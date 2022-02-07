@@ -93,7 +93,7 @@ function Dropdown({
               }}
               minW={listItemsMinWidth}
               p={0}
-              variant="form"
+              // variant="form"
             >
               <Flex
                 alignItems="center"

@@ -37,7 +37,7 @@ function AboutTeam({
       <SingleLineInput
         label="Team Members"
         placeholder="Number of Team Members"
-        value={teamMembers}
+        value={teamMembers === null ? undefined : teamMembers}
         onChange={(e) => {
           if (teamMembersError) {
             setTeamMembersError(false);

@@ -1,11 +1,9 @@
 /* eslint-disable max-classes-per-file */
-import React, { Component } from 'react';
+import React from 'react';
 import {
   Editor,
   EditorState,
   RichUtils,
-  convertToRaw,
-  convertFromRaw,
 } from 'draft-js';
 
 // Custom overrides for each style
@@ -33,14 +31,14 @@ function TextEditor() {
     setEditorState(state);
   };
 
-  const handleKeyCommand = (command: any) => {
-    const newState = RichUtils.handleKeyCommand(editorState, command);
-    if (newState) {
-      onChange(newState);
-      return true;
-    }
-    return false;
-  };
+  // const handleKeyCommand = (command: any) => {
+  //   const newState = RichUtils.handleKeyCommand(editorState, command);
+  //   if (newState) {
+  //     onChange(newState);
+  //     return true;
+  //   }
+  //   return false;
+  // };
 
   return (
     <div>
@@ -59,7 +57,7 @@ function TextEditor() {
         <Editor
           customStyleMap={styleMap}
           editorState={editorState}
-          handleKeyCommand={handleKeyCommand}
+          // handleKeyCommand={(command) => handleKeyCommand(command)}
           onChange={onChange}
           placeholder="Tell a story..."
           editorKey="foobar"
