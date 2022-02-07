@@ -1,8 +1,15 @@
 import { Container } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
+import { useAccount } from 'wagmi';
+import GrantCard from '../src/components/browse_grants/grantCard';
+import Sidebar from '../src/components/browse_grants/sidebar';
+import Heading from '../src/components/ui/heading';
 import NavbarLayout from '../src/layout/navbarLayout';
 
-function Home() {
+function BrowseGrants() {
+  const [{ data: accountData }] = useAccount();
+  const router = useRouter();
   return (
     <Container maxW="100%" display="flex" px="70px">
       <Container
@@ -14,13 +21,38 @@ function Home() {
         pb={8}
         px={10}
       >
-        Home
+        <Heading title="Browse grants" />
+        {Array(5)
+          .fill(0)
+          .map(() => (
+            <GrantCard
+              daoIcon="/images/dummy/Polygon Icon.svg"
+              daoName="Polygon DAO"
+              isDaoVerified
+              grantTitle="Storage Provider (SP) Tooling Ideas"
+              grantDesc="A tool, script or tutorial to set up monitoring for miner GPU, CPU, memory and other and resource and performance metrics, ideally using Prometheus"
+              numOfApplicants={0}
+              endTimestamp={new Date('January 2, 2022 23:59:59:000').getTime()}
+              grantAmount={60}
+              grantCurrency="ETH"
+              grantCurrencyIcon="/images/dummy/Ethereum Icon.svg"
+              isGrantVerified
+              onClick={() => {
+                if (!(accountData && accountData.address)) {
+                  router.push({ pathname: '/connect_wallet', query: { flow: '/' } });
+                  return;
+                }
+                router.push({ pathname: '/explore_grants/about_grant' });
+              }}
+            />
+          ))}
       </Container>
+      {accountData && accountData.address ? null : <Sidebar />}
     </Container>
   );
 }
 
-Home.getLayout = function getLayout(page: ReactElement) {
+BrowseGrants.getLayout = function getLayout(page: ReactElement) {
   return <NavbarLayout renderGetStarted>{page}</NavbarLayout>;
 };
-export default Home;
+export default BrowseGrants;

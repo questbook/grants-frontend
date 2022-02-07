@@ -30,7 +30,7 @@ function CoverUpload({ label, subtext }: CoverUploadProps) {
         p={2}
       >
         <Flex w="full" h="full" position="relative" bg="#E8E9E9" align="center" justify="center">
-          <Flex direction="column" align="center" jutify="start">
+          <Flex direction="column" align="center" justify="start">
             <Image h="30px" w="30px" src="/ui_icons/upload.svg" />
             <Box mt={1} />
             <Text fontSize="12px" lineHeight="24px" letterSpacing={0.5} color="brand.500" fontWeight="500">{subtext}</Text>
