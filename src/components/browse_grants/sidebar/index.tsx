@@ -10,12 +10,12 @@ function Sidebar() {
         {
           href: '#',
           label: 'Support 24*7',
-          iconUrl: '/brand_icons/discord_icon.svg',
+          iconUrl: '/sidebar/discord_icon.svg',
         },
         {
           href: '#',
           label: 'On Chain Contract',
-          iconUrl: '/brand_icons/onchain_icon.svg',
+          iconUrl: '/sidebar/onchain_icon.svg',
         },
       ]}
     >
@@ -39,19 +39,19 @@ function Sidebar() {
           <SidebarList
             listElements={[
               {
-                src: '/home/sidebar/create_grants.svg',
+                src: '/sidebar/create_grants.svg',
                 text: 'Create Grants',
               },
               {
-                src: '/home/sidebar/attract_applicants.svg',
+                src: '/sidebar/attract_applicants.svg',
                 text: 'Attract Applicants',
               },
               {
-                src: '/home/sidebar/review_application.svg',
+                src: '/sidebar/review_application.svg',
                 text: 'Review Application',
               },
               {
-                src: '/home/sidebar/deploy_funds.svg',
+                src: '/sidebar/deploy_funds.svg',
                 text: 'Deploy funds',
               },
             ]}
@@ -64,11 +64,11 @@ function Sidebar() {
           <SidebarList
             listElements={[
               {
-                src: '/home/sidebar/explore_grants.svg',
+                src: '/sidebar/explore_grants.svg',
                 text: 'Explore Grants',
               },
               {
-                src: '/home/sidebar/apply_for_grants.svg',
+                src: '/sidebar/apply_for_grants.svg',
                 text: 'Apply for grants',
               },
             ]}

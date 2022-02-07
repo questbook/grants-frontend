@@ -1,0 +1,97 @@
+import {
+  Box, Heading, Flex, Divider, Image, Text, Link,
+} from '@chakra-ui/react';
+import React from 'react';
+import FloatingSidebar from '../../../ui/sidebar/floatingSidebar';
+
+function Sidebar() {
+  return (
+    <Box mt="8px">
+      <FloatingSidebar>
+        <Heading
+          fontSize="16px"
+          fontWeight="400"
+          color="#414E50"
+          lineHeight="26px"
+          fontStyle="normal"
+        >
+          Application Details
+        </Heading>
+        <Flex direction="row" justify="start" w="full" mt={6} align="center">
+          <Image h="45px" w="45px" src="/network_icons/eth_mainnet.svg" />
+          <Box mx={3} />
+          <Heading variant="applicationHeading" color="brand.500">
+            0xb79....579268
+          </Heading>
+        </Flex>
+        <Box my={4} />
+        <Flex direction="row" justify="space-between" w="full" align="center">
+          <Text variant="applicationText" lineHeight="32px">
+            Name
+          </Text>
+          <Heading variant="applicationHeading" lineHeight="32px">
+            Ankit Nair
+          </Heading>
+        </Flex>
+        <Flex direction="row" justify="space-between" w="full" align="center">
+          <Text variant="applicationText" lineHeight="32px">
+            Email
+          </Text>
+          <Heading variant="applicationHeading" lineHeight="32px">
+            ankit@gmail.com
+          </Heading>
+        </Flex>
+        <Flex direction="row" justify="space-between" w="full" align="center">
+          <Text variant="applicationText" lineHeight="32px">
+            Sent On
+          </Text>
+          <Heading variant="applicationHeading" lineHeight="32px">
+            2nd January, 2022
+          </Heading>
+        </Flex>
+        <Divider mt="37px" />
+        <Flex mt="22px" mb="3px" direction="row" w="full" alignItems="center">
+          <Link
+            variant="link"
+            fontSize="14px"
+            lineHeight="24px"
+            fontWeight="500"
+            fontStyle="normal"
+            color="#414E50"
+            href="view grant"
+          >
+            View Grant
+            {' '}
+            <Image
+              display="inline-block"
+              h={3}
+              w={3}
+              src="/ui_icons/link.svg"
+            />
+          </Link>
+          <Link
+            variant="link"
+            fontSize="14px"
+            lineHeight="24px"
+            fontWeight="500"
+            fontStyle="normal"
+            color="#414E50"
+            href="view grant"
+            ml="auto"
+          >
+            View Application
+            {' '}
+            <Image
+              display="inline-block"
+              h={3}
+              w={3}
+              src="/ui_icons/link.svg"
+            />
+          </Link>
+        </Flex>
+      </FloatingSidebar>
+    </Box>
+  );
+}
+
+export default Sidebar;

@@ -13,7 +13,7 @@ function SidebarList({
   linkHref: string;
 }) {
   return (
-    <Flex direction="column" spacing={7} justify="start" align="start">
+    <Flex direction="column" justify="start" align="start">
       <Text fontSize="18px" lineHeight="26px" fontWeight="700">
         Protocols & DAOs
       </Text>

@@ -56,7 +56,7 @@ function Navbar({
               onClick={() => {
                 setActiveIndex(0);
                 router.push({
-                  pathname: '/',
+                  pathname: '/your_grants',
                 });
               }}
             />
@@ -70,7 +70,7 @@ function Navbar({
               onClick={() => {
                 setActiveIndex(1);
                 router.push({
-                  pathname: '/',
+                  pathname: '/funds',
                 });
               }}
             />
@@ -84,7 +84,7 @@ function Navbar({
               onClick={() => {
                 setActiveIndex(2);
                 router.push({
-                  pathname: '/',
+                  pathname: '/settings_and_members/',
                 });
               }}
             />
@@ -101,7 +101,7 @@ function Navbar({
               onClick={() => {
                 setActiveIndex(3);
                 router.push({
-                  pathname: '/',
+                  pathname: '/your_applications',
                 });
               }}
             />
@@ -112,7 +112,7 @@ function Navbar({
 
           <Button
             onClick={() => router.push({
-              pathname: '/create_grant/',
+              pathname: '/your_grants/create_grant/',
               query: {
                 account: true,
               },
