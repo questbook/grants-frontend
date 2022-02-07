@@ -1,0 +1,113 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import {
+  Container, Flex, Box, Button, Link, Text, Image,
+} from '@chakra-ui/react';
+import React from 'react';
+
+function DaoCreated({
+  network,
+  daoName,
+  onCreateGrantClick,
+  onVisitGrantsClick: onVisitMyGrantsClick,
+}: {
+  network: string;
+  daoName: string;
+  onCreateGrantClick: () => void;
+  onVisitGrantsClick: () => void;
+}) {
+  return (
+    <Container maxW="1024px" py={10}>
+      <Flex direction="column" alignItems="center" maxW="700px" mx="auto">
+        <Image
+          h="158px"
+          w="128px"
+          src="/images/yellow_flying_comp.svg"
+          alt=""
+        />
+        <Text
+          variant="heading"
+          fontSize="45px"
+          lineHeight="65px"
+          fontWeight="500"
+          mt={9}
+        >
+          Your DAO is created!
+        </Text>
+
+        <Text fontSize="12px" lineHeight="20px" fontWeight="400">
+          <Image
+            mb="-2px"
+            h="12px"
+            w="12px"
+            src="/ui_icons/info.svg"
+            alt="info"
+            display="inline-block"
+          />
+          {' '}
+          You Grants DAO is created on-chain on the
+          {' '}
+          <Box fontWeight="700" display="inline-block">
+            {network}
+            .
+          </Box>
+          {' '}
+          <Link
+            style={{ textDecoration: 'underline' }}
+            href="learn more"
+            variant="black"
+          >
+            Learn more
+          </Link>
+        </Text>
+
+        <Text mt={10} fontSize="28px" lineHeight="24px" fontWeight="500">
+          Grants DAO Name:
+          {' '}
+          <Link fontWeight="700" href="#">
+            {daoName}
+            <Image
+              mx={1}
+              src="/ui_icons/link.svg"
+              alt="open link"
+              display="inline-block"
+            />
+          </Link>
+        </Text>
+
+        <Text
+          color="#122224"
+          fontWeight="400"
+          mt={12}
+          px={8}
+          textAlign="center"
+        >
+          Congratulations on setting up your Grants DAO on Questbook. Click the
+          button below to create your first grant on Questbook and we&apos;ll
+          help you get started.
+        </Text>
+
+        <Button
+          onClick={() => onCreateGrantClick()}
+          mt={8}
+          variant="primary"
+        >
+          Create a Grant
+        </Button>
+
+        <Text
+          mt={3}
+          cursor="pointer"
+          fontWeight="400"
+          fontSize="16px"
+          lineHeight="24px"
+          color="#717A7C"
+          onClick={() => onVisitMyGrantsClick()}
+        >
+          No, I will do it later.
+        </Text>
+      </Flex>
+    </Container>
+  );
+}
+
+export default DaoCreated;

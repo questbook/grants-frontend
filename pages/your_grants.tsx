@@ -2,7 +2,7 @@ import { Container } from '@chakra-ui/react';
 import React, { ReactElement } from 'react';
 import NavbarLayout from '../src/layout/navbarLayout';
 
-function Home() {
+function YourGrants() {
   return (
     <Container maxW="100%" display="flex" px="70px">
       <Container
@@ -14,13 +14,13 @@ function Home() {
         pb={8}
         px={10}
       >
-        Home
+        Your Grants
       </Container>
     </Container>
   );
 }
 
-Home.getLayout = function getLayout(page: ReactElement) {
+YourGrants.getLayout = function getLayout(page: ReactElement) {
   return <NavbarLayout renderGetStarted>{page}</NavbarLayout>;
 };
-export default Home;
+export default YourGrants;

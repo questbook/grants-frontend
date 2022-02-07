@@ -1,3 +1,12 @@
+/* 
+  Import google fonts
+  DM Sans:
+    400, 500, 700
+  Spartan:
+    400, 600, 700
+*/
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Spartan:wght@400;600;700&display=swap');
+
 html,
 body {
   padding: 0;
@@ -13,4 +22,17 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+.richTextContainer > a {
+  color: #8850EA !important;
+  text-decoration: underline !important;
+}
+
+.richTextContainer > ul {
+  padding-left: 32px
+}
+
+.richTextContainer > ol {
+  padding-left: 32px
 }

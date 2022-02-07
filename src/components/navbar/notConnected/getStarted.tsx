@@ -1,0 +1,34 @@
+import React from 'react';
+import { Button, Text } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
+
+function GetStarted() {
+  const router = useRouter();
+
+  /* this button style is not required anywhere in design */
+  return (
+    <Button
+      mr={5}
+      h={12}
+      transition="all 1s ease"
+      _active={{
+        background:
+          'linear-gradient(96.85deg, #5222A7 -21.73%, #00B6CE 110.75%)',
+      }}
+      _hover={{
+        background:
+          'linear-gradient(96.85deg, #8E4EFF -21.73%, #4BEAFF 110.75%)',
+      }}
+      background="linear-gradient(96.85deg, #6F25F1 -21.73%, #00E1FF 110.75%)"
+      px={6}
+      py={3}
+      onClick={() => { router.push('/get_started'); }}
+    >
+      <Text fontFamily="DM Sans" color="white" fontWeight="bold">
+        Get Started
+      </Text>
+    </Button>
+  );
+}
+
+export default GetStarted;
