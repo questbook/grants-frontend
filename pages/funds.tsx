@@ -4,10 +4,19 @@ import {
 import React, { ReactElement } from 'react';
 import AddFundsModal from '../src/components/your_grants/add_funds_modal';
 import NavbarLayout from '../src/layout/navbarLayout';
+import { timeToString } from '../src/utils/formattingUtils';
 
 function AddFunds() {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-
+  const flex = [0.26, 0.175, 0.217, 0.27, 0.078];
+  const tableHeaders = ['From', 'To', 'Amount', 'On', 'Action'];
+  const tableData = new Array(5);
+  tableData.fill({
+    from: { address: '0xb791.. (You)' },
+    to: { address: '0xb791..' },
+    amount: { value: 50, symbol: 'ETH' },
+    on: { timestamp: new Date('January 24, 2022 23:59:59:000').getTime() },
+  });
   return (
     <Flex direction="row" justify="center">
       <Flex w="80%" direction="column" align="start" mt={6}>
@@ -26,41 +35,25 @@ function AddFunds() {
             </Flex>
           </Flex>
           <Flex w="100%" mt={8} alignItems="flex-start" direction="column">
-            <Flex direction="row" w="100%" justify="strech" align="center" px={10} py={6}>
-              <Text flex={1} variant="tableHeader">From</Text>
-              <Text flex={1} variant="tableHeader">To</Text>
-              <Text flex={1} variant="tableHeader">Amount</Text>
-              <Text flex={1} variant="tableHeader">On</Text>
-              <Text flex={1} variant="tableHeader">Action</Text>
+            <Flex direction="row" w="100%" justify="strech" align="center" py={2}>
+              {tableHeaders.map((header, index) => (<Text flex={flex[index]} variant="tableHeader">{header}</Text>))}
             </Flex>
             <Flex direction="column" w="100%" border="1px solid #D0D3D3" borderRadius={4}>
-              <Flex direction="row" w="100%" justify="stretch" align="center" bg="#F7F9F9" px={8} py={4}>
-                <Text flex={1} variant="tableBody">0xb791.. (You)</Text>
-                <Text flex={1} variant="tableBody">0xb791..</Text>
-                <Text flex={1} variant="tableBody">50 ETH</Text>
-                <Text flex={1} variant="tableBody">24 Jan, 2022</Text>
-                <Flex flex={1}>
-                  <Button variant="link" color="brand.500" rightIcon={<Image src="/ui_icons/link.svg" />}>View</Button>
+              {tableData.map((data, index) => (
+                <Flex direction="row" w="100%" justify="stretch" align="center" bg={index % 2 === 0 ? '#F7F9F9' : 'white'} py={6}>
+                  <Text ml={6} flex={flex[0]} variant="tableBody">{data.from.address}</Text>
+                  <Text flex={flex[1]} variant="tableBody">{data.to.address}</Text>
+                  <Text flex={flex[2]} variant="tableBody" fontWeight="400">
+                    {data.amount.value}
+                    {' '}
+                    {data.amount.symbol}
+                  </Text>
+                  <Text flex={flex[3]} variant="tableBody" fontWeight="400">{timeToString(data.on.timestamp, 'day_first')}</Text>
+                  <Flex flex={flex[4]}>
+                    <Button variant="link" color="brand.500" rightIcon={<Image src="/ui_icons/link.svg" />}>View</Button>
+                  </Flex>
                 </Flex>
-              </Flex>
-              <Flex direction="row" w="100%" justify="stretch" align="center" px={8} py={4}>
-                <Text flex={1} variant="tableBody">0xb791.. (You)</Text>
-                <Text flex={1} variant="tableBody">0xb791..</Text>
-                <Text flex={1} variant="tableBody">50 ETH</Text>
-                <Text flex={1} variant="tableBody">24 Jan, 2022</Text>
-                <Flex flex={1}>
-                  <Button variant="link" color="brand.500" rightIcon={<Image src="/ui_icons/link.svg" />}>View</Button>
-                </Flex>
-              </Flex>
-              <Flex direction="row" w="100%" justify="stretch" align="center" bg="#F7F9F9" px={8} py={4}>
-                <Text flex={1} variant="tableBody">0xb791.. (You)</Text>
-                <Text flex={1} variant="tableBody">0xb791..</Text>
-                <Text flex={1} variant="tableBody">50 ETH</Text>
-                <Text flex={1} variant="tableBody">24 Jan, 2022</Text>
-                <Flex flex={1}>
-                  <Button variant="link" color="brand.500" rightIcon={<Image src="/ui_icons/link.svg" />}>View</Button>
-                </Flex>
-              </Flex>
+              ))}
             </Flex>
           </Flex>
         </Flex>
