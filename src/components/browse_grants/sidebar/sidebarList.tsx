@@ -25,7 +25,7 @@ function SidebarList({
         align="start"
       >
         {listElements.map(({ src, text }) => (
-          <HStack justify="start" spacing={4} align="start" w="full">
+          <HStack key={text} justify="start" spacing={4} align="start" w="full">
             <Image h="21px" src={src} />
             <Text fontWeight="400" lineHeight="19.5px" color="#122224">{text}</Text>
           </HStack>

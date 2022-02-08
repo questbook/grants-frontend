@@ -13,7 +13,7 @@ export interface Props {
 function AccountDetails({ networkId, isOnline, address }: Props) {
   const formattedAddress = `${address.substring(0, 4)}......${address.substring(address.length - 4)}`;
   const supportedChainIds = Object.keys(supportedNetworks);
-  if (!(supportedChainIds.includes(networkId.toString()))) return <div>Not supported!</div>;
+  const networkSupported = supportedChainIds.includes(networkId.toString());
   return (
     <Button h={12} variant="solid" size="xl" px={2} py={1} borderRadius={8}>
       <Image
@@ -21,7 +21,9 @@ function AccountDetails({ networkId, isOnline, address }: Props) {
         w={8}
         src={
           supportedNetworks[
-            networkId.toString() as keyof typeof supportedNetworks
+            networkSupported
+              ? networkId.toString() as keyof typeof supportedNetworks
+              : 1
           ].icon
         }
         alt="current network"
@@ -37,9 +39,11 @@ function AccountDetails({ networkId, isOnline, address }: Props) {
           />
           <Text fontSize="9px" lineHeight="14px" fontWeight="500" color="#122224">
             {
-              supportedNetworks[
-                networkId.toString() as keyof typeof supportedNetworks
-              ].name
+              networkSupported
+                ? supportedNetworks[
+                  networkId.toString() as keyof typeof supportedNetworks
+                ].name
+                : 'Unsupported Network'
             }
           </Text>
         </Flex>

@@ -119,6 +119,7 @@ function ConnectWallet() {
           selectedNetworkId.toString() as keyof typeof supportedNetworks
         ].wallets.map(({ name, icon, id }) => (
           <WalletSelectButton
+            key={id}
             name={name}
             icon={icon}
             onClick={() => {

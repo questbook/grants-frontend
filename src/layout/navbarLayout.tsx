@@ -1,6 +1,7 @@
-import { Container, VStack } from '@chakra-ui/react';
-import React from 'react';
+import { Container, useToast, VStack } from '@chakra-ui/react';
+import React, { useEffect, useRef } from 'react';
 import { useAccount, useConnect, useNetwork } from 'wagmi';
+import { useRouter } from 'next/router';
 import SignInNavbar from '../components/navbar/notConnected';
 import ConnectedNavbar from '../components/navbar/connected';
 
@@ -11,8 +12,11 @@ interface Props {
 }
 
 function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
-  // const router = useRouter();
-  // const supportedChainIds = Object.keys(supportedNetworks);
+  const toast = useToast();
+  const [connected, setConnected] = React.useState(false);
+
+  const currentPageRef = useRef(null);
+  const { asPath } = useRouter();
 
   const [{ data: connectData }] = useConnect();
   const [{ data: accountData }] = useAccount({
@@ -20,9 +24,40 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
   });
   const [{ data: networkData }] = useNetwork();
 
+  useEffect(() => {
+    if (connected && !connectData.connected) {
+      setConnected(false);
+      toast({
+        title: 'Disconnected',
+      });
+    } else if (!connected && connectData.connected) {
+      setConnected(true);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connectData]);
+
+  // useEffect(() => {
+  //   console.log(accountData);
+  // }, [accountData]);
+
+  // useEffect(() => {
+  //   console.log(networkData, loading, error);
+  // }, [networkData]);
+
+  useEffect(() => {
+    if (asPath && asPath.length > 0) {
+      const { current } = currentPageRef;
+      if (!current) return;
+      (current as HTMLElement).scrollTo({
+        top: 0,
+        left: 0,
+      });
+    }
+  }, [asPath]);
+
   return (
     <VStack alignItems="center" maxH="100vh" width="100%" spacing={0} p={0}>
-      {accountData && networkData && connectData ? (
+      {accountData && connectData ? (
         <ConnectedNavbar
           networkId={networkData.chain?.id ?? -1}
           address={accountData.address}
@@ -36,7 +71,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
         root of children should also be a container with a max-width,
         this container is to render the scrollbar to extreme right of window
       */}
-      <Container maxW="100vw" p={0} overflow="scroll">
+      <Container ref={currentPageRef} maxW="100vw" p={0} overflow="scroll">
         {children}
       </Container>
     </VStack>
