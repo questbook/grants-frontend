@@ -29,7 +29,7 @@ function GetStarted({
       <Flex mt={10}>
         {[
           {
-            icon: '/images/pink_flying_comp.svg',
+            icon: '/illustrations/developer_illustration.svg',
             text: highlightWordsInString(
               'Are you a developer or someone who is looking for grants to build projects?',
               ['developer', 'looking for grants'],
@@ -38,7 +38,7 @@ function GetStarted({
             onClick: () => onTalentClick(),
           },
           {
-            icon: '/images/yellow_flying_comp.svg',
+            icon: '/illustrations/dao_illustration.svg',
             text: highlightWordsInString(
               'Are you a DAO or someone who is looking to fund ideas with your grants?',
               ['DAO', 'looking to fund ideas'],
@@ -57,7 +57,7 @@ function GetStarted({
             maxW="496px"
             ml={index === 0 ? 0 : 10}
           >
-            <Image h="158px" w="128px" src={icon} />
+            <Image h="153px" w="202px" src={icon} />
             <Text mt={6} fontWeight="400" textAlign="center">
               {text}
             </Text>

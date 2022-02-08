@@ -19,10 +19,10 @@ function DaoCreated({
     <Container maxW="1024px" py={10}>
       <Flex direction="column" alignItems="center" maxW="700px" mx="auto">
         <Image
-          h="158px"
-          w="128px"
-          src="/images/yellow_flying_comp.svg"
-          alt=""
+          h="160px"
+          w="156px"
+          src="/illustrations/dao_created.svg"
+          alt="dao_created"
         />
         <Text
           variant="heading"
