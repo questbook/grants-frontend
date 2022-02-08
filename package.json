@@ -22,7 +22,8 @@
     "react": "^17.0.2",
     "react-datepicker": "^4.6.0",
     "react-dom": "^17.0.2",
-    "wagmi": "^0.2.9"
+    "wagmi": "^0.2.9",
+    "@questbook/service-validator-client": "github:questbook/service-validator-typescript-client"
   },
   "devDependencies": {
     "@types/draft-js": "^0.11.8",

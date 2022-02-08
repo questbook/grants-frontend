@@ -2,12 +2,50 @@ import {
   Flex, Text, Image, Button, Box,
 } from '@chakra-ui/react';
 import React from 'react';
-import CoverUpload from '../ui/forms/coverUpload';
-import ImageUpload from '../ui/forms/imageUpload';
-import MultiLineInput from '../ui/forms/multiLineInput';
-import SingleLineInput from '../ui/forms/singleLineInput';
+import { useContract, useSigner } from 'wagmi';
+import config from '../../contracts/config';
+import WorkspaceRegistryABI from '../../contracts/abi/WorkspaceRegistryAbi.json';
+import EditForm from './edit_form';
 
 function Settings() {
+  // const [, setLoading] = React.useState(false);
+  const [formData, setFormData] = React.useState<{
+    name: string;
+    about: string;
+    image?: string;
+    coverImage?: string;
+    twitterHandle?: string;
+    discordHandle?: string;
+    telegramChannel?: string;
+  } | null>(null);
+
+  const [signerStates] = useSigner();
+
+  const contract = useContract({
+    addressOrName: config.WorkspaceRegistryAddress,
+    contractInterface: WorkspaceRegistryABI,
+    signerOrProvider: signerStates.data,
+  });
+
+  const handleFormSubmit = async (data: {
+    name: string;
+    about: string,
+    image?: string,
+    coverImage?: string,
+    twitterHandle?: string,
+    discordHandle?: string,
+    telegramChannel?: string, }) => {
+    setFormData(data);
+    // setLoading(true);
+
+    const workspaceID = 0;
+    const newMetadata = JSON.stringify(formData);
+    const ret = await contract.updateWorkspaceMetdata(workspaceID, newMetadata);
+    console.log(ret);
+
+    // setLoading(false);
+  };
+
   return (
     <Flex direction="column" align="start" w="85%">
       <Flex direction="row" w="full" justify="space-between">
@@ -25,94 +63,8 @@ function Settings() {
           See profile preview
         </Button>
       </Flex>
-      <Flex w="100%" mt={8} alignItems="flex-start">
-        <SingleLineInput
-          label="Grants DAO Name"
-          placeholder="Nouns DAO"
-          subtext="Letters, spaces, and numbers are allowed."
-          value={undefined}
-          onChange={() => {}}
-          isError={false}
-        />
-        <Box ml={9} />
-        <ImageUpload
-          image={undefined}
-          onChange={() => {}}
-          onClear={() => {}}
-          label="Add a logo"
-          subtext="Upload"
-        />
-      </Flex>
-      <Flex w="100%" mt={1}>
-        <MultiLineInput
-          label="About your Grants DAO"
-          placeholder="Sample"
-          value={undefined}
-          onChange={() => {}}
-          isError={false}
-          maxLength={500}
-          subtext={null}
-        />
-      </Flex>
-      <Flex w="100%" mt={1}>
-        <SingleLineInput
-          label="Network"
-          placeholder="Network"
-          value="Ethereum"
-          onChange={() => {}}
-          isError={false}
-          disabled
-        />
-      </Flex>
-      <Flex w="100%" mt={10}>
-        <CoverUpload label="Other Details" subtext="Upload a cover" />
-      </Flex>
-      <Flex w="100%" mt={8} alignItems="flex-start">
-        <SingleLineInput
-          label="Twitter Handle"
-          placeholder="@ethereum"
-          subtext=""
-          value={undefined}
-          onChange={() => {}}
-          isError={false}
-        />
-      </Flex>
-      <Flex w="100%" mt={8} alignItems="flex-start">
-        <SingleLineInput
-          label="Discord Server Link"
-          placeholder="@ethereum"
-          subtext=""
-          value={undefined}
-          onChange={() => {}}
-          isError={false}
-        />
-      </Flex>
-      <Flex w="100%" mt={8} alignItems="flex-start">
-        <SingleLineInput
-          label="Telegram Channel"
-          placeholder="www.telegram.com"
-          subtext=""
-          value={undefined}
-          onChange={() => {}}
-          isError={false}
-        />
-      </Flex>
-      <Flex direction="row" justify="start" mt={10}>
-        <Button variant="primary">Save changes</Button>
-        <Box mr={14} />
-        <Button
-          leftIcon={<Image src="/ui_icons/see.svg" my={-2} alt="Settings" />}
-          fontStyle="normal"
-          fontWeight="700"
-          fontSize="14px"
-          letterSpacing="0.5px"
-          lineHeight="20px"
-          colorScheme="brand"
-          variant="link"
-        >
-          See profile preview
-        </Button>
-      </Flex>
+      <EditForm onSubmit={handleFormSubmit} />
+
       <Box my={10} />
     </Flex>
   );
