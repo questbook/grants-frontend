@@ -13,7 +13,7 @@ function SignupDao() {
   const router = useRouter();
   const [loading, setLoading] = React.useState(false);
   const [daoCreated, setDaoCreated] = React.useState(false);
-  const [creatingGrant, setCreatingGrant] = React.useState(true);
+  const [creatingGrant, setCreatingGrant] = React.useState(false);
 
   const [daoData, setDaoData] = React.useState<{
     name: string;
