@@ -2,6 +2,7 @@ import { Container } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
 import { useAccount } from 'wagmi';
+import { ValidationApi, GrantApplicationRequest } from '@questbook/service-validator-client';
 import GrantCard from '../src/components/browse_grants/grantCard';
 import Sidebar from '../src/components/browse_grants/sidebar';
 import Heading from '../src/components/ui/heading';
@@ -56,3 +57,7 @@ BrowseGrants.getLayout = function getLayout(page: ReactElement) {
   return <NavbarLayout renderGetStarted>{page}</NavbarLayout>;
 };
 export default BrowseGrants;
+function GrantApplicationRequest(): import("@questbook/service-validator-client").GrantApplicationRequest | undefined {
+  throw new Error('Function not implemented.');
+}
+
