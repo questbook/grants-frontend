@@ -65,7 +65,10 @@ function Settings() {
         />
       </Flex>
       <Flex w="100%" mt={10}>
-        <CoverUpload label="Other Details" subtext="Upload a cover" />
+        <CoverUpload
+          label="Other Details"
+          subtext="Upload a cover"
+        />
       </Flex>
       <Flex w="100%" mt={8} alignItems="flex-start">
         <SingleLineInput
