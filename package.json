@@ -13,6 +13,7 @@
     "@chakra-ui/react": "^1.8.0",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
+    "@questbook/service-validator-client": "github:questbook/service-validator-typescript-client",
     "@toast-ui/editor": "^3.1.2",
     "@toast-ui/react-editor": "^3.1.2",
     "draft-js": "^0.11.7",
@@ -22,8 +23,7 @@
     "react": "^17.0.2",
     "react-datepicker": "^4.6.0",
     "react-dom": "^17.0.2",
-    "wagmi": "^0.2.9",
-    "@questbook/service-validator-client": "github:questbook/service-validator-typescript-client"
+    "wagmi": "^0.2.9"
   },
   "devDependencies": {
     "@types/draft-js": "^0.11.8",

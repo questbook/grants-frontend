@@ -25,7 +25,7 @@ function Sidebar({
       <Divider position="sticky" bottom={12} variant="sidebar" />
       <Flex bg={theme.colors.backgrounds.sidebar} position="sticky" bottom={0} w="100%" flexWrap="wrap" py={3} justify="center" px={8}>
         {links.map(({ href, label, iconUrl }, index) => (
-          <Flex alignItems="center" ml={index === 0 ? 0 : 10}>
+          <Flex key={label} alignItems="center" ml={index === 0 ? 0 : 10}>
             <Image h="18px" w="14px" src={iconUrl} />
             <Link
               ml={3}

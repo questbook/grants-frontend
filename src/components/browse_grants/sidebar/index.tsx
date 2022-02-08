@@ -30,7 +30,7 @@ function Sidebar() {
         <Text fontSize="28px" lineHeight="35.5px">
           What is
           <br />
-          <Text display="inline-block" fontWeight="700">
+          <Text as="span" display="inline-block" fontWeight="700">
             Questbook?
           </Text>
         </Text>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Box,
   Button,
@@ -22,6 +22,16 @@ function Navbar({
 }: Props) {
   const [activeIndex, setActiveIndex] = React.useState(-1);
   const router = useRouter();
+  const tabPaths = ['your_grants', 'funds', 'settings_and_members', 'your_applications'];
+
+  useEffect(() => {
+    const splitPaths = router.asPath.split('/');
+    const basePath = splitPaths.length >= 1 ? splitPaths[1] : splitPaths[0];
+    console.log(tabPaths.indexOf(basePath), basePath);
+    setActiveIndex(tabPaths.indexOf(basePath));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.asPath]);
+
   return (
     <Container
       zIndex={1}
@@ -54,9 +64,8 @@ function Navbar({
               icon="/ui_icons/your_applications.svg"
               isActive={activeIndex === 0}
               onClick={() => {
-                setActiveIndex(0);
                 router.push({
-                  pathname: '/your_grants',
+                  pathname: `/${tabPaths[0]}`,
                 });
               }}
             />
@@ -68,9 +77,8 @@ function Navbar({
               icon="/ui_icons/your_applications.svg"
               isActive={activeIndex === 1}
               onClick={() => {
-                setActiveIndex(1);
                 router.push({
-                  pathname: '/funds',
+                  pathname: `/${tabPaths[1]}`,
                 });
               }}
             />
@@ -82,9 +90,8 @@ function Navbar({
               icon="/ui_icons/your_applications.svg"
               isActive={activeIndex === 2}
               onClick={() => {
-                setActiveIndex(2);
                 router.push({
-                  pathname: '/settings_and_members/',
+                  pathname: `/${tabPaths[2]}`,
                 });
               }}
             />
@@ -99,9 +106,8 @@ function Navbar({
               icon="/ui_icons/your_applications.svg"
               isActive={activeIndex === 3}
               onClick={() => {
-                setActiveIndex(3);
                 router.push({
-                  pathname: '/your_applications',
+                  pathname: `/${tabPaths[3]}`,
                 });
               }}
             />
