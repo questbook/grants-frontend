@@ -1,12 +1,15 @@
 import { Container, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
+import { useContract, useSigner } from 'wagmi';
 import Form from '../src/components/signup/create_dao/form';
 import Loading from '../src/components/signup/create_dao/loading';
 import CreateGrant from '../src/components/signup/create_grant';
 import DaoCreated from '../src/components/signup/daoCreated';
 
 import Tooltip from '../src/components/ui/tooltip';
+import config from '../src/contracts/config';
+import WorkspaceRegistryABI from '../src/contracts/abi/WorkspaceRegistryAbi.json';
 import NavbarLayout from '../src/layout/navbarLayout';
 
 function SignupDao() {
@@ -22,7 +25,15 @@ function SignupDao() {
     network: string;
   } | null>(null);
 
-  const handleFormSubmit = (data: {
+  const [signerStates] = useSigner();
+
+  const contract = useContract({
+    addressOrName: config.WorkspaceRegistryAddress,
+    contractInterface: WorkspaceRegistryABI,
+    signerOrProvider: signerStates.data,
+  });
+
+  const handleFormSubmit = async (data: {
     name: string;
     description: string;
     image?: string;
@@ -30,6 +41,9 @@ function SignupDao() {
   }) => {
     setDaoData(data);
     setLoading(true);
+
+    const ret = await contract.createWorkspace(JSON.stringify(daoData));
+    console.log(ret);
 
     // show loading screen for minimum of 3 seconds
     setTimeout(() => {
