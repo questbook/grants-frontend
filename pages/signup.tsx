@@ -1,19 +1,24 @@
 import { Container, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
+import { useContract, useSigner } from 'wagmi';
+// import { ValidationApi, GrantApplicationRequest } from '@questbook/service-validator-client';
+import { ValidationApi } from '@questbook/service-validator-client';
 import Form from '../src/components/signup/create_dao/form';
 import Loading from '../src/components/signup/create_dao/loading';
 import CreateGrant from '../src/components/signup/create_grant';
 import DaoCreated from '../src/components/signup/daoCreated';
 
 import Tooltip from '../src/components/ui/tooltip';
+import config from '../src/contracts/config';
+import WorkspaceRegistryABI from '../src/contracts/abi/WorkspaceRegistryAbi.json';
 import NavbarLayout from '../src/layout/navbarLayout';
 
 function SignupDao() {
   const router = useRouter();
   const [loading, setLoading] = React.useState(false);
   const [daoCreated, setDaoCreated] = React.useState(false);
-  const [creatingGrant, setCreatingGrant] = React.useState(true);
+  const [creatingGrant, setCreatingGrant] = React.useState(false);
 
   const [daoData, setDaoData] = React.useState<{
     name: string;
@@ -22,19 +27,48 @@ function SignupDao() {
     network: string;
   } | null>(null);
 
-  const handleFormSubmit = (data: {
+  const [signerStates] = useSigner();
+
+  const contract = useContract({
+    addressOrName: config.WorkspaceRegistryAddress,
+    contractInterface: WorkspaceRegistryABI,
+    signerOrProvider: signerStates.data,
+  });
+
+  const handleFormSubmit = async (data: {
     name: string;
     description: string;
     image?: string;
     network: string;
   }) => {
     setDaoData(data);
-    setLoading(true);
 
+    const api = new ValidationApi();
+    const { data: { ipfsHash, url } } = await api.validateWorkspaceCreate({
+      title: data.name,
+      about: data.description,
+      logoIpfsHash: 'QmQi4J7E1dg8M9j8vKCvSXsTxn2d6X4FZJ4ew8vxtttUmT',
+      coverImageIpfsHash: 'QmQi4J7E1dg8M9j8vKCvSXsTxn2d6X4FZJ4ew8vxtttUmT',
+      creatorId: '0x4e35fF1872A720695a741B00f2fA4D1883440baC',
+      socials: [
+        { name: 'twitter', value: 'https://twitter.com/questbook' },
+      ],
+      supportedNetworks: ['0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'],
+    });
+    console.log(ipfsHash);
+    console.log(url);
+
+    const ret = await contract.createWorkspace(ipfsHash);
+    setLoading(true);
+    console.log(ret);
+    const res2 = await ret.wait();
+    console.log(res2);
+    console.log(res2.blockNumber);
+    setDaoCreated(true);
     // show loading screen for minimum of 3 seconds
-    setTimeout(() => {
-      setDaoCreated(true);
-    }, 3000);
+    // setTimeout(() => {
+
+    // }, 3000);
   };
 
   if (creatingGrant) {
