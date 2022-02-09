@@ -1,14 +1,21 @@
+import { gql } from '@apollo/client';
 import {
-  Container,
+  Container, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useRef, useState } from 'react';
+import React, {
+  ReactElement, useContext, useEffect, useRef, useState,
+} from 'react';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/edit_grant/form';
 import Sidebar from '../../src/components/your_grants/edit_grant/sidebar';
+import { DAI } from '../../src/constants/assetDetails';
+import { getGrantDetails } from '../../src/graphql/daoQueries';
 import NavbarLayout from '../../src/layout/navbarLayout';
+import { ApiClientsContext } from '../_app';
 
 function EditGrant() {
+  const subgraphClient = useContext(ApiClientsContext)?.subgraphClient.client;
   const router = useRouter();
 
   const grantInfoRef = useRef(null);
@@ -46,7 +53,7 @@ function EditGrant() {
     ],
   ];
 
-  const formData = {
+  const defaultFormData = {
     title: 'title',
     summary: 'summary',
     details: 'details',
@@ -59,11 +66,65 @@ function EditGrant() {
     project_details: true,
     project_goals: false,
     extra_field: 'ko',
-    is_multiple_miletones: false,
+    is_multiple_milestones: false,
     reward: '10',
     rewardCurrency: 'USDC',
     date: '2022-02-05',
   };
+
+  const toast = useToast();
+  const [formData, setFormData] = useState(defaultFormData);
+  const getGrantData = async () => {
+    if (!subgraphClient) return;
+    try {
+      const { data } = await subgraphClient
+        .query({
+          query: gql(getGrantDetails),
+          variables: {
+            // TODO: Need to change this here!
+            grantID: '0x05f4b7a7f0e7c0a7d716fa0fcbf7e3d69a9e80b4',
+          },
+        }) as any;
+      // console.log(data);
+      if (data.grants.length > 0) {
+        const grant = data.grants[0];
+        setFormData({
+          title: grant.title,
+          summary: grant.summary,
+          details: grant.details,
+          applicant_name: grant.fields.contains('applicant_name'),
+          applicant_email: grant.fields.contains('applicant_email'),
+          about_team: grant.fields.contains('about_team'),
+          funding_breakdown: grant.fields.contains('funding_breakdown'),
+          project_name: grant.fields.contains('project_name'),
+          project_link: grant.fields.contains('project_link'),
+          project_details: grant.fields.contains('project_details'),
+          project_goals: grant.fields.contains('project_goals'),
+          extra_field: grant.fields.extra_field,
+          is_multiple_milestones: false, // TODO: Needs modification
+          reward: grant.reward.committed,
+          rewardCurrency: grant.reward.asset === DAI ? 'DAI' : 'WETH',
+          date: grant.deadline,
+        });
+      } else {
+        toast({
+          title: 'Displaying dummy data',
+          status: 'info',
+        });
+        setFormData(defaultFormData);
+      }
+    } catch (e) {
+      toast({
+        title: 'Error getting workspace data',
+        status: 'error',
+      });
+    }
+  };
+
+  useEffect(() => {
+    getGrantData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Container maxW="100%" display="flex" px="70px">

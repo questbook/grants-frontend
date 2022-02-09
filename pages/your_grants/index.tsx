@@ -1,14 +1,61 @@
-import { Container } from '@chakra-ui/react';
+import { gql } from '@apollo/client';
+import { Container, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useContext, useEffect } from 'react';
+import { useAccount } from 'wagmi';
 import Heading from '../../src/components/ui/heading';
 import AddFunds from '../../src/components/your_grants/add_funds_modal';
 import YourGrantCard from '../../src/components/your_grants/yourGrantCard';
+import { DAI } from '../../src/constants/assetDetails';
+import { getAllGrantsForADao } from '../../src/graphql/daoQueries';
 import NavbarLayout from '../../src/layout/navbarLayout';
+import { ApiClientsContext } from '../_app';
 
 function YourGrants() {
+  const subgraphClient = useContext(ApiClientsContext)?.subgraphClient.client;
   const router = useRouter();
   const [addFundsIsOpen, setAddFundsIsOpen] = React.useState(false);
+
+  const toast = useToast();
+  const [grants, setGrants] = React.useState<any[]>([]);
+  const [{ data: accountData }] = useAccount({
+    fetchEns: false,
+  });
+  const getGrantData = async () => {
+    if (!subgraphClient) return;
+    try {
+      const { data } = await subgraphClient
+        .query({
+          query: gql(getAllGrantsForADao),
+          variables: {
+            first: 20,
+            skip: 0,
+            creatorID: accountData?.address,
+          },
+        }) as any;
+      // console.log(data);
+      if (data.grants.length > 0) {
+        setGrants(data.grants);
+      } else {
+        toast({
+          title: 'Displaying dummy data',
+          status: 'info',
+        });
+        setGrants([]);
+      }
+    } catch (e) {
+      toast({
+        title: 'Error getting workspace data',
+        status: 'error',
+      });
+    }
+  };
+
+  useEffect(() => {
+    getGrantData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       <Container maxW="100%" display="flex" px="70px">
@@ -22,7 +69,29 @@ function YourGrants() {
           px={10}
         >
           <Heading title="Your grants" />
-          {Array(1)
+          {grants.length > 0 && grants.map((grant) => (
+            <YourGrantCard
+              daoIcon={`https://ipfs.infura.io:5001/api/v0/cat?arg=${grant.workspace.logoIpfsHash}`}
+              grantTitle={grant.title}
+              grantDesc={grant.summary}
+              numOfApplicants={0}
+              endTimestamp={new Date(
+                grant.deadline,
+              ).getTime()}
+              grantAmount={grant.reward.committed}
+              grantCurrency={grant.reward.asset === DAI ? 'DAI' : 'WETH'}
+              grantCurrencyIcon="/images/dummy/Ethereum Icon.svg"
+              state="done"
+              onEditClick={() => router.push({
+                pathname: '/your_grants/edit_grant/',
+                query: {
+                  account: true,
+                },
+              })}
+              onAddFundsClick={() => setAddFundsIsOpen(true)}
+            />
+          ))}
+          {grants.length === 0 && Array(1)
             .fill(0)
             .map(() => (
               <YourGrantCard
@@ -46,7 +115,7 @@ function YourGrants() {
                 onAddFundsClick={() => setAddFundsIsOpen(true)}
               />
             ))}
-          {Array(1)
+          {grants.length === 0 && Array(1)
             .fill(0)
             .map(() => (
               <YourGrantCard
@@ -76,7 +145,7 @@ function YourGrants() {
                 onAddFundsClick={() => setAddFundsIsOpen(true)}
               />
             ))}
-          {Array(1)
+          {grants.length === 0 && Array(1)
             .fill(0)
             .map(() => (
               <YourGrantCard
