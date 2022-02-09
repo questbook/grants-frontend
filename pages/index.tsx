@@ -1,8 +1,7 @@
 import { Container } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement } from 'react';
 import { useAccount } from 'wagmi';
-import { ValidationApi, Configuration } from '@questbook/service-validator-client';
 import GrantCard from '../src/components/browse_grants/grantCard';
 import Sidebar from '../src/components/browse_grants/sidebar';
 import Heading from '../src/components/ui/heading';
@@ -52,7 +51,8 @@ function BrowseGrants() {
           .fill(0)
           .map((_, index) => (
             <GrantCard
-              key={index}
+              // eslint-disable-next-line react/no-array-index-key
+              key={`grant-card-${index}`}
               daoIcon="/images/dummy/Polygon Icon.svg"
               daoName="Polygon DAO"
               isDaoVerified

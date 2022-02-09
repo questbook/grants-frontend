@@ -79,7 +79,7 @@ function CreateGrant() {
           boxSizing="border-box"
         >
           {sideBarDetails.map(([title, description, ref], index) => (
-            <Flex direction="row" align="start">
+            <Flex key={`sidebar-${title}`} direction="row" align="start">
               <Box
                 bg={currentStep < index ? '#E8E9E9' : 'brand.500'}
                 h="20px"

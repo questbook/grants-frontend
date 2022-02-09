@@ -29,7 +29,7 @@ function ConnectWallet() {
   useEffect(() => {
     if (!connectLoading && connectData && connectData.connected) {
       if (router.query.flow === 'getting_started/dao') {
-        router.push('/signup/');
+        router.replace('/signup/');
       } else if (router.query.flow === 'getting_started/developer') {
         router.push({ pathname: '/', query: { account: true } });
       } else if (router.query.flow === '/') {

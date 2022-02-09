@@ -46,7 +46,7 @@ function DaoCreated({
           {' '}
           You Grants DAO is created on-chain on the
           {' '}
-          <Box fontWeight="700" display="inline-block">
+          <Box as="span" fontWeight="700" display="inline-block">
             {network}
             .
           </Box>

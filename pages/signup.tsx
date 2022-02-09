@@ -1,20 +1,19 @@
 import { Container, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, { ReactElement } from 'react';
-import { useContract, useSigner } from 'wagmi';
-// import { ValidationApi, GrantApplicationRequest } from '@questbook/service-validator-client';
-import { ValidationApi } from '@questbook/service-validator-client';
+import React, { ReactElement, useContext } from 'react';
+import { useAccount, useContract, useSigner } from 'wagmi';
 import Form from '../src/components/signup/create_dao/form';
 import Loading from '../src/components/signup/create_dao/loading';
 import CreateGrant from '../src/components/signup/create_grant';
 import DaoCreated from '../src/components/signup/daoCreated';
-
-import Tooltip from '../src/components/ui/tooltip';
-import config from '../src/contracts/config';
 import WorkspaceRegistryABI from '../src/contracts/abi/WorkspaceRegistryAbi.json';
+import Tooltip from '../src/components/ui/tooltip';
 import NavbarLayout from '../src/layout/navbarLayout';
+import { ApiClientsContext } from './_app';
+import config from '../src/constants/config';
 
 function SignupDao() {
+  const [{ data: accountData }] = useAccount();
   const router = useRouter();
   const [loading, setLoading] = React.useState(false);
   const [daoCreated, setDaoCreated] = React.useState(false);
@@ -25,54 +24,63 @@ function SignupDao() {
     description: string;
     image?: string;
     network: string;
-  } | null>(null);
+  } | null>({
+    name: 'Dhairya',
+    description: '',
+    network: '',
+    image: '',
+  });
 
+  const apiClients = useContext(ApiClientsContext);
   const [signerStates] = useSigner();
-
   const contract = useContract({
     addressOrName: config.WorkspaceRegistryAddress,
     contractInterface: WorkspaceRegistryABI,
     signerOrProvider: signerStates.data,
   });
-
   const handleFormSubmit = async (data: {
     name: string;
     description: string;
     image?: string;
     network: string;
   }) => {
+    if (!accountData || !accountData.address) {
+      return;
+    }
     setDaoData(data);
+    if (!apiClients) return;
 
-    const api = new ValidationApi();
-    const { data: { ipfsHash, url } } = await api.validateWorkspaceCreate({
+    setLoading(true);
+    const { subgraphClient, validatorApi } = apiClients;
+
+    const { data: { ipfsHash } } = await validatorApi.validateWorkspaceCreate({
       title: data.name,
       about: data.description,
-      logoIpfsHash: 'QmQi4J7E1dg8M9j8vKCvSXsTxn2d6X4FZJ4ew8vxtttUmT',
-      coverImageIpfsHash: 'QmQi4J7E1dg8M9j8vKCvSXsTxn2d6X4FZJ4ew8vxtttUmT',
-      creatorId: '0x4e35fF1872A720695a741B00f2fA4D1883440baC',
-      socials: [
-        { name: 'twitter', value: 'https://twitter.com/questbook' },
-      ],
+      logoIpfsHash: 'QmZ4ABKSvnpPedSioi4jMc6QA3YbLa9rJbD31ASXsCd9Nj',
+      coverImageIpfsHash: 'QmZ4ABKSvnpPedSioi4jMc6QA3YbLa9rJbD31ASXsCd9Nj',
+      creatorId: accountData.address,
+      socials: [],
       supportedNetworks: ['0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'],
     });
+
+    // console.log(url);
     console.log(ipfsHash);
-    console.log(url);
 
-    const ret = await contract.createWorkspace(ipfsHash);
-    setLoading(true);
-    console.log(ret);
-    const res2 = await ret.wait();
-    console.log(res2);
-    console.log(res2.blockNumber);
+    const transaction = await contract.createWorkspace(ipfsHash);
+    // console.log(ret);
+    const transactionData = await transaction.wait();
+
+    console.log(transactionData);
+    console.log(transactionData.blockNumber);
+
+    await subgraphClient.waitForBlock(transactionData.blockNumber);
+
+    setLoading(false);
     setDaoCreated(true);
-    // show loading screen for minimum of 3 seconds
-    // setTimeout(() => {
-
-    // }, 3000);
   };
 
   if (creatingGrant) {
-    return <CreateGrant onSubmit={() => router.push('/my_grants')} />;
+    return <CreateGrant onSubmit={() => router.push('/your_grants')} />;
   }
 
   if (daoCreated && daoData) {
@@ -81,7 +89,7 @@ function SignupDao() {
         daoName={daoData.name}
         network={daoData.network}
         onCreateGrantClick={() => setCreatingGrant(true)}
-        onVisitGrantsClick={() => router.push('/my_grants')}
+        onVisitGrantsClick={() => router.push('/your_grants')}
       />
     );
   }

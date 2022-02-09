@@ -18,12 +18,12 @@ function Breadcrumbs({ path }: { path: string[] }) {
         }
         // eslint-disable-next-line consistent-return
         return (
-          <>
+          <Box key={`breadcrumb-${node}`} as="span">
             {node}
             {' '}
             /
             {' '}
-          </>
+          </Box>
         );
       })}
       <Box

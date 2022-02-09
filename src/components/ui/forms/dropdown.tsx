@@ -86,6 +86,7 @@ function Dropdown({
         <MenuList minW={0} py={0}>
           {listItems.map(({ icon, label: text }) => (
             <MenuItem
+              key={`menu-item-${text}`}
               onClick={() => {
                 if (!onChange) return;
                 setSelected({ icon, label: text });

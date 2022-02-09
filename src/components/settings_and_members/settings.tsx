@@ -3,7 +3,7 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import { useContract, useSigner } from 'wagmi';
-import config from '../../contracts/config';
+import config from '../../constants/config';
 import WorkspaceRegistryABI from '../../contracts/abi/WorkspaceRegistryAbi.json';
 import EditForm from './edit_form';
 

@@ -1,9 +1,14 @@
 import { Container, useToast, VStack } from '@chakra-ui/react';
-import React, { useEffect, useRef } from 'react';
+import React, {
+  useContext, useEffect, useRef,
+} from 'react';
 import { useAccount, useConnect, useNetwork } from 'wagmi';
 import { useRouter } from 'next/router';
+import { gql } from '@apollo/client';
 import SignInNavbar from '../components/navbar/notConnected';
 import ConnectedNavbar from '../components/navbar/connected';
+import { ApiClientsContext } from '../../pages/_app';
+import { getWorkspacesQuery } from '../graphql/workspaceQueries';
 
 interface Props {
   children: React.ReactNode;
@@ -12,6 +17,10 @@ interface Props {
 }
 
 function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
+  const subgraphClient = useContext(ApiClientsContext)?.subgraphClient.client;
+  const [daoName, setDaoName] = React.useState('');
+  const [daoId, setDaoId] = React.useState<string | null>(null);
+
   const toast = useToast();
   const [connected, setConnected] = React.useState(false);
 
@@ -29,6 +38,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
       setConnected(false);
       toast({
         title: 'Disconnected',
+        status: 'info',
       });
     } else if (!connected && connectData.connected) {
       setConnected(true);
@@ -43,6 +53,34 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
   // useEffect(() => {
   //   console.log(networkData, loading, error);
   // }, [networkData]);
+
+  const getWorkspaceData = async (userAddress: string) => {
+    if (!subgraphClient) return;
+    try {
+      const { data } = await subgraphClient
+        .query({
+          query: gql(getWorkspacesQuery),
+          variables: {
+            ownerId: userAddress,
+          },
+        }) as any;
+      // console.log(data);
+      if (data.workspaces.length > 0) {
+        setDaoId(data.workspaces[0].id);
+        setDaoName(data.workspaces[0].title);
+      }
+    } catch (e) {
+      toast({
+        title: 'Error getting workspace data',
+        status: 'error',
+      });
+    }
+  };
+
+  useEffect(() => {
+    getWorkspaceData(accountData?.address ?? '');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountData]);
 
   useEffect(() => {
     if (asPath && asPath.length > 0) {
@@ -63,6 +101,8 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
           address={accountData.address}
           isOnline={connectData.connected}
           renderTabs={renderTabs ?? true}
+          daoName={daoName}
+          daoId={daoId}
         />
       ) : (
         <SignInNavbar renderGetStarted={renderGetStarted} />
