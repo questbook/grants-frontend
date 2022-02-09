@@ -1,44 +1,86 @@
 import { Container, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useContext } from 'react';
+import { useAccount, useContract, useSigner } from 'wagmi';
 import Form from '../src/components/signup/create_dao/form';
 import Loading from '../src/components/signup/create_dao/loading';
 import CreateGrant from '../src/components/signup/create_grant';
 import DaoCreated from '../src/components/signup/daoCreated';
-
+import WorkspaceRegistryABI from '../src/contracts/abi/WorkspaceRegistryAbi.json';
 import Tooltip from '../src/components/ui/tooltip';
 import NavbarLayout from '../src/layout/navbarLayout';
+import { ApiClientsContext } from './_app';
+import config from '../src/constants/config';
 
 function SignupDao() {
+  const [{ data: accountData }] = useAccount();
   const router = useRouter();
   const [loading, setLoading] = React.useState(false);
   const [daoCreated, setDaoCreated] = React.useState(false);
-  const [creatingGrant, setCreatingGrant] = React.useState(true);
+  const [creatingGrant, setCreatingGrant] = React.useState(false);
 
   const [daoData, setDaoData] = React.useState<{
     name: string;
     description: string;
     image?: string;
     network: string;
-  } | null>(null);
+  } | null>({
+    name: 'Dhairya',
+    description: '',
+    network: '',
+    image: '',
+  });
 
-  const handleFormSubmit = (data: {
+  const apiClients = useContext(ApiClientsContext);
+  const [signerStates] = useSigner();
+  const contract = useContract({
+    addressOrName: config.WorkspaceRegistryAddress,
+    contractInterface: WorkspaceRegistryABI,
+    signerOrProvider: signerStates.data,
+  });
+  const handleFormSubmit = async (data: {
     name: string;
     description: string;
     image?: string;
     network: string;
   }) => {
+    if (!accountData || !accountData.address) {
+      return;
+    }
     setDaoData(data);
-    setLoading(true);
+    if (!apiClients) return;
 
-    // show loading screen for minimum of 3 seconds
-    setTimeout(() => {
-      setDaoCreated(true);
-    }, 3000);
+    setLoading(true);
+    const { subgraphClient, validatorApi } = apiClients;
+
+    const { data: { ipfsHash } } = await validatorApi.validateWorkspaceCreate({
+      title: data.name,
+      about: data.description,
+      logoIpfsHash: 'QmZ4ABKSvnpPedSioi4jMc6QA3YbLa9rJbD31ASXsCd9Nj',
+      coverImageIpfsHash: 'QmZ4ABKSvnpPedSioi4jMc6QA3YbLa9rJbD31ASXsCd9Nj',
+      creatorId: accountData.address,
+      socials: [],
+      supportedNetworks: ['0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'],
+    });
+
+    // console.log(url);
+    console.log(ipfsHash);
+
+    const transaction = await contract.createWorkspace(ipfsHash);
+    // console.log(ret);
+    const transactionData = await transaction.wait();
+
+    console.log(transactionData);
+    console.log(transactionData.blockNumber);
+
+    await subgraphClient.waitForBlock(transactionData.blockNumber);
+
+    setLoading(false);
+    setDaoCreated(true);
   };
 
   if (creatingGrant) {
-    return <CreateGrant onSubmit={() => router.push('/my_grants')} />;
+    return <CreateGrant onSubmit={() => router.push('/your_grants')} />;
   }
 
   if (daoCreated && daoData) {
@@ -47,7 +89,7 @@ function SignupDao() {
         daoName={daoData.name}
         network={daoData.network}
         onCreateGrantClick={() => setCreatingGrant(true)}
-        onVisitGrantsClick={() => router.push('/my_grants')}
+        onVisitGrantsClick={() => router.push('/your_grants')}
       />
     );
   }

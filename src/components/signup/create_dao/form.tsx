@@ -1,7 +1,7 @@
 import {
   Flex, Box, Button, Text, Image, Link,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNetwork } from 'wagmi';
 import ImageUpload from '../../ui/forms/imageUpload';
 import MultiLineInput from '../../ui/forms/multiLineInput';
@@ -15,6 +15,27 @@ function Form({
   onSubmit: (data: { name: string; description: string; image?: string, network: string }) => void;
 }) {
   const [{ data: networkData }] = useNetwork();
+  const [networkSupported, setNetworkSupported] = React.useState(false);
+
+  useEffect(() => {
+    if (!networkData.chain || !networkData.chain.id) {
+      return;
+    }
+    const supportedChainIds = Object.keys(supportedNetworks);
+    const isSupported = supportedChainIds.includes(networkData.chain.id.toString());
+    setNetworkSupported(isSupported);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!networkData.chain || !networkData.chain.id) {
+      return;
+    }
+    const supportedChainIds = Object.keys(supportedNetworks);
+    const isSupported = supportedChainIds.includes(networkData.chain.id.toString());
+    setNetworkSupported(isSupported);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [networkData]);
 
   const [daoName, setDaoName] = React.useState('');
   const [daoNameError, setDaoNameError] = React.useState(false);
@@ -38,6 +59,9 @@ function Form({
     }
     if (!daoDescription || daoDescription.length === 0) {
       setDaoDescriptionError(true);
+      error = true;
+    }
+    if (!networkSupported) {
       error = true;
     }
 
@@ -96,19 +120,23 @@ function Form({
           <SingleLineInput
             label="Network"
             placeholder="Network"
-            value={supportedNetworks[
-              networkData.chain?.id.toString() as keyof typeof supportedNetworks
-            ].name}
+            value={networkSupported ? (
+              supportedNetworks[
+                networkData.chain?.id.toString() as keyof typeof supportedNetworks
+              ].name
+            ) : 'Network not supported'}
             onChange={() => {}}
             isError={false}
             disabled
             inputRightElement={(
               <Tooltip
                 icon="/ui_icons/error.svg"
-                label={`Your wallet is connected to the ${supportedNetworks[
-                  networkData.chain?.id.toString() as keyof typeof supportedNetworks
-                ].name}. Your GrantsDAO will be created on the same network.
-  To create a GrantsDAO on another network, connect a different wallet.`}
+                label={networkSupported ? (
+                  `Your wallet is connected to the ${supportedNetworks[
+                    networkData.chain?.id.toString() as keyof typeof supportedNetworks
+                  ].name}. Your GrantsDAO will be created on the same network.
+    To create a GrantsDAO on another network, connect a different wallet.`
+                ) : 'Select a supported network'}
               />
             )}
           />

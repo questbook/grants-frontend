@@ -26,6 +26,7 @@ function Tooltip({
       fontWeight="400"
     >
       <Button
+        as="span"
         variant="ghost"
         h={4}
         size="xs"

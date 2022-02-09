@@ -88,6 +88,7 @@ function SecondaryDropdown({
         <MenuList minW={0} py={0}>
           {listItems.map(({ icon, label: text, id }) => (
             <MenuItem
+              key={id}
               onClick={() => {
                 if (!onChange) return;
                 setSelected({ icon, label: text, id });

@@ -10,6 +10,31 @@ import NavbarLayout from '../src/layout/navbarLayout';
 function BrowseGrants() {
   const [{ data: accountData }] = useAccount();
   const router = useRouter();
+
+  // useEffect(() => {
+  //   (async () => {
+  //     const config = new Configuration({
+  //       basePath: 'https://api-grant-validator.questbook.app',
+  //     });
+  //     const api = new ValidationApi(config);
+  //     const { data } = await api.validateWorkspaceCreate({
+  //       title: 'bla',
+  //       about: 'abcd',
+  //       logoIpfsHash: 'a1232341234',
+  //       coverImageIpfsHash: '123123123123',
+  //       creatorId: '12323123123',
+  //       supportedNetworks: ['0x112344'],
+  //       socials: [
+  //         {
+  //           name: 'twitter',
+  //           value: 'twitter.com',
+  //         },
+  //       ],
+  //     });
+  //     console.log(data);
+  //   })();
+  // }, []);
+
   return (
     <Container maxW="100%" display="flex" px="70px">
       <Container
@@ -24,8 +49,10 @@ function BrowseGrants() {
         <Heading title="Browse grants" />
         {Array(5)
           .fill(0)
-          .map(() => (
+          .map((_, index) => (
             <GrantCard
+              // eslint-disable-next-line react/no-array-index-key
+              key={`grant-card-${index}`}
               daoIcon="/images/dummy/Polygon Icon.svg"
               daoName="Polygon DAO"
               isDaoVerified

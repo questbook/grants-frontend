@@ -46,10 +46,10 @@ function ApplicantDetails({
       >
         {detailsRequired.map((detail, index) => {
           const {
-            title, required, tooltip,
+            title, required, tooltip, id,
           } = detail as any;
           return (
-            <GridItem colSpan={1}>
+            <GridItem key={id} colSpan={1}>
               <Badge
                 isActive={required}
                 onClick={() => toggleDetailsRequired(index)}

@@ -2,6 +2,9 @@ import {
   Flex, Text, Image, Button, Box,
 } from '@chakra-ui/react';
 import React from 'react';
+import { useContract, useSigner } from 'wagmi';
+import config from '../../constants/config';
+import WorkspaceRegistryABI from '../../contracts/abi/WorkspaceRegistryAbi.json';
 import EditForm from './edit_form';
 
 function Settings() {
@@ -16,6 +19,14 @@ function Settings() {
     telegramChannel?: string;
   } | null>(null);
 
+  const [signerStates] = useSigner();
+
+  const contract = useContract({
+    addressOrName: config.WorkspaceRegistryAddress,
+    contractInterface: WorkspaceRegistryABI,
+    signerOrProvider: signerStates.data,
+  });
+
   const handleFormSubmit = async (data: {
     name: string;
     about: string,
@@ -27,7 +38,11 @@ function Settings() {
     setFormData(data);
     // setLoading(true);
 
-    console.log(formData);
+    // console.log(formData);
+    const workspaceID = 0;
+    const newMetadata = JSON.stringify(formData);
+    const ret = await contract.updateWorkspaceMetdata(workspaceID, newMetadata);
+    console.log(ret);
 
     // setLoading(false);
   };
