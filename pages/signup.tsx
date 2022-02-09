@@ -24,12 +24,7 @@ function SignupDao() {
     description: string;
     image?: string;
     network: string;
-  } | null>({
-    name: 'Dhairya',
-    description: '',
-    network: '',
-    image: '',
-  });
+  } | null>(null);
 
   const apiClients = useContext(ApiClientsContext);
   const [signerStates] = useSigner();
@@ -47,7 +42,6 @@ function SignupDao() {
     if (!accountData || !accountData.address) {
       return;
     }
-    setDaoData(data);
     if (!apiClients) return;
 
     setLoading(true);
@@ -75,6 +69,7 @@ function SignupDao() {
 
     await subgraphClient.waitForBlock(transactionData.blockNumber);
 
+    setDaoData(data);
     setLoading(false);
     setDaoCreated(true);
   };
