@@ -15,7 +15,6 @@ query($first: Int, $skip: Int) {
 `;
 
 const getNumOfApplicantsForAGrant = `
-
 `;
 
 const getAllGrantsForADao = `
@@ -51,6 +50,25 @@ query($grantID: ID!) {
 }
 `;
 
+const getApplicantsForAGrant = `
+
+`;
+
+const getApplicationDetails = `
+`;
+
+const getApplicationMilestones = `
+`;
+
+const getFundSentForApplication = `
+`;
+
+const getMembersForAWorkspace = `
+`;
+
 export {
-  getAllGrants, getNumOfApplicantsForAGrant, getAllGrantsForADao, getGrantDetails,
+  getAllGrants, getNumOfApplicantsForAGrant, getAllGrantsForADao,
+  getGrantDetails, getApplicantsForAGrant, getApplicationDetails,
+  getApplicationMilestones, getFundSentForApplication, getMembersForAWorkspace,
+
 };
