@@ -12,12 +12,13 @@ function EditForm({
 }: {
   onSubmit: (data: {
     name: string;
-    about: string,
-    image?: string,
-    coverImage?: string,
-    twitterHandle?: string,
-    discordHandle?: string,
-    telegramChannel?: string, }) => void;
+    about: string;
+    image?: string;
+    coverImage?: string;
+    twitterHandle?: string;
+    discordHandle?: string;
+    telegramChannel?: string;
+  }) => void;
 }) {
   const [daoName, setDaoName] = React.useState('');
   const [daoNameError, setDaoNameError] = React.useState(false);
@@ -60,16 +61,6 @@ function EditForm({
         about: daoAbout,
         // image: image === null ? undefined : image,
       });
-      console.log(
-        {
-          name: daoName,
-          about: daoAbout,
-          image: image === null ? undefined : image,
-          twitterHandle,
-          discordHandle,
-          telegramChannel,
-        },
-      );
     }
   };
 
@@ -163,7 +154,9 @@ function EditForm({
         />
       </Flex>
       <Flex direction="row" justify="start" mt={10}>
-        <Button variant="primary" onClick={handleSubmit}>Save changes</Button>
+        <Button variant="primary" onClick={handleSubmit}>
+          Save changes
+        </Button>
         <Box mr={14} />
         <Button
           leftIcon={<Image src="/ui_icons/see.svg" my={-2} alt="Settings" />}

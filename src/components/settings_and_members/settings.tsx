@@ -38,6 +38,7 @@ function Settings() {
     setFormData(data);
     // setLoading(true);
 
+    // console.log(formData);
     const workspaceID = 0;
     const newMetadata = JSON.stringify(formData);
     const ret = await contract.updateWorkspaceMetdata(workspaceID, newMetadata);

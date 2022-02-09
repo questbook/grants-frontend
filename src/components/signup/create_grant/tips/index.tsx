@@ -16,6 +16,7 @@ const TipsContainer = ({ currentTip }: Props) => {
         'Give clear instructions for the applicants on how to reach out to you.',
       ]}
       key={1}
+      icon="/illustrations/grant_proposal.svg"
     />,
     <TipsList
       tips={[
@@ -23,6 +24,7 @@ const TipsContainer = ({ currentTip }: Props) => {
         'If you want a specific kind of eligibility criteria, mention it. You would not want the applicants to learn it after submitting application.',
         'Give clear instructions for the applicants on how to reach out to you.',
       ]}
+      icon="/illustrations/grant_proposal.svg"
       key={2}
     />,
     <TipsList
@@ -31,6 +33,7 @@ const TipsContainer = ({ currentTip }: Props) => {
         "Your funds are not stored with us. It's on our smart contract. Learn more",
         'For milestone payouts, do mention milestones in your grant details.',
       ]}
+      icon="/illustrations/grant_reward.svg"
       key={3}
     />,
   ];

@@ -57,7 +57,7 @@ function Sidebar({
             2nd January, 2022
           </Heading>
         </Flex>
-        <Flex direction="column" w="full" align="start" mb={8} mt={4}>
+        <Flex direction="column" w="full" align="start" mt={4}>
           <Box
             // variant="dashed"
             border="1px dashed #A0A7A7"

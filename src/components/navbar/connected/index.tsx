@@ -99,7 +99,7 @@ function Navbar({
                 <Flex h="100%" direction="column">
                   <Tab
                     label="Grants"
-                    icon="/ui_icons/your_applications.svg"
+                    icon={`/ui_icons/${activeIndex === 0 ? 'brand' : 'gray'}/tab_grants.svg`}
                     isActive={activeIndex === 0}
                     onClick={() => {
                       router.push({
@@ -112,7 +112,7 @@ function Navbar({
                 <Flex h="100%" direction="column">
                   <Tab
                     label="Funds"
-                    icon="/ui_icons/your_applications.svg"
+                    icon={`/ui_icons/${activeIndex === 1 ? 'brand' : 'gray'}/tab_funds.svg`}
                     isActive={activeIndex === 1}
                     onClick={() => {
                       router.push({
@@ -125,7 +125,7 @@ function Navbar({
                 <Flex h="100%" direction="column">
                   <Tab
                     label="Settings And Members"
-                    icon="/ui_icons/your_applications.svg"
+                    icon={`/ui_icons/${activeIndex === 2 ? 'brand' : 'gray'}/tab_settings.svg`}
                     isActive={activeIndex === 2}
                     onClick={() => {
                       router.push({

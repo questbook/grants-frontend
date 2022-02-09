@@ -23,17 +23,17 @@ function Dao({
       <Flex mt="88px">
         {[
           {
-            icon: '/images/yellow_flying_comp.svg',
+            icon: '/illustrations/create_grant.svg',
             title: 'Create a Grant',
             text: 'In 2 minutes setup a simple, streamlined and transparent grant',
           },
           {
-            icon: '/images/yellow_flying_comp.svg',
+            icon: '/illustrations/attract_applications.svg',
             title: 'Attract applicants',
             text: 'Projects are pitched by applicants with detailed forms.',
           },
           {
-            icon: '/images/yellow_flying_comp.svg',
+            icon: '/illustrations/disburse_grants.svg',
             title: 'Disburse grants',
             text: 'Track project milestones, and reward grantees.',
           },
