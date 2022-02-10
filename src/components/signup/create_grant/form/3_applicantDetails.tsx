@@ -12,12 +12,15 @@ interface Props {
 
 function ApplicantDetails({ onSubmit }: Props) {
   const applicantDetails = applicantDetailsList.map(
-    ({ title, tooltip, id }, index) => ({
+    ({
+      title, tooltip, id, inputType,
+    }, index) => ({
       title,
       required: false,
       id,
       tooltip,
       index,
+      inputType,
     }),
   );
   const [detailsRequired, setDetailsRequired] = useState(applicantDetails);
@@ -45,18 +48,32 @@ function ApplicantDetails({ onSubmit }: Props) {
       error = true;
     }
     if (!error) {
-      const requiredDetails = {} as any;
+      const requiredDetails = [] as any;
       detailsRequired.forEach((detail) => {
-        requiredDetails[detail.id] = detail.required;
+        if (detail.required) {
+          requiredDetails.push({
+            id: detail.id,
+            title: detail.title,
+            inputType: detail.inputType,
+          });
+        }
       });
-      onSubmit({
-        ...requiredDetails,
-        extra_field:
-          extraFieldDetails != null && extraFieldDetails.length > 0
-            ? extraFieldDetails
-            : '',
-        is_multiple_miletones: multipleMilestones,
-      });
+      let fields = [...requiredDetails];
+      if (extraFieldDetails != null && extraFieldDetails.length > 0) {
+        fields = [...fields, {
+          id: 'extraField',
+          title: 'Other Information',
+          inputType: 'short-form',
+        }];
+      }
+      if (multipleMilestones) {
+        fields = [...fields, {
+          id: 'isMultipleMilestones',
+          title: 'Milestones',
+          inputType: 'array',
+        }];
+      }
+      onSubmit({ fields });
     }
   };
 
@@ -74,6 +91,8 @@ function ApplicantDetails({ onSubmit }: Props) {
           fontWeight="bold"
         >
           {detailsRequired.map((detail, index) => {
+            if (index === detailsRequired.length - 1) return null;
+            if (index === detailsRequired.length - 2) return null;
             const {
               title, required, tooltip,
             } = detail as any;

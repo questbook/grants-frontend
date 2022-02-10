@@ -32,7 +32,7 @@ function YourGrants() {
           variables: {
             first: 20,
             skip: 0,
-            creatorID: accountData?.address,
+            creatorId: accountData?.address,
           },
         }) as any;
       console.log(data);

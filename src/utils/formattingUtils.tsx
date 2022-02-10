@@ -1,3 +1,4 @@
+import { ethers } from 'ethers';
 import React from 'react';
 
 export function timeToString(timestamp: number, type?: 'day_first' | 'month_first', show_year?: boolean) {
@@ -19,6 +20,10 @@ export function timeToString(timestamp: number, type?: 'day_first' | 'month_firs
   return (type === 'day_first')
     ? (`${date.getUTCDate().toString()} ${months[date.getMonth()].substring(0, 3)}, ${date.getFullYear()}`)
     : (`${months[date.getMonth()]} ${date.getUTCDate().toString()} ${show_year ? date.getFullYear() : ''}`);
+}
+
+export function parseAmount(number: string) {
+  return ethers.utils.parseUnits(number, 18).toString();
 }
 
 export function highlightWordsInString(string: string, words: string[], color: string) {
