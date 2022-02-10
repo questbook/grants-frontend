@@ -74,6 +74,10 @@ function BrowseGrants() {
   const toast = useToast();
   const [grants, setGrants] = React.useState<any>([]);
 
+  const pageSize = 20;
+  const [currentPage, setCurrentPage] = React.useState(0);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const getGrantData = async () => {
     if (!subgraphClient) return;
     console.log(grants);
@@ -81,23 +85,18 @@ function BrowseGrants() {
       const { data } = (await subgraphClient.query({
         query: gql(getAllGrants),
         variables: {
-          first: 20,
-          skip: 0,
+          first: pageSize,
+          skip: currentPage * pageSize,
         },
       })) as any;
       // console.log(data);
       if (data.grants.length > 0) {
+        setCurrentPage(currentPage + 1);
         setGrants([...grants, ...data.grants]);
-      } else {
-        // toast({
-        //   title: 'Displaying dummy data',
-        //   status: 'info',
-        // });
-        console.log(grants.length);
-        console.log([...grants, ...grantsData]);
-        setGrants([...grants, ...grantsData]);
       }
+      // setGrants([...grants, ...grantsData]);
     } catch (e) {
+      console.log(e);
       toast({
         title: 'Error getting workspace data',
         status: 'error',
@@ -131,11 +130,11 @@ function BrowseGrants() {
       if (reachedBottom) { console.log(reachedBottom); }
 
       if (reachedBottom) {
-        //  getGrantData();
-        setGrants([...grants, ...grantsData]);
+        getGrantData();
+        // setGrants([...grants, ...grantsData]);
       }
     },
-    [containerRef, grants],
+    [containerRef, getGrantData],
   );
 
   useEffect(() => {
@@ -165,7 +164,7 @@ function BrowseGrants() {
         px={10}
       >
         <Heading title="Browse grants" />
-        {/* {grants.length > 0
+        {grants.length > 0
           && grants.map((grant) => (
             <GrantCard
               // eslint-disable-next-line react/no-array-index-key
@@ -192,8 +191,8 @@ function BrowseGrants() {
                 router.push({ pathname: '/explore_grants/about_grant' });
               }}
             />
-          ))} */}
-        {grants.length === -1
+          ))}
+        {/* {grants.length === -1
           ? null : (
             grants
               .map((_, index) => (
@@ -225,7 +224,7 @@ function BrowseGrants() {
                   }}
                 />
               ))
-          )}
+          )} */}
 
       </Container>
       {accountData && accountData.address ? null : <Sidebar />}

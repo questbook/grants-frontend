@@ -29,4 +29,12 @@ export default [
     title: 'Project Goals',
     id: 'project_goals',
   },
+  {
+    title: 'Milestones',
+    id: 'is_multiple_milestones',
+  },
+  {
+    title: 'Other Information',
+    id: 'extra_field',
+  },
 ];

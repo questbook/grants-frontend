@@ -10,6 +10,7 @@ interface ImageUploadProps {
   image: string | null | undefined;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
   onClear: () => void;
+  isError: boolean;
 }
 
 const defaultProps = {
@@ -18,7 +19,7 @@ const defaultProps = {
 };
 
 function ImageUpload({
-  label, subtext, image, onChange, onClear,
+  label, subtext, image, onChange, onClear, isError,
 }: ImageUploadProps) {
   const ref = useRef(null);
 
@@ -40,7 +41,7 @@ function ImageUpload({
         h="72px"
         display="inline-block"
         borderRadius="4px"
-        border="2px dashed #717A7C"
+        border={isError ? '3px dashed #EE7979' : '2px dashed #717A7C'}
         padding="5px"
         pos="relative"
       >

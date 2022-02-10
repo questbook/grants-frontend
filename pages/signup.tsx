@@ -12,6 +12,7 @@ import Tooltip from '../src/components/ui/tooltip';
 import NavbarLayout from '../src/layout/navbarLayout';
 import { ApiClientsContext } from './_app';
 import config from '../src/constants/config';
+import { uploadToIPFS } from '../src/utils/ipfsUtils';
 
 function SignupDao() {
   const [{ data: accountData }] = useAccount();
@@ -23,7 +24,7 @@ function SignupDao() {
   const [daoData, setDaoData] = React.useState<{
     name: string;
     description: string;
-    image?: string;
+    image: string;
     network: string;
   } | null>(null);
 
@@ -37,7 +38,7 @@ function SignupDao() {
   const handleFormSubmit = async (data: {
     name: string;
     description: string;
-    image?: string;
+    image: File;
     network: string;
   }) => {
     if (!accountData || !accountData.address) {
@@ -48,15 +49,16 @@ function SignupDao() {
     setLoading(true);
     const { subgraphClient, validatorApi } = apiClients;
 
+    const imageHash = await uploadToIPFS(data.image);
+    console.log(imageHash);
+
     const { data: { ipfsHash } } = await validatorApi.validateWorkspaceCreate({
       title: data.name,
       about: data.description,
-      logoIpfsHash: 'QmZ4ABKSvnpPedSioi4jMc6QA3YbLa9rJbD31ASXsCd9Nj',
-      coverImageIpfsHash: 'QmZ4ABKSvnpPedSioi4jMc6QA3YbLa9rJbD31ASXsCd9Nj',
+      logoIpfsHash: imageHash.hash,
       creatorId: accountData.address,
       socials: [],
-      // eslint-disable-next-line no-underscore-dangle
-      supportedNetworks: ['4'],
+      supportedNetworks: [data.network as SupportedNetwork],
     });
 
     // console.log(url);
@@ -71,7 +73,7 @@ function SignupDao() {
 
     await subgraphClient.waitForBlock(transactionData.blockNumber);
 
-    setDaoData(data);
+    setDaoData({ ...data, image: imageHash.hash });
     setLoading(false);
     setDaoCreated(true);
   };
