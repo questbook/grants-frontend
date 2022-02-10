@@ -2,6 +2,7 @@ import { Container, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { ReactElement, useContext } from 'react';
 import { useAccount, useContract, useSigner } from 'wagmi';
+import { SupportedNetwork } from '@questbook/service-validator-client';
 import Form from '../src/components/signup/create_dao/form';
 import Loading from '../src/components/signup/create_dao/loading';
 import CreateGrant from '../src/components/signup/create_grant';
@@ -54,7 +55,8 @@ function SignupDao() {
       coverImageIpfsHash: 'QmZ4ABKSvnpPedSioi4jMc6QA3YbLa9rJbD31ASXsCd9Nj',
       creatorId: accountData.address,
       socials: [],
-      supportedNetworks: ['0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'],
+      // eslint-disable-next-line no-underscore-dangle
+      supportedNetworks: ['4'],
     });
 
     // console.log(url);

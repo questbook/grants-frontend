@@ -68,6 +68,9 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
       if (data.workspaces.length > 0) {
         setDaoId(data.workspaces[0].id);
         setDaoName(data.workspaces[0].title);
+      } else {
+        setDaoId(null);
+        setDaoName('');
       }
     } catch (e) {
       toast({

@@ -1,5 +1,7 @@
 import { gql } from '@apollo/client';
-import { Container, useToast } from '@chakra-ui/react';
+import {
+  Container, Flex, useToast, Image, Text,
+} from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { ReactElement, useContext, useEffect } from 'react';
 import { useAccount } from 'wagmi';
@@ -22,7 +24,7 @@ function YourGrants() {
     fetchEns: false,
   });
   const getGrantData = async () => {
-    if (!subgraphClient) return;
+    if (!subgraphClient || !accountData?.address) return;
     try {
       const { data } = await subgraphClient
         .query({
@@ -33,7 +35,7 @@ function YourGrants() {
             creatorID: accountData?.address,
           },
         }) as any;
-      // console.log(data);
+      console.log(data);
       if (data.grants.length > 0) {
         setGrants(data.grants);
       } else {
@@ -43,10 +45,52 @@ function YourGrants() {
         });
         setGrants([]);
       }
-    } catch (e) {
+    } catch (e: any) {
+      console.log(e);
       toast({
-        title: 'Error getting workspace data',
-        status: 'error',
+        position: 'top',
+        duration: null,
+        render: ({ onClose }) => (
+          <Flex
+            alignItems="flex-start"
+            bgColor="#FFC0C0"
+            border="2px solid #EE7979"
+            px="26px"
+            py="22px"
+            borderRadius="6px"
+            mt={4}
+            mx={10}
+            alignSelf="stretch"
+          >
+            <Flex
+              alignItems="center"
+              justifyContent="center"
+              bgColor="#F7B7B7"
+              border="2px solid #EE7979"
+              borderRadius="40px"
+              p={2}
+              h="40px"
+              w="40px"
+              mt="5px"
+            >
+              <Image
+                onClick={onClose}
+                h="40px"
+                w="40px"
+                src="/ui_icons/result_rejected_application.svg"
+                alt="Rejected"
+              />
+            </Flex>
+            <Flex ml="23px" direction="column">
+              <Text fontSize="16px" lineHeight="24px" fontWeight="700" color="#7B4646">
+                Application Rejected
+              </Text>
+              <Text fontSize="16px" lineHeight="24px" fontWeight="400" color="#7B4646">
+                {e.message}
+              </Text>
+            </Flex>
+          </Flex>
+        ),
       });
     }
   };
@@ -54,7 +98,7 @@ function YourGrants() {
   useEffect(() => {
     getGrantData();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [accountData?.address]);
 
   return (
     <>

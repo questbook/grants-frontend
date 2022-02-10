@@ -62,5 +62,21 @@
         "icon": "/wallet_icons/walletConnect.svg"
       }
     ]
+  },
+  "80001": {
+    "name": "80001",
+    "icon": "/network_icons/polygon.svg",
+    "wallets": [
+      {
+        "id": "injected",
+        "name": "Metamask",
+        "icon": "/wallet_icons/metamask.svg"
+      },
+      {
+        "id": "walletConnect",
+        "name": "Wallet Connect",
+        "icon": "/wallet_icons/walletConnect.svg"
+      }
+    ]
   }
 }

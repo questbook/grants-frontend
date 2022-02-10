@@ -18,8 +18,8 @@ const getNumOfApplicantsForAGrant = `
 `;
 
 const getAllGrantsForADao = `
-query($first: Int, $skip: Int, $creatorID: Bytes!) {
-    grants(first: $first, skip: $skip, subgraphError: allow, where: {acceptingApplications: true, creatorID: $creatorID}) {
+query($first: Int, $skip: Int, $creatorId: Bytes!) {
+    grants(first: $first, skip: $skip, subgraphError: allow, where: {acceptingApplications: true, creatorId: $creatorId}) {
         id, 
         creatorId, 
         title, 
