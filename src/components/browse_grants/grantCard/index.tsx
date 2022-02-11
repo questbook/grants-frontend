@@ -16,7 +16,7 @@ interface GrantCardProps {
   numOfApplicants: number;
   endTimestamp: number;
 
-  grantAmount: number;
+  grantAmount: string;
   grantCurrency: string;
   grantCurrencyIcon: string;
 
@@ -44,7 +44,7 @@ function GrantCard({
   return (
     <>
       <Flex py={6} w="100%">
-        <Image h="54px" w="54px" src={daoIcon} />
+        <Image objectFit="cover" h="54px" w="54px" src={daoIcon} />
         <Flex flex={1} direction="column" ml={6}>
           <Flex direction="row" alignItems="center" flexWrap="wrap">
             <Text lineHeight="24px" fontSize="18px" fontWeight="700">

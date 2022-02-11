@@ -6,7 +6,7 @@ import TipsContainer from './tips';
 function CreateGrant({
   onSubmit,
 }: {
-  onSubmit: () => void;
+  onSubmit: (data: any) => void;
 }) {
   const totalSteps = 4;
 
@@ -31,10 +31,12 @@ function CreateGrant({
   const submitForm = (data: any) => {
     setFormData({ ...data, ...formData });
     // eslint-disable-next-line no-console
-    console.log({ ...data, ...formData });
-    setTimeout(() => {
-      onSubmit();
-    }, 10000);
+    // console.log({ ...data, ...formData });
+    // setTimeout(() => {
+    //   onSubmit();
+    // }, 10000);
+
+    onSubmit({ ...data, ...formData });
   };
 
   return (

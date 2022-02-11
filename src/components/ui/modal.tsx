@@ -39,7 +39,7 @@ function Modal({
     >
       <ModalOverlay maxH="100vh" />
       <ModalContent minW={480} maxH="90vh" overflow="scroll">
-        <Container px={6} pt={6} py={4} variant="header-container">
+        <Container px={6} py={4}>
           {typeof topIcon !== 'undefined' && (
             <Flex direction="column" align="center">
               {topIcon}

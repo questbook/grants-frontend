@@ -13,7 +13,7 @@ import {
 import React from 'react';
 
 interface DropdownProps {
-  listItems: { icon?: string; label: string }[];
+  listItems: { icon?: string; label: string, id?: string }[];
   listItemsMinWidth?: string;
   label?: string;
   // eslint-disable-next-line react/no-unused-prop-types
@@ -84,13 +84,17 @@ function Dropdown({
           </Container>
         </MenuButton>
         <MenuList minW={0} py={0}>
-          {listItems.map(({ icon, label: text }) => (
+          {listItems.map(({ icon, label: text, id }) => (
             <MenuItem
               key={`menu-item-${text}`}
               onClick={() => {
                 if (!onChange) return;
                 setSelected({ icon, label: text });
-                onChange(text);
+                if (id) {
+                  onChange({ id, label: text });
+                } else {
+                  onChange(text);
+                }
               }}
               minW={listItemsMinWidth}
               p={0}

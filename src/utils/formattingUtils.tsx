@@ -1,3 +1,4 @@
+import { ethers } from 'ethers';
 import React from 'react';
 import moment from 'moment';
 
@@ -29,6 +30,13 @@ export function timeToString(
     : `${months[date.getMonth()]} ${date.getUTCDate().toString()} ${
       show_year ? date.getFullYear() : ''
     }`;
+}
+export function parseAmount(number: string) {
+  return ethers.utils.parseUnits(number, 18).toString();
+}
+
+export function formatAmount(number: string) {
+  return ethers.utils.formatUnits(number, 18).toString();
 }
 
 export function highlightWordsInString(

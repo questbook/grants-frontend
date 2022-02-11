@@ -1,40 +1,53 @@
 export default [
   {
     title: 'Applicant Name',
-    id: 'applicant_name',
+    id: 'applicantName',
+    inputType: 'short-form',
   },
   {
     title: 'Applicant Email',
-    id: 'applicant_email',
+    id: 'applicantEmail',
+    inputType: 'short-form',
   },
-  { title: 'About Team', id: 'about_team' },
+  {
+    title: 'About Team',
+    id: 'aboutTeam',
+    inputType: 'long-form',
+  },
   {
     title: 'Funding Breakdown',
     tooltip: 'Funding breakdown for each team member',
-    id: 'funding_breakdown',
+    id: 'fundingBreakdown',
+    inputType: 'long-form',
   },
   {
     title: 'Project Name',
-    id: 'project_name',
+    id: 'projectName',
+    inputType: 'short-form',
   },
   {
     title: 'Project Link',
-    id: 'project_link',
+    id: 'projectLink',
+    inputType: 'array',
   },
   {
     title: 'Project Details',
-    id: 'project_details',
+    id: 'projectDetails',
+    inputType: 'long-form',
   },
   {
     title: 'Project Goals',
-    id: 'project_goals',
+    id: 'projectGoals',
+    inputType: 'long-form',
   },
   {
     title: 'Milestones',
-    id: 'is_multiple_milestones',
+    id: 'isMultipleMilestones',
+    inputType: 'array',
   },
   {
     title: 'Other Information',
-    id: 'extra_field',
+    id: 'extraField',
+    inputType: 'short-form',
   },
 ];

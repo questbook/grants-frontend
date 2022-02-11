@@ -1,36 +1,59 @@
 const getAllGrants = `
 query($first: Int, $skip: Int) {
-    grants(first: $first, skip: $skip, subgraphError: allow, where: {acceptingApplications: true}) {
-        id, 
-        creatorId, 
-        title, 
-        summary, 
-        details, 
-        reward {committed}, 
-        workspace {title, logoIpfsHash}, 
-        deadline,
-        funding,
-      }
-}
+  grants(
+    first: $first, 
+    skip: $skip, 
+    subgraphError: allow, 
+    where: {acceptingApplications: true},
+    orderBy: createdAtS, 
+    orderDirection: desc
+  ) {
+  id, 
+  creatorId, 
+  title, 
+  summary, 
+  details, 
+  reward {
+    committed,
+    id,
+    asset
+  }, 
+  workspace {title, logoIpfsHash}, 
+  deadline,
+  funding,
+}}
 `;
 
 const getNumOfApplicantsForAGrant = `
 `;
 
-const getAllGrantsForADao = `
+const getAllDaoGrants = `
 query($first: Int, $skip: Int, $creatorId: Bytes!) {
-    grants(first: $first, skip: $skip, subgraphError: allow, where: {acceptingApplications: true, creatorId: $creatorId}) {
-        id, 
-        creatorId, 
-        title, 
-        summary, 
-        details, 
-        reward {committed}, 
-        workspace {title, logoIpfsHash}, 
-        deadline,
-        funding,
-      }
-}
+  grants(
+    first: $first, 
+    skip: $skip, 
+    subgraphError: allow, 
+    where: {
+      acceptingApplications: true, 
+      creatorId: $creatorId
+    }
+    orderBy: createdAtS, 
+    orderDirection: desc
+  ) {
+  id, 
+  creatorId, 
+  title, 
+  summary, 
+  details, 
+  reward {
+    committed,
+    id,
+    asset
+  }, 
+  workspace {title, logoIpfsHash}, 
+  deadline,
+  funding,
+}}
 `;
 
 const getGrantDetails = `
@@ -67,13 +90,8 @@ const getMembersForAWorkspace = `
 `;
 
 export {
-  getAllGrants,
-  getNumOfApplicantsForAGrant,
-  getAllGrantsForADao,
-  getGrantDetails,
-  getApplicantsForAGrant,
-  getApplicationDetails,
-  getApplicationMilestones,
-  getFundSentForApplication,
-  getMembersForAWorkspace,
+  getAllGrants, getNumOfApplicantsForAGrant, getAllDaoGrants as getAllGrantsForADao,
+  getGrantDetails, getApplicantsForAGrant, getApplicationDetails,
+  getApplicationMilestones, getFundSentForApplication, getMembersForAWorkspace,
+
 };
