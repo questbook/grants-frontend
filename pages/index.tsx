@@ -12,58 +12,62 @@ import { useAccount } from 'wagmi';
 import GrantCard from '../src/components/browse_grants/grantCard';
 import Sidebar from '../src/components/browse_grants/sidebar';
 import Heading from '../src/components/ui/heading';
-import { DAI } from '../src/constants/assetDetails';
+import supportedCurrencies from '../src/constants/supportedCurrencies';
 import { getAllGrants } from '../src/graphql/daoQueries';
 import NavbarLayout from '../src/layout/navbarLayout';
+import { formatAmount } from '../src/utils/formattingUtils';
 import { ApiClientsContext } from './_app';
 
-const grantsData = [
-  {
-    id: '1',
-    daoIcon: '/images/dummy/Polygon Icon.svg',
-    daoName: 'Polygon DAO',
-    isDaoVerified: true,
-    grantTitle: 'Storage Provider (SP) Tooling Ideas',
-    grantDesc:
-      'A tool, script or tutorial to set up monitoring for miner GPU, CPU, memory and other and resource and performance metrics, ideally using Prometheus',
-    numOfApplicants: 0,
-    endTimestamp: new Date('January 2, 2022 23:59:59:000').getTime(),
-    grantAmount: 60,
-    grantCurrency: 'ETH',
-    grantCurrencyIcon: '/images/dummy/Ethereum Icon.svg',
-    isGrantVerified: true,
-  },
-  {
-    id: '1',
-    daoIcon: '/images/dummy/Polygon Icon.svg',
-    daoName: 'Polygon DAO',
-    isDaoVerified: true,
-    grantTitle: 'Storage Provider (SP) Tooling Ideas',
-    grantDesc:
-      'A tool, script or tutorial to set up monitoring for miner GPU, CPU, memory and other and resource and performance metrics, ideally using Prometheus',
-    numOfApplicants: 0,
-    endTimestamp: new Date('January 2, 2022 23:59:59:000').getTime(),
-    grantAmount: 60,
-    grantCurrency: 'ETH',
-    grantCurrencyIcon: '/images/dummy/Ethereum Icon.svg',
-    isGrantVerified: true,
-  },
-  {
-    id: '1',
-    daoIcon: '/images/dummy/Polygon Icon.svg',
-    daoName: 'Polygon DAO',
-    isDaoVerified: true,
-    grantTitle: 'Storage Provider (SP) Tooling Ideas',
-    grantDesc:
-      'A tool, script or tutorial to set up monitoring for miner GPU, CPU, memory and other and resource and performance metrics, ideally using Prometheus',
-    numOfApplicants: 0,
-    endTimestamp: new Date('January 2, 2022 23:59:59:000').getTime(),
-    grantAmount: 60,
-    grantCurrency: 'ETH',
-    grantCurrencyIcon: '/images/dummy/Ethereum Icon.svg',
-    isGrantVerified: true,
-  },
-];
+// const grantsData = [
+//   {
+//     id: '1',
+//     daoIcon: '/images/dummy/Polygon Icon.svg',
+//     daoName: 'Polygon DAO',
+//     isDaoVerified: true,
+//     grantTitle: 'Storage Provider (SP) Tooling Ideas',
+//     grantDesc:
+//       'A tool, script or tutorial to set up monitoring for miner GPU, CPU, m
+//        emory and other and resource and performance metrics, ideally using Prometheus',
+//     numOfApplicants: 0,
+//     endTimestamp: new Date('January 2, 2022 23:59:59:000').getTime(),
+//     grantAmount: 60,
+//     grantCurrency: 'ETH',
+//     grantCurrencyIcon: '/images/dummy/Ethereum Icon.svg',
+//     isGrantVerified: true,
+//   },
+//   {
+//     id: '1',
+//     daoIcon: '/images/dummy/Polygon Icon.svg',
+//     daoName: 'Polygon DAO',
+//     isDaoVerified: true,
+//     grantTitle: 'Storage Provider (SP) Tooling Ideas',
+//     grantDesc:
+//       'A tool, script or tutorial to set up monitoring for miner GPU, CPU, m
+//      emory and other and resource and performance metrics, ideally using Prometheus',
+//     numOfApplicants: 0,
+//     endTimestamp: new Date('January 2, 2022 23:59:59:000').getTime(),
+//     grantAmount: 60,
+//     grantCurrency: 'ETH',
+//     grantCurrencyIcon: '/images/dummy/Ethereum Icon.svg',
+//     isGrantVerified: true,
+//   },
+//   {
+//     id: '1',
+//     daoIcon: '/images/dummy/Polygon Icon.svg',
+//     daoName: 'Polygon DAO',
+//     isDaoVerified: true,
+//     grantTitle: 'Storage Provider (SP) Tooling Ideas',
+//     grantDesc:
+//       'A tool, script or tutorial to set up monitoring for miner GPU, CPU,
+//      memory and other and resource and performance metrics, ideally using Prometheus',
+//     numOfApplicants: 0,
+//     endTimestamp: new Date('January 2, 2022 23:59:59:000').getTime(),
+//     grantAmount: 60,
+//     grantCurrency: 'ETH',
+//     grantCurrencyIcon: '/images/dummy/Ethereum Icon.svg',
+//     isGrantVerified: true,
+//   },
+// ];
 
 function BrowseGrants() {
   const containerRef = useRef(null);
@@ -80,7 +84,7 @@ function BrowseGrants() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getGrantData = async () => {
     if (!subgraphClient) return;
-    console.log(grants);
+    // console.log(grants);
     try {
       const { data } = (await subgraphClient.query({
         query: gql(getAllGrants),
@@ -94,9 +98,8 @@ function BrowseGrants() {
         setCurrentPage(currentPage + 1);
         setGrants([...grants, ...data.grants]);
       }
-      // setGrants([...grants, ...grantsData]);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast({
         title: 'Error getting workspace data',
         status: 'error',
@@ -115,32 +118,23 @@ function BrowseGrants() {
   //   setCurrentStep(step);
   // };
 
-  const handleScroll = useCallback(
-    () => {
-      const { current } = containerRef;
-      if (!current) return;
-      const parentElement = (current as HTMLElement)?.parentNode as HTMLElement;
-      // console.log(((current as HTMLElement)?.parentNode as HTMLElement).scrollTop);
-      // console.log(parentElement.scrollTop);
-      // console.log(parentElement.scrollHeight - parentElement.clientHeight);
-      // console.log(Math.abs(parentElement.scrollTop
-      //   - (parentElement.scrollHeight - parentElement.clientHeight)));
-      const reachedBottom = Math.abs(parentElement.scrollTop
-        - (parentElement.scrollHeight - parentElement.clientHeight)) < 10;
-      if (reachedBottom) { console.log(reachedBottom); }
-
-      if (reachedBottom) {
-        getGrantData();
-        // setGrants([...grants, ...grantsData]);
-      }
-    },
-    [containerRef, getGrantData],
-  );
+  const handleScroll = useCallback(() => {
+    const { current } = containerRef;
+    if (!current) return;
+    const parentElement = (current as HTMLElement)?.parentNode as HTMLElement;
+    const reachedBottom = Math.abs(
+      parentElement.scrollTop
+          - (parentElement.scrollHeight - parentElement.clientHeight),
+    ) < 10;
+    if (reachedBottom) {
+      getGrantData();
+    }
+  }, [containerRef, getGrantData]);
 
   useEffect(() => {
     getGrantData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [accountData?.address]);
 
   useEffect(() => {
     const { current } = containerRef;
@@ -165,67 +159,38 @@ function BrowseGrants() {
       >
         <Heading title="Browse grants" />
         {grants.length > 0
-          && grants.map((grant) => (
-            <GrantCard
-              // eslint-disable-next-line react/no-array-index-key
-              key={grant.id}
-              daoIcon={`https://ipfs.infura.io:5001/api/v0/cat?arg=${grant.workspace.logoIpfsHash}`}
-              daoName={grant.workspace.title}
-              isDaoVerified
-              grantTitle={grant.title}
-              grantDesc={grant.summary}
-              numOfApplicants={0}
-              endTimestamp={new Date(grant.deadline).getTime()}
-              grantAmount={grant.reward.committed}
-              grantCurrency={grant.reward.asset === DAI ? 'DAI' : 'WETH'}
-              grantCurrencyIcon="/images/dummy/Ethereum Icon.svg"
-              isGrantVerified={grant.funding > 0}
-              onClick={() => {
-                if (!(accountData && accountData.address)) {
-                  router.push({
-                    pathname: '/connect_wallet',
-                    query: { flow: '/' },
-                  });
-                  return;
-                }
-                router.push({ pathname: '/explore_grants/about_grant' });
-              }}
-            />
-          ))}
-        {/* {grants.length === -1
-          ? null : (
-            grants
-              .map((_, index) => (
-                <GrantCard
-                // eslint-disable-next-line react/no-array-index-key
-                  key={`grant-card-${index}`}
-                  daoIcon="/images/dummy/Polygon Icon.svg"
-                  daoName="Polygon DAO"
-                  isDaoVerified
-                  grantTitle={`Storage Provider (SP) Tooling Ideas ${index}`}
-                  grantDesc="A tool, script or tutorial to set up monitoring for miner GPU, CPU, memory and other and resource and performance metrics, ideally using Prometheus"
-                  numOfApplicants={0}
-                  endTimestamp={new Date(
-                    'January 2, 2022 23:59:59:000',
-                  ).getTime()}
-                  grantAmount={60}
-                  grantCurrency="ETH"
-                  grantCurrencyIcon="/images/dummy/Ethereum Icon.svg"
-                  isGrantVerified
-                  onClick={() => {
-                    if (!(accountData && accountData.address)) {
-                      router.push({
-                        pathname: '/connect_wallet',
-                        query: { flow: '/' },
-                      });
-                      return;
-                    }
-                    router.push({ pathname: '/explore_grants/about_grant' });
-                  }}
-                />
-              ))
-          )} */}
-
+          && grants.map((grant: any) => {
+            const grantCurrency = supportedCurrencies.find(
+              (currency) => currency.id.toLowerCase()
+                === grant.reward.asset.toString().toLowerCase(),
+            );
+            return (
+              <GrantCard
+                key={grant.id}
+                daoIcon={`https://ipfs.infura.io:5001/api/v0/cat?arg=${grant.workspace.logoIpfsHash}`}
+                daoName={grant.workspace.title}
+                isDaoVerified={false}
+                grantTitle={grant.title}
+                grantDesc={grant.summary}
+                numOfApplicants={0}
+                endTimestamp={new Date(grant.deadline).getTime()}
+                grantAmount={formatAmount(grant.reward.committed)}
+                grantCurrency={grantCurrency?.label ?? 'LOL'}
+                grantCurrencyIcon={grantCurrency?.icon ?? '/images/dummy/Ethereum Icon.svg'}
+                isGrantVerified={grant.funding > 0}
+                onClick={() => {
+                  if (!(accountData && accountData.address)) {
+                    router.push({
+                      pathname: '/connect_wallet',
+                      query: { flow: '/' },
+                    });
+                    return;
+                  }
+                  router.push({ pathname: '/explore_grants/about_grant' });
+                }}
+              />
+            );
+          })}
       </Container>
       {accountData && accountData.address ? null : <Sidebar />}
     </Container>

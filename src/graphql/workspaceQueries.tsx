@@ -18,6 +18,8 @@ query($ownerId: Bytes!) {
       ownerId: $ownerId
     }
     subgraphError: allow
+    orderBy: createdAtS
+    orderDirection: desc
   ){
     id
     ownerId
