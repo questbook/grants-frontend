@@ -67,8 +67,13 @@ const getMembersForAWorkspace = `
 `;
 
 export {
-  getAllGrants, getNumOfApplicantsForAGrant, getAllGrantsForADao,
-  getGrantDetails, getApplicantsForAGrant, getApplicationDetails,
-  getApplicationMilestones, getFundSentForApplication, getMembersForAWorkspace,
-
+  getAllGrants,
+  getNumOfApplicantsForAGrant,
+  getAllGrantsForADao,
+  getGrantDetails,
+  getApplicantsForAGrant,
+  getApplicationDetails,
+  getApplicationMilestones,
+  getFundSentForApplication,
+  getMembersForAWorkspace,
 };

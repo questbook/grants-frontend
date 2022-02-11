@@ -1,12 +1,15 @@
-import {
-  Box, VStack, Button, Text,
-} from '@chakra-ui/react';
+import { Box, VStack, Button, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
 import FloatingSidebar from '../../ui/sidebar/floatingSidebar2';
 import Tooltip from '../../ui/tooltip';
 
-function Sidebar({ grantRequiredFields }: { grantRequiredFields: any[] }) {
+interface Props {
+  grantRequiredFields: any[];
+  grantID: string;
+}
+
+function Sidebar({ grantRequiredFields, grantID }: Props) {
   const router = useRouter();
   return (
     <Box my="71px">
@@ -15,8 +18,13 @@ function Sidebar({ grantRequiredFields }: { grantRequiredFields: any[] }) {
           Requisite for Application
         </Text>
         <VStack alignItems="stretch" mt={5} p={0} spacing={4}>
-          {grantRequiredFields.map(({ detail, tooltip }) => (
-            <Text fontWeight="400" fontSize="16px" lineHeight="20px">
+          {grantRequiredFields?.map(({ detail, tooltip }) => (
+            <Text
+              fontWeight="400"
+              fontSize="16px"
+              lineHeight="20px"
+              key={`grant-required-field-${detail}`}
+            >
               {detail}
               {tooltip?.length ? (
                 <Tooltip icon="/ui_icons/tooltip_grey.svg" label={tooltip} />
@@ -29,6 +37,7 @@ function Sidebar({ grantRequiredFields }: { grantRequiredFields: any[] }) {
             pathname: '/explore_grants/apply',
             query: {
               account: true,
+              grantID,
             },
           })}
           mt={10}
@@ -44,8 +53,8 @@ function Sidebar({ grantRequiredFields }: { grantRequiredFields: any[] }) {
           fontSize="12px"
           lineHeight="16px"
         >
-          Before applying, please ensure you read the grant details, and
-          understand every details around it.
+          Before applying, please ensure you read the grant details, and understand every details
+          around it.
         </Text>
       </FloatingSidebar>
     </Box>

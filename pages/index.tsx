@@ -1,13 +1,7 @@
 import { gql } from '@apollo/client';
 import { Container, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, {
-  ReactElement,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-} from 'react';
+import React, { ReactElement, useCallback, useContext, useEffect, useRef } from 'react';
 import { useAccount } from 'wagmi';
 import GrantCard from '../src/components/browse_grants/grantCard';
 import Sidebar from '../src/components/browse_grants/sidebar';
@@ -115,27 +109,27 @@ function BrowseGrants() {
   //   setCurrentStep(step);
   // };
 
-  const handleScroll = useCallback(
-    () => {
-      const { current } = containerRef;
-      if (!current) return;
-      const parentElement = (current as HTMLElement)?.parentNode as HTMLElement;
-      // console.log(((current as HTMLElement)?.parentNode as HTMLElement).scrollTop);
-      // console.log(parentElement.scrollTop);
-      // console.log(parentElement.scrollHeight - parentElement.clientHeight);
-      // console.log(Math.abs(parentElement.scrollTop
-      //   - (parentElement.scrollHeight - parentElement.clientHeight)));
-      const reachedBottom = Math.abs(parentElement.scrollTop
-        - (parentElement.scrollHeight - parentElement.clientHeight)) < 10;
-      if (reachedBottom) { console.log(reachedBottom); }
+  const handleScroll = useCallback(() => {
+    const { current } = containerRef;
+    if (!current) return;
+    const parentElement = (current as HTMLElement)?.parentNode as HTMLElement;
+    // console.log(((current as HTMLElement)?.parentNode as HTMLElement).scrollTop);
+    // console.log(parentElement.scrollTop);
+    // console.log(parentElement.scrollHeight - parentElement.clientHeight);
+    // console.log(Math.abs(parentElement.scrollTop
+    //   - (parentElement.scrollHeight - parentElement.clientHeight)));
+    const reachedBottom = Math.abs(
+      parentElement.scrollTop - (parentElement.scrollHeight - parentElement.clientHeight),
+    ) < 10;
+    if (reachedBottom) {
+      console.log(reachedBottom);
+    }
 
-      if (reachedBottom) {
-        getGrantData();
-        // setGrants([...grants, ...grantsData]);
-      }
-    },
-    [containerRef, getGrantData],
-  );
+    if (reachedBottom) {
+      getGrantData();
+      // setGrants([...grants, ...grantsData]);
+    }
+  }, [containerRef, getGrantData]);
 
   useEffect(() => {
     getGrantData();
@@ -165,7 +159,7 @@ function BrowseGrants() {
       >
         <Heading title="Browse grants" />
         {grants.length > 0
-          && grants.map((grant) => (
+          && grants.map((grant: any) => (
             <GrantCard
               // eslint-disable-next-line react/no-array-index-key
               key={grant.id}
@@ -203,7 +197,7 @@ function BrowseGrants() {
                   daoName="Polygon DAO"
                   isDaoVerified
                   grantTitle={`Storage Provider (SP) Tooling Ideas ${index}`}
-                  grantDesc="A tool, script or tutorial to set up monitoring for miner GPU, CPU, memory and other and resource and performance metrics, ideally using Prometheus"
+                  grantDesc="Loremm impum"
                   numOfApplicants={0}
                   endTimestamp={new Date(
                     'January 2, 2022 23:59:59:000',
@@ -225,7 +219,6 @@ function BrowseGrants() {
                 />
               ))
           )} */}
-
       </Container>
       {accountData && accountData.address ? null : <Sidebar />}
     </Container>
