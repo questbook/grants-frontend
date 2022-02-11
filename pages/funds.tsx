@@ -3,7 +3,7 @@ import {
 } from '@chakra-ui/react';
 import React, { ReactElement } from 'react';
 import moment from 'moment';
-import AddFundsModal from '../src/components/your_grants/add_funds_modal';
+import AddFundsModal from '../src/components/funds/add_funds_modal';
 import NavbarLayout from '../src/layout/navbarLayout';
 
 function AddFunds() {

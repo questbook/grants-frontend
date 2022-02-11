@@ -5,12 +5,12 @@ import {
 import {
   ChevronDownIcon, ViewIcon,
 } from '@chakra-ui/icons';
+import moment from 'moment';
 import Modal from '../../../ui/modal';
 import MilestoneDoneModalContent from '../modals/modalContentMilestoneDone';
 import MilestoneViewModalContent from '../modals/modalContentMilestoneView';
 import MilestoneDoneConfirmationModalContent from '../modals/modalContentMilestoneDoneConfirmation';
 import data from '../data/milestoneTableDummyData';
-import { timeToString } from '../../../../utils/formattingUtils';
 
 function Milestones() {
   const [isMilestoneDoneModalOpen, setIsMilestoneDoneModalOpen] = React.useState(false);
@@ -96,7 +96,7 @@ function Milestones() {
               variant="footer"
               fontWeight="500"
             >
-              {timeToString(status.done_date.timestamp)}
+              {moment(status.done_date.timestamp).format('MMM DD, YYYY')}
             </Text>
           </Text>
           <Button variant="link" _focus={{}}>
@@ -134,7 +134,7 @@ function Milestones() {
             variant="footer"
             fontWeight="500"
           >
-            {timeToString(status.approved_date.timestamp)}
+            {moment(status.approved_date.timestamp).format('MMM DD, YYYY')}
           </Text>
         </Text>
         <Button variant="link" _focus={{}}>

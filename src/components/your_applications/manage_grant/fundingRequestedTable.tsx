@@ -2,11 +2,11 @@ import React from 'react';
 import {
   Text, Image, Flex, Button,
 } from '@chakra-ui/react';
+import moment from 'moment';
 import Modal from '../../ui/modal';
 import MilestoneDoneModalContent from './modals/modalContentMilestoneDone';
 import MilestoneDoneCheckModalContent from './modals/modalContentMilestoneDoneCheck';
 import MilestoneDoneConfirmationModalContent from './modals/modalContentMilestoneDoneConfirmation';
-import { timeToString } from '../../../utils/formattingUtils';
 
 function Table() {
   const [isMilestoneDoneModalOpen, setIsMilestoneDoneModalOpen] = React.useState(false);
@@ -115,7 +115,7 @@ function Table() {
               w="100%"
             >
               <Text variant="applicationText">
-                {timeToString(item.on.timestamp, 'day_first')}
+                {moment(item.on.timestamp).format('MMMM Do YYYY')}
               </Text>
             </Flex>
 
