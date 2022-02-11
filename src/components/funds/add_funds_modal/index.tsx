@@ -15,15 +15,14 @@ import SingleLineInput from '../../ui/forms/singleLineInput';
 /// import Modal from '../../ui/modal';
 
 interface Props {
-  // eslint-disable-next-line react/no-unused-prop-types
   isOpen: boolean;
   onClose: () => void;
 }
 
-function AddFunds({ onClose }: Props) {
+function AddFunds({ isOpen, onClose }: Props) {
   return (
     <ModalComponent
-      isOpen
+      isOpen={isOpen}
       onClose={() => onClose()}
       // title="Add Funds"
       // rightIcon={(
