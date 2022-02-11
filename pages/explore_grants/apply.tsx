@@ -1,88 +1,100 @@
-import {
-  Container,
-} from '@chakra-ui/react';
+import { gql } from '@apollo/client';
+import { Container } from '@chakra-ui/react';
+import BN from 'bn.js';
 import { useRouter } from 'next/router';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import Form from '../../src/components/explore_grants/apply_grant/form';
 import Sidebar from '../../src/components/explore_grants/apply_grant/sidebar';
+import supportedCurrencies from '../../src/constants/supportedCurrencies';
+import { getGrantDetails, getAllGrants } from '../../src/graphql/daoQueries';
+import SubgraphClient from '../../src/graphql/subgraph';
 import NavbarLayout from '../../src/layout/navbarLayout';
+import { getFormattedDate } from '../../src/utils/formattingUtils';
+import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils';
 
 function ApplyGrant() {
   const router = useRouter();
+  const [grantData, setGrantData] = useState<any>(null);
+  const [grantID, setGrantID] = useState<any>('');
+  const [title, setTitle] = useState('');
+  const [deadline, setDeadline] = useState('');
+  const [isGrantVerified, setIsGrantVerified] = useState(false);
+  const [daoName, setDaoName] = useState('');
+  const [daoLogo, setDaoLogo] = useState('');
+  const [rewardAmount, setRewardAmount] = useState('');
+  const [rewardCurrency, setRewardCurrency] = useState('');
+  const [rewardCurrencyCoin, setRewardCurrencyCoin] = useState('');
+  const [payoutDescription, setPayoutDescription] = useState('');
+  const [grantDetails, setGrantDetails] = useState('');
+  const [grantSummary, setGrantSummary] = useState('');
+  const [grantRequiredFields, setGrantRequiredFields] = useState([]);
+  console.log(deadline, isGrantVerified, daoName, payoutDescription, grantRequiredFields);
 
-  const rewardAmount = '60';
-  const rewardCurrency = 'ETH';
-  const rewardCurrencyCoin = '/network_icons/eth_mainnet.svg';
-  const grantSummary = 'A tool, script or tutorial to set up monitoring for miner GPU, CPU, memory and other resource and performance metrics, ideally using Prometheus and Grafana or other common open source tools.';
-  const grantDetails = `
-<p>
-  About
-  <br />
-  Filecoin Next Step Microgrants are available to support taking the Next Step after building an initial prototype with Filecoin. They are offered with the 
-  <br />
-  <br />
-  <ol>
-    <li>Understanding that decentralized technologies are a rapidly developing field with many unknowns. </li>
-    <li>Next Step Microgrants seek to match the pace, breadth, and experimental nature of this work.</li>
-  </ol>
+  const getGrantData = useCallback(async () => {
+    const subgraphClient = new SubgraphClient();
+    if (!subgraphClient.client) return null;
+    try {
+      const { data } = (await subgraphClient.client.query({
+        query: gql(getGrantDetails),
+        variables: {
+          grantID, // : '0xcf624e32a53fec9ea5908f22d43a78a943931063',
+        },
+      })) as any;
+      console.log(data);
+      if (data && data.grants.length) {
+        setGrantData(data.grants[0]);
+      }
+      return true;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  }, [grantID]);
 
-  <br />
-  Intended Audience
+  useEffect(() => {
+    setGrantID(router?.query?.grantID ?? '');
+  }, [router]);
 
-  <br />
-  <a href="www.github.com/a1029">
-    www.github.com/a1029
-  </a>
-  <br />
-  <a href="www.github.com/a1029">
-    www.github.com/a1029
-  </a>
+  useEffect(() => {
+    if (!grantID) return;
+    getGrantData();
+  }, [grantID, getGrantData]);
 
-  <br />
-  <br />
-  <img src="https://i.pcmag.com/imagery/articles/007cgCeF2SOUL9OBpHBmdPi-51.fit_lim.size_1050x.png" />
-  <br />
-  <br />
-  
-  These grants are intended for:
-  <br />
-  <ul>
-    <li>Independent developers</li>
-    <li>Small studios</li>
-    <li>Non-profits</li>
-    <li>Activists, Researchers... and you!</li>
-  </ul>
+  useEffect(() => {
+    if (!grantData) return;
+    const funding: number = parseInt(grantData?.funding, 10);
+    setIsGrantVerified(funding > 0);
+    setDeadline(getFormattedDate(grantData?.deadline));
+    setTitle(grantData?.title);
+    setDaoName(grantData?.workspace?.title);
+    setDaoLogo(getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash));
+    const rAmt = new BN(grantData?.reward?.committed).div(new BN(10).pow(new BN(18)));
+    setRewardAmount(rAmt.toString());
+    const supportedCurrencyObj = supportedCurrencies.find(
+      (curr) => curr?.id.toLowerCase() === grantData?.reward?.asset?.toLowerCase(),
+    );
+    if (supportedCurrencyObj) {
+      setRewardCurrency(supportedCurrencyObj?.label);
+      setRewardCurrencyCoin(supportedCurrencyObj?.icon);
+    }
 
-  <br />
-  <br />
-  Program Qualifications
-  <br />
-  <br />
-  Next Step Microgrants are intended to be easy to apply for, evaluate, and administer. Projects must meet these 5 criteria:
-  <br />
-  <br />
-  <p>
-    You've already built something with Filecoin (or closely related technologies such as IPLD, libp2p, or frameworks or services such as NFT.storage, Textile Powergate, etc.), independently or as part of a course or hackathon.
-    You can provide a clear and straightforward description of the Next Step you plan to take with grant support.
-    You can complete this work within 3 months.
-    You agree to open-source this work, via MIT license for code or CC-BY-SA 3.0 license for content.
-    You agree to complete weekly updates and a grant report upon conclusion, with the results of your microgrant-funded work as well as a description of your experience building on IPFS, including any challenges or shortcomings encountered.
-    We may also contact you about promoting the resulting work, including coverage on the Filecoin Blog or social media.
-  </p>
-</p>
-`;
+    if (grantData?.fields.length && grantData?.fields?.some((fd: any) => fd.title === 'Milestones')) {
+      setPayoutDescription('Muliple Payouts');
+    } else {
+      setPayoutDescription('Single Payout - Instant Payout once the grant recepient is selected.');
+    }
+    setGrantDetails(grantData?.details);
+    setGrantSummary(grantData?.summary);
+    setGrantRequiredFields(
+      grantData?.fields?.map((field: any) => ({
+        detail: field.title,
+      })),
+    );
+  }, [grantData]);
 
   return (
     <Container maxW="100%" display="flex" px="0px">
-      <Container
-        flex={3}
-        display="flex"
-        flexDirection="column"
-        maxW="834px"
-        alignItems="stretch"
-        pb={8}
-        px={10}
-      >
+      <Container flex={3} display="flex" flexDirection="column" maxW="834px" alignItems="stretch" pb={8} px={10}>
         <Form
           onSubmit={(data) => {
             console.log(data);
@@ -93,26 +105,22 @@ function ApplyGrant() {
               },
             });
           }}
+          title={title}
+          grantId={grantID}
+          daoLogo={daoLogo}
           rewardAmount={rewardAmount}
           rewardCurrency={rewardCurrency}
           rewardCurrencyCoin={rewardCurrencyCoin}
         />
       </Container>
 
-      <Sidebar
-        grantSummary={grantSummary}
-        grantDetails={grantDetails}
-      />
+      <Sidebar grantSummary={grantSummary} grantDetails={grantDetails} />
     </Container>
   );
 }
 
 ApplyGrant.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <NavbarLayout>
-      {page}
-    </NavbarLayout>
-  );
+  return <NavbarLayout>{page}</NavbarLayout>;
 };
 
 export default ApplyGrant;

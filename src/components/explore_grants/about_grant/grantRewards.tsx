@@ -5,7 +5,7 @@ import React from 'react';
 
 function GrantRewards({
   daoName,
-  isDaoVerified,
+  isGrantVerified,
   daoLogo,
   rewardAmount,
   rewardCurrency,
@@ -13,7 +13,7 @@ function GrantRewards({
   payoutDescription,
 }: {
   daoName: string;
-  isDaoVerified: boolean;
+  isGrantVerified: boolean;
   daoLogo: string;
   rewardAmount: string;
   rewardCurrency: string;
@@ -36,7 +36,7 @@ function GrantRewards({
             {daoName}
           </Box>
           {' '}
-          {isDaoVerified && (
+          {isGrantVerified && (
             <Image
               display="inline-block"
               src="/ui_icons/verified.svg"
@@ -44,12 +44,7 @@ function GrantRewards({
             />
           )}
         </Text>
-        <Image
-          ml="auto"
-          h="54px"
-          w="54px"
-          src={daoLogo}
-        />
+        <Image ml="auto" h="54px" w="54px" src={daoLogo} />
       </Flex>
 
       <Divider />
@@ -62,8 +57,6 @@ function GrantRewards({
               <Text fontWeight="500">Reward</Text>
               <Text mt="1px" lineHeight="20px" fontSize="14px" fontWeight="400">
                 {`${rewardAmount} ${rewardCurrency}`}
-                {' '}
-                ≈ 2500 USD
               </Text>
             </Flex>
           </Flex>
@@ -77,12 +70,7 @@ function GrantRewards({
             </Flex>
           </Flex>
         </Flex>
-        <Image
-          ml="auto"
-          h="45px"
-          w="45px"
-          src={rewardCurrencyCoin}
-        />
+        <Image ml="auto" h="45px" w="45px" src={rewardCurrencyCoin} />
       </Flex>
     </>
   );

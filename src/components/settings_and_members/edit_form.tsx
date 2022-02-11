@@ -81,6 +81,7 @@ function EditForm({
         <Box ml={9} />
         <ImageUpload
           image={image}
+          isError={false}
           onChange={handleImageChange}
           onClear={() => setImage(null)}
           label="Add a logo"

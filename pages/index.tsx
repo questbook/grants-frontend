@@ -1,13 +1,7 @@
 import { gql } from '@apollo/client';
 import { Container, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, {
-  ReactElement,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-} from 'react';
+import React, { ReactElement, useCallback, useContext, useEffect, useRef } from 'react';
 import { useAccount } from 'wagmi';
 import GrantCard from '../src/components/browse_grants/grantCard';
 import Sidebar from '../src/components/browse_grants/sidebar';
