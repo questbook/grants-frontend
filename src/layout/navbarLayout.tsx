@@ -9,6 +9,7 @@ import SignInNavbar from '../components/navbar/notConnected';
 import ConnectedNavbar from '../components/navbar/connected';
 import { ApiClientsContext } from '../../pages/_app';
 import { getWorkspacesQuery } from '../graphql/workspaceQueries';
+import { getUrlForIPFSHash } from '../utils/ipfsUtils';
 
 interface Props {
   children: React.ReactNode;
@@ -20,6 +21,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
   const subgraphClient = useContext(ApiClientsContext)?.subgraphClient.client;
   const [daoName, setDaoName] = React.useState('');
   const [daoId, setDaoId] = React.useState<string | null>(null);
+  const [daoImage, setDaoImage] = React.useState<string | null>(null);
 
   const toast = useToast();
   const [connected, setConnected] = React.useState(false);
@@ -66,8 +68,14 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
         }) as any;
       // console.log(data);
       if (data.workspaces.length > 0) {
-        setDaoId(data.workspaces[0].id);
-        setDaoName(data.workspaces[0].title);
+        const workspace = data.workspaces[0];
+        setDaoId(workspace.id);
+        setDaoName(workspace.title);
+        setDaoImage(getUrlForIPFSHash(workspace.logoIpfsHash));
+      } else {
+        setDaoId(null);
+        setDaoName('');
+        setDaoImage(null);
       }
     } catch (e) {
       toast({
@@ -103,6 +111,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
           renderTabs={renderTabs ?? true}
           daoName={daoName}
           daoId={daoId}
+          daoImage={daoImage}
         />
       ) : (
         <SignInNavbar renderGetStarted={renderGetStarted} />

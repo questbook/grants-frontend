@@ -1,30 +1,37 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  Text,
-  Image,
-  Link,
-  Flex,
-  Container,
-} from '@chakra-ui/react';
+import React, { useContext, useState } from 'react';
+import { Box, Button, Text, Image, Link, Flex, Container } from '@chakra-ui/react';
+import { useContract, useSigner } from 'wagmi';
 import ApplicantDetails from './1_applicantDetails';
 import AboutProject from './3_aboutProject';
 import AboutTeam from './2_aboutTeam';
 import Funding from './4_funding';
+import config from '../../../../constants/config';
+import ApplicationRegistryAbi from '../../../../contracts/abi/ApplicationRegistryAbi.json';
+import { ApiClientsContext } from '../../../../../pages/_app';
 
+interface Props {
+  onSubmit: (data: any) => void;
+  title: string;
+  grantId: string;
+  daoLogo: string;
+  rewardAmount: string;
+  rewardCurrency: string;
+  rewardCurrencyCoin: string;
+}
+
+// eslint-disable-next-line max-len
 function Form({
   onSubmit,
+  title,
+  grantId,
+  daoLogo,
   rewardAmount,
   rewardCurrency,
   rewardCurrencyCoin,
-}: {
-  onSubmit: (data: any) => void,
-  rewardAmount: string,
-  rewardCurrency: string,
-  rewardCurrencyCoin: string,
-}) {
+}: Props) {
+  const [signer] = useSigner();
+  // const { validatorApi } = apiClientContext;
   const [applicantName, setApplicantName] = useState('');
   const [applicantNameError, setApplicantNameError] = useState(false);
 
@@ -34,18 +41,22 @@ function Form({
   const [teamMembers, setTeamMembers] = useState<number | null>(1);
   const [teamMembersError, setTeamMembersError] = useState(false);
 
-  const [membersDescription, setMembersDescription] = useState([{
-    description: '',
-    isError: false,
-  }]);
+  const [membersDescription, setMembersDescription] = useState([
+    {
+      description: '',
+      isError: false,
+    },
+  ]);
 
   const [projectName, setProjectName] = useState('');
   const [projectNameError, setProjectNameError] = useState(false);
 
-  const [projectLinks, setProjectLinks] = useState([{
-    link: '',
-    isError: false,
-  }]);
+  const [projectLinks, setProjectLinks] = useState([
+    {
+      link: '',
+      isError: false,
+    },
+  ]);
 
   const [projectDetails, setProjectDetails] = useState('');
   const [projectDetailsError, setProjectDetailsError] = useState(false);
@@ -53,12 +64,14 @@ function Form({
   const [projectGoal, setProjectGoal] = useState('');
   const [projectGoalError, setProjectGoalError] = useState(false);
 
-  const [projectMilestones, setProjectMilestones] = useState([{
-    milestone: '',
-    milestoneReward: '',
-    milestoneIsError: false,
-    milestoneRewardIsError: false,
-  }]);
+  const [projectMilestones, setProjectMilestones] = useState([
+    {
+      milestone: '',
+      milestoneReward: '',
+      milestoneIsError: false,
+      milestoneRewardIsError: false,
+    },
+  ]);
 
   const [fundingAsk, setFundingAsk] = useState('');
   const [fundingAskError, setFundingAskError] = useState(false);
@@ -66,7 +79,7 @@ function Form({
   const [fundingBreakdown, setFundingBreakdown] = useState('');
   const [fundingBreakdownError, setFundingBreakdownError] = useState(false);
 
-  const handleOnSubmit = () => {
+  const handleOnSubmit = async () => {
     let error = false;
     if (applicantName === '') {
       setApplicantNameError(true);
@@ -152,19 +165,24 @@ function Form({
     if (error) {
       return;
     }
+    // await apiClientContext?.validatorApi.validateGrantApplicationCreate({
+    //   grantId,
+    //   applicantId: signer?.data?.address,
+    //   applicantName,
+    //   applicantEmail,
+    //   projectName,
+    //   projectDetails,
+    //   fundingBreakdown,
+    //   // add,
+    // });
     onSubmit({ data: true });
   };
 
   return (
     <Flex mt="30px" flexDirection="column" alignItems="center" w="100%">
-      <Image
-        h="96px"
-        w="96px"
-        src="/images/dummy/Polygon Icon.svg"
-        alt="Polygon DAO"
-      />
+      <Image h="96px" w="96px" src={daoLogo} alt="Polygon DAO" />
       <Text mt={6} variant="heading">
-        Storage Provider (SP) Tooling Ideas
+        {title}
       </Text>
       <Text
         zIndex="1"
@@ -177,12 +195,7 @@ function Form({
       >
         Your Application Form
       </Text>
-      <Container
-        mt="-12px"
-        p={10}
-        border="2px solid #E8E9E9"
-        borderRadius="12px"
-      >
+      <Container mt="-12px" p={10} border="2px solid #E8E9E9" borderRadius="12px">
         <ApplicantDetails
           applicantName={applicantName}
           applicantNameError={applicantNameError}
@@ -243,14 +256,10 @@ function Form({
       </Container>
 
       <Text mt={10} textAlign="center" variant="footer" fontSize="12px">
-        <Image
-          display="inline-block"
-          src="/ui_icons/protip.svg"
-          alt="pro tip"
-          mb="-2px"
-        />
+        <Image display="inline-block" src="/ui_icons/protip.svg" alt="pro tip" mb="-2px" />
         {' '}
-        Your grant funds are securely stored on our smart contract.
+        Your
+        grant funds are securely stored on our smart contract.
         {' '}
         <Link href="wallet">Learn more</Link>
         {' '}

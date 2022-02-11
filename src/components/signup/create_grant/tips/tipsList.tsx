@@ -21,7 +21,7 @@ function TipsList({
         </Text>
         <VStack mt={9} spacing={7}>
           {tips.map((tip) => (
-            <Flex alignItems="flex-start">
+            <Flex key={`tips-${tip}`} alignItems="flex-start">
               <Image mt={1} src="/ui_icons/tip_checkmark.svg" alt="tip" />
               <Text color="#122224" fontWeight="400" fontSize="16px" ml="10px">
                 {tip}

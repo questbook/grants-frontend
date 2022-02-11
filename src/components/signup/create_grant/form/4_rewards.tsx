@@ -1,10 +1,5 @@
 import {
-  Flex,
-  Text,
-  Box,
-  Button,
-  Image,
-  Link,
+  Flex, Text, Box, Button, Image, Link,
 } from '@chakra-ui/react';
 import React from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -21,7 +16,12 @@ function GrantRewardsInput({ onSubmit }: Props) {
   const [reward, setReward] = React.useState('');
   const [rewardError, setRewardError] = React.useState(false);
 
-  const [rewardCurrency, setRewardCurrency] = React.useState('ETH');
+  const [rewardCurrency, setRewardCurrency] = React.useState(
+    supportedCurrencies[0].label,
+  );
+  const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
+    supportedCurrencies[0].id,
+  );
 
   const [date, setDate] = React.useState('');
   const [dateError, setDateError] = React.useState(false);
@@ -38,7 +38,7 @@ function GrantRewardsInput({ onSubmit }: Props) {
     }
 
     if (!error) {
-      onSubmit({ reward, rewardCurrency, date });
+      onSubmit({ reward, rewardCurrencyAddress, date });
     }
   };
   return (
@@ -69,7 +69,10 @@ function GrantRewardsInput({ onSubmit }: Props) {
               listItemsMinWidth="132px"
               listItems={supportedCurrencies}
               value={rewardCurrency}
-              onChange={(data: any) => setRewardCurrency(data)}
+              onChange={(data: any) => {
+                setRewardCurrency(data.label);
+                setRewardCurrencyAddress(data.id);
+              }}
             />
           </Box>
         </Flex>
@@ -90,22 +93,27 @@ function GrantRewardsInput({ onSubmit }: Props) {
         />
 
         <Text variant="footer" mt={8} mb={7} maxW="400">
-          <Image display="inline-block" h="10px" w="10px" src="/ui_icons/info_brand.svg" />
+          <Image
+            display="inline-block"
+            h="10px"
+            w="10px"
+            src="/ui_icons/info_brand.svg"
+          />
           {' '}
-          By pressing Publish Grant you&apos;ll have to approve this
-          transaction in your wallet.
+          By pressing Publish Grant you&apos;ll have to approve this transaction
+          in your wallet.
           {' '}
           <Link href="wallet">Learn more</Link>
           {' '}
-          <Image display="inline-block" h="10px" w="10px" src="/ui_icons/link.svg" />
+          <Image
+            display="inline-block"
+            h="10px"
+            w="10px"
+            src="/ui_icons/link.svg"
+          />
         </Text>
-
       </Flex>
-      <Button
-        mt="auto"
-        variant="primary"
-        onClick={handleOnSubmit}
-      >
+      <Button mt="auto" variant="primary" onClick={handleOnSubmit}>
         Continue
       </Button>
     </>

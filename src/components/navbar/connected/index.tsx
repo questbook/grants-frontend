@@ -18,10 +18,11 @@ interface Props {
   renderTabs: boolean;
   daoName: string;
   daoId: null | string;
+  daoImage: null | string;
 }
 
 function Navbar({
-  networkId, address, isOnline, renderTabs, daoName, daoId,
+  networkId, address, isOnline, renderTabs, daoName, daoId, daoImage,
 }: Props) {
   const [activeIndex, setActiveIndex] = React.useState(-1);
   const router = useRouter();
@@ -45,7 +46,7 @@ function Navbar({
       minH="80px"
     >
       {
-        daoId ? (
+        daoId && daoImage ? (
           <Button
             onClick={() => {
               setActiveIndex(-1);
@@ -61,13 +62,16 @@ function Navbar({
             borderRadius={0}
             background="linear-gradient(263.05deg, #EFF0F0 -7.32%, #FCFCFC 32.62%)"
             px="38px"
+            maxW="200px"
           >
-            <Image w="32px" h="32px" mr="10px" src="/images/dummy/Polygon Icon.svg" />
+            <Image objectFit="cover" w="32px" h="32px" mr="10px" src={daoImage} />
             <Text
               color="#414E50"
               fontWeight="500"
               fontSize="16px"
               lineHeight="24px"
+              overflow="hidden"
+              textOverflow="ellipsis"
             >
               {daoName}
             </Text>

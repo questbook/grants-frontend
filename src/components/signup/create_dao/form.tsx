@@ -12,7 +12,7 @@ import supportedNetworks from '../../../constants/supportedNetworks.json';
 function Form({
   onSubmit: onFormSubmit,
 }: {
-  onSubmit: (data: { name: string; description: string; image?: string, network: string }) => void;
+  onSubmit: (data: { name: string; description: string; image: File, network: string }) => void;
 }) {
   const [{ data: networkData }] = useNetwork();
   const [networkSupported, setNetworkSupported] = React.useState(false);
@@ -44,10 +44,15 @@ function Form({
   const [daoDescriptionError, setDaoDescriptionError] = React.useState(false);
 
   const [image, setImage] = React.useState<string | null>(null);
+  const [imageFile, setImageFile] = React.useState<File | null>(null);
+  const [imageError, setImageError] = React.useState(false);
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target.files);
     if (event.target.files && event.target.files[0]) {
       const img = event.target.files[0];
+      setImageFile(img);
       setImage(URL.createObjectURL(img));
+      setImageError(false);
     }
   };
 
@@ -64,17 +69,19 @@ function Form({
     if (!networkSupported) {
       error = true;
     }
-
-    if (!error) {
-      onFormSubmit({
-        name: daoName,
-        description: daoDescription,
-        image: image === null ? undefined : image,
-        network: supportedNetworks[
-          networkData.chain?.id.toString() as keyof typeof supportedNetworks
-        ].name,
-      });
+    if (image === null || imageFile === null) {
+      setImageError(true);
+      error = true;
     }
+
+    if (error) return;
+
+    onFormSubmit({
+      name: daoName,
+      description: daoDescription,
+      image: imageFile!,
+      network: networkData.chain!.id.toString(),
+    });
   };
 
   return (
@@ -100,6 +107,7 @@ function Form({
             onClear={() => setImage(null)}
             label="Add a logo"
             subtext="Upload"
+            isError={imageError}
           />
         </Flex>
         <Flex w="100%" mt={1}>

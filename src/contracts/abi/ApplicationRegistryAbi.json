@@ -170,28 +170,14 @@
   {
     "inputs": [],
     "name": "applicationCount",
-    "outputs": [
-      {
-        "internalType": "uint96",
-        "name": "",
-        "type": "uint96"
-      }
-    ],
+    "outputs": [{ "internalType": "uint96", "name": "", "type": "uint96" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "uint96",
-        "name": "",
-        "type": "uint96"
-      },
-      {
-        "internalType": "uint48",
-        "name": "",
-        "type": "uint48"
-      }
+      { "internalType": "uint96", "name": "", "type": "uint96" },
+      { "internalType": "uint48", "name": "", "type": "uint48" }
     ],
     "name": "applicationMilestones",
     "outputs": [
@@ -205,45 +191,15 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint96",
-        "name": "",
-        "type": "uint96"
-      }
-    ],
+    "inputs": [{ "internalType": "uint96", "name": "", "type": "uint96" }],
     "name": "applications",
     "outputs": [
-      {
-        "internalType": "uint96",
-        "name": "id",
-        "type": "uint96"
-      },
-      {
-        "internalType": "uint96",
-        "name": "workspaceId",
-        "type": "uint96"
-      },
-      {
-        "internalType": "address",
-        "name": "grant",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      },
-      {
-        "internalType": "uint48",
-        "name": "milestoneCount",
-        "type": "uint48"
-      },
-      {
-        "internalType": "string",
-        "name": "metadataHash",
-        "type": "string"
-      },
+      { "internalType": "uint96", "name": "id", "type": "uint96" },
+      { "internalType": "uint96", "name": "workspaceId", "type": "uint96" },
+      { "internalType": "address", "name": "grant", "type": "address" },
+      { "internalType": "address", "name": "owner", "type": "address" },
+      { "internalType": "uint48", "name": "milestoneCount", "type": "uint48" },
+      { "internalType": "string", "name": "metadataHash", "type": "string" },
       {
         "internalType": "enum ApplicationRegistry.ApplicationState",
         "name": "state",
@@ -255,21 +211,9 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint96",
-        "name": "_applicationId",
-        "type": "uint96"
-      },
-      {
-        "internalType": "uint48",
-        "name": "_milestoneId",
-        "type": "uint48"
-      },
-      {
-        "internalType": "uint96",
-        "name": "_workspaceId",
-        "type": "uint96"
-      },
+      { "internalType": "uint96", "name": "_applicationId", "type": "uint96" },
+      { "internalType": "uint48", "name": "_milestoneId", "type": "uint48" },
+      { "internalType": "uint96", "name": "_workspaceId", "type": "uint96" },
       {
         "internalType": "string",
         "name": "_reasonMetadataHash",
@@ -298,33 +242,17 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint96",
-        "name": "_applicationId",
-        "type": "uint96"
-      }
+      { "internalType": "uint96", "name": "_applicationId", "type": "uint96" }
     ],
     "name": "getApplicationOwner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -338,13 +266,7 @@
   {
     "inputs": [],
     "name": "paused",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -357,16 +279,8 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint96",
-        "name": "_applicationId",
-        "type": "uint96"
-      },
-      {
-        "internalType": "uint48",
-        "name": "_milestoneId",
-        "type": "uint48"
-      },
+      { "internalType": "uint96", "name": "_applicationId", "type": "uint96" },
+      { "internalType": "uint48", "name": "_milestoneId", "type": "uint48" },
       {
         "internalType": "string",
         "name": "_reasonMetadataHash",
@@ -393,26 +307,10 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_grant",
-        "type": "address"
-      },
-      {
-        "internalType": "uint96",
-        "name": "_workspaceId",
-        "type": "uint96"
-      },
-      {
-        "internalType": "string",
-        "name": "_metadataHash",
-        "type": "string"
-      },
-      {
-        "internalType": "uint48",
-        "name": "_milestoneCount",
-        "type": "uint48"
-      }
+      { "internalType": "address", "name": "_grant", "type": "address" },
+      { "internalType": "uint96", "name": "_workspaceId", "type": "uint96" },
+      { "internalType": "string", "name": "_metadataHash", "type": "string" },
+      { "internalType": "uint48", "name": "_milestoneCount", "type": "uint48" }
     ],
     "name": "submitApplication",
     "outputs": [],
@@ -421,11 +319,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "newOwner", "type": "address" }
     ],
     "name": "transferOwnership",
     "outputs": [],
@@ -441,21 +335,9 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint96",
-        "name": "_applicationId",
-        "type": "uint96"
-      },
-      {
-        "internalType": "string",
-        "name": "_metadataHash",
-        "type": "string"
-      },
-      {
-        "internalType": "uint48",
-        "name": "_milestoneCount",
-        "type": "uint48"
-      }
+      { "internalType": "uint96", "name": "_applicationId", "type": "uint96" },
+      { "internalType": "string", "name": "_metadataHash", "type": "string" },
+      { "internalType": "uint48", "name": "_milestoneCount", "type": "uint48" }
     ],
     "name": "updateApplicationMetadata",
     "outputs": [],
@@ -464,16 +346,8 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint96",
-        "name": "_applicationId",
-        "type": "uint96"
-      },
-      {
-        "internalType": "uint96",
-        "name": "_workspaceId",
-        "type": "uint96"
-      },
+      { "internalType": "uint96", "name": "_applicationId", "type": "uint96" },
+      { "internalType": "uint96", "name": "_workspaceId", "type": "uint96" },
       {
         "internalType": "enum ApplicationRegistry.ApplicationState",
         "name": "_state",

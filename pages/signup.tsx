@@ -2,15 +2,21 @@ import { Container, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { ReactElement, useContext } from 'react';
 import { useAccount, useContract, useSigner } from 'wagmi';
+import { SupportedNetwork } from '@questbook/service-validator-client';
+import { gql } from '@apollo/client';
 import Form from '../src/components/signup/create_dao/form';
 import Loading from '../src/components/signup/create_dao/loading';
 import CreateGrant from '../src/components/signup/create_grant';
 import DaoCreated from '../src/components/signup/daoCreated';
 import WorkspaceRegistryABI from '../src/contracts/abi/WorkspaceRegistryAbi.json';
+import GrantFactoryABI from '../src/contracts/abi/GrantFactoryAbi.json';
 import Tooltip from '../src/components/ui/tooltip';
 import NavbarLayout from '../src/layout/navbarLayout';
 import { ApiClientsContext } from './_app';
 import config from '../src/constants/config';
+import { uploadToIPFS } from '../src/utils/ipfsUtils';
+import { getWorkspacesQuery } from '../src/graphql/workspaceQueries';
+import { parseAmount } from '../src/utils/formattingUtils';
 
 function SignupDao() {
   const [{ data: accountData }] = useAccount();
@@ -22,46 +28,132 @@ function SignupDao() {
   const [daoData, setDaoData] = React.useState<{
     name: string;
     description: string;
-    image?: string;
+    image: string;
     network: string;
+    id: string;
   } | null>(null);
 
   const apiClients = useContext(ApiClientsContext);
   const [signerStates] = useSigner();
-  const contract = useContract({
+  const workspaceFactoryContract = useContract({
     addressOrName: config.WorkspaceRegistryAddress,
     contractInterface: WorkspaceRegistryABI,
+    signerOrProvider: signerStates.data,
+  });
+
+  const grantContract = useContract({
+    addressOrName: config.GrantFactoryAddress,
+    contractInterface: GrantFactoryABI,
     signerOrProvider: signerStates.data,
   });
   const handleFormSubmit = async (data: {
     name: string;
     description: string;
-    image?: string;
+    image: File;
     network: string;
   }) => {
-    if (!accountData || !accountData.address) {
+    try {
+      if (!accountData || !accountData.address) {
+        return;
+      }
+      if (!apiClients) return;
+
+      setLoading(true);
+      const { subgraphClient, validatorApi } = apiClients;
+
+      const imageHash = await uploadToIPFS(data.image);
+      console.log(imageHash);
+
+      const {
+        data: { ipfsHash },
+      } = await validatorApi.validateWorkspaceCreate({
+        title: data.name,
+        about: data.description,
+        logoIpfsHash: imageHash.hash,
+        creatorId: accountData.address,
+        socials: [],
+        supportedNetworks: [data.network as SupportedNetwork],
+      });
+
+      // console.log(url);
+      console.log(ipfsHash);
+
+      const transaction = await workspaceFactoryContract.createWorkspace(ipfsHash);
+      // console.log(ret);
+      const transactionData = await transaction.wait();
+
+      console.log(transactionData);
+      console.log(transactionData.blockNumber);
+
+      await subgraphClient.waitForBlock(transactionData.blockNumber);
+
+      const { data: createdWorkspaceData } = (await subgraphClient.client.query(
+        {
+          query: gql(getWorkspacesQuery),
+          variables: {
+            ownerId: accountData.address,
+          },
+        },
+      )) as any;
+      // console.log(data);
+      if (createdWorkspaceData.workspaces.length > 0) {
+        const newId = createdWorkspaceData.workspaces[
+          createdWorkspaceData.workspaces.length - 1
+        ].id;
+        // if (newId.length % 2 === 1) {
+        //   newId = `0x0${newId.slice(2)}`;
+        // }
+        setDaoData({
+          ...data,
+          image: imageHash.hash,
+          id: Number(newId).toString(),
+        });
+        setLoading(false);
+        setDaoCreated(true);
+      } else {
+        throw new Error('Workspace not indexed');
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+  };
+
+  const handleGrantSubmit = async (data: any) => {
+    if (!accountData || !accountData.address || !daoData) {
       return;
     }
     if (!apiClients) return;
 
-    setLoading(true);
+    setCreatingGrant(true);
     const { subgraphClient, validatorApi } = apiClients;
 
-    const { data: { ipfsHash } } = await validatorApi.validateWorkspaceCreate({
-      title: data.name,
-      about: data.description,
-      logoIpfsHash: 'QmZ4ABKSvnpPedSioi4jMc6QA3YbLa9rJbD31ASXsCd9Nj',
-      coverImageIpfsHash: 'QmZ4ABKSvnpPedSioi4jMc6QA3YbLa9rJbD31ASXsCd9Nj',
+    console.log(data);
+
+    const {
+      data: { ipfsHash },
+    } = await validatorApi.validateGrantCreate({
+      title: data.title,
+      summary: data.summary,
+      details: data.details,
+      deadline: data.date,
+      reward: {
+        committed: parseAmount(data.reward),
+        asset: data.rewardCurrencyAddress,
+      },
       creatorId: accountData.address,
-      socials: [],
-      supportedNetworks: ['0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'],
+      workspaceId: daoData!.id,
+      fields: data.fields,
     });
 
-    // console.log(url);
     console.log(ipfsHash);
 
-    const transaction = await contract.createWorkspace(ipfsHash);
-    // console.log(ret);
+    const transaction = await grantContract.createGrant(
+      daoData!.id,
+      ipfsHash,
+      config.WorkspaceRegistryAddress,
+      config.ApplicationRegistryAddress,
+    );
     const transactionData = await transaction.wait();
 
     console.log(transactionData);
@@ -69,13 +161,11 @@ function SignupDao() {
 
     await subgraphClient.waitForBlock(transactionData.blockNumber);
 
-    setDaoData(data);
-    setLoading(false);
-    setDaoCreated(true);
+    router.push('/your_grants');
   };
 
   if (creatingGrant) {
-    return <CreateGrant onSubmit={() => router.push('/your_grants')} />;
+    return <CreateGrant onSubmit={handleGrantSubmit} />;
   }
 
   if (daoCreated && daoData) {
@@ -122,42 +212,3 @@ SignupDao.getLayout = function getLayout(page: ReactElement) {
 };
 
 export default SignupDao;
-
-/*
-
-{
-    "reward": "1",
-    "rewardCurrency": "MATIC",
-    "date": "2022-02-10",
-    "applicant_name": true,
-    "applicant_email": false,
-    "about_team": true,
-    "funding_breakdown": false,
-    "project_name": true,
-    "project_link": true,
-    "project_details": false,
-    "project_goals": false,
-    "extra_field": "extra info",
-    "is_multiple_miletones": true,
-    "details": "details",
-    "title": "title",
-    "summary": "summary"
-}
-
-title: 'title',
-    summary: 'summary',
-    details: 'details',
-    applicant_name: true,
-    applicant_email: false,
-    about_team: false,
-    funding_breakdown: false,
-    project_name: false,
-    project_link: false,
-    project_details: true,
-    project_goals: false,
-    extra_field: 'ko',
-    is_multiple_miletones: false,
-    reward: '10',
-    rewardCurrency: 'USDC',
-    date: '2022-02-05',
-*/
