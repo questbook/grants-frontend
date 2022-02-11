@@ -2,8 +2,8 @@ import React from 'react';
 import {
   Text, Image, Flex, Link,
 } from '@chakra-ui/react';
+import moment from 'moment';
 import data from '../data/fundingRequestedDummyData';
-import { timeToString } from '../../../../utils/formattingUtils';
 
 function Funding() {
   const tableHeaders = [
@@ -91,7 +91,7 @@ function Funding() {
               w="100%"
             >
               <Text variant="applicationText">
-                {timeToString(item.on.timestamp, 'day_first')}
+                {moment(item.on.timestamp).format('MMM DD, YYYY')}
               </Text>
             </Flex>
 
