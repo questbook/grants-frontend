@@ -33,7 +33,7 @@ function Table() {
   ];
 
   const renderStatus = (status: any) => {
-    if (status.state === 'pending') {
+    if (status.state === 'submitted') {
       return (
         <Button
           variant="outline"

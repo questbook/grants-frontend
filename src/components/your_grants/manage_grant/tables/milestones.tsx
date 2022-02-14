@@ -36,7 +36,7 @@ function Milestones() {
   ];
 
   const renderStatus = (status: any) => {
-    if (status.state === 'pending') {
+    if (status.state === 'submitted') {
       return (
         <Flex direction="column">
           <Menu placement="bottom">

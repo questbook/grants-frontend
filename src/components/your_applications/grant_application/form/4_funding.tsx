@@ -64,7 +64,6 @@ function Funding({
           <Text mt="1px" lineHeight="20px" fontSize="14px" fontWeight="400">
             {`${rewardAmount} ${rewardCurrency}`}
             {' '}
-            ≈ 2500 USD
           </Text>
         </Flex>
       </Flex>

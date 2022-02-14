@@ -17,7 +17,7 @@ interface Props {
   daoIcon: string;
   isGrantVerified?: boolean;
   isDaoVerified?: boolean;
-  status: 'accepted' | 'pending' | 'rejected' | 'resubmit';
+  status: 'approved' | 'submitted' | 'rejected' | 'resubmit';
   onViewGrantClick?: () => void;
   onViewApplicationClick?: () => void;
   onManageGrantClick?: () => void;
@@ -104,7 +104,7 @@ function YourApplicationCard({
 
             <Box
               h={1}
-              bg={status === 'pending' ? '#E8E9E9' : '#A0A7A7'}
+              bg={status === 'submitted' ? '#E8E9E9' : '#A0A7A7'}
               flex={1}
             />
 
@@ -129,7 +129,7 @@ function YourApplicationCard({
             w="10px"
           />
         </Link>
-        {status === 'accepted' ? (
+        {status === 'approved' ? (
           <Button
             onClick={() => (onManageGrantClick ? onManageGrantClick() : () => {})}
             ml="30px"

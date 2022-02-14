@@ -214,7 +214,7 @@ function ViewApplicants() {
           onAcceptApplicationClick={() => router.push({
             pathname: '/your_grants/view_applicants/applicant_form/',
             query: {
-              flow: 'accepted',
+              flow: 'approved',
             },
           })}
           onRejectApplicationClick={() => router.push({

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -9,6 +9,7 @@ import {
   Flex,
   Container,
 } from '@chakra-ui/react';
+import { GrantApplicationProps } from 'src/types/application';
 import ApplicantDetails from './1_applicantDetails';
 import AboutProject from './3_aboutProject';
 import AboutTeam from './2_aboutTeam';
@@ -29,26 +30,26 @@ function Form({
   rewardCurrencyCoin: string;
   resubmitComment?: string;
   rejectedComment?: string;
-  formData: any;
+  formData: GrantApplicationProps | null;
 }) {
   const [applicantName, setApplicantName] = useState(
-    formData.applicantName ?? '',
+    formData?.applicantName ?? '',
   );
   const [applicantNameError, setApplicantNameError] = useState(false);
 
   const [applicantEmail, setApplicantEmail] = useState(
-    formData.applicantEmail ?? false,
+    formData?.applicantEmail ?? '',
   );
   const [applicantEmailError, setApplicantEmailError] = useState(false);
 
-  const [teamMembers, setTeamMembers] = useState<number | null>(
-    formData.teamMembers ?? 1,
+  const [teamMembers, setTeamMembers] = useState(
+    formData?.teamMembers ?? 1,
   );
   const [teamMembersError, setTeamMembersError] = useState(false);
 
   const [membersDescription, setMembersDescription] = useState(
-    formData.membersDescription
-      ? formData.membersDescription.map((member: any) => ({
+    formData?.membersDescription
+      ? formData?.membersDescription.map((member: any) => ({
         description: member.description ?? '',
         isError: false,
       }))
@@ -60,12 +61,12 @@ function Form({
       ],
   );
 
-  const [projectName, setProjectName] = useState(formData.projectName ?? '');
+  const [projectName, setProjectName] = useState(formData?.projectName ?? '');
   const [projectNameError, setProjectNameError] = useState(false);
 
   const [projectLinks, setProjectLinks] = useState(
-    formData.projectLinks
-      ? formData.projectLinks.map((link: any) => ({
+    formData?.projectLinks
+      ? formData?.projectLinks.map((link: any) => ({
         link: link.link ?? '',
         isError: false,
       }))
@@ -78,16 +79,16 @@ function Form({
   );
 
   const [projectDetails, setProjectDetails] = useState(
-    formData.projectDetails ?? '',
+    formData?.projectDetails ?? '',
   );
   const [projectDetailsError, setProjectDetailsError] = useState(false);
 
-  const [projectGoal, setProjectGoal] = useState(formData.projectGoal ?? '');
+  const [projectGoal, setProjectGoal] = useState(formData?.projectGoal ?? '');
   const [projectGoalError, setProjectGoalError] = useState(false);
 
   const [projectMilestones, setProjectMilestones] = useState(
-    formData.projectMilestones
-      ? formData.projectMilestones.map((milestone: any) => ({
+    formData?.projectMilestones
+      ? formData?.projectMilestones.map((milestone: any) => ({
         milestone: milestone.milestone ?? '',
         milestoneReward: milestone.milestoneReward ?? '',
         milestoneIsError: false,
@@ -103,13 +104,41 @@ function Form({
       ],
   );
 
-  const [fundingAsk, setFundingAsk] = useState(formData.fundingAsk ?? '');
+  const [fundingAsk, setFundingAsk] = useState(formData?.fundingAsk ?? '');
   const [fundingAskError, setFundingAskError] = useState(false);
 
   const [fundingBreakdown, setFundingBreakdown] = useState(
-    formData.fundingBreakdown ?? '',
+    formData?.fundingBreakdown ?? '',
   );
   const [fundingBreakdownError, setFundingBreakdownError] = useState(false);
+
+  useEffect(() => {
+    if (formData) {
+      setApplicantName(formData.applicantName);
+      setApplicantEmail(formData.applicantEmail);
+      setTeamMembers(formData.teamMembers);
+      setMembersDescription(formData?.membersDescription.map((member: any) => ({
+        description: member.description ?? '',
+        isError: false,
+      })));
+      setProjectName(formData.projectName);
+      setProjectLinks(formData?.projectLinks.map((link: any) => ({
+        link: link.link ?? '',
+        isError: false,
+      })));
+      setProjectDetails(formData.projectDetails);
+      setProjectGoal(formData.projectGoal);
+      setProjectMilestones(formData?.projectMilestones.map((milestone: any) => ({
+        milestone: milestone.milestone ?? '',
+        milestoneReward: milestone.milestoneReward ?? '',
+        milestoneIsError: false,
+        milestoneRewardIsError: false,
+      })));
+
+      setFundingAsk(formData.fundingAsk);
+      setFundingBreakdown(formData.fundingBreakdown);
+    }
+  }, [formData]);
 
   const handleOnSubmit = () => {
     if (!onSubmit) {

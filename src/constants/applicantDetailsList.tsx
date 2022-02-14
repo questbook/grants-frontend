@@ -10,8 +10,8 @@ export default [
     inputType: 'short-form',
   },
   {
-    title: 'About Team',
-    id: 'aboutTeam',
+    title: 'Team Members',
+    id: 'teamMembers',
     inputType: 'long-form',
   },
   {

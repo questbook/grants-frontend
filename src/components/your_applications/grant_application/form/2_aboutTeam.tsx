@@ -1,7 +1,7 @@
 import {
   Box, Text,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import MultiLineInput from '../../../ui/forms/multiLineInput';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
 import Tooltip from '../../../ui/tooltip';
@@ -17,8 +17,9 @@ function AboutTeam({
 
   readOnly,
 }: {
+
   teamMembers: number | null;
-  setTeamMembers: (teamMembers: number | null) => void;
+  setTeamMembers: Dispatch< SetStateAction<number>>;
   teamMembersError: boolean;
   setTeamMembersError: (teamMembersError: boolean) => void;
 
@@ -51,7 +52,7 @@ function AboutTeam({
             setTeamMembers(value);
             setMembersDescription(Array(value).fill({ description: '', isError: false }));
           } else {
-            setTeamMembers(null);
+            setTeamMembers(1);
           }
         }}
         isError={teamMembersError}

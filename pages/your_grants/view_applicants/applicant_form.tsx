@@ -44,7 +44,7 @@ function ApplicantForm() {
   const [rejectionComment] = useState('Rejected');
 
   useEffect(() => {
-    if (router.query.flow === 'accepted') {
+    if (router.query.flow === 'approved') {
       setStep(1);
     } else if (router.query.flow === 'rejected') {
       setStep(2);
