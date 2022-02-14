@@ -53,7 +53,6 @@ function AddFunds({ isOpen, onClose }: Props) {
         </Button>
       )}
       modalWidth={527}
-      // closeOnOverlayClick
     >
       <ModalBody>
         {type === -1 && (

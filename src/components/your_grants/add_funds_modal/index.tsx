@@ -29,7 +29,6 @@ function AddFunds({ isOpen, onClose }: Props) {
           Support 24*7
         </Button>
       )}
-      closeOnOverlayClick
     >
       <ModalBody>
         <Flex direction="column" justify="start" align="center">

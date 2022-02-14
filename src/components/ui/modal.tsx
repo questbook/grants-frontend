@@ -32,7 +32,8 @@ function Modal({
   rightIcon,
   topIcon,
   alignTitle,
-  modalWidth, closeButtonMargin,
+  modalWidth,
+  closeButtonMargin,
 }: Props) {
   return (
     <ModalComponent

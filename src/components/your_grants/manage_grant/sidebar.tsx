@@ -70,7 +70,6 @@ function Sidebar({ funds = 0 }: Props) {
         </Button>
         <AddFunds isOpen={isAddFundModalOpen} onClose={() => setIsAddFundModalOpen(false)} />
         <Modal
-          closeOnOverlayClick
           isOpen={isSendFundModalOpen}
           onClose={() => setIsSendFundModalOpen(false)}
           title="Send Funds"
