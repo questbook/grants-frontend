@@ -18,7 +18,7 @@ interface Props {
 }
 
 function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
-  const subgraphClient = useContext(ApiClientsContext)?.subgraphClient.client;
+  const apiClients = useContext(ApiClientsContext);
   const [daoName, setDaoName] = React.useState('');
   const [daoId, setDaoId] = React.useState<string | null>(null);
   const [daoImage, setDaoImage] = React.useState<string | null>(null);
@@ -57,9 +57,12 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
   // }, [networkData]);
 
   const getWorkspaceData = async (userAddress: string) => {
+    if (!apiClients) return;
+
+    const { subgraphClient, setWorkspaceId } = apiClients;
     if (!subgraphClient) return;
     try {
-      const { data } = await subgraphClient
+      const { data } = await subgraphClient.client
         .query({
           query: gql(getWorkspacesQuery),
           variables: {
@@ -72,6 +75,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
         setDaoId(workspace.id);
         setDaoName(workspace.title);
         setDaoImage(getUrlForIPFSHash(workspace.logoIpfsHash));
+        setWorkspaceId(workspace.id);
       } else {
         setDaoId(null);
         setDaoName('');

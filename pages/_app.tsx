@@ -51,9 +51,12 @@ const connectors = () => [
 export const ApiClientsContext = createContext<{
   subgraphClient: SubgraphClient;
   validatorApi: ValidationApi;
+  workspaceId: string | null;
+  setWorkspaceId:(id: string | null) => void;
 } | null>(null);
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  const [workspaceId, setWorkspaceId] = React.useState<string | null>(null);
   const client = useMemo(() => new SubgraphClient(), []);
 
   const validatorApi = useMemo(() => {
@@ -68,7 +71,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const apiClients = useMemo(() => ({
     subgraphClient: client,
     validatorApi,
-  }), [client, validatorApi]);
+    workspaceId,
+    setWorkspaceId,
+  }), [client, validatorApi, workspaceId, setWorkspaceId]);
 
   const getLayout = Component.getLayout ?? ((page) => page);
   return (

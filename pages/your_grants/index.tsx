@@ -165,6 +165,7 @@ function YourGrants() {
                   pathname: '/your_grants/edit_grant/',
                   query: {
                     account: true,
+                    id: grant.id,
                   },
                 })}
                 onAddFundsClick={() => setAddFundsIsOpen(true)}
