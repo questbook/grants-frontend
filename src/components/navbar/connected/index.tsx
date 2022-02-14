@@ -169,8 +169,8 @@ function Navbar({
                 });
               } else {
                 router.push({
-                  pathname: '/your_grants/create_grant/',
-                  // pathname: '/signup',
+                  // pathname: '/your_grants/create_grant/',
+                  pathname: '/signup',
                 });
               }
             }}

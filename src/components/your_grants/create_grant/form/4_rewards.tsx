@@ -4,6 +4,7 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
+import supportedCurrencies from '../../../../constants/supportedCurrencies';
 import Datepicker from '../../../ui/forms/datepicker';
 import Dropdown from '../../../ui/forms/dropdown';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
@@ -15,6 +16,7 @@ function GrantRewardsInput({
   setRewardError,
   rewardCurrency,
   setRewardCurrency,
+  setRewardCurrencyAddress,
   date,
   setDate,
   dateError,
@@ -26,6 +28,7 @@ function GrantRewardsInput({
   setRewardError: (rewardError: boolean) => void;
   rewardCurrency: string;
   setRewardCurrency: (rewardCurrency: string) => void;
+  setRewardCurrencyAddress: (rewardCurrencyAddress: string) => void;
   date: string;
   setDate: (date: string) => void;
   dateError: boolean;
@@ -53,22 +56,12 @@ function GrantRewardsInput({
         <Box mt={5} ml={4} minW="132px" flex={0}>
           <Dropdown
             listItemsMinWidth="132px"
-            listItems={[
-              {
-                icon: '/network_icons/ethereum.svg',
-                label: 'ETH',
-              },
-              {
-                icon: '/network_icons/ethereum.svg',
-                label: 'MATIC',
-              },
-              {
-                icon: '/network_icons/ethereum.svg',
-                label: 'USDC',
-              },
-            ]}
+            listItems={supportedCurrencies}
             value={rewardCurrency}
-            onChange={(data: any) => setRewardCurrency(data)}
+            onChange={(data: any) => {
+              setRewardCurrency(data.label);
+              setRewardCurrencyAddress(data.id);
+            }}
           />
         </Box>
       </Flex>

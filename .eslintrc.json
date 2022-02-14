@@ -14,9 +14,6 @@
   },
   "rules": {
     // disabling this for faster development, remove before release
-    "react/jsx-props-no-spreading": "off",
-    "@typescript-eslint/no-unused-vars": "off",
-    "no-console": "off",
-    "object-curly-newline": "off"
+    "react/jsx-props-no-spreading": "off"
   }
 }
