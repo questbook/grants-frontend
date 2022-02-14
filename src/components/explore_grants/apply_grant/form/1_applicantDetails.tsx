@@ -13,6 +13,7 @@ function ApplicantDetails({
   setApplicantNameError,
   applicantEmailError,
   setApplicantEmailError,
+  grantRequiredFields,
 }: {
   applicantName: string;
   setApplicantName: (applicantName: string) => void;
@@ -22,6 +23,7 @@ function ApplicantDetails({
   setApplicantNameError: (applicantNameError: boolean) => void;
   applicantEmailError: boolean;
   setApplicantEmailError: (applicantEmailError: boolean) => void;
+  grantRequiredFields: string[];
 }) {
   return (
     <>
@@ -42,6 +44,7 @@ function ApplicantDetails({
         isError={applicantNameError}
         errorText="Required"
         value={applicantName}
+        visible={grantRequiredFields.includes('applicantName')}
       />
       <Box mt={6} />
       <SingleLineInput
@@ -56,6 +59,7 @@ function ApplicantDetails({
         }}
         isError={applicantEmailError}
         errorText="Required"
+        visible={grantRequiredFields.includes('applicantEmail')}
       />
     </>
   );
