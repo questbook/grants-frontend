@@ -7,6 +7,7 @@ import {
   Container,
   Flex,
   Box,
+  IconButton, Image,
 } from '@chakra-ui/react';
 
 interface Props {
@@ -18,8 +19,8 @@ interface Props {
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   topIcon?: React.ReactNode;
-  closeOnOverlayClick?: boolean;
-  width?: string | number;
+  modalWidth?: string | number;
+  closeButtonMargin?: string | number;
 }
 
 function Modal({
@@ -31,18 +32,17 @@ function Modal({
   rightIcon,
   topIcon,
   alignTitle,
-  closeOnOverlayClick, width,
+  modalWidth, closeButtonMargin,
 }: Props) {
   return (
     <ModalComponent
       isCentered
       isOpen={isOpen}
       onClose={onClose}
-      closeOnOverlayClick={closeOnOverlayClick}
     >
       <ModalOverlay maxH="100vh" />
-      <ModalContent minW={width} maxH="90vh" overflow="scroll">
-        <Container px={8} py={9}>
+      <ModalContent minW={modalWidth} maxH="90vh" overflow="scroll">
+        <Container px={8} pt={9}>
           {typeof topIcon !== 'undefined' && (
             <Flex direction="column" align="center">
               {topIcon}
@@ -54,8 +54,18 @@ function Modal({
             <Heading textAlign={alignTitle} variant="modal">
               {title}
             </Heading>
-            {typeof rightIcon !== 'undefined' && <Box mx="auto" />}
+            <Box mx="auto" />
             {typeof rightIcon !== 'undefined' && rightIcon}
+            <IconButton
+              m={closeButtonMargin}
+              aria-label="close-button"
+              size="14px"
+              icon={<Image boxSize="14px" src="/ui_icons/close.svg" />}
+              _hover={{}}
+              _active={{}}
+              variant="ghost"
+              onClick={onClose}
+            />
           </Flex>
         </Container>
         {children}
@@ -69,8 +79,8 @@ Modal.defaultProps = {
   rightIcon: undefined,
   topIcon: undefined,
   alignTitle: 'left',
-  closeOnOverlayClick: false,
-  width: 480,
+  modalWidth: 480,
+  closeButtonMargin: '0px 0px 0px 20px',
 };
 
 export default Modal;

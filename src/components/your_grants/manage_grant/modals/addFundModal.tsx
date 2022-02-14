@@ -11,9 +11,9 @@ import {
   Link,
 } from '@chakra-ui/react';
 import React from 'react';
-import Dropdown from '../../ui/forms/dropdown';
-import SingleLineInput from '../../ui/forms/singleLineInput';
-import Modal from '../../ui/modal';
+import Dropdown from '../../../ui/forms/dropdown';
+import SingleLineInput from '../../../ui/forms/singleLineInput';
+import Modal from '../../../ui/modal';
 
 interface Props {
   isOpen: boolean;
@@ -43,21 +43,35 @@ function AddFunds({ isOpen, onClose }: Props) {
         />
       )}
       rightIcon={(
-        <Button
-          _focus={{}}
-          variant="link"
-          color="#AA82F0"
-          leftIcon={<Image src="/sidebar/discord_icon.svg" />}
-        >
-          Support 24*7
-        </Button>
+        <Flex direction="row" justify="start" align="center">
+          <Button
+            _focus={{}}
+            variant="link"
+            color="#AA82F0"
+            leftIcon={<Image src="/sidebar/discord_icon.svg" />}
+          >
+            Support 24*7
+          </Button>
+          {type === -1 && <Box mr={4} />}
+          {type === -1 && (
+          <IconButton
+            aria-label="close-button"
+            size="14px"
+            icon={<Image boxSize="14px" src="/ui_icons/close.svg" />}
+            _hover={{}}
+            _active={{}}
+            variant="ghost"
+            onClick={() => onClose()}
+          />
+          )}
+        </Flex>
       )}
-      modalWidth={527}
+      width={527}
       // closeOnOverlayClick
     >
       <ModalBody>
         {type === -1 && (
-        <Flex px={7} mb={7} mt={9} direction="column" justify="start" align="center">
+        <Flex px={7} mb={7} direction="column" justify="start" align="center">
           <Image src="/illustrations/add_funds_body.svg" />
           <Text
             mt={10}
