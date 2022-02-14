@@ -2,6 +2,7 @@
 import React, { useContext, useState } from 'react';
 import { Box, Button, Text, Image, Link, Flex, Container } from '@chakra-ui/react';
 import { useContract, useSigner } from 'wagmi';
+import { gql } from '@apollo/client';
 import ApplicantDetails from './1_applicantDetails';
 import AboutProject from './3_aboutProject';
 import AboutTeam from './2_aboutTeam';
@@ -9,15 +10,18 @@ import Funding from './4_funding';
 import config from '../../../../constants/config';
 import ApplicationRegistryAbi from '../../../../contracts/abi/ApplicationRegistryAbi.json';
 import { ApiClientsContext } from '../../../../../pages/_app';
+import { getGrantApplication } from '../../../../graphql/daoQueries';
 
 interface Props {
   onSubmit: (data: any) => void;
   title: string;
   grantId: string;
   daoLogo: string;
+  workspaceId: string;
   rewardAmount: string;
   rewardCurrency: string;
   rewardCurrencyCoin: string;
+  grantRequiredFields: string[];
 }
 
 // eslint-disable-next-line max-len
@@ -26,12 +30,21 @@ function Form({
   title,
   grantId,
   daoLogo,
+  workspaceId,
   rewardAmount,
   rewardCurrency,
   rewardCurrencyCoin,
+  grantRequiredFields,
 }: Props) {
   const [signer] = useSigner();
-  // const { validatorApi } = apiClientContext;
+  const applicationRegistryContract = useContract({
+    addressOrName: config.ApplicationRegistryAddress,
+    contractInterface: ApplicationRegistryAbi,
+    signerOrProvider: signer.data,
+  });
+
+  const apiClientContext = useContext(ApiClientsContext);
+  const { subgraphClient } : any = apiClientContext;
   const [applicantName, setApplicantName] = useState('');
   const [applicantNameError, setApplicantNameError] = useState(false);
 
@@ -80,102 +93,154 @@ function Form({
   const [fundingBreakdownError, setFundingBreakdownError] = useState(false);
 
   const handleOnSubmit = async () => {
-    let error = false;
-    if (applicantName === '') {
-      setApplicantNameError(true);
-      error = true;
-    }
-    if (applicantEmail === '') {
-      setApplicantEmailError(true);
-      error = true;
-    }
-    if (!teamMembers || teamMembers <= 0) {
-      setTeamMembersError(true);
-      error = true;
-    }
-
-    let membersDescriptionError = false;
-    const newMembersDescriptionArray = [...membersDescription];
-    membersDescription.forEach((member, index) => {
-      if (member.description === '') {
-        newMembersDescriptionArray[index].isError = true;
-        membersDescriptionError = true;
+    try {
+      let error = false;
+      if (applicantName === '' && grantRequiredFields.includes('applicantName')) {
+        setApplicantNameError(true);
+        error = true;
       }
-    });
-
-    if (membersDescriptionError) {
-      setMembersDescription(newMembersDescriptionArray);
-      error = true;
-    }
-
-    if (projectName === '') {
-      setProjectNameError(true);
-      error = true;
-    }
-
-    let projectLinksError = false;
-    const newProjectLinks = [...projectLinks];
-    projectLinks.forEach((project, index) => {
-      if (project.link === '') {
-        newProjectLinks[index].isError = true;
-        projectLinksError = true;
+      if (applicantEmail === '' && grantRequiredFields.includes('applicantEmail')) {
+        setApplicantEmailError(true);
+        error = true;
       }
-    });
-
-    if (projectLinksError) {
-      setProjectLinks(newProjectLinks);
-      error = true;
-    }
-
-    if (projectDetails === '') {
-      setProjectDetailsError(true);
-      error = true;
-    }
-    if (projectGoal === '') {
-      setProjectGoalError(true);
-      error = true;
-    }
-
-    let projectMilestonesError = false;
-    const newProjectMilestones = [...projectMilestones];
-    projectMilestones.forEach((project, index) => {
-      if (project.milestone === '') {
-        newProjectMilestones[index].milestoneIsError = true;
-        projectMilestonesError = true;
+      if ((!teamMembers || teamMembers <= 0) && grantRequiredFields.includes('teamMembers')) {
+        setTeamMembersError(true);
+        error = true;
       }
-      if (project.milestoneReward === '') {
-        newProjectMilestones[index].milestoneRewardIsError = true;
-        projectMilestonesError = true;
+
+      let membersDescriptionError = false;
+      const newMembersDescriptionArray = [...membersDescription];
+      membersDescription.forEach((member, index) => {
+        if (member.description === '' && grantRequiredFields.includes('memberDetails')) {
+          newMembersDescriptionArray[index].isError = true;
+          membersDescriptionError = true;
+        }
+      });
+
+      if (membersDescriptionError) {
+        setMembersDescription(newMembersDescriptionArray);
+        error = true;
       }
-    });
 
-    if (projectMilestonesError) {
-      setProjectMilestones(newProjectMilestones);
-      error = true;
-    }
+      if (projectName === '' && grantRequiredFields.includes('projectName')) {
+        setProjectNameError(true);
+        error = true;
+      }
 
-    if (fundingAsk === '') {
-      setFundingAskError(true);
-      error = true;
+      let projectLinksError = false;
+      const newProjectLinks = [...projectLinks];
+      projectLinks.forEach((project, index) => {
+        if (project.link === '' && grantRequiredFields.includes('projectLink')) {
+          newProjectLinks[index].isError = true;
+          projectLinksError = true;
+        }
+      });
+
+      if (projectLinksError) {
+        setProjectLinks(newProjectLinks);
+        error = true;
+      }
+
+      if (projectDetails === '' && grantRequiredFields.includes('projectDetails')) {
+        setProjectDetailsError(true);
+        error = true;
+      }
+      if (projectGoal === '' && grantRequiredFields.includes('projectGoals')) {
+        setProjectGoalError(true);
+        error = true;
+      }
+
+      let projectMilestonesError = false;
+      const newProjectMilestones = [...projectMilestones];
+      projectMilestones.forEach((project, index) => {
+        if (project.milestone === '') {
+          newProjectMilestones[index].milestoneIsError = true;
+          projectMilestonesError = true;
+        }
+        if (project.milestoneReward === '') {
+          newProjectMilestones[index].milestoneRewardIsError = true;
+          projectMilestonesError = true;
+        }
+      });
+
+      if (projectMilestonesError) {
+        setProjectMilestones(newProjectMilestones);
+        error = true;
+      }
+
+      if (fundingAsk === '' && grantRequiredFields.includes('fundingAsk')) {
+        setFundingAskError(true);
+        error = true;
+      }
+      if (fundingBreakdown === '' && grantRequiredFields.includes('fundingBreakdown')) {
+        setFundingBreakdownError(true);
+        error = true;
+      }
+      if (error) {
+        return;
+      }
+      console.log('mil', projectLinks);
+      const links = projectLinks.map((pl) => (pl.link));
+      const milestones = projectMilestones.map((pm) => (
+        { title: pm.milestone, amount: pm.milestoneReward }
+      ));
+
+      if (!signer || !signer.data || !apiClientContext) return;
+      const { data: { ipfsHash } } = await apiClientContext
+        .validatorApi
+        .validateGrantApplicationCreate({
+          grantId,
+          applicantId: await signer?.data?.getAddress(),
+          fields: {
+            applicantName: [applicantName],
+            applicantEmail: [applicantEmail],
+            projectName: [projectName],
+            projectDetails: [projectDetails],
+            fundingAsk: [fundingAsk],
+            fundingBreakdown: [fundingBreakdown],
+            teamMembers: [Number(teamMembers).toString()],
+            memberDetails: membersDescription.map((md) => (md.description)),
+            projectLink: links,
+            projectGoals: [projectGoal],
+            isMultipleMilestones: [grantRequiredFields.includes('isMultipleMilestones').toString()],
+          },
+          milestones,
+
+        });
+      console.log(ipfsHash);
+      console.log(grantId, workspaceId, projectMilestones.length);
+      const transaction = await applicationRegistryContract.submitApplication(
+        grantId,
+        Number(workspaceId).toString(),
+        ipfsHash,
+        projectMilestones.length,
+      );
+      const transactionData = await transaction.wait();
+
+      console.log(transactionData);
+      console.log(transactionData.blockNumber);
+
+      await subgraphClient.waitForBlock(transactionData.blockNumber);
+
+      const { data: { grantApplications } } = (await subgraphClient.client.query(
+        {
+
+          query: gql(getGrantApplication),
+          variables: {
+            grantID: grantId,
+            applicantID: await signer?.data?.getAddress(),
+          },
+        },
+      )) as any;
+      console.log(grantApplications);
+      if (!(grantApplications.length > 0)) {
+        throw new Error('Application not indexed');
+      }
+
+      onSubmit({ data: grantApplications });
+    } catch (error) {
+      console.log(error);
     }
-    if (fundingBreakdown === '') {
-      setFundingBreakdownError(true);
-      error = true;
-    }
-    if (error) {
-      return;
-    }
-    // await apiClientContext?.validatorApi.validateGrantApplicationCreate({
-    //   grantId,
-    //   applicantId: signer?.data?.address,
-    //   applicantName,
-    //   applicantEmail,
-    //   projectName,
-    //   projectDetails,
-    //   fundingBreakdown,
-    //   // add,
-    // });
-    onSubmit({ data: true });
   };
 
   return (
@@ -205,6 +270,7 @@ function Form({
           setApplicantNameError={setApplicantNameError}
           setApplicantEmail={setApplicantEmail}
           setApplicantEmailError={setApplicantEmailError}
+          grantRequiredFields={grantRequiredFields}
         />
 
         <Box mt="43px" />
@@ -215,6 +281,7 @@ function Form({
           setTeamMembersError={setTeamMembersError}
           membersDescription={membersDescription}
           setMembersDescription={setMembersDescription}
+          grantRequiredFields={grantRequiredFields}
         />
 
         <Box mt="19px" />
@@ -237,6 +304,7 @@ function Form({
           setProjectMilestones={setProjectMilestones}
           rewardCurrency={rewardCurrency}
           rewardCurrencyCoin={rewardCurrencyCoin}
+          grantRequiredFields={grantRequiredFields}
         />
 
         <Box mt="43px" />
@@ -252,6 +320,7 @@ function Form({
           rewardAmount={rewardAmount}
           rewardCurrency={rewardCurrency}
           rewardCurrencyCoin={rewardCurrencyCoin}
+          grantRequiredFields={grantRequiredFields}
         />
       </Container>
 

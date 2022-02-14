@@ -67,8 +67,8 @@ function AboutGrant() {
   }, [grantID, getGrantData]);
 
   useEffect(() => {
-    const funding: number = parseInt(grantData?.funding, 10);
-    setIsGrantVerified(funding > 0);
+    const funding = new BN(grantData?.funding);
+    setIsGrantVerified(funding.gt((new BN('0'))));
     setDeadline(getFormattedDate(grantData?.deadline));
     setTitle(grantData?.title);
     setDaoName(grantData?.workspace?.title);

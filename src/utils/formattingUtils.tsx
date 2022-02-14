@@ -58,3 +58,7 @@ export function getFormattedDate(timestamp: number) {
   const date = new Date(timestamp);
   return moment(date).format('LL');
 }
+
+export function getFormattedDateFromUnixTimestamp(timestamp: number) {
+  return moment.unix(timestamp).format('DD MMM');
+}

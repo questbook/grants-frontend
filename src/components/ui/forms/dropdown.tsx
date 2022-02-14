@@ -10,7 +10,7 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface DropdownProps {
   listItems: { icon?: string; label: string, id?: string }[];
@@ -40,6 +40,9 @@ function Dropdown({
   const [isOpen, setIsOpen] = React.useState(false);
   const defaultSelected = listItems[defaultIndex ?? 0];
   const [selected, setSelected] = React.useState(defaultSelected);
+  useEffect(() => {
+    setSelected(defaultSelected);
+  }, [defaultSelected]);
   return (
     <Flex flexDirection="column" alignItems="stretch" position="relative">
       {label && label.length && (
