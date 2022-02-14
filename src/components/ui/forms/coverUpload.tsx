@@ -4,7 +4,7 @@ import {
 } from '@chakra-ui/react';
 import React, { useRef } from 'react';
 
-interface ImageUploadProps {
+interface CoverUploadProps {
   label?: string;
   subtext?: string;
   image: string | null | undefined;
@@ -18,9 +18,9 @@ const defaultProps = {
   subtext: '',
 };
 
-function ImageUpload({
+function CoverUpload({
   label, subtext, image, onChange, onClear, isError,
-}: ImageUploadProps) {
+}: CoverUploadProps) {
   const ref = useRef(null);
 
   const openInput = () => {
@@ -83,5 +83,5 @@ function ImageUpload({
   );
 }
 
-ImageUpload.defaultProps = defaultProps;
-export default ImageUpload;
+CoverUpload.defaultProps = defaultProps;
+export default CoverUpload;
