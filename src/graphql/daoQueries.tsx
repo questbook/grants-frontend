@@ -1,3 +1,20 @@
+const getWorkspaceDetails = `
+query($workspaceID: ID!) {
+    workspace(id: $workspaceID, subgraphError: allow) {
+        id
+        title
+        about
+        logoIpfsHash
+        coverImageIpfsHash
+        supportedNetworks
+        socials {
+          name
+          value
+        }
+    }
+}
+`;
+
 const getAllGrants = `
 query($first: Int, $skip: Int) {
   grants(
@@ -93,5 +110,5 @@ export {
   getAllGrants, getNumOfApplicantsForAGrant, getAllDaoGrants as getAllGrantsForADao,
   getGrantDetails, getApplicantsForAGrant, getApplicationDetails,
   getApplicationMilestones, getFundSentForApplication, getMembersForAWorkspace,
-
+  getWorkspaceDetails
 };
