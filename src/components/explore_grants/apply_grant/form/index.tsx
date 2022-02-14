@@ -3,6 +3,7 @@ import React, { useContext, useState } from 'react';
 import { Box, Button, Text, Image, Link, Flex, Container } from '@chakra-ui/react';
 import { useContract, useSigner } from 'wagmi';
 import { gql } from '@apollo/client';
+import { formatAmount, parseAmount } from 'src/utils/formattingUtils';
 import ApplicantDetails from './1_applicantDetails';
 import AboutProject from './3_aboutProject';
 import AboutTeam from './2_aboutTeam';
@@ -181,8 +182,9 @@ function Form({
       }
       console.log('mil', projectLinks);
       const links = projectLinks.map((pl) => (pl.link));
+
       const milestones = projectMilestones.map((pm) => (
-        { title: pm.milestone, amount: pm.milestoneReward }
+        { title: pm.milestone, amount: parseAmount(pm.milestoneReward) }
       ));
 
       if (!signer || !signer.data || !apiClientContext) return;
@@ -196,7 +198,7 @@ function Form({
             applicantEmail: [applicantEmail],
             projectName: [projectName],
             projectDetails: [projectDetails],
-            fundingAsk: [fundingAsk],
+            fundingAsk: [parseAmount(fundingAsk)],
             fundingBreakdown: [fundingBreakdown],
             teamMembers: [Number(teamMembers).toString()],
             memberDetails: membersDescription.map((md) => (md.description)),
