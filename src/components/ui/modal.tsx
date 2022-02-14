@@ -15,9 +15,11 @@ interface Props {
   title: string;
   alignTitle?: 'left' | 'center' | 'right';
   children: React.ReactNode;
+  leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   topIcon?: React.ReactNode;
   closeOnOverlayClick?: boolean;
+  width?: string | number;
 }
 
 function Modal({
@@ -25,10 +27,11 @@ function Modal({
   onClose,
   title,
   children,
+  leftIcon,
   rightIcon,
   topIcon,
   alignTitle,
-  closeOnOverlayClick,
+  closeOnOverlayClick, width,
 }: Props) {
   return (
     <ModalComponent
@@ -38,26 +41,22 @@ function Modal({
       closeOnOverlayClick={closeOnOverlayClick}
     >
       <ModalOverlay maxH="100vh" />
-      <ModalContent minW={480} maxH="90vh" overflow="scroll">
-        <Container px={6} py={4}>
+      <ModalContent minW={width} maxH="90vh" overflow="scroll">
+        <Container px={8} py={9}>
           {typeof topIcon !== 'undefined' && (
             <Flex direction="column" align="center">
               {topIcon}
               <Box mb={5} />
             </Flex>
           )}
-          {typeof rightIcon !== 'undefined' ? (
-            <Flex direction="row" w="100%" justify="space-between">
-              <Heading textAlign={alignTitle} variant="modal">
-                {title}
-              </Heading>
-              {rightIcon}
-            </Flex>
-          ) : (
+          <Flex direction="row" w="100%" align="center">
+            {typeof leftIcon !== 'undefined' && leftIcon}
             <Heading textAlign={alignTitle} variant="modal">
               {title}
             </Heading>
-          )}
+            {typeof rightIcon !== 'undefined' && <Box mx="auto" />}
+            {typeof rightIcon !== 'undefined' && rightIcon}
+          </Flex>
         </Container>
         {children}
       </ModalContent>
@@ -66,10 +65,12 @@ function Modal({
 }
 
 Modal.defaultProps = {
+  leftIcon: undefined,
   rightIcon: undefined,
   topIcon: undefined,
   alignTitle: 'left',
   closeOnOverlayClick: false,
+  width: 480,
 };
 
 export default Modal;
