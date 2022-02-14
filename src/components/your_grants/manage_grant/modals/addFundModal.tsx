@@ -66,8 +66,7 @@ function AddFunds({ isOpen, onClose }: Props) {
           )}
         </Flex>
       )}
-      width={527}
-      // closeOnOverlayClick
+      modalWidth={527}
     >
       <ModalBody>
         {type === -1 && (

@@ -11,9 +11,11 @@ import {
   Link,
 } from '@chakra-ui/react';
 import React from 'react';
+import Lottie from 'lottie-react';
 import Dropdown from '../../ui/forms/dropdown';
 import SingleLineInput from '../../ui/forms/singleLineInput';
 import Modal from '../../ui/modal';
+import animationData from '../../../../public/animations/Add_Funds.json';
 
 interface Props {
   isOpen: boolean;
@@ -57,7 +59,8 @@ function AddFunds({ isOpen, onClose }: Props) {
       <ModalBody>
         {type === -1 && (
         <Flex px={7} mb={7} mt={9} direction="column" justify="start" align="center">
-          <Image src="/illustrations/add_funds_body.svg" />
+          {/* <Image src="/illustrations/add_funds_body.svg" /> */}
+          <Lottie animationData={animationData} />
           <Text
             mt={10}
             textAlign="center"
