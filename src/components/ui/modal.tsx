@@ -40,6 +40,7 @@ function Modal({
       isCentered
       isOpen={isOpen}
       onClose={onClose}
+      closeOnOverlayClick={false}
     >
       <ModalOverlay maxH="100vh" />
       <ModalContent minW={modalWidth} maxH="90vh" overflow="scroll">
