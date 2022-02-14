@@ -9,26 +9,12 @@ import {
   Flex,
   Container,
 } from '@chakra-ui/react';
-// import { GrantApplicationProps } from 'src/types/application';
+import { GrantApplicationProps } from 'src/types/application';
 import ApplicantDetails from './1_applicantDetails';
 import AboutProject from './3_aboutProject';
 import AboutTeam from './2_aboutTeam';
 import Funding from './4_funding';
 
-interface GrantApplicationProps {
-  applicantName: string;
-  applicantEmail:string;
-  teamMembers: string;
-  membersDescription: [{ description: string }];
-  projectName: string;
-  projectLinks: [{ link: string }];
-  projectDetails: string;
-  projectGoal: string;
-  projectMilestones: [{ milestone: string, milestoneReward: string }];
-  fundingAsk: string;
-  fundingBreakdown: string;
-
-}
 function Form({
   onSubmit,
   rewardAmount,
@@ -44,7 +30,7 @@ function Form({
   rewardCurrencyCoin: string;
   resubmitComment?: string;
   rejectedComment?: string;
-  formData: GrantApplicationProps;
+  formData: GrantApplicationProps | null;
 }) {
   const [applicantName, setApplicantName] = useState(
     formData?.applicantName ?? '',
@@ -52,12 +38,12 @@ function Form({
   const [applicantNameError, setApplicantNameError] = useState(false);
 
   const [applicantEmail, setApplicantEmail] = useState(
-    formData?.applicantEmail ?? false,
+    formData?.applicantEmail ?? '',
   );
   const [applicantEmailError, setApplicantEmailError] = useState(false);
 
   const [teamMembers, setTeamMembers] = useState(
-    formData?.teamMembers ?? '1',
+    formData?.teamMembers ?? 1,
   );
   const [teamMembersError, setTeamMembersError] = useState(false);
 
