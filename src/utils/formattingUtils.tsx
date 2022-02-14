@@ -62,3 +62,7 @@ export function getFormattedDate(timestamp: number) {
 export function getFormattedDateFromUnixTimestamp(timestamp: number) {
   return moment.unix(timestamp).format('DD MMM');
 }
+
+export function getFormattedFullDateFromUnixTimestamp(timestamp: number) {
+  return moment.unix(timestamp).format('LL');
+}

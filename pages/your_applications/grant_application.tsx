@@ -6,6 +6,7 @@ import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { gql } from '@apollo/client';
 import { ethers } from 'ethers';
 import { GrantApplicationProps } from 'src/types/application';
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import Form from '../../src/components/your_applications/grant_application/form';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import NavbarLayout from '../../src/layout/navbarLayout';
@@ -109,6 +110,9 @@ function ViewApplication() {
           rejectedComment={rejectedComment}
           resubmitComment={resubmitComment}
           formData={formData}
+          grantTitle={application?.grant?.title}
+          sentDate={application?.createdAtS}
+          daoLogo={getUrlForIPFSHash(application?.grant?.workspace?.logoIpfsHash)}
         />
       </Container>
     </Container>
