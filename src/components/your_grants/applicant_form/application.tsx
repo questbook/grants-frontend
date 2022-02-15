@@ -1,9 +1,15 @@
 import {
   Flex, Divider, Button, Image, Text, Heading, Box, Link,
 } from '@chakra-ui/react';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { formatAmount } from 'src/utils/formattingUtils';
+import { getAssetInfo } from 'src/utils/tokenUtils';
 
-function Application() {
+interface Props {
+  applicationData: any;
+}
+
+function Application({ applicationData }: Props) {
   const [selected, setSelected] = useState(0);
 
   const scroll = (ref: any, currentSelection: number) => {
@@ -17,6 +23,28 @@ function Application() {
 
   const refs = [useRef(null), useRef(null), useRef(null)];
   const tabs = ['Project Details', 'Funds Requested', 'About Team'];
+  const [projectTitle, setProjectTitle] = useState('');
+  const [projectLink, setProjectLink] = useState([]);
+  const [projectDetails, setProjectDetails] = useState('');
+  const [projectGoals, setProjectGoals] = useState('');
+  const [projectMilestones, setProjectMilestones] = useState([]);
+  const [fundingAsk, setFundingAsk] = useState('0');
+  const [fundingBreakdown, setFundingBreakdown] = useState('');
+  const [teamMembers, setTeamMembers] = useState('');
+  const [memberDetails, setMemberDetails] = useState([]);
+
+  useEffect(() => {
+    if (!applicationData) return;
+    setProjectTitle(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'projectName')?.value[0]);
+    setProjectLink(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'projectLink')?.value ?? []);
+    setProjectDetails(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'projectDetails')?.value[0]);
+    setProjectGoals(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'projectGoals')?.value[0]);
+    setProjectMilestones(applicationData?.milestones ?? []);
+    setFundingAsk(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'fundingAsk')?.value[0]);
+    setFundingBreakdown(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'fundingBreakdown')?.value[0]);
+    setTeamMembers(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'teamMembers')?.value[0]);
+    setMemberDetails(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'memberDetails')?.value ?? []);
+  }, [applicationData]);
 
   return (
     <>
@@ -46,86 +74,107 @@ function Application() {
       </Flex>
       <Flex direction="column" w="full">
         <Flex direction="column" w="full" mt={4}>
-          <Heading variant="applicationHeading" ref={refs[0]}>Grant Title</Heading>
-          <Text variant="applicationText" mt={2} mb={10}>Spock - Decentralised Sports stocks trading app</Text>
-          <Heading variant="applicationHeading">Project Link</Heading>
-          <Text variant="applicationText" mt={2} mb={10}>
-            <Link href="https://github.com/">https://github.com/</Link>
-          </Text>
-          <Heading variant="applicationHeading">Project Details</Heading>
-          <Text variant="applicationText" mt={2} mb={10}>
-            Spock is a decentralised sports stock trading app to be deployed on the Harmony
-            platform. Our idea was to build a platform where users can win rewards by
-            predicting the performance of favourite players. Spock is a revolutionary fantasy
-            game where one can buy and sell fantasy stocks of players. The better the player
-            plays on the day, the price goes up, and vice versa. A users role is to predict
-            the future performance of the players and build a portfolio accordingly.
-            Players can use the ONE/SPOCK tokens to trade players from different sports
-            as stocks. We have already developed the first prototype of the game and it is
-            running on the Polygon testnet.
-          </Text>
-          <Heading variant="applicationHeading">Project Goals</Heading>
-          <Text variant="applicationText" mt={2} mb={10}>
-            Build a platform where users can win rewards by predicting the performance of
-            favourite players. Players can use the ONE/SPOCK tokens to trade players from
-            different sports as stocks.
-          </Text>
-          <Heading variant="applicationHeading" ref={refs[1]}>Project Milestones</Heading>
-          <Flex direction="column" w="full" mt={3} mb={10}>
-            <Heading variant="applicationHeading" mt={3}>Milestone 1</Heading>
-            <Text variant="applicationText" mt={1}>Feature complete and deployed onto testnet</Text>
-            <Flex direction="row" justify="start" mt={3}>
-              <Image src="/images/dummy/Ethereum Icon.svg" />
+          <Box display={projectTitle && projectTitle !== '' ? '' : 'none'}>
+            <Heading variant="applicationHeading" ref={refs[0]}>Project Title</Heading>
+            <Text variant="applicationText" mt={2}>
+              {projectTitle}
+            </Text>
+          </Box>
+          <Box display={projectLink && projectLink.length ? '' : 'none'}>
+            <Heading variant="applicationHeading" mt={10}>Project Link</Heading>
+            {projectLink.map((link: string) => (
+              <Text variant="applicationText" mt={2}>
+                <Link href={link}>{link}</Link>
+              </Text>
+            ))}
+          </Box>
+
+          <Box display={projectDetails && projectDetails !== '' ? '' : 'none'}>
+            <Heading variant="applicationHeading" mt={10}>Project Details</Heading>
+            <Text variant="applicationText" mt={2} mb={10}>
+              {projectDetails}
+            </Text>
+          </Box>
+
+          <Box display={projectGoals && projectGoals !== '' ? '' : 'none'}>
+            <Heading variant="applicationHeading">Project Goals</Heading>
+            <Text variant="applicationText" mt={2} mb={10}>
+              {projectGoals}
+            </Text>
+          </Box>
+
+          <Box display={projectMilestones && projectMilestones.length ? '' : 'none'}>
+            <Heading variant="applicationHeading" ref={refs[1]}>Project Milestones</Heading>
+            <Flex direction="column" w="full" mt={3} mb={10}>
+              {projectMilestones.map((milestone: any, index:number) => (
+                <Box>
+                  <Heading variant="applicationHeading" mt={3}>
+                    Milestone
+                    {' '}
+                    {index + 1}
+                  </Heading>
+                  <Text variant="applicationText" mt={1}>{milestone?.title}</Text>
+                  <Flex direction="row" justify="start" mt={3}>
+                    <Image src={getAssetInfo(applicationData?.grant?.reward?.asset)?.icon} />
+                    <Box ml={2} />
+                    <Flex direction="column" justify="center" align="start">
+                      <Heading variant="applicationHeading">Funding asked</Heading>
+                      <Text variant="applicationText">
+                        {milestone?.amount && formatAmount(milestone?.amount)}
+                        {' '}
+                        { getAssetInfo(applicationData?.grant?.reward?.asset)?.label }
+                      </Text>
+                    </Flex>
+                  </Flex>
+                  <Box mt={4} />
+                </Box>
+              ))}
+            </Flex>
+          </Box>
+
+          <Box display={fundingAsk && fundingAsk !== '' ? '' : 'none'}>
+            <Heading variant="applicationHeading">Funding & Budget Breakdown</Heading>
+            <Flex direction="row" justify="start" mt={3} mb={10}>
+              <Image src={getAssetInfo(applicationData?.grant?.reward?.asset)?.icon} />
               <Box ml={2} />
               <Flex direction="column" justify="center" align="start">
-                <Heading variant="applicationHeading">Funding asked</Heading>
-                <Text variant="applicationText">60 ETH ≈ 2500 USD </Text>
+                <Heading variant="applicationHeading">Total funding asked</Heading>
+                <Text variant="applicationText" color="brand.500">
+                  {formatAmount(fundingAsk)}
+                  {' '}
+                  { getAssetInfo(applicationData?.grant?.reward?.asset)?.label }
+                </Text>
               </Flex>
             </Flex>
-            <Box mt={4} />
-            <Heading variant="applicationHeading" mt={3}>Milestone 2</Heading>
-            <Text variant="applicationText" mt={1}>Feature complete and deployed onto testnet</Text>
-            <Flex direction="row" justify="start" mt={3}>
-              <Image src="/images/dummy/Ethereum Icon.svg" />
-              <Box ml={2} />
-              <Flex direction="column" justify="center" align="start">
-                <Heading variant="applicationHeading">Funding asked</Heading>
-                <Text variant="applicationText">60 ETH ≈ 2500 USD </Text>
-              </Flex>
-            </Flex>
-          </Flex>
+          </Box>
 
-          <Heading variant="applicationHeading">Funding & Budget Breakdown</Heading>
-          <Flex direction="row" justify="start" mt={3} mb={10}>
-            <Image src="/images/dummy/Ethereum Icon.svg" />
-            <Box ml={2} />
-            <Flex direction="column" justify="center" align="start">
-              <Heading variant="applicationHeading">Total funding asked</Heading>
-              <Text variant="applicationText" color="brand.500">120 ETH</Text>
-            </Flex>
-          </Flex>
+          <Box display={fundingBreakdown && fundingBreakdown !== '' ? '' : 'none'}>
+            <Heading variant="applicationHeading">Funding Breakdown</Heading>
+            <Text variant="applicationText" mb={10}>
+              {fundingBreakdown}
+            </Text>
+          </Box>
 
-          <Heading variant="applicationHeading">Funding Breakdown</Heading>
-          <Text variant="applicationText" mb={10}>We will be using the funds for hiring iOS engineer, and a designer. For marketing we might need funds later.</Text>
-
-          <Heading variant="applicationHeading" ref={refs[2]}>About Team</Heading>
-          <Heading variant="applicationHeading" mt={4}>
-            Team Members -
-            {' '}
-            <Heading variant="applicationHeading" color="brand.500" display="inline-block">5</Heading>
-          </Heading>
-          <Heading variant="applicationHeading" color="brand.500" mt={5}>Member 1</Heading>
-          <Text variant="applicationText" mt={2}>
-            Undergrad - Computer Science, and freelancer. Here is the github profile:
-            {' '}
-            https://www.github.com
-          </Text>
-          <Heading variant="applicationHeading" color="brand.500" mt={5}>Member 2</Heading>
-          <Text variant="applicationText" mt={2}>
-            Undergrad - Computer Science, and freelancer. Here is the github profile:
-            {' '}
-            https://www.github.com
-          </Text>
+          <Box display={teamMembers && memberDetails.length ? '' : 'none'}>
+            <Heading variant="applicationHeading" ref={refs[2]}>About Team</Heading>
+            <Heading variant="applicationHeading" mt={4}>
+              Team Members -
+              {' '}
+              <Heading variant="applicationHeading" color="brand.500" display="inline-block">{teamMembers}</Heading>
+            </Heading>
+            {memberDetails.map((memberDetail: any, index:number) => (
+              <Box>
+                <Heading variant="applicationHeading" color="brand.500" mt={5}>
+                  Member
+                  {' '}
+                  {index + 1}
+                </Heading>
+                <Text variant="applicationText" mt={2}>
+                  {memberDetail}
+                </Text>
+              </Box>
+            ))}
+          </Box>
         </Flex>
         <Box my={10} />
       </Flex>

@@ -169,6 +169,7 @@ query($first: Int, $skip: Int, $grantID: Bytes!) {
   subgraphError:allow) {
     id
     grant {
+      title
       funding
       reward {
         asset
@@ -217,6 +218,7 @@ query($applicationID: Bytes!) {
     }
     applicantId
     state
+    feedback
     createdAtS
   }
 }
