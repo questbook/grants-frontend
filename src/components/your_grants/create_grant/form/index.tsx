@@ -221,10 +221,7 @@ function Form({
         setRewardError={setRewardError}
         rewardCurrency={rewardCurrency}
         setRewardCurrency={setRewardCurrency}
-<<<<<<< HEAD
         rewardCurrencyAddress={rewardCurrencyAddress}
-=======
->>>>>>> contracts
         setRewardCurrencyAddress={setRewardCurrencyAddress}
         date={date}
         setDate={setDate}

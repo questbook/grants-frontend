@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 import {
-  Container, Flex, useToast, Image, Text,
+  Container, Flex, useToast, Image, Text, Button,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
@@ -12,11 +12,11 @@ import React, {
 } from 'react';
 import { useAccount } from 'wagmi';
 import { BigNumber } from '@ethersproject/bignumber';
-import AddFunds from '../../src/components/funds/add_funds_modal';
+import AddFunds from 'src/components/funds/add_funds_modal';
 import Heading from '../../src/components/ui/heading';
 import YourGrantCard from '../../src/components/your_grants/yourGrantCard';
 import supportedCurrencies from '../../src/constants/supportedCurrencies';
-import { getAllGrantsForADao } from '../../src/graphql/daoQueries';
+import { getAllGrantsForCreator } from '../../src/graphql/daoQueries';
 import NavbarLayout from '../../src/layout/navbarLayout';
 import { formatAmount } from '../../src/utils/formattingUtils';
 import { ApiClientsContext } from '../_app';
@@ -43,14 +43,15 @@ function YourGrants() {
   const getGrantData = async () => {
     if (!subgraphClient || !accountData?.address) return;
     try {
-      const { data } = (await subgraphClient.query({
-        query: gql(getAllGrantsForADao),
-        variables: {
-          first: pageSize,
-          skip: pageSize * currentPage,
-          creatorId: accountData?.address,
-        },
-      })) as any;
+      const { data } = await subgraphClient
+        .query({
+          query: gql(getAllGrantsForCreator),
+          variables: {
+            first: pageSize,
+            skip: pageSize * currentPage,
+            creatorId: accountData?.address,
+          },
+        }) as any;
       // console.log(data);
       if (data.grants.length > 0) {
         setCurrentPage(currentPage + 1);
@@ -214,86 +215,7 @@ function YourGrants() {
               />
             );
           })}
-          {grants.length === 0 && Array(1)
-            .fill(0)
-            .map(() => (
-              <YourGrantCard
-                daoIcon="/images/dummy/Polygon Icon.svg"
-                grantTitle="Storage Provider (SP) Tooling Ideas"
-                grantDesc="A tool, script or tutorial to set up monitoring for miner GPU, CPU, memory and other and resource and performance metrics, ideally using Prometheus"
-                numOfApplicants={0}
-                endTimestamp={new Date(
-                  'January 2, 2022 23:59:59:000',
-                ).getTime()}
-                grantAmount="60"
-                grantCurrency="ETH"
-                grantCurrencyIcon="/images/dummy/Ethereum Icon.svg"
-                state="done"
-                onEditClick={() => router.push({
-                  pathname: '/your_grants/edit_grant/',
-                  query: {
-                    account: true,
-                  },
-                })}
-                onAddFundsClick={() => setAddFundsIsOpen(true)}
-              />
-            ))}
-          {grants.length === 0 && Array(1)
-            .fill(0)
-            .map(() => (
-              <YourGrantCard
-                daoIcon="/images/dummy/Polygon Icon.svg"
-                grantTitle="Storage Provider (SP) Tooling Ideas"
-                grantDesc="A tool, script or tutorial to set up monitoring for miner GPU, CPU, memory and other and resource and performance metrics, ideally using Prometheus"
-                numOfApplicants={10}
-                endTimestamp={new Date(
-                  'January 2, 2022 23:59:59:000',
-                ).getTime()}
-                grantAmount="60"
-                grantCurrency="ETH"
-                grantCurrencyIcon="/images/dummy/Ethereum Icon.svg"
-                state="done"
-                onEditClick={() => router.push({
-                  pathname: '/your_grants/edit_grant/',
-                  query: {
-                    account: true,
-                  },
-                })}
-                onViewApplicantsClick={() => router.push({
-                  pathname: '/your_grants/view_applicants/',
-                  query: {
-                    account: true,
-                  },
-                })}
-                onAddFundsClick={() => setAddFundsIsOpen(true)}
-              />
-            ))}
-          {grants.length === 0 && Array(1)
-            .fill(0)
-            .map(() => (
-              <YourGrantCard
-                daoIcon="/images/dummy/Polygon Icon.svg"
-                grantTitle="Storage Provider (SP) Tooling Ideas"
-                grantDesc="A tool, script or tutorial to set up monitoring for miner GPU, CPU, memory and other and resource and performance metrics, ideally using Prometheus"
-                numOfApplicants={10}
-                endTimestamp={new Date(
-                  'January 2, 2022 23:59:59:000',
-                ).getTime()}
-                grantAmount="60"
-                grantCurrency="ETH"
-                grantCurrencyIcon="/images/dummy/Ethereum Icon.svg"
-                state="processing"
-                onEditClick={() => router.push({
-                  pathname: '/your_grants/edit_grant/',
-
-                })}
-                onViewApplicantsClick={() => router.push({
-                  pathname: '/your_grants/view_applicants/',
-                })}
-                onAddFundsClick={() => setAddFundsIsOpen(true)}
-              />
-            ))}
-          {/* {grants.length === 0 && (
+          {grants.length === 0 && (
             <Flex direction="column" justify="center" h="100%" align="center" mx={4}>
               <Image h="174px" w="146px" src="/illustrations/no_grants.svg" />
               <Text
@@ -325,7 +247,7 @@ function YourGrants() {
                 Create a Grant
               </Button>
             </Flex>
-          )} */}
+          )}
         </Container>
       </Container>
       {grantForFunding && grantRewardAsset && (

@@ -6,7 +6,6 @@ import {
   Box,
   VStack,
   Image,
-  Link,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { ReactElement, useEffect } from 'react';

@@ -174,7 +174,7 @@ function BrowseGrants() {
                 isDaoVerified={false}
                 grantTitle={grant.title}
                 grantDesc={grant.summary}
-                numOfApplicants={0}
+                numOfApplicants={grant.numberOfApplications}
                 endTimestamp={new Date(grant.deadline).getTime()}
                 grantAmount={formatAmount(grant.reward.committed)}
                 grantCurrency={grantCurrency?.label ?? 'LOL'}

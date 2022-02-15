@@ -30,7 +30,9 @@ export type AbstractMilestonesTableProps = {
   renderStatus: (milestone: ApplicationMilestone) => React.ReactNode
 };
 
-function AbstractMilestonesTable({ milestones, rewardAssetId, renderStatus }: AbstractMilestonesTableProps) {
+function AbstractMilestonesTable(
+  { milestones, rewardAssetId, renderStatus }: AbstractMilestonesTableProps,
+) {
   const { icon: rewardIcon, label: rewardSymbol } = getAssetInfo(rewardAssetId);
 
   return (

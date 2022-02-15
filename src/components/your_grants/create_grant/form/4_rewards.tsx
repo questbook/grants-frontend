@@ -16,6 +16,8 @@ function GrantRewardsInput({
   setRewardError,
   rewardCurrency,
   setRewardCurrency,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  rewardCurrencyAddress,
   setRewardCurrencyAddress,
   date,
   setDate,
@@ -28,6 +30,7 @@ function GrantRewardsInput({
   setRewardError: (rewardError: boolean) => void;
   rewardCurrency: string;
   setRewardCurrency: (rewardCurrency: string) => void;
+  rewardCurrencyAddress: string;
   setRewardCurrencyAddress: (rewardCurrencyAddress: string) => void;
   date: string;
   setDate: (date: string) => void;

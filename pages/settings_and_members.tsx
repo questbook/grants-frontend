@@ -19,7 +19,7 @@ function SettingsAndMembers() {
     setSelected(to);
   };
 
-  async function getWorkspaceData(workspaceID) {
+  async function getWorkspaceData(workspaceID: string) {
     if (!workspaceID) return;
     const workspaceIDHex = `0x${parseInt(workspaceID, 10).toString(16)}`;
     const subgraphClient = new SubgraphClient();

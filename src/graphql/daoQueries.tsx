@@ -38,22 +38,47 @@ query($first: Int, $skip: Int) {
   workspace {title, logoIpfsHash}, 
   deadline,
   funding,
+  numberOfApplications,
 }}
 `;
 
 const getNumOfApplicantsForAGrant = `
 `;
 
-const getAllDaoGrants = `
-query($first: Int, $skip: Int, $creatorId: Bytes!) {
+const getAllGrantsForCreator = `
+query($first: Int, $skip: Int, $creatorId: String) {
   grants(
     first: $first, 
     skip: $skip, 
     subgraphError: allow, 
-    where: {
-      acceptingApplications: true, 
-      creatorId: $creatorId
-    }
+    where: { creatorId: $creatorId }
+    orderBy: createdAtS, 
+    orderDirection: desc
+  ) {
+  id, 
+  creatorId, 
+  title, 
+  summary, 
+  details, 
+  reward {
+    committed,
+    id,
+    asset
+  }, 
+  workspace {title, logoIpfsHash}, 
+  deadline,
+  funding,
+  numberOfApplications,
+}}
+`;
+
+const getAllGrantsForADao = `
+query($first: Int, $skip: Int, $workspaceId: String!) {
+  grants(
+    first: $first, 
+    skip: $skip, 
+    subgraphError: allow, 
+    where: { workspace: $workspaceId }
     orderBy: createdAtS, 
     orderDirection: desc
   ) {
@@ -202,21 +227,21 @@ query($applicationID: Bytes!) {
 
 const getApplicationMilestones = `
 query($grantId: ID!) {
-	grantApplications(where: { id: $grantId }) {
-	  grant {
-      reward {
-        asset
+    grantApplications(where: { id: $grantId }) {
+      grant {
+        reward {
+          asset
+        }
+      },
+      milestones {
+      id,
+      state,
+      title,
+      amount,
+      amountPaid,
+      updatedAtS,
       }
-    },
-	  milestones {
-		id,
-		state,
-		title,
-		amount,
-		amountPaid,
-		updatedAtS,
-	  }
-	}
+    }
 }
 `;
 
@@ -224,7 +249,7 @@ const getFundSentForApplication = `
 query($applicationId: String) {
   fundsTransfers(where: {application: $applicationId}, orderBy: createdAtS, orderDirection: desc) {
     grant {
-    	id
+      id
     },
     application {
       id
@@ -246,9 +271,41 @@ query($applicationId: String) {
 const getMembersForAWorkspace = `
 `;
 
+const getFunding = `
+query($grantId: String) {
+  fundsTransfers(where: {grant: $grantId}, orderBy: createdAtS, orderDirection: desc) {
+    grant { id },
+    application { id },
+    milestone { id, title },
+    id,
+    amount,
+    sender,
+    to,
+    createdAtS,
+    type
+  }
+}
+`;
+
+const getNumberOfGrantsQuery = `
+query($first: Int, $skip: Int, $creatorId: String) {
+  grants(where: {creatorId: $creatorId}, subgraphError: allow){
+    id,
+  }}
+`;
+
+const getNumberOfApplicationsQuery = `
+query($first: Int, $skip: Int, $applicantId: String) {
+  grantApplications(where: {applicantId: $applicantId}, subgraphError: allow){
+    id,
+  }}
+`;
+
 export {
-  getAllGrants, getNumOfApplicantsForAGrant, getAllDaoGrants as getAllGrantsForADao,
+  getAllGrants, getNumOfApplicantsForAGrant, getAllGrantsForADao,
+  getAllGrantsForCreator,
   getGrantDetails, getApplicantsForAGrant, getApplicationDetails,
   getApplicationMilestones, getFundSentForApplication, getMembersForAWorkspace, getGrantApplication,
-  getMyApplications, getWorkspaceDetails,
+  getMyApplications, getWorkspaceDetails, getFunding,
+  getNumberOfGrantsQuery, getNumberOfApplicationsQuery,
 };

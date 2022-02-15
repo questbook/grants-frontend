@@ -10,7 +10,6 @@ import CreateGrant from '../src/components/signup/create_grant';
 import DaoCreated from '../src/components/signup/daoCreated';
 import WorkspaceRegistryABI from '../src/contracts/abi/WorkspaceRegistryAbi.json';
 import GrantFactoryABI from '../src/contracts/abi/GrantFactoryAbi.json';
-import Tooltip from '../src/components/ui/tooltip';
 import NavbarLayout from '../src/layout/navbarLayout';
 import { ApiClientsContext } from './_app';
 import config from '../src/constants/config';
@@ -23,7 +22,7 @@ function SignupDao() {
   const router = useRouter();
   const [loading, setLoading] = React.useState(false);
   const [daoCreated, setDaoCreated] = React.useState(false);
-  const [creatingGrant, setCreatingGrant] = React.useState(true);
+  const [creatingGrant, setCreatingGrant] = React.useState(false);
 
   const [daoData, setDaoData] = React.useState<{
     name: string;
