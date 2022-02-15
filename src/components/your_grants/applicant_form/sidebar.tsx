@@ -101,6 +101,14 @@ function Sidebar({
           Approve Grant
         </Button>
         <Button
+          onClick={() => onAcceptApplicationClick()}
+          variant="primary"
+          mt={7}
+          display={applicationData?.state === 'resubmit' ? '' : 'none'}
+        >
+          Accept Application
+        </Button>
+        <Button
           onClick={() => onResubmitApplicationClick()}
           variant="resubmit"
           mt={4}
