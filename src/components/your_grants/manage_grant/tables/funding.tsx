@@ -1,40 +1,148 @@
-import React from 'react';
+/* eslint-disable react/no-unstable-nested-components */
+import React, { useMemo } from 'react';
 import {
   Text, Image, Flex, Tooltip,
 } from '@chakra-ui/react';
 import moment from 'moment';
 import { FundTransfer } from 'src/graphql/queries';
 import { getAssetInfo } from 'src/utils/tokenUtils';
-import { text } from 'node:stream/consumers';
+import Link from 'next/link';
 
-const TABLE_HEADERS = [
-  {
+// extract milstone index from ID and generate title like "Milestone (index+1)"
+const getMilestoneTitle = (milestone: FundTransfer['milestone']) => {
+  if (milestone) {
+    const [, idx] = milestone.id.split('.');
+    return `Milestone ${(+idx) + 1}`;
+  }
+  return 'Unknown Milestone';
+};
+
+const getTextWithEllipses = (txt: string, maxLength = 7) => (txt.length > maxLength ? `${txt.slice(0, maxLength)}...` : txt);
+
+const TABLE_HEADERS = {
+  milestoneTitle: {
     title: 'Funding Received',
-    flex: 0.6,
+    flex: 0.5,
+    content: (item: FundTransfer, assetId: string) => (
+      <>
+        <Image
+          display="inline-block"
+          src={getAssetInfo(assetId)?.icon}
+          mr={2}
+          h="27px"
+          w="27px"
+        />
+        <Text textAlign="start" variant="applicationText">
+          {getMilestoneTitle(item.milestone)}
+          {' '}
+          -
+          {' '}
+          <Text
+            display="inline-block"
+            variant="applicationText"
+            fontWeight="700"
+          >
+            {item.amount}
+            {' '}
+            {getAssetInfo(assetId)?.label}
+          </Text>
+        </Text>
+      </>
+    ),
   },
-  { title: 'On', flex: 0.2 },
-  { title: 'To', flex: 0.2 },
-  // { title: 'Status', flex: 0.5 },
-];
+  amount: {
+    title: 'Amount',
+    flex: 0.35,
+    content: (item: FundTransfer, assetId: string) => (
+      <Text
+        display="inline-block"
+        variant="applicationText"
+        fontWeight="700"
+      >
+        {item.amount}
+        {' '}
+        {getAssetInfo(assetId)?.label}
+      </Text>
+    ),
+  },
+  date: {
+    title: 'On',
+    flex: 0.2,
+    content: (item: FundTransfer) => (
+      <Tooltip label={`Transaction ID: ${item.id}`}>
+        <Text variant="applicationText">
+          {moment(new Date(item.createdAtS * 1000)).format('MMM DD, YYYY')}
+        </Text>
+      </Tooltip>
+    ),
+  },
+  to: {
+    title: 'To',
+    flex: 0.15,
+    content: (item: FundTransfer) => (
+      <Tooltip label={item.to}>
+        <Text variant="applicationText" color="#122224">
+          {getTextWithEllipses(item.to)}
+        </Text>
+      </Tooltip>
+    ),
+  },
+  action: {
+    title: 'Action',
+    flex: 0.1,
+    content: (item: FundTransfer) => (
+      <Link
+        href={`https://etherscan.io/tx/${item.id}/`}
+        replace={false}
+      >
+        <Text
+          color="brand.500"
+          variant="applicationText"
+          fontWeight="500"
+          fontSize="14px"
+          lineHeight="14px"
+        >
+          View
+          {' '}
+          <Image display="inline-block" src="/ui_icons/link.svg" />
+        </Text>
+      </Link>
+    ),
+  },
+  from: {
+    title: 'From',
+    flex: 0.2,
+    content: (item: FundTransfer) => (
+      <Tooltip label={item.sender}>
+        <Text variant="applicationText" color="#122224">
+          {getTextWithEllipses(item.sender)}
+          {' '}
+          {item.sender === item.grant.id ? ' (Grant)' : ''}
+        </Text>
+      </Tooltip>
+    ),
+  },
+  initiator: {
+    title: 'Initiated By',
+    flex: 0.3,
+    content: (item: FundTransfer) => (
+      <Tooltip label={item.sender}>
+        <Text variant="applicationText" color="#122224">
+          {getTextWithEllipses(item.sender)}
+        </Text>
+      </Tooltip>
+    ),
+  },
+};
 
 export type FundingProps = {
   fundTransfers: FundTransfer[]
   assetId: string
+  columns: (keyof typeof TABLE_HEADERS)[]
 };
 
-function Funding({ fundTransfers, assetId }: FundingProps) {
-  const assetInfo = getAssetInfo(assetId);
-  // extract milstone index from ID and generate title like "Milestone (index+1)"
-  const getMilestoneTitle = (milestone: FundTransfer['milestone']) => {
-    if (milestone) {
-      const [, idx] = milestone.id.split('.');
-      return `Milestone ${(+idx) + 1}`;
-    }
-    return 'Unknown Milestone';
-  };
-
-  const getTextWithEllipses = (txt: string, maxLength = 10) => (txt.length > maxLength ? `${txt.slice(0, maxLength)}...` : txt);
-
+function Funding({ fundTransfers, assetId, columns }: FundingProps) {
+  const tableHeaders = useMemo(() => columns.map((column) => TABLE_HEADERS[column]), [columns]);
   return (
     <Flex w="100%" my={4} align="center" direction="column" flex={1}>
       <Flex
@@ -45,10 +153,10 @@ function Funding({ fundTransfers, assetId }: FundingProps) {
         mt="32px"
         mb="9px"
       >
-        {TABLE_HEADERS.map((header) => (
+        {tableHeaders.map((header) => (
           <Text
             textAlign="left"
-            flex={header.flex != null ? header.flex : 1}
+            flex={header.flex}
             variant="tableHeader"
           >
             {header.title}
@@ -64,89 +172,31 @@ function Funding({ fundTransfers, assetId }: FundingProps) {
       >
         {fundTransfers.map((item, index) => (
           <Flex
+            key={item.id}
             direction="row"
             w="100%"
             justify="stretch"
             align="center"
             bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
             py={4}
-            pl="22px"
-            pr="28px"
+            pl="15px"
+            pr="15px"
           >
-            <Flex
-              direction="row"
-              justify="start"
-              align="center"
-              flex={TABLE_HEADERS[0].flex}
-            >
-              <Image
-                display="inline-block"
-                src={assetInfo?.icon}
-                mr={2}
-                h="27px"
-                w="27px"
-              />
-              <Text textAlign="start" variant="applicationText">
-                {getMilestoneTitle(item.milestone)}
-                {' '}
-                -
-                {' '}
-                <Text
-                  display="inline-block"
-                  variant="applicationText"
-                  fontWeight="700"
-                >
-                  {item.amount}
-                  {' '}
-                  {assetInfo?.label}
-                </Text>
-              </Text>
-            </Flex>
-
-            <Flex
-              flex={TABLE_HEADERS[1].flex}
-              direction="column"
-            >
-              <Tooltip label={`Transaction ID: ${item.id}`}>
-                <Text variant="applicationText">
-                  {moment(new Date(item.createdAtS * 1000)).format('MMM DD, YYYY')}
-                </Text>
-              </Tooltip>
-            </Flex>
-
-            <Flex
-              flex={TABLE_HEADERS[2].flex}
-              direction="column"
-            >
-              <Tooltip label={item.to}>
-                <Text variant="applicationText" color="#122224">
-                  {getTextWithEllipses(item.to)}
-                </Text>
-              </Tooltip>
-            </Flex>
-
-            {/* <Flex
-              flex={TABLE_HEADERS[3].flex}
-            >
-              <Flex direction="column" justify="center" align="end" w="100%">
-                <Link
-                  href="https://etherscan.io/tx/0x265f00837424f1ef46cb8c6858d6cc9a486ab702f8f019424006dcb029f66e75/"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  color="brand.500"
-                  fontWeight="500"
-                  fontSize="14px"
-                  lineHeight="14px"
-                  // textAlign="right"
-                  _focus={{}}
-                >
-                  View
-                  {' '}
-                  <Image display="inline-block" src="/ui_icons/link.svg" />
-                </Link>
-              </Flex>
-
-            </Flex> */}
+            {
+              tableHeaders.map(
+                ({ title, flex, content }) => (
+                  <Flex
+                    key={title}
+                    direction="row"
+                    justify="start"
+                    align="center"
+                    flex={flex}
+                  >
+                    {content(item, assetId)}
+                  </Flex>
+                ),
+              )
+            }
           </Flex>
         ))}
       </Flex>

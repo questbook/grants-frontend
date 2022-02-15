@@ -42,7 +42,11 @@ function ManageGrant() {
       icon: fundingIcon,
       title: getTotalFundingRecv(milestones).toString(),
       subtitle: 'Funding Sent',
-      content: <Funding fundTransfers={fundsDisbursed} assetId={rewardAsset} />,
+      content: <Funding
+        fundTransfers={fundsDisbursed}
+        assetId={rewardAsset}
+        columns={['milestoneTitle', 'date', 'from', 'action']}
+      />,
     },
     {
       icon: fundingIcon,

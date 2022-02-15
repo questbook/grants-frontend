@@ -1,15 +1,38 @@
-import { Button, Divider, Flex, Text, Box, Image, IconButton, Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
-import React from 'react';
+import {
+  Button, Divider, Flex, Text, Box, Image, IconButton, Menu, MenuButton, MenuList, MenuItem,
+} from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { Grant, useFundsTransfer } from 'src/graphql/queries';
+import { getAssetInfo } from 'src/utils/tokenUtils';
+import Funding from '../your_grants/manage_grant/tables/funding';
 import AddFunds from './add_funds_modal';
-import Deposits from './deposits';
-import Withdrawals from './withdrawals';
 import WithdrawFunds from './withdraw_funds_modal';
 
-function FundForAGrant() {
-  const [isAddFundsModalOpen, setIsAddFundsModalOpen] = React.useState(false);
-  const [isWithdrawFundsModalOpen, setIsWithdrawFundsModalOpen] = React.useState(false);
-  const tabs = ['Deposits', 'Withdrawals'];
+export type FundForAGrantProps = {
+  grant: Grant
+};
+
+const TABS = ['Deposits', 'Withdrawals'] as const;
+
+const TABS_MAP = [
+  {
+    type: 'funds_deposited',
+    columns: ['from', 'to', 'amount', 'date', 'action'] as const,
+  },
+  {
+    type: 'funds_withdrawn',
+    columns: ['from', 'to', 'initiator', 'amount', 'date', 'action'] as const,
+  },
+] as const;
+
+function FundForAGrant({ grant }: FundForAGrantProps) {
+  const [isAddFundsModalOpen, setIsAddFundsModalOpen] = useState(false);
+  const [isWithdrawFundsModalOpen, setIsWithdrawFundsModalOpen] = useState(false);
   const [selected, setSelected] = React.useState(0);
+
+  const { data } = useFundsTransfer(grant.id);
+
+  const assetInfo = getAssetInfo(grant.reward.asset);
 
   const switchTab = (to: number) => {
     setSelected(to);
@@ -18,13 +41,17 @@ function FundForAGrant() {
   return (
     <Flex direction="column" w="100%" mt={3} mb={12}>
       <Flex direction="row" justify="space-between" w="100%">
-        <Text fontWeight="700" fontSize="18px" lineHeight="26px">Storage Provider (SP) Tooling Ideas</Text>
+        <Text fontWeight="700" fontSize="18px" lineHeight="26px">{grant.title}</Text>
         <Flex direction="row" justify="start" align="center">
-          <Image src="/images/dummy/Ethereum Icon.svg" alt="Ethereum Icon" />
+          <Image src={assetInfo?.icon} alt="Ethereum Icon" />
           <Box mr={2} />
           <Text fontWeight="700" fontSize="16px" lineHeight="24px" letterSpacing={0.5}>Funds Available</Text>
           <Box mr={2} />
-          <Text fontWeight="700" fontSize="16px" lineHeight="24px" letterSpacing={0.5} color="brand.500">40 ETH</Text>
+          <Text fontWeight="700" fontSize="16px" lineHeight="24px" letterSpacing={0.5} color="brand.500">
+            {grant.reward.committed}
+            {' '}
+            {assetInfo?.label}
+          </Text>
           <Box mr={5} />
           <Button variant="primaryCta" onClick={() => setIsAddFundsModalOpen(true)}>Add Funds</Button>
           <Menu>
@@ -45,7 +72,7 @@ function FundForAGrant() {
         </Flex>
       </Flex>
       <Flex direction="row" w="full" justify="start" align="stretch" my={4}>
-        {tabs.map((tab, index) => (
+        {TABS.map((tab, index) => (
           <Button
             variant="link"
             ml={index === 0 ? 0 : 12}
@@ -66,7 +93,13 @@ function FundForAGrant() {
         ))}
       </Flex>
       <Divider />
-      {selected === 0 ? <Deposits /> : <Withdrawals />}
+
+      <Funding
+        fundTransfers={data.filter((d) => d.type === TABS_MAP[selected].type)}
+        assetId={grant.reward.asset}
+        columns={[...TABS_MAP[selected].columns]}
+      />
+
       <AddFunds
         isOpen={isAddFundsModalOpen}
         onClose={() => setIsAddFundsModalOpen(false)}
