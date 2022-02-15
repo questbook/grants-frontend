@@ -172,48 +172,42 @@ function YourGrants() {
           px={10}
         >
           <Heading title="Your grants" />
-          {grants.length > 0 &&
-            grants.map((grant: any) => {
-              const grantCurrency = supportedCurrencies.find(
-                (currency) =>
-                  currency.id.toLowerCase() ===
-                  grant.reward.asset.toString().toLowerCase()
-              );
-              return (
-                <YourGrantCard
-                  key={grant.id}
-                  daoIcon={`https://ipfs.infura.io:5001/api/v0/cat?arg=${grant.workspace.logoIpfsHash}`}
-                  grantTitle={grant.title}
-                  grantDesc={grant.summary}
-                  numOfApplicants={grant.numberOfApplications}
-                  endTimestamp={new Date(grant.deadline).getTime()}
-                  grantAmount={formatAmount(grant.reward.committed)}
-                  grantCurrency={grantCurrency?.label ?? 'LOL'}
-                  grantCurrencyIcon={
-                    grantCurrency?.icon ?? '/images/dummy/Ethereum Icon.svg'
-                  }
-                  state="done"
-                  onEditClick={() =>
-                    router.push({
-                      pathname: '/your_grants/edit_grant/',
-                      query: {
-                        account: true,
-                        id: grant.id,
-                      },
-                    })
-                  }
-                  onAddFundsClick={() => initialiseFundModal(grant)}
-                  onViewApplicantsClick={() =>
-                    router.push({
-                      pathname: '/your_grants/view_applicants/',
-                      query: {
-                        grantID: grant.id,
-                      },
-                    })
-                  }
-                />
-              );
-            })}
+          {grants.length > 0
+          && grants.map((grant: any) => {
+            const grantCurrency = supportedCurrencies.find(
+              (currency) => currency.id.toLowerCase()
+                === grant.reward.asset.toString().toLowerCase(),
+            );
+            return (
+              <YourGrantCard
+                key={grant.id}
+                daoIcon={`https://ipfs.infura.io:5001/api/v0/cat?arg=${grant.workspace.logoIpfsHash}`}
+                grantTitle={grant.title}
+                grantDesc={grant.summary}
+                numOfApplicants={grant.numberOfApplications}
+                endTimestamp={new Date(
+                  grant.deadline,
+                ).getTime()}
+                grantAmount={formatAmount(grant.reward.committed)}
+                grantCurrency={grantCurrency?.label ?? 'LOL'}
+                grantCurrencyIcon={grantCurrency?.icon ?? '/images/dummy/Ethereum Icon.svg'}
+                state="done"
+                onEditClick={() => router.push({
+                  pathname: '/your_grants/edit_grant/',
+                  query: {
+                    grantID: grant.id,
+                  },
+                })}
+                onAddFundsClick={() => initialiseFundModal(grant)}
+                onViewApplicantsClick={() => router.push({
+                  pathname: '/your_grants/view_applicants/',
+                  query: {
+                    grantID: grant.id,
+                  },
+                })}
+              />
+            );
+          })}
         </Container>
       </Container>
       {grantForFunding && grantRewardAsset && (
