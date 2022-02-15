@@ -182,7 +182,10 @@ function BrowseGrants() {
                     });
                     return;
                   }
-                  router.push({ pathname: '/explore_grants/about_grant' });
+                  router.push({
+                    pathname: '/explore_grants/about_grant',
+                    query: { grantID: grant.id },
+                  });
                 }}
               />
             );

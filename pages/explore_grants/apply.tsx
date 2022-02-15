@@ -2,16 +2,16 @@ import { gql } from '@apollo/client';
 import { Container } from '@chakra-ui/react';
 import BN from 'bn.js';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  ReactElement, useCallback, useEffect, useState,
+} from 'react';
 import Form from '../../src/components/explore_grants/apply_grant/form';
 import Sidebar from '../../src/components/explore_grants/apply_grant/sidebar';
 import supportedCurrencies from '../../src/constants/supportedCurrencies';
 import { getGrantDetails } from '../../src/graphql/daoQueries';
 import SubgraphClient from '../../src/graphql/subgraph';
 import NavbarLayout from '../../src/layout/navbarLayout';
-import { getFormattedDate } from '../../src/utils/formattingUtils';
 import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils';
-import { ApiClientsContext } from '../_app';
 
 function ApplyGrant() {
   const router = useRouter();

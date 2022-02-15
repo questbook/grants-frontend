@@ -60,7 +60,7 @@ function Content({
               variant="tableBody"
             >
               {'     '}
-              {`${item.applicant_address}`}
+              {`${item.applicant_address.substring(0, 13)}...`}
             </Text>
             <Text
               flex={tableHeadersflex[1]}

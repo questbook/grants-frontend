@@ -53,6 +53,7 @@ query($first: Int, $skip: Int, $creatorId: Bytes!) {
   workspace {title, logoIpfsHash}, 
   deadline,
   funding,
+  numberOfApplications,
 }}
 `;
 
@@ -91,8 +92,11 @@ query($grantID: ID!, $applicantID: Bytes!) {
 `;
 
 const getMyApplications = `
-query($applicantID: Bytes!) {
-  grantApplications(where:{
+query($first: Int, $skip: Int, $applicantID: Bytes!) {
+  grantApplications(
+    first: $first, 
+    skip: $skip, 
+    where:{
     applicantId: $applicantID
   },
   subgraphError:allow) {
@@ -115,7 +119,29 @@ query($applicantID: Bytes!) {
 `;
 
 const getApplicantsForAGrant = `
-
+query($first: Int, $skip: Int, $grantID: Bytes!) {
+  grantApplications(
+    first: $first,
+    where:{
+    grant: $grantID
+  },
+  subgraphError:allow) {
+    id
+    grant {
+      funding
+      reward {
+        asset
+      }
+    }
+    applicantId
+    state
+    createdAtS
+    fields {
+      id
+      value
+    }
+  }
+}
 `;
 
 const getApplicationDetails = `

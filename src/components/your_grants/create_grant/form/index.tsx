@@ -31,15 +31,19 @@ function Form({
   const applicantDetails = applicantDetailsList.map(
     ({
       title, tooltip, id, inputType,
-    }, index) => ({
-      title,
-      required: false,
-      id,
-      tooltip,
-      index,
-      inputType,
-    }),
-  );
+    }, index) => {
+      if (index === applicantDetailsList.length - 1) return null;
+      if (index === applicantDetailsList.length - 2) return null;
+      return {
+        title,
+        required: false,
+        id,
+        tooltip,
+        index,
+        inputType,
+      };
+    },
+  ).filter((obj) => obj != null);
   const [detailsRequired, setDetailsRequired] = useState(applicantDetails);
   const [extraField, setExtraField] = useState(false);
   const [multipleMilestones, setMultipleMilestones] = useState(false);
@@ -97,30 +101,27 @@ function Form({
     }
 
     if (!error) {
-      const requiredDetails = [] as any;
+      const requiredDetails = {} as any;
       detailsRequired.forEach((detail) => {
-        if (detail.required) {
-          requiredDetails.push({
-            id: detail.id,
+        if (detail && detail.required) {
+          requiredDetails[detail.id] = {
             title: detail.title,
             inputType: detail.inputType,
-          });
+          };
         }
       });
-      let fields = [...requiredDetails];
+      const fields = { ...requiredDetails };
       if (extraFieldDetails != null && extraFieldDetails.length > 0) {
-        fields = [...fields, {
-          id: 'extraField',
+        fields.extraField = {
           title: 'Other Information',
           inputType: 'short-form',
-        }];
+        };
       }
       if (multipleMilestones) {
-        fields = [...fields, {
-          id: 'isMultipleMilestones',
+        fields.isMultipleMilestones = {
           title: 'Milestones',
           inputType: 'array',
-        }];
+        };
       }
       onSubmit({
         title,
