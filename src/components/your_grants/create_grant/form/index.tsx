@@ -9,6 +9,7 @@ import ApplicantDetails from './3_applicantDetails';
 import GrantRewardsInput from './4_rewards';
 import Heading from '../../../ui/heading';
 import applicantDetailsList from '../../../../constants/applicantDetailsList';
+import supportedCurrencies from '../../../../constants/supportedCurrencies';
 
 function Form({
   refs,
@@ -28,14 +29,21 @@ function Form({
   const [detailsError, setDetailsError] = useState(false);
 
   const applicantDetails = applicantDetailsList.map(
-    ({ title, tooltip, id }, index) => ({
-      title,
-      required: false,
-      id,
-      tooltip,
-      index,
-    }),
-  );
+    ({
+      title, tooltip, id, inputType,
+    }, index) => {
+      if (index === applicantDetailsList.length - 1) return null;
+      if (index === applicantDetailsList.length - 2) return null;
+      return {
+        title,
+        required: false,
+        id,
+        tooltip,
+        index,
+        inputType,
+      };
+    },
+  ).filter((obj) => obj != null);
   const [detailsRequired, setDetailsRequired] = useState(applicantDetails);
   const [extraField, setExtraField] = useState(false);
   const [multipleMilestones, setMultipleMilestones] = useState(false);
@@ -55,7 +63,12 @@ function Form({
   const [reward, setReward] = React.useState('');
   const [rewardError, setRewardError] = React.useState(false);
 
-  const [rewardCurrency, setRewardCurrency] = React.useState('ETH');
+  const [rewardCurrency, setRewardCurrency] = React.useState(
+    supportedCurrencies[0].label,
+  );
+  const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
+    supportedCurrencies[0].id,
+  );
 
   const [date, setDate] = React.useState('');
   const [dateError, setDateError] = React.useState(false);
@@ -90,18 +103,33 @@ function Form({
     if (!error) {
       const requiredDetails = {} as any;
       detailsRequired.forEach((detail) => {
-        requiredDetails[detail.id] = detail.required;
+        if (detail && detail.required) {
+          requiredDetails[detail.id] = {
+            title: detail.title,
+            inputType: detail.inputType,
+          };
+        }
       });
+      const fields = { ...requiredDetails };
+      if (extraFieldDetails != null && extraFieldDetails.length > 0) {
+        fields.extraField = {
+          title: 'Other Information',
+          inputType: 'short-form',
+        };
+      }
+      if (multipleMilestones) {
+        fields.isMultipleMilestones = {
+          title: 'Milestones',
+          inputType: 'array',
+        };
+      }
       onSubmit({
         title,
         summary,
         details,
-        ...requiredDetails,
-        extra_field:
-          extraFieldDetails != null && extraFieldDetails.length > 0 ? extraFieldDetails : '',
-        is_multiple_miletones: multipleMilestones,
+        fields,
         reward,
-        rewardCurrency,
+        rewardCurrencyAddress,
         date,
       });
     }
@@ -193,6 +221,7 @@ function Form({
         setRewardError={setRewardError}
         rewardCurrency={rewardCurrency}
         setRewardCurrency={setRewardCurrency}
+        setRewardCurrencyAddress={setRewardCurrencyAddress}
         date={date}
         setDate={setDate}
         dateError={dateError}

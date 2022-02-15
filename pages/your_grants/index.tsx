@@ -153,7 +153,7 @@ function YourGrants() {
                 daoIcon={`https://ipfs.infura.io:5001/api/v0/cat?arg=${grant.workspace.logoIpfsHash}`}
                 grantTitle={grant.title}
                 grantDesc={grant.summary}
-                numOfApplicants={0}
+                numOfApplicants={grant.numberOfApplications}
                 endTimestamp={new Date(
                   grant.deadline,
                 ).getTime()}
@@ -165,9 +165,16 @@ function YourGrants() {
                   pathname: '/your_grants/edit_grant/',
                   query: {
                     account: true,
+                    id: grant.id,
                   },
                 })}
                 onAddFundsClick={() => setAddFundsIsOpen(true)}
+                onViewApplicantsClick={() => router.push({
+                  pathname: '/your_grants/view_applicants/',
+                  query: {
+                    grantID: grant.id,
+                  },
+                })}
               />
             );
           })}

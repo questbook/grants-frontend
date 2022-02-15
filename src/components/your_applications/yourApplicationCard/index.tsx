@@ -54,7 +54,7 @@ function YourApplicationCard({
   return (
     <Flex direction="column">
       <Flex py={6} w="100%" alignItems="flex-start">
-        <Image h="54px" w="54px" src={daoIcon} />
+        <Image objectFit="cover" h="54px" w="54px" src={daoIcon} />
         <Flex flex={1} direction="column" ml={6}>
           <Flex direction="row" alignItems="center" flexWrap="wrap">
             <Text lineHeight="24px" fontSize="18px" fontWeight="700">
