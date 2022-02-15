@@ -44,7 +44,34 @@ query($first: Int, $skip: Int) {
 const getNumOfApplicantsForAGrant = `
 `;
 
-const getAllDaoGrants = `
+const getAllGrantsForCreator = `
+query($first: Int, $skip: Int, $creatorId: String!) {
+  grants(
+    first: $first, 
+    skip: $skip, 
+    subgraphError: allow, 
+    where: { creatorId: $creatorId }
+    orderBy: createdAtS, 
+    orderDirection: desc
+  ) {
+  id, 
+  creatorId, 
+  title, 
+  summary, 
+  details, 
+  reward {
+    committed,
+    id,
+    asset
+  }, 
+  workspace {title, logoIpfsHash}, 
+  deadline,
+  funding,
+  numberOfApplications,
+}}
+`;
+
+const getAllGrantsForADao = `
 query($first: Int, $skip: Int, $workspaceId: String!) {
   grants(
     first: $first, 
@@ -258,7 +285,8 @@ query($grantId: String) {
 `;
 
 export {
-  getAllGrants, getNumOfApplicantsForAGrant, getAllDaoGrants as getAllGrantsForADao,
+  getAllGrants, getNumOfApplicantsForAGrant, getAllGrantsForADao,
+  getAllGrantsForCreator,
   getGrantDetails, getApplicantsForAGrant, getApplicationDetails,
   getApplicationMilestones, getFundSentForApplication, getMembersForAWorkspace, getGrantApplication,
   getMyApplications, getWorkspaceDetails, getFunding,

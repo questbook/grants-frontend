@@ -11,7 +11,7 @@ import Heading from '../../src/components/ui/heading';
 import AddFunds from '../../src/components/your_grants/add_funds_modal';
 import YourGrantCard from '../../src/components/your_grants/yourGrantCard';
 import supportedCurrencies from '../../src/constants/supportedCurrencies';
-import { getAllGrantsForADao } from '../../src/graphql/daoQueries';
+import { getAllGrantsForADao, getAllGrantsForCreator } from '../../src/graphql/daoQueries';
 import NavbarLayout from '../../src/layout/navbarLayout';
 import { formatAmount } from '../../src/utils/formattingUtils';
 import { ApiClientsContext } from '../_app';
@@ -38,7 +38,7 @@ function YourGrants() {
     try {
       const { data } = await subgraphClient
         .query({
-          query: gql(getAllGrantsForADao),
+          query: gql(getAllGrantsForCreator),
           variables: {
             first: pageSize,
             skip: pageSize * currentPage,
