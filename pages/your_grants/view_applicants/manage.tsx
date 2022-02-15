@@ -2,6 +2,8 @@ import {
   Container, Flex, Image, Box, Text, Link, Button,
 } from '@chakra-ui/react';
 import React from 'react';
+import { useApplicationMilestones } from 'src/graphql/queries';
+import { getAssetInfo } from 'src/utils/tokenUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Heading from '../../../src/components/ui/heading';
 import Modal from '../../../src/components/ui/modal';
@@ -12,23 +14,6 @@ import Milestones from '../../../src/components/your_grants/manage_grant/tables/
 import NavbarLayout from '../../../src/layout/navbarLayout';
 
 function ManageGrant() {
-  const tabs = [
-    {
-      title: '1',
-      subtitle: 'Milestone',
-    },
-    {
-      icon: '/images/dummy/Ethereum Icon.svg',
-      title: '0',
-      subtitle: 'Funding Requested',
-    },
-    {
-      icon: '/images/dummy/Ethereum Icon.svg',
-      title: '20',
-      subtitle: 'Funding Recieved',
-    },
-  ];
-
   const path = ['My Grants', 'View Application', 'Manage'];
   const grantTitle = 'Storage Provider (SP) Tooling Ideas';
 
@@ -38,6 +23,27 @@ function ManageGrant() {
 
   const [selected, setSelected] = React.useState(0);
   const [isGrantCompleteModelOpen, setIsGrantCompleteModalOpen] = React.useState(false);
+
+  const { data: { milestones, rewardAsset }, loading, error } = useApplicationMilestones('0x7');
+  const fundingIcon = getAssetInfo(rewardAsset)?.icon;
+
+  const tabs = [
+    {
+      title: milestones.length.toString(),
+      subtitle: milestones.length === 1 ? 'Milestone' : 'Milestones',
+    },
+    {
+      icon: fundingIcon,
+      title: '0',
+      subtitle: 'Funding Requested',
+    },
+    {
+      icon: fundingIcon,
+      title: '20',
+      subtitle: 'Funding Recieved',
+    },
+  ];
+
   return (
     <Container maxW="100%" display="flex" px="70px">
       <Container
@@ -137,7 +143,7 @@ function ManageGrant() {
           ))}
         </Flex>
 
-        {selected === 0 ? <Milestones /> : <Funding />}
+        {selected === 0 ? <Milestones milestones={milestones} rewardAssetId={rewardAsset} /> : <Funding />}
 
         <Flex direction="row" justify="center" mt={8}>
           <Button variant="primary" onClick={() => setIsGrantCompleteModalOpen(true)}>Mark Grant as Complete</Button>

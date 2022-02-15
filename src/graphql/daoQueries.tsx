@@ -199,6 +199,23 @@ query($applicationID: Bytes!) {
 `;
 
 const getApplicationMilestones = `
+query($grantId: ID!) {
+	grantApplications(where: { id: $grantId }) {
+	  grant {
+      reward {
+        asset
+      }
+    },
+	  milestones {
+		id,
+		state,
+		title,
+		amount,
+		amountPaid,
+		updatedAtS,
+	  }
+	}
+}
 `;
 
 const getFundSentForApplication = `

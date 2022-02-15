@@ -6,37 +6,50 @@ import {
   ChevronDownIcon, ViewIcon,
 } from '@chakra-ui/icons';
 import moment from 'moment';
+import { ApplicationMilestone } from 'src/graphql/queries';
+import { getAssetInfo } from 'src/utils/tokenUtils';
 import Modal from '../../../ui/modal';
 import MilestoneDoneModalContent from '../modals/modalContentMilestoneDone';
 import MilestoneViewModalContent from '../modals/modalContentMilestoneView';
 import MilestoneDoneConfirmationModalContent from '../modals/modalContentMilestoneDoneConfirmation';
-import data from '../data/milestoneTableDummyData';
 
-function Milestones() {
+const TABLE_HEADERS = [
+  {
+    title: 'Milestone',
+    flex: 0.504,
+    justifyContent: 'flex-start',
+  },
+  {
+    title: 'Reward / Expected Reward',
+    flex: 0.358,
+    justifyContent: 'flex-start',
+  },
+  {
+    title: 'Status',
+    flex: 0.138,
+
+    justifyContent: 'center',
+  },
+];
+
+export type MilestoneTableProps = {
+  milestones: ApplicationMilestone[]
+  rewardAssetId: string
+  loading: boolean
+  error: Error
+};
+
+function Milestones({ milestones, rewardAssetId }: MilestoneTableProps) {
   const [isMilestoneDoneModalOpen, setIsMilestoneDoneModalOpen] = React.useState(false);
   const [isMilestoneViewModalOpen, setIsMilestoneViewModalOpen] = React.useState(false);
   const [
     isMilestoneDoneConfirmationModalOpen,
     setIsMilestoneDoneConfirmationModalOpen,
   ] = React.useState(false);
+  const { icon: rewardIcon, label: rewardSymbol } = getAssetInfo(rewardAssetId);
 
-  const tableHeaders = [
-    {
-      title: 'Milestone',
-      flex: 0.504,
-    },
-    {
-      title: 'Reward / Expected Reward',
-      flex: 0.358,
-    },
-    {
-      title: 'Status',
-      flex: 0.138,
-    },
-  ];
-
-  const renderStatus = (status: any) => {
-    if (status.state === 'submitted') {
+  const renderStatus = (status: ApplicationMilestone['state'], updatedAtS: number) => {
+    if (status === 'submitted') {
       return (
         <Flex direction="column">
           <Menu placement="bottom">
@@ -69,7 +82,7 @@ function Milestones() {
         </Flex>
       );
     }
-    if (status.state === 'done') {
+    if (status === 'requested') {
       return (
         <Flex direction="column" justify="end" align="flex-end">
           <Text
@@ -96,7 +109,7 @@ function Milestones() {
               variant="footer"
               fontWeight="500"
             >
-              {moment(status.done_date.timestamp).format('MMM DD, YYYY')}
+              {moment(new Date(updatedAtS * 1000)).format('MMM DD, YYYY')}
             </Text>
           </Text>
           <Button variant="link" _focus={{}}>
@@ -134,7 +147,7 @@ function Milestones() {
             variant="footer"
             fontWeight="500"
           >
-            {moment(status.approved_date.timestamp).format('MMM DD, YYYY')}
+            {moment(new Date(updatedAtS * 1000)).format('MMM DD, YYYY')}
           </Text>
         </Text>
         <Button variant="link" _focus={{}}>
@@ -162,9 +175,9 @@ function Milestones() {
         mt="32px"
         mb="9px"
       >
-        {tableHeaders.map((header, index) => (
+        {TABLE_HEADERS.map((header) => (
           <Text
-            justifyContent={index === 2 ? 'center' : 'flex-start'}
+            justifyContent={header.justifyContent}
             flex={header.flex ? header.flex : 1}
             variant="tableHeader"
             display="flex"
@@ -181,7 +194,7 @@ function Milestones() {
         borderRadius={4}
         align="stretch"
       >
-        {data.map((item, index) => (
+        {milestones.map((item, index) => (
           <Flex
             direction="row"
             w="100%"
@@ -192,13 +205,13 @@ function Milestones() {
             py={4}
           >
             <Flex
-              flex={tableHeaders[0].flex ? tableHeaders[0].flex : 1}
+              flex={TABLE_HEADERS[0].flex}
               direction="column"
               w="100%"
               pl="19px"
             >
               <Text variant="applicationText" fontWeight="700" color="#122224">
-                {item.milestone.title}
+                {item.title}
               </Text>
               <Text
                 fontSize="14px"
@@ -210,7 +223,9 @@ function Milestones() {
                 noOfLines={1}
                 textOverflow="ellipsis"
               >
-                {item.milestone.subtitle}
+                Milestone
+                {' '}
+                {index + 1}
               </Text>
             </Flex>
             <Flex
@@ -218,9 +233,9 @@ function Milestones() {
               direction="row"
               justify="start"
               align="center"
-              flex={tableHeaders[1].flex ? tableHeaders[1].flex : 1}
+              flex={TABLE_HEADERS[1].flex}
             >
-              <Image display="inline-block" src={item.reward.icon} mr={2} boxSize="27px" />
+              <Image display="inline-block" src={rewardIcon} mr={2} boxSize="27px" />
               <Text
                 textAlign="center"
                 fontSize="14px"
@@ -228,22 +243,22 @@ function Milestones() {
                 fontWeight="700"
                 color="#122224"
               >
-                {item.reward.received}
+                {item.amountPaid}
                 {' '}
                 /
                 {' '}
-                {item.reward.total}
+                {item.amount}
                 {' '}
-                {item.reward.symbol}
+                {rewardSymbol}
               </Text>
             </Flex>
             <Flex
-              flex={tableHeaders[2].flex ? tableHeaders[2].flex : 1}
+              flex={TABLE_HEADERS[2].flex}
               justify="end"
               mr={5}
               minW="180px"
             >
-              {renderStatus(item.status)}
+              {renderStatus(item.state, item.updatedAtS || 0)}
             </Flex>
           </Flex>
         ))}
