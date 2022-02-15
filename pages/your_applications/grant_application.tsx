@@ -2,7 +2,9 @@ import {
   Container,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useCallback, useEffect, useState } from 'react';
+import React, {
+  ReactElement, useCallback, useEffect, useState,
+} from 'react';
 import { gql } from '@apollo/client';
 import { ethers } from 'ethers';
 import { GrantApplicationProps } from 'src/types/application';

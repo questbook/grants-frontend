@@ -2,9 +2,16 @@ import {
   Box, Heading, Flex, Divider, Image, Text, Link,
 } from '@chakra-ui/react';
 import React from 'react';
+import { getFormattedFullDateFromUnixTimestamp, truncateStringFromMiddle } from 'src/utils/formattingUtils';
 import FloatingSidebar from '../../../ui/sidebar/floatingSidebar';
 
-function Sidebar() {
+function Sidebar(
+  {
+    applicationData,
+  }: {
+    applicationData: any;
+  },
+) {
   return (
     <Box mt="8px">
       <FloatingSidebar>
@@ -21,7 +28,7 @@ function Sidebar() {
           <Image h="45px" w="45px" src="/network_icons/eth_mainnet.svg" />
           <Box mx={3} />
           <Heading variant="applicationHeading" color="brand.500">
-            0xb79....579268
+            {truncateStringFromMiddle(applicationData?.applicantId)}
           </Heading>
         </Flex>
         <Box my={4} />
@@ -30,7 +37,7 @@ function Sidebar() {
             Name
           </Text>
           <Heading variant="applicationHeading" lineHeight="32px">
-            Ankit Nair
+            {applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'applicantName').value[0]}
           </Heading>
         </Flex>
         <Flex direction="row" justify="space-between" w="full" align="center">
@@ -38,7 +45,7 @@ function Sidebar() {
             Email
           </Text>
           <Heading variant="applicationHeading" lineHeight="32px">
-            ankit@gmail.com
+            {applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'applicantEmail').value[0]}
           </Heading>
         </Flex>
         <Flex direction="row" justify="space-between" w="full" align="center">
@@ -46,7 +53,7 @@ function Sidebar() {
             Sent On
           </Text>
           <Heading variant="applicationHeading" lineHeight="32px">
-            2nd January, 2022
+            {getFormattedFullDateFromUnixTimestamp(applicationData?.createdAtS)}
           </Heading>
         </Flex>
         <Divider mt="37px" />

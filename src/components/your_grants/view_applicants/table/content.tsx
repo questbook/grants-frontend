@@ -32,6 +32,7 @@ function Content({
     if (status === 2) return <ResubmissionRequested />;
     return <PendingReview />;
   };
+
   return (
     <Flex
       mt="10px"
@@ -118,13 +119,15 @@ function Content({
                     if (item.status === 1) {
                       onViewApplicationFormClick({
                         rejectionComment: 'rejectionComment',
+                        applicationId: item.applicationId,
                       });
                     } else if (item.status === 2) {
                       onViewApplicationFormClick({
                         resubmissionComment: 'resubmissionComment',
+                        applicationId: item.applicationId,
                       });
                     } else {
-                      onViewApplicationFormClick();
+                      onViewApplicationFormClick({ applicationId: item.applicationId });
                     }
                   }
                 }}
