@@ -41,15 +41,15 @@ function ApplicantDetails({
   return (
     <Flex py={0} direction="column">
       <Grid templateColumns="repeat(2, 1fr)" gap="18px" fontWeight="bold">
-        {detailsRequired.map((detail) => {
+        {detailsRequired.map((detail, index) => {
           const {
             title, required, id, tooltip,
           } = detail as any;
           return (
-            <GridItem colSpan={1}>
+            <GridItem key={id} colSpan={1}>
               <Badge
                 isActive={required}
-                onClick={() => toggleDetailsRequired(id)}
+                onClick={() => toggleDetailsRequired(index)}
                 label={title}
                 tooltip={tooltip}
               />

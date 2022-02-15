@@ -164,8 +164,7 @@ function YourGrants() {
                 onEditClick={() => router.push({
                   pathname: '/your_grants/edit_grant/',
                   query: {
-                    account: true,
-                    id: grant.id,
+                    grantID: grant.id,
                   },
                 })}
                 onAddFundsClick={() => setAddFundsIsOpen(true)}
