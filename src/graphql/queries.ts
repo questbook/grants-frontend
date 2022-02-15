@@ -47,10 +47,13 @@ export const useApplicationMilestones = (grantId: string) => {
     },
   });
 
-  const rewardAsset = data?.grantApplications[0]?.grant?.reward?.asset;
-  const milestones = data?.grantApplications[0]?.milestones || [];
+  const grantApp = data?.grantApplications[0];
+
+  const fundingAsk: string = grantApp?.fields?.find((item: any) => item.id.endsWith('.fundingAsk.field'))?.value;
+  const rewardAsset: string = grantApp?.grant?.reward?.asset;
+  const milestones = grantApp?.milestones || [];
   return {
-    data: { rewardAsset, milestones: milestones as ApplicationMilestone[] },
+    data: { rewardAsset, milestones: milestones as ApplicationMilestone[], fundingAsk },
     loading,
     error,
   };

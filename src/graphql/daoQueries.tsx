@@ -232,13 +232,17 @@ query($grantId: ID!) {
         asset
       }
     },
+    fields {
+      id,
+      value
+    }
 	  milestones {
-		id,
-		state,
-		title,
-		amount,
-		amountPaid,
-		updatedAtS,
+      id,
+      state,
+      title,
+      amount,
+      amountPaid,
+      updatedAtS,
 	  }
 	}
 }
