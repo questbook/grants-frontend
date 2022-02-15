@@ -4,10 +4,10 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
+import supportedCurrencies from '../../../../constants/supportedCurrencies';
 import Datepicker from '../../../ui/forms/datepicker';
 import Dropdown from '../../../ui/forms/dropdown';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
-import supportedCurrencies from '../../../../constants/supportedCurrencies';
 
 function GrantRewardsInput({
   reward,
@@ -16,6 +16,7 @@ function GrantRewardsInput({
   setRewardError,
   rewardCurrency,
   setRewardCurrency,
+  setRewardCurrencyAddress,
   date,
   setDate,
   dateError,
@@ -27,15 +28,12 @@ function GrantRewardsInput({
   setRewardError: (rewardError: boolean) => void;
   rewardCurrency: string;
   setRewardCurrency: (rewardCurrency: string) => void;
+  setRewardCurrencyAddress: (rewardCurrencyAddress: string) => void;
   date: string;
   setDate: (date: string) => void;
   dateError: boolean;
   setDateError: (dateError: boolean) => void;
 }) {
-  let defaultIndex = supportedCurrencies.findIndex(
-    (currency) => (currency.label === rewardCurrency),
-  );
-  if (defaultIndex === -1) defaultIndex = 0;
   return (
     <Flex direction="column">
 
@@ -60,8 +58,10 @@ function GrantRewardsInput({
             listItemsMinWidth="132px"
             listItems={supportedCurrencies}
             value={rewardCurrency}
-            onChange={(data: any) => setRewardCurrency(data)}
-            defaultIndex={defaultIndex}
+            onChange={(data: any) => {
+              setRewardCurrency(data.label);
+              setRewardCurrencyAddress(data.id);
+            }}
           />
         </Box>
       </Flex>

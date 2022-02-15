@@ -1,5 +1,9 @@
-import { Box, Container, Image, Flex, Divider } from '@chakra-ui/react';
-import React, { ReactElement, useCallback, useContext, useEffect, useState } from 'react';
+import {
+  Box, Container, Image, Flex, Divider,
+} from '@chakra-ui/react';
+import React, {
+  ReactElement, useCallback, useEffect, useState,
+} from 'react';
 import { gql } from '@apollo/client';
 import BN from 'bn.js';
 import { useRouter } from 'next/router';
@@ -9,16 +13,11 @@ import Sidebar from '../../src/components/explore_grants/about_grant/sidebar';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Heading from '../../src/components/ui/heading';
 import NavbarLayout from '../../src/layout/navbarLayout';
-import { getGrantDetails, getAllGrants } from '../../src/graphql/daoQueries';
-import { ApiClientsContext } from '../_app';
+import { getGrantDetails } from '../../src/graphql/daoQueries';
 import { getFormattedDate } from '../../src/utils/formattingUtils';
 import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils';
 import supportedCurrencies from '../../src/constants/supportedCurrencies';
 import SubgraphClient from '../../src/graphql/subgraph';
-
-interface Props {
-  grantData: any;
-}
 
 function AboutGrant() {
   const [grantData, setGrantData] = useState<any>(null);
@@ -67,8 +66,8 @@ function AboutGrant() {
   }, [grantID, getGrantData]);
 
   useEffect(() => {
-    const funding: number = parseInt(grantData?.funding, 10);
-    setIsGrantVerified(funding > 0);
+    const funding = new BN(grantData?.funding);
+    setIsGrantVerified(funding.gt((new BN('0'))));
     setDeadline(getFormattedDate(grantData?.deadline));
     setTitle(grantData?.title);
     setDaoName(grantData?.workspace?.title);

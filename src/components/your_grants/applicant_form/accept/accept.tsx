@@ -7,13 +7,15 @@ import {
   Image,
 } from '@chakra-ui/react';
 import React from 'react';
+import { formatAmount } from 'src/utils/formattingUtils';
+import { getAssetInfo } from 'src/utils/tokenUtils';
 
 function Accept({
-  milestones,
   onSubmit,
+  applicationData,
 }: {
-  milestones: any[];
   onSubmit: () => void;
+  applicationData: any
 }) {
   return (
     <Container
@@ -41,7 +43,9 @@ function Accept({
             fontWeight="700"
             color="brand.500"
           >
-            60 ETH
+            {formatAmount(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'fundingAsk').value[0] ?? '0')}
+            {' '}
+            { getAssetInfo(applicationData?.grant?.reward?.asset)?.label }
           </Text>
         </Flex>
       </Flex>
@@ -50,18 +54,22 @@ function Accept({
         Funding split by milestones
       </Text>
       <Flex direction="column" justify="start" align="start">
-        {milestones.map((milestone) => (
+        {applicationData
+        && applicationData?.milestones?.length > 0
+        && applicationData?.milestones?.map((milestone:any, index: number) => (
           <Flex direction="column" mt={6}>
             <Text variant="applicationText" fontWeight="700">
               Milestone
               {' '}
-              {milestone.number}
+              {index + 1}
             </Text>
             <Text variant="applicationText" color="#717A7C">
-              {milestone.description}
+              {milestone?.title}
             </Text>
             <Flex direction="row" justify="start" align="center" mt={2}>
-              <Image src={milestone.icon} />
+              <Image
+                src={getAssetInfo(applicationData?.grant?.reward?.asset)?.icon}
+              />
               <Flex direction="column" ml={2}>
                 <Text variant="applicationText" fontWeight="700">
                   Funding Ask
@@ -72,9 +80,9 @@ function Accept({
                   fontWeight="700"
                   color="brand.500"
                 >
-                  {milestone.amount}
+                  {milestone?.amount && formatAmount(milestone?.amount)}
                   {' '}
-                  {milestone.symbol}
+                  { getAssetInfo(applicationData?.grant?.reward?.asset)?.label }
                 </Text>
               </Flex>
             </Flex>

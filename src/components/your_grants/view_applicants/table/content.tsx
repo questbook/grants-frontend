@@ -32,6 +32,7 @@ function Content({
     if (status === 2) return <ResubmissionRequested />;
     return <PendingReview />;
   };
+
   return (
     <Flex
       mt="10px"
@@ -60,7 +61,7 @@ function Content({
               variant="tableBody"
             >
               {'     '}
-              {`${item.applicant_address}`}
+              {`${item.applicant_address.substring(0, 13)}...`}
             </Text>
             <Text
               flex={tableHeadersflex[1]}
@@ -118,13 +119,15 @@ function Content({
                     if (item.status === 1) {
                       onViewApplicationFormClick({
                         rejectionComment: 'rejectionComment',
+                        applicationId: item.applicationId,
                       });
                     } else if (item.status === 2) {
                       onViewApplicationFormClick({
                         resubmissionComment: 'resubmissionComment',
+                        applicationId: item.applicationId,
                       });
                     } else {
-                      onViewApplicationFormClick();
+                      onViewApplicationFormClick({ applicationId: item.applicationId });
                     }
                   }
                 }}

@@ -2,12 +2,20 @@ import {
   Box, Button, Container, Flex, Text,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useRef, useState } from 'react';
+import React, {
+  ReactElement, useContext, useRef, useState,
+} from 'react';
+import { useAccount, useContract, useSigner } from 'wagmi';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/create_grant/form';
+import config from '../../src/constants/config';
+import GrantFactoryABI from '../../src/contracts/abi/GrantFactoryAbi.json';
 import NavbarLayout from '../../src/layout/navbarLayout';
+import { parseAmount } from '../../src/utils/formattingUtils';
+import { ApiClientsContext } from '../_app';
 
 function CreateGrant() {
+  const [{ data: accountData }] = useAccount();
   const router = useRouter();
 
   const grantInfoRef = useRef(null);
@@ -45,6 +53,58 @@ function CreateGrant() {
     ],
   ];
 
+  const apiClients = useContext(ApiClientsContext);
+  const [signerStates] = useSigner();
+
+  const grantContract = useContract({
+    addressOrName: config.GrantFactoryAddress,
+    contractInterface: GrantFactoryABI,
+    signerOrProvider: signerStates.data,
+  });
+  const handleGrantSubmit = async (data: any) => {
+    if (!apiClients) return;
+    const { subgraphClient, validatorApi, workspaceId } = apiClients;
+    if (!accountData || !accountData.address || !workspaceId) {
+      return;
+    }
+
+    console.log(data);
+    console.log(workspaceId);
+
+    const {
+      data: { ipfsHash },
+    } = await validatorApi.validateGrantCreate({
+      title: data.title,
+      summary: data.summary,
+      details: data.details,
+      deadline: data.date,
+      reward: {
+        committed: parseAmount(data.reward),
+        asset: data.rewardCurrencyAddress,
+      },
+      creatorId: accountData.address,
+      workspaceId,
+      fields: data.fields,
+    });
+
+    console.log(ipfsHash);
+
+    const transaction = await grantContract.createGrant(
+      workspaceId!,
+      ipfsHash,
+      config.WorkspaceRegistryAddress,
+      config.ApplicationRegistryAddress,
+    );
+    const transactionData = await transaction.wait();
+
+    console.log(transactionData);
+    console.log(transactionData.blockNumber);
+
+    await subgraphClient.waitForBlock(transactionData.blockNumber);
+
+    router.replace('/your_grants');
+  };
+
   return (
     <Container maxW="100%" display="flex" px="70px">
       <Container
@@ -58,10 +118,7 @@ function CreateGrant() {
       >
         <Breadcrumbs path={['My Grants', 'Create grant']} />
         <Form
-          onSubmit={(data) => {
-            console.log(data);
-            router.replace('/my_grants');
-          }}
+          onSubmit={handleGrantSubmit}
           refs={sideBarDetails.map((detail) => detail[2])}
         />
       </Container>

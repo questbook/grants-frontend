@@ -4,16 +4,18 @@ import {
   Image,
   Text,
   Button,
+  Box,
   IconButton,
   Divider,
   Heading,
+  Link,
   useToast,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import Lottie from 'lottie-react';
 import copy from 'copy-to-clipboard';
-import { useContract, useSigner } from 'wagmi';
-import { BigNumber, ethers } from 'ethers';
+import { useAccount, useContract, useSigner } from 'wagmi';
+import { ethers } from 'ethers';
 import Dropdown from '../../ui/forms/dropdown';
 import SingleLineInput from '../../ui/forms/singleLineInput';
 import Modal from '../../ui/modal';
@@ -39,7 +41,7 @@ function AddFunds({
   const [funding, setFunding] = React.useState('');
   const [error, setError] = React.useState(false);
   const [walletBalance, setWalletBalance] = React.useState(0);
-  const [walletBalanceHR, setWalletBalanceHR] = React.useState(BigNumber.from(0));
+  const [walletBalanceHR, setWalletBalanceHR] = React.useState(0);
   const [rewardAssetDecimals, setRewardAssetDecimals] = React.useState(0);
 
   const nextScreenTexts = [
@@ -88,7 +90,7 @@ function AddFunds({
         duration: 9000,
         isClosable: true,
       });
-      setFunding('0');
+      setFunding(0);
       onClose();
     } catch {
       toast({
@@ -105,19 +107,18 @@ function AddFunds({
       try {
         const assetDecimal = await rewardAssetContract.decimals();
         setRewardAssetDecimals(assetDecimal);
-        const tempWalletBalance = await rewardAssetContract.balanceOf(
-          // eslint-disable-next-line no-underscore-dangle
-          await signerStates.data?.getAddress(),
+        const walletBalance = await rewardAssetContract.balanceOf(
+          signerStates.data._address,
         );
-        setWalletBalance(tempWalletBalance);
+        setWalletBalance(walletBalance);
         setWalletBalanceHR(
-          BigNumber.from(ethers.utils.formatUnits(walletBalance, assetDecimal)),
+          ethers.utils.formatUnits(walletBalance, assetDecimal),
         );
       } catch (e) {
         console.error(e);
       }
     }());
-  }, [signerStates, rewardAsset, rewardAssetContract, walletBalance]);
+  }, [signerStates, rewardAsset]);
 
   return (
     <Modal
@@ -335,7 +336,8 @@ function AddFunds({
               {' '}
               <Text variant="tableHeader" display="inline-block">
                 {`${parseFloat(
-                  walletBalanceHR.toString(),
+                  walletBalanceHR,
+                  10,
                 ).toFixed(4)} ${rewardAsset?.label}`}
 
               </Text>

@@ -29,14 +29,21 @@ function Form({
   const [detailsError, setDetailsError] = useState(false);
 
   const applicantDetails = applicantDetailsList.map(
-    ({ title, tooltip, id }, index) => ({
-      title,
-      required: false,
-      id,
-      tooltip,
-      index,
-    }),
-  );
+    ({
+      title, tooltip, id, inputType,
+    }, index) => {
+      if (index === applicantDetailsList.length - 1) return null;
+      if (index === applicantDetailsList.length - 2) return null;
+      return {
+        title,
+        required: false,
+        id,
+        tooltip,
+        index,
+        inputType,
+      };
+    },
+  ).filter((obj) => obj != null);
   const [detailsRequired, setDetailsRequired] = useState(applicantDetails);
   const [extraField, setExtraField] = useState(false);
   const [multipleMilestones, setMultipleMilestones] = useState(false);
@@ -96,18 +103,33 @@ function Form({
     if (!error) {
       const requiredDetails = {} as any;
       detailsRequired.forEach((detail) => {
-        requiredDetails[detail.id] = detail.required;
+        if (detail && detail.required) {
+          requiredDetails[detail.id] = {
+            title: detail.title,
+            inputType: detail.inputType,
+          };
+        }
       });
+      const fields = { ...requiredDetails };
+      if (extraFieldDetails != null && extraFieldDetails.length > 0) {
+        fields.extraField = {
+          title: 'Other Information',
+          inputType: 'short-form',
+        };
+      }
+      if (multipleMilestones) {
+        fields.isMultipleMilestones = {
+          title: 'Milestones',
+          inputType: 'array',
+        };
+      }
       onSubmit({
         title,
         summary,
         details,
-        ...requiredDetails,
-        extra_field:
-          extraFieldDetails != null && extraFieldDetails.length > 0 ? extraFieldDetails : '',
-        is_multiple_miletones: multipleMilestones,
+        fields,
         reward,
-        rewardCurrency,
+        rewardCurrencyAddress,
         date,
       });
     }
@@ -199,7 +221,10 @@ function Form({
         setRewardError={setRewardError}
         rewardCurrency={rewardCurrency}
         setRewardCurrency={setRewardCurrency}
+<<<<<<< HEAD
         rewardCurrencyAddress={rewardCurrencyAddress}
+=======
+>>>>>>> contracts
         setRewardCurrencyAddress={setRewardCurrencyAddress}
         date={date}
         setDate={setDate}

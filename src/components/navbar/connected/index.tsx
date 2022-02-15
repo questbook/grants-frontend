@@ -8,6 +8,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import { useAccount } from 'wagmi';
 import AccountDetails from './accountDetails';
 import Tab from './tab';
 
@@ -24,6 +25,7 @@ interface Props {
 function Navbar({
   networkId, address, isOnline, renderTabs, daoName, daoId, daoImage,
 }: Props) {
+  const [{ data, error, loading }, disconnect] = useAccount();
   const [activeIndex, setActiveIndex] = React.useState(-1);
   const router = useRouter();
   const tabPaths = ['your_grants', 'funds', 'settings_and_members', 'your_applications'];
@@ -134,6 +136,7 @@ function Navbar({
                     onClick={() => {
                       router.push({
                         pathname: `/${tabPaths[2]}`,
+                        search: `?workspaceID=${Number(daoId)}`,
                       });
                     }}
                   />
@@ -148,7 +151,7 @@ function Navbar({
           <Flex h="100%" direction="column">
             <Tab
               label="My Applications"
-              icon="/ui_icons/your_applications.svg"
+              icon={`/ui_icons/${activeIndex === 3 ? 'brand' : 'gray'}/tab_grants.svg`}
               isActive={activeIndex === 3}
               onClick={() => {
                 router.push({
@@ -190,6 +193,15 @@ function Navbar({
         isOnline={isOnline}
         address={address}
       />
+      <Button
+        maxW="163px"
+        variant="disconnect"
+        mr="12px"
+        ml="10px"
+        onClick={disconnect}
+      >
+        Disconnect
+      </Button>
     </Container>
   );
 }

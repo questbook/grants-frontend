@@ -21,6 +21,8 @@ function Funding({
   rewardAmount,
   rewardCurrency,
   rewardCurrencyCoin,
+
+  grantRequiredFields,
 }: {
   fundingAsk: string;
   setFundingAsk: (fundingAsk: string) => void;
@@ -35,6 +37,8 @@ function Funding({
   rewardAmount: string;
   rewardCurrency: string;
   rewardCurrencyCoin: string;
+
+  grantRequiredFields: string[];
 }) {
   return (
     <>
@@ -59,7 +63,7 @@ function Funding({
 
       <Box mt={8} />
 
-      <Flex alignItems="flex-start">
+      <Flex alignItems="flex-start" display={grantRequiredFields.includes('fundingBreakdown') ? 'flex' : 'none'}>
         <Box minW="160px" flex={1}>
           <SingleLineInput
             label="Funding Ask"
@@ -104,6 +108,7 @@ function Funding({
         isError={fundingBreakdownError}
         errorText="Required"
         tooltip="Write about how you planning use funds for your project - hiring, marketing etc."
+        visible={grantRequiredFields.includes('fundingBreakdown')}
       />
     </>
   );

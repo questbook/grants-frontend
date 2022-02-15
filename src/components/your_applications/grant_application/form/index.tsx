@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -9,6 +9,8 @@ import {
   Flex,
   Container,
 } from '@chakra-ui/react';
+import { GrantApplicationProps } from 'src/types/application';
+import { getFormattedFullDateFromUnixTimestamp } from 'src/utils/formattingUtils';
 import ApplicantDetails from './1_applicantDetails';
 import AboutProject from './3_aboutProject';
 import AboutTeam from './2_aboutTeam';
@@ -22,6 +24,9 @@ function Form({
   resubmitComment,
   rejectedComment,
   formData,
+  grantTitle,
+  sentDate,
+  daoLogo,
 }: {
   onSubmit: null | ((data: any) => void);
   rewardAmount: string;
@@ -29,87 +34,68 @@ function Form({
   rewardCurrencyCoin: string;
   resubmitComment?: string;
   rejectedComment?: string;
-  formData: any;
+  formData: GrantApplicationProps | null;
+  grantTitle: string;
+  sentDate: string;
+  daoLogo: string;
 }) {
-  const [applicantName, setApplicantName] = useState(
-    formData.applicantName ?? '',
-  );
+  const [applicantName, setApplicantName] = useState('');
   const [applicantNameError, setApplicantNameError] = useState(false);
 
-  const [applicantEmail, setApplicantEmail] = useState(
-    formData.applicantEmail ?? false,
-  );
+  const [applicantEmail, setApplicantEmail] = useState('');
   const [applicantEmailError, setApplicantEmailError] = useState(false);
 
-  const [teamMembers, setTeamMembers] = useState<number | null>(
-    formData.teamMembers ?? 1,
-  );
+  const [teamMembers, setTeamMembers] = useState(1);
   const [teamMembersError, setTeamMembersError] = useState(false);
 
-  const [membersDescription, setMembersDescription] = useState(
-    formData.membersDescription
-      ? formData.membersDescription.map((member: any) => ({
-        description: member.description ?? '',
-        isError: false,
-      }))
-      : [
-        {
-          description: '',
-          isError: false,
-        },
-      ],
-  );
+  const [membersDescription, setMembersDescription] = useState<any[]>([]);
 
-  const [projectName, setProjectName] = useState(formData.projectName ?? '');
+  const [projectName, setProjectName] = useState('');
   const [projectNameError, setProjectNameError] = useState(false);
 
-  const [projectLinks, setProjectLinks] = useState(
-    formData.projectLinks
-      ? formData.projectLinks.map((link: any) => ({
-        link: link.link ?? '',
-        isError: false,
-      }))
-      : [
-        {
-          link: '',
-          isError: false,
-        },
-      ],
-  );
+  const [projectLinks, setProjectLinks] = useState<any[]>([]);
 
-  const [projectDetails, setProjectDetails] = useState(
-    formData.projectDetails ?? '',
-  );
+  const [projectDetails, setProjectDetails] = useState('');
   const [projectDetailsError, setProjectDetailsError] = useState(false);
 
-  const [projectGoal, setProjectGoal] = useState(formData.projectGoal ?? '');
+  const [projectGoal, setProjectGoal] = useState('');
   const [projectGoalError, setProjectGoalError] = useState(false);
 
-  const [projectMilestones, setProjectMilestones] = useState(
-    formData.projectMilestones
-      ? formData.projectMilestones.map((milestone: any) => ({
+  const [projectMilestones, setProjectMilestones] = useState<any[]>([]);
+
+  const [fundingAsk, setFundingAsk] = useState('');
+  const [fundingAskError, setFundingAskError] = useState(false);
+
+  const [fundingBreakdown, setFundingBreakdown] = useState('');
+  const [fundingBreakdownError, setFundingBreakdownError] = useState(false);
+
+  useEffect(() => {
+    if (formData) {
+      setApplicantName(formData.applicantName);
+      setApplicantEmail(formData.applicantEmail);
+      setTeamMembers(formData.teamMembers);
+      setMembersDescription(formData?.membersDescription.map((member: any) => ({
+        description: member.description ?? '',
+        isError: false,
+      })));
+      setProjectName(formData.projectName);
+      setProjectLinks(formData?.projectLinks.map((link: any) => ({
+        link: link.link ?? '',
+        isError: false,
+      })));
+      setProjectDetails(formData.projectDetails);
+      setProjectGoal(formData.projectGoal);
+      setProjectMilestones(formData?.projectMilestones.map((milestone: any) => ({
         milestone: milestone.milestone ?? '',
         milestoneReward: milestone.milestoneReward ?? '',
         milestoneIsError: false,
         milestoneRewardIsError: false,
-      }))
-      : [
-        {
-          milestone: '',
-          milestoneReward: '',
-          milestoneIsError: false,
-          milestoneRewardIsError: false,
-        },
-      ],
-  );
+      })));
 
-  const [fundingAsk, setFundingAsk] = useState(formData.fundingAsk ?? '');
-  const [fundingAskError, setFundingAskError] = useState(false);
-
-  const [fundingBreakdown, setFundingBreakdown] = useState(
-    formData.fundingBreakdown ?? '',
-  );
-  const [fundingBreakdownError, setFundingBreakdownError] = useState(false);
+      setFundingAsk(formData.fundingAsk);
+      setFundingBreakdown(formData.fundingBreakdown);
+    }
+  }, [formData]);
 
   const handleOnSubmit = () => {
     if (!onSubmit) {
@@ -208,17 +194,19 @@ function Form({
       <Image
         h="96px"
         w="96px"
-        src="/images/dummy/Polygon Icon.svg"
+        src={daoLogo}
         alt="Polygon DAO"
       />
       <Text mt={6} variant="heading">
-        Storage Provider (SP) Tooling Ideas
+        {grantTitle}
       </Text>
 
       <Text mt="10px" fontSize="16px" lineHeight="24px" fontWeight="500" color="#717A7C">
         <Image mb="-2px" src="/ui_icons/calendar.svg" w="16px" h="18px" display="inline-block" />
         {' '}
-        Sent on 24 June, 2022
+        Sent on
+        {' '}
+        {getFormattedFullDateFromUnixTimestamp(Number(sentDate))}
       </Text>
 
       {rejectedComment && (

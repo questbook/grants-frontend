@@ -15,6 +15,7 @@ interface MultiLineInputProps {
   maxLength?: number;
   disabled?: boolean;
   tooltip?: string;
+  visible?: boolean;
 }
 
 const defaultProps = {
@@ -25,6 +26,7 @@ const defaultProps = {
   disabled: false,
   tooltip: '',
   errorText: '',
+  visible: true,
 };
 
 function MultiLineInput({
@@ -38,10 +40,11 @@ function MultiLineInput({
   maxLength,
   disabled,
   tooltip,
+  visible,
 }: MultiLineInputProps) {
   const theme = useTheme();
   return (
-    <Flex flex={1} direction="column">
+    <Flex flex={1} direction="column" display={visible ? '' : 'none'}>
       <Text lineHeight="20px" fontWeight="bold">
         {label}
         {tooltip && tooltip.length ? <Tooltip label={tooltip} /> : null}

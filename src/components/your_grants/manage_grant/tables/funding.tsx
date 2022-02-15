@@ -1,20 +1,39 @@
 import React from 'react';
 import {
-  Text, Image, Flex, Link,
+  Text, Image, Flex, Tooltip,
 } from '@chakra-ui/react';
 import moment from 'moment';
-import data from '../data/fundingRequestedDummyData';
+import { FundTransfer } from 'src/graphql/queries';
+import { getAssetInfo } from 'src/utils/tokenUtils';
+import { text } from 'node:stream/consumers';
 
-function Funding() {
-  const tableHeaders = [
-    {
-      title: 'Funding Received',
-      flex: 2,
-    },
-    { title: 'On' },
-    { title: 'From' },
-    { title: 'Status', flex: 0.5 },
-  ];
+const TABLE_HEADERS = [
+  {
+    title: 'Funding Received',
+    flex: 0.6,
+  },
+  { title: 'On', flex: 0.2 },
+  { title: 'To', flex: 0.2 },
+  // { title: 'Status', flex: 0.5 },
+];
+
+export type FundingProps = {
+  fundTransfers: FundTransfer[]
+  assetId: string
+};
+
+function Funding({ fundTransfers, assetId }: FundingProps) {
+  const assetInfo = getAssetInfo(assetId);
+  // extract milstone index from ID and generate title like "Milestone (index+1)"
+  const getMilestoneTitle = (milestone: FundTransfer['milestone']) => {
+    if (milestone) {
+      const [, idx] = milestone.id.split('.');
+      return `Milestone ${(+idx) + 1}`;
+    }
+    return 'Unknown Milestone';
+  };
+
+  const getTextWithEllipses = (txt: string, maxLength = 10) => (txt.length > maxLength ? `${txt.slice(0, maxLength)}...` : txt);
 
   return (
     <Flex w="100%" my={4} align="center" direction="column" flex={1}>
@@ -26,12 +45,11 @@ function Funding() {
         mt="32px"
         mb="9px"
       >
-        {tableHeaders.map((header, index) => (
+        {TABLE_HEADERS.map((header) => (
           <Text
             textAlign="left"
             flex={header.flex != null ? header.flex : 1}
             variant="tableHeader"
-            mr={index === 3 ? '28px' : '-28px'}
           >
             {header.title}
           </Text>
@@ -44,7 +62,7 @@ function Funding() {
         borderRadius={4}
         align="stretch"
       >
-        {data.map((item, index) => (
+        {fundTransfers.map((item, index) => (
           <Flex
             direction="row"
             w="100%"
@@ -59,17 +77,17 @@ function Funding() {
               direction="row"
               justify="start"
               align="center"
-              flex={tableHeaders[0].flex ? tableHeaders[0].flex : 0}
+              flex={TABLE_HEADERS[0].flex}
             >
               <Image
                 display="inline-block"
-                src={item.funding_received.fund.icon}
+                src={assetInfo?.icon}
                 mr={2}
                 h="27px"
                 w="27px"
               />
-              <Text textAlign="center" variant="applicationText">
-                {item.funding_received.milestone.title}
+              <Text textAlign="start" variant="applicationText">
+                {getMilestoneTitle(item.milestone)}
                 {' '}
                 -
                 {' '}
@@ -78,44 +96,39 @@ function Funding() {
                   variant="applicationText"
                   fontWeight="700"
                 >
-                  {item.funding_received.fund.amount}
+                  {item.amount}
                   {' '}
-                  {item.funding_received.fund.symbol}
+                  {assetInfo?.label}
                 </Text>
               </Text>
             </Flex>
 
             <Flex
-              flex={tableHeaders[1].flex ? tableHeaders[1].flex : 1}
+              flex={TABLE_HEADERS[1].flex}
               direction="column"
-              w="100%"
             >
-              <Text variant="applicationText">
-                {moment(item.on.timestamp).format('MMM DD, YYYY')}
-              </Text>
+              <Tooltip label={`Transaction ID: ${item.id}`}>
+                <Text variant="applicationText">
+                  {moment(new Date(item.createdAtS * 1000)).format('MMM DD, YYYY')}
+                </Text>
+              </Tooltip>
             </Flex>
 
             <Flex
-              flex={tableHeaders[2].flex ? tableHeaders[2].flex : 1}
+              flex={TABLE_HEADERS[2].flex}
               direction="column"
-              w="100%"
             >
-              <Text variant="applicationText" color="#122224">
-                {item.from.address}
-              </Text>
+              <Tooltip label={item.to}>
+                <Text variant="applicationText" color="#122224">
+                  {getTextWithEllipses(item.to)}
+                </Text>
+              </Tooltip>
             </Flex>
 
-            <Flex
-              flex={tableHeaders[3].flex != null ? tableHeaders[3].flex : 1}
+            {/* <Flex
+              flex={TABLE_HEADERS[3].flex}
             >
               <Flex direction="column" justify="center" align="end" w="100%">
-                {item.status.state === 'processing' && (
-                <Flex direction="row" justify="end" align="center">
-                  <Image display="inline-block" src="/ui_icons/hourglass.svg" />
-                  {' '}
-                  <Text variant="footer" color="#717A7C" textAlign="end">Processing...</Text>
-                </Flex>
-                )}
                 <Link
                   href="https://etherscan.io/tx/0x265f00837424f1ef46cb8c6858d6cc9a486ab702f8f019424006dcb029f66e75/"
                   rel="noopener noreferrer"
@@ -127,13 +140,13 @@ function Funding() {
                   // textAlign="right"
                   _focus={{}}
                 >
-                  {item.status.state === 'processing' ? 'Learn More' : 'View'}
+                  View
                   {' '}
                   <Image display="inline-block" src="/ui_icons/link.svg" />
                 </Link>
               </Flex>
 
-            </Flex>
+            </Flex> */}
           </Flex>
         ))}
       </Flex>

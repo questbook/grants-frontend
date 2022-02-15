@@ -1,7 +1,9 @@
 import { gql } from '@apollo/client';
 import { Container, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useCallback, useContext, useEffect, useRef } from 'react';
+import React, {
+  ReactElement, useCallback, useContext, useEffect, useRef,
+} from 'react';
 import { useAccount } from 'wagmi';
 import GrantCard from '../src/components/browse_grants/grantCard';
 import Sidebar from '../src/components/browse_grants/sidebar';
@@ -78,7 +80,7 @@ function BrowseGrants() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getGrantData = async () => {
     if (!subgraphClient) return;
-    // console.log(grants);
+    console.log(grants);
     try {
       const { data } = (await subgraphClient.query({
         query: gql(getAllGrants),
@@ -87,7 +89,7 @@ function BrowseGrants() {
           skip: currentPage * pageSize,
         },
       })) as any;
-      // console.log(data);
+      console.log(data);
       if (data.grants.length > 0) {
         setCurrentPage(currentPage + 1);
         setGrants([...grants, ...data.grants]);
@@ -186,7 +188,10 @@ function BrowseGrants() {
                     });
                     return;
                   }
-                  router.push({ pathname: '/explore_grants/about_grant' });
+                  router.push({
+                    pathname: '/explore_grants/about_grant',
+                    query: { grantID: grant.id },
+                  });
                 }}
               />
             );
