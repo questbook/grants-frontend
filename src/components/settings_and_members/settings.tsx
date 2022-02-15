@@ -1,4 +1,6 @@
-import { Flex, Text, Image, Button, Box } from '@chakra-ui/react';
+import {
+  Flex, Text, Image, Button, Box, useToast,
+} from '@chakra-ui/react';
 import React, { useEffect, useContext } from 'react';
 import { useContract, useSigner } from 'wagmi';
 import config from '../../constants/config';
@@ -35,6 +37,7 @@ function Settings({
   });
 
   const apiClients = useContext(ApiClientsContext);
+  const toast = useToast();
 
   const handleFormSubmit = async (data: {
     name: string;
@@ -82,8 +85,19 @@ function Settings({
     });
 
     const workspaceID = Number(workspaceData.id);
-    const ret = await contract.updateWorkspaceMetadata(workspaceID, ipfsHash);
-    console.log(ret);
+
+    toast({
+      title: 'Updating workspace',
+      status: 'info',
+      duration: 100000,
+    });
+
+    const txn = await contract.updateWorkspaceMetadata(workspaceID, ipfsHash);
+    console.log(txn);
+    const transactionData = await txn.wait();
+    console.log(transactionData.blockNumber);
+    await subgraphClient.waitForBlock(transactionData.blockNumber);
+    window.location.reload();
   };
 
   useEffect(() => {

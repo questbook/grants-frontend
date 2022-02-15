@@ -1,4 +1,6 @@
-import { Box, Button, Flex, Image } from '@chakra-ui/react';
+import {
+  Box, Button, Flex, Image,
+} from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import CoverUpload from '../ui/forms/coverUpload';
 import ImageUpload from '../ui/forms/imageUpload';
