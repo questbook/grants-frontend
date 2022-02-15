@@ -9,6 +9,7 @@ import ApplicantDetails from './3_applicantDetails';
 import GrantRewardsInput from './4_rewards';
 import applicantDetailsList from '../../../../constants/applicantDetailsList';
 import Heading from '../../../ui/heading';
+import supportedCurrencies from '../../../../constants/supportedCurrencies';
 
 function Form({
   refs,
@@ -30,25 +31,35 @@ function Form({
   const [detailsError, setDetailsError] = useState(false);
 
   const applicantDetails = applicantDetailsList.map(
-    ({ title, tooltip, id }, index) => ({
-      title,
-      required: formData[id] ?? false,
-      id,
-      tooltip,
-      index,
-    }),
-  );
+    ({
+      title, tooltip, id, inputType,
+    }, index) => {
+      if (index === applicantDetailsList.length - 1) return null;
+      if (index === applicantDetailsList.length - 2) return null;
+      return {
+        title,
+        required: formData[id] ?? false,
+        id,
+        tooltip,
+        index,
+        inputType,
+      };
+    },
+  ).filter((obj) => obj != null);
   const [detailsRequired, setDetailsRequired] = useState(applicantDetails);
   const [extraField, setExtraField] = useState(
-    formData.extra_field && formData.extra_field.length > 0,
+    formData.extraField,
   );
   const [multipleMilestones, setMultipleMilestones] = useState(
-    formData.multiple_milestones,
+    formData.isMultipleMilestones,
   );
 
   const toggleDetailsRequired = (index: number) => {
     const newDetailsRequired = [...detailsRequired];
     // TODO: create interface for detailsRequired
+
+    console.log(newDetailsRequired, index);
+
     (newDetailsRequired[index] as any).required = !(
       newDetailsRequired[index] as any
     ).required;
@@ -61,7 +72,12 @@ function Form({
   const [reward, setReward] = React.useState(formData.reward ?? '');
   const [rewardError, setRewardError] = React.useState(false);
 
-  const [rewardCurrency, setRewardCurrency] = React.useState(formData.rewardCurrency ?? 'ETH');
+  const [rewardCurrency, setRewardCurrency] = React.useState(
+    formData.rewardCurrency ?? supportedCurrencies[0].label,
+  );
+  const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
+    formData.rewardCurrencyAddress ?? supportedCurrencies[0].id,
+  );
 
   const [date, setDate] = React.useState(formData.date ?? '');
   const [dateError, setDateError] = React.useState(false);
@@ -96,18 +112,35 @@ function Form({
     if (!error) {
       const requiredDetails = {} as any;
       detailsRequired.forEach((detail) => {
-        requiredDetails[detail.id] = detail.required;
+        if (detail && detail.required) {
+          requiredDetails[detail.id] = {
+            title: detail.title,
+            inputType: detail.inputType,
+          };
+        }
       });
+      const fields = { ...requiredDetails };
+      if (extraFieldDetails != null && extraFieldDetails.length > 0) {
+        fields.extraField = {
+          title: 'Other Information',
+          inputType: 'short-form',
+        };
+      }
+      if (multipleMilestones) {
+        fields.isMultipleMilestones = {
+          title: 'Milestones',
+          inputType: 'array',
+        };
+      }
+
+      console.log(fields);
       onSubmit({
         title,
         summary,
         details,
-        ...requiredDetails,
-        extra_field:
-          extraFieldDetails != null && extraFieldDetails.length > 0 ? extraFieldDetails : '',
-        is_multiple_miletones: multipleMilestones,
+        fields,
         reward,
-        rewardCurrency,
+        rewardCurrencyAddress,
         date,
       });
     }
@@ -204,6 +237,7 @@ function Form({
         setRewardError={setRewardError}
         rewardCurrency={rewardCurrency}
         setRewardCurrency={setRewardCurrency}
+        setRewardCurrencyAddress={setRewardCurrencyAddress}
         date={date}
         setDate={setDate}
         dateError={dateError}

@@ -2,6 +2,8 @@ import {
   Container, Flex, Image, Box, Text, Link, Button,
 } from '@chakra-ui/react';
 import React from 'react';
+import { ApplicationMilestone, useApplicationMilestones, useFundDisbursed } from 'src/graphql/queries';
+import { getAssetInfo } from 'src/utils/tokenUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Heading from '../../../src/components/ui/heading';
 import Modal from '../../../src/components/ui/modal';
@@ -11,24 +13,11 @@ import Funding from '../../../src/components/your_grants/manage_grant/tables/fun
 import Milestones from '../../../src/components/your_grants/manage_grant/tables/milestones';
 import NavbarLayout from '../../../src/layout/navbarLayout';
 
-function ManageGrant() {
-  const tabs = [
-    {
-      title: '1',
-      subtitle: 'Milestone',
-    },
-    {
-      icon: '/images/dummy/Ethereum Icon.svg',
-      title: '0',
-      subtitle: 'Funding Requested',
-    },
-    {
-      icon: '/images/dummy/Ethereum Icon.svg',
-      title: '20',
-      subtitle: 'Funding Recieved',
-    },
-  ];
+function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
+  return milestones.reduce((value, milestone) => value + (+milestone.amountPaid), 0);
+}
 
+function ManageGrant() {
   const path = ['My Grants', 'View Application', 'Manage'];
   const grantTitle = 'Storage Provider (SP) Tooling Ideas';
 
@@ -38,6 +27,31 @@ function ManageGrant() {
 
   const [selected, setSelected] = React.useState(0);
   const [isGrantCompleteModelOpen, setIsGrantCompleteModalOpen] = React.useState(false);
+
+  const { data: { milestones, rewardAsset }, loading, error } = useApplicationMilestones('0x7');
+  const { data: fundsDisbursed } = useFundDisbursed(null);
+  const fundingIcon = getAssetInfo(rewardAsset)?.icon;
+
+  const tabs = [
+    {
+      title: milestones.length.toString(),
+      subtitle: milestones.length === 1 ? 'Milestone' : 'Milestones',
+      content: <Milestones milestones={milestones} rewardAssetId={rewardAsset} />,
+    },
+    {
+      icon: fundingIcon,
+      title: getTotalFundingRecv(milestones).toString(),
+      subtitle: 'Funding Sent',
+      content: <Funding fundTransfers={fundsDisbursed} assetId={rewardAsset} />,
+    },
+    {
+      icon: fundingIcon,
+      title: '1',
+      subtitle: 'Funding Requested',
+      content: <div />, // <Funding fundTransfers={fundsDisbursed} assetId={rewardAsset} />,
+    },
+  ];
+
   return (
     <Container maxW="100%" display="flex" px="70px">
       <Container
@@ -121,7 +135,7 @@ function ManageGrant() {
               borderTopWidth={index !== selected ? 0 : '2px'}
               borderBottomWidth={index !== selected ? '2px' : 0}
               borderBottomRightRadius="-2px"
-              onClick={() => (index !== tabs.length - 1 ? setSelected(index) : null)}
+              onClick={() => setSelected(index)}
             >
               <Flex direction="column" justify="center" align="center" w="100%">
                 <Flex direction="row" justify="center" align="center">
@@ -137,7 +151,7 @@ function ManageGrant() {
           ))}
         </Flex>
 
-        {selected === 0 ? <Milestones /> : <Funding />}
+        {tabs[selected].content}
 
         <Flex direction="row" justify="center" mt={8}>
           <Button variant="primary" onClick={() => setIsGrantCompleteModalOpen(true)}>Mark Grant as Complete</Button>

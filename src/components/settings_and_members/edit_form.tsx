@@ -1,24 +1,27 @@
 import {
   Box, Button, Flex, Image,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import CoverUpload from '../ui/forms/coverUpload';
 import ImageUpload from '../ui/forms/imageUpload';
 import MultiLineInput from '../ui/forms/multiLineInput';
 import SingleLineInput from '../ui/forms/singleLineInput';
+import supportedNetworks from '../../constants/supportedNetworks.json';
 
 function EditForm({
   onSubmit: onFormSubmit,
+  formData,
 }: {
   onSubmit: (data: {
     name: string;
     about: string;
-    image?: string;
-    coverImage?: string;
+    image?: File;
+    coverImage?: File;
     twitterHandle?: string;
     discordHandle?: string;
     telegramChannel?: string;
   }) => void;
+  formData: any;
 }) {
   const [daoName, setDaoName] = React.useState('');
   const [daoNameError, setDaoNameError] = React.useState(false);
@@ -26,7 +29,13 @@ function EditForm({
   const [daoAbout, setDaoAbout] = React.useState('');
   const [daoAboutError, setDaoAboutError] = React.useState(false);
 
-  const [image, setImage] = React.useState<string | null>(null);
+  const [supportedNetwork, setSupportedNetwork] = React.useState('');
+
+  const [image, setImage] = React.useState<string | null>('');
+  const [imageFile, setImageFile] = React.useState<string | null>('');
+
+  const [coverImage, setCoverImage] = React.useState<string | null>('');
+  const [coverImageFile, setCoverImageFile] = React.useState<string | null>('');
 
   const [twitterHandle, setTwitterHandle] = React.useState('');
   const [twitterHandleError, setTwitterHandleError] = React.useState(false);
@@ -37,10 +46,41 @@ function EditForm({
   const [telegramChannel, setTelegramChannel] = React.useState('');
   const [telegramChannelError, setTelegramChannelError] = React.useState(false);
 
+  useEffect(() => {
+    if (!formData) {
+      return;
+    }
+    const chainId = formData.supportedNetwork.split('_')[1];
+    const supportedChainIds = Object.keys(supportedNetworks);
+    const networkSupported = supportedChainIds.includes(chainId);
+    const networkName = networkSupported
+      ? supportedNetworks[chainId as keyof typeof supportedNetworks].name
+      : 'Unsupported Network';
+    setDaoName(formData.name);
+    setDaoAbout(formData.about);
+    setSupportedNetwork(networkName);
+    setImage(formData.image);
+    setCoverImage(formData.coverImage);
+    setTwitterHandle(formData.twitterHandle);
+    setDiscordHandle(formData.discordHandle);
+    setTelegramChannel(formData.telegramChannel);
+  }, [formData]);
+
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const img = event.target.files[0];
+      setImageFile(img);
       setImage(URL.createObjectURL(img));
+    }
+  };
+
+  const handleCoverImageChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    if (event.target.files && event.target.files[0]) {
+      const img = event.target.files[0];
+      setCoverImageFile(img);
+      setCoverImage(URL.createObjectURL(img));
     }
   };
 
@@ -59,7 +99,11 @@ function EditForm({
       onFormSubmit({
         name: daoName,
         about: daoAbout,
-        // image: image === null ? undefined : image,
+        image: imageFile,
+        coverImage: coverImageFile,
+        twitterHandle,
+        discordHandle,
+        telegramChannel,
       });
     }
   };
@@ -106,14 +150,19 @@ function EditForm({
         <SingleLineInput
           label="Network"
           placeholder="Network"
-          value="Ethereum"
+          value={supportedNetwork}
           onChange={() => {}}
           isError={false}
           disabled
         />
       </Flex>
       <Flex w="100%" mt={10}>
-        <CoverUpload label="Other Details" subtext="Upload a cover" />
+        <CoverUpload
+          image={coverImage}
+          isError={false}
+          onChange={handleCoverImageChange}
+          subtext="Upload a cover"
+        />
       </Flex>
       <Flex w="100%" mt={8} alignItems="flex-start">
         <SingleLineInput
@@ -157,19 +206,6 @@ function EditForm({
       <Flex direction="row" justify="start" mt={10}>
         <Button variant="primary" onClick={handleSubmit}>
           Save changes
-        </Button>
-        <Box mr={14} />
-        <Button
-          leftIcon={<Image src="/ui_icons/see.svg" my={-2} alt="Settings" />}
-          fontStyle="normal"
-          fontWeight="700"
-          fontSize="14px"
-          letterSpacing="0.5px"
-          lineHeight="20px"
-          colorScheme="brand"
-          variant="link"
-        >
-          See profile preview
         </Button>
       </Flex>
     </>

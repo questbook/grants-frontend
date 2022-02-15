@@ -1,3 +1,20 @@
+const getWorkspaceDetails = `
+query($workspaceID: ID!) {
+    workspace(id: $workspaceID, subgraphError: allow) {
+        id
+        title
+        about
+        logoIpfsHash
+        coverImageIpfsHash
+        supportedNetworks
+        socials {
+          name
+          value
+        }
+    }
+}
+`;
+
 const getAllGrants = `
 query($first: Int, $skip: Int) {
   grants(
@@ -184,9 +201,46 @@ query($applicationID: Bytes!) {
 `;
 
 const getApplicationMilestones = `
+query($grantId: ID!) {
+	grantApplications(where: { id: $grantId }) {
+	  grant {
+      reward {
+        asset
+      }
+    },
+	  milestones {
+		id,
+		state,
+		title,
+		amount,
+		amountPaid,
+		updatedAtS,
+	  }
+	}
+}
 `;
 
 const getFundSentForApplication = `
+query($applicationId: String) {
+  fundsTransfers(where: {application: $applicationId}, orderBy: createdAtS, orderDirection: desc) {
+    grant {
+    	id
+    },
+    application {
+      id
+    },
+    milestone {
+      id,
+      title
+    },
+    id,
+    amount,
+    sender,
+    to,
+    createdAtS,
+    type
+  }
+}
 `;
 
 const getMembersForAWorkspace = `
@@ -196,5 +250,5 @@ export {
   getAllGrants, getNumOfApplicantsForAGrant, getAllDaoGrants as getAllGrantsForADao,
   getGrantDetails, getApplicantsForAGrant, getApplicationDetails,
   getApplicationMilestones, getFundSentForApplication, getMembersForAWorkspace, getGrantApplication,
-  getMyApplications,
+  getMyApplications, getWorkspaceDetails,
 };

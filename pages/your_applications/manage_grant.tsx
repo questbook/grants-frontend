@@ -2,6 +2,8 @@ import {
   Container, Flex, Image, Box, Text, Button,
 } from '@chakra-ui/react';
 import React from 'react';
+import { useApplicationMilestones } from 'src/graphql/queries';
+import { getAssetInfo } from 'src/utils/tokenUtils';
 import Sidebar from '../../src/components/your_applications/manage_grant/sidebar';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Heading from '../../src/components/ui/heading';
@@ -10,20 +12,26 @@ import FundingRequestedTable from '../../src/components/your_applications/manage
 import NavbarLayout from '../../src/layout/navbarLayout';
 
 function ManageGrant() {
-  const tabs = [{
-    title: '1',
-    subtitle: 'Milestone',
-  },
-  {
-    icon: '/images/dummy/Ethereum Icon.svg',
-    title: '0',
-    subtitle: 'Funding Requested',
-  },
-  {
-    icon: '/images/dummy/Ethereum Icon.svg',
-    title: '20',
-    subtitle: 'Funding Recieved',
-  }];
+  const { data: { milestones, rewardAsset }, loading, error } = useApplicationMilestones('0x7');
+  const fundingIcon = getAssetInfo(rewardAsset)?.icon;
+
+  const tabs = [
+    {
+      title: milestones.length.toString(),
+      subtitle: milestones.length === 1 ? 'Milestone' : 'Milestones',
+    },
+    {
+      icon: fundingIcon,
+      title: '0',
+      subtitle: 'Funding Requested',
+    },
+    {
+      icon: fundingIcon,
+      title: '20',
+      subtitle: 'Funding Recieved',
+    },
+  ];
+
   const [selected, setSelected] = React.useState(0);
   return (
     <Container maxW="100%" display="flex" px="70px">
@@ -73,7 +81,11 @@ function ManageGrant() {
           ))}
         </Flex>
 
-        {selected === 0 ? <MilestoneTable /> : <FundingRequestedTable />}
+        {
+          selected === 0
+            ? <MilestoneTable milestones={milestones} rewardAssetId={rewardAsset} />
+            : <FundingRequestedTable />
+        }
       </Container>
 
       <Sidebar />
