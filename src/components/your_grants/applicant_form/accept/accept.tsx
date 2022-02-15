@@ -27,6 +27,7 @@ function Accept({
       pb={8}
       px={10}
     >
+      <Text mt={4} mb={4} variant="heading">{applicationData?.grant?.title}</Text>
       <Divider mb={5} />
       <Text fontSize="18px" lineHeight="26px" fontWeight="700">
         Accept Grant Application
@@ -70,7 +71,7 @@ function Accept({
               <Image
                 src={getAssetInfo(applicationData?.grant?.reward?.asset)?.icon}
               />
-              <Flex direction="column" ml={2}>
+              <Flex direction="column" ml={3}>
                 <Text variant="applicationText" fontWeight="700">
                   Funding Ask
                 </Text>
