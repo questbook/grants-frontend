@@ -1,10 +1,12 @@
 import { gql } from '@apollo/client';
-import {
-  Container, Flex, useToast, Image, Text,
-} from '@chakra-ui/react';
+import { Container, Flex, useToast, Image, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
-  ReactElement, useCallback, useContext, useEffect, useRef,
+  ReactElement,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
 } from 'react';
 import { useAccount } from 'wagmi';
 import Heading from '../../src/components/ui/heading';
@@ -15,6 +17,7 @@ import { getAllGrantsForADao } from '../../src/graphql/daoQueries';
 import NavbarLayout from '../../src/layout/navbarLayout';
 import { formatAmount } from '../../src/utils/formattingUtils';
 import { ApiClientsContext } from '../_app';
+import { BigNumber } from '@ethersproject/bignumber';
 
 function YourGrants() {
   const containerRef = useRef(null);
@@ -22,6 +25,7 @@ function YourGrants() {
   const router = useRouter();
   const [addFundsIsOpen, setAddFundsIsOpen] = React.useState(false);
   const [grantForFunding, setGrantForFunding] = React.useState(null);
+  const [grantRewardAsset, setGrantRewardAsset] = React.useState(null);
 
   const toast = useToast();
   const [grants, setGrants] = React.useState<any[]>([]);
@@ -37,15 +41,14 @@ function YourGrants() {
   const getGrantData = async () => {
     if (!subgraphClient || !accountData?.address) return;
     try {
-      const { data } = await subgraphClient
-        .query({
-          query: gql(getAllGrantsForADao),
-          variables: {
-            first: pageSize,
-            skip: pageSize * currentPage,
-            creatorId: accountData?.address,
-          },
-        }) as any;
+      const { data } = (await subgraphClient.query({
+        query: gql(getAllGrantsForADao),
+        variables: {
+          first: pageSize,
+          skip: pageSize * currentPage,
+          creatorId: accountData?.address,
+        },
+      })) as any;
       // console.log(data);
       if (data.grants.length > 0) {
         setCurrentPage(currentPage + 1);
@@ -88,10 +91,20 @@ function YourGrants() {
               />
             </Flex>
             <Flex ml="23px" direction="column">
-              <Text fontSize="16px" lineHeight="24px" fontWeight="700" color="#7B4646">
+              <Text
+                fontSize="16px"
+                lineHeight="24px"
+                fontWeight="700"
+                color="#7B4646"
+              >
                 Error Message
               </Text>
-              <Text fontSize="16px" lineHeight="24px" fontWeight="400" color="#7B4646">
+              <Text
+                fontSize="16px"
+                lineHeight="24px"
+                fontWeight="400"
+                color="#7B4646"
+              >
                 {e.message}
               </Text>
             </Flex>
@@ -102,18 +115,30 @@ function YourGrants() {
   };
 
   const initialiseFundModal = async (grant) => {
+    const grantCurrency = supportedCurrencies.find(
+      (currency) =>
+        currency.id.toLowerCase() ===
+        grant.reward.asset.toString().toLowerCase()
+    );
     setAddFundsIsOpen(true);
-    setGrantForFunding(grant);
+    setGrantForFunding(grant.id);
+    setGrantRewardAsset({
+      address: grant.reward.asset,
+      committed: BigNumber.from(grant.reward.committed),
+      label: grantCurrency?.label ?? 'LOL',
+      icon: grantCurrency?.icon ?? '/images/dummy/Ethereum Icon.svg',
+    });
   };
 
   const handleScroll = useCallback(() => {
     const { current } = containerRef;
     if (!current) return;
     const parentElement = (current as HTMLElement)?.parentNode as HTMLElement;
-    const reachedBottom = Math.abs(
-      parentElement.scrollTop
-          - (parentElement.scrollHeight - parentElement.clientHeight),
-    ) < 10;
+    const reachedBottom =
+      Math.abs(
+        parentElement.scrollTop -
+          (parentElement.scrollHeight - parentElement.clientHeight)
+      ) < 10;
     if (reachedBottom) {
       getGrantData();
     }
@@ -147,50 +172,58 @@ function YourGrants() {
           px={10}
         >
           <Heading title="Your grants" />
-          {grants.length > 0
-          && grants.map((grant: any) => {
-            const grantCurrency = supportedCurrencies.find(
-              (currency) => currency.id.toLowerCase()
-                === grant.reward.asset.toString().toLowerCase(),
-            );
-            return (
-              <YourGrantCard
-                key={grant.id}
-                daoIcon={`https://ipfs.infura.io:5001/api/v0/cat?arg=${grant.workspace.logoIpfsHash}`}
-                grantTitle={grant.title}
-                grantDesc={grant.summary}
-                numOfApplicants={grant.numberOfApplications}
-                endTimestamp={new Date(
-                  grant.deadline,
-                ).getTime()}
-                grantAmount={formatAmount(grant.reward.committed)}
-                grantCurrency={grantCurrency?.label ?? 'LOL'}
-                grantCurrencyIcon={grantCurrency?.icon ?? '/images/dummy/Ethereum Icon.svg'}
-                state="done"
-                onEditClick={() => router.push({
-                  pathname: '/your_grants/edit_grant/',
-                  query: {
-                    account: true,
-                    id: grant.id,
-                  },
-                })}
-                onAddFundsClick={() => initialiseFundModal(grant.id)}
-                onViewApplicantsClick={() => router.push({
-                  pathname: '/your_grants/view_applicants/',
-                  query: {
-                    grantID: grant.id,
-                  },
-                })}
-              />
-            );
-          })}
+          {grants.length > 0 &&
+            grants.map((grant: any) => {
+              const grantCurrency = supportedCurrencies.find(
+                (currency) =>
+                  currency.id.toLowerCase() ===
+                  grant.reward.asset.toString().toLowerCase()
+              );
+              return (
+                <YourGrantCard
+                  key={grant.id}
+                  daoIcon={`https://ipfs.infura.io:5001/api/v0/cat?arg=${grant.workspace.logoIpfsHash}`}
+                  grantTitle={grant.title}
+                  grantDesc={grant.summary}
+                  numOfApplicants={grant.numberOfApplications}
+                  endTimestamp={new Date(grant.deadline).getTime()}
+                  grantAmount={formatAmount(grant.reward.committed)}
+                  grantCurrency={grantCurrency?.label ?? 'LOL'}
+                  grantCurrencyIcon={
+                    grantCurrency?.icon ?? '/images/dummy/Ethereum Icon.svg'
+                  }
+                  state="done"
+                  onEditClick={() =>
+                    router.push({
+                      pathname: '/your_grants/edit_grant/',
+                      query: {
+                        account: true,
+                        id: grant.id,
+                      },
+                    })
+                  }
+                  onAddFundsClick={() => initialiseFundModal(grant)}
+                  onViewApplicantsClick={() =>
+                    router.push({
+                      pathname: '/your_grants/view_applicants/',
+                      query: {
+                        grantID: grant.id,
+                      },
+                    })
+                  }
+                />
+              );
+            })}
         </Container>
       </Container>
-      <AddFunds
-        isOpen={addFundsIsOpen}
-        onClose={() => setAddFundsIsOpen(false)}
-        grantAddress={grantForFunding}
-      />
+      {grantForFunding && grantRewardAsset && (
+        <AddFunds
+          isOpen={addFundsIsOpen}
+          onClose={() => setAddFundsIsOpen(false)}
+          grantAddress={grantForFunding}
+          rewardAsset={grantRewardAsset}
+        />
+      )}
     </>
   );
 }
