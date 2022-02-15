@@ -21,6 +21,7 @@ function YourGrants() {
   const subgraphClient = useContext(ApiClientsContext)?.subgraphClient.client;
   const router = useRouter();
   const [addFundsIsOpen, setAddFundsIsOpen] = React.useState(false);
+  const [grantForFunding, setGrantForFunding] = React.useState(null);
 
   const toast = useToast();
   const [grants, setGrants] = React.useState<any[]>([]);
@@ -100,6 +101,11 @@ function YourGrants() {
     }
   };
 
+  const initialiseFundModal = async (grant) => {
+    setAddFundsIsOpen(true);
+    setGrantForFunding(grant);
+  };
+
   const handleScroll = useCallback(() => {
     const { current } = containerRef;
     if (!current) return;
@@ -168,7 +174,7 @@ function YourGrants() {
                     id: grant.id,
                   },
                 })}
-                onAddFundsClick={() => setAddFundsIsOpen(true)}
+                onAddFundsClick={() => initialiseFundModal(grant.id)}
                 onViewApplicantsClick={() => router.push({
                   pathname: '/your_grants/view_applicants/',
                   query: {
@@ -183,6 +189,7 @@ function YourGrants() {
       <AddFunds
         isOpen={addFundsIsOpen}
         onClose={() => setAddFundsIsOpen(false)}
+        grantAddress={grantForFunding}
       />
     </>
   );

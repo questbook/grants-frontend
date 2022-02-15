@@ -9,6 +9,7 @@ import {
   Divider,
   Heading,
   Link,
+  useToast,
 } from '@chakra-ui/react';
 import React from 'react';
 import Lottie from 'lottie-react';
@@ -16,19 +17,33 @@ import Dropdown from '../../ui/forms/dropdown';
 import SingleLineInput from '../../ui/forms/singleLineInput';
 import Modal from '../../ui/modal';
 import animationData from '../../../../public/animations/Add_Funds.json';
+import copy from "copy-to-clipboard";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  grantAddress: string;
 }
 
-function AddFunds({ isOpen, onClose }: Props) {
+function AddFunds({ isOpen, onClose, grantAddress }: Props) {
   const [type, setType] = React.useState(-1);
   const [funding, setFunding] = React.useState('');
   const [error, setError] = React.useState(false);
 
   const nextScreenTexts = ['Deposit funds from another wallet', 'Deposit funds from connected wallet'];
   const stepsWhenAddingFromAnotherWallet = ['Open your wallet which has funds.', 'Send the funds to the address below.'];
+  const toast = useToast();
+
+  const copyToClipboard = async () => {
+    copy(grantAddress);
+    toast({
+      title: 'Copied!',
+      status: 'success',
+      duration: 9000,
+      isClosable: true,
+    });
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -142,13 +157,12 @@ function AddFunds({ isOpen, onClose }: Props) {
               label="Smart Contract Address"
               height="80px"
               inputRightElement={(
-                <Button variant="primary" w="89px" h="48px" mr={20}>
+                <Button variant="primary" w="89px" h="48px" mr={20} onClick={() => copyToClipboard()}>
                   Copy
                 </Button>
               )}
-              placeholder="0xb794f5fss35x9268"
-              // subtext="Send only ETH token to this address."
-              value={undefined}
+              value={`${grantAddress.substring(0, 12)}....${grantAddress.substring(grantAddress.length-13, grantAddress.length)}`}
+              disabled={true}
               onChange={() => {}}
               isError={false}
               subtextAlign="center"
