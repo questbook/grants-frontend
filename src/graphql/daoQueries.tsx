@@ -219,6 +219,26 @@ query($grantId: ID!) {
 `;
 
 const getFundSentForApplication = `
+query($applicationId: String) {
+  fundsTransfers(where: {application: $applicationId}, orderBy: createdAtS, orderDirection: desc) {
+    grant {
+    	id
+    },
+    application {
+      id
+    },
+    milestone {
+      id,
+      title
+    },
+    id,
+    amount,
+    sender,
+    to,
+    createdAtS,
+    type
+  }
+}
 `;
 
 const getMembersForAWorkspace = `
