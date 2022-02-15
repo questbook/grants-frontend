@@ -103,6 +103,7 @@ function AddFunds({ isOpen, onClose, grantAddress, rewardAsset }: Props) {
   useEffect(() => {
     (async function () {
       try {
+        if (!rewardAssetContract.provider) return;
         const assetDecimal = await rewardAssetContract.decimals();
         setRewardAssetDecimals(assetDecimal);
         const walletBalance = await rewardAssetContract.balanceOf(
@@ -116,7 +117,7 @@ function AddFunds({ isOpen, onClose, grantAddress, rewardAsset }: Props) {
         console.error(e);
       }
     })();
-  }, [signerStates, rewardAsset]);
+  }, [signerStates, rewardAssetContract]);
 
   return (
     <Modal
