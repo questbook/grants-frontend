@@ -2,7 +2,12 @@ import {
   Container, Flex, Text, Image,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, {
+  ReactElement, useEffect, useState, useCallback,
+} from 'react';
+import SubgraphClient from 'src/graphql/subgraph';
+import { getApplicationDetails } from 'src/graphql/daoQueries';
+import { gql } from '@apollo/client';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Heading from '../../../src/components/ui/heading';
 
@@ -40,8 +45,37 @@ function ApplicantForm() {
   const router = useRouter();
   const [step, setStep] = useState(0);
 
-  const [resubmissionComment] = useState('Resubmission comment');
-  const [rejectionComment] = useState('Rejected');
+  const [applicationId, setApplicationId] = useState<any>('');
+  const [applicationData, setApplicationData] = useState<any>(null);
+
+  const getApplicationData = useCallback(async () => {
+    const subgraphClient = new SubgraphClient();
+    if (!subgraphClient.client) return null;
+    try {
+      const { data } = (await subgraphClient.client.query({
+        query: gql(getApplicationDetails),
+        variables: {
+          applicationID: applicationId,
+        },
+      })) as any;
+      if (data && data.grantApplication) {
+        setApplicationData(data.grantApplication);
+      }
+      return true;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  }, [applicationId]);
+
+  useEffect(() => {
+    setApplicationId(router?.query?.applicationId ?? '');
+  }, [router]);
+
+  useEffect(() => {
+    if (!applicationId) return;
+    getApplicationData();
+  }, [applicationId, getApplicationData]);
 
   useEffect(() => {
     if (router.query.flow === 'approved') {
@@ -91,7 +125,7 @@ function ApplicantForm() {
           <Breadcrumbs
             path={['Your Grants', 'View Applicants', 'Applicant Form']}
           />
-          <Heading mt="18px" title="Storage Provider (SP) Tooling Ideas" />
+          <Heading mt="18px" title={applicationData?.grant?.title} />
         </Container>
 
         <Container maxW="100%" display="flex">
@@ -104,7 +138,7 @@ function ApplicantForm() {
             pb={8}
             px={10}
           >
-            {rejectionComment && rejectionComment.length > 0 && (
+            {applicationData && applicationData?.state === 'rejected' && (
               <Flex
                 alignItems="flex-start"
                 bgColor="#FFC0C0"
@@ -149,13 +183,13 @@ function ApplicantForm() {
                     fontWeight="400"
                     color="#7B4646"
                   >
-                    {rejectionComment}
+                    {applicationData?.feedback}
                   </Text>
                 </Flex>
               </Flex>
             )}
 
-            {resubmissionComment && resubmissionComment.length > 0 && (
+            {applicationData && applicationData?.state === 'resubmit' && (
               <Flex
                 alignItems="flex-start"
                 bgColor="#FEF6D9"
@@ -195,16 +229,17 @@ function ApplicantForm() {
                     fontWeight="400"
                     color="#7B4646"
                   >
-                    {resubmissionComment}
+                    {applicationData?.feedback}
                   </Text>
                 </Flex>
               </Flex>
             )}
 
-            <Application />
+            <Application applicationData={applicationData} />
           </Container>
 
           <Sidebar
+            applicationData={applicationData}
             onAcceptApplicationClick={() => setStep(1)}
             onRejectApplicationClick={() => setStep(2)}
             onResubmitApplicationClick={() => setStep(3)}

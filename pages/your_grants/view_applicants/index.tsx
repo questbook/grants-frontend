@@ -14,7 +14,7 @@ import NavbarLayout from '../../../src/layout/navbarLayout';
 import { ApiClientsContext } from '../../_app';
 
 function ViewApplicants() {
-  const [applicantsData, setApplicantsData] = useState([]);
+  const [applicantsData, setApplicantsData] = useState<any>([]);
   const [grantID, setGrantID] = useState<any>('');
   const subgraphClient = useContext(ApiClientsContext)?.subgraphClient;
   const applicationStatuses = [
@@ -39,9 +39,11 @@ function ViewApplicants() {
       if (data && data.grantApplications.length) {
         const fetchedApplicantsData = data.grantApplications.map(
           (applicant: any) => ({
+            grantTitle: applicant?.grant?.title,
+            applicationId: applicant.id,
             applicant_address: applicant.applicantId,
             sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
-            applicant_name: applicant.fields.find((field: any) => field.id.includes('fundingAsk')).value[0],
+            applicant_name: applicant.fields.find((field: any) => field.id.includes('applicantName')).value[0],
             funding_asked: {
               amount: applicant.fields.find((field: any) => field.id.includes('fundingAsk')).value[0],
               symbol: supportedCurrencies.find(
@@ -56,7 +58,7 @@ function ViewApplicants() {
             status: applicationStatuses.indexOf(applicant.state),
           }),
         );
-        // console.log(fetchedApplicantsData);
+        // console.log('fetchedd', fetchedApplicantsData);
         setApplicantsData(fetchedApplicantsData);
       }
       return true;
@@ -75,6 +77,7 @@ function ViewApplicants() {
     getGrantData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [grantID]);
+
   return (
     <Container maxW="100%" display="flex" px="70px">
       <Container
@@ -88,17 +91,20 @@ function ViewApplicants() {
       >
         <Breadcrumbs path={['My Grants', 'View Applicants']} />
         <Heading
-          title="Storage Provider (SP) Tooling Ideas"
+          title={applicantsData[0]?.grantTitle ?? 'Grant Title'}
           dontRenderDivider
         />
         <Table
           data={applicantsData}
-          onViewApplicantFormClick={(commentData: any) => router.push({
-            pathname: '/your_grants/view_applicants/applicant_form/',
-            query: {
-              commentData,
-            },
-          })}
+          onViewApplicantFormClick={
+            (commentData: any) => router.push({
+              pathname: '/your_grants/view_applicants/applicant_form/',
+              query: {
+                commentData,
+                applicationId: commentData.applicationId,
+              },
+            })
+          }
           onAcceptApplicationClick={() => router.push({
             pathname: '/your_grants/view_applicants/applicant_form/',
             query: {

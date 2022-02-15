@@ -66,3 +66,11 @@ export function getFormattedDateFromUnixTimestamp(timestamp: number) {
 export function getFormattedFullDateFromUnixTimestamp(timestamp: number) {
   return moment.unix(timestamp).format('LL');
 }
+
+export function truncateStringFromMiddle(str:string) {
+  if (!str) return '';
+  if (str.length > 10) {
+    return `${str.substring(0, 4)}...${str.substring(str.length - 4, str.length)}`;
+  }
+  return str;
+}
