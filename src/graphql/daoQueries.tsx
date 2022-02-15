@@ -45,7 +45,7 @@ const getNumOfApplicantsForAGrant = `
 `;
 
 const getAllGrantsForCreator = `
-query($first: Int, $skip: Int, $creatorId: String!) {
+query($first: Int, $skip: Int, $creatorId: String) {
   grants(
     first: $first, 
     skip: $skip, 
