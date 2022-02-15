@@ -11,6 +11,7 @@ function Talent({
   const theme = useTheme();
   return (
     <Container
+      h="100vh"
       maxW="100%"
       display="flex"
       px="70px"
@@ -23,17 +24,17 @@ function Talent({
       <Flex mt="88px">
         {[
           {
-            icon: '/images/yellow_flying_comp.svg',
+            icon: '/illustrations/browse_grants.svg',
             title: 'Browse Grants',
             text: 'Browse grants from DAOs, and protocols.',
           },
           {
-            icon: '/images/yellow_flying_comp.svg',
+            icon: '/illustrations/apply_instantly.svg',
             title: 'Apply instantly',
             text: 'Pitch your ideas, and projects to get a chance of winning grants.',
           },
           {
-            icon: '/images/yellow_flying_comp.svg',
+            icon: '/illustrations/get_funded.svg',
             title: 'Get funded',
             text: 'If selected, you will be rewarded with tokens',
           },
@@ -77,7 +78,7 @@ function Talent({
         maxW="100vw"
         w="auto"
         m={0}
-        position="sticky"
+        position="absolute"
         bottom={0}
         display="flex"
         justifyContent="center"

@@ -16,6 +16,7 @@ import Dropdown from '../../ui/forms/dropdown';
 import SingleLineInput from '../../ui/forms/singleLineInput';
 import Modal from '../../ui/modal';
 import animationData from '../../../../public/animations/Add_Funds.json';
+import Tooltip from '../../ui/tooltip';
 
 interface Props {
   isOpen: boolean;
@@ -81,18 +82,10 @@ function AddFunds({ isOpen, onClose }: Props) {
             {nextScreenTexts.map((text, index) => (
               <>
                 <Flex direction="row" justify="space-between" align="center" mx={4}>
-                  <Flex direction="row">
-                    <Text variant="tableBody" color="#8850EA" my={4}>
-                      {text}
-                      {' '}
-                    </Text>
-                    <Image
-                      ml={2}
-                      display="inline-block"
-                      alt="another_wallet"
-                      src="/ui_icons/info_brand_light.svg"
-                    />
-                  </Flex>
+                  <Text variant="tableBody" color="brand.500" my={4}>
+                    {text}
+                    {' '}
+                  </Text>
                   <IconButton
                     aria-label="right_chevron"
                     variant="ghost"
@@ -111,8 +104,8 @@ function AddFunds({ isOpen, onClose }: Props) {
         </Flex>
         )}
         {type === 0 && (
-        <Flex direction="column">
-          <Heading variant="page">Deposit funds from another wallet</Heading>
+        <Flex direction="column" mt={6}>
+          <Text fontSize="18px" lineHeight="26px" fontWeight="700" color="#122224">Deposit funds from another wallet</Text>
           <Flex direction="column" align="start">
             {stepsWhenAddingFromAnotherWallet.map((text, index) => (
               <Flex direction="row" justify="start" mt={8} align="center">
@@ -137,23 +130,14 @@ function AddFunds({ isOpen, onClose }: Props) {
               </Flex>
             ))}
           </Flex>
-          <Flex w="100%" mt={7}>
-            <SingleLineInput
-              label="Smart Contract Address"
-              height="80px"
-              inputRightElement={(
-                <Button variant="primary" w="89px" h="48px" mr={20}>
-                  Copy
-                </Button>
-              )}
-              placeholder="0xb794f5fss35x9268"
-              // subtext="Send only ETH token to this address."
-              value={undefined}
-              onChange={() => {}}
-              isError={false}
-              subtextAlign="center"
-              tooltip="Smart Contract Address is the address of the smart contract that will receive the funds."
-            />
+          <Flex w="100%" mt={7} direction="column">
+            <Text variant="tableHeader" color="#122224">
+              Smart Contract Address
+            </Text>
+            <Flex direction="row" justify="space-between" align="center" bg="#F3F4F4" px={3} py={3} mt={1} w="100%">
+              <Text variant="footer">0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D</Text>
+              <Button variant="primary" w="77px">Copy</Button>
+            </Flex>
           </Flex>
           <Heading variant="applicationHeading" textAlign="center" color="#717A7C" mt={4}>
             Send only ETH token to this address.
@@ -164,9 +148,9 @@ function AddFunds({ isOpen, onClose }: Props) {
         </Flex>
         )}
         {type === 1 && (
-        <Flex direction="column">
-          <Heading variant="page">Deposit funds from your wallet</Heading>
-          <Flex direction="row" mt={5}>
+        <Flex direction="column" mt={6}>
+          <Text fontSize="18px" lineHeight="26px" fontWeight="700" color="#122224">Deposit funds from your wallet</Text>
+          <Flex direction="row" mt={7}>
             <Image src="/ui_icons/grant_reward.svg" />
             <Flex flex={1} direction="column" ml={3}>
               <Text fontWeight="500">Grant Reward</Text>
@@ -175,7 +159,7 @@ function AddFunds({ isOpen, onClose }: Props) {
               </Text>
             </Flex>
           </Flex>
-          <Flex direction="row" w="100%" alignItems="flex-end" justify="space-between" mt={5}>
+          <Flex direction="row" w="100%" alignItems="flex-end" justify="space-between" mt={8}>
             <Flex w="70%" direction="column">
               <SingleLineInput
                 label="Deposit Amount"

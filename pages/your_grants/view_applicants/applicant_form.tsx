@@ -40,8 +40,8 @@ function ApplicantForm() {
   const router = useRouter();
   const [step, setStep] = useState(0);
 
-  const [resubmissionComment] = useState('Resubmission comment');
-  const [rejectionComment] = useState('Rejected');
+  const [resubmissionComment] = useState('Feedback Comment shown here.');
+  const [rejectionComment] = useState('Comment shown here.');
 
   useEffect(() => {
     if (router.query.flow === 'accepted') {
@@ -55,7 +55,7 @@ function ApplicantForm() {
     if (currentStep === 1) {
       return (
         <>
-          <Accept onSubmit={() => router.back()} milestones={milestones} />
+          <Accept onSubmit={() => router.push('/your_grants/view_applicants/manage')} milestones={milestones} />
           <AcceptSidebar />
         </>
       );
@@ -86,7 +86,7 @@ function ApplicantForm() {
           maxW="1116px"
           alignItems="stretch"
           pb={6}
-          px={10}
+          // px={10}
         >
           <Breadcrumbs
             path={['Your Grants', 'View Applicants', 'Applicant Form']}
@@ -187,7 +187,7 @@ function ApplicantForm() {
                     fontWeight="700"
                     color="#7B4646"
                   >
-                    Resubmit your Application
+                    Request for Resubmission
                   </Text>
                   <Text
                     fontSize="16px"
@@ -228,7 +228,7 @@ function ApplicantForm() {
         <Breadcrumbs
           path={['My Grants', 'View Applicants', 'Applicant Form']}
         />
-        <Heading mt="18px" title="Storage Provider (SP) Tooling Ideas" />
+        <Heading mt="18px" title="Storage Provider (SP) Tooling Ideas" dontRenderDivider />
       </Container>
 
       <Container pb={12} maxW="100%" display="flex">

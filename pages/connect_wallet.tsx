@@ -17,7 +17,8 @@ import Modal from '../src/components/ui/modal';
 import SecondaryDropdown from '../src/components/ui/secondaryDropdown';
 import Tooltip from '../src/components/ui/tooltip';
 import NavbarLayout from '../src/layout/navbarLayout';
-import supportedNetworks from '../src/constants/supportedNetworks.json';
+import compatibleNetworks from '../src/constants/compatibleNetworks.json';
+import strings from '../src/constants/strings.json';
 
 function ConnectWallet() {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -66,31 +67,29 @@ function ConnectWallet() {
       flexDirection="column"
       alignItems="center"
     >
-      <Text mt="46px" variant="heading">
-        Let&apos;s setup your account on Questbook
-      </Text>
+      <Text mt="46px" variant="heading">{strings.connect_wallet.heading}</Text>
       <Text mt={7} textAlign="center">
-        Use your existing crypto wallet
-        <Tooltip label="Crypto wallet is an application or hardware device that allows users to store and retrieve digital assets." />
-        or create a new one to start using Questbook
+        {strings.connect_wallet.subheading_1}
+        <Tooltip label={strings.connect_wallet.tooltip_label} />
+        {strings.connect_wallet.subheading_2}
       </Text>
 
       <Flex alignItems="baseline" mt={7}>
         <Text fontWeight="400" color="#3E4969" mr={4}>
-          Current Network
+          {strings.connect_wallet.dropdown_label}
         </Text>
         <SecondaryDropdown
           // listElements={['Ethereum', 'Solana', 'Harmony', 'Bitcoin']}
           // isOpen={isMenuOpen}
           // setIsOpen={setIsMenuOpen}
           listItemsMinWidth="280px"
-          listItems={Object.keys(supportedNetworks).map((networkId: any) => ({
+          listItems={Object.keys(compatibleNetworks).map((networkId: any) => ({
             id: networkId,
-            label: supportedNetworks[
-              networkId.toString() as keyof typeof supportedNetworks
+            label: compatibleNetworks[
+              networkId.toString() as keyof typeof compatibleNetworks
             ].name,
-            icon: supportedNetworks[
-              networkId.toString() as keyof typeof supportedNetworks
+            icon: compatibleNetworks[
+              networkId.toString() as keyof typeof compatibleNetworks
             ].icon,
           }))}
           // value={rewardCurrency}
@@ -98,12 +97,12 @@ function ConnectWallet() {
             setSelectedNetworkId(id);
           }}
         />
-        <Box mr={3} />
+        {/* <Box mr={3} />
         <Tooltip
           h="14px"
           w="14px"
-          label="Crypto wallet is an application or hardware device that allows users to store and retrieve digital assets."
-        />
+          label={strings.connect_wallet.tooltip_label}
+        /> */}
       </Flex>
 
       <Box mt={7} />
@@ -115,8 +114,8 @@ function ConnectWallet() {
         flexDirection="column"
         mt={7}
       >
-        {supportedNetworks[
-          selectedNetworkId.toString() as keyof typeof supportedNetworks
+        {compatibleNetworks[
+          selectedNetworkId.toString() as keyof typeof compatibleNetworks
         ].wallets.map(({ name, icon, id }) => (
           <WalletSelectButton
             key={id}
@@ -140,14 +139,13 @@ function ConnectWallet() {
           mb="-2px"
         />
         {' '}
-        Preferably connect a wallet with access to funds to reward grantees
-        easily.
+        <Text variant="footer" fontWeight="700" display="inline-block">Pro Tip: </Text>
+        {' '}
+        {strings.connect_wallet.protip}
       </Text>
 
       <Text variant="footer" my="36px">
-        By connecting your wallet, you accept Questbook&apos;s
-        {' '}
-        <Link href="toc">Terms of Service</Link>
+        {strings.connect_wallet.footer}
       </Text>
 
       <Modal

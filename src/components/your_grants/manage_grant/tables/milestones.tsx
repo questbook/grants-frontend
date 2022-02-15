@@ -99,7 +99,7 @@ function Milestones() {
               {moment(status.done_date.timestamp).format('MMM DD, YYYY')}
             </Text>
           </Text>
-          <Button variant="link" _focus={{}}>
+          <Button variant="link" _focus={{}} onClick={() => setIsMilestoneViewModalOpen(true)}>
             <Text textAlign="right" variant="footer" color="#6200EE">
               View
             </Text>

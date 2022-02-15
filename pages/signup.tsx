@@ -23,7 +23,7 @@ function SignupDao() {
   const router = useRouter();
   const [loading, setLoading] = React.useState(false);
   const [daoCreated, setDaoCreated] = React.useState(false);
-  const [creatingGrant, setCreatingGrant] = React.useState(false);
+  const [creatingGrant, setCreatingGrant] = React.useState(true);
 
   const [daoData, setDaoData] = React.useState<{
     name: string;
@@ -194,13 +194,8 @@ function SignupDao() {
         What should we call your Grants DAO?
       </Text>
       <Text mt={7} maxW="676px" textAlign="center">
-        A Grants DAO
-        <Tooltip
-          icon="/ui_icons/tooltip_questionmark_brand.svg"
-          label="Crypto wallet is an application or hardware device that allows users to store and retrieve digital assets."
-        />
-        allows you and your team to manage grants, funds and applicants - all in
-        a single neatly arranged space.
+        A Grants DAO is a neatly arranged space where you can manage grants,
+        review grant applications and fund grants.
       </Text>
       <Form onSubmit={handleFormSubmit} />
     </Container>

@@ -25,6 +25,7 @@ function Accept({
       pb={8}
       px={10}
     >
+      <Divider mb={5} />
       <Text fontSize="18px" lineHeight="26px" fontWeight="700">
         Accept Grant Application
       </Text>

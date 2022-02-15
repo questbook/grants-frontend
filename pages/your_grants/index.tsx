@@ -1,14 +1,14 @@
 import { gql } from '@apollo/client';
 import {
-  Container, Flex, useToast, Image, Text,
+  Container, Flex, useToast, Image, Text, Button,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
   ReactElement, useCallback, useContext, useEffect, useRef,
 } from 'react';
 import { useAccount } from 'wagmi';
+import AddFunds from '../../src/components/funds/add_funds_modal';
 import Heading from '../../src/components/ui/heading';
-import AddFunds from '../../src/components/your_grants/add_funds_modal';
 import YourGrantCard from '../../src/components/your_grants/yourGrantCard';
 import supportedCurrencies from '../../src/constants/supportedCurrencies';
 import { getAllGrantsForADao } from '../../src/graphql/daoQueries';
@@ -128,9 +128,15 @@ function YourGrants() {
     return () => parentElement.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
+  const getIcon = (currency: string) => {
+    if (currency === 'DAI') return '/ui_icons/brand/currency/dai.svg';
+    if (currency === 'WMATIC') return '/ui_icons/brand/currency/wmatic.svg';
+    return '/ui_icons/brand/currency/weth.svg';
+  };
+
   return (
     <>
-      <Container ref={containerRef} maxW="100%" display="flex" px="70px">
+      <Container ref={containerRef} maxW="100%" h="100%" display="flex" px="70px">
         <Container
           flex={1}
           display="flex"
@@ -159,7 +165,7 @@ function YourGrants() {
                 ).getTime()}
                 grantAmount={formatAmount(grant.reward.committed)}
                 grantCurrency={grantCurrency?.label ?? 'LOL'}
-                grantCurrencyIcon={grantCurrency?.icon ?? '/images/dummy/Ethereum Icon.svg'}
+                grantCurrencyIcon={grantCurrency?.label ? getIcon(grantCurrency.label) : '/images/dummy/Ethereum Icon.svg'}
                 state="done"
                 onEditClick={() => router.push({
                   pathname: '/your_grants/edit_grant/',
@@ -171,6 +177,118 @@ function YourGrants() {
               />
             );
           })}
+          {grants.length === 0 && Array(1)
+            .fill(0)
+            .map(() => (
+              <YourGrantCard
+                daoIcon="/images/dummy/Polygon Icon.svg"
+                grantTitle="Storage Provider (SP) Tooling Ideas"
+                grantDesc="A tool, script or tutorial to set up monitoring for miner GPU, CPU, memory and other and resource and performance metrics, ideally using Prometheus"
+                numOfApplicants={0}
+                endTimestamp={new Date(
+                  'January 2, 2022 23:59:59:000',
+                ).getTime()}
+                grantAmount="60"
+                grantCurrency="ETH"
+                grantCurrencyIcon="/images/dummy/Ethereum Icon.svg"
+                state="done"
+                onEditClick={() => router.push({
+                  pathname: '/your_grants/edit_grant/',
+                  query: {
+                    account: true,
+                  },
+                })}
+                onAddFundsClick={() => setAddFundsIsOpen(true)}
+              />
+            ))}
+          {grants.length === 0 && Array(1)
+            .fill(0)
+            .map(() => (
+              <YourGrantCard
+                daoIcon="/images/dummy/Polygon Icon.svg"
+                grantTitle="Storage Provider (SP) Tooling Ideas"
+                grantDesc="A tool, script or tutorial to set up monitoring for miner GPU, CPU, memory and other and resource and performance metrics, ideally using Prometheus"
+                numOfApplicants={10}
+                endTimestamp={new Date(
+                  'January 2, 2022 23:59:59:000',
+                ).getTime()}
+                grantAmount="60"
+                grantCurrency="ETH"
+                grantCurrencyIcon="/images/dummy/Ethereum Icon.svg"
+                state="done"
+                onEditClick={() => router.push({
+                  pathname: '/your_grants/edit_grant/',
+                  query: {
+                    account: true,
+                  },
+                })}
+                onViewApplicantsClick={() => router.push({
+                  pathname: '/your_grants/view_applicants/',
+                  query: {
+                    account: true,
+                  },
+                })}
+                onAddFundsClick={() => setAddFundsIsOpen(true)}
+              />
+            ))}
+          {grants.length === 0 && Array(1)
+            .fill(0)
+            .map(() => (
+              <YourGrantCard
+                daoIcon="/images/dummy/Polygon Icon.svg"
+                grantTitle="Storage Provider (SP) Tooling Ideas"
+                grantDesc="A tool, script or tutorial to set up monitoring for miner GPU, CPU, memory and other and resource and performance metrics, ideally using Prometheus"
+                numOfApplicants={10}
+                endTimestamp={new Date(
+                  'January 2, 2022 23:59:59:000',
+                ).getTime()}
+                grantAmount="60"
+                grantCurrency="ETH"
+                grantCurrencyIcon="/images/dummy/Ethereum Icon.svg"
+                state="processing"
+                onEditClick={() => router.push({
+                  pathname: '/your_grants/edit_grant/',
+
+                })}
+                onViewApplicantsClick={() => router.push({
+                  pathname: '/your_grants/view_applicants/',
+                })}
+                onAddFundsClick={() => setAddFundsIsOpen(true)}
+              />
+            ))}
+          {/* {grants.length === 0 && (
+            <Flex direction="column" justify="center" h="100%" align="center" mx={4}>
+              <Image h="174px" w="146px" src="/illustrations/no_grants.svg" />
+              <Text
+                mt="17px"
+                fontFamily="Spartan, sans-serif"
+                fontSize="20px"
+                lineHeight="25px"
+                fontWeight="700"
+                textAlign="center"
+              >
+                It’s quite silent here!
+              </Text>
+              <Text mt="11px" fontWeight="400" textAlign="center">
+                Get started by creating your grant and post it in less than 2 minutes.
+              </Text>
+
+              <Button
+                mt={16}
+                onClick={() => {
+                  router.push({
+                    pathname: '/your_grants/create_grant/',
+                    // pathname: '/signup',
+                  });
+                }}
+                maxW="163px"
+                variant="primary"
+                mr="12px"
+              >
+                Create a Grant
+              </Button>
+            </Flex>
+          )} */}
         </Container>
       </Container>
       <AddFunds

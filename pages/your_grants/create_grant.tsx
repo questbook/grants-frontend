@@ -40,7 +40,7 @@ function CreateGrant() {
     ],
     [
       'Reward and Deadline',
-      'Amount, type of payout & submission deadline',
+      'Grant reward & submission deadline',
       grantRewardsRef,
     ],
   ];

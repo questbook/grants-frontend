@@ -140,6 +140,12 @@ function BrowseGrants() {
     return () => parentElement.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
+  const getIcon = (currency: string) => {
+    if (currency === 'DAI') return '/ui_icons/brand/currency/dai.svg';
+    if (currency === 'WMATIC') return '/ui_icons/brand/currency/wmatic.svg';
+    return '/ui_icons/brand/currency/weth.svg';
+  };
+
   return (
     <Container ref={containerRef} maxW="100%" display="flex" px="70px">
       <Container
@@ -170,7 +176,7 @@ function BrowseGrants() {
                 endTimestamp={new Date(grant.deadline).getTime()}
                 grantAmount={formatAmount(grant.reward.committed)}
                 grantCurrency={grantCurrency?.label ?? 'LOL'}
-                grantCurrencyIcon={grantCurrency?.icon ?? '/images/dummy/Ethereum Icon.svg'}
+                grantCurrencyIcon={grantCurrency?.label ? getIcon(grantCurrency.label) : '/images/dummy/Ethereum Icon.svg'}
                 isGrantVerified={grant.funding > 0}
                 onClick={() => {
                   if (!(accountData && accountData.address)) {

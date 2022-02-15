@@ -16,7 +16,7 @@ function ModalContent({
   return (
     <ModalBody>
       <Flex direction="column" justify="start" align="center">
-        <Image w="127px" h="147px" src="/images/pink_flying_comp.svg" />
+        <Image w="127px" h="147px" src="/illustrations/done.svg" />
         <Heading mt={8} textAlign="center" variant="applicationHeading">
           You have marked the Milestone 1 as done.
         </Heading>

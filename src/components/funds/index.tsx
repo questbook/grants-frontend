@@ -37,7 +37,11 @@ function FundForAGrant() {
               variant="ghost"
             />
             <MenuList>
-              <MenuItem icon={<Image src="/ui_icons/withdraw_fund.svg" />} _hover={{}} onClick={() => setIsWithdrawFundsModalOpen(true)}>
+              <MenuItem
+                icon={<Image src="/ui_icons/withdraw_fund.svg" />}
+                _hover={{}}
+                onClick={() => setIsWithdrawFundsModalOpen(true)}
+              >
                 Withdraw Funds
               </MenuItem>
             </MenuList>
