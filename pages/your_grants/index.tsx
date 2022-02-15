@@ -1,5 +1,7 @@
 import { gql } from '@apollo/client';
-import { Container, Flex, useToast, Image, Text } from '@chakra-ui/react';
+import {
+  Container, Flex, useToast, Image, Text,
+} from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
   ReactElement,
@@ -9,15 +11,15 @@ import React, {
   useRef,
 } from 'react';
 import { useAccount } from 'wagmi';
+import { BigNumber } from '@ethersproject/bignumber';
 import Heading from '../../src/components/ui/heading';
 import AddFunds from '../../src/components/your_grants/add_funds_modal';
 import YourGrantCard from '../../src/components/your_grants/yourGrantCard';
 import supportedCurrencies from '../../src/constants/supportedCurrencies';
-import { getAllGrantsForADao } from '../../src/graphql/daoQueries';
+import { getAllGrantsForADao, getAllGrantsForCreator } from '../../src/graphql/daoQueries';
 import NavbarLayout from '../../src/layout/navbarLayout';
 import { formatAmount } from '../../src/utils/formattingUtils';
 import { ApiClientsContext } from '../_app';
-import { BigNumber } from '@ethersproject/bignumber';
 
 function YourGrants() {
   const containerRef = useRef(null);
@@ -41,14 +43,15 @@ function YourGrants() {
   const getGrantData = async () => {
     if (!subgraphClient || !accountData?.address) return;
     try {
-      const { data } = (await subgraphClient.query({
-        query: gql(getAllGrantsForADao),
-        variables: {
-          first: pageSize,
-          skip: pageSize * currentPage,
-          creatorId: accountData?.address,
-        },
-      })) as any;
+      const { data } = await subgraphClient
+        .query({
+          query: gql(getAllGrantsForCreator),
+          variables: {
+            first: pageSize,
+            skip: pageSize * currentPage,
+            creatorId: accountData?.address,
+          },
+        }) as any;
       // console.log(data);
       if (data.grants.length > 0) {
         setCurrentPage(currentPage + 1);
@@ -116,9 +119,8 @@ function YourGrants() {
 
   const initialiseFundModal = async (grant) => {
     const grantCurrency = supportedCurrencies.find(
-      (currency) =>
-        currency.id.toLowerCase() ===
-        grant.reward.asset.toString().toLowerCase()
+      (currency) => currency.id.toLowerCase()
+        === grant.reward.asset.toString().toLowerCase(),
     );
     setAddFundsIsOpen(true);
     setGrantForFunding(grant.id);
@@ -134,11 +136,10 @@ function YourGrants() {
     const { current } = containerRef;
     if (!current) return;
     const parentElement = (current as HTMLElement)?.parentNode as HTMLElement;
-    const reachedBottom =
-      Math.abs(
-        parentElement.scrollTop -
-          (parentElement.scrollHeight - parentElement.clientHeight)
-      ) < 10;
+    const reachedBottom = Math.abs(
+      parentElement.scrollTop
+          - (parentElement.scrollHeight - parentElement.clientHeight),
+    ) < 10;
     if (reachedBottom) {
       getGrantData();
     }
