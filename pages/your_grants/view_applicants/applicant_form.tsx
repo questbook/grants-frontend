@@ -82,40 +82,50 @@ function ApplicantForm() {
     contractInterface: ApplicationRegistryAbi,
     signerOrProvider: signerStates.data,
   });
-  const handleAcceptApplication = async () => {
-    if (!apiClients) return;
-    const { subgraphClient, workspaceId } = apiClients;
-    if (!accountData
+
+  const handleApplicationStateUpdate = async (state:number, comment:string) => {
+    try {
+      if (!apiClients) return;
+      const { subgraphClient, validatorApi, workspaceId } = apiClients;
+      if (!accountData
       || !accountData.address
       || !workspaceId
       || !applicationData
       || !applicationData.id) {
-      return;
+        return;
+      }
+      const {
+        data: { ipfsHash },
+      } = await validatorApi.validateGrantApplicationUpdate({
+        feedback: comment,
+      });
+      console.log(ipfsHash);
+      console.log(Number(applicationData?.id), Number(workspaceId));
+      const transaction = await applicationRegContract.updateApplicationState(
+        Number(applicationData?.id),
+        Number(workspaceId),
+        state,
+        ipfsHash,
+      );
+      const transactionData = await transaction.wait();
+
+      console.log(transactionData);
+      console.log(transactionData.blockNumber);
+
+      await subgraphClient.waitForBlock(transactionData.blockNumber);
+
+      router.replace('/your_grants');
+    } catch (error) {
+      console.log(error);
     }
-
-    console.log(Number(applicationData?.id), Number(workspaceId));
-    const transaction = await applicationRegContract.updateApplicationState(
-      Number(applicationData?.id),
-      Number(workspaceId),
-      2,
-      '',
-    );
-    const transactionData = await transaction.wait();
-
-    console.log(transactionData);
-    console.log(transactionData.blockNumber);
-
-    await subgraphClient.waitForBlock(transactionData.blockNumber);
-
-    router.replace('/your_grants');
   };
-
   function renderContent(currentStep: number) {
     if (currentStep === 1) {
       return (
         <>
           <Accept
-            onSubmit={handleAcceptApplication}
+            // onSubmit={handleAcceptApplication}
+            onSubmit={() => handleApplicationStateUpdate(2, '')}
             applicationData={applicationData}
           />
           <AcceptSidebar
@@ -127,15 +137,19 @@ function ApplicantForm() {
     if (currentStep === 2) {
       return (
         <>
-          <Reject onSubmit={() => router.back()} />
-          <RejectSidebar />
+          <Reject onSubmit={({ comment }) => handleApplicationStateUpdate(3, comment)} />
+          <RejectSidebar
+            applicationData={applicationData}
+          />
         </>
       );
     }
     return (
       <>
-        <Resubmit onSubmit={() => router.back()} />
-        <ResubmitSidebar />
+        <Resubmit onSubmit={({ comment }) => handleApplicationStateUpdate(1, comment)} />
+        <ResubmitSidebar
+          applicationData={applicationData}
+        />
       </>
     );
   }

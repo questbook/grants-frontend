@@ -3,6 +3,7 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import { getFormattedFullDateFromUnixTimestamp, truncateStringFromMiddle } from 'src/utils/formattingUtils';
+import { getAssetInfo } from 'src/utils/tokenUtils';
 import FloatingSidebar from '../../../ui/sidebar/floatingSidebar';
 
 function Sidebar(
@@ -25,7 +26,7 @@ function Sidebar(
           Application Details
         </Heading>
         <Flex direction="row" justify="start" w="full" mt={6} align="center">
-          <Image h="45px" w="45px" src="/network_icons/eth_mainnet.svg" />
+          <Image h="45px" w="45px" src={getAssetInfo(applicationData?.grant?.reward?.asset)?.icon} />
           <Box mx={3} />
           <Heading variant="applicationHeading" color="brand.500">
             {truncateStringFromMiddle(applicationData?.applicantId)}
@@ -65,7 +66,7 @@ function Sidebar(
             fontWeight="500"
             fontStyle="normal"
             color="#414E50"
-            href="view grant"
+            href={`/explore_grants/about_grant?grantID=${applicationData?.grant?.id}`}
           >
             View Grant
             {' '}
@@ -83,7 +84,7 @@ function Sidebar(
             fontWeight="500"
             fontStyle="normal"
             color="#414E50"
-            href="view grant"
+            href={`/your_applications/grant_application?applicationID=${applicationData?.id}`}
             ml="auto"
           >
             View Application

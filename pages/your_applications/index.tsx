@@ -109,7 +109,8 @@ function YourApplications() {
                 isGrantVerified={(new BN(application.grant.funding)).gt(new BN(0))}
                 isDaoVerified={false}
                 status={application.state}
-                sentDate={getFormattedDateFromUnixTimestamp(application.createdAtS)}
+                sentDate={getFormattedDateFromUnixTimestamp(application?.createdAtS)}
+                updatedDate={getFormattedDateFromUnixTimestamp(application?.updatedAtS)}
                 onViewGrantClick={() => router.push({
                   pathname: '/explore_grants/about_grant',
                   query: {
@@ -129,77 +130,6 @@ function YourApplications() {
             )
           ))}
 
-        {/* <YourApplicationCard
-          grantTitle="Storage Provider (SP) Tooling Ideas"
-          daoName="Polygon DAO"
-          daoIcon="/images/dummy/Polygon Icon.svg"
-          isGrantVerified={isGrantVerified}
-          isDaoVerified={isDaoVerified}
-          status="accepted"
-          sentDate="07 Aug"
-          resultDate="07 Aug"
-          onViewGrantClick={() => router.push({
-            pathname: '/explore_grants/about_grant',
-            query: {
-              account: true,
-            },
-          })}
-          onManageGrantClick={() => router.push({
-            pathname: '/your_applications/manage_grant',
-            query: {
-              account: true,
-              viewApplicationType: 'accepted',
-            },
-          })}
-        />
-
-        <YourApplicationCard
-          grantTitle="Storage Provider (SP) Tooling Ideas"
-          daoName="Polygon DAO"
-          daoIcon="/images/dummy/Polygon Icon.svg"
-          isGrantVerified={isGrantVerified}
-          isDaoVerified={isDaoVerified}
-          status="rejected"
-          sentDate="07 Aug"
-          resultDate="07 Aug"
-          onViewGrantClick={() => router.push({
-            pathname: '/explore_grants/about_grant',
-            query: {
-              account: true,
-            },
-          })}
-          onViewApplicationClick={() => router.push({
-            pathname: '/your_applications/grant_application',
-            query: {
-              account: true,
-              viewApplicationType: 'rejected',
-            },
-          })}
-        />
-
-        <YourApplicationCard
-          grantTitle="Storage Provider (SP) Tooling Ideas"
-          daoName="Polygon DAO"
-          daoIcon="/images/dummy/Polygon Icon.svg"
-          isGrantVerified={isGrantVerified}
-          isDaoVerified={isDaoVerified}
-          status="resubmit"
-          sentDate="07 Aug"
-          resultDate="07 Aug"
-          onViewGrantClick={() => router.push({
-            pathname: '/explore_grants/about_grant',
-            query: {
-              account: true,
-            },
-          })}
-          onViewApplicationClick={() => router.push({
-            pathname: '/your_applications/grant_application',
-            query: {
-              account: true,
-              viewApplicationType: 'resubmit',
-            },
-          })}
-        /> */}
       </Container>
     </Container>
   );
