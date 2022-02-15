@@ -1,21 +1,64 @@
 import { Button, Divider, Flex } from '@chakra-ui/react';
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { gql } from '@apollo/client';
 import Members from '../src/components/settings_and_members/members';
 import Settings from '../src/components/settings_and_members/settings';
 import NavbarLayout from '../src/layout/navbarLayout';
+import { getWorkspaceDetails } from '../src/graphql/daoQueries';
+import SubgraphClient from '../src/graphql/subgraph';
 
 function SettingsAndMembers() {
+  const router = useRouter();
   const tabs = ['Settings', 'Invite Members'];
   const [selected, setSelected] = useState(0);
+  const [workspaceId, setWorkspaceId] = useState(null);
+  const [workspaceData, setWorkspaceData] = useState(null);
 
   const switchTab = (to: number) => {
     setSelected(to);
   };
 
+  async function getWorkspaceData(workspaceID) {
+    if (!workspaceID) return;
+    const workspaceIDHex = `0x${parseInt(workspaceID, 10).toString(16)}`;
+    const subgraphClient = new SubgraphClient();
+    if (!subgraphClient.client) return;
+    try {
+      const { data } = (await subgraphClient.client.query({
+        query: gql(getWorkspaceDetails),
+        variables: {
+          workspaceID: workspaceIDHex,
+        },
+      })) as any;
+      if (data.workspace) {
+        setWorkspaceData(data.workspace);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  useEffect(() => {
+    setWorkspaceId(router?.query?.workspaceId ?? '');
+  }, [router]);
+
+  useEffect(() => {
+    getWorkspaceData(workspaceId);
+  }, [workspaceId]);
+
   return (
     <Flex direction="row" w="100%" justify="space-evenly">
       <Flex w="65%" direction="column">
-        <Flex direction="row" w="full" justify="start" h={14} align="stretch" mb={4} mt={6}>
+        <Flex
+          direction="row"
+          w="full"
+          justify="start"
+          h={14}
+          align="stretch"
+          mb={4}
+          mt={6}
+        >
           {tabs.map((tab, index) => (
             <Button
               variant="link"
@@ -38,7 +81,11 @@ function SettingsAndMembers() {
           ))}
         </Flex>
         <Divider variant="sidebar" mb={5} />
-        {selected === 0 ? <Settings /> : <Members />}
+        {selected === 0 ? (
+          <Settings workspaceData={workspaceData} />
+        ) : (
+          <Members />
+        )}
       </Flex>
       <Flex w="20%" />
     </Flex>

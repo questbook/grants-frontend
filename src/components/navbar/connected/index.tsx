@@ -136,6 +136,7 @@ function Navbar({
                     onClick={() => {
                       router.push({
                         pathname: `/${tabPaths[2]}`,
+                        search: `?workspaceID=${Number(daoId)}`,
                       });
                     }}
                   />
