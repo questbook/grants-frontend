@@ -5,8 +5,15 @@ export default {
         height: 12,
         px: 12,
         bg: 'brand.500',
-        _hover: { background: 'brand.600' },
+        _hover: { background: 'brand.600',
+          _disabled: {
+            bgColor: 'brandDisabled.500',
+          },
+        },
         _active: { background: 'brand.700' },
+        _disabled: {
+          background: 'brandDisabled.600',
+        },
         py: 3,
         color: 'white',
         fontWeight: 'bold',

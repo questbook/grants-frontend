@@ -5,7 +5,7 @@ import {
 import React from 'react';
 import Modal from '../../ui/modal';
 import FloatingSidebar from '../../ui/sidebar/floatingSidebar';
-import AddFundModalContent from './modals/addFundModalContent';
+import AddFunds from './modals/addFundModal';
 import SendFundModalContent from './modals/sendFundModalContent';
 
 interface Props {
@@ -68,25 +68,8 @@ function Sidebar({ funds = 0 }: Props) {
         >
           Send Funds
         </Button>
+        <AddFunds isOpen={isAddFundModalOpen} onClose={() => setIsAddFundModalOpen(false)} />
         <Modal
-          isOpen={isAddFundModalOpen}
-          onClose={() => setIsAddFundModalOpen(false)}
-          title="Add Funds"
-          rightIcon={(
-            <Button
-              _focus={{}}
-              variant="link"
-              color="#AA82F0"
-              leftIcon={<Image src="/brand_icons/discord_icon.svg" />}
-            >
-              Support 24*7
-            </Button>
-          )}
-        >
-          <AddFundModalContent onClose={() => setIsAddFundModalOpen(false)} />
-        </Modal>
-        <Modal
-          closeOnOverlayClick
           isOpen={isSendFundModalOpen}
           onClose={() => setIsSendFundModalOpen(false)}
           title="Send Funds"

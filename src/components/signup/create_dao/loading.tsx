@@ -4,7 +4,9 @@ import {
   Image,
   Text,
 } from '@chakra-ui/react';
+import Lottie from 'lottie-react';
 import React, { useEffect } from 'react';
+import animationData from '../../../../public/animations/Loading.json';
 
 function Loading() {
   const [timeElapsed, setTimeElapsed] = React.useState(0);
@@ -25,12 +27,7 @@ function Loading() {
       p={12}
     >
       {timeElapsed < 1 ? (
-        <Image
-          src="/create_dao/loading.svg"
-          mb={16}
-          h={126}
-          w={121}
-        />
+        <Lottie animationData={animationData} />
       ) : (
         <Image
           src="/create_dao/loading-2.svg"
