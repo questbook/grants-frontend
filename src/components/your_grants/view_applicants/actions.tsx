@@ -1,4 +1,4 @@
-import { ViewIcon, CheckIcon, CloseIcon } from '@chakra-ui/icons';
+import { ViewIcon } from '@chakra-ui/icons';
 import {
   Menu,
   MenuButton,
@@ -76,7 +76,7 @@ function Actions({
               View Application
             </Text>
           </MenuItem>
-          <MenuItem
+          {/* <MenuItem
             onClick={() => {
               if (onAcceptApplicationClick) {
                 onAcceptApplicationClick();
@@ -109,7 +109,7 @@ function Actions({
             >
               Reject
             </Text>
-          </MenuItem>
+          </MenuItem> */}
         </MenuList>
       </Menu>
     );
@@ -176,7 +176,7 @@ function Actions({
 
 Actions.defaultProps = {
   onViewApplicationFormClick: () => {},
-  onAcceptApplicationClick: () => {},
-  onRejectApplicationClick: () => {},
+  // onAcceptApplicationClick: () => {},
+  // onRejectApplicationClick: () => {},
 };
 export default Actions;
