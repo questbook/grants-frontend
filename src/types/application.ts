@@ -12,3 +12,28 @@ export interface GrantApplicationProps {
   fundingBreakdown: string;
 
 }
+
+export interface GrantApplicationFieldsSubgraph {
+  applicantName: string[];
+  applicantEmail:string[];
+  projectName: string[];
+  projectDetails: string[];
+  fundingAsk: string[];
+  fundingBreakdown: string[];
+  teamMembers?: string[];
+  memberDetails?: string[];
+  projectLink?: string[];
+  projectGoals?: string[];
+  isMultipleMilestones?: string[];
+}
+
+interface Milestone {
+  title: string;
+  amount: string;
+}
+export interface GrantApplicationSubgraph {
+  grantId: string;
+  applicantId: string;
+  fields: GrantApplicationFieldsSubgraph;
+  milestones: Milestone[]
+}

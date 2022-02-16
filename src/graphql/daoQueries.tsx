@@ -156,6 +156,7 @@ query($first: Int, $skip: Int, $applicantID: Bytes!) {
     applicantId
     state
     createdAtS
+    updatedAtS
   }
 }
 `;

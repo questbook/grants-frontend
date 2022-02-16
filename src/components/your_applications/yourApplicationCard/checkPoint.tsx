@@ -62,7 +62,7 @@ function CheckPoint({ state, date }: Props) {
         top="-20px"
         whiteSpace="nowrap"
       >
-        {date}
+        { date}
       </Text>
       <Box
         display="flex"
