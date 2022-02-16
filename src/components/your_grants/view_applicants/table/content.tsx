@@ -124,24 +124,30 @@ function Content({
                 w="88px"
                 h="32px"
                 onClick={() => {
-                  if (item.status === 0 && onManageApplicationClick) {
+                  //               if (status === 0) return <PendingReview />;
+                  // if (status === 1) return <ResubmissionRequested />;
+                  // if (status === 2) return <GrantApproved />;
+                  // if (status === 3) return <Rejected />;
+                  // return <GrantComplete />;
+                  console.log(item.status);
+                  if ((item.status === 2 || item.status === 4) && onManageApplicationClick) {
                     onManageApplicationClick({
                       applicationId: item.applicationId,
                     });
                     return;
                   }
                   if (onViewApplicationFormClick) {
-                    if (item.status === 1) {
+                    if (item.status === 3) {
                       onViewApplicationFormClick({
                         rejectionComment: 'rejectionComment',
                         applicationId: item.applicationId,
                       });
-                    } else if (item.status === 2) {
+                    } else if (item.status === 1) {
                       onViewApplicationFormClick({
                         resubmissionComment: 'resubmissionComment',
                         applicationId: item.applicationId,
                       });
-                    } else {
+                    } else if (item.status === 0) {
                       onViewApplicationFormClick({ applicationId: item.applicationId });
                     }
                   }
