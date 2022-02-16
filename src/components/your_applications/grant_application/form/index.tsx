@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
   Box,
   Button,
@@ -13,7 +13,6 @@ import { GrantApplicationProps } from 'src/types/application';
 import { getFormattedFullDateFromUnixTimestamp, parseAmount } from 'src/utils/formattingUtils';
 import { useContract, useSigner } from 'wagmi';
 import config from 'src/constants/config';
-import { useContext } from 'react';
 import { ApiClientsContext } from 'pages/_app';
 import { getGrantApplication } from 'src/graphql/daoQueries';
 import { gql } from '@apollo/client';
@@ -507,7 +506,5 @@ function Form({
 }
 
 Form.defaultProps = {
-  resubmitComment: '',
-  rejectedComment: '',
 };
 export default Form;

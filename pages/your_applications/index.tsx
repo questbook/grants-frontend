@@ -115,15 +115,18 @@ function YourApplications() {
                   pathname: '/explore_grants/about_grant',
                   query: {
                     grantID: application.grant.id,
-                    account: true,
                   },
                 })}
                 onViewApplicationClick={() => router.push({
                   pathname: '/your_applications/grant_application',
                   query: {
-                    account: true,
                     applicationID: application.id,
-                    viewApplicationType: 'pending',
+                  },
+                })}
+                onManageGrantClick={() => router.push({
+                  pathname: '/your_applications/manage_grant',
+                  query: {
+                    applicationID: application.id,
                   },
                 })}
               />

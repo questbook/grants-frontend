@@ -21,21 +21,8 @@ function ViewApplication() {
   const router = useRouter();
   const [applicationID, setApplicationId] = React.useState<any>('');
   const [application, setApplication] = React.useState<any>([]);
-  const [isReadOnly, setIsReadOnly] = useState(true);
 
-  const [rejectedComment, setRejectedComment] = useState('');
-  const [resubmitComment, setResubmitComment] = useState('');
   const [formData, setFormData] = useState<GrantApplicationProps | null>(null);
-
-  useEffect(() => {
-    if (router.query.viewApplicationType === 'resubmit') {
-      setIsReadOnly(false);
-      setResubmitComment('This requires a resubmission');
-    }
-    if (router.query.viewApplicationType === 'rejected') {
-      setRejectedComment('This is bad news');
-    }
-  }, [router.query.viewApplicationType]);
 
   const getApplicationDetailsData = useCallback(async () => {
     const subgraphClient = new SubgraphClient();
@@ -116,8 +103,6 @@ function ViewApplication() {
           rewardAmount={ethers.utils.formatEther(application?.grant?.reward?.committed ?? '1').toString()}
           rewardCurrency={getAssetInfo(application?.grant?.reward?.asset)?.label}
           rewardCurrencyCoin={getAssetInfo(application?.grant?.reward?.asset)?.icon}
-          rejectedComment={rejectedComment}
-          resubmitComment={resubmitComment}
           formData={formData}
           grantTitle={application?.grant?.title}
           sentDate={application?.createdAtS}

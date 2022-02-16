@@ -1,9 +1,13 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import React, { useContext, useState } from 'react';
-import { Box, Button, Text, Image, Link, Flex, Container } from '@chakra-ui/react';
+import {
+  Box, Button, Text, Image, Link, Flex, Container,
+} from '@chakra-ui/react';
 import { useContract, useSigner } from 'wagmi';
 import { gql } from '@apollo/client';
-import { formatAmount, parseAmount } from 'src/utils/formattingUtils';
+import { parseAmount } from 'src/utils/formattingUtils';
+import { GrantApplicationSubgraph } from 'src/types/application';
+import { GrantApplicationRequest } from '@questbook/service-validator-client';
 import ApplicantDetails from './1_applicantDetails';
 import AboutProject from './3_aboutProject';
 import AboutTeam from './2_aboutTeam';
@@ -188,27 +192,28 @@ function Form({
       ));
 
       if (!signer || !signer.data || !apiClientContext) return;
+      const data: GrantApplicationSubgraph = {
+        grantId,
+        applicantId: await signer?.data?.getAddress(),
+        fields: {
+          applicantName: [applicantName],
+          applicantEmail: [applicantEmail],
+          projectName: [projectName],
+          projectDetails: [projectDetails],
+          fundingAsk: [parseAmount(fundingAsk)],
+          fundingBreakdown: [fundingBreakdown],
+          teamMembers: [Number(teamMembers).toString()],
+          memberDetails: membersDescription.map((md) => (md.description)),
+          projectLink: links,
+          projectGoals: [projectGoal],
+          isMultipleMilestones: [grantRequiredFields.includes('isMultipleMilestones').toString()],
+        },
+        milestones,
+
+      };
       const { data: { ipfsHash } } = await apiClientContext
         .validatorApi
-        .validateGrantApplicationCreate({
-          grantId,
-          applicantId: await signer?.data?.getAddress(),
-          fields: {
-            applicantName: [applicantName],
-            applicantEmail: [applicantEmail],
-            projectName: [projectName],
-            projectDetails: [projectDetails],
-            fundingAsk: [parseAmount(fundingAsk)],
-            fundingBreakdown: [fundingBreakdown],
-            teamMembers: [Number(teamMembers).toString()],
-            memberDetails: membersDescription.map((md) => (md.description)),
-            projectLink: links,
-            projectGoals: [projectGoal],
-            isMultipleMilestones: [grantRequiredFields.includes('isMultipleMilestones').toString()],
-          },
-          milestones,
-
-        });
+        .validateGrantApplicationCreate(data as unknown as GrantApplicationRequest);
       console.log(ipfsHash);
       console.log(grantId, workspaceId, projectMilestones.length);
       const transaction = await applicationRegistryContract.submitApplication(
