@@ -13,14 +13,14 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import Lottie from 'lottie-react';
+import copy from 'copy-to-clipboard';
+import { useAccount, useContract, useSigner } from 'wagmi';
+import { ethers } from 'ethers';
 import Dropdown from '../../ui/forms/dropdown';
 import SingleLineInput from '../../ui/forms/singleLineInput';
 import Modal from '../../ui/modal';
 import animationData from '../../../../public/animations/Add_Funds.json';
-import copy from 'copy-to-clipboard';
-import { useAccount, useContract, useSigner } from 'wagmi';
 import ERC20ABI from '../../../contracts/abi/ERC20.json';
-import { ethers } from 'ethers';
 
 interface Props {
   isOpen: boolean;
@@ -34,7 +34,9 @@ interface Props {
   };
 }
 
-function AddFunds({ isOpen, onClose, grantAddress, rewardAsset }: Props) {
+function AddFunds({
+  isOpen, onClose, grantAddress, rewardAsset,
+}: Props) {
   const [type, setType] = React.useState(-1);
   const [funding, setFunding] = React.useState('');
   const [error, setError] = React.useState(false);
@@ -50,10 +52,11 @@ function AddFunds({ isOpen, onClose, grantAddress, rewardAsset }: Props) {
     'Open your wallet which has funds.',
     'Send the funds to the address below.',
   ];
+
   const toast = useToast();
   const [signerStates] = useSigner();
   const rewardAssetContract = useContract({
-    addressOrName: rewardAsset.address,
+    addressOrName: rewardAsset.address ?? '0x0000000000000000000000000000000000000000',
     contractInterface: ERC20ABI,
     signerOrProvider: signerStates.data,
   });
@@ -79,7 +82,7 @@ function AddFunds({ isOpen, onClose, grantAddress, rewardAsset }: Props) {
     try {
       const transferTxn = await rewardAssetContract.transfer(
         grantAddress,
-        finalAmount
+        finalAmount,
       );
       await transferTxn.wait();
       toast({
@@ -103,20 +106,22 @@ function AddFunds({ isOpen, onClose, grantAddress, rewardAsset }: Props) {
   useEffect(() => {
     (async function () {
       try {
+        console.log('', rewardAssetContract);
+        if (!rewardAssetContract.provider) return;
         const assetDecimal = await rewardAssetContract.decimals();
         setRewardAssetDecimals(assetDecimal);
         const walletBalance = await rewardAssetContract.balanceOf(
-          signerStates.data._address
+          signerStates.data._address,
         );
         setWalletBalance(walletBalance);
         setWalletBalanceHR(
-          ethers.utils.formatUnits(walletBalance, assetDecimal)
+          ethers.utils.formatUnits(walletBalance, assetDecimal),
         );
       } catch (e) {
         console.error(e);
       }
-    })();
-  }, [signerStates, rewardAsset]);
+    }());
+  }, [signerStates, rewardAssetContract]);
 
   return (
     <Modal
@@ -135,7 +140,7 @@ function AddFunds({ isOpen, onClose, grantAddress, rewardAsset }: Props) {
           />
         )
       }
-      rightIcon={
+      rightIcon={(
         <Button
           _focus={{}}
           variant="link"
@@ -144,7 +149,7 @@ function AddFunds({ isOpen, onClose, grantAddress, rewardAsset }: Props) {
         >
           Support 24*7
         </Button>
-      }
+      )}
       modalWidth={527}
     >
       <ModalBody>
@@ -186,7 +191,8 @@ function AddFunds({ isOpen, onClose, grantAddress, rewardAsset }: Props) {
                   >
                     <Flex direction="row">
                       <Text variant="tableBody" color="#8850EA" my={4}>
-                        {text}{' '}
+                        {text}
+                        {' '}
                       </Text>
                       <Image
                         ml={2}
@@ -239,7 +245,7 @@ function AddFunds({ isOpen, onClose, grantAddress, rewardAsset }: Props) {
               <SingleLineInput
                 label="Smart Contract Address"
                 height="80px"
-                inputRightElement={
+                inputRightElement={(
                   <Button
                     variant="primary"
                     w="89px"
@@ -249,15 +255,15 @@ function AddFunds({ isOpen, onClose, grantAddress, rewardAsset }: Props) {
                   >
                     Copy
                   </Button>
-                }
+                )}
                 value={`${grantAddress.substring(
                   0,
-                  12
+                  12,
                 )}....${grantAddress.substring(
                   grantAddress.length - 13,
-                  grantAddress.length
+                  grantAddress.length,
                 )}`}
-                disabled={true}
+                disabled
                 onChange={() => {}}
                 isError={false}
                 subtextAlign="center"
@@ -285,10 +291,11 @@ function AddFunds({ isOpen, onClose, grantAddress, rewardAsset }: Props) {
               <Flex flex={1} direction="column" ml={3}>
                 <Text fontWeight="500">Grant Reward</Text>
                 <Text variant="footer" color="brand.500" fontWeight="700">
-                  {ethers.utils.formatUnits(
+                  {rewardAsset && rewardAsset.committed && ethers.utils.formatUnits(
                     rewardAsset.committed,
-                    rewardAssetDecimals
-                  )}{' '}
+                    rewardAssetDecimals,
+                  )}
+                  {' '}
                   {rewardAsset?.label}
                 </Text>
               </Flex>
@@ -328,11 +335,15 @@ function AddFunds({ isOpen, onClose, grantAddress, rewardAsset }: Props) {
               </Flex>
             </Flex>
             <Text mt={1} variant="tableHeader" color="#122224">
-              Wallet Balance{' '}
-              <Text variant="tableHeader" display="inline-block">{`${parseFloat(
-                walletBalanceHR,
-                10
-              ).toFixed(4)} ${rewardAsset?.label}`}</Text>
+              Wallet Balance
+              {' '}
+              <Text variant="tableHeader" display="inline-block">
+                {`${parseFloat(
+                  walletBalanceHR,
+                  10,
+                ).toFixed(4)} ${rewardAsset?.label}`}
+
+              </Text>
             </Text>
             <Button variant="primary" my={8} onClick={() => depositFunds()}>
               Deposit

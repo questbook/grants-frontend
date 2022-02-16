@@ -135,8 +135,7 @@ function Navbar({
                     isActive={activeIndex === 2}
                     onClick={() => {
                       router.push({
-                        pathname: `/${tabPaths[2]}`,
-                        search: `?workspaceID=${Number(daoId)}`,
+                        pathname: `/${tabPaths[2]}`
                       });
                     }}
                   />

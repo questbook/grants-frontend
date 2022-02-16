@@ -14,7 +14,7 @@ function Table({
   onViewApplicantFormClick?: (data? : any) => void;
   onAcceptApplicationClick?: () => void;
   onRejectApplicationClick?: () => void;
-  onManageApplicationClick?: () => void;
+  onManageApplicationClick?: (data? : any) => void;
   data: any[];
 }) {
   const [filter, setFilter] = React.useState(-1);
@@ -29,7 +29,11 @@ function Table({
           onViewApplicationFormClick={onViewApplicantFormClick}
           onAcceptApplicationClick={onAcceptApplicationClick}
           onRejectApplicationClick={onRejectApplicationClick}
-          onManageApplicationClick={onManageApplicationClick}
+          onManageApplicationClick={(manageData: any) => {
+            if (onManageApplicationClick) {
+              onManageApplicationClick(manageData);
+            }
+          }}
         />
       </Flex>
 
