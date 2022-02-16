@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import React, {
   ReactElement, useContext, useEffect, useState,
 } from 'react';
-import { formatAmount } from 'src/utils/formattingUtils';
+import { formatAmount } from '../../../src/utils/formattingUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Heading from '../../../src/components/ui/heading';
 import Table from '../../../src/components/your_grants/view_applicants/table';
