@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import React, { useContext, useState } from 'react';
 import {
-  Box, Button, Text, Image, Link, Flex, Container,
+  Box, Button, Text, Image, Link, Flex, Container, useToast,
 } from '@chakra-ui/react';
 import { useContract, useSigner } from 'wagmi';
 import { gql } from '@apollo/client';
@@ -41,6 +41,7 @@ function Form({
   rewardCurrencyCoin,
   grantRequiredFields,
 }: Props) {
+  const toast = useToast();
   const [signer] = useSigner();
   const applicationRegistryContract = useContract({
     addressOrName: config.ApplicationRegistryAddress,
@@ -226,6 +227,7 @@ function Form({
 
       console.log(transactionData);
       console.log(transactionData.blockNumber);
+      toast({ title: 'Transaction succeeded', status: 'success' });
 
       await subgraphClient.waitForBlock(transactionData.blockNumber);
 
@@ -247,6 +249,10 @@ function Form({
       onSubmit({ data: grantApplications });
     } catch (error) {
       console.log(error);
+      toast({
+        title: 'Application not indexed',
+        status: 'error',
+      });
     }
   };
 
