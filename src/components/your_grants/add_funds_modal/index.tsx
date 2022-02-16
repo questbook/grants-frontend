@@ -39,7 +39,7 @@ function AddFunds({
   isOpen, onClose, grantAddress, rewardAsset,
 }: Props) {
   const [type, setType] = React.useState(-1);
-  const [funding, setFunding] = React.useState(0);
+  const [funding, setFunding] = React.useState('');
   const [error, setError] = React.useState(false);
   const [walletBalance, setWalletBalance] = React.useState(0);
   const [rewardAssetDecimals, setRewardAssetDecimals] = React.useState(0);
@@ -72,7 +72,7 @@ function AddFunds({
   };
 
   const depositFunds = async () => {
-    const finalAmount = ethers.utils.parseUnits(funding.toString(), rewardAssetDecimals);
+    const finalAmount = ethers.utils.parseUnits(funding, rewardAssetDecimals);
     toast({
       title: 'Depositing!',
       status: 'info',
@@ -91,7 +91,7 @@ function AddFunds({
         duration: 9000,
         isClosable: true,
       });
-      setFunding(0);
+      setFunding('');
       onClose();
     } catch {
       toast({
@@ -314,7 +314,7 @@ function AddFunds({
                     if (error) {
                       setError(false);
                     }
-                    setFunding(parseInt(e.target.value, 10));
+                    setFunding(e.target.value);
                   }}
                   isError={error}
                   errorText="Required"
