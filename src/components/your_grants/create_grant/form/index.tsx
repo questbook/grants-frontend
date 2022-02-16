@@ -255,7 +255,7 @@ function Form({
       </Flex>
 
       <Button onClick={handleOnSubmit} variant="primary">
-        Save Changes
+        Create Grant
       </Button>
     </>
   );

@@ -27,10 +27,10 @@ function Content({
 }) {
   const tableHeadersflex = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
   const getStatus = (status: number): ReactElement => {
-    if (status === 0) return <GrantApproved />;
-    if (status === 1) return <Rejected />;
-    if (status === 2) return <ResubmissionRequested />;
-    return <PendingReview />;
+    if (status === 0) return <PendingReview />;
+    if (status === 1) return <ResubmissionRequested />;
+    if (status === 2) return <GrantApproved />;
+    return <Rejected />;
   };
 
   return (

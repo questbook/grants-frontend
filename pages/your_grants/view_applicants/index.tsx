@@ -19,10 +19,10 @@ function ViewApplicants() {
   const [grantID, setGrantID] = useState<any>('');
   const subgraphClient = useContext(ApiClientsContext)?.subgraphClient;
   const applicationStatuses = [
+    'submitted',
+    'resubmit',
     'approved',
     'rejected',
-    'resubmit',
-    'submitted',
     'completed',
   ];
   // eslint-disable-next-line react-hooks/exhaustive-deps

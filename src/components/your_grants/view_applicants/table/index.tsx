@@ -1,5 +1,5 @@
 import { Flex } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Content from './content';
 import Filter from './filter';
 import Headers from './headers';
@@ -18,9 +18,12 @@ function Table({
   data: any[];
 }) {
   const [filter, setFilter] = React.useState(-1);
+  useEffect(() => {
+    console.log(filter);
+  }, [filter]);
   return (
     <>
-      <Filter setFilter={setFilter} />
+      <Filter filter={filter} setFilter={setFilter} />
       <Flex w="100%" mt="38px" align="center" direction="column" flex={1}>
         <Headers />
         <Content
