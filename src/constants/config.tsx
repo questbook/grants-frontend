@@ -6,7 +6,6 @@ const config = {
   ApplicationRegistryAddress: '0xCEb8F472DA601F78893C6e81b2Dfed2c3b51Da65',
   GrantFactoryAddress: '0x458FC77414fe2dda159e3ED186a882d0161CCc85',
   subgraphUri: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph',
-  blankAddress: '0x0000000000000000000000000000000000000000',
 };
 
 export default config;

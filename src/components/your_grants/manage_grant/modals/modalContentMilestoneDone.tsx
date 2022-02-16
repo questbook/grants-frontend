@@ -44,9 +44,6 @@ function ModalContent({ milestone, done }: Props) {
         Number(milestoneIndex),
         Number(workspaceId),
         data.ipfsHash,
-        0,
-        config.blankAddress,
-        0,
       );
 
       const transactionData = await transaction.wait();
