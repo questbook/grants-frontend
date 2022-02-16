@@ -120,7 +120,7 @@ function AddFunds({
         console.error(e);
       }
     }());
-  }, [signerStates, rewardAssetContract, walletBalance]);
+  }, [signerStates, rewardAssetContract]);
 
   return (
     <Modal

@@ -142,6 +142,13 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
       <WithdrawFunds
         isOpen={isWithdrawFundsModalOpen}
         onClose={() => setIsWithdrawFundsModalOpen(false)}
+        grantAddress={grant.id}
+        rewardAsset={{
+          address: grant.reward.asset,
+          committed: BigNumber.from(grant.reward.committed),
+          label: assetInfo?.label,
+          icon: assetInfo?.icon,
+        }}
       />
     </Flex>
   );
