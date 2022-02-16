@@ -1,31 +1,27 @@
 import {
   Flex, Text, Button,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Modal from '../ui/modal';
 import ModalContent from './modalContent';
 
-function Members() {
+interface Props {
+  workspaceMembers: any;
+}
+
+function Members({workspaceMembers}: Props) {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [tableData, setTableData] = React.useState(null);
   const flex = [0.68, 0.32];
   const tableHeaders = ['Member Address', 'Role'];
-  const tableData = [
-    {
-      member_address: '0xb794f5e....74279579268',
-      role: 'Admin',
-    },
-    {
-      member_address: '0xb794f5e....74279579268',
-      role: 'Admin',
-    },
-    {
-      member_address: '0xb794f5e....74279579268',
-      role: 'Admin',
-    },
-    {
-      member_address: '0xb794f5e....74279579268',
-      role: 'Admin',
-    }];
+
+  useEffect(() => {
+    if(!workspaceMembers) return;
+    const tempTableData = workspaceMembers.map((member) => {
+      return {memberAddress: member.actorId, role: 'Admin'};
+    });
+    setTableData(tempTableData);
+  }, [workspaceMembers]);
 
   return (
     <Flex direction="column" align="start" w="100%">
@@ -38,9 +34,9 @@ function Members() {
           {tableHeaders.map((header, index) => (<Text flex={flex[index]} variant="tableHeader">{header}</Text>))}
         </Flex>
         <Flex direction="column" w="100%" border="1px solid #D0D3D3" borderRadius={4}>
-          {tableData.map((data, index) => (
+          {tableData && tableData.map((data, index) => (
             <Flex direction="row" w="100%" justify="stretch" align="center" bg={index % 2 === 0 ? '#F7F9F9' : 'white'} py={4}>
-              <Text ml={7} flex={flex[0]} variant="tableBody">{data.member_address}</Text>
+              <Text ml={7} flex={flex[0]} variant="tableBody">{data.memberAddress}</Text>
               <Text flex={flex[1]} variant="tableBody">{data.role}</Text>
             </Flex>
           ))}

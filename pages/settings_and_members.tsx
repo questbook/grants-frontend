@@ -29,7 +29,6 @@ function SettingsAndMembers() {
           workspaceID: workspaceID,
         },
       })) as any;
-      console.log(data);
       if (data.workspace) {
         setWorkspaceData(data.workspace);
       }
@@ -81,7 +80,7 @@ function SettingsAndMembers() {
         {selected === 0 ? (
           <Settings workspaceData={workspaceData} />
         ) : (
-          <Members />
+          <Members workspaceMembers={workspaceData?.members} />
         )}
       </Flex>
       <Flex w="20%" />
