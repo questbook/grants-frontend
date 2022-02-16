@@ -4,10 +4,12 @@ import {
 import React from 'react';
 
 function SidebarList({
+  listHeading,
   listElements,
   linkText,
   linkHref,
 }: {
+  listHeading: string;
   listElements: { src: string; text: string }[];
   linkText: string;
   linkHref: string;
@@ -15,7 +17,7 @@ function SidebarList({
   return (
     <Flex direction="column" justify="start" align="start">
       <Text fontSize="18px" lineHeight="26px" fontWeight="700">
-        Protocols & DAOs
+        {listHeading}
       </Text>
       <VStack
         mt={5}

@@ -4,18 +4,19 @@ import {
   Image,
   Text,
   Button,
-  Box,
   IconButton,
   Divider,
   Heading,
-  Link,
   useToast,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import Lottie from 'lottie-react';
 import copy from 'copy-to-clipboard';
-import { useAccount, useContract, useSigner } from 'wagmi';
-import { ethers } from 'ethers';
+import {
+  useContract, useSigner,
+} from 'wagmi';
+import { BigNumber, ethers } from 'ethers';
+import { formatAmount } from 'src/utils/formattingUtils';
 import Dropdown from '../../ui/forms/dropdown';
 import SingleLineInput from '../../ui/forms/singleLineInput';
 import Modal from '../../ui/modal';
@@ -38,10 +39,9 @@ function AddFunds({
   isOpen, onClose, grantAddress, rewardAsset,
 }: Props) {
   const [type, setType] = React.useState(-1);
-  const [funding, setFunding] = React.useState('');
+  const [funding, setFunding] = React.useState(0);
   const [error, setError] = React.useState(false);
   const [walletBalance, setWalletBalance] = React.useState(0);
-  const [walletBalanceHR, setWalletBalanceHR] = React.useState(0);
   const [rewardAssetDecimals, setRewardAssetDecimals] = React.useState(0);
 
   const nextScreenTexts = [
@@ -72,7 +72,7 @@ function AddFunds({
   };
 
   const depositFunds = async () => {
-    const finalAmount = ethers.utils.parseUnits(funding, rewardAssetDecimals);
+    const finalAmount = ethers.utils.parseUnits(funding.toString(), rewardAssetDecimals);
     toast({
       title: 'Depositing!',
       status: 'info',
@@ -110,18 +110,17 @@ function AddFunds({
         if (!rewardAssetContract.provider) return;
         const assetDecimal = await rewardAssetContract.decimals();
         setRewardAssetDecimals(assetDecimal);
-        const walletBalance = await rewardAssetContract.balanceOf(
-          signerStates.data._address,
+        const tempAddress = await signerStates.data?.getAddress();
+        const tempWalletBalance = await rewardAssetContract.balanceOf(
+          // signerStates.data._address,
+          tempAddress,
         );
-        setWalletBalance(walletBalance);
-        setWalletBalanceHR(
-          ethers.utils.formatUnits(walletBalance, assetDecimal),
-        );
+        setWalletBalance(tempWalletBalance);
       } catch (e) {
         console.error(e);
       }
     }());
-  }, [signerStates, rewardAssetContract]);
+  }, [signerStates, rewardAssetContract, walletBalance]);
 
   return (
     <Modal
@@ -291,9 +290,8 @@ function AddFunds({
               <Flex flex={1} direction="column" ml={3}>
                 <Text fontWeight="500">Grant Reward</Text>
                 <Text variant="footer" color="brand.500" fontWeight="700">
-                  {rewardAsset && rewardAsset.committed && ethers.utils.formatUnits(
-                    rewardAsset.committed,
-                    rewardAssetDecimals,
+                  {rewardAsset && rewardAsset.committed && formatAmount(
+                    rewardAsset.committed.toString(),
                   )}
                   {' '}
                   {rewardAsset?.label}
@@ -316,7 +314,7 @@ function AddFunds({
                     if (error) {
                       setError(false);
                     }
-                    setFunding(e.target.value);
+                    setFunding(parseInt(e.target.value, 10));
                   }}
                   isError={error}
                   errorText="Required"
@@ -338,10 +336,7 @@ function AddFunds({
               Wallet Balance
               {' '}
               <Text variant="tableHeader" display="inline-block">
-                {`${parseFloat(
-                  walletBalanceHR,
-                  10,
-                ).toFixed(4)} ${rewardAsset?.label}`}
+                {`${formatAmount(walletBalance.toString())} ${rewardAsset?.label}`}
 
               </Text>
             </Text>

@@ -5,36 +5,26 @@ export default {
         height: 12,
         px: 12,
         bg: 'brand.500',
-        _hover: { background: 'brand.600',
-          _disabled: {
-            bgColor: 'brandDisabled.500',
-          },
-        },
+        _hover: { background: 'brand.600' },
         _active: { background: 'brand.700' },
         _disabled: {
-          background: 'brandDisabled.600',
+          background: 'brandDisabled.500',
         },
         py: 3,
         color: 'white',
         fontWeight: 'bold',
         fontSize: '16px',
         lineHeight: '24px',
+        borderRadius: '8px',
       },
       primaryCta: {
         height: 8,
         px: 6,
         bg: 'brand.500',
-        _hover: {
-          background: 'brand.600',
-          _disabled: {
-            bgColor: 'brandDisabled.500',
-          },
-        },
-        _active: {
-          background: 'brand.700',
-        },
+        _hover: { background: 'brand.600' },
+        _active: { background: 'brand.700' },
         _disabled: {
-          background: 'brandDisabled.600',
+          background: 'brandDisabled.500',
         },
         py: '6px',
         color: 'white',

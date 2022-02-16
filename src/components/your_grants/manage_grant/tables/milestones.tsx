@@ -85,7 +85,7 @@ function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
               {moment(new Date(updatedAtS * 1000)).format('MMM DD, YYYY')}
             </Text>
           </Text>
-          <Button variant="link" _focus={{}}>
+          <Button variant="link" _focus={{}} onClick={() => setIsMilestoneViewModalOpen(true)}>
             <Text textAlign="right" variant="footer" color="#6200EE">
               View
             </Text>

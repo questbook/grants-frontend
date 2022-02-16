@@ -18,7 +18,7 @@ function SettingsAndMembers() {
     setSelected(to);
   };
 
-  async function getWorkspaceData(workspaceID) {
+  async function getWorkspaceData(workspaceID: string) {
     if (!workspaceID) return;
     const subgraphClient = new SubgraphClient();
     if (!subgraphClient.client) return;

@@ -37,17 +37,18 @@ function ManageGrant() {
   const [selected, setSelected] = React.useState(0);
   const [isGrantCompleteModelOpen, setIsGrantCompleteModalOpen] = React.useState(false);
 
-  const { data: { milestones, rewardAsset } } = useApplicationMilestones('0x7');
-  const { data: fundsDisbursed } = useFundDisbursed(null);
-  const fundingIcon = getAssetInfo(rewardAsset)?.icon;
-  const assetInfo = getAssetInfo(rewardAsset);
-
-  const router = useRouter();
   const [applicationID, setApplicationID] = useState<any>('');
+  const router = useRouter();
   const subgraphClient = useContext(ApiClientsContext)?.subgraphClient;
   const [{ data: accountData }] = useAccount({
     fetchEns: false,
   });
+
+  const { data: { milestones, rewardAsset } } = useApplicationMilestones(applicationID);
+  const { data: fundsDisbursed } = useFundDisbursed(null);
+  const fundingIcon = getAssetInfo(rewardAsset)?.icon;
+  const assetInfo = getAssetInfo(rewardAsset);
+
   const getGrantData = async () => {
     if (!subgraphClient || !accountData?.address) return;
     try {

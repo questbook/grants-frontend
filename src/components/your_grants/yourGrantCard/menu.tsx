@@ -44,12 +44,12 @@ function Menu({
               display="inline-block"
               h={4}
               w={4}
-              src="/ui_icons/share_brand.svg"
+              src="/ui_icons/share.svg"
             />
             {copied ? 'Link Copied!' : 'Share'}
           </Text>
         </MenuItem>
-        <MenuItem onClick={() => onEditClick()} py="12px" px="16px">
+        {/* <MenuItem onClick={() => onEditClick()} py="12px" px="16px">
           <Text
             fontSize="14px"
             fontWeight="400"
@@ -67,7 +67,7 @@ function Menu({
             />
             Edit
           </Text>
-        </MenuItem>
+        </MenuItem> */}
       </MenuList>
     </MenuComponent>
   );

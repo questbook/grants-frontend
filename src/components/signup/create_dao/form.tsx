@@ -113,7 +113,7 @@ function Form({
         <Flex w="100%" mt={1}>
           <MultiLineInput
             label="About your Grants DAO"
-            placeholder="Sample"
+            placeholder="A summary about your Grants DAO containing your mission statement and grant focus areas"
             value={daoDescription}
             onChange={(e) => {
               if (daoDescriptionError) setDaoDescriptionError(false);
@@ -142,7 +142,7 @@ function Form({
                 label={networkSupported ? (
                   `Your wallet is connected to the ${supportedNetworks[
                     networkData.chain?.id.toString() as keyof typeof supportedNetworks
-                  ].name}. Your GrantsDAO will be created on the same network.
+                  ].name} Network. Your GrantsDAO will be created on the same network.
     To create a GrantsDAO on another network, connect a different wallet.`
                 ) : 'Select a supported network'}
               />
@@ -160,7 +160,7 @@ function Form({
           src="/ui_icons/info_brand.svg"
         />
         {' '}
-        By pressing continue you&apos;ll be charged a gas fee.
+        By pressing continue you&apos;ll have to approve this transaction in your wallet.
         {' '}
         <Link mx={1} href="wallet">
           Learn more

@@ -38,6 +38,7 @@ query($first: Int, $skip: Int) {
   workspace {title, logoIpfsHash}, 
   deadline,
   funding,
+  numberOfApplications,
 }}
 `;
 
@@ -226,21 +227,21 @@ query($applicationID: Bytes!) {
 
 const getApplicationMilestones = `
 query($grantId: ID!) {
-	grantApplications(where: { id: $grantId }) {
-	  grant {
-      reward {
-        asset
+    grantApplications(where: { id: $grantId }) {
+      grant {
+        reward {
+          asset
+        }
+      },
+      milestones {
+      id,
+      state,
+      title,
+      amount,
+      amountPaid,
+      updatedAtS,
       }
-    },
-	  milestones {
-		id,
-		state,
-		title,
-		amount,
-		amountPaid,
-		updatedAtS,
-	  }
-	}
+    }
 }
 `;
 
@@ -248,7 +249,7 @@ const getFundSentForApplication = `
 query($applicationId: String) {
   fundsTransfers(where: {application: $applicationId}, orderBy: createdAtS, orderDirection: desc) {
     grant {
-    	id
+      id
     },
     application {
       id
@@ -286,10 +287,25 @@ query($grantId: String) {
 }
 `;
 
+const getNumberOfGrantsQuery = `
+query($first: Int, $skip: Int, $creatorId: String) {
+  grants(where: {creatorId: $creatorId}, subgraphError: allow){
+    id,
+  }}
+`;
+
+const getNumberOfApplicationsQuery = `
+query($first: Int, $skip: Int, $applicantId: String) {
+  grantApplications(where: {applicantId: $applicantId}, subgraphError: allow){
+    id,
+  }}
+`;
+
 export {
   getAllGrants, getNumOfApplicantsForAGrant, getAllGrantsForADao,
   getAllGrantsForCreator,
   getGrantDetails, getApplicantsForAGrant, getApplicationDetails,
   getApplicationMilestones, getFundSentForApplication, getMembersForAWorkspace, getGrantApplication,
   getMyApplications, getWorkspaceDetails, getFunding,
+  getNumberOfGrantsQuery, getNumberOfApplicationsQuery,
 };

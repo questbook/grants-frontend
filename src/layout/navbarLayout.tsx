@@ -5,6 +5,7 @@ import React, {
 import { useAccount, useConnect, useNetwork } from 'wagmi';
 import { useRouter } from 'next/router';
 import { gql } from '@apollo/client';
+import { getNumberOfApplicationsQuery, getNumberOfGrantsQuery } from 'src/graphql/daoQueries';
 import SignInNavbar from '../components/navbar/notConnected';
 import ConnectedNavbar from '../components/navbar/connected';
 import { ApiClientsContext } from '../../pages/_app';
@@ -34,6 +35,9 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
     fetchEns: false,
   });
   const [{ data: networkData }] = useNetwork();
+
+  const [numOfGrants, setNumOfGrants] = React.useState(0);
+  const [numOfApplications, setNumOfApplications] = React.useState(0);
 
   useEffect(() => {
     if (connected && !connectData.connected) {
@@ -89,8 +93,56 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
     }
   };
 
+  const getGrantsCount = async (userAddress: string) => {
+    if (!apiClients) return;
+
+    const { subgraphClient } = apiClients;
+    if (!subgraphClient) return;
+    try {
+      const { data } = await subgraphClient.client
+        .query({
+          query: gql(getNumberOfGrantsQuery),
+          variables: {
+            creatorId: userAddress,
+          },
+        }) as any;
+      // console.log(data);
+      setNumOfGrants(data.grants.length);
+    } catch (e) {
+      toast({
+        title: 'Error getting applicant data',
+        status: 'error',
+      });
+    }
+  };
+
+  const getApplicantsCount = async (userAddress: string) => {
+    if (!apiClients) return;
+
+    const { subgraphClient } = apiClients;
+    if (!subgraphClient) return;
+    try {
+      const { data } = await subgraphClient.client
+        .query({
+          query: gql(getNumberOfApplicationsQuery),
+          variables: {
+            applicantId: userAddress,
+          },
+        }) as any;
+      // console.log(data);
+      setNumOfApplications(data.grantApplications.length);
+    } catch (e) {
+      toast({
+        title: 'Error getting applicant data',
+        status: 'error',
+      });
+    }
+  };
+
   useEffect(() => {
     getWorkspaceData(accountData?.address ?? '');
+    getGrantsCount(accountData?.address ?? '');
+    getApplicantsCount(accountData?.address ?? '');
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountData]);
 
@@ -116,6 +168,8 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
           daoName={daoName}
           daoId={daoId}
           daoImage={daoImage}
+          grantsCount={numOfGrants}
+          applicationCount={numOfApplications}
         />
       ) : (
         <SignInNavbar renderGetStarted={renderGetStarted} />

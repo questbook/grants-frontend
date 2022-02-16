@@ -4,9 +4,9 @@ import {
 import { BigNumber } from 'ethers';
 // import { ExternalLinkIcon } from '@chakra-ui/icons';
 import React from 'react';
+import AddFunds from '../../funds/add_funds_modal';
 import Modal from '../../ui/modal';
 import FloatingSidebar from '../../ui/sidebar/floatingSidebar';
-import AddFunds from './modals/addFundModal';
 import SendFundModalContent from './modals/sendFundModalContent';
 
 interface Props {
@@ -20,7 +20,7 @@ function Sidebar({ funds = 0, grant, assetInfo }: Props) {
   const [isSendFundModalOpen, setIsSendFundModalOpen] = React.useState(false);
 
   return (
-    <Box my="115px">
+    <Box my="154px">
       <FloatingSidebar>
         <Text variant="applicationText" color="#414E50">
           Funds available for disbursal
@@ -143,7 +143,7 @@ function Sidebar({ funds = 0, grant, assetInfo }: Props) {
               _focus={{}}
               variant="link"
               color="#AA82F0"
-              leftIcon={<Image src="/brand_icons/discord_icon.svg" />}
+              leftIcon={<Image src="/sidebar/discord_icon.svg" />}
             >
               Support 24*7
             </Button>

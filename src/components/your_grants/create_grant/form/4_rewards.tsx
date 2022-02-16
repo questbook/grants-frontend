@@ -4,10 +4,10 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
-import supportedCurrencies from '../../../../constants/supportedCurrencies';
 import Datepicker from '../../../ui/forms/datepicker';
 import Dropdown from '../../../ui/forms/dropdown';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
+import supportedCurrencies from '../../../../constants/supportedCurrencies';
 
 function GrantRewardsInput({
   reward,
@@ -16,6 +16,8 @@ function GrantRewardsInput({
   setRewardError,
   rewardCurrency,
   setRewardCurrency,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  rewardCurrencyAddress,
   setRewardCurrencyAddress,
   date,
   setDate,
@@ -28,6 +30,7 @@ function GrantRewardsInput({
   setRewardError: (rewardError: boolean) => void;
   rewardCurrency: string;
   setRewardCurrency: (rewardCurrency: string) => void;
+  rewardCurrencyAddress: string;
   setRewardCurrencyAddress: (rewardCurrencyAddress: string) => void;
   date: string;
   setDate: (date: string) => void;
@@ -38,32 +41,34 @@ function GrantRewardsInput({
     <Flex direction="column">
 
       <Flex alignItems="flex-start">
-        <Box minW="160px" flex={0}>
-          <SingleLineInput
-            label="Grant Reward"
-            placeholder="100"
-            errorText="Required"
-            onChange={(e) => {
-              if (rewardError) {
-                setRewardError(false);
-              }
-              setReward(e.target.value);
-            }}
-            value={reward}
-            isError={rewardError}
-          />
-        </Box>
-        <Box mt={5} ml={4} minW="132px" flex={0}>
-          <Dropdown
-            listItemsMinWidth="132px"
-            listItems={supportedCurrencies}
-            value={rewardCurrency}
-            onChange={(data: any) => {
-              setRewardCurrency(data.label);
-              setRewardCurrencyAddress(data.id);
-            }}
-          />
-        </Box>
+        <Flex direction="row" w="100%" alignItems="flex-end" justify="space-between" mt={12}>
+          <Flex w="65%" direction="column">
+            <SingleLineInput
+              label="Grant Reward"
+              placeholder="100"
+              errorText="Required"
+              onChange={(e) => {
+                if (rewardError) {
+                  setRewardError(false);
+                }
+                setReward(e.target.value);
+              }}
+              value={reward}
+              isError={rewardError}
+            />
+          </Flex>
+          <Flex direction="column" w="30%">
+            <Dropdown
+              listItemsMinWidth="145px"
+              listItems={supportedCurrencies}
+              value={rewardCurrency}
+              onChange={(data: any) => {
+                setRewardCurrency(data.label);
+                setRewardCurrencyAddress(data.id);
+              }}
+            />
+          </Flex>
+        </Flex>
       </Flex>
 
       <Box mt={12} />
