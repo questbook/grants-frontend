@@ -1,10 +1,11 @@
 import {
-  Box, Button, Container, Flex, Text,
+  Box, Button, Container, Flex, Text, ToastId, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
-  ReactElement, useContext, useRef, useState,
+  ReactElement, useContext, useEffect, useRef, useState,
 } from 'react';
+import InfoToast from 'src/components/ui/infoToast';
 import { useAccount, useContract, useSigner } from 'wagmi';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/create_grant/form';
@@ -61,13 +62,39 @@ function CreateGrant() {
     contractInterface: GrantFactoryABI,
     signerOrProvider: signerStates.data,
   });
+  const [hasClicked, setHasClicked] = React.useState(false);
+  useEffect(() => {
+    console.log(hasClicked);
+  }, [hasClicked]);
+  const toastRef = React.useRef<ToastId>();
+  const toast = useToast();
+
+  const closeToast = () => {
+    if (toastRef.current) {
+      toast.close(toastRef.current);
+    }
+  };
+
+  const showToast = ({ link } : { link: string }) => {
+    toastRef.current = toast({
+      position: 'top',
+      render: () => (
+        <InfoToast
+          link={link}
+          close={closeToast}
+        />
+      ),
+    });
+  };
   const handleGrantSubmit = async (data: any) => {
+    console.log('YP!');
     if (!apiClients) return;
-    const { subgraphClient, validatorApi, workspaceId } = apiClients;
+    const { validatorApi, workspaceId } = apiClients;
     if (!accountData || !accountData.address || !workspaceId) {
       return;
     }
 
+    setHasClicked(true);
     console.log(data);
     console.log(workspaceId);
 
@@ -95,14 +122,17 @@ function CreateGrant() {
       config.WorkspaceRegistryAddress,
       config.ApplicationRegistryAddress,
     );
-    const transactionData = await transaction.wait();
+    setHasClicked(false);
+    console.log(transaction);
+    router.replace({ pathname: '/your_grants', query: { txHash: transaction.hash } });
 
-    console.log(transactionData);
-    console.log(transactionData.blockNumber);
+    showToast({ link: `https://etherscan.io/tx/${transaction.hash}` });
+    // const transactionData = await transaction.wait();
 
-    await subgraphClient.waitForBlock(transactionData.blockNumber);
+    // console.log(transactionData);
+    // console.log(transactionData.blockNumber);
 
-    router.replace('/your_grants');
+    // await subgraphClient.waitForBlock(transactionData.blockNumber);
   };
 
   return (
@@ -120,6 +150,7 @@ function CreateGrant() {
         <Form
           onSubmit={handleGrantSubmit}
           refs={sideBarDetails.map((detail) => detail[2])}
+          hasClicked={hasClicked}
         />
       </Container>
 
