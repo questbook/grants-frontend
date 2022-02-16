@@ -18,6 +18,7 @@ import { getApplicationDetails } from '../../../src/graphql/daoQueries';
 import NavbarLayout from '../../../src/layout/navbarLayout';
 import { getAssetInfo } from '../../../src/utils/tokenUtils';
 import { ApiClientsContext } from '../../_app';
+import { formatAmount, parseAmount } from '../../../src/utils/formattingUtils';
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
   return milestones.reduce((value, milestone) => value + (+milestone.amountPaid), 0);
@@ -109,7 +110,7 @@ function ManageGrant() {
     },
     {
       icon: fundingIcon,
-      title: (fundingAsk || getTotalFundingAsked(milestones)).toString(),
+      title: formatAmount((fundingAsk || getTotalFundingAsked(milestones)).toString()),
       subtitle: 'Funding Requested',
       content: undefined, // <Funding fundTransfers={fundsDisbursed} assetId={rewardAsset} />,
     },

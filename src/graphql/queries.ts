@@ -1,6 +1,7 @@
 import { gql, useQuery } from '@apollo/client';
-import { ApiClientsContext } from 'pages/_app';
 import { useContext } from 'react';
+import { ApiClientsContext } from '../../pages/_app';
+import { formatAmount } from '../utils/formattingUtils';
 import {
   getAllGrantsForADao, getApplicationMilestones, getFunding, getFundSentForApplication,
 } from './daoQueries';
@@ -51,7 +52,10 @@ export const useApplicationMilestones = (grantId: string) => {
 
   const fundingAsk: string = grantApp?.fields?.find((item: any) => item.id.endsWith('.fundingAsk.field'))?.value;
   const rewardAsset: string = grantApp?.grant?.reward?.asset;
-  const milestones = grantApp?.milestones || [];
+  const milestones = grantApp?.milestones.map((milestone: any) => ({
+    ...milestone,
+    amount: formatAmount(milestone.amount.toString()),
+  })) || [];
   return {
     data: { rewardAsset, milestones: milestones as ApplicationMilestone[], fundingAsk },
     loading,
