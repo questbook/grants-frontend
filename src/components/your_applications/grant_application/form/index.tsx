@@ -8,6 +8,7 @@ import {
   Link,
   Flex,
   Container,
+  useToast,
 } from '@chakra-ui/react';
 import { GrantApplicationProps } from 'src/types/application';
 import { getFormattedFullDateFromUnixTimestamp, parseAmount } from 'src/utils/formattingUtils';
@@ -52,6 +53,7 @@ function Form({
   applicationID: string;
   grantID: string;
 }) {
+  const toast = useToast();
   const [signer] = useSigner();
 
   const applicationRegistryContract = useContract({
@@ -251,6 +253,7 @@ function Form({
 
       console.log(transactionData);
       console.log(transactionData.blockNumber);
+      toast({ title: 'Transaction succeeded', status: 'success' });
 
       await subgraphClient.waitForBlock(transactionData.blockNumber);
 
@@ -272,6 +275,10 @@ function Form({
       onSubmit({ data: grantApplications });
     } catch (error) {
       console.log(error);
+      toast({
+        title: 'Application not indexed',
+        status: 'error',
+      });
     }
   };
 
