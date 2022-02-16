@@ -38,6 +38,9 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
     fetchEns: false,
   });
   const [{ data: networkData }] = useNetwork();
+  useEffect(() => {
+    console.log(networkData.chain);
+  }, [networkData]);
 
   const [numOfGrants, setNumOfGrants] = React.useState(0);
   const [numOfApplications, setNumOfApplications] = React.useState(0);
