@@ -11,6 +11,7 @@ function Dao({
   const theme = useTheme();
   return (
     <Container
+      h="100vh"
       maxW="100%"
       display="flex"
       px="70px"
@@ -18,24 +19,24 @@ function Dao({
       alignItems="center"
     >
       <Text mt="46px" variant="heading">
-        Here&apos;s what you can do on Questbook
+        So, you want to create grants? It&apos;s pretty simple. 🚀
       </Text>
       <Flex mt="88px">
         {[
           {
             icon: '/illustrations/create_grant.svg',
             title: 'Create a Grant',
-            text: 'In 2 minutes setup a simple, streamlined and transparent grant',
+            text: 'Create a grant application under 2 minutes and post it on Questbook',
           },
           {
             icon: '/illustrations/attract_applications.svg',
             title: 'Attract applicants',
-            text: 'Projects are pitched by applicants with detailed forms.',
+            text: 'Share your grants. Receive applications submitted by a pool of applicants.',
           },
           {
             icon: '/illustrations/disburse_grants.svg',
             title: 'Disburse grants',
-            text: 'Track project milestones, and reward grantees.',
+            text: 'Review applications by tracking milestones, and pay for each milestone. ',
           },
         ].map(({ icon, title, text }, index) => (
           <Container
@@ -77,19 +78,20 @@ function Dao({
         maxW="100vw"
         w="auto"
         m={0}
-        position="sticky"
+        position="absolute"
         bottom={0}
         display="flex"
         justifyContent="center"
         py={3}
       >
         <Text w="100vw" textAlign="center" variant="footer" fontSize="12px">
-          Your grant funds are securely stored on our smart contract.
+          Each grant can be seen on-chain.
           {' '}
           <Link href="learn more">
             Learn more
             <Image
               mx={1}
+              boxSize="10px"
               src="/ui_icons/link.svg"
               alt="open link"
               display="inline-block"

@@ -23,6 +23,9 @@ function ConnectWallet() {
       _active={{
         background: 'linear-gradient(180deg, #515D60 0%, #374749 100%)',
       }}
+      _disabled={{
+        background: '#D0D3D3',
+      }}
       onClick={() => router.push('/connect_wallet')}
     >
       <Image

@@ -14,7 +14,7 @@ interface Props {
 function ModalContent({
   onClose,
 }: Props) {
-  const [checkedItems, setCheckedItems] = React.useState([false, false]);
+  const [checkedItems, setCheckedItems] = React.useState([true, false]);
   const [chosen, setChosen] = React.useState(-1);
   const [selectedMilestone, setSelectedMilestone] = React.useState(-1);
   const [funding, setFunding] = React.useState('');
@@ -45,6 +45,7 @@ function ModalContent({
           <Checkbox
             m={0}
             p={0}
+            colorScheme="brand"
             isChecked={checkedItems[0]}
             onChange={() => setCheckedItems([true, false])}
           />
@@ -97,8 +98,18 @@ function ModalContent({
 
           <Box mt={8} />
           <Heading variant="applicationHeading" color="#122224">Milestone</Heading>
-          <Menu matchWidth>
-            <MenuButton w="100%" as={Button} rightIcon={<ChevronDownIcon />} textAlign="left">
+          <Menu
+            matchWidth
+          >
+            <MenuButton
+              w="100%"
+              as={Button}
+              color="#122224"
+              background="#E8E9E9"
+              _disabled={{ color: '#A0A7A7', background: '#F3F4F4' }}
+              rightIcon={<ChevronDownIcon />}
+              textAlign="left"
+            >
               <Text
                 variant="applicationText"
                 color={selectedMilestone === -1 ? '#717A7C' : '#122224'}

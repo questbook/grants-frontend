@@ -22,10 +22,10 @@ function Content({
   onViewApplicationFormClick?: (data?: any) => void;
   onAcceptApplicationClick?: () => void;
   onRejectApplicationClick?: () => void;
-  onManageApplicationClick?: () => void;
+  onManageApplicationClick?: (data?: any) => void;
   data: any[];
 }) {
-  const tableHeadersflex = [0.251, 0.15, 0.184, 0.116, 0.2, 0.116];
+  const tableHeadersflex = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
   const getStatus = (status: number): ReactElement => {
     if (status === 0) return <GrantApproved />;
     if (status === 1) return <Rejected />;
@@ -112,7 +112,9 @@ function Content({
                 status={item.status}
                 onViewApplicationFormClick={() => {
                   if (item.status === 0 && onManageApplicationClick) {
-                    onManageApplicationClick();
+                    onManageApplicationClick({
+                      applicationId: item.applicationId,
+                    });
                     return;
                   }
                   if (onViewApplicationFormClick) {

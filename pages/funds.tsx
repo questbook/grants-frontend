@@ -1,11 +1,14 @@
 import { Flex, Text } from '@chakra-ui/react';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useContext } from 'react';
 import { useAllGrantsForDAO } from '../src/graphql/queries';
 import NavbarLayout from '../src/layout/navbarLayout';
 import FundForAGrant from '../src/components/funds';
+import { ApiClientsContext } from './_app';
+// import strings from '../src/constants/strings.json';
 
 function AddFunds() {
-  const { data } = useAllGrantsForDAO('0x19');
+  const workspaceId = useContext(ApiClientsContext)?.workspaceId;
+  const { data } = useAllGrantsForDAO(workspaceId!);
 
   return (
     <Flex direction="row" justify="center">

@@ -48,8 +48,8 @@ function GrantRewardsInput({ onSubmit }: Props) {
           What&apos;s the reward and deadline for the grant?
         </Text>
 
-        <Flex alignItems="flex-start" mt={12}>
-          <Box minW="160px" flex={0}>
+        {/* <Flex alignItems="flex-start" mt={12}>
+          <Box flex={0}>
             <SingleLineInput
               label="Grant Reward"
               placeholder="100"
@@ -64,9 +64,9 @@ function GrantRewardsInput({ onSubmit }: Props) {
               isError={rewardError}
             />
           </Box>
-          <Box mt={5} ml={4} minW="132px" flex={0}>
+          <Box mt={5} ml={4} minW="145px" flex={0}>
             <Dropdown
-              listItemsMinWidth="132px"
+              listItemsMinWidth="145px"
               listItems={supportedCurrencies}
               value={rewardCurrency}
               onChange={(data: any) => {
@@ -75,6 +75,35 @@ function GrantRewardsInput({ onSubmit }: Props) {
               }}
             />
           </Box>
+        </Flex> */}
+
+        <Flex direction="row" w="100%" alignItems="flex-end" justify="space-between" mt={12}>
+          <Flex w="65%" direction="column">
+            <SingleLineInput
+              label="Grant Reward"
+              placeholder="100"
+              errorText="Required"
+              onChange={(e) => {
+                if (rewardError) {
+                  setRewardError(false);
+                }
+                setReward(e.target.value);
+              }}
+              value={reward}
+              isError={rewardError}
+            />
+          </Flex>
+          <Flex direction="column" w="30%">
+            <Dropdown
+              listItemsMinWidth="145px"
+              listItems={supportedCurrencies}
+              value={rewardCurrency}
+              onChange={(data: any) => {
+                setRewardCurrency(data.label);
+                setRewardCurrencyAddress(data.id);
+              }}
+            />
+          </Flex>
         </Flex>
 
         <Box mt={12} />

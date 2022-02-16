@@ -52,6 +52,9 @@ function MultiLineInput({
       <Textarea
         isInvalid={isError}
         isDisabled={disabled}
+        color="#122224"
+        background="#E8E9E9"
+        _disabled={{ color: '#A0A7A7', background: '#F3F4F4' }}
         minH="120px"
         mt={1}
         variant="filled"

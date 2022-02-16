@@ -8,7 +8,6 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { useAccount } from 'wagmi';
 import AccountDetails from './accountDetails';
 import Tab from './tab';
 
@@ -20,12 +19,14 @@ interface Props {
   daoName: string;
   daoId: null | string;
   daoImage: null | string;
+  grantsCount: number;
+  applicationCount: number;
 }
 
 function Navbar({
-  networkId, address, isOnline, renderTabs, daoName, daoId, daoImage,
+  networkId, address, isOnline, renderTabs,
+  daoName, daoId, daoImage, grantsCount, applicationCount,
 }: Props) {
-  const [{ data, error, loading }, disconnect] = useAccount();
   const [activeIndex, setActiveIndex] = React.useState(-1);
   const router = useRouter();
   const tabPaths = ['your_grants', 'funds', 'settings_and_members', 'your_applications'];
@@ -99,7 +100,7 @@ function Navbar({
       {renderTabs ? (
         <>
           {
-            daoId ? (
+            (daoId || grantsCount) ? (
               <>
                 <Box mr="12px" />
                 <Flex h="100%" direction="column">
@@ -135,8 +136,7 @@ function Navbar({
                     isActive={activeIndex === 2}
                     onClick={() => {
                       router.push({
-                        pathname: `/${tabPaths[2]}`,
-                        search: `?workspaceID=${Number(daoId)}`,
+                        pathname: `/${tabPaths[2]}`
                       });
                     }}
                   />
@@ -148,6 +148,7 @@ function Navbar({
 
           <Box mr="auto" />
 
+          {(!daoId || applicationCount > 0) && (
           <Flex h="100%" direction="column">
             <Tab
               label="My Applications"
@@ -161,6 +162,7 @@ function Navbar({
             />
             {activeIndex === 3 ? <Box w="100%" h="2px" bgColor="#8850EA" /> : null}
           </Flex>
+          )}
 
           <Box mr="8px" />
 
@@ -193,15 +195,6 @@ function Navbar({
         isOnline={isOnline}
         address={address}
       />
-      <Button
-        maxW="163px"
-        variant="disconnect"
-        mr="12px"
-        ml="10px"
-        onClick={disconnect}
-      >
-        Disconnect
-      </Button>
     </Container>
   );
 }

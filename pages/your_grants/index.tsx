@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 import {
-  Container, Flex, useToast, Image, Text,
+  Container, Flex, useToast, Image, Text, Button,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
@@ -12,11 +12,11 @@ import React, {
 } from 'react';
 import { useAccount } from 'wagmi';
 import { BigNumber } from '@ethersproject/bignumber';
+import AddFunds from 'src/components/funds/add_funds_modal';
 import Heading from '../../src/components/ui/heading';
-import AddFunds from '../../src/components/your_grants/add_funds_modal';
 import YourGrantCard from '../../src/components/your_grants/yourGrantCard';
 import supportedCurrencies from '../../src/constants/supportedCurrencies';
-import { getAllGrantsForADao, getAllGrantsForCreator } from '../../src/graphql/daoQueries';
+import { getAllGrantsForCreator } from '../../src/graphql/daoQueries';
 import NavbarLayout from '../../src/layout/navbarLayout';
 import { formatAmount } from '../../src/utils/formattingUtils';
 import { ApiClientsContext } from '../_app';
@@ -160,9 +160,15 @@ function YourGrants() {
     return () => parentElement.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
+  const getIcon = (currency: string) => {
+    if (currency === 'DAI') return '/ui_icons/brand/currency/dai.svg';
+    if (currency === 'WMATIC') return '/ui_icons/brand/currency/wmatic.svg';
+    return '/ui_icons/brand/currency/weth.svg';
+  };
+
   return (
     <>
-      <Container ref={containerRef} maxW="100%" display="flex" px="70px">
+      <Container ref={containerRef} maxW="100%" h="100%" display="flex" px="70px">
         <Container
           flex={1}
           display="flex"
@@ -191,7 +197,7 @@ function YourGrants() {
                 ).getTime()}
                 grantAmount={formatAmount(grant.reward.committed)}
                 grantCurrency={grantCurrency?.label ?? 'LOL'}
-                grantCurrencyIcon={grantCurrency?.icon ?? '/images/dummy/Ethereum Icon.svg'}
+                grantCurrencyIcon={grantCurrency?.label ? getIcon(grantCurrency.label) : '/images/dummy/Ethereum Icon.svg'}
                 state="done"
                 onEditClick={() => router.push({
                   pathname: '/your_grants/edit_grant/',
@@ -209,6 +215,39 @@ function YourGrants() {
               />
             );
           })}
+          {grants.length === 0 && (
+            <Flex direction="column" justify="center" h="100%" align="center" mx={4}>
+              <Image h="174px" w="146px" src="/illustrations/no_grants.svg" />
+              <Text
+                mt="17px"
+                fontFamily="Spartan, sans-serif"
+                fontSize="20px"
+                lineHeight="25px"
+                fontWeight="700"
+                textAlign="center"
+              >
+                It’s quite silent here!
+              </Text>
+              <Text mt="11px" fontWeight="400" textAlign="center">
+                Get started by creating your grant and post it in less than 2 minutes.
+              </Text>
+
+              <Button
+                mt={16}
+                onClick={() => {
+                  router.push({
+                    pathname: '/your_grants/create_grant/',
+                    // pathname: '/signup',
+                  });
+                }}
+                maxW="163px"
+                variant="primary"
+                mr="12px"
+              >
+                Create a Grant
+              </Button>
+            </Flex>
+          )}
         </Container>
       </Container>
       {grantForFunding && grantRewardAsset && (

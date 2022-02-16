@@ -2,8 +2,8 @@ import React from 'react';
 import {
   Text, Image, Flex,
 } from '@chakra-ui/react';
-import { ApplicationMilestone } from 'src/graphql/queries';
-import { getAssetInfo } from 'src/utils/tokenUtils';
+import { ApplicationMilestone } from '../../../graphql/queries';
+import { getAssetInfo } from '../../../utils/tokenUtils';
 
 const TABLE_HEADERS = [
   {
@@ -53,6 +53,7 @@ function AbstractMilestonesTable(
       >
         {TABLE_HEADERS.map((header) => (
           <Text
+            key={header.title}
             justifyContent={header.justifyContent}
             flex={header.flex ? header.flex : 1}
             variant="tableHeader"

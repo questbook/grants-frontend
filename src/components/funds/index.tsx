@@ -1,12 +1,16 @@
 import {
   Button, Divider, Flex, Text, Box, Image, IconButton, Menu, MenuButton, MenuList, MenuItem,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Grant, useFundsTransfer } from 'src/graphql/queries';
 import { getAssetInfo } from 'src/utils/tokenUtils';
 import Funding from '../your_grants/manage_grant/tables/funding';
 import AddFunds from './add_funds_modal';
 import WithdrawFunds from './withdraw_funds_modal';
+import ERC20ABI from 'src/contracts/abi/ERC20.json';
+import { useContract, useSigner } from 'wagmi';
+import { ethers } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber';
 
 export type FundForAGrantProps = {
   grant: Grant
@@ -29,6 +33,13 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
   const [isAddFundsModalOpen, setIsAddFundsModalOpen] = useState(false);
   const [isWithdrawFundsModalOpen, setIsWithdrawFundsModalOpen] = useState(false);
   const [selected, setSelected] = React.useState(0);
+  const [fundingAssetDecimals, setFundingAssetDecimals] = React.useState(0);
+  const [signerStates] = useSigner();
+  const rewardAssetContract = useContract({
+    addressOrName: grant.reward.asset,
+    contractInterface: ERC20ABI,
+    signerOrProvider: signerStates.data,
+  });
 
   const { data } = useFundsTransfer(grant.id);
 
@@ -37,6 +48,18 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
   const switchTab = (to: number) => {
     setSelected(to);
   };
+
+  useEffect(() => {
+    (async function () {
+      try {
+        if (!rewardAssetContract.provider) return;
+        const assetDecimal = await rewardAssetContract.decimals();
+        setFundingAssetDecimals(assetDecimal);
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+  }, [grant, rewardAssetContract]);
 
   return (
     <Flex direction="column" w="100%" mt={3} mb={12}>
@@ -48,7 +71,7 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
           <Text fontWeight="700" fontSize="16px" lineHeight="24px" letterSpacing={0.5}>Funds Available</Text>
           <Box mr={2} />
           <Text fontWeight="700" fontSize="16px" lineHeight="24px" letterSpacing={0.5} color="brand.500">
-            {grant.reward.committed}
+            {ethers.utils.formatUnits(grant.funding, fundingAssetDecimals)}
             {' '}
             {assetInfo?.label}
           </Text>
@@ -64,7 +87,11 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
               variant="ghost"
             />
             <MenuList>
-              <MenuItem icon={<Image src="/ui_icons/withdraw_fund.svg" />} _hover={{}} onClick={() => setIsWithdrawFundsModalOpen(true)}>
+              <MenuItem
+                icon={<Image src="/ui_icons/withdraw_fund.svg" />}
+                _hover={{}}
+                onClick={() => setIsWithdrawFundsModalOpen(true)}
+              >
                 Withdraw Funds
               </MenuItem>
             </MenuList>
@@ -98,11 +125,19 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
         fundTransfers={data.filter((d) => d.type === TABS_MAP[selected].type)}
         assetId={grant.reward.asset}
         columns={[...TABS_MAP[selected].columns]}
+        assetDecimals={fundingAssetDecimals}
       />
 
       <AddFunds
         isOpen={isAddFundsModalOpen}
         onClose={() => setIsAddFundsModalOpen(false)}
+        grantAddress={grant.id}
+        rewardAsset={{
+          address: grant.reward.asset,
+          committed: BigNumber.from(grant.reward.committed),
+          label: assetInfo?.label,
+          icon: assetInfo?.icon,
+        }}
       />
       <WithdrawFunds
         isOpen={isWithdrawFundsModalOpen}
