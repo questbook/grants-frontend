@@ -6,10 +6,11 @@ import {
 import { BigNumber } from 'ethers';
 import React, { useEffect } from 'react';
 import { useContract, useSigner } from 'wagmi';
-import { formatAmount } from '../../../../utils/formattingUtils';
+import { formatAmount, parseAmount } from '../../../../utils/formattingUtils';
 import Dropdown from '../../../ui/forms/dropdown';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
 import ERC20ABI from '../../../../contracts/abi/ERC20.json';
+import GrantABI from '../../../../contracts/abi/GrantAbi.json';
 
 interface Props {
   onClose: () => void;
@@ -20,18 +21,19 @@ interface Props {
     icon: string;
   };
   contractFunding: string;
+  milestones: any[];
+  applicationId: string;
+  grantId: string;
 }
 
 function ModalContent({
-  onClose, rewardAsset, contractFunding,
+  onClose, rewardAsset, contractFunding, milestones, applicationId, grantId,
 }: Props) {
   const [checkedItems, setCheckedItems] = React.useState([true, false]);
   const [chosen, setChosen] = React.useState(-1);
   const [selectedMilestone, setSelectedMilestone] = React.useState(-1);
   const [funding, setFunding] = React.useState('');
   const [error, setError] = React.useState(false);
-
-  const milestones = [1, 2, 3, 4, 5];
 
   const [walletBalance, setWalletBalance] = React.useState(0);
   // const toast = useToast();
@@ -42,10 +44,69 @@ function ModalContent({
     signerOrProvider: signerStates.data,
   });
 
+  const grantContract = useContract({
+    addressOrName: grantId.length > 0 ? grantId : '0x0000000000000000000000000000000000000000',
+    contractInterface: GrantABI,
+    signerOrProvider: signerStates.data,
+  });
+
+  const sendFundsFromContract = async () => {
+    if (!milestones[selectedMilestone].id.split('.')[1]) return;
+    if (!rewardAsset.address) return;
+    if (!parseAmount(funding)) return;
+    if (!applicationId) return;
+
+    const transaction = await grantContract.disburseReward(
+      applicationId,
+      milestones[selectedMilestone].id.split('.')[1],
+      rewardAsset.address,
+      parseAmount(funding),
+    );
+    // const transactionData =
+    await transaction.wait();
+
+    // console.log(transactionData);
+    // console.log(transactionData.blockNumber);
+
+    onClose();
+  };
+
+  const sendFundsFromWallet = async () => {
+    console.log(grantContract);
+
+    console.log(
+      applicationId,
+      milestones[selectedMilestone].id.split('.')[1],
+      rewardAsset.address,
+      parseAmount(funding),
+    );
+
+    if (!milestones[selectedMilestone].id.split('.')[1]) return;
+    if (!rewardAsset.address) return;
+    if (!parseAmount(funding)) return;
+    if (!applicationId) return;
+
+    const txn = await rewardAssetContract.approve(grantContract.address, parseAmount(funding));
+    await txn.wait();
+
+    const transaction = await grantContract.disburseRewardP2P(
+      applicationId,
+      milestones[selectedMilestone].id.split('.')[1],
+      rewardAsset.address,
+      parseAmount(funding),
+    );
+    const transactionData = await transaction.wait();
+
+    console.log(transactionData);
+    console.log(transactionData.blockNumber);
+
+    onClose();
+  };
+
   useEffect(() => {
     (async function () {
       try {
-        console.log('', rewardAssetContract);
+        console.log('rewardContract', rewardAssetContract);
         if (!rewardAssetContract.provider) return;
         // const assetDecimal = await rewardAssetContract.decimals();
         // setRewardAssetDecimals(assetDecimal);
@@ -54,6 +115,8 @@ function ModalContent({
           // signerStates.data._address,
           tempAddress,
         );
+        console.log('tempAddress', tempAddress);
+        console.log(tempWalletBalance);
         setWalletBalance(tempWalletBalance);
       } catch (e) {
         console.error(e);
@@ -145,7 +208,7 @@ function ModalContent({
                 variant="applicationText"
                 color={selectedMilestone === -1 ? '#717A7C' : '#122224'}
               >
-                {selectedMilestone === -1 ? 'Select a milestone' : `Milestone ${milestones[selectedMilestone]}`}
+                {selectedMilestone === -1 ? 'Select a milestone' : `Milestone ${selectedMilestone + 1}: ${milestones[selectedMilestone].title}`}
               </Text>
             </MenuButton>
             <MenuList>
@@ -155,7 +218,9 @@ function ModalContent({
                 >
                   Milestone
                   {' '}
-                  {milestone}
+                  {index + 1}
+                  {': '}
+                  {milestone.title}
                 </MenuItem>
               ))}
             </MenuList>
@@ -190,7 +255,7 @@ function ModalContent({
             </Flex>
           </Flex>
 
-          <Button variant="primary" w="100%" my={10} onClick={onClose}>Send Funds</Button>
+          <Button variant="primary" w="100%" my={10} onClick={sendFundsFromContract}>Send Funds</Button>
 
         </Flex>
       )}
@@ -220,7 +285,7 @@ function ModalContent({
               variant="applicationText"
               color={selectedMilestone === -1 ? '#717A7C' : '#122224'}
             >
-              {selectedMilestone === -1 ? 'Select a milestone' : `Milestone ${milestones[selectedMilestone]}`}
+              {selectedMilestone === -1 ? 'Select a milestone' : `Milestone ${selectedMilestone + 1}: ${milestones[selectedMilestone].title}`}
             </Text>
           </MenuButton>
           <MenuList>
@@ -230,7 +295,9 @@ function ModalContent({
               >
                 Milestone
                 {' '}
-                {milestone}
+                {index + 1}
+                {': '}
+                {milestone.title}
               </MenuItem>
             ))}
           </MenuList>
@@ -265,7 +332,7 @@ function ModalContent({
           </Flex>
         </Flex>
 
-        <Button variant="primary" w="100%" my={10} onClick={onClose}>Send Funds</Button>
+        <Button variant="primary" w="100%" my={10} onClick={sendFundsFromWallet}>Send Funds</Button>
 
       </Flex>
       )}

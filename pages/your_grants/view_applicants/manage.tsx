@@ -1,12 +1,22 @@
 import { gql } from '@apollo/client';
 import {
-  Container, Flex, Image, Box, Text, Link, Button,
+  Container,
+  Flex,
+  Image,
+  Box,
+  Text,
+  Link,
+  Button,
 } from '@chakra-ui/react';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
-import { ApplicationMilestone, useApplicationMilestones, useFundDisbursed } from '../../../src/graphql/queries';
+import {
+  ApplicationMilestone,
+  useApplicationMilestones,
+  useFundDisbursed,
+} from '../../../src/graphql/queries';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Heading from '../../../src/components/ui/heading';
 import Modal from '../../../src/components/ui/modal';
@@ -21,11 +31,14 @@ import { ApiClientsContext } from '../../_app';
 import { formatAmount, parseAmount } from '../../../src/utils/formattingUtils';
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
-  return milestones.reduce((value, milestone) => value + (+milestone.amountPaid), 0);
+  return milestones.reduce(
+    (value, milestone) => value + +milestone.amountPaid,
+    0,
+  );
 }
 
 function getTotalFundingAsked(milestones: ApplicationMilestone[]) {
-  return milestones.reduce((value, milestone) => value + (+milestone.amount), 0);
+  return milestones.reduce((value, milestone) => value + +milestone.amount, 0);
 }
 
 function ManageGrant() {
@@ -49,21 +62,22 @@ function ManageGrant() {
     fetchEns: false,
   });
 
-  const { data: { milestones, rewardAsset, fundingAsk } } = useApplicationMilestones(applicationID);
-  const { data: fundsDisbursed } = useFundDisbursed(null);
+  const {
+    data: { milestones, rewardAsset, fundingAsk },
+  } = useApplicationMilestones(applicationID);
+  const { data: fundsDisbursed } = useFundDisbursed(applicationID);
   const fundingIcon = getAssetInfo(rewardAsset)?.icon;
   const assetInfo = getAssetInfo(rewardAsset);
 
   const getGrantData = async () => {
     if (!subgraphClient || !accountData?.address) return;
     try {
-      const { data } = await subgraphClient.client
-        .query({
-          query: gql(getApplicationDetails),
-          variables: {
-            applicationID,
-          },
-        }) as any;
+      const { data } = (await subgraphClient.client.query({
+        query: gql(getApplicationDetails),
+        variables: {
+          applicationID,
+        },
+      })) as any;
       console.log(data);
       if (data && data.grantApplication) {
         const application = data.grantApplication;
@@ -95,22 +109,27 @@ function ManageGrant() {
     {
       title: milestones.length.toString(),
       subtitle: milestones.length === 1 ? 'Milestone' : 'Milestones',
-      content: <Milestones milestones={milestones} rewardAssetId={rewardAsset} />,
+      content: (
+        <Milestones milestones={milestones} rewardAssetId={rewardAsset} />
+      ),
     },
     {
       icon: fundingIcon,
       title: getTotalFundingRecv(milestones).toString(),
       subtitle: 'Funding Sent',
-      content: <Funding
-        fundTransfers={fundsDisbursed}
-        assetId={rewardAsset}
-        columns={['milestoneTitle', 'date', 'from', 'action']}
-        assetDecimals={18}
-      />,
+      content: (
+        <Funding
+          fundTransfers={fundsDisbursed}
+          assetId={rewardAsset}
+          columns={['milestoneTitle', 'date', 'from', 'action']}
+          assetDecimals={18}
+          grantId={applicationData.grant?.id}
+        />
+      ),
     },
     {
       icon: fundingIcon,
-      title: formatAmount((fundingAsk || getTotalFundingAsked(milestones)).toString()),
+      title: (fundingAsk || getTotalFundingAsked(milestones)).toString(),
       subtitle: 'Funding Requested',
       content: undefined, // <Funding fundTransfers={fundsDisbursed} assetId={rewardAsset} />,
     },
@@ -128,12 +147,13 @@ function ManageGrant() {
         px={10}
       >
         <Breadcrumbs path={path} />
-        <Heading mt="12px" title={applicationData.grantTitle} dontRenderDivider />
+        <Heading
+          mt="12px"
+          title={applicationData.grantTitle}
+          dontRenderDivider
+        />
         <Flex mt="3px" direction="row" justify="start" align="baseline">
-          <Text
-            key="address"
-            variant="applicationText"
-          >
+          <Text key="address" variant="applicationText">
             By
             {' '}
             <Box as="span" fontWeight="700" display="inline-block">
@@ -193,10 +213,19 @@ function ManageGrant() {
               _hover={{
                 background: '#F5F5F5',
               }}
-              background={index !== selected ? 'linear-gradient(180deg, #FFFFFF 0%, #F3F4F4 100%)' : 'white'}
+              background={
+                index !== selected
+                  ? 'linear-gradient(180deg, #FFFFFF 0%, #F3F4F4 100%)'
+                  : 'white'
+              }
               _focus={{}}
               borderRadius={index !== selected ? 0 : '8px 8px 0px 0px'}
-              borderRightWidth={((index !== (tabs.length - 1) && index + 1 !== selected) || index === selected) ? '2px' : '0px'}
+              borderRightWidth={
+                (index !== tabs.length - 1 && index + 1 !== selected)
+                || index === selected
+                  ? '2px'
+                  : '0px'
+              }
               borderLeftWidth={index !== selected ? 0 : '2px'}
               borderTopWidth={index !== selected ? 0 : '2px'}
               borderBottomWidth={index !== selected ? '2px' : 0}
@@ -207,13 +236,17 @@ function ManageGrant() {
             >
               <Flex direction="column" justify="center" align="center" w="100%">
                 <Flex direction="row" justify="center" align="center">
-                  {tab.icon && <Image h="26px" w="26px" src={tab.icon} alt={tab.icon} />}
+                  {tab.icon && (
+                    <Image h="26px" w="26px" src={tab.icon} alt={tab.icon} />
+                  )}
                   <Box mx={1} />
                   <Text fontWeight="700" fontSize="26px" lineHeight="40px">
                     {tab.title}
                   </Text>
                 </Flex>
-                <Text variant="applicationText" color="#717A7C">{tab.subtitle}</Text>
+                <Text variant="applicationText" color="#717A7C">
+                  {tab.subtitle}
+                </Text>
               </Flex>
             </Button>
           ))}
@@ -222,22 +255,28 @@ function ManageGrant() {
         {tabs[selected].content}
 
         <Flex direction="row" justify="center" mt={8}>
-          <Button variant="primary" onClick={() => setIsGrantCompleteModalOpen(true)}>Mark Grant as Complete</Button>
+          <Button
+            variant="primary"
+            onClick={() => setIsGrantCompleteModalOpen(true)}
+          >
+            Mark Grant as Complete
+          </Button>
         </Flex>
-
       </Container>
-      <Sidebar assetInfo={assetInfo} grant={applicationData.grant} funds={0} />
+      <Sidebar
+        milestones={milestones}
+        assetInfo={assetInfo}
+        grant={applicationData.grant}
+        applicationId={applicationID}
+      />
 
       <Modal
         isOpen={isGrantCompleteModelOpen}
         onClose={() => setIsGrantCompleteModalOpen(false)}
         title="Mark Grant as Complete"
       >
-        <ModalContent
-          onClose={() => setIsGrantCompleteModalOpen(false)}
-        />
+        <ModalContent onClose={() => setIsGrantCompleteModalOpen(false)} />
       </Modal>
-
     </Container>
   );
 }

@@ -55,7 +55,9 @@ export const useApplicationMilestones = (grantId: string) => {
   const milestones = grantApp?.milestones.map((milestone: any) => ({
     ...milestone,
     amount: formatAmount(milestone.amount.toString()),
+    amountPaid: formatAmount(milestone.amountPaid.toString()),
   })) || [];
+  console.log(milestones);
   return {
     data: { rewardAsset, milestones: milestones as ApplicationMilestone[], fundingAsk },
     loading,
@@ -71,7 +73,6 @@ export const useFundDisbursed = (applicationId: string | null) => {
       applicationId,
     },
   });
-
   const transfers = data?.fundsTransfers || [];
   return {
     data: transfers as FundTransfer[],

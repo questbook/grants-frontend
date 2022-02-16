@@ -37,6 +37,9 @@ export function parseAmount(number: string) {
 
 function nFormatter(value: string, digits = 2) {
   const num = Math.abs(Number(value));
+  if (num < 10000) {
+    return value;
+  }
   const lookup = [
     { value: 1, symbol: '' },
     { value: 1e3, symbol: 'k' },
@@ -52,7 +55,8 @@ function nFormatter(value: string, digits = 2) {
 }
 
 export function formatAmount(number: string) {
-  return nFormatter(ethers.utils.formatUnits(number, 18).toString());
+  const value = ethers.utils.formatUnits(number, 18).toString();
+  return nFormatter(value);
 }
 
 export function highlightWordsInString(
