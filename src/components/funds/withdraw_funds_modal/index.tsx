@@ -88,6 +88,7 @@ function WithdrawFunds({
       setType(1);
       showToast({ link: `https://etherscan.io/tx/${transferTxn.transactionHash}` });
     } catch {
+      setHasClicked(false);
       toast({
         title: 'Withdrawal failed!',
         status: 'error',

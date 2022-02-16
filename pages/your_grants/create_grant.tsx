@@ -94,42 +94,50 @@ function CreateGrant() {
       return;
     }
 
-    setHasClicked(true);
-    console.log(data);
-    console.log(workspaceId);
+    try {
+      setHasClicked(true);
+      console.log(data);
+      console.log(workspaceId);
 
-    const {
-      data: { ipfsHash },
-    } = await validatorApi.validateGrantCreate({
-      title: data.title,
-      summary: data.summary,
-      details: data.details,
-      deadline: data.date,
-      reward: {
-        committed: parseAmount(data.reward),
-        asset: data.rewardCurrencyAddress,
-      },
-      creatorId: accountData.address,
-      workspaceId,
-      fields: data.fields,
-    });
+      const {
+        data: { ipfsHash },
+      } = await validatorApi.validateGrantCreate({
+        title: data.title,
+        summary: data.summary,
+        details: data.details,
+        deadline: data.date,
+        reward: {
+          committed: parseAmount(data.reward),
+          asset: data.rewardCurrencyAddress,
+        },
+        creatorId: accountData.address,
+        workspaceId,
+        fields: data.fields,
+      });
 
-    console.log(ipfsHash);
+      console.log(ipfsHash);
 
-    const transaction = await grantContract.createGrant(
-      workspaceId!,
-      ipfsHash,
-      config.WorkspaceRegistryAddress,
-      config.ApplicationRegistryAddress,
-    );
-    const transactionData = await transaction.wait();
+      const transaction = await grantContract.createGrant(
+        workspaceId!,
+        ipfsHash,
+        config.WorkspaceRegistryAddress,
+        config.ApplicationRegistryAddress,
+      );
+      const transactionData = await transaction.wait();
 
-    setHasClicked(false);
-    console.log(transactionData);
-    router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
+      setHasClicked(false);
+      console.log(transactionData);
+      router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
 
-    showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
-
+      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
+    } catch (error) {
+      setHasClicked(false);
+      console.log(error);
+      toast({
+        title: 'Application update not indexed',
+        status: 'error',
+      });
+    }
     // console.log(transactionData);
     // console.log(transactionData.blockNumber);
 

@@ -5,6 +5,8 @@ import {
   Button,
   Text,
   Image,
+  Center,
+  CircularProgress,
 } from '@chakra-ui/react';
 import React from 'react';
 import { formatAmount } from 'src/utils/formattingUtils';
@@ -13,9 +15,11 @@ import { getAssetInfo } from 'src/utils/tokenUtils';
 function Accept({
   onSubmit,
   applicationData,
+  hasClicked,
 }: {
   onSubmit: () => void;
-  applicationData: any
+  applicationData: any;
+  hasClicked: boolean;
 }) {
   return (
     <Container
@@ -91,9 +95,11 @@ function Accept({
         ))}
       </Flex>
       <Divider mt={7} />
-      <Button onClick={() => onSubmit()} w="100%" mt={10} variant="primary">
-        Accept Application
-      </Button>
+      {hasClicked ? <Center><CircularProgress isIndeterminate color="brand.500" size="48px" mt={10} /></Center> : (
+        <Button onClick={() => onSubmit()} w="100%" mt={10} variant="primary">
+          Accept Application
+        </Button>
+      )}
     </Container>
   );
 }

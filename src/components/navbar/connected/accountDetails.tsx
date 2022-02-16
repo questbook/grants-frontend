@@ -3,6 +3,7 @@ import {
   Button, VStack, Image, Text, Flex, Menu, MenuButton, MenuList, MenuItem,
 } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
+import { useRouter } from 'next/router';
 import supportedNetworks from '../../../constants/supportedNetworks.json';
 
 export interface Props {
@@ -16,6 +17,7 @@ function AccountDetails({ networkId, isOnline, address }: Props) {
   const supportedChainIds = Object.keys(supportedNetworks);
   const networkSupported = supportedChainIds.includes(networkId.toString());
   const [, disconnect] = useAccount();
+  const router = useRouter();
 
   return (
     <Menu>
@@ -72,7 +74,15 @@ function AccountDetails({ networkId, isOnline, address }: Props) {
 
       </MenuButton>
       <MenuList>
-        <MenuItem onClick={disconnect} icon={<Image src="/ui_icons/logout.svg" />}>Logout</MenuItem>
+        <MenuItem
+          onClick={() => {
+            disconnect();
+            router.replace('/');
+          }}
+          icon={<Image src="/ui_icons/logout.svg" />}
+        >
+          Logout
+        </MenuItem>
       </MenuList>
     </Menu>
   );

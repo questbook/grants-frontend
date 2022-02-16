@@ -121,6 +121,7 @@ function AddFunds({
       setFunding('');
       onClose();
     } catch {
+      setHasClicked(false);
       toast({
         title: 'Could not deposit!',
         status: 'error',

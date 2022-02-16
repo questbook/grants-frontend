@@ -101,42 +101,51 @@ function EditGrant() {
       return;
     }
 
-    setHasClicked(true);
-    console.log(data);
-    console.log(workspaceId);
+    try {
+      setHasClicked(true);
+      console.log(data);
+      console.log(workspaceId);
 
-    // eslint-disable-next-line react-hooks/rules-of-hooks
+      // eslint-disable-next-line react-hooks/rules-of-hooks
 
-    const {
-      data: { ipfsHash },
-    } = await validatorApi.validateGrantUpdate({
-      title: data.title,
-      summary: data.summary,
-      details: data.details,
-      deadline: data.date,
-      reward: {
-        committed: parseAmount(data.reward),
-        asset: data.rewardCurrencyAddress,
-      },
-      fields: data.fields,
-    });
+      const {
+        data: { ipfsHash },
+      } = await validatorApi.validateGrantUpdate({
+        title: data.title,
+        summary: data.summary,
+        details: data.details,
+        deadline: data.date,
+        reward: {
+          committed: parseAmount(data.reward),
+          asset: data.rewardCurrencyAddress,
+        },
+        fields: data.fields,
+      });
 
-    console.log(ipfsHash);
+      console.log(ipfsHash);
 
-    const transaction = await grantContract.updateGrant(
-      ipfsHash,
-    );
-    const transactionData = await transaction.wait();
+      const transaction = await grantContract.updateGrant(
+        ipfsHash,
+      );
+      const transactionData = await transaction.wait();
 
-    console.log(transactionData);
-    console.log(transactionData.blockNumber);
-    setHasClicked(false);
-    router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
+      console.log(transactionData);
+      console.log(transactionData.blockNumber);
+      setHasClicked(false);
+      router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
 
-    showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
-    // await subgraphClient.waitForBlock(transactionData.blockNumber);
+      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
+      // await subgraphClient.waitForBlock(transactionData.blockNumber);
 
     // router.replace('/your_grants');
+    } catch (error) {
+      setHasClicked(false);
+      console.log(error);
+      toast({
+        title: 'Application update not indexed',
+        status: 'error',
+      });
+    }
   };
 
   const [formData, setFormData] = useState<any>(null);

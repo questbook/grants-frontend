@@ -79,18 +79,27 @@ function ModalContent({
     if (!parseAmount(funding)) return;
     if (!applicationId) return;
 
-    setHasClicked(true);
-    const transaction = await grantContract.disburseReward(
-      applicationId,
-      milestones[selectedMilestone].id.split('.')[1],
-      rewardAsset.address,
-      parseAmount(funding),
-    );
-    // const transactionData =
-    await transaction.wait();
-    onClose();
-    setHasClicked(false);
-    showToast({ link: `https://etherscan.io/tx/${transaction.transactionHash}` });
+    try {
+      setHasClicked(true);
+      const transaction = await grantContract.disburseReward(
+        applicationId,
+        milestones[selectedMilestone].id.split('.')[1],
+        rewardAsset.address,
+        parseAmount(funding),
+      );
+      // const transactionData =
+      await transaction.wait();
+      onClose();
+      setHasClicked(false);
+      showToast({ link: `https://etherscan.io/tx/${transaction.transactionHash}` });
+    } catch (e) {
+      setHasClicked(false);
+      console.log(e);
+      toast({
+        title: 'Application update not indexed',
+        status: 'error',
+      });
+    }
 
     // console.log(transactionData);
     // console.log(transactionData.blockNumber);

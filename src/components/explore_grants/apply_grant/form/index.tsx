@@ -260,9 +260,6 @@ function Form({
       showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
       router.replace({
         pathname: '/your_applications',
-        query: {
-          account: true,
-        },
       });
       // await subgraphClient.waitForBlock(transactionData.blockNumber);
 
@@ -283,6 +280,7 @@ function Form({
 
       // onSubmit({ data: grantApplications });
     } catch (error) {
+      setHasClicked(false);
       console.log(error);
       toast({
         title: 'Application not indexed',

@@ -1,5 +1,5 @@
 import {
-  Container, Flex, Text, Image, useToast,
+  Container, Flex, Text, Image, useToast, ToastId,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
@@ -13,6 +13,7 @@ import { useAccount, useContract, useSigner } from 'wagmi';
 import config from 'src/constants/config';
 import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.json';
 import { ApiClientsContext } from 'pages/_app';
+import InfoToast from 'src/components/ui/infoToast';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Heading from '../../../src/components/ui/heading';
 
@@ -84,10 +85,34 @@ function ApplicantForm() {
     signerOrProvider: signerStates.data,
   });
 
+  const [hasClicked, setHasClicked] = React.useState(false);
+  useEffect(() => {
+    console.log(hasClicked);
+  }, [hasClicked]);
+  const toastRef = React.useRef<ToastId>();
+
+  const closeToast = () => {
+    if (toastRef.current) {
+      toast.close(toastRef.current);
+    }
+  };
+
+  const showToast = ({ link } : { link: string }) => {
+    toastRef.current = toast({
+      position: 'top',
+      render: () => (
+        <InfoToast
+          link={link}
+          close={closeToast}
+        />
+      ),
+    });
+  };
+
   const handleApplicationStateUpdate = async (state:number, comment:string) => {
     try {
       if (!apiClients) return;
-      const { subgraphClient, validatorApi, workspaceId } = apiClients;
+      const { validatorApi, workspaceId } = apiClients;
       if (!accountData
       || !accountData.address
       || !workspaceId
@@ -95,6 +120,8 @@ function ApplicantForm() {
       || !applicationData.id) {
         return;
       }
+
+      setHasClicked(true);
       const {
         data: { ipfsHash },
       } = await validatorApi.validateGrantApplicationUpdate({
@@ -112,12 +139,15 @@ function ApplicantForm() {
 
       console.log(transactionData);
       console.log(transactionData.blockNumber);
-      toast({ title: 'Transaction succeeded', status: 'success' });
+      // toast({ title: 'Transaction succeeded', status: 'success' });
 
-      await subgraphClient.waitForBlock(transactionData.blockNumber);
-
+      setHasClicked(false);
       router.replace('/your_grants');
+
+      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
+      // await subgraphClient.waitForBlock(transactionData.blockNumber);
     } catch (error) {
+      setHasClicked(false);
       console.log(error);
       toast({
         title: 'Application update not indexed',
@@ -133,6 +163,7 @@ function ApplicantForm() {
             // onSubmit={handleAcceptApplication}
             onSubmit={() => handleApplicationStateUpdate(2, '')}
             applicationData={applicationData}
+            hasClicked={hasClicked}
           />
           <AcceptSidebar
             applicationData={applicationData}
@@ -143,7 +174,10 @@ function ApplicantForm() {
     if (currentStep === 2) {
       return (
         <>
-          <Reject onSubmit={({ comment }) => handleApplicationStateUpdate(3, comment)} />
+          <Reject
+            onSubmit={({ comment }) => handleApplicationStateUpdate(3, comment)}
+            hasClicked={hasClicked}
+          />
           <RejectSidebar
             applicationData={applicationData}
           />
@@ -152,7 +186,10 @@ function ApplicantForm() {
     }
     return (
       <>
-        <Resubmit onSubmit={({ comment }) => handleApplicationStateUpdate(1, comment)} />
+        <Resubmit
+          onSubmit={({ comment }) => handleApplicationStateUpdate(1, comment)}
+          hasClicked={hasClicked}
+        />
         <ResubmitSidebar
           applicationData={applicationData}
         />

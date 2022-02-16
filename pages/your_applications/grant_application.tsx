@@ -110,7 +110,7 @@ function ViewApplication() {
           feedback={application?.feedback}
           grantRequiredFields={application?.fields?.map((field:any) => field.id.split('.')[1]) ?? []}
           applicationID={applicationID}
-          grantID={application?.grant?.id}
+          // grantID={application?.grant?.id}
         />
       </Container>
     </Container>

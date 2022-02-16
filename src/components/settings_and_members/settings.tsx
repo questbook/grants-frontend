@@ -74,59 +74,67 @@ function Settings({
     telegramChannel?: string;
   }) => {
     if (!apiClients) return;
-    const { validatorApi } = apiClients;
-    let imageHash = workspaceData.logoIpfsHash;
-    let coverImageHash = workspaceData.coverImageIpfsHash;
-    const socials = [];
+    try {
+      const { validatorApi } = apiClients;
+      let imageHash = workspaceData.logoIpfsHash;
+      let coverImageHash = workspaceData.coverImageIpfsHash;
+      const socials = [];
 
-    console.log('check', data.image);
-    if (data.image) {
-      imageHash = await uploadToIPFS(data.image);
-      imageHash = imageHash.hash;
+      console.log('check', data.image);
+      if (data.image) {
+        imageHash = await uploadToIPFS(data.image);
+        imageHash = imageHash.hash;
+      }
+      if (data.coverImage) {
+        coverImageHash = await uploadToIPFS(data.coverImage);
+        coverImageHash = coverImageHash.hash;
+      }
+
+      if (data.twitterHandle) {
+        socials.push({ name: 'twitter', value: data.twitterHandle });
+      }
+      if (data.discordHandle) {
+        socials.push({ name: 'discord', value: data.discordHandle });
+      }
+      if (data.telegramChannel) {
+        socials.push({ name: 'telegram', value: data.telegramChannel });
+      }
+
+      setHasClicked(true);
+      const {
+        data: { ipfsHash },
+      } = await validatorApi.validateWorkspaceUpdate({
+        title: data.name,
+        about: data.about,
+        logoIpfsHash: imageHash,
+        coverImageIpfsHash: coverImageHash,
+        socials,
+      });
+
+      const workspaceID = Number(workspaceData.id);
+
+      // toast({
+      //   title: 'Updating workspace',
+      //   status: 'info',
+      //   duration: 100000,
+      // });
+
+      const txn = await contract.updateWorkspaceMetadata(workspaceID, ipfsHash);
+      console.log(txn);
+      const transactionData = await txn.wait();
+      console.log(transactionData.blockNumber);
+      setHasClicked(false);
+      window.location.reload();
+
+      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
+    } catch (error) {
+      setHasClicked(false);
+      console.log(error);
+      toast({
+        title: 'Application update not indexed',
+        status: 'error',
+      });
     }
-    if (data.coverImage) {
-      coverImageHash = await uploadToIPFS(data.coverImage);
-      coverImageHash = coverImageHash.hash;
-    }
-
-    if (data.twitterHandle) {
-      socials.push({ name: 'twitter', value: data.twitterHandle });
-    }
-    if (data.discordHandle) {
-      socials.push({ name: 'discord', value: data.discordHandle });
-    }
-    if (data.telegramChannel) {
-      socials.push({ name: 'telegram', value: data.telegramChannel });
-    }
-
-    setHasClicked(true);
-    const {
-      data: { ipfsHash },
-    } = await validatorApi.validateWorkspaceUpdate({
-      title: data.name,
-      about: data.about,
-      logoIpfsHash: imageHash,
-      coverImageIpfsHash: coverImageHash,
-      socials,
-    });
-
-    const workspaceID = Number(workspaceData.id);
-
-    // toast({
-    //   title: 'Updating workspace',
-    //   status: 'info',
-    //   duration: 100000,
-    // });
-
-    const txn = await contract.updateWorkspaceMetadata(workspaceID, ipfsHash);
-    console.log(txn);
-    const transactionData = await txn.wait();
-    console.log(transactionData.blockNumber);
-    setHasClicked(false);
-    window.location.reload();
-
-    showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
-
     // await subgraphClient.waitForBlock(transactionData.blockNumber);
   };
 
