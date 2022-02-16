@@ -234,12 +234,13 @@ query($grantId: ID!) {
         }
       },
       milestones {
-      id,
-      state,
-      title,
-      amount,
-      amountPaid,
-      updatedAtS,
+        id,
+        state,
+        title,
+        amount,
+        amountPaid,
+        updatedAtS,
+        text
       }
     }
 }

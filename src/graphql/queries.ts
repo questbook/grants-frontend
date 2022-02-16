@@ -12,6 +12,7 @@ export type ApplicationMilestone = {
   state: 'submitted' | 'requested' | 'approved'
   title: string
   updatedAtS: number | null
+  text: string | null
 };
 
 export type FundTransferType = 'funds_deposited' | 'funds_withdrawn' | 'funds_disbursed';
