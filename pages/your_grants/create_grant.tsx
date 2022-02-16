@@ -86,8 +86,8 @@ function CreateGrant() {
       ),
     });
   };
+
   const handleGrantSubmit = async (data: any) => {
-    console.log('YP!');
     if (!apiClients) return;
     const { validatorApi, workspaceId } = apiClients;
     if (!accountData || !accountData.address || !workspaceId) {
@@ -122,12 +122,13 @@ function CreateGrant() {
       config.WorkspaceRegistryAddress,
       config.ApplicationRegistryAddress,
     );
-    setHasClicked(false);
-    console.log(transaction);
-    router.replace({ pathname: '/your_grants', query: { txHash: transaction.hash } });
+    const transactionData = await transaction.wait();
 
-    showToast({ link: `https://etherscan.io/tx/${transaction.hash}` });
-    // const transactionData = await transaction.wait();
+    setHasClicked(false);
+    console.log(transactionData);
+    router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
+
+    showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
 
     // console.log(transactionData);
     // console.log(transactionData.blockNumber);

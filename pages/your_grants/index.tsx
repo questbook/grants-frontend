@@ -228,12 +228,17 @@ function YourGrants() {
                 fontWeight="700"
                 textAlign="center"
               >
-                It’s quite silent here!
+                {router.query.done
+                  ? 'Your grant is being published..'
+                  : 'It’s quite silent here!'}
               </Text>
               <Text mt="11px" fontWeight="400" textAlign="center">
-                Get started by creating your grant and post it in less than 2 minutes.
+                {router.query.done
+                  ? 'You may visit this page after a while to see the published grant. Once published, the grant will be live and will be open for anyone to apply.'
+                  : 'Get started by creating your grant and post it in less than 2 minutes.'}
               </Text>
 
+              {!router.query.done && (
               <Button
                 mt={16}
                 onClick={() => {
@@ -248,6 +253,7 @@ function YourGrants() {
               >
                 Create a Grant
               </Button>
+              )}
             </Flex>
           )}
         </Container>

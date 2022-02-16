@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import React, { useState } from 'react';
 import {
-  Box, Button, Text, Image, Link, Flex, CircularProgress,
+  Box, Button, Text, Image, Link, Flex, CircularProgress, Center,
 } from '@chakra-ui/react';
 import Title from './1_title';
 import Details from './2_details';
@@ -257,7 +257,11 @@ function Form({
       </Flex>
 
       {hasClicked
-        ? <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} /> : (
+        ? (
+          <Center>
+            <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
+          </Center>
+        ) : (
           <Button onClick={handleOnSubmit} variant="primary">
             Create Grant
           </Button>

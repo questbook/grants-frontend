@@ -4,22 +4,23 @@ import {
   Image,
   Text,
   Button,
-  Box,
-  IconButton,
-  Divider,
-  Heading,
   Link,
   useToast,
+  ToastId,
+  Center,
+  CircularProgress,
 } from '@chakra-ui/react';
 import React from 'react';
-import Dropdown from '../../ui/forms/dropdown';
-import SingleLineInput from '../../ui/forms/singleLineInput';
-import Modal from '../../ui/modal';
 import {
   useContract, useSigner,
 } from 'wagmi';
-import GrantABI from '../../../contracts/abi/GrantAbi.json';
 import { parseAmount, truncateStringFromMiddle } from 'src/utils/formattingUtils';
+import { BigNumber } from 'ethers';
+import InfoToast from 'src/components/ui/infoToast';
+import Dropdown from '../../ui/forms/dropdown';
+import SingleLineInput from '../../ui/forms/singleLineInput';
+import Modal from '../../ui/modal';
+import GrantABI from '../../../contracts/abi/GrantAbi.json';
 
 interface Props {
   isOpen: boolean;
@@ -33,7 +34,9 @@ interface Props {
   };
 }
 
-function WithdrawFunds({ isOpen, onClose, grantAddress, rewardAsset }: Props) {
+function WithdrawFunds({
+  isOpen, onClose, grantAddress, rewardAsset,
+}: Props) {
   const [type, setType] = React.useState(-1);
   const [funding, setFunding] = React.useState('');
   const [error, setError] = React.useState(false);
@@ -48,21 +51,42 @@ function WithdrawFunds({ isOpen, onClose, grantAddress, rewardAsset }: Props) {
   });
 
   const [transactionHash, setTransactionHash] = React.useState('');
-  const details = [{ key: 'Amount', value: '2 ETH' }, { key: 'Withdrawal Address', value: '0x918102991810xc10292' }];
+  const [hasClicked, setHasClicked] = React.useState(false);
+  const toastRef = React.useRef<ToastId>();
 
-
+  const closeToast = () => {
+    if (toastRef.current) {
+      toast.close(toastRef.current);
+    }
+  };
+  const showToast = ({ link } : { link: string }) => {
+    toastRef.current = toast({
+      position: 'top',
+      render: () => (
+        <InfoToast
+          link={link}
+          close={closeToast}
+        />
+      ),
+    });
+  };
 
   const dummyTransaction = async () => {
     setType(0);
     const finalAmount = parseAmount(funding.toString());
     try {
+      setHasClicked(true);
       const transferTxn = await grantContract.withdrawFunds(
         rewardAsset.address,
         finalAmount,
         address,
       );
-      setTransactionHash(transferTxn.hash);
+      const transactionData = await transferTxn.wait();
+
+      setHasClicked(false);
+      setTransactionHash(transactionData.transactionHash);
       setType(1);
+      showToast({ link: `https://etherscan.io/tx/${transferTxn.transactionHash}` });
     } catch {
       toast({
         title: 'Withdrawal failed!',
@@ -71,8 +95,6 @@ function WithdrawFunds({ isOpen, onClose, grantAddress, rewardAsset }: Props) {
         isClosable: true,
       });
     }
-
-
   };
 
   return (
@@ -146,9 +168,15 @@ function WithdrawFunds({ isOpen, onClose, grantAddress, rewardAsset }: Props) {
                 Enter only ERC 20 address
               </Text>
             )}
-            <Button variant="primary" mt={addressError ? 5 : 10} mb={9} onClick={dummyTransaction} disabled={addressError || type === 0}>
-              Withdraw
-            </Button>
+            {hasClicked ? (
+              <Center>
+                <CircularProgress isIndeterminate color="brand.500" size="48px" mt={10} mb={9} />
+              </Center>
+            ) : (
+              <Button variant="primary" mt={addressError ? 5 : 10} mb={9} onClick={dummyTransaction} disabled={addressError || type === 0}>
+                Withdraw
+              </Button>
+            )}
           </Flex>
         )}
         {type === 1 && (

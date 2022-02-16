@@ -1,5 +1,5 @@
 import {
-  Flex, Box, Button, Text, Image, Link,
+  Flex, Box, Button, Text, Image, Link, CircularProgress, Center,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useNetwork } from 'wagmi';
@@ -10,9 +10,11 @@ import Tooltip from '../../ui/tooltip';
 import supportedNetworks from '../../../constants/supportedNetworks.json';
 
 function Form({
+  hasClicked,
   onSubmit: onFormSubmit,
 }: {
   onSubmit: (data: { name: string; description: string; image: File, network: string }) => void;
+  hasClicked: boolean;
 }) {
   const [{ data: networkData }] = useNetwork();
   const [networkSupported, setNetworkSupported] = React.useState(false);
@@ -174,16 +176,22 @@ function Form({
         </Link>
       </Text>
 
-      <Button
-        onClick={handleSubmit}
-        w="100%"
-        maxW="502px"
-        variant="primary"
-        mt={5}
-        mb={16}
-      >
-        Create Grants DAO
-      </Button>
+      {hasClicked ? (
+        <Center>
+          <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
+        </Center>
+      ) : (
+        <Button
+          onClick={handleSubmit}
+          w="100%"
+          maxW="502px"
+          variant="primary"
+          mt={5}
+          mb={16}
+        >
+          Create Grants DAO
+        </Button>
+      )}
     </>
   );
 }

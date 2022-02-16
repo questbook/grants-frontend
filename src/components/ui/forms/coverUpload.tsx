@@ -9,7 +9,7 @@ interface CoverUploadProps {
   subtext?: string;
   image: string | null | undefined;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
-  onClear: () => void;
+  // onClear: () => void;
   isError: boolean;
 }
 
@@ -19,7 +19,7 @@ const defaultProps = {
 };
 
 function CoverUpload({
-  label, subtext, image, onChange, onClear, isError,
+  label, subtext, image, onChange, isError,
 }: CoverUploadProps) {
   const ref = useRef(null);
 

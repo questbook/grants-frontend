@@ -1,9 +1,12 @@
-import { Container, Text } from '@chakra-ui/react';
+import {
+  Container, Text, ToastId, useToast,
+} from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { ReactElement, useContext } from 'react';
 import { useAccount, useContract, useSigner } from 'wagmi';
 import { SupportedNetwork } from '@questbook/service-validator-client';
 import { gql } from '@apollo/client';
+import InfoToast from 'src/components/ui/infoToast';
 import Form from '../src/components/signup/create_dao/form';
 import Loading from '../src/components/signup/create_dao/loading';
 import CreateGrant from '../src/components/signup/create_grant';
@@ -118,14 +121,37 @@ function SignupDao() {
     }
   };
 
+  const [hasClicked, setHasClicked] = React.useState(false);
+  const toastRef = React.useRef<ToastId>();
+  const toast = useToast();
+
+  const closeToast = () => {
+    if (toastRef.current) {
+      toast.close(toastRef.current);
+    }
+  };
+
+  const showToast = ({ link } : { link: string }) => {
+    toastRef.current = toast({
+      position: 'top',
+      render: () => (
+        <InfoToast
+          link={link}
+          close={closeToast}
+        />
+      ),
+    });
+  };
+
   const handleGrantSubmit = async (data: any) => {
     if (!accountData || !accountData.address || !daoData) {
       return;
     }
     if (!apiClients) return;
 
+    setHasClicked(true);
     setCreatingGrant(true);
-    const { subgraphClient, validatorApi } = apiClients;
+    const { validatorApi } = apiClients;
 
     console.log(data);
 
@@ -155,12 +181,18 @@ function SignupDao() {
     );
     const transactionData = await transaction.wait();
 
-    console.log(transactionData);
-    console.log(transactionData.blockNumber);
+    setHasClicked(false);
+    console.log(transaction);
+    router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
 
-    await subgraphClient.waitForBlock(transactionData.blockNumber);
+    showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
 
-    router.push('/your_grants');
+    // console.log(transactionData);
+    // console.log(transactionData.blockNumber);
+
+    // await subgraphClient.waitForBlock(transactionData.blockNumber);
+
+    // router.push('/your_grants');
   };
 
   if (creatingGrant) {
@@ -196,7 +228,7 @@ function SignupDao() {
         A Grants DAO is a neatly arranged space where you can manage grants,
         review grant applications and fund grants.
       </Text>
-      <Form onSubmit={handleFormSubmit} />
+      <Form hasClicked={hasClicked} onSubmit={handleFormSubmit} />
     </Container>
   );
 }
