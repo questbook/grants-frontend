@@ -11,6 +11,10 @@ query($workspaceID: ID!) {
           name
           value
         }
+        members {
+          actorId
+          email
+        }
     }
 }
 `;
@@ -248,10 +252,11 @@ query($grantId: ID!) {
 
 const getFundSentForApplication = `
 query($applicationId: String) {
-  fundsTransfers(where: {application: $applicationId}, orderBy: createdAtS, orderDirection: desc) {
-    grant {
-      id
-    },
+  fundsTransfers(
+      where: {application: $applicationId}, 
+      orderBy: createdAtS, 
+      orderDirection: desc) {
+    
     application {
       id
     },

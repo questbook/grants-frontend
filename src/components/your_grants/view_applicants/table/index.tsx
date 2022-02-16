@@ -6,15 +6,15 @@ import Headers from './headers';
 
 function Table({
   onViewApplicantFormClick,
-  onAcceptApplicationClick,
-  onRejectApplicationClick,
+  // onAcceptApplicationClick,
+  // onRejectApplicationClick,
   onManageApplicationClick,
   data,
   title,
 }: {
   onViewApplicantFormClick?: (data? : any) => void;
-  onAcceptApplicationClick?: () => void;
-  onRejectApplicationClick?: () => void;
+  // onAcceptApplicationClick?: () => void;
+  // onRejectApplicationClick?: () => void;
   onManageApplicationClick?: (data? : any) => void;
   data: any[];
   title: string;
@@ -35,8 +35,8 @@ function Table({
           data={data}
           filter={filter}
           onViewApplicationFormClick={onViewApplicantFormClick}
-          onAcceptApplicationClick={onAcceptApplicationClick}
-          onRejectApplicationClick={onRejectApplicationClick}
+          // onAcceptApplicationClick={onAcceptApplicationClick}
+          // onRejectApplicationClick={onRejectApplicationClick}
           onManageApplicationClick={(manageData: any) => {
             if (onManageApplicationClick) {
               onManageApplicationClick(manageData);
@@ -134,8 +134,8 @@ function Table({
 
 Table.defaultProps = {
   onViewApplicantFormClick: () => {},
-  onAcceptApplicationClick: () => {},
-  onRejectApplicationClick: () => {},
+  // onAcceptApplicationClick: () => {},
+  // onRejectApplicationClick: () => {},
   onManageApplicationClick: () => {},
 };
 export default Table;

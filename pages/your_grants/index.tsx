@@ -12,7 +12,7 @@ import React, {
 } from 'react';
 import { useAccount } from 'wagmi';
 import { BigNumber } from '@ethersproject/bignumber';
-import AddFunds from 'src/components/funds/add_funds_modal';
+import AddFunds from '../../src/components/funds/add_funds_modal';
 import Heading from '../../src/components/ui/heading';
 import YourGrantCard from '../../src/components/your_grants/yourGrantCard';
 import supportedCurrencies from '../../src/constants/supportedCurrencies';

@@ -5,7 +5,7 @@ import {
 } from '@chakra-ui/react';
 import { useContract, useSigner } from 'wagmi';
 import { parseAmount } from 'src/utils/formattingUtils';
-import { GrantApplicationSubgraph } from 'src/types/application';
+import { GrantApplicationFieldsSubgraph, GrantApplicationCreateSubgraph } from 'src/types/application';
 import { GrantApplicationRequest } from '@questbook/service-validator-client';
 import InfoToast from 'src/components/ui/infoToast';
 import { useRouter } from 'next/router';
@@ -214,9 +214,8 @@ function Form({
       ));
 
       if (!signer || !signer.data || !apiClientContext) return;
-
       setHasClicked(true);
-      const data: GrantApplicationSubgraph = {
+      const data: GrantApplicationCreateSubgraph = {
         grantId,
         applicantId: await signer?.data?.getAddress(),
         fields: {
@@ -235,6 +234,11 @@ function Form({
         milestones,
 
       };
+      Object.keys(data.fields).forEach((field) => {
+        if (!grantRequiredFields.includes(field)) {
+          delete data.fields[field as keyof GrantApplicationFieldsSubgraph];
+        }
+      });
       const { data: { ipfsHash } } = await apiClientContext
         .validatorApi
         .validateGrantApplicationCreate(data as unknown as GrantApplicationRequest);

@@ -4,16 +4,16 @@ import {
   Text, Image, Flex, Tooltip, Link,
 } from '@chakra-ui/react';
 import moment from 'moment';
-import { FundTransfer } from 'src/graphql/queries';
-import { getAssetInfo } from 'src/utils/tokenUtils';
-// import Link from 'next/link';
 import { ethers } from 'ethers';
+import { FundTransfer } from '../../../../graphql/queries';
+import { getAssetInfo } from '../../../../utils/tokenUtils';
+import { formatAmount } from '../../../../utils/formattingUtils';
 
 // extract milstone index from ID and generate title like "Milestone (index+1)"
 const getMilestoneTitle = (milestone: FundTransfer['milestone']) => {
   if (milestone) {
     const [, idx] = milestone.id.split('.');
-    return `Milestone ${(+idx) + 1}`;
+    return `Milestone ${+idx + 1}`;
   }
   return 'Unknown Milestone';
 };
@@ -43,7 +43,7 @@ const TABLE_HEADERS = {
             variant="applicationText"
             fontWeight="700"
           >
-            {item.amount}
+            {formatAmount(item.amount)}
             {' '}
             {getAssetInfo(assetId)?.label}
           </Text>
@@ -55,11 +55,7 @@ const TABLE_HEADERS = {
     title: 'Amount',
     flex: 0.35,
     content: (item: FundTransfer, assetId: string, assetDecimals: number) => (
-      <Text
-        display="inline-block"
-        variant="applicationText"
-        fontWeight="700"
-      >
+      <Text display="inline-block" variant="applicationText" fontWeight="700">
         {ethers.utils.formatUnits(item.amount, assetDecimals)}
         {' '}
         {getAssetInfo(assetId)?.label}
@@ -94,7 +90,6 @@ const TABLE_HEADERS = {
     content: (item: FundTransfer) => (
       <Link
         href={`https://etherscan.io/tx/${item.id}/`}
-        replace={false}
         target="_blank"
       >
         <Text
@@ -114,12 +109,17 @@ const TABLE_HEADERS = {
   from: {
     title: 'From',
     flex: 0.2,
-    content: (item: FundTransfer) => (
+    content: (
+      item: FundTransfer,
+      assetId: string,
+      assetDecimals: number,
+      grantId: string,
+    ) => (
       <Tooltip label={item.sender}>
         <Text variant="applicationText" color="#122224">
           {getTextWithEllipses(item.sender)}
           {' '}
-          {item.sender === item.grant.id ? ' (Grant)' : ''}
+          {item.sender === grantId ? ' (Grant)' : ''}
         </Text>
       </Tooltip>
     ),
@@ -138,76 +138,78 @@ const TABLE_HEADERS = {
 };
 
 export type FundingProps = {
-  fundTransfers: FundTransfer[]
-  assetId: string
-  columns: (keyof typeof TABLE_HEADERS)[]
-  assetDecimals: number
+  fundTransfers: FundTransfer[];
+  assetId: string;
+  columns: (keyof typeof TABLE_HEADERS)[];
+  assetDecimals: number;
+  grantId: string | null;
 };
 
-function Funding({ fundTransfers, assetId, columns, assetDecimals }: FundingProps) {
-  const tableHeaders = useMemo(() => columns.map((column) => TABLE_HEADERS[column]), [columns]);
+function Funding({
+  fundTransfers,
+  assetId,
+  columns,
+  assetDecimals,
+  grantId,
+}: FundingProps) {
+  const tableHeaders = useMemo(
+    () => columns.map((column) => TABLE_HEADERS[column]),
+    [columns],
+  );
   return (
     <Flex w="100%" my={4} align="center" direction="column" flex={1}>
-      {fundTransfers.length === 0 &&
-        <>No Transactions</>
-      }
-      {fundTransfers.length > 0 &&
-        <><Flex
-          direction="row"
-          w="100%"
-          justify="strech"
-          align="center"
-          mt="32px"
-          mb="9px"
-        >
-          {tableHeaders.map((header) => (
-            <Text
-              textAlign="left"
-              flex={header.flex}
-              variant="tableHeader"
-            >
-              {header.title}
-            </Text>
-          ))}
-        </Flex>
-        <Flex
-          direction="column"
-          w="100%"
-          border="1px solid #D0D3D3"
-          borderRadius={4}
-          align="stretch"
-        >
-          {fundTransfers.map((item, index) => (
-            <Flex
-              key={item.id}
-              direction="row"
-              w="100%"
-              justify="stretch"
-              align="center"
-              bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
-              py={4}
-              pl="15px"
-              pr="15px"
-            >
-              {
-                tableHeaders.map(
-                  ({ title, flex, content }) => (
-                    <Flex
-                      key={title}
-                      direction="row"
-                      justify="start"
-                      align="center"
-                      flex={flex}
-                    >
-                      {content(item, assetId, assetDecimals)}
-                    </Flex>
-                  ),
-                )
-              }
-            </Flex>
-          ))}
-        </Flex></>
-      }
+      {fundTransfers.length === 0 && <>No Transactions</>}
+      {fundTransfers.length > 0 && (
+        <>
+          <Flex
+            direction="row"
+            w="100%"
+            justify="strech"
+            align="center"
+            mt="32px"
+            mb="9px"
+          >
+            {tableHeaders.map((header) => (
+              <Text textAlign="left" flex={header.flex} variant="tableHeader">
+                {header.title}
+              </Text>
+            ))}
+          </Flex>
+          <Flex
+            direction="column"
+            w="100%"
+            border="1px solid #D0D3D3"
+            borderRadius={4}
+            align="stretch"
+          >
+            {fundTransfers.map((item, index) => (
+              <Flex
+                key={item.id}
+                direction="row"
+                w="100%"
+                justify="stretch"
+                align="center"
+                bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
+                py={4}
+                pl="15px"
+                pr="15px"
+              >
+                {grantId && tableHeaders.map(({ title, flex, content }) => (
+                  <Flex
+                    key={title}
+                    direction="row"
+                    justify="start"
+                    align="center"
+                    flex={flex}
+                  >
+                    {content(item, assetId, assetDecimals, grantId)}
+                  </Flex>
+                ))}
+              </Flex>
+            ))}
+          </Flex>
+        </>
+      )}
     </Flex>
   );
 }

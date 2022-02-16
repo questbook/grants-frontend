@@ -8,9 +8,9 @@ import ERC20ABI from 'src/contracts/abi/ERC20.json';
 import { useContract, useSigner } from 'wagmi';
 import { ethers } from 'ethers';
 import { BigNumber } from '@ethersproject/bignumber';
-import Funding from '../your_grants/manage_grant/tables/funding';
-import AddFunds from './add_funds_modal';
 import WithdrawFunds from './withdraw_funds_modal';
+import AddFunds from './add_funds_modal';
+import Funding from '../your_grants/manage_grant/tables/funding';
 
 export type FundForAGrantProps = {
   grant: Grant
@@ -50,6 +50,8 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line wrap-iife
+    // eslint-disable-next-line func-names
     (async function () {
       try {
         if (!rewardAssetContract.provider) return;
@@ -126,6 +128,7 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
         assetId={grant.reward.asset}
         columns={[...TABS_MAP[selected].columns]}
         assetDecimals={fundingAssetDecimals}
+        grantId={grant.id}
       />
 
       <AddFunds

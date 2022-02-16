@@ -14,7 +14,7 @@ function Filter({
   filter: number;
   setFilter: (i: number) => void;
 }) {
-  const menuOptions = ['All', 'Pending Review', 'Await Resubmit', 'Approved', 'Rejected'];
+  const menuOptions = ['All', 'Pending Review', 'Await Resubmit', 'Approved', 'Rejected', 'Completed'];
 
   return (
     <Flex direction="row" justify="start" align="center">

@@ -3,21 +3,29 @@ import {
 } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 // import { ExternalLinkIcon } from '@chakra-ui/icons';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { formatAmount } from '../../../utils/formattingUtils';
 import AddFunds from '../../funds/add_funds_modal';
 import Modal from '../../ui/modal';
 import FloatingSidebar from '../../ui/sidebar/floatingSidebar';
 import SendFundModalContent from './modals/sendFundModalContent';
 
 interface Props {
-  funds: number;
   grant: any;
   assetInfo: any;
+  milestones: any[];
+  applicationId: string;
 }
 
-function Sidebar({ funds = 0, grant, assetInfo }: Props) {
+function Sidebar({
+  grant, assetInfo, milestones, applicationId,
+}: Props) {
   const [isAddFundModalOpen, setIsAddFundModalOpen] = React.useState(false);
   const [isSendFundModalOpen, setIsSendFundModalOpen] = React.useState(false);
+
+  useEffect(() => {
+    console.log(grant);
+  }, [grant]);
 
   return (
     <Box my="154px">
@@ -29,15 +37,15 @@ function Sidebar({ funds = 0, grant, assetInfo }: Props) {
           <Image
             h="26px"
             w="26px"
-            src="/images/dummy/Ethereum Icon.svg"
+            src={assetInfo?.icon}
             alt="eth"
           />
           <Box mx={1} />
           <Text fontWeight="700" fontSize="26px" lineHeight="40px">
-            {funds}
+            {grant && grant.funding ? formatAmount(grant?.funding) : null}
           </Text>
           <Box mr={3} />
-          {funds > 0 && (
+          {grant && parseInt(grant.funding, 10) > 0 && (
             <Button
               variant="link"
               _focus={{}}
@@ -48,7 +56,7 @@ function Sidebar({ funds = 0, grant, assetInfo }: Props) {
             </Button>
           )}
         </Flex>
-        {funds === 0 && (
+        {grant && parseInt(grant.funding, 10) === 0 && (
           <>
             <Text
               fontSize="14px"
@@ -106,7 +114,7 @@ function Sidebar({ funds = 0, grant, assetInfo }: Props) {
           fontWeight="400"
           mt="19px"
         >
-          {funds > 0
+          {grant && parseInt(grant.funding, 10) > 0
             ? 'Send funds from your wallet or verified grant smart contract'
             : 'Send funds from your wallet'}
         </Text>
@@ -134,6 +142,7 @@ function Sidebar({ funds = 0, grant, assetInfo }: Props) {
             }}
           />
         )}
+        {grant && (
         <Modal
           isOpen={isSendFundModalOpen}
           onClose={() => setIsSendFundModalOpen(false)}
@@ -149,8 +158,21 @@ function Sidebar({ funds = 0, grant, assetInfo }: Props) {
             </Button>
           )}
         >
-          <SendFundModalContent onClose={() => setIsSendFundModalOpen(false)} />
+          <SendFundModalContent
+            milestones={milestones}
+            rewardAsset={{
+              address: grant.reward.asset,
+              committed: BigNumber.from(grant.reward.committed),
+              label: assetInfo?.label,
+              icon: assetInfo?.icon,
+            }}
+            contractFunding={grant.funding}
+            onClose={() => setIsSendFundModalOpen(false)}
+            grantId={grant.id}
+            applicationId={applicationId}
+          />
         </Modal>
+        )}
       </FloatingSidebar>
     </Box>
   );
