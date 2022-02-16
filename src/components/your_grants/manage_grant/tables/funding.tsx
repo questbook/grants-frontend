@@ -148,61 +148,66 @@ function Funding({ fundTransfers, assetId, columns, assetDecimals }: FundingProp
   const tableHeaders = useMemo(() => columns.map((column) => TABLE_HEADERS[column]), [columns]);
   return (
     <Flex w="100%" my={4} align="center" direction="column" flex={1}>
-      <Flex
-        direction="row"
-        w="100%"
-        justify="strech"
-        align="center"
-        mt="32px"
-        mb="9px"
-      >
-        {tableHeaders.map((header) => (
-          <Text
-            textAlign="left"
-            flex={header.flex}
-            variant="tableHeader"
-          >
-            {header.title}
-          </Text>
-        ))}
-      </Flex>
-      <Flex
-        direction="column"
-        w="100%"
-        border="1px solid #D0D3D3"
-        borderRadius={4}
-        align="stretch"
-      >
-        {fundTransfers.map((item, index) => (
-          <Flex
-            key={item.id}
-            direction="row"
-            w="100%"
-            justify="stretch"
-            align="center"
-            bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
-            py={4}
-            pl="15px"
-            pr="15px"
-          >
-            {
-              tableHeaders.map(
-                ({ title, flex, content }) => (
-                  <Flex
-                    key={title}
-                    direction="row"
-                    justify="start"
-                    align="center"
-                    flex={flex}
-                  >
-                    {content(item, assetId, assetDecimals)}
-                  </Flex>
-                ),
-              )
-            }
-          </Flex>
-        ))}
-      </Flex>
+      {fundTransfers.length === 0 &&
+        <>No Transactions</>
+      }
+      {fundTransfers.length > 0 &&
+        <><Flex
+          direction="row"
+          w="100%"
+          justify="strech"
+          align="center"
+          mt="32px"
+          mb="9px"
+        >
+          {tableHeaders.map((header) => (
+            <Text
+              textAlign="left"
+              flex={header.flex}
+              variant="tableHeader"
+            >
+              {header.title}
+            </Text>
+          ))}
+        </Flex>
+        <Flex
+          direction="column"
+          w="100%"
+          border="1px solid #D0D3D3"
+          borderRadius={4}
+          align="stretch"
+        >
+          {fundTransfers.map((item, index) => (
+            <Flex
+              key={item.id}
+              direction="row"
+              w="100%"
+              justify="stretch"
+              align="center"
+              bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
+              py={4}
+              pl="15px"
+              pr="15px"
+            >
+              {
+                tableHeaders.map(
+                  ({ title, flex, content }) => (
+                    <Flex
+                      key={title}
+                      direction="row"
+                      justify="start"
+                      align="center"
+                      flex={flex}
+                    >
+                      {content(item, assetId, assetDecimals)}
+                    </Flex>
+                  ),
+                )
+              }
+            </Flex>
+          ))}
+        </Flex></>
+      }
     </Flex>
   );
 }

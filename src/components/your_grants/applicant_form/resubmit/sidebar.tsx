@@ -2,9 +2,17 @@ import {
   Box, Heading, Flex, Divider, Image, Text, Link,
 } from '@chakra-ui/react';
 import React from 'react';
+import { getFormattedFullDateFromUnixTimestamp, truncateStringFromMiddle } from 'src/utils/formattingUtils';
+import { getAssetInfo } from 'src/utils/tokenUtils';
 import FloatingSidebar from '../../../ui/sidebar/floatingSidebar';
 
-function Sidebar() {
+function Sidebar(
+  {
+    applicationData,
+  }: {
+    applicationData: any;
+  },
+) {
   return (
     <Box mt="8px">
       <FloatingSidebar>
@@ -18,10 +26,10 @@ function Sidebar() {
           Application Details
         </Heading>
         <Flex direction="row" justify="start" w="full" mt={6} align="center">
-          <Image h="45px" w="45px" src="/network_icons/eth_mainnet.svg" />
+          <Image h="45px" w="45px" src={getAssetInfo(applicationData?.grant?.reward?.asset)?.icon} />
           <Box mx={3} />
           <Heading variant="applicationHeading" color="brand.500">
-            0xb79....579268
+            {truncateStringFromMiddle(applicationData?.applicantId)}
           </Heading>
         </Flex>
         <Box my={4} />
@@ -30,7 +38,7 @@ function Sidebar() {
             Name
           </Text>
           <Heading variant="applicationHeading" lineHeight="32px">
-            Ankit Nair
+            {applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'applicantName').value[0]}
           </Heading>
         </Flex>
         <Flex direction="row" justify="space-between" w="full" align="center">
@@ -38,7 +46,7 @@ function Sidebar() {
             Email
           </Text>
           <Heading variant="applicationHeading" lineHeight="32px">
-            ankit@gmail.com
+            {applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'applicantEmail').value[0]}
           </Heading>
         </Flex>
         <Flex direction="row" justify="space-between" w="full" align="center">
@@ -46,7 +54,7 @@ function Sidebar() {
             Sent On
           </Text>
           <Heading variant="applicationHeading" lineHeight="32px">
-            2nd January, 2022
+            {getFormattedFullDateFromUnixTimestamp(applicationData?.createdAtS)}
           </Heading>
         </Flex>
         <Divider mt="37px" />
@@ -58,7 +66,7 @@ function Sidebar() {
             fontWeight="500"
             fontStyle="normal"
             color="#414E50"
-            href="view grant"
+            href={`/explore_grants/about_grant?grantID=${applicationData?.grant?.id}`}
           >
             View Grant
             {' '}
@@ -76,7 +84,7 @@ function Sidebar() {
             fontWeight="500"
             fontStyle="normal"
             color="#414E50"
-            href="view grant"
+            href={`/your_applications/grant_application?applicationID=${applicationData?.id}`}
             ml="auto"
           >
             View Application

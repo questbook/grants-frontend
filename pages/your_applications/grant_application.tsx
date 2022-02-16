@@ -20,21 +20,8 @@ function ViewApplication() {
   const router = useRouter();
   const [applicationID, setApplicationId] = React.useState<any>('');
   const [application, setApplication] = React.useState<any>([]);
-  const [isReadOnly, setIsReadOnly] = useState(true);
 
-  const [rejectedComment, setRejectedComment] = useState('');
-  const [resubmitComment, setResubmitComment] = useState('');
   const [formData, setFormData] = useState<GrantApplicationProps | null>(null);
-
-  useEffect(() => {
-    if (router.query.viewApplicationType === 'resubmit') {
-      setIsReadOnly(false);
-      setResubmitComment('This requires a resubmission');
-    }
-    if (router.query.viewApplicationType === 'rejected') {
-      setRejectedComment('This is bad news');
-    }
-  }, [router.query.viewApplicationType]);
 
   const getApplicationDetailsData = useCallback(async () => {
     const subgraphClient = new SubgraphClient();
@@ -69,7 +56,7 @@ function ViewApplication() {
 
   useEffect(() => {
     if (!application || !application?.fields?.length) return;
-    console.log('applicartion', application);
+    console.log('application', application);
     const fields = application?.fields;
     console.log(fields);
     const fd: GrantApplicationProps = {
@@ -82,8 +69,8 @@ function ViewApplication() {
       projectDetails: fields.find((f:any) => f.id.split('.')[1] === 'projectDetails')?.value[0] ?? '',
       projectGoal: fields.find((f:any) => f.id.split('.')[1] === 'projectGoals')?.value[0] ?? '',
       projectMilestones: application.milestones
-        .map((ms:any) => ({ milestone: ms.title, milestoneReward: ms.amount })) ?? [],
-      fundingAsk: fields.find((f:any) => f.id.split('.')[1] === 'fundingAsk')?.value[0] ?? '',
+        .map((ms:any) => ({ milestone: ms.title, milestoneReward: ethers.utils.formatEther(ms.amount ?? '0') })) ?? [],
+      fundingAsk: ethers.utils.formatEther(fields.find((f:any) => f.id.split('.')[1] === 'fundingAsk')?.value[0] ?? '0'),
       fundingBreakdown: fields.find((f:any) => f.id.split('.')[1] === 'fundingBreakdown')?.value[0] ?? '',
     };
     console.log('fd', fd);
@@ -103,18 +90,27 @@ function ViewApplication() {
       >
         <Breadcrumbs path={['Your Applications', 'Grant Application']} />
         <Form
-          onSubmit={isReadOnly ? null : () => {
-            router.back();
+          onSubmit={application && application?.state !== 'resubmit' ? null : ({ data }) => {
+            router.push({
+              pathname: '/your_applications',
+              query: {
+                applicantID: data[0].applicantId,
+                account: true,
+              },
+            });
           }}
           rewardAmount={ethers.utils.formatEther(application?.grant?.reward?.committed ?? '1').toString()}
           rewardCurrency={getAssetInfo(application?.grant?.reward?.asset)?.label}
           rewardCurrencyCoin={getAssetInfo(application?.grant?.reward?.asset)?.icon}
-          rejectedComment={rejectedComment}
-          resubmitComment={resubmitComment}
           formData={formData}
           grantTitle={application?.grant?.title}
           sentDate={application?.createdAtS}
           daoLogo={getUrlForIPFSHash(application?.grant?.workspace?.logoIpfsHash)}
+          state={application?.state}
+          feedback={application?.feedback}
+          grantRequiredFields={application?.fields?.map((field:any) => field.id.split('.')[1]) ?? []}
+          applicationID={applicationID}
+          grantID={application?.grant?.id}
         />
       </Container>
     </Container>

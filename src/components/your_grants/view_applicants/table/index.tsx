@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import Content from './content';
 import Filter from './filter';
@@ -10,12 +10,14 @@ function Table({
   onRejectApplicationClick,
   onManageApplicationClick,
   data,
+  title,
 }: {
   onViewApplicantFormClick?: (data? : any) => void;
   onAcceptApplicationClick?: () => void;
   onRejectApplicationClick?: () => void;
   onManageApplicationClick?: (data? : any) => void;
   data: any[];
+  title: string;
 }) {
   const [filter, setFilter] = React.useState(-1);
   useEffect(() => {
@@ -23,8 +25,11 @@ function Table({
   }, [filter]);
   return (
     <>
-      <Filter filter={filter} setFilter={setFilter} />
-      <Flex w="100%" mt="38px" align="center" direction="column" flex={1}>
+      <Flex direction="row" mt={3} align="center">
+        <Text variant="heading" mr={4}>{title}</Text>
+        <Filter filter={filter} setFilter={setFilter} />
+      </Flex>
+      <Flex w="100%" mt={10} align="center" direction="column" flex={1}>
         <Headers />
         <Content
           data={data}

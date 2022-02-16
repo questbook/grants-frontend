@@ -23,6 +23,10 @@ function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
   return milestones.reduce((value, milestone) => value + (+milestone.amountPaid), 0);
 }
 
+function getTotalFundingAsked(milestones: ApplicationMilestone[]) {
+  return milestones.reduce((value, milestone) => value + (+milestone.amount), 0);
+}
+
 function ManageGrant() {
   const path = ['My Grants', 'View Application', 'Manage'];
 
@@ -44,7 +48,7 @@ function ManageGrant() {
     fetchEns: false,
   });
 
-  const { data: { milestones, rewardAsset } } = useApplicationMilestones(applicationID);
+  const { data: { milestones, rewardAsset, fundingAsk } } = useApplicationMilestones(applicationID);
   const { data: fundsDisbursed } = useFundDisbursed(null);
   const fundingIcon = getAssetInfo(rewardAsset)?.icon;
   const assetInfo = getAssetInfo(rewardAsset);
@@ -105,9 +109,9 @@ function ManageGrant() {
     },
     {
       icon: fundingIcon,
-      title: '1',
+      title: (fundingAsk || getTotalFundingAsked(milestones)).toString(),
       subtitle: 'Funding Requested',
-      content: <div />, // <Funding fundTransfers={fundsDisbursed} assetId={rewardAsset} />,
+      content: undefined, // <Funding fundTransfers={fundsDisbursed} assetId={rewardAsset} />,
     },
   ];
 
@@ -196,7 +200,9 @@ function ManageGrant() {
               borderTopWidth={index !== selected ? 0 : '2px'}
               borderBottomWidth={index !== selected ? '2px' : 0}
               borderBottomRightRadius="-2px"
-              onClick={() => setSelected(index)}
+              onClick={() => {
+                if (tabs[index].content) setSelected(index);
+              }}
             >
               <Flex direction="column" justify="center" align="center" w="100%">
                 <Flex direction="row" justify="center" align="center">

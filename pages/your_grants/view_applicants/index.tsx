@@ -7,7 +7,6 @@ import React, {
 } from 'react';
 import { formatAmount } from 'src/utils/formattingUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
-import Heading from '../../../src/components/ui/heading';
 import Table from '../../../src/components/your_grants/view_applicants/table';
 import supportedCurrencies from '../../../src/constants/supportedCurrencies';
 import { getApplicantsForAGrant } from '../../../src/graphql/daoQueries';
@@ -91,11 +90,8 @@ function ViewApplicants() {
         px={10}
       >
         <Breadcrumbs path={['My Grants', 'View Applicants']} />
-        <Heading
-          title={applicantsData[0]?.grantTitle ?? 'Grant Title'}
-          dontRenderDivider
-        />
         <Table
+          title={applicantsData[0]?.grantTitle ?? 'Grant Title'}
           data={applicantsData}
           onViewApplicantFormClick={
             (commentData: any) => router.push({

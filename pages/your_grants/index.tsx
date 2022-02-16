@@ -27,7 +27,7 @@ function YourGrants() {
   const router = useRouter();
   const [addFundsIsOpen, setAddFundsIsOpen] = React.useState(false);
   const [grantForFunding, setGrantForFunding] = React.useState(null);
-  const [grantRewardAsset, setGrantRewardAsset] = React.useState(null);
+  const [grantRewardAsset, setGrantRewardAsset] = React.useState<any>(null);
 
   const toast = useToast();
   const [grants, setGrants] = React.useState<any[]>([]);
@@ -117,7 +117,7 @@ function YourGrants() {
     }
   };
 
-  const initialiseFundModal = async (grant) => {
+  const initialiseFundModal = async (grant:any) => {
     const grantCurrency = supportedCurrencies.find(
       (currency) => currency.id.toLowerCase()
         === grant.reward.asset.toString().toLowerCase(),
