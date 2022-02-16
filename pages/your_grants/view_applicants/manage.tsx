@@ -7,11 +7,12 @@ import {
   Text,
   Link,
   Button,
+  useToast,
 } from '@chakra-ui/react';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useSigner, useContract } from 'wagmi';
 import {
   ApplicationMilestone,
   useApplicationMilestones,
@@ -28,6 +29,9 @@ import { getApplicationDetails } from '../../../src/graphql/daoQueries';
 import NavbarLayout from '../../../src/layout/navbarLayout';
 import { getAssetInfo } from '../../../src/utils/tokenUtils';
 import { ApiClientsContext } from '../../_app';
+import { formatAmount, parseAmount } from '../../../src/utils/formattingUtils';
+import config from 'src/constants/config';
+import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.json';
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
   return milestones.reduce(
@@ -49,6 +53,7 @@ function ManageGrant() {
     applicantEmail: '',
     applicationDate: '',
     grant: null,
+    id: '',
   });
 
   const [selected, setSelected] = React.useState(0);
@@ -77,7 +82,6 @@ function ManageGrant() {
           applicationID,
         },
       })) as any;
-      console.log(data);
       if (data && data.grantApplication) {
         const application = data.grantApplication;
         setApplicationData({
@@ -86,6 +90,7 @@ function ManageGrant() {
           applicantEmail: application.fields.find((field: any) => field.id.includes('applicantEmail'))?.value[0],
           applicationDate: moment(application.createdAt).format('D MMMM YYYY'),
           grant: application.grant,
+          id: application.id,
         });
       }
     } catch (e: any) {
@@ -133,6 +138,53 @@ function ManageGrant() {
       content: undefined, // <Funding fundTransfers={fundsDisbursed} assetId={rewardAsset} />,
     },
   ];
+
+  const apiClients = useContext(ApiClientsContext);
+  const toast = useToast();
+  const [signerStates] = useSigner();
+  const applicationRegContract = useContract({
+    addressOrName: config.ApplicationRegistryAddress,
+    contractInterface: ApplicationRegistryAbi,
+    signerOrProvider: signerStates.data,
+  });
+  const markApplicationComplete = async (comment) => {
+    try {
+      if (!apiClients) return;
+      const { subgraphClient, validatorApi, workspaceId } = apiClients;
+      console.log('acdataa---------', applicationData);
+      if (!accountData
+      || !accountData.address
+      || !workspaceId
+      || !applicationData
+      || !applicationData.id) {
+        console.log('compleeeeeee');
+        return;
+      }
+      const {
+        data: { ipfsHash },
+      } = await validatorApi.validateGrantApplicationUpdate({
+        feedback: comment,
+      });
+      console.log(ipfsHash);
+      console.log(Number(applicationData?.id), Number(workspaceId));
+      const transaction = await applicationRegContract.completeApplication(
+        Number(applicationData?.id),
+        Number(workspaceId),
+        ipfsHash,
+      );
+      const transactionData = await transaction.wait();
+
+      console.log(transactionData);
+      console.log(transactionData.blockNumber);
+      toast({ title: 'Transaction succeeded', status: 'success' });
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: 'Application update not indexed',
+        status: 'error',
+      });
+    }
+  };
 
   return (
     <Container maxW="100%" display="flex" px="70px">
@@ -274,7 +326,7 @@ function ManageGrant() {
         onClose={() => setIsGrantCompleteModalOpen(false)}
         title="Mark Grant as Complete"
       >
-        <ModalContent onClose={() => setIsGrantCompleteModalOpen(false)} />
+        <ModalContent onClose={({ details }) => markApplicationComplete(details)} />
       </Modal>
     </Container>
   );
