@@ -67,20 +67,21 @@ function Navbar({
               borderRadius={0}
               background="linear-gradient(263.05deg, #EFF0F0 -7.32%, #FCFCFC 32.62%)"
               px="38px"
-              maxW="200px"
             >
-              <Image objectFit="cover" w="32px" h="32px" mr="10px" src={daoImage} />
-              <Text
-                color="#414E50"
-                fontWeight="500"
-                fontSize="16px"
-                lineHeight="24px"
-                overflow="hidden"
-                textOverflow="ellipsis"
-                display="inline-block"
-              >
-                {daoName}
-              </Text>
+              <Flex direction="row" align="center">
+                <Image objectFit="cover" w="32px" h="32px" mr="10px" src={daoImage} display="inline-block" />
+                <Text
+                  color="#414E50"
+                  fontWeight="500"
+                  fontSize="16px"
+                  lineHeight="24px"
+                  overflow="hidden"
+                  textOverflow="ellipsis"
+                >
+                  {daoName}
+                </Text>
+                <Image ml={2} src="/ui_icons/dropdown_arrow.svg" alt="options" />
+              </Flex>
             </MenuButton>
             <MenuList>
               {workspaces.map((workspace) => (
@@ -98,6 +99,15 @@ function Navbar({
                   {workspace.title}
                 </MenuItem>
               ))}
+              <MenuItem
+                icon={<Image src="/ui_icons/gray/see.svg" />}
+                onClick={() => {
+                  router.push('/');
+                }}
+              >
+                Browse Grants
+
+              </MenuItem>
             </MenuList>
           </Menu>
         ) : (

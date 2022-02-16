@@ -154,10 +154,6 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
     }
   };
 
-  // useEffect(() => {
-  //   getWorkspaceData(accountData?.address ?? '');
-  // }, []);
-
   useEffect(() => {
     getWorkspaceData(accountData?.address ?? '');
     getGrantsCount(accountData?.address ?? '');

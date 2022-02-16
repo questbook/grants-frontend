@@ -19,7 +19,16 @@ function AccountDetails({ networkId, isOnline, address }: Props) {
 
   return (
     <Menu>
-      <MenuButton as={Button} h={12} variant="solid" size="xl" px={2} py={1} borderRadius={8} rightIcon={<Image mr={2} src="/ui_icons/dropdown_arrow.svg" alt="options" />}>
+      <MenuButton
+        as={Button}
+        h={12}
+        variant="solid"
+        size="xl"
+        px={2}
+        py={1}
+        borderRadius={8}
+        rightIcon={<Image mr={2} src="/ui_icons/dropdown_arrow.svg" alt="options" />}
+      >
         <Flex direction="row" align="center" justify="center">
           <Image
             h={8}
