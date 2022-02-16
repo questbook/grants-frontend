@@ -90,7 +90,7 @@ export const useFundsTransfer = (grantId: string) => {
   };
 };
 
-export const useAllGrantsForDAO = (workspaceId: string) => {
+export const useAllGrantsForDAO = (workspaceId? : string) => {
   const { subgraphClient } = useContext(ApiClientsContext)!;
   const { data, loading, error } = useQuery(gql(getAllGrantsForADao), {
     client: subgraphClient.client,

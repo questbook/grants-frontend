@@ -1,19 +1,18 @@
 import { Button, Divider, Flex } from '@chakra-ui/react';
-import React, { ReactElement, useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import React, { ReactElement, useState, useEffect, useContext } from 'react';
 import { gql } from '@apollo/client';
 import Members from '../src/components/settings_and_members/members';
 import Settings from '../src/components/settings_and_members/settings';
 import NavbarLayout from '../src/layout/navbarLayout';
 import { getWorkspaceDetails } from '../src/graphql/daoQueries';
 import SubgraphClient from '../src/graphql/subgraph';
+import { ApiClientsContext } from './_app';
 
 function SettingsAndMembers() {
-  const router = useRouter();
   const tabs = ['Settings', 'Invite Members'];
   const [selected, setSelected] = useState(0);
-  const [workspaceId, setWorkspaceId] = useState(null);
   const [workspaceData, setWorkspaceData] = useState(null);
+  const workspaceId = useContext(ApiClientsContext)?.workspaceId;
 
   const switchTab = (to: number) => {
     setSelected(to);
@@ -21,16 +20,16 @@ function SettingsAndMembers() {
 
   async function getWorkspaceData(workspaceID: string) {
     if (!workspaceID) return;
-    const workspaceIDHex = `0x${parseInt(workspaceID, 10).toString(16)}`;
     const subgraphClient = new SubgraphClient();
     if (!subgraphClient.client) return;
     try {
       const { data } = (await subgraphClient.client.query({
         query: gql(getWorkspaceDetails),
         variables: {
-          workspaceID: workspaceIDHex,
+          workspaceID: workspaceID,
         },
       })) as any;
+      console.log(data);
       if (data.workspace) {
         setWorkspaceData(data.workspace);
       }
@@ -40,10 +39,8 @@ function SettingsAndMembers() {
   }
 
   useEffect(() => {
-    setWorkspaceId(router?.query?.workspaceId ?? '');
-  }, [router]);
-
-  useEffect(() => {
+    if (!workspaceId) return;
+    console.log('getting called');
     getWorkspaceData(workspaceId);
   }, [workspaceId]);
 

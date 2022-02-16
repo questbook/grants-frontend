@@ -22,7 +22,7 @@ function Content({
   onViewApplicationFormClick?: (data?: any) => void;
   onAcceptApplicationClick?: () => void;
   onRejectApplicationClick?: () => void;
-  onManageApplicationClick?: () => void;
+  onManageApplicationClick?: (data?: any) => void;
   data: any[];
 }) {
   const tableHeadersflex = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
@@ -112,7 +112,9 @@ function Content({
                 status={item.status}
                 onViewApplicationFormClick={() => {
                   if (item.status === 0 && onManageApplicationClick) {
-                    onManageApplicationClick();
+                    onManageApplicationClick({
+                      applicationId: item.applicationId,
+                    });
                     return;
                   }
                   if (onViewApplicationFormClick) {

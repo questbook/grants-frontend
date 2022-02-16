@@ -118,8 +118,11 @@ function ViewApplicants() {
               flow: 'rejected',
             },
           })}
-          onManageApplicationClick={() => router.push({
+          onManageApplicationClick={(data: any) => router.push({
             pathname: '/your_grants/view_applicants/manage/',
+            query: {
+              applicationId: data.applicationId,
+            },
           })}
         />
       </Container>

@@ -1,12 +1,13 @@
 /* eslint-disable react/no-unstable-nested-components */
 import React, { useMemo } from 'react';
 import {
-  Text, Image, Flex, Tooltip,
+  Text, Image, Flex, Tooltip, Link,
 } from '@chakra-ui/react';
 import moment from 'moment';
 import { FundTransfer } from 'src/graphql/queries';
 import { getAssetInfo } from 'src/utils/tokenUtils';
-import Link from 'next/link';
+// import Link from 'next/link';
+import { ethers } from 'ethers';
 
 // extract milstone index from ID and generate title like "Milestone (index+1)"
 const getMilestoneTitle = (milestone: FundTransfer['milestone']) => {
@@ -53,13 +54,13 @@ const TABLE_HEADERS = {
   amount: {
     title: 'Amount',
     flex: 0.35,
-    content: (item: FundTransfer, assetId: string) => (
+    content: (item: FundTransfer, assetId: string, assetDecimals: number) => (
       <Text
         display="inline-block"
         variant="applicationText"
         fontWeight="700"
       >
-        {item.amount}
+        {ethers.utils.formatUnits(item.amount, assetDecimals)}
         {' '}
         {getAssetInfo(assetId)?.label}
       </Text>
@@ -94,6 +95,7 @@ const TABLE_HEADERS = {
       <Link
         href={`https://etherscan.io/tx/${item.id}/`}
         replace={false}
+        target="_blank"
       >
         <Text
           color="brand.500"
@@ -139,9 +141,10 @@ export type FundingProps = {
   fundTransfers: FundTransfer[]
   assetId: string
   columns: (keyof typeof TABLE_HEADERS)[]
+  assetDecimals: number
 };
 
-function Funding({ fundTransfers, assetId, columns }: FundingProps) {
+function Funding({ fundTransfers, assetId, columns, assetDecimals }: FundingProps) {
   const tableHeaders = useMemo(() => columns.map((column) => TABLE_HEADERS[column]), [columns]);
   return (
     <Flex w="100%" my={4} align="center" direction="column" flex={1}>
@@ -192,7 +195,7 @@ function Funding({ fundTransfers, assetId, columns }: FundingProps) {
                     align="center"
                     flex={flex}
                   >
-                    {content(item, assetId)}
+                    {content(item, assetId, assetDecimals)}
                   </Flex>
                 ),
               )
