@@ -28,7 +28,6 @@ import { getApplicationDetails } from '../../../src/graphql/daoQueries';
 import NavbarLayout from '../../../src/layout/navbarLayout';
 import { getAssetInfo } from '../../../src/utils/tokenUtils';
 import { ApiClientsContext } from '../../_app';
-import { formatAmount, parseAmount } from '../../../src/utils/formattingUtils';
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
   return milestones.reduce(
