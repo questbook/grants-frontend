@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import React from 'react';
 import moment from 'moment';
+import { FundTransfer } from 'src/graphql/queries';
 
 export function timeToString(
   timestamp: number,
@@ -98,4 +99,13 @@ export function truncateStringFromMiddle(str:string) {
     return `${str.substring(0, 4)}...${str.substring(str.length - 4, str.length)}`;
   }
   return str;
+}
+
+// extract milstone index from ID and generate title like "Milestone (index+1)"
+export function getMilestoneTitle(milestone: FundTransfer['milestone']) {
+  if (milestone) {
+    const [, idx] = milestone.id.split('.');
+    return `Milestone ${(+idx) + 1}`;
+  }
+  return 'Unknown Milestone';
 }

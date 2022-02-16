@@ -8,15 +8,7 @@ import { FundTransfer } from 'src/graphql/queries';
 import { getAssetInfo } from 'src/utils/tokenUtils';
 // import Link from 'next/link';
 import { ethers } from 'ethers';
-
-// extract milstone index from ID and generate title like "Milestone (index+1)"
-const getMilestoneTitle = (milestone: FundTransfer['milestone']) => {
-  if (milestone) {
-    const [, idx] = milestone.id.split('.');
-    return `Milestone ${(+idx) + 1}`;
-  }
-  return 'Unknown Milestone';
-};
+import { getMilestoneTitle } from 'src/utils/formattingUtils';
 
 const getTextWithEllipses = (txt: string, maxLength = 7) => (txt.length > maxLength ? `${txt.slice(0, maxLength)}...` : txt);
 
@@ -144,7 +136,9 @@ export type FundingProps = {
   assetDecimals: number
 };
 
-function Funding({ fundTransfers, assetId, columns, assetDecimals }: FundingProps) {
+function Funding({
+  fundTransfers, assetId, columns, assetDecimals,
+}: FundingProps) {
   const tableHeaders = useMemo(() => columns.map((column) => TABLE_HEADERS[column]), [columns]);
   return (
     <Flex w="100%" my={4} align="center" direction="column" flex={1}>
