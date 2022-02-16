@@ -10,13 +10,14 @@ import {
   Container,
   useToast,
 } from '@chakra-ui/react';
-import { GrantApplicationProps } from 'src/types/application';
+import { GrantApplicationFieldsSubgraph, GrantApplicationProps, GrantApplicationUpdateSubgraph } from 'src/types/application';
 import { getFormattedFullDateFromUnixTimestamp, parseAmount } from 'src/utils/formattingUtils';
 import { useContract, useSigner } from 'wagmi';
 import config from 'src/constants/config';
 import { ApiClientsContext } from 'pages/_app';
 import { getGrantApplication } from 'src/graphql/daoQueries';
 import { gql } from '@apollo/client';
+import { GrantApplicationUpdate } from '@questbook/service-validator-client';
 import ApplicantDetails from './1_applicantDetails';
 import AboutProject from './3_aboutProject';
 import AboutTeam from './2_aboutTeam';
@@ -224,25 +225,31 @@ function Form({
       ));
 
       if (!signer || !signer.data || !apiClientContext) return;
+      const data: GrantApplicationUpdateSubgraph = {
+        fields: {
+          applicantName: [applicantName],
+          applicantEmail: [applicantEmail],
+          projectName: [projectName],
+          projectDetails: [projectDetails],
+          fundingAsk: [parseAmount(fundingAsk)],
+          fundingBreakdown: [fundingBreakdown],
+          teamMembers: [Number(teamMembers).toString()],
+          memberDetails: membersDescription.map((md) => (md.description)),
+          projectLink: links,
+          projectGoals: [projectGoal],
+          isMultipleMilestones: [grantRequiredFields.includes('isMultipleMilestones').toString()],
+        },
+        milestones,
+
+      };
+      Object.keys(data.fields).forEach((field) => {
+        if (!grantRequiredFields.includes(field)) {
+          delete data.fields[field as keyof GrantApplicationFieldsSubgraph];
+        }
+      });
       const { data: { ipfsHash } } = await apiClientContext
         .validatorApi
-        .validateGrantApplicationUpdate({
-          fields: {
-            applicantName: [applicantName],
-            applicantEmail: [applicantEmail],
-            projectName: [projectName],
-            projectDetails: [projectDetails],
-            fundingAsk: [parseAmount(fundingAsk)],
-            fundingBreakdown: [fundingBreakdown],
-            teamMembers: [Number(teamMembers).toString()],
-            memberDetails: membersDescription.map((md) => (md.description)),
-            projectLink: links,
-            projectGoals: [projectGoal],
-            isMultipleMilestones: [grantRequiredFields.includes('isMultipleMilestones').toString()],
-          },
-          milestones,
-
-        });
+        .validateGrantApplicationUpdate(data as unknown as GrantApplicationUpdate);
       console.log(ipfsHash);
       const transaction = await applicationRegistryContract.updateApplicationMetadata(
         applicationID,
@@ -421,6 +428,7 @@ function Form({
           setApplicantEmail={setApplicantEmail}
           setApplicantEmailError={setApplicantEmailError}
           readOnly={onSubmit === null}
+          grantRequiredFields={grantRequiredFields}
         />
 
         <Box mt="43px" />
@@ -432,6 +440,7 @@ function Form({
           membersDescription={membersDescription}
           setMembersDescription={setMembersDescription}
           readOnly={onSubmit === null}
+          grantRequiredFields={grantRequiredFields}
         />
 
         <Box mt="19px" />
@@ -455,6 +464,7 @@ function Form({
           rewardCurrency={rewardCurrency}
           rewardCurrencyCoin={rewardCurrencyCoin}
           readOnly={onSubmit === null}
+          grantRequiredFields={grantRequiredFields}
         />
 
         <Box mt="43px" />
@@ -471,6 +481,7 @@ function Form({
           rewardCurrency={rewardCurrency}
           rewardCurrencyCoin={rewardCurrencyCoin}
           readOnly={onSubmit === null}
+          grantRequiredFields={grantRequiredFields}
         />
       </Container>
 

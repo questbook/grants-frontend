@@ -1,5 +1,5 @@
 import {
-  Box, Text, VisuallyHidden,
+  Box, Text,
 } from '@chakra-ui/react';
 import React from 'react';
 import MultiLineInput from '../../../ui/forms/multiLineInput';

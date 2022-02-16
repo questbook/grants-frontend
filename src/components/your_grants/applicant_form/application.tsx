@@ -140,7 +140,7 @@ function Application({ applicationData }: Props) {
               <Flex direction="column" justify="center" align="start">
                 <Heading variant="applicationHeading">Total funding asked</Heading>
                 <Text variant="applicationText" color="brand.500">
-                  {formatAmount(fundingAsk)}
+                  {formatAmount(fundingAsk ?? '0')}
                   {' '}
                   { getAssetInfo(applicationData?.grant?.reward?.asset)?.label }
                 </Text>

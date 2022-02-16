@@ -32,6 +32,7 @@ function AboutProject({
   rewardCurrency,
   rewardCurrencyCoin,
   readOnly,
+  grantRequiredFields,
 }: {
   projectName: string;
   setProjectName: (projectName: string) => void;
@@ -78,6 +79,7 @@ function AboutProject({
   rewardCurrencyCoin: string;
 
   readOnly?: boolean;
+  grantRequiredFields: string[];
 }) {
   return (
     <>
@@ -100,6 +102,7 @@ function AboutProject({
         isError={projectNameError}
         errorText="Required"
         disabled={readOnly}
+        visible={grantRequiredFields.includes('projectName')}
       />
 
       {projectLinks.map((project, index) => (
@@ -124,6 +127,7 @@ function AboutProject({
             isError={project.isError}
             errorText="Required"
             disabled={readOnly}
+            visible={grantRequiredFields.includes('projectLink')}
             inputRightElement={
               index === 0 ? null : (
                 <Box
@@ -168,6 +172,7 @@ function AboutProject({
             setProjectLinks([...projectLinks, { link: '', isError: false }]);
           }}
           w="fit-content"
+          display={grantRequiredFields.includes('projectLink') ? 'block' : 'none'}
         >
           <Image
             display="inline-block"
@@ -197,6 +202,7 @@ function AboutProject({
         isError={projectDetailsError}
         errorText="Required"
         disabled={readOnly}
+        visible={grantRequiredFields.includes('projectDetails')}
       />
 
       <Box mt={8} />
@@ -214,6 +220,7 @@ function AboutProject({
         isError={projectGoalError}
         errorText="Required"
         disabled={readOnly}
+        visible={grantRequiredFields.includes('projectGoals')}
       />
 
       <Box mt={4} />
@@ -339,6 +346,7 @@ function AboutProject({
             ]);
           }}
           w="fit-content"
+          display={grantRequiredFields.includes('isMultipleMilestones') ? 'block' : 'none'}
         >
           <Image
             display="inline-block"
