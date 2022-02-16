@@ -11,6 +11,10 @@ query($workspaceID: ID!) {
           name
           value
         }
+        members {
+          actorId
+          email
+        }
     }
 }
 `;
