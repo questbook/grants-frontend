@@ -30,7 +30,7 @@ function Sidebar({
           Application Details
         </Heading>
         <Flex direction="row" justify="start" w="full" mt={6} align="center">
-          <Image h="45px" w="45px" src="/network_icons/eth_mainnet.svg" />
+          <Image h="45px" w="45px" src={getAssetInfo(applicationData?.grant?.reward?.asset)?.icon} />
           <Box mx={3} />
           <Heading variant="applicationHeading" color="brand.500">
             {truncateStringFromMiddle(applicationData?.applicantId)}
@@ -104,10 +104,23 @@ function Sidebar({
           onClick={() => onAcceptApplicationClick()}
           variant="primary"
           mt={7}
+          disabled={applicationData?.state === 'resubmit'}
           display={applicationData?.state === 'resubmit' ? '' : 'none'}
         >
           Accept Application
         </Button>
+        <Text
+          mt={7}
+          fontSize="sm"
+          lineHeight="4"
+          align="center"
+          color="#717A7C"
+          display={applicationData?.state === 'resubmit' ? '' : 'none'}
+        >
+          This application has been asked for resubmission.
+          The applicant has been notified to resubmit.
+
+        </Text>
         <Button
           onClick={() => onResubmitApplicationClick()}
           variant="resubmit"

@@ -22,6 +22,7 @@ interface Props {
   onViewApplicationClick?: () => void;
   onManageGrantClick?: () => void;
   sentDate?: string;
+  updatedDate?: string;
   reviewDate?: string;
   resultDate?: string;
 }
@@ -33,6 +34,7 @@ const defaultProps = {
   onViewApplicationClick: () => {},
   onManageGrantClick: () => {},
   sentDate: '',
+  updatedDate: '',
   reviewDate: '',
   resultDate: '',
 };
@@ -48,6 +50,7 @@ function YourApplicationCard({
   onViewApplicationClick,
   onManageGrantClick,
   sentDate,
+  updatedDate,
   reviewDate,
   resultDate,
 }: Props) {
@@ -109,7 +112,7 @@ function YourApplicationCard({
             />
 
             <Flex direction="column" alignItems="center" position="relative">
-              <CheckPoint date={resultDate} state={status} />
+              <CheckPoint date={['approved', 'rejected', 'resubmit', 'completed'].includes(status) ? updatedDate : ''} state={status} />
             </Flex>
           </Container>
         </Flex>
