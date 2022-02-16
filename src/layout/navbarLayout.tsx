@@ -20,6 +20,9 @@ interface Props {
 
 function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
   const apiClients = useContext(ApiClientsContext);
+
+  const [workspaces, setWorkspaces] = React.useState([]);
+
   const [daoName, setDaoName] = React.useState('');
   const [daoId, setDaoId] = React.useState<string | null>(null);
   const [daoImage, setDaoImage] = React.useState<string | null>(null);
@@ -60,10 +63,22 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
   //   console.log(networkData, loading, error);
   // }, [networkData]);
 
+  const setWorkspace = (workspace: any) => {
+    if (!apiClients) return;
+    const { setWorkspaceId } = apiClients;
+
+    console.log(`Setting workspace as ${workspace.title}`);
+
+    setDaoId(workspace.id);
+    setDaoName(workspace.title);
+    setDaoImage(getUrlForIPFSHash(workspace.logoIpfsHash));
+    setWorkspaceId(workspace.id);
+  };
+
   const getWorkspaceData = async (userAddress: string) => {
     if (!apiClients) return;
 
-    const { subgraphClient, setWorkspaceId } = apiClients;
+    const { subgraphClient } = apiClients;
     if (!subgraphClient) return;
     try {
       const { data } = await subgraphClient.client
@@ -74,12 +89,12 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
           },
         }) as any;
       // console.log(data);
+      setWorkspaces(data.workspaces);
+      console.log('This executed!');
+      console.log(data.workspaces.length);
       if (data.workspaces.length > 0) {
         const workspace = data.workspaces[0];
-        setDaoId(workspace.id);
-        setDaoName(workspace.title);
-        setDaoImage(getUrlForIPFSHash(workspace.logoIpfsHash));
-        setWorkspaceId(workspace.id);
+        setWorkspace(workspace);
       } else {
         setDaoId(null);
         setDaoName('');
@@ -139,12 +154,16 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
     }
   };
 
+  // useEffect(() => {
+  //   getWorkspaceData(accountData?.address ?? '');
+  // }, []);
+
   useEffect(() => {
     getWorkspaceData(accountData?.address ?? '');
     getGrantsCount(accountData?.address ?? '');
     getApplicantsCount(accountData?.address ?? '');
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountData]);
+  }, [accountData?.address]);
 
   useEffect(() => {
     if (asPath && asPath.length > 0) {
@@ -170,6 +189,8 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
           daoImage={daoImage}
           grantsCount={numOfGrants}
           applicationCount={numOfApplications}
+          workspaces={workspaces}
+          setWorkspace={setWorkspace}
         />
       ) : (
         <SignInNavbar renderGetStarted={renderGetStarted} />

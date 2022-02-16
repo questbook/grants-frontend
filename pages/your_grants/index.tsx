@@ -166,6 +166,8 @@ function YourGrants() {
     return '/ui_icons/brand/currency/weth.svg';
   };
 
+  const workspaceId = useContext(ApiClientsContext)?.workspaceId;
+
   return (
     <>
       <Container ref={containerRef} maxW="100%" h="100%" display="flex" px="70px">
@@ -180,7 +182,7 @@ function YourGrants() {
         >
           <Heading title="Your grants" />
           {grants.length > 0
-          && grants.map((grant: any) => {
+          && grants.filter((item) => item.workspace.id === workspaceId).map((grant: any) => {
             const grantCurrency = supportedCurrencies.find(
               (currency) => currency.id.toLowerCase()
                 === grant.reward.asset.toString().toLowerCase(),
@@ -215,8 +217,8 @@ function YourGrants() {
               />
             );
           })}
-          {grants.length === 0 && (
-            <Flex direction="column" justify="center" h="100%" align="center" mx={4}>
+          {grants.filter((item) => item.workspace.id === workspaceId).length === 0 && (
+            <Flex direction="column" justify="center" h="100%" align="center" mx={4} mt={10}>
               <Image h="174px" w="146px" src="/illustrations/no_grants.svg" />
               <Text
                 mt="17px"

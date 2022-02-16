@@ -5,6 +5,10 @@ import {
   Container,
   Flex,
   Image,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Text,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
@@ -21,11 +25,13 @@ interface Props {
   daoImage: null | string;
   grantsCount: number;
   applicationCount: number;
+  workspaces: any[];
+  setWorkspace: (workspace: any) => void;
 }
 
 function Navbar({
   networkId, address, isOnline, renderTabs,
-  daoName, daoId, daoImage, grantsCount, applicationCount,
+  daoName, daoId, daoImage, grantsCount, applicationCount, workspaces, setWorkspace,
 }: Props) {
   const [activeIndex, setActiveIndex] = React.useState(-1);
   const router = useRouter();
@@ -50,35 +56,50 @@ function Navbar({
     >
       {
         daoId && daoImage ? (
-          <Button
-            onClick={() => {
-              setActiveIndex(-1);
-              router.push({
-                pathname: '/',
-              });
-            }}
-            m={0}
-            h="100%"
-            variant="ghost"
-            display="flex"
-            alignItems="center"
-            borderRadius={0}
-            background="linear-gradient(263.05deg, #EFF0F0 -7.32%, #FCFCFC 32.62%)"
-            px="38px"
-            maxW="200px"
-          >
-            <Image objectFit="cover" w="32px" h="32px" mr="10px" src={daoImage} />
-            <Text
-              color="#414E50"
-              fontWeight="500"
-              fontSize="16px"
-              lineHeight="24px"
-              overflow="hidden"
-              textOverflow="ellipsis"
+          <Menu>
+            <MenuButton
+              as={Button}
+              m={0}
+              h="100%"
+              variant="ghost"
+              display="flex"
+              alignItems="center"
+              borderRadius={0}
+              background="linear-gradient(263.05deg, #EFF0F0 -7.32%, #FCFCFC 32.62%)"
+              px="38px"
+              maxW="200px"
             >
-              {daoName}
-            </Text>
-          </Button>
+              <Image objectFit="cover" w="32px" h="32px" mr="10px" src={daoImage} />
+              <Text
+                color="#414E50"
+                fontWeight="500"
+                fontSize="16px"
+                lineHeight="24px"
+                overflow="hidden"
+                textOverflow="ellipsis"
+                display="inline-block"
+              >
+                {daoName}
+              </Text>
+            </MenuButton>
+            <MenuList>
+              {workspaces.map((workspace) => (
+                <MenuItem
+                  icon={(
+                    <Image
+                      boxSize="20px"
+                      src={`https://ipfs.infura.io:5001/api/v0/cat?arg=${workspace.logoIpfsHash}`}
+                    />
+                  )}
+                  onClick={() => {
+                    setWorkspace(workspace);
+                  }}
+                >
+                  {workspace.title}
+                </MenuItem>
+              ))}
+            </MenuList>
+          </Menu>
         ) : (
           <Image
             onClick={() => {
@@ -136,7 +157,7 @@ function Navbar({
                     isActive={activeIndex === 2}
                     onClick={() => {
                       router.push({
-                        pathname: `/${tabPaths[2]}`
+                        pathname: `/${tabPaths[2]}`,
                       });
                     }}
                   />
