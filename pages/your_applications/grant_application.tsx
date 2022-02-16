@@ -9,7 +9,6 @@ import { gql } from '@apollo/client';
 import { ethers } from 'ethers';
 import { GrantApplicationProps } from 'src/types/application';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
-import { formatAmount } from 'src/utils/formattingUtils';
 import Form from '../../src/components/your_applications/grant_application/form';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import NavbarLayout from '../../src/layout/navbarLayout';
@@ -70,8 +69,8 @@ function ViewApplication() {
       projectDetails: fields.find((f:any) => f.id.split('.')[1] === 'projectDetails')?.value[0] ?? '',
       projectGoal: fields.find((f:any) => f.id.split('.')[1] === 'projectGoals')?.value[0] ?? '',
       projectMilestones: application.milestones
-        .map((ms:any) => ({ milestone: ms.title, milestoneReward: formatAmount(ms.amount ?? '0') })) ?? [],
-      fundingAsk: formatAmount(fields.find((f:any) => f.id.split('.')[1] === 'fundingAsk')?.value[0] ?? '0'),
+        .map((ms:any) => ({ milestone: ms.title, milestoneReward: ethers.utils.formatEther(ms.amount ?? '0') })) ?? [],
+      fundingAsk: ethers.utils.formatEther(fields.find((f:any) => f.id.split('.')[1] === 'fundingAsk')?.value[0] ?? '0'),
       fundingBreakdown: fields.find((f:any) => f.id.split('.')[1] === 'fundingBreakdown')?.value[0] ?? '',
     };
     console.log('fd', fd);

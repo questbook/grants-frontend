@@ -1,5 +1,5 @@
 import {
-  Container, Flex, Text, Image,
+  Container, Flex, Text, Image, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
@@ -30,6 +30,7 @@ import Sidebar from '../../../src/components/your_grants/applicant_form/sidebar'
 import NavbarLayout from '../../../src/layout/navbarLayout';
 
 function ApplicantForm() {
+  const toast = useToast();
   const router = useRouter();
   const [step, setStep] = useState(0);
 
@@ -111,12 +112,17 @@ function ApplicantForm() {
 
       console.log(transactionData);
       console.log(transactionData.blockNumber);
+      toast({ title: 'Transaction succeeded', status: 'success' });
 
       await subgraphClient.waitForBlock(transactionData.blockNumber);
 
       router.replace('/your_grants');
     } catch (error) {
       console.log(error);
+      toast({
+        title: 'Application update not indexed',
+        status: 'error',
+      });
     }
   };
   function renderContent(currentStep: number) {
