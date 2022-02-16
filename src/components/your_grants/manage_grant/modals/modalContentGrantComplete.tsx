@@ -35,7 +35,7 @@ function ModalContent({ onClose }: Props) {
             maxLength={300}
           />
         </Flex>
-        <Button w="100%" variant="primary" mt={6} onClick={onClose}>
+        <Button w="100%" variant="primary" mt={6} onClick={() => onClose({details})}>
           Mark Grant as Done
         </Button>
         <Box mb={4} />
