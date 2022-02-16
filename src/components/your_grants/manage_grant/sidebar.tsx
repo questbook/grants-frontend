@@ -4,7 +4,7 @@ import {
 import { BigNumber } from 'ethers';
 // import { ExternalLinkIcon } from '@chakra-ui/icons';
 import React, { useEffect } from 'react';
-import { formatAmount, parseAmount } from '../../../utils/formattingUtils';
+import { formatAmount } from '../../../utils/formattingUtils';
 import AddFunds from '../../funds/add_funds_modal';
 import Modal from '../../ui/modal';
 import FloatingSidebar from '../../ui/sidebar/floatingSidebar';

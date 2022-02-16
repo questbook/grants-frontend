@@ -32,13 +32,13 @@ function Form({
 
   const applicantDetails = applicantDetailsList.map(
     ({
-      title, tooltip, id, inputType,
+      title, tooltip, id, inputType, isRequired,
     }, index) => {
       if (index === applicantDetailsList.length - 1) return null;
       if (index === applicantDetailsList.length - 2) return null;
       return {
         title,
-        required: formData[id] ?? false,
+        required: formData[id] ?? (isRequired ?? false),
         id,
         tooltip,
         index,
@@ -130,6 +130,19 @@ function Form({
         fields.isMultipleMilestones = {
           title: 'Milestones',
           inputType: 'array',
+        };
+      }
+
+      if (fields.teamMembers) {
+        fields.memberDetails = {
+          title: 'Member Details',
+          inputType: 'array',
+        };
+      }
+      if (fields.fundingBreakdown) {
+        fields.fundingAsk = {
+          title: 'Funding Ask',
+          inputType: 'short-form',
         };
       }
 
