@@ -43,7 +43,7 @@ function Modal({
       closeOnOverlayClick={false}
     >
       <ModalOverlay maxH="100vh" />
-      <ModalContent minW={modalWidth} maxH="90vh" overflow="scroll">
+      <ModalContent minW={modalWidth} maxH="90vh" overflow="scroll" borderRadius="12px">
         <Container px={8} pt={9}>
           {typeof topIcon !== 'undefined' && (
             <Flex direction="column" align="center">

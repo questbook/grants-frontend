@@ -4,9 +4,10 @@ import {
 import React from 'react';
 
 function TipsList({
+  tipsHeading,
   tips, icon,
 }: {
-  tips: {}[], icon: string,
+  tipsHeading: string, tips: {}[], icon: string,
 }) {
   return (
     <Container m={0} px="55px" py="77px" flex="0.4" bgColor="#9FE5F3">
@@ -17,7 +18,7 @@ function TipsList({
           alt="pink_flying_comp"
         />
         <Text color="#122224" fontWeight="600" fontSize="28px" lineHeight="40px" letterSpacing="-1px" mt={12}>
-          Tips to write a good grant
+          {tipsHeading}
         </Text>
         <VStack mt={9} spacing={7}>
           {tips.map((tip) => (

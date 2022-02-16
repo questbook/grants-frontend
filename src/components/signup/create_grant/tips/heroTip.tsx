@@ -5,7 +5,7 @@ import React from 'react';
 
 function HeroTip() {
   return (
-    <Container m={0} px="50px" py="96px" flex="0.4" bgColor="#9FE5F3">
+    <Container m={0} px="50px" py="96px" flex="0.4" bgColor="#7FDAEC">
       <Flex direction="column" justify="center" align="start">
         <Image src="/illustrations/first_grant.svg" boxSize="128px" />
         <Box mb={5} />

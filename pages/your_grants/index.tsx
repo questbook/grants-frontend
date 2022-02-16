@@ -1,17 +1,22 @@
 import { gql } from '@apollo/client';
 import {
-  Container, Flex, useToast, Image, Text,
+  Container, Flex, useToast, Image, Text, Button,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
-  ReactElement, useCallback, useContext, useEffect, useRef,
+  ReactElement,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
 } from 'react';
 import { useAccount } from 'wagmi';
+import { BigNumber } from '@ethersproject/bignumber';
+import AddFunds from 'src/components/funds/add_funds_modal';
 import Heading from '../../src/components/ui/heading';
-import AddFunds from '../../src/components/your_grants/add_funds_modal';
 import YourGrantCard from '../../src/components/your_grants/yourGrantCard';
 import supportedCurrencies from '../../src/constants/supportedCurrencies';
-import { getAllGrantsForADao } from '../../src/graphql/daoQueries';
+import { getAllGrantsForCreator } from '../../src/graphql/daoQueries';
 import NavbarLayout from '../../src/layout/navbarLayout';
 import { formatAmount } from '../../src/utils/formattingUtils';
 import { ApiClientsContext } from '../_app';
@@ -21,6 +26,8 @@ function YourGrants() {
   const subgraphClient = useContext(ApiClientsContext)?.subgraphClient.client;
   const router = useRouter();
   const [addFundsIsOpen, setAddFundsIsOpen] = React.useState(false);
+  const [grantForFunding, setGrantForFunding] = React.useState(null);
+  const [grantRewardAsset, setGrantRewardAsset] = React.useState(null);
 
   const toast = useToast();
   const [grants, setGrants] = React.useState<any[]>([]);
@@ -38,7 +45,7 @@ function YourGrants() {
     try {
       const { data } = await subgraphClient
         .query({
-          query: gql(getAllGrantsForADao),
+          query: gql(getAllGrantsForCreator),
           variables: {
             first: pageSize,
             skip: pageSize * currentPage,
@@ -87,10 +94,20 @@ function YourGrants() {
               />
             </Flex>
             <Flex ml="23px" direction="column">
-              <Text fontSize="16px" lineHeight="24px" fontWeight="700" color="#7B4646">
+              <Text
+                fontSize="16px"
+                lineHeight="24px"
+                fontWeight="700"
+                color="#7B4646"
+              >
                 Error Message
               </Text>
-              <Text fontSize="16px" lineHeight="24px" fontWeight="400" color="#7B4646">
+              <Text
+                fontSize="16px"
+                lineHeight="24px"
+                fontWeight="400"
+                color="#7B4646"
+              >
                 {e.message}
               </Text>
             </Flex>
@@ -98,6 +115,21 @@ function YourGrants() {
         ),
       });
     }
+  };
+
+  const initialiseFundModal = async (grant) => {
+    const grantCurrency = supportedCurrencies.find(
+      (currency) => currency.id.toLowerCase()
+        === grant.reward.asset.toString().toLowerCase(),
+    );
+    setAddFundsIsOpen(true);
+    setGrantForFunding(grant.id);
+    setGrantRewardAsset({
+      address: grant.reward.asset,
+      committed: BigNumber.from(grant.reward.committed),
+      label: grantCurrency?.label ?? 'LOL',
+      icon: grantCurrency?.icon ?? '/images/dummy/Ethereum Icon.svg',
+    });
   };
 
   const handleScroll = useCallback(() => {
@@ -128,9 +160,15 @@ function YourGrants() {
     return () => parentElement.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
+  const getIcon = (currency: string) => {
+    if (currency === 'DAI') return '/ui_icons/brand/currency/dai.svg';
+    if (currency === 'WMATIC') return '/ui_icons/brand/currency/wmatic.svg';
+    return '/ui_icons/brand/currency/weth.svg';
+  };
+
   return (
     <>
-      <Container ref={containerRef} maxW="100%" display="flex" px="70px">
+      <Container ref={containerRef} maxW="100%" h="100%" display="flex" px="70px">
         <Container
           flex={1}
           display="flex"
@@ -159,7 +197,7 @@ function YourGrants() {
                 ).getTime()}
                 grantAmount={formatAmount(grant.reward.committed)}
                 grantCurrency={grantCurrency?.label ?? 'LOL'}
-                grantCurrencyIcon={grantCurrency?.icon ?? '/images/dummy/Ethereum Icon.svg'}
+                grantCurrencyIcon={grantCurrency?.label ? getIcon(grantCurrency.label) : '/images/dummy/Ethereum Icon.svg'}
                 state="done"
                 onEditClick={() => router.push({
                   pathname: '/your_grants/edit_grant/',
@@ -167,7 +205,7 @@ function YourGrants() {
                     grantID: grant.id,
                   },
                 })}
-                onAddFundsClick={() => setAddFundsIsOpen(true)}
+                onAddFundsClick={() => initialiseFundModal(grant)}
                 onViewApplicantsClick={() => router.push({
                   pathname: '/your_grants/view_applicants/',
                   query: {
@@ -177,12 +215,49 @@ function YourGrants() {
               />
             );
           })}
+          {grants.length === 0 && (
+            <Flex direction="column" justify="center" h="100%" align="center" mx={4}>
+              <Image h="174px" w="146px" src="/illustrations/no_grants.svg" />
+              <Text
+                mt="17px"
+                fontFamily="Spartan, sans-serif"
+                fontSize="20px"
+                lineHeight="25px"
+                fontWeight="700"
+                textAlign="center"
+              >
+                It’s quite silent here!
+              </Text>
+              <Text mt="11px" fontWeight="400" textAlign="center">
+                Get started by creating your grant and post it in less than 2 minutes.
+              </Text>
+
+              <Button
+                mt={16}
+                onClick={() => {
+                  router.push({
+                    pathname: '/your_grants/create_grant/',
+                    // pathname: '/signup',
+                  });
+                }}
+                maxW="163px"
+                variant="primary"
+                mr="12px"
+              >
+                Create a Grant
+              </Button>
+            </Flex>
+          )}
         </Container>
       </Container>
-      <AddFunds
-        isOpen={addFundsIsOpen}
-        onClose={() => setAddFundsIsOpen(false)}
-      />
+      {grantForFunding && grantRewardAsset && (
+        <AddFunds
+          isOpen={addFundsIsOpen}
+          onClose={() => setAddFundsIsOpen(false)}
+          grantAddress={grantForFunding}
+          rewardAsset={grantRewardAsset}
+        />
+      )}
     </>
   );
 }

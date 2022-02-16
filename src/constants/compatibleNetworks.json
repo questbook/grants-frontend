@@ -1,0 +1,35 @@
+{
+    "137": {
+        "name": "Polygon",
+        "icon": "/network_icons/polygon_final.svg",
+        "wallets": [
+          {
+            "id": "injected",
+            "name": "Metamask",
+            "icon": "/wallet_icons/metamask.svg"
+          },
+          {
+            "id": "walletConnect",
+            "name": "Wallet Connect",
+            "icon": "/wallet_icons/walletConnect.svg"
+          }
+        ]
+      },
+    "1": {
+      "name": "Ethereum",
+      "icon": "/network_icons/ethereum_final.svg",
+      "wallets": [
+        {
+          "id": "injected",
+          "name": "Metamask",
+          "icon": "/wallet_icons/metamask.svg"
+        },
+        {
+          "id": "walletConnect",
+          "name": "Wallet Connect",
+          "icon": "/wallet_icons/walletConnect.svg"
+        }
+      ]
+    }
+  }
+  

@@ -110,7 +110,8 @@ function YourGrantCard({
                 ml={3}
                 isDisabled={state === 'processing'}
                 variant={state === 'processing' ? 'primaryCta' : 'outline'}
-                colorScheme="brand"
+                color="brand.500"
+                borderColor="brand.500"
                 h="32px"
                 onClick={onAddFundsClick ?? (() => {})}
               >

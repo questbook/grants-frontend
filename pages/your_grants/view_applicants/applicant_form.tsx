@@ -164,7 +164,7 @@ function ApplicantForm() {
           maxW="1116px"
           alignItems="stretch"
           pb={6}
-          px={10}
+          // px={10}
         >
           <Breadcrumbs
             path={['Your Grants', 'View Applicants', 'Applicant Form']}
@@ -265,7 +265,7 @@ function ApplicantForm() {
                     fontWeight="700"
                     color="#7B4646"
                   >
-                    Resubmit your Application
+                    Request for Resubmission
                   </Text>
                   <Text
                     fontSize="16px"
@@ -301,13 +301,12 @@ function ApplicantForm() {
         flexDirection="column"
         maxW="1116px"
         alignItems="stretch"
-        pb={6}
+        pb={0}
         px={10}
       >
         <Breadcrumbs
           path={['My Grants', 'View Applicants', 'Applicant Form']}
         />
-        <Heading mt="18px" title={applicationData?.grant?.title} />
       </Container>
 
       <Container pb={12} maxW="100%" display="flex">

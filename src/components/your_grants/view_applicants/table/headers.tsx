@@ -10,7 +10,7 @@ function Headers() {
     'Status',
     'Actions',
   ];
-  const tableHeadersflex = [0.251, 0.15, 0.184, 0.116, 0.2, 0.116];
+  const tableHeadersflex = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
   const tableHeadersAlign = [
     'left',
     'left',

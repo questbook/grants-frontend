@@ -3,6 +3,7 @@ import {
   Container, Flex, Box, Button, Link, Text, Image,
 } from '@chakra-ui/react';
 import React from 'react';
+import supportedNetworks from '../../constants/supportedNetworks.json';
 
 function DaoCreated({
   network,
@@ -17,7 +18,7 @@ function DaoCreated({
 }) {
   return (
     <Container maxW="1024px" py={10}>
-      <Flex direction="column" alignItems="center" maxW="700px" mx="auto">
+      <Flex direction="column" alignItems="center" mx="auto">
         <Image
           h="160px"
           w="156px"
@@ -31,7 +32,7 @@ function DaoCreated({
           fontWeight="500"
           mt={9}
         >
-          Your DAO is created!
+          Yay! Your Grants DAO is successfully created.
         </Text>
 
         <Text fontSize="12px" lineHeight="20px" fontWeight="400">
@@ -44,11 +45,13 @@ function DaoCreated({
             display="inline-block"
           />
           {' '}
-          You Grants DAO is created on-chain on the
+          Your Grants DAO is created on-chain on
           {' '}
           <Box as="span" fontWeight="700" display="inline-block">
-            {network}
-            .
+            {supportedNetworks[network as keyof typeof supportedNetworks].name}
+            {' '}
+            {' '}
+            network.
           </Box>
           {' '}
           <Link
@@ -81,9 +84,7 @@ function DaoCreated({
           px={8}
           textAlign="center"
         >
-          Congratulations on setting up your Grants DAO on Questbook. Click the
-          button below to create your first grant on Questbook and we&apos;ll
-          help you get started.
+          Let&apos;s create your first grant on Questbook
         </Text>
 
         <Button

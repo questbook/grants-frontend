@@ -1,4 +1,4 @@
-import { Container } from '@chakra-ui/react';
+import { Container, Flex } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
 import Form from './form';
 import TipsContainer from './tips';
@@ -57,6 +57,18 @@ function CreateGrant({
       />
       <TipsContainer currentTip={currentStep} />
     </Container>
+
+  // <Flex ref={currentPageRef} direction="row" w="100%" h="100vh" px={0} py={0}>
+  //   <Flex w="60%" h="100%" direction="column">
+  //     <Form
+  //       currentStep={currentStep}
+  //       totalSteps={totalSteps}
+  //       incrementCurrentStep={(data) => changeCurrentStep(data, currentStep + 1)}
+  //       submitForm={(data) => submitForm(data)}
+  //     />
+  //   </Flex>
+  //   <Flex w="40%" h="100%" direction="column"><TipsContainer currentTip={currentStep} /></Flex>
+  // </Flex>
   );
 }
 

@@ -221,6 +221,7 @@ function Form({
         setRewardError={setRewardError}
         rewardCurrency={rewardCurrency}
         setRewardCurrency={setRewardCurrency}
+        rewardCurrencyAddress={rewardCurrencyAddress}
         setRewardCurrencyAddress={setRewardCurrencyAddress}
         date={date}
         setDate={setDate}

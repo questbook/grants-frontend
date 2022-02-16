@@ -26,7 +26,7 @@ function Loading() {
       alignItems="center"
       p={12}
     >
-      {timeElapsed < 1 ? (
+      {/* {timeElapsed < 1 ? (
         <Lottie animationData={animationData} />
       ) : (
         <Image
@@ -35,7 +35,8 @@ function Loading() {
           w={432}
           h={193.11}
         />
-      )}
+      )} */}
+      <Lottie animationData={animationData} />
       <Text fontSize="24px" fontWeight="26px" variant="heading">
         {timeElapsed < 1 ? (
           'Setting up your Grants DAO ...'
