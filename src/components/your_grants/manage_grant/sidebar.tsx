@@ -134,6 +134,7 @@ function Sidebar({ funds = 0, grant, assetInfo }: Props) {
             }}
           />
         )}
+        {grant && (
         <Modal
           isOpen={isSendFundModalOpen}
           onClose={() => setIsSendFundModalOpen(false)}
@@ -149,8 +150,18 @@ function Sidebar({ funds = 0, grant, assetInfo }: Props) {
             </Button>
           )}
         >
-          <SendFundModalContent onClose={() => setIsSendFundModalOpen(false)} />
+          <SendFundModalContent
+            rewardAsset={{
+              address: grant.reward.asset,
+              committed: BigNumber.from(grant.reward.committed),
+              label: assetInfo?.label,
+              icon: assetInfo?.icon,
+            }}
+            contractFunding={grant.funding}
+            onClose={() => setIsSendFundModalOpen(false)}
+          />
         </Modal>
+        )}
       </FloatingSidebar>
     </Box>
   );

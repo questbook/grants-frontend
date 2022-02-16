@@ -3,16 +3,27 @@ import {
   ModalBody, Flex, Image, Text, Button, Heading,
   Divider, Checkbox, Box, Menu, MenuButton, MenuList, MenuItem,
 } from '@chakra-ui/react';
-import React from 'react';
+import { BigNumber } from 'ethers';
+import React, { useEffect } from 'react';
+import { useContract, useSigner } from 'wagmi';
+import { formatAmount } from '../../../../utils/formattingUtils';
 import Dropdown from '../../../ui/forms/dropdown';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
+import ERC20ABI from '../../../../contracts/abi/ERC20.json';
 
 interface Props {
   onClose: () => void;
+  rewardAsset: {
+    address: string;
+    committed: BigNumber;
+    label: string;
+    icon: string;
+  };
+  contractFunding: string;
 }
 
 function ModalContent({
-  onClose,
+  onClose, rewardAsset, contractFunding,
 }: Props) {
   const [checkedItems, setCheckedItems] = React.useState([true, false]);
   const [chosen, setChosen] = React.useState(-1);
@@ -21,8 +32,34 @@ function ModalContent({
   const [error, setError] = React.useState(false);
 
   const milestones = [1, 2, 3, 4, 5];
-  const walletBalance = 2;
-  const contractBalance = 40;
+
+  const [walletBalance, setWalletBalance] = React.useState(0);
+  // const toast = useToast();
+  const [signerStates] = useSigner();
+  const rewardAssetContract = useContract({
+    addressOrName: rewardAsset.address ?? '0x0000000000000000000000000000000000000000',
+    contractInterface: ERC20ABI,
+    signerOrProvider: signerStates.data,
+  });
+
+  useEffect(() => {
+    (async function () {
+      try {
+        console.log('', rewardAssetContract);
+        if (!rewardAssetContract.provider) return;
+        // const assetDecimal = await rewardAssetContract.decimals();
+        // setRewardAssetDecimals(assetDecimal);
+        const tempAddress = await signerStates.data?.getAddress();
+        const tempWalletBalance = await rewardAssetContract.balanceOf(
+          // signerStates.data._address,
+          tempAddress,
+        );
+        setWalletBalance(tempWalletBalance);
+      } catch (e) {
+        console.error(e);
+      }
+    }());
+  }, [signerStates, rewardAssetContract, walletBalance]);
 
   return (
     <ModalBody>
@@ -32,13 +69,11 @@ function ModalContent({
         <Heading variant="applicationHeading" mt={4}>Use funds from the grant smart contract</Heading>
         <Flex direction="row" justify="space-between" align="center" w="100%" mt={9}>
           <Flex direction="row" justify="start" align="center">
-            <Image src="/images/dummy/Ethereum Icon.svg" />
+            <Image src={rewardAsset.icon} />
             <Flex direction="column" ml={2}>
               <Text variant="applicationText" fontWeight="700">Funds Available</Text>
               <Text fontSize="14px" lineHeight="20px" fontWeight="700" color="brand.500">
-                {contractBalance}
-                {' '}
-                ETH
+                {`${formatAmount(contractFunding.toString())} ${rewardAsset?.label}`}
               </Text>
             </Flex>
           </Flex>
@@ -55,13 +90,11 @@ function ModalContent({
         <Heading variant="applicationHeading" mt={6}>Use funds from the wallet linked to your account</Heading>
         <Flex direction="row" justify="space-between" align="center" w="100%" mt={9}>
           <Flex direction="row" justify="start" align="center">
-            <Image src="/images/dummy/Ethereum Icon.svg" />
+            <Image src={rewardAsset.icon} />
             <Flex direction="column" ml={2}>
               <Text variant="applicationText" fontWeight="700">Funds Available</Text>
               <Text fontSize="14px" lineHeight="20px" fontWeight="700" color="brand.500">
-                {walletBalance}
-                {' '}
-                ETH
+                {`${formatAmount(walletBalance.toString())} ${rewardAsset?.label}`}
               </Text>
             </Flex>
           </Flex>
@@ -85,13 +118,11 @@ function ModalContent({
           </Button>
 
           <Flex direction="row" justify="start" align="center" mt={6}>
-            <Image src="/images/dummy/Ethereum Icon.svg" />
+            <Image src={rewardAsset.icon} />
             <Flex direction="column" ml={2}>
               <Text variant="applicationText" fontWeight="700">Funds Available</Text>
               <Text fontSize="14px" lineHeight="20px" fontWeight="700" color="brand.500">
-                {contractBalance}
-                {' '}
-                ETH
+                {`${formatAmount(contractFunding.toString())} ${rewardAsset?.label}`}
               </Text>
             </Flex>
           </Flex>
@@ -151,8 +182,8 @@ function ModalContent({
                 listItemsMinWidth="132px"
                 listItems={[
                   {
-                    icon: '/images/dummy/Ethereum Icon.svg',
-                    label: 'ETH',
+                    icon: rewardAsset?.icon,
+                    label: rewardAsset?.label,
                   },
                 ]}
               />
@@ -172,13 +203,11 @@ function ModalContent({
         </Button>
 
         <Flex direction="row" justify="start" align="center" mt={6}>
-          <Image src="/images/dummy/Ethereum Icon.svg" />
+          <Image src={rewardAsset.icon} />
           <Flex direction="column" ml={2}>
             <Text variant="applicationText" fontWeight="700">Funds Available</Text>
             <Text fontSize="14px" lineHeight="20px" fontWeight="700" color="brand.500">
-              {walletBalance}
-              {' '}
-              ETH
+              {`${formatAmount(walletBalance.toString())} ${rewardAsset?.label}`}
             </Text>
           </Flex>
         </Flex>
@@ -228,8 +257,8 @@ function ModalContent({
               listItemsMinWidth="132px"
               listItems={[
                 {
-                  icon: '/images/dummy/Ethereum Icon.svg',
-                  label: 'ETH',
+                  icon: rewardAsset?.icon,
+                  label: rewardAsset?.label,
                 },
               ]}
             />

@@ -16,7 +16,7 @@ import {
   useContract, useSigner,
 } from 'wagmi';
 import { BigNumber, ethers } from 'ethers';
-import { formatAmount } from 'src/utils/formattingUtils';
+import { formatAmount } from '../../../utils/formattingUtils';
 import Dropdown from '../../ui/forms/dropdown';
 import SingleLineInput from '../../ui/forms/singleLineInput';
 import Modal from '../../ui/modal';
