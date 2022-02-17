@@ -91,11 +91,11 @@ function ManageGrant() {
           title: application.grant.title,
           applicantAddress: application.applicantId,
           applicantEmail: application.fields.find((field: any) => field.id.includes('applicantEmail'))?.value[0],
-          applicationDate: moment(application.createdAt).format('D MMMM YYYY'),
+          applicationDate: moment(moment.unix(application.createdAtS)).format('D MMMM YYYY'),
           grant: application.grant,
           id: application.id,
           state: application.state,
-          updatedDate: moment(application.updatedAt).format('MMM D, YYYY'),
+          updatedDate: moment(moment.unix(application.updatedAtS)).format('MMM D, YYYY'),
         });
       }
     } catch (e: any) {
