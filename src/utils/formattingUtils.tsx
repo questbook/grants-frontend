@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import React from 'react';
 import moment from 'moment';
+import { FundTransfer } from 'src/graphql/queries';
 
 export function timeToString(
   timestamp: number,
@@ -92,6 +93,10 @@ export function getFormattedDateFromUnixTimestamp(timestamp: number) {
   return moment.unix(timestamp).format('DD MMM');
 }
 
+export function getFormattedDateFromUnixTimestampWithYear(timestamp: number) {
+  return moment.unix(timestamp).format('MMM DD, YYYY');
+}
+
 export function getFormattedFullDateFromUnixTimestamp(timestamp: number) {
   return moment.unix(timestamp).format('LL');
 }
@@ -102,4 +107,25 @@ export function truncateStringFromMiddle(str:string) {
     return `${str.substring(0, 4)}...${str.substring(str.length - 4, str.length)}`;
   }
   return str;
+}
+
+// extract milstone index from ID and generate title like "Milestone (index+1)"
+export function getMilestoneMetadata(milestone: FundTransfer['milestone']) {
+  if (milestone) {
+    const [applicationId, idx] = milestone.id.split('.');
+    return {
+      applicationId,
+      milestoneIndex: +idx,
+    };
+  }
+  return undefined;
+}
+
+// extract milstone index from ID and generate title like "Milestone (index+1)"
+export function getMilestoneTitle(milestone: FundTransfer['milestone']) {
+  const item = getMilestoneMetadata(milestone);
+  if (typeof item !== 'undefined') {
+    return `Milestone ${item.milestoneIndex + 1}`;
+  }
+  return 'Unknown Milestone';
 }

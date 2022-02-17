@@ -5,18 +5,10 @@ import {
 } from '@chakra-ui/react';
 import moment from 'moment';
 import { ethers } from 'ethers';
+import { getMilestoneTitle } from 'src/utils/formattingUtils';
 import { FundTransfer } from '../../../../graphql/queries';
 import { getAssetInfo } from '../../../../utils/tokenUtils';
 import { formatAmount } from '../../../../utils/formattingUtils';
-
-// extract milstone index from ID and generate title like "Milestone (index+1)"
-const getMilestoneTitle = (milestone: FundTransfer['milestone']) => {
-  if (milestone) {
-    const [, idx] = milestone.id.split('.');
-    return `Milestone ${+idx + 1}`;
-  }
-  return 'Unknown Milestone';
-};
 
 const getTextWithEllipses = (txt: string, maxLength = 7) => (txt.length > maxLength ? `${txt.slice(0, maxLength)}...` : txt);
 
