@@ -26,38 +26,6 @@ function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
     if (status === 'submitted' || status === 'requested') {
       return (
         <Flex direction="column">
-          {
-            status === 'requested' && (
-              <Text
-                textAlign="right"
-                variant="footer"
-                color="#A0A7A7"
-                whiteSpace="nowrap"
-              >
-                Marked as Done
-                {' '}
-                <Text
-                  textAlign="right"
-                  display="inline-block"
-                  variant="footer"
-                  fontWeight="400"
-                  color="#A0A7A7"
-                >
-                  on
-                </Text>
-                {' '}
-                <Text
-                  textAlign="right"
-                  display="inline-block"
-                  variant="footer"
-                  fontWeight="500"
-                >
-                  {moment(new Date(updatedAtS * 1000)).format('MMM DD, YYYY')}
-                </Text>
-              </Text>
-
-            )
-          }
           <Menu placement="bottom">
             <MenuButton
               as={Button}
