@@ -9,16 +9,27 @@ import moment from 'moment';
 import { ApplicationMilestone } from 'src/graphql/queries';
 import AbstractMilestonesTable, { AbstractMilestonesTableProps } from 'src/components/ui/tables/AbstractMilestonesTable';
 import { getMilestoneTitle } from 'src/utils/formattingUtils';
+import { BigNumber } from 'ethers';
 import Modal from '../../../ui/modal';
 import MilestoneDoneModalContent from '../modals/modalContentMilestoneDone';
 import MilestoneViewModalContent from '../modals/modalContentMilestoneView';
 import MilestoneDoneConfirmationModalContent from '../modals/modalContentMilestoneDoneConfirmation';
+import SendFundModalContent from '../modals/sendFundModalContent';
+// src/components/your_grants/manage_grant/modals/sendFundModalContent
 
 type OpenedModalType = 'milestone-view' | 'milestone-done' | 'milestone-done-confirm';
 type OpenedModal = { type: OpenedModalType, milestone: ApplicationMilestone };
 
 function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
   const [openedModal, setOpenedModal] = useState<OpenedModal>();
+  const [isSendFundModalOpen, setIsSendFundModalOpen] = useState(false);
+
+  const {
+    milestones,
+    grant,
+    assetInfo,
+    applicationId,
+  } = props;
 
   const renderStatus = (milestone: ApplicationMilestone) => {
     const status = milestone.state;
@@ -143,6 +154,36 @@ function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
         <MilestoneDoneConfirmationModalContent
           milestone={openedModal?.milestone}
           onClose={() => setOpenedModal(undefined)}
+          openSendFund={() => setIsSendFundModalOpen(true)}
+        />
+      </Modal>
+      <Modal
+        isOpen={isSendFundModalOpen}
+        onClose={() => setIsSendFundModalOpen(false)}
+        title="Send Funds"
+        rightIcon={(
+          <Button
+            _focus={{}}
+            variant="link"
+            color="#AA82F0"
+            leftIcon={<Image src="/sidebar/discord_icon.svg" />}
+          >
+            Support 24*7
+          </Button>
+          )}
+      >
+        <SendFundModalContent
+          milestones={milestones}
+          rewardAsset={{
+            address: grant.reward.asset,
+            committed: BigNumber.from(grant.reward.committed),
+            label: assetInfo?.label,
+            icon: assetInfo?.icon,
+          }}
+          contractFunding={grant.funding}
+          onClose={() => setIsSendFundModalOpen(false)}
+          grantId={grant.id}
+          applicationId={applicationId}
         />
       </Modal>
     </>

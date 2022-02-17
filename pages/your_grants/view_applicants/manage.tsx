@@ -123,6 +123,9 @@ function ManageGrant() {
           refetch={refetchMilestones}
           milestones={milestones}
           rewardAssetId={rewardAsset}
+          assetInfo={assetInfo}
+          grant={applicationData.grant}
+          applicationId={applicationID}
         />
       ),
     },

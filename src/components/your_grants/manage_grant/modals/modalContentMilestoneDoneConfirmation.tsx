@@ -8,11 +8,13 @@ import { getMilestoneTitle } from 'src/utils/formattingUtils';
 interface Props {
   milestone: ApplicationMilestone | undefined
   onClose: () => void;
+  openSendFund: () => void;
 }
 
 function ModalContent({
   milestone,
   onClose,
+  openSendFund,
 }: Props) {
   return (
     <ModalBody>
@@ -30,7 +32,16 @@ function ModalContent({
         </Text>
         <Flex direction="row" w="100%" justify="space-evenly" mt={10} mb={4}>
           <Button w="45%" variant="resubmit" color="brand.500" _hover={{ background: '#F5F5F5', borderColor: 'brand.500', borderWidth: '2px' }} onClick={onClose}>Cancel</Button>
-          <Button w="45%" variant="primary">Send Funds</Button>
+          <Button
+            w="45%"
+            variant="primary"
+            onClick={() => {
+              onClose();
+              openSendFund();
+            }}
+          >
+            Send Funds
+          </Button>
         </Flex>
       </Flex>
     </ModalBody>

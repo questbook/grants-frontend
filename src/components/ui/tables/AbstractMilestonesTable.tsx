@@ -29,6 +29,9 @@ export type AbstractMilestonesTableProps = {
   rewardAssetId: string
   refetch: () => void
   renderStatus: (milestone: ApplicationMilestone) => React.ReactNode
+  grant: any;
+  assetInfo: any;
+  applicationId: string;
 };
 
 function AbstractMilestonesTable(
