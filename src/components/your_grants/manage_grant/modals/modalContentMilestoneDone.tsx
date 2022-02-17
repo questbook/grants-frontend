@@ -1,5 +1,5 @@
 import {
-  ModalBody, Flex, Text, Button, Box, Image, useToast,
+  ModalBody, Flex, Text, Button, Box, Image, useToast, Center, CircularProgress, ToastId,
 } from '@chakra-ui/react';
 import config from 'src/constants/config';
 import { ApiClientsContext } from 'pages/_app';
@@ -8,6 +8,7 @@ import { ApplicationMilestone } from 'src/graphql/queries';
 import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.json';
 import { getFormattedDateFromUnixTimestampWithYear, getMilestoneMetadata } from 'src/utils/formattingUtils';
 import { useContract, useSigner } from 'wagmi';
+import InfoToast from 'src/components/ui/infoToast';
 import MultiLineInput from '../../../ui/forms/multiLineInput';
 
 interface Props {
@@ -16,22 +17,41 @@ interface Props {
 }
 
 function ModalContent({ milestone, done }: Props) {
-  const { subgraphClient, validatorApi, workspaceId } = useContext(ApiClientsContext)!;
+  const { validatorApi, workspaceId } = useContext(ApiClientsContext)!;
   const [signerStates] = useSigner();
   const applicationRegContract = useContract({
     addressOrName: config.ApplicationRegistryAddress,
     contractInterface: ApplicationRegistryAbi,
     signerOrProvider: signerStates.data,
   });
-  const toast = useToast();
 
   const [details, setDetails] = useState('');
   const [detailsError, setDetailsError] = useState(false);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [hasClicked, setHasClicked] = React.useState(false);
+  const toastRef = React.useRef<ToastId>();
+  const toast = useToast();
+
+  const closeToast = () => {
+    if (toastRef.current) {
+      toast.close(toastRef.current);
+    }
+  };
+
+  const showToast = ({ link } : { link: string }) => {
+    toastRef.current = toast({
+      position: 'top',
+      render: () => (
+        <InfoToast
+          link={link}
+          close={closeToast}
+        />
+      ),
+    });
+  };
 
   const markAsDone = async () => {
-    setIsLoading(true);
+    setHasClicked(true);
 
     try {
       const { data } = await validatorApi.validateApplicationMilestoneUpdate({ text: details });
@@ -50,11 +70,12 @@ function ModalContent({ milestone, done }: Props) {
 
       console.log('executed transaction', transactionData);
 
-      await subgraphClient.waitForBlock(transactionData.blockNumber);
+      // await subgraphClient.waitForBlock(transactionData.blockNumber);
 
-      console.log('executed application milestone');
+      // console.log('executed application milestone');
 
       done();
+      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
     } catch (error: any) {
       console.error('error in milestone update ', error);
       toast({
@@ -65,7 +86,7 @@ function ModalContent({ milestone, done }: Props) {
         isClosable: true,
       });
     } finally {
-      setIsLoading(false);
+      setHasClicked(false);
     }
   };
 
@@ -140,13 +161,16 @@ function ModalContent({ milestone, done }: Props) {
             </Button>
           </Text>
         </Flex>
-        <Button w="100%" variant="primary" mt={8} onClick={markAsDone} disabled={isLoading}>
-          {
-            isLoading
-              ? 'Updating...'
-              : 'Mark as Done'
-          }
-        </Button>
+
+        {hasClicked ? (
+          <Center>
+            <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
+          </Center>
+        ) : (
+          <Button w="100%" variant="primary" mt={8} onClick={markAsDone}>
+            Mark as Done
+          </Button>
+        )}
         <Box mb={4} />
       </Flex>
     </ModalBody>

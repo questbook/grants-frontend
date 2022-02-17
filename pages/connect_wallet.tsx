@@ -82,15 +82,16 @@ function ConnectWallet() {
           // isOpen={isMenuOpen}
           // setIsOpen={setIsMenuOpen}
           listItemsMinWidth="280px"
-          listItems={Object.keys(compatibleNetworks).map((networkId: any) => ({
-            id: networkId,
-            label: compatibleNetworks[
-              networkId.toString() as keyof typeof compatibleNetworks
-            ].name,
-            icon: compatibleNetworks[
-              networkId.toString() as keyof typeof compatibleNetworks
-            ].icon,
-          }))}
+          listItems={Object.keys(compatibleNetworks)
+            .sort((a, b) => parseInt(b, 10) - parseInt(a, 10)).map((networkId: any) => ({
+              id: networkId,
+              label: compatibleNetworks[
+                networkId.toString() as keyof typeof compatibleNetworks
+              ].name,
+              icon: compatibleNetworks[
+                networkId.toString() as keyof typeof compatibleNetworks
+              ].icon,
+            }))}
           // value={rewardCurrency}
           onChange={(id: number) => {
             setSelectedNetworkId(id);
@@ -130,6 +131,7 @@ function ConnectWallet() {
         ))}
       </VStack>
 
+      {router.query.flow !== 'getting_started/developer' && (
       <Text variant="footer" mt="24px">
         <Image
           display="inline-block"
@@ -142,6 +144,7 @@ function ConnectWallet() {
         {' '}
         {strings.connect_wallet.protip}
       </Text>
+      )}
 
       <Text variant="footer" my="36px">
         {strings.connect_wallet.footer}

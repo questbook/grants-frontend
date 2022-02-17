@@ -10,6 +10,8 @@ import {
   Container,
   useToast,
   ToastId,
+  Center,
+  CircularProgress,
 } from '@chakra-ui/react';
 import { GrantApplicationFieldsSubgraph, GrantApplicationProps, GrantApplicationUpdateSubgraph } from 'src/types/application';
 import { getFormattedFullDateFromUnixTimestamp, parseAmount } from 'src/utils/formattingUtils';
@@ -423,14 +425,20 @@ function Form({
       {onSubmit ? (
         <>
           <Box mt={8} />
-          <Button
-            onClick={handleOnSubmit}
-            mx={10}
-            alignSelf="stretch"
-            variant="primary"
-          >
-            Resubmit Application
-          </Button>
+          {hasClicked ? (
+            <Center>
+              <CircularProgress isIndeterminate color="brand.500" size="48px" />
+            </Center>
+          ) : (
+            <Button
+              onClick={handleOnSubmit}
+              mx={10}
+              alignSelf="stretch"
+              variant="primary"
+            >
+              Resubmit Application
+            </Button>
+          )}
           <Box mt={4} />
         </>
       ) : null}

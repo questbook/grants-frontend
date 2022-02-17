@@ -226,6 +226,7 @@ query($applicationID: Bytes!) {
     state
     feedback
     createdAtS
+    updatedAtS
   }
 }
 `;

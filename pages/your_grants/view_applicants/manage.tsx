@@ -8,11 +8,15 @@ import {
   Link,
   Button,
   useToast,
+  ToastId,
 } from '@chakra-ui/react';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react';
 import { useAccount, useSigner, useContract } from 'wagmi';
+import config from 'src/constants/config';
+import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.json';
+import InfoToast from 'src/components/ui/infoToast';
 import {
   ApplicationMilestone,
   useApplicationMilestones,
@@ -29,9 +33,6 @@ import { getApplicationDetails } from '../../../src/graphql/daoQueries';
 import NavbarLayout from '../../../src/layout/navbarLayout';
 import { getAssetInfo } from '../../../src/utils/tokenUtils';
 import { ApiClientsContext } from '../../_app';
-import { formatAmount, parseAmount } from '../../../src/utils/formattingUtils';
-import config from 'src/constants/config';
-import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.json';
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
   return milestones.reduce(
@@ -82,8 +83,10 @@ function ManageGrant() {
           applicationID,
         },
       })) as any;
+      console.log(data);
       if (data && data.grantApplication) {
         const application = data.grantApplication;
+        console.log(application);
         setApplicationData({
           title: application.grant.title,
           applicantAddress: application.applicantId,
@@ -91,6 +94,8 @@ function ManageGrant() {
           applicationDate: moment(application.createdAt).format('D MMMM YYYY'),
           grant: application.grant,
           id: application.id,
+          state: application.state,
+          updatedDate: moment(application.updatedAt).format('MMM D, YYYY'),
         });
       }
     } catch (e: any) {
@@ -140,17 +145,37 @@ function ManageGrant() {
   ];
 
   const apiClients = useContext(ApiClientsContext);
-  const toast = useToast();
   const [signerStates] = useSigner();
   const applicationRegContract = useContract({
     addressOrName: config.ApplicationRegistryAddress,
     contractInterface: ApplicationRegistryAbi,
     signerOrProvider: signerStates.data,
   });
-  const markApplicationComplete = async (comment) => {
+  const [hasClicked, setHasClicked] = React.useState(false);
+  const toastRef = React.useRef<ToastId>();
+  const toast = useToast();
+
+  const closeToast = () => {
+    if (toastRef.current) {
+      toast.close(toastRef.current);
+    }
+  };
+
+  const showToast = ({ link } : { link: string }) => {
+    toastRef.current = toast({
+      position: 'top',
+      render: () => (
+        <InfoToast
+          link={link}
+          close={closeToast}
+        />
+      ),
+    });
+  };
+  const markApplicationComplete = async (comment: string) => {
     try {
       if (!apiClients) return;
-      const { subgraphClient, validatorApi, workspaceId } = apiClients;
+      const { validatorApi, workspaceId } = apiClients;
       console.log('acdataa---------', applicationData);
       if (!accountData
       || !accountData.address
@@ -160,6 +185,8 @@ function ManageGrant() {
         console.log('compleeeeeee');
         return;
       }
+
+      setHasClicked(true);
       const {
         data: { ipfsHash },
       } = await validatorApi.validateGrantApplicationUpdate({
@@ -176,8 +203,13 @@ function ManageGrant() {
 
       console.log(transactionData);
       console.log(transactionData.blockNumber);
-      toast({ title: 'Transaction succeeded', status: 'success' });
+
+      setHasClicked(false);
+      setIsGrantCompleteModalOpen(false);
+      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
+      // toast({ title: 'Transaction succeeded', status: 'success' });
     } catch (error) {
+      setHasClicked(false);
       console.log(error);
       toast({
         title: 'Application update not indexed',
@@ -253,6 +285,14 @@ function ManageGrant() {
           </Link>
         </Flex>
 
+        {applicationData.state === 'completed' && (
+        <Text variant="applicationText" color="#717A7C" mt={6}>
+          Grant marked as complete on
+          {' '}
+          <Text variant="applicationText" display="inline-block">{applicationData.updatedDate}</Text>
+        </Text>
+        )}
+
         <Flex mt="29px" direction="row" w="full" align="center">
           {tabs.map((tab, index) => (
             <Button
@@ -306,27 +346,36 @@ function ManageGrant() {
         {tabs[selected].content}
 
         <Flex direction="row" justify="center" mt={8}>
+
+          {applicationData.state !== 'completed' && (
           <Button
             variant="primary"
             onClick={() => setIsGrantCompleteModalOpen(true)}
           >
             Mark Grant as Complete
           </Button>
+          )}
+
         </Flex>
       </Container>
+      {applicationData.state !== 'completed' && (
       <Sidebar
         milestones={milestones}
         assetInfo={assetInfo}
         grant={applicationData.grant}
         applicationId={applicationID}
       />
+      )}
 
       <Modal
         isOpen={isGrantCompleteModelOpen}
         onClose={() => setIsGrantCompleteModalOpen(false)}
         title="Mark Grant as Complete"
       >
-        <ModalContent onClose={({ details }) => markApplicationComplete(details)} />
+        <ModalContent
+          hasClicked={hasClicked}
+          onClose={(details) => markApplicationComplete(details)}
+        />
       </Modal>
     </Container>
   );
