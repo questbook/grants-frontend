@@ -91,7 +91,7 @@ function AboutProject({
       <Box mt={6} />
       <SingleLineInput
         label="Project Name"
-        placeholder="name"
+        placeholder="NFT marketplace on Polygon"
         value={projectName}
         onChange={(e) => {
           if (projectNameError) {
@@ -110,7 +110,7 @@ function AboutProject({
           <Box mt={7} />
           <SingleLineInput
             label={`Project Link ${index + 1}`}
-            placeholder="name"
+            placeholder="www.project.com"
             value={project.link}
             onChange={(e) => {
               const newProjectLinks = [...projectLinks];
@@ -190,7 +190,7 @@ function AboutProject({
       <Box mt={8} />
 
       <MultiLineInput
-        placeholder="Details about your project - requirements, deliverables, and milestones - as detailed as possible."
+        placeholder="Write details about your project - requirements, deliverables, and milestones - as detailed as possible."
         label="Project Details"
         value={projectDetails}
         onChange={(e) => {
@@ -207,7 +207,7 @@ function AboutProject({
 
       <Box mt={8} />
       <MultiLineInput
-        placeholder="Write about what's to plan to achieve with this project"
+        placeholder="Write about what your team plans to achieve with this project"
         label="Project Goals"
         maxLength={1000}
         value={projectGoal}

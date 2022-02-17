@@ -83,9 +83,9 @@ function AboutGrant() {
     }
 
     if (grantData?.fields.length && grantData?.fields?.some((fd: any) => fd.title === 'Milestones')) {
-      setPayoutDescription('Muliple Payouts');
+      setPayoutDescription('Multiple');
     } else {
-      setPayoutDescription('Single Payout - Instant Payout once the grant recepient is selected.');
+      setPayoutDescription('Single');
     }
     setGrantDetails(grantData?.details);
     setGrantSummary(grantData?.summary);

@@ -177,6 +177,7 @@ function ApplicantForm() {
           <Reject
             onSubmit={({ comment }) => handleApplicationStateUpdate(3, comment)}
             hasClicked={hasClicked}
+            title={applicationData?.grant?.title}
           />
           <RejectSidebar
             applicationData={applicationData}
@@ -189,6 +190,7 @@ function ApplicantForm() {
         <Resubmit
           onSubmit={({ comment }) => handleApplicationStateUpdate(1, comment)}
           hasClicked={hasClicked}
+          title={applicationData?.grant?.title}
         />
         <ResubmitSidebar
           applicationData={applicationData}

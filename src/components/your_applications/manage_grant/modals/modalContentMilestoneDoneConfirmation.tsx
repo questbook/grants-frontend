@@ -21,7 +21,8 @@ function ModalContent({
           You have marked the Milestone 1 as done.
         </Heading>
         <Text mt={4} textAlign="center" variant="applicationText">
-          You will shortly receive a confirmation and reward if any from the grant publisher.
+          You will shortly receive a confirmation and
+          reward if any for completing the grant milestone .
         </Text>
         <Button w="100%" variant="primary" mt={10} onClick={onClose}>OK</Button>
         <Box mb={4} />

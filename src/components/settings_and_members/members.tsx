@@ -9,17 +9,15 @@ interface Props {
   workspaceMembers: any;
 }
 
-function Members({workspaceMembers}: Props) {
+function Members({ workspaceMembers }: Props) {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [tableData, setTableData] = React.useState(null);
   const flex = [0.68, 0.32];
   const tableHeaders = ['Member Address', 'Role'];
 
   useEffect(() => {
-    if(!workspaceMembers) return;
-    const tempTableData = workspaceMembers.map((member) => {
-      return {memberAddress: member.actorId, role: 'Admin'};
-    });
+    if (!workspaceMembers) return;
+    const tempTableData = workspaceMembers.map((member) => ({ memberAddress: member.actorId, role: 'Admin' }));
     setTableData(tempTableData);
   }, [workspaceMembers]);
 

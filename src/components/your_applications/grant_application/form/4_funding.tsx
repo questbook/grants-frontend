@@ -105,7 +105,7 @@ function Funding({
       <Box mt={8} />
 
       <MultiLineInput
-        placeholder="Write about how you planning use funds for your project - hiring, marketing etc."
+        placeholder="Write about how you plan to use the funds for your project - hiring, marketing etc."
         label="Funding Breakdown"
         maxLength={1000}
         value={fundingBreakdown}

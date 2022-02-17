@@ -10,18 +10,18 @@ function GrantDetails({
 }) {
   return (
     <>
-      <Text mt={7} variant="heading" fontSize="18px" lineHeight="26px">
-        Grant Details
+      <Text mt={7} variant="heading" fontSize="18px" lineHeight="26px" color="#8347E5">
+        About Grant
       </Text>
 
-      <Text mt={1} variant="heading" fontSize="16px" lineHeight="24px">
+      <Text mt={4} variant="heading" fontSize="16px" lineHeight="24px">
         Summary
       </Text>
       <Text mt={3} fontWeight="400">
         {grantSummary}
       </Text>
 
-      <Text mt={3} variant="heading" fontSize="16px" lineHeight="24px">
+      <Text mt={4} variant="heading" fontSize="16px" lineHeight="24px">
         Details
       </Text>
       <Text mt={3} fontWeight="400">

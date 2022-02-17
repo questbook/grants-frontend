@@ -51,7 +51,7 @@ function ManageGrant() {
     {
       icon: fundingIcon,
       title: '20',
-      subtitle: 'Funding Recieved',
+      subtitle: 'Funding Received',
     },
   ];
 

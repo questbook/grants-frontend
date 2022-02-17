@@ -1,5 +1,5 @@
 import {
-  Container, Button, Text, Box, Center, CircularProgress,
+  Container, Button, Text, Box, Center, CircularProgress, Divider,
 } from '@chakra-ui/react';
 import React from 'react';
 import MultiLineInput from '../../../ui/forms/multiLineInput';
@@ -7,9 +7,11 @@ import MultiLineInput from '../../../ui/forms/multiLineInput';
 function Reject({
   onSubmit,
   hasClicked,
+  title,
 }: {
   onSubmit: (data: any) => void;
   hasClicked: boolean;
+  title: string;
 }) {
   const [comment, setComment] = React.useState('');
   const [commentError, setCommentError] = React.useState(false);
@@ -25,6 +27,8 @@ function Reject({
       alignSelf="flex-start"
       ml={0}
     >
+      <Text mt={4} mb={4} variant="heading">{title}</Text>
+      <Divider mb={5} />
       <Text fontSize="18px" lineHeight="26px" fontWeight="700">
         Reason for Rejection
       </Text>

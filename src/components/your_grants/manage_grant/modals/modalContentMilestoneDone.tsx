@@ -128,7 +128,7 @@ function ModalContent({ milestone, done }: Props) {
         <Flex mt={6} w="100%">
           <MultiLineInput
             label="Feedback and Comments"
-            placeholder="A tool, script or tutorial to set up monitoring for miner GPU, CPU, & memory."
+            placeholder="Write the milestone summary as detailed as possible."
             value={details}
             isError={detailsError}
             onChange={(e) => {

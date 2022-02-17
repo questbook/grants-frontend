@@ -33,7 +33,7 @@ function ApplicantDetails({
       <Box mt={6} />
       <SingleLineInput
         label="Applicant Name"
-        placeholder="Nouns DAO"
+        placeholder="John Doe"
         subtext="Full names are preferred."
         onChange={(e) => {
           if (applicantNameError) {

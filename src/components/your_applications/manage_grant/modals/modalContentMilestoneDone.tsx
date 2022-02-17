@@ -16,16 +16,16 @@ function ModalContent({ onClose }: Props) {
     <ModalBody maxW="521px">
       <Flex direction="column" justify="start" align="center">
         <Text textAlign="center" variant="applicationText">
-          Add a brief summary of what was achieved in the milestone, timelines
-          and links to show your proof of work.
+          Add a brief summary of what was achieved in the milestone,
+          timelines and links to show your proof of work.
         </Text>
         <Text mt={8} textAlign="center" variant="applicationText">
-          The grant reviewer can see your summary.
+          The grantor can see your summary.
         </Text>
         <Flex mt={6} w="100%">
           <MultiLineInput
-            label="Milestone Details"
-            placeholder="A tool, script or tutorial to set up monitoring for miner GPU, CPU, & memory."
+            label="Milestone Summary"
+            placeholder="Write the milestone summary as detailed as possible."
             value={details}
             isError={detailsError}
             onChange={(e) => {

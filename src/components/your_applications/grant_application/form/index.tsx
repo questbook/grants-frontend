@@ -527,15 +527,11 @@ function Form({
         />
       </Container>
 
+      {onSubmit && (
       <Text mt={10} textAlign="center" variant="footer" fontSize="12px">
-        <Image
-          display="inline-block"
-          src="/ui_icons/protip.svg"
-          alt="pro tip"
-          mb="-2px"
-        />
+        <Image display="inline-block" src="/ui_icons/info.svg" alt="pro tip" mb="-2px" />
         {' '}
-        Your grant funds are securely stored on our smart contract.
+        By pressing Submit Application you’ll have to approve this transaction in your wallet.
         {' '}
         <Link href="wallet">Learn more</Link>
         {' '}
@@ -548,6 +544,7 @@ function Form({
           w="10px"
         />
       </Text>
+      )}
 
       <Box mt={5} />
 

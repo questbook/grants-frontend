@@ -40,7 +40,7 @@ function AboutTeam({
       <Box mt={6} />
       <SingleLineInput
         label="Team Members"
-        placeholder="Number of Team Members"
+        placeholder="Number of team members"
         value={teamMembers === null ? undefined : teamMembers}
         onChange={(e) => {
           if (teamMembersError) {
@@ -81,7 +81,7 @@ function AboutTeam({
       {
         membersDescription.map(({ description, isError }, index) => (
           <MultiLineInput
-            placeholder="Write about team member - education, work experience, and side projects"
+            placeholder="Write about team member - education, work experience with portfolio link, and side projects."
             label={`Member ${index + 1}`}
             maxLength={300}
             value={description}

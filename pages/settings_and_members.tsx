@@ -1,5 +1,7 @@
 import { Button, Divider, Flex } from '@chakra-ui/react';
-import React, { ReactElement, useState, useEffect, useContext } from 'react';
+import React, {
+  ReactElement, useState, useEffect, useContext,
+} from 'react';
 import { gql } from '@apollo/client';
 import Members from '../src/components/settings_and_members/members';
 import Settings from '../src/components/settings_and_members/settings';
@@ -26,7 +28,7 @@ function SettingsAndMembers() {
       const { data } = (await subgraphClient.client.query({
         query: gql(getWorkspaceDetails),
         variables: {
-          workspaceID: workspaceID,
+          workspaceID,
         },
       })) as any;
       if (data.workspace) {
@@ -45,7 +47,7 @@ function SettingsAndMembers() {
 
   return (
     <Flex direction="row" w="100%" justify="space-evenly">
-      <Flex w="65%" direction="column">
+      <Flex w="45%" direction="column">
         <Flex
           direction="row"
           w="full"
@@ -83,7 +85,7 @@ function SettingsAndMembers() {
           <Members workspaceMembers={workspaceData?.members} />
         )}
       </Flex>
-      <Flex w="20%" />
+      <Flex w="auto" />
     </Flex>
   );
 }

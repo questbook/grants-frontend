@@ -1,5 +1,5 @@
 import {
-  Box, Button, Center, CircularProgress, Flex,
+  Box, Button, Center, CircularProgress, Flex, Text, Image, Link,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import CoverUpload from '../ui/forms/coverUpload';
@@ -205,7 +205,27 @@ function EditForm({
           isError={telegramChannelError}
         />
       </Flex>
-      <Flex direction="row" justify="start" mt={10}>
+      <Flex direction="row" mt={4}>
+        <Text textAlign="left" variant="footer" fontSize="12px">
+          <Image display="inline-block" src="/ui_icons/info.svg" alt="pro tip" mb="-2px" />
+          {' '}
+          By pressing the button Save Changes below
+          you’ll have to approve this transaction in your wallet.
+          {' '}
+          <Link href="wallet">Learn more</Link>
+          {' '}
+          <Image
+            display="inline-block"
+            src="/ui_icons/link.svg"
+            alt="pro tip"
+            mb="-1px"
+            h="10px"
+            w="10px"
+          />
+        </Text>
+      </Flex>
+
+      <Flex direction="row" justify="start" mt={4}>
         {hasClicked ? (
           <Center>
             <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
