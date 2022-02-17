@@ -38,6 +38,12 @@ function CheckPoint({ state, date }: Props) {
       bgColor: '#418FA0',
       textColor: '#418FA0',
     },
+    completed: {
+      text: 'Completed',
+      icon: '/ui_icons/result_accepted_application.svg',
+      bgColor: '#418FA0',
+      textColor: '#418FA0',
+    },
     rejected: {
       text: 'Rejected',
       icon: '/ui_icons/result_rejected_application.svg',
