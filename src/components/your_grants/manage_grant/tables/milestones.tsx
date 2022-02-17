@@ -147,7 +147,7 @@ function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
         <MilestoneDoneConfirmationModalContent
           milestone={openedModal?.milestone}
           onClose={() => setOpenedModal(undefined)}
-          openSendFund={sendFundOpen}
+          openSendFund={sendFundOpen!}
         />
       </Modal>
     </>
