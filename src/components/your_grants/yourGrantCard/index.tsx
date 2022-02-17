@@ -103,7 +103,7 @@ function YourGrantCard({
                   </Button>
                 </Text>
               ) : (
-                numOfApplicants > 0 ? <Menu onEditClick={onEditClick ?? (() => {})} /> : null
+                numOfApplicants > 0 ? <Menu /> : null
               )}
               <Button
                 mr={2}

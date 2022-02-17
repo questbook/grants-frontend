@@ -63,7 +63,7 @@ function ViewApplicants() {
       }
       return true;
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       return null;
     }
   };

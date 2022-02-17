@@ -58,7 +58,7 @@ function YourGrants() {
         setGrants([...grants, ...data.grants]);
       }
     } catch (e: any) {
-      console.log(e);
+      // console.log(e);
       toast({
         position: 'top',
         duration: null,

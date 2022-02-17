@@ -1,5 +1,7 @@
 import { Button, Divider, Flex } from '@chakra-ui/react';
-import React, { ReactElement, useState, useEffect, useContext } from 'react';
+import React, {
+  ReactElement, useState, useEffect, useContext,
+} from 'react';
 import { gql } from '@apollo/client';
 import Members from '../src/components/settings_and_members/members';
 import Settings from '../src/components/settings_and_members/settings';
@@ -11,7 +13,7 @@ import { ApiClientsContext } from './_app';
 function SettingsAndMembers() {
   const tabs = ['Settings', 'Invite Members'];
   const [selected, setSelected] = useState(0);
-  const [workspaceData, setWorkspaceData] = useState(null);
+  const [workspaceData, setWorkspaceData] = useState<any>(null);
   const workspaceId = useContext(ApiClientsContext)?.workspaceId;
 
   const switchTab = (to: number) => {
@@ -26,20 +28,20 @@ function SettingsAndMembers() {
       const { data } = (await subgraphClient.client.query({
         query: gql(getWorkspaceDetails),
         variables: {
-          workspaceID: workspaceID,
+          workspaceID,
         },
       })) as any;
       if (data.workspace) {
         setWorkspaceData(data.workspace);
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   }
 
   useEffect(() => {
     if (!workspaceId) return;
-    console.log('getting called');
+    // console.log('getting called');
     getWorkspaceData(workspaceId);
   }, [workspaceId]);
 

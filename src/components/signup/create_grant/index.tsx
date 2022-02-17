@@ -1,4 +1,4 @@
-import { Container, Flex } from '@chakra-ui/react';
+import { Container } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
 import Form from './form';
 import TipsContainer from './tips';

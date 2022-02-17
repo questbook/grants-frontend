@@ -115,6 +115,7 @@ function Table(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
         <MilestoneDoneModalContent
           milestone={openedModal?.milestone}
           onClose={() => {
+            // eslint-disable-next-line react/destructuring-assignment
             props.refetch();
             setOpenedModal({ type: 'milestone-confirm', milestone: openedModal!.milestone });
           }}
