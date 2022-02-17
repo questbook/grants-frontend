@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Text, Image, Flex, Button, MenuButton, Menu, MenuList, MenuItem,
 } from '@chakra-ui/react';
@@ -8,20 +8,21 @@ import {
 import moment from 'moment';
 import { ApplicationMilestone } from 'src/graphql/queries';
 import AbstractMilestonesTable, { AbstractMilestonesTableProps } from 'src/components/ui/tables/AbstractMilestonesTable';
+import { getMilestoneTitle } from 'src/utils/formattingUtils';
 import Modal from '../../../ui/modal';
 import MilestoneDoneModalContent from '../modals/modalContentMilestoneDone';
 import MilestoneViewModalContent from '../modals/modalContentMilestoneView';
 import MilestoneDoneConfirmationModalContent from '../modals/modalContentMilestoneDoneConfirmation';
 
-function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
-  const [isMilestoneDoneModalOpen, setIsMilestoneDoneModalOpen] = React.useState(false);
-  const [isMilestoneViewModalOpen, setIsMilestoneViewModalOpen] = React.useState(false);
-  const [
-    isMilestoneDoneConfirmationModalOpen,
-    setIsMilestoneDoneConfirmationModalOpen,
-  ] = React.useState(false);
+type OpenedModalType = 'milestone-view' | 'milestone-done' | 'milestone-done-confirm';
+type OpenedModal = { type: OpenedModalType, milestone: ApplicationMilestone };
 
-  const renderStatus = (status: ApplicationMilestone['state'], updatedAtS: number) => {
+function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
+  const [openedModal, setOpenedModal] = useState<OpenedModal>();
+
+  const renderStatus = (milestone: ApplicationMilestone) => {
+    const status = milestone.state;
+    const updatedAtS = milestone.updatedAtS || 0;
     if (status === 'submitted') {
       return (
         <Flex direction="column">
@@ -43,12 +44,12 @@ function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
               Manage
             </MenuButton>
             <MenuList minW="164px" p={0}>
-              <MenuItem icon={<ViewIcon color="#31373D" />} onClick={() => setIsMilestoneDoneModalOpen(true)}>
+              <MenuItem icon={<ViewIcon color="#31373D" />} onClick={() => setOpenedModal({ type: 'milestone-done', milestone })}>
                 <Text fontSize="14px" fontWeight="400" lineHeight="20px" color="#122224">Mark As Done</Text>
               </MenuItem>
               {/* TODO: Need to change the icons */}
-              <MenuItem icon={<ViewIcon color="#31373D" />} onClick={() => setIsMilestoneViewModalOpen(true)}>
-                <Text fontSize="14px" fontWeight="400" lineHeight="20px" color="#122224">View Grantee Submission</Text>
+              <MenuItem disabled>
+                <Text fontSize="14px" fontWeight="400" lineHeight="20px" color="#122224">No Grantee Submission</Text>
               </MenuItem>
             </MenuList>
           </Menu>
@@ -85,7 +86,7 @@ function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
               {moment(new Date(updatedAtS * 1000)).format('MMM DD, YYYY')}
             </Text>
           </Text>
-          <Button variant="link" _focus={{}} onClick={() => setIsMilestoneViewModalOpen(true)}>
+          <Button variant="link" _focus={{}} onClick={() => setOpenedModal({ type: 'milestone-view', milestone })}>
             <Text textAlign="right" variant="footer" color="#6200EE">
               View
             </Text>
@@ -123,7 +124,7 @@ function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
             {moment(new Date(updatedAtS * 1000)).format('MMM DD, YYYY')}
           </Text>
         </Text>
-        <Button variant="link" _focus={{}}>
+        <Button variant="link" _focus={{}} onClick={() => setOpenedModal({ type: 'milestone-view', milestone })}>
           <Text textAlign="right" variant="footer" color="#6200EE">
             View
           </Text>
@@ -136,40 +137,40 @@ function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
     <>
       <AbstractMilestonesTable
         {...props}
-        renderStatus={(milestone) => renderStatus(milestone.state, milestone.updatedAtS || 0)}
+        renderStatus={renderStatus}
       />
       <Modal
-        isOpen={isMilestoneDoneModalOpen}
-        onClose={() => setIsMilestoneDoneModalOpen(false)}
-        title="Mark Milestone 1 as Done"
+        isOpen={openedModal?.type === 'milestone-done'}
+        onClose={() => setOpenedModal(undefined)}
+        title={`Mark ${getMilestoneTitle(openedModal?.milestone)} as Done`}
         alignTitle="center"
         topIcon={<Image src="/ui_icons/milestone_complete.svg" />}
       >
         <MilestoneDoneModalContent
-          onClose={() => {
-            setIsMilestoneDoneModalOpen(false);
-            setIsMilestoneDoneConfirmationModalOpen(true);
+          milestone={openedModal?.milestone}
+          done={() => {
+            setOpenedModal({ type: 'milestone-done-confirm', milestone: openedModal!.milestone });
           }}
         />
       </Modal>
       <Modal
-        isOpen={isMilestoneViewModalOpen}
-        onClose={() => setIsMilestoneViewModalOpen(false)}
-        title="Milestone 1"
+        isOpen={openedModal?.type === 'milestone-view'}
+        onClose={() => setOpenedModal(undefined)}
+        title={getMilestoneTitle(openedModal?.milestone)}
       >
         <MilestoneViewModalContent
-          onClose={() => {
-            setIsMilestoneViewModalOpen(false);
-          }}
+          milestone={openedModal?.milestone}
+          onClose={() => setOpenedModal(undefined)}
         />
       </Modal>
       <Modal
-        isOpen={isMilestoneDoneConfirmationModalOpen}
-        onClose={() => setIsMilestoneDoneConfirmationModalOpen(false)}
+        isOpen={openedModal?.type === 'milestone-done-confirm'}
+        onClose={() => setOpenedModal(undefined)}
         title=""
       >
         <MilestoneDoneConfirmationModalContent
-          onClose={() => setIsMilestoneDoneConfirmationModalOpen(false)}
+          milestone={openedModal?.milestone}
+          onClose={() => setOpenedModal(undefined)}
         />
       </Modal>
     </>
