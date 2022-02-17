@@ -159,23 +159,23 @@ function Form({
         return;
       }
       let error = false;
-      if (applicantName === '') {
+      if (applicantName === '' && grantRequiredFields.includes('applicantName')) {
         setApplicantNameError(true);
         error = true;
       }
-      if (applicantEmail === '') {
+      if (applicantEmail === '' && grantRequiredFields.includes('applicantEmail')) {
         setApplicantEmailError(true);
         error = true;
       }
-      if (!teamMembers || teamMembers <= 0) {
+      if ((!teamMembers || teamMembers <= 0) && grantRequiredFields.includes('teamMembers')) {
         setTeamMembersError(true);
         error = true;
       }
 
       let membersDescriptionError = false;
       const newMembersDescriptionArray = [...membersDescription];
-      membersDescription.forEach((member: any, index: number) => {
-        if (member.description === '') {
+      membersDescription.forEach((member, index) => {
+        if (member.description === '' && grantRequiredFields.includes('memberDetails')) {
           newMembersDescriptionArray[index].isError = true;
           membersDescriptionError = true;
         }
@@ -186,15 +186,15 @@ function Form({
         error = true;
       }
 
-      if (projectName === '') {
+      if (projectName === '' && grantRequiredFields.includes('projectName')) {
         setProjectNameError(true);
         error = true;
       }
 
       let projectLinksError = false;
       const newProjectLinks = [...projectLinks];
-      projectLinks.forEach((project: any, index: number) => {
-        if (project.link === '') {
+      projectLinks.forEach((project, index) => {
+        if (project.link === '' && grantRequiredFields.includes('projectLink')) {
           newProjectLinks[index].isError = true;
           projectLinksError = true;
         }
@@ -205,18 +205,18 @@ function Form({
         error = true;
       }
 
-      if (projectDetails === '') {
+      if (projectDetails === '' && grantRequiredFields.includes('projectDetails')) {
         setProjectDetailsError(true);
         error = true;
       }
-      if (projectGoal === '') {
+      if (projectGoal === '' && grantRequiredFields.includes('projectGoals')) {
         setProjectGoalError(true);
         error = true;
       }
 
       let projectMilestonesError = false;
       const newProjectMilestones = [...projectMilestones];
-      projectMilestones.forEach((project: any, index: number) => {
+      projectMilestones.forEach((project, index) => {
         if (project.milestone === '') {
           newProjectMilestones[index].milestoneIsError = true;
           projectMilestonesError = true;
@@ -232,11 +232,11 @@ function Form({
         error = true;
       }
 
-      if (fundingAsk === '') {
+      if (fundingAsk === '' && grantRequiredFields.includes('fundingAsk')) {
         setFundingAskError(true);
         error = true;
       }
-      if (fundingBreakdown === '') {
+      if (fundingBreakdown === '' && grantRequiredFields.includes('fundingBreakdown')) {
         setFundingBreakdownError(true);
         error = true;
       }
@@ -250,6 +250,8 @@ function Form({
       const milestones = projectMilestones.map((pm) => (
         { title: pm.milestone, amount: parseAmount(pm.milestoneReward) }
       ));
+
+      console.log(milestones);
 
       if (!signer || !signer.data || !apiClientContext) return;
       const data: GrantApplicationUpdateSubgraph = {

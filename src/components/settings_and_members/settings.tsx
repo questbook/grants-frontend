@@ -103,11 +103,16 @@ function Settings({
       setHasClicked(true);
       const {
         data: { ipfsHash },
-      } = await validatorApi.validateWorkspaceUpdate({
+      } = await validatorApi.validateWorkspaceUpdate(coverImageHash ? {
         title: data.name,
         about: data.about,
         logoIpfsHash: imageHash,
         coverImageIpfsHash: coverImageHash,
+        socials,
+      } : {
+        title: data.name,
+        about: data.about,
+        logoIpfsHash: imageHash,
         socials,
       });
 
