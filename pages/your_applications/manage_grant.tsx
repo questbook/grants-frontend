@@ -2,12 +2,16 @@ import {
   Container, Flex, Image, Box, Text, Button,
 } from '@chakra-ui/react';
 import React, { useContext, useEffect, useState } from 'react';
-import { useApplicationMilestones, useFundDisbursed } from '../../src/graphql/queries';
-import { getAssetInfo } from '../../src/utils/tokenUtils';
 import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
 import { gql } from '@apollo/client';
 import moment from 'moment';
+import {
+  ApplicationMilestone,
+  useApplicationMilestones,
+  useFundDisbursed,
+} from '../../src/graphql/queries';
+import { getAssetInfo } from '../../src/utils/tokenUtils';
 import Sidebar from '../../src/components/your_applications/manage_grant/sidebar';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Heading from '../../src/components/ui/heading';
@@ -46,7 +50,10 @@ function ManageGrant() {
     fetchEns: false,
   });
 
-  const { data: { milestones, rewardAsset, fundingAsk }, refetch } = useApplicationMilestones(applicationID);
+  const {
+    data: { milestones, rewardAsset, fundingAsk },
+    refetch,
+  } = useApplicationMilestones(applicationID);
   const fundingIcon = getAssetInfo(rewardAsset)?.icon;
   const assetInfo = getAssetInfo(rewardAsset);
   const { data: fundsDisbursed } = useFundDisbursed(applicationID);
@@ -63,7 +70,9 @@ function ManageGrant() {
     },
     {
       icon: fundingIcon,
-      title: (fundingAsk ? formatAmount(fundingAsk.toString()) : null) || getTotalFundingAsked(milestones).toString(),
+      title:
+        (fundingAsk ? formatAmount(fundingAsk.toString()) : null)
+        || getTotalFundingAsked(milestones).toString(),
       subtitle: 'Funding Requested',
     },
   ];
@@ -84,7 +93,9 @@ function ManageGrant() {
           title: application.grant.title,
           applicantAddress: application.applicantId,
           applicantEmail: application.fields.find((field: any) => field.id.includes('applicantEmail'))?.value[0],
-          applicationDate: moment.unix(application.createdAtS).format('D MMMM YYYY'),
+          applicationDate: moment
+            .unix(application.createdAtS)
+            .format('D MMMM YYYY'),
           grant: application.grant,
           id: application.id,
         });
@@ -130,10 +141,19 @@ function ManageGrant() {
               _hover={{
                 background: '#F5F5F5',
               }}
-              background={index !== selected ? 'linear-gradient(180deg, #FFFFFF 0%, #F3F4F4 100%)' : 'white'}
+              background={
+                index !== selected
+                  ? 'linear-gradient(180deg, #FFFFFF 0%, #F3F4F4 100%)'
+                  : 'white'
+              }
               _focus={{}}
               borderRadius={index !== selected ? 0 : '8px 8px 0px 0px'}
-              borderRightWidth={((index !== (tabs.length - 1) && index + 1 !== selected) || index === selected) ? '2px' : '0px'}
+              borderRightWidth={
+                (index !== tabs.length - 1 && index + 1 !== selected)
+                || index === selected
+                  ? '2px'
+                  : '0px'
+              }
               borderLeftWidth={index !== selected ? 0 : '2px'}
               borderTopWidth={index !== selected ? 0 : '2px'}
               borderBottomWidth={index !== selected ? '2px' : 0}
@@ -142,37 +162,37 @@ function ManageGrant() {
             >
               <Flex direction="column" justify="center" align="center" w="100%">
                 <Flex direction="row" justify="center" align="center">
-                  {tab.icon && <Image h="26px" w="26px" src={tab.icon} alt={tab.icon} />}
+                  {tab.icon && (
+                    <Image h="26px" w="26px" src={tab.icon} alt={tab.icon} />
+                  )}
                   <Box mx={1} />
                   <Text fontWeight="700" fontSize="26px" lineHeight="40px">
                     {tab.title}
                   </Text>
                 </Flex>
-                <Text variant="applicationText" color="#717A7C">{tab.subtitle}</Text>
+                <Text variant="applicationText" color="#717A7C">
+                  {tab.subtitle}
+                </Text>
               </Flex>
             </Button>
           ))}
         </Flex>
 
-        {
-          selected === 0
-            ? (
-              <MilestoneTable
-                refetch={refetch}
-                milestones={milestones}
-                rewardAssetId={rewardAsset}
-              />
-            )
-            : (
-              <Funding
-                fundTransfers={fundsDisbursed}
-                assetId={rewardAsset}
-                columns={['milestoneTitle', 'date', 'from', 'action']}
-                assetDecimals={18}
-                grantId={applicationData.grant?.id}
-              />
-            )
-        }
+        {selected === 0 ? (
+          <MilestoneTable
+            refetch={refetch}
+            milestones={milestones}
+            rewardAssetId={rewardAsset}
+          />
+        ) : (
+          <Funding
+            fundTransfers={fundsDisbursed}
+            assetId={rewardAsset}
+            columns={['milestoneTitle', 'date', 'from', 'action']}
+            assetDecimals={18}
+            grantId={applicationData.grant?.id}
+          />
+        )}
       </Container>
 
       <Sidebar applicationData={applicationData} assetInfo={assetInfo} />
@@ -181,10 +201,6 @@ function ManageGrant() {
 }
 
 ManageGrant.getLayout = function getLayout(page: React.ReactElement) {
-  return (
-    <NavbarLayout>
-      {page}
-    </NavbarLayout>
-  );
+  return <NavbarLayout>{page}</NavbarLayout>;
 };
 export default ManageGrant;
