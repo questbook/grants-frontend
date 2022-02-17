@@ -1,7 +1,7 @@
 import {
-  Flex, Box, Button, Text, Image, Link,
+  Flex, Box, Button, Text, Image, Link, CircularProgress, Center,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNetwork } from 'wagmi';
 import ImageUpload from '../../ui/forms/imageUpload';
 import MultiLineInput from '../../ui/forms/multiLineInput';
@@ -10,11 +10,34 @@ import Tooltip from '../../ui/tooltip';
 import supportedNetworks from '../../../constants/supportedNetworks.json';
 
 function Form({
+  hasClicked,
   onSubmit: onFormSubmit,
 }: {
-  onSubmit: (data: { name: string; description: string; image?: string, network: string }) => void;
+  onSubmit: (data: { name: string; description: string; image: File, network: string }) => void;
+  hasClicked: boolean;
 }) {
   const [{ data: networkData }] = useNetwork();
+  const [networkSupported, setNetworkSupported] = React.useState(false);
+
+  useEffect(() => {
+    if (!networkData.chain || !networkData.chain.id) {
+      return;
+    }
+    const supportedChainIds = Object.keys(supportedNetworks);
+    const isSupported = supportedChainIds.includes(networkData.chain.id.toString());
+    setNetworkSupported(isSupported);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!networkData.chain || !networkData.chain.id) {
+      return;
+    }
+    const supportedChainIds = Object.keys(supportedNetworks);
+    const isSupported = supportedChainIds.includes(networkData.chain.id.toString());
+    setNetworkSupported(isSupported);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [networkData]);
 
   const [daoName, setDaoName] = React.useState('');
   const [daoNameError, setDaoNameError] = React.useState(false);
@@ -23,10 +46,15 @@ function Form({
   const [daoDescriptionError, setDaoDescriptionError] = React.useState(false);
 
   const [image, setImage] = React.useState<string | null>(null);
+  const [imageFile, setImageFile] = React.useState<File | null>(null);
+  const [imageError, setImageError] = React.useState(false);
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // console.log(event.target.files);
     if (event.target.files && event.target.files[0]) {
       const img = event.target.files[0];
+      setImageFile(img);
       setImage(URL.createObjectURL(img));
+      setImageError(false);
     }
   };
 
@@ -40,17 +68,22 @@ function Form({
       setDaoDescriptionError(true);
       error = true;
     }
-
-    if (!error) {
-      onFormSubmit({
-        name: daoName,
-        description: daoDescription,
-        image: image === null ? undefined : image,
-        network: supportedNetworks[
-          networkData.chain?.id.toString() as keyof typeof supportedNetworks
-        ].name,
-      });
+    if (!networkSupported) {
+      error = true;
     }
+    if (image === null || imageFile === null) {
+      setImageError(true);
+      error = true;
+    }
+
+    if (error) return;
+
+    onFormSubmit({
+      name: daoName,
+      description: daoDescription,
+      image: imageFile!,
+      network: networkData.chain!.id.toString(),
+    });
   };
 
   return (
@@ -76,12 +109,13 @@ function Form({
             onClear={() => setImage(null)}
             label="Add a logo"
             subtext="Upload"
+            isError={imageError}
           />
         </Flex>
         <Flex w="100%" mt={1}>
           <MultiLineInput
             label="About your Grants DAO"
-            placeholder="Sample"
+            placeholder="A summary about your Grants DAO containing your mission statement and grant focus areas"
             value={daoDescription}
             onChange={(e) => {
               if (daoDescriptionError) setDaoDescriptionError(false);
@@ -96,19 +130,23 @@ function Form({
           <SingleLineInput
             label="Network"
             placeholder="Network"
-            value={supportedNetworks[
-              networkData.chain?.id.toString() as keyof typeof supportedNetworks
-            ].name}
+            value={networkSupported ? (
+              supportedNetworks[
+                networkData.chain?.id.toString() as keyof typeof supportedNetworks
+              ].name
+            ) : 'Network not supported'}
             onChange={() => {}}
             isError={false}
             disabled
             inputRightElement={(
               <Tooltip
                 icon="/ui_icons/error.svg"
-                label={`Your wallet is connected to the ${supportedNetworks[
-                  networkData.chain?.id.toString() as keyof typeof supportedNetworks
-                ].name}. Your GrantsDAO will be created on the same network.
-  To create a GrantsDAO on another network, connect a different wallet.`}
+                label={networkSupported ? (
+                  `Your wallet is connected to the ${supportedNetworks[
+                    networkData.chain?.id.toString() as keyof typeof supportedNetworks
+                  ].name} Network. Your GrantsDAO will be created on the same network.
+    To create a GrantsDAO on another network, connect a different wallet.`
+                ) : 'Select a supported network'}
               />
             )}
           />
@@ -124,7 +162,7 @@ function Form({
           src="/ui_icons/info_brand.svg"
         />
         {' '}
-        By pressing continue you&apos;ll be charged a gas fee.
+        By pressing continue you&apos;ll have to approve this transaction in your wallet.
         {' '}
         <Link mx={1} href="wallet">
           Learn more
@@ -138,16 +176,22 @@ function Form({
         </Link>
       </Text>
 
-      <Button
-        onClick={handleSubmit}
-        w="100%"
-        maxW="502px"
-        variant="primary"
-        mt={5}
-        mb={16}
-      >
-        Create Grants DAO
-      </Button>
+      {hasClicked ? (
+        <Center>
+          <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
+        </Center>
+      ) : (
+        <Button
+          onClick={handleSubmit}
+          w="100%"
+          maxW="502px"
+          variant="primary"
+          mt={5}
+          mb={16}
+        >
+          Create Grants DAO
+        </Button>
+      )}
     </>
   );
 }

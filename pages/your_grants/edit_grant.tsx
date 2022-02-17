@@ -1,12 +1,24 @@
-import {
-  Container,
-} from '@chakra-ui/react';
+import { gql } from '@apollo/client';
+import { Container, ToastId, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useRef, useState } from 'react';
+import React, {
+  ReactElement,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { useAccount, useContract, useSigner } from 'wagmi';
+import InfoToast from '../../src/components/ui/infoToast';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/edit_grant/form';
 import Sidebar from '../../src/components/your_grants/edit_grant/sidebar';
+import GrantABI from '../../src/contracts/abi/GrantAbi.json';
+import supportedCurrencies from '../../src/constants/supportedCurrencies';
+import { getGrantDetails } from '../../src/graphql/daoQueries';
 import NavbarLayout from '../../src/layout/navbarLayout';
+import { formatAmount, parseAmount } from '../../src/utils/formattingUtils';
+import { ApiClientsContext } from '../_app';
 
 function EditGrant() {
   const router = useRouter();
@@ -17,6 +29,7 @@ function EditGrant() {
   const grantRewardsRef = useRef(null);
 
   const [currentStep, setCurrentStep] = useState(0);
+  const [grantID, setGrantID] = useState<any>('');
 
   const scroll = (ref: any, step: number) => {
     if (!ref.current) return;
@@ -46,24 +59,143 @@ function EditGrant() {
     ],
   ];
 
-  const formData = {
-    title: 'title',
-    summary: 'summary',
-    details: 'details',
-    applicant_name: true,
-    applicant_email: false,
-    about_team: false,
-    funding_breakdown: false,
-    project_name: false,
-    project_link: false,
-    project_details: true,
-    project_goals: false,
-    extra_field: 'ko',
-    is_multiple_miletones: false,
-    reward: '10',
-    rewardCurrency: 'USDC',
-    date: '2022-02-05',
+  const [{ data: accountData }] = useAccount();
+  const apiClients = useContext(ApiClientsContext);
+  const [signerStates] = useSigner();
+
+  const grantContract = useContract({
+    addressOrName: grantID.length > 0 ? grantID : '0x0000000000000000000000000000000000000000',
+    contractInterface: GrantABI,
+    signerOrProvider: signerStates.data,
+  });
+
+  const [hasClicked, setHasClicked] = React.useState(false);
+  const toastRef = React.useRef<ToastId>();
+  const toast = useToast();
+
+  const closeToast = () => {
+    if (toastRef.current) {
+      toast.close(toastRef.current);
+    }
   };
+
+  const showToast = ({ link } : { link: string }) => {
+    toastRef.current = toast({
+      position: 'top',
+      render: () => (
+        <InfoToast
+          link={link}
+          close={closeToast}
+        />
+      ),
+    });
+  };
+
+  const handleGrantSubmit = async (data: any) => {
+    if (!apiClients) return;
+    const { validatorApi, workspaceId } = apiClients;
+    if (!accountData || !accountData.address || !workspaceId) {
+      return;
+    }
+
+    try {
+      setHasClicked(true);
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+
+      const {
+        data: { ipfsHash },
+      } = await validatorApi.validateGrantUpdate({
+        title: data.title,
+        summary: data.summary,
+        details: data.details,
+        deadline: data.date,
+        reward: {
+          committed: parseAmount(data.reward),
+          asset: data.rewardCurrencyAddress,
+        },
+        fields: data.fields,
+      });
+
+      // console.log(ipfsHash);
+
+      const transaction = await grantContract.updateGrant(
+        ipfsHash,
+      );
+      const transactionData = await transaction.wait();
+      setHasClicked(false);
+      router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
+
+      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
+      // await subgraphClient.waitForBlock(transactionData.blockNumber);
+
+    // router.replace('/your_grants');
+    } catch (error) {
+      setHasClicked(false);
+      // console.log(error);
+      toast({
+        title: 'Application update not indexed',
+        status: 'error',
+      });
+    }
+  };
+
+  const [formData, setFormData] = useState<any>(null);
+  const getGrantData = async () => {
+    if (!apiClients) return;
+    const { subgraphClient } = apiClients;
+    if (!subgraphClient) return;
+    try {
+      const { data } = (await subgraphClient.client.query({
+        query: gql(getGrantDetails),
+        variables: {
+          grantID,
+        },
+      })) as any;
+      if (data.grants.length > 0) {
+        const grant = data.grants[0];
+        setFormData({
+          title: grant.title,
+          summary: grant.summary,
+          details: grant.details,
+          applicantName: grant.fields.find((field: any) => field.id.includes('applicantName')) !== undefined,
+          applicantEmail: grant.fields.find((field: any) => field.id.includes('applicantEmail')) !== undefined,
+          teamMembers: grant.fields.find((field: any) => field.id.includes('teamMembers')) !== undefined,
+          projectName: grant.fields.find((field: any) => field.id.includes('projectName')) !== undefined,
+          projectGoals: grant.fields.find((field: any) => field.id.includes('projectGoals')) !== undefined,
+          projectDetails: grant.fields.find((field: any) => field.id.includes('projectDetails')) !== undefined,
+          projectLink: grant.fields.find((field: any) => field.id.includes('projectLink')) !== undefined,
+          isMultipleMilestones: grant.fields.find((field: any) => field.id.includes('isMultipleMilestones')) !== undefined,
+          fundingBreakdown: grant.fields.find((field: any) => field.id.includes('fundingBreakdown')) !== undefined,
+          extraField: grant.fields.find((field: any) => field.id.includes('extraField')) !== undefined,
+          reward: formatAmount(grant.reward.committed),
+          rewardCurrency: supportedCurrencies.find(
+            (currency) => currency.id.toLowerCase() === grant.reward.asset.toLowerCase(),
+          )!.label,
+          rewardCurrencyAddress: supportedCurrencies.find(
+            (currency) => currency.id.toLowerCase() === grant.reward.asset.toLowerCase(),
+          )!.id,
+          date: grant.deadline,
+        });
+      }
+    } catch (e: any) {
+      toast({
+        title: 'Error getting workspace data',
+        description: e.message,
+        status: 'error',
+      });
+    }
+  };
+
+  useEffect(() => {
+    setGrantID(router?.query?.grantID ?? '');
+  }, [router]);
+
+  useEffect(() => {
+    if (!grantID) return;
+
+    getGrantData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grantID]);
 
   return (
     <Container maxW="100%" display="flex" px="70px">
@@ -77,15 +209,18 @@ function EditGrant() {
         px={10}
       >
         <Breadcrumbs path={['Your Grants', 'Edit grant']} />
-        <Form
-          formData={formData}
-          onSubmit={(data: any) => {
+        {formData && (
+          <Form
+            hasClicked={hasClicked}
+            formData={formData}
+            onSubmit={(data: any) => {
             // eslint-disable-next-line no-console
-            console.log(data);
-            router.replace('/your_grants');
-          }}
-          refs={sideBarDetails.map((detail) => detail[2])}
-        />
+              // console.log(data);
+              handleGrantSubmit(data);
+            }}
+            refs={sideBarDetails.map((detail) => detail[2])}
+          />
+        )}
       </Container>
 
       <Sidebar

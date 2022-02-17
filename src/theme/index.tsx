@@ -21,7 +21,7 @@ const theme = extendTheme({
       700: '#6200EE',
     },
     brandDisabled: {
-      500: '#D0D3D3',
+      500: '#69CACA',
       600: '#656c6c',
     },
     backgrounds: {

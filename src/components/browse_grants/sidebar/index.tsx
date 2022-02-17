@@ -30,13 +30,14 @@ function Sidebar() {
         <Text fontSize="28px" lineHeight="35.5px">
           What is
           <br />
-          <Text display="inline-block" fontWeight="700">
+          <Text as="span" display="inline-block" fontWeight="700">
             Questbook?
           </Text>
         </Text>
 
         <Box mt={8}>
           <SidebarList
+            listHeading="Protocols & DAOs"
             listElements={[
               {
                 src: '/sidebar/create_grants.svg',
@@ -62,6 +63,7 @@ function Sidebar() {
 
         <Box mt={8}>
           <SidebarList
+            listHeading="Buidlers"
             listElements={[
               {
                 src: '/sidebar/explore_grants.svg',
@@ -70,6 +72,10 @@ function Sidebar() {
               {
                 src: '/sidebar/apply_for_grants.svg',
                 text: 'Apply for grants',
+              },
+              {
+                src: '/sidebar/win_grants.svg',
+                text: 'Win Grants',
               },
             ]}
             linkText="See our guide"

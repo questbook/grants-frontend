@@ -9,19 +9,27 @@
     "export": "next export"
   },
   "dependencies": {
+    "@apollo/client": "^3.5.8",
     "@chakra-ui/icons": "^1.1.1",
     "@chakra-ui/react": "^1.8.0",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
+    "@ethersproject/bignumber": "^5.5.0",
+    "@questbook/service-validator-client": "github:questbook/service-validator-typescript-client",
     "@toast-ui/editor": "^3.1.2",
     "@toast-ui/react-editor": "^3.1.2",
+    "bn.js": "^5.2.0",
+    "copy-to-clipboard": "^3.3.1",
     "draft-js": "^0.11.7",
     "ethers": "^5.5.4",
     "framer-motion": "^5.6.0",
+    "lottie-react": "^2.2.1",
+    "moment": "^2.29.1",
     "next": "12.0.8",
     "react": "^17.0.2",
     "react-datepicker": "^4.6.0",
     "react-dom": "^17.0.2",
+    "use-file-picker": "^1.4.1",
     "wagmi": "^0.2.9"
   },
   "devDependencies": {

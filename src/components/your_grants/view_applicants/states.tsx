@@ -1,11 +1,13 @@
 import React from 'react';
 import { Text } from '@chakra-ui/react';
 
+const maxWidth = '127px';
+
 function GrantApproved() {
   return (
     <Text
       w="100%"
-      maxW="115px"
+      maxW={maxWidth}
       bg="#C8E9DE"
       color="#334640"
       borderRadius="24px"
@@ -27,7 +29,7 @@ function Rejected() {
   return (
     <Text
       w="100%"
-      maxW="115px"
+      maxW={maxWidth}
       bg="#EBCCDD"
       color="#7B4646"
       borderRadius="24px"
@@ -48,7 +50,7 @@ function PendingReview() {
   return (
     <Text
       w="100%"
-      maxW="115px"
+      maxW={maxWidth}
       bg="#FFF0B8"
       color="#46251D"
       borderRadius="24px"
@@ -70,11 +72,11 @@ function ResubmissionRequested() {
   return (
     <Text
       w="100%"
-      maxW="115px"
-      bg="#FFF0B8"
-      color="#46251D"
+      maxW={maxWidth}
+      bg="#BBDEFF"
+      color="#3E4969"
       borderRadius="24px"
-      border="1px solid #EFC094"
+      border="1px solid #88BDEE"
       px={3}
       py={1}
       textAlign="center"
@@ -83,11 +85,33 @@ function ResubmissionRequested() {
       fontWeight="400"
       whiteSpace="nowrap"
     >
-      Changes Req
+      Awaiting Resubmit
+    </Text>
+  );
+}
+
+function GrantComplete() {
+  return (
+    <Text
+      w="100%"
+      maxW={maxWidth}
+      bg="#C8E9DE"
+      color="#334640"
+      borderRadius="24px"
+      border="1px solid #69B399"
+      px={3}
+      py={1}
+      textAlign="center"
+      fontSize="12px"
+      lineHeight="20px"
+      fontWeight="400"
+      whiteSpace="nowrap"
+    >
+      Complete
     </Text>
   );
 }
 
 export {
-  GrantApproved, Rejected, PendingReview, ResubmissionRequested,
+  GrantApproved, Rejected, PendingReview, ResubmissionRequested, GrantComplete,
 };

@@ -1,6 +1,6 @@
 import { Flex, Image, Text } from '@chakra-ui/react';
 import React from 'react';
-import { timeToString } from '../../../utils/formattingUtils';
+import moment from 'moment';
 
 function Badge({
   numOfApplicants,
@@ -23,7 +23,7 @@ function Badge({
       <Text fontSize="xs">
         Ends on
         {' '}
-        {timeToString(endTimestamp)}
+        {moment(endTimestamp).format('MMMM D')}
       </Text>
     </Flex>
   );

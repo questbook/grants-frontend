@@ -1,29 +1,97 @@
 import {
   Container, Flex, Image, Box, Text, Button,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { useAccount } from 'wagmi';
+import { gql } from '@apollo/client';
+import moment from 'moment';
 import Sidebar from '../../src/components/your_applications/manage_grant/sidebar';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Heading from '../../src/components/ui/heading';
 import MilestoneTable from '../../src/components/your_applications/manage_grant/milestoneTable';
 import FundingRequestedTable from '../../src/components/your_applications/manage_grant/fundingRequestedTable';
 import NavbarLayout from '../../src/layout/navbarLayout';
+import { ApiClientsContext } from '../_app';
+import { getApplicationDetails } from '../../src/graphql/daoQueries';
+import { getAssetInfo } from '../../src/utils/tokenUtils';
+import { useApplicationMilestones } from '../../src/graphql/queries';
 
 function ManageGrant() {
-  const tabs = [{
-    title: '1',
-    subtitle: 'Milestone',
-  },
-  {
-    icon: '/images/dummy/Ethereum Icon.svg',
-    title: '0',
-    subtitle: 'Funding Requested',
-  },
-  {
-    icon: '/images/dummy/Ethereum Icon.svg',
-    title: '20',
-    subtitle: 'Funding Recieved',
-  }];
+  const [applicationData, setApplicationData] = useState<any>({
+    grantTitle: '',
+    applicantAddress: '',
+    applicantEmail: '',
+    applicationDate: '',
+    grant: null,
+    id: '',
+  });
+
+  const [applicationID, setApplicationID] = useState<any>('');
+  const router = useRouter();
+  const subgraphClient = useContext(ApiClientsContext)?.subgraphClient;
+  const [{ data: accountData }] = useAccount({
+    fetchEns: false,
+  });
+
+  const { data: { milestones, rewardAsset }, refetch } = useApplicationMilestones(applicationID);
+  const fundingIcon = getAssetInfo(rewardAsset)?.icon;
+  const assetInfo = getAssetInfo(rewardAsset);
+
+  const tabs = [
+    {
+      title: milestones.length.toString(),
+      subtitle: milestones.length === 1 ? 'Milestone' : 'Milestones',
+    },
+    {
+      icon: fundingIcon,
+      title: '0',
+      subtitle: 'Funding Requested',
+    },
+    {
+      icon: fundingIcon,
+      title: '20',
+      subtitle: 'Funding Recieved',
+    },
+  ];
+
+  const getGrantData = async () => {
+    if (!subgraphClient || !accountData?.address) return;
+    try {
+      const { data } = (await subgraphClient.client.query({
+        query: gql(getApplicationDetails),
+        variables: {
+          applicationID,
+        },
+      })) as any;
+      if (data && data.grantApplication) {
+        const application = data.grantApplication;
+        // console.log(application);
+        setApplicationData({
+          title: application.grant.title,
+          applicantAddress: application.applicantId,
+          applicantEmail: application.fields.find((field: any) => field.id.includes('applicantEmail'))?.value[0],
+          applicationDate: moment.unix(application.createdAtS).format('D MMMM YYYY'),
+          grant: application.grant,
+          id: application.id,
+        });
+      }
+    } catch (e: any) {
+      // console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    setApplicationID(router?.query?.applicationID ?? '');
+  }, [router, accountData]);
+
+  useEffect(() => {
+    if (!subgraphClient || !accountData?.address) return;
+    if (!applicationID || applicationID.length < 1) return;
+    getGrantData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [applicationID, accountData?.address]);
+
   const [selected, setSelected] = React.useState(0);
   return (
     <Container maxW="100%" display="flex" px="70px">
@@ -37,7 +105,7 @@ function ManageGrant() {
         px={10}
       >
         <Breadcrumbs path={['Your Applications', 'Manage Grant']} />
-        <Heading mt="18px" title="Storage Provider (SP) Tooling Ideas" />
+        <Heading mt="18px" title={applicationData.title} />
         <Box mt={5} />
 
         <Flex direction="row" w="full" align="center">
@@ -73,10 +141,20 @@ function ManageGrant() {
           ))}
         </Flex>
 
-        {selected === 0 ? <MilestoneTable /> : <FundingRequestedTable />}
+        {
+          selected === 0
+            ? (
+              <MilestoneTable
+                refetch={refetch}
+                milestones={milestones}
+                rewardAssetId={rewardAsset}
+              />
+            )
+            : <FundingRequestedTable />
+        }
       </Container>
 
-      <Sidebar />
+      <Sidebar applicationData={applicationData} assetInfo={assetInfo} />
     </Container>
   );
 }

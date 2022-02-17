@@ -14,6 +14,6 @@
   },
   "rules": {
     // disabling this for faster development, remove before release
-    "react/jsx-props-no-spreading": "off" 
+    "react/jsx-props-no-spreading": "off"
   }
 }

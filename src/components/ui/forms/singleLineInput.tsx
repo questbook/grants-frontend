@@ -27,6 +27,7 @@ interface SingleLineInputProps {
   inputRightElement?: React.ReactNode;
   type?: string;
   height?: string | number;
+  visible?: boolean;
 }
 
 const defaultProps = {
@@ -43,6 +44,7 @@ const defaultProps = {
   inputRightElement: null,
   type: 'text',
   height: 12,
+  visible: true,
 };
 
 function SingleLineInput({
@@ -61,12 +63,12 @@ function SingleLineInput({
   inputRightElement,
   type,
   height,
-
+  visible,
 }: SingleLineInputProps) {
   const theme = useTheme();
   const ref = useRef(null);
   return (
-    <Flex flex={1} direction="column">
+    <Flex flex={1} direction="column" display={visible ? '' : 'none'}>
       <Flex direction="row" justify="space-between" align="center">
         <Text lineHeight="20px" fontWeight="bold">
           {label}
@@ -81,6 +83,9 @@ function SingleLineInput({
           isDisabled={disabled}
           isInvalid={isError}
           mt={1}
+          color="#122224"
+          background="#E8E9E9"
+          _disabled={{ color: '#A0A7A7', background: '#F3F4F4' }}
           variant="filled"
           placeholder={placeholder}
           value={value == null ? undefined : value}

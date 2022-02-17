@@ -61,6 +61,9 @@ function DateInput({
           isDisabled={disabled}
           isInvalid={isError}
           mt={1}
+          color="#122224"
+          background="#E8E9E9"
+          _disabled={{ color: '#A0A7A7', background: '#F3F4F4' }}
           variant="filled"
           placeholder={placeholder}
           value={value}

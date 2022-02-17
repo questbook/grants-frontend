@@ -23,6 +23,7 @@ function Funding({
   rewardCurrencyCoin,
 
   readOnly,
+  grantRequiredFields,
 }: {
   fundingAsk: string;
   setFundingAsk: (fundingAsk: string) => void;
@@ -39,6 +40,7 @@ function Funding({
   rewardCurrencyCoin: string;
 
   readOnly?: boolean;
+  grantRequiredFields: string[];
 }) {
   return (
     <>
@@ -64,14 +66,13 @@ function Funding({
           <Text mt="1px" lineHeight="20px" fontSize="14px" fontWeight="400">
             {`${rewardAmount} ${rewardCurrency}`}
             {' '}
-            ≈ 2500 USD
           </Text>
         </Flex>
       </Flex>
 
       <Box mt={8} />
 
-      <Flex alignItems="flex-start">
+      <Flex alignItems="flex-start" display={grantRequiredFields.includes('fundingBreakdown') ? 'flex' : 'none'}>
         <Box minW="160px" flex={1}>
           <SingleLineInput
             label="Funding Ask"
@@ -118,6 +119,7 @@ function Funding({
         isError={fundingBreakdownError}
         errorText="Required"
         tooltip="Write about how you planning use funds for your project - hiring, marketing etc."
+        visible={grantRequiredFields.includes('fundingBreakdown')}
       />
 
     </>

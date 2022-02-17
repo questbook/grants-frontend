@@ -1,4 +1,6 @@
-import React, { ReactElement, ReactNode } from 'react';
+import React, {
+  ReactElement, ReactNode, createContext, useMemo,
+} from 'react';
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import { ChakraProvider } from '@chakra-ui/react';
@@ -12,7 +14,10 @@ import {
 } from 'wagmi';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import dynamic from 'next/dynamic';
+import Head from 'next/head';
+import { Configuration, ValidationApi } from '@questbook/service-validator-client';
 import theme from '../src/theme';
+import SubgraphClient from '../src/graphql/subgraph';
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -43,13 +48,45 @@ const connectors = () => [
   }),
 ];
 
+export const ApiClientsContext = createContext<{
+  subgraphClient: SubgraphClient;
+  validatorApi: ValidationApi;
+  workspaceId: string | null;
+  setWorkspaceId:(id: string | null) => void;
+} | null>(null);
+
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  const [workspaceId, setWorkspaceId] = React.useState<string | null>(null);
+  const client = useMemo(() => new SubgraphClient(), []);
+
+  const validatorApi = useMemo(() => {
+    const validatorConfiguration = new Configuration({
+      basePath: 'https://api-grant-validator.questbook.app',
+    });
+    return (
+      new ValidationApi(validatorConfiguration)
+    );
+  }, []);
+
+  const apiClients = useMemo(() => ({
+    subgraphClient: client,
+    validatorApi,
+    workspaceId,
+    setWorkspaceId,
+  }), [client, validatorApi, workspaceId, setWorkspaceId]);
+
   const getLayout = Component.getLayout ?? ((page) => page);
   return (
     <Provider autoConnect connectors={connectors}>
-      <ChakraProvider theme={theme}>
-        {getLayout(<Component {...pageProps} />)}
-      </ChakraProvider>
+      <ApiClientsContext.Provider value={apiClients}>
+        <ChakraProvider theme={theme}>
+          <Head>
+            <link rel="icon" href="/favicon.png" />
+            <link rel="icon" href="/favicon.svg" />
+          </Head>
+          {getLayout(<Component {...pageProps} />)}
+        </ChakraProvider>
+      </ApiClientsContext.Provider>
     </Provider>
   );
 }

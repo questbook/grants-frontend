@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
   Box,
   Button,
@@ -8,199 +8,312 @@ import {
   Link,
   Flex,
   Container,
+  useToast,
+  ToastId,
+  Center,
+  CircularProgress,
 } from '@chakra-ui/react';
+import { useContract, useSigner } from 'wagmi';
+import { GrantApplicationUpdate } from '@questbook/service-validator-client';
+import { useRouter } from 'next/router';
+import { GrantApplicationFieldsSubgraph, GrantApplicationProps, GrantApplicationUpdateSubgraph } from '../../../../types/application';
+import { ApiClientsContext } from '../../../../../pages/_app';
+import config from '../../../../constants/config';
+import { getFormattedFullDateFromUnixTimestamp, parseAmount } from '../../../../utils/formattingUtils';
+import InfoToast from '../../../ui/infoToast';
 import ApplicantDetails from './1_applicantDetails';
 import AboutProject from './3_aboutProject';
 import AboutTeam from './2_aboutTeam';
 import Funding from './4_funding';
+
+import ApplicationRegistryAbi from '../../../../contracts/abi/ApplicationRegistryAbi.json';
 
 function Form({
   onSubmit,
   rewardAmount,
   rewardCurrency,
   rewardCurrencyCoin,
-  resubmitComment,
-  rejectedComment,
   formData,
+  grantTitle,
+  sentDate,
+  daoLogo,
+  state,
+  feedback,
+  grantRequiredFields,
+  applicationID,
+  // grantID,
 }: {
   onSubmit: null | ((data: any) => void);
   rewardAmount: string;
   rewardCurrency: string;
   rewardCurrencyCoin: string;
-  resubmitComment?: string;
-  rejectedComment?: string;
-  formData: any;
+  formData: GrantApplicationProps | null;
+  grantTitle: string;
+  sentDate: string;
+  daoLogo: string;
+  state: string;
+  feedback: string;
+  grantRequiredFields: string[];
+  applicationID: string;
+  // grantID: string;
 }) {
-  const [applicantName, setApplicantName] = useState(
-    formData.applicantName ?? '',
-  );
+  const toast = useToast();
+  const router = useRouter();
+  const [signer] = useSigner();
+
+  const applicationRegistryContract = useContract({
+    addressOrName: config.ApplicationRegistryAddress,
+    contractInterface: ApplicationRegistryAbi,
+    signerOrProvider: signer.data,
+  });
+
+  const apiClientContext = useContext(ApiClientsContext);
+  // const { subgraphClient } : any = apiClientContext;
+  const [applicantName, setApplicantName] = useState('');
   const [applicantNameError, setApplicantNameError] = useState(false);
 
-  const [applicantEmail, setApplicantEmail] = useState(
-    formData.applicantEmail ?? false,
-  );
+  const [applicantEmail, setApplicantEmail] = useState('');
   const [applicantEmailError, setApplicantEmailError] = useState(false);
 
-  const [teamMembers, setTeamMembers] = useState<number | null>(
-    formData.teamMembers ?? 1,
-  );
+  const [teamMembers, setTeamMembers] = useState(1);
   const [teamMembersError, setTeamMembersError] = useState(false);
 
-  const [membersDescription, setMembersDescription] = useState(
-    formData.membersDescription
-      ? formData.membersDescription.map((member: any) => ({
-        description: member.description ?? '',
-        isError: false,
-      }))
-      : [
-        {
-          description: '',
-          isError: false,
-        },
-      ],
-  );
+  const [membersDescription, setMembersDescription] = useState<any[]>([]);
 
-  const [projectName, setProjectName] = useState(formData.projectName ?? '');
+  const [projectName, setProjectName] = useState('');
   const [projectNameError, setProjectNameError] = useState(false);
 
-  const [projectLinks, setProjectLinks] = useState(
-    formData.projectLinks
-      ? formData.projectLinks.map((link: any) => ({
-        link: link.link ?? '',
-        isError: false,
-      }))
-      : [
-        {
-          link: '',
-          isError: false,
-        },
-      ],
-  );
+  const [projectLinks, setProjectLinks] = useState<any[]>([]);
 
-  const [projectDetails, setProjectDetails] = useState(
-    formData.projectDetails ?? '',
-  );
+  const [projectDetails, setProjectDetails] = useState('');
   const [projectDetailsError, setProjectDetailsError] = useState(false);
 
-  const [projectGoal, setProjectGoal] = useState(formData.projectGoal ?? '');
+  const [projectGoal, setProjectGoal] = useState('');
   const [projectGoalError, setProjectGoalError] = useState(false);
 
-  const [projectMilestones, setProjectMilestones] = useState(
-    formData.projectMilestones
-      ? formData.projectMilestones.map((milestone: any) => ({
-        milestone: milestone.milestone ?? '',
-        milestoneReward: milestone.milestoneReward ?? '',
-        milestoneIsError: false,
-        milestoneRewardIsError: false,
-      }))
-      : [
-        {
-          milestone: '',
-          milestoneReward: '',
-          milestoneIsError: false,
-          milestoneRewardIsError: false,
-        },
-      ],
-  );
+  const [projectMilestones, setProjectMilestones] = useState<any[]>([]);
 
-  const [fundingAsk, setFundingAsk] = useState(formData.fundingAsk ?? '');
+  const [fundingAsk, setFundingAsk] = useState('');
   const [fundingAskError, setFundingAskError] = useState(false);
 
-  const [fundingBreakdown, setFundingBreakdown] = useState(
-    formData.fundingBreakdown ?? '',
-  );
+  const [fundingBreakdown, setFundingBreakdown] = useState('');
   const [fundingBreakdownError, setFundingBreakdownError] = useState(false);
 
-  const handleOnSubmit = () => {
-    if (!onSubmit) {
-      return;
-    }
-    let error = false;
-    if (applicantName === '') {
-      setApplicantNameError(true);
-      error = true;
-    }
-    if (applicantEmail === '') {
-      setApplicantEmailError(true);
-      error = true;
-    }
-    if (!teamMembers || teamMembers <= 0) {
-      setTeamMembersError(true);
-      error = true;
-    }
+  useEffect(() => {
+    try {
+      if (formData) {
+        setApplicantName(formData.applicantName);
+        setApplicantEmail(formData.applicantEmail);
+        setTeamMembers(formData.teamMembers);
+        setMembersDescription(formData?.membersDescription.map((member: any) => ({
+          description: member.description ?? '',
+          isError: false,
+        })));
+        setProjectName(formData.projectName);
+        setProjectLinks(formData?.projectLinks.map((link: any) => ({
+          link: link.link ?? '',
+          isError: false,
+        })));
+        setProjectDetails(formData.projectDetails);
+        setProjectGoal(formData.projectGoal);
+        setProjectMilestones(formData?.projectMilestones.map((milestone: any) => ({
+          milestone: milestone.milestone ?? '',
+          milestoneReward: milestone.milestoneReward ?? '',
+          milestoneIsError: false,
+          milestoneRewardIsError: false,
+        })));
 
-    let membersDescriptionError = false;
-    const newMembersDescriptionArray = [...membersDescription];
-    membersDescription.forEach((member: any, index: number) => {
-      if (member.description === '') {
-        newMembersDescriptionArray[index].isError = true;
-        membersDescriptionError = true;
+        setFundingAsk(formData.fundingAsk);
+        setFundingBreakdown(formData.fundingBreakdown);
       }
+    } catch (error) {
+      // console.log(error);
+    }
+  }, [formData]);
+
+  const [hasClicked, setHasClicked] = React.useState(false);
+  const toastRef = React.useRef<ToastId>();
+
+  const closeToast = () => {
+    if (toastRef.current) {
+      toast.close(toastRef.current);
+    }
+  };
+
+  const showToast = ({ link } : { link: string }) => {
+    toastRef.current = toast({
+      position: 'top',
+      render: () => (
+        <InfoToast
+          link={link}
+          close={closeToast}
+        />
+      ),
     });
+  };
 
-    if (membersDescriptionError) {
-      setMembersDescription(newMembersDescriptionArray);
-      error = true;
-    }
-
-    if (projectName === '') {
-      setProjectNameError(true);
-      error = true;
-    }
-
-    let projectLinksError = false;
-    const newProjectLinks = [...projectLinks];
-    projectLinks.forEach((project: any, index: number) => {
-      if (project.link === '') {
-        newProjectLinks[index].isError = true;
-        projectLinksError = true;
+  const handleOnSubmit = async () => {
+    try {
+      if (!onSubmit) {
+        return;
       }
-    });
-
-    if (projectLinksError) {
-      setProjectLinks(newProjectLinks);
-      error = true;
-    }
-
-    if (projectDetails === '') {
-      setProjectDetailsError(true);
-      error = true;
-    }
-    if (projectGoal === '') {
-      setProjectGoalError(true);
-      error = true;
-    }
-
-    let projectMilestonesError = false;
-    const newProjectMilestones = [...projectMilestones];
-    projectMilestones.forEach((project: any, index: number) => {
-      if (project.milestone === '') {
-        newProjectMilestones[index].milestoneIsError = true;
-        projectMilestonesError = true;
+      let error = false;
+      if (applicantName === '' && grantRequiredFields.includes('applicantName')) {
+        setApplicantNameError(true);
+        error = true;
       }
-      if (project.milestoneReward === '') {
-        newProjectMilestones[index].milestoneRewardIsError = true;
-        projectMilestonesError = true;
+      if (applicantEmail === '' && grantRequiredFields.includes('applicantEmail')) {
+        setApplicantEmailError(true);
+        error = true;
       }
-    });
+      if ((!teamMembers || teamMembers <= 0) && grantRequiredFields.includes('teamMembers')) {
+        setTeamMembersError(true);
+        error = true;
+      }
 
-    if (projectMilestonesError) {
-      setProjectMilestones(newProjectMilestones);
-      error = true;
-    }
+      let membersDescriptionError = false;
+      const newMembersDescriptionArray = [...membersDescription];
+      membersDescription.forEach((member, index) => {
+        if (member.description === '' && grantRequiredFields.includes('memberDetails')) {
+          newMembersDescriptionArray[index].isError = true;
+          membersDescriptionError = true;
+        }
+      });
 
-    if (fundingAsk === '') {
-      setFundingAskError(true);
-      error = true;
+      if (membersDescriptionError) {
+        setMembersDescription(newMembersDescriptionArray);
+        error = true;
+      }
+
+      if (projectName === '' && grantRequiredFields.includes('projectName')) {
+        setProjectNameError(true);
+        error = true;
+      }
+
+      let projectLinksError = false;
+      const newProjectLinks = [...projectLinks];
+      projectLinks.forEach((project, index) => {
+        if (project.link === '' && grantRequiredFields.includes('projectLink')) {
+          newProjectLinks[index].isError = true;
+          projectLinksError = true;
+        }
+      });
+
+      if (projectLinksError) {
+        setProjectLinks(newProjectLinks);
+        error = true;
+      }
+
+      if (projectDetails === '' && grantRequiredFields.includes('projectDetails')) {
+        setProjectDetailsError(true);
+        error = true;
+      }
+      if (projectGoal === '' && grantRequiredFields.includes('projectGoals')) {
+        setProjectGoalError(true);
+        error = true;
+      }
+
+      let projectMilestonesError = false;
+      const newProjectMilestones = [...projectMilestones];
+      projectMilestones.forEach((project, index) => {
+        if (project.milestone === '') {
+          newProjectMilestones[index].milestoneIsError = true;
+          projectMilestonesError = true;
+        }
+        if (project.milestoneReward === '') {
+          newProjectMilestones[index].milestoneRewardIsError = true;
+          projectMilestonesError = true;
+        }
+      });
+
+      if (projectMilestonesError) {
+        setProjectMilestones(newProjectMilestones);
+        error = true;
+      }
+
+      if (fundingAsk === '' && grantRequiredFields.includes('fundingAsk')) {
+        setFundingAskError(true);
+        error = true;
+      }
+      if (fundingBreakdown === '' && grantRequiredFields.includes('fundingBreakdown')) {
+        setFundingBreakdownError(true);
+        error = true;
+      }
+      if (error) {
+        return;
+      }
+
+      setHasClicked(true);
+      const links = projectLinks.map((pl) => (pl.link));
+
+      const milestones = projectMilestones.map((pm) => (
+        { title: pm.milestone, amount: parseAmount(pm.milestoneReward) }
+      ));
+
+      if (!signer || !signer.data || !apiClientContext) return;
+      const data: GrantApplicationUpdateSubgraph = {
+        fields: {
+          applicantName: [applicantName],
+          applicantEmail: [applicantEmail],
+          projectName: [projectName],
+          projectDetails: [projectDetails],
+          fundingAsk: [parseAmount(fundingAsk)],
+          fundingBreakdown: [fundingBreakdown],
+          teamMembers: [Number(teamMembers).toString()],
+          memberDetails: membersDescription.map((md) => (md.description)),
+          projectLink: links,
+          projectGoals: [projectGoal],
+          isMultipleMilestones: [grantRequiredFields.includes('isMultipleMilestones').toString()],
+        },
+        milestones,
+
+      };
+      Object.keys(data.fields).forEach((field) => {
+        if (!grantRequiredFields.includes(field)) {
+          delete data.fields[field as keyof GrantApplicationFieldsSubgraph];
+        }
+      });
+      const { data: { ipfsHash } } = await apiClientContext
+        .validatorApi
+        .validateGrantApplicationUpdate(data as unknown as GrantApplicationUpdate);
+      const transaction = await applicationRegistryContract.updateApplicationMetadata(
+        applicationID,
+        ipfsHash,
+        projectMilestones.length,
+      );
+      const transactionData = await transaction.wait();
+      toast({ title: 'Transaction succeeded', status: 'success' });
+
+      setHasClicked(false);
+      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
+      router.push('/your_applications');
+
+      // await subgraphClient.waitForBlock(transactionData.blockNumber);
+
+      // const { data: { grantApplications } } = (await subgraphClient.client.query(
+      //   {
+
+      //     query: gql(getGrantApplication),
+      //     variables: {
+      //       grantID,
+      //       applicantID: await signer?.data?.getAddress(),
+      //     },
+      //   },
+      // )) as any;
+      // console.log(grantApplications);
+      // if (!(grantApplications.length > 0)) {
+      //   throw new Error('Application not indexed');
+      // }
+
+      // onSubmit({ data: grantApplications });
+    } catch (error) {
+      setHasClicked(false);
+      // console.log(error);
+      toast({
+        title: 'Application not indexed',
+        status: 'error',
+      });
     }
-    if (fundingBreakdown === '') {
-      setFundingBreakdownError(true);
-      error = true;
-    }
-    if (error) {
-      return;
-    }
-    onSubmit({ data: true });
   };
 
   return (
@@ -208,20 +321,22 @@ function Form({
       <Image
         h="96px"
         w="96px"
-        src="/images/dummy/Polygon Icon.svg"
+        src={daoLogo}
         alt="Polygon DAO"
       />
       <Text mt={6} variant="heading">
-        Storage Provider (SP) Tooling Ideas
+        {grantTitle}
       </Text>
 
       <Text mt="10px" fontSize="16px" lineHeight="24px" fontWeight="500" color="#717A7C">
         <Image mb="-2px" src="/ui_icons/calendar.svg" w="16px" h="18px" display="inline-block" />
         {' '}
-        Sent on 24 June, 2022
+        Sent on
+        {' '}
+        {getFormattedFullDateFromUnixTimestamp(Number(sentDate))}
       </Text>
 
-      {rejectedComment && (
+      {state === 'rejected' && (
         <Flex
           alignItems="flex-start"
           bgColor="#FFC0C0"
@@ -256,13 +371,13 @@ function Form({
               Application Rejected
             </Text>
             <Text fontSize="16px" lineHeight="24px" fontWeight="400" color="#7B4646">
-              {rejectedComment}
+              {feedback}
             </Text>
           </Flex>
         </Flex>
       )}
 
-      {resubmitComment && (
+      {state === 'resubmit' && (
         <Flex
           alignItems="flex-start"
           bgColor="#FEF6D9"
@@ -292,7 +407,7 @@ function Form({
               Resubmit your Application
             </Text>
             <Text fontSize="16px" lineHeight="24px" fontWeight="400" color="#7B4646">
-              {resubmitComment}
+              {feedback}
             </Text>
           </Flex>
         </Flex>
@@ -301,14 +416,20 @@ function Form({
       {onSubmit ? (
         <>
           <Box mt={8} />
-          <Button
-            onClick={handleOnSubmit}
-            mx={10}
-            alignSelf="stretch"
-            variant="primary"
-          >
-            Resubmit Application
-          </Button>
+          {hasClicked ? (
+            <Center>
+              <CircularProgress isIndeterminate color="brand.500" size="48px" />
+            </Center>
+          ) : (
+            <Button
+              onClick={handleOnSubmit}
+              mx={10}
+              alignSelf="stretch"
+              variant="primary"
+            >
+              Resubmit Application
+            </Button>
+          )}
           <Box mt={4} />
         </>
       ) : null}
@@ -340,6 +461,7 @@ function Form({
           setApplicantEmail={setApplicantEmail}
           setApplicantEmailError={setApplicantEmailError}
           readOnly={onSubmit === null}
+          grantRequiredFields={grantRequiredFields}
         />
 
         <Box mt="43px" />
@@ -351,6 +473,7 @@ function Form({
           membersDescription={membersDescription}
           setMembersDescription={setMembersDescription}
           readOnly={onSubmit === null}
+          grantRequiredFields={grantRequiredFields}
         />
 
         <Box mt="19px" />
@@ -374,6 +497,7 @@ function Form({
           rewardCurrency={rewardCurrency}
           rewardCurrencyCoin={rewardCurrencyCoin}
           readOnly={onSubmit === null}
+          grantRequiredFields={grantRequiredFields}
         />
 
         <Box mt="43px" />
@@ -390,6 +514,7 @@ function Form({
           rewardCurrency={rewardCurrency}
           rewardCurrencyCoin={rewardCurrencyCoin}
           readOnly={onSubmit === null}
+          grantRequiredFields={grantRequiredFields}
         />
       </Container>
 
@@ -432,7 +557,5 @@ function Form({
 }
 
 Form.defaultProps = {
-  resubmitComment: '',
-  rejectedComment: '',
 };
 export default Form;

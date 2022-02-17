@@ -2,61 +2,77 @@ import {
   Container,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, {
+  ReactElement, useCallback, useEffect, useState,
+} from 'react';
+import { gql } from '@apollo/client';
+import { ethers } from 'ethers';
+import { GrantApplicationProps } from '../../src/types/application';
+import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils';
 import Form from '../../src/components/your_applications/grant_application/form';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import NavbarLayout from '../../src/layout/navbarLayout';
+import SubgraphClient from '../../src/graphql/subgraph';
+import { getApplicationDetails } from '../../src/graphql/daoQueries';
+import { getAssetInfo } from '../../src/utils/tokenUtils';
 
 function ViewApplication() {
-  const rewardAmount = '60';
-  const rewardCurrency = 'ETH';
-  const rewardCurrencyCoin = '/network_icons/eth_mainnet.svg';
-
   const router = useRouter();
-  const [isReadOnly, setIsReadOnly] = useState(true);
+  const [applicationID, setApplicationId] = React.useState<any>('');
+  const [application, setApplication] = React.useState<any>([]);
 
-  const [rejectedComment, setRejectedComment] = useState('');
-  const [resubmitComment, setResubmitComment] = useState('');
+  const [formData, setFormData] = useState<GrantApplicationProps | null>(null);
+
+  const getApplicationDetailsData = useCallback(async () => {
+    const subgraphClient = new SubgraphClient();
+    if (!subgraphClient.client) return null;
+    try {
+      const { data } = (await subgraphClient.client.query({
+
+        query: gql(getApplicationDetails),
+        variables: {
+          applicationID,
+        },
+      })) as any;
+      // console.log(data);
+      if (data && data.grantApplication) {
+        setApplication(data.grantApplication);
+      }
+      return true;
+    } catch (e) {
+      // console.log(e);
+      return null;
+    }
+  }, [applicationID]);
 
   useEffect(() => {
-    if (router.query.viewApplicationType === 'resubmit') {
-      setIsReadOnly(false);
-      setResubmitComment('This requires a resubmission');
-    }
-    if (router.query.viewApplicationType === 'rejected') {
-      setRejectedComment('This is bad news');
-    }
-  }, [router.query.viewApplicationType]);
+    setApplicationId(router?.query?.applicationID ?? '');
+  }, [router]);
 
-  const formData = {
-    applicantName: 'Dhairya',
-    applicantEmail: 'dhairya@email.com',
-    teamMembers: 1,
-    membersDescription: [
-      {
-        description: 'Crazy guy',
-      },
-    ],
+  useEffect(() => {
+    if (!applicationID) return;
+    getApplicationDetailsData();
+  }, [applicationID, getApplicationDetailsData]);
 
-    projectName: 'Project Icarus',
-    projectLinks: [
-      {
-        link: 'github',
-      },
-    ],
-    projectDetails: 'This is a project',
-    projectGoal: '100',
-
-    projectMilestones: [
-      {
-        milestone: 'Milestone 1',
-        milestoneReward: '10',
-      },
-    ],
-
-    fundingAsk: '100',
-    fundingBreakdown: 'lol',
-  };
+  useEffect(() => {
+    if (!application || !application?.fields?.length) return;
+    const fields = application?.fields;
+    const fd: GrantApplicationProps = {
+      applicantName: fields.find((f:any) => f.id.split('.')[1] === 'applicantName')?.value[0] ?? '',
+      applicantEmail: fields.find((f:any) => f.id.split('.')[1] === 'applicantEmail')?.value[0] ?? '',
+      teamMembers: Number(fields.find((f:any) => f.id.split('.')[1] === 'teamMembers')?.value[0]) ?? 1,
+      membersDescription: fields.find((f:any) => f.id.split('.')[1] === 'memberDetails')?.value.map((val:string) => ({ description: val })) ?? [],
+      projectName: fields.find((f:any) => f.id.split('.')[1] === 'projectName')?.value[0] ?? '',
+      projectLinks: fields.find((f:any) => f.id.split('.')[1] === 'projectLink')?.value.map((val:string) => ({ link: val })) ?? [],
+      projectDetails: fields.find((f:any) => f.id.split('.')[1] === 'projectDetails')?.value[0] ?? '',
+      projectGoal: fields.find((f:any) => f.id.split('.')[1] === 'projectGoals')?.value[0] ?? '',
+      projectMilestones: application.milestones
+        .map((ms:any) => ({ milestone: ms.title, milestoneReward: ethers.utils.formatEther(ms.amount ?? '0') })) ?? [],
+      fundingAsk: ethers.utils.formatEther(fields.find((f:any) => f.id.split('.')[1] === 'fundingAsk')?.value[0] ?? '0'),
+      fundingBreakdown: fields.find((f:any) => f.id.split('.')[1] === 'fundingBreakdown')?.value[0] ?? '',
+    };
+    setFormData(fd);
+  }, [application]);
 
   return (
     <Container maxW="100%" display="flex" px="70px">
@@ -71,15 +87,27 @@ function ViewApplication() {
       >
         <Breadcrumbs path={['Your Applications', 'Grant Application']} />
         <Form
-          onSubmit={isReadOnly ? null : () => {
-            router.back();
+          onSubmit={application && application?.state !== 'resubmit' ? null : ({ data }) => {
+            router.push({
+              pathname: '/your_applications',
+              query: {
+                applicantID: data[0].applicantId,
+                account: true,
+              },
+            });
           }}
-          rewardAmount={rewardAmount}
-          rewardCurrency={rewardCurrency}
-          rewardCurrencyCoin={rewardCurrencyCoin}
-          rejectedComment={rejectedComment}
-          resubmitComment={resubmitComment}
+          rewardAmount={ethers.utils.formatEther(application?.grant?.reward?.committed ?? '1').toString()}
+          rewardCurrency={getAssetInfo(application?.grant?.reward?.asset)?.label}
+          rewardCurrencyCoin={getAssetInfo(application?.grant?.reward?.asset)?.icon}
           formData={formData}
+          grantTitle={application?.grant?.title}
+          sentDate={application?.createdAtS}
+          daoLogo={getUrlForIPFSHash(application?.grant?.workspace?.logoIpfsHash)}
+          state={application?.state}
+          feedback={application?.feedback}
+          grantRequiredFields={application?.fields?.map((field:any) => field.id.split('.')[1]) ?? []}
+          applicationID={applicationID}
+          // grantID={application?.grant?.id}
         />
       </Container>
     </Container>

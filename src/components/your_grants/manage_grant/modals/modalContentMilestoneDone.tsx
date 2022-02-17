@@ -1,16 +1,94 @@
 import {
-  ModalBody, Flex, Text, Button, Box, Image,
+  ModalBody, Flex, Text, Button, Box, Image, useToast, Center, CircularProgress, ToastId,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import config from 'src/constants/config';
+import { ApiClientsContext } from 'pages/_app';
+import React, { useContext, useState } from 'react';
+import { ApplicationMilestone } from 'src/graphql/queries';
+import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.json';
+import { getFormattedDateFromUnixTimestampWithYear, getMilestoneMetadata } from 'src/utils/formattingUtils';
+import { useContract, useSigner } from 'wagmi';
+import InfoToast from 'src/components/ui/infoToast';
 import MultiLineInput from '../../../ui/forms/multiLineInput';
 
 interface Props {
-  onClose: () => void;
+  milestone: ApplicationMilestone | undefined
+  done: () => void
 }
 
-function ModalContent({ onClose }: Props) {
+function ModalContent({ milestone, done }: Props) {
+  const { validatorApi, workspaceId } = useContext(ApiClientsContext)!;
+  const [signerStates] = useSigner();
+  const applicationRegContract = useContract({
+    addressOrName: config.ApplicationRegistryAddress,
+    contractInterface: ApplicationRegistryAbi,
+    signerOrProvider: signerStates.data,
+  });
+
   const [details, setDetails] = useState('');
   const [detailsError, setDetailsError] = useState(false);
+
+  const [hasClicked, setHasClicked] = React.useState(false);
+  const toastRef = React.useRef<ToastId>();
+  const toast = useToast();
+
+  const closeToast = () => {
+    if (toastRef.current) {
+      toast.close(toastRef.current);
+    }
+  };
+
+  const showToast = ({ link } : { link: string }) => {
+    toastRef.current = toast({
+      position: 'top',
+      render: () => (
+        <InfoToast
+          link={link}
+          close={closeToast}
+        />
+      ),
+    });
+  };
+
+  const markAsDone = async () => {
+    setHasClicked(true);
+
+    try {
+      const { data } = await validatorApi.validateApplicationMilestoneUpdate({ text: details });
+      console.log(`uploaded milestone update data to IPFS: ${data.ipfsHash}`);
+
+      const { milestoneIndex, applicationId } = getMilestoneMetadata(milestone)!;
+      // contract interaction
+      const transaction = await applicationRegContract.approveMilestone(
+        applicationId,
+        Number(milestoneIndex),
+        Number(workspaceId),
+        data.ipfsHash,
+      );
+
+      const transactionData = await transaction.wait();
+
+      console.log('executed transaction', transactionData);
+
+      // await subgraphClient.waitForBlock(transactionData.blockNumber);
+
+      // console.log('executed application milestone');
+
+      done();
+      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
+    } catch (error: any) {
+      console.error('error in milestone update ', error);
+      toast({
+        title: error.name,
+        description: error.message,
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
+    } finally {
+      setHasClicked(false);
+    }
+  };
 
   return (
     <ModalBody maxW="521px">
@@ -22,22 +100,31 @@ function ModalContent({ onClose }: Props) {
         <Text mt={8} textAlign="center" variant="applicationText">
           The grantee can see your summary.
         </Text>
-        <Text
-          mt={5}
-          variant="applicationText"
-          textAlign="center"
-          fontWeight="700"
-        >
-          Grantee marked it as done on September 5, 2022.
-        </Text>
-        <Text
-          mt={8}
-          variant="applicationText"
-          fontWeight="700"
-        >
-          Milestone Summary by Grantee
-        </Text>
-        <Text variant="applicationText" mt={4}>A tool, script or tutorial to set up monitoring for miner GPU, CPU, & memory.</Text>
+        {
+          milestone?.state === 'requested' && (
+            <>
+              <Text
+                mt={5}
+                variant="applicationText"
+                textAlign="center"
+                fontWeight="700"
+              >
+                Grantee marked it as done on
+                {' '}
+                {getFormattedDateFromUnixTimestampWithYear(milestone!.updatedAtS || 0)}
+              </Text>
+              <Text
+                mt={8}
+                variant="applicationText"
+                fontWeight="700"
+              >
+                Milestone Summary by Grantee
+              </Text>
+              <Text variant="applicationText" mt={4}>{milestone.text || 'N/A'}</Text>
+            </>
+          )
+        }
+
         <Flex mt={6} w="100%">
           <MultiLineInput
             label="Feedback and Comments"
@@ -74,9 +161,16 @@ function ModalContent({ onClose }: Props) {
             </Button>
           </Text>
         </Flex>
-        <Button w="100%" variant="primary" mt={8} onClick={onClose}>
-          Mark as Done
-        </Button>
+
+        {hasClicked ? (
+          <Center>
+            <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
+          </Center>
+        ) : (
+          <Button w="100%" variant="primary" mt={8} onClick={markAsDone}>
+            Mark as Done
+          </Button>
+        )}
         <Box mb={4} />
       </Flex>
     </ModalBody>

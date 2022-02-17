@@ -10,10 +10,10 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface DropdownProps {
-  listItems: { icon?: string; label: string }[];
+  listItems: { icon?: string; label: string, id?: string }[];
   listItemsMinWidth?: string;
   label?: string;
   // eslint-disable-next-line react/no-unused-prop-types
@@ -40,6 +40,9 @@ function Dropdown({
   const [isOpen, setIsOpen] = React.useState(false);
   const defaultSelected = listItems[defaultIndex ?? 0];
   const [selected, setSelected] = React.useState(defaultSelected);
+  useEffect(() => {
+    setSelected(defaultSelected);
+  }, [defaultSelected]);
   return (
     <Flex flexDirection="column" alignItems="stretch" position="relative">
       {label && label.length && (
@@ -84,12 +87,17 @@ function Dropdown({
           </Container>
         </MenuButton>
         <MenuList minW={0} py={0}>
-          {listItems.map(({ icon, label: text }) => (
+          {listItems.map(({ icon, label: text, id }) => (
             <MenuItem
+              key={`menu-item-${text}`}
               onClick={() => {
                 if (!onChange) return;
                 setSelected({ icon, label: text });
-                onChange(text);
+                if (id) {
+                  onChange({ id, label: text });
+                } else {
+                  onChange(text);
+                }
               }}
               minW={listItemsMinWidth}
               p={0}

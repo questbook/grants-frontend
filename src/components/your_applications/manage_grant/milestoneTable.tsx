@@ -1,39 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Text, Image, Flex, Button,
 } from '@chakra-ui/react';
+import AbstractMilestonesTable, { AbstractMilestonesTableProps } from 'src/components/ui/tables/AbstractMilestonesTable';
+import { ApplicationMilestone } from 'src/graphql/queries';
 import Modal from '../../ui/modal';
 import MilestoneDoneModalContent from './modals/modalContentMilestoneDone';
 import MilestoneDoneCheckModalContent from './modals/modalContentMilestoneDoneCheck';
 import MilestoneDoneConfirmationModalContent from './modals/modalContentMilestoneDoneConfirmation';
-import { timeToString } from '../../../utils/formattingUtils';
-import data from './milestoneTableDummyData';
+import { getMilestoneTitle, timeToString } from '../../../utils/formattingUtils';
 
-function Table() {
-  const [isMilestoneDoneModalOpen, setIsMilestoneDoneModalOpen] = React.useState(false);
-  const [isMilestoneDoneCheckModalOpen, setIsMilestoneDoneCheckModalOpen] = React.useState(false);
-  const [
-    isMilestoneDoneConfirmationModalOpen,
-    setIsMilestoneDoneConfirmationModalOpen,
-  ] = React.useState(false);
+type OpenedModalType = 'milestone-done' | 'milestone-view' | 'milestone-confirm';
+type OpenedModal = { type: OpenedModalType, milestone: ApplicationMilestone };
 
-  const tableHeaders = [
-    {
-      title: 'Milestone',
-      flex: 0.504,
-    },
-    {
-      title: 'Reward / Expected Reward',
-      flex: 0.358,
-    },
-    {
-      title: 'Status',
-      flex: 0.138,
-    },
-  ];
+function Table(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
+  const [openedModal, setOpenedModal] = useState<OpenedModal>();
 
-  const renderStatus = (status: any) => {
-    if (status.state === 'pending') {
+  const renderStatus = (milestone: ApplicationMilestone) => {
+    const status = milestone.state;
+    const updatedAtS = milestone.updatedAtS || 0;
+    if (status === 'submitted') {
       return (
         <Button
           variant="outline"
@@ -45,13 +31,13 @@ function Table() {
           borderRadius={8}
           borderColor="brand.500"
           height="32px"
-          onClick={() => setIsMilestoneDoneModalOpen(true)}
+          onClick={() => setOpenedModal({ type: 'milestone-done', milestone })}
         >
           Mark as Done
         </Button>
       );
     }
-    if (status.state === 'done') {
+    if (status === 'requested') {
       return (
         <Flex direction="column" justify="end" align="end">
           <Text
@@ -63,10 +49,10 @@ function Table() {
             Marked as Done on
             {' '}
             <Text display="inline-block" variant="footer" fontWeight="500">
-              {timeToString(status.done_date.timestamp)}
+              {timeToString(updatedAtS * 1000)}
             </Text>
           </Text>
-          <Button variant="link" _focus={{}}>
+          <Button variant="link" onClick={() => setOpenedModal({ type: 'milestone-view', milestone })}>
             <Text variant="footer" color="#6200EE">
               View
             </Text>
@@ -101,10 +87,10 @@ function Table() {
             variant="footer"
             fontWeight="500"
           >
-            {timeToString(status.approved_date.timestamp)}
+            {timeToString(updatedAtS * 1000)}
           </Text>
         </Text>
-        <Button variant="link" _focus={{}}>
+        <Button variant="link" onClick={() => setOpenedModal({ type: 'milestone-view', milestone })}>
           <Text textAlign="right" variant="footer" color="#6200EE">
             View
           </Text>
@@ -114,144 +100,48 @@ function Table() {
   };
 
   return (
-    <Flex
-      w="100%"
-      my={4}
-      align="center"
-      direction="column"
-      flex={1}
-    >
-      <Flex
-        direction="row"
-        w="100%"
-        justify="strech"
-        align="center"
-        mt="32px"
-        mb="9px"
-      >
-        {tableHeaders.map((header, index) => (
-          <Text
-            justifyContent={index === 2 ? 'center' : 'flex-start'}
-            flex={header.flex ? header.flex : 1}
-            variant="tableHeader"
-            display="flex"
-            color="#122224"
-            minW="180px"
-          >
-            {header.title}
-          </Text>
-        ))}
-      </Flex>
-      <Flex
-        direction="column"
-        w="100%"
-        border="1px solid #D0D3D3"
-        borderRadius={4}
-        align="stretch"
-      >
-        {data.map((item, index) => (
-          <Flex
-            direction="row"
-            w="100%"
-            justify="stretch"
-            align="center"
-            bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
-            px={0}
-            py={4}
-          >
-            <Flex
-              flex={tableHeaders[0].flex ? tableHeaders[0].flex : 1}
-              direction="column"
-              w="100%"
-              pl="19px"
-            >
-              <Text variant="applicationText" fontWeight="700" color="#122224">
-                {item.milestone.title}
-              </Text>
-              <Text
-                fontSize="14px"
-                lineHeight="24px"
-                letterSpacing={0.5}
-                fontStyle="normal"
-                fontWeight="400"
-                color="#717A7C"
-                noOfLines={1}
-                textOverflow="ellipsis"
-              >
-                {item.milestone.subtitle}
-              </Text>
-            </Flex>
-            <Flex
-              ml={8}
-              direction="row"
-              justify="start"
-              align="center"
-              flex={tableHeaders[1].flex ? tableHeaders[1].flex : 1}
-            >
-              <Image display="inline-block" src={item.reward.icon} mr={2} />
-              <Text
-                textAlign="center"
-                fontSize="14px"
-                letterSpacing={0.5}
-                fontWeight="700"
-                color="#122224"
-              >
-                {item.reward.received}
-                {' '}
-                /
-                {' '}
-                {item.reward.total}
-                {' '}
-                {item.reward.symbol}
-              </Text>
-            </Flex>
-            <Flex
-              flex={tableHeaders[2].flex ? tableHeaders[2].flex : 1}
-              justify="end"
-              mr={5}
-              minW="180px"
-            >
-              {renderStatus(item.status)}
-            </Flex>
-          </Flex>
-        ))}
-      </Flex>
+    <>
+      <AbstractMilestonesTable
+        {...props}
+        renderStatus={renderStatus}
+      />
       <Modal
-        isOpen={isMilestoneDoneModalOpen}
-        onClose={() => setIsMilestoneDoneModalOpen(false)}
-        title="Mark Milestone 1 as Done"
+        isOpen={openedModal?.type === 'milestone-done'}
+        onClose={() => setOpenedModal(undefined)}
+        title={`Mark ${getMilestoneTitle(openedModal?.milestone)} as Done`}
         alignTitle="center"
         topIcon={<Image src="/ui_icons/milestone_complete.svg" />}
       >
         <MilestoneDoneModalContent
+          milestone={openedModal?.milestone}
           onClose={() => {
-            setIsMilestoneDoneModalOpen(false);
-            setIsMilestoneDoneCheckModalOpen(true);
+            // eslint-disable-next-line react/destructuring-assignment
+            props.refetch();
+            setOpenedModal({ type: 'milestone-confirm', milestone: openedModal!.milestone });
           }}
         />
       </Modal>
       <Modal
-        isOpen={isMilestoneDoneCheckModalOpen}
-        onClose={() => setIsMilestoneDoneCheckModalOpen(false)}
-        title="Milestone 1"
+        isOpen={openedModal?.type === 'milestone-view'}
+        onClose={() => setOpenedModal(undefined)}
+        title={getMilestoneTitle(openedModal?.milestone)}
       >
         <MilestoneDoneCheckModalContent
-          onClose={() => {
-            setIsMilestoneDoneCheckModalOpen(false);
-            setIsMilestoneDoneConfirmationModalOpen(true);
-          }}
+          milestone={openedModal?.milestone}
+          onClose={() => setOpenedModal(undefined)}
         />
       </Modal>
       <Modal
-        isOpen={isMilestoneDoneConfirmationModalOpen}
-        onClose={() => setIsMilestoneDoneConfirmationModalOpen(false)}
+        isOpen={openedModal?.type === 'milestone-confirm'}
+        onClose={() => setOpenedModal(undefined)}
         title=""
       >
         <MilestoneDoneConfirmationModalContent
-          onClose={() => setIsMilestoneDoneConfirmationModalOpen(false)}
+          milestone={openedModal?.milestone}
+          onClose={() => setOpenedModal(undefined)}
         />
       </Modal>
-    </Flex>
+    </>
   );
 }
 

@@ -14,6 +14,8 @@ function AboutTeam({
 
   membersDescription,
   setMembersDescription,
+
+  grantRequiredFields,
 }: {
   teamMembers: number | null;
   setTeamMembers: (teamMembers: number | null) => void;
@@ -22,9 +24,11 @@ function AboutTeam({
 
   membersDescription: { description: string, isError: boolean }[];
   setMembersDescription: (membersDescription: { description: string, isError: boolean }[]) => void;
+  grantRequiredFields: string[];
 }) {
   return (
-    <>
+
+    <Box display={grantRequiredFields.includes('teamMembers') || grantRequiredFields.includes('memberDetails') ? '' : 'none'}>
       <Text fontWeight="700" fontSize="16px" lineHeight="20px" color="#8850EA">
         About Team
         <Tooltip
@@ -52,10 +56,19 @@ function AboutTeam({
         }}
         isError={teamMembersError}
         errorText="Required"
+        visible={grantRequiredFields.includes('teamMembers')}
       />
 
       <Box mt="43px" />
-      <Text fontWeight="700" fontSize="16px" lineHeight="20px" color="#8850EA">
+      <Text
+        fontWeight="700"
+        fontSize="16px"
+        lineHeight="20px"
+        color="#8850EA"
+        display={grantRequiredFields.includes(
+          'memberDetails',
+        ) ? '' : 'none'}
+      >
         Details
         <Tooltip
           icon="/ui_icons/tooltip_questionmark_brand.svg"
@@ -86,11 +99,11 @@ function AboutTeam({
             }}
             isError={isError}
             errorText="Required"
+            visible={grantRequiredFields.includes('memberDetails')}
           />
         ))
       }
-
-    </>
+    </Box>
   );
 }
 

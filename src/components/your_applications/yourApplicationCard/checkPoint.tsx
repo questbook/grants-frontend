@@ -5,8 +5,8 @@ interface Props {
   state:
   | 'sent'
   | 'under_review'
-  | 'accepted'
-  | 'pending'
+  | 'approved'
+  | 'submitted'
   | 'rejected'
   | 'resubmit';
   date?: string;
@@ -26,14 +26,20 @@ function CheckPoint({ state, date }: Props) {
       bgColor: '#418FA0',
       textColor: '#418FA0',
     },
-    pending: {
+    submitted: {
       text: 'Result',
       icon: '/ui_icons/result_pending_application.svg',
       bgColor: '#D0D3D3',
       textColor: '#BDBDBD',
     },
-    accepted: {
+    approved: {
       text: 'Result',
+      icon: '/ui_icons/result_accepted_application.svg',
+      bgColor: '#418FA0',
+      textColor: '#418FA0',
+    },
+    completed: {
+      text: 'Completed',
       icon: '/ui_icons/result_accepted_application.svg',
       bgColor: '#418FA0',
       textColor: '#418FA0',
@@ -62,7 +68,7 @@ function CheckPoint({ state, date }: Props) {
         top="-20px"
         whiteSpace="nowrap"
       >
-        {date}
+        { date}
       </Text>
       <Box
         display="flex"
@@ -70,21 +76,21 @@ function CheckPoint({ state, date }: Props) {
         justifyContent="center"
         h={9}
         w={9}
-        bg={stateInfo[state].bgColor}
+        bg={stateInfo[state]?.bgColor}
         borderRadius="36px"
       >
-        <Image src={stateInfo[state].icon} />
+        <Image src={stateInfo[state]?.icon} />
       </Box>
       <Text
         fontSize="14px"
         lineHeight="16px"
         fontWeight="500"
-        color={stateInfo[state].textColor}
+        color={stateInfo[state]?.textColor}
         position="absolute"
         bottom="-18px"
         whiteSpace="nowrap"
       >
-        {stateInfo[state].text}
+        {stateInfo[state]?.text}
       </Text>
     </>
   );

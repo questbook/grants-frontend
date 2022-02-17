@@ -7,6 +7,8 @@
 
 # testing
 /coverage
+/pages/api/
+/pages/test.tsx
 
 # next.js
 /.next/
@@ -35,3 +37,5 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+yarn.lock

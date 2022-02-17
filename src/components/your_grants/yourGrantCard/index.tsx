@@ -11,7 +11,7 @@ interface YourGrantCardProps {
   grantDesc: string;
   numOfApplicants: number;
   endTimestamp: number;
-  grantAmount: number;
+  grantAmount: string;
   grantCurrency: string;
   grantCurrencyIcon: string;
   state: 'processing' | 'done';
@@ -37,7 +37,7 @@ function YourGrantCard({
   return (
     <>
       <Flex py={6} w="100%">
-        <Image h="54px" w="54px" src={daoIcon} />
+        <Image objectFit="cover" h="54px" w="54px" src={daoIcon} />
         <Flex flex={1} direction="column" ml={6}>
           <Text lineHeight="24px" fontSize="18px" fontWeight="700">
             {grantTitle}
@@ -103,14 +103,15 @@ function YourGrantCard({
                   </Button>
                 </Text>
               ) : (
-                numOfApplicants > 0 ? <Menu onEditClick={onEditClick ?? (() => {})} /> : null
+                numOfApplicants > 0 ? <Menu /> : null
               )}
               <Button
                 mr={2}
                 ml={3}
                 isDisabled={state === 'processing'}
                 variant={state === 'processing' ? 'primaryCta' : 'outline'}
-                colorScheme="brand"
+                color="brand.500"
+                borderColor="brand.500"
                 h="32px"
                 onClick={onAddFundsClick ?? (() => {})}
               >

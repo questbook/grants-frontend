@@ -1,7 +1,7 @@
 import {
   Box, Text,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import MultiLineInput from '../../../ui/forms/multiLineInput';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
 import Tooltip from '../../../ui/tooltip';
@@ -16,9 +16,11 @@ function AboutTeam({
   setMembersDescription,
 
   readOnly,
+  grantRequiredFields,
 }: {
+
   teamMembers: number | null;
-  setTeamMembers: (teamMembers: number | null) => void;
+  setTeamMembers: Dispatch< SetStateAction<number>>;
   teamMembersError: boolean;
   setTeamMembersError: (teamMembersError: boolean) => void;
 
@@ -26,9 +28,10 @@ function AboutTeam({
   setMembersDescription: (membersDescription: { description: string, isError: boolean }[]) => void;
 
   readOnly?: boolean;
+  grantRequiredFields: string[];
 }) {
   return (
-    <>
+    <Box display={grantRequiredFields.includes('teamMembers') || grantRequiredFields.includes('memberDetails') ? '' : 'none'}>
       <Text fontWeight="700" fontSize="16px" lineHeight="20px" color="#8850EA">
         About Team
         <Tooltip
@@ -51,16 +54,25 @@ function AboutTeam({
             setTeamMembers(value);
             setMembersDescription(Array(value).fill({ description: '', isError: false }));
           } else {
-            setTeamMembers(null);
+            setTeamMembers(1);
           }
         }}
         isError={teamMembersError}
         errorText="Required"
         disabled={readOnly}
+        visible={grantRequiredFields.includes('teamMembers')}
       />
 
       <Box mt="43px" />
-      <Text fontWeight="700" fontSize="16px" lineHeight="20px" color="#8850EA">
+      <Text
+        fontWeight="700"
+        fontSize="16px"
+        lineHeight="20px"
+        color="#8850EA"
+        display={grantRequiredFields.includes(
+          'memberDetails',
+        ) ? '' : 'none'}
+      >
         Details
         <Tooltip
           icon="/ui_icons/tooltip_questionmark_brand.svg"
@@ -92,11 +104,12 @@ function AboutTeam({
             isError={isError}
             errorText="Required"
             disabled={readOnly}
+            visible={grantRequiredFields.includes('memberDetails')}
           />
         ))
       }
 
-    </>
+    </Box>
   );
 }
 

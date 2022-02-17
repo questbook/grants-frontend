@@ -1,0 +1,37 @@
+{
+    "connect_wallet": {
+        "heading": "Let’s setup your account on Questbook",
+        "subheading_1": "Use your existing crypto wallet",
+        "subheading_2": "or create a new one to start using Questbook",
+        "tooltip_label": "A crypto wallet is an application or hardware device that allows individuals to store and retrieve digital items.",
+        "dropdown_label": "Wallets compatible on",
+        "protip": "Preferably connect a wallet that you will be using to disburse grants for seamless payouts",
+        "footer": "By connecting your wallet, you accept Questbook’s Terms of Service"
+    },
+    "funds": {
+        "heading": "Funds"
+    },
+    "get_started": {
+        "heading": "gm! 👋  Welcome to Questbook",
+        "subheading": "What is your goal on Questbook?",
+        "talent": {
+            "text":"Are you looking to apply for grants on Questbook?",
+            "highlight": ["apply for grants"]
+        },
+        "dao": {
+            "text":"Are you looking to fund grants on Questbook?",
+            "highlight": ["fund grants"]
+        },
+        "button_text": "Continue",
+        "footer": {
+            "link": "Connect your wallet",
+            "text": "to access your existing account on Questbook."
+        }
+    },
+    "settings_and_members": {},
+    "signup": {},
+    "index": {},
+    "explore_grants": {},
+    "your_applications": {},
+    "your_grants": {}
+}

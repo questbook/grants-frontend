@@ -1,35 +1,47 @@
-import { Flex } from '@chakra-ui/react';
-import React from 'react';
+import { Flex, Text } from '@chakra-ui/react';
+import React, { useEffect } from 'react';
 import Content from './content';
 import Filter from './filter';
 import Headers from './headers';
 
 function Table({
   onViewApplicantFormClick,
-  onAcceptApplicationClick,
-  onRejectApplicationClick,
+  // onAcceptApplicationClick,
+  // onRejectApplicationClick,
   onManageApplicationClick,
   data,
+  title,
 }: {
   onViewApplicantFormClick?: (data? : any) => void;
-  onAcceptApplicationClick?: () => void;
-  onRejectApplicationClick?: () => void;
-  onManageApplicationClick?: () => void;
+  // onAcceptApplicationClick?: () => void;
+  // onRejectApplicationClick?: () => void;
+  onManageApplicationClick?: (data? : any) => void;
   data: any[];
+  title: string;
 }) {
   const [filter, setFilter] = React.useState(-1);
+  useEffect(() => {
+    console.log(filter);
+  }, [filter]);
   return (
     <>
-      <Filter setFilter={setFilter} />
-      <Flex w="100%" mt="38px" align="center" direction="column" flex={1}>
+      <Flex direction="row" mt={3} align="center">
+        <Text variant="heading" mr={4}>{title}</Text>
+        <Filter filter={filter} setFilter={setFilter} />
+      </Flex>
+      <Flex w="100%" mt={10} align="center" direction="column" flex={1}>
         <Headers />
         <Content
           data={data}
           filter={filter}
           onViewApplicationFormClick={onViewApplicantFormClick}
-          onAcceptApplicationClick={onAcceptApplicationClick}
-          onRejectApplicationClick={onRejectApplicationClick}
-          onManageApplicationClick={onManageApplicationClick}
+          // onAcceptApplicationClick={onAcceptApplicationClick}
+          // onRejectApplicationClick={onRejectApplicationClick}
+          onManageApplicationClick={(manageData: any) => {
+            if (onManageApplicationClick) {
+              onManageApplicationClick(manageData);
+            }
+          }}
         />
       </Flex>
 
@@ -122,8 +134,8 @@ function Table({
 
 Table.defaultProps = {
   onViewApplicantFormClick: () => {},
-  onAcceptApplicationClick: () => {},
-  onRejectApplicationClick: () => {},
+  // onAcceptApplicationClick: () => {},
+  // onRejectApplicationClick: () => {},
   onManageApplicationClick: () => {},
 };
 export default Table;

@@ -15,8 +15,56 @@
       }
     ]
   },
+  "3": {
+    "name": "Ropsten",
+    "icon": "/network_icons/eth_mainnet.svg",
+    "wallets": [
+      {
+        "id": "injected",
+        "name": "Metamask",
+        "icon": "/wallet_icons/metamask.svg"
+      },
+      {
+        "id": "walletConnect",
+        "name": "Wallet Connect",
+        "icon": "/wallet_icons/walletConnect.svg"
+      }
+    ]
+  },
+  "4": {
+    "name": "Rinkeby",
+    "icon": "/network_icons/eth_mainnet.svg",
+    "wallets": [
+      {
+        "id": "injected",
+        "name": "Metamask",
+        "icon": "/wallet_icons/metamask.svg"
+      },
+      {
+        "id": "walletConnect",
+        "name": "Wallet Connect",
+        "icon": "/wallet_icons/walletConnect.svg"
+      }
+    ]
+  },
   "137": {
     "name": "Polygon Mainnet",
+    "icon": "/network_icons/polygon.svg",
+    "wallets": [
+      {
+        "id": "injected",
+        "name": "Metamask",
+        "icon": "/wallet_icons/metamask.svg"
+      },
+      {
+        "id": "walletConnect",
+        "name": "Wallet Connect",
+        "icon": "/wallet_icons/walletConnect.svg"
+      }
+    ]
+  },
+  "80001": {
+    "name": "80001",
     "icon": "/network_icons/polygon.svg",
     "wallets": [
       {

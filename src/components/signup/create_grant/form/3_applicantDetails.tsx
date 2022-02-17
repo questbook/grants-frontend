@@ -12,16 +12,23 @@ interface Props {
 
 function ApplicantDetails({ onSubmit }: Props) {
   const applicantDetails = applicantDetailsList.map(
-    ({ title, tooltip, id }, index) => ({
-      title,
-      required: false,
-      id,
-      tooltip,
-      index,
-    }),
-  );
+    ({
+      title, tooltip, id, inputType, isRequired,
+    }, index) => {
+      if (index === applicantDetailsList.length - 1) return null;
+      if (index === applicantDetailsList.length - 2) return null;
+      return {
+        title,
+        required: isRequired || false,
+        id,
+        tooltip,
+        index,
+        inputType,
+      };
+    },
+  ).filter((obj) => obj != null);
   const [detailsRequired, setDetailsRequired] = useState(applicantDetails);
-  const [extraField, setExtraField] = useState(false);
+  const [extraField] = useState(false);
 
   const [milestoneSelectOptionIsVisible, setMilestoneSelectOptionIsVisible] = React.useState(false);
   const [multipleMilestones, setMultipleMilestones] = useState(false);
@@ -47,16 +54,39 @@ function ApplicantDetails({ onSubmit }: Props) {
     if (!error) {
       const requiredDetails = {} as any;
       detailsRequired.forEach((detail) => {
-        requiredDetails[detail.id] = detail.required;
+        if (detail && detail.required) {
+          requiredDetails[detail.id] = {
+            title: detail.title,
+            inputType: detail.inputType,
+          };
+        }
       });
-      onSubmit({
-        ...requiredDetails,
-        extra_field:
-          extraFieldDetails != null && extraFieldDetails.length > 0
-            ? extraFieldDetails
-            : '',
-        is_multiple_miletones: multipleMilestones,
-      });
+      const fields = { ...requiredDetails };
+      if (extraFieldDetails != null && extraFieldDetails.length > 0) {
+        fields.extraField = {
+          title: 'Other Information',
+          inputType: 'short-form',
+        };
+      }
+      if (multipleMilestones) {
+        fields.isMultipleMilestones = {
+          title: 'Milestones',
+          inputType: 'array',
+        };
+      }
+      if (fields.teamMembers) {
+        fields.memberDetails = {
+          title: 'Member Details',
+          inputType: 'array',
+        };
+      }
+      if (fields.fundingBreakdown) {
+        fields.fundingAsk = {
+          title: 'Funding Ask',
+          inputType: 'short-form',
+        };
+      }
+      onSubmit({ fields });
     }
   };
 
@@ -74,28 +104,26 @@ function ApplicantDetails({ onSubmit }: Props) {
           fontWeight="bold"
         >
           {detailsRequired.map((detail, index) => {
+            if (index === detailsRequired.length - 1) return null;
+            if (index === detailsRequired.length - 2) return null;
             const {
               title, required, tooltip,
             } = detail as any;
             return (
               <GridItem colSpan={1}>
                 <Badge
-                  isActive={required}
-                  onClick={() => toggleDetailsRequired(index)}
+                  isActive={applicantDetailsList[index].isRequired || required}
+                  onClick={() => {
+                    if (!applicantDetailsList[index].isRequired) {
+                      toggleDetailsRequired(index);
+                    }
+                  }}
                   label={title}
                   tooltip={tooltip}
                 />
               </GridItem>
             );
           })}
-          <GridItem colSpan={1}>
-            <Badge
-              isActive={extraField}
-              onClick={() => setExtraField(!extraField)}
-              label="Other Information"
-              tooltip="Add extra information about the applicant"
-            />
-          </GridItem>
           <GridItem colSpan={1}>
             <Badge
               isActive={milestoneSelectOptionIsVisible}

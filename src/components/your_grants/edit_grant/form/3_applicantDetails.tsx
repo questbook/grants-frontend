@@ -2,6 +2,7 @@ import {
   Flex, Grid, GridItem, Box, Text,
 } from '@chakra-ui/react';
 import React from 'react';
+import applicantDetailsList from '../../../../constants/applicantDetailsList';
 import Badge from '../../../ui/badge';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
 
@@ -10,6 +11,7 @@ function ApplicantDetails({
   toggleDetailsRequired,
 
   extraField,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setExtraField,
 
   extraFieldDetails,
@@ -41,29 +43,25 @@ function ApplicantDetails({
   return (
     <Flex py={0} direction="column">
       <Grid templateColumns="repeat(2, 1fr)" gap="18px" fontWeight="bold">
-        {detailsRequired.map((detail) => {
+        {detailsRequired.map((detail, index) => {
           const {
             title, required, id, tooltip,
           } = detail as any;
           return (
-            <GridItem colSpan={1}>
+            <GridItem key={id} colSpan={1}>
               <Badge
-                isActive={required}
-                onClick={() => toggleDetailsRequired(id)}
+                isActive={applicantDetailsList[index].isRequired || required}
+                onClick={() => {
+                  if (!applicantDetailsList[index].isRequired) {
+                    toggleDetailsRequired(index);
+                  }
+                }}
                 label={title}
                 tooltip={tooltip}
               />
             </GridItem>
           );
         })}
-        <GridItem colSpan={1}>
-          <Badge
-            isActive={extraField}
-            onClick={() => setExtraField(!extraField)}
-            label="Other Information"
-            tooltip="Add extra information about the applicant"
-          />
-        </GridItem>
         <GridItem colSpan={1}>
           <Badge
             isActive={milestoneSelectOptionIsVisible}

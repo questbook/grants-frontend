@@ -1,16 +1,70 @@
 import {
-  ModalBody, Flex, Text, Button, Box, Image,
+  ModalBody, Flex, Text, Button, Box, Image, useToast,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { useContract, useSigner } from 'wagmi';
+import { ApiClientsContext } from '../../../../../pages/_app';
+import config from '../../../../constants/config';
+import { ApplicationMilestone } from '../../../../graphql/queries';
+import { getMilestoneMetadata } from '../../../../utils/formattingUtils';
+import ApplicationRegistryAbi from '../../../../contracts/abi/ApplicationRegistryAbi.json';
 import MultiLineInput from '../../../ui/forms/multiLineInput';
 
 interface Props {
+  milestone: ApplicationMilestone | undefined
   onClose: () => void;
 }
 
-function ModalContent({ onClose }: Props) {
+function ModalContent({ milestone, onClose }: Props) {
+  const { subgraphClient, validatorApi } = useContext(ApiClientsContext)!;
+  const [signerStates] = useSigner();
+  const applicationRegContract = useContract({
+    addressOrName: config.ApplicationRegistryAddress,
+    contractInterface: ApplicationRegistryAbi,
+    signerOrProvider: signerStates.data,
+  });
+  const toast = useToast();
+
   const [details, setDetails] = useState('');
   const [detailsError, setDetailsError] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const markAsDone = async () => {
+    if (!details) {
+      setDetailsError(true);
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const { data } = await validatorApi.validateApplicationMilestoneUpdate({ text: details });
+      const { milestoneIndex, applicationId } = getMilestoneMetadata(milestone)!;
+      // contract interaction
+      const transaction = await applicationRegContract.requestMilestoneApproval(
+        applicationId,
+        Number(milestoneIndex),
+        data.ipfsHash,
+      );
+
+      const transactionData = await transaction.wait();
+
+      await subgraphClient.waitForBlock(transactionData.blockNumber);
+      onClose();
+    } catch (error: any) {
+      // console.error('error in milestone update ', error);
+      toast({
+        title: error.name,
+        description: error.message,
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <ModalBody maxW="521px">
@@ -58,8 +112,12 @@ function ModalContent({ onClose }: Props) {
             </Button>
           </Text>
         </Flex>
-        <Button w="100%" variant="primary" mt={8} onClick={onClose}>
-          Mark as Done
+        <Button w="100%" variant="primary" mt={8} onClick={markAsDone} disabled={isLoading}>
+          {
+            isLoading
+              ? 'Updating...'
+              : 'Mark as Done'
+          }
         </Button>
         <Box mb={4} />
       </Flex>

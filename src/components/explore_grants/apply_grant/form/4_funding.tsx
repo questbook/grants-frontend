@@ -21,6 +21,8 @@ function Funding({
   rewardAmount,
   rewardCurrency,
   rewardCurrencyCoin,
+
+  grantRequiredFields,
 }: {
   fundingAsk: string;
   setFundingAsk: (fundingAsk: string) => void;
@@ -35,39 +37,33 @@ function Funding({
   rewardAmount: string;
   rewardCurrency: string;
   rewardCurrencyCoin: string;
+
+  grantRequiredFields: string[];
 }) {
   return (
     <>
       <Text fontWeight="700" fontSize="16px" lineHeight="20px" color="#8850EA">
         Funding & Budget Breakdown
-        <Tooltip
-          icon="/ui_icons/tooltip_questionmark_brand.svg"
-          label="team"
-        />
+        <Tooltip icon="/ui_icons/tooltip_questionmark_brand.svg" label="team" />
       </Text>
 
       <Box mt={8} />
 
       <Flex direction="row" alignItems="flex-start" mt="24px">
-        <Image
-          ml="auto"
-          h="45px"
-          w="45px"
-          src={rewardCurrencyCoin}
-        />
+        <Image ml="auto" h="45px" w="45px" src={rewardCurrencyCoin} />
         <Flex flex={1} direction="column" ml={3}>
           <Text fontWeight="500">Grant Reward</Text>
           <Text mt="1px" lineHeight="20px" fontSize="14px" fontWeight="400">
             {`${rewardAmount} ${rewardCurrency}`}
             {' '}
-            ≈ 2500 USD
+            {/* ≈ 2500 USD */}
           </Text>
         </Flex>
       </Flex>
 
       <Box mt={8} />
 
-      <Flex alignItems="flex-start">
+      <Flex alignItems="flex-start" display={grantRequiredFields.includes('fundingBreakdown') ? 'flex' : 'none'}>
         <Box minW="160px" flex={1}>
           <SingleLineInput
             label="Funding Ask"
@@ -112,8 +108,8 @@ function Funding({
         isError={fundingBreakdownError}
         errorText="Required"
         tooltip="Write about how you planning use funds for your project - hiring, marketing etc."
+        visible={grantRequiredFields.includes('fundingBreakdown')}
       />
-
     </>
   );
 }

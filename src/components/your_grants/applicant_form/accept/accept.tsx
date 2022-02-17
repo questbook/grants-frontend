@@ -5,15 +5,21 @@ import {
   Button,
   Text,
   Image,
+  Center,
+  CircularProgress,
 } from '@chakra-ui/react';
 import React from 'react';
+import { formatAmount } from '../../../../utils/formattingUtils';
+import { getAssetInfo } from '../../../../utils/tokenUtils';
 
 function Accept({
-  milestones,
   onSubmit,
+  applicationData,
+  hasClicked,
 }: {
-  milestones: any[];
   onSubmit: () => void;
+  applicationData: any;
+  hasClicked: boolean;
 }) {
   return (
     <Container
@@ -25,6 +31,8 @@ function Accept({
       pb={8}
       px={10}
     >
+      <Text mt={4} mb={4} variant="heading">{applicationData?.grant?.title}</Text>
+      <Divider mb={5} />
       <Text fontSize="18px" lineHeight="26px" fontWeight="700">
         Accept Grant Application
       </Text>
@@ -40,7 +48,9 @@ function Accept({
             fontWeight="700"
             color="brand.500"
           >
-            60 ETH
+            {formatAmount(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'fundingAsk')?.value[0] ?? '0')}
+            {' '}
+            { getAssetInfo(applicationData?.grant?.reward?.asset)?.label }
           </Text>
         </Flex>
       </Flex>
@@ -49,19 +59,23 @@ function Accept({
         Funding split by milestones
       </Text>
       <Flex direction="column" justify="start" align="start">
-        {milestones.map((milestone) => (
+        {applicationData
+        && applicationData?.milestones?.length > 0
+        && applicationData?.milestones?.map((milestone:any, index: number) => (
           <Flex direction="column" mt={6}>
             <Text variant="applicationText" fontWeight="700">
               Milestone
               {' '}
-              {milestone.number}
+              {index + 1}
             </Text>
             <Text variant="applicationText" color="#717A7C">
-              {milestone.description}
+              {milestone?.title}
             </Text>
             <Flex direction="row" justify="start" align="center" mt={2}>
-              <Image src={milestone.icon} />
-              <Flex direction="column" ml={2}>
+              <Image
+                src={getAssetInfo(applicationData?.grant?.reward?.asset)?.icon}
+              />
+              <Flex direction="column" ml={3}>
                 <Text variant="applicationText" fontWeight="700">
                   Funding Ask
                 </Text>
@@ -71,9 +85,9 @@ function Accept({
                   fontWeight="700"
                   color="brand.500"
                 >
-                  {milestone.amount}
+                  {milestone?.amount && formatAmount(milestone?.amount)}
                   {' '}
-                  {milestone.symbol}
+                  { getAssetInfo(applicationData?.grant?.reward?.asset)?.label }
                 </Text>
               </Flex>
             </Flex>
@@ -81,9 +95,11 @@ function Accept({
         ))}
       </Flex>
       <Divider mt={7} />
-      <Button onClick={() => onSubmit()} w="100%" mt={10} variant="primary">
-        Accept Application
-      </Button>
+      {hasClicked ? <Center><CircularProgress isIndeterminate color="brand.500" size="48px" mt={10} /></Center> : (
+        <Button onClick={() => onSubmit()} w="100%" mt={10} variant="primary">
+          Accept Application
+        </Button>
+      )}
     </Container>
   );
 }

@@ -11,7 +11,7 @@ data.fill({
     icon: '/images/dummy/Ethereum Icon.svg',
   },
   status: {
-    state: 'pending',
+    state: 'submitted',
     txnHash: '',
   },
 }, 0, 5);

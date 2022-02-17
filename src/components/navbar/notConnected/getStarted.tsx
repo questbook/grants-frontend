@@ -19,6 +19,9 @@ function GetStarted() {
         background:
           'linear-gradient(96.85deg, #8E4EFF -21.73%, #4BEAFF 110.75%)',
       }}
+      _disabled={{
+        background: 'linear-gradient(96.85deg, #E0E6E7 -21.73%, #C4C4C4 110.75%)',
+      }}
       background="linear-gradient(96.85deg, #6F25F1 -21.73%, #00E1FF 110.75%)"
       px={6}
       py={3}

@@ -3,35 +3,37 @@ import {
   Box,
   Text,
   Image,
+  Button,
 } from '@chakra-ui/react';
 import React, { ReactElement } from 'react';
-import Actions from '../actions';
 import {
-  GrantApproved, Rejected, PendingReview, ResubmissionRequested,
+  GrantApproved, Rejected, PendingReview, ResubmissionRequested, GrantComplete,
 } from '../states';
 
 function Content({
   filter,
   onViewApplicationFormClick,
-  onAcceptApplicationClick,
-  onRejectApplicationClick,
+  // onAcceptApplicationClick,
+  // onRejectApplicationClick,
   onManageApplicationClick,
   data,
 }: {
   filter: number;
   onViewApplicationFormClick?: (data?: any) => void;
-  onAcceptApplicationClick?: () => void;
-  onRejectApplicationClick?: () => void;
-  onManageApplicationClick?: () => void;
+  // onAcceptApplicationClick?: () => void;
+  // onRejectApplicationClick?: () => void;
+  onManageApplicationClick?: (data?: any) => void;
   data: any[];
 }) {
-  const tableHeadersflex = [0.251, 0.15, 0.184, 0.116, 0.2, 0.116];
+  const tableHeadersflex = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
   const getStatus = (status: number): ReactElement => {
-    if (status === 0) return <GrantApproved />;
-    if (status === 1) return <Rejected />;
-    if (status === 2) return <ResubmissionRequested />;
-    return <PendingReview />;
+    if (status === 0) return <PendingReview />;
+    if (status === 1) return <ResubmissionRequested />;
+    if (status === 2) return <GrantApproved />;
+    if (status === 3) return <Rejected />;
+    return <GrantComplete />;
   };
+
   return (
     <Flex
       mt="10px"
@@ -60,7 +62,7 @@ function Content({
               variant="tableBody"
             >
               {'     '}
-              {`${item.applicant_address}`}
+              {`${item.applicant_address.substring(0, 13)}...`}
             </Text>
             <Text
               flex={tableHeadersflex[1]}
@@ -107,30 +109,80 @@ function Content({
               alignItems="center"
               flex={tableHeadersflex[5]}
             >
-              <Actions
+              <Button
+                variant="outline"
+                color="brand.500"
+                fontWeight="500"
+                fontSize="14px"
+                lineHeight="14px"
+                textAlign="center"
+                borderRadius={8}
+                borderColor="brand.500"
+                _focus={{}}
+                p={0}
+                minW={0}
+                w="88px"
+                h="32px"
+                onClick={() => {
+                  //               if (status === 0) return <PendingReview />;
+                  // if (status === 1) return <ResubmissionRequested />;
+                  // if (status === 2) return <GrantApproved />;
+                  // if (status === 3) return <Rejected />;
+                  // return <GrantComplete />;
+                  console.log(item.status);
+                  if ((item.status === 2 || item.status === 4) && onManageApplicationClick) {
+                    onManageApplicationClick({
+                      applicationId: item.applicationId,
+                    });
+                    return;
+                  }
+                  if (onViewApplicationFormClick) {
+                    if (item.status === 3) {
+                      onViewApplicationFormClick({
+                        rejectionComment: 'rejectionComment',
+                        applicationId: item.applicationId,
+                      });
+                    } else if (item.status === 1) {
+                      onViewApplicationFormClick({
+                        resubmissionComment: 'resubmissionComment',
+                        applicationId: item.applicationId,
+                      });
+                    } else if (item.status === 0) {
+                      onViewApplicationFormClick({ applicationId: item.applicationId });
+                    }
+                  }
+                }}
+              >
+                View
+              </Button>
+              {/* <Actions
                 status={item.status}
                 onViewApplicationFormClick={() => {
                   if (item.status === 0 && onManageApplicationClick) {
-                    onManageApplicationClick();
+                    onManageApplicationClick({
+                      applicationId: item.applicationId,
+                    });
                     return;
                   }
                   if (onViewApplicationFormClick) {
                     if (item.status === 1) {
                       onViewApplicationFormClick({
                         rejectionComment: 'rejectionComment',
+                        applicationId: item.applicationId,
                       });
                     } else if (item.status === 2) {
                       onViewApplicationFormClick({
                         resubmissionComment: 'resubmissionComment',
+                        applicationId: item.applicationId,
                       });
                     } else {
-                      onViewApplicationFormClick();
+                      onViewApplicationFormClick({ applicationId: item.applicationId });
                     }
                   }
                 }}
                 onAcceptApplicationClick={onAcceptApplicationClick}
                 onRejectApplicationClick={onRejectApplicationClick}
-              />
+              /> */}
             </Flex>
           </Flex>
         ))}
@@ -140,8 +192,8 @@ function Content({
 
 Content.defaultProps = {
   onViewApplicationFormClick: () => {},
-  onAcceptApplicationClick: () => {},
-  onRejectApplicationClick: () => {},
+  // onAcceptApplicationClick: () => {},
+  // onRejectApplicationClick: () => {},
   onManageApplicationClick: () => {},
 };
 export default Content;

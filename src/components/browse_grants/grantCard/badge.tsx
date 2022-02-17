@@ -1,6 +1,6 @@
 import { Image, Text } from '@chakra-ui/react';
 import React from 'react';
-import { timeToString } from '../../../utils/formattingUtils';
+import moment from 'moment';
 
 function Badge({
   numOfApplicants,
@@ -12,7 +12,7 @@ function Badge({
   return (
     <Text display="flex" alignItems="center" mb="10px" fontWeight="700">
       <Image mr="6px" boxSize={3} src="/ui_icons/applicant.svg" display="inline-block" />
-      <Text fontSize="xs" display="inline-block">
+      <Text as="span" fontSize="xs" display="inline-block">
         {numOfApplicants}
         {' '}
         Applicant
@@ -20,10 +20,10 @@ function Badge({
       </Text>
       <Image mx={2} src="/ui_icons/green_dot.svg" display="inline-block" />
       <Image mr="6px" boxSize={3} src="/ui_icons/deadline.svg" display="inline-block" />
-      <Text fontSize="xs" display="inline-block">
+      <Text as="span" fontSize="xs" display="inline-block">
         Ends on
         {' '}
-        {timeToString(endTimestamp)}
+        {moment(endTimestamp).format('MMMM D')}
       </Text>
     </Text>
   );

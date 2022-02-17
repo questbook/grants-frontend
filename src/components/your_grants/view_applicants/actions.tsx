@@ -1,4 +1,4 @@
-import { ViewIcon, CheckIcon, CloseIcon } from '@chakra-ui/icons';
+import { ViewIcon } from '@chakra-ui/icons';
 import {
   Menu,
   MenuButton,
@@ -13,13 +13,13 @@ import React from 'react';
 function Actions({
   status,
   onViewApplicationFormClick,
-  onAcceptApplicationClick,
-  onRejectApplicationClick,
+  // onAcceptApplicationClick,
+  // onRejectApplicationClick,
 }: {
   status: number;
   onViewApplicationFormClick?: () => void;
-  onAcceptApplicationClick?: () => void;
-  onRejectApplicationClick?: () => void;
+  // onAcceptApplicationClick?: () => void;
+  // onRejectApplicationClick?: () => void;
 }) {
   if (status === 3) {
     return (
@@ -76,7 +76,7 @@ function Actions({
               View Application
             </Text>
           </MenuItem>
-          <MenuItem
+          {/* <MenuItem
             onClick={() => {
               if (onAcceptApplicationClick) {
                 onAcceptApplicationClick();
@@ -109,7 +109,7 @@ function Actions({
             >
               Reject
             </Text>
-          </MenuItem>
+          </MenuItem> */}
         </MenuList>
       </Menu>
     );
@@ -176,7 +176,7 @@ function Actions({
 
 Actions.defaultProps = {
   onViewApplicationFormClick: () => {},
-  onAcceptApplicationClick: () => {},
-  onRejectApplicationClick: () => {},
+  // onAcceptApplicationClick: () => {},
+  // onRejectApplicationClick: () => {},
 };
 export default Actions;

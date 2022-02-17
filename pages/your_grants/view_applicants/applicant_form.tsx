@@ -1,8 +1,19 @@
 import {
-  Container, Flex, Text, Image,
+  Container, Flex, Text, Image, useToast, ToastId,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, {
+  ReactElement, useEffect, useState, useCallback,
+  useContext,
+} from 'react';
+import { gql } from '@apollo/client';
+import { useAccount, useContract, useSigner } from 'wagmi';
+import SubgraphClient from '../../../src/graphql/subgraph';
+import { getApplicationDetails } from '../../../src/graphql/daoQueries';
+import config from '../../../src/constants/config';
+import ApplicationRegistryAbi from '../../../src/contracts/abi/ApplicationRegistryAbi.json';
+import { ApiClientsContext } from '../../_app';
+import InfoToast from '../../../src/components/ui/infoToast';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Heading from '../../../src/components/ui/heading';
 
@@ -19,59 +30,166 @@ import Application from '../../../src/components/your_grants/applicant_form/appl
 import Sidebar from '../../../src/components/your_grants/applicant_form/sidebar';
 import NavbarLayout from '../../../src/layout/navbarLayout';
 
-const milestones = [
-  {
-    number: 1,
-    description: 'Feature complete and deployed onto testnet',
-    amount: 20,
-    symbol: 'ETH',
-    icon: '/images/dummy/Ethereum Icon.svg',
-  },
-  {
-    number: 2,
-    description: 'Feature complete and deployed onto testnet',
-    amount: 40,
-    symbol: 'ETH',
-    icon: '/images/dummy/Ethereum Icon.svg',
-  },
-];
-
 function ApplicantForm() {
+  const toast = useToast();
   const router = useRouter();
   const [step, setStep] = useState(0);
 
-  const [resubmissionComment] = useState('Resubmission comment');
-  const [rejectionComment] = useState('Rejected');
+  const [applicationId, setApplicationId] = useState<any>('');
+  const [applicationData, setApplicationData] = useState<any>(null);
+
+  const getApplicationData = useCallback(async () => {
+    const subgraphClient = new SubgraphClient();
+    if (!subgraphClient.client) return null;
+    try {
+      const { data } = (await subgraphClient.client.query({
+        query: gql(getApplicationDetails),
+        variables: {
+          applicationID: applicationId,
+        },
+      })) as any;
+      // console.log(data);
+      if (data && data.grantApplication) {
+        setApplicationData(data.grantApplication);
+      }
+      return true;
+    } catch (e) {
+      // console.log(e);
+      return null;
+    }
+  }, [applicationId]);
 
   useEffect(() => {
-    if (router.query.flow === 'accepted') {
+    setApplicationId(router?.query?.applicationId ?? '');
+  }, [router]);
+
+  useEffect(() => {
+    if (!applicationId) return;
+    getApplicationData();
+  }, [applicationId, getApplicationData]);
+
+  useEffect(() => {
+    if (router.query.flow === 'approved') {
       setStep(1);
     } else if (router.query.flow === 'rejected') {
       setStep(2);
     }
   }, [router]);
+  const [{ data: accountData }] = useAccount();
+  const apiClients = useContext(ApiClientsContext);
+  const [signerStates] = useSigner();
 
+  const applicationRegContract = useContract({
+    addressOrName: config.ApplicationRegistryAddress,
+    contractInterface: ApplicationRegistryAbi,
+    signerOrProvider: signerStates.data,
+  });
+
+  const [hasClicked, setHasClicked] = React.useState(false);
+  const toastRef = React.useRef<ToastId>();
+
+  const closeToast = () => {
+    if (toastRef.current) {
+      toast.close(toastRef.current);
+    }
+  };
+
+  const showToast = ({ link } : { link: string }) => {
+    toastRef.current = toast({
+      position: 'top',
+      render: () => (
+        <InfoToast
+          link={link}
+          close={closeToast}
+        />
+      ),
+    });
+  };
+
+  const handleApplicationStateUpdate = async (state:number, comment:string) => {
+    try {
+      if (!apiClients) return;
+      const { validatorApi, workspaceId } = apiClients;
+      if (!accountData
+      || !accountData.address
+      || !workspaceId
+      || !applicationData
+      || !applicationData.id) {
+        return;
+      }
+
+      setHasClicked(true);
+      const {
+        data: { ipfsHash },
+      } = await validatorApi.validateGrantApplicationUpdate({
+        feedback: comment,
+      });
+      // console.log(ipfsHash);
+      // console.log(Number(applicationData?.id), Number(workspaceId));
+      const transaction = await applicationRegContract.updateApplicationState(
+        Number(applicationData?.id),
+        Number(workspaceId),
+        state,
+        ipfsHash,
+      );
+      const transactionData = await transaction.wait();
+
+      // console.log(transactionData);
+      // console.log(transactionData.blockNumber);
+      // toast({ title: 'Transaction succeeded', status: 'success' });
+
+      setHasClicked(false);
+      router.replace('/your_grants');
+
+      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
+      // await subgraphClient.waitForBlock(transactionData.blockNumber);
+    } catch (error) {
+      setHasClicked(false);
+      // console.log(error);
+      toast({
+        title: 'Application update not indexed',
+        status: 'error',
+      });
+    }
+  };
   function renderContent(currentStep: number) {
     if (currentStep === 1) {
       return (
         <>
-          <Accept onSubmit={() => router.back()} milestones={milestones} />
-          <AcceptSidebar />
+          <Accept
+            // onSubmit={handleAcceptApplication}
+            onSubmit={() => handleApplicationStateUpdate(2, '')}
+            applicationData={applicationData}
+            hasClicked={hasClicked}
+          />
+          <AcceptSidebar
+            applicationData={applicationData}
+          />
         </>
       );
     }
     if (currentStep === 2) {
       return (
         <>
-          <Reject onSubmit={() => router.back()} />
-          <RejectSidebar />
+          <Reject
+            onSubmit={({ comment }) => handleApplicationStateUpdate(3, comment)}
+            hasClicked={hasClicked}
+          />
+          <RejectSidebar
+            applicationData={applicationData}
+          />
         </>
       );
     }
     return (
       <>
-        <Resubmit onSubmit={() => router.back()} />
-        <ResubmitSidebar />
+        <Resubmit
+          onSubmit={({ comment }) => handleApplicationStateUpdate(1, comment)}
+          hasClicked={hasClicked}
+        />
+        <ResubmitSidebar
+          applicationData={applicationData}
+        />
       </>
     );
   }
@@ -86,12 +204,12 @@ function ApplicantForm() {
           maxW="1116px"
           alignItems="stretch"
           pb={6}
-          px={10}
+          // px={10}
         >
           <Breadcrumbs
             path={['Your Grants', 'View Applicants', 'Applicant Form']}
           />
-          <Heading mt="18px" title="Storage Provider (SP) Tooling Ideas" />
+          <Heading mt="18px" title={applicationData?.grant?.title} />
         </Container>
 
         <Container maxW="100%" display="flex">
@@ -104,7 +222,7 @@ function ApplicantForm() {
             pb={8}
             px={10}
           >
-            {rejectionComment && rejectionComment.length > 0 && (
+            {applicationData && applicationData?.state === 'rejected' && (
               <Flex
                 alignItems="flex-start"
                 bgColor="#FFC0C0"
@@ -149,13 +267,13 @@ function ApplicantForm() {
                     fontWeight="400"
                     color="#7B4646"
                   >
-                    {rejectionComment}
+                    {applicationData?.feedback}
                   </Text>
                 </Flex>
               </Flex>
             )}
 
-            {resubmissionComment && resubmissionComment.length > 0 && (
+            {applicationData && applicationData?.state === 'resubmit' && (
               <Flex
                 alignItems="flex-start"
                 bgColor="#FEF6D9"
@@ -187,7 +305,7 @@ function ApplicantForm() {
                     fontWeight="700"
                     color="#7B4646"
                   >
-                    Resubmit your Application
+                    Request for Resubmission
                   </Text>
                   <Text
                     fontSize="16px"
@@ -195,16 +313,17 @@ function ApplicantForm() {
                     fontWeight="400"
                     color="#7B4646"
                   >
-                    {resubmissionComment}
+                    {applicationData?.feedback}
                   </Text>
                 </Flex>
               </Flex>
             )}
 
-            <Application />
+            <Application applicationData={applicationData} />
           </Container>
 
           <Sidebar
+            applicationData={applicationData}
             onAcceptApplicationClick={() => setStep(1)}
             onRejectApplicationClick={() => setStep(2)}
             onResubmitApplicationClick={() => setStep(3)}
@@ -222,13 +341,12 @@ function ApplicantForm() {
         flexDirection="column"
         maxW="1116px"
         alignItems="stretch"
-        pb={6}
+        pb={0}
         px={10}
       >
         <Breadcrumbs
           path={['My Grants', 'View Applicants', 'Applicant Form']}
         />
-        <Heading mt="18px" title="Storage Provider (SP) Tooling Ideas" />
       </Container>
 
       <Container pb={12} maxW="100%" display="flex">

@@ -1,14 +1,15 @@
 import {
-  ModalBody, Flex, Text, Button, Box,
+  ModalBody, Flex, Text, Button, Box, Center, CircularProgress,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import MultiLineInput from '../../../ui/forms/multiLineInput';
 
 interface Props {
-  onClose: () => void;
+  onClose: (details: string) => void;
+  hasClicked: boolean;
 }
 
-function ModalContent({ onClose }: Props) {
+function ModalContent({ onClose, hasClicked }: Props) {
   const [details, setDetails] = useState('');
   const [detailsError, setDetailsError] = useState(false);
 
@@ -35,9 +36,15 @@ function ModalContent({ onClose }: Props) {
             maxLength={300}
           />
         </Flex>
-        <Button w="100%" variant="primary" mt={6} onClick={onClose}>
-          Mark Grant as Done
-        </Button>
+        {hasClicked ? (
+          <Center>
+            <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
+          </Center>
+        ) : (
+          <Button w="100%" variant="primary" mt={6} onClick={() => onClose(details)}>
+            Mark Grant as Done
+          </Button>
+        )}
         <Box mb={4} />
       </Flex>
     </ModalBody>
