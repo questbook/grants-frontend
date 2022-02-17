@@ -132,7 +132,7 @@ function YourApplicationCard({
             w="10px"
           />
         </Link>
-        {status === 'approved' ? (
+        {['approved', 'completed'].includes(status) ? (
           <Button
             onClick={() => (onManageGrantClick ? onManageGrantClick() : () => {})}
             ml="30px"
