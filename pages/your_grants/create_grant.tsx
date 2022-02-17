@@ -3,10 +3,10 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
-  ReactElement, useContext, useEffect, useRef, useState,
+  ReactElement, useContext, useRef, useState,
 } from 'react';
-import InfoToast from 'src/components/ui/infoToast';
 import { useAccount, useContract, useSigner } from 'wagmi';
+import InfoToast from '../../src/components/ui/infoToast';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/create_grant/form';
 import config from '../../src/constants/config';
@@ -63,9 +63,6 @@ function CreateGrant() {
     signerOrProvider: signerStates.data,
   });
   const [hasClicked, setHasClicked] = React.useState(false);
-  useEffect(() => {
-    console.log(hasClicked);
-  }, [hasClicked]);
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
 
@@ -96,9 +93,6 @@ function CreateGrant() {
 
     try {
       setHasClicked(true);
-      console.log(data);
-      console.log(workspaceId);
-
       const {
         data: { ipfsHash },
       } = await validatorApi.validateGrantCreate({
@@ -115,7 +109,7 @@ function CreateGrant() {
         fields: data.fields,
       });
 
-      console.log(ipfsHash);
+      // console.log(ipfsHash);
 
       const transaction = await grantContract.createGrant(
         workspaceId!,
@@ -126,13 +120,12 @@ function CreateGrant() {
       const transactionData = await transaction.wait();
 
       setHasClicked(false);
-      console.log(transactionData);
       router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
 
       showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
     } catch (error) {
       setHasClicked(false);
-      console.log(error);
+      // console.log(error);
       toast({
         title: 'Application update not indexed',
         status: 'error',

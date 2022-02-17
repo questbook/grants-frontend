@@ -52,6 +52,7 @@ function YourApplicationCard({
   sentDate,
   updatedDate,
   reviewDate,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   resultDate,
 }: Props) {
   return (

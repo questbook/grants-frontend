@@ -9,17 +9,15 @@ interface Props {
   workspaceMembers: any;
 }
 
-function Members({workspaceMembers}: Props) {
+function Members({ workspaceMembers }: Props) {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [tableData, setTableData] = React.useState(null);
+  const [tableData, setTableData] = React.useState<any>(null);
   const flex = [0.68, 0.32];
   const tableHeaders = ['Member Address', 'Role'];
 
   useEffect(() => {
-    if(!workspaceMembers) return;
-    const tempTableData = workspaceMembers.map((member) => {
-      return {memberAddress: member.actorId, role: 'Admin'};
-    });
+    if (!workspaceMembers) return;
+    const tempTableData = workspaceMembers.map((member: any) => ({ memberAddress: member.actorId, role: 'Admin' }));
     setTableData(tempTableData);
   }, [workspaceMembers]);
 
@@ -34,7 +32,7 @@ function Members({workspaceMembers}: Props) {
           {tableHeaders.map((header, index) => (<Text flex={flex[index]} variant="tableHeader">{header}</Text>))}
         </Flex>
         <Flex direction="column" w="100%" border="1px solid #D0D3D3" borderRadius={4}>
-          {tableData && tableData.map((data, index) => (
+          {tableData && tableData.map((data: any, index: number) => (
             <Flex direction="row" w="100%" justify="stretch" align="center" bg={index % 2 === 0 ? '#F7F9F9' : 'white'} py={4}>
               <Text ml={7} flex={flex[0]} variant="tableBody">{data.memberAddress}</Text>
               <Text flex={flex[1]} variant="tableBody">{data.role}</Text>

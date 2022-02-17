@@ -7,8 +7,8 @@ import React, {
 } from 'react';
 import { gql } from '@apollo/client';
 import { ethers } from 'ethers';
-import { GrantApplicationProps } from 'src/types/application';
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
+import { GrantApplicationProps } from '../../src/types/application';
+import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils';
 import Form from '../../src/components/your_applications/grant_application/form';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import NavbarLayout from '../../src/layout/navbarLayout';
@@ -34,13 +34,13 @@ function ViewApplication() {
           applicationID,
         },
       })) as any;
-      console.log(data);
+      // console.log(data);
       if (data && data.grantApplication) {
         setApplication(data.grantApplication);
       }
       return true;
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       return null;
     }
   }, [applicationID]);
@@ -56,9 +56,7 @@ function ViewApplication() {
 
   useEffect(() => {
     if (!application || !application?.fields?.length) return;
-    console.log('application', application);
     const fields = application?.fields;
-    console.log(fields);
     const fd: GrantApplicationProps = {
       applicantName: fields.find((f:any) => f.id.split('.')[1] === 'applicantName')?.value[0] ?? '',
       applicantEmail: fields.find((f:any) => f.id.split('.')[1] === 'applicantEmail')?.value[0] ?? '',
@@ -73,7 +71,6 @@ function ViewApplication() {
       fundingAsk: ethers.utils.formatEther(fields.find((f:any) => f.id.split('.')[1] === 'fundingAsk')?.value[0] ?? '0'),
       fundingBreakdown: fields.find((f:any) => f.id.split('.')[1] === 'fundingBreakdown')?.value[0] ?? '',
     };
-    console.log('fd', fd);
     setFormData(fd);
   }, [application]);
 

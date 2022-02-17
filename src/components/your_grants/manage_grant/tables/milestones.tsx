@@ -120,6 +120,7 @@ function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
         <MilestoneDoneModalContent
           milestone={openedModal?.milestone}
           done={() => {
+            // eslint-disable-next-line react/destructuring-assignment
             props.refetch();
             setOpenedModal({ type: 'milestone-done-confirm', milestone: openedModal!.milestone });
           }}

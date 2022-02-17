@@ -14,57 +14,6 @@ import NavbarLayout from '../src/layout/navbarLayout';
 import { formatAmount } from '../src/utils/formattingUtils';
 import { ApiClientsContext } from './_app';
 
-// const grantsData = [
-//   {
-//     id: '1',
-//     daoIcon: '/images/dummy/Polygon Icon.svg',
-//     daoName: 'Polygon DAO',
-//     isDaoVerified: true,
-//     grantTitle: 'Storage Provider (SP) Tooling Ideas',
-//     grantDesc:
-//       'A tool, script or tutorial to set up monitoring for miner GPU, CPU, m
-//        emory and other and resource and performance metrics, ideally using Prometheus',
-//     numOfApplicants: 0,
-//     endTimestamp: new Date('January 2, 2022 23:59:59:000').getTime(),
-//     grantAmount: 60,
-//     grantCurrency: 'ETH',
-//     grantCurrencyIcon: '/images/dummy/Ethereum Icon.svg',
-//     isGrantVerified: true,
-//   },
-//   {
-//     id: '1',
-//     daoIcon: '/images/dummy/Polygon Icon.svg',
-//     daoName: 'Polygon DAO',
-//     isDaoVerified: true,
-//     grantTitle: 'Storage Provider (SP) Tooling Ideas',
-//     grantDesc:
-//       'A tool, script or tutorial to set up monitoring for miner GPU, CPU, m
-//      emory and other and resource and performance metrics, ideally using Prometheus',
-//     numOfApplicants: 0,
-//     endTimestamp: new Date('January 2, 2022 23:59:59:000').getTime(),
-//     grantAmount: 60,
-//     grantCurrency: 'ETH',
-//     grantCurrencyIcon: '/images/dummy/Ethereum Icon.svg',
-//     isGrantVerified: true,
-//   },
-//   {
-//     id: '1',
-//     daoIcon: '/images/dummy/Polygon Icon.svg',
-//     daoName: 'Polygon DAO',
-//     isDaoVerified: true,
-//     grantTitle: 'Storage Provider (SP) Tooling Ideas',
-//     grantDesc:
-//       'A tool, script or tutorial to set up monitoring for miner GPU, CPU,
-//      memory and other and resource and performance metrics, ideally using Prometheus',
-//     numOfApplicants: 0,
-//     endTimestamp: new Date('January 2, 2022 23:59:59:000').getTime(),
-//     grantAmount: 60,
-//     grantCurrency: 'ETH',
-//     grantCurrencyIcon: '/images/dummy/Ethereum Icon.svg',
-//     isGrantVerified: true,
-//   },
-// ];
-
 function BrowseGrants() {
   const containerRef = useRef(null);
   const [{ data: accountData }] = useAccount();
@@ -80,7 +29,6 @@ function BrowseGrants() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getGrantData = async () => {
     if (!subgraphClient) return;
-    console.log(grants);
     try {
       const { data } = (await subgraphClient.query({
         query: gql(getAllGrants),
@@ -89,7 +37,6 @@ function BrowseGrants() {
           skip: currentPage * pageSize,
         },
       })) as any;
-      console.log(data);
       if (data.grants.length > 0) {
         setCurrentPage(currentPage + 1);
         setGrants([...grants, ...data.grants]);

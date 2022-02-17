@@ -2,8 +2,8 @@ import {
   Heading, Flex, Text, Image, Box, Button,
 } from '@chakra-ui/react';
 import React from 'react';
-import { formatAmount, getFormattedFullDateFromUnixTimestamp, truncateStringFromMiddle } from 'src/utils/formattingUtils';
-import { getAssetInfo } from 'src/utils/tokenUtils';
+import { formatAmount, getFormattedFullDateFromUnixTimestamp, truncateStringFromMiddle } from '../../../utils/formattingUtils';
+import { getAssetInfo } from '../../../utils/tokenUtils';
 import FloatingSidebar from '../../ui/sidebar/floatingSidebar';
 
 function Sidebar({

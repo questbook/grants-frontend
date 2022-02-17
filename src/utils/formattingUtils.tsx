@@ -1,7 +1,8 @@
 import { ethers } from 'ethers';
 import React from 'react';
 import moment from 'moment';
-import { FundTransfer } from 'src/graphql/queries';
+// eslint-disable-next-line import/no-cycle
+import { FundTransfer } from '../graphql/queries';
 
 export function timeToString(
   timestamp: number,

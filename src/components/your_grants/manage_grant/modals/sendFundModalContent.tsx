@@ -7,7 +7,7 @@ import {
 import { BigNumber } from 'ethers';
 import React, { useEffect } from 'react';
 import { useContract, useSigner } from 'wagmi';
-import InfoToast from 'src/components/ui/infoToast';
+import InfoToast from '../../../ui/infoToast';
 import { formatAmount, parseAmount } from '../../../../utils/formattingUtils';
 import Dropdown from '../../../ui/forms/dropdown';
 import SingleLineInput from '../../../ui/forms/singleLineInput';

@@ -6,14 +6,14 @@ import React, {
   ReactElement, useEffect, useState, useCallback,
   useContext,
 } from 'react';
-import SubgraphClient from 'src/graphql/subgraph';
-import { getApplicationDetails } from 'src/graphql/daoQueries';
 import { gql } from '@apollo/client';
 import { useAccount, useContract, useSigner } from 'wagmi';
-import config from 'src/constants/config';
-import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.json';
-import { ApiClientsContext } from 'pages/_app';
-import InfoToast from 'src/components/ui/infoToast';
+import SubgraphClient from '../../../src/graphql/subgraph';
+import { getApplicationDetails } from '../../../src/graphql/daoQueries';
+import config from '../../../src/constants/config';
+import ApplicationRegistryAbi from '../../../src/contracts/abi/ApplicationRegistryAbi.json';
+import { ApiClientsContext } from '../../_app';
+import InfoToast from '../../../src/components/ui/infoToast';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Heading from '../../../src/components/ui/heading';
 
@@ -48,13 +48,13 @@ function ApplicantForm() {
           applicationID: applicationId,
         },
       })) as any;
-      console.log(data);
+      // console.log(data);
       if (data && data.grantApplication) {
         setApplicationData(data.grantApplication);
       }
       return true;
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       return null;
     }
   }, [applicationId]);
@@ -86,9 +86,6 @@ function ApplicantForm() {
   });
 
   const [hasClicked, setHasClicked] = React.useState(false);
-  useEffect(() => {
-    console.log(hasClicked);
-  }, [hasClicked]);
   const toastRef = React.useRef<ToastId>();
 
   const closeToast = () => {
@@ -127,8 +124,8 @@ function ApplicantForm() {
       } = await validatorApi.validateGrantApplicationUpdate({
         feedback: comment,
       });
-      console.log(ipfsHash);
-      console.log(Number(applicationData?.id), Number(workspaceId));
+      // console.log(ipfsHash);
+      // console.log(Number(applicationData?.id), Number(workspaceId));
       const transaction = await applicationRegContract.updateApplicationState(
         Number(applicationData?.id),
         Number(workspaceId),
@@ -137,8 +134,8 @@ function ApplicantForm() {
       );
       const transactionData = await transaction.wait();
 
-      console.log(transactionData);
-      console.log(transactionData.blockNumber);
+      // console.log(transactionData);
+      // console.log(transactionData.blockNumber);
       // toast({ title: 'Transaction succeeded', status: 'success' });
 
       setHasClicked(false);
@@ -148,7 +145,7 @@ function ApplicantForm() {
       // await subgraphClient.waitForBlock(transactionData.blockNumber);
     } catch (error) {
       setHasClicked(false);
-      console.log(error);
+      // console.log(error);
       toast({
         title: 'Application update not indexed',
         status: 'error',
