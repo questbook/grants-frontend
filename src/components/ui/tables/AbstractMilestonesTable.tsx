@@ -27,6 +27,7 @@ const TABLE_HEADERS = [
 export type AbstractMilestonesTableProps = {
   milestones: ApplicationMilestone[]
   rewardAssetId: string
+  refetch: () => void
   renderStatus: (milestone: ApplicationMilestone) => React.ReactNode
 };
 

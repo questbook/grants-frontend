@@ -43,14 +43,14 @@ export type Grant = {
 
 export const useApplicationMilestones = (grantId: string) => {
   const { subgraphClient } = useContext(ApiClientsContext)!;
-  const { data, loading, error } = useQuery(gql(getApplicationMilestones), {
+  const fullData = useQuery(gql(getApplicationMilestones), {
     client: subgraphClient.client,
     variables: {
       grantId,
     },
   });
 
-  const grantApp = data?.grantApplications[0];
+  const grantApp = fullData?.data?.grantApplications[0];
 
   const fundingAsk: string = grantApp?.fields?.find((item: any) => item.id.endsWith('.fundingAsk.field'))?.value;
   const rewardAsset: string = grantApp?.grant?.reward?.asset;
@@ -59,11 +59,10 @@ export const useApplicationMilestones = (grantId: string) => {
     amount: formatAmount(milestone.amount.toString()),
     amountPaid: formatAmount(milestone.amountPaid.toString()),
   })) || [];
-  console.log(milestones);
+
   return {
+    ...fullData,
     data: { rewardAsset, milestones: milestones as ApplicationMilestone[], fundingAsk },
-    loading,
-    error,
   };
 };
 

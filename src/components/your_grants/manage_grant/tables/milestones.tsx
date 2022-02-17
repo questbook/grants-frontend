@@ -149,6 +149,7 @@ function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
         <MilestoneDoneModalContent
           milestone={openedModal?.milestone}
           done={() => {
+            props.refetch();
             setOpenedModal({ type: 'milestone-done-confirm', milestone: openedModal!.milestone });
           }}
         />
