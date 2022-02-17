@@ -9,7 +9,7 @@ import React, {
   useState,
 } from 'react';
 import { useAccount, useContract, useSigner } from 'wagmi';
-import InfoToast from 'src/components/ui/infoToast';
+import InfoToast from '../../src/components/ui/infoToast';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/edit_grant/form';
 import Sidebar from '../../src/components/your_grants/edit_grant/sidebar';
@@ -70,9 +70,6 @@ function EditGrant() {
   });
 
   const [hasClicked, setHasClicked] = React.useState(false);
-  useEffect(() => {
-    console.log(hasClicked);
-  }, [hasClicked]);
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
 
@@ -103,9 +100,6 @@ function EditGrant() {
 
     try {
       setHasClicked(true);
-      console.log(data);
-      console.log(workspaceId);
-
       // eslint-disable-next-line react-hooks/rules-of-hooks
 
       const {
@@ -122,15 +116,12 @@ function EditGrant() {
         fields: data.fields,
       });
 
-      console.log(ipfsHash);
+      // console.log(ipfsHash);
 
       const transaction = await grantContract.updateGrant(
         ipfsHash,
       );
       const transactionData = await transaction.wait();
-
-      console.log(transactionData);
-      console.log(transactionData.blockNumber);
       setHasClicked(false);
       router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
 
@@ -140,7 +131,7 @@ function EditGrant() {
     // router.replace('/your_grants');
     } catch (error) {
       setHasClicked(false);
-      console.log(error);
+      // console.log(error);
       toast({
         title: 'Application update not indexed',
         status: 'error',
@@ -160,10 +151,8 @@ function EditGrant() {
           grantID,
         },
       })) as any;
-      console.log(data);
       if (data.grants.length > 0) {
         const grant = data.grants[0];
-        console.log(grant.fields.find((field: any) => field.id.includes('applicantName')) !== undefined);
         setFormData({
           title: grant.title,
           summary: grant.summary,
@@ -187,7 +176,6 @@ function EditGrant() {
           )!.id,
           date: grant.deadline,
         });
-        console.log(formData);
       }
     } catch (e: any) {
       toast({

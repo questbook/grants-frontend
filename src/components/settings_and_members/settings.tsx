@@ -40,9 +40,6 @@ function Settings({
   const apiClients = useContext(ApiClientsContext);
 
   const [hasClicked, setHasClicked] = React.useState(false);
-  useEffect(() => {
-    console.log(hasClicked);
-  }, [hasClicked]);
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
 
@@ -80,7 +77,6 @@ function Settings({
       let coverImageHash = workspaceData.coverImageIpfsHash;
       const socials = [];
 
-      console.log('check', data.image);
       if (data.image) {
         imageHash = await uploadToIPFS(data.image);
         imageHash = imageHash.hash;
@@ -125,16 +121,14 @@ function Settings({
       // });
 
       const txn = await contract.updateWorkspaceMetadata(workspaceID, ipfsHash);
-      console.log(txn);
       const transactionData = await txn.wait();
-      console.log(transactionData.blockNumber);
       setHasClicked(false);
       window.location.reload();
 
       showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
     } catch (error) {
       setHasClicked(false);
-      console.log(error);
+      // console.log(error);
       toast({
         title: 'Application update not indexed',
         status: 'error',
@@ -152,8 +146,8 @@ function Settings({
     const discordHandle = discordSocial.length > 0 ? discordSocial[0].value : null;
     const telegramSocial = workspaceData.socials.filter((socials: any) => socials.name === 'telegram');
     const telegramChannel = telegramSocial.length > 0 ? telegramSocial[0].value : null;
-    console.log('loaded', workspaceData);
-    console.log(getUrlForIPFSHash(workspaceData?.logoIpfsHash));
+    // console.log('loaded', workspaceData);
+    // console.log(getUrlForIPFSHash(workspaceData?.logoIpfsHash));
     setFormData({
       name: workspaceData.title,
       about: workspaceData.about,

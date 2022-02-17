@@ -19,8 +19,8 @@ import {
   useContract, useSigner,
 } from 'wagmi';
 import { BigNumber, ethers } from 'ethers';
-import { formatAmount } from 'src/utils/formattingUtils';
-import InfoToast from 'src/components/ui/infoToast';
+import { formatAmount } from '../../../utils/formattingUtils';
+import InfoToast from '../../ui/infoToast';
 import Dropdown from '../../ui/forms/dropdown';
 import SingleLineInput from '../../ui/forms/singleLineInput';
 import Modal from '../../ui/modal';
@@ -132,9 +132,9 @@ function AddFunds({
   };
 
   useEffect(() => {
+    // eslint-disable-next-line func-names
     (async function () {
       try {
-        console.log('', rewardAssetContract);
         if (!rewardAssetContract.provider) return;
         const assetDecimal = await rewardAssetContract.decimals();
         setRewardAssetDecimals(assetDecimal);
@@ -145,7 +145,7 @@ function AddFunds({
         );
         setWalletBalance(tempWalletBalance);
       } catch (e) {
-        console.error(e);
+        // console.error(e);
       }
     }());
   }, [signerStates, rewardAssetContract]);

@@ -9,8 +9,8 @@ import {
   CircularProgress,
 } from '@chakra-ui/react';
 import React from 'react';
-import { formatAmount } from 'src/utils/formattingUtils';
-import { getAssetInfo } from 'src/utils/tokenUtils';
+import { formatAmount } from '../../../../utils/formattingUtils';
+import { getAssetInfo } from '../../../../utils/tokenUtils';
 
 function Accept({
   onSubmit,
