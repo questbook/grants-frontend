@@ -9,11 +9,7 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 
-function Menu({
-  onEditClick,
-}: {
-  onEditClick: () => void;
-}) {
+function Menu() {
   const [copied, setCopied] = React.useState(false);
   return (
     <MenuComponent

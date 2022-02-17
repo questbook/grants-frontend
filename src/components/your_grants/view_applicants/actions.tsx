@@ -13,13 +13,13 @@ import React from 'react';
 function Actions({
   status,
   onViewApplicationFormClick,
-  onAcceptApplicationClick,
-  onRejectApplicationClick,
+  // onAcceptApplicationClick,
+  // onRejectApplicationClick,
 }: {
   status: number;
   onViewApplicationFormClick?: () => void;
-  onAcceptApplicationClick?: () => void;
-  onRejectApplicationClick?: () => void;
+  // onAcceptApplicationClick?: () => void;
+  // onRejectApplicationClick?: () => void;
 }) {
   if (status === 3) {
     return (

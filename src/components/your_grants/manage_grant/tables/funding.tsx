@@ -5,10 +5,10 @@ import {
 } from '@chakra-ui/react';
 import moment from 'moment';
 import { ethers } from 'ethers';
-import { getMilestoneTitle } from 'src/utils/formattingUtils';
+// import { getMilestoneTitle } from 'src/utils/formattingUtils';
 import { FundTransfer } from '../../../../graphql/queries';
 import { getAssetInfo } from '../../../../utils/tokenUtils';
-import { formatAmount } from '../../../../utils/formattingUtils';
+import { formatAmount, getMilestoneTitle } from '../../../../utils/formattingUtils';
 
 const getTextWithEllipses = (txt: string, maxLength = 7) => (txt.length > maxLength ? `${txt.slice(0, maxLength)}...` : txt);
 
