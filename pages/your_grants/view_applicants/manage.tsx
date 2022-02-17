@@ -13,6 +13,8 @@ import moment from 'moment';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react';
 import { useAccount, useSigner, useContract } from 'wagmi';
+import config from 'src/constants/config';
+import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.json';
 import {
   ApplicationMilestone,
   useApplicationMilestones,
@@ -30,8 +32,6 @@ import NavbarLayout from '../../../src/layout/navbarLayout';
 import { getAssetInfo } from '../../../src/utils/tokenUtils';
 import { ApiClientsContext } from '../../_app';
 import { formatAmount, parseAmount } from '../../../src/utils/formattingUtils';
-import config from 'src/constants/config';
-import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.json';
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
   return milestones.reduce(
@@ -67,7 +67,7 @@ function ManageGrant() {
   });
 
   const {
-    data: { milestones, rewardAsset, fundingAsk },
+    data: { milestones, rewardAsset, fundingAsk }, refetch: refetchMilestones,
   } = useApplicationMilestones(applicationID);
   const { data: fundsDisbursed } = useFundDisbursed(applicationID);
   const fundingIcon = getAssetInfo(rewardAsset)?.icon;
@@ -114,7 +114,11 @@ function ManageGrant() {
       title: milestones.length.toString(),
       subtitle: milestones.length === 1 ? 'Milestone' : 'Milestones',
       content: (
-        <Milestones milestones={milestones} rewardAssetId={rewardAsset} />
+        <Milestones
+          refetch={refetchMilestones}
+          milestones={milestones}
+          rewardAssetId={rewardAsset}
+        />
       ),
     },
     {
