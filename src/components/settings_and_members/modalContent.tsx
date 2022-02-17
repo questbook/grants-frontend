@@ -2,7 +2,7 @@ import {
   ModalBody, Button, Text, Box, useToast, Flex, Image, Link,
 } from '@chakra-ui/react';
 import React, { useContext } from 'react';
-import { useAccount, useContract, useSigner } from 'wagmi';
+import { useContract, useSigner } from 'wagmi';
 import SingleLineInput from '../ui/forms/singleLineInput';
 import config from '../../constants/config';
 import WorkspaceRegistryABI from '../../contracts/abi/WorkspaceRegistryAbi.json';
@@ -13,6 +13,7 @@ interface Props {
 }
 
 function ModalContent({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onClose,
 }: Props) {
   const [memberAddress, setMemberAddress] = React.useState('');
@@ -44,9 +45,9 @@ function ModalContent({
         duration: 9000,
         isClosable: true,
       });
-    } catch (e) {
+    } catch (e: any) {
       toast({
-        title: e,
+        title: e.message,
         status: 'error',
         duration: 9000,
         isClosable: true,

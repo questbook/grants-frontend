@@ -45,13 +45,13 @@ function AboutGrant() {
           grantID, // : '0xcf624e32a53fec9ea5908f22d43a78a943931063',
         },
       })) as any;
-      console.log(data);
+      // console.log(data);
       if (data && data.grants.length) {
         setGrantData(data.grants[0]);
       }
       return true;
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       return null;
     }
   }, [grantID]);

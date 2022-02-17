@@ -38,13 +38,13 @@ function ApplyGrant() {
           grantID,
         },
       })) as any;
-      console.log(data);
+      // console.log(data);
       if (data && data.grants.length) {
         setGrantData(data.grants[0]);
       }
       return true;
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       return null;
     }
   }, [grantID]);
@@ -68,12 +68,12 @@ function ApplyGrant() {
     const supportedCurrencyObj = supportedCurrencies.find(
       (curr) => curr?.id.toLowerCase() === grantData?.reward?.asset?.toLowerCase(),
     );
-    console.log('curr', supportedCurrencyObj);
+    // console.log('curr', supportedCurrencyObj);
     if (supportedCurrencyObj) {
       setRewardCurrency(supportedCurrencyObj?.label);
       setRewardCurrencyCoin(supportedCurrencyObj?.icon);
     }
-    console.log(grantData);
+    // console.log(grantData);
 
     setGrantDetails(grantData?.details);
     setGrantSummary(grantData?.summary);

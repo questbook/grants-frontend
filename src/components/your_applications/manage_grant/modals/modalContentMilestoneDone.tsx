@@ -1,13 +1,13 @@
 import {
   ModalBody, Flex, Text, Button, Box, Image, useToast,
 } from '@chakra-ui/react';
-import { ApiClientsContext } from 'pages/_app';
 import React, { useContext, useState } from 'react';
-import config from 'src/constants/config';
-import { ApplicationMilestone } from 'src/graphql/queries';
-import { getMilestoneMetadata } from 'src/utils/formattingUtils';
-import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.json';
 import { useContract, useSigner } from 'wagmi';
+import { ApiClientsContext } from '../../../../../pages/_app';
+import config from '../../../../constants/config';
+import { ApplicationMilestone } from '../../../../graphql/queries';
+import { getMilestoneMetadata } from '../../../../utils/formattingUtils';
+import ApplicationRegistryAbi from '../../../../contracts/abi/ApplicationRegistryAbi.json';
 import MultiLineInput from '../../../ui/forms/multiLineInput';
 
 interface Props {
@@ -40,8 +40,6 @@ function ModalContent({ milestone, onClose }: Props) {
 
     try {
       const { data } = await validatorApi.validateApplicationMilestoneUpdate({ text: details });
-      console.log(`uploaded milestone update data to IPFS: ${data.ipfsHash}`);
-
       const { milestoneIndex, applicationId } = getMilestoneMetadata(milestone)!;
       // contract interaction
       const transaction = await applicationRegContract.requestMilestoneApproval(
@@ -52,15 +50,10 @@ function ModalContent({ milestone, onClose }: Props) {
 
       const transactionData = await transaction.wait();
 
-      console.log('executed transaction', transactionData);
-
       await subgraphClient.waitForBlock(transactionData.blockNumber);
-
-      console.log('executed application milestone');
-
       onClose();
     } catch (error: any) {
-      console.error('error in milestone update ', error);
+      // console.error('error in milestone update ', error);
       toast({
         title: error.name,
         description: error.message,

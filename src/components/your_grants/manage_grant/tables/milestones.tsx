@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Text, Image, Flex, Button, MenuButton, Menu, MenuList, MenuItem,
 } from '@chakra-ui/react';
@@ -30,6 +30,10 @@ function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
     assetInfo,
     applicationId,
   } = props;
+
+  useEffect(() => {
+    console.log(grant);
+  }, [grant]);
 
   const renderStatus = (milestone: ApplicationMilestone) => {
     const status = milestone.state;
@@ -131,6 +135,7 @@ function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
         <MilestoneDoneModalContent
           milestone={openedModal?.milestone}
           done={() => {
+            // eslint-disable-next-line react/destructuring-assignment
             props.refetch();
             setOpenedModal({ type: 'milestone-done-confirm', milestone: openedModal!.milestone });
           }}

@@ -14,9 +14,9 @@ import moment from 'moment';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react';
 import { useAccount, useSigner, useContract } from 'wagmi';
-import config from 'src/constants/config';
-import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.json';
-import InfoToast from 'src/components/ui/infoToast';
+import config from '../../../src/constants/config';
+import ApplicationRegistryAbi from '../../../src/contracts/abi/ApplicationRegistryAbi.json';
+import InfoToast from '../../../src/components/ui/infoToast';
 import {
   ApplicationMilestone,
   useApplicationMilestones,
@@ -83,10 +83,9 @@ function ManageGrant() {
           applicationID,
         },
       })) as any;
-      console.log(data);
       if (data && data.grantApplication) {
         const application = data.grantApplication;
-        console.log(application);
+        // console.log(application);
         setApplicationData({
           title: application.grant.title,
           applicantAddress: application.applicantId,
@@ -99,7 +98,7 @@ function ManageGrant() {
         });
       }
     } catch (e: any) {
-      console.log(e);
+      // console.log(e);
     }
   };
 
@@ -183,13 +182,12 @@ function ManageGrant() {
     try {
       if (!apiClients) return;
       const { validatorApi, workspaceId } = apiClients;
-      console.log('acdataa---------', applicationData);
       if (!accountData
       || !accountData.address
       || !workspaceId
       || !applicationData
       || !applicationData.id) {
-        console.log('compleeeeeee');
+        // console.log('compleeeeeee');
         return;
       }
 
@@ -199,25 +197,21 @@ function ManageGrant() {
       } = await validatorApi.validateGrantApplicationUpdate({
         feedback: comment,
       });
-      console.log(ipfsHash);
-      console.log(Number(applicationData?.id), Number(workspaceId));
+      // console.log(ipfsHash);
+      // console.log(Number(applicationData?.id), Number(workspaceId));
       const transaction = await applicationRegContract.completeApplication(
         Number(applicationData?.id),
         Number(workspaceId),
         ipfsHash,
       );
       const transactionData = await transaction.wait();
-
-      console.log(transactionData);
-      console.log(transactionData.blockNumber);
-
       setHasClicked(false);
       setIsGrantCompleteModalOpen(false);
       showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
       // toast({ title: 'Transaction succeeded', status: 'success' });
     } catch (error) {
       setHasClicked(false);
-      console.log(error);
+      // console.log(error);
       toast({
         title: 'Application update not indexed',
         status: 'error',
@@ -381,7 +375,7 @@ function ManageGrant() {
       >
         <ModalContent
           hasClicked={hasClicked}
-          onClose={(details) => markApplicationComplete(details)}
+          onClose={(details: any) => markApplicationComplete(details)}
         />
       </Modal>
     </Container>

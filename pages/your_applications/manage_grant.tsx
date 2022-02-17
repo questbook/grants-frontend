@@ -2,8 +2,6 @@ import {
   Container, Flex, Image, Box, Text, Button,
 } from '@chakra-ui/react';
 import React, { useContext, useEffect, useState } from 'react';
-import { useApplicationMilestones } from 'src/graphql/queries';
-import { getAssetInfo } from 'src/utils/tokenUtils';
 import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
 import { gql } from '@apollo/client';
@@ -16,6 +14,8 @@ import FundingRequestedTable from '../../src/components/your_applications/manage
 import NavbarLayout from '../../src/layout/navbarLayout';
 import { ApiClientsContext } from '../_app';
 import { getApplicationDetails } from '../../src/graphql/daoQueries';
+import { getAssetInfo } from '../../src/utils/tokenUtils';
+import { useApplicationMilestones } from '../../src/graphql/queries';
 
 function ManageGrant() {
   const [applicationData, setApplicationData] = useState<any>({
@@ -66,7 +66,7 @@ function ManageGrant() {
       })) as any;
       if (data && data.grantApplication) {
         const application = data.grantApplication;
-        console.log(application);
+        // console.log(application);
         setApplicationData({
           title: application.grant.title,
           applicantAddress: application.applicantId,
@@ -77,7 +77,7 @@ function ManageGrant() {
         });
       }
     } catch (e: any) {
-      console.log(e);
+      // console.log(e);
     }
   };
 

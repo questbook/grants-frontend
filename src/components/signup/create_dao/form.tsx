@@ -49,7 +49,7 @@ function Form({
   const [imageFile, setImageFile] = React.useState<File | null>(null);
   const [imageError, setImageError] = React.useState(false);
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.files);
+    // console.log(event.target.files);
     if (event.target.files && event.target.files[0]) {
       const img = event.target.files[0];
       setImageFile(img);

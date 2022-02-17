@@ -162,6 +162,7 @@ function Table() {
             setIsMilestoneDoneModalOpen(false);
             setIsMilestoneDoneCheckModalOpen(true);
           }}
+          milestone={undefined}
         />
       </Modal>
       <Modal
@@ -170,6 +171,7 @@ function Table() {
         title="Milestone 1"
       >
         <MilestoneDoneCheckModalContent
+          milestone={undefined}
           onClose={() => {
             setIsMilestoneDoneCheckModalOpen(false);
             setIsMilestoneDoneConfirmationModalOpen(true);
@@ -182,6 +184,7 @@ function Table() {
         title=""
       >
         <MilestoneDoneConfirmationModalContent
+          milestone={undefined}
           onClose={() => setIsMilestoneDoneConfirmationModalOpen(false)}
         />
       </Modal>

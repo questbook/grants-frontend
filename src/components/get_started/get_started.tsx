@@ -47,7 +47,7 @@ function GetStarted({
             ),
             onClick: () => onDaoClick(),
           },
-        ].map(({ icon, text, onClick }, index) => (
+        ].map(({ icon, text, onClick }) => (
           <Flex direction="column" justify="start" align="center" mx={4}>
             <Image h="153px" w="202px" src={icon} />
             <Text mt={10} fontWeight="400" textAlign="center">

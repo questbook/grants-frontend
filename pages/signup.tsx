@@ -6,7 +6,7 @@ import React, { ReactElement, useContext } from 'react';
 import { useAccount, useContract, useSigner } from 'wagmi';
 import { SupportedNetwork } from '@questbook/service-validator-client';
 import { gql } from '@apollo/client';
-import InfoToast from 'src/components/ui/infoToast';
+import InfoToast from '../src/components/ui/infoToast';
 import Form from '../src/components/signup/create_dao/form';
 import Loading from '../src/components/signup/create_dao/loading';
 import CreateGrant from '../src/components/signup/create_grant';
@@ -64,7 +64,6 @@ function SignupDao() {
       const { subgraphClient, validatorApi } = apiClients;
 
       const imageHash = await uploadToIPFS(data.image);
-      console.log(imageHash);
 
       const {
         data: { ipfsHash },
@@ -77,16 +76,9 @@ function SignupDao() {
         supportedNetworks: [data.network as SupportedNetwork],
       });
 
-      // console.log(url);
-      console.log(ipfsHash);
-
       const transaction = await workspaceFactoryContract.createWorkspace(ipfsHash);
       // console.log(ret);
       const transactionData = await transaction.wait();
-
-      console.log(transactionData);
-      console.log(transactionData.blockNumber);
-
       await subgraphClient.waitForBlock(transactionData.blockNumber);
 
       const { data: createdWorkspaceData } = (await subgraphClient.client.query(
@@ -97,7 +89,6 @@ function SignupDao() {
           },
         },
       )) as any;
-      // console.log(data);
       if (createdWorkspaceData.workspaces.length > 0) {
         const newId = createdWorkspaceData.workspaces[
           createdWorkspaceData.workspaces.length - 1
@@ -117,7 +108,7 @@ function SignupDao() {
       }
     } catch (error) {
       setLoading(false);
-      console.log(error);
+      // console.log(error);
     }
   };
 
@@ -153,9 +144,6 @@ function SignupDao() {
       setHasClicked(true);
       setCreatingGrant(true);
       const { validatorApi } = apiClients;
-
-      console.log(data);
-
       const {
         data: { ipfsHash },
       } = await validatorApi.validateGrantCreate({
@@ -172,8 +160,6 @@ function SignupDao() {
         fields: data.fields,
       });
 
-      console.log(ipfsHash);
-
       const transaction = await grantContract.createGrant(
         daoData!.id,
         ipfsHash,
@@ -183,13 +169,12 @@ function SignupDao() {
       const transactionData = await transaction.wait();
 
       setHasClicked(false);
-      console.log(transaction);
       router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
 
       showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
     } catch (error) {
       setHasClicked(false);
-      console.log(error);
+      // console.log(error);
       toast({
         title: 'Application update not indexed',
         status: 'error',

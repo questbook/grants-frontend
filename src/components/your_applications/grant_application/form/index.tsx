@@ -13,14 +13,14 @@ import {
   Center,
   CircularProgress,
 } from '@chakra-ui/react';
-import { GrantApplicationFieldsSubgraph, GrantApplicationProps, GrantApplicationUpdateSubgraph } from 'src/types/application';
-import { getFormattedFullDateFromUnixTimestamp, parseAmount } from 'src/utils/formattingUtils';
 import { useContract, useSigner } from 'wagmi';
-import config from 'src/constants/config';
-import { ApiClientsContext } from 'pages/_app';
 import { GrantApplicationUpdate } from '@questbook/service-validator-client';
-import InfoToast from 'src/components/ui/infoToast';
 import { useRouter } from 'next/router';
+import { GrantApplicationFieldsSubgraph, GrantApplicationProps, GrantApplicationUpdateSubgraph } from '../../../../types/application';
+import { ApiClientsContext } from '../../../../../pages/_app';
+import config from '../../../../constants/config';
+import { getFormattedFullDateFromUnixTimestamp, parseAmount } from '../../../../utils/formattingUtils';
+import InfoToast from '../../../ui/infoToast';
 import ApplicantDetails from './1_applicantDetails';
 import AboutProject from './3_aboutProject';
 import AboutTeam from './2_aboutTeam';
@@ -127,14 +127,11 @@ function Form({
         setFundingBreakdown(formData.fundingBreakdown);
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }, [formData]);
 
   const [hasClicked, setHasClicked] = React.useState(false);
-  useEffect(() => {
-    console.log(hasClicked);
-  }, [hasClicked]);
   const toastRef = React.useRef<ToastId>();
 
   const closeToast = () => {
@@ -253,8 +250,6 @@ function Form({
         { title: pm.milestone, amount: parseAmount(pm.milestoneReward) }
       ));
 
-      console.log(milestones);
-
       if (!signer || !signer.data || !apiClientContext) return;
       const data: GrantApplicationUpdateSubgraph = {
         fields: {
@@ -281,16 +276,12 @@ function Form({
       const { data: { ipfsHash } } = await apiClientContext
         .validatorApi
         .validateGrantApplicationUpdate(data as unknown as GrantApplicationUpdate);
-      console.log(ipfsHash);
       const transaction = await applicationRegistryContract.updateApplicationMetadata(
         applicationID,
         ipfsHash,
         projectMilestones.length,
       );
       const transactionData = await transaction.wait();
-
-      console.log(transactionData);
-      console.log(transactionData.blockNumber);
       toast({ title: 'Transaction succeeded', status: 'success' });
 
       setHasClicked(false);
@@ -317,7 +308,7 @@ function Form({
       // onSubmit({ data: grantApplications });
     } catch (error) {
       setHasClicked(false);
-      console.log(error);
+      // console.log(error);
       toast({
         title: 'Application not indexed',
         status: 'error',

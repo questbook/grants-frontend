@@ -39,13 +39,13 @@ function YourApplications() {
           applicantID: accountData?.address,
         },
       })) as any;
-      console.log('myapps', data);
+      // console.log('myapps', data);
       if (data && data.grantApplications.length) {
         setCurrentPage(currentPage + 1);
         setMyApplications([...myApplications, ...data.grantApplications]);
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
 

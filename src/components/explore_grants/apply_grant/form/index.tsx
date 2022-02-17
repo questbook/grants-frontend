@@ -4,11 +4,11 @@ import {
   Box, Button, Text, Image, Link, Flex, Container, useToast, ToastId, Center, CircularProgress,
 } from '@chakra-ui/react';
 import { useContract, useSigner } from 'wagmi';
-import { parseAmount } from 'src/utils/formattingUtils';
-import { GrantApplicationFieldsSubgraph, GrantApplicationCreateSubgraph } from 'src/types/application';
 import { GrantApplicationRequest } from '@questbook/service-validator-client';
-import InfoToast from 'src/components/ui/infoToast';
 import { useRouter } from 'next/router';
+import { parseAmount } from '../../../../utils/formattingUtils';
+import { GrantApplicationFieldsSubgraph, GrantApplicationCreateSubgraph } from '../../../../types/application';
+import InfoToast from '../../../ui/infoToast';
 import ApplicantDetails from './1_applicantDetails';
 import AboutProject from './3_aboutProject';
 import AboutTeam from './2_aboutTeam';
@@ -206,7 +206,6 @@ function Form({
       if (error) {
         return;
       }
-      console.log('mil', projectLinks);
       const links = projectLinks.map((pl) => (pl.link));
 
       const milestones = projectMilestones.map((pm) => (
@@ -242,8 +241,6 @@ function Form({
       const { data: { ipfsHash } } = await apiClientContext
         .validatorApi
         .validateGrantApplicationCreate(data as unknown as GrantApplicationRequest);
-      console.log(ipfsHash);
-      console.log(grantId, workspaceId, projectMilestones.length);
       const transaction = await applicationRegistryContract.submitApplication(
         grantId,
         Number(workspaceId).toString(),
@@ -251,9 +248,6 @@ function Form({
         projectMilestones.length,
       );
       const transactionData = await transaction.wait();
-
-      console.log(transactionData);
-      console.log(transactionData.blockNumber);
       // toast({ title: 'Transaction succeeded', status: 'success' });
 
       setHasClicked(false);
@@ -281,7 +275,7 @@ function Form({
       // onSubmit({ data: grantApplications });
     } catch (error) {
       setHasClicked(false);
-      console.log(error);
+      // console.log(error);
       toast({
         title: 'Application not indexed',
         status: 'error',

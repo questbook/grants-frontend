@@ -2,8 +2,8 @@ import {
   Flex, Divider, Button, Image, Text, Heading, Box, Link,
 } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
-import { formatAmount } from 'src/utils/formattingUtils';
-import { getAssetInfo } from 'src/utils/tokenUtils';
+import { formatAmount } from '../../../utils/formattingUtils';
+import { getAssetInfo } from '../../../utils/tokenUtils';
 
 interface Props {
   applicationData: any;

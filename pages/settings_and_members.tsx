@@ -13,7 +13,7 @@ import { ApiClientsContext } from './_app';
 function SettingsAndMembers() {
   const tabs = ['Settings', 'Invite Members'];
   const [selected, setSelected] = useState(0);
-  const [workspaceData, setWorkspaceData] = useState(null);
+  const [workspaceData, setWorkspaceData] = useState<any>(null);
   const workspaceId = useContext(ApiClientsContext)?.workspaceId;
 
   const switchTab = (to: number) => {
@@ -35,13 +35,13 @@ function SettingsAndMembers() {
         setWorkspaceData(data.workspace);
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   }
 
   useEffect(() => {
     if (!workspaceId) return;
-    console.log('getting called');
+    // console.log('getting called');
     getWorkspaceData(workspaceId);
   }, [workspaceId]);
 
