@@ -23,9 +23,41 @@ function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
   const renderStatus = (milestone: ApplicationMilestone) => {
     const status = milestone.state;
     const updatedAtS = milestone.updatedAtS || 0;
-    if (status === 'submitted') {
+    if (status === 'submitted' || status === 'requested') {
       return (
         <Flex direction="column">
+          {
+            status === 'requested' && (
+              <Text
+                textAlign="right"
+                variant="footer"
+                color="#A0A7A7"
+                whiteSpace="nowrap"
+              >
+                Marked as Done
+                {' '}
+                <Text
+                  textAlign="right"
+                  display="inline-block"
+                  variant="footer"
+                  fontWeight="400"
+                  color="#A0A7A7"
+                >
+                  on
+                </Text>
+                {' '}
+                <Text
+                  textAlign="right"
+                  display="inline-block"
+                  variant="footer"
+                  fontWeight="500"
+                >
+                  {moment(new Date(updatedAtS * 1000)).format('MMM DD, YYYY')}
+                </Text>
+              </Text>
+
+            )
+          }
           <Menu placement="bottom">
             <MenuButton
               as={Button}
@@ -45,55 +77,26 @@ function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
             </MenuButton>
             <MenuList minW="164px" p={0}>
               <MenuItem icon={<ViewIcon color="#31373D" />} onClick={() => setOpenedModal({ type: 'milestone-done', milestone })}>
-                <Text fontSize="14px" fontWeight="400" lineHeight="20px" color="#122224">Mark As Done</Text>
+                <Text fontSize="14px" fontWeight="400" lineHeight="20px" color="#122224">Approve Milestone</Text>
               </MenuItem>
               {/* TODO: Need to change the icons */}
-              <MenuItem disabled>
-                <Text fontSize="14px" fontWeight="400" lineHeight="20px" color="#122224">No Grantee Submission</Text>
-              </MenuItem>
+              {
+                status === 'requested' ? (
+                  <MenuItem icon={<ViewIcon color="#31373D" />} onClick={() => setOpenedModal({ type: 'milestone-view', milestone })}>
+                    <Text fontSize="14px" fontWeight="400" lineHeight="20px" color="#122224">View Grantee Submission</Text>
+                  </MenuItem>
+                ) : (
+                  <MenuItem disabled>
+                    <Text fontSize="14px" fontWeight="400" lineHeight="20px" color="#122224">No Grantee Submission</Text>
+                  </MenuItem>
+                )
+              }
             </MenuList>
           </Menu>
         </Flex>
       );
     }
-    if (status === 'requested') {
-      return (
-        <Flex direction="column" justify="end" align="flex-end">
-          <Text
-            textAlign="right"
-            variant="footer"
-            color="#A0A7A7"
-            whiteSpace="nowrap"
-          >
-            Marked as Done
-            {' '}
-            <Text
-              textAlign="right"
-              display="inline-block"
-              variant="footer"
-              fontWeight="400"
-              color="#A0A7A7"
-            >
-              on
-            </Text>
-            {' '}
-            <Text
-              textAlign="right"
-              display="inline-block"
-              variant="footer"
-              fontWeight="500"
-            >
-              {moment(new Date(updatedAtS * 1000)).format('MMM DD, YYYY')}
-            </Text>
-          </Text>
-          <Button variant="link" _focus={{}} onClick={() => setOpenedModal({ type: 'milestone-view', milestone })}>
-            <Text textAlign="right" variant="footer" color="#6200EE">
-              View
-            </Text>
-          </Button>
-        </Flex>
-      );
-    }
+
     return (
       <Flex direction="column" justify="end" align="flex-end">
         <Text
