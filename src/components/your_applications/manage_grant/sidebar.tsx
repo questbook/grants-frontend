@@ -5,7 +5,13 @@ import {
 import React from 'react';
 import FloatingSidebar from '../../ui/sidebar/floatingSidebar';
 
-function Sidebar() {
+function Sidebar({
+  applicationData,
+  assetInfo,
+}: {
+  applicationData: any;
+  assetInfo: any;
+}) {
   return (
     <Box my="115px">
       <FloatingSidebar>
@@ -13,7 +19,7 @@ function Sidebar() {
           Application Details
         </Text>
         <Flex direction="row" justify="start" w="full" mt={7} align="flex-start">
-          <Image h="45px" w="45px" src="/network_icons/eth_mainnet.svg" />
+          <Image h="45px" w="45px" src={assetInfo?.icon} />
           <Box ml="18px" />
           <Flex direction="column" align="start" w="100%">
             <Text
@@ -23,7 +29,7 @@ function Sidebar() {
               fontWeight="700"
               color="#6200EE"
             >
-              0xb79....579268
+              {`${applicationData.applicantAddress.substring(0, 6)}...`}
             </Text>
             <Text variant="applicationText" color="#717A7C">
               Sent on
@@ -36,7 +42,7 @@ function Sidebar() {
                 fontWeight="700"
                 color="#122224"
               >
-                2 Jan, 2022
+                {applicationData.applicationDate}
               </Box>
             </Text>
           </Flex>
