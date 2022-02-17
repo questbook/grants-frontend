@@ -33,6 +33,7 @@ import { getApplicationDetails } from '../../../src/graphql/daoQueries';
 import NavbarLayout from '../../../src/layout/navbarLayout';
 import { getAssetInfo } from '../../../src/utils/tokenUtils';
 import { ApiClientsContext } from '../../_app';
+import { formatAmount } from '../../../src/utils/formattingUtils';
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
   return milestones.reduce(
@@ -141,7 +142,7 @@ function ManageGrant() {
     },
     {
       icon: fundingIcon,
-      title: (fundingAsk || getTotalFundingAsked(milestones)).toString(),
+      title: (fundingAsk ? formatAmount(fundingAsk.toString()) : null) || getTotalFundingAsked(milestones).toString(),
       subtitle: 'Funding Requested',
       content: undefined, // <Funding fundTransfers={fundsDisbursed} assetId={rewardAsset} />,
     },
@@ -184,7 +185,6 @@ function ManageGrant() {
       || !workspaceId
       || !applicationData
       || !applicationData.id) {
-        // console.log('compleeeeeee');
         return;
       }
 

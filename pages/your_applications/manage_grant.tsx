@@ -2,6 +2,8 @@ import {
   Container, Flex, Image, Box, Text, Button,
 } from '@chakra-ui/react';
 import React, { useContext, useEffect, useState } from 'react';
+import { useApplicationMilestones, useFundDisbursed } from '../../src/graphql/queries';
+import { getAssetInfo } from '../../src/utils/tokenUtils';
 import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
 import { gql } from '@apollo/client';
@@ -10,12 +12,22 @@ import Sidebar from '../../src/components/your_applications/manage_grant/sidebar
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Heading from '../../src/components/ui/heading';
 import MilestoneTable from '../../src/components/your_applications/manage_grant/milestoneTable';
-import FundingRequestedTable from '../../src/components/your_applications/manage_grant/fundingRequestedTable';
+import Funding from '../../src/components/your_applications/manage_grant/fundingRequestedTable';
 import NavbarLayout from '../../src/layout/navbarLayout';
 import { ApiClientsContext } from '../_app';
 import { getApplicationDetails } from '../../src/graphql/daoQueries';
-import { getAssetInfo } from '../../src/utils/tokenUtils';
-import { useApplicationMilestones } from '../../src/graphql/queries';
+import { formatAmount } from '../../src/utils/formattingUtils';
+
+function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
+  return milestones.reduce(
+    (value, milestone) => value + +milestone.amountPaid,
+    0,
+  );
+}
+
+function getTotalFundingAsked(milestones: ApplicationMilestone[]) {
+  return milestones.reduce((value, milestone) => value + +milestone.amount, 0);
+}
 
 function ManageGrant() {
   const [applicationData, setApplicationData] = useState<any>({
@@ -34,9 +46,10 @@ function ManageGrant() {
     fetchEns: false,
   });
 
-  const { data: { milestones, rewardAsset }, refetch } = useApplicationMilestones(applicationID);
+  const { data: { milestones, rewardAsset, fundingAsk }, refetch } = useApplicationMilestones(applicationID);
   const fundingIcon = getAssetInfo(rewardAsset)?.icon;
   const assetInfo = getAssetInfo(rewardAsset);
+  const { data: fundsDisbursed } = useFundDisbursed(applicationID);
 
   const tabs = [
     {
@@ -45,13 +58,13 @@ function ManageGrant() {
     },
     {
       icon: fundingIcon,
-      title: '0',
-      subtitle: 'Funding Requested',
+      title: getTotalFundingRecv(milestones).toString(),
+      subtitle: 'Funding Recieved',
     },
     {
       icon: fundingIcon,
-      title: '20',
-      subtitle: 'Funding Recieved',
+      title: (fundingAsk ? formatAmount(fundingAsk.toString()) : null) || getTotalFundingAsked(milestones).toString(),
+      subtitle: 'Funding Requested',
     },
   ];
 
@@ -150,7 +163,15 @@ function ManageGrant() {
                 rewardAssetId={rewardAsset}
               />
             )
-            : <FundingRequestedTable />
+            : (
+              <Funding
+                fundTransfers={fundsDisbursed}
+                assetId={rewardAsset}
+                columns={['milestoneTitle', 'date', 'from', 'action']}
+                assetDecimals={18}
+                grantId={applicationData.grant?.id}
+              />
+            )
         }
       </Container>
 

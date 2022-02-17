@@ -23,10 +23,6 @@ function Sidebar({
   const [isAddFundModalOpen, setIsAddFundModalOpen] = React.useState(false);
   const [isSendFundModalOpen, setIsSendFundModalOpen] = React.useState(false);
 
-  useEffect(() => {
-    console.log(grant);
-  }, [grant]);
-
   return (
     <Box my="154px">
       <FloatingSidebar>

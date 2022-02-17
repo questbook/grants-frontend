@@ -248,6 +248,10 @@ query($grantId: ID!) {
         updatedAtS,
         text
       }
+      fields {
+        id
+        value
+      }
     }
 }
 `;
