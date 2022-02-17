@@ -28,10 +28,8 @@ export type AbstractMilestonesTableProps = {
   milestones: ApplicationMilestone[]
   rewardAssetId: string
   refetch: () => void
+  sendFundOpen: () => void
   renderStatus: (milestone: ApplicationMilestone) => React.ReactNode
-  grant: any;
-  assetInfo: any;
-  applicationId: string;
 };
 
 function AbstractMilestonesTable(

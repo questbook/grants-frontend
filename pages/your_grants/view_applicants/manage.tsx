@@ -14,6 +14,7 @@ import moment from 'moment';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react';
 import { useAccount, useSigner, useContract } from 'wagmi';
+import { BigNumber } from 'ethers';
 import config from '../../../src/constants/config';
 import ApplicationRegistryAbi from '../../../src/contracts/abi/ApplicationRegistryAbi.json';
 import InfoToast from '../../../src/components/ui/infoToast';
@@ -33,6 +34,8 @@ import { getApplicationDetails } from '../../../src/graphql/daoQueries';
 import NavbarLayout from '../../../src/layout/navbarLayout';
 import { getAssetInfo } from '../../../src/utils/tokenUtils';
 import { ApiClientsContext } from '../../_app';
+import { formatAmount } from '../../../src/utils/formattingUtils';
+import SendFundModalContent from '../../../src/components/your_grants/manage_grant/modals/sendFundModalContent';
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
   return milestones.reduce(
@@ -59,6 +62,7 @@ function ManageGrant() {
 
   const [selected, setSelected] = React.useState(0);
   const [isGrantCompleteModelOpen, setIsGrantCompleteModalOpen] = React.useState(false);
+  const [isSendFundModalOpen, setIsSendFundModalOpen] = useState(false);
 
   const [applicationID, setApplicationID] = useState<any>('');
   const router = useRouter();
@@ -68,7 +72,8 @@ function ManageGrant() {
   });
 
   const {
-    data: { milestones, rewardAsset, fundingAsk }, refetch: refetchMilestones,
+    data: { milestones, rewardAsset, fundingAsk },
+    refetch: refetchMilestones,
   } = useApplicationMilestones(applicationID);
   const { data: fundsDisbursed } = useFundDisbursed(applicationID);
   const fundingIcon = getAssetInfo(rewardAsset)?.icon;
@@ -90,17 +95,25 @@ function ManageGrant() {
           title: application.grant.title,
           applicantAddress: application.applicantId,
           applicantEmail: application.fields.find((field: any) => field.id.includes('applicantEmail'))?.value[0],
-          applicationDate: moment.unix(application.createdAtS).format('D MMMM YYYY'),
+          applicationDate: moment
+            .unix(application.createdAtS)
+            .format('D MMMM YYYY'),
           grant: application.grant,
           id: application.id,
           state: application.state,
-          updatedDate: moment.unix(application.updatedAtS).format('MMM D, YYYY'),
+          updatedDate: moment
+            .unix(application.updatedAtS)
+            .format('MMM D, YYYY'),
         });
       }
     } catch (e: any) {
-      // console.log(e);
+      console.log(e);
     }
   };
+
+  useEffect(() => {
+    console.log('App Data: ', applicationData);
+  }, [applicationData]);
 
   useEffect(() => {
     setApplicationID(router?.query?.applicationId ?? '');
@@ -122,9 +135,7 @@ function ManageGrant() {
           refetch={refetchMilestones}
           milestones={milestones}
           rewardAssetId={rewardAsset}
-          assetInfo={assetInfo}
-          grant={applicationData.grant}
-          applicationId={applicationID}
+          sendFundOpen={() => setIsSendFundModalOpen(true)}
         />
       ),
     },
@@ -144,7 +155,9 @@ function ManageGrant() {
     },
     {
       icon: fundingIcon,
-      title: (fundingAsk || getTotalFundingAsked(milestones)).toString(),
+      title:
+        (fundingAsk ? formatAmount(fundingAsk.toString()) : null)
+        || getTotalFundingAsked(milestones).toString(),
       subtitle: 'Funding Requested',
       content: undefined, // <Funding fundTransfers={fundsDisbursed} assetId={rewardAsset} />,
     },
@@ -167,27 +180,23 @@ function ManageGrant() {
     }
   };
 
-  const showToast = ({ link } : { link: string }) => {
+  const showToast = ({ link }: { link: string }) => {
     toastRef.current = toast({
       position: 'top',
-      render: () => (
-        <InfoToast
-          link={link}
-          close={closeToast}
-        />
-      ),
+      render: () => <InfoToast link={link} close={closeToast} />,
     });
   };
   const markApplicationComplete = async (comment: string) => {
     try {
       if (!apiClients) return;
       const { validatorApi, workspaceId } = apiClients;
-      if (!accountData
-      || !accountData.address
-      || !workspaceId
-      || !applicationData
-      || !applicationData.id) {
-        // console.log('compleeeeeee');
+      if (
+        !accountData
+        || !accountData.address
+        || !workspaceId
+        || !applicationData
+        || !applicationData.id
+      ) {
         return;
       }
 
@@ -207,7 +216,9 @@ function ManageGrant() {
       const transactionData = await transaction.wait();
       setHasClicked(false);
       setIsGrantCompleteModalOpen(false);
-      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
+      showToast({
+        link: `https://etherscan.io/tx/${transactionData.transactionHash}`,
+      });
       // toast({ title: 'Transaction succeeded', status: 'success' });
     } catch (error) {
       setHasClicked(false);
@@ -287,11 +298,13 @@ function ManageGrant() {
         </Flex>
 
         {applicationData.state === 'completed' && (
-        <Text variant="applicationText" color="#717A7C" mt={6}>
-          Grant marked as complete on
-          {' '}
-          <Text variant="applicationText" display="inline-block">{applicationData.updatedDate}</Text>
-        </Text>
+          <Text variant="applicationText" color="#717A7C" mt={6}>
+            Grant marked as complete on
+            {' '}
+            <Text variant="applicationText" display="inline-block">
+              {applicationData.updatedDate}
+            </Text>
+          </Text>
         )}
 
         <Flex mt="29px" direction="row" w="full" align="center">
@@ -347,25 +360,23 @@ function ManageGrant() {
         {tabs[selected].content}
 
         <Flex direction="row" justify="center" mt={8}>
-
           {applicationData.state !== 'completed' && (
-          <Button
-            variant="primary"
-            onClick={() => setIsGrantCompleteModalOpen(true)}
-          >
-            Mark Grant as Complete
-          </Button>
+            <Button
+              variant="primary"
+              onClick={() => setIsGrantCompleteModalOpen(true)}
+            >
+              Mark Grant as Complete
+            </Button>
           )}
-
         </Flex>
       </Container>
       {applicationData.state !== 'completed' && (
-      <Sidebar
-        milestones={milestones}
-        assetInfo={assetInfo}
-        grant={applicationData.grant}
-        applicationId={applicationID}
-      />
+        <Sidebar
+          milestones={milestones}
+          assetInfo={assetInfo}
+          grant={applicationData.grant}
+          applicationId={applicationID}
+        />
       )}
 
       <Modal
@@ -378,6 +389,38 @@ function ManageGrant() {
           onClose={(details: any) => markApplicationComplete(details)}
         />
       </Modal>
+
+      {applicationData && applicationData.grant && (
+      <Modal
+        isOpen={isSendFundModalOpen}
+        onClose={() => setIsSendFundModalOpen(false)}
+        title="Send Funds"
+        rightIcon={(
+          <Button
+            _focus={{}}
+            variant="link"
+            color="#AA82F0"
+            leftIcon={<Image src="/sidebar/discord_icon.svg" />}
+          >
+            Support 24*7
+          </Button>
+          )}
+      >
+        <SendFundModalContent
+          milestones={milestones}
+          rewardAsset={{
+            address: applicationData.grant.reward.asset,
+            committed: BigNumber.from(applicationData.grant.reward.committed),
+            label: assetInfo?.label,
+            icon: assetInfo?.icon,
+          }}
+          contractFunding={applicationData.grant.funding}
+          onClose={() => setIsSendFundModalOpen(false)}
+          grantId={applicationData.grant.id}
+          applicationId={applicationID}
+        />
+      </Modal>
+      )}
     </Container>
   );
 }

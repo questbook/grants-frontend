@@ -1,195 +1,208 @@
-import React from 'react';
+/* eslint-disable react/no-unstable-nested-components */
+import React, { useMemo } from 'react';
 import {
-  Text, Image, Flex, Button,
+  Text, Image, Flex, Tooltip, Link,
 } from '@chakra-ui/react';
 import moment from 'moment';
-import Modal from '../../ui/modal';
-import MilestoneDoneModalContent from './modals/modalContentMilestoneDone';
-import MilestoneDoneCheckModalContent from './modals/modalContentMilestoneDoneCheck';
-import MilestoneDoneConfirmationModalContent from './modals/modalContentMilestoneDoneConfirmation';
+import { ethers } from 'ethers';
+import { FundTransfer } from '../../../graphql/queries';
+import { getAssetInfo } from '../../../utils/tokenUtils';
+import { formatAmount, getMilestoneTitle } from '../../../utils/formattingUtils';
 
-function Table() {
-  const [isMilestoneDoneModalOpen, setIsMilestoneDoneModalOpen] = React.useState(false);
-  const [isMilestoneDoneCheckModalOpen, setIsMilestoneDoneCheckModalOpen] = React.useState(false);
-  const [
-    isMilestoneDoneConfirmationModalOpen,
-    setIsMilestoneDoneConfirmationModalOpen,
-  ] = React.useState(false);
+const getTextWithEllipses = (txt: string, maxLength = 7) => (txt.length > maxLength ? `${txt.slice(0, maxLength)}...` : txt);
 
-  const tableHeaders = [
-    {
-      title: 'Funding Received',
-      flex: 2,
-    },
-    { title: 'On' },
-    { title: 'From' },
-    { title: 'Status', flex: 0 },
-  ];
-  const data = new Array(10);
-  data.fill({
-    funding_received: {
-      milestone: { number: 1, title: 'Milestone 1' },
-      fund: {
-        amount: 1,
-        symbol: 'ETH',
-        icon: '/images/dummy/Ethereum Icon.svg',
-      },
-    },
-    on: { timestamp: new Date('January 24, 2022 23:59:59:000').getTime() },
-    from: { address: '0x1a...' },
-    status: { state: 'done', txnHash: '' },
-  });
+const TABLE_HEADERS = {
+  milestoneTitle: {
+    title: 'Funding Received',
+    flex: 0.5,
+    content: (item: FundTransfer, assetId: string) => (
+      <>
+        <Image
+          display="inline-block"
+          src={getAssetInfo(assetId)?.icon}
+          mr={2}
+          h="27px"
+          w="27px"
+        />
+        <Text textAlign="start" variant="applicationText">
+          {getMilestoneTitle(item.milestone)}
+          {' '}
+          -
+          {' '}
+          <Text
+            display="inline-block"
+            variant="applicationText"
+            fontWeight="700"
+          >
+            {formatAmount(item.amount)}
+            {' '}
+            {getAssetInfo(assetId)?.label}
+          </Text>
+        </Text>
+      </>
+    ),
+  },
+  amount: {
+    title: 'Amount',
+    flex: 0.35,
+    content: (item: FundTransfer, assetId: string, assetDecimals: number) => (
+      <Text display="inline-block" variant="applicationText" fontWeight="700">
+        {ethers.utils.formatUnits(item.amount, assetDecimals)}
+        {' '}
+        {getAssetInfo(assetId)?.label}
+      </Text>
+    ),
+  },
+  date: {
+    title: 'On',
+    flex: 0.2,
+    content: (item: FundTransfer) => (
+      <Tooltip label={`Transaction ID: ${item.id}`}>
+        <Text variant="applicationText">
+          {moment(new Date(item.createdAtS * 1000)).format('MMM DD, YYYY')}
+        </Text>
+      </Tooltip>
+    ),
+  },
+  to: {
+    title: 'To',
+    flex: 0.15,
+    content: (item: FundTransfer) => (
+      <Tooltip label={item.to}>
+        <Text variant="applicationText" color="#122224">
+          {getTextWithEllipses(item.to)}
+        </Text>
+      </Tooltip>
+    ),
+  },
+  action: {
+    title: 'Action',
+    flex: 0.1,
+    content: (item: FundTransfer) => (
+      <Link
+        href={`https://etherscan.io/tx/${item.id}/`}
+        target="_blank"
+      >
+        <Text
+          color="brand.500"
+          variant="applicationText"
+          fontWeight="500"
+          fontSize="14px"
+          lineHeight="14px"
+        >
+          View
+          {' '}
+          <Image display="inline-block" src="/ui_icons/link.svg" />
+        </Text>
+      </Link>
+    ),
+  },
+  from: {
+    title: 'From',
+    flex: 0.2,
+    content: (
+      item: FundTransfer,
+      assetId: string,
+      assetDecimals: number,
+      grantId: string,
+    ) => (
+      <Tooltip label={item.sender}>
+        <Text variant="applicationText" color="#122224">
+          {getTextWithEllipses(item.sender)}
+          {' '}
+          {item.sender === grantId ? ' (Grant)' : ''}
+        </Text>
+      </Tooltip>
+    ),
+  },
+  initiator: {
+    title: 'Initiated By',
+    flex: 0.3,
+    content: (item: FundTransfer) => (
+      <Tooltip label={item.sender}>
+        <Text variant="applicationText" color="#122224">
+          {getTextWithEllipses(item.sender)}
+        </Text>
+      </Tooltip>
+    ),
+  },
+};
 
+export type FundingProps = {
+  fundTransfers: FundTransfer[];
+  assetId: string;
+  columns: (keyof typeof TABLE_HEADERS)[];
+  assetDecimals: number;
+  grantId: string | null;
+};
+
+function Funding({
+  fundTransfers,
+  assetId,
+  columns,
+  assetDecimals,
+  grantId,
+}: FundingProps) {
+  const tableHeaders = useMemo(
+    () => columns.map((column) => TABLE_HEADERS[column]),
+    [columns],
+  );
   return (
     <Flex w="100%" my={4} align="center" direction="column" flex={1}>
-      <Flex
-        direction="row"
-        w="100%"
-        justify="strech"
-        align="center"
-        mt="32px"
-        mb="9px"
-      >
-        {tableHeaders.map((header, index) => (
-          <Text
-            textAlign="left"
-            flex={header.flex != null ? header.flex : 1}
-            variant="tableHeader"
-            mr={index === 3 ? '28px' : '-28px'}
-          >
-            {header.title}
-          </Text>
-        ))}
-      </Flex>
-      <Flex
-        direction="column"
-        w="100%"
-        border="1px solid #D0D3D3"
-        borderRadius={4}
-        align="stretch"
-      >
-        {data.map((item, index) => (
+      {fundTransfers.length === 0 && <>No Transactions</>}
+      {fundTransfers.length > 0 && (
+        <>
           <Flex
             direction="row"
             w="100%"
-            justify="stretch"
+            justify="strech"
             align="center"
-            bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
-            py={4}
-            pl="22px"
-            pr="28px"
+            mt="32px"
+            mb="9px"
           >
-            <Flex
-              direction="row"
-              justify="start"
-              align="center"
-              flex={tableHeaders[0].flex ? tableHeaders[0].flex : 0}
-            >
-              <Image
-                display="inline-block"
-                src={item.funding_received.fund.icon}
-                mr={2}
-                h="27px"
-                w="27px"
-              />
-              <Text textAlign="center" variant="applicationText">
-                {item.funding_received.milestone.title}
-                {' '}
-                -
-                {' '}
-                <Text
-                  display="inline-block"
-                  variant="applicationText"
-                  fontWeight="700"
-                >
-                  {item.funding_received.fund.amount}
-                  {' '}
-                  {item.funding_received.fund.symbol}
-                </Text>
+            {tableHeaders.map((header) => (
+              <Text textAlign="left" flex={header.flex} variant="tableHeader">
+                {header.title}
               </Text>
-            </Flex>
-
-            <Flex
-              flex={tableHeaders[1].flex ? tableHeaders[1].flex : 1}
-              direction="column"
-              w="100%"
-            >
-              <Text variant="applicationText">
-                {moment(item.on.timestamp).format('MMMM Do YYYY')}
-              </Text>
-            </Flex>
-
-            <Flex
-              flex={tableHeaders[2].flex ? tableHeaders[2].flex : 1}
-              direction="column"
-              w="100%"
-            >
-              <Text variant="applicationText" color="#122224">
-                {item.from.address}
-              </Text>
-            </Flex>
-
-            <Flex
-              flex={tableHeaders[3].flex != null ? tableHeaders[3].flex : 1}
-            >
-              <Button
-                variant="link"
-                color="brand.500"
-                fontWeight="500"
-                fontSize="14px"
-                lineHeight="14px"
-                textAlign="center"
-                borderRadius={8}
-                borderColor="brand.500"
-                _focus={{}}
-                rightIcon={<Image src="/ui_icons/link.svg" />}
-              >
-                View
-              </Button>
-            </Flex>
+            ))}
           </Flex>
-        ))}
-      </Flex>
-      <Modal
-        isOpen={isMilestoneDoneModalOpen}
-        onClose={() => setIsMilestoneDoneModalOpen(false)}
-        title="Mark Milestone 1 as Done"
-        alignTitle="center"
-        topIcon={<Image src="/ui_icons/milestone_complete.svg" />}
-      >
-        <MilestoneDoneModalContent
-          onClose={() => {
-            setIsMilestoneDoneModalOpen(false);
-            setIsMilestoneDoneCheckModalOpen(true);
-          }}
-          milestone={undefined}
-        />
-      </Modal>
-      <Modal
-        isOpen={isMilestoneDoneCheckModalOpen}
-        onClose={() => setIsMilestoneDoneCheckModalOpen(false)}
-        title="Milestone 1"
-      >
-        <MilestoneDoneCheckModalContent
-          milestone={undefined}
-          onClose={() => {
-            setIsMilestoneDoneCheckModalOpen(false);
-            setIsMilestoneDoneConfirmationModalOpen(true);
-          }}
-        />
-      </Modal>
-      <Modal
-        isOpen={isMilestoneDoneConfirmationModalOpen}
-        onClose={() => setIsMilestoneDoneConfirmationModalOpen(false)}
-        title=""
-      >
-        <MilestoneDoneConfirmationModalContent
-          milestone={undefined}
-          onClose={() => setIsMilestoneDoneConfirmationModalOpen(false)}
-        />
-      </Modal>
+          <Flex
+            direction="column"
+            w="100%"
+            border="1px solid #D0D3D3"
+            borderRadius={4}
+            align="stretch"
+          >
+            {fundTransfers.map((item, index) => (
+              <Flex
+                key={item.id}
+                direction="row"
+                w="100%"
+                justify="stretch"
+                align="center"
+                bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
+                py={4}
+                pl="15px"
+                pr="15px"
+              >
+                {grantId && tableHeaders.map(({ title, flex, content }) => (
+                  <Flex
+                    key={title}
+                    direction="row"
+                    justify="start"
+                    align="center"
+                    flex={flex}
+                  >
+                    {content(item, assetId, assetDecimals, grantId)}
+                  </Flex>
+                ))}
+              </Flex>
+            ))}
+          </Flex>
+        </>
+      )}
     </Flex>
   );
 }
 
-export default Table;
+export default Funding;
