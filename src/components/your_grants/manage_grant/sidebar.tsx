@@ -3,7 +3,7 @@ import {
 } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 // import { ExternalLinkIcon } from '@chakra-ui/icons';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { formatAmount } from '../../../utils/formattingUtils';
 import AddFunds from '../../funds/add_funds_modal';
 import Modal from '../../ui/modal';
@@ -22,10 +22,6 @@ function Sidebar({
 }: Props) {
   const [isAddFundModalOpen, setIsAddFundModalOpen] = React.useState(false);
   const [isSendFundModalOpen, setIsSendFundModalOpen] = React.useState(false);
-
-  useEffect(() => {
-    console.log(grant);
-  }, [grant]);
 
   return (
     <Box my="154px">
