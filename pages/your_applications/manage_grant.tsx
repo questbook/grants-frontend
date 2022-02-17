@@ -34,7 +34,7 @@ function ManageGrant() {
     fetchEns: false,
   });
 
-  const { data: { milestones, rewardAsset } } = useApplicationMilestones(applicationID);
+  const { data: { milestones, rewardAsset }, refetch } = useApplicationMilestones(applicationID);
   const fundingIcon = getAssetInfo(rewardAsset)?.icon;
   const assetInfo = getAssetInfo(rewardAsset);
 
@@ -143,7 +143,13 @@ function ManageGrant() {
 
         {
           selected === 0
-            ? <MilestoneTable milestones={milestones} rewardAssetId={rewardAsset} />
+            ? (
+              <MilestoneTable
+                refetch={refetch}
+                milestones={milestones}
+                rewardAssetId={rewardAsset}
+              />
+            )
             : <FundingRequestedTable />
         }
       </Container>

@@ -68,7 +68,7 @@ function ManageGrant() {
   });
 
   const {
-    data: { milestones, rewardAsset, fundingAsk },
+    data: { milestones, rewardAsset, fundingAsk }, refetch: refetchMilestones,
   } = useApplicationMilestones(applicationID);
   const { data: fundsDisbursed } = useFundDisbursed(applicationID);
   const fundingIcon = getAssetInfo(rewardAsset)?.icon;
@@ -119,7 +119,11 @@ function ManageGrant() {
       title: milestones.length.toString(),
       subtitle: milestones.length === 1 ? 'Milestone' : 'Milestones',
       content: (
-        <Milestones milestones={milestones} rewardAssetId={rewardAsset} />
+        <Milestones
+          refetch={refetchMilestones}
+          milestones={milestones}
+          rewardAssetId={rewardAsset}
+        />
       ),
     },
     {

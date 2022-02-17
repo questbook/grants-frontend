@@ -2,23 +2,28 @@ import {
   ModalBody, Flex, Text, Button, Box, Image, Heading,
 } from '@chakra-ui/react';
 import React from 'react';
+import { ApplicationMilestone } from 'src/graphql/queries';
+import { getMilestoneTitle } from 'src/utils/formattingUtils';
 
 interface Props {
+  milestone: ApplicationMilestone | undefined
   onClose: () => void;
 }
 
 function ModalContent({
+  milestone,
   onClose,
 }: Props) {
-//   const [details, setDetails] = useState('');
-//   const [detailsError, setDetailsError] = useState(false);
-
   return (
     <ModalBody>
       <Flex direction="column" justify="start" align="center">
         <Image w="127px" h="147px" src="/illustrations/done.svg" />
         <Heading mt={8} textAlign="center" variant="applicationHeading">
-          You have marked the Milestone 1 as done.
+          You have marked
+          {' '}
+          {getMilestoneTitle(milestone)}
+          {' '}
+          as done.
         </Heading>
         <Text mt={4} textAlign="center" variant="applicationText">
           You will shortly receive a confirmation and

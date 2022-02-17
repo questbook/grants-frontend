@@ -8,17 +8,17 @@ import Modal from '../../ui/modal';
 import MilestoneDoneModalContent from './modals/modalContentMilestoneDone';
 import MilestoneDoneCheckModalContent from './modals/modalContentMilestoneDoneCheck';
 import MilestoneDoneConfirmationModalContent from './modals/modalContentMilestoneDoneConfirmation';
-import { timeToString } from '../../../utils/formattingUtils';
+import { getMilestoneTitle, timeToString } from '../../../utils/formattingUtils';
+
+type OpenedModalType = 'milestone-done' | 'milestone-view' | 'milestone-confirm';
+type OpenedModal = { type: OpenedModalType, milestone: ApplicationMilestone };
 
 function Table(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
-  const [isMilestoneDoneModalOpen, setIsMilestoneDoneModalOpen] = useState(false);
-  const [isMilestoneDoneCheckModalOpen, setIsMilestoneDoneCheckModalOpen] = useState(false);
-  const [
-    isMilestoneDoneConfirmationModalOpen,
-    setIsMilestoneDoneConfirmationModalOpen,
-  ] = useState(false);
+  const [openedModal, setOpenedModal] = useState<OpenedModal>();
 
-  const renderStatus = (status: ApplicationMilestone['state'], updatedAtS: number) => {
+  const renderStatus = (milestone: ApplicationMilestone) => {
+    const status = milestone.state;
+    const updatedAtS = milestone.updatedAtS || 0;
     if (status === 'submitted') {
       return (
         <Button
@@ -31,7 +31,7 @@ function Table(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
           borderRadius={8}
           borderColor="brand.500"
           height="32px"
-          onClick={() => setIsMilestoneDoneModalOpen(true)}
+          onClick={() => setOpenedModal({ type: 'milestone-done', milestone })}
         >
           Mark as Done
         </Button>
@@ -52,7 +52,7 @@ function Table(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
               {timeToString(updatedAtS * 1000)}
             </Text>
           </Text>
-          <Button variant="link" _focus={{}}>
+          <Button variant="link" onClick={() => setOpenedModal({ type: 'milestone-view', milestone })}>
             <Text variant="footer" color="#6200EE">
               View
             </Text>
@@ -90,7 +90,7 @@ function Table(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
             {timeToString(updatedAtS * 1000)}
           </Text>
         </Text>
-        <Button variant="link" _focus={{}}>
+        <Button variant="link" onClick={() => setOpenedModal({ type: 'milestone-view', milestone })}>
           <Text textAlign="right" variant="footer" color="#6200EE">
             View
           </Text>
@@ -103,43 +103,41 @@ function Table(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
     <>
       <AbstractMilestonesTable
         {...props}
-        renderStatus={
-          (milestone) => renderStatus(milestone.state, milestone.updatedAtS || 0)
-        }
+        renderStatus={renderStatus}
       />
       <Modal
-        isOpen={isMilestoneDoneModalOpen}
-        onClose={() => setIsMilestoneDoneModalOpen(false)}
-        title="Mark Milestone 1 as Done"
+        isOpen={openedModal?.type === 'milestone-done'}
+        onClose={() => setOpenedModal(undefined)}
+        title={`Mark ${getMilestoneTitle(openedModal?.milestone)} as Done`}
         alignTitle="center"
         topIcon={<Image src="/ui_icons/milestone_complete.svg" />}
       >
         <MilestoneDoneModalContent
+          milestone={openedModal?.milestone}
           onClose={() => {
-            setIsMilestoneDoneModalOpen(false);
-            setIsMilestoneDoneCheckModalOpen(true);
+            props.refetch();
+            setOpenedModal({ type: 'milestone-confirm', milestone: openedModal!.milestone });
           }}
         />
       </Modal>
       <Modal
-        isOpen={isMilestoneDoneCheckModalOpen}
-        onClose={() => setIsMilestoneDoneCheckModalOpen(false)}
-        title="Milestone 1"
+        isOpen={openedModal?.type === 'milestone-view'}
+        onClose={() => setOpenedModal(undefined)}
+        title={getMilestoneTitle(openedModal?.milestone)}
       >
         <MilestoneDoneCheckModalContent
-          onClose={() => {
-            setIsMilestoneDoneCheckModalOpen(false);
-            setIsMilestoneDoneConfirmationModalOpen(true);
-          }}
+          milestone={openedModal?.milestone}
+          onClose={() => setOpenedModal(undefined)}
         />
       </Modal>
       <Modal
-        isOpen={isMilestoneDoneConfirmationModalOpen}
-        onClose={() => setIsMilestoneDoneConfirmationModalOpen(false)}
+        isOpen={openedModal?.type === 'milestone-confirm'}
+        onClose={() => setOpenedModal(undefined)}
         title=""
       >
         <MilestoneDoneConfirmationModalContent
-          onClose={() => setIsMilestoneDoneConfirmationModalOpen(false)}
+          milestone={openedModal?.milestone}
+          onClose={() => setOpenedModal(undefined)}
         />
       </Modal>
     </>
