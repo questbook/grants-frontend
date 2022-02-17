@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client';
-import { Container, useToast } from '@chakra-ui/react';
+import { Container, ToastId, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
   ReactElement,
@@ -9,11 +9,11 @@ import React, {
   useState,
 } from 'react';
 import { useAccount, useContract, useSigner } from 'wagmi';
+import InfoToast from 'src/components/ui/infoToast';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/edit_grant/form';
 import Sidebar from '../../src/components/your_grants/edit_grant/sidebar';
 import GrantABI from '../../src/contracts/abi/GrantAbi.json';
-import config from '../../src/constants/config';
 import supportedCurrencies from '../../src/constants/supportedCurrencies';
 import { getGrantDetails } from '../../src/graphql/daoQueries';
 import NavbarLayout from '../../src/layout/navbarLayout';
@@ -69,48 +69,85 @@ function EditGrant() {
     signerOrProvider: signerStates.data,
   });
 
+  const [hasClicked, setHasClicked] = React.useState(false);
+  useEffect(() => {
+    console.log(hasClicked);
+  }, [hasClicked]);
+  const toastRef = React.useRef<ToastId>();
+  const toast = useToast();
+
+  const closeToast = () => {
+    if (toastRef.current) {
+      toast.close(toastRef.current);
+    }
+  };
+
+  const showToast = ({ link } : { link: string }) => {
+    toastRef.current = toast({
+      position: 'top',
+      render: () => (
+        <InfoToast
+          link={link}
+          close={closeToast}
+        />
+      ),
+    });
+  };
+
   const handleGrantSubmit = async (data: any) => {
     if (!apiClients) return;
-    const { subgraphClient, validatorApi, workspaceId } = apiClients;
+    const { validatorApi, workspaceId } = apiClients;
     if (!accountData || !accountData.address || !workspaceId) {
       return;
     }
 
-    console.log(data);
-    console.log(workspaceId);
+    try {
+      setHasClicked(true);
+      console.log(data);
+      console.log(workspaceId);
 
-    // eslint-disable-next-line react-hooks/rules-of-hooks
+      // eslint-disable-next-line react-hooks/rules-of-hooks
 
-    const {
-      data: { ipfsHash },
-    } = await validatorApi.validateGrantUpdate({
-      title: data.title,
-      summary: data.summary,
-      details: data.details,
-      deadline: data.date,
-      reward: {
-        committed: parseAmount(data.reward),
-        asset: data.rewardCurrencyAddress,
-      },
-      fields: data.fields,
-    });
+      const {
+        data: { ipfsHash },
+      } = await validatorApi.validateGrantUpdate({
+        title: data.title,
+        summary: data.summary,
+        details: data.details,
+        deadline: data.date,
+        reward: {
+          committed: parseAmount(data.reward),
+          asset: data.rewardCurrencyAddress,
+        },
+        fields: data.fields,
+      });
 
-    console.log(ipfsHash);
+      console.log(ipfsHash);
 
-    const transaction = await grantContract.updateGrant(
-      ipfsHash,
-    );
-    const transactionData = await transaction.wait();
+      const transaction = await grantContract.updateGrant(
+        ipfsHash,
+      );
+      const transactionData = await transaction.wait();
 
-    console.log(transactionData);
-    console.log(transactionData.blockNumber);
+      console.log(transactionData);
+      console.log(transactionData.blockNumber);
+      setHasClicked(false);
+      router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
 
-    await subgraphClient.waitForBlock(transactionData.blockNumber);
+      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
+      // await subgraphClient.waitForBlock(transactionData.blockNumber);
 
-    router.replace('/your_grants');
+    // router.replace('/your_grants');
+    } catch (error) {
+      setHasClicked(false);
+      console.log(error);
+      toast({
+        title: 'Application update not indexed',
+        status: 'error',
+      });
+    }
   };
 
-  const toast = useToast();
   const [formData, setFormData] = useState<any>(null);
   const getGrantData = async () => {
     if (!apiClients) return;
@@ -151,14 +188,8 @@ function EditGrant() {
           date: grant.deadline,
         });
         console.log(formData);
-      } else {
-        toast({
-          title: 'Displaying dummy data',
-          status: 'info',
-        });
-        setFormData(defaultFormData);
       }
-    } catch (e) {
+    } catch (e: any) {
       toast({
         title: 'Error getting workspace data',
         description: e.message,
@@ -192,6 +223,7 @@ function EditGrant() {
         <Breadcrumbs path={['Your Grants', 'Edit grant']} />
         {formData && (
           <Form
+            hasClicked={hasClicked}
             formData={formData}
             onSubmit={(data: any) => {
             // eslint-disable-next-line no-console

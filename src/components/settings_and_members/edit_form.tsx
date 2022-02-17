@@ -1,5 +1,5 @@
 import {
-  Box, Button, Flex, Image,
+  Box, Button, Center, CircularProgress, Flex,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import CoverUpload from '../ui/forms/coverUpload';
@@ -11,6 +11,7 @@ import supportedNetworks from '../../constants/supportedNetworks.json';
 function EditForm({
   onSubmit: onFormSubmit,
   formData,
+  hasClicked,
 }: {
   onSubmit: (data: {
     name: string;
@@ -22,6 +23,7 @@ function EditForm({
     telegramChannel?: string;
   }) => void;
   formData: any;
+  hasClicked: boolean;
 }) {
   const [daoName, setDaoName] = React.useState('');
   const [daoNameError, setDaoNameError] = React.useState(false);
@@ -32,10 +34,10 @@ function EditForm({
   const [supportedNetwork, setSupportedNetwork] = React.useState('');
 
   const [image, setImage] = React.useState<string | null>('');
-  const [imageFile, setImageFile] = React.useState<string | null>('');
+  const [imageFile, setImageFile] = React.useState<File | null>(null);
 
   const [coverImage, setCoverImage] = React.useState<string | null>('');
-  const [coverImageFile, setCoverImageFile] = React.useState<string | null>('');
+  const [coverImageFile, setCoverImageFile] = React.useState<File | null>(null);
 
   const [twitterHandle, setTwitterHandle] = React.useState('');
   const [twitterHandleError, setTwitterHandleError] = React.useState(false);
@@ -99,8 +101,8 @@ function EditForm({
       onFormSubmit({
         name: daoName,
         about: daoAbout,
-        image: imageFile,
-        coverImage: coverImageFile,
+        image: imageFile!,
+        coverImage: coverImageFile!,
         twitterHandle,
         discordHandle,
         telegramChannel,
@@ -204,9 +206,15 @@ function EditForm({
         />
       </Flex>
       <Flex direction="row" justify="start" mt={10}>
-        <Button variant="primary" onClick={handleSubmit}>
-          Save changes
-        </Button>
+        {hasClicked ? (
+          <Center>
+            <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
+          </Center>
+        ) : (
+          <Button variant="primary" onClick={handleSubmit}>
+            Save changes
+          </Button>
+        )}
       </Flex>
     </>
   );

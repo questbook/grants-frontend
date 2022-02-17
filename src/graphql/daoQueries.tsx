@@ -69,7 +69,7 @@ query($first: Int, $skip: Int, $creatorId: String) {
     id,
     asset
   }, 
-  workspace {title, logoIpfsHash}, 
+  workspace {id, title, logoIpfsHash}, 
   deadline,
   funding,
   numberOfApplications,

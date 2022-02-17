@@ -1,5 +1,5 @@
 import {
-  Flex, Text, Image, Button, Box, useToast,
+  Flex, Text, Box, useToast, ToastId,
 } from '@chakra-ui/react';
 import React, { useEffect, useContext } from 'react';
 import { useContract, useSigner } from 'wagmi';
@@ -8,6 +8,7 @@ import WorkspaceRegistryABI from '../../contracts/abi/WorkspaceRegistryAbi.json'
 import EditForm from './edit_form';
 import { getUrlForIPFSHash, uploadToIPFS } from '../../utils/ipfsUtils';
 import { ApiClientsContext } from '../../../pages/_app';
+import InfoToast from '../ui/infoToast';
 
 interface Props {
   workspaceData: any;
@@ -37,7 +38,31 @@ function Settings({
   });
 
   const apiClients = useContext(ApiClientsContext);
+
+  const [hasClicked, setHasClicked] = React.useState(false);
+  useEffect(() => {
+    console.log(hasClicked);
+  }, [hasClicked]);
+  const toastRef = React.useRef<ToastId>();
   const toast = useToast();
+
+  const closeToast = () => {
+    if (toastRef.current) {
+      toast.close(toastRef.current);
+    }
+  };
+
+  const showToast = ({ link } : { link: string }) => {
+    toastRef.current = toast({
+      position: 'top',
+      render: () => (
+        <InfoToast
+          link={link}
+          close={closeToast}
+        />
+      ),
+    });
+  };
 
   const handleFormSubmit = async (data: {
     name: string;
@@ -49,65 +74,83 @@ function Settings({
     telegramChannel?: string;
   }) => {
     if (!apiClients) return;
-    const { subgraphClient, validatorApi } = apiClients;
-    let imageHash = workspaceData.logoIpfsHash;
-    let coverImageHash = workspaceData.coverImageIpfsHash;
-    const socials = [];
+    try {
+      const { validatorApi } = apiClients;
+      let imageHash = workspaceData.logoIpfsHash;
+      let coverImageHash = workspaceData.coverImageIpfsHash;
+      const socials = [];
 
-    console.log('check', data.image);
-    if (data.image) {
-      imageHash = await uploadToIPFS(data.image);
-      imageHash = imageHash.hash;
+      console.log('check', data.image);
+      if (data.image) {
+        imageHash = await uploadToIPFS(data.image);
+        imageHash = imageHash.hash;
+      }
+      if (data.coverImage) {
+        coverImageHash = await uploadToIPFS(data.coverImage);
+        coverImageHash = coverImageHash.hash;
+      }
+
+      if (data.twitterHandle) {
+        socials.push({ name: 'twitter', value: data.twitterHandle });
+      }
+      if (data.discordHandle) {
+        socials.push({ name: 'discord', value: data.discordHandle });
+      }
+      if (data.telegramChannel) {
+        socials.push({ name: 'telegram', value: data.telegramChannel });
+      }
+
+      setHasClicked(true);
+      const {
+        data: { ipfsHash },
+      } = await validatorApi.validateWorkspaceUpdate(coverImageHash ? {
+        title: data.name,
+        about: data.about,
+        logoIpfsHash: imageHash,
+        coverImageIpfsHash: coverImageHash,
+        socials,
+      } : {
+        title: data.name,
+        about: data.about,
+        logoIpfsHash: imageHash,
+        socials,
+      });
+
+      const workspaceID = Number(workspaceData.id);
+
+      // toast({
+      //   title: 'Updating workspace',
+      //   status: 'info',
+      //   duration: 100000,
+      // });
+
+      const txn = await contract.updateWorkspaceMetadata(workspaceID, ipfsHash);
+      console.log(txn);
+      const transactionData = await txn.wait();
+      console.log(transactionData.blockNumber);
+      setHasClicked(false);
+      window.location.reload();
+
+      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
+    } catch (error) {
+      setHasClicked(false);
+      console.log(error);
+      toast({
+        title: 'Application update not indexed',
+        status: 'error',
+      });
     }
-    if (data.coverImage) {
-      coverImageHash = await uploadToIPFS(data.coverImage);
-      coverImageHash = coverImageHash.hash;
-    }
-
-    if (data.twitterHandle) {
-      socials.push({ name: 'twitter', value: data.twitterHandle });
-    }
-    if (data.discordHandle) {
-      socials.push({ name: 'discord', value: data.discordHandle });
-    }
-    if (data.telegramChannel) {
-      socials.push({ name: 'telegram', value: data.telegramChannel });
-    }
-
-    const {
-      data: { ipfsHash },
-    } = await validatorApi.validateWorkspaceUpdate({
-      title: data.name,
-      about: data.about,
-      logoIpfsHash: imageHash,
-      coverImageIpfsHash: coverImageHash,
-      socials,
-    });
-
-    const workspaceID = Number(workspaceData.id);
-
-    toast({
-      title: 'Updating workspace',
-      status: 'info',
-      duration: 100000,
-    });
-
-    const txn = await contract.updateWorkspaceMetadata(workspaceID, ipfsHash);
-    console.log(txn);
-    const transactionData = await txn.wait();
-    console.log(transactionData.blockNumber);
-    await subgraphClient.waitForBlock(transactionData.blockNumber);
-    window.location.reload();
+    // await subgraphClient.waitForBlock(transactionData.blockNumber);
   };
 
   useEffect(() => {
     if (!workspaceData) return;
     if (Object.keys(workspaceData).length === 0) return;
-    const twitterSocial = workspaceData.socials.filter((socials) => socials.name === 'twitter');
+    const twitterSocial = workspaceData.socials.filter((socials: any) => socials.name === 'twitter');
     const twitterHandle = twitterSocial.length > 0 ? twitterSocial[0].value : null;
-    const discordSocial = workspaceData.socials.filter((socials) => socials.name === 'discord');
+    const discordSocial = workspaceData.socials.filter((socials: any) => socials.name === 'discord');
     const discordHandle = discordSocial.length > 0 ? discordSocial[0].value : null;
-    const telegramSocial = workspaceData.socials.filter((socials) => socials.name === 'telegram');
+    const telegramSocial = workspaceData.socials.filter((socials: any) => socials.name === 'telegram');
     const telegramChannel = telegramSocial.length > 0 ? telegramSocial[0].value : null;
     console.log('loaded', workspaceData);
     console.log(getUrlForIPFSHash(workspaceData?.logoIpfsHash));
@@ -136,7 +179,7 @@ function Settings({
           Workspace Settings
         </Text>
       </Flex>
-      <EditForm onSubmit={handleFormSubmit} formData={formData} />
+      <EditForm hasClicked={hasClicked} onSubmit={handleFormSubmit} formData={formData} />
       <Box my={10} />
     </Flex>
   );

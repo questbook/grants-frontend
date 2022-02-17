@@ -7,7 +7,6 @@ import React, {
 } from 'react';
 import { formatAmount } from '../../../src/utils/formattingUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
-import Heading from '../../../src/components/ui/heading';
 import Table from '../../../src/components/your_grants/view_applicants/table';
 import supportedCurrencies from '../../../src/constants/supportedCurrencies';
 import { getApplicantsForAGrant } from '../../../src/graphql/daoQueries';
@@ -19,10 +18,10 @@ function ViewApplicants() {
   const [grantID, setGrantID] = useState<any>('');
   const subgraphClient = useContext(ApiClientsContext)?.subgraphClient;
   const applicationStatuses = [
+    'submitted',
+    'resubmit',
     'approved',
     'rejected',
-    'resubmit',
-    'submitted',
     'completed',
   ];
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -91,11 +90,8 @@ function ViewApplicants() {
         px={10}
       >
         <Breadcrumbs path={['My Grants', 'View Applicants']} />
-        <Heading
-          title={applicantsData[0]?.grantTitle ?? 'Grant Title'}
-          dontRenderDivider
-        />
         <Table
+          title={applicantsData[0]?.grantTitle ?? 'Grant Title'}
           data={applicantsData}
           onViewApplicantFormClick={
             (commentData: any) => router.push({
@@ -106,18 +102,18 @@ function ViewApplicants() {
               },
             })
           }
-          onAcceptApplicationClick={() => router.push({
-            pathname: '/your_grants/view_applicants/applicant_form/',
-            query: {
-              flow: 'approved',
-            },
-          })}
-          onRejectApplicationClick={() => router.push({
-            pathname: '/your_grants/view_applicants/applicant_form/',
-            query: {
-              flow: 'rejected',
-            },
-          })}
+          // onAcceptApplicationClick={() => router.push({
+          //   pathname: '/your_grants/view_applicants/applicant_form/',
+          //   query: {
+          //     flow: 'approved',
+          //   },
+          // })}
+          // onRejectApplicationClick={() => router.push({
+          //   pathname: '/your_grants/view_applicants/applicant_form/',
+          //   query: {
+          //     flow: 'rejected',
+          //   },
+          // })}
           onManageApplicationClick={(data: any) => router.push({
             pathname: '/your_grants/view_applicants/manage/',
             query: {

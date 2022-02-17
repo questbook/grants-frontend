@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import React, { useContext, useState } from 'react';
 import {
-  Box, Button, Text, Image, Link, Flex, Container, useToast,
+  Box, Button, Text, Image, Link, Flex, Container, useToast, ToastId, Center, CircularProgress,
 } from '@chakra-ui/react';
 import { useContract, useSigner } from 'wagmi';
-import { gql } from '@apollo/client';
 import { parseAmount } from 'src/utils/formattingUtils';
 import { GrantApplicationFieldsSubgraph, GrantApplicationCreateSubgraph } from 'src/types/application';
 import { GrantApplicationRequest } from '@questbook/service-validator-client';
+import InfoToast from 'src/components/ui/infoToast';
+import { useRouter } from 'next/router';
 import ApplicantDetails from './1_applicantDetails';
 import AboutProject from './3_aboutProject';
 import AboutTeam from './2_aboutTeam';
@@ -15,10 +16,9 @@ import Funding from './4_funding';
 import config from '../../../../constants/config';
 import ApplicationRegistryAbi from '../../../../contracts/abi/ApplicationRegistryAbi.json';
 import { ApiClientsContext } from '../../../../../pages/_app';
-import { getGrantApplication } from '../../../../graphql/daoQueries';
 
 interface Props {
-  onSubmit: (data: any) => void;
+  // onSubmit: (data: any) => void;
   title: string;
   grantId: string;
   daoLogo: string;
@@ -31,7 +31,7 @@ interface Props {
 
 // eslint-disable-next-line max-len
 function Form({
-  onSubmit,
+  // onSubmit,
   title,
   grantId,
   daoLogo,
@@ -41,7 +41,6 @@ function Form({
   rewardCurrencyCoin,
   grantRequiredFields,
 }: Props) {
-  const toast = useToast();
   const [signer] = useSigner();
   const applicationRegistryContract = useContract({
     addressOrName: config.ApplicationRegistryAddress,
@@ -50,7 +49,6 @@ function Form({
   });
 
   const apiClientContext = useContext(ApiClientsContext);
-  const { subgraphClient } : any = apiClientContext;
   const [applicantName, setApplicantName] = useState('');
   const [applicantNameError, setApplicantNameError] = useState(false);
 
@@ -97,6 +95,29 @@ function Form({
 
   const [fundingBreakdown, setFundingBreakdown] = useState('');
   const [fundingBreakdownError, setFundingBreakdownError] = useState(false);
+
+  const [hasClicked, setHasClicked] = React.useState(false);
+  const toastRef = React.useRef<ToastId>();
+  const toast = useToast();
+  const router = useRouter();
+
+  const closeToast = () => {
+    if (toastRef.current) {
+      toast.close(toastRef.current);
+    }
+  };
+
+  const showToast = ({ link } : { link: string }) => {
+    toastRef.current = toast({
+      position: 'top',
+      render: () => (
+        <InfoToast
+          link={link}
+          close={closeToast}
+        />
+      ),
+    });
+  };
 
   const handleOnSubmit = async () => {
     try {
@@ -193,6 +214,7 @@ function Form({
       ));
 
       if (!signer || !signer.data || !apiClientContext) return;
+      setHasClicked(true);
       const data: GrantApplicationCreateSubgraph = {
         grantId,
         applicantId: await signer?.data?.getAddress(),
@@ -232,27 +254,33 @@ function Form({
 
       console.log(transactionData);
       console.log(transactionData.blockNumber);
-      toast({ title: 'Transaction succeeded', status: 'success' });
+      // toast({ title: 'Transaction succeeded', status: 'success' });
 
-      await subgraphClient.waitForBlock(transactionData.blockNumber);
+      setHasClicked(false);
+      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
+      router.replace({
+        pathname: '/your_applications',
+      });
+      // await subgraphClient.waitForBlock(transactionData.blockNumber);
 
-      const { data: { grantApplications } } = (await subgraphClient.client.query(
-        {
+      // const { data: { grantApplications } } = (await subgraphClient.client.query(
+      //   {
 
-          query: gql(getGrantApplication),
-          variables: {
-            grantID: grantId,
-            applicantID: await signer?.data?.getAddress(),
-          },
-        },
-      )) as any;
-      console.log(grantApplications);
-      if (!(grantApplications.length > 0)) {
-        throw new Error('Application not indexed');
-      }
+      //     query: gql(getGrantApplication),
+      //     variables: {
+      //       grantID: grantId,
+      //       applicantID: await signer?.data?.getAddress(),
+      //     },
+      //   },
+      // )) as any;
+      // console.log(grantApplications);
+      // if (!(grantApplications.length > 0)) {
+      //   throw new Error('Application not indexed');
+      // }
 
-      onSubmit({ data: grantApplications });
+      // onSubmit({ data: grantApplications });
     } catch (error) {
+      setHasClicked(false);
       console.log(error);
       toast({
         title: 'Application not indexed',
@@ -362,9 +390,15 @@ function Form({
 
       <Box mt={5} />
 
-      <Button onClick={handleOnSubmit} mx={10} alignSelf="stretch" variant="primary">
-        Submit Application
-      </Button>
+      {hasClicked ? (
+        <Center>
+          <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
+        </Center>
+      ) : (
+        <Button onClick={handleOnSubmit} mx={10} alignSelf="stretch" variant="primary">
+          Submit Application
+        </Button>
+      )}
     </Flex>
   );
 }

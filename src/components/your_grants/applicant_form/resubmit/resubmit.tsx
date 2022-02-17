@@ -1,13 +1,15 @@
 import {
-  Container, Button, Text, Box,
+  Container, Button, Text, Box, Center, CircularProgress,
 } from '@chakra-ui/react';
 import React from 'react';
 import MultiLineInput from '../../../ui/forms/multiLineInput';
 
 function Resubmit({
   onSubmit,
+  hasClicked,
 }: {
   onSubmit: (data: any) => void;
+  hasClicked: boolean;
 }) {
   const [comment, setComment] = React.useState('');
   const [commentError, setCommentError] = React.useState(false);
@@ -43,9 +45,11 @@ function Resubmit({
         errorText="Required"
       />
 
-      <Button onClick={() => onSubmit({ comment })} w="100%" mt={10} variant="primary">
-        Ask to Resubmit
-      </Button>
+      {hasClicked ? <Center><CircularProgress isIndeterminate color="brand.500" size="48px" mt={10} /></Center> : (
+        <Button onClick={() => onSubmit({ comment })} w="100%" mt={10} variant="primary">
+          Ask to Resubmit
+        </Button>
+      )}
     </Container>
   );
 }

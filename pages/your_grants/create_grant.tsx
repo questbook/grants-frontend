@@ -1,10 +1,11 @@
 import {
-  Box, Button, Container, Flex, Text,
+  Box, Button, Container, Flex, Text, ToastId, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
-  ReactElement, useContext, useRef, useState,
+  ReactElement, useContext, useEffect, useRef, useState,
 } from 'react';
+import InfoToast from 'src/components/ui/infoToast';
 import { useAccount, useContract, useSigner } from 'wagmi';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/create_grant/form';
@@ -61,48 +62,86 @@ function CreateGrant() {
     contractInterface: GrantFactoryABI,
     signerOrProvider: signerStates.data,
   });
+  const [hasClicked, setHasClicked] = React.useState(false);
+  useEffect(() => {
+    console.log(hasClicked);
+  }, [hasClicked]);
+  const toastRef = React.useRef<ToastId>();
+  const toast = useToast();
+
+  const closeToast = () => {
+    if (toastRef.current) {
+      toast.close(toastRef.current);
+    }
+  };
+
+  const showToast = ({ link } : { link: string }) => {
+    toastRef.current = toast({
+      position: 'top',
+      render: () => (
+        <InfoToast
+          link={link}
+          close={closeToast}
+        />
+      ),
+    });
+  };
+
   const handleGrantSubmit = async (data: any) => {
     if (!apiClients) return;
-    const { subgraphClient, validatorApi, workspaceId } = apiClients;
+    const { validatorApi, workspaceId } = apiClients;
     if (!accountData || !accountData.address || !workspaceId) {
       return;
     }
 
-    console.log(data);
-    console.log(workspaceId);
+    try {
+      setHasClicked(true);
+      console.log(data);
+      console.log(workspaceId);
 
-    const {
-      data: { ipfsHash },
-    } = await validatorApi.validateGrantCreate({
-      title: data.title,
-      summary: data.summary,
-      details: data.details,
-      deadline: data.date,
-      reward: {
-        committed: parseAmount(data.reward),
-        asset: data.rewardCurrencyAddress,
-      },
-      creatorId: accountData.address,
-      workspaceId,
-      fields: data.fields,
-    });
+      const {
+        data: { ipfsHash },
+      } = await validatorApi.validateGrantCreate({
+        title: data.title,
+        summary: data.summary,
+        details: data.details,
+        deadline: data.date,
+        reward: {
+          committed: parseAmount(data.reward),
+          asset: data.rewardCurrencyAddress,
+        },
+        creatorId: accountData.address,
+        workspaceId,
+        fields: data.fields,
+      });
 
-    console.log(ipfsHash);
+      console.log(ipfsHash);
 
-    const transaction = await grantContract.createGrant(
-      workspaceId!,
-      ipfsHash,
-      config.WorkspaceRegistryAddress,
-      config.ApplicationRegistryAddress,
-    );
-    const transactionData = await transaction.wait();
+      const transaction = await grantContract.createGrant(
+        workspaceId!,
+        ipfsHash,
+        config.WorkspaceRegistryAddress,
+        config.ApplicationRegistryAddress,
+      );
+      const transactionData = await transaction.wait();
 
-    console.log(transactionData);
-    console.log(transactionData.blockNumber);
+      setHasClicked(false);
+      console.log(transactionData);
+      router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
 
-    await subgraphClient.waitForBlock(transactionData.blockNumber);
+      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
+    } catch (error) {
+      setHasClicked(false);
+      console.log(error);
+      toast({
+        title: 'Application update not indexed',
+        status: 'error',
+      });
+    }
+    // console.log(transactionData);
+    // console.log(transactionData.blockNumber);
 
-    router.replace('/your_grants');
+    // await subgraphClient.waitForBlock(transactionData.blockNumber);
   };
 
   return (
@@ -120,6 +159,7 @@ function CreateGrant() {
         <Form
           onSubmit={handleGrantSubmit}
           refs={sideBarDetails.map((detail) => detail[2])}
+          hasClicked={hasClicked}
         />
       </Container>
 

@@ -9,15 +9,16 @@ import {
   Flex,
   Container,
   useToast,
+  ToastId,
 } from '@chakra-ui/react';
 import { GrantApplicationFieldsSubgraph, GrantApplicationProps, GrantApplicationUpdateSubgraph } from 'src/types/application';
 import { getFormattedFullDateFromUnixTimestamp, parseAmount } from 'src/utils/formattingUtils';
 import { useContract, useSigner } from 'wagmi';
 import config from 'src/constants/config';
 import { ApiClientsContext } from 'pages/_app';
-import { getGrantApplication } from 'src/graphql/daoQueries';
-import { gql } from '@apollo/client';
 import { GrantApplicationUpdate } from '@questbook/service-validator-client';
+import InfoToast from 'src/components/ui/infoToast';
+import { useRouter } from 'next/router';
 import ApplicantDetails from './1_applicantDetails';
 import AboutProject from './3_aboutProject';
 import AboutTeam from './2_aboutTeam';
@@ -38,7 +39,7 @@ function Form({
   feedback,
   grantRequiredFields,
   applicationID,
-  grantID,
+  // grantID,
 }: {
   onSubmit: null | ((data: any) => void);
   rewardAmount: string;
@@ -52,9 +53,10 @@ function Form({
   feedback: string;
   grantRequiredFields: string[];
   applicationID: string;
-  grantID: string;
+  // grantID: string;
 }) {
   const toast = useToast();
+  const router = useRouter();
   const [signer] = useSigner();
 
   const applicationRegistryContract = useContract({
@@ -64,7 +66,7 @@ function Form({
   });
 
   const apiClientContext = useContext(ApiClientsContext);
-  const { subgraphClient } : any = apiClientContext;
+  // const { subgraphClient } : any = apiClientContext;
   const [applicantName, setApplicantName] = useState('');
   const [applicantNameError, setApplicantNameError] = useState(false);
 
@@ -127,29 +129,53 @@ function Form({
     }
   }, [formData]);
 
+  const [hasClicked, setHasClicked] = React.useState(false);
+  useEffect(() => {
+    console.log(hasClicked);
+  }, [hasClicked]);
+  const toastRef = React.useRef<ToastId>();
+
+  const closeToast = () => {
+    if (toastRef.current) {
+      toast.close(toastRef.current);
+    }
+  };
+
+  const showToast = ({ link } : { link: string }) => {
+    toastRef.current = toast({
+      position: 'top',
+      render: () => (
+        <InfoToast
+          link={link}
+          close={closeToast}
+        />
+      ),
+    });
+  };
+
   const handleOnSubmit = async () => {
     try {
       if (!onSubmit) {
         return;
       }
       let error = false;
-      if (applicantName === '') {
+      if (applicantName === '' && grantRequiredFields.includes('applicantName')) {
         setApplicantNameError(true);
         error = true;
       }
-      if (applicantEmail === '') {
+      if (applicantEmail === '' && grantRequiredFields.includes('applicantEmail')) {
         setApplicantEmailError(true);
         error = true;
       }
-      if (!teamMembers || teamMembers <= 0) {
+      if ((!teamMembers || teamMembers <= 0) && grantRequiredFields.includes('teamMembers')) {
         setTeamMembersError(true);
         error = true;
       }
 
       let membersDescriptionError = false;
       const newMembersDescriptionArray = [...membersDescription];
-      membersDescription.forEach((member: any, index: number) => {
-        if (member.description === '') {
+      membersDescription.forEach((member, index) => {
+        if (member.description === '' && grantRequiredFields.includes('memberDetails')) {
           newMembersDescriptionArray[index].isError = true;
           membersDescriptionError = true;
         }
@@ -160,15 +186,15 @@ function Form({
         error = true;
       }
 
-      if (projectName === '') {
+      if (projectName === '' && grantRequiredFields.includes('projectName')) {
         setProjectNameError(true);
         error = true;
       }
 
       let projectLinksError = false;
       const newProjectLinks = [...projectLinks];
-      projectLinks.forEach((project: any, index: number) => {
-        if (project.link === '') {
+      projectLinks.forEach((project, index) => {
+        if (project.link === '' && grantRequiredFields.includes('projectLink')) {
           newProjectLinks[index].isError = true;
           projectLinksError = true;
         }
@@ -179,18 +205,18 @@ function Form({
         error = true;
       }
 
-      if (projectDetails === '') {
+      if (projectDetails === '' && grantRequiredFields.includes('projectDetails')) {
         setProjectDetailsError(true);
         error = true;
       }
-      if (projectGoal === '') {
+      if (projectGoal === '' && grantRequiredFields.includes('projectGoals')) {
         setProjectGoalError(true);
         error = true;
       }
 
       let projectMilestonesError = false;
       const newProjectMilestones = [...projectMilestones];
-      projectMilestones.forEach((project: any, index: number) => {
+      projectMilestones.forEach((project, index) => {
         if (project.milestone === '') {
           newProjectMilestones[index].milestoneIsError = true;
           projectMilestonesError = true;
@@ -206,11 +232,11 @@ function Form({
         error = true;
       }
 
-      if (fundingAsk === '') {
+      if (fundingAsk === '' && grantRequiredFields.includes('fundingAsk')) {
         setFundingAskError(true);
         error = true;
       }
-      if (fundingBreakdown === '') {
+      if (fundingBreakdown === '' && grantRequiredFields.includes('fundingBreakdown')) {
         setFundingBreakdownError(true);
         error = true;
       }
@@ -218,11 +244,14 @@ function Form({
         return;
       }
 
+      setHasClicked(true);
       const links = projectLinks.map((pl) => (pl.link));
 
       const milestones = projectMilestones.map((pm) => (
         { title: pm.milestone, amount: parseAmount(pm.milestoneReward) }
       ));
+
+      console.log(milestones);
 
       if (!signer || !signer.data || !apiClientContext) return;
       const data: GrantApplicationUpdateSubgraph = {
@@ -262,25 +291,30 @@ function Form({
       console.log(transactionData.blockNumber);
       toast({ title: 'Transaction succeeded', status: 'success' });
 
-      await subgraphClient.waitForBlock(transactionData.blockNumber);
+      setHasClicked(false);
+      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
+      router.push('/your_applications');
 
-      const { data: { grantApplications } } = (await subgraphClient.client.query(
-        {
+      // await subgraphClient.waitForBlock(transactionData.blockNumber);
 
-          query: gql(getGrantApplication),
-          variables: {
-            grantID,
-            applicantID: await signer?.data?.getAddress(),
-          },
-        },
-      )) as any;
-      console.log(grantApplications);
-      if (!(grantApplications.length > 0)) {
-        throw new Error('Application not indexed');
-      }
+      // const { data: { grantApplications } } = (await subgraphClient.client.query(
+      //   {
 
-      onSubmit({ data: grantApplications });
+      //     query: gql(getGrantApplication),
+      //     variables: {
+      //       grantID,
+      //       applicantID: await signer?.data?.getAddress(),
+      //     },
+      //   },
+      // )) as any;
+      // console.log(grantApplications);
+      // if (!(grantApplications.length > 0)) {
+      //   throw new Error('Application not indexed');
+      // }
+
+      // onSubmit({ data: grantApplications });
     } catch (error) {
+      setHasClicked(false);
       console.log(error);
       toast({
         title: 'Application not indexed',

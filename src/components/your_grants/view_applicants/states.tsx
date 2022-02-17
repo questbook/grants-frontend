@@ -90,6 +90,28 @@ function ResubmissionRequested() {
   );
 }
 
+function GrantComplete() {
+  return (
+    <Text
+      w="100%"
+      maxW={maxWidth}
+      bg="#C8E9DE"
+      color="#334640"
+      borderRadius="24px"
+      border="1px solid #69B399"
+      px={3}
+      py={1}
+      textAlign="center"
+      fontSize="12px"
+      lineHeight="20px"
+      fontWeight="400"
+      whiteSpace="nowrap"
+    >
+      Complete
+    </Text>
+  );
+}
+
 export {
-  GrantApproved, Rejected, PendingReview, ResubmissionRequested,
+  GrantApproved, Rejected, PendingReview, ResubmissionRequested, GrantComplete,
 };

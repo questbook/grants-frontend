@@ -38,6 +38,7 @@ export type Grant = {
     asset: string
     committed: string
   }
+  funding: number
 };
 
 export const useApplicationMilestones = (grantId: string) => {

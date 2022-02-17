@@ -8,6 +8,9 @@ import {
   Divider,
   Heading,
   useToast,
+  ToastId,
+  Center,
+  CircularProgress,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import Lottie from 'lottie-react';
@@ -17,6 +20,7 @@ import {
 } from 'wagmi';
 import { BigNumber, ethers } from 'ethers';
 import { formatAmount } from 'src/utils/formattingUtils';
+import InfoToast from 'src/components/ui/infoToast';
 import Dropdown from '../../../ui/forms/dropdown';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
 import Modal from '../../../ui/modal';
@@ -71,29 +75,53 @@ function AddFunds({
     });
   };
 
+  const toastRef = React.useRef<ToastId>();
+  const [hasClicked, setHasClicked] = React.useState(false);
+  const closeToast = () => {
+    if (toastRef.current) {
+      toast.close(toastRef.current);
+    }
+  };
+  const showToast = ({ link } : { link: string }) => {
+    toastRef.current = toast({
+      position: 'top',
+      render: () => (
+        <InfoToast
+          link={link}
+          close={closeToast}
+        />
+      ),
+    });
+  };
+
   const depositFunds = async () => {
     const finalAmount = ethers.utils.parseUnits(funding, rewardAssetDecimals);
-    toast({
-      title: 'Depositing!',
-      status: 'info',
-      duration: 9000,
-      isClosable: true,
-    });
+    // toast({
+    //   title: 'Depositing!',
+    //   status: 'info',
+    //   duration: 9000,
+    //   isClosable: true,
+    // });
     try {
+      setHasClicked(true);
       const transferTxn = await rewardAssetContract.transfer(
         grantAddress,
         finalAmount,
       );
-      await transferTxn.wait();
-      toast({
-        title: 'Deposited!',
-        status: 'success',
-        duration: 9000,
-        isClosable: true,
-      });
+      const transactionData = await transferTxn.wait();
+      // toast({
+      //   title: 'Deposited!',
+      //   status: 'success',
+      //   duration: 9000,
+      //   isClosable: true,
+      // });
+      setHasClicked(false);
+      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
+
       setFunding('');
       onClose();
     } catch {
+      setHasClicked(false);
       toast({
         title: 'Could not deposit!',
         status: 'error',
@@ -337,12 +365,17 @@ function AddFunds({
               {' '}
               <Text variant="tableHeader" display="inline-block">
                 {`${formatAmount(walletBalance.toString())} ${rewardAsset?.label}`}
-
               </Text>
             </Text>
-            <Button variant="primary" my={8} onClick={() => depositFunds()}>
-              Deposit
-            </Button>
+            {hasClicked ? (
+              <Center>
+                <CircularProgress isIndeterminate color="brand.500" size="48px" my={4} />
+              </Center>
+            ) : (
+              <Button variant="primary" my={8} onClick={() => depositFunds()}>
+                Deposit
+              </Button>
+            )}
           </Flex>
         )}
       </ModalBody>

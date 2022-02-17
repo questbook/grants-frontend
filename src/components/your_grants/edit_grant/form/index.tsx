@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import React, { useState } from 'react';
 import {
-  Box, Button, Text, Image, Link, Flex,
+  Box, Button, Text, Image, Link, Flex, CircularProgress, Center,
 } from '@chakra-ui/react';
 import Title from './1_title';
 import Details from './2_details';
@@ -15,10 +15,12 @@ function Form({
   refs,
   onSubmit,
   formData,
+  hasClicked,
 }: {
   refs: any[];
   onSubmit: (data: any) => void;
   formData: any;
+  hasClicked: boolean;
 }) {
   const maxDescriptionLength = 300;
   const [title, setTitle] = useState(formData.title ?? '');
@@ -282,9 +284,15 @@ function Form({
         </Text>
       </Flex>
 
-      <Button onClick={handleOnSubmit} variant="primary">
-        Save Changes
-      </Button>
+      {hasClicked ? (
+        <Center>
+          <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
+        </Center>
+      ) : (
+        <Button onClick={handleOnSubmit} variant="primary">
+          Save Changes
+        </Button>
+      )}
     </>
   );
 }

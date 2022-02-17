@@ -1,11 +1,13 @@
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import {
   ModalBody, Flex, Image, Text, Button, Heading,
-  Divider, Checkbox, Box, Menu, MenuButton, MenuList, MenuItem,
+  Divider, Checkbox, Box, Menu, MenuButton, MenuList,
+  MenuItem, useToast, Center, CircularProgress, ToastId,
 } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import React, { useEffect } from 'react';
 import { useContract, useSigner } from 'wagmi';
+import InfoToast from 'src/components/ui/infoToast';
 import { formatAmount, parseAmount } from '../../../../utils/formattingUtils';
 import Dropdown from '../../../ui/forms/dropdown';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
@@ -50,25 +52,57 @@ function ModalContent({
     signerOrProvider: signerStates.data,
   });
 
+  const toast = useToast();
+  const toastRef = React.useRef<ToastId>();
+  const [hasClicked, setHasClicked] = React.useState(false);
+  const closeToast = () => {
+    if (toastRef.current) {
+      toast.close(toastRef.current);
+    }
+  };
+
+  const showToast = ({ link } : { link: string }) => {
+    toastRef.current = toast({
+      position: 'top',
+      render: () => (
+        <InfoToast
+          link={link}
+          close={closeToast}
+        />
+      ),
+    });
+  };
+
   const sendFundsFromContract = async () => {
     if (!milestones[selectedMilestone].id.split('.')[1]) return;
     if (!rewardAsset.address) return;
     if (!parseAmount(funding)) return;
     if (!applicationId) return;
 
-    const transaction = await grantContract.disburseReward(
-      applicationId,
-      milestones[selectedMilestone].id.split('.')[1],
-      rewardAsset.address,
-      parseAmount(funding),
-    );
-    // const transactionData =
-    await transaction.wait();
+    try {
+      setHasClicked(true);
+      const transaction = await grantContract.disburseReward(
+        applicationId,
+        milestones[selectedMilestone].id.split('.')[1],
+        rewardAsset.address,
+        parseAmount(funding),
+      );
+      // const transactionData =
+      await transaction.wait();
+      onClose();
+      setHasClicked(false);
+      showToast({ link: `https://etherscan.io/tx/${transaction.transactionHash}` });
+    } catch (e) {
+      setHasClicked(false);
+      console.log(e);
+      toast({
+        title: 'Application update not indexed',
+        status: 'error',
+      });
+    }
 
     // console.log(transactionData);
     // console.log(transactionData.blockNumber);
-
-    onClose();
   };
 
   const sendFundsFromWallet = async () => {
@@ -86,6 +120,7 @@ function ModalContent({
     if (!parseAmount(funding)) return;
     if (!applicationId) return;
 
+    setHasClicked(true);
     const txn = await rewardAssetContract.approve(grantContract.address, parseAmount(funding));
     await txn.wait();
 
@@ -96,6 +131,8 @@ function ModalContent({
       parseAmount(funding),
     );
     const transactionData = await transaction.wait();
+    setHasClicked(false);
+    showToast({ link: `https://etherscan.io/tx/${transaction.transactionHash}` });
 
     console.log(transactionData);
     console.log(transactionData.blockNumber);
@@ -255,7 +292,11 @@ function ModalContent({
             </Flex>
           </Flex>
 
-          <Button variant="primary" w="100%" my={10} onClick={sendFundsFromContract}>Send Funds</Button>
+          { hasClicked ? (
+            <Center>
+              <CircularProgress isIndeterminate color="brand.500" size="48px" my={10} />
+            </Center>
+          ) : <Button variant="primary" w="100%" my={10} onClick={sendFundsFromContract}>Send Funds</Button>}
 
         </Flex>
       )}
@@ -332,7 +373,11 @@ function ModalContent({
           </Flex>
         </Flex>
 
-        <Button variant="primary" w="100%" my={10} onClick={sendFundsFromWallet}>Send Funds</Button>
+        {hasClicked ? (
+          <Center>
+            <CircularProgress isIndeterminate color="brand.500" size="48px" my={10} />
+          </Center>
+        ) : <Button variant="primary" w="100%" my={10} onClick={sendFundsFromWallet}>Send Funds</Button>}
 
       </Flex>
       )}

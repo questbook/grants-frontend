@@ -84,16 +84,16 @@ function ApplyGrant() {
     <Container maxW="100%" display="flex" px="0px">
       <Container flex={3} display="flex" flexDirection="column" maxW="834px" alignItems="stretch" pb={8} px={10}>
         <Form
-          onSubmit={({ data }) => {
-            console.log('applyRes', data);
-            router.push({
-              pathname: '/your_applications',
-              query: {
-                applicantID: data[0].applicantId,
-                account: true,
-              },
-            });
-          }}
+          // onSubmit={({ data }) => {
+          //   console.log('applyRes', data);
+          //   router.push({
+          //     pathname: '/your_applications',
+          //     query: {
+          //       applicantID: data[0].applicantId,
+          //       account: true,
+          //     },
+          //   });
+          // }}
           title={title}
           grantId={grantID}
           daoLogo={daoLogo}
