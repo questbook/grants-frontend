@@ -31,9 +31,14 @@ interface Milestone {
   title: string;
   amount: string;
 }
-export interface GrantApplicationSubgraph {
+export interface GrantApplicationCreateSubgraph {
   grantId: string;
   applicantId: string;
+  fields: GrantApplicationFieldsSubgraph;
+  milestones: Milestone[]
+}
+
+export interface GrantApplicationUpdateSubgraph {
   fields: GrantApplicationFieldsSubgraph;
   milestones: Milestone[]
 }

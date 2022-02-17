@@ -16,6 +16,7 @@ function AboutTeam({
   setMembersDescription,
 
   readOnly,
+  grantRequiredFields,
 }: {
 
   teamMembers: number | null;
@@ -27,9 +28,10 @@ function AboutTeam({
   setMembersDescription: (membersDescription: { description: string, isError: boolean }[]) => void;
 
   readOnly?: boolean;
+  grantRequiredFields: string[];
 }) {
   return (
-    <>
+    <Box display={grantRequiredFields.includes('teamMembers') || grantRequiredFields.includes('memberDetails') ? '' : 'none'}>
       <Text fontWeight="700" fontSize="16px" lineHeight="20px" color="#8850EA">
         About Team
         <Tooltip
@@ -58,10 +60,19 @@ function AboutTeam({
         isError={teamMembersError}
         errorText="Required"
         disabled={readOnly}
+        visible={grantRequiredFields.includes('teamMembers')}
       />
 
       <Box mt="43px" />
-      <Text fontWeight="700" fontSize="16px" lineHeight="20px" color="#8850EA">
+      <Text
+        fontWeight="700"
+        fontSize="16px"
+        lineHeight="20px"
+        color="#8850EA"
+        display={grantRequiredFields.includes(
+          'memberDetails',
+        ) ? '' : 'none'}
+      >
         Details
         <Tooltip
           icon="/ui_icons/tooltip_questionmark_brand.svg"
@@ -93,11 +104,12 @@ function AboutTeam({
             isError={isError}
             errorText="Required"
             disabled={readOnly}
+            visible={grantRequiredFields.includes('memberDetails')}
           />
         ))
       }
 
-    </>
+    </Box>
   );
 }
 

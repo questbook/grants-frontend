@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import React, {
   ReactElement, useContext, useEffect, useState,
 } from 'react';
-import { formatAmount } from 'src/utils/formattingUtils';
+import { formatAmount } from '../../../src/utils/formattingUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Heading from '../../../src/components/ui/heading';
 import Table from '../../../src/components/your_grants/view_applicants/table';
@@ -44,19 +44,19 @@ function ViewApplicants() {
             applicationId: applicant.id,
             applicant_address: applicant.applicantId,
             sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
-            applicant_name: applicant.fields.find((field: any) => field.id.includes('applicantName')).value[0],
+            applicant_name: applicant.fields.find((field: any) => field?.id?.includes('applicantName'))?.value[0],
             funding_asked: {
-              amount: formatAmount(applicant.fields.find((field: any) => field.id.includes('fundingAsk')).value[0]),
+              amount: formatAmount(applicant?.fields?.find((field: any) => field?.id?.includes('fundingAsk'))?.value[0] ?? '0'),
               symbol: supportedCurrencies.find(
                 (currency) => currency.id.toLowerCase()
-                  === applicant.grant.reward.asset.toLowerCase(),
+                  === applicant?.grant?.reward?.asset?.toLowerCase(),
               )?.label,
               icon: supportedCurrencies.find(
-                (currency) => currency.id.toLowerCase()
-                  === applicant.grant.reward.asset.toLowerCase(),
+                (currency) => currency?.id?.toLowerCase()
+                  === applicant?.grant?.reward?.asset?.toLowerCase(),
               )?.icon,
             },
-            status: applicationStatuses.indexOf(applicant.state),
+            status: applicationStatuses.indexOf(applicant?.state),
           }),
         );
         // console.log('fetchedd', fetchedApplicantsData);
