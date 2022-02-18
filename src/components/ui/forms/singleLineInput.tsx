@@ -7,6 +7,7 @@ import {
   Box,
   InputGroup,
   InputRightElement,
+  PlacementWithLogical,
 } from '@chakra-ui/react';
 import Tooltip from '../tooltip';
 
@@ -22,6 +23,7 @@ interface SingleLineInputProps {
   subtextAlign?: 'left' | 'right' | 'center';
   disabled?: boolean;
   tooltip?: string;
+  tooltipPlacement?: PlacementWithLogical;
 
   labelRightElement?: React.ReactNode;
   inputRightElement?: React.ReactNode;
@@ -36,6 +38,7 @@ const defaultProps = {
   subtext: '',
   disabled: false,
   tooltip: '',
+  tooltipPlacement: 'bottom-end',
   subtextAlign: 'left',
   onClick: () => {},
   isError: false,
@@ -57,6 +60,7 @@ function SingleLineInput({
   subtext,
   disabled,
   tooltip,
+  tooltipPlacement,
   subtextAlign,
   onClick,
   labelRightElement,
@@ -72,7 +76,12 @@ function SingleLineInput({
       <Flex direction="row" justify="space-between" align="center">
         <Text lineHeight="20px" fontWeight="bold">
           {label}
-          {tooltip && tooltip.length ? <Tooltip label={tooltip} /> : null}
+          {tooltip && tooltip.length ? (
+            <Tooltip
+              label={tooltip}
+              placement={tooltipPlacement}
+            />
+          ) : null}
         </Text>
         {labelRightElement}
       </Flex>

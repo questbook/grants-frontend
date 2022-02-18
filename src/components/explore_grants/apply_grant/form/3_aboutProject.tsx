@@ -84,7 +84,11 @@ function AboutProject({
     <>
       <Text fontWeight="700" fontSize="16px" lineHeight="20px" color="#8850EA">
         About Project
-        <Tooltip icon="/ui_icons/tooltip_questionmark_brand.svg" label="team" />
+        <Tooltip
+          icon="/ui_icons/tooltip_questionmark_brand.svg"
+          label="Write about your project - idea, use cases, process, goals, and how it helps our ecosystem."
+          placement="bottom-start"
+        />
       </Text>
 
       <Box mt={6} />
@@ -279,7 +283,8 @@ function AboutProject({
                 <SingleLineInput
                   label="Expected Milestone Reward"
                   placeholder="100"
-                  tooltip="Expected Milestone Reward"
+                  tooltip="How much money would you need to complete this milestone"
+                  tooltipPlacement="bottom-start"
                   value={milestoneReward}
                   onChange={(e) => {
                     const newProjectMilestone = [...projectMilestones];
@@ -295,6 +300,7 @@ function AboutProject({
                   }}
                   isError={milestoneRewardIsError}
                   errorText="Required"
+                  type="number"
                 />
               </Box>
               <Box ml={4} mt={5} minW="132px" flex={0}>

@@ -36,7 +36,8 @@ function AboutTeam({
         About Team
         <Tooltip
           icon="/ui_icons/tooltip_questionmark_brand.svg"
-          label="team"
+          label="Write about the team members working on the project."
+          placement="bottom-start"
         />
       </Text>
 
@@ -74,10 +75,10 @@ function AboutTeam({
         ) ? '' : 'none'}
       >
         Details
-        <Tooltip
+        {/* <Tooltip
           icon="/ui_icons/tooltip_questionmark_brand.svg"
           label="details"
-        />
+        /> */}
       </Text>
 
       <Box mt={3} />

@@ -48,7 +48,8 @@ function Funding({
         Funding & Budget Breakdown
         <Tooltip
           icon="/ui_icons/tooltip_questionmark_brand.svg"
-          label="team"
+          label="How much funding in total would you need and explain how you would spend the money if your application is accepted."
+          placement="bottom-start"
         />
       </Text>
 
@@ -86,6 +87,7 @@ function Funding({
             }}
             isError={fundingAskError}
             errorText="Required"
+            type="number"
             disabled={readOnly}
           />
         </Box>
