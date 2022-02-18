@@ -28,5 +28,26 @@ query($ownerId: Bytes!) {
   }
 }
 `;
+const getWorkspaceMembersQuery = `
+query($actorId: Bytes!) {
+  workspaceMembers(
+    where: {
+      actorId: $actorId
+    }
+    subgraphError: allow
+    orderBy: id
+    orderDirection: desc
+  ){
+    id
+    actorId
+    workspace {
+      id
+      ownerId
+      logoIpfsHash
+      title
+    }
+  }
+}
+`;
 
-export { tokensQuery, getWorkspacesQuery };
+export { tokensQuery, getWorkspacesQuery, getWorkspaceMembersQuery };
