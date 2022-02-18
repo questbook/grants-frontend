@@ -4,9 +4,10 @@ import Form from './form';
 import TipsContainer from './tips';
 
 function CreateGrant({
-  onSubmit,
+  onSubmit, hasClicked,
 }: {
   onSubmit: (data: any) => void;
+  hasClicked: boolean;
 }) {
   const totalSteps = 4;
 
@@ -54,6 +55,7 @@ function CreateGrant({
         totalSteps={totalSteps}
         incrementCurrentStep={(data) => changeCurrentStep(data, currentStep + 1)}
         submitForm={(data) => submitForm(data)}
+        hasClicked={hasClicked}
       />
       <TipsContainer currentTip={currentStep} />
     </Container>

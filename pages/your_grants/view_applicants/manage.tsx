@@ -365,7 +365,7 @@ function ManageGrant() {
               variant="primary"
               onClick={() => setIsGrantCompleteModalOpen(true)}
             >
-              Mark Grant as Complete
+              Mark Application as closed
             </Button>
           )}
         </Flex>
@@ -382,7 +382,8 @@ function ManageGrant() {
       <Modal
         isOpen={isGrantCompleteModelOpen}
         onClose={() => setIsGrantCompleteModalOpen(false)}
-        title="Mark Grant as Complete"
+        title="Mark Application as closed"
+        modalWidth={512}
       >
         <ModalContent
           hasClicked={hasClicked}

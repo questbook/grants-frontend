@@ -15,10 +15,11 @@ interface Props {
   incrementCurrentStep: (data: any) => void;
   totalSteps: number;
   submitForm: (data: any) => void;
+  hasClicked: boolean;
 }
 
 function Form({
-  currentStep, incrementCurrentStep, totalSteps, submitForm,
+  currentStep, incrementCurrentStep, totalSteps, submitForm, hasClicked,
 }: Props) {
   const incrementFormInputStep = (data: any) => {
     if (currentStep < totalSteps - 1) {
@@ -32,7 +33,7 @@ function Form({
     <Title onSubmit={incrementFormInputStep} key={0} />,
     <Details onSubmit={incrementFormInputStep} key={1} />,
     <ApplicantDetails onSubmit={incrementFormInputStep} key={2} />,
-    <GrantRewardsInput onSubmit={incrementFormInputStep} key={3} />,
+    <GrantRewardsInput hasClicked={hasClicked} onSubmit={incrementFormInputStep} key={3} />,
   ];
 
   const getProgressValueFromStep = (step: number) => ((step + 1) / (totalSteps + 1)) * 100;

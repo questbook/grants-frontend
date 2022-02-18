@@ -143,7 +143,7 @@ function WithdrawFunds({
             </Flex>
             <Flex mt={8}>
               <SingleLineInput
-                label="Receipient Address"
+                label="Recipient Address"
                 placeholder="Enter address here"
                 isError={addressError}
                 errorText=""
@@ -166,7 +166,7 @@ function WithdrawFunds({
               </Flex>
             ) : (
               <Text mt={1} variant="footer">
-                Enter receipient address on
+                Enter recipient address on
                 {' '}
                 {rewardAsset.label === 'WMATIC' ? 'Polygon' : 'Ethereum'}
                 {' '}

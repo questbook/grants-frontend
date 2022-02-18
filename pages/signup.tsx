@@ -189,7 +189,7 @@ function SignupDao() {
   };
 
   if (creatingGrant) {
-    return <CreateGrant onSubmit={handleGrantSubmit} />;
+    return <CreateGrant hasClicked={hasClicked} onSubmit={handleGrantSubmit} />;
   }
 
   if (daoCreated && daoData) {
