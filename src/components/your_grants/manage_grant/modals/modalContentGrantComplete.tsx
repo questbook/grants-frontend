@@ -14,7 +14,7 @@ function ModalContent({ onClose, hasClicked }: Props) {
   const [detailsError, setDetailsError] = useState(false);
 
   return (
-    <ModalBody maxW="521px">
+    <ModalBody maxW="521px" mt={8}>
       <Flex direction="column" justify="start" align="stretch">
         <Text textAlign="center" variant="applicationText">
           Add a brief summary of what was achieved in the grant,

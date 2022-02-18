@@ -383,6 +383,7 @@ function ManageGrant() {
         isOpen={isGrantCompleteModelOpen}
         onClose={() => setIsGrantCompleteModalOpen(false)}
         title="Mark Application as closed"
+        modalWidth={512}
       >
         <ModalContent
           hasClicked={hasClicked}
