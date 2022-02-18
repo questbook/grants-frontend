@@ -12,14 +12,14 @@ import React, {
 } from 'react';
 import { useAccount } from 'wagmi';
 import { BigNumber } from '@ethersproject/bignumber';
-import AddFunds from '../../src/components/funds/add_funds_modal';
-import Heading from '../../src/components/ui/heading';
-import YourGrantCard from '../../src/components/your_grants/yourGrantCard';
-import supportedCurrencies from '../../src/constants/supportedCurrencies';
-import { getAllGrantsForCreator } from '../../src/graphql/daoQueries';
-import NavbarLayout from '../../src/layout/navbarLayout';
-import { formatAmount } from '../../src/utils/formattingUtils';
-import { ApiClientsContext } from '../_app';
+import AddFunds from '../src/components/funds/add_funds_modal';
+import Heading from '../src/components/ui/heading';
+import YourGrantCard from '../src/components/your_grants/yourGrantCard';
+import supportedCurrencies from '../src/constants/supportedCurrencies';
+import { getAllGrantsForCreator } from '../src/graphql/daoQueries';
+import NavbarLayout from '../src/layout/navbarLayout';
+import { formatAmount } from '../src/utils/formattingUtils';
+import { ApiClientsContext } from './_app';
 
 function YourGrants() {
   const containerRef = useRef(null);
