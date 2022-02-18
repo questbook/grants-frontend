@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Text, Image, Flex, Button, MenuButton, Menu, MenuList, MenuItem,
+  Text, Flex, Button, MenuButton, Menu, MenuList, MenuItem,
 } from '@chakra-ui/react';
 import {
   ChevronDownIcon, ViewIcon,
@@ -13,12 +13,15 @@ import Modal from '../../../ui/modal';
 import MilestoneDoneModalContent from '../modals/modalContentMilestoneDone';
 import MilestoneViewModalContent from '../modals/modalContentMilestoneView';
 import MilestoneDoneConfirmationModalContent from '../modals/modalContentMilestoneDoneConfirmation';
+// src/components/your_grants/manage_grant/modals/sendFundModalContent
 
 type OpenedModalType = 'milestone-view' | 'milestone-done' | 'milestone-done-confirm';
 type OpenedModal = { type: OpenedModalType, milestone: ApplicationMilestone };
 
 function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
   const [openedModal, setOpenedModal] = useState<OpenedModal>();
+
+  const { sendFundOpen } = props;
 
   const renderStatus = (milestone: ApplicationMilestone) => {
     const status = milestone.state;
@@ -115,7 +118,6 @@ function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
         onClose={() => setOpenedModal(undefined)}
         title={`Mark ${getMilestoneTitle(openedModal?.milestone)} as Done`}
         alignTitle="center"
-        topIcon={<Image src="/ui_icons/milestone_complete.svg" />}
       >
         <MilestoneDoneModalContent
           milestone={openedModal?.milestone}
@@ -144,6 +146,7 @@ function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
         <MilestoneDoneConfirmationModalContent
           milestone={openedModal?.milestone}
           onClose={() => setOpenedModal(undefined)}
+          openSendFund={sendFundOpen!}
         />
       </Modal>
     </>

@@ -282,7 +282,7 @@ function Form({
         projectMilestones.length,
       );
       const transactionData = await transaction.wait();
-      toast({ title: 'Transaction succeeded', status: 'success' });
+      // toast({ title: 'Transaction succeeded', status: 'success' });
 
       setHasClicked(false);
       showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
@@ -518,15 +518,11 @@ function Form({
         />
       </Container>
 
+      {onSubmit && (
       <Text mt={10} textAlign="center" variant="footer" fontSize="12px">
-        <Image
-          display="inline-block"
-          src="/ui_icons/protip.svg"
-          alt="pro tip"
-          mb="-2px"
-        />
+        <Image display="inline-block" src="/ui_icons/info.svg" alt="pro tip" mb="-2px" />
         {' '}
-        Your grant funds are securely stored on our smart contract.
+        By pressing Submit Application you’ll have to approve this transaction in your wallet.
         {' '}
         <Link href="wallet">Learn more</Link>
         {' '}
@@ -539,18 +535,29 @@ function Form({
           w="10px"
         />
       </Text>
+      )}
 
       <Box mt={5} />
 
       {onSubmit ? (
-        <Button
-          onClick={handleOnSubmit}
-          mx={10}
-          alignSelf="stretch"
-          variant="primary"
-        >
-          Resubmit Application
-        </Button>
+        <>
+          <Box mt={4} />
+          {hasClicked ? (
+            <Center>
+              <CircularProgress isIndeterminate color="brand.500" size="48px" />
+            </Center>
+          ) : (
+            <Button
+              onClick={handleOnSubmit}
+              mx={10}
+              alignSelf="stretch"
+              variant="primary"
+            >
+              Resubmit Application
+            </Button>
+          )}
+          <Box mt={4} />
+        </>
       ) : null}
     </Flex>
   );

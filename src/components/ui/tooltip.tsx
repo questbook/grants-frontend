@@ -1,4 +1,6 @@
-import { Tooltip as TooltipComponent, Button, Image } from '@chakra-ui/react';
+import {
+  Tooltip as TooltipComponent, Button, Image, PlacementWithLogical,
+} from '@chakra-ui/react';
 import React from 'react';
 
 function Tooltip({
@@ -6,15 +8,17 @@ function Tooltip({
   h,
   w,
   icon,
+  placement,
 }: {
   label: string;
   h?: number | string;
   w?: number | string;
   icon?: string;
+  placement?: PlacementWithLogical;
 }) {
   return (
     <TooltipComponent
-      placement="bottom-end"
+      placement={placement}
       label={label}
       bg="white"
       color="#122224"
@@ -51,5 +55,6 @@ Tooltip.defaultProps = {
   h: 4,
   w: 4,
   icon: '/ui_icons/tooltip_questionmark.svg',
+  placement: 'bottom-end',
 };
 export default Tooltip;

@@ -18,10 +18,10 @@ function Reject({
       flex={1}
       display="flex"
       flexDirection="column"
-      maxW="584px"
+      maxW="502px"
       alignItems="stretch"
       pb={8}
-      px={10}
+      px={0}
       alignSelf="flex-start"
       ml={0}
     >

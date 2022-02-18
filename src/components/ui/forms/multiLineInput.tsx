@@ -54,7 +54,8 @@ function MultiLineInput({
         isDisabled={disabled}
         color="#122224"
         background="#E8E9E9"
-        _disabled={{ color: '#A0A7A7', background: '#F3F4F4' }}
+        _placeholder={{ color: '#717A7C' }}
+        _disabled={{ color: '#122224', background: '#F3F4F4' }}
         minH="120px"
         mt={1}
         variant="filled"

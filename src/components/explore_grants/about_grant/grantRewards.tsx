@@ -63,7 +63,7 @@ function GrantRewards({
           <Flex direction="row" alignItems="flex-start" mt="28px">
             <Image mt="2px" src="/sidebar/apply_for_grants.svg" />
             <Flex flex={1} direction="column" ml={3}>
-              <Text fontWeight="500">Payout</Text>
+              <Text fontWeight="500">Milestones</Text>
               <Text mt="1px" lineHeight="20px" fontSize="14px" fontWeight="400">
                 {payoutDescription}
               </Text>

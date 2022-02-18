@@ -1,5 +1,5 @@
 import {
-  ModalBody, Button, Text, Box, useToast,
+  ModalBody, Button, Text, Box, useToast, Flex, Image, Link,
 } from '@chakra-ui/react';
 import React, { useContext } from 'react';
 import { useContract, useSigner } from 'wagmi';
@@ -84,7 +84,25 @@ function ModalContent({
         }}
         isError={false}
       />
-      <Box my={8} />
+      <Flex direction="row" mt={6}>
+        <Text textAlign="left" variant="footer" fontSize="12px">
+          <Image display="inline-block" src="/ui_icons/info.svg" alt="pro tip" mb="-2px" />
+          {' '}
+          By pressing Send Invite you’ll have to approve this transaction in your wallet.
+          {' '}
+          <Link href="wallet">Learn more</Link>
+          {' '}
+          <Image
+            display="inline-block"
+            src="/ui_icons/link.svg"
+            alt="pro tip"
+            mb="-1px"
+            h="10px"
+            w="10px"
+          />
+        </Text>
+      </Flex>
+      <Box my={4} />
       <Button w="100%" variant="primary" onClick={addMember}>Send Invite</Button>
       <Box my={8} />
     </ModalBody>

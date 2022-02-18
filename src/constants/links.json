@@ -1,0 +1,6 @@
+{
+    "rinkeby": {
+        "address": "https://rinkeby.etherscan.io/address/",
+        "transactionHash": "https://rinkeby.etherscan.io/tx/"
+    }
+}

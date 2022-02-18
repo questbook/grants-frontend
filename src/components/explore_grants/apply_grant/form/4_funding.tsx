@@ -44,7 +44,11 @@ function Funding({
     <>
       <Text fontWeight="700" fontSize="16px" lineHeight="20px" color="#8850EA">
         Funding & Budget Breakdown
-        <Tooltip icon="/ui_icons/tooltip_questionmark_brand.svg" label="team" />
+        <Tooltip
+          icon="/ui_icons/tooltip_questionmark_brand.svg"
+          label="How much funding in total would you need and explain how you would spend the money if your application is accepted."
+          placement="bottom-start"
+        />
       </Text>
 
       <Box mt={8} />
@@ -77,6 +81,7 @@ function Funding({
             }}
             isError={fundingAskError}
             errorText="Required"
+            type="number"
           />
         </Box>
         <Box mt={5} ml={4} minW="132px" flex={0}>
@@ -95,7 +100,7 @@ function Funding({
       <Box mt={8} />
 
       <MultiLineInput
-        placeholder="Write about how you planning use funds for your project - hiring, marketing etc."
+        placeholder="Write about how you plan to use the funds for your project - hiring, marketing etc."
         label="Funding Breakdown"
         maxLength={1000}
         value={fundingBreakdown}

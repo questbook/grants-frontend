@@ -14,6 +14,7 @@ import moment from 'moment';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react';
 import { useAccount, useSigner, useContract } from 'wagmi';
+import { BigNumber } from 'ethers';
 import config from '../../../src/constants/config';
 import ApplicationRegistryAbi from '../../../src/contracts/abi/ApplicationRegistryAbi.json';
 import InfoToast from '../../../src/components/ui/infoToast';
@@ -34,6 +35,7 @@ import NavbarLayout from '../../../src/layout/navbarLayout';
 import { getAssetInfo } from '../../../src/utils/tokenUtils';
 import { ApiClientsContext } from '../../_app';
 import { formatAmount } from '../../../src/utils/formattingUtils';
+import SendFundModalContent from '../../../src/components/your_grants/manage_grant/modals/sendFundModalContent';
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
   return milestones.reduce(
@@ -60,6 +62,7 @@ function ManageGrant() {
 
   const [selected, setSelected] = React.useState(0);
   const [isGrantCompleteModelOpen, setIsGrantCompleteModalOpen] = React.useState(false);
+  const [isSendFundModalOpen, setIsSendFundModalOpen] = useState(false);
 
   const [applicationID, setApplicationID] = useState<any>('');
   const router = useRouter();
@@ -104,9 +107,13 @@ function ManageGrant() {
         });
       }
     } catch (e: any) {
-      // console.log(e);
+      console.log(e);
     }
   };
+
+  useEffect(() => {
+    console.log('App Data: ', applicationData);
+  }, [applicationData]);
 
   useEffect(() => {
     setApplicationID(router?.query?.applicationId ?? '');
@@ -128,6 +135,7 @@ function ManageGrant() {
           refetch={refetchMilestones}
           milestones={milestones}
           rewardAssetId={rewardAsset}
+          sendFundOpen={() => setIsSendFundModalOpen(true)}
         />
       ),
     },
@@ -381,6 +389,38 @@ function ManageGrant() {
           onClose={(details: any) => markApplicationComplete(details)}
         />
       </Modal>
+
+      {applicationData && applicationData.grant && (
+      <Modal
+        isOpen={isSendFundModalOpen}
+        onClose={() => setIsSendFundModalOpen(false)}
+        title="Send Funds"
+        rightIcon={(
+          <Button
+            _focus={{}}
+            variant="link"
+            color="#AA82F0"
+            leftIcon={<Image src="/sidebar/discord_icon.svg" />}
+          >
+            Support 24*7
+          </Button>
+          )}
+      >
+        <SendFundModalContent
+          milestones={milestones}
+          rewardAsset={{
+            address: applicationData.grant.reward.asset,
+            committed: BigNumber.from(applicationData.grant.reward.committed),
+            label: assetInfo?.label,
+            icon: assetInfo?.icon,
+          }}
+          contractFunding={applicationData.grant.funding}
+          onClose={() => setIsSendFundModalOpen(false)}
+          grantId={applicationData.grant.id}
+          applicationId={applicationID}
+        />
+      </Modal>
+      )}
     </Container>
   );
 }

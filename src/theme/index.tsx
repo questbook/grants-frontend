@@ -27,7 +27,7 @@ const theme = extendTheme({
     backgrounds: {
       sidebar: '#F6F9FB',
       card: '#F3F4F4',
-      floatingSidebar: '#F6F9FB',
+      floatingSidebar: '#F3F4F4',
     },
     brandGreen: {
       500: '#01C37E',

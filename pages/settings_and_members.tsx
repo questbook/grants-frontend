@@ -47,7 +47,7 @@ function SettingsAndMembers() {
 
   return (
     <Flex direction="row" w="100%" justify="space-evenly">
-      <Flex w="65%" direction="column">
+      <Flex w="45%" direction="column">
         <Flex
           direction="row"
           w="full"
@@ -85,7 +85,7 @@ function SettingsAndMembers() {
           <Members workspaceMembers={workspaceData?.members} />
         )}
       </Flex>
-      <Flex w="20%" />
+      <Flex w="auto" />
     </Flex>
   );
 }

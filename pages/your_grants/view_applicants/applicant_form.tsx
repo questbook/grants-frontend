@@ -1,5 +1,5 @@
 import {
-  Container, Flex, Text, Image, useToast, ToastId,
+  Container, Flex, Text, Image, useToast, ToastId, Divider,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
@@ -204,7 +204,7 @@ function ApplicantForm() {
           maxW="1116px"
           alignItems="stretch"
           pb={6}
-          // px={10}
+          px={0}
         >
           <Breadcrumbs
             path={['Your Grants', 'View Applicants', 'Applicant Form']}
@@ -334,25 +334,19 @@ function ApplicantForm() {
   }
 
   return (
-    <Container flexDirection="column" maxW="100%" display="flex" px="70px">
-      <Container
-        flex={1}
-        display="flex"
-        flexDirection="column"
-        maxW="1116px"
-        alignItems="stretch"
-        pb={0}
-        px={10}
-      >
+    <Flex direction="column" mx={200}>
+      <Flex direction="column" mx={10} w="100%">
         <Breadcrumbs
           path={['My Grants', 'View Applicants', 'Applicant Form']}
         />
-      </Container>
+        <Text mt={4} mb={4} variant="heading">{applicationData?.grant?.title}</Text>
+        <Divider mb={5} />
+        <Flex maxW="100%" direction="row" justify="space-between">
+          {renderContent(step)}
+        </Flex>
+      </Flex>
 
-      <Container pb={12} maxW="100%" display="flex">
-        {renderContent(step)}
-      </Container>
-    </Container>
+    </Flex>
   );
 }
 

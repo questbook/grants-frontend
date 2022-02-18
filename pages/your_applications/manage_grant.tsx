@@ -66,7 +66,7 @@ function ManageGrant() {
     {
       icon: fundingIcon,
       title: getTotalFundingRecv(milestones).toString(),
-      subtitle: 'Funding Recieved',
+      subtitle: 'Funding Received',
     },
     {
       icon: fundingIcon,

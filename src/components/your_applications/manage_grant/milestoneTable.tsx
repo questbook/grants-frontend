@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Text, Image, Flex, Button,
+  Text, Flex, Button,
 } from '@chakra-ui/react';
 import AbstractMilestonesTable, { AbstractMilestonesTableProps } from 'src/components/ui/tables/AbstractMilestonesTable';
 import { ApplicationMilestone } from 'src/graphql/queries';
@@ -110,7 +110,6 @@ function Table(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
         onClose={() => setOpenedModal(undefined)}
         title={`Mark ${getMilestoneTitle(openedModal?.milestone)} as Done`}
         alignTitle="center"
-        topIcon={<Image src="/ui_icons/milestone_complete.svg" />}
       >
         <MilestoneDoneModalContent
           milestone={openedModal?.milestone}

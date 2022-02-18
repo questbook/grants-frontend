@@ -18,7 +18,7 @@ interface Props {
   children: React.ReactNode;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
-  topIcon?: React.ReactNode;
+  // topIcon?: React.ReactNode;
   modalWidth?: string | number;
   closeButtonMargin?: string | number;
 }
@@ -30,7 +30,7 @@ function Modal({
   children,
   leftIcon,
   rightIcon,
-  topIcon,
+  // topIcon,
   alignTitle,
   modalWidth,
   closeButtonMargin,
@@ -45,12 +45,12 @@ function Modal({
       <ModalOverlay maxH="100vh" />
       <ModalContent minW={modalWidth} maxH="90vh" overflow="scroll" borderRadius="12px">
         <Container px={8} pt={9}>
-          {typeof topIcon !== 'undefined' && (
+          {/* {typeof topIcon !== 'undefined' && (
             <Flex direction="column" align="center">
               {topIcon}
               <Box mb={5} />
             </Flex>
-          )}
+          )} */}
           <Flex direction="row" w="100%" align="center">
             {typeof leftIcon !== 'undefined' && leftIcon}
             <Heading textAlign={alignTitle} variant="modal">
@@ -79,7 +79,7 @@ function Modal({
 Modal.defaultProps = {
   leftIcon: undefined,
   rightIcon: undefined,
-  topIcon: undefined,
+  // topIcon: undefined,
   alignTitle: 'left',
   modalWidth: 480,
   closeButtonMargin: '0px 0px 0px 20px',

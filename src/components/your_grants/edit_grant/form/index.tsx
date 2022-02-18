@@ -166,7 +166,11 @@ function Form({
       <Heading mt="18px" title="Edit your grant" />
 
       <Flex mt="-73px" justifyContent="flex-end">
-        <Button onClick={handleOnSubmit} variant="primary">Save</Button>
+        {hasClicked ? (
+          <Center>
+            <CircularProgress isIndeterminate color="brand.500" size="48px" />
+          </Center>
+        ) : <Button onClick={handleOnSubmit} variant="primary">Save</Button>}
       </Flex>
 
       <Text

@@ -28,6 +28,7 @@ export type AbstractMilestonesTableProps = {
   milestones: ApplicationMilestone[]
   rewardAssetId: string
   refetch: () => void
+  sendFundOpen?: () => void
   renderStatus: (milestone: ApplicationMilestone) => React.ReactNode
 };
 

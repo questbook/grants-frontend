@@ -166,7 +166,11 @@ function WithdrawFunds({
               </Flex>
             ) : (
               <Text mt={1} variant="footer">
-                Enter only ERC 20 address
+                Enter receipient address on
+                {' '}
+                {rewardAsset.label === 'WMATIC' ? 'Polygon' : 'Ethereum'}
+                {' '}
+                network
               </Text>
             )}
             {hasClicked ? (

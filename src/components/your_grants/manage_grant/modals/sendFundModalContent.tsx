@@ -201,6 +201,7 @@ function ModalContent({
           <Checkbox
             m={0}
             p={0}
+            colorScheme="brand"
             isChecked={checkedItems[1]}
             onChange={() => setCheckedItems([false, true])}
           />

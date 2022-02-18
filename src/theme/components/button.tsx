@@ -8,7 +8,7 @@ export default {
         _hover: { background: 'brand.600' },
         _active: { background: 'brand.700' },
         _disabled: {
-          background: 'brandDisabled.500',
+          background: '#D0D3D3',
         },
         py: 3,
         color: 'white',
@@ -24,7 +24,7 @@ export default {
         _hover: { background: 'brand.600' },
         _active: { background: 'brand.700' },
         _disabled: {
-          background: 'brandDisabled.500',
+          background: '#D0D3D3',
         },
         py: '6px',
         color: 'white',
