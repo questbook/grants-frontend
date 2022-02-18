@@ -9,7 +9,7 @@ import { getNumberOfApplicationsQuery, getNumberOfGrantsQuery } from 'src/graphq
 import SignInNavbar from '../components/navbar/notConnected';
 import ConnectedNavbar from '../components/navbar/connected';
 import { ApiClientsContext } from '../../pages/_app';
-import { getWorkspacesQuery } from '../graphql/workspaceQueries';
+import { getWorkspaceMembersQuery } from '../graphql/workspaceQueries';
 import { getUrlForIPFSHash } from '../utils/ipfsUtils';
 
 interface Props {
@@ -86,17 +86,18 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
     try {
       const { data } = await subgraphClient.client
         .query({
-          query: gql(getWorkspacesQuery),
+          query: gql(getWorkspaceMembersQuery),
           variables: {
-            ownerId: userAddress,
+            actorId: userAddress,
           },
         }) as any;
-      // console.log(data);
-      setWorkspaces(data.workspaces);
+      console.log(data);
+      const workspacesRes = data.workspaceMembers.map((member: any) => ({ ...member.workspace }));
+      setWorkspaces(workspacesRes);
       console.log('This executed!');
-      console.log(data.workspaces.length);
-      if (data.workspaces.length > 0) {
-        const workspace = data.workspaces[0];
+      console.log(workspacesRes.length);
+      if (workspacesRes.length > 0) {
+        const workspace = workspacesRes[0];
         setWorkspace(workspace);
       } else {
         setDaoId(null);
