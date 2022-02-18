@@ -1,7 +1,7 @@
 import { gql, useQuery } from '@apollo/client';
 import { useContext } from 'react';
+import { formatAmount } from 'src/utils/formattingUtils';
 import { ApiClientsContext } from '../../pages/_app';
-import { formatAmount } from '../utils/formattingUtils';
 import {
   getAllGrantsForADao, getApplicationMilestones, getFunding, getFundSentForApplication,
 } from './daoQueries';

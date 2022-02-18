@@ -1,5 +1,5 @@
 import {
-  Container, Button, Text, Box, Center, CircularProgress, Divider,
+  Container, Button, Text, Box, Center, CircularProgress,
 } from '@chakra-ui/react';
 import React from 'react';
 import MultiLineInput from '../../../ui/forms/multiLineInput';
@@ -7,11 +7,9 @@ import MultiLineInput from '../../../ui/forms/multiLineInput';
 function Resubmit({
   onSubmit,
   hasClicked,
-  title,
 }: {
   onSubmit: (data: any) => void;
   hasClicked: boolean;
-  title: string;
 }) {
   const [comment, setComment] = React.useState('');
   const [commentError, setCommentError] = React.useState(false);
@@ -20,15 +18,13 @@ function Resubmit({
       flex={1}
       display="flex"
       flexDirection="column"
-      maxW="584px"
+      maxW="502px"
       alignItems="stretch"
       pb={8}
-      px={10}
+      px={0}
       alignSelf="flex-start"
       ml={0}
     >
-      <Text mt={4} mb={4} variant="heading">{title}</Text>
-      <Divider mb={5} />
       <Text fontSize="18px" lineHeight="26px" fontWeight="700">
         Reason for Resubmission
       </Text>

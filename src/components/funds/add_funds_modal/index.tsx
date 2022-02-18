@@ -303,7 +303,15 @@ function AddFunds({
               color="#717A7C"
               mt={4}
             >
-              Send only ETH token to this address.
+              Send only
+              {' '}
+              {rewardAsset.label}
+              {' '}
+              token to this
+              {' '}
+              {rewardAsset.label === 'WMATIC' ? 'Polygon' : 'Ethereum'}
+              {' '}
+              address.
             </Heading>
             <Button variant="primary" my={8} onClick={() => onClose()}>
               OK

@@ -26,13 +26,12 @@ function Accept({
       flex={1}
       display="flex"
       flexDirection="column"
-      maxW="834px"
+      maxW="660px"
       alignItems="stretch"
       pb={8}
-      px={10}
+      px={0}
+      ml={0}
     >
-      <Text mt={4} mb={4} variant="heading">{applicationData?.grant?.title}</Text>
-      <Divider mb={5} />
       <Text fontSize="18px" lineHeight="26px" fontWeight="700">
         Accept Grant Application
       </Text>
