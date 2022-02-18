@@ -14,6 +14,7 @@
         "icon": "/wallet_icons/walletConnect.svg"
       }
     ]
+
   },
   "3": {
     "name": "Ropsten",
@@ -45,7 +46,11 @@
         "name": "Wallet Connect",
         "icon": "/wallet_icons/walletConnect.svg"
       }
-    ]
+    ],
+    "explorer": {
+      "address": "https://rinkeby.etherscan.io/address/",
+      "transactionHash": "https://rinkeby.etherscan.io/tx/"
+    }
   },
   "137": {
     "name": "Polygon Mainnet",
