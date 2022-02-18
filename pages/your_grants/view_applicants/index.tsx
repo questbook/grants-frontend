@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import React, {
   ReactElement, useContext, useEffect, useState,
 } from 'react';
+import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters';
 import { formatAmount } from '../../../src/utils/formattingUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Table from '../../../src/components/your_grants/view_applicants/table';
@@ -17,13 +18,13 @@ function ViewApplicants() {
   const [applicantsData, setApplicantsData] = useState<any>([]);
   const [grantID, setGrantID] = useState<any>('');
   const subgraphClient = useContext(ApiClientsContext)?.subgraphClient;
-  const applicationStatuses = [
-    'submitted',
-    'resubmit',
-    'approved',
-    'rejected',
-    'completed',
-  ];
+  // const applicationStatuses = [
+  //   'submitted',
+  //   'resubmit',
+  //   'approved',
+  //   'rejected',
+  //   'completed',
+  // ];
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getGrantData = async () => {
     if (!subgraphClient) return null;
@@ -55,7 +56,8 @@ function ViewApplicants() {
                   === applicant?.grant?.reward?.asset?.toLowerCase(),
               )?.icon,
             },
-            status: applicationStatuses.indexOf(applicant?.state),
+            // status: applicationStatuses.indexOf(applicant?.state),
+            status: TableFilters[applicant?.state],
           }),
         );
         // console.log('fetchedd', fetchedApplicantsData);

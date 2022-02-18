@@ -38,14 +38,19 @@ import { formatAmount } from '../../../src/utils/formattingUtils';
 import SendFundModalContent from '../../../src/components/your_grants/manage_grant/modals/sendFundModalContent';
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
-  return milestones.reduce(
-    (value, milestone) => value + +milestone.amountPaid,
-    0,
-  );
+  let val = BigNumber.from(0);
+  milestones.forEach((milestone) => {
+    val = val.add(milestone.amountPaid);
+  });
+  return val;
 }
 
 function getTotalFundingAsked(milestones: ApplicationMilestone[]) {
-  return milestones.reduce((value, milestone) => value + +milestone.amount, 0);
+  let val = BigNumber.from(0);
+  milestones.forEach((milestone) => {
+    val = val.add(milestone.amount);
+  });
+  return val;
 }
 
 function ManageGrant() {
@@ -141,7 +146,7 @@ function ManageGrant() {
     },
     {
       icon: fundingIcon,
-      title: getTotalFundingRecv(milestones).toString(),
+      title: formatAmount(getTotalFundingRecv(milestones).toString()),
       subtitle: 'Funding Sent',
       content: (
         <Funding
@@ -157,7 +162,7 @@ function ManageGrant() {
       icon: fundingIcon,
       title:
         (fundingAsk ? formatAmount(fundingAsk.toString()) : null)
-        || getTotalFundingAsked(milestones).toString(),
+        || formatAmount(getTotalFundingAsked(milestones).toString()),
       subtitle: 'Funding Requested',
       content: undefined, // <Funding fundTransfers={fundsDisbursed} assetId={rewardAsset} />,
     },
@@ -310,7 +315,7 @@ function ManageGrant() {
         <Flex mt="29px" direction="row" w="full" align="center">
           {tabs.map((tab, index) => (
             <Button
-              // eslint-disable-next-line react/no-array-index-key
+                // eslint-disable-next-line react/no-array-index-key
               key={`tab-${tab.title}-${index}`}
               variant="ghost"
               h="110px"
@@ -318,31 +323,27 @@ function ManageGrant() {
               _hover={{
                 background: '#F5F5F5',
               }}
-              background={
-                index !== selected
-                  ? 'linear-gradient(180deg, #FFFFFF 0%, #F3F4F4 100%)'
-                  : 'white'
-              }
+              background={index !== selected
+                ? 'linear-gradient(180deg, #FFFFFF 0%, #F3F4F4 100%)'
+                : 'white'}
               _focus={{}}
               borderRadius={index !== selected ? 0 : '8px 8px 0px 0px'}
-              borderRightWidth={
-                (index !== tabs.length - 1 && index + 1 !== selected)
-                || index === selected
-                  ? '2px'
-                  : '0px'
-              }
+              borderRightWidth={(index !== tabs.length - 1 && index + 1 !== selected)
+                  || index === selected
+                ? '2px'
+                : '0px'}
               borderLeftWidth={index !== selected ? 0 : '2px'}
               borderTopWidth={index !== selected ? 0 : '2px'}
               borderBottomWidth={index !== selected ? '2px' : 0}
               borderBottomRightRadius="-2px"
               onClick={() => {
-                if (tabs[index].content) setSelected(index);
+                if (tabs[index].content) { setSelected(index); }
               }}
             >
               <Flex direction="column" justify="center" align="center" w="100%">
                 <Flex direction="row" justify="center" align="center">
                   {tab.icon && (
-                    <Image h="26px" w="26px" src={tab.icon} alt={tab.icon} />
+                  <Image h="26px" w="26px" src={tab.icon} alt={tab.icon} />
                   )}
                   <Box mx={1} />
                   <Text fontWeight="700" fontSize="26px" lineHeight="40px">

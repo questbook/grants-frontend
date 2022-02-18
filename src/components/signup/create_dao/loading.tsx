@@ -36,7 +36,7 @@ function Loading() {
           h={193.11}
         />
       )} */}
-      <Lottie animationData={animationData} />
+      <Lottie animationData={animationData} loop />
       <Text fontSize="24px" fontWeight="26px" variant="heading">
         {timeElapsed < 1 ? (
           'Setting up your Grants DAO ...'

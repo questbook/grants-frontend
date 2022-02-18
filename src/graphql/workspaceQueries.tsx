@@ -27,6 +27,7 @@ query($ownerId: Bytes!) {
     title
   }
 }
+
 `;
 const getWorkspaceMembersQuery = `
 query($actorId: Bytes!) {

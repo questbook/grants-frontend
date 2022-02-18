@@ -44,6 +44,7 @@ class SubgraphClient {
       // eslint-disable-next-line no-await-in-loop
       const response = await this.client.query({
         query: gql(query),
+        fetchPolicy: 'network-only',
       });
       // eslint-disable-next-line no-underscore-dangle
       minBlock = response.data._meta.block.number;
