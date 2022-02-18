@@ -42,7 +42,7 @@ function ModalContent({ onClose, hasClicked }: Props) {
           </Center>
         ) : (
           <Button w="100%" variant="primary" mt={6} onClick={() => onClose(details)}>
-            Mark Grant as Done
+            Mark Application as closed
           </Button>
         )}
         <Box mb={4} />
