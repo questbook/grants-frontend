@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Text, Image, Flex, Button, MenuButton, Menu, MenuList, MenuItem,
+  Text, Flex, Button, MenuButton, Menu, MenuList, MenuItem,
 } from '@chakra-ui/react';
 import {
   ChevronDownIcon, ViewIcon,
@@ -118,7 +118,6 @@ function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
         onClose={() => setOpenedModal(undefined)}
         title={`Mark ${getMilestoneTitle(openedModal?.milestone)} as Done`}
         alignTitle="center"
-        topIcon={<Image src="/ui_icons/milestone_complete.svg" />}
       >
         <MilestoneDoneModalContent
           milestone={openedModal?.milestone}

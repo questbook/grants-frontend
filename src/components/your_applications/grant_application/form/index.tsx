@@ -282,7 +282,7 @@ function Form({
         projectMilestones.length,
       );
       const transactionData = await transaction.wait();
-      toast({ title: 'Transaction succeeded', status: 'success' });
+      // toast({ title: 'Transaction succeeded', status: 'success' });
 
       setHasClicked(false);
       showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
@@ -540,14 +540,24 @@ function Form({
       <Box mt={5} />
 
       {onSubmit ? (
-        <Button
-          onClick={handleOnSubmit}
-          mx={10}
-          alignSelf="stretch"
-          variant="primary"
-        >
-          Resubmit Application
-        </Button>
+        <>
+          <Box mt={4} />
+          {hasClicked ? (
+            <Center>
+              <CircularProgress isIndeterminate color="brand.500" size="48px" />
+            </Center>
+          ) : (
+            <Button
+              onClick={handleOnSubmit}
+              mx={10}
+              alignSelf="stretch"
+              variant="primary"
+            >
+              Resubmit Application
+            </Button>
+          )}
+          <Box mt={4} />
+        </>
       ) : null}
     </Flex>
   );

@@ -93,7 +93,8 @@ function ModalContent({ milestone, done }: Props) {
   return (
     <ModalBody maxW="521px">
       <Flex direction="column" justify="start" align="stretch">
-        <Text textAlign="center" variant="applicationText">
+        <Image src="/ui_icons/milestone_complete.svg" mt={6} />
+        <Text textAlign="center" variant="applicationText" mt={6}>
           Add a brief summary of what was achieved in the milestone,
           and add a proof of work.
         </Text>
