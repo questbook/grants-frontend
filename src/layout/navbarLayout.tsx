@@ -91,7 +91,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
             actorId: userAddress,
           },
         }) as any;
-      console.log(data);
+      // console.log(data);
       const workspacesRes = data.workspaceMembers.map((member: any) => ({ ...member.workspace }));
       setWorkspaces(workspacesRes);
       console.log('This executed!');
