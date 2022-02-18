@@ -1,5 +1,5 @@
 import {
-  Flex, Text, Box, Button, Image, Link,
+  Flex, Text, Box, Button, Image, Link, Center, CircularProgress,
 } from '@chakra-ui/react';
 import React from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -10,9 +10,10 @@ import SingleLineInput from '../../../ui/forms/singleLineInput';
 
 interface Props {
   onSubmit: (data: any) => void;
+  hasClicked: boolean;
 }
 
-function GrantRewardsInput({ onSubmit }: Props) {
+function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
   const [reward, setReward] = React.useState('');
   const [rewardError, setRewardError] = React.useState(false);
 
@@ -142,9 +143,15 @@ function GrantRewardsInput({ onSubmit }: Props) {
           />
         </Text>
       </Flex>
-      <Button mt="auto" variant="primary" onClick={handleOnSubmit}>
-        Continue
-      </Button>
+      {hasClicked ? (
+        <Center>
+          <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
+        </Center>
+      ) : (
+        <Button mt="auto" variant="primary" onClick={handleOnSubmit}>
+          Continue
+        </Button>
+      )}
     </>
   );
 }

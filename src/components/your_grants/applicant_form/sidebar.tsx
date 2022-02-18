@@ -98,7 +98,7 @@ function Sidebar({
           mt={7}
           display={applicationData?.state === 'submitted' ? '' : 'none'}
         >
-          Approve Grant
+          Approve Application
         </Button>
         <Button
           onClick={() => onAcceptApplicationClick()}
