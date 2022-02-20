@@ -1,4 +1,6 @@
-import { Container, useToast, VStack } from '@chakra-ui/react';
+import {
+  Container, useToast, VStack, Text,
+} from '@chakra-ui/react';
 import React, {
   useContext, useEffect, useRef,
 } from 'react';
@@ -6,6 +8,7 @@ import { useAccount, useConnect, useNetwork } from 'wagmi';
 import { useRouter } from 'next/router';
 import { gql } from '@apollo/client';
 import { getNumberOfApplicationsQuery, getNumberOfGrantsQuery } from 'src/graphql/daoQueries';
+import Modal from 'src/components/ui/modal';
 import SignInNavbar from '../components/navbar/notConnected';
 import ConnectedNavbar from '../components/navbar/connected';
 import { ApiClientsContext } from '../../pages/_app';
@@ -202,6 +205,21 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
       <Container ref={currentPageRef} maxW="100vw" p={0} overflow="scroll">
         {children}
       </Container>
+      <Modal
+        isOpen={networkData.chain! && networkData.chain?.id !== 4}
+        onClose={() => {}}
+        title="Wrong network!"
+        showCloseButton={false}
+      >
+        <Text variant="tableHeader" color="#122224" my={8} mx={10} textAlign="center">
+          We only support Rinkeby Network as of now! Extending to
+          {' '}
+          {networkData.chain?.name}
+          {' '}
+          soon!
+        </Text>
+      </Modal>
+
     </VStack>
   );
 }
