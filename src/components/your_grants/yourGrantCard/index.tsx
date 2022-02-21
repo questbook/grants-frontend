@@ -6,6 +6,7 @@ import Badge from './badge';
 import Menu from './menu';
 
 interface YourGrantCardProps {
+  grantID: string;
   daoIcon: string;
   grantTitle: string;
   grantDesc: string;
@@ -21,6 +22,7 @@ interface YourGrantCardProps {
 }
 
 function YourGrantCard({
+  grantID,
   daoIcon,
   grantTitle,
   grantDesc,
@@ -103,7 +105,7 @@ function YourGrantCard({
                   </Button>
                 </Text>
               ) : (
-                numOfApplicants > 0 ? <Menu /> : null
+                numOfApplicants > 0 ? <Menu grantID={grantID} /> : null
               )}
               <Button
                 mr={2}

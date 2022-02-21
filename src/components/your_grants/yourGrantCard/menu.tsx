@@ -7,10 +7,13 @@ import {
   Text,
   Image,
 } from '@chakra-ui/react';
+import copy from 'copy-to-clipboard';
 import React from 'react';
+import config from 'src/constants/config';
 
-function Menu() {
+function Menu({ grantID } : { grantID: string }) {
   const [copied, setCopied] = React.useState(false);
+
   return (
     <MenuComponent
       onClose={() => setCopied(false)}
@@ -26,7 +29,14 @@ function Menu() {
         minW={0}
       />
       <MenuList minW="164px" p={0}>
-        <MenuItem onClick={() => setCopied(true)} py="12px" px="16px">
+        <MenuItem
+          onClick={() => {
+            copy(`${config.basePath}/explore_grants/about_grant/?grantID=${grantID}`);
+            return setCopied(true);
+          }}
+          py="12px"
+          px="16px"
+        >
           <Text
             fontSize="14px"
             fontWeight="400"
@@ -68,5 +78,4 @@ function Menu() {
     </MenuComponent>
   );
 }
-
 export default Menu;
