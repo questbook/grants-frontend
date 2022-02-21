@@ -1829,7 +1829,7 @@ export type GetAllGrantsForADaoQueryVariables = Exact<{
 }>;
 
 
-export type GetAllGrantsForADaoQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: any, title: string, summary: string, details: string, deadline?: string | null, funding: any, numberOfApplications: number, reward: { __typename?: 'Reward', committed: any, id: string, asset: any }, workspace: { __typename?: 'Workspace', title: string, logoIpfsHash: string } }> };
+export type GetAllGrantsForADaoQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: any, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: any, numberOfApplications: number, reward: { __typename?: 'Reward', committed: any, id: string, asset: any }, workspace: { __typename?: 'Workspace', title: string, logoIpfsHash: string } }> };
 
 export type GetAllGrantsForCreatorQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -1999,6 +1999,7 @@ export const GetAllGrantsForADaoDocument = gql`
     id
     creatorId
     title
+    createdAtS
     summary
     details
     reward {

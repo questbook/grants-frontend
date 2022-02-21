@@ -10,6 +10,7 @@ query getAllGrantsForADao($first: Int, $skip: Int, $workspaceId: String!) {
   id, 
   creatorId, 
   title, 
+  createdAtS,
   summary, 
   details, 
   reward {
