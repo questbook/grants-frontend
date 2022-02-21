@@ -16,10 +16,10 @@ import React, {
 import { useAccount, useSigner, useContract } from 'wagmi';
 import { BigNumber } from 'ethers';
 import { ApplicationMilestone, useGetApplicationDetailsQuery, useGetFundSentForApplicationQuery } from 'src/generated/graphql';
+import { useApplicationMilestones } from 'src/utils/queryUtil';
 import config from '../../../src/constants/config';
 import ApplicationRegistryAbi from '../../../src/contracts/abi/ApplicationRegistryAbi.json';
 import InfoToast from '../../../src/components/ui/infoToast';
-import { useApplicationMilestones } from '../../../src/graphql/queries';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Heading from '../../../src/components/ui/heading';
 import Modal from '../../../src/components/ui/modal';
