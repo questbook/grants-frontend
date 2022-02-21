@@ -2,7 +2,7 @@ import {
   Container, useToast, VStack,
 } from '@chakra-ui/react';
 import React, {
-  useContext, useEffect, useRef,
+  useContext, useEffect, useRef, useState,
 } from 'react';
 import { useAccount, useConnect, useNetwork } from 'wagmi';
 import { useRouter } from 'next/router';
@@ -12,6 +12,7 @@ import {
   useGetNumberOfGrantsLazyQuery,
   useGetWorkspaceMembersLazyQuery,
 } from 'src/generated/graphql';
+import { MinimalWorkspace } from 'src/types';
 import SignInNavbar from '../components/navbar/notConnected';
 import ConnectedNavbar from '../components/navbar/connected';
 import { ApiClientsContext } from '../../pages/_app';
@@ -26,24 +27,29 @@ interface Props {
 function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
   const apiClients = useContext(ApiClientsContext);
 
-  const [workspaces, setWorkspaces] = React.useState<GetWorkspaceMembersQuery['workspaceMembers']>([]);
-
-  const [daoName, setDaoName] = React.useState('');
-  const [daoId, setDaoId] = React.useState<string | null>(null);
-  const [daoImage, setDaoImage] = React.useState<string | null>(null);
-
-  const toast = useToast();
-  const [connected, setConnected] = React.useState(false);
-
-  const currentPageRef = useRef(null);
   const { asPath } = useRouter();
 
   const [{ data: connectData }] = useConnect();
   const [{ data: accountData }] = useAccount({ fetchEns: false });
   const [{ data: networkData }] = useNetwork();
 
+  const toast = useToast();
+
+  const [workspaces, setWorkspaces] = React.useState<MinimalWorkspace[]>([]);
+  const [selectedWorkspaceIndex, setSelectedWorkspaceIndex] = useState(0);
+
+  const daoName = workspaces[selectedWorkspaceIndex]?.title;
+  const daoId = workspaces[selectedWorkspaceIndex]?.id;
+  const daoImage = workspaces[selectedWorkspaceIndex]
+    ? getUrlForIPFSHash(workspaces[selectedWorkspaceIndex].logoIpfsHash)
+    : undefined;
+
+  const [connected, setConnected] = React.useState(false);
+
   const [numOfGrants, setNumOfGrants] = React.useState(0);
   const [numOfApplications, setNumOfApplications] = React.useState(0);
+
+  const currentPageRef = useRef(null);
 
   const [getNumberOfApplications] = useGetNumberOfApplicationsLazyQuery({
     client: apiClients?.subgraphClient?.client,
@@ -57,29 +63,13 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
     client: apiClients?.subgraphClient?.client,
   });
 
-  const setWorkspace = (workspace: any) => {
-    if (!apiClients) return;
-    const { setWorkspaceId } = apiClients;
-
-    console.log(`Setting workspace as ${workspace.title}`);
-
-    setDaoId(workspace.id);
-    setDaoName(workspace.title);
-    setDaoImage(getUrlForIPFSHash(workspace.logoIpfsHash));
-    setWorkspaceId(workspace.id);
-  };
-
   const getWorkspaceData = async (userAddress: string) => {
     try {
       const { data } = await getWorkspaceMembers({
         variables: { actorId: userAddress },
       });
       if (data?.workspaceMembers?.length) {
-        setWorkspaces(data.workspaceMembers);
-      } else {
-        setDaoId(null);
-        setDaoName('');
-        setDaoImage(null);
+        setWorkspaces(data.workspaceMembers.map((w) => w.workspace));
       }
     } catch (e) {
       toast({
@@ -124,13 +114,6 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
   };
 
   useEffect(() => {
-    getWorkspaceData(accountData?.address ?? '');
-    getGrantsCount(accountData?.address ?? '');
-    getApplicantsCount(accountData?.address ?? '');
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountData?.address]);
-
-  useEffect(() => {
     if (asPath && asPath.length > 0) {
       const { current } = currentPageRef;
       if (!current) return;
@@ -154,6 +137,16 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectData]);
 
+  useEffect(() => {
+    const addr = accountData?.address;
+    if (addr) {
+      getWorkspaceData(addr);
+      getGrantsCount(addr);
+      getApplicantsCount(addr);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountData?.address]);
+
   return (
     <VStack alignItems="center" maxH="100vh" width="100%" spacing={0} p={0}>
       {accountData && connectData ? (
@@ -164,11 +157,11 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
           renderTabs={renderTabs ?? true}
           daoName={daoName}
           daoId={daoId}
-          daoImage={daoImage}
+          daoImage={daoImage || ''}
           grantsCount={numOfGrants}
           applicationCount={numOfApplications}
           workspaces={workspaces}
-          setWorkspace={setWorkspace}
+          setSelectedWorkspaceIndex={setSelectedWorkspaceIndex}
         />
       ) : (
         <SignInNavbar renderGetStarted={renderGetStarted} />

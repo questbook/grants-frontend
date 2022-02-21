@@ -38,7 +38,7 @@ function YourApplications() {
         variables: {
           first: PAGE_SIZE,
           skip: currentPage * PAGE_SIZE,
-          applicantID: accountData?.address,
+          applicantID: accountData?.address || '',
         },
       });
       if (data) {
