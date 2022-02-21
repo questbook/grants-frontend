@@ -139,7 +139,12 @@ function ApplicantForm() {
       // toast({ title: 'Transaction succeeded', status: 'success' });
 
       setHasClicked(false);
-      router.replace('/your_grants');
+      router.replace({
+        pathname: '/your_grants/view_applicants',
+        query: {
+          grantID: applicationData?.grant?.id,
+        },
+      });
 
       showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
       // await subgraphClient.waitForBlock(transactionData.blockNumber);
