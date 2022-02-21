@@ -6,11 +6,10 @@ import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
 import moment from 'moment';
 import { BigNumber } from 'ethers';
-import { useGetApplicationDetailsLazyQuery } from 'src/generated/graphql';
+import { useGetApplicationDetailsLazyQuery, useGetFundSentForApplicationQuery } from 'src/generated/graphql';
 import {
   ApplicationMilestone,
   useApplicationMilestones,
-  useFundDisbursed,
 } from '../../src/graphql/queries';
 import { getAssetInfo } from '../../src/utils/tokenUtils';
 import Sidebar from '../../src/components/your_applications/manage_grant/sidebar';
@@ -61,7 +60,12 @@ function ManageGrant() {
     refetch,
   } = useApplicationMilestones(applicationID);
 
-  const { data: fundsDisbursed } = useFundDisbursed(applicationID);
+  const { data: fundsDisbursed } = useGetFundSentForApplicationQuery({
+    client: subgraphClient?.client,
+    variables: {
+      applicationId: applicationID,
+    },
+  });
 
   const [getApplicationDetails] = useGetApplicationDetailsLazyQuery({
     client: subgraphClient?.client,
@@ -197,7 +201,7 @@ function ManageGrant() {
           />
         ) : (
           <Funding
-            fundTransfers={fundsDisbursed}
+            fundTransfers={fundsDisbursed?.fundsTransfers || []}
             assetId={rewardAsset}
             columns={['milestoneTitle', 'date', 'from', 'action']}
             assetDecimals={18}
