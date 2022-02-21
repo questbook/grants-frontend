@@ -1,0 +1,17 @@
+schema:
+  - https://the-graph.questbook.app/subgraphs/name/qb-subgraph
+documents:
+  - ./graphql/*.graphql
+overwrite: true
+generates:
+  ./src/generated/graphql.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      skipTypename: false
+      withComponent: false
+      withHooks: true
+      withHOC: false
+      withRefetchFn: false

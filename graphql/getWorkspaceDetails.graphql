@@ -1,0 +1,18 @@
+query getWorkspaceDetails($workspaceID: ID!) {
+    workspace(id: $workspaceID, subgraphError: allow) {
+        id
+        title
+        about
+        logoIpfsHash
+        coverImageIpfsHash
+        supportedNetworks
+        socials {
+          name
+          value
+        }
+        members {
+          actorId
+          email
+        }
+    }
+}

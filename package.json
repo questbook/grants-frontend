@@ -6,7 +6,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "export": "next export"
+    "export": "next export",
+    "generate": "graphql-codegen --config codegen.yaml"
   },
   "dependencies": {
     "@apollo/client": "^3.5.8",
@@ -34,6 +35,11 @@
     "wagmi": "^0.2.9"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^2.6.2",
+    "@graphql-codegen/introspection": "^2.1.1",
+    "@graphql-codegen/typescript": "^2.4.5",
+    "@graphql-codegen/typescript-operations": "^2.3.2",
+    "@graphql-codegen/typescript-react-apollo": "^3.2.8",
     "@types/draft-js": "^0.11.8",
     "@types/node": "17.0.12",
     "@types/react": "17.0.38",
