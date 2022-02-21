@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import React, { ReactElement, useContext } from 'react';
 import { useAccount, useContract, useSigner } from 'wagmi';
 import { SupportedNetwork } from '@questbook/service-validator-client';
-import { gql } from '@apollo/client';
 import InfoToast from '../src/components/ui/infoToast';
 import Form from '../src/components/signup/create_dao/form';
 import Loading from '../src/components/signup/create_dao/loading';
@@ -17,7 +16,6 @@ import NavbarLayout from '../src/layout/navbarLayout';
 import { ApiClientsContext } from './_app';
 import config from '../src/constants/config';
 import { uploadToIPFS } from '../src/utils/ipfsUtils';
-import { getWorkspacesQuery } from '../src/graphql/workspaceQueries';
 import { parseAmount } from '../src/utils/formattingUtils';
 
 function SignupDao() {
@@ -61,7 +59,7 @@ function SignupDao() {
       if (!apiClients) return;
 
       setLoading(true);
-      const { subgraphClient, validatorApi } = apiClients;
+      const { validatorApi } = apiClients;
 
       const imageHash = await uploadToIPFS(data.image);
 
@@ -76,26 +74,19 @@ function SignupDao() {
         supportedNetworks: [data.network as SupportedNetwork],
       });
 
-      const transaction = await workspaceFactoryContract.createWorkspace(ipfsHash);
-      // console.log(ret);
+      const transaction = await workspaceFactoryContract.createWorkspace(
+        ipfsHash,
+      );
+      // console.log(transaction);
       const transactionData = await transaction.wait();
-      await subgraphClient.waitForBlock(transactionData.blockNumber);
-
-      const { data: createdWorkspaceData } = (await subgraphClient.client.query(
-        {
-          query: gql(getWorkspacesQuery),
-          variables: {
-            ownerId: accountData.address,
-          },
-        },
-      )) as any;
-      if (createdWorkspaceData.workspaces.length > 0) {
-        const newId = createdWorkspaceData.workspaces[
-          createdWorkspaceData.workspaces.length - 1
-        ].id;
-        // if (newId.length % 2 === 1) {
-        //   newId = `0x0${newId.slice(2)}`;
-        // }
+      // console.log(transactionData);
+      // console.log(transactionData.events[0].args.id);
+      if (
+        transactionData
+        && transactionData.events.length > 0
+        && transactionData.events[0].event === 'WorkspaceCreated'
+      ) {
+        const newId = transactionData.events[0].args.id;
         setDaoData({
           ...data,
           image: imageHash.hash,
@@ -122,15 +113,10 @@ function SignupDao() {
     }
   };
 
-  const showToast = ({ link } : { link: string }) => {
+  const showToast = ({ link }: { link: string }) => {
     toastRef.current = toast({
       position: 'top',
-      render: () => (
-        <InfoToast
-          link={link}
-          close={closeToast}
-        />
-      ),
+      render: () => <InfoToast link={link} close={closeToast} />,
     });
   };
 
@@ -171,7 +157,9 @@ function SignupDao() {
       setHasClicked(false);
       router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
 
-      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
+      showToast({
+        link: `https://etherscan.io/tx/${transactionData.transactionHash}`,
+      });
     } catch (error) {
       setHasClicked(false);
       // console.log(error);
