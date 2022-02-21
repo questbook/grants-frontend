@@ -1,8 +1,7 @@
 import { ethers } from 'ethers';
 import React from 'react';
 import moment from 'moment';
-// eslint-disable-next-line import/no-cycle
-import { FundTransfer } from '../graphql/queries';
+import { FundTransfer } from 'src/types';
 
 export function timeToString(
   timestamp: number,
@@ -111,7 +110,7 @@ export function truncateStringFromMiddle(str:string) {
 }
 
 // extract milstone index from ID and generate title like "Milestone (index+1)"
-export function getMilestoneMetadata(milestone: FundTransfer['milestone'] | null) {
+export function getMilestoneMetadata(milestone: FundTransfer['milestone']) {
   if (milestone) {
     const [applicationId, idx] = milestone.id.split('.');
     return {
@@ -123,7 +122,7 @@ export function getMilestoneMetadata(milestone: FundTransfer['milestone'] | null
 }
 
 // extract milstone index from ID and generate title like "Milestone (index+1)"
-export function getMilestoneTitle(milestone: FundTransfer['milestone'] | null) {
+export function getMilestoneTitle(milestone: FundTransfer['milestone']) {
   const item = getMilestoneMetadata(milestone);
   if (typeof item !== 'undefined') {
     return `Milestone ${item.milestoneIndex + 1}`;

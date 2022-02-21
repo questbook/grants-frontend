@@ -6,9 +6,9 @@ import {
   ChevronDownIcon, ViewIcon,
 } from '@chakra-ui/icons';
 import moment from 'moment';
-import { ApplicationMilestone } from 'src/graphql/queries';
 import AbstractMilestonesTable, { AbstractMilestonesTableProps } from 'src/components/ui/tables/AbstractMilestonesTable';
 import { getMilestoneTitle } from 'src/utils/formattingUtils';
+import { ApplicationMilestone } from 'src/types';
 import Modal from '../../../ui/modal';
 import MilestoneDoneModalContent from '../modals/modalContentMilestoneDone';
 import MilestoneViewModalContent from '../modals/modalContentMilestoneView';

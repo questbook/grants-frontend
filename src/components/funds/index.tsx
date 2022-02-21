@@ -2,7 +2,6 @@ import {
   Button, Divider, Flex, Text, Box, Image, IconButton, Menu, MenuButton, MenuList, MenuItem,
 } from '@chakra-ui/react';
 import React, { useState, useEffect, useContext } from 'react';
-import { Grant } from 'src/graphql/queries';
 import { getAssetInfo } from 'src/utils/tokenUtils';
 import ERC20ABI from 'src/contracts/abi/ERC20.json';
 import { useContract, useSigner } from 'wagmi';
@@ -10,6 +9,7 @@ import { ethers } from 'ethers';
 import { BigNumber } from '@ethersproject/bignumber';
 import { useGetFundingQuery } from 'src/generated/graphql';
 import { ApiClientsContext } from 'pages/_app';
+import { Grant } from 'src/types';
 import WithdrawFunds from './withdraw_funds_modal';
 import AddFunds from './add_funds_modal';
 import Funding from '../your_grants/manage_grant/tables/funding';

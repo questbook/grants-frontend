@@ -5,14 +5,11 @@ import {
 } from '@chakra-ui/react';
 import moment from 'moment';
 import { ethers } from 'ethers';
-// import { getMilestoneTitle } from 'src/utils/formattingUtils';
-import { GetFundSentForApplicationQuery } from 'src/generated/graphql';
+import { FundTransfer } from 'src/types';
 import { getAssetInfo } from '../../../../utils/tokenUtils';
 import { formatAmount, getMilestoneTitle } from '../../../../utils/formattingUtils';
 
 const getTextWithEllipses = (txt: string, maxLength = 7) => (txt.length > maxLength ? `${txt.slice(0, maxLength)}...` : txt);
-
-type FundTransfer = GetFundSentForApplicationQuery['fundsTransfers'][number];
 
 type TableContent = {
   title: string

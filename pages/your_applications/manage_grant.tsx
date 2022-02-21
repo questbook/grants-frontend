@@ -7,8 +7,8 @@ import { useAccount } from 'wagmi';
 import moment from 'moment';
 import { BigNumber } from 'ethers';
 import { useGetApplicationDetailsLazyQuery, useGetFundSentForApplicationQuery } from 'src/generated/graphql';
+import { ApplicationMilestone } from 'src/types';
 import {
-  ApplicationMilestone,
   useApplicationMilestones,
 } from '../../src/graphql/queries';
 import { getAssetInfo } from '../../src/utils/tokenUtils';
@@ -24,7 +24,7 @@ import { formatAmount } from '../../src/utils/formattingUtils';
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
   let val = BigNumber.from(0);
   milestones.forEach((milestone) => {
-    val = val.add(milestone.amountPaid);
+    val = val.add(BigNumber.from(milestone.amountPaid));
   });
   return val;
 }
@@ -32,7 +32,7 @@ function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 function getTotalFundingAsked(milestones: ApplicationMilestone[]) {
   let val = BigNumber.from(0);
   milestones.forEach((milestone) => {
-    val = val.add(milestone.amount);
+    val = val.add(BigNumber.from(milestone.amount));
   });
   return val;
 }
