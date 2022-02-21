@@ -1,6 +1,6 @@
 import { gql, useQuery } from '@apollo/client';
+import { BigNumber } from 'ethers';
 import { useContext } from 'react';
-import { formatAmount } from 'src/utils/formattingUtils';
 import { ApiClientsContext } from '../../pages/_app';
 import {
   getAllGrantsForADao, getApplicationMilestones, getFunding, getFundSentForApplication,
@@ -56,8 +56,8 @@ export const useApplicationMilestones = (grantId: string) => {
   const rewardAsset: string = grantApp?.grant?.reward?.asset;
   const milestones = grantApp?.milestones.map((milestone: any) => ({
     ...milestone,
-    amount: formatAmount(milestone.amount.toString()),
-    amountPaid: formatAmount(milestone.amountPaid.toString()),
+    amount: BigNumber.from(milestone.amount.toString()),
+    amountPaid: BigNumber.from(milestone.amountPaid.toString()),
   })) || [];
 
   return {

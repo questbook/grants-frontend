@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Text, Image, Flex,
 } from '@chakra-ui/react';
+import { formatAmount } from 'src/utils/formattingUtils';
 import { ApplicationMilestone } from '../../../graphql/queries';
 import { getAssetInfo } from '../../../utils/tokenUtils';
 
@@ -123,11 +124,11 @@ function AbstractMilestonesTable(
                 fontWeight="700"
                 color="#122224"
               >
-                {item.amountPaid}
+                {formatAmount(item.amountPaid.toString())}
                 {' '}
                 /
                 {' '}
-                {item.amount}
+                {formatAmount(item.amount.toString())}
                 {' '}
                 {rewardSymbol}
               </Text>

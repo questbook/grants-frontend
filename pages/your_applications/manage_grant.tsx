@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
 import { gql } from '@apollo/client';
 import moment from 'moment';
+import { BigNumber } from 'ethers';
 import {
   ApplicationMilestone,
   useApplicationMilestones,
@@ -23,14 +24,19 @@ import { getApplicationDetails } from '../../src/graphql/daoQueries';
 import { formatAmount } from '../../src/utils/formattingUtils';
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
-  return milestones.reduce(
-    (value, milestone) => value + +milestone.amountPaid,
-    0,
-  );
+  let val = BigNumber.from(0);
+  milestones.forEach((milestone) => {
+    val = val.add(milestone.amountPaid);
+  });
+  return val;
 }
 
 function getTotalFundingAsked(milestones: ApplicationMilestone[]) {
-  return milestones.reduce((value, milestone) => value + +milestone.amount, 0);
+  let val = BigNumber.from(0);
+  milestones.forEach((milestone) => {
+    val = val.add(milestone.amount);
+  });
+  return val;
 }
 
 function ManageGrant() {

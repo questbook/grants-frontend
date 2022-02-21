@@ -9,6 +9,7 @@ import React, { ReactElement } from 'react';
 import {
   GrantApproved, Rejected, PendingReview, ResubmissionRequested, GrantComplete,
 } from '../states';
+import { TableFilters } from './TableFilters';
 
 function Content({
   filter,
@@ -27,10 +28,10 @@ function Content({
 }) {
   const tableHeadersflex = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
   const getStatus = (status: number): ReactElement => {
-    if (status === 0) return <PendingReview />;
-    if (status === 1) return <ResubmissionRequested />;
-    if (status === 2) return <GrantApproved />;
-    if (status === 3) return <Rejected />;
+    if (status === TableFilters.submitted) return <PendingReview />;
+    if (status === TableFilters.resubmit) return <ResubmissionRequested />;
+    if (status === TableFilters.approved) return <GrantApproved />;
+    if (status === TableFilters.rejected) return <Rejected />;
     return <GrantComplete />;
   };
 

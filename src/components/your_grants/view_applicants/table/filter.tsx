@@ -6,6 +6,7 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import FilterStates from '../filterStates';
+import { TableFilterNames } from './TableFilters';
 
 function Filter({
   filter,
@@ -14,8 +15,6 @@ function Filter({
   filter: number;
   setFilter: (i: number) => void;
 }) {
-  const menuOptions = ['All', 'Pending Review', 'Await Resubmit', 'Approved', 'Rejected', 'Completed'];
-
   return (
     <Flex direction="row" justify="start" align="center">
       <Menu placement="bottom">
@@ -36,7 +35,7 @@ function Filter({
           Filter By
         </MenuButton>
         <MenuList minW="164px" p={0}>
-          {menuOptions.map((option, i) => (
+          {Object.keys(TableFilterNames).map((option, i) => (
             <MenuItem onClick={() => setFilter(i - 1)}>
               <Text
                 fontSize="14px"
@@ -44,7 +43,7 @@ function Filter({
                 lineHeight="20px"
                 color="#122224"
               >
-                {option}
+                {TableFilterNames[option as keyof typeof TableFilterNames]}
               </Text>
             </MenuItem>
           ))}
@@ -52,7 +51,8 @@ function Filter({
       </Menu>
       {filter >= 0 && (
       <FilterStates
-        filter={menuOptions[filter + 1]}
+        filter={TableFilterNames[Object
+          .keys(TableFilterNames)[filter + 1] as keyof typeof TableFilterNames]}
         setFilter={setFilter}
       />
       )}

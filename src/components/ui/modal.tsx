@@ -21,6 +21,7 @@ interface Props {
   // topIcon?: React.ReactNode;
   modalWidth?: string | number;
   closeButtonMargin?: string | number;
+  showCloseButton?: boolean;
 }
 
 function Modal({
@@ -34,6 +35,7 @@ function Modal({
   alignTitle,
   modalWidth,
   closeButtonMargin,
+  showCloseButton,
 }: Props) {
   return (
     <ModalComponent
@@ -58,6 +60,7 @@ function Modal({
             </Heading>
             <Box mx="auto" />
             {typeof rightIcon !== 'undefined' && rightIcon}
+            {showCloseButton && (
             <IconButton
               m={closeButtonMargin}
               aria-label="close-button"
@@ -68,6 +71,7 @@ function Modal({
               variant="ghost"
               onClick={onClose}
             />
+            )}
           </Flex>
         </Container>
         {children}
@@ -83,6 +87,7 @@ Modal.defaultProps = {
   alignTitle: 'left',
   modalWidth: 480,
   closeButtonMargin: '0px 0px 0px 20px',
+  showCloseButton: true,
 };
 
 export default Modal;
