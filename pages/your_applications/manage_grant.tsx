@@ -4,9 +4,9 @@ import {
 import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
-import { gql } from '@apollo/client';
 import moment from 'moment';
 import { BigNumber } from 'ethers';
+import { useGetApplicationDetailsLazyQuery } from 'src/generated/graphql';
 import {
   ApplicationMilestone,
   useApplicationMilestones,
@@ -20,7 +20,6 @@ import MilestoneTable from '../../src/components/your_applications/manage_grant/
 import Funding from '../../src/components/your_applications/manage_grant/fundingRequestedTable';
 import NavbarLayout from '../../src/layout/navbarLayout';
 import { ApiClientsContext } from '../_app';
-import { getApplicationDetails } from '../../src/graphql/daoQueries';
 import { formatAmount } from '../../src/utils/formattingUtils';
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
@@ -40,6 +39,12 @@ function getTotalFundingAsked(milestones: ApplicationMilestone[]) {
 }
 
 function ManageGrant() {
+  const { subgraphClient } = useContext(ApiClientsContext)!;
+
+  const router = useRouter();
+
+  const [{ data: accountData }] = useAccount({ fetchEns: false });
+
   const [applicationData, setApplicationData] = useState<any>({
     grantTitle: '',
     applicantAddress: '',
@@ -48,21 +53,22 @@ function ManageGrant() {
     grant: null,
     id: '',
   });
-
   const [applicationID, setApplicationID] = useState<any>('');
-  const router = useRouter();
-  const subgraphClient = useContext(ApiClientsContext)?.subgraphClient;
-  const [{ data: accountData }] = useAccount({
-    fetchEns: false,
-  });
+  const [selected, setSelected] = React.useState(0);
 
   const {
     data: { milestones, rewardAsset, fundingAsk },
     refetch,
   } = useApplicationMilestones(applicationID);
+
+  const { data: fundsDisbursed } = useFundDisbursed(applicationID);
+
+  const [getApplicationDetails] = useGetApplicationDetailsLazyQuery({
+    client: subgraphClient?.client,
+  });
+
   const fundingIcon = getAssetInfo(rewardAsset)?.icon;
   const assetInfo = getAssetInfo(rewardAsset);
-  const { data: fundsDisbursed } = useFundDisbursed(applicationID);
 
   const tabs = [
     {
@@ -86,12 +92,12 @@ function ManageGrant() {
   const getGrantData = async () => {
     if (!subgraphClient || !accountData?.address) return;
     try {
-      const { data } = (await subgraphClient.client.query({
-        query: gql(getApplicationDetails),
+      const { data } = await getApplicationDetails({
         variables: {
           applicationID,
         },
-      })) as any;
+      });
+
       if (data && data.grantApplication) {
         const application = data.grantApplication;
         // console.log(application);
@@ -122,7 +128,6 @@ function ManageGrant() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applicationID, accountData?.address]);
 
-  const [selected, setSelected] = React.useState(0);
   return (
     <Container maxW="100%" display="flex" px="70px">
       <Container
