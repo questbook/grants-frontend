@@ -105,7 +105,7 @@ function Navbar({
                   router.push('/');
                 }}
               >
-                Browse Grants
+                Discover Grants
 
               </MenuItem>
             </MenuList>
