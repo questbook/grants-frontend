@@ -6,13 +6,15 @@ import React, {
 } from 'react';
 import { useAccount, useConnect, useNetwork } from 'wagmi';
 import { useRouter } from 'next/router';
-import { gql } from '@apollo/client';
-import { getNumberOfApplicationsQuery, getNumberOfGrantsQuery } from 'src/graphql/daoQueries';
-// import Modal from 'src/components/ui/modal';
+import {
+  GetWorkspaceMembersQuery,
+  useGetNumberOfApplicationsLazyQuery,
+  useGetNumberOfGrantsLazyQuery,
+  useGetWorkspaceMembersLazyQuery,
+} from 'src/generated/graphql';
 import SignInNavbar from '../components/navbar/notConnected';
 import ConnectedNavbar from '../components/navbar/connected';
 import { ApiClientsContext } from '../../pages/_app';
-import { getWorkspaceMembersQuery } from '../graphql/workspaceQueries';
 import { getUrlForIPFSHash } from '../utils/ipfsUtils';
 
 interface Props {
@@ -24,7 +26,7 @@ interface Props {
 function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
   const apiClients = useContext(ApiClientsContext);
 
-  const [workspaces, setWorkspaces] = React.useState([]);
+  const [workspaces, setWorkspaces] = React.useState<GetWorkspaceMembersQuery['workspaceMembers']>([]);
 
   const [daoName, setDaoName] = React.useState('');
   const [daoId, setDaoId] = React.useState<string | null>(null);
@@ -37,37 +39,23 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
   const { asPath } = useRouter();
 
   const [{ data: connectData }] = useConnect();
-  const [{ data: accountData }] = useAccount({
-    fetchEns: false,
-  });
+  const [{ data: accountData }] = useAccount({ fetchEns: false });
   const [{ data: networkData }] = useNetwork();
-  useEffect(() => {
-    console.log(networkData.chain);
-  }, [networkData]);
 
   const [numOfGrants, setNumOfGrants] = React.useState(0);
   const [numOfApplications, setNumOfApplications] = React.useState(0);
 
-  useEffect(() => {
-    if (connected && !connectData.connected) {
-      setConnected(false);
-      toast({
-        title: 'Disconnected',
-        status: 'info',
-      });
-    } else if (!connected && connectData.connected) {
-      setConnected(true);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connectData]);
+  const [getNumberOfApplications] = useGetNumberOfApplicationsLazyQuery({
+    client: apiClients?.subgraphClient?.client,
+  });
 
-  // useEffect(() => {
-  //   console.log(accountData);
-  // }, [accountData]);
+  const [getNumberOfGrants] = useGetNumberOfGrantsLazyQuery({
+    client: apiClients?.subgraphClient?.client,
+  });
 
-  // useEffect(() => {
-  //   console.log(networkData, loading, error);
-  // }, [networkData]);
+  const [getWorkspaceMembers] = useGetWorkspaceMembersLazyQuery({
+    client: apiClients?.subgraphClient?.client,
+  });
 
   const setWorkspace = (workspace: any) => {
     if (!apiClients) return;
@@ -82,26 +70,12 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
   };
 
   const getWorkspaceData = async (userAddress: string) => {
-    if (!apiClients) return;
-
-    const { subgraphClient } = apiClients;
-    if (!subgraphClient) return;
     try {
-      const { data } = await subgraphClient.client
-        .query({
-          query: gql(getWorkspaceMembersQuery),
-          variables: {
-            actorId: userAddress,
-          },
-        }) as any;
-      // console.log(data);
-      const workspacesRes = data.workspaceMembers.map((member: any) => ({ ...member.workspace }));
-      setWorkspaces(workspacesRes);
-      console.log('This executed!');
-      console.log(workspacesRes.length);
-      if (workspacesRes.length > 0) {
-        const workspace = workspacesRes[0];
-        setWorkspace(workspace);
+      const { data } = await getWorkspaceMembers({
+        variables: { actorId: userAddress },
+      });
+      if (data?.workspaceMembers?.length) {
+        setWorkspaces(data.workspaceMembers);
       } else {
         setDaoId(null);
         setDaoName('');
@@ -121,15 +95,12 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
     const { subgraphClient } = apiClients;
     if (!subgraphClient) return;
     try {
-      const { data } = await subgraphClient.client
-        .query({
-          query: gql(getNumberOfGrantsQuery),
-          variables: {
-            creatorId: userAddress,
-          },
-        }) as any;
-      // console.log(data);
-      setNumOfGrants(data.grants.length);
+      const { data } = await getNumberOfGrants({
+        variables: {
+          creatorId: userAddress,
+        },
+      });
+      setNumOfGrants(data?.grants.length || 0);
     } catch (e) {
       toast({
         title: 'Error getting applicant data',
@@ -139,20 +110,11 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
   };
 
   const getApplicantsCount = async (userAddress: string) => {
-    if (!apiClients) return;
-
-    const { subgraphClient } = apiClients;
-    if (!subgraphClient) return;
     try {
-      const { data } = await subgraphClient.client
-        .query({
-          query: gql(getNumberOfApplicationsQuery),
-          variables: {
-            applicantId: userAddress,
-          },
-        }) as any;
-      // console.log(data);
-      setNumOfApplications(data.grantApplications.length);
+      const { data } = await getNumberOfApplications({
+        variables: { applicantId: userAddress },
+      });
+      setNumOfApplications(data?.grantApplications.length || 0);
     } catch (e) {
       toast({
         title: 'Error getting applicant data',
@@ -178,6 +140,19 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
       });
     }
   }, [asPath]);
+
+  useEffect(() => {
+    if (connected && !connectData.connected) {
+      setConnected(false);
+      toast({
+        title: 'Disconnected',
+        status: 'info',
+      });
+    } else if (!connected && connectData.connected) {
+      setConnected(true);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connectData]);
 
   return (
     <VStack alignItems="center" maxH="100vh" width="100%" spacing={0} p={0}>
