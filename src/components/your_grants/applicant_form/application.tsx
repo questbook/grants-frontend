@@ -51,25 +51,32 @@ function Application({ applicationData }: Props) {
       <Flex mt="8px" direction="column" w="full">
         <Divider />
         <Flex direction="row" w="full" justify="space-evenly" h={14} align="stretch" mb={8}>
-          {tabs.map((tab, index) => (
-            <Button
-              variant="ghost"
-              h="54px"
-              w="full"
-              _hover={{
-                background: '#F5F5F5',
-              }}
-              _focus={{}}
-              borderRadius={0}
-              background={selected === index ? '#E7DAFF' : 'white'}
-              color={selected === index ? 'brand.500' : '#122224'}
-              borderBottomColor={selected === index ? 'brand.500' : '#E7DAFF'}
-              borderBottomWidth={selected === index ? '2px' : '1px'}
-              onClick={() => scroll(refs[index], index)}
-            >
-              {tab}
-            </Button>
-          ))}
+          {
+          tabs.map((tab, index) => (
+            (
+              (index < 2 || (index === 2 && teamMembers))
+              && (
+              <Button
+                variant="ghost"
+                h="54px"
+                w="full"
+                _hover={{
+                  background: '#F5F5F5',
+                }}
+                _focus={{}}
+                borderRadius={0}
+                background={selected === index ? '#E7DAFF' : 'white'}
+                color={selected === index ? 'brand.500' : '#122224'}
+                borderBottomColor={selected === index ? 'brand.500' : '#E7DAFF'}
+                borderBottomWidth={selected === index ? '2px' : '1px'}
+                onClick={() => scroll(refs[index], index)}
+              >
+                {tab}
+              </Button>
+              )
+            )
+          ))
+}
         </Flex>
       </Flex>
       <Flex direction="column" w="full">

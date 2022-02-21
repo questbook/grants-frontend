@@ -45,6 +45,7 @@ function GrantRewardsInput({
               placeholder="100"
               errorText="Required"
               onChange={(e) => {
+                console.log(e.target.value);
                 if (rewardError) {
                   setRewardError(false);
                 }
@@ -52,6 +53,7 @@ function GrantRewardsInput({
               }}
               value={reward}
               isError={rewardError}
+              type="number"
             />
           </Flex>
           <Flex direction="column" w="30%">
