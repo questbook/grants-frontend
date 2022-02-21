@@ -94,8 +94,8 @@ export function getFormattedDateFromUnixTimestamp(timestamp: number) {
   return moment.unix(timestamp).format('DD MMM');
 }
 
-export function getFormattedDateFromUnixTimestampWithYear(timestamp: number) {
-  return moment.unix(timestamp).format('MMM DD, YYYY');
+export function getFormattedDateFromUnixTimestampWithYear(timestamp: number | undefined) {
+  return timestamp ? moment.unix(timestamp).format('MMM DD, YYYY') : undefined;
 }
 
 export function getFormattedFullDateFromUnixTimestamp(timestamp: number) {
@@ -111,7 +111,7 @@ export function truncateStringFromMiddle(str:string) {
 }
 
 // extract milstone index from ID and generate title like "Milestone (index+1)"
-export function getMilestoneMetadata(milestone: FundTransfer['milestone']) {
+export function getMilestoneMetadata(milestone: FundTransfer['milestone'] | null) {
   if (milestone) {
     const [applicationId, idx] = milestone.id.split('.');
     return {
@@ -123,7 +123,7 @@ export function getMilestoneMetadata(milestone: FundTransfer['milestone']) {
 }
 
 // extract milstone index from ID and generate title like "Milestone (index+1)"
-export function getMilestoneTitle(milestone: FundTransfer['milestone']) {
+export function getMilestoneTitle(milestone: FundTransfer['milestone'] | null) {
   const item = getMilestoneMetadata(milestone);
   if (typeof item !== 'undefined') {
     return `Milestone ${item.milestoneIndex + 1}`;

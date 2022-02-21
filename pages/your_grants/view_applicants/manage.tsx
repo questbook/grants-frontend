@@ -1,4 +1,3 @@
-import { gql } from '@apollo/client';
 import {
   Container,
   Flex,
@@ -10,19 +9,17 @@ import {
   useToast,
   ToastId,
 } from '@chakra-ui/react';
-import moment from 'moment';
 import { useRouter } from 'next/router';
-import React, { useContext, useEffect, useState } from 'react';
+import React, {
+  useContext, useEffect, useMemo, useState,
+} from 'react';
 import { useAccount, useSigner, useContract } from 'wagmi';
 import { BigNumber } from 'ethers';
+import { ApplicationMilestone, useGetApplicationDetailsQuery, useGetFundSentForApplicationQuery } from 'src/generated/graphql';
 import config from '../../../src/constants/config';
 import ApplicationRegistryAbi from '../../../src/contracts/abi/ApplicationRegistryAbi.json';
 import InfoToast from '../../../src/components/ui/infoToast';
-import {
-  ApplicationMilestone,
-  useApplicationMilestones,
-  useFundDisbursed,
-} from '../../../src/graphql/queries';
+import { useApplicationMilestones } from '../../../src/graphql/queries';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Heading from '../../../src/components/ui/heading';
 import Modal from '../../../src/components/ui/modal';
@@ -30,11 +27,10 @@ import ModalContent from '../../../src/components/your_grants/manage_grant/modal
 import Sidebar from '../../../src/components/your_grants/manage_grant/sidebar';
 import Funding from '../../../src/components/your_grants/manage_grant/tables/funding';
 import Milestones from '../../../src/components/your_grants/manage_grant/tables/milestones';
-import { getApplicationDetails } from '../../../src/graphql/daoQueries';
 import NavbarLayout from '../../../src/layout/navbarLayout';
 import { getAssetInfo } from '../../../src/utils/tokenUtils';
 import { ApiClientsContext } from '../../_app';
-import { formatAmount } from '../../../src/utils/formattingUtils';
+import { formatAmount, getFormattedDateFromUnixTimestampWithYear } from '../../../src/utils/formattingUtils';
 import SendFundModalContent from '../../../src/components/your_grants/manage_grant/modals/sendFundModalContent';
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
@@ -53,87 +49,53 @@ function getTotalFundingAsked(milestones: ApplicationMilestone[]) {
   return val;
 }
 
-// function areAllMilestoneApproved(milestones: ApplicationMilestone[]) {
-//   return milestones.every((milestone) => milestone.state === 'approved');
-// }
-
 function ManageGrant() {
   const path = ['My Grants', 'View Application', 'Manage'];
-
-  const [applicationData, setApplicationData] = useState<any>({
-    grantTitle: '',
-    applicantAddress: '',
-    applicantEmail: '',
-    applicationDate: '',
-    grant: null,
-    id: '',
-  });
 
   const [selected, setSelected] = React.useState(0);
   const [isGrantCompleteModelOpen, setIsGrantCompleteModalOpen] = React.useState(false);
   const [isSendFundModalOpen, setIsSendFundModalOpen] = useState(false);
 
-  const [applicationID, setApplicationID] = useState<any>('');
+  const [applicationID, setApplicationID] = useState<any>();
   const router = useRouter();
   const subgraphClient = useContext(ApiClientsContext)?.subgraphClient;
-  const [{ data: accountData }] = useAccount({
-    fetchEns: false,
-  });
+  const [{ data: accountData }] = useAccount({ fetchEns: false });
 
   const {
     data: { milestones, rewardAsset, fundingAsk },
     refetch: refetchMilestones,
   } = useApplicationMilestones(applicationID);
-  const { data: fundsDisbursed } = useFundDisbursed(applicationID);
+
+  const {
+    data: appDetailsResult,
+    refetch: refetchApplicationDetails,
+  } = useGetApplicationDetailsQuery({
+    client: subgraphClient?.client,
+    variables: {
+      applicationID,
+    },
+  });
+
+  const { data: fundsDisbursed } = useGetFundSentForApplicationQuery({
+    client: subgraphClient?.client,
+    variables: {
+      applicationId: applicationID,
+    },
+  });
+
+  const applicationData = appDetailsResult?.grantApplication;
+  const applicantEmail = useMemo(
+    () => applicationData?.fields.find((field: any) => field.id.includes('applicantEmail'))?.value[0],
+    [applicationData],
+  );
+
   const fundingIcon = getAssetInfo(rewardAsset)?.icon;
   const assetInfo = getAssetInfo(rewardAsset);
 
-  const getGrantData = async () => {
-    if (!subgraphClient || !accountData?.address) return;
-    try {
-      const { data } = (await subgraphClient.client.query({
-        query: gql(getApplicationDetails),
-        variables: {
-          applicationID,
-        },
-      })) as any;
-      if (data && data.grantApplication) {
-        const application = data.grantApplication;
-        // console.log(application);
-        setApplicationData({
-          title: application.grant.title,
-          applicantAddress: application.applicantId,
-          applicantEmail: application.fields.find((field: any) => field.id.includes('applicantEmail'))?.value[0],
-          applicationDate: moment
-            .unix(application.createdAtS)
-            .format('D MMMM YYYY'),
-          grant: application.grant,
-          id: application.id,
-          state: application.state,
-          updatedDate: moment
-            .unix(application.updatedAtS)
-            .format('MMM D, YYYY'),
-        });
-      }
-    } catch (e: any) {
-      console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    console.log('App Data: ', applicationData);
-  }, [applicationData]);
-
   useEffect(() => {
     setApplicationID(router?.query?.applicationId ?? '');
-  }, [router, accountData]);
-
-  useEffect(() => {
-    if (!subgraphClient || !accountData?.address) return;
-    if (!applicationID || applicationID.length < 1) return;
-    getGrantData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [applicationID, accountData?.address]);
+    refetchApplicationDetails();
+  }, [router, accountData, refetchApplicationDetails]);
 
   const tabs = [
     {
@@ -154,11 +116,11 @@ function ManageGrant() {
       subtitle: 'Funding Sent',
       content: (
         <Funding
-          fundTransfers={fundsDisbursed}
+          fundTransfers={fundsDisbursed?.fundsTransfers || []}
           assetId={rewardAsset}
           columns={['milestoneTitle', 'date', 'from', 'action']}
           assetDecimals={18}
-          grantId={applicationData.grant?.id}
+          grantId={applicationData?.grant?.id || ''}
         />
       ),
     },
@@ -231,7 +193,7 @@ function ManageGrant() {
       // toast({ title: 'Transaction succeeded', status: 'success' });
     } catch (error) {
       setHasClicked(false);
-      // console.log(error);
+
       toast({
         title: 'Application update not indexed',
         status: 'error',
@@ -253,7 +215,7 @@ function ManageGrant() {
         <Breadcrumbs path={path} />
         <Heading
           mt="12px"
-          title={applicationData.grantTitle}
+          title={applicationData?.grant?.title || ''}
           dontRenderDivider
         />
         <Flex mt="3px" direction="row" justify="start" align="baseline">
@@ -261,7 +223,7 @@ function ManageGrant() {
             By
             {' '}
             <Box as="span" fontWeight="700" display="inline-block">
-              {`${applicationData.applicantAddress.substring(0, 6)}...`}
+              {`${applicationData?.applicantId?.substring(0, 6)}...`}
             </Box>
           </Text>
           <Box mr={6} />
@@ -272,7 +234,7 @@ function ManageGrant() {
               src="/ui_icons/mail_icon.svg"
               mr={2}
             />
-            {applicationData.applicantEmail}
+            {applicantEmail}
           </Text>
           <Box mr={6} />
           <Text key="date_text" fontWeight="400">
@@ -282,7 +244,7 @@ function ManageGrant() {
               src="/ui_icons/date_icon.svg"
               mr={2}
             />
-            {applicationData.applicationDate}
+            {getFormattedDateFromUnixTimestampWithYear(applicationData?.createdAtS)}
           </Text>
           <Box mr={6} />
           <Link
@@ -306,12 +268,12 @@ function ManageGrant() {
           </Link>
         </Flex>
 
-        {applicationData.state === 'completed' && (
+        {applicationData?.state === 'completed' && (
           <Text variant="applicationText" color="#717A7C" mt={6}>
             Grant marked as complete on
             {' '}
             <Text variant="applicationText" display="inline-block">
-              {applicationData.updatedDate}
+              {getFormattedDateFromUnixTimestampWithYear(applicationData?.updatedAtS)}
             </Text>
           </Text>
         )}
@@ -365,7 +327,7 @@ function ManageGrant() {
         {tabs[selected].content}
 
         <Flex direction="row" justify="center" mt={8}>
-          {applicationData.state !== 'completed' && (
+          {applicationData?.state !== 'completed' && (
             <Button
               variant="primary"
               onClick={() => setIsGrantCompleteModalOpen(true)}
@@ -375,11 +337,11 @@ function ManageGrant() {
           )}
         </Flex>
       </Container>
-      {applicationData.state !== 'completed' && (
+      {applicationData?.state !== 'completed' && (
         <Sidebar
           milestones={milestones}
           assetInfo={assetInfo}
-          grant={applicationData.grant}
+          grant={applicationData?.grant}
           applicationId={applicationID}
         />
       )}
