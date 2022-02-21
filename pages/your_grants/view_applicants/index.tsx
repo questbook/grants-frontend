@@ -1,4 +1,3 @@
-import { gql } from '@apollo/client';
 import { Container } from '@chakra-ui/react';
 import moment from 'moment';
 import { useRouter } from 'next/router';
@@ -11,7 +10,6 @@ import { formatAmount } from '../../../src/utils/formattingUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Table from '../../../src/components/your_grants/view_applicants/table';
 import supportedCurrencies from '../../../src/constants/supportedCurrencies';
-import { getApplicantsForAGrant } from '../../../src/graphql/daoQueries';
 import NavbarLayout from '../../../src/layout/navbarLayout';
 import { ApiClientsContext } from '../../_app';
 

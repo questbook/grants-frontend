@@ -1,4 +1,3 @@
-import { gql } from '@apollo/client';
 import {
   Container, Flex, useToast, Image, Text, Button,
 } from '@chakra-ui/react';
