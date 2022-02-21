@@ -12,14 +12,16 @@ import React, {
 } from 'react';
 import { useAccount } from 'wagmi';
 import { BigNumber } from '@ethersproject/bignumber';
+import { useGetAllGrantsForCreatorLazyQuery, GetAllGrantsForCreatorQuery } from 'src/generated/graphql';
 import AddFunds from '../../src/components/funds/add_funds_modal';
 import Heading from '../../src/components/ui/heading';
 import YourGrantCard from '../../src/components/your_grants/yourGrantCard';
 import supportedCurrencies from '../../src/constants/supportedCurrencies';
-import { getAllGrantsForCreator } from '../../src/graphql/daoQueries';
 import NavbarLayout from '../../src/layout/navbarLayout';
 import { formatAmount } from '../../src/utils/formattingUtils';
 import { ApiClientsContext } from '../_app';
+
+const PAGE_SIZE = 20;
 
 function YourGrants() {
   const containerRef = useRef(null);
@@ -29,10 +31,12 @@ function YourGrants() {
   const [grantForFunding, setGrantForFunding] = React.useState(null);
   const [grantRewardAsset, setGrantRewardAsset] = React.useState<any>(null);
 
+  const [getAllGrantsForCreator] = useGetAllGrantsForCreatorLazyQuery({
+    client: subgraphClient,
+  });
   const toast = useToast();
-  const [grants, setGrants] = React.useState<any[]>([]);
+  const [grants, setGrants] = React.useState<GetAllGrantsForCreatorQuery['grants']>([]);
 
-  const pageSize = 20;
   const [currentPage, setCurrentPage] = React.useState(0);
 
   const [{ data: accountData }] = useAccount({
@@ -43,17 +47,14 @@ function YourGrants() {
   const getGrantData = async () => {
     if (!subgraphClient || !accountData?.address) return;
     try {
-      const { data } = await subgraphClient
-        .query({
-          query: gql(getAllGrantsForCreator),
-          variables: {
-            first: pageSize,
-            skip: pageSize * currentPage,
-            creatorId: accountData?.address,
-          },
-        }) as any;
-      // console.log(data);
-      if (data.grants.length > 0) {
+      const { data } = await getAllGrantsForCreator({
+        variables: {
+          first: PAGE_SIZE,
+          skip: PAGE_SIZE * currentPage,
+          creatorId: accountData?.address,
+        },
+      });
+      if (data) {
         setCurrentPage(currentPage + 1);
         setGrants([...grants, ...data.grants]);
       }
