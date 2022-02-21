@@ -7,7 +7,6 @@ import React, {
 import { useAccount, useConnect, useNetwork } from 'wagmi';
 import { useRouter } from 'next/router';
 import {
-  GetWorkspaceMembersQuery,
   useGetNumberOfApplicationsLazyQuery,
   useGetNumberOfGrantsLazyQuery,
   useGetWorkspaceMembersLazyQuery,
@@ -146,6 +145,11 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountData?.address]);
+
+  useEffect(() => {
+    const id = workspaces[selectedWorkspaceIndex]?.id;
+    apiClients?.setWorkspaceId(id);
+  }, [selectedWorkspaceIndex, workspaces]);
 
   return (
     <VStack alignItems="center" maxH="100vh" width="100%" spacing={0} p={0}>

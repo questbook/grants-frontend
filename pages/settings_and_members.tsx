@@ -3,6 +3,7 @@ import React, {
   ReactElement, useState, useEffect, useContext,
 } from 'react';
 import { useGetWorkspaceDetailsLazyQuery } from 'src/generated/graphql';
+import { Workspace } from 'src/types';
 import Members from '../src/components/settings_and_members/members';
 import Settings from '../src/components/settings_and_members/settings';
 import NavbarLayout from '../src/layout/navbarLayout';
@@ -13,7 +14,7 @@ function SettingsAndMembers() {
 
   const tabs = ['Settings', 'Invite Members'];
   const [selected, setSelected] = useState(0);
-  const [workspaceData, setWorkspaceData] = useState<any>();
+  const [workspaceData, setWorkspaceData] = useState<Workspace>();
 
   const [getWorkspaceDetails] = useGetWorkspaceDetailsLazyQuery({
     client: subgraphClient.client,
@@ -24,13 +25,11 @@ function SettingsAndMembers() {
   };
 
   async function getWorkspaceData(workspaceID: string) {
-    if (!workspaceID) return;
-
     try {
       const { data } = await getWorkspaceDetails({
         variables: { workspaceID },
       });
-      setWorkspaceData(data?.workspace);
+      setWorkspaceData(data!.workspace!);
     } catch (e) {
       // console.log(e);
     }
@@ -38,7 +37,7 @@ function SettingsAndMembers() {
 
   useEffect(() => {
     if (!workspaceId) return;
-    // console.log('getting called');
+    console.log('getting called ', workspaceId);
     getWorkspaceData(workspaceId);
   }, [workspaceId]);
 
@@ -77,7 +76,7 @@ function SettingsAndMembers() {
         </Flex>
         <Divider variant="sidebar" mb={5} />
         {selected === 0 ? (
-          <Settings workspaceData={workspaceData} />
+          <Settings workspaceData={workspaceData!} />
         ) : (
           <Members workspaceMembers={workspaceData?.members} />
         )}
