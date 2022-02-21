@@ -53,9 +53,9 @@ function getTotalFundingAsked(milestones: ApplicationMilestone[]) {
   return val;
 }
 
-function areAllMilestoneApproved(milestones: ApplicationMilestone[]) {
-  return milestones.every((milestone) => milestone.state === 'approved');
-}
+// function areAllMilestoneApproved(milestones: ApplicationMilestone[]) {
+//   return milestones.every((milestone) => milestone.state === 'approved');
+// }
 
 function ManageGrant() {
   const path = ['My Grants', 'View Application', 'Manage'];
@@ -365,7 +365,7 @@ function ManageGrant() {
         {tabs[selected].content}
 
         <Flex direction="row" justify="center" mt={8}>
-          {applicationData.state !== 'completed' && areAllMilestoneApproved(milestones) && (
+          {applicationData.state !== 'completed' && (
             <Button
               variant="primary"
               onClick={() => setIsGrantCompleteModalOpen(true)}
