@@ -13,9 +13,9 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  BigDecimal: any;
-  BigInt: any;
-  Bytes: any;
+  BigDecimal: string;
+  BigInt: string;
+  Bytes: string;
 };
 
 /** the milestone of a grant application */
@@ -1820,7 +1820,7 @@ export type GetAllGrantsQueryVariables = Exact<{
 }>;
 
 
-export type GetAllGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: any, title: string, summary: string, details: string, deadline?: string | null, funding: any, numberOfApplications: number, reward: { __typename?: 'Reward', committed: any, id: string, asset: any }, workspace: { __typename?: 'Workspace', title: string, logoIpfsHash: string } }> };
+export type GetAllGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', title: string, logoIpfsHash: string } }> };
 
 export type GetAllGrantsForADaoQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -1829,7 +1829,7 @@ export type GetAllGrantsForADaoQueryVariables = Exact<{
 }>;
 
 
-export type GetAllGrantsForADaoQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: any, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: any, numberOfApplications: number, reward: { __typename?: 'Reward', committed: any, id: string, asset: any }, workspace: { __typename?: 'Workspace', title: string, logoIpfsHash: string } }> };
+export type GetAllGrantsForADaoQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', title: string, logoIpfsHash: string } }> };
 
 export type GetAllGrantsForCreatorQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -1838,7 +1838,7 @@ export type GetAllGrantsForCreatorQueryVariables = Exact<{
 }>;
 
 
-export type GetAllGrantsForCreatorQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: any, title: string, summary: string, details: string, deadline?: string | null, funding: any, numberOfApplications: number, reward: { __typename?: 'Reward', committed: any, id: string, asset: any }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string } }> };
+export type GetAllGrantsForCreatorQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string } }> };
 
 export type GetApplicantsForAGrantQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -1847,35 +1847,35 @@ export type GetApplicantsForAGrantQueryVariables = Exact<{
 }>;
 
 
-export type GetApplicantsForAGrantQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: any, state: ApplicationState, createdAtS: number, grant: { __typename?: 'Grant', title: string, funding: any, reward: { __typename?: 'Reward', asset: any } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, value: Array<string> }> }> };
+export type GetApplicantsForAGrantQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, createdAtS: number, grant: { __typename?: 'Grant', title: string, funding: string, reward: { __typename?: 'Reward', asset: string } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, value: Array<string> }> }> };
 
 export type GetApplicationDetailsQueryVariables = Exact<{
   applicationID: Scalars['ID'];
 }>;
 
 
-export type GetApplicationDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, applicantId: any, state: ApplicationState, feedback?: string | null, createdAtS: number, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, value: Array<string> }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, amount: any }>, grant: { __typename?: 'Grant', id: string, title: string, funding: any, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string }, reward: { __typename?: 'Reward', id: string, asset: any, committed: any } } } | null };
+export type GetApplicationDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, feedback?: string | null, createdAtS: number, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, value: Array<string> }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, amount: string }>, grant: { __typename?: 'Grant', id: string, title: string, funding: string, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string }, reward: { __typename?: 'Reward', id: string, asset: string, committed: string } } } | null };
 
 export type GetApplicationMilestonesQueryVariables = Exact<{
   grantId: Scalars['ID'];
 }>;
 
 
-export type GetApplicationMilestonesQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', grant: { __typename?: 'Grant', reward: { __typename?: 'Reward', asset: any } }, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, state: MilestoneState, title: string, amount: any, amountPaid: any, updatedAtS?: number | null, text?: string | null }>, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, value: Array<string> }> }> };
+export type GetApplicationMilestonesQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', grant: { __typename?: 'Grant', reward: { __typename?: 'Reward', asset: string } }, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, state: MilestoneState, title: string, amount: string, amountPaid: string, updatedAtS?: number | null, text?: string | null }>, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, value: Array<string> }> }> };
 
 export type GetFundSentForApplicationQueryVariables = Exact<{
   applicationId?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetFundSentForApplicationQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', id: string, amount: any, sender: any, to: any, createdAtS: number, type: FundsTransferType, application?: { __typename?: 'GrantApplication', id: string } | null, milestone?: { __typename?: 'ApplicationMilestone', id: string, title: string } | null }> };
+export type GetFundSentForApplicationQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', id: string, amount: string, sender: string, to: string, createdAtS: number, type: FundsTransferType, application?: { __typename?: 'GrantApplication', id: string } | null, milestone?: { __typename?: 'ApplicationMilestone', id: string, title: string } | null }> };
 
 export type GetFundingQueryVariables = Exact<{
   grantId?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetFundingQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', id: string, amount: any, sender: any, to: any, createdAtS: number, type: FundsTransferType, grant: { __typename?: 'Grant', id: string }, application?: { __typename?: 'GrantApplication', id: string } | null, milestone?: { __typename?: 'ApplicationMilestone', id: string, title: string } | null }> };
+export type GetFundingQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', id: string, amount: string, sender: string, to: string, createdAtS: number, type: FundsTransferType, grant: { __typename?: 'Grant', id: string }, application?: { __typename?: 'GrantApplication', id: string } | null, milestone?: { __typename?: 'ApplicationMilestone', id: string, title: string } | null }> };
 
 export type GetGrantApplicationQueryVariables = Exact<{
   grantID: Scalars['String'];
@@ -1883,14 +1883,14 @@ export type GetGrantApplicationQueryVariables = Exact<{
 }>;
 
 
-export type GetGrantApplicationQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: any, grant: { __typename?: 'Grant', id: string, title: string } }> };
+export type GetGrantApplicationQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, grant: { __typename?: 'Grant', id: string, title: string } }> };
 
 export type GetGrantDetailsQueryVariables = Exact<{
   grantID: Scalars['ID'];
 }>;
 
 
-export type GetGrantDetailsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: any, title: string, summary: string, details: string, deadline?: string | null, funding: any, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType }>, reward: { __typename?: 'Reward', id: string, asset: any, committed: any }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string } }> };
+export type GetGrantDetailsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType }>, reward: { __typename?: 'Reward', id: string, asset: string, committed: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string } }> };
 
 export type GetMyApplicationsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -1899,7 +1899,7 @@ export type GetMyApplicationsQueryVariables = Exact<{
 }>;
 
 
-export type GetMyApplicationsQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: any, state: ApplicationState, createdAtS: number, updatedAtS: number, grant: { __typename?: 'Grant', id: string, title: string, funding: any, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string } } }> };
+export type GetMyApplicationsQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, createdAtS: number, updatedAtS: number, grant: { __typename?: 'Grant', id: string, title: string, funding: string, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string } } }> };
 
 export type GetNumberOfApplicationsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -1924,14 +1924,14 @@ export type GetWorkspaceDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, members: Array<{ __typename?: 'WorkspaceMember', actorId: any, email?: string | null }> } | null };
+export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, members: Array<{ __typename?: 'WorkspaceMember', actorId: string, email?: string | null }> } | null };
 
 export type GetWorkspaceMembersQueryVariables = Exact<{
   actorId: Scalars['Bytes'];
 }>;
 
 
-export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: any, workspace: { __typename?: 'Workspace', id: string, ownerId: any, logoIpfsHash: string, title: string } }> };
+export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, workspace: { __typename?: 'Workspace', id: string, ownerId: string, logoIpfsHash: string, title: string } }> };
 
 
 export const GetAllGrantsDocument = gql`

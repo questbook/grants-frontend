@@ -10,6 +10,10 @@ generates:
       - typescript-operations
       - typescript-react-apollo
     config:
+      scalars:
+        BigDecimal: string
+        BigInt: string
+        Bytes: string
       skipTypename: false
       withComponent: false
       withHooks: true
