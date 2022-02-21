@@ -1926,6 +1926,13 @@ export type GetWorkspaceDetailsQueryVariables = Exact<{
 
 export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, members: Array<{ __typename?: 'WorkspaceMember', actorId: any, email?: string | null }> } | null };
 
+export type GetWorkspaceMembersQueryVariables = Exact<{
+  actorId: Scalars['Bytes'];
+}>;
+
+
+export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: any, workspace: { __typename?: 'Workspace', id: string, ownerId: any, logoIpfsHash: string, title: string } }> };
+
 
 export const GetAllGrantsDocument = gql`
     query getAllGrants($first: Int, $skip: Int) {
@@ -2658,3 +2665,50 @@ export function useGetWorkspaceDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetWorkspaceDetailsQueryHookResult = ReturnType<typeof useGetWorkspaceDetailsQuery>;
 export type GetWorkspaceDetailsLazyQueryHookResult = ReturnType<typeof useGetWorkspaceDetailsLazyQuery>;
 export type GetWorkspaceDetailsQueryResult = Apollo.QueryResult<GetWorkspaceDetailsQuery, GetWorkspaceDetailsQueryVariables>;
+export const GetWorkspaceMembersDocument = gql`
+    query getWorkspaceMembers($actorId: Bytes!) {
+  workspaceMembers(
+    where: {actorId: $actorId}
+    subgraphError: allow
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    actorId
+    workspace {
+      id
+      ownerId
+      logoIpfsHash
+      title
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetWorkspaceMembersQuery__
+ *
+ * To run a query within a React component, call `useGetWorkspaceMembersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWorkspaceMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetWorkspaceMembersQuery({
+ *   variables: {
+ *      actorId: // value for 'actorId'
+ *   },
+ * });
+ */
+export function useGetWorkspaceMembersQuery(baseOptions: Apollo.QueryHookOptions<GetWorkspaceMembersQuery, GetWorkspaceMembersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetWorkspaceMembersQuery, GetWorkspaceMembersQueryVariables>(GetWorkspaceMembersDocument, options);
+      }
+export function useGetWorkspaceMembersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetWorkspaceMembersQuery, GetWorkspaceMembersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetWorkspaceMembersQuery, GetWorkspaceMembersQueryVariables>(GetWorkspaceMembersDocument, options);
+        }
+export type GetWorkspaceMembersQueryHookResult = ReturnType<typeof useGetWorkspaceMembersQuery>;
+export type GetWorkspaceMembersLazyQueryHookResult = ReturnType<typeof useGetWorkspaceMembersLazyQuery>;
+export type GetWorkspaceMembersQueryResult = Apollo.QueryResult<GetWorkspaceMembersQuery, GetWorkspaceMembersQueryVariables>;
