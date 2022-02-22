@@ -38,6 +38,12 @@ function ApplicantForm() {
   const [applicationId, setApplicationId] = useState<any>('');
   const [applicationData, setApplicationData] = useState<any>(null);
 
+  const [resubmitComment, setResubmitComment] = useState('');
+  const [resubmitCommentError, setResubmitCommentError] = useState(false);
+
+  const [rejectionComment, setRejectionComment] = useState('');
+  const [rejectionCommentError, setRejectionCommentError] = useState(false);
+
   const getApplicationData = useCallback(async () => {
     const subgraphClient = new SubgraphClient();
     if (!subgraphClient.client) return null;
@@ -106,7 +112,7 @@ function ApplicantForm() {
     });
   };
 
-  const handleApplicationStateUpdate = async (state:number, comment:string) => {
+  const handleApplicationStateUpdate = async (state: number) => {
     try {
       if (!apiClients) return;
       const { validatorApi, workspaceId } = apiClients;
@@ -118,11 +124,21 @@ function ApplicantForm() {
         return;
       }
 
+      if (state === 1 && resubmitComment === '') {
+        setResubmitCommentError(true);
+        return;
+      }
+
+      if (state === 3 && resubmitComment === '') {
+        setRejectionCommentError(true);
+        return;
+      }
+
       setHasClicked(true);
       const {
         data: { ipfsHash },
       } = await validatorApi.validateGrantApplicationUpdate({
-        feedback: comment,
+        feedback: rejectionComment,
       });
       // console.log(ipfsHash);
       // console.log(Number(applicationData?.id), Number(workspaceId));
@@ -163,7 +179,7 @@ function ApplicantForm() {
         <>
           <Accept
             // onSubmit={handleAcceptApplication}
-            onSubmit={() => handleApplicationStateUpdate(2, '')}
+            onSubmit={() => handleApplicationStateUpdate(2)}
             applicationData={applicationData}
             hasClicked={hasClicked}
           />
@@ -177,8 +193,12 @@ function ApplicantForm() {
       return (
         <>
           <Reject
-            onSubmit={({ comment }) => handleApplicationStateUpdate(3, comment)}
+            onSubmit={() => handleApplicationStateUpdate(3)}
             hasClicked={hasClicked}
+            comment={rejectionComment}
+            setComment={setRejectionComment}
+            commentError={rejectionCommentError}
+            setCommentError={setRejectionCommentError}
           />
           <RejectSidebar
             applicationData={applicationData}
@@ -189,8 +209,12 @@ function ApplicantForm() {
     return (
       <>
         <Resubmit
-          onSubmit={({ comment }) => handleApplicationStateUpdate(1, comment)}
+          onSubmit={() => handleApplicationStateUpdate(1)}
           hasClicked={hasClicked}
+          comment={resubmitComment}
+          setComment={setResubmitComment}
+          commentError={resubmitCommentError}
+          setCommentError={setResubmitCommentError}
         />
         <ResubmitSidebar
           applicationData={applicationData}

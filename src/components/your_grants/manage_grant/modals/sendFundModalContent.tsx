@@ -74,6 +74,13 @@ function ModalContent({
   };
 
   const sendFundsFromContract = async () => {
+    let hasError = false;
+
+    if (selectedMilestone === -1) hasError = true;
+    if (funding === '') { setError(true); hasError = true; }
+
+    if (hasError) return;
+
     if (!milestones[selectedMilestone].id.split('.')[1]) return;
     if (!rewardAsset.address) return;
     if (!parseAmount(funding)) return;
@@ -106,6 +113,13 @@ function ModalContent({
   };
 
   const sendFundsFromWallet = async () => {
+    let hasError = false;
+
+    if (selectedMilestone === -1) hasError = true;
+    if (funding === '') { setError(true); hasError = true; }
+
+    if (hasError) return;
+
     console.log(grantContract);
 
     console.log(
@@ -264,7 +278,7 @@ function ModalContent({
             </MenuList>
           </Menu>
 
-          <Flex direction="row" w="100%" alignItems="flex-end" justify="space-between" mt={8}>
+          <Flex direction="row" w="100%" alignItems="start" justify="space-between" mt={8}>
             <Flex w="70%" direction="column">
               <SingleLineInput
                 label="Amount to be disbursed"
@@ -278,9 +292,10 @@ function ModalContent({
                 }}
                 isError={error}
                 errorText="Required"
+                type="number"
               />
             </Flex>
-            <Flex direction="column" w="25%">
+            <Flex direction="column" w="25%" mt="20px">
               <Dropdown
                 listItemsMinWidth="132px"
                 listItems={[
@@ -345,7 +360,7 @@ function ModalContent({
           </MenuList>
         </Menu>
 
-        <Flex direction="row" w="100%" alignItems="flex-end" justify="space-between" mt={8}>
+        <Flex direction="row" w="100%" alignItems="start" justify="space-between" mt={8}>
           <Flex w="70%" direction="column">
             <SingleLineInput
               label="Amount to be disbursed"
@@ -361,7 +376,7 @@ function ModalContent({
               errorText="Required"
             />
           </Flex>
-          <Flex direction="column" w="25%">
+          <Flex direction="column" w="25%" mt="20px">
             <Dropdown
               listItemsMinWidth="132px"
               listItems={[

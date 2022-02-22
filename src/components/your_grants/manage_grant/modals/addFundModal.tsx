@@ -346,6 +346,7 @@ function AddFunds({
                   }}
                   isError={error}
                   errorText="Required"
+                  type="number"
                 />
               </Flex>
               <Flex direction="column" w="25%">
