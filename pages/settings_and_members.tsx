@@ -3,6 +3,7 @@ import React, {
   ReactElement, useState, useEffect, useContext,
 } from 'react';
 import { gql } from '@apollo/client';
+import { useRouter } from 'next/router';
 import Members from '../src/components/settings_and_members/members';
 import Settings from '../src/components/settings_and_members/settings';
 import NavbarLayout from '../src/layout/navbarLayout';
@@ -11,8 +12,9 @@ import SubgraphClient from '../src/graphql/subgraph';
 import { ApiClientsContext } from './_app';
 
 function SettingsAndMembers() {
+  const router = useRouter();
   const tabs = ['Settings', 'Invite Members'];
-  const [selected, setSelected] = useState(0);
+  const [selected, setSelected] = useState(router.query.tab === 'members' ? 1 : 0);
   const [workspaceData, setWorkspaceData] = useState<any>(null);
   const workspaceId = useContext(ApiClientsContext)?.workspaceId;
 
