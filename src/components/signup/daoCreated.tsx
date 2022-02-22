@@ -30,6 +30,7 @@ function DaoCreated({
           fontSize="45px"
           lineHeight="65px"
           fontWeight="500"
+          textAlign="center"
           mt={9}
         >
           Yay! Your Grants DAO is successfully created.
