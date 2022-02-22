@@ -79,7 +79,7 @@ function Application({ applicationData }: Props) {
 }
         </Flex>
       </Flex>
-      <Flex direction="column" w="full" h="25em" overflowY="scroll">
+      <Flex direction="column" w="full">
         <Flex direction="column" w="full" mt={4}>
           <Box display={projectTitle && projectTitle !== '' ? '' : 'none'}>
             <Heading variant="applicationHeading" ref={refs[0]}>Project Title</Heading>

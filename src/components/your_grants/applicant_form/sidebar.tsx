@@ -18,7 +18,6 @@ function Sidebar({
   applicationData: any;
 }) {
   return (
-
     <FloatingSidebar>
       <Heading
         fontSize="16px"
