@@ -227,7 +227,6 @@ function Form({
       >
         Reward and Deadline
       </Text>
-      <Box mt="20px" />
       <GrantRewardsInput
         reward={reward}
         setReward={setReward}
