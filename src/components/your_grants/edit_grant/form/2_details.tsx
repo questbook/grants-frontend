@@ -29,7 +29,7 @@ function Details({
           setDetails(e.target.value);
         }}
         errorText="Required"
-        maxLength={300}
+        maxLength={-1}
       />
 
     </Flex>

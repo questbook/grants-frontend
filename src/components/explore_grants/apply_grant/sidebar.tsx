@@ -16,7 +16,7 @@ function Sidebar({
       direction="column"
       alignItems="center"
       px={10}
-      py={6}
+      py={0}
       pos="absolute"
       w="50%"
       h="calc(100% - 80px)"
@@ -29,6 +29,7 @@ function Sidebar({
         borderRadius={12}
         direction="column"
         w="100%"
+        overflowY="scroll"
       >
         <GrantDetails
           grantDetails={grantDetails}

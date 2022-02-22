@@ -6,18 +6,18 @@ import {
   MenuItem,
   Text,
   Image,
+  useToast,
 } from '@chakra-ui/react';
 import copy from 'copy-to-clipboard';
 import React from 'react';
 import config from 'src/constants/config';
 
 function Menu({ grantID } : { grantID: string }) {
-  const [copied, setCopied] = React.useState(false);
+  const toast = useToast();
 
   return (
     <MenuComponent
-      onClose={() => setCopied(false)}
-      closeOnSelect={false}
+      closeOnSelect
       placement="left"
     >
       <MenuButton
@@ -32,7 +32,11 @@ function Menu({ grantID } : { grantID: string }) {
         <MenuItem
           onClick={() => {
             copy(`${config.basePath}/explore_grants/about_grant/?grantID=${grantID}`);
-            return setCopied(true);
+            toast({
+              position: 'bottom',
+              title: 'Link copied!',
+              status: 'success',
+            });
           }}
           py="12px"
           px="16px"
@@ -52,7 +56,7 @@ function Menu({ grantID } : { grantID: string }) {
               w={4}
               src="/ui_icons/share.svg"
             />
-            {copied ? 'Link Copied!' : 'Share'}
+            Share
           </Text>
         </MenuItem>
         {/* <MenuItem onClick={() => onEditClick()} py="12px" px="16px">
