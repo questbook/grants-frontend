@@ -1,5 +1,5 @@
 import {
-  Container, Flex, Text, Image, useToast, ToastId, Divider,
+  Flex, Text, Image, useToast, ToastId, Divider,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
@@ -139,7 +139,12 @@ function ApplicantForm() {
       // toast({ title: 'Transaction succeeded', status: 'success' });
 
       setHasClicked(false);
-      router.replace('/your_grants');
+      router.replace({
+        pathname: '/your_grants/view_applicants',
+        query: {
+          grantID: applicationData?.grant?.id,
+        },
+      });
 
       showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
       // await subgraphClient.waitForBlock(transactionData.blockNumber);
@@ -196,140 +201,144 @@ function ApplicantForm() {
 
   if (step === 0) {
     return (
-      <Container flexDirection="column" maxW="100%" display="flex" px="70px">
-        <Container
-          flex={1}
-          display="flex"
-          flexDirection="column"
-          maxW="1116px"
-          alignItems="stretch"
-          pb={6}
-          px={0}
-        >
-          <Breadcrumbs
-            path={['Your Grants', 'View Applicants', 'Applicant Form']}
-          />
-          <Heading mt="18px" title={applicationData?.grant?.title} />
-        </Container>
-
-        <Container maxW="100%" display="flex">
-          <Container
-            flex={1}
-            display="flex"
-            flexDirection="column"
-            maxW="834px"
+      <Flex direction="row" w="72%" mx="auto">
+        <Flex direction="column" w="100%" m={0} p={0} h="100%">
+          <Flex
+            direction="column"
             alignItems="stretch"
-            pb={8}
-            px={10}
+            pb={6}
+            px={0}
+            w="100%"
           >
-            {applicationData && applicationData?.state === 'rejected' && (
+            <Breadcrumbs
+              path={['Your Grants', 'View Applicants', 'Applicant Form']}
+            />
+            <Heading mt="18px" title={applicationData?.grant?.title} />
+          </Flex>
+
+          <Flex direction="row" w="100%" justify="space-between">
+            <Flex direction="column" w="65%" align="start">
               <Flex
-                alignItems="flex-start"
-                bgColor="#FFC0C0"
-                border="2px solid #EE7979"
-                px="26px"
-                py="22px"
-                borderRadius="6px"
-                my={4}
-                mx={10}
-                alignSelf="stretch"
+                direction="column"
+                alignItems="stretch"
+                pb={8}
+                w="100%"
               >
+                {applicationData && applicationData?.state === 'rejected' && (
                 <Flex
-                  alignItems="center"
-                  justifyContent="center"
-                  bgColor="#F7B7B7"
+                  alignItems="flex-start"
+                  bgColor="#FFC0C0"
                   border="2px solid #EE7979"
-                  borderRadius="40px"
-                  p={2}
-                  h="40px"
-                  w="40px"
-                  mt="5px"
+                  px="26px"
+                  py="22px"
+                  borderRadius="6px"
+                  my={4}
+                  mx={10}
+                  alignSelf="stretch"
                 >
-                  <Image
+                  <Flex
+                    alignItems="center"
+                    justifyContent="center"
+                    bgColor="#F7B7B7"
+                    border="2px solid #EE7979"
+                    borderRadius="40px"
+                    p={2}
                     h="40px"
                     w="40px"
-                    src="/ui_icons/result_rejected_application.svg"
-                    alt="Rejected"
-                  />
-                </Flex>
-                <Flex ml="23px" direction="column">
-                  <Text
-                    fontSize="16px"
-                    lineHeight="24px"
-                    fontWeight="700"
-                    color="#7B4646"
+                    mt="5px"
                   >
-                    Application Rejected
-                  </Text>
-                  <Text
-                    fontSize="16px"
-                    lineHeight="24px"
-                    fontWeight="400"
-                    color="#7B4646"
-                  >
-                    {applicationData?.feedback}
-                  </Text>
+                    <Image
+                      h="40px"
+                      w="40px"
+                      src="/ui_icons/result_rejected_application.svg"
+                      alt="Rejected"
+                    />
+                  </Flex>
+                  <Flex ml="23px" direction="column">
+                    <Text
+                      fontSize="16px"
+                      lineHeight="24px"
+                      fontWeight="700"
+                      color="#7B4646"
+                    >
+                      Application Rejected
+                    </Text>
+                    <Text
+                      fontSize="16px"
+                      lineHeight="24px"
+                      fontWeight="400"
+                      color="#7B4646"
+                    >
+                      {applicationData?.feedback}
+                    </Text>
+                  </Flex>
                 </Flex>
-              </Flex>
-            )}
+                )}
 
-            {applicationData && applicationData?.state === 'resubmit' && (
-              <Flex
-                alignItems="flex-start"
-                bgColor="#FEF6D9"
-                border="2px solid #EFC094"
-                px="26px"
-                py="22px"
-                borderRadius="6px"
-                my={4}
-                mx={10}
-                alignSelf="stretch"
-              >
+                {applicationData && applicationData?.state === 'resubmit' && (
                 <Flex
-                  alignItems="center"
-                  justifyContent="center"
-                  h="36px"
-                  w="42px"
+                  alignItems="flex-start"
+                  bgColor="#FEF6D9"
+                  border="2px solid #EFC094"
+                  px="26px"
+                  py="22px"
+                  borderRadius="6px"
+                  my={4}
+                  mx={10}
+                  alignSelf="stretch"
                 >
-                  <Image
-                    h="40px"
-                    w="40px"
-                    src="/ui_icons/alert_triangle.svg"
-                    alt="Resubmit"
-                  />
-                </Flex>
-                <Flex ml="23px" direction="column">
-                  <Text
-                    fontSize="16px"
-                    lineHeight="24px"
-                    fontWeight="700"
-                    color="#7B4646"
+                  <Flex
+                    alignItems="center"
+                    justifyContent="center"
+                    h="36px"
+                    w="42px"
                   >
-                    Request for Resubmission
-                  </Text>
-                  <Text
-                    fontSize="16px"
-                    lineHeight="24px"
-                    fontWeight="400"
-                    color="#7B4646"
-                  >
-                    {applicationData?.feedback}
-                  </Text>
+                    <Image
+                      h="40px"
+                      w="40px"
+                      src="/ui_icons/alert_triangle.svg"
+                      alt="Resubmit"
+                    />
+                  </Flex>
+                  <Flex ml="23px" direction="column">
+                    <Text
+                      fontSize="16px"
+                      lineHeight="24px"
+                      fontWeight="700"
+                      color="#7B4646"
+                    >
+                      Request for Resubmission
+                    </Text>
+                    <Text
+                      fontSize="16px"
+                      lineHeight="24px"
+                      fontWeight="400"
+                      color="#7B4646"
+                    >
+                      {applicationData?.feedback}
+                    </Text>
+                  </Flex>
                 </Flex>
+                )}
+
+                <Flex direction="column">
+                  <Application applicationData={applicationData} />
+                </Flex>
+
               </Flex>
-            )}
+            </Flex>
+            <Flex direction="column" mt={2}>
+              <Sidebar
+                applicationData={applicationData}
+                onAcceptApplicationClick={() => setStep(1)}
+                onRejectApplicationClick={() => setStep(2)}
+                onResubmitApplicationClick={() => setStep(3)}
+              />
+            </Flex>
+          </Flex>
+        </Flex>
 
-            <Application applicationData={applicationData} />
-          </Container>
-
-          <Sidebar
-            applicationData={applicationData}
-            onAcceptApplicationClick={() => setStep(1)}
-            onRejectApplicationClick={() => setStep(2)}
-            onResubmitApplicationClick={() => setStep(3)}
-          />
-        </Container>
-      </Container>
+      </Flex>
     );
   }
 

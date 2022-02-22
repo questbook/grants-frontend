@@ -284,7 +284,7 @@ function Form({
   };
 
   return (
-    <Flex mt="30px" flexDirection="column" alignItems="center" w="100%">
+    <Flex my="30px" flexDirection="column" alignItems="center" w="100%" px="44px">
       <Image h="96px" w="96px" src={daoLogo} alt="Polygon DAO" />
       <Text mt={6} variant="heading">
         {title}

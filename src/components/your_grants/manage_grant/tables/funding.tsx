@@ -8,9 +8,7 @@ import { ethers } from 'ethers';
 // import { getMilestoneTitle } from 'src/utils/formattingUtils';
 import { FundTransfer } from '../../../../graphql/queries';
 import { getAssetInfo } from '../../../../utils/tokenUtils';
-import { formatAmount, getMilestoneTitle } from '../../../../utils/formattingUtils';
-
-const getTextWithEllipses = (txt: string, maxLength = 7) => (txt.length > maxLength ? `${txt.slice(0, maxLength)}...` : txt);
+import { formatAmount, getMilestoneTitle, getTextWithEllipses } from '../../../../utils/formattingUtils';
 
 const TABLE_HEADERS = {
   milestoneTitle: {

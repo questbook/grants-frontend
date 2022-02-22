@@ -1,4 +1,4 @@
-import React, { ChangeEventHandler } from 'react';
+import React, { ChangeEventHandler, useEffect } from 'react';
 import {
   Text, Flex, useTheme, Textarea, Box,
 } from '@chakra-ui/react';
@@ -43,7 +43,11 @@ function MultiLineInput({
   visible,
 }: MultiLineInputProps) {
   const theme = useTheme();
-  const [currentLength, setCurrentLength] = React.useState(0);
+  const [currentLength, setCurrentLength] = React.useState(value?.length);
+
+  useEffect(() => {
+    setCurrentLength(value?.length);
+  }, [value]);
 
   return (
     <Flex flex={1} direction="column" display={visible ? '' : 'none'}>
@@ -68,7 +72,6 @@ function MultiLineInput({
             maxLength === -1
             || (maxLength && maxLength > 0 && e.target.value.length <= maxLength)
           ) {
-            setCurrentLength(e.target.value.length);
             onChange(e);
           }
         }}
