@@ -33,6 +33,7 @@ function Sidebar({
               lineHeight="24px"
               fontWeight="700"
               href={href}
+              isExternal
             >
               {label}
             </Link>

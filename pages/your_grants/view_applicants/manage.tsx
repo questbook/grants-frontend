@@ -293,7 +293,8 @@ function ManageGrant() {
             fontWeight="500"
             fontStyle="normal"
             color="#414E50"
-            href="view_grant"
+            href={`/your_grants/view_applicants/applicant_form/?applicationId=${applicationData.id}`}
+            target="_blank"
           >
             View Application
             {' '}

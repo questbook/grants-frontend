@@ -79,7 +79,7 @@ const TABLE_HEADERS = {
     content: (item: FundTransfer) => (
       <Link
         href={`https://etherscan.io/tx/${item.id}/`}
-        target="_blank"
+        isExternal
       >
         <Text
           color="brand.500"

@@ -56,7 +56,8 @@ function Sidebar({
             fontWeight="500"
             fontStyle="normal"
             color="#414E50"
-            href="view grant"
+            href={`/explore_grants/about_grant/?grantID=${applicationData.grant.id}`}
+            isExternal
           >
             View Grant
             {' '}
@@ -69,7 +70,8 @@ function Sidebar({
             fontWeight="500"
             fontStyle="normal"
             color="#414E50"
-            href="view grant"
+            href={`/your_grants/view_applicants/applicant_form/?applicationId=${applicationData.id}`}
+            isExternal
             ml="auto"
           >
             View Application
