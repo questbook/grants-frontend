@@ -369,7 +369,7 @@ function Form({
         {' '}
         By pressing Submit Application you&apos;ll have to approve this transaction in your wallet.
         {' '}
-        <Link href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46" target="_blank">Learn more</Link>
+        <Link href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46" isExternal>Learn more</Link>
         {' '}
         <Image
           display="inline-block"
