@@ -12,6 +12,7 @@ import React, {
 } from 'react';
 import { useAccount } from 'wagmi';
 import { BigNumber } from '@ethersproject/bignumber';
+import Empty from 'src/components/ui/empty';
 import AddFunds from '../../src/components/funds/add_funds_modal';
 import Heading from '../../src/components/ui/heading';
 import YourGrantCard from '../../src/components/your_grants/yourGrantCard';
@@ -220,24 +221,17 @@ function YourGrants() {
           })}
           {grants.filter((item) => item.workspace.id === workspaceId).length === 0 && (
             <Flex direction="column" justify="center" h="100%" align="center" mx={4} mt={10}>
-              <Image h="174px" w="146px" src="/illustrations/no_grants.svg" />
-              <Text
-                mt="17px"
-                fontFamily="Spartan, sans-serif"
-                fontSize="20px"
-                lineHeight="25px"
-                fontWeight="700"
-                textAlign="center"
-              >
-                {router.query.done
+              <Empty
+                src={`/illustrations/empty_states/${router.query.done ? 'first_grant.svg' : 'no_grants.svg'}`}
+                imgHeight="174px"
+                imgWidth="146px"
+                title={router.query.done
                   ? 'Your grant is being published..'
                   : 'It’s quite silent here!'}
-              </Text>
-              <Text mt="11px" fontWeight="400" textAlign="center">
-                {router.query.done
+                subtitle={router.query.done
                   ? 'You may visit this page after a while to see the published grant. Once published, the grant will be live and will be open for anyone to apply.'
                   : 'Get started by creating your grant and post it in less than 2 minutes.'}
-              </Text>
+              />
 
               {!router.query.done && (
               <Button

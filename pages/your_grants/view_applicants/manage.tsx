@@ -159,6 +159,7 @@ function ManageGrant() {
           columns={['milestoneTitle', 'date', 'from', 'action']}
           assetDecimals={18}
           grantId={applicationData.grant?.id}
+          type="funding_sent"
         />
       ),
     },
@@ -365,7 +366,7 @@ function ManageGrant() {
         {tabs[selected].content}
 
         <Flex direction="row" justify="center" mt={8}>
-          {applicationData.state !== 'completed' && (
+          {applicationData.state !== 'completed' && selected === 0 && (
             <Button
               variant="primary"
               onClick={() => setIsGrantCompleteModalOpen(true)}

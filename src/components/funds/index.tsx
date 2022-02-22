@@ -129,8 +129,10 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
         columns={[...TABS_MAP[selected].columns]}
         assetDecimals={fundingAssetDecimals}
         grantId={grant.id}
+        type={TABS_MAP[selected].type}
       />
 
+      {/* Modals */}
       <AddFunds
         isOpen={isAddFundsModalOpen}
         onClose={() => setIsAddFundsModalOpen(false)}

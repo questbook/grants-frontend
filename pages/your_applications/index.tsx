@@ -1,5 +1,5 @@
 import {
-  Container,
+  Container, Flex,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
@@ -8,6 +8,7 @@ import React, {
 import { gql } from '@apollo/client';
 import BN from 'bn.js';
 import { useAccount } from 'wagmi';
+import Empty from 'src/components/ui/empty';
 import Heading from '../../src/components/ui/heading';
 import YourApplicationCard from '../../src/components/your_applications/yourApplicationCard';
 import NavbarLayout from '../../src/layout/navbarLayout';
@@ -132,6 +133,18 @@ function YourApplications() {
               />
             )
           ))}
+
+        {myApplications.length === 0 && (
+        <Flex direction="column" mt={14} align="center">
+          <Empty
+            src="/illustrations/empty_states/no_applications.svg"
+            imgHeight="134px"
+            imgWidth="147px"
+            title="No applications"
+            subtitle="All your grant applications are shown here. Discover grants on our home page."
+          />
+        </Flex>
+        )}
 
       </Container>
     </Container>
