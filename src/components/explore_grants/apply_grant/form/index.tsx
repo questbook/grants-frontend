@@ -241,6 +241,7 @@ function Form({
       const { data: { ipfsHash } } = await apiClientContext
         .validatorApi
         .validateGrantApplicationCreate(data as unknown as GrantApplicationRequest);
+
       const transaction = await applicationRegistryContract.submitApplication(
         grantId,
         Number(workspaceId).toString(),

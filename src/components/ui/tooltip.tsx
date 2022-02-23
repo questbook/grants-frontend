@@ -10,7 +10,7 @@ function Tooltip({
   icon,
   placement,
 }: {
-  label: string;
+  label:string | (string | JSX.Element)[];
   h?: number | string;
   w?: number | string;
   icon?: string;
