@@ -12,6 +12,8 @@ import {
   useGetWorkspaceMembersLazyQuery,
 } from 'src/generated/graphql';
 import { MinimalWorkspace } from 'src/types';
+import { getChainIdFromResponse } from 'src/utils/formattingUtils';
+import { SupportedChainId } from 'src/constants/chains';
 import SignInNavbar from '../components/navbar/notConnected';
 import ConnectedNavbar from '../components/navbar/connected';
 import { ApiClientsContext } from '../../pages/_app';
@@ -148,7 +150,11 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 
   useEffect(() => {
     const id = workspaces[selectedWorkspaceIndex]?.id;
+    const chainId:SupportedChainId = Number(getChainIdFromResponse(
+      workspaces[selectedWorkspaceIndex]?.supportedNetworks[0],
+    ));
     apiClients?.setWorkspaceId(id);
+    apiClients?.setChainId(chainId);
   }, [apiClients, selectedWorkspaceIndex, workspaces]);
 
   return (

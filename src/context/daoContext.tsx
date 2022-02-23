@@ -1,9 +1,11 @@
 import { SupportedNetwork } from '@questbook/service-validator-client';
 import { ApiClientsContext } from 'pages/_app';
 import React, {
-  ReactNode, useCallback, useContext, useMemo,
+  createContext,
+  ReactNode, useCallback, useContext, useMemo, useState,
 } from 'react';
 import { SupportedChainId } from 'src/constants/chains';
+import useGetSelectedNetwork from 'src/hooks/useGetSelectedNetwork';
 import useWorkspaceRegistryContract from 'src/hooks/useWorkspaceRegistryContract';
 import { WorkspaceData } from 'src/types/workspace';
 import { uploadToIPFS } from 'src/utils/ipfsUtils';
@@ -26,17 +28,18 @@ const daoContextDefaultValues: DaoContextType = {
   daoCreated: false,
 };
 
-export const DaoContext = React.createContext<DaoContextType>(daoContextDefaultValues);
+export const DaoContext = createContext<DaoContextType>(daoContextDefaultValues);
 
 export function DaoProvider({ children }: Props) {
-  const [loading, setLoading] = React.useState(false);
-  const [daoCreated, setDaoCreated] = React.useState(false);
-  const [daoData, setDaoData] = React.useState<WorkspaceData>();
+  const [loading, setLoading] = useState(false);
+  const [daoCreated, setDaoCreated] = useState(false);
+  const [daoData, setDaoData] = useState<WorkspaceData>();
   const [{ data: accountData }] = useAccount();
   const apiClients = useContext(ApiClientsContext);
   const { showErrorToast } = useToastContext();
+  const selectedChainId = useGetSelectedNetwork();
   const workspaceFactoryContract = useWorkspaceRegistryContract(
-    apiClients?.chainId || SupportedChainId.RINKEBY,
+    selectedChainId || SupportedChainId.RINKEBY,
   );
   const createWorkspace = useCallback(async (data: WorkspaceData) => {
     try {

@@ -1965,7 +1965,7 @@ export type GetWorkspaceMembersQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, workspace: { __typename?: 'Workspace', id: string, ownerId: string, logoIpfsHash: string, title: string } }> };
+export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, workspace: { __typename?: 'Workspace', id: string, ownerId: string, logoIpfsHash: string, title: string, supportedNetworks: Array<SupportedNetwork> } }> };
 
 
 export const GetAllGrantsDocument = gql`
@@ -2715,6 +2715,7 @@ export const GetWorkspaceMembersDocument = gql`
       ownerId
       logoIpfsHash
       title
+      supportedNetworks
     }
   }
 }

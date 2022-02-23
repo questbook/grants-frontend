@@ -132,4 +132,4 @@ export function getMilestoneTitle(milestone: FundTransfer['milestone']) {
 
 export const getTextWithEllipses = (txt: string, maxLength = 7) => (txt.length > maxLength ? `${txt.slice(0, maxLength)}...` : txt);
 
-export const getChainIdFromResponse = (networkString: string):string => networkString.split('_')[1];
+export const getChainIdFromResponse = (networkString: string):string => networkString?.split('_')[1];
