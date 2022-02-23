@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import React, {
   ReactElement, useCallback, useContext, useEffect, useRef, useState,
 } from 'react';
-import { useGetAllGrantsLazyQuery, GetAllGrantsQuery } from 'src/generated/graphql';
+import { useGetAllGrantsLazyQuery, GetAllGrantsQuery, useGetGrantsAppliedToLazyQuery } from 'src/generated/graphql';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import { useAccount } from 'wagmi';
 import GrantCard from '../src/components/browse_grants/grantCard';
@@ -23,23 +23,58 @@ function BrowseGrants() {
   const subgraphClient = useContext(ApiClientsContext)?.subgraphClient.client;
 
   const [getAllGrants] = useGetAllGrantsLazyQuery({ client: subgraphClient });
+  const [getGrantsAppliedTo] = useGetGrantsAppliedToLazyQuery({ client: subgraphClient });
 
   const toast = useToast();
   const [grants, setGrants] = useState<GetAllGrantsQuery['grants']>([]);
 
   const [currentPage, setCurrentPage] = useState(0);
+  const [grantsAppliedTo, setGrantsAppliedTo] = React.useState<string[]>();
+
+  const getGrantsAppliedToData = async () => {
+    if (!subgraphClient) return;
+    setCurrentPage(0);
+    if (!accountData?.address) {
+      setGrantsAppliedTo([]);
+      return;
+    }
+
+    try {
+      const { data } = await getGrantsAppliedTo({
+        variables: {
+          applicantID: accountData?.address,
+        },
+      });
+      if (data) {
+        const temp: string[] = [];
+        data.grantApplications.forEach((grantApplication) => {
+          temp.push(grantApplication.grant.id);
+        });
+        setGrantsAppliedTo(temp);
+      }
+    } catch (e) {
+      // console.log(e);
+      toast({
+        title: 'Error loading grants applied to',
+        status: 'error',
+      });
+    }
+  };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getGrantData = async () => {
     if (!subgraphClient) return;
+    console.log('APPLIED TO: ', grantsAppliedTo);
     try {
       const { data } = await getAllGrants({
         variables: {
           first: PAGE_SIZE,
           skip: currentPage * PAGE_SIZE,
+          appliedTo: grantsAppliedTo,
         },
       });
       if (data) {
+        // data.grants.forEach((grant) => { console.log(grant.id); });
         setCurrentPage(currentPage + 1);
         setGrants([...grants, ...data.grants]);
       }
@@ -66,9 +101,15 @@ function BrowseGrants() {
   }, [containerRef, getGrantData]);
 
   useEffect(() => {
-    getGrantData();
+    getGrantsAppliedToData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountData?.address]);
+
+  useEffect(() => {
+    console.log('grantsAppliedTo', grantsAppliedTo);
+    getGrantData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grantsAppliedTo]);
 
   useEffect(() => {
     const { current } = containerRef;

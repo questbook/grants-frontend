@@ -1851,6 +1851,7 @@ export enum _SubgraphErrorPolicy_ {
 export type GetAllGrantsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
+  appliedTo?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
 }>;
 
 
@@ -1926,6 +1927,15 @@ export type GetGrantDetailsQueryVariables = Exact<{
 
 export type GetGrantDetailsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType }>, reward: { __typename?: 'Reward', id: string, asset: string, committed: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string } }> };
 
+export type GetGrantsAppliedToQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+  applicantID: Scalars['Bytes'];
+}>;
+
+
+export type GetGrantsAppliedToQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, grant: { __typename?: 'Grant', id: string } }> };
+
 export type GetMyApplicationsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
@@ -1969,12 +1979,12 @@ export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers:
 
 
 export const GetAllGrantsDocument = gql`
-    query getAllGrants($first: Int, $skip: Int) {
+    query getAllGrants($first: Int, $skip: Int, $appliedTo: [ID!]) {
   grants(
     first: $first
     skip: $skip
     subgraphError: allow
-    where: {acceptingApplications: true}
+    where: {acceptingApplications: true, id_not_in: $appliedTo}
     orderBy: createdAtS
     orderDirection: desc
   ) {
@@ -2013,6 +2023,7 @@ export const GetAllGrantsDocument = gql`
  *   variables: {
  *      first: // value for 'first'
  *      skip: // value for 'skip'
+ *      appliedTo: // value for 'appliedTo'
  *   },
  * });
  */
@@ -2522,6 +2533,51 @@ export function useGetGrantDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetGrantDetailsQueryHookResult = ReturnType<typeof useGetGrantDetailsQuery>;
 export type GetGrantDetailsLazyQueryHookResult = ReturnType<typeof useGetGrantDetailsLazyQuery>;
 export type GetGrantDetailsQueryResult = Apollo.QueryResult<GetGrantDetailsQuery, GetGrantDetailsQueryVariables>;
+export const GetGrantsAppliedToDocument = gql`
+    query getGrantsAppliedTo($first: Int, $skip: Int, $applicantID: Bytes!) {
+  grantApplications(
+    first: $first
+    skip: $skip
+    where: {applicantId: $applicantID}
+    subgraphError: allow
+  ) {
+    id
+    grant {
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetGrantsAppliedToQuery__
+ *
+ * To run a query within a React component, call `useGetGrantsAppliedToQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGrantsAppliedToQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGrantsAppliedToQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *      applicantID: // value for 'applicantID'
+ *   },
+ * });
+ */
+export function useGetGrantsAppliedToQuery(baseOptions: Apollo.QueryHookOptions<GetGrantsAppliedToQuery, GetGrantsAppliedToQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetGrantsAppliedToQuery, GetGrantsAppliedToQueryVariables>(GetGrantsAppliedToDocument, options);
+      }
+export function useGetGrantsAppliedToLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetGrantsAppliedToQuery, GetGrantsAppliedToQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetGrantsAppliedToQuery, GetGrantsAppliedToQueryVariables>(GetGrantsAppliedToDocument, options);
+        }
+export type GetGrantsAppliedToQueryHookResult = ReturnType<typeof useGetGrantsAppliedToQuery>;
+export type GetGrantsAppliedToLazyQueryHookResult = ReturnType<typeof useGetGrantsAppliedToLazyQuery>;
+export type GetGrantsAppliedToQueryResult = Apollo.QueryResult<GetGrantsAppliedToQuery, GetGrantsAppliedToQueryVariables>;
 export const GetMyApplicationsDocument = gql`
     query getMyApplications($first: Int, $skip: Int, $applicantID: Bytes!) {
   grantApplications(

@@ -1,0 +1,14 @@
+query getGrantsAppliedTo($first: Int, $skip: Int, $applicantID: Bytes!) {
+  grantApplications(
+    first: $first, 
+    skip: $skip, 
+    where:{
+    applicantId: $applicantID
+  },
+  subgraphError:allow) {
+    id
+    grant {
+      id
+    }
+  }
+}
