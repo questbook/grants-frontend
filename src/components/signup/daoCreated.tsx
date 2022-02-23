@@ -57,7 +57,8 @@ function DaoCreated({
           {' '}
           <Link
             style={{ textDecoration: 'underline' }}
-            href="learn more"
+            href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
+            isExternal
             variant="black"
           >
             Learn more

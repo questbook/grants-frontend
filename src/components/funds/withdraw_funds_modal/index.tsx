@@ -198,7 +198,7 @@ function WithdrawFunds({
             ))}
           </Flex>
 
-          <Link mx={1} href={`https://etherscan.io/tx/${transactionHash}`} target="_blank" variant="footer" fontWeight="700" color="brand.500">
+          <Link mx={1} href={`https://etherscan.io/tx/${transactionHash}`} isExternal variant="footer" fontWeight="700" color="brand.500">
             Learn more
             <Image
               ml={1}

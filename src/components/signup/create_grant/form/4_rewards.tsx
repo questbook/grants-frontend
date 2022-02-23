@@ -105,7 +105,7 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
           By pressing Publish Grant you&apos;ll have to approve this transaction
           in your wallet.
           {' '}
-          <Link href="wallet">Learn more</Link>
+          <Link href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46" isExternal>Learn more</Link>
           {' '}
           <Image
             display="inline-block"

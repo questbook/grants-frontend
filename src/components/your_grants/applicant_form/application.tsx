@@ -91,7 +91,7 @@ function Application({ applicationData }: Props) {
             <Heading variant="applicationHeading" mt={10}>Project Link</Heading>
             {projectLink.map((link: string) => (
               <Text variant="applicationText" mt={2}>
-                <Link href={link}>{link}</Link>
+                <Link href={link} isExternal>{link}</Link>
               </Text>
             ))}
           </Box>

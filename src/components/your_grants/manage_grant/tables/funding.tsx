@@ -95,7 +95,7 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
     content: (item) => (
       <Link
         href={`https://etherscan.io/tx/${item.id}/`}
-        target="_blank"
+        isExternal
       >
         <Text
           color="brand.500"
