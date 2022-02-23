@@ -2,11 +2,13 @@ import {
   Box, Button, Center, CircularProgress, Flex, Text, Image, Link,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
+import { getChainIdFromResponse } from 'src/utils/formattingUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { SupportedChainId } from 'src/constants/chains';
 import CoverUpload from '../ui/forms/coverUpload';
 import ImageUpload from '../ui/forms/imageUpload';
 import MultiLineInput from '../ui/forms/multiLineInput';
 import SingleLineInput from '../ui/forms/singleLineInput';
-import supportedNetworks from '../../constants/supportedNetworks.json';
 
 function EditForm({
   onSubmit: onFormSubmit,
@@ -52,12 +54,8 @@ function EditForm({
     if (!formData) {
       return;
     }
-    const chainId = formData.supportedNetwork.split('_')[1];
-    const supportedChainIds = Object.keys(supportedNetworks);
-    const networkSupported = supportedChainIds.includes(chainId);
-    const networkName = networkSupported
-      ? supportedNetworks[chainId as keyof typeof supportedNetworks].name
-      : 'Unsupported Network';
+    const chainId = getChainIdFromResponse(formData.supportedNetwork);
+    const networkName = CHAIN_INFO[chainId as unknown as SupportedChainId].name;
     setDaoName(formData.name);
     setDaoAbout(formData.about);
     setSupportedNetwork(networkName);

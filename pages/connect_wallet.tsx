@@ -10,18 +10,19 @@ import {
 import { useRouter } from 'next/router';
 import React, { ReactElement, useEffect } from 'react';
 import { useConnect } from 'wagmi';
+import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from 'src/constants/chains';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ModalContent from '../src/components/connect_wallet/modalContent';
 import WalletSelectButton from '../src/components/connect_wallet/walletSelectButton';
 import Modal from '../src/components/ui/modal';
 import SecondaryDropdown from '../src/components/ui/secondaryDropdown';
 import Tooltip from '../src/components/ui/tooltip';
 import NavbarLayout from '../src/layout/navbarLayout';
-import compatibleNetworks from '../src/constants/compatibleNetworks.json';
 import strings from '../src/constants/strings.json';
 
 function ConnectWallet() {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [selectedNetworkId, setSelectedNetworkId] = React.useState(1);
+  const [selectedNetworkId, setSelectedNetworkId] = React.useState(4);
   const router = useRouter();
 
   const [{ data: connectData, loading: connectLoading }] = useConnect();
@@ -82,16 +83,11 @@ function ConnectWallet() {
           // isOpen={isMenuOpen}
           // setIsOpen={setIsMenuOpen}
           listItemsMinWidth="280px"
-          listItems={Object.keys(compatibleNetworks)
-            .sort((a, b) => parseInt(b, 10) - parseInt(a, 10)).map((networkId: any) => ({
-              id: networkId,
-              label: compatibleNetworks[
-                networkId.toString() as keyof typeof compatibleNetworks
-              ].name,
-              icon: compatibleNetworks[
-                networkId.toString() as keyof typeof compatibleNetworks
-              ].icon,
-            }))}
+          listItems={ALL_SUPPORTED_CHAIN_IDS.map((chainId: SupportedChainId) => ({
+            id: chainId,
+            label: CHAIN_INFO[chainId].name,
+            icon: CHAIN_INFO[chainId].icon,
+          }))}
           // value={rewardCurrency}
           onChange={(id: number) => {
             setSelectedNetworkId(id);
@@ -114,21 +110,22 @@ function ConnectWallet() {
         flexDirection="column"
         mt={7}
       >
-        {compatibleNetworks[
-          selectedNetworkId.toString() as keyof typeof compatibleNetworks
-        ].wallets.map(({ name, icon, id }) => (
-          <WalletSelectButton
-            key={id}
-            name={name}
-            icon={icon}
-            onClick={() => {
-              const connector = data.connectors.find((x) => x.id === id);
-              if (connector) {
-                connect(connector);
-              }
-            }}
-          />
-        ))}
+        {
+        CHAIN_INFO[selectedNetworkId]
+          .wallets.map(({ name, icon, id }) => (
+            <WalletSelectButton
+              key={id}
+              name={name}
+              icon={icon}
+              onClick={() => {
+                const connector = data.connectors.find((x) => x.id === id);
+                if (connector) {
+                  connect(connector);
+                }
+              }}
+            />
+          ))
+}
       </VStack>
 
       {router.query.flow !== 'getting_started/developer' && (

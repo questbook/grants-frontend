@@ -4,7 +4,7 @@ import {
 import React from 'react';
 
 interface Props {
-  link: string;
+  link: string | undefined;
   close: () => void;
 }
 

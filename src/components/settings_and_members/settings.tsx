@@ -4,6 +4,9 @@ import {
 import React, { useEffect, useContext } from 'react';
 import { useContract, useSigner } from 'wagmi';
 import { Workspace } from 'src/types';
+import useIsCorrectNetworkSelected from 'src/hooks/useIsCorrectNetwork';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { useToastContext } from 'src/context/toastContext';
 import config from '../../constants/config';
 import WorkspaceRegistryABI from '../../contracts/abi/WorkspaceRegistryAbi.json';
 import EditForm from './edit_form';
@@ -31,6 +34,7 @@ function Settings({
   } | null>();
 
   const [signerStates] = useSigner();
+  const { showErrorToast } = useToastContext();
 
   const contract = useContract({
     addressOrName: config.WorkspaceRegistryAddress,
@@ -61,6 +65,7 @@ function Settings({
       ),
     });
   };
+  const isCorrectNetworkSelected = useIsCorrectNetworkSelected(apiClients?.chainId);
 
   const handleFormSubmit = async (data: {
     name: string;
@@ -74,6 +79,11 @@ function Settings({
     if (!apiClients) return;
     try {
       const { validatorApi } = apiClients;
+
+      if (!isCorrectNetworkSelected && apiClients && apiClients.chainId) {
+        throw Error(`You are on the wrong network. Please switch to ${CHAIN_INFO[apiClients.chainId].name}`);
+      }
+
       let imageHash = workspaceData.logoIpfsHash;
       let coverImageHash = workspaceData.coverImageIpfsHash;
       const socials = [];
@@ -119,13 +129,10 @@ function Settings({
       window.location.reload();
 
       showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
-    } catch (error) {
+    } catch (error: any) {
       setHasClicked(false);
       // console.log(error);
-      toast({
-        title: 'Application update not indexed',
-        status: 'error',
-      });
+      showErrorToast(error.message as string);
     }
     // await subgraphClient.waitForBlock(transactionData.blockNumber);
   };

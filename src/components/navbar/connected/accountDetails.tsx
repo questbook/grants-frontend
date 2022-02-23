@@ -4,7 +4,9 @@ import {
 } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
-import supportedNetworks from '../../../constants/supportedNetworks.json';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
+import useGetSelectedNetwork from 'src/hooks/useGetSelectedNetwork';
+import { truncateStringFromMiddle } from 'src/utils/formattingUtils';
 
 export interface Props {
   networkId: number;
@@ -12,12 +14,11 @@ export interface Props {
   address: string;
 }
 
-function AccountDetails({ networkId, isOnline, address }: Props) {
-  const formattedAddress = `${address.substring(0, 4)}......${address.substring(address.length - 4)}`;
-  const supportedChainIds = Object.keys(supportedNetworks);
-  const networkSupported = supportedChainIds.includes(networkId.toString());
-  const [, disconnect] = useAccount();
+function AccountDetails({ isOnline, address }: Props) {
+  const [,disconnect] = useAccount();
   const router = useRouter();
+
+  const chainId = useGetSelectedNetwork();
 
   return (
     <Menu>
@@ -36,11 +37,7 @@ function AccountDetails({ networkId, isOnline, address }: Props) {
             h={8}
             w={8}
             src={
-          supportedNetworks[
-            networkSupported
-              ? networkId.toString() as keyof typeof supportedNetworks
-              : 1
-          ].icon
+           chainId ? CHAIN_INFO[chainId].icon : '/wallet_icons/unknown.png'
         }
             alt="current network"
           />
@@ -50,23 +47,18 @@ function AccountDetails({ networkId, isOnline, address }: Props) {
                 mt="-3px"
                 mr={1}
                 src="/ui_icons/online.svg"
-                visibility={isOnline ? 'visible' : 'hidden'}
+                visibility={isOnline && chainId ? 'visible' : 'hidden'}
                 alt="wallet connected"
               />
               <Text fontSize="9px" lineHeight="14px" fontWeight="500" color="#122224">
-                {
-              networkSupported
-                ? supportedNetworks[
-                  networkId.toString() as keyof typeof supportedNetworks
-                ].name
-                : 'Unsupported Network'
-            }
+                {chainId ? CHAIN_INFO[chainId].name : ''}
               </Text>
             </Flex>
 
             <Flex>
               <Text color="#122224" fontWeight="700" fontSize="16px" lineHeight="24px">
-                {formattedAddress}
+                {/* {formattedAddress} */}
+                {truncateStringFromMiddle(address)}
               </Text>
             </Flex>
           </VStack>

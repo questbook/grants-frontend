@@ -104,7 +104,7 @@ export function getFormattedFullDateFromUnixTimestamp(timestamp: number) {
 export function truncateStringFromMiddle(str:string) {
   if (!str) return '';
   if (str.length > 10) {
-    return `${str.substring(0, 4)}...${str.substring(str.length - 4, str.length)}`;
+    return `${str.substring(0, 4)}......${str.substring(str.length - 4, str.length)}`;
   }
   return str;
 }
@@ -131,3 +131,5 @@ export function getMilestoneTitle(milestone: FundTransfer['milestone']) {
 }
 
 export const getTextWithEllipses = (txt: string, maxLength = 7) => (txt.length > maxLength ? `${txt.slice(0, maxLength)}...` : txt);
+
+export const getChainIdFromResponse = (networkString: string):string => networkString.split('_')[1];

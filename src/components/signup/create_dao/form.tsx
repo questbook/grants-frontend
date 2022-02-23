@@ -8,53 +8,27 @@ import {
   CircularProgress,
   Center,
 } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
-import { useNetwork } from 'wagmi';
+import React from 'react';
 import { highlightWordsInString } from 'src/utils/formattingUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { SupportedChainId } from 'src/constants/chains';
+import useGetSelectedNetwork from 'src/hooks/useGetSelectedNetwork';
+import useIsSupportedNetwork from 'src/hooks/useIsSupportedNetwork';
 import ImageUpload from '../../ui/forms/imageUpload';
 import MultiLineInput from '../../ui/forms/multiLineInput';
 import SingleLineInput from '../../ui/forms/singleLineInput';
 import Tooltip from '../../ui/tooltip';
-import supportedNetworks from '../../../constants/supportedNetworks.json';
 
 function Form({
   hasClicked,
   onSubmit: onFormSubmit,
 }: {
-  onSubmit: (data: {
-    name: string;
-    description: string;
-    image: File;
-    network: string;
-  }) => void;
+  onSubmit: (data:
+  { name: string; description: string; image: File, network: SupportedChainId }) => void;
   hasClicked: boolean;
 }) {
-  const [{ data: networkData }] = useNetwork();
-  const [networkSupported, setNetworkSupported] = React.useState(false);
-
-  useEffect(() => {
-    if (!networkData.chain || !networkData.chain.id) {
-      return;
-    }
-    const supportedChainIds = Object.keys(supportedNetworks);
-    const isSupported = supportedChainIds.includes(
-      networkData.chain.id.toString(),
-    );
-    setNetworkSupported(isSupported);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (!networkData.chain || !networkData.chain.id) {
-      return;
-    }
-    const supportedChainIds = Object.keys(supportedNetworks);
-    const isSupported = supportedChainIds.includes(
-      networkData.chain.id.toString(),
-    );
-    setNetworkSupported(isSupported);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [networkData]);
+  const isSupportedNetwork = useIsSupportedNetwork();
+  const selectedNetwork : SupportedChainId | undefined = useGetSelectedNetwork();
 
   const [daoName, setDaoName] = React.useState('');
   const [daoNameError, setDaoNameError] = React.useState(false);
@@ -85,12 +59,15 @@ function Form({
       setDaoDescriptionError(true);
       error = true;
     }
-    if (!networkSupported) {
-      error = true;
-    }
+
     if (image === null || imageFile === null) {
       setImageError(true);
       error = true;
+    }
+
+    if (!selectedNetwork) {
+      error = true;
+      return;
     }
 
     if (error) return;
@@ -99,7 +76,7 @@ function Form({
       name: daoName,
       description: daoDescription,
       image: imageFile!,
-      network: networkData.chain!.id.toString(),
+      network: selectedNetwork,
     });
   };
 
@@ -147,38 +124,19 @@ function Form({
           <SingleLineInput
             label="Network"
             placeholder="Network"
-            value={
-              networkSupported
-                ? supportedNetworks[
-                  networkData.chain?.id.toString() as keyof typeof supportedNetworks
-                ].name
-                : 'Network not supported'
-            }
+            value={selectedNetwork && isSupportedNetwork ? (
+              CHAIN_INFO[selectedNetwork].name
+            ) : 'Network not supported'}
             onChange={() => {}}
             isError={false}
             disabled
             inputRightElement={(
               <Tooltip
                 icon="/ui_icons/error.svg"
-                label={
-                  networkSupported
-                    ? highlightWordsInString(
-                      `Your wallet is connected to the ${
-                        supportedNetworks[
-                          networkData.chain?.id.toString() as keyof typeof supportedNetworks
-                        ].name
-                      } Network. Your GrantsDAO will be created on the same network. To create a GrantsDAO on another network, connect a different wallet.`,
-                      [
-                        `${
-                          supportedNetworks[
-                            networkData.chain?.id.toString() as keyof typeof supportedNetworks
-                          ].name
-                        } Network`,
-                      ],
-                      '#122224',
-                    )
-                    : 'Select a supported network'
-                }
+                label={selectedNetwork && isSupportedNetwork ? (
+                  highlightWordsInString(`Your wallet is connected to the ${CHAIN_INFO[selectedNetwork].name} Network. Your GrantsDAO will be created on the same network.
+    To create a GrantsDAO on another network, connect a different wallet.`, [`${CHAIN_INFO[selectedNetwork].name} Network`], '#122224')
+                ) : 'Select a supported network'}
               />
             )}
           />
