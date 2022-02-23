@@ -99,7 +99,7 @@ function SignupDao() {
     );
   }
 
-  if (loading) {
+  if (workspaceLoading) {
     return <Loading />;
   }
   return (

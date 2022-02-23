@@ -1,14 +1,13 @@
 import React, { useContext, useEffect } from 'react';
 import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
-import config from 'src/constants/config';
 import {
-  useAccount, useContract, useNetwork, useSigner,
+  useAccount, useNetwork,
 } from 'wagmi';
 import { SupportedNetwork } from '@questbook/service-validator-client';
 import { uploadToIPFS } from 'src/utils/ipfsUtils';
 import ErrorToast from '../components/ui/toasts/errorToast';
-import WorkspaceRegistryABI from '../contracts/abi/WorkspaceRegistryAbi.json';
+import useWorkspaceRegistryContract from './useWorkspaceRegistryContract';
 
 export default function useCreateWorkspace(data: any, chainId?: string) {
   const [error, setError] = React.useState<string>();
@@ -20,26 +19,7 @@ export default function useCreateWorkspace(data: any, chainId?: string) {
 
   const apiClients = useContext(ApiClientsContext)!;
   const { validatorApi, workspace } = apiClients;
-  const [signerStates] = useSigner();
-
-  const [addressOrName, setAddressOrName] = React.useState<string>();
-  useEffect(() => {
-    if (!chainId) {
-      if (workspace && workspace.chainId && workspace.chainId === 'chain_4') {
-        setAddressOrName(config.WorkspaceRegistryAddress);
-      }
-    }
-    if (chainId === '1') {
-      setAddressOrName(config.WorkspaceRegistryAddress);
-    }
-  }, [chainId, workspace]);
-
-  const workspaceFactoryContract = useContract({
-    addressOrName:
-      addressOrName ?? '0x0000000000000000000000000000000000000000',
-    contractInterface: WorkspaceRegistryABI,
-    signerOrProvider: signerStates.data,
-  });
+  const workspaceRegistryContract = useWorkspaceRegistryContract(workspace, chainId);
 
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
@@ -75,7 +55,7 @@ export default function useCreateWorkspace(data: any, chainId?: string) {
         throw new Error('Error validating grant data');
       }
       try {
-        const createWorkspaceTransaction = await workspaceFactoryContract.createWorkspace(
+        const createWorkspaceTransaction = await workspaceRegistryContract.createWorkspace(
           ipfsHash,
         );
         const createWorkspaceTransactionData = await createWorkspaceTransaction.wait();
@@ -112,11 +92,11 @@ export default function useCreateWorkspace(data: any, chainId?: string) {
         throw new Error('validatorApi or workspaceId is not defined');
       }
       if (
-        !workspaceFactoryContract
-        || workspaceFactoryContract.address
+        !workspaceRegistryContract
+        || workspaceRegistryContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !workspaceFactoryContract.signer
-        || !workspaceFactoryContract.provider
+        || !workspaceRegistryContract.signer
+        || !workspaceRegistryContract.provider
       ) {
         return;
       }
@@ -141,7 +121,7 @@ export default function useCreateWorkspace(data: any, chainId?: string) {
     loading,
     toast,
     transactionData,
-    workspaceFactoryContract,
+    workspaceRegistryContract,
     validatorApi,
     workspace,
     accountData,
