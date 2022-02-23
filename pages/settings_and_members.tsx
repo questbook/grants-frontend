@@ -38,7 +38,6 @@ function SettingsAndMembers() {
 
   useEffect(() => {
     if (!workspaceId) return;
-    console.log('getting called ', workspaceId);
     getWorkspaceData(workspaceId);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceId]);

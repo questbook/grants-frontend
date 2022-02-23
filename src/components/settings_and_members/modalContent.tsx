@@ -1,20 +1,16 @@
 import {
-  ModalBody, Button, Text, Box, useToast, Flex, Image, Link,
+  ModalBody, Button, Text, Box, Flex, Image, Link, Center, CircularProgress,
 } from '@chakra-ui/react';
-import React, { useContext } from 'react';
-import { useContract, useSigner } from 'wagmi';
+import React from 'react';
 import { isValidAddress, isValidEmail } from 'src/utils/validationUtils';
+import { useDaoContext } from 'src/context/daoContext';
 import SingleLineInput from '../ui/forms/singleLineInput';
-import config from '../../constants/config';
-import WorkspaceRegistryABI from '../../contracts/abi/WorkspaceRegistryAbi.json';
-import { ApiClientsContext } from '../../../pages/_app';
 
 interface Props {
   onClose: () => void;
 }
 
 function ModalContent({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onClose,
 }: Props) {
   const [memberAddress, setMemberAddress] = React.useState('');
@@ -23,15 +19,7 @@ function ModalContent({
   const [memberEmail, setMemberEmail] = React.useState('');
   const [memberEmailError, setMemberEmailError] = React.useState(false);
 
-  const [signerStates] = useSigner();
-  const toast = useToast();
-  const workspaceFactoryContract = useContract({
-    addressOrName: config.WorkspaceRegistryAddress,
-    contractInterface: WorkspaceRegistryABI,
-    signerOrProvider: signerStates.data,
-  });
-  const workspaceId = useContext(ApiClientsContext)?.workspaceId;
-
+  const { addWorkspaceAdmins, addingMember } = useDaoContext();
   const addMember = async () => {
     let hasError = false;
 
@@ -40,36 +28,15 @@ function ModalContent({
       hasError = true;
     }
 
-    if (!memberEmail || memberEmail.length === 0 || !isValidEmail(memberEmail)) {
+    if (memberEmail && memberEmail.length !== 0 && !isValidEmail(memberEmail)) {
       setMemberEmailError(true);
       hasError = true;
     }
 
     if (hasError) return;
 
-    toast({
-      title: 'Adding member',
-      status: 'info',
-      duration: 9000,
-      isClosable: true,
-    });
-    try {
-      const txn = await workspaceFactoryContract.addWorkspaceAdmins(workspaceId, [memberAddress], [memberEmail ?? '']);
-      await txn.wait();
-      toast({
-        title: 'Member added',
-        status: 'info',
-        duration: 9000,
-        isClosable: true,
-      });
-    } catch (e: any) {
-      toast({
-        title: e.message,
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
-      });
-    }
+    await addWorkspaceAdmins({ memberAddress, memberEmail });
+    onClose();
   };
 
   return (
@@ -129,7 +96,17 @@ function ModalContent({
         </Text>
       </Flex>
       <Box my={4} />
-      <Button w="100%" variant="primary" onClick={addMember}>Send Invite</Button>
+      {
+  addingMember ? (
+
+    <Center>
+      <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
+    </Center>
+  ) : (
+    <Button w="100%" variant="primary" onClick={addMember}>Send Invite</Button>
+
+  )
+    }
       <Box my={8} />
     </ModalBody>
   );

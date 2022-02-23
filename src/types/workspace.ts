@@ -7,3 +7,8 @@ export interface WorkspaceData {
   network: SupportedChainId;
   id?: string;
 }
+
+export interface WorkspaceMemberData {
+  memberAddress: string;
+  memberEmail: string;
+}

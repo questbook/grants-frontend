@@ -9,7 +9,7 @@ import { SupportedChainId } from 'src/constants/chains';
 import useGetSelectedNetwork from 'src/hooks/useGetSelectedNetwork';
 import useIsCorrectNetworkSelected from 'src/hooks/useIsCorrectNetwork';
 import useWorkspaceRegistryContract from 'src/hooks/useWorkspaceRegistryContract';
-import { WorkspaceData } from 'src/types/workspace';
+import { WorkspaceData, WorkspaceMemberData } from 'src/types/workspace';
 import { uploadToIPFS } from 'src/utils/ipfsUtils';
 import { useAccount } from 'wagmi';
 import { useToastContext } from './toastContext';
@@ -20,18 +20,22 @@ type Props = {
 type DaoContextType = {
   createWorkspace: (data:WorkspaceData) => void;
   editWorkspace: (data:any, workspaceData: any) => void;
+  addWorkspaceAdmins: (data:WorkspaceMemberData) => void;
   loading: boolean;
   hasClicked: boolean;
   daoData: WorkspaceData | undefined;
   daoCreated: boolean;
+  addingMember: boolean;
 };
 const daoContextDefaultValues: DaoContextType = {
   createWorkspace: () => {},
   editWorkspace: () => {},
+  addWorkspaceAdmins: () => {},
   loading: false,
   hasClicked: false,
   daoData: undefined,
   daoCreated: false,
+  addingMember: false,
 };
 
 export const DaoContext = createContext<DaoContextType>(daoContextDefaultValues);
@@ -171,9 +175,36 @@ export function DaoProvider({ children }: Props) {
   }, [apiClients,
     isCorrectNetworkSelected, showErrorToast, showInfoToast, workspaceFactoryContractExisting]);
 
+  const [addingMember, setAddingMember] = useState(false);
+  const addWorkspaceAdmins = useCallback(async (data: WorkspaceMemberData) => {
+    const { memberAddress, memberEmail } = data;
+
+    try {
+      if (!isCorrectNetworkSelected && apiClients && apiClients.chainId) {
+        throw Error(`You are on the wrong network. Please switch to ${CHAIN_INFO[apiClients.chainId].name}`);
+      }
+      setAddingMember(true);
+      const txn = await workspaceFactoryContractExisting.addWorkspaceAdmins(apiClients?.workspaceId, [memberAddress], [memberEmail ?? '']);
+      await txn.wait();
+      showInfoToast('Member added');
+      setAddingMember(false);
+    } catch (error: any) {
+      showErrorToast(error.message);
+      setAddingMember(false);
+    }
+  }, [apiClients,
+    isCorrectNetworkSelected, showErrorToast, showInfoToast, workspaceFactoryContractExisting]);
   const value = useMemo(() => ({
-    createWorkspace, daoCreated, daoData, loading, editWorkspace, hasClicked,
-  }), [createWorkspace, daoCreated, daoData, editWorkspace, hasClicked, loading]);
+    createWorkspace,
+    daoCreated,
+    daoData,
+    loading,
+    editWorkspace,
+    hasClicked,
+    addWorkspaceAdmins,
+    addingMember,
+  }), [createWorkspace,
+    daoCreated, daoData, editWorkspace, hasClicked, loading, addWorkspaceAdmins, addingMember]);
   return (
     <DaoContext.Provider value={value}>
       {children}
