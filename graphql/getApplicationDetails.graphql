@@ -29,7 +29,8 @@ query getApplicationDetails($applicationID: ID!) {
     }
     applicantId
     state
-    feedback
+    feedbackDao,
+    feedbackDev,
     createdAtS
     updatedAtS
   }
