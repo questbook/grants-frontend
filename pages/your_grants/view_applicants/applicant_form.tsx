@@ -271,7 +271,7 @@ function ApplicantForm() {
                       fontWeight="400"
                       color="#7B4646"
                     >
-                      {applicationData?.feedback}
+                      {applicationData?.feedbackDao}
                     </Text>
                   </Flex>
                 </Flex>
@@ -317,7 +317,7 @@ function ApplicantForm() {
                       fontWeight="400"
                       color="#7B4646"
                     >
-                      {applicationData?.feedback}
+                      {applicationData?.feedbackDao}
                     </Text>
                   </Flex>
                 </Flex>
