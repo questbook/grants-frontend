@@ -2,16 +2,19 @@ import {
   Container, useToast, VStack,
 } from '@chakra-ui/react';
 import React, {
-  useContext, useEffect, useRef,
+  useContext, useEffect, useRef, useState,
 } from 'react';
 import { useAccount, useConnect, useNetwork } from 'wagmi';
 import { useRouter } from 'next/router';
-import { gql } from '@apollo/client';
-import { getNumberOfApplicationsQuery, getNumberOfGrantsQuery } from 'src/graphql/daoQueries';
+import {
+  useGetNumberOfApplicationsLazyQuery,
+  useGetNumberOfGrantsLazyQuery,
+  useGetWorkspaceMembersLazyQuery,
+} from 'src/generated/graphql';
+import { MinimalWorkspace } from 'src/types';
 import SignInNavbar from '../components/navbar/notConnected';
 import ConnectedNavbar from '../components/navbar/connected';
 import { ApiClientsContext } from '../../pages/_app';
-import { getWorkspaceMembersQuery } from '../graphql/workspaceQueries';
 import { getUrlForIPFSHash } from '../utils/ipfsUtils';
 
 interface Props {
@@ -23,88 +26,49 @@ interface Props {
 function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
   const apiClients = useContext(ApiClientsContext);
 
-  const [workspaces, setWorkspaces] = React.useState([]);
-
-  const [daoName, setDaoName] = React.useState('');
-  const [daoId, setDaoId] = React.useState<string | null>(null);
-  const [daoImage, setDaoImage] = React.useState<string | null>(null);
-
-  const toast = useToast();
-  const [connected, setConnected] = React.useState(false);
-
-  const currentPageRef = useRef(null);
   const { asPath } = useRouter();
 
   const [{ data: connectData }] = useConnect();
-  const [{ data: accountData }] = useAccount({
-    fetchEns: false,
-  });
+  const [{ data: accountData }] = useAccount({ fetchEns: false });
   const [{ data: networkData }] = useNetwork();
-  useEffect(() => {
-    console.log(networkData.chain);
-  }, [networkData]);
+
+  const toast = useToast();
+
+  const [workspaces, setWorkspaces] = React.useState<MinimalWorkspace[]>([]);
+  const [selectedWorkspaceIndex, setSelectedWorkspaceIndex] = useState(0);
+
+  const daoName = workspaces[selectedWorkspaceIndex]?.title;
+  const daoId = workspaces[selectedWorkspaceIndex]?.id;
+  const daoImage = workspaces[selectedWorkspaceIndex]
+    ? getUrlForIPFSHash(workspaces[selectedWorkspaceIndex].logoIpfsHash)
+    : undefined;
+
+  const [connected, setConnected] = React.useState(false);
 
   const [numOfGrants, setNumOfGrants] = React.useState(0);
   const [numOfApplications, setNumOfApplications] = React.useState(0);
 
-  useEffect(() => {
-    if (connected && !connectData.connected) {
-      setConnected(false);
-      toast({
-        title: 'Disconnected',
-        status: 'info',
-      });
-    } else if (!connected && connectData.connected) {
-      setConnected(true);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connectData]);
+  const currentPageRef = useRef(null);
 
-  // useEffect(() => {
-  //   console.log(accountData);
-  // }, [accountData]);
+  const [getNumberOfApplications] = useGetNumberOfApplicationsLazyQuery({
+    client: apiClients?.subgraphClient?.client,
+  });
 
-  // useEffect(() => {
-  //   console.log(networkData, loading, error);
-  // }, [networkData]);
+  const [getNumberOfGrants] = useGetNumberOfGrantsLazyQuery({
+    client: apiClients?.subgraphClient?.client,
+  });
 
-  const setWorkspace = (workspace: any) => {
-    if (!apiClients) return;
-    const { setWorkspaceId } = apiClients;
-
-    console.log(`Setting workspace as ${workspace.title}`);
-
-    setDaoId(workspace.id);
-    setDaoName(workspace.title);
-    setDaoImage(getUrlForIPFSHash(workspace.logoIpfsHash));
-    setWorkspaceId(workspace.id);
-  };
+  const [getWorkspaceMembers] = useGetWorkspaceMembersLazyQuery({
+    client: apiClients?.subgraphClient?.client,
+  });
 
   const getWorkspaceData = async (userAddress: string) => {
-    if (!apiClients) return;
-
-    const { subgraphClient } = apiClients;
-    if (!subgraphClient) return;
     try {
-      const { data } = await subgraphClient.client
-        .query({
-          query: gql(getWorkspaceMembersQuery),
-          variables: {
-            actorId: userAddress,
-          },
-        }) as any;
-      // console.log(data);
-      const workspacesRes = data.workspaceMembers.map((member: any) => ({ ...member.workspace }));
-      setWorkspaces(workspacesRes);
-      console.log('This executed!');
-      console.log(workspacesRes.length);
-      if (workspacesRes.length > 0) {
-        const workspace = workspacesRes[0];
-        setWorkspace(workspace);
-      } else {
-        setDaoId(null);
-        setDaoName('');
-        setDaoImage(null);
+      const { data } = await getWorkspaceMembers({
+        variables: { actorId: userAddress },
+      });
+      if (data) {
+        setWorkspaces(data.workspaceMembers.map((w) => w.workspace));
       }
     } catch (e) {
       toast({
@@ -120,15 +84,12 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
     const { subgraphClient } = apiClients;
     if (!subgraphClient) return;
     try {
-      const { data } = await subgraphClient.client
-        .query({
-          query: gql(getNumberOfGrantsQuery),
-          variables: {
-            creatorId: userAddress,
-          },
-        }) as any;
-      // console.log(data);
-      setNumOfGrants(data.grants.length);
+      const { data } = await getNumberOfGrants({
+        variables: {
+          creatorId: userAddress,
+        },
+      });
+      setNumOfGrants(data?.grants.length || 0);
     } catch (e) {
       toast({
         title: 'Error getting applicant data',
@@ -138,20 +99,11 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
   };
 
   const getApplicantsCount = async (userAddress: string) => {
-    if (!apiClients) return;
-
-    const { subgraphClient } = apiClients;
-    if (!subgraphClient) return;
     try {
-      const { data } = await subgraphClient.client
-        .query({
-          query: gql(getNumberOfApplicationsQuery),
-          variables: {
-            applicantId: userAddress,
-          },
-        }) as any;
-      // console.log(data);
-      setNumOfApplications(data.grantApplications.length);
+      const { data } = await getNumberOfApplications({
+        variables: { applicantId: userAddress },
+      });
+      setNumOfApplications(data?.grantApplications.length || 0);
     } catch (e) {
       toast({
         title: 'Error getting applicant data',
@@ -159,13 +111,6 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
       });
     }
   };
-
-  useEffect(() => {
-    getWorkspaceData(accountData?.address ?? '');
-    getGrantsCount(accountData?.address ?? '');
-    getApplicantsCount(accountData?.address ?? '');
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountData?.address]);
 
   useEffect(() => {
     if (asPath && asPath.length > 0) {
@@ -178,6 +123,34 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
     }
   }, [asPath]);
 
+  useEffect(() => {
+    if (connected && !connectData.connected) {
+      setConnected(false);
+      toast({
+        title: 'Disconnected',
+        status: 'info',
+      });
+    } else if (!connected && connectData.connected) {
+      setConnected(true);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connectData]);
+
+  useEffect(() => {
+    const addr = accountData?.address;
+    if (addr) {
+      getWorkspaceData(addr);
+      getGrantsCount(addr);
+      getApplicantsCount(addr);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountData?.address]);
+
+  useEffect(() => {
+    const id = workspaces[selectedWorkspaceIndex]?.id;
+    apiClients?.setWorkspaceId(id);
+  }, [selectedWorkspaceIndex, workspaces]);
+
   return (
     <VStack alignItems="center" maxH="100vh" width="100%" spacing={0} p={0}>
       {accountData && connectData ? (
@@ -188,11 +161,11 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
           renderTabs={renderTabs ?? true}
           daoName={daoName}
           daoId={daoId}
-          daoImage={daoImage}
+          daoImage={daoImage || ''}
           grantsCount={numOfGrants}
           applicationCount={numOfApplications}
           workspaces={workspaces}
-          setWorkspace={setWorkspace}
+          setSelectedWorkspaceIndex={setSelectedWorkspaceIndex}
         />
       ) : (
         <SignInNavbar renderGetStarted={renderGetStarted} />

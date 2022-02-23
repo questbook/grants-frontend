@@ -6,10 +6,8 @@ import React, {
   ReactElement, useEffect, useState, useCallback,
   useContext,
 } from 'react';
-import { gql } from '@apollo/client';
 import { useAccount, useContract, useSigner } from 'wagmi';
-import SubgraphClient from '../../../src/graphql/subgraph';
-import { getApplicationDetails } from '../../../src/graphql/daoQueries';
+import { useGetApplicationDetailsLazyQuery } from 'src/generated/graphql';
 import config from '../../../src/constants/config';
 import ApplicationRegistryAbi from '../../../src/contracts/abi/ApplicationRegistryAbi.json';
 import { ApiClientsContext } from '../../_app';
@@ -31,6 +29,20 @@ import Sidebar from '../../../src/components/your_grants/applicant_form/sidebar'
 import NavbarLayout from '../../../src/layout/navbarLayout';
 
 function ApplicantForm() {
+  const apiClients = useContext(ApiClientsContext);
+
+  const [{ data: accountData }] = useAccount();
+  const [signerStates] = useSigner();
+
+  const applicationRegContract = useContract({
+    addressOrName: config.ApplicationRegistryAddress,
+    contractInterface: ApplicationRegistryAbi,
+    signerOrProvider: signerStates.data,
+  });
+
+  const [hasClicked, setHasClicked] = React.useState(false);
+  const toastRef = React.useRef<ToastId>();
+
   const toast = useToast();
   const router = useRouter();
   const [step, setStep] = useState(0);
@@ -43,17 +55,17 @@ function ApplicantForm() {
 
   const [rejectionComment, setRejectionComment] = useState('');
   const [rejectionCommentError, setRejectionCommentError] = useState(false);
+  const [getApplicationDetails] = useGetApplicationDetailsLazyQuery({
+    client: apiClients?.subgraphClient?.client,
+  });
 
   const getApplicationData = useCallback(async () => {
-    const subgraphClient = new SubgraphClient();
-    if (!subgraphClient.client) return null;
     try {
-      const { data } = (await subgraphClient.client.query({
-        query: gql(getApplicationDetails),
+      const { data } = await getApplicationDetails({
         variables: {
           applicationID: applicationId,
         },
-      })) as any;
+      });
       // console.log(data);
       if (data && data.grantApplication) {
         setApplicationData(data.grantApplication);
@@ -63,7 +75,7 @@ function ApplicantForm() {
       // console.log(e);
       return null;
     }
-  }, [applicationId]);
+  }, [applicationId, getApplicationDetails]);
 
   useEffect(() => {
     setApplicationId(router?.query?.applicationId ?? '');
@@ -81,18 +93,6 @@ function ApplicantForm() {
       setStep(2);
     }
   }, [router]);
-  const [{ data: accountData }] = useAccount();
-  const apiClients = useContext(ApiClientsContext);
-  const [signerStates] = useSigner();
-
-  const applicationRegContract = useContract({
-    addressOrName: config.ApplicationRegistryAddress,
-    contractInterface: ApplicationRegistryAbi,
-    signerOrProvider: signerStates.data,
-  });
-
-  const [hasClicked, setHasClicked] = React.useState(false);
-  const toastRef = React.useRef<ToastId>();
 
   const closeToast = () => {
     if (toastRef.current) {
@@ -173,6 +173,7 @@ function ApplicantForm() {
       });
     }
   };
+
   function renderContent(currentStep: number) {
     if (currentStep === 1) {
       return (
@@ -293,7 +294,7 @@ function ApplicantForm() {
                       fontWeight="400"
                       color="#7B4646"
                     >
-                      {applicationData?.feedback}
+                      {applicationData?.feedbackDao}
                     </Text>
                   </Flex>
                 </Flex>
@@ -339,7 +340,7 @@ function ApplicantForm() {
                       fontWeight="400"
                       color="#7B4646"
                     >
-                      {applicationData?.feedback}
+                      {applicationData?.feedbackDao}
                     </Text>
                   </Flex>
                 </Flex>

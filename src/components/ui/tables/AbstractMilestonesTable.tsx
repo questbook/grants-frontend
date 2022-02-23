@@ -3,7 +3,7 @@ import {
   Text, Image, Flex,
 } from '@chakra-ui/react';
 import { formatAmount } from 'src/utils/formattingUtils';
-import { ApplicationMilestone } from '../../../graphql/queries';
+import { ApplicationMilestone } from 'src/types';
 import { getAssetInfo } from '../../../utils/tokenUtils';
 
 const TABLE_HEADERS = [

@@ -1,20 +1,22 @@
 import {
-  Container,
+  Container, Flex,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
   ReactElement, useCallback, useContext, useEffect, useRef,
 } from 'react';
-import { gql } from '@apollo/client';
 import BN from 'bn.js';
 import { useAccount } from 'wagmi';
+import Empty from 'src/components/ui/empty';
+import { useGetMyApplicationsLazyQuery } from 'src/generated/graphql';
 import Heading from '../../src/components/ui/heading';
 import YourApplicationCard from '../../src/components/your_applications/yourApplicationCard';
 import NavbarLayout from '../../src/layout/navbarLayout';
-import { getMyApplications } from '../../src/graphql/daoQueries';
 import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils';
 import { getFormattedDateFromUnixTimestamp } from '../../src/utils/formattingUtils';
 import { ApiClientsContext } from '../_app';
+
+const PAGE_SIZE = 20;
 
 function YourApplications() {
   const router = useRouter();
@@ -24,39 +26,30 @@ function YourApplications() {
 
   const containerRef = useRef(null);
   const [{ data: accountData }] = useAccount();
-  const pageSize = 20;
   const [currentPage, setCurrentPage] = React.useState(0);
+
+  const [getMyApplications] = useGetMyApplicationsLazyQuery({
+    client: subgraphClient?.client,
+  });
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getMyApplicationsData = async () => {
-    if (!subgraphClient) return;
     try {
-      const { data } = (await subgraphClient.client.query({
-        query: gql(getMyApplications),
+      const { data } = await getMyApplications({
         variables: {
-          first: pageSize,
-          skip: currentPage * pageSize,
-          applicantID: accountData?.address,
+          first: PAGE_SIZE,
+          skip: currentPage * PAGE_SIZE,
+          applicantID: accountData?.address || '',
         },
-      })) as any;
-      // console.log('myapps', data);
-      if (data && data.grantApplications.length) {
+      });
+      if (data) {
         setCurrentPage(currentPage + 1);
         setMyApplications([...myApplications, ...data.grantApplications]);
       }
     } catch (e) {
-      // console.log(e);
+      // console.log('error in fetching my applications ', e);
     }
   };
-
-  // useEffect(() => {
-  //   setApplicantId(router?.query?.applicantID ?? '');
-  // }, [router]);
-
-  // useEffect(() => {
-  //   if (!applicantID) return;
-  //   getMyApplicationsData();
-  // }, [applicantID, getMyApplicationsData]);
 
   const handleScroll = useCallback(() => {
     const { current } = containerRef;
@@ -132,6 +125,18 @@ function YourApplications() {
               />
             )
           ))}
+
+        {myApplications.length === 0 && (
+        <Flex direction="column" mt={14} align="center">
+          <Empty
+            src="/illustrations/empty_states/no_applications.svg"
+            imgHeight="134px"
+            imgWidth="147px"
+            title="No applications"
+            subtitle="All your grant applications are shown here. Discover grants on our home page."
+          />
+        </Flex>
+        )}
 
       </Container>
     </Container>

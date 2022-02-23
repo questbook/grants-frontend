@@ -5,16 +5,31 @@ import {
 } from '@chakra-ui/react';
 import moment from 'moment';
 import { ethers } from 'ethers';
-// import { getMilestoneTitle } from 'src/utils/formattingUtils';
-import { FundTransfer } from '../../../../graphql/queries';
+import Empty from 'src/components/ui/empty';
+import { FundTransfer } from 'src/types';
 import { getAssetInfo } from '../../../../utils/tokenUtils';
-import { formatAmount, getMilestoneTitle, getTextWithEllipses } from '../../../../utils/formattingUtils';
+import {
+  formatAmount,
+  getMilestoneTitle,
+  getTextWithEllipses,
+} from '../../../../utils/formattingUtils';
 
-const TABLE_HEADERS = {
+type TableContent = {
+  title: string
+  flex?: number
+  content: (
+    item: FundTransfer,
+    assetId: string,
+    assetDecimals: number,
+    grantId: string
+  ) => React.ReactChild
+};
+
+const TABLE_HEADERS: { [id: string]: TableContent } = {
   milestoneTitle: {
     title: 'Funding Received',
     flex: 0.5,
-    content: (item: FundTransfer, assetId: string) => (
+    content: (item, assetId) => (
       <>
         <Image
           display="inline-block"
@@ -44,7 +59,7 @@ const TABLE_HEADERS = {
   amount: {
     title: 'Amount',
     flex: 0.35,
-    content: (item: FundTransfer, assetId: string, assetDecimals: number) => (
+    content: (item, assetId, assetDecimals: number) => (
       <Text display="inline-block" variant="applicationText" fontWeight="700">
         {ethers.utils.formatUnits(item.amount, assetDecimals)}
         {' '}
@@ -55,7 +70,7 @@ const TABLE_HEADERS = {
   date: {
     title: 'On',
     flex: 0.2,
-    content: (item: FundTransfer) => (
+    content: (item) => (
       <Tooltip label={`Transaction ID: ${item.id}`}>
         <Text variant="applicationText">
           {moment(new Date(item.createdAtS * 1000)).format('MMM DD, YYYY')}
@@ -66,7 +81,7 @@ const TABLE_HEADERS = {
   to: {
     title: 'To',
     flex: 0.15,
-    content: (item: FundTransfer) => (
+    content: (item) => (
       <Tooltip label={item.to}>
         <Text variant="applicationText" color="#122224">
           {getTextWithEllipses(item.to)}
@@ -77,7 +92,7 @@ const TABLE_HEADERS = {
   action: {
     title: 'Action',
     flex: 0.1,
-    content: (item: FundTransfer) => (
+    content: (item) => (
       <Link
         href={`https://etherscan.io/tx/${item.id}/`}
         target="_blank"
@@ -99,12 +114,7 @@ const TABLE_HEADERS = {
   from: {
     title: 'From',
     flex: 0.2,
-    content: (
-      item: FundTransfer,
-      assetId: string,
-      assetDecimals: number,
-      grantId: string,
-    ) => (
+    content: (item, _, __, grantId) => (
       <Tooltip label={item.sender}>
         <Text variant="applicationText" color="#122224">
           {getTextWithEllipses(item.sender)}
@@ -117,7 +127,7 @@ const TABLE_HEADERS = {
   initiator: {
     title: 'Initiated By',
     flex: 0.3,
-    content: (item: FundTransfer) => (
+    content: (item) => (
       <Tooltip label={item.sender}>
         <Text variant="applicationText" color="#122224">
           {getTextWithEllipses(item.sender)}
@@ -133,6 +143,7 @@ export type FundingProps = {
   columns: (keyof typeof TABLE_HEADERS)[];
   assetDecimals: number;
   grantId: string | null;
+  type: string;
 };
 
 function Funding({
@@ -141,14 +152,50 @@ function Funding({
   columns,
   assetDecimals,
   grantId,
+  type,
 }: FundingProps) {
   const tableHeaders = useMemo(
     () => columns.map((column) => TABLE_HEADERS[column]),
     [columns],
   );
+
+  const emptyStates = {
+    funds_deposited: {
+      src: '/illustrations/empty_states/no_deposits.svg',
+      imgHeight: '160px',
+      imgWidth: '135px',
+      title: 'No deposits yet.',
+      subtitle: 'Once you deposit funds to your grant smart contract, they will appear here.',
+    },
+    funds_withdrawn: {
+      src: '/illustrations/empty_states/no_withdrawals.svg',
+      imgHeight: '136px',
+      imgWidth: '135px',
+      title: 'No withdrawals yet.',
+      subtitle: 'Once you withdraw funds from your grant smart contract, they will appear here.',
+    },
+    funding_sent: {
+      src: '/illustrations/empty_states/funds_received.svg',
+      imgHeight: '135px',
+      imgWidth: '135px',
+      title: 'No funds sent yet.',
+      subtitle: 'Once you send funds to the grantee, they will appear here.',
+    },
+  };
+
   return (
     <Flex w="100%" my={4} align="center" direction="column" flex={1}>
-      {fundTransfers.length === 0 && <>No Transactions</>}
+      {fundTransfers.length === 0 && (
+        <Flex mt={14} direction="column" align="center">
+          <Empty
+            src={emptyStates[type as keyof typeof emptyStates].src}
+            imgHeight={emptyStates[type as keyof typeof emptyStates].imgHeight}
+            imgWidth={emptyStates[type as keyof typeof emptyStates].imgWidth}
+            title={emptyStates[type as keyof typeof emptyStates].title}
+            subtitle={emptyStates[type as keyof typeof emptyStates].subtitle}
+          />
+        </Flex>
+      )}
       {fundTransfers.length > 0 && (
         <>
           <Flex
@@ -184,17 +231,18 @@ function Funding({
                 pl="15px"
                 pr="15px"
               >
-                {grantId && tableHeaders.map(({ title, flex, content }) => (
-                  <Flex
-                    key={title}
-                    direction="row"
-                    justify="start"
-                    align="center"
-                    flex={flex}
-                  >
-                    {content(item, assetId, assetDecimals, grantId)}
-                  </Flex>
-                ))}
+                {grantId
+                  && tableHeaders.map(({ title, flex, content }) => (
+                    <Flex
+                      key={title}
+                      direction="row"
+                      justify="start"
+                      align="center"
+                      flex={flex}
+                    >
+                      {content(item, assetId, assetDecimals, grantId)}
+                    </Flex>
+                  ))}
               </Flex>
             ))}
           </Flex>

@@ -1,6 +1,5 @@
-import { gql } from '@apollo/client';
 import {
-  Container, Flex, useToast, Image, Text, Button,
+  Flex, useToast, Image, Text, Button,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
@@ -12,14 +11,18 @@ import React, {
 } from 'react';
 import { useAccount } from 'wagmi';
 import { BigNumber } from '@ethersproject/bignumber';
+import Empty from 'src/components/ui/empty';
+import Sidebar from 'src/components/your_grants/sidebar/sidebar';
+import { useGetAllGrantsForCreatorLazyQuery, GetAllGrantsForCreatorQuery } from 'src/generated/graphql';
 import AddFunds from '../../src/components/funds/add_funds_modal';
 import Heading from '../../src/components/ui/heading';
 import YourGrantCard from '../../src/components/your_grants/yourGrantCard';
 import supportedCurrencies from '../../src/constants/supportedCurrencies';
-import { getAllGrantsForCreator } from '../../src/graphql/daoQueries';
 import NavbarLayout from '../../src/layout/navbarLayout';
 import { formatAmount } from '../../src/utils/formattingUtils';
 import { ApiClientsContext } from '../_app';
+
+const PAGE_SIZE = 20;
 
 function YourGrants() {
   const containerRef = useRef(null);
@@ -29,10 +32,12 @@ function YourGrants() {
   const [grantForFunding, setGrantForFunding] = React.useState(null);
   const [grantRewardAsset, setGrantRewardAsset] = React.useState<any>(null);
 
+  const [getAllGrantsForCreator] = useGetAllGrantsForCreatorLazyQuery({
+    client: subgraphClient,
+  });
   const toast = useToast();
-  const [grants, setGrants] = React.useState<any[]>([]);
+  const [grants, setGrants] = React.useState<GetAllGrantsForCreatorQuery['grants']>([]);
 
-  const pageSize = 20;
   const [currentPage, setCurrentPage] = React.useState(0);
 
   const [{ data: accountData }] = useAccount({
@@ -43,17 +48,14 @@ function YourGrants() {
   const getGrantData = async () => {
     if (!subgraphClient || !accountData?.address) return;
     try {
-      const { data } = await subgraphClient
-        .query({
-          query: gql(getAllGrantsForCreator),
-          variables: {
-            first: pageSize,
-            skip: pageSize * currentPage,
-            creatorId: accountData?.address,
-          },
-        }) as any;
-      // console.log(data);
-      if (data.grants.length > 0) {
+      const { data } = await getAllGrantsForCreator({
+        variables: {
+          first: PAGE_SIZE,
+          skip: PAGE_SIZE * currentPage,
+          creatorId: accountData?.address,
+        },
+      });
+      if (data) {
         setCurrentPage(currentPage + 1);
         setGrants([...grants, ...data.grants]);
       }
@@ -170,17 +172,16 @@ function YourGrants() {
 
   return (
     <>
-      <Container ref={containerRef} maxW="100%" h="100%" display="flex" px="70px">
-        <Container
-          flex={1}
-          display="flex"
-          flexDirection="column"
-          maxW="834px"
+      <Flex ref={containerRef} direction="row" justify="center">
+        <Flex
+          direction="column"
+          w="55%"
           alignItems="stretch"
           pb={8}
           px={10}
         >
           <Heading title="Your grants" />
+
           {grants.length > 0
           && grants.filter((item) => item.workspace.id === workspaceId).map((grant: any) => {
             const grantCurrency = supportedCurrencies.find(
@@ -218,47 +219,53 @@ function YourGrants() {
               />
             );
           })}
-          {grants.filter((item) => item.workspace.id === workspaceId).length === 0 && (
-            <Flex direction="column" justify="center" h="100%" align="center" mx={4} mt={10}>
-              <Image h="174px" w="146px" src="/illustrations/no_grants.svg" />
-              <Text
-                mt="17px"
-                fontFamily="Spartan, sans-serif"
-                fontSize="20px"
-                lineHeight="25px"
-                fontWeight="700"
-                textAlign="center"
-              >
-                {router.query.done
-                  ? 'Your grant is being published..'
-                  : 'It’s quite silent here!'}
-              </Text>
-              <Text mt="11px" fontWeight="400" textAlign="center">
-                {router.query.done
-                  ? 'You may visit this page after a while to see the published grant. Once published, the grant will be live and will be open for anyone to apply.'
-                  : 'Get started by creating your grant and post it in less than 2 minutes.'}
-              </Text>
 
-              {!router.query.done && (
-              <Button
-                mt={16}
-                onClick={() => {
-                  router.push({
-                    pathname: '/your_grants/create_grant/',
-                    // pathname: '/signup',
-                  });
-                }}
-                maxW="163px"
-                variant="primary"
-                mr="12px"
-              >
-                Create a Grant
-              </Button>
-              )}
+          {grants.filter((item) => item.workspace.id === workspaceId).length === 0 && (
+            <Flex direction="row" w="100%">
+              <Flex direction="column" justify="center" h="100%" align="center" mt={10} mx="auto">
+                <Empty
+                  src={`/illustrations/empty_states/${router.query.done ? 'first_grant.svg' : 'no_grants.svg'}`}
+                  imgHeight="174px"
+                  imgWidth="146px"
+                  title={router.query.done
+                    ? 'Your grant is being published..'
+                    : 'It’s quite silent here!'}
+                  subtitle={router.query.done
+                    ? 'You may visit this page after a while to see the published grant. Once published, the grant will be live and will be open for anyone to apply.'
+                    : 'Get started by creating your grant and post it in less than 2 minutes.'}
+                />
+
+                {!router.query.done && (
+                <Button
+                  mt={16}
+                  onClick={() => {
+                    router.push({
+                      pathname: '/your_grants/create_grant/',
+                      // pathname: '/signup',
+                    });
+                  }}
+                  maxW="163px"
+                  variant="primary"
+                  mr="12px"
+                >
+                  Create a Grant
+                </Button>
+                )}
+              </Flex>
             </Flex>
           )}
-        </Container>
-      </Container>
+        </Flex>
+        {grants.filter((item) => item.workspace.id === workspaceId).length === 0
+        && (
+        <Flex
+          w="26%"
+          h="calc(100vh - 80px)"
+          pos="sticky"
+        >
+          <Sidebar />
+        </Flex>
+        )}
+      </Flex>
       {grantForFunding && grantRewardAsset && (
         <AddFunds
           isOpen={addFundsIsOpen}

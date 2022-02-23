@@ -1,13 +1,15 @@
 import {
   Button, Divider, Flex, Text, Box, Image, IconButton, Menu, MenuButton, MenuList, MenuItem,
 } from '@chakra-ui/react';
-import React, { useState, useEffect } from 'react';
-import { Grant, useFundsTransfer } from 'src/graphql/queries';
+import React, { useState, useEffect, useContext } from 'react';
 import { getAssetInfo } from 'src/utils/tokenUtils';
 import ERC20ABI from 'src/contracts/abi/ERC20.json';
 import { useContract, useSigner } from 'wagmi';
 import { ethers } from 'ethers';
 import { BigNumber } from '@ethersproject/bignumber';
+import { useGetFundingQuery } from 'src/generated/graphql';
+import { ApiClientsContext } from 'pages/_app';
+import { Grant } from 'src/types';
 import WithdrawFunds from './withdraw_funds_modal';
 import AddFunds from './add_funds_modal';
 import Funding from '../your_grants/manage_grant/tables/funding';
@@ -30,6 +32,7 @@ const TABS_MAP = [
 ] as const;
 
 function FundForAGrant({ grant }: FundForAGrantProps) {
+  const { subgraphClient } = useContext(ApiClientsContext)!;
   const [isAddFundsModalOpen, setIsAddFundsModalOpen] = useState(false);
   const [isWithdrawFundsModalOpen, setIsWithdrawFundsModalOpen] = useState(false);
   const [selected, setSelected] = React.useState(0);
@@ -41,7 +44,10 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
     signerOrProvider: signerStates.data,
   });
 
-  const { data } = useFundsTransfer(grant.id);
+  const { data } = useGetFundingQuery({
+    client: subgraphClient?.client,
+    variables: { grantId: grant.id },
+  });
 
   const assetInfo = getAssetInfo(grant.reward.asset);
 
@@ -124,13 +130,19 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
       <Divider />
 
       <Funding
-        fundTransfers={data.filter((d) => d.type === TABS_MAP[selected].type)}
+        fundTransfers={
+          data?.fundsTransfers?.filter(
+            (d) => d.type === TABS_MAP[selected].type,
+          ) || []
+        }
         assetId={grant.reward.asset}
         columns={[...TABS_MAP[selected].columns]}
         assetDecimals={fundingAssetDecimals}
         grantId={grant.id}
+        type={TABS_MAP[selected].type}
       />
 
+      {/* Modals */}
       <AddFunds
         isOpen={isAddFundsModalOpen}
         onClose={() => setIsAddFundsModalOpen(false)}

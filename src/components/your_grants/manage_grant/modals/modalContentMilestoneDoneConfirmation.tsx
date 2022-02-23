@@ -2,7 +2,7 @@ import {
   ModalBody, Flex, Text, Button, Image, Heading,
 } from '@chakra-ui/react';
 import React from 'react';
-import { ApplicationMilestone } from 'src/graphql/queries';
+import { ApplicationMilestone } from 'src/types';
 import { getMilestoneTitle } from 'src/utils/formattingUtils';
 
 interface Props {
