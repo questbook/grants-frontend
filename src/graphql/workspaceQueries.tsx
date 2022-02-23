@@ -46,6 +46,7 @@ query($actorId: Bytes!) {
       ownerId
       logoIpfsHash
       title
+      supportedNetworks
     }
   }
 }

@@ -15,7 +15,10 @@ import {
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import { Configuration, ValidationApi } from '@questbook/service-validator-client';
+import {
+  Configuration,
+  ValidationApi,
+} from '@questbook/service-validator-client';
 import theme from '../src/theme';
 import SubgraphClient from '../src/graphql/subgraph';
 
@@ -53,27 +56,33 @@ export const ApiClientsContext = createContext<{
   validatorApi: ValidationApi;
   workspaceId: string | null;
   setWorkspaceId:(id: string | null) => void;
+  workspace: any;
+  setWorkspace:(workspace: any) => void;
 } | null>(null);
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const [workspaceId, setWorkspaceId] = React.useState<string | null>(null);
+  const [workspace, setWorkspace] = React.useState<{ workspaceId: string; chainId: string }>();
   const client = useMemo(() => new SubgraphClient(), []);
 
   const validatorApi = useMemo(() => {
     const validatorConfiguration = new Configuration({
       basePath: 'https://api-grant-validator.questbook.app',
     });
-    return (
-      new ValidationApi(validatorConfiguration)
-    );
+    return new ValidationApi(validatorConfiguration);
   }, []);
 
-  const apiClients = useMemo(() => ({
-    subgraphClient: client,
-    validatorApi,
-    workspaceId,
-    setWorkspaceId,
-  }), [client, validatorApi, workspaceId, setWorkspaceId]);
+  const apiClients = useMemo(
+    () => ({
+      subgraphClient: client,
+      validatorApi,
+      workspaceId,
+      setWorkspaceId,
+      workspace,
+      setWorkspace,
+    }),
+    [client, validatorApi, workspaceId, setWorkspaceId, workspace, setWorkspace],
+  );
 
   const getLayout = Component.getLayout ?? ((page) => page);
   return (

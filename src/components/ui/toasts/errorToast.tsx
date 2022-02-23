@@ -11,7 +11,8 @@ interface Props {
 function ErrorToast({ content, close }: Props) {
   return (
     <Flex
-      p={7}
+      py="22px"
+      px="26px"
       bg="#FFC0C0"
       border="2px solid #EE7979"
       borderRadius="6px"

@@ -86,6 +86,7 @@ function Navbar({
             <MenuList>
               {workspaces.map((workspace) => (
                 <MenuItem
+                  key={workspace.title}
                   icon={(
                     <Image
                       boxSize="20px"

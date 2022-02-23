@@ -1,22 +1,16 @@
 import {
-  Box, Button, Container, Flex, Text, ToastId, useToast,
+  Box, Button, Container, Flex, Text,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
-  ReactElement, useContext, useRef, useState,
+  ReactElement, useEffect, useRef, useState,
 } from 'react';
-import { useAccount, useContract, useSigner } from 'wagmi';
-import InfoToast from '../../src/components/ui/infoToast';
+import useCreateGrant from 'src/hooks/useCreateGrant';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/create_grant/form';
-import config from '../../src/constants/config';
-import GrantFactoryABI from '../../src/contracts/abi/GrantFactoryAbi.json';
 import NavbarLayout from '../../src/layout/navbarLayout';
-import { parseAmount } from '../../src/utils/formattingUtils';
-import { ApiClientsContext } from '../_app';
 
 function CreateGrant() {
-  const [{ data: accountData }] = useAccount();
   const router = useRouter();
 
   const grantInfoRef = useRef(null);
@@ -54,88 +48,15 @@ function CreateGrant() {
     ],
   ];
 
-  const apiClients = useContext(ApiClientsContext);
-  const [signerStates] = useSigner();
+  const [formData, setFormData] = useState<any>();
+  const [transactionData, loading] = useCreateGrant(formData);
 
-  const grantContract = useContract({
-    addressOrName: config.GrantFactoryAddress,
-    contractInterface: GrantFactoryABI,
-    signerOrProvider: signerStates.data,
-  });
-  const [hasClicked, setHasClicked] = React.useState(false);
-  const toastRef = React.useRef<ToastId>();
-  const toast = useToast();
-
-  const closeToast = () => {
-    if (toastRef.current) {
-      toast.close(toastRef.current);
-    }
-  };
-
-  const showToast = ({ link } : { link: string }) => {
-    toastRef.current = toast({
-      position: 'top',
-      render: () => (
-        <InfoToast
-          link={link}
-          close={closeToast}
-        />
-      ),
-    });
-  };
-
-  const handleGrantSubmit = async (data: any) => {
-    if (!apiClients) return;
-    const { validatorApi, workspaceId } = apiClients;
-    if (!accountData || !accountData.address || !workspaceId) {
-      return;
-    }
-
-    try {
-      setHasClicked(true);
-      const {
-        data: { ipfsHash },
-      } = await validatorApi.validateGrantCreate({
-        title: data.title,
-        summary: data.summary,
-        details: data.details,
-        deadline: data.date,
-        reward: {
-          committed: parseAmount(data.reward),
-          asset: data.rewardCurrencyAddress,
-        },
-        creatorId: accountData.address,
-        workspaceId,
-        fields: data.fields,
-      });
-
-      // console.log(ipfsHash);
-
-      const transaction = await grantContract.createGrant(
-        workspaceId!,
-        ipfsHash,
-        config.WorkspaceRegistryAddress,
-        config.ApplicationRegistryAddress,
-      );
-      const transactionData = await transaction.wait();
-
-      setHasClicked(false);
+  useEffect(() => {
+    console.log(transactionData);
+    if (transactionData) {
       router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
-
-      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
-    } catch (error) {
-      setHasClicked(false);
-      // console.log(error);
-      toast({
-        title: 'Application update not indexed',
-        status: 'error',
-      });
     }
-    // console.log(transactionData);
-    // console.log(transactionData.blockNumber);
-
-    // await subgraphClient.waitForBlock(transactionData.blockNumber);
-  };
+  }, [transactionData, router]);
 
   return (
     <Container maxW="100%" display="flex" px="70px">
@@ -150,9 +71,9 @@ function CreateGrant() {
       >
         <Breadcrumbs path={['My Grants', 'Create grant']} />
         <Form
-          onSubmit={handleGrantSubmit}
+          onSubmit={(data: any) => setFormData(data)}
           refs={sideBarDetails.map((detail) => detail[2])}
-          hasClicked={hasClicked}
+          hasClicked={loading}
         />
       </Container>
 

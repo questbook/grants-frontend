@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import React, { ReactElement, useContext } from 'react';
 import { useAccount, useContract, useSigner } from 'wagmi';
 import { SupportedNetwork } from '@questbook/service-validator-client';
+import ErrorToast from 'src/components/ui/toasts/errorToast';
 import InfoToast from '../src/components/ui/infoToast';
 import Form from '../src/components/signup/create_dao/form';
 import Loading from '../src/components/signup/create_dao/loading';
@@ -46,6 +47,31 @@ function SignupDao() {
     contractInterface: GrantFactoryABI,
     signerOrProvider: signerStates.data,
   });
+
+  const [hasClicked, setHasClicked] = React.useState(false);
+  const toastRef = React.useRef<ToastId>();
+  const toast = useToast();
+
+  const closeToast = () => {
+    if (toastRef.current) {
+      toast.close(toastRef.current);
+    }
+  };
+
+  const showToast = ({ link }: { link: string }) => {
+    toastRef.current = toast({
+      position: 'top',
+      render: () => <InfoToast link={link} close={closeToast} />,
+    });
+  };
+
+  const showErrorToast = ({ errorMessage }: { errorMessage: string }) => {
+    toastRef.current = toast({
+      position: 'top',
+      render: () => <ErrorToast content={errorMessage} close={closeToast} />,
+    });
+  };
+
   const handleFormSubmit = async (data: {
     name: string;
     description: string;
@@ -54,7 +80,7 @@ function SignupDao() {
   }) => {
     try {
       if (!accountData || !accountData.address) {
-        return;
+        throw Error('Connect your wallet to sign in');
       }
       if (!apiClients) return;
 
@@ -103,28 +129,12 @@ function SignupDao() {
     }
   };
 
-  const [hasClicked, setHasClicked] = React.useState(false);
-  const toastRef = React.useRef<ToastId>();
-  const toast = useToast();
-
-  const closeToast = () => {
-    if (toastRef.current) {
-      toast.close(toastRef.current);
-    }
-  };
-
-  const showToast = ({ link }: { link: string }) => {
-    toastRef.current = toast({
-      position: 'top',
-      render: () => <InfoToast link={link} close={closeToast} />,
-    });
-  };
-
   const handleGrantSubmit = async (data: any) => {
-    if (!accountData || !accountData.address || !daoData) {
-      return;
+    if (!accountData || !accountData.address) {
+      throw Error('Connect your wallet to sign in');
     }
     if (!apiClients) return;
+    if (!daoData) return;
 
     try {
       setHasClicked(true);
@@ -160,20 +170,10 @@ function SignupDao() {
       showToast({
         link: `https://etherscan.io/tx/${transactionData.transactionHash}`,
       });
-    } catch (error) {
+    } catch (error: any) {
       setHasClicked(false);
-      // console.log(error);
-      toast({
-        title: 'Application update not indexed',
-        status: 'error',
-      });
+      showErrorToast(error.message);
     }
-    // console.log(transactionData);
-    // console.log(transactionData.blockNumber);
-
-    // await subgraphClient.waitForBlock(transactionData.blockNumber);
-
-    // router.push('/your_grants');
   };
 
   if (creatingGrant) {

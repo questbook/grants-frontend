@@ -42,7 +42,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
   });
   const [{ data: networkData }] = useNetwork();
   useEffect(() => {
-    console.log(networkData.chain);
+    // console.log(networkData.chain);
   }, [networkData]);
 
   const [numOfGrants, setNumOfGrants] = React.useState(0);
@@ -71,14 +71,15 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 
   const setWorkspace = (workspace: any) => {
     if (!apiClients) return;
-    const { setWorkspaceId } = apiClients;
+    const { setWorkspaceId, setWorkspace } = apiClients;
 
-    console.log(`Setting workspace as ${workspace.title}`);
+    // console.log(`Setting workspace as ${workspace.title}`);
 
     setDaoId(workspace.id);
     setDaoName(workspace.title);
     setDaoImage(getUrlForIPFSHash(workspace.logoIpfsHash));
     setWorkspaceId(workspace.id);
+    setWorkspace({ workspaceId: workspace.id, chainId: workspace.supportedNetworks[0] });
   };
 
   const getWorkspaceData = async (userAddress: string) => {
@@ -97,8 +98,8 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
       // console.log(data);
       const workspacesRes = data.workspaceMembers.map((member: any) => ({ ...member.workspace }));
       setWorkspaces(workspacesRes);
-      console.log('This executed!');
-      console.log(workspacesRes.length);
+      // console.log('This executed!');
+      // console.log(workspacesRes.length);
       if (workspacesRes.length > 0) {
         const workspace = workspacesRes[0];
         setWorkspace(workspace);
