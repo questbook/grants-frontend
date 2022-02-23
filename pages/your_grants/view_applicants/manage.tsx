@@ -76,17 +76,12 @@ function ManageGrant() {
     },
   });
 
-  const { data: fundsDisbursed, error: fundsDisbursedError } = useGetFundSentForApplicationQuery({
+  const { data: fundsDisbursed } = useGetFundSentForApplicationQuery({
     client: subgraphClient?.client,
     variables: {
       applicationId: applicationID,
     },
   });
-
-  useEffect(() => {
-    console.log(`Funds Disbursed ${fundsDisbursed}`, fundsDisbursed);
-    console.log(`Funds Disbursed Error ${fundsDisbursedError}`);
-  }, [fundsDisbursed, fundsDisbursedError]);
 
   const applicationData = appDetailsResult?.grantApplication;
   const applicantEmail = useMemo(
