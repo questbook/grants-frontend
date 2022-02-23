@@ -56,7 +56,7 @@ function Sidebar({
             fontWeight="500"
             fontStyle="normal"
             color="#414E50"
-            href={`/explore_grants/about_grant/?grantID=${applicationData.grant.id}`}
+            href={`/explore_grants/about_grant/?grantID=${applicationData.grant?.id}`}
             isExternal
           >
             View Grant
