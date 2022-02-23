@@ -2,25 +2,17 @@ import {
   Container, Text, ToastId, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useContext } from 'react';
-import { useAccount, useContract, useSigner } from 'wagmi';
-import { SupportedNetwork } from '@questbook/service-validator-client';
-import ErrorToast from 'src/components/ui/toasts/errorToast';
+import React, { ReactElement, useEffect } from 'react';
+import useCreateWorkspace from 'src/hooks/useCreateWorkspace';
+import useCreateGrant from 'src/hooks/useCreateGrant';
 import InfoToast from '../src/components/ui/infoToast';
 import Form from '../src/components/signup/create_dao/form';
 import Loading from '../src/components/signup/create_dao/loading';
 import CreateGrant from '../src/components/signup/create_grant';
 import DaoCreated from '../src/components/signup/daoCreated';
-import WorkspaceRegistryABI from '../src/contracts/abi/WorkspaceRegistryAbi.json';
-import GrantFactoryABI from '../src/contracts/abi/GrantFactoryAbi.json';
 import NavbarLayout from '../src/layout/navbarLayout';
-import { ApiClientsContext } from './_app';
-import config from '../src/constants/config';
-import { uploadToIPFS } from '../src/utils/ipfsUtils';
-import { parseAmount } from '../src/utils/formattingUtils';
 
 function SignupDao() {
-  const [{ data: accountData }] = useAccount();
   const router = useRouter();
   const [loading, setLoading] = React.useState(false);
   const [daoCreated, setDaoCreated] = React.useState(false);
@@ -34,150 +26,66 @@ function SignupDao() {
     id: string;
   } | null>(null);
 
-  const apiClients = useContext(ApiClientsContext);
-  const [signerStates] = useSigner();
-  const workspaceFactoryContract = useContract({
-    addressOrName: config.WorkspaceRegistryAddress,
-    contractInterface: WorkspaceRegistryABI,
-    signerOrProvider: signerStates.data,
-  });
-
-  const grantContract = useContract({
-    addressOrName: config.GrantFactoryAddress,
-    contractInterface: GrantFactoryABI,
-    signerOrProvider: signerStates.data,
-  });
-
-  const [hasClicked, setHasClicked] = React.useState(false);
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
 
-  const closeToast = () => {
-    if (toastRef.current) {
-      toast.close(toastRef.current);
-    }
-  };
+  const [workspaceData, setWorkspaceData] = React.useState<any>();
+  const [workspaceTransactionData, imageHash, workspaceLoading] = useCreateWorkspace(workspaceData);
 
-  const showToast = ({ link }: { link: string }) => {
-    toastRef.current = toast({
-      position: 'top',
-      render: () => <InfoToast link={link} close={closeToast} />,
-    });
-  };
-
-  const showErrorToast = ({ errorMessage }: { errorMessage: string }) => {
-    toastRef.current = toast({
-      position: 'top',
-      render: () => <ErrorToast content={errorMessage} close={closeToast} />,
-    });
-  };
-
-  const handleFormSubmit = async (data: {
-    name: string;
-    description: string;
-    image: File;
-    network: string;
-  }) => {
-    try {
-      if (!accountData || !accountData.address) {
-        throw Error('Connect your wallet to sign in');
-      }
-      if (!apiClients) return;
-
-      setLoading(true);
-      const { validatorApi } = apiClients;
-
-      const imageHash = await uploadToIPFS(data.image);
-
-      const {
-        data: { ipfsHash },
-      } = await validatorApi.validateWorkspaceCreate({
-        title: data.name,
-        about: data.description,
-        logoIpfsHash: imageHash.hash,
-        creatorId: accountData.address,
-        socials: [],
-        supportedNetworks: [data.network as SupportedNetwork],
+  useEffect(() => {
+    if (
+      workspaceData
+      && workspaceTransactionData
+      && workspaceTransactionData.events.length > 0
+      && workspaceTransactionData.events[0].event === 'WorkspaceCreated'
+      && imageHash
+    ) {
+      const newId = workspaceTransactionData.events[0].args.id;
+      setDaoData({
+        ...workspaceData,
+        image: imageHash,
+        id: Number(newId).toString(),
       });
-
-      const transaction = await workspaceFactoryContract.createWorkspace(
-        ipfsHash,
-      );
-      // console.log(transaction);
-      const transactionData = await transaction.wait();
-      // console.log(transactionData);
-      // console.log(transactionData.events[0].args.id);
-      if (
-        transactionData
-        && transactionData.events.length > 0
-        && transactionData.events[0].event === 'WorkspaceCreated'
-      ) {
-        const newId = transactionData.events[0].args.id;
-        setDaoData({
-          ...data,
-          image: imageHash.hash,
-          id: Number(newId).toString(),
-        });
-        setLoading(false);
-        setDaoCreated(true);
-      } else {
-        throw new Error('Workspace not indexed');
-      }
-    } catch (error) {
       setLoading(false);
-      // console.log(error);
+      setDaoCreated(true);
     }
-  };
+  }, [workspaceTransactionData, imageHash, workspaceData, router]);
 
-  const handleGrantSubmit = async (data: any) => {
-    if (!accountData || !accountData.address) {
-      throw Error('Connect your wallet to sign in');
-    }
-    if (!apiClients) return;
-    if (!daoData) return;
+  const [grantData, setGrantData] = React.useState<any>();
+  const [grantTransactionData, createGrantLoading] = useCreateGrant(
+    grantData,
+    grantData?.network,
+  );
 
-    try {
-      setHasClicked(true);
-      setCreatingGrant(true);
-      const { validatorApi } = apiClients;
-      const {
-        data: { ipfsHash },
-      } = await validatorApi.validateGrantCreate({
-        title: data.title,
-        summary: data.summary,
-        details: data.details,
-        deadline: data.date,
-        reward: {
-          committed: parseAmount(data.reward),
-          asset: data.rewardCurrencyAddress,
-        },
-        creatorId: accountData.address,
-        workspaceId: daoData!.id,
-        fields: data.fields,
-      });
-
-      const transaction = await grantContract.createGrant(
-        daoData!.id,
-        ipfsHash,
-        config.WorkspaceRegistryAddress,
-        config.ApplicationRegistryAddress,
-      );
-      const transactionData = await transaction.wait();
-
-      setHasClicked(false);
+  useEffect(() => {
+    // console.log(grantTransactionData);
+    if (grantTransactionData) {
       router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
 
-      showToast({
-        link: `https://etherscan.io/tx/${transactionData.transactionHash}`,
+      const link = `https://etherscan.io/tx/${grantTransactionData.transactionHash}`;
+      toastRef.current = toast({
+        position: 'top',
+        render: () => (
+          <InfoToast
+            link={link}
+            close={() => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            }}
+          />
+        ),
       });
-    } catch (error: any) {
-      setHasClicked(false);
-      showErrorToast(error.message);
     }
-  };
+  }, [toast, grantTransactionData, router]);
 
   if (creatingGrant) {
-    return <CreateGrant hasClicked={hasClicked} onSubmit={handleGrantSubmit} />;
+    return (
+      <CreateGrant
+        hasClicked={createGrantLoading}
+        onSubmit={(data) => setGrantData(data)}
+      />
+    );
   }
 
   if (daoCreated && daoData) {
@@ -209,7 +117,13 @@ function SignupDao() {
         A Grants DAO is a neatly arranged space where you can manage grants,
         review grant applications and fund grants.
       </Text>
-      <Form hasClicked={hasClicked} onSubmit={handleFormSubmit} />
+      <Form
+        hasClicked={workspaceLoading}
+        onSubmit={(data) => {
+          setLoading(true);
+          setWorkspaceData(data);
+        }}
+      />
     </Container>
   );
 }

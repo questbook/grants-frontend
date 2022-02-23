@@ -2,17 +2,19 @@ import React, { useContext, useEffect } from 'react';
 import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import config from 'src/constants/config';
-import { parseAmount } from 'src/utils/formattingUtils';
 import {
   useAccount, useContract, useNetwork, useSigner,
 } from 'wagmi';
+import { SupportedNetwork } from '@questbook/service-validator-client';
+import { uploadToIPFS } from 'src/utils/ipfsUtils';
 import ErrorToast from '../components/ui/toasts/errorToast';
-import GrantFactoryABI from '../contracts/abi/GrantFactoryAbi.json';
+import WorkspaceRegistryABI from '../contracts/abi/WorkspaceRegistryAbi.json';
 
-export default function useCreateGrant(data: any, chainId?: string) {
+export default function useCreateWorkspace(data: any, chainId?: string) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
   const [transactionData, setTransactionData] = React.useState<any>();
+  const [imageHash, setImageHash] = React.useState<string>();
   const [{ data: accountData }] = useAccount();
   const [{ data: networkData }] = useNetwork();
 
@@ -24,24 +26,18 @@ export default function useCreateGrant(data: any, chainId?: string) {
   useEffect(() => {
     if (!chainId) {
       if (workspace && workspace.chainId && workspace.chainId === 'chain_4') {
-        setAddressOrName(config.GrantFactoryAddress);
+        setAddressOrName(config.WorkspaceRegistryAddress);
       }
     }
-    if (chainId === '4') {
-      setAddressOrName(config.GrantFactoryAddress);
+    if (chainId === '1') {
+      setAddressOrName(config.WorkspaceRegistryAddress);
     }
   }, [chainId, workspace]);
 
-  // useEffect(() => {
-  //   if (error) {
-  //     setError(undefined);
-  //   }
-  // }, [workspace, error]);
-
-  const grantContract = useContract({
+  const workspaceFactoryContract = useContract({
     addressOrName:
       addressOrName ?? '0x0000000000000000000000000000000000000000',
-    contractInterface: GrantFactoryABI,
+    contractInterface: WorkspaceRegistryABI,
     signerOrProvider: signerStates.data,
   });
 
@@ -62,34 +58,30 @@ export default function useCreateGrant(data: any, chainId?: string) {
     async function validate() {
       setLoading(true);
       console.log('calling validate');
+
+      const uploadedImageHash = await uploadToIPFS(data.image);
+
       const {
         data: { ipfsHash },
-      } = await validatorApi.validateGrantCreate({
-        title: data.title,
-        summary: data.summary,
-        details: data.details,
-        deadline: data.date,
-        reward: {
-          committed: parseAmount(data.reward),
-          asset: data.rewardCurrencyAddress,
-        },
+      } = await validatorApi.validateWorkspaceCreate({
+        title: data.name,
+        about: data.description,
+        logoIpfsHash: uploadedImageHash.hash,
         creatorId: accountData!.address,
-        workspaceId: workspace.workspaceId!,
-        fields: data.fields,
+        socials: [],
+        supportedNetworks: [data.network as SupportedNetwork],
       });
       if (!ipfsHash) {
         throw new Error('Error validating grant data');
       }
       try {
-        const createGrantTransaction = await grantContract.createGrant(
-          workspace.workspaceId!,
+        const createWorkspaceTransaction = await workspaceFactoryContract.createWorkspace(
           ipfsHash,
-          config.WorkspaceRegistryAddress,
-          config.ApplicationRegistryAddress,
         );
-        const createGrantTransactionData = await createGrantTransaction.wait();
+        const createWorkspaceTransactionData = await createWorkspaceTransaction.wait();
 
-        setTransactionData(createGrantTransactionData);
+        setTransactionData(createWorkspaceTransactionData);
+        setImageHash(uploadedImageHash.hash);
         setLoading(false);
       } catch (e: any) {
         setError(e.message);
@@ -113,25 +105,18 @@ export default function useCreateGrant(data: any, chainId?: string) {
       if (!accountData || !accountData.address) {
         throw new Error('not connected to wallet');
       }
-      if (!workspace || !workspace.workspaceId) {
-        throw new Error('not connected to workspace');
-      }
-      if (chainId) {
-        if (chainId !== networkData.chain?.id.toString()) {
-          throw new Error('wrong network');
-        }
-      } else if (workspace.chainId !== `chain_${networkData.chain?.id}`) {
+      if (workspace.chainId !== `chain_${networkData.chain?.id}`) {
         throw new Error('connected to wrong network');
       }
       if (!validatorApi) {
         throw new Error('validatorApi or workspaceId is not defined');
       }
       if (
-        !grantContract
-        || grantContract.address
+        !workspaceFactoryContract
+        || workspaceFactoryContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !grantContract.signer
-        || !grantContract.provider
+        || !workspaceFactoryContract.signer
+        || !workspaceFactoryContract.provider
       ) {
         return;
       }
@@ -156,14 +141,13 @@ export default function useCreateGrant(data: any, chainId?: string) {
     loading,
     toast,
     transactionData,
-    grantContract,
+    workspaceFactoryContract,
     validatorApi,
     workspace,
     accountData,
     networkData,
-    chainId,
     data,
   ]);
 
-  return [transactionData, loading];
+  return [transactionData, imageHash, loading];
 }

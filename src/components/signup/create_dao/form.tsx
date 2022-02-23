@@ -26,17 +26,6 @@ function Form({
     const supportedChainIds = Object.keys(supportedNetworks);
     const isSupported = supportedChainIds.includes(networkData.chain.id.toString());
     setNetworkSupported(isSupported);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (!networkData.chain || !networkData.chain.id) {
-      return;
-    }
-    const supportedChainIds = Object.keys(supportedNetworks);
-    const isSupported = supportedChainIds.includes(networkData.chain.id.toString());
-    setNetworkSupported(isSupported);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [networkData]);
 
   const [daoName, setDaoName] = React.useState('');
