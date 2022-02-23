@@ -12,6 +12,8 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import { MinimalWorkspace } from 'src/types';
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import AccountDetails from './accountDetails';
 import Tab from './tab';
 
@@ -25,13 +27,15 @@ interface Props {
   daoImage: null | string;
   grantsCount: number;
   applicationCount: number;
-  workspaces: any[];
-  setWorkspace: (workspace: any) => void;
+  workspaces: MinimalWorkspace[];
+
+  setSelectedWorkspaceIndex: (idx: number) => void
 }
 
 function Navbar({
   networkId, address, isOnline, renderTabs,
-  daoName, daoId, daoImage, grantsCount, applicationCount, workspaces, setWorkspace,
+  daoName, daoId, daoImage, grantsCount, applicationCount, workspaces,
+  setSelectedWorkspaceIndex,
 }: Props) {
   const [activeIndex, setActiveIndex] = React.useState(-1);
   const router = useRouter();
@@ -84,17 +88,17 @@ function Navbar({
               </Flex>
             </MenuButton>
             <MenuList>
-              {workspaces.map((workspace) => (
+              {workspaces.map((workspace, idx) => (
                 <MenuItem
-                  key={workspace.title}
+                  key={workspace.id}
                   icon={(
                     <Image
                       boxSize="20px"
-                      src={`https://ipfs.infura.io:5001/api/v0/cat?arg=${workspace.logoIpfsHash}`}
+                      src={getUrlForIPFSHash(workspace.logoIpfsHash)}
                     />
                   )}
                   onClick={() => {
-                    setWorkspace(workspace);
+                    setSelectedWorkspaceIndex(idx);
                   }}
                 >
                   {workspace.title}
@@ -106,7 +110,7 @@ function Navbar({
                   router.push('/');
                 }}
               >
-                Browse Grants
+                Discover Grants
 
               </MenuItem>
             </MenuList>

@@ -45,7 +45,7 @@ function Details({ onSubmit }: Props) {
             setDetails(e.target.value);
           }}
           errorText="Required"
-          maxLength={300}
+          maxLength={-1}
         />
 
         <Box mt={12} />

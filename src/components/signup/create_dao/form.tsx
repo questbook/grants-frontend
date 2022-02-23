@@ -1,8 +1,16 @@
 import {
-  Flex, Box, Button, Text, Image, Link, CircularProgress, Center,
+  Flex,
+  Box,
+  Button,
+  Text,
+  Image,
+  Link,
+  CircularProgress,
+  Center,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useNetwork } from 'wagmi';
+import { highlightWordsInString } from 'src/utils/formattingUtils';
 import ImageUpload from '../../ui/forms/imageUpload';
 import MultiLineInput from '../../ui/forms/multiLineInput';
 import SingleLineInput from '../../ui/forms/singleLineInput';
@@ -13,7 +21,12 @@ function Form({
   hasClicked,
   onSubmit: onFormSubmit,
 }: {
-  onSubmit: (data: { name: string; description: string; image: File, network: string }) => void;
+  onSubmit: (data: {
+    name: string;
+    description: string;
+    image: File;
+    network: string;
+  }) => void;
   hasClicked: boolean;
 }) {
   const [{ data: networkData }] = useNetwork();
@@ -24,9 +37,12 @@ function Form({
       return;
     }
     const supportedChainIds = Object.keys(supportedNetworks);
-    const isSupported = supportedChainIds.includes(networkData.chain.id.toString());
+    const isSupported = supportedChainIds.includes(
+      networkData.chain.id.toString(),
+    );
     setNetworkSupported(isSupported);
-  }, [networkData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [daoName, setDaoName] = React.useState('');
   const [daoNameError, setDaoNameError] = React.useState(false);
@@ -119,23 +135,38 @@ function Form({
           <SingleLineInput
             label="Network"
             placeholder="Network"
-            value={networkSupported ? (
-              supportedNetworks[
-                networkData.chain?.id.toString() as keyof typeof supportedNetworks
-              ].name
-            ) : 'Network not supported'}
+            value={
+              networkSupported
+                ? supportedNetworks[
+                  networkData.chain?.id.toString() as keyof typeof supportedNetworks
+                ].name
+                : 'Network not supported'
+            }
             onChange={() => {}}
             isError={false}
             disabled
             inputRightElement={(
               <Tooltip
                 icon="/ui_icons/error.svg"
-                label={networkSupported ? (
-                  `Your wallet is connected to the ${supportedNetworks[
-                    networkData.chain?.id.toString() as keyof typeof supportedNetworks
-                  ].name} Network. Your GrantsDAO will be created on the same network.
-    To create a GrantsDAO on another network, connect a different wallet.`
-                ) : 'Select a supported network'}
+                label={
+                  networkSupported
+                    ? highlightWordsInString(
+                      `Your wallet is connected to the ${
+                        supportedNetworks[
+                          networkData.chain?.id.toString() as keyof typeof supportedNetworks
+                        ].name
+                      } Network. Your GrantsDAO will be created on the same network. To create a GrantsDAO on another network, connect a different wallet.`,
+                      [
+                        `${
+                          supportedNetworks[
+                            networkData.chain?.id.toString() as keyof typeof supportedNetworks
+                          ].name
+                        } Network`,
+                      ],
+                      '#122224',
+                    )
+                    : 'Select a supported network'
+                }
               />
             )}
           />
@@ -151,9 +182,10 @@ function Form({
           src="/ui_icons/info_brand.svg"
         />
         {' '}
-        By pressing continue you&apos;ll have to approve this transaction in your wallet.
+        By pressing continue you&apos;ll have to approve this transaction in
+        your wallet.
         {' '}
-        <Link mx={1} href="wallet">
+        <Link mx={1} href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46" isExternal>
           Learn more
           <Image
             ml={1}
@@ -167,7 +199,12 @@ function Form({
 
       {hasClicked ? (
         <Center>
-          <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
+          <CircularProgress
+            isIndeterminate
+            color="brand.500"
+            size="48px"
+            mt={4}
+          />
         </Center>
       ) : (
         <Button

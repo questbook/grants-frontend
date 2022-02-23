@@ -3,6 +3,7 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useContext } from 'react';
 import { useContract, useSigner } from 'wagmi';
+import { Workspace } from 'src/types';
 import config from '../../constants/config';
 import WorkspaceRegistryABI from '../../contracts/abi/WorkspaceRegistryAbi.json';
 import EditForm from './edit_form';
@@ -11,7 +12,7 @@ import { ApiClientsContext } from '../../../pages/_app';
 import InfoToast from '../ui/infoToast';
 
 interface Props {
-  workspaceData: any;
+  workspaceData: Workspace;
 }
 
 function Settings({
@@ -27,7 +28,7 @@ function Settings({
     twitterHandle?: string;
     discordHandle?: string;
     telegramChannel?: string;
-  } | null>(null);
+  } | null>();
 
   const [signerStates] = useSigner();
 
@@ -78,12 +79,10 @@ function Settings({
       const socials = [];
 
       if (data.image) {
-        imageHash = await uploadToIPFS(data.image);
-        imageHash = imageHash.hash;
+        imageHash = (await uploadToIPFS(data.image)).hash;
       }
       if (data.coverImage) {
-        coverImageHash = await uploadToIPFS(data.coverImage);
-        coverImageHash = coverImageHash.hash;
+        coverImageHash = (await uploadToIPFS(data.coverImage)).hash;
       }
 
       if (data.twitterHandle) {
@@ -112,13 +111,7 @@ function Settings({
         socials,
       });
 
-      const workspaceID = Number(workspaceData.id);
-
-      // toast({
-      //   title: 'Updating workspace',
-      //   status: 'info',
-      //   duration: 100000,
-      // });
+      const workspaceID = Number(workspaceData?.id);
 
       const txn = await contract.updateWorkspaceMetadata(workspaceID, ipfsHash);
       const transactionData = await txn.wait();
@@ -141,11 +134,11 @@ function Settings({
     if (!workspaceData) return;
     if (Object.keys(workspaceData).length === 0) return;
     const twitterSocial = workspaceData.socials.filter((socials: any) => socials.name === 'twitter');
-    const twitterHandle = twitterSocial.length > 0 ? twitterSocial[0].value : null;
+    const twitterHandle = twitterSocial.length > 0 ? twitterSocial[0].value : undefined;
     const discordSocial = workspaceData.socials.filter((socials: any) => socials.name === 'discord');
-    const discordHandle = discordSocial.length > 0 ? discordSocial[0].value : null;
+    const discordHandle = discordSocial.length > 0 ? discordSocial[0].value : undefined;
     const telegramSocial = workspaceData.socials.filter((socials: any) => socials.name === 'telegram');
-    const telegramChannel = telegramSocial.length > 0 ? telegramSocial[0].value : null;
+    const telegramChannel = telegramSocial.length > 0 ? telegramSocial[0].value : undefined;
     // console.log('loaded', workspaceData);
     // console.log(getUrlForIPFSHash(workspaceData?.logoIpfsHash));
     setFormData({
@@ -153,7 +146,7 @@ function Settings({
       about: workspaceData.about,
       image: getUrlForIPFSHash(workspaceData?.logoIpfsHash),
       supportedNetwork: workspaceData.supportedNetworks[0],
-      coverImage: getUrlForIPFSHash(workspaceData?.coverImageIpfsHash),
+      coverImage: getUrlForIPFSHash(workspaceData.coverImageIpfsHash || ''),
       twitterHandle,
       discordHandle,
       telegramChannel,

@@ -1,7 +1,8 @@
 import {
-  Flex, Text, Button,
+  Flex, Text, Button, Tooltip,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
+import { getTextWithEllipses } from 'src/utils/formattingUtils';
 import Modal from '../ui/modal';
 import ModalContent from './modalContent';
 
@@ -34,7 +35,11 @@ function Members({ workspaceMembers }: Props) {
         <Flex direction="column" w="100%" border="1px solid #D0D3D3" borderRadius={4}>
           {tableData && tableData.map((data: any, index: number) => (
             <Flex direction="row" w="100%" justify="stretch" align="center" bg={index % 2 === 0 ? '#F7F9F9' : 'white'} py={4}>
-              <Text ml={7} flex={flex[0]} variant="tableBody">{data.memberAddress}</Text>
+              <Tooltip label={data.memberAddress}>
+                <Text ml={7} flex={flex[0]} variant="tableBody">
+                  {getTextWithEllipses(data.memberAddress, 16)}
+                </Text>
+              </Tooltip>
               <Text flex={flex[1]} variant="tableBody">{data.role}</Text>
             </Flex>
           ))}

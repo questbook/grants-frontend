@@ -1,0 +1,24 @@
+query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes) {
+  grants(
+    first: $first, 
+    skip: $skip, 
+    subgraphError: allow, 
+    where: { creatorId: $creatorId }
+    orderBy: createdAtS, 
+    orderDirection: desc
+  ) {
+  id, 
+  creatorId, 
+  title, 
+  summary, 
+  details, 
+  reward {
+    committed,
+    id,
+    asset
+  }, 
+  workspace {id, title, logoIpfsHash}, 
+  deadline,
+  funding,
+  numberOfApplications,
+}}

@@ -87,7 +87,7 @@ function Talent({
         <Text w="100vw" textAlign="center" variant="footer" fontSize="12px">
           Your grant funds are securely stored on our smart contract.
           {' '}
-          <Link href="wallet">Learn more</Link>
+          <Link href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46" isExternal>Learn more</Link>
         </Text>
       </Container>
     </Container>

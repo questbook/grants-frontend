@@ -1,15 +1,13 @@
 import {
-  Container, Flex, Text, Image, useToast, ToastId, Divider,
+  Flex, Text, Image, useToast, ToastId, Divider,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
   ReactElement, useEffect, useState, useCallback,
   useContext,
 } from 'react';
-import { gql } from '@apollo/client';
 import { useAccount, useContract, useSigner } from 'wagmi';
-import SubgraphClient from '../../../src/graphql/subgraph';
-import { getApplicationDetails } from '../../../src/graphql/daoQueries';
+import { useGetApplicationDetailsLazyQuery } from 'src/generated/graphql';
 import config from '../../../src/constants/config';
 import ApplicationRegistryAbi from '../../../src/contracts/abi/ApplicationRegistryAbi.json';
 import { ApiClientsContext } from '../../_app';
@@ -31,6 +29,20 @@ import Sidebar from '../../../src/components/your_grants/applicant_form/sidebar'
 import NavbarLayout from '../../../src/layout/navbarLayout';
 
 function ApplicantForm() {
+  const apiClients = useContext(ApiClientsContext);
+
+  const [{ data: accountData }] = useAccount();
+  const [signerStates] = useSigner();
+
+  const applicationRegContract = useContract({
+    addressOrName: config.ApplicationRegistryAddress,
+    contractInterface: ApplicationRegistryAbi,
+    signerOrProvider: signerStates.data,
+  });
+
+  const [hasClicked, setHasClicked] = React.useState(false);
+  const toastRef = React.useRef<ToastId>();
+
   const toast = useToast();
   const router = useRouter();
   const [step, setStep] = useState(0);
@@ -38,16 +50,22 @@ function ApplicantForm() {
   const [applicationId, setApplicationId] = useState<any>('');
   const [applicationData, setApplicationData] = useState<any>(null);
 
+  const [resubmitComment, setResubmitComment] = useState('');
+  const [resubmitCommentError, setResubmitCommentError] = useState(false);
+
+  const [rejectionComment, setRejectionComment] = useState('');
+  const [rejectionCommentError, setRejectionCommentError] = useState(false);
+  const [getApplicationDetails] = useGetApplicationDetailsLazyQuery({
+    client: apiClients?.subgraphClient?.client,
+  });
+
   const getApplicationData = useCallback(async () => {
-    const subgraphClient = new SubgraphClient();
-    if (!subgraphClient.client) return null;
     try {
-      const { data } = (await subgraphClient.client.query({
-        query: gql(getApplicationDetails),
+      const { data } = await getApplicationDetails({
         variables: {
           applicationID: applicationId,
         },
-      })) as any;
+      });
       // console.log(data);
       if (data && data.grantApplication) {
         setApplicationData(data.grantApplication);
@@ -57,7 +75,7 @@ function ApplicantForm() {
       // console.log(e);
       return null;
     }
-  }, [applicationId]);
+  }, [applicationId, getApplicationDetails]);
 
   useEffect(() => {
     setApplicationId(router?.query?.applicationId ?? '');
@@ -75,18 +93,6 @@ function ApplicantForm() {
       setStep(2);
     }
   }, [router]);
-  const [{ data: accountData }] = useAccount();
-  const apiClients = useContext(ApiClientsContext);
-  const [signerStates] = useSigner();
-
-  const applicationRegContract = useContract({
-    addressOrName: config.ApplicationRegistryAddress,
-    contractInterface: ApplicationRegistryAbi,
-    signerOrProvider: signerStates.data,
-  });
-
-  const [hasClicked, setHasClicked] = React.useState(false);
-  const toastRef = React.useRef<ToastId>();
 
   const closeToast = () => {
     if (toastRef.current) {
@@ -106,7 +112,7 @@ function ApplicantForm() {
     });
   };
 
-  const handleApplicationStateUpdate = async (state:number, comment:string) => {
+  const handleApplicationStateUpdate = async (state: number) => {
     try {
       if (!apiClients) return;
       const { validatorApi, workspaceId } = apiClients;
@@ -118,11 +124,21 @@ function ApplicantForm() {
         return;
       }
 
+      if (state === 1 && resubmitComment === '') {
+        setResubmitCommentError(true);
+        return;
+      }
+
+      if (state === 3 && resubmitComment === '') {
+        setRejectionCommentError(true);
+        return;
+      }
+
       setHasClicked(true);
       const {
         data: { ipfsHash },
       } = await validatorApi.validateGrantApplicationUpdate({
-        feedback: comment,
+        feedback: rejectionComment,
       });
       // console.log(ipfsHash);
       // console.log(Number(applicationData?.id), Number(workspaceId));
@@ -139,7 +155,12 @@ function ApplicantForm() {
       // toast({ title: 'Transaction succeeded', status: 'success' });
 
       setHasClicked(false);
-      router.replace('/your_grants');
+      router.replace({
+        pathname: '/your_grants/view_applicants',
+        query: {
+          grantID: applicationData?.grant?.id,
+        },
+      });
 
       showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
       // await subgraphClient.waitForBlock(transactionData.blockNumber);
@@ -152,13 +173,14 @@ function ApplicantForm() {
       });
     }
   };
+
   function renderContent(currentStep: number) {
     if (currentStep === 1) {
       return (
         <>
           <Accept
             // onSubmit={handleAcceptApplication}
-            onSubmit={() => handleApplicationStateUpdate(2, '')}
+            onSubmit={() => handleApplicationStateUpdate(2)}
             applicationData={applicationData}
             hasClicked={hasClicked}
           />
@@ -172,8 +194,12 @@ function ApplicantForm() {
       return (
         <>
           <Reject
-            onSubmit={({ comment }) => handleApplicationStateUpdate(3, comment)}
+            onSubmit={() => handleApplicationStateUpdate(3)}
             hasClicked={hasClicked}
+            comment={rejectionComment}
+            setComment={setRejectionComment}
+            commentError={rejectionCommentError}
+            setCommentError={setRejectionCommentError}
           />
           <RejectSidebar
             applicationData={applicationData}
@@ -184,8 +210,12 @@ function ApplicantForm() {
     return (
       <>
         <Resubmit
-          onSubmit={({ comment }) => handleApplicationStateUpdate(1, comment)}
+          onSubmit={() => handleApplicationStateUpdate(1)}
           hasClicked={hasClicked}
+          comment={resubmitComment}
+          setComment={setResubmitComment}
+          commentError={resubmitCommentError}
+          setCommentError={setResubmitCommentError}
         />
         <ResubmitSidebar
           applicationData={applicationData}
@@ -196,140 +226,144 @@ function ApplicantForm() {
 
   if (step === 0) {
     return (
-      <Container flexDirection="column" maxW="100%" display="flex" px="70px">
-        <Container
-          flex={1}
-          display="flex"
-          flexDirection="column"
-          maxW="1116px"
-          alignItems="stretch"
-          pb={6}
-          px={0}
-        >
-          <Breadcrumbs
-            path={['Your Grants', 'View Applicants', 'Applicant Form']}
-          />
-          <Heading mt="18px" title={applicationData?.grant?.title} />
-        </Container>
-
-        <Container maxW="100%" display="flex">
-          <Container
-            flex={1}
-            display="flex"
-            flexDirection="column"
-            maxW="834px"
+      <Flex direction="row" w="72%" mx="auto">
+        <Flex direction="column" w="100%" m={0} p={0} h="100%">
+          <Flex
+            direction="column"
             alignItems="stretch"
-            pb={8}
-            px={10}
+            pb={6}
+            px={0}
+            w="100%"
           >
-            {applicationData && applicationData?.state === 'rejected' && (
+            <Breadcrumbs
+              path={['Your Grants', 'View Applicants', 'Applicant Form']}
+            />
+            <Heading mt="18px" title={applicationData?.grant?.title} />
+          </Flex>
+
+          <Flex direction="row" w="100%" justify="space-between">
+            <Flex direction="column" w="65%" align="start">
               <Flex
-                alignItems="flex-start"
-                bgColor="#FFC0C0"
-                border="2px solid #EE7979"
-                px="26px"
-                py="22px"
-                borderRadius="6px"
-                my={4}
-                mx={10}
-                alignSelf="stretch"
+                direction="column"
+                alignItems="stretch"
+                pb={8}
+                w="100%"
               >
+                {applicationData && applicationData?.state === 'rejected' && (
                 <Flex
-                  alignItems="center"
-                  justifyContent="center"
-                  bgColor="#F7B7B7"
+                  alignItems="flex-start"
+                  bgColor="#FFC0C0"
                   border="2px solid #EE7979"
-                  borderRadius="40px"
-                  p={2}
-                  h="40px"
-                  w="40px"
-                  mt="5px"
+                  px="26px"
+                  py="22px"
+                  borderRadius="6px"
+                  my={4}
+                  mx={10}
+                  alignSelf="stretch"
                 >
-                  <Image
+                  <Flex
+                    alignItems="center"
+                    justifyContent="center"
+                    bgColor="#F7B7B7"
+                    border="2px solid #EE7979"
+                    borderRadius="40px"
+                    p={2}
                     h="40px"
                     w="40px"
-                    src="/ui_icons/result_rejected_application.svg"
-                    alt="Rejected"
-                  />
-                </Flex>
-                <Flex ml="23px" direction="column">
-                  <Text
-                    fontSize="16px"
-                    lineHeight="24px"
-                    fontWeight="700"
-                    color="#7B4646"
+                    mt="5px"
                   >
-                    Application Rejected
-                  </Text>
-                  <Text
-                    fontSize="16px"
-                    lineHeight="24px"
-                    fontWeight="400"
-                    color="#7B4646"
-                  >
-                    {applicationData?.feedback}
-                  </Text>
+                    <Image
+                      h="40px"
+                      w="40px"
+                      src="/ui_icons/result_rejected_application.svg"
+                      alt="Rejected"
+                    />
+                  </Flex>
+                  <Flex ml="23px" direction="column">
+                    <Text
+                      fontSize="16px"
+                      lineHeight="24px"
+                      fontWeight="700"
+                      color="#7B4646"
+                    >
+                      Application Rejected
+                    </Text>
+                    <Text
+                      fontSize="16px"
+                      lineHeight="24px"
+                      fontWeight="400"
+                      color="#7B4646"
+                    >
+                      {applicationData?.feedbackDao}
+                    </Text>
+                  </Flex>
                 </Flex>
-              </Flex>
-            )}
+                )}
 
-            {applicationData && applicationData?.state === 'resubmit' && (
-              <Flex
-                alignItems="flex-start"
-                bgColor="#FEF6D9"
-                border="2px solid #EFC094"
-                px="26px"
-                py="22px"
-                borderRadius="6px"
-                my={4}
-                mx={10}
-                alignSelf="stretch"
-              >
+                {applicationData && applicationData?.state === 'resubmit' && (
                 <Flex
-                  alignItems="center"
-                  justifyContent="center"
-                  h="36px"
-                  w="42px"
+                  alignItems="flex-start"
+                  bgColor="#FEF6D9"
+                  border="2px solid #EFC094"
+                  px="26px"
+                  py="22px"
+                  borderRadius="6px"
+                  my={4}
+                  mx={10}
+                  alignSelf="stretch"
                 >
-                  <Image
-                    h="40px"
-                    w="40px"
-                    src="/ui_icons/alert_triangle.svg"
-                    alt="Resubmit"
-                  />
-                </Flex>
-                <Flex ml="23px" direction="column">
-                  <Text
-                    fontSize="16px"
-                    lineHeight="24px"
-                    fontWeight="700"
-                    color="#7B4646"
+                  <Flex
+                    alignItems="center"
+                    justifyContent="center"
+                    h="36px"
+                    w="42px"
                   >
-                    Request for Resubmission
-                  </Text>
-                  <Text
-                    fontSize="16px"
-                    lineHeight="24px"
-                    fontWeight="400"
-                    color="#7B4646"
-                  >
-                    {applicationData?.feedback}
-                  </Text>
+                    <Image
+                      h="40px"
+                      w="40px"
+                      src="/ui_icons/alert_triangle.svg"
+                      alt="Resubmit"
+                    />
+                  </Flex>
+                  <Flex ml="23px" direction="column">
+                    <Text
+                      fontSize="16px"
+                      lineHeight="24px"
+                      fontWeight="700"
+                      color="#7B4646"
+                    >
+                      Request for Resubmission
+                    </Text>
+                    <Text
+                      fontSize="16px"
+                      lineHeight="24px"
+                      fontWeight="400"
+                      color="#7B4646"
+                    >
+                      {applicationData?.feedbackDao}
+                    </Text>
+                  </Flex>
                 </Flex>
+                )}
+
+                <Flex direction="column">
+                  <Application applicationData={applicationData} />
+                </Flex>
+
               </Flex>
-            )}
+            </Flex>
+            <Flex direction="column" mt={2}>
+              <Sidebar
+                applicationData={applicationData}
+                onAcceptApplicationClick={() => setStep(1)}
+                onRejectApplicationClick={() => setStep(2)}
+                onResubmitApplicationClick={() => setStep(3)}
+              />
+            </Flex>
+          </Flex>
+        </Flex>
 
-            <Application applicationData={applicationData} />
-          </Container>
-
-          <Sidebar
-            applicationData={applicationData}
-            onAcceptApplicationClick={() => setStep(1)}
-            onRejectApplicationClick={() => setStep(2)}
-            onResubmitApplicationClick={() => setStep(3)}
-          />
-        </Container>
-      </Container>
+      </Flex>
     );
   }
 

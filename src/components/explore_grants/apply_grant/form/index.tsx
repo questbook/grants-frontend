@@ -6,6 +6,7 @@ import {
 import { useContract, useSigner } from 'wagmi';
 import { GrantApplicationRequest } from '@questbook/service-validator-client';
 import { useRouter } from 'next/router';
+import { isValidEmail } from 'src/utils/validationUtils';
 import { parseAmount } from '../../../../utils/formattingUtils';
 import { GrantApplicationFieldsSubgraph, GrantApplicationCreateSubgraph } from '../../../../types/application';
 import InfoToast from '../../../ui/infoToast';
@@ -126,7 +127,7 @@ function Form({
         setApplicantNameError(true);
         error = true;
       }
-      if (applicantEmail === '' && grantRequiredFields.includes('applicantEmail')) {
+      if ((applicantEmail === '' || !isValidEmail(applicantEmail)) && grantRequiredFields.includes('applicantEmail')) {
         setApplicantEmailError(true);
         error = true;
       }
@@ -241,6 +242,7 @@ function Form({
       const { data: { ipfsHash } } = await apiClientContext
         .validatorApi
         .validateGrantApplicationCreate(data as unknown as GrantApplicationRequest);
+
       const transaction = await applicationRegistryContract.submitApplication(
         grantId,
         Number(workspaceId).toString(),
@@ -284,7 +286,7 @@ function Form({
   };
 
   return (
-    <Flex mt="30px" flexDirection="column" alignItems="center" w="100%">
+    <Flex my="30px" flexDirection="column" alignItems="center" w="100%" px="44px">
       <Image h="96px" w="96px" src={daoLogo} alt="Polygon DAO" />
       <Text mt={6} variant="heading">
         {title}
@@ -367,9 +369,9 @@ function Form({
       <Text mt={10} textAlign="center" variant="footer" fontSize="12px">
         <Image display="inline-block" src="/ui_icons/info.svg" alt="pro tip" mb="-2px" />
         {' '}
-        By pressing Submit Application you’ll have to approve this transaction in your wallet.
+        By pressing Submit Application you&apos;ll have to approve this transaction in your wallet.
         {' '}
-        <Link href="wallet">Learn more</Link>
+        <Link href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46" isExternal>Learn more</Link>
         {' '}
         <Image
           display="inline-block"

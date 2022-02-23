@@ -1,7 +1,13 @@
 import { Flex, useTheme } from '@chakra-ui/react';
 import React from 'react';
 
-function FloatingSidebar({ children }: { children: React.ReactNode }) {
+function FloatingSidebar({
+  children,
+  top,
+}: {
+  children: React.ReactNode;
+  top?: number | string;
+}) {
   const theme = useTheme();
   return (
     <Flex
@@ -14,10 +20,16 @@ function FloatingSidebar({ children }: { children: React.ReactNode }) {
       alignItems="stretch"
       px={10}
       py={5}
+      pos="sticky"
+      top={top}
     >
       {children}
     </Flex>
   );
 }
+
+FloatingSidebar.defaultProps = {
+  top: '40px',
+};
 
 export default FloatingSidebar;

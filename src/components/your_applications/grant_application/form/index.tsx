@@ -16,6 +16,7 @@ import {
 import { useContract, useSigner } from 'wagmi';
 import { GrantApplicationUpdate } from '@questbook/service-validator-client';
 import { useRouter } from 'next/router';
+import { isValidEmail } from 'src/utils/validationUtils';
 import { GrantApplicationFieldsSubgraph, GrantApplicationProps, GrantApplicationUpdateSubgraph } from '../../../../types/application';
 import { ApiClientsContext } from '../../../../../pages/_app';
 import config from '../../../../constants/config';
@@ -162,7 +163,7 @@ function Form({
         setApplicantNameError(true);
         error = true;
       }
-      if (applicantEmail === '' && grantRequiredFields.includes('applicantEmail')) {
+      if ((applicantEmail === '' || !isValidEmail(applicantEmail)) && grantRequiredFields.includes('applicantEmail')) {
         setApplicantEmailError(true);
         error = true;
       }
@@ -522,9 +523,9 @@ function Form({
       <Text mt={10} textAlign="center" variant="footer" fontSize="12px">
         <Image display="inline-block" src="/ui_icons/info.svg" alt="pro tip" mb="-2px" />
         {' '}
-        By pressing Submit Application you’ll have to approve this transaction in your wallet.
+        By pressing Submit Application you&apos;ll have to approve this transaction in your wallet.
         {' '}
-        <Link href="wallet">Learn more</Link>
+        <Link href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46" isExternal>Learn more</Link>
         {' '}
         <Image
           display="inline-block"

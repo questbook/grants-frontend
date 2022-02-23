@@ -3,39 +3,38 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
-  ReactElement, useCallback, useEffect, useState,
+  ReactElement, useCallback, useContext, useEffect, useState,
 } from 'react';
-import { gql } from '@apollo/client';
 import { ethers } from 'ethers';
+import { GetApplicationDetailsQuery, useGetApplicationDetailsLazyQuery } from 'src/generated/graphql';
+import { ApiClientsContext } from 'pages/_app';
 import { GrantApplicationProps } from '../../src/types/application';
 import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils';
 import Form from '../../src/components/your_applications/grant_application/form';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import NavbarLayout from '../../src/layout/navbarLayout';
-import SubgraphClient from '../../src/graphql/subgraph';
-import { getApplicationDetails } from '../../src/graphql/daoQueries';
 import { getAssetInfo } from '../../src/utils/tokenUtils';
 
 function ViewApplication() {
+  const { subgraphClient } = useContext(ApiClientsContext)!;
+
   const router = useRouter();
   const [applicationID, setApplicationId] = React.useState<any>('');
-  const [application, setApplication] = React.useState<any>([]);
+  const [application, setApplication] = React.useState<GetApplicationDetailsQuery['grantApplication']>();
 
   const [formData, setFormData] = useState<GrantApplicationProps | null>(null);
 
-  const getApplicationDetailsData = useCallback(async () => {
-    const subgraphClient = new SubgraphClient();
-    if (!subgraphClient.client) return null;
-    try {
-      const { data } = (await subgraphClient.client.query({
+  const [getApplicationDetails] = useGetApplicationDetailsLazyQuery({
+    client: subgraphClient.client,
+  });
 
-        query: gql(getApplicationDetails),
-        variables: {
-          applicationID,
-        },
-      })) as any;
-      // console.log(data);
-      if (data && data.grantApplication) {
+  const getApplicationDetailsData = useCallback(async () => {
+    try {
+      const { data } = await getApplicationDetails({
+        variables: { applicationID },
+      });
+
+      if (data) {
         setApplication(data.grantApplication);
       }
       return true;
@@ -43,7 +42,7 @@ function ViewApplication() {
       // console.log(e);
       return null;
     }
-  }, [applicationID]);
+  }, [applicationID, getApplicationDetails]);
 
   useEffect(() => {
     setApplicationId(router?.query?.applicationID ?? '');
@@ -56,20 +55,23 @@ function ViewApplication() {
 
   useEffect(() => {
     if (!application || !application?.fields?.length) return;
+
+    const getStringField = (fieldName: string) => application?.fields?.find(({ id }) => id.split('.')[1] === fieldName)?.value[0] ?? '';
+
     const fields = application?.fields;
     const fd: GrantApplicationProps = {
-      applicantName: fields.find((f:any) => f.id.split('.')[1] === 'applicantName')?.value[0] ?? '',
-      applicantEmail: fields.find((f:any) => f.id.split('.')[1] === 'applicantEmail')?.value[0] ?? '',
-      teamMembers: Number(fields.find((f:any) => f.id.split('.')[1] === 'teamMembers')?.value[0]) ?? 1,
+      applicantName: getStringField('applicantName'),
+      applicantEmail: getStringField('applicantEmail'),
+      teamMembers: +(getStringField('teamMembers') || '1'),
       membersDescription: fields.find((f:any) => f.id.split('.')[1] === 'memberDetails')?.value.map((val:string) => ({ description: val })) ?? [],
-      projectName: fields.find((f:any) => f.id.split('.')[1] === 'projectName')?.value[0] ?? '',
+      projectName: getStringField('projectName'),
       projectLinks: fields.find((f:any) => f.id.split('.')[1] === 'projectLink')?.value.map((val:string) => ({ link: val })) ?? [],
-      projectDetails: fields.find((f:any) => f.id.split('.')[1] === 'projectDetails')?.value[0] ?? '',
-      projectGoal: fields.find((f:any) => f.id.split('.')[1] === 'projectGoals')?.value[0] ?? '',
+      projectDetails: getStringField('projectDetails'),
+      projectGoal: getStringField('projectGoals'),
       projectMilestones: application.milestones
         .map((ms:any) => ({ milestone: ms.title, milestoneReward: ethers.utils.formatEther(ms.amount ?? '0') })) ?? [],
-      fundingAsk: ethers.utils.formatEther(fields.find((f:any) => f.id.split('.')[1] === 'fundingAsk')?.value[0] ?? '0'),
-      fundingBreakdown: fields.find((f:any) => f.id.split('.')[1] === 'fundingBreakdown')?.value[0] ?? '',
+      fundingAsk: ethers.utils.formatEther(getStringField('fundingAsk') ?? '0'),
+      fundingBreakdown: getStringField('fundingBreakdown'),
     };
     setFormData(fd);
   }, [application]);
@@ -97,17 +99,16 @@ function ViewApplication() {
             });
           }}
           rewardAmount={ethers.utils.formatEther(application?.grant?.reward?.committed ?? '1').toString()}
-          rewardCurrency={getAssetInfo(application?.grant?.reward?.asset)?.label}
-          rewardCurrencyCoin={getAssetInfo(application?.grant?.reward?.asset)?.icon}
+          rewardCurrency={getAssetInfo(application?.grant?.reward?.asset ?? '')?.label}
+          rewardCurrencyCoin={getAssetInfo(application?.grant?.reward?.asset ?? '')?.icon}
           formData={formData}
-          grantTitle={application?.grant?.title}
-          sentDate={application?.createdAtS}
-          daoLogo={getUrlForIPFSHash(application?.grant?.workspace?.logoIpfsHash)}
-          state={application?.state}
-          feedback={application?.feedback}
+          grantTitle={application?.grant?.title || ''}
+          sentDate={application?.createdAtS ? new Date(application.createdAtS * 1000).toJSON() : ''}
+          daoLogo={getUrlForIPFSHash(application?.grant?.workspace?.logoIpfsHash || '')}
+          state={application?.state || ''}
+          feedback={application?.feedbackDao || ''}
           grantRequiredFields={application?.fields?.map((field:any) => field.id.split('.')[1]) ?? []}
           applicationID={applicationID}
-          // grantID={application?.grant?.id}
         />
       </Container>
     </Container>

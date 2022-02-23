@@ -87,7 +87,7 @@ function Dao({
         <Text w="100vw" textAlign="center" variant="footer" fontSize="12px">
           Each grant can be seen on-chain.
           {' '}
-          <Link href="learn more">
+          <Link href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46" isExternal>
             Learn more
             <Image
               mx={1}

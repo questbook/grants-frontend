@@ -13,10 +13,8 @@ function Sidebar({
   const theme = useTheme();
   return (
     <Flex
-      // h="calc(100vh - 80px)"
       bg={theme.colors.backgrounds.sidebar}
-      w="fit-content"
-      maxW={376}
+      w="100%"
       align="center"
       justify="space-between"
       direction="column"
@@ -33,6 +31,7 @@ function Sidebar({
               lineHeight="24px"
               fontWeight="700"
               href={href}
+              isExternal
             >
               {label}
             </Link>

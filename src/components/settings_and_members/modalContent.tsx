@@ -3,6 +3,7 @@ import {
 } from '@chakra-ui/react';
 import React, { useContext } from 'react';
 import { useContract, useSigner } from 'wagmi';
+import { isValidAddress, isValidEmail } from 'src/utils/validationUtils';
 import SingleLineInput from '../ui/forms/singleLineInput';
 import config from '../../constants/config';
 import WorkspaceRegistryABI from '../../contracts/abi/WorkspaceRegistryAbi.json';
@@ -17,7 +18,11 @@ function ModalContent({
   onClose,
 }: Props) {
   const [memberAddress, setMemberAddress] = React.useState('');
+  const [memberAddressError, setMemberAddressError] = React.useState(false);
+
   const [memberEmail, setMemberEmail] = React.useState('');
+  const [memberEmailError, setMemberEmailError] = React.useState(false);
+
   const [signerStates] = useSigner();
   const toast = useToast();
   const workspaceFactoryContract = useContract({
@@ -28,7 +33,19 @@ function ModalContent({
   const workspaceId = useContext(ApiClientsContext)?.workspaceId;
 
   const addMember = async () => {
-    if (!memberAddress || memberAddress.length === 0) return;
+    let hasError = false;
+
+    if (!memberAddress || memberAddress.length === 0 || !isValidAddress(memberAddress)) {
+      setMemberAddressError(true);
+      hasError = true;
+    }
+
+    if (!memberEmail || memberEmail.length === 0 || !isValidEmail(memberEmail)) {
+      setMemberEmailError(true);
+      hasError = true;
+    }
+
+    if (hasError) return;
 
     toast({
       title: 'Adding member',
@@ -69,9 +86,13 @@ function ModalContent({
         subtext=""
         value={memberAddress}
         onChange={(e) => {
+          if (memberAddressError) {
+            setMemberAddressError(false);
+          }
           setMemberAddress(e.target.value);
         }}
-        isError={false}
+        isError={memberAddressError}
+        errorText="Address required with proper format"
       />
       <Box my={4} />
       <SingleLineInput
@@ -80,17 +101,22 @@ function ModalContent({
         subtext=""
         value={memberEmail}
         onChange={(e) => {
+          if (memberEmailError) {
+            setMemberEmailError(false);
+          }
           setMemberEmail(e.target.value);
         }}
-        isError={false}
+        isError={memberEmailError}
+        errorText="Required email address in proper format"
+        type="email"
       />
       <Flex direction="row" mt={6}>
         <Text textAlign="left" variant="footer" fontSize="12px">
           <Image display="inline-block" src="/ui_icons/info.svg" alt="pro tip" mb="-2px" />
           {' '}
-          By pressing Send Invite you’ll have to approve this transaction in your wallet.
+          By pressing Send Invite you&apos;ll have to approve this transaction in your wallet.
           {' '}
-          <Link href="wallet">Learn more</Link>
+          <Link href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46" isExternal>Learn more</Link>
           {' '}
           <Image
             display="inline-block"

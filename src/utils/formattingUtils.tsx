@@ -1,8 +1,7 @@
 import { ethers } from 'ethers';
 import React from 'react';
 import moment from 'moment';
-// eslint-disable-next-line import/no-cycle
-import { FundTransfer } from '../graphql/queries';
+import { FundTransfer } from 'src/types';
 
 export function timeToString(
   timestamp: number,
@@ -94,8 +93,8 @@ export function getFormattedDateFromUnixTimestamp(timestamp: number) {
   return moment.unix(timestamp).format('DD MMM');
 }
 
-export function getFormattedDateFromUnixTimestampWithYear(timestamp: number) {
-  return moment.unix(timestamp).format('MMM DD, YYYY');
+export function getFormattedDateFromUnixTimestampWithYear(timestamp: number | undefined) {
+  return timestamp ? moment.unix(timestamp).format('MMM DD, YYYY') : undefined;
 }
 
 export function getFormattedFullDateFromUnixTimestamp(timestamp: number) {
@@ -130,3 +129,5 @@ export function getMilestoneTitle(milestone: FundTransfer['milestone']) {
   }
   return 'Unknown Milestone';
 }
+
+export const getTextWithEllipses = (txt: string, maxLength = 7) => (txt.length > maxLength ? `${txt.slice(0, maxLength)}...` : txt);

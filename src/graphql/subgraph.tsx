@@ -28,7 +28,7 @@ class SubgraphClient {
 
       // average block time is 12-14 seconds
       const nextBlock = new Promise((f) => {
-        setTimeout(f, 14000);
+        setTimeout(f, 5000);
       });
 
       const query = `

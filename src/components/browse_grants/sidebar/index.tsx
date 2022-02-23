@@ -25,7 +25,7 @@ function Sidebar() {
         direction="column"
         py={7}
         px={10}
-        overflow="scroll"
+        // overflow="scroll"
       >
         <Text fontSize="28px" lineHeight="35.5px">
           What is
@@ -57,7 +57,7 @@ function Sidebar() {
               },
             ]}
             linkText="See our guide"
-            linkHref="#"
+            linkHref="https://www.notion.so/questbook/Grant-DAO-Wiki-e844026ab4344b67b447a7aa390ae053"
           />
         </Box>
 
@@ -79,7 +79,7 @@ function Sidebar() {
               },
             ]}
             linkText="See our guide"
-            linkHref="#"
+            linkHref="https://www.notion.so/questbook/Talent-Wiki-2927326de319415f87264a139621bbae"
           />
         </Box>
       </Flex>

@@ -1,18 +1,20 @@
-import { gql } from '@apollo/client';
-import { Container, useToast } from '@chakra-ui/react';
+import { Flex, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
-  ReactElement, useCallback, useContext, useEffect, useRef,
+  ReactElement, useCallback, useContext, useEffect, useRef, useState,
 } from 'react';
+import { useGetAllGrantsLazyQuery, GetAllGrantsQuery } from 'src/generated/graphql';
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import { useAccount } from 'wagmi';
 import GrantCard from '../src/components/browse_grants/grantCard';
 import Sidebar from '../src/components/browse_grants/sidebar';
 import Heading from '../src/components/ui/heading';
 import supportedCurrencies from '../src/constants/supportedCurrencies';
-import { getAllGrants } from '../src/graphql/daoQueries';
 import NavbarLayout from '../src/layout/navbarLayout';
 import { formatAmount } from '../src/utils/formattingUtils';
 import { ApiClientsContext } from './_app';
+
+const PAGE_SIZE = 20;
 
 function BrowseGrants() {
   const containerRef = useRef(null);
@@ -20,46 +22,35 @@ function BrowseGrants() {
   const router = useRouter();
   const subgraphClient = useContext(ApiClientsContext)?.subgraphClient.client;
 
-  const toast = useToast();
-  const [grants, setGrants] = React.useState<any>([]);
+  const [getAllGrants] = useGetAllGrantsLazyQuery({ client: subgraphClient });
 
-  const pageSize = 20;
-  const [currentPage, setCurrentPage] = React.useState(0);
+  const toast = useToast();
+  const [grants, setGrants] = useState<GetAllGrantsQuery['grants']>([]);
+
+  const [currentPage, setCurrentPage] = useState(0);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getGrantData = async () => {
     if (!subgraphClient) return;
     try {
-      const { data } = (await subgraphClient.query({
-        query: gql(getAllGrants),
+      const { data } = await getAllGrants({
         variables: {
-          first: pageSize,
-          skip: currentPage * pageSize,
+          first: PAGE_SIZE,
+          skip: currentPage * PAGE_SIZE,
         },
-      })) as any;
-      if (data.grants.length > 0) {
+      });
+      if (data) {
         setCurrentPage(currentPage + 1);
         setGrants([...grants, ...data.grants]);
       }
     } catch (e) {
       // console.log(e);
       toast({
-        title: 'Error getting workspace data',
+        title: 'Error loading grants',
         status: 'error',
       });
     }
   };
-
-  //   const { current } = currentPageRef;
-  //   if (!current) return;
-  //   ((current as HTMLElement)?.parentNode as HTMLElement).scrollTo({
-  //     top: 0,
-  //     left: 0,
-  //     behavior: 'smooth',
-  //   });
-  //   // console.log(currentPageRef.current?.parentNode);
-  //   setCurrentStep(step);
-  // };
 
   const handleScroll = useCallback(() => {
     const { current } = containerRef;
@@ -96,17 +87,15 @@ function BrowseGrants() {
   };
 
   return (
-    <Container ref={containerRef} maxW="100%" display="flex" px="70px">
-      <Container
-        flex={1}
-        display="flex"
-        flexDirection="column"
-        maxW="834px"
+    <Flex ref={containerRef} direction="row" justify="center">
+      <Flex
+        direction="column"
+        w="55%"
         alignItems="stretch"
         pb={8}
         px={10}
       >
-        <Heading title="Browse grants" />
+        <Heading title="Discover grants" />
         {grants.length > 0
           && grants.map((grant: any) => {
             const grantCurrency = supportedCurrencies.find(
@@ -116,7 +105,7 @@ function BrowseGrants() {
             return (
               <GrantCard
                 key={grant.id}
-                daoIcon={`https://ipfs.infura.io:5001/api/v0/cat?arg=${grant.workspace.logoIpfsHash}`}
+                daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
                 daoName={grant.workspace.title}
                 isDaoVerified={false}
                 grantTitle={grant.title}
@@ -143,9 +132,18 @@ function BrowseGrants() {
               />
             );
           })}
-      </Container>
-      {accountData && accountData.address ? null : <Sidebar />}
-    </Container>
+      </Flex>
+      {accountData && accountData.address ? null : (
+        <Flex
+          w="26%"
+          h="100%"
+          pos="sticky"
+          top={0}
+        >
+          <Sidebar />
+        </Flex>
+      )}
+    </Flex>
   );
 }
 

@@ -33,7 +33,7 @@ function SidebarList({
           </HStack>
         ))}
       </VStack>
-      <Link mt={6} ml={9} href={linkHref} fontSize="12px">
+      <Link mt={6} ml={9} href={linkHref} fontSize="12px" isExternal>
         {linkText}
         {' '}
         {'>'}

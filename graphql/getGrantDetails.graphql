@@ -1,0 +1,14 @@
+query getGrantDetails($grantID: ID!) {
+    grants(where: {id: $grantID}, subgraphError: allow){
+        id, 
+        creatorId, 
+        title, 
+        summary, 
+        details, 
+        fields (first: 20) {id, title, inputType}
+        reward {id, asset, committed}, 
+        workspace {id, title, logoIpfsHash}, 
+        deadline,
+        funding,
+    }
+}
