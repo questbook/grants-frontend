@@ -67,7 +67,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
       const { data } = await getWorkspaceMembers({
         variables: { actorId: userAddress },
       });
-      if (data?.workspaceMembers?.length) {
+      if (data) {
         setWorkspaces(data.workspaceMembers.map((w) => w.workspace));
       }
     } catch (e) {
