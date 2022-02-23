@@ -11,7 +11,7 @@ import Sidebar from '../src/components/browse_grants/sidebar';
 import Heading from '../src/components/ui/heading';
 import supportedCurrencies from '../src/constants/supportedCurrencies';
 import NavbarLayout from '../src/layout/navbarLayout';
-import { formatAmount } from '../src/utils/formattingUtils';
+import { formatAmount, parseAmount } from '../src/utils/formattingUtils';
 import { ApiClientsContext } from './_app';
 
 const PAGE_SIZE = 20;
@@ -67,8 +67,8 @@ function BrowseGrants() {
 
   useEffect(() => {
     getGrantData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountData?.address]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const { current } = containerRef;
@@ -80,6 +80,7 @@ function BrowseGrants() {
     return () => parentElement.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
+  // @TODO: cannot work multichain
   const getIcon = (currency: string) => {
     if (currency === 'DAI') return '/ui_icons/brand/currency/dai.svg';
     if (currency === 'WMATIC') return '/ui_icons/brand/currency/wmatic.svg';
@@ -97,11 +98,12 @@ function BrowseGrants() {
       >
         <Heading title="Discover grants" />
         {grants.length > 0
-          && grants.map((grant: any) => {
+          && grants.map((grant) => {
             const grantCurrency = supportedCurrencies.find(
               (currency) => currency.id.toLowerCase()
                 === grant.reward.asset.toString().toLowerCase(),
             );
+            const isGrantVerified = parseInt(parseAmount(grant.funding), 10) > 0;
             return (
               <GrantCard
                 key={grant.id}
@@ -111,11 +113,11 @@ function BrowseGrants() {
                 grantTitle={grant.title}
                 grantDesc={grant.summary}
                 numOfApplicants={grant.numberOfApplications}
-                endTimestamp={new Date(grant.deadline).getTime()}
+                endTimestamp={new Date(grant.deadline!).getTime()}
                 grantAmount={formatAmount(grant.reward.committed)}
                 grantCurrency={grantCurrency?.label ?? 'LOL'}
                 grantCurrencyIcon={grantCurrency?.label ? getIcon(grantCurrency.label) : '/images/dummy/Ethereum Icon.svg'}
-                isGrantVerified={grant.funding > 0}
+                isGrantVerified={isGrantVerified}
                 onClick={() => {
                   if (!(accountData && accountData.address)) {
                     router.push({
@@ -136,7 +138,6 @@ function BrowseGrants() {
       {accountData && accountData.address ? null : (
         <Flex
           w="26%"
-          h="100%"
           pos="sticky"
           top={0}
         >
