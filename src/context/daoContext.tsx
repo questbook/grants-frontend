@@ -4,8 +4,10 @@ import React, {
   createContext,
   ReactNode, useCallback, useContext, useMemo, useState,
 } from 'react';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { SupportedChainId } from 'src/constants/chains';
 import useGetSelectedNetwork from 'src/hooks/useGetSelectedNetwork';
+import useIsCorrectNetworkSelected from 'src/hooks/useIsCorrectNetwork';
 import useWorkspaceRegistryContract from 'src/hooks/useWorkspaceRegistryContract';
 import { WorkspaceData } from 'src/types/workspace';
 import { uploadToIPFS } from 'src/utils/ipfsUtils';
@@ -17,13 +19,17 @@ type Props = {
 };
 type DaoContextType = {
   createWorkspace: (data:WorkspaceData) => void;
+  editWorkspace: (data:any, workspaceData: any) => void;
   loading: boolean;
+  hasClicked: boolean;
   daoData: WorkspaceData | undefined;
   daoCreated: boolean;
 };
 const daoContextDefaultValues: DaoContextType = {
   createWorkspace: () => {},
+  editWorkspace: () => {},
   loading: false,
+  hasClicked: false,
   daoData: undefined,
   daoCreated: false,
 };
@@ -36,7 +42,7 @@ export function DaoProvider({ children }: Props) {
   const [daoData, setDaoData] = useState<WorkspaceData>();
   const [{ data: accountData }] = useAccount();
   const apiClients = useContext(ApiClientsContext);
-  const { showErrorToast } = useToastContext();
+  const { showErrorToast, showInfoToast } = useToastContext();
   const selectedChainId = useGetSelectedNetwork();
   const workspaceFactoryContract = useWorkspaceRegistryContract(
     selectedChainId || SupportedChainId.RINKEBY,
@@ -95,10 +101,79 @@ export function DaoProvider({ children }: Props) {
       // console.log(error);
     }
   }, [accountData, apiClients, showErrorToast, workspaceFactoryContract]);
-  const value = useMemo(() => ({
-    createWorkspace, daoCreated, daoData, loading,
-  }), [createWorkspace, daoCreated, daoData, loading]);
 
+  const [hasClicked, setHasClicked] = useState(false);
+  const workspaceFactoryContractExisting = useWorkspaceRegistryContract(
+    apiClients?.chainId || SupportedChainId.RINKEBY,
+  );
+  const isCorrectNetworkSelected = useIsCorrectNetworkSelected(apiClients?.chainId);
+  const editWorkspace = useCallback(async (data: any, workspaceData: any) => {
+    if (!apiClients) return;
+    try {
+      const { validatorApi } = apiClients;
+
+      if (!isCorrectNetworkSelected && apiClients && apiClients.chainId) {
+        throw Error(`You are on the wrong network. Please switch to ${CHAIN_INFO[apiClients.chainId].name}`);
+      }
+
+      let imageHash = workspaceData.logoIpfsHash;
+      let coverImageHash = workspaceData.coverImageIpfsHash;
+      const socials = [];
+
+      if (data.image) {
+        imageHash = (await uploadToIPFS(data.image)).hash;
+      }
+      if (data.coverImage) {
+        coverImageHash = (await uploadToIPFS(data.coverImage)).hash;
+      }
+
+      if (data.twitterHandle) {
+        socials.push({ name: 'twitter', value: data.twitterHandle });
+      }
+      if (data.discordHandle) {
+        socials.push({ name: 'discord', value: data.discordHandle });
+      }
+      if (data.telegramChannel) {
+        socials.push({ name: 'telegram', value: data.telegramChannel });
+      }
+
+      setHasClicked(true);
+      const {
+        data: { ipfsHash },
+      } = await validatorApi.validateWorkspaceUpdate(coverImageHash ? {
+        title: data.name,
+        about: data.about,
+        logoIpfsHash: imageHash,
+        coverImageIpfsHash: coverImageHash,
+        socials,
+      } : {
+        title: data.name,
+        about: data.about,
+        logoIpfsHash: imageHash,
+        socials,
+      });
+
+      const workspaceID = Number(workspaceData?.id);
+
+      const txn = await workspaceFactoryContractExisting
+        .updateWorkspaceMetadata(workspaceID, ipfsHash);
+      const transactionData = await txn.wait();
+      setHasClicked(false);
+      window.location.reload();
+
+      showInfoToast(`https://etherscan.io/tx/${transactionData.transactionHash}`);
+    } catch (error: any) {
+      setHasClicked(false);
+      // console.log(error);
+      showErrorToast(error.message as string);
+    }
+    // await subgraphClient.waitForBlock(transactionData.blockNumber);
+  }, [apiClients,
+    isCorrectNetworkSelected, showErrorToast, showInfoToast, workspaceFactoryContractExisting]);
+
+  const value = useMemo(() => ({
+    createWorkspace, daoCreated, daoData, loading, editWorkspace, hasClicked,
+  }), [createWorkspace, daoCreated, daoData, editWorkspace, hasClicked, loading]);
   return (
     <DaoContext.Provider value={value}>
       {children}
