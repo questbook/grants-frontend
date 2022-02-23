@@ -4,8 +4,7 @@ import {
 } from '@chakra-ui/react';
 import Badge from './badge';
 
-interface GrantCardProps {
-  daoID: string;
+interface BrowseGrantCardProps {
   daoIcon: string;
   daoName: string;
   isDaoVerified?: boolean;
@@ -24,8 +23,7 @@ interface GrantCardProps {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-function GrantCard({
-  daoID,
+function BrowseGrantCard({
   daoIcon,
   daoName,
   isDaoVerified,
@@ -42,7 +40,7 @@ function GrantCard({
   grantCurrencyIcon,
 
   onClick,
-}: GrantCardProps) {
+}: BrowseGrantCardProps) {
   return (
     <>
       <Flex py={6} w="100%">
@@ -70,7 +68,7 @@ function GrantCard({
           </Flex>
 
           <Flex direction="row">
-            <Link href={`/profile?daoID=${daoID}`} lineHeight="24px" fontWeight="700">
+            <Link href="link" lineHeight="24px" fontWeight="700">
               {daoName}
               {isDaoVerified && (
                 <Image
@@ -108,9 +106,9 @@ function GrantCard({
   );
 }
 
-GrantCard.defaultProps = {
+BrowseGrantCard.defaultProps = {
   isGrantVerified: false,
   isDaoVerified: false,
   onClick: () => {},
 };
-export default GrantCard;
+export default BrowseGrantCard;

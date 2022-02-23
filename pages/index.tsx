@@ -104,6 +104,7 @@ function BrowseGrants() {
             );
             return (
               <GrantCard
+                daoID={grant.workspace.id}
                 key={grant.id}
                 daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
                 daoName={grant.workspace.title}

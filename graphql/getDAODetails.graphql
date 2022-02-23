@@ -1,0 +1,37 @@
+query getDAODetails($workspaceID: ID!, $daoID: String!) {
+     workspace(id: $workspaceID, subgraphError: allow) {
+        id
+        title
+        about
+        logoIpfsHash
+        coverImageIpfsHash
+        supportedNetworks
+        socials {
+          name
+          value
+        }
+    }
+    
+    grants(
+        subgraphError: allow, 
+        where: { workspace: $daoID }
+        orderBy: createdAtS, 
+        orderDirection: desc
+    ) {
+    id, 
+    creatorId, 
+    title, 
+    createdAtS,
+    summary, 
+    details, 
+    reward {
+        committed,
+        id,
+        asset
+    }, 
+    workspace {title, logoIpfsHash}, 
+    deadline,
+    funding,
+    numberOfApplications,
+    }
+}
