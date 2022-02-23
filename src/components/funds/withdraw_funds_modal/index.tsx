@@ -17,6 +17,7 @@ import {
 import { parseAmount, truncateStringFromMiddle } from 'src/utils/formattingUtils';
 import { BigNumber } from 'ethers';
 import InfoToast from 'src/components/ui/infoToast';
+import { isValidAddress } from 'src/utils/validationUtils';
 import Dropdown from '../../ui/forms/dropdown';
 import SingleLineInput from '../../ui/forms/singleLineInput';
 import Modal from '../../ui/modal';
@@ -71,7 +72,21 @@ function WithdrawFunds({
     });
   };
 
-  const dummyTransaction = async () => {
+  const withdraw = async () => {
+    let hasError: boolean = false;
+
+    if (funding === '') {
+      setError(true);
+      hasError = true;
+    }
+
+    if (!isValidAddress(address)) {
+      setAddressError(true);
+      hasError = true;
+    }
+
+    if (hasError) return;
+
     setType(0);
     const finalAmount = parseAmount(funding.toString());
     try {
@@ -113,7 +128,7 @@ function WithdrawFunds({
       <ModalBody mx={2}>
         {type !== 1 && (
           <Flex direction="column" mt={7}>
-            <Flex direction="row" w="100%" alignItems="flex-end" justify="space-between">
+            <Flex direction="row" w="100%" align="start" justify="space-between">
               <Flex w="70%" direction="column">
                 <SingleLineInput
                   label="Withdrawal Amount"
@@ -127,9 +142,10 @@ function WithdrawFunds({
                   }}
                   isError={error}
                   errorText="Required"
+                  type="number"
                 />
               </Flex>
-              <Flex direction="column" w="25%">
+              <Flex direction="column" w="25%" mt="20px">
                 <Dropdown
                   listItemsMinWidth="132px"
                   listItems={[
@@ -178,7 +194,7 @@ function WithdrawFunds({
                 <CircularProgress isIndeterminate color="brand.500" size="48px" mt={10} mb={9} />
               </Center>
             ) : (
-              <Button variant="primary" mt={addressError ? 5 : 10} mb={9} onClick={dummyTransaction} disabled={addressError || type === 0}>
+              <Button variant="primary" mt={addressError ? 5 : 10} mb={9} onClick={withdraw} disabled={addressError || type === 0}>
                 Withdraw
               </Button>
             )}

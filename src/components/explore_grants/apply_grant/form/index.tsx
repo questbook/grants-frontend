@@ -6,6 +6,7 @@ import {
 import { useContract, useSigner } from 'wagmi';
 import { GrantApplicationRequest } from '@questbook/service-validator-client';
 import { useRouter } from 'next/router';
+import { isValidEmail } from 'src/utils/validationUtils';
 import { parseAmount } from '../../../../utils/formattingUtils';
 import { GrantApplicationFieldsSubgraph, GrantApplicationCreateSubgraph } from '../../../../types/application';
 import InfoToast from '../../../ui/infoToast';
@@ -126,7 +127,7 @@ function Form({
         setApplicantNameError(true);
         error = true;
       }
-      if (applicantEmail === '' && grantRequiredFields.includes('applicantEmail')) {
+      if ((applicantEmail === '' || !isValidEmail(applicantEmail)) && grantRequiredFields.includes('applicantEmail')) {
         setApplicantEmailError(true);
         error = true;
       }

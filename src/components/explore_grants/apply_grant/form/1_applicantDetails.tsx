@@ -60,6 +60,7 @@ function ApplicantDetails({
         isError={applicantEmailError}
         errorText="Required"
         visible={grantRequiredFields.includes('applicantEmail')}
+        type="email"
       />
     </>
   );

@@ -7,12 +7,18 @@ import MultiLineInput from '../../../ui/forms/multiLineInput';
 function Reject({
   onSubmit,
   hasClicked,
+  comment,
+  setComment,
+  commentError,
+  setCommentError,
 }: {
   onSubmit: (data: any) => void;
   hasClicked: boolean;
+  comment: string;
+  setComment: (comment: string) => void;
+  commentError: boolean;
+  setCommentError: (commentError: boolean) => void;
 }) {
-  const [comment, setComment] = React.useState('');
-  const [commentError, setCommentError] = React.useState(false);
   return (
     <Container
       flex={1}
@@ -46,7 +52,7 @@ function Reject({
       />
 
       {hasClicked ? <Center><CircularProgress isIndeterminate color="brand.500" size="48px" mt={10} /></Center> : (
-        <Button onClick={() => onSubmit({ comment })} w="100%" mt={10} variant="primary">
+        <Button onClick={onSubmit} w="100%" mt={10} variant="primary">
           Reject Application
         </Button>
       )}

@@ -64,6 +64,7 @@ function ApplicantDetails({
         errorText="Required"
         disabled={readOnly}
         visible={grantRequiredFields.includes('applicantEmail')}
+        type="email"
       />
     </>
   );

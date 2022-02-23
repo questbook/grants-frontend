@@ -95,6 +95,11 @@ function AddFunds({
   };
 
   const depositFunds = async () => {
+    if (funding === '') {
+      setError(true);
+      return;
+    }
+
     const finalAmount = ethers.utils.parseUnits(funding, rewardAssetDecimals);
     // toast({
     //   title: 'Depositing!',
@@ -337,7 +342,7 @@ function AddFunds({
             <Flex
               direction="row"
               w="100%"
-              alignItems="flex-end"
+              alignItems="start"
               justify="space-between"
               mt={5}
             >
@@ -354,9 +359,10 @@ function AddFunds({
                   }}
                   isError={error}
                   errorText="Required"
+                  type="number"
                 />
               </Flex>
-              <Flex direction="column" w="25%">
+              <Flex direction="column" w="25%" mt="20px">
                 <Dropdown
                   listItemsMinWidth="132px"
                   listItems={[
