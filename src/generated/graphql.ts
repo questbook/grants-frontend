@@ -295,8 +295,10 @@ export type GrantApplication = {
   applicantId: Scalars['Bytes'];
   /** in seconds since epoch */
   createdAtS: Scalars['Int'];
-  /** Feedback from the grant manager/applicant */
-  feedback?: Maybe<Scalars['String']>;
+  /** Feedback from the grant DAO manager/applicant */
+  feedbackDao?: Maybe<Scalars['String']>;
+  /** Feedback from the developer */
+  feedbackDev?: Maybe<Scalars['String']>;
   /** Answers to the fields requested in the grant */
   fields: Array<GrantFieldAnswer>;
   /** The grant for which the application is for */
@@ -336,8 +338,10 @@ export type GrantApplicationRevision = {
   application: GrantApplication;
   /** in seconds since epoch, when was this revision created */
   createdAtS: Scalars['Int'];
-  /** Feedback from the grant manager/applicant */
-  feedback?: Maybe<Scalars['String']>;
+  /** Feedback from the grant DAO manager/applicant */
+  feedbackDao?: Maybe<Scalars['String']>;
+  /** Feedback from the developer */
+  feedbackDev?: Maybe<Scalars['String']>;
   /** Answers to the fields requested in the grant */
   fields: Array<GrantFieldAnswer>;
   id: Scalars['ID'];
@@ -396,20 +400,34 @@ export type GrantApplicationRevision_Filter = {
   createdAtS_lte?: InputMaybe<Scalars['Int']>;
   createdAtS_not?: InputMaybe<Scalars['Int']>;
   createdAtS_not_in?: InputMaybe<Array<Scalars['Int']>>;
-  feedback?: InputMaybe<Scalars['String']>;
-  feedback_contains?: InputMaybe<Scalars['String']>;
-  feedback_ends_with?: InputMaybe<Scalars['String']>;
-  feedback_gt?: InputMaybe<Scalars['String']>;
-  feedback_gte?: InputMaybe<Scalars['String']>;
-  feedback_in?: InputMaybe<Array<Scalars['String']>>;
-  feedback_lt?: InputMaybe<Scalars['String']>;
-  feedback_lte?: InputMaybe<Scalars['String']>;
-  feedback_not?: InputMaybe<Scalars['String']>;
-  feedback_not_contains?: InputMaybe<Scalars['String']>;
-  feedback_not_ends_with?: InputMaybe<Scalars['String']>;
-  feedback_not_in?: InputMaybe<Array<Scalars['String']>>;
-  feedback_not_starts_with?: InputMaybe<Scalars['String']>;
-  feedback_starts_with?: InputMaybe<Scalars['String']>;
+  feedbackDao?: InputMaybe<Scalars['String']>;
+  feedbackDao_contains?: InputMaybe<Scalars['String']>;
+  feedbackDao_ends_with?: InputMaybe<Scalars['String']>;
+  feedbackDao_gt?: InputMaybe<Scalars['String']>;
+  feedbackDao_gte?: InputMaybe<Scalars['String']>;
+  feedbackDao_in?: InputMaybe<Array<Scalars['String']>>;
+  feedbackDao_lt?: InputMaybe<Scalars['String']>;
+  feedbackDao_lte?: InputMaybe<Scalars['String']>;
+  feedbackDao_not?: InputMaybe<Scalars['String']>;
+  feedbackDao_not_contains?: InputMaybe<Scalars['String']>;
+  feedbackDao_not_ends_with?: InputMaybe<Scalars['String']>;
+  feedbackDao_not_in?: InputMaybe<Array<Scalars['String']>>;
+  feedbackDao_not_starts_with?: InputMaybe<Scalars['String']>;
+  feedbackDao_starts_with?: InputMaybe<Scalars['String']>;
+  feedbackDev?: InputMaybe<Scalars['String']>;
+  feedbackDev_contains?: InputMaybe<Scalars['String']>;
+  feedbackDev_ends_with?: InputMaybe<Scalars['String']>;
+  feedbackDev_gt?: InputMaybe<Scalars['String']>;
+  feedbackDev_gte?: InputMaybe<Scalars['String']>;
+  feedbackDev_in?: InputMaybe<Array<Scalars['String']>>;
+  feedbackDev_lt?: InputMaybe<Scalars['String']>;
+  feedbackDev_lte?: InputMaybe<Scalars['String']>;
+  feedbackDev_not?: InputMaybe<Scalars['String']>;
+  feedbackDev_not_contains?: InputMaybe<Scalars['String']>;
+  feedbackDev_not_ends_with?: InputMaybe<Scalars['String']>;
+  feedbackDev_not_in?: InputMaybe<Array<Scalars['String']>>;
+  feedbackDev_not_starts_with?: InputMaybe<Scalars['String']>;
+  feedbackDev_starts_with?: InputMaybe<Scalars['String']>;
   fields?: InputMaybe<Array<Scalars['String']>>;
   fields_contains?: InputMaybe<Array<Scalars['String']>>;
   fields_not?: InputMaybe<Array<Scalars['String']>>;
@@ -436,7 +454,8 @@ export enum GrantApplicationRevision_OrderBy {
   ActorId = 'actorId',
   Application = 'application',
   CreatedAtS = 'createdAtS',
-  Feedback = 'feedback',
+  FeedbackDao = 'feedbackDao',
+  FeedbackDev = 'feedbackDev',
   Fields = 'fields',
   Id = 'id',
   Milestones = 'milestones',
@@ -458,20 +477,34 @@ export type GrantApplication_Filter = {
   createdAtS_lte?: InputMaybe<Scalars['Int']>;
   createdAtS_not?: InputMaybe<Scalars['Int']>;
   createdAtS_not_in?: InputMaybe<Array<Scalars['Int']>>;
-  feedback?: InputMaybe<Scalars['String']>;
-  feedback_contains?: InputMaybe<Scalars['String']>;
-  feedback_ends_with?: InputMaybe<Scalars['String']>;
-  feedback_gt?: InputMaybe<Scalars['String']>;
-  feedback_gte?: InputMaybe<Scalars['String']>;
-  feedback_in?: InputMaybe<Array<Scalars['String']>>;
-  feedback_lt?: InputMaybe<Scalars['String']>;
-  feedback_lte?: InputMaybe<Scalars['String']>;
-  feedback_not?: InputMaybe<Scalars['String']>;
-  feedback_not_contains?: InputMaybe<Scalars['String']>;
-  feedback_not_ends_with?: InputMaybe<Scalars['String']>;
-  feedback_not_in?: InputMaybe<Array<Scalars['String']>>;
-  feedback_not_starts_with?: InputMaybe<Scalars['String']>;
-  feedback_starts_with?: InputMaybe<Scalars['String']>;
+  feedbackDao?: InputMaybe<Scalars['String']>;
+  feedbackDao_contains?: InputMaybe<Scalars['String']>;
+  feedbackDao_ends_with?: InputMaybe<Scalars['String']>;
+  feedbackDao_gt?: InputMaybe<Scalars['String']>;
+  feedbackDao_gte?: InputMaybe<Scalars['String']>;
+  feedbackDao_in?: InputMaybe<Array<Scalars['String']>>;
+  feedbackDao_lt?: InputMaybe<Scalars['String']>;
+  feedbackDao_lte?: InputMaybe<Scalars['String']>;
+  feedbackDao_not?: InputMaybe<Scalars['String']>;
+  feedbackDao_not_contains?: InputMaybe<Scalars['String']>;
+  feedbackDao_not_ends_with?: InputMaybe<Scalars['String']>;
+  feedbackDao_not_in?: InputMaybe<Array<Scalars['String']>>;
+  feedbackDao_not_starts_with?: InputMaybe<Scalars['String']>;
+  feedbackDao_starts_with?: InputMaybe<Scalars['String']>;
+  feedbackDev?: InputMaybe<Scalars['String']>;
+  feedbackDev_contains?: InputMaybe<Scalars['String']>;
+  feedbackDev_ends_with?: InputMaybe<Scalars['String']>;
+  feedbackDev_gt?: InputMaybe<Scalars['String']>;
+  feedbackDev_gte?: InputMaybe<Scalars['String']>;
+  feedbackDev_in?: InputMaybe<Array<Scalars['String']>>;
+  feedbackDev_lt?: InputMaybe<Scalars['String']>;
+  feedbackDev_lte?: InputMaybe<Scalars['String']>;
+  feedbackDev_not?: InputMaybe<Scalars['String']>;
+  feedbackDev_not_contains?: InputMaybe<Scalars['String']>;
+  feedbackDev_not_ends_with?: InputMaybe<Scalars['String']>;
+  feedbackDev_not_in?: InputMaybe<Array<Scalars['String']>>;
+  feedbackDev_not_starts_with?: InputMaybe<Scalars['String']>;
+  feedbackDev_starts_with?: InputMaybe<Scalars['String']>;
   fields?: InputMaybe<Array<Scalars['String']>>;
   fields_contains?: InputMaybe<Array<Scalars['String']>>;
   fields_not?: InputMaybe<Array<Scalars['String']>>;
@@ -519,7 +552,8 @@ export type GrantApplication_Filter = {
 export enum GrantApplication_OrderBy {
   ApplicantId = 'applicantId',
   CreatedAtS = 'createdAtS',
-  Feedback = 'feedback',
+  FeedbackDao = 'feedbackDao',
+  FeedbackDev = 'feedbackDev',
   Fields = 'fields',
   Grant = 'grant',
   Id = 'id',
@@ -1854,7 +1888,7 @@ export type GetApplicationDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetApplicationDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, feedback?: string | null, createdAtS: number, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, value: Array<string> }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, amount: string }>, grant: { __typename?: 'Grant', id: string, title: string, funding: string, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string }, reward: { __typename?: 'Reward', id: string, asset: string, committed: string } } } | null };
+export type GetApplicationDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, feedbackDao?: string | null, feedbackDev?: string | null, createdAtS: number, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, value: Array<string> }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, amount: string }>, grant: { __typename?: 'Grant', id: string, title: string, funding: string, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string }, reward: { __typename?: 'Reward', id: string, asset: string, committed: string } } } | null };
 
 export type GetApplicationMilestonesQueryVariables = Exact<{
   grantId: Scalars['ID'];
@@ -2196,7 +2230,8 @@ export const GetApplicationDetailsDocument = gql`
     }
     applicantId
     state
-    feedback
+    feedbackDao
+    feedbackDev
     createdAtS
     updatedAtS
   }

@@ -106,7 +106,7 @@ function ViewApplication() {
           sentDate={application?.createdAtS ? new Date(application.createdAtS * 1000).toJSON() : ''}
           daoLogo={getUrlForIPFSHash(application?.grant?.workspace?.logoIpfsHash || '')}
           state={application?.state || ''}
-          feedback={application?.feedback || ''}
+          feedback={application?.feedbackDao || ''}
           grantRequiredFields={application?.fields?.map((field:any) => field.id.split('.')[1]) ?? []}
           applicationID={applicationID}
         />
