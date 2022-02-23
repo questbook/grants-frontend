@@ -1,4 +1,3 @@
-import { gql } from '@apollo/client';
 import { Container } from '@chakra-ui/react';
 import moment from 'moment';
 import { useRouter } from 'next/router';
@@ -6,40 +5,37 @@ import React, {
   ReactElement, useContext, useEffect, useState,
 } from 'react';
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters';
+import { useGetApplicantsForAGrantLazyQuery } from 'src/generated/graphql';
 import { formatAmount } from '../../../src/utils/formattingUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Table from '../../../src/components/your_grants/view_applicants/table';
 import supportedCurrencies from '../../../src/constants/supportedCurrencies';
-import { getApplicantsForAGrant } from '../../../src/graphql/daoQueries';
 import NavbarLayout from '../../../src/layout/navbarLayout';
 import { ApiClientsContext } from '../../_app';
+
+const PAGE_SIZE = 500;
 
 function ViewApplicants() {
   const [applicantsData, setApplicantsData] = useState<any>([]);
   const [grantID, setGrantID] = useState<any>('');
   const subgraphClient = useContext(ApiClientsContext)?.subgraphClient;
-  // const applicationStatuses = [
-  //   'submitted',
-  //   'resubmit',
-  //   'approved',
-  //   'rejected',
-  //   'completed',
-  // ];
+
+  const [getApplicants] = useGetApplicantsForAGrantLazyQuery({ client: subgraphClient?.client });
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getGrantData = async () => {
     if (!subgraphClient) return null;
     try {
-      const { data } = (await subgraphClient.client.query({
-        query: gql(getApplicantsForAGrant),
+      const { data } = await getApplicants({
         variables: {
-          grantID, // : '0xcf624e32a53fec9ea5908f22d43a78a943931063',
-          first: 999,
+          grantID,
+          first: PAGE_SIZE,
           skip: 0,
         },
-      })) as any;
+      });
       if (data && data.grantApplications.length) {
         const fetchedApplicantsData = data.grantApplications.map(
-          (applicant: any) => ({
+          (applicant) => ({
             grantTitle: applicant?.grant?.title,
             applicationId: applicant.id,
             applicant_address: applicant.applicantId,
@@ -60,7 +56,6 @@ function ViewApplicants() {
             status: TableFilters[applicant?.state],
           }),
         );
-        // console.log('fetchedd', fetchedApplicantsData);
         setApplicantsData(fetchedApplicantsData);
       }
       return true;

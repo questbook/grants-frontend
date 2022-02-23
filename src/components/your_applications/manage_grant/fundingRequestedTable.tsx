@@ -5,7 +5,7 @@ import {
 } from '@chakra-ui/react';
 import moment from 'moment';
 import { ethers } from 'ethers';
-import { FundTransfer } from '../../../graphql/queries';
+import { FundTransfer } from 'src/types';
 import { getAssetInfo } from '../../../utils/tokenUtils';
 import { formatAmount, getMilestoneTitle, getTextWithEllipses } from '../../../utils/formattingUtils';
 

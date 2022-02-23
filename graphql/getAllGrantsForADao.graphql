@@ -1,0 +1,25 @@
+query getAllGrantsForADao($first: Int, $skip: Int, $workspaceId: String!) {
+  grants(
+    first: $first, 
+    skip: $skip, 
+    subgraphError: allow, 
+    where: { workspace: $workspaceId }
+    orderBy: createdAtS, 
+    orderDirection: desc
+  ) {
+  id, 
+  creatorId, 
+  title, 
+  createdAtS,
+  summary, 
+  details, 
+  reward {
+    committed,
+    id,
+    asset
+  }, 
+  workspace {title, logoIpfsHash}, 
+  deadline,
+  funding,
+  numberOfApplications,
+}}

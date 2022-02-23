@@ -2,24 +2,27 @@ import {
   Box, Container, Image, Flex, Divider,
 } from '@chakra-ui/react';
 import React, {
-  ReactElement, useCallback, useEffect, useState,
+  ReactElement, useCallback, useContext, useEffect, useState,
 } from 'react';
-import { gql } from '@apollo/client';
 import BN from 'bn.js';
 import { useRouter } from 'next/router';
+import { useGetGrantDetailsLazyQuery } from 'src/generated/graphql';
+import { ApiClientsContext } from 'pages/_app';
 import GrantDetails from '../../src/components/explore_grants/about_grant/grantDetails';
 import GrantRewards from '../../src/components/explore_grants/about_grant/grantRewards';
 import Sidebar from '../../src/components/explore_grants/about_grant/sidebar';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Heading from '../../src/components/ui/heading';
 import NavbarLayout from '../../src/layout/navbarLayout';
-import { getGrantDetails } from '../../src/graphql/daoQueries';
 import { getFormattedDate } from '../../src/utils/formattingUtils';
 import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils';
 import supportedCurrencies from '../../src/constants/supportedCurrencies';
-import SubgraphClient from '../../src/graphql/subgraph';
 
 function AboutGrant() {
+  const { subgraphClient } = useContext(ApiClientsContext)!;
+
+  const router = useRouter();
+
   const [grantData, setGrantData] = useState<any>(null);
   const [grantID, setGrantID] = useState<any>('');
   const [title, setTitle] = useState('');
@@ -35,17 +38,16 @@ function AboutGrant() {
   const [grantSummary, setGrantSummary] = useState('');
   const [grantRequiredFields, setGrantRequiredFields] = useState([]);
 
+  const [getGrantDetails] = useGetGrantDetailsLazyQuery({
+    client: subgraphClient?.client,
+  });
+
   const getGrantData = useCallback(async () => {
-    const subgraphClient = new SubgraphClient();
-    if (!subgraphClient.client) return null;
     try {
-      const { data } = (await subgraphClient.client.query({
-        query: gql(getGrantDetails),
-        variables: {
-          grantID, // : '0xcf624e32a53fec9ea5908f22d43a78a943931063',
-        },
-      })) as any;
-      // console.log(data);
+      const { data } = await getGrantDetails({
+        variables: { grantID },
+      });
+
       if (data && data.grants.length) {
         setGrantData(data.grants[0]);
       }
@@ -54,8 +56,8 @@ function AboutGrant() {
       // console.log(e);
       return null;
     }
-  }, [grantID]);
-  const router = useRouter();
+  }, [grantID, getGrantDetails]);
+
   useEffect(() => {
     setGrantID(router?.query?.grantID ?? '');
   }, [router]);

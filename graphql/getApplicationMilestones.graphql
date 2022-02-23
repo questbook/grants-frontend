@@ -1,0 +1,22 @@
+query getApplicationMilestones($grantId: ID!) {
+    grantApplications(where: { id: $grantId }) {
+      grant {
+        reward {
+          asset
+        }
+      },
+      milestones {
+        id,
+        state,
+        title,
+        amount,
+        amountPaid,
+        updatedAtS,
+        text
+      }
+      fields {
+        id
+        value
+      }
+    }
+}

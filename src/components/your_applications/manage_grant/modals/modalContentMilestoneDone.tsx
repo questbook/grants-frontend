@@ -4,9 +4,9 @@ import {
 import React, { useContext, useState } from 'react';
 import { useContract, useSigner } from 'wagmi';
 import InfoToast from 'src/components/ui/infoToast';
+import { ApplicationMilestone } from 'src/types';
 import { ApiClientsContext } from '../../../../../pages/_app';
 import config from '../../../../constants/config';
-import { ApplicationMilestone } from '../../../../graphql/queries';
 import { getMilestoneMetadata } from '../../../../utils/formattingUtils';
 import ApplicationRegistryAbi from '../../../../contracts/abi/ApplicationRegistryAbi.json';
 import MultiLineInput from '../../../ui/forms/multiLineInput';

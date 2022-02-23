@@ -2,38 +2,34 @@ import { Button, Divider, Flex } from '@chakra-ui/react';
 import React, {
   ReactElement, useState, useEffect, useContext,
 } from 'react';
-import { gql } from '@apollo/client';
+import { useGetWorkspaceDetailsLazyQuery } from 'src/generated/graphql';
+import { Workspace } from 'src/types';
 import Members from '../src/components/settings_and_members/members';
 import Settings from '../src/components/settings_and_members/settings';
 import NavbarLayout from '../src/layout/navbarLayout';
-import { getWorkspaceDetails } from '../src/graphql/daoQueries';
-import SubgraphClient from '../src/graphql/subgraph';
 import { ApiClientsContext } from './_app';
 
 function SettingsAndMembers() {
+  const { workspaceId, subgraphClient } = useContext(ApiClientsContext)!;
+
   const tabs = ['Settings', 'Invite Members'];
   const [selected, setSelected] = useState(0);
-  const [workspaceData, setWorkspaceData] = useState<any>(null);
-  const workspaceId = useContext(ApiClientsContext)?.workspaceId;
+  const [workspaceData, setWorkspaceData] = useState<Workspace>();
+
+  const [getWorkspaceDetails] = useGetWorkspaceDetailsLazyQuery({
+    client: subgraphClient.client,
+  });
 
   const switchTab = (to: number) => {
     setSelected(to);
   };
 
   async function getWorkspaceData(workspaceID: string) {
-    if (!workspaceID) return;
-    const subgraphClient = new SubgraphClient();
-    if (!subgraphClient.client) return;
     try {
-      const { data } = (await subgraphClient.client.query({
-        query: gql(getWorkspaceDetails),
-        variables: {
-          workspaceID,
-        },
-      })) as any;
-      if (data.workspace) {
-        setWorkspaceData(data.workspace);
-      }
+      const { data } = await getWorkspaceDetails({
+        variables: { workspaceID },
+      });
+      setWorkspaceData(data!.workspace!);
     } catch (e) {
       // console.log(e);
     }
@@ -41,7 +37,7 @@ function SettingsAndMembers() {
 
   useEffect(() => {
     if (!workspaceId) return;
-    // console.log('getting called');
+    console.log('getting called ', workspaceId);
     getWorkspaceData(workspaceId);
   }, [workspaceId]);
 
@@ -80,7 +76,7 @@ function SettingsAndMembers() {
         </Flex>
         <Divider variant="sidebar" mb={5} />
         {selected === 0 ? (
-          <Settings workspaceData={workspaceData} />
+          <Settings workspaceData={workspaceData!} />
         ) : (
           <Members workspaceMembers={workspaceData?.members} />
         )}

@@ -1,0 +1,25 @@
+query getMyApplications($first: Int, $skip: Int, $applicantID: Bytes!) {
+  grantApplications(
+    first: $first, 
+    skip: $skip, 
+    where:{
+    applicantId: $applicantID
+  },
+  subgraphError:allow) {
+    id
+    grant {
+      id
+      title
+      funding
+      workspace {
+        id
+        title
+        logoIpfsHash
+      }
+    }
+    applicantId
+    state
+    createdAtS
+    updatedAtS
+  }
+}
