@@ -16,7 +16,7 @@ import React, {
 import { useAccount, useSigner, useContract } from 'wagmi';
 import { BigNumber } from 'ethers';
 import { ApplicationMilestone, useGetApplicationDetailsQuery, useGetFundSentForApplicationQuery } from 'src/generated/graphql';
-import { useApplicationMilestones } from 'src/utils/queryUtil';
+import useApplicationMilestones from 'src/utils/queryUtil';
 import config from '../../../src/constants/config';
 import ApplicationRegistryAbi from '../../../src/contracts/abi/ApplicationRegistryAbi.json';
 import InfoToast from '../../../src/components/ui/infoToast';
@@ -121,6 +121,7 @@ function ManageGrant() {
           columns={['milestoneTitle', 'date', 'from', 'action']}
           assetDecimals={18}
           grantId={applicationData?.grant?.id || ''}
+          type="funding_sent"
         />
       ),
     },
@@ -327,7 +328,7 @@ function ManageGrant() {
         {tabs[selected].content}
 
         <Flex direction="row" justify="center" mt={8}>
-          {applicationData?.state !== 'completed' && (
+          {applicationData?.state !== 'completed' && selected === 0 && (
             <Button
               variant="primary"
               onClick={() => setIsGrantCompleteModalOpen(true)}

@@ -1,4 +1,4 @@
-import { Container, useToast } from '@chakra-ui/react';
+import { Flex, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
   ReactElement, useCallback, useContext, useEffect, useRef, useState,
@@ -87,12 +87,10 @@ function BrowseGrants() {
   };
 
   return (
-    <Container ref={containerRef} maxW="100%" display="flex" px="70px">
-      <Container
-        flex={1}
-        display="flex"
-        flexDirection="column"
-        maxW="834px"
+    <Flex ref={containerRef} direction="row" justify="center">
+      <Flex
+        direction="column"
+        w="55%"
         alignItems="stretch"
         pb={8}
         px={10}
@@ -134,9 +132,18 @@ function BrowseGrants() {
               />
             );
           })}
-      </Container>
-      {accountData && accountData.address ? null : <Sidebar />}
-    </Container>
+      </Flex>
+      {accountData && accountData.address ? null : (
+        <Flex
+          w="26%"
+          h="100%"
+          pos="sticky"
+          top={0}
+        >
+          <Sidebar />
+        </Flex>
+      )}
+    </Flex>
   );
 }
 

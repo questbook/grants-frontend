@@ -8,7 +8,7 @@ import moment from 'moment';
 import { BigNumber } from 'ethers';
 import { useGetApplicationDetailsLazyQuery, useGetFundSentForApplicationQuery } from 'src/generated/graphql';
 import { ApplicationMilestone } from 'src/types';
-import { useApplicationMilestones } from 'src/utils/queryUtil';
+import useApplicationMilestones from 'src/utils/queryUtil';
 import { getAssetInfo } from '../../src/utils/tokenUtils';
 import Sidebar from '../../src/components/your_applications/manage_grant/sidebar';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';

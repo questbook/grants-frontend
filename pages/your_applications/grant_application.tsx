@@ -99,8 +99,8 @@ function ViewApplication() {
             });
           }}
           rewardAmount={ethers.utils.formatEther(application?.grant?.reward?.committed ?? '1').toString()}
-          rewardCurrency={getAssetInfo(application?.grant?.reward?.asset)?.label}
-          rewardCurrencyCoin={getAssetInfo(application?.grant?.reward?.asset)?.icon}
+          rewardCurrency={getAssetInfo(application?.grant?.reward?.asset ?? '')?.label}
+          rewardCurrencyCoin={getAssetInfo(application?.grant?.reward?.asset ?? '')?.icon}
           formData={formData}
           grantTitle={application?.grant?.title || ''}
           sentDate={application?.createdAtS ? new Date(application.createdAtS * 1000).toJSON() : ''}

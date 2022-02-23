@@ -5,6 +5,7 @@ import {
 } from '@chakra-ui/react';
 import moment from 'moment';
 import { ethers } from 'ethers';
+import Empty from 'src/components/ui/empty';
 import { FundTransfer } from 'src/types';
 import { getAssetInfo } from '../../../utils/tokenUtils';
 import { formatAmount, getMilestoneTitle, getTextWithEllipses } from '../../../utils/formattingUtils';
@@ -145,9 +146,28 @@ function Funding({
     () => columns.map((column) => TABLE_HEADERS[column]),
     [columns],
   );
+
+  const emptyState = {
+    src: '/illustrations/empty_states/funds_received.svg',
+    imgHeight: '135px',
+    imgWidth: '135px',
+    title: 'No funds received yet.',
+    subtitle: 'Once you receive funds from the grantor, they will appear here.',
+  };
+
   return (
     <Flex w="100%" my={4} align="center" direction="column" flex={1}>
-      {fundTransfers.length === 0 && <>No Transactions</>}
+      {fundTransfers.length === 0 && (
+      <Flex mt={14} direction="column" align="center">
+        <Empty
+          src={emptyState.src}
+          imgHeight={emptyState.imgHeight}
+          imgWidth={emptyState.imgWidth}
+          title={emptyState.title}
+          subtitle={emptyState.subtitle}
+        />
+      </Flex>
+      )}
       {fundTransfers.length > 0 && (
         <>
           <Flex

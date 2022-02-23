@@ -2,6 +2,7 @@ import { Button, Divider, Flex } from '@chakra-ui/react';
 import React, {
   ReactElement, useState, useEffect, useContext,
 } from 'react';
+import { useRouter } from 'next/router';
 import { useGetWorkspaceDetailsLazyQuery } from 'src/generated/graphql';
 import { Workspace } from 'src/types';
 import Members from '../src/components/settings_and_members/members';
@@ -11,9 +12,9 @@ import { ApiClientsContext } from './_app';
 
 function SettingsAndMembers() {
   const { workspaceId, subgraphClient } = useContext(ApiClientsContext)!;
-
+  const router = useRouter();
   const tabs = ['Settings', 'Invite Members'];
-  const [selected, setSelected] = useState(0);
+  const [selected, setSelected] = useState(router.query.tab === 'members' ? 1 : 0);
   const [workspaceData, setWorkspaceData] = useState<Workspace>();
 
   const [getWorkspaceDetails] = useGetWorkspaceDetailsLazyQuery({
@@ -39,6 +40,7 @@ function SettingsAndMembers() {
     if (!workspaceId) return;
     console.log('getting called ', workspaceId);
     getWorkspaceData(workspaceId);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceId]);
 
   return (

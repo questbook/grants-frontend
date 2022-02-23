@@ -25,7 +25,7 @@ function Sidebar() {
         direction="column"
         py={7}
         px={10}
-        overflow="scroll"
+        // overflow="scroll"
       >
         <Text fontSize="28px" lineHeight="35.5px">
           What is
