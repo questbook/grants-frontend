@@ -97,7 +97,7 @@ function BrowseGrants() {
         pb={8}
         px={10}
       >
-        <Heading title="Browse grants" />
+        <Heading title="Discover grants" />
         {grants.length > 0
           && grants.map((grant: any) => {
             const grantCurrency = supportedCurrencies.find(

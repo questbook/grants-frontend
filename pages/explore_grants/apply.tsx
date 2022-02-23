@@ -1,4 +1,4 @@
-import { Container } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import BN from 'bn.js';
 import { useRouter } from 'next/router';
 import { ApiClientsContext } from 'pages/_app';
@@ -80,19 +80,9 @@ function ApplyGrant() {
   }, [grantData]);
 
   return (
-    <Container maxW="100%" display="flex" px="0px">
-      <Container flex={3} display="flex" flexDirection="column" maxW="834px" alignItems="stretch" pb={8} px={10}>
+    <Flex direction="row" w="100%" justify="space-evenly">
+      <Flex direction="column" w="50%" h="100%">
         <Form
-          // onSubmit={({ data }) => {
-          //   console.log('applyRes', data);
-          //   router.push({
-          //     pathname: '/your_applications',
-          //     query: {
-          //       applicantID: data[0].applicantId,
-          //       account: true,
-          //     },
-          //   });
-          // }}
           title={title}
           grantId={grantID}
           daoLogo={daoLogo}
@@ -102,10 +92,13 @@ function ApplyGrant() {
           workspaceId={workspaceId}
           grantRequiredFields={grantRequiredFields.map((field:any) => field.id.split('.')[1])}
         />
-      </Container>
+      </Flex>
 
-      <Sidebar grantSummary={grantSummary} grantDetails={grantDetails} />
-    </Container>
+      <Flex direction="column" w="50%">
+        <Sidebar grantSummary={grantSummary} grantDetails={grantDetails} />
+      </Flex>
+
+    </Flex>
   );
 }
 

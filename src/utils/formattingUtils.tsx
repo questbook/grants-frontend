@@ -129,3 +129,5 @@ export function getMilestoneTitle(milestone: FundTransfer['milestone']) {
   }
   return 'Unknown Milestone';
 }
+
+export const getTextWithEllipses = (txt: string, maxLength = 7) => (txt.length > maxLength ? `${txt.slice(0, maxLength)}...` : txt);

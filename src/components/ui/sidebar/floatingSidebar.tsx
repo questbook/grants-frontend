@@ -5,12 +5,13 @@ import React from 'react';
 
 function FloatingSidebar({
   children,
+  top,
 }: {
   children: React.ReactNode;
+  top?: number | string;
 }) {
   return (
     <Flex
-        // h="calc(100vh - 80px)"
       bg="white"
       border="2px solid #D0D3D3"
       borderRadius={4}
@@ -19,10 +20,16 @@ function FloatingSidebar({
       alignItems="stretch"
       px="28px"
       py="22px"
+      pos="sticky"
+      top={top}
     >
       {children}
     </Flex>
   );
 }
+
+FloatingSidebar.defaultProps = {
+  top: '40px',
+};
 
 export default FloatingSidebar;

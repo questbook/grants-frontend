@@ -189,6 +189,7 @@ function YourGrants() {
             );
             return (
               <YourGrantCard
+                grantID={grant.id}
                 key={grant.id}
                 daoIcon={`https://ipfs.infura.io:5001/api/v0/cat?arg=${grant.workspace.logoIpfsHash}`}
                 grantTitle={grant.title}

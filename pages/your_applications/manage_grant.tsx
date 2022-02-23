@@ -79,14 +79,14 @@ function ManageGrant() {
     },
     {
       icon: fundingIcon,
-      title: getTotalFundingRecv(milestones).toString(),
+      title: formatAmount(getTotalFundingRecv(milestones).toString()),
       subtitle: 'Funding Received',
     },
     {
       icon: fundingIcon,
       title:
         (fundingAsk ? formatAmount(fundingAsk.toString()) : null)
-        || getTotalFundingAsked(milestones).toString(),
+        || formatAmount(getTotalFundingAsked(milestones).toString()),
       subtitle: 'Funding Requested',
     },
   ];
