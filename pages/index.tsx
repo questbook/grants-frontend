@@ -35,7 +35,7 @@ function BrowseGrants() {
     if (!subgraphClient) return;
     setCurrentPage(0);
     if (!accountData?.address) {
-      setGrantsAppliedTo([]);
+      setGrantsAppliedTo(['']);
       return;
     }
 
