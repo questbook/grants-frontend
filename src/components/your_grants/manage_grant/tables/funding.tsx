@@ -5,9 +5,8 @@ import {
 } from '@chakra-ui/react';
 import moment from 'moment';
 import { ethers } from 'ethers';
-// import { getMilestoneTitle } from 'src/utils/formattingUtils';
 import Empty from 'src/components/ui/empty';
-import { FundTransfer } from '../../../../graphql/queries';
+import { FundTransfer } from 'src/types';
 import { getAssetInfo } from '../../../../utils/tokenUtils';
 import {
   formatAmount,
@@ -15,11 +14,22 @@ import {
   getTextWithEllipses,
 } from '../../../../utils/formattingUtils';
 
-const TABLE_HEADERS = {
+type TableContent = {
+  title: string
+  flex?: number
+  content: (
+    item: FundTransfer,
+    assetId: string,
+    assetDecimals: number,
+    grantId: string
+  ) => React.ReactChild
+};
+
+const TABLE_HEADERS: { [id: string]: TableContent } = {
   milestoneTitle: {
     title: 'Funding Received',
     flex: 0.5,
-    content: (item: FundTransfer, assetId: string) => (
+    content: (item, assetId) => (
       <>
         <Image
           display="inline-block"
@@ -49,7 +59,7 @@ const TABLE_HEADERS = {
   amount: {
     title: 'Amount',
     flex: 0.35,
-    content: (item: FundTransfer, assetId: string, assetDecimals: number) => (
+    content: (item, assetId, assetDecimals: number) => (
       <Text display="inline-block" variant="applicationText" fontWeight="700">
         {ethers.utils.formatUnits(item.amount, assetDecimals)}
         {' '}
@@ -60,7 +70,7 @@ const TABLE_HEADERS = {
   date: {
     title: 'On',
     flex: 0.2,
-    content: (item: FundTransfer) => (
+    content: (item) => (
       <Tooltip label={`Transaction ID: ${item.id}`}>
         <Text variant="applicationText">
           {moment(new Date(item.createdAtS * 1000)).format('MMM DD, YYYY')}
@@ -71,7 +81,7 @@ const TABLE_HEADERS = {
   to: {
     title: 'To',
     flex: 0.15,
-    content: (item: FundTransfer) => (
+    content: (item) => (
       <Tooltip label={item.to}>
         <Text variant="applicationText" color="#122224">
           {getTextWithEllipses(item.to)}
@@ -82,8 +92,11 @@ const TABLE_HEADERS = {
   action: {
     title: 'Action',
     flex: 0.1,
-    content: (item: FundTransfer) => (
-      <Link href={`https://etherscan.io/tx/${item.id}/`} target="_blank">
+    content: (item) => (
+      <Link
+        href={`https://etherscan.io/tx/${item.id}/`}
+        target="_blank"
+      >
         <Text
           color="brand.500"
           variant="applicationText"
@@ -101,12 +114,7 @@ const TABLE_HEADERS = {
   from: {
     title: 'From',
     flex: 0.2,
-    content: (
-      item: FundTransfer,
-      assetId: string,
-      assetDecimals: number,
-      grantId: string,
-    ) => (
+    content: (item, _, __, grantId) => (
       <Tooltip label={item.sender}>
         <Text variant="applicationText" color="#122224">
           {getTextWithEllipses(item.sender)}
@@ -119,7 +127,7 @@ const TABLE_HEADERS = {
   initiator: {
     title: 'Initiated By',
     flex: 0.3,
-    content: (item: FundTransfer) => (
+    content: (item) => (
       <Tooltip label={item.sender}>
         <Text variant="applicationText" color="#122224">
           {getTextWithEllipses(item.sender)}

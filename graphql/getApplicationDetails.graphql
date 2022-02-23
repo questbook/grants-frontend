@@ -1,0 +1,36 @@
+query getApplicationDetails($applicationID: ID!) {
+  grantApplication(
+    id: $applicationID,
+  subgraphError:allow) {
+    id
+    fields {
+      id
+      value
+    }
+    milestones {
+      id
+      title
+      amount
+    }
+    grant {
+      id
+      title
+      funding
+      workspace {
+        id
+        title
+        logoIpfsHash
+      }
+      reward {
+        id
+        asset
+        committed
+      }
+    }
+    applicantId
+    state
+    feedback
+    createdAtS
+    updatedAtS
+  }
+}

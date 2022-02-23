@@ -1,0 +1,4 @@
+query getNumberOfApplications($first: Int, $skip: Int, $applicantId: Bytes) {
+  grantApplications(where: {applicantId: $applicantId}, subgraphError: allow){
+    id,
+  }}

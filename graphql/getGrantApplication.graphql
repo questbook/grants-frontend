@@ -1,0 +1,14 @@
+query getGrantApplication($grantID: String!, $applicantID: Bytes!) {
+  grantApplications(where:{
+    applicantId: $applicantID,
+    grant :  $grantID
+  },
+  subgraphError:allow) {
+    id
+    grant {
+      id
+      title
+    }
+    applicantId
+  }
+}

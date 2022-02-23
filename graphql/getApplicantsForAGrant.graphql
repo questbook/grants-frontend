@@ -1,0 +1,24 @@
+query getApplicantsForAGrant($first: Int, $skip: Int, $grantID: String!) {
+  grantApplications(
+    first: $first,
+    where:{
+    grant: $grantID
+  },
+  subgraphError:allow) {
+    id
+    grant {
+      title
+      funding
+      reward {
+        asset
+      }
+    }
+    applicantId
+    state
+    createdAtS
+    fields {
+      id
+      value
+    }
+  }
+}

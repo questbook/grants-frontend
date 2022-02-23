@@ -6,7 +6,7 @@ import {
 import moment from 'moment';
 import { ethers } from 'ethers';
 import Empty from 'src/components/ui/empty';
-import { FundTransfer } from '../../../graphql/queries';
+import { FundTransfer } from 'src/types';
 import { getAssetInfo } from '../../../utils/tokenUtils';
 import { formatAmount, getMilestoneTitle, getTextWithEllipses } from '../../../utils/formattingUtils';
 

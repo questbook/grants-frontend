@@ -3,7 +3,7 @@ import {
   Text, Flex, Button,
 } from '@chakra-ui/react';
 import AbstractMilestonesTable, { AbstractMilestonesTableProps } from 'src/components/ui/tables/AbstractMilestonesTable';
-import { ApplicationMilestone } from 'src/graphql/queries';
+import { ApplicationMilestone } from 'src/types';
 import Modal from '../../ui/modal';
 import MilestoneDoneModalContent from './modals/modalContentMilestoneDone';
 import MilestoneDoneCheckModalContent from './modals/modalContentMilestoneDoneCheck';

@@ -4,11 +4,11 @@ import {
 import config from 'src/constants/config';
 import { ApiClientsContext } from 'pages/_app';
 import React, { useContext, useState } from 'react';
-import { ApplicationMilestone } from 'src/graphql/queries';
 import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.json';
 import { getFormattedDateFromUnixTimestampWithYear, getMilestoneMetadata } from 'src/utils/formattingUtils';
 import { useContract, useSigner } from 'wagmi';
 import InfoToast from 'src/components/ui/infoToast';
+import { ApplicationMilestone } from 'src/types';
 import MultiLineInput from '../../../ui/forms/multiLineInput';
 
 interface Props {
