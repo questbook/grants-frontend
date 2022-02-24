@@ -163,7 +163,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
               <Image ml={2} src="/ui_icons/dropdown_arrow.svg" alt="options" />
             </Flex>
           </MenuButton>
-          <MenuList>
+          <MenuList maxH="80vh" overflow="scroll">
             {workspaces.map((userWorkspace) => (
               <MenuItem
                 key={userWorkspace.id}

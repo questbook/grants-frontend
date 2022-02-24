@@ -3,24 +3,18 @@
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses';
 import { SupportedChainId } from 'src/constants/chains';
 import { useContract, useSigner } from 'wagmi';
-import WORKSPACE_REGISTRY_ABI from 'src/contracts/abi/WorkspaceRegistryAbi.json';
 import React, { useEffect } from 'react';
-import config from 'src/constants/config';
-import WorkspaceRegistryABI from '../contracts/abi/WorkspaceRegistryAbi.json';
+import WorkspaceRegistryABI from '../../contracts/abi/WorkspaceRegistryAbi.json';
 
-export default function useWorkspaceRegistryContract(workspace: any, chainId?: string) {
+export default function useWorkspaceRegistryContract(chainId?: SupportedChainId) {
   const [addressOrName, setAddressOrName] = React.useState<string>();
   const [signerStates] = useSigner();
   useEffect(() => {
     if (!chainId) {
-      if (workspace && workspace.chainId && workspace.chainId === 'chain_4') {
-        setAddressOrName(config.WorkspaceRegistryAddress);
-      }
+      return;
     }
-    if (chainId === '1') {
-      setAddressOrName(config.WorkspaceRegistryAddress);
-    }
-  }, [chainId, workspace]);
+    setAddressOrName(WORKSPACE_REGISTRY_ADDRESS[chainId]);
+  }, [chainId]);
 
   const workspaceRegistryContract = useContract({
     addressOrName:

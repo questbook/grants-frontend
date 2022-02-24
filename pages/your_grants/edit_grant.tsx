@@ -7,16 +7,15 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useAccount, useContract, useSigner } from 'wagmi';
 import { useGetGrantDetailsLazyQuery } from 'src/generated/graphql';
+import useEditGrant from 'src/hooks/useEditGrant';
 import InfoToast from '../../src/components/ui/infoToast';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/edit_grant/form';
 import Sidebar from '../../src/components/your_grants/edit_grant/sidebar';
-import GrantABI from '../../src/contracts/abi/GrantAbi.json';
 import supportedCurrencies from '../../src/constants/supportedCurrencies';
 import NavbarLayout from '../../src/layout/navbarLayout';
-import { formatAmount, parseAmount } from '../../src/utils/formattingUtils';
+import { formatAmount } from '../../src/utils/formattingUtils';
 import { ApiClientsContext } from '../_app';
 
 function EditGrant() {
@@ -30,18 +29,8 @@ function EditGrant() {
   const grantRewardsRef = useRef(null);
 
   const [currentStep, setCurrentStep] = useState(0);
-  const [grantID, setGrantID] = useState<any>('');
+  const [grantID, setGrantID] = useState<string>();
 
-  const [{ data: accountData }] = useAccount();
-  const [signerStates] = useSigner();
-
-  const grantContract = useContract({
-    addressOrName: grantID.length > 0 ? grantID : '0x0000000000000000000000000000000000000000',
-    contractInterface: GrantABI,
-    signerOrProvider: signerStates.data,
-  });
-
-  const [hasClicked, setHasClicked] = React.useState(false);
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
 
@@ -74,6 +63,7 @@ function EditGrant() {
     if (!apiClients) return;
     const { subgraphClient } = apiClients;
     if (!subgraphClient) return;
+    if (!grantID) return;
     try {
       const { data } = await getGrantDetails({ variables: { grantID } });
       if (data) {
@@ -120,79 +110,35 @@ function EditGrant() {
     setCurrentStep(step);
   };
 
-  const closeToast = () => {
-    if (toastRef.current) {
-      toast.close(toastRef.current);
-    }
-  };
-
-  const showToast = ({ link } : { link: string }) => {
-    toastRef.current = toast({
-      position: 'top',
-      render: () => (
-        <InfoToast
-          link={link}
-          close={closeToast}
-        />
-      ),
-    });
-  };
-
-  const handleGrantSubmit = async (data: any) => {
-    if (!apiClients) return;
-    const { validatorApi, workspaceId } = apiClients;
-    if (!accountData || !accountData.address || !workspaceId) {
-      return;
-    }
-
-    try {
-      setHasClicked(true);
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-
-      const {
-        data: { ipfsHash },
-      } = await validatorApi.validateGrantUpdate({
-        title: data.title,
-        summary: data.summary,
-        details: data.details,
-        deadline: data.date,
-        reward: {
-          committed: parseAmount(data.reward),
-          asset: data.rewardCurrencyAddress,
-        },
-        fields: data.fields,
-      });
-
-      // console.log(ipfsHash);
-
-      const transaction = await grantContract.updateGrant(
-        ipfsHash,
-      );
-      const transactionData = await transaction.wait();
-      setHasClicked(false);
-      router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
-
-      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
-      // await subgraphClient.waitForBlock(transactionData.blockNumber);
-
-    // router.replace('/your_grants');
-    } catch (error) {
-      setHasClicked(false);
-      // console.log(error);
-      toast({
-        title: 'Application update not indexed',
-        status: 'error',
-      });
-    }
-  };
+  const [editData, setEditData] = useState<any>();
+  const [transactionData, loading] = useEditGrant(editData, grantID);
 
   useEffect(() => {
-    setGrantID(router?.query?.grantID ?? '');
+    console.log(transactionData);
+    if (transactionData) {
+      router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
+      toastRef.current = toast({
+        position: 'top',
+        render: () => (
+          <InfoToast
+            link={`https://etherscan.io/tx/${transactionData.transactionHash}`}
+            close={() => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            }}
+          />
+        ),
+      });
+    }
+  }, [toast, transactionData, router]);
+
+  useEffect(() => {
+    setGrantID(router?.query?.grantID?.toString());
   }, [router]);
 
   useEffect(() => {
     if (!grantID) return;
-
     getGrantData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [grantID]);
@@ -211,12 +157,12 @@ function EditGrant() {
         <Breadcrumbs path={['Your Grants', 'Edit grant']} />
         {formData && (
           <Form
-            hasClicked={hasClicked}
+            hasClicked={loading}
             formData={formData}
             onSubmit={(data: any) => {
             // eslint-disable-next-line no-console
               // console.log(data);
-              handleGrantSubmit(data);
+              setEditData(data);
             }}
             refs={sideBarDetails.map((detail) => detail[2])}
           />

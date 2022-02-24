@@ -1,10 +1,11 @@
 import {
-  Box, Button, Container, Flex, Text,
+  Box, Button, Container, Flex, Text, ToastId, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
   ReactElement, useEffect, useRef, useState,
 } from 'react';
+import InfoToast from 'src/components/ui/infoToast';
 import useCreateGrant from 'src/hooks/useCreateGrant';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/create_grant/form';
@@ -19,6 +20,9 @@ function CreateGrant() {
   const grantRewardsRef = useRef(null);
 
   const [currentStep, setCurrentStep] = useState(0);
+
+  const toastRef = React.useRef<ToastId>();
+  const toast = useToast();
 
   const scroll = (ref: any, step: number) => {
     if (!ref.current) return;
@@ -55,8 +59,21 @@ function CreateGrant() {
     console.log(transactionData);
     if (transactionData) {
       router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
+      toastRef.current = toast({
+        position: 'top',
+        render: () => (
+          <InfoToast
+            link={`https://etherscan.io/tx/${transactionData.transactionHash}`}
+            close={() => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            }}
+          />
+        ),
+      });
     }
-  }, [transactionData, router]);
+  }, [toast, transactionData, router]);
 
   return (
     <Container maxW="100%" display="flex" px="70px">

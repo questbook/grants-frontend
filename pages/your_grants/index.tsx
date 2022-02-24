@@ -168,7 +168,7 @@ function YourGrants() {
     return '/ui_icons/brand/currency/weth.svg';
   };
 
-  const workspaceId = useContext(ApiClientsContext)?.workspaceId;
+  const workspaceId = useContext(ApiClientsContext)?.workspace?.id;
 
   return (
     <>
@@ -259,7 +259,6 @@ function YourGrants() {
         && (
         <Flex
           w="26%"
-          h="calc(100vh - 80px)"
           pos="sticky"
         >
           <Sidebar />

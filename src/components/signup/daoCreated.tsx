@@ -3,7 +3,8 @@ import {
   Container, Flex, Box, Button, Link, Text, Image,
 } from '@chakra-ui/react';
 import React from 'react';
-import supportedNetworks from '../../constants/supportedNetworks.json';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { SupportedChainId } from 'src/constants/chains';
 
 function DaoCreated({
   network,
@@ -11,7 +12,7 @@ function DaoCreated({
   onCreateGrantClick,
   onVisitGrantsClick: onVisitMyGrantsClick,
 }: {
-  network: string;
+  network: SupportedChainId;
   daoName: string;
   onCreateGrantClick: () => void;
   onVisitGrantsClick: () => void;
@@ -49,7 +50,7 @@ function DaoCreated({
           Your Grants DAO is created on-chain on
           {' '}
           <Box as="span" fontWeight="700" display="inline-block">
-            {supportedNetworks[network as keyof typeof supportedNetworks].name}
+            {CHAIN_INFO[network].name}
             {' '}
             {' '}
             network.

@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import React, { ReactElement, useEffect } from 'react';
 import useCreateWorkspace from 'src/hooks/useCreateWorkspace';
 import useCreateGrant from 'src/hooks/useCreateGrant';
+import { SupportedChainId } from 'src/constants/chains';
 import InfoToast from '../src/components/ui/infoToast';
 import Form from '../src/components/signup/create_dao/form';
 import Loading from '../src/components/signup/create_dao/loading';
@@ -21,7 +22,7 @@ function SignupDao() {
     name: string;
     description: string;
     image: string;
-    network: string;
+    network: SupportedChainId;
     id: string;
   } | null>(null);
 
@@ -52,7 +53,8 @@ function SignupDao() {
   const [grantData, setGrantData] = React.useState<any>();
   const [grantTransactionData, createGrantLoading] = useCreateGrant(
     grantData,
-    grantData?.network,
+    workspaceData?.network,
+    daoData?.id,
   );
 
   useEffect(() => {
