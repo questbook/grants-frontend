@@ -19,6 +19,7 @@ import {
   useContract, useSigner,
 } from 'wagmi';
 import { BigNumber, ethers } from 'ethers';
+import useDepositFunds from 'src/hooks/useDepositFunds';
 import { formatAmount } from '../../../utils/formattingUtils';
 import InfoToast from '../../ui/infoToast';
 import Dropdown from '../../ui/forms/dropdown';
@@ -76,65 +77,36 @@ function AddFunds({
   };
 
   const toastRef = React.useRef<ToastId>();
-  const [hasClicked, setHasClicked] = React.useState(false);
-  const closeToast = () => {
-    if (toastRef.current) {
-      toast.close(toastRef.current);
-    }
-  };
-  const showToast = ({ link } : { link: string }) => {
-    toastRef.current = toast({
-      position: 'top',
-      render: () => (
-        <InfoToast
-          link={link}
-          close={closeToast}
-        />
-      ),
-    });
-  };
 
-  const depositFunds = async () => {
-    if (funding === '') {
-      setError(true);
-      return;
-    }
+  const [finalAmount, setFinalAmount] = React.useState<BigNumber>();
+  const [depositTransactionData, loading] = useDepositFunds(
+    finalAmount,
+    rewardAsset.address,
+    grantAddress,
+  );
 
-    const finalAmount = ethers.utils.parseUnits(funding, rewardAssetDecimals);
-    // toast({
-    //   title: 'Depositing!',
-    //   status: 'info',
-    //   duration: 9000,
-    //   isClosable: true,
-    // });
-    try {
-      setHasClicked(true);
-      const transferTxn = await rewardAssetContract.transfer(
-        grantAddress,
-        finalAmount,
-      );
-      const transactionData = await transferTxn.wait();
-      // toast({
-      //   title: 'Deposited!',
-      //   status: 'success',
-      //   duration: 9000,
-      //   isClosable: true,
-      // });
-      setHasClicked(false);
-      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
-
-      setFunding('');
+  useEffect(() => {
+    // console.log(depositTransactionData);
+    if (depositTransactionData) {
       onClose();
-    } catch {
-      setHasClicked(false);
-      toast({
-        title: 'Could not deposit!',
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
+      setFinalAmount(undefined);
+      setFunding('');
+      toastRef.current = toast({
+        position: 'top',
+        render: () => (
+          <InfoToast
+            link={`https://etherscan.io/tx/${depositTransactionData.transactionHash}`}
+            close={() => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            }}
+          />
+        ),
       });
     }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toast, depositTransactionData]);
 
   useEffect(() => {
     // eslint-disable-next-line func-names
@@ -381,12 +353,12 @@ function AddFunds({
                 {`${formatAmount(walletBalance.toString())} ${rewardAsset?.label}`}
               </Text>
             </Text>
-            {hasClicked ? (
+            {loading ? (
               <Center>
                 <CircularProgress isIndeterminate color="brand.500" size="48px" my={4} />
               </Center>
             ) : (
-              <Button variant="primary" my={8} onClick={() => depositFunds()}>
+              <Button variant="primary" my={8} onClick={() => setFinalAmount(ethers.utils.parseUnits(funding, rewardAssetDecimals))}>
                 Deposit
               </Button>
             )}
