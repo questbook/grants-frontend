@@ -65,6 +65,7 @@ function YourApplications() {
   }, [containerRef, getMyApplicationsData]);
 
   useEffect(() => {
+    if (!accountData) return;
     getMyApplicationsData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountData?.address]);

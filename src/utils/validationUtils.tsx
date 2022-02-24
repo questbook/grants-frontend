@@ -12,11 +12,7 @@ const isValidEmail = (email: string) => {
   return regexp.test(email);
 };
 
-const getSupportedChainIdFromWorkspace = (workspace?: MinimalWorkspace) => {
-  if (!workspace) {
-    return undefined;
-  }
-  const chainId = workspace.supportedNetworks[0] as SupportedNetwork;
+const getSupportedChainIdFromSupportedNetwork = (chainId: SupportedNetwork) => {
   if (chainId === SupportedNetwork.Chain_4) {
     return SupportedChainId.RINKEBY;
   }
@@ -27,6 +23,14 @@ const getSupportedChainIdFromWorkspace = (workspace?: MinimalWorkspace) => {
   return SupportedChainId.HARMONY_TESTNET_S0;
   // cannot return undefined ?
   // return undefined;
+};
+
+const getSupportedChainIdFromWorkspace = (workspace?: MinimalWorkspace) => {
+  if (!workspace) {
+    return undefined;
+  }
+  const chainId = workspace.supportedNetworks[0] as SupportedNetwork;
+  return getSupportedChainIdFromSupportedNetwork(chainId);
 };
 
 const getSupportedValidatorNetworkFromChainId = (chainId: SupportedChainId) => {
@@ -45,4 +49,5 @@ export {
   isValidEmail,
   getSupportedChainIdFromWorkspace,
   getSupportedValidatorNetworkFromChainId,
+  getSupportedChainIdFromSupportedNetwork,
 };
