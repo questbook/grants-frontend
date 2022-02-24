@@ -25,7 +25,10 @@ function BrowseGrants() {
     subgraphCl.client
   ));
 
-  const [getAllGrants] = useGetAllGrantsLazyQuery({ client: subgraphClient });
+  const allNetworkGrants = subgraphClients.map((client) => (
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useGetAllGrantsLazyQuery({ client })
+  ));
 
   const toast = useToast();
   const [grants, setGrants] = useState<GetAllGrantsQuery['grants']>([]);
@@ -36,16 +39,23 @@ function BrowseGrants() {
   const getGrantData = async () => {
     if (!subgraphClient) return;
     try {
-      const { data } = await getAllGrants({
-        variables: {
-          first: PAGE_SIZE,
-          skip: currentPage * PAGE_SIZE,
-        },
-      });
-      if (data) {
+      const promises = allNetworkGrants.map((allGrants) => (
+        // eslint-disable-next-line no-async-promise-executor
+        new Promise(async (resolve) => {
+          const { data } = await allGrants[0]({
+            variables: {
+              first: PAGE_SIZE,
+              skip: currentPage * PAGE_SIZE,
+            },
+          });
+          resolve(data.grants);
+        })
+      ));
+      Promise.all(promises).then((values) => {
+        const allGrantsData = [].concat(...values);
+        setGrants([...grants, ...allGrantsData]);
         setCurrentPage(currentPage + 1);
-        setGrants([...grants, ...data.grants]);
-      }
+      });
     } catch (e) {
       // console.log(e);
       toast({
