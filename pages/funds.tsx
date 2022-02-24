@@ -7,11 +7,11 @@ import FundForAGrant from '../src/components/funds';
 import { ApiClientsContext } from './_app';
 
 function AddFunds() {
-  const { workspaceId, subgraphClient } = useContext(ApiClientsContext)!;
+  const { workspace, subgraphClient } = useContext(ApiClientsContext)!;
   const { data } = useGetAllGrantsForADaoQuery({
     client: subgraphClient.client,
     variables: {
-      workspaceId: workspaceId!,
+      workspaceId: workspace?.id ?? '',
     },
   });
 
@@ -32,7 +32,7 @@ function AddFunds() {
               src="/illustrations/empty_states/no_grants.svg"
               imgHeight="174px"
               imgWidth="146px"
-              title="It’s quite silent here!"
+              title="It's quite silent here!"
               subtitle="Get started by creating your grant and post it in less than 2 minutes."
             />
           </Flex>
