@@ -20,6 +20,7 @@ import {
   ValidationApi,
 } from '@questbook/service-validator-client';
 import { MinimalWorkspace } from 'src/types';
+import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from 'src/constants/chains';
 import theme from '../src/theme';
 import SubgraphClient from '../src/graphql/subgraph';
 
@@ -59,12 +60,16 @@ export const ApiClientsContext = createContext<{
   setWorkspaceId:(id: string | null) => void;
   workspace?: MinimalWorkspace;
   setWorkspace:(workspace?: MinimalWorkspace) => void;
+  subgraphClients: SubgraphClient[];
 } | null>(null);
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const [workspaceId, setWorkspaceId] = React.useState<string | null>(null);
   const [workspace, setWorkspace] = React.useState<MinimalWorkspace>();
-  const client = useMemo(() => new SubgraphClient(), []);
+  const clients = ALL_SUPPORTED_CHAIN_IDS.map((chainId) => (
+    new SubgraphClient(chainId)
+  ));
+  const client = useMemo(() => new SubgraphClient(SupportedChainId.RINKEBY), []);
 
   const validatorApi = useMemo(() => {
     const validatorConfiguration = new Configuration({
@@ -81,8 +86,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       setWorkspaceId,
       workspace,
       setWorkspace,
+      subgraphClients: clients,
     }),
-    [client, validatorApi, workspaceId, setWorkspaceId, workspace, setWorkspace],
+    [client, validatorApi, workspaceId, setWorkspaceId, workspace, setWorkspace, clients],
   );
 
   const getLayout = Component.getLayout ?? ((page) => page);

@@ -25,6 +25,7 @@ interface ChainInfo {
       label: string
     }
   }
+  readonly subgraphClientUrl: string;
 }
 
 export type ChainInfoMap = { readonly [chainId: number]: ChainInfo };
@@ -67,6 +68,7 @@ export const CHAIN_INFO: ChainInfoMap = {
         label: 'WMATIC',
       },
     },
+    subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph',
   },
   [SupportedChainId.HARMONY_TESTNET_S0]: {
     name: 'Harmony Testnet S0',
@@ -106,5 +108,6 @@ export const CHAIN_INFO: ChainInfoMap = {
         label: 'WMATIC',
       },
     },
+    subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-harmonytest',
   },
 };

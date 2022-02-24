@@ -21,6 +21,9 @@ function BrowseGrants() {
   const [{ data: accountData }] = useAccount();
   const router = useRouter();
   const subgraphClient = useContext(ApiClientsContext)?.subgraphClient.client;
+  const subgraphClients = useContext(ApiClientsContext)?.subgraphClients.map((subgraphCl) => (
+    subgraphCl.client
+  ));
 
   const [getAllGrants] = useGetAllGrantsLazyQuery({ client: subgraphClient });
 
