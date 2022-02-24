@@ -1,5 +1,5 @@
 import {
-  Flex, Text, Box, useToast, ToastId,
+  Flex, Text, Box, useToast, ToastId, Link, Image,
 } from '@chakra-ui/react';
 import React, { useEffect, useContext } from 'react';
 import { useContract, useSigner } from 'wagmi';
@@ -165,6 +165,13 @@ function Settings({
         >
           Workspace Settings
         </Text>
+        <Link href={`/profile?daoID=${workspaceData?.id}`} color="brand.500" fontWeight="700" letterSpacing={0.5}>
+          <Flex direction="row" align="center">
+            <Image src="/ui_icons/see.svg" display="inline-block" mr={2} />
+            See Profile Preview
+          </Flex>
+
+        </Link>
       </Flex>
       <EditForm hasClicked={hasClicked} onSubmit={handleFormSubmit} formData={formData} />
       <Box my={10} />
