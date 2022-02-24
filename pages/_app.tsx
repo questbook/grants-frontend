@@ -19,6 +19,7 @@ import {
   Configuration,
   ValidationApi,
 } from '@questbook/service-validator-client';
+import { MinimalWorkspace } from 'src/types';
 import theme from '../src/theme';
 import SubgraphClient from '../src/graphql/subgraph';
 
@@ -56,13 +57,13 @@ export const ApiClientsContext = createContext<{
   validatorApi: ValidationApi;
   workspaceId: string | null;
   setWorkspaceId:(id: string | null) => void;
-  workspace: any;
-  setWorkspace:(workspace: any) => void;
+  workspace?: MinimalWorkspace;
+  setWorkspace:(workspace?: MinimalWorkspace) => void;
 } | null>(null);
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const [workspaceId, setWorkspaceId] = React.useState<string | null>(null);
-  const [workspace, setWorkspace] = React.useState<{ workspaceId: string; chainId: string }>();
+  const [workspace, setWorkspace] = React.useState<MinimalWorkspace>();
   const client = useMemo(() => new SubgraphClient(), []);
 
   const validatorApi = useMemo(() => {

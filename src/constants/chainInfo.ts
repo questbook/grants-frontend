@@ -1,5 +1,7 @@
 import { SupportedChainId } from './chains';
 
+// @TODO: Polygon
+
 interface ChainInfo {
   readonly name: string;
   readonly nativeCurrency: {
@@ -73,7 +75,7 @@ export const CHAIN_INFO: ChainInfoMap = {
       symbol: 'ONE',
       decimals: 18,
     },
-    icon: '/network_icons/eth_mainnet.svg',
+    icon: '/network_icons/polygon.svg',
     wallets: [
       {
         id: 'injected',

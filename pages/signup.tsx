@@ -14,7 +14,6 @@ import NavbarLayout from '../src/layout/navbarLayout';
 
 function SignupDao() {
   const router = useRouter();
-  const [loading, setLoading] = React.useState(false);
   const [daoCreated, setDaoCreated] = React.useState(false);
   const [creatingGrant, setCreatingGrant] = React.useState(false);
 
@@ -46,7 +45,6 @@ function SignupDao() {
         image: imageHash,
         id: Number(newId).toString(),
       });
-      setLoading(false);
       setDaoCreated(true);
     }
   }, [workspaceTransactionData, imageHash, workspaceData, router]);
@@ -120,7 +118,6 @@ function SignupDao() {
       <Form
         hasClicked={workspaceLoading}
         onSubmit={(data) => {
-          setLoading(true);
           setWorkspaceData(data);
         }}
       />

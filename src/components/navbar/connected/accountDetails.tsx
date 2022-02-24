@@ -1,10 +1,19 @@
 import React from 'react';
 import {
-  Button, VStack, Image, Text, Flex, Menu, MenuButton, MenuList, MenuItem,
+  Button,
+  VStack,
+  Image,
+  Text,
+  Flex,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
-import supportedNetworks from '../../../constants/supportedNetworks.json';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
+import useChainId from 'src/hooks/utils/useChainId';
 
 export interface Props {
   networkId: number;
@@ -12,12 +21,13 @@ export interface Props {
   address: string;
 }
 
-function AccountDetails({ networkId, isOnline, address }: Props) {
-  const formattedAddress = `${address.substring(0, 4)}......${address.substring(address.length - 4)}`;
-  const supportedChainIds = Object.keys(supportedNetworks);
-  const networkSupported = supportedChainIds.includes(networkId.toString());
-  const [, disconnect] = useAccount();
+function AccountDetails() {
+  const isOnline = true;
+  const [{ data: accountData }, disconnect] = useAccount();
   const router = useRouter();
+
+  const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`;
+  const chainId = useChainId();
 
   return (
     <Menu>
@@ -29,21 +39,19 @@ function AccountDetails({ networkId, isOnline, address }: Props) {
         px={2}
         py={1}
         borderRadius={8}
-        rightIcon={<Image mr={2} src="/ui_icons/dropdown_arrow.svg" alt="options" />}
+        rightIcon={
+          <Image mr={2} src="/ui_icons/dropdown_arrow.svg" alt="options" />
+        }
       >
         <Flex direction="row" align="center" justify="center">
-          <Image
-            h={8}
-            w={8}
-            src={
-          supportedNetworks[
-            networkSupported
-              ? networkId.toString() as keyof typeof supportedNetworks
-              : 1
-          ].icon
-        }
-            alt="current network"
-          />
+          {chainId ? (
+            <Image
+              h={8}
+              w={8}
+              src={CHAIN_INFO[chainId].icon}
+              alt="current network"
+            />
+          ) : null}
           <VStack spacing={0} ml={3} mr={5} mt={1} alignItems="flex-start">
             <Flex mb="-6px" alignItems="center">
               <Image
@@ -53,25 +61,30 @@ function AccountDetails({ networkId, isOnline, address }: Props) {
                 visibility={isOnline ? 'visible' : 'hidden'}
                 alt="wallet connected"
               />
-              <Text fontSize="9px" lineHeight="14px" fontWeight="500" color="#122224">
-                {
-              networkSupported
-                ? supportedNetworks[
-                  networkId.toString() as keyof typeof supportedNetworks
-                ].name
-                : 'Unsupported Network'
-            }
+              <Text
+                fontSize="9px"
+                lineHeight="14px"
+                fontWeight="500"
+                color="#122224"
+              >
+                {chainId
+                  ? CHAIN_INFO[chainId].name
+                  : 'Unsupported Network'}
               </Text>
             </Flex>
 
             <Flex>
-              <Text color="#122224" fontWeight="700" fontSize="16px" lineHeight="24px">
-                {formattedAddress}
+              <Text
+                color="#122224"
+                fontWeight="700"
+                fontSize="16px"
+                lineHeight="24px"
+              >
+                {formatAddress(accountData?.address ?? '')}
               </Text>
             </Flex>
           </VStack>
         </Flex>
-
       </MenuButton>
       <MenuList>
         <MenuItem
