@@ -9,7 +9,13 @@
         "footer": "By connecting your wallet, you accept Questbook’s Terms of Service"
     },
     "funds": {
-        "heading": "Funds"
+        "heading": "Funds",
+        "add_funds_modal": {
+            "errors": {}
+        },
+        "withdraw_funds_modal": {
+            "errors": {}
+        }
     },
     "get_started": {
         "heading": "gm! 👋  Welcome to Questbook",
@@ -28,10 +34,60 @@
             "text": "to access your existing account on Questbook."
         }
     },
-    "settings_and_members": {},
-    "signup": {},
+    "settings_and_members": {
+        "settings": {
+            "form": {
+                "errors": {}
+            }
+        },
+        "members" : {
+            "invite_member_modal" : {
+                "errors" : {}
+            }
+        }
+    },
+    "signup": {
+        "form": {
+            "errors": {}
+        }
+    },
     "index": {},
-    "explore_grants": {},
-    "your_applications": {},
-    "your_grants": {}
+    "explore_grants": {
+        "apply": {
+            "form": {
+                "errors": {}
+            }
+        }
+    },
+    "your_applications": {
+        "grant_applications": {
+            "form": {
+                "errors": {}
+            }
+        },
+        "manage_grant": {
+            "mark_as_done_modal": {
+                "errors": {}
+            }
+        }
+    },
+    "your_grants": {
+        "create_grant": {
+            "form": {
+                "errors": {}
+            }
+        },
+        "edit_grant": {
+            "form": {
+                "errors": {}
+            }
+        },
+        "view_applicants": {
+            "send_funds_modal": {
+                "errors": {
+                    
+                }
+            }
+        }
+    }
 }
