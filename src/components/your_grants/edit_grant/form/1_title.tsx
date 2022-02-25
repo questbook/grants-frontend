@@ -2,6 +2,8 @@ import { Flex, Box } from '@chakra-ui/react';
 import React from 'react';
 import MultiLineInput from '../../../ui/forms/multiLineInput';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
+import { getGrantSummaryErrorText, getGrantTitleErrorText } from './errors/errorTexts';
+import { GrantSummaryError, GrantTitleError } from './errors/errorTypes';
 
 function Title({
   title,
@@ -18,10 +20,10 @@ function Title({
   setTitle: (title: string) => void;
   summary: string;
   setSummary: (summary: string) => void;
-  titleError: boolean;
-  setTitleError: (titleError: boolean) => void;
-  summaryError: boolean;
-  setSummaryError: (summaryError: boolean) => void;
+  titleError: GrantTitleError;
+  setTitleError: (titleError: GrantTitleError) => void;
+  summaryError: GrantSummaryError;
+  setSummaryError: (summaryError: GrantSummaryError) => void;
   maxDescriptionLength: number;
 }) {
   return (
@@ -30,13 +32,15 @@ function Title({
         label="Grant Title"
         value={title}
         onChange={(e) => {
-          setTitleError(false);
+          if (titleError !== GrantTitleError.NoError) {
+            setTitleError(GrantTitleError.NoError);
+          }
           setTitle(e.target.value);
         }}
+        isError={titleError !== GrantTitleError.NoError}
+        errorText={getGrantTitleErrorText(titleError)}
         placeholder="Decentralized batching contract"
         subtext="Letters, spaces, and numbers are allowed."
-        isError={titleError}
-        errorText="Required"
       />
 
       <Box mt={8} />
@@ -46,14 +50,14 @@ function Title({
         placeholder="A tool, script or tutorial to set up monitoring for miner GPU, CPU, & memory."
         value={summary}
         onChange={(e) => {
-          setSummaryError(false);
-          if (e.target.value.length <= maxDescriptionLength) {
-            setSummary(e.target.value);
+          if (summaryError !== GrantSummaryError.NoError) {
+            setSummaryError(GrantSummaryError.NoError);
           }
+          setSummary(e.target.value);
         }}
         maxLength={maxDescriptionLength}
-        isError={summaryError}
-        errorText="Required"
+        isError={summaryError !== GrantSummaryError.NoError}
+        errorText={getGrantSummaryErrorText(summaryError)}
       />
     </Flex>
   );

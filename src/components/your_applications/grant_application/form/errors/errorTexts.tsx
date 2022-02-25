@@ -14,7 +14,7 @@ import {
 } from './errorTypes';
 import strings from '../../../../../constants/strings.json';
 
-const { errors } = strings.explore_grants.apply.form;
+const { errors } = strings.your_applications.grant_applications.form;
 
 const getApplicantNameErrorText = (error: ApplicantNameError) => {
   switch (error) {

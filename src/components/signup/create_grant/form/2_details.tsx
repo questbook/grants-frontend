@@ -3,6 +3,8 @@ import {
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import MultiLineInput from '../../../ui/forms/multiLineInput';
+import { getGrantDetailsErrorText } from './errors/errorTexts';
+import { GrantDetailsError } from './errors/errorTypes';
 
 interface Props {
   onSubmit: (data: any) => void;
@@ -10,12 +12,12 @@ interface Props {
 
 function Details({ onSubmit }: Props) {
   const [details, setDetails] = useState('');
-  const [detailsError, setDetailsError] = useState(false);
+  const [detailsError, setDetailsError] = useState(GrantDetailsError.NoError);
 
   const handleOnSubmit = () => {
     let error = false;
     if (details.length <= 0) {
-      setDetailsError(true);
+      setDetailsError(GrantDetailsError.NoError);
       error = true;
     }
 
@@ -37,14 +39,14 @@ function Details({ onSubmit }: Props) {
           label="Grant Details"
           placeholder="Details about your grant - requirements, deliverables, and milestones"
           value={details}
-          isError={detailsError}
+          isError={detailsError !== GrantDetailsError.NoError}
           onChange={(e) => {
-            if (detailsError) {
-              setDetailsError(false);
+            if (detailsError !== GrantDetailsError.NoError) {
+              setDetailsError(GrantDetailsError.NoError);
             }
             setDetails(e.target.value);
           }}
-          errorText="Required"
+          errorText={getGrantDetailsErrorText(detailsError)}
           maxLength={-1}
         />
 

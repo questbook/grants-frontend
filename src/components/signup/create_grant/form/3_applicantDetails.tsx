@@ -5,6 +5,8 @@ import React, { useState } from 'react';
 import Badge from '../../../ui/badge';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
 import applicantDetailsList from '../../../../constants/applicantDetailsList';
+import { ExtraFieldError } from './errors/errorTypes';
+import { getExtraFieldErrorText } from './errors/errorTexts';
 
 interface Props {
   onSubmit: (data: any) => void;
@@ -43,12 +45,12 @@ function ApplicantDetails({ onSubmit }: Props) {
   };
 
   const [extraFieldDetails, setExtraFieldDetails] = useState('');
-  const [extraFieldError, setExtraFieldError] = useState(false);
+  const [extraFieldError, setExtraFieldError] = useState(ExtraFieldError.NoError);
 
   const handleOnSubmit = () => {
     let error = false;
     if (extraField && extraFieldDetails.length <= 0) {
-      setExtraFieldError(true);
+      setExtraFieldError(ExtraFieldError.InvalidValue);
       error = true;
     }
     if (!error) {
@@ -144,11 +146,13 @@ function ApplicantDetails({ onSubmit }: Props) {
             <SingleLineInput
               label="Field Name"
               placeholder="Sample Field"
-              isError={extraFieldError}
-              errorText="Required"
+              isError={extraFieldError !== ExtraFieldError.NoError}
+              errorText={getExtraFieldErrorText(extraFieldError)}
               value={extraFieldDetails}
               onChange={(e) => {
-                setExtraFieldError(false);
+                if (extraFieldError !== ExtraFieldError.NoError) {
+                  setExtraFieldError(ExtraFieldError.InvalidValue);
+                }
                 setExtraFieldDetails(e.target.value);
               }}
               subtext="Letters and spaces are allowed."

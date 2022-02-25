@@ -5,6 +5,7 @@ import React from 'react';
 import applicantDetailsList from '../../../../constants/applicantDetailsList';
 import Badge from '../../../ui/badge';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
+import { ExtraFieldError } from './errors/errorTypes';
 
 function ApplicantDetails({
   detailsRequired,
@@ -32,8 +33,8 @@ function ApplicantDetails({
   extraFieldDetails: string;
   setExtraFieldDetails: (extraFieldDetails: string) => void;
 
-  extraFieldError: boolean;
-  setExtraFieldError: (extraFieldError: boolean) => void;
+  extraFieldError: ExtraFieldError;
+  setExtraFieldError: (extraFieldError: ExtraFieldError) => void;
 
   multipleMilestones: boolean;
   setMultipleMilestones: (multipleMilestones: boolean) => void;
@@ -85,11 +86,13 @@ function ApplicantDetails({
           <SingleLineInput
             label="Field Name"
             placeholder="Sample Field"
-            isError={extraFieldError}
+            isError={extraFieldError !== ExtraFieldError.NoError}
             errorText="Required"
             value={extraFieldDetails}
             onChange={(e) => {
-              setExtraFieldError(false);
+              if (extraFieldError === ExtraFieldError.NoError) {
+                setExtraFieldError(ExtraFieldError.NoError);
+              }
               setExtraFieldDetails(e.target.value);
             }}
             subtext="Letters and spaces are allowed."

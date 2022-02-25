@@ -4,6 +4,8 @@ import {
 import React, { useState } from 'react';
 import MultiLineInput from '../../../ui/forms/multiLineInput';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
+import { getGrantSummaryErrorText, getGrantTitleErrorText } from './errors/errorTexts';
+import { GrantSummaryError, GrantTitleError } from './errors/errorTypes';
 
 interface Props {
   onSubmit: (data: any) => void;
@@ -14,17 +16,17 @@ function Title({ onSubmit }: Props) {
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
 
-  const [titleError, setTitleError] = useState(false);
-  const [summaryError, setSummaryError] = useState(false);
+  const [titleError, setTitleError] = useState(GrantTitleError.NoError);
+  const [summaryError, setSummaryError] = useState(GrantSummaryError.NoError);
 
   const handleOnSubmit = () => {
     let error = false;
     if (title.length <= 0) {
-      setTitleError(true);
+      setTitleError(GrantTitleError.InvalidValue);
       error = true;
     }
     if (summary.length <= 0) {
-      setSummaryError(true);
+      setSummaryError(GrantSummaryError.InvalidValue);
       error = true;
     }
 
@@ -47,13 +49,13 @@ function Title({ onSubmit }: Props) {
           label="Grant Title"
           value={title}
           onChange={(e) => {
-            setTitleError(false);
+            if (titleError !== GrantTitleError.NoError) { setTitleError(GrantTitleError.NoError); }
             setTitle(e.target.value);
           }}
           placeholder="Decentralized batching contract"
           subtext="Letters, spaces, and numbers are allowed."
-          isError={titleError}
-          errorText="Required"
+          isError={titleError !== GrantTitleError.NoError}
+          errorText={getGrantTitleErrorText(titleError)}
         />
 
         <Box mt={12} />
@@ -63,14 +65,14 @@ function Title({ onSubmit }: Props) {
           placeholder="A tool, script or tutorial to set up monitoring for miner GPU, CPU, & memory."
           value={summary}
           onChange={(e) => {
-            setSummaryError(false);
-            if (e.target.value.length <= maxDescriptionLength) {
-              setSummary(e.target.value);
+            if (summaryError !== GrantSummaryError.NoError) {
+              setSummaryError(GrantSummaryError.NoError);
             }
+            setSummary(e.target.value);
           }}
           maxLength={maxDescriptionLength}
-          isError={summaryError}
-          errorText="Required"
+          isError={summaryError !== GrantSummaryError.NoError}
+          errorText={getGrantSummaryErrorText(summaryError)}
         />
 
       </Flex>

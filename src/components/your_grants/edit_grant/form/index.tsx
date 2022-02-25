@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import {
   Box, Button, Text, Image, Link, Flex, CircularProgress, Center,
 } from '@chakra-ui/react';
+import moment from 'moment';
 import Title from './1_title';
 import Details from './2_details';
 import ApplicantDetails from './3_applicantDetails';
@@ -10,6 +11,14 @@ import GrantRewardsInput from './4_rewards';
 import applicantDetailsList from '../../../../constants/applicantDetailsList';
 import Heading from '../../../ui/heading';
 import supportedCurrencies from '../../../../constants/supportedCurrencies';
+import {
+  ExtraFieldError,
+  GrantDeadlineError,
+  GrantDetailsError,
+  GrantRewardError,
+  GrantSummaryError,
+  GrantTitleError,
+} from './errors/errorTypes';
 
 function Form({
   refs,
@@ -26,11 +35,11 @@ function Form({
   const [title, setTitle] = useState(formData.title ?? '');
   const [summary, setSummary] = useState(formData.summary ?? '');
 
-  const [titleError, setTitleError] = useState(false);
-  const [summaryError, setSummaryError] = useState(false);
+  const [titleError, setTitleError] = useState(GrantTitleError.NoError);
+  const [summaryError, setSummaryError] = useState(GrantSummaryError.NoError);
 
-  const [details, setDetails] = useState(formData.details ?? '');
-  const [detailsError, setDetailsError] = useState(false);
+  const [details, setDetails] = useState('');
+  const [detailsError, setDetailsError] = useState(GrantDetailsError.NoError);
 
   const applicantDetails = applicantDetailsList.map(
     ({
@@ -69,10 +78,14 @@ function Form({
   };
 
   const [extraFieldDetails, setExtraFieldDetails] = useState(formData.extra_field ?? '');
-  const [extraFieldError, setExtraFieldError] = useState(false);
+  const [extraFieldError, setExtraFieldError] = useState(
+    ExtraFieldError.NoError,
+  );
 
-  const [reward, setReward] = React.useState(formData.reward ?? '');
-  const [rewardError, setRewardError] = React.useState(false);
+  const [reward, setReward] = React.useState('');
+  const [rewardError, setRewardError] = React.useState(
+    GrantRewardError.NoError,
+  );
 
   const [rewardCurrency, setRewardCurrency] = React.useState(
     formData.rewardCurrency ?? supportedCurrencies[0].label,
@@ -82,32 +95,36 @@ function Form({
   );
 
   const [date, setDate] = React.useState(formData.date ?? '');
-  const [dateError, setDateError] = React.useState(false);
+  const [dateError, setDateError] = React.useState(GrantDeadlineError.NoError);
 
   const handleOnSubmit = () => {
     let error = false;
     if (title.length <= 0) {
-      setTitleError(true);
+      setTitleError(GrantTitleError.InvalidValue);
       error = true;
     }
     if (summary.length <= 0) {
-      setSummaryError(true);
+      setSummaryError(GrantSummaryError.InvalidValue);
       error = true;
     }
     if (details.length <= 0) {
-      setDetailsError(true);
+      setDetailsError(GrantDetailsError.InvalidValue);
       error = true;
     }
     if (extraField && extraFieldDetails.length <= 0) {
-      setExtraFieldError(true);
+      setExtraFieldError(ExtraFieldError.InvalidValue);
       error = true;
     }
     if (reward.length <= 0) {
-      setRewardError(true);
+      setRewardError(GrantRewardError.InvalidValue);
       error = true;
     }
     if (date.length <= 0) {
-      setDateError(true);
+      setDateError(GrantDeadlineError.InvalidValue);
+      error = true;
+    }
+    if (moment(date, 'YYYY-MM-D').isBefore(moment())) {
+      setDateError(GrantDeadlineError.PastDate);
       error = true;
     }
 

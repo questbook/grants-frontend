@@ -1,12 +1,15 @@
 import {
   Flex, Text, Box, Button, Image, Link, Center, CircularProgress,
 } from '@chakra-ui/react';
+import moment from 'moment';
 import React from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import supportedCurrencies from '../../../../constants/supportedCurrencies';
 import Datepicker from '../../../ui/forms/datepicker';
 import Dropdown from '../../../ui/forms/dropdown';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
+import { getGrantDeadlineErrorText, getGrantRewardErrorText } from './errors/errorTexts';
+import { GrantDeadlineError, GrantRewardError } from './errors/errorTypes';
 
 interface Props {
   onSubmit: (data: any) => void;
@@ -15,7 +18,7 @@ interface Props {
 
 function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
   const [reward, setReward] = React.useState('');
-  const [rewardError, setRewardError] = React.useState(false);
+  const [rewardError, setRewardError] = React.useState(GrantRewardError.NoError);
 
   const [rewardCurrency, setRewardCurrency] = React.useState(
     supportedCurrencies[0].label,
@@ -25,16 +28,20 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
   );
 
   const [date, setDate] = React.useState('');
-  const [dateError, setDateError] = React.useState(false);
+  const [dateError, setDateError] = React.useState(GrantDeadlineError.NoError);
 
   const handleOnSubmit = () => {
     let error = false;
     if (reward.length <= 0) {
-      setRewardError(true);
+      setRewardError(GrantRewardError.InvalidValue);
       error = true;
     }
     if (date.length <= 0) {
-      setDateError(true);
+      setDateError(GrantDeadlineError.InvalidValue);
+      error = true;
+    }
+    if (moment(date, 'YYYY-MM-D').isBefore(moment())) {
+      setDateError(GrantDeadlineError.PastDate);
       error = true;
     }
 
@@ -56,13 +63,13 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
               placeholder="100"
               value={reward}
               onChange={(e) => {
-                if (rewardError) {
-                  setRewardError(false);
+                if (rewardError !== GrantRewardError.NoError) {
+                  setRewardError(GrantRewardError.NoError);
                 }
                 setReward(e.target.value);
               }}
-              isError={rewardError}
-              errorText="Required"
+              isError={rewardError !== GrantRewardError.NoError}
+              errorText={getGrantRewardErrorText(rewardError)}
               type="number"
             />
           </Box>
@@ -83,14 +90,14 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
 
         <Datepicker
           onChange={(e) => {
-            if (dateError) {
-              setDateError(false);
+            if (dateError !== GrantDeadlineError.NoError) {
+              setDateError(GrantDeadlineError.NoError);
             }
             setDate(e.target.value);
           }}
           value={date}
-          isError={dateError}
-          errorText="Required"
+          isError={dateError !== GrantDeadlineError.NoError}
+          errorText={getGrantDeadlineErrorText(dateError)}
           label="Grant Deadline"
         />
 

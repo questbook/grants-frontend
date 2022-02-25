@@ -8,6 +8,8 @@ import Datepicker from '../../../ui/forms/datepicker';
 import Dropdown from '../../../ui/forms/dropdown';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
 import supportedCurrencies from '../../../../constants/supportedCurrencies';
+import { GrantDeadlineError, GrantRewardError } from './errors/errorTypes';
+import { getGrantDeadlineErrorText, getGrantRewardErrorText } from './errors/errorTexts';
 
 function GrantRewardsInput({
   reward,
@@ -24,15 +26,15 @@ function GrantRewardsInput({
 }: {
   reward: string;
   setReward: (rewards: string) => void;
-  rewardError: boolean;
-  setRewardError: (rewardError: boolean) => void;
+  rewardError: GrantRewardError;
+  setRewardError: (rewardError: GrantRewardError) => void;
   rewardCurrency: string;
   setRewardCurrency: (rewardCurrency: string) => void;
   setRewardCurrencyAddress: (rewardCurrencyAddress: string) => void;
   date: string;
   setDate: (date: string) => void;
-  dateError: boolean;
-  setDateError: (dateError: boolean) => void;
+  dateError: GrantDeadlineError;
+  setDateError: (dateError: GrantDeadlineError) => void;
 }) {
   return (
     <Flex direction="column">
@@ -44,13 +46,13 @@ function GrantRewardsInput({
             placeholder="100"
             value={reward}
             onChange={(e) => {
-              if (rewardError) {
-                setRewardError(false);
+              if (rewardError !== GrantRewardError.NoError) {
+                setRewardError(GrantRewardError.NoError);
               }
               setReward(e.target.value);
             }}
-            isError={rewardError}
-            errorText="Required"
+            isError={rewardError !== GrantRewardError.NoError}
+            errorText={getGrantRewardErrorText(rewardError)}
             type="number"
           />
         </Box>
@@ -71,14 +73,14 @@ function GrantRewardsInput({
 
       <Datepicker
         onChange={(e) => {
-          if (dateError) {
-            setDateError(false);
+          if (dateError !== GrantDeadlineError.NoError) {
+            setDateError(GrantDeadlineError.NoError);
           }
           setDate(e.target.value);
         }}
         value={date}
-        isError={dateError}
-        errorText="Required"
+        isError={dateError !== GrantDeadlineError.NoError}
+        errorText={getGrantDeadlineErrorText(dateError)}
         label="Grant Deadline"
       />
 

@@ -1,8 +1,16 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import React, { useState } from 'react';
 import {
-  Box, Button, Text, Image, Link, Flex, CircularProgress, Center,
+  Box,
+  Button,
+  Text,
+  Image,
+  Link,
+  Flex,
+  CircularProgress,
+  Center,
 } from '@chakra-ui/react';
+import moment from 'moment';
 import Title from './1_title';
 import Details from './2_details';
 import ApplicantDetails from './3_applicantDetails';
@@ -10,6 +18,14 @@ import GrantRewardsInput from './4_rewards';
 import Heading from '../../../ui/heading';
 import applicantDetailsList from '../../../../constants/applicantDetailsList';
 import supportedCurrencies from '../../../../constants/supportedCurrencies';
+import {
+  ExtraFieldError,
+  GrantDeadlineError,
+  GrantDetailsError,
+  GrantRewardError,
+  GrantSummaryError,
+  GrantTitleError,
+} from './errors/errorTypes';
 
 function Form({
   refs,
@@ -24,14 +40,14 @@ function Form({
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
 
-  const [titleError, setTitleError] = useState(false);
-  const [summaryError, setSummaryError] = useState(false);
+  const [titleError, setTitleError] = useState(GrantTitleError.NoError);
+  const [summaryError, setSummaryError] = useState(GrantSummaryError.NoError);
 
   const [details, setDetails] = useState('');
-  const [detailsError, setDetailsError] = useState(false);
+  const [detailsError, setDetailsError] = useState(GrantDetailsError.NoError);
 
-  const applicantDetails = applicantDetailsList.map(
-    ({
+  const applicantDetails = applicantDetailsList
+    .map(({
       title, tooltip, id, inputType, isRequired,
     }, index) => {
       if (index === applicantDetailsList.length - 1) return null;
@@ -44,8 +60,8 @@ function Form({
         index,
         inputType,
       };
-    },
-  ).filter((obj) => obj != null);
+    })
+    .filter((obj) => obj != null);
   const [detailsRequired, setDetailsRequired] = useState(applicantDetails);
   const [extraField, setExtraField] = useState(false);
   const [multipleMilestones, setMultipleMilestones] = useState(false);
@@ -60,10 +76,14 @@ function Form({
   };
 
   const [extraFieldDetails, setExtraFieldDetails] = useState('');
-  const [extraFieldError, setExtraFieldError] = useState(false);
+  const [extraFieldError, setExtraFieldError] = useState(
+    ExtraFieldError.NoError,
+  );
 
   const [reward, setReward] = React.useState('');
-  const [rewardError, setRewardError] = React.useState(false);
+  const [rewardError, setRewardError] = React.useState(
+    GrantRewardError.NoError,
+  );
 
   const [rewardCurrency, setRewardCurrency] = React.useState(
     supportedCurrencies[0].label,
@@ -73,32 +93,36 @@ function Form({
   );
 
   const [date, setDate] = React.useState('');
-  const [dateError, setDateError] = React.useState(false);
+  const [dateError, setDateError] = React.useState(GrantDeadlineError.NoError);
 
   const handleOnSubmit = () => {
     let error = false;
     if (title.length <= 0) {
-      setTitleError(true);
+      setTitleError(GrantTitleError.InvalidValue);
       error = true;
     }
     if (summary.length <= 0) {
-      setSummaryError(true);
+      setSummaryError(GrantSummaryError.InvalidValue);
       error = true;
     }
     if (details.length <= 0) {
-      setDetailsError(true);
+      setDetailsError(GrantDetailsError.InvalidValue);
       error = true;
     }
     if (extraField && extraFieldDetails.length <= 0) {
-      setExtraFieldError(true);
+      setExtraFieldError(ExtraFieldError.InvalidValue);
       error = true;
     }
     if (reward.length <= 0) {
-      setRewardError(true);
+      setRewardError(GrantRewardError.InvalidValue);
       error = true;
     }
     if (date.length <= 0) {
-      setDateError(true);
+      setDateError(GrantDeadlineError.InvalidValue);
+      error = true;
+    }
+    if (moment(date, 'YYYY-MM-D').isBefore(moment())) {
+      setDateError(GrantDeadlineError.PastDate);
       error = true;
     }
 
@@ -255,7 +279,12 @@ function Form({
           By pressing Publish Grant you&apos;ll have to approve this transaction
           in your wallet.
           {' '}
-          <Link href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46" isExternal>Learn more</Link>
+          <Link
+            href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
+            isExternal
+          >
+            Learn more
+          </Link>
           {' '}
           <Image
             display="inline-block"
@@ -266,16 +295,20 @@ function Form({
         </Text>
       </Flex>
 
-      {hasClicked
-        ? (
-          <Center>
-            <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
-          </Center>
-        ) : (
-          <Button onClick={handleOnSubmit} variant="primary">
-            Create Grant
-          </Button>
-        )}
+      {hasClicked ? (
+        <Center>
+          <CircularProgress
+            isIndeterminate
+            color="brand.500"
+            size="48px"
+            mt={4}
+          />
+        </Center>
+      ) : (
+        <Button onClick={handleOnSubmit} variant="primary">
+          Create Grant
+        </Button>
+      )}
     </>
   );
 }
