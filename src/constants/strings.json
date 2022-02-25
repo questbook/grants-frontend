@@ -11,22 +11,48 @@
     "funds": {
         "heading": "Funds",
         "add_funds_modal": {
-            "errors": {}
+            "errors": {
+                "deposit_amount": {
+                    "0": {
+                        "code": 0,
+                        "message": "Please enter a valid amount"
+                    },
+                    "1": {
+                        "code": 1,
+                        "message": "Insufficient funds"
+                    }
+                }
+            }
         },
         "withdraw_funds_modal": {
-            "errors": {}
+            "errors": {
+                "withdraw_amount": {
+                    "0": {
+                        "code": 0,
+                        "message": "Please enter a valid amount"
+                    },
+                    "1": {
+                        "code": 1,
+                        "message": "Insufficient funds"
+                    }
+                }
+            }
         }
     },
     "get_started": {
         "heading": "gm! 👋  Welcome to Questbook",
         "subheading": "What is your goal on Questbook?",
         "talent": {
-            "text":"Are you looking to apply for grants on Questbook?",
-            "highlight": ["apply for grants"]
+            "text": "Are you looking to apply for grants on Questbook?",
+            "highlight": [
+                "apply for grants"
+            ]
         },
         "dao": {
-            "text":"Are you looking to fund grants on Questbook?",
-            "highlight": ["fund grants"]
+            "text": "Are you looking to fund grants on Questbook?",
+            "highlight": [
+                "fund grants"
+            ]
         },
         "button_text": "Continue",
         "footer": {
@@ -40,9 +66,9 @@
                 "errors": {}
             }
         },
-        "members" : {
-            "invite_member_modal" : {
-                "errors" : {}
+        "members": {
+            "invite_member_modal": {
+                "errors": {}
             }
         }
     },
@@ -85,7 +111,22 @@
         "view_applicants": {
             "send_funds_modal": {
                 "errors": {
-                    
+                    "send_amount": {
+                        "0": {
+                            "code": 0,
+                            "message": "Please enter a valid amount"
+                        },
+                        "1": {
+                            "code": 1,
+                            "message": "Insufficient funds"
+                        }
+                    },
+                    "milestone": {
+                        "0": {
+                            "code": 0,
+                            "message": "No milestone selected"
+                        }
+                    }
                 }
             }
         }

@@ -158,6 +158,7 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
         isOpen={isWithdrawFundsModalOpen}
         onClose={() => setIsWithdrawFundsModalOpen(false)}
         grantAddress={grant.id}
+        grantFunding={grant.funding}
         rewardAsset={{
           address: grant.reward.asset,
           committed: BigNumber.from(grant.reward.committed),

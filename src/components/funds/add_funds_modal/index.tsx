@@ -26,6 +26,7 @@ import SingleLineInput from '../../ui/forms/singleLineInput';
 import Modal from '../../ui/modal';
 import animationData from '../../../../public/animations/Add_Funds.json';
 import ERC20ABI from '../../../contracts/abi/ERC20.json';
+import AllStrings from '../../../constants/strings.json';
 
 interface Props {
   isOpen: boolean;
@@ -44,9 +45,22 @@ function AddFunds({
 }: Props) {
   const [type, setType] = React.useState(-1);
   const [funding, setFunding] = React.useState('');
-  const [error, setError] = React.useState(false);
   const [walletBalance, setWalletBalance] = React.useState(0);
   const [rewardAssetDecimals, setRewardAssetDecimals] = React.useState(0);
+
+  const { errors } = AllStrings.funds.add_funds_modal;
+  enum ErrorTypes {
+    NoError = -1,
+    InvalidValue = 0,
+    InsufficientFunds = 1,
+  }
+  const [error, setError] = React.useState<ErrorTypes>(ErrorTypes.NoError);
+  const getErrorText = () => {
+    switch (error) {
+      case ErrorTypes.NoError: return '';
+      default: return errors.deposit_amount[error].message;
+    }
+  };
 
   const nextScreenTexts = [
     'Deposit funds from another wallet',
@@ -95,18 +109,19 @@ function AddFunds({
   };
 
   const depositFunds = async () => {
-    if (funding === '') {
-      setError(true);
+    if (funding === '' || BigNumber.from(funding).lte(0)) {
+      setError(ErrorTypes.InvalidValue);
       return;
     }
 
     const finalAmount = ethers.utils.parseUnits(funding, rewardAssetDecimals);
-    // toast({
-    //   title: 'Depositing!',
-    //   status: 'info',
-    //   duration: 9000,
-    //   isClosable: true,
-    // });
+    console.log('finalAmount', finalAmount);
+    console.log(walletBalance);
+    if (finalAmount.gt(walletBalance)) {
+      setError(ErrorTypes.InsufficientFunds);
+      return;
+    }
+
     try {
       setHasClicked(true);
       const transferTxn = await rewardAssetContract.transfer(
@@ -114,12 +129,6 @@ function AddFunds({
         finalAmount,
       );
       const transactionData = await transferTxn.wait();
-      // toast({
-      //   title: 'Deposited!',
-      //   status: 'success',
-      //   duration: 9000,
-      //   isClosable: true,
-      // });
       setHasClicked(false);
       showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
 
@@ -352,13 +361,13 @@ function AddFunds({
                   placeholder="100"
                   value={funding}
                   onChange={(e) => {
-                    if (error) {
-                      setError(false);
+                    if (error !== ErrorTypes.NoError) {
+                      setError(ErrorTypes.NoError);
                     }
                     setFunding(e.target.value);
                   }}
-                  isError={error}
-                  errorText="Required"
+                  isError={error !== ErrorTypes.NoError}
+                  errorText={getErrorText()}
                   type="number"
                 />
               </Flex>
