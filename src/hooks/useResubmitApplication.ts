@@ -2,17 +2,15 @@ import React, { useContext, useEffect } from 'react';
 import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import { useAccount, useNetwork } from 'wagmi';
-import {
-  getSupportedChainIdFromWorkspace,
-} from 'src/utils/validationUtils';
+import { SupportedChainId } from 'src/constants/chains';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useApplicationRegistryContract from './contracts/useApplicationRegistryContract';
 
-export default function useUpdateApplicationState(
+export default function useResubmitApplication(
   data: any,
-  applicationId: string | undefined,
-  state: string | undefined,
+  chainId?: SupportedChainId,
+  applicationId?: string,
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
@@ -21,20 +19,19 @@ export default function useUpdateApplicationState(
   const [{ data: networkData }] = useNetwork();
 
   const apiClients = useContext(ApiClientsContext)!;
-  const { validatorApi, workspace } = apiClients;
+  const { validatorApi } = apiClients;
+
   const currentChainId = useChainId();
-  const applicationContract = useApplicationRegistryContract(currentChainId);
+  const applicationRegistryContract = useApplicationRegistryContract(chainId);
+
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
 
   useEffect(() => {
-    console.log(state);
-    if (state) {
-      console.log(state);
+    if (data) {
       setError(undefined);
-      setLoading(false);
     }
-  }, [state]);
+  }, [data]);
 
   useEffect(() => {
     if (error) return;
@@ -47,25 +44,21 @@ export default function useUpdateApplicationState(
       try {
         const {
           data: { ipfsHash },
-        } = await validatorApi.validateGrantApplicationUpdate({
-          feedback: data,
-        });
+        } = await validatorApi.validateGrantApplicationUpdate(data);
         if (!ipfsHash) {
           throw new Error('Error validating grant data');
         }
-
-        const updateTxn = await applicationContract.updateApplicationState(
-          Number(applicationId),
-          Number(workspace!.id),
-          state,
+        const txn = await applicationRegistryContract.updateApplicationMetadata(
+          applicationId,
           ipfsHash,
+          data.milestones.length,
         );
-        const updateTxnData = await updateTxn.wait();
+        const txnData = await txn.wait();
 
-        setTransactionData(updateTxnData);
+        setTransactionData(txnData);
         setLoading(false);
       } catch (e: any) {
-        console.log(e);
+        // console.log(e);
         setError(e.message);
         setLoading(false);
         toastRef.current = toast({
@@ -82,33 +75,27 @@ export default function useUpdateApplicationState(
       }
     }
     try {
-      console.log(data);
-      console.log(workspace);
       if (!data) return;
-      if (!state) return;
-      if (!applicationId) return;
       if (transactionData) return;
+      if (!chainId) return;
       if (!accountData || !accountData.address) {
         throw new Error('not connected to wallet');
       }
       if (!currentChainId) {
         throw new Error('not connected to valid network');
       }
-      if (!workspace) {
-        throw new Error('not connected to workspace');
-      }
-      if (getSupportedChainIdFromWorkspace(workspace) !== currentChainId) {
+      if (currentChainId !== chainId) {
         throw new Error('connected to wrong network');
       }
       if (!validatorApi) {
         throw new Error('validatorApi or workspaceId is not defined');
       }
       if (
-        !applicationContract
-        || applicationContract.address
+        !applicationRegistryContract
+        || applicationRegistryContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !applicationContract.signer
-        || !applicationContract.provider
+        || !applicationRegistryContract.signer
+        || !applicationRegistryContract.provider
       ) {
         return;
       }
@@ -133,15 +120,14 @@ export default function useUpdateApplicationState(
     loading,
     toast,
     transactionData,
-    applicationContract,
+    applicationRegistryContract,
     validatorApi,
-    workspace,
     accountData,
     networkData,
     currentChainId,
-    applicationId,
-    state,
+    chainId,
     data,
+    applicationId,
   ]);
 
   return [transactionData, loading];

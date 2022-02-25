@@ -97,6 +97,7 @@ function YourApplications() {
           && myApplications.map((application: any) => (
             (
               <YourApplicationCard
+                key={application.id}
                 grantTitle={application.grant.title}
                 daoName={application.grant.workspace.title}
                 daoIcon={getUrlForIPFSHash(application.grant.workspace.logoIpfsHash)}

@@ -1888,7 +1888,7 @@ export type GetApplicationDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetApplicationDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, feedbackDao?: string | null, feedbackDev?: string | null, createdAtS: number, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, value: Array<string> }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, amount: string }>, grant: { __typename?: 'Grant', id: string, title: string, funding: string, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string }, reward: { __typename?: 'Reward', id: string, asset: string, committed: string } } } | null };
+export type GetApplicationDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, feedbackDao?: string | null, feedbackDev?: string | null, createdAtS: number, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, value: Array<string> }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, amount: string }>, grant: { __typename?: 'Grant', id: string, title: string, funding: string, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> }, reward: { __typename?: 'Reward', id: string, asset: string, committed: string } } } | null };
 
 export type GetApplicationMilestonesQueryVariables = Exact<{
   grantId: Scalars['ID'];
@@ -2221,6 +2221,7 @@ export const GetApplicationDetailsDocument = gql`
         id
         title
         logoIpfsHash
+        supportedNetworks
       }
       reward {
         id
