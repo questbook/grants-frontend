@@ -6,10 +6,8 @@ import React, {
   ReactElement, useEffect, useState, useCallback,
   useContext,
 } from 'react';
-import { useAccount, useContract, useSigner } from 'wagmi';
 import { useGetApplicationDetailsLazyQuery } from 'src/generated/graphql';
-import config from '../../../src/constants/config';
-import ApplicationRegistryAbi from '../../../src/contracts/abi/ApplicationRegistryAbi.json';
+import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState';
 import { ApiClientsContext } from '../../_app';
 import InfoToast from '../../../src/components/ui/infoToast';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
@@ -31,16 +29,6 @@ import NavbarLayout from '../../../src/layout/navbarLayout';
 function ApplicantForm() {
   const apiClients = useContext(ApiClientsContext);
 
-  const [{ data: accountData }] = useAccount();
-  const [signerStates] = useSigner();
-
-  const applicationRegContract = useContract({
-    addressOrName: config.ApplicationRegistryAddress,
-    contractInterface: ApplicationRegistryAbi,
-    signerOrProvider: signerStates.data,
-  });
-
-  const [hasClicked, setHasClicked] = React.useState(false);
   const toastRef = React.useRef<ToastId>();
 
   const toast = useToast();
@@ -94,84 +82,60 @@ function ApplicantForm() {
     }
   }, [router]);
 
-  const closeToast = () => {
-    if (toastRef.current) {
-      toast.close(toastRef.current);
-    }
-  };
+  const [state, setState] = useState<any>(null);
 
-  const showToast = ({ link } : { link: string }) => {
-    toastRef.current = toast({
-      position: 'top',
-      render: () => (
-        <InfoToast
-          link={link}
-          close={closeToast}
-        />
-      ),
-    });
-  };
+  useEffect(() => {
+    console.log(state);
+  }, [state]);
 
-  const handleApplicationStateUpdate = async (state: number) => {
-    try {
-      if (!apiClients) return;
-      const { validatorApi, workspaceId } = apiClients;
-      if (!accountData
-      || !accountData.address
-      || !workspaceId
-      || !applicationData
-      || !applicationData.id) {
-        return;
-      }
+  const [txn, loading, error] = useUpdateApplicationState(
+    state === 1 ? resubmitComment : rejectionComment,
+    applicationData?.id,
+    state,
+  );
 
-      if (state === 1 && resubmitComment === '') {
-        setResubmitCommentError(true);
-        return;
-      }
-
-      if (state === 3 && resubmitComment === '') {
-        setRejectionCommentError(true);
-        return;
-      }
-
-      setHasClicked(true);
-      const {
-        data: { ipfsHash },
-      } = await validatorApi.validateGrantApplicationUpdate({
-        feedback: rejectionComment,
+  useEffect(() => {
+    if (txn) {
+      setState(undefined);
+      toastRef.current = toast({
+        position: 'top',
+        render: () => (
+          <InfoToast
+            link={`https://etherscan.io/tx/${txn.transactionHash}`}
+            close={() => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            }}
+          />
+        ),
       });
-      // console.log(ipfsHash);
-      // console.log(Number(applicationData?.id), Number(workspaceId));
-      const transaction = await applicationRegContract.updateApplicationState(
-        Number(applicationData?.id),
-        Number(workspaceId),
-        state,
-        ipfsHash,
-      );
-      const transactionData = await transaction.wait();
-
-      // console.log(transactionData);
-      // console.log(transactionData.blockNumber);
-      // toast({ title: 'Transaction succeeded', status: 'success' });
-
-      setHasClicked(false);
       router.replace({
         pathname: '/your_grants/view_applicants',
         query: {
           grantID: applicationData?.grant?.id,
         },
       });
-
-      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
-      // await subgraphClient.waitForBlock(transactionData.blockNumber);
-    } catch (error) {
-      setHasClicked(false);
-      // console.log(error);
-      toast({
-        title: 'Application update not indexed',
-        status: 'error',
-      });
+    } else if (error) {
+      setState(undefined);
     }
+  }, [toastRef, toast, router, applicationData, txn, error]);
+
+  const handleApplicationStateUpdate = async (st: number) => {
+    console.log('unsetting state');
+    setState(undefined);
+    if (st === 1 && resubmitComment === '') {
+      setResubmitCommentError(true);
+      return;
+    }
+
+    if (st === 3 && rejectionComment === '') {
+      setRejectionCommentError(true);
+      return;
+    }
+
+    console.log('setting state');
+    setState(st);
   };
 
   function renderContent(currentStep: number) {
@@ -182,7 +146,7 @@ function ApplicantForm() {
             // onSubmit={handleAcceptApplication}
             onSubmit={() => handleApplicationStateUpdate(2)}
             applicationData={applicationData}
-            hasClicked={hasClicked}
+            hasClicked={loading}
           />
           <AcceptSidebar
             applicationData={applicationData}
@@ -195,7 +159,7 @@ function ApplicantForm() {
         <>
           <Reject
             onSubmit={() => handleApplicationStateUpdate(3)}
-            hasClicked={hasClicked}
+            hasClicked={loading}
             comment={rejectionComment}
             setComment={setRejectionComment}
             commentError={rejectionCommentError}
@@ -211,7 +175,7 @@ function ApplicantForm() {
       <>
         <Resubmit
           onSubmit={() => handleApplicationStateUpdate(1)}
-          hasClicked={hasClicked}
+          hasClicked={loading}
           comment={resubmitComment}
           setComment={setResubmitComment}
           commentError={resubmitCommentError}

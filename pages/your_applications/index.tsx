@@ -76,6 +76,7 @@ function YourApplications() {
   }, [containerRef, getMyApplicationsData]);
 
   useEffect(() => {
+    if (!accountData) return;
     getMyApplicationsData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountData?.address]);
@@ -107,6 +108,7 @@ function YourApplications() {
           && myApplications.map((application: any) => (
             (
               <YourApplicationCard
+                key={application.id}
                 grantTitle={application.grant.title}
                 daoName={application.grant.workspace.title}
                 daoIcon={getUrlForIPFSHash(application.grant.workspace.logoIpfsHash)}
