@@ -418,6 +418,14 @@
                         }
                     }
                 }
+            },
+            "manage_grant": {
+                "mark_as_done_modal": {
+                    "errors": {}
+                },
+                "mark_as_closed_modal": {
+                    "errors": {}
+                }
             }
         }
     }
