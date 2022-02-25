@@ -8,7 +8,9 @@ import {
   Image,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useEffect } from 'react';
+import React, {
+  ReactElement, useContext, useEffect, useState,
+} from 'react';
 import { useConnect } from 'wagmi';
 import {
   ALL_SUPPORTED_CHAIN_IDS,
@@ -22,6 +24,7 @@ import SecondaryDropdown from '../src/components/ui/secondaryDropdown';
 import Tooltip from '../src/components/ui/tooltip';
 import NavbarLayout from '../src/layout/navbarLayout';
 import strings from '../src/constants/strings.json';
+import { ApiClientsContext } from './_app';
 
 // @TODO: harmony testnet image and currencies
 // @TODO: why is toc link removed?
@@ -35,23 +38,33 @@ function ConnectWallet() {
   const router = useRouter();
 
   const [{ data: connectData, loading: connectLoading }] = useConnect();
+  const { setChainId, chainId: chainIdContext } = useContext(ApiClientsContext)!;
+  const [grantId, setGrantId] = useState('');
+
+  useEffect(() => {
+    if (router && router.query) {
+      const { chainId: cId, grantId: gId } = router.query;
+      setChainId(cId as unknown as SupportedChainId);
+      setGrantId(gId as string);
+    }
+  }, [router, setChainId]);
 
   useEffect(() => {
     if (!connectLoading && connectData && connectData.connected) {
       if (router.query.flow === 'getting_started/dao') {
         router.replace('/signup/');
       } else if (router.query.flow === 'getting_started/developer') {
-        router.push({ pathname: '/', query: { account: true } });
+        router.push({ pathname: '/' });
       } else if (router.query.flow === '/') {
         router.push({
           pathname: '/explore_grants/about_grant',
-          query: { account: true },
+          query: { grantID: grantId, chainId: chainIdContext },
         });
       } else {
-        router.push({ pathname: '/', query: { account: true } });
+        router.push({ pathname: '/' });
       }
     }
-  }, [connectLoading, connectData, router]);
+  }, [connectLoading, connectData, router, grantId, chainIdContext]);
 
   const [{ data, error }, connect] = useConnect();
   const toast = useToast();

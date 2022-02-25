@@ -8,6 +8,7 @@ import React, {
 import { ethers } from 'ethers';
 import { GetApplicationDetailsQuery, useGetApplicationDetailsLazyQuery } from 'src/generated/graphql';
 import { ApiClientsContext } from 'pages/_app';
+import { SupportedChainId } from 'src/constants/chains';
 import { GrantApplicationProps } from '../../src/types/application';
 import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils';
 import Form from '../../src/components/your_applications/grant_application/form';
@@ -16,13 +17,21 @@ import NavbarLayout from '../../src/layout/navbarLayout';
 import { getAssetInfo } from '../../src/utils/tokenUtils';
 
 function ViewApplication() {
-  const { subgraphClient } = useContext(ApiClientsContext)!;
+  const apiClients = useContext(ApiClientsContext)!;
+  const { subgraphClient, chainId, setChainId } = apiClients;
 
   const router = useRouter();
   const [applicationID, setApplicationId] = React.useState<any>('');
   const [application, setApplication] = React.useState<GetApplicationDetailsQuery['grantApplication']>();
 
   const [formData, setFormData] = useState<GrantApplicationProps | null>(null);
+
+  useEffect(() => {
+    if (router && router.query) {
+      const { chainId: cId } = router.query;
+      setChainId(cId as unknown as SupportedChainId);
+    }
+  }, [router, setChainId]);
 
   const [getApplicationDetails] = useGetApplicationDetailsLazyQuery({
     client: subgraphClient.client,
@@ -95,6 +104,7 @@ function ViewApplication() {
               query: {
                 applicantID: data[0].applicantId,
                 account: true,
+                chainId,
               },
             });
           }}

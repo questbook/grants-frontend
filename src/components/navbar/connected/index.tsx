@@ -13,12 +13,14 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import router from 'next/router';
-import { MinimalWorkspace } from 'src/types';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import useActiveTabIndex from 'src/hooks/utils/useActiveTabIndex';
 import { useGetNumberOfApplicationsLazyQuery, useGetNumberOfGrantsLazyQuery, useGetWorkspaceMembersLazyQuery } from 'src/generated/graphql';
 import { ApiClientsContext } from 'pages/_app';
 import { useAccount } from 'wagmi';
+import { getChainIdFromResponse } from 'src/utils/formattingUtils';
+import { SupportedChainId } from 'src/constants/chains';
+import { MinimalWorkspace } from 'src/types';
 import Tab from './tab';
 import AccountDetails from './accountDetails';
 
@@ -38,7 +40,9 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
   const [applicationCount, setApplicationCount] = React.useState(0);
 
   const apiClients = useContext(ApiClientsContext)!;
-  const { workspace, setWorkspace, subgraphClient } = apiClients;
+  const {
+    workspace, setWorkspace, subgraphClient, setChainId, chainId,
+  } = apiClients;
 
   const [getNumberOfApplications] = useGetNumberOfApplicationsLazyQuery({
     client: subgraphClient.client,
@@ -63,6 +67,9 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
           // console.log(data);
           setWorkspaces(data.workspaceMembers.map((w) => w.workspace));
           setWorkspace(data.workspaceMembers[0].workspace);
+          setChainId(getChainIdFromResponse(
+            data.workspaceMembers[0].workspace.supportedNetworks[0],
+          ) as unknown as SupportedChainId);
         } else {
           setWorkspaces([]);
           setWorkspace(undefined);
@@ -76,7 +83,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
       }
     };
     getWorkspaceData(accountData?.address);
-  }, [toast, accountData?.address, getWorkspaces, setWorkspace]);
+  }, [toast, accountData?.address, getWorkspaces, setWorkspace, setChainId]);
 
   useEffect(() => {
     if (!accountData?.address) return;
@@ -221,6 +228,10 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                   onClick={() => {
                     router.push({
                       pathname: `/${tabPaths[0]}`,
+                      query: {
+                        workspaceId: workspace?.id,
+                        chainId,
+                      },
                     });
                   }}
                 />
@@ -238,6 +249,10 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                   onClick={() => {
                     router.push({
                       pathname: `/${tabPaths[1]}`,
+                      query: {
+                        workspaceId: workspace?.id,
+                        chainId,
+                      },
                     });
                   }}
                 />
@@ -255,6 +270,10 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                   onClick={() => {
                     router.push({
                       pathname: `/${tabPaths[2]}`,
+                      query: {
+                        workspaceId: workspace?.id,
+                        chainId,
+                      },
                     });
                   }}
                 />
@@ -278,6 +297,9 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 onClick={() => {
                   router.push({
                     pathname: `/${tabPaths[3]}`,
+                    query: {
+                      chainId,
+                    },
                   });
                 }}
               />
@@ -298,7 +320,9 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
               } else {
                 router.push({
                   pathname: '/your_grants/create_grant/',
-                  // pathname: '/signup',
+                  query: {
+                    chainId,
+                  },
                 });
               }
             }}

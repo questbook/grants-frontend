@@ -9,6 +9,7 @@ import React, {
 } from 'react';
 import { useGetGrantDetailsLazyQuery } from 'src/generated/graphql';
 import useEditGrant from 'src/hooks/useEditGrant';
+import { SupportedChainId } from 'src/constants/chains';
 import InfoToast from '../../src/components/ui/infoToast';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/edit_grant/form';
@@ -19,7 +20,7 @@ import { formatAmount } from '../../src/utils/formattingUtils';
 import { ApiClientsContext } from '../_app';
 
 function EditGrant() {
-  const apiClients = useContext(ApiClientsContext);
+  const { subgraphClient, chainId, setChainId } = useContext(ApiClientsContext)!;
 
   const router = useRouter();
 
@@ -36,8 +37,15 @@ function EditGrant() {
 
   const [formData, setFormData] = useState<any>(null);
 
+  useEffect(() => {
+    if (router && router.query) {
+      const { chainId: cId } = router.query;
+      setChainId(cId as unknown as SupportedChainId);
+    }
+  }, [router, setChainId]);
+
   const [getGrantDetails] = useGetGrantDetailsLazyQuery({
-    client: apiClients?.subgraphClient?.client,
+    client: subgraphClient?.client,
   });
 
   const sideBarDetails = [
@@ -60,8 +68,6 @@ function EditGrant() {
   ];
 
   const getGrantData = async () => {
-    if (!apiClients) return;
-    const { subgraphClient } = apiClients;
     if (!subgraphClient) return;
     if (!grantID) return;
     try {
@@ -116,7 +122,7 @@ function EditGrant() {
   useEffect(() => {
     console.log(transactionData);
     if (transactionData) {
-      router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
+      router.replace({ pathname: '/your_grants', query: { done: 'yes', chainId } });
       toastRef.current = toast({
         position: 'top',
         render: () => (
@@ -131,7 +137,7 @@ function EditGrant() {
         ),
       });
     }
-  }, [toast, transactionData, router]);
+  }, [toast, transactionData, router, chainId]);
 
   useEffect(() => {
     setGrantID(router?.query?.grantID?.toString());

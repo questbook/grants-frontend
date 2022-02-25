@@ -11,7 +11,7 @@ import Sidebar from '../src/components/browse_grants/sidebar';
 import Heading from '../src/components/ui/heading';
 import supportedCurrencies from '../src/constants/supportedCurrencies';
 import NavbarLayout from '../src/layout/navbarLayout';
-import { formatAmount, parseAmount } from '../src/utils/formattingUtils';
+import { formatAmount, getChainIdFromResponse, parseAmount } from '../src/utils/formattingUtils';
 import { ApiClientsContext } from './_app';
 
 const PAGE_SIZE = 20;
@@ -21,9 +21,6 @@ function BrowseGrants() {
   const [{ data: accountData }] = useAccount();
   const router = useRouter();
   const subgraphClient = useContext(ApiClientsContext)?.subgraphClient.client;
-  const subgraphClients = useContext(ApiClientsContext)?.subgraphClients.map((subgraphCl) => (
-    subgraphCl.client
-  ));
 
   const [getAllGrants] = useGetAllGrantsLazyQuery({ client: subgraphClient });
 
@@ -125,13 +122,20 @@ function BrowseGrants() {
                   if (!(accountData && accountData.address)) {
                     router.push({
                       pathname: '/connect_wallet',
-                      query: { flow: '/' },
+                      query: {
+                        flow: '/',
+                        grantId: grant.id,
+                        chainId: getChainIdFromResponse(grant.workspace.supportedNetworks[0]),
+                      },
                     });
                     return;
                   }
                   router.push({
                     pathname: '/explore_grants/about_grant',
-                    query: { grantID: grant.id },
+                    query: {
+                      grantID: grant.id,
+                      chainId: getChainIdFromResponse(grant.workspace.supportedNetworks[0]),
+                    },
                   });
                 }}
               />

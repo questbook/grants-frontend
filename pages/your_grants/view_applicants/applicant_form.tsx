@@ -8,9 +8,9 @@ import React, {
 } from 'react';
 import { useAccount, useContract, useSigner } from 'wagmi';
 import { useGetApplicationDetailsLazyQuery } from 'src/generated/graphql';
+import { SupportedChainId } from 'src/constants/chains';
 import config from '../../../src/constants/config';
 import ApplicationRegistryAbi from '../../../src/contracts/abi/ApplicationRegistryAbi.json';
-import { ApiClientsContext } from '../../_app';
 import InfoToast from '../../../src/components/ui/infoToast';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Heading from '../../../src/components/ui/heading';
@@ -27,9 +27,12 @@ import ResubmitSidebar from '../../../src/components/your_grants/applicant_form/
 import Application from '../../../src/components/your_grants/applicant_form/application';
 import Sidebar from '../../../src/components/your_grants/applicant_form/sidebar';
 import NavbarLayout from '../../../src/layout/navbarLayout';
+import { ApiClientsContext } from '../../_app';
 
 function ApplicantForm() {
-  const apiClients = useContext(ApiClientsContext);
+  const {
+    setChainId, chainId, subgraphClient, validatorApi, workspaceId,
+  } = useContext(ApiClientsContext)!;
 
   const [{ data: accountData }] = useAccount();
   const [signerStates] = useSigner();
@@ -55,8 +58,16 @@ function ApplicantForm() {
 
   const [rejectionComment, setRejectionComment] = useState('');
   const [rejectionCommentError, setRejectionCommentError] = useState(false);
+
+  useEffect(() => {
+    if (router && router.query) {
+      const { chainId: cId } = router.query;
+      setChainId(cId as unknown as SupportedChainId);
+    }
+  }, [router, setChainId]);
+
   const [getApplicationDetails] = useGetApplicationDetailsLazyQuery({
-    client: apiClients?.subgraphClient?.client,
+    client: subgraphClient?.client,
   });
 
   const getApplicationData = useCallback(async () => {
@@ -114,9 +125,7 @@ function ApplicantForm() {
 
   const handleApplicationStateUpdate = async (state: number) => {
     try {
-      if (!apiClients) return;
-      const { validatorApi, workspaceId } = apiClients;
-      if (!accountData
+      if (!validatorApi || !accountData
       || !accountData.address
       || !workspaceId
       || !applicationData
@@ -159,6 +168,7 @@ function ApplicantForm() {
         pathname: '/your_grants/view_applicants',
         query: {
           grantID: applicationData?.grant?.id,
+          chainId,
         },
       });
 

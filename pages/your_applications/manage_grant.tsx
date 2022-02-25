@@ -9,6 +9,7 @@ import { BigNumber } from 'ethers';
 import { useGetApplicationDetailsLazyQuery, useGetFundSentForApplicationQuery } from 'src/generated/graphql';
 import { ApplicationMilestone } from 'src/types';
 import useApplicationMilestones from 'src/utils/queryUtil';
+import { SupportedChainId } from 'src/constants/chains';
 import { getAssetInfo } from '../../src/utils/tokenUtils';
 import Sidebar from '../../src/components/your_applications/manage_grant/sidebar';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
@@ -36,7 +37,7 @@ function getTotalFundingAsked(milestones: ApplicationMilestone[]) {
 }
 
 function ManageGrant() {
-  const { subgraphClient } = useContext(ApiClientsContext)!;
+  const { subgraphClient, setChainId } = useContext(ApiClientsContext)!;
 
   const router = useRouter();
 
@@ -52,6 +53,13 @@ function ManageGrant() {
   });
   const [applicationID, setApplicationID] = useState<any>('');
   const [selected, setSelected] = React.useState(0);
+
+  useEffect(() => {
+    if (router && router.query) {
+      const { chainId: cId } = router.query;
+      setChainId(cId as unknown as SupportedChainId);
+    }
+  }, [router, setChainId]);
 
   const {
     data: { milestones, rewardAsset, fundingAsk },

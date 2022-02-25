@@ -17,6 +17,7 @@ import { useAccount, useSigner, useContract } from 'wagmi';
 import { BigNumber } from 'ethers';
 import { ApplicationMilestone, useGetApplicationDetailsQuery, useGetFundSentForApplicationQuery } from 'src/generated/graphql';
 import useApplicationMilestones from 'src/utils/queryUtil';
+import { SupportedChainId } from 'src/constants/chains';
 import config from '../../../src/constants/config';
 import ApplicationRegistryAbi from '../../../src/contracts/abi/ApplicationRegistryAbi.json';
 import InfoToast from '../../../src/components/ui/infoToast';
@@ -58,8 +59,17 @@ function ManageGrant() {
 
   const [applicationID, setApplicationID] = useState<any>();
   const router = useRouter();
-  const subgraphClient = useContext(ApiClientsContext)?.subgraphClient;
+  const {
+    setChainId, subgraphClient,
+  } = useContext(ApiClientsContext)!;
   const [{ data: accountData }] = useAccount({ fetchEns: false });
+
+  useEffect(() => {
+    if (router && router.query) {
+      const { chainId: cId } = router.query;
+      setChainId(cId as unknown as SupportedChainId);
+    }
+  }, [router, setChainId]);
 
   const {
     data: { milestones, rewardAsset, fundingAsk },

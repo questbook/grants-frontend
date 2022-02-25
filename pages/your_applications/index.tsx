@@ -9,6 +9,7 @@ import BN from 'bn.js';
 import { useAccount } from 'wagmi';
 import Empty from 'src/components/ui/empty';
 import { useGetMyApplicationsLazyQuery } from 'src/generated/graphql';
+import { SupportedChainId } from 'src/constants/chains';
 import Heading from '../../src/components/ui/heading';
 import YourApplicationCard from '../../src/components/your_applications/yourApplicationCard';
 import NavbarLayout from '../../src/layout/navbarLayout';
@@ -21,12 +22,21 @@ const PAGE_SIZE = 20;
 function YourApplications() {
   const router = useRouter();
   // const [applicantID, setApplicantId] = React.useState<any>('');
-  const subgraphClient = useContext(ApiClientsContext)?.subgraphClient;
+  const {
+    setChainId, subgraphClient, chainId,
+  } = useContext(ApiClientsContext)!;
   const [myApplications, setMyApplications] = React.useState<any>([]);
 
   const containerRef = useRef(null);
   const [{ data: accountData }] = useAccount();
   const [currentPage, setCurrentPage] = React.useState(0);
+
+  useEffect(() => {
+    if (router && router.query) {
+      const { chainId: cId } = router.query;
+      setChainId(cId as unknown as SupportedChainId);
+    }
+  }, [router, setChainId]);
 
   const [getMyApplications] = useGetMyApplicationsLazyQuery({
     client: subgraphClient?.client,
@@ -108,18 +118,21 @@ function YourApplications() {
                   pathname: '/explore_grants/about_grant',
                   query: {
                     grantID: application.grant.id,
+                    chainId,
                   },
                 })}
                 onViewApplicationClick={() => router.push({
                   pathname: '/your_applications/grant_application',
                   query: {
                     applicationID: application.id,
+                    chainId,
                   },
                 })}
                 onManageGrantClick={() => router.push({
                   pathname: '/your_applications/manage_grant',
                   query: {
                     applicationID: application.id,
+                    chainId,
                   },
                 })}
               />

@@ -6,6 +6,7 @@ import React, {
 } from 'react';
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters';
 import { useGetApplicantsForAGrantLazyQuery } from 'src/generated/graphql';
+import { SupportedChainId } from 'src/constants/chains';
 import { formatAmount } from '../../../src/utils/formattingUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Table from '../../../src/components/your_grants/view_applicants/table';
@@ -18,7 +19,17 @@ const PAGE_SIZE = 500;
 function ViewApplicants() {
   const [applicantsData, setApplicantsData] = useState<any>([]);
   const [grantID, setGrantID] = useState<any>('');
-  const subgraphClient = useContext(ApiClientsContext)?.subgraphClient;
+  const router = useRouter();
+  const {
+    setChainId, chainId, subgraphClient,
+  } = useContext(ApiClientsContext)!;
+
+  useEffect(() => {
+    if (router && router.query) {
+      const { chainId: cId } = router.query;
+      setChainId(cId as unknown as SupportedChainId);
+    }
+  }, [router, setChainId]);
 
   const [getApplicants] = useGetApplicantsForAGrantLazyQuery({ client: subgraphClient?.client });
 
@@ -64,7 +75,6 @@ function ViewApplicants() {
       return null;
     }
   };
-  const router = useRouter();
   useEffect(() => {
     setGrantID(router?.query?.grantID ?? '');
   }, [router]);
@@ -96,6 +106,7 @@ function ViewApplicants() {
               query: {
                 commentData,
                 applicationId: commentData.applicationId,
+                chainId,
               },
             })
           }
@@ -115,6 +126,7 @@ function ViewApplicants() {
             pathname: '/your_grants/view_applicants/manage/',
             query: {
               applicationId: data.applicationId,
+              chainId,
             },
           })}
         />

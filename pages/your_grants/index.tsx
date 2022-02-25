@@ -14,6 +14,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import Empty from 'src/components/ui/empty';
 import Sidebar from 'src/components/your_grants/sidebar/sidebar';
 import { useGetAllGrantsForCreatorLazyQuery, GetAllGrantsForCreatorQuery } from 'src/generated/graphql';
+import { SupportedChainId } from 'src/constants/chains';
 import AddFunds from '../../src/components/funds/add_funds_modal';
 import Heading from '../../src/components/ui/heading';
 import YourGrantCard from '../../src/components/your_grants/yourGrantCard';
@@ -27,10 +28,21 @@ const PAGE_SIZE = 20;
 function YourGrants() {
   const containerRef = useRef(null);
   const subgraphClient = useContext(ApiClientsContext)?.subgraphClient.client;
+  const {
+    workspaceId, setWorkspaceId, setChainId, chainId,
+  } = useContext(ApiClientsContext)!;
   const router = useRouter();
   const [addFundsIsOpen, setAddFundsIsOpen] = React.useState(false);
   const [grantForFunding, setGrantForFunding] = React.useState(null);
   const [grantRewardAsset, setGrantRewardAsset] = React.useState<any>(null);
+
+  useEffect(() => {
+    if (router && router.query) {
+      const { workspaceId: wId, chainId: cId } = router.query;
+      setWorkspaceId(wId as string);
+      setChainId(cId as unknown as SupportedChainId);
+    }
+  }, [router, setChainId, setWorkspaceId]);
 
   const [getAllGrantsForCreator] = useGetAllGrantsForCreatorLazyQuery({
     client: subgraphClient,
@@ -168,7 +180,7 @@ function YourGrants() {
     return '/ui_icons/brand/currency/weth.svg';
   };
 
-  const workspaceId = useContext(ApiClientsContext)?.workspace?.id;
+  // const workspaceId = useContext(ApiClientsContext)?.workspace?.id;
 
   return (
     <>
@@ -207,6 +219,7 @@ function YourGrants() {
                   pathname: '/your_grants/edit_grant/',
                   query: {
                     grantID: grant.id,
+                    chainId,
                   },
                 })}
                 onAddFundsClick={() => initialiseFundModal(grant)}
@@ -214,6 +227,7 @@ function YourGrants() {
                   pathname: '/your_grants/view_applicants/',
                   query: {
                     grantID: grant.id,
+                    chainId,
                   },
                 })}
               />
@@ -241,7 +255,9 @@ function YourGrants() {
                   onClick={() => {
                     router.push({
                       pathname: '/your_grants/create_grant/',
-                      // pathname: '/signup',
+                      query: {
+                        chainId,
+                      },
                     });
                   }}
                   maxW="163px"

@@ -5,6 +5,7 @@ import { ApiClientsContext } from 'pages/_app';
 import React, {
   ReactElement, useCallback, useContext, useEffect, useState,
 } from 'react';
+import { SupportedChainId } from 'src/constants/chains';
 import { useGetGrantDetailsLazyQuery } from 'src/generated/graphql';
 import Form from '../../src/components/explore_grants/apply_grant/form';
 import Sidebar from '../../src/components/explore_grants/apply_grant/sidebar';
@@ -13,7 +14,7 @@ import NavbarLayout from '../../src/layout/navbarLayout';
 import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils';
 
 function ApplyGrant() {
-  const { subgraphClient } = useContext(ApiClientsContext)!;
+  const { subgraphClient, setChainId } = useContext(ApiClientsContext)!;
 
   const router = useRouter();
   const [grantData, setGrantData] = useState<any>(null);
@@ -27,6 +28,13 @@ function ApplyGrant() {
   const [grantSummary, setGrantSummary] = useState('');
   const [workspaceId, setWorkspaceId] = useState('');
   const [grantRequiredFields, setGrantRequiredFields] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (router && router.query) {
+      const { chainId: cId } = router.query;
+      setChainId(cId as unknown as SupportedChainId);
+    }
+  }, [router, setChainId]);
 
   const [getGrantDetails] = useGetGrantDetailsLazyQuery({
     client: subgraphClient?.client,

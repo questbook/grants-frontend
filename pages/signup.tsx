@@ -2,7 +2,7 @@ import {
   Container, Text, ToastId, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement, useContext, useEffect } from 'react';
 import useCreateWorkspace from 'src/hooks/useCreateWorkspace';
 import useCreateGrant from 'src/hooks/useCreateGrant';
 import { SupportedChainId } from 'src/constants/chains';
@@ -12,9 +12,14 @@ import Loading from '../src/components/signup/create_dao/loading';
 import CreateGrant from '../src/components/signup/create_grant';
 import DaoCreated from '../src/components/signup/daoCreated';
 import NavbarLayout from '../src/layout/navbarLayout';
+import { ApiClientsContext } from './_app';
 
 function SignupDao() {
   const router = useRouter();
+  const {
+    workspaceId, setWorkspaceId, setChainId, chainId,
+  } = useContext(ApiClientsContext)!;
+
   const [daoCreated, setDaoCreated] = React.useState(false);
   const [creatingGrant, setCreatingGrant] = React.useState(false);
 
@@ -47,8 +52,10 @@ function SignupDao() {
         id: Number(newId).toString(),
       });
       setDaoCreated(true);
+      setWorkspaceId(newId);
+      setChainId(workspaceData.network);
     }
-  }, [workspaceTransactionData, imageHash, workspaceData, router]);
+  }, [workspaceTransactionData, imageHash, workspaceData, router, setWorkspaceId, setChainId]);
 
   const [grantData, setGrantData] = React.useState<any>();
   const [grantTransactionData, createGrantLoading] = useCreateGrant(
@@ -60,7 +67,7 @@ function SignupDao() {
   useEffect(() => {
     // console.log(grantTransactionData);
     if (grantTransactionData) {
-      router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
+      router.replace({ pathname: '/your_grants', query: { done: 'yes', workspaceId, chainId } });
 
       const link = `https://etherscan.io/tx/${grantTransactionData.transactionHash}`;
       toastRef.current = toast({
@@ -77,7 +84,7 @@ function SignupDao() {
         ),
       });
     }
-  }, [toast, grantTransactionData, router]);
+  }, [toast, grantTransactionData, router, workspaceId, chainId]);
 
   if (creatingGrant) {
     return (
@@ -94,7 +101,7 @@ function SignupDao() {
         daoName={daoData.name}
         network={daoData.network}
         onCreateGrantClick={() => setCreatingGrant(true)}
-        onVisitGrantsClick={() => router.push('/your_grants')}
+        onVisitGrantsClick={() => router.push({ pathname: '/your_grants', query: { workspaceId, chainId } })}
       />
     );
   }

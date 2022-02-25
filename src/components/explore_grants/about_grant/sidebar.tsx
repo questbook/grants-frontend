@@ -2,7 +2,8 @@ import {
   Box, VStack, Button, Text,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React from 'react';
+import { ApiClientsContext } from 'pages/_app';
+import React, { useContext } from 'react';
 import FloatingSidebar from '../../ui/sidebar/floatingSidebar2';
 import Tooltip from '../../ui/tooltip';
 
@@ -13,6 +14,7 @@ interface Props {
 
 function Sidebar({ grantRequiredFields, grantID }: Props) {
   const router = useRouter();
+  const { chainId } = useContext(ApiClientsContext)!;
   return (
     <Box my="71px">
       <FloatingSidebar>
@@ -40,6 +42,7 @@ function Sidebar({ grantRequiredFields, grantID }: Props) {
             query: {
               account: true,
               grantID,
+              chainId,
             },
           })}
           mt={10}

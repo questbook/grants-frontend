@@ -1,19 +1,32 @@
 import { Flex, Text } from '@chakra-ui/react';
-import React, { ReactElement, useContext } from 'react';
+import React, { ReactElement, useContext, useEffect } from 'react';
 import Empty from 'src/components/ui/empty';
 import { useGetAllGrantsForADaoQuery } from 'src/generated/graphql';
+import { useRouter } from 'next/router';
+import { SupportedChainId } from 'src/constants/chains';
 import NavbarLayout from '../src/layout/navbarLayout';
 import FundForAGrant from '../src/components/funds';
 import { ApiClientsContext } from './_app';
 
 function AddFunds() {
-  const { workspace, subgraphClient } = useContext(ApiClientsContext)!;
+  const {
+    workspace, setWorkspaceId, setChainId, subgraphClient,
+  } = useContext(ApiClientsContext)!;
+  const router = useRouter();
   const { data } = useGetAllGrantsForADaoQuery({
     client: subgraphClient.client,
     variables: {
       workspaceId: workspace?.id ?? '',
     },
   });
+
+  useEffect(() => {
+    if (router && router.query) {
+      const { workspaceId: wId, chainId: cId } = router.query;
+      setWorkspaceId(wId as string);
+      setChainId(cId as unknown as SupportedChainId);
+    }
+  }, [router, setChainId, setWorkspaceId]);
 
   const grants = data?.grants || [];
 

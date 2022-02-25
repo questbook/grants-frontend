@@ -61,15 +61,18 @@ export const ApiClientsContext = createContext<{
   workspace?: MinimalWorkspace;
   setWorkspace:(workspace?: MinimalWorkspace) => void;
   subgraphClients: SubgraphClient[];
+  chainId: SupportedChainId | undefined;
+  setChainId:(id: SupportedChainId | undefined) => void;
 } | null>(null);
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const [workspaceId, setWorkspaceId] = React.useState<string | null>(null);
+  const [chainId, setChainId] = React.useState<SupportedChainId | undefined>();
   const [workspace, setWorkspace] = React.useState<MinimalWorkspace>();
-  const clients = ALL_SUPPORTED_CHAIN_IDS.map((chainId) => (
-    new SubgraphClient(chainId)
+  const clients = ALL_SUPPORTED_CHAIN_IDS.map((chnId) => (
+    new SubgraphClient(chnId)
   ));
-  const client = useMemo(() => new SubgraphClient(SupportedChainId.RINKEBY), []);
+  const client = useMemo(() => new SubgraphClient(chainId || SupportedChainId.RINKEBY), [chainId]);
 
   const validatorApi = useMemo(() => {
     const validatorConfiguration = new Configuration({
@@ -87,8 +90,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       workspace,
       setWorkspace,
       subgraphClients: clients,
+      chainId,
+      setChainId,
     }),
-    [client, validatorApi, workspaceId, setWorkspaceId, workspace, setWorkspace, clients],
+    [client, validatorApi, workspaceId, workspace, clients, chainId],
   );
 
   const getLayout = Component.getLayout ?? ((page) => page);

@@ -2,10 +2,12 @@ import {
   Box, Button, Container, Flex, Text, ToastId, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import { ApiClientsContext } from 'pages/_app';
 import React, {
-  ReactElement, useEffect, useRef, useState,
+  ReactElement, useContext, useEffect, useRef, useState,
 } from 'react';
 import InfoToast from 'src/components/ui/infoToast';
+import { SupportedChainId } from 'src/constants/chains';
 import useCreateGrant from 'src/hooks/useCreateGrant';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/create_grant/form';
@@ -13,6 +15,9 @@ import NavbarLayout from '../../src/layout/navbarLayout';
 
 function CreateGrant() {
   const router = useRouter();
+  const {
+    setChainId, chainId,
+  } = useContext(ApiClientsContext)!;
 
   const grantInfoRef = useRef(null);
   const detailsRef = useRef(null);
@@ -56,9 +61,16 @@ function CreateGrant() {
   const [transactionData, loading] = useCreateGrant(formData);
 
   useEffect(() => {
+    if (router && router.query) {
+      const { chainId: cId } = router.query;
+      setChainId(cId as unknown as SupportedChainId);
+    }
+  }, [router, setChainId]);
+
+  useEffect(() => {
     console.log(transactionData);
     if (transactionData) {
-      router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
+      router.replace({ pathname: '/your_grants', query: { done: 'yes', chainId } });
       toastRef.current = toast({
         position: 'top',
         render: () => (
@@ -73,7 +85,7 @@ function CreateGrant() {
         ),
       });
     }
-  }, [toast, transactionData, router]);
+  }, [toast, transactionData, router, chainId]);
 
   return (
     <Container maxW="100%" display="flex" px="70px">

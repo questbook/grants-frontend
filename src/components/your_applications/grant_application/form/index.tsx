@@ -68,8 +68,8 @@ function Form({
     signerOrProvider: signer.data,
   });
 
-  const apiClientContext = useContext(ApiClientsContext);
-  // const { subgraphClient } : any = apiClientContext;
+  const apiClientContext = useContext(ApiClientsContext)!;
+  const { chainId } = apiClientContext;
   const [applicantName, setApplicantName] = useState('');
   const [applicantNameError, setApplicantNameError] = useState(false);
 
@@ -287,7 +287,7 @@ function Form({
 
       setHasClicked(false);
       showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
-      router.push('/your_applications');
+      router.push({ pathname: '/your_applications', query: { chainId } });
 
       // await subgraphClient.waitForBlock(transactionData.blockNumber);
 

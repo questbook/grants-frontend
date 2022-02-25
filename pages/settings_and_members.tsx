@@ -5,17 +5,28 @@ import React, {
 import { useRouter } from 'next/router';
 import { useGetWorkspaceDetailsLazyQuery } from 'src/generated/graphql';
 import { Workspace } from 'src/types';
+import { SupportedChainId } from 'src/constants/chains';
 import Members from '../src/components/settings_and_members/members';
 import Settings from '../src/components/settings_and_members/settings';
 import NavbarLayout from '../src/layout/navbarLayout';
 import { ApiClientsContext } from './_app';
 
 function SettingsAndMembers() {
-  const { workspaceId, subgraphClient } = useContext(ApiClientsContext)!;
+  const {
+    workspaceId, subgraphClient, setWorkspaceId, setChainId,
+  } = useContext(ApiClientsContext)!;
   const router = useRouter();
   const tabs = ['Settings', 'Invite Members'];
   const [selected, setSelected] = useState(router.query.tab === 'members' ? 1 : 0);
   const [workspaceData, setWorkspaceData] = useState<Workspace>();
+
+  useEffect(() => {
+    if (router && router.query) {
+      const { workspaceId: wId, chainId: cId } = router.query;
+      setWorkspaceId(wId as string);
+      setChainId(cId as unknown as SupportedChainId);
+    }
+  }, [router, setChainId, setWorkspaceId]);
 
   const [getWorkspaceDetails] = useGetWorkspaceDetailsLazyQuery({
     client: subgraphClient.client,

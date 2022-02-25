@@ -2,11 +2,13 @@ import {
   Flex, Text, Image, Box, Button,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React from 'react';
+import { ApiClientsContext } from 'pages/_app';
+import React, { useContext } from 'react';
 import SidebarComponent from '../../ui/sidebar/sidebar';
 
 function Sidebar() {
   const router = useRouter();
+  const { chainId, workspaceId } = useContext(ApiClientsContext)!;
   const listItems = [
     {
       icon: '/ui_icons/first_grant.svg',
@@ -15,6 +17,9 @@ function Sidebar() {
       onSubmit: () => {
         router.push({
           pathname: '/your_grants/create_grant/',
+          query: {
+            chainId,
+          },
         });
       },
     }, {
@@ -26,6 +31,8 @@ function Sidebar() {
           pathname: '/settings_and_members/',
           query: {
             tab: 'members',
+            chainId,
+            workspaceId,
           },
         });
       },
