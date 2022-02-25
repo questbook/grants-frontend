@@ -103,7 +103,7 @@ function ViewApplication() {
           rewardCurrencyCoin={getAssetInfo(application?.grant?.reward?.asset ?? '')?.icon}
           formData={formData}
           grantTitle={application?.grant?.title || ''}
-          sentDate={application?.createdAtS ? new Date(application.createdAtS * 1000).toJSON() : ''}
+          sentDate={application?.createdAtS ? new Date(application.createdAtS).toString() : ''}
           daoLogo={getUrlForIPFSHash(application?.grant?.workspace?.logoIpfsHash || '')}
           state={application?.state || ''}
           feedback={application?.feedbackDao || ''}
