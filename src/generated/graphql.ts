@@ -1933,7 +1933,7 @@ export type GetMyApplicationsQueryVariables = Exact<{
 }>;
 
 
-export type GetMyApplicationsQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, createdAtS: number, updatedAtS: number, grant: { __typename?: 'Grant', id: string, title: string, funding: string, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string } } }> };
+export type GetMyApplicationsQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, createdAtS: number, updatedAtS: number, grant: { __typename?: 'Grant', id: string, title: string, funding: string, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } } }> };
 
 export type GetNumberOfApplicationsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -2542,6 +2542,7 @@ export const GetMyApplicationsDocument = gql`
         id
         title
         logoIpfsHash
+        supportedNetworks
       }
     }
     applicantId

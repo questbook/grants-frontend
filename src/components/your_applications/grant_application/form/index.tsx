@@ -159,12 +159,9 @@ function Form({
       });
       router.push({
         pathname: '/your_applications',
-        query: {
-          chainId,
-        },
       });
     }
-  }, [toast, router, txnData, chainId]);
+  }, [toast, router, txnData]);
 
   const handleOnSubmit = async () => {
     console.log(onSubmit);
