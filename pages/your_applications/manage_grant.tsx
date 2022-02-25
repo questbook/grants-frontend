@@ -6,10 +6,14 @@ import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
 import moment from 'moment';
 import { BigNumber } from 'ethers';
-import { useGetApplicationDetailsLazyQuery, useGetFundSentForApplicationQuery } from 'src/generated/graphql';
+import {
+  useGetApplicationDetailsLazyQuery,
+  useGetFundSentForApplicationQuery,
+} from 'src/generated/graphql';
 import { ApplicationMilestone } from 'src/types';
 import useApplicationMilestones from 'src/utils/queryUtil';
 import { SupportedChainId } from 'src/constants/chains';
+import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import { getAssetInfo } from '../../src/utils/tokenUtils';
 import Sidebar from '../../src/components/your_applications/manage_grant/sidebar';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
@@ -204,6 +208,9 @@ function ManageGrant() {
             refetch={refetch}
             milestones={milestones}
             rewardAssetId={rewardAsset}
+            chainId={applicationData?.grant?.workspace ? getSupportedChainIdFromSupportedNetwork(
+              applicationData.grant.workspace.supportedNetworks[0],
+            ) : undefined}
           />
         ) : (
           <Funding

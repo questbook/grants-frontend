@@ -13,7 +13,7 @@ import { ApiClientsContext } from './_app';
 
 function SettingsAndMembers() {
   const {
-    workspaceId, subgraphClient, setWorkspaceId, setChainId,
+    workspace, subgraphClient, setWorkspaceId, setChainId,
   } = useContext(ApiClientsContext)!;
   const router = useRouter();
   const tabs = ['Settings', 'Invite Members'];
@@ -48,11 +48,11 @@ function SettingsAndMembers() {
   }
 
   useEffect(() => {
-    if (!workspaceId) return;
-    console.log('getting called ', workspaceId);
-    getWorkspaceData(workspaceId);
+    if (!workspace) return;
+    // console.log('getting called ', workspaceId);
+    getWorkspaceData(workspace.id);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workspaceId]);
+  }, [workspace]);
 
   return (
     <Flex direction="row" w="100%" justify="space-evenly">

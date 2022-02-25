@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import { SupportedChainId } from 'src/constants/chains';
 import { useGetGrantDetailsLazyQuery } from 'src/generated/graphql';
+import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import Form from '../../src/components/explore_grants/apply_grant/form';
 import Sidebar from '../../src/components/explore_grants/apply_grant/sidebar';
 import supportedCurrencies from '../../src/constants/supportedCurrencies';
@@ -28,6 +29,7 @@ function ApplyGrant() {
   const [grantSummary, setGrantSummary] = useState('');
   const [workspaceId, setWorkspaceId] = useState('');
   const [grantRequiredFields, setGrantRequiredFields] = useState<any[]>([]);
+  const [chainId, setChainId] = useState<SupportedChainId>();
 
   useEffect(() => {
     if (router && router.query) {
@@ -67,6 +69,7 @@ function ApplyGrant() {
 
   useEffect(() => {
     if (!grantData) return;
+    setChainId(getSupportedChainIdFromSupportedNetwork(grantData.workspace.supportedNetworks[0]));
     setTitle(grantData?.title);
     setWorkspaceId(grantData?.workspace?.id);
     setDaoLogo(getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash));
@@ -91,6 +94,7 @@ function ApplyGrant() {
     <Flex direction="row" w="100%" justify="space-evenly">
       <Flex direction="column" w="50%" h="100%">
         <Form
+          chainId={chainId}
           title={title}
           grantId={grantID}
           daoLogo={daoLogo}

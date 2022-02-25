@@ -13,13 +13,12 @@ import { useRouter } from 'next/router';
 import React, {
   useContext, useEffect, useMemo, useState,
 } from 'react';
-import { useAccount, useSigner, useContract } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { BigNumber } from 'ethers';
 import { ApplicationMilestone, useGetApplicationDetailsQuery, useGetFundSentForApplicationQuery } from 'src/generated/graphql';
 import useApplicationMilestones from 'src/utils/queryUtil';
 import { SupportedChainId } from 'src/constants/chains';
-import config from '../../../src/constants/config';
-import ApplicationRegistryAbi from '../../../src/contracts/abi/ApplicationRegistryAbi.json';
+import useCompleteApplication from 'src/hooks/useCompleteApplication';
 import InfoToast from '../../../src/components/ui/infoToast';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Heading from '../../../src/components/ui/heading';
@@ -145,71 +144,36 @@ function ManageGrant() {
     },
   ];
 
-  const apiClients = useContext(ApiClientsContext);
-  const [signerStates] = useSigner();
-  const applicationRegContract = useContract({
-    addressOrName: config.ApplicationRegistryAddress,
-    contractInterface: ApplicationRegistryAbi,
-    signerOrProvider: signerStates.data,
-  });
-  const [hasClicked, setHasClicked] = React.useState(false);
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
 
-  const closeToast = () => {
-    if (toastRef.current) {
-      toast.close(toastRef.current);
-    }
-  };
+  const [update, setUpdate] = useState<any>();
+  const [txn, loading] = useCompleteApplication(update, applicationData?.id);
 
-  const showToast = ({ link }: { link: string }) => {
-    toastRef.current = toast({
-      position: 'top',
-      render: () => <InfoToast link={link} close={closeToast} />,
-    });
-  };
-  const markApplicationComplete = async (comment: string) => {
-    try {
-      if (!apiClients) return;
-      const { validatorApi, workspaceId } = apiClients;
-      if (
-        !accountData
-        || !accountData.address
-        || !workspaceId
-        || !applicationData
-        || !applicationData.id
-      ) {
-        return;
-      }
-
-      setHasClicked(true);
-      const {
-        data: { ipfsHash },
-      } = await validatorApi.validateGrantApplicationUpdate({
-        feedback: comment,
-      });
-      // console.log(ipfsHash);
-      // console.log(Number(applicationData?.id), Number(workspaceId));
-      const transaction = await applicationRegContract.completeApplication(
-        Number(applicationData?.id),
-        Number(workspaceId),
-        ipfsHash,
-      );
-      const transactionData = await transaction.wait();
-      setHasClicked(false);
+  useEffect(() => {
+    if (txn) {
+      setUpdate(undefined);
       setIsGrantCompleteModalOpen(false);
-      showToast({
-        link: `https://etherscan.io/tx/${transactionData.transactionHash}`,
-      });
-      // toast({ title: 'Transaction succeeded', status: 'success' });
-    } catch (error) {
-      setHasClicked(false);
-
-      toast({
-        title: 'Application update not indexed',
-        status: 'error',
+      toastRef.current = toast({
+        position: 'top',
+        render: () => (
+          <InfoToast
+            link={`https://etherscan.io/tx/${txn.transactionHash}`}
+            close={() => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            }}
+          />
+        ),
       });
     }
+  }, [toast, txn]);
+
+  const markApplicationComplete = async (comment: string) => {
+    setUpdate({
+      feedback: comment,
+    });
   };
 
   return (
@@ -365,7 +329,7 @@ function ManageGrant() {
         modalWidth={512}
       >
         <ModalContent
-          hasClicked={hasClicked}
+          hasClicked={loading}
           onClose={(details: any) => markApplicationComplete(details)}
         />
       </Modal>
