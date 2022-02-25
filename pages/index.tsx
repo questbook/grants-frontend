@@ -21,11 +21,15 @@ function BrowseGrants() {
   const [{ data: accountData }] = useAccount();
   const router = useRouter();
   const subgraphClient = useContext(ApiClientsContext)?.subgraphClient.client;
+  const subgraphClients = useContext(ApiClientsContext)?.subgraphClients.map((subgraphCl) => (
+    subgraphCl.client
+  ));
 
-  const allNetworkGrants = subgraphClients.map((client) => (
+  const allNetworkGrants = subgraphClients!.map((client) => (
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useGetAllGrantsLazyQuery({ client })
   ));
+  useEffect(() => {}, [subgraphClients]);
 
   const toast = useToast();
   const [grants, setGrants] = useState<GetAllGrantsQuery['grants']>([]);
@@ -45,10 +49,14 @@ function BrowseGrants() {
               skip: currentPage * PAGE_SIZE,
             },
           });
-          resolve(data.grants);
+          if (data && data.grants) {
+            resolve(data.grants);
+          } else {
+            resolve([]);
+          }
         })
       ));
-      Promise.all(promises).then((values) => {
+      Promise.all(promises).then((values:any[]) => {
         const allGrantsData = [].concat(...values);
         setGrants([...grants, ...allGrantsData]);
         setCurrentPage(currentPage + 1);
@@ -109,6 +117,7 @@ function BrowseGrants() {
         <Heading title="Discover grants" />
         {grants.length > 0
           && grants.map((grant) => {
+            console.log('grantt ', grant);
             const grantCurrency = supportedCurrencies.find(
               (currency) => currency.id.toLowerCase()
                 === grant.reward.asset.toString().toLowerCase(),

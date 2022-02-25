@@ -32,7 +32,7 @@ function YourApplications() {
   const [{ data: accountData }] = useAccount();
   const [currentPage, setCurrentPage] = React.useState(0);
 
-  const allNetworkApplications = subgraphClients.map((client) => (
+  const allNetworkApplications = subgraphClients!.map((client) => (
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useGetMyApplicationsLazyQuery({ client })
   ));
@@ -50,10 +50,14 @@ function YourApplications() {
               applicantID: accountData?.address || '',
             },
           });
-          resolve(data.grantApplications);
+          if (data && data.grantApplications) {
+            resolve(data.grantApplications);
+          } else {
+            resolve([]);
+          }
         })
       ));
-      Promise.all(promises).then((values) => {
+      Promise.all(promises).then((values:any[]) => {
         const allApplicationsData = [].concat(...values);
         setMyApplications([...myApplications, ...allApplicationsData]);
         setCurrentPage(currentPage + 1);
