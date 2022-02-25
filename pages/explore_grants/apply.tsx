@@ -15,7 +15,7 @@ import NavbarLayout from '../../src/layout/navbarLayout';
 import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils';
 
 function ApplyGrant() {
-  const { subgraphClient, setChainId } = useContext(ApiClientsContext)!;
+  const { subgraphClient, setChainId: setChainIdCtx } = useContext(ApiClientsContext)!;
 
   const router = useRouter();
   const [grantData, setGrantData] = useState<any>(null);
@@ -34,9 +34,9 @@ function ApplyGrant() {
   useEffect(() => {
     if (router && router.query) {
       const { chainId: cId } = router.query;
-      setChainId(cId as unknown as SupportedChainId);
+      setChainIdCtx(cId as unknown as SupportedChainId);
     }
-  }, [router, setChainId]);
+  }, [router, setChainIdCtx]);
 
   const [getGrantDetails] = useGetGrantDetailsLazyQuery({
     client: subgraphClient?.client,
