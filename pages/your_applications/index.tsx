@@ -21,31 +21,42 @@ const PAGE_SIZE = 20;
 function YourApplications() {
   const router = useRouter();
   // const [applicantID, setApplicantId] = React.useState<any>('');
-  const subgraphClient = useContext(ApiClientsContext)?.subgraphClient;
+  // const subgraphClient = useContext(ApiClientsContext)?.subgraphClient;
+  const subgraphClients = useContext(ApiClientsContext)?.subgraphClients.map((subgraphCl) => (
+    subgraphCl.client
+  ));
   const [myApplications, setMyApplications] = React.useState<any>([]);
 
   const containerRef = useRef(null);
   const [{ data: accountData }] = useAccount();
   const [currentPage, setCurrentPage] = React.useState(0);
 
-  const [getMyApplications] = useGetMyApplicationsLazyQuery({
-    client: subgraphClient?.client,
-  });
+  const allNetworkApplications = subgraphClients.map((client) => (
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useGetMyApplicationsLazyQuery({ client })
+  ));
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getMyApplicationsData = async () => {
     try {
-      const { data } = await getMyApplications({
-        variables: {
-          first: PAGE_SIZE,
-          skip: currentPage * PAGE_SIZE,
-          applicantID: accountData?.address || '',
-        },
-      });
-      if (data) {
+      const promises = allNetworkApplications.map((allApplications) => (
+        // eslint-disable-next-line no-async-promise-executor
+        new Promise(async (resolve) => {
+          const { data } = await allApplications[0]({
+            variables: {
+              first: PAGE_SIZE,
+              skip: currentPage * PAGE_SIZE,
+              applicantID: accountData?.address || '',
+            },
+          });
+          resolve(data.grantApplications);
+        })
+      ));
+      Promise.all(promises).then((values) => {
+        const allApplicationsData = [].concat(...values);
+        setMyApplications([...myApplications, ...allApplicationsData]);
         setCurrentPage(currentPage + 1);
-        setMyApplications([...myApplications, ...data.grantApplications]);
-      }
+      });
     } catch (e) {
       // console.log('error in fetching my applications ', e);
     }

@@ -1,13 +1,14 @@
 import {
   ApolloClient, InMemoryCache, HttpLink, gql,
 } from '@apollo/client';
-import config from '../constants/config';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { SupportedChainId } from 'src/constants/chains';
 
 class SubgraphClient {
   client: ApolloClient<any>;
 
-  constructor() {
-    const link = new HttpLink({ uri: config.subgraphUri });
+  constructor(chainId: SupportedChainId) {
+    const link = new HttpLink({ uri: CHAIN_INFO[chainId].subgraphClientUrl });
     const client = new ApolloClient({
       link,
       cache: new InMemoryCache(),
