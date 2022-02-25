@@ -4,6 +4,7 @@ import {
 } from '@chakra-ui/react';
 import { formatAmount } from 'src/utils/formattingUtils';
 import { ApplicationMilestone } from 'src/types';
+import { SupportedChainId } from 'src/constants/chains';
 import { getAssetInfo } from '../../../utils/tokenUtils';
 
 const TABLE_HEADERS = [
@@ -31,6 +32,7 @@ export type AbstractMilestonesTableProps = {
   refetch: () => void
   sendFundOpen?: () => void
   renderStatus: (milestone: ApplicationMilestone) => React.ReactNode
+  chainId?: SupportedChainId,
 };
 
 function AbstractMilestonesTable(

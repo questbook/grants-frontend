@@ -88,7 +88,7 @@ function ApplicantForm() {
     console.log(state);
   }, [state]);
 
-  const [txn, loading] = useUpdateApplicationState(
+  const [txn, loading, error] = useUpdateApplicationState(
     state === 1 ? resubmitComment : rejectionComment,
     applicationData?.id,
     state,
@@ -116,11 +116,14 @@ function ApplicantForm() {
           grantID: applicationData?.grant?.id,
         },
       });
+    } else if (error) {
+      setState(undefined);
     }
-  }, [toastRef, toast, router, applicationData, txn]);
+  }, [toastRef, toast, router, applicationData, txn, error]);
 
   const handleApplicationStateUpdate = async (st: number) => {
-    console.log(st);
+    console.log('unsetting state');
+    setState(undefined);
     if (st === 1 && resubmitComment === '') {
       setResubmitCommentError(true);
       return;
@@ -131,6 +134,7 @@ function ApplicantForm() {
       return;
     }
 
+    console.log('setting state');
     setState(st);
   };
 

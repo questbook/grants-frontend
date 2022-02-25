@@ -9,10 +9,9 @@ import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useApplicationRegistryContract from './contracts/useApplicationRegistryContract';
 
-export default function useUpdateApplicationState(
+export default function useCompleteApplication(
   data: any,
   applicationId: string | undefined,
-  state: number | undefined,
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
@@ -28,11 +27,11 @@ export default function useUpdateApplicationState(
   const toast = useToast();
 
   useEffect(() => {
-    if (state) {
+    if (data) {
       setError(undefined);
       setLoading(false);
     }
-  }, [state]);
+  }, [data]);
 
   useEffect(() => {
     if (error) return;
@@ -40,21 +39,18 @@ export default function useUpdateApplicationState(
 
     async function validate() {
       setLoading(true);
-      // console.log('calling validate');
+      console.log('calling validate');
       try {
         const {
           data: { ipfsHash },
-        } = await validatorApi.validateGrantApplicationUpdate({
-          feedback: data,
-        });
+        } = await validatorApi.validateApplicationMilestoneUpdate(data);
         if (!ipfsHash) {
           throw new Error('Error validating grant data');
         }
 
-        const updateTxn = await applicationContract.updateApplicationState(
+        const updateTxn = await applicationContract.completeApplication(
           Number(applicationId),
           Number(workspace!.id),
-          state,
           ipfsHash,
         );
         const updateTxnData = await updateTxn.wait();
@@ -62,7 +58,7 @@ export default function useUpdateApplicationState(
         setTransactionData(updateTxnData);
         setLoading(false);
       } catch (e: any) {
-        // console.log(e);
+        console.log(e);
         setError(e.message);
         setLoading(false);
         toastRef.current = toast({
@@ -79,10 +75,7 @@ export default function useUpdateApplicationState(
       }
     }
     try {
-      if (!state) return;
-      if (state !== 2) {
-        if (!data) return;
-      }
+      if (!data) return;
       if (!applicationId) return;
       if (transactionData) return;
       if (!accountData || !accountData.address) {
@@ -137,7 +130,6 @@ export default function useUpdateApplicationState(
     networkData,
     currentChainId,
     applicationId,
-    state,
     data,
   ]);
 

@@ -1,5 +1,5 @@
 import { useContract, useSigner } from 'wagmi';
-import { erc20Interface } from '../../contracts/utils/ERC20';
+import erc20Interface from '../../contracts/abi/ERC20.json';
 
 export default function useERC20Contract(address?: string) {
   const [signerStates] = useSigner();

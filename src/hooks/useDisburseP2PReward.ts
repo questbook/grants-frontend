@@ -7,12 +7,15 @@ import {
 } from 'src/utils/validationUtils';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
-import useApplicationRegistryContract from './contracts/useApplicationRegistryContract';
+import useGrantContract from './contracts/useGrantContract';
+import useERC20Contract from './contracts/useERC20Contract';
 
-export default function useUpdateApplicationState(
+export default function useDisburseReward(
   data: any,
+  grantId: string | undefined,
   applicationId: string | undefined,
-  state: number | undefined,
+  milestoneIndex: number | undefined,
+  rewardAssetAddress: string | undefined,
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
@@ -23,16 +26,17 @@ export default function useUpdateApplicationState(
   const apiClients = useContext(ApiClientsContext)!;
   const { validatorApi, workspace } = apiClients;
   const currentChainId = useChainId();
-  const applicationContract = useApplicationRegistryContract(currentChainId);
+  const grantContract = useGrantContract(grantId);
+  const rewardContract = useERC20Contract(rewardAssetAddress);
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
 
   useEffect(() => {
-    if (state) {
+    if (data) {
       setError(undefined);
       setLoading(false);
     }
-  }, [state]);
+  }, [data]);
 
   useEffect(() => {
     if (error) return;
@@ -42,27 +46,20 @@ export default function useUpdateApplicationState(
       setLoading(true);
       // console.log('calling validate');
       try {
-        const {
-          data: { ipfsHash },
-        } = await validatorApi.validateGrantApplicationUpdate({
-          feedback: data,
-        });
-        if (!ipfsHash) {
-          throw new Error('Error validating grant data');
-        }
-
-        const updateTxn = await applicationContract.updateApplicationState(
-          Number(applicationId),
-          Number(workspace!.id),
-          state,
-          ipfsHash,
+        const txn = await rewardContract.approve(grantContract.address, data);
+        await txn.wait();
+        const updateTxn = await grantContract.disburseRewardP2P(
+          applicationId,
+          milestoneIndex,
+          rewardAssetAddress,
+          data,
         );
         const updateTxnData = await updateTxn.wait();
 
         setTransactionData(updateTxnData);
         setLoading(false);
       } catch (e: any) {
-        // console.log(e);
+        console.log(e);
         setError(e.message);
         setLoading(false);
         toastRef.current = toast({
@@ -79,12 +76,16 @@ export default function useUpdateApplicationState(
       }
     }
     try {
-      if (!state) return;
-      if (state !== 2) {
-        if (!data) return;
-      }
+      // console.log(data);
+      // console.log(milestoneIndex);
+      // console.log(applicationId);
+      // console.log(Number.isNaN(milestoneIndex));
+      if (Number.isNaN(milestoneIndex)) return;
+      if (!data) return;
       if (!applicationId) return;
       if (transactionData) return;
+      if (!rewardAssetAddress) return;
+      // console.log(66);
       if (!accountData || !accountData.address) {
         throw new Error('not connected to wallet');
       }
@@ -100,12 +101,22 @@ export default function useUpdateApplicationState(
       if (!validatorApi) {
         throw new Error('validatorApi or workspaceId is not defined');
       }
+      // console.log(5);
       if (
-        !applicationContract
-        || applicationContract.address
+        !grantContract
+        || grantContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !applicationContract.signer
-        || !applicationContract.provider
+        || !grantContract.signer
+        || !grantContract.provider
+      ) {
+        return;
+      }
+      if (
+        !rewardContract
+        || rewardContract.address
+          === '0x0000000000000000000000000000000000000000'
+        || !rewardContract.signer
+        || !rewardContract.provider
       ) {
         return;
       }
@@ -130,14 +141,16 @@ export default function useUpdateApplicationState(
     loading,
     toast,
     transactionData,
-    applicationContract,
+    rewardContract,
+    grantContract,
     validatorApi,
     workspace,
     accountData,
     networkData,
     currentChainId,
     applicationId,
-    state,
+    milestoneIndex,
+    rewardAssetAddress,
     data,
   ]);
 

@@ -9,10 +9,10 @@ import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useApplicationRegistryContract from './contracts/useApplicationRegistryContract';
 
-export default function useUpdateApplicationState(
+export default function useApproveMilestone(
   data: any,
   applicationId: string | undefined,
-  state: number | undefined,
+  milestoneIndex: number | undefined,
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
@@ -28,11 +28,11 @@ export default function useUpdateApplicationState(
   const toast = useToast();
 
   useEffect(() => {
-    if (state) {
+    if (data) {
       setError(undefined);
       setLoading(false);
     }
-  }, [state]);
+  }, [data]);
 
   useEffect(() => {
     if (error) return;
@@ -40,21 +40,19 @@ export default function useUpdateApplicationState(
 
     async function validate() {
       setLoading(true);
-      // console.log('calling validate');
+      console.log('calling validate');
       try {
         const {
           data: { ipfsHash },
-        } = await validatorApi.validateGrantApplicationUpdate({
-          feedback: data,
-        });
+        } = await validatorApi.validateApplicationMilestoneUpdate(data);
         if (!ipfsHash) {
           throw new Error('Error validating grant data');
         }
 
-        const updateTxn = await applicationContract.updateApplicationState(
-          Number(applicationId),
+        const updateTxn = await applicationContract.approveMilestone(
+          applicationId,
+          Number(milestoneIndex),
           Number(workspace!.id),
-          state,
           ipfsHash,
         );
         const updateTxnData = await updateTxn.wait();
@@ -62,7 +60,7 @@ export default function useUpdateApplicationState(
         setTransactionData(updateTxnData);
         setLoading(false);
       } catch (e: any) {
-        // console.log(e);
+        console.log(e);
         setError(e.message);
         setLoading(false);
         toastRef.current = toast({
@@ -79,12 +77,15 @@ export default function useUpdateApplicationState(
       }
     }
     try {
-      if (!state) return;
-      if (state !== 2) {
-        if (!data) return;
-      }
+      console.log(data);
+      console.log(milestoneIndex);
+      console.log(applicationId);
+      console.log(Number.isNaN(milestoneIndex));
+      if (Number.isNaN(milestoneIndex)) return;
+      if (!data) return;
       if (!applicationId) return;
       if (transactionData) return;
+      console.log(66);
       if (!accountData || !accountData.address) {
         throw new Error('not connected to wallet');
       }
@@ -100,6 +101,7 @@ export default function useUpdateApplicationState(
       if (!validatorApi) {
         throw new Error('validatorApi or workspaceId is not defined');
       }
+      console.log(5);
       if (
         !applicationContract
         || applicationContract.address
@@ -137,7 +139,7 @@ export default function useUpdateApplicationState(
     networkData,
     currentChainId,
     applicationId,
-    state,
+    milestoneIndex,
     data,
   ]);
 
