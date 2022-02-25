@@ -7,6 +7,7 @@ import { useContract, useSigner } from 'wagmi';
 import { GrantApplicationRequest } from '@questbook/service-validator-client';
 import { useRouter } from 'next/router';
 import { isValidEmail } from 'src/utils/validationUtils';
+import { BigNumber } from 'ethers';
 import { parseAmount } from '../../../../utils/formattingUtils';
 import { GrantApplicationFieldsSubgraph, GrantApplicationCreateSubgraph } from '../../../../types/application';
 import InfoToast from '../../../ui/infoToast';
@@ -17,6 +18,11 @@ import Funding from './4_funding';
 import config from '../../../../constants/config';
 import ApplicationRegistryAbi from '../../../../contracts/abi/ApplicationRegistryAbi.json';
 import { ApiClientsContext } from '../../../../../pages/_app';
+import {
+  ApplicantEmailError, ApplicantNameError, BreakdownError,
+  FundingAskError, MemberDescriptionError, MilestoneError, MilestoneRewardError,
+  ProjectDetailsError, ProjectGoalError, ProjectLinkError, ProjectNameError, TeamMemberError,
+} from './errors/errorTypes';
 
 interface Props {
   // onSubmit: (data: any) => void;
@@ -51,51 +57,51 @@ function Form({
 
   const apiClientContext = useContext(ApiClientsContext);
   const [applicantName, setApplicantName] = useState('');
-  const [applicantNameError, setApplicantNameError] = useState(false);
+  const [applicantNameError, setApplicantNameError] = useState(ApplicantNameError.NoError);
 
   const [applicantEmail, setApplicantEmail] = useState('');
-  const [applicantEmailError, setApplicantEmailError] = useState(false);
+  const [applicantEmailError, setApplicantEmailError] = useState(ApplicantEmailError.NoError);
 
   const [teamMembers, setTeamMembers] = useState<number | null>(1);
-  const [teamMembersError, setTeamMembersError] = useState(false);
+  const [teamMembersError, setTeamMembersError] = useState(TeamMemberError.NoError);
 
   const [membersDescription, setMembersDescription] = useState([
     {
       description: '',
-      isError: false,
+      isError: MemberDescriptionError.NoError,
     },
   ]);
 
   const [projectName, setProjectName] = useState('');
-  const [projectNameError, setProjectNameError] = useState(false);
+  const [projectNameError, setProjectNameError] = useState(ProjectNameError.NoError);
 
   const [projectLinks, setProjectLinks] = useState([
     {
       link: '',
-      isError: false,
+      isError: ProjectLinkError.NoError,
     },
   ]);
 
   const [projectDetails, setProjectDetails] = useState('');
-  const [projectDetailsError, setProjectDetailsError] = useState(false);
+  const [projectDetailsError, setProjectDetailsError] = useState(ProjectDetailsError.NoError);
 
   const [projectGoal, setProjectGoal] = useState('');
-  const [projectGoalError, setProjectGoalError] = useState(false);
+  const [projectGoalError, setProjectGoalError] = useState(ProjectGoalError.NoError);
 
   const [projectMilestones, setProjectMilestones] = useState([
     {
       milestone: '',
       milestoneReward: '',
-      milestoneIsError: false,
-      milestoneRewardIsError: false,
+      milestoneIsError: MilestoneError.NoError,
+      milestoneRewardIsError: MilestoneRewardError.NoError,
     },
   ]);
 
   const [fundingAsk, setFundingAsk] = useState('');
-  const [fundingAskError, setFundingAskError] = useState(false);
+  const [fundingAskError, setFundingAskError] = useState(FundingAskError.NoError);
 
   const [fundingBreakdown, setFundingBreakdown] = useState('');
-  const [fundingBreakdownError, setFundingBreakdownError] = useState(false);
+  const [fundingBreakdownError, setFundingBreakdownError] = useState(BreakdownError.NoError);
 
   const [hasClicked, setHasClicked] = React.useState(false);
   const toastRef = React.useRef<ToastId>();
@@ -124,15 +130,16 @@ function Form({
     try {
       let error = false;
       if (applicantName === '' && grantRequiredFields.includes('applicantName')) {
-        setApplicantNameError(true);
+        setApplicantNameError(ApplicantNameError.InvalidValue);
         error = true;
       }
       if ((applicantEmail === '' || !isValidEmail(applicantEmail)) && grantRequiredFields.includes('applicantEmail')) {
-        setApplicantEmailError(true);
+        setApplicantEmailError(applicantEmail === ''
+          ? ApplicantEmailError.InvalidValue : ApplicantEmailError.InvalidFormat);
         error = true;
       }
       if ((!teamMembers || teamMembers <= 0) && grantRequiredFields.includes('teamMembers')) {
-        setTeamMembersError(true);
+        setTeamMembersError(TeamMemberError.InvalidValue);
         error = true;
       }
 
@@ -140,7 +147,7 @@ function Form({
       const newMembersDescriptionArray = [...membersDescription];
       membersDescription.forEach((member, index) => {
         if (member.description === '' && grantRequiredFields.includes('memberDetails')) {
-          newMembersDescriptionArray[index].isError = true;
+          newMembersDescriptionArray[index].isError = MemberDescriptionError.InvalidValue;
           membersDescriptionError = true;
         }
       });
@@ -151,7 +158,7 @@ function Form({
       }
 
       if (projectName === '' && grantRequiredFields.includes('projectName')) {
-        setProjectNameError(true);
+        setProjectNameError(ProjectNameError.InvalidValue);
         error = true;
       }
 
@@ -159,7 +166,7 @@ function Form({
       const newProjectLinks = [...projectLinks];
       projectLinks.forEach((project, index) => {
         if (project.link === '' && grantRequiredFields.includes('projectLink')) {
-          newProjectLinks[index].isError = true;
+          newProjectLinks[index].isError = ProjectLinkError.InvalidValue;
           projectLinksError = true;
         }
       });
@@ -170,11 +177,11 @@ function Form({
       }
 
       if (projectDetails === '' && grantRequiredFields.includes('projectDetails')) {
-        setProjectDetailsError(true);
+        setProjectDetailsError(ProjectDetailsError.InvalidValue);
         error = true;
       }
       if (projectGoal === '' && grantRequiredFields.includes('projectGoals')) {
-        setProjectGoalError(true);
+        setProjectGoalError(ProjectGoalError.InvalidValue);
         error = true;
       }
 
@@ -182,11 +189,11 @@ function Form({
       const newProjectMilestones = [...projectMilestones];
       projectMilestones.forEach((project, index) => {
         if (project.milestone === '') {
-          newProjectMilestones[index].milestoneIsError = true;
+          newProjectMilestones[index].milestoneIsError = MilestoneError.InvalidValue;
           projectMilestonesError = true;
         }
-        if (project.milestoneReward === '') {
-          newProjectMilestones[index].milestoneRewardIsError = true;
+        if (project.milestoneReward === '' || BigNumber.from(project.milestoneReward).lte(0)) {
+          newProjectMilestones[index].milestoneRewardIsError = MilestoneRewardError.InvalidValue;
           projectMilestonesError = true;
         }
       });
@@ -197,11 +204,11 @@ function Form({
       }
 
       if (fundingAsk === '' && grantRequiredFields.includes('fundingAsk')) {
-        setFundingAskError(true);
+        setFundingAskError(FundingAskError.InvalidValue);
         error = true;
       }
       if (fundingBreakdown === '' && grantRequiredFields.includes('fundingBreakdown')) {
-        setFundingBreakdownError(true);
+        setFundingBreakdownError(BreakdownError.InvalidValue);
         error = true;
       }
       if (error) {

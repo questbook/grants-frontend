@@ -6,6 +6,8 @@ import Dropdown from '../../../ui/forms/dropdown';
 import MultiLineInput from '../../../ui/forms/multiLineInput';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
 import Tooltip from '../../../ui/tooltip';
+import { getBreakdownErrorText, getFundingAskErrorText } from './errors/errorTexts';
+import { BreakdownError, FundingAskError } from './errors/errorTypes';
 
 function Funding({
   fundingAsk,
@@ -26,13 +28,13 @@ function Funding({
 }: {
   fundingAsk: string;
   setFundingAsk: (fundingAsk: string) => void;
-  fundingAskError: boolean;
-  setFundingAskError: (fundingAskError: boolean) => void;
+  fundingAskError: FundingAskError;
+  setFundingAskError: (fundingAskError: FundingAskError) => void;
 
   fundingBreakdown: string;
   setFundingBreakdown: (fundingBreakdown: string) => void;
-  fundingBreakdownError: boolean;
-  setFundingBreakdownError: (fundingBreakdownError: boolean) => void;
+  fundingBreakdownError: BreakdownError;
+  setFundingBreakdownError: (fundingBreakdownError: BreakdownError) => void;
 
   rewardAmount: string;
   rewardCurrency: string;
@@ -75,13 +77,13 @@ function Funding({
             value={fundingAsk}
             onChange={(e) => {
               console.log(e.target.value);
-              if (fundingAskError) {
-                setFundingAskError(false);
+              if (fundingAskError !== FundingAskError.NoError) {
+                setFundingAskError(FundingAskError.NoError);
               }
               setFundingAsk(e.target.value);
             }}
-            isError={fundingAskError}
-            errorText="Required"
+            isError={fundingAskError !== FundingAskError.NoError}
+            errorText={getFundingAskErrorText(fundingAskError)}
             type="number"
           />
         </Box>
@@ -106,13 +108,13 @@ function Funding({
         maxLength={1000}
         value={fundingBreakdown}
         onChange={(e) => {
-          if (fundingBreakdownError) {
-            setFundingBreakdownError(false);
+          if (fundingBreakdownError !== BreakdownError.NoError) {
+            setFundingBreakdownError(BreakdownError.NoError);
           }
           setFundingBreakdown(e.target.value);
         }}
-        isError={fundingBreakdownError}
-        errorText="Required"
+        isError={fundingBreakdownError !== BreakdownError.NoError}
+        errorText={getBreakdownErrorText(fundingBreakdownError)}
         tooltip="Write about how you planning use funds for your project - hiring, marketing etc."
         visible={grantRequiredFields.includes('fundingBreakdown')}
       />

@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   trailingSlash: true,
+  images: {
+    domains: ['ipfs.infura.io'],
+  },
 }
 
 module.exports = nextConfig

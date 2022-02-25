@@ -81,7 +81,88 @@
     "explore_grants": {
         "apply": {
             "form": {
-                "errors": {}
+                "errors": {
+                    "applicant_name": {
+                        "0": {
+                            "code": 0,
+                            "message": "Please enter a valid name"
+                        }
+                    },
+                    "applicant_email": {
+                        "0": {
+                            "code": 0,
+                            "message": "Please enter an email"
+                        },
+                        "1": {
+                            "code": 0,
+                            "message": "Please enter a valid email address"
+                        }
+                    },
+                    "team_members": {
+                        "0": {
+                            "code": 0,
+                            "message": "Please enter a non-negative number"
+                        }
+                    },
+                    "member_description": {
+                        "0": {
+                            "code": 0,
+                            "message": "Please enter a valid description"
+                        }
+                    },
+                    "project_name": {
+                        "0": {
+                            "code": 0,
+                            "message": "Please enter a valid project name"
+                        }
+                    },
+                    "project_link": {
+                        "0": {
+                            "code": 0,
+                            "message": "Please enter a link"
+                        },
+                        "1": {
+                            "code": 0,
+                            "message": "Please enter a valid link"
+                        }
+                    },
+                    "project_details": {
+                        "0": {
+                            "code": 0,
+                            "message": "Please enter a valid detail"
+                        }
+                    },
+                    "project_goal": {
+                        "0": {
+                            "code": 0,
+                            "message": "Please enter a valid goal"
+                        }
+                    },
+                    "milestone": {
+                        "0": {
+                            "code": 0,
+                            "message": "Please enter a valid milestone description"
+                        }
+                    },
+                    "milestone_reward": {
+                        "0": {
+                            "code": 0,
+                            "message": "Please enter a valid milestone reward"
+                        }
+                    },
+                    "funding_ask": {
+                        "0": {
+                            "code": 0,
+                            "message": "Please enter a valid funding ask"
+                        }
+                    },
+                    "breakdown": {
+                        "0": {
+                            "code": 0,
+                            "message": "Please enter a valid breakdown"
+                        }
+                    }
+                }
             }
         }
     },

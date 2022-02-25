@@ -3,6 +3,8 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
+import { getApplicantEmailErrorText, getApplicantNameErrorText } from './errors/errorTexts';
+import { ApplicantEmailError, ApplicantNameError } from './errors/errorTypes';
 
 function ApplicantDetails({
   applicantName,
@@ -20,10 +22,10 @@ function ApplicantDetails({
   setApplicantName: (applicantName: string) => void;
   applicantEmail: string;
   setApplicantEmail: (applicantEmail: string) => void;
-  applicantNameError: boolean;
-  setApplicantNameError: (applicantNameError: boolean) => void;
-  applicantEmailError: boolean;
-  setApplicantEmailError: (applicantEmailError: boolean) => void;
+  applicantNameError: ApplicantNameError;
+  setApplicantNameError: (applicantNameError: ApplicantNameError) => void;
+  applicantEmailError: ApplicantEmailError;
+  setApplicantEmailError: (applicantEmailError: ApplicantEmailError) => void;
   readOnly?: boolean;
   grantRequiredFields: string[];
 }) {
@@ -38,13 +40,13 @@ function ApplicantDetails({
         placeholder="Nouns DAO"
         subtext="Full names are preferred."
         onChange={(e) => {
-          if (applicantNameError) {
-            setApplicantNameError(false);
+          if (applicantNameError !== ApplicantNameError.NoError) {
+            setApplicantNameError(ApplicantNameError.NoError);
           }
           setApplicantName(e.target.value);
         }}
-        isError={applicantNameError}
-        errorText="Required"
+        isError={applicantNameError !== ApplicantNameError.NoError}
+        errorText={getApplicantNameErrorText(applicantNameError)}
         value={applicantName}
         disabled={readOnly}
         visible={grantRequiredFields.includes('applicantName')}
@@ -54,14 +56,14 @@ function ApplicantDetails({
         label="Applicant Email"
         placeholder="name@sample.com"
         value={applicantEmail}
-        onChange={(e: any) => {
-          if (applicantEmailError) {
-            setApplicantEmailError(false);
+        onChange={(e) => {
+          if (applicantEmailError !== ApplicantEmailError.NoError) {
+            setApplicantEmailError(ApplicantEmailError.NoError);
           }
           setApplicantEmail(e.target.value);
         }}
-        isError={applicantEmailError}
-        errorText="Required"
+        isError={applicantEmailError !== ApplicantEmailError.NoError}
+        errorText={getApplicantEmailErrorText(applicantEmailError)}
         disabled={readOnly}
         visible={grantRequiredFields.includes('applicantEmail')}
         type="email"
