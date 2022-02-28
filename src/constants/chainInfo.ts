@@ -23,6 +23,7 @@ interface ChainInfo {
     [address: string]: {
       icon: string
       label: string
+      address: string
     }
   }
   readonly subgraphClientUrl: string;
@@ -58,15 +59,18 @@ export const CHAIN_INFO: ChainInfoMap = {
       '0xc7ad46e0b8a400bb3c915120d284aafba8fc4735': {
         icon: '/ui_icons/brand/currency/dai_symbol.svg',
         label: 'DAI',
+        address: '0xc7ad46e0b8a400bb3c915120d284aafba8fc4735',
       },
       '0xc778417e063141139fce010982780140aa0cd5ab': {
         icon: '/ui_icons/brand/currency/usdc_symbol.svg',
         label: 'WETH',
+        address: '0xc778417e063141139fce010982780140aa0cd5ab',
       },
-      '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270': {
-        icon: '/ui_icons/brand/currency/wmatic_symbol.svg',
-        label: 'WMATIC',
-      },
+      // '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270': {
+      //   icon: '/ui_icons/brand/currency/wmatic_symbol.svg',
+      //   label: 'WMATIC',
+      //   address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
+      // },
     },
     subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph',
   },
@@ -95,17 +99,15 @@ export const CHAIN_INFO: ChainInfoMap = {
       transactionHash: 'https://explorer.pops.one/tx/',
     },
     supportedCurrencies: {
-      '0xc7ad46e0b8a400bb3c915120d284aafba8fc4735': {
+      '0xc27255d7805fc79e4616d5cd50d6f4464aea75a3': {
         icon: '/ui_icons/brand/currency/dai_symbol.svg',
-        label: 'DAI',
+        label: '1DAI',
+        address: '0xc27255d7805fc79e4616d5cd50d6f4464aea75a3',
       },
-      '0xc778417e063141139fce010982780140aa0cd5ab': {
+      '0x1e120b3b4af96e7f394ecaf84375b1c661830013': {
         icon: '/ui_icons/brand/currency/usdc_symbol.svg',
-        label: 'WETH',
-      },
-      '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270': {
-        icon: '/ui_icons/brand/currency/wmatic_symbol.svg',
-        label: 'WMATIC',
+        label: '1ETH',
+        address: '0x1e120b3b4af96e7f394ecaf84375b1c661830013',
       },
     },
     subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-harmonytest',

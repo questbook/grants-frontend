@@ -19,8 +19,9 @@ import { useGetNumberOfApplicationsLazyQuery, useGetNumberOfGrantsLazyQuery, use
 import { ApiClientsContext } from 'pages/_app';
 import { useAccount } from 'wagmi';
 import { getChainIdFromResponse } from 'src/utils/formattingUtils';
-import { SupportedChainId } from 'src/constants/chains';
+import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from 'src/constants/chains';
 import { MinimalWorkspace } from 'src/types';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import Tab from './tab';
 import AccountDetails from './accountDetails';
 
@@ -41,39 +42,58 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 
   const apiClients = useContext(ApiClientsContext)!;
   const {
-    workspace, setWorkspace, subgraphClient, setChainId, chainId,
+    workspace, setWorkspace, subgraphClient, setChainId, chainId, subgraphClients,
   } = apiClients;
 
+  const chainIndex = ALL_SUPPORTED_CHAIN_IDS.findIndex((c) => c === chainId);
   const [getNumberOfApplications] = useGetNumberOfApplicationsLazyQuery({
-    client: subgraphClient.client,
+    client: subgraphClients[chainIndex === -1 ? 0 : chainIndex].client,
   });
   const [getNumberOfGrants] = useGetNumberOfGrantsLazyQuery({
-    client: subgraphClient.client,
+    client: subgraphClients[chainIndex === -1 ? 0 : chainIndex].client,
   });
-  const [getWorkspaces] = useGetWorkspaceMembersLazyQuery({
-    client: subgraphClient.client,
-  });
+  // const [getWorkspaces] = useGetWorkspaceMembersLazyQuery({
+  //   client: subgraphClient.client,
+  // });
+
+  const getAllWorkspaces = subgraphClients!.map(({ client }) => (
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useGetWorkspaceMembersLazyQuery({ client })
+  ));
+  useEffect(() => {}, [subgraphClients]);
 
   useEffect(() => {
     if (!accountData?.address) return;
-    if (!getWorkspaces) return;
-    if (!setWorkspace) return;
+    if (!getAllWorkspaces) return;
+    // if (!set) return;
+
     const getWorkspaceData = async (userAddress: string) => {
       try {
-        const { data } = await getWorkspaces({
-          variables: { actorId: userAddress },
-        });
-        if (data && data.workspaceMembers.length > 0) {
-          // console.log(data);
-          setWorkspaces(data.workspaceMembers.map((w) => w.workspace));
-          setWorkspace(data.workspaceMembers[0].workspace);
+        const promises = getAllWorkspaces.map((allWorkspaces) => (
+          // eslint-disable-next-line no-async-promise-executor
+          new Promise(async (resolve) => {
+            console.log('calling grants');
+            const { data } = await allWorkspaces[0]({
+              variables: { actorId: userAddress },
+            });
+            if (data && data.workspaceMembers.length > 0) {
+              resolve(data.workspaceMembers.map((w) => w.workspace));
+            } else {
+              resolve([]);
+            }
+          })
+        ));
+        Promise.all(promises).then((values:any[]) => {
+          const allWorkspacesData = [].concat(...values) as MinimalWorkspace[];
+          // setGrants([...grants, ...allGrantsData]);
+          // setCurrentPage(currentPage + 1);
+          console.log('all workspaces', allWorkspacesData);
+          setWorkspaces([...workspaces, ...allWorkspacesData]);
+          setWorkspace(allWorkspacesData[0]);
           setChainId(getChainIdFromResponse(
-            data.workspaceMembers[0].workspace.supportedNetworks[0],
+            allWorkspacesData[0].supportedNetworks[0],
           ) as unknown as SupportedChainId);
-        } else {
-          setWorkspaces([]);
-          setWorkspace(undefined);
-        }
+        });
       } catch (e) {
         // console.log(e);
         toast({
@@ -83,7 +103,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
       }
     };
     getWorkspaceData(accountData?.address);
-  }, [toast, accountData?.address, getWorkspaces, setWorkspace, setChainId]);
+  }, []);
 
   useEffect(() => {
     if (!accountData?.address) return;
@@ -182,6 +202,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 )}
                 onClick={() => {
                   setWorkspace(userWorkspace);
+                  setChainId(getSupportedChainIdFromWorkspace(userWorkspace));
                 }}
               >
                 {userWorkspace.title}

@@ -1,7 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
-import config from 'src/constants/config';
 import { parseAmount } from 'src/utils/formattingUtils';
 import { useAccount, useNetwork } from 'wagmi';
 import { SupportedChainId } from 'src/constants/chains';
@@ -9,6 +8,7 @@ import {
   getSupportedChainIdFromWorkspace,
   getSupportedValidatorNetworkFromChainId,
 } from 'src/utils/validationUtils';
+import { APPLICATION_REGISTRY_ADDRESS, WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useGrantFactoryContract from './contracts/useGrantFactoryContract';
 import useChainId from './utils/useChainId';
@@ -69,11 +69,15 @@ export default function useCreateGrant(
           throw new Error('Error validating grant data');
         }
 
+        console.log(workspaceId ?? Number(workspace?.id).toString());
+        console.log('ipfsHash', ipfsHash);
+        console.log(WORKSPACE_REGISTRY_ADDRESS[currentChainId!], APPLICATION_REGISTRY_ADDRESS[currentChainId!]);
+
         const createGrantTransaction = await grantContract.createGrant(
           workspaceId ?? Number(workspace?.id).toString(),
           ipfsHash,
-          config.WorkspaceRegistryAddress,
-          config.ApplicationRegistryAddress,
+          WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
+          APPLICATION_REGISTRY_ADDRESS[currentChainId!],
         );
         const createGrantTransactionData = await createGrantTransaction.wait();
 

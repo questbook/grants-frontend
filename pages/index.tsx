@@ -43,6 +43,7 @@ function BrowseGrants() {
       const promises = allNetworkGrants.map((allGrants) => (
         // eslint-disable-next-line no-async-promise-executor
         new Promise(async (resolve) => {
+          console.log('calling grants');
           const { data } = await allGrants[0]({
             variables: {
               first: PAGE_SIZE,
@@ -117,7 +118,7 @@ function BrowseGrants() {
         <Heading title="Discover grants" />
         {grants.length > 0
           && grants.map((grant) => {
-            console.log('grantt ', grant);
+            // console.log('grantt ', grant);
             const grantCurrency = supportedCurrencies.find(
               (currency) => currency.id.toLowerCase()
                 === grant.reward.asset.toString().toLowerCase(),

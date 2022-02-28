@@ -41,7 +41,7 @@ const getSupportedValidatorNetworkFromChainId = (chainId: SupportedChainId) => {
   // if (chainId === SupportedNetwork.Chain_80001) {
   //   return SupportedChainId.HARMONY_TESTNET_S0;
   // }
-  return SupportedValidatorNetwork._4;
+  return SupportedValidatorNetwork._1666700000;
 };
 
 export {

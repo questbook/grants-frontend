@@ -36,13 +36,13 @@ function YourGrants() {
   const [grantForFunding, setGrantForFunding] = React.useState(null);
   const [grantRewardAsset, setGrantRewardAsset] = React.useState<any>(null);
 
-  useEffect(() => {
-    if (router && router.query) {
-      const { workspaceId: wId, chainId: cId } = router.query;
-      setWorkspaceId(wId as string);
-      setChainId(cId as unknown as SupportedChainId);
-    }
-  }, [router, setChainId, setWorkspaceId]);
+  // useEffect(() => {
+  //   if (router && router.query) {
+  //     const { workspaceId: wId, chainId: cId } = router.query;
+  //     setWorkspaceId(wId as string);
+  //     setChainId(cId as unknown as SupportedChainId);
+  //   }
+  // }, [router, setChainId, setWorkspaceId]);
 
   const [getAllGrantsForCreator] = useGetAllGrantsForCreatorLazyQuery({
     client: subgraphClient,
