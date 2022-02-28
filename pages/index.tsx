@@ -97,7 +97,7 @@ function BrowseGrants() {
         setGrants([...grants, ...data.grants]);
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast({
         title: 'Error loading grants',
         status: 'error',
