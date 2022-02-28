@@ -41,6 +41,10 @@ function BrowseGrants() {
   const [currentPage, setCurrentPage] = useState(0);
   const [conversionRate, setConversionRate] = useState<{ [x: string]: any }>();
 
+  // useEffect(() => {
+  //   console.log('Conversion Rate: ', conversionRate);
+  // }, [conversionRate]);
+
   const getConversionRates = async () => {
     if (!subgraphClient) return;
     const CONVERSION_QUERY = gql(`query conversionRates {
@@ -58,11 +62,12 @@ function BrowseGrants() {
           obj: { id: string | number; rate: any },
         ) => {
           // eslint-disable-next-line no-param-reassign
-          map[obj.id] = { rate: obj.rate };
+          map[obj.id] = { usd: obj.rate };
           return map;
         },
         conversionMap,
       );
+      console.log('Set from cache: ', conversionMap);
       setConversionRate(conversionMap);
     } else {
       const res = await fetch(config.conversionRateAPI);
@@ -76,6 +81,7 @@ function BrowseGrants() {
           });
         });
         subgraphClient.writeQuery({ query: CONVERSION_QUERY, data: { rates } });
+        console.log('Set from API: ', data);
         setConversionRate(data);
       }
     }
@@ -154,6 +160,7 @@ function BrowseGrants() {
             const amount = mul !== -1 ? BigNumber.from(grant.reward.committed)
               .mul(BigNumber.from(parseInt((usd * mul).toString(), 10)))
               .div(parseInt(mul.toString(), 10)) : -1;
+
             return (
               <GrantCard
                 key={grant.id}
