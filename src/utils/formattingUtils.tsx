@@ -30,7 +30,7 @@ export function timeToString(
     )}, ${date.getFullYear()}`
     : `${months[date.getMonth()]} ${date.getUTCDate().toString()} ${
       show_year ? date.getFullYear() : ''
-    }`;
+  }`;
 }
 export function parseAmount(number: string) {
   return ethers.utils.parseUnits(number, 18).toString();
@@ -51,13 +51,22 @@ function nFormatter(value: string, digits = 2) {
     { value: 1e18, symbol: 'E' },
   ];
   const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
-  const item = lookup.slice().reverse().find((i) => num >= i.value);
-  return item ? (num / item.value).toFixed(digits).replace(rx, '$1') + item.symbol : '0';
+  const item = lookup
+    .slice()
+    .reverse()
+    .find((i) => num >= i.value);
+  return item
+    ? (num / item.value).toFixed(digits).replace(rx, '$1') + item.symbol : '0';
 }
 
 export function formatAmount(number: string) {
   const value = ethers.utils.formatUnits(number, 18).toString();
   return nFormatter(value);
+}
+
+export function getMultiplier(n: number) {
+  const m = n.toString();
+  return 10 ** (m.length - m.indexOf('.') - 1);
 }
 
 export function highlightWordsInString(
@@ -75,12 +84,25 @@ export function highlightWordsInString(
   });
 }
 
-export function getIconFromCurrency(currency: string, isCircled: boolean = false) {
+export function getIconFromCurrency(
+  currency: string,
+  isCircled: boolean = false,
+) {
   switch (currency) {
-    case 'DAI': return isCircled ? '/ui_icons/brand/currency/dai.svg' : '/ui_icons/brand/currency/dai_symbol.svg';
-    case 'WMATIC': return isCircled ? '/ui_icons/brand/currency/wmatic.svg' : '/ui_icons/brand/currency/wmatic_symbol.svg';
-    case 'WETH': return isCircled ? '/ui_icons/brand/currency/weth.svg' : '/ui_icons/brand/currency/weth_symbol.svg';
-    default: return '/images/dummy/Ethereum Icon.svg';
+    case 'DAI':
+      return isCircled
+        ? '/ui_icons/brand/currency/dai.svg'
+      : '/ui_icons/brand/currency/dai_symbol.svg';
+    case 'WMATIC':
+      return isCircled
+        ? '/ui_icons/brand/currency/wmatic.svg'
+      : '/ui_icons/brand/currency/wmatic_symbol.svg';
+    case 'WETH':
+      return isCircled
+        ? '/ui_icons/brand/currency/weth.svg'
+      : '/ui_icons/brand/currency/weth_symbol.svg';
+    default:
+      return '/images/dummy/Ethereum Icon.svg';
   }
 }
 
@@ -93,7 +115,9 @@ export function getFormattedDateFromUnixTimestamp(timestamp: number) {
   return moment.unix(timestamp).format('DD MMM');
 }
 
-export function getFormattedDateFromUnixTimestampWithYear(timestamp: number | undefined) {
+export function getFormattedDateFromUnixTimestampWithYear(
+  timestamp: number | undefined,
+) {
   return timestamp ? moment.unix(timestamp).format('MMM DD, YYYY') : undefined;
 }
 
@@ -101,10 +125,13 @@ export function getFormattedFullDateFromUnixTimestamp(timestamp: number) {
   return moment.unix(timestamp).format('LL');
 }
 
-export function truncateStringFromMiddle(str:string) {
+export function truncateStringFromMiddle(str: string) {
   if (!str) return '';
   if (str.length > 10) {
-    return `${str.substring(0, 4)}...${str.substring(str.length - 4, str.length)}`;
+    return `${str.substring(0, 4)}...${str.substring(
+      str.length - 4,
+      str.length,
+    )}`;
   }
   return str;
 }

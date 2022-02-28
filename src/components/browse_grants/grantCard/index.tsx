@@ -20,6 +20,8 @@ interface GrantCardProps {
   grantCurrency: string;
   grantCurrencyIcon: string;
 
+  grantAmountInUSD: string;
+
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
@@ -38,6 +40,8 @@ function GrantCard({
   grantAmount,
   grantCurrency,
   grantCurrencyIcon,
+
+  grantAmountInUSD,
 
   onClick,
 }: GrantCardProps) {
@@ -93,6 +97,11 @@ function GrantCard({
               {grantAmount}
               {' '}
               {grantCurrency}
+
+              {grantAmountInUSD !== '' && ' ≈ '}
+
+              {grantAmountInUSD !== '' && grantAmountInUSD}
+              {grantAmountInUSD !== '' && ' USD'}
             </Text>
             <Box mr="auto" />
             <Button onClick={onClick} variant="primaryCta">
