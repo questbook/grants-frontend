@@ -97,7 +97,7 @@ function BrowseGrants() {
           skip: currentPage * PAGE_SIZE,
         },
       });
-      await getConversionRates();
+      getConversionRates();
       if (data) {
         setCurrentPage(currentPage + 1);
         setGrants([...grants, ...data.grants]);
@@ -156,7 +156,7 @@ function BrowseGrants() {
                 === grant.reward.asset.toString().toLowerCase(),
             );
             const { usd } = conversionRate ? conversionRate[grantCurrency?.symbol!] : 0;
-            const mul = usd !== 0 ? getMultiplier(usd) : -1;
+            const mul = usd && usd !== 0 ? getMultiplier(usd) : -1;
             const amount = mul !== -1 ? BigNumber.from(grant.reward.committed)
               .mul(BigNumber.from(parseInt((usd * mul).toString(), 10)))
               .div(parseInt(mul.toString(), 10)) : -1;
