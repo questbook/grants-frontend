@@ -22,7 +22,7 @@ import Sidebar from '../src/components/browse_grants/sidebar';
 import Heading from '../src/components/ui/heading';
 import supportedCurrencies from '../src/constants/supportedCurrencies';
 import NavbarLayout from '../src/layout/navbarLayout';
-import { formatAmount, getMultiplier } from '../src/utils/formattingUtils';
+import { formatAmount, formatAmountUpto2Decimals, getMultiplier } from '../src/utils/formattingUtils';
 import { ApiClientsContext } from './_app';
 
 const PAGE_SIZE = 20;
@@ -160,6 +160,7 @@ function BrowseGrants() {
             const amount = mul !== -1 ? BigNumber.from(grant.reward.committed)
               .mul(BigNumber.from(parseInt((usd * mul).toString(), 10)))
               .div(parseInt(mul.toString(), 10)) : -1;
+            // console.log(formatAmountUpto2Decimals(amount.toString()));
 
             return (
               <GrantCard
@@ -178,7 +179,7 @@ function BrowseGrants() {
                     ? getIcon(grantCurrency.label)
                     : '/images/dummy/Ethereum Icon.svg'
                 }
-                grantAmountInUSD={amount !== -1 ? formatAmount(amount.toString()) : ''}
+                grantAmountInUSD={amount !== -1 ? formatAmountUpto2Decimals(amount.toString()) : ''}
                 isGrantVerified={grant.funding > 0}
                 onClick={() => {
                   if (!(accountData && accountData.address)) {

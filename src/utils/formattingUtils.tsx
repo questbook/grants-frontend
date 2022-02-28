@@ -69,6 +69,12 @@ export function getMultiplier(n: number) {
   return 10 ** (m.length - m.indexOf('.') - 1);
 }
 
+export function formatAmountUpto2Decimals(number: string) {
+  const value = ethers.utils.formatUnits(number, 18).toString();
+  const truncatedValue = value.substring(0, value.indexOf('.') + 3);
+  return nFormatter(truncatedValue);
+}
+
 export function highlightWordsInString(
   string: string,
   words: string[],
