@@ -7,8 +7,6 @@ import {
   Link,
   useToast,
   ToastId,
-  Center,
-  CircularProgress,
 } from '@chakra-ui/react';
 import React from 'react';
 import {
@@ -18,6 +16,7 @@ import { parseAmount, truncateStringFromMiddle } from 'src/utils/formattingUtils
 import { BigNumber } from 'ethers';
 import InfoToast from 'src/components/ui/infoToast';
 import { isValidAddress } from 'src/utils/validationUtils';
+import Loader from 'src/components/ui/loader';
 import Dropdown from '../../ui/forms/dropdown';
 import SingleLineInput from '../../ui/forms/singleLineInput';
 import Modal from '../../ui/modal';
@@ -103,6 +102,7 @@ function WithdrawFunds({
       setType(1);
       showToast({ link: `https://etherscan.io/tx/${transferTxn.transactionHash}` });
     } catch {
+      setType(-1);
       setHasClicked(false);
       toast({
         title: 'Withdrawal failed!',
@@ -189,15 +189,10 @@ function WithdrawFunds({
                 network
               </Text>
             )}
-            {hasClicked ? (
-              <Center>
-                <CircularProgress isIndeterminate color="brand.500" size="48px" mt={10} mb={9} />
-              </Center>
-            ) : (
-              <Button variant="primary" mt={addressError ? 5 : 10} mb={9} onClick={withdraw} disabled={addressError || type === 0}>
-                Withdraw
-              </Button>
-            )}
+
+            <Button variant="primary" mt={addressError ? 5 : 10} mb={9} onClick={hasClicked ? () => {} : withdraw} py={hasClicked ? 2 : 0}>
+              {hasClicked ? <Loader /> : 'Withdraw'}
+            </Button>
           </Flex>
         )}
         {type === 1 && (

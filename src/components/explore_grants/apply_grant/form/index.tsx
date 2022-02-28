@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import React, { useContext, useState } from 'react';
 import {
-  Box, Button, Text, Image, Link, Flex, Container, useToast, ToastId, Center, CircularProgress,
+  Box, Button, Text, Image, Link, Flex, Container, useToast, ToastId,
 } from '@chakra-ui/react';
 import { useContract, useSigner } from 'wagmi';
 import { GrantApplicationRequest } from '@questbook/service-validator-client';
 import { useRouter } from 'next/router';
 import { isValidEmail } from 'src/utils/validationUtils';
+import Loader from 'src/components/ui/loader';
 import { parseAmount } from '../../../../utils/formattingUtils';
 import { GrantApplicationFieldsSubgraph, GrantApplicationCreateSubgraph } from '../../../../types/application';
 import InfoToast from '../../../ui/infoToast';
@@ -385,15 +386,9 @@ function Form({
 
       <Box mt={5} />
 
-      {hasClicked ? (
-        <Center>
-          <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
-        </Center>
-      ) : (
-        <Button onClick={handleOnSubmit} mx={10} alignSelf="stretch" variant="primary">
-          Submit Application
-        </Button>
-      )}
+      <Button onClick={hasClicked ? () => {} : handleOnSubmit} mx={10} alignSelf="stretch" variant="primary" py={hasClicked ? 2 : 0}>
+        {hasClicked ? <Loader /> : 'Submit Application'}
+      </Button>
     </Flex>
   );
 }

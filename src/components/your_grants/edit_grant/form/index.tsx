@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import React, { useState } from 'react';
 import {
-  Box, Button, Text, Image, Link, Flex, CircularProgress, Center,
+  Box, Button, Text, Image, Link, Flex,
 } from '@chakra-ui/react';
+import Loader from 'src/components/ui/loader';
 import Title from './1_title';
 import Details from './2_details';
 import ApplicantDetails from './3_applicantDetails';
@@ -161,16 +162,21 @@ function Form({
     }
   };
 
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
   return (
     <>
       <Heading mt="18px" title="Edit your grant" />
 
       <Flex mt="-73px" justifyContent="flex-end">
-        {hasClicked ? (
-          <Center>
-            <CircularProgress isIndeterminate color="brand.500" size="48px" />
-          </Center>
-        ) : <Button onClick={handleOnSubmit} variant="primary">Save</Button>}
+        <Button
+          ref={buttonRef}
+          w={hasClicked ? buttonRef.current?.offsetWidth : 'auto'}
+          onClick={hasClicked ? () => {} : handleOnSubmit}
+          py={hasClicked ? 2 : 0}
+          variant="primary"
+        >
+          {hasClicked ? <Loader /> : 'Save'}
+        </Button>
       </Flex>
 
       <Text
@@ -288,15 +294,9 @@ function Form({
         </Text>
       </Flex>
 
-      {hasClicked ? (
-        <Center>
-          <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
-        </Center>
-      ) : (
-        <Button onClick={handleOnSubmit} variant="primary">
-          Save Changes
-        </Button>
-      )}
+      <Button onClick={hasClicked ? () => {} : handleOnSubmit} py={hasClicked ? 2 : 0} variant="primary">
+        {hasClicked ? <Loader /> : 'Save Changes'}
+      </Button>
     </>
   );
 }

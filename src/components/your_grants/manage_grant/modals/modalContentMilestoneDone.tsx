@@ -1,5 +1,5 @@
 import {
-  ModalBody, Flex, Text, Button, Box, Image, useToast, Center, CircularProgress, ToastId,
+  ModalBody, Flex, Text, Button, Box, Image, useToast, ToastId,
 } from '@chakra-ui/react';
 import config from 'src/constants/config';
 import { ApiClientsContext } from 'pages/_app';
@@ -9,6 +9,7 @@ import { getFormattedDateFromUnixTimestampWithYear, getMilestoneMetadata } from 
 import { useContract, useSigner } from 'wagmi';
 import InfoToast from 'src/components/ui/infoToast';
 import { ApplicationMilestone } from 'src/types';
+import Loader from 'src/components/ui/loader';
 import MultiLineInput from '../../../ui/forms/multiLineInput';
 
 interface Props {
@@ -162,16 +163,9 @@ function ModalContent({ milestone, done }: Props) {
             </Button>
           </Text>
         </Flex>
-
-        {hasClicked ? (
-          <Center>
-            <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
-          </Center>
-        ) : (
-          <Button w="100%" variant="primary" mt={8} onClick={markAsDone}>
-            Mark as Done
-          </Button>
-        )}
+        <Button w="100%" variant="primary" mt={8} py={hasClicked ? 2 : 0} onClick={hasClicked ? () => {} : markAsDone}>
+          {hasClicked ? <Loader /> : 'Mark as Done'}
+        </Button>
         <Box mb={4} />
       </Flex>
     </ModalBody>

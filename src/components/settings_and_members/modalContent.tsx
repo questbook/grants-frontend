@@ -1,5 +1,5 @@
 import {
-  ModalBody, Button, Text, Box, useToast, Flex, Image, Link,
+  ModalBody, Button, Text, Box, useToast, Flex, Image, Link, ToastId,
 } from '@chakra-ui/react';
 import React, { useContext } from 'react';
 import { useContract, useSigner } from 'wagmi';
@@ -8,6 +8,8 @@ import SingleLineInput from '../ui/forms/singleLineInput';
 import config from '../../constants/config';
 import WorkspaceRegistryABI from '../../contracts/abi/WorkspaceRegistryAbi.json';
 import { ApiClientsContext } from '../../../pages/_app';
+import Loader from '../ui/loader';
+import InfoToast from '../ui/infoToast';
 
 interface Props {
   onClose: () => void;
@@ -25,6 +27,27 @@ function ModalContent({
 
   const [signerStates] = useSigner();
   const toast = useToast();
+  const [hasClicked, setHasClicked] = React.useState(false);
+  const toastRef = React.useRef<ToastId>();
+
+  const closeToast = () => {
+    if (toastRef.current) {
+      toast.close(toastRef.current);
+    }
+  };
+
+  const showToast = ({ link } : { link: string }) => {
+    toastRef.current = toast({
+      position: 'top',
+      render: () => (
+        <InfoToast
+          link={link}
+          close={closeToast}
+        />
+      ),
+    });
+  };
+
   const workspaceFactoryContract = useContract({
     addressOrName: config.WorkspaceRegistryAddress,
     contractInterface: WorkspaceRegistryABI,
@@ -47,22 +70,14 @@ function ModalContent({
 
     if (hasError) return;
 
-    toast({
-      title: 'Adding member',
-      status: 'info',
-      duration: 9000,
-      isClosable: true,
-    });
     try {
+      setHasClicked(true);
       const txn = await workspaceFactoryContract.addWorkspaceAdmins(workspaceId, [memberAddress], [memberEmail ?? '']);
-      await txn.wait();
-      toast({
-        title: 'Member added',
-        status: 'info',
-        duration: 9000,
-        isClosable: true,
-      });
+      const transactionData = await txn.wait();
+      setHasClicked(false);
+      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
     } catch (e: any) {
+      setHasClicked(false);
       toast({
         title: e.message,
         status: 'error',
@@ -129,7 +144,7 @@ function ModalContent({
         </Text>
       </Flex>
       <Box my={4} />
-      <Button w="100%" variant="primary" onClick={addMember}>Send Invite</Button>
+      <Button w="100%" py={hasClicked ? 2 : 0} variant="primary" onClick={hasClicked ? () => {} : addMember}>{hasClicked ? <Loader /> : 'Send Invite'}</Button>
       <Box my={8} />
     </ModalBody>
   );

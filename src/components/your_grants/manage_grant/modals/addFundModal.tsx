@@ -9,8 +9,6 @@ import {
   Heading,
   useToast,
   ToastId,
-  Center,
-  CircularProgress,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import Lottie from 'lottie-react';
@@ -21,6 +19,7 @@ import {
 import { BigNumber, ethers } from 'ethers';
 import { formatAmount } from 'src/utils/formattingUtils';
 import InfoToast from 'src/components/ui/infoToast';
+import Loader from 'src/components/ui/loader';
 import Dropdown from '../../../ui/forms/dropdown';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
 import Modal from '../../../ui/modal';
@@ -368,15 +367,9 @@ function AddFunds({
                 {`${formatAmount(walletBalance.toString())} ${rewardAsset?.label}`}
               </Text>
             </Text>
-            {hasClicked ? (
-              <Center>
-                <CircularProgress isIndeterminate color="brand.500" size="48px" my={4} />
-              </Center>
-            ) : (
-              <Button variant="primary" my={8} onClick={() => depositFunds()}>
-                Deposit
-              </Button>
-            )}
+            <Button variant="primary" my={8} py={hasClicked ? 2 : 0} onClick={() => (hasClicked ? {} : depositFunds())}>
+              {hasClicked ? <Loader /> : 'Deposit'}
+            </Button>
           </Flex>
         )}
       </ModalBody>

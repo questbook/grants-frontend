@@ -2,11 +2,12 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import {
   ModalBody, Flex, Image, Text, Button, Heading,
   Divider, Checkbox, Box, Menu, MenuButton, MenuList,
-  MenuItem, useToast, Center, CircularProgress, ToastId,
+  MenuItem, useToast, ToastId,
 } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import React, { useEffect } from 'react';
 import { useContract, useSigner } from 'wagmi';
+import Loader from 'src/components/ui/loader';
 import InfoToast from '../../../ui/infoToast';
 import { formatAmount, parseAmount } from '../../../../utils/formattingUtils';
 import Dropdown from '../../../ui/forms/dropdown';
@@ -308,11 +309,15 @@ function ModalContent({
             </Flex>
           </Flex>
 
-          { hasClicked ? (
-            <Center>
-              <CircularProgress isIndeterminate color="brand.500" size="48px" my={10} />
-            </Center>
-          ) : <Button variant="primary" w="100%" my={10} onClick={sendFundsFromContract}>Send Funds</Button>}
+          <Button
+            variant="primary"
+            w="100%"
+            my={10}
+            onClick={hasClicked ? () => {} : sendFundsFromContract}
+            py={hasClicked ? 2 : 0}
+          >
+            {hasClicked ? <Loader /> : 'Send Funds'}
+          </Button>
 
         </Flex>
       )}
@@ -389,12 +394,15 @@ function ModalContent({
           </Flex>
         </Flex>
 
-        {hasClicked ? (
-          <Center>
-            <CircularProgress isIndeterminate color="brand.500" size="48px" my={10} />
-          </Center>
-        ) : <Button variant="primary" w="100%" my={10} onClick={sendFundsFromWallet}>Send Funds</Button>}
-
+        <Button
+          variant="primary"
+          w="100%"
+          my={10}
+          onClick={hasClicked ? () => {} : sendFundsFromWallet}
+          py={hasClicked ? 2 : 0}
+        >
+          {hasClicked ? <Loader /> : 'Send Funds'}
+        </Button>
       </Flex>
       )}
     </ModalBody>

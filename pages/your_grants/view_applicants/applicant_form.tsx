@@ -129,7 +129,7 @@ function ApplicantForm() {
         return;
       }
 
-      if (state === 3 && resubmitComment === '') {
+      if (state === 3 && rejectionComment === '') {
         setRejectionCommentError(true);
         return;
       }

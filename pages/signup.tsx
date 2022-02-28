@@ -209,7 +209,7 @@ function SignupDao() {
         A Grants DAO is a neatly arranged space where you can manage grants,
         review grant applications and fund grants.
       </Text>
-      <Form hasClicked={hasClicked} onSubmit={handleFormSubmit} />
+      <Form onSubmit={handleFormSubmit} />
     </Container>
   );
 }
