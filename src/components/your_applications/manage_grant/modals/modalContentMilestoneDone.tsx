@@ -1,91 +1,72 @@
 import {
-  ModalBody, Flex, Text, Button, Box, Image, useToast, ToastId, Center, CircularProgress,
+  ModalBody,
+  Flex,
+  Text,
+  Button,
+  Box,
+  Image,
+  useToast,
+  ToastId,
+  Center,
+  CircularProgress,
 } from '@chakra-ui/react';
-import React, { useContext, useState } from 'react';
-import { useContract, useSigner } from 'wagmi';
+import React, { useEffect, useState } from 'react';
 import InfoToast from 'src/components/ui/infoToast';
 import { ApplicationMilestone } from 'src/types';
-import { ApiClientsContext } from '../../../../../pages/_app';
-import config from '../../../../constants/config';
+import useRequestMilestoneApproval from 'src/hooks/useRequestMilestoneApproval';
+import { SupportedChainId } from 'src/constants/chains';
 import { getMilestoneMetadata } from '../../../../utils/formattingUtils';
-import ApplicationRegistryAbi from '../../../../contracts/abi/ApplicationRegistryAbi.json';
 import MultiLineInput from '../../../ui/forms/multiLineInput';
 
 interface Props {
-  milestone: ApplicationMilestone | undefined
+  chainId: SupportedChainId | undefined;
+  milestone: ApplicationMilestone | undefined;
   onClose: () => void;
 }
 
-function ModalContent({ milestone, onClose }: Props) {
-  const { validatorApi } = useContext(ApiClientsContext)!;
-  const [signerStates] = useSigner();
-  const applicationRegContract = useContract({
-    addressOrName: config.ApplicationRegistryAddress,
-    contractInterface: ApplicationRegistryAbi,
-    signerOrProvider: signerStates.data,
-  });
-
+function ModalContent({ milestone, onClose, chainId }: Props) {
   const [details, setDetails] = useState('');
   const [detailsError, setDetailsError] = useState(false);
 
-  const [hasClicked, setHasClicked] = React.useState(false);
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
 
-  const closeToast = () => {
-    if (toastRef.current) {
-      toast.close(toastRef.current);
-    }
-  };
+  const { milestoneIndex, applicationId } = getMilestoneMetadata(milestone)!;
+  const [milestoneUpdate, setMilestoneUpdate] = useState<any>();
+  const [txn, loading] = useRequestMilestoneApproval(
+    milestoneUpdate,
+    chainId,
+    applicationId,
+    milestoneIndex,
+  );
 
-  const showToast = ({ link } : { link: string }) => {
-    toastRef.current = toast({
-      position: 'top',
-      render: () => (
-        <InfoToast
-          link={link}
-          close={closeToast}
-        />
-      ),
-    });
-  };
+  useEffect(() => {
+    if (txn) {
+      setMilestoneUpdate(undefined);
+      onClose();
+      toastRef.current = toast({
+        position: 'top',
+        render: () => (
+          <InfoToast
+            link={`https://etherscan.io/tx/${txn.transactionHash}`}
+            close={() => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            }}
+          />
+        ),
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toast, txn]);
 
   const markAsDone = async () => {
     if (!details) {
       setDetailsError(true);
       return;
     }
-
-    setHasClicked(true);
-
-    try {
-      const { data } = await validatorApi.validateApplicationMilestoneUpdate({ text: details });
-      const { milestoneIndex, applicationId } = getMilestoneMetadata(milestone)!;
-      // contract interaction
-      const transaction = await applicationRegContract.requestMilestoneApproval(
-        applicationId,
-        Number(milestoneIndex),
-        data.ipfsHash,
-      );
-
-      const transactionData = await transaction.wait();
-      setHasClicked(false);
-      onClose();
-
-      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
-      // await subgraphClient.waitForBlock(transactionData.blockNumber);
-    } catch (error: any) {
-      // console.error('error in milestone update ', error);
-      toast({
-        title: error.name,
-        description: error.message,
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
-      });
-    } finally {
-      setHasClicked(false);
-    }
+    setMilestoneUpdate({ text: details });
   };
 
   return (
@@ -93,8 +74,8 @@ function ModalContent({ milestone, onClose }: Props) {
       <Flex direction="column" justify="start" align="center">
         <Image src="/ui_icons/milestone_complete.svg" mt={6} />
         <Text textAlign="center" variant="applicationText" mt={6}>
-          Add a brief summary of what was achieved in the milestone,
-          timelines and links to show your proof of work.
+          Add a brief summary of what was achieved in the milestone, timelines
+          and links to show your proof of work.
         </Text>
         <Text mt={8} textAlign="center" variant="applicationText">
           The grantor can see your summary.
@@ -135,9 +116,14 @@ function ModalContent({ milestone, onClose }: Props) {
             </Button>
           </Text>
         </Flex>
-        {hasClicked ? (
+        {loading ? (
           <Center>
-            <CircularProgress isIndeterminate color="brand.500" size="48px" mt={10} />
+            <CircularProgress
+              isIndeterminate
+              color="brand.500"
+              size="48px"
+              mt={10}
+            />
           </Center>
         ) : (
           <Button w="100%" variant="primary" mt={8} onClick={markAsDone}>

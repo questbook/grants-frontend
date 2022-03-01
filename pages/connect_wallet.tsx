@@ -8,20 +8,32 @@ import {
   Image,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useEffect } from 'react';
+import React, {
+  ReactElement, useEffect,
+} from 'react';
 import { useConnect } from 'wagmi';
+import {
+  ALL_SUPPORTED_CHAIN_IDS,
+  SupportedChainId,
+} from 'src/constants/chains';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ModalContent from '../src/components/connect_wallet/modalContent';
 import WalletSelectButton from '../src/components/connect_wallet/walletSelectButton';
 import Modal from '../src/components/ui/modal';
 import SecondaryDropdown from '../src/components/ui/secondaryDropdown';
 import Tooltip from '../src/components/ui/tooltip';
 import NavbarLayout from '../src/layout/navbarLayout';
-import compatibleNetworks from '../src/constants/compatibleNetworks.json';
 import strings from '../src/constants/strings.json';
+
+// @TODO: harmony testnet image and currencies
+// @TODO: why is toc link removed?
 
 function ConnectWallet() {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [selectedNetworkId, setSelectedNetworkId] = React.useState(1);
+  const [
+    selectedNetworkId,
+    setSelectedNetworkId,
+  ] = React.useState<SupportedChainId>(ALL_SUPPORTED_CHAIN_IDS[0]);
   const router = useRouter();
 
   const [{ data: connectData, loading: connectLoading }] = useConnect();
@@ -31,14 +43,14 @@ function ConnectWallet() {
       if (router.query.flow === 'getting_started/dao') {
         router.replace('/signup/');
       } else if (router.query.flow === 'getting_started/developer') {
-        router.push({ pathname: '/', query: { account: true } });
+        router.push({ pathname: '/' });
       } else if (router.query.flow === '/') {
-        router.push({
+        router.replace({
           pathname: '/explore_grants/about_grant',
-          query: { account: true },
+          query: { grantId: router.query.grantId, chainId: router.query.chainId },
         });
       } else {
-        router.push({ pathname: '/', query: { account: true } });
+        router.push({ pathname: '/' });
       }
     }
   }, [connectLoading, connectData, router]);
@@ -66,7 +78,9 @@ function ConnectWallet() {
       flexDirection="column"
       alignItems="center"
     >
-      <Text mt="46px" variant="heading">{strings.connect_wallet.heading}</Text>
+      <Text mt="46px" variant="heading">
+        {strings.connect_wallet.heading}
+      </Text>
       <Text mt={7} textAlign="center">
         {strings.connect_wallet.subheading_1}
         <Tooltip label={strings.connect_wallet.tooltip_label} />
@@ -78,22 +92,14 @@ function ConnectWallet() {
           {strings.connect_wallet.dropdown_label}
         </Text>
         <SecondaryDropdown
-          // listElements={['Ethereum', 'Solana', 'Harmony', 'Bitcoin']}
-          // isOpen={isMenuOpen}
-          // setIsOpen={setIsMenuOpen}
           listItemsMinWidth="280px"
-          listItems={Object.keys(compatibleNetworks)
-            .sort((a, b) => parseInt(b, 10) - parseInt(a, 10)).map((networkId: any) => ({
-              id: networkId,
-              label: compatibleNetworks[
-                networkId.toString() as keyof typeof compatibleNetworks
-              ].name,
-              icon: compatibleNetworks[
-                networkId.toString() as keyof typeof compatibleNetworks
-              ].icon,
-            }))}
+          listItems={ALL_SUPPORTED_CHAIN_IDS.map((chainId) => ({
+            id: chainId,
+            label: CHAIN_INFO[chainId].name,
+            icon: CHAIN_INFO[chainId].icon,
+          }))}
           // value={rewardCurrency}
-          onChange={(id: number) => {
+          onChange={(id: SupportedChainId) => {
             setSelectedNetworkId(id);
           }}
         />
@@ -114,9 +120,7 @@ function ConnectWallet() {
         flexDirection="column"
         mt={7}
       >
-        {compatibleNetworks[
-          selectedNetworkId.toString() as keyof typeof compatibleNetworks
-        ].wallets.map(({ name, icon, id }) => (
+        {CHAIN_INFO[selectedNetworkId].wallets.map(({ name, icon, id }) => (
           <WalletSelectButton
             key={id}
             name={name}
