@@ -149,7 +149,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
   useEffect(() => {
     const id = workspaces[selectedWorkspaceIndex]?.id;
     apiClients?.setWorkspaceId(id);
-  }, [selectedWorkspaceIndex, workspaces]);
+  }, [apiClients, selectedWorkspaceIndex, workspaces]);
 
   return (
     <VStack alignItems="center" maxH="100vh" width="100%" spacing={0} p={0}>

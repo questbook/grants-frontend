@@ -87,7 +87,7 @@ function ViewApplication() {
         pb={8}
         px={10}
       >
-        <Breadcrumbs path={['Your Applications', 'Grant Application']} />
+        <Breadcrumbs path={['My Applications', 'Grant Application']} />
         <Form
           onSubmit={application && application?.state !== 'resubmit' ? null : ({ data }) => {
             router.push({
