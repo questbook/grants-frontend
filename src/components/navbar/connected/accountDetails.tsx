@@ -88,6 +88,13 @@ function AccountDetails() {
       </MenuButton>
       <MenuList>
         <MenuItem
+          isDisabled
+        >
+          Signed in with
+          {' '}
+          {data?.connector?.name}
+        </MenuItem>
+        <MenuItem
           onClick={() => {
             disconnect();
             router.replace('/');

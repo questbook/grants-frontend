@@ -135,22 +135,19 @@ function ConnectWallet() {
         ))}
       </VStack>
 
-      {router.query.flow !== 'getting_started/developer' && (
-        <Text variant="footer" mt="24px">
-          <Image
-            display="inline-block"
-            src="/ui_icons/protip.svg"
-            alt="pro tip"
-            mb="-2px"
-          />
-          {' '}
-          <Text variant="footer" fontWeight="700" display="inline-block">
-            Pro Tip:
-            {' '}
-          </Text>
-          {' '}
-          {strings.connect_wallet.protip}
-        </Text>
+      {router.query.flow === 'getting_started/dao' && (
+      <Text variant="footer" mt="24px">
+        <Image
+          display="inline-block"
+          src="/ui_icons/protip.svg"
+          alt="pro tip"
+          mb="-2px"
+        />
+        {' '}
+        <Text variant="footer" fontWeight="700" display="inline-block">Pro Tip: </Text>
+        {' '}
+        {strings.connect_wallet.protip}
+      </Text>
       )}
 
       <Text variant="footer" my="36px">

@@ -114,7 +114,7 @@ function ViewApplication() {
         pb={8}
         px={10}
       >
-        <Breadcrumbs path={['Your Applications', 'Grant Application']} />
+        <Breadcrumbs path={['My Applications', 'Grant Application']} />
         <Form
           chainId={application ? getSupportedChainIdFromSupportedNetwork(
             application!.grant.workspace.supportedNetworks[0],
