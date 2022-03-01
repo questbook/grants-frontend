@@ -60,6 +60,7 @@ function SignupDao() {
         title: workspaceData.description,
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceTransactionData, imageHash, workspaceData, router]);
 
   const [grantData, setGrantData] = React.useState<any>();

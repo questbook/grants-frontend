@@ -92,7 +92,7 @@ function AccountDetails() {
         >
           Signed in with
           {' '}
-          {data?.connector?.name}
+          {accountData?.connector?.name}
         </MenuItem>
         <MenuItem
           onClick={() => {
