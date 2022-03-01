@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useContext, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box, Button, Text, Image, Link, Flex, Container, useToast, ToastId, Center, CircularProgress,
 } from '@chakra-ui/react';
-import { useContract, useSigner } from 'wagmi';
-import { GrantApplicationRequest } from '@questbook/service-validator-client';
+import { useSigner } from 'wagmi';
 import { useRouter } from 'next/router';
 import { isValidEmail } from 'src/utils/validationUtils';
+import useSubmitApplication from 'src/hooks/useSubmitApplication';
+import { SupportedChainId } from 'src/constants/chains';
+import { GrantApplicationRequest } from '@questbook/service-validator-client';
 import { parseAmount } from '../../../../utils/formattingUtils';
 import { GrantApplicationFieldsSubgraph, GrantApplicationCreateSubgraph } from '../../../../types/application';
 import InfoToast from '../../../ui/infoToast';
@@ -14,12 +16,10 @@ import ApplicantDetails from './1_applicantDetails';
 import AboutProject from './3_aboutProject';
 import AboutTeam from './2_aboutTeam';
 import Funding from './4_funding';
-import config from '../../../../constants/config';
-import ApplicationRegistryAbi from '../../../../contracts/abi/ApplicationRegistryAbi.json';
-import { ApiClientsContext } from '../../../../../pages/_app';
 
 interface Props {
   // onSubmit: (data: any) => void;
+  chainId: SupportedChainId | undefined;
   title: string;
   grantId: string;
   daoLogo: string;
@@ -33,6 +33,7 @@ interface Props {
 // eslint-disable-next-line max-len
 function Form({
   // onSubmit,
+  chainId,
   title,
   grantId,
   daoLogo,
@@ -43,13 +44,6 @@ function Form({
   grantRequiredFields,
 }: Props) {
   const [signer] = useSigner();
-  const applicationRegistryContract = useContract({
-    addressOrName: config.ApplicationRegistryAddress,
-    contractInterface: ApplicationRegistryAbi,
-    signerOrProvider: signer.data,
-  });
-
-  const apiClientContext = useContext(ApiClientsContext);
   const [applicantName, setApplicantName] = useState('');
   const [applicantNameError, setApplicantNameError] = useState(false);
 
@@ -97,197 +91,159 @@ function Form({
   const [fundingBreakdown, setFundingBreakdown] = useState('');
   const [fundingBreakdownError, setFundingBreakdownError] = useState(false);
 
-  const [hasClicked, setHasClicked] = React.useState(false);
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
   const router = useRouter();
 
-  const closeToast = () => {
-    if (toastRef.current) {
-      toast.close(toastRef.current);
-    }
-  };
+  const [formData, setFormData] = React.useState<any>();
+  const [txnData, loading] = useSubmitApplication(formData, chainId, grantId, workspaceId);
 
-  const showToast = ({ link } : { link: string }) => {
-    toastRef.current = toast({
-      position: 'top',
-      render: () => (
-        <InfoToast
-          link={link}
-          close={closeToast}
-        />
-      ),
-    });
-  };
-
-  const handleOnSubmit = async () => {
-    try {
-      let error = false;
-      if (applicantName === '' && grantRequiredFields.includes('applicantName')) {
-        setApplicantNameError(true);
-        error = true;
-      }
-      if ((applicantEmail === '' || !isValidEmail(applicantEmail)) && grantRequiredFields.includes('applicantEmail')) {
-        setApplicantEmailError(true);
-        error = true;
-      }
-      if ((!teamMembers || teamMembers <= 0) && grantRequiredFields.includes('teamMembers')) {
-        setTeamMembersError(true);
-        error = true;
-      }
-
-      let membersDescriptionError = false;
-      const newMembersDescriptionArray = [...membersDescription];
-      membersDescription.forEach((member, index) => {
-        if (member.description === '' && grantRequiredFields.includes('memberDetails')) {
-          newMembersDescriptionArray[index].isError = true;
-          membersDescriptionError = true;
-        }
+  useEffect(() => {
+    if (txnData) {
+      toastRef.current = toast({
+        position: 'top',
+        render: () => (
+          <InfoToast
+            link={`https://etherscan.io/tx/${txnData.transactionHash}`}
+            close={() => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            }}
+          />
+        ),
       });
-
-      if (membersDescriptionError) {
-        setMembersDescription(newMembersDescriptionArray);
-        error = true;
-      }
-
-      if (projectName === '' && grantRequiredFields.includes('projectName')) {
-        setProjectNameError(true);
-        error = true;
-      }
-
-      let projectLinksError = false;
-      const newProjectLinks = [...projectLinks];
-      projectLinks.forEach((project, index) => {
-        if (project.link === '' && grantRequiredFields.includes('projectLink')) {
-          newProjectLinks[index].isError = true;
-          projectLinksError = true;
-        }
-      });
-
-      if (projectLinksError) {
-        setProjectLinks(newProjectLinks);
-        error = true;
-      }
-
-      if (projectDetails === '' && grantRequiredFields.includes('projectDetails')) {
-        setProjectDetailsError(true);
-        error = true;
-      }
-      if (projectGoal === '' && grantRequiredFields.includes('projectGoals')) {
-        setProjectGoalError(true);
-        error = true;
-      }
-
-      let projectMilestonesError = false;
-      const newProjectMilestones = [...projectMilestones];
-      projectMilestones.forEach((project, index) => {
-        if (project.milestone === '') {
-          newProjectMilestones[index].milestoneIsError = true;
-          projectMilestonesError = true;
-        }
-        if (project.milestoneReward === '') {
-          newProjectMilestones[index].milestoneRewardIsError = true;
-          projectMilestonesError = true;
-        }
-      });
-
-      if (projectMilestonesError) {
-        setProjectMilestones(newProjectMilestones);
-        error = true;
-      }
-
-      if (fundingAsk === '' && grantRequiredFields.includes('fundingAsk')) {
-        setFundingAskError(true);
-        error = true;
-      }
-      if (fundingBreakdown === '' && grantRequiredFields.includes('fundingBreakdown')) {
-        setFundingBreakdownError(true);
-        error = true;
-      }
-      if (error) {
-        return;
-      }
-      const links = projectLinks.map((pl) => (pl.link));
-
-      const milestones = projectMilestones.map((pm) => (
-        { title: pm.milestone, amount: parseAmount(pm.milestoneReward) }
-      ));
-
-      if (!signer || !signer.data || !apiClientContext) return;
-      setHasClicked(true);
-      const data: GrantApplicationCreateSubgraph = {
-        grantId,
-        applicantId: await signer?.data?.getAddress(),
-        fields: {
-          applicantName: [applicantName],
-          applicantEmail: [applicantEmail],
-          projectName: [projectName],
-          projectDetails: [projectDetails],
-          fundingAsk: [parseAmount(fundingAsk)],
-          fundingBreakdown: [fundingBreakdown],
-          teamMembers: [Number(teamMembers).toString()],
-          memberDetails: membersDescription.map((md) => (md.description)),
-          projectLink: links,
-          projectGoals: [projectGoal],
-          isMultipleMilestones: [grantRequiredFields.includes('isMultipleMilestones').toString()],
-        },
-        milestones,
-
-      };
-      Object.keys(data.fields).forEach((field) => {
-        if (!grantRequiredFields.includes(field)) {
-          delete data.fields[field as keyof GrantApplicationFieldsSubgraph];
-        }
-      });
-      const { data: { ipfsHash } } = await apiClientContext
-        .validatorApi
-        .validateGrantApplicationCreate(data as unknown as GrantApplicationRequest);
-
-      const transaction = await applicationRegistryContract.submitApplication(
-        grantId,
-        Number(workspaceId).toString(),
-        ipfsHash,
-        projectMilestones.length,
-      );
-      const transactionData = await transaction.wait();
-      // toast({ title: 'Transaction succeeded', status: 'success' });
-
-      setHasClicked(false);
-      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
       router.replace({
         pathname: '/your_applications',
       });
-      // await subgraphClient.waitForBlock(transactionData.blockNumber);
-
-      // const { data: { grantApplications } } = (await subgraphClient.client.query(
-      //   {
-
-      //     query: gql(getGrantApplication),
-      //     variables: {
-      //       grantID: grantId,
-      //       applicantID: await signer?.data?.getAddress(),
-      //     },
-      //   },
-      // )) as any;
-      // console.log(grantApplications);
-      // if (!(grantApplications.length > 0)) {
-      //   throw new Error('Application not indexed');
-      // }
-
-      // onSubmit({ data: grantApplications });
-    } catch (error) {
-      setHasClicked(false);
-      // console.log(error);
-      toast({
-        title: 'Application not indexed',
-        status: 'error',
-      });
     }
+  }, [toast, router, txnData]);
+
+  const handleOnSubmit = async () => {
+    let error = false;
+    if (applicantName === '' && grantRequiredFields.includes('applicantName')) {
+      setApplicantNameError(true);
+      error = true;
+    }
+    if ((applicantEmail === '' || !isValidEmail(applicantEmail)) && grantRequiredFields.includes('applicantEmail')) {
+      setApplicantEmailError(true);
+      error = true;
+    }
+    if ((!teamMembers || teamMembers <= 0) && grantRequiredFields.includes('teamMembers')) {
+      setTeamMembersError(true);
+      error = true;
+    }
+
+    let membersDescriptionError = false;
+    const newMembersDescriptionArray = [...membersDescription];
+    membersDescription.forEach((member, index) => {
+      if (member.description === '' && grantRequiredFields.includes('memberDetails')) {
+        newMembersDescriptionArray[index].isError = true;
+        membersDescriptionError = true;
+      }
+    });
+
+    if (membersDescriptionError) {
+      setMembersDescription(newMembersDescriptionArray);
+      error = true;
+    }
+
+    if (projectName === '' && grantRequiredFields.includes('projectName')) {
+      setProjectNameError(true);
+      error = true;
+    }
+
+    let projectLinksError = false;
+    const newProjectLinks = [...projectLinks];
+    projectLinks.forEach((project, index) => {
+      if (project.link === '' && grantRequiredFields.includes('projectLink')) {
+        newProjectLinks[index].isError = true;
+        projectLinksError = true;
+      }
+    });
+
+    if (projectLinksError) {
+      setProjectLinks(newProjectLinks);
+      error = true;
+    }
+
+    if (projectDetails === '' && grantRequiredFields.includes('projectDetails')) {
+      setProjectDetailsError(true);
+      error = true;
+    }
+    if (projectGoal === '' && grantRequiredFields.includes('projectGoals')) {
+      setProjectGoalError(true);
+      error = true;
+    }
+
+    let projectMilestonesError = false;
+    const newProjectMilestones = [...projectMilestones];
+    projectMilestones.forEach((project, index) => {
+      if (project.milestone === '') {
+        newProjectMilestones[index].milestoneIsError = true;
+        projectMilestonesError = true;
+      }
+      if (project.milestoneReward === '') {
+        newProjectMilestones[index].milestoneRewardIsError = true;
+        projectMilestonesError = true;
+      }
+    });
+
+    if (projectMilestonesError) {
+      setProjectMilestones(newProjectMilestones);
+      error = true;
+    }
+
+    if (fundingAsk === '' && grantRequiredFields.includes('fundingAsk')) {
+      setFundingAskError(true);
+      error = true;
+    }
+    if (fundingBreakdown === '' && grantRequiredFields.includes('fundingBreakdown')) {
+      setFundingBreakdownError(true);
+      error = true;
+    }
+    if (error) {
+      return;
+    }
+    const links = projectLinks.map((pl) => (pl.link));
+
+    const milestones = projectMilestones.map((pm) => (
+      { title: pm.milestone, amount: parseAmount(pm.milestoneReward) }
+    ));
+
+    if (!signer || !signer.data) return;
+    const data: GrantApplicationCreateSubgraph = {
+      grantId,
+      applicantId: await signer?.data?.getAddress(),
+      fields: {
+        applicantName: [applicantName],
+        applicantEmail: [applicantEmail],
+        projectName: [projectName],
+        projectDetails: [projectDetails],
+        fundingAsk: [parseAmount(fundingAsk)],
+        fundingBreakdown: [fundingBreakdown],
+        teamMembers: [Number(teamMembers).toString()],
+        memberDetails: membersDescription.map((md) => (md.description)),
+        projectLink: links,
+        projectGoals: [projectGoal],
+        isMultipleMilestones: [grantRequiredFields.includes('isMultipleMilestones').toString()],
+      },
+      milestones,
+
+    };
+    Object.keys(data.fields).forEach((field) => {
+      if (!grantRequiredFields.includes(field)) {
+        delete data.fields[field as keyof GrantApplicationFieldsSubgraph];
+      }
+    });
+
+    // console.log(data);
+    setFormData(data as unknown as GrantApplicationRequest);
   };
 
   return (
     <Flex my="30px" flexDirection="column" alignItems="center" w="100%" px="44px">
-      <Image h="96px" w="96px" src={daoLogo} alt="Polygon DAO" />
+      <Image objectFit="cover" h="96px" w="96px" src={daoLogo} alt="Polygon DAO" />
       <Text mt={6} variant="heading">
         {title}
       </Text>
@@ -385,7 +341,7 @@ function Form({
 
       <Box mt={5} />
 
-      {hasClicked ? (
+      {loading ? (
         <Center>
           <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
         </Center>

@@ -10,18 +10,14 @@ import {
   Center,
   CircularProgress,
 } from '@chakra-ui/react';
-import React from 'react';
-import {
-  useContract, useSigner,
-} from 'wagmi';
+import React, { useEffect } from 'react';
 import { parseAmount, truncateStringFromMiddle } from 'src/utils/formattingUtils';
 import { BigNumber } from 'ethers';
 import InfoToast from 'src/components/ui/infoToast';
-import { isValidAddress } from 'src/utils/validationUtils';
+import useWithdrawFunds from 'src/hooks/useWithdrawFunds';
 import Dropdown from '../../ui/forms/dropdown';
 import SingleLineInput from '../../ui/forms/singleLineInput';
 import Modal from '../../ui/modal';
-import GrantABI from '../../../contracts/abi/GrantAbi.json';
 
 interface Props {
   isOpen: boolean;
@@ -44,74 +40,41 @@ function WithdrawFunds({
   const [address, setAddress] = React.useState('');
   const [addressError, setAddressError] = React.useState(false);
   const toast = useToast();
-  const [signerStates] = useSigner();
-  const grantContract = useContract({
-    addressOrName: grantAddress ?? '0x0000000000000000000000000000000000000000',
-    contractInterface: GrantABI,
-    signerOrProvider: signerStates.data,
-  });
 
   const [transactionHash, setTransactionHash] = React.useState('');
-  const [hasClicked, setHasClicked] = React.useState(false);
   const toastRef = React.useRef<ToastId>();
 
-  const closeToast = () => {
-    if (toastRef.current) {
-      toast.close(toastRef.current);
-    }
-  };
-  const showToast = ({ link } : { link: string }) => {
-    toastRef.current = toast({
-      position: 'top',
-      render: () => (
-        <InfoToast
-          link={link}
-          close={closeToast}
-        />
-      ),
-    });
-  };
+  const [finalAmount, setFinalAmount] = React.useState<string>();
+  const [withdrawTransactionData, loading] = useWithdrawFunds(
+    finalAmount,
+    rewardAsset.address,
+    grantAddress,
+    address,
+  );
 
-  const withdraw = async () => {
-    let hasError: boolean = false;
-
-    if (funding === '') {
-      setError(true);
-      hasError = true;
-    }
-
-    if (!isValidAddress(address)) {
-      setAddressError(true);
-      hasError = true;
-    }
-
-    if (hasError) return;
-
-    setType(0);
-    const finalAmount = parseAmount(funding.toString());
-    try {
-      setHasClicked(true);
-      const transferTxn = await grantContract.withdrawFunds(
-        rewardAsset.address,
-        finalAmount,
-        address,
-      );
-      const transactionData = await transferTxn.wait();
-
-      setHasClicked(false);
-      setTransactionHash(transactionData.transactionHash);
+  useEffect(() => {
+    // console.log(depositTransactionData);
+    if (withdrawTransactionData) {
       setType(1);
-      showToast({ link: `https://etherscan.io/tx/${transferTxn.transactionHash}` });
-    } catch {
-      setHasClicked(false);
-      toast({
-        title: 'Withdrawal failed!',
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
+      setTransactionHash(withdrawTransactionData.hash);
+      setFinalAmount(undefined);
+      setFunding('');
+      toastRef.current = toast({
+        position: 'top',
+        render: () => (
+          <InfoToast
+            link={`https://etherscan.io/tx/${withdrawTransactionData.transactionHash}`}
+            close={() => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            }}
+          />
+        ),
       });
     }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toast, withdrawTransactionData]);
 
   return (
     <Modal
@@ -189,12 +152,12 @@ function WithdrawFunds({
                 network
               </Text>
             )}
-            {hasClicked ? (
+            {loading ? (
               <Center>
                 <CircularProgress isIndeterminate color="brand.500" size="48px" mt={10} mb={9} />
               </Center>
             ) : (
-              <Button variant="primary" mt={addressError ? 5 : 10} mb={9} onClick={withdraw} disabled={addressError || type === 0}>
+              <Button variant="primary" mt={addressError ? 5 : 10} mb={9} onClick={() => setFinalAmount(parseAmount(funding.toString()))} disabled={addressError || type === 0}>
                 Withdraw
               </Button>
             )}

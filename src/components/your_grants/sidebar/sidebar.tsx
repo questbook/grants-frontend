@@ -57,7 +57,7 @@ function Sidebar() {
         <Text variant="heading">
           Here is what you can do
           {' '}
-          <Text display="inline-block" color="#EA5050" variant="heading" fontWeight="600" letterSpacing={-1}>
+          <Text as="span" display="inline-block" color="#EA5050" variant="heading" fontWeight="600" letterSpacing={-1}>
             next?
           </Text>
         </Text>
@@ -65,7 +65,7 @@ function Sidebar() {
         <Box mb={9} />
 
         {listItems.map((item) => (
-          <Flex direction="row" align="start" mb={14}>
+          <Flex key={item.title} direction="row" align="start" mb={14}>
             <Image src={item.icon} boxSize="30px" />
             <Flex ml={4} direction="column" align="start">
               <Text

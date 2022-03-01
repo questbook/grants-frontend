@@ -99,6 +99,7 @@ function Table(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
     );
   };
 
+  const { chainId } = props;
   return (
     <>
       <AbstractMilestonesTable
@@ -112,6 +113,7 @@ function Table(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
         alignTitle="center"
       >
         <MilestoneDoneModalContent
+          chainId={chainId}
           milestone={openedModal?.milestone}
           onClose={() => {
             // eslint-disable-next-line react/destructuring-assignment

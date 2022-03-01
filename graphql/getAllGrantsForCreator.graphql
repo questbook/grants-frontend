@@ -1,9 +1,9 @@
-query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes) {
+query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String) {
   grants(
     first: $first, 
     skip: $skip, 
     subgraphError: allow, 
-    where: { creatorId: $creatorId }
+    where: { creatorId: $creatorId, workspace: $workspaceId }
     orderBy: createdAtS, 
     orderDirection: desc
   ) {
@@ -17,7 +17,7 @@ query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes) {
     id,
     asset
   }, 
-  workspace {id, title, logoIpfsHash}, 
+  workspace {id, title, logoIpfsHash, supportedNetworks}, 
   deadline,
   funding,
   numberOfApplications,

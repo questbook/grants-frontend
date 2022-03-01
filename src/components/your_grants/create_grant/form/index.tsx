@@ -1,15 +1,17 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box, Button, Text, Image, Link, Flex, CircularProgress, Center,
 } from '@chakra-ui/react';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
+import useChainId from 'src/hooks/utils/useChainId';
+import { SupportedChainId } from 'src/constants/chains';
 import Title from './1_title';
 import Details from './2_details';
 import ApplicantDetails from './3_applicantDetails';
 import GrantRewardsInput from './4_rewards';
 import Heading from '../../../ui/heading';
 import applicantDetailsList from '../../../../constants/applicantDetailsList';
-import supportedCurrencies from '../../../../constants/supportedCurrencies';
 
 function Form({
   refs,
@@ -65,12 +67,31 @@ function Form({
   const [reward, setReward] = React.useState('');
   const [rewardError, setRewardError] = React.useState(false);
 
+  const currentChain = useChainId() ?? SupportedChainId.RINKEBY;
+
+  const supportedCurrencies = Object.keys(
+    CHAIN_INFO[currentChain].supportedCurrencies,
+  ).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
+    .map((currency) => ({ ...currency, id: currency.address }));
   const [rewardCurrency, setRewardCurrency] = React.useState(
     supportedCurrencies[0].label,
   );
   const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
     supportedCurrencies[0].id,
   );
+
+  useEffect(() => {
+    // console.log(currentChain);
+    if (currentChain) {
+      const supportedCurrencies = Object.keys(
+        CHAIN_INFO[currentChain].supportedCurrencies,
+      ).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
+        .map((currency) => ({ ...currency, id: currency.address }));
+      setRewardCurrency(supportedCurrencies[0].label);
+      setRewardCurrencyAddress(supportedCurrencies[0].address);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentChain]);
 
   const [date, setDate] = React.useState('');
   const [dateError, setDateError] = React.useState(false);
@@ -239,6 +260,7 @@ function Form({
         setDate={setDate}
         dateError={dateError}
         setDateError={setDateError}
+        supportedCurrencies={supportedCurrencies}
       />
 
       <Flex alignItems="flex-start" mt={8} mb={10} maxW="400">
