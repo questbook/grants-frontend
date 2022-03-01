@@ -8,6 +8,7 @@ import BN from 'bn.js';
 import { useRouter } from 'next/router';
 import { useGetGrantDetailsQuery } from 'src/generated/graphql';
 import { ApiClientsContext } from 'pages/_app';
+import GrantShare from 'src/components/ui/grantShare';
 import { SupportedChainId } from 'src/constants/chains';
 import { getAssetInfo } from 'src/utils/tokenUtils';
 import GrantDetails from '../../src/components/explore_grants/about_grant/grantDetails';
@@ -148,6 +149,8 @@ function AboutGrant() {
           >
             {grantStatus}
           </Box>
+          <Box mx="auto" />
+          <GrantShare chainId={chainId} grantID={grantID} />
         </Flex>
 
         <Divider mt={3} />

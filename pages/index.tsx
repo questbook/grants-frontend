@@ -121,6 +121,7 @@ function BrowseGrants() {
             return (
               <GrantCard
                 key={grant.id}
+                grantID={grant.id}
                 daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
                 daoName={grant.workspace.title}
                 isDaoVerified={false}
@@ -145,6 +146,9 @@ function BrowseGrants() {
                   ?? '/images/dummy/Ethereum Icon.svg'
                 }
                 isGrantVerified={isGrantVerified}
+                chainId={getSupportedChainIdFromSupportedNetwork(
+                  grant.workspace.supportedNetworks[0],
+                )}
                 onClick={() => {
                   if (!(accountData && accountData.address)) {
                     router.push({

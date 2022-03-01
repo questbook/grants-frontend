@@ -171,6 +171,9 @@ function YourGrants() {
                     ?? '/images/dummy/Ethereum Icon.svg'
                   }
                 state="done"
+                chainId={getSupportedChainIdFromSupportedNetwork(
+                  grant.workspace.supportedNetworks[0],
+                )}
                 onEditClick={() => router.push({
                   pathname: '/your_grants/edit_grant/',
                   query: {
