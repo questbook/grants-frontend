@@ -171,14 +171,14 @@ function YourGrants() {
                 onEditClick={() => router.push({
                   pathname: '/your_grants/edit_grant/',
                   query: {
-                    grantID: grant.id,
+                    grantId: grant.id,
                   },
                 })}
                 onAddFundsClick={() => initialiseFundModal(grant)}
                 onViewApplicantsClick={() => router.push({
                   pathname: '/your_grants/view_applicants/',
                   query: {
-                    grantID: grant.id,
+                    grantId: grant.id,
                   },
                 })}
               />

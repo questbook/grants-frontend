@@ -161,7 +161,7 @@ function EditGrant() {
   }, [toast, transactionData, router]);
 
   useEffect(() => {
-    setGrantID(router?.query?.grantID?.toString());
+    setGrantID(router?.query?.grantId?.toString());
   }, [router]);
 
   return (

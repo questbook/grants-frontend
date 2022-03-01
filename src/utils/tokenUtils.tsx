@@ -3,9 +3,12 @@ import { SupportedChainId } from 'src/constants/chains';
 import supportedCurrencies from '../constants/supportedCurrencies';
 
 export function getAssetInfo(
-  asset: string,
+  asset?: string,
   chainId?: SupportedChainId,
 ): { label: string; icon: string } {
+  if (!asset) {
+    return { label: '', icon: '' };
+  }
   if (chainId) {
     return {
       label:

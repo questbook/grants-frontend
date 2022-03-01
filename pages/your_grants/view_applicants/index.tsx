@@ -5,12 +5,13 @@ import React, {
   ReactElement, useContext, useEffect, useState,
 } from 'react';
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters';
-import { useGetApplicantsForAGrantLazyQuery } from 'src/generated/graphql';
+import { useGetApplicantsForAGrantQuery } from 'src/generated/graphql';
 import { SupportedChainId } from 'src/constants/chains';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+import { getAssetInfo } from 'src/utils/tokenUtils';
 import { formatAmount } from '../../../src/utils/formattingUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Table from '../../../src/components/your_grants/view_applicants/table';
-import supportedCurrencies from '../../../src/constants/supportedCurrencies';
 import NavbarLayout from '../../../src/layout/navbarLayout';
 import { ApiClientsContext } from '../../_app';
 
@@ -20,70 +21,67 @@ function ViewApplicants() {
   const [applicantsData, setApplicantsData] = useState<any>([]);
   const [grantID, setGrantID] = useState<any>('');
   const router = useRouter();
-  const {
-    setChainId, chainId, subgraphClient,
-  } = useContext(ApiClientsContext)!;
+  const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
 
   useEffect(() => {
     if (router && router.query) {
-      const { chainId: cId } = router.query;
-      setChainId(cId as unknown as SupportedChainId);
+      const { grantId: gId } = router.query;
+      setGrantID(gId);
     }
-  }, [router, setChainId]);
-
-  const [getApplicants] = useGetApplicantsForAGrantLazyQuery({ client: subgraphClient?.client });
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const getGrantData = async () => {
-    if (!subgraphClient) return null;
-    try {
-      const { data } = await getApplicants({
-        variables: {
-          grantID,
-          first: PAGE_SIZE,
-          skip: 0,
-        },
-      });
-      if (data && data.grantApplications.length) {
-        const fetchedApplicantsData = data.grantApplications.map(
-          (applicant) => ({
-            grantTitle: applicant?.grant?.title,
-            applicationId: applicant.id,
-            applicant_address: applicant.applicantId,
-            sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
-            applicant_name: applicant.fields.find((field: any) => field?.id?.includes('applicantName'))?.value[0],
-            funding_asked: {
-              amount: formatAmount(applicant?.fields?.find((field: any) => field?.id?.includes('fundingAsk'))?.value[0] ?? '0'),
-              symbol: supportedCurrencies.find(
-                (currency) => currency.id.toLowerCase()
-                  === applicant?.grant?.reward?.asset?.toLowerCase(),
-              )?.label,
-              icon: supportedCurrencies.find(
-                (currency) => currency?.id?.toLowerCase()
-                  === applicant?.grant?.reward?.asset?.toLowerCase(),
-              )?.icon,
-            },
-            // status: applicationStatuses.indexOf(applicant?.state),
-            status: TableFilters[applicant?.state],
-          }),
-        );
-        setApplicantsData(fetchedApplicantsData);
-      }
-      return true;
-    } catch (e) {
-      // console.log(e);
-      return null;
-    }
-  };
-  useEffect(() => {
-    setGrantID(router?.query?.grantID ?? '');
   }, [router]);
 
+  const [queryParams, setQueryParams] = useState<any>({
+    client:
+      subgraphClients[
+        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      ].client,
+  });
+
   useEffect(() => {
+    if (!workspace) return;
     if (!grantID) return;
-    getGrantData();
+
+    setQueryParams({
+      client:
+        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+      variables: {
+        grantID,
+        first: PAGE_SIZE,
+        skip: 0,
+      },
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [grantID]);
+  }, [workspace, grantID]);
+
+  const { data, error, loading } = useGetApplicantsForAGrantQuery(queryParams);
+  useEffect(() => {
+    if (data && data.grantApplications.length) {
+      const fetchedApplicantsData = data.grantApplications.map((applicant) => ({
+        grantTitle: applicant?.grant?.title,
+        applicationId: applicant.id,
+        applicant_address: applicant.applicantId,
+        sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
+        applicant_name: applicant.fields.find((field: any) => field?.id?.includes('applicantName'))?.value[0],
+        funding_asked: {
+          amount: formatAmount(
+            applicant?.fields?.find((field: any) => field?.id?.includes('fundingAsk'))?.value[0] ?? '0',
+          ),
+          symbol: getAssetInfo(
+            applicant?.grant?.reward?.asset?.toLowerCase(),
+            getSupportedChainIdFromWorkspace(workspace),
+          ).label,
+          icon: getAssetInfo(
+            applicant?.grant?.reward?.asset?.toLowerCase(),
+            getSupportedChainIdFromWorkspace(workspace),
+          ).icon,
+        },
+        // status: applicationStatuses.indexOf(applicant?.state),
+        status: TableFilters[applicant?.state],
+      }));
+      setApplicantsData(fetchedApplicantsData);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, error, loading]);
 
   return (
     <Container maxW="100%" display="flex" px="70px">
@@ -100,16 +98,13 @@ function ViewApplicants() {
         <Table
           title={applicantsData[0]?.grantTitle ?? 'Grant Title'}
           data={applicantsData}
-          onViewApplicantFormClick={
-            (commentData: any) => router.push({
-              pathname: '/your_grants/view_applicants/applicant_form/',
-              query: {
-                commentData,
-                applicationId: commentData.applicationId,
-                chainId,
-              },
-            })
-          }
+          onViewApplicantFormClick={(commentData: any) => router.push({
+            pathname: '/your_grants/view_applicants/applicant_form/',
+            query: {
+              commentData,
+              applicationId: commentData.applicationId,
+            },
+          })}
           // onAcceptApplicationClick={() => router.push({
           //   pathname: '/your_grants/view_applicants/applicant_form/',
           //   query: {
@@ -122,11 +117,11 @@ function ViewApplicants() {
           //     flow: 'rejected',
           //   },
           // })}
+          // eslint-disable-next-line @typescript-eslint/no-shadow
           onManageApplicationClick={(data: any) => router.push({
             pathname: '/your_grants/view_applicants/manage/',
             query: {
               applicationId: data.applicationId,
-              chainId,
             },
           })}
         />

@@ -1,14 +1,24 @@
 import {
-  Flex, Text, Image, useToast, ToastId, Divider,
+  Flex,
+  Text,
+  Image,
+  useToast,
+  ToastId,
+  Divider,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
-  ReactElement, useEffect, useState, useCallback,
+  ReactElement,
+  useEffect,
+  useState,
   useContext,
 } from 'react';
-import { useGetApplicationDetailsLazyQuery } from 'src/generated/graphql';
+import {
+  useGetApplicationDetailsQuery,
+} from 'src/generated/graphql';
 import { SupportedChainId } from 'src/constants/chains';
 import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { ApiClientsContext } from '../../_app';
 import InfoToast from '../../../src/components/ui/infoToast';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
@@ -28,9 +38,7 @@ import Sidebar from '../../../src/components/your_grants/applicant_form/sidebar'
 import NavbarLayout from '../../../src/layout/navbarLayout';
 
 function ApplicantForm() {
-  const {
-    setChainId, chainId, subgraphClient,
-  } = useContext(ApiClientsContext)!;
+  const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
 
   const toastRef = React.useRef<ToastId>();
 
@@ -49,41 +57,43 @@ function ApplicantForm() {
 
   useEffect(() => {
     if (router && router.query) {
-      const { chainId: cId } = router.query;
-      setChainId(cId as unknown as SupportedChainId);
+      const { applicationId: aId } = router.query;
+      setApplicationId(aId);
     }
-  }, [router, setChainId]);
-
-  const [getApplicationDetails] = useGetApplicationDetailsLazyQuery({
-    client: subgraphClient?.client,
-  });
-
-  const getApplicationData = useCallback(async () => {
-    try {
-      const { data } = await getApplicationDetails({
-        variables: {
-          applicationID: applicationId,
-        },
-      });
-      // console.log(data);
-      if (data && data.grantApplication) {
-        setApplicationData(data.grantApplication);
-      }
-      return true;
-    } catch (e) {
-      // console.log(e);
-      return null;
-    }
-  }, [applicationId, getApplicationDetails]);
-
-  useEffect(() => {
-    setApplicationId(router?.query?.applicationId ?? '');
   }, [router]);
 
+  const [queryParams, setQueryParams] = useState<any>({
+    client:
+      subgraphClients[
+        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      ].client,
+  });
+
   useEffect(() => {
+    if (!workspace) return;
     if (!applicationId) return;
-    getApplicationData();
-  }, [applicationId, getApplicationData]);
+
+    setQueryParams({
+      client:
+        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+      variables: {
+        applicationID: applicationId,
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspace, applicationId]);
+
+  const {
+    data,
+    error: queryError,
+    loading: queryLoading,
+  } = useGetApplicationDetailsQuery(queryParams);
+  useEffect(() => {
+    if (data && data.grantApplication) {
+      setApplicationData(data.grantApplication);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, queryError, queryLoading]);
 
   useEffect(() => {
     if (router.query.flow === 'approved') {
@@ -94,11 +104,6 @@ function ApplicantForm() {
   }, [router]);
 
   const [state, setState] = useState<any>(null);
-
-  useEffect(() => {
-    console.log(state);
-  }, [state]);
-
   const [txn, loading, error] = useUpdateApplicationState(
     state === 1 ? resubmitComment : rejectionComment,
     applicationData?.id,
@@ -124,17 +129,16 @@ function ApplicantForm() {
       router.replace({
         pathname: '/your_grants/view_applicants',
         query: {
-          grantID: applicationData?.grant?.id,
-          chainId,
+          grantId: applicationData?.grant?.id,
         },
       });
     } else if (error) {
       setState(undefined);
     }
-  }, [toastRef, toast, router, applicationData, txn, error, chainId]);
+  }, [toastRef, toast, router, applicationData, txn, error]);
 
   const handleApplicationStateUpdate = async (st: number) => {
-    console.log('unsetting state');
+    // console.log('unsetting state');
     setState(undefined);
     if (st === 1 && resubmitComment === '') {
       setResubmitCommentError(true);
@@ -146,7 +150,7 @@ function ApplicantForm() {
       return;
     }
 
-    console.log('setting state');
+    // console.log('setting state');
     setState(st);
   };
 
@@ -160,9 +164,7 @@ function ApplicantForm() {
             applicationData={applicationData}
             hasClicked={loading}
           />
-          <AcceptSidebar
-            applicationData={applicationData}
-          />
+          <AcceptSidebar applicationData={applicationData} />
         </>
       );
     }
@@ -177,9 +179,7 @@ function ApplicantForm() {
             commentError={rejectionCommentError}
             setCommentError={setRejectionCommentError}
           />
-          <RejectSidebar
-            applicationData={applicationData}
-          />
+          <RejectSidebar applicationData={applicationData} />
         </>
       );
     }
@@ -193,9 +193,7 @@ function ApplicantForm() {
           commentError={resubmitCommentError}
           setCommentError={setResubmitCommentError}
         />
-        <ResubmitSidebar
-          applicationData={applicationData}
-        />
+        <ResubmitSidebar applicationData={applicationData} />
       </>
     );
   }
@@ -204,13 +202,7 @@ function ApplicantForm() {
     return (
       <Flex direction="row" w="72%" mx="auto">
         <Flex direction="column" w="100%" m={0} p={0} h="100%">
-          <Flex
-            direction="column"
-            alignItems="stretch"
-            pb={6}
-            px={0}
-            w="100%"
-          >
+          <Flex direction="column" alignItems="stretch" pb={6} px={0} w="100%">
             <Breadcrumbs
               path={['Your Grants', 'View Applicants', 'Applicant Form']}
             />
@@ -219,113 +211,107 @@ function ApplicantForm() {
 
           <Flex direction="row" w="100%" justify="space-between">
             <Flex direction="column" w="65%" align="start">
-              <Flex
-                direction="column"
-                alignItems="stretch"
-                pb={8}
-                w="100%"
-              >
+              <Flex direction="column" alignItems="stretch" pb={8} w="100%">
                 {applicationData && applicationData?.state === 'rejected' && (
-                <Flex
-                  alignItems="flex-start"
-                  bgColor="#FFC0C0"
-                  border="2px solid #EE7979"
-                  px="26px"
-                  py="22px"
-                  borderRadius="6px"
-                  my={4}
-                  mx={10}
-                  alignSelf="stretch"
-                >
                   <Flex
-                    alignItems="center"
-                    justifyContent="center"
-                    bgColor="#F7B7B7"
+                    alignItems="flex-start"
+                    bgColor="#FFC0C0"
                     border="2px solid #EE7979"
-                    borderRadius="40px"
-                    p={2}
-                    h="40px"
-                    w="40px"
-                    mt="5px"
+                    px="26px"
+                    py="22px"
+                    borderRadius="6px"
+                    my={4}
+                    mx={10}
+                    alignSelf="stretch"
                   >
-                    <Image
+                    <Flex
+                      alignItems="center"
+                      justifyContent="center"
+                      bgColor="#F7B7B7"
+                      border="2px solid #EE7979"
+                      borderRadius="40px"
+                      p={2}
                       h="40px"
                       w="40px"
-                      src="/ui_icons/result_rejected_application.svg"
-                      alt="Rejected"
-                    />
-                  </Flex>
-                  <Flex ml="23px" direction="column">
-                    <Text
-                      fontSize="16px"
-                      lineHeight="24px"
-                      fontWeight="700"
-                      color="#7B4646"
+                      mt="5px"
                     >
-                      Application Rejected
-                    </Text>
-                    <Text
-                      fontSize="16px"
-                      lineHeight="24px"
-                      fontWeight="400"
-                      color="#7B4646"
-                    >
-                      {applicationData?.feedbackDao}
-                    </Text>
+                      <Image
+                        h="40px"
+                        w="40px"
+                        src="/ui_icons/result_rejected_application.svg"
+                        alt="Rejected"
+                      />
+                    </Flex>
+                    <Flex ml="23px" direction="column">
+                      <Text
+                        fontSize="16px"
+                        lineHeight="24px"
+                        fontWeight="700"
+                        color="#7B4646"
+                      >
+                        Application Rejected
+                      </Text>
+                      <Text
+                        fontSize="16px"
+                        lineHeight="24px"
+                        fontWeight="400"
+                        color="#7B4646"
+                      >
+                        {applicationData?.feedbackDao}
+                      </Text>
+                    </Flex>
                   </Flex>
-                </Flex>
                 )}
 
                 {applicationData && applicationData?.state === 'resubmit' && (
-                <Flex
-                  alignItems="flex-start"
-                  bgColor="#FEF6D9"
-                  border="2px solid #EFC094"
-                  px="26px"
-                  py="22px"
-                  borderRadius="6px"
-                  my={4}
-                  mx={10}
-                  alignSelf="stretch"
-                >
                   <Flex
-                    alignItems="center"
-                    justifyContent="center"
-                    h="36px"
-                    w="42px"
+                    alignItems="flex-start"
+                    bgColor="#FEF6D9"
+                    border="2px solid #EFC094"
+                    px="26px"
+                    py="22px"
+                    borderRadius="6px"
+                    my={4}
+                    mx={10}
+                    alignSelf="stretch"
                   >
-                    <Image
-                      h="40px"
-                      w="40px"
-                      src="/ui_icons/alert_triangle.svg"
-                      alt="Resubmit"
-                    />
-                  </Flex>
-                  <Flex ml="23px" direction="column">
-                    <Text
-                      fontSize="16px"
-                      lineHeight="24px"
-                      fontWeight="700"
-                      color="#7B4646"
+                    <Flex
+                      alignItems="center"
+                      justifyContent="center"
+                      h="36px"
+                      w="42px"
                     >
-                      Request for Resubmission
-                    </Text>
-                    <Text
-                      fontSize="16px"
-                      lineHeight="24px"
-                      fontWeight="400"
-                      color="#7B4646"
-                    >
-                      {applicationData?.feedbackDao}
-                    </Text>
+                      <Image
+                        h="40px"
+                        w="40px"
+                        src="/ui_icons/alert_triangle.svg"
+                        alt="Resubmit"
+                      />
+                    </Flex>
+                    <Flex ml="23px" direction="column">
+                      <Text
+                        fontSize="16px"
+                        lineHeight="24px"
+                        fontWeight="700"
+                        color="#7B4646"
+                      >
+                        Request for Resubmission
+                      </Text>
+                      <Text
+                        fontSize="16px"
+                        lineHeight="24px"
+                        fontWeight="400"
+                        color="#7B4646"
+                      >
+                        {applicationData?.feedbackDao}
+                      </Text>
+                    </Flex>
                   </Flex>
-                </Flex>
                 )}
 
                 <Flex direction="column">
                   <Application applicationData={applicationData} />
                 </Flex>
-
               </Flex>
             </Flex>
             <Flex direction="column" mt={2}>
@@ -338,7 +324,6 @@ function ApplicantForm() {
             </Flex>
           </Flex>
         </Flex>
-
       </Flex>
     );
   }
@@ -349,13 +334,14 @@ function ApplicantForm() {
         <Breadcrumbs
           path={['My Grants', 'View Applicants', 'Applicant Form']}
         />
-        <Text mt={4} mb={4} variant="heading">{applicationData?.grant?.title}</Text>
+        <Text mt={4} mb={4} variant="heading">
+          {applicationData?.grant?.title}
+        </Text>
         <Divider mb={5} />
         <Flex maxW="100%" direction="row" justify="space-between">
           {renderContent(step)}
         </Flex>
       </Flex>
-
     </Flex>
   );
 }
