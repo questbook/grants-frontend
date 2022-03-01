@@ -1,5 +1,15 @@
 import {
-  Button, Divider, Flex, Text, Box, Image, IconButton, Menu, MenuButton, MenuList, MenuItem,
+  Button,
+  Divider,
+  Flex,
+  Text,
+  Box,
+  Image,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from '@chakra-ui/react';
 import React, { useState, useEffect, useContext } from 'react';
 import { getAssetInfo } from 'src/utils/tokenUtils';
@@ -10,12 +20,14 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { useGetFundingQuery } from 'src/generated/graphql';
 import { ApiClientsContext } from 'pages/_app';
 import { Grant } from 'src/types';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+import { SupportedChainId } from 'src/constants/chains';
 import WithdrawFunds from './withdraw_funds_modal';
 import AddFunds from './add_funds_modal';
 import Funding from '../your_grants/manage_grant/tables/funding';
 
 export type FundForAGrantProps = {
-  grant: Grant
+  grant: Grant;
 };
 
 const TABS = ['Deposits', 'Withdrawals'] as const;
@@ -32,7 +44,7 @@ const TABS_MAP = [
 ] as const;
 
 function FundForAGrant({ grant }: FundForAGrantProps) {
-  const { subgraphClient } = useContext(ApiClientsContext)!;
+  const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
   const [isAddFundsModalOpen, setIsAddFundsModalOpen] = useState(false);
   const [isWithdrawFundsModalOpen, setIsWithdrawFundsModalOpen] = useState(false);
   const [selected, setSelected] = React.useState(0);
@@ -45,7 +57,10 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
   });
 
   const { data } = useGetFundingQuery({
-    client: subgraphClient?.client,
+    client:
+      subgraphClients[
+        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      ].client,
     variables: { grantId: grant.id },
   });
 
@@ -53,7 +68,7 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
     console.log('data', data);
   }, [data]);
 
-  const assetInfo = getAssetInfo(grant.reward.asset);
+  const assetInfo = getAssetInfo(grant.reward.asset, getSupportedChainIdFromWorkspace(workspace));
 
   const switchTab = (to: number) => {
     setSelected(to);
@@ -76,19 +91,39 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
   return (
     <Flex direction="column" w="100%" mt={3} mb={12}>
       <Flex direction="row" justify="space-between" w="100%">
-        <Text fontWeight="700" fontSize="18px" lineHeight="26px">{grant.title}</Text>
+        <Text fontWeight="700" fontSize="18px" lineHeight="26px">
+          {grant.title}
+        </Text>
         <Flex direction="row" justify="start" align="center">
           <Image src={assetInfo?.icon} alt="Ethereum Icon" />
           <Box mr={2} />
-          <Text fontWeight="700" fontSize="16px" lineHeight="24px" letterSpacing={0.5}>Funds Available</Text>
+          <Text
+            fontWeight="700"
+            fontSize="16px"
+            lineHeight="24px"
+            letterSpacing={0.5}
+          >
+            Funds Available
+          </Text>
           <Box mr={2} />
-          <Text fontWeight="700" fontSize="16px" lineHeight="24px" letterSpacing={0.5} color="brand.500">
+          <Text
+            fontWeight="700"
+            fontSize="16px"
+            lineHeight="24px"
+            letterSpacing={0.5}
+            color="brand.500"
+          >
             {ethers.utils.formatUnits(grant.funding, fundingAssetDecimals)}
             {' '}
             {assetInfo?.label}
           </Text>
           <Box mr={5} />
-          <Button variant="primaryCta" onClick={() => setIsAddFundsModalOpen(true)}>Add Funds</Button>
+          <Button
+            variant="primaryCta"
+            onClick={() => setIsAddFundsModalOpen(true)}
+          >
+            Add Funds
+          </Button>
           <Menu>
             <MenuButton
               as={IconButton}

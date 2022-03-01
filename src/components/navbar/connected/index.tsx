@@ -121,7 +121,9 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
           // setCurrentPage(currentPage + 1);
           // console.log('all workspaces', allWorkspacesData);
           setWorkspaces([...workspaces, ...allWorkspacesData]);
-          setWorkspace(allWorkspacesData[0]);
+
+          const i = allWorkspacesData.findIndex((w) => w.id === localStorage.getItem('currentWorkspaceId') ?? 'undefined');
+          setWorkspace(allWorkspacesData[i === -1 ? 0 : i]);
         });
       } catch (e) {
         // console.log(e);

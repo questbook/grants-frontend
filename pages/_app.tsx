@@ -82,7 +82,15 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     () => ({
       validatorApi,
       workspace,
-      setWorkspace,
+      setWorkspace: (newWorkspace?: MinimalWorkspace) => {
+        if (newWorkspace) {
+          localStorage.setItem('currentWorkspaceId', newWorkspace.id);
+        } else {
+          localStorage.setItem('currentWorkspaceId', 'undefined');
+        }
+
+        setWorkspace(newWorkspace);
+      },
       subgraphClients: clients,
     }),
     [validatorApi, workspace, setWorkspace, clients],

@@ -1,32 +1,26 @@
 import { Flex, Text } from '@chakra-ui/react';
-import React, { ReactElement, useContext, useEffect } from 'react';
+import React, { ReactElement, useContext } from 'react';
 import Empty from 'src/components/ui/empty';
 import { useGetAllGrantsForADaoQuery } from 'src/generated/graphql';
-import { useRouter } from 'next/router';
 import { SupportedChainId } from 'src/constants/chains';
+import {
+  getSupportedChainIdFromWorkspace,
+} from 'src/utils/validationUtils';
 import NavbarLayout from '../src/layout/navbarLayout';
 import FundForAGrant from '../src/components/funds';
 import { ApiClientsContext } from './_app';
 
 function AddFunds() {
-  const {
-    workspace, setWorkspaceId, setChainId, subgraphClient,
-  } = useContext(ApiClientsContext)!;
-  const router = useRouter();
+  const { workspace, subgraphClients } = useContext(ApiClientsContext)!;
   const { data } = useGetAllGrantsForADaoQuery({
-    client: subgraphClient.client,
+    client:
+      subgraphClients[
+        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      ].client,
     variables: {
       workspaceId: workspace?.id ?? '',
     },
   });
-
-  useEffect(() => {
-    if (router && router.query) {
-      const { workspaceId: wId, chainId: cId } = router.query;
-      setWorkspaceId(wId as string);
-      setChainId(cId as unknown as SupportedChainId);
-    }
-  }, [router, setChainId, setWorkspaceId]);
 
   const grants = data?.grants || [];
 
@@ -34,11 +28,9 @@ function AddFunds() {
     <Flex direction="row" justify="center">
       <Flex w="80%" direction="column" align="start" mt={6}>
         <Text variant="heading">Funds</Text>
-        {
-          grants.map(
-            (grant) => <FundForAGrant grant={grant} />,
-          )
-        }
+        {grants.map((grant) => (
+          <FundForAGrant grant={grant} />
+        ))}
         {grants.length === 0 && (
           <Flex direction="column" align="center" w="100%" h="100%" mt={14}>
             <Empty

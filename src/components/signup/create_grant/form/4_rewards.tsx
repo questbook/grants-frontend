@@ -42,12 +42,12 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
   useEffect(() => {
     console.log(currentChain);
     if (currentChain) {
-      const supportedCurrencies = Object.keys(
+      const currencies = Object.keys(
         CHAIN_INFO[currentChain].supportedCurrencies,
       ).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
         .map((currency) => ({ ...currency, id: currency.address }));
-      setRewardCurrency(supportedCurrencies[0].label);
-      setRewardCurrencyAddress(supportedCurrencies[0].address);
+      setRewardCurrency(currencies[0].label);
+      setRewardCurrencyAddress(currencies[0].address);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentChain]);
