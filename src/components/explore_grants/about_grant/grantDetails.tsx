@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 
 function GrantDetails({
   grantSummary,
@@ -24,13 +24,13 @@ function GrantDetails({
       <Text mt={4} variant="heading" fontSize="16px" lineHeight="24px">
         Details
       </Text>
-      <Text mt={3} fontWeight="400">
+      <Box mt={3} fontWeight="400">
         <div
           className="richTextContainer"
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: grantDetails }}
         />
-      </Text>
+      </Box>
     </>
   );
 }

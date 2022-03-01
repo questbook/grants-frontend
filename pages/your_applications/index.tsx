@@ -22,19 +22,16 @@ function YourApplications() {
   const router = useRouter();
   // const [applicantID, setApplicantId] = React.useState<any>('');
   // const subgraphClient = useContext(ApiClientsContext)?.subgraphClient;
-  const subgraphClients = useContext(ApiClientsContext)
-    ?.subgraphClients.map((subgraphCl) => (
-      subgraphCl.client
-    ));
+  const { subgraphClients } = useContext(ApiClientsContext)!;
   const [myApplications, setMyApplications] = React.useState<any>([]);
 
   const containerRef = useRef(null);
   const [{ data: accountData }] = useAccount();
   const [currentPage, setCurrentPage] = React.useState(0);
 
-  const allNetworkApplications = subgraphClients!.map((client) => (
+  const allNetworkApplications = Object.keys(subgraphClients)!.map((key) => (
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    useGetMyApplicationsLazyQuery({ client })
+    useGetMyApplicationsLazyQuery({ client: subgraphClients[key].client })
   ));
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -125,7 +122,7 @@ function YourApplications() {
                 onViewGrantClick={() => router.push({
                   pathname: '/explore_grants/about_grant',
                   query: {
-                    grantID: application.grant.id,
+                    grantId: application.grant.id,
                     chainId: getChainIdFromResponse(
                       application.grant.workspace.supportedNetworks[0],
                     ),
@@ -134,7 +131,7 @@ function YourApplications() {
                 onViewApplicationClick={() => router.push({
                   pathname: '/your_applications/grant_application',
                   query: {
-                    applicationID: application.id,
+                    applicationId: application.id,
                     chainId: getChainIdFromResponse(
                       application.grant.workspace.supportedNetworks[0],
                     ),
@@ -143,7 +140,7 @@ function YourApplications() {
                 onManageGrantClick={() => router.push({
                   pathname: '/your_applications/manage_grant',
                   query: {
-                    applicationID: application.id,
+                    applicationId: application.id,
                     chainId: getChainIdFromResponse(
                       application.grant.workspace.supportedNetworks[0],
                     ),

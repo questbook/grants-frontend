@@ -1,21 +1,21 @@
 import { Flex } from '@chakra-ui/react';
-import BN from 'bn.js';
 import { useRouter } from 'next/router';
 import { ApiClientsContext } from 'pages/_app';
 import React, {
-  ReactElement, useCallback, useContext, useEffect, useState,
+  ReactElement, useContext, useEffect, useState,
 } from 'react';
 import { SupportedChainId } from 'src/constants/chains';
-import { useGetGrantDetailsLazyQuery } from 'src/generated/graphql';
+import { useGetGrantDetailsQuery } from 'src/generated/graphql';
+import { formatAmount } from 'src/utils/formattingUtils';
+import { getAssetInfo } from 'src/utils/tokenUtils';
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import Form from '../../src/components/explore_grants/apply_grant/form';
 import Sidebar from '../../src/components/explore_grants/apply_grant/sidebar';
-import supportedCurrencies from '../../src/constants/supportedCurrencies';
 import NavbarLayout from '../../src/layout/navbarLayout';
 import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils';
 
 function ApplyGrant() {
-  const { subgraphClient, setChainId: setChainIdCtx } = useContext(ApiClientsContext)!;
+  const { subgraphClients } = useContext(ApiClientsContext)!;
 
   const router = useRouter();
   const [grantData, setGrantData] = useState<any>(null);
@@ -33,39 +33,41 @@ function ApplyGrant() {
 
   useEffect(() => {
     if (router && router.query) {
-      const { chainId: cId } = router.query;
-      setChainIdCtx(cId as unknown as SupportedChainId);
+      const { chainId: cId, grantId: gId } = router.query;
+      setChainId(cId as unknown as SupportedChainId);
+      setGrantID(gId);
     }
-  }, [router, setChainIdCtx]);
-
-  const [getGrantDetails] = useGetGrantDetailsLazyQuery({
-    client: subgraphClient?.client,
-  });
-
-  const getGrantData = useCallback(async () => {
-    try {
-      const { data } = await getGrantDetails({
-        variables: { grantID },
-      });
-
-      if (data && data.grants.length) {
-        setGrantData(data.grants[0]);
-      }
-      return true;
-    } catch (e) {
-      // console.log(e);
-      return null;
-    }
-  }, [grantID, getGrantDetails]);
-
-  useEffect(() => {
-    setGrantID(router?.query?.grantID ?? '');
   }, [router]);
+
+  const [queryParams, setQueryParams] = useState<any>({
+    client:
+      subgraphClients[
+        chainId ?? SupportedChainId.RINKEBY
+      ].client,
+  });
 
   useEffect(() => {
     if (!grantID) return;
-    getGrantData();
-  }, [grantID, getGrantData]);
+    if (!chainId) return;
+
+    setQueryParams({
+      client:
+        subgraphClients[chainId].client,
+      variables: {
+        grantID,
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chainId, grantID]);
+
+  const { data, error, loading } = useGetGrantDetailsQuery(queryParams);
+
+  useEffect(() => {
+    if (data && data.grants && data.grants.length > 0) {
+      setGrantData(data.grants[0]);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, error, loading]);
 
   useEffect(() => {
     if (!grantData) return;
@@ -73,11 +75,8 @@ function ApplyGrant() {
     setTitle(grantData?.title);
     setWorkspaceId(grantData?.workspace?.id);
     setDaoLogo(getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash));
-    const rAmt = new BN(grantData?.reward?.committed).div(new BN(10).pow(new BN(18)));
-    setRewardAmount(rAmt.toString());
-    const supportedCurrencyObj = supportedCurrencies.find(
-      (curr) => curr?.id.toLowerCase() === grantData?.reward?.asset?.toLowerCase(),
-    );
+    setRewardAmount(grantData?.reward?.committed ? formatAmount(grantData?.reward?.committed) : '');
+    const supportedCurrencyObj = getAssetInfo(grantData?.reward?.asset?.toLowerCase(), chainId);
     // console.log('curr', supportedCurrencyObj);
     if (supportedCurrencyObj) {
       setRewardCurrency(supportedCurrencyObj?.label);
@@ -88,6 +87,7 @@ function ApplyGrant() {
     setGrantDetails(grantData?.details);
     setGrantSummary(grantData?.summary);
     setGrantRequiredFields(grantData?.fields);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [grantData]);
 
   return (

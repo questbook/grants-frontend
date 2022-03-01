@@ -2,7 +2,6 @@ import { Container } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
   ReactElement,
-  useCallback,
   useContext,
   useEffect,
   useState,
@@ -10,7 +9,7 @@ import React, {
 import { ethers } from 'ethers';
 import {
   GetApplicationDetailsQuery,
-  useGetApplicationDetailsLazyQuery,
+  useGetApplicationDetailsQuery,
 } from 'src/generated/graphql';
 import { ApiClientsContext } from 'pages/_app';
 import { SupportedChainId } from 'src/constants/chains';
@@ -24,49 +23,52 @@ import { getAssetInfo } from '../../src/utils/tokenUtils';
 
 function ViewApplication() {
   const apiClients = useContext(ApiClientsContext)!;
-  const { subgraphClient, setChainId } = apiClients;
+  const { subgraphClients } = apiClients;
 
   const router = useRouter();
   const [applicationID, setApplicationId] = React.useState<any>('');
   const [application, setApplication] = React.useState<GetApplicationDetailsQuery['grantApplication']>();
 
   const [formData, setFormData] = useState<GrantApplicationProps | null>(null);
+  const [chainId, setChainId] = useState<SupportedChainId>();
 
   useEffect(() => {
     if (router && router.query) {
-      const { chainId: cId } = router.query;
+      const { chainId: cId, applicationId: aId } = router.query;
       setChainId(cId as unknown as SupportedChainId);
+      setApplicationId(aId);
     }
-  }, [router, setChainId]);
-
-  const [getApplicationDetails] = useGetApplicationDetailsLazyQuery({
-    client: subgraphClient.client,
-  });
-
-  const getApplicationDetailsData = useCallback(async () => {
-    try {
-      const { data } = await getApplicationDetails({
-        variables: { applicationID },
-      });
-
-      if (data) {
-        setApplication(data.grantApplication);
-      }
-      return true;
-    } catch (e) {
-      // console.log(e);
-      return null;
-    }
-  }, [applicationID, getApplicationDetails]);
-
-  useEffect(() => {
-    setApplicationId(router?.query?.applicationID ?? '');
   }, [router]);
+
+  const [queryParams, setQueryParams] = useState<any>({
+    client:
+      subgraphClients[
+        chainId ?? SupportedChainId.RINKEBY
+      ].client,
+  });
 
   useEffect(() => {
     if (!applicationID) return;
-    getApplicationDetailsData();
-  }, [applicationID, getApplicationDetailsData]);
+    if (!chainId) return;
+
+    setQueryParams({
+      client:
+        subgraphClients[chainId].client,
+      variables: {
+        applicationID,
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chainId, applicationID]);
+
+  const { data, error, loading } = useGetApplicationDetailsQuery(queryParams);
+
+  useEffect(() => {
+    if (data) {
+      setApplication(data.grantApplication);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, error, loading]);
 
   useEffect(() => {
     if (!application || !application?.fields?.length) return;
@@ -120,6 +122,7 @@ function ViewApplication() {
           onSubmit={
             application && application?.state !== 'resubmit'
               ? null
+              // eslint-disable-next-line @typescript-eslint/no-shadow
               : ({ data }) => {
                 router.push({
                   pathname: '/your_applications',
@@ -134,10 +137,10 @@ function ViewApplication() {
             .formatEther(application?.grant?.reward?.committed ?? '1')
             .toString()}
           rewardCurrency={
-            getAssetInfo(application?.grant?.reward?.asset ?? '')?.label
+            getAssetInfo(application?.grant?.reward?.asset ?? '', chainId)?.label
           }
           rewardCurrencyCoin={
-            getAssetInfo(application?.grant?.reward?.asset ?? '')?.icon
+            getAssetInfo(application?.grant?.reward?.asset ?? '', chainId)?.icon
           }
           formData={formData}
           grantTitle={application?.grant?.title || ''}

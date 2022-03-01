@@ -237,13 +237,13 @@ function Form({
       }
     });
 
-    console.log(data);
+    // console.log(data);
     setFormData(data as unknown as GrantApplicationRequest);
   };
 
   return (
     <Flex my="30px" flexDirection="column" alignItems="center" w="100%" px="44px">
-      <Image h="96px" w="96px" src={daoLogo} alt="Polygon DAO" />
+      <Image objectFit="cover" h="96px" w="96px" src={daoLogo} alt="Polygon DAO" />
       <Text mt={6} variant="heading">
         {title}
       </Text>

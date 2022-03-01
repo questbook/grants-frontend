@@ -33,6 +33,7 @@ export function timeToString(
     }`;
 }
 export function parseAmount(number: string) {
+  console.log('number', number);
   return ethers.utils.parseUnits(number, 18).toString();
 }
 

@@ -96,7 +96,7 @@ function SignupDao() {
       <CreateGrant
         hasClicked={createGrantLoading}
         onSubmit={(data) => {
-          console.log(data);
+          // console.log(data);
           setGrantData(data);
         }}
       />

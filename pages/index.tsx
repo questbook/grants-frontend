@@ -162,7 +162,7 @@ function BrowseGrants() {
                   router.push({
                     pathname: '/explore_grants/about_grant',
                     query: {
-                      grantID: grant.id,
+                      grantId: grant.id,
                       chainId: getChainIdFromResponse(
                         grant.workspace.supportedNetworks[0],
                       ),

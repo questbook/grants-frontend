@@ -64,9 +64,9 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
     variables: { grantId: grant.id },
   });
 
-  useEffect(() => {
-    console.log('data', data);
-  }, [data]);
+  // useEffect(() => {
+  //   console.log('data', data);
+  // }, [data]);
 
   const assetInfo = getAssetInfo(grant.reward.asset, getSupportedChainIdFromWorkspace(workspace));
 
