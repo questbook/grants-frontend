@@ -60,7 +60,7 @@ function SignupDao() {
         title: workspaceData.description,
       });
     }
-  }, [workspaceTransactionData, imageHash, workspaceData, router, setWorkspace]);
+  }, [workspaceTransactionData, imageHash, workspaceData, router]);
 
   const [grantData, setGrantData] = React.useState<any>();
   const [grantTransactionData, createGrantLoading] = useCreateGrant(
