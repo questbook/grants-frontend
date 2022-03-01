@@ -70,13 +70,16 @@ function YourGrants() {
   useEffect(() => {
     if (!workspace) return;
     setGrants([]);
-    if (currentPage !== 0) { setCurrentPage(0); }
+    setCurrentPage(0);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspace]);
 
   useEffect(() => {
     if (data && data.grants && data.grants.length > 0) {
-      if (grants.length && grants[0].workspace.id === data.grants[0].workspace.id) {
+      if (grants.length > 0
+          && grants[0].workspace.id === data.grants[0].workspace.id
+          && grants[0].id !== data.grants[0].id
+      ) {
         setGrants([...grants, ...data.grants]);
       } else {
         setGrants(data.grants);
