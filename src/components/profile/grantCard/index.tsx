@@ -2,17 +2,12 @@ import React from 'react';
 import {
   Image, Text, Button, Flex, Box, Divider, Link,
 } from '@chakra-ui/react';
-import ShareMenu from 'src/components/ui/grantShareMenu';
-import { SupportedChainId } from 'src/constants/chains';
 import Badge from './badge';
 
-interface GrantCardProps {
-  daoID: string;
-  grantID: string;
+interface BrowseGrantCardProps {
   daoIcon: string;
   daoName: string;
   isDaoVerified?: boolean;
-  chainId: SupportedChainId | undefined;
 
   grantTitle: string;
   grantDesc: string;
@@ -28,13 +23,10 @@ interface GrantCardProps {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-function GrantCard({
-  daoID,
-  grantID,
+function BrowseGrantCard({
   daoIcon,
   daoName,
   isDaoVerified,
-  chainId,
 
   grantTitle,
   grantDesc,
@@ -48,7 +40,7 @@ function GrantCard({
   grantCurrencyIcon,
 
   onClick,
-}: GrantCardProps) {
+}: BrowseGrantCardProps) {
   return (
     <>
       <Flex py={6} w="100%">
@@ -76,7 +68,7 @@ function GrantCard({
           </Flex>
 
           <Flex direction="row">
-            <Link href={`/profile?daoId=${daoID}&chainId=${chainId}`} lineHeight="24px" fontWeight="700">
+            <Link href="link" lineHeight="24px" fontWeight="700">
               {daoName}
               {isDaoVerified && (
                 <Image
@@ -103,8 +95,7 @@ function GrantCard({
               {grantCurrency}
             </Text>
             <Box mr="auto" />
-            <ShareMenu chainId={chainId} grantID={grantID} />
-            <Button ml={7} onClick={onClick} variant="primaryCta">
+            <Button onClick={onClick} variant="primaryCta">
               Apply Now
             </Button>
           </Flex>
@@ -115,9 +106,9 @@ function GrantCard({
   );
 }
 
-GrantCard.defaultProps = {
+BrowseGrantCard.defaultProps = {
   isGrantVerified: false,
   isDaoVerified: false,
   onClick: () => {},
 };
-export default GrantCard;
+export default BrowseGrantCard;

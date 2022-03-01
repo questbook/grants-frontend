@@ -1854,7 +1854,7 @@ export type GetAllGrantsQueryVariables = Exact<{
 }>;
 
 
-export type GetAllGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
+export type GetAllGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
 
 export type GetAllGrantsForADaoQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -1897,6 +1897,14 @@ export type GetApplicationMilestonesQueryVariables = Exact<{
 
 
 export type GetApplicationMilestonesQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', grant: { __typename?: 'Grant', reward: { __typename?: 'Reward', asset: string } }, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, state: MilestoneState, title: string, amount: string, amountPaid: string, updatedAtS?: number | null, text?: string | null }>, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, value: Array<string> }> }> };
+
+export type GetDaoDetailsQueryVariables = Exact<{
+  workspaceID: Scalars['ID'];
+  daoID: Scalars['String'];
+}>;
+
+
+export type GetDaoDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, socials: Array<{ __typename?: 'Social', name: string, value: string }> } | null, grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', title: string, logoIpfsHash: string } }> };
 
 export type GetFundSentForApplicationQueryVariables = Exact<{
   applicationId?: InputMaybe<Scalars['String']>;
@@ -1990,6 +1998,7 @@ export const GetAllGrantsDocument = gql`
       asset
     }
     workspace {
+      id
       title
       logoIpfsHash
       supportedNetworks
@@ -2322,6 +2331,76 @@ export function useGetApplicationMilestonesLazyQuery(baseOptions?: Apollo.LazyQu
 export type GetApplicationMilestonesQueryHookResult = ReturnType<typeof useGetApplicationMilestonesQuery>;
 export type GetApplicationMilestonesLazyQueryHookResult = ReturnType<typeof useGetApplicationMilestonesLazyQuery>;
 export type GetApplicationMilestonesQueryResult = Apollo.QueryResult<GetApplicationMilestonesQuery, GetApplicationMilestonesQueryVariables>;
+export const GetDaoDetailsDocument = gql`
+    query getDAODetails($workspaceID: ID!, $daoID: String!) {
+  workspace(id: $workspaceID, subgraphError: allow) {
+    id
+    title
+    about
+    logoIpfsHash
+    coverImageIpfsHash
+    supportedNetworks
+    socials {
+      name
+      value
+    }
+  }
+  grants(
+    subgraphError: allow
+    where: {workspace: $daoID}
+    orderBy: createdAtS
+    orderDirection: desc
+  ) {
+    id
+    creatorId
+    title
+    createdAtS
+    summary
+    details
+    reward {
+      committed
+      id
+      asset
+    }
+    workspace {
+      title
+      logoIpfsHash
+    }
+    deadline
+    funding
+    numberOfApplications
+  }
+}
+    `;
+
+/**
+ * __useGetDaoDetailsQuery__
+ *
+ * To run a query within a React component, call `useGetDaoDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDaoDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDaoDetailsQuery({
+ *   variables: {
+ *      workspaceID: // value for 'workspaceID'
+ *      daoID: // value for 'daoID'
+ *   },
+ * });
+ */
+export function useGetDaoDetailsQuery(baseOptions: Apollo.QueryHookOptions<GetDaoDetailsQuery, GetDaoDetailsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDaoDetailsQuery, GetDaoDetailsQueryVariables>(GetDaoDetailsDocument, options);
+      }
+export function useGetDaoDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDaoDetailsQuery, GetDaoDetailsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDaoDetailsQuery, GetDaoDetailsQueryVariables>(GetDaoDetailsDocument, options);
+        }
+export type GetDaoDetailsQueryHookResult = ReturnType<typeof useGetDaoDetailsQuery>;
+export type GetDaoDetailsLazyQueryHookResult = ReturnType<typeof useGetDaoDetailsLazyQuery>;
+export type GetDaoDetailsQueryResult = Apollo.QueryResult<GetDaoDetailsQuery, GetDaoDetailsQueryVariables>;
 export const GetFundSentForApplicationDocument = gql`
     query getFundSentForApplication($applicationId: String) {
   fundsTransfers(

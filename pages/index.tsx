@@ -120,6 +120,7 @@ function BrowseGrants() {
             const isGrantVerified = parseInt(parseAmount(grant.funding), 10) > 0;
             return (
               <GrantCard
+                daoID={grant.workspace.id}
                 key={grant.id}
                 grantID={grant.id}
                 daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
