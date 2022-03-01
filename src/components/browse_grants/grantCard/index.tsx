@@ -76,7 +76,7 @@ function GrantCard({
           </Flex>
 
           <Flex direction="row">
-            <Link href={`/profile?daoID=${daoID}`} lineHeight="24px" fontWeight="700">
+            <Link href={`/profile?daoId=${daoID}&chainId=${chainId}`} lineHeight="24px" fontWeight="700">
               {daoName}
               {isDaoVerified && (
                 <Image

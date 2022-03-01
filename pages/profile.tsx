@@ -1,10 +1,10 @@
 import {
   Link,
   Divider,
-  Flex, IconButton, Image, Text, useToast,
+  Flex, IconButton, Image, Text,
 } from '@chakra-ui/react';
-import React from 'react';
-import { useGetDaoDetailsLazyQuery } from 'src/generated/graphql';
+import React, { useEffect, useState } from 'react';
+import { useGetDaoDetailsQuery } from 'src/generated/graphql';
 import NavbarLayout from 'src/layout/navbarLayout';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import { DAOGrant, DAOWorkspace } from 'src/types';
@@ -15,58 +15,62 @@ import { BigNumber } from 'ethers';
 import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
 import SeeMore from 'src/components/profile/see_more';
-import supportedNetworks from '../src/constants/supportedNetworks.json';
+import { SupportedChainId } from 'src/constants/chains';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { ApiClientsContext } from './_app';
 
 function Profile() {
   const router = useRouter();
-  const toast = useToast();
-  const { daoID } = router.query;
 
-  const subgraphClient = React.useContext(ApiClientsContext)?.subgraphClient.client;
-  const [getDaoDetailsQuery] = useGetDaoDetailsLazyQuery({ client: subgraphClient });
+  const { subgraphClients } = React.useContext(ApiClientsContext)!;
+  const [{ data: accountData }] = useAccount();
 
   // const [data, setData] = React.useState();
   const [workspaceData, setWorkspaceData] = React.useState<DAOWorkspace>();
-  const [chainID, setChainID] = React.useState<keyof typeof supportedNetworks>();
   const [grantData, setGrantData] = React.useState<DAOGrant>();
+  const [chainID, setChainId] = React.useState<SupportedChainId>();
+  const [daoID, setDaoId] = React.useState<string>();
 
-  const [{ data: accountData }] = useAccount();
-
-  const getDaoDetails = async () => {
-    if (!subgraphClient || !daoID || typeof daoID !== 'string') return;
-
-    try {
-      const { data } = await getDaoDetailsQuery({
-        variables: {
-          workspaceID: daoID,
-          daoID,
-        },
-      });
-      if (data) {
-        setWorkspaceData(data?.workspace!);
-        setGrantData(data?.grants);
-        console.log(`Supported Network: ${data?.workspace?.supportedNetworks}`);
-        setChainID(parseInt(
-          data?.workspace?.supportedNetworks[0].slice(6)!,
-          10,
-        ).toString() as keyof typeof supportedNetworks);
-
-        console.log(supportedNetworks[chainID!]);
-      }
-    } catch (e) {
-      // console.log(e);
-      toast({
-        title: 'Error loading grants',
-        status: 'error',
-      });
+  useEffect(() => {
+    if (router && router.query) {
+      const { chainId: cId, daoId: dId } = router.query;
+      setChainId(cId as unknown as SupportedChainId);
+      setDaoId(dId?.toString());
     }
-  };
+  }, [router]);
 
-  React.useEffect(() => {
-    getDaoDetails();
+  const [queryParams, setQueryParams] = useState<any>({
+    client:
+      subgraphClients[
+        chainID ?? SupportedChainId.RINKEBY
+      ].client,
+  });
+
+  useEffect(() => {
+    if (!daoID) return;
+    if (!chainID) return;
+
+    setQueryParams({
+      client:
+        subgraphClients[chainID].client,
+      variables: {
+        workspaceID: daoID,
+        daoID,
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chainID, daoID]);
+
+  const { data, error, loading } = useGetDaoDetailsQuery(queryParams);
+
+  useEffect(() => {
+    if (data) {
+      setWorkspaceData(data?.workspace!);
+      setGrantData(data?.grants);
+      console.log(`Supported Network: ${data?.workspace?.supportedNetworks}`);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [daoID]);
+  }, [data, error, loading]);
 
   const getIcon = (currency: string) => {
     if (currency === 'DAI') return '/ui_icons/brand/currency/dai.svg';
@@ -127,7 +131,7 @@ function Profile() {
             />
             <Flex direction="column" align="start" ml={5}>
               <Text variant="heading">{workspaceData?.title}</Text>
-              {chainID && chainID in supportedNetworks && (
+              {chainID && (
               <Flex
                 direction="row"
                 align="center"
@@ -138,13 +142,13 @@ function Profile() {
                 pr={4}
                 pl={2}
               >
-                <Image mr={3} boxSize="18px" src={supportedNetworks[chainID].icon} />
+                <Image mr={3} boxSize="18px" src={CHAIN_INFO[chainID].icon} />
                 <Text
                   variant="applicationText"
                   fontWeight="500"
                   color="#717A7C"
                 >
-                  {supportedNetworks[chainID].name}
+                  {CHAIN_INFO[chainID].name}
                 </Text>
               </Flex>
               )}
@@ -191,7 +195,7 @@ function Profile() {
                   }
                   router.push({
                     pathname: '/explore_grants/about_grant',
-                    query: { grantID: grant.id },
+                    query: { grantId: grant.id },
                   });
                 }}
               />
