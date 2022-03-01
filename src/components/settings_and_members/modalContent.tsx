@@ -1,5 +1,5 @@
 import {
-  ModalBody, Button, Text, Box, useToast, Flex, Image, Link,
+  ModalBody, Button, Text, Box, useToast, Flex, Image, Link, CircularProgress, Center,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { isValidAddress, isValidEmail } from 'src/utils/validationUtils';
@@ -11,7 +11,6 @@ interface Props {
 }
 
 function ModalContent({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onClose,
 }: Props) {
   const [memberAddress, setMemberAddress] = React.useState('');
@@ -22,12 +21,13 @@ function ModalContent({
   const toast = useToast();
 
   const [memberData, setMemberData] = React.useState<any>();
-  const [txnData] = useAddMember(memberData);
+  const [txnData, loading] = useAddMember(memberData);
 
   useEffect(() => {
     // console.log(depositTransactionData);
     if (txnData) {
       setMemberData(undefined);
+      onClose();
       toast({
         title: 'Member added',
         status: 'info',
@@ -116,7 +116,13 @@ function ModalContent({
         </Text>
       </Flex>
       <Box my={4} />
-      <Button w="100%" variant="primary" onClick={() => handleSubmit()}>Send Invite</Button>
+      {loading ? (
+        <Center>
+          <CircularProgress isIndeterminate color="brand.500" size="48px" my={4} />
+        </Center>
+      ) : (
+        <Button w="100%" variant="primary" onClick={() => handleSubmit()}>Send Invite</Button>
+      )}
       <Box my={8} />
     </ModalBody>
   );
