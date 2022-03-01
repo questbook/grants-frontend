@@ -49,6 +49,7 @@ function WithdrawFunds({
     finalAmount,
     rewardAsset.address,
     grantAddress,
+    address,
   );
 
   useEffect(() => {

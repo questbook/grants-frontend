@@ -11,6 +11,7 @@ export default function useWithdrawFunds(
   finalAmount?: string,
   rewardAddress?: string,
   grantAddress?: string,
+  address?: string,
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
@@ -45,7 +46,7 @@ export default function useWithdrawFunds(
         const transferTxn = await grantContract.withdrawFunds(
           rewardAddress,
           finalAmount,
-          grantAddress,
+          address,
         );
         const depositTransactionData = await transferTxn.wait();
 
@@ -70,8 +71,8 @@ export default function useWithdrawFunds(
     }
     try {
       if (!finalAmount) return;
-      if (!grantAddress) return;
       if (!rewardAddress) return;
+      if (!address) return;
       if (transactionData) return;
       if (!accountData || !accountData.address) {
         throw new Error('not connected to wallet');
@@ -123,7 +124,7 @@ export default function useWithdrawFunds(
     networkData,
     currentChainId,
     rewardAddress,
-    grantAddress,
+    address,
     finalAmount,
   ]);
 

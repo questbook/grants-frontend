@@ -45,9 +45,9 @@ function ConnectWallet() {
       } else if (router.query.flow === 'getting_started/developer') {
         router.push({ pathname: '/' });
       } else if (router.query.flow === '/') {
-        router.push({
+        router.replace({
           pathname: '/explore_grants/about_grant',
-          query: { grantID: router.query.grantId, chainId: '4' },
+          query: { grantId: router.query.grantId, chainId: router.query.chainId },
         });
       } else {
         router.push({ pathname: '/' });
