@@ -99,7 +99,7 @@ function GrantCard({
             </Text>
             <Box mr="auto" />
             <ShareMenu grantID={grantID} />
-            <Button ml={3} onClick={onClick} variant="primaryCta">
+            <Button ml={7} onClick={onClick} variant="primaryCta">
               Apply Now
             </Button>
           </Flex>

@@ -8,6 +8,7 @@ import BN from 'bn.js';
 import { useRouter } from 'next/router';
 import { useGetGrantDetailsLazyQuery } from 'src/generated/graphql';
 import { ApiClientsContext } from 'pages/_app';
+import GrantShare from 'src/components/ui/grantShare';
 import GrantDetails from '../../src/components/explore_grants/about_grant/grantDetails';
 import GrantRewards from '../../src/components/explore_grants/about_grant/grantRewards';
 import Sidebar from '../../src/components/explore_grants/about_grant/sidebar';
@@ -112,6 +113,8 @@ function AboutGrant() {
           <Box as="span" display="inline-block" color="#122224" fontWeight="bold">
             {grantStatus}
           </Box>
+          <Box mx="auto" />
+          <GrantShare grantID={grantID} />
         </Flex>
 
         <Divider mt={3} />

@@ -52,7 +52,7 @@ function ShareMenu({ grantID } : { grantID: string }) {
               display="inline-block"
               h={4}
               w={4}
-              src="/ui_icons/share.svg"
+              src="/ui_icons/share_brand.svg"
             />
             {copied ? 'Link Copied!' : 'Share'}
           </Text>

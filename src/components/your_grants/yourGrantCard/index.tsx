@@ -109,7 +109,7 @@ function YourGrantCard({
               )}
               <Button
                 mr={2}
-                ml={3}
+                ml={5}
                 isDisabled={state === 'processing'}
                 variant={state === 'processing' ? 'primaryCta' : 'outline'}
                 color="brand.500"
