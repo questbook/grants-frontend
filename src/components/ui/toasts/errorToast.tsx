@@ -1,5 +1,5 @@
 import {
-  Flex, Image, IconButton, Box,
+  Flex, Image, Text,
 } from '@chakra-ui/react';
 import React from 'react';
 
@@ -11,29 +11,52 @@ interface Props {
 function ErrorToast({ content, close }: Props) {
   return (
     <Flex
-      py="22px"
-      px="26px"
-      bg="#FFC0C0"
+      alignItems="flex-start"
+      bgColor="#FFC0C0"
       border="2px solid #EE7979"
+      px="26px"
+      py="22px"
       borderRadius="6px"
-      minW="578px"
-          // maxH="94px"
-      direction="row"
-      justify="center"
-      align="center"
+      mt={4}
+      mx={10}
+      alignSelf="stretch"
     >
-      <Image src="/toast/error.svg" mr={6} />
-      {content}
-      <Box m="auto" />
-      <Flex h="full" align="center" justify="center">
-        <IconButton
-          _hover={{}}
-          variant="ghost"
-          _active={{}}
-          icon={<Image src="/toast/error_close.svg" />}
-          aria-label="Close"
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        bgColor="#F7B7B7"
+        border="2px solid #EE7979"
+        borderRadius="40px"
+        p={2}
+        h="40px"
+        w="40px"
+        mt="5px"
+      >
+        <Image
           onClick={close}
+          h="40px"
+          w="40px"
+          src="/ui_icons/result_rejected_application.svg"
+          alt="Rejected"
         />
+      </Flex>
+      <Flex ml="23px" direction="column">
+        <Text
+          fontSize="16px"
+          lineHeight="24px"
+          fontWeight="700"
+          color="#7B4646"
+        >
+          Error Message
+        </Text>
+        <Text
+          fontSize="16px"
+          lineHeight="24px"
+          fontWeight="400"
+          color="#7B4646"
+        >
+          {content}
+        </Text>
       </Flex>
     </Flex>
   );

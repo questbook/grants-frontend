@@ -1869,10 +1869,11 @@ export type GetAllGrantsForCreatorQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
   creatorId?: InputMaybe<Scalars['Bytes']>;
+  workspaceId?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetAllGrantsForCreatorQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string } }> };
+export type GetAllGrantsForCreatorQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
 
 export type GetApplicantsForAGrantQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -2090,12 +2091,12 @@ export type GetAllGrantsForADaoQueryHookResult = ReturnType<typeof useGetAllGran
 export type GetAllGrantsForADaoLazyQueryHookResult = ReturnType<typeof useGetAllGrantsForADaoLazyQuery>;
 export type GetAllGrantsForADaoQueryResult = Apollo.QueryResult<GetAllGrantsForADaoQuery, GetAllGrantsForADaoQueryVariables>;
 export const GetAllGrantsForCreatorDocument = gql`
-    query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes) {
+    query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String) {
   grants(
     first: $first
     skip: $skip
     subgraphError: allow
-    where: {creatorId: $creatorId}
+    where: {creatorId: $creatorId, workspace: $workspaceId}
     orderBy: createdAtS
     orderDirection: desc
   ) {
@@ -2113,6 +2114,7 @@ export const GetAllGrantsForCreatorDocument = gql`
       id
       title
       logoIpfsHash
+      supportedNetworks
     }
     deadline
     funding
@@ -2136,6 +2138,7 @@ export const GetAllGrantsForCreatorDocument = gql`
  *      first: // value for 'first'
  *      skip: // value for 'skip'
  *      creatorId: // value for 'creatorId'
+ *      workspaceId: // value for 'workspaceId'
  *   },
  * });
  */

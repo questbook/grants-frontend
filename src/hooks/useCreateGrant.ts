@@ -168,5 +168,5 @@ export default function useCreateGrant(
     data,
   ]);
 
-  return [transactionData, loading];
+  return [transactionData, loading, error];
 }

@@ -7,20 +7,21 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useGetGrantDetailsLazyQuery } from 'src/generated/graphql';
+import { useGetGrantDetailsQuery } from 'src/generated/graphql';
 import useEditGrant from 'src/hooks/useEditGrant';
 import { SupportedChainId } from 'src/constants/chains';
+import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import InfoToast from '../../src/components/ui/infoToast';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/edit_grant/form';
 import Sidebar from '../../src/components/your_grants/edit_grant/sidebar';
-import supportedCurrencies from '../../src/constants/supportedCurrencies';
 import NavbarLayout from '../../src/layout/navbarLayout';
 import { formatAmount } from '../../src/utils/formattingUtils';
 import { ApiClientsContext } from '../_app';
 
 function EditGrant() {
-  const { subgraphClient, chainId, setChainId } = useContext(ApiClientsContext)!;
+  const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
 
   const router = useRouter();
 
@@ -37,16 +38,76 @@ function EditGrant() {
 
   const [formData, setFormData] = useState<any>(null);
 
-  useEffect(() => {
-    if (router && router.query) {
-      const { chainId: cId } = router.query;
-      setChainId(cId as unknown as SupportedChainId);
-    }
-  }, [router, setChainId]);
-
-  const [getGrantDetails] = useGetGrantDetailsLazyQuery({
-    client: subgraphClient?.client,
+  const [queryParams, setQueryParams] = useState<any>({
+    client:
+      subgraphClients[
+        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      ].client,
   });
+
+  useEffect(() => {
+    if (!workspace) return;
+
+    setQueryParams({
+      client:
+        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+      variables: { grantID },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grantID, workspace]);
+
+  const {
+    data,
+    error,
+    loading: queryLoading,
+  } = useGetGrantDetailsQuery(queryParams);
+
+  useEffect(() => {
+    if (data && data.grants && data.grants.length > 0) {
+      const grant = data.grants[0];
+      setFormData({
+        title: grant.title,
+        summary: grant.summary,
+        details: grant.details,
+        applicantName:
+          grant.fields.find((field: any) => field.id.includes('applicantName')) !== undefined,
+        applicantEmail:
+          grant.fields.find((field: any) => field.id.includes('applicantEmail')) !== undefined,
+        teamMembers:
+          grant.fields.find((field: any) => field.id.includes('teamMembers')) !== undefined,
+        projectName:
+          grant.fields.find((field: any) => field.id.includes('projectName')) !== undefined,
+        projectGoals:
+          grant.fields.find((field: any) => field.id.includes('projectGoals')) !== undefined,
+        projectDetails:
+          grant.fields.find((field: any) => field.id.includes('projectDetails')) !== undefined,
+        projectLink:
+          grant.fields.find((field: any) => field.id.includes('projectLink')) !== undefined,
+        isMultipleMilestones:
+          grant.fields.find((field: any) => field.id.includes('isMultipleMilestones')) !== undefined,
+        fundingBreakdown:
+          grant.fields.find((field: any) => field.id.includes('fundingBreakdown')) !== undefined,
+        extraField:
+          grant.fields.find((field: any) => field.id.includes('extraField'))
+          !== undefined,
+        reward: formatAmount(grant.reward.committed),
+        rewardCurrency:
+          CHAIN_INFO[
+            getSupportedChainIdFromSupportedNetwork(
+              grant.workspace.supportedNetworks[0],
+            )
+          ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label ?? 'LOL',
+        rewardCurrencyAddress:
+          CHAIN_INFO[
+            getSupportedChainIdFromSupportedNetwork(
+              grant.workspace.supportedNetworks[0],
+            )
+          ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.address,
+        date: grant.deadline,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, error, queryLoading]);
 
   const sideBarDetails = [
     ['Grant Intro', 'Grant title, and summary', grantInfoRef],
@@ -67,46 +128,6 @@ function EditGrant() {
     ],
   ];
 
-  const getGrantData = async () => {
-    if (!subgraphClient) return;
-    if (!grantID) return;
-    try {
-      const { data } = await getGrantDetails({ variables: { grantID } });
-      if (data) {
-        const grant = data.grants[0];
-        setFormData({
-          title: grant.title,
-          summary: grant.summary,
-          details: grant.details,
-          applicantName: grant.fields.find((field: any) => field.id.includes('applicantName')) !== undefined,
-          applicantEmail: grant.fields.find((field: any) => field.id.includes('applicantEmail')) !== undefined,
-          teamMembers: grant.fields.find((field: any) => field.id.includes('teamMembers')) !== undefined,
-          projectName: grant.fields.find((field: any) => field.id.includes('projectName')) !== undefined,
-          projectGoals: grant.fields.find((field: any) => field.id.includes('projectGoals')) !== undefined,
-          projectDetails: grant.fields.find((field: any) => field.id.includes('projectDetails')) !== undefined,
-          projectLink: grant.fields.find((field: any) => field.id.includes('projectLink')) !== undefined,
-          isMultipleMilestones: grant.fields.find((field: any) => field.id.includes('isMultipleMilestones')) !== undefined,
-          fundingBreakdown: grant.fields.find((field: any) => field.id.includes('fundingBreakdown')) !== undefined,
-          extraField: grant.fields.find((field: any) => field.id.includes('extraField')) !== undefined,
-          reward: formatAmount(grant.reward.committed),
-          rewardCurrency: supportedCurrencies.find(
-            (currency) => currency.id.toLowerCase() === grant.reward.asset.toLowerCase(),
-          )!.label,
-          rewardCurrencyAddress: supportedCurrencies.find(
-            (currency) => currency.id.toLowerCase() === grant.reward.asset.toLowerCase(),
-          )!.id,
-          date: grant.deadline,
-        });
-      }
-    } catch (e: any) {
-      toast({
-        title: 'Error getting workspace data',
-        description: e.message,
-        status: 'error',
-      });
-    }
-  };
-
   const scroll = (ref: any, step: number) => {
     if (!ref.current) return;
     ref.current.scrollIntoView({
@@ -120,9 +141,9 @@ function EditGrant() {
   const [transactionData, loading] = useEditGrant(editData, grantID);
 
   useEffect(() => {
-    console.log(transactionData);
+    // console.log(transactionData);
     if (transactionData) {
-      router.replace({ pathname: '/your_grants', query: { done: 'yes', chainId } });
+      router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
       toastRef.current = toast({
         position: 'top',
         render: () => (
@@ -137,17 +158,11 @@ function EditGrant() {
         ),
       });
     }
-  }, [toast, transactionData, router, chainId]);
+  }, [toast, transactionData, router]);
 
   useEffect(() => {
     setGrantID(router?.query?.grantID?.toString());
   }, [router]);
-
-  useEffect(() => {
-    if (!grantID) return;
-    getGrantData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [grantID]);
 
   return (
     <Container maxW="100%" display="flex" px="70px">
@@ -165,10 +180,10 @@ function EditGrant() {
           <Form
             hasClicked={loading}
             formData={formData}
-            onSubmit={(data: any) => {
-            // eslint-disable-next-line no-console
+            onSubmit={(editdata: any) => {
+              // eslint-disable-next-line no-console
               // console.log(data);
-              setEditData(data);
+              setEditData(editdata);
             }}
             refs={sideBarDetails.map((detail) => detail[2])}
           />

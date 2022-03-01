@@ -8,7 +8,7 @@ import {
   Center,
   CircularProgress,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { SupportedChainId } from 'src/constants/chains';
@@ -27,15 +27,34 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
   const [rewardError, setRewardError] = React.useState(false);
 
   const currentChain = useChainId() ?? SupportedChainId.RINKEBY;
+
   const supportedCurrencies = Object.keys(
     CHAIN_INFO[currentChain].supportedCurrencies,
-  ).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address]);
+  ).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
+    .map((currency) => ({ ...currency, id: currency.address }));
   const [rewardCurrency, setRewardCurrency] = React.useState(
     supportedCurrencies[0].label,
   );
   const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
     supportedCurrencies[0].address,
   );
+
+  useEffect(() => {
+    console.log(currentChain);
+    if (currentChain) {
+      const supportedCurrencies = Object.keys(
+        CHAIN_INFO[currentChain].supportedCurrencies,
+      ).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
+        .map((currency) => ({ ...currency, id: currency.address }));
+      setRewardCurrency(supportedCurrencies[0].label);
+      setRewardCurrencyAddress(supportedCurrencies[0].address);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentChain]);
+
+  useEffect(() => {
+    console.log(rewardCurrencyAddress);
+  }, [rewardCurrencyAddress]);
 
   const [date, setDate] = React.useState('');
   const [dateError, setDateError] = React.useState(false);
@@ -50,6 +69,9 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
       setDateError(true);
       error = true;
     }
+
+    console.log(reward);
+    console.log(rewardCurrencyAddress);
 
     if (!error) {
       onSubmit({ reward, rewardCurrencyAddress, date });
@@ -85,6 +107,7 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
               listItems={supportedCurrencies}
               value={rewardCurrency}
               onChange={(data: any) => {
+                console.log(data);
                 setRewardCurrency(data.label);
                 setRewardCurrencyAddress(data.id);
               }}

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -15,11 +15,16 @@ import {
 import router from 'next/router';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import useActiveTabIndex from 'src/hooks/utils/useActiveTabIndex';
-import { useGetNumberOfApplicationsLazyQuery, useGetNumberOfGrantsLazyQuery, useGetWorkspaceMembersLazyQuery } from 'src/generated/graphql';
+import {
+  useGetNumberOfApplicationsQuery,
+  useGetNumberOfGrantsQuery,
+  useGetWorkspaceMembersLazyQuery,
+} from 'src/generated/graphql';
 import { ApiClientsContext } from 'pages/_app';
 import { useAccount } from 'wagmi';
-import { getChainIdFromResponse } from 'src/utils/formattingUtils';
-import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from 'src/constants/chains';
+import {
+  SupportedChainId,
+} from 'src/constants/chains';
 import { MinimalWorkspace } from 'src/types';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import Tab from './tab';
@@ -41,26 +46,53 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
   const [applicationCount, setApplicationCount] = React.useState(0);
 
   const apiClients = useContext(ApiClientsContext)!;
-  const {
-    workspace, setWorkspace, subgraphClient, setChainId, chainId, subgraphClients,
-  } = apiClients;
+  const { workspace, setWorkspace, subgraphClients } = apiClients;
 
-  const chainIndex = ALL_SUPPORTED_CHAIN_IDS.findIndex((c) => c === chainId);
-  const [getNumberOfApplications] = useGetNumberOfApplicationsLazyQuery({
-    client: subgraphClients[chainIndex === -1 ? 0 : chainIndex].client,
+  const chainId = getSupportedChainIdFromWorkspace(workspace);
+  const [numberApplicationsQueryParams, setNumberApplicationsQueryParams] = useState<any>({
+    client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
   });
-  const [getNumberOfGrants] = useGetNumberOfGrantsLazyQuery({
-    client: subgraphClients[chainIndex === -1 ? 0 : chainIndex].client,
+  const [numberGrantsQueryParams, setNumberGrantsQueryParams] = useState<any>({
+    client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
   });
-  // const [getWorkspaces] = useGetWorkspaceMembersLazyQuery({
-  //   client: subgraphClient.client,
-  // });
 
-  const getAllWorkspaces = subgraphClients!.map(({ client }) => (
+  useEffect(() => {
+    if (!workspace) return;
+    if (!accountData) return;
+
+    setNumberApplicationsQueryParams({
+      client:
+        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+      variables: { applicantId: accountData?.address },
+    });
+    setNumberGrantsQueryParams({
+      client:
+        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+      variables: { creatorId: accountData?.address },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspace, accountData?.address]);
+
+  // eslint-disable-next-line max-len
+  const { data: applicationData, error: applicationError } = useGetNumberOfApplicationsQuery(numberApplicationsQueryParams);
+  const { data: grantData, error: grantError } = useGetNumberOfGrantsQuery(numberGrantsQueryParams);
+
+  useEffect(() => {
+    // console.log(applicationData);
+    // console.log(applicationError);
+    if (applicationData) {
+      setApplicationCount(applicationData?.grantApplications.length || 0);
+    }
+    if (grantData) {
+      setGrantsCount(grantData?.grants.length || 0);
+    }
+  }, [applicationData, applicationError, grantData, grantError]);
+
+  const getAllWorkspaces = Object.keys(subgraphClients)!.map(
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    useGetWorkspaceMembersLazyQuery({ client })
-  ));
-  useEffect(() => {}, [subgraphClients]);
+    (key) => useGetWorkspaceMembersLazyQuery({ client: subgraphClients[key].client }),
+  );
+  // useEffect(() => {}, [subgraphClients]);
 
   useEffect(() => {
     if (!accountData?.address) return;
@@ -69,10 +101,10 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 
     const getWorkspaceData = async (userAddress: string) => {
       try {
-        const promises = getAllWorkspaces.map((allWorkspaces) => (
+        const promises = getAllWorkspaces.map(
           // eslint-disable-next-line no-async-promise-executor
-          new Promise(async (resolve) => {
-            console.log('calling grants');
+          (allWorkspaces) => new Promise(async (resolve) => {
+            // console.log('calling grants');
             const { data } = await allWorkspaces[0]({
               variables: { actorId: userAddress },
             });
@@ -81,18 +113,15 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
             } else {
               resolve([]);
             }
-          })
-        ));
-        Promise.all(promises).then((values:any[]) => {
+          }),
+        );
+        Promise.all(promises).then((values: any[]) => {
           const allWorkspacesData = [].concat(...values) as MinimalWorkspace[];
           // setGrants([...grants, ...allGrantsData]);
           // setCurrentPage(currentPage + 1);
-          console.log('all workspaces', allWorkspacesData);
+          // console.log('all workspaces', allWorkspacesData);
           setWorkspaces([...workspaces, ...allWorkspacesData]);
           setWorkspace(allWorkspacesData[0]);
-          setChainId(getChainIdFromResponse(
-            allWorkspacesData[0].supportedNetworks[0],
-          ) as unknown as SupportedChainId);
         });
       } catch (e) {
         // console.log(e);
@@ -103,47 +132,8 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
       }
     };
     getWorkspaceData(accountData?.address);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (!accountData?.address) return;
-    if (!getNumberOfGrants) return;
-    const getGrantsCount = async (userAddress: string) => {
-      try {
-        const { data } = await getNumberOfGrants({
-          variables: {
-            creatorId: userAddress,
-          },
-        });
-        setGrantsCount(data?.grants.length || 0);
-      } catch (e) {
-        toast({
-          title: 'Error getting applicant data',
-          status: 'error',
-        });
-      }
-    };
-    getGrantsCount(accountData?.address);
-  }, [toast, accountData?.address, getNumberOfGrants]);
-
-  useEffect(() => {
-    if (!accountData?.address) return;
-    if (!getNumberOfApplications) return;
-    const getApplicantsCount = async (userAddress: string) => {
-      try {
-        const { data } = await getNumberOfApplications({
-          variables: { applicantId: userAddress },
-        });
-        setApplicationCount(data?.grantApplications.length || 0);
-      } catch (e) {
-        toast({
-          title: 'Error getting applicant data',
-          status: 'error',
-        });
-      }
-    };
-    getApplicantsCount(accountData?.address);
-  }, [toast, accountData?.address, getNumberOfApplications]);
 
   return (
     <Container
@@ -202,7 +192,6 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 )}
                 onClick={() => {
                   setWorkspace(userWorkspace);
-                  setChainId(getSupportedChainIdFromWorkspace(userWorkspace));
                 }}
               >
                 {userWorkspace.title}
@@ -249,10 +238,6 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                   onClick={() => {
                     router.push({
                       pathname: `/${tabPaths[0]}`,
-                      query: {
-                        workspaceId: workspace?.id,
-                        chainId,
-                      },
                     });
                   }}
                 />
@@ -270,10 +255,6 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                   onClick={() => {
                     router.push({
                       pathname: `/${tabPaths[1]}`,
-                      query: {
-                        workspaceId: workspace?.id,
-                        chainId,
-                      },
                     });
                   }}
                 />
@@ -291,10 +272,6 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                   onClick={() => {
                     router.push({
                       pathname: `/${tabPaths[2]}`,
-                      query: {
-                        workspaceId: workspace?.id,
-                        chainId,
-                      },
                     });
                   }}
                 />
@@ -318,9 +295,6 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 onClick={() => {
                   router.push({
                     pathname: `/${tabPaths[3]}`,
-                    query: {
-                      chainId,
-                    },
                   });
                 }}
               />
@@ -341,9 +315,6 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
               } else {
                 router.push({
                   pathname: '/your_grants/create_grant/',
-                  query: {
-                    chainId,
-                  },
                 });
               }
             }}

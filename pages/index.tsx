@@ -1,34 +1,44 @@
 import { Flex, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
-  ReactElement, useCallback, useContext, useEffect, useRef, useState,
+  ReactElement,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
 } from 'react';
-import { useGetAllGrantsLazyQuery, GetAllGrantsQuery } from 'src/generated/graphql';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
+import {
+  useGetAllGrantsLazyQuery,
+  GetAllGrantsQuery,
+} from 'src/generated/graphql';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
+import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import { useAccount } from 'wagmi';
 import GrantCard from '../src/components/browse_grants/grantCard';
 import Sidebar from '../src/components/browse_grants/sidebar';
 import Heading from '../src/components/ui/heading';
-import supportedCurrencies from '../src/constants/supportedCurrencies';
 import NavbarLayout from '../src/layout/navbarLayout';
-import { formatAmount, getChainIdFromResponse, parseAmount } from '../src/utils/formattingUtils';
+import {
+  formatAmount,
+  getChainIdFromResponse,
+  parseAmount,
+} from '../src/utils/formattingUtils';
 import { ApiClientsContext } from './_app';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 5;
 
 function BrowseGrants() {
   const containerRef = useRef(null);
   const [{ data: accountData }] = useAccount();
   const router = useRouter();
-  const subgraphClient = useContext(ApiClientsContext)?.subgraphClient.client;
-  const subgraphClients = useContext(ApiClientsContext)?.subgraphClients.map((subgraphCl) => (
-    subgraphCl.client
-  ));
+  const { subgraphClients } = useContext(ApiClientsContext)!;
 
-  const allNetworkGrants = subgraphClients!.map((client) => (
+  const allNetworkGrants = Object.keys(subgraphClients)!.map(
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    useGetAllGrantsLazyQuery({ client })
-  ));
+    (key) => useGetAllGrantsLazyQuery({ client: subgraphClients[key].client }),
+  );
   useEffect(() => {}, [subgraphClients]);
 
   const toast = useToast();
@@ -38,12 +48,12 @@ function BrowseGrants() {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getGrantData = async () => {
-    if (!subgraphClient) return;
+    // if (!subgraphClient) return;
     try {
-      const promises = allNetworkGrants.map((allGrants) => (
+      const promises = allNetworkGrants.map(
         // eslint-disable-next-line no-async-promise-executor
-        new Promise(async (resolve) => {
-          console.log('calling grants');
+        (allGrants) => new Promise(async (resolve) => {
+          // console.log('calling grants');
           const { data } = await allGrants[0]({
             variables: {
               first: PAGE_SIZE,
@@ -55,9 +65,9 @@ function BrowseGrants() {
           } else {
             resolve([]);
           }
-        })
-      ));
-      Promise.all(promises).then((values:any[]) => {
+        }),
+      );
+      Promise.all(promises).then((values: any[]) => {
         const allGrantsData = [].concat(...values);
         setGrants([...grants, ...allGrantsData]);
         setCurrentPage(currentPage + 1);
@@ -86,7 +96,7 @@ function BrowseGrants() {
 
   useEffect(() => {
     getGrantData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -99,30 +109,14 @@ function BrowseGrants() {
     return () => parentElement.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
-  // @TODO: cannot work multichain
-  const getIcon = (currency: string) => {
-    if (currency === 'DAI') return '/ui_icons/brand/currency/dai.svg';
-    if (currency === 'WMATIC') return '/ui_icons/brand/currency/wmatic.svg';
-    return '/ui_icons/brand/currency/weth.svg';
-  };
-
   return (
     <Flex ref={containerRef} direction="row" justify="center">
-      <Flex
-        direction="column"
-        w="55%"
-        alignItems="stretch"
-        pb={8}
-        px={10}
-      >
+      <Flex direction="column" w="55%" alignItems="stretch" pb={8} px={10}>
         <Heading title="Discover grants" />
         {grants.length > 0
           && grants.map((grant) => {
-            // console.log('grantt ', grant);
-            const grantCurrency = supportedCurrencies.find(
-              (currency) => currency.id.toLowerCase()
-                === grant.reward.asset.toString().toLowerCase(),
-            );
+            // console.log(grant.workspace.supportedNetworks[0]);
+            // console.log(grant.reward);
             const isGrantVerified = parseInt(parseAmount(grant.funding), 10) > 0;
             return (
               <GrantCard
@@ -135,8 +129,21 @@ function BrowseGrants() {
                 numOfApplicants={grant.numberOfApplications}
                 endTimestamp={new Date(grant.deadline!).getTime()}
                 grantAmount={formatAmount(grant.reward.committed)}
-                grantCurrency={grantCurrency?.label ?? 'LOL'}
-                grantCurrencyIcon={grantCurrency?.label ? getIcon(grantCurrency.label) : '/images/dummy/Ethereum Icon.svg'}
+                grantCurrency={
+                  CHAIN_INFO[
+                    getSupportedChainIdFromSupportedNetwork(
+                      grant.workspace.supportedNetworks[0],
+                    )
+                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label ?? 'LOL'
+                }
+                grantCurrencyIcon={
+                  CHAIN_INFO[
+                    getSupportedChainIdFromSupportedNetwork(
+                      grant.workspace.supportedNetworks[0],
+                    )
+                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.icon
+                  ?? '/images/dummy/Ethereum Icon.svg'
+                }
                 isGrantVerified={isGrantVerified}
                 onClick={() => {
                   if (!(accountData && accountData.address)) {
@@ -145,7 +152,9 @@ function BrowseGrants() {
                       query: {
                         flow: '/',
                         grantId: grant.id,
-                        chainId: getChainIdFromResponse(grant.workspace.supportedNetworks[0]),
+                        chainId: getChainIdFromResponse(
+                          grant.workspace.supportedNetworks[0],
+                        ),
                       },
                     });
                     return;
@@ -154,7 +163,9 @@ function BrowseGrants() {
                     pathname: '/explore_grants/about_grant',
                     query: {
                       grantID: grant.id,
-                      chainId: getChainIdFromResponse(grant.workspace.supportedNetworks[0]),
+                      chainId: getChainIdFromResponse(
+                        grant.workspace.supportedNetworks[0],
+                      ),
                     },
                   });
                 }}
@@ -163,11 +174,7 @@ function BrowseGrants() {
           })}
       </Flex>
       {accountData && accountData.address ? null : (
-        <Flex
-          w="26%"
-          pos="sticky"
-          top={0}
-        >
+        <Flex w="26%" pos="sticky" top={0}>
           <Sidebar />
         </Flex>
       )}

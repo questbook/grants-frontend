@@ -17,7 +17,7 @@ import { ApiClientsContext } from './_app';
 function SignupDao() {
   const router = useRouter();
   const {
-    workspaceId, setWorkspaceId, setChainId, chainId,
+    setWorkspace,
   } = useContext(ApiClientsContext)!;
 
   const [daoCreated, setDaoCreated] = React.useState(false);
@@ -52,10 +52,15 @@ function SignupDao() {
         id: Number(newId).toString(),
       });
       setDaoCreated(true);
-      setWorkspaceId(newId);
-      setChainId(workspaceData.network);
+      setWorkspace({
+        id: Number(newId).toString(),
+        logoIpfsHash: imageHash,
+        ownerId: workspaceData.ownerId,
+        supportedNetworks: [workspaceData.network],
+        title: workspaceData.description,
+      });
     }
-  }, [workspaceTransactionData, imageHash, workspaceData, router, setWorkspaceId, setChainId]);
+  }, [workspaceTransactionData, imageHash, workspaceData, router, setWorkspace]);
 
   const [grantData, setGrantData] = React.useState<any>();
   const [grantTransactionData, createGrantLoading] = useCreateGrant(
@@ -67,7 +72,7 @@ function SignupDao() {
   useEffect(() => {
     // console.log(grantTransactionData);
     if (grantTransactionData) {
-      router.replace({ pathname: '/your_grants', query: { done: 'yes', workspaceId, chainId } });
+      router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
 
       const link = `https://etherscan.io/tx/${grantTransactionData.transactionHash}`;
       toastRef.current = toast({
@@ -84,13 +89,16 @@ function SignupDao() {
         ),
       });
     }
-  }, [toast, grantTransactionData, router, workspaceId, chainId]);
+  }, [toast, grantTransactionData, router]);
 
   if (creatingGrant) {
     return (
       <CreateGrant
         hasClicked={createGrantLoading}
-        onSubmit={(data) => setGrantData(data)}
+        onSubmit={(data) => {
+          console.log(data);
+          setGrantData(data);
+        }}
       />
     );
   }
@@ -101,7 +109,7 @@ function SignupDao() {
         daoName={daoData.name}
         network={daoData.network}
         onCreateGrantClick={() => setCreatingGrant(true)}
-        onVisitGrantsClick={() => router.push({ pathname: '/your_grants', query: { workspaceId, chainId } })}
+        onVisitGrantsClick={() => router.push({ pathname: '/your_grants' })}
       />
     );
   }

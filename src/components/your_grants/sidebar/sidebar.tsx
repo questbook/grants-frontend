@@ -2,13 +2,11 @@ import {
   Flex, Text, Image, Box, Button,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { ApiClientsContext } from 'pages/_app';
-import React, { useContext } from 'react';
+import React from 'react';
 import SidebarComponent from '../../ui/sidebar/sidebar';
 
 function Sidebar() {
   const router = useRouter();
-  const { chainId, workspaceId } = useContext(ApiClientsContext)!;
   const listItems = [
     {
       icon: '/ui_icons/first_grant.svg',
@@ -17,9 +15,6 @@ function Sidebar() {
       onSubmit: () => {
         router.push({
           pathname: '/your_grants/create_grant/',
-          query: {
-            chainId,
-          },
         });
       },
     }, {
@@ -31,8 +26,6 @@ function Sidebar() {
           pathname: '/settings_and_members/',
           query: {
             tab: 'members',
-            chainId,
-            workspaceId,
           },
         });
       },
@@ -64,7 +57,7 @@ function Sidebar() {
         <Text variant="heading">
           Here is what you can do
           {' '}
-          <Text display="inline-block" color="#EA5050" variant="heading" fontWeight="600" letterSpacing={-1}>
+          <Text as="span" display="inline-block" color="#EA5050" variant="heading" fontWeight="600" letterSpacing={-1}>
             next?
           </Text>
         </Text>
@@ -72,7 +65,7 @@ function Sidebar() {
         <Box mb={9} />
 
         {listItems.map((item) => (
-          <Flex direction="row" align="start" mb={14}>
+          <Flex key={item.title} direction="row" align="start" mb={14}>
             <Image src={item.icon} boxSize="30px" />
             <Flex ml={4} direction="column" align="start">
               <Text
