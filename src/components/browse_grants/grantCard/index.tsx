@@ -2,9 +2,11 @@ import React from 'react';
 import {
   Image, Text, Button, Flex, Box, Divider, Link,
 } from '@chakra-ui/react';
+import Menu from 'src/components/ui/grantShareMenu';
 import Badge from './badge';
 
 interface GrantCardProps {
+  grantID: string;
   daoIcon: string;
   daoName: string;
   isDaoVerified?: boolean;
@@ -24,6 +26,7 @@ interface GrantCardProps {
 }
 
 function GrantCard({
+  grantID,
   daoIcon,
   daoName,
   isDaoVerified,
@@ -95,7 +98,8 @@ function GrantCard({
               {grantCurrency}
             </Text>
             <Box mr="auto" />
-            <Button onClick={onClick} variant="primaryCta">
+            <Menu grantID={grantID} />
+            <Button ml={3} onClick={onClick} variant="primaryCta">
               Apply Now
             </Button>
           </Flex>

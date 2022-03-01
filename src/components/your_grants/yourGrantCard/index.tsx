@@ -3,7 +3,7 @@ import {
   Image, Text, Button, Flex, Box, Divider,
 } from '@chakra-ui/react';
 import Badge from './badge';
-import Menu from './menu';
+import ShareMenu from '../../ui/grantShareMenu';
 
 interface YourGrantCardProps {
   grantID: string;
@@ -105,7 +105,7 @@ function YourGrantCard({
                   </Button>
                 </Text>
               ) : (
-                numOfApplicants > 0 ? <Menu grantID={grantID} /> : null
+                <ShareMenu grantID={grantID} />
               )}
               <Button
                 mr={2}
