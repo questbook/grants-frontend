@@ -36,9 +36,11 @@ export type AbstractMilestonesTableProps = {
 };
 
 function AbstractMilestonesTable(
-  { milestones, rewardAssetId, renderStatus }: AbstractMilestonesTableProps,
+  {
+    milestones, rewardAssetId, renderStatus, chainId,
+  }: AbstractMilestonesTableProps,
 ) {
-  const { icon: rewardIcon, label: rewardSymbol } = getAssetInfo(rewardAssetId);
+  const { icon: rewardIcon, label: rewardSymbol } = getAssetInfo(rewardAssetId, chainId);
 
   return (
     <Flex

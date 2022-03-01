@@ -7,18 +7,29 @@ import moment from 'moment';
 import { ethers } from 'ethers';
 import Empty from 'src/components/ui/empty';
 import { FundTransfer } from 'src/types';
+import { SupportedChainId } from 'src/constants/chains';
 import { getAssetInfo } from '../../../utils/tokenUtils';
-import { formatAmount, getMilestoneTitle, getTextWithEllipses } from '../../../utils/formattingUtils';
+import {
+  formatAmount,
+  getMilestoneTitle,
+  getTextWithEllipses,
+} from '../../../utils/formattingUtils';
 
 const TABLE_HEADERS = {
   milestoneTitle: {
     title: 'Funding Received',
     flex: 0.5,
-    content: (item: FundTransfer, assetId: string) => (
+    content: (
+      item: FundTransfer,
+      assetId: string,
+      _: any,
+      __: any,
+      chainId: SupportedChainId | undefined,
+    ) => (
       <>
         <Image
           display="inline-block"
-          src={getAssetInfo(assetId)?.icon}
+          src={getAssetInfo(assetId, chainId)?.icon}
           mr={2}
           h="27px"
           w="27px"
@@ -35,7 +46,7 @@ const TABLE_HEADERS = {
           >
             {formatAmount(item.amount)}
             {' '}
-            {getAssetInfo(assetId)?.label}
+            {getAssetInfo(assetId, chainId)?.label}
           </Text>
         </Text>
       </>
@@ -44,11 +55,17 @@ const TABLE_HEADERS = {
   amount: {
     title: 'Amount',
     flex: 0.35,
-    content: (item: FundTransfer, assetId: string, assetDecimals: number) => (
+    content: (
+      item: FundTransfer,
+      assetId: string,
+      assetDecimals: number,
+      _: any,
+      chainId: SupportedChainId | undefined,
+    ) => (
       <Text display="inline-block" variant="applicationText" fontWeight="700">
         {ethers.utils.formatUnits(item.amount, assetDecimals)}
         {' '}
-        {getAssetInfo(assetId)?.label}
+        {getAssetInfo(assetId, chainId)?.label}
       </Text>
     ),
   },
@@ -78,10 +95,7 @@ const TABLE_HEADERS = {
     title: 'Action',
     flex: 0.1,
     content: (item: FundTransfer) => (
-      <Link
-        href={`https://etherscan.io/tx/${item.id}/`}
-        isExternal
-      >
+      <Link href={`https://etherscan.io/tx/${item.id}/`} isExternal>
         <Text
           color="brand.500"
           variant="applicationText"
@@ -133,6 +147,7 @@ export type FundingProps = {
   columns: (keyof typeof TABLE_HEADERS)[];
   assetDecimals: number;
   grantId: string | null;
+  chainId?: SupportedChainId;
 };
 
 function Funding({
@@ -141,6 +156,7 @@ function Funding({
   columns,
   assetDecimals,
   grantId,
+  chainId,
 }: FundingProps) {
   const tableHeaders = useMemo(
     () => columns.map((column) => TABLE_HEADERS[column]),
@@ -158,15 +174,15 @@ function Funding({
   return (
     <Flex w="100%" my={4} align="center" direction="column" flex={1}>
       {fundTransfers.length === 0 && (
-      <Flex mt={14} direction="column" align="center">
-        <Empty
-          src={emptyState.src}
-          imgHeight={emptyState.imgHeight}
-          imgWidth={emptyState.imgWidth}
-          title={emptyState.title}
-          subtitle={emptyState.subtitle}
-        />
-      </Flex>
+        <Flex mt={14} direction="column" align="center">
+          <Empty
+            src={emptyState.src}
+            imgHeight={emptyState.imgHeight}
+            imgWidth={emptyState.imgWidth}
+            title={emptyState.title}
+            subtitle={emptyState.subtitle}
+          />
+        </Flex>
       )}
       {fundTransfers.length > 0 && (
         <>
@@ -203,17 +219,18 @@ function Funding({
                 pl="15px"
                 pr="15px"
               >
-                {grantId && tableHeaders.map(({ title, flex, content }) => (
-                  <Flex
-                    key={title}
-                    direction="row"
-                    justify="start"
-                    align="center"
-                    flex={flex}
-                  >
-                    {content(item, assetId, assetDecimals, grantId)}
-                  </Flex>
-                ))}
+                {grantId
+                  && tableHeaders.map(({ title, flex, content }) => (
+                    <Flex
+                      key={title}
+                      direction="row"
+                      justify="start"
+                      align="center"
+                      flex={flex}
+                    >
+                      {content(item, assetId, assetDecimals, grantId, chainId)}
+                    </Flex>
+                  ))}
               </Flex>
             ))}
           </Flex>

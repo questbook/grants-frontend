@@ -3,17 +3,15 @@ import {
 } from '@chakra-ui/react';
 import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { useAccount } from 'wagmi';
 import moment from 'moment';
 import { BigNumber } from 'ethers';
 import {
-  useGetApplicationDetailsLazyQuery,
+  useGetApplicationDetailsQuery,
   useGetFundSentForApplicationQuery,
 } from 'src/generated/graphql';
 import { ApplicationMilestone } from 'src/types';
 import useApplicationMilestones from 'src/utils/queryUtil';
 import { SupportedChainId } from 'src/constants/chains';
-import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import { getAssetInfo } from '../../src/utils/tokenUtils';
 import Sidebar from '../../src/components/your_applications/manage_grant/sidebar';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
@@ -41,12 +39,8 @@ function getTotalFundingAsked(milestones: ApplicationMilestone[]) {
 }
 
 function ManageGrant() {
-  const { subgraphClient, setChainId } = useContext(ApiClientsContext)!;
-
+  const { subgraphClients } = useContext(ApiClientsContext)!;
   const router = useRouter();
-
-  const [{ data: accountData }] = useAccount({ fetchEns: false });
-
   const [applicationData, setApplicationData] = useState<any>({
     grantTitle: '',
     applicantAddress: '',
@@ -57,32 +51,72 @@ function ManageGrant() {
   });
   const [applicationID, setApplicationID] = useState<any>('');
   const [selected, setSelected] = React.useState(0);
+  const [chainId, setChainId] = useState<SupportedChainId>();
 
   useEffect(() => {
     if (router && router.query) {
-      const { chainId: cId } = router.query;
+      console.log(router.query);
+      const { chainId: cId, applicationId: aId } = router.query;
       setChainId(cId as unknown as SupportedChainId);
+      setApplicationID(aId);
     }
-  }, [router, setChainId]);
+  }, [router]);
 
   const {
     data: { milestones, rewardAsset, fundingAsk },
     refetch,
-  } = useApplicationMilestones(applicationID);
+  } = useApplicationMilestones(applicationID, chainId);
 
   const { data: fundsDisbursed } = useGetFundSentForApplicationQuery({
-    client: subgraphClient?.client,
+    client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
     variables: {
       applicationId: applicationID,
     },
   });
 
-  const [getApplicationDetails] = useGetApplicationDetailsLazyQuery({
-    client: subgraphClient?.client,
+  const [queryParams, setQueryParams] = useState<any>({
+    client:
+      subgraphClients[
+        chainId ?? SupportedChainId.RINKEBY
+      ].client,
   });
 
-  const fundingIcon = getAssetInfo(rewardAsset)?.icon;
-  const assetInfo = getAssetInfo(rewardAsset);
+  useEffect(() => {
+    if (!applicationID) return;
+    if (!chainId) return;
+
+    setQueryParams({
+      client:
+        subgraphClients[chainId].client,
+      variables: {
+        applicationID,
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chainId, applicationID]);
+
+  const { data, error, loading } = useGetApplicationDetailsQuery(queryParams);
+
+  useEffect(() => {
+    if (data && data.grantApplication) {
+      const application = data.grantApplication;
+      // console.log(application);
+      setApplicationData({
+        title: application.grant.title,
+        applicantAddress: application.applicantId,
+        applicantEmail: application.fields.find((field: any) => field.id.includes('applicantEmail'))?.value[0],
+        applicationDate: moment
+          .unix(application.createdAtS)
+          .format('D MMMM YYYY'),
+        grant: application.grant,
+        id: application.id,
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, error, loading]);
+
+  const assetInfo = getAssetInfo(rewardAsset, chainId);
+  const fundingIcon = assetInfo.icon;
 
   const tabs = [
     {
@@ -102,45 +136,6 @@ function ManageGrant() {
       subtitle: 'Funding Requested',
     },
   ];
-
-  const getGrantData = async () => {
-    if (!subgraphClient || !accountData?.address) return;
-    try {
-      const { data } = await getApplicationDetails({
-        variables: {
-          applicationID,
-        },
-      });
-
-      if (data && data.grantApplication) {
-        const application = data.grantApplication;
-        // console.log(application);
-        setApplicationData({
-          title: application.grant.title,
-          applicantAddress: application.applicantId,
-          applicantEmail: application.fields.find((field: any) => field.id.includes('applicantEmail'))?.value[0],
-          applicationDate: moment
-            .unix(application.createdAtS)
-            .format('D MMMM YYYY'),
-          grant: application.grant,
-          id: application.id,
-        });
-      }
-    } catch (e: any) {
-      // console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    setApplicationID(router?.query?.applicationID ?? '');
-  }, [router, accountData]);
-
-  useEffect(() => {
-    if (!subgraphClient || !accountData?.address) return;
-    if (!applicationID || applicationID.length < 1) return;
-    getGrantData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [applicationID, accountData?.address]);
 
   return (
     <Container maxW="100%" display="flex" px="70px">
@@ -208,9 +203,7 @@ function ManageGrant() {
             refetch={refetch}
             milestones={milestones}
             rewardAssetId={rewardAsset}
-            chainId={applicationData?.grant?.workspace ? getSupportedChainIdFromSupportedNetwork(
-              applicationData.grant.workspace.supportedNetworks[0],
-            ) : undefined}
+            chainId={chainId}
           />
         ) : (
           <Funding
@@ -219,11 +212,12 @@ function ManageGrant() {
             columns={['milestoneTitle', 'date', 'from', 'action']}
             assetDecimals={18}
             grantId={applicationData.grant?.id}
+            chainId={chainId}
           />
         )}
       </Container>
 
-      <Sidebar applicationData={applicationData} assetInfo={assetInfo} />
+      <Sidebar chainId={chainId} applicationData={applicationData} assetInfo={assetInfo} />
     </Container>
   );
 }

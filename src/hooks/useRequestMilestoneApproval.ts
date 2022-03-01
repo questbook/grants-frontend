@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 import React, { useContext, useEffect } from 'react';
 import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
@@ -58,7 +59,7 @@ export default function useRequestMilestoneApproval(
         setTransactionData(updateTxnData);
         setLoading(false);
       } catch (e: any) {
-        console.log(e);
+        // console.log(e);
         setError(e.message);
         setLoading(false);
         toastRef.current = toast({
@@ -84,14 +85,13 @@ export default function useRequestMilestoneApproval(
       if (!applicationId) return;
       if (transactionData) return;
       if (!chainId) return;
-      // console.log(66);
       if (!accountData || !accountData.address) {
         throw new Error('not connected to wallet');
       }
       if (!currentChainId) {
         throw new Error('not connected to valid network');
       }
-      if (chainId !== currentChainId) {
+      if (chainId != currentChainId) {
         throw new Error('connected to wrong network');
       }
       if (!validatorApi) {

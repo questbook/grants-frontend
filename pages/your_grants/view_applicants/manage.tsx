@@ -15,10 +15,15 @@ import React, {
 } from 'react';
 import { useAccount } from 'wagmi';
 import { BigNumber } from 'ethers';
-import { ApplicationMilestone, useGetApplicationDetailsQuery, useGetFundSentForApplicationQuery } from 'src/generated/graphql';
+import {
+  ApplicationMilestone,
+  useGetApplicationDetailsQuery,
+  useGetFundSentForApplicationQuery,
+} from 'src/generated/graphql';
 import useApplicationMilestones from 'src/utils/queryUtil';
 import { SupportedChainId } from 'src/constants/chains';
 import useCompleteApplication from 'src/hooks/useCompleteApplication';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import InfoToast from '../../../src/components/ui/infoToast';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Heading from '../../../src/components/ui/heading';
@@ -30,7 +35,10 @@ import Milestones from '../../../src/components/your_grants/manage_grant/tables/
 import NavbarLayout from '../../../src/layout/navbarLayout';
 import { getAssetInfo } from '../../../src/utils/tokenUtils';
 import { ApiClientsContext } from '../../_app';
-import { formatAmount, getFormattedDateFromUnixTimestampWithYear } from '../../../src/utils/formattingUtils';
+import {
+  formatAmount,
+  getFormattedDateFromUnixTimestampWithYear,
+} from '../../../src/utils/formattingUtils';
 import SendFundModalContent from '../../../src/components/your_grants/manage_grant/modals/sendFundModalContent';
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
@@ -58,17 +66,8 @@ function ManageGrant() {
 
   const [applicationID, setApplicationID] = useState<any>();
   const router = useRouter();
-  const {
-    setChainId, subgraphClient,
-  } = useContext(ApiClientsContext)!;
+  const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
   const [{ data: accountData }] = useAccount({ fetchEns: false });
-
-  useEffect(() => {
-    if (router && router.query) {
-      const { chainId: cId } = router.query;
-      setChainId(cId as unknown as SupportedChainId);
-    }
-  }, [router, setChainId]);
 
   const {
     data: { milestones, rewardAsset, fundingAsk },
@@ -79,14 +78,22 @@ function ManageGrant() {
     data: appDetailsResult,
     refetch: refetchApplicationDetails,
   } = useGetApplicationDetailsQuery({
-    client: subgraphClient?.client,
+    client:
+        subgraphClients[
+          getSupportedChainIdFromWorkspace(workspace)
+            ?? SupportedChainId.RINKEBY
+        ].client,
     variables: {
       applicationID,
     },
   });
 
   const { data: fundsDisbursed } = useGetFundSentForApplicationQuery({
-    client: subgraphClient?.client,
+    client:
+      subgraphClients[
+        getSupportedChainIdFromWorkspace(workspace)
+          ?? SupportedChainId.RINKEBY
+      ].client,
     variables: {
       applicationId: applicationID,
     },
@@ -98,8 +105,8 @@ function ManageGrant() {
     [applicationData],
   );
 
-  const fundingIcon = getAssetInfo(rewardAsset)?.icon;
-  const assetInfo = getAssetInfo(rewardAsset);
+  const assetInfo = getAssetInfo(rewardAsset, getSupportedChainIdFromWorkspace(workspace));
+  const fundingIcon = assetInfo.icon;
 
   useEffect(() => {
     setApplicationID(router?.query?.applicationId ?? '');
@@ -116,6 +123,7 @@ function ManageGrant() {
           milestones={milestones}
           rewardAssetId={rewardAsset}
           sendFundOpen={() => setIsSendFundModalOpen(true)}
+          chainId={getSupportedChainIdFromWorkspace(workspace)}
         />
       ),
     },
@@ -131,6 +139,7 @@ function ManageGrant() {
           assetDecimals={18}
           grantId={applicationData?.grant?.id || ''}
           type="funding_sent"
+          chainId={getSupportedChainIdFromWorkspace(workspace)}
         />
       ),
     },
@@ -172,7 +181,7 @@ function ManageGrant() {
 
   const markApplicationComplete = async (comment: string) => {
     setUpdate({
-      feedback: comment,
+      text: comment,
     });
   };
 
@@ -219,7 +228,9 @@ function ManageGrant() {
               src="/ui_icons/date_icon.svg"
               mr={2}
             />
-            {getFormattedDateFromUnixTimestampWithYear(applicationData?.createdAtS)}
+            {getFormattedDateFromUnixTimestampWithYear(
+              applicationData?.createdAtS,
+            )}
           </Text>
           <Box mr={6} />
           <Link
@@ -249,7 +260,9 @@ function ManageGrant() {
             Grant marked as complete on
             {' '}
             <Text variant="applicationText" display="inline-block">
-              {getFormattedDateFromUnixTimestampWithYear(applicationData?.updatedAtS)}
+              {getFormattedDateFromUnixTimestampWithYear(
+                applicationData?.updatedAtS,
+              )}
             </Text>
           </Text>
         )}
@@ -257,7 +270,7 @@ function ManageGrant() {
         <Flex mt="29px" direction="row" w="full" align="center">
           {tabs.map((tab, index) => (
             <Button
-                // eslint-disable-next-line react/no-array-index-key
+              // eslint-disable-next-line react/no-array-index-key
               key={`tab-${tab.title}-${index}`}
               variant="ghost"
               h="110px"
@@ -265,27 +278,33 @@ function ManageGrant() {
               _hover={{
                 background: '#F5F5F5',
               }}
-              background={index !== selected
-                ? 'linear-gradient(180deg, #FFFFFF 0%, #F3F4F4 100%)'
-                : 'white'}
+              background={
+                index !== selected
+                  ? 'linear-gradient(180deg, #FFFFFF 0%, #F3F4F4 100%)'
+                  : 'white'
+              }
               _focus={{}}
               borderRadius={index !== selected ? 0 : '8px 8px 0px 0px'}
-              borderRightWidth={(index !== tabs.length - 1 && index + 1 !== selected)
-                  || index === selected
-                ? '2px'
-                : '0px'}
+              borderRightWidth={
+                (index !== tabs.length - 1 && index + 1 !== selected)
+                || index === selected
+                  ? '2px'
+                  : '0px'
+              }
               borderLeftWidth={index !== selected ? 0 : '2px'}
               borderTopWidth={index !== selected ? 0 : '2px'}
               borderBottomWidth={index !== selected ? '2px' : 0}
               borderBottomRightRadius="-2px"
               onClick={() => {
-                if (tabs[index].content) { setSelected(index); }
+                if (tabs[index].content) {
+                  setSelected(index);
+                }
               }}
             >
               <Flex direction="column" justify="center" align="center" w="100%">
                 <Flex direction="row" justify="center" align="center">
                   {tab.icon && (
-                  <Image h="26px" w="26px" src={tab.icon} alt={tab.icon} />
+                    <Image h="26px" w="26px" src={tab.icon} alt={tab.icon} />
                   )}
                   <Box mx={1} />
                   <Text fontWeight="700" fontSize="26px" lineHeight="40px">
@@ -335,35 +354,35 @@ function ManageGrant() {
       </Modal>
 
       {applicationData && applicationData.grant && (
-      <Modal
-        isOpen={isSendFundModalOpen}
-        onClose={() => setIsSendFundModalOpen(false)}
-        title="Send Funds"
-        rightIcon={(
-          <Button
-            _focus={{}}
-            variant="link"
-            color="#AA82F0"
-            leftIcon={<Image src="/sidebar/discord_icon.svg" />}
-          >
-            Support 24*7
-          </Button>
-          )}
-      >
-        <SendFundModalContent
-          milestones={milestones}
-          rewardAsset={{
-            address: applicationData.grant.reward.asset,
-            committed: BigNumber.from(applicationData.grant.reward.committed),
-            label: assetInfo?.label,
-            icon: assetInfo?.icon,
-          }}
-          contractFunding={applicationData.grant.funding}
+        <Modal
+          isOpen={isSendFundModalOpen}
           onClose={() => setIsSendFundModalOpen(false)}
-          grantId={applicationData.grant.id}
-          applicationId={applicationID}
-        />
-      </Modal>
+          title="Send Funds"
+          rightIcon={(
+            <Button
+              _focus={{}}
+              variant="link"
+              color="#AA82F0"
+              leftIcon={<Image src="/sidebar/discord_icon.svg" />}
+            >
+              Support 24*7
+            </Button>
+          )}
+        >
+          <SendFundModalContent
+            milestones={milestones}
+            rewardAsset={{
+              address: applicationData.grant.reward.asset,
+              committed: BigNumber.from(applicationData.grant.reward.committed),
+              label: assetInfo?.label,
+              icon: assetInfo?.icon,
+            }}
+            contractFunding={applicationData.grant.funding}
+            onClose={() => setIsSendFundModalOpen(false)}
+            grantId={applicationData.grant.id}
+            applicationId={applicationID}
+          />
+        </Modal>
       )}
     </Container>
   );

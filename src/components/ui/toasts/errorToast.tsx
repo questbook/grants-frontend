@@ -1,5 +1,5 @@
 import {
-  Flex, Image, Text,
+  Flex, IconButton, Image, Text,
 } from '@chakra-ui/react';
 import React from 'react';
 
@@ -17,6 +17,7 @@ function ErrorToast({ content, close }: Props) {
       px="26px"
       py="22px"
       borderRadius="6px"
+      minW="578px"
       mt={4}
       mx={10}
       alignSelf="stretch"
@@ -40,7 +41,7 @@ function ErrorToast({ content, close }: Props) {
           alt="Rejected"
         />
       </Flex>
-      <Flex ml="23px" direction="column">
+      <Flex flex={1} ml="23px" direction="column">
         <Text
           fontSize="16px"
           lineHeight="24px"
@@ -57,6 +58,16 @@ function ErrorToast({ content, close }: Props) {
         >
           {content}
         </Text>
+      </Flex>
+      <Flex h="full" align="center" justify="center">
+        <IconButton
+          _hover={{}}
+          variant="ghost"
+          _active={{}}
+          icon={<Image src="/ui_icons/close.svg" />}
+          aria-label="Close"
+          onClick={close}
+        />
       </Flex>
     </Flex>
   );
