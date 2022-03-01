@@ -90,7 +90,7 @@ function YourApplications() {
         pb={8}
         px={10}
       >
-        <Heading title="Your Applications" />
+        <Heading title="My Applications" />
 
         { myApplications.length > 0
           && myApplications.map((application: any) => (

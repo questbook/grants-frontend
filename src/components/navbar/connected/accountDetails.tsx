@@ -16,7 +16,7 @@ function AccountDetails({ networkId, isOnline, address }: Props) {
   const formattedAddress = `${address.substring(0, 4)}......${address.substring(address.length - 4)}`;
   const supportedChainIds = Object.keys(supportedNetworks);
   const networkSupported = supportedChainIds.includes(networkId.toString());
-  const [, disconnect] = useAccount();
+  const [{ data }, disconnect] = useAccount();
   const router = useRouter();
 
   return (
@@ -74,6 +74,13 @@ function AccountDetails({ networkId, isOnline, address }: Props) {
 
       </MenuButton>
       <MenuList>
+        <MenuItem
+          isDisabled
+        >
+          Signed in with
+          {' '}
+          {data?.connector?.name}
+        </MenuItem>
         <MenuItem
           onClick={() => {
             disconnect();

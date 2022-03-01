@@ -141,7 +141,7 @@ function ManageGrant() {
         pb={8}
         px={10}
       >
-        <Breadcrumbs path={['Your Applications', 'Manage Grant']} />
+        <Breadcrumbs path={['My Applications', 'Manage Grant']} />
         <Heading mt="18px" title={applicationData.title} />
         <Box mt={5} />
 

@@ -131,7 +131,7 @@ function ConnectWallet() {
         ))}
       </VStack>
 
-      {router.query.flow !== 'getting_started/developer' && (
+      {router.query.flow === 'getting_started/dao' && (
       <Text variant="footer" mt="24px">
         <Image
           display="inline-block"
