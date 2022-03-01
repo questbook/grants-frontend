@@ -49,7 +49,7 @@ function ImageUpload({
           {image && image.length && <Image objectFit="cover" src={image} w="100%" h="100%" />}
         </Button>
 
-        <input style={{ visibility: 'hidden' }} ref={ref} type="file" name="myImage" onChange={onChange} />
+        <input style={{ visibility: 'hidden' }} ref={ref} type="file" name="myImage" onChange={onChange} accept="image/jpg, image/jpeg, image/png" />
 
         <Box
           position="absolute"

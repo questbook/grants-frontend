@@ -1,9 +1,18 @@
 import {
-  Flex, Text, Box, Button, Image, Link, Center, CircularProgress,
+  Flex,
+  Text,
+  Box,
+  Button,
+  Image,
+  Link,
+  Center,
+  CircularProgress,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
-import supportedCurrencies from '../../../../constants/supportedCurrencies';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { SupportedChainId } from 'src/constants/chains';
+import useChainId from 'src/hooks/utils/useChainId';
 import Datepicker from '../../../ui/forms/datepicker';
 import Dropdown from '../../../ui/forms/dropdown';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
@@ -17,12 +26,35 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
   const [reward, setReward] = React.useState('');
   const [rewardError, setRewardError] = React.useState(false);
 
+  const currentChain = useChainId() ?? SupportedChainId.RINKEBY;
+
+  const supportedCurrencies = Object.keys(
+    CHAIN_INFO[currentChain].supportedCurrencies,
+  ).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
+    .map((currency) => ({ ...currency, id: currency.address }));
   const [rewardCurrency, setRewardCurrency] = React.useState(
     supportedCurrencies[0].label,
   );
   const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
-    supportedCurrencies[0].id,
+    supportedCurrencies[0].address,
   );
+
+  useEffect(() => {
+    console.log(currentChain);
+    if (currentChain) {
+      const currencies = Object.keys(
+        CHAIN_INFO[currentChain].supportedCurrencies,
+      ).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
+        .map((currency) => ({ ...currency, id: currency.address }));
+      setRewardCurrency(currencies[0].label);
+      setRewardCurrencyAddress(currencies[0].address);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentChain]);
+
+  useEffect(() => {
+    console.log(rewardCurrencyAddress);
+  }, [rewardCurrencyAddress]);
 
   const [date, setDate] = React.useState('');
   const [dateError, setDateError] = React.useState(false);
@@ -37,6 +69,9 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
       setDateError(true);
       error = true;
     }
+
+    console.log(reward);
+    console.log(rewardCurrencyAddress);
 
     if (!error) {
       onSubmit({ reward, rewardCurrencyAddress, date });
@@ -72,6 +107,7 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
               listItems={supportedCurrencies}
               value={rewardCurrency}
               onChange={(data: any) => {
+                console.log(data);
                 setRewardCurrency(data.label);
                 setRewardCurrencyAddress(data.id);
               }}
@@ -105,7 +141,12 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
           By pressing Publish Grant you&apos;ll have to approve this transaction
           in your wallet.
           {' '}
-          <Link href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46" isExternal>Learn more</Link>
+          <Link
+            href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
+            isExternal
+          >
+            Learn more
+          </Link>
           {' '}
           <Image
             display="inline-block"
@@ -117,7 +158,12 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
       </Flex>
       {hasClicked ? (
         <Center>
-          <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
+          <CircularProgress
+            isIndeterminate
+            color="brand.500"
+            size="48px"
+            mt={4}
+          />
         </Center>
       ) : (
         <Button mt="auto" variant="primary" onClick={handleOnSubmit}>

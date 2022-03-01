@@ -1,12 +1,14 @@
 import { Image, Button } from '@chakra-ui/react';
 import copy from 'copy-to-clipboard';
 import React from 'react';
+import { SupportedChainId } from 'src/constants/chains';
 
 interface Props {
   grantID: string;
+  chainId: SupportedChainId | undefined;
 }
 
-function GrantShare({ grantID } : Props) {
+function GrantShare({ grantID, chainId } : Props) {
   const [copied, setCopied] = React.useState(false);
 
   const copyGrantLink = () => {
@@ -14,7 +16,7 @@ function GrantShare({ grantID } : Props) {
     const protocol = href[0];
     const domain = href[2];
     console.log(domain);
-    copy(`${protocol}//${domain}/explore_grants/about_grant/?grantID=${grantID}`);
+    copy(`${protocol}//${domain}/explore_grants/about_grant/?grantId=${grantID}&chainId=${chainId}`);
     setCopied(true);
   };
 

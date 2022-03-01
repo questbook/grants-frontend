@@ -44,7 +44,7 @@ function GrantRewards({
             />
           )}
         </Text>
-        <Image ml="auto" h="54px" w="54px" src={daoLogo} />
+        <Image objectFit="cover" ml="auto" h="54px" w="54px" src={daoLogo} />
       </Flex>
 
       <Divider />

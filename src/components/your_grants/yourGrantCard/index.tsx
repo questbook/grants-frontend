@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Image, Text, Button, Flex, Box, Divider,
 } from '@chakra-ui/react';
+import { SupportedChainId } from 'src/constants/chains';
 import Badge from './badge';
 import ShareMenu from '../../ui/grantShareMenu';
 
@@ -19,6 +20,7 @@ interface YourGrantCardProps {
   onEditClick?: () => void;
   onViewApplicantsClick?: () => void;
   onAddFundsClick?: () => void;
+  chainId: SupportedChainId | undefined;
 }
 
 function YourGrantCard({
@@ -35,6 +37,7 @@ function YourGrantCard({
   onEditClick,
   onViewApplicantsClick,
   onAddFundsClick,
+  chainId,
 }: YourGrantCardProps) {
   return (
     <>
@@ -105,7 +108,7 @@ function YourGrantCard({
                   </Button>
                 </Text>
               ) : (
-                <ShareMenu grantID={grantID} />
+                <ShareMenu chainId={chainId} grantID={grantID} />
               )}
               <Button
                 mr={2}

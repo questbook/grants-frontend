@@ -1,14 +1,11 @@
 import {
   ModalBody, Flex, Text, Button, Box, Image, useToast, Center, CircularProgress, ToastId,
 } from '@chakra-ui/react';
-import config from 'src/constants/config';
-import { ApiClientsContext } from 'pages/_app';
-import React, { useContext, useState } from 'react';
-import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.json';
+import React, { useEffect, useState } from 'react';
 import { getFormattedDateFromUnixTimestampWithYear, getMilestoneMetadata } from 'src/utils/formattingUtils';
-import { useContract, useSigner } from 'wagmi';
 import InfoToast from 'src/components/ui/infoToast';
 import { ApplicationMilestone } from 'src/types';
+import useApproveMilestone from 'src/hooks/useApproveMilestone';
 import MultiLineInput from '../../../ui/forms/multiLineInput';
 
 interface Props {
@@ -17,77 +14,38 @@ interface Props {
 }
 
 function ModalContent({ milestone, done }: Props) {
-  const { validatorApi, workspaceId } = useContext(ApiClientsContext)!;
-  const [signerStates] = useSigner();
-  const applicationRegContract = useContract({
-    addressOrName: config.ApplicationRegistryAddress,
-    contractInterface: ApplicationRegistryAbi,
-    signerOrProvider: signerStates.data,
-  });
-
   const [details, setDetails] = useState('');
   const [detailsError, setDetailsError] = useState(false);
 
-  const [hasClicked, setHasClicked] = React.useState(false);
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
 
-  const closeToast = () => {
-    if (toastRef.current) {
-      toast.close(toastRef.current);
-    }
-  };
+  const { milestoneIndex, applicationId } = getMilestoneMetadata(milestone)!;
+  const [milestoneUpdate, setMilestoneUpdate] = useState<any>();
+  const [txn, loading] = useApproveMilestone(milestoneUpdate, applicationId, milestoneIndex);
 
-  const showToast = ({ link } : { link: string }) => {
-    toastRef.current = toast({
-      position: 'top',
-      render: () => (
-        <InfoToast
-          link={link}
-          close={closeToast}
-        />
-      ),
-    });
-  };
+  useEffect(() => {
+    if (txn) {
+      setMilestoneUpdate(undefined);
+      done();
+      toastRef.current = toast({
+        position: 'top',
+        render: () => (
+          <InfoToast
+            link={`https://etherscan.io/tx/${txn.transactionHash}`}
+            close={() => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            }}
+          />
+        ),
+      });
+    }
+  }, [done, toast, txn]);
 
   const markAsDone = async () => {
-    setHasClicked(true);
-
-    try {
-      const { data } = await validatorApi.validateApplicationMilestoneUpdate({ text: details });
-      console.log(`uploaded milestone update data to IPFS: ${data.ipfsHash}`);
-
-      const { milestoneIndex, applicationId } = getMilestoneMetadata(milestone)!;
-      // contract interaction
-      const transaction = await applicationRegContract.approveMilestone(
-        applicationId,
-        Number(milestoneIndex),
-        Number(workspaceId),
-        data.ipfsHash,
-      );
-
-      const transactionData = await transaction.wait();
-
-      console.log('executed transaction', transactionData);
-
-      // await subgraphClient.waitForBlock(transactionData.blockNumber);
-
-      // console.log('executed application milestone');
-
-      done();
-      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
-    } catch (error: any) {
-      console.error('error in milestone update ', error);
-      toast({
-        title: error.name,
-        description: error.message,
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
-      });
-    } finally {
-      setHasClicked(false);
-    }
+    setMilestoneUpdate({ text: details });
   };
 
   return (
@@ -163,7 +121,7 @@ function ModalContent({ milestone, done }: Props) {
           </Text>
         </Flex>
 
-        {hasClicked ? (
+        {loading ? (
           <Center>
             <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
           </Center>

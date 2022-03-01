@@ -1,14 +1,11 @@
 import {
   Flex, Text, Box, useToast, ToastId,
 } from '@chakra-ui/react';
-import React, { useEffect, useContext } from 'react';
-import { useContract, useSigner } from 'wagmi';
+import React, { useEffect, useState } from 'react';
 import { Workspace } from 'src/types';
-import config from '../../constants/config';
-import WorkspaceRegistryABI from '../../contracts/abi/WorkspaceRegistryAbi.json';
+import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace';
 import EditForm from './edit_form';
 import { getUrlForIPFSHash, uploadToIPFS } from '../../utils/ipfsUtils';
-import { ApiClientsContext } from '../../../pages/_app';
 import InfoToast from '../ui/infoToast';
 
 interface Props {
@@ -30,104 +27,71 @@ function Settings({
     telegramChannel?: string;
   } | null>();
 
-  const [signerStates] = useSigner();
-
-  const contract = useContract({
-    addressOrName: config.WorkspaceRegistryAddress,
-    contractInterface: WorkspaceRegistryABI,
-    signerOrProvider: signerStates.data,
-  });
-
-  const apiClients = useContext(ApiClientsContext);
-
-  const [hasClicked, setHasClicked] = React.useState(false);
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
 
-  const closeToast = () => {
-    if (toastRef.current) {
-      toast.close(toastRef.current);
+  const [editData, setEditData] = useState<any>();
+  const [txnData, loading] = useUpdateWorkspace(editData);
+
+  useEffect(() => {
+    if (txnData) {
+      toastRef.current = toast({
+        position: 'top',
+        render: () => (
+          <InfoToast
+            link={`https://etherscan.io/tx/${txnData.transactionHash}`}
+            close={() => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            }}
+          />
+        ),
+      });
     }
-  };
+  }, [toast, txnData]);
 
-  const showToast = ({ link } : { link: string }) => {
-    toastRef.current = toast({
-      position: 'top',
-      render: () => (
-        <InfoToast
-          link={link}
-          close={closeToast}
-        />
-      ),
-    });
-  };
+  const handleFormSubmit = async (data: any) => {
+    let imageHash = workspaceData.logoIpfsHash;
+    let coverImageHash = workspaceData.coverImageIpfsHash;
+    const socials = [];
 
-  const handleFormSubmit = async (data: {
-    name: string;
-    about: string;
-    image?: File;
-    coverImage?: File;
-    twitterHandle?: string;
-    discordHandle?: string;
-    telegramChannel?: string;
-  }) => {
-    if (!apiClients) return;
-    try {
-      const { validatorApi } = apiClients;
-      let imageHash = workspaceData.logoIpfsHash;
-      let coverImageHash = workspaceData.coverImageIpfsHash;
-      const socials = [];
+    if (data.image) {
+      imageHash = (await uploadToIPFS(data.image)).hash;
+    }
+    if (data.coverImage) {
+      coverImageHash = (await uploadToIPFS(data.coverImage)).hash;
+    }
 
-      if (data.image) {
-        imageHash = (await uploadToIPFS(data.image)).hash;
-      }
-      if (data.coverImage) {
-        coverImageHash = (await uploadToIPFS(data.coverImage)).hash;
-      }
+    if (data.twitterHandle) {
+      socials.push({ name: 'twitter', value: data.twitterHandle });
+    }
+    if (data.discordHandle) {
+      socials.push({ name: 'discord', value: data.discordHandle });
+    }
+    if (data.telegramChannel) {
+      socials.push({ name: 'telegram', value: data.telegramChannel });
+    }
 
-      if (data.twitterHandle) {
-        socials.push({ name: 'twitter', value: data.twitterHandle });
-      }
-      if (data.discordHandle) {
-        socials.push({ name: 'discord', value: data.discordHandle });
-      }
-      if (data.telegramChannel) {
-        socials.push({ name: 'telegram', value: data.telegramChannel });
-      }
-
-      setHasClicked(true);
-      const {
-        data: { ipfsHash },
-      } = await validatorApi.validateWorkspaceUpdate(coverImageHash ? {
+    let d = {};
+    if (coverImageHash) {
+      d = {
         title: data.name,
         about: data.about,
         logoIpfsHash: imageHash,
         coverImageIpfsHash: coverImageHash,
         socials,
-      } : {
+      };
+    } else {
+      d = {
         title: data.name,
         about: data.about,
         logoIpfsHash: imageHash,
         socials,
-      });
-
-      const workspaceID = Number(workspaceData?.id);
-
-      const txn = await contract.updateWorkspaceMetadata(workspaceID, ipfsHash);
-      const transactionData = await txn.wait();
-      setHasClicked(false);
-      window.location.reload();
-
-      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
-    } catch (error) {
-      setHasClicked(false);
-      // console.log(error);
-      toast({
-        title: 'Application update not indexed',
-        status: 'error',
-      });
+      };
     }
-    // await subgraphClient.waitForBlock(transactionData.blockNumber);
+
+    setEditData(d);
   };
 
   useEffect(() => {
@@ -166,7 +130,7 @@ function Settings({
           Workspace Settings
         </Text>
       </Flex>
-      <EditForm hasClicked={hasClicked} onSubmit={handleFormSubmit} formData={formData} />
+      <EditForm hasClicked={loading} onSubmit={handleFormSubmit} formData={formData} />
       <Box my={10} />
     </Flex>
   );

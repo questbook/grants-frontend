@@ -3,14 +3,17 @@ import {
 } from '@chakra-ui/react';
 // import { ExternalLinkIcon } from '@chakra-ui/icons';
 import React from 'react';
+import { SupportedChainId } from 'src/constants/chains';
 import FloatingSidebar from '../../ui/sidebar/floatingSidebar';
 
 function Sidebar({
   applicationData,
   assetInfo,
+  chainId,
 }: {
   applicationData: any;
   assetInfo: any;
+  chainId: SupportedChainId | undefined;
 }) {
   return (
     <Box my="115px">
@@ -56,7 +59,7 @@ function Sidebar({
             fontWeight="500"
             fontStyle="normal"
             color="#414E50"
-            href={`/explore_grants/about_grant/?grantID=${applicationData.grant?.id}`}
+            href={`/explore_grants/about_grant/?grantId=${applicationData.grant?.id}&chainId=${chainId}`}
             isExternal
           >
             View Grant
@@ -70,7 +73,7 @@ function Sidebar({
             fontWeight="500"
             fontStyle="normal"
             color="#414E50"
-            href={`/your_grants/view_applicants/applicant_form/?applicationId=${applicationData.id}`}
+            href={`/your_applications/grant_application/?applicationId=${applicationData.id}&chainId=${chainId}`}
             isExternal
             ml="auto"
           >

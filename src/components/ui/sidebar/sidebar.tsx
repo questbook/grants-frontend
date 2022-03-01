@@ -1,5 +1,5 @@
 import {
-  Divider, Flex, Image, Link, useTheme,
+  Flex, Image, Link, useTheme,
 } from '@chakra-ui/react';
 import React from 'react';
 
@@ -20,8 +20,7 @@ function Sidebar({
       direction="column"
     >
       {children}
-      <Divider position="sticky" bottom={12} variant="sidebar" />
-      <Flex bg={theme.colors.backgrounds.sidebar} position="sticky" bottom={0} w="100%" flexWrap="wrap" py={3} justify="center" px={8}>
+      <Flex borderTop="1px solid #A0A7A7" bg={theme.colors.backgrounds.sidebar} position="sticky" bottom={0} w="100%" py={3} justify="center" px={8}>
         {links.map(({ href, label, iconUrl }, index) => (
           <Flex key={label} alignItems="center" ml={index === 0 ? 0 : 10}>
             <Image h="18px" w="14px" src={iconUrl} />
