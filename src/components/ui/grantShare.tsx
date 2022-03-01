@@ -15,7 +15,7 @@ function GrantShare({ grantID, chainId } : Props) {
     const href = window.location.href.split('/');
     const protocol = href[0];
     const domain = href[2];
-    console.log(domain);
+    // console.log(domain);
     copy(`${protocol}//${domain}/explore_grants/about_grant/?grantId=${grantID}&chainId=${chainId}`);
     setCopied(true);
   };
