@@ -43,7 +43,8 @@ export default function useCreateWorkspace(
       // console.log('calling validate');
 
       const uploadedImageHash = await uploadToIPFS(data.image);
-
+      console.log('Network: ', data.network);
+      console.log('Network Return: ', getSupportedValidatorNetworkFromChainId(data.network));
       const {
         data: { ipfsHash },
       } = await validatorApi.validateWorkspaceCreate({
@@ -71,7 +72,7 @@ export default function useCreateWorkspace(
         toastRef.current = toast({
           position: 'top',
           render: () => ErrorToast({
-            content: 'User rejected transaction',
+            content: 'Transaction Failed',
             close: () => {
               if (toastRef.current) {
                 toast.close(toastRef.current);

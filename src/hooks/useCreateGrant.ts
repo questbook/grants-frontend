@@ -8,7 +8,10 @@ import {
   getSupportedChainIdFromWorkspace,
   getSupportedValidatorNetworkFromChainId,
 } from 'src/utils/validationUtils';
-import { APPLICATION_REGISTRY_ADDRESS, WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses';
+import {
+  APPLICATION_REGISTRY_ADDRESS,
+  WORKSPACE_REGISTRY_ADDRESS,
+} from 'src/constants/addresses';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useGrantFactoryContract from './contracts/useGrantFactoryContract';
 import useChainId from './utils/useChainId';
@@ -56,7 +59,6 @@ export default function useCreateGrant(
           details: data.details,
           deadline: data.date,
           reward: {
-            // @ts-expect-error
             committed: parseAmount(data.reward),
             asset: data.rewardCurrencyAddress,
           },
@@ -72,7 +74,10 @@ export default function useCreateGrant(
 
         console.log(workspaceId ?? Number(workspace?.id).toString());
         console.log('ipfsHash', ipfsHash);
-        console.log(WORKSPACE_REGISTRY_ADDRESS[currentChainId!], APPLICATION_REGISTRY_ADDRESS[currentChainId!]);
+        console.log(
+          WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
+          APPLICATION_REGISTRY_ADDRESS[currentChainId!],
+        );
 
         const createGrantTransaction = await grantContract.createGrant(
           workspaceId ?? Number(workspace?.id).toString(),
@@ -91,7 +96,7 @@ export default function useCreateGrant(
         toastRef.current = toast({
           position: 'top',
           render: () => ErrorToast({
-            content: 'User rejected transaction',
+            content: 'Transaction Failed',
             close: () => {
               if (toastRef.current) {
                 toast.close(toastRef.current);

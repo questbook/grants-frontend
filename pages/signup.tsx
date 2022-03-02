@@ -57,7 +57,7 @@ function SignupDao() {
         logoIpfsHash: imageHash,
         ownerId: workspaceData.ownerId,
         supportedNetworks: [workspaceData.network],
-        title: workspaceData.description,
+        title: workspaceData.name,
       });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -136,6 +136,7 @@ function SignupDao() {
       <Form
         // hasClicked={workspaceLoading}
         onSubmit={(data) => {
+          console.log('Workspace Data: ', data);
           setWorkspaceData(data);
         }}
       />

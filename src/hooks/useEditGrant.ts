@@ -50,7 +50,6 @@ export default function useEditGrant(
           details: data.details,
           deadline: data.date,
           reward: {
-            // @ts-expect-error
             committed: parseAmount(data.reward),
             asset: data.rewardCurrencyAddress,
           },
@@ -74,7 +73,7 @@ export default function useEditGrant(
         toastRef.current = toast({
           position: 'top',
           render: () => ErrorToast({
-            content: 'User rejected transaction',
+            content: 'Transaction Failed',
             close: () => {
               if (toastRef.current) {
                 toast.close(toastRef.current);

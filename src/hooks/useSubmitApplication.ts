@@ -68,7 +68,7 @@ export default function useSubmitApplication(
         toastRef.current = toast({
           position: 'top',
           render: () => ErrorToast({
-            content: 'User rejected transaction',
+            content: 'Transaction Failed',
             close: () => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
