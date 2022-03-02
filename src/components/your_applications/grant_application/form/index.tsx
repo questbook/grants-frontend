@@ -10,12 +10,11 @@ import {
   Container,
   useToast,
   ToastId,
-  Center,
-  CircularProgress,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { isValidEmail } from 'src/utils/validationUtils';
 import useResubmitApplication from 'src/hooks/useResubmitApplication';
+import Loader from 'src/components/ui/loader';
 import { SupportedChainId } from 'src/constants/chains';
 import {
   GrantApplicationFieldsSubgraph,
@@ -424,24 +423,17 @@ function Form({
       )}
 
       {onSubmit ? (
-        <>
-          <Box mt={8} />
-          {loading ? (
-            <Center>
-              <CircularProgress isIndeterminate color="brand.500" size="48px" />
-            </Center>
-          ) : (
-            <Button
-              onClick={handleOnSubmit}
-              mx={10}
-              alignSelf="stretch"
-              variant="primary"
-            >
-              Resubmit Application
-            </Button>
-          )}
-          <Box mt={4} />
-        </>
+        <Button
+          onClick={loading ? () => {} : handleOnSubmit}
+          py={loading ? 2 : 0}
+          mt={8}
+          mb={4}
+          mx={10}
+          alignSelf="stretch"
+          variant="primary"
+        >
+          {loading ? <Loader /> : 'Resubmit Application'}
+        </Button>
       ) : null}
 
       <Text
@@ -561,24 +553,17 @@ function Form({
       <Box mt={5} />
 
       {onSubmit ? (
-        <>
-          <Box mt={4} />
-          {loading ? (
-            <Center>
-              <CircularProgress isIndeterminate color="brand.500" size="48px" />
-            </Center>
-          ) : (
-            <Button
-              onClick={handleOnSubmit}
-              mx={10}
-              alignSelf="stretch"
-              variant="primary"
-            >
-              Resubmit Application
-            </Button>
-          )}
-          <Box mt={4} />
-        </>
+        <Button
+          onClick={loading ? () => {} : handleOnSubmit}
+          py={loading ? 2 : 0}
+          mt={8}
+          mb={4}
+          mx={10}
+          alignSelf="stretch"
+          variant="primary"
+        >
+          {loading ? <Loader /> : 'Resubmit Application'}
+        </Button>
       ) : null}
     </Flex>
   );

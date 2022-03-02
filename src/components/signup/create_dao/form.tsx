@@ -5,8 +5,6 @@ import {
   Text,
   Image,
   Link,
-  CircularProgress,
-  Center,
 } from '@chakra-ui/react';
 import React from 'react';
 import { highlightWordsInString } from 'src/utils/formattingUtils';
@@ -19,7 +17,6 @@ import SingleLineInput from '../../ui/forms/singleLineInput';
 import Tooltip from '../../ui/tooltip';
 
 function Form({
-  hasClicked,
   onSubmit: onFormSubmit,
 }: {
   onSubmit: (data: {
@@ -28,7 +25,6 @@ function Form({
     image: File;
     network: SupportedChainId;
   }) => void;
-  hasClicked: boolean;
 }) {
   const chainId = useChainId();
 
@@ -180,27 +176,16 @@ function Form({
         </Link>
       </Text>
 
-      {hasClicked ? (
-        <Center>
-          <CircularProgress
-            isIndeterminate
-            color="brand.500"
-            size="48px"
-            mt={4}
-          />
-        </Center>
-      ) : (
-        <Button
-          onClick={handleSubmit}
-          w="100%"
-          maxW="502px"
-          variant="primary"
-          mt={5}
-          mb={16}
-        >
-          Create Grants DAO
-        </Button>
-      )}
+      <Button
+        onClick={handleSubmit}
+        w="100%"
+        maxW="502px"
+        variant="primary"
+        mt={5}
+        mb={16}
+      >
+        Create Grants DAO
+      </Button>
     </>
   );
 }

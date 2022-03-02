@@ -9,16 +9,13 @@ import {
   Heading,
   useToast,
   ToastId,
-  Center,
-  CircularProgress,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import Lottie from 'lottie-react';
 import copy from 'copy-to-clipboard';
-import {
-  useContract, useSigner,
-} from 'wagmi';
+import { useContract, useSigner } from 'wagmi';
 import { BigNumber, ethers } from 'ethers';
+import Loader from 'src/components/ui/loader';
 import useDepositFunds from 'src/hooks/useDepositFunds';
 import { formatAmount } from '../../../utils/formattingUtils';
 import InfoToast from '../../ui/infoToast';
@@ -61,7 +58,8 @@ function AddFunds({
   const toast = useToast();
   const [signerStates] = useSigner();
   const rewardAssetContract = useContract({
-    addressOrName: rewardAsset.address ?? '0x0000000000000000000000000000000000000000',
+    addressOrName:
+      rewardAsset.address ?? '0x0000000000000000000000000000000000000000',
     contractInterface: ERC20ABI,
     signerOrProvider: signerStates.data,
   });
@@ -105,7 +103,7 @@ function AddFunds({
         ),
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, depositTransactionData]);
 
   useEffect(() => {
@@ -303,9 +301,9 @@ function AddFunds({
               <Flex flex={1} direction="column" ml={3}>
                 <Text fontWeight="500">Grant Reward</Text>
                 <Text variant="footer" color="brand.500" fontWeight="700">
-                  {rewardAsset && rewardAsset.committed && formatAmount(
-                    rewardAsset.committed.toString(),
-                  )}
+                  {rewardAsset
+                    && rewardAsset.committed
+                    && formatAmount(rewardAsset.committed.toString())}
                   {' '}
                   {rewardAsset?.label}
                 </Text>
@@ -350,18 +348,24 @@ function AddFunds({
               Wallet Balance
               {' '}
               <Text variant="tableHeader" display="inline-block">
-                {`${formatAmount(walletBalance.toString())} ${rewardAsset?.label}`}
+                {`${formatAmount(walletBalance.toString())} ${
+                  rewardAsset?.label
+                }`}
               </Text>
             </Text>
-            {loading ? (
-              <Center>
-                <CircularProgress isIndeterminate color="brand.500" size="48px" my={4} />
-              </Center>
-            ) : (
-              <Button variant="primary" my={8} onClick={() => setFinalAmount(ethers.utils.parseUnits(funding, rewardAssetDecimals))}>
-                Deposit
-              </Button>
-            )}
+
+            <Button
+              variant="primary"
+              my={8}
+              py={loading ? 2 : 0}
+              onClick={() => (loading
+                ? {}
+                : setFinalAmount(
+                  ethers.utils.parseUnits(funding, rewardAssetDecimals),
+                ))}
+            >
+              {loading ? <Loader /> : 'Deposit'}
+            </Button>
           </Flex>
         )}
       </ModalBody>

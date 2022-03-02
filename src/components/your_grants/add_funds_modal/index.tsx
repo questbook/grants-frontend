@@ -20,11 +20,11 @@ import { BigNumber, ethers } from 'ethers';
 import { formatAmount } from 'src/utils/formattingUtils';
 import InfoToast from 'src/components/ui/infoToast';
 import Loader from 'src/components/ui/loader';
-import Dropdown from '../../../ui/forms/dropdown';
-import SingleLineInput from '../../../ui/forms/singleLineInput';
-import Modal from '../../../ui/modal';
-import animationData from '../../../../../public/animations/Add_Funds.json';
-import ERC20ABI from '../../../../contracts/abi/ERC20.json';
+import Dropdown from '../../ui/forms/dropdown';
+import SingleLineInput from '../../ui/forms/singleLineInput';
+import Modal from '../../ui/modal';
+import animationData from '../../../../public/animations/Add_Funds.json';
+import ERC20ABI from '../../../contracts/abi/ERC20.json';
 
 interface Props {
   isOpen: boolean;

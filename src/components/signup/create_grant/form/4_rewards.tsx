@@ -1,16 +1,11 @@
 import {
-  Flex,
-  Text,
-  Box,
-  Button,
-  Image,
-  Link,
-  Center,
-  CircularProgress,
+  Flex, Text, Box, Button, Image, Link,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import Loader from 'src/components/ui/loader';
+
 import { SupportedChainId } from 'src/constants/chains';
 import useChainId from 'src/hooks/utils/useChainId';
 import Datepicker from '../../../ui/forms/datepicker';
@@ -58,6 +53,8 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
 
   const [date, setDate] = React.useState('');
   const [dateError, setDateError] = React.useState(false);
+
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
 
   const handleOnSubmit = () => {
     let error = false;
@@ -156,20 +153,16 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
           />
         </Text>
       </Flex>
-      {hasClicked ? (
-        <Center>
-          <CircularProgress
-            isIndeterminate
-            color="brand.500"
-            size="48px"
-            mt={4}
-          />
-        </Center>
-      ) : (
-        <Button mt="auto" variant="primary" onClick={handleOnSubmit}>
-          Continue
-        </Button>
-      )}
+      <Button
+        ref={buttonRef}
+        mt="auto"
+        variant="primary"
+        onClick={hasClicked ? () => {} : handleOnSubmit}
+        py={hasClicked ? 2 : 0}
+        w={hasClicked ? buttonRef.current?.offsetWidth : 'auto'}
+      >
+        {hasClicked ? <Loader /> : 'Continue'}
+      </Button>
     </>
   );
 }

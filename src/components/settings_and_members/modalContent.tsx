@@ -1,10 +1,11 @@
 import {
-  ModalBody, Button, Text, Box, useToast, Flex, Image, Link, CircularProgress, Center,
+  ModalBody, Button, Text, Box, useToast, Flex, Image, Link,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { isValidAddress, isValidEmail } from 'src/utils/validationUtils';
 import useAddMember from 'src/hooks/useAddMember';
 import SingleLineInput from '../ui/forms/singleLineInput';
+import Loader from '../ui/loader';
 
 interface Props {
   onClose: () => void;
@@ -116,13 +117,7 @@ function ModalContent({
         </Text>
       </Flex>
       <Box my={4} />
-      {loading ? (
-        <Center>
-          <CircularProgress isIndeterminate color="brand.500" size="48px" my={4} />
-        </Center>
-      ) : (
-        <Button w="100%" variant="primary" onClick={() => handleSubmit()}>Send Invite</Button>
-      )}
+      <Button w="100%" py={loading ? 2 : 0} variant="primary" onClick={loading ? () => {} : () => handleSubmit()}>{loading ? <Loader /> : 'Send Invite'}</Button>
       <Box my={8} />
     </ModalBody>
   );

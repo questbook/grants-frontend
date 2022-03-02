@@ -5,9 +5,8 @@ import {
   Button,
   Text,
   Image,
-  Center,
-  CircularProgress,
 } from '@chakra-ui/react';
+import Loader from 'src/components/ui/loader';
 import { ApiClientsContext } from 'pages/_app';
 import React, { useContext } from 'react';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
@@ -98,11 +97,9 @@ function Accept({
         ))}
       </Flex>
       <Divider mt={7} />
-      {hasClicked ? <Center><CircularProgress isIndeterminate color="brand.500" size="48px" mt={10} /></Center> : (
-        <Button onClick={() => onSubmit()} w="100%" mt={10} variant="primary">
-          Accept Application
-        </Button>
-      )}
+      <Button onClick={() => (hasClicked ? {} : onSubmit())} w="100%" mt={10} py={hasClicked ? 2 : 0} variant="primary">
+        {hasClicked ? <Loader /> : 'Accept Application'}
+      </Button>
     </Container>
   );
 }

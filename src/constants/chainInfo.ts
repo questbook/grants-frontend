@@ -100,7 +100,7 @@ export const CHAIN_INFO: ChainInfoMap = {
     },
     supportedCurrencies: {
       '0xc27255d7805fc79e4616d5cd50d6f4464aea75a3': {
-        icon: '/wallet_icons/metamask.svg',
+        icon: '/ui_icons/brand/currency/dai.svg',
         label: '1DAI',
         address: '0xc27255d7805fc79e4616d5cd50d6f4464aea75a3',
       },

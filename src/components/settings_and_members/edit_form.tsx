@@ -1,5 +1,5 @@
 import {
-  Box, Button, Center, CircularProgress, Flex, Text, Image, Link,
+  Box, Button, Flex, Text, Image, Link,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
@@ -8,6 +8,7 @@ import CoverUpload from '../ui/forms/coverUpload';
 import ImageUpload from '../ui/forms/imageUpload';
 import MultiLineInput from '../ui/forms/multiLineInput';
 import SingleLineInput from '../ui/forms/singleLineInput';
+import Loader from '../ui/loader';
 
 function EditForm({
   onSubmit: onFormSubmit,
@@ -107,6 +108,8 @@ function EditForm({
       });
     }
   };
+
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
 
   return (
     <>
@@ -224,15 +227,9 @@ function EditForm({
       </Flex>
 
       <Flex direction="row" justify="start" mt={4}>
-        {hasClicked ? (
-          <Center>
-            <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
-          </Center>
-        ) : (
-          <Button variant="primary" onClick={handleSubmit}>
-            Save changes
-          </Button>
-        )}
+        <Button ref={buttonRef} w={hasClicked ? buttonRef.current?.offsetWidth : 'auto'} variant="primary" onClick={hasClicked ? () => {} : handleSubmit} py={hasClicked ? 2 : 0}>
+          {hasClicked ? <Loader /> : 'Save changes'}
+        </Button>
       </Flex>
     </>
   );

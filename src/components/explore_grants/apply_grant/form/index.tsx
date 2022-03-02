@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import React, { useEffect, useState } from 'react';
 import {
-  Box, Button, Text, Image, Link, Flex, Container, useToast, ToastId, Center, CircularProgress,
+  Box, Button, Text, Image, Link, Flex, Container, useToast, ToastId,
 } from '@chakra-ui/react';
 import { useSigner } from 'wagmi';
 import { useRouter } from 'next/router';
 import { isValidEmail } from 'src/utils/validationUtils';
+import Loader from 'src/components/ui/loader';
 import useSubmitApplication from 'src/hooks/useSubmitApplication';
 import { SupportedChainId } from 'src/constants/chains';
 import { GrantApplicationRequest } from '@questbook/service-validator-client';
@@ -341,15 +342,9 @@ function Form({
 
       <Box mt={5} />
 
-      {loading ? (
-        <Center>
-          <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
-        </Center>
-      ) : (
-        <Button onClick={handleOnSubmit} mx={10} alignSelf="stretch" variant="primary">
-          Submit Application
-        </Button>
-      )}
+      <Button onClick={loading ? () => {} : handleOnSubmit} mx={10} alignSelf="stretch" variant="primary" py={loading ? 2 : 0}>
+        {loading ? <Loader /> : 'Submit Application'}
+      </Button>
     </Flex>
   );
 }

@@ -7,13 +7,12 @@ import {
   Link,
   useToast,
   ToastId,
-  Center,
-  CircularProgress,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { parseAmount, truncateStringFromMiddle } from 'src/utils/formattingUtils';
 import { BigNumber } from 'ethers';
 import InfoToast from 'src/components/ui/infoToast';
+import Loader from 'src/components/ui/loader';
 import useWithdrawFunds from 'src/hooks/useWithdrawFunds';
 import Dropdown from '../../ui/forms/dropdown';
 import SingleLineInput from '../../ui/forms/singleLineInput';
@@ -152,15 +151,10 @@ function WithdrawFunds({
                 network
               </Text>
             )}
-            {loading ? (
-              <Center>
-                <CircularProgress isIndeterminate color="brand.500" size="48px" mt={10} mb={9} />
-              </Center>
-            ) : (
-              <Button variant="primary" mt={addressError ? 5 : 10} mb={9} onClick={() => setFinalAmount(parseAmount(funding.toString()))} disabled={addressError || type === 0}>
-                Withdraw
-              </Button>
-            )}
+
+            <Button variant="primary" mt={addressError ? 5 : 10} mb={9} onClick={loading ? () => {} : () => setFinalAmount(parseAmount(funding.toString()))} py={loading ? 2 : 0}>
+              {loading ? <Loader /> : 'Withdraw'}
+            </Button>
           </Flex>
         )}
         {type === 1 && (

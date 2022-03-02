@@ -1,18 +1,10 @@
 import {
-  ModalBody,
-  Flex,
-  Text,
-  Button,
-  Box,
-  Image,
-  useToast,
-  ToastId,
-  Center,
-  CircularProgress,
+  ModalBody, Flex, Text, Button, Box, Image, useToast, ToastId,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import InfoToast from 'src/components/ui/infoToast';
 import { ApplicationMilestone } from 'src/types';
+import Loader from 'src/components/ui/loader';
 import useRequestMilestoneApproval from 'src/hooks/useRequestMilestoneApproval';
 import { SupportedChainId } from 'src/constants/chains';
 import { getMilestoneMetadata } from '../../../../utils/formattingUtils';
@@ -116,20 +108,9 @@ function ModalContent({ milestone, onClose, chainId }: Props) {
             </Button>
           </Text>
         </Flex>
-        {loading ? (
-          <Center>
-            <CircularProgress
-              isIndeterminate
-              color="brand.500"
-              size="48px"
-              mt={10}
-            />
-          </Center>
-        ) : (
-          <Button w="100%" variant="primary" mt={8} onClick={markAsDone}>
-            Mark as Done
-          </Button>
-        )}
+        <Button w="100%" variant="primary" mt={8} py={loading ? 2 : 0} onClick={loading ? () => {} : markAsDone}>
+          {loading ? <Loader /> : 'Mark as Done'}
+        </Button>
         <Box mb={4} />
       </Flex>
     </ModalBody>

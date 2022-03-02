@@ -2,11 +2,12 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import {
   ModalBody, Flex, Image, Text, Button, Heading,
   Divider, Checkbox, Box, Menu, MenuButton, MenuList,
-  MenuItem, useToast, Center, CircularProgress, ToastId,
+  MenuItem, useToast, ToastId,
 } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import { useContract, useSigner } from 'wagmi';
+import Loader from 'src/components/ui/loader';
 import useDisburseReward from 'src/hooks/useDisburseReward';
 import useDisburseP2PReward from 'src/hooks/useDisburseP2PReward';
 import InfoToast from '../../../ui/infoToast';
@@ -294,11 +295,15 @@ function ModalContent({
             </Flex>
           </Flex>
 
-          { disburseLoading ? (
-            <Center>
-              <CircularProgress isIndeterminate color="brand.500" size="48px" my={10} />
-            </Center>
-          ) : <Button variant="primary" w="100%" my={10} onClick={sendFundsFromContract}>Send Funds</Button>}
+          <Button
+            variant="primary"
+            w="100%"
+            my={10}
+            onClick={disburseLoading ? () => {} : sendFundsFromContract}
+            py={disburseLoading ? 2 : 0}
+          >
+            {disburseLoading ? <Loader /> : 'Send Funds'}
+          </Button>
 
         </Flex>
       )}
@@ -375,12 +380,15 @@ function ModalContent({
           </Flex>
         </Flex>
 
-        {disburseP2PLoading ? (
-          <Center>
-            <CircularProgress isIndeterminate color="brand.500" size="48px" my={10} />
-          </Center>
-        ) : <Button variant="primary" w="100%" my={10} onClick={sendFundsFromWallet}>Send Funds</Button>}
-
+        <Button
+          variant="primary"
+          w="100%"
+          my={10}
+          onClick={disburseP2PLoading ? () => {} : sendFundsFromWallet}
+          py={disburseP2PLoading ? 2 : 0}
+        >
+          {disburseP2PLoading ? <Loader /> : 'Send Funds'}
+        </Button>
       </Flex>
       )}
     </ModalBody>
