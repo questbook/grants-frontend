@@ -15,7 +15,12 @@ import {
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import { Configuration, ValidationApi } from '@questbook/service-validator-client';
+import {
+  Configuration,
+  ValidationApi,
+} from '@questbook/service-validator-client';
+import { MinimalWorkspace } from 'src/types';
+import { ALL_SUPPORTED_CHAIN_IDS } from 'src/constants/chains';
 import theme from '../src/theme';
 import SubgraphClient from '../src/graphql/subgraph';
 
@@ -49,31 +54,47 @@ const connectors = () => [
 ];
 
 export const ApiClientsContext = createContext<{
-  subgraphClient: SubgraphClient;
   validatorApi: ValidationApi;
-  workspaceId: string | null;
-  setWorkspaceId:(id: string | null) => void;
+  workspace?: MinimalWorkspace;
+  setWorkspace:(workspace?: MinimalWorkspace) => void;
+  subgraphClients: { [chainId: string]: SubgraphClient };
 } | null>(null);
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-  const [workspaceId, setWorkspaceId] = React.useState<string | null>(null);
-  const client = useMemo(() => new SubgraphClient(), []);
+  const [workspace, setWorkspace] = React.useState<MinimalWorkspace>();
+
+  const clients = useMemo(() => {
+    const clientsObject = {} as { [chainId: string]: SubgraphClient };
+    ALL_SUPPORTED_CHAIN_IDS.forEach((chnId) => {
+      clientsObject[chnId] = new SubgraphClient(chnId);
+    });
+    return clientsObject;
+  }, []);
 
   const validatorApi = useMemo(() => {
     const validatorConfiguration = new Configuration({
       basePath: 'https://api-grant-validator.questbook.app',
     });
-    return (
-      new ValidationApi(validatorConfiguration)
-    );
+    return new ValidationApi(validatorConfiguration);
   }, []);
 
-  const apiClients = useMemo(() => ({
-    subgraphClient: client,
-    validatorApi,
-    workspaceId,
-    setWorkspaceId,
-  }), [client, validatorApi, workspaceId, setWorkspaceId]);
+  const apiClients = useMemo(
+    () => ({
+      validatorApi,
+      workspace,
+      setWorkspace: (newWorkspace?: MinimalWorkspace) => {
+        if (newWorkspace) {
+          localStorage.setItem('currentWorkspaceId', newWorkspace.id);
+        } else {
+          localStorage.setItem('currentWorkspaceId', 'undefined');
+        }
+
+        setWorkspace(newWorkspace);
+      },
+      subgraphClients: clients,
+    }),
+    [validatorApi, workspace, setWorkspace, clients],
+  );
 
   const getLayout = Component.getLayout ?? ((page) => page);
   return (

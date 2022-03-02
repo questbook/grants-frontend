@@ -13,11 +13,10 @@ import {
 import React, { useEffect } from 'react';
 import Lottie from 'lottie-react';
 import copy from 'copy-to-clipboard';
-import {
-  useContract, useSigner,
-} from 'wagmi';
+import { useContract, useSigner } from 'wagmi';
 import { BigNumber, ethers } from 'ethers';
 import Loader from 'src/components/ui/loader';
+import useDepositFunds from 'src/hooks/useDepositFunds';
 import { formatAmount } from '../../../utils/formattingUtils';
 import InfoToast from '../../ui/infoToast';
 import Dropdown from '../../ui/forms/dropdown';
@@ -59,7 +58,8 @@ function AddFunds({
   const toast = useToast();
   const [signerStates] = useSigner();
   const rewardAssetContract = useContract({
-    addressOrName: rewardAsset.address ?? '0x0000000000000000000000000000000000000000',
+    addressOrName:
+      rewardAsset.address ?? '0x0000000000000000000000000000000000000000',
     contractInterface: ERC20ABI,
     signerOrProvider: signerStates.data,
   });
@@ -75,65 +75,36 @@ function AddFunds({
   };
 
   const toastRef = React.useRef<ToastId>();
-  const [hasClicked, setHasClicked] = React.useState(false);
-  const closeToast = () => {
-    if (toastRef.current) {
-      toast.close(toastRef.current);
-    }
-  };
-  const showToast = ({ link } : { link: string }) => {
-    toastRef.current = toast({
-      position: 'top',
-      render: () => (
-        <InfoToast
-          link={link}
-          close={closeToast}
-        />
-      ),
-    });
-  };
 
-  const depositFunds = async () => {
-    if (funding === '') {
-      setError(true);
-      return;
-    }
+  const [finalAmount, setFinalAmount] = React.useState<BigNumber>();
+  const [depositTransactionData, loading] = useDepositFunds(
+    finalAmount,
+    rewardAsset.address,
+    grantAddress,
+  );
 
-    const finalAmount = ethers.utils.parseUnits(funding, rewardAssetDecimals);
-    // toast({
-    //   title: 'Depositing!',
-    //   status: 'info',
-    //   duration: 9000,
-    //   isClosable: true,
-    // });
-    try {
-      setHasClicked(true);
-      const transferTxn = await rewardAssetContract.transfer(
-        grantAddress,
-        finalAmount,
-      );
-      const transactionData = await transferTxn.wait();
-      // toast({
-      //   title: 'Deposited!',
-      //   status: 'success',
-      //   duration: 9000,
-      //   isClosable: true,
-      // });
-      setHasClicked(false);
-      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
-
-      setFunding('');
+  useEffect(() => {
+    // console.log(depositTransactionData);
+    if (depositTransactionData) {
       onClose();
-    } catch {
-      setHasClicked(false);
-      toast({
-        title: 'Could not deposit!',
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
+      setFinalAmount(undefined);
+      setFunding('');
+      toastRef.current = toast({
+        position: 'top',
+        render: () => (
+          <InfoToast
+            link={`https://etherscan.io/tx/${depositTransactionData.transactionHash}`}
+            close={() => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            }}
+          />
+        ),
       });
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toast, depositTransactionData]);
 
   useEffect(() => {
     // eslint-disable-next-line func-names
@@ -330,9 +301,9 @@ function AddFunds({
               <Flex flex={1} direction="column" ml={3}>
                 <Text fontWeight="500">Grant Reward</Text>
                 <Text variant="footer" color="brand.500" fontWeight="700">
-                  {rewardAsset && rewardAsset.committed && formatAmount(
-                    rewardAsset.committed.toString(),
-                  )}
+                  {rewardAsset
+                    && rewardAsset.committed
+                    && formatAmount(rewardAsset.committed.toString())}
                   {' '}
                   {rewardAsset?.label}
                 </Text>
@@ -377,12 +348,23 @@ function AddFunds({
               Wallet Balance
               {' '}
               <Text variant="tableHeader" display="inline-block">
-                {`${formatAmount(walletBalance.toString())} ${rewardAsset?.label}`}
+                {`${formatAmount(walletBalance.toString())} ${
+                  rewardAsset?.label
+                }`}
               </Text>
             </Text>
 
-            <Button variant="primary" my={8} py={hasClicked ? 2 : 0} onClick={() => (hasClicked ? {} : depositFunds())}>
-              {hasClicked ? <Loader /> : 'Deposit'}
+            <Button
+              variant="primary"
+              my={8}
+              py={loading ? 2 : 0}
+              onClick={() => (loading
+                ? {}
+                : setFinalAmount(
+                  ethers.utils.parseUnits(funding, rewardAssetDecimals),
+                ))}
+            >
+              {loading ? <Loader /> : 'Deposit'}
             </Button>
           </Flex>
         )}

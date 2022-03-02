@@ -1,6 +1,7 @@
 import {
   GetAllGrantsForADaoQuery,
   GetApplicationMilestonesQuery,
+  GetDaoDetailsQuery,
   GetFundSentForApplicationQuery,
   GetWorkspaceDetailsQuery,
   GetWorkspaceMembersQuery,
@@ -11,3 +12,5 @@ export type ApplicationMilestone = GetApplicationMilestonesQuery['grantApplicati
 export type FundTransfer = GetFundSentForApplicationQuery['fundsTransfers'][number];
 export type MinimalWorkspace = GetWorkspaceMembersQuery['workspaceMembers'][number]['workspace'];
 export type Workspace = Exclude<GetWorkspaceDetailsQuery['workspace'], null | undefined>;
+export type DAOWorkspace = GetDaoDetailsQuery['workspace'];
+export type DAOGrant = GetDaoDetailsQuery['grants'];

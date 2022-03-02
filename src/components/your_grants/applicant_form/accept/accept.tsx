@@ -6,8 +6,10 @@ import {
   Text,
   Image,
 } from '@chakra-ui/react';
-import React from 'react';
 import Loader from 'src/components/ui/loader';
+import { ApiClientsContext } from 'pages/_app';
+import React, { useContext } from 'react';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { formatAmount } from '../../../../utils/formattingUtils';
 import { getAssetInfo } from '../../../../utils/tokenUtils';
 
@@ -20,6 +22,8 @@ function Accept({
   applicationData: any;
   hasClicked: boolean;
 }) {
+  const { workspace } = useContext(ApiClientsContext)!;
+  const chainId = getSupportedChainIdFromWorkspace(workspace);
   return (
     <Container
       flex={1}
@@ -48,7 +52,7 @@ function Accept({
           >
             {formatAmount(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'fundingAsk')?.value[0] ?? '0')}
             {' '}
-            { getAssetInfo(applicationData?.grant?.reward?.asset)?.label }
+            { getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.label }
           </Text>
         </Flex>
       </Flex>
@@ -71,7 +75,7 @@ function Accept({
             </Text>
             <Flex direction="row" justify="start" align="center" mt={2}>
               <Image
-                src={getAssetInfo(applicationData?.grant?.reward?.asset)?.icon}
+                src={getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.icon}
               />
               <Flex direction="column" ml={3}>
                 <Text variant="applicationText" fontWeight="700">
@@ -85,7 +89,7 @@ function Accept({
                 >
                   {milestone?.amount && formatAmount(milestone?.amount)}
                   {' '}
-                  { getAssetInfo(applicationData?.grant?.reward?.asset)?.label }
+                  { getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.label }
                 </Text>
               </Flex>
             </Flex>

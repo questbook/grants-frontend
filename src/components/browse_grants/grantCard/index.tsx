@@ -2,12 +2,17 @@ import React from 'react';
 import {
   Image, Text, Button, Flex, Box, Divider, Link,
 } from '@chakra-ui/react';
+import ShareMenu from 'src/components/ui/grantShareMenu';
+import { SupportedChainId } from 'src/constants/chains';
 import Badge from './badge';
 
 interface GrantCardProps {
+  daoID: string;
+  grantID: string;
   daoIcon: string;
   daoName: string;
   isDaoVerified?: boolean;
+  chainId: SupportedChainId | undefined;
 
   grantTitle: string;
   grantDesc: string;
@@ -24,9 +29,12 @@ interface GrantCardProps {
 }
 
 function GrantCard({
+  daoID,
+  grantID,
   daoIcon,
   daoName,
   isDaoVerified,
+  chainId,
 
   grantTitle,
   grantDesc,
@@ -68,7 +76,7 @@ function GrantCard({
           </Flex>
 
           <Flex direction="row">
-            <Link href="link" lineHeight="24px" fontWeight="700">
+            <Link href={`/profile?daoId=${daoID}&chainId=${chainId}`} lineHeight="24px" fontWeight="700">
               {daoName}
               {isDaoVerified && (
                 <Image
@@ -83,7 +91,7 @@ function GrantCard({
             </Link>
           </Flex>
 
-          <Text lineHeight="24px" color="#122224" fontWeight="400">
+          <Text mt={5} lineHeight="24px" color="#122224" fontWeight="400">
             {grantDesc}
           </Text>
 
@@ -95,7 +103,8 @@ function GrantCard({
               {grantCurrency}
             </Text>
             <Box mr="auto" />
-            <Button onClick={onClick} variant="primaryCta">
+            <ShareMenu chainId={chainId} grantID={grantID} />
+            <Button ml={7} onClick={onClick} variant="primaryCta">
               Apply Now
             </Button>
           </Flex>

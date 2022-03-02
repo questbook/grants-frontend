@@ -1,22 +1,17 @@
 import {
-  ModalBody, Button, Text, Box, useToast, Flex, Image, Link, ToastId,
+  ModalBody, Button, Text, Box, useToast, Flex, Image, Link,
 } from '@chakra-ui/react';
-import React, { useContext } from 'react';
-import { useContract, useSigner } from 'wagmi';
+import React, { useEffect } from 'react';
 import { isValidAddress, isValidEmail } from 'src/utils/validationUtils';
+import useAddMember from 'src/hooks/useAddMember';
 import SingleLineInput from '../ui/forms/singleLineInput';
-import config from '../../constants/config';
-import WorkspaceRegistryABI from '../../contracts/abi/WorkspaceRegistryAbi.json';
-import { ApiClientsContext } from '../../../pages/_app';
 import Loader from '../ui/loader';
-import InfoToast from '../ui/infoToast';
 
 interface Props {
   onClose: () => void;
 }
 
 function ModalContent({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onClose,
 }: Props) {
   const [memberAddress, setMemberAddress] = React.useState('');
@@ -24,38 +19,27 @@ function ModalContent({
 
   const [memberEmail, setMemberEmail] = React.useState('');
   const [memberEmailError, setMemberEmailError] = React.useState(false);
-
-  const [signerStates] = useSigner();
   const toast = useToast();
-  const [hasClicked, setHasClicked] = React.useState(false);
-  const toastRef = React.useRef<ToastId>();
 
-  const closeToast = () => {
-    if (toastRef.current) {
-      toast.close(toastRef.current);
+  const [memberData, setMemberData] = React.useState<any>();
+  const [txnData, loading] = useAddMember(memberData);
+
+  useEffect(() => {
+    // console.log(depositTransactionData);
+    if (txnData) {
+      setMemberData(undefined);
+      onClose();
+      toast({
+        title: 'Member added',
+        status: 'info',
+        duration: 9000,
+        isClosable: true,
+      });
     }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toast, txnData]);
 
-  const showToast = ({ link } : { link: string }) => {
-    toastRef.current = toast({
-      position: 'top',
-      render: () => (
-        <InfoToast
-          link={link}
-          close={closeToast}
-        />
-      ),
-    });
-  };
-
-  const workspaceFactoryContract = useContract({
-    addressOrName: config.WorkspaceRegistryAddress,
-    contractInterface: WorkspaceRegistryABI,
-    signerOrProvider: signerStates.data,
-  });
-  const workspaceId = useContext(ApiClientsContext)?.workspaceId;
-
-  const addMember = async () => {
+  const handleSubmit = async () => {
     let hasError = false;
 
     if (!memberAddress || memberAddress.length === 0 || !isValidAddress(memberAddress)) {
@@ -70,21 +54,10 @@ function ModalContent({
 
     if (hasError) return;
 
-    try {
-      setHasClicked(true);
-      const txn = await workspaceFactoryContract.addWorkspaceAdmins(workspaceId, [memberAddress], [memberEmail ?? '']);
-      const transactionData = await txn.wait();
-      setHasClicked(false);
-      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
-    } catch (e: any) {
-      setHasClicked(false);
-      toast({
-        title: e.message,
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
-      });
-    }
+    setMemberData({
+      memberAddress: [memberAddress],
+      memberEmail: [memberEmail ?? ''],
+    });
   };
 
   return (
@@ -144,7 +117,7 @@ function ModalContent({
         </Text>
       </Flex>
       <Box my={4} />
-      <Button w="100%" py={hasClicked ? 2 : 0} variant="primary" onClick={hasClicked ? () => {} : addMember}>{hasClicked ? <Loader /> : 'Send Invite'}</Button>
+      <Button w="100%" py={loading ? 2 : 0} variant="primary" onClick={loading ? () => {} : () => handleSubmit()}>{loading ? <Loader /> : 'Send Invite'}</Button>
       <Box my={8} />
     </ModalBody>
   );

@@ -14,6 +14,7 @@ query getWorkspaceMembers($actorId: Bytes!) {
       ownerId
       logoIpfsHash
       title
+      supportedNetworks
     }
   }
 }

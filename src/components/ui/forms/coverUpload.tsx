@@ -46,8 +46,8 @@ function CoverUpload({
         pos="relative"
       >
         <Button p={0} onClick={() => openInput()} h="100%" w="100%" flex={1}>
-          {image && image.length && !image.endsWith('arg=null') && <Image objectFit="cover" src={image} w="100%" h="100%" />}
-          {(!image || !(image.length) || image.endsWith('arg=null')) && (
+          {image && image.length && !image.endsWith('arg=') && <Image objectFit="cover" src={image} w="100%" h="100%" />}
+          {(!image || !(image.length) || image.endsWith('arg=')) && (
             <Flex direction="column" align="center" justify="start">
               <Image h="30px" w="30px" src="/ui_icons/upload.svg" />
               <Box mt={1} />

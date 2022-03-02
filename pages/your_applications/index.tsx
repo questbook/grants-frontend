@@ -13,7 +13,7 @@ import Heading from '../../src/components/ui/heading';
 import YourApplicationCard from '../../src/components/your_applications/yourApplicationCard';
 import NavbarLayout from '../../src/layout/navbarLayout';
 import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils';
-import { getFormattedDateFromUnixTimestamp } from '../../src/utils/formattingUtils';
+import { getChainIdFromResponse, getFormattedDateFromUnixTimestamp } from '../../src/utils/formattingUtils';
 import { ApiClientsContext } from '../_app';
 
 const PAGE_SIZE = 20;
@@ -21,31 +21,44 @@ const PAGE_SIZE = 20;
 function YourApplications() {
   const router = useRouter();
   // const [applicantID, setApplicantId] = React.useState<any>('');
-  const subgraphClient = useContext(ApiClientsContext)?.subgraphClient;
+  // const subgraphClient = useContext(ApiClientsContext)?.subgraphClient;
+  const { subgraphClients } = useContext(ApiClientsContext)!;
   const [myApplications, setMyApplications] = React.useState<any>([]);
 
   const containerRef = useRef(null);
   const [{ data: accountData }] = useAccount();
   const [currentPage, setCurrentPage] = React.useState(0);
 
-  const [getMyApplications] = useGetMyApplicationsLazyQuery({
-    client: subgraphClient?.client,
-  });
+  const allNetworkApplications = Object.keys(subgraphClients)!.map((key) => (
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useGetMyApplicationsLazyQuery({ client: subgraphClients[key].client })
+  ));
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getMyApplicationsData = async () => {
     try {
-      const { data } = await getMyApplications({
-        variables: {
-          first: PAGE_SIZE,
-          skip: currentPage * PAGE_SIZE,
-          applicantID: accountData?.address || '',
-        },
-      });
-      if (data) {
+      const promises = allNetworkApplications.map((allApplications) => (
+        // eslint-disable-next-line no-async-promise-executor
+        new Promise(async (resolve) => {
+          const { data } = await allApplications[0]({
+            variables: {
+              first: PAGE_SIZE,
+              skip: currentPage * PAGE_SIZE,
+              applicantID: accountData?.address || '',
+            },
+          });
+          if (data && data.grantApplications) {
+            resolve(data.grantApplications);
+          } else {
+            resolve([]);
+          }
+        })
+      ));
+      Promise.all(promises).then((values:any[]) => {
+        const allApplicationsData = [].concat(...values);
+        setMyApplications([...myApplications, ...allApplicationsData]);
         setCurrentPage(currentPage + 1);
-        setMyApplications([...myApplications, ...data.grantApplications]);
-      }
+      });
     } catch (e) {
       // console.log('error in fetching my applications ', e);
     }
@@ -65,6 +78,7 @@ function YourApplications() {
   }, [containerRef, getMyApplicationsData]);
 
   useEffect(() => {
+    if (!accountData) return;
     getMyApplicationsData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountData?.address]);
@@ -90,12 +104,13 @@ function YourApplications() {
         pb={8}
         px={10}
       >
-        <Heading title="Your Applications" />
+        <Heading title="My Applications" />
 
         { myApplications.length > 0
           && myApplications.map((application: any) => (
             (
               <YourApplicationCard
+                key={application.id}
                 grantTitle={application.grant.title}
                 daoName={application.grant.workspace.title}
                 daoIcon={getUrlForIPFSHash(application.grant.workspace.logoIpfsHash)}
@@ -107,19 +122,28 @@ function YourApplications() {
                 onViewGrantClick={() => router.push({
                   pathname: '/explore_grants/about_grant',
                   query: {
-                    grantID: application.grant.id,
+                    grantId: application.grant.id,
+                    chainId: getChainIdFromResponse(
+                      application.grant.workspace.supportedNetworks[0],
+                    ),
                   },
                 })}
                 onViewApplicationClick={() => router.push({
                   pathname: '/your_applications/grant_application',
                   query: {
-                    applicationID: application.id,
+                    applicationId: application.id,
+                    chainId: getChainIdFromResponse(
+                      application.grant.workspace.supportedNetworks[0],
+                    ),
                   },
                 })}
                 onManageGrantClick={() => router.push({
                   pathname: '/your_applications/manage_grant',
                   query: {
-                    applicationID: application.id,
+                    applicationId: application.id,
+                    chainId: getChainIdFromResponse(
+                      application.grant.workspace.supportedNetworks[0],
+                    ),
                   },
                 })}
               />

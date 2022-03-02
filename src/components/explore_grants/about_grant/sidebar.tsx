@@ -3,15 +3,17 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
+import { SupportedChainId } from 'src/constants/chains';
 import FloatingSidebar from '../../ui/sidebar/floatingSidebar2';
 import Tooltip from '../../ui/tooltip';
 
 interface Props {
   grantRequiredFields: any[];
   grantID: string;
+  chainId: SupportedChainId | undefined;
 }
 
-function Sidebar({ grantRequiredFields, grantID }: Props) {
+function Sidebar({ grantRequiredFields, grantID, chainId }: Props) {
   const router = useRouter();
   return (
     <Box my="71px">
@@ -39,7 +41,8 @@ function Sidebar({ grantRequiredFields, grantID }: Props) {
             pathname: '/explore_grants/apply',
             query: {
               account: true,
-              grantID,
+              grantId: grantID,
+              chainId,
             },
           })}
           mt={10}
