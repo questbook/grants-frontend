@@ -7,6 +7,7 @@ import moment from 'moment';
 import { ethers } from 'ethers';
 import Empty from 'src/components/ui/empty';
 import { FundTransfer } from 'src/types';
+import { SupportedChainId } from 'src/constants/chains';
 import { getAssetInfo } from '../../../../utils/tokenUtils';
 import {
   formatAmount,
@@ -21,7 +22,8 @@ type TableContent = {
     item: FundTransfer,
     assetId: string,
     assetDecimals: number,
-    grantId: string
+    grantId: string,
+    chainId?: SupportedChainId,
   ) => React.ReactChild
 };
 
@@ -29,11 +31,11 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
   milestoneTitle: {
     title: 'Funding Received',
     flex: 0.5,
-    content: (item, assetId) => (
+    content: (item, assetId, _, __, chainId) => (
       <>
         <Image
           display="inline-block"
-          src={getAssetInfo(assetId)?.icon}
+          src={getAssetInfo(assetId, chainId)?.icon}
           mr={2}
           h="27px"
           w="27px"
@@ -50,7 +52,7 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
           >
             {formatAmount(item.amount)}
             {' '}
-            {getAssetInfo(assetId)?.label}
+            {getAssetInfo(assetId, chainId)?.label}
           </Text>
         </Text>
       </>
@@ -144,6 +146,7 @@ export type FundingProps = {
   assetDecimals: number;
   grantId: string | null;
   type: string;
+  chainId?: SupportedChainId;
 };
 
 function Funding({
@@ -153,6 +156,7 @@ function Funding({
   assetDecimals,
   grantId,
   type,
+  chainId,
 }: FundingProps) {
   const tableHeaders = useMemo(
     () => columns.map((column) => TABLE_HEADERS[column]),
@@ -240,7 +244,7 @@ function Funding({
                       align="center"
                       flex={flex}
                     >
-                      {content(item, assetId, assetDecimals, grantId)}
+                      {content(item, assetId, assetDecimals, grantId, chainId)}
                     </Flex>
                   ))}
               </Flex>
@@ -252,4 +256,7 @@ function Funding({
   );
 }
 
+Funding.defaultProps = {
+  chainId: SupportedChainId.RINKEBY,
+};
 export default Funding;

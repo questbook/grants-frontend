@@ -3,45 +3,53 @@ import React, {
   ReactElement, useState, useEffect, useContext,
 } from 'react';
 import { useRouter } from 'next/router';
-import { useGetWorkspaceDetailsLazyQuery } from 'src/generated/graphql';
+import { useGetWorkspaceDetailsQuery } from 'src/generated/graphql';
 import { Workspace } from 'src/types';
+import { SupportedChainId } from 'src/constants/chains';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import Members from '../src/components/settings_and_members/members';
 import Settings from '../src/components/settings_and_members/settings';
 import NavbarLayout from '../src/layout/navbarLayout';
 import { ApiClientsContext } from './_app';
 
 function SettingsAndMembers() {
-  const { workspaceId, subgraphClient } = useContext(ApiClientsContext)!;
+  const { workspace, subgraphClients } = useContext(ApiClientsContext)!;
   const router = useRouter();
   const tabs = ['Settings', 'Invite Members'];
-  const [selected, setSelected] = useState(router.query.tab === 'members' ? 1 : 0);
+  const [selected, setSelected] = useState(
+    router.query.tab === 'members' ? 1 : 0,
+  );
   const [workspaceData, setWorkspaceData] = useState<Workspace>();
 
-  const [getWorkspaceDetails] = useGetWorkspaceDetailsLazyQuery({
-    client: subgraphClient.client,
+  const [queryParams, setQueryParams] = useState<any>({
+    client:
+      subgraphClients[
+        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      ].client,
   });
+
+  useEffect(() => {
+    if (!workspace) return;
+    setQueryParams({
+      client:
+      subgraphClients[
+        getSupportedChainIdFromWorkspace(workspace)!
+      ].client,
+      variables: { workspaceID: workspace.id },
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspace]);
+
+  const { data } = useGetWorkspaceDetailsQuery(queryParams);
+
+  useEffect(() => {
+    if (!data) return;
+    setWorkspaceData(data!.workspace!);
+  }, [data]);
 
   const switchTab = (to: number) => {
     setSelected(to);
   };
-
-  async function getWorkspaceData(workspaceID: string) {
-    try {
-      const { data } = await getWorkspaceDetails({
-        variables: { workspaceID },
-      });
-      setWorkspaceData(data!.workspace!);
-    } catch (e) {
-      // console.log(e);
-    }
-  }
-
-  useEffect(() => {
-    if (!workspaceId) return;
-    console.log('getting called ', workspaceId);
-    getWorkspaceData(workspaceId);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workspaceId]);
 
   return (
     <Flex direction="row" w="100%" justify="space-evenly">

@@ -1,7 +1,9 @@
 import {
   Heading, Flex, Text, Image, Box, Button,
 } from '@chakra-ui/react';
-import React from 'react';
+import { ApiClientsContext } from 'pages/_app';
+import React, { useContext } from 'react';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { formatAmount, getFormattedFullDateFromUnixTimestamp, truncateStringFromMiddle } from '../../../utils/formattingUtils';
 import { getAssetInfo } from '../../../utils/tokenUtils';
 import FloatingSidebar from '../../ui/sidebar/floatingSidebar';
@@ -17,6 +19,8 @@ function Sidebar({
   onResubmitApplicationClick: () => void;
   applicationData: any;
 }) {
+  const { workspace } = useContext(ApiClientsContext)!;
+  const chainId = getSupportedChainIdFromWorkspace(workspace);
   return (
     <FloatingSidebar>
       <Heading
@@ -29,7 +33,7 @@ function Sidebar({
         Application Details
       </Heading>
       <Flex direction="row" justify="start" w="full" mt={6} align="center">
-        <Image h="45px" w="45px" src={getAssetInfo(applicationData?.grant?.reward?.asset)?.icon} />
+        <Image h="45px" w="45px" src={getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.icon} />
         <Box mx={3} />
         <Heading variant="applicationHeading" color="brand.500">
           {truncateStringFromMiddle(applicationData?.applicantId)}
@@ -80,7 +84,7 @@ function Sidebar({
         >
           {formatAmount(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'fundingAsk')?.value[0] ?? '0')}
           {' '}
-          { getAssetInfo(applicationData?.grant?.reward?.asset)?.label }
+          { getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.label }
         </Text>
         <Box
             // variant="dashed"

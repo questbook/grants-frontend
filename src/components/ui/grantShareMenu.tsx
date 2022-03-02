@@ -6,20 +6,22 @@ import {
   MenuItem,
   Text,
   Image,
-  useToast,
 } from '@chakra-ui/react';
 import copy from 'copy-to-clipboard';
 import React from 'react';
-import config from 'src/constants/config';
+import { SupportedChainId } from 'src/constants/chains';
 
-function Menu({ grantID } : { grantID: string }) {
-  const toast = useToast();
+function ShareMenu({
+  grantID,
+  chainId,
+}: {
+  grantID: string;
+  chainId: SupportedChainId | undefined;
+}) {
+  const [copied, setCopied] = React.useState(false);
 
   return (
-    <MenuComponent
-      closeOnSelect
-      placement="left"
-    >
+    <MenuComponent closeOnSelect={false} placement="left">
       <MenuButton
         as={IconButton}
         aria-label="View More Options"
@@ -31,12 +33,14 @@ function Menu({ grantID } : { grantID: string }) {
       <MenuList minW="164px" p={0}>
         <MenuItem
           onClick={() => {
-            copy(`${config.basePath}/explore_grants/about_grant/?grantID=${grantID}`);
-            toast({
-              position: 'bottom',
-              title: 'Link copied!',
-              status: 'success',
-            });
+            const href = window.location.href.split('/');
+            const protocol = href[0];
+            const domain = href[2];
+            // console.log(domain);
+            copy(
+              `${protocol}//${domain}/explore_grants/about_grant/?grantId=${grantID}&chainId=${chainId}`,
+            );
+            setCopied(true);
           }}
           py="12px"
           px="16px"
@@ -54,9 +58,9 @@ function Menu({ grantID } : { grantID: string }) {
               display="inline-block"
               h={4}
               w={4}
-              src="/ui_icons/share.svg"
+              src="/ui_icons/share_brand.svg"
             />
-            Share
+            {copied ? 'Link Copied!' : 'Share'}
           </Text>
         </MenuItem>
         {/* <MenuItem onClick={() => onEditClick()} py="12px" px="16px">
@@ -82,4 +86,4 @@ function Menu({ grantID } : { grantID: string }) {
     </MenuComponent>
   );
 }
-export default Menu;
+export default ShareMenu;

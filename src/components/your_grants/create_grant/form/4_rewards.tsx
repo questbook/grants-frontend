@@ -7,7 +7,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Datepicker from '../../../ui/forms/datepicker';
 import Dropdown from '../../../ui/forms/dropdown';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
-import supportedCurrencies from '../../../../constants/supportedCurrencies';
 
 function GrantRewardsInput({
   reward,
@@ -21,6 +20,7 @@ function GrantRewardsInput({
   setDate,
   dateError,
   setDateError,
+  supportedCurrencies,
 }: {
   reward: string;
   setReward: (rewards: string) => void;
@@ -33,6 +33,7 @@ function GrantRewardsInput({
   setDate: (date: string) => void;
   dateError: boolean;
   setDateError: (dateError: boolean) => void;
+  supportedCurrencies: any[];
 }) {
   return (
     <Flex direction="column">

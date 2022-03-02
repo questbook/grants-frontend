@@ -4,6 +4,7 @@ import {
 } from '@chakra-ui/react';
 import { formatAmount } from 'src/utils/formattingUtils';
 import { ApplicationMilestone } from 'src/types';
+import { SupportedChainId } from 'src/constants/chains';
 import { getAssetInfo } from '../../../utils/tokenUtils';
 
 const TABLE_HEADERS = [
@@ -31,12 +32,15 @@ export type AbstractMilestonesTableProps = {
   refetch: () => void
   sendFundOpen?: () => void
   renderStatus: (milestone: ApplicationMilestone) => React.ReactNode
+  chainId?: SupportedChainId | undefined,
 };
 
 function AbstractMilestonesTable(
-  { milestones, rewardAssetId, renderStatus }: AbstractMilestonesTableProps,
+  {
+    milestones, rewardAssetId, renderStatus, chainId,
+  }: AbstractMilestonesTableProps,
 ) {
-  const { icon: rewardIcon, label: rewardSymbol } = getAssetInfo(rewardAssetId);
+  const { icon: rewardIcon, label: rewardSymbol } = getAssetInfo(rewardAssetId, chainId);
 
   return (
     <Flex
@@ -148,4 +152,8 @@ function AbstractMilestonesTable(
   );
 }
 
+AbstractMilestonesTable.defaultProps = {
+  sendFundOpen: () => {},
+  chainId: undefined,
+};
 export default AbstractMilestonesTable;

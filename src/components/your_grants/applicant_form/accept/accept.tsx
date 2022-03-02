@@ -5,10 +5,11 @@ import {
   Button,
   Text,
   Image,
-  Center,
-  CircularProgress,
 } from '@chakra-ui/react';
-import React from 'react';
+import Loader from 'src/components/ui/loader';
+import { ApiClientsContext } from 'pages/_app';
+import React, { useContext } from 'react';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { formatAmount } from '../../../../utils/formattingUtils';
 import { getAssetInfo } from '../../../../utils/tokenUtils';
 
@@ -21,6 +22,8 @@ function Accept({
   applicationData: any;
   hasClicked: boolean;
 }) {
+  const { workspace } = useContext(ApiClientsContext)!;
+  const chainId = getSupportedChainIdFromWorkspace(workspace);
   return (
     <Container
       flex={1}
@@ -49,7 +52,7 @@ function Accept({
           >
             {formatAmount(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'fundingAsk')?.value[0] ?? '0')}
             {' '}
-            { getAssetInfo(applicationData?.grant?.reward?.asset)?.label }
+            { getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.label }
           </Text>
         </Flex>
       </Flex>
@@ -72,7 +75,7 @@ function Accept({
             </Text>
             <Flex direction="row" justify="start" align="center" mt={2}>
               <Image
-                src={getAssetInfo(applicationData?.grant?.reward?.asset)?.icon}
+                src={getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.icon}
               />
               <Flex direction="column" ml={3}>
                 <Text variant="applicationText" fontWeight="700">
@@ -86,7 +89,7 @@ function Accept({
                 >
                   {milestone?.amount && formatAmount(milestone?.amount)}
                   {' '}
-                  { getAssetInfo(applicationData?.grant?.reward?.asset)?.label }
+                  { getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.label }
                 </Text>
               </Flex>
             </Flex>
@@ -94,11 +97,9 @@ function Accept({
         ))}
       </Flex>
       <Divider mt={7} />
-      {hasClicked ? <Center><CircularProgress isIndeterminate color="brand.500" size="48px" mt={10} /></Center> : (
-        <Button onClick={() => onSubmit()} w="100%" mt={10} variant="primary">
-          Accept Application
-        </Button>
-      )}
+      <Button onClick={() => (hasClicked ? {} : onSubmit())} w="100%" mt={10} py={hasClicked ? 2 : 0} variant="primary">
+        {hasClicked ? <Loader /> : 'Accept Application'}
+      </Button>
     </Container>
   );
 }

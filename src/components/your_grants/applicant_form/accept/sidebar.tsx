@@ -1,7 +1,9 @@
 import {
   Box, Heading, Flex, Divider, Image, Text, Link,
 } from '@chakra-ui/react';
-import React from 'react';
+import { ApiClientsContext } from 'pages/_app';
+import React, { useContext } from 'react';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { getFormattedFullDateFromUnixTimestamp, truncateStringFromMiddle } from '../../../../utils/formattingUtils';
 import { getAssetInfo } from '../../../../utils/tokenUtils';
 import FloatingSidebar from '../../../ui/sidebar/floatingSidebar';
@@ -13,6 +15,8 @@ function Sidebar(
     applicationData: any;
   },
 ) {
+  const { workspace } = useContext(ApiClientsContext)!;
+  const chainId = getSupportedChainIdFromWorkspace(workspace);
   return (
     <Box mt="8px">
       <FloatingSidebar>
@@ -26,7 +30,7 @@ function Sidebar(
           Application Details
         </Heading>
         <Flex direction="row" justify="start" w="full" mt={6} align="center">
-          <Image h="45px" w="45px" src={getAssetInfo(applicationData?.grant?.reward?.asset)?.icon} />
+          <Image h="45px" w="45px" src={getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.icon} />
           <Box mx={3} />
           <Heading variant="applicationHeading" color="brand.500">
             {truncateStringFromMiddle(applicationData?.applicantId)}
@@ -66,7 +70,7 @@ function Sidebar(
             fontWeight="500"
             fontStyle="normal"
             color="#414E50"
-            href={`/explore_grants/about_grant?grantID=${applicationData?.grant?.id}`}
+            href={`/explore_grants/about_grant?grantId=${applicationData?.grant?.id}&chainId=${chainId}`}
           >
             View Grant
             {' '}
@@ -84,7 +88,7 @@ function Sidebar(
             fontWeight="500"
             fontStyle="normal"
             color="#414E50"
-            href={`/your_applications/grant_application?applicationID=${applicationData?.id}`}
+            href={`/your_applications/grant_application?applicationId=${applicationData?.id}&chainId=${chainId}`}
             ml="auto"
           >
             View Application

@@ -2,17 +2,19 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import {
   ModalBody, Flex, Image, Text, Button, Heading,
   Divider, Checkbox, Box, Menu, MenuButton, MenuList,
-  MenuItem, useToast, Center, CircularProgress, ToastId,
+  MenuItem, useToast, ToastId,
 } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useContract, useSigner } from 'wagmi';
+import Loader from 'src/components/ui/loader';
+import useDisburseReward from 'src/hooks/useDisburseReward';
+import useDisburseP2PReward from 'src/hooks/useDisburseP2PReward';
 import InfoToast from '../../../ui/infoToast';
 import { formatAmount, parseAmount } from '../../../../utils/formattingUtils';
 import Dropdown from '../../../ui/forms/dropdown';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
 import ERC20ABI from '../../../../contracts/abi/ERC20.json';
-import GrantABI from '../../../../contracts/abi/GrantAbi.json';
 
 interface Props {
   onClose: () => void;
@@ -46,32 +48,43 @@ function ModalContent({
     signerOrProvider: signerStates.data,
   });
 
-  const grantContract = useContract({
-    addressOrName: grantId.length > 0 ? grantId : '0x0000000000000000000000000000000000000000',
-    contractInterface: GrantABI,
-    signerOrProvider: signerStates.data,
-  });
-
   const toast = useToast();
   const toastRef = React.useRef<ToastId>();
-  const [hasClicked, setHasClicked] = React.useState(false);
-  const closeToast = () => {
-    if (toastRef.current) {
-      toast.close(toastRef.current);
-    }
-  };
 
-  const showToast = ({ link } : { link: string }) => {
-    toastRef.current = toast({
-      position: 'top',
-      render: () => (
-        <InfoToast
-          link={link}
-          close={closeToast}
-        />
-      ),
-    });
-  };
+  const [disburseAmount, setDisburseAmount] = useState<any>();
+  const [disburseData, disburseLoading, disburseError] = useDisburseReward(
+    disburseAmount,
+    grantId,
+    applicationId,
+    selectedMilestone === -1 ? undefined : milestones[selectedMilestone].id.split('.')[1],
+    rewardAsset.address,
+  );
+
+  useEffect(() => {
+    // console.log(depositTransactionData);
+    if (disburseData) {
+      onClose();
+      setDisburseAmount(undefined);
+      setFunding('');
+      toastRef.current = toast({
+        position: 'top',
+        render: () => (
+          <InfoToast
+            link={`https://etherscan.io/tx/${disburseData.transactionHash}`}
+            close={() => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            }}
+          />
+        ),
+      });
+    } else if (disburseError) {
+      setDisburseAmount(undefined);
+      setFunding('');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toast, disburseData, disburseError]);
 
   const sendFundsFromContract = async () => {
     let hasError = false;
@@ -80,37 +93,43 @@ function ModalContent({
     if (funding === '') { setError(true); hasError = true; }
 
     if (hasError) return;
-
-    if (!milestones[selectedMilestone].id.split('.')[1]) return;
-    if (!rewardAsset.address) return;
-    if (!parseAmount(funding)) return;
-    if (!applicationId) return;
-
-    try {
-      setHasClicked(true);
-      const transaction = await grantContract.disburseReward(
-        applicationId,
-        milestones[selectedMilestone].id.split('.')[1],
-        rewardAsset.address,
-        parseAmount(funding),
-      );
-      // const transactionData =
-      await transaction.wait();
-      onClose();
-      setHasClicked(false);
-      showToast({ link: `https://etherscan.io/tx/${transaction.transactionHash}` });
-    } catch (e) {
-      setHasClicked(false);
-      console.log(e);
-      toast({
-        title: 'Application update not indexed',
-        status: 'error',
-      });
-    }
-
-    // console.log(transactionData);
-    // console.log(transactionData.blockNumber);
+    setDisburseAmount(parseAmount(funding));
   };
+
+  const [disburseP2PAmount, setDisburseP2PAmount] = useState<any>();
+  const [disburseP2PData, disburseP2PLoading, disburseP2PError] = useDisburseP2PReward(
+    disburseP2PAmount,
+    grantId,
+    applicationId,
+    selectedMilestone === -1 ? undefined : milestones[selectedMilestone].id.split('.')[1],
+    rewardAsset.address,
+  );
+
+  useEffect(() => {
+    // console.log(depositTransactionData);
+    if (disburseP2PData) {
+      onClose();
+      setDisburseP2PAmount(undefined);
+      setFunding('');
+      toastRef.current = toast({
+        position: 'top',
+        render: () => (
+          <InfoToast
+            link={`https://etherscan.io/tx/${disburseP2PData.transactionHash}`}
+            close={() => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            }}
+          />
+        ),
+      });
+    } else if (disburseP2PError) {
+      setDisburseP2PAmount(undefined);
+      setFunding('');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toast, disburseP2PData, disburseP2PError]);
 
   const sendFundsFromWallet = async () => {
     let hasError = false;
@@ -119,39 +138,7 @@ function ModalContent({
     if (funding === '') { setError(true); hasError = true; }
 
     if (hasError) return;
-
-    console.log(grantContract);
-
-    console.log(
-      applicationId,
-      milestones[selectedMilestone].id.split('.')[1],
-      rewardAsset.address,
-      parseAmount(funding),
-    );
-
-    if (!milestones[selectedMilestone].id.split('.')[1]) return;
-    if (!rewardAsset.address) return;
-    if (!parseAmount(funding)) return;
-    if (!applicationId) return;
-
-    setHasClicked(true);
-    const txn = await rewardAssetContract.approve(grantContract.address, parseAmount(funding));
-    await txn.wait();
-
-    const transaction = await grantContract.disburseRewardP2P(
-      applicationId,
-      milestones[selectedMilestone].id.split('.')[1],
-      rewardAsset.address,
-      parseAmount(funding),
-    );
-    const transactionData = await transaction.wait();
-    setHasClicked(false);
-    showToast({ link: `https://etherscan.io/tx/${transaction.transactionHash}` });
-
-    console.log(transactionData);
-    console.log(transactionData.blockNumber);
-
-    onClose();
+    setDisburseP2PAmount(parseAmount(funding));
   };
 
   useEffect(() => {
@@ -308,11 +295,15 @@ function ModalContent({
             </Flex>
           </Flex>
 
-          { hasClicked ? (
-            <Center>
-              <CircularProgress isIndeterminate color="brand.500" size="48px" my={10} />
-            </Center>
-          ) : <Button variant="primary" w="100%" my={10} onClick={sendFundsFromContract}>Send Funds</Button>}
+          <Button
+            variant="primary"
+            w="100%"
+            my={10}
+            onClick={disburseLoading ? () => {} : sendFundsFromContract}
+            py={disburseLoading ? 2 : 0}
+          >
+            {disburseLoading ? <Loader /> : 'Send Funds'}
+          </Button>
 
         </Flex>
       )}
@@ -389,12 +380,15 @@ function ModalContent({
           </Flex>
         </Flex>
 
-        {hasClicked ? (
-          <Center>
-            <CircularProgress isIndeterminate color="brand.500" size="48px" my={10} />
-          </Center>
-        ) : <Button variant="primary" w="100%" my={10} onClick={sendFundsFromWallet}>Send Funds</Button>}
-
+        <Button
+          variant="primary"
+          w="100%"
+          my={10}
+          onClick={disburseP2PLoading ? () => {} : sendFundsFromWallet}
+          py={disburseP2PLoading ? 2 : 0}
+        >
+          {disburseP2PLoading ? <Loader /> : 'Send Funds'}
+        </Button>
       </Flex>
       )}
     </ModalBody>

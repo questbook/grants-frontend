@@ -3,7 +3,7 @@ query getAllGrants($first: Int, $skip: Int, $appliedTo: [ID!]) {
     first: $first, 
     skip: $skip, 
     subgraphError: allow, 
-    where: {acceptingApplications: true, id_not_in: $appliedTo},
+    where: {acceptingApplications: true},
     orderBy: createdAtS, 
     orderDirection: desc
   ) {
@@ -17,7 +17,7 @@ query getAllGrants($first: Int, $skip: Int, $appliedTo: [ID!]) {
     id,
     asset
   }, 
-  workspace {title, logoIpfsHash}, 
+  workspace {id, title, logoIpfsHash, supportedNetworks}, 
   deadline,
   funding,
   numberOfApplications,

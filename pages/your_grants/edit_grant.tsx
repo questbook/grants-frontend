@@ -7,20 +7,21 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useAccount, useContract, useSigner } from 'wagmi';
-import { useGetGrantDetailsLazyQuery } from 'src/generated/graphql';
+import { useGetGrantDetailsQuery } from 'src/generated/graphql';
+import useEditGrant from 'src/hooks/useEditGrant';
+import { SupportedChainId } from 'src/constants/chains';
+import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import InfoToast from '../../src/components/ui/infoToast';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/edit_grant/form';
 import Sidebar from '../../src/components/your_grants/edit_grant/sidebar';
-import GrantABI from '../../src/contracts/abi/GrantAbi.json';
-import supportedCurrencies from '../../src/constants/supportedCurrencies';
 import NavbarLayout from '../../src/layout/navbarLayout';
-import { formatAmount, parseAmount } from '../../src/utils/formattingUtils';
+import { formatAmount } from '../../src/utils/formattingUtils';
 import { ApiClientsContext } from '../_app';
 
 function EditGrant() {
-  const apiClients = useContext(ApiClientsContext);
+  const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
 
   const router = useRouter();
 
@@ -30,26 +31,83 @@ function EditGrant() {
   const grantRewardsRef = useRef(null);
 
   const [currentStep, setCurrentStep] = useState(0);
-  const [grantID, setGrantID] = useState<any>('');
+  const [grantID, setGrantID] = useState<string>();
 
-  const [{ data: accountData }] = useAccount();
-  const [signerStates] = useSigner();
-
-  const grantContract = useContract({
-    addressOrName: grantID.length > 0 ? grantID : '0x0000000000000000000000000000000000000000',
-    contractInterface: GrantABI,
-    signerOrProvider: signerStates.data,
-  });
-
-  const [hasClicked, setHasClicked] = React.useState(false);
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
 
   const [formData, setFormData] = useState<any>(null);
 
-  const [getGrantDetails] = useGetGrantDetailsLazyQuery({
-    client: apiClients?.subgraphClient?.client,
+  const [queryParams, setQueryParams] = useState<any>({
+    client:
+      subgraphClients[
+        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      ].client,
   });
+
+  useEffect(() => {
+    if (!workspace) return;
+
+    setQueryParams({
+      client:
+        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+      variables: { grantID },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grantID, workspace]);
+
+  const {
+    data,
+    error,
+    loading: queryLoading,
+  } = useGetGrantDetailsQuery(queryParams);
+
+  useEffect(() => {
+    if (data && data.grants && data.grants.length > 0) {
+      const grant = data.grants[0];
+      setFormData({
+        title: grant.title,
+        summary: grant.summary,
+        details: grant.details,
+        applicantName:
+          grant.fields.find((field: any) => field.id.includes('applicantName')) !== undefined,
+        applicantEmail:
+          grant.fields.find((field: any) => field.id.includes('applicantEmail')) !== undefined,
+        teamMembers:
+          grant.fields.find((field: any) => field.id.includes('teamMembers')) !== undefined,
+        projectName:
+          grant.fields.find((field: any) => field.id.includes('projectName')) !== undefined,
+        projectGoals:
+          grant.fields.find((field: any) => field.id.includes('projectGoals')) !== undefined,
+        projectDetails:
+          grant.fields.find((field: any) => field.id.includes('projectDetails')) !== undefined,
+        projectLink:
+          grant.fields.find((field: any) => field.id.includes('projectLink')) !== undefined,
+        isMultipleMilestones:
+          grant.fields.find((field: any) => field.id.includes('isMultipleMilestones')) !== undefined,
+        fundingBreakdown:
+          grant.fields.find((field: any) => field.id.includes('fundingBreakdown')) !== undefined,
+        extraField:
+          grant.fields.find((field: any) => field.id.includes('extraField'))
+          !== undefined,
+        reward: formatAmount(grant.reward.committed),
+        rewardCurrency:
+          CHAIN_INFO[
+            getSupportedChainIdFromSupportedNetwork(
+              grant.workspace.supportedNetworks[0],
+            )
+          ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label ?? 'LOL',
+        rewardCurrencyAddress:
+          CHAIN_INFO[
+            getSupportedChainIdFromSupportedNetwork(
+              grant.workspace.supportedNetworks[0],
+            )
+          ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.address,
+        date: grant.deadline,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, error, queryLoading]);
 
   const sideBarDetails = [
     ['Grant Intro', 'Grant title, and summary', grantInfoRef],
@@ -70,47 +128,6 @@ function EditGrant() {
     ],
   ];
 
-  const getGrantData = async () => {
-    if (!apiClients) return;
-    const { subgraphClient } = apiClients;
-    if (!subgraphClient) return;
-    try {
-      const { data } = await getGrantDetails({ variables: { grantID } });
-      if (data) {
-        const grant = data.grants[0];
-        setFormData({
-          title: grant.title,
-          summary: grant.summary,
-          details: grant.details,
-          applicantName: grant.fields.find((field: any) => field.id.includes('applicantName')) !== undefined,
-          applicantEmail: grant.fields.find((field: any) => field.id.includes('applicantEmail')) !== undefined,
-          teamMembers: grant.fields.find((field: any) => field.id.includes('teamMembers')) !== undefined,
-          projectName: grant.fields.find((field: any) => field.id.includes('projectName')) !== undefined,
-          projectGoals: grant.fields.find((field: any) => field.id.includes('projectGoals')) !== undefined,
-          projectDetails: grant.fields.find((field: any) => field.id.includes('projectDetails')) !== undefined,
-          projectLink: grant.fields.find((field: any) => field.id.includes('projectLink')) !== undefined,
-          isMultipleMilestones: grant.fields.find((field: any) => field.id.includes('isMultipleMilestones')) !== undefined,
-          fundingBreakdown: grant.fields.find((field: any) => field.id.includes('fundingBreakdown')) !== undefined,
-          extraField: grant.fields.find((field: any) => field.id.includes('extraField')) !== undefined,
-          reward: formatAmount(grant.reward.committed),
-          rewardCurrency: supportedCurrencies.find(
-            (currency) => currency.id.toLowerCase() === grant.reward.asset.toLowerCase(),
-          )!.label,
-          rewardCurrencyAddress: supportedCurrencies.find(
-            (currency) => currency.id.toLowerCase() === grant.reward.asset.toLowerCase(),
-          )!.id,
-          date: grant.deadline,
-        });
-      }
-    } catch (e: any) {
-      toast({
-        title: 'Error getting workspace data',
-        description: e.message,
-        status: 'error',
-      });
-    }
-  };
-
   const scroll = (ref: any, step: number) => {
     if (!ref.current) return;
     ref.current.scrollIntoView({
@@ -120,82 +137,32 @@ function EditGrant() {
     setCurrentStep(step);
   };
 
-  const closeToast = () => {
-    if (toastRef.current) {
-      toast.close(toastRef.current);
-    }
-  };
+  const [editData, setEditData] = useState<any>();
+  const [transactionData, loading] = useEditGrant(editData, grantID);
 
-  const showToast = ({ link } : { link: string }) => {
-    toastRef.current = toast({
-      position: 'top',
-      render: () => (
-        <InfoToast
-          link={link}
-          close={closeToast}
-        />
-      ),
-    });
-  };
-
-  const handleGrantSubmit = async (data: any) => {
-    if (!apiClients) return;
-    const { validatorApi, workspaceId } = apiClients;
-    if (!accountData || !accountData.address || !workspaceId) {
-      return;
-    }
-
-    try {
-      setHasClicked(true);
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-
-      const {
-        data: { ipfsHash },
-      } = await validatorApi.validateGrantUpdate({
-        title: data.title,
-        summary: data.summary,
-        details: data.details,
-        deadline: data.date,
-        reward: {
-          committed: parseAmount(data.reward),
-          asset: data.rewardCurrencyAddress,
-        },
-        fields: data.fields,
-      });
-
-      // console.log(ipfsHash);
-
-      const transaction = await grantContract.updateGrant(
-        ipfsHash,
-      );
-      const transactionData = await transaction.wait();
-      setHasClicked(false);
+  useEffect(() => {
+    // console.log(transactionData);
+    if (transactionData) {
       router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
-
-      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
-      // await subgraphClient.waitForBlock(transactionData.blockNumber);
-
-    // router.replace('/your_grants');
-    } catch (error) {
-      setHasClicked(false);
-      // console.log(error);
-      toast({
-        title: 'Application update not indexed',
-        status: 'error',
+      toastRef.current = toast({
+        position: 'top',
+        render: () => (
+          <InfoToast
+            link={`https://etherscan.io/tx/${transactionData.transactionHash}`}
+            close={() => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            }}
+          />
+        ),
       });
     }
-  };
+  }, [toast, transactionData, router]);
 
   useEffect(() => {
-    setGrantID(router?.query?.grantID ?? '');
+    setGrantID(router?.query?.grantId?.toString());
   }, [router]);
-
-  useEffect(() => {
-    if (!grantID) return;
-
-    getGrantData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [grantID]);
 
   return (
     <Container maxW="100%" display="flex" px="70px">
@@ -211,12 +178,12 @@ function EditGrant() {
         <Breadcrumbs path={['Your Grants', 'Edit grant']} />
         {formData && (
           <Form
-            hasClicked={hasClicked}
+            hasClicked={loading}
             formData={formData}
-            onSubmit={(data: any) => {
-            // eslint-disable-next-line no-console
+            onSubmit={(editdata: any) => {
+              // eslint-disable-next-line no-console
               // console.log(data);
-              handleGrantSubmit(data);
+              setEditData(editdata);
             }}
             refs={sideBarDetails.map((detail) => detail[2])}
           />

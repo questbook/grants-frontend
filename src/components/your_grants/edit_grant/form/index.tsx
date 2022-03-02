@@ -1,15 +1,18 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Box, Button, Text, Image, Link, Flex, CircularProgress, Center,
+  Box, Button, Text, Image, Link, Flex,
 } from '@chakra-ui/react';
+import Loader from 'src/components/ui/loader';
+import useChainId from 'src/hooks/utils/useChainId';
+import { SupportedChainId } from 'src/constants/chains';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import Title from './1_title';
 import Details from './2_details';
 import ApplicantDetails from './3_applicantDetails';
 import GrantRewardsInput from './4_rewards';
 import applicantDetailsList from '../../../../constants/applicantDetailsList';
 import Heading from '../../../ui/heading';
-import supportedCurrencies from '../../../../constants/supportedCurrencies';
 
 function Form({
   refs,
@@ -60,7 +63,7 @@ function Form({
     const newDetailsRequired = [...detailsRequired];
     // TODO: create interface for detailsRequired
 
-    console.log(newDetailsRequired, index);
+    // console.log(newDetailsRequired, index);
 
     (newDetailsRequired[index] as any).required = !(
       newDetailsRequired[index] as any
@@ -74,12 +77,31 @@ function Form({
   const [reward, setReward] = React.useState(formData.reward ?? '');
   const [rewardError, setRewardError] = React.useState(false);
 
+  const currentChain = useChainId() ?? SupportedChainId.RINKEBY;
+
+  const supportedCurrencies = Object.keys(
+    CHAIN_INFO[currentChain].supportedCurrencies,
+  ).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
+    .map((currency) => ({ ...currency, id: currency.address }));
   const [rewardCurrency, setRewardCurrency] = React.useState(
     formData.rewardCurrency ?? supportedCurrencies[0].label,
   );
   const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
     formData.rewardCurrencyAddress ?? supportedCurrencies[0].id,
   );
+
+  useEffect(() => {
+    // console.log(currentChain);
+    if (currentChain) {
+      const supportedCurrencies = Object.keys(
+        CHAIN_INFO[currentChain].supportedCurrencies,
+      ).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
+        .map((currency) => ({ ...currency, id: currency.address }));
+      setRewardCurrency(formData.rewardCurrency ?? supportedCurrencies[0].label);
+      setRewardCurrencyAddress(formData.rewardCurrencyAddress ?? supportedCurrencies[0].address);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentChain]);
 
   const [date, setDate] = React.useState(formData.date ?? '');
   const [dateError, setDateError] = React.useState(false);
@@ -148,7 +170,7 @@ function Form({
         };
       }
 
-      console.log(fields);
+      // console.log(fields);
       onSubmit({
         title,
         summary,
@@ -161,16 +183,21 @@ function Form({
     }
   };
 
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
   return (
     <>
       <Heading mt="18px" title="Edit your grant" />
 
       <Flex mt="-73px" justifyContent="flex-end">
-        {hasClicked ? (
-          <Center>
-            <CircularProgress isIndeterminate color="brand.500" size="48px" />
-          </Center>
-        ) : <Button onClick={handleOnSubmit} variant="primary">Save</Button>}
+        <Button
+          ref={buttonRef}
+          w={hasClicked ? buttonRef.current?.offsetWidth : 'auto'}
+          onClick={hasClicked ? () => {} : handleOnSubmit}
+          py={hasClicked ? 2 : 0}
+          variant="primary"
+        >
+          {hasClicked ? <Loader /> : 'Save'}
+        </Button>
       </Flex>
 
       <Text
@@ -261,6 +288,7 @@ function Form({
         setDate={setDate}
         dateError={dateError}
         setDateError={setDateError}
+        supportedCurrencies={supportedCurrencies}
       />
 
       <Flex alignItems="flex-start" mt={8} mb={10} maxW="400">
@@ -288,15 +316,9 @@ function Form({
         </Text>
       </Flex>
 
-      {hasClicked ? (
-        <Center>
-          <CircularProgress isIndeterminate color="brand.500" size="48px" mt={4} />
-        </Center>
-      ) : (
-        <Button onClick={handleOnSubmit} variant="primary">
-          Save Changes
-        </Button>
-      )}
+      <Button onClick={hasClicked ? () => {} : handleOnSubmit} py={hasClicked ? 2 : 0} variant="primary">
+        {hasClicked ? <Loader /> : 'Save Changes'}
+      </Button>
     </>
   );
 }

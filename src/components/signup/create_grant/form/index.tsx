@@ -22,6 +22,7 @@ function Form({
   currentStep, incrementCurrentStep, totalSteps, submitForm, hasClicked,
 }: Props) {
   const incrementFormInputStep = (data: any) => {
+    console.log(data);
     if (currentStep < totalSteps - 1) {
       incrementCurrentStep(data);
     } else {
