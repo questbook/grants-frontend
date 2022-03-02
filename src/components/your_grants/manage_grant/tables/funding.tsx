@@ -256,4 +256,7 @@ function Funding({
   );
 }
 
+Funding.defaultProps = {
+  chainId: SupportedChainId.RINKEBY,
+};
 export default Funding;
