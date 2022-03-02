@@ -50,6 +50,7 @@ export default function useEditGrant(
           details: data.details,
           deadline: data.date,
           reward: {
+            // @ts-expect-error
             committed: parseAmount(data.reward),
             asset: data.rewardCurrencyAddress,
           },
