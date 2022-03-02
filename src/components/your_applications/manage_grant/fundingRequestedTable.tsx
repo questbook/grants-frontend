@@ -147,7 +147,7 @@ export type FundingProps = {
   columns: (keyof typeof TABLE_HEADERS)[];
   assetDecimals: number;
   grantId: string | null;
-  chainId?: SupportedChainId;
+  chainId?: SupportedChainId | undefined;
 };
 
 function Funding({
@@ -240,4 +240,7 @@ function Funding({
   );
 }
 
+Funding.defaultProps = {
+  chainId: SupportedChainId.RINKEBY,
+};
 export default Funding;

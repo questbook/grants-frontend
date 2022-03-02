@@ -32,7 +32,7 @@ export type AbstractMilestonesTableProps = {
   refetch: () => void
   sendFundOpen?: () => void
   renderStatus: (milestone: ApplicationMilestone) => React.ReactNode
-  chainId?: SupportedChainId,
+  chainId?: SupportedChainId | undefined,
 };
 
 function AbstractMilestonesTable(
@@ -152,4 +152,8 @@ function AbstractMilestonesTable(
   );
 }
 
+AbstractMilestonesTable.defaultProps = {
+  sendFundOpen: () => {},
+  chainId: undefined,
+};
 export default AbstractMilestonesTable;
