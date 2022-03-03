@@ -25,10 +25,12 @@ export type ApplicationMilestone = {
   amount: Scalars['BigInt'];
   /** amount paid by DAO */
   amountPaid: Scalars['BigInt'];
+  /** Feedback from the grant DAO manager/applicant */
+  feedbackDao?: Maybe<Scalars['String']>;
+  /** Feedback from the developer */
+  feedbackDev?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   state: MilestoneState;
-  /** text that was sent with the milestone update */
-  text?: Maybe<Scalars['String']>;
   title: Scalars['String'];
   /** in seconds since epoch */
   updatedAtS?: Maybe<Scalars['Int']>;
@@ -51,6 +53,34 @@ export type ApplicationMilestone_Filter = {
   amount_lte?: InputMaybe<Scalars['BigInt']>;
   amount_not?: InputMaybe<Scalars['BigInt']>;
   amount_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  feedbackDao?: InputMaybe<Scalars['String']>;
+  feedbackDao_contains?: InputMaybe<Scalars['String']>;
+  feedbackDao_ends_with?: InputMaybe<Scalars['String']>;
+  feedbackDao_gt?: InputMaybe<Scalars['String']>;
+  feedbackDao_gte?: InputMaybe<Scalars['String']>;
+  feedbackDao_in?: InputMaybe<Array<Scalars['String']>>;
+  feedbackDao_lt?: InputMaybe<Scalars['String']>;
+  feedbackDao_lte?: InputMaybe<Scalars['String']>;
+  feedbackDao_not?: InputMaybe<Scalars['String']>;
+  feedbackDao_not_contains?: InputMaybe<Scalars['String']>;
+  feedbackDao_not_ends_with?: InputMaybe<Scalars['String']>;
+  feedbackDao_not_in?: InputMaybe<Array<Scalars['String']>>;
+  feedbackDao_not_starts_with?: InputMaybe<Scalars['String']>;
+  feedbackDao_starts_with?: InputMaybe<Scalars['String']>;
+  feedbackDev?: InputMaybe<Scalars['String']>;
+  feedbackDev_contains?: InputMaybe<Scalars['String']>;
+  feedbackDev_ends_with?: InputMaybe<Scalars['String']>;
+  feedbackDev_gt?: InputMaybe<Scalars['String']>;
+  feedbackDev_gte?: InputMaybe<Scalars['String']>;
+  feedbackDev_in?: InputMaybe<Array<Scalars['String']>>;
+  feedbackDev_lt?: InputMaybe<Scalars['String']>;
+  feedbackDev_lte?: InputMaybe<Scalars['String']>;
+  feedbackDev_not?: InputMaybe<Scalars['String']>;
+  feedbackDev_not_contains?: InputMaybe<Scalars['String']>;
+  feedbackDev_not_ends_with?: InputMaybe<Scalars['String']>;
+  feedbackDev_not_in?: InputMaybe<Array<Scalars['String']>>;
+  feedbackDev_not_starts_with?: InputMaybe<Scalars['String']>;
+  feedbackDev_starts_with?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['ID']>;
   id_gt?: InputMaybe<Scalars['ID']>;
   id_gte?: InputMaybe<Scalars['ID']>;
@@ -63,20 +93,6 @@ export type ApplicationMilestone_Filter = {
   state_in?: InputMaybe<Array<MilestoneState>>;
   state_not?: InputMaybe<MilestoneState>;
   state_not_in?: InputMaybe<Array<MilestoneState>>;
-  text?: InputMaybe<Scalars['String']>;
-  text_contains?: InputMaybe<Scalars['String']>;
-  text_ends_with?: InputMaybe<Scalars['String']>;
-  text_gt?: InputMaybe<Scalars['String']>;
-  text_gte?: InputMaybe<Scalars['String']>;
-  text_in?: InputMaybe<Array<Scalars['String']>>;
-  text_lt?: InputMaybe<Scalars['String']>;
-  text_lte?: InputMaybe<Scalars['String']>;
-  text_not?: InputMaybe<Scalars['String']>;
-  text_not_contains?: InputMaybe<Scalars['String']>;
-  text_not_ends_with?: InputMaybe<Scalars['String']>;
-  text_not_in?: InputMaybe<Array<Scalars['String']>>;
-  text_not_starts_with?: InputMaybe<Scalars['String']>;
-  text_starts_with?: InputMaybe<Scalars['String']>;
   title?: InputMaybe<Scalars['String']>;
   title_contains?: InputMaybe<Scalars['String']>;
   title_ends_with?: InputMaybe<Scalars['String']>;
@@ -104,9 +120,10 @@ export type ApplicationMilestone_Filter = {
 export enum ApplicationMilestone_OrderBy {
   Amount = 'amount',
   AmountPaid = 'amountPaid',
+  FeedbackDao = 'feedbackDao',
+  FeedbackDev = 'feedbackDev',
   Id = 'id',
   State = 'state',
-  Text = 'text',
   Title = 'title',
   UpdatedAtS = 'updatedAtS'
 }
@@ -253,6 +270,8 @@ export type Grant = {
   __typename?: 'Grant';
   /** Whether the grant is currently accepting applications or not */
   acceptingApplications: Scalars['Boolean'];
+  /** List of applications for the grant */
+  applications: Array<GrantApplication>;
   /** in seconds since epoch */
   createdAtS: Scalars['Int'];
   /** Address of who created the grant */
@@ -278,6 +297,15 @@ export type Grant = {
   updatedAtS?: Maybe<Scalars['Int']>;
   /** Workspace which created the grant */
   workspace: Workspace;
+};
+
+
+export type GrantApplicationsArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<GrantApplication_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<GrantApplication_Filter>;
 };
 
 
@@ -815,6 +843,7 @@ export type Grant_Filter = {
 
 export enum Grant_OrderBy {
   AcceptingApplications = 'acceptingApplications',
+  Applications = 'applications',
   CreatedAtS = 'createdAtS',
   CreatorId = 'creatorId',
   Deadline = 'deadline',
@@ -1564,7 +1593,9 @@ export enum SupportedNetwork {
   Chain_1 = 'chain_1',
   Chain_4 = 'chain_4',
   Chain_137 = 'chain_137',
-  Chain_80001 = 'chain_80001'
+  Chain_80001 = 'chain_80001',
+  Chain_1666600000 = 'chain_1666600000',
+  Chain_1666700000 = 'chain_1666700000'
 }
 
 /** Schema for a Workspace or DAO */
@@ -1897,7 +1928,7 @@ export type GetApplicationMilestonesQueryVariables = Exact<{
 }>;
 
 
-export type GetApplicationMilestonesQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', grant: { __typename?: 'Grant', reward: { __typename?: 'Reward', asset: string } }, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, state: MilestoneState, title: string, amount: string, amountPaid: string, updatedAtS?: number | null, text?: string | null }>, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, value: Array<string> }> }> };
+export type GetApplicationMilestonesQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', grant: { __typename?: 'Grant', reward: { __typename?: 'Reward', asset: string } }, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, state: MilestoneState, title: string, amount: string, amountPaid: string, updatedAtS?: number | null, feedbackDao?: string | null, feedbackDev?: string | null }>, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, value: Array<string> }> }> };
 
 export type GetDaoDetailsQueryVariables = Exact<{
   workspaceID: Scalars['ID'];
@@ -2305,7 +2336,8 @@ export const GetApplicationMilestonesDocument = gql`
       amount
       amountPaid
       updatedAtS
-      text
+      feedbackDao
+      feedbackDev
     }
     fields {
       id

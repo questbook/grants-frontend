@@ -41,11 +41,12 @@ export default function useUpdateApplicationState(
     async function validate() {
       setLoading(true);
       // console.log('calling validate');
+      console.log('DATA: ', data);
       try {
         const {
           data: { ipfsHash },
         } = await validatorApi.validateGrantApplicationUpdate({
-          feedback: data,
+          feedback: data.length === 0 ? '  ' : data,
         });
         if (!ipfsHash) {
           throw new Error('Error validating grant data');

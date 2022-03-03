@@ -12,7 +12,8 @@ query getApplicationMilestones($grantId: ID!) {
         amount,
         amountPaid,
         updatedAtS,
-        text
+        feedbackDao,
+        feedbackDev
       }
       fields {
         id

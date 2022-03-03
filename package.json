@@ -26,6 +26,7 @@
     "framer-motion": "^5.6.0",
     "lottie-react": "^2.2.1",
     "moment": "^2.29.1",
+    "multiformats": "^9.6.4",
     "next": "12.0.8",
     "react": "^17.0.2",
     "react-datepicker": "^4.6.0",

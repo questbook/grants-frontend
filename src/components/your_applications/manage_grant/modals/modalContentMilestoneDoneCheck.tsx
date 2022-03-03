@@ -27,7 +27,7 @@ function ModalContent({
           Milestone Summary
         </Heading>
         <Text mt={4} variant="applicationText">
-          {milestone?.text}
+          {milestone?.feedbackDao}
         </Text>
         <Button w="100%" variant="primary" mt={10} onClick={onClose}>OK</Button>
         <Box mb={4} />
