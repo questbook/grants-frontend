@@ -1,5 +1,3 @@
-import { CID } from 'multiformats/cid';
-
 const IPFS_UPLOAD_ENDPOINT = 'https://ipfs.infura.io:5001/api/v0/add?pin=true';
 
 export const uploadToIPFS = async (data: string | Blob): Promise<{ hash: string }> => {

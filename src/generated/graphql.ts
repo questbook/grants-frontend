@@ -641,6 +641,7 @@ export enum GrantFieldAnswer_OrderBy {
 }
 
 export enum GrantFieldInputType {
+  Array = 'array',
   LongForm = 'long_form',
   Numeric = 'numeric',
   ShortForm = 'short_form'
@@ -1882,11 +1883,11 @@ export enum _SubgraphErrorPolicy_ {
 export type GetAllGrantsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
-  appliedTo?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
+  applicantId: Scalars['Bytes'];
 }>;
 
 
-export type GetAllGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
+export type GetAllGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> }, applications: Array<{ __typename?: 'GrantApplication', applicantId: string }> }> };
 
 export type GetAllGrantsForADaoQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -2019,7 +2020,7 @@ export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers:
 
 
 export const GetAllGrantsDocument = gql`
-    query getAllGrants($first: Int, $skip: Int, $appliedTo: [ID!]) {
+    query getAllGrants($first: Int, $skip: Int, $applicantId: Bytes!) {
   grants(
     first: $first
     skip: $skip
@@ -2047,6 +2048,9 @@ export const GetAllGrantsDocument = gql`
     deadline
     funding
     numberOfApplications
+    applications(where: {applicantId: $applicantId}, first: 1) {
+      applicantId
+    }
   }
 }
     `;
@@ -2065,11 +2069,11 @@ export const GetAllGrantsDocument = gql`
  *   variables: {
  *      first: // value for 'first'
  *      skip: // value for 'skip'
- *      appliedTo: // value for 'appliedTo'
+ *      applicantId: // value for 'applicantId'
  *   },
  * });
  */
-export function useGetAllGrantsQuery(baseOptions?: Apollo.QueryHookOptions<GetAllGrantsQuery, GetAllGrantsQueryVariables>) {
+export function useGetAllGrantsQuery(baseOptions: Apollo.QueryHookOptions<GetAllGrantsQuery, GetAllGrantsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetAllGrantsQuery, GetAllGrantsQueryVariables>(GetAllGrantsDocument, options);
       }

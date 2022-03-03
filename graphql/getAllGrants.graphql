@@ -1,4 +1,4 @@
-query getAllGrants($first: Int, $skip: Int, $appliedTo: [ID!]) {
+query getAllGrants($first: Int, $skip: Int, $applicantId: Bytes!) {
   grants(
     first: $first, 
     skip: $skip, 
@@ -21,4 +21,7 @@ query getAllGrants($first: Int, $skip: Int, $appliedTo: [ID!]) {
   deadline,
   funding,
   numberOfApplications,
+  applications(where: {applicantId: $applicantId}, first: 1) {
+      applicantId
+  }
 }}
