@@ -21,6 +21,7 @@ import {
 import { SupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import AddFunds from '../../src/components/funds/add_funds_modal';
 import Heading from '../../src/components/ui/heading';
 import YourGrantCard from '../../src/components/your_grants/yourGrantCard';
@@ -149,7 +150,7 @@ function YourGrants() {
               <YourGrantCard
                 grantID={grant.id}
                 key={grant.id}
-                daoIcon={`https://ipfs.infura.io:5001/api/v0/cat?arg=${grant.workspace.logoIpfsHash}`}
+                daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
                 grantTitle={grant.title}
                 grantDesc={grant.summary}
                 numOfApplicants={grant.numberOfApplications}
@@ -238,7 +239,7 @@ function YourGrants() {
           )}
         </Flex>
         {grants.length === 0 && (
-          <Flex w="26%" pos="sticky">
+          <Flex w="26%" pos="sticky" minH="calc(100vh - 80px)">
             <Sidebar />
           </Flex>
         )}
