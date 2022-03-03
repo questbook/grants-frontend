@@ -48,7 +48,7 @@ export const CHAIN_INFO: ChainInfoMap = {
       {
         id: 'walletConnect',
         name: 'Wallet Connect',
-        icon: '/wallet_icons/walletConnect.svg',
+        icon: '/wallet_icons/walletconnect.svg',
       },
     ],
     explorer: {
@@ -91,7 +91,7 @@ export const CHAIN_INFO: ChainInfoMap = {
       {
         id: 'walletConnect',
         name: 'Wallet Connect',
-        icon: '/wallet_icons/walletConnect.svg',
+        icon: '/wallet_icons/walletconnect.svg',
       },
     ],
     explorer: {

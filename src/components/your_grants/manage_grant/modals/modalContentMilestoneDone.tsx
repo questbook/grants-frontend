@@ -73,6 +73,7 @@ function ModalContent({ milestone, done }: Props) {
                 {' '}
                 {getFormattedDateFromUnixTimestampWithYear(milestone!.updatedAtS || 0)}
               </Text>
+              {milestone.feedbackDev && (
               <Text
                 mt={8}
                 variant="applicationText"
@@ -80,7 +81,18 @@ function ModalContent({ milestone, done }: Props) {
               >
                 Milestone Summary by Grantee
               </Text>
-              <Text variant="applicationText" mt={4}>{milestone.text || 'N/A'}</Text>
+              )}
+              {milestone.feedbackDev && <Text variant="applicationText" mt={4}>{milestone.feedbackDev}</Text>}
+              {milestone.feedbackDao && (
+              <Text
+                mt={8}
+                variant="applicationText"
+                fontWeight="700"
+              >
+                Milestone Summary by Grantor
+              </Text>
+              )}
+              {milestone.feedbackDao && <Text variant="applicationText" mt={4}>{milestone.feedbackDao}</Text>}
             </>
           )
         }
