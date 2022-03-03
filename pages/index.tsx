@@ -27,7 +27,7 @@ import {
 } from '../src/utils/formattingUtils';
 import { ApiClientsContext } from './_app';
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 100;
 
 function BrowseGrants() {
   const containerRef = useRef(null);
@@ -47,9 +47,9 @@ function BrowseGrants() {
   const [currentPage, setCurrentPage] = useState(0);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const getGrantData = async () => {
-    // if (!subgraphClient) return;
+  const getGrantData = async (firstTime: boolean = false) => {
     try {
+      const currentPageLocal = firstTime ? 0 : currentPage;
       const promises = allNetworkGrants.map(
         // eslint-disable-next-line no-async-promise-executor
         (allGrants) => new Promise(async (resolve) => {
@@ -57,11 +57,13 @@ function BrowseGrants() {
           const { data } = await allGrants[0]({
             variables: {
               first: PAGE_SIZE,
-              skip: currentPage * PAGE_SIZE,
+              skip: currentPageLocal * PAGE_SIZE,
+              applicantId: accountData?.address ?? '',
             },
           });
           if (data && data.grants) {
-            resolve(data.grants);
+            const filteredGrants = data.grants.filter((grant) => grant.applications.length === 0);
+            resolve(filteredGrants);
           } else {
             resolve([]);
           }
@@ -69,8 +71,13 @@ function BrowseGrants() {
       );
       Promise.all(promises).then((values: any[]) => {
         const allGrantsData = [].concat(...values);
-        setGrants([...grants, ...allGrantsData]);
-        setCurrentPage(currentPage + 1);
+        if (firstTime) {
+          setGrants(allGrantsData);
+        } else {
+          setGrants([...grants, ...allGrantsData]);
+        }
+        setCurrentPage(firstTime ? 1 : currentPage + 1);
+        // @TODO: Handle the case where a lot of the grants are filtered out.
       });
     } catch (e) {
       // console.log(e);
@@ -95,9 +102,10 @@ function BrowseGrants() {
   }, [containerRef, getGrantData]);
 
   useEffect(() => {
-    getGrantData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // setCurrentPage(0);
+    getGrantData(true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountData?.address]);
 
   useEffect(() => {
     const { current } = containerRef;
