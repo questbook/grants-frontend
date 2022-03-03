@@ -47,9 +47,9 @@ function BrowseGrants() {
   const [currentPage, setCurrentPage] = useState(0);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const getGrantData = async () => {
-    // if (!accountData?.address) return;
+  const getGrantData = async (firstTime: boolean = false) => {
     try {
+      const currentPageLocal = firstTime ? 0 : currentPage;
       const promises = allNetworkGrants.map(
         // eslint-disable-next-line no-async-promise-executor
         (allGrants) => new Promise(async (resolve) => {
@@ -57,8 +57,8 @@ function BrowseGrants() {
           const { data } = await allGrants[0]({
             variables: {
               first: PAGE_SIZE,
-              skip: currentPage * PAGE_SIZE,
-              applicantId: accountData?.address ?? '0x0000000000000000000000000000000000000000',
+              skip: currentPageLocal * PAGE_SIZE,
+              applicantId: accountData?.address ?? '',
             },
           });
           if (data && data.grants) {
@@ -71,8 +71,12 @@ function BrowseGrants() {
       );
       Promise.all(promises).then((values: any[]) => {
         const allGrantsData = [].concat(...values);
-        setGrants([...grants, ...allGrantsData]);
-        setCurrentPage(currentPage + 1);
+        if (firstTime) {
+          setGrants(allGrantsData);
+        } else {
+          setGrants([...grants, ...allGrantsData]);
+        }
+        setCurrentPage(firstTime ? 1 : currentPage + 1);
         // @TODO: Handle the case where a lot of the grants are filtered out.
       });
     } catch (e) {
@@ -98,9 +102,10 @@ function BrowseGrants() {
   }, [containerRef, getGrantData]);
 
   useEffect(() => {
-    getGrantData();
+    // setCurrentPage(0);
+    getGrantData(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountData]);
+  }, [accountData?.address]);
 
   useEffect(() => {
     const { current } = containerRef;
