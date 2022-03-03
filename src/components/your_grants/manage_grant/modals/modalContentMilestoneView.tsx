@@ -28,7 +28,7 @@ function ModalContent({
           Milestone Summary
         </Heading>
         <Text mt={4} variant="applicationText">
-          {milestone?.text || 'N/A'}
+          {milestone?.feedbackDev || 'N/A'}
         </Text>
         <Button w="100%" variant="primary" mt={10} onClick={onClose}>OK</Button>
         <Box mb={4} />
