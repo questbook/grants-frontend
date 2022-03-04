@@ -105,9 +105,11 @@ function AboutGrant() {
       setRewardCurrencyCoin(supportedCurrencyObj?.icon);
     }
 
+    console.log(grantData?.fields);
+
     if (
       grantData?.fields.length
-      && grantData?.fields?.some((fd: any) => fd.title === 'Milestones')
+      && grantData?.fields?.some((fd: any) => fd.title === 'isMultipleMilestones')
     ) {
       setPayoutDescription('Multiple');
     } else {
