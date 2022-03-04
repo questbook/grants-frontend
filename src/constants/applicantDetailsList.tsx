@@ -60,4 +60,10 @@ export default [
     inputType: 'short-form',
     isRequired: false,
   },
+  {
+    title: 'Funding Ask',
+    id: 'fundingAsk',
+    inputType: 'long-form',
+    isRequired: true,
+  },
 ];
