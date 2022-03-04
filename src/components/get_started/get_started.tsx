@@ -61,7 +61,7 @@ function GetStarted({
       </Flex>
 
       <Text variant="footer" mt="51px" mb="35px">
-        <Link href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46" isExternal>{strings.get_started.footer.link}</Link>
+        <Link href="/connect_wallet">{strings.get_started.footer.link}</Link>
         {' '}
         {strings.get_started.footer.text}
       </Text>
