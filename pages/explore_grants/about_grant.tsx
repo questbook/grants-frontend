@@ -114,6 +114,7 @@ function AboutGrant() {
     }
     setGrantDetails(grantData?.details);
     setGrantSummary(grantData?.summary);
+    console.log(grantData);
     setGrantRequiredFields(
       grantData?.fields?.map((field: any) => ({
         detail: field.title,

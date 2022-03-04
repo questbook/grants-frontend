@@ -62,7 +62,9 @@ function BrowseGrants() {
             },
           });
           if (data && data.grants) {
-            const filteredGrants = data.grants.filter((grant) => grant.applications.length === 0);
+            const filteredGrants = data.grants.filter(
+              (grant) => grant.applications.length === 0,
+            );
             resolve(filteredGrants);
           } else {
             resolve([]);
@@ -70,11 +72,19 @@ function BrowseGrants() {
         }),
       );
       Promise.all(promises).then((values: any[]) => {
-        const allGrantsData = [].concat(...values);
+        const allGrantsData = [].concat(
+          ...values,
+        ) as GetAllGrantsQuery['grants'];
         if (firstTime) {
-          setGrants(allGrantsData);
+          setGrants(
+            allGrantsData.sort((a: any, b: any) => b.createdAtS - a.createdAtS),
+          );
         } else {
-          setGrants([...grants, ...allGrantsData]);
+          setGrants(
+            [...grants, ...allGrantsData].sort(
+              (a: any, b: any) => b.createdAtS - a.createdAtS,
+            ),
+          );
         }
         setCurrentPage(firstTime ? 1 : currentPage + 1);
         // @TODO: Handle the case where a lot of the grants are filtered out.
@@ -104,7 +114,7 @@ function BrowseGrants() {
   useEffect(() => {
     // setCurrentPage(0);
     getGrantData(true);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountData?.address]);
 
   useEffect(() => {
@@ -144,15 +154,16 @@ function BrowseGrants() {
                     getSupportedChainIdFromSupportedNetwork(
                       grant.workspace.supportedNetworks[0],
                     )
-                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label ?? 'LOL'
+                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+                    ?.label ?? 'LOL'
                 }
                 grantCurrencyIcon={
                   CHAIN_INFO[
                     getSupportedChainIdFromSupportedNetwork(
                       grant.workspace.supportedNetworks[0],
                     )
-                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.icon
-                  ?? '/images/dummy/Ethereum Icon.svg'
+                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+                    ?.icon ?? '/images/dummy/Ethereum Icon.svg'
                 }
                 isGrantVerified={isGrantVerified}
                 chainId={getSupportedChainIdFromSupportedNetwork(

@@ -1887,7 +1887,7 @@ export type GetAllGrantsQueryVariables = Exact<{
 }>;
 
 
-export type GetAllGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> }, applications: Array<{ __typename?: 'GrantApplication', applicantId: string }> }> };
+export type GetAllGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, createdAtS: number, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> }, applications: Array<{ __typename?: 'GrantApplication', applicantId: string }> }> };
 
 export type GetAllGrantsForADaoQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -2039,6 +2039,7 @@ export const GetAllGrantsDocument = gql`
       id
       asset
     }
+    createdAtS
     workspace {
       id
       title
