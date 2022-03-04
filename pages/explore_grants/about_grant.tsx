@@ -105,7 +105,7 @@ function AboutGrant() {
       setRewardCurrencyCoin(supportedCurrencyObj?.icon);
     }
 
-    console.log(grantData?.fields);
+    // console.log(grantData?.fields);
 
     if (
       grantData?.fields.length
