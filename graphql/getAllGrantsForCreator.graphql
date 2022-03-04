@@ -3,7 +3,7 @@ query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $worksp
     first: $first, 
     skip: $skip, 
     subgraphError: allow, 
-    where: { creatorId: $creatorId, workspace: $workspaceId }
+    where: { workspace: $workspaceId }
     orderBy: createdAtS, 
     orderDirection: desc
   ) {

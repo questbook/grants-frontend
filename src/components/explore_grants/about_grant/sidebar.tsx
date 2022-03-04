@@ -18,10 +18,10 @@ function Sidebar({ grantRequiredFields, grantID, chainId }: Props) {
   return (
     <Box my="71px">
       <FloatingSidebar>
-        <Text variant="heading" fontSize="18px" lineHeight="26px">
+        <Text variant="heading" fontSize="18px" lineHeight="26px" mt={3}>
           Requisite for Application
         </Text>
-        <VStack alignItems="stretch" mt={5} p={0} spacing={4}>
+        <VStack alignItems="stretch" mt={10} p={0} spacing={4}>
           {grantRequiredFields?.map(({ detail, tooltip }) => (
             <Text
               fontWeight="400"
@@ -57,6 +57,7 @@ function Sidebar({ grantRequiredFields, grantID, chainId }: Props) {
           fontWeight="400"
           fontSize="12px"
           lineHeight="16px"
+          mb={3}
         >
           Before applying, please ensure you read the grant details, and understand every details
           around it.

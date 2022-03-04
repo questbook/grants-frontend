@@ -2152,7 +2152,7 @@ export const GetAllGrantsForCreatorDocument = gql`
     first: $first
     skip: $skip
     subgraphError: allow
-    where: {creatorId: $creatorId, workspace: $workspaceId}
+    where: {workspace: $workspaceId}
     orderBy: createdAtS
     orderDirection: desc
   ) {

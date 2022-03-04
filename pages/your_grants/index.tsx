@@ -60,7 +60,7 @@ function YourGrants() {
       variables: {
         first: PAGE_SIZE,
         skip: PAGE_SIZE * currentPage,
-        creatorId: accountData?.address,
+        // creatorId: accountData?.address,
         workspaceId: workspace?.id,
       },
     });

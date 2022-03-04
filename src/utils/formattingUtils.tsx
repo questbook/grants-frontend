@@ -2,6 +2,7 @@ import { ethers } from 'ethers';
 import React from 'react';
 import moment from 'moment';
 import { FundTransfer } from 'src/types';
+import applicantDetailsList from 'src/constants/applicantDetailsList';
 
 export function timeToString(
   timestamp: number,
@@ -134,3 +135,5 @@ export function getMilestoneTitle(milestone: FundTransfer['milestone']) {
 export const getTextWithEllipses = (txt: string, maxLength = 7) => (txt.length > maxLength ? `${txt.slice(0, maxLength)}...` : txt);
 
 export const getChainIdFromResponse = (networkString: string):string => networkString?.split('_')[1];
+
+export const getFieldLabelFromFieldTitle = (title: string) => applicantDetailsList.find((detail) => detail.id === title)?.title;
