@@ -96,8 +96,8 @@ function Form({
   const toast = useToast();
   const router = useRouter();
 
-  const [formData, setFormData] = React.useState<any>();
-  const [txnData, loading] = useSubmitApplication(formData, chainId, grantId, workspaceId);
+  const [formData, setFormData] = React.useState<GrantApplicationRequest>();
+  const [txnData, loading] = useSubmitApplication(formData!, chainId, grantId, workspaceId);
 
   useEffect(() => {
     if (txnData) {
@@ -208,29 +208,30 @@ function Form({
     }
     const links = projectLinks.map((pl) => (pl.link));
 
-    const milestones = projectMilestones.map((pm) => (
-      { title: pm.milestone, amount: parseAmount(pm.milestoneReward) }
-    ));
-
     if (!signer || !signer.data) return;
-    const data: GrantApplicationCreateSubgraph = {
+
+    const data: GrantApplicationRequest = {
       grantId,
       applicantId: await signer?.data?.getAddress(),
       fields: {
-        applicantName: [applicantName],
-        applicantEmail: [applicantEmail],
-        projectName: [projectName],
-        projectDetails: [projectDetails],
-        fundingAsk: [parseAmount(fundingAsk)],
-        fundingBreakdown: [fundingBreakdown],
-        teamMembers: [Number(teamMembers).toString()],
-        memberDetails: membersDescription.map((md) => (md.description)),
-        projectLink: links,
-        projectGoals: [projectGoal],
-        isMultipleMilestones: [grantRequiredFields.includes('isMultipleMilestones').toString()],
+        applicantName: [{ value: applicantName }],
+        applicantEmail: [{ value: applicantEmail }],
+        projectName: [{ value: projectName }],
+        projectDetails: [{ value: projectDetails }],
+        fundingAsk: [{ value: parseAmount(fundingAsk) }],
+        fundingBreakdown: [{ value: fundingBreakdown }],
+        teamMembers: [{ value: Number(teamMembers).toString() }],
+        memberDetails: membersDescription.map((md) => ({ value: md.description })),
+        projectLink: links.map((value) => ({ value })),
+        projectGoals: [{ value: projectGoal }],
+        isMultipleMilestones: [{ value: grantRequiredFields.includes('isMultipleMilestones').toString() }],
       },
-      milestones,
-
+      milestones: projectMilestones.map((pm) => (
+        {
+          title: pm.milestone,
+          amount: parseAmount(pm.milestoneReward),
+        }
+      )),
     };
     Object.keys(data.fields).forEach((field) => {
       if (!grantRequiredFields.includes(field)) {
@@ -238,8 +239,7 @@ function Form({
       }
     });
 
-    // console.log(data);
-    setFormData(data as unknown as GrantApplicationRequest);
+    setFormData(data);
   };
 
   return (

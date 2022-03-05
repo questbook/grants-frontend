@@ -3,12 +3,13 @@ import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import { useAccount, useNetwork } from 'wagmi';
 import { SupportedChainId } from 'src/constants/chains';
+import { GrantApplicationUpdate } from '@questbook/service-validator-client';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useApplicationRegistryContract from './contracts/useApplicationRegistryContract';
 
 export default function useResubmitApplication(
-  data: any,
+  data: GrantApplicationUpdate,
   chainId?: SupportedChainId,
   applicationId?: string,
 ) {

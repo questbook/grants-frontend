@@ -10,7 +10,7 @@ import useChainId from './utils/useChainId';
 import useApplicationRegistryContract from './contracts/useApplicationRegistryContract';
 
 export default function useUpdateApplicationState(
-  data: any,
+  data: string,
   applicationId: string | undefined,
   state: number | undefined,
 ) {

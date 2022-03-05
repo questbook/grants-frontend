@@ -16,6 +16,7 @@ import { isValidEmail } from 'src/utils/validationUtils';
 import useResubmitApplication from 'src/hooks/useResubmitApplication';
 import Loader from 'src/components/ui/loader';
 import { SupportedChainId } from 'src/constants/chains';
+import { GrantApplicationUpdate } from '@questbook/service-validator-client';
 import {
   GrantApplicationFieldsSubgraph,
   GrantApplicationProps,
@@ -270,36 +271,34 @@ function Form({
 
     const links = projectLinks.map((pl) => pl.link);
 
-    const milestones = projectMilestones.map((pm) => ({
-      title: pm.milestone,
-      amount: parseAmount(pm.milestoneReward),
-    }));
-
-    const data: GrantApplicationUpdateSubgraph = {
+    const data: GrantApplicationUpdate = {
       fields: {
-        applicantName: [applicantName],
-        applicantEmail: [applicantEmail],
-        projectName: [projectName],
-        projectDetails: [projectDetails],
-        fundingAsk: [parseAmount(fundingAsk)],
-        fundingBreakdown: [fundingBreakdown],
-        teamMembers: [Number(teamMembers).toString()],
-        memberDetails: membersDescription.map((md) => md.description),
-        projectLink: links,
-        projectGoals: [projectGoal],
-        isMultipleMilestones: [
-          grantRequiredFields.includes('isMultipleMilestones').toString(),
-        ],
+        applicantName: [{ value: applicantName }],
+        applicantEmail: [{ value: applicantEmail }],
+        projectName: [{ value: projectName }],
+        projectDetails: [{ value: projectDetails }],
+        fundingAsk: [{ value: parseAmount(fundingAsk) }],
+        fundingBreakdown: [{ value: fundingBreakdown }],
+        teamMembers: [{ value: Number(teamMembers).toString() }],
+        memberDetails: membersDescription.map((md) => ({ value: md.description })),
+        projectLink: links.map((value) => ({ value })),
+        projectGoals: [{ value: projectGoal }],
+        isMultipleMilestones: [{ value: grantRequiredFields.includes('isMultipleMilestones').toString() }],
       },
-      milestones,
+      milestones: projectMilestones.map((pm) => (
+        {
+          title: pm.milestone,
+          amount: parseAmount(pm.milestoneReward),
+        }
+      )),
     };
-    Object.keys(data.fields).forEach((field) => {
+
+    Object.keys(data.fields!).forEach((field) => {
       if (!grantRequiredFields.includes(field)) {
-        delete data.fields[field as keyof GrantApplicationFieldsSubgraph];
+        delete data.fields![field as keyof GrantApplicationFieldsSubgraph];
       }
     });
 
-    console.log(data);
     setUpdateData(data);
   };
 
