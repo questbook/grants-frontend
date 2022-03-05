@@ -594,6 +594,7 @@ export type GrantField = {
   __typename?: 'GrantField';
   id: Scalars['ID'];
   inputType: GrantFieldInputType;
+  isPii: Scalars['Boolean'];
   possibleValues?: Maybe<Array<Scalars['String']>>;
   title: Scalars['String'];
 };
@@ -602,8 +603,77 @@ export type GrantFieldAnswer = {
   __typename?: 'GrantFieldAnswer';
   field: GrantField;
   id: Scalars['ID'];
-  value: Array<Scalars['String']>;
+  values: Array<GrantFieldAnswerItem>;
 };
+
+
+export type GrantFieldAnswerValuesArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<GrantFieldAnswerItem_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<GrantFieldAnswerItem_Filter>;
+};
+
+export type GrantFieldAnswerItem = {
+  __typename?: 'GrantFieldAnswerItem';
+  answer: GrantFieldAnswer;
+  id: Scalars['ID'];
+  value: Scalars['String'];
+  walletId?: Maybe<Scalars['Bytes']>;
+};
+
+export type GrantFieldAnswerItem_Filter = {
+  answer?: InputMaybe<Scalars['String']>;
+  answer_contains?: InputMaybe<Scalars['String']>;
+  answer_ends_with?: InputMaybe<Scalars['String']>;
+  answer_gt?: InputMaybe<Scalars['String']>;
+  answer_gte?: InputMaybe<Scalars['String']>;
+  answer_in?: InputMaybe<Array<Scalars['String']>>;
+  answer_lt?: InputMaybe<Scalars['String']>;
+  answer_lte?: InputMaybe<Scalars['String']>;
+  answer_not?: InputMaybe<Scalars['String']>;
+  answer_not_contains?: InputMaybe<Scalars['String']>;
+  answer_not_ends_with?: InputMaybe<Scalars['String']>;
+  answer_not_in?: InputMaybe<Array<Scalars['String']>>;
+  answer_not_starts_with?: InputMaybe<Scalars['String']>;
+  answer_starts_with?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  value?: InputMaybe<Scalars['String']>;
+  value_contains?: InputMaybe<Scalars['String']>;
+  value_ends_with?: InputMaybe<Scalars['String']>;
+  value_gt?: InputMaybe<Scalars['String']>;
+  value_gte?: InputMaybe<Scalars['String']>;
+  value_in?: InputMaybe<Array<Scalars['String']>>;
+  value_lt?: InputMaybe<Scalars['String']>;
+  value_lte?: InputMaybe<Scalars['String']>;
+  value_not?: InputMaybe<Scalars['String']>;
+  value_not_contains?: InputMaybe<Scalars['String']>;
+  value_not_ends_with?: InputMaybe<Scalars['String']>;
+  value_not_in?: InputMaybe<Array<Scalars['String']>>;
+  value_not_starts_with?: InputMaybe<Scalars['String']>;
+  value_starts_with?: InputMaybe<Scalars['String']>;
+  walletId?: InputMaybe<Scalars['Bytes']>;
+  walletId_contains?: InputMaybe<Scalars['Bytes']>;
+  walletId_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  walletId_not?: InputMaybe<Scalars['Bytes']>;
+  walletId_not_contains?: InputMaybe<Scalars['Bytes']>;
+  walletId_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+};
+
+export enum GrantFieldAnswerItem_OrderBy {
+  Answer = 'answer',
+  Id = 'id',
+  Value = 'value',
+  WalletId = 'walletId'
+}
 
 export type GrantFieldAnswer_Filter = {
   field?: InputMaybe<Scalars['String']>;
@@ -628,16 +698,12 @@ export type GrantFieldAnswer_Filter = {
   id_lte?: InputMaybe<Scalars['ID']>;
   id_not?: InputMaybe<Scalars['ID']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']>>;
-  value?: InputMaybe<Array<Scalars['String']>>;
-  value_contains?: InputMaybe<Array<Scalars['String']>>;
-  value_not?: InputMaybe<Array<Scalars['String']>>;
-  value_not_contains?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export enum GrantFieldAnswer_OrderBy {
   Field = 'field',
   Id = 'id',
-  Value = 'value'
+  Values = 'values'
 }
 
 export enum GrantFieldInputType {
@@ -660,6 +726,10 @@ export type GrantField_Filter = {
   inputType_in?: InputMaybe<Array<GrantFieldInputType>>;
   inputType_not?: InputMaybe<GrantFieldInputType>;
   inputType_not_in?: InputMaybe<Array<GrantFieldInputType>>;
+  isPii?: InputMaybe<Scalars['Boolean']>;
+  isPii_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  isPii_not?: InputMaybe<Scalars['Boolean']>;
+  isPii_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   possibleValues?: InputMaybe<Array<Scalars['String']>>;
   possibleValues_contains?: InputMaybe<Array<Scalars['String']>>;
   possibleValues_not?: InputMaybe<Array<Scalars['String']>>;
@@ -683,6 +753,7 @@ export type GrantField_Filter = {
 export enum GrantField_OrderBy {
   Id = 'id',
   InputType = 'inputType',
+  IsPii = 'isPii',
   PossibleValues = 'possibleValues',
   Title = 'title'
 }
@@ -1011,6 +1082,8 @@ export type Query = {
   grantApplications: Array<GrantApplication>;
   grantField?: Maybe<GrantField>;
   grantFieldAnswer?: Maybe<GrantFieldAnswer>;
+  grantFieldAnswerItem?: Maybe<GrantFieldAnswerItem>;
+  grantFieldAnswerItems: Array<GrantFieldAnswerItem>;
   grantFieldAnswers: Array<GrantFieldAnswer>;
   grantFields: Array<GrantField>;
   grants: Array<Grant>;
@@ -1122,6 +1195,24 @@ export type QueryGrantFieldAnswerArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryGrantFieldAnswerItemArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryGrantFieldAnswerItemsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<GrantFieldAnswerItem_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<GrantFieldAnswerItem_Filter>;
 };
 
 
@@ -1354,6 +1445,8 @@ export type Subscription = {
   grantApplications: Array<GrantApplication>;
   grantField?: Maybe<GrantField>;
   grantFieldAnswer?: Maybe<GrantFieldAnswer>;
+  grantFieldAnswerItem?: Maybe<GrantFieldAnswerItem>;
+  grantFieldAnswerItems: Array<GrantFieldAnswerItem>;
   grantFieldAnswers: Array<GrantFieldAnswer>;
   grantFields: Array<GrantField>;
   grants: Array<Grant>;
@@ -1465,6 +1558,24 @@ export type SubscriptionGrantFieldAnswerArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionGrantFieldAnswerItemArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionGrantFieldAnswerItemsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<GrantFieldAnswerItem_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<GrantFieldAnswerItem_Filter>;
 };
 
 
@@ -1656,6 +1767,8 @@ export type WorkspaceMember = {
   email?: Maybe<Scalars['String']>;
   /** Globally unique ID of the member */
   id: Scalars['ID'];
+  /** Public key of the workspace member */
+  publicKey?: Maybe<Scalars['String']>;
   workspace: Workspace;
 };
 
@@ -1698,6 +1811,20 @@ export type WorkspaceMember_Filter = {
   id_lte?: InputMaybe<Scalars['ID']>;
   id_not?: InputMaybe<Scalars['ID']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  publicKey?: InputMaybe<Scalars['String']>;
+  publicKey_contains?: InputMaybe<Scalars['String']>;
+  publicKey_ends_with?: InputMaybe<Scalars['String']>;
+  publicKey_gt?: InputMaybe<Scalars['String']>;
+  publicKey_gte?: InputMaybe<Scalars['String']>;
+  publicKey_in?: InputMaybe<Array<Scalars['String']>>;
+  publicKey_lt?: InputMaybe<Scalars['String']>;
+  publicKey_lte?: InputMaybe<Scalars['String']>;
+  publicKey_not?: InputMaybe<Scalars['String']>;
+  publicKey_not_contains?: InputMaybe<Scalars['String']>;
+  publicKey_not_ends_with?: InputMaybe<Scalars['String']>;
+  publicKey_not_in?: InputMaybe<Array<Scalars['String']>>;
+  publicKey_not_starts_with?: InputMaybe<Scalars['String']>;
+  publicKey_starts_with?: InputMaybe<Scalars['String']>;
   workspace?: InputMaybe<Scalars['String']>;
   workspace_contains?: InputMaybe<Scalars['String']>;
   workspace_ends_with?: InputMaybe<Scalars['String']>;
@@ -1719,6 +1846,7 @@ export enum WorkspaceMember_OrderBy {
   ActorId = 'actorId',
   Email = 'email',
   Id = 'id',
+  PublicKey = 'publicKey',
   Workspace = 'workspace'
 }
 
@@ -1915,21 +2043,21 @@ export type GetApplicantsForAGrantQueryVariables = Exact<{
 }>;
 
 
-export type GetApplicantsForAGrantQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, createdAtS: number, grant: { __typename?: 'Grant', title: string, funding: string, reward: { __typename?: 'Reward', asset: string } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, value: Array<string> }> }> };
+export type GetApplicantsForAGrantQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, createdAtS: number, grant: { __typename?: 'Grant', title: string, funding: string, reward: { __typename?: 'Reward', asset: string } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> };
 
 export type GetApplicationDetailsQueryVariables = Exact<{
   applicationID: Scalars['ID'];
 }>;
 
 
-export type GetApplicationDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, feedbackDao?: string | null, feedbackDev?: string | null, createdAtS: number, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, value: Array<string> }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, amount: string }>, grant: { __typename?: 'Grant', id: string, title: string, funding: string, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> }, reward: { __typename?: 'Reward', id: string, asset: string, committed: string } } } | null };
+export type GetApplicationDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, feedbackDao?: string | null, feedbackDev?: string | null, createdAtS: number, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, amount: string }>, grant: { __typename?: 'Grant', id: string, title: string, funding: string, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> }, reward: { __typename?: 'Reward', id: string, asset: string, committed: string } } } | null };
 
 export type GetApplicationMilestonesQueryVariables = Exact<{
   grantId: Scalars['ID'];
 }>;
 
 
-export type GetApplicationMilestonesQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', grant: { __typename?: 'Grant', reward: { __typename?: 'Reward', asset: string } }, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, state: MilestoneState, title: string, amount: string, amountPaid: string, updatedAtS?: number | null, feedbackDao?: string | null, feedbackDev?: string | null }>, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, value: Array<string> }> }> };
+export type GetApplicationMilestonesQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', grant: { __typename?: 'Grant', reward: { __typename?: 'Reward', asset: string } }, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, state: MilestoneState, title: string, amount: string, amountPaid: string, updatedAtS?: number | null, feedbackDao?: string | null, feedbackDev?: string | null }>, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> };
 
 export type GetDaoDetailsQueryVariables = Exact<{
   workspaceID: Scalars['ID'];
@@ -2225,7 +2353,9 @@ export const GetApplicantsForAGrantDocument = gql`
     createdAtS
     fields {
       id
-      value
+      values {
+        value
+      }
     }
   }
 }
@@ -2266,7 +2396,9 @@ export const GetApplicationDetailsDocument = gql`
     id
     fields {
       id
-      value
+      values {
+        value
+      }
     }
     milestones {
       id
@@ -2346,7 +2478,9 @@ export const GetApplicationMilestonesDocument = gql`
     }
     fields {
       id
-      value
+      values {
+        value
+      }
     }
   }
 }

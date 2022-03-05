@@ -18,7 +18,9 @@ query getApplicantsForAGrant($first: Int, $skip: Int, $grantID: String!) {
     createdAtS
     fields {
       id
-      value
+      values {
+        value
+      }
     }
   }
 }
