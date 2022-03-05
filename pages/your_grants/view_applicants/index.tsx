@@ -56,28 +56,31 @@ function ViewApplicants() {
   const { data, error, loading } = useGetApplicantsForAGrantQuery(queryParams);
   useEffect(() => {
     if (data && data.grantApplications.length) {
-      const fetchedApplicantsData = data.grantApplications.map((applicant) => ({
-        grantTitle: applicant?.grant?.title,
-        applicationId: applicant.id,
-        applicant_address: applicant.applicantId,
-        sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
-        applicant_name: applicant.fields.find((field: any) => field?.id?.includes('applicantName'))?.value[0],
-        funding_asked: {
-          amount: formatAmount(
-            applicant?.fields?.find((field: any) => field?.id?.includes('fundingAsk'))?.value[0] ?? '0',
-          ),
-          symbol: getAssetInfo(
-            applicant?.grant?.reward?.asset?.toLowerCase(),
-            getSupportedChainIdFromWorkspace(workspace),
-          ).label,
-          icon: getAssetInfo(
-            applicant?.grant?.reward?.asset?.toLowerCase(),
-            getSupportedChainIdFromWorkspace(workspace),
-          ).icon,
-        },
-        // status: applicationStatuses.indexOf(applicant?.state),
-        status: TableFilters[applicant?.state],
-      }));
+      const fetchedApplicantsData = data.grantApplications.map((applicant) => {
+        const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value;
+        return {
+          grantTitle: applicant?.grant?.title,
+          applicationId: applicant.id,
+          applicant_address: applicant.applicantId,
+          sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
+          applicant_name: getFieldString('applicantName'),
+          funding_asked: {
+            amount: formatAmount(
+              getFieldString('fundingAsk') ?? '0',
+            ),
+            symbol: getAssetInfo(
+              applicant?.grant?.reward?.asset?.toLowerCase(),
+              getSupportedChainIdFromWorkspace(workspace),
+            ).label,
+            icon: getAssetInfo(
+              applicant?.grant?.reward?.asset?.toLowerCase(),
+              getSupportedChainIdFromWorkspace(workspace),
+            ).icon,
+          },
+          // status: applicationStatuses.indexOf(applicant?.state),
+          status: TableFilters[applicant?.state],
+        };
+      });
       setApplicantsData(fetchedApplicantsData);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

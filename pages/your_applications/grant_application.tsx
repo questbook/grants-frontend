@@ -73,8 +73,11 @@ function ViewApplication() {
   useEffect(() => {
     if (!application || !application?.fields?.length) return;
 
-    const getStringField = (fieldName: string) => application?.fields?.find(({ id }) => id.split('.')[1] === fieldName)
-      ?.value[0] ?? '';
+    const getStringField = (fieldName: string) => (
+      application?.fields
+        ?.find(({ id }) => id.split('.')[1] === fieldName)
+        ?.values[0]?.value ?? ''
+    );
 
     const fields = application?.fields;
     const fd: GrantApplicationProps = {

@@ -101,7 +101,9 @@ function ManageGrant() {
 
   const applicationData = appDetailsResult?.grantApplication;
   const applicantEmail = useMemo(
-    () => applicationData?.fields.find((field: any) => field.id.includes('applicantEmail'))?.value[0],
+    () => applicationData?.fields.find(
+      (field) => field.id.includes('applicantEmail'),
+    )?.values[0]?.value,
     [applicationData],
   );
 
