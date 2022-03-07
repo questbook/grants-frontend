@@ -66,4 +66,10 @@ export default [
     inputType: 'long-form',
     isRequired: true,
   },
+  {
+    title: 'Member Details',
+    id: 'memberDetails',
+    inputType: 'long-form',
+    isRequired: true,
+  },
 ];
