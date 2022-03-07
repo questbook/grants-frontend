@@ -33,7 +33,7 @@ function CheckPoint({ state, date }: Props) {
       textColor: '#BDBDBD',
     },
     approved: {
-      text: 'Result',
+      text: 'Approved',
       icon: '/ui_icons/result_accepted_application.svg',
       bgColor: '#418FA0',
       textColor: '#418FA0',
