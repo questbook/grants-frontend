@@ -17,9 +17,7 @@ function Sidebar({
       alignItems="center"
       px={10}
       py={0}
-      pos="absolute"
-      w="50%"
-      h="calc(100% - 80px)"
+      h="100%"
     >
       <Flex
         px={10}
@@ -29,7 +27,10 @@ function Sidebar({
         borderRadius={12}
         direction="column"
         w="100%"
+        maxW="calc(50vw - 80px)"
         overflowY="scroll"
+        position="absolute"
+        maxH="calc(100vh - 150px)"
       >
         <GrantDetails
           grantDetails={grantDetails}
