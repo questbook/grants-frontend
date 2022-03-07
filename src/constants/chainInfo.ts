@@ -81,7 +81,7 @@ export const CHAIN_INFO: ChainInfoMap = {
       symbol: 'ONE',
       decimals: 18,
     },
-    icon: '/network_icons/polygon.svg',
+    icon: '/network_icons/harmony.svg',
     wallets: [
       {
         id: 'injected',
