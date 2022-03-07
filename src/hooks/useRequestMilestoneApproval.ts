@@ -4,7 +4,7 @@ import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import { useAccount, useNetwork } from 'wagmi';
 import { SupportedChainId } from 'src/constants/chains';
-import { errorCodes, getMessageFromCode } from 'eth-rpc-errors';
+import getErrorMessage from 'src/utils/errorUtils';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useApplicationRegistryContract from './contracts/useApplicationRegistryContract';
@@ -60,9 +60,7 @@ export default function useRequestMilestoneApproval(
         setTransactionData(updateTxnData);
         setLoading(false);
       } catch (e: any) {
-        console.log('Error: ', e);
-        const message = e.code === errorCodes.rpc.internal ? e.data.message : getMessageFromCode(e.code, e.message);
-        console.log('Error message: ', message);
+        const message = getErrorMessage(e);
         setError(message);
         setLoading(false);
         toastRef.current = toast({
@@ -112,9 +110,7 @@ export default function useRequestMilestoneApproval(
       }
       validate();
     } catch (e: any) {
-      console.log('Error: ', e);
-      const message = e.code === errorCodes.rpc.internal ? e.data.message : getMessageFromCode(e.code, e.message);
-      console.log('Error message: ', message);
+      const message = getErrorMessage(e);
       setError(message);
       setLoading(false);
       toastRef.current = toast({

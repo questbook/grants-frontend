@@ -4,7 +4,7 @@ import { ApiClientsContext } from 'pages/_app';
 import { useAccount, useNetwork } from 'wagmi';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { BigNumber } from 'ethers';
-import { errorCodes, getMessageFromCode } from 'eth-rpc-errors';
+import getErrorMessage from 'src/utils/errorUtils';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useERC20Contract from './contracts/useERC20Contract';
@@ -53,9 +53,7 @@ export default function useDepositFunds(
         setTransactionData(depositTransactionData);
         setLoading(false);
       } catch (e: any) {
-        console.log('Error: ', e, typeof e);
-        const message = e.code === errorCodes.rpc.internal ? e.data.message : getMessageFromCode(e.code, e.message);
-        console.log('Error message: ', message);
+        const message = getErrorMessage(e);
         setError(message);
         setLoading(false);
         toastRef.current = toast({
@@ -100,9 +98,7 @@ export default function useDepositFunds(
       }
       validate();
     } catch (e: any) {
-      console.log('Error: ', e);
-      const message = e.code === errorCodes.rpc.internal ? e.data.message : getMessageFromCode(e.code, e.message);
-      console.log('Error message: ', message);
+      const message = getErrorMessage(e);
       setError(message);
       setLoading(false);
       toastRef.current = toast({

@@ -12,7 +12,7 @@ import {
   APPLICATION_REGISTRY_ADDRESS,
   WORKSPACE_REGISTRY_ADDRESS,
 } from 'src/constants/addresses';
-import { errorCodes, getMessageFromCode } from 'eth-rpc-errors';
+import getErrorMessage from 'src/utils/errorUtils';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useGrantFactoryContract from './contracts/useGrantFactoryContract';
 import useChainId from './utils/useChainId';
@@ -91,9 +91,7 @@ export default function useCreateGrant(
         setTransactionData(createGrantTransactionData);
         setLoading(false);
       } catch (e: any) {
-        console.log('Error: ', e);
-        const message = e.code === errorCodes.rpc.internal ? e.data.message : getMessageFromCode(e.code, e.message);
-        console.log('Error message: ', message);
+        const message = getErrorMessage(e);
         setError(message);
         setLoading(false);
         toastRef.current = toast({
@@ -147,9 +145,7 @@ export default function useCreateGrant(
       }
       validate();
     } catch (e: any) {
-      console.log('Error: ', e);
-      const message = e.code === errorCodes.rpc.internal ? e.data.message : getMessageFromCode(e.code, e.message);
-      console.log('Error message: ', message);
+      const message = getErrorMessage(e);
       setError(message);
       setLoading(false);
       toastRef.current = toast({
