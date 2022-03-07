@@ -4,6 +4,7 @@ import { ApiClientsContext } from 'pages/_app';
 import { useAccount } from 'wagmi';
 import { uploadToIPFS } from 'src/utils/ipfsUtils';
 import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils';
+import { getMessageFromCode } from 'eth-rpc-errors';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract';
 import useChainId from './utils/useChainId';
@@ -67,12 +68,15 @@ export default function useCreateWorkspace(
         setImageHash(uploadedImageHash.hash);
         setLoading(false);
       } catch (e: any) {
-        setError(e.message);
+        console.log('Error: ', e);
+        const message = getMessageFromCode(e.code, 'Unknown error occurred!');
+        console.log('Error message: ', message);
+        setError(message);
         setLoading(false);
         toastRef.current = toast({
           position: 'top',
           render: () => ErrorToast({
-            content: 'Transaction Failed',
+            content: message,
             close: () => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -105,12 +109,15 @@ export default function useCreateWorkspace(
       }
       validate();
     } catch (e: any) {
-      setError(e.message);
+      console.log('Error: ', e);
+      const message = getMessageFromCode(e.code, 'Unknown error occurred!');
+      console.log('Error message: ', message);
+      setError(message);
       setLoading(false);
       toastRef.current = toast({
         position: 'top',
         render: () => ErrorToast({
-          content: e.message,
+          content: message,
           close: () => {
             if (toastRef.current) {
               toast.close(toastRef.current);

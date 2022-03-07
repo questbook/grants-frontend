@@ -4,6 +4,7 @@ import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import { useAccount, useNetwork } from 'wagmi';
 import { SupportedChainId } from 'src/constants/chains';
+import { getMessageFromCode } from 'eth-rpc-errors';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useApplicationRegistryContract from './contracts/useApplicationRegistryContract';
@@ -59,13 +60,15 @@ export default function useRequestMilestoneApproval(
         setTransactionData(updateTxnData);
         setLoading(false);
       } catch (e: any) {
-        // console.log(e);
-        setError(e.message);
+        console.log('Error: ', e);
+        const message = getMessageFromCode(e.code, 'Unknown error occurred!');
+        console.log('Error message: ', message);
+        setError(message);
         setLoading(false);
         toastRef.current = toast({
           position: 'top',
           render: () => ErrorToast({
-            content: 'Transaction Failed',
+            content: message,
             close: () => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -109,12 +112,15 @@ export default function useRequestMilestoneApproval(
       }
       validate();
     } catch (e: any) {
-      setError(e.message);
+      console.log('Error: ', e);
+      const message = getMessageFromCode(e.code, 'Unknown error occurred!');
+      console.log('Error message: ', message);
+      setError(message);
       setLoading(false);
       toastRef.current = toast({
         position: 'top',
         render: () => ErrorToast({
-          content: e.message,
+          content: message,
           close: () => {
             if (toastRef.current) {
               toast.close(toastRef.current);

@@ -62,7 +62,7 @@ function ConnectWallet() {
     if (error) {
       toast({
         title: error?.name,
-        description: error?.message,
+        description: 'Please check your Metamask extension in the browser',
         status: 'error',
         duration: 9000,
         isClosable: true,

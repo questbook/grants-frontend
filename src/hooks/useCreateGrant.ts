@@ -12,6 +12,7 @@ import {
   APPLICATION_REGISTRY_ADDRESS,
   WORKSPACE_REGISTRY_ADDRESS,
 } from 'src/constants/addresses';
+import { getMessageFromCode } from 'eth-rpc-errors';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useGrantFactoryContract from './contracts/useGrantFactoryContract';
 import useChainId from './utils/useChainId';
@@ -90,13 +91,15 @@ export default function useCreateGrant(
         setTransactionData(createGrantTransactionData);
         setLoading(false);
       } catch (e: any) {
-        console.log(e);
-        setError(e.message);
+        console.log('Error: ', e);
+        const message = getMessageFromCode(e.code, 'Unknown error occurred!');
+        console.log('Error message: ', message);
+        setError(message);
         setLoading(false);
         toastRef.current = toast({
           position: 'top',
           render: () => ErrorToast({
-            content: 'Transaction Failed',
+            content: message,
             close: () => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -144,12 +147,15 @@ export default function useCreateGrant(
       }
       validate();
     } catch (e: any) {
-      setError(e.message);
+      console.log('Error: ', e);
+      const message = getMessageFromCode(e.code, 'Unknown error occurred!');
+      console.log('Error message: ', message);
+      setError(message);
       setLoading(false);
       toastRef.current = toast({
         position: 'top',
         render: () => ErrorToast({
-          content: e.message,
+          content: message,
           close: () => {
             if (toastRef.current) {
               toast.close(toastRef.current);
