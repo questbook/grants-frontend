@@ -53,8 +53,8 @@ export default function useDepositFunds(
         setTransactionData(depositTransactionData);
         setLoading(false);
       } catch (e: any) {
-        console.log('Error: ', e);
-        const message = getMessageFromCode(e.code, 'Unknown error occurred!');
+        console.log('Error: ', e, typeof e);
+        const message = e.code === -32603 ? e.data.message : getMessageFromCode(e.code, 'Unknown error occurred!');
         console.log('Error message: ', message);
         setError(message);
         setLoading(false);
