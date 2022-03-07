@@ -55,7 +55,7 @@ export default function useWithdrawFunds(
         setLoading(false);
       } catch (e: any) {
         console.log('Error: ', e);
-        const message = e.code === errorCodes.rpc.internal ? e.data.message : getMessageFromCode(e.code, 'Unknown error occurred!');
+        const message = e.code === errorCodes.rpc.internal ? e.data.message : getMessageFromCode(e.code, e.message);
         console.log('Error message: ', message);
         setError(message);
         setLoading(false);
@@ -103,7 +103,7 @@ export default function useWithdrawFunds(
       validate();
     } catch (e: any) {
       console.log('Error: ', e);
-      const message = e.code === errorCodes.rpc.internal ? e.data.message : getMessageFromCode(e.code, 'Unknown error occurred!');
+      const message = e.code === errorCodes.rpc.internal ? e.data.message : getMessageFromCode(e.code, e.message);
       console.log('Error message: ', message);
       setError(message);
       setLoading(false);
