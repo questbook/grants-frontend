@@ -5,7 +5,9 @@ query getApplicationDetails($applicationID: ID!) {
     id
     fields {
       id
-      value
+      values {
+        value
+      }
     }
     milestones {
       id

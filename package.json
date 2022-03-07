@@ -33,7 +33,7 @@
     "react-dom": "^17.0.2",
     "subscriptions-transport-ws": "^0.11.0",
     "use-file-picker": "^1.4.1",
-    "wagmi": "^0.2.9"
+    "wagmi": "^0.2.13"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^2.6.2",

@@ -50,7 +50,7 @@ function Accept({
             fontWeight="700"
             color="brand.500"
           >
-            {formatAmount(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'fundingAsk')?.value[0] ?? '0')}
+            {formatAmount(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'fundingAsk')?.values[0].value ?? '0')}
             {' '}
             { getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.label }
           </Text>

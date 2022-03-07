@@ -17,7 +17,9 @@ query getApplicationMilestones($grantId: ID!) {
       }
       fields {
         id
-        value
+        values {
+          value
+        }
       }
     }
 }

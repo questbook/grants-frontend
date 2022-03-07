@@ -45,7 +45,7 @@ function Sidebar({
           Name
         </Text>
         <Heading variant="applicationHeading" lineHeight="32px">
-          {applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'applicantName')?.value[0]}
+          {applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'applicantName')?.values[0]?.value}
         </Heading>
       </Flex>
       <Flex direction="row" justify="space-between" w="full" align="center">
@@ -53,7 +53,7 @@ function Sidebar({
           Email
         </Text>
         <Heading variant="applicationHeading" lineHeight="32px">
-          {applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'applicantEmail')?.value[0]}
+          {applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'applicantEmail')?.values[0]?.value}
         </Heading>
       </Flex>
       <Flex direction="row" justify="space-between" w="full" align="center">
@@ -82,7 +82,7 @@ function Sidebar({
           fontStyle="normal"
           color="#122224"
         >
-          {formatAmount(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'fundingAsk')?.value[0] ?? '0')}
+          {formatAmount(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'fundingAsk')?.values[0]?.value ?? '0')}
           {' '}
           { getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.label }
         </Text>
