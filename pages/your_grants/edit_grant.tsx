@@ -17,7 +17,6 @@ import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/edit_grant/form';
 import Sidebar from '../../src/components/your_grants/edit_grant/sidebar';
 import NavbarLayout from '../../src/layout/navbarLayout';
-import { formatAmount } from '../../src/utils/formattingUtils';
 import { ApiClientsContext } from '../_app';
 
 function EditGrant() {
@@ -90,7 +89,7 @@ function EditGrant() {
         extraField:
           grant.fields.find((field: any) => field.id.includes('extraField'))
           !== undefined,
-        reward: formatAmount(grant.reward.committed),
+        reward: grant.reward.committed,
         rewardCurrency:
           CHAIN_INFO[
             getSupportedChainIdFromSupportedNetwork(

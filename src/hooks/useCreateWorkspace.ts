@@ -4,7 +4,7 @@ import { ApiClientsContext } from 'pages/_app';
 import { useAccount } from 'wagmi';
 import { uploadToIPFS } from 'src/utils/ipfsUtils';
 import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils';
-import { getMessageFromCode } from 'eth-rpc-errors';
+import { errorCodes, getMessageFromCode } from 'eth-rpc-errors';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract';
 import useChainId from './utils/useChainId';
@@ -69,7 +69,7 @@ export default function useCreateWorkspace(
         setLoading(false);
       } catch (e: any) {
         console.log('Error: ', e);
-        const message = getMessageFromCode(e.code, 'Unknown error occurred!');
+        const message = e.code === errorCodes.rpc.internal ? e.data.message : getMessageFromCode(e.code, 'Unknown error occurred!');
         console.log('Error message: ', message);
         setError(message);
         setLoading(false);
@@ -110,7 +110,7 @@ export default function useCreateWorkspace(
       validate();
     } catch (e: any) {
       console.log('Error: ', e);
-      const message = getMessageFromCode(e.code, 'Unknown error occurred!');
+      const message = e.code === errorCodes.rpc.internal ? e.data.message : getMessageFromCode(e.code, 'Unknown error occurred!');
       console.log('Error message: ', message);
       setError(message);
       setLoading(false);

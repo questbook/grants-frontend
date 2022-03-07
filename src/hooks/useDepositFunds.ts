@@ -4,7 +4,7 @@ import { ApiClientsContext } from 'pages/_app';
 import { useAccount, useNetwork } from 'wagmi';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { BigNumber } from 'ethers';
-import { getMessageFromCode } from 'eth-rpc-errors';
+import { errorCodes, getMessageFromCode } from 'eth-rpc-errors';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useERC20Contract from './contracts/useERC20Contract';
@@ -54,7 +54,7 @@ export default function useDepositFunds(
         setLoading(false);
       } catch (e: any) {
         console.log('Error: ', e, typeof e);
-        const message = e.code === -32603 ? e.data.message : getMessageFromCode(e.code, 'Unknown error occurred!');
+        const message = e.code === errorCodes.rpc.internal ? e.data.message : getMessageFromCode(e.code, 'Unknown error occurred!');
         console.log('Error message: ', message);
         setError(message);
         setLoading(false);
@@ -101,7 +101,7 @@ export default function useDepositFunds(
       validate();
     } catch (e: any) {
       console.log('Error: ', e);
-      const message = getMessageFromCode(e.code, 'Unknown error occurred!');
+      const message = e.code === errorCodes.rpc.internal ? e.data.message : getMessageFromCode(e.code, 'Unknown error occurred!');
       console.log('Error message: ', message);
       setError(message);
       setLoading(false);

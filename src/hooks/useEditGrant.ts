@@ -6,7 +6,7 @@ import { useAccount, useNetwork } from 'wagmi';
 import {
   getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils';
-import { getMessageFromCode } from 'eth-rpc-errors';
+import { errorCodes, getMessageFromCode } from 'eth-rpc-errors';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useGrantContract from './contracts/useGrantContract';
@@ -69,7 +69,7 @@ export default function useEditGrant(
         setLoading(false);
       } catch (e: any) {
         console.log('Error: ', e);
-        const message = getMessageFromCode(e.code, 'Unknown error occurred!');
+        const message = e.code === errorCodes.rpc.internal ? e.data.message : getMessageFromCode(e.code, 'Unknown error occurred!');
         console.log('Error message: ', message);
         setError(message);
         setLoading(false);
@@ -116,7 +116,7 @@ export default function useEditGrant(
       validate();
     } catch (e: any) {
       console.log('Error: ', e);
-      const message = getMessageFromCode(e.code, 'Unknown error occurred!');
+      const message = e.code === errorCodes.rpc.internal ? e.data.message : getMessageFromCode(e.code, 'Unknown error occurred!');
       console.log('Error message: ', message);
       setError(message);
       setLoading(false);

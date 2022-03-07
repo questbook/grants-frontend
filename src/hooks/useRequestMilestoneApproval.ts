@@ -4,7 +4,7 @@ import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import { useAccount, useNetwork } from 'wagmi';
 import { SupportedChainId } from 'src/constants/chains';
-import { getMessageFromCode } from 'eth-rpc-errors';
+import { errorCodes, getMessageFromCode } from 'eth-rpc-errors';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useApplicationRegistryContract from './contracts/useApplicationRegistryContract';
@@ -61,7 +61,7 @@ export default function useRequestMilestoneApproval(
         setLoading(false);
       } catch (e: any) {
         console.log('Error: ', e);
-        const message = getMessageFromCode(e.code, 'Unknown error occurred!');
+        const message = e.code === errorCodes.rpc.internal ? e.data.message : getMessageFromCode(e.code, 'Unknown error occurred!');
         console.log('Error message: ', message);
         setError(message);
         setLoading(false);
@@ -113,7 +113,7 @@ export default function useRequestMilestoneApproval(
       validate();
     } catch (e: any) {
       console.log('Error: ', e);
-      const message = getMessageFromCode(e.code, 'Unknown error occurred!');
+      const message = e.code === errorCodes.rpc.internal ? e.data.message : getMessageFromCode(e.code, 'Unknown error occurred!');
       console.log('Error message: ', message);
       setError(message);
       setLoading(false);
