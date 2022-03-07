@@ -18,7 +18,7 @@ const useApplicationMilestones = (grantId: string, chainId?: SupportedChainId) =
 
   const grantApp = fullData?.data?.grantApplications[0];
 
-  const fundingAsk = grantApp?.fields?.find((item: any) => item.id.endsWith('.fundingAsk.field'))?.value?.[0];
+  const fundingAsk = grantApp?.fields?.find((item) => item.id.endsWith('.fundingAsk.field'))?.values[0]?.value;
   const rewardAsset = grantApp?.grant?.reward?.asset ?? '';
   const milestones = grantApp?.milestones || [];
 

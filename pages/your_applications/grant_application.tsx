@@ -73,8 +73,11 @@ function ViewApplication() {
   useEffect(() => {
     if (!application || !application?.fields?.length) return;
 
-    const getStringField = (fieldName: string) => application?.fields?.find(({ id }) => id.split('.')[1] === fieldName)
-      ?.value[0] ?? '';
+    const getStringField = (fieldName: string) => (
+      application?.fields
+        ?.find(({ id }) => id.split('.')[1] === fieldName)
+        ?.values[0]?.value ?? ''
+    );
 
     const fields = application?.fields;
     const fd: GrantApplicationProps = {
@@ -84,12 +87,12 @@ function ViewApplication() {
       membersDescription:
         fields
           .find((f: any) => f.id.split('.')[1] === 'memberDetails')
-          ?.value.map((val: string) => ({ description: val })) ?? [],
+          ?.values.map((val) => ({ description: val.value })) ?? [],
       projectName: getStringField('projectName'),
       projectLinks:
         fields
           .find((f: any) => f.id.split('.')[1] === 'projectLink')
-          ?.value.map((val: string) => ({ link: val })) ?? [],
+          ?.values.map((val) => ({ link: val.value })) ?? [],
       projectDetails: getStringField('projectDetails'),
       projectGoal: getStringField('projectGoals'),
       projectMilestones:

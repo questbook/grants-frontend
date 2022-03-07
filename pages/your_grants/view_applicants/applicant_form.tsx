@@ -14,6 +14,7 @@ import React, {
   useContext,
 } from 'react';
 import {
+  GetApplicationDetailsQuery,
   useGetApplicationDetailsQuery,
 } from 'src/generated/graphql';
 import { SupportedChainId } from 'src/constants/chains';
@@ -47,7 +48,7 @@ function ApplicantForm() {
   const [step, setStep] = useState(0);
 
   const [applicationId, setApplicationId] = useState<any>('');
-  const [applicationData, setApplicationData] = useState<any>(null);
+  const [applicationData, setApplicationData] = useState<GetApplicationDetailsQuery['grantApplication']>(null);
 
   const [resubmitComment, setResubmitComment] = useState('');
   const [resubmitCommentError, setResubmitCommentError] = useState(false);
@@ -206,7 +207,7 @@ function ApplicantForm() {
             <Breadcrumbs
               path={['Your Grants', 'View Applicants', 'Applicant Form']}
             />
-            <Heading mt="18px" title={applicationData?.grant?.title} />
+            <Heading mt="18px" title={applicationData?.grant?.title || ''} />
           </Flex>
 
           <Flex direction="row" w="100%" justify="space-between">
