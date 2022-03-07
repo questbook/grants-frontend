@@ -12,12 +12,13 @@ import { ApiClientsContext } from 'pages/_app';
 import React, {
   useContext, useEffect, useRef, useState,
 } from 'react';
+import { GetApplicationDetailsQuery } from 'src/generated/graphql';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { formatAmount } from '../../../utils/formattingUtils';
 import { getAssetInfo } from '../../../utils/tokenUtils';
 
 interface Props {
-  applicationData: any;
+  applicationData: GetApplicationDetailsQuery['grantApplication'];
 }
 
 function Application({ applicationData }: Props) {
@@ -35,57 +36,50 @@ function Application({ applicationData }: Props) {
   const refs = [useRef(null), useRef(null), useRef(null)];
   const tabs = ['Project Details', 'Funds Requested', 'About Team'];
   const [projectTitle, setProjectTitle] = useState('');
-  const [projectLink, setProjectLink] = useState([]);
+  const [projectLink, setProjectLink] = useState<any[]>([]);
   const [projectDetails, setProjectDetails] = useState('');
   const [projectGoals, setProjectGoals] = useState('');
-  const [projectMilestones, setProjectMilestones] = useState([]);
+  const [projectMilestones, setProjectMilestones] = useState<any[]>([]);
   const [fundingAsk, setFundingAsk] = useState('0');
   const [fundingBreakdown, setFundingBreakdown] = useState('');
   const [teamMembers, setTeamMembers] = useState('');
-  const [memberDetails, setMemberDetails] = useState([]);
+  const [memberDetails, setMemberDetails] = useState<any[]>([]);
 
   useEffect(() => {
     if (!applicationData) return;
+    const getStringField = (fieldName: string) => (
+      applicationData?.fields
+        ?.find(({ id }) => id.split('.')[1] === fieldName)
+        ?.values[0]?.value ?? ''
+    );
     setProjectTitle(
-      applicationData?.fields?.find(
-        (fld: any) => fld?.id?.split('.')[1] === 'projectName',
-      )?.value[0],
+      getStringField('projectName'),
     );
     setProjectLink(
       applicationData?.fields?.find(
         (fld: any) => fld?.id?.split('.')[1] === 'projectLink',
-      )?.value ?? [],
+      )?.values.map((val) => ({ link: val.value })) ?? [],
     );
     setProjectDetails(
-      applicationData?.fields?.find(
-        (fld: any) => fld?.id?.split('.')[1] === 'projectDetails',
-      )?.value[0],
+      getStringField('projectDetails'),
     );
     setProjectGoals(
-      applicationData?.fields?.find(
-        (fld: any) => fld?.id?.split('.')[1] === 'projectGoals',
-      )?.value[0],
+      getStringField('projectGoals'),
     );
     setProjectMilestones(applicationData?.milestones ?? []);
     setFundingAsk(
-      applicationData?.fields?.find(
-        (fld: any) => fld?.id?.split('.')[1] === 'fundingAsk',
-      )?.value[0],
+      getStringField('fundingAsk'),
     );
     setFundingBreakdown(
-      applicationData?.fields?.find(
-        (fld: any) => fld?.id?.split('.')[1] === 'fundingBreakdown',
-      )?.value[0],
+      getStringField('fundingBreakdown'),
     );
     setTeamMembers(
-      applicationData?.fields?.find(
-        (fld: any) => fld?.id?.split('.')[1] === 'teamMembers',
-      )?.value[0],
+      getStringField('teamMembers'),
     );
     setMemberDetails(
       applicationData?.fields?.find(
         (fld: any) => fld?.id?.split('.')[1] === 'memberDetails',
-      )?.value ?? [],
+      )?.values.map((val) => (val.value)) ?? [],
     );
   }, [applicationData]);
 
@@ -142,7 +136,7 @@ function Application({ applicationData }: Props) {
             <Heading variant="applicationHeading" mt={10}>
               Project Link
             </Heading>
-            {projectLink.map((link: string) => (
+            {projectLink.map(({ link }) => (
               <Text variant="applicationText" mt={2}>
                 <Link href={link} isExternal>
                   {link}

@@ -100,11 +100,10 @@ function ManageGrant() {
   useEffect(() => {
     if (data && data.grantApplication) {
       const application = data.grantApplication;
-      // console.log(application);
       setApplicationData({
         title: application.grant.title,
         applicantAddress: application.applicantId,
-        applicantEmail: application.fields.find((field: any) => field.id.includes('applicantEmail'))?.value[0],
+        applicantEmail: application.fields.find((field: any) => field.id.includes('applicantEmail'))?.values[0]?.value,
         applicationDate: moment
           .unix(application.createdAtS)
           .format('D MMMM YYYY'),
@@ -112,7 +111,6 @@ function ManageGrant() {
         id: application.id,
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error, loading]);
 
   const assetInfo = getAssetInfo(rewardAsset, chainId);

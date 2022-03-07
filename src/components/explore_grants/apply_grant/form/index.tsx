@@ -11,7 +11,7 @@ import useSubmitApplication from 'src/hooks/useSubmitApplication';
 import { SupportedChainId } from 'src/constants/chains';
 import { GrantApplicationRequest } from '@questbook/service-validator-client';
 import { parseAmount } from '../../../../utils/formattingUtils';
-import { GrantApplicationFieldsSubgraph, GrantApplicationCreateSubgraph } from '../../../../types/application';
+import { GrantApplicationFieldsSubgraph } from '../../../../types/application';
 import InfoToast from '../../../ui/infoToast';
 import ApplicantDetails from './1_applicantDetails';
 import AboutProject from './3_aboutProject';

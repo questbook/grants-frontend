@@ -52,7 +52,7 @@ export default function useResubmitApplication(
         const txn = await applicationRegistryContract.updateApplicationMetadata(
           applicationId,
           ipfsHash,
-          data.milestones.length,
+          data.milestones!.length,
         );
         const txnData = await txn.wait();
 

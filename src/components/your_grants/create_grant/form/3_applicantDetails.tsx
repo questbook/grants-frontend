@@ -50,6 +50,23 @@ function ApplicantDetails({
           const {
             title, required, tooltip, id,
           } = detail as any;
+          if (id === 'isMultipleMilestones') {
+            return (
+              <GridItem colSpan={1}>
+                <Badge
+                  isActive={milestoneSelectOptionIsVisible}
+                  onClick={() => {
+                    setMilestoneSelectOptionIsVisible(
+                      !milestoneSelectOptionIsVisible,
+                    );
+                    setMultipleMilestones(false);
+                  }}
+                  label="Milestones"
+                  tooltip="Add milestones for the applicant to complete"
+                />
+              </GridItem>
+            );
+          }
           return (
             <GridItem key={id} colSpan={1}>
               <Badge
@@ -65,17 +82,6 @@ function ApplicantDetails({
             </GridItem>
           );
         })}
-        <GridItem colSpan={1}>
-          <Badge
-            isActive={milestoneSelectOptionIsVisible}
-            onClick={() => {
-              setMilestoneSelectOptionIsVisible(!milestoneSelectOptionIsVisible);
-              setMultipleMilestones(false);
-            }}
-            label="Milestones"
-            tooltip="Add milestones for the applicant to complete"
-          />
-        </GridItem>
       </Grid>
 
       <Box mt={6} />

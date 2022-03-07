@@ -87,12 +87,12 @@ function ViewApplication() {
       membersDescription:
         fields
           .find((f: any) => f.id.split('.')[1] === 'memberDetails')
-          ?.value.map((val: string) => ({ description: val })) ?? [],
+          ?.values.map((val) => ({ description: val.value })) ?? [],
       projectName: getStringField('projectName'),
       projectLinks:
         fields
           .find((f: any) => f.id.split('.')[1] === 'projectLink')
-          ?.value.map((val: string) => ({ link: val })) ?? [],
+          ?.values.map((val) => ({ link: val.value })) ?? [],
       projectDetails: getStringField('projectDetails'),
       projectGoal: getStringField('projectGoals'),
       projectMilestones:

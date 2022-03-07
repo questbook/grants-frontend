@@ -104,13 +104,30 @@ function ApplicantDetails({ onSubmit }: Props) {
           fontWeight="bold"
         >
           {detailsRequired.map((detail, index) => {
-            if (index === detailsRequired.length - 1) return null;
-            if (index === detailsRequired.length - 2) return null;
+            // if (index === detailsRequired.length - 1) return null;
+            // if (index === detailsRequired.length - 2) return null;
             const {
-              title, required, tooltip,
+              title, required, id, tooltip,
             } = detail as any;
+            if (id === 'isMultipleMilestones') {
+              return (
+                <GridItem colSpan={1}>
+                  <Badge
+                    isActive={milestoneSelectOptionIsVisible}
+                    onClick={() => {
+                      setMilestoneSelectOptionIsVisible(
+                        !milestoneSelectOptionIsVisible,
+                      );
+                      setMultipleMilestones(false);
+                    }}
+                    label="Milestones"
+                    tooltip="Add milestones for the applicant to complete"
+                  />
+                </GridItem>
+              );
+            }
             return (
-              <GridItem colSpan={1}>
+              <GridItem colSpan={1} key={id}>
                 <Badge
                   isActive={applicantDetailsList[index].isRequired || required}
                   onClick={() => {
@@ -124,17 +141,6 @@ function ApplicantDetails({ onSubmit }: Props) {
               </GridItem>
             );
           })}
-          <GridItem colSpan={1}>
-            <Badge
-              isActive={milestoneSelectOptionIsVisible}
-              onClick={() => {
-                setMilestoneSelectOptionIsVisible(!milestoneSelectOptionIsVisible);
-                setMultipleMilestones(false);
-              }}
-              label="Milestones"
-              tooltip="Add milestones for the applicant to complete"
-            />
-          </GridItem>
         </Grid>
 
         <Box mt={6} />

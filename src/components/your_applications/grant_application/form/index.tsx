@@ -20,7 +20,6 @@ import { GrantApplicationUpdate } from '@questbook/service-validator-client';
 import {
   GrantApplicationFieldsSubgraph,
   GrantApplicationProps,
-  GrantApplicationUpdateSubgraph,
 } from '../../../../types/application';
 import {
   getFormattedFullDateFromUnixTimestamp,
