@@ -6,6 +6,7 @@ import {
   Box,
   VStack,
   Image,
+  ToastId,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
@@ -17,6 +18,7 @@ import {
   SupportedChainId,
 } from 'src/constants/chains';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import ErrorToast from 'src/components/ui/toasts/errorToast';
 import ModalContent from '../src/components/connect_wallet/modalContent';
 import WalletSelectButton from '../src/components/connect_wallet/walletSelectButton';
 import Modal from '../src/components/ui/modal';
@@ -25,7 +27,6 @@ import Tooltip from '../src/components/ui/tooltip';
 import NavbarLayout from '../src/layout/navbarLayout';
 import strings from '../src/constants/strings.json';
 
-// @TODO: harmony testnet image and currencies
 // @TODO: why is toc link removed?
 
 function ConnectWallet() {
@@ -57,15 +58,20 @@ function ConnectWallet() {
 
   const [{ data, error }, connect] = useConnect();
   const toast = useToast();
+  const toastRef = React.useRef<ToastId>();
 
   useEffect(() => {
     if (error) {
-      toast({
-        title: error?.name,
-        description: error?.message,
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
+      toastRef.current = toast({
+        position: 'top',
+        render: () => ErrorToast({
+          content: 'Please check your Metamask extension in the browser',
+          close: () => {
+            if (toastRef.current) {
+              toast.close(toastRef.current);
+            }
+          },
+        }),
       });
     }
   }, [toast, error]);

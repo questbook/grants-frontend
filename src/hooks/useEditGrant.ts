@@ -6,6 +6,7 @@ import { useAccount, useNetwork } from 'wagmi';
 import {
   getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils';
+import getErrorMessage from 'src/utils/errorUtils';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useGrantContract from './contracts/useGrantContract';
@@ -67,13 +68,13 @@ export default function useEditGrant(
         setTransactionData(createGrantTransactionData);
         setLoading(false);
       } catch (e: any) {
-        console.log(e);
-        setError(e.message);
+        const message = getErrorMessage(e);
+        setError(message);
         setLoading(false);
         toastRef.current = toast({
           position: 'top',
           render: () => ErrorToast({
-            content: 'Transaction Failed',
+            content: message,
             close: () => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -112,12 +113,13 @@ export default function useEditGrant(
       }
       validate();
     } catch (e: any) {
-      setError(e.message);
+      const message = getErrorMessage(e);
+      setError(message);
       setLoading(false);
       toastRef.current = toast({
         position: 'top',
         render: () => ErrorToast({
-          content: e.message,
+          content: message,
           close: () => {
             if (toastRef.current) {
               toast.close(toastRef.current);

@@ -4,6 +4,7 @@ import { ApiClientsContext } from 'pages/_app';
 import { useAccount, useNetwork } from 'wagmi';
 import { SupportedChainId } from 'src/constants/chains';
 import { GrantApplicationUpdate } from '@questbook/service-validator-client';
+import getErrorMessage from 'src/utils/errorUtils';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useApplicationRegistryContract from './contracts/useApplicationRegistryContract';
@@ -59,13 +60,13 @@ export default function useResubmitApplication(
         setTransactionData(txnData);
         setLoading(false);
       } catch (e: any) {
-        // console.log(e);
-        setError(e.message);
+        const message = getErrorMessage(e);
+        setError(message);
         setLoading(false);
         toastRef.current = toast({
           position: 'top',
           render: () => ErrorToast({
-            content: 'Transaction Failed',
+            content: message,
             close: () => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -102,12 +103,13 @@ export default function useResubmitApplication(
       }
       validate();
     } catch (e: any) {
-      setError(e.message);
+      const message = getErrorMessage(e);
+      setError(message);
       setLoading(false);
       toastRef.current = toast({
         position: 'top',
         render: () => ErrorToast({
-          content: e.message,
+          content: message,
           close: () => {
             if (toastRef.current) {
               toast.close(toastRef.current);
