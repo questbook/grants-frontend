@@ -182,8 +182,6 @@ function EditGrant() {
             hasClicked={loading}
             formData={formData}
             onSubmit={(editdata: any) => {
-              // eslint-disable-next-line no-console
-              // console.log(data);
               setEditData(editdata);
             }}
             refs={sideBarDetails.map((detail) => detail[2])}
