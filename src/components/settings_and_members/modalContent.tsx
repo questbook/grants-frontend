@@ -9,7 +9,7 @@ import Loader from '../ui/loader';
 import InfoToast from '../ui/infoToast';
 
 interface Props {
-  onClose: () => void;
+  onClose: (member: { memberAddress: string, role: string }) => void;
 }
 
 function ModalContent({
@@ -29,8 +29,9 @@ function ModalContent({
   useEffect(() => {
     // console.log(depositTransactionData);
     if (txnData) {
+      const newMemberData = memberData.memberAddress[0];
       setMemberData(undefined);
-      onClose();
+      onClose({ memberAddress: newMemberData, role: 'admin' });
       toastRef.current = toast({
         position: 'top',
         render: () => (
