@@ -64,7 +64,7 @@ function SignupDao() {
   }, [workspaceTransactionData, imageHash, workspaceData, router]);
 
   const [grantData, setGrantData] = React.useState<any>();
-  const [grantTransactionData, createGrantLoading] = useCreateGrant(
+  const [grantTransactionData, transactionLink, createGrantLoading] = useCreateGrant(
     grantData,
     workspaceData?.network,
     daoData?.id,
@@ -75,7 +75,7 @@ function SignupDao() {
     if (grantTransactionData) {
       router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
 
-      const link = `https://etherscan.io/tx/${grantTransactionData.transactionHash}`;
+      const link = transactionLink;
       toastRef.current = toast({
         position: 'top',
         render: () => (
@@ -90,6 +90,7 @@ function SignupDao() {
         ),
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, grantTransactionData, router]);
 
   if (creatingGrant) {
