@@ -170,7 +170,7 @@ function EditForm({
       <Flex w="100%" mt={8} alignItems="flex-start">
         <SingleLineInput
           label="Twitter Handle"
-          placeholder="@ethereum"
+          placeholder="@questbookapp"
           subtext=""
           value={twitterHandle}
           onChange={(e) => {
@@ -183,7 +183,7 @@ function EditForm({
       <Flex w="100%" mt={8} alignItems="flex-start">
         <SingleLineInput
           label="Discord Server Link"
-          placeholder="@ethereum"
+          placeholder="https://discord.gg/questbook"
           subtext=""
           value={discordHandle}
           onChange={(e) => {
