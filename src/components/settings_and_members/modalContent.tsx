@@ -1,11 +1,12 @@
 import {
-  ModalBody, Button, Text, Box, useToast, Flex, Image, Link,
+  ModalBody, Button, Text, Box, useToast, Flex, Image, Link, ToastId,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { isValidAddress, isValidEmail } from 'src/utils/validationUtils';
 import useAddMember from 'src/hooks/useAddMember';
 import SingleLineInput from '../ui/forms/singleLineInput';
 import Loader from '../ui/loader';
+import InfoToast from '../ui/infoToast';
 
 interface Props {
   onClose: () => void;
@@ -22,18 +23,26 @@ function ModalContent({
   const toast = useToast();
 
   const [memberData, setMemberData] = React.useState<any>();
-  const [txnData, loading] = useAddMember(memberData);
+  const [txnData, txnLink, loading] = useAddMember(memberData);
 
+  const toastRef = React.useRef<ToastId>();
   useEffect(() => {
     // console.log(depositTransactionData);
     if (txnData) {
       setMemberData(undefined);
       onClose();
-      toast({
-        title: 'Member added',
-        status: 'info',
-        duration: 9000,
-        isClosable: true,
+      toastRef.current = toast({
+        position: 'top',
+        render: () => (
+          <InfoToast
+            link={txnLink}
+            close={() => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            }}
+          />
+        ),
       });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
