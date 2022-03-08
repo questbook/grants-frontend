@@ -196,7 +196,7 @@ function EditForm({
       <Flex w="100%" mt={8} alignItems="flex-start">
         <SingleLineInput
           label="Telegram Channel"
-          placeholder="www.telegram.com"
+          placeholder="https://t.me/questbook"
           subtext=""
           value={telegramChannel}
           onChange={(e) => {

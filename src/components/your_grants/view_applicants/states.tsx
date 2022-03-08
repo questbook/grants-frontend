@@ -107,7 +107,7 @@ function GrantComplete() {
       fontWeight="400"
       whiteSpace="nowrap"
     >
-      Complete
+      Closed
     </Text>
   );
 }
