@@ -12,6 +12,7 @@ import useEditGrant from 'src/hooks/useEditGrant';
 import { SupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { formatAmount } from 'src/utils/formattingUtils';
 import InfoToast from '../../src/components/ui/infoToast';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/edit_grant/form';
@@ -89,7 +90,7 @@ function EditGrant() {
         extraField:
           grant.fields.find((field: any) => field.id.includes('extraField'))
           !== undefined,
-        reward: grant.reward.committed,
+        reward: formatAmount(grant.reward.committed),
         rewardCurrency:
           CHAIN_INFO[
             getSupportedChainIdFromSupportedNetwork(
