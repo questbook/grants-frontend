@@ -105,7 +105,7 @@ function ApplicantForm() {
   }, [router]);
 
   const [state, setState] = useState<any>(null);
-  const [txn, loading, error] = useUpdateApplicationState(
+  const [txn, txnLink, loading, error] = useUpdateApplicationState(
     state === 1 ? resubmitComment : rejectionComment,
     applicationData?.id,
     state,
@@ -118,7 +118,7 @@ function ApplicantForm() {
         position: 'top',
         render: () => (
           <InfoToast
-            link={`https://etherscan.io/tx/${txn.transactionHash}`}
+            link={txnLink}
             close={() => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -136,6 +136,7 @@ function ApplicantForm() {
     } else if (error) {
       setState(undefined);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toastRef, toast, router, applicationData, txn, error]);
 
   const handleApplicationStateUpdate = async (st: number) => {

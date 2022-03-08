@@ -4,6 +4,8 @@ import {
 import { BigNumber } from 'ethers';
 // import { ExternalLinkIcon } from '@chakra-ui/icons';
 import React from 'react';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import { formatAmount } from '../../../utils/formattingUtils';
 import AddFunds from '../../funds/add_funds_modal';
 import Modal from '../../ui/modal';
@@ -22,7 +24,6 @@ function Sidebar({
 }: Props) {
   const [isAddFundModalOpen, setIsAddFundModalOpen] = React.useState(false);
   const [isSendFundModalOpen, setIsSendFundModalOpen] = React.useState(false);
-
   return (
     <Box my="154px">
       <FloatingSidebar>
@@ -81,7 +82,15 @@ function Sidebar({
             >
               Add funds to your
               {' '}
-              <Link href={`https://etherscan.io/address/${grant.id}`} fontWeight="700" color="brand.500" isExternal>
+              <Link
+                href={grant
+                  ? `${CHAIN_INFO[getSupportedChainIdFromSupportedNetwork(grant.workspace.supportedNetworks[0])]
+                    .explorer.address}${grant?.id}`
+                  : ''}
+                fontWeight="700"
+                color="brand.500"
+                isExternal
+              >
                 verified grant smart contract
                 {' '}
                 <Image

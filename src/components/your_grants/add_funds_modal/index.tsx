@@ -115,7 +115,7 @@ function AddFunds({
       //   isClosable: true,
       // });
       setHasClicked(false);
-      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
+      showToast({ link: `${transactionData.transactionHash}` });
 
       setFunding('');
       onClose();

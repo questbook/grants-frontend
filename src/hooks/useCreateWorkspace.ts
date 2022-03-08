@@ -3,8 +3,9 @@ import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import { useAccount } from 'wagmi';
 import { uploadToIPFS } from 'src/utils/ipfsUtils';
-import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils';
+import { getSupportedChainIdFromSupportedNetwork, getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils';
 import getErrorMessage from 'src/utils/errorUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract';
 import useChainId from './utils/useChainId';
@@ -44,8 +45,8 @@ export default function useCreateWorkspace(
       // console.log('calling validate');
 
       const uploadedImageHash = await uploadToIPFS(data.image);
-      console.log('Network: ', data.network);
-      console.log('Network Return: ', getSupportedValidatorNetworkFromChainId(data.network));
+      // console.log('Network: ', data.network);
+      // console.log('Network Return: ', getSupportedValidatorNetworkFromChainId(data.network));
       const {
         data: { ipfsHash },
       } = await validatorApi.validateWorkspaceCreate({
@@ -134,5 +135,14 @@ export default function useCreateWorkspace(
     data,
   ]);
 
-  return [transactionData, imageHash, loading];
+  return [
+    transactionData,
+    data?.network
+      ? `${CHAIN_INFO[getSupportedChainIdFromSupportedNetwork(data.network)]
+        .explorer.transactionHash}${transactionData?.transactionHash}`
+      : '',
+    imageHash,
+    loading,
+    error,
+  ];
 }

@@ -53,7 +53,7 @@ function CreateGrant() {
   ];
 
   const [formData, setFormData] = useState<any>();
-  const [transactionData, loading] = useCreateGrant(formData);
+  const [transactionData, blockExplorerLink, loading] = useCreateGrant(formData);
 
   useEffect(() => {
     // console.log(transactionData);
@@ -63,7 +63,7 @@ function CreateGrant() {
         position: 'top',
         render: () => (
           <InfoToast
-            link={`https://etherscan.io/tx/${transactionData.transactionHash}`}
+            link={blockExplorerLink}
             close={() => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -73,6 +73,7 @@ function CreateGrant() {
         ),
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, transactionData, router]);
 
   return (

@@ -6,6 +6,7 @@ import {
   getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils';
 import getErrorMessage from 'src/utils/errorUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useApplicationRegistryContract from './contracts/useApplicationRegistryContract';
@@ -41,7 +42,7 @@ export default function useApproveMilestone(
 
     async function validate() {
       setLoading(true);
-      console.log('calling validate');
+      // console.log('calling validate');
       try {
         const {
           data: { ipfsHash },
@@ -78,15 +79,14 @@ export default function useApproveMilestone(
       }
     }
     try {
-      console.log(data);
-      console.log(milestoneIndex);
-      console.log(applicationId);
-      console.log(Number.isNaN(milestoneIndex));
+      // console.log(data);
+      // console.log(milestoneIndex);
+      // console.log(applicationId);
+      // console.log(Number.isNaN(milestoneIndex));
       if (Number.isNaN(milestoneIndex)) return;
       if (!data) return;
       if (!applicationId) return;
       if (transactionData) return;
-      console.log(66);
       if (!accountData || !accountData.address) {
         throw new Error('not connected to wallet');
       }
@@ -102,7 +102,6 @@ export default function useApproveMilestone(
       if (!validatorApi) {
         throw new Error('validatorApi or workspaceId is not defined');
       }
-      console.log(5);
       if (
         !applicationContract
         || applicationContract.address
@@ -145,5 +144,12 @@ export default function useApproveMilestone(
     data,
   ]);
 
-  return [transactionData, loading, error];
+  return [
+    transactionData,
+    currentChainId
+      ? `${CHAIN_INFO[currentChainId]
+        .explorer.transactionHash}${transactionData?.transactionHash}`
+      : '',
+    loading,
+  ];
 }

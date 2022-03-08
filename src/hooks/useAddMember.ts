@@ -6,6 +6,7 @@ import {
   getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils';
 import getErrorMessage from 'src/utils/errorUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract';
@@ -124,5 +125,12 @@ export default function useAddMember(
     data,
   ]);
 
-  return [transactionData, loading];
+  return [
+    transactionData,
+    currentChainId
+      ? `${CHAIN_INFO[currentChainId]
+        .explorer.transactionHash}${transactionData?.transactionHash}`
+      : '',
+    loading,
+  ];
 }

@@ -159,7 +159,7 @@ function ManageGrant() {
   const toast = useToast();
 
   const [update, setUpdate] = useState<any>();
-  const [txn, loading] = useCompleteApplication(update, applicationData?.id);
+  const [txn, txnLink, loading] = useCompleteApplication(update, applicationData?.id);
 
   useEffect(() => {
     if (txn) {
@@ -169,7 +169,7 @@ function ManageGrant() {
         position: 'top',
         render: () => (
           <InfoToast
-            link={`https://etherscan.io/tx/${txn.transactionHash}`}
+            link={txnLink}
             close={() => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -179,6 +179,7 @@ function ManageGrant() {
         ),
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, txn]);
 
   const markApplicationComplete = async (comment: string) => {

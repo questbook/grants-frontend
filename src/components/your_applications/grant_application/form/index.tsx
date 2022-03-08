@@ -135,7 +135,7 @@ function Form({
   const toastRef = React.useRef<ToastId>();
 
   const [updateData, setUpdateData] = React.useState<any>();
-  const [txnData, loading] = useResubmitApplication(
+  const [txnData, txnLink, loading] = useResubmitApplication(
     updateData,
     chainId,
     applicationID,
@@ -147,7 +147,7 @@ function Form({
         position: 'top',
         render: () => (
           <InfoToast
-            link={`https://etherscan.io/tx/${txnData.transactionHash}`}
+            link={txnLink}
             close={() => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -160,10 +160,11 @@ function Form({
         pathname: '/your_applications',
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, router, txnData]);
 
   const handleOnSubmit = async () => {
-    console.log(onSubmit);
+    // console.log(onSubmit);
     if (!onSubmit) {
       return;
     }

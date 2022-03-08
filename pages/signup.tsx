@@ -16,9 +16,7 @@ import { ApiClientsContext } from './_app';
 
 function SignupDao() {
   const router = useRouter();
-  const {
-    setWorkspace,
-  } = useContext(ApiClientsContext)!;
+  const { setWorkspace } = useContext(ApiClientsContext)!;
 
   const [daoCreated, setDaoCreated] = React.useState(false);
   const [creatingGrant, setCreatingGrant] = React.useState(false);
@@ -35,7 +33,12 @@ function SignupDao() {
   const toast = useToast();
 
   const [workspaceData, setWorkspaceData] = React.useState<any>();
-  const [workspaceTransactionData, imageHash, workspaceLoading] = useCreateWorkspace(workspaceData);
+  const [
+    workspaceTransactionData,
+    workspaceTxnLink,
+    imageHash,
+    workspaceLoading,
+  ] = useCreateWorkspace(workspaceData);
 
   useEffect(() => {
     if (
@@ -60,22 +63,22 @@ function SignupDao() {
         title: workspaceData.name,
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceTransactionData, imageHash, workspaceData, router]);
 
   const [grantData, setGrantData] = React.useState<any>();
-  const [grantTransactionData, createGrantLoading] = useCreateGrant(
-    grantData,
-    workspaceData?.network,
-    daoData?.id,
-  );
+  const [
+    grantTransactionData,
+    transactionLink,
+    createGrantLoading,
+  ] = useCreateGrant(grantData, workspaceData?.network, daoData?.id);
 
   useEffect(() => {
     // console.log(grantTransactionData);
     if (grantTransactionData) {
       router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
 
-      const link = `https://etherscan.io/tx/${grantTransactionData.transactionHash}`;
+      const link = transactionLink;
       toastRef.current = toast({
         position: 'top',
         render: () => (
@@ -90,6 +93,7 @@ function SignupDao() {
         ),
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, grantTransactionData, router]);
 
   if (creatingGrant) {

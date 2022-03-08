@@ -13,6 +13,7 @@ import {
   WORKSPACE_REGISTRY_ADDRESS,
 } from 'src/constants/addresses';
 import getErrorMessage from 'src/utils/errorUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useGrantFactoryContract from './contracts/useGrantFactoryContract';
 import useChainId from './utils/useChainId';
@@ -73,12 +74,12 @@ export default function useCreateGrant(
           throw new Error('Error validating grant data');
         }
 
-        console.log(workspaceId ?? Number(workspace?.id).toString());
-        console.log('ipfsHash', ipfsHash);
-        console.log(
-          WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
-          APPLICATION_REGISTRY_ADDRESS[currentChainId!],
-        );
+        // console.log(workspaceId ?? Number(workspace?.id).toString());
+        // console.log('ipfsHash', ipfsHash);
+        // console.log(
+        //   WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
+        //   APPLICATION_REGISTRY_ADDRESS[currentChainId!],
+        // );
 
         const createGrantTransaction = await grantContract.createGrant(
           workspaceId ?? Number(workspace?.id).toString(),
@@ -176,5 +177,13 @@ export default function useCreateGrant(
     data,
   ]);
 
-  return [transactionData, loading, error];
+  return [
+    transactionData,
+    chainId ?? getSupportedChainIdFromWorkspace(workspace)
+      ? `${CHAIN_INFO[chainId ?? getSupportedChainIdFromWorkspace(workspace)!]
+        .explorer.transactionHash}${transactionData?.transactionHash}`
+      : '',
+    loading,
+    error,
+  ];
 }

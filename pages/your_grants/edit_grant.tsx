@@ -139,7 +139,7 @@ function EditGrant() {
   };
 
   const [editData, setEditData] = useState<any>();
-  const [transactionData, loading] = useEditGrant(editData, grantID);
+  const [transactionData, txnLink, loading] = useEditGrant(editData, grantID);
 
   useEffect(() => {
     // console.log(transactionData);
@@ -149,7 +149,7 @@ function EditGrant() {
         position: 'top',
         render: () => (
           <InfoToast
-            link={`https://etherscan.io/tx/${transactionData.transactionHash}`}
+            link={txnLink}
             close={() => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -159,6 +159,7 @@ function EditGrant() {
         ),
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, transactionData, router]);
 
   useEffect(() => {
