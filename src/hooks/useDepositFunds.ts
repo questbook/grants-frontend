@@ -5,6 +5,7 @@ import { useAccount, useNetwork } from 'wagmi';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { BigNumber } from 'ethers';
 import getErrorMessage from 'src/utils/errorUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useERC20Contract from './contracts/useERC20Contract';
@@ -127,5 +128,12 @@ export default function useDepositFunds(
     finalAmount,
   ]);
 
-  return [transactionData, loading];
+  return [
+    transactionData,
+    currentChainId
+      ? `${CHAIN_INFO[currentChainId]
+        .explorer.transactionHash}${transactionData?.transactionHash}`
+      : '',
+    loading,
+  ];
 }

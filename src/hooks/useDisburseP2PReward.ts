@@ -6,6 +6,7 @@ import {
   getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils';
 import getErrorMessage from 'src/utils/errorUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useGrantContract from './contracts/useGrantContract';
@@ -156,5 +157,13 @@ export default function useDisburseReward(
     data,
   ]);
 
-  return [transactionData, loading, error];
+  return [
+    transactionData,
+    currentChainId
+      ? `${CHAIN_INFO[currentChainId]
+        .explorer.transactionHash}${transactionData?.transactionHash}`
+      : '',
+    loading,
+    error,
+  ];
 }

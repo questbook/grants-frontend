@@ -77,7 +77,7 @@ function AddFunds({
   const toastRef = React.useRef<ToastId>();
 
   const [finalAmount, setFinalAmount] = React.useState<BigNumber>();
-  const [depositTransactionData, loading] = useDepositFunds(
+  const [depositTransactionData, txnLink, loading] = useDepositFunds(
     finalAmount,
     rewardAsset.address,
     grantAddress,
@@ -93,7 +93,7 @@ function AddFunds({
         position: 'top',
         render: () => (
           <InfoToast
-            link={`https://etherscan.io/tx/${depositTransactionData.transactionHash}`}
+            link={txnLink}
             close={() => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
