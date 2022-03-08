@@ -104,6 +104,7 @@ function SingleLineInput({
           h={height}
           onClick={onClick}
           type={type}
+          onWheel={(e) => (e.target as HTMLElement).blur()}
         />
         {inputRightElement && (
           <InputRightElement h="100%" mt={1}>
