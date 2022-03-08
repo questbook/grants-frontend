@@ -4,6 +4,7 @@ import { ApiClientsContext } from 'pages/_app';
 import { useAccount, useNetwork } from 'wagmi';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import getErrorMessage from 'src/utils/errorUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useGrantContract from './contracts/useGrantContract';
@@ -84,8 +85,8 @@ export default function useWithdrawFunds(
       if (!workspace) {
         throw new Error('not connected to workspace');
       }
-      console.log(workspace);
-      console.log(currentChainId);
+      // console.log(workspace);
+      // console.log(currentChainId);
       if (getSupportedChainIdFromWorkspace(workspace) !== currentChainId) {
         throw new Error('connected to wrong network');
       }
@@ -130,5 +131,13 @@ export default function useWithdrawFunds(
     finalAmount,
   ]);
 
-  return [transactionData, loading];
+  return [
+    transactionData,
+    currentChainId
+      ? `${CHAIN_INFO[currentChainId]
+        .explorer.transactionHash}${transactionData?.transactionHash}`
+      : '',
+    loading,
+    error,
+  ];
 }

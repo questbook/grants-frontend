@@ -25,7 +25,7 @@ function ModalContent({ milestone, onClose, chainId }: Props) {
 
   const { milestoneIndex, applicationId } = getMilestoneMetadata(milestone)!;
   const [milestoneUpdate, setMilestoneUpdate] = useState<any>();
-  const [txn, loading] = useRequestMilestoneApproval(
+  const [txn, txnLink, loading] = useRequestMilestoneApproval(
     milestoneUpdate,
     chainId,
     applicationId,
@@ -40,7 +40,7 @@ function ModalContent({ milestone, onClose, chainId }: Props) {
         position: 'top',
         render: () => (
           <InfoToast
-            link={`https://etherscan.io/tx/${txn.transactionHash}`}
+            link={txnLink}
             close={() => {
               if (toastRef.current) {
                 toast.close(toastRef.current);

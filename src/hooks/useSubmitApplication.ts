@@ -5,6 +5,7 @@ import { useAccount, useNetwork } from 'wagmi';
 import { SupportedChainId } from 'src/constants/chains';
 import { GrantApplicationRequest } from '@questbook/service-validator-client';
 import getErrorMessage from 'src/utils/errorUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useApplicationRegistryContract from './contracts/useApplicationRegistryContract';
@@ -138,5 +139,13 @@ export default function useSubmitApplication(
     workspaceId,
   ]);
 
-  return [transactionData, loading];
+  return [
+    transactionData,
+    chainId
+      ? `${CHAIN_INFO[chainId]
+        .explorer.transactionHash}${transactionData?.transactionHash}`
+      : '',
+    loading,
+    error,
+  ];
 }

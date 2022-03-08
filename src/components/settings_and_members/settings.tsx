@@ -36,7 +36,7 @@ function Settings({ workspaceData }: Props) {
   const toast = useToast();
 
   const [editData, setEditData] = useState<any>();
-  const [txnData, loading] = useUpdateWorkspace(editData);
+  const [txnData, txnLink, loading] = useUpdateWorkspace(editData);
 
   useEffect(() => {
     if (txnData) {
@@ -44,7 +44,7 @@ function Settings({ workspaceData }: Props) {
         position: 'top',
         render: () => (
           <InfoToast
-            link={`https://etherscan.io/tx/${txnData.transactionHash}`}
+            link={txnLink}
             close={() => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -54,6 +54,7 @@ function Settings({ workspaceData }: Props) {
         ),
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, txnData]);
 
   const handleFormSubmit = async (data: any) => {

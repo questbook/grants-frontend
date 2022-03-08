@@ -5,6 +5,7 @@ import { ApiClientsContext } from 'pages/_app';
 import { useAccount, useNetwork } from 'wagmi';
 import { SupportedChainId } from 'src/constants/chains';
 import getErrorMessage from 'src/utils/errorUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useApplicationRegistryContract from './contracts/useApplicationRegistryContract';
@@ -141,5 +142,13 @@ export default function useRequestMilestoneApproval(
     data,
   ]);
 
-  return [transactionData, loading, error];
+  return [
+    transactionData,
+    chainId
+      ? `${CHAIN_INFO[chainId]
+        .explorer.transactionHash}${transactionData?.transactionHash}`
+      : '',
+    loading,
+    error,
+  ];
 }
