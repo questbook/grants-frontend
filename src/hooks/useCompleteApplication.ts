@@ -6,6 +6,7 @@ import {
   getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils';
 import getErrorMessage from 'src/utils/errorUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useApplicationRegistryContract from './contracts/useApplicationRegistryContract';
@@ -40,7 +41,7 @@ export default function useCompleteApplication(
 
     async function validate() {
       setLoading(true);
-      console.log('calling validate');
+      // console.log('calling validate');
       try {
         const {
           data: { ipfsHash },
@@ -135,5 +136,12 @@ export default function useCompleteApplication(
     data,
   ]);
 
-  return [transactionData, loading, error];
+  return [
+    transactionData,
+    currentChainId
+      ? `${CHAIN_INFO[currentChainId]
+        .explorer.transactionHash}${transactionData?.transactionHash}`
+      : '',
+    loading,
+  ];
 }
