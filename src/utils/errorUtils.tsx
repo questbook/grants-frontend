@@ -1,6 +1,8 @@
 import { errorCodes, getMessageFromCode } from 'eth-rpc-errors';
 
 function getErrorMessage(e: any) {
+  // eslint-disable-next-line no-param-reassign
+  if (e.error) e = e.error;
   console.log('Error: ', e);
   let message = '';
   if (e.code === errorCodes.rpc.internal) {

@@ -37,7 +37,7 @@ export default function useEditGrant(
   useEffect(() => {
     if (error) return;
     if (loading) return;
-    // console.log('calling createGrant');
+    // console.log('calling editGrant');
 
     async function validate() {
       setLoading(true);
