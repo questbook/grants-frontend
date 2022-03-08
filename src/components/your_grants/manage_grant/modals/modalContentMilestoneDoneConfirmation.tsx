@@ -28,7 +28,10 @@ function ModalContent({
           as done.
         </Heading>
         <Text mt={4} textAlign="center" variant="applicationText">
-          You will shortly receive a confirmation and reward if any from the grant publisher.
+          The applicant will shortly receive a confirmation.
+        </Text>
+        <Text mt={8} textAlign="center" variant="applicationText">
+          Do you want to send funds for completing this milestone?
         </Text>
         <Flex direction="row" w="100%" justify="space-evenly" mt={10} mb={4}>
           <Button w="45%" variant="resubmit" color="brand.500" _hover={{ background: '#F5F5F5', borderColor: 'brand.500', borderWidth: '2px' }} onClick={onClose}>Cancel</Button>

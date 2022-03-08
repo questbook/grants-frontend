@@ -19,7 +19,7 @@ enum TableFilterNames {
   'resubmit' = 'Awaiting Resubmit',
   'approved' = 'Approved',
   'rejected' = 'Rejected',
-  'completed' = 'Complete',
+  'completed' = 'Closed',
 }
 
 export { TableFilters, TableFilterNames };

@@ -170,7 +170,7 @@ function EditForm({
       <Flex w="100%" mt={8} alignItems="flex-start">
         <SingleLineInput
           label="Twitter Handle"
-          placeholder="@ethereum"
+          placeholder="@questbookapp"
           subtext=""
           value={twitterHandle}
           onChange={(e) => {
@@ -183,7 +183,7 @@ function EditForm({
       <Flex w="100%" mt={8} alignItems="flex-start">
         <SingleLineInput
           label="Discord Server Link"
-          placeholder="@ethereum"
+          placeholder="https://discord.gg/questbook"
           subtext=""
           value={discordHandle}
           onChange={(e) => {
@@ -196,7 +196,7 @@ function EditForm({
       <Flex w="100%" mt={8} alignItems="flex-start">
         <SingleLineInput
           label="Telegram Channel"
-          placeholder="www.telegram.com"
+          placeholder="https://t.me/questbook"
           subtext=""
           value={telegramChannel}
           onChange={(e) => {
