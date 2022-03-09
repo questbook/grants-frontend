@@ -35,6 +35,7 @@ function SignupDao() {
   const [workspaceData, setWorkspaceData] = React.useState<any>();
   const [
     workspaceTransactionData,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     workspaceTxnLink,
     imageHash,
     workspaceLoading,
