@@ -32,7 +32,7 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-const infuraId = process.env.INFURA_ID;
+const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
 
 // Chains for connectors to support
 // const chains = [...defaultChains, ...defaultL2Chains].filter(
