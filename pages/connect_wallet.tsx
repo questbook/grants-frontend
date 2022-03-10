@@ -23,7 +23,6 @@ import ModalContent from '../src/components/connect_wallet/modalContent';
 import WalletSelectButton from '../src/components/connect_wallet/walletSelectButton';
 import Modal from '../src/components/ui/modal';
 import SecondaryDropdown from '../src/components/ui/secondaryDropdown';
-import Tooltip from '../src/components/ui/tooltip';
 import NavbarLayout from '../src/layout/navbarLayout';
 import strings from '../src/constants/strings.json';
 
@@ -89,7 +88,8 @@ function ConnectWallet() {
       </Text>
       <Text mt={7} textAlign="center">
         {strings.connect_wallet.subheading_1}
-        <Tooltip label={strings.connect_wallet.tooltip_label} />
+        {' '}
+        {/* <Tooltip label={strings.connect_wallet.tooltip_label} /> */}
         {strings.connect_wallet.subheading_2}
       </Text>
 
