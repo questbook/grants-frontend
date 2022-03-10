@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -16,17 +16,13 @@ import router from 'next/router';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import useActiveTabIndex from 'src/hooks/utils/useActiveTabIndex';
 import {
-  useGetNumberOfApplicationsQuery,
-  useGetNumberOfGrantsQuery,
+  useGetNumberOfApplicationsLazyQuery,
+  useGetNumberOfGrantsLazyQuery,
   useGetWorkspaceMembersLazyQuery,
 } from 'src/generated/graphql';
 import { ApiClientsContext } from 'pages/_app';
 import { useAccount } from 'wagmi';
-import {
-  SupportedChainId,
-} from 'src/constants/chains';
 import { MinimalWorkspace } from 'src/types';
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import Tab from './tab';
 import AccountDetails from './accountDetails';
 
@@ -48,45 +44,82 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
   const apiClients = useContext(ApiClientsContext)!;
   const { workspace, setWorkspace, subgraphClients } = apiClients;
 
-  const chainId = getSupportedChainIdFromWorkspace(workspace);
-  const [numberApplicationsQueryParams, setNumberApplicationsQueryParams] = useState<any>({
-    client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
-  });
-  const [numberGrantsQueryParams, setNumberGrantsQueryParams] = useState<any>({
-    client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
-  });
-
-  useEffect(() => {
-    if (!workspace) return;
-    if (!accountData) return;
-
-    setNumberApplicationsQueryParams({
-      client:
-        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
-      variables: { applicantId: accountData?.address },
-    });
-    setNumberGrantsQueryParams({
-      client:
-        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
-      variables: { creatorId: accountData?.address },
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workspace, accountData?.address]);
-
   // eslint-disable-next-line max-len
-  const { data: applicationData, error: applicationError } = useGetNumberOfApplicationsQuery(numberApplicationsQueryParams);
-  const { data: grantData, error: grantError } = useGetNumberOfGrantsQuery(numberGrantsQueryParams);
+  const getNumberOfApplicationsClients = Object.keys(subgraphClients)!.map(
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    (key) => useGetNumberOfApplicationsLazyQuery({
+      client: subgraphClients[key].client,
+    }),
+  );
+
+  const getNumberOfGrantsClients = Object.keys(subgraphClients)!.map(
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    (key) => useGetNumberOfGrantsLazyQuery({ client: subgraphClients[key].client }),
+  );
 
   useEffect(() => {
-    // console.log(applicationData);
-    // console.log(applicationError);
-    if (applicationData) {
-      setApplicationCount(applicationData?.grantApplications.length || 0);
-    }
-    if (grantData) {
-      setGrantsCount(grantData?.grants.length || 0);
-    }
-  }, [applicationData, applicationError, grantData, grantError]);
+    if (!accountData?.address) return;
+    if (!workspace) return;
+
+    const getNumberOfApplications = async () => {
+      try {
+        const promises = getNumberOfApplicationsClients.map(
+          // eslint-disable-next-line no-async-promise-executor
+          (query) => new Promise(async (resolve) => {
+            const { data } = await query[0]({
+              variables: { applicantId: accountData?.address },
+            });
+            if (data && data.grantApplications.length > 0) {
+              resolve(data.grantApplications.length);
+            } else {
+              resolve(0);
+            }
+          }),
+        );
+        Promise.all(promises).then((value: any[]) => {
+          setApplicationCount(value.reduce((a, b) => a + b, 0));
+        });
+      } catch (e) {
+        toast({
+          title: 'Error getting application count',
+          status: 'error',
+        });
+      }
+    };
+
+    const getNumberOfGrants = async () => {
+      try {
+        const promises = getNumberOfGrantsClients.map(
+          // eslint-disable-next-line no-async-promise-executor
+          (query) => new Promise(async (resolve) => {
+            const { data } = await query[0]({
+              variables: { workspaceId: workspace?.id },
+            });
+            if (data && data.grants.length > 0) {
+              resolve(data.grants.length);
+            } else {
+              resolve(0);
+            }
+          }),
+        );
+        Promise.all(promises).then((value: any[]) => {
+          setGrantsCount(value.reduce((a, b) => a + b, 0));
+        });
+      } catch (e) {
+        toast({
+          title: 'Error getting grants count',
+          status: 'error',
+        });
+      }
+    };
+
+    getNumberOfApplications();
+    getNumberOfGrants();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    accountData?.address,
+    workspace?.id,
+  ]);
 
   const getAllWorkspaces = Object.keys(subgraphClients)!.map(
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -122,7 +155,9 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
           // console.log('all workspaces', allWorkspacesData);
           setWorkspaces([...workspaces, ...allWorkspacesData]);
 
-          const i = allWorkspacesData.findIndex((w) => w.id === localStorage.getItem('currentWorkspaceId') ?? 'undefined');
+          const i = allWorkspacesData.findIndex(
+            (w) => w.id === localStorage.getItem('currentWorkspaceId') ?? 'undefined',
+          );
           setWorkspace(allWorkspacesData[i === -1 ? 0 : i]);
         });
       } catch (e) {
@@ -134,7 +169,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
       }
     };
     getWorkspaceData(accountData?.address);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
