@@ -6,6 +6,7 @@ import { uploadToIPFS } from 'src/utils/ipfsUtils';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils';
 import getErrorMessage from 'src/utils/errorUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import config from 'src/constants/config';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract';
 import useChainId from './utils/useChainId';
@@ -44,7 +45,8 @@ export default function useCreateWorkspace(
       setLoading(true);
       // console.log('calling validate');
 
-      const uploadedImageHash = await uploadToIPFS(data.image);
+      const uploadedImageHash = data.image
+        ? (await uploadToIPFS(data.image)).hash : config.defaultImageIPFSHash;
       // console.log('Network: ', data.network);
       // console.log('Network Return: ', getSupportedValidatorNetworkFromChainId(data.network));
       const {
@@ -52,7 +54,7 @@ export default function useCreateWorkspace(
       } = await validatorApi.validateWorkspaceCreate({
         title: data.name,
         about: data.description,
-        logoIpfsHash: uploadedImageHash.hash,
+        logoIpfsHash: uploadedImageHash,
         creatorId: accountData!.address,
         socials: [],
         supportedNetworks: [getSupportedValidatorNetworkFromChainId(data.network)],
@@ -66,7 +68,7 @@ export default function useCreateWorkspace(
         const createWorkspaceTransactionData = await createWorkspaceTransaction.wait();
 
         setTransactionData(createWorkspaceTransactionData);
-        setImageHash(uploadedImageHash.hash);
+        setImageHash(uploadedImageHash);
         setLoading(false);
       } catch (e: any) {
         const message = getErrorMessage(e);

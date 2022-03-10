@@ -22,7 +22,7 @@ function Form({
   onSubmit: (data: {
     name: string;
     description: string;
-    image: File;
+    image: File | null;
     network: SupportedChainId;
   }) => void;
 }) {
@@ -59,17 +59,17 @@ function Form({
     if (!chainId) {
       error = true;
     }
-    if (image === null || imageFile === null) {
-      setImageError(true);
-      error = true;
-    }
+    // if (image === null || imageFile === null) {
+    //   setImageError(true);
+    //   error = true;
+    // }
 
     if (error) return;
 
     onFormSubmit({
       name: daoName,
       description: daoDescription,
-      image: imageFile!,
+      image: imageFile,
       network: chainId!,
     });
   };
