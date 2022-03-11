@@ -285,6 +285,8 @@ export type Grant = {
   /** Funding currently present in the grant */
   funding: Scalars['BigInt'];
   id: Scalars['ID'];
+  /** People who will manage the grant. They can see the PII submitted in an application */
+  managers: Array<GrantManager>;
   metadataHash: Scalars['String'];
   /** Number of applications in the grant */
   numberOfApplications: Scalars['Int'];
@@ -315,6 +317,15 @@ export type GrantFieldsArgs = {
   orderDirection?: InputMaybe<OrderDirection>;
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<GrantField_Filter>;
+};
+
+
+export type GrantManagersArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<GrantManager_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<GrantManager_Filter>;
 };
 
 export type GrantApplication = {
@@ -758,6 +769,61 @@ export enum GrantField_OrderBy {
   Title = 'title'
 }
 
+export type GrantManager = {
+  __typename?: 'GrantManager';
+  /** Grant for which this entity is the manager */
+  grant: Grant;
+  /** Globally unique ID of the member */
+  id: Scalars['ID'];
+  /** Workspace member */
+  member?: Maybe<WorkspaceMember>;
+};
+
+export type GrantManager_Filter = {
+  grant?: InputMaybe<Scalars['String']>;
+  grant_contains?: InputMaybe<Scalars['String']>;
+  grant_ends_with?: InputMaybe<Scalars['String']>;
+  grant_gt?: InputMaybe<Scalars['String']>;
+  grant_gte?: InputMaybe<Scalars['String']>;
+  grant_in?: InputMaybe<Array<Scalars['String']>>;
+  grant_lt?: InputMaybe<Scalars['String']>;
+  grant_lte?: InputMaybe<Scalars['String']>;
+  grant_not?: InputMaybe<Scalars['String']>;
+  grant_not_contains?: InputMaybe<Scalars['String']>;
+  grant_not_ends_with?: InputMaybe<Scalars['String']>;
+  grant_not_in?: InputMaybe<Array<Scalars['String']>>;
+  grant_not_starts_with?: InputMaybe<Scalars['String']>;
+  grant_starts_with?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  member?: InputMaybe<Scalars['String']>;
+  member_contains?: InputMaybe<Scalars['String']>;
+  member_ends_with?: InputMaybe<Scalars['String']>;
+  member_gt?: InputMaybe<Scalars['String']>;
+  member_gte?: InputMaybe<Scalars['String']>;
+  member_in?: InputMaybe<Array<Scalars['String']>>;
+  member_lt?: InputMaybe<Scalars['String']>;
+  member_lte?: InputMaybe<Scalars['String']>;
+  member_not?: InputMaybe<Scalars['String']>;
+  member_not_contains?: InputMaybe<Scalars['String']>;
+  member_not_ends_with?: InputMaybe<Scalars['String']>;
+  member_not_in?: InputMaybe<Array<Scalars['String']>>;
+  member_not_starts_with?: InputMaybe<Scalars['String']>;
+  member_starts_with?: InputMaybe<Scalars['String']>;
+};
+
+export enum GrantManager_OrderBy {
+  Grant = 'grant',
+  Id = 'id',
+  Member = 'member'
+}
+
 export type Grant_Filter = {
   acceptingApplications?: InputMaybe<Scalars['Boolean']>;
   acceptingApplications_in?: InputMaybe<Array<Scalars['Boolean']>>;
@@ -923,6 +989,7 @@ export enum Grant_OrderBy {
   Fields = 'fields',
   Funding = 'funding',
   Id = 'id',
+  Managers = 'managers',
   MetadataHash = 'metadataHash',
   NumberOfApplications = 'numberOfApplications',
   Reward = 'reward',
@@ -1086,6 +1153,8 @@ export type Query = {
   grantFieldAnswerItems: Array<GrantFieldAnswerItem>;
   grantFieldAnswers: Array<GrantFieldAnswer>;
   grantFields: Array<GrantField>;
+  grantManager?: Maybe<GrantManager>;
+  grantManagers: Array<GrantManager>;
   grants: Array<Grant>;
   notification?: Maybe<Notification>;
   notifications: Array<Notification>;
@@ -1235,6 +1304,24 @@ export type QueryGrantFieldsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<GrantField_Filter>;
+};
+
+
+export type QueryGrantManagerArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryGrantManagersArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<GrantManager_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<GrantManager_Filter>;
 };
 
 
@@ -1449,6 +1536,8 @@ export type Subscription = {
   grantFieldAnswerItems: Array<GrantFieldAnswerItem>;
   grantFieldAnswers: Array<GrantFieldAnswer>;
   grantFields: Array<GrantField>;
+  grantManager?: Maybe<GrantManager>;
+  grantManagers: Array<GrantManager>;
   grants: Array<Grant>;
   notification?: Maybe<Notification>;
   notifications: Array<Notification>;
@@ -1598,6 +1687,24 @@ export type SubscriptionGrantFieldsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<GrantField_Filter>;
+};
+
+
+export type SubscriptionGrantManagerArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionGrantManagersArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<GrantManager_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<GrantManager_Filter>;
 };
 
 
@@ -2126,7 +2233,7 @@ export type GetNumberOfApplicationsQuery = { __typename?: 'Query', grantApplicat
 export type GetNumberOfGrantsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
-  creatorId?: InputMaybe<Scalars['Bytes']>;
+  workspaceId: Scalars['String'];
 }>;
 
 
@@ -2929,8 +3036,8 @@ export type GetNumberOfApplicationsQueryHookResult = ReturnType<typeof useGetNum
 export type GetNumberOfApplicationsLazyQueryHookResult = ReturnType<typeof useGetNumberOfApplicationsLazyQuery>;
 export type GetNumberOfApplicationsQueryResult = Apollo.QueryResult<GetNumberOfApplicationsQuery, GetNumberOfApplicationsQueryVariables>;
 export const GetNumberOfGrantsDocument = gql`
-    query getNumberOfGrants($first: Int, $skip: Int, $creatorId: Bytes) {
-  grants(where: {creatorId: $creatorId}, subgraphError: allow) {
+    query getNumberOfGrants($first: Int, $skip: Int, $workspaceId: String!) {
+  grants(where: {workspace: $workspaceId}, subgraphError: allow) {
     id
   }
 }
@@ -2950,11 +3057,11 @@ export const GetNumberOfGrantsDocument = gql`
  *   variables: {
  *      first: // value for 'first'
  *      skip: // value for 'skip'
- *      creatorId: // value for 'creatorId'
+ *      workspaceId: // value for 'workspaceId'
  *   },
  * });
  */
-export function useGetNumberOfGrantsQuery(baseOptions?: Apollo.QueryHookOptions<GetNumberOfGrantsQuery, GetNumberOfGrantsQueryVariables>) {
+export function useGetNumberOfGrantsQuery(baseOptions: Apollo.QueryHookOptions<GetNumberOfGrantsQuery, GetNumberOfGrantsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetNumberOfGrantsQuery, GetNumberOfGrantsQueryVariables>(GetNumberOfGrantsDocument, options);
       }

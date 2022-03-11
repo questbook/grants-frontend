@@ -9,6 +9,7 @@ import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract';
 import useChainId from './utils/useChainId';
+import { SupportedNetwork } from 'src/generated/graphql';
 
 export default function useCreateWorkspace(
   data: any,
@@ -33,6 +34,10 @@ export default function useCreateWorkspace(
     if (data) {
       setError(undefined);
     }
+  }, [data]);
+
+  useEffect(() => {
+    console.log(data?.network);
   }, [data]);
 
   useEffect(() => {
@@ -139,7 +144,7 @@ export default function useCreateWorkspace(
   return [
     transactionData,
     data?.network
-      ? `${CHAIN_INFO[getSupportedChainIdFromSupportedNetwork(data.network)]
+      ? `${CHAIN_INFO[getSupportedChainIdFromSupportedNetwork(`chain_${data.network}` as SupportedNetwork)]
         .explorer.transactionHash}${transactionData?.transactionHash}`
       : '',
     imageHash,

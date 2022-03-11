@@ -305,7 +305,7 @@ function Form({
   return (
     <Flex mt="30px" flexDirection="column" alignItems="center" w="100%">
       <Image objectFit="cover" h="96px" w="96px" src={daoLogo} alt="Polygon DAO" />
-      <Text mt={6} variant="heading">
+      <Text mt={6} variant="heading" textAlign="center">
         {grantTitle}
       </Text>
 

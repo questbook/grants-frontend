@@ -2,8 +2,8 @@ import {
   Box, Text,
 } from '@chakra-ui/react';
 import React from 'react';
+import MySelect from 'src/components/ui/forms/select';
 import MultiLineInput from '../../../ui/forms/multiLineInput';
-import SingleLineInput from '../../../ui/forms/singleLineInput';
 import Tooltip from '../../../ui/tooltip';
 
 function AboutTeam({
@@ -39,26 +39,21 @@ function AboutTeam({
       </Text>
 
       <Box mt={6} />
-      <SingleLineInput
-        label="Team Members"
-        placeholder="Number of team members"
+      {grantRequiredFields.includes('teamMembers') && (
+      <MySelect
         value={teamMembers === null ? undefined : teamMembers}
         onChange={(e) => {
           if (teamMembersError) {
             setTeamMembersError(false);
           }
           const value = parseInt(e.target.value, 10);
-          if (!Number.isNaN(value)) {
-            setTeamMembers(value);
-            setMembersDescription(Array(value).fill({ description: '', isError: false }));
-          } else {
-            setTeamMembers(null);
-          }
+          setTeamMembers(value);
+          setMembersDescription(Array(value).fill({ description: '', isError: false }));
         }}
-        isError={teamMembersError}
-        errorText="Required"
-        visible={grantRequiredFields.includes('teamMembers')}
+        label="Team Members"
+        options={Array.from(Array(11).keys()).slice(1)}
       />
+      )}
 
       <Box mt="43px" />
       <Text
