@@ -4,6 +4,7 @@ import {
 import React, { useEffect } from 'react';
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import config from 'src/constants/config';
 import CoverUpload from '../ui/forms/coverUpload';
 import ImageUpload from '../ui/forms/imageUpload';
 import MultiLineInput from '../ui/forms/multiLineInput';
@@ -35,7 +36,7 @@ function EditForm({
 
   const [supportedNetwork, setSupportedNetwork] = React.useState('');
 
-  const [image, setImage] = React.useState<string | null>('');
+  const [image, setImage] = React.useState<string>(config.defaultDAOImagePath);
   const [imageFile, setImageFile] = React.useState<File | null>(null);
 
   const [coverImage, setCoverImage] = React.useState<string | null>('');
@@ -130,7 +131,6 @@ function EditForm({
           image={image}
           isError={false}
           onChange={handleImageChange}
-          // onClear={() => setImage(null)}
           label="Add a logo"
         />
       </Flex>

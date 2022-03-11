@@ -6,7 +6,7 @@ import React, { useRef } from 'react';
 
 interface ImageUploadProps {
   label?: string;
-  image: string | null | undefined;
+  image: string;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
   isError: boolean;
 }
@@ -26,6 +26,10 @@ function ImageUpload({
     }
   };
 
+  React.useEffect(() => {
+    console.log('Image: ', image);
+  }, [image]);
+
   return (
     <Flex direction="column" align="center">
       <Text lineHeight="20px" fontWeight="bold">
@@ -43,7 +47,7 @@ function ImageUpload({
         pos="relative"
       >
         <Button p={0} onClick={() => openInput()} h="100%" w="100%" flex={1}>
-          <Image objectFit="cover" src={image ?? '/images/default_dao.jpeg'} w="100%" h="100%" />
+          <Image objectFit="cover" src={image} w="100%" h="100%" />
         </Button>
 
         <input style={{ visibility: 'hidden' }} ref={ref} type="file" name="myImage" onChange={onChange} accept="image/jpg, image/jpeg, image/png" />

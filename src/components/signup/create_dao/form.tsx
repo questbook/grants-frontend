@@ -11,6 +11,7 @@ import { highlightWordsInString } from 'src/utils/formattingUtils';
 import useChainId from 'src/hooks/utils/useChainId';
 import { SupportedChainId } from 'src/constants/chains';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import config from 'src/constants/config';
 import ImageUpload from '../../ui/forms/imageUpload';
 import MultiLineInput from '../../ui/forms/multiLineInput';
 import SingleLineInput from '../../ui/forms/singleLineInput';
@@ -23,6 +24,7 @@ function Form({
     name: string;
     description: string;
     image: File | null;
+    imagePath: string;
     network: SupportedChainId;
   }) => void;
 }) {
@@ -34,7 +36,7 @@ function Form({
   const [daoDescription, setDaoDescription] = React.useState('');
   const [daoDescriptionError, setDaoDescriptionError] = React.useState(false);
 
-  const [image, setImage] = React.useState<string | null>(null);
+  const [image, setImage] = React.useState<string>(config.defaultDAOImagePath);
   const [imageFile, setImageFile] = React.useState<File | null>(null);
   const [imageError, setImageError] = React.useState(false);
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,6 +72,7 @@ function Form({
       name: daoName,
       description: daoDescription,
       image: imageFile,
+      imagePath: image,
       network: chainId!,
     });
   };
@@ -94,7 +97,6 @@ function Form({
           <ImageUpload
             image={image}
             onChange={handleImageChange}
-            // onClear={() => setImage(null)}
             label="Add a logo"
             isError={imageError}
           />
