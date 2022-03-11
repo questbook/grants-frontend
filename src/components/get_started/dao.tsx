@@ -1,13 +1,15 @@
 import {
-  Container, Flex, Button, Link, Text, useTheme, Image,
+  Container,
+  Flex,
+  Button,
+  Link,
+  Text,
+  useTheme,
+  Image,
 } from '@chakra-ui/react';
 import React from 'react';
 
-function Dao({
-  onClick,
-}: {
-  onClick: () => void;
-}) {
+function Dao({ onClick }: { onClick: () => void }) {
   const theme = useTheme();
   return (
     <Container
@@ -64,11 +66,7 @@ function Dao({
         ))}
       </Flex>
 
-      <Button
-        onClick={() => onClick()}
-        variant="primary"
-        my={16}
-      >
+      <Button onClick={() => onClick()} variant="primary" my={16}>
         Continue
       </Button>
 
@@ -85,9 +83,11 @@ function Dao({
         py={3}
       >
         <Text w="100vw" textAlign="center" variant="footer" fontSize="12px">
-          Each grant can be seen on-chain.
-          {' '}
-          <Link href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46" isExternal>
+          Each grant can be seen on-chain.{' '}
+          <Link
+            href="https://www.notion.so/questbook/Contracts-7cea3bdfb6be47e68f165b4a719c662f"
+            isExternal
+          >
             Learn more
             <Image
               mx={1}
