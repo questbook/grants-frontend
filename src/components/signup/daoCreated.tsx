@@ -11,11 +11,13 @@ function DaoCreated({
   daoName,
   onCreateGrantClick,
   onVisitGrantsClick: onVisitMyGrantsClick,
+  txnLink,
 }: {
   network: SupportedChainId;
   daoName: string;
   onCreateGrantClick: () => void;
   onVisitGrantsClick: () => void;
+  txnLink: string | undefined;
 }) {
   return (
     <Container maxW="1024px" py={10}>
@@ -69,7 +71,7 @@ function DaoCreated({
         <Text mt={10} fontSize="28px" lineHeight="24px" fontWeight="500">
           Grants DAO Name:
           {' '}
-          <Link fontWeight="700" href="#">
+          <Link isExternal fontWeight="700" href={txnLink}>
             {daoName}
             <Image
               mx={1}
