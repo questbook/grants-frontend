@@ -42,10 +42,12 @@ function Form({
   const [imageError, setImageError] = React.useState(false);
   const toast = useToast();
   const toastRef = React.useRef<ToastId>();
+  const maxImageSize = 2;
+
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const img = event.target.files[0];
-      if (img.size / 1024 / 1024 <= 5) {
+      if (img.size / 1024 / 1024 <= maxImageSize) {
         setImageFile(img);
         setImage(URL.createObjectURL(img));
         setImageError(false);
@@ -53,7 +55,7 @@ function Form({
         toastRef.current = toast({
           position: 'top',
           render: () => ErrorToast({
-            content: 'Image size exceeds 5 MB',
+            content: `Image size exceeds ${maxImageSize} MB`,
             close: () => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
