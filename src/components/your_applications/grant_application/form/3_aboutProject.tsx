@@ -95,7 +95,7 @@ function AboutProject({
       <Box mt={6} />
       <SingleLineInput
         label="Project Name"
-        placeholder="NFT marketplace on Polygon"
+        placeholder="NFT marketplace"
         value={projectName}
         onChange={(e) => {
           if (projectNameError) {
