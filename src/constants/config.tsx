@@ -6,7 +6,6 @@ const config = {
   ApplicationRegistryAddress: '0x9f0033722c0E05303fdB5E1cab8e5f59A105bFED',
   GrantFactoryAddress: '0x0E6B77F32c273aDae050Ab9d511Fc30Bb385DaAc',
   subgraphUri: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph',
-  defaultImageIPFSHash: 'QmQdF2xdvPxu59VTMmL5GHXoVtC5ipWPs6G2Mhgg1U58Rx', // Need to change this to a default image
 };
 
 export default config;

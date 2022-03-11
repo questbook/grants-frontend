@@ -6,7 +6,6 @@ import { uploadToIPFS } from 'src/utils/ipfsUtils';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils';
 import getErrorMessage from 'src/utils/errorUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
-import config from 'src/constants/config';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract';
 import useChainId from './utils/useChainId';
@@ -45,8 +44,7 @@ export default function useCreateWorkspace(
       setLoading(true);
       // console.log('calling validate');
 
-      const uploadedImageHash = data.image
-        ? (await uploadToIPFS(data.image)).hash : config.defaultImageIPFSHash;
+      const uploadedImageHash = (await uploadToIPFS(data.image)).hash;
       // console.log('Network: ', data.network);
       // console.log('Network Return: ', getSupportedValidatorNetworkFromChainId(data.network));
       const {

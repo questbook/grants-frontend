@@ -6,20 +6,17 @@ import React, { useRef } from 'react';
 
 interface ImageUploadProps {
   label?: string;
-  subtext?: string;
   image: string | null | undefined;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
-  onClear: () => void;
   isError: boolean;
 }
 
 const defaultProps = {
   label: 'Upload',
-  subtext: '',
 };
 
 function ImageUpload({
-  label, subtext, image, onChange, onClear, isError,
+  label, image, onChange, isError,
 }: ImageUploadProps) {
   const ref = useRef(null);
 
@@ -46,7 +43,7 @@ function ImageUpload({
         pos="relative"
       >
         <Button p={0} onClick={() => openInput()} h="100%" w="100%" flex={1}>
-          {image && image.length && <Image objectFit="cover" src={image} w="100%" h="100%" />}
+          <Image objectFit="cover" src={image ?? '/images/default_dao.jpeg'} w="100%" h="100%" />
         </Button>
 
         <input style={{ visibility: 'hidden' }} ref={ref} type="file" name="myImage" onChange={onChange} accept="image/jpg, image/jpeg, image/png" />
@@ -68,7 +65,7 @@ function ImageUpload({
           <Image h="30px" w="30px" src="/ui_icons/upload.svg" />
         </Box>
       </Flex>
-      {subtext && subtext?.length && !image && !image?.length && (
+      {/* {subtext && subtext?.length && !image && !image?.length && (
         <Text
           fontSize="12px"
           color="#8850EA"
@@ -78,21 +75,19 @@ function ImageUpload({
         >
           {subtext}
         </Text>
-      )}
-      {image && image?.length && (
-        <Text
-          fontSize="12px"
-          color="#A0A7A7"
-          fontWeight="500"
-          lineHeight="24px"
-          mt={1}
-          cursor="pointer"
-          onClick={() => onClear()}
-          zIndex={1}
-        >
-          Remove
-        </Text>
-      )}
+      )} */}
+      <Text
+        fontSize="12px"
+        color="#A0A7A7"
+        fontWeight="500"
+        lineHeight="24px"
+        mt={1}
+        cursor="pointer"
+        onClick={() => openInput()}
+        zIndex={1}
+      >
+        Change
+      </Text>
     </Flex>
   );
 }

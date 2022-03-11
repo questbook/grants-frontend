@@ -94,9 +94,8 @@ function Form({
           <ImageUpload
             image={image}
             onChange={handleImageChange}
-            onClear={() => setImage(null)}
+            // onClear={() => setImage(null)}
             label="Add a logo"
-            subtext="Upload"
             isError={imageError}
           />
         </Flex>

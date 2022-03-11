@@ -130,9 +130,8 @@ function EditForm({
           image={image}
           isError={false}
           onChange={handleImageChange}
-          onClear={() => setImage(null)}
+          // onClear={() => setImage(null)}
           label="Add a logo"
-          subtext="Upload"
         />
       </Flex>
       <Flex w="100%" mt={1}>
