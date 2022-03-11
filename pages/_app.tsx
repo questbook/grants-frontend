@@ -2,7 +2,7 @@ import React, {
   ReactElement, ReactNode, createContext, useMemo,
 } from 'react';
 import '../styles/globals.css';
-import type { AppProps } from 'next/app';
+import type { AppContext, AppProps } from 'next/app';
 import { ChakraProvider } from '@chakra-ui/react';
 import { NextPage } from 'next';
 import 'draft-js/dist/Draft.css';
@@ -21,6 +21,7 @@ import {
 } from '@questbook/service-validator-client';
 import { MinimalWorkspace } from 'src/types';
 import { ALL_SUPPORTED_CHAIN_IDS } from 'src/constants/chains';
+import App from 'next/app';
 import theme from '../src/theme';
 import SubgraphClient from '../src/graphql/subgraph';
 
@@ -111,6 +112,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     </Provider>
   );
 }
+
+MyApp.getInitialProps = async (appContext: AppContext) => {
+  // calls page's `getInitialProps` and fills `appProps.pageProps`
+  const appProps = await App.getInitialProps(appContext);
+
+  return { ...appProps };
+};
 
 export default dynamic(() => Promise.resolve(MyApp), {
   ssr: false,
