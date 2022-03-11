@@ -1,6 +1,9 @@
+import config from 'src/constants/config';
+
 const IPFS_UPLOAD_ENDPOINT = 'https://ipfs.infura.io:5001/api/v0/add?pin=true';
 
 export const uploadToIPFS = async (data: string | Blob): Promise<{ hash: string }> => {
+  if (data === null) return { hash: config.deafultDAOImageHash };
   const form = new FormData();
   form.append('file', data);
 
