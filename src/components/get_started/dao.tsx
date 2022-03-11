@@ -83,7 +83,8 @@ function Dao({ onClick }: { onClick: () => void }) {
         py={3}
       >
         <Text w="100vw" textAlign="center" variant="footer" fontSize="12px">
-          Each grant can be seen on-chain.{' '}
+          Each grant can be seen on-chain.
+          {' '}
           <Link
             href="https://www.notion.so/questbook/Contracts-7cea3bdfb6be47e68f165b4a719c662f"
             isExternal
