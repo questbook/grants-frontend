@@ -5,12 +5,15 @@ import {
   Text,
   Image,
   Link,
+  useToast,
+  ToastId,
 } from '@chakra-ui/react';
 import React from 'react';
 import { highlightWordsInString } from 'src/utils/formattingUtils';
 import useChainId from 'src/hooks/utils/useChainId';
 import { SupportedChainId } from 'src/constants/chains';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import ErrorToast from 'src/components/ui/toasts/errorToast';
 import ImageUpload from '../../ui/forms/imageUpload';
 import MultiLineInput from '../../ui/forms/multiLineInput';
 import SingleLineInput from '../../ui/forms/singleLineInput';
@@ -37,12 +40,30 @@ function Form({
   const [image, setImage] = React.useState<string | null>(null);
   const [imageFile, setImageFile] = React.useState<File | null>(null);
   const [imageError, setImageError] = React.useState(false);
+  const toast = useToast();
+  const toastRef = React.useRef<ToastId>();
+  const maxImageSize = 2;
+
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const img = event.target.files[0];
-      setImageFile(img);
-      setImage(URL.createObjectURL(img));
-      setImageError(false);
+      if (img.size / 1024 / 1024 <= maxImageSize) {
+        setImageFile(img);
+        setImage(URL.createObjectURL(img));
+        setImageError(false);
+      } else {
+        toastRef.current = toast({
+          position: 'top',
+          render: () => ErrorToast({
+            content: `Image size exceeds ${maxImageSize} MB`,
+            close: () => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            },
+          }),
+        });
+      }
     }
   };
 
