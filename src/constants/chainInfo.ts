@@ -45,11 +45,12 @@ export const CHAIN_INFO: ChainInfoMap = {
         name: 'Metamask',
         icon: '/wallet_icons/metamask.svg',
       },
-      {
-        id: 'walletConnect',
-        name: 'Wallet Connect',
-        icon: '/wallet_icons/walletconnect.svg',
-      },
+      // Removing Wallet Connect Support
+      // {
+      //   id: 'walletConnect',
+      //   name: 'Wallet Connect',
+      //   icon: '/wallet_icons/walletconnect.svg',
+      // },
     ],
     explorer: {
       address: 'https://rinkeby.etherscan.io/address/',
@@ -88,11 +89,12 @@ export const CHAIN_INFO: ChainInfoMap = {
         name: 'Metamask',
         icon: '/wallet_icons/metamask.svg',
       },
-      {
-        id: 'walletConnect',
-        name: 'Wallet Connect',
-        icon: '/wallet_icons/walletconnect.svg',
-      },
+      // Removing Wallet Connect Support
+      // {
+      //   id: 'walletConnect',
+      //   name: 'Wallet Connect',
+      //   icon: '/wallet_icons/walletconnect.svg',
+      // },
     ],
     explorer: {
       address: 'https://explorer.pops.one/address/',
