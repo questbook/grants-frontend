@@ -148,6 +148,7 @@ function AddFunds({
           variant="link"
           color="#AA82F0"
           leftIcon={<Image src="/sidebar/discord_icon.svg" />}
+          onClick={() => window.open('https://discord.com/invite/tWg7Mb7KM7/')}
         >
           Support 24*7
         </Button>

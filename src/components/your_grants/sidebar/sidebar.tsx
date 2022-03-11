@@ -36,12 +36,12 @@ function Sidebar() {
     <SidebarComponent
       links={[
         {
-          href: '#',
+          href: 'https://discord.com/invite/tWg7Mb7KM7',
           label: 'Support 24*7',
           iconUrl: '/sidebar/discord_icon.svg',
         },
         {
-          href: '#',
+          href: 'https://www.notion.so/questbook/Contracts-7cea3bdfb6be47e68f165b4a719c662f',
           label: 'On Chain Contract',
           iconUrl: '/sidebar/onchain_icon.svg',
         },
