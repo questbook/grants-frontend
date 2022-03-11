@@ -19,7 +19,7 @@ export default [
   },
   {
     title: 'Funding Breakdown',
-    tooltip: 'Funding breakdown for each team member',
+    tooltip: 'Details on how the project will use funding to achieve goals.',
     id: 'fundingBreakdown',
     inputType: 'long-form',
     isRequired: true,

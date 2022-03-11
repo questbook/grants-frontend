@@ -120,7 +120,7 @@ function Funding({
         disabled={readOnly}
         isError={fundingBreakdownError}
         errorText="Required"
-        tooltip="Write about how you planning use funds for your project - hiring, marketing etc."
+        tooltip="Details on how the project will use funding to achieve goals."
         visible={grantRequiredFields.includes('fundingBreakdown')}
       />
 
