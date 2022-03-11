@@ -6,10 +6,10 @@ import { uploadToIPFS } from 'src/utils/ipfsUtils';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils';
 import getErrorMessage from 'src/utils/errorUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { SupportedNetwork } from 'src/generated/graphql';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract';
 import useChainId from './utils/useChainId';
-import { SupportedNetwork } from 'src/generated/graphql';
 
 export default function useCreateWorkspace(
   data: any,
@@ -50,7 +50,6 @@ export default function useCreateWorkspace(
       // console.log('calling validate');
 
       const uploadedImageHash = (await uploadToIPFS(data.image)).hash;
-      console.log('Image Hash: ', uploadedImageHash);
       // console.log('Network: ', data.network);
       // console.log('Network Return: ', getSupportedValidatorNetworkFromChainId(data.network));
       const {

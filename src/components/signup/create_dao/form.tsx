@@ -27,7 +27,6 @@ function Form({
     name: string;
     description: string;
     image: File | null;
-    imagePath: string;
     network: SupportedChainId;
   }) => void;
 }) {
@@ -93,7 +92,6 @@ function Form({
       name: daoName,
       description: daoDescription,
       image: imageFile,
-      imagePath: image,
       network: chainId!,
     });
   };
