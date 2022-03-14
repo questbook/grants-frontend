@@ -137,21 +137,21 @@ export const CHAIN_INFO: ChainInfoMap = {
       transactionHash: 'https://mumbai.polygonscan.com/tx/',
     },
     supportedCurrencies: {
-      '0xd393b1E02dA9831Ff419e22eA105aAe4c47E1253': {
-        icon: '/ui_icons/brand/currency/dai_symbol.svg',
-        label: 'DAI',
-        address: '0xd393b1E02dA9831Ff419e22eA105aAe4c47E1253',
-      },
+      // '0xd393b1E02dA9831Ff419e22eA105aAe4c47E1253': {
+      //   icon: '/ui_icons/brand/currency/dai_symbol.svg',
+      //   label: 'DAI',
+      //   address: '0xd393b1E02dA9831Ff419e22eA105aAe4c47E1253',
+      // },
       '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889': {
         icon: '/ui_icons/brand/currency/wmatic_symbol.svg',
         label: 'WMATIC',
         address: '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
       },
-      '0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa': {
-        icon: '/ui_icons/brand/currency/weth_symbol.svg',
-        label: 'WETH',
-        address: '0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa',
-      },
+      // '0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa': {
+      //   icon: '/ui_icons/brand/currency/weth_symbol.svg',
+      //   label: 'WETH',
+      //   address: '0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa',
+      // },
     },
     subgraphClientUrl: '',
   },
