@@ -1,5 +1,6 @@
 import {
-  Link, Divider, Flex, IconButton, Image, Text,
+  Button,
+  Divider, Flex, IconButton, Image, Text,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { useGetDaoDetailsQuery } from 'src/generated/graphql';
@@ -14,6 +15,7 @@ import { useAccount } from 'wagmi';
 import SeeMore from 'src/components/profile/see_more';
 import { SupportedChainId } from 'src/constants/chains';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import { ApiClientsContext } from './_app';
 
 function Profile() {
@@ -93,8 +95,9 @@ function Profile() {
         <Flex direction="row">
           {workspaceData?.socials.map((social) => (
             <IconButton
-              as={Link}
               aria-label={social.name}
+              // as={Button}
+              zIndex={10}
               ml={3}
               mt={3}
               p={3}
@@ -108,8 +111,7 @@ function Profile() {
               )}
               bg="white"
               boxSize="48px"
-              href={social.value}
-              isExternal
+              onClick={() => { console.log(social.value); window.open(social.value, '_blank'); }}
             />
           ))}
         </Flex>
@@ -163,6 +165,7 @@ function Profile() {
         && grantData.length > 0
         && grantData.map((grant) => (
           <BrowseGrantCard
+            daoID={grant.workspace.id}
             key={grant.id}
             daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
             daoName={grant.workspace.title}
@@ -184,6 +187,9 @@ function Profile() {
                 ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
                   ?.icon ?? '/images/dummy/Ethereum Icon.svg'
               }
+            chainId={getSupportedChainIdFromSupportedNetwork(
+              grant.workspace.supportedNetworks[0],
+            )}
             isGrantVerified={BigNumber.from(grant.funding).gt(0)}
             onClick={() => {
               if (!(accountData && accountData.address)) {

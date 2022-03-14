@@ -168,8 +168,8 @@ function EditForm({
       </Flex>
       <Flex w="100%" mt={8} alignItems="flex-start">
         <SingleLineInput
-          label="Twitter Handle"
-          placeholder="@questbookapp"
+          label="Twitter Profile Link"
+          placeholder="https://twitter.com/questbookapp"
           subtext=""
           value={twitterHandle}
           onChange={(e) => {
