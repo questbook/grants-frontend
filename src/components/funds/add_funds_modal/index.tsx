@@ -194,10 +194,12 @@ function AddFunds({
                     mx={4}
                   >
                     <Flex direction="row">
-                      <Text variant="tableBody" color="#8850EA" my={4}>
-                        {text}
-                        {' '}
-                      </Text>
+                      <Button _active={{}} onClick={() => setType(index)} variant="link" my={4}>
+                        <Text variant="tableBody" color="#8850EA">
+                          {text}
+                          {' '}
+                        </Text>
+                      </Button>
                       <Image
                         ml={2}
                         display="inline-block"
