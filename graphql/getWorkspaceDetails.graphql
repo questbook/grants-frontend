@@ -11,7 +11,9 @@ query getWorkspaceDetails($workspaceID: ID!) {
           value
         }
         members {
+          id
           actorId
+          publicKey
           email
         }
     }

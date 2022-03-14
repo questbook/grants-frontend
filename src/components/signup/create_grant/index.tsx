@@ -1,5 +1,6 @@
 import { Container } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
+import { useAccount } from 'wagmi';
 import Form from './form';
 import TipsContainer from './tips';
 
@@ -9,6 +10,7 @@ function CreateGrant({
   onSubmit: (data: any) => void;
   hasClicked: boolean;
 }) {
+  const [{ data: accountData }] = useAccount();
   const totalSteps = 4;
 
   const [formData, setFormData] = useState({});
@@ -37,7 +39,7 @@ function CreateGrant({
     //   onSubmit();
     // }, 10000);
 
-    onSubmit({ ...data, ...formData });
+    onSubmit({ ...data, ...formData, grantManagers: [accountData?.address] });
   };
 
   return (

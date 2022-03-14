@@ -58,6 +58,7 @@ function SignupDao() {
         ownerId: workspaceData.ownerId,
         supportedNetworks: [workspaceData.network],
         title: workspaceData.name,
+        members: [],
       });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

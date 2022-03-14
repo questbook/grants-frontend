@@ -16,7 +16,8 @@ import { isValidEmail } from 'src/utils/validationUtils';
 import useResubmitApplication from 'src/hooks/useResubmitApplication';
 import Loader from 'src/components/ui/loader';
 import { SupportedChainId } from 'src/constants/chains';
-import { GrantApplicationUpdate } from '@questbook/service-validator-client';
+import { GrantApplicationRequest, GrantApplicationUpdate } from '@questbook/service-validator-client';
+import useApplicationEncryption from 'src/hooks/useApplicationEncryption';
 import {
   GrantApplicationFieldsSubgraph,
   GrantApplicationProps,
@@ -45,6 +46,8 @@ function Form({
   feedback,
   grantRequiredFields,
   applicationID,
+  workspace,
+  piiFields,
 }: // grantID,
 {
   chainId: SupportedChainId | undefined;
@@ -60,8 +63,11 @@ function Form({
   feedback: string;
   grantRequiredFields: string[];
   applicationID: string;
+  workspace: any;
+  piiFields: string[];
   // grantID: string;
 }) {
+  const { encryptApplicationPII } = useApplicationEncryption();
   const toast = useToast();
   const router = useRouter();
   const [applicantName, setApplicantName] = useState('');
@@ -298,7 +304,20 @@ function Form({
       }
     });
 
-    setUpdateData(data);
+    if (!workspace || !workspace.members) return;
+    let encryptedData;
+
+    if (piiFields.length > 0) {
+      encryptedData = await encryptApplicationPII(
+        data as GrantApplicationRequest,
+        piiFields,
+        workspace.members,
+      );
+
+      console.log('encryptedData -----', encryptedData);
+    }
+
+    setUpdateData(encryptedData || data);
   };
 
   return (

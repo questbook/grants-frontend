@@ -15,6 +15,11 @@ query getWorkspaceMembers($actorId: Bytes!) {
       logoIpfsHash
       title
       supportedNetworks
+      members {
+        id
+        actorId
+        publicKey
+      }
     }
   }
 }

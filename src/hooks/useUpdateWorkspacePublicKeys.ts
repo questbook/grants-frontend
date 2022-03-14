@@ -1,25 +1,17 @@
 import React, { useContext, useEffect } from 'react';
 import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
-import { parseAmount } from 'src/utils/formattingUtils';
 import { useAccount, useNetwork } from 'wagmi';
-import { SupportedChainId } from 'src/constants/chains';
 import {
   getSupportedChainIdFromWorkspace,
-  getSupportedValidatorNetworkFromChainId,
 } from 'src/utils/validationUtils';
-import {
-  APPLICATION_REGISTRY_ADDRESS,
-  WORKSPACE_REGISTRY_ADDRESS,
-} from 'src/constants/addresses';
+import { WorkspacePublicKeysUpdateRequest } from '@questbook/service-validator-client';
 import ErrorToast from '../components/ui/toasts/errorToast';
-import useGrantFactoryContract from './contracts/useGrantFactoryContract';
 import useChainId from './utils/useChainId';
+import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract';
 
-export default function useCreateGrant(
-  data: any,
-  chainId?: SupportedChainId,
-  workspaceId?: string,
+export default function useUpdateWorkspacePublicKeys(
+  data: WorkspacePublicKeysUpdateRequest,
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
@@ -29,12 +21,12 @@ export default function useCreateGrant(
 
   const apiClients = useContext(ApiClientsContext)!;
   const { validatorApi, workspace } = apiClients;
-  const grantContract = useGrantFactoryContract(
-    chainId ?? getSupportedChainIdFromWorkspace(workspace),
-  );
+
+  const currentChainId = useChainId();
+  const workspaceRegistryContract = useWorkspaceRegistryContract(currentChainId);
+
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
-  const currentChainId = useChainId();
 
   useEffect(() => {
     if (data) {
@@ -53,42 +45,18 @@ export default function useCreateGrant(
       try {
         const {
           data: { ipfsHash },
-        } = await validatorApi.validateGrantCreate({
-          title: data.title,
-          summary: data.summary,
-          details: data.details,
-          deadline: data.date,
-          reward: {
-            committed: parseAmount(data.reward),
-            asset: data.rewardCurrencyAddress,
-          },
-          creatorId: accountData!.address,
-          workspaceId: getSupportedValidatorNetworkFromChainId(
-            (chainId ?? getSupportedChainIdFromWorkspace(workspace))!,
-          ),
-          fields: data.fields,
-          grantManagers: data.grantManagers,
-        });
+        } = await validatorApi.validateWorkspacePublicKeysUpdate(data);
         if (!ipfsHash) {
           throw new Error('Error validating grant data');
         }
 
-        console.log(workspaceId ?? Number(workspace?.id).toString());
-        console.log('ipfsHash', ipfsHash);
-        console.log(
-          WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
-          APPLICATION_REGISTRY_ADDRESS[currentChainId!],
-        );
-
-        const createGrantTransaction = await grantContract.createGrant(
-          workspaceId ?? Number(workspace?.id).toString(),
+        const updateTransaction = await workspaceRegistryContract.updateWorkspaceMetadata(
+          Number(workspace!.id),
           ipfsHash,
-          WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
-          APPLICATION_REGISTRY_ADDRESS[currentChainId!],
         );
-        const createGrantTransactionData = await createGrantTransaction.wait();
+        const updateTransactionData = await updateTransaction.wait();
 
-        setTransactionData(createGrantTransactionData);
+        setTransactionData(updateTransactionData);
         setLoading(false);
       } catch (e: any) {
         console.log(e);
@@ -109,6 +77,7 @@ export default function useCreateGrant(
     }
     try {
       if (!data) return;
+      if (!data.publicKey || !data.walletId) return;
       if (transactionData) return;
       if (!accountData || !accountData.address) {
         throw new Error('not connected to wallet');
@@ -116,30 +85,23 @@ export default function useCreateGrant(
       if (!currentChainId) {
         throw new Error('not connected to valid network');
       }
-      if (chainId) {
-        if (chainId !== currentChainId) {
-          throw new Error('connected to wrong network');
-        }
-        if (!workspaceId) {
-          throw new Error('workspaceId is required');
-        }
-      } else {
-        if (!workspace) {
-          throw new Error('not connected to workspace');
-        }
-        if (getSupportedChainIdFromWorkspace(workspace) !== currentChainId) {
-          throw new Error('connected to wrong network');
-        }
+      if (!workspace) {
+        throw new Error('not connected to workspace');
+      }
+      console.log(workspace, getSupportedChainIdFromWorkspace(workspace));
+      console.log(currentChainId);
+      if (getSupportedChainIdFromWorkspace(workspace) !== currentChainId) {
+        throw new Error('connected to wrong network');
       }
       if (!validatorApi) {
         throw new Error('validatorApi or workspaceId is not defined');
       }
       if (
-        !grantContract
-        || grantContract.address
+        !workspaceRegistryContract
+        || workspaceRegistryContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !grantContract.signer
-        || !grantContract.provider
+        || !workspaceRegistryContract.signer
+        || !workspaceRegistryContract.provider
       ) {
         return;
       }
@@ -164,16 +126,14 @@ export default function useCreateGrant(
     loading,
     toast,
     transactionData,
-    grantContract,
+    workspaceRegistryContract,
     validatorApi,
     workspace,
     accountData,
     networkData,
     currentChainId,
-    chainId,
-    workspaceId,
     data,
   ]);
 
-  return [transactionData, loading, error];
+  return [transactionData, loading];
 }

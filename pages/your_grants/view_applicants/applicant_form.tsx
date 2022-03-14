@@ -20,6 +20,7 @@ import {
 import { SupportedChainId } from 'src/constants/chains';
 import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+import useApplicationEncryption from 'src/hooks/useApplicationEncryption';
 import { ApiClientsContext } from '../../_app';
 import InfoToast from '../../../src/components/ui/infoToast';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
@@ -40,6 +41,7 @@ import NavbarLayout from '../../../src/layout/navbarLayout';
 
 function ApplicantForm() {
   const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
+  const { decryptApplicationPII } = useApplicationEncryption();
 
   const toastRef = React.useRef<ToastId>();
 
@@ -91,6 +93,7 @@ function ApplicantForm() {
   } = useGetApplicationDetailsQuery(queryParams);
   useEffect(() => {
     if (data && data.grantApplication) {
+      console.log('grantApplication------>', data.grantApplication);
       setApplicationData(data.grantApplication);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -138,6 +141,15 @@ function ApplicantForm() {
     }
   }, [toastRef, toast, router, applicationData, txn, error]);
 
+  const showHiddenData = async () => {
+    if (applicationData) {
+      const decryptedApplicationData = await decryptApplicationPII(applicationData);
+      if (decryptedApplicationData) {
+        setApplicationData(decryptedApplicationData);
+      }
+    }
+  };
+
   const handleApplicationStateUpdate = async (st: number) => {
     // console.log('unsetting state');
     setState(undefined);
@@ -165,7 +177,7 @@ function ApplicantForm() {
             applicationData={applicationData}
             hasClicked={loading}
           />
-          <AcceptSidebar applicationData={applicationData} />
+          <AcceptSidebar applicationData={applicationData} showHiddenData={showHiddenData} />
         </>
       );
     }
@@ -180,7 +192,7 @@ function ApplicantForm() {
             commentError={rejectionCommentError}
             setCommentError={setRejectionCommentError}
           />
-          <RejectSidebar applicationData={applicationData} />
+          <RejectSidebar applicationData={applicationData} showHiddenData={showHiddenData} />
         </>
       );
     }
@@ -194,7 +206,7 @@ function ApplicantForm() {
           commentError={resubmitCommentError}
           setCommentError={setResubmitCommentError}
         />
-        <ResubmitSidebar applicationData={applicationData} />
+        <ResubmitSidebar applicationData={applicationData} showHiddenData={showHiddenData} />
       </>
     );
   }
@@ -311,12 +323,13 @@ function ApplicantForm() {
                 )}
 
                 <Flex direction="column">
-                  <Application applicationData={applicationData} />
+                  <Application applicationData={applicationData} showHiddenData={showHiddenData} />
                 </Flex>
               </Flex>
             </Flex>
             <Flex direction="column" mt={2}>
               <Sidebar
+                showHiddenData={showHiddenData}
                 applicationData={applicationData}
                 onAcceptApplicationClick={() => setStep(1)}
                 onRejectApplicationClick={() => setStep(2)}

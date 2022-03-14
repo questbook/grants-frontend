@@ -84,30 +84,58 @@ function AboutTeam({
       <Box mt={3} />
 
       {
-        membersDescription.map(({ description, isError }, index) => (
-          <MultiLineInput
-            placeholder="Write about team member - education, work experience with portfolio link, and side projects."
-            label={`Member ${index + 1}`}
-            maxLength={300}
-            value={description}
-            onChange={(e) => {
-              const newMembersDescription = [...membersDescription];
+        membersDescription && membersDescription.length ? (
+          membersDescription.map(({ description, isError }, index) => (
+            <MultiLineInput
+              placeholder="Write about team member - education, work experience with portfolio link, and side projects."
+              label={`Member ${index + 1}`}
+              maxLength={300}
+              value={description}
+              onChange={(e) => {
+                const newMembersDescription = [...membersDescription];
 
-              const member = { ...membersDescription[index] };
-              if (member.isError) {
-                member.isError = false;
-              }
-              member.description = e.target.value;
-              newMembersDescription[index] = member;
+                const member = { ...membersDescription[index] };
+                if (member.isError) {
+                  member.isError = false;
+                }
+                member.description = e.target.value;
+                newMembersDescription[index] = member;
 
-              setMembersDescription(newMembersDescription);
-            }}
-            isError={isError}
-            errorText="Required"
-            disabled={readOnly}
-            visible={grantRequiredFields.includes('memberDetails')}
-          />
-        ))
+                setMembersDescription(newMembersDescription);
+              }}
+              isError={isError}
+              errorText="Required"
+              disabled={readOnly}
+              visible={grantRequiredFields.includes('memberDetails')}
+            />
+          ))) : (
+          grantRequiredFields.includes('memberDetails') && teamMembers && (
+            [...Array(teamMembers)].map((_, index) => (
+              <MultiLineInput
+                placeholder="Write about team member - education, work experience with portfolio link, and side projects."
+                label={`Member ${index + 1}`}
+                maxLength={300}
+                value=""
+                onChange={(e) => {
+                  const newMembersDescription = [...membersDescription];
+
+                  const member = { ...membersDescription[index] };
+                  if (member.isError) {
+                    member.isError = false;
+                  }
+                  member.description = e.target.value;
+                  newMembersDescription[index] = member;
+
+                  setMembersDescription(newMembersDescription);
+                }}
+                isError={false}
+                errorText="Required"
+                disabled={readOnly}
+                visible={grantRequiredFields.includes('memberDetails')}
+              />
+            ))
+          )
+        )
       }
 
     </Box>
