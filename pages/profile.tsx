@@ -1,5 +1,4 @@
 import {
-  Button,
   Divider, Flex, IconButton, Image, Text,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
