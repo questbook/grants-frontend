@@ -345,6 +345,8 @@ export type GrantApplication = {
   id: Scalars['ID'];
   /** Milestones of the application */
   milestones: Array<ApplicationMilestone>;
+  /** PII Data */
+  pii: Array<PiiAnswer>;
   /** Current state of the application */
   state: ApplicationState;
   /** in seconds since epoch */
@@ -367,6 +369,15 @@ export type GrantApplicationMilestonesArgs = {
   orderDirection?: InputMaybe<OrderDirection>;
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<ApplicationMilestone_Filter>;
+};
+
+
+export type GrantApplicationPiiArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<PiiAnswer_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<PiiAnswer_Filter>;
 };
 
 /** A revision after an update */
@@ -574,6 +585,10 @@ export type GrantApplication_Filter = {
   milestones_contains?: InputMaybe<Array<Scalars['String']>>;
   milestones_not?: InputMaybe<Array<Scalars['String']>>;
   milestones_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  pii?: InputMaybe<Array<Scalars['String']>>;
+  pii_contains?: InputMaybe<Array<Scalars['String']>>;
+  pii_not?: InputMaybe<Array<Scalars['String']>>;
+  pii_not_contains?: InputMaybe<Array<Scalars['String']>>;
   state?: InputMaybe<ApplicationState>;
   state_in?: InputMaybe<Array<ApplicationState>>;
   state_not?: InputMaybe<ApplicationState>;
@@ -597,6 +612,7 @@ export enum GrantApplication_OrderBy {
   Grant = 'grant',
   Id = 'id',
   Milestones = 'milestones',
+  Pii = 'pii',
   State = 'state',
   UpdatedAtS = 'updatedAtS'
 }
@@ -1134,6 +1150,60 @@ export enum OrderDirection {
   Desc = 'desc'
 }
 
+export type PiiAnswer = {
+  __typename?: 'PIIAnswer';
+  /** The encrypted data */
+  data: Scalars['String'];
+  id: Scalars['ID'];
+  /** Grant manager who can access this encrypted info */
+  manager?: Maybe<GrantManager>;
+};
+
+export type PiiAnswer_Filter = {
+  data?: InputMaybe<Scalars['String']>;
+  data_contains?: InputMaybe<Scalars['String']>;
+  data_ends_with?: InputMaybe<Scalars['String']>;
+  data_gt?: InputMaybe<Scalars['String']>;
+  data_gte?: InputMaybe<Scalars['String']>;
+  data_in?: InputMaybe<Array<Scalars['String']>>;
+  data_lt?: InputMaybe<Scalars['String']>;
+  data_lte?: InputMaybe<Scalars['String']>;
+  data_not?: InputMaybe<Scalars['String']>;
+  data_not_contains?: InputMaybe<Scalars['String']>;
+  data_not_ends_with?: InputMaybe<Scalars['String']>;
+  data_not_in?: InputMaybe<Array<Scalars['String']>>;
+  data_not_starts_with?: InputMaybe<Scalars['String']>;
+  data_starts_with?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  manager?: InputMaybe<Scalars['String']>;
+  manager_contains?: InputMaybe<Scalars['String']>;
+  manager_ends_with?: InputMaybe<Scalars['String']>;
+  manager_gt?: InputMaybe<Scalars['String']>;
+  manager_gte?: InputMaybe<Scalars['String']>;
+  manager_in?: InputMaybe<Array<Scalars['String']>>;
+  manager_lt?: InputMaybe<Scalars['String']>;
+  manager_lte?: InputMaybe<Scalars['String']>;
+  manager_not?: InputMaybe<Scalars['String']>;
+  manager_not_contains?: InputMaybe<Scalars['String']>;
+  manager_not_ends_with?: InputMaybe<Scalars['String']>;
+  manager_not_in?: InputMaybe<Array<Scalars['String']>>;
+  manager_not_starts_with?: InputMaybe<Scalars['String']>;
+  manager_starts_with?: InputMaybe<Scalars['String']>;
+};
+
+export enum PiiAnswer_OrderBy {
+  Data = 'data',
+  Id = 'id',
+  Manager = 'manager'
+}
+
 export type Query = {
   __typename?: 'Query';
   /** Access to subgraph metadata */
@@ -1158,6 +1228,8 @@ export type Query = {
   grants: Array<Grant>;
   notification?: Maybe<Notification>;
   notifications: Array<Notification>;
+  piianswer?: Maybe<PiiAnswer>;
+  piianswers: Array<PiiAnswer>;
   reward?: Maybe<Reward>;
   rewards: Array<Reward>;
   social?: Maybe<Social>;
@@ -1354,6 +1426,24 @@ export type QueryNotificationsArgs = {
 };
 
 
+export type QueryPiianswerArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryPiianswersArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<PiiAnswer_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<PiiAnswer_Filter>;
+};
+
+
 export type QueryRewardArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
@@ -1541,6 +1631,8 @@ export type Subscription = {
   grants: Array<Grant>;
   notification?: Maybe<Notification>;
   notifications: Array<Notification>;
+  piianswer?: Maybe<PiiAnswer>;
+  piianswers: Array<PiiAnswer>;
   reward?: Maybe<Reward>;
   rewards: Array<Reward>;
   social?: Maybe<Social>;
@@ -1734,6 +1826,24 @@ export type SubscriptionNotificationsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<Notification_Filter>;
+};
+
+
+export type SubscriptionPiianswerArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionPiianswersArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<PiiAnswer_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<PiiAnswer_Filter>;
 };
 
 
@@ -2172,7 +2282,7 @@ export type GetDaoDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetDaoDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, socials: Array<{ __typename?: 'Social', name: string, value: string }> } | null, grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', title: string, logoIpfsHash: string } }> };
+export type GetDaoDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, socials: Array<{ __typename?: 'Social', name: string, value: string }> } | null, grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
 
 export type GetFundSentForApplicationQueryVariables = Exact<{
   applicationId?: InputMaybe<Scalars['String']>;
@@ -2652,8 +2762,10 @@ export const GetDaoDetailsDocument = gql`
       asset
     }
     workspace {
+      id
       title
       logoIpfsHash
+      supportedNetworks
     }
     deadline
     funding

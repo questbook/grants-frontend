@@ -2,12 +2,16 @@ import React from 'react';
 import {
   Image, Text, Button, Flex, Box, Divider, Link,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
+import { SupportedChainId } from 'src/constants/chains';
 import Badge from './badge';
 
 interface BrowseGrantCardProps {
+  daoID: string;
   daoIcon: string;
   daoName: string;
   isDaoVerified?: boolean;
+  chainId: SupportedChainId | undefined;
 
   grantTitle: string;
   grantDesc: string;
@@ -24,9 +28,11 @@ interface BrowseGrantCardProps {
 }
 
 function BrowseGrantCard({
+  daoID,
   daoIcon,
   daoName,
   isDaoVerified,
+  chainId,
 
   grantTitle,
   grantDesc,
@@ -41,6 +47,8 @@ function BrowseGrantCard({
 
   onClick,
 }: BrowseGrantCardProps) {
+  const router = useRouter();
+
   return (
     <>
       <Flex py={6} w="100%">
@@ -68,17 +76,30 @@ function BrowseGrantCard({
           </Flex>
 
           <Flex direction="row">
-            <Link href="link" lineHeight="24px" fontWeight="700">
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+            <Link
+              onClick={() => {
+                router.push({
+                  pathname: '/profile',
+                  query: {
+                    daoId: daoID,
+                    chainId,
+                  },
+                });
+              }}
+              lineHeight="24px"
+              fontWeight="700"
+            >
               {daoName}
               {isDaoVerified && (
-                <Image
-                  h={4}
-                  w={4}
-                  display="inline-block"
-                  src="/ui_icons/verified.svg"
-                  ml="2px"
-                  mb="-2px"
-                />
+              <Image
+                h={4}
+                w={4}
+                display="inline-block"
+                src="/ui_icons/verified.svg"
+                ml="2px"
+                mb="-2px"
+              />
               )}
             </Link>
           </Flex>
