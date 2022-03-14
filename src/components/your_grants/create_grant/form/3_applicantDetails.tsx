@@ -4,21 +4,19 @@ import {
 import React from 'react';
 import applicantDetailsList from '../../../../constants/applicantDetailsList';
 import Badge from '../../../ui/badge';
-import SingleLineInput from '../../../ui/forms/singleLineInput';
 
 function ApplicantDetails({
   detailsRequired,
   toggleDetailsRequired,
 
-  extraField,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  setExtraField,
+  // extraField,
+  // setExtraField,
 
-  extraFieldDetails,
-  setExtraFieldDetails,
+  // extraFieldDetails,
+  // setExtraFieldDetails,
 
-  extraFieldError,
-  setExtraFieldError,
+  // extraFieldError,
+  // setExtraFieldError,
 
   multipleMilestones,
   setMultipleMilestones,
@@ -26,14 +24,14 @@ function ApplicantDetails({
   detailsRequired: any[];
   toggleDetailsRequired: (index: number) => void;
 
-  extraField: boolean;
-  setExtraField: (extraField: boolean) => void;
+  // extraField: boolean;
+  // setExtraField: (extraField: boolean) => void;
 
-  extraFieldDetails: string;
-  setExtraFieldDetails: (extraFieldDetails: string) => void;
+  // extraFieldDetails: string;
+  // setExtraFieldDetails: (extraFieldDetails: string) => void;
 
-  extraFieldError: boolean;
-  setExtraFieldError: (extraFieldError: boolean) => void;
+  // extraFieldError: boolean;
+  // setExtraFieldError: (extraFieldError: boolean) => void;
 
   multipleMilestones: boolean;
   setMultipleMilestones: (multipleMilestones: boolean) => void;
@@ -86,7 +84,7 @@ function ApplicantDetails({
 
       <Box mt={6} />
 
-      {extraField ? (
+      {/* {extraField ? (
         <>
           <SingleLineInput
             label="Field Name"
@@ -102,7 +100,7 @@ function ApplicantDetails({
           />
           <Box mt={8} />
         </>
-      ) : null}
+      ) : null} */}
 
       {milestoneSelectOptionIsVisible && (
         <>
