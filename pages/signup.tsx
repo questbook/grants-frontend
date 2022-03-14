@@ -6,6 +6,7 @@ import React, { ReactElement, useContext, useEffect } from 'react';
 import useCreateWorkspace from 'src/hooks/useCreateWorkspace';
 import useCreateGrant from 'src/hooks/useCreateGrant';
 import { SupportedChainId } from 'src/constants/chains';
+import { SupportedNetwork } from 'src/generated/graphql';
 import InfoToast from '../src/components/ui/infoToast';
 import Form from '../src/components/signup/create_dao/form';
 import Loading from '../src/components/signup/create_dao/loading';
@@ -59,7 +60,7 @@ function SignupDao() {
         id: Number(newId).toString(),
         logoIpfsHash: imageHash,
         ownerId: workspaceData.ownerId,
-        supportedNetworks: [workspaceData.network],
+        supportedNetworks: [`chain_${workspaceData.network}` as SupportedNetwork],
         title: workspaceData.name,
         members: [],
       });

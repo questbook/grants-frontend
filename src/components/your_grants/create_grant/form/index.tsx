@@ -348,7 +348,12 @@ function Form({
         </Text>
       </Flex>
 
-      <Button py={hasClicked ? 2 : 0} onClick={hasClicked ? () => {} : handleOnSubmit} variant="primary">
+      <Button
+        py={hasClicked ? 2 : 0}
+        onClick={hasClicked ? () => {} : handleOnSubmit}
+        variant="primary"
+        disabled={shouldEncrypt && (!keySubmitted && !hasOwnerPublicKey)}
+      >
         {hasClicked ? <Loader /> : 'Create Grant'}
       </Button>
     </>
