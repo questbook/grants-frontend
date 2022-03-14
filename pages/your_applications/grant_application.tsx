@@ -103,7 +103,7 @@ function ViewApplication() {
       fundingAsk: ethers.utils.formatEther(getStringField('fundingAsk') ?? '0'),
       fundingBreakdown: getStringField('fundingBreakdown'),
     };
-    if (application?.grant?.fields?.find((field: any) => field.title === 'memberDetails')) {
+    if (application?.grant?.fields?.find((field: any) => field.title === 'memberDetails') && !fd.membersDescription.length) {
       fd.membersDescription = [...Array(fd.teamMembers)].map(() => ({ description: '' }));
     }
     setFormData(fd);
