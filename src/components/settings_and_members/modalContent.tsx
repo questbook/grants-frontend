@@ -57,7 +57,7 @@ function ModalContent({
       hasError = true;
     }
 
-    if (!memberEmail || memberEmail.length === 0 || !isValidEmail(memberEmail)) {
+    if (memberEmail && !isValidEmail(memberEmail)) {
       setMemberEmailError(true);
       hasError = true;
     }
