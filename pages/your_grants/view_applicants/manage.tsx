@@ -24,6 +24,7 @@ import useApplicationMilestones from 'src/utils/queryUtil';
 import { SupportedChainId } from 'src/constants/chains';
 import useCompleteApplication from 'src/hooks/useCompleteApplication';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+import config from 'src/constants/config';
 import InfoToast from '../../../src/components/ui/infoToast';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Heading from '../../../src/components/ui/heading';
@@ -367,7 +368,7 @@ function ManageGrant() {
               variant="link"
               color="#AA82F0"
               leftIcon={<Image src="/sidebar/discord_icon.svg" />}
-              onClick={() => window.open('https://discord.com/invite/tWg7Mb7KM7/')}
+              onClick={() => window.open(config.supportLink)}
             >
               Support 24*7
             </Button>
