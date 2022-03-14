@@ -19,7 +19,7 @@ export default [
   },
   {
     title: 'Funding Breakdown',
-    tooltip: 'Funding breakdown for each team member',
+    tooltip: 'Details on how the project will use funding to achieve goals.',
     id: 'fundingBreakdown',
     inputType: 'long-form',
     isRequired: true,
@@ -54,12 +54,12 @@ export default [
     inputType: 'array',
     isRequired: false,
   },
-  {
-    title: 'Other Information',
-    id: 'extraField',
-    inputType: 'short-form',
-    isRequired: false,
-  },
+  // {
+  //   title: 'Other Information',
+  //   id: 'extraField',
+  //   inputType: 'short-form',
+  //   isRequired: false,
+  // },
   {
     title: 'Funding Ask',
     id: 'fundingAsk',

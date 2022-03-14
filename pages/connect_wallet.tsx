@@ -6,27 +6,24 @@ import {
   Box,
   VStack,
   Image,
+  ToastId,
+  Link,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, {
-  ReactElement, useEffect,
-} from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { useConnect } from 'wagmi';
 import {
   ALL_SUPPORTED_CHAIN_IDS,
   SupportedChainId,
 } from 'src/constants/chains';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import ErrorToast from 'src/components/ui/toasts/errorToast';
 import ModalContent from '../src/components/connect_wallet/modalContent';
 import WalletSelectButton from '../src/components/connect_wallet/walletSelectButton';
 import Modal from '../src/components/ui/modal';
 import SecondaryDropdown from '../src/components/ui/secondaryDropdown';
-import Tooltip from '../src/components/ui/tooltip';
 import NavbarLayout from '../src/layout/navbarLayout';
 import strings from '../src/constants/strings.json';
-
-// @TODO: harmony testnet image and currencies
-// @TODO: why is toc link removed?
 
 function ConnectWallet() {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -47,7 +44,10 @@ function ConnectWallet() {
       } else if (router.query.flow === '/') {
         router.replace({
           pathname: '/explore_grants/about_grant',
-          query: { grantId: router.query.grantId, chainId: router.query.chainId },
+          query: {
+            grantId: router.query.grantId,
+            chainId: router.query.chainId,
+          },
         });
       } else {
         router.push({ pathname: '/' });
@@ -57,15 +57,20 @@ function ConnectWallet() {
 
   const [{ data, error }, connect] = useConnect();
   const toast = useToast();
+  const toastRef = React.useRef<ToastId>();
 
   useEffect(() => {
     if (error) {
-      toast({
-        title: error?.name,
-        description: error?.message,
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
+      toastRef.current = toast({
+        position: 'top',
+        render: () => ErrorToast({
+          content: 'Please check your Metamask extension in the browser',
+          close: () => {
+            if (toastRef.current) {
+              toast.close(toastRef.current);
+            }
+          },
+        }),
       });
     }
   }, [toast, error]);
@@ -83,7 +88,8 @@ function ConnectWallet() {
       </Text>
       <Text mt={7} textAlign="center">
         {strings.connect_wallet.subheading_1}
-        <Tooltip label={strings.connect_wallet.tooltip_label} />
+        {' '}
+        {/* <Tooltip label={strings.connect_wallet.tooltip_label} /> */}
         {strings.connect_wallet.subheading_2}
       </Text>
 
@@ -136,22 +142,27 @@ function ConnectWallet() {
       </VStack>
 
       {router.query.flow === 'getting_started/dao' && (
-      <Text variant="footer" mt="24px">
-        <Image
-          display="inline-block"
-          src="/ui_icons/protip.svg"
-          alt="pro tip"
-          mb="-2px"
-        />
-        {' '}
-        <Text variant="footer" fontWeight="700" display="inline-block">Pro Tip: </Text>
-        {' '}
-        {strings.connect_wallet.protip}
-      </Text>
+        <Text variant="footer" mt="24px">
+          <Image
+            display="inline-block"
+            src="/ui_icons/protip.svg"
+            alt="pro tip"
+            mb="-2px"
+          />
+          {' '}
+          <Text variant="footer" fontWeight="700" display="inline-block">
+            Pro Tip:
+            {' '}
+          </Text>
+          {' '}
+          {strings.connect_wallet.protip}
+        </Text>
       )}
 
       <Text variant="footer" my="36px">
         {strings.connect_wallet.footer}
+        {' '}
+        <Link isExternal href="http://socionity.com/privacy.html">Terms of Service</Link>
       </Text>
 
       <Modal

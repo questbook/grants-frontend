@@ -3,7 +3,10 @@ import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import { useAccount } from 'wagmi';
 import { uploadToIPFS } from 'src/utils/ipfsUtils';
-import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils';
+import { getSupportedChainIdFromSupportedNetwork, getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils';
+import getErrorMessage from 'src/utils/errorUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { SupportedNetwork } from 'src/generated/graphql';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract';
 import useChainId from './utils/useChainId';
@@ -34,6 +37,10 @@ export default function useCreateWorkspace(
   }, [data]);
 
   useEffect(() => {
+    console.log(data?.network);
+  }, [data]);
+
+  useEffect(() => {
     if (error) return;
     if (loading) return;
     // console.log('calling createGrant');
@@ -42,15 +49,15 @@ export default function useCreateWorkspace(
       setLoading(true);
       // console.log('calling validate');
 
-      const uploadedImageHash = await uploadToIPFS(data.image);
-      console.log('Network: ', data.network);
-      console.log('Network Return: ', getSupportedValidatorNetworkFromChainId(data.network));
+      const uploadedImageHash = (await uploadToIPFS(data.image)).hash;
+      // console.log('Network: ', data.network);
+      // console.log('Network Return: ', getSupportedValidatorNetworkFromChainId(data.network));
       const {
         data: { ipfsHash },
       } = await validatorApi.validateWorkspaceCreate({
         title: data.name,
         about: data.description,
-        logoIpfsHash: uploadedImageHash.hash,
+        logoIpfsHash: uploadedImageHash,
         creatorId: accountData!.address,
         socials: [],
         supportedNetworks: [getSupportedValidatorNetworkFromChainId(data.network)],
@@ -64,15 +71,16 @@ export default function useCreateWorkspace(
         const createWorkspaceTransactionData = await createWorkspaceTransaction.wait();
 
         setTransactionData(createWorkspaceTransactionData);
-        setImageHash(uploadedImageHash.hash);
+        setImageHash(uploadedImageHash);
         setLoading(false);
       } catch (e: any) {
-        setError(e.message);
+        const message = getErrorMessage(e);
+        setError(message);
         setLoading(false);
         toastRef.current = toast({
           position: 'top',
           render: () => ErrorToast({
-            content: 'Transaction Failed',
+            content: message,
             close: () => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -105,12 +113,13 @@ export default function useCreateWorkspace(
       }
       validate();
     } catch (e: any) {
-      setError(e.message);
+      const message = getErrorMessage(e);
+      setError(message);
       setLoading(false);
       toastRef.current = toast({
         position: 'top',
         render: () => ErrorToast({
-          content: e.message,
+          content: message,
           close: () => {
             if (toastRef.current) {
               toast.close(toastRef.current);
@@ -131,5 +140,14 @@ export default function useCreateWorkspace(
     data,
   ]);
 
-  return [transactionData, imageHash, loading];
+  return [
+    transactionData,
+    data?.network
+      ? `${CHAIN_INFO[getSupportedChainIdFromSupportedNetwork(`chain_${data.network}` as SupportedNetwork)]
+        .explorer.transactionHash}${transactionData?.transactionHash}`
+      : '',
+    imageHash,
+    loading,
+    error,
+  ];
 }

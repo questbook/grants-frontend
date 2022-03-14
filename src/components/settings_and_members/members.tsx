@@ -46,7 +46,13 @@ function Members({ workspaceMembers }: Props) {
         </Flex>
       </Flex>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Invite Member">
-        <ModalContent onClose={() => setIsModalOpen(false)} />
+        <ModalContent onClose={(
+          newMember: { memberAddress: string, role: string },
+        ) => {
+          setTableData([...tableData, newMember]);
+          setIsModalOpen(false);
+        }}
+        />
       </Modal>
     </Flex>
   );

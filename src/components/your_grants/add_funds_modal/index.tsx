@@ -20,6 +20,7 @@ import { BigNumber, ethers } from 'ethers';
 import { formatAmount } from 'src/utils/formattingUtils';
 import InfoToast from 'src/components/ui/infoToast';
 import Loader from 'src/components/ui/loader';
+import config from 'src/constants/config';
 import Dropdown from '../../ui/forms/dropdown';
 import SingleLineInput from '../../ui/forms/singleLineInput';
 import Modal from '../../ui/modal';
@@ -115,7 +116,7 @@ function AddFunds({
       //   isClosable: true,
       // });
       setHasClicked(false);
-      showToast({ link: `https://etherscan.io/tx/${transactionData.transactionHash}` });
+      showToast({ link: `${transactionData.transactionHash}` });
 
       setFunding('');
       onClose();
@@ -172,6 +173,7 @@ function AddFunds({
           variant="link"
           color="#AA82F0"
           leftIcon={<Image src="/sidebar/discord_icon.svg" />}
+          onClick={() => window.open(config.supportLink)}
         >
           Support 24*7
         </Button>

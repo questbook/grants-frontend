@@ -1,14 +1,15 @@
 import {
-  ModalBody, Button, Text, Box, useToast, Flex, Image, Link,
+  ModalBody, Button, Text, Box, useToast, Flex, Image, Link, ToastId,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { isValidAddress, isValidEmail } from 'src/utils/validationUtils';
 import useAddMember from 'src/hooks/useAddMember';
 import SingleLineInput from '../ui/forms/singleLineInput';
 import Loader from '../ui/loader';
+import InfoToast from '../ui/infoToast';
 
 interface Props {
-  onClose: () => void;
+  onClose: (member: { memberAddress: string, role: string }) => void;
 }
 
 function ModalContent({
@@ -22,18 +23,27 @@ function ModalContent({
   const toast = useToast();
 
   const [memberData, setMemberData] = React.useState<any>();
-  const [txnData, loading] = useAddMember(memberData);
+  const [txnData, txnLink, loading] = useAddMember(memberData);
 
+  const toastRef = React.useRef<ToastId>();
   useEffect(() => {
     // console.log(depositTransactionData);
     if (txnData) {
+      const newMemberData = memberData.memberAddress[0];
       setMemberData(undefined);
-      onClose();
-      toast({
-        title: 'Member added',
-        status: 'info',
-        duration: 9000,
-        isClosable: true,
+      onClose({ memberAddress: newMemberData, role: 'admin' });
+      toastRef.current = toast({
+        position: 'top',
+        render: () => (
+          <InfoToast
+            link={txnLink}
+            close={() => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            }}
+          />
+        ),
       });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -47,7 +57,7 @@ function ModalContent({
       hasError = true;
     }
 
-    if (!memberEmail || memberEmail.length === 0 || !isValidEmail(memberEmail)) {
+    if (memberEmail && !isValidEmail(memberEmail)) {
       setMemberEmailError(true);
       hasError = true;
     }

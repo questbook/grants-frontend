@@ -32,6 +32,7 @@ import { ApiClientsContext } from '../_app';
 const PAGE_SIZE = 5;
 
 function YourGrants() {
+  const router = useRouter();
   const [{ data: accountData }] = useAccount({
     fetchEns: false,
   });
@@ -63,6 +64,7 @@ function YourGrants() {
         // creatorId: accountData?.address,
         workspaceId: workspace?.id,
       },
+      fetchPolicy: 'network-only',
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, workspace, accountData?.address]);
@@ -89,7 +91,6 @@ function YourGrants() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error, loading]);
 
-  const router = useRouter();
   const [addFundsIsOpen, setAddFundsIsOpen] = React.useState(false);
   const [grantForFunding, setGrantForFunding] = React.useState(null);
   const [grantRewardAsset, setGrantRewardAsset] = React.useState<any>(null);

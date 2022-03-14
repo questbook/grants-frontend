@@ -9,7 +9,6 @@ import { WorkspacePublicKeysUpdateRequest } from '@questbook/service-validator-c
 import { useAccount } from 'wagmi';
 import Loader from 'src/components/ui/loader';
 import Badge from '../../../ui/badge';
-import SingleLineInput from '../../../ui/forms/singleLineInput';
 import applicantDetailsList from '../../../../constants/applicantDetailsList';
 import Tooltip from '../../../ui/tooltip';
 
@@ -36,7 +35,6 @@ function ApplicantDetails({ onSubmit }: Props) {
     },
   ).filter((obj) => obj != null);
   const [detailsRequired, setDetailsRequired] = useState(applicantDetails);
-  const [extraField] = useState(false);
   const [shouldEncrypt, setShouldEncrypt] = useState(false);
   const [keySubmitted, setKeySubmitted] = useState(false);
   const [publicKey, setPublicKey] = React.useState<WorkspacePublicKeysUpdateRequest>({ walletId: '', publicKey: '' });
@@ -48,6 +46,7 @@ function ApplicantDetails({ onSubmit }: Props) {
       setKeySubmitted(true);
     }
   }, [transactionData]);
+  // const [extraField] = useState(false);
 
   const [milestoneSelectOptionIsVisible, setMilestoneSelectOptionIsVisible] = React.useState(false);
   const [multipleMilestones, setMultipleMilestones] = useState(false);
@@ -61,15 +60,15 @@ function ApplicantDetails({ onSubmit }: Props) {
     setDetailsRequired(newDetailsRequired);
   };
 
-  const [extraFieldDetails, setExtraFieldDetails] = useState('');
-  const [extraFieldError, setExtraFieldError] = useState(false);
+  // const [extraFieldDetails, setExtraFieldDetails] = useState('');
+  // const [extraFieldError, setExtraFieldError] = useState(false);
 
   const handleOnSubmit = () => {
-    let error = false;
-    if (extraField && extraFieldDetails.length <= 0) {
-      setExtraFieldError(true);
-      error = true;
-    }
+    const error = false;
+    // if (extraField && extraFieldDetails.length <= 0) {
+    //   setExtraFieldError(true);
+    //   error = true;
+    // }
     if (!error) {
       const requiredDetails = {} as any;
       detailsRequired.forEach((detail) => {
@@ -81,12 +80,12 @@ function ApplicantDetails({ onSubmit }: Props) {
         }
       });
       const fields = { ...requiredDetails };
-      if (extraFieldDetails != null && extraFieldDetails.length > 0) {
-        fields.extraField = {
-          title: 'Other Information',
-          inputType: 'short-form',
-        };
-      }
+      // if (extraFieldDetails != null && extraFieldDetails.length > 0) {
+      //   fields.extraField = {
+      //     title: 'Other Information',
+      //     inputType: 'short-form',
+      //   };
+      // }
       if (multipleMilestones) {
         fields.isMultipleMilestones = {
           title: 'Milestones',
@@ -168,7 +167,7 @@ function ApplicantDetails({ onSubmit }: Props) {
 
         <Box mt={6} />
 
-        {extraField ? (
+        {/* {extraField ? (
           <>
             <SingleLineInput
               label="Field Name"
@@ -184,7 +183,7 @@ function ApplicantDetails({ onSubmit }: Props) {
             />
             <Box mt={8} />
           </>
-        ) : null}
+        ) : null} */}
 
         {milestoneSelectOptionIsVisible && (
         <>

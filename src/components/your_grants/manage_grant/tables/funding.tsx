@@ -8,6 +8,7 @@ import { ethers } from 'ethers';
 import Empty from 'src/components/ui/empty';
 import { FundTransfer } from 'src/types';
 import { SupportedChainId } from 'src/constants/chains';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { getAssetInfo } from '../../../../utils/tokenUtils';
 import {
   formatAmount,
@@ -16,15 +17,15 @@ import {
 } from '../../../../utils/formattingUtils';
 
 type TableContent = {
-  title: string
-  flex?: number
+  title: string;
+  flex?: number;
   content: (
     item: FundTransfer,
     assetId: string,
     assetDecimals: number,
     grantId: string,
-    chainId?: SupportedChainId,
-  ) => React.ReactChild
+    chainId?: SupportedChainId
+  ) => React.ReactChild;
 };
 
 const TABLE_HEADERS: { [id: string]: TableContent } = {
@@ -94,9 +95,13 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
   action: {
     title: 'Action',
     flex: 0.1,
-    content: (item) => (
+    content: (item, _, __, ___, chainId) => (
       <Link
-        href={`https://etherscan.io/tx/${item.id}/`}
+        href={
+          chainId
+            ? `${CHAIN_INFO[chainId].explorer.transactionHash}${item.id}`
+            : ''
+        }
         isExternal
       >
         <Text
@@ -169,14 +174,16 @@ function Funding({
       imgHeight: '160px',
       imgWidth: '135px',
       title: 'No deposits yet.',
-      subtitle: 'Once you deposit funds to your grant smart contract, they will appear here.',
+      subtitle:
+        'Once you deposit funds to your grant smart contract, they will appear here.',
     },
     funds_withdrawn: {
       src: '/illustrations/empty_states/no_withdrawals.svg',
       imgHeight: '136px',
       imgWidth: '135px',
       title: 'No withdrawals yet.',
-      subtitle: 'Once you withdraw funds from your grant smart contract, they will appear here.',
+      subtitle:
+        'Once you withdraw funds from your grant smart contract, they will appear here.',
     },
     funding_sent: {
       src: '/illustrations/empty_states/funds_received.svg',

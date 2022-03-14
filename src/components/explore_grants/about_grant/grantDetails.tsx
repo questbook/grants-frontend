@@ -1,5 +1,8 @@
+/* eslint-disable react/no-unstable-nested-components */
+// @TODO: Fix this ESLint issue
 import React from 'react';
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Link, Text } from '@chakra-ui/react';
+import Linkify from 'react-linkify';
 
 function GrantDetails({
   grantSummary,
@@ -10,7 +13,13 @@ function GrantDetails({
 }) {
   return (
     <>
-      <Text mt={7} variant="heading" fontSize="18px" lineHeight="26px" color="#8347E5">
+      <Text
+        mt={7}
+        variant="heading"
+        fontSize="18px"
+        lineHeight="26px"
+        color="#8347E5"
+      >
         About Grant
       </Text>
 
@@ -24,13 +33,26 @@ function GrantDetails({
       <Text mt={4} variant="heading" fontSize="16px" lineHeight="24px">
         Details
       </Text>
-      <Box mt={3} fontWeight="400">
-        <div
+      <Linkify
+        componentDecorator={(
+          decoratedHref: string,
+          decoratedText: string,
+          key: number,
+        ) => (
+          <Link key={key} href={decoratedHref} isExternal>
+            {decoratedText}
+          </Link>
+        )}
+      >
+        <Box mt={3} fontWeight="400">
+          {grantDetails}
+          {/* <div
           className="richTextContainer"
           // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: grantDetails }}
-        />
-      </Box>
+          dangerouslySetInnerHTML={{ __html:  }}
+        /> */}
+        </Box>
+      </Linkify>
     </>
   );
 }

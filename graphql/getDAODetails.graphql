@@ -33,7 +33,7 @@ query getDAODetails($workspaceID: ID!, $daoID: String!) {
         id,
         asset
     }, 
-    workspace {title, logoIpfsHash}, 
+    workspace {id, title, logoIpfsHash, supportedNetworks}, 
     deadline,
     funding,
     numberOfApplications,

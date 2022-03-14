@@ -103,7 +103,11 @@ function Form({
   const router = useRouter();
 
   const [formData, setFormData] = React.useState<GrantApplicationRequest>();
-  const [txnData, loading] = useSubmitApplication(formData!, chainId, grantId, workspaceId);
+  const [
+    txnData,
+    txnLink,
+    loading,
+  ] = useSubmitApplication(formData!, chainId, grantId, workspaceId);
 
   useEffect(() => {
     if (txnData) {
@@ -111,7 +115,7 @@ function Form({
         position: 'top',
         render: () => (
           <InfoToast
-            link={`https://etherscan.io/tx/${txnData.transactionHash}`}
+            link={txnLink}
             close={() => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -124,6 +128,7 @@ function Form({
         pathname: '/your_applications',
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, router, txnData]);
 
   const handleOnSubmit = async () => {

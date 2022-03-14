@@ -5,12 +5,16 @@ import {
   Text,
   Image,
   Link,
+  useToast,
+  ToastId,
 } from '@chakra-ui/react';
 import React from 'react';
 import { highlightWordsInString } from 'src/utils/formattingUtils';
 import useChainId from 'src/hooks/utils/useChainId';
 import { SupportedChainId } from 'src/constants/chains';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import config from 'src/constants/config';
+import ErrorToast from 'src/components/ui/toasts/errorToast';
 import ImageUpload from '../../ui/forms/imageUpload';
 import MultiLineInput from '../../ui/forms/multiLineInput';
 import SingleLineInput from '../../ui/forms/singleLineInput';
@@ -22,7 +26,7 @@ function Form({
   onSubmit: (data: {
     name: string;
     description: string;
-    image: File;
+    image: File | null;
     network: SupportedChainId;
   }) => void;
 }) {
@@ -34,15 +38,33 @@ function Form({
   const [daoDescription, setDaoDescription] = React.useState('');
   const [daoDescriptionError, setDaoDescriptionError] = React.useState(false);
 
-  const [image, setImage] = React.useState<string | null>(null);
+  const [image, setImage] = React.useState<string>(config.defaultDAOImagePath);
   const [imageFile, setImageFile] = React.useState<File | null>(null);
   const [imageError, setImageError] = React.useState(false);
+  const toast = useToast();
+  const toastRef = React.useRef<ToastId>();
+  const maxImageSize = 2;
+
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const img = event.target.files[0];
-      setImageFile(img);
-      setImage(URL.createObjectURL(img));
-      setImageError(false);
+      if (img.size / 1024 / 1024 <= maxImageSize) {
+        setImageFile(img);
+        setImage(URL.createObjectURL(img));
+        setImageError(false);
+      } else {
+        toastRef.current = toast({
+          position: 'top',
+          render: () => ErrorToast({
+            content: `Image size exceeds ${maxImageSize} MB`,
+            close: () => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            },
+          }),
+        });
+      }
     }
   };
 
@@ -59,17 +81,17 @@ function Form({
     if (!chainId) {
       error = true;
     }
-    if (image === null || imageFile === null) {
-      setImageError(true);
-      error = true;
-    }
+    // if (image === null || imageFile === null) {
+    //   setImageError(true);
+    //   error = true;
+    // }
 
     if (error) return;
 
     onFormSubmit({
       name: daoName,
       description: daoDescription,
-      image: imageFile!,
+      image: imageFile,
       network: chainId!,
     });
   };
@@ -94,9 +116,7 @@ function Form({
           <ImageUpload
             image={image}
             onChange={handleImageChange}
-            onClear={() => setImage(null)}
             label="Add a logo"
-            subtext="Upload"
             isError={imageError}
           />
         </Flex>

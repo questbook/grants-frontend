@@ -4,6 +4,8 @@ import { ApiClientsContext } from 'pages/_app';
 import { useAccount, useNetwork } from 'wagmi';
 import { SupportedChainId } from 'src/constants/chains';
 import { GrantApplicationRequest } from '@questbook/service-validator-client';
+import getErrorMessage from 'src/utils/errorUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useApplicationRegistryContract from './contracts/useApplicationRegistryContract';
@@ -63,13 +65,13 @@ export default function useSubmitApplication(
         setTransactionData(txnData);
         setLoading(false);
       } catch (e: any) {
-        console.log(e);
-        setError(e.message);
+        const message = getErrorMessage(e);
+        setError(message);
         setLoading(false);
         toastRef.current = toast({
           position: 'top',
           render: () => ErrorToast({
-            content: 'Transaction Failed',
+            content: message,
             close: () => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -106,12 +108,13 @@ export default function useSubmitApplication(
       }
       validate();
     } catch (e: any) {
-      setError(e.message);
+      const message = getErrorMessage(e);
+      setError(message);
       setLoading(false);
       toastRef.current = toast({
         position: 'top',
         render: () => ErrorToast({
-          content: e.message,
+          content: message,
           close: () => {
             if (toastRef.current) {
               toast.close(toastRef.current);
@@ -136,5 +139,13 @@ export default function useSubmitApplication(
     workspaceId,
   ]);
 
-  return [transactionData, loading];
+  return [
+    transactionData,
+    chainId
+      ? `${CHAIN_INFO[chainId]
+        .explorer.transactionHash}${transactionData?.transactionHash}`
+      : '',
+    loading,
+    error,
+  ];
 }

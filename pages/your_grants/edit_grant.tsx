@@ -12,12 +12,13 @@ import useEditGrant from 'src/hooks/useEditGrant';
 import { SupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { formatEther } from 'ethers/lib/utils';
+import { BigNumber } from 'ethers';
 import InfoToast from '../../src/components/ui/infoToast';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/edit_grant/form';
 import Sidebar from '../../src/components/your_grants/edit_grant/sidebar';
 import NavbarLayout from '../../src/layout/navbarLayout';
-import { formatAmount } from '../../src/utils/formattingUtils';
 import { ApiClientsContext } from '../_app';
 
 function EditGrant() {
@@ -90,7 +91,7 @@ function EditGrant() {
         extraField:
           grant.fields.find((field: any) => field.id.includes('extraField'))
           !== undefined,
-        reward: formatAmount(grant.reward.committed),
+        reward: formatEther(BigNumber.from(grant.reward.committed)),
         rewardCurrency:
           CHAIN_INFO[
             getSupportedChainIdFromSupportedNetwork(
@@ -138,7 +139,7 @@ function EditGrant() {
   };
 
   const [editData, setEditData] = useState<any>();
-  const [transactionData, loading] = useEditGrant(editData, grantID);
+  const [transactionData, txnLink, loading] = useEditGrant(editData, grantID);
 
   useEffect(() => {
     // console.log(transactionData);
@@ -148,7 +149,7 @@ function EditGrant() {
         position: 'top',
         render: () => (
           <InfoToast
-            link={`https://etherscan.io/tx/${transactionData.transactionHash}`}
+            link={txnLink}
             close={() => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -158,6 +159,7 @@ function EditGrant() {
         ),
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, transactionData, router]);
 
   useEffect(() => {
@@ -181,8 +183,6 @@ function EditGrant() {
             hasClicked={loading}
             formData={formData}
             onSubmit={(editdata: any) => {
-              // eslint-disable-next-line no-console
-              // console.log(data);
               setEditData(editdata);
             }}
             refs={sideBarDetails.map((detail) => detail[2])}

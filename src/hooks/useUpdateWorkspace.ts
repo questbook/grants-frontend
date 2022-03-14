@@ -5,6 +5,8 @@ import { useAccount, useNetwork } from 'wagmi';
 import {
   getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils';
+import getErrorMessage from 'src/utils/errorUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract';
@@ -58,13 +60,13 @@ export default function useUpdateWorkspace(
         setTransactionData(updateTransactionData);
         setLoading(false);
       } catch (e: any) {
-        console.log(e);
-        setError(e.message);
+        const message = getErrorMessage(e);
+        setError(message);
         setLoading(false);
         toastRef.current = toast({
           position: 'top',
           render: () => ErrorToast({
-            content: 'Transaction Failed',
+            content: message,
             close: () => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -103,12 +105,13 @@ export default function useUpdateWorkspace(
       }
       validate();
     } catch (e: any) {
-      setError(e.message);
+      const message = getErrorMessage(e);
+      setError(message);
       setLoading(false);
       toastRef.current = toast({
         position: 'top',
         render: () => ErrorToast({
-          content: e.message,
+          content: message,
           close: () => {
             if (toastRef.current) {
               toast.close(toastRef.current);
@@ -131,5 +134,13 @@ export default function useUpdateWorkspace(
     data,
   ]);
 
-  return [transactionData, loading];
+  return [
+    transactionData,
+    currentChainId
+      ? `${CHAIN_INFO[currentChainId]
+        .explorer.transactionHash}${transactionData?.transactionHash}`
+      : '',
+    loading,
+    error,
+  ];
 }

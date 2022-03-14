@@ -38,8 +38,8 @@ function GrantRewardsInput({
   return (
     <Flex direction="column">
 
-      <Flex alignItems="flex-start">
-        <Box minW="160px" flex={0}>
+      <Flex direction="row" mt={12}>
+        <Box minW="160px" flex={1}>
           <SingleLineInput
             label="Grant Reward"
             placeholder="100"
@@ -52,6 +52,7 @@ function GrantRewardsInput({
             }}
             value={reward}
             isError={rewardError}
+            type="number"
           />
         </Box>
         <Box mt={5} ml={4} minW="132px" flex={0}>

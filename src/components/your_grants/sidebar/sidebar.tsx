@@ -3,6 +3,7 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
+import config from 'src/constants/config';
 import SidebarComponent from '../../ui/sidebar/sidebar';
 
 function Sidebar() {
@@ -36,12 +37,12 @@ function Sidebar() {
     <SidebarComponent
       links={[
         {
-          href: '#',
+          href: config.supportLink,
           label: 'Support 24*7',
           iconUrl: '/sidebar/discord_icon.svg',
         },
         {
-          href: '#',
+          href: 'https://www.notion.so/questbook/Contracts-7cea3bdfb6be47e68f165b4a719c662f',
           label: 'On Chain Contract',
           iconUrl: '/sidebar/onchain_icon.svg',
         },

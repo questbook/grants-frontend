@@ -66,9 +66,9 @@ function Details({ onSubmit }: Props) {
           Continue
         </Button>
 
-        <Button h={12} minW="168px" ml="42px" onClick={() => onSubmit({})}>
+        {/* <Button h={12} minW="168px" ml="42px" onClick={() => onSubmit({})}>
           Skip
-        </Button>
+        </Button> */}
       </Flex>
     </>
   );

@@ -1,5 +1,6 @@
 import { Flex, Box, Text } from '@chakra-ui/react';
 import React from 'react';
+import config from 'src/constants/config';
 import SidebarComponent from '../../ui/sidebar/sidebar';
 import SidebarList from './sidebarList';
 
@@ -8,12 +9,12 @@ function Sidebar() {
     <SidebarComponent
       links={[
         {
-          href: '#',
+          href: config.supportLink,
           label: 'Support 24*7',
           iconUrl: '/sidebar/discord_icon.svg',
         },
         {
-          href: '#',
+          href: 'https://www.notion.so/questbook/Contracts-7cea3bdfb6be47e68f165b4a719c662f',
           label: 'On Chain Contract',
           iconUrl: '/sidebar/onchain_icon.svg',
         },

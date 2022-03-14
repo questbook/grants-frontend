@@ -1,9 +1,12 @@
 import {
-  Box, Text, Flex, Image, Divider, Button,
+  Box, Text, Flex, Image, Divider, Button, Link,
 } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 // import { ExternalLinkIcon } from '@chakra-ui/icons';
 import React from 'react';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
+import config from 'src/constants/config';
+import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import { formatAmount } from '../../../utils/formattingUtils';
 import AddFunds from '../../funds/add_funds_modal';
 import Modal from '../../ui/modal';
@@ -22,7 +25,6 @@ function Sidebar({
 }: Props) {
   const [isAddFundModalOpen, setIsAddFundModalOpen] = React.useState(false);
   const [isSendFundModalOpen, setIsSendFundModalOpen] = React.useState(false);
-
   return (
     <Box my="154px">
       <FloatingSidebar>
@@ -81,16 +83,23 @@ function Sidebar({
             >
               Add funds to your
               {' '}
-              <Box as="span" fontWeight="700" color="#8850EA">
+              <Link
+                href={grant
+                  ? `${CHAIN_INFO[getSupportedChainIdFromSupportedNetwork(grant.workspace.supportedNetworks[0])]
+                    .explorer.address}${grant?.id}`
+                  : ''}
+                fontWeight="700"
+                color="brand.500"
+                isExternal
+              >
                 verified grant smart contract
-              </Box>
-              {' '}
-              <Image
-                src="/ui_icons/link.svg"
-                alt="link"
-                display="inline-block"
-              />
-              {' '}
+                {' '}
+                <Image
+                  src="/ui_icons/link.svg"
+                  alt="link"
+                  display="inline-block"
+                />
+              </Link>
               to fund grantees in 1 click.
             </Text>
             <Button
@@ -149,6 +158,7 @@ function Sidebar({
               variant="link"
               color="#AA82F0"
               leftIcon={<Image src="/sidebar/discord_icon.svg" />}
+              onClick={() => window.open(config.supportLink)}
             >
               Support 24*7
             </Button>

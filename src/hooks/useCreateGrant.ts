@@ -12,6 +12,8 @@ import {
   APPLICATION_REGISTRY_ADDRESS,
   WORKSPACE_REGISTRY_ADDRESS,
 } from 'src/constants/addresses';
+import getErrorMessage from 'src/utils/errorUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useGrantFactoryContract from './contracts/useGrantFactoryContract';
 import useChainId from './utils/useChainId';
@@ -73,12 +75,12 @@ export default function useCreateGrant(
           throw new Error('Error validating grant data');
         }
 
-        console.log(workspaceId ?? Number(workspace?.id).toString());
-        console.log('ipfsHash', ipfsHash);
-        console.log(
-          WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
-          APPLICATION_REGISTRY_ADDRESS[currentChainId!],
-        );
+        // console.log(workspaceId ?? Number(workspace?.id).toString());
+        // console.log('ipfsHash', ipfsHash);
+        // console.log(
+        //   WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
+        //   APPLICATION_REGISTRY_ADDRESS[currentChainId!],
+        // );
 
         const createGrantTransaction = await grantContract.createGrant(
           workspaceId ?? Number(workspace?.id).toString(),
@@ -91,13 +93,13 @@ export default function useCreateGrant(
         setTransactionData(createGrantTransactionData);
         setLoading(false);
       } catch (e: any) {
-        console.log(e);
-        setError(e.message);
+        const message = getErrorMessage(e);
+        setError(message);
         setLoading(false);
         toastRef.current = toast({
           position: 'top',
           render: () => ErrorToast({
-            content: 'Transaction Failed',
+            content: message,
             close: () => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -145,12 +147,13 @@ export default function useCreateGrant(
       }
       validate();
     } catch (e: any) {
-      setError(e.message);
+      const message = getErrorMessage(e);
+      setError(message);
       setLoading(false);
       toastRef.current = toast({
         position: 'top',
         render: () => ErrorToast({
-          content: e.message,
+          content: message,
           close: () => {
             if (toastRef.current) {
               toast.close(toastRef.current);
@@ -175,5 +178,13 @@ export default function useCreateGrant(
     data,
   ]);
 
-  return [transactionData, loading, error];
+  return [
+    transactionData,
+    chainId ?? getSupportedChainIdFromWorkspace(workspace)
+      ? `${CHAIN_INFO[chainId ?? getSupportedChainIdFromWorkspace(workspace)!]
+        .explorer.transactionHash}${transactionData?.transactionHash}`
+      : '',
+    loading,
+    error,
+  ];
 }

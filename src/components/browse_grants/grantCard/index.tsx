@@ -4,6 +4,7 @@ import {
 } from '@chakra-ui/react';
 import ShareMenu from 'src/components/ui/grantShareMenu';
 import { SupportedChainId } from 'src/constants/chains';
+import { useRouter } from 'next/router';
 import Badge from './badge';
 
 interface GrantCardProps {
@@ -49,6 +50,7 @@ function GrantCard({
 
   onClick,
 }: GrantCardProps) {
+  const router = useRouter();
   return (
     <>
       <Flex py={6} w="100%">
@@ -76,7 +78,20 @@ function GrantCard({
           </Flex>
 
           <Flex direction="row">
-            <Link href={`/profile?daoId=${daoID}&chainId=${chainId}`} lineHeight="24px" fontWeight="700">
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+            <Link
+              onClick={() => {
+                router.push({
+                  pathname: '/profile',
+                  query: {
+                    daoId: daoID,
+                    chainId,
+                  },
+                });
+              }}
+              lineHeight="24px"
+              fontWeight="700"
+            >
               {daoName}
               {isDaoVerified && (
                 <Image

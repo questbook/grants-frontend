@@ -17,6 +17,7 @@ import { useContract, useSigner } from 'wagmi';
 import { BigNumber, ethers } from 'ethers';
 import Loader from 'src/components/ui/loader';
 import useDepositFunds from 'src/hooks/useDepositFunds';
+import config from 'src/constants/config';
 import { formatAmount } from '../../../utils/formattingUtils';
 import InfoToast from '../../ui/infoToast';
 import Dropdown from '../../ui/forms/dropdown';
@@ -77,7 +78,7 @@ function AddFunds({
   const toastRef = React.useRef<ToastId>();
 
   const [finalAmount, setFinalAmount] = React.useState<BigNumber>();
-  const [depositTransactionData, loading] = useDepositFunds(
+  const [depositTransactionData, txnLink, loading] = useDepositFunds(
     finalAmount,
     rewardAsset.address,
     grantAddress,
@@ -93,7 +94,7 @@ function AddFunds({
         position: 'top',
         render: () => (
           <InfoToast
-            link={`https://etherscan.io/tx/${depositTransactionData.transactionHash}`}
+            link={txnLink}
             close={() => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -148,6 +149,7 @@ function AddFunds({
           variant="link"
           color="#AA82F0"
           leftIcon={<Image src="/sidebar/discord_icon.svg" />}
+          onClick={() => window.open(config.supportLink)}
         >
           Support 24*7
         </Button>
@@ -192,10 +194,12 @@ function AddFunds({
                     mx={4}
                   >
                     <Flex direction="row">
-                      <Text variant="tableBody" color="#8850EA" my={4}>
-                        {text}
-                        {' '}
-                      </Text>
+                      <Button _active={{}} onClick={() => setType(index)} variant="link" my={4}>
+                        <Text variant="tableBody" color="#8850EA">
+                          {text}
+                          {' '}
+                        </Text>
+                      </Button>
                       <Image
                         ml={2}
                         display="inline-block"

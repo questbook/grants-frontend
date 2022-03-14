@@ -4,6 +4,7 @@ import {
 import React, { useEffect } from 'react';
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import config from 'src/constants/config';
 import CoverUpload from '../ui/forms/coverUpload';
 import ImageUpload from '../ui/forms/imageUpload';
 import MultiLineInput from '../ui/forms/multiLineInput';
@@ -35,7 +36,7 @@ function EditForm({
 
   const [supportedNetwork, setSupportedNetwork] = React.useState('');
 
-  const [image, setImage] = React.useState<string | null>('');
+  const [image, setImage] = React.useState<string>(config.defaultDAOImagePath);
   const [imageFile, setImageFile] = React.useState<File | null>(null);
 
   const [coverImage, setCoverImage] = React.useState<string | null>('');
@@ -130,9 +131,7 @@ function EditForm({
           image={image}
           isError={false}
           onChange={handleImageChange}
-          onClear={() => setImage(null)}
           label="Add a logo"
-          subtext="Upload"
         />
       </Flex>
       <Flex w="100%" mt={1}>
@@ -169,8 +168,8 @@ function EditForm({
       </Flex>
       <Flex w="100%" mt={8} alignItems="flex-start">
         <SingleLineInput
-          label="Twitter Handle"
-          placeholder="@ethereum"
+          label="Twitter Profile Link"
+          placeholder="https://twitter.com/questbookapp"
           subtext=""
           value={twitterHandle}
           onChange={(e) => {
@@ -183,7 +182,7 @@ function EditForm({
       <Flex w="100%" mt={8} alignItems="flex-start">
         <SingleLineInput
           label="Discord Server Link"
-          placeholder="@ethereum"
+          placeholder="https://discord.gg/questbook"
           subtext=""
           value={discordHandle}
           onChange={(e) => {
@@ -196,7 +195,7 @@ function EditForm({
       <Flex w="100%" mt={8} alignItems="flex-start">
         <SingleLineInput
           label="Telegram Channel"
-          placeholder="www.telegram.com"
+          placeholder="https://t.me/questbook"
           subtext=""
           value={telegramChannel}
           onChange={(e) => {

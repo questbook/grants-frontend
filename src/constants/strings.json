@@ -6,7 +6,7 @@
         "tooltip_label": "A crypto wallet is an application or hardware device that allows individuals to store and retrieve digital items.",
         "dropdown_label": "Wallets compatible on",
         "protip": "Preferably connect a wallet that you will be using to disburse grants for seamless payouts",
-        "footer": "By connecting your wallet, you accept Questbook’s Terms of Service"
+        "footer": "By connecting your wallet, you accept Questbook’s"
     },
     "funds": {
         "heading": "Funds"

@@ -8,6 +8,7 @@ import { ethers } from 'ethers';
 import Empty from 'src/components/ui/empty';
 import { FundTransfer } from 'src/types';
 import { SupportedChainId } from 'src/constants/chains';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { getAssetInfo } from '../../../utils/tokenUtils';
 import {
   formatAmount,
@@ -94,8 +95,14 @@ const TABLE_HEADERS = {
   action: {
     title: 'Action',
     flex: 0.1,
-    content: (item: FundTransfer) => (
-      <Link href={`https://etherscan.io/tx/${item.id}/`} isExternal>
+    content: (item: FundTransfer, _: any, __: any, ___: any, currentChainId: any) => (
+      <Link
+        href={currentChainId
+          ? `${CHAIN_INFO[currentChainId]
+            .explorer.transactionHash}${item.id}`
+          : ''}
+        isExternal
+      >
         <Text
           color="brand.500"
           variant="applicationText"

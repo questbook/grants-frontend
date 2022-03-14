@@ -2282,7 +2282,7 @@ export type GetDaoDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetDaoDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, socials: Array<{ __typename?: 'Social', name: string, value: string }> } | null, grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', title: string, logoIpfsHash: string } }> };
+export type GetDaoDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, socials: Array<{ __typename?: 'Social', name: string, value: string }> } | null, grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
 
 export type GetFundSentForApplicationQueryVariables = Exact<{
   applicationId?: InputMaybe<Scalars['String']>;
@@ -2343,7 +2343,7 @@ export type GetNumberOfApplicationsQuery = { __typename?: 'Query', grantApplicat
 export type GetNumberOfGrantsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
-  creatorId?: InputMaybe<Scalars['Bytes']>;
+  workspaceId: Scalars['String'];
 }>;
 
 
@@ -2779,8 +2779,10 @@ export const GetDaoDetailsDocument = gql`
       asset
     }
     workspace {
+      id
       title
       logoIpfsHash
+      supportedNetworks
     }
     deadline
     funding
@@ -3164,8 +3166,8 @@ export type GetNumberOfApplicationsQueryHookResult = ReturnType<typeof useGetNum
 export type GetNumberOfApplicationsLazyQueryHookResult = ReturnType<typeof useGetNumberOfApplicationsLazyQuery>;
 export type GetNumberOfApplicationsQueryResult = Apollo.QueryResult<GetNumberOfApplicationsQuery, GetNumberOfApplicationsQueryVariables>;
 export const GetNumberOfGrantsDocument = gql`
-    query getNumberOfGrants($first: Int, $skip: Int, $creatorId: Bytes) {
-  grants(where: {creatorId: $creatorId}, subgraphError: allow) {
+    query getNumberOfGrants($first: Int, $skip: Int, $workspaceId: String!) {
+  grants(where: {workspace: $workspaceId}, subgraphError: allow) {
     id
   }
 }
@@ -3185,11 +3187,11 @@ export const GetNumberOfGrantsDocument = gql`
  *   variables: {
  *      first: // value for 'first'
  *      skip: // value for 'skip'
- *      creatorId: // value for 'creatorId'
+ *      workspaceId: // value for 'workspaceId'
  *   },
  * });
  */
-export function useGetNumberOfGrantsQuery(baseOptions?: Apollo.QueryHookOptions<GetNumberOfGrantsQuery, GetNumberOfGrantsQueryVariables>) {
+export function useGetNumberOfGrantsQuery(baseOptions: Apollo.QueryHookOptions<GetNumberOfGrantsQuery, GetNumberOfGrantsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetNumberOfGrantsQuery, GetNumberOfGrantsQueryVariables>(GetNumberOfGrantsDocument, options);
       }

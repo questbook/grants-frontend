@@ -14,6 +14,8 @@ import { BigNumber } from 'ethers';
 import InfoToast from 'src/components/ui/infoToast';
 import Loader from 'src/components/ui/loader';
 import useWithdrawFunds from 'src/hooks/useWithdrawFunds';
+import useChainId from 'src/hooks/utils/useChainId';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import Dropdown from '../../ui/forms/dropdown';
 import SingleLineInput from '../../ui/forms/singleLineInput';
 import Modal from '../../ui/modal';
@@ -44,12 +46,14 @@ function WithdrawFunds({
   const toastRef = React.useRef<ToastId>();
 
   const [finalAmount, setFinalAmount] = React.useState<string>();
-  const [withdrawTransactionData, loading] = useWithdrawFunds(
+  const [withdrawTransactionData, withdrawTxnLink, loading] = useWithdrawFunds(
     finalAmount,
     rewardAsset.address,
     grantAddress,
     address,
   );
+
+  const currentChainId = useChainId();
 
   useEffect(() => {
     // console.log(depositTransactionData);
@@ -62,7 +66,7 @@ function WithdrawFunds({
         position: 'top',
         render: () => (
           <InfoToast
-            link={`https://etherscan.io/tx/${withdrawTransactionData.transactionHash}`}
+            link={withdrawTxnLink}
             close={() => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -171,7 +175,17 @@ function WithdrawFunds({
             ))}
           </Flex>
 
-          <Link mx={1} href={`https://etherscan.io/tx/${transactionHash}`} isExternal variant="footer" fontWeight="700" color="brand.500">
+          <Link
+            mx={1}
+            href={currentChainId
+              ? `${CHAIN_INFO[currentChainId]
+                .explorer.transactionHash}${transactionHash}`
+              : ''}
+            isExternal
+            variant="footer"
+            fontWeight="700"
+            color="brand.500"
+          >
             Learn more
             <Image
               ml={1}

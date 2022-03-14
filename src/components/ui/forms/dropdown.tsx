@@ -16,7 +16,6 @@ interface DropdownProps {
   listItems: { icon?: string; label: string, id?: string }[];
   listItemsMinWidth?: string;
   label?: string;
-  // eslint-disable-next-line react/no-unused-prop-types
   value?: string;
   onChange?: Function;
   defaultIndex?: number;
@@ -36,6 +35,7 @@ function Dropdown({
   label,
   onChange,
   defaultIndex,
+  value,
 }: DropdownProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const defaultSelected = listItems[defaultIndex ?? 0];
@@ -78,12 +78,30 @@ function Dropdown({
             h={12}
             justifyContent="flex-start"
           >
-            {selected.icon && selected.icon.length ? (
-              <Image mr={3} h="24px" w="24px" src={selected.icon} />
-            ) : null}
-            <Text fontWeight="400" fontSize="14px" color="#414E50">
-              {selected.label}
-            </Text>
+            { value ? (
+              <>
+                {listItems?.find(({ label: text }) => text === value)?.icon ? (
+                  <Image
+                    mr={3}
+                    h="24px"
+                    w="24px"
+                    src={listItems.find(({ label: text }) => text === value)?.icon}
+                  />
+                ) : null}
+                <Text fontWeight="400" fontSize="14px" color="#414E50">
+                  {value}
+                </Text>
+              </>
+            ) : (
+              <>
+                {selected.icon && selected.icon.length ? (
+                  <Image mr={3} h="24px" w="24px" src={selected.icon} />
+                ) : null}
+                <Text fontWeight="400" fontSize="14px" color="#414E50">
+                  {selected.label}
+                </Text>
+              </>
+            )}
           </Container>
         </MenuButton>
         <MenuList minW={0} py={0}>
