@@ -142,10 +142,10 @@ export const CHAIN_INFO: ChainInfoMap = {
       //   label: 'DAI',
       //   address: '0xd393b1E02dA9831Ff419e22eA105aAe4c47E1253',
       // },
-      '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889': {
+      '0x9c3c9283d3e44854697cd22d3faa240cfb032889': {
         icon: '/ui_icons/brand/currency/wmatic_symbol.svg',
         label: 'WMATIC',
-        address: '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
+        address: '0x9c3c9283d3e44854697cd22d3faa240cfb032889',
       },
       // '0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa': {
       //   icon: '/ui_icons/brand/currency/weth_symbol.svg',
@@ -153,7 +153,7 @@ export const CHAIN_INFO: ChainInfoMap = {
       //   address: '0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa',
       // },
     },
-    subgraphClientUrl: '',
+    subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-polygon-mumbai',
   },
   [SupportedChainId.POLYGON_MAINNET]: {
     name: 'Polygon Mainnet',
@@ -180,22 +180,22 @@ export const CHAIN_INFO: ChainInfoMap = {
       transactionHash: 'https://polygonscan.com/tx/',
     },
     supportedCurrencies: {
-      '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063': {
+      '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063': {
         icon: '/ui_icons/brand/currency/dai_symbol.svg',
         label: 'DAI',
-        address: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063',
+        address: '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063',
       },
-      '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270': {
+      '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270': {
         icon: '/ui_icons/brand/currency/wmatic_symbol.svg',
         label: 'WMATIC',
-        address: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+        address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
       },
-      '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619': {
+      '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619': {
         icon: '/ui_icons/brand/currency/weth_symbol.svg',
         label: 'WETH',
-        address: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
+        address: '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619',
       },
     },
-    subgraphClientUrl: '',
+    subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-polygon',
   },
 };
