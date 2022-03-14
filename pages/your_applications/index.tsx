@@ -57,7 +57,7 @@ function YourApplications() {
       Promise.all(promises).then((values:any[]) => {
         const allApplicationsData = [].concat(...values);
         allApplicationsData
-          .sort((a: GrantApplication, b: GrantApplication) => b.updatedAtS - a.updatedAtS);
+          .sort((a: GrantApplication, b: GrantApplication) => b.createdAtS - a.createdAtS);
         setMyApplications([...myApplications, ...allApplicationsData]);
         setCurrentPage(currentPage + 1);
       });
