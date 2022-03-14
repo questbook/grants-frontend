@@ -275,14 +275,17 @@ function Application({ applicationData, showHiddenData }: Props) {
                 rounded="md"
                 py="5"
                 mt="2"
+                display="flex"
+                justifyContent="center"
               >
                 <Flex
                   direction="column"
                   justifyContent="center"
                   alignItems="center"
+                  maxW="480px"
                 >
                   <Image h="77px" w="89px" src="/illustrations/disburse_grants.svg" />
-                  <Text variant="applicationText" mt={2}>
+                  <Text textAlign="center" variant="applicationText" mt={2}>
                     Team member details are hidden, and can be viewed only if
                     you have specific access.
                   </Text>

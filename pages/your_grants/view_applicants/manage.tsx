@@ -8,6 +8,7 @@ import {
   Button,
   useToast,
   ToastId,
+  ModalBody,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
@@ -117,8 +118,10 @@ function ManageGrant() {
     }
   }, [appDetailsResult]);
 
+  const [hiddenModalOpen, setHiddenModalOpen] = useState(false);
   const showHiddenData = async () => {
     if (applicationData) {
+      setHiddenModalOpen(true);
       const decryptedApplicationData = await decryptApplicationPII(applicationData);
       if (decryptedApplicationData) {
         setApplicationData(decryptedApplicationData);
@@ -206,6 +209,63 @@ function ManageGrant() {
       text: comment,
     });
   };
+
+  function renderModal() {
+    return (
+      <Modal
+        isOpen={hiddenModalOpen}
+        onClose={() => setHiddenModalOpen(false)}
+        title="View Details with your Wallet"
+        modalWidth={566}
+      >
+        <ModalBody px={10}>
+          <Flex direction="column">
+            <Flex mt="36px">
+              <Text fontWeight="bold" fontSize="18px">
+                How does this work?
+              </Text>
+            </Flex>
+            <Flex mt="28px" alignItems="center">
+              <Box
+                bg="#8850EA"
+                color="#fff"
+                h={10}
+                w={10}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                borderRadius="50%"
+                mr="19px"
+              >
+                1
+              </Box>
+              <Text>Open your wallet</Text>
+            </Flex>
+            <Flex alignItems="center" mt="35px" mb="40px">
+              <Box
+                bg="#8850EA"
+                color="#fff"
+                h={10}
+                w={10}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                borderRadius="50%"
+                mr="19px"
+              >
+                2
+              </Box>
+              <Text>Click on ‘Decrypt’ to view the details.</Text>
+            </Flex>
+
+            <Button mb={10} variant="primary" onClick={() => setHiddenModalOpen(false)}>
+              ok
+            </Button>
+          </Flex>
+        </ModalBody>
+      </Modal>
+    );
+  }
 
   return (
     <Container maxW="100%" display="flex" px="70px">
@@ -413,6 +473,8 @@ function ManageGrant() {
           />
         </Modal>
       )}
+
+      {renderModal()}
     </Container>
   );
 }
