@@ -54,12 +54,12 @@ export default [
     inputType: 'array',
     isRequired: false,
   },
-  {
-    title: 'Other Information',
-    id: 'extraField',
-    inputType: 'short-form',
-    isRequired: false,
-  },
+  // {
+  //   title: 'Other Information',
+  //   id: 'extraField',
+  //   inputType: 'short-form',
+  //   isRequired: false,
+  // },
   {
     title: 'Funding Ask',
     id: 'fundingAsk',
