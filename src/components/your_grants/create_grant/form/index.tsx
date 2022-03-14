@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Box, Button, Text, Image, Link, Flex,
 } from '@chakra-ui/react';
@@ -7,6 +7,10 @@ import Loader from 'src/components/ui/loader';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import useChainId from 'src/hooks/utils/useChainId';
 import { SupportedChainId } from 'src/constants/chains';
+import { useAccount } from 'wagmi';
+import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
+import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys';
+import { ApiClientsContext } from 'pages/_app';
 import Title from './1_title';
 import Details from './2_details';
 import ApplicantDetails from './3_applicantDetails';
@@ -23,6 +27,8 @@ function Form({
   onSubmit: (data: any) => void;
   hasClicked: boolean;
 }) {
+  const { workspace } = useContext(ApiClientsContext)!;
+  const [{ data: accountData }] = useAccount();
   const maxDescriptionLength = 300;
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
@@ -32,6 +38,49 @@ function Form({
 
   const [details, setDetails] = useState('');
   const [detailsError, setDetailsError] = useState(false);
+
+  const [shouldEncrypt, setShouldEncrypt] = useState(false);
+  const [hasOwnerPublicKey, setHasOwnerPublicKey] = useState(false);
+  const [keySubmitted, setKeySubmitted] = useState(false);
+  const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({ publicKey: '' });
+  const [transactionData, loading] = useUpdateWorkspacePublicKeys(publicKey);
+
+  const [admins, setAdmins] = useState<any[]>([]);
+
+  // [TODO] : if different grantManagers are required for different grants
+  // const [grantManagers, setGrantManagers] = useState<any[]>([accountData?.address]);
+  // const toggleGrantManager = (address: string) => {
+  //   const newGrantManagers = grantManagers.includes(address)
+  //     ? grantManagers.filter((grantManager) => grantManager !== address)
+  //     : [...grantManagers, address];
+  //   setGrantManagers(newGrantManagers);
+  // };
+
+  useEffect(() => {
+    if (transactionData) {
+      setKeySubmitted(true);
+      console.log('transactionData-----', transactionData);
+    }
+  }, [transactionData]);
+
+  useEffect(() => {
+    if (workspace && workspace.members && accountData && accountData.address) {
+      const hasPubKey = workspace.members.some((member) => member.actorId.toLowerCase() === accountData?.address.toLowerCase() && member.publicKey && member.publicKey !== '');
+      setHasOwnerPublicKey(hasPubKey);
+      // console.log('workspace.members-----', workspace.members);
+      // console.log('accountData.address-----', accountData.address);
+      // console.log(' has ',
+      // workspace.members.some((member) => member.actorId === accountData?.address));
+      // console.log('hasOwnerPublicKey-----', hasOwnerPublicKey);
+    }
+  }, [accountData, workspace]);
+
+  useEffect(() => {
+    if (workspace && workspace.members) {
+      const adminAddresses = workspace.members.filter((member) => member.publicKey && member.publicKey !== '').map((member) => member.actorId);
+      setAdmins(adminAddresses);
+    }
+  }, [workspace]);
 
   const applicantDetails = applicantDetailsList.map(
     ({
@@ -159,6 +208,10 @@ function Form({
           inputType: 'short-form',
         };
       }
+      if (shouldEncrypt && (keySubmitted || hasOwnerPublicKey)) {
+        fields.applicantEmail = { ...fields.applicantEmail, pii: true };
+        fields.memberDetails = { ...fields.memberDetails, pii: true };
+      }
       onSubmit({
         title,
         summary,
@@ -167,6 +220,7 @@ function Form({
         reward,
         rewardCurrencyAddress,
         date,
+        grantManagers: admins,
       });
     }
   };
@@ -237,6 +291,11 @@ function Form({
         // setExtraFieldError={setExtraFieldError}
         multipleMilestones={multipleMilestones}
         setMultipleMilestones={setMultipleMilestones}
+        shouldEncrypt={shouldEncrypt}
+        setShouldEncrypt={setShouldEncrypt}
+        loading={loading}
+        setPublicKey={setPublicKey}
+        hasOwnerPublicKey={hasOwnerPublicKey}
       />
 
       <Text
@@ -289,7 +348,12 @@ function Form({
         </Text>
       </Flex>
 
-      <Button py={hasClicked ? 2 : 0} onClick={hasClicked ? () => {} : handleOnSubmit} variant="primary">
+      <Button
+        py={hasClicked ? 2 : 0}
+        onClick={hasClicked ? () => {} : handleOnSubmit}
+        variant="primary"
+        disabled={shouldEncrypt && (!keySubmitted && !hasOwnerPublicKey)}
+      >
         {hasClicked ? <Loader /> : 'Create Grant'}
       </Button>
     </>

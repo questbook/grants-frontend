@@ -8,6 +8,7 @@ import {
   Button,
   useToast,
   ToastId,
+  ModalBody,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
@@ -17,6 +18,7 @@ import { useAccount } from 'wagmi';
 import { BigNumber } from 'ethers';
 import {
   ApplicationMilestone,
+  GetApplicationDetailsQuery,
   useGetApplicationDetailsQuery,
   useGetFundSentForApplicationQuery,
 } from 'src/generated/graphql';
@@ -25,6 +27,7 @@ import { SupportedChainId } from 'src/constants/chains';
 import useCompleteApplication from 'src/hooks/useCompleteApplication';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import config from 'src/constants/config';
+import useApplicationEncryption from 'src/hooks/useApplicationEncryption';
 import InfoToast from '../../../src/components/ui/infoToast';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Heading from '../../../src/components/ui/heading';
@@ -59,6 +62,7 @@ function getTotalFundingAsked(milestones: ApplicationMilestone[]) {
 }
 
 function ManageGrant() {
+  const { decryptApplicationPII } = useApplicationEncryption();
   const path = ['My Grants', 'View Application', 'Manage'];
 
   const [selected, setSelected] = React.useState(0);
@@ -100,13 +104,30 @@ function ManageGrant() {
     },
   });
 
-  const applicationData = appDetailsResult?.grantApplication;
+  const [applicationData, setApplicationData] = useState<GetApplicationDetailsQuery['grantApplication']>(null);
   const applicantEmail = useMemo(
     () => applicationData?.fields.find(
       (field) => field.id.includes('applicantEmail'),
     )?.values[0]?.value,
     [applicationData],
   );
+
+  useEffect(() => {
+    if (appDetailsResult && appDetailsResult.grantApplication) {
+      setApplicationData(appDetailsResult.grantApplication);
+    }
+  }, [appDetailsResult]);
+
+  const [hiddenModalOpen, setHiddenModalOpen] = useState(false);
+  const showHiddenData = async () => {
+    if (applicationData) {
+      setHiddenModalOpen(true);
+      const decryptedApplicationData = await decryptApplicationPII(applicationData);
+      if (decryptedApplicationData) {
+        setApplicationData(decryptedApplicationData);
+      }
+    }
+  };
 
   const assetInfo = getAssetInfo(rewardAsset, getSupportedChainIdFromWorkspace(workspace));
   const fundingIcon = assetInfo.icon;
@@ -189,6 +210,63 @@ function ManageGrant() {
     });
   };
 
+  function renderModal() {
+    return (
+      <Modal
+        isOpen={hiddenModalOpen}
+        onClose={() => setHiddenModalOpen(false)}
+        title="View Details with your Wallet"
+        modalWidth={566}
+      >
+        <ModalBody px={10}>
+          <Flex direction="column">
+            <Flex mt="36px">
+              <Text fontWeight="bold" fontSize="18px">
+                How does this work?
+              </Text>
+            </Flex>
+            <Flex mt="28px" alignItems="center">
+              <Box
+                bg="#8850EA"
+                color="#fff"
+                h={10}
+                w={10}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                borderRadius="50%"
+                mr="19px"
+              >
+                1
+              </Box>
+              <Text>Open your wallet</Text>
+            </Flex>
+            <Flex alignItems="center" mt="35px" mb="40px">
+              <Box
+                bg="#8850EA"
+                color="#fff"
+                h={10}
+                w={10}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                borderRadius="50%"
+                mr="19px"
+              >
+                2
+              </Box>
+              <Text>Click on ‘Decrypt’ to view the details.</Text>
+            </Flex>
+
+            <Button mb={10} variant="primary" onClick={() => setHiddenModalOpen(false)}>
+              ok
+            </Button>
+          </Flex>
+        </ModalBody>
+      </Modal>
+    );
+  }
+
   return (
     <Container maxW="100%" display="flex" px="70px">
       <Container
@@ -222,7 +300,13 @@ function ManageGrant() {
               src="/ui_icons/mail_icon.svg"
               mr={2}
             />
-            {applicantEmail}
+            {applicantEmail || (
+            <Text display="inline" variant="applicationHeading" lineHeight="32px" onClick={showHiddenData} cursor="pointer">
+              Hidden
+              {' '}
+              <Text color="#6200EE" display="inline">View</Text>
+            </Text>
+            )}
           </Text>
           <Box mr={6} />
           <Text key="date_text" fontWeight="400">
@@ -389,6 +473,8 @@ function ManageGrant() {
           />
         </Modal>
       )}
+
+      {renderModal()}
     </Container>
   );
 }

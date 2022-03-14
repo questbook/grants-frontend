@@ -5,13 +5,13 @@ import {
   useToast,
   ToastId,
   Divider,
+  ModalBody,
+  Box,
+  Button,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
-  ReactElement,
-  useEffect,
-  useState,
-  useContext,
+  ReactElement, useEffect, useState, useContext,
 } from 'react';
 import {
   GetApplicationDetailsQuery,
@@ -20,6 +20,8 @@ import {
 import { SupportedChainId } from 'src/constants/chains';
 import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+import useApplicationEncryption from 'src/hooks/useApplicationEncryption';
+import Modal from 'src/components/ui/modal';
 import { ApiClientsContext } from '../../_app';
 import InfoToast from '../../../src/components/ui/infoToast';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
@@ -40,6 +42,7 @@ import NavbarLayout from '../../../src/layout/navbarLayout';
 
 function ApplicantForm() {
   const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
+  const { decryptApplicationPII } = useApplicationEncryption();
 
   const toastRef = React.useRef<ToastId>();
 
@@ -91,6 +94,7 @@ function ApplicantForm() {
   } = useGetApplicationDetailsQuery(queryParams);
   useEffect(() => {
     if (data && data.grantApplication) {
+      console.log('grantApplication------>', data.grantApplication);
       setApplicationData(data.grantApplication);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -136,8 +140,22 @@ function ApplicantForm() {
     } else if (error) {
       setState(undefined);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toastRef, toast, router, applicationData, txn, error]);
+
+  const [hiddenModalOpen, setHiddenModalOpen] = useState(false);
+
+  const showHiddenData = async () => {
+    if (applicationData) {
+      setHiddenModalOpen(true);
+      const decryptedApplicationData = await decryptApplicationPII(
+        applicationData,
+      );
+      if (decryptedApplicationData) {
+        setApplicationData(decryptedApplicationData);
+      }
+    }
+  };
 
   const handleApplicationStateUpdate = async (st: number) => {
     // console.log('unsetting state');
@@ -156,6 +174,63 @@ function ApplicantForm() {
     setState(st);
   };
 
+  function renderModal() {
+    return (
+      <Modal
+        isOpen={hiddenModalOpen}
+        onClose={() => setHiddenModalOpen(false)}
+        title="View Details with your Wallet"
+        modalWidth={566}
+      >
+        <ModalBody px={10}>
+          <Flex direction="column">
+            <Flex mt="36px">
+              <Text fontWeight="bold" fontSize="18px">
+                How does this work?
+              </Text>
+            </Flex>
+            <Flex mt="28px" alignItems="center">
+              <Box
+                bg="#8850EA"
+                color="#fff"
+                h={10}
+                w={10}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                borderRadius="50%"
+                mr="19px"
+              >
+                1
+              </Box>
+              <Text>Open your wallet</Text>
+            </Flex>
+            <Flex alignItems="center" mt="35px" mb="40px">
+              <Box
+                bg="#8850EA"
+                color="#fff"
+                h={10}
+                w={10}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                borderRadius="50%"
+                mr="19px"
+              >
+                2
+              </Box>
+              <Text>Click on ‘Decrypt’ to view the details.</Text>
+            </Flex>
+
+            <Button mb={10} variant="primary" onClick={() => setHiddenModalOpen(false)}>
+              ok
+            </Button>
+          </Flex>
+        </ModalBody>
+      </Modal>
+    );
+  }
+
   function renderContent(currentStep: number) {
     if (currentStep === 1) {
       return (
@@ -166,7 +241,10 @@ function ApplicantForm() {
             applicationData={applicationData}
             hasClicked={loading}
           />
-          <AcceptSidebar applicationData={applicationData} />
+          <AcceptSidebar
+            applicationData={applicationData}
+            showHiddenData={showHiddenData}
+          />
         </>
       );
     }
@@ -181,7 +259,10 @@ function ApplicantForm() {
             commentError={rejectionCommentError}
             setCommentError={setRejectionCommentError}
           />
-          <RejectSidebar applicationData={applicationData} />
+          <RejectSidebar
+            applicationData={applicationData}
+            showHiddenData={showHiddenData}
+          />
         </>
       );
     }
@@ -195,156 +276,175 @@ function ApplicantForm() {
           commentError={resubmitCommentError}
           setCommentError={setResubmitCommentError}
         />
-        <ResubmitSidebar applicationData={applicationData} />
+        <ResubmitSidebar
+          applicationData={applicationData}
+          showHiddenData={showHiddenData}
+        />
       </>
     );
   }
 
   if (step === 0) {
     return (
-      <Flex direction="row" w="72%" mx="auto">
-        <Flex direction="column" w="100%" m={0} p={0} h="100%">
-          <Flex direction="column" alignItems="stretch" pb={6} px={0} w="100%">
-            <Breadcrumbs
-              path={['Your Grants', 'View Applicants', 'Applicant Form']}
-            />
-            <Heading mt="18px" title={applicationData?.grant?.title || ''} />
-          </Flex>
+      <>
+        <Flex direction="row" w="72%" mx="auto">
+          <Flex direction="column" w="100%" m={0} p={0} h="100%">
+            <Flex
+              direction="column"
+              alignItems="stretch"
+              pb={6}
+              px={0}
+              w="100%"
+            >
+              <Breadcrumbs
+                path={['Your Grants', 'View Applicants', 'Applicant Form']}
+              />
+              <Heading mt="18px" title={applicationData?.grant?.title || ''} />
+            </Flex>
 
-          <Flex direction="row" w="100%" justify="space-between">
-            <Flex direction="column" w="65%" align="start">
-              <Flex direction="column" alignItems="stretch" pb={8} w="100%">
-                {applicationData && applicationData?.state === 'rejected' && (
-                  <Flex
-                    alignItems="flex-start"
-                    bgColor="#FFC0C0"
-                    border="2px solid #EE7979"
-                    px="26px"
-                    py="22px"
-                    borderRadius="6px"
-                    my={4}
-                    mx={10}
-                    alignSelf="stretch"
-                  >
+            <Flex direction="row" w="100%" justify="space-between">
+              <Flex direction="column" w="65%" align="start">
+                <Flex direction="column" alignItems="stretch" pb={8} w="100%">
+                  {applicationData && applicationData?.state === 'rejected' && (
                     <Flex
-                      alignItems="center"
-                      justifyContent="center"
-                      bgColor="#F7B7B7"
+                      alignItems="flex-start"
+                      bgColor="#FFC0C0"
                       border="2px solid #EE7979"
-                      borderRadius="40px"
-                      p={2}
-                      h="40px"
-                      w="40px"
-                      mt="5px"
+                      px="26px"
+                      py="22px"
+                      borderRadius="6px"
+                      my={4}
+                      mx={10}
+                      alignSelf="stretch"
                     >
-                      <Image
+                      <Flex
+                        alignItems="center"
+                        justifyContent="center"
+                        bgColor="#F7B7B7"
+                        border="2px solid #EE7979"
+                        borderRadius="40px"
+                        p={2}
                         h="40px"
                         w="40px"
-                        src="/ui_icons/result_rejected_application.svg"
-                        alt="Rejected"
-                      />
-                    </Flex>
-                    <Flex ml="23px" direction="column">
-                      <Text
-                        fontSize="16px"
-                        lineHeight="24px"
-                        fontWeight="700"
-                        color="#7B4646"
+                        mt="5px"
                       >
-                        Application Rejected
-                      </Text>
-                      <Text
-                        fontSize="16px"
-                        lineHeight="24px"
-                        fontWeight="400"
-                        color="#7B4646"
-                      >
-                        {applicationData?.feedbackDao}
-                      </Text>
+                        <Image
+                          h="40px"
+                          w="40px"
+                          src="/ui_icons/result_rejected_application.svg"
+                          alt="Rejected"
+                        />
+                      </Flex>
+                      <Flex ml="23px" direction="column">
+                        <Text
+                          fontSize="16px"
+                          lineHeight="24px"
+                          fontWeight="700"
+                          color="#7B4646"
+                        >
+                          Application Rejected
+                        </Text>
+                        <Text
+                          fontSize="16px"
+                          lineHeight="24px"
+                          fontWeight="400"
+                          color="#7B4646"
+                        >
+                          {applicationData?.feedbackDao}
+                        </Text>
+                      </Flex>
                     </Flex>
-                  </Flex>
-                )}
+                  )}
 
-                {applicationData && applicationData?.state === 'resubmit' && (
-                  <Flex
-                    alignItems="flex-start"
-                    bgColor="#FEF6D9"
-                    border="2px solid #EFC094"
-                    px="26px"
-                    py="22px"
-                    borderRadius="6px"
-                    my={4}
-                    mx={10}
-                    alignSelf="stretch"
-                  >
+                  {applicationData && applicationData?.state === 'resubmit' && (
                     <Flex
-                      alignItems="center"
-                      justifyContent="center"
-                      h="36px"
-                      w="42px"
+                      alignItems="flex-start"
+                      bgColor="#FEF6D9"
+                      border="2px solid #EFC094"
+                      px="26px"
+                      py="22px"
+                      borderRadius="6px"
+                      my={4}
+                      mx={10}
+                      alignSelf="stretch"
                     >
-                      <Image
-                        h="40px"
-                        w="40px"
-                        src="/ui_icons/alert_triangle.svg"
-                        alt="Resubmit"
-                      />
-                    </Flex>
-                    <Flex ml="23px" direction="column">
-                      <Text
-                        fontSize="16px"
-                        lineHeight="24px"
-                        fontWeight="700"
-                        color="#7B4646"
+                      <Flex
+                        alignItems="center"
+                        justifyContent="center"
+                        h="36px"
+                        w="42px"
                       >
-                        Request for Resubmission
-                      </Text>
-                      <Text
-                        fontSize="16px"
-                        lineHeight="24px"
-                        fontWeight="400"
-                        color="#7B4646"
-                      >
-                        {applicationData?.feedbackDao}
-                      </Text>
+                        <Image
+                          h="40px"
+                          w="40px"
+                          src="/ui_icons/alert_triangle.svg"
+                          alt="Resubmit"
+                        />
+                      </Flex>
+                      <Flex ml="23px" direction="column">
+                        <Text
+                          fontSize="16px"
+                          lineHeight="24px"
+                          fontWeight="700"
+                          color="#7B4646"
+                        >
+                          Request for Resubmission
+                        </Text>
+                        <Text
+                          fontSize="16px"
+                          lineHeight="24px"
+                          fontWeight="400"
+                          color="#7B4646"
+                        >
+                          {applicationData?.feedbackDao}
+                        </Text>
+                      </Flex>
                     </Flex>
-                  </Flex>
-                )}
+                  )}
 
-                <Flex direction="column">
-                  <Application applicationData={applicationData} />
+                  <Flex direction="column">
+                    <Application
+                      applicationData={applicationData}
+                      showHiddenData={showHiddenData}
+                    />
+                  </Flex>
                 </Flex>
               </Flex>
-            </Flex>
-            <Flex direction="column" mt={2}>
-              <Sidebar
-                applicationData={applicationData}
-                onAcceptApplicationClick={() => setStep(1)}
-                onRejectApplicationClick={() => setStep(2)}
-                onResubmitApplicationClick={() => setStep(3)}
-              />
+              <Flex direction="column" mt={2}>
+                <Sidebar
+                  showHiddenData={showHiddenData}
+                  applicationData={applicationData}
+                  onAcceptApplicationClick={() => setStep(1)}
+                  onRejectApplicationClick={() => setStep(2)}
+                  onResubmitApplicationClick={() => setStep(3)}
+                />
+              </Flex>
             </Flex>
           </Flex>
         </Flex>
-      </Flex>
+        {renderModal()}
+      </>
     );
   }
 
   return (
-    <Flex direction="column" mx={200}>
-      <Flex direction="column" mx={10} w="100%">
-        <Breadcrumbs
-          path={['My Grants', 'View Applicants', 'Applicant Form']}
-        />
-        <Text mt={4} mb={4} variant="heading">
-          {applicationData?.grant?.title}
-        </Text>
-        <Divider mb={5} />
-        <Flex maxW="100%" direction="row" justify="space-between">
-          {renderContent(step)}
+    <>
+      <Flex direction="column" mx={200}>
+        <Flex direction="column" mx={10} w="100%">
+          <Breadcrumbs
+            path={['My Grants', 'View Applicants', 'Applicant Form']}
+          />
+          <Text mt={4} mb={4} variant="heading">
+            {applicationData?.grant?.title}
+          </Text>
+          <Divider mb={5} />
+          <Flex maxW="100%" direction="row" justify="space-between">
+            {renderContent(step)}
+          </Flex>
         </Flex>
       </Flex>
-    </Flex>
+      {renderModal()}
+    </>
   );
 }
 

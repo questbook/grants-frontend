@@ -1,15 +1,22 @@
 import {
-  Flex, Text, Grid, Button, GridItem, Box,
+  Flex, Text, Grid, Button, GridItem, Box, Switch, Image, Link,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import { ChevronRightIcon } from '@chakra-ui/icons';
+import React, { useEffect, useState } from 'react';
+import useEncryption from 'src/hooks/utils/useEncryption';
+import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys';
+import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
+import Loader from 'src/components/ui/loader';
 import Badge from '../../../ui/badge';
 import applicantDetailsList from '../../../../constants/applicantDetailsList';
+import Tooltip from '../../../ui/tooltip';
 
 interface Props {
   onSubmit: (data: any) => void;
 }
 
 function ApplicantDetails({ onSubmit }: Props) {
+  const { getPublicEncryptionKey } = useEncryption();
   const applicantDetails = applicantDetailsList.map(
     ({
       title, tooltip, id, inputType, isRequired,
@@ -27,6 +34,16 @@ function ApplicantDetails({ onSubmit }: Props) {
     },
   ).filter((obj) => obj != null);
   const [detailsRequired, setDetailsRequired] = useState(applicantDetails);
+  const [shouldEncrypt, setShouldEncrypt] = useState(false);
+  const [keySubmitted, setKeySubmitted] = useState(false);
+  const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({ publicKey: '' });
+  const [transactionData, loading] = useUpdateWorkspacePublicKeys(publicKey);
+
+  useEffect(() => {
+    if (transactionData) {
+      setKeySubmitted(true);
+    }
+  }, [transactionData]);
   // const [extraField] = useState(false);
 
   const [milestoneSelectOptionIsVisible, setMilestoneSelectOptionIsVisible] = React.useState(false);
@@ -84,6 +101,10 @@ function ApplicantDetails({ onSubmit }: Props) {
           title: 'Funding Ask',
           inputType: 'short-form',
         };
+      }
+      if (shouldEncrypt && keySubmitted) {
+        fields.applicantEmail = { ...fields.applicantEmail, pii: true };
+        fields.memberDetails = { ...fields.memberDetails, pii: true };
       }
       onSubmit({ fields });
     }
@@ -187,8 +208,77 @@ function ApplicantDetails({ onSubmit }: Props) {
           </Flex>
         </>
         )}
+        <Flex mt={8} gap="2">
+          <Flex direction="column">
+            <Text color="#122224" fontWeight="bold" fontSize="16px" lineHeight="20px">
+              Hide applicant personal data (email, and about team)
+            </Text>
+            <Flex>
+              <Text color="#717A7C" fontSize="14px" lineHeight="20px">
+                You will be asked for your public encryption key
+                <Tooltip
+                  icon="/ui_icons/tooltip_questionmark.svg"
+                  label="Write about the team members working on the project."
+                  placement="bottom-start"
+                />
+              </Text>
+            </Flex>
+          </Flex>
+          <Flex justifyContent="center" gap={2} alignItems="center">
+            <Switch
+              id="encrypt"
+              onChange={
+              (e) => {
+                setShouldEncrypt(e.target.checked);
+              }
+             }
+            />
+            <Text
+              fontSize="12px"
+              fontWeight="bold"
+              lineHeight="16px"
+            >
+              {`${shouldEncrypt ? 'YES' : 'NO'}`}
+
+            </Text>
+          </Flex>
+        </Flex>
+        {shouldEncrypt && (
+          <Flex mt={8} gap="2" direction="column">
+            <Flex
+              gap="2"
+              cursor="pointer"
+              onClick={async () => setPublicKey({ publicKey: (await getPublicEncryptionKey()) || '' })}
+            >
+              <Text
+                color="brand.500"
+                fontWeight="bold"
+                fontSize="16px"
+                lineHeight="24px"
+              >
+                Allow access to your public key and encrypt the applicant form to proceed
+              </Text>
+              <ChevronRightIcon color="brand.500" fontSize="2xl" />
+              {loading
+              && <Loader />}
+            </Flex>
+            <Flex alignItems="center" gap={2}>
+              <Image mt={1} src="/ui_icons/info.svg" />
+              <Text color="#122224" fontWeight="medium" fontSize="14px" lineHeight="20px">
+                By doing the above you’ll have to approve this transaction in your wallet.
+              </Text>
+            </Flex>
+            <Link href="todo">
+              <Text color="#122224" fontWeight="normal" fontSize="14px" lineHeight="20px" decoration="underline">
+
+                Why is this required?
+              </Text>
+            </Link>
+          </Flex>
+        )}
+
       </Flex>
-      <Button mt="auto" variant="primary" onClick={handleOnSubmit}>
+      <Button mt="auto" variant="primary" onClick={handleOnSubmit} disabled={shouldEncrypt && !keySubmitted}>
         Continue
       </Button>
     </>

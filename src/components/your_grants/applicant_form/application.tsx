@@ -19,9 +19,10 @@ import { getAssetInfo } from '../../../utils/tokenUtils';
 
 interface Props {
   applicationData: GetApplicationDetailsQuery['grantApplication'];
+  showHiddenData: () => void;
 }
 
-function Application({ applicationData }: Props) {
+function Application({ applicationData, showHiddenData }: Props) {
   const [selected, setSelected] = useState(0);
 
   const scroll = (ref: any, currentSelection: number) => {
@@ -47,39 +48,24 @@ function Application({ applicationData }: Props) {
 
   useEffect(() => {
     if (!applicationData) return;
-    const getStringField = (fieldName: string) => (
-      applicationData?.fields
-        ?.find(({ id }) => id.split('.')[1] === fieldName)
-        ?.values[0]?.value ?? ''
-    );
-    setProjectTitle(
-      getStringField('projectName'),
-    );
+    const getStringField = (fieldName: string) => applicationData?.fields?.find(({ id }) => id.split('.')[1] === fieldName)
+      ?.values[0]?.value ?? '';
+    setProjectTitle(getStringField('projectName'));
     setProjectLink(
-      applicationData?.fields?.find(
-        (fld: any) => fld?.id?.split('.')[1] === 'projectLink',
-      )?.values.map((val) => ({ link: val.value })) ?? [],
+      applicationData?.fields
+        ?.find((fld: any) => fld?.id?.split('.')[1] === 'projectLink')
+        ?.values.map((val) => ({ link: val.value })) ?? [],
     );
-    setProjectDetails(
-      getStringField('projectDetails'),
-    );
-    setProjectGoals(
-      getStringField('projectGoals'),
-    );
+    setProjectDetails(getStringField('projectDetails'));
+    setProjectGoals(getStringField('projectGoals'));
     setProjectMilestones(applicationData?.milestones ?? []);
-    setFundingAsk(
-      getStringField('fundingAsk'),
-    );
-    setFundingBreakdown(
-      getStringField('fundingBreakdown'),
-    );
-    setTeamMembers(
-      getStringField('teamMembers'),
-    );
+    setFundingAsk(getStringField('fundingAsk'));
+    setFundingBreakdown(getStringField('fundingBreakdown'));
+    setTeamMembers(getStringField('teamMembers'));
     setMemberDetails(
-      applicationData?.fields?.find(
-        (fld: any) => fld?.id?.split('.')[1] === 'memberDetails',
-      )?.values.map((val) => (val.value)) ?? [],
+      applicationData?.fields
+        ?.find((fld: any) => fld?.id?.split('.')[1] === 'memberDetails')
+        ?.values.map((val) => val.value) ?? [],
     );
   }, [applicationData]);
 
@@ -249,7 +235,7 @@ function Application({ applicationData }: Props) {
             </Text>
           </Box>
 
-          <Box display={teamMembers && memberDetails.length ? '' : 'none'}>
+          <Box display={teamMembers ? '' : 'none'}>
             <Heading variant="applicationHeading" ref={refs[2]}>
               About Team
             </Heading>
@@ -264,18 +250,56 @@ function Application({ applicationData }: Props) {
                 {teamMembers}
               </Heading>
             </Heading>
-            {memberDetails.map((memberDetail: any, index: number) => (
-              <Box>
-                <Heading variant="applicationHeading" color="brand.500" mt={5}>
-                  Member
-                  {' '}
-                  {index + 1}
-                </Heading>
-                <Text variant="applicationText" mt={2}>
-                  {memberDetail}
-                </Text>
+            {memberDetails && memberDetails.length ? (
+              memberDetails.map((memberDetail: any, index: number) => (
+                <Box>
+                  <Heading
+                    variant="applicationHeading"
+                    color="brand.500"
+                    mt={5}
+                  >
+                    Member
+                    {' '}
+                    {index + 1}
+                  </Heading>
+                  <Text variant="applicationText" mt={2}>
+                    {memberDetail}
+                  </Text>
+                </Box>
+              ))
+            ) : (
+              <Box
+                backdropBlur="base"
+                border="1px"
+                borderColor="#D0D3D3"
+                rounded="md"
+                py="5"
+                mt="2"
+                display="flex"
+                justifyContent="center"
+              >
+                <Flex
+                  direction="column"
+                  justifyContent="center"
+                  alignItems="center"
+                  maxW="480px"
+                >
+                  <Image h="77px" w="89px" src="/illustrations/disburse_grants.svg" />
+                  <Text textAlign="center" variant="applicationText" mt={2}>
+                    Team member details are hidden, and can be viewed only if
+                    you have specific access.
+                  </Text>
+                  <Button
+                    onClick={showHiddenData}
+                    variant="primary"
+                    mt={7}
+                    w="269px"
+                  >
+                    View Details
+                  </Button>
+                </Flex>
               </Box>
-            ))}
+            )}
           </Box>
         </Flex>
         <Box my={10} />

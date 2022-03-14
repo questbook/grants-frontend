@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Box, Button, Text, Image, Link, Flex, Container, useToast, ToastId,
 } from '@chakra-ui/react';
@@ -10,6 +10,8 @@ import Loader from 'src/components/ui/loader';
 import useSubmitApplication from 'src/hooks/useSubmitApplication';
 import { SupportedChainId } from 'src/constants/chains';
 import { GrantApplicationRequest } from '@questbook/service-validator-client';
+import { ApiClientsContext } from 'pages/_app';
+import useApplicationEncryption from 'src/hooks/useApplicationEncryption';
 import { parseAmount } from '../../../../utils/formattingUtils';
 import { GrantApplicationFieldsSubgraph } from '../../../../types/application';
 import InfoToast from '../../../ui/infoToast';
@@ -29,6 +31,7 @@ interface Props {
   rewardCurrency: string;
   rewardCurrencyCoin: string;
   grantRequiredFields: string[];
+  piiFields: string[];
 }
 
 // eslint-disable-next-line max-len
@@ -43,7 +46,10 @@ function Form({
   rewardCurrency,
   rewardCurrencyCoin,
   grantRequiredFields,
+  piiFields,
 }: Props) {
+  const { encryptApplicationPII } = useApplicationEncryption();
+  const { workspace } = useContext(ApiClientsContext)!;
   const [signer] = useSigner();
   const [applicantName, setApplicantName] = useState('');
   const [applicantNameError, setApplicantNameError] = useState(false);
@@ -243,8 +249,14 @@ function Form({
         delete data.fields[field as keyof GrantApplicationFieldsSubgraph];
       }
     });
+    if (!workspace || !workspace.members) return;
+    let encryptedData;
+    if (piiFields.length > 0) {
+      encryptedData = await encryptApplicationPII(data, piiFields, workspace.members);
 
-    setFormData(data);
+      console.log('encryptedData -----', encryptedData);
+    }
+    setFormData(encryptedData || data);
   };
 
   return (

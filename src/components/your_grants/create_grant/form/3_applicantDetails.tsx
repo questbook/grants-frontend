@@ -1,7 +1,12 @@
+import { ChevronRightIcon } from '@chakra-ui/icons';
 import {
-  Flex, Grid, GridItem, Box, Text,
+  Flex, Grid, GridItem, Box, Text, Switch, Image,
 } from '@chakra-ui/react';
+import Link from 'next/link';
 import React from 'react';
+import Loader from 'src/components/ui/loader';
+import Tooltip from 'src/components/ui/tooltip';
+import useEncryption from 'src/hooks/utils/useEncryption';
 import applicantDetailsList from '../../../../constants/applicantDetailsList';
 import Badge from '../../../ui/badge';
 
@@ -20,6 +25,12 @@ function ApplicantDetails({
 
   multipleMilestones,
   setMultipleMilestones,
+
+  shouldEncrypt,
+  setShouldEncrypt,
+  loading,
+  setPublicKey,
+  hasOwnerPublicKey,
 }: {
   detailsRequired: any[];
   toggleDetailsRequired: (index: number) => void;
@@ -35,8 +46,16 @@ function ApplicantDetails({
 
   multipleMilestones: boolean;
   setMultipleMilestones: (multipleMilestones: boolean) => void;
+
+  shouldEncrypt: boolean;
+  setShouldEncrypt: (shouldEncrypt: boolean) => void;
+  loading: boolean;
+  setPublicKey: (publicKey: any) => void;
+  hasOwnerPublicKey: boolean;
 }) {
   const [milestoneSelectOptionIsVisible, setMilestoneSelectOptionIsVisible] = React.useState(false);
+  const { getPublicEncryptionKey } = useEncryption();
+
   return (
     <Flex py={0} direction="column">
       <Grid
@@ -126,6 +145,74 @@ function ApplicantDetails({
             />
           </Flex>
         </>
+      )}
+      <Flex mt={8} gap="2" justifyContent="space-between">
+        <Flex direction="column">
+          <Text color="#122224" fontWeight="bold" fontSize="16px" lineHeight="20px">
+            Hide applicant personal data (email, and about team)
+          </Text>
+          <Flex>
+            <Text color="#717A7C" fontSize="14px" lineHeight="20px">
+              You will be asked for your public encryption key
+              <Tooltip
+                icon="/ui_icons/tooltip_questionmark.svg"
+                label="Write about the team members working on the project."
+                placement="bottom-start"
+              />
+            </Text>
+          </Flex>
+        </Flex>
+        <Flex justifyContent="center" gap={2} alignItems="center">
+          <Switch
+            id="encrypt"
+            onChange={
+              (e) => {
+                setShouldEncrypt(e.target.checked);
+              }
+             }
+          />
+          <Text
+            fontSize="12px"
+            fontWeight="bold"
+            lineHeight="16px"
+          >
+            {`${shouldEncrypt ? 'YES' : 'NO'}`}
+
+          </Text>
+        </Flex>
+      </Flex>
+      {shouldEncrypt && !hasOwnerPublicKey && (
+      <Flex mt={8} gap="2" direction="column">
+        <Flex
+          gap="2"
+          cursor="pointer"
+          onClick={async () => setPublicKey({ publicKey: (await getPublicEncryptionKey()) || '' })}
+        >
+          <Text
+            color="brand.500"
+            fontWeight="bold"
+            fontSize="16px"
+            lineHeight="24px"
+          >
+            Allow access to your public key and encrypt the applicant form to proceed
+          </Text>
+          <ChevronRightIcon color="brand.500" fontSize="2xl" />
+          {loading
+              && <Loader />}
+        </Flex>
+        <Flex alignItems="center" gap={2}>
+          <Image mt={1} src="/ui_icons/info.svg" />
+          <Text color="#122224" fontWeight="medium" fontSize="14px" lineHeight="20px">
+            By doing the above you’ll have to approve this transaction in your wallet.
+          </Text>
+        </Flex>
+        <Link href="todo">
+          <Text color="#122224" fontWeight="normal" fontSize="14px" lineHeight="20px" decoration="underline">
+
+            Why is this required?
+          </Text>
+        </Link>
+      </Flex>
       )}
     </Flex>
 

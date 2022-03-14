@@ -9,6 +9,13 @@ query getApplicationDetails($applicationID: ID!) {
         value
       }
     }
+    pii {
+      id
+      manager {
+        id
+      }
+      data
+    }
     milestones {
       id
       title
@@ -23,11 +30,21 @@ query getApplicationDetails($applicationID: ID!) {
         title
         logoIpfsHash
         supportedNetworks
+        members {
+          id
+          actorId
+          publicKey
+        }
       }
       reward {
         id
         asset
         committed
+      }
+      fields {
+        id
+        title
+        isPii
       }
     }
     applicantId

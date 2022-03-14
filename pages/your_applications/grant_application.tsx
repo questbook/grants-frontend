@@ -103,6 +103,9 @@ function ViewApplication() {
       fundingAsk: ethers.utils.formatEther(getStringField('fundingAsk') ?? '0'),
       fundingBreakdown: getStringField('fundingBreakdown'),
     };
+    if (application?.grant?.fields?.find((field: any) => field.title === 'memberDetails') && !fd.membersDescription.length) {
+      fd.membersDescription = [...Array(fd.teamMembers)].map(() => ({ description: '' }));
+    }
     setFormData(fd);
   }, [application]);
 
@@ -157,10 +160,15 @@ function ViewApplication() {
           state={application?.state || ''}
           feedback={application?.feedbackDao || ''}
           grantRequiredFields={
-            application?.fields?.map((field: any) => field.id.split('.')[1])
+            application?.grant?.fields?.map((field: any) => field.id.split('.')[1])
             ?? []
           }
+          piiFields={
+            application?.grant?.fields?.filter((field:any) => field.isPii).map((field:any) => field.id.split('.')[1])
+            ?? []
+}
           applicationID={applicationID}
+          workspace={application?.grant?.workspace}
         />
       </Container>
     </Container>

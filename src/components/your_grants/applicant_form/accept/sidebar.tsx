@@ -11,8 +11,10 @@ import FloatingSidebar from '../../../ui/sidebar/floatingSidebar';
 function Sidebar(
   {
     applicationData,
+    showHiddenData,
   }: {
     applicationData: any;
+    showHiddenData: () => void;
   },
 ) {
   const { workspace } = useContext(ApiClientsContext)!;
@@ -50,7 +52,14 @@ function Sidebar(
             Email
           </Text>
           <Heading variant="applicationHeading" lineHeight="32px">
-            {applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'applicantEmail')?.values[0]?.value}
+            {(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'applicantEmail')) ? (
+              applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'applicantEmail')?.values[0]?.value) : (
+                <Heading variant="applicationHeading" lineHeight="32px" onClick={showHiddenData} cursor="pointer">
+                  Hidden
+                  {' '}
+                  <Text color="#6200EE" display="inline">View</Text>
+                </Heading>
+            )}
           </Heading>
         </Flex>
         <Flex direction="row" justify="space-between" w="full" align="center">
