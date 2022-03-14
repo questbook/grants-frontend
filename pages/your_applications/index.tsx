@@ -8,7 +8,7 @@ import React, {
 import BN from 'bn.js';
 import { useAccount } from 'wagmi';
 import Empty from 'src/components/ui/empty';
-import { useGetMyApplicationsLazyQuery } from 'src/generated/graphql';
+import { GrantApplication, useGetMyApplicationsLazyQuery } from 'src/generated/graphql';
 import Heading from '../../src/components/ui/heading';
 import YourApplicationCard from '../../src/components/your_applications/yourApplicationCard';
 import NavbarLayout from '../../src/layout/navbarLayout';
@@ -56,6 +56,8 @@ function YourApplications() {
       ));
       Promise.all(promises).then((values:any[]) => {
         const allApplicationsData = [].concat(...values);
+        allApplicationsData
+          .sort((a: GrantApplication, b: GrantApplication) => b.updatedAtS - a.updatedAtS);
         setMyApplications([...myApplications, ...allApplicationsData]);
         setCurrentPage(currentPage + 1);
       });
