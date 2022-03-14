@@ -112,4 +112,37 @@ export const CHAIN_INFO: ChainInfoMap = {
     },
     subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-harmonytest',
   },
+  [SupportedChainId.POLYGON_TESTNET]: {
+    name: 'Polygon Testnet',
+    nativeCurrency: {
+      name: 'Matic Token',
+      symbol: 'MATIC',
+      decimals: 18,
+    },
+    icon: '/network_icons/eth_mainnet.svg',
+    wallets: [
+      {
+        id: 'injected',
+        name: 'Metamask',
+        icon: '/wallet_icons/metamask.svg',
+      },
+      {
+        id: 'walletConnect',
+        name: 'Wallet Connect',
+        icon: '/wallet_icons/walletconnect.svg',
+      },
+    ],
+    explorer: {
+      address: 'https://https://mumbai.polygonscan.com/address/',
+      transactionHash: 'https://https://mumbai.polygonscan.com/tx/',
+    },
+    supportedCurrencies: {
+      '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270': {
+        icon: '/ui_icons/brand/currency/wmatic_symbol.svg',
+        label: 'WMATIC',
+        address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
+      },
+    },
+    subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph',
+  },
 };
