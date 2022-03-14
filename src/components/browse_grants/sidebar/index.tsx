@@ -1,5 +1,6 @@
 import { Flex, Box, Text } from '@chakra-ui/react';
 import React from 'react';
+import config from 'src/constants/config';
 import SidebarComponent from '../../ui/sidebar/sidebar';
 import SidebarList from './sidebarList';
 
@@ -8,7 +9,7 @@ function Sidebar() {
     <SidebarComponent
       links={[
         {
-          href: 'https://discord.com/invite/tWg7Mb7KM7',
+          href: config.supportLink,
           label: 'Support 24*7',
           iconUrl: '/sidebar/discord_icon.svg',
         },

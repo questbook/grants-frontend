@@ -5,6 +5,7 @@ import { BigNumber } from 'ethers';
 // import { ExternalLinkIcon } from '@chakra-ui/icons';
 import React from 'react';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import config from 'src/constants/config';
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import { formatAmount } from '../../../utils/formattingUtils';
 import AddFunds from '../../funds/add_funds_modal';
@@ -157,7 +158,7 @@ function Sidebar({
               variant="link"
               color="#AA82F0"
               leftIcon={<Image src="/sidebar/discord_icon.svg" />}
-              onClick={() => window.open('https://discord.com/invite/tWg7Mb7KM7/')}
+              onClick={() => window.open(config.supportLink)}
             >
               Support 24*7
             </Button>
