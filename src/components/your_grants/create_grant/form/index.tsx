@@ -8,7 +8,7 @@ import { CHAIN_INFO } from 'src/constants/chainInfo';
 import useChainId from 'src/hooks/utils/useChainId';
 import { SupportedChainId } from 'src/constants/chains';
 import { useAccount } from 'wagmi';
-import { WorkspacePublicKeysUpdateRequest } from '@questbook/service-validator-client';
+import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys';
 import { ApiClientsContext } from 'pages/_app';
 import Title from './1_title';
@@ -42,7 +42,7 @@ function Form({
   const [shouldEncrypt, setShouldEncrypt] = useState(false);
   const [hasOwnerPublicKey, setHasOwnerPublicKey] = useState(false);
   const [keySubmitted, setKeySubmitted] = useState(false);
-  const [publicKey, setPublicKey] = React.useState<WorkspacePublicKeysUpdateRequest>({ walletId: '', publicKey: '' });
+  const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({ publicKey: '' });
   const [transactionData, loading] = useUpdateWorkspacePublicKeys(publicKey);
 
   const [admins, setAdmins] = useState<any[]>([]);

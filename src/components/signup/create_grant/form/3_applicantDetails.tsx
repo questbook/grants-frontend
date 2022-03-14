@@ -5,8 +5,7 @@ import { ChevronRightIcon } from '@chakra-ui/icons';
 import React, { useEffect, useState } from 'react';
 import useEncryption from 'src/hooks/utils/useEncryption';
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys';
-import { WorkspacePublicKeysUpdateRequest } from '@questbook/service-validator-client';
-import { useAccount } from 'wagmi';
+import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
 import Loader from 'src/components/ui/loader';
 import Badge from '../../../ui/badge';
 import applicantDetailsList from '../../../../constants/applicantDetailsList';
@@ -37,9 +36,8 @@ function ApplicantDetails({ onSubmit }: Props) {
   const [detailsRequired, setDetailsRequired] = useState(applicantDetails);
   const [shouldEncrypt, setShouldEncrypt] = useState(false);
   const [keySubmitted, setKeySubmitted] = useState(false);
-  const [publicKey, setPublicKey] = React.useState<WorkspacePublicKeysUpdateRequest>({ walletId: '', publicKey: '' });
+  const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({ publicKey: '' });
   const [transactionData, loading] = useUpdateWorkspacePublicKeys(publicKey);
-  const [{ data: accountData }] = useAccount();
 
   useEffect(() => {
     if (transactionData) {
@@ -250,7 +248,7 @@ function ApplicantDetails({ onSubmit }: Props) {
             <Flex
               gap="2"
               cursor="pointer"
-              onClick={async () => setPublicKey({ walletId: accountData?.address, publicKey: (await getPublicEncryptionKey()) || '' })}
+              onClick={async () => setPublicKey({ publicKey: (await getPublicEncryptionKey()) || '' })}
             >
               <Text
                 color="brand.500"

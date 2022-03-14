@@ -7,7 +7,6 @@ import React from 'react';
 import Loader from 'src/components/ui/loader';
 import Tooltip from 'src/components/ui/tooltip';
 import useEncryption from 'src/hooks/utils/useEncryption';
-import { useAccount } from 'wagmi';
 import applicantDetailsList from '../../../../constants/applicantDetailsList';
 import Badge from '../../../ui/badge';
 
@@ -55,7 +54,6 @@ function ApplicantDetails({
   hasOwnerPublicKey: boolean;
 }) {
   const [milestoneSelectOptionIsVisible, setMilestoneSelectOptionIsVisible] = React.useState(false);
-  const [{ data: accountData }] = useAccount();
   const { getPublicEncryptionKey } = useEncryption();
 
   return (
@@ -188,7 +186,7 @@ function ApplicantDetails({
         <Flex
           gap="2"
           cursor="pointer"
-          onClick={async () => setPublicKey({ walletId: accountData?.address, publicKey: (await getPublicEncryptionKey()) || '' })}
+          onClick={async () => setPublicKey({ publicKey: (await getPublicEncryptionKey()) || '' })}
         >
           <Text
             color="brand.500"

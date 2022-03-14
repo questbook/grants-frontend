@@ -5,13 +5,13 @@ import { useAccount, useNetwork } from 'wagmi';
 import {
   getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils';
-import { WorkspacePublicKeysUpdateRequest } from '@questbook/service-validator-client';
+import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract';
 
 export default function useUpdateWorkspacePublicKeys(
-  data: WorkspacePublicKeysUpdateRequest,
+  data: WorkspaceUpdateRequest,
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
@@ -45,7 +45,7 @@ export default function useUpdateWorkspacePublicKeys(
       try {
         const {
           data: { ipfsHash },
-        } = await validatorApi.validateWorkspacePublicKeysUpdate(data);
+        } = await validatorApi.validateWorkspaceUpdate(data);
         if (!ipfsHash) {
           throw new Error('Error validating grant data');
         }
@@ -77,7 +77,7 @@ export default function useUpdateWorkspacePublicKeys(
     }
     try {
       if (!data) return;
-      if (!data.publicKey || !data.walletId) return;
+      if (!data.publicKey) return;
       if (transactionData) return;
       if (!accountData || !accountData.address) {
         throw new Error('not connected to wallet');
@@ -88,8 +88,6 @@ export default function useUpdateWorkspacePublicKeys(
       if (!workspace) {
         throw new Error('not connected to workspace');
       }
-      console.log(workspace, getSupportedChainIdFromWorkspace(workspace));
-      console.log(currentChainId);
       if (getSupportedChainIdFromWorkspace(workspace) !== currentChainId) {
         throw new Error('connected to wrong network');
       }
