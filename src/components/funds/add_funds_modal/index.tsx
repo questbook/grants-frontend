@@ -17,6 +17,7 @@ import { useContract, useSigner } from 'wagmi';
 import { BigNumber, ethers } from 'ethers';
 import Loader from 'src/components/ui/loader';
 import useDepositFunds from 'src/hooks/useDepositFunds';
+import config from 'src/constants/config';
 import { formatAmount } from '../../../utils/formattingUtils';
 import InfoToast from '../../ui/infoToast';
 import Dropdown from '../../ui/forms/dropdown';
@@ -148,7 +149,7 @@ function AddFunds({
           variant="link"
           color="#AA82F0"
           leftIcon={<Image src="/sidebar/discord_icon.svg" />}
-          onClick={() => window.open('https://discord.com/invite/tWg7Mb7KM7/')}
+          onClick={() => window.open(config.supportLink)}
         >
           Support 24*7
         </Button>
@@ -193,10 +194,12 @@ function AddFunds({
                     mx={4}
                   >
                     <Flex direction="row">
-                      <Text variant="tableBody" color="#8850EA" my={4}>
-                        {text}
-                        {' '}
-                      </Text>
+                      <Button _active={{}} onClick={() => setType(index)} variant="link" my={4}>
+                        <Text variant="tableBody" color="#8850EA">
+                          {text}
+                          {' '}
+                        </Text>
+                      </Button>
                       <Image
                         ml={2}
                         display="inline-block"

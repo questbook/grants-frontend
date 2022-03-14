@@ -50,7 +50,7 @@ function Form({
     },
   ).filter((obj) => obj != null);
   const [detailsRequired, setDetailsRequired] = useState(applicantDetails);
-  const [extraField, setExtraField] = useState(false);
+  // const [extraField, setExtraField] = useState(false);
   const [multipleMilestones, setMultipleMilestones] = useState(false);
 
   const toggleDetailsRequired = (index: number) => {
@@ -62,8 +62,8 @@ function Form({
     setDetailsRequired(newDetailsRequired);
   };
 
-  const [extraFieldDetails, setExtraFieldDetails] = useState('');
-  const [extraFieldError, setExtraFieldError] = useState(false);
+  // const [extraFieldDetails, setExtraFieldDetails] = useState('');
+  // const [extraFieldError, setExtraFieldError] = useState(false);
 
   const [reward, setReward] = React.useState('');
   const [rewardError, setRewardError] = React.useState(false);
@@ -111,10 +111,10 @@ function Form({
       setDetailsError(true);
       error = true;
     }
-    if (extraField && extraFieldDetails.length <= 0) {
-      setExtraFieldError(true);
-      error = true;
-    }
+    // if (extraField && extraFieldDetails.length <= 0) {
+    //   setExtraFieldError(true);
+    //   error = true;
+    // }
     if (reward.length <= 0) {
       setRewardError(true);
       error = true;
@@ -135,12 +135,12 @@ function Form({
         }
       });
       const fields = { ...requiredDetails };
-      if (extraFieldDetails != null && extraFieldDetails.length > 0) {
-        fields.extraField = {
-          title: 'Other Information',
-          inputType: 'short-form',
-        };
-      }
+      // if (extraFieldDetails != null && extraFieldDetails.length > 0) {
+      //   fields.extraField = {
+      //     title: 'Other Information',
+      //     inputType: 'short-form',
+      //   };
+      // }
       if (multipleMilestones) {
         fields.isMultipleMilestones = {
           title: 'Milestones',
@@ -229,12 +229,12 @@ function Form({
       <ApplicantDetails
         detailsRequired={detailsRequired}
         toggleDetailsRequired={toggleDetailsRequired}
-        extraField={extraField}
-        setExtraField={setExtraField}
-        extraFieldDetails={extraFieldDetails}
-        setExtraFieldDetails={setExtraFieldDetails}
-        extraFieldError={extraFieldError}
-        setExtraFieldError={setExtraFieldError}
+        // extraField={extraField}
+        // setExtraField={setExtraField}
+        // extraFieldDetails={extraFieldDetails}
+        // setExtraFieldDetails={setExtraFieldDetails}
+        // extraFieldError={extraFieldError}
+        // setExtraFieldError={setExtraFieldError}
         multipleMilestones={multipleMilestones}
         setMultipleMilestones={setMultipleMilestones}
       />

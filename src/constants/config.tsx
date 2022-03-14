@@ -8,6 +8,7 @@ const config = {
   subgraphUri: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph',
   defaultDAOImagePath: '/images/default_dao.jpeg',
   deafultDAOImageHash: 'QmesbcNhj2rpCnX41bJtkVAerSuM7NdrRfUSeEDbJrnB9W',
+  supportLink: 'https://discord.gg/a3SkQX6gnW',
 };
 
 export default config;

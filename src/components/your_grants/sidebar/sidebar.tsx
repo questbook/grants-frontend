@@ -3,6 +3,7 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
+import config from 'src/constants/config';
 import SidebarComponent from '../../ui/sidebar/sidebar';
 
 function Sidebar() {
@@ -36,7 +37,7 @@ function Sidebar() {
     <SidebarComponent
       links={[
         {
-          href: 'https://discord.com/invite/tWg7Mb7KM7',
+          href: config.supportLink,
           label: 'Support 24*7',
           iconUrl: '/sidebar/discord_icon.svg',
         },

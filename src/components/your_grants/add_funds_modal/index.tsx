@@ -20,6 +20,7 @@ import { BigNumber, ethers } from 'ethers';
 import { formatAmount } from 'src/utils/formattingUtils';
 import InfoToast from 'src/components/ui/infoToast';
 import Loader from 'src/components/ui/loader';
+import config from 'src/constants/config';
 import Dropdown from '../../ui/forms/dropdown';
 import SingleLineInput from '../../ui/forms/singleLineInput';
 import Modal from '../../ui/modal';
@@ -172,7 +173,7 @@ function AddFunds({
           variant="link"
           color="#AA82F0"
           leftIcon={<Image src="/sidebar/discord_icon.svg" />}
-          onClick={() => window.open('https://discord.com/invite/tWg7Mb7KM7/')}
+          onClick={() => window.open(config.supportLink)}
         >
           Support 24*7
         </Button>
