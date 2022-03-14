@@ -17,6 +17,7 @@ import { useAccount } from 'wagmi';
 import { BigNumber } from 'ethers';
 import {
   ApplicationMilestone,
+  GetApplicationDetailsQuery,
   useGetApplicationDetailsQuery,
   useGetFundSentForApplicationQuery,
 } from 'src/generated/graphql';
@@ -25,6 +26,7 @@ import { SupportedChainId } from 'src/constants/chains';
 import useCompleteApplication from 'src/hooks/useCompleteApplication';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import config from 'src/constants/config';
+import useApplicationEncryption from 'src/hooks/useApplicationEncryption';
 import InfoToast from '../../../src/components/ui/infoToast';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Heading from '../../../src/components/ui/heading';
@@ -59,6 +61,7 @@ function getTotalFundingAsked(milestones: ApplicationMilestone[]) {
 }
 
 function ManageGrant() {
+  const { decryptApplicationPII } = useApplicationEncryption();
   const path = ['My Grants', 'View Application', 'Manage'];
 
   const [selected, setSelected] = React.useState(0);
@@ -100,13 +103,28 @@ function ManageGrant() {
     },
   });
 
-  const applicationData = appDetailsResult?.grantApplication;
+  const [applicationData, setApplicationData] = useState<GetApplicationDetailsQuery['grantApplication']>(null);
   const applicantEmail = useMemo(
     () => applicationData?.fields.find(
       (field) => field.id.includes('applicantEmail'),
     )?.values[0]?.value,
     [applicationData],
   );
+
+  useEffect(() => {
+    if (appDetailsResult && appDetailsResult.grantApplication) {
+      setApplicationData(appDetailsResult.grantApplication);
+    }
+  }, [appDetailsResult]);
+
+  const showHiddenData = async () => {
+    if (applicationData) {
+      const decryptedApplicationData = await decryptApplicationPII(applicationData);
+      if (decryptedApplicationData) {
+        setApplicationData(decryptedApplicationData);
+      }
+    }
+  };
 
   const assetInfo = getAssetInfo(rewardAsset, getSupportedChainIdFromWorkspace(workspace));
   const fundingIcon = assetInfo.icon;
@@ -222,7 +240,13 @@ function ManageGrant() {
               src="/ui_icons/mail_icon.svg"
               mr={2}
             />
-            {applicantEmail}
+            {applicantEmail || (
+            <Text display="inline" variant="applicationHeading" lineHeight="32px" onClick={showHiddenData} cursor="pointer">
+              Hidden
+              {' '}
+              <Text color="#6200EE" display="inline">View</Text>
+            </Text>
+            )}
           </Text>
           <Box mr={6} />
           <Text key="date_text" fontWeight="400">
