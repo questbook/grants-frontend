@@ -17,6 +17,8 @@ const getSupportedChainIdFromSupportedNetwork = (chainId: SupportedNetwork) => {
     return SupportedChainId.RINKEBY;
   } if (chainId === SupportedNetwork.Chain_80001) {
     return SupportedChainId.POLYGON_TESTNET;
+  } if (chainId === SupportedNetwork.Chain_137) {
+    return SupportedChainId.POLYGON_MAINNET;
   }
   // @TODO: needs type for harmony
   // if (chainId === SupportedNetwork.Chain_80001) {
@@ -40,6 +42,8 @@ const getSupportedValidatorNetworkFromChainId = (chainId: SupportedChainId) => {
     return SupportedValidatorNetwork._4;
   } if (chainId === SupportedChainId.POLYGON_TESTNET) {
     return SupportedValidatorNetwork._80001;
+  } if (chainId === SupportedChainId.POLYGON_MAINNET) {
+    return SupportedValidatorNetwork._137;
   }
   // @TODO: needs type for harmony
   // if (chainId === SupportedNetwork.Chain_80001) {
