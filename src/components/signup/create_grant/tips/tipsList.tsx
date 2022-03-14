@@ -1,5 +1,5 @@
 import {
-  VStack, Text, Image, Flex,
+  Text, Image, Flex,
 } from '@chakra-ui/react';
 import React from 'react';
 
