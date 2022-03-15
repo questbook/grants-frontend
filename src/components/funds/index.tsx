@@ -20,7 +20,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { useGetFundingQuery } from 'src/generated/graphql';
 import { ApiClientsContext } from 'pages/_app';
 import { Grant } from 'src/types';
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { SupportedChainId } from 'src/constants/chains';
 import WithdrawFunds from './withdraw_funds_modal';
 import AddFunds from './add_funds_modal';
@@ -179,6 +179,7 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
         assetDecimals={fundingAssetDecimals}
         grantId={grant.id}
         type={TABS_MAP[selected].type}
+        chainId={getSupportedChainIdFromSupportedNetwork(grant.workspace.supportedNetworks[0])}
       />
 
       {/* Modals */}
