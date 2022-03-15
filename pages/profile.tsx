@@ -7,7 +7,7 @@ import NavbarLayout from 'src/layout/navbarLayout';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import { DAOGrant, DAOWorkspace } from 'src/types';
 import BrowseGrantCard from 'src/components/profile/grantCard';
-import { formatAmount } from 'src/utils/formattingUtils';
+import { formatAmount, getChainIdFromResponse } from 'src/utils/formattingUtils';
 import { BigNumber } from 'ethers';
 import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
@@ -200,7 +200,13 @@ function Profile() {
               }
               router.push({
                 pathname: '/explore_grants/about_grant',
-                query: { grantId: grant.id },
+                query: {
+                  grantId: grant.id,
+                  chainId: getChainIdFromResponse(
+                    grant.workspace.supportedNetworks[0],
+                  ),
+                },
+
               });
             }}
           />
