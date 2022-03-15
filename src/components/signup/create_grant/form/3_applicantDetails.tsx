@@ -215,10 +215,10 @@ function ApplicantDetails({ onSubmit }: Props) {
             </Text>
             <Flex>
               <Text color="#717A7C" fontSize="14px" lineHeight="20px">
-                You will be asked for your public encryption key
+                You will be using your public key to access this data.
                 <Tooltip
                   icon="/ui_icons/tooltip_questionmark.svg"
-                  label="Public encryption key is used for encrypting your applicants' personal data"
+                  label="Public key linked to your wallet will allow you to see the hidden data."
                   placement="bottom-start"
                 />
               </Text>
