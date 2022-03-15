@@ -2,6 +2,8 @@ import {
   Flex, Box, Divider, Text, useTheme, Image,
 } from '@chakra-ui/react';
 import React from 'react';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { SupportedChainId } from 'src/constants/chains';
 
 function GrantRewards({
   daoName,
@@ -11,6 +13,7 @@ function GrantRewards({
   rewardCurrency,
   rewardCurrencyCoin,
   payoutDescription,
+  chainId,
 }: {
   daoName: string;
   isGrantVerified: boolean;
@@ -19,6 +22,7 @@ function GrantRewards({
   rewardCurrency: string;
   rewardCurrencyCoin: string;
   payoutDescription: string;
+  chainId: SupportedChainId | undefined;
 }) {
   const theme = useTheme();
   return (
@@ -43,6 +47,10 @@ function GrantRewards({
               mb="-2px"
             />
           )}
+          <Text fontSize="16px" display="inline" color="#717A7C" fontWeight="400" lineHeight="24px" ml={2}>
+
+            {`• ${CHAIN_INFO[chainId!]?.name}`}
+          </Text>
         </Text>
         <Image objectFit="cover" ml="auto" h="54px" w="54px" src={daoLogo} />
       </Flex>

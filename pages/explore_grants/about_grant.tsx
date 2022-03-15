@@ -167,6 +167,7 @@ function AboutGrant() {
           rewardCurrency={rewardCurrency}
           rewardCurrencyCoin={rewardCurrencyCoin}
           payoutDescription={payoutDescription}
+          chainId={chainId}
         />
 
         <Divider mt={7} />
