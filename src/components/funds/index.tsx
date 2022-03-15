@@ -48,7 +48,7 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
   const [isAddFundsModalOpen, setIsAddFundsModalOpen] = useState(false);
   const [isWithdrawFundsModalOpen, setIsWithdrawFundsModalOpen] = useState(false);
   const [selected, setSelected] = React.useState(0);
-  const [fundingAssetDecimals, setFundingAssetDecimals] = React.useState(0);
+  const [fundingAssetDecimals, setFundingAssetDecimals] = React.useState(18);
   const [signerStates] = useSigner();
   const rewardAssetContract = useContract({
     addressOrName: grant.reward.asset,

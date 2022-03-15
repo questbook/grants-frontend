@@ -4,6 +4,7 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { SupportedChainId } from 'src/constants/chains';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import Badge from './badge';
 
 interface BrowseGrantCardProps {
@@ -102,6 +103,10 @@ function BrowseGrantCard({
               />
               )}
             </Link>
+            <Text fontSize="16px" display="inline" color="#717A7C" fontWeight="400" lineHeight="24px" ml={2}>
+
+              {`• ${CHAIN_INFO[chainId!]?.name}`}
+            </Text>
           </Flex>
 
           <Text mt={5} lineHeight="24px" color="#122224" fontWeight="400">
