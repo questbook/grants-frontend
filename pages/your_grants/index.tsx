@@ -239,11 +239,9 @@ function YourGrants() {
             </Flex>
           )}
         </Flex>
-        {grants.length === 0 && (
-          <Flex w="26%" pos="sticky" minH="calc(100vh - 80px)">
-            <Sidebar />
-          </Flex>
-        )}
+        <Flex w="26%" pos="sticky" minH="calc(100vh - 80px)">
+          <Sidebar showCreateGrantItem={grants.length === 0} />
+        </Flex>
       </Flex>
       {grantForFunding && grantRewardAsset && (
         <AddFunds

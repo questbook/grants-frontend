@@ -1,8 +1,7 @@
 import { ChevronRightIcon } from '@chakra-ui/icons';
 import {
-  Flex, Grid, GridItem, Box, Text, Switch, Image,
+  Flex, Grid, GridItem, Box, Text, Switch, Image, Link,
 } from '@chakra-ui/react';
-import Link from 'next/link';
 import React from 'react';
 import Loader from 'src/components/ui/loader';
 import Tooltip from 'src/components/ui/tooltip';
@@ -31,6 +30,7 @@ function ApplicantDetails({
   loading,
   setPublicKey,
   hasOwnerPublicKey,
+  keySubmitted,
 }: {
   detailsRequired: any[];
   toggleDetailsRequired: (index: number) => void;
@@ -52,6 +52,7 @@ function ApplicantDetails({
   loading: boolean;
   setPublicKey: (publicKey: any) => void;
   hasOwnerPublicKey: boolean;
+  keySubmitted: boolean;
 }) {
   const [milestoneSelectOptionIsVisible, setMilestoneSelectOptionIsVisible] = React.useState(false);
   const { getPublicEncryptionKey } = useEncryption();
@@ -156,7 +157,7 @@ function ApplicantDetails({
               You will be asked for your public encryption key
               <Tooltip
                 icon="/ui_icons/tooltip_questionmark.svg"
-                label="Write about the team members working on the project."
+                label="Public encryption key is used for encrypting your applicants' personal data"
                 placement="bottom-start"
               />
             </Text>
@@ -181,7 +182,7 @@ function ApplicantDetails({
           </Text>
         </Flex>
       </Flex>
-      {shouldEncrypt && !hasOwnerPublicKey && (
+      {shouldEncrypt && !hasOwnerPublicKey && !keySubmitted && (
       <Flex mt={8} gap="2" direction="column">
         <Flex
           gap="2"
@@ -206,7 +207,7 @@ function ApplicantDetails({
             By doing the above you’ll have to approve this transaction in your wallet.
           </Text>
         </Flex>
-        <Link href="todo">
+        <Link href="https://www.notion.so/questbook/Why-is-public-key-required-e3fa53f34a5240d185d3d34744bb33f4" isExternal>
           <Text color="#122224" fontWeight="normal" fontSize="14px" lineHeight="20px" decoration="underline">
 
             Why is this required?

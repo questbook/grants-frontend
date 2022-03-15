@@ -67,11 +67,6 @@ function Form({
     if (workspace && workspace.members && accountData && accountData.address) {
       const hasPubKey = workspace.members.some((member) => member.actorId.toLowerCase() === accountData?.address.toLowerCase() && member.publicKey && member.publicKey !== '');
       setHasOwnerPublicKey(hasPubKey);
-      // console.log('workspace.members-----', workspace.members);
-      // console.log('accountData.address-----', accountData.address);
-      // console.log(' has ',
-      // workspace.members.some((member) => member.actorId === accountData?.address));
-      // console.log('hasOwnerPublicKey-----', hasOwnerPublicKey);
     }
   }, [accountData, workspace]);
 
@@ -296,6 +291,7 @@ function Form({
         loading={loading}
         setPublicKey={setPublicKey}
         hasOwnerPublicKey={hasOwnerPublicKey}
+        keySubmitted={keySubmitted}
       />
 
       <Text
