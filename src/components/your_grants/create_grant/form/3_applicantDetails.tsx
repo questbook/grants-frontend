@@ -30,6 +30,7 @@ function ApplicantDetails({
   loading,
   setPublicKey,
   hasOwnerPublicKey,
+  keySubmitted,
 }: {
   detailsRequired: any[];
   toggleDetailsRequired: (index: number) => void;
@@ -51,6 +52,7 @@ function ApplicantDetails({
   loading: boolean;
   setPublicKey: (publicKey: any) => void;
   hasOwnerPublicKey: boolean;
+  keySubmitted: boolean;
 }) {
   const [milestoneSelectOptionIsVisible, setMilestoneSelectOptionIsVisible] = React.useState(false);
   const { getPublicEncryptionKey } = useEncryption();
@@ -180,7 +182,7 @@ function ApplicantDetails({
           </Text>
         </Flex>
       </Flex>
-      {shouldEncrypt && !hasOwnerPublicKey && (
+      {shouldEncrypt && !hasOwnerPublicKey && !keySubmitted && (
       <Flex mt={8} gap="2" direction="column">
         <Flex
           gap="2"

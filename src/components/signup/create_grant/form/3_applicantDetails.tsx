@@ -243,7 +243,7 @@ function ApplicantDetails({ onSubmit }: Props) {
             </Text>
           </Flex>
         </Flex>
-        {shouldEncrypt && (
+        {(shouldEncrypt && !keySubmitted) && (
           <Flex mt={8} gap="2" direction="column">
             <Flex
               gap="2"
