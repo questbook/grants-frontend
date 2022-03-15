@@ -5,6 +5,7 @@ import {
 import ShareMenu from 'src/components/ui/grantShareMenu';
 import { SupportedChainId } from 'src/constants/chains';
 import { useRouter } from 'next/router';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import Badge from './badge';
 
 interface GrantCardProps {
@@ -104,6 +105,10 @@ function GrantCard({
                 />
               )}
             </Link>
+            <Text fontSize="16px" color="#717A7C" fontWeight="400" lineHeight="24px" ml={2}>
+
+              {`• ${CHAIN_INFO[chainId!]?.name}`}
+            </Text>
           </Flex>
 
           <Text mt={5} lineHeight="24px" color="#122224" fontWeight="400">
