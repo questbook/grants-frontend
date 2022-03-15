@@ -134,7 +134,7 @@ function AddFunds({
   useEffect(() => {
     (async function () {
       try {
-        console.log('', rewardAssetContract);
+        // console.log('', rewardAssetContract);
         if (!rewardAssetContract.provider) return;
         const assetDecimal = await rewardAssetContract.decimals();
         setRewardAssetDecimals(assetDecimal);
@@ -145,7 +145,7 @@ function AddFunds({
         );
         setWalletBalance(tempWalletBalance);
       } catch (e) {
-        console.error(e);
+        // console.error(e);
       }
     }());
   }, [signerStates, rewardAssetContract]);

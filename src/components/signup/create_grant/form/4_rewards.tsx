@@ -6,7 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import Loader from 'src/components/ui/loader';
 
-import { SupportedChainId } from 'src/constants/chains';
+import { DefaultSupportedChainId } from 'src/constants/chains';
 import useChainId from 'src/hooks/utils/useChainId';
 import Datepicker from '../../../ui/forms/datepicker';
 import Dropdown from '../../../ui/forms/dropdown';
@@ -21,7 +21,7 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
   const [reward, setReward] = React.useState('');
   const [rewardError, setRewardError] = React.useState(false);
 
-  const currentChain = useChainId() ?? SupportedChainId.RINKEBY;
+  const currentChain = useChainId() ?? DefaultSupportedChainId;
 
   const supportedCurrencies = Object.keys(
     CHAIN_INFO[currentChain].supportedCurrencies,
@@ -35,7 +35,6 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
   );
 
   useEffect(() => {
-    console.log(currentChain);
     if (currentChain) {
       const currencies = Object.keys(
         CHAIN_INFO[currentChain].supportedCurrencies,
@@ -46,10 +45,6 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentChain]);
-
-  useEffect(() => {
-    console.log(rewardCurrencyAddress);
-  }, [rewardCurrencyAddress]);
 
   const [date, setDate] = React.useState('');
   const [dateError, setDateError] = React.useState(false);
@@ -66,10 +61,6 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
       setDateError(true);
       error = true;
     }
-
-    console.log(reward);
-    console.log(rewardCurrencyAddress);
-
     if (!error) {
       onSubmit({ reward, rewardCurrencyAddress, date });
     }
@@ -104,7 +95,6 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
               listItems={supportedCurrencies}
               value={rewardCurrency}
               onChange={(data: any) => {
-                console.log(data);
                 setRewardCurrency(data.label);
                 setRewardCurrencyAddress(data.id);
               }}

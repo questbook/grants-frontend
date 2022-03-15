@@ -49,7 +49,7 @@ export default function useSubmitApplication(
         const {
           data: { ipfsHash },
         } = await validatorApi.validateGrantApplicationCreate(data);
-        console.log(ipfsHash);
+        // console.log(ipfsHash);
         if (!ipfsHash) {
           throw new Error('Error validating grant data');
         }

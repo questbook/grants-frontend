@@ -12,7 +12,7 @@ import { BigNumber } from 'ethers';
 import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
 import SeeMore from 'src/components/profile/see_more';
-import { SupportedChainId } from 'src/constants/chains';
+import { DefaultSupportedChainId, SupportedChainId } from 'src/constants/chains';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import { ApiClientsContext } from './_app';
@@ -38,7 +38,7 @@ function Profile() {
   }, [router]);
 
   const [queryParams, setQueryParams] = useState<any>({
-    client: subgraphClients[chainID ?? SupportedChainId.RINKEBY].client,
+    client: subgraphClients[chainID ?? DefaultSupportedChainId].client,
   });
 
   useEffect(() => {
@@ -110,7 +110,7 @@ function Profile() {
               )}
               bg="white"
               boxSize="48px"
-              onClick={() => { console.log(social.value); window.open(social.value, '_blank'); }}
+              onClick={() => { window.open(social.value, '_blank'); }}
             />
           ))}
         </Flex>
@@ -176,13 +176,13 @@ function Profile() {
             grantAmount={formatAmount(grant.reward.committed)}
             grantCurrency={
                 CHAIN_INFO[
-                  chainID ?? SupportedChainId.RINKEBY
+                  chainID ?? DefaultSupportedChainId
                 ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
                   ?.label ?? 'LOL'
               }
             grantCurrencyIcon={
                 CHAIN_INFO[
-                  chainID ?? SupportedChainId.RINKEBY
+                  chainID ?? DefaultSupportedChainId
                 ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
                   ?.icon ?? '/images/dummy/Ethereum Icon.svg'
               }

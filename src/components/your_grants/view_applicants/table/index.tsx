@@ -1,5 +1,5 @@
 import { Flex, Text } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
+import React from 'react';
 import Content from './content';
 import Filter from './filter';
 import Headers from './headers';
@@ -20,9 +20,9 @@ function Table({
   title: string;
 }) {
   const [filter, setFilter] = React.useState(-1);
-  useEffect(() => {
-    console.log(filter);
-  }, [filter]);
+  // useEffect(() => {
+  //   console.log(filter);
+  // }, [filter]);
   return (
     <>
       <Flex direction="row" mt={3} align="center">

@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { SupportedNetwork as SupportedValidatorNetwork } from '@questbook/service-validator-client/dist/api';
 import { ethers } from 'ethers';
-import { SupportedChainId } from 'src/constants/chains';
+import { DefaultSupportedChainId, SupportedChainId } from 'src/constants/chains';
 import { SupportedNetwork } from 'src/generated/graphql';
 import { MinimalWorkspace } from 'src/types';
 
@@ -13,18 +13,14 @@ const isValidEmail = (email: string) => {
 };
 
 const getSupportedChainIdFromSupportedNetwork = (chainId: SupportedNetwork) => {
-  if (chainId === SupportedNetwork.Chain_4) {
-    return SupportedChainId.RINKEBY;
-  } if (chainId === SupportedNetwork.Chain_80001) {
-    return SupportedChainId.POLYGON_TESTNET;
-  } if (chainId === SupportedNetwork.Chain_137) {
+  if (chainId === SupportedNetwork.Chain_137) {
     return SupportedChainId.POLYGON_MAINNET;
   }
   // @TODO: needs type for harmony
   // if (chainId === SupportedNetwork.Chain_80001) {
   //   return SupportedChainId.HARMONY_TESTNET_S0;
   // }
-  return SupportedChainId.HARMONY_TESTNET_S0;
+  return DefaultSupportedChainId;
   // cannot return undefined ?
   // return undefined;
 };
@@ -38,18 +34,14 @@ const getSupportedChainIdFromWorkspace = (workspace?: MinimalWorkspace) => {
 };
 
 const getSupportedValidatorNetworkFromChainId = (chainId: SupportedChainId) => {
-  if (chainId === SupportedChainId.RINKEBY) {
-    return SupportedValidatorNetwork._4;
-  } if (chainId === SupportedChainId.POLYGON_TESTNET) {
-    return SupportedValidatorNetwork._80001;
-  } if (chainId === SupportedChainId.POLYGON_MAINNET) {
+  if (chainId === SupportedChainId.POLYGON_MAINNET) {
     return SupportedValidatorNetwork._137;
   }
   // @TODO: needs type for harmony
   // if (chainId === SupportedNetwork.Chain_80001) {
   //   return SupportedChainId.HARMONY_TESTNET_S0;
   // }
-  return SupportedValidatorNetwork._1666700000;
+  return SupportedValidatorNetwork._137;
 };
 
 export {

@@ -99,7 +99,6 @@ export default function useDisburseReward(
       if (!validatorApi) {
         throw new Error('validatorApi or workspaceId is not defined');
       }
-      console.log(5);
       if (
         !grantContract
         || grantContract.address

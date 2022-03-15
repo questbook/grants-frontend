@@ -2,7 +2,7 @@ import { Flex, Text } from '@chakra-ui/react';
 import React, { ReactElement, useContext } from 'react';
 import Empty from 'src/components/ui/empty';
 import { useGetAllGrantsForADaoQuery } from 'src/generated/graphql';
-import { SupportedChainId } from 'src/constants/chains';
+import { DefaultSupportedChainId } from 'src/constants/chains';
 import {
   getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils';
@@ -15,7 +15,7 @@ function AddFunds() {
   const { data } = useGetAllGrantsForADaoQuery({
     client:
       subgraphClients[
-        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+        getSupportedChainIdFromWorkspace(workspace) ?? DefaultSupportedChainId
       ].client,
     variables: {
       workspaceId: workspace?.id ?? '',

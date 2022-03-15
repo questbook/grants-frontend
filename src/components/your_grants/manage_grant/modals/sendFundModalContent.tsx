@@ -190,7 +190,7 @@ function ModalContent({
         // console.log(tempWalletBalance);
         setWalletBalance(tempWalletBalance);
       } catch (e) {
-        console.error(e);
+        // console.error(e);
       }
     }());
   }, [signerStates, rewardAssetContract]);

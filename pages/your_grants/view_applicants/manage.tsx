@@ -23,7 +23,7 @@ import {
   useGetFundSentForApplicationQuery,
 } from 'src/generated/graphql';
 import useApplicationMilestones from 'src/utils/queryUtil';
-import { SupportedChainId } from 'src/constants/chains';
+import { DefaultSupportedChainId } from 'src/constants/chains';
 import useCompleteApplication from 'src/hooks/useCompleteApplication';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import config from 'src/constants/config';
@@ -86,7 +86,7 @@ function ManageGrant() {
     client:
         subgraphClients[
           getSupportedChainIdFromWorkspace(workspace)
-            ?? SupportedChainId.RINKEBY
+            ?? DefaultSupportedChainId
         ].client,
     variables: {
       applicationID,
@@ -97,7 +97,7 @@ function ManageGrant() {
     client:
       subgraphClients[
         getSupportedChainIdFromWorkspace(workspace)
-          ?? SupportedChainId.RINKEBY
+          ?? DefaultSupportedChainId
       ].client,
     variables: {
       applicationId: applicationID,

@@ -130,7 +130,7 @@ function Content({
                   // if (status === 2) return <GrantApproved />;
                   // if (status === 3) return <Rejected />;
                   // return <GrantComplete />;
-                  console.log(item.status);
+                  // console.log(item.status);
                   if ((item.status === 2 || item.status === 4) && onManageApplicationClick) {
                     onManageApplicationClick({
                       applicationId: item.applicationId,

@@ -5,7 +5,7 @@ import React, {
 import { useRouter } from 'next/router';
 import { useGetWorkspaceDetailsQuery } from 'src/generated/graphql';
 import { Workspace } from 'src/types';
-import { SupportedChainId } from 'src/constants/chains';
+import { DefaultSupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import Members from '../src/components/settings_and_members/members';
 import Settings from '../src/components/settings_and_members/settings';
@@ -24,7 +24,7 @@ function SettingsAndMembers() {
   const [queryParams, setQueryParams] = useState<any>({
     client:
       subgraphClients[
-        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+        getSupportedChainIdFromWorkspace(workspace) ?? DefaultSupportedChainId
       ].client,
   });
 

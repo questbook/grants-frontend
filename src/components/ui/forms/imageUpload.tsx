@@ -26,9 +26,9 @@ function ImageUpload({
     }
   };
 
-  React.useEffect(() => {
-    console.log('Image: ', image);
-  }, [image]);
+  // React.useEffect(() => {
+  //   console.log('Image: ', image);
+  // }, [image]);
 
   return (
     <Flex direction="column" align="center">

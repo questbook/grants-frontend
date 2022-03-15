@@ -83,8 +83,8 @@ export default function useDepositFunds(
       if (!workspace) {
         throw new Error('not connected to workspace');
       }
-      console.log(workspace);
-      console.log(currentChainId);
+      // console.log(workspace);
+      // console.log(currentChainId);
       if (getSupportedChainIdFromWorkspace(workspace) !== currentChainId) {
         throw new Error('connected to wrong network');
       }

@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 import { useGetGrantDetailsQuery } from 'src/generated/graphql';
 import useEditGrant from 'src/hooks/useEditGrant';
-import { SupportedChainId } from 'src/constants/chains';
+import { DefaultSupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { formatEther } from 'ethers/lib/utils';
@@ -42,7 +42,7 @@ function EditGrant() {
   const [queryParams, setQueryParams] = useState<any>({
     client:
       subgraphClients[
-        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+        getSupportedChainIdFromWorkspace(workspace) ?? DefaultSupportedChainId
       ].client,
   });
 

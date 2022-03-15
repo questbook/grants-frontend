@@ -36,19 +36,19 @@ export default function useApplicationEncryption() {
     if (!newData || !newData.fields || !newData.pii) return newData;
     if (!accountData || !accountData.address) return newData;
     const piiData = newData.pii.find((pii) => pii.id.split('.')[1].toLowerCase() === accountData.address.toLowerCase())!;
-    console.log('piiData', piiData);
+    // console.log('piiData', piiData);
     if (!piiData) return newData;
     const applicationId = newData.pii[0].id.split('.')[0];
     let decryptedPiiData = await decryptMessage(piiData.data);
-    console.log('decryptedPiiData', decryptedPiiData);
+    // console.log('decryptedPiiData', decryptedPiiData);
     if (decryptedPiiData) {
       decryptedPiiData = JSON.parse(decryptedPiiData);
       if (!decryptedPiiData) return newData;
       const piiData2: { id: string; values: GrantFieldAnswerItem[] }[] = Object.entries(decryptedPiiData).map(([key, value]) => ({ id: `${applicationId}.${key}`, values: value as unknown as GrantFieldAnswerItem[] }));
-      console.log('piiData', piiData2);
+      // console.log('piiData', piiData2);
       newData.fields = [...newData.fields, ...piiData2];
     }
-    console.log('newData', newData);
+    // console.log('newData', newData);
 
     return newData;
   };

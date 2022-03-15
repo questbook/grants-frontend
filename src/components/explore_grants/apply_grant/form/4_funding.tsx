@@ -74,7 +74,7 @@ function Funding({
             placeholder="100"
             value={fundingAsk}
             onChange={(e) => {
-              console.log(e.target.value);
+              // console.log(e.target.value);
               if (fundingAskError) {
                 setFundingAskError(false);
               }

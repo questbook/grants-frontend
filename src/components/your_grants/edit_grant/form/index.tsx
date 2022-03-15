@@ -5,7 +5,7 @@ import {
 } from '@chakra-ui/react';
 import Loader from 'src/components/ui/loader';
 import useChainId from 'src/hooks/utils/useChainId';
-import { SupportedChainId } from 'src/constants/chains';
+import { DefaultSupportedChainId } from 'src/constants/chains';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import Title from './1_title';
 import Details from './2_details';
@@ -77,7 +77,7 @@ function Form({
   const [reward, setReward] = React.useState(formData.reward ?? '');
   const [rewardError, setRewardError] = React.useState(false);
 
-  const currentChain = useChainId() ?? SupportedChainId.RINKEBY;
+  const currentChain = useChainId() ?? DefaultSupportedChainId;
 
   const supportedCurrencies = Object.keys(
     CHAIN_INFO[currentChain].supportedCurrencies,

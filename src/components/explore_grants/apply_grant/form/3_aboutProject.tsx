@@ -287,7 +287,7 @@ function AboutProject({
                   tooltipPlacement="bottom-start"
                   value={milestoneReward}
                   onChange={(e) => {
-                    console.log(e.target.value);
+                    // console.log(e.target.value);
                     const newProjectMilestone = [...projectMilestones];
 
                     const newProject = { ...newProjectMilestone[index] };

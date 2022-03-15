@@ -17,7 +17,7 @@ import {
   GetApplicationDetailsQuery,
   useGetApplicationDetailsQuery,
 } from 'src/generated/graphql';
-import { SupportedChainId } from 'src/constants/chains';
+import { DefaultSupportedChainId } from 'src/constants/chains';
 import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption';
@@ -69,7 +69,7 @@ function ApplicantForm() {
   const [queryParams, setQueryParams] = useState<any>({
     client:
       subgraphClients[
-        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+        getSupportedChainIdFromWorkspace(workspace) ?? DefaultSupportedChainId
       ].client,
   });
 
@@ -94,7 +94,6 @@ function ApplicantForm() {
   } = useGetApplicationDetailsQuery(queryParams);
   useEffect(() => {
     if (data && data.grantApplication) {
-      console.log('grantApplication------>', data.grantApplication);
       setApplicationData(data.grantApplication);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

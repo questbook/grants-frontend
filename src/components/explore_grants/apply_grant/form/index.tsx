@@ -254,7 +254,7 @@ function Form({
     if (piiFields.length > 0) {
       encryptedData = await encryptApplicationPII(data, piiFields, workspace.members);
 
-      console.log('encryptedData -----', encryptedData);
+      // console.log('encryptedData -----', encryptedData);
     }
     setFormData(encryptedData || data);
   };

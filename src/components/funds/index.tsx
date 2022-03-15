@@ -21,7 +21,7 @@ import { useGetFundingQuery } from 'src/generated/graphql';
 import { ApiClientsContext } from 'pages/_app';
 import { Grant } from 'src/types';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
-import { SupportedChainId } from 'src/constants/chains';
+import { DefaultSupportedChainId } from 'src/constants/chains';
 import WithdrawFunds from './withdraw_funds_modal';
 import AddFunds from './add_funds_modal';
 import Funding from '../your_grants/manage_grant/tables/funding';
@@ -59,7 +59,7 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
   const { data } = useGetFundingQuery({
     client:
       subgraphClients[
-        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+        getSupportedChainIdFromWorkspace(workspace) ?? DefaultSupportedChainId
       ].client,
     variables: { grantId: grant.id },
   });

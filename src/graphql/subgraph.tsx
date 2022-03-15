@@ -49,7 +49,7 @@ class SubgraphClient {
       });
       // eslint-disable-next-line no-underscore-dangle
       minBlock = response.data._meta.block.number;
-      console.log(minBlock);
+      // console.log(minBlock);
       // Sleep to wait for the next block
       // eslint-disable-next-line no-await-in-loop
       await nextBlock;

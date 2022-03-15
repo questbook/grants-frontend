@@ -36,9 +36,9 @@ export default function useCreateWorkspace(
     }
   }, [data]);
 
-  useEffect(() => {
-    console.log(data?.network);
-  }, [data]);
+  // useEffect(() => {
+  //   console.log(data?.network);
+  // }, [data]);
 
   useEffect(() => {
     if (error) return;

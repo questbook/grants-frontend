@@ -1,6 +1,6 @@
 import { ApiClientsContext } from 'pages/_app';
 import { useContext } from 'react';
-import { SupportedChainId } from 'src/constants/chains';
+import { DefaultSupportedChainId, SupportedChainId } from 'src/constants/chains';
 import { useGetApplicationMilestonesQuery } from 'src/generated/graphql';
 import { getSupportedChainIdFromWorkspace } from './validationUtils';
 
@@ -9,7 +9,7 @@ const useApplicationMilestones = (grantId: string, chainId?: SupportedChainId) =
   const fullData = useGetApplicationMilestonesQuery({
     client:
       subgraphClients[
-        (chainId ?? getSupportedChainIdFromWorkspace(workspace)) ?? SupportedChainId.RINKEBY
+        (chainId ?? getSupportedChainIdFromWorkspace(workspace)) ?? DefaultSupportedChainId
       ].client,
     variables: {
       grantId,

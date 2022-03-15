@@ -18,7 +18,7 @@ import {
   GetAllGrantsForCreatorQuery,
   useGetAllGrantsForCreatorQuery,
 } from 'src/generated/graphql';
-import { SupportedChainId } from 'src/constants/chains';
+import { DefaultSupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
@@ -47,7 +47,7 @@ function YourGrants() {
   const [queryParams, setQueryParams] = useState<any>({
     client:
       subgraphClients[
-        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+        getSupportedChainIdFromWorkspace(workspace) ?? DefaultSupportedChainId
       ].client,
   });
 

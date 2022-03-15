@@ -6,7 +6,7 @@ import React, {
 } from 'react';
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters';
 import { useGetApplicantsForAGrantQuery } from 'src/generated/graphql';
-import { SupportedChainId } from 'src/constants/chains';
+import { DefaultSupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { getAssetInfo } from 'src/utils/tokenUtils';
 import { formatAmount } from '../../../src/utils/formattingUtils';
@@ -33,7 +33,7 @@ function ViewApplicants() {
   const [queryParams, setQueryParams] = useState<any>({
     client:
       subgraphClients[
-        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+        getSupportedChainIdFromWorkspace(workspace) ?? DefaultSupportedChainId
       ].client,
   });
 

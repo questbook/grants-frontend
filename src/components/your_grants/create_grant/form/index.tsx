@@ -6,7 +6,7 @@ import {
 import Loader from 'src/components/ui/loader';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import useChainId from 'src/hooks/utils/useChainId';
-import { SupportedChainId } from 'src/constants/chains';
+import { DefaultSupportedChainId } from 'src/constants/chains';
 import { useAccount } from 'wagmi';
 import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys';
@@ -59,7 +59,6 @@ function Form({
   useEffect(() => {
     if (transactionData) {
       setKeySubmitted(true);
-      console.log('transactionData-----', transactionData);
     }
   }, [transactionData]);
 
@@ -112,7 +111,7 @@ function Form({
   const [reward, setReward] = React.useState('');
   const [rewardError, setRewardError] = React.useState(false);
 
-  const currentChain = useChainId() ?? SupportedChainId.RINKEBY;
+  const currentChain = useChainId() ?? DefaultSupportedChainId;
 
   const supportedCurrencies = Object.keys(
     CHAIN_INFO[currentChain].supportedCurrencies,

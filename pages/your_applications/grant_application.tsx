@@ -12,7 +12,7 @@ import {
   useGetApplicationDetailsQuery,
 } from 'src/generated/graphql';
 import { ApiClientsContext } from 'pages/_app';
-import { SupportedChainId } from 'src/constants/chains';
+import { DefaultSupportedChainId, SupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import { GrantApplicationProps } from '../../src/types/application';
 import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils';
@@ -43,7 +43,7 @@ function ViewApplication() {
   const [queryParams, setQueryParams] = useState<any>({
     client:
       subgraphClients[
-        chainId ?? SupportedChainId.RINKEBY
+        chainId ?? DefaultSupportedChainId
       ].client,
   });
 

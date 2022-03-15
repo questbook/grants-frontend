@@ -43,7 +43,7 @@ export default function useAddMember(
     async function validate() {
       setLoading(true);
       // console.log('calling validate');
-      console.log(data);
+      // console.log(data);
       try {
         const updateTransaction = await workspaceRegistryContract.addWorkspaceAdmins(
           workspace!.id,

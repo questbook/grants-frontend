@@ -7,7 +7,7 @@ import moment from 'moment';
 import { ethers } from 'ethers';
 import Empty from 'src/components/ui/empty';
 import { FundTransfer } from 'src/types';
-import { SupportedChainId } from 'src/constants/chains';
+import { DefaultSupportedChainId, SupportedChainId } from 'src/constants/chains';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { getAssetInfo } from '../../../../utils/tokenUtils';
 import {
@@ -264,6 +264,6 @@ function Funding({
 }
 
 Funding.defaultProps = {
-  chainId: SupportedChainId.RINKEBY,
+  chainId: DefaultSupportedChainId,
 };
 export default Funding;

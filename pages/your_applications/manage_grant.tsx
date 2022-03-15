@@ -11,7 +11,7 @@ import {
 } from 'src/generated/graphql';
 import { ApplicationMilestone } from 'src/types';
 import useApplicationMilestones from 'src/utils/queryUtil';
-import { SupportedChainId } from 'src/constants/chains';
+import { DefaultSupportedChainId, SupportedChainId } from 'src/constants/chains';
 import { getAssetInfo } from '../../src/utils/tokenUtils';
 import Sidebar from '../../src/components/your_applications/manage_grant/sidebar';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
@@ -55,7 +55,6 @@ function ManageGrant() {
 
   useEffect(() => {
     if (router && router.query) {
-      console.log(router.query);
       const { chainId: cId, applicationId: aId } = router.query;
       setChainId(cId as unknown as SupportedChainId);
       setApplicationID(aId);
@@ -68,7 +67,7 @@ function ManageGrant() {
   } = useApplicationMilestones(applicationID, chainId);
 
   const { data: fundsDisbursed } = useGetFundSentForApplicationQuery({
-    client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
+    client: subgraphClients[chainId ?? DefaultSupportedChainId].client,
     variables: {
       applicationId: applicationID,
     },
@@ -77,7 +76,7 @@ function ManageGrant() {
   const [queryParams, setQueryParams] = useState<any>({
     client:
       subgraphClients[
-        chainId ?? SupportedChainId.RINKEBY
+        chainId ?? DefaultSupportedChainId
       ].client,
   });
 

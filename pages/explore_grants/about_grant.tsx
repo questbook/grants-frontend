@@ -9,7 +9,7 @@ import { useRouter } from 'next/router';
 import { useGetGrantDetailsQuery } from 'src/generated/graphql';
 import { ApiClientsContext } from 'pages/_app';
 import GrantShare from 'src/components/ui/grantShare';
-import { SupportedChainId } from 'src/constants/chains';
+import { DefaultSupportedChainId, SupportedChainId } from 'src/constants/chains';
 import { getAssetInfo } from 'src/utils/tokenUtils';
 import GrantDetails from '../../src/components/explore_grants/about_grant/grantDetails';
 import GrantRewards from '../../src/components/explore_grants/about_grant/grantRewards';
@@ -56,7 +56,7 @@ function AboutGrant() {
   }, [router.query]);
 
   const [queryParams, setQueryParams] = useState<any>({
-    client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
+    client: subgraphClients[chainId ?? DefaultSupportedChainId].client,
   });
 
   useEffect(() => {
@@ -117,7 +117,6 @@ function AboutGrant() {
     }
     setGrantDetails(grantData?.details);
     setGrantSummary(grantData?.summary);
-    console.log(grantData);
     setGrantRequiredFields(
       grantData?.fields?.map((field: any) => ({
         detail: getFieldLabelFromFieldTitle(field.title) ?? 'Invalid Field',

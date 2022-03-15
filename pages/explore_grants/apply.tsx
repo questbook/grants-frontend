@@ -4,7 +4,7 @@ import { ApiClientsContext } from 'pages/_app';
 import React, {
   ReactElement, useContext, useEffect, useState,
 } from 'react';
-import { SupportedChainId } from 'src/constants/chains';
+import { DefaultSupportedChainId, SupportedChainId } from 'src/constants/chains';
 import { useGetGrantDetailsQuery } from 'src/generated/graphql';
 import { formatAmount } from 'src/utils/formattingUtils';
 import { getAssetInfo } from 'src/utils/tokenUtils';
@@ -42,7 +42,7 @@ function ApplyGrant() {
   const [queryParams, setQueryParams] = useState<any>({
     client:
       subgraphClients[
-        chainId ?? SupportedChainId.RINKEBY
+        chainId ?? DefaultSupportedChainId
       ].client,
   });
 
