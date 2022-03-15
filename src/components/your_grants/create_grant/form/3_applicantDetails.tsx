@@ -1,8 +1,7 @@
 import { ChevronRightIcon } from '@chakra-ui/icons';
 import {
-  Flex, Grid, GridItem, Box, Text, Switch, Image,
+  Flex, Grid, GridItem, Box, Text, Switch, Image, Link,
 } from '@chakra-ui/react';
-import Link from 'next/link';
 import React from 'react';
 import Loader from 'src/components/ui/loader';
 import Tooltip from 'src/components/ui/tooltip';
@@ -156,7 +155,7 @@ function ApplicantDetails({
               You will be asked for your public encryption key
               <Tooltip
                 icon="/ui_icons/tooltip_questionmark.svg"
-                label="Write about the team members working on the project."
+                label="Public encryption key is used for encrypting your applicants' personal data"
                 placement="bottom-start"
               />
             </Text>
@@ -206,7 +205,7 @@ function ApplicantDetails({
             By doing the above you’ll have to approve this transaction in your wallet.
           </Text>
         </Flex>
-        <Link href="todo">
+        <Link href="https://www.notion.so/questbook/Why-is-public-key-required-e3fa53f34a5240d185d3d34744bb33f4" isExternal>
           <Text color="#122224" fontWeight="normal" fontSize="14px" lineHeight="20px" decoration="underline">
 
             Why is this required?

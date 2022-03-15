@@ -2,13 +2,28 @@ import {
   Flex, Text, Image, Box, Button,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import config from 'src/constants/config';
+import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey';
 import SidebarComponent from '../../ui/sidebar/sidebar';
 
-function Sidebar() {
+interface Props {
+  showCreateGrantItem: boolean;
+}
+function Sidebar({ showCreateGrantItem }: Props) {
+  const { RenderModal, setHiddenModalOpen } = useSubmitPublicKey();
   const router = useRouter();
-  const listItems = [
+  const [listItems, setListItems] = useState<any[]>([]);
+
+  useEffect(() => {
+    let items = [{
+      icon: '/ui_icons/first_grant.svg',
+      title: 'Get access to encrypted applicant data',
+      subtitle: 'Provide access to your public encryption key ',
+      onSubmit: () => {
+        setHiddenModalOpen(true);
+      },
+    },
     {
       icon: '/ui_icons/first_grant.svg',
       title: 'Create your first grant',
@@ -31,7 +46,12 @@ function Sidebar() {
         });
       },
     },
-  ];
+    ];
+    if (!showCreateGrantItem) {
+      items = items.filter((item) => item.title !== 'Create your first grant');
+    }
+    setListItems(items);
+  }, [router, setHiddenModalOpen, showCreateGrantItem]);
 
   return (
     <SidebarComponent
@@ -92,6 +112,7 @@ function Sidebar() {
         ))}
 
       </Flex>
+      <RenderModal />
     </SidebarComponent>
   );
 }
