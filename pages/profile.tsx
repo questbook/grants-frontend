@@ -194,7 +194,13 @@ function Profile() {
               if (!(accountData && accountData.address)) {
                 router.push({
                   pathname: '/connect_wallet',
-                  query: { flow: '/' },
+                  query: {
+                    flow: '/',
+                    grantId: grant.id,
+                    chainId: getChainIdFromResponse(
+                      grant.workspace.supportedNetworks[0],
+                    ),
+                  },
                 });
                 return;
               }
@@ -206,7 +212,6 @@ function Profile() {
                     grant.workspace.supportedNetworks[0],
                   ),
                 },
-
               });
             }}
           />
