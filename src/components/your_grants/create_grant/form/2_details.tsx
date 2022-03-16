@@ -1,8 +1,7 @@
-import {
-  Flex,
-} from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
+import { EditorState } from 'draft-js';
 import React from 'react';
-import MultiLineInput from '../../../ui/forms/multiLineInput';
+import RichTextEditor from 'src/components/ui/forms/richTextEditor';
 
 function Details({
   details,
@@ -10,28 +9,27 @@ function Details({
   detailsError,
   setDetailsError,
 }: {
-  details: string;
-  setDetails: (details: string) => void;
+  details: EditorState;
+  setDetails: (details: EditorState) => void;
   detailsError: boolean;
   setDetailsError: (detailsError: boolean) => void;
 }) {
   return (
     <Flex direction="column">
-      <MultiLineInput
+      <RichTextEditor
         label="Grant Details"
         placeholder="Details about your grant - requirements, deliverables, and milestones"
         value={details}
         isError={detailsError}
-        onChange={(e) => {
+        onChange={(e: EditorState) => {
           if (detailsError) {
             setDetailsError(false);
           }
-          setDetails(e.target.value);
+          setDetails(e);
         }}
         errorText="Required"
         maxLength={-1}
       />
-
     </Flex>
   );
 }

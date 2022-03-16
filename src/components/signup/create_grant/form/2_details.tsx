@@ -1,26 +1,30 @@
 import {
   Flex, Text, Button, Box,
 } from '@chakra-ui/react';
+import { convertToRaw, EditorState } from 'draft-js';
 import React, { useState } from 'react';
-import MultiLineInput from '../../../ui/forms/multiLineInput';
+import RichTextEditor from 'src/components/ui/forms/richTextEditor';
 
 interface Props {
   onSubmit: (data: any) => void;
 }
 
 function Details({ onSubmit }: Props) {
-  const [details, setDetails] = useState('');
+  const [details, setDetails] = useState(() => EditorState.createEmpty());
   const [detailsError, setDetailsError] = useState(false);
 
   const handleOnSubmit = () => {
     let error = false;
-    if (details.length <= 0) {
+    if (!details.getCurrentContent().hasText()) {
       setDetailsError(true);
       error = true;
     }
 
     if (!error) {
-      onSubmit({ details });
+      const detailsString = JSON.stringify(
+        convertToRaw(details.getCurrentContent()),
+      );
+      onSubmit({ details: detailsString });
     }
   };
 
@@ -33,33 +37,22 @@ function Details({ onSubmit }: Props) {
 
         <Box mt={12} />
 
-        <MultiLineInput
+        <RichTextEditor
           label="Grant Details"
           placeholder="Details about your grant - requirements, deliverables, and milestones"
           value={details}
           isError={detailsError}
-          onChange={(e) => {
+          onChange={(e: EditorState) => {
             if (detailsError) {
               setDetailsError(false);
             }
-            setDetails(e.target.value);
+            setDetails(e);
           }}
           errorText="Required"
           maxLength={-1}
         />
 
         <Box mt={12} />
-
-        {/* <Button onClick={() => {
-          RichUtils.toggleInlineStyle(editorState, 'BOLD');
-        }}
-        >
-          Bold
-
-        </Button>
-
-        <TextEditor /> */}
-
       </Flex>
       <Flex mt="auto">
         <Button variant="primary" onClick={handleOnSubmit}>
