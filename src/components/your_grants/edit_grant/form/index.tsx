@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box, Button, Text, Image, Link, Flex,
 } from '@chakra-ui/react';
@@ -7,6 +7,9 @@ import Loader from 'src/components/ui/loader';
 import useChainId from 'src/hooks/utils/useChainId';
 import { DefaultSupportedChainId } from 'src/constants/chains';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import {
+  ContentState, convertFromRaw, convertToRaw, EditorState,
+} from 'draft-js';
 import Title from './1_title';
 import Details from './2_details';
 import ApplicantDetails from './3_applicantDetails';
@@ -32,7 +35,17 @@ function Form({
   const [titleError, setTitleError] = useState(false);
   const [summaryError, setSummaryError] = useState(false);
 
-  const [details, setDetails] = useState(formData.details ?? '');
+  const [details, setDetails] = useState(useMemo(() => {
+    try {
+      const o = JSON.parse(formData.details);
+      return EditorState.createWithContent(convertFromRaw(o));
+    } catch (e) {
+      if (formData.details) {
+        return EditorState.createWithContent(ContentState.createFromText(formData.details));
+      }
+      return EditorState.createEmpty();
+    }
+  }, [formData.details]));
   const [detailsError, setDetailsError] = useState(false);
 
   const applicantDetails = applicantDetailsList.map(
@@ -116,7 +129,7 @@ function Form({
       setSummaryError(true);
       error = true;
     }
-    if (details.length <= 0) {
+    if (!details.getCurrentContent().hasText()) {
       setDetailsError(true);
       error = true;
     }
@@ -134,6 +147,9 @@ function Form({
     }
 
     if (!error) {
+      const detailsString = JSON.stringify(
+        convertToRaw(details.getCurrentContent()),
+      );
       const requiredDetails = {} as any;
       detailsRequired.forEach((detail) => {
         if (detail && detail.required) {
@@ -174,7 +190,7 @@ function Form({
       onSubmit({
         title,
         summary,
-        details,
+        details: detailsString,
         fields,
         reward,
         rewardCurrencyAddress,

@@ -220,7 +220,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
           <MenuList maxH="80vh" overflowY="auto">
             {workspaces.map((userWorkspace) => (
               <MenuItem
-                key={userWorkspace.id}
+                key={`${userWorkspace.id}-${userWorkspace.supportedNetworks[0]}`}
                 icon={(
                   <Image
                     boxSize="20px"

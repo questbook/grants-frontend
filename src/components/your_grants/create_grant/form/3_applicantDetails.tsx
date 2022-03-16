@@ -4,7 +4,6 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import Loader from 'src/components/ui/loader';
-import Tooltip from 'src/components/ui/tooltip';
 import useEncryption from 'src/hooks/utils/useEncryption';
 import applicantDetailsList from '../../../../constants/applicantDetailsList';
 import Badge from '../../../ui/badge';
@@ -70,7 +69,7 @@ function ApplicantDetails({
           } = detail as any;
           if (id === 'isMultipleMilestones') {
             return (
-              <GridItem colSpan={1}>
+              <GridItem key={id} colSpan={1}>
                 <Badge
                   isActive={milestoneSelectOptionIsVisible}
                   onClick={() => {
@@ -154,12 +153,12 @@ function ApplicantDetails({
           </Text>
           <Flex>
             <Text color="#717A7C" fontSize="14px" lineHeight="20px">
-              You will be asked for your public encryption key
-              <Tooltip
+              {shouldEncrypt ? 'The applicant data will be visible only to DAO members.' : 'The applicant data will be visible to everyone with the link.'}
+              {/* <Tooltip
                 icon="/ui_icons/tooltip_questionmark.svg"
-                label="Public encryption key is used for encrypting your applicants' personal data"
+                label="Public key linked to your wallet will allow you to see the hidden data."
                 placement="bottom-start"
-              />
+              /> */}
             </Text>
           </Flex>
         </Flex>
