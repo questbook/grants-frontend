@@ -11,6 +11,7 @@ import { useAccount } from 'wagmi';
 import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys';
 import { ApiClientsContext } from 'pages/_app';
+import { convertToRaw, EditorState } from 'draft-js';
 import Title from './1_title';
 import Details from './2_details';
 import ApplicantDetails from './3_applicantDetails';
@@ -36,7 +37,7 @@ function Form({
   const [titleError, setTitleError] = useState(false);
   const [summaryError, setSummaryError] = useState(false);
 
-  const [details, setDetails] = useState('');
+  const [details, setDetails] = useState(() => EditorState.createEmpty());
   const [detailsError, setDetailsError] = useState(false);
 
   const [shouldEncrypt, setShouldEncrypt] = useState(false);
@@ -151,7 +152,7 @@ function Form({
       setSummaryError(true);
       error = true;
     }
-    if (details.length <= 0) {
+    if (!details.getCurrentContent().hasText()) {
       setDetailsError(true);
       error = true;
     }
@@ -169,6 +170,10 @@ function Form({
     }
 
     if (!error) {
+      const detailsString = JSON.stringify(
+        convertToRaw(details.getCurrentContent()),
+      );
+
       const requiredDetails = {} as any;
       detailsRequired.forEach((detail) => {
         if (detail && detail.required) {
@@ -210,7 +215,7 @@ function Form({
       onSubmit({
         title,
         summary,
-        details,
+        details: detailsString,
         fields,
         reward,
         rewardCurrencyAddress,
