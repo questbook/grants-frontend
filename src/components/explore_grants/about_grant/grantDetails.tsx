@@ -1,9 +1,10 @@
 /* eslint-disable react/no-unstable-nested-components */
 // @TODO: Fix this ESLint issue
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Link, Text } from '@chakra-ui/react';
 import Linkify from 'react-linkify';
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer';
+import { getFromIPFS } from 'src/utils/ipfsUtils';
 
 function GrantDetails({
   grantSummary,
@@ -12,6 +13,23 @@ function GrantDetails({
   grantSummary: string;
   grantDetails: string;
 }) {
+  const [decodedDetails, setDecodedDetails] = useState('');
+  const getDecodedDetails = async (detailsHash: string) => {
+    console.log(detailsHash);
+    const d = await getFromIPFS(detailsHash);
+    setDecodedDetails(d);
+  };
+
+  useEffect(() => {
+    if (!grantDetails) return;
+
+    if (grantDetails.startsWith('Qm') && grantDetails.length < 64) {
+      getDecodedDetails(grantDetails);
+    } else {
+      setDecodedDetails(grantDetails);
+    }
+  }, [grantDetails]);
+
   return (
     <>
       <Text
@@ -46,14 +64,14 @@ function GrantDetails({
         )}
       >
         <Box mt={3} fontWeight="400">
-          {grantDetails ? (
+          {decodedDetails ? (
             <TextViewer
             // value={useMemo(() => EditorState.createWithContent(
             //   convertFromRaw(JSON.parse(grantDetails)),
             // ), [grantDetails])}
             // value={editorState}
             // onChange={setEditorState}
-              grantDetails={grantDetails}
+              grantDetails={decodedDetails}
             />
           ) : null}
           {/* <div
