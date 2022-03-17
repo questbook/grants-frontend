@@ -1,10 +1,9 @@
 /* eslint-disable react/no-unstable-nested-components */
 // @TODO: Fix this ESLint issue
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Box, Link, Text } from '@chakra-ui/react';
 import Linkify from 'react-linkify';
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer';
-import { ContentState, convertFromRaw, EditorState } from 'draft-js';
 
 function GrantDetails({
   grantSummary,
@@ -47,22 +46,16 @@ function GrantDetails({
         )}
       >
         <Box mt={3} fontWeight="400">
-          <TextViewer
+          {grantDetails ? (
+            <TextViewer
             // value={useMemo(() => EditorState.createWithContent(
             //   convertFromRaw(JSON.parse(grantDetails)),
             // ), [grantDetails])}
-            value={useMemo(() => {
-              try {
-                const o = JSON.parse(grantDetails);
-                return EditorState.createWithContent(convertFromRaw(o));
-              } catch (e) {
-                if (grantDetails) {
-                  return EditorState.createWithContent(ContentState.createFromText(grantDetails));
-                }
-                return EditorState.createEmpty();
-              }
-            }, [grantDetails])}
-          />
+            // value={editorState}
+            // onChange={setEditorState}
+              grantDetails={grantDetails}
+            />
+          ) : null}
           {/* <div
           className="richTextContainer"
           // eslint-disable-next-line react/no-danger
