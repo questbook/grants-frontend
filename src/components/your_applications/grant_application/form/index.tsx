@@ -305,10 +305,9 @@ function Form({
       }
     });
 
-    if (!workspace || !workspace.members) return;
     let encryptedData;
 
-    if (piiFields.length > 0) {
+    if (piiFields.length > 0 && workspace && workspace.members) {
       encryptedData = await encryptApplicationPII(
         data as GrantApplicationRequest,
         piiFields,

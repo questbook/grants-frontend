@@ -57,10 +57,21 @@ function GrantCard({
       <Flex py={6} w="100%">
         <Image objectFit="cover" h="54px" w="54px" src={daoIcon} />
         <Flex flex={1} direction="column" ml={6}>
-          <Flex direction="row" alignItems="center" flexWrap="wrap">
-            <Text lineHeight="24px" fontSize="18px" fontWeight="700">
-              {grantTitle}
-              {isGrantVerified && (
+          <Flex direction="row" alignItems="start">
+            <Flex direction="column" maxW="50%">
+              <Button
+                textAlign="left"
+                lineHeight="26px"
+                fontSize="18px"
+                fontWeight="700"
+                color="#12224"
+                noOfLines={4}
+                variant="link"
+                onClick={onClick}
+                whiteSpace="normal"
+              >
+                {grantTitle}
+                {isGrantVerified && (
                 <Image
                   h={4}
                   w={4}
@@ -69,8 +80,10 @@ function GrantCard({
                   ml="2px"
                   mb="-2px"
                 />
-              )}
-            </Text>
+                )}
+              </Button>
+            </Flex>
+
             <Box mr="auto" />
             <Badge
               numOfApplicants={numOfApplicants}

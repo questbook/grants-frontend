@@ -10,7 +10,7 @@ function Badge({
   endTimestamp: number;
 }) {
   return (
-    <Text display="flex" alignItems="center" mb="10px" fontWeight="700">
+    <Text display="flex" alignItems="center" mb="10px" fontWeight="700" lineHeight="26px">
       <Image mr="6px" boxSize={3} src="/ui_icons/applicant.svg" display="inline-block" />
       <Text as="span" fontSize="xs" display="inline-block">
         {numOfApplicants}
