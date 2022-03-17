@@ -16,6 +16,13 @@ export const uploadToIPFS = async (data: string | Blob): Promise<{ hash: string 
   return { hash: responseBody.Hash };
 };
 
+export const getFromIPFS = async (hash: string): Promise<string> => {
+  console.log(hash);
+  const fetchResult = await fetch(`https://ipfs.io/ipfs/${hash}`);
+  const responseBody = await fetchResult.text();
+  return responseBody;
+};
+
 export const getUrlForIPFSHash = (hash: string) => {
   // https://docs.ipfs.io/concepts/what-is-ipfs
   // https://infura.io/docs/ipfs#section/Getting-Started/Pin-a-file

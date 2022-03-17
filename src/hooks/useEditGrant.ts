@@ -8,6 +8,7 @@ import {
 } from 'src/utils/validationUtils';
 import getErrorMessage from 'src/utils/errorUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { uploadToIPFS } from 'src/utils/ipfsUtils';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useGrantContract from './contracts/useGrantContract';
@@ -44,12 +45,13 @@ export default function useEditGrant(
       setLoading(true);
       // console.log('calling validate');
       try {
+        const detailsHash = (await uploadToIPFS(data.details)).hash;
         const {
           data: { ipfsHash },
         } = await validatorApi.validateGrantUpdate({
           title: data.title,
           summary: data.summary,
-          details: data.details,
+          details: detailsHash,
           deadline: data.date,
           reward: {
             committed: parseAmount(data.reward),
