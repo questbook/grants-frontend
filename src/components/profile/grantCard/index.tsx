@@ -2,13 +2,15 @@ import React from 'react';
 import {
   Image, Text, Button, Flex, Box, Divider, Link,
 } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
+import ShareMenu from 'src/components/ui/grantShareMenu';
 import { SupportedChainId } from 'src/constants/chains';
+import { useRouter } from 'next/router';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import Badge from './badge';
 
-interface BrowseGrantCardProps {
+interface GrantCardProps {
   daoID: string;
+  grantID: string;
   daoIcon: string;
   daoName: string;
   isDaoVerified?: boolean;
@@ -28,8 +30,9 @@ interface BrowseGrantCardProps {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-function BrowseGrantCard({
+function GrantCard({
   daoID,
+  grantID,
   daoIcon,
   daoName,
   isDaoVerified,
@@ -47,18 +50,28 @@ function BrowseGrantCard({
   grantCurrencyIcon,
 
   onClick,
-}: BrowseGrantCardProps) {
+}: GrantCardProps) {
   const router = useRouter();
-
   return (
     <>
       <Flex py={6} w="100%">
         <Image objectFit="cover" h="54px" w="54px" src={daoIcon} />
         <Flex flex={1} direction="column" ml={6}>
-          <Flex direction="row" alignItems="center" flexWrap="wrap">
-            <Text lineHeight="24px" fontSize="18px" fontWeight="700">
-              {grantTitle}
-              {isGrantVerified && (
+          <Flex direction="row" alignItems="start">
+            <Flex direction="column" maxW="50%">
+              <Button
+                textAlign="left"
+                lineHeight="26px"
+                fontSize="18px"
+                fontWeight="700"
+                color="#12224"
+                noOfLines={4}
+                variant="link"
+                onClick={onClick}
+                whiteSpace="normal"
+              >
+                {grantTitle}
+                {isGrantVerified && (
                 <Image
                   h={4}
                   w={4}
@@ -67,8 +80,10 @@ function BrowseGrantCard({
                   ml="2px"
                   mb="-2px"
                 />
-              )}
-            </Text>
+                )}
+              </Button>
+            </Flex>
+
             <Box mr="auto" />
             <Badge
               numOfApplicants={numOfApplicants}
@@ -93,17 +108,17 @@ function BrowseGrantCard({
             >
               {daoName}
               {isDaoVerified && (
-              <Image
-                h={4}
-                w={4}
-                display="inline-block"
-                src="/ui_icons/verified.svg"
-                ml="2px"
-                mb="-2px"
-              />
+                <Image
+                  h={4}
+                  w={4}
+                  display="inline-block"
+                  src="/ui_icons/verified.svg"
+                  ml="2px"
+                  mb="-2px"
+                />
               )}
             </Link>
-            <Text fontSize="16px" display="inline" color="#717A7C" fontWeight="400" lineHeight="24px" ml={2}>
+            <Text fontSize="16px" color="#717A7C" fontWeight="400" lineHeight="24px" ml={2}>
 
               {`• ${CHAIN_INFO[chainId!]?.name}`}
             </Text>
@@ -121,7 +136,8 @@ function BrowseGrantCard({
               {grantCurrency}
             </Text>
             <Box mr="auto" />
-            <Button onClick={onClick} variant="primaryCta">
+            <ShareMenu chainId={chainId} grantID={grantID} />
+            <Button ml={7} onClick={onClick} variant="primaryCta">
               Apply Now
             </Button>
           </Flex>
@@ -132,9 +148,9 @@ function BrowseGrantCard({
   );
 }
 
-BrowseGrantCard.defaultProps = {
+GrantCard.defaultProps = {
   isGrantVerified: false,
   isDaoVerified: false,
   onClick: () => {},
 };
-export default BrowseGrantCard;
+export default GrantCard;
