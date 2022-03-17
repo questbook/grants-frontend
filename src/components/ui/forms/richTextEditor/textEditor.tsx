@@ -8,30 +8,45 @@ import {
 } from 'draft-js';
 import Editor, { composeDecorators } from '@draft-js-plugins/editor';
 import 'draft-js/dist/Draft.css';
-import { Flex, IconButton, Image } from '@chakra-ui/react';
+import {
+  Flex, IconButton, Image, Link, Text,
+} from '@chakra-ui/react';
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils';
 import createImagePlugin from '@draft-js-plugins/image';
 import createResizeablePlugin from '@draft-js-plugins/resizeable';
 import createFocusPlugin from '@draft-js-plugins/focus';
 import '@draft-js-plugins/image/lib/plugin.css';
+import createLinkifyPlugin from '@draft-js-plugins/linkify';
 import Loader from '../../loader';
 
+const linkifyPlugin = createLinkifyPlugin({
+  component(props) {
+    // eslint-disable-next-line no-alert, jsx-a11y/anchor-has-content
+    // return <a {...props} onClick={() => alert('Clicked on Link!')} />;
+    return (
+      <Link {...props} onClick={() => window.open(props.href, '_blank')} isExternal />
+    );
+  },
+});
 const focusPlugin = createFocusPlugin();
 const resizeablePlugin = createResizeablePlugin();
 const decorator = composeDecorators(resizeablePlugin.decorator);
 const imagePlugin = createImagePlugin({ decorator });
-const plugins = [focusPlugin, resizeablePlugin, imagePlugin];
+const plugins = [focusPlugin, resizeablePlugin, imagePlugin, linkifyPlugin];
 
 function StyleButton({
   onToggle,
   active,
   icon,
   style,
+  label,
 }: {
   onToggle: (style: string) => void;
   active: boolean;
-  icon: string;
+  icon: string | undefined;
   style: string;
+  // eslint-disable-next-line react/require-default-props
+  label?: string | undefined;
 }) {
   return (
     <IconButton
@@ -39,7 +54,7 @@ function StyleButton({
       bg={active ? '#A0A7A7' : 'none'}
       _hover={{ bg: active ? '#A0A7A7' : 'none' }}
       _active={{ bg: active ? '#A0A7A7' : 'none' }}
-      icon={<Image src={icon} />}
+      icon={icon ? <Image src={icon} /> : <Text>{label}</Text>}
       onMouseDown={(e) => {
         e.preventDefault();
         onToggle(style);
@@ -78,11 +93,11 @@ function InlineStyleControls({
 }
 
 const BLOCK_TYPES = [
-  { label: '/ui_icons/bold_button.svg', style: 'header-one' },
-  { label: '/ui_icons/bold_button.svg', style: 'header-two' },
-  { label: '/ui_icons/bold_button.svg', style: 'header-three' },
-  { label: '/ui_icons/ul_button.svg', style: 'unordered-list-item' },
-  { label: '/ui_icons/ol_button.svg', style: 'ordered-list-item' },
+  { style: 'header-one', label: 'h1' },
+  { style: 'header-two', label: 'h2' },
+  { style: 'header-three', label: 'h3' },
+  { icon: '/ui_icons/ul_button.svg', style: 'unordered-list-item' },
+  { icon: '/ui_icons/ol_button.svg', style: 'ordered-list-item' },
 ];
 
 function BlockStyleControls({
@@ -102,11 +117,12 @@ function BlockStyleControls({
     <div className="RichEditor-controls">
       {BLOCK_TYPES.map((type) => (
         <StyleButton
-          key={type.label}
+          key={type.label ?? type.icon}
           active={type.style === blockType}
-          icon={type.label}
+          icon={type.icon}
           onToggle={onToggle}
           style={type.style}
+          label={type.label}
         />
       ))}
     </div>
@@ -118,7 +134,7 @@ function TextEditor({
   value: editorState,
   onChange: setEditorState,
 }: {
-  placeholder: string | undefined,
+  placeholder: string | undefined;
   value: EditorState;
   onChange: (editorState: EditorState) => void;
 }) {
