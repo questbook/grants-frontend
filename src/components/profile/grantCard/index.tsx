@@ -2,15 +2,13 @@ import React from 'react';
 import {
   Image, Text, Button, Flex, Box, Divider, Link,
 } from '@chakra-ui/react';
-import ShareMenu from 'src/components/ui/grantShareMenu';
-import { SupportedChainId } from 'src/constants/chains';
 import { useRouter } from 'next/router';
+import { SupportedChainId } from 'src/constants/chains';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import Badge from './badge';
 
-interface GrantCardProps {
+interface BrowseGrantCardProps {
   daoID: string;
-  grantID: string;
   daoIcon: string;
   daoName: string;
   isDaoVerified?: boolean;
@@ -30,9 +28,8 @@ interface GrantCardProps {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-function GrantCard({
+function BrowseGrantCard({
   daoID,
-  grantID,
   daoIcon,
   daoName,
   isDaoVerified,
@@ -50,8 +47,9 @@ function GrantCard({
   grantCurrencyIcon,
 
   onClick,
-}: GrantCardProps) {
+}: BrowseGrantCardProps) {
   const router = useRouter();
+
   return (
     <>
       <Flex py={6} w="100%">
@@ -108,17 +106,17 @@ function GrantCard({
             >
               {daoName}
               {isDaoVerified && (
-                <Image
-                  h={4}
-                  w={4}
-                  display="inline-block"
-                  src="/ui_icons/verified.svg"
-                  ml="2px"
-                  mb="-2px"
-                />
+              <Image
+                h={4}
+                w={4}
+                display="inline-block"
+                src="/ui_icons/verified.svg"
+                ml="2px"
+                mb="-2px"
+              />
               )}
             </Link>
-            <Text fontSize="16px" color="#717A7C" fontWeight="400" lineHeight="24px" ml={2}>
+            <Text fontSize="16px" display="inline" color="#717A7C" fontWeight="400" lineHeight="24px" ml={2}>
 
               {`• ${CHAIN_INFO[chainId!]?.name}`}
             </Text>
@@ -136,8 +134,7 @@ function GrantCard({
               {grantCurrency}
             </Text>
             <Box mr="auto" />
-            <ShareMenu chainId={chainId} grantID={grantID} />
-            <Button ml={7} onClick={onClick} variant="primaryCta">
+            <Button onClick={onClick} variant="primaryCta">
               Apply Now
             </Button>
           </Flex>
@@ -148,9 +145,9 @@ function GrantCard({
   );
 }
 
-GrantCard.defaultProps = {
+BrowseGrantCard.defaultProps = {
   isGrantVerified: false,
   isDaoVerified: false,
   onClick: () => {},
 };
-export default GrantCard;
+export default BrowseGrantCard;
