@@ -14,6 +14,7 @@ import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspa
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { formatEther } from 'ethers/lib/utils';
 import { BigNumber } from 'ethers';
+import { getFromIPFS } from 'src/utils/ipfsUtils';
 import InfoToast from '../../src/components/ui/infoToast';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/edit_grant/form';
@@ -63,9 +64,58 @@ function EditGrant() {
     loading: queryLoading,
   } = useGetGrantDetailsQuery(queryParams);
 
+  const getDecodedDetails = async (detailsHash: string, grant: any) => {
+    console.log(detailsHash);
+    const d = await getFromIPFS(detailsHash);
+    setFormData({
+      title: grant.title,
+      summary: grant.summary,
+      details: d,
+      applicantName:
+        grant.fields.find((field: any) => field.id.includes('applicantName')) !== undefined,
+      applicantEmail:
+        grant.fields.find((field: any) => field.id.includes('applicantEmail')) !== undefined,
+      teamMembers:
+        grant.fields.find((field: any) => field.id.includes('teamMembers')) !== undefined,
+      projectName:
+        grant.fields.find((field: any) => field.id.includes('projectName')) !== undefined,
+      projectGoals:
+        grant.fields.find((field: any) => field.id.includes('projectGoals')) !== undefined,
+      projectDetails:
+        grant.fields.find((field: any) => field.id.includes('projectDetails')) !== undefined,
+      projectLink:
+        grant.fields.find((field: any) => field.id.includes('projectLink')) !== undefined,
+      isMultipleMilestones:
+        grant.fields.find((field: any) => field.id.includes('isMultipleMilestones')) !== undefined,
+      fundingBreakdown:
+        grant.fields.find((field: any) => field.id.includes('fundingBreakdown')) !== undefined,
+      extraField:
+        grant.fields.find((field: any) => field.id.includes('extraField'))
+        !== undefined,
+      reward: formatEther(BigNumber.from(grant.reward.committed)),
+      rewardCurrency:
+        CHAIN_INFO[
+          getSupportedChainIdFromSupportedNetwork(
+            grant.workspace.supportedNetworks[0],
+          )
+        ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label ?? 'LOL',
+      rewardCurrencyAddress:
+        CHAIN_INFO[
+          getSupportedChainIdFromSupportedNetwork(
+            grant.workspace.supportedNetworks[0],
+          )
+        ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.address,
+      date: grant.deadline,
+    });
+  };
+
   useEffect(() => {
     if (data && data.grants && data.grants.length > 0) {
       const grant = data.grants[0];
+      if (grant.details.startsWith('Qm') && grant.details.length < 64) {
+        getDecodedDetails(grant.details, grant);
+        return;
+      }
       setFormData({
         title: grant.title,
         summary: grant.summary,

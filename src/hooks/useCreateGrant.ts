@@ -14,6 +14,7 @@ import {
 } from 'src/constants/addresses';
 import getErrorMessage from 'src/utils/errorUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { uploadToIPFS } from 'src/utils/ipfsUtils';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useGrantFactoryContract from './contracts/useGrantFactoryContract';
 import useChainId from './utils/useChainId';
@@ -53,12 +54,13 @@ export default function useCreateGrant(
       setLoading(true);
       // console.log('calling validate');
       try {
+        const detailsHash = (await uploadToIPFS(data.details)).hash;
         const {
           data: { ipfsHash },
         } = await validatorApi.validateGrantCreate({
           title: data.title,
           summary: data.summary,
-          details: data.details,
+          details: detailsHash,
           deadline: data.date,
           reward: {
             committed: parseAmount(data.reward),
