@@ -16,8 +16,18 @@ import { isValidEmail } from 'src/utils/validationUtils';
 import useResubmitApplication from 'src/hooks/useResubmitApplication';
 import Loader from 'src/components/ui/loader';
 import { SupportedChainId } from 'src/constants/chains';
-import { GrantApplicationRequest, GrantApplicationUpdate } from '@questbook/service-validator-client';
+import {
+  GrantApplicationRequest,
+  GrantApplicationUpdate,
+} from '@questbook/service-validator-client';
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption';
+import {
+  ContentState,
+  convertFromRaw,
+  convertToRaw,
+  EditorState,
+} from 'draft-js';
+import { getFromIPFS } from 'src/utils/ipfsUtils';
 import {
   GrantApplicationFieldsSubgraph,
   GrantApplicationProps,
@@ -86,7 +96,7 @@ function Form({
 
   const [projectLinks, setProjectLinks] = useState<any[]>([]);
 
-  const [projectDetails, setProjectDetails] = useState('');
+  const [projectDetails, setProjectDetails] = useState(() => EditorState.createEmpty());
   const [projectDetailsError, setProjectDetailsError] = useState(false);
 
   const [projectGoal, setProjectGoal] = useState('');
@@ -99,6 +109,30 @@ function Form({
 
   const [fundingBreakdown, setFundingBreakdown] = useState('');
   const [fundingBreakdownError, setFundingBreakdownError] = useState(false);
+
+  const getProjectDetails = async (projectDetails: string) => {
+    try {
+      if (projectDetails.startsWith('Qm') && projectDetails.length < 64) {
+        const o = await getFromIPFS(projectDetails);
+        console.log('From IPFS: ', o);
+        setProjectDetails(EditorState.createWithContent(convertFromRaw(JSON.parse(o))));
+      } else {
+        console.log('Previous text value: ', projectDetails);
+        const o = JSON.parse(projectDetails);
+        setProjectDetails(EditorState.createWithContent(convertFromRaw(o)));
+      }
+    } catch (e) {
+      if (projectDetails) {
+        setProjectDetails(
+          EditorState.createWithContent(
+            ContentState.createFromText(projectDetails),
+          ),
+        );
+      } else {
+        setProjectDetails(EditorState.createEmpty());
+      }
+    }
+  };
 
   useEffect(() => {
     try {
@@ -119,7 +153,8 @@ function Form({
             isError: false,
           })),
         );
-        setProjectDetails(formData.projectDetails);
+        console.log('Project details: ', formData.projectDetails);
+        getProjectDetails(formData.projectDetails);
         setProjectGoal(formData.projectGoal);
         setProjectMilestones(
           formData?.projectMilestones.map((milestone: any) => ({
@@ -166,7 +201,7 @@ function Form({
         pathname: '/your_applications',
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, router, txnData]);
 
   const handleOnSubmit = async () => {
@@ -230,13 +265,11 @@ function Form({
       error = true;
     }
 
-    if (
-      projectDetails === ''
-      && grantRequiredFields.includes('projectDetails')
-    ) {
+    if (!projectDetails.getCurrentContent().hasText()) {
       setProjectDetailsError(true);
       error = true;
     }
+
     if (projectGoal === '' && grantRequiredFields.includes('projectGoals')) {
       setProjectGoalError(true);
       error = true;
@@ -274,7 +307,9 @@ function Form({
     if (error) {
       return;
     }
-
+    const projectDetailsString = JSON.stringify(
+      convertToRaw(projectDetails.getCurrentContent()),
+    );
     const links = projectLinks.map((pl) => pl.link);
 
     const data: GrantApplicationUpdate = {
@@ -282,21 +317,27 @@ function Form({
         applicantName: [{ value: applicantName }],
         applicantEmail: [{ value: applicantEmail }],
         projectName: [{ value: projectName }],
-        projectDetails: [{ value: projectDetails }],
+        projectDetails: [{ value: projectDetailsString }],
         fundingAsk: [{ value: parseAmount(fundingAsk) }],
         fundingBreakdown: [{ value: fundingBreakdown }],
         teamMembers: [{ value: Number(teamMembers).toString() }],
-        memberDetails: membersDescription.map((md) => ({ value: md.description })),
+        memberDetails: membersDescription.map((md) => ({
+          value: md.description,
+        })),
         projectLink: links.map((value) => ({ value })),
         projectGoals: [{ value: projectGoal }],
-        isMultipleMilestones: [{ value: grantRequiredFields.includes('isMultipleMilestones').toString() }],
+        isMultipleMilestones: [
+          {
+            value: grantRequiredFields
+              .includes('isMultipleMilestones')
+              .toString(),
+          },
+        ],
       },
-      milestones: projectMilestones.map((pm) => (
-        {
-          title: pm.milestone,
-          amount: parseAmount(pm.milestoneReward),
-        }
-      )),
+      milestones: projectMilestones.map((pm) => ({
+        title: pm.milestone,
+        amount: parseAmount(pm.milestoneReward),
+      })),
     };
 
     Object.keys(data.fields!).forEach((field) => {
@@ -322,7 +363,13 @@ function Form({
 
   return (
     <Flex mt="30px" flexDirection="column" alignItems="center" w="100%">
-      <Image objectFit="cover" h="96px" w="96px" src={daoLogo} alt="Polygon DAO" />
+      <Image
+        objectFit="cover"
+        h="96px"
+        w="96px"
+        src={daoLogo}
+        alt="Polygon DAO"
+      />
       <Text mt={6} variant="heading" textAlign="center">
         {grantTitle}
       </Text>

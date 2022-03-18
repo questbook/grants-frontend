@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 import {
   Flex,
   Divider,
@@ -8,11 +9,14 @@ import {
   Box,
   Link,
 } from '@chakra-ui/react';
+import Linkify from 'react-linkify';
 import { ApiClientsContext } from 'pages/_app';
 import React, {
   useContext, useEffect, useRef, useState,
 } from 'react';
+import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer';
 import { GetApplicationDetailsQuery } from 'src/generated/graphql';
+import { getFromIPFS } from 'src/utils/ipfsUtils';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { formatAmount } from '../../../utils/formattingUtils';
 import { getAssetInfo } from '../../../utils/tokenUtils';
@@ -38,13 +42,19 @@ function Application({ applicationData, showHiddenData }: Props) {
   const tabs = ['Project Details', 'Funds Requested', 'About Team'];
   const [projectTitle, setProjectTitle] = useState('');
   const [projectLink, setProjectLink] = useState<any[]>([]);
-  const [projectDetails, setProjectDetails] = useState('');
   const [projectGoals, setProjectGoals] = useState('');
   const [projectMilestones, setProjectMilestones] = useState<any[]>([]);
   const [fundingAsk, setFundingAsk] = useState('0');
   const [fundingBreakdown, setFundingBreakdown] = useState('');
   const [teamMembers, setTeamMembers] = useState('');
   const [memberDetails, setMemberDetails] = useState<any[]>([]);
+
+  const [decodedDetails, setDecodedDetails] = useState('');
+  const getDecodedDetails = async (detailsHash: string) => {
+    console.log(detailsHash);
+    const d = await getFromIPFS(detailsHash);
+    setDecodedDetails(d);
+  };
 
   useEffect(() => {
     if (!applicationData) return;
@@ -56,7 +66,14 @@ function Application({ applicationData, showHiddenData }: Props) {
         ?.find((fld: any) => fld?.id?.split('.')[1] === 'projectLink')
         ?.values.map((val) => ({ link: val.value })) ?? [],
     );
-    setProjectDetails(getStringField('projectDetails'));
+
+    const projectDetailsTemp = getStringField('projectDetails');
+    if (projectDetailsTemp.startsWith('Qm') && projectDetailsTemp.length < 64) {
+      getDecodedDetails(projectDetailsTemp);
+    } else {
+      setDecodedDetails(projectDetailsTemp);
+    }
+
     setProjectGoals(getStringField('projectGoals'));
     setProjectMilestones(applicationData?.milestones ?? []);
     setFundingAsk(getStringField('fundingAsk'));
@@ -131,14 +148,37 @@ function Application({ applicationData, showHiddenData }: Props) {
             ))}
           </Box>
 
-          <Box display={projectDetails && projectDetails !== '' ? '' : 'none'}>
+          {/* <Box display={projectDetails && projectDetails !== '' ? '' : 'none'}>
             <Heading variant="applicationHeading" mt={10}>
               Project Details
             </Heading>
             <Text variant="applicationText" mt={2} mb={10}>
               {projectDetails}
             </Text>
-          </Box>
+          </Box> */}
+
+          <Heading variant="applicationHeading" mt={10}>
+            Project Details
+          </Heading>
+          <Linkify
+            componentDecorator={(
+              decoratedHref: string,
+              decoratedText: string,
+              key: number,
+            ) => (
+              <Link key={key} href={decoratedHref} isExternal>
+                {decoratedText}
+              </Link>
+            )}
+          >
+            <Box mt={2} mb={10} fontWeight="400">
+              {decodedDetails ? (
+                <TextViewer
+                  grantDetails={decodedDetails}
+                />
+              ) : null}
+            </Box>
+          </Linkify>
 
           <Box display={projectGoals && projectGoals !== '' ? '' : 'none'}>
             <Heading variant="applicationHeading">Project Goals</Heading>
