@@ -11,6 +11,7 @@ import useSubmitApplication from 'src/hooks/useSubmitApplication';
 import { SupportedChainId } from 'src/constants/chains';
 import { GrantApplicationRequest } from '@questbook/service-validator-client';
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption';
+import { convertToRaw, EditorState } from 'draft-js';
 import { parseAmount } from '../../../../utils/formattingUtils';
 import { GrantApplicationFieldsSubgraph } from '../../../../types/application';
 import InfoToast from '../../../ui/infoToast';
@@ -77,7 +78,7 @@ function Form({
     },
   ]);
 
-  const [projectDetails, setProjectDetails] = useState('');
+  const [projectDetails, setProjectDetails] = useState(() => EditorState.createEmpty());
   const [projectDetailsError, setProjectDetailsError] = useState(false);
 
   const [projectGoal, setProjectGoal] = useState('');
@@ -179,7 +180,7 @@ function Form({
       error = true;
     }
 
-    if (projectDetails === '' && grantRequiredFields.includes('projectDetails')) {
+    if (!projectDetails.getCurrentContent().hasText()) {
       setProjectDetailsError(true);
       error = true;
     }
@@ -217,6 +218,9 @@ function Form({
     if (error) {
       return;
     }
+    const projectDetailsString = JSON.stringify(
+      convertToRaw(projectDetails.getCurrentContent()),
+    );
     const links = projectLinks.map((pl) => (pl.link));
 
     if (!signer || !signer.data) return;
@@ -228,7 +232,7 @@ function Form({
         applicantName: [{ value: applicantName }],
         applicantEmail: [{ value: applicantEmail }],
         projectName: [{ value: projectName }],
-        projectDetails: [{ value: projectDetails }],
+        projectDetails: [{ value: projectDetailsString }],
         fundingAsk: [{ value: parseAmount(fundingAsk) }],
         fundingBreakdown: [{ value: fundingBreakdown }],
         teamMembers: [{ value: Number(teamMembers).toString() }],

@@ -1,7 +1,9 @@
 import {
   Box, Flex, Text, Image,
 } from '@chakra-ui/react';
+import { EditorState } from 'draft-js';
 import React from 'react';
+import RichTextEditor from 'src/components/ui/forms/richTextEditor';
 import Dropdown from '../../../ui/forms/dropdown';
 import MultiLineInput from '../../../ui/forms/multiLineInput';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
@@ -50,8 +52,8 @@ function AboutProject({
     }[]
   ) => void;
 
-  projectDetails: string;
-  setProjectDetails: (projectDetails: string) => void;
+  projectDetails: EditorState;
+  setProjectDetails: (projectDetails: EditorState) => void;
   projectDetailsError: boolean;
   setProjectDetailsError: (projectDetailsError: boolean) => void;
 
@@ -186,19 +188,20 @@ function AboutProject({
 
       <Box mt={8} />
 
-      <MultiLineInput
-        placeholder="Write details about your project - requirements, deliverables, and milestones - as detailed as possible."
+      <RichTextEditor
         label="Project Details"
+        placeholder="Write details about your project - requirements, deliverables, and milestones - as detailed as possible."
         value={projectDetails}
-        onChange={(e) => {
+        onChange={(e: EditorState) => {
           if (projectDetailsError) {
             setProjectDetailsError(false);
           }
-          setProjectDetails(e.target.value);
+          setProjectDetails(e);
         }}
         isError={projectDetailsError}
         errorText="Required"
         visible={grantRequiredFields.includes('projectDetails')}
+        maxLength={-1}
       />
 
       <Box mt={8} />
