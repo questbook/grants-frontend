@@ -133,10 +133,12 @@ function TextEditor({
   placeholder,
   value: editorState,
   onChange: setEditorState,
+  readOnly,
 }: {
   placeholder: string | undefined;
   value: EditorState;
   onChange: (editorState: EditorState) => void;
+  readOnly?: boolean;
 }) {
   const ref = useRef(null);
   const imageUploadRef = useRef(null);
@@ -332,10 +334,13 @@ function TextEditor({
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           plugins={plugins}
+          readOnly={readOnly}
         />
       </div>
     </div>
   );
 }
+
+TextEditor.defaultProps = { readOnly: false };
 
 export default TextEditor;

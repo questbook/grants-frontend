@@ -41,10 +41,11 @@ function RichTextEditor({
   subtext,
   tooltip,
   visible,
+  disabled,
 }: RichTextEditorProps) {
   return (
     <Flex flex={1} direction="column" display={visible ? '' : 'none'}>
-      <Text lineHeight="20px" fontWeight="bold">
+      <Text lineHeight="20px" fontWeight="bold" mb={1}>
         {label}
         {tooltip && tooltip.length ? <Tooltip label={tooltip} /> : null}
       </Text>
@@ -52,6 +53,7 @@ function RichTextEditor({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        readOnly={disabled}
       />
       {(subtext && subtext.length)
       || (isError && errorText && errorText?.length) ? (

@@ -103,8 +103,12 @@ function ApplicantDetails({ onSubmit }: Props) {
         };
       }
       if (shouldEncrypt && keySubmitted) {
-        fields.applicantEmail = { ...fields.applicantEmail, pii: true };
-        fields.memberDetails = { ...fields.memberDetails, pii: true };
+        if (fields.applicantEmail) {
+          fields.applicantEmail = { ...fields.applicantEmail, pii: true };
+        }
+        if (fields.memberDetails) {
+          fields.memberDetails = { ...fields.memberDetails, pii: true };
+        }
       }
       onSubmit({ fields });
     }

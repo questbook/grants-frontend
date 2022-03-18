@@ -49,7 +49,11 @@ function Members({ workspaceMembers }: Props) {
         <ModalContent onClose={(
           newMember: { memberAddress: string, role: string },
         ) => {
-          setTableData([...tableData, newMember]);
+          if (tableData && tableData.length > 0) {
+            setTableData([...tableData, newMember]);
+          } else {
+            setTableData([newMember]);
+          }
           setIsModalOpen(false);
         }}
         />
