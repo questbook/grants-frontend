@@ -7,8 +7,9 @@ import React, {
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters';
 import { useGetApplicantsForAGrantQuery } from 'src/generated/graphql';
 import { SupportedChainId } from 'src/constants/chains';
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { getAssetInfo } from 'src/utils/tokenUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { formatAmount } from '../../../src/utils/formattingUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Table from '../../../src/components/your_grants/view_applicants/table';
@@ -65,9 +66,19 @@ function ViewApplicants() {
           sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
           applicant_name: getFieldString('applicantName'),
           funding_asked: {
-            amount: formatAmount(
-              getFieldString('fundingAsk') ?? '0',
-            ),
+            // amount: formatAmount(
+            //   getFieldString('fundingAsk') ?? '0',
+            // ),
+            amount:
+              applicant && getFieldString('fundingAsk') ? formatAmount(
+                getFieldString('fundingAsk')!,
+                CHAIN_INFO[
+                  getSupportedChainIdFromSupportedNetwork(
+                    applicant.grant.workspace.supportedNetworks[0],
+                  )
+                ]?.supportedCurrencies[applicant.grant.reward.asset.toLowerCase()]
+                  ?.decimals ?? 18,
+              ) : '1',
             symbol: getAssetInfo(
               applicant?.grant?.reward?.asset?.toLowerCase(),
               getSupportedChainIdFromWorkspace(workspace),

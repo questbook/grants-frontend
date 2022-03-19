@@ -12,6 +12,9 @@ query getApplicantsForAGrant($first: Int, $skip: Int, $grantID: String!) {
       reward {
         asset
       }
+      workspace {
+        supportedNetworks
+      }
     }
     applicantId
     state

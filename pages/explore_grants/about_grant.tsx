@@ -11,6 +11,8 @@ import { ApiClientsContext } from 'pages/_app';
 import GrantShare from 'src/components/ui/grantShare';
 import { SupportedChainId } from 'src/constants/chains';
 import { getAssetInfo } from 'src/utils/tokenUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import GrantDetails from '../../src/components/explore_grants/about_grant/grantDetails';
 import GrantRewards from '../../src/components/explore_grants/about_grant/grantRewards';
 import Sidebar from '../../src/components/explore_grants/about_grant/sidebar';
@@ -92,7 +94,13 @@ function AboutGrant() {
     setDaoLogo(getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash));
     setRewardAmount(
       grantData?.reward?.committed
-        ? formatAmount(grantData?.reward?.committed)
+        ? formatAmount(
+          grantData?.reward?.committed,
+          CHAIN_INFO[getSupportedChainIdFromSupportedNetwork(
+            grantData.workspace.supportedNetworks[0],
+          )]?.supportedCurrencies[grantData.reward.asset.toLowerCase()]
+            ?.decimals ?? 18,
+        )
         : '',
     );
     const supportedCurrencyObj = getAssetInfo(

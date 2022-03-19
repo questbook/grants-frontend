@@ -156,7 +156,15 @@ function YourGrants() {
                 grantDesc={grant.summary}
                 numOfApplicants={grant.numberOfApplications}
                 endTimestamp={new Date(grant.deadline).getTime()}
-                grantAmount={formatAmount(grant.reward.committed)}
+                grantAmount={formatAmount(
+                  grant.reward.committed,
+                  CHAIN_INFO[
+                    getSupportedChainIdFromSupportedNetwork(
+                      grant.workspace.supportedNetworks[0],
+                    )
+                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+                    ?.decimals ?? 18,
+                )}
                 grantCurrency={
                     CHAIN_INFO[
                       getSupportedChainIdFromSupportedNetwork(

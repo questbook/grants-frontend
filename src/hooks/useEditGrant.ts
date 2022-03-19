@@ -54,7 +54,7 @@ export default function useEditGrant(
           details: detailsHash,
           deadline: data.date,
           reward: {
-            committed: parseAmount(data.reward),
+            committed: parseAmount(data.reward, data.rewardCurrencyAddress),
             asset: data.rewardCurrencyAddress,
           },
           fields: data.fields,

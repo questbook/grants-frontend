@@ -6,7 +6,6 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { ethers } from 'ethers';
 import {
   GetApplicationDetailsQuery,
   useGetApplicationDetailsQuery,
@@ -14,6 +13,8 @@ import {
 import { ApiClientsContext } from 'pages/_app';
 import { SupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
+import { formatAmount } from 'src/utils/formattingUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { GrantApplicationProps } from '../../src/types/application';
 import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils';
 import Form from '../../src/components/your_applications/grant_application/form';
@@ -98,9 +99,30 @@ function ViewApplication() {
       projectMilestones:
         application.milestones.map((ms: any) => ({
           milestone: ms.title,
-          milestoneReward: ethers.utils.formatEther(ms.amount ?? '0'),
+          // milestoneReward: ethers.utils.formatEther(ms.amount ?? '0'),
+          milestoneReward:
+            application ? formatAmount(
+              ms.amount,
+              CHAIN_INFO[
+                getSupportedChainIdFromSupportedNetwork(
+                  application.grant.workspace.supportedNetworks[0],
+                )
+              ]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
+                ?.decimals ?? 18,
+            ) : '1'
+          ,
         })) ?? [],
-      fundingAsk: ethers.utils.formatEther(getStringField('fundingAsk') ?? '0'),
+      // fundingAsk: ethers.utils.formatEther(getStringField('fundingAsk') ?? '0'),
+      fundingAsk:
+        application ? formatAmount(
+          getStringField('fundingAsk'),
+          CHAIN_INFO[
+            getSupportedChainIdFromSupportedNetwork(
+              application.grant.workspace.supportedNetworks[0],
+            )
+          ]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
+            ?.decimals ?? 18,
+        ) : '1',
       fundingBreakdown: getStringField('fundingBreakdown'),
     };
     if (application?.grant?.fields?.find((field: any) => field.title === 'memberDetails') && !fd.membersDescription.length) {
@@ -139,15 +161,24 @@ function ViewApplication() {
                 });
               }
           }
-          rewardAmount={ethers.utils
-            .formatEther(application?.grant?.reward?.committed ?? '1')
-            .toString()}
+          rewardAmount={
+            application ? formatAmount(
+              application.grant.reward.committed,
+              CHAIN_INFO[
+                getSupportedChainIdFromSupportedNetwork(
+                  application.grant.workspace.supportedNetworks[0],
+                )
+              ]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
+                ?.decimals ?? 18,
+            ) : '1'
+          }
           rewardCurrency={
             getAssetInfo(application?.grant?.reward?.asset ?? '', chainId)?.label
           }
           rewardCurrencyCoin={
             getAssetInfo(application?.grant?.reward?.asset ?? '', chainId)?.icon
           }
+          rewardCurrencyAddress={application?.grant?.reward?.asset}
           formData={formData}
           grantTitle={application?.grant?.title || ''}
           sentDate={

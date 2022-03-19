@@ -17,7 +17,8 @@ import React, {
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer';
 import { GetApplicationDetailsQuery } from 'src/generated/graphql';
 import { getFromIPFS } from 'src/utils/ipfsUtils';
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { formatAmount } from '../../../utils/formattingUtils';
 import { getAssetInfo } from '../../../utils/tokenUtils';
 
@@ -221,7 +222,16 @@ function Application({ applicationData, showHiddenData }: Props) {
                         Funding asked
                       </Heading>
                       <Text variant="applicationText">
-                        {milestone?.amount && formatAmount(milestone?.amount)}
+                        {milestone?.amount && applicationData
+                        && formatAmount(
+                          milestone?.amount,
+                          CHAIN_INFO[
+                            getSupportedChainIdFromSupportedNetwork(
+                              applicationData.grant.workspace.supportedNetworks[0],
+                            )
+                          ]?.supportedCurrencies[applicationData.grant.reward.asset.toLowerCase()]
+                            ?.decimals ?? 18,
+                        )}
                         {' '}
                         {
                           getAssetInfo(
@@ -255,7 +265,16 @@ function Application({ applicationData, showHiddenData }: Props) {
                   Total funding asked
                 </Heading>
                 <Text variant="applicationText" color="brand.500">
-                  {formatAmount(fundingAsk ?? '0')}
+                  {applicationData
+                    && formatAmount(
+                      fundingAsk ?? '0',
+                      CHAIN_INFO[
+                        getSupportedChainIdFromSupportedNetwork(
+                          applicationData.grant.workspace.supportedNetworks[0],
+                        )
+                      ]?.supportedCurrencies[applicationData.grant.reward.asset.toLowerCase()]
+                        ?.decimals ?? 18,
+                    )}
                   {' '}
                   {
                     getAssetInfo(applicationData?.grant?.reward?.asset, chainId)
