@@ -136,4 +136,5 @@ export const getTextWithEllipses = (txt: string, maxLength = 7) => (txt.length >
 
 export const getChainIdFromResponse = (networkString: string):string => networkString?.split('_')[1];
 
+// eslint-disable-next-line max-len
 export const getFieldLabelFromFieldTitle = (title: string) => applicantDetailsList.find((detail) => detail.id === title)?.title;
