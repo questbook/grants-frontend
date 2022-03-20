@@ -9,6 +9,7 @@ import {
   useToast,
   ToastId,
   ModalBody,
+  Tooltip,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
@@ -299,9 +300,11 @@ function ManageGrant() {
           <Text key="address" variant="applicationText">
             By
             {' '}
-            <Box as="span" fontWeight="700" display="inline-block">
-              {`${applicationData?.applicantId?.substring(0, 6)}...`}
-            </Box>
+            <Tooltip label={applicationData?.applicantId}>
+              <Box as="span" fontWeight="700" display="inline-block">
+                {`${applicationData?.applicantId?.substring(0, 6)}...`}
+              </Box>
+            </Tooltip>
           </Text>
           <Box mr={6} />
           <Text key="mail_text" fontWeight="400">
