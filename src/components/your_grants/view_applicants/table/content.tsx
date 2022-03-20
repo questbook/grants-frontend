@@ -4,6 +4,7 @@ import {
   Text,
   Image,
   Button,
+  Tooltip,
 } from '@chakra-ui/react';
 import React, { ReactElement } from 'react';
 import {
@@ -56,15 +57,18 @@ function Content({
             px={0}
             py={4}
           >
-            <Text
-              ml="19px"
-              mr="-19px"
-              flex={tableHeadersflex[0]}
-              variant="tableBody"
-            >
-              {'     '}
-              {`${item.applicant_address.substring(0, 13)}...`}
-            </Text>
+
+            <Tooltip label={item?.applicant_address}>
+              <Text
+                ml="19px"
+                mr="-19px"
+                flex={tableHeadersflex[0]}
+                variant="tableBody"
+              >
+                {'     '}
+                {`${item.applicant_address.substring(0, 13)}...`}
+              </Text>
+            </Tooltip>
             <Text
               flex={tableHeadersflex[1]}
               color="#717A7C"

@@ -1,5 +1,5 @@
 import {
-  Box, Heading, Flex, Divider, Image, Text, Link,
+  Box, Heading, Flex, Divider, Image, Text, Link, Tooltip,
 } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import React, { useContext } from 'react';
@@ -34,9 +34,11 @@ function Sidebar(
         <Flex direction="row" justify="start" w="full" mt={6} align="center">
           <Image h="45px" w="45px" src={getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.icon} />
           <Box mx={3} />
-          <Heading variant="applicationHeading" color="brand.500">
-            {truncateStringFromMiddle(applicationData?.applicantId)}
-          </Heading>
+          <Tooltip label={applicationData?.applicantId}>
+            <Heading variant="applicationHeading" color="brand.500">
+              {truncateStringFromMiddle(applicationData?.applicantId)}
+            </Heading>
+          </Tooltip>
         </Flex>
         <Box my={4} />
         <Flex direction="row" justify="space-between" w="full" align="center">
