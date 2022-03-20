@@ -4,7 +4,8 @@ import { ApiClientsContext } from 'pages/_app';
 import React, {
   ReactElement, useContext, useEffect, useState,
 } from 'react';
-import { DefaultSupportedChainId, SupportedChainId } from 'src/constants/chains';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { SupportedChainId, DefaultSupportedChainId } from 'src/constants/chains';
 import { useGetGrantDetailsQuery } from 'src/generated/graphql';
 import { formatAmount } from 'src/utils/formattingUtils';
 import { getAssetInfo } from 'src/utils/tokenUtils';
@@ -25,6 +26,7 @@ function ApplyGrant() {
   const [rewardAmount, setRewardAmount] = useState('');
   const [rewardCurrency, setRewardCurrency] = useState('');
   const [rewardCurrencyCoin, setRewardCurrencyCoin] = useState('');
+  const [rewardCurrencyAddress, setRewardCurrencyAddress] = useState();
   const [grantDetails, setGrantDetails] = useState('');
   const [grantSummary, setGrantSummary] = useState('');
   const [workspaceId, setWorkspaceId] = useState('');
@@ -75,12 +77,23 @@ function ApplyGrant() {
     setTitle(grantData?.title);
     setWorkspaceId(grantData?.workspace?.id);
     setDaoLogo(getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash));
-    setRewardAmount(grantData?.reward?.committed ? formatAmount(grantData?.reward?.committed) : '');
+    setRewardAmount(
+      grantData?.reward?.committed
+        ? formatAmount(
+          grantData?.reward?.committed,
+          CHAIN_INFO[getSupportedChainIdFromSupportedNetwork(
+            grantData.workspace.supportedNetworks[0],
+          )]?.supportedCurrencies[grantData.reward.asset.toLowerCase()]
+            ?.decimals ?? 18,
+        )
+        : '',
+    );
     const supportedCurrencyObj = getAssetInfo(grantData?.reward?.asset?.toLowerCase(), chainId);
     // console.log('curr', supportedCurrencyObj);
     if (supportedCurrencyObj) {
       setRewardCurrency(supportedCurrencyObj?.label);
       setRewardCurrencyCoin(supportedCurrencyObj?.icon);
+      setRewardCurrencyAddress(grantData?.reward?.asset?.toLowerCase());
     }
     // console.log(grantData);
 
@@ -101,6 +114,7 @@ function ApplyGrant() {
           rewardAmount={rewardAmount}
           rewardCurrency={rewardCurrency}
           rewardCurrencyCoin={rewardCurrencyCoin}
+          rewardCurrencyAddress={rewardCurrencyAddress}
           workspaceId={workspaceId}
           grantRequiredFields={grantRequiredFields.map((field:any) => field.id.split('.')[1])}
           piiFields={grantRequiredFields.filter((field:any) => field.isPii).map((field:any) => field.id.split('.')[1])}

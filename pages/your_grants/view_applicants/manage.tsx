@@ -75,9 +75,19 @@ function ManageGrant() {
   const [{ data: accountData }] = useAccount({ fetchEns: false });
 
   const {
-    data: { milestones, rewardAsset, fundingAsk },
+    data: {
+      milestones, rewardAsset, fundingAsk, decimals,
+    },
     refetch: refetchMilestones,
   } = useApplicationMilestones(applicationID);
+
+  useEffect(() => {
+    console.log(decimals);
+  }, [decimals]);
+
+  useEffect(() => {
+    console.log('milestones', milestones);
+  }, [milestones]);
 
   const {
     data: appDetailsResult,
@@ -146,6 +156,7 @@ function ManageGrant() {
           refetch={refetchMilestones}
           milestones={milestones}
           rewardAssetId={rewardAsset}
+          decimals={decimals}
           sendFundOpen={() => setIsSendFundModalOpen(true)}
           chainId={getSupportedChainIdFromWorkspace(workspace)}
         />
@@ -153,14 +164,14 @@ function ManageGrant() {
     },
     {
       icon: fundingIcon,
-      title: formatAmount(getTotalFundingRecv(milestones).toString()),
+      title: formatAmount(getTotalFundingRecv(milestones).toString(), decimals),
       subtitle: 'Funding Sent',
       content: (
         <Funding
           fundTransfers={fundsDisbursed?.fundsTransfers || []}
           assetId={rewardAsset}
           columns={['milestoneTitle', 'date', 'from', 'action']}
-          assetDecimals={18}
+          assetDecimals={decimals}
           grantId={applicationData?.grant?.id || ''}
           type="funding_sent"
           chainId={getSupportedChainIdFromWorkspace(workspace)}
@@ -170,8 +181,8 @@ function ManageGrant() {
     {
       icon: fundingIcon,
       title:
-        (fundingAsk ? formatAmount(fundingAsk.toString()) : null)
-        || formatAmount(getTotalFundingAsked(milestones).toString()),
+        (fundingAsk ? formatAmount(fundingAsk.toString(), decimals) : null)
+        || formatAmount(getTotalFundingAsked(milestones).toString(), decimals),
       subtitle: 'Funding Requested',
       content: undefined, // <Funding fundTransfers={fundsDisbursed} assetId={rewardAsset} />,
     },
@@ -426,6 +437,7 @@ function ManageGrant() {
           assetInfo={assetInfo}
           grant={applicationData?.grant}
           applicationId={applicationID}
+          decimals={decimals}
         />
       )}
 

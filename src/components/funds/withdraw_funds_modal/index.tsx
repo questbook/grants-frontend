@@ -156,7 +156,17 @@ function WithdrawFunds({
               </Text>
             )}
 
-            <Button variant="primary" mt={addressError ? 5 : 10} mb={9} onClick={loading ? () => {} : () => setFinalAmount(parseAmount(funding.toString()))} py={loading ? 2 : 0}>
+            <Button
+              variant="primary"
+              mt={addressError ? 5 : 10}
+              mb={9}
+              onClick={
+                loading
+                  ? () => {}
+                  : () => setFinalAmount(parseAmount(funding.toString(), rewardAsset.address))
+}
+              py={loading ? 2 : 0}
+            >
               {loading ? <Loader /> : 'Withdraw'}
             </Button>
           </Flex>

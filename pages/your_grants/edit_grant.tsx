@@ -12,9 +12,8 @@ import useEditGrant from 'src/hooks/useEditGrant';
 import { DefaultSupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
-import { formatEther } from 'ethers/lib/utils';
-import { BigNumber } from 'ethers';
 import { getFromIPFS } from 'src/utils/ipfsUtils';
+import { formatAmount } from 'src/utils/formattingUtils';
 import InfoToast from '../../src/components/ui/infoToast';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/edit_grant/form';
@@ -92,7 +91,15 @@ function EditGrant() {
       extraField:
         grant.fields.find((field: any) => field.id.includes('extraField'))
         !== undefined,
-      reward: formatEther(BigNumber.from(grant.reward.committed)),
+      reward: formatAmount(
+        grant.reward.committed,
+        CHAIN_INFO[
+          getSupportedChainIdFromSupportedNetwork(
+            grant.workspace.supportedNetworks[0],
+          )
+        ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+          ?.decimals ?? 18,
+      ),
       rewardCurrency:
         CHAIN_INFO[
           getSupportedChainIdFromSupportedNetwork(
@@ -141,7 +148,15 @@ function EditGrant() {
         extraField:
           grant.fields.find((field: any) => field.id.includes('extraField'))
           !== undefined,
-        reward: formatEther(BigNumber.from(grant.reward.committed)),
+        reward: formatAmount(
+          grant.reward.committed,
+          CHAIN_INFO[
+            getSupportedChainIdFromSupportedNetwork(
+              grant.workspace.supportedNetworks[0],
+            )
+          ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+            ?.decimals ?? 18,
+        ),
         rewardCurrency:
           CHAIN_INFO[
             getSupportedChainIdFromSupportedNetwork(

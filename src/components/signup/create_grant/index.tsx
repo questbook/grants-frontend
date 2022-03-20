@@ -18,7 +18,7 @@ function CreateGrant({
   const currentPageRef = useRef(null);
 
   const changeCurrentStep = (data: any, step: number) => {
-    setFormData({ ...data, ...formData });
+    setFormData({ ...formData, ...data });
 
     const { current } = currentPageRef;
     if (!current) return;
@@ -32,14 +32,14 @@ function CreateGrant({
   };
 
   const submitForm = (data: any) => {
-    setFormData({ ...data, ...formData });
+    setFormData({ ...formData, ...data });
     // eslint-disable-next-line no-console
     // console.log({ ...data, ...formData });
     // setTimeout(() => {
     //   onSubmit();
     // }, 10000);
 
-    onSubmit({ ...data, ...formData, grantManagers: [accountData?.address] });
+    onSubmit({ ...formData, ...data, grantManagers: [accountData?.address] });
   };
 
   return (

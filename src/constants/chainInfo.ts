@@ -24,6 +24,7 @@ interface ChainInfo {
       icon: string
       label: string
       address: string
+      decimals: number
     }
   }
   readonly subgraphClientUrl: string;
@@ -60,16 +61,25 @@ export const CHAIN_INFO: ChainInfoMap = {
         icon: '/ui_icons/brand/currency/dai_symbol.svg',
         label: 'DAI',
         address: '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063',
+        decimals: 18,
       },
       '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270': {
         icon: '/ui_icons/brand/currency/wmatic_symbol.svg',
         label: 'WMATIC',
         address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
+        decimals: 18,
       },
       '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619': {
         icon: '/ui_icons/brand/currency/weth_symbol.svg',
         label: 'WETH',
         address: '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619',
+        decimals: 18,
+      },
+      '0x2791bca1f2de4661ed88a30c99a7a9449aa84174': {
+        icon: '/ui_icons/brand/currency/usdc_symbol.svg',
+        label: 'USDC',
+        address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
+        decimals: 6,
       },
     },
     subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-polygon',

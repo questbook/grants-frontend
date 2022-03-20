@@ -62,7 +62,9 @@ function ManageGrant() {
   }, [router]);
 
   const {
-    data: { milestones, rewardAsset, fundingAsk },
+    data: {
+      milestones, rewardAsset, fundingAsk, decimals,
+    },
     refetch,
   } = useApplicationMilestones(applicationID, chainId);
 
@@ -122,14 +124,14 @@ function ManageGrant() {
     },
     {
       icon: fundingIcon,
-      title: formatAmount(getTotalFundingRecv(milestones).toString()),
+      title: formatAmount(getTotalFundingRecv(milestones).toString(), decimals),
       subtitle: 'Funding Received',
     },
     {
       icon: fundingIcon,
       title:
-        (fundingAsk ? formatAmount(fundingAsk.toString()) : null)
-        || formatAmount(getTotalFundingAsked(milestones).toString()),
+        (fundingAsk ? formatAmount(fundingAsk.toString(), decimals) : null)
+        || formatAmount(getTotalFundingAsked(milestones).toString(), decimals),
       subtitle: 'Funding Requested',
     },
   ];
@@ -201,13 +203,14 @@ function ManageGrant() {
             milestones={milestones}
             rewardAssetId={rewardAsset}
             chainId={chainId}
+            decimals={decimals}
           />
         ) : (
           <Funding
             fundTransfers={fundsDisbursed?.fundsTransfers || []}
             assetId={rewardAsset}
             columns={['milestoneTitle', 'date', 'from', 'action']}
-            assetDecimals={18}
+            assetDecimals={decimals}
             grantId={applicationData.grant?.id}
             chainId={chainId}
           />

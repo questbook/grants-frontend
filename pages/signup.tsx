@@ -78,6 +78,7 @@ function SignupDao() {
   useEffect(() => {
     // console.log(grantTransactionData);
     if (grantTransactionData) {
+      setGrantData(null);
       router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
 
       const link = transactionLink;
@@ -103,7 +104,7 @@ function SignupDao() {
       <CreateGrant
         hasClicked={createGrantLoading}
         onSubmit={(data) => {
-          // console.log(data);
+          console.log('grant data', data);
           setGrantData(data);
         }}
       />

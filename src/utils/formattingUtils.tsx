@@ -3,6 +3,8 @@ import React from 'react';
 import moment from 'moment';
 import { FundTransfer } from 'src/types';
 import applicantDetailsList from 'src/constants/applicantDetailsList';
+import { ALL_SUPPORTED_CHAIN_IDS } from 'src/constants/chains';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 
 export function timeToString(
   timestamp: number,
@@ -33,7 +35,31 @@ export function timeToString(
       show_year ? date.getFullYear() : ''
     }`;
 }
-export function parseAmount(number: string) {
+export function parseAmount(number: string, contractAddress?: string) {
+  let decimals = 18;
+  console.log('nnnunun');
+  console.log(number);
+
+  if (contractAddress) {
+    let allCurrencies: any[] = [];
+    ALL_SUPPORTED_CHAIN_IDS.forEach((id) => {
+      const { supportedCurrencies } = CHAIN_INFO[id];
+      const supportedCurrenciesArray = Object
+        .keys(supportedCurrencies)
+        .map((i) => supportedCurrencies[i]);
+      allCurrencies = [...allCurrencies, ...supportedCurrenciesArray];
+    });
+
+    console.log(allCurrencies);
+    console.log(contractAddress);
+
+    decimals = allCurrencies
+      .find((currency) => currency.address === contractAddress)?.decimals || 18;
+
+    console.log(decimals);
+    return ethers.utils.parseUnits(number, decimals).toString();
+  }
+
   // console.log('number', number);
   return ethers.utils.parseUnits(number, 18).toString();
 }
@@ -57,8 +83,8 @@ function nFormatter(value: string, digits = 2) {
   return item ? (num / item.value).toFixed(digits).replace(rx, '$1') + item.symbol : '0';
 }
 
-export function formatAmount(number: string) {
-  const value = ethers.utils.formatUnits(number, 18).toString();
+export function formatAmount(number: string, decimals = 18) {
+  const value = ethers.utils.formatUnits(number, decimals).toString();
   return nFormatter(value);
 }
 
@@ -136,4 +162,5 @@ export const getTextWithEllipses = (txt: string, maxLength = 7) => (txt.length >
 
 export const getChainIdFromResponse = (networkString: string):string => networkString?.split('_')[1];
 
+// eslint-disable-next-line max-len
 export const getFieldLabelFromFieldTitle = (title: string) => applicantDetailsList.find((detail) => detail.id === title)?.title;

@@ -55,6 +55,7 @@ function ModalContent({
   const [selectedMilestone, setSelectedMilestone] = React.useState(-1);
   const [funding, setFunding] = React.useState('');
   const [error, setError] = React.useState(false);
+  const [rewardAssetDecimals, setRewardAssetDecimals] = React.useState(0);
 
   const [walletBalance, setWalletBalance] = React.useState(0);
   // const toast = useToast();
@@ -116,7 +117,7 @@ function ModalContent({
     }
 
     if (hasError) return;
-    setDisburseAmount(parseAmount(funding));
+    setDisburseAmount(parseAmount(funding, rewardAsset.address));
   };
 
   const [disburseP2PAmount, setDisburseP2PAmount] = useState<any>();
@@ -171,7 +172,7 @@ function ModalContent({
     }
 
     if (hasError) return;
-    setDisburseP2PAmount(parseAmount(funding));
+    setDisburseP2PAmount(parseAmount(funding, rewardAsset.address));
   };
 
   useEffect(() => {
@@ -179,8 +180,8 @@ function ModalContent({
       try {
         // console.log('rewardContract', rewardAssetContract);
         if (!rewardAssetContract.provider) return;
-        // const assetDecimal = await rewardAssetContract.decimals();
-        // setRewardAssetDecimals(assetDecimal);
+        const assetDecimal = await rewardAssetContract.decimals();
+        setRewardAssetDecimals(assetDecimal);
         const tempAddress = await signerStates.data?.getAddress();
         const tempWalletBalance = await rewardAssetContract.balanceOf(
           // signerStates.data._address,
@@ -221,7 +222,7 @@ function ModalContent({
                   fontWeight="700"
                   color="brand.500"
                 >
-                  {`${formatAmount(contractFunding.toString())} ${
+                  {`${formatAmount(contractFunding.toString(), rewardAssetDecimals)} ${
                     rewardAsset?.label
                   }`}
                 </Text>
@@ -259,7 +260,7 @@ function ModalContent({
                   fontWeight="700"
                   color="brand.500"
                 >
-                  {`${formatAmount(walletBalance.toString())} ${
+                  {`${formatAmount(walletBalance.toString(), rewardAssetDecimals)} ${
                     rewardAsset?.label
                   }`}
                 </Text>
@@ -317,7 +318,7 @@ function ModalContent({
                 fontWeight="700"
                 color="brand.500"
               >
-                {`${formatAmount(contractFunding.toString())} ${
+                {`${formatAmount(contractFunding.toString(), rewardAssetDecimals)} ${
                   rewardAsset?.label
                 }`}
               </Text>
@@ -442,7 +443,7 @@ function ModalContent({
                 fontWeight="700"
                 color="brand.500"
               >
-                {`${formatAmount(walletBalance.toString())} ${
+                {`${formatAmount(walletBalance.toString(), rewardAssetDecimals)} ${
                   rewardAsset?.label
                 }`}
               </Text>

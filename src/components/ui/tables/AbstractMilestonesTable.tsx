@@ -33,11 +33,12 @@ export type AbstractMilestonesTableProps = {
   sendFundOpen?: () => void
   renderStatus: (milestone: ApplicationMilestone) => React.ReactNode
   chainId?: SupportedChainId | undefined,
+  decimals?: number,
 };
 
 function AbstractMilestonesTable(
   {
-    milestones, rewardAssetId, renderStatus, chainId,
+    milestones, rewardAssetId, renderStatus, chainId, decimals,
   }: AbstractMilestonesTableProps,
 ) {
   const { icon: rewardIcon, label: rewardSymbol } = getAssetInfo(rewardAssetId, chainId);
@@ -128,11 +129,11 @@ function AbstractMilestonesTable(
                 fontWeight="700"
                 color="#122224"
               >
-                {formatAmount(item.amountPaid.toString())}
+                {formatAmount(item.amountPaid.toString(), decimals)}
                 {' '}
                 /
                 {' '}
-                {formatAmount(item.amount.toString())}
+                {formatAmount(item.amount.toString(), decimals)}
                 {' '}
                 {rewardSymbol}
               </Text>
@@ -155,5 +156,6 @@ function AbstractMilestonesTable(
 AbstractMilestonesTable.defaultProps = {
   sendFundOpen: () => {},
   chainId: undefined,
+  decimals: 18,
 };
 export default AbstractMilestonesTable;

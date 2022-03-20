@@ -307,7 +307,7 @@ function AddFunds({
                 <Text variant="footer" color="brand.500" fontWeight="700">
                   {rewardAsset
                     && rewardAsset.committed
-                    && formatAmount(rewardAsset.committed.toString())}
+                    && formatAmount(rewardAsset.committed.toString(), rewardAssetDecimals)}
                   {' '}
                   {rewardAsset?.label}
                 </Text>
@@ -352,7 +352,7 @@ function AddFunds({
               Wallet Balance
               {' '}
               <Text variant="tableHeader" display="inline-block">
-                {`${formatAmount(walletBalance.toString())} ${
+                {`${formatAmount(walletBalance.toString(), rewardAssetDecimals)} ${
                   rewardAsset?.label
                 }`}
               </Text>

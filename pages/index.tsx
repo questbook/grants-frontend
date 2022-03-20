@@ -134,7 +134,7 @@ function BrowseGrants() {
         {grants.length > 0
           && grants.map((grant) => {
             // console.log(grant.workspace.supportedNetworks[0]);
-            // console.log(grant.reward);
+            console.log(grant.reward);
             const isGrantVerified = parseInt(parseAmount(grant.funding), 10) > 0;
             return (
               <GrantCard
@@ -148,7 +148,15 @@ function BrowseGrants() {
                 grantDesc={grant.summary}
                 numOfApplicants={grant.numberOfApplications}
                 endTimestamp={new Date(grant.deadline!).getTime()}
-                grantAmount={formatAmount(grant.reward.committed)}
+                grantAmount={formatAmount(
+                  grant.reward.committed,
+                  CHAIN_INFO[
+                    getSupportedChainIdFromSupportedNetwork(
+                      grant.workspace.supportedNetworks[0],
+                    )
+                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+                    ?.decimals ?? 18,
+                )}
                 grantCurrency={
                   CHAIN_INFO[
                     getSupportedChainIdFromSupportedNetwork(
