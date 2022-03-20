@@ -18,10 +18,11 @@ interface Props {
   assetInfo: any;
   milestones: any[];
   applicationId: string;
+  decimals: number;
 }
 
 function Sidebar({
-  grant, assetInfo, milestones, applicationId,
+  grant, assetInfo, milestones, applicationId, decimals,
 }: Props) {
   const [isAddFundModalOpen, setIsAddFundModalOpen] = React.useState(false);
   const [isSendFundModalOpen, setIsSendFundModalOpen] = React.useState(false);
@@ -40,7 +41,7 @@ function Sidebar({
           />
           <Box mx={1} />
           <Text fontWeight="700" fontSize="26px" lineHeight="40px">
-            {grant && grant.funding ? formatAmount(grant?.funding) : null}
+            {grant && grant.funding ? formatAmount(grant?.funding, decimals) : null}
           </Text>
           <Box mr={3} />
           {grant && parseInt(grant.funding, 10) > 0 && (
@@ -100,6 +101,7 @@ function Sidebar({
                   display="inline-block"
                 />
               </Link>
+              {' '}
               to fund grantees in 1 click.
             </Text>
             <Button

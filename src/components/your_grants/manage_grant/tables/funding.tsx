@@ -4,7 +4,6 @@ import {
   Text, Image, Flex, Tooltip, Link,
 } from '@chakra-ui/react';
 import moment from 'moment';
-import { ethers } from 'ethers';
 import Empty from 'src/components/ui/empty';
 import { FundTransfer } from 'src/types';
 import { SupportedChainId } from 'src/constants/chains';
@@ -32,7 +31,7 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
   milestoneTitle: {
     title: 'Funding Received',
     flex: 0.5,
-    content: (item, assetId, _, __, chainId) => (
+    content: (item, assetId, assetDecimals, __, chainId) => (
       <>
         <Image
           display="inline-block"
@@ -51,7 +50,7 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
             variant="applicationText"
             fontWeight="700"
           >
-            {formatAmount(item.amount)}
+            {formatAmount(item.amount, assetDecimals)}
             {' '}
             {getAssetInfo(assetId, chainId)?.label}
           </Text>
@@ -64,7 +63,8 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
     flex: 0.35,
     content: (item, assetId, assetDecimals: number) => (
       <Text display="inline-block" variant="applicationText" fontWeight="700">
-        {ethers.utils.formatUnits(item.amount, assetDecimals)}
+        {/* {ethers.utils.formatUnits(item.amount, assetDecimals)} */}
+        {formatAmount(item.amount, assetDecimals)}
         {' '}
         {getAssetInfo(assetId)?.label}
       </Text>
