@@ -116,10 +116,8 @@ function Form({
     try {
       if (projectDetails.startsWith('Qm') && projectDetails.length < 64) {
         const o = await getFromIPFS(projectDetails);
-        console.log('From IPFS: ', o);
         setProjectDetails(EditorState.createWithContent(convertFromRaw(JSON.parse(o))));
       } else {
-        console.log('Previous text value: ', projectDetails);
         const o = JSON.parse(projectDetails);
         setProjectDetails(EditorState.createWithContent(convertFromRaw(o)));
       }
@@ -155,7 +153,6 @@ function Form({
             isError: false,
           })),
         );
-        console.log('Project details: ', formData.projectDetails);
         getProjectDetails(formData.projectDetails);
         setProjectGoal(formData.projectGoal);
         setProjectMilestones(

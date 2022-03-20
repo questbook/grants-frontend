@@ -15,7 +15,6 @@ function GrantDetails({
 }) {
   const [decodedDetails, setDecodedDetails] = useState('');
   const getDecodedDetails = async (detailsHash: string) => {
-    console.log(detailsHash);
     const d = await getFromIPFS(detailsHash);
     setDecodedDetails(d);
   };

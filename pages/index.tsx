@@ -133,8 +133,6 @@ function BrowseGrants() {
         <Heading title="Discover grants" />
         {grants.length > 0
           && grants.map((grant) => {
-            // console.log(grant.workspace.supportedNetworks[0]);
-            console.log(grant.reward);
             const isGrantVerified = parseInt(parseAmount(grant.funding), 10) > 0;
             return (
               <GrantCard

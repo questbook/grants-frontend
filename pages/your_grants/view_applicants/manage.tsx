@@ -81,14 +81,6 @@ function ManageGrant() {
     refetch: refetchMilestones,
   } = useApplicationMilestones(applicationID);
 
-  useEffect(() => {
-    console.log(decimals);
-  }, [decimals]);
-
-  useEffect(() => {
-    console.log('milestones', milestones);
-  }, [milestones]);
-
   const {
     data: appDetailsResult,
     refetch: refetchApplicationDetails,

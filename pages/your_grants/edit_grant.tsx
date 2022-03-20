@@ -64,7 +64,6 @@ function EditGrant() {
   } = useGetGrantDetailsQuery(queryParams);
 
   const getDecodedDetails = async (detailsHash: string, grant: any) => {
-    console.log(detailsHash);
     const d = await getFromIPFS(detailsHash);
     setFormData({
       title: grant.title,
