@@ -81,6 +81,7 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
       try {
         if (!rewardAssetContract.provider) return;
         const assetDecimal = await rewardAssetContract.decimals();
+        console.log('decinma', assetDecimal);
         setFundingAssetDecimals(assetDecimal);
       } catch (e) {
         // console.error(e);

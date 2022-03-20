@@ -3,7 +3,8 @@ import {
 } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import React, { useContext } from 'react';
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { formatAmount, getFormattedFullDateFromUnixTimestamp, truncateStringFromMiddle } from '../../../utils/formattingUtils';
 import { getAssetInfo } from '../../../utils/tokenUtils';
 import FloatingSidebar from '../../ui/sidebar/floatingSidebar';
@@ -91,7 +92,16 @@ function Sidebar({
           fontStyle="normal"
           color="#122224"
         >
-          {formatAmount(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'fundingAsk')?.values[0]?.value ?? '0')}
+          {applicationData
+            && formatAmount(
+              applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'fundingAsk')?.values[0]?.value ?? '0',
+              CHAIN_INFO[
+                getSupportedChainIdFromSupportedNetwork(
+                  applicationData.grant.workspace.supportedNetworks[0],
+                )
+              ]?.supportedCurrencies[applicationData.grant.reward.asset.toLowerCase()]
+                ?.decimals ?? 18,
+            )}
           {' '}
           { getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.label }
         </Text>

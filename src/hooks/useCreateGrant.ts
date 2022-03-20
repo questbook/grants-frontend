@@ -40,6 +40,7 @@ export default function useCreateGrant(
   const currentChainId = useChainId();
 
   useEffect(() => {
+    console.log('data', data);
     if (data) {
       setError(undefined);
     }
@@ -63,7 +64,7 @@ export default function useCreateGrant(
           details: detailsHash,
           deadline: data.date,
           reward: {
-            committed: parseAmount(data.reward),
+            committed: parseAmount(data.reward, data.rewardCurrencyAddress),
             asset: data.rewardCurrencyAddress,
           },
           creatorId: accountData!.address,

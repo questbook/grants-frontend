@@ -9,7 +9,11 @@ import {
 import Loader from 'src/components/ui/loader';
 import { ApiClientsContext } from 'pages/_app';
 import React, { useContext } from 'react';
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+import {
+  getSupportedChainIdFromSupportedNetwork,
+  getSupportedChainIdFromWorkspace,
+} from 'src/utils/validationUtils';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { formatAmount } from '../../../../utils/formattingUtils';
 import { getAssetInfo } from '../../../../utils/tokenUtils';
 
@@ -50,9 +54,24 @@ function Accept({
             fontWeight="700"
             color="brand.500"
           >
-            {formatAmount(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'fundingAsk')?.values[0].value ?? '0')}
+            {applicationData
+              && formatAmount(
+                applicationData?.fields?.find(
+                  (fld: any) => fld?.id?.split('.')[1] === 'fundingAsk',
+                )?.values[0].value ?? '0',
+                CHAIN_INFO[
+                  getSupportedChainIdFromSupportedNetwork(
+                    applicationData.grant.workspace.supportedNetworks[0],
+                  )
+                ]?.supportedCurrencies[
+                  applicationData.grant.reward.asset.toLowerCase()
+                ]?.decimals ?? 18,
+              )}
             {' '}
-            { getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.label }
+            {
+              getAssetInfo(applicationData?.grant?.reward?.asset, chainId)
+                ?.label
+            }
           </Text>
         </Flex>
       </Flex>
@@ -62,42 +81,67 @@ function Accept({
       </Text>
       <Flex direction="column" justify="start" align="start">
         {applicationData
-        && applicationData?.milestones?.length > 0
-        && applicationData?.milestones?.map((milestone:any, index: number) => (
-          <Flex direction="column" mt={6}>
-            <Text variant="applicationText" fontWeight="700">
-              Milestone
-              {' '}
-              {index + 1}
-            </Text>
-            <Text variant="applicationText" color="#717A7C">
-              {milestone?.title}
-            </Text>
-            <Flex direction="row" justify="start" align="center" mt={2}>
-              <Image
-                src={getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.icon}
-              />
-              <Flex direction="column" ml={3}>
-                <Text variant="applicationText" fontWeight="700">
-                  Funding Ask
-                </Text>
-                <Text
-                  fontSize="14px"
-                  lineHeight="20px"
-                  fontWeight="700"
-                  color="brand.500"
-                >
-                  {milestone?.amount && formatAmount(milestone?.amount)}
-                  {' '}
-                  { getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.label }
-                </Text>
+          && applicationData?.milestones?.length > 0
+          && applicationData?.milestones?.map((milestone: any, index: number) => (
+            <Flex direction="column" mt={6}>
+              <Text variant="applicationText" fontWeight="700">
+                Milestone
+                {' '}
+                {index + 1}
+              </Text>
+              <Text variant="applicationText" color="#717A7C">
+                {milestone?.title}
+              </Text>
+              <Flex direction="row" justify="start" align="center" mt={2}>
+                <Image
+                  src={
+                    getAssetInfo(applicationData?.grant?.reward?.asset, chainId)
+                      ?.icon
+                  }
+                />
+                <Flex direction="column" ml={3}>
+                  <Text variant="applicationText" fontWeight="700">
+                    Funding Ask
+                  </Text>
+                  <Text
+                    fontSize="14px"
+                    lineHeight="20px"
+                    fontWeight="700"
+                    color="brand.500"
+                  >
+                    {milestone?.amount
+                      && applicationData
+                      && formatAmount(
+                        milestone?.amount,
+                        CHAIN_INFO[
+                          getSupportedChainIdFromSupportedNetwork(
+                            applicationData.grant.workspace.supportedNetworks[0],
+                          )
+                        ]?.supportedCurrencies[
+                          applicationData.grant.reward.asset.toLowerCase()
+                        ]?.decimals ?? 18,
+                      )}
+                    {' '}
+                    {
+                      getAssetInfo(
+                        applicationData?.grant?.reward?.asset,
+                        chainId,
+                      )?.label
+                    }
+                  </Text>
+                </Flex>
               </Flex>
             </Flex>
-          </Flex>
-        ))}
+          ))}
       </Flex>
       <Divider mt={7} />
-      <Button onClick={() => (hasClicked ? {} : onSubmit())} w="100%" mt={10} py={hasClicked ? 2 : 0} variant="primary">
+      <Button
+        onClick={() => (hasClicked ? {} : onSubmit())}
+        w="100%"
+        mt={10}
+        py={hasClicked ? 2 : 0}
+        variant="primary"
+      >
         {hasClicked ? <Loader /> : 'Accept Application'}
       </Button>
     </Container>

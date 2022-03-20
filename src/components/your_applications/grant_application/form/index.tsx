@@ -48,6 +48,7 @@ function Form({
   rewardAmount,
   rewardCurrency,
   rewardCurrencyCoin,
+  rewardCurrencyAddress,
   formData,
   grantTitle,
   sentDate,
@@ -65,6 +66,7 @@ function Form({
   rewardAmount: string;
   rewardCurrency: string;
   rewardCurrencyCoin: string;
+  rewardCurrencyAddress: string | undefined;
   formData: GrantApplicationProps | null;
   grantTitle: string;
   sentDate: string;
@@ -318,7 +320,7 @@ function Form({
         applicantEmail: [{ value: applicantEmail }],
         projectName: [{ value: projectName }],
         projectDetails: [{ value: projectDetailsString }],
-        fundingAsk: [{ value: parseAmount(fundingAsk) }],
+        fundingAsk: [{ value: parseAmount(fundingAsk, rewardCurrencyAddress) }],
         fundingBreakdown: [{ value: fundingBreakdown }],
         teamMembers: [{ value: Number(teamMembers).toString() }],
         memberDetails: membersDescription.map((md) => ({
@@ -336,7 +338,7 @@ function Form({
       },
       milestones: projectMilestones.map((pm) => ({
         title: pm.milestone,
-        amount: parseAmount(pm.milestoneReward),
+        amount: parseAmount(pm.milestoneReward, rewardCurrencyAddress),
       })),
     };
 

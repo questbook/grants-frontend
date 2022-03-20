@@ -4,7 +4,6 @@ import {
   Text, Image, Flex, Tooltip, Link,
 } from '@chakra-ui/react';
 import moment from 'moment';
-import { ethers } from 'ethers';
 import Empty from 'src/components/ui/empty';
 import { FundTransfer } from 'src/types';
 import { SupportedChainId } from 'src/constants/chains';
@@ -23,7 +22,7 @@ const TABLE_HEADERS = {
     content: (
       item: FundTransfer,
       assetId: string,
-      _: any,
+      assetDecimals: any,
       __: any,
       chainId: SupportedChainId | undefined,
     ) => (
@@ -45,7 +44,7 @@ const TABLE_HEADERS = {
             variant="applicationText"
             fontWeight="700"
           >
-            {formatAmount(item.amount)}
+            {formatAmount(item.amount, assetDecimals)}
             {' '}
             {getAssetInfo(assetId, chainId)?.label}
           </Text>
@@ -64,7 +63,7 @@ const TABLE_HEADERS = {
       chainId: SupportedChainId | undefined,
     ) => (
       <Text display="inline-block" variant="applicationText" fontWeight="700">
-        {ethers.utils.formatUnits(item.amount, assetDecimals)}
+        {formatAmount(item.amount, assetDecimals)}
         {' '}
         {getAssetInfo(assetId, chainId)?.label}
       </Text>
