@@ -217,6 +217,12 @@ export const CHAIN_INFO: ChainInfoMap = {
         address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
         decimals: 6,
       },
+      '0xd6df932a45c0f255f85145f286ea0b292b21c90b': {
+        icon: '/ui_icons/brand/currency/aave_symbol.svg',
+        label: 'AAVE',
+        address: '0xd6df932a45c0f255f85145f286ea0b292b21c90b',
+        decimals: 18,
+      },
     },
     subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-polygon',
   },
