@@ -72,7 +72,7 @@ export default function useCreateGrant(
             (chainId ?? getSupportedChainIdFromWorkspace(workspace))!,
           ),
           fields: data.fields,
-          grantManagers: data.grantManagers,
+          grantManagers: data.grantManagers.length ? data.grantManagers : [accountData!.address],
         });
         if (!ipfsHash) {
           throw new Error('Error validating grant data');
