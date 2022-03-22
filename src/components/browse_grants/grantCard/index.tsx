@@ -28,6 +28,7 @@ interface GrantCardProps {
   grantCurrencyIcon: string;
 
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  onTitleClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 function GrantCard({
@@ -50,6 +51,7 @@ function GrantCard({
   grantCurrencyIcon,
 
   onClick,
+  onTitleClick,
 }: GrantCardProps) {
   const router = useRouter();
   return (
@@ -67,7 +69,7 @@ function GrantCard({
                 color="#12224"
                 noOfLines={4}
                 variant="link"
-                onClick={onClick}
+                onClick={onTitleClick}
                 whiteSpace="normal"
               >
                 {grantTitle}
@@ -152,5 +154,6 @@ GrantCard.defaultProps = {
   isGrantVerified: false,
   isDaoVerified: false,
   onClick: () => {},
+  onTitleClick: () => {},
 };
 export default GrantCard;

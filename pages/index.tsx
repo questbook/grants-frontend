@@ -201,6 +201,17 @@ function BrowseGrants() {
                     },
                   });
                 }}
+                onTitleClick={() => {
+                  router.push({
+                    pathname: '/explore_grants/about_grant',
+                    query: {
+                      grantId: grant.id,
+                      chainId: getChainIdFromResponse(
+                        grant.workspace.supportedNetworks[0],
+                      ),
+                    },
+                  });
+                }}
               />
             );
           })}
