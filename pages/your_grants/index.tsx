@@ -197,6 +197,7 @@ function YourGrants() {
                     grantId: grant.id,
                   },
                 })}
+                acceptingApplications={grant.acceptingApplications}
               />
             ))}
 
