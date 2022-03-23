@@ -27,6 +27,7 @@ interface GrantCardProps {
   grantTitle: string;
   grantDesc: string;
   isGrantVerified?: boolean;
+  funding: string;
 
   numOfApplicants: number;
   endTimestamp: number;
@@ -50,6 +51,7 @@ function GrantCard({
   grantTitle,
   grantDesc,
   isGrantVerified,
+  funding,
 
   numOfApplicants,
   endTimestamp,
@@ -82,7 +84,7 @@ function GrantCard({
               </Link>
               {isGrantVerified && (
                 <VerifiedBadge
-                  grantAmount={grantAmount}
+                  grantAmount={funding}
                   grantCurrency={grantCurrency}
                 />
               )}

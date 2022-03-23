@@ -29,6 +29,7 @@ interface Props {
   daoLogo: string;
   workspaceId: string;
   isGrantVerified: boolean;
+  funding: string;
   rewardAmount: string;
   rewardCurrency: string;
   rewardCurrencyCoin: string;
@@ -47,6 +48,7 @@ function Form({
   daoLogo,
   workspaceId,
   isGrantVerified,
+  funding,
   rewardAmount,
   rewardCurrency,
   rewardCurrencyCoin,
@@ -273,7 +275,7 @@ function Form({
       <Text mt={6} variant="heading">
         {title}
         {isGrantVerified
-          && <VerifiedBadge grantAmount={rewardAmount} grantCurrency={rewardCurrency} />}
+          && <VerifiedBadge grantAmount={funding} grantCurrency={rewardCurrency} />}
       </Text>
       <Text
         zIndex="1"

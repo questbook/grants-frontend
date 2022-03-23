@@ -14,8 +14,7 @@ import useApplicationMilestones from 'src/utils/queryUtil';
 import { SupportedChainId } from 'src/constants/chains';
 import VerifiedBadge from 'src/components/ui/verified_badge';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
-import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
-import BN from 'bn.js';
+import verify from 'src/utils/grantUtils';
 import { getAssetInfo } from '../../src/utils/tokenUtils';
 import Sidebar from '../../src/components/your_applications/manage_grant/sidebar';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
@@ -106,7 +105,7 @@ function ManageGrant() {
   const [grantFunding, setGrantFunding] = useState('');
 
   useEffect(() => {
-    if (data && data.grantApplication) {
+    if (data && data.grantApplication && chainId) {
       const application = data.grantApplication;
       setApplicationData({
         title: application.grant.title,
@@ -119,19 +118,16 @@ function ManageGrant() {
         id: application.id,
       });
 
-      setGrantFunding(data.grantApplication.grant.funding
-        ? formatAmount(
-          data.grantApplication.grant.funding,
-          CHAIN_INFO[getSupportedChainIdFromSupportedNetwork(
-            data.grantApplication.grant.workspace.supportedNetworks[0],
-          )]?.supportedCurrencies[data.grantApplication.grant.reward.asset.toLowerCase()]
-            ?.decimals ?? 18,
-        )
-        : '');
-      const bnFunding = new BN(data.grantApplication.grant.funding);
-      setIsGrantVerified(bnFunding.gt(new BN('0')));
+      const chainInfo = CHAIN_INFO[chainId]
+        ?.supportedCurrencies[application.grant.reward.asset.toLowerCase()];
+      const [localIsGrantVerified, localFunding] = verify(
+        application.grant.funding,
+        chainInfo.decimals,
+      );
+      setGrantFunding(localFunding);
+      setIsGrantVerified(localIsGrantVerified);
     }
-  }, [data, error, loading]);
+  }, [data, error, loading, chainId]);
 
   const assetInfo = getAssetInfo(rewardAsset, chainId);
   const fundingIcon = assetInfo.icon;

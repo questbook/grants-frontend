@@ -4,7 +4,6 @@ import {
 import React, {
   ReactElement, useContext, useEffect, useState,
 } from 'react';
-import BN from 'bn.js';
 import { useRouter } from 'next/router';
 import { useGetGrantDetailsQuery } from 'src/generated/graphql';
 import { ApiClientsContext } from 'pages/_app';
@@ -12,8 +11,8 @@ import GrantShare from 'src/components/ui/grantShare';
 import { SupportedChainId } from 'src/constants/chains';
 import { getAssetInfo } from 'src/utils/tokenUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
-import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import VerifiedBadge from 'src/components/ui/verified_badge';
+import verify from 'src/utils/grantUtils';
 import GrantDetails from '../../src/components/explore_grants/about_grant/grantDetails';
 import GrantRewards from '../../src/components/explore_grants/about_grant/grantRewards';
 import Sidebar from '../../src/components/explore_grants/about_grant/sidebar';
@@ -87,31 +86,21 @@ function AboutGrant() {
   }, [data, error, loading]);
 
   useEffect(() => {
-    setFunding(grantData?.funding
-      ? formatAmount(
-        grantData?.funding,
-        CHAIN_INFO[getSupportedChainIdFromSupportedNetwork(
-          grantData.workspace.supportedNetworks[0],
-        )]?.supportedCurrencies[grantData.reward.asset.toLowerCase()]
-          ?.decimals ?? 18,
-      )
-      : '');
-    const bnFunding = new BN(grantData?.funding);
-    console.log('Funding: ', grantData?.funding);
-    setIsGrantVerified(bnFunding.gt(new BN('0')));
+    if (!chainId || !grantData) return;
+
+    const chainInfo = CHAIN_INFO[chainId]
+      ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];
+    const [localIsGrantVerified, localFunding] = verify(grantData?.funding, chainInfo.decimals);
+
+    setFunding(localFunding);
+    setIsGrantVerified(localIsGrantVerified);
     setDeadline(getFormattedDate(grantData?.deadline));
     setTitle(grantData?.title);
     setDaoName(grantData?.workspace?.title);
     setDaoLogo(getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash));
     setRewardAmount(
       grantData?.reward?.committed
-        ? formatAmount(
-          grantData?.reward?.committed,
-          CHAIN_INFO[getSupportedChainIdFromSupportedNetwork(
-            grantData.workspace.supportedNetworks[0],
-          )]?.supportedCurrencies[grantData.reward.asset.toLowerCase()]
-            ?.decimals ?? 18,
-        )
+        ? formatAmount(grantData?.reward?.committed, chainInfo?.decimals ?? 18)
         : '',
     );
     const supportedCurrencyObj = getAssetInfo(
@@ -144,7 +133,7 @@ function AboutGrant() {
       })),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [grantData]);
+  }, [grantData, chainId]);
 
   const grantStatus = 'Open';
 
