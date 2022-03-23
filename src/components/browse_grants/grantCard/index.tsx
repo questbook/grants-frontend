@@ -1,11 +1,19 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import {
-  Image, Text, Button, Flex, Box, Divider, Link,
+  Image,
+  Text,
+  Button,
+  Flex,
+  Box,
+  Divider,
+  Link,
 } from '@chakra-ui/react';
 import ShareMenu from 'src/components/ui/grantShareMenu';
 import { SupportedChainId } from 'src/constants/chains';
 import { useRouter } from 'next/router';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import VerifiedBadge from 'src/components/ui/verified_badge';
 import Badge from './badge';
 
 interface GrantCardProps {
@@ -28,7 +36,7 @@ interface GrantCardProps {
   grantCurrencyIcon: string;
 
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
-  onTitleClick?: React.MouseEventHandler<HTMLButtonElement>;
+  onTitleClick?: React.MouseEventHandler<HTMLAnchorElement>;
 }
 
 function GrantCard({
@@ -60,31 +68,26 @@ function GrantCard({
         <Image objectFit="cover" h="54px" w="54px" src={daoIcon} />
         <Flex flex={1} direction="column" ml={6}>
           <Flex direction="row" alignItems="start">
-            <Flex direction="column" maxW="50%">
-              <Button
+            <Text maxW="50%">
+              <Link
+                onClick={onTitleClick}
+                whiteSpace="normal"
                 textAlign="left"
                 lineHeight="26px"
                 fontSize="18px"
                 fontWeight="700"
                 color="#12224"
-                noOfLines={4}
-                variant="link"
-                onClick={onTitleClick}
-                whiteSpace="normal"
               >
                 {grantTitle}
-                {isGrantVerified && (
-                <Image
-                  h={4}
-                  w={4}
-                  display="inline-block"
-                  src="/ui_icons/verified.svg"
-                  ml="2px"
-                  mb="-2px"
+              </Link>
+              <Box mr={1} display="inline-block" />
+              {isGrantVerified && (
+                <VerifiedBadge
+                  grantAmount={grantAmount}
+                  grantCurrency={grantCurrency}
                 />
-                )}
-              </Button>
-            </Flex>
+              )}
+            </Text>
 
             <Box mr="auto" />
             <Badge
@@ -94,7 +97,6 @@ function GrantCard({
           </Flex>
 
           <Flex direction="row">
-            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <Link
               onClick={() => {
                 router.push({
@@ -120,8 +122,13 @@ function GrantCard({
                 />
               )}
             </Link>
-            <Text fontSize="16px" color="#717A7C" fontWeight="400" lineHeight="24px" ml={2}>
-
+            <Text
+              fontSize="16px"
+              color="#717A7C"
+              fontWeight="400"
+              lineHeight="24px"
+              ml={2}
+            >
               {`• ${CHAIN_INFO[chainId!]?.name}`}
             </Text>
           </Flex>
