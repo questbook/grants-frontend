@@ -24,8 +24,8 @@ function VerifiedBadge({ grantAmount, grantCurrency }: Props) {
           w={4}
           display="inline-block"
           src="/ui_icons/verified.svg"
-          ml="2px"
-          mb="-2px"
+          ml={1}
+          lineHeight="18px"
         />
       </PopoverTrigger>
       <PopoverContent bg="white" borderRadius="8px" p={4} maxW="210px">

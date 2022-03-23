@@ -1,5 +1,5 @@
 import {
-  Box, Container, Image, Flex, Divider,
+  Box, Container, Image, Flex, Divider, Text,
 } from '@chakra-ui/react';
 import React, {
   ReactElement, useContext, useEffect, useState,
@@ -13,11 +13,11 @@ import { SupportedChainId } from 'src/constants/chains';
 import { getAssetInfo } from 'src/utils/tokenUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
+import VerifiedBadge from 'src/components/ui/verified_badge';
 import GrantDetails from '../../src/components/explore_grants/about_grant/grantDetails';
 import GrantRewards from '../../src/components/explore_grants/about_grant/grantRewards';
 import Sidebar from '../../src/components/explore_grants/about_grant/sidebar';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
-import Heading from '../../src/components/ui/heading';
 import NavbarLayout from '../../src/layout/navbarLayout';
 import {
   formatAmount,
@@ -149,7 +149,12 @@ function AboutGrant() {
         px={10}
       >
         <Breadcrumbs path={['Explore Grants', 'About Grant']} />
-        <Heading mt="18px" dontRenderDivider title={title} />
+        {/* <Heading mt="18px" dontRenderDivider title={title} /> */}
+        <Text variant="heading" mt="18px">
+          {title}
+          {isGrantVerified
+          && <VerifiedBadge grantAmount={rewardAmount} grantCurrency={rewardCurrency} />}
+        </Text>
         <Flex fontWeight="400" alignItems="center">
           <Image mr={3} mt="-3px" boxSize={3} src="/ui_icons/calendar.svg" />
           {`Ends on ${deadline}`}
@@ -171,7 +176,6 @@ function AboutGrant() {
         <GrantRewards
           daoName={daoName}
           daoLogo={daoLogo}
-          isGrantVerified={isGrantVerified}
           rewardAmount={rewardAmount}
           rewardCurrency={rewardCurrency}
           rewardCurrencyCoin={rewardCurrencyCoin}

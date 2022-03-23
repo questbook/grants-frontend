@@ -80,7 +80,6 @@ function GrantCard({
               >
                 {grantTitle}
               </Link>
-              <Box mr={1} display="inline-block" />
               {isGrantVerified && (
                 <VerifiedBadge
                   grantAmount={grantAmount}
