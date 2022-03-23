@@ -1,10 +1,9 @@
 import {
-  Box, Container, Image, Flex, Divider,
+  Box, Container, Image, Flex, Divider, Text,
 } from '@chakra-ui/react';
 import React, {
   ReactElement, useContext, useEffect, useState,
 } from 'react';
-import BN from 'bn.js';
 import { useRouter } from 'next/router';
 import { useGetGrantDetailsQuery } from 'src/generated/graphql';
 import { ApiClientsContext } from 'pages/_app';
@@ -12,12 +11,12 @@ import GrantShare from 'src/components/ui/grantShare';
 import { SupportedChainId } from 'src/constants/chains';
 import { getAssetInfo } from 'src/utils/tokenUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
-import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
+import VerifiedBadge from 'src/components/ui/verified_badge';
+import verify from 'src/utils/grantUtils';
 import GrantDetails from '../../src/components/explore_grants/about_grant/grantDetails';
 import GrantRewards from '../../src/components/explore_grants/about_grant/grantRewards';
 import Sidebar from '../../src/components/explore_grants/about_grant/sidebar';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
-import Heading from '../../src/components/ui/heading';
 import NavbarLayout from '../../src/layout/navbarLayout';
 import {
   formatAmount,
@@ -46,6 +45,7 @@ function AboutGrant() {
   const [grantSummary, setGrantSummary] = useState('');
   const [grantRequiredFields, setGrantRequiredFields] = useState([]);
   const [chainId, setChainId] = useState<SupportedChainId>();
+  const [funding, setFunding] = useState('');
 
   useEffect(() => {
     // console.log(router.query);
@@ -86,21 +86,21 @@ function AboutGrant() {
   }, [data, error, loading]);
 
   useEffect(() => {
-    const funding = new BN(grantData?.funding);
-    setIsGrantVerified(funding.gt(new BN('0')));
+    if (!chainId || !grantData) return;
+
+    const chainInfo = CHAIN_INFO[chainId]
+      ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];
+    const [localIsGrantVerified, localFunding] = verify(grantData?.funding, chainInfo.decimals);
+
+    setFunding(localFunding);
+    setIsGrantVerified(localIsGrantVerified);
     setDeadline(getFormattedDate(grantData?.deadline));
     setTitle(grantData?.title);
     setDaoName(grantData?.workspace?.title);
     setDaoLogo(getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash));
     setRewardAmount(
       grantData?.reward?.committed
-        ? formatAmount(
-          grantData?.reward?.committed,
-          CHAIN_INFO[getSupportedChainIdFromSupportedNetwork(
-            grantData.workspace.supportedNetworks[0],
-          )]?.supportedCurrencies[grantData.reward.asset.toLowerCase()]
-            ?.decimals ?? 18,
-        )
+        ? formatAmount(grantData?.reward?.committed, chainInfo?.decimals ?? 18)
         : '',
     );
     const supportedCurrencyObj = getAssetInfo(
@@ -133,7 +133,7 @@ function AboutGrant() {
       })),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [grantData]);
+  }, [grantData, chainId]);
 
   const grantStatus = 'Open';
 
@@ -149,7 +149,12 @@ function AboutGrant() {
         px={10}
       >
         <Breadcrumbs path={['Explore Grants', 'About Grant']} />
-        <Heading mt="18px" dontRenderDivider title={title} />
+        {/* <Heading mt="18px" dontRenderDivider title={title} /> */}
+        <Text variant="heading" mt="18px">
+          {title}
+          {isGrantVerified
+          && <VerifiedBadge grantAmount={funding} grantCurrency={rewardCurrency} />}
+        </Text>
         <Flex fontWeight="400" alignItems="center">
           <Image mr={3} mt="-3px" boxSize={3} src="/ui_icons/calendar.svg" />
           {`Ends on ${deadline}`}
@@ -171,6 +176,7 @@ function AboutGrant() {
         <GrantRewards
           daoName={daoName}
           daoLogo={daoLogo}
+          funding={funding}
           isGrantVerified={isGrantVerified}
           rewardAmount={rewardAmount}
           rewardCurrency={rewardCurrency}

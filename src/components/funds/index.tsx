@@ -81,7 +81,7 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
       try {
         if (!rewardAssetContract.provider) return;
         const assetDecimal = await rewardAssetContract.decimals();
-        console.log('decinma', assetDecimal);
+        console.log('decimal', assetDecimal);
         setFundingAssetDecimals(assetDecimal);
       } catch (e) {
         // console.error(e);
@@ -92,7 +92,7 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
   return (
     <Flex direction="column" w="100%" mt={3} mb={12}>
       <Flex direction="row" justify="space-between" w="100%">
-        <Text fontWeight="700" fontSize="18px" lineHeight="26px">
+        <Text fontWeight="700" fontSize="18px" lineHeight="26px" maxW="50%">
           {grant.title}
         </Text>
         <Flex direction="row" justify="start" align="center">
