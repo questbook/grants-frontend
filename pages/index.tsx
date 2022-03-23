@@ -27,7 +27,7 @@ import {
 } from '../src/utils/formattingUtils';
 import { ApiClientsContext } from './_app';
 
-const PAGE_SIZE = 100;
+const PAGE_SIZE = 40;
 
 function BrowseGrants() {
   const containerRef = useRef(null);

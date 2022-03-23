@@ -4,6 +4,7 @@ import { ApiClientsContext } from 'pages/_app';
 import React, {
   ReactElement, useContext, useEffect, useState,
 } from 'react';
+import BN from 'bn.js';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { SupportedChainId } from 'src/constants/chains';
 import { useGetGrantDetailsQuery } from 'src/generated/graphql';
@@ -23,6 +24,7 @@ function ApplyGrant() {
   const [grantID, setGrantID] = useState<any>('');
   const [title, setTitle] = useState('');
   const [daoLogo, setDaoLogo] = useState('');
+  const [isGrantVerified, setIsGrantVerified] = useState(false);
   const [rewardAmount, setRewardAmount] = useState('');
   const [rewardCurrency, setRewardCurrency] = useState('');
   const [rewardCurrencyCoin, setRewardCurrencyCoin] = useState('');
@@ -73,6 +75,9 @@ function ApplyGrant() {
 
   useEffect(() => {
     if (!grantData) return;
+    const funding = new BN(grantData?.funding);
+    setIsGrantVerified(funding.gt(new BN('0')));
+
     setChainId(getSupportedChainIdFromSupportedNetwork(grantData.workspace.supportedNetworks[0]));
     setTitle(grantData?.title);
     setWorkspaceId(grantData?.workspace?.id);
@@ -111,6 +116,7 @@ function ApplyGrant() {
           title={title}
           grantId={grantID}
           daoLogo={daoLogo}
+          isGrantVerified={isGrantVerified}
           rewardAmount={rewardAmount}
           rewardCurrency={rewardCurrency}
           rewardCurrencyCoin={rewardCurrencyCoin}

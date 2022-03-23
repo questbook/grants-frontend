@@ -8,6 +8,8 @@ import { SupportedChainId } from 'src/constants/chains';
 function GrantRewards({
   daoName,
   daoLogo,
+  isGrantVerified,
+  funding,
   rewardAmount,
   rewardCurrency,
   rewardCurrencyCoin,
@@ -16,6 +18,8 @@ function GrantRewards({
 }: {
   daoName: string;
   daoLogo: string;
+  isGrantVerified: boolean;
+  funding: string;
   rewardAmount: string;
   rewardCurrency: string;
   rewardCurrencyCoin: string;
@@ -67,6 +71,7 @@ function GrantRewards({
               </Text>
             </Flex>
           </Flex>
+          {isGrantVerified && (
           <Flex direction="row" alignItems="flex-start" mt="28px">
             <Image mt="2px" w="18px" h="21px" src="/ui_icons/verified.svg" />
             <Flex flex={1} direction="column" ml={3}>
@@ -75,13 +80,14 @@ function GrantRewards({
                 Funds deposited as reward ≈
                 {' '}
                 <Text fontWeight="700" display="inline-block">
-                  {rewardAmount}
+                  {funding}
                   {' '}
                   {rewardCurrency}
                 </Text>
               </Text>
             </Flex>
           </Flex>
+          )}
         </Flex>
         <Image mt="28px" ml="auto" h="45px" w="45px" src={rewardCurrencyCoin} />
       </Flex>

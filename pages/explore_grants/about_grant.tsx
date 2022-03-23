@@ -46,6 +46,7 @@ function AboutGrant() {
   const [grantSummary, setGrantSummary] = useState('');
   const [grantRequiredFields, setGrantRequiredFields] = useState([]);
   const [chainId, setChainId] = useState<SupportedChainId>();
+  const [funding, setFunding] = useState('');
 
   useEffect(() => {
     // console.log(router.query);
@@ -86,8 +87,18 @@ function AboutGrant() {
   }, [data, error, loading]);
 
   useEffect(() => {
-    const funding = new BN(grantData?.funding);
-    setIsGrantVerified(funding.gt(new BN('0')));
+    setFunding(grantData?.funding
+      ? formatAmount(
+        grantData?.funding,
+        CHAIN_INFO[getSupportedChainIdFromSupportedNetwork(
+          grantData.workspace.supportedNetworks[0],
+        )]?.supportedCurrencies[grantData.reward.asset.toLowerCase()]
+          ?.decimals ?? 18,
+      )
+      : '');
+    const bnFunding = new BN(grantData?.funding);
+    console.log('Funding: ', grantData?.funding);
+    setIsGrantVerified(bnFunding.gt(new BN('0')));
     setDeadline(getFormattedDate(grantData?.deadline));
     setTitle(grantData?.title);
     setDaoName(grantData?.workspace?.title);
@@ -153,7 +164,7 @@ function AboutGrant() {
         <Text variant="heading" mt="18px">
           {title}
           {isGrantVerified
-          && <VerifiedBadge grantAmount={rewardAmount} grantCurrency={rewardCurrency} />}
+          && <VerifiedBadge grantAmount={funding} grantCurrency={rewardCurrency} />}
         </Text>
         <Flex fontWeight="400" alignItems="center">
           <Image mr={3} mt="-3px" boxSize={3} src="/ui_icons/calendar.svg" />
@@ -176,6 +187,8 @@ function AboutGrant() {
         <GrantRewards
           daoName={daoName}
           daoLogo={daoLogo}
+          funding={funding}
+          isGrantVerified={isGrantVerified}
           rewardAmount={rewardAmount}
           rewardCurrency={rewardCurrency}
           rewardCurrencyCoin={rewardCurrencyCoin}
