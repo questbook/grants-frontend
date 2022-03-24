@@ -134,28 +134,6 @@ export function highlightWordsInString(
   });
 }
 
-export function getIconFromCurrency(
-  currency: string,
-  isCircled: boolean = false,
-) {
-  switch (currency) {
-    case 'DAI':
-      return isCircled
-        ? '/ui_icons/brand/currency/dai.svg'
-        : '/ui_icons/brand/currency/dai_symbol.svg';
-    case 'WMATIC':
-      return isCircled
-        ? '/ui_icons/brand/currency/wmatic.svg'
-        : '/ui_icons/brand/currency/wmatic_symbol.svg';
-    case 'WETH':
-      return isCircled
-        ? '/ui_icons/brand/currency/weth.svg'
-        : '/ui_icons/brand/currency/weth_symbol.svg';
-    default:
-      return '/images/dummy/Ethereum Icon.svg';
-  }
-}
-
 export function getFormattedDate(timestamp: number) {
   const date = new Date(timestamp);
   return moment(date).format('LL');
