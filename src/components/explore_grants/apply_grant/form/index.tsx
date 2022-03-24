@@ -275,7 +275,7 @@ function Form({
       <Text mt={6} variant="heading">
         {title}
         {isGrantVerified
-          && <VerifiedBadge grantAmount={funding} grantCurrency={rewardCurrency} />}
+          && <VerifiedBadge grantAmount={funding} grantCurrency={rewardCurrency} lineHeight="44px" />}
       </Text>
       <Text
         zIndex="1"

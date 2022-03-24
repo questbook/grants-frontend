@@ -153,7 +153,7 @@ function AboutGrant() {
         <Text variant="heading" mt="18px">
           {title}
           {isGrantVerified
-          && <VerifiedBadge grantAmount={funding} grantCurrency={rewardCurrency} />}
+          && <VerifiedBadge grantAmount={funding} grantCurrency={rewardCurrency} lineHeight="44px" />}
         </Text>
         <Flex fontWeight="400" alignItems="center">
           <Image mr={3} mt="-3px" boxSize={3} src="/ui_icons/calendar.svg" />

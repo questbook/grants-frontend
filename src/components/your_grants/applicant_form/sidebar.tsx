@@ -3,6 +3,7 @@ import {
 } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import React, { useContext } from 'react';
+import CopyIcon from 'src/components/ui/copy_icon';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { formatAmount, getFormattedFullDateFromUnixTimestamp, truncateStringFromMiddle } from '../../../utils/formattingUtils';
@@ -43,6 +44,8 @@ function Sidebar({
             {truncateStringFromMiddle(applicationData?.applicantId)}
           </Heading>
         </Tooltip>
+        <Box mr={4} />
+        <CopyIcon text={applicationData?.applicantId} />
       </Flex>
       <Box my={4} />
       <Flex direction="row" justify="space-between" w="full" align="center">

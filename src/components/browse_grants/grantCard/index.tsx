@@ -83,10 +83,14 @@ function GrantCard({
                 {grantTitle}
               </Link>
               {isGrantVerified && (
-                <VerifiedBadge
-                  grantAmount={funding}
-                  grantCurrency={grantCurrency}
-                />
+                <Flex direction="column" display="inline-block" justify="center">
+                  <VerifiedBadge
+                    grantAmount={funding}
+                    grantCurrency={grantCurrency}
+                    lineHeight="26px"
+                    marginBottom={-1}
+                  />
+                </Flex>
               )}
             </Text>
 

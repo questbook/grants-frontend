@@ -13,7 +13,7 @@ import Tooltip from '../tooltip';
 
 interface SingleLineInputProps {
   label?: string;
-  value: string | number | readonly string[] | undefined;
+  value: string | undefined;
   onChange: ChangeEventHandler<HTMLInputElement>;
   onClick?: () => void;
   placeholder?: string;
@@ -30,6 +30,7 @@ interface SingleLineInputProps {
   type?: string;
   height?: string | number;
   visible?: boolean;
+  maxLength?: number;
 }
 
 const defaultProps = {
@@ -48,6 +49,7 @@ const defaultProps = {
   type: 'text',
   height: 12,
   visible: true,
+  maxLength: -1,
 };
 
 function SingleLineInput({
@@ -68,9 +70,15 @@ function SingleLineInput({
   type,
   height,
   visible,
+  maxLength,
 }: SingleLineInputProps) {
   const theme = useTheme();
   const ref = useRef(null);
+  const [currentLength, setCurrentLength] = React.useState(value?.length);
+
+  React.useEffect(() => {
+    setCurrentLength(value?.length);
+  }, [value]);
   return (
     <Flex flex={1} direction="column" display={visible ? '' : 'none'}>
       <Flex direction="row" justify="space-between" align="center">
@@ -99,12 +107,20 @@ function SingleLineInput({
           variant="filled"
           placeholder={placeholder}
           value={value == null ? undefined : value}
-          onChange={onChange}
+          onChange={(e) => {
+            if (
+              maxLength === -1
+              || (maxLength && maxLength > 0 && e.target.value.length <= maxLength)
+            ) {
+              onChange(e);
+            }
+          }}
           focusBorderColor={theme.colors.brand[500]}
           h={height}
           onClick={onClick}
           type={type}
           onWheel={(e) => (e.target as HTMLElement).blur()}
+          maxLength={maxLength}
         />
         {inputRightElement && (
           <InputRightElement h="100%" mt={1}>
@@ -136,6 +152,18 @@ function SingleLineInput({
           mt={1}
         >
           {subtext}
+        </Text>
+      )}
+      {maxLength && maxLength > 0 && (
+        <Text
+          fontSize="14px"
+          color="#717A7C"
+          fontWeight="500"
+          lineHeight="20px"
+          textAlign="right"
+          mt={isError && errorText && errorText?.length ? '-19px' : 1}
+        >
+          {`${currentLength}/${maxLength}`}
         </Text>
       )}
     </Flex>

@@ -166,7 +166,7 @@ function ManageGrant() {
         <Text variant="heading" mt="18px">
           {applicationData.title}
           {isGrantVerified
-          && <VerifiedBadge grantAmount={grantFunding} grantCurrency={assetInfo.label} />}
+          && <VerifiedBadge grantAmount={grantFunding} grantCurrency={assetInfo.label} lineHeight="44px" />}
         </Text>
         <Box mt={5} />
 
