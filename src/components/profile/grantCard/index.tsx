@@ -79,6 +79,7 @@ function BrowseGrantCard({
                 grantAmount={funding}
                 grantCurrency={grantCurrency}
                 lineHeight="26px"
+                marginBottom={-1}
               />
               )}
             </Text>

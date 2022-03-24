@@ -69,7 +69,7 @@ function YourApplicationCard({
             <Text lineHeight="24px" fontSize="18px" fontWeight="700">
               {grantTitle}
               {isGrantVerified && (
-                <VerifiedBadge grantAmount={funding} grantCurrency={currency} lineHeight="24px" />
+                <VerifiedBadge grantAmount={funding} grantCurrency={currency} lineHeight="24px" marginBottom={-1} />
               )}
             </Text>
           </Flex>
