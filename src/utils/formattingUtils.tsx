@@ -89,28 +89,12 @@ function nFormatter(value: string, digits = 3) {
 }
 
 function truncateTo(number: string, digits = 3) {
-  // console.log('Number to truncate: ', number);
   const decimalIndex = number.indexOf('.');
-  // console.log('Decimal index: ', decimalIndex, ', digits: ', digits);
   if (decimalIndex === -1) return number;
   let ret = number.substring(0, decimalIndex + 1);
-  // console.log('String to return initialised: ', ret);
   const lastSymbol = number.charCodeAt(number.length - 1);
-  // console.log('Last symbol: ', lastSymbol);
   const containsSymbol = !(lastSymbol >= 48 && lastSymbol <= 57);
-  // console.log('Contains symbol: ', containsSymbol);
   let isEntirelyZeroAfterDecimal = true;
-  // console.log(
-  //   'a: ',
-  //   decimalIndex + digits,
-  //   'b: ',
-  //   containsSymbol ? number.length - 1 : number.length,
-  //   ', Will loop till: ',
-  //   Math.min(
-  //     decimalIndex + digits,
-  //     containsSymbol ? number.length - 1 : number.length
-  //   )
-  // );
   for (
     let i = decimalIndex + 1;
     i
@@ -120,23 +104,11 @@ function truncateTo(number: string, digits = 3) {
     );
     i += 1
   ) {
-    // console.log(
-    //   'i: ',
-    //   i,
-    //   ', entirely zero: ',
-    //   isEntirelyZeroAfterDecimal,
-    //   ', charCode: ',
-    //   number.charCodeAt(i),
-    //   ', ret: ',
-    //   ret,
-    // );
     isEntirelyZeroAfterDecimal &&= number.charCodeAt(i) === 48;
     ret += number.charAt(i);
   }
-  // console.log('Entirely zero: ', isEntirelyZeroAfterDecimal, ', ret: ', ret);
   const returnValue = (isEntirelyZeroAfterDecimal ? ret.substring(0, decimalIndex) : ret)
     + (containsSymbol ? number.charAt(number.length - 1) : '');
-  // console.log('Return value: ', returnValue);
   return returnValue;
 }
 
@@ -145,7 +117,6 @@ export function formatAmount(number: string, decimals = 18, isEditable = false) 
   if (isEditable) return truncateTo(value, decimals);
   const formattedValue = nFormatter(value);
   return truncateTo(formattedValue);
-  // return formattedValue;
 }
 
 export function highlightWordsInString(
