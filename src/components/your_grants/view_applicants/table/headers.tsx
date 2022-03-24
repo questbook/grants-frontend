@@ -5,7 +5,7 @@ function Headers() {
   const tableHeaders = [
     'Applicant Address',
     'Sent On',
-    'Applicant Name',
+    'Project Name',
     'Funding Asked',
     'Status',
     'Actions',

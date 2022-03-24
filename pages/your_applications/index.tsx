@@ -9,11 +9,13 @@ import BN from 'bn.js';
 import { useAccount } from 'wagmi';
 import Empty from 'src/components/ui/empty';
 import { GrantApplication, useGetMyApplicationsLazyQuery } from 'src/generated/graphql';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import Heading from '../../src/components/ui/heading';
 import YourApplicationCard from '../../src/components/your_applications/yourApplicationCard';
 import NavbarLayout from '../../src/layout/navbarLayout';
 import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils';
-import { getChainIdFromResponse, getFormattedDateFromUnixTimestamp } from '../../src/utils/formattingUtils';
+import { formatAmount, getChainIdFromResponse, getFormattedDateFromUnixTimestamp } from '../../src/utils/formattingUtils';
 import { ApiClientsContext } from '../_app';
 
 const PAGE_SIZE = 20;
@@ -117,6 +119,21 @@ function YourApplications() {
                 daoName={application.grant.workspace.title}
                 daoIcon={getUrlForIPFSHash(application.grant.workspace.logoIpfsHash)}
                 isGrantVerified={(new BN(application.grant.funding)).gt(new BN(0))}
+                funding={formatAmount(
+                  application.grant.funding,
+                  CHAIN_INFO[
+                    getSupportedChainIdFromSupportedNetwork(
+                      application.grant.workspace.supportedNetworks[0],
+                    )
+                  ]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
+                    ?.decimals ?? 18,
+                )}
+                currency={CHAIN_INFO[
+                  getSupportedChainIdFromSupportedNetwork(
+                    application.grant.workspace.supportedNetworks[0],
+                  )
+                ]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
+                  ?.label ?? 'LOL'}
                 isDaoVerified={false}
                 status={application.state}
                 sentDate={getFormattedDateFromUnixTimestamp(application?.createdAtS)}

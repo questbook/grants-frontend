@@ -107,6 +107,7 @@ function AboutProject({
         isError={projectNameError}
         errorText="Required"
         visible={grantRequiredFields.includes('projectName')}
+        maxLength={30}
       />
 
       {projectLinks.map((project, index) => (
