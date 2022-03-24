@@ -29,6 +29,7 @@ import useCompleteApplication from 'src/hooks/useCompleteApplication';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import config from 'src/constants/config';
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption';
+import CopyIcon from 'src/components/ui/copy_icon';
 import InfoToast from '../../../src/components/ui/infoToast';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Heading from '../../../src/components/ui/heading';
@@ -305,6 +306,9 @@ function ManageGrant() {
                 {`${applicationData?.applicantId?.substring(0, 6)}...`}
               </Box>
             </Tooltip>
+            <Flex display="inline-block" ml={2}>
+              <CopyIcon text={applicationData?.applicantId!} />
+            </Flex>
           </Text>
           <Box mr={6} />
           <Text key="mail_text" fontWeight="400">
