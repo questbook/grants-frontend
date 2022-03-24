@@ -102,13 +102,14 @@ function AboutProject({
         onChange={(e) => {
           if (projectNameError) {
             setProjectNameError(false);
-          } setProjectName(e.target.value);
+          }
+          setProjectName(e.target.value);
         }}
         isError={projectNameError}
         errorText="Required"
         disabled={readOnly}
         visible={grantRequiredFields.includes('projectName')}
-        maxLength={50}
+        maxLength={30}
       />
 
       {projectLinks.map((project, index) => (
