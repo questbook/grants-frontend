@@ -87,7 +87,7 @@ function Content({
               variant="tableBody"
               fontWeight="400"
             >
-              {item.applicant_name}
+              {item.project_name}
             </Text>
             <Flex
               flex={tableHeadersflex[3]}
