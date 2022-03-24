@@ -140,8 +140,9 @@ function truncateTo(number: string, digits = 3) {
   return returnValue;
 }
 
-export function formatAmount(number: string, decimals = 18) {
+export function formatAmount(number: string, decimals = 18, isEditable = false) {
   const value = ethers.utils.formatUnits(number, decimals).toString();
+  if (isEditable) return truncateTo(value, decimals);
   const formattedValue = nFormatter(value);
   return truncateTo(formattedValue);
   // return formattedValue;

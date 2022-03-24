@@ -109,6 +109,7 @@ function ViewApplication() {
                 )
               ]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
                 ?.decimals ?? 18,
+              true,
             ) : '1'
           ,
         })) ?? [],
@@ -122,6 +123,7 @@ function ViewApplication() {
             )
           ]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
             ?.decimals ?? 18,
+          true,
         ) : '1',
       fundingBreakdown: getStringField('fundingBreakdown'),
     };
