@@ -1,11 +1,13 @@
 import {
-  Flex, Box, Divider, Text, useTheme, Image,
+  Flex, Divider, Text, useTheme, Image, Button,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import React from 'react';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { SupportedChainId } from 'src/constants/chains';
 
 function GrantRewards({
+  daoId,
   daoName,
   daoLogo,
   isGrantVerified,
@@ -16,6 +18,7 @@ function GrantRewards({
   payoutDescription,
   chainId,
 }: {
+  daoId: string;
   daoName: string;
   daoLogo: string;
   isGrantVerified: boolean;
@@ -27,22 +30,33 @@ function GrantRewards({
   chainId: SupportedChainId | undefined;
 }) {
   const theme = useTheme();
+  const router = useRouter();
+
   return (
     <>
       <Flex direction="row" alignItems="center" my="22px">
         <Text lineHeight="24px" fontSize="18px" fontWeight="400">
           Grant posted by
           {' '}
-          <Box
-            as="span"
+          <Button
+            variant="link"
+            // as="span"
             display="inline-block"
             color={theme.colors.brand[500]}
             fontWeight="bold"
+            onClick={() => {
+              router.push({
+                pathname: '/profile',
+                query: {
+                  daoId,
+                  chainId,
+                },
+              });
+            }}
           >
             {daoName}
-          </Box>
+          </Button>
           <Text fontSize="16px" display="inline" color="#717A7C" fontWeight="400" lineHeight="24px" ml={2}>
-
             {`• ${CHAIN_INFO[chainId!]?.name}`}
           </Text>
         </Text>

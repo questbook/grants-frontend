@@ -35,6 +35,7 @@ function AboutGrant() {
   const [title, setTitle] = useState('');
   const [deadline, setDeadline] = useState('');
   const [isGrantVerified, setIsGrantVerified] = useState(false);
+  const [daoId, setDaoId] = useState('');
   const [daoName, setDaoName] = useState('');
   const [daoLogo, setDaoLogo] = useState('');
   const [rewardAmount, setRewardAmount] = useState('');
@@ -96,6 +97,7 @@ function AboutGrant() {
     setIsGrantVerified(localIsGrantVerified);
     setDeadline(getFormattedDate(grantData?.deadline));
     setTitle(grantData?.title);
+    setDaoId(grantData?.workspace?.id);
     setDaoName(grantData?.workspace?.title);
     setDaoLogo(getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash));
     setRewardAmount(
@@ -174,6 +176,7 @@ function AboutGrant() {
         <Divider mt={3} />
 
         <GrantRewards
+          daoId={daoId}
           daoName={daoName}
           daoLogo={daoLogo}
           funding={funding}
