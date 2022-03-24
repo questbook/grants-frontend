@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import {
   Image, Text, Button, Flex, Box, Divider, Link,
@@ -5,6 +6,7 @@ import {
 import { useRouter } from 'next/router';
 import { SupportedChainId } from 'src/constants/chains';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import VerifiedBadge from 'src/components/ui/verified_badge';
 import Badge from './badge';
 
 interface BrowseGrantCardProps {
@@ -17,6 +19,7 @@ interface BrowseGrantCardProps {
   grantTitle: string;
   grantDesc: string;
   isGrantVerified?: boolean;
+  funding: string;
 
   numOfApplicants: number;
   endTimestamp: number;
@@ -26,6 +29,7 @@ interface BrowseGrantCardProps {
   grantCurrencyIcon: string;
 
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  onTitleClick?: React.MouseEventHandler<HTMLAnchorElement>;
 }
 
 function BrowseGrantCard({
@@ -38,6 +42,7 @@ function BrowseGrantCard({
   grantTitle,
   grantDesc,
   isGrantVerified,
+  funding,
 
   numOfApplicants,
   endTimestamp,
@@ -47,6 +52,7 @@ function BrowseGrantCard({
   grantCurrencyIcon,
 
   onClick,
+  onTitleClick,
 }: BrowseGrantCardProps) {
   const router = useRouter();
 
@@ -56,31 +62,26 @@ function BrowseGrantCard({
         <Image objectFit="cover" h="54px" w="54px" src={daoIcon} />
         <Flex flex={1} direction="column" ml={6}>
           <Flex direction="row" alignItems="start">
-            <Flex direction="column" maxW="50%">
-              <Button
+            <Text maxW="50%">
+              <Link
+                onClick={onTitleClick}
+                whiteSpace="normal"
                 textAlign="left"
                 lineHeight="26px"
                 fontSize="18px"
                 fontWeight="700"
                 color="#12224"
-                noOfLines={4}
-                variant="link"
-                onClick={onClick}
-                whiteSpace="normal"
               >
                 {grantTitle}
-                {isGrantVerified && (
-                <Image
-                  h={4}
-                  w={4}
-                  display="inline-block"
-                  src="/ui_icons/verified.svg"
-                  ml="2px"
-                  mb="-2px"
-                />
-                )}
-              </Button>
-            </Flex>
+              </Link>
+              {isGrantVerified && (
+              <VerifiedBadge
+                grantAmount={funding}
+                grantCurrency={grantCurrency}
+                lineHeight="26px"
+              />
+              )}
+            </Text>
 
             <Box mr="auto" />
             <Badge
@@ -149,5 +150,6 @@ BrowseGrantCard.defaultProps = {
   isGrantVerified: false,
   isDaoVerified: false,
   onClick: () => {},
+  onTitleClick: () => {},
 };
 export default BrowseGrantCard;

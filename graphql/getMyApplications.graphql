@@ -17,6 +17,9 @@ query getMyApplications($first: Int, $skip: Int, $applicantID: Bytes!) {
         logoIpfsHash
         supportedNetworks
       }
+      reward {
+        asset
+      }
     }
     applicantId
     state

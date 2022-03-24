@@ -7,8 +7,9 @@ import { SupportedChainId } from 'src/constants/chains';
 
 function GrantRewards({
   daoName,
-  isGrantVerified,
   daoLogo,
+  isGrantVerified,
+  funding,
   rewardAmount,
   rewardCurrency,
   rewardCurrencyCoin,
@@ -16,8 +17,9 @@ function GrantRewards({
   chainId,
 }: {
   daoName: string;
-  isGrantVerified: boolean;
   daoLogo: string;
+  isGrantVerified: boolean;
+  funding: string;
   rewardAmount: string;
   rewardCurrency: string;
   rewardCurrencyCoin: string;
@@ -39,14 +41,6 @@ function GrantRewards({
           >
             {daoName}
           </Box>
-          {' '}
-          {isGrantVerified && (
-            <Image
-              display="inline-block"
-              src="/ui_icons/verified.svg"
-              mb="-2px"
-            />
-          )}
           <Text fontSize="16px" display="inline" color="#717A7C" fontWeight="400" lineHeight="24px" ml={2}>
 
             {`• ${CHAIN_INFO[chainId!]?.name}`}
@@ -57,7 +51,7 @@ function GrantRewards({
 
       <Divider />
 
-      <Flex alignItems="center">
+      <Flex alignItems="start">
         <Flex direction="column">
           <Flex direction="row" alignItems="flex-start" mt="28px">
             <Image mt="2px" src="/sidebar/apply_for_grants.svg" />
@@ -77,8 +71,25 @@ function GrantRewards({
               </Text>
             </Flex>
           </Flex>
+          {isGrantVerified && (
+          <Flex direction="row" alignItems="flex-start" mt="28px">
+            <Image mt="2px" w="18px" h="21px" src="/ui_icons/verified.svg" />
+            <Flex flex={1} direction="column" ml={3}>
+              <Text fontWeight="500">Verified Grant</Text>
+              <Text mt="1px" lineHeight="20px" fontSize="14px" fontWeight="400">
+                Funds deposited as reward ≈
+                {' '}
+                <Text fontWeight="700" display="inline-block">
+                  {funding}
+                  {' '}
+                  {rewardCurrency}
+                </Text>
+              </Text>
+            </Flex>
+          </Flex>
+          )}
         </Flex>
-        <Image ml="auto" h="45px" w="45px" src={rewardCurrencyCoin} />
+        <Image mt="28px" ml="auto" h="45px" w="45px" src={rewardCurrencyCoin} />
       </Flex>
     </>
   );

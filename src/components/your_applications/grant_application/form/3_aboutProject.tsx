@@ -109,6 +109,7 @@ function AboutProject({
         errorText="Required"
         disabled={readOnly}
         visible={grantRequiredFields.includes('projectName')}
+        maxLength={30}
       />
 
       {projectLinks.map((project, index) => (

@@ -12,6 +12,7 @@ import { SupportedChainId } from 'src/constants/chains';
 import { GrantApplicationRequest } from '@questbook/service-validator-client';
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption';
 import { convertToRaw, EditorState } from 'draft-js';
+import VerifiedBadge from 'src/components/ui/verified_badge';
 import { parseAmount } from '../../../../utils/formattingUtils';
 import { GrantApplicationFieldsSubgraph } from '../../../../types/application';
 import InfoToast from '../../../ui/infoToast';
@@ -27,6 +28,8 @@ interface Props {
   grantId: string;
   daoLogo: string;
   workspaceId: string;
+  isGrantVerified: boolean;
+  funding: string;
   rewardAmount: string;
   rewardCurrency: string;
   rewardCurrencyCoin: string;
@@ -44,6 +47,8 @@ function Form({
   grantId,
   daoLogo,
   workspaceId,
+  isGrantVerified,
+  funding,
   rewardAmount,
   rewardCurrency,
   rewardCurrencyCoin,
@@ -269,6 +274,8 @@ function Form({
       <Image objectFit="cover" h="96px" w="96px" src={daoLogo} alt="Polygon DAO" />
       <Text mt={6} variant="heading">
         {title}
+        {isGrantVerified
+          && <VerifiedBadge grantAmount={funding} grantCurrency={rewardCurrency} lineHeight="44px" />}
       </Text>
       <Text
         zIndex="1"

@@ -10,6 +10,7 @@ import { useGetGrantDetailsQuery } from 'src/generated/graphql';
 import { formatAmount } from 'src/utils/formattingUtils';
 import { getAssetInfo } from 'src/utils/tokenUtils';
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
+import verify from 'src/utils/grantUtils';
 import Form from '../../src/components/explore_grants/apply_grant/form';
 import Sidebar from '../../src/components/explore_grants/apply_grant/sidebar';
 import NavbarLayout from '../../src/layout/navbarLayout';
@@ -23,6 +24,8 @@ function ApplyGrant() {
   const [grantID, setGrantID] = useState<any>('');
   const [title, setTitle] = useState('');
   const [daoLogo, setDaoLogo] = useState('');
+  const [isGrantVerified, setIsGrantVerified] = useState(false);
+  const [funding, setFunding] = useState('');
   const [rewardAmount, setRewardAmount] = useState('');
   const [rewardCurrency, setRewardCurrency] = useState('');
   const [rewardCurrencyCoin, setRewardCurrencyCoin] = useState('');
@@ -73,7 +76,17 @@ function ApplyGrant() {
 
   useEffect(() => {
     if (!grantData) return;
-    setChainId(getSupportedChainIdFromSupportedNetwork(grantData.workspace.supportedNetworks[0]));
+    const localChainId = getSupportedChainIdFromSupportedNetwork(
+      grantData.workspace.supportedNetworks[0],
+    );
+    const chainInfo = CHAIN_INFO[localChainId]
+      ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];
+    const [localIsGrantVerified, localFunding] = verify(grantData?.funding, chainInfo.decimals);
+
+    setIsGrantVerified(localIsGrantVerified);
+    setFunding(localFunding);
+
+    setChainId(localChainId);
     setTitle(grantData?.title);
     setWorkspaceId(grantData?.workspace?.id);
     setDaoLogo(getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash));
@@ -81,10 +94,7 @@ function ApplyGrant() {
       grantData?.reward?.committed
         ? formatAmount(
           grantData?.reward?.committed,
-          CHAIN_INFO[getSupportedChainIdFromSupportedNetwork(
-            grantData.workspace.supportedNetworks[0],
-          )]?.supportedCurrencies[grantData.reward.asset.toLowerCase()]
-            ?.decimals ?? 18,
+          chainInfo?.decimals ?? 18,
         )
         : '',
     );
@@ -111,6 +121,8 @@ function ApplyGrant() {
           title={title}
           grantId={grantID}
           daoLogo={daoLogo}
+          isGrantVerified={isGrantVerified}
+          funding={funding}
           rewardAmount={rewardAmount}
           rewardCurrency={rewardCurrency}
           rewardCurrencyCoin={rewardCurrencyCoin}
