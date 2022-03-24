@@ -83,10 +83,12 @@ function GrantCard({
                 {grantTitle}
               </Link>
               {isGrantVerified && (
-                <VerifiedBadge
-                  grantAmount={funding}
-                  grantCurrency={grantCurrency}
-                />
+              <VerifiedBadge
+                grantAmount={funding}
+                grantCurrency={grantCurrency}
+                lineHeight="26px"
+                marginBottom={-1}
+              />
               )}
             </Text>
 

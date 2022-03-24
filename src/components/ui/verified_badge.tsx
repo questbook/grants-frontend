@@ -13,19 +13,24 @@ import React from 'react';
 interface Props {
   grantAmount: string;
   grantCurrency: string;
+  lineHeight: string | number;
+  marginBottom?: string | number;
 }
 
-function VerifiedBadge({ grantAmount, grantCurrency }: Props) {
+function VerifiedBadge({
+  grantAmount, grantCurrency, lineHeight, marginBottom,
+}: Props) {
   return (
     <Popover trigger="hover">
       <PopoverTrigger>
         <Image
-          h={4}
-          w={4}
+          h="20px"
+          w="17px"
           display="inline-block"
           src="/ui_icons/verified.svg"
           ml={1}
-          lineHeight="18px"
+          mb={marginBottom}
+          lineHeight={lineHeight}
         />
       </PopoverTrigger>
       <PopoverContent bg="white" borderRadius="8px" p={4} maxW="210px">
@@ -72,5 +77,9 @@ function VerifiedBadge({ grantAmount, grantCurrency }: Props) {
     </Popover>
   );
 }
+
+VerifiedBadge.defaultProps = {
+  marginBottom: 0,
+};
 
 export default VerifiedBadge;

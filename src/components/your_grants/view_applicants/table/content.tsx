@@ -7,6 +7,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import React, { ReactElement } from 'react';
+import CopyIcon from 'src/components/ui/copy_icon';
 import {
   GrantApproved, Rejected, PendingReview, ResubmissionRequested, GrantComplete,
 } from '../states';
@@ -58,17 +59,21 @@ function Content({
             py={4}
           >
 
-            <Tooltip label={item?.applicant_address}>
-              <Text
-                ml="19px"
-                mr="-19px"
-                flex={tableHeadersflex[0]}
-                variant="tableBody"
-              >
-                {'     '}
-                {`${item.applicant_address.substring(0, 13)}...`}
-              </Text>
-            </Tooltip>
+            <Flex direction="row" flex={tableHeadersflex[0]} align="center">
+              <Tooltip label={item?.applicant_address}>
+                <Text
+                  ml="19px"
+                  mr="-19px"
+                  variant="tableBody"
+                >
+                  {'     '}
+                  {`${item.applicant_address.substring(0, 4)}...${item.applicant_address.substring(item.applicant_address.length - 4)}`}
+                </Text>
+              </Tooltip>
+              <Box mr={8} />
+              <CopyIcon text={item?.applicant_address} />
+            </Flex>
+
             <Text
               flex={tableHeadersflex[1]}
               color="#717A7C"

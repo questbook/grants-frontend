@@ -78,6 +78,7 @@ function BrowseGrantCard({
               <VerifiedBadge
                 grantAmount={funding}
                 grantCurrency={grantCurrency}
+                lineHeight="26px"
               />
               )}
             </Text>
