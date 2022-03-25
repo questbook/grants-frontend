@@ -1,9 +1,9 @@
-query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String) {
+query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String, $acceptingApplications: Boolean) {
   grants(
     first: $first, 
     skip: $skip, 
     subgraphError: allow, 
-    where: { workspace: $workspaceId }
+    where: { workspace: $workspaceId, acceptingApplications: $acceptingApplications }
     orderBy: createdAtS, 
     orderDirection: desc
   ) {

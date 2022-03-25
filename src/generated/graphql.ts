@@ -2234,6 +2234,16 @@ export type GetAllGrantsQueryVariables = Exact<{
 
 export type GetAllGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, createdAtS: number, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> }, applications: Array<{ __typename?: 'GrantApplication', applicantId: string }> }> };
 
+export type GetAllGrantsCountForCreatorQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+  creatorId?: InputMaybe<Scalars['Bytes']>;
+  workspaceId?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetAllGrantsCountForCreatorQuery = { __typename?: 'Query', liveGrants: Array<{ __typename?: 'Grant', id: string }>, archived: Array<{ __typename?: 'Grant', id: string }> };
+
 export type GetAllGrantsForADaoQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
@@ -2248,6 +2258,7 @@ export type GetAllGrantsForCreatorQueryVariables = Exact<{
   skip?: InputMaybe<Scalars['Int']>;
   creatorId?: InputMaybe<Scalars['Bytes']>;
   workspaceId?: InputMaybe<Scalars['String']>;
+  acceptingApplications?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
@@ -2311,7 +2322,7 @@ export type GetGrantDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetGrantDetailsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, isPii: boolean }>, reward: { __typename?: 'Reward', id: string, asset: string, committed: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null }> } }> };
+export type GetGrantDetailsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, acceptingApplications: boolean, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, isPii: boolean }>, reward: { __typename?: 'Reward', id: string, asset: string, committed: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null }> } }> };
 
 export type GetGrantsAppliedToQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -2430,6 +2441,55 @@ export function useGetAllGrantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetAllGrantsQueryHookResult = ReturnType<typeof useGetAllGrantsQuery>;
 export type GetAllGrantsLazyQueryHookResult = ReturnType<typeof useGetAllGrantsLazyQuery>;
 export type GetAllGrantsQueryResult = Apollo.QueryResult<GetAllGrantsQuery, GetAllGrantsQueryVariables>;
+export const GetAllGrantsCountForCreatorDocument = gql`
+    query getAllGrantsCountForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String) {
+  liveGrants: grants(
+    subgraphError: allow
+    where: {acceptingApplications: true, workspace: $workspaceId}
+    first: 1
+  ) {
+    id
+  }
+  archived: grants(
+    subgraphError: allow
+    where: {acceptingApplications: false, workspace: $workspaceId}
+    first: 1
+  ) {
+    id
+  }
+}
+    `;
+
+/**
+ * __useGetAllGrantsCountForCreatorQuery__
+ *
+ * To run a query within a React component, call `useGetAllGrantsCountForCreatorQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllGrantsCountForCreatorQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllGrantsCountForCreatorQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *      creatorId: // value for 'creatorId'
+ *      workspaceId: // value for 'workspaceId'
+ *   },
+ * });
+ */
+export function useGetAllGrantsCountForCreatorQuery(baseOptions?: Apollo.QueryHookOptions<GetAllGrantsCountForCreatorQuery, GetAllGrantsCountForCreatorQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllGrantsCountForCreatorQuery, GetAllGrantsCountForCreatorQueryVariables>(GetAllGrantsCountForCreatorDocument, options);
+      }
+export function useGetAllGrantsCountForCreatorLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllGrantsCountForCreatorQuery, GetAllGrantsCountForCreatorQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllGrantsCountForCreatorQuery, GetAllGrantsCountForCreatorQueryVariables>(GetAllGrantsCountForCreatorDocument, options);
+        }
+export type GetAllGrantsCountForCreatorQueryHookResult = ReturnType<typeof useGetAllGrantsCountForCreatorQuery>;
+export type GetAllGrantsCountForCreatorLazyQueryHookResult = ReturnType<typeof useGetAllGrantsCountForCreatorLazyQuery>;
+export type GetAllGrantsCountForCreatorQueryResult = Apollo.QueryResult<GetAllGrantsCountForCreatorQuery, GetAllGrantsCountForCreatorQueryVariables>;
 export const GetAllGrantsForADaoDocument = gql`
     query getAllGrantsForADao($first: Int, $skip: Int, $workspaceId: String!) {
   grants(
@@ -2493,12 +2553,12 @@ export type GetAllGrantsForADaoQueryHookResult = ReturnType<typeof useGetAllGran
 export type GetAllGrantsForADaoLazyQueryHookResult = ReturnType<typeof useGetAllGrantsForADaoLazyQuery>;
 export type GetAllGrantsForADaoQueryResult = Apollo.QueryResult<GetAllGrantsForADaoQuery, GetAllGrantsForADaoQueryVariables>;
 export const GetAllGrantsForCreatorDocument = gql`
-    query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String) {
+    query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String, $acceptingApplications: Boolean) {
   grants(
     first: $first
     skip: $skip
     subgraphError: allow
-    where: {workspace: $workspaceId}
+    where: {workspace: $workspaceId, acceptingApplications: $acceptingApplications}
     orderBy: createdAtS
     orderDirection: desc
   ) {
@@ -2542,6 +2602,7 @@ export const GetAllGrantsForCreatorDocument = gql`
  *      skip: // value for 'skip'
  *      creatorId: // value for 'creatorId'
  *      workspaceId: // value for 'workspaceId'
+ *      acceptingApplications: // value for 'acceptingApplications'
  *   },
  * });
  */
@@ -2768,7 +2829,7 @@ export const GetDaoDetailsDocument = gql`
   }
   grants(
     subgraphError: allow
-    where: {workspace: $daoID}
+    where: {workspace: $daoID, acceptingApplications: true}
     orderBy: createdAtS
     orderDirection: desc
   ) {
@@ -3006,6 +3067,7 @@ export const GetGrantDetailsDocument = gql`
     }
     deadline
     funding
+    acceptingApplications
   }
 }
     `;
