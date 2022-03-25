@@ -58,14 +58,12 @@ export default function useDisburseReward(
   }, [grantContract]);
 
   useEffect(() => {
-    console.log('useDisburseReward', incorrectNetwork, error, loading);
     if (incorrectNetwork) return;
     if (error) return;
     if (loading) return;
 
     async function validate() {
       setLoading(true);
-      console.log('calling validate');
       try {
         const updateTxn = await grantContract.disburseReward(
           applicationId,
@@ -130,7 +128,6 @@ export default function useDisburseReward(
       if (!validatorApi) {
         throw new Error('validatorApi or workspaceId is not defined');
       }
-      console.log(5);
       if (
         !grantContract
         || grantContract.address
