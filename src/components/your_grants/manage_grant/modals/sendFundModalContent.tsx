@@ -56,6 +56,7 @@ function ModalContent({
   const [funding, setFunding] = React.useState('');
   const [error, setError] = React.useState(false);
   const [rewardAssetDecimals, setRewardAssetDecimals] = React.useState(0);
+  const [submitClicked, setSubmitClicked] = useState(false);
 
   const [walletBalance, setWalletBalance] = React.useState(0);
   // const toast = useToast();
@@ -79,6 +80,8 @@ function ModalContent({
       ? undefined
       : milestones[selectedMilestone].id.split('.')[1],
     rewardAsset.address,
+    submitClicked,
+    setSubmitClicked,
   );
 
   useEffect(() => {
@@ -117,6 +120,7 @@ function ModalContent({
     }
 
     if (hasError) return;
+    setSubmitClicked(true);
     setDisburseAmount(parseAmount(funding, rewardAsset.address));
   };
 
