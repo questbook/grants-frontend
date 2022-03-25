@@ -44,17 +44,17 @@ export function parseAmount(number: string, contractAddress?: string) {
     let allCurrencies: any[] = [];
     ALL_SUPPORTED_CHAIN_IDS.forEach((id) => {
       const { supportedCurrencies } = CHAIN_INFO[id];
-      const supportedCurrenciesArray = Object
-        .keys(supportedCurrencies)
-        .map((i) => supportedCurrencies[i]);
+      const supportedCurrenciesArray = Object.keys(supportedCurrencies).map(
+        (i) => supportedCurrencies[i],
+      );
       allCurrencies = [...allCurrencies, ...supportedCurrenciesArray];
     });
 
     console.log(allCurrencies);
     console.log(contractAddress);
 
-    decimals = allCurrencies
-      .find((currency) => currency.address === contractAddress)?.decimals || 18;
+    decimals = allCurrencies.find((currency) => currency.address === contractAddress)
+      ?.decimals || 18;
 
     console.log(decimals);
     return ethers.utils.parseUnits(number, decimals).toString();
@@ -64,7 +64,7 @@ export function parseAmount(number: string, contractAddress?: string) {
   return ethers.utils.parseUnits(number, 18).toString();
 }
 
-function nFormatter(value: string, digits = 2) {
+function nFormatter(value: string, digits = 3) {
   const num = Math.abs(Number(value));
   if (num < 10000) {
     return value;
@@ -79,13 +79,44 @@ function nFormatter(value: string, digits = 2) {
     { value: 1e18, symbol: 'E' },
   ];
   const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
-  const item = lookup.slice().reverse().find((i) => num >= i.value);
-  return item ? (num / item.value).toFixed(digits).replace(rx, '$1') + item.symbol : '0';
+  const item = lookup
+    .slice()
+    .reverse()
+    .find((i) => num >= i.value);
+  return item
+    ? (num / item.value).toFixed(digits).replace(rx, '$1') + item.symbol
+    : '0';
 }
 
-export function formatAmount(number: string, decimals = 18) {
+function truncateTo(number: string, digits = 3) {
+  const decimalIndex = number.indexOf('.');
+  if (decimalIndex === -1) return number;
+  let ret = number.substring(0, decimalIndex + 1);
+  const lastSymbol = number.charCodeAt(number.length - 1);
+  const containsSymbol = !(lastSymbol >= 48 && lastSymbol <= 57);
+  let isEntirelyZeroAfterDecimal = true;
+  for (
+    let i = decimalIndex + 1;
+    i
+    < Math.min(
+      decimalIndex + digits + 1,
+      containsSymbol ? number.length - 1 : number.length,
+    );
+    i += 1
+  ) {
+    isEntirelyZeroAfterDecimal &&= number.charCodeAt(i) === 48;
+    ret += number.charAt(i);
+  }
+  const returnValue = (isEntirelyZeroAfterDecimal ? ret.substring(0, decimalIndex) : ret)
+    + (containsSymbol ? number.charAt(number.length - 1) : '');
+  return returnValue;
+}
+
+export function formatAmount(number: string, decimals = 18, isEditable = false) {
   const value = ethers.utils.formatUnits(number, decimals).toString();
-  return nFormatter(value);
+  if (isEditable) return truncateTo(value, decimals);
+  const formattedValue = nFormatter(value);
+  return truncateTo(formattedValue);
 }
 
 export function highlightWordsInString(
@@ -103,15 +134,6 @@ export function highlightWordsInString(
   });
 }
 
-export function getIconFromCurrency(currency: string, isCircled: boolean = false) {
-  switch (currency) {
-    case 'DAI': return isCircled ? '/ui_icons/brand/currency/dai.svg' : '/ui_icons/brand/currency/dai_symbol.svg';
-    case 'WMATIC': return isCircled ? '/ui_icons/brand/currency/wmatic.svg' : '/ui_icons/brand/currency/wmatic_symbol.svg';
-    case 'WETH': return isCircled ? '/ui_icons/brand/currency/weth.svg' : '/ui_icons/brand/currency/weth_symbol.svg';
-    default: return '/images/dummy/Ethereum Icon.svg';
-  }
-}
-
 export function getFormattedDate(timestamp: number) {
   const date = new Date(timestamp);
   return moment(date).format('LL');
@@ -121,7 +143,9 @@ export function getFormattedDateFromUnixTimestamp(timestamp: number) {
   return moment.unix(timestamp).format('DD MMM');
 }
 
-export function getFormattedDateFromUnixTimestampWithYear(timestamp: number | undefined) {
+export function getFormattedDateFromUnixTimestampWithYear(
+  timestamp: number | undefined,
+) {
   return timestamp ? moment.unix(timestamp).format('MMM DD, YYYY') : undefined;
 }
 
@@ -129,10 +153,13 @@ export function getFormattedFullDateFromUnixTimestamp(timestamp: number) {
   return moment.unix(timestamp).format('LL');
 }
 
-export function truncateStringFromMiddle(str:string) {
+export function truncateStringFromMiddle(str: string) {
   if (!str) return '';
   if (str.length > 10) {
-    return `${str.substring(0, 4)}...${str.substring(str.length - 4, str.length)}`;
+    return `${str.substring(0, 4)}...${str.substring(
+      str.length - 4,
+      str.length,
+    )}`;
   }
   return str;
 }
@@ -160,7 +187,7 @@ export function getMilestoneTitle(milestone: FundTransfer['milestone']) {
 
 export const getTextWithEllipses = (txt: string, maxLength = 7) => (txt.length > maxLength ? `${txt.slice(0, maxLength)}...` : txt);
 
-export const getChainIdFromResponse = (networkString: string):string => networkString?.split('_')[1];
+export const getChainIdFromResponse = (networkString: string): string => networkString?.split('_')[1];
 
 // eslint-disable-next-line max-len
 export const getFieldLabelFromFieldTitle = (title: string) => applicantDetailsList.find((detail) => detail.id === title)?.title;

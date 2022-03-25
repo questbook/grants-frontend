@@ -9,6 +9,7 @@ import {
   Link,
 } from '@chakra-ui/react';
 import React from 'react';
+import VerifiedBadge from 'src/components/ui/verified_badge';
 import CheckPoint from './checkPoint';
 
 interface Props {
@@ -25,6 +26,8 @@ interface Props {
   updatedDate?: string;
   reviewDate?: string;
   resultDate?: string;
+  funding: string;
+  currency: string;
 }
 
 const defaultProps = {
@@ -52,6 +55,8 @@ function YourApplicationCard({
   sentDate,
   updatedDate,
   reviewDate,
+  funding,
+  currency,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   resultDate,
 }: Props) {
@@ -64,12 +69,7 @@ function YourApplicationCard({
             <Text lineHeight="24px" fontSize="18px" fontWeight="700">
               {grantTitle}
               {isGrantVerified && (
-                <Image
-                  display="inline-block"
-                  src="/ui_icons/verified.svg"
-                  ml="2px"
-                  mb="-2px"
-                />
+                <VerifiedBadge grantAmount={funding} grantCurrency={currency} lineHeight="24px" marginBottom={-1} />
               )}
             </Text>
           </Flex>

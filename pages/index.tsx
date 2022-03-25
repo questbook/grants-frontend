@@ -13,6 +13,7 @@ import {
   useGetAllGrantsLazyQuery,
   GetAllGrantsQuery,
 } from 'src/generated/graphql';
+import verify from 'src/utils/grantUtils';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import { useAccount } from 'wagmi';
@@ -22,12 +23,10 @@ import Heading from '../src/components/ui/heading';
 import NavbarLayout from '../src/layout/navbarLayout';
 import {
   formatAmount,
-  getChainIdFromResponse,
-  parseAmount,
 } from '../src/utils/formattingUtils';
 import { ApiClientsContext } from './_app';
 
-const PAGE_SIZE = 100;
+const PAGE_SIZE = 40;
 
 function BrowseGrants() {
   const containerRef = useRef(null);
@@ -133,9 +132,16 @@ function BrowseGrants() {
         <Heading title="Discover grants" />
         {grants.length > 0
           && grants.map((grant) => {
-            // console.log(grant.workspace.supportedNetworks[0]);
-            console.log(grant.reward);
-            const isGrantVerified = parseInt(parseAmount(grant.funding), 10) > 0;
+            const chainId = getSupportedChainIdFromSupportedNetwork(
+              grant.workspace.supportedNetworks[0],
+            );
+            const chainInfo = CHAIN_INFO[chainId]?.supportedCurrencies[
+              grant.reward.asset.toLowerCase()
+            ];
+            const [isGrantVerified, funding] = verify(
+              grant.funding,
+              chainInfo?.decimals,
+            );
             return (
               <GrantCard
                 daoID={grant.workspace.id}
@@ -150,33 +156,15 @@ function BrowseGrants() {
                 endTimestamp={new Date(grant.deadline!).getTime()}
                 grantAmount={formatAmount(
                   grant.reward.committed,
-                  CHAIN_INFO[
-                    getSupportedChainIdFromSupportedNetwork(
-                      grant.workspace.supportedNetworks[0],
-                    )
-                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-                    ?.decimals ?? 18,
+                  chainInfo?.decimals ?? 18,
                 )}
-                grantCurrency={
-                  CHAIN_INFO[
-                    getSupportedChainIdFromSupportedNetwork(
-                      grant.workspace.supportedNetworks[0],
-                    )
-                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-                    ?.label ?? 'LOL'
-                }
+                grantCurrency={chainInfo?.label ?? 'LOL'}
                 grantCurrencyIcon={
-                  CHAIN_INFO[
-                    getSupportedChainIdFromSupportedNetwork(
-                      grant.workspace.supportedNetworks[0],
-                    )
-                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-                    ?.icon ?? '/images/dummy/Ethereum Icon.svg'
+                  chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'
                 }
                 isGrantVerified={isGrantVerified}
-                chainId={getSupportedChainIdFromSupportedNetwork(
-                  grant.workspace.supportedNetworks[0],
-                )}
+                funding={funding}
+                chainId={chainId}
                 onClick={() => {
                   if (!(accountData && accountData.address)) {
                     router.push({
@@ -184,9 +172,7 @@ function BrowseGrants() {
                       query: {
                         flow: '/',
                         grantId: grant.id,
-                        chainId: getChainIdFromResponse(
-                          grant.workspace.supportedNetworks[0],
-                        ),
+                        chainId,
                       },
                     });
                     return;
@@ -195,9 +181,16 @@ function BrowseGrants() {
                     pathname: '/explore_grants/about_grant',
                     query: {
                       grantId: grant.id,
-                      chainId: getChainIdFromResponse(
-                        grant.workspace.supportedNetworks[0],
-                      ),
+                      chainId,
+                    },
+                  });
+                }}
+                onTitleClick={() => {
+                  router.push({
+                    pathname: '/explore_grants/about_grant',
+                    query: {
+                      grantId: grant.id,
+                      chainId,
                     },
                   });
                 }}

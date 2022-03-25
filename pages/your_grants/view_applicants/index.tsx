@@ -64,7 +64,8 @@ function ViewApplicants() {
           applicationId: applicant.id,
           applicant_address: applicant.applicantId,
           sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
-          applicant_name: getFieldString('applicantName'),
+          // applicant_name: getFieldString('applicantName'),
+          project_name: getFieldString('projectName'),
           funding_asked: {
             // amount: formatAmount(
             //   getFieldString('fundingAsk') ?? '0',

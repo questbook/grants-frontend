@@ -12,10 +12,12 @@ import {
 import { ApplicationMilestone } from 'src/types';
 import useApplicationMilestones from 'src/utils/queryUtil';
 import { SupportedChainId } from 'src/constants/chains';
+import VerifiedBadge from 'src/components/ui/verified_badge';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
+import verify from 'src/utils/grantUtils';
 import { getAssetInfo } from '../../src/utils/tokenUtils';
 import Sidebar from '../../src/components/your_applications/manage_grant/sidebar';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
-import Heading from '../../src/components/ui/heading';
 import MilestoneTable from '../../src/components/your_applications/manage_grant/milestoneTable';
 import Funding from '../../src/components/your_applications/manage_grant/fundingRequestedTable';
 import NavbarLayout from '../../src/layout/navbarLayout';
@@ -99,8 +101,11 @@ function ManageGrant() {
 
   const { data, error, loading } = useGetApplicationDetailsQuery(queryParams);
 
+  const [isGrantVerified, setIsGrantVerified] = useState(false);
+  const [grantFunding, setGrantFunding] = useState('');
+
   useEffect(() => {
-    if (data && data.grantApplication) {
+    if (data && data.grantApplication && chainId) {
       const application = data.grantApplication;
       setApplicationData({
         title: application.grant.title,
@@ -112,8 +117,17 @@ function ManageGrant() {
         grant: application.grant,
         id: application.id,
       });
+
+      const chainInfo = CHAIN_INFO[chainId]
+        ?.supportedCurrencies[application.grant.reward.asset.toLowerCase()];
+      const [localIsGrantVerified, localFunding] = verify(
+        application.grant.funding,
+        chainInfo.decimals,
+      );
+      setGrantFunding(localFunding);
+      setIsGrantVerified(localIsGrantVerified);
     }
-  }, [data, error, loading]);
+  }, [data, error, loading, chainId]);
 
   const assetInfo = getAssetInfo(rewardAsset, chainId);
   const fundingIcon = assetInfo.icon;
@@ -149,7 +163,11 @@ function ManageGrant() {
         px={10}
       >
         <Breadcrumbs path={['My Applications', 'Manage Grant']} />
-        <Heading mt="18px" title={applicationData.title} />
+        <Text variant="heading" mt="18px">
+          {applicationData.title}
+          {isGrantVerified
+          && <VerifiedBadge grantAmount={grantFunding} grantCurrency={assetInfo.label} lineHeight="44px" />}
+        </Text>
         <Box mt={5} />
 
         <Flex direction="row" w="full" align="center">
