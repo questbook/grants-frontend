@@ -52,6 +52,7 @@ function ApplicantForm() {
 
   const [applicationId, setApplicationId] = useState<any>('');
   const [applicationData, setApplicationData] = useState<GetApplicationDetailsQuery['grantApplication']>(null);
+  const [submitClicked, setSubmitClicked] = useState(false);
 
   const [resubmitComment, setResubmitComment] = useState('');
   const [resubmitCommentError, setResubmitCommentError] = useState(false);
@@ -113,6 +114,8 @@ function ApplicantForm() {
     state === 1 ? resubmitComment : rejectionComment,
     applicationData?.id,
     state,
+    submitClicked,
+    setSubmitClicked,
   );
 
   useEffect(() => {
@@ -171,6 +174,7 @@ function ApplicantForm() {
     }
 
     // console.log('setting state');
+    setSubmitClicked(true);
     setState(st);
   };
 

@@ -34,6 +34,7 @@ export default function useUpdateWorkspace(
   useEffect(() => {
     if (data) {
       setError(undefined);
+      setIncorrectNetwork(false);
     }
   }, [data]);
 

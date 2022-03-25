@@ -15,6 +15,8 @@ export default function useUpdateApplicationState(
   data: string,
   applicationId: string | undefined,
   state: number | undefined,
+  submitClicked: boolean,
+  setSubmitClicked: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
@@ -35,8 +37,16 @@ export default function useUpdateApplicationState(
     if (state) {
       setError(undefined);
       setLoading(false);
+      setIncorrectNetwork(false);
     }
   }, [state]);
+
+  useEffect(() => {
+    if (submitClicked) {
+      setIncorrectNetwork(false);
+      setSubmitClicked(false);
+    }
+  }, [setSubmitClicked, submitClicked]);
 
   useEffect(() => {
     if (incorrectNetwork) {
