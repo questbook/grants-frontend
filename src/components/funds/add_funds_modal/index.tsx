@@ -10,14 +10,16 @@ import {
   useToast,
   ToastId,
 } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Lottie from 'lottie-react';
 import copy from 'copy-to-clipboard';
-import { useContract, useSigner } from 'wagmi';
+import { useContract, useNetwork, useSigner } from 'wagmi';
 import { BigNumber, ethers } from 'ethers';
 import Loader from 'src/components/ui/loader';
 import useDepositFunds from 'src/hooks/useDepositFunds';
 import config from 'src/constants/config';
+import { ApiClientsContext } from 'pages/_app';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { formatAmount } from '../../../utils/formattingUtils';
 import InfoToast from '../../ui/infoToast';
 import Dropdown from '../../ui/forms/dropdown';
@@ -41,6 +43,8 @@ interface Props {
 function AddFunds({
   isOpen, onClose, grantAddress, rewardAsset,
 }: Props) {
+  const apiClients = useContext(ApiClientsContext)!;
+  const { workspace } = apiClients;
   const [type, setType] = React.useState(-1);
   const [funding, setFunding] = React.useState('');
   const [error, setError] = React.useState(false);
@@ -57,6 +61,7 @@ function AddFunds({
   ];
 
   const toast = useToast();
+  const [,switchNetwork] = useNetwork();
   const [signerStates] = useSigner();
   const rewardAssetContract = useContract({
     addressOrName:
@@ -83,6 +88,13 @@ function AddFunds({
     rewardAsset.address,
     grantAddress,
   );
+
+  useEffect(() => {
+    if (workspace && switchNetwork && isOpen) {
+      const chainId = getSupportedChainIdFromWorkspace(workspace);
+      switchNetwork(chainId!);
+    }
+  }, [isOpen, switchNetwork, workspace]);
 
   useEffect(() => {
     // console.log(depositTransactionData);
