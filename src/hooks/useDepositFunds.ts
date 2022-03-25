@@ -17,9 +17,10 @@ export default function useDepositFunds(
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
+  const [incorrectNetwork, setIncorrectNetwork] = React.useState(false);
   const [transactionData, setTransactionData] = React.useState<any>();
   const [{ data: accountData }] = useAccount();
-  const [{ data: networkData }] = useNetwork();
+  const [{ data: networkData }, switchNetwork] = useNetwork();
 
   const apiClients = useContext(ApiClientsContext)!;
   const { workspace } = apiClients;
@@ -27,16 +28,27 @@ export default function useDepositFunds(
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
   const currentChainId = useChainId();
+  const chainId = getSupportedChainIdFromWorkspace(workspace);
 
   useEffect(() => {
     if (finalAmount) {
       setError(undefined);
+      setIncorrectNetwork(false);
     } else if (transactionData) {
       setTransactionData(undefined);
+      setIncorrectNetwork(false);
     }
   }, [finalAmount, transactionData]);
 
   useEffect(() => {
+    if (incorrectNetwork) {
+      setIncorrectNetwork(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rewardContract]);
+
+  useEffect(() => {
+    if (incorrectNetwork) return;
     if (error) return;
     if (loading) return;
     // console.log('calling createGrant');
@@ -77,16 +89,20 @@ export default function useDepositFunds(
       if (!accountData || !accountData.address) {
         throw new Error('not connected to wallet');
       }
-      if (!currentChainId) {
-        throw new Error('not connected to valid network');
-      }
       if (!workspace) {
         throw new Error('not connected to workspace');
       }
-      console.log(workspace);
-      console.log(currentChainId);
-      if (getSupportedChainIdFromWorkspace(workspace) !== currentChainId) {
-        throw new Error('connected to wrong network');
+      if (!currentChainId) {
+        if (switchNetwork && chainId) { switchNetwork(chainId); }
+        setIncorrectNetwork(true);
+        setLoading(false);
+        return;
+      }
+      if (chainId !== currentChainId) {
+        if (switchNetwork && chainId) { switchNetwork(chainId); }
+        setIncorrectNetwork(true);
+        setLoading(false);
+        return;
       }
       if (
         !rewardContract
@@ -114,6 +130,7 @@ export default function useDepositFunds(
         }),
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     error,
     loading,
@@ -126,6 +143,8 @@ export default function useDepositFunds(
     currentChainId,
     grantAddress,
     finalAmount,
+    chainId,
+    incorrectNetwork,
   ]);
 
   return [
