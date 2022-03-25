@@ -21,6 +21,7 @@ export default function useSubmitApplication(
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
+  const [incorrectNetwork, setIncorrectNetwork] = React.useState(false);
   const [transactionData, setTransactionData] = React.useState<any>();
   const [{ data: accountData }] = useAccount();
   const [{ data: networkData }, switchNetwork] = useNetwork();
@@ -37,17 +38,19 @@ export default function useSubmitApplication(
   useEffect(() => {
     if (data) {
       setError(undefined);
+      setIncorrectNetwork(false);
     }
   }, [data]);
 
   useEffect(() => {
-    if (error) {
-      setError(undefined);
+    if (incorrectNetwork) {
+      setIncorrectNetwork(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applicationRegistryContract]);
 
   useEffect(() => {
+    if (incorrectNetwork) return;
     if (error) return;
     if (loading) return;
     // console.log('calling createGrant');
@@ -105,16 +108,14 @@ export default function useSubmitApplication(
         throw new Error('not connected to wallet');
       }
       if (!currentChainId) {
-        // throw new Error('not connected to valid network');
-        if (switchNetwork) { switchNetwork(chainId); }
-        setError('not connected to valid network');
+        if (switchNetwork && chainId) { switchNetwork(chainId); }
+        setIncorrectNetwork(true);
         setLoading(false);
         return;
       }
-      if (currentChainId !== chainId) {
-        // throw new Error('connected to wrong network');
-        if (switchNetwork) { switchNetwork(chainId); }
-        setError('connected to wrong network');
+      if (chainId !== currentChainId) {
+        if (switchNetwork && chainId) { switchNetwork(chainId); }
+        setIncorrectNetwork(true);
         setLoading(false);
         return;
       }
@@ -162,6 +163,7 @@ export default function useSubmitApplication(
     data,
     grantId,
     workspaceId,
+    incorrectNetwork,
   ]);
 
   return [
