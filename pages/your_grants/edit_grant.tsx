@@ -99,6 +99,7 @@ function EditGrant() {
           )
         ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
           ?.decimals ?? 18,
+        true,
       ),
       rewardCurrency:
         CHAIN_INFO[
