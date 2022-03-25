@@ -3,6 +3,7 @@ import { SupportedChainId } from './chains';
 // @TODO: Polygon
 
 interface ChainInfo {
+  readonly id: number;
   readonly name: string;
   readonly nativeCurrency: {
     name: string
@@ -28,11 +29,13 @@ interface ChainInfo {
     }
   }
   readonly subgraphClientUrl: string;
+  readonly rpcUrls: string[];
 }
 
 export type ChainInfoMap = { readonly [chainId: number]: ChainInfo };
 export const CHAIN_INFO: ChainInfoMap = {
   [SupportedChainId.RINKEBY]: {
+    id: SupportedChainId.RINKEBY,
     name: 'Rinkeby',
     nativeCurrency: {
       name: 'Rinkeby ETH',
@@ -77,8 +80,10 @@ export const CHAIN_INFO: ChainInfoMap = {
       },
     },
     subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-rinkeby',
+    rpcUrls: ['https://rinkeby.infura.io/v3/'],
   },
   [SupportedChainId.HARMONY_TESTNET_S0]: {
+    id: SupportedChainId.HARMONY_TESTNET_S0,
     name: 'Harmony Testnet S0',
     nativeCurrency: {
       name: 'Harmony Testnet ONE',
@@ -117,8 +122,10 @@ export const CHAIN_INFO: ChainInfoMap = {
       },
     },
     subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-harmonytest',
+    rpcUrls: ['https://api.s0.b.hmny.io'],
   },
   [SupportedChainId.POLYGON_TESTNET]: {
+    id: SupportedChainId.POLYGON_TESTNET,
     name: 'Polygon Testnet',
     nativeCurrency: {
       name: 'Matic Token',
@@ -167,8 +174,10 @@ export const CHAIN_INFO: ChainInfoMap = {
       },
     },
     subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-polygon-mumbai',
+    rpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
   },
   [SupportedChainId.POLYGON_MAINNET]: {
+    id: SupportedChainId.POLYGON_MAINNET,
     name: 'Polygon Mainnet',
     nativeCurrency: {
       name: 'Matic Token',
@@ -225,5 +234,6 @@ export const CHAIN_INFO: ChainInfoMap = {
       },
     },
     subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-polygon',
+    rpcUrls: ['https://polygon-rpc.com/'],
   },
 };
