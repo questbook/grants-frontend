@@ -18,6 +18,8 @@ export default function useDisburseReward(
   applicationId: string | undefined,
   milestoneIndex: number | undefined,
   rewardAssetAddress: string | undefined,
+  submitClicked: boolean,
+  setSubmitClicked: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
@@ -48,6 +50,13 @@ export default function useDisburseReward(
       setIncorrectNetwork(false);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (submitClicked) {
+      setIncorrectNetwork(false);
+      setSubmitClicked(false);
+    }
+  }, [setSubmitClicked, submitClicked]);
 
   useEffect(() => {
     if (incorrectNetwork) {

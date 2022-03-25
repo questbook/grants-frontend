@@ -57,6 +57,7 @@ function ModalContent({
   const [error, setError] = React.useState(false);
   const [rewardAssetDecimals, setRewardAssetDecimals] = React.useState(0);
   const [submitClicked, setSubmitClicked] = useState(false);
+  const [submitClickedP2P, setSubmitClickedP2P] = useState(false);
 
   const [walletBalance, setWalletBalance] = React.useState(0);
   // const toast = useToast();
@@ -138,6 +139,8 @@ function ModalContent({
       ? undefined
       : milestones[selectedMilestone].id.split('.')[1],
     rewardAsset.address,
+    submitClickedP2P,
+    setSubmitClickedP2P,
   );
 
   useEffect(() => {
@@ -176,6 +179,7 @@ function ModalContent({
     }
 
     if (hasError) return;
+    setSubmitClickedP2P(true);
     setDisburseP2PAmount(parseAmount(funding, rewardAsset.address));
   };
 
@@ -283,7 +287,11 @@ function ModalContent({
             variant="primary"
             w="100%"
             my={8}
-            onClick={() => (checkedItems[0] ? setChosen(0) : setChosen(1))}
+            onClick={() => {
+              setDisburseAmount(undefined);
+              setDisburseP2PAmount(undefined);
+              if (checkedItems[0]) setChosen(0); else setChosen(1);
+            }}
           >
             Continue
           </Button>
