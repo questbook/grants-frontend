@@ -161,6 +161,7 @@ export default function useUpdateApplicationState(
     state,
     data,
     incorrectNetwork,
+    chainId,
   ]);
 
   return [
