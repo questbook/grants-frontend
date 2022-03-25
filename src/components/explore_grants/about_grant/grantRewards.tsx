@@ -1,23 +1,28 @@
 import {
-  Flex, Box, Divider, Text, useTheme, Image,
+  Flex, Divider, Text, useTheme, Image, Button,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import React from 'react';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { SupportedChainId } from 'src/constants/chains';
 
 function GrantRewards({
+  daoId,
   daoName,
-  isGrantVerified,
   daoLogo,
+  isGrantVerified,
+  funding,
   rewardAmount,
   rewardCurrency,
   rewardCurrencyCoin,
   payoutDescription,
   chainId,
 }: {
+  daoId: string;
   daoName: string;
-  isGrantVerified: boolean;
   daoLogo: string;
+  isGrantVerified: boolean;
+  funding: string;
   rewardAmount: string;
   rewardCurrency: string;
   rewardCurrencyCoin: string;
@@ -25,30 +30,33 @@ function GrantRewards({
   chainId: SupportedChainId | undefined;
 }) {
   const theme = useTheme();
+  const router = useRouter();
+
   return (
     <>
       <Flex direction="row" alignItems="center" my="22px">
         <Text lineHeight="24px" fontSize="18px" fontWeight="400">
           Grant posted by
           {' '}
-          <Box
-            as="span"
+          <Button
+            variant="link"
+            // as="span"
             display="inline-block"
             color={theme.colors.brand[500]}
             fontWeight="bold"
+            onClick={() => {
+              router.push({
+                pathname: '/profile',
+                query: {
+                  daoId,
+                  chainId,
+                },
+              });
+            }}
           >
             {daoName}
-          </Box>
-          {' '}
-          {isGrantVerified && (
-            <Image
-              display="inline-block"
-              src="/ui_icons/verified.svg"
-              mb="-2px"
-            />
-          )}
+          </Button>
           <Text fontSize="16px" display="inline" color="#717A7C" fontWeight="400" lineHeight="24px" ml={2}>
-
             {`• ${CHAIN_INFO[chainId!]?.name}`}
           </Text>
         </Text>
@@ -57,7 +65,7 @@ function GrantRewards({
 
       <Divider />
 
-      <Flex alignItems="center">
+      <Flex alignItems="start">
         <Flex direction="column">
           <Flex direction="row" alignItems="flex-start" mt="28px">
             <Image mt="2px" src="/sidebar/apply_for_grants.svg" />
@@ -77,8 +85,25 @@ function GrantRewards({
               </Text>
             </Flex>
           </Flex>
+          {isGrantVerified && (
+          <Flex direction="row" alignItems="flex-start" mt="28px">
+            <Image mt="2px" w="18px" h="21px" src="/ui_icons/verified.svg" />
+            <Flex flex={1} direction="column" ml={3}>
+              <Text fontWeight="500">Verified Grant</Text>
+              <Text mt="1px" lineHeight="20px" fontSize="14px" fontWeight="400">
+                Funds deposited as reward ≈
+                {' '}
+                <Text fontWeight="700" display="inline-block">
+                  {funding}
+                  {' '}
+                  {rewardCurrency}
+                </Text>
+              </Text>
+            </Flex>
+          </Flex>
+          )}
         </Flex>
-        <Image ml="auto" h="45px" w="45px" src={rewardCurrencyCoin} />
+        <Image mt="28px" ml="auto" h="45px" w="45px" src={rewardCurrencyCoin} />
       </Flex>
     </>
   );

@@ -7,14 +7,16 @@ import NavbarLayout from 'src/layout/navbarLayout';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import { DAOGrant, DAOWorkspace } from 'src/types';
 import BrowseGrantCard from 'src/components/profile/grantCard';
-import { formatAmount, getChainIdFromResponse } from 'src/utils/formattingUtils';
-import { BigNumber } from 'ethers';
+import {
+  formatAmount,
+} from 'src/utils/formattingUtils';
 import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
 import SeeMore from 'src/components/profile/see_more';
 import { SupportedChainId } from 'src/constants/chains';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
+import verify from 'src/utils/grantUtils';
 import { ApiClientsContext } from './_app';
 
 function Profile() {
@@ -110,7 +112,10 @@ function Profile() {
               )}
               bg="white"
               boxSize="48px"
-              onClick={() => { console.log(social.value); window.open(social.value, '_blank'); }}
+              onClick={() => {
+                console.log(social.value);
+                window.open(social.value, '_blank');
+              }}
             />
           ))}
         </Flex>
@@ -162,60 +167,71 @@ function Profile() {
 
       {grantData
         && grantData.length > 0
-        && grantData.map((grant) => (
-          <BrowseGrantCard
-            daoID={grant.workspace.id}
-            key={grant.id}
-            daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
-            daoName={grant.workspace.title}
-            isDaoVerified={false}
-            grantTitle={grant.title}
-            grantDesc={grant.summary}
-            numOfApplicants={grant.numberOfApplications}
-            endTimestamp={new Date(grant.deadline!).getTime()}
-            grantAmount={formatAmount(grant.reward.committed)}
-            grantCurrency={
-                CHAIN_INFO[
-                  chainID ?? SupportedChainId.RINKEBY
-                ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-                  ?.label ?? 'LOL'
+        && grantData.map((grant) => {
+          const chainId = getSupportedChainIdFromSupportedNetwork(
+            grant.workspace.supportedNetworks[0],
+          );
+          const chainInfo = CHAIN_INFO[chainId]?.supportedCurrencies[
+            grant.reward.asset.toLowerCase()
+          ];
+          const [isGrantVerified, funding] = verify(
+            grant.funding,
+            chainInfo?.decimals,
+          );
+          return (
+            <BrowseGrantCard
+              daoID={grant.workspace.id}
+              key={grant.id}
+              daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
+              daoName={grant.workspace.title}
+              isDaoVerified={false}
+              grantTitle={grant.title}
+              grantDesc={grant.summary}
+              numOfApplicants={grant.numberOfApplications}
+              endTimestamp={new Date(grant.deadline!).getTime()}
+              grantAmount={formatAmount(
+                grant.reward.committed,
+                chainInfo?.decimals ?? 18,
+              )}
+              grantCurrency={chainInfo?.label ?? 'LOL'}
+              grantCurrencyIcon={
+                chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'
               }
-            grantCurrencyIcon={
-                CHAIN_INFO[
-                  chainID ?? SupportedChainId.RINKEBY
-                ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-                  ?.icon ?? '/images/dummy/Ethereum Icon.svg'
-              }
-            chainId={getSupportedChainIdFromSupportedNetwork(
-              grant.workspace.supportedNetworks[0],
-            )}
-            isGrantVerified={BigNumber.from(grant.funding).gt(0)}
-            onClick={() => {
-              if (!(accountData && accountData.address)) {
+              chainId={chainId}
+              isGrantVerified={isGrantVerified}
+              funding={funding}
+              onClick={() => {
+                if (!(accountData && accountData.address)) {
+                  router.push({
+                    pathname: '/connect_wallet',
+                    query: {
+                      flow: '/',
+                      grantId: grant.id,
+                      chainId,
+                    },
+                  });
+                  return;
+                }
                 router.push({
-                  pathname: '/connect_wallet',
+                  pathname: '/explore_grants/about_grant',
                   query: {
-                    flow: '/',
                     grantId: grant.id,
-                    chainId: getChainIdFromResponse(
-                      grant.workspace.supportedNetworks[0],
-                    ),
+                    chainId,
                   },
                 });
-                return;
-              }
-              router.push({
-                pathname: '/explore_grants/about_grant',
-                query: {
-                  grantId: grant.id,
-                  chainId: getChainIdFromResponse(
-                    grant.workspace.supportedNetworks[0],
-                  ),
-                },
-              });
-            }}
-          />
-        ))}
+              }}
+              onTitleClick={() => {
+                router.push({
+                  pathname: '/explore_grants/about_grant',
+                  query: {
+                    grantId: grant.id,
+                    chainId,
+                  },
+                });
+              }}
+            />
+          );
+        })}
     </Flex>
   );
 }
