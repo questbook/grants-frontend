@@ -2248,6 +2248,7 @@ export type GetAllGrantsForADaoQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
   workspaceId: Scalars['String'];
+  acceptingApplications: Scalars['Boolean'];
 }>;
 
 
@@ -2491,12 +2492,12 @@ export type GetAllGrantsCountForCreatorQueryHookResult = ReturnType<typeof useGe
 export type GetAllGrantsCountForCreatorLazyQueryHookResult = ReturnType<typeof useGetAllGrantsCountForCreatorLazyQuery>;
 export type GetAllGrantsCountForCreatorQueryResult = Apollo.QueryResult<GetAllGrantsCountForCreatorQuery, GetAllGrantsCountForCreatorQueryVariables>;
 export const GetAllGrantsForADaoDocument = gql`
-    query getAllGrantsForADao($first: Int, $skip: Int, $workspaceId: String!) {
+    query getAllGrantsForADao($first: Int, $skip: Int, $workspaceId: String!, $acceptingApplications: Boolean!) {
   grants(
     first: $first
     skip: $skip
     subgraphError: allow
-    where: {workspace: $workspaceId}
+    where: {workspace: $workspaceId, acceptingApplications: $acceptingApplications}
     orderBy: createdAtS
     orderDirection: desc
   ) {
@@ -2538,6 +2539,7 @@ export const GetAllGrantsForADaoDocument = gql`
  *      first: // value for 'first'
  *      skip: // value for 'skip'
  *      workspaceId: // value for 'workspaceId'
+ *      acceptingApplications: // value for 'acceptingApplications'
  *   },
  * });
  */

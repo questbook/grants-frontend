@@ -151,22 +151,19 @@ function YourGrants() {
   const initialiseFundModal = async (grant: any) => {
     setAddFundsIsOpen(true);
     setGrantForFunding(grant.id);
+    const chainInfo = CHAIN_INFO[
+      getSupportedChainIdFromSupportedNetwork(
+        grant.workspace.supportedNetworks[0],
+      )
+    ]?.supportedCurrencies[grant.reward.asset.toLowerCase()];
     setGrantRewardAsset({
       address: grant.reward.asset,
       committed: BigNumber.from(grant.reward.committed),
       label:
-        CHAIN_INFO[
-          getSupportedChainIdFromSupportedNetwork(
-            grant.workspace.supportedNetworks[0],
-          )
-        ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label
+        chainInfo?.label
         ?? 'LOL',
       icon:
-        CHAIN_INFO[
-          getSupportedChainIdFromSupportedNetwork(
-            grant.workspace.supportedNetworks[0],
-          )
-        ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.icon
+        chainInfo?.icon
         ?? '/images/dummy/Ethereum Icon.svg',
     });
   };
