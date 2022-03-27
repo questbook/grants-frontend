@@ -90,7 +90,7 @@ function AddFunds() {
             onClick={() => {
               setSelectedTab(tab.index);
               localStorage.setItem(
-                'yourGrantsTabSelected',
+                'fundsTabSelected',
                 tab.index.toString(),
               );
             }}
