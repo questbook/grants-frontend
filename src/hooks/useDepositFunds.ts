@@ -88,6 +88,8 @@ export default function useDepositFunds(
       if (getSupportedChainIdFromWorkspace(workspace) !== currentChainId) {
         throw new Error('connected to wrong network');
       }
+      if (finalAmount.isZero()) throw new Error('Amount entered should be more than 0!');
+      if (finalAmount.isNegative()) throw new Error('Amount entered cannot be negative!');
       if (
         !rewardContract
         || rewardContract.address
