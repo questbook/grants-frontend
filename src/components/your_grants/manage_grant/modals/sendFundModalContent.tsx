@@ -505,6 +505,7 @@ function ModalContent({
                 }}
                 isError={error}
                 errorText="Required"
+                type="number"
               />
             </Flex>
             <Flex direction="column" w="25%" mt="20px">
