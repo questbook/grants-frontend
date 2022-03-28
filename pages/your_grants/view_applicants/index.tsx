@@ -123,6 +123,10 @@ function ViewApplicants() {
   [boolean, number]
   >([acceptingApplications, 0]);
 
+  useEffect(() => {
+    setIsAcceptingApplications([acceptingApplications, 0]);
+  }, [acceptingApplications]);
+
   const [transactionData, txnLink, archiveGrantLoading, archiveGrantError] = useArchiveGrant(
     isAcceptingApplications[0],
     isAcceptingApplications[1],
@@ -158,6 +162,10 @@ function ViewApplicants() {
     setIsAcceptingApplications([acceptingApplications, 0]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [archiveGrantError]);
+
+  React.useEffect(() => {
+    console.log('Is Accepting Applications: ', isAcceptingApplications);
+  }, [isAcceptingApplications]);
 
   return (
     <Container maxW="100%" display="flex" px="70px">
@@ -233,20 +241,12 @@ function ViewApplicants() {
         <ChangeAccessibilityModalContent
           onClose={() => setIsModalOpen(false)}
           imagePath="/illustrations/publish_grant.svg"
-          title={
-            acceptingApplications
-              ? 'Are you sure you want to archive this grant?'
-              : 'Are you sure you want to publish this grant?'
-          }
-          subtitle={
-            acceptingApplications
-              ? 'The grant will no longer be visible to anyone. You will not receive any new applications for it.'
-              : 'The grant will be live, and applicants can apply for this grant.'
-          }
-          actionButtonText={
-            acceptingApplications ? 'Archive Grant' : 'Publish Grant'
-          }
+          title="Are you sure you want to publish this grant?"
+          subtitle="The grant will be live, and applicants can apply for this grant."
+          actionButtonText="Publish Grant"
           actionButtonOnClick={() => {
+            console.log('Doing it!');
+            console.log('Is Accepting Applications (Button click): ', isAcceptingApplications);
             setIsAcceptingApplications([
               !isAcceptingApplications[0],
               isAcceptingApplications[1] + 1,
