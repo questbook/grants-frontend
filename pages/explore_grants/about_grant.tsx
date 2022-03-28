@@ -13,6 +13,7 @@ import { getAssetInfo } from 'src/utils/tokenUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import VerifiedBadge from 'src/components/ui/verified_badge';
 import verify from 'src/utils/grantUtils';
+import SEO from 'src/components/ui/seo';
 import GrantDetails from '../../src/components/explore_grants/about_grant/grantDetails';
 import GrantRewards from '../../src/components/explore_grants/about_grant/grantRewards';
 import Sidebar from '../../src/components/explore_grants/about_grant/sidebar';
@@ -141,6 +142,10 @@ function AboutGrant() {
 
   return (
     <Container maxW="100%" display="flex" px="70px">
+      <SEO
+        title={title}
+        description={grantSummary}
+      />
       <Container
         flex={1}
         display="flex"

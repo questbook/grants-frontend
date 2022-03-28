@@ -14,7 +14,6 @@ import {
 } from 'wagmi';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import dynamic from 'next/dynamic';
-import Head from 'next/head';
 import {
   Configuration,
   ValidationApi,
@@ -22,6 +21,8 @@ import {
 import { MinimalWorkspace } from 'src/types';
 import { ALL_SUPPORTED_CHAIN_IDS } from 'src/constants/chains';
 import App from 'next/app';
+import { DefaultSeo } from 'next-seo';
+import getSeo from 'src/utils/seo';
 import theme from '../src/theme';
 import SubgraphClient from '../src/graphql/subgraph';
 
@@ -97,15 +98,14 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     [validatorApi, workspace, setWorkspace, clients],
   );
 
+  const seo = getSeo();
+
   const getLayout = Component.getLayout ?? ((page) => page);
   return (
     <Provider autoConnect connectors={connectors}>
       <ApiClientsContext.Provider value={apiClients}>
+        <DefaultSeo {...seo} />
         <ChakraProvider theme={theme}>
-          <Head>
-            <link rel="icon" href="/favicon.png" />
-            <link rel="icon" href="/favicon.svg" />
-          </Head>
           {getLayout(<Component {...pageProps} />)}
         </ChakraProvider>
       </ApiClientsContext.Provider>
