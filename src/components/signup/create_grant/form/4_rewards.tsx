@@ -1,13 +1,16 @@
 import {
   Flex, Text, Box, Button, Image, Link,
 } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import Loader from 'src/components/ui/loader';
 
 import { DefaultSupportedChainId } from 'src/constants/chains';
 import useChainId from 'src/hooks/utils/useChainId';
+import { useNetwork } from 'wagmi';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+import { ApiClientsContext } from 'pages/_app';
 import Datepicker from '../../../ui/forms/datepicker';
 import Dropdown from '../../../ui/forms/dropdown';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
@@ -18,8 +21,11 @@ interface Props {
 }
 
 function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
+  const apiClients = useContext(ApiClientsContext)!;
+  const { workspace } = apiClients;
   const [reward, setReward] = React.useState('');
   const [rewardError, setRewardError] = React.useState(false);
+  const [,switchNetwork] = useNetwork();
 
   const currentChain = useChainId() ?? DefaultSupportedChainId;
 
@@ -35,6 +41,14 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
   );
 
   useEffect(() => {
+    if (workspace && switchNetwork) {
+      const chainId = getSupportedChainIdFromWorkspace(workspace);
+      switchNetwork(chainId!);
+    }
+  }, [switchNetwork, workspace]);
+
+  useEffect(() => {
+    console.log(currentChain);
     if (currentChain) {
       const currencies = Object.keys(
         CHAIN_INFO[currentChain].supportedCurrencies,

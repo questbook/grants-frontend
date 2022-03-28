@@ -8,17 +8,23 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import { ApiClientsContext } from 'pages/_app';
 import React, {
-  ReactElement, useEffect, useRef, useState,
+  ReactElement, useContext, useEffect, useRef, useState,
 } from 'react';
 import InfoToast from 'src/components/ui/infoToast';
 import useCreateGrant from 'src/hooks/useCreateGrant';
 import useIntersection from 'src/hooks/utils/useIntersection';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+import { useNetwork } from 'wagmi';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/create_grant/form';
 import NavbarLayout from '../../src/layout/navbarLayout';
 
 function CreateGrant() {
+  const apiClients = useContext(ApiClientsContext)!;
+  const { workspace } = apiClients;
+  const [,switchNetwork] = useNetwork();
   const router = useRouter();
 
   const grantInfoRef = useRef(null);
@@ -67,6 +73,13 @@ function CreateGrant() {
 
   const [formData, setFormData] = useState<any>();
   const [transactionData, blockExplorerLink, loading] = useCreateGrant(formData);
+
+  useEffect(() => {
+    if (workspace && switchNetwork) {
+      const chainId = getSupportedChainIdFromWorkspace(workspace);
+      switchNetwork(chainId!);
+    }
+  }, [switchNetwork, workspace]);
 
   useEffect(() => {
     // console.log(transactionData);

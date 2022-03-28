@@ -3,6 +3,7 @@ import { SupportedChainId } from './chains';
 // @TODO: Polygon
 
 interface ChainInfo {
+  readonly id: number;
   readonly name: string;
   readonly nativeCurrency: {
     name: string
@@ -28,11 +29,13 @@ interface ChainInfo {
     }
   }
   readonly subgraphClientUrl: string;
+  readonly rpcUrls: string[];
 }
 
 export type ChainInfoMap = { readonly [chainId: number]: ChainInfo };
 export const CHAIN_INFO: ChainInfoMap = {
   [SupportedChainId.POLYGON_MAINNET]: {
+    id: SupportedChainId.POLYGON_MAINNET,
     name: 'Polygon Mainnet',
     nativeCurrency: {
       name: 'Matic Token',
@@ -95,5 +98,6 @@ export const CHAIN_INFO: ChainInfoMap = {
       },
     },
     subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-polygon',
+    rpcUrls: ['https://polygon-rpc.com/'],
   },
 };

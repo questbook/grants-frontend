@@ -470,6 +470,7 @@ function ManageGrant() {
           )}
         >
           <SendFundModalContent
+            isOpen={isSendFundModalOpen}
             milestones={milestones}
             rewardAsset={{
               address: applicationData.grant.reward.asset,
