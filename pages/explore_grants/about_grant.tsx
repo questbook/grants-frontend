@@ -91,7 +91,7 @@ function AboutGrant() {
 
     const chainInfo = CHAIN_INFO[chainId]
       ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];
-    const [localIsGrantVerified, localFunding] = verify(grantData?.funding, chainInfo.decimals);
+    const [localIsGrantVerified, localFunding] = verify(grantData?.funding, chainInfo?.decimals);
 
     setFunding(localFunding);
     setIsGrantVerified(localIsGrantVerified);

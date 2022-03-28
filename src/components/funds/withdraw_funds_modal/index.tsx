@@ -8,7 +8,7 @@ import {
   useToast,
   ToastId,
 } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { parseAmount, truncateStringFromMiddle } from 'src/utils/formattingUtils';
 import { BigNumber } from 'ethers';
 import InfoToast from 'src/components/ui/infoToast';
@@ -41,16 +41,19 @@ function WithdrawFunds({
   const [address, setAddress] = React.useState('');
   const [addressError, setAddressError] = React.useState(false);
   const toast = useToast();
+  const [submitClicked, setSubmitClicked] = useState(false);
 
   const [transactionHash, setTransactionHash] = React.useState('');
   const toastRef = React.useRef<ToastId>();
 
   const [finalAmount, setFinalAmount] = React.useState<string>();
   const [withdrawTransactionData, withdrawTxnLink, loading] = useWithdrawFunds(
+    setSubmitClicked,
     finalAmount,
     rewardAsset.address,
     grantAddress,
     address,
+    submitClicked,
   );
 
   const currentChainId = useChainId();
@@ -163,7 +166,10 @@ function WithdrawFunds({
               onClick={
                 loading
                   ? () => {}
-                  : () => setFinalAmount(parseAmount(funding.toString(), rewardAsset.address))
+                  : () => {
+                    setSubmitClicked(true);
+                    setFinalAmount(parseAmount(funding.toString(), rewardAsset.address));
+                  }
 }
               py={loading ? 2 : 0}
             >

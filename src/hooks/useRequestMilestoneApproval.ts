@@ -18,9 +18,10 @@ export default function useRequestMilestoneApproval(
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
+  const [incorrectNetwork, setIncorrectNetwork] = React.useState(false);
   const [transactionData, setTransactionData] = React.useState<any>();
   const [{ data: accountData }] = useAccount();
-  const [{ data: networkData }] = useNetwork();
+  const [{ data: networkData }, switchNetwork] = useNetwork();
 
   const apiClients = useContext(ApiClientsContext)!;
   const { validatorApi } = apiClients;
@@ -28,15 +29,28 @@ export default function useRequestMilestoneApproval(
   const applicationContract = useApplicationRegistryContract(chainId);
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
+  if (chainId) {
+    // eslint-disable-next-line no-param-reassign
+    chainId = parseInt(chainId as unknown as string, 10);
+  }
 
   useEffect(() => {
     if (data) {
       setError(undefined);
       setLoading(false);
+      setIncorrectNetwork(false);
     }
   }, [data]);
 
   useEffect(() => {
+    if (incorrectNetwork) {
+      setIncorrectNetwork(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [applicationContract]);
+
+  useEffect(() => {
+    if (incorrectNetwork) return;
     if (error) return;
     if (loading) return;
 
@@ -91,15 +105,24 @@ export default function useRequestMilestoneApproval(
         throw new Error('not connected to wallet');
       }
       if (!currentChainId) {
-        throw new Error('not connected to valid network');
+        if (switchNetwork && chainId) {
+          switchNetwork(chainId);
+        }
+        setIncorrectNetwork(true);
+        setLoading(false);
+        return;
       }
-      if (chainId != currentChainId) {
-        throw new Error('connected to wrong network');
+      if (chainId !== currentChainId) {
+        if (switchNetwork && chainId) {
+          switchNetwork(chainId);
+        }
+        setIncorrectNetwork(true);
+        setLoading(false);
+        return;
       }
       if (!validatorApi) {
         throw new Error('validatorApi or workspaceId is not defined');
       }
-      // console.log(5);
       if (
         !applicationContract
         || applicationContract.address
@@ -126,6 +149,7 @@ export default function useRequestMilestoneApproval(
         }),
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     error,
     loading,
@@ -140,6 +164,7 @@ export default function useRequestMilestoneApproval(
     applicationId,
     milestoneIndex,
     data,
+    incorrectNetwork,
   ]);
 
   return [

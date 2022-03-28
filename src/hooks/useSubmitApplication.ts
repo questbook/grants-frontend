@@ -1,7 +1,9 @@
 import React, { useContext, useEffect } from 'react';
 import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
-import { useAccount, useNetwork } from 'wagmi';
+import {
+  useAccount, useNetwork,
+} from 'wagmi';
 import { SupportedChainId } from 'src/constants/chains';
 import { GrantApplicationRequest } from '@questbook/service-validator-client';
 import getErrorMessage from 'src/utils/errorUtils';
@@ -19,9 +21,10 @@ export default function useSubmitApplication(
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
+  const [incorrectNetwork, setIncorrectNetwork] = React.useState(false);
   const [transactionData, setTransactionData] = React.useState<any>();
   const [{ data: accountData }] = useAccount();
-  const [{ data: networkData }] = useNetwork();
+  const [{ data: networkData }, switchNetwork] = useNetwork();
 
   const apiClients = useContext(ApiClientsContext)!;
   const { validatorApi } = apiClients;
@@ -35,10 +38,19 @@ export default function useSubmitApplication(
   useEffect(() => {
     if (data) {
       setError(undefined);
+      setIncorrectNetwork(false);
     }
   }, [data]);
 
   useEffect(() => {
+    if (incorrectNetwork) {
+      setIncorrectNetwork(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [applicationRegistryContract]);
+
+  useEffect(() => {
+    if (incorrectNetwork) return;
     if (error) return;
     if (loading) return;
     // console.log('calling createGrant');
@@ -47,7 +59,9 @@ export default function useSubmitApplication(
       setLoading(true);
       // console.log('calling validate');
       try {
-        const detailsHash = (await uploadToIPFS(data.fields.projectDetails[0].value)).hash;
+        const detailsHash = (
+          await uploadToIPFS(data.fields.projectDetails[0].value)
+        ).hash;
         // eslint-disable-next-line no-param-reassign
         data.fields.projectDetails[0].value = detailsHash;
         console.log('Details hash: ', detailsHash);
@@ -94,10 +108,16 @@ export default function useSubmitApplication(
         throw new Error('not connected to wallet');
       }
       if (!currentChainId) {
-        throw new Error('not connected to valid network');
+        if (switchNetwork && chainId) { switchNetwork(chainId); }
+        setIncorrectNetwork(true);
+        setLoading(false);
+        return;
       }
-      if (currentChainId !== chainId) {
-        throw new Error('connected to wrong network');
+      if (chainId !== currentChainId) {
+        if (switchNetwork && chainId) { switchNetwork(chainId); }
+        setIncorrectNetwork(true);
+        setLoading(false);
+        return;
       }
       if (!validatorApi) {
         throw new Error('validatorApi or workspaceId is not defined');
@@ -128,6 +148,7 @@ export default function useSubmitApplication(
         }),
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     error,
     loading,
@@ -142,13 +163,13 @@ export default function useSubmitApplication(
     data,
     grantId,
     workspaceId,
+    incorrectNetwork,
   ]);
 
   return [
     transactionData,
     chainId
-      ? `${CHAIN_INFO[chainId]
-        .explorer.transactionHash}${transactionData?.transactionHash}`
+      ? `${CHAIN_INFO[chainId].explorer.transactionHash}${transactionData?.transactionHash}`
       : '',
     loading,
     error,
