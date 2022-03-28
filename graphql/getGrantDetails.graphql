@@ -21,5 +21,6 @@ query getGrantDetails($grantID: ID!) {
         }, 
         deadline,
         funding,
+        acceptingApplications,
     }
 }
