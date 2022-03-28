@@ -17,11 +17,13 @@ import {
   ToastId,
 } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
-import React, { useEffect, useState } from 'react';
-import { useContract, useSigner } from 'wagmi';
+import React, { useContext, useEffect, useState } from 'react';
+import { useContract, useNetwork, useSigner } from 'wagmi';
 import Loader from 'src/components/ui/loader';
 import useDisburseReward from 'src/hooks/useDisburseReward';
 import useDisburseP2PReward from 'src/hooks/useDisburseP2PReward';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+import { ApiClientsContext } from 'pages/_app';
 import InfoToast from '../../../ui/infoToast';
 import { formatAmount, parseAmount } from '../../../../utils/formattingUtils';
 import Dropdown from '../../../ui/forms/dropdown';
@@ -29,6 +31,7 @@ import SingleLineInput from '../../../ui/forms/singleLineInput';
 import ERC20ABI from '../../../../contracts/abi/ERC20.json';
 
 interface Props {
+  isOpen: boolean;
   onClose: () => void;
   rewardAsset: {
     address: string;
@@ -43,6 +46,7 @@ interface Props {
 }
 
 function ModalContent({
+  isOpen,
   onClose,
   rewardAsset,
   contractFunding,
@@ -50,16 +54,21 @@ function ModalContent({
   applicationId,
   grantId,
 }: Props) {
+  const apiClients = useContext(ApiClientsContext)!;
+  const { workspace } = apiClients;
   const [checkedItems, setCheckedItems] = React.useState([true, false]);
   const [chosen, setChosen] = React.useState(-1);
   const [selectedMilestone, setSelectedMilestone] = React.useState(-1);
   const [funding, setFunding] = React.useState('');
   const [error, setError] = React.useState(false);
   const [rewardAssetDecimals, setRewardAssetDecimals] = React.useState(0);
+  const [submitClicked, setSubmitClicked] = useState(false);
+  const [submitClickedP2P, setSubmitClickedP2P] = useState(false);
 
   const [walletBalance, setWalletBalance] = React.useState(0);
   // const toast = useToast();
   const [signerStates] = useSigner();
+  const [,switchNetwork] = useNetwork();
   const rewardAssetContract = useContract({
     addressOrName:
       rewardAsset.address ?? '0x0000000000000000000000000000000000000000',
@@ -79,7 +88,16 @@ function ModalContent({
       ? undefined
       : milestones[selectedMilestone].id.split('.')[1],
     rewardAsset.address,
+    submitClicked,
+    setSubmitClicked,
   );
+
+  useEffect(() => {
+    if (workspace && switchNetwork && isOpen) {
+      const chainId = getSupportedChainIdFromWorkspace(workspace);
+      switchNetwork(chainId!);
+    }
+  }, [isOpen, switchNetwork, workspace]);
 
   useEffect(() => {
     // console.log(depositTransactionData);
@@ -117,6 +135,7 @@ function ModalContent({
     }
 
     if (hasError) return;
+    setSubmitClicked(true);
     setDisburseAmount(parseAmount(funding, rewardAsset.address));
   };
 
@@ -134,6 +153,8 @@ function ModalContent({
       ? undefined
       : milestones[selectedMilestone].id.split('.')[1],
     rewardAsset.address,
+    submitClickedP2P,
+    setSubmitClickedP2P,
   );
 
   useEffect(() => {
@@ -172,6 +193,7 @@ function ModalContent({
     }
 
     if (hasError) return;
+    setSubmitClickedP2P(true);
     setDisburseP2PAmount(parseAmount(funding, rewardAsset.address));
   };
 
@@ -279,7 +301,11 @@ function ModalContent({
             variant="primary"
             w="100%"
             my={8}
-            onClick={() => (checkedItems[0] ? setChosen(0) : setChosen(1))}
+            onClick={() => {
+              setDisburseAmount(undefined);
+              setDisburseP2PAmount(undefined);
+              if (checkedItems[0]) setChosen(0); else setChosen(1);
+            }}
           >
             Continue
           </Button>
@@ -505,6 +531,7 @@ function ModalContent({
                 }}
                 isError={error}
                 errorText="Required"
+                type="number"
               />
             </Flex>
             <Flex direction="column" w="25%" mt="20px">

@@ -107,13 +107,9 @@ function AboutGrant() {
   useEffect(() => {
     if (!chainId || !grantData) return;
 
-    const chainInfo = CHAIN_INFO[chainId]?.supportedCurrencies[
-      grantData?.reward.asset.toLowerCase()
-    ];
-    const [localIsGrantVerified, localFunding] = verify(
-      grantData?.funding,
-      chainInfo.decimals,
-    );
+    const chainInfo = CHAIN_INFO[chainId]
+      ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];
+    const [localIsGrantVerified, localFunding] = verify(grantData?.funding, chainInfo?.decimals);
 
     setFunding(localFunding);
     setIsGrantVerified(localIsGrantVerified);

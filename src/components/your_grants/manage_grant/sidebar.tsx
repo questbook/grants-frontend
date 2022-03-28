@@ -167,6 +167,7 @@ function Sidebar({
           )}
         >
           <SendFundModalContent
+            isOpen={isSendFundModalOpen}
             milestones={milestones}
             rewardAsset={{
               address: grant.reward.asset,
