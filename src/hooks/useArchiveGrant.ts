@@ -33,7 +33,6 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
     if (changeCount === 0) return;
     if (error) return;
     if (loading) return;
-    // console.log('calling editGrant');
 
     async function validate() {
       setLoading(true);

@@ -164,6 +164,10 @@ function AboutGrant() {
   [boolean, number]
   >([acceptingApplications, 0]);
 
+  useEffect(() => {
+    setIsAcceptingApplications([acceptingApplications, 0]);
+  }, [acceptingApplications]);
+
   const [transactionData, txnLink, archiveGrantLoading, archiveGrantError] = useArchiveGrant(
     isAcceptingApplications[0],
     isAcceptingApplications[1],

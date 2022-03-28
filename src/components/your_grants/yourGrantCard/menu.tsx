@@ -107,8 +107,8 @@ function YourGrantMenu({
               <Image
                 mr={18}
                 display="inline-block"
-                h={4}
-                w={4}
+                h="20px"
+                w="20px"
                 src={item.iconPath}
               />
               {item.text}
