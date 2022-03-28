@@ -374,11 +374,10 @@ function AddFunds({
               variant="primary"
               my={8}
               py={loading ? 2 : 0}
-              onClick={() => (loading
-                ? {}
-                : setFinalAmount(
-                  ethers.utils.parseUnits(funding, rewardAssetDecimals),
-                ))}
+              onClick={loading ? () => {} : () => {
+                if (funding === '') { setError(true); return; }
+                setFinalAmount(ethers.utils.parseUnits(funding, rewardAssetDecimals));
+              }}
             >
               {loading ? <Loader /> : 'Deposit'}
             </Button>

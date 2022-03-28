@@ -1,4 +1,6 @@
-import { Container } from '@chakra-ui/react';
+import {
+  Container, ToastId, useToast, Flex, Image, Text, Box, Button,
+} from '@chakra-ui/react';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import React, {
@@ -10,6 +12,11 @@ import { DefaultSupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { getAssetInfo } from 'src/utils/tokenUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { useAccount } from 'wagmi';
+import InfoToast from 'src/components/ui/infoToast';
+import Modal from 'src/components/ui/modal';
+import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent';
+import useArchiveGrant from 'src/hooks/useArchiveGrant';
 import { formatAmount } from '../../../src/utils/formattingUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Table from '../../../src/components/your_grants/view_applicants/table';
@@ -20,7 +27,15 @@ const PAGE_SIZE = 500;
 
 function ViewApplicants() {
   const [applicantsData, setApplicantsData] = useState<any>([]);
-  const [grantID, setGrantID] = useState<any>('');
+  const [daoId, setDaoId] = useState('');
+  const [grantID, setGrantID] = useState<any>(null);
+  const [acceptingApplications, setAcceptingApplications] = useState(true);
+  const [shouldShowButton, setShouldShowButton] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [{ data: accountData }] = useAccount({
+    fetchEns: false,
+  });
   const router = useRouter();
   const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
 
@@ -94,9 +109,63 @@ function ViewApplicants() {
         };
       });
       setApplicantsData(fetchedApplicantsData);
+      setDaoId(data.grantApplications[0].grant.workspace.id);
+      setAcceptingApplications(data.grantApplications[0].grant.acceptingApplications);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error, loading]);
+
+  useEffect(() => {
+    setShouldShowButton(daoId === workspace?.id);
+  }, [workspace, accountData, daoId]);
+
+  const [isAcceptingApplications, setIsAcceptingApplications] = React.useState<
+  [boolean, number]
+  >([acceptingApplications, 0]);
+
+  useEffect(() => {
+    setIsAcceptingApplications([acceptingApplications, 0]);
+  }, [acceptingApplications]);
+
+  const [transactionData, txnLink, archiveGrantLoading, archiveGrantError] = useArchiveGrant(
+    isAcceptingApplications[0],
+    isAcceptingApplications[1],
+    grantID,
+  );
+
+  const toastRef = React.useRef<ToastId>();
+  const toast = useToast();
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    // console.log(transactionData);
+    if (transactionData) {
+      toastRef.current = toast({
+        position: 'top',
+        render: () => (
+          <InfoToast
+            link={txnLink}
+            close={() => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            }}
+          />
+        ),
+      });
+      setIsModalOpen(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toast, transactionData]);
+
+  React.useEffect(() => {
+    setIsAcceptingApplications([acceptingApplications, 0]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [archiveGrantError]);
+
+  React.useEffect(() => {
+    console.log('Is Accepting Applications: ', isAcceptingApplications);
+  }, [isAcceptingApplications]);
 
   return (
     <Container maxW="100%" display="flex" px="70px">
@@ -110,6 +179,7 @@ function ViewApplicants() {
         px={10}
       >
         <Breadcrumbs path={['My Grants', 'View Applicants']} />
+
         <Table
           title={applicantsData[0]?.grantTitle ?? 'Grant Title'}
           data={applicantsData}
@@ -120,18 +190,6 @@ function ViewApplicants() {
               applicationId: commentData.applicationId,
             },
           })}
-          // onAcceptApplicationClick={() => router.push({
-          //   pathname: '/your_grants/view_applicants/applicant_form/',
-          //   query: {
-          //     flow: 'approved',
-          //   },
-          // })}
-          // onRejectApplicationClick={() => router.push({
-          //   pathname: '/your_grants/view_applicants/applicant_form/',
-          //   query: {
-          //     flow: 'rejected',
-          //   },
-          // })}
           // eslint-disable-next-line @typescript-eslint/no-shadow
           onManageApplicationClick={(data: any) => router.push({
             pathname: '/your_grants/view_applicants/manage/',
@@ -139,8 +197,64 @@ function ViewApplicants() {
               applicationId: data.applicationId,
             },
           })}
+          archiveGrantComponent={!acceptingApplications && (
+            <Flex
+              maxW="100%"
+              bg="#F3F4F4"
+              direction="row"
+              align="center"
+              px={8}
+              py={6}
+              mt={6}
+              border="1px solid #E8E9E9"
+              borderRadius="6px"
+            >
+              <Image src="/toast/warning.svg" w="42px" h="36px" />
+              <Flex direction="column" ml={6}>
+                <Text variant="tableHeader" color="#414E50">
+                  {shouldShowButton && accountData?.address ? 'Grant is unpublished and not live on the Discover Grants section' : 'Grant is archived and closed for new applications.'}
+                </Text>
+                <Text variant="tableBody" color="#717A7C" fontWeight="400" mt={2}>
+                  New applicants are restricted to apply for the grant.
+                </Text>
+              </Flex>
+              <Box mr="auto" />
+              {accountData?.address && shouldShowButton && (
+                <Button
+                  ref={buttonRef}
+                  w={archiveGrantLoading ? buttonRef?.current?.offsetWidth : 'auto'}
+                  variant="primary"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  Unhide Grant
+                </Button>
+              )}
+            </Flex>
+          )}
         />
       </Container>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title=""
+      >
+        <ChangeAccessibilityModalContent
+          onClose={() => setIsModalOpen(false)}
+          imagePath="/illustrations/publish_grant.svg"
+          title="Are you sure you want to publish this grant?"
+          subtitle="The grant will be live, and applicants can apply for this grant."
+          actionButtonText="Publish Grant"
+          actionButtonOnClick={() => {
+            console.log('Doing it!');
+            console.log('Is Accepting Applications (Button click): ', isAcceptingApplications);
+            setIsAcceptingApplications([
+              !isAcceptingApplications[0],
+              isAcceptingApplications[1] + 1,
+            ]);
+          }}
+          loading={archiveGrantLoading}
+        />
+      </Modal>
     </Container>
   );
 }

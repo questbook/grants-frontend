@@ -3,67 +3,45 @@ import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import { useAccount, useNetwork } from 'wagmi';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
-import { BigNumber } from 'ethers';
 import getErrorMessage from 'src/utils/errorUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
-import useERC20Contract from './contracts/useERC20Contract';
+import useGrantContract from './contracts/useGrantContract';
 
-export default function useDepositFunds(
-  finalAmount?: BigNumber,
-  rewardAddress?: string,
-  grantAddress?: string,
-) {
+export default function useArchiveGrant(newState: boolean, changeCount: number, grantId?: string) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
-  const [incorrectNetwork, setIncorrectNetwork] = React.useState(false);
   const [transactionData, setTransactionData] = React.useState<any>();
   const [{ data: accountData }] = useAccount();
-  const [{ data: networkData }, switchNetwork] = useNetwork();
+  const [{ data: networkData }] = useNetwork();
 
   const apiClients = useContext(ApiClientsContext)!;
-  const { workspace } = apiClients;
-  const rewardContract = useERC20Contract(rewardAddress);
+  const { validatorApi, workspace } = apiClients;
+  const grantContract = useGrantContract(grantId);
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
   const currentChainId = useChainId();
-  const chainId = getSupportedChainIdFromWorkspace(workspace);
 
   useEffect(() => {
-    if (finalAmount) {
+    if (newState) {
       setError(undefined);
-      setIncorrectNetwork(false);
-    } else if (transactionData) {
-      setTransactionData(undefined);
-      setIncorrectNetwork(false);
     }
-  }, [finalAmount, transactionData]);
+  }, [newState]);
 
   useEffect(() => {
-    if (incorrectNetwork) {
-      setIncorrectNetwork(false);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rewardContract]);
-
-  useEffect(() => {
-    if (incorrectNetwork) return;
+    if (changeCount === 0) return;
     if (error) return;
     if (loading) return;
-    // console.log('calling createGrant');
 
     async function validate() {
       setLoading(true);
-      // console.log('calling validate');
-      try {
-        const transferTxn = await rewardContract.transfer(
-          grantAddress,
-          finalAmount,
-        );
-        const depositTransactionData = await transferTxn.wait();
 
-        setTransactionData(depositTransactionData);
+      try {
+        const archiveGrantTransaction = await grantContract.updateGrantAccessibility(newState);
+        const archiveGrantTransactionData = await archiveGrantTransaction.wait();
+
+        setTransactionData(archiveGrantTransactionData);
         setLoading(false);
       } catch (e: any) {
         const message = getErrorMessage(e);
@@ -83,35 +61,28 @@ export default function useDepositFunds(
       }
     }
     try {
-      if (!finalAmount) return;
-      if (!grantAddress) return;
       if (transactionData) return;
       if (!accountData || !accountData.address) {
         throw new Error('not connected to wallet');
       }
+      if (!currentChainId) {
+        throw new Error('not connected to valid network');
+      }
       if (!workspace) {
         throw new Error('not connected to workspace');
       }
-      if (!currentChainId) {
-        if (switchNetwork && chainId) { switchNetwork(chainId); }
-        setIncorrectNetwork(true);
-        setLoading(false);
-        return;
+      if (getSupportedChainIdFromWorkspace(workspace) !== currentChainId) {
+        throw new Error('connected to wrong network');
       }
-      if (chainId !== currentChainId) {
-        if (switchNetwork && chainId) { switchNetwork(chainId); }
-        setIncorrectNetwork(true);
-        setLoading(false);
-        return;
+      if (!validatorApi) {
+        throw new Error('validatorApi or workspaceId is not defined');
       }
-      if (finalAmount.isZero()) throw new Error('Amount entered should be more than 0!');
-      if (finalAmount.isNegative()) throw new Error('Amount entered cannot be negative!');
       if (
-        !rewardContract
-        || rewardContract.address
+        !grantContract
+        || grantContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !rewardContract.signer
-        || !rewardContract.provider
+        || !grantContract.signer
+        || !grantContract.provider
       ) {
         return;
       }
@@ -132,29 +103,27 @@ export default function useDepositFunds(
         }),
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     error,
     loading,
     toast,
     transactionData,
-    rewardContract,
+    grantContract,
+    validatorApi,
     workspace,
     accountData,
     networkData,
     currentChainId,
-    grantAddress,
-    finalAmount,
-    chainId,
-    incorrectNetwork,
+    newState,
+    changeCount,
   ]);
 
   return [
     transactionData,
     currentChainId
-      ? `${CHAIN_INFO[currentChainId]
-        .explorer.transactionHash}${transactionData?.transactionHash}`
+      ? `${CHAIN_INFO[currentChainId].explorer.transactionHash}${transactionData?.transactionHash}`
       : '',
     loading,
+    error,
   ];
 }

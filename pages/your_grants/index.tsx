@@ -1,6 +1,4 @@
-import {
-  Flex, Button,
-} from '@chakra-ui/react';
+import { Flex, Button } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
   ReactElement,
@@ -16,10 +14,14 @@ import Empty from 'src/components/ui/empty';
 import Sidebar from 'src/components/your_grants/sidebar/sidebar';
 import {
   GetAllGrantsForCreatorQuery,
+  useGetAllGrantsCountForCreatorQuery,
   useGetAllGrantsForCreatorQuery,
 } from 'src/generated/graphql';
 import { DefaultSupportedChainId } from 'src/constants/chains';
-import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+import {
+  getSupportedChainIdFromSupportedNetwork,
+  getSupportedChainIdFromWorkspace,
+} from 'src/utils/validationUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import AddFunds from '../../src/components/funds/add_funds_modal';
@@ -51,6 +53,56 @@ function YourGrants() {
       ].client,
   });
 
+  const [countQueryParams, setCountQueryParams] = useState<any>({
+    client:
+      subgraphClients[
+        getSupportedChainIdFromWorkspace(workspace) ?? DefaultSupportedChainId
+      ].client,
+  });
+
+  const tabs = [
+    { index: 0, acceptingApplications: true, label: 'Live Grants' },
+    { index: 1, acceptingApplications: false, label: 'Archived' },
+  ];
+  const [selectedTab, setSelectedTab] = useState(
+    parseInt(localStorage.getItem('yourGrantsTabSelected') ?? '0', 10),
+  );
+
+  const [grantCount, setGrantCount] = useState([true, true]);
+
+  useEffect(() => {
+    if (!workspace) return;
+    if (!accountData) return;
+
+    setCountQueryParams({
+      client:
+        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+      variables: {
+        first: PAGE_SIZE,
+        skip: PAGE_SIZE * currentPage,
+        workspaceId: workspace?.id,
+      },
+      fetchPolicy: 'network-only',
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, workspace, accountData?.address]);
+
+  const {
+    data: allGrantsCountData,
+    error: allGrantsCountError,
+    loading: allGrantsCountLoading,
+  } = useGetAllGrantsCountForCreatorQuery(countQueryParams);
+
+  useEffect(() => {
+    if (allGrantsCountData) {
+      setGrantCount([
+        allGrantsCountData.liveGrants.length > 0,
+        allGrantsCountData.archived.length > 0,
+      ]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allGrantsCountData, allGrantsCountError, allGrantsCountLoading]);
+
   useEffect(() => {
     if (!workspace) return;
     if (!accountData) return;
@@ -61,34 +113,35 @@ function YourGrants() {
       variables: {
         first: PAGE_SIZE,
         skip: PAGE_SIZE * currentPage,
-        // creatorId: accountData?.address,
         workspaceId: workspace?.id,
+        acceptingApplications: tabs[selectedTab].acceptingApplications,
       },
       fetchPolicy: 'network-only',
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, workspace, accountData?.address]);
+  }, [currentPage, workspace, accountData?.address, selectedTab]);
 
   const { data, error, loading } = useGetAllGrantsForCreatorQuery(queryParams);
   useEffect(() => {
     if (!workspace) return;
     setGrants([]);
     setCurrentPage(0);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workspace]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspace, selectedTab]);
 
   useEffect(() => {
     if (data && data.grants && data.grants.length > 0) {
-      if (grants.length > 0
-          && grants[0].workspace.id === data.grants[0].workspace.id
-          && grants[0].id !== data.grants[0].id
+      if (
+        grants.length > 0
+        && grants[0].workspace.id === data.grants[0].workspace.id
+        && grants[0].id !== data.grants[0].id
       ) {
         setGrants([...grants, ...data.grants]);
       } else {
         setGrants(data.grants);
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error, loading]);
 
   const [addFundsIsOpen, setAddFundsIsOpen] = React.useState(false);
@@ -98,21 +151,19 @@ function YourGrants() {
   const initialiseFundModal = async (grant: any) => {
     setAddFundsIsOpen(true);
     setGrantForFunding(grant.id);
+    const chainInfo = CHAIN_INFO[
+      getSupportedChainIdFromSupportedNetwork(
+        grant.workspace.supportedNetworks[0],
+      )
+    ]?.supportedCurrencies[grant.reward.asset.toLowerCase()];
     setGrantRewardAsset({
       address: grant.reward.asset,
       committed: BigNumber.from(grant.reward.committed),
       label:
-        CHAIN_INFO[
-          getSupportedChainIdFromSupportedNetwork(
-            grant.workspace.supportedNetworks[0],
-          )
-        ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label ?? 'LOL',
+        chainInfo?.label
+        ?? 'LOL',
       icon:
-        CHAIN_INFO[
-          getSupportedChainIdFromSupportedNetwork(
-            grant.workspace.supportedNetworks[0],
-          )
-        ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.icon
+        chainInfo?.icon
         ?? '/images/dummy/Ethereum Icon.svg',
     });
   };
@@ -145,7 +196,35 @@ function YourGrants() {
       <Flex ref={containerRef} direction="row" justify="center">
         <Flex direction="column" w="55%" alignItems="stretch" pb={8} px={10}>
           <Heading title="Your grants" />
-
+          <Flex direction="row" mt={4} mb={4}>
+            {tabs.map((tab) => grantCount[tab.index] && (
+              <Button
+                padding="8px 24px"
+                borderRadius="52px"
+                minH="40px"
+                bg={selectedTab === tab.index ? 'brand.500' : 'white'}
+                color={selectedTab === tab.index ? 'white' : 'black'}
+                onClick={() => {
+                  setSelectedTab(tab.index);
+                  localStorage.setItem(
+                    'yourGrantsTabSelected',
+                    tab.index.toString(),
+                  );
+                }}
+                _hover={{}}
+                fontWeight="700"
+                fontSize="16px"
+                lineHeight="24px"
+                mr={3}
+                border={
+                  selectedTab === tab.index ? 'none' : '1px solid #A0A7A7'
+                }
+                key={tab.index}
+              >
+                {tab.label}
+              </Button>
+            ))}
+          </Flex>
           {grants.length > 0
             && grants.map((grant: any) => (
               <YourGrantCard
@@ -166,20 +245,21 @@ function YourGrants() {
                     ?.decimals ?? 18,
                 )}
                 grantCurrency={
-                    CHAIN_INFO[
-                      getSupportedChainIdFromSupportedNetwork(
-                        grant.workspace.supportedNetworks[0],
-                      )
-                    ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label ?? 'LOL'
-                  }
+                  CHAIN_INFO[
+                    getSupportedChainIdFromSupportedNetwork(
+                      grant.workspace.supportedNetworks[0],
+                    )
+                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+                    ?.label ?? 'LOL'
+                }
                 grantCurrencyIcon={
-                    CHAIN_INFO[
-                      getSupportedChainIdFromSupportedNetwork(
-                        grant.workspace.supportedNetworks[0],
-                      )
-                    ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.icon
-                    ?? '/images/dummy/Ethereum Icon.svg'
-                  }
+                  CHAIN_INFO[
+                    getSupportedChainIdFromSupportedNetwork(
+                      grant.workspace.supportedNetworks[0],
+                    )
+                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+                    ?.icon ?? '/images/dummy/Ethereum Icon.svg'
+                }
                 state="done"
                 chainId={getSupportedChainIdFromSupportedNetwork(
                   grant.workspace.supportedNetworks[0],
@@ -197,6 +277,7 @@ function YourGrants() {
                     grantId: grant.id,
                   },
                 })}
+                acceptingApplications={grant.acceptingApplications}
               />
             ))}
 
@@ -248,7 +329,7 @@ function YourGrants() {
           )}
         </Flex>
         <Flex w="26%" pos="sticky" minH="calc(100vh - 80px)">
-          <Sidebar showCreateGrantItem={grants.length === 0} />
+          <Sidebar showCreateGrantItem={!grantCount[0] && !grantCount[1]} />
         </Flex>
       </Flex>
       {grantForFunding && grantRewardAsset && (

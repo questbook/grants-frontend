@@ -11,9 +11,12 @@ interface Props {
   grantRequiredFields: any[];
   grantID: string;
   chainId: SupportedChainId | undefined;
+  acceptingApplications: boolean;
 }
 
-function Sidebar({ grantRequiredFields, grantID, chainId }: Props) {
+function Sidebar({
+  grantRequiredFields, grantID, chainId, acceptingApplications,
+}: Props) {
   const router = useRouter();
   return (
     <Box my="71px">
@@ -36,6 +39,7 @@ function Sidebar({ grantRequiredFields, grantID, chainId }: Props) {
             </Text>
           ))}
         </VStack>
+        {acceptingApplications && (
         <Button
           onClick={() => router.push({
             pathname: '/explore_grants/apply',
@@ -50,6 +54,8 @@ function Sidebar({ grantRequiredFields, grantID, chainId }: Props) {
         >
           Apply for Grant
         </Button>
+        )}
+        {acceptingApplications && (
         <Text
           mt={2}
           color="#717A7C"
@@ -62,6 +68,7 @@ function Sidebar({ grantRequiredFields, grantID, chainId }: Props) {
           Before applying, please ensure you read the grant details, and understand every details
           around it.
         </Text>
+        )}
       </FloatingSidebar>
     </Box>
   );
