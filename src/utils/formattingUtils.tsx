@@ -128,7 +128,7 @@ export function highlightWordsInString(
   const formatted = string.replace(regex, (match) => `<span>${match}<span>`);
   return formatted.split('<span>').map((word, index) => {
     if (index % 2) {
-      return <span style={{ color, fontWeight: '700' }}>{word}</span>;
+      return <span style={{ color, fontWeight: 700 }}>{word}</span>;
     }
     return word;
   });
