@@ -17,7 +17,6 @@ interface Props {
   onArchiveGrantClick: () => void;
   isArchived: boolean;
   numOfApplicants: number;
-  onAddFundsClick: (() => void) | undefined;
   onViewApplicantsClick: (() => void) | undefined;
   onEditClick: (() => void) | undefined;
 }
@@ -34,7 +33,6 @@ function YourGrantMenu({
   onArchiveGrantClick,
   isArchived,
   numOfApplicants,
-  onAddFundsClick,
   onViewApplicantsClick,
   onEditClick,
 }: Props) {
@@ -43,7 +41,7 @@ function YourGrantMenu({
   const defaultItems: MenuItemProps[] = [
     {
       iconPath: '/ui_icons/share_brand.svg',
-      text: copied ? 'Link Copied!' : 'Share',
+      text: copied ? 'Link Copied!' : 'Share grant link',
       onClick: () => {
         const href = window.location.href.split('/');
         const protocol = href[0];
@@ -58,12 +56,7 @@ function YourGrantMenu({
   const archivedItems: MenuItemProps[] = [
     {
       iconPath: '/ui_icons/view_applicants.svg',
-      text: 'Add Funds',
-      onClick: () => onAddFundsClick && onAddFundsClick(),
-    },
-    {
-      iconPath: '/ui_icons/view_applicants.svg',
-      text: numOfApplicants > 0 ? 'View Applicants' : 'Edit Grant',
+      text: numOfApplicants > 0 ? 'View applicants' : 'Edit grant',
       onClick: () => (numOfApplicants > 0
         ? onViewApplicantsClick && onViewApplicantsClick()
         : onEditClick && onEditClick()),
@@ -71,7 +64,7 @@ function YourGrantMenu({
   ];
   const nonArchivedItems: MenuItemProps[] = [{
     iconPath: '/ui_icons/archive_grant.svg',
-    text: 'Archive',
+    text: 'Archive grant',
     onClick: () => onArchiveGrantClick && onArchiveGrantClick(),
   }];
 

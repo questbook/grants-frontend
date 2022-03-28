@@ -148,7 +148,6 @@ function YourGrantCard({
                 }}
                 isArchived={!acceptingApplications}
                 numOfApplicants={numOfApplicants}
-                onAddFundsClick={onAddFundsClick}
                 onViewApplicantsClick={onViewApplicantsClick}
                 onEditClick={onEditClick}
               />
@@ -179,7 +178,7 @@ function YourGrantCard({
                     }
                   }}
                 >
-                  {numOfApplicants > 0 ? 'View Applicants' : 'Edit Grant'}
+                  {numOfApplicants > 0 ? 'View applicants' : 'Edit grant'}
                 </Button>
               )}
               {!acceptingApplications && (
@@ -193,7 +192,7 @@ function YourGrantCard({
                   ref={buttonRef}
                   w={loading ? buttonRef.current?.offsetWidth : 'auto'}
                 >
-                  Publish Grant
+                  Publish grant
                 </Button>
               )}
             </Flex>
