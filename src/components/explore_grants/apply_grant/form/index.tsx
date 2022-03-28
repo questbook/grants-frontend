@@ -295,10 +295,10 @@ function Form({
         <Image src="/toast/warning.svg" w="42px" h="36px" />
         <Flex direction="column" ml={6}>
           <Text variant="tableHeader" color="#414E50">
-            {shouldShowButton && accountData?.address ? 'Grant is unpublished and not live on the Discover Grants section' : 'Grant is archived and closed for new applications.'}
+            {shouldShowButton && accountData?.address ? 'Grant is archived and cannot be discovered on the Home page.' : 'Grant is archived and closed for new applications.'}
           </Text>
           <Text variant="tableBody" color="#717A7C" fontWeight="400" mt={2}>
-            New applicants are restricted to apply for the grant.
+            New applicants cannot apply to an archived grant.
           </Text>
         </Flex>
       </Flex>
