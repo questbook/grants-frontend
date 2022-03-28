@@ -7,7 +7,6 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { NextPage } from 'next';
 import 'draft-js/dist/Draft.css';
 import {
-  Chain,
   chain,
   Connector,
   defaultChains,
@@ -23,7 +22,7 @@ import {
   ValidationApi,
 } from '@questbook/service-validator-client';
 import { MinimalWorkspace } from 'src/types';
-import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from 'src/constants/chains';
+import { ALL_SUPPORTED_CHAIN_IDS } from 'src/constants/chains';
 import App from 'next/app';
 import { providers } from 'ethers';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
@@ -46,8 +45,12 @@ const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
 // );
 
 // Pick chains
-const chains = [...defaultChains, ...defaultL2Chains,
-  CHAIN_INFO[SupportedChainId.HARMONY_TESTNET_S0] as Chain];
+// not req for production
+
+// const chains = [...defaultChains, ...defaultL2Chains,
+//   CHAIN_INFO[SupportedChainId.HARMONY_TESTNET_S0] as Chain];
+const chains = [...defaultChains, ...defaultL2Chains];
+
 const defaultChain = chain.polygonMainnet;
 // Set up connectors
 const connectors = () => [
