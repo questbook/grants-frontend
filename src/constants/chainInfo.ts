@@ -232,6 +232,12 @@ export const CHAIN_INFO: ChainInfoMap = {
         address: '0xd6df932a45c0f255f85145f286ea0b292b21c90b',
         decimals: 18,
       },
+      '0x282d8efce846a88b159800bd4130ad77443fa1a1': {
+        icon: '/ui_icons/brand/currency/ocean_symbol.svg',
+        label: 'OCEAN',
+        address: '0x282d8efce846a88b159800bd4130ad77443fa1a1',
+        decimals: 18,
+      },
     },
     subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-polygon',
     rpcUrls: ['https://polygon-rpc.com/'],
