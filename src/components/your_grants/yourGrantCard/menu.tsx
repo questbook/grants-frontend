@@ -23,6 +23,8 @@ interface Props {
 
 interface MenuItemProps {
   iconPath: string;
+  iconWidth?: string | number;
+  iconHeight?: string | number;
   text: string;
   onClick: () => void;
 }
@@ -41,6 +43,8 @@ function YourGrantMenu({
   const defaultItems: MenuItemProps[] = [
     {
       iconPath: '/ui_icons/share_brand.svg',
+      iconWidth: '15px',
+      iconHeight: '15px',
       text: copied ? 'Link Copied!' : 'Share grant link',
       onClick: () => {
         const href = window.location.href.split('/');
@@ -100,8 +104,8 @@ function YourGrantMenu({
               <Image
                 mr={18}
                 display="inline-block"
-                h="20px"
-                w="20px"
+                h={item.iconHeight ?? '20px'}
+                w={item.iconWidth ?? '20px'}
                 src={item.iconPath}
               />
               {item.text}
