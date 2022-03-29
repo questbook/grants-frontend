@@ -1,5 +1,5 @@
 schema:
-  - https://the-graph.questbook.app/subgraphs/name/qb-subgraph-rinkeby
+  - https://the-graph.questbook.app/subgraphs/name/qb-subgraph-polygon
 documents:
   - ./graphql/*.graphql
 overwrite: true

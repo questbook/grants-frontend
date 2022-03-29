@@ -9,11 +9,11 @@ import {
   Divider,
   Link,
 } from '@chakra-ui/react';
-import ShareMenu from 'src/components/ui/grantShareMenu';
 import { SupportedChainId } from 'src/constants/chains';
 import { useRouter } from 'next/router';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import VerifiedBadge from 'src/components/ui/verified_badge';
+import ShareMenu from './menu';
 import Badge from './badge';
 
 interface GrantCardProps {

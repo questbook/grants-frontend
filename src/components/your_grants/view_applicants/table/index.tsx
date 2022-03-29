@@ -11,6 +11,7 @@ function Table({
   onManageApplicationClick,
   data,
   title,
+  archiveGrantComponent,
 }: {
   onViewApplicantFormClick?: (data? : any) => void;
   // onAcceptApplicationClick?: () => void;
@@ -18,6 +19,7 @@ function Table({
   onManageApplicationClick?: (data? : any) => void;
   data: any[];
   title: string;
+  archiveGrantComponent: React.ReactNode;
 }) {
   const [filter, setFilter] = React.useState(-1);
   // useEffect(() => {
@@ -29,6 +31,7 @@ function Table({
         <Text variant="heading" mr={4}>{title}</Text>
         <Filter filter={filter} setFilter={setFilter} />
       </Flex>
+      {archiveGrantComponent}
       <Flex w="100%" mt={10} align="center" direction="column" flex={1}>
         <Headers />
         <Content

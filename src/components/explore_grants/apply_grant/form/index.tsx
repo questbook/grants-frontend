@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Box, Button, Text, Image, Link, Flex, Container, useToast, ToastId,
 } from '@chakra-ui/react';
-import { useSigner } from 'wagmi';
+import { useAccount, useSigner } from 'wagmi';
 import { useRouter } from 'next/router';
 import { isValidEmail } from 'src/utils/validationUtils';
 import Loader from 'src/components/ui/loader';
@@ -37,6 +37,8 @@ interface Props {
   grantRequiredFields: string[];
   piiFields: string[];
   members: any[];
+  acceptingApplications: boolean;
+  shouldShowButton: boolean;
 }
 
 // eslint-disable-next-line max-len
@@ -56,7 +58,13 @@ function Form({
   grantRequiredFields,
   piiFields,
   members,
+  acceptingApplications,
+  shouldShowButton,
 }: Props) {
+  const [{ data: accountData }] = useAccount({
+    fetchEns: false,
+  });
+
   const { encryptApplicationPII } = useApplicationEncryption();
   const [signer] = useSigner();
   const [applicantName, setApplicantName] = useState('');
@@ -271,6 +279,30 @@ function Form({
 
   return (
     <Flex my="30px" flexDirection="column" alignItems="center" w="100%" px="44px">
+      {!acceptingApplications && (
+      <Flex
+        w="100%"
+        bg="#F3F4F4"
+        direction="row"
+        align="center"
+        px={8}
+        py={6}
+        mt={6}
+        mb={8}
+        border="1px solid #E8E9E9"
+        borderRadius="6px"
+      >
+        <Image src="/toast/warning.svg" w="42px" h="36px" />
+        <Flex direction="column" ml={6}>
+          <Text variant="tableHeader" color="#414E50">
+            {shouldShowButton && accountData?.address ? 'Grant is archived and cannot be discovered on the Home page.' : 'Grant is archived and closed for new applications.'}
+          </Text>
+          <Text variant="tableBody" color="#717A7C" fontWeight="400" mt={2}>
+            New applicants cannot apply to an archived grant.
+          </Text>
+        </Flex>
+      </Flex>
+      )}
       <Image objectFit="cover" h="96px" w="96px" src={daoLogo} alt="Polygon DAO" />
       <Text mt={6} variant="heading">
         {title}
@@ -352,6 +384,7 @@ function Form({
         />
       </Container>
 
+      {acceptingApplications && (
       <Text mt={10} textAlign="center" variant="footer" fontSize="12px">
         <Image display="inline-block" src="/ui_icons/info.svg" alt="pro tip" mb="-2px" />
         {' '}
@@ -368,12 +401,15 @@ function Form({
           w="10px"
         />
       </Text>
+      )}
 
       <Box mt={5} />
 
+      {acceptingApplications && (
       <Button onClick={loading ? () => {} : handleOnSubmit} mx={10} alignSelf="stretch" variant="primary" py={loading ? 2 : 0}>
         {loading ? <Loader /> : 'Submit Application'}
       </Button>
+      )}
     </Flex>
   );
 }

@@ -7,14 +7,17 @@ query getApplicantsForAGrant($first: Int, $skip: Int, $grantID: String!) {
   subgraphError:allow) {
     id
     grant {
+      id
       title
       funding
       reward {
         asset
       }
       workspace {
+        id
         supportedNetworks
       }
+      acceptingApplications
     }
     applicantId
     state

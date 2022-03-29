@@ -17,12 +17,13 @@ import NavbarLayout from '../../src/layout/navbarLayout';
 import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils';
 
 function ApplyGrant() {
-  const { subgraphClients } = useContext(ApiClientsContext)!;
+  const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
 
   const router = useRouter();
   const [grantData, setGrantData] = useState<any>(null);
   const [grantID, setGrantID] = useState<any>('');
   const [title, setTitle] = useState('');
+  const [daoId, setDaoId] = useState('');
   const [daoLogo, setDaoLogo] = useState('');
   const [isGrantVerified, setIsGrantVerified] = useState(false);
   const [funding, setFunding] = useState('');
@@ -35,6 +36,8 @@ function ApplyGrant() {
   const [workspaceId, setWorkspaceId] = useState('');
   const [grantRequiredFields, setGrantRequiredFields] = useState<any[]>([]);
   const [chainId, setChainId] = useState<SupportedChainId>();
+  const [acceptingApplications, setAcceptingApplications] = useState(true);
+  const [shouldShowButton, setShouldShowButton] = useState(false);
 
   useEffect(() => {
     if (router && router.query) {
@@ -85,10 +88,10 @@ function ApplyGrant() {
 
     setIsGrantVerified(localIsGrantVerified);
     setFunding(localFunding);
-
     setChainId(localChainId);
     setTitle(grantData?.title);
     setWorkspaceId(grantData?.workspace?.id);
+    setDaoId(grantData?.workspace?.id);
     setDaoLogo(getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash));
     setRewardAmount(
       grantData?.reward?.committed
@@ -110,8 +113,13 @@ function ApplyGrant() {
     setGrantDetails(grantData?.details);
     setGrantSummary(grantData?.summary);
     setGrantRequiredFields(grantData?.fields);
+    setAcceptingApplications(grantData?.acceptingApplications);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [grantData]);
+
+  useEffect(() => {
+    setShouldShowButton(daoId === workspace?.id);
+  }, [daoId, workspace]);
 
   return (
     <Flex direction="row" w="100%" justify="space-evenly">
@@ -131,6 +139,8 @@ function ApplyGrant() {
           grantRequiredFields={grantRequiredFields.map((field:any) => field.id.split('.')[1])}
           piiFields={grantRequiredFields.filter((field:any) => field.isPii).map((field:any) => field.id.split('.')[1])}
           members={grantData?.workspace?.members}
+          acceptingApplications={acceptingApplications}
+          shouldShowButton={shouldShowButton}
         />
       </Flex>
 

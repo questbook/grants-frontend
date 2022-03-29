@@ -18,7 +18,7 @@ query getDAODetails($workspaceID: ID!, $daoID: String!) {
     
     grants(
         subgraphError: allow, 
-        where: { workspace: $daoID }
+        where: { workspace: $daoID, acceptingApplications: true }
         orderBy: createdAtS, 
         orderDirection: desc
     ) {

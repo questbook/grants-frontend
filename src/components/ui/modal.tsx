@@ -65,7 +65,7 @@ function Modal({
               m={closeButtonMargin}
               aria-label="close-button"
               size="14px"
-              icon={<Image boxSize="14px" src="/ui_icons/close.svg" />}
+              icon={<Image boxSize="14px" _active={{}} _hover={{}} src="/ui_icons/close.svg" />}
               _hover={{}}
               _active={{}}
               variant="ghost"
