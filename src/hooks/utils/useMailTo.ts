@@ -23,8 +23,8 @@ export default function useMailTo(
 
   const [defaultLink, setDefaultLink] = useState<string>();
 
-  const yahooLink = `https://compose.mail.yahoo.com/?to=${to}&cc=${cc}&bcc=${bcc}&su=${subject}&body=${body}`;
-  const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&cc=${cc}&bcc=${bcc}&su=${subject}&body=${body}`;
+  const yahooLink = `https://compose.mail.yahoo.com/?to=${to}${cc ? `&cc=${cc}` : ''}${bcc ? `&bcc=${bcc}` : ''}${subject ? `&su=${subject}` : ''}${body ? `&body=${body}` : ''}`;
+  const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${to}${cc ? `&cc=${cc}` : ''}${bcc ? `&bcc=${bcc}` : ''}${subject ? `&su=${subject}` : ''}${body ? `&body=${body}` : ''}`;
 
   useEffect(() => {
     if (email?.includes('@gmail')) {
