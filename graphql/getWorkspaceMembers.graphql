@@ -19,6 +19,7 @@ query getWorkspaceMembers($actorId: Bytes!) {
         id
         actorId
         publicKey
+        email
       }
     }
   }

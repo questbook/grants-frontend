@@ -907,6 +907,10 @@ export type Grant_Filter = {
   id_lte?: InputMaybe<Scalars['ID']>;
   id_not?: InputMaybe<Scalars['ID']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  managers?: InputMaybe<Array<Scalars['String']>>;
+  managers_contains?: InputMaybe<Array<Scalars['String']>>;
+  managers_not?: InputMaybe<Array<Scalars['String']>>;
+  managers_not_contains?: InputMaybe<Array<Scalars['String']>>;
   metadataHash?: InputMaybe<Scalars['String']>;
   metadataHash_contains?: InputMaybe<Scalars['String']>;
   metadataHash_ends_with?: InputMaybe<Scalars['String']>;
@@ -2373,7 +2377,7 @@ export type GetWorkspaceMembersQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, workspace: { __typename?: 'Workspace', id: string, ownerId: string, logoIpfsHash: string, title: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null }> } }> };
+export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, workspace: { __typename?: 'Workspace', id: string, ownerId: string, logoIpfsHash: string, title: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null }> } }> };
 
 
 export const GetAllGrantsDocument = gql`
@@ -3353,6 +3357,7 @@ export const GetWorkspaceMembersDocument = gql`
         id
         actorId
         publicKey
+        email
       }
     }
   }

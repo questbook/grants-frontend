@@ -7,6 +7,7 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { getFormattedFullDateFromUnixTimestamp, truncateStringFromMiddle } from '../../../../utils/formattingUtils';
 import { getAssetInfo } from '../../../../utils/tokenUtils';
 import FloatingSidebar from '../../../ui/sidebar/floatingSidebar';
+import MailTo from '../../mail_to/mailTo';
 
 function Sidebar(
   {
@@ -19,6 +20,11 @@ function Sidebar(
 ) {
   const { workspace } = useContext(ApiClientsContext)!;
   const chainId = getSupportedChainIdFromWorkspace(workspace);
+  const applicantEmail = applicationData?.fields?.find(
+    (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
+  ) ? applicationData?.fields?.find(
+      (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
+    )?.values[0]?.value : undefined;
   return (
     <Box mt="8px">
       <FloatingSidebar>
@@ -55,12 +61,20 @@ function Sidebar(
           </Text>
           <Heading variant="applicationHeading" lineHeight="32px">
             {(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'applicantEmail')) ? (
-              applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'applicantEmail')?.values[0]?.value) : (
-                <Heading variant="applicationHeading" lineHeight="32px" onClick={showHiddenData} cursor="pointer">
-                  Hidden
-                  {' '}
-                  <Text color="#6200EE" display="inline">View</Text>
-                </Heading>
+              <>
+                {
+                applicationData?.fields?.find(
+                  (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
+                )?.values[0]?.value
+              }
+                <MailTo applicantEmail={applicantEmail} />
+              </>
+            ) : (
+              <Heading variant="applicationHeading" lineHeight="32px" onClick={showHiddenData} cursor="pointer">
+                Hidden
+                {' '}
+                <Text color="#6200EE" display="inline">View</Text>
+              </Heading>
             )}
           </Heading>
         </Flex>
