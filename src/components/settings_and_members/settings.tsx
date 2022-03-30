@@ -11,6 +11,7 @@ import React, { useEffect, useState } from 'react';
 import { Workspace } from 'src/types';
 import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace';
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
+import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
 import EditForm from './edit_form';
 import { getUrlForIPFSHash, uploadToIPFS } from '../../utils/ipfsUtils';
 import InfoToast from '../ui/infoToast';
@@ -19,23 +20,25 @@ interface Props {
   workspaceData: Workspace;
 }
 
+type SettingsForm = {
+  name: string;
+  about: string;
+  supportedNetwork: string;
+  image?: string;
+  coverImage?: string;
+  twitterHandle?: string;
+  discordHandle?: string;
+  telegramChannel?: string;
+};
+
 function Settings({ workspaceData }: Props) {
   // const [, setLoading] = React.useState(false);
-  const [formData, setFormData] = React.useState<{
-    name: string;
-    about: string;
-    supportedNetwork: string;
-    image?: string;
-    coverImage?: string;
-    twitterHandle?: string;
-    discordHandle?: string;
-    telegramChannel?: string;
-  } | null>();
+  const [formData, setFormData] = React.useState<SettingsForm>();
 
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
 
-  const [editData, setEditData] = useState<any>();
+  const [editData, setEditData] = useState<WorkspaceUpdateRequest>();
   const [txnData, txnLink, loading] = useUpdateWorkspace(editData);
 
   useEffect(() => {
@@ -57,7 +60,7 @@ function Settings({ workspaceData }: Props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, txnData]);
 
-  const handleFormSubmit = async (data: any) => {
+  const handleFormSubmit = async (data: SettingsForm) => {
     let imageHash = workspaceData.logoIpfsHash;
     let coverImageHash = workspaceData.coverImageIpfsHash;
     const socials = [];
@@ -79,44 +82,26 @@ function Settings({ workspaceData }: Props) {
       socials.push({ name: 'telegram', value: data.telegramChannel });
     }
 
-    let d = {};
-    if (coverImageHash) {
-      d = {
-        title: data.name,
-        about: data.about,
-        logoIpfsHash: imageHash,
-        coverImageIpfsHash: coverImageHash,
-        socials,
-      };
-    } else {
-      d = {
-        title: data.name,
-        about: data.about,
-        logoIpfsHash: imageHash,
-        socials,
-      };
-    }
-
-    setEditData(d);
+    setEditData({
+      title: data.name,
+      about: data.about,
+      logoIpfsHash: imageHash,
+      coverImageIpfsHash: coverImageHash || undefined,
+      socials,
+    });
   };
 
   useEffect(() => {
     if (!workspaceData) return;
-    if (Object.keys(workspaceData).length === 0) return;
-    const twitterSocial = workspaceData.socials.filter(
-      (socials: any) => socials.name === 'twitter',
-    );
-    const twitterHandle = twitterSocial.length > 0 ? twitterSocial[0].value : undefined;
-    const discordSocial = workspaceData.socials.filter(
-      (socials: any) => socials.name === 'discord',
-    );
-    const discordHandle = discordSocial.length > 0 ? discordSocial[0].value : undefined;
-    const telegramSocial = workspaceData.socials.filter(
-      (socials: any) => socials.name === 'telegram',
-    );
-    const telegramChannel = telegramSocial.length > 0 ? telegramSocial[0].value : undefined;
-    // console.log('loaded', workspaceData);
-    // console.log(getUrlForIPFSHash(workspaceData?.logoIpfsHash));
+    if (!Object.keys(workspaceData).length) return;
+
+    /// finds & returns the value of a social media contact from the workspace socials list
+    const getSocial = (name: string) => workspaceData.socials.find((s) => s.name === name)?.value;
+
+    const twitterHandle = getSocial('twitter');
+    const discordHandle = getSocial('discord');
+    const telegramChannel = getSocial('telegram');
+
     setFormData({
       name: workspaceData.title,
       about: workspaceData.about,
