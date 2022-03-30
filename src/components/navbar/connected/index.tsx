@@ -152,7 +152,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
           const allWorkspacesData = [].concat(...values) as MinimalWorkspace[];
           // setGrants([...grants, ...allGrantsData]);
           // setCurrentPage(currentPage + 1);
-          // console.log('all workspaces', allWorkspacesData);
+          console.log('all workspaces', allWorkspacesData);
           setWorkspaces([...workspaces, ...allWorkspacesData]);
 
           const i = allWorkspacesData.findIndex(
