@@ -7,6 +7,7 @@ import useAddMember from 'src/hooks/useAddMember';
 import SingleLineInput from '../ui/forms/singleLineInput';
 import Loader from '../ui/loader';
 import InfoToast from '../ui/infoToast';
+import Badge from '../ui/badge';
 
 interface Props {
   onClose: (member: { memberAddress: string, role: string }) => void;
@@ -24,6 +25,8 @@ function ModalContent({
 
   const [memberData, setMemberData] = React.useState<any>();
   const [txnData, txnLink, loading] = useAddMember(memberData);
+
+  const [isReviewer, setIsReviewer] = React.useState(true);
 
   const toastRef = React.useRef<ToastId>();
   useEffect(() => {
@@ -92,7 +95,7 @@ function ModalContent({
         isError={memberAddressError}
         errorText="Address required with proper format"
       />
-      <Box my={4} />
+      <Box my="31px" />
       <SingleLineInput
         label="Email address (optional)"
         placeholder="name@sample.com"
@@ -108,6 +111,29 @@ function ModalContent({
         errorText="Required email address in proper format"
         type="email"
       />
+      <Box my="31px" />
+      <Flex flex={1} direction="column">
+        <Text lineHeight="20px" fontWeight="bold">
+          Role
+        </Text>
+      </Flex>
+      <Flex mt={1} maxW="420px">
+        <Badge
+          isActive={!isReviewer}
+          onClick={() => setIsReviewer(false)}
+          label="Admin"
+          inActiveVariant="solid"
+          tooltip="Complete access"
+        />
+        <Box mr={4} />
+        <Badge
+          isActive={isReviewer}
+          onClick={() => setIsReviewer(true)}
+          label="Reviewer"
+          inActiveVariant="solid"
+          tooltip="Cannot handle financial transactions"
+        />
+      </Flex>
       <Flex direction="row" mt={6}>
         <Text textAlign="left" variant="footer" fontSize="12px">
           <Image display="inline-block" src="/ui_icons/info.svg" alt="pro tip" mb="-2px" />
