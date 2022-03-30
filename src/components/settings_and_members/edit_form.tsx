@@ -1,116 +1,134 @@
 import {
-  Box, Button, Flex, Text, Image, Link,
+  Box, Button, Flex, Text, Image, Link, useToast, ToastId,
 } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
+import React, {
+  useEffect, useMemo, useRef, useState,
+} from 'react';
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import config from 'src/constants/config';
+import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace';
+import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
+import { SettingsForm, Workspace } from 'src/types';
+import { generateWorkspaceUpdateRequest, workspaceDataToSettingsForm } from 'src/utils/settingsUtils';
 import CoverUpload from '../ui/forms/coverUpload';
 import ImageUpload from '../ui/forms/imageUpload';
 import MultiLineInput from '../ui/forms/multiLineInput';
 import SingleLineInput from '../ui/forms/singleLineInput';
 import Loader from '../ui/loader';
+import InfoToast from '../ui/infoToast';
 
-function EditForm({
-  onSubmit: onFormSubmit,
-  formData,
-  hasClicked,
-}: {
-  onSubmit: (data: {
-    name: string;
-    about: string;
-    image?: File;
-    coverImage?: File;
-    twitterHandle?: string;
-    discordHandle?: string;
-    telegramChannel?: string;
-  }) => void;
-  formData: any;
-  hasClicked: boolean;
-}) {
-  const [daoName, setDaoName] = React.useState('');
-  const [daoNameError, setDaoNameError] = React.useState(false);
+type EditFormProps = {
+  workspaceData: Workspace | undefined
+};
 
-  const [daoAbout, setDaoAbout] = React.useState('');
-  const [daoAboutError, setDaoAboutError] = React.useState(false);
+type EditErrors = { [K in keyof SettingsForm]?: { error: string } };
 
-  const [supportedNetwork, setSupportedNetwork] = React.useState('');
+function EditForm({ workspaceData }: EditFormProps) {
+  const toast = useToast();
 
-  const [image, setImage] = React.useState<string>(config.defaultDAOImagePath);
-  const [imageFile, setImageFile] = React.useState<File | null>(null);
+  const [editedFormData, setEditedFormData] = useState<SettingsForm>();
+  const [editData, setEditData] = useState<WorkspaceUpdateRequest>();
+  const [editError, setEditError] = useState<EditErrors>({ });
 
-  const [coverImage, setCoverImage] = React.useState<string | null>('');
-  const [coverImageFile, setCoverImageFile] = React.useState<File | null>(null);
+  const [txnData, txnLink, loading] = useUpdateWorkspace(editData);
 
-  const [twitterHandle, setTwitterHandle] = React.useState('');
-  const [twitterHandleError, setTwitterHandleError] = React.useState(false);
+  const supportedNetwork = useMemo(() => {
+    if (editedFormData) {
+      const supportedChainId = getSupportedChainIdFromSupportedNetwork(
+        editedFormData!.supportedNetwork,
+      );
+      const networkName = supportedChainId ? CHAIN_INFO[supportedChainId].name : 'Unsupported Network';
 
-  const [discordHandle, setDiscordHandle] = React.useState('');
-  const [discordHandleError, setDiscordHandleError] = React.useState(false);
-
-  const [telegramChannel, setTelegramChannel] = React.useState('');
-  const [telegramChannelError, setTelegramChannelError] = React.useState(false);
-
-  useEffect(() => {
-    if (!formData) {
-      return;
+      return networkName;
     }
 
-    const supportedChainId = getSupportedChainIdFromSupportedNetwork(formData.supportedNetwork);
-    const networkName = supportedChainId ? CHAIN_INFO[supportedChainId].name : 'Unsupported Network';
-    setDaoName(formData.name);
-    setDaoAbout(formData.about);
-    setSupportedNetwork(networkName);
-    setImage(formData.image);
-    setCoverImage(formData.coverImage);
-    setTwitterHandle(formData.twitterHandle);
-    setDiscordHandle(formData.discordHandle);
-    setTelegramChannel(formData.telegramChannel);
-  }, [formData]);
+    return undefined;
+  }, [editedFormData]);
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const img = event.target.files[0];
-      setImageFile(img);
-      setImage(URL.createObjectURL(img));
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const toastRef = useRef<ToastId>();
+
+  const showInfoToast = (text: string) => {
+    toastRef.current = toast({
+      position: 'top',
+      render: () => (
+        <InfoToast
+          link={text}
+          close={() => {
+            if (toastRef.current) {
+              toast.close(toastRef.current);
+            }
+          }}
+        />
+      ),
+    });
+  };
+
+  const updateEditError = (key: keyof SettingsForm, error: string | undefined) => (
+    setEditError((err) => ({ ...err, [key]: error ? { error } : undefined }))
+  );
+
+  const updateFormData = (update: Partial<SettingsForm>) => {
+    // eslint-disable-next-line guard-for-in, no-restricted-syntax
+    for (const key in update) {
+      updateEditError(key as any, undefined);
+    }
+
+    if (editedFormData) {
+      setEditedFormData((current) => ({ ...current!, ...update }));
     }
   };
 
-  const handleCoverImageChange = (
+  const hasError = (key: keyof SettingsForm) => !!editError[key];
+
+  const handleImageChange = (
+    key: 'image' | 'coverImage',
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     if (event.target.files && event.target.files[0]) {
       const img = event.target.files[0];
-      setCoverImageFile(img);
-      setCoverImage(URL.createObjectURL(img));
+      updateFormData({ [key]: URL.createObjectURL(img).toString() });
     }
   };
 
-  const handleSubmit = () => {
-    let error = false;
-    if (!daoName || daoName.length === 0) {
-      setDaoNameError(true);
-      error = true;
+  const handleSubmit = async () => {
+    if (!editedFormData?.name?.length) {
+      return updateEditError('name', 'Please enter a name');
     }
-    if (!daoAbout || daoAbout.length === 0) {
-      setDaoAboutError(true);
-      error = true;
+    if (!editedFormData?.about?.length) {
+      return updateEditError('about', 'Please enter about');
     }
 
-    if (!error) {
-      onFormSubmit({
-        name: daoName,
-        about: daoAbout,
-        image: imageFile!,
-        coverImage: coverImageFile!,
-        twitterHandle,
-        discordHandle,
-        telegramChannel,
+    const data = await generateWorkspaceUpdateRequest(
+      editedFormData,
+      workspaceDataToSettingsForm(workspaceData)!,
+    );
+
+    if (!Object.keys(data).length) {
+      toast({
+        position: 'bottom-right',
+        title: 'No Changes to Save!',
+        status: 'info',
+        isClosable: true,
+        duration: 3000,
       });
+      return undefined;
     }
+
+    return setEditData(data);
   };
 
-  const buttonRef = React.useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    setEditedFormData(workspaceDataToSettingsForm(workspaceData));
+  }, [workspaceData]);
+
+  useEffect(() => {
+    if (txnData) {
+      showInfoToast(txnLink);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toast, txnData]);
 
   return (
     <>
@@ -119,18 +137,15 @@ function EditForm({
           label="Grants DAO Name"
           placeholder="Nouns DAO"
           subtext="Letters, spaces, and numbers are allowed."
-          value={daoName}
-          onChange={(e) => {
-            if (daoNameError) setDaoNameError(false);
-            setDaoName(e.target.value);
-          }}
-          isError={daoNameError}
+          value={editedFormData?.name}
+          onChange={(e) => updateFormData({ name: e.target.value })}
+          isError={hasError('name')}
         />
         <Box ml={9} />
         <ImageUpload
-          image={image}
+          image={editedFormData?.image || config.defaultDAOImagePath}
           isError={false}
-          onChange={handleImageChange}
+          onChange={(e) => handleImageChange('image', e)}
           label="Add a logo"
         />
       </Flex>
@@ -138,12 +153,9 @@ function EditForm({
         <MultiLineInput
           label="About your Grants DAO"
           placeholder="Sample"
-          value={daoAbout}
-          onChange={(e) => {
-            if (daoAboutError) setDaoAboutError(false);
-            setDaoAbout(e.target.value);
-          }}
-          isError={daoAboutError}
+          value={editedFormData?.about}
+          onChange={(e) => updateFormData({ about: e.target.value })}
+          isError={hasError('about')}
           maxLength={500}
           subtext={null}
         />
@@ -160,9 +172,9 @@ function EditForm({
       </Flex>
       <Flex w="100%" mt={10}>
         <CoverUpload
-          image={coverImage}
+          image={editedFormData?.coverImage || ''}
           isError={false}
-          onChange={handleCoverImageChange}
+          onChange={(e) => handleImageChange('coverImage', e)}
           subtext="Upload a cover"
         />
       </Flex>
@@ -171,12 +183,9 @@ function EditForm({
           label="Twitter Profile Link"
           placeholder="https://twitter.com/questbookapp"
           subtext=""
-          value={twitterHandle}
-          onChange={(e) => {
-            if (twitterHandleError) setTwitterHandleError(false);
-            setTwitterHandle(e.target.value);
-          }}
-          isError={twitterHandleError}
+          value={editedFormData?.twitterHandle}
+          onChange={(e) => updateFormData({ twitterHandle: e.target.value })}
+          isError={hasError('twitterHandle')}
         />
       </Flex>
       <Flex w="100%" mt={8} alignItems="flex-start">
@@ -184,12 +193,9 @@ function EditForm({
           label="Discord Server Link"
           placeholder="https://discord.gg/questbook"
           subtext=""
-          value={discordHandle}
-          onChange={(e) => {
-            if (discordHandleError) setDiscordHandleError(false);
-            setDiscordHandle(e.target.value);
-          }}
-          isError={discordHandleError}
+          value={editedFormData?.discordHandle}
+          onChange={(e) => updateFormData({ discordHandle: e.target.value })}
+          isError={hasError('discordHandle')}
         />
       </Flex>
       <Flex w="100%" mt={8} alignItems="flex-start">
@@ -197,12 +203,9 @@ function EditForm({
           label="Telegram Channel"
           placeholder="https://t.me/questbook"
           subtext=""
-          value={telegramChannel}
-          onChange={(e) => {
-            if (telegramChannelError) setTelegramChannelError(false);
-            setTelegramChannel(e.target.value);
-          }}
-          isError={telegramChannelError}
+          value={editedFormData?.telegramChannel}
+          onChange={(e) => updateFormData({ telegramChannel: e.target.value })}
+          isError={hasError('telegramChannel')}
         />
       </Flex>
       <Flex direction="row" mt={4}>
@@ -226,8 +229,8 @@ function EditForm({
       </Flex>
 
       <Flex direction="row" justify="start" mt={4}>
-        <Button ref={buttonRef} w={hasClicked ? buttonRef.current?.offsetWidth : 'auto'} variant="primary" onClick={hasClicked ? () => {} : handleSubmit} py={hasClicked ? 2 : 0}>
-          {hasClicked ? <Loader /> : 'Save changes'}
+        <Button ref={buttonRef} w={loading ? buttonRef.current?.offsetWidth : 'auto'} variant="primary" onClick={loading ? () => {} : handleSubmit} py={loading ? 2 : 0}>
+          {loading ? <Loader /> : 'Save changes'}
         </Button>
       </Flex>
     </>
