@@ -10,16 +10,19 @@ import useChainId from './utils/useChainId';
 import useGrantContract from './contracts/useGrantContract';
 
 export default function useWithdrawFunds(
+  setSubmitClicked: React.Dispatch<React.SetStateAction<boolean>>,
   finalAmount?: string,
   rewardAddress?: string,
   grantAddress?: string,
   address?: string,
+  submitClicked?: boolean,
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
+  const [incorrectNetwork, setIncorrectNetwork] = React.useState(false);
   const [transactionData, setTransactionData] = React.useState<any>();
   const [{ data: accountData }] = useAccount();
-  const [{ data: networkData }] = useNetwork();
+  const [{ data: networkData }, switchNetwork] = useNetwork();
 
   const apiClients = useContext(ApiClientsContext)!;
   const { workspace } = apiClients;
@@ -27,23 +30,40 @@ export default function useWithdrawFunds(
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
   const currentChainId = useChainId();
+  const chainId = getSupportedChainIdFromWorkspace(workspace);
 
   useEffect(() => {
     if (finalAmount) {
       setError(undefined);
+      setIncorrectNetwork(false);
     } else if (transactionData) {
       setTransactionData(undefined);
+      setIncorrectNetwork(false);
     }
-  }, [finalAmount, transactionData]);
+  }, [finalAmount, transactionData, address]);
 
   useEffect(() => {
+    if (submitClicked) {
+      setError(undefined);
+      setIncorrectNetwork(false);
+      setSubmitClicked(false);
+    }
+  }, [setSubmitClicked, submitClicked]);
+
+  useEffect(() => {
+    if (incorrectNetwork) {
+      setIncorrectNetwork(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grantContract]);
+
+  useEffect(() => {
+    if (incorrectNetwork) return;
     if (error) return;
     if (loading) return;
-    // console.log('calling createGrant');
 
     async function validate() {
       setLoading(true);
-      // console.log('calling validate');
       try {
         const transferTxn = await grantContract.withdrawFunds(
           rewardAddress,
@@ -79,16 +99,20 @@ export default function useWithdrawFunds(
       if (!accountData || !accountData.address) {
         throw new Error('not connected to wallet');
       }
-      if (!currentChainId) {
-        throw new Error('not connected to valid network');
-      }
       if (!workspace) {
         throw new Error('not connected to workspace');
       }
-      // console.log(workspace);
-      // console.log(currentChainId);
-      if (getSupportedChainIdFromWorkspace(workspace) !== currentChainId) {
-        throw new Error('connected to wrong network');
+      if (!currentChainId) {
+        if (switchNetwork && chainId) { switchNetwork(chainId); }
+        setIncorrectNetwork(true);
+        setLoading(false);
+        return;
+      }
+      if (chainId !== currentChainId) {
+        if (switchNetwork && chainId) { switchNetwork(chainId); }
+        setIncorrectNetwork(true);
+        setLoading(false);
+        return;
       }
       if (
         !grantContract
@@ -116,6 +140,7 @@ export default function useWithdrawFunds(
         }),
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     error,
     loading,
@@ -129,6 +154,8 @@ export default function useWithdrawFunds(
     rewardAddress,
     address,
     finalAmount,
+    chainId,
+    incorrectNetwork,
   ]);
 
   return [

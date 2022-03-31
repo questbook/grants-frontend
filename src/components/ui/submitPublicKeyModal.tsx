@@ -46,7 +46,7 @@ function SubmitPublicKeyModal({
               justifyContent="center"
               borderRadius="50%"
               mr="19px"
-              flexShrink="0"
+              flexShrink={[0]}
             >
               1
             </Box>
@@ -66,7 +66,7 @@ function SubmitPublicKeyModal({
               justifyContent="center"
               borderRadius="50%"
               mr="19px"
-              flexShrink="0"
+              flexShrink={[0]}
             >
               2
             </Box>
@@ -83,7 +83,7 @@ function SubmitPublicKeyModal({
               justifyContent="center"
               borderRadius="50%"
               mr="19px"
-              flexShrink="0"
+              flexShrink={[0]}
             >
               3
             </Box>

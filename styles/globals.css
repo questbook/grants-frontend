@@ -96,3 +96,44 @@ a {
 .richTextContainer.focus {
   border-color: #8850EA;
 }
+
+@media only screen and (max-width: 600px) {
+  .css-18zpb5w, .css-36fyah, .css-txogrl, .css-14csuak, .css-1oioic1, .css-ey1yde, .css-1hubv9n {
+    display: none !important;
+  }
+
+  .css-101n6fu {
+    padding-bottom: 8px !important;
+  }
+
+  .css-1008y4k {
+    max-height: 80vh !important;
+    flex-direction: column !important;
+  }
+
+  .css-101n6fu {
+    align-self: center;
+  }
+
+  .css-tv5y8e, .css-tiwsnw {
+    width: 100% !important;
+  }
+
+  .css-tiwsnw {
+    padding: 0 !important;
+  }
+
+  .css-1xhj18k {
+    flex-direction: column !important;
+  }
+
+  .css-32qh8a {
+    display: grid !important;
+    grid-column: 50% 50% !important;
+    grid-row: 50% 50% !important;
+  }
+
+  .css-y8a1hp {
+    max-width: 100% !important;
+  }
+}

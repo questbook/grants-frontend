@@ -67,7 +67,9 @@ function VerifiedBadge({
               fontStyle="normal"
               fontSize="14px"
               lineHeight="16px"
-              onClick={() => {}}
+              onClick={() => {
+                window.open('https://questbook.notion.site/What-does-a-Verified-Grant-Mean-0e83ed1f3f4e4fe4ae994a19a75cf413/');
+              }}
             >
               Learn More
             </Button>

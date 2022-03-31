@@ -7,8 +7,11 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { NextPage } from 'next';
 import 'draft-js/dist/Draft.css';
 import {
-  // defaultChains,
-  // defaultL2Chains,
+  Chain,
+  chain,
+  Connector,
+  defaultChains,
+  defaultL2Chains,
   InjectedConnector,
   Provider,
 } from 'wagmi';
@@ -19,10 +22,12 @@ import {
   ValidationApi,
 } from '@questbook/service-validator-client';
 import { MinimalWorkspace } from 'src/types';
-import { ALL_SUPPORTED_CHAIN_IDS } from 'src/constants/chains';
+import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from 'src/constants/chains';
 import App from 'next/app';
 import { DefaultSeo } from 'next-seo';
 import getSeo from 'src/utils/seo';
+import { providers } from 'ethers';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import theme from '../src/theme';
 import SubgraphClient from '../src/graphql/subgraph';
 
@@ -41,11 +46,15 @@ const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
 //   (chain) => chain.name in ['mainnet', 'polygonMainnet'],
 // );
 
+// Pick chains
+const chains = [...defaultChains, ...defaultL2Chains,
+  CHAIN_INFO[SupportedChainId.HARMONY_TESTNET_S0] as Chain];
+const defaultChain = chain.polygonMainnet;
 // Set up connectors
 const connectors = () => [
   new InjectedConnector({
-    // chains,
-    options: { shimDisconnect: true },
+    chains,
+    options: { shimDisconnect: true, shimChainChangedDisconnect: true },
   }),
   new WalletConnectConnector({
     options: {
@@ -54,6 +63,17 @@ const connectors = () => [
     },
   }),
 ];
+
+// Set up providers
+type ProviderConfig = { chainId?: number; connector?: Connector };
+
+const provider = ({ chainId }: ProviderConfig) => {
+  const rpcUrl = CHAIN_INFO[chainId!]?.rpcUrls[0];
+  if (!rpcUrl) {
+    return new providers.JsonRpcProvider(CHAIN_INFO[defaultChain.id].rpcUrls[0], 'any');
+  }
+  return new providers.JsonRpcProvider(rpcUrl, 'any');
+};
 
 export const ApiClientsContext = createContext<{
   validatorApi: ValidationApi;
@@ -102,7 +122,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   const getLayout = Component.getLayout ?? ((page) => page);
   return (
-    <Provider autoConnect connectors={connectors}>
+    <Provider autoConnect connectors={connectors} provider={provider}>
       <ApiClientsContext.Provider value={apiClients}>
         <DefaultSeo {...seo} />
         <ChakraProvider theme={theme}>

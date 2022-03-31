@@ -15,17 +15,21 @@ export default function useUpdateApplicationState(
   data: string,
   applicationId: string | undefined,
   state: number | undefined,
+  submitClicked: boolean,
+  setSubmitClicked: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
+  const [incorrectNetwork, setIncorrectNetwork] = React.useState(false);
   const [transactionData, setTransactionData] = React.useState<any>();
   const [{ data: accountData }] = useAccount();
-  const [{ data: networkData }] = useNetwork();
+  const [{ data: networkData }, switchNetwork] = useNetwork();
 
   const apiClients = useContext(ApiClientsContext)!;
   const { validatorApi, workspace } = apiClients;
   const currentChainId = useChainId();
-  const applicationContract = useApplicationRegistryContract(currentChainId);
+  const chainId = getSupportedChainIdFromWorkspace(workspace);
+  const applicationContract = useApplicationRegistryContract(chainId);
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
 
@@ -33,10 +37,26 @@ export default function useUpdateApplicationState(
     if (state) {
       setError(undefined);
       setLoading(false);
+      setIncorrectNetwork(false);
     }
   }, [state]);
 
   useEffect(() => {
+    if (submitClicked) {
+      setIncorrectNetwork(false);
+      setSubmitClicked(false);
+    }
+  }, [setSubmitClicked, submitClicked]);
+
+  useEffect(() => {
+    if (incorrectNetwork) {
+      setIncorrectNetwork(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [applicationContract]);
+
+  useEffect(() => {
+    if (incorrectNetwork) return;
     if (error) return;
     if (loading) return;
 
@@ -91,14 +111,20 @@ export default function useUpdateApplicationState(
       if (!accountData || !accountData.address) {
         throw new Error('not connected to wallet');
       }
-      if (!currentChainId) {
-        throw new Error('not connected to valid network');
-      }
       if (!workspace) {
         throw new Error('not connected to workspace');
       }
-      if (getSupportedChainIdFromWorkspace(workspace) !== currentChainId) {
-        throw new Error('connected to wrong network');
+      if (!currentChainId) {
+        if (switchNetwork && chainId) { switchNetwork(chainId); }
+        setIncorrectNetwork(true);
+        setLoading(false);
+        return;
+      }
+      if (chainId !== currentChainId) {
+        if (switchNetwork && chainId) { switchNetwork(chainId); }
+        setIncorrectNetwork(true);
+        setLoading(false);
+        return;
       }
       if (!validatorApi) {
         throw new Error('validatorApi or workspaceId is not defined');
@@ -129,6 +155,7 @@ export default function useUpdateApplicationState(
         }),
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     error,
     loading,
@@ -143,6 +170,8 @@ export default function useUpdateApplicationState(
     applicationId,
     state,
     data,
+    incorrectNetwork,
+    chainId,
   ]);
 
   return [

@@ -1,0 +1,9 @@
+query getAllGrantsCountForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String) {
+    liveGrants: grants(subgraphError: allow, where: {acceptingApplications: true, workspace: $workspaceId}, first: 1) {
+        id, 
+    }
+  
+    archived: grants(subgraphError: allow, where: {acceptingApplications: false, workspace: $workspaceId}, first: 1) {
+        id, 
+    }
+}

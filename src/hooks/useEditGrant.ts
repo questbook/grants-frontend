@@ -19,9 +19,10 @@ export default function useEditGrant(
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
+  const [incorrectNetwork, setIncorrectNetwork] = React.useState(false);
   const [transactionData, setTransactionData] = React.useState<any>();
   const [{ data: accountData }] = useAccount();
-  const [{ data: networkData }] = useNetwork();
+  const [{ data: networkData }, switchNetwork] = useNetwork();
 
   const apiClients = useContext(ApiClientsContext)!;
   const { validatorApi, workspace } = apiClients;
@@ -29,14 +30,24 @@ export default function useEditGrant(
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
   const currentChainId = useChainId();
+  const chainId = getSupportedChainIdFromWorkspace(workspace);
 
   useEffect(() => {
     if (data) {
       setError(undefined);
+      setIncorrectNetwork(false);
     }
   }, [data]);
 
   useEffect(() => {
+    if (incorrectNetwork) {
+      setIncorrectNetwork(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grantContract]);
+
+  useEffect(() => {
+    if (incorrectNetwork) return;
     if (error) return;
     if (loading) return;
     // console.log('calling editGrant');
@@ -93,14 +104,20 @@ export default function useEditGrant(
       if (!accountData || !accountData.address) {
         throw new Error('not connected to wallet');
       }
-      if (!currentChainId) {
-        throw new Error('not connected to valid network');
-      }
       if (!workspace) {
         throw new Error('not connected to workspace');
       }
-      if (getSupportedChainIdFromWorkspace(workspace) !== currentChainId) {
-        throw new Error('connected to wrong network');
+      if (!currentChainId) {
+        if (switchNetwork && chainId) { switchNetwork(chainId); }
+        setIncorrectNetwork(true);
+        setLoading(false);
+        return;
+      }
+      if (chainId !== currentChainId) {
+        if (switchNetwork && chainId) { switchNetwork(chainId); }
+        setIncorrectNetwork(true);
+        setLoading(false);
+        return;
       }
       if (!validatorApi) {
         throw new Error('validatorApi or workspaceId is not defined');
@@ -131,6 +148,7 @@ export default function useEditGrant(
         }),
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     error,
     loading,
@@ -143,6 +161,8 @@ export default function useEditGrant(
     networkData,
     currentChainId,
     data,
+    chainId,
+    incorrectNetwork,
   ]);
 
   return [
