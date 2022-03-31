@@ -1,9 +1,9 @@
 const seoConfig = {
   title: 'Questbook',
-  titleTemplate: '%s - Questbook',
+  titleTemplate: '%s',
   description:
       '',
-  siteUrl: 'https://grants.questbook.app',
+  siteUrl: 'https://www.questbook.app/',
   twitter: {
     handle: '@questbookapp',
     site: '@questbookapp',
@@ -12,7 +12,7 @@ const seoConfig = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://grants.questbook.app',
+    url: 'https://www.questbook.app/',
     title: 'Questbook',
     description:
         '',
@@ -20,16 +20,16 @@ const seoConfig = {
         'Questbook',
     images: [
       {
-        url: '',
+        url: 'https://ipfs.io/ipfs/QmQtJhGjUQyYe2j2tmka4VZ8NzJD3J9jiFSjhjgGkugwYs',
         width: 1240,
         height: 480,
-        alt: '',
+        alt: 'Questbook Grant',
       },
       {
-        url: '',
+        url: 'https://ipfs.io/ipfs/QmQtJhGjUQyYe2j2tmka4VZ8NzJD3J9jiFSjhjgGkugwYs',
         width: 1012,
         height: 506,
-        alt: '',
+        alt: 'Questbook Grant',
       },
     ],
   },
