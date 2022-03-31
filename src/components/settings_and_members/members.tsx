@@ -6,6 +6,7 @@ import { getTextWithEllipses } from 'src/utils/formattingUtils';
 import CopyIcon from '../ui/copy_icon';
 import Modal from '../ui/modal';
 import ModalContent from './modalContent';
+import roles from './roles';
 
 interface Props {
   workspaceMembers: any;
@@ -28,10 +29,13 @@ function Members({ workspaceMembers }: Props) {
     if (!workspaceMembers) return;
     const tempTableData = workspaceMembers.map((member: any) => ({
       memberAddress: member.actorId,
-      role: 'Admin',
+      role: member.role,
     }));
     setTableData(tempTableData);
   }, [workspaceMembers]);
+
+  const [isEdit, setIsEdit] = React.useState(false);
+  const [selectedRow, setSelectedRow] = React.useState(-1);
 
   return (
     <Flex direction="column" align="start" w="100%">
@@ -44,7 +48,7 @@ function Members({ workspaceMembers }: Props) {
         >
           Manage Members
         </Text>
-        <Button variant="primaryCta" onClick={() => setIsModalOpen(true)}>
+        <Button variant="primaryCta" onClick={() => { setIsEdit(false); setIsModalOpen(true); }}>
           Invite New
         </Button>
       </Flex>
@@ -83,7 +87,7 @@ function Members({ workspaceMembers }: Props) {
                   </Flex>
                 </Tooltip>
                 <Text flex={tableDataFlex[1]} variant="tableBody">
-                  {data.role}
+                  {roles.find((r) => r.value === data.role)?.label ?? 'Admin'}
                 </Text>
                 <Text flex={tableDataFlex[2]} variant="tableBody">
                   24 January, 2021
@@ -108,6 +112,11 @@ function Members({ workspaceMembers }: Props) {
                     borderRadius={8}
                     borderColor="brand.500"
                     height="32px"
+                    onClick={() => {
+                      setIsEdit(true);
+                      setIsModalOpen(true);
+                      setSelectedRow(index);
+                    }}
                   >
                     Edit
                   </Button>
@@ -119,17 +128,20 @@ function Members({ workspaceMembers }: Props) {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="Invite Member"
+        title={`${isEdit ? 'Edit' : 'Invite'} Member`}
       >
         <ModalContent
-          onClose={(newMember: { memberAddress: string; role: string }) => {
+          onClose={(newMember: { address: string, email: string, role: string }) => {
             if (tableData && tableData.length > 0) {
               setTableData([...tableData, newMember]);
             } else {
               setTableData([newMember]);
             }
+            setIsEdit(false);
             setIsModalOpen(false);
           }}
+          isEdit={isEdit}
+          member={{ address: isEdit && selectedRow !== -1 ? tableData[selectedRow].memberAddress : '', email: '', role: isEdit && selectedRow !== -1 ? tableData[selectedRow].role : '' }}
         />
       </Modal>
     </Flex>

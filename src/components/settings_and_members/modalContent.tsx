@@ -8,33 +8,43 @@ import SingleLineInput from '../ui/forms/singleLineInput';
 import Loader from '../ui/loader';
 import InfoToast from '../ui/infoToast';
 import Badge from '../ui/badge';
+import roles from './roles';
+import MemberProps from './memberProps';
 
 interface Props {
-  onClose: (member: { memberAddress: string, role: string }) => void;
+  onClose: (member: MemberProps) => void;
+  isEdit: boolean,
+  member?: MemberProps;
 }
 
 function ModalContent({
-  onClose,
+  onClose, isEdit, member,
 }: Props) {
-  const [memberAddress, setMemberAddress] = React.useState('');
+  const [memberAddress, setMemberAddress] = React.useState(member?.address || '');
   const [memberAddressError, setMemberAddressError] = React.useState(false);
 
-  const [memberEmail, setMemberEmail] = React.useState('');
+  const [memberEmail, setMemberEmail] = React.useState(member?.email || '');
   const [memberEmailError, setMemberEmailError] = React.useState(false);
   const toast = useToast();
 
   const [memberData, setMemberData] = React.useState<any>();
   const [txnData, txnLink, loading] = useAddMember(memberData);
 
-  const [isReviewer, setIsReviewer] = React.useState(true);
+  const [role, setRole] = React.useState<string>(member?.role || roles[0].value);
+  // const [isReviewer, setIsReviewer] = React.useState(member?.role === 'Reviewer');
 
   const toastRef = React.useRef<ToastId>();
   useEffect(() => {
     // console.log(depositTransactionData);
     if (txnData) {
-      const newMemberData = memberData.memberAddress[0];
+      const newMemberAddress = memberData.memberAddress[0];
+      const newMemberEmail = memberData.memberEmail[0];
       setMemberData(undefined);
-      onClose({ memberAddress: newMemberData, role: 'admin' });
+      onClose({
+        address: newMemberAddress,
+        email: newMemberEmail,
+        role: roles.find((r) => r.value === role)?.value ?? '',
+      });
       toastRef.current = toast({
         position: 'top',
         render: () => (
@@ -60,7 +70,7 @@ function ModalContent({
       hasError = true;
     }
 
-    if (memberEmail && !isValidEmail(memberEmail)) {
+    if (!memberEmail || memberEmail.length || !isValidEmail(memberEmail)) {
       setMemberEmailError(true);
       hasError = true;
     }
@@ -70,19 +80,20 @@ function ModalContent({
     setMemberData({
       memberAddress: [memberAddress],
       memberEmail: [memberEmail ?? ''],
+      memberRole: [role],
     });
   };
 
   return (
     <ModalBody>
       <Text>
-        Enter the address of the member you would like to invite.
-        Please note: The invited user have will access to your workspace
-        - can create grants, invite members, and add funds.
+        {isEdit
+          ? 'You can either change the access given to this member or choose to revoke access. '
+          : 'Enter the wallet address of the member you would like to invite.'}
       </Text>
       <Box my={8} />
       <SingleLineInput
-        label="Address"
+        label="Address *"
         placeholder="0xb794f5e74279579268"
         subtext=""
         value={memberAddress}
@@ -97,7 +108,7 @@ function ModalContent({
       />
       <Box my="31px" />
       <SingleLineInput
-        label="Email address (optional)"
+        label="Email address *"
         placeholder="name@sample.com"
         subtext=""
         value={memberEmail}
@@ -114,25 +125,22 @@ function ModalContent({
       <Box my="31px" />
       <Flex flex={1} direction="column">
         <Text lineHeight="20px" fontWeight="bold">
-          Role
+          Role *
         </Text>
       </Flex>
       <Flex mt={1} maxW="420px">
-        <Badge
-          isActive={!isReviewer}
-          onClick={() => setIsReviewer(false)}
-          label="Admin"
-          inActiveVariant="solid"
-          tooltip="Complete access"
-        />
-        <Box mr={4} />
-        <Badge
-          isActive={isReviewer}
-          onClick={() => setIsReviewer(true)}
-          label="Reviewer"
-          inActiveVariant="solid"
-          tooltip="Cannot handle financial transactions"
-        />
+        {roles.map((r) => (
+          <>
+            <Badge
+              isActive={r.value === role}
+              onClick={() => setRole(r.value)}
+              label={r.label}
+              inActiveVariant="solid"
+              tooltip={r.tooltip}
+            />
+            {r.index < roles.length - 1 && <Box mr={4} />}
+          </>
+        ))}
       </Flex>
       <Flex direction="row" mt={6}>
         <Text textAlign="left" variant="footer" fontSize="12px">
@@ -153,10 +161,31 @@ function ModalContent({
         </Text>
       </Flex>
       <Box my={4} />
-      <Button w="100%" py={loading ? 2 : 0} variant="primary" onClick={loading ? () => {} : () => handleSubmit()}>{loading ? <Loader /> : 'Send Invite'}</Button>
+      <Flex direction="row" justify="stretch">
+        {isEdit && (
+        <Button w="48%" variant="link" color="brand.500">
+          Revoke Access
+          {' '}
+          <Image ml={2} src="/ui_icons/revoke_access.svg" display="inline-block" />
+        </Button>
+        )}
+        {isEdit && <Box mx="auto" />}
+        <Button
+          w={isEdit ? '48%' : '100%'}
+          py={loading ? 2 : 0}
+          variant="primary"
+          onClick={loading ? () => {} : () => handleSubmit()}
+        >
+          {loading ? <Loader /> : 'Send Invite'}
+        </Button>
+      </Flex>
       <Box my={8} />
     </ModalBody>
   );
 }
+
+ModalContent.defaultProps = {
+  member: {},
+};
 
 export default ModalContent;
