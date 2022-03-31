@@ -19,6 +19,7 @@ interface Props {
   numOfApplicants: number;
   onViewApplicantsClick: (() => void) | undefined;
   onEditClick: (() => void) | undefined;
+  isAdmin: boolean;
 }
 
 interface MenuItemProps {
@@ -37,6 +38,7 @@ function YourGrantMenu({
   numOfApplicants,
   onViewApplicantsClick,
   onEditClick,
+  isAdmin,
 }: Props) {
   const [copied, setCopied] = React.useState(false);
 
@@ -72,9 +74,10 @@ function YourGrantMenu({
     onClick: () => onArchiveGrantClick && onArchiveGrantClick(),
   }];
 
-  const items = isArchived
+  // eslint-disable-next-line no-nested-ternary
+  const items = isAdmin ? (isArchived
     ? [...defaultItems, ...archivedItems]
-    : [...defaultItems, ...nonArchivedItems];
+    : [...defaultItems, ...nonArchivedItems]) : [...defaultItems];
 
   return (
     <MenuComponent closeOnSelect={false} placement="left" onClose={() => setCopied(false)}>
