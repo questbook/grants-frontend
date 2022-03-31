@@ -54,62 +54,6 @@
         "type": "uint96"
       },
       {
-        "indexed": false,
-        "internalType": "address[]",
-        "name": "admins",
-        "type": "address[]"
-      },
-      {
-        "indexed": false,
-        "internalType": "string[]",
-        "name": "emails",
-        "type": "string[]"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "time",
-        "type": "uint256"
-      }
-    ],
-    "name": "WorkspaceAdminsAdded",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint96",
-        "name": "id",
-        "type": "uint96"
-      },
-      {
-        "indexed": false,
-        "internalType": "address[]",
-        "name": "admins",
-        "type": "address[]"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "time",
-        "type": "uint256"
-      }
-    ],
-    "name": "WorkspaceAdminsRemoved",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint96",
-        "name": "id",
-        "type": "uint96"
-      },
-      {
         "indexed": true,
         "internalType": "address",
         "name": "owner",
@@ -129,6 +73,49 @@
       }
     ],
     "name": "WorkspaceCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint96",
+        "name": "id",
+        "type": "uint96"
+      },
+      {
+        "indexed": false,
+        "internalType": "address[]",
+        "name": "members",
+        "type": "address[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8[]",
+        "name": "roles",
+        "type": "uint8[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool[]",
+        "name": "enabled",
+        "type": "bool[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "string[]",
+        "name": "emails",
+        "type": "string[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "time",
+        "type": "uint256"
+      }
+    ],
+    "name": "WorkspaceMembersUpdated",
     "type": "event"
   },
   {
@@ -161,29 +148,6 @@
     ],
     "name": "WorkspaceUpdated",
     "type": "event"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint96",
-        "name": "_id",
-        "type": "uint96"
-      },
-      {
-        "internalType": "address[]",
-        "name": "_admins",
-        "type": "address[]"
-      },
-      {
-        "internalType": "string[]",
-        "name": "_emails",
-        "type": "string[]"
-      }
-    ],
-    "name": "addWorkspaceAdmins",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
   },
   {
     "inputs": [
@@ -223,6 +187,54 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint96",
+        "name": "_id",
+        "type": "uint96"
+      },
+      {
+        "internalType": "address",
+        "name": "_address",
+        "type": "address"
+      }
+    ],
+    "name": "isWorkspaceAdminOrReviewer",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint96",
+        "name": "",
+        "type": "uint96"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "memberRoles",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "owner",
     "outputs": [
@@ -253,24 +265,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint96",
-        "name": "_id",
-        "type": "uint96"
-      },
-      {
-        "internalType": "address[]",
-        "name": "_admins",
-        "type": "address[]"
-      }
-    ],
-    "name": "removeWorkspaceAdmins",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -308,12 +302,27 @@
         "type": "uint96"
       },
       {
-        "internalType": "string",
-        "name": "_metadataHash",
-        "type": "string"
+        "internalType": "address[]",
+        "name": "_members",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint8[]",
+        "name": "_roles",
+        "type": "uint8[]"
+      },
+      {
+        "internalType": "bool[]",
+        "name": "_enabled",
+        "type": "bool[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "_emails",
+        "type": "string[]"
       }
     ],
-    "name": "updateWorkspaceMetadata",
+    "name": "updateWorkspaceMembers",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -322,24 +331,18 @@
     "inputs": [
       {
         "internalType": "uint96",
-        "name": "",
+        "name": "_id",
         "type": "uint96"
       },
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
+        "internalType": "string",
+        "name": "_metadataHash",
+        "type": "string"
       }
     ],
-    "name": "workspaceAdmins",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
+    "name": "updateWorkspaceMetadata",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
