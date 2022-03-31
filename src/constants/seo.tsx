@@ -3,7 +3,8 @@ const seoConfig = {
   titleTemplate: '%s',
   description:
       'Some description',
-  siteUrl: 'https://www.questbook.app/',
+  // siteUrl: 'https://www.questbook.app/',
+  siteUrl: 'https://beta.questbook.app/',
   twitter: {
     handle: '@questbookapp',
     site: '@questbookapp',
@@ -12,7 +13,7 @@ const seoConfig = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://www.questbook.app/',
+    url: 'https://beta.questbook.app/',
     title: 'Questbook',
     description:
         'Some description',
