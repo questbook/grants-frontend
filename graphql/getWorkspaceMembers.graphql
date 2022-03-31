@@ -20,6 +20,7 @@ query getWorkspaceMembers($actorId: Bytes!) {
         actorId
         publicKey
         email
+        accessLevel
       }
     }
   }

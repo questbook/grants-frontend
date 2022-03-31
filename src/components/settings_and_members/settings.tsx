@@ -131,7 +131,7 @@ function Settings({ workspaceData }: Props) {
   }, [workspaceData]);
 
   return (
-    <Flex direction="column" align="start" w="85%">
+    <Flex direction="column" align="start" w="65%">
       <Flex direction="row" w="full" justify="space-between">
         <Text
           fontStyle="normal"

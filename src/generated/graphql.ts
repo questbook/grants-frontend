@@ -2370,14 +2370,14 @@ export type GetWorkspaceDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null }> } | null };
+export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel }> } | null };
 
 export type GetWorkspaceMembersQueryVariables = Exact<{
   actorId: Scalars['Bytes'];
 }>;
 
 
-export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, workspace: { __typename?: 'Workspace', id: string, ownerId: string, logoIpfsHash: string, title: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null }> } }> };
+export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, workspace: { __typename?: 'Workspace', id: string, ownerId: string, logoIpfsHash: string, title: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel }> } }> };
 
 
 export const GetAllGrantsDocument = gql`
@@ -3305,6 +3305,7 @@ export const GetWorkspaceDetailsDocument = gql`
       actorId
       publicKey
       email
+      accessLevel
     }
   }
 }
@@ -3358,6 +3359,7 @@ export const GetWorkspaceMembersDocument = gql`
         actorId
         publicKey
         email
+        accessLevel
       }
     }
   }

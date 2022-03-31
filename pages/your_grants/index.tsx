@@ -41,6 +41,7 @@ function YourGrants() {
     fetchEns: false,
   });
   const { workspace, subgraphClients } = useContext(ApiClientsContext)!;
+  const [isAdmin, setIsAdmin] = React.useState<boolean>(false);
 
   const containerRef = useRef(null);
   const [currentPage, setCurrentPage] = React.useState(0);
@@ -108,6 +109,16 @@ function YourGrants() {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, workspace, accountData?.address]);
+
+  useEffect(() => {
+    if (workspace && workspace.members
+      && workspace.members.length > 0 && accountData && accountData.address) {
+      const tempMember = workspace.members.find(
+        (m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
+      );
+      setIsAdmin(tempMember?.accessLevel === 'admin' || tempMember?.accessLevel === 'owner');
+    }
+  }, [accountData, workspace]);
 
   const {
     data: allGrantsCountData,
@@ -300,6 +311,7 @@ function YourGrants() {
                   },
                 })}
                 acceptingApplications={grant.acceptingApplications}
+                isAdmin={isAdmin}
               />
             ))}
 
