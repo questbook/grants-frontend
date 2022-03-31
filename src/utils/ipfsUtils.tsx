@@ -4,6 +4,17 @@ const IPFS_UPLOAD_ENDPOINT = 'https://ipfs.infura.io:5001/api/v0/add?pin=true';
 
 export const uploadToIPFS = async (data: string | Blob): Promise<{ hash: string }> => {
   if (data === null) return { hash: config.deafultDAOImageHash };
+
+  if (typeof data === 'string') {
+    // if it's a blob url
+    // convert to a blob so it can be fetched correctly
+    if (data.startsWith('blob:')) {
+      const fetchResult = await fetch(data);
+      // eslint-disable-next-line no-param-reassign
+      data = await fetchResult.blob();
+    }
+  }
+
   const form = new FormData();
   form.append('file', data);
 
@@ -17,7 +28,6 @@ export const uploadToIPFS = async (data: string | Blob): Promise<{ hash: string 
 };
 
 export const getFromIPFS = async (hash: string): Promise<string> => {
-  console.log(hash);
   const fetchResult = await fetch(`https://ipfs.io/ipfs/${hash}`);
   const responseBody = await fetchResult.text();
   return responseBody;
