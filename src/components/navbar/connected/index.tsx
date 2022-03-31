@@ -43,7 +43,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 
   const apiClients = useContext(ApiClientsContext)!;
   const { workspace, setWorkspace, subgraphClients } = apiClients;
-  const [member, setMember] = React.useState<any>(null);
+  const [isAdmin, setIsAdmin] = React.useState(false);
 
   // eslint-disable-next-line max-len
   const getNumberOfApplicationsClients = Object.keys(subgraphClients)!.map(
@@ -131,7 +131,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
       const tempMember = workspace.members.find(
         (m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
       );
-      setMember(tempMember || null);
+      setIsAdmin(tempMember?.accessLevel === 'admin' || tempMember?.accessLevel === 'owner');
     }
   }, [accountData?.address, workspace]);
 
@@ -290,7 +290,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                   <Box w="100%" h="2px" bgColor="#8850EA" />
                 ) : null}
               </Flex>
-              <Flex h="100%" direction="column" display={member?.accessLevel === 'admin' ? '' : 'none'}>
+              <Flex h="100%" direction="column" display={isAdmin ? '' : 'none'}>
                 <Tab
                   label="Funds"
                   icon={`/ui_icons/${
@@ -307,7 +307,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                   <Box w="100%" h="2px" bgColor="#8850EA" />
                 ) : null}
               </Flex>
-              <Flex h="100%" direction="column" display={member?.accessLevel === 'admin' ? '' : 'none'}>
+              <Flex h="100%" direction="column" display={isAdmin ? '' : 'none'}>
                 <Tab
                   label="Settings And Members"
                   icon={`/ui_icons/${

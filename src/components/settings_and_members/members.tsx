@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 import { getTextWithEllipses } from 'src/utils/formattingUtils';
 import CopyIcon from '../ui/copy_icon';
 import Modal from '../ui/modal';
-import ConfirmationModalContent from './confirmationModalContent';
+// import ConfirmationModalContent from './confirmationModalContent';
 import ModalContent from './modalContent';
 import roles from './roles';
 
@@ -30,7 +30,8 @@ function Members({ workspaceMembers }: Props) {
     if (!workspaceMembers) return;
     const tempTableData = workspaceMembers.map((member: any) => ({
       memberAddress: member.actorId,
-      role: member.role,
+      role: member.accessLevel,
+      email: member.email,
     }));
     setTableData(tempTableData);
   }, [workspaceMembers]);
@@ -38,7 +39,7 @@ function Members({ workspaceMembers }: Props) {
   const [isEdit, setIsEdit] = React.useState(false);
   const [selectedRow, setSelectedRow] = React.useState(-1);
 
-  const [revokeModalOpen, setRevokeModalOpen] = React.useState(false);
+  // const [revokeModalOpen, setRevokeModalOpen] = React.useState(false);
 
   React.useEffect(() => { console.log(tableData); }, [tableData]);
 
@@ -140,6 +141,7 @@ function Members({ workspaceMembers }: Props) {
             newMember: { address: string; email: string; role: string },
             shouldRevoke?: boolean,
           ) => {
+            console.log(newMember);
             if (!shouldRevoke) {
               if (tableData && tableData.length > 0) {
                 setTableData([...tableData, newMember]);
@@ -151,11 +153,15 @@ function Members({ workspaceMembers }: Props) {
             setIsModalOpen(false);
           }}
           isEdit={isEdit}
-          setRevokeModalOpen={setRevokeModalOpen}
-          member={{ address: isEdit && selectedRow !== -1 ? tableData[selectedRow].memberAddress : '', email: '', role: isEdit && selectedRow !== -1 ? tableData[selectedRow].role : '' }}
+          // setRevokeModalOpen={setRevokeModalOpen}
+          member={{
+            address: isEdit && selectedRow !== -1 ? tableData[selectedRow].memberAddress : '',
+            email: isEdit && selectedRow !== -1 ? tableData[selectedRow].email : '',
+            role: isEdit && selectedRow !== -1 ? tableData[selectedRow].role : '',
+          }}
         />
       </Modal>
-      <Modal
+      {/* <Modal
         isOpen={revokeModalOpen}
         onClose={() => setRevokeModalOpen(false)}
         title=""
@@ -169,7 +175,7 @@ function Members({ workspaceMembers }: Props) {
           }}
           loading={false}
         />
-      </Modal>
+      </Modal> */}
     </Flex>
   );
 }
