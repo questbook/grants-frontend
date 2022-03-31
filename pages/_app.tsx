@@ -123,8 +123,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
   return (
     <Provider autoConnect connectors={connectors} provider={provider}>
+      <DefaultSeo {...seo} />
       <ApiClientsContext.Provider value={apiClients}>
-        <DefaultSeo {...seo} />
         <ChakraProvider theme={theme}>
           {getLayout(<Component {...pageProps} />)}
         </ChakraProvider>
