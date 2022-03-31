@@ -11,8 +11,14 @@ function MailTo({ applicantEmail } : { applicantEmail: string }) {
   const [copied, setCopied] = useState(false);
   const { defaultLink, gmailLink, yahooLink } = useMailTo(
     applicantEmail,
-    'EMAIL_TEMPLATE yolo',
-    'SUBJECT',
+    `Hi <Applicant Name>,%0D
+Thanks for applying to <Grant Title > grant.%0D
+As a next step, we would like to schedule a call with you and your team. Here’s my Calendly link : <Link> Feel free to choose any open slot to schedule an intro. call with us. Look forward to speaking with you. %0D%0D
+Best,%0D
+<Name>`,
+    'Request for a Meeting',
+    undefined,
+    'questbook.app@gmail.com',
   );
   return (
     <>
