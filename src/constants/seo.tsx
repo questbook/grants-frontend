@@ -2,7 +2,7 @@ const seoConfig = {
   title: 'Questbook',
   titleTemplate: '%s',
   description:
-      '',
+      'Some description',
   siteUrl: 'https://www.questbook.app/',
   twitter: {
     handle: '@questbookapp',
@@ -15,7 +15,7 @@ const seoConfig = {
     url: 'https://www.questbook.app/',
     title: 'Questbook',
     description:
-        '',
+        'Some description',
     site_name:
         'Questbook',
     images: [
