@@ -12,13 +12,14 @@ import roles from './roles';
 import MemberProps from './memberProps';
 
 interface Props {
-  onClose: (member: MemberProps) => void;
+  onClose: (member: MemberProps, shouldRevoke?: boolean) => void;
   isEdit: boolean,
   member?: MemberProps;
+  setRevokeModalOpen: (v: boolean) => void;
 }
 
 function ModalContent({
-  onClose, isEdit, member,
+  onClose, isEdit, member, setRevokeModalOpen,
 }: Props) {
   const [memberAddress, setMemberAddress] = React.useState(member?.address || '');
   const [memberAddressError, setMemberAddressError] = React.useState(false);
@@ -163,7 +164,19 @@ function ModalContent({
       <Box my={4} />
       <Flex direction="row" justify="stretch">
         {isEdit && (
-        <Button w="48%" variant="link" color="brand.500">
+        <Button
+          w="48%"
+          variant="link"
+          color="brand.500"
+          onClick={() => {
+            onClose({
+              address: memberAddress,
+              email: memberEmail,
+              role,
+            }, true);
+            setRevokeModalOpen(true);
+          }}
+        >
           Revoke Access
           {' '}
           <Image ml={2} src="/ui_icons/revoke_access.svg" display="inline-block" />

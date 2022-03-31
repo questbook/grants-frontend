@@ -5,6 +5,7 @@ import React, { useEffect } from 'react';
 import { getTextWithEllipses } from 'src/utils/formattingUtils';
 import CopyIcon from '../ui/copy_icon';
 import Modal from '../ui/modal';
+import ConfirmationModalContent from './confirmationModalContent';
 import ModalContent from './modalContent';
 import roles from './roles';
 
@@ -36,6 +37,10 @@ function Members({ workspaceMembers }: Props) {
 
   const [isEdit, setIsEdit] = React.useState(false);
   const [selectedRow, setSelectedRow] = React.useState(-1);
+
+  const [revokeModalOpen, setRevokeModalOpen] = React.useState(false);
+
+  React.useEffect(() => { console.log(tableData); }, [tableData]);
 
   return (
     <Flex direction="column" align="start" w="100%">
@@ -131,17 +136,38 @@ function Members({ workspaceMembers }: Props) {
         title={`${isEdit ? 'Edit' : 'Invite'} Member`}
       >
         <ModalContent
-          onClose={(newMember: { address: string, email: string, role: string }) => {
-            if (tableData && tableData.length > 0) {
-              setTableData([...tableData, newMember]);
-            } else {
-              setTableData([newMember]);
+          onClose={(
+            newMember: { address: string; email: string; role: string },
+            shouldRevoke?: boolean,
+          ) => {
+            if (!shouldRevoke) {
+              if (tableData && tableData.length > 0) {
+                setTableData([...tableData, newMember]);
+              } else {
+                setTableData([newMember]);
+              }
             }
             setIsEdit(false);
             setIsModalOpen(false);
           }}
           isEdit={isEdit}
+          setRevokeModalOpen={setRevokeModalOpen}
           member={{ address: isEdit && selectedRow !== -1 ? tableData[selectedRow].memberAddress : '', email: '', role: isEdit && selectedRow !== -1 ? tableData[selectedRow].role : '' }}
+        />
+      </Modal>
+      <Modal
+        isOpen={revokeModalOpen}
+        onClose={() => setRevokeModalOpen(false)}
+        title=""
+      >
+        <ConfirmationModalContent
+          actionButtonOnClick={() => {
+            // Logic to revoke user access
+          }}
+          onClose={() => {
+            setRevokeModalOpen(false);
+          }}
+          loading={false}
         />
       </Modal>
     </Flex>
