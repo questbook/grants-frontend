@@ -4,6 +4,7 @@ import {
 import React, { useEffect } from 'react';
 import { isValidAddress, isValidEmail } from 'src/utils/validationUtils';
 import useAddMember from 'src/hooks/useAddMember';
+import { ethers } from 'ethers';
 import SingleLineInput from '../ui/forms/singleLineInput';
 import Loader from '../ui/loader';
 import InfoToast from '../ui/infoToast';
@@ -36,22 +37,24 @@ function ModalContent({
   // const [isReviewer, setIsReviewer] = React.useState(member?.role === 'Reviewer');
   const [revokeModalOpen, setRevokeModalOpen] = React.useState(false);
   const [hidden, setHidden] = React.useState(false);
+  const [revoking, setRevoking] = React.useState(false);
 
   const toastRef = React.useRef<ToastId>();
   useEffect(() => {
     // console.log(depositTransactionData);
     if (txnData) {
-      console.log(txnData);
       const dt = txnData.events[0].args;
       const newMemberAddress = dt[1][0];
       const newMemberEmail = dt[4][0];
-      const dtRole = dt[2][0];
+      const time = parseInt(ethers.BigNumber.from(dt[5]).toString(), 10);
+      const dtRole = dt[2][1];
       setMemberData(undefined);
       onClose({
         address: newMemberAddress,
         email: newMemberEmail,
         role: roles.find((r) => r.index === dtRole)?.value ?? '',
-      });
+        updatedAt: time,
+      }, dt[3].every((r:boolean) => !r));
       toastRef.current = toast({
         position: 'top',
         render: () => (
@@ -91,6 +94,7 @@ function ModalContent({
       memberRoles: [...rolesVar],
       memberRolesEnabled: [false, true],
     });
+    setRevoking(false);
   };
 
   const revokeAccess = () => {
@@ -114,7 +118,14 @@ function ModalContent({
       memberRoles: [0, 1],
       memberRolesEnabled: [false, false],
     });
+    setRevoking(true);
   };
+
+  useEffect(() => {
+    if (!loading) {
+      setRevoking(false);
+    }
+  }, [loading]);
 
   return (
     <>
@@ -199,20 +210,20 @@ function ModalContent({
           <Button
             w="48%"
             variant="disconnect"
-          // color="brand.500"
-            onClick={() => {
-              // onClose({
-              //   address: memberAddress,
-              //   email: memberEmail,
-              //   role,
-              // }, true);
+            onClick={loading ? () => {} : () => {
               setHidden(true);
               setRevokeModalOpen(true);
             }}
+            disabled={loading && !revoking}
           >
-            Revoke Access
-            {' '}
-            <Image ml={2} src="/ui_icons/delete_gray.svg" display="inline-block" />
+            {loading && revoking ? <Loader />
+              : (
+                <>
+                  <span>Revoke Access</span>
+                  {' '}
+                  <Image ml={2} src="/ui_icons/delete_gray.svg" display="inline-block" />
+                </>
+              )}
           </Button>
           )}
           {isEdit && <Box mx="auto" />}
@@ -221,8 +232,9 @@ function ModalContent({
             py={loading ? 2 : 0}
             variant="primary"
             onClick={loading ? () => {} : () => handleSubmit()}
+            disabled={loading && revoking}
           >
-            {loading ? <Loader /> : 'Send Invite'}
+            {loading && !revoking ? <Loader /> : 'Send Invite'}
           </Button>
         </Flex>
         <Box my={8} />

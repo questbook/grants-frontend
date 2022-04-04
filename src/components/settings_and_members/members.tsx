@@ -2,7 +2,7 @@ import {
   Flex, Text, Button, Tooltip, Box,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
-import { getTextWithEllipses } from 'src/utils/formattingUtils';
+import { getFormattedDateFromUnixTimestampWithYear, getTextWithEllipses } from 'src/utils/formattingUtils';
 import CopyIcon from '../ui/copy_icon';
 import Modal from '../ui/modal';
 // import ConfirmationModalContent from './confirmationModalContent';
@@ -29,9 +29,10 @@ function Members({ workspaceMembers }: Props) {
   useEffect(() => {
     if (!workspaceMembers) return;
     const tempTableData = workspaceMembers.map((member: any) => ({
-      memberAddress: member.actorId,
+      address: member.actorId,
       role: member.accessLevel,
       email: member.email,
+      updatedAt: member.updatedAt,
     }));
     setTableData(tempTableData);
   }, [workspaceMembers]);
@@ -83,28 +84,28 @@ function Members({ workspaceMembers }: Props) {
                 py={4}
                 px={7}
               >
-                <Tooltip label={data.memberAddress}>
+                <Tooltip label={data.address}>
                   <Flex flex={tableDataFlex[0]}>
                     <Text variant="tableBody">
-                      {getTextWithEllipses(data.memberAddress, 16)}
+                      {getTextWithEllipses(data.address, 16)}
                     </Text>
                     <Box mr="7px" />
-                    <CopyIcon text={data.memberAddress} />
+                    <CopyIcon text={data.address} />
                   </Flex>
                 </Tooltip>
                 <Text flex={tableDataFlex[1]} variant="tableBody">
                   {roles.find((r) => r.value === data.role)?.label ?? 'Admin'}
                 </Text>
                 <Text flex={tableDataFlex[2]} variant="tableBody">
-                  24 January, 2021
+                  {getFormattedDateFromUnixTimestampWithYear(data.updatedAt)}
                 </Text>
-                <Tooltip label={data.memberAddress}>
+                <Tooltip label={data.address}>
                   <Flex flex={tableDataFlex[3]}>
                     <Text variant="tableBody">
-                      {getTextWithEllipses(data.memberAddress, 16)}
+                      {getTextWithEllipses(data.address, 16)}
                     </Text>
                     <Box mr="7px" />
-                    <CopyIcon text={data.memberAddress} />
+                    <CopyIcon text={data.address} />
                   </Flex>
                 </Tooltip>
                 <Box flex={tableDataFlex[4]}>
@@ -138,44 +139,37 @@ function Members({ workspaceMembers }: Props) {
       >
         <ModalContent
           onClose={(
-            newMember: { address: string; email: string; role: string },
+            newMember: { address: string; email: string; role: string; updatedAt?: number; },
             shouldRevoke?: boolean,
           ) => {
-            console.log(newMember);
             if (!shouldRevoke) {
               if (tableData && tableData.length > 0) {
-                setTableData([...tableData, newMember]);
+                setTableData([
+                  ...tableData.filter(
+                    (dt:any) => dt.address.toLowerCase() !== newMember.address.toLowerCase(),
+                  ),
+                  newMember]);
               } else {
                 setTableData([newMember]);
               }
+            } else {
+              setTableData([
+                ...tableData.filter(
+                  (dt:any) => dt.address.toLowerCase() !== newMember.address.toLowerCase(),
+                ),
+              ]);
             }
             setIsEdit(false);
             setIsModalOpen(false);
           }}
           isEdit={isEdit}
-          // setRevokeModalOpen={setRevokeModalOpen}
           member={{
-            address: isEdit && selectedRow !== -1 ? tableData[selectedRow].memberAddress : '',
+            address: isEdit && selectedRow !== -1 ? tableData[selectedRow].address : '',
             email: isEdit && selectedRow !== -1 ? tableData[selectedRow].email : '',
             role: isEdit && selectedRow !== -1 ? tableData[selectedRow].role : '',
           }}
         />
       </Modal>
-      {/* <Modal
-        isOpen={revokeModalOpen}
-        onClose={() => setRevokeModalOpen(false)}
-        title=""
-      >
-        <ConfirmationModalContent
-          actionButtonOnClick={() => {
-            // Logic to revoke user access
-          }}
-          onClose={() => {
-            setRevokeModalOpen(false);
-          }}
-          loading={false}
-        />
-      </Modal> */}
     </Flex>
   );
 }

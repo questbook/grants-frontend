@@ -180,7 +180,7 @@ function YourGrantCard({
                       onViewApplicantsClick();
                     }
                   }}
-                  display={isAdmin ? '' : 'none'}
+                  display={isAdmin || numOfApplicants > 0 ? undefined : 'none'}
                 >
                   {numOfApplicants > 0 ? 'View applicants' : 'Edit grant'}
                 </Button>
