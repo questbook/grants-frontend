@@ -327,7 +327,7 @@ function YourGrants() {
             ))}
 
         </Flex>
-        <Flex w="26%" pos="sticky" minH="calc(100vh - 80px)">
+        <Flex w="26%" pos="sticky" minH="calc(100vh - 80px)" display={isAdmin ? undefined : 'none'}>
           <Sidebar showCreateGrantItem={!grantCount[0] && !grantCount[1]} />
         </Flex>
       </Flex>

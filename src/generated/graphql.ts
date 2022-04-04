@@ -1985,18 +1985,23 @@ export type WorkspaceMember = {
   accessLevel: WorkspaceMemberAccessLevel;
   /** the ID of the member itself */
   actorId: Scalars['Bytes'];
+  /** When the member was added */
+  addedAt: Scalars['Int'];
   email?: Maybe<Scalars['String']>;
   /** Globally unique ID of the member */
   id: Scalars['ID'];
   /** Public key of the workspace member */
   publicKey?: Maybe<Scalars['String']>;
+  /** Last update on member */
+  updatedAt: Scalars['Int'];
   workspace: Workspace;
 };
 
 export enum WorkspaceMemberAccessLevel {
   Admin = 'admin',
   Member = 'member',
-  Owner = 'owner'
+  Owner = 'owner',
+  Reviewer = 'reviewer'
 }
 
 export type WorkspaceMember_Filter = {
@@ -2010,6 +2015,14 @@ export type WorkspaceMember_Filter = {
   actorId_not?: InputMaybe<Scalars['Bytes']>;
   actorId_not_contains?: InputMaybe<Scalars['Bytes']>;
   actorId_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  addedAt?: InputMaybe<Scalars['Int']>;
+  addedAt_gt?: InputMaybe<Scalars['Int']>;
+  addedAt_gte?: InputMaybe<Scalars['Int']>;
+  addedAt_in?: InputMaybe<Array<Scalars['Int']>>;
+  addedAt_lt?: InputMaybe<Scalars['Int']>;
+  addedAt_lte?: InputMaybe<Scalars['Int']>;
+  addedAt_not?: InputMaybe<Scalars['Int']>;
+  addedAt_not_in?: InputMaybe<Array<Scalars['Int']>>;
   email?: InputMaybe<Scalars['String']>;
   email_contains?: InputMaybe<Scalars['String']>;
   email_ends_with?: InputMaybe<Scalars['String']>;
@@ -2046,6 +2059,14 @@ export type WorkspaceMember_Filter = {
   publicKey_not_in?: InputMaybe<Array<Scalars['String']>>;
   publicKey_not_starts_with?: InputMaybe<Scalars['String']>;
   publicKey_starts_with?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['Int']>;
+  updatedAt_gt?: InputMaybe<Scalars['Int']>;
+  updatedAt_gte?: InputMaybe<Scalars['Int']>;
+  updatedAt_in?: InputMaybe<Array<Scalars['Int']>>;
+  updatedAt_lt?: InputMaybe<Scalars['Int']>;
+  updatedAt_lte?: InputMaybe<Scalars['Int']>;
+  updatedAt_not?: InputMaybe<Scalars['Int']>;
+  updatedAt_not_in?: InputMaybe<Array<Scalars['Int']>>;
   workspace?: InputMaybe<Scalars['String']>;
   workspace_contains?: InputMaybe<Scalars['String']>;
   workspace_ends_with?: InputMaybe<Scalars['String']>;
@@ -2065,9 +2086,11 @@ export type WorkspaceMember_Filter = {
 export enum WorkspaceMember_OrderBy {
   AccessLevel = 'accessLevel',
   ActorId = 'actorId',
+  AddedAt = 'addedAt',
   Email = 'email',
   Id = 'id',
   PublicKey = 'publicKey',
+  UpdatedAt = 'updatedAt',
   Workspace = 'workspace'
 }
 
@@ -2370,7 +2393,7 @@ export type GetWorkspaceDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel }> } | null };
+export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, updatedAt: number }> } | null };
 
 export type GetWorkspaceMembersQueryVariables = Exact<{
   actorId: Scalars['Bytes'];
@@ -3306,6 +3329,7 @@ export const GetWorkspaceDetailsDocument = gql`
       publicKey
       email
       accessLevel
+      updatedAt
     }
   }
 }
