@@ -9,6 +9,8 @@ const seoConfig = {
     handle: '@questbookapp',
     site: '@questbookapp',
     cardType: 'summary_large_image',
+    title: 'Questbook Grant',
+    image: 'https://ipfs.io/ipfs/QmQtJhGjUQyYe2j2tmka4VZ8NzJD3J9jiFSjhjgGkugwYs',
   },
   openGraph: {
     type: 'website',

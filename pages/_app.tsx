@@ -16,13 +16,16 @@ import {
   Provider,
 } from 'wagmi';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-import dynamic from 'next/dynamic';
+// import dynamic from 'next/dynamic';
 import {
   Configuration,
   ValidationApi,
 } from '@questbook/service-validator-client';
 import { MinimalWorkspace } from 'src/types';
-import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from 'src/constants/chains';
+import {
+  ALL_SUPPORTED_CHAIN_IDS,
+  SupportedChainId,
+} from 'src/constants/chains';
 import App from 'next/app';
 import { DefaultSeo } from 'next-seo';
 import getSeo from 'src/utils/seo';
@@ -47,8 +50,11 @@ const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
 // );
 
 // Pick chains
-const chains = [...defaultChains, ...defaultL2Chains,
-  CHAIN_INFO[SupportedChainId.HARMONY_TESTNET_S0] as Chain];
+const chains = [
+  ...defaultChains,
+  ...defaultL2Chains,
+  CHAIN_INFO[SupportedChainId.HARMONY_TESTNET_S0] as Chain,
+];
 const defaultChain = chain.polygonMainnet;
 // Set up connectors
 const connectors = () => [
@@ -70,7 +76,10 @@ type ProviderConfig = { chainId?: number; connector?: Connector };
 const provider = ({ chainId }: ProviderConfig) => {
   const rpcUrl = CHAIN_INFO[chainId!]?.rpcUrls[0];
   if (!rpcUrl) {
-    return new providers.JsonRpcProvider(CHAIN_INFO[defaultChain.id].rpcUrls[0], 'any');
+    return new providers.JsonRpcProvider(
+      CHAIN_INFO[defaultChain.id].rpcUrls[0],
+      'any',
+    );
   }
   return new providers.JsonRpcProvider(rpcUrl, 'any');
 };
@@ -138,10 +147,11 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 MyApp.getInitialProps = async (appContext: AppContext) => {
   // calls page's `getInitialProps` and fills `appProps.pageProps`
   const appProps = await App.getInitialProps(appContext);
-
+  console.log('appProps', appProps);
   return { ...appProps };
 };
 
-export default dynamic(() => Promise.resolve(MyApp), {
-  ssr: false,
-});
+// export default dynamic(() => Promise.resolve(MyApp), {
+//   ssr: false,
+// });
+export default MyApp;

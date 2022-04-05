@@ -8,6 +8,7 @@ import {
 import Heading from 'src/components/ui/heading';
 import LiveGrantEmptyState from 'src/components/funds/empty_states/live_grants';
 import ArchivedGrantEmptyState from 'src/components/funds/empty_states/archived_grant';
+import dynamic from 'next/dynamic';
 import NavbarLayout from '../src/layout/navbarLayout';
 import FundForAGrant from '../src/components/funds';
 import { ApiClientsContext } from './_app';
@@ -99,4 +100,7 @@ AddFunds.getLayout = function getLayout(page: ReactElement) {
   return <NavbarLayout>{page}</NavbarLayout>;
 };
 
-export default AddFunds;
+// export default AddFunds;
+export default dynamic(() => Promise.resolve(AddFunds), {
+  ssr: false,
+});
