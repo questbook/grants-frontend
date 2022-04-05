@@ -71,7 +71,9 @@ function YourGrants() {
       emptyState: {
         icon: '/illustrations/empty_states/no_live_grant.svg',
         title: 'It’s quite silent here!',
-        description: ['Get started by creating your grant and post it in less than 2 minutes.'],
+        description: [
+          'Get started by creating your grant and post it in less than 2 minutes.',
+        ],
         shouldShowButton: true,
       },
     },
@@ -82,14 +84,21 @@ function YourGrants() {
       emptyState: {
         icon: '/illustrations/empty_states/no_archived_grant.svg',
         title: 'No Grants archived.',
-        description: ['When you archive a grant it will no longer be visible to anyone.', ['To archive a grant, click on the', 'icon on your live grant and select “Archive grant”.']],
+        description: [
+          'When you archive a grant it will no longer be visible to anyone.',
+          [
+            'To archive a grant, click on the',
+            'icon on your live grant and select “Archive grant”.',
+          ],
+        ],
         shouldShowButton: false,
       },
     },
   ];
-  const [selectedTab, setSelectedTab] = useState(
-    parseInt(localStorage.getItem('yourGrantsTabSelected') ?? '0', 10),
-  );
+  const [selectedTab, setSelectedTab] = useState(0);
+  useEffect(() => {
+    setSelectedTab(parseInt(localStorage.getItem('yourGrantsTabSelected') ?? '0', 10));
+  }, []);
 
   const [grantCount, setGrantCount] = useState([true, true]);
 
@@ -111,12 +120,20 @@ function YourGrants() {
   }, [currentPage, workspace, accountData?.address]);
 
   useEffect(() => {
-    if (workspace && workspace.members
-      && workspace.members.length > 0 && accountData && accountData.address) {
+    if (
+      workspace
+      && workspace.members
+      && workspace.members.length > 0
+      && accountData
+      && accountData.address
+    ) {
       const tempMember = workspace.members.find(
         (m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
       );
-      setIsAdmin(tempMember?.accessLevel === 'admin' || tempMember?.accessLevel === 'owner');
+      setIsAdmin(
+        tempMember?.accessLevel === 'admin'
+          || tempMember?.accessLevel === 'owner',
+      );
     }
   }, [accountData, workspace]);
 
@@ -192,12 +209,8 @@ function YourGrants() {
     setGrantRewardAsset({
       address: grant.reward.asset,
       committed: BigNumber.from(grant.reward.committed),
-      label:
-        chainInfo?.label
-        ?? 'LOL',
-      icon:
-        chainInfo?.icon
-        ?? '/images/dummy/Ethereum Icon.svg',
+      label: chainInfo?.label ?? 'LOL',
+      icon: chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg',
     });
   };
 
@@ -319,15 +332,20 @@ function YourGrants() {
             && !grantCount[0]
             && !grantCount[1]
             && router.query.done && <FirstGrantEmptyState />}
-          {grants.length === 0 && !router.query.done
+          {grants.length === 0
+            && !router.query.done
             && (selectedTab === 0 ? (
               <LiveGrantEmptyState />
             ) : (
               <ArchivedGrantEmptyState />
             ))}
-
         </Flex>
-        <Flex w="26%" pos="sticky" minH="calc(100vh - 80px)" display={isAdmin ? undefined : 'none'}>
+        <Flex
+          w="26%"
+          pos="sticky"
+          minH="calc(100vh - 80px)"
+          display={isAdmin ? undefined : 'none'}
+        >
           <Sidebar showCreateGrantItem={!grantCount[0] && !grantCount[1]} />
         </Flex>
       </Flex>
