@@ -20,6 +20,7 @@ import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ErrorToast from 'src/components/ui/toasts/errorToast';
 import ModalContent from '../src/components/connect_wallet/modalContent';
 import WalletSelectButton from '../src/components/connect_wallet/walletSelectButton';
+import SolanaWalletSelectButton from '../src/components/connect_wallet/solanaWalletSelectButton';
 import Modal from '../src/components/ui/modal';
 import SecondaryDropdown from '../src/components/ui/secondaryDropdown';
 import NavbarLayout from '../src/layout/navbarLayout';
@@ -126,19 +127,26 @@ function ConnectWallet() {
         flexDirection="column"
         mt={7}
       >
-        {CHAIN_INFO[selectedNetworkId].wallets.map(({ name, icon, id }) => (
-          <WalletSelectButton
-            key={id}
-            name={name}
-            icon={icon}
-            onClick={() => {
-              const connector = data.connectors.find((x) => x.id === id);
-              if (connector) {
-                connect(connector);
-              }
-            }}
-          />
-        ))}
+        {
+          CHAIN_INFO[selectedNetworkId].wallets.map(({ name, icon, id }) => {
+            if (selectedNetworkId === SupportedChainId.SOLANA_DEVNET)
+              return <SolanaWalletSelectButton
+                key={id}
+                name={name}
+                icon={icon} />
+            else return (
+              <WalletSelectButton
+                key={id}
+                name={name}
+                icon={icon}
+                onClick={() => {
+                  const connector = data.connectors.find((x) => x.id === id);
+                  if (connector) {
+                    connect(connector);
+                  }
+                }}
+              />)
+          })}
       </VStack>
 
       {router.query.flow === 'getting_started/dao' && (

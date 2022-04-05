@@ -34,6 +34,32 @@ interface ChainInfo {
 
 export type ChainInfoMap = { readonly [chainId: number]: ChainInfo };
 export const CHAIN_INFO: ChainInfoMap = {
+  [SupportedChainId.SOLANA_DEVNET]: {
+    id: SupportedChainId.SOLANA_DEVNET,
+    name: 'Solana Devnet',
+    nativeCurrency: {
+      name: 'Solana',
+      symbol: 'SOL',
+      decimals: 9,
+    },
+    icon: '/network_icons/solana-sol.svg',
+    wallets: [
+      {
+        id: 'solana-injected',
+        name: 'Phantom',
+        icon: '/wallet_icons/phantom.svg',
+      },
+    ],
+    explorer: {
+      address: 'https://explorer.solana.com/address/?cluster=devnet',
+      transactionHash: 'https://explorer.solana.com/tx/?cluster=devnet',
+    },
+    supportedCurrencies: {
+      // TODO: add supported currencies
+    },
+    subgraphClientUrl: '',
+    rpcUrls: ['https://api.devnet.solana.com'],
+  },
   [SupportedChainId.RINKEBY]: {
     id: SupportedChainId.RINKEBY,
     name: 'Rinkeby',
