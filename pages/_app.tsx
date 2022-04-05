@@ -15,8 +15,7 @@ import {
   Provider,
 } from 'wagmi';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-import dynamic from 'next/dynamic';
-import Head from 'next/head';
+// import dynamic from 'next/dynamic';
 import {
   Configuration,
   ValidationApi,
@@ -24,8 +23,11 @@ import {
 import { MinimalWorkspace } from 'src/types';
 import { ALL_SUPPORTED_CHAIN_IDS } from 'src/constants/chains';
 import App from 'next/app';
+import { DefaultSeo } from 'next-seo';
+import getSeo from 'src/utils/seo';
 import { providers } from 'ethers';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import Head from 'next/head';
 import theme from '../src/theme';
 import SubgraphClient from '../src/graphql/subgraph';
 
@@ -72,7 +74,10 @@ type ProviderConfig = { chainId?: number; connector?: Connector };
 const provider = ({ chainId }: ProviderConfig) => {
   const rpcUrl = CHAIN_INFO[chainId!]?.rpcUrls[0];
   if (!rpcUrl) {
-    return new providers.JsonRpcProvider(CHAIN_INFO[defaultChain.id].rpcUrls[0], 'any');
+    return new providers.JsonRpcProvider(
+      CHAIN_INFO[defaultChain.id].rpcUrls[0],
+      'any',
+    );
   }
   return new providers.JsonRpcProvider(rpcUrl, 'any');
 };
@@ -120,29 +125,45 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     [validatorApi, workspace, setWorkspace, clients],
   );
 
+  const seo = getSeo();
+
   const getLayout = Component.getLayout ?? ((page) => page);
   return (
-    <Provider autoConnect connectors={connectors} provider={provider}>
-      <ApiClientsContext.Provider value={apiClients}>
-        <ChakraProvider theme={theme}>
-          <Head>
-            <link rel="icon" href="/favicon.png" />
-            <link rel="icon" href="/favicon.svg" />
-          </Head>
-          {getLayout(<Component {...pageProps} />)}
-        </ChakraProvider>
-      </ApiClientsContext.Provider>
-    </Provider>
+    <>
+      <DefaultSeo {...seo} />
+      <Head>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-N9KVED0HQZ" />
+        <script
+        // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '[Tracking ID]', { page_path: window.location.pathname });
+            `,
+          }}
+        />
+      </Head>
+      <Provider autoConnect connectors={connectors} provider={provider}>
+        <ApiClientsContext.Provider value={apiClients}>
+          <ChakraProvider theme={theme}>
+            {getLayout(<Component {...pageProps} />)}
+          </ChakraProvider>
+        </ApiClientsContext.Provider>
+      </Provider>
+    </>
   );
 }
 
 MyApp.getInitialProps = async (appContext: AppContext) => {
   // calls page's `getInitialProps` and fills `appProps.pageProps`
   const appProps = await App.getInitialProps(appContext);
-
+  console.log('appProps', appProps);
   return { ...appProps };
 };
 
-export default dynamic(() => Promise.resolve(MyApp), {
-  ssr: false,
-});
+// export default dynamic(() => Promise.resolve(MyApp), {
+//   ssr: false,
+// });
+export default MyApp;

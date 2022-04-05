@@ -70,6 +70,7 @@ function ManageGrant() {
   const [selected, setSelected] = React.useState(0);
   const [isGrantCompleteModelOpen, setIsGrantCompleteModalOpen] = React.useState(false);
   const [isSendFundModalOpen, setIsSendFundModalOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = React.useState<boolean>(false);
 
   const [applicationID, setApplicationID] = useState<any>();
   const router = useRouter();
@@ -214,6 +215,16 @@ function ManageGrant() {
       text: comment,
     });
   };
+
+  useEffect(() => {
+    if (workspace && workspace.members
+      && workspace.members.length > 0 && accountData && accountData.address) {
+      const tempMember = workspace.members.find(
+        (m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
+      );
+      setIsAdmin(tempMember?.accessLevel === 'admin' || tempMember?.accessLevel === 'owner');
+    }
+  }, [accountData, workspace]);
 
   function renderModal() {
     return (
@@ -430,7 +441,7 @@ function ManageGrant() {
           )}
         </Flex>
       </Container>
-      {applicationData?.state !== 'completed' && (
+      {applicationData?.state !== 'completed' && isAdmin && (
         <Sidebar
           milestones={milestones}
           assetInfo={assetInfo}

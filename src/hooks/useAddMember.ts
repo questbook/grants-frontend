@@ -56,9 +56,11 @@ export default function useAddMember(
       // console.log('calling validate');
       // console.log(data);
       try {
-        const updateTransaction = await workspaceRegistryContract.addWorkspaceAdmins(
+        const updateTransaction = await workspaceRegistryContract.updateWorkspaceMembers(
           workspace!.id,
           data.memberAddress,
+          data.memberRoles,
+          data.memberRolesEnabled,
           data.memberEmail,
         );
         const updateTransactionData = await updateTransaction.wait();

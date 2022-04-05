@@ -53,7 +53,7 @@ function SettingsAndMembers() {
 
   return (
     <Flex direction="row" w="100%" justify="space-evenly">
-      <Flex w="45%" direction="column">
+      <Flex w={selected === 0 ? '100%' : '100%'} maxW="1036px" direction="column">
         <Flex
           direction="row"
           w="full"

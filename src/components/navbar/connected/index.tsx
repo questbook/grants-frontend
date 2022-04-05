@@ -43,6 +43,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 
   const apiClients = useContext(ApiClientsContext)!;
   const { workspace, setWorkspace, subgraphClients } = apiClients;
+  const [isAdmin, setIsAdmin] = React.useState(false);
 
   // eslint-disable-next-line max-len
   const getNumberOfApplicationsClients = Object.keys(subgraphClients)!.map(
@@ -125,7 +126,14 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     (key) => useGetWorkspaceMembersLazyQuery({ client: subgraphClients[key].client }),
   );
-  // useEffect(() => {}, [subgraphClients]);
+  useEffect(() => {
+    if (workspace && workspace.members && workspace.members.length > 0) {
+      const tempMember = workspace.members.find(
+        (m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
+      );
+      setIsAdmin(tempMember?.accessLevel === 'admin' || tempMember?.accessLevel === 'owner');
+    }
+  }, [accountData?.address, workspace]);
 
   useEffect(() => {
     if (!accountData?.address) return;
@@ -282,7 +290,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                   <Box w="100%" h="2px" bgColor="#8850EA" />
                 ) : null}
               </Flex>
-              <Flex h="100%" direction="column">
+              <Flex h="100%" direction="column" display={isAdmin ? '' : 'none'}>
                 <Tab
                   label="Funds"
                   icon={`/ui_icons/${
@@ -299,7 +307,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                   <Box w="100%" h="2px" bgColor="#8850EA" />
                 ) : null}
               </Flex>
-              <Flex h="100%" direction="column">
+              <Flex h="100%" direction="column" display={isAdmin ? '' : 'none'}>
                 <Tab
                   label="Settings And Members"
                   icon={`/ui_icons/${
@@ -344,6 +352,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
           <Box mr="8px" />
 
           <Button
+            display={isAdmin ? undefined : 'none'}
             onClick={() => {
               if (workspace?.id == null) {
                 router.push({

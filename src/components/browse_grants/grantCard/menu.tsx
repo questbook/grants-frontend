@@ -32,15 +32,34 @@ function ShareMenu({
       />
       <MenuList minW="164px" p={0}>
         <MenuItem
-          onClick={() => {
+          onClick={async () => {
             const href = window.location.href.split('/');
             const protocol = href[0];
             const domain = href[2];
             // console.log(domain);
-            copy(
-              `${protocol}//${domain}/explore_grants/about_grant/?grantId=${grantID}&chainId=${chainId}`,
-            );
-            setCopied(true);
+
+            const req = {
+              long_url: `${protocol}//${domain}/explore_grants/about_grant/?grantId=${grantID}&chainId=${chainId}&utm_source=questbook&utm_medium=browse_grants&utm_campaign=share`,
+              domain: 'bit.ly',
+              group_guid: process.env.NEXT_PUBLIC_BITLY_GROUP,
+            };
+
+            await fetch('https://api-ssl.bitly.com/v4/shorten', {
+              method: 'POST',
+              headers: {
+                Authorization: process.env.NEXT_PUBLIC_BITLY_AUTH,
+                'Content-Type': 'application/json',
+              } as HeadersInit,
+              body: JSON.stringify(req),
+            }).then((response) => {
+              if (!response.ok) {
+                console.log(response);
+              }
+              return response.json();
+            }).then((data) => {
+              copy(data.link);
+              setCopied(true);
+            });
           }}
           py="12px"
           px="16px"

@@ -33,6 +33,7 @@ interface YourGrantCardProps {
   onAddFundsClick?: () => void;
   acceptingApplications: boolean;
   chainId: SupportedChainId | undefined;
+  isAdmin: boolean;
 }
 
 function YourGrantCard({
@@ -51,6 +52,7 @@ function YourGrantCard({
   onAddFundsClick,
   chainId,
   acceptingApplications,
+  isAdmin,
 }: YourGrantCardProps) {
   const [isAcceptingApplications, setIsAcceptingApplications] = React.useState<
   [boolean, number]
@@ -150,8 +152,9 @@ function YourGrantCard({
                 numOfApplicants={numOfApplicants}
                 onViewApplicantsClick={onViewApplicantsClick}
                 onEditClick={onEditClick}
+                isAdmin={isAdmin}
               />
-              {acceptingApplications && (
+              {acceptingApplications && isAdmin && (
                 <Button
                   mr={2}
                   ml={5}
@@ -177,11 +180,12 @@ function YourGrantCard({
                       onViewApplicantsClick();
                     }
                   }}
+                  display={isAdmin || numOfApplicants > 0 ? undefined : 'none'}
                 >
                   {numOfApplicants > 0 ? 'View applicants' : 'Edit grant'}
                 </Button>
               )}
-              {!acceptingApplications && (
+              {!acceptingApplications && isAdmin && (
                 <Button
                   ml={5}
                   isDisabled={state === 'processing'}
