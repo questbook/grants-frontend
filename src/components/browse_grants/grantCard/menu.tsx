@@ -49,7 +49,7 @@ function ShareMenu({
               headers: {
                 Authorization: process.env.BITLY_AUTH,
                 'Content-Type': 'application/json',
-              },
+              } as HeadersInit,
               body: JSON.stringify(req),
             }).then((response) => {
               if (!response.ok) {
