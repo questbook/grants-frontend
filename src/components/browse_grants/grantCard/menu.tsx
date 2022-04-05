@@ -47,7 +47,7 @@ function ShareMenu({
             await fetch('https://api-ssl.bitly.com/v4/shorten', {
               method: 'POST',
               headers: {
-                Authorization: process.env.BITLY_AUTH,
+                Authorization: process.env.NEXT_PUBLIC_BITLY_AUTH,
                 'Content-Type': 'application/json',
               } as HeadersInit,
               body: JSON.stringify(req),
