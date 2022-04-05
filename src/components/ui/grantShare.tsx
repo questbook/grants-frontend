@@ -20,7 +20,7 @@ function GrantShare({ grantID, chainId } : Props) {
     const req = {
       long_url: `${protocol}//${domain}/explore_grants/about_grant/?grantId=${grantID}&chainId=${chainId}&utm_source=questbook&utm_medium=grant_details&utm_campaign=share`,
       domain: 'bit.ly',
-      group_guid: process.env.BITLY_GROUP,
+      group_guid: process.env.NEXT_PUBLIC_BITLY_GROUP,
     };
 
     await fetch('https://api-ssl.bitly.com/v4/shorten', {
