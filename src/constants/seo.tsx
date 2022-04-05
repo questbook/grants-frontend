@@ -18,7 +18,7 @@ const seoConfig = {
     url: 'https://beta.questbook.app/',
     title: 'Questbook',
     description:
-        'Some description',
+        'Discover Opportunities in Web 3.0 and Earn in Crypto',
     site_name:
         'Questbook',
     images: [
