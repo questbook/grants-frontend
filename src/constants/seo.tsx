@@ -2,7 +2,7 @@ const seoConfig = {
   title: 'Questbook',
   titleTemplate: '%s',
   description:
-      'Some description',
+      'Discover Opportunities in Web 3.0 and Earn in Crypto',
   // siteUrl: 'https://www.questbook.app/',
   siteUrl: 'https://beta.questbook.app/',
   twitter: {
@@ -18,7 +18,7 @@ const seoConfig = {
     url: 'https://beta.questbook.app/',
     title: 'Questbook',
     description:
-        'Some description',
+        'Discover Opportunities in Web 3.0 and Earn in Crypto',
     site_name:
         'Questbook',
     images: [

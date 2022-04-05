@@ -20,7 +20,6 @@ import { getAssetInfo } from 'src/utils/tokenUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import VerifiedBadge from 'src/components/ui/verified_badge';
 import verify from 'src/utils/grantUtils';
-import SEO from 'src/components/ui/seo';
 import { useAccount } from 'wagmi';
 import Modal from 'src/components/ui/modal';
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent';
@@ -207,10 +206,6 @@ function AboutGrant() {
 
   return (
     <Flex direction="column" w="72%" mx="auto" mb={8}>
-      <SEO
-        title={title}
-        description={grantSummary}
-      />
       <Breadcrumbs path={['Explore Grants', 'About Grant']} />
       {!acceptingApplications && (
         <Flex
