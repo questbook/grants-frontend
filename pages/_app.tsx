@@ -16,7 +16,6 @@ import {
   Provider,
 } from 'wagmi';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-import dynamic from 'next/dynamic';
 import {
   Configuration,
   ValidationApi,
@@ -142,6 +141,8 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
   return { ...appProps };
 };
 
-export default dynamic(() => Promise.resolve(MyApp), {
-  ssr: false,
-});
+// export default dynamic(() => Promise.resolve(MyApp), {
+//   ssr: false,
+// });
+
+export default MyApp;
