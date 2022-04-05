@@ -95,10 +95,10 @@ function YourGrants() {
       },
     },
   ];
-  // const [selectedTab, setSelectedTab] = useState(
-  //   parseInt(localStorage.getItem('yourGrantsTabSelected') ?? '0', 10),
-  // );
   const [selectedTab, setSelectedTab] = useState(0);
+  useEffect(() => {
+    setSelectedTab(parseInt(localStorage.getItem('yourGrantsTabSelected') ?? '0', 10));
+  }, []);
 
   const [grantCount, setGrantCount] = useState([true, true]);
 
