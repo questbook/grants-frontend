@@ -11,13 +11,34 @@ interface Props {
 function GrantShare({ grantID, chainId } : Props) {
   const [copied, setCopied] = React.useState(false);
 
-  const copyGrantLink = () => {
+  const copyGrantLink = async () => {
     const href = window.location.href.split('/');
     const protocol = href[0];
     const domain = href[2];
     // console.log(domain);
-    copy(`${protocol}//${domain}/explore_grants/about_grant/?grantId=${grantID}&chainId=${chainId}`);
-    setCopied(true);
+
+    const req = {
+      long_url: `${protocol}//${domain}/explore_grants/about_grant/?grantId=${grantID}&chainId=${chainId}&utm_source=questbook&utm_medium=grant_details&utm_campaign=share`,
+      domain: 'bit.ly',
+      group_guid: process.env.BITLY_GROUP,
+    };
+
+    await fetch('https://api-ssl.bitly.com/v4/shorten', {
+      method: 'POST',
+      headers: {
+        Authorization: process.env.BITLY_AUTH,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(req),
+    }).then((response) => {
+      if (!response.ok) {
+        console.log(response);
+      }
+      return response.json();
+    }).then((data) => {
+      copy(data.link);
+      setCopied(true);
+    });
   };
 
   return (

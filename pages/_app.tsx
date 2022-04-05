@@ -31,6 +31,7 @@ import { DefaultSeo } from 'next-seo';
 import getSeo from 'src/utils/seo';
 import { providers } from 'ethers';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import Head from 'next/head';
 import theme from '../src/theme';
 import SubgraphClient from '../src/graphql/subgraph';
 
@@ -133,6 +134,20 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <>
       <DefaultSeo {...seo} />
+      <Head>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-N9KVED0HQZ" />
+        <script
+        // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '[Tracking ID]', { page_path: window.location.pathname });
+            `,
+          }}
+        />
+      </Head>
       <Provider autoConnect connectors={connectors} provider={provider}>
         <ApiClientsContext.Provider value={apiClients}>
           <ChakraProvider theme={theme}>
