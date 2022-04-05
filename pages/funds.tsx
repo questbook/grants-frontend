@@ -1,5 +1,5 @@
 import { Button, Flex } from '@chakra-ui/react';
-import React, { ReactElement, useContext } from 'react';
+import React, { ReactElement, useContext, useEffect } from 'react';
 import { useGetAllGrantsForADaoQuery } from 'src/generated/graphql';
 import { SupportedChainId } from 'src/constants/chains';
 import {
@@ -8,7 +8,6 @@ import {
 import Heading from 'src/components/ui/heading';
 import LiveGrantEmptyState from 'src/components/funds/empty_states/live_grants';
 import ArchivedGrantEmptyState from 'src/components/funds/empty_states/archived_grant';
-import dynamic from 'next/dynamic';
 import NavbarLayout from '../src/layout/navbarLayout';
 import FundForAGrant from '../src/components/funds';
 import { ApiClientsContext } from './_app';
@@ -20,9 +19,11 @@ function AddFunds() {
     { index: 0, acceptingApplications: true, label: 'Live Grants' },
     { index: 1, acceptingApplications: false, label: 'Archived' },
   ];
-  const [selectedTab, setSelectedTab] = React.useState(
-    parseInt(localStorage.getItem('fundsTabSelected') ?? '0', 10),
-  );
+  const [selectedTab, setSelectedTab] = React.useState(0);
+
+  useEffect(() => {
+    setSelectedTab(parseInt(localStorage.getItem('fundsTabSelected') ?? '0', 10));
+  }, []);
 
   const { data } = useGetAllGrantsForADaoQuery({
     client:
@@ -100,7 +101,4 @@ AddFunds.getLayout = function getLayout(page: ReactElement) {
   return <NavbarLayout>{page}</NavbarLayout>;
 };
 
-// export default AddFunds;
-export default dynamic(() => Promise.resolve(AddFunds), {
-  ssr: false,
-});
+export default AddFunds;
