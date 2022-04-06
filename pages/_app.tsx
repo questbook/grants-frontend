@@ -27,6 +27,7 @@ import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from 'src/constants/chains'
 import App from 'next/app';
 import { providers } from 'ethers';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { GrantsContextMaker } from 'src/hooks/stores/useGrantsStore';
 import theme from '../src/theme';
 import SubgraphClient from '../src/graphql/subgraph';
 
@@ -121,13 +122,15 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <Provider autoConnect connectors={connectors} provider={provider}>
       <ApiClientsContext.Provider value={apiClients}>
-        <ChakraProvider theme={theme}>
-          <Head>
-            <link rel="icon" href="/favicon.png" />
-            <link rel="icon" href="/favicon.svg" />
-          </Head>
-          {getLayout(<Component {...pageProps} />)}
-        </ChakraProvider>
+        <GrantsContextMaker>
+          <ChakraProvider theme={theme}>
+            <Head>
+              <link rel="icon" href="/favicon.png" />
+              <link rel="icon" href="/favicon.svg" />
+            </Head>
+            {getLayout(<Component {...pageProps} />)}
+          </ChakraProvider>
+        </GrantsContextMaker>
       </ApiClientsContext.Provider>
     </Provider>
   );

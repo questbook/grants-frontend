@@ -26,6 +26,7 @@ import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import FirstGrantEmptyState from 'src/components/your_grants/empty_states/first_grant';
 import LiveGrantEmptyState from 'src/components/your_grants/empty_states/live_grants';
 import ArchivedGrantEmptyState from 'src/components/your_grants/empty_states/archived_grant';
+import { GrantsContext } from 'src/hooks/stores/useGrantsStore';
 import AddFunds from '../../src/components/funds/add_funds_modal';
 import Heading from '../../src/components/ui/heading';
 import YourGrantCard from '../../src/components/your_grants/yourGrantCard';
@@ -41,6 +42,7 @@ function YourGrants() {
     fetchEns: false,
   });
   const { workspace, subgraphClients } = useContext(ApiClientsContext)!;
+  const { yourGrants } = useContext(GrantsContext);
 
   const containerRef = useRef(null);
   const [currentPage, setCurrentPage] = React.useState(0);
@@ -248,7 +250,7 @@ function YourGrants() {
             ))}
           </Flex>
           {grants.length > 0
-            && grants.map((grant: any) => (
+            && grants.map((grant) => (
               <YourGrantCard
                 grantID={grant.id}
                 key={grant.id}
@@ -256,7 +258,7 @@ function YourGrants() {
                 grantTitle={grant.title}
                 grantDesc={grant.summary}
                 numOfApplicants={grant.numberOfApplications}
-                endTimestamp={new Date(grant.deadline).getTime()}
+                endTimestamp={grant.deadline ? new Date(grant.deadline).getTime() : 0}
                 grantAmount={formatAmount(
                   grant.reward.committed,
                   CHAIN_INFO[
