@@ -240,11 +240,6 @@
         "type": "uint48"
       },
       {
-        "internalType": "uint48",
-        "name": "milestonesDone",
-        "type": "uint48"
-      },
-      {
         "internalType": "string",
         "name": "metadataHash",
         "type": "string"
@@ -253,6 +248,11 @@
         "internalType": "enum ApplicationRegistry.ApplicationState",
         "name": "state",
         "type": "uint8"
+      },
+      {
+        "internalType": "bool",
+        "name": "milestonesDone",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",

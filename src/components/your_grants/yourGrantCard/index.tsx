@@ -152,7 +152,6 @@ function YourGrantCard({
                 numOfApplicants={numOfApplicants}
                 onViewApplicantsClick={onViewApplicantsClick}
                 onEditClick={onEditClick}
-                isAdmin={isAdmin}
               />
               {acceptingApplications && isAdmin && (
                 <Button
