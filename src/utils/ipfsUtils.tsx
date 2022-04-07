@@ -16,13 +16,6 @@ export const uploadToIPFS = async (data: string | Blob): Promise<{ hash: string 
   return { hash: responseBody.Hash };
 };
 
-export const getFromIPFS = async (hash: string): Promise<string> => {
-  console.log(hash);
-  const fetchResult = await fetch(`https://ipfs.io/ipfs/${hash}`);
-  const responseBody = await fetchResult.text();
-  return responseBody;
-};
-
 export const getUrlForIPFSHash = (hash: string) => {
   // https://docs.ipfs.io/concepts/what-is-ipfs
   // https://infura.io/docs/ipfs#section/Getting-Started/Pin-a-file
@@ -31,5 +24,11 @@ export const getUrlForIPFSHash = (hash: string) => {
   // return `https://${v1}.ipfs.dweb.link/#x-ipfs-companion-no-redirect`;
   // return `https://ipfs.infura.io:5001/api/v0/cat?arg=${v1}`;
   // return `https://infura-ipfs.io:5001/api/v0/cat?arg=${hash}`;
-  return `https://ipfs.io/ipfs/${hash}`;
+  return `https://api.thegraph.com/ipfs/api/v0/cat?arg=${hash}`;
+};
+
+export const getFromIPFS = async (hash: string): Promise<string> => {
+  const fetchResult = await fetch(`https://ipfs.infura.io:5001/api/v0/cat?arg=${hash}`, { method: 'post' });
+  const responseBody = await fetchResult.text();
+  return responseBody;
 };
