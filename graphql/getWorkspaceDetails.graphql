@@ -16,7 +16,6 @@ query getWorkspaceDetails($workspaceID: ID!) {
           publicKey
           email
           accessLevel
-          updatedAt
         }
     }
 }
