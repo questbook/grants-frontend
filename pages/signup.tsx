@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import React, { ReactElement, useContext, useEffect } from 'react';
 import useCreateWorkspace from 'src/hooks/useCreateWorkspace';
 import useCreateGrant from 'src/hooks/useCreateGrant';
+import { GrantsContext } from 'src/hooks/stores/useGrantsStore';
 import { SupportedChainId } from 'src/constants/chains';
 import { SupportedNetwork } from 'src/generated/graphql';
 import InfoToast from '../src/components/ui/infoToast';
@@ -69,15 +70,20 @@ function SignupDao() {
   }, [workspaceTransactionData, imageHash, workspaceData, router]);
 
   const [grantData, setGrantData] = React.useState<any>();
-  const [
-    grantTransactionData,
-    transactionLink,
-    createGrantLoading,
-  ] = useCreateGrant(grantData, workspaceData?.network, daoData?.id);
+  // const [
+  //   grantTransactionData,
+  //   transactionLink,
+  //   createGrantLoading,
+  // ] = useCreateGrant(grantData, workspaceData?.network, daoData?.id);
+  const { createGrant, loading, transactionData } = useContext(GrantsContext);
+  let transactionLink: any;
+  function createGrantFunction(data: any) {
+    [transactionLink] = createGrant(data);
+  }
 
   useEffect(() => {
     // console.log(grantTransactionData);
-    if (grantTransactionData) {
+    if (transactionData) {
       setGrantData(null);
       router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
 
@@ -97,14 +103,15 @@ function SignupDao() {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [toast, grantTransactionData, router]);
+  }, [toast, transactionData, router]);
 
   if (creatingGrant) {
     return (
       <CreateGrant
-        hasClicked={createGrantLoading}
+        hasClicked={loading}
         onSubmit={(data) => {
           console.log('grant data', data);
+          createGrantFunction(data);
           setGrantData(data);
         }}
       />

@@ -10,10 +10,10 @@ import {
 import { useRouter } from 'next/router';
 import { ApiClientsContext } from 'pages/_app';
 import React, {
-  ReactElement, useContext, useEffect, useRef, useState,
+  ReactElement, useContext, useEffect, useRef,
 } from 'react';
 import InfoToast from 'src/components/ui/infoToast';
-import useCreateGrant from 'src/hooks/useCreateGrant';
+import { GrantsContext } from 'src/hooks/stores/useGrantsStore';
 import useIntersection from 'src/hooks/utils/useIntersection';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { useNetwork } from 'wagmi';
@@ -24,7 +24,7 @@ import NavbarLayout from '../../src/layout/navbarLayout';
 function CreateGrant() {
   const apiClients = useContext(ApiClientsContext)!;
   const { workspace } = apiClients;
-  const [,switchNetwork] = useNetwork();
+  const [, switchNetwork] = useNetwork();
   const router = useRouter();
 
   const grantInfoRef = useRef(null);
@@ -71,9 +71,15 @@ function CreateGrant() {
     ],
   ];
 
-  const [formData, setFormData] = useState<any>();
-  const [transactionData, blockExplorerLink, loading] = useCreateGrant(formData);
+  // const [transactionData, blockExplorerLink, loading] = useCreateGrant(formData);
 
+  let blockExplorerLink: string;
+
+  const { createGrant, loading, transactionData } = useContext(GrantsContext);
+
+  function createGrantFunction(data: any) {
+    [blockExplorerLink] = createGrant(data);
+  }
   useEffect(() => {
     if (workspace && switchNetwork) {
       const chainId = getSupportedChainIdFromWorkspace(workspace);
@@ -137,7 +143,7 @@ function CreateGrant() {
       >
         <Breadcrumbs path={['My Grants', 'Create grant']} />
         <Form
-          onSubmit={(data: any) => setFormData(data)}
+          onSubmit={(data: any) => createGrantFunction(data)}
           refs={sideBarDetails.map((detail) => detail[2])}
           hasClicked={loading}
         />
