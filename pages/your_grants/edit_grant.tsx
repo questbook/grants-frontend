@@ -210,7 +210,9 @@ function EditGrant() {
 
   const [editData, setEditData] = useState<any>();
   // const [transactionData, txnLink, loading] = useEditGrant(editData, grantID);
-  const { updateGrantHandler, loading, transactionData } = useContext(GrantsContext);
+  const {
+    updateGrantHandler, loading, transactionData, transactionType,
+  } = useContext(GrantsContext);
   let txnLink: any;
 
   function updateGrant(formdata: any) {
@@ -221,7 +223,7 @@ function EditGrant() {
 
   useEffect(() => {
     // console.log(transactionData);
-    if (transactionData) {
+    if (transactionType === 'update' && transactionData) {
       router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
       toastRef.current = toast({
         position: 'top',

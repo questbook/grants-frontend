@@ -75,10 +75,12 @@ function CreateGrant() {
 
   let blockExplorerLink: string;
 
-  const { createGrant, loading, transactionData } = useContext(GrantsContext);
+  const {
+    createGrantHandler, loading, transactionData, transactionType,
+  } = useContext(GrantsContext);
 
-  function createGrantFunction(data: any) {
-    [blockExplorerLink] = createGrant(data);
+  function createGrant(data: any) {
+    blockExplorerLink = createGrantHandler(data);
   }
   useEffect(() => {
     if (workspace && switchNetwork) {
@@ -89,7 +91,7 @@ function CreateGrant() {
 
   useEffect(() => {
     // console.log(transactionData);
-    if (transactionData) {
+    if (transactionType === 'create' && transactionData) {
       router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
       toastRef.current = toast({
         position: 'top',
@@ -106,7 +108,7 @@ function CreateGrant() {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [toast, transactionData, router]);
+  }, [toast, transactionData, transactionType, router]);
 
   const getColor = (index: number, color2: string, color1: string) => {
     if (index === 3) {
@@ -143,7 +145,7 @@ function CreateGrant() {
       >
         <Breadcrumbs path={['My Grants', 'Create grant']} />
         <Form
-          onSubmit={(data: any) => createGrantFunction(data)}
+          onSubmit={(data: any) => createGrant(data)}
           refs={sideBarDetails.map((detail) => detail[2])}
           hasClicked={loading}
         />
