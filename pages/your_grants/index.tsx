@@ -42,6 +42,7 @@ function YourGrants() {
   });
   const { workspace, subgraphClients } = useContext(ApiClientsContext)!;
   const [isAdmin, setIsAdmin] = React.useState<boolean>(false);
+  const [isReviewer, setIsReviewer] = React.useState<boolean>(false);
 
   const containerRef = useRef(null);
   const [currentPage, setCurrentPage] = React.useState(0);
@@ -134,6 +135,7 @@ function YourGrants() {
         tempMember?.accessLevel === 'admin'
           || tempMember?.accessLevel === 'owner',
       );
+      setIsReviewer(tempMember?.accessLevel === 'reviewer');
     }
   }, [accountData, workspace]);
 
@@ -344,9 +346,9 @@ function YourGrants() {
           w="26%"
           pos="sticky"
           minH="calc(100vh - 80px)"
-          display={isAdmin ? undefined : 'none'}
+          display={isAdmin || isReviewer ? undefined : 'none'}
         >
-          <Sidebar showCreateGrantItem={!grantCount[0] && !grantCount[1]} />
+          <Sidebar isReviewer={isReviewer} showCreateGrantItem={!grantCount[0] && !grantCount[1]} />
         </Flex>
       </Flex>
       {grantForFunding && grantRewardAsset && (
