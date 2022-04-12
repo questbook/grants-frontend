@@ -5,7 +5,6 @@ import { GetAllGrantsForCreatorQuery } from 'src/generated/graphql';
 import { parseAmount } from 'src/utils/formattingUtils';
 import { SupportedChainId } from 'src/constants/chains';
 import { Grant } from 'src/types';
-import { useAccount, useNetwork } from 'wagmi';
 import { uploadToIPFS } from 'src/utils/ipfsUtils';
 import { getSupportedChainIdFromWorkspace, getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils';
 import { APPLICATION_REGISTRY_ADDRESS, WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses';
@@ -13,10 +12,13 @@ import { ToastId, useToast } from '@chakra-ui/react';
 import getErrorMessage from 'src/utils/errorUtils';
 import ErrorToast from 'src/components/ui/toasts/errorToast';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { useAccount, useNetwork } from 'wagmi';
 import ContextGenerator from '../utils/contextGenerator';
 import usePaginatedDataStore from './usePaginatedDataStore';
 import useGrantFactoryContract from '../contracts/useGrantFactoryContract';
 import useChainId from '../utils/useChainId';
+
+// import useGrantContract from '../contracts/useGrantContract';
 
 type YourGrant = GetAllGrantsForCreatorQuery['grants'][0];
 
@@ -26,16 +28,18 @@ const useGrantsStore = () => {
   const [incorrectNetwork, setIncorrectNetwork] = React.useState(false);
 
   const [data, setData] = React.useState<any>();
-  const [chainId, setChainId] = React.useState<SupportedChainId>();
+  // const [chainId, setChainId] = React.useState<SupportedChainId>();
   const [workspaceId, setWorkspaceId] = React.useState<string>();
   const [transactionData, setTransactionData] = React.useState<any>();
   const [{ data: accountData }] = useAccount();
   const [{ data: networkData }, switchNetwork] = useNetwork();
   const subgraphClients = useContext(ApiClientsContext)!;
   const { validatorApi, workspace } = subgraphClients;
+  const chainId = getSupportedChainIdFromWorkspace(workspace);
   const grantContract = useGrantFactoryContract(
     chainId ?? getSupportedChainIdFromWorkspace(workspace),
   );
+  // const grantUpdateContract = useGrantContract();
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
   const currentChainId = useChainId();
@@ -56,7 +60,7 @@ const useGrantsStore = () => {
       setIncorrectNetwork(false);
     }
   }
-  async function createGrantFunction(formData: any) {
+  async function createGrant(formData: any) {
     setLoading(true);
     // console.log('calling validate');
     try {
@@ -88,6 +92,53 @@ const useGrantsStore = () => {
         ipfsHash,
         WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
         APPLICATION_REGISTRY_ADDRESS[currentChainId!],
+      );
+      const createGrantTransactionData = await createGrantTransaction.wait();
+
+      setTransactionData(createGrantTransactionData);
+      setLoading(false);
+    } catch (e: any) {
+      const message = getErrorMessage(e);
+      setError(message);
+      setLoading(false);
+      toastRef.current = toast({
+        position: 'top',
+        render: () => ErrorToast({
+          content: message,
+          close: () => {
+            if (toastRef.current) {
+              toast.close(toastRef.current);
+            }
+          },
+        }),
+      });
+    }
+  }
+
+  async function updateGrant(formData: any, grantUpdateContract: any) {
+    setLoading(true);
+    // console.log('calling validate');
+    try {
+      const detailsHash = (await uploadToIPFS(formData.details)).hash;
+      const {
+        data: { ipfsHash },
+      } = await validatorApi.validateGrantUpdate({
+        title: formData.title,
+        summary: formData.summary,
+        details: detailsHash,
+        deadline: formData.date,
+        reward: {
+          committed: parseAmount(formData.reward, formData.rewardCurrencyAddress),
+          asset: formData.rewardCurrencyAddress,
+        },
+        fields: formData.fields,
+      });
+      if (!ipfsHash) {
+        throw new Error('Error validating grant data');
+      }
+
+      const createGrantTransaction = await grantUpdateContract.updateGrant(
+        ipfsHash,
       );
       const createGrantTransactionData = await createGrantTransaction.wait();
 
@@ -176,18 +227,12 @@ const useGrantsStore = () => {
     chainId,
     incorrectNetwork]);
 
-  const createGrant = (
+  const createGrantHandler = (
     formData: GrantCreateRequest,
     chainid?: SupportedChainId,
     workspaceid?: string,
   ) => {
-    if (chainid) {
-      setChainId(chainid);
-    }
-    if (!chainId) {
-      setChainId(getSupportedChainIdFromWorkspace(workspace));
-    }
-    if (data) {
+    if (formData) {
       setData(formData);
     }
     if (workspaceid) {
@@ -198,7 +243,7 @@ const useGrantsStore = () => {
       checkNetwork();
       validate(formData, chainid ?? getSupportedChainIdFromWorkspace(workspace));
 
-      createGrantFunction(formData);
+      createGrant(formData);
     } catch (e: any) {
       const message = getErrorMessage(e);
       setError(message);
@@ -216,17 +261,41 @@ const useGrantsStore = () => {
       });
     }
     console.log(transactionData, loading, error);
-    return [transactionData,
-      chainId ?? getSupportedChainIdFromWorkspace(workspace)
-        ? `${CHAIN_INFO[chainId ?? getSupportedChainIdFromWorkspace(workspace)!]
-          .explorer.transactionHash}${transactionData?.transactionHash}`
-        : '',
-      loading,
-      error];
+    return chainId ?? getSupportedChainIdFromWorkspace(workspace)
+      ? `${CHAIN_INFO[chainId ?? getSupportedChainIdFromWorkspace(workspace)!]
+        .explorer.transactionHash}${transactionData?.transactionHash}`
+      : '';
   };
 
-  const updateGrant = async (grantId: string, req: GrantUpdateRequest) => {
-
+  const updateGrantHandler = async (formData: GrantUpdateRequest, grantUpdateContract: any) => {
+    if (formData) {
+      setData(formData);
+    }
+    try {
+      checkData();
+      checkNetwork();
+      validate(formData, chainId ?? getSupportedChainIdFromWorkspace(workspace));
+      updateGrant(formData, grantUpdateContract);
+    } catch (e: any) {
+      const message = getErrorMessage(e);
+      setError(message);
+      setLoading(false);
+      toastRef.current = toast({
+        position: 'top',
+        render: () => ErrorToast({
+          content: message,
+          close: () => {
+            if (toastRef.current) {
+              toast.close(toastRef.current);
+            }
+          },
+        }),
+      });
+    }
+    return currentChainId
+      ? `${CHAIN_INFO[currentChainId]
+        .explorer.transactionHash}${transactionData?.transactionHash}`
+      : '';
   };
 
   const archiveGrant = async (grantId: string) => {
@@ -239,8 +308,8 @@ const useGrantsStore = () => {
     allGrants,
     yourGrants,
     archivedGrants,
-    createGrant,
-    updateGrant,
+    createGrantHandler,
+    updateGrantHandler,
     archiveGrant,
   };
 };

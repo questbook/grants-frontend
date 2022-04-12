@@ -9,11 +9,13 @@ import React, {
 } from 'react';
 import { useGetGrantDetailsQuery } from 'src/generated/graphql';
 import useEditGrant from 'src/hooks/useEditGrant';
+import { GrantsContext } from 'src/hooks/stores/useGrantsStore';
 import { SupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { getFromIPFS } from 'src/utils/ipfsUtils';
 import { formatAmount } from 'src/utils/formattingUtils';
+import useGrantContract from '../../src/hooks/contracts/useGrantContract';
 import InfoToast from '../../src/components/ui/infoToast';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/edit_grant/form';
@@ -45,6 +47,7 @@ function EditGrant() {
         getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
       ].client,
   });
+  const grantContract = useGrantContract(grantID);
 
   useEffect(() => {
     if (!workspace) return;
@@ -54,6 +57,7 @@ function EditGrant() {
         subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
       variables: { grantID },
     });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [grantID, workspace]);
 
@@ -205,7 +209,15 @@ function EditGrant() {
   };
 
   const [editData, setEditData] = useState<any>();
-  const [transactionData, txnLink, loading] = useEditGrant(editData, grantID);
+  // const [transactionData, txnLink, loading] = useEditGrant(editData, grantID);
+  const { updateGrantHandler, loading, transactionData } = useContext(GrantsContext);
+  let txnLink: any;
+
+  function updateGrant(formdata: any) {
+    if (grantID) {
+      txnLink = updateGrantHandler(formdata, grantContract);
+    }
+  }
 
   useEffect(() => {
     // console.log(transactionData);
@@ -225,7 +237,7 @@ function EditGrant() {
         ),
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, transactionData, router]);
 
   useEffect(() => {
@@ -249,6 +261,7 @@ function EditGrant() {
             hasClicked={loading}
             formData={formData}
             onSubmit={(editdata: any) => {
+              updateGrant(formData);
               setEditData(editdata);
             }}
             refs={sideBarDetails.map((detail) => detail[2])}
