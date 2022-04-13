@@ -1,10 +1,12 @@
 import { GrantCreateRequest, GrantUpdateRequest } from '@questbook/service-validator-client';
 import { ApiClientsContext } from 'pages/_app';
-import React, { useContext, useEffect } from 'react';
-import { GetAllGrantsForCreatorQuery } from 'src/generated/graphql';
+import React, { useContext, useEffect, useState } from 'react';
+import {
+  GetAllGrantsForCreatorQuery,
+} from 'src/generated/graphql';
 import { SupportedChainId } from 'src/constants/chains';
 import { Grant } from 'src/types';
-import { getSupportedChainIdFromWorkspace, getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { ToastId, useToast } from '@chakra-ui/react';
 import getErrorMessage from 'src/utils/errorUtils';
 import ErrorToast from 'src/components/ui/toasts/errorToast';
@@ -19,8 +21,6 @@ import {
 } from './utils';
 
 // import useGrantContract from '../contracts/useGrantContract';
-
-type YourGrant = GetAllGrantsForCreatorQuery['grants'][0];
 
 const useGrantsStore = () => {
   const [error, setError] = React.useState<string>();
@@ -46,15 +46,15 @@ const useGrantsStore = () => {
   const toast = useToast();
   const currentChainId = useChainId();
 
-  const allGrants = usePaginatedDataStore<Grant>();
-  const yourGrants = usePaginatedDataStore<YourGrant>();
-  const archivedGrants = usePaginatedDataStore<YourGrant>();
+  const grants = usePaginatedDataStore<Grant>();
+  // const yourGrants = usePaginatedDataStore<YourGrant>();
+  // const archivedGrants = usePaginatedDataStore<YourGrant>();
 
   useEffect(() => {
     checkData(data, setError, setIncorrectNetwork);
     checkNetwork(incorrectNetwork, setIncorrectNetwork);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, grantContract]);
+  }, [data, grants.grants, grantContract]);
 
   useEffect(() => {
     if (incorrectNetwork) return;
@@ -201,20 +201,15 @@ const useGrantsStore = () => {
       : '';
   };
 
-  const archiveGrant = async (grantId: string) => {
-
-  };
-
   return {
     loading,
     transactionData,
     transactionType,
-    allGrants,
-    yourGrants,
-    archivedGrants,
+    grants,
+    // yourGrants,
+    // archivedGrants,
     createGrantHandler,
     updateGrantHandler,
-    archiveGrant,
   };
 };
 
