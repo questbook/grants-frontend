@@ -29,7 +29,7 @@ function usePaginatedDataStore<T>() {
     (key) => useGetAllGrantsLazyQuery({ client: subgraphClients[key].client }),
   );
 
-  const getGrantData = async (firstTime: boolean = false) => {
+  const getGrantData = async (firstTime: boolean = false, pageSize: number = PAGE_SIZE) => {
     try {
       const currentPageLocal = firstTime ? 0 : currentPage;
       const promises = allNetworkGrants.map(
@@ -39,8 +39,8 @@ function usePaginatedDataStore<T>() {
           // eslint-disable-next-line @typescript-eslint/no-shadow
           const { data } = await allGrants[0]({
             variables: {
-              first: PAGE_SIZE,
-              skip: currentPageLocal * PAGE_SIZE,
+              first: pageSize,
+              skip: currentPageLocal * pageSize,
               applicantId: accountData?.address ?? '',
             },
           });
@@ -88,8 +88,8 @@ function usePaginatedDataStore<T>() {
 
   return {
     grants,
-    loadMoreGrants: async () => {
-      getGrantData();
+    loadMoreGrants: async (pageSize: number) => {
+      getGrantData(false, pageSize);
     },
   };
 }
