@@ -43,7 +43,9 @@ function Form({
   const [shouldEncrypt, setShouldEncrypt] = useState(false);
   const [hasOwnerPublicKey, setHasOwnerPublicKey] = useState(false);
   const [keySubmitted, setKeySubmitted] = useState(false);
-  const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({ publicKey: '' });
+  const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({
+    publicKey: '',
+  });
   const [transactionData, loading] = useUpdateWorkspacePublicKeys(publicKey);
 
   const [admins, setAdmins] = useState<any[]>([]);
@@ -66,20 +68,26 @@ function Form({
 
   useEffect(() => {
     if (workspace && workspace.members && accountData && accountData.address) {
-      const hasPubKey = workspace.members.some((member) => member.actorId.toLowerCase() === accountData?.address.toLowerCase() && member.publicKey && member.publicKey !== '');
+      const hasPubKey = workspace.members.some(
+        (member) => member.actorId.toLowerCase() === accountData?.address.toLowerCase()
+          && member.publicKey
+          && member.publicKey !== '',
+      );
       setHasOwnerPublicKey(hasPubKey);
     }
   }, [accountData, workspace]);
 
   useEffect(() => {
     if (workspace && workspace.members) {
-      const adminAddresses = workspace.members.filter((member) => member.publicKey && member.publicKey !== '').map((member) => member.actorId);
+      const adminAddresses = workspace.members
+        .filter((member) => member.publicKey && member.publicKey !== '')
+        .map((member) => member.actorId);
       setAdmins(adminAddresses);
     }
   }, [workspace]);
 
-  const applicantDetails = applicantDetailsList.map(
-    ({
+  const applicantDetails = applicantDetailsList
+    .map(({
       title, tooltip, id, inputType, isRequired,
     }, index) => {
       if (index === applicantDetailsList.length - 1) return null;
@@ -92,8 +100,8 @@ function Form({
         index,
         inputType,
       };
-    },
-  ).filter((obj) => obj != null);
+    })
+    .filter((obj) => obj != null);
   const [detailsRequired, setDetailsRequired] = useState(applicantDetails);
   // const [extraField, setExtraField] = useState(false);
   const [multipleMilestones, setMultipleMilestones] = useState(false);
@@ -107,6 +115,18 @@ function Form({
     setDetailsRequired(newDetailsRequired);
   };
 
+  const [rubrikRequired, setRubrikRequired] = useState(false);
+  const [rubriks, setRubriks] = useState<any>([
+    {
+      name: '',
+      nameError: false,
+      description: '',
+      descriptionError: false,
+    },
+  ]);
+
+  const [shouldEncryptReviews, setShouldEncryptReviews] = useState(false);
+
   // const [extraFieldDetails, setExtraFieldDetails] = useState('');
   // const [extraFieldError, setExtraFieldError] = useState(false);
 
@@ -117,7 +137,8 @@ function Form({
 
   const supportedCurrencies = Object.keys(
     CHAIN_INFO[currentChain].supportedCurrencies,
-  ).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
+  )
+    .map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
     .map((currency) => ({ ...currency, id: currency.address }));
   const [rewardCurrency, setRewardCurrency] = React.useState(
     supportedCurrencies[0].label,
@@ -131,12 +152,13 @@ function Form({
     if (currentChain) {
       const supportedCurrencies = Object.keys(
         CHAIN_INFO[currentChain].supportedCurrencies,
-      ).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
+      )
+        .map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
         .map((currency) => ({ ...currency, id: currency.address }));
       setRewardCurrency(supportedCurrencies[0].label);
       setRewardCurrencyAddress(supportedCurrencies[0].address);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentChain]);
 
   const [date, setDate] = React.useState('');
@@ -167,6 +189,22 @@ function Form({
     if (date.length <= 0) {
       setDateError(true);
       error = true;
+    }
+
+    if (rubrikRequired) {
+      const errorCheckedRubriks = rubriks.map((rubrik: any) => {
+        const errorCheckedRubrik = { ...rubrik };
+        if (rubrik.name.length <= 0) {
+          errorCheckedRubrik.nameError = true;
+          error = true;
+        }
+        if (rubrik.description.length <= 0) {
+          errorCheckedRubrik.descriptionError = true;
+          error = true;
+        }
+        return errorCheckedRubrik;
+      });
+      setRubriks(errorCheckedRubriks);
     }
 
     if (!error) {
@@ -295,12 +333,10 @@ function Form({
         // setExtraFieldError={setExtraFieldError}
         multipleMilestones={multipleMilestones}
         setMultipleMilestones={setMultipleMilestones}
-        shouldEncrypt={shouldEncrypt}
-        setShouldEncrypt={setShouldEncrypt}
-        loading={loading}
-        setPublicKey={setPublicKey}
-        hasOwnerPublicKey={hasOwnerPublicKey}
-        keySubmitted={keySubmitted}
+        rubrikRequired={rubrikRequired}
+        setRubrikRequired={setRubrikRequired}
+        rubriks={rubriks}
+        setRubriks={setRubriks}
       />
 
       <Text
@@ -326,6 +362,14 @@ function Form({
         dateError={dateError}
         setDateError={setDateError}
         supportedCurrencies={supportedCurrencies}
+        shouldEncrypt={shouldEncrypt}
+        setShouldEncrypt={setShouldEncrypt}
+        loading={loading}
+        setPublicKey={setPublicKey}
+        hasOwnerPublicKey={hasOwnerPublicKey}
+        keySubmitted={keySubmitted}
+        shouldEncryptReviews={shouldEncryptReviews}
+        setShouldEncryptReviews={setShouldEncryptReviews}
       />
 
       <Flex alignItems="flex-start" mt={8} mb={10} maxW="400">
@@ -342,7 +386,12 @@ function Form({
           By pressing Publish Grant you&apos;ll have to approve this transaction
           in your wallet.
           {' '}
-          <Link href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46" isExternal>Learn more</Link>
+          <Link
+            href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
+            isExternal
+          >
+            Learn more
+          </Link>
           {' '}
           <Image
             display="inline-block"
@@ -357,7 +406,7 @@ function Form({
         py={hasClicked ? 2 : 0}
         onClick={hasClicked ? () => {} : handleOnSubmit}
         variant="primary"
-        disabled={shouldEncrypt && (!keySubmitted && !hasOwnerPublicKey)}
+        disabled={shouldEncrypt && !keySubmitted && !hasOwnerPublicKey}
       >
         {hasClicked ? <Loader /> : 'Create Grant'}
       </Button>

@@ -1,22 +1,18 @@
 import {
-  Flex, Text, Grid, Button, GridItem, Box, Switch, Image, Link,
+  Flex, Text, Grid, Button, GridItem, Box, Switch, Image, Divider,
 } from '@chakra-ui/react';
-import { ChevronRightIcon } from '@chakra-ui/icons';
-import React, { useEffect, useState } from 'react';
-import useEncryption from 'src/hooks/utils/useEncryption';
-import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys';
-import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
-import Loader from 'src/components/ui/loader';
+import React, { useState } from 'react';
+import Dropdown from 'src/components/ui/forms/dropdown';
+import MultiLineInput from 'src/components/ui/forms/multiLineInput';
+import SingleLineInput from 'src/components/ui/forms/singleLineInput';
 import Badge from '../../../ui/badge';
 import applicantDetailsList from '../../../../constants/applicantDetailsList';
-import Tooltip from '../../../ui/tooltip';
 
 interface Props {
   onSubmit: (data: any) => void;
 }
 
 function ApplicantDetails({ onSubmit }: Props) {
-  const { getPublicEncryptionKey } = useEncryption();
   const applicantDetails = applicantDetailsList.map(
     ({
       title, tooltip, id, inputType, isRequired,
@@ -34,16 +30,15 @@ function ApplicantDetails({ onSubmit }: Props) {
     },
   ).filter((obj) => obj != null);
   const [detailsRequired, setDetailsRequired] = useState(applicantDetails);
-  const [shouldEncrypt, setShouldEncrypt] = useState(false);
-  const [keySubmitted, setKeySubmitted] = useState(false);
-  const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({ publicKey: '' });
-  const [transactionData, loading] = useUpdateWorkspacePublicKeys(publicKey);
-
-  useEffect(() => {
-    if (transactionData) {
-      setKeySubmitted(true);
-    }
-  }, [transactionData]);
+  const [rubrikRequired, setRubrikRequired] = useState(false);
+  const [rubriks, setRubriks] = useState<any[]>([
+    {
+      name: '',
+      nameError: false,
+      description: '',
+      descriptionError: false,
+    },
+  ]);
   // const [extraField] = useState(false);
 
   const [milestoneSelectOptionIsVisible, setMilestoneSelectOptionIsVisible] = React.useState(false);
@@ -62,11 +57,22 @@ function ApplicantDetails({ onSubmit }: Props) {
   // const [extraFieldError, setExtraFieldError] = useState(false);
 
   const handleOnSubmit = () => {
-    const error = false;
-    // if (extraField && extraFieldDetails.length <= 0) {
-    //   setExtraFieldError(true);
-    //   error = true;
-    // }
+    let error = false;
+    if (rubrikRequired) {
+      const errorCheckedRubriks = rubriks.map((rubrik: any) => {
+        const errorCheckedRubrik = { ...rubrik };
+        if (rubrik.name.length <= 0) {
+          errorCheckedRubrik.nameError = true;
+          error = true;
+        }
+        if (rubrik.description.length <= 0) {
+          errorCheckedRubrik.descriptionError = true;
+          error = true;
+        }
+        return errorCheckedRubrik;
+      });
+      setRubriks(errorCheckedRubriks);
+    }
     if (!error) {
       const requiredDetails = {} as any;
       detailsRequired.forEach((detail) => {
@@ -101,14 +107,6 @@ function ApplicantDetails({ onSubmit }: Props) {
           title: 'Funding Ask',
           inputType: 'short-form',
         };
-      }
-      if (shouldEncrypt && keySubmitted) {
-        if (fields.applicantEmail) {
-          fields.applicantEmail = { ...fields.applicantEmail, pii: true };
-        }
-        if (fields.memberDetails) {
-          fields.memberDetails = { ...fields.memberDetails, pii: true };
-        }
       }
       onSubmit({ fields });
     }
@@ -212,77 +210,210 @@ function ApplicantDetails({ onSubmit }: Props) {
           </Flex>
         </>
         )}
-        <Flex mt={8} gap="2">
+
+        <Flex direction="column" mt={8}>
+          <Text
+            fontSize="18px"
+            fontWeight="700"
+            lineHeight="26px"
+            letterSpacing={0}
+          >
+            Applicant Review
+          </Text>
+          <Flex>
+            <Text color="#717A7C" fontSize="14px" lineHeight="20px">
+              Once you recieve applications you can assign reviewers to each applicant,
+              and setup a evaluation scorecard to get 360° feedback.
+            </Text>
+          </Flex>
+        </Flex>
+
+        <Flex mt={4} gap="2" justifyContent="space-between">
           <Flex direction="column">
-            <Text color="#122224" fontWeight="bold" fontSize="16px" lineHeight="20px">
-              Hide applicant personal data (email, and about team)
+            <Text
+              color="#122224"
+              fontWeight="bold"
+              fontSize="16px"
+              lineHeight="20px"
+            >
+              Evaluation rubric
             </Text>
             <Flex>
               <Text color="#717A7C" fontSize="14px" lineHeight="20px">
-                You will be using your public key to access this data.
-                <Tooltip
-                  icon="/ui_icons/tooltip_questionmark.svg"
-                  label="Public key linked to your wallet will allow you to see the hidden data."
-                  placement="bottom-start"
-                />
+                Define a set of criteria for reviewers to evaluate the application
+                You can add this later too.
               </Text>
             </Flex>
           </Flex>
           <Flex justifyContent="center" gap={2} alignItems="center">
             <Switch
               id="encrypt"
-              onChange={
-              (e) => {
-                setShouldEncrypt(e.target.checked);
-              }
-             }
+              onChange={(e) => {
+                setRubrikRequired(e.target.checked);
+                const newRubriks = rubriks.map((rubrik) => ({
+                  ...rubrik,
+                  nameError: false,
+                  descriptionError: false,
+                }));
+                setRubriks(newRubriks);
+              }}
             />
-            <Text
-              fontSize="12px"
-              fontWeight="bold"
-              lineHeight="16px"
-            >
-              {`${shouldEncrypt ? 'YES' : 'NO'}`}
-
+            <Text fontSize="12px" fontWeight="bold" lineHeight="16px">
+              {`${rubrikRequired ? 'YES' : 'NO'}`}
             </Text>
           </Flex>
         </Flex>
-        {(shouldEncrypt && !keySubmitted) && (
-          <Flex mt={8} gap="2" direction="column">
+
+        {rubriks.map((rubrik, index) => (
+          <>
             <Flex
+              mt={4}
               gap="2"
-              cursor="pointer"
-              onClick={async () => setPublicKey({ publicKey: (await getPublicEncryptionKey()) || '' })}
+              alignItems="flex-start"
+              opacity={rubrikRequired ? 1 : 0.4}
             >
-              <Text
-                color="brand.500"
-                fontWeight="bold"
-                fontSize="16px"
-                lineHeight="24px"
+              <Flex direction="column" flex={0.3327}>
+                <Text
+                  mt="18px"
+                  color="#122224"
+                  fontWeight="bold"
+                  fontSize="16px"
+                  lineHeight="20px"
+                >
+                  Criteria
+                  {' '}
+                  {index + 1}
+                </Text>
+              </Flex>
+              <Flex justifyContent="center" gap={2} alignItems="center" flex={0.6673}>
+                <SingleLineInput
+                  value={rubriks[index].name}
+                  onChange={(e) => {
+                    const newRubriks = [...rubriks];
+                    newRubriks[index].name = e.target.value;
+                    newRubriks[index].nameError = false;
+                    setRubriks(newRubriks);
+                  }}
+                  placeholder="Name"
+                  isError={rubriks[index].nameError}
+                  errorText="Required"
+                  disabled={!rubrikRequired}
+                />
+              </Flex>
+            </Flex>
+            <Flex mt={6} gap="2" alignItems="flex-start" opacity={rubrikRequired ? 1 : 0.4}>
+              <Flex direction="column" flex={0.3327}>
+                <Text
+                  mt="18px"
+                  color="#122224"
+                  fontWeight="bold"
+                  fontSize="16px"
+                  lineHeight="20px"
+                >
+                  Description
+                </Text>
+              </Flex>
+              <Flex justifyContent="center" gap={2} alignItems="center" flex={0.6673}>
+                <MultiLineInput
+                  value={rubriks[index].description}
+                  onChange={(e) => {
+                    const newRubriks = [...rubriks];
+                    newRubriks[index].description = e.target.value;
+                    newRubriks[index].descriptionError = false;
+                    setRubriks(newRubriks);
+                  }}
+                  placeholder="Describe the evaluation criteria"
+                  isError={rubriks[index].descriptionError}
+                  errorText="Required"
+                  disabled={!rubrikRequired}
+                />
+              </Flex>
+            </Flex>
+
+            <Flex mt={2} gap="2" justifyContent="flex-end">
+              <Box
+                onClick={() => {
+                  if (!rubrikRequired) return;
+                  const newRubriks = [...rubriks];
+                  newRubriks.splice(index, 1);
+                  setRubriks(newRubriks);
+                }}
+                display="flex"
+                alignItems="center"
+                cursor="pointer"
+                opacity={rubrikRequired ? 1 : 0.4}
               >
-                Allow access to your public key and encrypt the applicant form to proceed
-              </Text>
-              <ChevronRightIcon color="brand.500" fontSize="2xl" />
-              {loading
-              && <Loader />}
+                <Image
+                  h="16px"
+                  w="15px"
+                  src="/ui_icons/delete_red.svg"
+                  mr="6px"
+                />
+                <Text fontWeight="500" fontSize="14px" color="#DF5252" lineHeight="20px">
+                  Delete
+                </Text>
+              </Box>
             </Flex>
-            <Flex alignItems="center" gap={2}>
-              <Image mt={1} src="/ui_icons/info.svg" />
-              <Text color="#122224" fontWeight="medium" fontSize="14px" lineHeight="20px">
-                By doing the above you’ll have to approve this transaction in your wallet.
-              </Text>
-            </Flex>
-            <Link href="https://www.notion.so/questbook/Why-is-public-key-required-e3fa53f34a5240d185d3d34744bb33f4" isExternal>
-              <Text color="#122224" fontWeight="normal" fontSize="14px" lineHeight="20px" decoration="underline">
+            <Divider mt={4} />
+          </>
+        ))}
 
-                Why is this required?
-              </Text>
-            </Link>
-          </Flex>
-        )}
+        <Flex mt="19px" gap="2" justifyContent="flex-start">
+          <Box
+            onClick={() => {
+              if (!rubrikRequired) return;
+              const newRubriks = [...rubriks, {
+                name: '',
+                nameError: false,
+                description: '',
+                descriptionError: false,
+              }];
+              setRubriks(newRubriks);
+            }}
+            display="flex"
+            alignItems="center"
+            cursor="pointer"
+            opacity={rubrikRequired ? 1 : 0.4}
+          >
+            <Image
+              h="16px"
+              w="15px"
+              src="/ui_icons/plus_circle.svg"
+              mr="6px"
+            />
+            <Text fontWeight="500" fontSize="14px" color="#8850EA" lineHeight="20px">
+              Add another criteria
+            </Text>
+          </Box>
+        </Flex>
 
+        <Flex opacity={rubrikRequired ? 1 : 0.4} direction="column" mt={6}>
+          <Text
+            fontSize="18px"
+            fontWeight="700"
+            lineHeight="26px"
+            letterSpacing={0}
+          >
+            Evaluation Rating
+          </Text>
+          <Box mt={2} minW="499px" flex={0}>
+            <Dropdown
+              listItems={[{
+                label: '3 point rating',
+                id: '3',
+              }, {
+                label: '5 point rating',
+                id: '5',
+              }]}
+              onChange={rubrikRequired ? ({ id }: any) => {
+                console.log(id);
+              } : undefined}
+              listItemsMinWidth="600px"
+            />
+          </Box>
+        </Flex>
       </Flex>
-      <Button mt="auto" variant="primary" onClick={handleOnSubmit} disabled={shouldEncrypt && !keySubmitted}>
+      <Button mt="auto" variant="primary" onClick={handleOnSubmit}>
         Continue
       </Button>
     </>

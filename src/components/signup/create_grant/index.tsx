@@ -13,12 +13,23 @@ function CreateGrant({
   const [{ data: accountData }] = useAccount();
   const totalSteps = 4;
 
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState<any>({});
   const [currentStep, setCurrentStep] = useState(0);
   const currentPageRef = useRef(null);
 
   const changeCurrentStep = (data: any, step: number) => {
-    setFormData({ ...formData, ...data });
+    const newFormData = { ...formData };
+    if (data.pii) {
+      console.log(formData);
+      if (formData.fields.applicantEmail) {
+        newFormData.fields.applicantEmail = { ...formData.fields.applicantEmail, pii: true };
+      }
+      if (formData.fields.memberDetails) {
+        newFormData.fields.memberDetails = { ...formData.fields.memberDetails, pii: true };
+      }
+    }
+
+    setFormData({ ...newFormData, ...data });
 
     const { current } = currentPageRef;
     if (!current) return;
@@ -32,14 +43,20 @@ function CreateGrant({
   };
 
   const submitForm = (data: any) => {
-    setFormData({ ...formData, ...data });
-    // eslint-disable-next-line no-console
-    // console.log({ ...data, ...formData });
-    // setTimeout(() => {
-    //   onSubmit();
-    // }, 10000);
+    const newFormData = { ...formData };
+    if (data.pii) {
+      if (formData.fields.applicantEmail) {
+        newFormData.fields.applicantEmail = { ...formData.fields.applicantEmail, pii: true };
+      }
+      if (formData.fields.memberDetails) {
+        newFormData.fields.memberDetails = { ...formData.fields.memberDetails, pii: true };
+      }
+      // eslint-disable-next-line no-param-reassign
+      delete data.pii;
+    }
 
-    onSubmit({ ...formData, ...data, grantManagers: [accountData?.address] });
+    setFormData({ ...newFormData, ...data });
+    onSubmit({ ...newFormData, ...data, grantManagers: [accountData?.address] });
   };
 
   return (
