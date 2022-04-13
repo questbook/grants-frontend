@@ -1,7 +1,7 @@
 import {
-  Flex, Text, Box, Button, Image, Link,
+  Flex, Text, Box, Button, Image, Link, Switch,
 } from '@chakra-ui/react';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import Loader from 'src/components/ui/loader';
@@ -11,6 +11,11 @@ import useChainId from 'src/hooks/utils/useChainId';
 import { useNetwork } from 'wagmi';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { ApiClientsContext } from 'pages/_app';
+import useEncryption from 'src/hooks/utils/useEncryption';
+import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
+import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys';
+import { ChevronRightIcon } from '@chakra-ui/icons';
+import Tooltip from 'src/components/ui/tooltip';
 import Datepicker from '../../../ui/forms/datepicker';
 import Dropdown from '../../../ui/forms/dropdown';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
@@ -21,6 +26,7 @@ interface Props {
 }
 
 function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
+  const { getPublicEncryptionKey } = useEncryption();
   const apiClients = useContext(ApiClientsContext)!;
   const { workspace } = apiClients;
   const [reward, setReward] = React.useState('');
@@ -67,6 +73,19 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
   const [date, setDate] = React.useState('');
   const [dateError, setDateError] = React.useState(false);
 
+  const [keySubmitted, setKeySubmitted] = useState(false);
+  const [shouldEncrypt, setShouldEncrypt] = useState(false);
+  const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({ publicKey: '' });
+  const [transactionData, loading] = useUpdateWorkspacePublicKeys(publicKey);
+
+  const [shouldEncryptReviews, setShouldEncryptReviews] = useState(false);
+
+  useEffect(() => {
+    if (transactionData) {
+      setKeySubmitted(true);
+    }
+  }, [transactionData]);
+
   const buttonRef = React.useRef<HTMLButtonElement>(null);
 
   const handleOnSubmit = () => {
@@ -84,7 +103,13 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
     console.log(rewardCurrencyAddress);
 
     if (!error) {
-      onSubmit({ reward, rewardCurrencyAddress, date });
+      let pii = false;
+      if (shouldEncrypt && keySubmitted) {
+        pii = true;
+      }
+      onSubmit({
+        reward, rewardCurrencyAddress, date, pii,
+      });
     }
   };
   return (
@@ -140,6 +165,115 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
           label="Grant Deadline"
         />
 
+        <Flex direction="column" mt={12}>
+          <Text
+            fontSize="18px"
+            fontWeight="700"
+            lineHeight="26px"
+            letterSpacing={0}
+          >
+            Grant privacy
+          </Text>
+        </Flex>
+
+        <Flex mt={8} gap="2">
+          <Flex direction="column" flex={1}>
+            <Text color="#122224" fontWeight="bold" fontSize="16px" lineHeight="20px">
+              Hide applicant personal data (email, and about team)
+            </Text>
+            <Flex>
+              <Text color="#717A7C" fontSize="14px" lineHeight="20px">
+                You will be using your public key to access this data.
+                <Tooltip
+                  icon="/ui_icons/tooltip_questionmark.svg"
+                  label="Public key linked to your wallet will allow you to see the hidden data."
+                  placement="bottom-start"
+                />
+              </Text>
+            </Flex>
+          </Flex>
+          <Flex justifyContent="center" gap={2} alignItems="center">
+            <Switch
+              id="encrypt"
+              onChange={
+              (e) => {
+                setShouldEncrypt(e.target.checked);
+              }
+             }
+            />
+            <Text
+              fontSize="12px"
+              fontWeight="bold"
+              lineHeight="16px"
+            >
+              {`${shouldEncrypt ? 'YES' : 'NO'}`}
+
+            </Text>
+          </Flex>
+        </Flex>
+        {(shouldEncrypt && !keySubmitted) && (
+        <Flex mt={8} gap="2" direction="column">
+          <Flex
+            gap="2"
+            cursor="pointer"
+            onClick={async () => setPublicKey({ publicKey: (await getPublicEncryptionKey()) || '' })}
+          >
+            <Text
+              color="brand.500"
+              fontWeight="bold"
+              fontSize="16px"
+              lineHeight="24px"
+            >
+              Allow access to your public key and encrypt the applicant form to proceed
+            </Text>
+            <ChevronRightIcon color="brand.500" fontSize="2xl" />
+            {loading
+              && <Loader />}
+          </Flex>
+          <Flex alignItems="center" gap={2}>
+            <Image mt={1} src="/ui_icons/info.svg" />
+            <Text color="#122224" fontWeight="medium" fontSize="14px" lineHeight="20px">
+              By doing the above you’ll have to approve this transaction in your wallet.
+            </Text>
+          </Flex>
+          <Link href="https://www.notion.so/questbook/Why-is-public-key-required-e3fa53f34a5240d185d3d34744bb33f4" isExternal>
+            <Text color="#122224" fontWeight="normal" fontSize="14px" lineHeight="20px" decoration="underline">
+
+              Why is this required?
+            </Text>
+          </Link>
+        </Flex>
+        )}
+
+        <Flex mt={8} gap="2" justifyContent="space-between">
+          <Flex direction="column" flex={1}>
+            <Text
+              color="#122224"
+              fontWeight="bold"
+              fontSize="16px"
+              lineHeight="20px"
+            >
+              Keep applicant reviews private
+            </Text>
+            <Flex>
+              <Text color="#717A7C" fontSize="14px" lineHeight="20px">
+                Private review is only visible to reviewers, DAO members.
+              </Text>
+            </Flex>
+          </Flex>
+          <Flex ml="auto" justifyContent="center" gap={2} alignItems="center">
+            <Switch
+              id="encrypt"
+              onChange={(e) => {
+                setShouldEncryptReviews(e.target.checked);
+              }}
+            />
+            <Text fontSize="12px" fontWeight="bold" lineHeight="16px">
+              {`${shouldEncryptReviews ? 'YES' : 'NO'}`}
+            </Text>
+          </Flex>
+        </Flex>
+
         <Text variant="footer" mt={8} mb={7} maxW="400">
           <Image
             display="inline-block"
@@ -166,6 +300,7 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
           />
         </Text>
       </Flex>
+
       <Button
         ref={buttonRef}
         mt="auto"
@@ -173,6 +308,7 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
         onClick={hasClicked ? () => {} : handleOnSubmit}
         py={hasClicked ? 2 : 0}
         w={hasClicked ? buttonRef.current?.offsetWidth : 'auto'}
+        disabled={shouldEncrypt && !keySubmitted}
       >
         {hasClicked ? <Loader /> : 'Continue'}
       </Button>
