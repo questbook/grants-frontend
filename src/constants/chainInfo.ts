@@ -239,7 +239,7 @@ export const CHAIN_INFO: ChainInfoMap = {
         decimals: 18,
       },
     },
-    subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-polygon',
+    subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-polygon-mainnet',
     rpcUrls: ['https://polygon-rpc.com/'],
   },
 };
