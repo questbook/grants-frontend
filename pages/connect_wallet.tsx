@@ -20,11 +20,13 @@ import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ErrorToast from 'src/components/ui/toasts/errorToast';
 import ModalContent from '../src/components/connect_wallet/modalContent';
 import WalletSelectButton from '../src/components/connect_wallet/walletSelectButton';
-import SolanaWalletSelectButton from '../src/components/connect_wallet/solanaWalletSelectButton';
 import Modal from '../src/components/ui/modal';
 import SecondaryDropdown from '../src/components/ui/secondaryDropdown';
 import NavbarLayout from '../src/layout/navbarLayout';
 import strings from '../src/constants/strings.json';
+
+// Solana
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 
 function ConnectWallet() {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -35,6 +37,28 @@ function ConnectWallet() {
   const router = useRouter();
 
   const [{ data: connectData, loading: connectLoading }] = useConnect();
+
+  const { wallets: solanaWallets, select: solanaSelect, connect: solanaConnect, disconnect: solanaDisconnect, connecting: solanaConnecting, connected: solanaConnected} = useWallet();
+
+  useEffect(() => {
+    if (!solanaConnecting && solanaConnected) {
+      if (router.query.flow === 'getting_started/dao') {
+        router.replace('/signup/');
+      } else if (router.query.flow === 'getting_started/developer') {
+        router.push({ pathname: '/' });
+      } else if (router.query.flow === '/') {
+        router.replace({
+          pathname: '/explore_grants/about_grant',
+          query: {
+            grantId: router.query.grantId,
+            chainId: router.query.chainId,
+          },
+        });
+      } else {
+        router.push({ pathname: '/' });
+      }
+    }
+  }, [solanaConnecting, solanaConnected, router]);
 
   useEffect(() => {
     if (!connectLoading && connectData && connectData.connected) {
@@ -55,6 +79,8 @@ function ConnectWallet() {
       }
     }
   }, [connectLoading, connectData, router]);
+
+
 
   const [{ data, error }, connect] = useConnect();
   const toast = useToast();
@@ -129,20 +155,26 @@ function ConnectWallet() {
       >
         {
           CHAIN_INFO[selectedNetworkId].wallets.map(({ name, icon, id }) => {
-            if (selectedNetworkId === SupportedChainId.SOLANA_DEVNET)
-              return <SolanaWalletSelectButton
-                key={id}
-                name={name}
-                icon={icon} />
-            else return (
+            return (
               <WalletSelectButton
                 key={id}
                 name={name}
                 icon={icon}
-                onClick={() => {
-                  const connector = data.connectors.find((x) => x.id === id);
-                  if (connector) {
-                    connect(connector);
+                onClick={async () => {
+                  if (selectedNetworkId === SupportedChainId.SOLANA_DEVNET) {
+                    const thisWallet = solanaWallets.find((x) => x.adapter.name === name);
+                    if (thisWallet){
+                      await solanaDisconnect()
+                      solanaSelect(thisWallet.adapter.name)
+                      solanaConnect()
+                    }
+                  }
+                  else {
+                    const connector = data.connectors.find((x) => x.id === id);
+                    if (connector) {
+                      await solanaDisconnect()
+                      connect(connector);
+                    }
                   }
                 }}
               />)

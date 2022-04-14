@@ -3,7 +3,7 @@ export enum SupportedChainId {
   HARMONY_TESTNET_S0 = 1666700000,
   POLYGON_TESTNET = 80001,
   POLYGON_MAINNET = 137,
-  SOLANA_DEVNET = 0,
+  SOLANA_DEVNET = -1,
 }
 
 export const ALL_SUPPORTED_CHAIN_IDS: SupportedChainId[] = Object.values(SupportedChainId).filter(

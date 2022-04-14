@@ -57,6 +57,7 @@ export const CHAIN_INFO: ChainInfoMap = {
     supportedCurrencies: {
       // TODO: add supported currencies
     },
+    // TODO: add subgraph url. 
     subgraphClientUrl: '',
     rpcUrls: ['https://api.devnet.solana.com'],
   },

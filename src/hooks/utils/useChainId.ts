@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
 import { SupportedChainId } from 'src/constants/chains';
 import { useNetwork } from 'wagmi';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 
 export default function useChainId() {
   const [{ data: networkData }] = useNetwork();
+  const { connection: solanaConnection } = useConnection(); 
   const supportedChainIdFromNetworkData = (chainId: number) => {
     if (chainId === 4) {
       return SupportedChainId.RINKEBY;
@@ -17,17 +19,21 @@ export default function useChainId() {
     if (chainId === 80001) {
       return SupportedChainId.POLYGON_TESTNET;
     }
+    if (chainId === -1){
+      return SupportedChainId.SOLANA_DEVNET; 
+    }
     return undefined;
   };
 
   const [chainId, setChainId] = React.useState<SupportedChainId>();
   useEffect(() => {
     // console.log('changing net');
-    if (!networkData.chain?.id) {
+    // console.log(solanaConnection.rpcEndpoint)
+    if (!networkData.chain?.id && !solanaConnection?.rpcEndpoint) {
       setChainId(undefined);
       return;
     }
-    setChainId(supportedChainIdFromNetworkData(networkData.chain.id));
+    setChainId(supportedChainIdFromNetworkData(networkData.chain?.id ?? -1));
   }, [networkData.chain?.id]);
 
   return chainId;

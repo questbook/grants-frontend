@@ -15,7 +15,13 @@ import {
   InjectedConnector,
   Provider,
 } from 'wagmi';
+
+// Solana 
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
+import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
+import { clusterApiUrl } from '@solana/web3.js';
+import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
+
 // import dynamic from 'next/dynamic';
 import {
   Configuration,
@@ -33,6 +39,7 @@ import { providers } from 'ethers';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import theme from '../src/theme';
 import SubgraphClient from '../src/graphql/subgraph';
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -87,12 +94,21 @@ const provider = ({ chainId }: ProviderConfig) => {
 export const ApiClientsContext = createContext<{
   validatorApi: ValidationApi;
   workspace?: MinimalWorkspace;
-  setWorkspace:(workspace?: MinimalWorkspace) => void;
+  setWorkspace: (workspace?: MinimalWorkspace) => void;
   subgraphClients: { [chainId: string]: SubgraphClient };
 } | null>(null);
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const [workspace, setWorkspace] = React.useState<MinimalWorkspace>();
+
+  const network = WalletAdapterNetwork.Devnet;
+  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+  const wallets = useMemo(
+    () => [
+      new PhantomWalletAdapter()
+    ],
+    [network]
+  );
 
   const clients = useMemo(() => {
     const clientsObject = {} as { [chainId: string]: SubgraphClient };
@@ -133,13 +149,18 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <>
       <DefaultSeo {...seo} />
-      <Provider autoConnect connectors={connectors} provider={provider}>
-        <ApiClientsContext.Provider value={apiClients}>
-          <ChakraProvider theme={theme}>
-            {getLayout(<Component {...pageProps} />)}
-          </ChakraProvider>
-        </ApiClientsContext.Provider>
-      </Provider>
+      <ConnectionProvider endpoint={endpoint}>
+        <WalletProvider wallets={wallets}>
+          <Provider autoConnect connectors={connectors} provider={provider}>
+            <ApiClientsContext.Provider value={apiClients}>
+              <ChakraProvider theme={theme}>
+                {getLayout(<Component {...pageProps} />)}
+              </ChakraProvider>
+            </ApiClientsContext.Provider>
+          </Provider>
+        </WalletProvider>
+      </ConnectionProvider>
+
     </>
   );
 }
