@@ -86,7 +86,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const [workspace, setWorkspace] = React.useState<MinimalWorkspace>();
 
   const clients = useMemo(() => {
-    const clientsObject = {} as { [chainId: string]: SubgraphClient };
+    const clientsObject = {} as { [C in SupportedChainId]: SubgraphClient };
     ALL_SUPPORTED_CHAIN_IDS.forEach((chnId) => {
       clientsObject[chnId] = new SubgraphClient(chnId);
     });
