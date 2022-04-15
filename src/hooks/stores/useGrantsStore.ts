@@ -3,7 +3,11 @@ import { ApiClientsContext } from 'pages/_app';
 import { useContext, useEffect } from 'react';
 import { SupportedChainId } from 'src/constants/chains';
 import {
-  GetAllGrantsForCreatorQueryVariables, GetAllGrantsDocument, GetAllGrantsForCreatorDocument, GetAllGrantsForCreatorQuery, GetAllGrantsQuery,
+  GetAllGrantsForCreatorQueryVariables,
+  GetAllGrantsDocument,
+  GetAllGrantsForCreatorDocument,
+  GetAllGrantsForCreatorQuery,
+  GetAllGrantsQuery,
 } from 'src/generated/graphql';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { useAccount } from 'wagmi';
