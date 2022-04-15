@@ -8,6 +8,7 @@ import {
   GetAllGrantsForCreatorDocument,
   GetAllGrantsForCreatorQuery,
   GetAllGrantsQuery,
+  GetAllGrantsQueryVariables,
 } from 'src/generated/graphql';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { useAccount } from 'wagmi';
@@ -27,7 +28,7 @@ const useGrantsStore = () => {
 
   const allGrants = usePaginatedDataStore({
     queryDocument: GetAllGrantsDocument,
-    variables: { applicantId: accountData?.address || '' } as GetAllGrantsCountForCreatorQueryVariables,
+    variables: { applicantId: accountData?.address || '' } as GetAllGrantsQueryVariables,
     getItems: (q: GetAllGrantsQuery | undefined) => (
       (q?.grants || []).filter((g) => g.applications.length === 0)
     ),
@@ -49,7 +50,7 @@ const useGrantsStore = () => {
   });
 
   const {
-    loading, setTransactionData, transactionData, transactionType, transactionLink, grants, error,
+    loading, setTransactionData, transactionData, transactionType, error,
   } = grantHook;
 
   const createGrantHandler = (

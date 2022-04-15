@@ -2,7 +2,6 @@ import { GrantCreateRequest, GrantUpdateRequest } from '@questbook/service-valid
 import { ApiClientsContext } from 'pages/_app';
 import React, { useContext, useEffect } from 'react';
 import { SupportedChainId } from 'src/constants/chains';
-import { Grant } from 'src/types';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { toast, ToastId } from '@chakra-ui/react';
 import getErrorMessage from 'src/utils/errorUtils';
@@ -10,8 +9,6 @@ import ErrorToast from 'src/components/ui/toasts/errorToast';
 
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { useAccount, useNetwork } from 'wagmi';
-
-import usePaginatedDataStore from './usePaginatedDataStore';
 import useGrantFactoryContract from '../contracts/useGrantFactoryContract';
 import useChainId from '../utils/useChainId';
 import {
@@ -43,14 +40,11 @@ const useGrantsHook = () => {
 
   const currentChainId = useChainId();
 
-  const grants = usePaginatedDataStore<Grant>();
-  // const archivedGrants = usePaginatedDataStore<YourGrant>();
-
   useEffect(() => {
     checkData(data, setError, setIncorrectNetwork);
     checkNetwork(incorrectNetwork, setIncorrectNetwork);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, grants.grants, grantContract]);
+  }, [data, grantContract]);
 
   useEffect(() => {
     if (incorrectNetwork) return;
@@ -261,7 +255,6 @@ const useGrantsHook = () => {
     transactionData,
     transactionType,
     transactionLink,
-    grants,
     // yourGrants,
     // archivedGrants,
     createGrantHandler,
