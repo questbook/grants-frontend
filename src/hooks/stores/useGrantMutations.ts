@@ -1,11 +1,17 @@
 import { ApiClientsContext } from 'pages/_app';
+import {
+  getSupportedChainIdFromWorkspace,
+  getSupportedValidatorNetworkFromChainId,
+} from 'src/utils/validationUtils';
 import React, { useContext, useEffect } from 'react';
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { ToastId, useToast } from '@chakra-ui/react';
 import getErrorMessage from 'src/utils/errorUtils';
 import ErrorToast from 'src/components/ui/toasts/errorToast';
 import { CreateGrantForm } from 'src/types';
+import { uploadToIPFS } from 'src/utils/ipfsUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { parseAmount } from 'src/utils/formattingUtils';
+import { useAccount } from 'wagmi';
 import useGrantFactoryContract from '../contracts/useGrantFactoryContract';
 import useChainId from '../utils/useChainId';
 import useGrantMutationsUtils from './useGrantMutationsUtils';
@@ -20,9 +26,10 @@ const useGrantMutations = () => {
   const [transactionData, setTransactionData] = React.useState<any>();
   const [transactionType, setTransactionType] = React.useState<string>();
   const subgraphClients = useContext(ApiClientsContext)!;
-  const { workspace } = subgraphClients;
+  const { validatorApi, workspace } = subgraphClients;
   const chainId = getSupportedChainIdFromWorkspace(workspace);
   const grantContract = useGrantFactoryContract(chainId);
+  const [{ data: accountData }] = useAccount();
 
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
@@ -43,6 +50,7 @@ const useGrantMutations = () => {
     formData: CreateGrantForm,
     workspaceid?: string,
   ) => {
+    const task = 'create';
     let createGrantData;
     if (workspaceid) {
       setWorkspaceId(workspaceid);
@@ -54,15 +62,40 @@ const useGrantMutations = () => {
         transactionData,
         setLoading,
       );
-      createGrantData = await grantMutationsUtils.createGrantFunction(
-        formData,
-        workspaceId,
+      const detailsHash = (await uploadToIPFS(formData.details)).hash;
+      const {
+        data: { ipfsHash },
+      } = await validatorApi.validateGrantCreate({
+        title: formData.title,
+        summary: formData.summary,
+        details: detailsHash,
+        deadline: formData.date,
+        reward: {
+          committed: parseAmount(formData.reward, formData.rewardCurrencyAddress),
+          asset: formData.rewardCurrencyAddress,
+        },
+        creatorId: accountData!.address,
+        workspaceId: getSupportedValidatorNetworkFromChainId(
+          chainId!,
+        ),
+        fields: formData.fields,
+        grantManagers: formData.grantManagers.length
+          ? formData.grantManagers
+          : [accountData!.address],
+      });
+      if (!ipfsHash) {
+        throw new Error('Error validating grant data');
+      }
+      createGrantData = await grantMutationsUtils.contractMutation(
+        task,
+        grantContract,
         setTransactionData,
         setLoading,
         setError,
+        ipfsHash,
       );
       //   setTransactionData('');
-      setTransactionType('create');
+      setTransactionType(task);
     } catch (e) {
       const message = getErrorMessage(e);
       setError(message);
@@ -87,6 +120,7 @@ const useGrantMutations = () => {
 
   const updateGrant = async (formData: CreateGrantForm, grantUpdateContract: any) => {
     let updateGrantTxnData;
+    const task = 'update';
 
     try {
       grantMutationsUtils.checkNetwork();
@@ -95,16 +129,33 @@ const useGrantMutations = () => {
         transactionData,
         setLoading,
       );
-
-      updateGrantTxnData = await grantMutationsUtils.updateGrantFunction(
-        formData,
+      const detailsHash = (await uploadToIPFS(formData.details)).hash;
+      const {
+        data: { ipfsHash },
+      } = await validatorApi.validateGrantUpdate({
+        title: formData.title,
+        summary: formData.summary,
+        details: detailsHash,
+        deadline: formData.date,
+        reward: {
+          committed: parseAmount(formData.reward, formData.rewardCurrencyAddress),
+          asset: formData.rewardCurrencyAddress,
+        },
+        fields: formData.fields,
+      });
+      if (!ipfsHash) {
+        throw new Error('Error validating grant data');
+      }
+      updateGrantTxnData = await grantMutationsUtils.contractMutation(
+        task,
         grantUpdateContract,
-        setError,
-        setLoading,
         setTransactionData,
+        setLoading,
+        setError,
+        ipfsHash,
       );
       //   setTransactionData('');
-      setTransactionType('update');
+      setTransactionType(task);
     } catch (e: any) {
       const message = getErrorMessage(e);
       setError(message);
@@ -133,6 +184,7 @@ const useGrantMutations = () => {
     grantArchiveContract: any,
   ) => {
     let txnData;
+    const task = 'archive';
     if (newState) {
       setError(undefined);
     }
@@ -140,18 +192,21 @@ const useGrantMutations = () => {
       return;
     }
     if (error) return;
+    if (changeCount === 0) return;
     try {
       grantMutationsUtils.validateArchive(
         transactionData,
         grantArchiveContract,
       );
-      txnData = await grantMutationsUtils.archiveGrantFunction(
-        newState,
-        changeCount,
+
+      txnData = await grantMutationsUtils.contractMutation(
+        task,
+        grantArchiveContract,
         setTransactionData,
         setLoading,
         setError,
-        grantArchiveContract,
+        '',
+        newState,
       );
       //   setTransactionData('');
       setTransactionType('archive');

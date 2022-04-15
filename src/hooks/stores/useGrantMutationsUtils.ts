@@ -10,8 +10,7 @@ import { useAccount, useNetwork } from 'wagmi';
 import {
   ToastId, useToast,
 } from '@chakra-ui/react';
-import { uploadToIPFS } from 'src/utils/ipfsUtils';
-import { parseAmount } from 'src/utils/formattingUtils';
+
 import getErrorMessage from 'src/utils/errorUtils';
 import ErrorToast from 'src/components/ui/toasts/errorToast';
 import { ApiClientsContext } from 'pages/_app';
@@ -27,6 +26,7 @@ const useGrantMutationsUtils = () => {
   const subgraphClients = useContext(ApiClientsContext)!;
   const { validatorApi, workspace } = subgraphClients;
   const chainId = getSupportedChainIdFromWorkspace(workspace);
+  const workspaceId = getSupportedValidatorNetworkFromChainId(chainId!);
   const currentChainId = useChainId();
   const [{ data: networkData }, switchNetwork] = useNetwork();
   const grantContract = useGrantFactoryContract(chainId);
@@ -120,145 +120,34 @@ const useGrantMutationsUtils = () => {
   }
 
   // eslint-disable-next-line consistent-return
-  async function createGrantFunction(
-    formData: CreateGrantForm,
-    workspaceId: string | undefined,
+  async function contractMutation(
+    task: string,
+    contract: any,
     setTransactionData: React.Dispatch<any>,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
     setError: React.Dispatch<React.SetStateAction<string | undefined>>,
+    ipfsHash?: string,
+    newState?: boolean,
   ) {
     setLoading(true);
-    // console.log('calling validate');
+    let grantTransaction;
     try {
-      const detailsHash = (await uploadToIPFS(formData.details)).hash;
-      const {
-        data: { ipfsHash },
-      } = await validatorApi.validateGrantCreate({
-        title: formData.title,
-        summary: formData.summary,
-        details: detailsHash,
-        deadline: formData.date,
-        reward: {
-          committed: parseAmount(formData.reward, formData.rewardCurrencyAddress),
-          asset: formData.rewardCurrencyAddress,
-        },
-        creatorId: accountData!.address,
-        workspaceId: getSupportedValidatorNetworkFromChainId(
-          chainId!,
-        ),
-        fields: formData.fields,
-        grantManagers: formData.grantManagers.length
-          ? formData.grantManagers
-          : [accountData!.address],
-      });
-      if (!ipfsHash) {
-        throw new Error('Error validating grant data');
+      if (task === 'create' && ipfsHash) {
+        grantTransaction = await contract.createGrant(
+          workspaceId ?? Number(workspace?.id).toString(),
+          ipfsHash,
+          WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
+          APPLICATION_REGISTRY_ADDRESS[currentChainId!],
+        );
+      } else if (task === 'update' && ipfsHash) {
+        grantTransaction = contract.updateGrant(ipfsHash);
+      } else if (task === 'archive') {
+        grantTransaction = await contract.updateGrantAccessibility(newState);
       }
-
-      const createGrantTransaction = await grantContract.createGrant(
-        workspaceId ?? Number(workspace?.id).toString(),
-        ipfsHash,
-        WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
-        APPLICATION_REGISTRY_ADDRESS[currentChainId!],
-      );
-      const createGrantTransactionData = await createGrantTransaction.wait();
-
+      const createGrantTransactionData = await grantTransaction.wait();
       setTransactionData(createGrantTransactionData);
       setLoading(false);
       return createGrantTransactionData;
-    } catch (e: any) {
-      const message = getErrorMessage(e);
-      setError(message);
-      setLoading(false);
-      // eslint-disable-next-line no-param-reassign
-      toastRef.current = toast({
-        position: 'top',
-        render: () => ErrorToast({
-          content: message,
-          close: () => {
-            if (toastRef.current) {
-              toast.close(toastRef.current);
-            }
-          },
-        }),
-      });
-    }
-  }
-
-  // eslint-disable-next-line consistent-return
-  async function updateGrantFunction(
-    formData: CreateGrantForm,
-    grantUpdateContract: any,
-    setError: React.Dispatch<React.SetStateAction<string | undefined>>,
-    setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-    setTransactionData: React.Dispatch<any>,
-  ) {
-    setLoading(true);
-    // console.log('calling validate');
-    try {
-      const detailsHash = (await uploadToIPFS(formData.details)).hash;
-      const {
-        data: { ipfsHash },
-      } = await validatorApi.validateGrantUpdate({
-        title: formData.title,
-        summary: formData.summary,
-        details: detailsHash,
-        deadline: formData.date,
-        reward: {
-          committed: parseAmount(formData.reward, formData.rewardCurrencyAddress),
-          asset: formData.rewardCurrencyAddress,
-        },
-        fields: formData.fields,
-      });
-      if (!ipfsHash) {
-        throw new Error('Error validating grant data');
-      }
-
-      const updateGrantTransaction = await grantUpdateContract.updateGrant(
-        ipfsHash,
-      );
-      const updateGrantTransactionData = await updateGrantTransaction.wait();
-
-      setTransactionData(updateGrantTransactionData);
-      setLoading(false);
-      return updateGrantTransactionData;
-    } catch (e: any) {
-      const message = getErrorMessage(e);
-      setError(message);
-      setLoading(false);
-      // eslint-disable-next-line no-param-reassign
-      toastRef.current = toast({
-        position: 'top',
-        render: () => ErrorToast({
-          content: message,
-          close: () => {
-            if (toastRef.current) {
-              toast.close(toastRef.current);
-            }
-          },
-        }),
-      });
-    }
-  }
-
-  async function archiveGrantFunction(
-    newState: boolean,
-    changeCount: number,
-    setTransactionData: React.Dispatch<any>,
-    setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-    setError: React.Dispatch<React.SetStateAction<string | undefined>>,
-    grantArchiveContract: any,
-  ) {
-    if (changeCount === 0) return;
-    try {
-      setLoading(true);
-      const archiveGrantTransaction = await grantArchiveContract.updateGrantAccessibility(newState);
-      const archiveGrantTransactionData = await archiveGrantTransaction.wait();
-
-      setTransactionData(archiveGrantTransactionData);
-      setLoading(false);
-      // eslint-disable-next-line consistent-return
-      return archiveGrantTransactionData;
     } catch (e: any) {
       const message = getErrorMessage(e);
       setError(message);
@@ -293,9 +182,7 @@ const useGrantMutationsUtils = () => {
     checkNetwork,
     validate,
     validateArchive,
-    createGrantFunction,
-    updateGrantFunction,
-    archiveGrantFunction,
+    contractMutation,
   };
 };
 export default useGrantMutationsUtils;

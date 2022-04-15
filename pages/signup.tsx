@@ -75,10 +75,13 @@ function SignupDao() {
   //   transactionLink,
   //   createGrantLoading,
   // ] = useCreateGrant(grantData, workspaceData?.network, daoData?.id);
-  const { createGrant, loading, transactionData } = useContext(GrantsContext);
-  let transactionLink: any;
+  const {
+    createGrantHandler,
+    loading,
+    transactionData, transactionLink,
+  } = useContext(GrantsContext);
   function createGrantFunction(data: any) {
-    [transactionLink] = createGrant(data);
+    createGrantHandler(data);
   }
 
   useEffect(() => {
@@ -86,13 +89,11 @@ function SignupDao() {
     if (transactionData) {
       setGrantData(null);
       router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
-
-      const link = transactionLink;
       toastRef.current = toast({
         position: 'top',
         render: () => (
           <InfoToast
-            link={link}
+            link={transactionLink}
             close={() => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
