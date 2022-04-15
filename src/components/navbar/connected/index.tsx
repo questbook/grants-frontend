@@ -206,14 +206,15 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
             px="38px"
           >
           <Flex direction="row" align="center" gap="8px">
-          {isDiscover ? <Image src="/ui_icons/gray/see.svg"/> : <Image
-            objectFit="cover"
-            w="32px"
-            h="32px"
-            src={getUrlForIPFSHash(workspace.logoIpfsHash)}
-            display="inline-block"
-          />
-          }
+              {isDiscover ? <Image src="/ui_icons/gray/see.svg"/> : (
+                <Image
+                objectFit="cover"
+                w="32px"
+                h="32px"
+                src={getUrlForIPFSHash(workspace.logoIpfsHash)}
+                display="inline-block"
+              />
+              )}
               <Text
                 color="#414E50"
                 fontWeight="500"
@@ -222,7 +223,10 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 overflow="hidden"
                 textOverflow="ellipsis"
               >
-                {isDiscover ? "Discover Grants" : workspace.title}
+                {isDiscover ?
+                 'Discover Grants'
+                 : workspace.title
+                }
               </Text>
               <Image ml={2} src="/ui_icons/dropdown_arrow.svg" alt="options" />
             </Flex>
