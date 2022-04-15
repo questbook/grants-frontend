@@ -48,16 +48,13 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
   // eslint-disable-next-line max-len
   const getNumberOfApplicationsClients = Object.keys(subgraphClients)!.map(
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    (key) =>
-      useGetNumberOfApplicationsLazyQuery({
-        client: subgraphClients[key].client,
-      })
+    (key) => useGetNumberOfApplicationsLazyQuery({
+        client: subgraphClients[key].client })
   );
 
   const getNumberOfGrantsClients = Object.keys(subgraphClients)!.map(
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    (key) =>
-      useGetNumberOfGrantsLazyQuery({ client: subgraphClients[key].client })
+    (key) => useGetNumberOfGrantsLazyQuery({ client: subgraphClients[key].client })
   );
 
   useEffect(() => {
@@ -68,8 +65,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
       try {
         const promises = getNumberOfApplicationsClients.map(
           // eslint-disable-next-line no-async-promise-executor
-          (query) =>
-            new Promise(async (resolve) => {
+          (query) => new Promise(async (resolve) => {
               const { data } = await query[0]({
                 variables: { applicantId: accountData?.address },
               });
@@ -95,8 +91,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
       try {
         const promises = getNumberOfGrantsClients.map(
           // eslint-disable-next-line no-async-promise-executor
-          (query) =>
-            new Promise(async (resolve) => {
+          (query) => new Promise(async (resolve) => {
               const { data } = await query[0]({
                 variables: { workspaceId: workspace?.id },
               });
@@ -125,8 +120,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 
   const getAllWorkspaces = Object.keys(subgraphClients)!.map(
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    (key) =>
-      useGetWorkspaceMembersLazyQuery({ client: subgraphClients[key].client })
+    (key) => useGetWorkspaceMembersLazyQuery({ client: subgraphClients[key].client })
   );
   useEffect(() => {
     if (workspace && workspace.members && workspace.members.length > 0) {
@@ -134,8 +128,8 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
         (m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase()
       );
       setIsAdmin(
-        tempMember?.accessLevel === 'admin' ||
-          tempMember?.accessLevel === 'owner'
+        tempMember?.accessLevel === 'admin'
+        || tempMember?.accessLevel === 'owner'
       );
     }
   }, [accountData?.address, workspace]);
@@ -149,8 +143,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
       try {
         const promises = getAllWorkspaces.map(
           // eslint-disable-next-line no-async-promise-executor
-          (allWorkspaces) =>
-            new Promise(async (resolve) => {
+          (allWorkspaces) => new Promise(async (resolve) => {
               // console.log('calling grants');
               const { data } = await allWorkspaces[0]({
                 variables: { actorId: userAddress },
