@@ -208,7 +208,6 @@ function EditGrant() {
     setCurrentStep(step);
   };
 
-  const [editData, setEditData] = useState<any>();
   // const [transactionData, txnLink, loading] = useEditGrant(editData, grantID);
   const {
     updateGrantHandler,
@@ -218,7 +217,6 @@ function EditGrant() {
     transactionType,
     transactionLink,
   } = useContext(GrantsContext);
-  let txnLink: any;
 
   function updateGrant(formdata: any) {
     if (grantID) {
@@ -270,7 +268,6 @@ function EditGrant() {
             formData={formData}
             onSubmit={(editdata: any) => {
               updateGrant(formData);
-              setEditData(editdata);
             }}
             refs={sideBarDetails.map((detail) => detail[2])}
           />

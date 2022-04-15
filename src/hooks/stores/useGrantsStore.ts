@@ -1,4 +1,3 @@
-import { GrantCreateRequest, GrantUpdateRequest } from '@questbook/service-validator-client';
 import { ApiClientsContext } from 'pages/_app';
 import { useContext, useEffect } from 'react';
 import { SupportedChainId } from 'src/constants/chains';
@@ -12,8 +11,9 @@ import {
 } from 'src/generated/graphql';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { useAccount } from 'wagmi';
+import { CreateGrantForm } from 'src/types';
 import ContextGenerator from '../utils/contextGenerator';
-import useGrantsHook from './useGrantsHook';
+import useGrantMutations from './useGrantMutations';
 import usePaginatedDataStore from './usePaginatedDataStore';
 
 // import useGrantContract from '../contracts/useGrantContract';
@@ -22,7 +22,7 @@ const useGrantsStore = () => {
   const { workspace } = useContext(ApiClientsContext)!;
 
   const [{ data: accountData }] = useAccount();
-  const grantHook = useGrantsHook();
+  const grantHook = useGrantMutations();
 
   const myChainId = getSupportedChainIdFromWorkspace(workspace!) || SupportedChainId.RINKEBY;
 
@@ -50,24 +50,24 @@ const useGrantsStore = () => {
   });
 
   const {
-    loading, setTransactionData, transactionData, transactionType, error,
+    loading, setTransactionData, transactionData, transactionLink, transactionType, error,
   } = grantHook;
 
   const createGrantHandler = (
-    formData: GrantCreateRequest,
-  ) => grantHook.createGrantHandler(formData);
+    formData: CreateGrantForm,
+  ) => grantHook.createGrant(formData);
 
   const updateGrantHandler = (
-    formData: GrantUpdateRequest,
+    formData: CreateGrantForm,
     grantUpdateContract: any,
-  ) => grantHook.updateGrantHandler(formData, grantUpdateContract);
+  ) => grantHook.updateGrant(formData, grantUpdateContract);
 
   const archiveGrantHandler = (
     newState: boolean,
     changeCount: number,
     grantId: string,
     grantArchiveContract: any,
-  ) => grantHook.archiveGrantHandler(newState, changeCount, grantId, grantArchiveContract);
+  ) => grantHook.archiveGrant(newState, changeCount, grantArchiveContract);
 
   useEffect(() => {
     yourGrants.clear();
@@ -80,6 +80,7 @@ const useGrantsStore = () => {
     loading,
     setTransactionData, // so that component can reset transaction data after displaying the toast
     transactionData,
+    transactionLink,
     transactionType,
     allGrants,
     yourGrants,

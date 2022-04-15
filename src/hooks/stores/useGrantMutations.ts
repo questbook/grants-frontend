@@ -1,115 +1,65 @@
-import { GrantCreateRequest, GrantUpdateRequest } from '@questbook/service-validator-client';
 import { ApiClientsContext } from 'pages/_app';
 import React, { useContext, useEffect } from 'react';
-import { SupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
-import { toast, ToastId } from '@chakra-ui/react';
+import { ToastId, useToast } from '@chakra-ui/react';
 import getErrorMessage from 'src/utils/errorUtils';
 import ErrorToast from 'src/components/ui/toasts/errorToast';
-
+import { CreateGrantForm } from 'src/types';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
-import { useAccount, useNetwork } from 'wagmi';
 import useGrantFactoryContract from '../contracts/useGrantFactoryContract';
 import useChainId from '../utils/useChainId';
-import {
-  checkData, checkNetwork, validate, createGrant, updateGrant, archiveGrant, validateArchive,
-} from './utils';
+import useGrantMutationsUtils from './useGrantMutationsUtils';
 
-const useGrantsHook = () => {
+const useGrantMutations = () => {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
-  const [incorrectNetwork, setIncorrectNetwork] = React.useState(false);
   const [transactionLink, setTransactionLink] = React.useState<string>('');
 
-  const [data, setData] = React.useState<any>();
   // const [chainId, setChainId] = React.useState<SupportedChainId>();
   const [workspaceId, setWorkspaceId] = React.useState<string>();
   const [transactionData, setTransactionData] = React.useState<any>();
   const [transactionType, setTransactionType] = React.useState<string>();
-  const [{ data: accountData }] = useAccount();
-  const [{ data: networkData }, switchNetwork] = useNetwork();
   const subgraphClients = useContext(ApiClientsContext)!;
-  const { validatorApi, workspace } = subgraphClients;
+  const { workspace } = subgraphClients;
   const chainId = getSupportedChainIdFromWorkspace(workspace);
-  const grantContract = useGrantFactoryContract(
-    chainId ?? getSupportedChainIdFromWorkspace(workspace),
-  );
+  const grantContract = useGrantFactoryContract(chainId);
 
-  // const grantUpdateContract = useGrantContract();
   const toastRef = React.useRef<ToastId>();
-
+  const toast = useToast();
   const currentChainId = useChainId();
+  const grantMutationsUtils = useGrantMutationsUtils();
 
   useEffect(() => {
-    checkData(data, setError, setIncorrectNetwork);
-    checkNetwork(incorrectNetwork, setIncorrectNetwork);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, grantContract]);
-
-  useEffect(() => {
-    if (incorrectNetwork) return;
     if (error) return;
     // eslint-disable-next-line no-useless-return
     if (loading) return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error,
     loading,
-    toast,
-    transactionData,
     grantContract,
-    validatorApi,
-    workspace,
-    accountData,
-    networkData,
-    currentChainId,
-    data,
-    chainId,
-    incorrectNetwork]);
+  ]);
 
-  const createGrantHandler = async (
-    formData: GrantCreateRequest,
-    chainid?: SupportedChainId,
+  const createGrant = async (
+    formData: CreateGrantForm,
     workspaceid?: string,
   ) => {
     let createGrantData;
-    if (formData) {
-      setData(formData);
-    }
     if (workspaceid) {
       setWorkspaceId(workspaceid);
     }
     try {
-      checkData(data, setError, setIncorrectNetwork);
-      checkNetwork(incorrectNetwork, setIncorrectNetwork);
-      validate(
+      grantMutationsUtils.checkNetwork();
+      grantMutationsUtils.validate(
         formData,
-        chainId,
         transactionData,
-        accountData,
-        workspace,
-        currentChainId,
-        switchNetwork,
-        setIncorrectNetwork,
         setLoading,
-        validatorApi,
-        grantContract,
       );
-
-      createGrantData = await createGrant(
+      createGrantData = await grantMutationsUtils.createGrantFunction(
         formData,
-        setLoading,
-        validatorApi,
-        accountData,
-        chainId,
-        workspace,
-        grantContract,
         workspaceId,
-        currentChainId,
         setTransactionData,
-        getErrorMessage,
+        setLoading,
         setError,
-        toastRef,
-        toast,
       );
       //   setTransactionData('');
       setTransactionType('create');
@@ -135,38 +85,23 @@ const useGrantsHook = () => {
       : '');
   };
 
-  const updateGrantHandler = async (formData: GrantUpdateRequest, grantUpdateContract: any) => {
+  const updateGrant = async (formData: CreateGrantForm, grantUpdateContract: any) => {
     let updateGrantTxnData;
-    if (formData) {
-      setData(formData);
-    }
+
     try {
-      checkData(data, setError, setIncorrectNetwork);
-      checkNetwork(incorrectNetwork, setIncorrectNetwork);
-      validate(
+      grantMutationsUtils.checkNetwork();
+      grantMutationsUtils.validate(
         formData,
-        chainId,
         transactionData,
-        accountData,
-        workspace,
-        currentChainId,
-        switchNetwork,
-        setIncorrectNetwork,
         setLoading,
-        validatorApi,
-        grantContract,
       );
 
-      updateGrantTxnData = await updateGrant(
+      updateGrantTxnData = await grantMutationsUtils.updateGrantFunction(
         formData,
         grantUpdateContract,
-        setLoading,
-        validatorApi,
-        setTransactionData,
-        getErrorMessage,
         setError,
-        toastRef,
-        toast,
+        setLoading,
+        setTransactionData,
       );
       //   setTransactionData('');
       setTransactionType('update');
@@ -192,37 +127,30 @@ const useGrantsHook = () => {
       : '');
   };
 
-  const archiveGrantHandler = async (
+  const archiveGrant = async (
     newState: boolean,
     changeCount: number,
-    grantId: string,
     grantArchiveContract: any,
   ) => {
     let txnData;
     if (newState) {
       setError(undefined);
     }
+    if (loading) {
+      return;
+    }
+    if (error) return;
     try {
-      validateArchive(
+      grantMutationsUtils.validateArchive(
         transactionData,
-        accountData,
-        currentChainId,
-        workspace,
-        validatorApi,
         grantArchiveContract,
       );
-      txnData = await archiveGrant(
+      txnData = await grantMutationsUtils.archiveGrantFunction(
         newState,
         changeCount,
-        grantId,
         setTransactionData,
         setLoading,
-        error,
-        loading,
-        getErrorMessage,
         setError,
-        toastRef,
-        toast,
         grantArchiveContract,
       );
       //   setTransactionData('');
@@ -255,12 +183,10 @@ const useGrantsHook = () => {
     transactionData,
     transactionType,
     transactionLink,
-    // yourGrants,
-    // archivedGrants,
-    createGrantHandler,
-    updateGrantHandler,
-    archiveGrantHandler,
+    createGrant,
+    updateGrant,
+    archiveGrant,
   };
 };
 
-export default useGrantsHook;
+export default useGrantMutations;

@@ -26,3 +26,14 @@ export type SettingsForm = {
   discordHandle?: string;
   telegramChannel?: string;
 };
+
+export type CreateGrantForm = {
+  'title': string,
+  'summary': string,
+  'details': string,
+  'fields': any,
+  'reward': string,
+  'rewardCurrencyAddress': string,
+  'date': string,
+  'grantManagers': any[],
+};
