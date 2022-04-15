@@ -1,7 +1,9 @@
 /* eslint-disable react/no-unstable-nested-components */
 // @TODO: Fix this ESLint issue
 import React, { useEffect, useState } from 'react';
-import { Box, Link, Text, Skeleton } from '@chakra-ui/react';
+import {
+  Box, Link, Text, Skeleton,
+} from '@chakra-ui/react';
 import Linkify from 'react-linkify';
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer';
 import { getFromIPFS } from 'src/utils/ipfsUtils';

@@ -94,7 +94,7 @@ function truncateTo(number: string, digits = 3) {
   let ret = number.substring(0, decimalIndex + 1);
   const lastSymbol = number.charCodeAt(number.length - 1);
   const containsSymbol = !(lastSymbol >= 48 && lastSymbol <= 57);
-  let isEntirelyZeroAfterDecimal = true;
+  const isEntirelyZeroAfterDecimal = true;
   for (
     let i = decimalIndex + 1;
     i

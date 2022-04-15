@@ -8,7 +8,7 @@ import progress from './components/progress';
 import text from './components/text';
 
 const theme = extendTheme({
-    fonts: {
+  fonts: {
     heading: 'DM Sans, sans-serif',
     body: 'DM Sans, sans-serif',
     buttons: 'DM Sans, sans-serif',
