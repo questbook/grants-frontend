@@ -36,137 +36,50 @@ import { ApiClientsContext } from '../_app';
 
 const PAGE_SIZE = 5;
 
+const TABS = [
+  {
+    index: 0,
+    acceptingApplications: true,
+    label: 'Live Grants',
+    emptyState: {
+      icon: '/illustrations/empty_states/no_live_grant.svg',
+      title: 'It’s quite silent here!',
+      description: ['Get started by creating your grant and post it in less than 2 minutes.'],
+      shouldShowButton: true,
+    },
+  },
+  {
+    index: 1,
+    acceptingApplications: false,
+    label: 'Archived',
+    emptyState: {
+      icon: '/illustrations/empty_states/no_archived_grant.svg',
+      title: 'No Grants archived.',
+      description: ['When you archive a grant it will no longer be visible to anyone.', ['To archive a grant, click on the', 'icon on your live grant and select “Archive grant”.']],
+      shouldShowButton: false,
+    },
+  },
+];
+
 function YourGrants() {
   const router = useRouter();
   const [{ data: accountData }] = useAccount({
     fetchEns: false,
   });
   const { workspace, subgraphClients } = useContext(ApiClientsContext)!;
-  const { yourGrants } = useContext(GrantsContext);
+  const { yourGrants, archivedGrants } = useContext(GrantsContext);
 
   const containerRef = useRef(null);
-  const [currentPage, setCurrentPage] = React.useState(0);
-  const [grants, setGrants] = React.useState<
-  GetAllGrantsForCreatorQuery['grants']
-  >([]);
 
-  const [queryParams, setQueryParams] = useState<any>({
-    client:
-      subgraphClients[
-        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
-      ].client,
-  });
-
-  const [countQueryParams, setCountQueryParams] = useState<any>({
-    client:
-      subgraphClients[
-        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
-      ].client,
-  });
-
-  const tabs = [
-    {
-      index: 0,
-      acceptingApplications: true,
-      label: 'Live Grants',
-      emptyState: {
-        icon: '/illustrations/empty_states/no_live_grant.svg',
-        title: 'It’s quite silent here!',
-        description: ['Get started by creating your grant and post it in less than 2 minutes.'],
-        shouldShowButton: true,
-      },
-    },
-    {
-      index: 1,
-      acceptingApplications: false,
-      label: 'Archived',
-      emptyState: {
-        icon: '/illustrations/empty_states/no_archived_grant.svg',
-        title: 'No Grants archived.',
-        description: ['When you archive a grant it will no longer be visible to anyone.', ['To archive a grant, click on the', 'icon on your live grant and select “Archive grant”.']],
-        shouldShowButton: false,
-      },
-    },
-  ];
   const [selectedTab, setSelectedTab] = useState(
     parseInt(localStorage.getItem('yourGrantsTabSelected') ?? '0', 10),
   );
 
-  const [grantCount, setGrantCount] = useState([true, true]);
-
-  useEffect(() => {
-    if (!workspace) return;
-    if (!accountData) return;
-
-    setCountQueryParams({
-      client:
-        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
-      variables: {
-        first: PAGE_SIZE,
-        skip: PAGE_SIZE * currentPage,
-        workspaceId: workspace?.id,
-      },
-      fetchPolicy: 'network-only',
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, workspace, accountData?.address]);
-
   const {
-    data: allGrantsCountData,
-    error: allGrantsCountError,
-    loading: allGrantsCountLoading,
-  } = useGetAllGrantsCountForCreatorQuery(countQueryParams);
-
-  useEffect(() => {
-    if (allGrantsCountData) {
-      setGrantCount([
-        allGrantsCountData.liveGrants.length > 0,
-        allGrantsCountData.archived.length > 0,
-      ]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allGrantsCountData, allGrantsCountError, allGrantsCountLoading]);
-
-  useEffect(() => {
-    if (!workspace) return;
-    if (!accountData) return;
-
-    setQueryParams({
-      client:
-        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
-      variables: {
-        first: PAGE_SIZE,
-        skip: PAGE_SIZE * currentPage,
-        workspaceId: workspace?.id,
-        acceptingApplications: tabs[selectedTab].acceptingApplications,
-      },
-      fetchPolicy: 'network-only',
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, workspace, accountData?.address, selectedTab]);
-
-  const { data, error, loading } = useGetAllGrantsForCreatorQuery(queryParams);
-  useEffect(() => {
-    if (!workspace) return;
-    setGrants([]);
-    setCurrentPage(0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workspace, selectedTab]);
-
-  useEffect(() => {
-    if (data && data.grants && data.grants.length > 0) {
-      if (
-        grants.length > 0
-        && grants[0].workspace.id === data.grants[0].workspace.id
-        && grants[0].id !== data.grants[0].id
-      ) {
-        setGrants([...grants, ...data.grants]);
-      } else {
-        setGrants(data.grants);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, error, loading]);
+    data: grants,
+    requiresFirstFetch,
+    fetchMore,
+  } = selectedTab === 0 ? yourGrants : archivedGrants;
 
   const [addFundsIsOpen, setAddFundsIsOpen] = React.useState(false);
   const [grantForFunding, setGrantForFunding] = React.useState(null);
@@ -201,9 +114,9 @@ function YourGrants() {
           - (parentElement.scrollHeight - parentElement.clientHeight),
     ) < 10;
     if (reachedBottom) {
-      setCurrentPage(currentPage + 1);
+      fetchMore();
     }
-  }, [containerRef, currentPage]);
+  }, [containerRef, fetchMore]);
 
   useEffect(() => {
     const { current } = containerRef;
@@ -215,13 +128,19 @@ function YourGrants() {
     return () => parentElement.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
+  useEffect(() => {
+    if (requiresFirstFetch) {
+      fetchMore();
+    }
+  }, [requiresFirstFetch, fetchMore]);
+
   return (
     <>
       <Flex ref={containerRef} direction="row" justify="center">
         <Flex direction="column" w="55%" alignItems="stretch" pb={8} px={10}>
           <Heading title="Your grants" />
           <Flex direction="row" mt={4} mb={4}>
-            {tabs.map((tab) => (
+            {TABS.map((tab) => (
               <Button
                 padding="8px 24px"
                 borderRadius="52px"
@@ -249,8 +168,8 @@ function YourGrants() {
               </Button>
             ))}
           </Flex>
-          {grants.length > 0
-            && grants.map((grant) => (
+          {grants.items.length > 0
+            && grants.items.map((grant) => (
               <YourGrantCard
                 grantID={grant.id}
                 key={grant.id}
@@ -305,20 +224,16 @@ function YourGrants() {
               />
             ))}
 
-          {grants.length === 0
-            && !grantCount[0]
-            && !grantCount[1]
+          {!grants.items.length
             && router.query.done && <FirstGrantEmptyState />}
-          {grants.length === 0 && !router.query.done
-            && (selectedTab === 0 ? (
-              <LiveGrantEmptyState />
-            ) : (
-              <ArchivedGrantEmptyState />
-            ))}
-
+          {
+            !grants.items.length
+            && !grants.hasMore
+            && (selectedTab === 0 ? <LiveGrantEmptyState /> : <ArchivedGrantEmptyState />)
+          }
         </Flex>
         <Flex w="26%" pos="sticky" minH="calc(100vh - 80px)">
-          <Sidebar showCreateGrantItem={!grantCount[0] && !grantCount[1]} />
+          <Sidebar showCreateGrantItem={!grants.items.length && !grants.hasMore} />
         </Flex>
       </Flex>
       {grantForFunding && grantRewardAsset && (

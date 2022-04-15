@@ -2,7 +2,12 @@ import { GrantCreateRequest, GrantUpdateRequest } from '@questbook/service-valid
 import { ApiClientsContext } from 'pages/_app';
 import React, { useContext, useEffect, useState } from 'react';
 import {
+  GetAllGrantsDocument,
+  GetAllGrantsForCreatorDocument,
   GetAllGrantsForCreatorQuery,
+  GetAllGrantsForCreatorQueryVariables,
+  GetAllGrantsQuery,
+  GetAllGrantsQueryVariables,
 } from 'src/generated/graphql';
 import { SupportedChainId } from 'src/constants/chains';
 import { Grant } from 'src/types';
@@ -46,15 +51,36 @@ const useGrantsStore = () => {
   const toast = useToast();
   const currentChainId = useChainId();
 
-  const grants = usePaginatedDataStore<Grant>();
-  // const yourGrants = usePaginatedDataStore<YourGrant>();
-  // const archivedGrants = usePaginatedDataStore<YourGrant>();
+  const myChainId = getSupportedChainIdFromWorkspace(workspace!) || SupportedChainId.RINKEBY;
+
+  const allGrants = usePaginatedDataStore({
+    queryDocument: GetAllGrantsDocument,
+    variables: { applicantId: accountData?.address || '' } as GetAllGrantsQueryVariables,
+    getItems: (q: GetAllGrantsQuery | undefined) => (
+      (q?.grants || []).filter((g) => g.applications.length === 0)
+    ),
+    sort: (a, b) => b.createdAtS - a.createdAtS,
+  });
+
+  const yourGrants = usePaginatedDataStore({
+    chains: [myChainId],
+    queryDocument: GetAllGrantsForCreatorDocument,
+    variables: { workspaceId: workspace?.id || '', acceptingApplications: true } as GetAllGrantsForCreatorQueryVariables,
+    getItems: (q: GetAllGrantsForCreatorQuery | undefined) => q?.grants || [],
+  });
+
+  const archivedGrants = usePaginatedDataStore({
+    chains: [myChainId],
+    queryDocument: GetAllGrantsForCreatorDocument,
+    variables: { workspaceId: workspace?.id || '', acceptingApplications: false } as GetAllGrantsForCreatorQueryVariables,
+    getItems: (q: GetAllGrantsForCreatorQuery | undefined) => q?.grants || [],
+  });
 
   useEffect(() => {
     checkData(data, setError, setIncorrectNetwork);
     checkNetwork(incorrectNetwork, setIncorrectNetwork);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, grants.grants, grantContract]);
+  }, [data, allGrants.data.items, grantContract]);
 
   useEffect(() => {
     if (incorrectNetwork) return;
@@ -201,13 +227,19 @@ const useGrantsStore = () => {
       : '';
   };
 
+  useEffect(() => {
+    yourGrants.clear();
+    archivedGrants.clear();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [myChainId]);
+
   return {
     loading,
     transactionData,
     transactionType,
-    grants,
-    // yourGrants,
-    // archivedGrants,
+    allGrants,
+    yourGrants,
+    archivedGrants,
     createGrantHandler,
     updateGrantHandler,
   };

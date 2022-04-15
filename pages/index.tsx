@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react';
+import { Divider, Flex } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, {
   ReactElement,
@@ -32,9 +32,9 @@ function BrowseGrants() {
   useEffect(() => { }, [subgraphClients]);
 
   // const [grants, setGrants] = useState<GetAllGrantsQuery['grants']>([]);
-  const { grants } = useContext(GrantsContext);
-
-  //
+  const { allGrants } = useContext(GrantsContext);
+  const allGrantsList = allGrants.data.items;
+  const divWidth = Math.floor((1 - allGrants.data.loading) * 100);
 
   const handleScroll = useCallback(() => {
     const { current } = containerRef;
@@ -46,9 +46,15 @@ function BrowseGrants() {
     ) < 10;
     if (reachedBottom) {
       // getGrantData();
-      grants.loadMoreGrants();
+      allGrants.fetchMore();
     }
-  }, [containerRef, grants]);
+  }, [containerRef, allGrants]);
+
+  useEffect(() => {
+    if (allGrants.requiresFirstFetch) {
+      allGrants.fetchMore();
+    }
+  }, [allGrants]);
 
   // useEffect(() => {
   //   // setCurrentPage(0);
@@ -69,9 +75,10 @@ function BrowseGrants() {
   return (
     <Flex ref={containerRef} direction="row" justify="center">
       <Flex direction="column" w="55%" alignItems="stretch" pb={8} px={10}>
-        <Heading title="Discover grants" />
-        {grants.grants.length > 0
-          && grants.grants.map((grant) => {
+        <Heading title="Discover grants" dontRenderDivider />
+        <Divider width={`${divWidth}%`} mt={4} mb={3} />
+        {allGrantsList.length > 0
+          && allGrantsList.map((grant) => {
             const chainId = getSupportedChainIdFromSupportedNetwork(
               grant.workspace.supportedNetworks[0],
             );
