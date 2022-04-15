@@ -48,14 +48,16 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
   // eslint-disable-next-line max-len
   const getNumberOfApplicationsClients = Object.keys(subgraphClients)!.map(
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    (key) => useGetNumberOfApplicationsLazyQuery({
-      client: subgraphClients[key].client,
-    }),
+    (key) =>
+      useGetNumberOfApplicationsLazyQuery({
+        client: subgraphClients[key].client,
+      })
   );
 
   const getNumberOfGrantsClients = Object.keys(subgraphClients)!.map(
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    (key) => useGetNumberOfGrantsLazyQuery({ client: subgraphClients[key].client }),
+    (key) =>
+      useGetNumberOfGrantsLazyQuery({ client: subgraphClients[key].client })
   );
 
   useEffect(() => {
@@ -66,16 +68,17 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
       try {
         const promises = getNumberOfApplicationsClients.map(
           // eslint-disable-next-line no-async-promise-executor
-          (query) => new Promise(async (resolve) => {
-            const { data } = await query[0]({
-              variables: { applicantId: accountData?.address },
-            });
-            if (data && data.grantApplications.length > 0) {
-              resolve(data.grantApplications.length);
-            } else {
-              resolve(0);
-            }
-          }),
+          (query) =>
+            new Promise(async (resolve) => {
+              const { data } = await query[0]({
+                variables: { applicantId: accountData?.address },
+              });
+              if (data && data.grantApplications.length > 0) {
+                resolve(data.grantApplications.length);
+              } else {
+                resolve(0);
+              }
+            })
         );
         Promise.all(promises).then((value: any[]) => {
           setApplicationCount(value.reduce((a, b) => a + b, 0));
@@ -92,16 +95,17 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
       try {
         const promises = getNumberOfGrantsClients.map(
           // eslint-disable-next-line no-async-promise-executor
-          (query) => new Promise(async (resolve) => {
-            const { data } = await query[0]({
-              variables: { workspaceId: workspace?.id },
-            });
-            if (data && data.grants.length > 0) {
-              resolve(data.grants.length);
-            } else {
-              resolve(0);
-            }
-          }),
+          (query) =>
+            new Promise(async (resolve) => {
+              const { data } = await query[0]({
+                variables: { workspaceId: workspace?.id },
+              });
+              if (data && data.grants.length > 0) {
+                resolve(data.grants.length);
+              } else {
+                resolve(0);
+              }
+            })
         );
         Promise.all(promises).then((value: any[]) => {
           setGrantsCount(value.reduce((a, b) => a + b, 0));
@@ -116,22 +120,23 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 
     getNumberOfApplications();
     getNumberOfGrants();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    accountData?.address,
-    workspace?.id,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountData?.address, workspace?.id]);
 
   const getAllWorkspaces = Object.keys(subgraphClients)!.map(
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    (key) => useGetWorkspaceMembersLazyQuery({ client: subgraphClients[key].client }),
+    (key) =>
+      useGetWorkspaceMembersLazyQuery({ client: subgraphClients[key].client })
   );
   useEffect(() => {
     if (workspace && workspace.members && workspace.members.length > 0) {
       const tempMember = workspace.members.find(
-        (m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
+        (m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase()
       );
-      setIsAdmin(tempMember?.accessLevel === 'admin' || tempMember?.accessLevel === 'owner');
+      setIsAdmin(
+        tempMember?.accessLevel === 'admin' ||
+          tempMember?.accessLevel === 'owner'
+      );
     }
   }, [accountData?.address, workspace]);
 
@@ -144,17 +149,18 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
       try {
         const promises = getAllWorkspaces.map(
           // eslint-disable-next-line no-async-promise-executor
-          (allWorkspaces) => new Promise(async (resolve) => {
-            // console.log('calling grants');
-            const { data } = await allWorkspaces[0]({
-              variables: { actorId: userAddress },
-            });
-            if (data && data.workspaceMembers.length > 0) {
-              resolve(data.workspaceMembers.map((w) => w.workspace));
-            } else {
-              resolve([]);
-            }
-          }),
+          (allWorkspaces) =>
+            new Promise(async (resolve) => {
+              // console.log('calling grants');
+              const { data } = await allWorkspaces[0]({
+                variables: { actorId: userAddress },
+              });
+              if (data && data.workspaceMembers.length > 0) {
+                resolve(data.workspaceMembers.map((w) => w.workspace));
+              } else {
+                resolve([]);
+              }
+            })
         );
         Promise.all(promises).then((values: any[]) => {
           const allWorkspacesData = [].concat(...values) as MinimalWorkspace[];
@@ -164,7 +170,8 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
           setWorkspaces([...workspaces, ...allWorkspacesData]);
 
           const i = allWorkspacesData.findIndex(
-            (w) => w.id === localStorage.getItem('currentWorkspaceId') ?? 'undefined',
+            (w) =>
+              w.id === localStorage.getItem('currentWorkspaceId') ?? 'undefined'
           );
           setWorkspace(allWorkspacesData[i === -1 ? 0 : i]);
         });
@@ -205,15 +212,17 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
             background="linear-gradient(263.05deg, #EFF0F0 -7.32%, #FCFCFC 32.62%)"
             px="38px"
           >
-          <Flex direction="row" align="center" gap="8px">
-              {isDiscover ? <Image src="/ui_icons/gray/see.svg"/> : (
+            <Flex direction="row" align="center" gap="8px">
+              {isDiscover ? (
+                <Image src="/ui_icons/gray/see.svg" />
+              ) : (
                 <Image
-                objectFit="cover"
-                w="32px"
-                h="32px"
-                src={getUrlForIPFSHash(workspace.logoIpfsHash)}
-                display="inline-block"
-              />
+                  objectFit="cover"
+                  w="32px"
+                  h="32px"
+                  src={getUrlForIPFSHash(workspace.logoIpfsHash)}
+                  display="inline-block"
+                />
               )}
               <Text
                 color="#414E50"
@@ -223,10 +232,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 overflow="hidden"
                 textOverflow="ellipsis"
               >
-                {isDiscover ?
-                 'Discover Grants'
-                 : workspace.title
-                }
+                {isDiscover ? 'Discover Grants' : workspace.title}
               </Text>
               <Image ml={2} src="/ui_icons/dropdown_arrow.svg" alt="options" />
             </Flex>
@@ -236,12 +242,12 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
             {workspaces.map((userWorkspace) => (
               <MenuItem
                 key={`${userWorkspace.id}-${userWorkspace.supportedNetworks[0]}`}
-                icon={(
+                icon={
                   <Image
                     boxSize="20px"
                     src={getUrlForIPFSHash(userWorkspace.logoIpfsHash)}
                   />
-                )}
+                }
                 onClick={() => {
                   setWorkspace(userWorkspace);
                   setIsDiscover(false);
