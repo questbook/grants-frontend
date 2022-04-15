@@ -205,14 +205,15 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
             background="linear-gradient(263.05deg, #EFF0F0 -7.32%, #FCFCFC 32.62%)"
             px="38px"
           >
-            <Flex direction="row" align="center" gap="8px">
-            {isDiscover ? <Image src="/ui_icons/gray/see.svg"/> :     <Image
-                  objectFit="cover"
-                  w="32px"
-                  h="32px"
-                  src={getUrlForIPFSHash(workspace.logoIpfsHash)}
-                  display="inline-block"
-                />}
+          <Flex direction="row" align="center" gap="8px">
+          {isDiscover ? <Image src="/ui_icons/gray/see.svg"/> : <Image
+            objectFit="cover"
+            w="32px"
+            h="32px"
+            src={getUrlForIPFSHash(workspace.logoIpfsHash)}
+            display="inline-block"
+          />
+          }
               <Text
                 color="#414E50"
                 fontWeight="500"
