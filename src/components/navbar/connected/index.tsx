@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -180,6 +180,8 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const [isDiscover, setIsDiscover] = useState<boolean>(false);
+
   return (
     <Container
       zIndex={1}
@@ -203,15 +205,14 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
             background="linear-gradient(263.05deg, #EFF0F0 -7.32%, #FCFCFC 32.62%)"
             px="38px"
           >
-            <Flex direction="row" align="center">
-              <Image
-                objectFit="cover"
-                w="32px"
-                h="32px"
-                mr="10px"
-                src={getUrlForIPFSHash(workspace.logoIpfsHash)}
-                display="inline-block"
-              />
+            <Flex direction="row" align="center" gap="8px">
+            {isDiscover ? <Image src="/ui_icons/gray/see.svg"/> :     <Image
+                  objectFit="cover"
+                  w="32px"
+                  h="32px"
+                  src={getUrlForIPFSHash(workspace.logoIpfsHash)}
+                  display="inline-block"
+                />}
               <Text
                 color="#414E50"
                 fontWeight="500"
@@ -220,11 +221,12 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 overflow="hidden"
                 textOverflow="ellipsis"
               >
-                {workspace.title}
+                {isDiscover ? "Discover Grants" : workspace.title}
               </Text>
               <Image ml={2} src="/ui_icons/dropdown_arrow.svg" alt="options" />
             </Flex>
           </MenuButton>
+
           <MenuList maxH="80vh" overflowY="auto">
             {workspaces.map((userWorkspace) => (
               <MenuItem
@@ -237,6 +239,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 )}
                 onClick={() => {
                   setWorkspace(userWorkspace);
+                  setIsDiscover(false);
                 }}
               >
                 {userWorkspace.title}
@@ -246,6 +249,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
               icon={<Image src="/ui_icons/gray/see.svg" />}
               onClick={() => {
                 router.push('/');
+                setIsDiscover(true);
               }}
             >
               Discover Grants
