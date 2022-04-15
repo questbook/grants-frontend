@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Image,
   Text,
@@ -11,6 +11,8 @@ import {
 } from '@chakra-ui/react';
 import { SupportedChainId } from 'src/constants/chains';
 import useArchiveGrant from 'src/hooks/useArchiveGrant';
+import useGrantContract from 'src/hooks/contracts/useGrantContract';
+import { GrantsContext } from 'src/hooks/stores/useGrantsStore';
 import InfoToast from 'src/components/ui/infoToast';
 import Modal from 'src/components/ui/modal';
 import Badge from './badge';
@@ -53,14 +55,21 @@ function YourGrantCard({
   acceptingApplications,
 }: YourGrantCardProps) {
   const [isAcceptingApplications, setIsAcceptingApplications] = React.useState<
-  [boolean, number]
+    [boolean, number]
   >([acceptingApplications, 0]);
 
-  const [transactionData, txnLink, loading, error] = useArchiveGrant(
-    isAcceptingApplications[0],
-    isAcceptingApplications[1],
-    grantID,
-  );
+  // const [transactionData, txnLink, loading, error] = useArchiveGrant(
+  //   isAcceptingApplications[0],
+  //   isAcceptingApplications[1],
+  //   grantID,
+  // );
+
+  const grantArchiveContract = useGrantContract(grantID);
+  const {
+    archiveGrantHandler, loading, transactionData, transactionType, transactionLink, error,
+  } = useContext(GrantsContext);
+  let txnLink: any;
+  console.log(`transaction Data: ${transactionData}, TxnLink: ${transactionLink}`);
 
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
@@ -69,14 +78,24 @@ function YourGrantCard({
   const [isArchiveModalOpen, setIsArchiveModalOpen] = React.useState(false);
   const [isPublishGrantModalOpen, setIsPublishGrantModalOpen] = React.useState(false);
 
+  const archiveGrant = (newState: boolean, changeAccount: number) => {
+    txnLink = archiveGrantHandler(
+      newState,
+      changeAccount,
+      grantID,
+      grantArchiveContract,
+    );
+  };
+
   React.useEffect(() => {
     // console.log(transactionData);
-    if (transactionData) {
+    if (transactionData && transactionType === 'archive') {
+      console.log(`transaction Data: ${transactionData}, TxnLink: ${transactionLink}`);
       toastRef.current = toast({
         position: 'top',
         render: () => (
           <InfoToast
-            link={txnLink}
+            link={transactionLink}
             close={() => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -89,7 +108,7 @@ function YourGrantCard({
       setIsPublishGrantModalOpen(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [toast, transactionData]);
+  }, [toast, transactionData,txnLink, transactionLink]);
 
   React.useEffect(() => {
     setIsAcceptingApplications([acceptingApplications, 0]);
@@ -160,7 +179,7 @@ function YourGrantCard({
                   color="brand.500"
                   borderColor="brand.500"
                   h="32px"
-                  onClick={onAddFundsClick ?? (() => {})}
+                  onClick={onAddFundsClick ?? (() => { })}
                 >
                   Add funds
                 </Button>
@@ -222,6 +241,7 @@ function YourGrantCard({
               !isAcceptingApplications[0],
               isAcceptingApplications[1] + 1,
             ]);
+            archiveGrant(!isAcceptingApplications[0], isAcceptingApplications[1] + 1);
           }}
           loading={loading}
         />
@@ -231,8 +251,8 @@ function YourGrantCard({
 }
 
 YourGrantCard.defaultProps = {
-  onEditClick: () => {},
-  onViewApplicantsClick: () => {},
-  onAddFundsClick: () => {},
+  onEditClick: () => { },
+  onViewApplicantsClick: () => { },
+  onAddFundsClick: () => { },
 };
 export default YourGrantCard;

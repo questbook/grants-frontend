@@ -73,14 +73,15 @@ function CreateGrant() {
 
   // const [transactionData, blockExplorerLink, loading] = useCreateGrant(formData);
 
-  let blockExplorerLink: string;
-
   const {
-    createGrantHandler, loading, transactionData, transactionType,
+    createGrantHandler,
+    loading,
+    setTransactionData,
+    transactionData, transactionType, transactionLink,
   } = useContext(GrantsContext);
 
   function createGrant(data: any) {
-    blockExplorerLink = createGrantHandler(data);
+    createGrantHandler(data);
   }
   useEffect(() => {
     if (workspace && switchNetwork) {
@@ -97,7 +98,7 @@ function CreateGrant() {
         position: 'top',
         render: () => (
           <InfoToast
-            link={blockExplorerLink}
+            link={transactionLink}
             close={() => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -106,9 +107,10 @@ function CreateGrant() {
           />
         ),
       });
+      setTransactionData('');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [toast, transactionData, transactionType, router]);
+  }, [toast, transactionData, transactionLink, transactionType, router]);
 
   const getColor = (index: number, color2: string, color1: string) => {
     if (index === 3) {

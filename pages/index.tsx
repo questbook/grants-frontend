@@ -6,14 +6,18 @@ import React, {
   useContext,
   useEffect,
   useRef,
-
+  useState,
 } from 'react';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import {
+  useGetAllGrantsLazyQuery,
+  GetAllGrantsQuery,
+} from 'src/generated/graphql';
+import { GrantsContext } from 'src/hooks/stores/useGrantsStore';
 import verify from 'src/utils/grantUtils';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import { useAccount } from 'wagmi';
-import { GrantsContext } from 'src/hooks/stores/useGrantsStore';
 import GrantCard from '../src/components/browse_grants/grantCard';
 import Sidebar from '../src/components/browse_grants/sidebar';
 import Heading from '../src/components/ui/heading';
@@ -21,15 +25,11 @@ import NavbarLayout from '../src/layout/navbarLayout';
 import {
   formatAmount,
 } from '../src/utils/formattingUtils';
-import { ApiClientsContext } from './_app';
 
 function BrowseGrants() {
   const containerRef = useRef(null);
   const [{ data: accountData }] = useAccount();
   const router = useRouter();
-  const { subgraphClients } = useContext(ApiClientsContext)!;
-
-  useEffect(() => { }, [subgraphClients]);
 
   // const [grants, setGrants] = useState<GetAllGrantsQuery['grants']>([]);
   const { allGrants } = useContext(GrantsContext);
@@ -42,7 +42,7 @@ function BrowseGrants() {
     const parentElement = (current as HTMLElement)?.parentNode as HTMLElement;
     const reachedBottom = Math.abs(
       parentElement.scrollTop
-      - (parentElement.scrollHeight - parentElement.clientHeight),
+          - (parentElement.scrollHeight - parentElement.clientHeight),
     ) < 10;
     if (reachedBottom) {
       // getGrantData();
@@ -51,16 +51,10 @@ function BrowseGrants() {
   }, [containerRef, allGrants]);
 
   useEffect(() => {
-    if (allGrants.requiresFirstFetch) {
+    if (allGrants.requiresFirstFetch && accountData?.address) {
       allGrants.fetchMore();
     }
-  }, [allGrants]);
-
-  // useEffect(() => {
-  //   // setCurrentPage(0);
-  //   getGrantData(true);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [accountData?.address]);
+  }, [allGrants, accountData?.address]);
 
   useEffect(() => {
     const { current } = containerRef;

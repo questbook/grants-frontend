@@ -211,13 +211,18 @@ function EditGrant() {
   const [editData, setEditData] = useState<any>();
   // const [transactionData, txnLink, loading] = useEditGrant(editData, grantID);
   const {
-    updateGrantHandler, loading, transactionData, transactionType,
+    updateGrantHandler,
+    loading,
+    setTransactionData,
+    transactionData,
+    transactionType,
+    transactionLink,
   } = useContext(GrantsContext);
   let txnLink: any;
 
   function updateGrant(formdata: any) {
     if (grantID) {
-      txnLink = updateGrantHandler(formdata, grantContract);
+      updateGrantHandler(formdata, grantContract);
     }
   }
 
@@ -229,7 +234,7 @@ function EditGrant() {
         position: 'top',
         render: () => (
           <InfoToast
-            link={txnLink}
+            link={transactionLink}
             close={() => {
               if (toastRef.current) {
                 toast.close(toastRef.current);
@@ -238,9 +243,10 @@ function EditGrant() {
           />
         ),
       });
+      setTransactionData('');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [toast, transactionData, router]);
+  }, [toast, transactionData, transactionLink, router]);
 
   useEffect(() => {
     setGrantID(router?.query?.grantId?.toString());

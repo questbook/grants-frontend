@@ -174,6 +174,8 @@ function AboutGrant() {
     grantID,
   );
 
+  console.log(`transaction Data: ${transactionData}, TxnLink: ${txnLink}`);
+
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
   const buttonRef = React.useRef<HTMLButtonElement>(null);
