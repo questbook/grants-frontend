@@ -10,6 +10,11 @@ import { uploadToIPFS } from 'src/utils/ipfsUtils';
 import { parseAmount } from 'src/utils/formattingUtils';
 import ErrorToast from 'src/components/ui/toasts/errorToast';
 import { ToastId } from '@chakra-ui/react';
+import { MinimalWorkspace } from 'src/types';
+import {
+  Configuration,
+  ValidationApi,
+} from '@questbook/service-validator-client';
 import React from 'react';
 
 export function checkData(
@@ -37,12 +42,12 @@ export function validate(
   chainId: any,
   transactionData: any,
   accountData: any,
-  workspace: any,
-  currentChainId: any,
+  workspace: MinimalWorkspace | undefined,
+  currentChainId: number | undefined,
   switchNetwork: any,
-  setIncorrectNetwork: any,
-  setLoading: any,
-  validatorApi: any,
+  setIncorrectNetwork: React.Dispatch<React.SetStateAction<boolean>>,
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+  validatorApi: ValidationApi,
   grantContract: any,
 ) {
   if (!formData) return;
@@ -81,6 +86,41 @@ export function validate(
   }
 }
 
+export function validateArchive(
+  transactionData: any,
+  accountData: any,
+  currentChainId: number | undefined,
+  workspace: MinimalWorkspace | undefined,
+  validatorApi: ValidationApi,
+  grantContract: any,
+) {
+  if (transactionData) return;
+  if (!accountData || !accountData.address) {
+    throw new Error('not connected to wallet');
+  }
+  if (!currentChainId) {
+    throw new Error('not connected to valid network');
+  }
+  if (!workspace) {
+    throw new Error('not connected to workspace');
+  }
+  if (getSupportedChainIdFromWorkspace(workspace) !== currentChainId) {
+    throw new Error('connected to wrong network');
+  }
+  if (!validatorApi) {
+    throw new Error('validatorApi or workspaceId is not defined');
+  }
+  if (
+    !grantContract
+      || grantContract.address
+        === '0x0000000000000000000000000000000000000000'
+      || !grantContract.signer
+      || !grantContract.provider
+  // eslint-disable-next-line no-useless-return
+  ) return;
+}
+
+// eslint-disable-next-line consistent-return
 export async function createGrant(
   formData: any,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
@@ -136,6 +176,7 @@ export async function createGrant(
 
     setTransactionData(createGrantTransactionData);
     setLoading(false);
+    return createGrantTransactionData;
   } catch (e: any) {
     const message = getErrorMessage(e);
     setError(message);
@@ -155,6 +196,7 @@ export async function createGrant(
   }
 }
 
+// eslint-disable-next-line consistent-return
 export async function updateGrant(
   formData: any,
   grantContract: any,
@@ -187,13 +229,60 @@ export async function updateGrant(
       throw new Error('Error validating grant data');
     }
 
-    const createGrantTransaction = await grantContract.updateGrant(
+    const updateGrantTransaction = await grantContract.updateGrant(
       ipfsHash,
     );
-    const createGrantTransactionData = await createGrantTransaction.wait();
+    const updateGrantTransactionData = await updateGrantTransaction.wait();
 
-    setTransactionData(createGrantTransactionData);
+    setTransactionData(updateGrantTransactionData);
     setLoading(false);
+    return updateGrantTransactionData;
+  } catch (e: any) {
+    const message = getErrorMessage(e);
+    setError(message);
+    setLoading(false);
+    // eslint-disable-next-line no-param-reassign
+    toastRef.current = toast({
+      position: 'top',
+      render: () => ErrorToast({
+        content: message,
+        close: () => {
+          if (toastRef.current) {
+            toast.close(toastRef.current);
+          }
+        },
+      }),
+    });
+  }
+}
+
+export async function archiveGrant(
+  newState: boolean,
+  changeCount: number,
+  grantId: string,
+  setTransactionData: React.Dispatch<any>,
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+  error: string | undefined,
+  loading: boolean,
+  getErrorMessage: (e: any) => string,
+  setError: React.Dispatch<React.SetStateAction<string | undefined>>,
+  toastRef: React.MutableRefObject<ToastId | undefined>,
+  toast: any,
+  grantContract: any,
+) {
+  if (changeCount === 0) return;
+  if (error) return;
+  if (loading) return;
+
+  try {
+    setLoading(true);
+    const archiveGrantTransaction = await grantContract.updateGrantAccessibility(newState);
+    const archiveGrantTransactionData = await archiveGrantTransaction.wait();
+
+    setTransactionData(archiveGrantTransactionData);
+    setLoading(false);
+    // eslint-disable-next-line consistent-return
+    return archiveGrantTransactionData;
   } catch (e: any) {
     const message = getErrorMessage(e);
     setError(message);

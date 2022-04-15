@@ -1,9 +1,11 @@
-import { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { ApiClientsContext } from 'pages/_app';
 import {
   useGetAllGrantsLazyQuery,
   GetAllGrantsQuery,
+  useGetAllGrantsForCreatorQuery,
 } from 'src/generated/graphql';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { useAccount } from 'wagmi';
 import { useToast } from '@chakra-ui/react';
 
@@ -15,11 +17,14 @@ export type PaginatedData<T> = {
   error?: Error
 };
 
+type YourGrant = GetAllGrantsForCreatorQuery['grants'][0];
+
 function usePaginatedDataStore<T>() {
   const PAGE_SIZE = 40;
-  const [currentPage, setCurrentPage] = useState(0);
+
   const [grants, setGrants] = useState<GetAllGrantsQuery['grants']>([]);
-  const { subgraphClients } = useContext(ApiClientsContext)!;
+  const [yourGrants, setYourGrants] = useState<YourGrant>([]);
+  const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
 
   const [{ data: accountData }] = useAccount();
   const toast = useToast();
@@ -29,7 +34,12 @@ function usePaginatedDataStore<T>() {
     (key) => useGetAllGrantsLazyQuery({ client: subgraphClients[key].client }),
   );
 
-  const getGrantData = async (firstTime: boolean = false, pageSize: number = PAGE_SIZE) => {
+  const getGrantData = async (
+    currentPage: number,
+    setCurrentPage: React.Dispatch<React.SetStateAction<number>>,
+    firstTime: boolean = false,
+    pageSize: number = PAGE_SIZE,
+  ) => {
     try {
       const currentPageLocal = firstTime ? 0 : currentPage;
       const promises = allNetworkGrants.map(
@@ -82,14 +92,19 @@ function usePaginatedDataStore<T>() {
   };
 
   useEffect(() => {
-    getGrantData(true);
+    // getGrantData(true);
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountData?.address]);
 
   return {
     grants,
-    loadMoreGrants: async (pageSize: number) => {
-      getGrantData(false, pageSize);
+    loadMoreGrants: async (
+      pageSize: number,
+      currentPage: number,
+      setCurrentPage: React.Dispatch<React.SetStateAction<number>>,
+    ) => {
+      getGrantData(currentPage, setCurrentPage, false, pageSize);
     },
   };
 }
