@@ -180,11 +180,15 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 
   const [isDiscover, setIsDiscover] = useState<boolean>(false);
 
+  const { pathname } = router;
+
   useEffect(() => {
-    if (router.pathname !== '/') {
+    if (pathname !== '/') {
       setIsDiscover(false);
+    } else {
+      setIsDiscover(true);
     }
-  }, [router.pathname, isDiscover]);
+  }, [pathname, isDiscover]);
 
   return (
     <Container
