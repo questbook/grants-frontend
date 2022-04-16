@@ -1,7 +1,12 @@
 import React from 'react';
-import { Box, Text, useTheme } from '@chakra-ui/react';
+import { Box, Text, Link, useTheme } from '@chakra-ui/react';
 
-function Breadcrumbs({ path }: { path: string[] }) {
+interface BreadcrumbProps {
+  path: string[];
+  id?: string;
+}
+
+function Breadcrumbs({ path, id }: BreadcrumbProps) {
   const theme = useTheme();
   return (
     <Text
@@ -19,10 +24,24 @@ function Breadcrumbs({ path }: { path: string[] }) {
         // eslint-disable-next-line consistent-return
         return (
           <Box key={`breadcrumb-${node}`} as="span">
-            {node}
-            {' '}
-            /
-            {' '}
+            <Link
+              href={`/${
+                node === 'My Grants'
+                  ? 'your_grants'
+                  : node === 'Your Grants'
+                  ? 'your_grants'
+                  : node === 'My Applications'
+                  ? 'your_applications'
+                  : node === 'View Applicants'
+                  ? `your_grants/view_applicants/?grantId=${id}`
+                  : node === 'Explore Grants'
+                  ? ''
+                  : null
+              }`}
+            >
+              {node}
+            </Link>{' '}
+            /{' '}
           </Box>
         );
       })}
