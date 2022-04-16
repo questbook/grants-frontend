@@ -1,8 +1,11 @@
 import React from 'react';
-import { Box, Text, Link, useTheme } from '@chakra-ui/react';
+import {
+  Box, Text, Link, useTheme,
+} from '@chakra-ui/react';
 
 interface BreadcrumbProps {
   path: string[];
+  // eslint-disable-next-line react/require-default-props
   id?: string;
 }
 
@@ -26,22 +29,29 @@ function Breadcrumbs({ path, id }: BreadcrumbProps) {
           <Box key={`breadcrumb-${node}`} as="span">
             <Link
               href={`/${
+                // eslint-disable-next-line no-nested-ternary
                 node === 'My Grants'
                   ? 'your_grants'
+                  // eslint-disable-next-line no-nested-ternary
                   : node === 'Your Grants'
-                  ? 'your_grants'
-                  : node === 'My Applications'
-                  ? 'your_applications'
-                  : node === 'View Applicants'
-                  ? `your_grants/view_applicants/?grantId=${id}`
-                  : node === 'Explore Grants'
-                  ? ''
-                  : null
+                    ? 'your_grants'
+                    // eslint-disable-next-line no-nested-ternary
+                    : node === 'My Applications'
+                      ? 'your_applications'
+                      // eslint-disable-next-line no-nested-ternary
+                      : node === 'View Applicants'
+                        ? `your_grants/view_applicants/?grantId=${id}`
+                        // eslint-disable-next-line no-nested-ternary
+                        : node === 'Explore Grants'
+                          ? ''
+                          : null
               }`}
             >
               {node}
-            </Link>{' '}
-            /{' '}
+            </Link>
+            {' '}
+            /
+            {' '}
           </Box>
         );
       })}
