@@ -257,12 +257,12 @@ function Sidebar({
         mb={8}
       >
         <Flex direction="column">
-          <Text mb="14px" fontWeight="700">Evaluation Rubrik</Text>
-          {[{ title: 'Evaluation Rubrik', description: 'Description' },
-            { title: 'Evaluation Rubrik', description: 'Description' }].map((rubrik: any) => (
+          <Text mb="14px" fontWeight="700">Evaluation Rubric</Text>
+          {[{ title: 'Evaluation Rubric', description: 'Description' },
+            { title: 'Evaluation Rubric', description: 'Description' }].map((rubric: any) => (
               <>
-                <Text mt={2} fontWeight="700" color="#122224" fontSize="14px">{rubrik.title}</Text>
-                <Text color="#717A7C" fontSize="12px">{rubrik.description}</Text>
+                <Text mt={2} fontWeight="700" color="#122224" fontSize="14px">{rubric.title}</Text>
+                <Text color="#717A7C" fontSize="12px">{rubric.description}</Text>
               </>
           ))}
         </Flex>

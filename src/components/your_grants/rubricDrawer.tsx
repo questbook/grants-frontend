@@ -6,37 +6,37 @@ import Dropdown from '../ui/forms/dropdown';
 import MultiLineInput from '../ui/forms/multiLineInput';
 import SingleLineInput from '../ui/forms/singleLineInput';
 
-function RubrikDrawer({
-  rubrikDrawerOpen,
-  setRubrikDrawerOpen,
-  rubriks,
-  setRubriks,
-  rubrikEditAllowed,
+function RubricDrawer({
+  rubricDrawerOpen,
+  setRubricDrawerOpen,
+  rubrics,
+  setRubrics,
+  rubricEditAllowed,
 }: {
-  rubrikDrawerOpen: boolean;
-  setRubrikDrawerOpen: (rubrikDrawerOpen: boolean) => void;
-  rubriks: any[];
-  setRubriks: (rubriks: any[]) => void;
-  rubrikEditAllowed: boolean;
+  rubricDrawerOpen: boolean;
+  setRubricDrawerOpen: (rubricDrawerOpen: boolean) => void;
+  rubrics: any[];
+  setRubrics: (rubrics: any[]) => void;
+  rubricEditAllowed: boolean;
 }) {
   return (
     <Drawer
-      isOpen={rubrikDrawerOpen}
+      isOpen={rubricDrawerOpen}
       placement="right"
-      onClose={() => setRubrikDrawerOpen(false)}
+      onClose={() => setRubricDrawerOpen(false)}
       size="lg"
     >
       <DrawerOverlay />
       <DrawerContent>
 
         <Flex direction="column" overflow="scroll" p={8}>
-          {rubriks.map((rubrik, index) => (
+          {rubrics.map((rubric, index) => (
             <>
               <Flex
                 mt={4}
                 gap="2"
                 alignItems="flex-start"
-                opacity={rubrikEditAllowed ? 1 : 0.4}
+                opacity={rubricEditAllowed ? 1 : 0.4}
               >
                 <Flex direction="column" flex={0.3327}>
                   <Text
@@ -53,21 +53,21 @@ function RubrikDrawer({
                 </Flex>
                 <Flex justifyContent="center" gap={2} alignItems="center" flex={0.6673}>
                   <SingleLineInput
-                    value={rubriks[index].name}
+                    value={rubrics[index].name}
                     onChange={(e) => {
-                      const newRubriks = [...rubriks];
-                      newRubriks[index].name = e.target.value;
-                      newRubriks[index].nameError = false;
-                      setRubriks(newRubriks);
+                      const newRubrics = [...rubrics];
+                      newRubrics[index].name = e.target.value;
+                      newRubrics[index].nameError = false;
+                      setRubrics(newRubrics);
                     }}
                     placeholder="Name"
-                    isError={rubriks[index].nameError}
+                    isError={rubrics[index].nameError}
                     errorText="Required"
-                    disabled={!rubrikEditAllowed}
+                    disabled={!rubricEditAllowed}
                   />
                 </Flex>
               </Flex>
-              <Flex mt={6} gap="2" alignItems="flex-start" opacity={rubrikEditAllowed ? 1 : 0.4}>
+              <Flex mt={6} gap="2" alignItems="flex-start" opacity={rubricEditAllowed ? 1 : 0.4}>
                 <Flex direction="column" flex={0.3327}>
                   <Text
                     mt="18px"
@@ -81,17 +81,17 @@ function RubrikDrawer({
                 </Flex>
                 <Flex justifyContent="center" gap={2} alignItems="center" flex={0.6673}>
                   <MultiLineInput
-                    value={rubriks[index].description}
+                    value={rubrics[index].description}
                     onChange={(e) => {
-                      const newRubriks = [...rubriks];
-                      newRubriks[index].description = e.target.value;
-                      newRubriks[index].descriptionError = false;
-                      setRubriks(newRubriks);
+                      const newRubrics = [...rubrics];
+                      newRubrics[index].description = e.target.value;
+                      newRubrics[index].descriptionError = false;
+                      setRubrics(newRubrics);
                     }}
                     placeholder="Describe the evaluation criteria"
-                    isError={rubriks[index].descriptionError}
+                    isError={rubrics[index].descriptionError}
                     errorText="Required"
-                    disabled={!rubrikEditAllowed}
+                    disabled={!rubricEditAllowed}
                   />
                 </Flex>
               </Flex>
@@ -99,15 +99,15 @@ function RubrikDrawer({
               <Flex mt={2} gap="2" justifyContent="flex-end">
                 <Box
                   onClick={() => {
-                    if (!rubrikEditAllowed) return;
-                    const newRubriks = [...rubriks];
-                    newRubriks.splice(index, 1);
-                    setRubriks(newRubriks);
+                    if (!rubricEditAllowed) return;
+                    const newRubrics = [...rubrics];
+                    newRubrics.splice(index, 1);
+                    setRubrics(newRubrics);
                   }}
                   display="flex"
                   alignItems="center"
                   cursor="pointer"
-                  opacity={rubrikEditAllowed ? 1 : 0.4}
+                  opacity={rubricEditAllowed ? 1 : 0.4}
                 >
                   <Image
                     h="16px"
@@ -127,19 +127,19 @@ function RubrikDrawer({
           <Flex mt="19px" gap="2" justifyContent="flex-start">
             <Box
               onClick={() => {
-                if (!rubrikEditAllowed) return;
-                const newRubriks = [...rubriks, {
+                if (!rubricEditAllowed) return;
+                const newRubrics = [...rubrics, {
                   name: '',
                   nameError: false,
                   description: '',
                   descriptionError: false,
                 }];
-                setRubriks(newRubriks);
+                setRubrics(newRubrics);
               }}
               display="flex"
               alignItems="center"
               cursor="pointer"
-              opacity={rubrikEditAllowed ? 1 : 0.4}
+              opacity={rubricEditAllowed ? 1 : 0.4}
             >
               <Image
                 h="16px"
@@ -153,7 +153,7 @@ function RubrikDrawer({
             </Box>
           </Flex>
 
-          <Flex opacity={rubrikEditAllowed ? 1 : 0.4} direction="column" mt={6}>
+          <Flex opacity={rubricEditAllowed ? 1 : 0.4} direction="column" mt={6}>
             <Text
               fontSize="18px"
               fontWeight="700"
@@ -171,7 +171,7 @@ function RubrikDrawer({
                   label: '5 point rating',
                   id: '5',
                 }]}
-                onChange={rubrikEditAllowed ? ({ id }: any) => {
+                onChange={rubricEditAllowed ? ({ id }: any) => {
                   console.log(id);
                 } : undefined}
                 listItemsMinWidth="300px"
@@ -189,4 +189,4 @@ function RubrikDrawer({
   );
 }
 
-export default RubrikDrawer;
+export default RubricDrawer;

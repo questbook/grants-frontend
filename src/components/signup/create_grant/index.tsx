@@ -29,6 +29,15 @@ function CreateGrant({
       }
     }
 
+    if (data.shouldEncryptReviews) {
+      newFormData.rubric = {
+        ...newFormData.rubric,
+        isPrivate: data.shouldEncryptReviews,
+      };
+      // eslint-disable-next-line no-param-reassign
+      delete data.shouldEncryptReviews;
+    }
+
     setFormData({ ...newFormData, ...data });
 
     const { current } = currentPageRef;
@@ -53,6 +62,15 @@ function CreateGrant({
       }
       // eslint-disable-next-line no-param-reassign
       delete data.pii;
+    }
+
+    if (data.shouldEncryptReviews) {
+      newFormData.rubric = {
+        ...newFormData.rubric,
+        isPrivate: data.shouldEncryptReviews,
+      };
+      // eslint-disable-next-line no-param-reassign
+      delete data.shouldEncryptReviews;
     }
 
     setFormData({ ...newFormData, ...data });

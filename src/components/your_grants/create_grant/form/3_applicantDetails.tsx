@@ -31,10 +31,10 @@ function ApplicantDetails({
   multipleMilestones,
   setMultipleMilestones,
 
-  rubrikRequired,
-  setRubrikRequired,
-  rubriks,
-  setRubriks,
+  rubricRequired,
+  setRubricRequired,
+  rubrics,
+  setRubrics,
 }: {
   detailsRequired: any[];
   toggleDetailsRequired: (index: number) => void;
@@ -51,10 +51,10 @@ function ApplicantDetails({
   multipleMilestones: boolean;
   setMultipleMilestones: (multipleMilestones: boolean) => void;
 
-  rubrikRequired: boolean;
-  setRubrikRequired: (rubrikRequired: boolean) => void;
-  rubriks: any[];
-  setRubriks: (rubriks: any[]) => void;
+  rubricRequired: boolean;
+  setRubricRequired: (rubricRequired: boolean) => void;
+  rubrics: any[];
+  setRubrics: (rubrics: any[]) => void;
 }) {
   const [milestoneSelectOptionIsVisible, setMilestoneSelectOptionIsVisible] = React.useState(false);
 
@@ -183,28 +183,28 @@ function ApplicantDetails({
           <Switch
             id="encrypt"
             onChange={(e) => {
-              setRubrikRequired(e.target.checked);
-              const newRubriks = rubriks.map((rubrik) => ({
-                ...rubrik,
+              setRubricRequired(e.target.checked);
+              const newRubrics = rubrics.map((rubric) => ({
+                ...rubric,
                 nameError: false,
                 descriptionError: false,
               }));
-              setRubriks(newRubriks);
+              setRubrics(newRubrics);
             }}
           />
           <Text fontSize="12px" fontWeight="bold" lineHeight="16px">
-            {`${rubrikRequired ? 'YES' : 'NO'}`}
+            {`${rubricRequired ? 'YES' : 'NO'}`}
           </Text>
         </Flex>
       </Flex>
 
-      {rubriks.map((rubrik, index) => (
+      {rubrics.map((rubric, index) => (
         <>
           <Flex
             mt={4}
             gap="2"
             alignItems="flex-start"
-            opacity={rubrikRequired ? 1 : 0.4}
+            opacity={rubricRequired ? 1 : 0.4}
           >
             <Flex direction="column" flex={0.3327}>
               <Text
@@ -221,21 +221,21 @@ function ApplicantDetails({
             </Flex>
             <Flex justifyContent="center" gap={2} alignItems="center" flex={0.6673}>
               <SingleLineInput
-                value={rubriks[index].name}
+                value={rubrics[index].name}
                 onChange={(e) => {
-                  const newRubriks = [...rubriks];
-                  newRubriks[index].name = e.target.value;
-                  newRubriks[index].nameError = false;
-                  setRubriks(newRubriks);
+                  const newRubrics = [...rubrics];
+                  newRubrics[index].name = e.target.value;
+                  newRubrics[index].nameError = false;
+                  setRubrics(newRubrics);
                 }}
                 placeholder="Name"
-                isError={rubriks[index].nameError}
+                isError={rubrics[index].nameError}
                 errorText="Required"
-                disabled={!rubrikRequired}
+                disabled={!rubricRequired}
               />
             </Flex>
           </Flex>
-          <Flex mt={6} gap="2" alignItems="flex-start" opacity={rubrikRequired ? 1 : 0.4}>
+          <Flex mt={6} gap="2" alignItems="flex-start" opacity={rubricRequired ? 1 : 0.4}>
             <Flex direction="column" flex={0.3327}>
               <Text
                 mt="18px"
@@ -249,17 +249,17 @@ function ApplicantDetails({
             </Flex>
             <Flex justifyContent="center" gap={2} alignItems="center" flex={0.6673}>
               <MultiLineInput
-                value={rubriks[index].description}
+                value={rubrics[index].description}
                 onChange={(e) => {
-                  const newRubriks = [...rubriks];
-                  newRubriks[index].description = e.target.value;
-                  newRubriks[index].descriptionError = false;
-                  setRubriks(newRubriks);
+                  const newRubrics = [...rubrics];
+                  newRubrics[index].description = e.target.value;
+                  newRubrics[index].descriptionError = false;
+                  setRubrics(newRubrics);
                 }}
                 placeholder="Describe the evaluation criteria"
-                isError={rubriks[index].descriptionError}
+                isError={rubrics[index].descriptionError}
                 errorText="Required"
-                disabled={!rubrikRequired}
+                disabled={!rubricRequired}
               />
             </Flex>
           </Flex>
@@ -267,15 +267,15 @@ function ApplicantDetails({
           <Flex mt={2} gap="2" justifyContent="flex-end">
             <Box
               onClick={() => {
-                if (!rubrikRequired) return;
-                const newRubriks = [...rubriks];
-                newRubriks.splice(index, 1);
-                setRubriks(newRubriks);
+                if (!rubricRequired) return;
+                const newRubrics = [...rubrics];
+                newRubrics.splice(index, 1);
+                setRubrics(newRubrics);
               }}
               display="flex"
               alignItems="center"
               cursor="pointer"
-              opacity={rubrikRequired ? 1 : 0.4}
+              opacity={rubricRequired ? 1 : 0.4}
             >
               <Image
                 h="16px"
@@ -295,19 +295,19 @@ function ApplicantDetails({
       <Flex mt="19px" gap="2" justifyContent="flex-start">
         <Box
           onClick={() => {
-            if (!rubrikRequired) return;
-            const newRubriks = [...rubriks, {
+            if (!rubricRequired) return;
+            const newRubrics = [...rubrics, {
               name: '',
               nameError: false,
               description: '',
               descriptionError: false,
             }];
-            setRubriks(newRubriks);
+            setRubrics(newRubrics);
           }}
           display="flex"
           alignItems="center"
           cursor="pointer"
-          opacity={rubrikRequired ? 1 : 0.4}
+          opacity={rubricRequired ? 1 : 0.4}
         >
           <Image
             h="16px"
@@ -321,7 +321,7 @@ function ApplicantDetails({
         </Box>
       </Flex>
 
-      <Flex opacity={rubrikRequired ? 1 : 0.4} direction="column" mt={6}>
+      <Flex opacity={rubricRequired ? 1 : 0.4} direction="column" mt={6}>
         <Text
           fontSize="18px"
           fontWeight="700"
@@ -339,7 +339,7 @@ function ApplicantDetails({
               label: '5 point rating',
               id: '5',
             }]}
-            onChange={rubrikRequired ? ({ id }: any) => {
+            onChange={rubricRequired ? ({ id }: any) => {
               console.log(id);
             } : undefined}
             listItemsMinWidth="600px"

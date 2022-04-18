@@ -30,8 +30,8 @@ function ApplicantDetails({ onSubmit }: Props) {
     },
   ).filter((obj) => obj != null);
   const [detailsRequired, setDetailsRequired] = useState(applicantDetails);
-  const [rubrikRequired, setRubrikRequired] = useState(false);
-  const [rubriks, setRubriks] = useState<any[]>([
+  const [rubricRequired, setRubricRequired] = useState(false);
+  const [rubrics, setRubrics] = useState<any[]>([
     {
       name: '',
       nameError: false,
@@ -58,20 +58,20 @@ function ApplicantDetails({ onSubmit }: Props) {
 
   const handleOnSubmit = () => {
     let error = false;
-    if (rubrikRequired) {
-      const errorCheckedRubriks = rubriks.map((rubrik: any) => {
-        const errorCheckedRubrik = { ...rubrik };
-        if (rubrik.name.length <= 0) {
-          errorCheckedRubrik.nameError = true;
+    if (rubricRequired) {
+      const errorCheckedRubrics = rubrics.map((rubric: any) => {
+        const errorCheckedRubric = { ...rubric };
+        if (rubric.name.length <= 0) {
+          errorCheckedRubric.nameError = true;
           error = true;
         }
-        if (rubrik.description.length <= 0) {
-          errorCheckedRubrik.descriptionError = true;
+        if (rubric.description.length <= 0) {
+          errorCheckedRubric.descriptionError = true;
           error = true;
         }
-        return errorCheckedRubrik;
+        return errorCheckedRubric;
       });
-      setRubriks(errorCheckedRubriks);
+      setRubrics(errorCheckedRubrics);
     }
     if (!error) {
       const requiredDetails = {} as any;
@@ -84,12 +84,18 @@ function ApplicantDetails({ onSubmit }: Props) {
         }
       });
       const fields = { ...requiredDetails };
-      // if (extraFieldDetails != null && extraFieldDetails.length > 0) {
-      //   fields.extraField = {
-      //     title: 'Other Information',
-      //     inputType: 'short-form',
-      //   };
-      // }
+      const rubric = {} as any;
+
+      if (rubricRequired) {
+        rubrics.forEach((r, index) => {
+          rubric[index.toString()] = {
+            title: r.name,
+            details: r.description,
+            maximumPoints: 5,
+          };
+        });
+      }
+
       if (multipleMilestones) {
         fields.isMultipleMilestones = {
           title: 'Milestones',
@@ -108,7 +114,13 @@ function ApplicantDetails({ onSubmit }: Props) {
           inputType: 'short-form',
         };
       }
-      onSubmit({ fields });
+      onSubmit({
+        fields,
+        rubric: {
+          isPrivate: false,
+          rubric,
+        },
+      });
     }
   };
 
@@ -249,28 +261,28 @@ function ApplicantDetails({ onSubmit }: Props) {
             <Switch
               id="encrypt"
               onChange={(e) => {
-                setRubrikRequired(e.target.checked);
-                const newRubriks = rubriks.map((rubrik) => ({
-                  ...rubrik,
+                setRubricRequired(e.target.checked);
+                const newRubrics = rubrics.map((rubric) => ({
+                  ...rubric,
                   nameError: false,
                   descriptionError: false,
                 }));
-                setRubriks(newRubriks);
+                setRubrics(newRubrics);
               }}
             />
             <Text fontSize="12px" fontWeight="bold" lineHeight="16px">
-              {`${rubrikRequired ? 'YES' : 'NO'}`}
+              {`${rubricRequired ? 'YES' : 'NO'}`}
             </Text>
           </Flex>
         </Flex>
 
-        {rubriks.map((rubrik, index) => (
+        {rubrics.map((rubric, index) => (
           <>
             <Flex
               mt={4}
               gap="2"
               alignItems="flex-start"
-              opacity={rubrikRequired ? 1 : 0.4}
+              opacity={rubricRequired ? 1 : 0.4}
             >
               <Flex direction="column" flex={0.3327}>
                 <Text
@@ -287,21 +299,21 @@ function ApplicantDetails({ onSubmit }: Props) {
               </Flex>
               <Flex justifyContent="center" gap={2} alignItems="center" flex={0.6673}>
                 <SingleLineInput
-                  value={rubriks[index].name}
+                  value={rubrics[index].name}
                   onChange={(e) => {
-                    const newRubriks = [...rubriks];
-                    newRubriks[index].name = e.target.value;
-                    newRubriks[index].nameError = false;
-                    setRubriks(newRubriks);
+                    const newRubrics = [...rubrics];
+                    newRubrics[index].name = e.target.value;
+                    newRubrics[index].nameError = false;
+                    setRubrics(newRubrics);
                   }}
                   placeholder="Name"
-                  isError={rubriks[index].nameError}
+                  isError={rubrics[index].nameError}
                   errorText="Required"
-                  disabled={!rubrikRequired}
+                  disabled={!rubricRequired}
                 />
               </Flex>
             </Flex>
-            <Flex mt={6} gap="2" alignItems="flex-start" opacity={rubrikRequired ? 1 : 0.4}>
+            <Flex mt={6} gap="2" alignItems="flex-start" opacity={rubricRequired ? 1 : 0.4}>
               <Flex direction="column" flex={0.3327}>
                 <Text
                   mt="18px"
@@ -315,17 +327,17 @@ function ApplicantDetails({ onSubmit }: Props) {
               </Flex>
               <Flex justifyContent="center" gap={2} alignItems="center" flex={0.6673}>
                 <MultiLineInput
-                  value={rubriks[index].description}
+                  value={rubrics[index].description}
                   onChange={(e) => {
-                    const newRubriks = [...rubriks];
-                    newRubriks[index].description = e.target.value;
-                    newRubriks[index].descriptionError = false;
-                    setRubriks(newRubriks);
+                    const newRubrics = [...rubrics];
+                    newRubrics[index].description = e.target.value;
+                    newRubrics[index].descriptionError = false;
+                    setRubrics(newRubrics);
                   }}
                   placeholder="Describe the evaluation criteria"
-                  isError={rubriks[index].descriptionError}
+                  isError={rubrics[index].descriptionError}
                   errorText="Required"
-                  disabled={!rubrikRequired}
+                  disabled={!rubricRequired}
                 />
               </Flex>
             </Flex>
@@ -333,15 +345,15 @@ function ApplicantDetails({ onSubmit }: Props) {
             <Flex mt={2} gap="2" justifyContent="flex-end">
               <Box
                 onClick={() => {
-                  if (!rubrikRequired) return;
-                  const newRubriks = [...rubriks];
-                  newRubriks.splice(index, 1);
-                  setRubriks(newRubriks);
+                  if (!rubricRequired) return;
+                  const newRubrics = [...rubrics];
+                  newRubrics.splice(index, 1);
+                  setRubrics(newRubrics);
                 }}
                 display="flex"
                 alignItems="center"
                 cursor="pointer"
-                opacity={rubrikRequired ? 1 : 0.4}
+                opacity={rubricRequired ? 1 : 0.4}
               >
                 <Image
                   h="16px"
@@ -361,19 +373,19 @@ function ApplicantDetails({ onSubmit }: Props) {
         <Flex mt="19px" gap="2" justifyContent="flex-start">
           <Box
             onClick={() => {
-              if (!rubrikRequired) return;
-              const newRubriks = [...rubriks, {
+              if (!rubricRequired) return;
+              const newRubrics = [...rubrics, {
                 name: '',
                 nameError: false,
                 description: '',
                 descriptionError: false,
               }];
-              setRubriks(newRubriks);
+              setRubrics(newRubrics);
             }}
             display="flex"
             alignItems="center"
             cursor="pointer"
-            opacity={rubrikRequired ? 1 : 0.4}
+            opacity={rubricRequired ? 1 : 0.4}
           >
             <Image
               h="16px"
@@ -387,7 +399,7 @@ function ApplicantDetails({ onSubmit }: Props) {
           </Box>
         </Flex>
 
-        <Flex opacity={rubrikRequired ? 1 : 0.4} direction="column" mt={6}>
+        <Flex opacity={rubricRequired ? 1 : 0.4} direction="column" mt={6}>
           <Text
             fontSize="18px"
             fontWeight="700"
@@ -405,7 +417,7 @@ function ApplicantDetails({ onSubmit }: Props) {
                 label: '5 point rating',
                 id: '5',
               }]}
-              onChange={rubrikRequired ? ({ id }: any) => {
+              onChange={rubricRequired ? ({ id }: any) => {
                 console.log(id);
               } : undefined}
               listItemsMinWidth="600px"

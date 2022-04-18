@@ -88,7 +88,7 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
 
   const buttonRef = React.useRef<HTMLButtonElement>(null);
 
-  const handleOnSubmit = () => {
+  const handleOnSubmit = async () => {
     let error = false;
     if (reward.length <= 0) {
       setRewardError(true);
@@ -103,12 +103,15 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
     console.log(rewardCurrencyAddress);
 
     if (!error) {
+      // if (!keySubmitted) {
+      //   setPublicKey({ publicKey: (await getPublicEncryptionKey()) || '' });
+      // }
       let pii = false;
       if (shouldEncrypt && keySubmitted) {
         pii = true;
       }
       onSubmit({
-        reward, rewardCurrencyAddress, date, pii,
+        reward, rewardCurrencyAddress, date, pii, shouldEncryptReviews,
       });
     }
   };
@@ -211,7 +214,7 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
             </Text>
           </Flex>
         </Flex>
-        {(shouldEncrypt && !keySubmitted) && (
+        {/* {(shouldEncrypt && !keySubmitted) && (
         <Flex mt={8} gap="2" direction="column">
           <Flex
             gap="2"
@@ -243,7 +246,7 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
             </Text>
           </Link>
         </Flex>
-        )}
+        )} */}
 
         <Flex mt={8} gap="2" justifyContent="space-between">
           <Flex direction="column" flex={1}>
@@ -308,7 +311,6 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
         onClick={hasClicked ? () => {} : handleOnSubmit}
         py={hasClicked ? 2 : 0}
         w={hasClicked ? buttonRef.current?.offsetWidth : 'auto'}
-        disabled={shouldEncrypt && !keySubmitted}
       >
         {hasClicked ? <Loader /> : 'Continue'}
       </Button>
