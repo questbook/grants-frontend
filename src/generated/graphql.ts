@@ -1633,8 +1633,11 @@ export type Review = {
   /** The encrypted data of the review */
   data: Array<PiiAnswer>;
   id: Scalars['ID'];
+<<<<<<< HEAD
   /** IPFS Hash to the publicly accessible review */
   publicReviewDataHash?: Maybe<Scalars['String']>;
+=======
+>>>>>>> dfca2e0 (Added support for Optimism)
   /** Workspace member that reviewed the app */
   reviewer?: Maybe<WorkspaceMember>;
   /** ID of the reviewer */
@@ -1685,6 +1688,7 @@ export type Review_Filter = {
   id_lte?: InputMaybe<Scalars['ID']>;
   id_not?: InputMaybe<Scalars['ID']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+<<<<<<< HEAD
   publicReviewDataHash?: InputMaybe<Scalars['String']>;
   publicReviewDataHash_contains?: InputMaybe<Scalars['String']>;
   publicReviewDataHash_ends_with?: InputMaybe<Scalars['String']>;
@@ -1699,6 +1703,8 @@ export type Review_Filter = {
   publicReviewDataHash_not_in?: InputMaybe<Array<Scalars['String']>>;
   publicReviewDataHash_not_starts_with?: InputMaybe<Scalars['String']>;
   publicReviewDataHash_starts_with?: InputMaybe<Scalars['String']>;
+=======
+>>>>>>> dfca2e0 (Added support for Optimism)
   reviewer?: InputMaybe<Scalars['String']>;
   reviewerId?: InputMaybe<Scalars['String']>;
   reviewerId_contains?: InputMaybe<Scalars['String']>;
@@ -1734,7 +1740,10 @@ export enum Review_OrderBy {
   CreatedAtS = 'createdAtS',
   Data = 'data',
   Id = 'id',
+<<<<<<< HEAD
   PublicReviewDataHash = 'publicReviewDataHash',
+=======
+>>>>>>> dfca2e0 (Added support for Optimism)
   Reviewer = 'reviewer',
   ReviewerId = 'reviewerId'
 }
@@ -1784,8 +1793,11 @@ export type Rubric = {
   /** Unix timestamp of when the rubric was created */
   createdAtS: Scalars['Int'];
   id: Scalars['ID'];
+<<<<<<< HEAD
   /** Is private evaluation */
   isPrivate: Scalars['Boolean'];
+=======
+>>>>>>> dfca2e0 (Added support for Optimism)
   items: Array<RubricItem>;
   /** Unix timestamp of when the rubric was updated */
   updatedAtS: Scalars['Int'];
@@ -1804,7 +1816,10 @@ export type RubricItem = {
   __typename?: 'RubricItem';
   details: Scalars['String'];
   id: Scalars['ID'];
+<<<<<<< HEAD
   maximumPoints: Scalars['Int'];
+=======
+>>>>>>> dfca2e0 (Added support for Optimism)
   title: Scalars['String'];
 };
 
@@ -1831,6 +1846,7 @@ export type RubricItem_Filter = {
   id_lte?: InputMaybe<Scalars['ID']>;
   id_not?: InputMaybe<Scalars['ID']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+<<<<<<< HEAD
   maximumPoints?: InputMaybe<Scalars['Int']>;
   maximumPoints_gt?: InputMaybe<Scalars['Int']>;
   maximumPoints_gte?: InputMaybe<Scalars['Int']>;
@@ -1839,6 +1855,8 @@ export type RubricItem_Filter = {
   maximumPoints_lte?: InputMaybe<Scalars['Int']>;
   maximumPoints_not?: InputMaybe<Scalars['Int']>;
   maximumPoints_not_in?: InputMaybe<Array<Scalars['Int']>>;
+=======
+>>>>>>> dfca2e0 (Added support for Optimism)
   title?: InputMaybe<Scalars['String']>;
   title_contains?: InputMaybe<Scalars['String']>;
   title_ends_with?: InputMaybe<Scalars['String']>;
@@ -1858,7 +1876,10 @@ export type RubricItem_Filter = {
 export enum RubricItem_OrderBy {
   Details = 'details',
   Id = 'id',
+<<<<<<< HEAD
   MaximumPoints = 'maximumPoints',
+=======
+>>>>>>> dfca2e0 (Added support for Optimism)
   Title = 'title'
 }
 
@@ -1893,10 +1914,13 @@ export type Rubric_Filter = {
   id_lte?: InputMaybe<Scalars['ID']>;
   id_not?: InputMaybe<Scalars['ID']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+<<<<<<< HEAD
   isPrivate?: InputMaybe<Scalars['Boolean']>;
   isPrivate_in?: InputMaybe<Array<Scalars['Boolean']>>;
   isPrivate_not?: InputMaybe<Scalars['Boolean']>;
   isPrivate_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
+=======
+>>>>>>> dfca2e0 (Added support for Optimism)
   items?: InputMaybe<Array<Scalars['String']>>;
   items_contains?: InputMaybe<Array<Scalars['String']>>;
   items_not?: InputMaybe<Array<Scalars['String']>>;
@@ -1915,7 +1939,10 @@ export enum Rubric_OrderBy {
   AddedBy = 'addedBy',
   CreatedAtS = 'createdAtS',
   Id = 'id',
+<<<<<<< HEAD
   IsPrivate = 'isPrivate',
+=======
+>>>>>>> dfca2e0 (Added support for Optimism)
   Items = 'items',
   UpdatedAtS = 'updatedAtS'
 }
@@ -2352,7 +2379,8 @@ export enum SupportedNetwork {
   Chain_137 = 'chain_137',
   Chain_80001 = 'chain_80001',
   Chain_1666600000 = 'chain_1666600000',
-  Chain_1666700000 = 'chain_1666700000'
+  Chain_1666700000 = 'chain_1666700000',
+  Chain_10 = 'chain_10',
 }
 
 /** Schema for a Workspace or DAO */
