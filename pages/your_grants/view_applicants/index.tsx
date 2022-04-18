@@ -17,6 +17,7 @@ import InfoToast from 'src/components/ui/infoToast';
 import Modal from 'src/components/ui/modal';
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent';
 import useArchiveGrant from 'src/hooks/useArchiveGrant';
+import RubrikDrawer from 'src/components/your_grants/rubrikDrawer';
 import { formatAmount } from '../../../src/utils/formattingUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Table from '../../../src/components/your_grants/view_applicants/table';
@@ -38,6 +39,17 @@ function ViewApplicants() {
   });
   const router = useRouter();
   const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
+
+  const [rubrikDrawerOpen, setRubrikDrawerOpen] = useState(false);
+  const [rubrikEditAllowed] = useState(true);
+  const [rubriks, setRubriks] = useState<any[]>([
+    {
+      name: '',
+      nameError: false,
+      description: '',
+      descriptionError: false,
+    },
+  ]);
 
   useEffect(() => {
     if (router && router.query) {
@@ -177,8 +189,23 @@ function ViewApplicants() {
         alignItems="stretch"
         pb={8}
         px={10}
+        pos="relative"
       >
         <Breadcrumbs path={['My Grants', 'View Applicants']} />
+
+        <Box pos="absolute" right="40px" top="48px">
+          <Button variant="primary" onClick={() => setRubrikDrawerOpen(true)}>
+            Setup Evaluation Rubrik
+          </Button>
+        </Box>
+
+        <RubrikDrawer
+          rubrikDrawerOpen={rubrikDrawerOpen}
+          setRubrikDrawerOpen={setRubrikDrawerOpen}
+          rubrikEditAllowed={rubrikEditAllowed}
+          rubriks={rubriks}
+          setRubriks={setRubriks}
+        />
 
         <Table
           title={applicantsData[0]?.grantTitle ?? 'Grant Title'}

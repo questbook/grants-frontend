@@ -414,7 +414,14 @@ function ApplicantForm() {
                   </Flex>
                 </Flex>
               </Flex>
-              <Flex direction="column" mt={2}>
+              <Flex
+                direction="column"
+                mt={2}
+                w={340}
+                alignItems="stretch"
+                pos="sticky"
+                top="36px"
+              >
                 <Sidebar
                   showHiddenData={showHiddenData}
                   applicationData={applicationData}
