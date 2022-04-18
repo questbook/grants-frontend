@@ -54,13 +54,92 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
+        "internalType": "uint96",
+        "name": "_reviewId",
+        "type": "uint96"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint96",
+        "name": "_workspaceId",
+        "type": "uint96"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint96",
+        "name": "_applicationId",
+        "type": "uint96"
+      },
+      {
         "indexed": false,
         "internalType": "address",
-        "name": "account",
+        "name": "_grantAddress",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "_metadataHash",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "time",
+        "type": "uint256"
       }
     ],
-    "name": "Paused",
+    "name": "ReviewSubmitted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint96[]",
+        "name": "_reviewIds",
+        "type": "uint96[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint96",
+        "name": "_workspaceId",
+        "type": "uint96"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint96",
+        "name": "_applicationId",
+        "type": "uint96"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_grantAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address[]",
+        "name": "_reviewers",
+        "type": "address[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool[]",
+        "name": "_active",
+        "type": "bool[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "time",
+        "type": "uint256"
+      }
+    ],
+    "name": "ReviewersAssigned",
     "type": "event"
   },
   {
@@ -68,12 +147,30 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "uint96",
+        "name": "_workspaceId",
+        "type": "uint96"
+      },
+      {
+        "indexed": true,
         "internalType": "address",
-        "name": "account",
+        "name": "_grantAddress",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "_metadataHash",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "time",
+        "type": "uint256"
       }
     ],
-    "name": "Unpaused",
+    "name": "RubricsSet",
     "type": "event"
   },
   {
@@ -90,121 +187,96 @@
     "type": "event"
   },
   {
-    "anonymous": false,
+    "inputs": [],
+    "name": "applicationReg",
+    "outputs": [
+      {
+        "internalType": "contract IApplicationRegistry",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
-        "indexed": true,
         "internalType": "uint96",
-        "name": "id",
+        "name": "_workspaceId",
         "type": "uint96"
       },
       {
-        "indexed": true,
+        "internalType": "uint96",
+        "name": "_applicationId",
+        "type": "uint96"
+      },
+      {
         "internalType": "address",
-        "name": "owner",
+        "name": "_grantAddress",
         "type": "address"
       },
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "metadataHash",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "time",
-        "type": "uint256"
-      }
-    ],
-    "name": "WorkspaceCreated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint96",
-        "name": "id",
-        "type": "uint96"
-      },
-      {
-        "indexed": false,
         "internalType": "address[]",
-        "name": "members",
+        "name": "_reviewers",
         "type": "address[]"
       },
       {
-        "indexed": false,
-        "internalType": "uint8[]",
-        "name": "roles",
-        "type": "uint8[]"
-      },
-      {
-        "indexed": false,
         "internalType": "bool[]",
-        "name": "enabled",
+        "name": "_active",
         "type": "bool[]"
-      },
-      {
-        "indexed": false,
-        "internalType": "string[]",
-        "name": "emails",
-        "type": "string[]"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "time",
-        "type": "uint256"
       }
     ],
-    "name": "WorkspaceMembersUpdated",
-    "type": "event"
+    "name": "assignReviewers",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
-    "anonymous": false,
+    "inputs": [],
+    "name": "grantFactory",
+    "outputs": [
+      {
+        "internalType": "contract IGrantFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "uint96",
-        "name": "id",
-        "type": "uint96"
-      },
-      {
-        "indexed": true,
         "internalType": "address",
-        "name": "owner",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "grantReviewStates",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "grant",
         "type": "address"
       },
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "metadataHash",
-        "type": "string"
+        "internalType": "uint96",
+        "name": "workspaceId",
+        "type": "uint96"
       },
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "time",
-        "type": "uint256"
-      }
-    ],
-    "name": "WorkspaceUpdated",
-    "type": "event"
-  },
-  {
-    "inputs": [
+        "internalType": "uint96",
+        "name": "numOfReviews",
+        "type": "uint96"
+      },
       {
         "internalType": "string",
-        "name": "_metadataHash",
+        "name": "rubricsMetadataHash",
         "type": "string"
       }
     ],
-    "name": "createWorkspace",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -215,78 +287,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint96",
-        "name": "_id",
-        "type": "uint96"
-      },
-      {
-        "internalType": "address",
-        "name": "_address",
-        "type": "address"
-      }
-    ],
-    "name": "isWorkspaceAdmin",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint96",
-        "name": "_id",
-        "type": "uint96"
-      },
-      {
-        "internalType": "address",
-        "name": "_address",
-        "type": "address"
-      }
-    ],
-    "name": "isWorkspaceAdminOrReviewer",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint96",
-        "name": "",
-        "type": "uint96"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "memberRoles",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "owner",
     "outputs": [
@@ -294,26 +294,6 @@
         "internalType": "address",
         "name": "",
         "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "pause",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "paused",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -340,6 +320,163 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "reviewCount",
+    "outputs": [
+      {
+        "internalType": "uint96",
+        "name": "",
+        "type": "uint96"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint96",
+        "name": "",
+        "type": "uint96"
+      }
+    ],
+    "name": "reviews",
+    "outputs": [
+      {
+        "internalType": "uint96",
+        "name": "id",
+        "type": "uint96"
+      },
+      {
+        "internalType": "uint96",
+        "name": "workspaceId",
+        "type": "uint96"
+      },
+      {
+        "internalType": "uint96",
+        "name": "applicationId",
+        "type": "uint96"
+      },
+      {
+        "internalType": "address",
+        "name": "grant",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "reviewer",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "metadataHash",
+        "type": "string"
+      },
+      {
+        "internalType": "bool",
+        "name": "active",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract IApplicationRegistry",
+        "name": "_applicationReg",
+        "type": "address"
+      }
+    ],
+    "name": "setApplicationReg",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract IGrantFactory",
+        "name": "_grantFactory",
+        "type": "address"
+      }
+    ],
+    "name": "setGrantFactory",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint96",
+        "name": "_workspaceId",
+        "type": "uint96"
+      },
+      {
+        "internalType": "address",
+        "name": "_grantAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "_metadataHash",
+        "type": "string"
+      }
+    ],
+    "name": "setRubrics",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract IWorkspaceRegistry",
+        "name": "_workspaceReg",
+        "type": "address"
+      }
+    ],
+    "name": "setWorkspaceReg",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint96",
+        "name": "_workspaceId",
+        "type": "uint96"
+      },
+      {
+        "internalType": "uint96",
+        "name": "_applicationId",
+        "type": "uint96"
+      },
+      {
+        "internalType": "address",
+        "name": "_grantAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "_metadataHash",
+        "type": "string"
+      }
+    ],
+    "name": "submitReview",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -348,64 +485,6 @@
       }
     ],
     "name": "transferOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "unpause",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint96",
-        "name": "_id",
-        "type": "uint96"
-      },
-      {
-        "internalType": "address[]",
-        "name": "_members",
-        "type": "address[]"
-      },
-      {
-        "internalType": "uint8[]",
-        "name": "_roles",
-        "type": "uint8[]"
-      },
-      {
-        "internalType": "bool[]",
-        "name": "_enabled",
-        "type": "bool[]"
-      },
-      {
-        "internalType": "string[]",
-        "name": "_emails",
-        "type": "string[]"
-      }
-    ],
-    "name": "updateWorkspaceMembers",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint96",
-        "name": "_id",
-        "type": "uint96"
-      },
-      {
-        "internalType": "string",
-        "name": "_metadataHash",
-        "type": "string"
-      }
-    ],
-    "name": "updateWorkspaceMetadata",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -443,41 +522,12 @@
   },
   {
     "inputs": [],
-    "name": "workspaceCount",
+    "name": "workspaceReg",
     "outputs": [
       {
-        "internalType": "uint96",
+        "internalType": "contract IWorkspaceRegistry",
         "name": "",
-        "type": "uint96"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint96",
-        "name": "",
-        "type": "uint96"
-      }
-    ],
-    "name": "workspaces",
-    "outputs": [
-      {
-        "internalType": "uint96",
-        "name": "id",
-        "type": "uint96"
-      },
-      {
-        "internalType": "address",
-        "name": "owner",
         "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "metadataHash",
-        "type": "string"
       }
     ],
     "stateMutability": "view",
