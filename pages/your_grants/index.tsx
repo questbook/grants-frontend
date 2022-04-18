@@ -183,6 +183,7 @@ function YourGrants() {
 
   useEffect(() => {
     if (data && data.grants && data.grants.length > 0) {
+      console.log('data.grants', data.grants);
       if (
         grants.length > 0
         && grants[0].workspace.id === data.grants[0].workspace.id
@@ -327,6 +328,8 @@ function YourGrants() {
                 })}
                 acceptingApplications={grant.acceptingApplications}
                 isAdmin={isAdmin}
+                initialRubrics={grant.rubric}
+                workspaceId={grant.workspace.id}
               />
             ))}
 

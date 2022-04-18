@@ -292,6 +292,8 @@ export type Grant = {
   numberOfApplications: Scalars['Int'];
   /** Proposed reward for the grant */
   reward: Reward;
+  /** Rubric for evaulating the grant */
+  rubric?: Maybe<Rubric>;
   /** Short description of the grant */
   summary: Scalars['String'];
   title: Scalars['String'];
@@ -347,6 +349,10 @@ export type GrantApplication = {
   milestones: Array<ApplicationMilestone>;
   /** PII Data */
   pii: Array<PiiAnswer>;
+  /** People who will review the grant applications */
+  reviewers: Array<WorkspaceMember>;
+  /** Reviews of the application */
+  reviews: Array<Review>;
   /** Current state of the application */
   state: ApplicationState;
   /** in seconds since epoch */
@@ -378,6 +384,24 @@ export type GrantApplicationPiiArgs = {
   orderDirection?: InputMaybe<OrderDirection>;
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<PiiAnswer_Filter>;
+};
+
+
+export type GrantApplicationReviewersArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<WorkspaceMember_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<WorkspaceMember_Filter>;
+};
+
+
+export type GrantApplicationReviewsArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Review_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<Review_Filter>;
 };
 
 /** A revision after an update */
@@ -589,6 +613,10 @@ export type GrantApplication_Filter = {
   pii_contains?: InputMaybe<Array<Scalars['String']>>;
   pii_not?: InputMaybe<Array<Scalars['String']>>;
   pii_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  reviewers?: InputMaybe<Array<Scalars['String']>>;
+  reviewers_contains?: InputMaybe<Array<Scalars['String']>>;
+  reviewers_not?: InputMaybe<Array<Scalars['String']>>;
+  reviewers_not_contains?: InputMaybe<Array<Scalars['String']>>;
   state?: InputMaybe<ApplicationState>;
   state_in?: InputMaybe<Array<ApplicationState>>;
   state_not?: InputMaybe<ApplicationState>;
@@ -613,6 +641,8 @@ export enum GrantApplication_OrderBy {
   Id = 'id',
   Milestones = 'milestones',
   Pii = 'pii',
+  Reviewers = 'reviewers',
+  Reviews = 'reviews',
   State = 'state',
   UpdatedAtS = 'updatedAtS'
 }
@@ -947,6 +977,20 @@ export type Grant_Filter = {
   reward_not_in?: InputMaybe<Array<Scalars['String']>>;
   reward_not_starts_with?: InputMaybe<Scalars['String']>;
   reward_starts_with?: InputMaybe<Scalars['String']>;
+  rubric?: InputMaybe<Scalars['String']>;
+  rubric_contains?: InputMaybe<Scalars['String']>;
+  rubric_ends_with?: InputMaybe<Scalars['String']>;
+  rubric_gt?: InputMaybe<Scalars['String']>;
+  rubric_gte?: InputMaybe<Scalars['String']>;
+  rubric_in?: InputMaybe<Array<Scalars['String']>>;
+  rubric_lt?: InputMaybe<Scalars['String']>;
+  rubric_lte?: InputMaybe<Scalars['String']>;
+  rubric_not?: InputMaybe<Scalars['String']>;
+  rubric_not_contains?: InputMaybe<Scalars['String']>;
+  rubric_not_ends_with?: InputMaybe<Scalars['String']>;
+  rubric_not_in?: InputMaybe<Array<Scalars['String']>>;
+  rubric_not_starts_with?: InputMaybe<Scalars['String']>;
+  rubric_starts_with?: InputMaybe<Scalars['String']>;
   summary?: InputMaybe<Scalars['String']>;
   summary_contains?: InputMaybe<Scalars['String']>;
   summary_ends_with?: InputMaybe<Scalars['String']>;
@@ -1013,6 +1057,7 @@ export enum Grant_OrderBy {
   MetadataHash = 'metadataHash',
   NumberOfApplications = 'numberOfApplications',
   Reward = 'reward',
+  Rubric = 'rubric',
   Summary = 'summary',
   Title = 'title',
   UpdatedAtS = 'updatedAtS',
@@ -1234,8 +1279,14 @@ export type Query = {
   notifications: Array<Notification>;
   piianswer?: Maybe<PiiAnswer>;
   piianswers: Array<PiiAnswer>;
+  review?: Maybe<Review>;
+  reviews: Array<Review>;
   reward?: Maybe<Reward>;
   rewards: Array<Reward>;
+  rubric?: Maybe<Rubric>;
+  rubricItem?: Maybe<RubricItem>;
+  rubricItems: Array<RubricItem>;
+  rubrics: Array<Rubric>;
   social?: Maybe<Social>;
   socials: Array<Social>;
   workspace?: Maybe<Workspace>;
@@ -1448,6 +1499,24 @@ export type QueryPiianswersArgs = {
 };
 
 
+export type QueryReviewArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryReviewsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Review_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Review_Filter>;
+};
+
+
 export type QueryRewardArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
@@ -1463,6 +1532,42 @@ export type QueryRewardsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<Reward_Filter>;
+};
+
+
+export type QueryRubricArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryRubricItemArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryRubricItemsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<RubricItem_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<RubricItem_Filter>;
+};
+
+
+export type QueryRubricsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Rubric_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Rubric_Filter>;
 };
 
 
@@ -1519,6 +1624,121 @@ export type QueryWorkspacesArgs = {
   where?: InputMaybe<Workspace_Filter>;
 };
 
+export type Review = {
+  __typename?: 'Review';
+  /** Application for which the review is */
+  application: GrantApplication;
+  /** created at S */
+  createdAtS: Scalars['Int'];
+  /** The encrypted data of the review */
+  data: Array<PiiAnswer>;
+  id: Scalars['ID'];
+  /** IPFS Hash to the publicly accessible review */
+  publicReviewDataHash?: Maybe<Scalars['String']>;
+  /** Workspace member that reviewed the app */
+  reviewer?: Maybe<WorkspaceMember>;
+  /** ID of the reviewer */
+  reviewerId: Scalars['String'];
+};
+
+
+export type ReviewDataArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<PiiAnswer_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<PiiAnswer_Filter>;
+};
+
+export type Review_Filter = {
+  application?: InputMaybe<Scalars['String']>;
+  application_contains?: InputMaybe<Scalars['String']>;
+  application_ends_with?: InputMaybe<Scalars['String']>;
+  application_gt?: InputMaybe<Scalars['String']>;
+  application_gte?: InputMaybe<Scalars['String']>;
+  application_in?: InputMaybe<Array<Scalars['String']>>;
+  application_lt?: InputMaybe<Scalars['String']>;
+  application_lte?: InputMaybe<Scalars['String']>;
+  application_not?: InputMaybe<Scalars['String']>;
+  application_not_contains?: InputMaybe<Scalars['String']>;
+  application_not_ends_with?: InputMaybe<Scalars['String']>;
+  application_not_in?: InputMaybe<Array<Scalars['String']>>;
+  application_not_starts_with?: InputMaybe<Scalars['String']>;
+  application_starts_with?: InputMaybe<Scalars['String']>;
+  createdAtS?: InputMaybe<Scalars['Int']>;
+  createdAtS_gt?: InputMaybe<Scalars['Int']>;
+  createdAtS_gte?: InputMaybe<Scalars['Int']>;
+  createdAtS_in?: InputMaybe<Array<Scalars['Int']>>;
+  createdAtS_lt?: InputMaybe<Scalars['Int']>;
+  createdAtS_lte?: InputMaybe<Scalars['Int']>;
+  createdAtS_not?: InputMaybe<Scalars['Int']>;
+  createdAtS_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  data?: InputMaybe<Array<Scalars['String']>>;
+  data_contains?: InputMaybe<Array<Scalars['String']>>;
+  data_not?: InputMaybe<Array<Scalars['String']>>;
+  data_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  publicReviewDataHash?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_contains?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_ends_with?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_gt?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_gte?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_in?: InputMaybe<Array<Scalars['String']>>;
+  publicReviewDataHash_lt?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_lte?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_not?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_not_contains?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_not_ends_with?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_not_in?: InputMaybe<Array<Scalars['String']>>;
+  publicReviewDataHash_not_starts_with?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_starts_with?: InputMaybe<Scalars['String']>;
+  reviewer?: InputMaybe<Scalars['String']>;
+  reviewerId?: InputMaybe<Scalars['String']>;
+  reviewerId_contains?: InputMaybe<Scalars['String']>;
+  reviewerId_ends_with?: InputMaybe<Scalars['String']>;
+  reviewerId_gt?: InputMaybe<Scalars['String']>;
+  reviewerId_gte?: InputMaybe<Scalars['String']>;
+  reviewerId_in?: InputMaybe<Array<Scalars['String']>>;
+  reviewerId_lt?: InputMaybe<Scalars['String']>;
+  reviewerId_lte?: InputMaybe<Scalars['String']>;
+  reviewerId_not?: InputMaybe<Scalars['String']>;
+  reviewerId_not_contains?: InputMaybe<Scalars['String']>;
+  reviewerId_not_ends_with?: InputMaybe<Scalars['String']>;
+  reviewerId_not_in?: InputMaybe<Array<Scalars['String']>>;
+  reviewerId_not_starts_with?: InputMaybe<Scalars['String']>;
+  reviewerId_starts_with?: InputMaybe<Scalars['String']>;
+  reviewer_contains?: InputMaybe<Scalars['String']>;
+  reviewer_ends_with?: InputMaybe<Scalars['String']>;
+  reviewer_gt?: InputMaybe<Scalars['String']>;
+  reviewer_gte?: InputMaybe<Scalars['String']>;
+  reviewer_in?: InputMaybe<Array<Scalars['String']>>;
+  reviewer_lt?: InputMaybe<Scalars['String']>;
+  reviewer_lte?: InputMaybe<Scalars['String']>;
+  reviewer_not?: InputMaybe<Scalars['String']>;
+  reviewer_not_contains?: InputMaybe<Scalars['String']>;
+  reviewer_not_ends_with?: InputMaybe<Scalars['String']>;
+  reviewer_not_in?: InputMaybe<Array<Scalars['String']>>;
+  reviewer_not_starts_with?: InputMaybe<Scalars['String']>;
+  reviewer_starts_with?: InputMaybe<Scalars['String']>;
+};
+
+export enum Review_OrderBy {
+  Application = 'application',
+  CreatedAtS = 'createdAtS',
+  Data = 'data',
+  Id = 'id',
+  PublicReviewDataHash = 'publicReviewDataHash',
+  Reviewer = 'reviewer',
+  ReviewerId = 'reviewerId'
+}
+
 export type Reward = {
   __typename?: 'Reward';
   asset: Scalars['Bytes'];
@@ -1555,6 +1775,149 @@ export enum Reward_OrderBy {
   Asset = 'asset',
   Committed = 'committed',
   Id = 'id'
+}
+
+export type Rubric = {
+  __typename?: 'Rubric';
+  /** Who added this rubric */
+  addedBy?: Maybe<WorkspaceMember>;
+  /** Unix timestamp of when the rubric was created */
+  createdAtS: Scalars['Int'];
+  id: Scalars['ID'];
+  /** Is private evaluation */
+  isPrivate: Scalars['Boolean'];
+  items: Array<RubricItem>;
+  /** Unix timestamp of when the rubric was updated */
+  updatedAtS: Scalars['Int'];
+};
+
+
+export type RubricItemsArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<RubricItem_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<RubricItem_Filter>;
+};
+
+export type RubricItem = {
+  __typename?: 'RubricItem';
+  details: Scalars['String'];
+  id: Scalars['ID'];
+  maximumPoints: Scalars['Int'];
+  title: Scalars['String'];
+};
+
+export type RubricItem_Filter = {
+  details?: InputMaybe<Scalars['String']>;
+  details_contains?: InputMaybe<Scalars['String']>;
+  details_ends_with?: InputMaybe<Scalars['String']>;
+  details_gt?: InputMaybe<Scalars['String']>;
+  details_gte?: InputMaybe<Scalars['String']>;
+  details_in?: InputMaybe<Array<Scalars['String']>>;
+  details_lt?: InputMaybe<Scalars['String']>;
+  details_lte?: InputMaybe<Scalars['String']>;
+  details_not?: InputMaybe<Scalars['String']>;
+  details_not_contains?: InputMaybe<Scalars['String']>;
+  details_not_ends_with?: InputMaybe<Scalars['String']>;
+  details_not_in?: InputMaybe<Array<Scalars['String']>>;
+  details_not_starts_with?: InputMaybe<Scalars['String']>;
+  details_starts_with?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  maximumPoints?: InputMaybe<Scalars['Int']>;
+  maximumPoints_gt?: InputMaybe<Scalars['Int']>;
+  maximumPoints_gte?: InputMaybe<Scalars['Int']>;
+  maximumPoints_in?: InputMaybe<Array<Scalars['Int']>>;
+  maximumPoints_lt?: InputMaybe<Scalars['Int']>;
+  maximumPoints_lte?: InputMaybe<Scalars['Int']>;
+  maximumPoints_not?: InputMaybe<Scalars['Int']>;
+  maximumPoints_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  title?: InputMaybe<Scalars['String']>;
+  title_contains?: InputMaybe<Scalars['String']>;
+  title_ends_with?: InputMaybe<Scalars['String']>;
+  title_gt?: InputMaybe<Scalars['String']>;
+  title_gte?: InputMaybe<Scalars['String']>;
+  title_in?: InputMaybe<Array<Scalars['String']>>;
+  title_lt?: InputMaybe<Scalars['String']>;
+  title_lte?: InputMaybe<Scalars['String']>;
+  title_not?: InputMaybe<Scalars['String']>;
+  title_not_contains?: InputMaybe<Scalars['String']>;
+  title_not_ends_with?: InputMaybe<Scalars['String']>;
+  title_not_in?: InputMaybe<Array<Scalars['String']>>;
+  title_not_starts_with?: InputMaybe<Scalars['String']>;
+  title_starts_with?: InputMaybe<Scalars['String']>;
+};
+
+export enum RubricItem_OrderBy {
+  Details = 'details',
+  Id = 'id',
+  MaximumPoints = 'maximumPoints',
+  Title = 'title'
+}
+
+export type Rubric_Filter = {
+  addedBy?: InputMaybe<Scalars['String']>;
+  addedBy_contains?: InputMaybe<Scalars['String']>;
+  addedBy_ends_with?: InputMaybe<Scalars['String']>;
+  addedBy_gt?: InputMaybe<Scalars['String']>;
+  addedBy_gte?: InputMaybe<Scalars['String']>;
+  addedBy_in?: InputMaybe<Array<Scalars['String']>>;
+  addedBy_lt?: InputMaybe<Scalars['String']>;
+  addedBy_lte?: InputMaybe<Scalars['String']>;
+  addedBy_not?: InputMaybe<Scalars['String']>;
+  addedBy_not_contains?: InputMaybe<Scalars['String']>;
+  addedBy_not_ends_with?: InputMaybe<Scalars['String']>;
+  addedBy_not_in?: InputMaybe<Array<Scalars['String']>>;
+  addedBy_not_starts_with?: InputMaybe<Scalars['String']>;
+  addedBy_starts_with?: InputMaybe<Scalars['String']>;
+  createdAtS?: InputMaybe<Scalars['Int']>;
+  createdAtS_gt?: InputMaybe<Scalars['Int']>;
+  createdAtS_gte?: InputMaybe<Scalars['Int']>;
+  createdAtS_in?: InputMaybe<Array<Scalars['Int']>>;
+  createdAtS_lt?: InputMaybe<Scalars['Int']>;
+  createdAtS_lte?: InputMaybe<Scalars['Int']>;
+  createdAtS_not?: InputMaybe<Scalars['Int']>;
+  createdAtS_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  isPrivate?: InputMaybe<Scalars['Boolean']>;
+  isPrivate_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  isPrivate_not?: InputMaybe<Scalars['Boolean']>;
+  isPrivate_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  items?: InputMaybe<Array<Scalars['String']>>;
+  items_contains?: InputMaybe<Array<Scalars['String']>>;
+  items_not?: InputMaybe<Array<Scalars['String']>>;
+  items_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  updatedAtS?: InputMaybe<Scalars['Int']>;
+  updatedAtS_gt?: InputMaybe<Scalars['Int']>;
+  updatedAtS_gte?: InputMaybe<Scalars['Int']>;
+  updatedAtS_in?: InputMaybe<Array<Scalars['Int']>>;
+  updatedAtS_lt?: InputMaybe<Scalars['Int']>;
+  updatedAtS_lte?: InputMaybe<Scalars['Int']>;
+  updatedAtS_not?: InputMaybe<Scalars['Int']>;
+  updatedAtS_not_in?: InputMaybe<Array<Scalars['Int']>>;
+};
+
+export enum Rubric_OrderBy {
+  AddedBy = 'addedBy',
+  CreatedAtS = 'createdAtS',
+  Id = 'id',
+  IsPrivate = 'isPrivate',
+  Items = 'items',
+  UpdatedAtS = 'updatedAtS'
 }
 
 export type Social = {
@@ -1637,8 +2000,14 @@ export type Subscription = {
   notifications: Array<Notification>;
   piianswer?: Maybe<PiiAnswer>;
   piianswers: Array<PiiAnswer>;
+  review?: Maybe<Review>;
+  reviews: Array<Review>;
   reward?: Maybe<Reward>;
   rewards: Array<Reward>;
+  rubric?: Maybe<Rubric>;
+  rubricItem?: Maybe<RubricItem>;
+  rubricItems: Array<RubricItem>;
+  rubrics: Array<Rubric>;
   social?: Maybe<Social>;
   socials: Array<Social>;
   workspace?: Maybe<Workspace>;
@@ -1851,6 +2220,24 @@ export type SubscriptionPiianswersArgs = {
 };
 
 
+export type SubscriptionReviewArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionReviewsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Review_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Review_Filter>;
+};
+
+
 export type SubscriptionRewardArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
@@ -1866,6 +2253,42 @@ export type SubscriptionRewardsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<Reward_Filter>;
+};
+
+
+export type SubscriptionRubricArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionRubricItemArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionRubricItemsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<RubricItem_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<RubricItem_Filter>;
+};
+
+
+export type SubscriptionRubricsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Rubric_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Rubric_Filter>;
 };
 
 
@@ -1925,6 +2348,7 @@ export type SubscriptionWorkspacesArgs = {
 export enum SupportedNetwork {
   Chain_1 = 'chain_1',
   Chain_4 = 'chain_4',
+  Chain_10 = 'chain_10',
   Chain_137 = 'chain_137',
   Chain_80001 = 'chain_80001',
   Chain_1666600000 = 'chain_1666600000',
@@ -2290,7 +2714,7 @@ export type GetAllGrantsForCreatorQueryVariables = Exact<{
 }>;
 
 
-export type GetAllGrantsForCreatorQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, acceptingApplications: boolean, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
+export type GetAllGrantsForCreatorQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, acceptingApplications: boolean, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> }, rubric?: { __typename?: 'Rubric', items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }> };
 
 export type GetApplicantsForAGrantQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -2350,7 +2774,7 @@ export type GetGrantDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetGrantDetailsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, acceptingApplications: boolean, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, isPii: boolean }>, reward: { __typename?: 'Reward', id: string, asset: string, committed: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null }> } }> };
+export type GetGrantDetailsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, acceptingApplications: boolean, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, isPii: boolean }>, reward: { __typename?: 'Reward', id: string, asset: string, committed: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null }> }, rubric?: { __typename?: 'Rubric', items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }> };
 
 export type GetGrantsAppliedToQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -2611,6 +3035,14 @@ export const GetAllGrantsForCreatorDocument = gql`
     funding
     numberOfApplications
     acceptingApplications
+    rubric {
+      items {
+        id
+        title
+        details
+        maximumPoints
+      }
+    }
   }
 }
     `;
@@ -3100,6 +3532,14 @@ export const GetGrantDetailsDocument = gql`
     deadline
     funding
     acceptingApplications
+    rubric {
+      items {
+        id
+        title
+        details
+        maximumPoints
+      }
+    }
   }
 }
     `;

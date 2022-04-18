@@ -1,10 +1,13 @@
 import {
   Box, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, Text, Image, Button,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { SupportedChainId } from 'src/constants/chains';
+import useSetRubrics from 'src/hooks/useSetRubrics';
 import Dropdown from '../ui/forms/dropdown';
 import MultiLineInput from '../ui/forms/multiLineInput';
 import SingleLineInput from '../ui/forms/singleLineInput';
+import Loader from '../ui/loader';
 
 function RubricDrawer({
   rubricDrawerOpen,
@@ -12,13 +15,77 @@ function RubricDrawer({
   rubrics,
   setRubrics,
   rubricEditAllowed,
+  maximumPoints,
+  setMaximumPoints,
+  grantAddress,
+  chainId,
+  workspaceId,
 }: {
   rubricDrawerOpen: boolean;
   setRubricDrawerOpen: (rubricDrawerOpen: boolean) => void;
   rubrics: any[];
   setRubrics: (rubrics: any[]) => void;
   rubricEditAllowed: boolean;
+  maximumPoints: number;
+  setMaximumPoints: (maximumPoints: number) => void;
+  grantAddress: string;
+  chainId: SupportedChainId | undefined;
+  workspaceId: string;
 }) {
+  const [editedRubricData, setEditedRubricData] = React.useState<any>();
+  const handleOnSubmit = () => {
+    let error = false;
+    if (rubrics.length > 0) {
+      const errorCheckedRubrics = rubrics.map((rubric: any) => {
+        const errorCheckedRubric = { ...rubric };
+        if (rubric.name.length <= 0) {
+          errorCheckedRubric.nameError = true;
+          error = true;
+        }
+        if (rubric.description.length <= 0) {
+          errorCheckedRubric.descriptionError = true;
+          error = true;
+        }
+        return errorCheckedRubric;
+      });
+      setRubrics(errorCheckedRubrics);
+    }
+    if (!error) {
+      const rubric = {} as any;
+
+      if (rubrics.length > 0) {
+        rubrics.forEach((r, index) => {
+          rubric[index.toString()] = {
+            title: r.name,
+            details: r.description,
+            maximumPoints,
+          };
+        });
+      }
+
+      console.log('rubric', rubric);
+      setEditedRubricData({
+        rubric: {
+          isPrivate: false,
+          rubric,
+        },
+      });
+    }
+  };
+
+  const [
+    data,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    transactionLink,
+    loading,
+  ] = useSetRubrics(editedRubricData, chainId, workspaceId, grantAddress);
+
+  useEffect(() => {
+    if (data) {
+      setRubricDrawerOpen(false);
+    }
+  }, [data, setRubricDrawerOpen]);
+
   return (
     <Drawer
       isOpen={rubricDrawerOpen}
@@ -164,23 +231,31 @@ function RubricDrawer({
             </Text>
             <Box mt={2} minW="399px" flex={0}>
               <Dropdown
-                listItems={[{
+                listItems={maximumPoints === 3 ? [{
                   label: '3 point rating',
                   id: '3',
                 }, {
                   label: '5 point rating',
                   id: '5',
+                }] : [{
+                  label: '5 point rating',
+                  id: '5',
+                }, {
+                  label: '3 point rating',
+                  id: '3',
                 }]}
                 onChange={rubricEditAllowed ? ({ id }: any) => {
-                  console.log(id);
+                  setMaximumPoints(parseInt(id, 10));
                 } : undefined}
                 listItemsMinWidth="300px"
               />
             </Box>
           </Flex>
           <Box mt={12}>
-            <Button mt="auto" variant="primary" onClick={() => {}}>
-              Save
+            <Button mt="auto" variant="primary" onClick={handleOnSubmit}>
+              {!loading ? 'Save' : (
+                <Loader />
+              )}
             </Button>
           </Box>
         </Flex>
