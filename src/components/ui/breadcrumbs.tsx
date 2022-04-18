@@ -42,9 +42,12 @@ function Breadcrumbs({ path, id }: BreadcrumbProps) {
                       : node === 'View Applicants'
                         ? `your_grants/view_applicants/?grantId=${id}`
                         // eslint-disable-next-line no-nested-ternary
-                        : node === 'Explore Grants'
-                          ? ''
-                          : null
+                        : node === 'View Application'
+                          ? `your_grants/view_applicants/applicant_form/?applicationId=${id}`
+                          // eslint-disable-next-line no-nested-ternary
+                          : node === 'Explore Grants'
+                            ? ''
+                            : null
               }`}
             >
               {node}
