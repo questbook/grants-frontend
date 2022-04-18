@@ -94,14 +94,19 @@ export default function useCreateGrant(
           throw new Error('Error validating grant data');
         }
 
-        const {
-          data: { ipfsHash: rubricHash },
-        } = await validatorApi.validateRubricSet({
-          rubric: data.rubric,
-        });
+        let rubricHash = '';
+        if (data.rubric) {
+          const {
+            data: { ipfsHash: auxRubricHash },
+          } = await validatorApi.validateRubricSet({
+            rubric: data.rubric,
+          });
 
-        if (!rubricHash) {
-          throw new Error('Error validating rubric data');
+          if (!auxRubricHash) {
+            throw new Error('Error validating rubric data');
+          }
+
+          rubricHash = auxRubricHash;
         }
 
         console.log('rubricHash', rubricHash);
