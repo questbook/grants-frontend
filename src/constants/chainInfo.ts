@@ -359,7 +359,7 @@ export const CHAIN_INFO: ChainInfoMap = {
         decimals: 6,
       },
     },
-    subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-optimism-mainnet/graphql',
+    subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-optimism-mainnet',
     rpcUrls: ['https://mainnet.optimism.io/'],
   },
 };
