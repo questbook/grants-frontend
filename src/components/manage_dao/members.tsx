@@ -27,6 +27,8 @@ function Members({ workspaceMembers }: Props) {
   const tableDataFlex = [0.2622, 0.1632, 0.2448, 0.2591, 0.0734];
 
   useEffect(() => {
+    console.log(workspaceMembers)
+
     if (!workspaceMembers) return;
     const tempTableData = workspaceMembers.map((member: any) => ({
       address: member.actorId,
