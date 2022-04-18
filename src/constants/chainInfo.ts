@@ -287,7 +287,7 @@ export const CHAIN_INFO: ChainInfoMap = {
         decimals: 6,
       },
     },
-    subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-rinkeby',
-    rpcUrls: ['https://rinkeby.infura.io/v3/'],
+    subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-optimism-mainnet/graphql',
+    rpcUrls: ['https://mainnet.optimism.io/'],
   },
 };
