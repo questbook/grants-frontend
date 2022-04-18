@@ -54,9 +54,15 @@ const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
 const chains = [
   ...defaultChains,
   ...defaultL2Chains,
-  CHAIN_INFO[SupportedChainId.HARMONY_TESTNET_S0] as Chain,
+
+  // commenting to only support rinkeby
+  // CHAIN_INFO[SupportedChainId.HARMONY_TESTNET_S0] as Chain,
 ];
-const defaultChain = chain.polygonMainnet;
+
+// commenting to only support rinkeby
+// const defaultChain = chain.polygonMainnet;
+
+const defaultChain = chain.rinkeby;
 // Set up connectors
 const connectors = () => [
   new InjectedConnector({
