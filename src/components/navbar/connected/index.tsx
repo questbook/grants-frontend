@@ -32,7 +32,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
   const tabPaths = [
     'your_grants',
     'funds',
-    'settings_and_members',
+    'manage_dao',
     'your_applications',
   ];
   const activeIndex = useActiveTabIndex(tabPaths);
@@ -309,7 +309,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
               </Flex>
               <Flex h="100%" direction="column" display={isAdmin ? '' : 'none'}>
                 <Tab
-                  label="Settings And Members"
+                  label="Manage DAO"
                   icon={`/ui_icons/${
                     activeIndex === 2 ? 'brand' : 'gray'
                   }/tab_settings.svg`}

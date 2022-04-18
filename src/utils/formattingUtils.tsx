@@ -104,7 +104,7 @@ function truncateTo(number: string, digits = 3) {
     );
     i += 1
   ) {
-    isEntirelyZeroAfterDecimal &&= number.charCodeAt(i) === 48;
+    isEntirelyZeroAfterDecimal && number.charCodeAt(i) === 48;
     ret += number.charAt(i);
   }
   const returnValue = (isEntirelyZeroAfterDecimal ? ret.substring(0, decimalIndex) : ret)

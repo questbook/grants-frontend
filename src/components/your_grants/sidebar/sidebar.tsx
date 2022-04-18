@@ -45,7 +45,7 @@ function Sidebar({ showCreateGrantItem }: Props) {
           'Invite core DAO members to set up grants, and add funds to it.',
         onSubmit: () => {
           router.push({
-            pathname: '/settings_and_members/',
+            pathname: '/manage_dao/',
             query: {
               tab: 'members',
             },

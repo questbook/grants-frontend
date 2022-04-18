@@ -7,17 +7,18 @@ import { useGetWorkspaceDetailsQuery } from 'src/generated/graphql';
 import { Workspace } from 'src/types';
 import { SupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
-import Members from '../src/components/settings_and_members/members';
-import Settings from '../src/components/settings_and_members/settings';
+import Members from '../src/components/manage_dao/members';
+import Settings from '../src/components/manage_dao/settings';
+import Payouts from '../src/components/manage_dao/payouts';
 import NavbarLayout from '../src/layout/navbarLayout';
 import { ApiClientsContext } from './_app';
 
-function SettingsAndMembers() {
+function ManageDAO() {
   const { workspace, subgraphClients } = useContext(ApiClientsContext)!;
   const router = useRouter();
-  const tabs = ['Settings', 'Invite Members'];
+  const tabs = ['Settings', 'Members', 'Payouts'];
   const [selected, setSelected] = useState(
-    router.query.tab === 'members' ? 1 : 0,
+    router.query.tab === 'members' ? 1 : router.query.tab === 'payouts' ? 2 : 0,
   );
   const [workspaceData, setWorkspaceData] = useState<Workspace>();
 
@@ -87,8 +88,10 @@ function SettingsAndMembers() {
         <Divider variant="sidebar" mb={5} />
         {selected === 0 ? (
           <Settings workspaceData={workspaceData!} />
-        ) : (
+        ) : selected === 1 ? (
           <Members workspaceMembers={workspaceData?.members} />
+        ) : selected === 2 && (
+          <Payouts workspaceMembers={workspaceData?.members} />
         )}
       </Flex>
       <Flex w="auto" />
@@ -96,8 +99,8 @@ function SettingsAndMembers() {
   );
 }
 
-SettingsAndMembers.getLayout = function getLayout(page: ReactElement) {
+ManageDAO.getLayout = function getLayout(page: ReactElement) {
   return <NavbarLayout>{page}</NavbarLayout>;
 };
 
-export default SettingsAndMembers;
+export default ManageDAO;
