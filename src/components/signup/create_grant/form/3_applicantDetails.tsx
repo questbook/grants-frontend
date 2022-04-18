@@ -30,6 +30,7 @@ function ApplicantDetails({ onSubmit }: Props) {
     },
   ).filter((obj) => obj != null);
   const [detailsRequired, setDetailsRequired] = useState(applicantDetails);
+  const [maximumPoints, setMaximumPoints] = useState(5);
   const [rubricRequired, setRubricRequired] = useState(false);
   const [rubrics, setRubrics] = useState<any[]>([
     {
@@ -91,7 +92,7 @@ function ApplicantDetails({ onSubmit }: Props) {
           rubric[index.toString()] = {
             title: r.name,
             details: r.description,
-            maximumPoints: 5,
+            maximumPoints,
           };
         });
       }
@@ -411,14 +412,14 @@ function ApplicantDetails({ onSubmit }: Props) {
           <Box mt={2} minW="499px" flex={0}>
             <Dropdown
               listItems={[{
-                label: '3 point rating',
-                id: '3',
-              }, {
                 label: '5 point rating',
                 id: '5',
+              }, {
+                label: '3 point rating',
+                id: '3',
               }]}
               onChange={rubricRequired ? ({ id }: any) => {
-                console.log(id);
+                setMaximumPoints(parseInt(id, 10));
               } : undefined}
               listItemsMinWidth="600px"
             />

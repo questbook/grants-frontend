@@ -103,9 +103,9 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
     console.log(rewardCurrencyAddress);
 
     if (!error) {
-      // if (!keySubmitted) {
-      //   setPublicKey({ publicKey: (await getPublicEncryptionKey()) || '' });
-      // }
+      if (!keySubmitted) {
+        setPublicKey({ publicKey: (await getPublicEncryptionKey()) || '' });
+      }
       let pii = false;
       if (shouldEncrypt && keySubmitted) {
         pii = true;
