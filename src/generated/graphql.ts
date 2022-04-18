@@ -2379,8 +2379,7 @@ export enum SupportedNetwork {
   Chain_137 = 'chain_137',
   Chain_80001 = 'chain_80001',
   Chain_1666600000 = 'chain_1666600000',
-  Chain_1666700000 = 'chain_1666700000',
-  Chain_10 = 'chain_10',
+  Chain_1666700000 = 'chain_1666700000'
 }
 
 /** Schema for a Workspace or DAO */
