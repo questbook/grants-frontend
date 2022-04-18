@@ -242,4 +242,52 @@ export const CHAIN_INFO: ChainInfoMap = {
     subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-polygon-mainnet',
     rpcUrls: ['https://polygon-rpc.com/'],
   },
+  [SupportedChainId.OPTIMISM_MAINNET]: {
+    id: SupportedChainId.OPTIMISM_MAINNET,
+    name: 'Optimism Mainnet',
+    nativeCurrency: {
+      name: 'Optimism ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    icon: '/network_icons/eth_mainnet.svg',
+    wallets: [
+      {
+        id: 'injected',
+        name: 'Metamask',
+        icon: '/wallet_icons/metamask.svg',
+      },
+      {
+        id: 'walletConnect',
+        name: 'Wallet Connect',
+        icon: '/wallet_icons/walletconnect.svg',
+      },
+    ],
+    explorer: {
+      address: 'https://optimistic.etherscan.io/address/',
+      transactionHash: 'https://optimistic.etherscan.io/tx/',
+    },
+    supportedCurrencies: {
+      '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1': {
+        icon: '/ui_icons/brand/currency/dai_symbol.svg',
+        label: 'DAI',
+        address: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
+        decimals: 18,
+      },
+      '0x4200000000000000000000000000000000000006': {
+        icon: '/ui_icons/brand/currency/weth_symbol.svg',
+        label: 'WETH',
+        address: '0x4200000000000000000000000000000000000006',
+        decimals: 18,
+      },
+      '0x7F5c764cBc14f9669B88837ca1490cCa17c31607': {
+        icon: '/ui_icons/brand/currency/usdc_symbol.svg',
+        label: 'USDC',
+        address: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
+        decimals: 6,
+      },
+    },
+    subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-rinkeby',
+    rpcUrls: ['https://rinkeby.infura.io/v3/'],
+  },
 };
