@@ -14,7 +14,6 @@ import { ApiClientsContext } from 'pages/_app';
 import useEncryption from 'src/hooks/utils/useEncryption';
 import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys';
-import { ChevronRightIcon } from '@chakra-ui/icons';
 import Tooltip from 'src/components/ui/tooltip';
 import Datepicker from '../../../ui/forms/datepicker';
 import Dropdown from '../../../ui/forms/dropdown';
@@ -76,7 +75,7 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
   const [keySubmitted, setKeySubmitted] = useState(false);
   const [shouldEncrypt, setShouldEncrypt] = useState(false);
   const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({ publicKey: '' });
-  const [transactionData, loading] = useUpdateWorkspacePublicKeys(publicKey);
+  const [transactionData] = useUpdateWorkspacePublicKeys(publicKey);
 
   const [shouldEncryptReviews, setShouldEncryptReviews] = useState(false);
 
@@ -214,39 +213,6 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
             </Text>
           </Flex>
         </Flex>
-        {/* {(shouldEncrypt && !keySubmitted) && (
-        <Flex mt={8} gap="2" direction="column">
-          <Flex
-            gap="2"
-            cursor="pointer"
-            onClick={async () => setPublicKey({ publicKey: (await getPublicEncryptionKey()) || '' })}
-          >
-            <Text
-              color="brand.500"
-              fontWeight="bold"
-              fontSize="16px"
-              lineHeight="24px"
-            >
-              Allow access to your public key and encrypt the applicant form to proceed
-            </Text>
-            <ChevronRightIcon color="brand.500" fontSize="2xl" />
-            {loading
-              && <Loader />}
-          </Flex>
-          <Flex alignItems="center" gap={2}>
-            <Image mt={1} src="/ui_icons/info.svg" />
-            <Text color="#122224" fontWeight="medium" fontSize="14px" lineHeight="20px">
-              By doing the above you’ll have to approve this transaction in your wallet.
-            </Text>
-          </Flex>
-          <Link href="https://www.notion.so/questbook/Why-is-public-key-required-e3fa53f34a5240d185d3d34744bb33f4" isExternal>
-            <Text color="#122224" fontWeight="normal" fontSize="14px" lineHeight="20px" decoration="underline">
-
-              Why is this required?
-            </Text>
-          </Link>
-        </Flex>
-        )} */}
 
         <Flex mt={8} gap="2" justifyContent="space-between">
           <Flex direction="column" flex={1}>

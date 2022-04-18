@@ -7,7 +7,7 @@ import React, {
   ReactElement, useContext, useEffect, useState,
 } from 'react';
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters';
-import { useGetApplicantsForAGrantQuery } from 'src/generated/graphql';
+import { useGetApplicantsForAGrantQuery, useGetGrantDetailsQuery } from 'src/generated/graphql';
 import { SupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { getAssetInfo } from 'src/utils/tokenUtils';
@@ -41,6 +41,7 @@ function ViewApplicants() {
   const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
 
   const [rubricDrawerOpen, setRubricDrawerOpen] = useState(false);
+  const [maximumPoints, setMaximumPoints] = React.useState(5);
   const [rubricEditAllowed] = useState(true);
   const [rubrics, setRubrics] = useState<any[]>([
     {
@@ -127,6 +128,27 @@ function ViewApplicants() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error, loading]);
 
+  const { data: grantData } = useGetGrantDetailsQuery(queryParams);
+  useEffect(() => {
+    console.log('grantData', grantData);
+    const initialRubrics = grantData?.grants[0].rubric;
+    const newRubrics = [] as any[];
+    console.log('initialRubrics', initialRubrics);
+    initialRubrics?.items.forEach((initalRubric) => {
+      newRubrics.push({
+        name: initalRubric.title,
+        nameError: false,
+        description: initalRubric.details,
+        descriptionError: false,
+      });
+    });
+    if (newRubrics.length === 0) return;
+    setRubrics(newRubrics);
+    if (initialRubrics?.items[0].maximumPoints) {
+      setMaximumPoints(initialRubrics.items[0].maximumPoints);
+    }
+  }, [grantData]);
+
   useEffect(() => {
     setShouldShowButton(daoId === workspace?.id);
   }, [workspace, accountData, daoId]);
@@ -205,6 +227,11 @@ function ViewApplicants() {
           rubricEditAllowed={rubricEditAllowed}
           rubrics={rubrics}
           setRubrics={setRubrics}
+          maximumPoints={maximumPoints}
+          setMaximumPoints={setMaximumPoints}
+          chainId={getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY}
+          grantAddress={grantID}
+          workspaceId={workspace?.id ?? ''}
         />
 
         <Table

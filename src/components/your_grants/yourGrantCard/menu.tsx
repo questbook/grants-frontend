@@ -21,6 +21,7 @@ interface Props {
   onEditClick: (() => void) | undefined;
   isAdmin: boolean;
   setRubricDrawerOpen: ((arg0: boolean) => void);
+  initialRubricAvailable: boolean;
 }
 
 interface MenuItemProps {
@@ -41,6 +42,7 @@ function YourGrantMenu({
   onEditClick,
   isAdmin,
   setRubricDrawerOpen,
+  initialRubricAvailable,
 }: Props) {
   const [copied, setCopied] = React.useState(false);
 
@@ -64,7 +66,7 @@ function YourGrantMenu({
       iconPath: '/ui_icons/eval_setup.svg',
       iconWidth: '24px',
       iconHeight: '24px',
-      text: 'Setup evaluation score',
+      text: initialRubricAvailable ? 'Edit evaluation score' : 'Setup evaluation score',
       onClick: () => setRubricDrawerOpen(true),
     },
   ];
