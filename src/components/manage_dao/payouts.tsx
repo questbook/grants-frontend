@@ -12,9 +12,9 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import {
-  getFormattedDateFromUnixTimestampWithYear,
-  getTextWithEllipses,
+  trimAddress,
 } from 'src/utils/formattingUtils';
+
 import config from 'src/constants/config';
 import CopyIcon from '../ui/copy_icon';
 import Modal from '../ui/modal';
@@ -27,8 +27,7 @@ interface Props {
 function Payouts({ workspaceMembers }: Props) {
   const payModal = useDisclosure();
   const [payMode, setPayMode] = React.useState<number>(-1);
-  const [selectedMode, setSelectedMode] = React.useState(0);
-  const [selectMethod, setSelectMethod] = React.useState(false);
+  const [selectedData, setSelectedData] = React.useState<any>();
 
   const payOptions = ['Pay from connected wallet', 'Pay from another wallet'];
 
@@ -61,14 +60,16 @@ function Payouts({ workspaceMembers }: Props) {
   ];
 
   useEffect(() => {
-    if (!payoutTablePlaceholders) return;
+    // if (!payoutTablePlaceholders) return;
     const tempTableData = payoutTablePlaceholders.map((payoutData: any) => ({
       address: payoutData.address,
       date: payoutData.date,
       outstanding: payoutData.outstanding,
     }));
+
     setTableData(tempTableData);
-  }, [payoutTablePlaceholders]);
+
+  }, [workspaceMembers]);
 
   return (
     <Flex direction="column" align="start" w="100%">
@@ -119,7 +120,7 @@ function Payouts({ workspaceMembers }: Props) {
                   <Tooltip label={data.address}>
                     <Flex flex={tableDataFlex[0]}>
                       <Text variant="tableBody">
-                        {getTextWithEllipses(data.address, 16)}
+                        {trimAddress(data.address, 4)}
                       </Text>
                       <Box mr="7px" />
                       <CopyIcon text={data.address} />
@@ -148,9 +149,8 @@ function Payouts({ workspaceMembers }: Props) {
                       height="2rem"
                       onClick={() => {
                         payModal.onOpen();
-                        setSelectedMode(1);
-                        setPayMode(1)
-                        setSelectMethod(true);
+                        setPayMode(2)
+                        setSelectedData(data);
                       }}
                     >
                       Mark as done
@@ -165,9 +165,8 @@ function Payouts({ workspaceMembers }: Props) {
                       px={3}
                       onClick={() => {
                         payModal.onOpen();
-                        setSelectedMode(2);
                         setPayMode(-1)
-                        setSelectMethod(true);
+                        setSelectedData(data);
                       }}
                     >
                       Pay now
@@ -181,9 +180,9 @@ function Payouts({ workspaceMembers }: Props) {
                   title={`${
                     payMode === -1
                       ? 'Pay From'
-                      : payMode === 0
+                      : payMode === 0 || payMode === 1
                       ? 'Pay Reviewer'
-                      : payMode === 1 && 'Fill Payment Details'
+                      : payMode === 2 && 'Fill Payment Details'
                   }`}
                   rightIcon={
                     payMode === 1 || payMode === 0 ? (
@@ -248,8 +247,8 @@ function Payouts({ workspaceMembers }: Props) {
 
                   <PayoutModalContent
                     payMode={payMode}
-                    address={data.address}
-                    reviews={data.outstanding}
+                    address={selectedData?.address}
+                    reviews={selectedData?.outstanding}
                     onClose={payModal.onClose}
                   />
                 </Modal>

@@ -88,6 +88,9 @@ function nFormatter(value: string, digits = 3) {
     : '0';
 }
 
+export const trimAddress = (address: string, digitQuantity: number) =>
+  address.slice(0, digitQuantity) + "..." + address.slice(-4);
+
 function truncateTo(number: string, digits = 3) {
   const decimalIndex = number.indexOf('.');
   if (decimalIndex === -1) return number;
