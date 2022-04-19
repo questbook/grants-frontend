@@ -1,5 +1,5 @@
 import {
-  Box, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, Text, Image, Button,
+  Box, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, Text, Image, Button, Switch, Link,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { SupportedChainId } from 'src/constants/chains';
@@ -20,6 +20,7 @@ function RubricDrawer({
   grantAddress,
   chainId,
   workspaceId,
+  initialIsPrivate,
 }: {
   rubricDrawerOpen: boolean;
   setRubricDrawerOpen: (rubricDrawerOpen: boolean) => void;
@@ -31,7 +32,15 @@ function RubricDrawer({
   grantAddress: string;
   chainId: SupportedChainId | undefined;
   workspaceId: string;
+  initialIsPrivate: boolean;
 }) {
+  const [shouldEncryptReviews, setShouldEncryptReviews] = React.useState(false);
+  useEffect(() => {
+    if (initialIsPrivate) {
+      setShouldEncryptReviews(true);
+    }
+  }, [initialIsPrivate]);
+
   const [editedRubricData, setEditedRubricData] = React.useState<any>();
   const handleOnSubmit = () => {
     let error = false;
@@ -66,7 +75,7 @@ function RubricDrawer({
       console.log('rubric', rubric);
       setEditedRubricData({
         rubric: {
-          isPrivate: false,
+          isPrivate: shouldEncryptReviews,
           rubric,
         },
       });
@@ -251,6 +260,63 @@ function RubricDrawer({
               />
             </Box>
           </Flex>
+
+          <Flex mt={8} gap="2" justifyContent="space-between">
+            <Flex direction="column" flex={1}>
+              <Text
+                color="#122224"
+                fontWeight="bold"
+                fontSize="16px"
+                lineHeight="20px"
+              >
+                Keep applicant reviews private
+              </Text>
+              <Flex>
+                <Text color="#717A7C" fontSize="14px" lineHeight="20px">
+                  Private review is only visible to reviewers, DAO members.
+                </Text>
+              </Flex>
+            </Flex>
+            <Flex ml="auto" justifyContent="center" gap={2} alignItems="center">
+              <Switch
+                id="encrypt"
+                defaultChecked={initialIsPrivate}
+                onChange={(e) => {
+                  setShouldEncryptReviews(e.target.checked);
+                }}
+              />
+              <Text fontSize="12px" fontWeight="bold" lineHeight="16px">
+                {`${shouldEncryptReviews ? 'YES' : 'NO'}`}
+              </Text>
+            </Flex>
+          </Flex>
+
+          <Text variant="footer" mt={8} mb={7} maxW="400">
+            <Image
+              display="inline-block"
+              h="10px"
+              w="10px"
+              src="/ui_icons/info_brand.svg"
+            />
+            {' '}
+            By pressing Publish Grant you&apos;ll have to approve this transaction
+            in your wallet.
+            {' '}
+            <Link
+              href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
+              isExternal
+            >
+              Learn more
+            </Link>
+            {' '}
+            <Image
+              display="inline-block"
+              h="10px"
+              w="10px"
+              src="/ui_icons/link.svg"
+            />
+          </Text>
+
           <Box mt={12}>
             <Button mt="auto" variant="primary" onClick={handleOnSubmit}>
               {!loading ? 'Save' : (
