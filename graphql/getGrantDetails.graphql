@@ -23,11 +23,12 @@ query getGrantDetails($grantID: ID!) {
         funding,
         acceptingApplications,
         rubric {
+            isPrivate
             items {
-            id,
-            title,
-            details,
-            maximumPoints,
+                id,
+                title,
+                details,
+                maximumPoints,
             },
         },
     }

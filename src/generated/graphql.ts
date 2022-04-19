@@ -2714,7 +2714,7 @@ export type GetAllGrantsForCreatorQueryVariables = Exact<{
 }>;
 
 
-export type GetAllGrantsForCreatorQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, acceptingApplications: boolean, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> }, rubric?: { __typename?: 'Rubric', items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }> };
+export type GetAllGrantsForCreatorQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, acceptingApplications: boolean, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> }, rubric?: { __typename?: 'Rubric', isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }> };
 
 export type GetApplicantsForAGrantQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -2730,7 +2730,7 @@ export type GetApplicationDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetApplicationDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, feedbackDao?: string | null, feedbackDev?: string | null, createdAtS: number, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, pii: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, amount: string }>, grant: { __typename?: 'Grant', id: string, title: string, funding: string, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null }> }, reward: { __typename?: 'Reward', id: string, asset: string, committed: string }, fields: Array<{ __typename?: 'GrantField', id: string, title: string, isPii: boolean }> } } | null };
+export type GetApplicationDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, feedbackDao?: string | null, feedbackDev?: string | null, createdAtS: number, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, pii: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, amount: string }>, grant: { __typename?: 'Grant', id: string, title: string, funding: string, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null }> }, reward: { __typename?: 'Reward', id: string, asset: string, committed: string }, fields: Array<{ __typename?: 'GrantField', id: string, title: string, isPii: boolean }>, rubric?: { __typename?: 'Rubric', isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, reviewers: Array<{ __typename?: 'WorkspaceMember', email?: string | null, id: string }> } | null };
 
 export type GetApplicationMilestonesQueryVariables = Exact<{
   grantId: Scalars['ID'];
@@ -2774,7 +2774,7 @@ export type GetGrantDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetGrantDetailsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, acceptingApplications: boolean, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, isPii: boolean }>, reward: { __typename?: 'Reward', id: string, asset: string, committed: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null }> }, rubric?: { __typename?: 'Rubric', items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }> };
+export type GetGrantDetailsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, acceptingApplications: boolean, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, isPii: boolean }>, reward: { __typename?: 'Reward', id: string, asset: string, committed: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null }> }, rubric?: { __typename?: 'Rubric', isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }> };
 
 export type GetGrantsAppliedToQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -3036,6 +3036,7 @@ export const GetAllGrantsForCreatorDocument = gql`
     numberOfApplications
     acceptingApplications
     rubric {
+      isPrivate
       items {
         id
         title
@@ -3184,6 +3185,30 @@ export const GetApplicationDetailsDocument = gql`
         title
         isPii
       }
+      rubric {
+        isPrivate
+        items {
+          id
+          title
+          details
+          maximumPoints
+        }
+      }
+    }
+    reviews {
+      data {
+        id
+        manager {
+          id
+        }
+        data
+      }
+      publicReviewDataHash
+      id
+    }
+    reviewers {
+      email
+      id
     }
     applicantId
     state
@@ -3533,6 +3558,7 @@ export const GetGrantDetailsDocument = gql`
     funding
     acceptingApplications
     rubric {
+      isPrivate
       items {
         id
         title

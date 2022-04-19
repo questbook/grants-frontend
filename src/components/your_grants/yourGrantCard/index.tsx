@@ -280,6 +280,7 @@ function YourGrantCard({
         chainId={chainId}
         grantAddress={grantID}
         workspaceId={workspaceId}
+        initialIsPrivate={initialRubrics.isPrivate}
       />
     </>
   );

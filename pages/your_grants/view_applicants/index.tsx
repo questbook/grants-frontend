@@ -232,6 +232,7 @@ function ViewApplicants() {
           chainId={getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY}
           grantAddress={grantID}
           workspaceId={workspace?.id ?? ''}
+          initialIsPrivate={grantData?.grants[0].rubric?.isPrivate ?? false}
         />
 
         <Table
