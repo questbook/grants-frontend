@@ -3,16 +3,20 @@ import {
   Flex,
   Text,
   Button,
+  IconButton,
   Image,
-  Heading,
   Input,
+  InputGroup,
+  InputRightElement,
+  Heading,
   useClipboard,
   useToast,
 } from '@chakra-ui/react';
-import React from 'react';
-import Loader from 'src/components/ui/loader';
-import SingleLineInput from '../ui/forms/singleLineInput';
-import InfoToast from '../ui/infoToast';
+import {useState} from 'react';
+import {trimAddress} from '../utils';
+
+// import InfoToast from '../ui/infoToast';
+// import Loader from 'src/components/ui/loader';
 
 interface Props {
   payMode: number;
@@ -22,70 +26,71 @@ interface Props {
 }
 
 function PayoutModalContent({ payMode, address, reviews, onClose }: Props) {
-  const toast = useToast();
 
+  const [reviewsToPay, setReviewsToPay] = useState<number>();
+  const [amountToPay, setAmountToPay] = useState<number>()
+
+  const toast = useToast();
   const { hasCopied, onCopy } = useClipboard(address);
 
-  const startToast = async () => {
-    toast({
-      title: 'Copied!',
-      status: 'success',
-      duration: 9000,
-      isClosable: true,
-    });
-  };
+  const onChange = (e: any) => {
+    setReviewsToPay(e.target.value);
+  }
+
+  const fillReviews = () => {
+    setReviewsToPay(reviews);
+  }
 
   return (
     <ModalBody>
       {payMode === 0 && (
-        <Flex direction="column">
-          <Flex w="100%" mt={7}>
-            <SingleLineInput
-              label="Address"
-              height="80px"
-              inputRightElement={
-                <Button
-                  variant="primary"
-                  w="89px"
-                  h="48px"
-                  mr={20}
-                  onClick={() => {
-                    startToast();
-                    onCopy();
-                  }}
-                >
-                  Copy
-                </Button>
-              }
-              value={`${address.substring(0, 12)}....${address.substring(
-                address.length - 13,
-                address.length
-              )}`}
-              disabled
-              onChange={() => {}}
-              isError={false}
-              subtextAlign="center"
-              tooltip="This is the address of the reviewer that will receive the funds."
-            />
+        <Flex direction="column" gap="0.5rem">
+          <Flex w="100%" mt={7} direction="row" justify="space-between" align="center">
+            <Heading fontSize="0.875rem" textAlign="left">
+              Address:
+            </Heading>
+            <Text fontSize="0.875rem">
+              {trimAddress(address)} <IconButton
+                aria-label="Back"
+                variant="ghost"
+                _hover={{}}
+                _active={{}}
+                icon={<Image mr={8} src={!hasCopied ? "/ui_icons/copy/normal.svg" : "/ui_icons/copy/active.svg"} />}
+                onClick={() => onCopy()}
+              />
+            </Text>
           </Flex>
-          <Heading
-            variant="applicationHeading"
-            textAlign="center"
-            color="#717A7C"
-            mt={4}
-          >
-            Reviews
+          <Flex direction="column" gap="0.25rem">
+          <Heading fontSize="0.875rem" textAlign="left">
+            Reviews:
           </Heading>
-          <Input></Input>
-          <Heading
-            variant="applicationHeading"
-            textAlign="center"
-            color="#717A7C"
-            mt={4}
-          >
+          <InputGroup size='md'>
+            <Input
+              pr='4.5rem'
+              placeholder='Enter number of reviews'
+              min={1}
+              max={reviews}
+              onChange={(e) => onChange(e)}
+              value={reviewsToPay}
+            />
+            <InputRightElement width='4.5rem'>
+              <Button bg="none" color="brand" h='1.75rem' size='sm' onClick={() => fillReviews}>
+                ALL
+              </Button>
+            </InputRightElement>
+          </InputGroup>
+          </Flex>
+          <Flex direction="column" gap="0.25rem">
+          <Heading fontSize="0.875rem" textAlign="left">
             Amount per Review
           </Heading>
-          <Input></Input>
+          <Input
+            pr='4.5rem'
+            placeholder='Enter Amount'
+            onChange={(e) => onChange(e)}
+            value={amountToPay}
+          />
+          </Flex>
 
           <Text fontSize="0.75rem">
             By pressing Make Payment you will have to approve the transaction in

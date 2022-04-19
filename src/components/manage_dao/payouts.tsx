@@ -149,7 +149,7 @@ function Payouts({ workspaceMembers }: Props) {
                       onClick={() => {
                         payModal.onOpen();
                         setSelectedMode(1);
-                        setPayMode(-1)
+                        setPayMode(1)
                         setSelectMethod(true);
                       }}
                     >
@@ -211,7 +211,6 @@ function Payouts({ workspaceMembers }: Props) {
                           <Button
                             _active={{}}
                             onClick={() => {
-                              setSelectMethod(false);
                               setPayMode(index)
                             }}
                             variant="link"
@@ -240,7 +239,6 @@ function Payouts({ workspaceMembers }: Props) {
                           }
                           onClick={() => {
                             setPayMode(index)
-                            setSelectMethod(false);
                           }}
                         />
                       </Flex>
