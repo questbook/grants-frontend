@@ -12,7 +12,7 @@ import {
   Heading,
   useClipboard,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { trimAddress } from '../../utils/formattingUtils';
 import useChainId from 'src/hooks/utils/useChainId';
 
@@ -36,6 +36,7 @@ function PayoutModalContent({ payMode, address, reviews, onClose }: Props) {
 
   const [reviewsToPay, setReviewsToPay] = useState<number>();
   const [amountToPay, setAmountToPay] = useState<number>();
+  const [totalAmount, setTotalAmount] = useState<number>(0);
 
   const supportedCurrencies = Object.keys(
     CHAIN_INFO[currentChain].supportedCurrencies,
@@ -56,6 +57,12 @@ function PayoutModalContent({ payMode, address, reviews, onClose }: Props) {
   const fillReviews = () => {
     setReviewsToPay(reviews);
   };
+
+  useEffect(() => {
+    if (amountToPay != undefined && reviewsToPay != undefined) {
+    setTotalAmount(amountToPay as any * reviewsToPay as any);
+  }
+  }, [amountToPay])
 
   return (
     <ModalBody>
@@ -110,8 +117,9 @@ function PayoutModalContent({ payMode, address, reviews, onClose }: Props) {
               onChange={(e) => setReviewsToPay(parseInt(e.target.value))}
               value={reviewsToPay}
               h={12}
+              type="number"
             />
-            <InputRightElement width="4.5rem">
+            <InputRightElement width="fit-content" p={5} mt="0.25rem">
               <Button
                 bg="none"
                 color="#8850EA"
@@ -139,9 +147,14 @@ function PayoutModalContent({ payMode, address, reviews, onClose }: Props) {
           <Input
             pr="4.5rem"
             placeholder="Enter Amount"
-            onChange={(e) => setAmountToPay(parseInt(e.target.value))}
+            onChange={(e) =>
+              {
+                setAmountToPay(parseInt(e.target.value));
+              }
+            }
             value={amountToPay}
             h={12}
+            type="number"
           />
         </Flex>
         <Flex direction="column" w="fit-content" mt="20px">
@@ -156,6 +169,29 @@ function PayoutModalContent({ payMode, address, reviews, onClose }: Props) {
             }}
           />
         </Flex>
+        </Flex>
+        <Flex>
+          {totalAmount != 0 ?
+            <InputGroup>
+              <Input
+                isReadOnly
+                value="Total Amount"
+                pr="4.5rem"
+                h={12}
+              />
+              <InputRightElement p={5} mt="0.25rem" width="fit-content">
+                <Text
+                  bg="none"
+                  fontSize="0.875rem"
+                  color="black"
+                  fontWeight="bold"
+                  size="sm"
+                >
+                  {totalAmount}{" "}{reviewCurrency}
+                </Text>
+              </InputRightElement>
+            </InputGroup>
+          : null}
         </Flex>
 
         <Text fontSize="0.75rem" alignContent="center">

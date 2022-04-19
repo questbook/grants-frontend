@@ -184,8 +184,20 @@ function Payouts({ workspaceMembers }: Props) {
                       ? 'Pay Reviewer'
                       : payMode === 2 && 'Fill Payment Details'
                   }`}
+                  leftIcon={
+                    payMode !== -1 && (
+                      <IconButton
+                        aria-label="Back"
+                        variant="ghost"
+                        _hover={{}}
+                        _active={{}}
+                        icon={<Image src="/ui_icons/black/chevron_left.svg" />}
+                        onClick={() => setPayMode(-1)}
+                      />
+                    )
+                  }
                   rightIcon={
-                    payMode === 1 || payMode === 0 ? (
+                    payMode === 1 ? (
                       <Button
                         _focus={{}}
                         variant="link"
