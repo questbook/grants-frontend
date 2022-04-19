@@ -1,11 +1,24 @@
 import {
-  Image, IconButton, Divider, Flex, Text, Button, Tooltip, Box, ModalContent, useDisclosure
+  Image,
+  IconButton,
+  Divider,
+  Flex,
+  Text,
+  Button,
+  Tooltip,
+  Box,
+  ModalContent,
+  useDisclosure,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
-import { getFormattedDateFromUnixTimestampWithYear, getTextWithEllipses } from 'src/utils/formattingUtils';
+import {
+  getFormattedDateFromUnixTimestampWithYear,
+  getTextWithEllipses,
+} from 'src/utils/formattingUtils';
+import config from 'src/constants/config';
 import CopyIcon from '../ui/copy_icon';
 import Modal from '../ui/modal';
-// import ConfirmationModalContent from './confirmationModalContent';
+import PayoutModalContent from './payoutModalContent';
 
 interface Props {
   workspaceMembers: any;
@@ -14,6 +27,10 @@ interface Props {
 function Payouts({ workspaceMembers }: Props) {
   const payModal = useDisclosure();
   const [payMode, setPayMode] = React.useState<number>(-1);
+  const [selectedMode, setSelectedMode] = React.useState(0);
+  const [selectMethod, setSelectMethod] = React.useState(false);
+
+  const payOptions = ['Pay from connected wallet', 'Pay from another wallet'];
 
   const [tableData, setTableData] = React.useState<any>(null);
   const flex = [0.2741, 0.1544, 0.2316, 0.2403, 0.0994];
@@ -27,39 +44,31 @@ function Payouts({ workspaceMembers }: Props) {
 
   const payoutTablePlaceholders = [
     {
-      address: "0x0c9ccbada1411687f6ffa7df317af35b16b1fe0c",
-      date: "24 January 2022",
-      outstanding: 5
+      address: '0x0c9ccbada1411687f6ffa7df317af35b16b1fe0c',
+      date: '24 January 2022',
+      outstanding: 5,
     },
     {
-      address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-      date: "21 December 2021",
-      outstanding: 2
+      address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+      date: '21 December 2021',
+      outstanding: 2,
     },
     {
-      address: "0x4c6ef0b696325ac6bfe5f597bbc269ad1bd76825",
-      date: "10 October 2022",
-      outstanding: 10
+      address: '0x4c6ef0b696325ac6bfe5f597bbc269ad1bd76825',
+      date: '10 October 2022',
+      outstanding: 10,
     },
-  ]
+  ];
 
   useEffect(() => {
     if (!payoutTablePlaceholders) return;
     const tempTableData = payoutTablePlaceholders.map((payoutData: any) => ({
       address: payoutData.address,
       date: payoutData.date,
-      outstanding: payoutData.outstanding
+      outstanding: payoutData.outstanding,
     }));
     setTableData(tempTableData);
   }, [payoutTablePlaceholders]);
-
-  const [isPaid, setIsPaid] = React.useState(false);
-  const [selectedRow, setSelectedRow] = React.useState(-1);
-
-  const nextScreenTexts = [
-    'Pay from connected wallet',
-    'Pay from another wallet',
-  ];
 
   return (
     <Flex direction="column" align="start" w="100%">
@@ -74,7 +83,14 @@ function Payouts({ workspaceMembers }: Props) {
         </Text>
       </Flex>
       <Flex w="100%" mt={8} alignItems="flex-start" direction="column">
-        <Flex direction="row" w="100%" justify="strech" align="center" py={2}>
+        <Flex
+          direction="row"
+          w="100%"
+          justify="space-around"
+          pl={10}
+          align="center"
+          py={2}
+        >
           {tableHeaders.map((header, index) => (
             <Text flex={flex[index]} variant="tableHeader">
               {header}
@@ -87,112 +103,162 @@ function Payouts({ workspaceMembers }: Props) {
           border="1px solid #D0D3D3"
           borderRadius={4}
         >
-          {tableData
-            && tableData.map((data: any, index: number) => (
-              <Flex
-                direction="row"
-                w="100%"
-                justify="stretch"
-                align="center"
-                bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
-                py={4}
-                px={7}
-              >
-                <Tooltip label={data.address}>
-                  <Flex flex={tableDataFlex[0]}>
-                    <Text variant="tableBody">
-                      {getTextWithEllipses(data.address, 16)}
-                    </Text>
-                    <Box mr="7px" />
-                    <CopyIcon text={data.address} />
+          {tableData &&
+            tableData.map((data: any, index: number) => (
+              <>
+                <Flex
+                  direction="row"
+                  w="100%"
+                  justify="space-around"
+                  align="center"
+                  textAlign="center"
+                  bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
+                  py={4}
+                  px={5}
+                >
+                  <Tooltip label={data.address}>
+                    <Flex flex={tableDataFlex[0]}>
+                      <Text variant="tableBody">
+                        {getTextWithEllipses(data.address, 16)}
+                      </Text>
+                      <Box mr="7px" />
+                      <CopyIcon text={data.address} />
+                    </Flex>
+                  </Tooltip>
+                  <Text
+                    flex={tableDataFlex[1]}
+                    minW="fit-content"
+                    variant="tableBody"
+                  >
+                    {data.date}
+                  </Text>
+                  <Text flex={tableDataFlex[2]} variant="tableBody">
+                    {data.outstanding}
+                  </Text>
+                  <Flex direction="row" flex={tableDataFlex[4]} gap="0.5rem">
+                    <Button
+                      variant="outline"
+                      color="brand.500"
+                      fontWeight="500"
+                      fontSize="14px"
+                      lineHeight="14px"
+                      textAlign="center"
+                      borderRadius={8}
+                      borderColor="brand.500"
+                      height="2rem"
+                      onClick={() => {
+                        payModal.onOpen();
+                        setSelectedMode(1);
+                        setPayMode(-1)
+                        setSelectMethod(true);
+                      }}
+                    >
+                      Mark as done
+                    </Button>
+                    <Button
+                      variant="primary"
+                      fontWeight="500"
+                      fontSize="14px"
+                      lineHeight="14px"
+                      textAlign="center"
+                      height="2rem"
+                      px={3}
+                      onClick={() => {
+                        payModal.onOpen();
+                        setSelectedMode(2);
+                        setPayMode(-1)
+                        setSelectMethod(true);
+                      }}
+                    >
+                      Pay now
+                    </Button>
                   </Flex>
-                </Tooltip>
-                <Text flex={tableDataFlex[1]} variant="tableBody">
-                  {data.date}
-                </Text>
-                <Text flex={tableDataFlex[2]} variant="tableBody">
-                  {data.outstanding}
-                </Text>
-                <Box flex={tableDataFlex[4]}>
-                  <Button
-                    variant="outline"
-                    color="brand.500"
-                    fontWeight="500"
-                    fontSize="14px"
-                    lineHeight="14px"
-                    textAlign="center"
-                    borderRadius={8}
-                    borderColor="brand.500"
-                    height="32px"
-                    onClick={() => {
-                      setPayMode(1);
-                      setSelectedRow(index);
-                    }}
-                  >
-                    Mark as done
-                  </Button>
-                  <Button
-                    variant="primary"
-                    fontWeight="500"
-                    fontSize="14px"
-                    lineHeight="14px"
-                    textAlign="center"
-                    height="32px"
-                    onClick={() => {
-                      setPayMode(0);
-                      setSelectedRow(index);
-                    }}
-                  >
-                    Pay now
-                  </Button>
-                </Box>
-              </Flex>
+                </Flex>
+
+                <Modal
+                  isOpen={payModal.isOpen}
+                  onClose={payModal.onClose}
+                  title={`${
+                    payMode === -1
+                      ? 'Pay From'
+                      : payMode === 0
+                      ? 'Pay Reviewer'
+                      : payMode === 1 && 'Fill Payment Details'
+                  }`}
+                  rightIcon={
+                    payMode === 1 || payMode === 0 ? (
+                      <Button
+                        _focus={{}}
+                        variant="link"
+                        color="#AA82F0"
+                        leftIcon={<Image src="/sidebar/discord_icon.svg" />}
+                        onClick={() => window.open(config.supportLink)}
+                      >
+                        Support 24*7
+                      </Button>
+                    ) : null
+                  }
+                >
+                  {payMode === -1 ? payOptions.map((option, index) => (
+                    <>
+                      <Flex
+                        direction="row"
+                        justify="space-between"
+                        align="center"
+                        mx={4}
+                      >
+                        <Flex direction="row">
+                          <Button
+                            _active={{}}
+                            onClick={() => {
+                              setSelectMethod(false);
+                              setPayMode(index)
+                            }}
+                            variant="link"
+                            my={4}
+                          >
+                            <Text variant="tableBody" color="#8850EA">
+                              {option}{' '}
+                            </Text>
+                          </Button>
+                          <Image
+                            ml={2}
+                            display="inline-block"
+                            alt="another_wallet"
+                            src="/ui_icons/info_brand_light.svg"
+                          />
+                        </Flex>
+                        <IconButton
+                          aria-label="right_chevron"
+                          variant="ghost"
+                          _hover={{}}
+                          _active={{}}
+                          w="13px"
+                          h="6px"
+                          icon={
+                            <Image src="/ui_icons/brand/chevron_right.svg" />
+                          }
+                          onClick={() => {
+                            setPayMode(index)
+                            setSelectMethod(false);
+                          }}
+                        />
+                      </Flex>
+                      <Divider />
+                    </>
+                  )) : null}
+
+                  <PayoutModalContent
+                    payMode={payMode}
+                    address={data.address}
+                    reviews={data.outstanding}
+                    onClose={payModal.onClose}
+                  />
+                </Modal>
+              </>
             ))}
         </Flex>
       </Flex>
-
-      <Modal
-        isOpen={payModal.isOpen}
-        onClose={payModal.onClose}
-        title={`Pay From`}
-      >
-        {nextScreenTexts.map((text, index) => (
-          <>
-            <Flex
-              direction="row"
-              justify="space-between"
-              align="center"
-              mx={4}
-            >
-              <Flex direction="row">
-                <Button _active={{}} onClick={() => setPayMode(index)} variant="link" my={4}>
-                  <Text variant="tableBody" color="#8850EA">
-                    {text}
-                    {' '}
-                  </Text>
-                </Button>
-                <Image
-                  ml={2}
-                  display="inline-block"
-                  alt="another_wallet"
-                  src="/ui_icons/info_brand_light.svg"
-                />
-              </Flex>
-              <IconButton
-                aria-label="right_chevron"
-                variant="ghost"
-                _hover={{}}
-                _active={{}}
-                w="13px"
-                h="6px"
-                icon={<Image src="/ui_icons/brand/chevron_right.svg" />}
-                onClick={() => setPayMode(index)}
-              />
-            </Flex>
-            <Divider />
-          </>
-        ))}
-      </Modal>
     </Flex>
   );
 }
