@@ -269,7 +269,6 @@ function Sidebar({
         chainId={chainId}
         workspaceId={applicationData?.grant.workspace.id}
         initialReviewers={applicationData?.reviewers}
-        // initialIsPrivate={applicationData?.grant.rubric.isPrivate}
         applicationId={applicationData?.id}
         onClose={() => setReviewDrawerOpen(false)}
       />

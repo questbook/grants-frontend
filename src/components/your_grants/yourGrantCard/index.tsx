@@ -190,7 +190,7 @@ function YourGrantCard({
                 onEditClick={onEditClick}
                 isAdmin={isAdmin}
                 setRubricDrawerOpen={setRubricDrawerOpen}
-                initialRubricAvailable={initialRubrics && initialRubrics.items.length > 0}
+                initialRubricAvailable={initialRubrics?.items.length > 0 ?? false}
               />
               {acceptingApplications && isAdmin && (
                 <Button
