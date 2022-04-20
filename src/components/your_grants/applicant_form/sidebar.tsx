@@ -23,6 +23,7 @@ import {
 import { getAssetInfo } from '../../../utils/tokenUtils';
 import MailTo from '../mail_to/mailTo';
 import ReviewDrawer from '../reviewerDrawer';
+import RubricSidebar from './rubric_sidebar';
 
 function Sidebar({
   showHiddenData,
@@ -227,6 +228,18 @@ function Sidebar({
           Reject Application
         </Button>
       </Flex>
+
+      <Box mt={8} />
+
+      <RubricSidebar
+        total={applicationData
+          ?.reviewers.length ?? 0}
+        reviews={applicationData?.reviews}
+        rubric={applicationData?.grant.rubric}
+      />
+
+      <Box mt={8} />
+
       <Flex
         bg="white"
         border="2px solid #D0D3D3"
@@ -236,7 +249,6 @@ function Sidebar({
         alignItems="stretch"
         px="28px"
         py="22px"
-        mt={8}
       >
         <Flex direction="column">
           <Text fontWeight="700">Application Reviewers</Text>
@@ -254,10 +266,28 @@ function Sidebar({
               email: r.email,
               address: r.id.split('.')[1],
             })).map((reviewer: any) => (
-              <>
-                <Text mt={2} fontWeight="700" color="#122224" fontSize="14px">{reviewer.address}</Text>
-                <Text color="#717A7C" fontSize="12px">{reviewer.email}</Text>
-              </>
+              <Flex
+                w="100%"
+                h="64px"
+                align="center"
+                mt={2}
+                py={3}
+              >
+                <Image src="/ui_icons/reviewer_account.svg" />
+                <Flex direction="column" ml={4}>
+                  <Text
+                    fontWeight="700"
+                    color="#122224"
+                    fontSize="14px"
+                    lineHeight="20px"
+                  >
+                    {truncateStringFromMiddle(reviewer.address)}
+                  </Text>
+                  <Text mt={1} color="#717A7C" fontSize="12px">
+                    {reviewer.email}
+                  </Text>
+                </Flex>
+              </Flex>
             ))}
         </Flex>
       </Flex>
@@ -269,8 +299,8 @@ function Sidebar({
         chainId={chainId}
         workspaceId={applicationData?.grant.workspace.id}
         initialReviewers={applicationData?.reviewers}
-        initialIsPrivate={applicationData?.grant.rubric.isPrivate}
         applicationId={applicationData?.id}
+        onClose={() => setReviewDrawerOpen(false)}
       />
 
       <Flex
@@ -283,11 +313,10 @@ function Sidebar({
         px="28px"
         py="22px"
         mt={8}
-        mb={8}
       >
         <Flex direction="column">
           <Text mb="14px" fontWeight="700">Evaluation Rubric</Text>
-          {applicationData
+          {applicationData?.grant?.rubric && applicationData
             ?.grant
             ?.rubric
             .items.map((r: any) => ({
@@ -301,6 +330,8 @@ function Sidebar({
             ))}
         </Flex>
       </Flex>
+
+      <Box mb={8} />
     </>
   );
 }
