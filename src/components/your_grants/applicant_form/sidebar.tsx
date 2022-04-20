@@ -254,10 +254,28 @@ function Sidebar({
               email: r.email,
               address: r.id.split('.')[1],
             })).map((reviewer: any) => (
-              <>
-                <Text mt={2} fontWeight="700" color="#122224" fontSize="14px">{reviewer.address}</Text>
-                <Text color="#717A7C" fontSize="12px">{reviewer.email}</Text>
-              </>
+              <Flex
+                w="100%"
+                h="64px"
+                align="center"
+                mt={2}
+                py={3}
+              >
+                <Image src="/ui_icons/reviewer_account.svg" />
+                <Flex direction="column" ml={4}>
+                  <Text
+                    fontWeight="700"
+                    color="#122224"
+                    fontSize="14px"
+                    lineHeight="20px"
+                  >
+                    {truncateStringFromMiddle(reviewer.address)}
+                  </Text>
+                  <Text mt={1} color="#717A7C" fontSize="12px">
+                    {reviewer.email}
+                  </Text>
+                </Flex>
+              </Flex>
             ))}
         </Flex>
       </Flex>

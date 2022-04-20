@@ -46,13 +46,34 @@ function ReviewDrawer({
   }>({});
   const [editedReviewData, setEditedReviewData] = React.useState<any>();
 
+  // useEffect(() => {
+  //   if (!workspace) return;
+  //   if (!initialReviewers) return;
+  //   const newIsReviewer = [] as any[];
+  //   workspace.members.forEach((member: any) => {
+  //     newIsReviewer.push(
+  //       initialReviewers.find((r: any) => r.address === member.address) !== undefined,
+  //     );
+  //   });
+  //   setIsReviewer(newIsReviewer);
+  // }, [initialReviewers, workspace]);
+
+  // const handleOnSubmit = () => {
+  //   setEditedReviewData({
+  //     reviewers: workspace?.members.map((reviewer) => reviewer.id.split('.')[1]),
+  //     active: isReviewer,
+  //   });
+  // };
+
   useEffect(() => {
     if (!workspace) return;
     if (!initialReviewers) return;
     const newIsReviewer: { [key: string]: boolean } = {};
     workspace.members.forEach((member: any) => {
+      console.log(member);
+      console.log(initialReviewers);
       // eslint-disable-next-line max-len
-      newIsReviewer[member.address] = initialReviewers.find((r: any) => r.address === member.address)
+      newIsReviewer[member.actorId] = initialReviewers.find((r: any) => r.id.split('.')[1] === member.actorId)
         !== undefined;
     });
     console.log(newIsReviewer);
@@ -64,7 +85,7 @@ function ReviewDrawer({
       reviewers: workspace?.members.map(
         (reviewer) => reviewer.id.split('.')[1],
       ),
-      active: isReviewer,
+      active: Object.values(isReviewer),
     });
   };
 
@@ -100,7 +121,7 @@ function ReviewDrawer({
     >
       <DrawerOverlay />
       <DrawerContent>
-        <Flex direction="column" p={8} justify="space-between" h="100%">
+        <Flex direction="column" p={8} justify="space-between" h="100%" overflow="scroll">
           <Flex direction="row">
             <Text fontSize="16px" fontWeight="700" lineHeight="16px">
               Select Reviewers
@@ -139,50 +160,52 @@ function ReviewDrawer({
           </Flex>
 
           <Flex direction="column" overflowY="scroll" maxH="40%" mt={6}>
-            <CheckboxGroup colorScheme="brand">
-              {workspace?.members
-                .filter(
-                  (member) => emailSearchText === ''
+
+            {workspace?.members
+              .filter(
+                (member) => emailSearchText === ''
                     || (member.email && member.email.startsWith(emailSearchText)),
-                )
-                .map((member) => (
-                  <Flex
-                    w="100%"
-                    h="64px"
-                    bg={isReviewer[member.actorId] ? '#F3EDFD' : '#FFFFFF'}
-                    borderRadius="8px"
-                    align="center"
-                    mt={2}
-                    py={3}
-                  >
-                    <Checkbox
-                      value={member.actorId}
-                      isChecked={isReviewer[member.actorId]}
-                      onChange={(v) => {
-                        const newIsReviewer = { ...isReviewer };
-                        newIsReviewer[v.target.value] = !isReviewer[v.target.value];
-                        setIsReviewer(newIsReviewer);
-                      }}
-                      mx={4}
-                    />
-                    <Image ml={4} src="/ui_icons/reviewer_account.svg" />
-                    <Flex direction="column" ml={4}>
-                      <Text
-                        fontWeight="700"
-                        color="#122224"
-                        fontSize="14px"
-                        lineHeight="20px"
-                      >
-                        {member.email ? member.email : member.actorId}
-                      </Text>
-                      <Text mt={1} color="#717A7C" fontSize="12px">
-                        {member.email
+              )
+              .map((member) => (
+                <Flex
+                  w="100%"
+                  h="64px"
+                  bg={isReviewer[member.actorId] ? '#F3EDFD' : '#FFFFFF'}
+                  borderRadius="8px"
+                  align="center"
+                  mt={2}
+                  py={3}
+                >
+                  <Checkbox
+                    value={member.actorId}
+                    isChecked={isReviewer[member.actorId]}
+                    onChange={(v) => {
+                      const newIsReviewer = { ...isReviewer };
+                      newIsReviewer[v.target.value] = !isReviewer[v.target.value];
+                      setIsReviewer(newIsReviewer);
+                    }}
+                    mx={4}
+                    defaultChecked={isReviewer[member.actorId]}
+                    colorScheme="brand"
+                  />
+                  <Image ml={4} src="/ui_icons/reviewer_account.svg" />
+                  <Flex direction="column" ml={4}>
+                    <Text
+                      fontWeight="700"
+                      color="#122224"
+                      fontSize="14px"
+                      lineHeight="20px"
+                    >
+                      {member.email ? member.email : member.actorId}
+                    </Text>
+                    <Text mt={1} color="#717A7C" fontSize="12px">
+                      {member.email
                           && truncateStringFromMiddle(member.actorId)}
-                      </Text>
-                    </Flex>
+                    </Text>
                   </Flex>
-                ))}
-            </CheckboxGroup>
+                </Flex>
+              ))}
+
           </Flex>
 
           <Text fontSize="12px" color="#717A7C" mt={4}>
