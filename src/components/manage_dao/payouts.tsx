@@ -1,7 +1,6 @@
 import {
   Image,
   IconButton,
-  Divider,
   Flex,
   Text,
   Button,
@@ -211,33 +210,38 @@ function Payouts() {
                   }
                 >
                   {payMode === -1 ? payOptions.map((option, ind) => (
-                    <>
+                    <Button
+                      border="1px solid"
+                      borderColor="#6A4CFF"
+                      borderRadius="0.5rem"
+                      bgColor="rgba(149, 128, 255, 0.1)"
+                      onClick={() => {
+                        setPayMode(ind);
+                      }}
+                      p="1.5rem"
+                      h="4.5rem"
+                      mt="2rem"
+                      mx="2rem"
+                    >
                       <Flex
-                        direction="row"
+                        w="100%"
                         justify="space-between"
                         align="center"
-                        mx={4}
                       >
-                        <Flex direction="row">
-                          <Button
-                            _active={{}}
-                            onClick={() => {
-                              setPayMode(ind);
-                            }}
-                            variant="link"
-                            my={4}
-                          >
-                            <Text variant="tableBody" color="#8850EA">
-                              {option}
-                              {' '}
-                            </Text>
-                          </Button>
-                          <Image
-                            ml={2}
-                            display="inline-block"
-                            alt="another_wallet"
-                            src="/ui_icons/info_brand_light.svg"
-                          />
+                        <Flex>
+                          <Text variant="tableBody" color="#8850EA">
+                            {option}
+                            {' '}
+                          </Text>
+                          <Tooltip label={`${ind === 0 ? ('The reward will go through our smart contract directly into the reviewer wallet') : 'You will have to send the reviewer rewards separately'}`} fontSize="md">
+                            <Image
+                              ml={2}
+                              display="inline-block"
+                              alt="another_wallet"
+                              src="/ui_icons/info_brand_light.svg"
+                              color="#8850EA"
+                            />
+                          </Tooltip>
                         </Flex>
                         <IconButton
                           aria-label="right_chevron"
@@ -254,8 +258,7 @@ function Payouts() {
                           }}
                         />
                       </Flex>
-                      <Divider />
-                    </>
+                    </Button>
                   )) : null}
 
                   <PayoutModalContent
