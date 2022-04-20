@@ -7,10 +7,9 @@ import {
   Button,
   Tooltip,
   Box,
-  ModalContent,
   useDisclosure,
 } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   trimAddress,
 } from 'src/utils/formattingUtils';
@@ -20,18 +19,17 @@ import CopyIcon from '../ui/copy_icon';
 import Modal from '../ui/modal';
 import PayoutModalContent from './payoutModalContent';
 
-interface Props {
-  workspaceMembers: any;
-}
+// interface Props {
+//   workspaceMembers: any;
+// }
 
-function Payouts({ workspaceMembers }: Props) {
+function Payouts() {
   const payModal = useDisclosure();
   const [payMode, setPayMode] = React.useState<number>(-1);
   const [selectedData, setSelectedData] = React.useState<any>();
 
   const payOptions = ['Pay from connected wallet', 'Pay from another wallet'];
 
-  const [tableData, setTableData] = React.useState<any>(null);
   const flex = [0.2741, 0.1544, 0.2316, 0.2403, 0.0994];
   const tableHeaders = [
     'Member Address',
@@ -177,10 +175,13 @@ function Payouts({ workspaceMembers }: Props) {
                   isOpen={payModal.isOpen}
                   onClose={payModal.onClose}
                   title={`${
+                    // eslint-disable-next-line no-nested-ternary
                     payMode === -1
                       ? 'Pay From'
+                      // eslint-disable-next-line no-nested-ternary
                       : payMode === 0 || payMode === 1
                         ? 'Pay Reviewer'
+                        // eslint-disable-next-line no-nested-ternary
                         : payMode === 2 && 'Fill Payment Details'
                   }`}
                   leftIcon={
@@ -209,7 +210,7 @@ function Payouts({ workspaceMembers }: Props) {
                     ) : null
                   }
                 >
-                  {payMode === -1 ? payOptions.map((option, index) => (
+                  {payMode === -1 ? payOptions.map((option, ind) => (
                     <>
                       <Flex
                         direction="row"
@@ -221,7 +222,7 @@ function Payouts({ workspaceMembers }: Props) {
                           <Button
                             _active={{}}
                             onClick={() => {
-                              setPayMode(index);
+                              setPayMode(ind);
                             }}
                             variant="link"
                             my={4}
@@ -249,7 +250,7 @@ function Payouts({ workspaceMembers }: Props) {
                             <Image src="/ui_icons/brand/chevron_right.svg" />
                           }
                           onClick={() => {
-                            setPayMode(index);
+                            setPayMode(ind);
                           }}
                         />
                       </Flex>

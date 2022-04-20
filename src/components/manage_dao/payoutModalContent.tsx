@@ -47,7 +47,9 @@ function PayoutModalContent({
   const supportedCurrencies = Object.keys(
     CHAIN_INFO[currentChain].supportedCurrencies,
   )
-    .map((chainAddress) => CHAIN_INFO[currentChain].supportedCurrencies[chainAddress])
+    .map(
+      (chainAddress) => CHAIN_INFO[currentChain].supportedCurrencies[chainAddress],
+    )
     .map((currency) => ({ ...currency, id: currency.address }));
 
   const [reviewCurrency, setReviewCurrency] = useState(
@@ -122,7 +124,7 @@ function PayoutModalContent({
                 isInvalid={
                   (reviewsToPay as any) > reviews || (reviewsToPay as any) < 1
                 }
-                onChange={(e) => setReviewsToPay(parseInt(e.target.value))}
+                onChange={(e) => setReviewsToPay(parseInt(e.target.value, 10))}
                 value={reviewsToPay}
                 h={12}
                 type="number"
@@ -183,13 +185,13 @@ function PayoutModalContent({
             {totalAmount !== 0 ? (
               <InputGroup>
                 <Input isReadOnly value="Total Amount" pr="4.5rem" h={12} />
-                <InputRightElement zIndex="0" p={5} mt="0.25rem" width="fit-content">
-                  <Text
-                    bg="none"
-                    fontSize="0.875rem"
-                    color="black"
-                    size="sm"
-                  >
+                <InputRightElement
+                  zIndex="0"
+                  p={5}
+                  mt="0.25rem"
+                  width="fit-content"
+                >
+                  <Text bg="none" fontSize="0.875rem" color="black" size="sm">
                     {totalAmount}
                     {' '}
                     {reviewCurrency}
@@ -226,7 +228,14 @@ function PayoutModalContent({
             />
           </Text>
 
-          <Button variant="primary" my={8} onClick={() => console.log(reviewCurrencyAddress, totalAmount, reviewCurrency)}>
+          <Button
+            variant="primary"
+            my={8}
+            onClick={() => {
+              console.log(reviewCurrencyAddress, totalAmount, reviewCurrency);
+              onClose();
+            }}
+          >
             Make Payment
           </Button>
         </Flex>
@@ -244,7 +253,8 @@ function PayoutModalContent({
                 variant="ghost"
                 _hover={{}}
                 _active={{}}
-                icon={<Image mr={8} src={!hasCopied ? "/ui_icons/copy/normal.svg" : "/ui_icons/copy/active.svg"} />}
+                icon={<Image mr={8} src={!hasCopied ? "/ui_icons/copy/normal.svg"
+                : "/ui_icons/copy/active.svg"} />}
                 onClick={() => onCopy()}
               />
             </Text>

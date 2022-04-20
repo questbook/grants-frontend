@@ -106,6 +106,7 @@ function truncateTo(number: string, digits = 3) {
     );
     i += 1
   ) {
+    // eslint-disable-next-line  @typescript-eslint/no-unused-expressions
     isEntirelyZeroAfterDecimal && number.charCodeAt(i) === 48;
     ret += number.charAt(i);
   }
