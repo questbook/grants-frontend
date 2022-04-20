@@ -91,7 +91,7 @@ function ManageDAO() {
         ) : selected === 1 ? (
           <Members workspaceMembers={workspaceData?.members} />
         ) : selected === 2 && (
-          <Payouts workspaceMembers={workspaceData?.members} />
+          <Payouts />
         )}
       </Flex>
       <Flex w="auto" />
