@@ -69,7 +69,7 @@ function ReviewDrawer({
     if (!workspace) return;
     if (!initialReviewers) return;
     const newIsReviewer: { [key: string]: boolean } = {};
-    workspace.members.forEach((member: any) => {
+    workspace.members.filter((member) => member.publicKey ?? false).forEach((member: any) => {
       console.log(member);
       console.log(initialReviewers);
       // eslint-disable-next-line max-len
@@ -162,6 +162,7 @@ function ReviewDrawer({
           <Flex direction="column" overflowY="scroll" maxH="40%" mt={6}>
 
             {workspace?.members
+              .filter((member) => member.publicKey ?? false)
               .filter(
                 (member) => emailSearchText === ''
                     || (member.email && member.email.startsWith(emailSearchText)),
