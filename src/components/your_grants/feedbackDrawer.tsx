@@ -21,6 +21,7 @@ function FeedbackDrawer({
   chainId,
   workspaceId,
   applicationId,
+  isPrivate,
 }: {
   feedbackDrawerOpen: boolean;
   setFeedbackDrawerOpen: (feedbackDrawerOpen: boolean) => void;
@@ -32,6 +33,7 @@ function FeedbackDrawer({
   workspaceId: string;
   rubrics: any[];
   applicationId: string;
+  isPrivate: boolean;
 }) {
   const [editedFeedbackData, setEditedFeedbackData] = React.useState<any>();
   const [feedbackData, setFeedbackData] = React.useState<any[]>();
@@ -67,7 +69,14 @@ function FeedbackDrawer({
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transactionLink,
     loading,
-  ] = useSubmitReview(editedFeedbackData, chainId, workspaceId, grantAddress, applicationId);
+  ] = useSubmitReview(
+    editedFeedbackData,
+    isPrivate,
+    chainId,
+    workspaceId,
+    grantAddress,
+    applicationId,
+  );
 
   useEffect(() => {
     if (data) {

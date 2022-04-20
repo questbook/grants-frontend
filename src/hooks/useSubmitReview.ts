@@ -16,6 +16,7 @@ import useApplicationReviewRegistryContract from './contracts/useApplicationRevi
 
 export default function useSubmitReview(
   data: any,
+  isPrivate: boolean,
   chainId?: SupportedChainId,
   workspaceId?: string,
   grantAddress?: string,
@@ -97,7 +98,7 @@ export default function useSubmitReview(
           data: { ipfsHash },
         } = await validatorApi.validateReviewSet({
           reviewer: accountData!.address,
-          publicReviewDataHash: dataHash,
+          publicReviewDataHash: isPrivate ? '' : dataHash,
           encryptedReview,
         });
 
