@@ -82,7 +82,16 @@ export default function useSubmitReview(
         const encryptedHash = (await uploadToIPFS(encryptedData)).hash;
         encryptedReview[accountData!.address!] = encryptedHash;
 
-        const dataHash = (await uploadToIPFS(data)).hash;
+        workspace?.members.filter(
+          (m) => (m.accessLevel === 'admin' || m.accessLevel === 'owner') && (m.publicKey && m.publicKey?.length > 0),
+        ).map((m) => ({ key: m.publicKey, address: m.actorId }))
+          .forEach(async ({ key, address }) => {
+            const encryptedAdminData = encryptMessage(JSON.stringify(data), key!);
+            const encryptedAdminHash = (await uploadToIPFS(encryptedAdminData)).hash;
+            encryptedReview[address] = encryptedAdminHash;
+          });
+
+        const dataHash = (await uploadToIPFS(JSON.stringify(data))).hash;
 
         const {
           data: { ipfsHash },
