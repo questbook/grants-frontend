@@ -11,7 +11,6 @@ import {
   CheckboxGroup,
   Checkbox,
   Link,
-  Switch,
 } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import React, { useContext, useEffect, useState } from 'react';
@@ -56,6 +55,7 @@ function ReviewDrawer({
       newIsReviewer[member.address] = initialReviewers.find((r: any) => r.address === member.address)
         !== undefined;
     });
+    console.log(newIsReviewer);
     setIsReviewer(newIsReviewer);
   }, [initialReviewers, workspace]);
 
@@ -196,7 +196,7 @@ function ReviewDrawer({
 
           <Box my="auto" />
 
-          <Flex mt={8} gap="2">
+          {/* <Flex mt={8} gap="2">
             <Flex direction="column" flex={1}>
               <Text
                 color="#122224"
@@ -209,11 +209,11 @@ function ReviewDrawer({
               <Flex mt={1}>
                 <Text color="#717A7C" fontSize="14px" lineHeight="20px">
                   Only DAO admins and reviewers can view
-                  {/* <Tooltip
+                  <Tooltip
                     icon="/ui_icons/tooltip_questionmark.svg"
                     label="Public key linked to your wallet will allow you to see the hidden data."
                     placement="bottom-start"
-                  /> */}
+                  />
                 </Text>
               </Flex>
             </Flex>
@@ -244,7 +244,7 @@ function ReviewDrawer({
               By assigning, you&apos;ll have to approve this transaction in your
               wallet.
             </Text>
-          </Flex>
+          </Flex> */}
 
           <Flex direction="row" mt={6}>
             <Button mt="auto" variant="primary" onClick={handleOnSubmit}>
