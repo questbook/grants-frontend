@@ -190,7 +190,7 @@ function YourGrantCard({
                 onEditClick={onEditClick}
                 isAdmin={isAdmin}
                 setRubricDrawerOpen={setRubricDrawerOpen}
-                initialRubricAvailable={initialRubrics.items.length > 0}
+                initialRubricAvailable={initialRubrics?.items.length > 0 ?? false}
               />
               {acceptingApplications && isAdmin && (
                 <Button
@@ -280,7 +280,7 @@ function YourGrantCard({
         chainId={chainId}
         grantAddress={grantID}
         workspaceId={workspaceId}
-        initialIsPrivate={initialRubrics.isPrivate}
+        initialIsPrivate={initialRubrics?.isPrivate ?? false}
       />
     </>
   );
