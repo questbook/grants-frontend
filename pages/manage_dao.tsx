@@ -18,6 +18,7 @@ function ManageDAO() {
   const router = useRouter();
   const tabs = ['Settings', 'Members', 'Payouts'];
   const [selected, setSelected] = useState(
+    // eslint-disable-next-line no-nested-ternary
     router.query.tab === 'members' ? 1 : router.query.tab === 'payouts' ? 2 : 0,
   );
   const [workspaceData, setWorkspaceData] = useState<Workspace>();
@@ -86,10 +87,13 @@ function ManageDAO() {
           ))}
         </Flex>
         <Divider variant="sidebar" mb={5} />
+        // eslint-disable-next-line no-nested-ternary
         {selected === 0 ? (
           <Settings workspaceData={workspaceData!} />
+          // eslint-disable-next-line no-nested-ternary
         ) : selected === 1 ? (
           <Members workspaceMembers={workspaceData?.members} />
+          // eslint-disable-next-line no-nested-ternary
         ) : selected === 2 && (
           <Payouts />
         )}
