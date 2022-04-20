@@ -4,18 +4,20 @@ import React from 'react';
 function Headers() {
   const tableHeaders = [
     'Applicant Address',
-    'Sent On',
     'Project Name',
-    'Funding Asked',
+    'Funding',
+    'Reviewers',
     'Status',
+    'Last update on',
     'Actions',
   ];
-  const tableHeadersflex = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
+  const tableHeadersflex = [0.231, 0.15, 0.20, 0.116, 0.22, 0.21, 0.116];
   const tableHeadersAlign = [
     'left',
     'left',
     'left',
     'left',
+    'center',
     'center',
     'center',
   ];

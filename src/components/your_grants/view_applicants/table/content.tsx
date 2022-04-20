@@ -28,7 +28,7 @@ function Content({
   onManageApplicationClick?: (data?: any) => void;
   data: any[];
 }) {
-  const tableHeadersflex = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
+  const tableHeadersflex = [0.231, 0.15, 0.20, 0.22, 0.21, 0.21, 0.116];
   const getStatus = (status: number): ReactElement => {
     if (status === TableFilters.submitted) return <PendingReview />;
     if (status === TableFilters.resubmit) return <ResubmissionRequested />;
@@ -37,6 +37,8 @@ function Content({
     return <GrantComplete />;
   };
 
+  console.log(data);
+  
   return (
     <Flex
       mt="10px"
@@ -79,16 +81,10 @@ function Content({
               color="#717A7C"
               variant="tableBody"
             >
-              {item.sent_on}
-            </Text>
-            <Text
-              textAlign="left"
-              flex={tableHeadersflex[2]}
-              variant="tableBody"
-              fontWeight="400"
-            >
               {item.project_name}
+
             </Text>
+
             <Flex
               flex={tableHeadersflex[3]}
               direction="row"
@@ -105,14 +101,37 @@ function Content({
                 fontWeight="700"
                 letterSpacing={0.5}
               >
+                0
+                {' '}
+                {' '}
+                /
                 {item.funding_asked.amount}
                 {' '}
                 {item.funding_asked.symbol}
               </Text>
             </Flex>
+            <Text
+              textAlign="left"
+              flex={tableHeadersflex[2]}
+              variant="tableBody"
+              fontWeight="400"
+            >
+              2
+            </Text>
+
             <Flex justifyContent="center" flex={tableHeadersflex[4]}>
               {getStatus(item.status)}
             </Flex>
+
+            <Text
+              textAlign="left"
+              flex={tableHeadersflex[2]}
+              variant="tableBody"
+              fontWeight="400"
+            >
+              {item.sent_on}
+            </Text>
+
             <Flex
               display="flex"
               flexDirection="column"
