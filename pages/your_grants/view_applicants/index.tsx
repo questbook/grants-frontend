@@ -33,6 +33,7 @@ function ViewApplicants() {
   const [acceptingApplications, setAcceptingApplications] = useState(true);
   const [shouldShowButton, setShouldShowButton] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = React.useState<boolean>(false);
 
   const [{ data: accountData }] = useAccount({
     fetchEns: false,
@@ -81,6 +82,24 @@ function ViewApplicants() {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspace, grantID]);
+
+  useEffect(() => {
+    if (
+      workspace
+      && workspace.members
+      && workspace.members.length > 0
+      && accountData
+      && accountData.address
+    ) {
+      const tempMember = workspace.members.find(
+        (m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
+      );
+      setIsAdmin(
+        tempMember?.accessLevel === 'admin'
+          || tempMember?.accessLevel === 'owner',
+      );
+    }
+  }, [accountData, workspace]);
 
   const { data, error, loading } = useGetApplicantsForAGrantQuery(queryParams);
   useEffect(() => {
@@ -215,11 +234,13 @@ function ViewApplicants() {
       >
         <Breadcrumbs path={['My Grants', 'View Applicants']} />
 
+        {isAdmin && (
         <Box pos="absolute" right="40px" top="48px">
           <Button variant="primary" onClick={() => setRubricDrawerOpen(true)}>
             Setup Evaluation Rubric
           </Button>
         </Box>
+        )}
 
         <RubricDrawer
           rubricDrawerOpen={rubricDrawerOpen}

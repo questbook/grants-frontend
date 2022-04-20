@@ -26,6 +26,7 @@ import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import FirstGrantEmptyState from 'src/components/your_grants/empty_states/first_grant';
 import LiveGrantEmptyState from 'src/components/your_grants/empty_states/live_grants';
 import ArchivedGrantEmptyState from 'src/components/your_grants/empty_states/archived_grant';
+import AllowAccessToPublicKeyModal from 'src/components/ui/accessToPublicKeyModal';
 import AddFunds from '../../src/components/funds/add_funds_modal';
 import Heading from '../../src/components/ui/heading';
 import YourGrantCard from '../../src/components/your_grants/yourGrantCard';
@@ -37,6 +38,11 @@ const PAGE_SIZE = 5;
 
 function YourGrants() {
   const router = useRouter();
+  const [pk, setPk] = useState<string>('*');
+  // useEffect(async () => {
+  //   const publicKey = await getPublicEncryptionKey();
+  // }, [getPublicEncryptionKey]);
+
   const [{ data: accountData }] = useAccount({
     fetchEns: false,
   });
@@ -138,6 +144,22 @@ function YourGrants() {
       setIsReviewer(tempMember?.accessLevel === 'reviewer');
     }
   }, [accountData, workspace]);
+
+  useEffect(() => {
+    console.log(pk);
+    if (!accountData?.address) return;
+    if (!workspace) return;
+    const k = workspace?.members?.find(
+      (m) => m.actorId.toLowerCase() === accountData!.address.toLowerCase(),
+    )?.publicKey?.toString();
+    console.log(k);
+    if (k && k.length > 0) {
+      setPk(k);
+    } else {
+      setPk('');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspace, accountData]);
 
   const {
     data: allGrantsCountData,
@@ -362,6 +384,13 @@ function YourGrants() {
           rewardAsset={grantRewardAsset}
         />
       )}
+
+      <AllowAccessToPublicKeyModal
+        hiddenModalOpen={pk.length === 0}
+        setHiddenModalOpen={() => {
+          window.location.reload();
+        }}
+      />
     </>
   );
 }
