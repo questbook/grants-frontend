@@ -186,12 +186,15 @@ function Payouts() {
                   leftIcon={
                     payMode !== -1 && (
                       <IconButton
+                        mr="1rem"
+                        ml="-1rem"
                         aria-label="Back"
                         variant="ghost"
                         _hover={{}}
                         _active={{}}
                         icon={<Image src="/ui_icons/black/chevron_left.svg" />}
                         onClick={() => setPayMode(-1)}
+                        _focus={{boxShadow: "none"}}
                       />
                     )
                   }
@@ -263,7 +266,7 @@ function Payouts() {
 
                   <PayoutModalContent
                     payMode={payMode}
-                    address={selectedData?.address}
+                    reviewerAddress={selectedData?.address}
                     reviews={selectedData?.outstanding}
                     onClose={payModal.onClose}
                   />

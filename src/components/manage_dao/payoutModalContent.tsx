@@ -20,13 +20,13 @@ import {
 
 // UTILS AND HOOKS
 import React, { useState, useEffect } from 'react';
-import { utils } from 'ethers';
+// import { utils } from 'ethers';
 import useChainId from 'src/hooks/utils/useChainId';
 import { useContract, useSigner } from 'wagmi';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { SupportedChainId } from 'src/constants/chains';
 import Loader from 'src/components/ui/loader';
-import usePayReviewers from '../../hooks/usePayReviewers';
+// import usePayReviewers from '../../hooks/usePayReviewers';
 
 // CONSTANTS AND ABIS
 import { trimAddress, formatAmount } from '../../utils/formattingUtils';
@@ -39,13 +39,13 @@ import Dropdown from '../ui/forms/dropdown';
 
 interface Props {
   payMode: number;
-  address: string | any;
+  reviewerAddress: string | any;
   reviews: number;
   onClose: () => void;
 }
 
 function PayoutModalContent({
-  payMode, address, reviews, onClose,
+  payMode, reviewerAddress, reviews, onClose,
 }: Props) {
   // WAGMI && ETH HOOKS
   const currentChain = useChainId() ?? SupportedChainId.RINKEBY;
@@ -55,30 +55,44 @@ function PayoutModalContent({
     CHAIN_INFO[currentChain].supportedCurrencies,
   )
     .map(
-      (chainAddress) => CHAIN_INFO[currentChain].supportedCurrencies[chainAddress],
+      (address) => CHAIN_INFO[currentChain].supportedCurrencies[address],
     )
     .map((currency) => ({ ...currency, id: currency.address }));
 
   // STATES TO FILL WITH FORM INPUTS
   const [reviewsToPay, setReviewsToPay] = useState<number>();
-  const [amountToPay, setAmountToPay] = useState<string>();
+  const [amountToPay, setAmountToPay] = useState<number>();
   const [totalAmount, setTotalAmount] = useState<any>(0);
   const [reviewCurrency, setReviewCurrency] = useState(
     supportedCurrencies[0].label,
   );
-  const [reviewCurrencyAddress, setReviewurrencyAddress] = useState(
+  const [reviewCurrencyAddress, setReviewcurrencyAddress] = useState(
     supportedCurrencies[0].address,
   );
 
   // STATES TO FILL WITH ETH HOOKS
   const [walletBalance, setWalletBalance] = React.useState(0);
-  const [rewardAssetDecimals, setRewardAssetDecimals] = React.useState(0);
+  const [loader, setLoader] = useState(false);
+  // const [rewardAssetDecimals, setRewardAssetDecimals] = React.useState(0);
 
-  const [payReviewerData, txnLink, loading] = usePayReviewers(
-    totalAmount,
-    address,
-    reviewCurrencyAddress,
-  );
+  // const [payReviewerData, txnLink, loading] = usePayReviewers(
+  //   totalAmount,
+  //   address,
+  //   reviewCurrencyAddress,
+  // );
+
+  // const toast = useToast();
+
+  const { hasCopied, onCopy } = useClipboard(reviewerAddress);
+
+  useEffect(() => {
+    if (amountToPay !== undefined && reviewsToPay !== undefined) {
+      const amount = (((amountToPay as any) * reviewsToPay) as any);
+
+      setTotalAmount(amount.toString());
+    }
+  }, [amountToPay, reviewsToPay]);
+
 
   const rewardAssetContract = useContract({
     addressOrName:
@@ -86,18 +100,6 @@ function PayoutModalContent({
     contractInterface: ERC20ABI,
     signerOrProvider: signerStates.data,
   });
-
-  // const toast = useToast();
-
-  const { hasCopied, onCopy } = useClipboard(address);
-
-  useEffect(() => {
-    if (amountToPay !== undefined && reviewsToPay !== undefined) {
-      const amount = (((amountToPay as any) * reviewsToPay) as any);
-
-      setTotalAmount(utils.parseEther(amount));
-    }
-  }, [amountToPay, reviewsToPay]);
 
   const getWalletBalance = async () => {
     const tempAddress = await signerStates.data?.getAddress();
@@ -108,7 +110,7 @@ function PayoutModalContent({
 
   useEffect(() => {
     getWalletBalance();
-  }, [reviewCurrencyAddress, signerStates, rewardAssetContract]);
+  }, [totalAmount])
 
   return (
     <ModalBody>
@@ -125,7 +127,7 @@ function PayoutModalContent({
               Address:
             </Heading>
             <Text fontSize="0.875rem">
-              {trimAddress(address, 8)}
+              {trimAddress(reviewerAddress, 8)}
               {' '}
               <IconButton
                 alignItems="center"
@@ -194,7 +196,9 @@ function PayoutModalContent({
               <NumberInput
                 mr="0.5rem"
                 placeholder="Enter Amount"
-                onChange={(value) => setAmountToPay(value)}
+                onChange={(value) => {
+                  setAmountToPay(parseInt(value))
+                }}
                 value={amountToPay}
                 min={0}
                 step={0.01}
@@ -213,7 +217,7 @@ function PayoutModalContent({
                 value={reviewCurrency}
                 onChange={(data: any) => {
                   setReviewCurrency(data.label);
-                  setReviewurrencyAddress(data.id);
+                  setReviewcurrencyAddress(data.id);
                 }}
               />
             </Flex>
@@ -242,9 +246,7 @@ function PayoutModalContent({
                   {' '}
                   <Text color="#AAAAAA" display="inline-block" fontWeight="bold">
                     {`${formatAmount(
-                      walletBalance.toString(),
-                      rewardAssetDecimals,
-                    )}`}
+                      walletBalance.toString())}`}
                     {' '}
                     {reviewCurrency}
                   </Text>
@@ -288,11 +290,12 @@ function PayoutModalContent({
                 reviewCurrencyAddress,
                 totalAmount,
                 reviewCurrency,
-                address,
+                reviewerAddress,
               );
+              setLoader(!loader);
             }}
           >
-            {loading ? <Loader /> : 'Make Payment'}
+            {loader ? <Loader /> : 'Make Payment'}
           </Button>
           <Button
             variant="reject"
