@@ -87,8 +87,8 @@ function ManageDAO() {
           ))}
         </Flex>
         <Divider variant="sidebar" mb={5} />
-        // eslint-disable-next-line no-nested-ternary
-        {selected === 0 ? (
+        {// eslint-disable-next-line no-nested-ternary
+          selected === 0 ? (
           <Settings workspaceData={workspaceData!} />
           // eslint-disable-next-line no-nested-ternary
         ) : selected === 1 ? (
