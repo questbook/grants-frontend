@@ -1,5 +1,6 @@
 import {
-  Flex, ModalBody, Text, Box, Image,
+  Button,
+  Flex, Image, Link, ModalBody, Text,
 } from '@chakra-ui/react';
 import React from 'react';
 import Modal from './modal';
@@ -21,76 +22,68 @@ function AllowAccessToPublicKeyModal({
       modalWidth={719}
     >
       <ModalBody px={10}>
-        <Flex direction="column">
-          <Flex mt="36px">
-            <Text fontWeight="bold" fontSize="18px">
-              How does this work?
-            </Text>
-          </Flex>
-          <Flex mt="28px" alignItems="center">
-            <Box
-              bg="#8850EA"
-              color="#fff"
-              h={10}
-              w={10}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              borderRadius="50%"
-              mr="19px"
-              flexShrink={[0]}
-            >
-              1
-            </Box>
-            <Text>
-              Once you give access to your public key, you will be able to view
-              the applicant personal info (email, and about team).
-            </Text>
-          </Flex>
-          <Flex alignItems="center" mt="35px">
-            <Box
-              bg="#8850EA"
-              color="#fff"
-              h={10}
-              w={10}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              borderRadius="50%"
-              mr="19px"
-              flexShrink={[0]}
-            >
-              2
-            </Box>
-            <Text>After clicking “Continue”  open your wallet and click ‘Provide’.</Text>
-          </Flex>
-          <Flex alignItems="center" mt="35px" mb="40px">
-            <Box
-              bg="#8850EA"
-              color="#fff"
-              h={10}
-              w={10}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              borderRadius="50%"
-              mr="19px"
-              flexShrink={[0]}
-            >
-              3
-            </Box>
-            <Text>Click “Confirm” to confirm the transaction.</Text>
-          </Flex>
-          <Text mt={8} variant="footer" fontSize="14px" fontWeight="medium" lineHeight="20px">
-            <Image
-              display="inline-block"
-              src="/ui_icons/info.svg"
-              alt="pro tip"
-              mb="-2px"
-            />
-            {' '}
-            By pressing Continue you&apos;ll have to approve this transaction in your wallet.
+        <Flex direction="column" align="center">
+          <Text
+            variant="heading"
+            fontFamily="Spartan"
+            letterSpacing={-1}
+            textAlign="center"
+          >
+            gm! 👋 Welcome to Questbook
           </Text>
+
+          <Text mt={4} variant="applicationText">
+            You’ve been invited to be a reviewer for Polygon DAO
+          </Text>
+
+          <Text mt={9} variant="applicationText" fontWeight="700">
+            Here’s what you can do next
+          </Text>
+
+          <Flex direction="column" align="flex-start" mt={5}>
+            {[
+              'Review grant applicants assigned to you.',
+              'Receive payouts for reviews.',
+            ].map((item, index) => (
+              <Flex justify="start" direction="row" mt={index === 0 ? 0 : 6}>
+                <Image
+                  h="28px"
+                  w="28px"
+                  src={`/ui_icons/reviewers_modal_icon_${index + 1}.svg`}
+                />
+                <Text ml={4} variant="applicationText">
+                  {item}
+                </Text>
+              </Flex>
+            ))}
+          </Flex>
+
+          <Text mt={9} variant="applicantText" textAlign="center">
+            To get started, you can share your public key which allows you to
+            view the personal information such as email, and about team shared
+            by applicants. This data is encrypted, and is only visible to you if
+            you share your public key.
+            {' '}
+            <Link
+              mx={1}
+              href="/"
+              isExternal
+              color="brand.500"
+              fontWeight="400"
+              fontSize="14px"
+            >
+              Learn more
+              <Image
+                ml={1}
+                display="inline-block"
+                h="10px"
+                w="10px"
+                src="/ui_icons/link.svg"
+              />
+            </Link>
+          </Text>
+
+          <Button my={10} variant="primary">Allow access to public key</Button>
         </Flex>
       </ModalBody>
     </Modal>
