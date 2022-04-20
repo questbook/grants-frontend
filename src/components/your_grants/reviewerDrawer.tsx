@@ -8,7 +8,6 @@ import {
   Button,
   IconButton,
   Image,
-  CheckboxGroup,
   Checkbox,
   Link,
 } from '@chakra-ui/react';
@@ -103,7 +102,6 @@ function ReviewDrawer({
   );
   // ] = useSetReviews(editedReviewData, chainId, workspaceId, grantAddress);
 
-  const [hideApplicantReviews, setHideApplicantReviews] = useState(false);
   const [emailSearchText, setEmailSearchText] = useState('');
 
   useEffect(() => {

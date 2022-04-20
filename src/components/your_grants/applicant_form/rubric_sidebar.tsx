@@ -3,6 +3,7 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import StarRatings from 'react-star-ratings';
+import Loader from 'src/components/ui/loader';
 import useEncryption from 'src/hooks/utils/useEncryption';
 import { getFromIPFS } from 'src/utils/ipfsUtils';
 import { useAccount } from 'wagmi';
@@ -22,6 +23,7 @@ function RubricSidebar({
   const [loading, setLoading] = React.useState(false);
   const [detailedReviews, setDetailedReviews] = React.useState<any[]>([]);
   const [aggregatedResults, setAggregatedResults] = React.useState<any>();
+  const [isDecrypted, setIsDecrypted] = React.useState(false);
 
   const [forPercentage, setForPercentage] = React.useState<number>(0);
   const [againstPercentage, setAgainstPercentage] = React.useState<number>(0);
@@ -62,8 +64,10 @@ function RubricSidebar({
     // eslint-disable-next-line @typescript-eslint/no-shadow
     const againstPercentage = 100 - forPercentage;
 
-    setForPercentage(forPercentage);
-    setAgainstPercentage(againstPercentage);
+    if (publicData.length > 0) {
+      setForPercentage(forPercentage);
+      setAgainstPercentage(againstPercentage);
+    }
 
     console.log(results);
     setAggregatedResults(results);
@@ -115,19 +119,20 @@ function RubricSidebar({
     // eslint-disable-next-line @typescript-eslint/no-shadow
     const againstPercentage = 100 - forPercentage;
 
-    setForPercentage(forPercentage);
-    setAgainstPercentage(againstPercentage);
+    if (privateDecryptedData.length > 0) {
+      setForPercentage(forPercentage);
+      setAgainstPercentage(againstPercentage);
+    }
 
     console.log(results);
     setAggregatedResults(results);
     setLoading(false);
+    setIsDecrypted(true);
   };
 
   useEffect(() => {
     if (!rubric) return;
-    if (rubric.isPrivate) {
-      getEncrpytedData();
-    } else {
+    if (!rubric.isPrivate) {
       decodeReviews();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -148,6 +153,55 @@ function RubricSidebar({
     },
   ];
 
+  if (loading) {
+    return (
+      <Flex
+        bg="white"
+        border="2px solid #D0D3D3"
+        borderRadius={8}
+        w={340}
+        direction="column"
+        alignItems="stretch"
+        px="28px"
+        py="22px"
+      >
+        <Flex direction="row" justify="space-between">
+          <Text variant="tableHeader" color="#122224">
+            Application Review
+          </Text>
+        </Flex>
+
+        <Loader />
+      </Flex>
+    );
+  }
+
+  if (rubric.isPrivate && !isDecrypted) {
+    return (
+      <Flex
+        bg="white"
+        border="2px solid #D0D3D3"
+        borderRadius={8}
+        w={340}
+        direction="column"
+        alignItems="stretch"
+        px="28px"
+        py="22px"
+      >
+        <Flex direction="row" justify="space-between">
+          <Text variant="tableHeader" color="#122224">
+            Application Review
+          </Text>
+        </Flex>
+
+        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+        <Link onClick={() => getEncrpytedData()} mt={5} fontSize="14px" lineHeight="24px" fontWeight="500">
+          Decrypt reviews to see the results
+        </Link>
+      </Flex>
+    );
+  }
+
   return (
     <Flex
       bg="white"
@@ -163,9 +217,6 @@ function RubricSidebar({
         <Text variant="tableHeader" color="#122224">
           Application Review
         </Text>
-        <Link href="/" fontSize="12px" lineHeight="24px" fontWeight="500">
-          Edit
-        </Link>
       </Flex>
       <Text mt={3} variant="applicationText">
         {total - detailedReviews.length}
@@ -175,55 +226,60 @@ function RubricSidebar({
 
       <Box mt={2} />
 
-      <Flex direction="column" mt={8}>
+      {
+        forPercentage === 0 && againstPercentage === 0 ? null : (
+          <Flex direction="column" mt={8}>
 
-        {motion.map((motionItem, index) => (
-          <Flex
-            w="100%"
-            justify="space-between"
-            position="relative"
-            align="center"
-            mt={index === 0 ? 0 : '44px'}
-          >
-            <Flex
-              w={`${motionItem.percentage}%`}
-              bg={motionItem.color}
-              borderRadius="4px"
-              h="32px"
-              position="absolute"
-              left={0}
-            />
-
-            <Flex direction="row" align="center" pos="absolute">
-              <Image w="12px" h="12px" src={motionItem.icon} mx={3} />
-              <Text
-                fontSize="14px"
-                lineHeight="24px"
-                fontWeight="500"
-                color="#FFFFFF"
+            {motion.map((motionItem, index) => (
+              <Flex
+                w="100%"
+                justify="space-between"
+                position="relative"
+                align="center"
+                mt={index === 0 ? 0 : '44px'}
               >
-                {motionItem.label}
-              </Text>
-            </Flex>
-            <Text
-              position="absolute"
-              right={0}
-              fontSize="18px"
-              lineHeight="24px"
-              fontWeight="700"
-              color="#414E50"
-            >
-              {motionItem.percentage}
-              %
-            </Text>
+                <Flex
+                  w={`${motionItem.percentage}%`}
+                  bg={motionItem.color}
+                  borderRadius="4px"
+                  h="32px"
+                  position="absolute"
+                  left={0}
+                />
+
+                <Flex direction="row" align="center" pos="absolute">
+                  <Image w="12px" h="12px" src={motionItem.icon} mx={3} />
+                  <Text
+                    fontSize="14px"
+                    lineHeight="24px"
+                    fontWeight="500"
+                    color="#FFFFFF"
+                  >
+                    {motionItem.label}
+                  </Text>
+                </Flex>
+                <Text
+                  position="absolute"
+                  right={0}
+                  fontSize="18px"
+                  lineHeight="24px"
+                  fontWeight="700"
+                  color="#414E50"
+                >
+                  {motionItem.percentage}
+                  %
+                </Text>
+              </Flex>
+            ))}
           </Flex>
-        ))}
-      </Flex>
+        )
+      }
 
-      <Text mt={14} variant="tableHeader" color="#122224">
-        Evaluation Rubric
-      </Text>
-
+      {aggregatedResults && Object.values(aggregatedResults).length > 0 ? (
+        <Text mt={14} variant="tableHeader" color="#122224">
+          Evaluation Rubric
+        </Text>
+      ) : null}
       <Flex direction="column" mt={4}>
         {aggregatedResults && Object.values(aggregatedResults)
           .map((r: any, i: number) => (
@@ -248,9 +304,11 @@ function RubricSidebar({
           ))}
       </Flex>
 
-      <Link mt={5} href="/" fontSize="14px" lineHeight="24px" fontWeight="500">
-        See detailed feedback
-      </Link>
+      {aggregatedResults && Object.values(aggregatedResults).length > 0 ? (
+        <Link mt={5} href="/" fontSize="14px" lineHeight="24px" fontWeight="500">
+          See detailed feedback
+        </Link>
+      ) : null}
     </Flex>
   );
 }
