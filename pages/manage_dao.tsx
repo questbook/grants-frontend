@@ -89,14 +89,15 @@ function ManageDAO() {
         <Divider variant="sidebar" mb={5} />
         {// eslint-disable-next-line no-nested-ternary
           selected === 0 ? (
-          <Settings workspaceData={workspaceData!} />
+            <Settings workspaceData={workspaceData!} />
           // eslint-disable-next-line no-nested-ternary
-        ) : selected === 1 ? (
-          <Members workspaceMembers={workspaceData?.members} />
+          ) : selected === 1 ? (
+            <Members workspaceMembers={workspaceData?.members} />
           // eslint-disable-next-line no-nested-ternary
-        ) : selected === 2 && (
+          ) : selected === 2 && (
           <Payouts />
-        )}
+          )
+}
       </Flex>
       <Flex w="auto" />
     </Flex>
