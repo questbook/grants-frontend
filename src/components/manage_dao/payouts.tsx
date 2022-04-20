@@ -59,17 +59,16 @@ function Payouts({ workspaceMembers }: Props) {
     },
   ];
 
-  useEffect(() => {
-    // if (!payoutTablePlaceholders) return;
-    const tempTableData = payoutTablePlaceholders.map((payoutData: any) => ({
-      address: payoutData.address,
-      date: payoutData.date,
-      outstanding: payoutData.outstanding,
-    }));
+  const tempTableData = payoutTablePlaceholders.map((payoutData: any) => ({
+    address: payoutData.address,
+    date: payoutData.date,
+    outstanding: payoutData.outstanding,
+  }));
 
-    setTableData(tempTableData);
-
-  }, [workspaceMembers]);
+  // useEffect(() => {
+  //   // if (!payoutTablePlaceholders) return;
+  //   setTableData(tempTableData);
+  // }, [workspaceMembers]);
 
   return (
     <Flex direction="column" align="start" w="100%">
@@ -104,8 +103,8 @@ function Payouts({ workspaceMembers }: Props) {
           border="1px solid #D0D3D3"
           borderRadius={4}
         >
-          {tableData &&
-            tableData.map((data: any, index: number) => (
+          {tempTableData
+            && tempTableData.map((data: any, index: number) => (
               <>
                 <Flex
                   direction="row"
@@ -149,7 +148,7 @@ function Payouts({ workspaceMembers }: Props) {
                       height="2rem"
                       onClick={() => {
                         payModal.onOpen();
-                        setPayMode(2)
+                        setPayMode(2);
                         setSelectedData(data);
                       }}
                     >
@@ -165,7 +164,7 @@ function Payouts({ workspaceMembers }: Props) {
                       px={3}
                       onClick={() => {
                         payModal.onOpen();
-                        setPayMode(-1)
+                        setPayMode(-1);
                         setSelectedData(data);
                       }}
                     >
@@ -181,8 +180,8 @@ function Payouts({ workspaceMembers }: Props) {
                     payMode === -1
                       ? 'Pay From'
                       : payMode === 0 || payMode === 1
-                      ? 'Pay Reviewer'
-                      : payMode === 2 && 'Fill Payment Details'
+                        ? 'Pay Reviewer'
+                        : payMode === 2 && 'Fill Payment Details'
                   }`}
                   leftIcon={
                     payMode !== -1 && (
@@ -222,13 +221,14 @@ function Payouts({ workspaceMembers }: Props) {
                           <Button
                             _active={{}}
                             onClick={() => {
-                              setPayMode(index)
+                              setPayMode(index);
                             }}
                             variant="link"
                             my={4}
                           >
                             <Text variant="tableBody" color="#8850EA">
-                              {option}{' '}
+                              {option}
+                              {' '}
                             </Text>
                           </Button>
                           <Image
@@ -249,7 +249,7 @@ function Payouts({ workspaceMembers }: Props) {
                             <Image src="/ui_icons/brand/chevron_right.svg" />
                           }
                           onClick={() => {
-                            setPayMode(index)
+                            setPayMode(index);
                           }}
                         />
                       </Flex>

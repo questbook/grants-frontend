@@ -17,13 +17,13 @@ import {
   Heading,
   useClipboard,
 } from '@chakra-ui/react';
-import { useState, useEffect } from 'react';
-import { trimAddress } from '../../utils/formattingUtils';
+import React, { useState, useEffect } from 'react';
 import useChainId from 'src/hooks/utils/useChainId';
 
-import Dropdown from '../ui/forms/dropdown';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { SupportedChainId } from 'src/constants/chains';
+import Dropdown from '../ui/forms/dropdown';
+import { trimAddress } from '../../utils/formattingUtils';
 
 // import InfoToast from '../ui/infoToast';
 // import Loader from 'src/components/ui/loader';
@@ -35,24 +35,26 @@ interface Props {
   onClose: () => void;
 }
 
-function PayoutModalContent({ payMode, address, reviews, onClose }: Props) {
+function PayoutModalContent({
+  payMode, address, reviews, onClose,
+}: Props) {
   const currentChain = useChainId() ?? SupportedChainId.RINKEBY;
 
   const [reviewsToPay, setReviewsToPay] = useState<number>();
-  const [amountToPay, setAmountToPay] = useState<number>();
+  const [amountToPay, setAmountToPay] = useState<string>();
   const [totalAmount, setTotalAmount] = useState<number>(0);
 
   const supportedCurrencies = Object.keys(
-    CHAIN_INFO[currentChain].supportedCurrencies
+    CHAIN_INFO[currentChain].supportedCurrencies,
   )
-    .map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
+    .map((chainAddress) => CHAIN_INFO[currentChain].supportedCurrencies[chainAddress])
     .map((currency) => ({ ...currency, id: currency.address }));
 
   const [reviewCurrency, setReviewCurrency] = useState(
-    supportedCurrencies[0].label
+    supportedCurrencies[0].label,
   );
-  const [rewardCurrencyAddress, setRewardCurrencyAddress] = useState(
-    supportedCurrencies[0].address
+  const [reviewCurrencyAddress, setReviewurrencyAddress] = useState(
+    supportedCurrencies[0].address,
   );
 
   // const toast = useToast();
@@ -64,10 +66,10 @@ function PayoutModalContent({ payMode, address, reviews, onClose }: Props) {
   };
 
   useEffect(() => {
-    if (amountToPay != undefined && reviewsToPay != undefined) {
+    if (amountToPay !== undefined && reviewsToPay !== undefined) {
       setTotalAmount(((amountToPay as any) * reviewsToPay) as any);
     }
-  }, [amountToPay]);
+  }, [amountToPay, reviewsToPay]);
 
   return (
     <ModalBody>
@@ -84,7 +86,8 @@ function PayoutModalContent({ payMode, address, reviews, onClose }: Props) {
               Address:
             </Heading>
             <Text fontSize="0.875rem">
-              {trimAddress(address, 8)}{' '}
+              {trimAddress(address, 8)}
+              {' '}
               <IconButton
                 alignItems="center"
                 justifyItems="center"
@@ -93,7 +96,7 @@ function PayoutModalContent({ payMode, address, reviews, onClose }: Props) {
                 variant="ghost"
                 _hover={{}}
                 _active={{}}
-                icon={
+                icon={(
                   <Image
                     src={
                       !hasCopied
@@ -101,7 +104,7 @@ function PayoutModalContent({ payMode, address, reviews, onClose }: Props) {
                         : '/ui_icons/copy/active.svg'
                     }
                   />
-                }
+                )}
                 onClick={() => onCopy()}
               />
             </Text>
@@ -140,8 +143,8 @@ function PayoutModalContent({ payMode, address, reviews, onClose }: Props) {
             <Text fontSize="0.75rem">
               {(reviewsToPay as any) > reviews
                 ? `You can not pay more than ${reviews} reviews`
-                : (reviewsToPay as any) < 1 &&
-                  'You need to pay at least 1 review'}
+                : (reviewsToPay as any) < 1
+                  && 'You need to pay at least 1 review'}
             </Text>
           </Flex>
           <Flex direction="row">
@@ -152,11 +155,10 @@ function PayoutModalContent({ payMode, address, reviews, onClose }: Props) {
               <NumberInput
                 mr="0.5rem"
                 placeholder="Enter Amount"
-                onChange={(value) => setAmountToPay(parseInt(value))}
+                onChange={(value) => setAmountToPay(value)}
                 value={amountToPay}
-                precision={2}
-                min={0.01}
-                step={0.1}
+                min={0}
+                step={0.01}
               >
                 <NumberInputField h={12} minW="full" />
                 <NumberInputStepper>
@@ -171,15 +173,14 @@ function PayoutModalContent({ payMode, address, reviews, onClose }: Props) {
                 listItems={supportedCurrencies}
                 value={reviewCurrency}
                 onChange={(data: any) => {
-                  console.log(data);
                   setReviewCurrency(data.label);
-                  setRewardCurrencyAddress(data.id);
+                  setReviewurrencyAddress(data.id);
                 }}
               />
             </Flex>
           </Flex>
           <Flex>
-            {totalAmount != 0 ? (
+            {totalAmount !== 0 ? (
               <InputGroup>
                 <Input isReadOnly value="Total Amount" pr="4.5rem" h={12} />
                 <InputRightElement zIndex="0" p={5} mt="0.25rem" width="fit-content">
@@ -189,7 +190,9 @@ function PayoutModalContent({ payMode, address, reviews, onClose }: Props) {
                     color="black"
                     size="sm"
                   >
-                    {totalAmount} {reviewCurrency}
+                    {totalAmount}
+                    {' '}
+                    {reviewCurrency}
                   </Text>
                 </InputRightElement>
               </InputGroup>
@@ -203,15 +206,18 @@ function PayoutModalContent({ payMode, address, reviews, onClose }: Props) {
               w="10px"
               alt="wallet_info"
               src="/ui_icons/info_brand.svg"
-            />{' '}
+            />
+            {' '}
             By pressing Make Payment you will have to approve the transaction in
-            your wallet.{' '}
+            your wallet.
+            {' '}
             <Link
               href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
               isExternal
             >
               Learn more
-            </Link>{' '}
+            </Link>
+            {' '}
             <Image
               display="inline-block"
               h="10px"
@@ -220,13 +226,13 @@ function PayoutModalContent({ payMode, address, reviews, onClose }: Props) {
             />
           </Text>
 
-          <Button variant="primary" my={8} onClick={() => onClose()}>
+          <Button variant="primary" my={8} onClick={() => console.log(reviewCurrencyAddress, totalAmount, reviewCurrency)}>
             Make Payment
           </Button>
         </Flex>
       )}
 
-      {/*payMode === 1 && (
+      {/* payMode === 1 && (
         <Flex direction="column" gap="0.5rem">
           <Flex w="100%" mt={7} direction="row" justify="space-between" align="center">
             <Heading fontSize="0.875rem" textAlign="left">
@@ -283,7 +289,7 @@ function PayoutModalContent({ payMode, address, reviews, onClose }: Props) {
             Make Payment
           </Button>
         </Flex>
-      )*/}
+      ) */}
     </ModalBody>
   );
 }

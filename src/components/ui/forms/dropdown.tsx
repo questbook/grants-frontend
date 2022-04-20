@@ -68,7 +68,7 @@ function Dropdown({
             if (!onChange) return;
             setIsOpen(!isOpen);
           }}
-          _focus={{boxShadow: "none"}}
+          _focus={{ boxShadow: 'none' }}
         >
           <Container
             alignItems="center"

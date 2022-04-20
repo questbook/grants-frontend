@@ -88,8 +88,7 @@ function nFormatter(value: string, digits = 3) {
     : '0';
 }
 
-export const trimAddress = (address: string, digitQuantity: number) =>
-  address.slice(0, digitQuantity) + "..." + address.slice(-4);
+export const trimAddress = (address: string, digitQuantity: number) => `${address.slice(0, digitQuantity)}...${address.slice(-4)}`;
 
 function truncateTo(number: string, digits = 3) {
   const decimalIndex = number.indexOf('.');
@@ -97,7 +96,7 @@ function truncateTo(number: string, digits = 3) {
   let ret = number.substring(0, decimalIndex + 1);
   const lastSymbol = number.charCodeAt(number.length - 1);
   const containsSymbol = !(lastSymbol >= 48 && lastSymbol <= 57);
-  let isEntirelyZeroAfterDecimal = true;
+  const isEntirelyZeroAfterDecimal = true;
   for (
     let i = decimalIndex + 1;
     i
