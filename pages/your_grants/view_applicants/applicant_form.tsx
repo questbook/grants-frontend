@@ -435,18 +435,21 @@ function ApplicantForm() {
                 pos="sticky"
                 top="36px"
               >
-                {isAdmin
-                  ? (
-                    <Sidebar
-                      showHiddenData={showHiddenData}
-                      applicationData={applicationData}
-                      onAcceptApplicationClick={() => setStep(1)}
-                      onRejectApplicationClick={() => setStep(2)}
-                      onResubmitApplicationClick={() => setStep(3)}
-                    />
+                {
+                  applicationData
+                    ?.reviewers.find((reviewer) => reviewer.id.split('.')[1] === accountData?.address.toLowerCase()) !== undefined && (
+                      <ReviewerSidebar
+                        showHiddenData={showHiddenData}
+                        applicationData={applicationData}
+                        onAcceptApplicationClick={() => setStep(1)}
+                        onRejectApplicationClick={() => setStep(2)}
+                        onResubmitApplicationClick={() => setStep(3)}
+                      />
                   )
-                  : (
-                    <ReviewerSidebar
+                }
+                {isAdmin
+                  && (
+                    <Sidebar
                       showHiddenData={showHiddenData}
                       applicationData={applicationData}
                       onAcceptApplicationClick={() => setStep(1)}

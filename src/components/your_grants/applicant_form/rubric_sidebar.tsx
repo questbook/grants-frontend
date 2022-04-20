@@ -1,17 +1,137 @@
 import {
   Flex, Text, Link, Image, Box,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
+import StarRatings from 'react-star-ratings';
+import useEncryption from 'src/hooks/utils/useEncryption';
+import { getFromIPFS } from 'src/utils/ipfsUtils';
+import { useAccount } from 'wagmi';
 
 interface RubricSidebarProps {
   total: number;
-  forCount: number;
-  againstCount: number;
+  rubric: any;
+  reviews: any[]
 }
 
-function RubricSidebar({ total, forCount, againstCount }: RubricSidebarProps) {
-  const forPercentage = Math.ceil((forCount / total) * 100);
-  const againstPercentage = 100 - forPercentage;
+function RubricSidebar({
+  total,
+  rubric,
+  reviews,
+}: RubricSidebarProps) {
+  const { decryptMessage } = useEncryption();
+  const [loading, setLoading] = React.useState(false);
+  const [detailedReviews, setDetailedReviews] = React.useState<any[]>([]);
+  const [aggregatedResults, setAggregatedResults] = React.useState<any>();
+
+  const [forPercentage, setForPercentage] = React.useState<number>(0);
+  const [againstPercentage, setAgainstPercentage] = React.useState<number>(0);
+
+  const [{ data: accountData }] = useAccount();
+
+  const decodeReviews = async () => {
+    setLoading(true);
+    const publicDataPromises = reviews?.map(async (review) => {
+      const reviewData = getFromIPFS(review.publicReviewDataHash);
+      return reviewData;
+    });
+    if (!publicDataPromises) return;
+    const publicData = (await Promise.all(publicDataPromises)).map((data) => JSON.parse(data));
+    setDetailedReviews(publicData);
+
+    const results = [] as any;
+    rubric.items.forEach((item: any) => {
+      results[item.id] = {
+        title: item.title,
+        maximumPoints: item.maximumPoints,
+        rating: 0,
+      };
+    });
+
+    let forCount = 0;
+    publicData.forEach((review: any) => {
+      if (review.isApproved) {
+        forCount += 1;
+      }
+      review.items.forEach((item: any) => {
+        results[item.rubric.id].rating += item.rating;
+      });
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const forPercentage = Math.ceil((forCount / publicData.length) * 100);
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const againstPercentage = 100 - forPercentage;
+
+    setForPercentage(forPercentage);
+    setAgainstPercentage(againstPercentage);
+
+    console.log(results);
+    setAggregatedResults(results);
+    setLoading(false);
+  };
+
+  const getEncrpytedData = async () => {
+    const privateDataPromises = reviews?.map((review) => {
+      const decryptableData = review.data.filter((data: any) => data.id.split('.')[1].toLowerCase() === accountData?.address.toLowerCase());
+      return decryptableData.length > 0 ? decryptableData[0] : undefined;
+    }).flat().filter((review) => review !== undefined).map(async (review) => {
+      const reviewData = getFromIPFS(review.data);
+      return reviewData;
+    });
+    if (!privateDataPromises) return;
+
+    console.log(privateDataPromises);
+    // const privateData = await Promise.all((await Promise.all(privateDataPromises))
+    //   .map(async (data) => JSON.parse(await decryptMessage(data) ?? '{}')));
+
+    const privateData = await Promise.all(privateDataPromises);
+    console.log(privateData);
+    const privateDecryptedData = await Promise.all(privateData.map(async (data) => JSON.parse(await decryptMessage(data) ?? '{}')));
+
+    console.log(privateDecryptedData);
+    setDetailedReviews(privateDecryptedData);
+
+    const results = [] as any;
+    rubric.items.forEach((item: any) => {
+      results[item.id] = {
+        title: item.title,
+        maximumPoints: item.maximumPoints,
+        rating: 0,
+      };
+    });
+
+    let forCount = 0;
+    privateDecryptedData.forEach((review: any) => {
+      if (review.isApproved) {
+        forCount += 1;
+      }
+      review.items.forEach((item: any) => {
+        results[item.rubric.id].rating += item.rating;
+      });
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const forPercentage = Math.ceil((forCount / privateDecryptedData.length) * 100);
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const againstPercentage = 100 - forPercentage;
+
+    setForPercentage(forPercentage);
+    setAgainstPercentage(againstPercentage);
+
+    console.log(results);
+    setAggregatedResults(results);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (!rubric) return;
+    if (rubric.isPrivate) {
+      getEncrpytedData();
+    } else {
+      decodeReviews();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reviews, rubric]);
 
   const motion = [
     {
@@ -48,7 +168,7 @@ function RubricSidebar({ total, forCount, againstCount }: RubricSidebarProps) {
         </Link>
       </Flex>
       <Text mt={3} variant="applicationText">
-        {total - (forCount + againstCount)}
+        {total - detailedReviews.length}
         {' '}
         waiting
       </Text>
@@ -105,33 +225,27 @@ function RubricSidebar({ total, forCount, againstCount }: RubricSidebarProps) {
       </Text>
 
       <Flex direction="column" mt={4}>
-        {Array.from(
-          { length: Math.ceil(1 + Math.random() * (10 - 1)) },
-          (_, i) => (
-            <Flex direction="row" mt={i === 0 ? 0 : 5}>
+        {aggregatedResults && Object.values(aggregatedResults)
+          .map((r: any, i: number) => (
+            <Flex direction="row" mt={i === 0 ? 0 : 5} alignItems="center">
               <Text
                 fontSize="16px"
                 lineHeight="16px"
                 fontWeight="400"
                 color="#122224"
               >
-                Vision
+                {r.title}
               </Text>
               <Box mx="auto" />
-              {Array.from(
-                { length: Math.ceil(1 + Math.random() * (5 - 1)) },
-                (__, ii) => (
-                  <Image
-                    ml={ii === 0 ? 0 : 2}
-                    src="/ui_icons/rubric_star.svg"
-                    h="13px"
-                    w="13px"
-                  />
-                ),
-              )}
+              <StarRatings
+                rating={r.rating}
+                starRatedColor="#88BDEE"
+                starDimension="16px"
+                starSpacing="2px"
+                numberOfStars={r.maximumPoints}
+              />
             </Flex>
-          ),
-        )}
+          ))}
       </Flex>
 
       <Link mt={5} href="/" fontSize="14px" lineHeight="24px" fontWeight="500">

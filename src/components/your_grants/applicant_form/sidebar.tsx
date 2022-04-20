@@ -23,6 +23,7 @@ import {
 import { getAssetInfo } from '../../../utils/tokenUtils';
 import MailTo from '../mail_to/mailTo';
 import ReviewDrawer from '../reviewerDrawer';
+import RubricSidebar from './rubric_sidebar';
 
 function Sidebar({
   showHiddenData,
@@ -227,6 +228,18 @@ function Sidebar({
           Reject Application
         </Button>
       </Flex>
+
+      <Box mt={8} />
+
+      <RubricSidebar
+        total={applicationData
+          ?.reviewers.length ?? 0}
+        reviews={applicationData?.reviews}
+        rubric={applicationData?.grant.rubric}
+      />
+
+      <Box mt={8} />
+
       <Flex
         bg="white"
         border="2px solid #D0D3D3"
@@ -236,7 +249,6 @@ function Sidebar({
         alignItems="stretch"
         px="28px"
         py="22px"
-        mt={8}
       >
         <Flex direction="column">
           <Text fontWeight="700">Application Reviewers</Text>
@@ -301,7 +313,6 @@ function Sidebar({
         px="28px"
         py="22px"
         mt={8}
-        mb={8}
       >
         <Flex direction="column">
           <Text mb="14px" fontWeight="700">Evaluation Rubric</Text>
@@ -319,6 +330,8 @@ function Sidebar({
             ))}
         </Flex>
       </Flex>
+
+      <Box mb={8} />
     </>
   );
 }
