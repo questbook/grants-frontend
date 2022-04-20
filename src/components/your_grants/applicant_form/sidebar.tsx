@@ -269,8 +269,9 @@ function Sidebar({
         chainId={chainId}
         workspaceId={applicationData?.grant.workspace.id}
         initialReviewers={applicationData?.reviewers}
-        initialIsPrivate={applicationData?.grant.rubric.isPrivate}
+        // initialIsPrivate={applicationData?.grant.rubric.isPrivate}
         applicationId={applicationData?.id}
+        onClose={() => setReviewDrawerOpen(false)}
       />
 
       <Flex
@@ -287,7 +288,7 @@ function Sidebar({
       >
         <Flex direction="column">
           <Text mb="14px" fontWeight="700">Evaluation Rubric</Text>
-          {applicationData
+          {applicationData?.grant?.rubric && applicationData
             ?.grant
             ?.rubric
             .items.map((r: any) => ({
