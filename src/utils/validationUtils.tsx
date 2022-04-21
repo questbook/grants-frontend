@@ -15,16 +15,19 @@ const isValidEmail = (email: string) => {
 const getSupportedChainIdFromSupportedNetwork = (chainId: SupportedNetwork) => {
   if (chainId === SupportedNetwork.Chain_4) {
     return SupportedChainId.RINKEBY;
-  } if (chainId === SupportedNetwork.Chain_80001) {
-    return SupportedChainId.POLYGON_TESTNET;
-  } if (chainId === SupportedNetwork.Chain_137) {
-    return SupportedChainId.POLYGON_MAINNET;
   }
-  // @TODO: needs type for harmony
-  // if (chainId === SupportedNetwork.Chain_80001) {
-  //   return SupportedChainId.HARMONY_TESTNET_S0;
+  return SupportedChainId.RINKEBY;
+  // commenting
+  // } if (chainId === SupportedNetwork.Chain_80001) {
+  //   return SupportedChainId.POLYGON_TESTNET;
+  // } if (chainId === SupportedNetwork.Chain_137) {
+  //   return SupportedChainId.POLYGON_MAINNET;
   // }
-  return SupportedChainId.HARMONY_TESTNET_S0;
+  // // @TODO: needs type for harmony
+  // // if (chainId === SupportedNetwork.Chain_80001) {
+  // //   return SupportedChainId.HARMONY_TESTNET_S0;
+  // // }
+  // return SupportedChainId.HARMONY_TESTNET_S0;
   // cannot return undefined ?
   // return undefined;
 };
