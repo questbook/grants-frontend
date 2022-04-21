@@ -151,6 +151,19 @@
     "type": "event"
   },
   {
+    "inputs": [],
+    "name": "applicationReviewReg",
+    "outputs": [
+      {
+        "internalType": "contract IApplicationReviewRegistry",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint96",
@@ -160,6 +173,11 @@
       {
         "internalType": "string",
         "name": "_metadataHash",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_rubricsMetadataHash",
         "type": "string"
       },
       {
@@ -253,6 +271,19 @@
   {
     "inputs": [],
     "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract IApplicationReviewRegistry",
+        "name": "_applicationReviewReg",
+        "type": "address"
+      }
+    ],
+    "name": "setApplicationReviewReg",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
