@@ -47,6 +47,8 @@ const getSupportedValidatorNetworkFromChainId = (chainId: SupportedChainId) => {
     return SupportedValidatorNetwork._80001;
   } if (chainId === SupportedChainId.POLYGON_MAINNET) {
     return SupportedValidatorNetwork._137;
+  } if (chainId === SupportedChainId.OPTIMISM_MAINNET) {
+    return SupportedValidatorNetwork._10;
   }
   // @TODO: needs type for harmony
   // if (chainId === SupportedNetwork.Chain_80001) {

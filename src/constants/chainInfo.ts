@@ -268,10 +268,10 @@ export const CHAIN_INFO: ChainInfoMap = {
       transactionHash: 'https://optimistic.etherscan.io/tx/',
     },
     supportedCurrencies: {
-      '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1': {
+      '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1': {
         icon: '/ui_icons/brand/currency/dai_symbol.svg',
         label: 'DAI',
-        address: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
+        address: '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1',
         decimals: 18,
       },
       '0x4200000000000000000000000000000000000006': {
@@ -280,10 +280,10 @@ export const CHAIN_INFO: ChainInfoMap = {
         address: '0x4200000000000000000000000000000000000006',
         decimals: 18,
       },
-      '0x7F5c764cBc14f9669B88837ca1490cCa17c31607': {
+      '0x7f5c764cbc14f9669b88837ca1490cca17c31607': {
         icon: '/ui_icons/brand/currency/usdc_symbol.svg',
         label: 'USDC',
-        address: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
+        address: '0x7f5c764cbc14f9669b88837ca1490cca17c31607',
         decimals: 6,
       },
     },
