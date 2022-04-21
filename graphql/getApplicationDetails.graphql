@@ -57,6 +57,9 @@ query getApplicationDetails($applicationID: ID!) {
       },
     }
     reviews {
+      reviewer {
+        id
+      }
       data {
         id
         manager {
