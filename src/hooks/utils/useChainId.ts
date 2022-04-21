@@ -8,16 +8,15 @@ export default function useChainId() {
     if (chainId === 4) {
       return SupportedChainId.RINKEBY;
     }
-    // commenting
-    // if (chainId === 1666700000) {
-    //   return SupportedChainId.HARMONY_TESTNET_S0;
-    // }
-    // if (chainId === 137) {
-    //   return SupportedChainId.POLYGON_MAINNET;
-    // }
-    // if (chainId === 80001) {
-    //   return SupportedChainId.POLYGON_TESTNET;
-    // }
+    if (chainId === 1666700000) {
+      return SupportedChainId.HARMONY_TESTNET_S0;
+    }
+    if (chainId === 137) {
+      return SupportedChainId.POLYGON_MAINNET;
+    }
+    if (chainId === 80001) {
+      return SupportedChainId.POLYGON_TESTNET;
+    }
     return undefined;
   };
 
