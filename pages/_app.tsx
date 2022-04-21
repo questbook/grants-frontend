@@ -32,6 +32,7 @@ import getSeo from 'src/utils/seo';
 import { providers } from 'ethers';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import Head from 'next/head';
+import dynamic from 'next/dynamic';
 import theme from '../src/theme';
 import SubgraphClient from '../src/graphql/subgraph';
 
@@ -172,7 +173,7 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
   return { ...appProps };
 };
 
-// export default dynamic(() => Promise.resolve(MyApp), {
-//   ssr: false,
-// });
-export default MyApp;
+export default dynamic(() => Promise.resolve(MyApp), {
+  ssr: false,
+});
+// export default MyApp;
