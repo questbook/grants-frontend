@@ -352,7 +352,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
           <Box mr="8px" />
 
           <Button
-            display={isAdmin ? undefined : 'none'}
+            display={isAdmin || !workspace || !workspace?.id ? undefined : 'none'}
             onClick={() => {
               if (workspace?.id == null) {
                 router.push({

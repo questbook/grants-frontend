@@ -37,6 +37,7 @@ const getSupportedChainIdFromWorkspace = (workspace?: MinimalWorkspace) => {
   return getSupportedChainIdFromSupportedNetwork(chainId);
 };
 
+// eslint-disable-next-line arrow-body-style
 const getSupportedValidatorNetworkFromChainId = (chainId: SupportedChainId) => {
   if (chainId === SupportedChainId.RINKEBY) {
     return SupportedValidatorNetwork._4;
