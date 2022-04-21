@@ -7,7 +7,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { NextPage } from 'next';
 import 'draft-js/dist/Draft.css';
 import {
-  Chain,
+  // Chain,
   chain,
   Connector,
   defaultChains,
@@ -24,7 +24,7 @@ import {
 import { MinimalWorkspace } from 'src/types';
 import {
   ALL_SUPPORTED_CHAIN_IDS,
-  SupportedChainId,
+  // SupportedChainId,
 } from 'src/constants/chains';
 import App from 'next/app';
 import { DefaultSeo } from 'next-seo';
