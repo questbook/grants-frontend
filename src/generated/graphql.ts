@@ -1633,6 +1633,8 @@ export type Review = {
   /** The encrypted data of the review */
   data: Array<PiiAnswer>;
   id: Scalars['ID'];
+  /** IPFS Hash to the publicly accessible review */
+  publicReviewDataHash?: Maybe<Scalars['String']>;
   /** Workspace member that reviewed the app */
   reviewer?: Maybe<WorkspaceMember>;
   /** ID of the reviewer */
@@ -1683,6 +1685,20 @@ export type Review_Filter = {
   id_lte?: InputMaybe<Scalars['ID']>;
   id_not?: InputMaybe<Scalars['ID']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  publicReviewDataHash?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_contains?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_ends_with?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_gt?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_gte?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_in?: InputMaybe<Array<Scalars['String']>>;
+  publicReviewDataHash_lt?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_lte?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_not?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_not_contains?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_not_ends_with?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_not_in?: InputMaybe<Array<Scalars['String']>>;
+  publicReviewDataHash_not_starts_with?: InputMaybe<Scalars['String']>;
+  publicReviewDataHash_starts_with?: InputMaybe<Scalars['String']>;
   reviewer?: InputMaybe<Scalars['String']>;
   reviewerId?: InputMaybe<Scalars['String']>;
   reviewerId_contains?: InputMaybe<Scalars['String']>;
@@ -1718,6 +1734,7 @@ export enum Review_OrderBy {
   CreatedAtS = 'createdAtS',
   Data = 'data',
   Id = 'id',
+  PublicReviewDataHash = 'publicReviewDataHash',
   Reviewer = 'reviewer',
   ReviewerId = 'reviewerId'
 }
@@ -1767,6 +1784,8 @@ export type Rubric = {
   /** Unix timestamp of when the rubric was created */
   createdAtS: Scalars['Int'];
   id: Scalars['ID'];
+  /** Is private evaluation */
+  isPrivate: Scalars['Boolean'];
   items: Array<RubricItem>;
   /** Unix timestamp of when the rubric was updated */
   updatedAtS: Scalars['Int'];
@@ -1785,6 +1804,7 @@ export type RubricItem = {
   __typename?: 'RubricItem';
   details: Scalars['String'];
   id: Scalars['ID'];
+  maximumPoints: Scalars['Int'];
   title: Scalars['String'];
 };
 
@@ -1811,6 +1831,14 @@ export type RubricItem_Filter = {
   id_lte?: InputMaybe<Scalars['ID']>;
   id_not?: InputMaybe<Scalars['ID']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  maximumPoints?: InputMaybe<Scalars['Int']>;
+  maximumPoints_gt?: InputMaybe<Scalars['Int']>;
+  maximumPoints_gte?: InputMaybe<Scalars['Int']>;
+  maximumPoints_in?: InputMaybe<Array<Scalars['Int']>>;
+  maximumPoints_lt?: InputMaybe<Scalars['Int']>;
+  maximumPoints_lte?: InputMaybe<Scalars['Int']>;
+  maximumPoints_not?: InputMaybe<Scalars['Int']>;
+  maximumPoints_not_in?: InputMaybe<Array<Scalars['Int']>>;
   title?: InputMaybe<Scalars['String']>;
   title_contains?: InputMaybe<Scalars['String']>;
   title_ends_with?: InputMaybe<Scalars['String']>;
@@ -1830,6 +1858,7 @@ export type RubricItem_Filter = {
 export enum RubricItem_OrderBy {
   Details = 'details',
   Id = 'id',
+  MaximumPoints = 'maximumPoints',
   Title = 'title'
 }
 
@@ -1864,6 +1893,10 @@ export type Rubric_Filter = {
   id_lte?: InputMaybe<Scalars['ID']>;
   id_not?: InputMaybe<Scalars['ID']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  isPrivate?: InputMaybe<Scalars['Boolean']>;
+  isPrivate_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  isPrivate_not?: InputMaybe<Scalars['Boolean']>;
+  isPrivate_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   items?: InputMaybe<Array<Scalars['String']>>;
   items_contains?: InputMaybe<Array<Scalars['String']>>;
   items_not?: InputMaybe<Array<Scalars['String']>>;
@@ -1882,6 +1915,7 @@ export enum Rubric_OrderBy {
   AddedBy = 'addedBy',
   CreatedAtS = 'createdAtS',
   Id = 'id',
+  IsPrivate = 'isPrivate',
   Items = 'items',
   UpdatedAtS = 'updatedAtS'
 }
@@ -2680,7 +2714,7 @@ export type GetAllGrantsForCreatorQueryVariables = Exact<{
 }>;
 
 
-export type GetAllGrantsForCreatorQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, acceptingApplications: boolean, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
+export type GetAllGrantsForCreatorQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, acceptingApplications: boolean, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> }, rubric?: { __typename?: 'Rubric', isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }> };
 
 export type GetApplicantsForAGrantQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -2696,7 +2730,7 @@ export type GetApplicationDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetApplicationDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, feedbackDao?: string | null, feedbackDev?: string | null, createdAtS: number, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, pii: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, amount: string }>, grant: { __typename?: 'Grant', id: string, title: string, funding: string, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null }> }, reward: { __typename?: 'Reward', id: string, asset: string, committed: string }, fields: Array<{ __typename?: 'GrantField', id: string, title: string, isPii: boolean }> } } | null };
+export type GetApplicationDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, feedbackDao?: string | null, feedbackDev?: string | null, createdAtS: number, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, pii: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, amount: string }>, grant: { __typename?: 'Grant', id: string, title: string, funding: string, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null }> }, reward: { __typename?: 'Reward', id: string, asset: string, committed: string }, fields: Array<{ __typename?: 'GrantField', id: string, title: string, isPii: boolean }>, rubric?: { __typename?: 'Rubric', isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, reviewer?: { __typename?: 'WorkspaceMember', id: string } | null, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, reviewers: Array<{ __typename?: 'WorkspaceMember', email?: string | null, id: string }> } | null };
 
 export type GetApplicationMilestonesQueryVariables = Exact<{
   grantId: Scalars['ID'];
@@ -2740,7 +2774,7 @@ export type GetGrantDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetGrantDetailsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, acceptingApplications: boolean, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, isPii: boolean }>, reward: { __typename?: 'Reward', id: string, asset: string, committed: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null }> } }> };
+export type GetGrantDetailsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, acceptingApplications: boolean, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, isPii: boolean }>, reward: { __typename?: 'Reward', id: string, asset: string, committed: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null }> }, rubric?: { __typename?: 'Rubric', isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }> };
 
 export type GetGrantsAppliedToQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -3001,6 +3035,15 @@ export const GetAllGrantsForCreatorDocument = gql`
     funding
     numberOfApplications
     acceptingApplications
+    rubric {
+      isPrivate
+      items {
+        id
+        title
+        details
+        maximumPoints
+      }
+    }
   }
 }
     `;
@@ -3142,6 +3185,33 @@ export const GetApplicationDetailsDocument = gql`
         title
         isPii
       }
+      rubric {
+        isPrivate
+        items {
+          id
+          title
+          details
+          maximumPoints
+        }
+      }
+    }
+    reviews {
+      reviewer {
+        id
+      }
+      data {
+        id
+        manager {
+          id
+        }
+        data
+      }
+      publicReviewDataHash
+      id
+    }
+    reviewers {
+      email
+      id
     }
     applicantId
     state
@@ -3490,6 +3560,15 @@ export const GetGrantDetailsDocument = gql`
     deadline
     funding
     acceptingApplications
+    rubric {
+      isPrivate
+      items {
+        id
+        title
+        details
+        maximumPoints
+      }
+    }
   }
 }
     `;

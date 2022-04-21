@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   Text,
@@ -13,9 +13,11 @@ import { SupportedChainId } from 'src/constants/chains';
 import useArchiveGrant from 'src/hooks/useArchiveGrant';
 import InfoToast from 'src/components/ui/infoToast';
 import Modal from 'src/components/ui/modal';
+import { Rubric } from 'src/generated/graphql';
 import Badge from './badge';
 import YourGrantMenu from './menu';
 import ChangeAccessibilityModalContent from './changeAccessibilityModalContent';
+import RubricDrawer from '../rubricDrawer';
 
 interface YourGrantCardProps {
   grantID: string;
@@ -34,6 +36,8 @@ interface YourGrantCardProps {
   acceptingApplications: boolean;
   chainId: SupportedChainId | undefined;
   isAdmin: boolean;
+  initialRubrics: Rubric;
+  workspaceId: string;
 }
 
 function YourGrantCard({
@@ -53,6 +57,8 @@ function YourGrantCard({
   chainId,
   acceptingApplications,
   isAdmin,
+  initialRubrics,
+  workspaceId,
 }: YourGrantCardProps) {
   const [isAcceptingApplications, setIsAcceptingApplications] = React.useState<
   [boolean, number]
@@ -70,6 +76,36 @@ function YourGrantCard({
 
   const [isArchiveModalOpen, setIsArchiveModalOpen] = React.useState(false);
   const [isPublishGrantModalOpen, setIsPublishGrantModalOpen] = React.useState(false);
+
+  const [rubricDrawerOpen, setRubricDrawerOpen] = React.useState(false);
+  const [rubricEditAllowed] = React.useState(true);
+  const [maximumPoints, setMaximumPoints] = React.useState(5);
+  const [rubrics, setRubrics] = useState<any[]>([
+    {
+      name: '',
+      nameError: false,
+      description: '',
+      descriptionError: false,
+    },
+  ]);
+
+  useEffect(() => {
+    const newRubrics = [] as any[];
+    console.log('initialRubrics', initialRubrics);
+    initialRubrics?.items.forEach((initalRubric) => {
+      newRubrics.push({
+        name: initalRubric.title,
+        nameError: false,
+        description: initalRubric.details,
+        descriptionError: false,
+      });
+    });
+    if (newRubrics.length === 0) return;
+    setRubrics(newRubrics);
+    if (initialRubrics?.items[0].maximumPoints) {
+      setMaximumPoints(initialRubrics.items[0].maximumPoints);
+    }
+  }, [initialRubrics]);
 
   React.useEffect(() => {
     // console.log(transactionData);
@@ -153,6 +189,8 @@ function YourGrantCard({
                 onViewApplicantsClick={onViewApplicantsClick}
                 onEditClick={onEditClick}
                 isAdmin={isAdmin}
+                setRubricDrawerOpen={setRubricDrawerOpen}
+                initialRubricAvailable={initialRubrics?.items.length > 0 ?? false}
               />
               {acceptingApplications && isAdmin && (
                 <Button
@@ -230,6 +268,20 @@ function YourGrantCard({
           loading={loading}
         />
       </Modal>
+
+      <RubricDrawer
+        rubricDrawerOpen={rubricDrawerOpen}
+        setRubricDrawerOpen={setRubricDrawerOpen}
+        rubricEditAllowed={rubricEditAllowed}
+        rubrics={rubrics}
+        setRubrics={setRubrics}
+        maximumPoints={maximumPoints}
+        setMaximumPoints={setMaximumPoints}
+        chainId={chainId}
+        grantAddress={grantID}
+        workspaceId={workspaceId}
+        initialIsPrivate={initialRubrics && initialRubrics.isPrivate}
+      />
     </>
   );
 }

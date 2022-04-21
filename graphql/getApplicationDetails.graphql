@@ -46,6 +46,33 @@ query getApplicationDetails($applicationID: ID!) {
         title
         isPii
       }
+      rubric {
+        isPrivate
+        items {
+          id,
+          title,
+          details,
+          maximumPoints,
+        },
+      },
+    }
+    reviews {
+      reviewer {
+        id
+      }
+      data {
+        id
+        manager {
+          id
+        }
+        data
+      }
+      publicReviewDataHash
+      id
+    }
+    reviewers {
+      email
+      id
     }
     applicantId
     state
