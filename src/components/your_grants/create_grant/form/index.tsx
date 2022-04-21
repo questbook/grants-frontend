@@ -49,6 +49,7 @@ function Form({
   const [transactionData, loading] = useUpdateWorkspacePublicKeys(publicKey);
 
   const [admins, setAdmins] = useState<any[]>([]);
+  const [maximumPoints, setMaximumPoints] = useState(5);
 
   // [TODO] : if different grantManagers are required for different grants
   // const [grantManagers, setGrantManagers] = useState<any[]>([accountData?.address]);
@@ -222,12 +223,19 @@ function Form({
         }
       });
       const fields = { ...requiredDetails };
-      // if (extraFieldDetails != null && extraFieldDetails.length > 0) {
-      //   fields.extraField = {
-      //     title: 'Other Information',
-      //     inputType: 'short-form',
-      //   };
-      // }
+
+      const rubric = {} as any;
+
+      if (rubricRequired) {
+        rubrics.forEach((r: any, index: number) => {
+          rubric[index.toString()] = {
+            title: r.name,
+            details: r.description,
+            maximumPoints,
+          };
+        });
+      }
+
       if (multipleMilestones) {
         fields.isMultipleMilestones = {
           title: 'Milestones',
@@ -263,6 +271,10 @@ function Form({
         rewardCurrencyAddress,
         date,
         grantManagers: admins,
+        rubric: {
+          isPrivate: shouldEncryptReviews,
+          rubric,
+        },
       });
     }
   };
@@ -337,6 +349,7 @@ function Form({
         setRubricRequired={setRubricRequired}
         rubrics={rubrics}
         setRubrics={setRubrics}
+        setMaximumPoints={setMaximumPoints}
       />
 
       <Text

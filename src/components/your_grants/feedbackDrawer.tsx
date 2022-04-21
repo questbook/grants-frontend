@@ -13,7 +13,9 @@ import Badge from '../ui/badge';
 function FeedbackDrawer({
   feedbackDrawerOpen,
   setFeedbackDrawerOpen,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   feedbacks,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setFeedbacks,
   feedbackEditAllowed,
   rubrics,
