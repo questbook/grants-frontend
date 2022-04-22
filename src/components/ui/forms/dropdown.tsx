@@ -105,7 +105,6 @@ function Dropdown({
           </Container>
         </MenuButton>
         <MenuList minW={0} py={0} maxH="250px" overflowY="scroll">
-          {/* <Flex maxH="400px" dir="column" overflowY="scroll" maxW="100px"> */}
           {listItems.map(({ icon, label: text, id }) => (
             <MenuItem
               key={`menu-item-${text}`}
@@ -138,8 +137,6 @@ function Dropdown({
               </Flex>
             </MenuItem>
           ))}
-          {/* </Flex> */}
-
         </MenuList>
       </Menu>
     </Flex>
