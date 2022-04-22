@@ -15,6 +15,8 @@ const isValidEmail = (email: string) => {
 const getSupportedChainIdFromSupportedNetwork = (chainId: SupportedNetwork) => {
   if (chainId === SupportedNetwork.Chain_137) {
     return SupportedChainId.POLYGON_MAINNET;
+  } if (chainId === SupportedNetwork.Chain_10) {
+    return SupportedChainId.OPTIMISM_MAINNET;
   }
   // @TODO: needs type for harmony
   // if (chainId === SupportedNetwork.Chain_80001) {
@@ -37,6 +39,8 @@ const getSupportedChainIdFromWorkspace = (workspace?: MinimalWorkspace) => {
 const getSupportedValidatorNetworkFromChainId = (chainId: SupportedChainId) => {
   if (chainId === SupportedChainId.POLYGON_MAINNET) {
     return SupportedValidatorNetwork._137;
+  } if (chainId === SupportedChainId.OPTIMISM_MAINNET) {
+    return SupportedValidatorNetwork._10;
   }
   // @TODO: needs type for harmony
   // if (chainId === SupportedNetwork.Chain_80001) {
