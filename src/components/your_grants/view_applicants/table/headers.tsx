@@ -6,12 +6,12 @@ function Headers() {
     'Applicant Address',
     'Project Name',
     'Funding',
-    'Reviewers',
+    'Reviewer',
     'Status',
-    'Last update on',
+    'Last updated on',
     'Actions',
   ];
-  const tableHeadersflex = [0.231, 0.15, 0.20, 0.116, 0.22, 0.21, 0.116];
+  const tableHeadersflex = [0.231, 0.19, 0.15, 0.19, 0.16, 0.20, 0.116];
   const tableHeadersAlign = [
     'left',
     'left',

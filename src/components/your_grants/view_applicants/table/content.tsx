@@ -5,6 +5,13 @@ import {
   Image,
   Button,
   Tooltip,
+  PopoverArrow,
+  Popover,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
 } from '@chakra-ui/react';
 import React, { ReactElement } from 'react';
 import CopyIcon from 'src/components/ui/copy_icon';
@@ -28,7 +35,7 @@ function Content({
   onManageApplicationClick?: (data?: any) => void;
   data: any[];
 }) {
-  const tableHeadersflex = [0.231, 0.15, 0.20, 0.22, 0.21, 0.21, 0.116];
+  const tableHeadersflex = [0.231, 0.19, 0.15, 0.15, 0.16, 0.23, 0.116];
   const getStatus = (status: number): ReactElement => {
     if (status === TableFilters.submitted) return <PendingReview />;
     if (status === TableFilters.resubmit) return <ResubmissionRequested />;
@@ -37,8 +44,6 @@ function Content({
     return <GrantComplete />;
   };
 
-  console.log(data);
-  
   return (
     <Flex
       mt="10px"
@@ -82,11 +87,9 @@ function Content({
               variant="tableBody"
             >
               {item.project_name}
-
             </Text>
-
             <Flex
-              flex={tableHeadersflex[3]}
+              flex={tableHeadersflex[2]}
               direction="row"
               justifyContent="center"
               alignItems="center"
@@ -99,44 +102,48 @@ function Content({
                 fontSize="14px"
                 lineHeight="16px"
                 fontWeight="700"
-                letterSpacing={0.5}
+                letterSpacing={0.2}
               >
                 0
                 {' '}
-                {' '}
                 /
+                {' '}
                 {item.funding_asked.amount}
                 {' '}
                 {item.funding_asked.symbol}
               </Text>
             </Flex>
             <Text
-              textAlign="left"
-              flex={tableHeadersflex[2]}
+              justifyContent="center"
+              color="#717A7C"
               variant="tableBody"
-              fontWeight="400"
+              flex={tableHeadersflex[3]}
+              textAlign="center"
             >
-              2
+              <Popover placement='right'>
+                <PopoverTrigger>
+                  <Text>2</Text>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <PopoverCloseButton />
+                  <PopoverHeader>Reviewer</PopoverHeader>
+                  <PopoverBody>
+                    rayn@gmail.com
+                  </PopoverBody>
+                </PopoverContent>
+              </Popover>
             </Text>
-
             <Flex justifyContent="center" flex={tableHeadersflex[4]}>
               {getStatus(item.status)}
             </Flex>
-
-            <Text
-              textAlign="left"
-              flex={tableHeadersflex[2]}
-              variant="tableBody"
-              fontWeight="400"
-            >
+            <Flex justifyContent="center" flex={tableHeadersflex[5]}>
               {item.sent_on}
-            </Text>
-
+            </Flex>
             <Flex
               display="flex"
               flexDirection="column"
               alignItems="center"
-              flex={tableHeadersflex[5]}
+              flex={tableHeadersflex[6]}
             >
               <Button
                 variant="outline"
