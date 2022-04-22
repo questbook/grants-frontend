@@ -199,22 +199,28 @@ export const CHAIN_INFO: ChainInfoMap = {
     },
     supportedCurrencies: {
       '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1': {
-        icon: '/ui_icons/brand/currency/dai_symbol.svg',
+        icon: '/ui_icons/brand/currency/dai_icon.svg',
         label: 'DAI',
         address: '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1',
         decimals: 18,
       },
       '0x4200000000000000000000000000000000000006': {
-        icon: '/ui_icons/brand/currency/weth_symbol.svg',
+        icon: '/ui_icons/brand/currency/weth_icon.svg',
         label: 'WETH',
         address: '0x4200000000000000000000000000000000000006',
         decimals: 18,
       },
       '0x7f5c764cbc14f9669b88837ca1490cca17c31607': {
-        icon: '/ui_icons/brand/currency/usdc_symbol.svg',
+        icon: '/ui_icons/brand/currency/usdc_icon.svg',
         label: 'USDC',
         address: '0x7f5c764cbc14f9669b88837ca1490cca17c31607',
         decimals: 6,
+      },
+      '0x9e1028F5F1D5eDE59748FFceE5532509976840E0': {
+        icon: '/ui_icons/brand/currency/perp_symbol.svg',
+        label: 'PERP',
+        address: '0x9e1028F5F1D5eDE59748FFceE5532509976840E0',
+        decimals: 18,
       },
     },
     subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-optimism-mainnet',
