@@ -22,4 +22,13 @@ query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $worksp
   funding,
   numberOfApplications,
   acceptingApplications,
+  rubric {
+    isPrivate
+    items {
+      id,
+      title,
+      details,
+      maximumPoints,
+    },
+  },
 }}

@@ -141,7 +141,7 @@ function GrantCard({
           </Text>
 
           <Flex direction="row" mt={8} alignItems="center">
-            <Image src={grantCurrencyIcon} />
+            <Image boxSize="36px" src={grantCurrencyIcon} />
             <Text ml={2} fontWeight="700" color="#3F06A0">
               {grantAmount}
               {' '}
