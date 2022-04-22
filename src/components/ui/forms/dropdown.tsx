@@ -53,7 +53,7 @@ function Dropdown({
           <Box mt={1} />
         </>
       )}
-      <Menu onClose={() => setIsOpen(false)} isOpen={isOpen} variant="form">
+      <Menu onClose={() => setIsOpen(false)} isOpen={isOpen} variant="form" isLazy>
         <MenuButton
           maxW="100%"
           h={12}
@@ -104,7 +104,8 @@ function Dropdown({
             )}
           </Container>
         </MenuButton>
-        <MenuList minW={0} py={0}>
+        <MenuList minW={0} py={0} maxH="250px" overflowY="scroll">
+          {/* <Flex maxH="400px" dir="column" overflowY="scroll" maxW="100px"> */}
           {listItems.map(({ icon, label: text, id }) => (
             <MenuItem
               key={`menu-item-${text}`}
@@ -119,7 +120,6 @@ function Dropdown({
               }}
               minW={listItemsMinWidth}
               p={0}
-              // variant="form"
             >
               <Flex
                 alignItems="center"
@@ -138,6 +138,8 @@ function Dropdown({
               </Flex>
             </MenuItem>
           ))}
+          {/* </Flex> */}
+
         </MenuList>
       </Menu>
     </Flex>
