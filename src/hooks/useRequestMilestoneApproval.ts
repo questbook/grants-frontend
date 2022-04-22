@@ -2,7 +2,7 @@
 import React, { useContext, useEffect } from 'react';
 import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount, useNetwork } from '../../multichain';
 import { SupportedChainId } from 'src/constants/chains';
 import getErrorMessage from 'src/utils/errorUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';

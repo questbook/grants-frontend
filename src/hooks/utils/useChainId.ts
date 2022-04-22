@@ -1,11 +1,9 @@
 import React, { useEffect } from 'react';
 import { SupportedChainId } from 'src/constants/chains';
-import { useNetwork } from 'wagmi';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { useNetwork } from '../../../multichain';
 
 export default function useChainId() {
   const [{ data: networkData }] = useNetwork();
-  const { connection: solanaConnection } = useConnection(); 
   const supportedChainIdFromNetworkData = (chainId: number) => {
     if (chainId === 4) {
       return SupportedChainId.RINKEBY;
@@ -29,7 +27,7 @@ export default function useChainId() {
   useEffect(() => {
     // console.log('changing net');
     // console.log(solanaConnection.rpcEndpoint)
-    if (!networkData.chain?.id && !solanaConnection?.rpcEndpoint) {
+    if (!networkData.chain?.id) {
       setChainId(undefined);
       return;
     }

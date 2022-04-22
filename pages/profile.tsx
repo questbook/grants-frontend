@@ -11,7 +11,7 @@ import {
   formatAmount,
 } from 'src/utils/formattingUtils';
 import { useRouter } from 'next/router';
-import { useAccount } from 'wagmi';
+import { useAccount } from '../multichain';
 import SeeMore from 'src/components/profile/see_more';
 import { SupportedChainId } from 'src/constants/chains';
 import { CHAIN_INFO } from 'src/constants/chainInfo';

@@ -6,7 +6,7 @@ import React, {
   ReactElement, useCallback, useContext, useEffect, useRef,
 } from 'react';
 import BN from 'bn.js';
-import { useAccount } from 'wagmi';
+import { useAccount } from '../../multichain';
 import Empty from 'src/components/ui/empty';
 import { GrantApplication, useGetMyApplicationsLazyQuery } from 'src/generated/graphql';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
@@ -46,7 +46,7 @@ function YourApplications() {
             variables: {
               first: PAGE_SIZE,
               skip: currentPage * PAGE_SIZE,
-              applicantID: accountData?.address || '',
+              applicantID: accountData?.address?.toString() || '',
             },
           });
           if (data && data.grantApplications) {

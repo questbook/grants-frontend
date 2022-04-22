@@ -41,6 +41,10 @@ import theme from '../src/theme';
 import SubgraphClient from '../src/graphql/subgraph';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 
+import {
+  Provider as MultiChainProvider
+} from '../multichain'
+
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
@@ -64,7 +68,7 @@ const chains = [
 ];
 const defaultChain = chain.polygonMainnet;
 // Set up connectors
-const connectors = () => [
+const connectors = [
   new InjectedConnector({
     chains,
     options: { shimDisconnect: true, shimChainChangedDisconnect: true },
@@ -80,7 +84,7 @@ const connectors = () => [
 // Set up providers
 type ProviderConfig = { chainId?: number; connector?: Connector };
 
-const provider = ({ chainId }: ProviderConfig) => {
+const wagmiProvider = ({ chainId }: ProviderConfig) => {
   const rpcUrl = CHAIN_INFO[chainId!]?.rpcUrls[0];
   if (!rpcUrl) {
     return new providers.JsonRpcProvider(
@@ -151,7 +155,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       <DefaultSeo {...seo} />
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets}>
-          <Provider autoConnect connectors={connectors} provider={provider}>
+          <Provider autoConnect connectors={() => connectors} provider={wagmiProvider}>
             <ApiClientsContext.Provider value={apiClients}>
               <ChakraProvider theme={theme}>
                 {getLayout(<Component {...pageProps} />)}
@@ -160,6 +164,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           </Provider>
         </WalletProvider>
       </ConnectionProvider>
+      {/* <MultiChainProvider solanaEndpoint={endpoint} walletConnectors={[...wallets, ...connectors]} wagmiProvider={wagmiProvider}>
+        <ApiClientsContext.Provider value={apiClients}>
+          <ChakraProvider theme={theme}>
+            {getLayout(<Component {...pageProps} />)}
+          </ChakraProvider>
+        </ApiClientsContext.Provider>
+      </MultiChainProvider> */}
 
     </>
   );

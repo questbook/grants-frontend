@@ -11,7 +11,6 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { ReactElement, useEffect } from 'react';
-import { useConnect } from 'wagmi';
 import {
   ALL_SUPPORTED_CHAIN_IDS,
   SupportedChainId,
@@ -25,8 +24,7 @@ import SecondaryDropdown from '../src/components/ui/secondaryDropdown';
 import NavbarLayout from '../src/layout/navbarLayout';
 import strings from '../src/constants/strings.json';
 
-// Solana
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { useConnect } from '../multichain'
 
 function ConnectWallet() {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -38,29 +36,10 @@ function ConnectWallet() {
 
   const [{ data: connectData, loading: connectLoading }] = useConnect();
 
-  const { wallets: solanaWallets, select: solanaSelect, connect: solanaConnect, disconnect: solanaDisconnect, connecting: solanaConnecting, connected: solanaConnected} = useWallet();
 
   useEffect(() => {
-    if (!solanaConnecting && solanaConnected) {
-      if (router.query.flow === 'getting_started/dao') {
-        router.replace('/signup/');
-      } else if (router.query.flow === 'getting_started/developer') {
-        router.push({ pathname: '/' });
-      } else if (router.query.flow === '/') {
-        router.replace({
-          pathname: '/explore_grants/about_grant',
-          query: {
-            grantId: router.query.grantId,
-            chainId: router.query.chainId,
-          },
-        });
-      } else {
-        router.push({ pathname: '/' });
-      }
-    }
-  }, [solanaConnecting, solanaConnected, router]);
-
-  useEffect(() => {
+    // console.log(connectData)
+    // console.log(connectLoading)
     if (!connectLoading && connectData && connectData.connected) {
       if (router.query.flow === 'getting_started/dao') {
         router.replace('/signup/');
@@ -161,20 +140,10 @@ function ConnectWallet() {
                 name={name}
                 icon={icon}
                 onClick={async () => {
-                  if (selectedNetworkId === SupportedChainId.SOLANA_DEVNET) {
-                    const thisWallet = solanaWallets.find((x) => x.adapter.name === name);
-                    if (thisWallet){
-                      await solanaDisconnect()
-                      solanaSelect(thisWallet.adapter.name)
-                      solanaConnect()
-                    }
-                  }
-                  else {
-                    const connector = data.connectors.find((x) => x.id === id);
-                    if (connector) {
-                      await solanaDisconnect()
-                      connect(connector);
-                    }
+                  const connector = data.connectors.find((x) => ('id' in x && x.id === id) || ('name' in x && x.name === name));
+                  if (connector) {
+                    await connect(connector)
+                    console.log(connectData)
                   }
                 }}
               />)

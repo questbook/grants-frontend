@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import { parseAmount } from 'src/utils/formattingUtils';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount, useNetwork } from '../../multichain';
 import { SupportedChainId } from 'src/constants/chains';
 import {
   getSupportedChainIdFromWorkspace,
@@ -80,7 +80,7 @@ export default function useCreateGrant(
             committed: parseAmount(data.reward, data.rewardCurrencyAddress),
             asset: data.rewardCurrencyAddress,
           },
-          creatorId: accountData!.address,
+          creatorId: accountData!.address?.toString() ?? '',
           workspaceId: getSupportedValidatorNetworkFromChainId(
             (chainId ?? getSupportedChainIdFromWorkspace(workspace))!,
           ),

@@ -20,7 +20,7 @@ import { getAssetInfo } from 'src/utils/tokenUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import VerifiedBadge from 'src/components/ui/verified_badge';
 import verify from 'src/utils/grantUtils';
-import { useAccount } from 'wagmi';
+import { useAccount } from '../../multichain';
 import Modal from 'src/components/ui/modal';
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent';
 import useArchiveGrant from 'src/hooks/useArchiveGrant';

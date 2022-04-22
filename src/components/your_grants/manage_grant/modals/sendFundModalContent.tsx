@@ -18,7 +18,7 @@ import {
 } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import React, { useContext, useEffect, useState } from 'react';
-import { useContract, useNetwork, useSigner } from 'wagmi';
+import { useContract, useNetwork, useSigner } from '../../../../../multichain';
 import Loader from 'src/components/ui/loader';
 import useDisburseReward from 'src/hooks/useDisburseReward';
 import useDisburseP2PReward from 'src/hooks/useDisburseP2PReward';
@@ -72,8 +72,8 @@ function ModalContent({
   const rewardAssetContract = useContract({
     addressOrName:
       rewardAsset.address ?? '0x0000000000000000000000000000000000000000',
-    contractInterface: ERC20ABI,
-    signerOrProvider: signerStates.data,
+    contractInterface: {abi: ERC20ABI},
+    signerOrProvider: signerStates.data?.provider,
   });
 
   const toast = useToast();

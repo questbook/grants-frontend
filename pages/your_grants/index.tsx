@@ -8,7 +8,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount } from '../../multichain';
 import { BigNumber } from '@ethersproject/bignumber';
 import Sidebar from 'src/components/your_grants/sidebar/sidebar';
 import {
@@ -128,7 +128,7 @@ function YourGrants() {
       && accountData.address
     ) {
       const tempMember = workspace.members.find(
-        (m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
+        (m) => m.actorId.toLowerCase() === accountData?.address?.toString().toLowerCase(),
       );
       setIsAdmin(
         tempMember?.accessLevel === 'admin'

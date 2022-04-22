@@ -1,9 +1,8 @@
 import { Container, useToast, VStack } from '@chakra-ui/react';
 import React, { useEffect, useRef } from 'react';
-import { useAccount, useConnect } from 'wagmi';
+import { useAccount, useConnect } from '../../multichain';
 import SignInNavbar from '../components/navbar/notConnected';
 import ConnectedNavbar from '../components/navbar/connected';
-import { useWallet } from '@solana/wallet-adapter-react';
 
 interface Props {
   children: React.ReactNode;
@@ -13,7 +12,6 @@ interface Props {
 
 function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
   const [{ data: connectData }] = useConnect();
-  const { connected: solanaConnected} = useWallet();
   const [{ data: accountData }] = useAccount({ fetchEns: false });
   const toast = useToast();
 
@@ -21,13 +19,13 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
   const currentPageRef = useRef(null);
 
   useEffect(() => {
-    if (connected && !connectData.connected && !solanaConnected) {
+    if (connected && !connectData.connected) {
       setConnected(false);
       toast({
         title: 'Disconnected',
         status: 'info',
       });
-    } else if (!connected && (connectData.connected || solanaConnected)) {
+    } else if (!connected && (connectData.connected)) {
       setConnected(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -35,7 +33,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 
   return (
     <VStack alignItems="center" maxH="100vh" width="100%" spacing={0} p={0}>
-      {(accountData && connectData) || (solanaConnected) ? (
+      {(accountData && connectData) ? (
         <ConnectedNavbar renderTabs={renderTabs ?? true} />
       ) : (
         <SignInNavbar renderGetStarted={renderGetStarted} />

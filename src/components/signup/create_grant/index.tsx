@@ -1,6 +1,6 @@
 import { Container } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount } from '../../../../multichain';
 import Form from './form';
 import TipsContainer from './tips';
 

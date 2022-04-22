@@ -15,7 +15,7 @@ import { useRouter } from 'next/router';
 import React, {
   useContext, useEffect, useMemo, useState,
 } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount } from '../../../multichain';
 import { BigNumber } from 'ethers';
 import {
   ApplicationMilestone,
@@ -228,7 +228,7 @@ function ManageGrant() {
     if (workspace && workspace.members
       && workspace.members.length > 0 && accountData && accountData.address) {
       const tempMember = workspace.members.find(
-        (m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
+        (m) => m.actorId.toLowerCase() === accountData?.address?.toString()?.toLowerCase(),
       );
       setIsAdmin(tempMember?.accessLevel === 'admin' || tempMember?.accessLevel === 'owner');
     }

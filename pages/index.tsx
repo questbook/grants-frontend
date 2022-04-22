@@ -16,7 +16,7 @@ import {
 import verify from 'src/utils/grantUtils';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
-import { useAccount } from 'wagmi';
+import { useAccount } from '../multichain';
 import GrantCard from '../src/components/browse_grants/grantCard';
 import Sidebar from '../src/components/browse_grants/sidebar';
 import Heading from '../src/components/ui/heading';
@@ -57,7 +57,7 @@ function BrowseGrants() {
             variables: {
               first: PAGE_SIZE,
               skip: currentPageLocal * PAGE_SIZE,
-              applicantId: accountData?.address ?? '',
+              applicantId: accountData?.address?.toString() ?? '',
             },
           });
           if (data && data.grants) {

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
-import { useAccount } from 'wagmi';
+import { useAccount } from '../../multichain';
 import { uploadToIPFS } from 'src/utils/ipfsUtils';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils';
 import getErrorMessage from 'src/utils/errorUtils';
@@ -58,7 +58,7 @@ export default function useCreateWorkspace(
         title: data.name,
         about: data.description,
         logoIpfsHash: uploadedImageHash,
-        creatorId: accountData!.address,
+        creatorId: accountData!.address?.toString() ?? '',
         socials: [],
         supportedNetworks: [getSupportedValidatorNetworkFromChainId(data.network)],
       });

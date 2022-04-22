@@ -16,7 +16,7 @@ import InfoToast from 'src/components/ui/infoToast';
 import useCreateGrant from 'src/hooks/useCreateGrant';
 import useIntersection from 'src/hooks/utils/useIntersection';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
-import { useNetwork } from 'wagmi';
+import { useNetwork } from '../../multichain';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/create_grant/form';
 import NavbarLayout from '../../src/layout/navbarLayout';

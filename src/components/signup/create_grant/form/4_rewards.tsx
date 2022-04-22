@@ -8,7 +8,7 @@ import Loader from 'src/components/ui/loader';
 
 import { SupportedChainId } from 'src/constants/chains';
 import useChainId from 'src/hooks/utils/useChainId';
-import { useNetwork } from 'wagmi';
+import { useNetwork } from '../../../../../multichain';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { ApiClientsContext } from 'pages/_app';
 import Datepicker from '../../../ui/forms/datepicker';

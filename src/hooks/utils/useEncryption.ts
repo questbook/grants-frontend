@@ -1,7 +1,7 @@
 import { encrypt } from '@metamask/eth-sig-util';
 import { ethers } from 'ethers';
 import { useCallback } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount } from '../../../multichain';
 
 export default function useEncryption() {
   const [{ data: accountData }] = useAccount();

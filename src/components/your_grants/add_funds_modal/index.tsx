@@ -15,7 +15,7 @@ import Lottie from 'lottie-react';
 import copy from 'copy-to-clipboard';
 import {
   useContract, useSigner,
-} from 'wagmi';
+} from '../../../../multichain';
 import { BigNumber, ethers } from 'ethers';
 import { formatAmount } from 'src/utils/formattingUtils';
 import InfoToast from 'src/components/ui/infoToast';
@@ -61,8 +61,8 @@ function AddFunds({
   const [signerStates] = useSigner();
   const rewardAssetContract = useContract({
     addressOrName: rewardAsset.address ?? '0x0000000000000000000000000000000000000000',
-    contractInterface: ERC20ABI,
-    signerOrProvider: signerStates.data,
+    contractInterface: {abi: ERC20ABI},
+    signerOrProvider: signerStates.data?.provider,
   });
 
   const copyToClipboard = async () => {

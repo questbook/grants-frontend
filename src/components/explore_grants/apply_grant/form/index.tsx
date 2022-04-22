@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Box, Button, Text, Image, Link, Flex, Container, useToast, ToastId,
 } from '@chakra-ui/react';
-import { useAccount, useSigner } from 'wagmi';
+import { useAccount, useSigner } from '../../../../../multichain';
 import { useRouter } from 'next/router';
 import { isValidEmail } from 'src/utils/validationUtils';
 import Loader from 'src/components/ui/loader';
@@ -242,7 +242,7 @@ function Form({
 
     const data: GrantApplicationRequest = {
       grantId,
-      applicantId: await signer?.data?.getAddress(),
+      applicantId: await signer?.data?.getAddress().toString(),
       fields: {
         applicantName: [{ value: applicantName }],
         applicantEmail: [{ value: applicantEmail }],

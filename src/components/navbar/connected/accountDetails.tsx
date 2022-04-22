@@ -10,11 +10,10 @@ import {
   MenuList,
   MenuItem,
 } from '@chakra-ui/react';
-import { useAccount } from 'wagmi';
+import { useAccount } from '../../../../multichain';
 import { useRouter } from 'next/router';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import useChainId from 'src/hooks/utils/useChainId';
-import { useWallet } from '@solana/wallet-adapter-react';
 
 export interface Props {
   networkId: number;
@@ -25,7 +24,6 @@ export interface Props {
 function AccountDetails() {
   const isOnline = true;
   const [{ data: accountData }, disconnect] = useAccount();
-  const {disconnect: solanaDisconnect} = useWallet()
   const router = useRouter();
 
   const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`;
@@ -82,7 +80,7 @@ function AccountDetails() {
                 fontSize="16px"
                 lineHeight="24px"
               >
-                {formatAddress(accountData?.address ?? '')}
+                {formatAddress(accountData?.address?.toString() ?? '')}
               </Text>
             </Flex>
           </VStack>
@@ -99,7 +97,6 @@ function AccountDetails() {
         <MenuItem
           onClick={() => {
             disconnect();
-            solanaDisconnect();
             router.replace('/');
           }}
           icon={<Image src="/ui_icons/logout.svg" />}

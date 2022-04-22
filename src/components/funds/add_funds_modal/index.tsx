@@ -13,7 +13,7 @@ import {
 import React, { useContext, useEffect } from 'react';
 import Lottie from 'lottie-react';
 import copy from 'copy-to-clipboard';
-import { useContract, useNetwork, useSigner } from 'wagmi';
+import { useContract, useNetwork, useSigner } from '../../../../multichain';
 import { BigNumber, ethers } from 'ethers';
 import Loader from 'src/components/ui/loader';
 import useDepositFunds from 'src/hooks/useDepositFunds';
@@ -66,8 +66,8 @@ function AddFunds({
   const rewardAssetContract = useContract({
     addressOrName:
       rewardAsset.address ?? '0x0000000000000000000000000000000000000000',
-    contractInterface: ERC20ABI,
-    signerOrProvider: signerStates.data,
+    contractInterface: {abi: ERC20ABI},
+    signerOrProvider: signerStates.data?.provider,
   });
 
   const copyToClipboard = async () => {

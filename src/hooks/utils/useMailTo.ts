@@ -1,6 +1,6 @@
 import { ApiClientsContext } from 'pages/_app';
 import { useContext, useEffect, useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount } from '../../../multichain';
 
 export default function useMailTo(
   to : string | undefined = undefined,
@@ -16,7 +16,7 @@ export default function useMailTo(
 
   useEffect(() => {
     const managerEmail = workspace?.members.find(
-      (member) => member.actorId.toLowerCase() === accountData?.address.toLowerCase(),
+      (member) => member.actorId.toLowerCase() === accountData?.address?.toString().toLowerCase(),
     )?.email;
     setEmail(managerEmail);
   }, [workspace, accountData]);

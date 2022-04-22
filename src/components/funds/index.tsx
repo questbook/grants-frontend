@@ -14,7 +14,7 @@ import {
 import React, { useState, useEffect, useContext } from 'react';
 import { getAssetInfo } from 'src/utils/tokenUtils';
 import ERC20ABI from 'src/contracts/abi/ERC20.json';
-import { useContract, useSigner } from 'wagmi';
+import { useContract, useSigner } from '../../../multichain';
 import { ethers } from 'ethers';
 import { BigNumber } from '@ethersproject/bignumber';
 import { useGetFundingQuery } from 'src/generated/graphql';
@@ -52,8 +52,8 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
   const [signerStates] = useSigner();
   const rewardAssetContract = useContract({
     addressOrName: grant.reward.asset,
-    contractInterface: ERC20ABI,
-    signerOrProvider: signerStates.data,
+    contractInterface: {abi: ERC20ABI},
+    signerOrProvider: signerStates.data?.provider,
   });
 
   const { data } = useGetFundingQuery({

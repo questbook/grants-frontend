@@ -21,7 +21,7 @@ import {
   useGetWorkspaceMembersLazyQuery,
 } from 'src/generated/graphql';
 import { ApiClientsContext } from 'pages/_app';
-import { useAccount } from 'wagmi';
+import { useAccount } from '../../../../multichain';
 import { MinimalWorkspace } from 'src/types';
 import Tab from './tab';
 import AccountDetails from './accountDetails';
@@ -68,7 +68,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
           // eslint-disable-next-line no-async-promise-executor
           (query) => new Promise(async (resolve) => {
             const { data } = await query[0]({
-              variables: { applicantId: accountData?.address },
+              variables: { applicantId: accountData?.address.toString() },
             });
             if (data && data.grantApplications.length > 0) {
               resolve(data.grantApplications.length);
@@ -129,7 +129,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
   useEffect(() => {
     if (workspace && workspace.members && workspace.members.length > 0) {
       const tempMember = workspace.members.find(
-        (m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
+        (m) => m.actorId.toLowerCase() === accountData?.address.toString()?.toLowerCase(),
       );
       setIsAdmin(tempMember?.accessLevel === 'admin' || tempMember?.accessLevel === 'owner');
     }
@@ -176,7 +176,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
         });
       }
     };
-    getWorkspaceData(accountData?.address);
+    getWorkspaceData(accountData?.address.toString());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

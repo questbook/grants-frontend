@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount, useNetwork } from '../../multichain';
 import {
   getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils';

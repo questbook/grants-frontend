@@ -7,7 +7,7 @@ import Loader from 'src/components/ui/loader';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import useChainId from 'src/hooks/utils/useChainId';
 import { SupportedChainId } from 'src/constants/chains';
-import { useAccount } from 'wagmi';
+import { useAccount } from '../../../../../multichain';
 import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys';
 import { ApiClientsContext } from 'pages/_app';
@@ -66,7 +66,7 @@ function Form({
 
   useEffect(() => {
     if (workspace && workspace.members && accountData && accountData.address) {
-      const hasPubKey = workspace.members.some((member) => member.actorId.toLowerCase() === accountData?.address.toLowerCase() && member.publicKey && member.publicKey !== '');
+      const hasPubKey = workspace.members.some((member) => member.actorId.toLowerCase() === accountData?.address?.toString().toLowerCase() && member.publicKey && member.publicKey !== '');
       setHasOwnerPublicKey(hasPubKey);
     }
   }, [accountData, workspace]);

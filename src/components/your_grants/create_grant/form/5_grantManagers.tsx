@@ -3,7 +3,7 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import { truncateStringFromMiddle } from 'src/utils/formattingUtils';
-import { useAccount } from 'wagmi';
+import { useAccount } from '../../../../../multichain';
 import Badge from '../../../ui/badge';
 
 function GrantManagers({

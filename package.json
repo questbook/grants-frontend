@@ -22,6 +22,7 @@
     "@emotion/styled": "^11.6.0",
     "@ethersproject/bignumber": "^5.5.0",
     "@metamask/eth-sig-util": "^4.0.0",
+    "@project-serum/anchor": "^0.24.2",
     "@questbook/service-validator-client": "github:questbook/service-validator-typescript-client",
     "@solana/wallet-adapter-base": "^0.9.5",
     "@solana/wallet-adapter-react": "^0.15.4",

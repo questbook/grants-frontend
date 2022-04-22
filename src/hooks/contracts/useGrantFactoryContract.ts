@@ -2,7 +2,7 @@
 /* eslint-disable consistent-return */
 import { GRANT_FACTORY_ADDRESS } from 'src/constants/addresses';
 import { SupportedChainId } from 'src/constants/chains';
-import { useContract, useSigner } from 'wagmi';
+import { useContract, useSigner } from '../../../multichain';
 import React, { useEffect } from 'react';
 import GrantFactoryABI from '../../contracts/abi/GrantFactoryAbi.json';
 
@@ -19,8 +19,8 @@ export default function useGrantFactoryContract(chainId?: SupportedChainId) {
   const grantContract = useContract({
     addressOrName:
       addressOrName ?? '0x0000000000000000000000000000000000000000',
-    contractInterface: GrantFactoryABI,
-    signerOrProvider: signerStates.data,
+    contractInterface: {abi: GrantFactoryABI},
+    signerOrProvider: signerStates.data?.provider,
   });
 
   return grantContract;

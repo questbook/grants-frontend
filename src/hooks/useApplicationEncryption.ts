@@ -1,6 +1,6 @@
 import { GrantApplicationFieldAnswerItem, GrantApplicationRequest } from '@questbook/service-validator-client';
 import { GetApplicationDetailsQuery, GrantFieldAnswerItem } from 'src/generated/graphql';
-import { useAccount } from 'wagmi';
+import { useAccount } from '../../multichain';
 import useEncryption from './utils/useEncryption';
 
 export default function useApplicationEncryption() {
@@ -35,7 +35,7 @@ export default function useApplicationEncryption() {
     const newData = { ...data } as GetApplicationDetailsQuery['grantApplication'];
     if (!newData || !newData.fields || !newData.pii) return newData;
     if (!accountData || !accountData.address) return newData;
-    const piiData = newData.pii.find((pii) => pii.id.split('.')[1].toLowerCase() === accountData.address.toLowerCase())!;
+    const piiData = newData.pii.find((pii) => pii.id.split('.')[1].toLowerCase() === accountData.address?.toString().toLowerCase())!;
     console.log('piiData', piiData);
     if (!piiData) return newData;
     const applicationId = newData.pii[0].id.split('.')[0];

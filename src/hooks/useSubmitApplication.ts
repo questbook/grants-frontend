@@ -3,7 +3,7 @@ import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import {
   useAccount, useNetwork,
-} from 'wagmi';
+} from '../../multichain';
 import { SupportedChainId } from 'src/constants/chains';
 import { GrantApplicationRequest } from '@questbook/service-validator-client';
 import getErrorMessage from 'src/utils/errorUtils';
