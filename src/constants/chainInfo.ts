@@ -61,19 +61,19 @@ export const CHAIN_INFO: ChainInfoMap = {
     },
     supportedCurrencies: {
       '0xc7ad46e0b8a400bb3c915120d284aafba8fc4735': {
-        icon: '/ui_icons/brand/currency/dai_symbol.svg',
+        icon: '/ui_icons/brand/currency/dai_icon.svg',
         label: 'DAI',
         address: '0xc7ad46e0b8a400bb3c915120d284aafba8fc4735',
         decimals: 18,
       },
       '0xc778417e063141139fce010982780140aa0cd5ab': {
-        icon: '/ui_icons/brand/currency/weth_symbol.svg',
+        icon: '/ui_icons/brand/currency/weth_icon.svg',
         label: 'WETH',
         address: '0xc778417e063141139fce010982780140aa0cd5ab',
         decimals: 18,
       },
       '0xeb8f08a975ab53e34d8a0330e0d34de942c95926': {
-        icon: '/ui_icons/brand/currency/usdc_symbol.svg',
+        icon: '/ui_icons/brand/currency/usdc_icon.svg',
         label: 'USDC',
         address: '0xeb8f08a975ab53e34d8a0330e0d34de942c95926',
         decimals: 6,
@@ -109,13 +109,13 @@ export const CHAIN_INFO: ChainInfoMap = {
     },
     supportedCurrencies: {
       '0xc27255d7805fc79e4616d5cd50d6f4464aea75a3': {
-        icon: '/ui_icons/brand/currency/dai.svg',
+        icon: '/ui_icons/brand/currency/dai_icon.svg',
         label: '1DAI',
         address: '0xc27255d7805fc79e4616d5cd50d6f4464aea75a3',
         decimals: 18,
       },
       '0x1e120b3b4af96e7f394ecaf84375b1c661830013': {
-        icon: '/ui_icons/brand/currency/weth.svg',
+        icon: '/ui_icons/brand/currency/weth_icon.svg',
         label: '1ETH',
         address: '0x1e120b3b4af96e7f394ecaf84375b1c661830013',
         decimals: 18,
@@ -151,23 +151,23 @@ export const CHAIN_INFO: ChainInfoMap = {
     },
     supportedCurrencies: {
       // '0xd393b1E02dA9831Ff419e22eA105aAe4c47E1253': {
-      //   icon: '/ui_icons/brand/currency/dai_symbol.svg',
+      //   icon: '/ui_icons/brand/currency/dai_icon.svg',
       //   label: 'DAI',
       //   address: '0xd393b1E02dA9831Ff419e22eA105aAe4c47E1253',
       // },
       '0x9c3c9283d3e44854697cd22d3faa240cfb032889': {
-        icon: '/ui_icons/brand/currency/wmatic_symbol.svg',
+        icon: '/ui_icons/brand/currency/matic_symbol.svg',
         label: 'WMATIC',
         address: '0x9c3c9283d3e44854697cd22d3faa240cfb032889',
         decimals: 18,
       },
       // '0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa': {
-      //   icon: '/ui_icons/brand/currency/weth_symbol.svg',
+      //   icon: '/ui_icons/brand/currency/weth_icon.svg',
       //   label: 'WETH',
       //   address: '0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa',
       // },
       '0xe6b8a5cf854791412c1f6efc7caf629f5df1c747': {
-        icon: '/ui_icons/brand/currency/usdc_symbol.svg',
+        icon: '/ui_icons/brand/currency/usdc_icon.svg',
         label: 'USDC',
         address: '0xe6b8a5cf854791412c1f6efc7caf629f5df1c747',
         decimals: 6,
@@ -341,22 +341,28 @@ export const CHAIN_INFO: ChainInfoMap = {
     },
     supportedCurrencies: {
       '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1': {
-        icon: '/ui_icons/brand/currency/dai_symbol.svg',
+        icon: '/ui_icons/brand/currency/dai_icon.svg',
         label: 'DAI',
         address: '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1',
         decimals: 18,
       },
       '0x4200000000000000000000000000000000000006': {
-        icon: '/ui_icons/brand/currency/weth_symbol.svg',
+        icon: '/ui_icons/brand/currency/weth_icon.svg',
         label: 'WETH',
         address: '0x4200000000000000000000000000000000000006',
         decimals: 18,
       },
       '0x7f5c764cbc14f9669b88837ca1490cca17c31607': {
-        icon: '/ui_icons/brand/currency/usdc_symbol.svg',
+        icon: '/ui_icons/brand/currency/usdc_icon.svg',
         label: 'USDC',
         address: '0x7f5c764cbc14f9669b88837ca1490cca17c31607',
         decimals: 6,
+      },
+      '0x9e1028F5F1D5eDE59748FFceE5532509976840E0': {
+        icon: '/ui_icons/brand/currency/perp_symbol.svg',
+        label: 'PERP',
+        address: '0x9e1028F5F1D5eDE59748FFceE5532509976840E0',
+        decimals: 18,
       },
     },
     subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-optimism-mainnet',
