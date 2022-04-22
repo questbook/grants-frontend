@@ -8,7 +8,9 @@ export default function useChainId() {
     if (chainId === 137) {
       return SupportedChainId.POLYGON_MAINNET;
     }
-
+    if (chainId === 10) {
+      return SupportedChainId.OPTIMISM_MAINNET;
+    }
     return undefined;
   };
 
