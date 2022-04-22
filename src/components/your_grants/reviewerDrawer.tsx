@@ -68,7 +68,7 @@ function ReviewDrawer({
     if (!workspace) return;
     if (!initialReviewers) return;
     const newIsReviewer: { [key: string]: boolean } = {};
-    workspace.members.filter((member) => member.publicKey ?? false).forEach((member: any) => {
+    workspace.members.filter((member) => (member.publicKey ?? '').length > 0).forEach((member: any) => {
       console.log(member);
       console.log(initialReviewers);
       // eslint-disable-next-line max-len
@@ -81,9 +81,11 @@ function ReviewDrawer({
 
   const handleOnSubmit = () => {
     setEditedReviewData({
-      reviewers: workspace?.members.map(
-        (reviewer) => reviewer.id.split('.')[1],
-      ),
+      reviewers: workspace?.members
+        .filter((member) => (member.publicKey ?? '').length > 0)
+        .map(
+          (reviewer) => reviewer.id.split('.')[1],
+        ),
       active: Object.values(isReviewer),
     });
   };
@@ -160,7 +162,7 @@ function ReviewDrawer({
           <Flex direction="column" overflowY="scroll" maxH="40%" mt={6}>
 
             {workspace?.members
-              .filter((member) => member.publicKey ?? false)
+              .filter((member) => (member.publicKey ?? '').length > 0)
               .filter(
                 (member) => emailSearchText === ''
                     || (member.email && member.email.startsWith(emailSearchText)),
