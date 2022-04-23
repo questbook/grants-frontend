@@ -387,6 +387,7 @@ function YourGrants() {
 
       <AllowAccessToPublicKeyModal
         hiddenModalOpen={pk.length === 0}
+        isAdmin={isAdmin}
         setHiddenModalOpen={() => {
           window.location.reload();
         }}
