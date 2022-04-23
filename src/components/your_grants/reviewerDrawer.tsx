@@ -216,6 +216,11 @@ function ReviewDrawer({
           </Flex>
 
           <Text fontSize="12px" color="#717A7C" mt={4}>
+            The reviewers who have already submitted their reviews are not shown on this list.
+            {' '}
+          </Text>
+
+          <Text fontSize="12px" color="#717A7C" mt={4}>
             The reviewers who have not accepted the invite and submitted their
             public key are not shown on this list.
             {' '}
