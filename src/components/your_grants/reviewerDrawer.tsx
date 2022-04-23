@@ -29,6 +29,7 @@ function ReviewDrawer({
   workspaceId,
   applicationId,
   onClose,
+  reviews,
 }: {
   reviewDrawerOpen: boolean;
   setReviewDrawerOpen: (reviewDrawerOpen: boolean) => void;
@@ -38,6 +39,7 @@ function ReviewDrawer({
   initialReviewers: any[];
   applicationId: string;
   onClose: () => void;
+  reviews: any[];
 }) {
   const { workspace } = useContext(ApiClientsContext)!;
   const [isReviewer, setIsReviewer] = React.useState<{
@@ -68,21 +70,24 @@ function ReviewDrawer({
     if (!workspace) return;
     if (!initialReviewers) return;
     const newIsReviewer: { [key: string]: boolean } = {};
-    workspace.members.filter((member) => (member.publicKey ?? '').length > 0).forEach((member: any) => {
-      console.log(member);
-      console.log(initialReviewers);
-      // eslint-disable-next-line max-len
-      newIsReviewer[member.actorId] = initialReviewers.find((r: any) => r.id.split('.')[1] === member.actorId)
+    workspace.members.filter((member) => (member.publicKey ?? '').length > 0)
+      .filter((member) => reviews?.find((r) => r.reviewer.id.split('.')[1].toLowerCase() === member.actorId.toLowerCase()) === undefined)
+      .forEach((member: any) => {
+        console.log(member);
+        console.log(initialReviewers);
+        // eslint-disable-next-line max-len
+        newIsReviewer[member.actorId] = initialReviewers.find((r: any) => r.id.split('.')[1] === member.actorId)
         !== undefined;
-    });
+      });
     console.log(newIsReviewer);
     setIsReviewer(newIsReviewer);
-  }, [initialReviewers, workspace]);
+  }, [initialReviewers, workspace, reviews]);
 
   const handleOnSubmit = () => {
     setEditedReviewData({
       reviewers: workspace?.members
         .filter((member) => (member.publicKey ?? '').length > 0)
+        .filter((member) => reviews?.find((r) => r.reviewer.id.split('.')[1].toLowerCase() === member.actorId.toLowerCase()) === undefined)
         .map(
           (reviewer) => reviewer.id.split('.')[1],
         ),
@@ -163,6 +168,7 @@ function ReviewDrawer({
 
             {workspace?.members
               .filter((member) => (member.publicKey ?? '').length > 0)
+              .filter((member) => reviews?.find((r) => r.reviewer.id.split('.')[1].toLowerCase() === member.actorId.toLowerCase()) === undefined)
               .filter(
                 (member) => emailSearchText === ''
                     || (member.email && member.email.startsWith(emailSearchText)),
@@ -208,6 +214,11 @@ function ReviewDrawer({
               ))}
 
           </Flex>
+
+          <Text fontSize="12px" color="#717A7C" mt={4}>
+            The reviewers who have already submitted their reviews are not shown on this list.
+            {' '}
+          </Text>
 
           <Text fontSize="12px" color="#717A7C" mt={4}>
             The reviewers who have not accepted the invite and submitted their
