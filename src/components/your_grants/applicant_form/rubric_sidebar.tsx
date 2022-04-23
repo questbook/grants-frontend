@@ -84,7 +84,7 @@ function RubricSidebar({
   };
 
   const getEncrpytedData = async () => {
-    console.log(reviews);
+    setLoading(true);
     const privateDataPromises = reviews?.map((review) => {
       const decryptableData = review.data.filter((data: any) => data.id.split('.')[1].toLowerCase() === accountData?.address.toLowerCase());
       return decryptableData.length > 0 ? decryptableData[0] : undefined;
@@ -94,15 +94,13 @@ function RubricSidebar({
     });
     if (!privateDataPromises) return;
 
-    console.log(privateDataPromises);
+    // console.log(privateDataPromises);
     // const privateData = await Promise.all((await Promise.all(privateDataPromises))
     //   .map(async (data) => JSON.parse(await decryptMessage(data) ?? '{}')));
 
     const privateData = await Promise.all(privateDataPromises);
-    console.log(privateData);
     const privateDecryptedData = await Promise.all(privateData.map(async (data) => JSON.parse(await decryptMessage(data) ?? '{}')));
 
-    console.log(privateDecryptedData);
     setDetailedReviews(privateDecryptedData);
     const results = [] as any;
     rubric.items.forEach((item: any) => {
@@ -135,7 +133,7 @@ function RubricSidebar({
       setAgainstPercentage(againstPercentage);
     }
 
-    console.log(results);
+    // console.log(results);
     setAggregatedResults(results);
     setLoading(false);
     setIsDecrypted(true);
@@ -205,10 +203,14 @@ function RubricSidebar({
           </Text>
         </Flex>
 
-        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-        <Link onClick={() => getEncrpytedData()} mt={5} fontSize="14px" lineHeight="24px" fontWeight="500">
-          Decrypt reviews to see the results
-        </Link>
+        {loading ? (
+          <Loader />
+        ) : (
+          // eslint-disable-next-line jsx-a11y/anchor-is-valid
+          <Link onClick={() => getEncrpytedData()} mt={5} fontSize="14px" lineHeight="24px" fontWeight="500">
+            Decrypt reviews to see the results
+          </Link>
+        )}
       </Flex>
     );
   }
