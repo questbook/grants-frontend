@@ -85,6 +85,7 @@ function RubricSidebar({
 
   const getEncrpytedData = async () => {
     setLoading(true);
+    console.log(reviews);
     const privateDataPromises = reviews?.map((review) => {
       const decryptableData = review.data.filter((data: any) => data.id.split('.')[1].toLowerCase() === accountData?.address.toLowerCase());
       return decryptableData.length > 0 ? decryptableData[0] : undefined;
