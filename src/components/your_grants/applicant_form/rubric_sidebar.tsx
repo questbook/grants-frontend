@@ -384,76 +384,90 @@ function RubricSidebar({
         <DrawerContent>
 
           <Flex direction="column" overflow="scroll" p={8}>
-            <Text
-              mt="18px"
-              color="#122224"
-              fontWeight="bold"
-              fontSize="16px"
-              lineHeight="20px"
-            >
-              Overall Recommendation
-            </Text>
-            <Flex py={8}>
-              <Badge
-                isActive={reviewSelected?.isApproved}
-                label="YES"
-                onClick={() => {}}
-              />
-
-              <Box ml={4} />
-
-              <Badge
-                isActive={!reviewSelected?.isApproved}
-                label="NO"
-                onClick={() => {}}
-              />
-            </Flex>
-            {reviewSelected?.items?.map((feedback: any) => (
+            {reviewSelected && reviewSelected.items && reviewSelected.items.length > 0 ? (
               <>
-                <Flex
-                  mt={4}
-                  gap="2"
-                  direction="column"
+                <Text
+                  mt="18px"
+                  color="#122224"
+                  fontWeight="bold"
+                  fontSize="16px"
+                  lineHeight="20px"
                 >
-                  <Text
-                    mt="18px"
-                    color="#122224"
-                    fontWeight="bold"
-                    fontSize="16px"
-                    lineHeight="20px"
-                  >
-                    {feedback.rubric.title}
-                  </Text>
-                  <Text
-                    color="#69657B"
-                    fontWeight="bold"
-                    fontSize="12px"
-                    lineHeight="20px"
-                  >
-                    {feedback.rubric.details}
-                  </Text>
-
-                  <StarRatings
-                    numberOfStars={feedback.rubric.maximumPoints}
-                    starRatedColor="#88BDEE"
-                    rating={feedback.rating}
-                    name="rating"
-                    starHoverColor="#88BDEE"
-                    starDimension="18px"
+                  Overall Recommendation
+                </Text>
+                <Flex py={8}>
+                  <Badge
+                    isActive={reviewSelected?.isApproved}
+                    label="YES"
+                    onClick={() => {}}
                   />
 
-                  <MultiLineInput
-                    value={feedback.comment}
-                    onChange={() => {}}
-                    placeholder="Feedback"
-                    isError={false}
-                    errorText="Required"
-                    disabled
+                  <Box ml={4} />
+
+                  <Badge
+                    isActive={!reviewSelected?.isApproved}
+                    label="NO"
+                    onClick={() => {}}
                   />
                 </Flex>
-                <Divider mt={4} />
+                {reviewSelected?.items?.map((feedback: any) => (
+                  <>
+                    <Flex
+                      mt={4}
+                      gap="2"
+                      direction="column"
+                    >
+                      <Text
+                        mt="18px"
+                        color="#122224"
+                        fontWeight="bold"
+                        fontSize="16px"
+                        lineHeight="20px"
+                      >
+                        {feedback.rubric.title}
+                      </Text>
+                      <Text
+                        color="#69657B"
+                        fontWeight="bold"
+                        fontSize="12px"
+                        lineHeight="20px"
+                      >
+                        {feedback.rubric.details}
+                      </Text>
+
+                      <StarRatings
+                        numberOfStars={feedback.rubric.maximumPoints}
+                        starRatedColor="#88BDEE"
+                        rating={feedback.rating}
+                        name="rating"
+                        starHoverColor="#88BDEE"
+                        starDimension="18px"
+                      />
+
+                      <MultiLineInput
+                        value={feedback.comment}
+                        onChange={() => {}}
+                        placeholder="Feedback"
+                        isError={false}
+                        errorText="Required"
+                        disabled
+                      />
+                    </Flex>
+                    <Divider mt={4} />
+                  </>
+                ))}
               </>
-            ))}
+            ) : (
+              <Text
+                mt="18px"
+                color="#122224"
+                fontWeight="bold"
+                fontSize="16px"
+                lineHeight="20px"
+              >
+                Unable to decrpyt review
+              </Text>
+            )}
           </Flex>
         </DrawerContent>
       </Drawer>
