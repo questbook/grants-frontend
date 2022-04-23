@@ -43,7 +43,7 @@ function RubricSidebar({
       return reviewData;
     });
     if (!publicDataPromises) return;
-    const publicData = (await Promise.all(publicDataPromises)).map((data) => JSON.parse(data));
+    const publicData = (await Promise.all(publicDataPromises)).map((data) => JSON.parse(data ?? '{}'));
     console.log(publicData);
     setDetailedReviews(publicData);
 
