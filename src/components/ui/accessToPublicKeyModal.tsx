@@ -33,6 +33,7 @@ function AllowAccessToPublicKeyModal({
         onClose={() => setHiddenModalOpen(false)}
         title=""
         modalWidth={719}
+        showCloseButton={false}
       >
         <ModalBody px={10}>
           <Flex direction="column" align="center">
