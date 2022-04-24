@@ -14,6 +14,7 @@ import StarRatings from 'react-star-ratings';
 import Badge from 'src/components/ui/badge';
 import MultiLineInput from 'src/components/ui/forms/multiLineInput';
 import Loader from 'src/components/ui/loader';
+import useSubmitReview from 'src/hooks/useSubmitReview';
 import useEncryption from 'src/hooks/utils/useEncryption';
 import { getFromIPFS } from 'src/utils/ipfsUtils';
 import {
@@ -24,6 +25,7 @@ import FeedbackDrawer from '../feedbackDrawer';
 
 function ReviewerSidebar({
   applicationData,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isAdmin,
 }: {
   showHiddenData: () => void;
@@ -45,6 +47,8 @@ function ReviewerSidebar({
   const [decrpytLoading, setDecrpytLoading] = useState(false);
   const [reviewerDrawerOpen, setReviewerDrawerOpen] = useState(false);
   const [reviewSelected, setReviewSelected] = React.useState<any>();
+
+  const [editedFeedbackData, setEditedFeedbackData] = React.useState<any>();
 
   const { decryptMessage } = useEncryption();
 
@@ -76,9 +80,44 @@ function ReviewerSidebar({
     setReviewerDrawerOpen(true);
   };
 
-  if (yourReview && isAdmin) {
-    return null;
-  }
+  const handleOnResubmit = () => {
+    console.log(reviewSelected);
+
+    // let error = false;
+    // reviewSelected?.forEach((feedback: any) => {
+    //   if (feedback.rating === 0 && feedback.comment === '') {
+    //     error = true;
+    //   }
+    // });
+    // if (error) return;
+    setEditedFeedbackData(reviewSelected);
+  };
+
+  const [
+    data,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    transactionLink,
+    resubmitLoading,
+  ] = useSubmitReview(
+    editedFeedbackData,
+    applicationData?.grant.rubric.isPrivate,
+    chainId,
+    applicationData?.grant.workspace.id,
+    applicationData?.grant.id,
+    applicationData?.id,
+  );
+
+  useEffect(() => {
+    if (data) {
+      setReviewerDrawerOpen(false);
+      setReviewSelected(null);
+      setFeedbackDrawerOpen(false);
+    }
+  }, [data, setFeedbackDrawerOpen]);
+
+  // if (yourReview && isAdmin) {
+  //   return null;
+  // }
 
   if (yourReview) {
     return (
@@ -192,7 +231,19 @@ function ReviewerSidebar({
                   <Divider mt={4} />
                 </>
               ))}
+
+              <Flex direction="row" mt={12} alignItems="center">
+                <Button mt="auto" variant="primary" onClick={handleOnResubmit}>
+                  {resubmitLoading ? <Loader /> : 'Resubmit Feedback'}
+                </Button>
+                <Text fontSize="12px" color="#717A7C" ml={4}>
+                  If in case the DAO admin is not able to view your review,
+                  you can resubmit it without editing it.
+                  Please consult with the DAO admin before resubmitting
+                </Text>
+              </Flex>
             </Flex>
+
           </DrawerContent>
         </Drawer>
       </>
