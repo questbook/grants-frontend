@@ -299,6 +299,7 @@ function Sidebar({
         chainId={chainId}
         workspaceId={applicationData?.grant.workspace.id}
         initialReviewers={applicationData?.reviewers}
+        reviews={applicationData?.reviews}
         applicationId={applicationData?.id}
         onClose={() => setReviewDrawerOpen(false)}
       />

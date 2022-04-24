@@ -29,6 +29,7 @@ function ReviewDrawer({
   workspaceId,
   applicationId,
   onClose,
+  reviews,
 }: {
   reviewDrawerOpen: boolean;
   setReviewDrawerOpen: (reviewDrawerOpen: boolean) => void;
@@ -38,6 +39,7 @@ function ReviewDrawer({
   initialReviewers: any[];
   applicationId: string;
   onClose: () => void;
+  reviews: any[];
 }) {
   const { workspace } = useContext(ApiClientsContext)!;
   const [isReviewer, setIsReviewer] = React.useState<{
@@ -68,16 +70,17 @@ function ReviewDrawer({
     if (!workspace) return;
     if (!initialReviewers) return;
     const newIsReviewer: { [key: string]: boolean } = {};
-    workspace.members.filter((member) => (member.publicKey ?? '').length > 0).forEach((member: any) => {
-      console.log(member);
-      console.log(initialReviewers);
-      // eslint-disable-next-line max-len
-      newIsReviewer[member.actorId] = initialReviewers.find((r: any) => r.id.split('.')[1] === member.actorId)
+    workspace.members.filter((member) => (member.publicKey ?? '').length > 0)
+      .forEach((member: any) => {
+        console.log(member);
+        console.log(initialReviewers);
+        // eslint-disable-next-line max-len
+        newIsReviewer[member.actorId] = initialReviewers.find((r: any) => r.id.split('.')[1] === member.actorId)
         !== undefined;
-    });
+      });
     console.log(newIsReviewer);
     setIsReviewer(newIsReviewer);
-  }, [initialReviewers, workspace]);
+  }, [initialReviewers, workspace, reviews]);
 
   const handleOnSubmit = () => {
     setEditedReviewData({
@@ -167,47 +170,63 @@ function ReviewDrawer({
                 (member) => emailSearchText === ''
                     || (member.email && member.email.startsWith(emailSearchText)),
               )
-              .map((member) => (
-                <Flex
-                  w="100%"
-                  h="64px"
-                  bg={isReviewer[member.actorId] ? '#F3EDFD' : '#FFFFFF'}
-                  borderRadius="8px"
-                  align="center"
-                  mt={2}
-                  py={3}
-                >
-                  <Checkbox
-                    value={member.actorId}
-                    isChecked={isReviewer[member.actorId]}
-                    onChange={(v) => {
-                      const newIsReviewer = { ...isReviewer };
-                      newIsReviewer[v.target.value] = !isReviewer[v.target.value];
-                      setIsReviewer(newIsReviewer);
-                    }}
-                    mx={4}
-                    defaultChecked={isReviewer[member.actorId]}
-                    colorScheme="brand"
-                  />
-                  <Image ml={4} src="/ui_icons/reviewer_account.svg" />
-                  <Flex direction="column" ml={4}>
-                    <Text
-                      fontWeight="700"
-                      color="#122224"
-                      fontSize="14px"
-                      lineHeight="20px"
-                    >
-                      {member.email ? member.email : member.actorId}
-                    </Text>
-                    <Text mt={1} color="#717A7C" fontSize="12px">
-                      {member.email
+              .map((member) => {
+                let reviewExists = false;
+                if (reviews?.find((r) => r.reviewer.id.split('.')[1].toLowerCase() === member.actorId.toLowerCase())) {
+                  reviewExists = true;
+                }
+                return (
+                  <Flex
+                    w="100%"
+                    h="64px"
+                    // eslint-disable-next-line no-nested-ternary
+                    bg={reviewExists ? '#F3F4F4' : isReviewer[member.actorId] ? '#F3EDFD' : '#FFFFFF'}
+                    borderRadius="8px"
+                    align="center"
+                    mt={2}
+                    py={3}
+                  >
+                    <Checkbox
+                      value={member.actorId}
+                      isChecked={isReviewer[member.actorId]}
+                      onChange={(v) => {
+                        const newIsReviewer = { ...isReviewer };
+                        newIsReviewer[v.target.value] = !isReviewer[v.target.value];
+                        setIsReviewer(newIsReviewer);
+                      }}
+                      mx={4}
+                      defaultChecked={isReviewer[member.actorId]}
+                      colorScheme="brand"
+                      disabled={reviewExists}
+                    />
+                    <Image ml={4} src="/ui_icons/reviewer_account.svg" />
+                    <Flex direction="column" ml={4}>
+                      <Text
+                        fontWeight="700"
+                        color="#122224"
+                        fontSize="14px"
+                        lineHeight="20px"
+                      >
+                        {member.email ? member.email : member.actorId}
+                      </Text>
+                      <Text mt={1} color="#717A7C" fontSize="12px">
+                        {member.email
                           && truncateStringFromMiddle(member.actorId)}
-                    </Text>
+                        {member.email ? ' | ' : ''}
+                        {reviewExists && 'Review submitted'}
+                      </Text>
+                    </Flex>
                   </Flex>
-                </Flex>
-              ))}
+                );
+              })}
 
           </Flex>
+
+          <Text fontSize="12px" color="#717A7C" mt={4}>
+            The reviewers who have already submitted their
+            reviews cannot be unassigned as reviewers.
+            {' '}
+          </Text>
 
           <Text fontSize="12px" color="#717A7C" mt={4}>
             The reviewers who have not accepted the invite and submitted their

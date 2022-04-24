@@ -440,6 +440,7 @@ function ApplicantForm() {
                       <ReviewerSidebar
                         showHiddenData={showHiddenData}
                         applicationData={applicationData}
+                        isAdmin={isAdmin}
                         onAcceptApplicationClick={() => setStep(1)}
                         onRejectApplicationClick={() => setStep(2)}
                         onResubmitApplicationClick={() => setStep(3)}
