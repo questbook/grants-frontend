@@ -26,6 +26,7 @@ function Payouts() {
   const payModal = useDisclosure();
   const [payMode, setPayMode] = React.useState<number>(-1);
   const [selectedData, setSelectedData] = React.useState<any>();
+  const [paymentOutside, setPaymentOutside] = React.useState<boolean>(false);
 
   const payOptions = ['Pay from connected wallet', 'Pay from another wallet'];
 
@@ -178,10 +179,12 @@ function Payouts() {
                     payMode === -1
                       ? 'Pay From'
                       // eslint-disable-next-line no-nested-ternary
-                      : payMode === 0 || payMode === 1
+                      : payMode === 0 || (payMode === 1 && !paymentOutside)
                         ? 'Pay Reviewer'
                         // eslint-disable-next-line no-nested-ternary
-                        : payMode === 2 && 'Fill Payment Details'
+                        : payMode === 2 ? 'Fill Payment Details'
+                        // eslint-disable-next-line no-nested-ternary
+                        : (paymentOutside && payMode === 1) && 'Pay from external wallet'
                   }`}
                   leftIcon={
                     payMode !== -1 && (
@@ -269,6 +272,8 @@ function Payouts() {
                     reviewerAddress={selectedData?.address}
                     reviews={selectedData?.outstanding}
                     onClose={payModal.onClose}
+                    paymentOutside={paymentOutside}
+                    setPaymentOutside={setPaymentOutside}
                   />
                 </Modal>
               </>

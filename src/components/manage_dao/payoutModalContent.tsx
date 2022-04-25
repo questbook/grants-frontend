@@ -43,6 +43,8 @@ interface Props {
   reviewerAddress: string | any;
   reviews: number;
   onClose: () => void;
+  setPaymentOutside: any;
+  paymentOutside: boolean;
 }
 
 function PayoutModalContent({
@@ -50,6 +52,8 @@ function PayoutModalContent({
   reviewerAddress,
   reviews,
   onClose,
+  setPaymentOutside,
+  paymentOutside
 }: Props) {
   // WAGMI && ETH HOOKS
   const currentChain = useChainId() ?? SupportedChainId.RINKEBY;
@@ -155,153 +159,233 @@ function PayoutModalContent({
 
   return (
     <ModalBody>
-      {payMode === 0 && (
-        <Flex direction="column" gap="1rem">
+      <Flex direction="column" gap="1rem">
+        {(payMode === 0 || (payMode === 1 && !paymentOutside)) && (
+          <>
+            <Flex
+              w="100%"
+              mt={7}
+              direction="row"
+              justify="space-between"
+              align="center"
+            >
+              <Heading fontSize="0.875rem" textAlign="left">
+                Address:
+              </Heading>
+              <Text fontSize="0.875rem">
+                {trimAddress(reviewerAddress, 8)}{' '}
+                <IconButton
+                  alignItems="center"
+                  justifyItems="center"
+                  _focus={{ boxShadow: 'none' }}
+                  aria-label="Back"
+                  variant="ghost"
+                  _hover={{}}
+                  _active={{}}
+                  icon={
+                    <Image
+                      src={
+                        !hasCopied
+                          ? '/ui_icons/copy/normal.svg'
+                          : '/ui_icons/copy/active.svg'
+                      }
+                    />
+                  }
+                  onClick={() => onCopy()}
+                />
+              </Text>
+            </Flex>
+            <Flex direction="column" gap="0.5rem">
+              <Heading fontSize="0.875rem" textAlign="left">
+                Reviews:
+              </Heading>
+              <InputGroup size="md">
+                <Input
+                  pr="4.5rem"
+                  placeholder="Enter number of reviews"
+                  min={1}
+                  max={reviews}
+                  isInvalid={
+                    (reviewsToPay as any) > reviews || (reviewsToPay as any) < 1
+                  }
+                  onChange={(e) =>
+                    setReviewsToPay(parseInt(e.target.value, 10))
+                  }
+                  value={reviewsToPay}
+                  h={12}
+                  type="number"
+                />
+                <InputRightElement width="fit-content" p={5} mt="0.25rem">
+                  <Button
+                    bg="none"
+                    color="#8850EA"
+                    fontWeight="bold"
+                    h="1.75rem"
+                    size="sm"
+                    onClick={() => setReviewsToPay(reviews)}
+                  >
+                    ALL
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+              <Text fontSize="0.75rem">
+                {(reviewsToPay as any) > reviews
+                  ? `You can not pay more than ${reviews} reviews`
+                  : (reviewsToPay as any) < 1 &&
+                    'You need to pay at least 1 review'}
+              </Text>
+            </Flex>
+            <Flex direction="row">
+              <Flex w="70%" direction="column" gap="0.5rem">
+                <Heading fontSize="0.875rem" textAlign="left">
+                  Amount per Review:
+                </Heading>
+                <NumberInput
+                  mr="0.5rem"
+                  placeholder="Enter Amount"
+                  onChange={(value) => {
+                    setAmountToPay(parseInt(value));
+                  }}
+                  value={amountToPay}
+                  min={0}
+                  step={0.01}
+                >
+                  <NumberInputField h={12} minW="full" />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              </Flex>
+              <Flex direction="column" w="fit-content" mt="20px">
+                <Dropdown
+                  listItemsMinWidth="132px"
+                  listItems={supportedCurrencies}
+                  value={reviewCurrency}
+                  onChange={(data: any) => {
+                    setReviewCurrency(data.label);
+                    setReviewCurrencyAddress(data.id);
+                  }}
+                />
+              </Flex>
+            </Flex>
+            <Flex>
+              {totalAmount !== 0 ? (
+                <Flex direction="column" w="100%">
+                  <InputGroup>
+                    <Input
+                      color="#717A7C"
+                      border="none"
+                      bg="rgba(241, 247, 255, 0.83)"
+                      isReadOnly
+                      value="Total Amount"
+                      pr="4.5rem"
+                      h={12}
+                    />
+                    <InputRightElement
+                      zIndex="0"
+                      p={5}
+                      mt="0.25rem"
+                      width="fit-content"
+                    >
+                      <Text
+                        bg="none"
+                        fontSize="0.875rem"
+                        color="black"
+                        size="sm"
+                      >
+                        {totalAmount} {reviewCurrency}
+                      </Text>
+                    </InputRightElement>
+                  </InputGroup>
+
+                  <Text mt="0.75rem" color="#AAAAAA">
+                    Wallet Balance{' '}
+                    <Text
+                      color="#AAAAAA"
+                      display="inline-block"
+                      fontWeight="bold"
+                    >
+                      {`${formatAmount(walletBalance.toString())}`}{' '}
+                      {reviewCurrency}
+                    </Text>
+                  </Text>
+                </Flex>
+              ) : null}
+            </Flex>
+          </>
+        )}
+
+        {paymentOutside &&
+          <>
           <Flex
             w="100%"
             mt={7}
             direction="row"
-            justify="space-between"
             align="center"
           >
-            <Heading fontSize="0.875rem" textAlign="left">
-              Address:
-            </Heading>
-            <Text fontSize="0.875rem">
-              {trimAddress(reviewerAddress, 8)}{' '}
-              <IconButton
-                alignItems="center"
-                justifyItems="center"
-                _focus={{ boxShadow: 'none' }}
-                aria-label="Back"
-                variant="ghost"
-                _hover={{}}
-                _active={{}}
-                icon={
-                  <Image
-                    src={
-                      !hasCopied
-                        ? '/ui_icons/copy/normal.svg'
-                        : '/ui_icons/copy/active.svg'
-                    }
-                  />
-                }
-                onClick={() => onCopy()}
-              />
+            <Flex
+              align="center"
+              justify="center"
+              bgColor="#8850EA"
+              borderRadius="full"
+              w="48px"
+              h="48px"
+              mr="1rem"
+            >
+              1
+            </Flex>
+            <Text>
+              Open a wallet with funds.
             </Text>
           </Flex>
-          <Flex direction="column" gap="0.5rem">
-            <Heading fontSize="0.875rem" textAlign="left">
-              Reviews:
-            </Heading>
-            <InputGroup size="md">
-              <Input
-                pr="4.5rem"
-                placeholder="Enter number of reviews"
-                min={1}
-                max={reviews}
-                isInvalid={
-                  (reviewsToPay as any) > reviews || (reviewsToPay as any) < 1
-                }
-                onChange={(e) => setReviewsToPay(parseInt(e.target.value, 10))}
-                value={reviewsToPay}
-                h={12}
-                type="number"
-              />
-              <InputRightElement width="fit-content" p={5} mt="0.25rem">
-                <Button
-                  bg="none"
-                  color="#8850EA"
-                  fontWeight="bold"
-                  h="1.75rem"
-                  size="sm"
-                  onClick={() => setReviewsToPay(reviews)}
-                >
-                  ALL
-                </Button>
-              </InputRightElement>
-            </InputGroup>
-            <Text fontSize="0.75rem">
-              {(reviewsToPay as any) > reviews
-                ? `You can not pay more than ${reviews} reviews`
-                : (reviewsToPay as any) < 1 &&
-                  'You need to pay at least 1 review'}
+          <Flex
+            w="100%"
+            mt={7}
+            direction="row"
+            align="center"
+          >
+          <Flex
+            align="center"
+            justify="center"
+            bgColor="#8850EA"
+            borderRadius="full"
+            w="48px"
+            h="48px"
+            mr="1rem"
+          >
+              2
+            </Flex>
+            <Text>
+              Send {totalAmount !== 0 && totalAmount && reviewCurrency} to the address below.
             </Text>
           </Flex>
-          <Flex direction="row">
-            <Flex w="70%" direction="column" gap="0.5rem">
-              <Heading fontSize="0.875rem" textAlign="left">
-                Amount per Review:
-              </Heading>
-              <NumberInput
-                mr="0.5rem"
-                placeholder="Enter Amount"
-                onChange={(value) => {
-                  setAmountToPay(parseInt(value));
-                }}
-                value={amountToPay}
-                min={0}
-                step={0.01}
-              >
-                <NumberInputField h={12} minW="full" />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
+          <Flex
+            w="100%"
+            mt={7}
+            direction="row"
+            align="center"
+          >
+          <Flex
+            align="center"
+            justify="center"
+            bgColor="#8850EA"
+            borderRadius="full"
+            w="48px"
+            h="48px"
+            mr="1rem"
+          >
+              3
             </Flex>
-            <Flex direction="column" w="fit-content" mt="20px">
-              <Dropdown
-                listItemsMinWidth="132px"
-                listItems={supportedCurrencies}
-                value={reviewCurrency}
-                onChange={(data: any) => {
-                  setReviewCurrency(data.label);
-                  setReviewCurrencyAddress(data.id);
-                }}
-              />
-            </Flex>
+            <Text>
+              Copy the transaction hash and mark payment as done.
+            </Text>
           </Flex>
-          <Flex>
-            {totalAmount !== 0 ? (
-              <Flex direction="column" w="100%">
-                <InputGroup>
-                  <Input
-                    color="#717A7C"
-                    border="none"
-                    bg="rgba(241, 247, 255, 0.83)"
-                    isReadOnly
-                    value="Total Amount"
-                    pr="4.5rem"
-                    h={12}
-                  />
-                  <InputRightElement
-                    zIndex="0"
-                    p={5}
-                    mt="0.25rem"
-                    width="fit-content"
-                  >
-                    <Text bg="none" fontSize="0.875rem" color="black" size="sm">
-                      {totalAmount} {reviewCurrency}
-                    </Text>
-                  </InputRightElement>
-                </InputGroup>
+          </>
+        }
 
-                <Text mt="0.75rem" color="#AAAAAA">
-                  Wallet Balance{' '}
-                  <Text
-                    color="#AAAAAA"
-                    display="inline-block"
-                    fontWeight="bold"
-                  >
-                    {`${formatAmount(walletBalance.toString())}`}{' '}
-                    {reviewCurrency}
-                  </Text>
-                </Text>
-              </Flex>
-            ) : null}
-          </Flex>
-
+        {payMode === 0 && (
+          <>
           <Text fontSize="0.75rem" alignContent="center">
             <Image
               display="inline-block"
@@ -310,8 +394,8 @@ function PayoutModalContent({
               alt="wallet_info"
               src="/ui_icons/info_brand.svg"
             />{' '}
-            By pressing Make Payment you will have to approve the transaction in
-            your wallet.{' '}
+            By pressing Make Payment you will have to approve the transaction
+            in your wallet.{' '}
             <Link
               href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
               isExternal
@@ -325,7 +409,6 @@ function PayoutModalContent({
               src="/ui_icons/link.svg"
             />
           </Text>
-
           <Button
             variant="primary"
             my={8}
@@ -342,71 +425,32 @@ function PayoutModalContent({
           >
             {loader ? <Loader /> : 'Make Payment'}
           </Button>
-          <Button variant="reject" my={8} onClick={() => {}} py="0">
-            Cancel
-          </Button>
-        </Flex>
-      )}
+          </>
+        )}
 
-      {/* payMode === 1 && (
-        <Flex direction="column" gap="0.5rem">
-          <Flex w="100%" mt={7} direction="row" justify="space-between" align="center">
-            <Heading fontSize="0.875rem" textAlign="left">
-              Address:
-            </Heading>
-            <Text fontSize="0.875rem">
-              {trimAddress(address)} <IconButton
-                aria-label="Back"
-                variant="ghost"
-                _hover={{}}
-                _active={{}}
-                icon={<Image mr={8} src={!hasCopied ? "/ui_icons/copy/normal.svg"
-                : "/ui_icons/copy/active.svg"} />}
-                onClick={() => onCopy()}
-              />
-            </Text>
-          </Flex>
-          <Flex direction="column" gap="0.25rem">
-          <Heading fontSize="0.875rem" textAlign="left">
-            Reviews:
-          </Heading>
-          <InputGroup size='md'>
-            <Input
-              pr='4.5rem'
-              placeholder='Enter number of reviews'
-              min={1}
-              max={reviews}
-              onChange={(e) => onChange(e)}
-              value={reviewsToPay}
-            />
-            <InputRightElement width='4.5rem'>
-              <Button bg="none" color="brand" h='1.75rem' size='sm' onClick={() => fillReviews}>
-                ALL
-              </Button>
-            </InputRightElement>
-          </InputGroup>
-          </Flex>
-          <Flex direction="column" gap="0.25rem">
-          <Heading fontSize="0.875rem" textAlign="left">
-            Amount per Review
-          </Heading>
-          <Input
-            pr='4.5rem'
-            placeholder='Enter Amount'
-            onChange={(e) => onChange(e)}
-            value={amountToPay}
-          />
-          </Flex>
-
-          <Text fontSize="0.75rem">
-            By pressing Make Payment you will have to approve the transaction in
-            your wallet
-          </Text>
-          <Button variant="primary" my={8} onClick={() => onClose()}>
-            Make Payment
+        {payMode === 1 && (
+          <Button
+            variant="primary"
+            my={8}
+            onClick={() => {
+              console.log(
+                reviewCurrencyAddress,
+                totalAmount,
+                reviewCurrency,
+                reviewerAddress
+              );
+              {
+                reviewsToPay !== undefined &&
+                  amountToPay !== undefined &&
+                  setFinalAmount(utils.parseUnits(totalAmount));
+                setPaymentOutside(true);
+              }
+            }}
+          >
+            {paymentOutside ? 'Set Payment as PAID' : 'Make Payment'}
           </Button>
-        </Flex>
-      ) */}
+        )}
+      </Flex>
     </ModalBody>
   );
 }
