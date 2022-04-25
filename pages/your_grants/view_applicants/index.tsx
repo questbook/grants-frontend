@@ -34,6 +34,8 @@ function ViewApplicants() {
   const [shouldShowButton, setShouldShowButton] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAdmin, setIsAdmin] = React.useState<boolean>(false);
+  const [isReviewer, setIsReviewer] = React.useState<boolean>(false);
+
 
   const [{ data: accountData }] = useAccount({
     fetchEns: false,
@@ -98,6 +100,8 @@ function ViewApplicants() {
         tempMember?.accessLevel === 'admin'
           || tempMember?.accessLevel === 'owner',
       );
+
+      setIsReviewer(tempMember?.accessLevel === 'reviewer');
     }
   }, [accountData, workspace]);
 
@@ -106,6 +110,8 @@ function ViewApplicants() {
     if (data && data.grantApplications.length) {
       const fetchedApplicantsData = data.grantApplications.map((applicant) => {
         const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value;
+        console.log(applicant)
+
         return {
           grantTitle: applicant?.grant?.title,
           applicationId: applicant.id,
@@ -255,9 +261,9 @@ function ViewApplicants() {
           workspaceId={workspace?.id ?? ''}
           initialIsPrivate={grantData?.grants[0].rubric?.isPrivate ?? false}
         />
-
         <Table
           title={applicantsData[0]?.grantTitle ?? 'Grant Title'}
+          isReviewer={isReviewer}
           data={applicantsData}
           onViewApplicantFormClick={(commentData: any) => router.push({
             pathname: '/your_grants/view_applicants/applicant_form/',
