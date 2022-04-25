@@ -16,6 +16,7 @@ import {
   InputRightElement,
   Heading,
   ToastId,
+  Stack,
   useClipboard,
   useToast,
 } from '@chakra-ui/react';
@@ -40,6 +41,7 @@ import InfoToast from '../ui/infoToast';
 
 interface Props {
   payMode: number;
+  setPayMode: any;
   reviewerAddress: string | any;
   reviews: number;
   onClose: () => void;
@@ -49,6 +51,7 @@ interface Props {
 
 function PayoutModalContent({
   payMode,
+  setPayMode,
   reviewerAddress,
   reviews,
   onClose,
@@ -75,6 +78,18 @@ function PayoutModalContent({
   const [amountToPay, setAmountToPay] = useState<number>();
   const [totalAmount, setTotalAmount] = useState<any>(0);
   const [finalAmount, setFinalAmount] = useState<BigNumber>();
+  const [amountDeposited, setAmountDeposited] = useState<number>();
+  const [transactionHash, setTransactionHash] = useState<string>();
+
+  async function setTransactionHashFromClipboard() {
+    try {
+      const text = await navigator.clipboard.readText();
+      setTransactionHash(text)
+    } catch (err) {
+      console.error('Failed to read clipboard contents: ', err);
+    }
+  }
+
   const [reviewCurrency, setReviewCurrency] = useState(
     supportedCurrencies[0].label
   );
@@ -317,7 +332,9 @@ function PayoutModalContent({
         )}
 
         {paymentOutside &&
-          <>
+          <Stack
+            spacing="1rem"
+          >
           <Flex
             w="100%"
             mt={7}
@@ -357,7 +374,7 @@ function PayoutModalContent({
               2
             </Flex>
             <Text>
-              Send {totalAmount !== 0 && totalAmount && reviewCurrency} to the address below.
+              Send {totalAmount !== 0 && `${totalAmount} ${reviewCurrency}`} to the address below.
             </Text>
           </Flex>
           <Flex
@@ -378,10 +395,55 @@ function PayoutModalContent({
               3
             </Flex>
             <Text>
-              Copy the transaction hash and mark payment as done.
+              Copy the TX hash and set payment as done.
             </Text>
           </Flex>
-          </>
+
+          <Heading fontSize="0.875rem" textAlign="left">
+            Reviewer Wallet Address
+          </Heading>
+
+          <InputGroup>
+            <Input
+              color="#717A7C"
+              border="none"
+              bg="rgba(241, 247, 255, 0.83)"
+              isReadOnly
+              value={reviewerAddress}
+              pr="4.5rem"
+              h={16}
+              alignItems="center"
+              alignContent="center"
+              justifyContent="center"
+              justifySelf="center"
+              justifyItems="center"
+            />
+            <InputRightElement
+              alignSelf="center"
+              zIndex="0"
+              m="auto"
+              mt="0.25rem"
+              width="min-content"
+            >
+              <Button
+                w="40px"
+                h="90px"
+                variant="primary"
+                bg="none"
+                fontSize="0.875rem"
+                color="black"
+                size="sm"
+                onClick={() => onCopy()}
+              >
+                {hasCopied ? "Copied!" : "Copy"}
+              </Button>
+            </InputRightElement>
+          </InputGroup>
+
+          <Text color="#717A7C" fontSize="0.875rem">
+            NOTE: Send only {reviewCurrency} to the address in the Polygon network.
+          </Text>
+          </Stack>
         }
 
         {payMode === 0 && (
@@ -442,14 +504,176 @@ function PayoutModalContent({
               {
                 reviewsToPay !== undefined &&
                   amountToPay !== undefined &&
-                  setFinalAmount(utils.parseUnits(totalAmount));
-                setPaymentOutside(true);
+                  !paymentOutside ?
+                  (setFinalAmount(utils.parseUnits(totalAmount)),
+                setPaymentOutside(true)) : (
+                  setPaymentOutside(false),
+                  setPayMode(2));
               }
             }}
           >
-            {paymentOutside ? 'Set Payment as PAID' : 'Make Payment'}
+            {paymentOutside ? 'Mark Payment as Done' : 'Make Payment'}
           </Button>
         )}
+
+        {payMode === 2 &&
+          <Flex direction="column" gap="1rem">
+          <Flex
+            w="100%"
+            mt={7}
+            direction="row"
+            justify="space-between"
+            align="center"
+          >
+            <Heading fontSize="0.875rem" textAlign="left">
+              Address:
+            </Heading>
+            <Text fontSize="0.875rem">
+              {trimAddress(reviewerAddress, 8)}{' '}
+              <IconButton
+                alignItems="center"
+                justifyItems="center"
+                _focus={{ boxShadow: 'none' }}
+                aria-label="Back"
+                variant="ghost"
+                _hover={{}}
+                _active={{}}
+                icon={
+                  <Image
+                    src={
+                      !hasCopied
+                        ? '/ui_icons/copy/normal.svg'
+                        : '/ui_icons/copy/active.svg'
+                    }
+                  />
+                }
+                onClick={() => onCopy()}
+              />
+            </Text>
+          </Flex>
+          <Flex direction="column" gap="0.5rem">
+            <Heading fontSize="0.875rem" textAlign="left">
+              Reviews:
+            </Heading>
+            <InputGroup size="md">
+              <Input
+                pr="4.5rem"
+                placeholder="Enter number of reviews"
+                min={1}
+                max={reviews}
+                isInvalid={
+                  (reviewsToPay as any) > reviews || (reviewsToPay as any) < 1
+                }
+                onChange={(e) =>
+                  setReviewsToPay(parseInt(e.target.value, 10))
+                }
+                value={reviewsToPay}
+                h={12}
+                type="number"
+              />
+              <InputRightElement width="fit-content" p={5} mt="0.25rem">
+                <Button
+                  bg="none"
+                  color="#8850EA"
+                  fontWeight="bold"
+                  h="1.75rem"
+                  size="sm"
+                  onClick={() => setReviewsToPay(reviews)}
+                >
+                  ALL
+                </Button>
+              </InputRightElement>
+            </InputGroup>
+            <Text fontSize="0.75rem">
+              {(reviewsToPay as any) > reviews
+                ? `You can not pay more than ${reviews} reviews`
+                : (reviewsToPay as any) < 1 &&
+                  'You need to pay at least 1 review'}
+            </Text>
+          </Flex>
+          <Flex direction="row">
+            <Flex w="70%" direction="column" gap="0.5rem">
+              <Heading fontSize="0.875rem" textAlign="left">
+                Amount Deposited:
+              </Heading>
+              <NumberInput
+                mr="0.5rem"
+                placeholder="Enter Amount"
+                onChange={(value) => {
+                  setAmountDeposited(parseInt(value));
+                }}
+                value={amountDeposited}
+                min={0}
+                step={0.01}
+              >
+                <NumberInputField h={12} minW="full" />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+            </Flex>
+            <Flex direction="column" w="fit-content" mt="20px">
+              <Dropdown
+                listItemsMinWidth="132px"
+                listItems={supportedCurrencies}
+                value={reviewCurrency}
+                onChange={(data: any) => {
+                  setReviewCurrency(data.label);
+                  setReviewCurrencyAddress(data.id);
+                }}
+              />
+            </Flex>
+          </Flex>
+
+          <InputGroup>
+            <Input
+              color="#717A7C"
+              border="none"
+              bg="rgba(241, 247, 255, 0.83)"
+              placeholder="Paste the TXN hash here"
+              value={transactionHash}
+              pr="4.5rem"
+              h={16}
+            />
+            <InputRightElement
+              pt="1rem"
+              pr="1rem"
+              zIndex="0"
+              m="auto"
+              mt="0.25rem"
+              width="min-content"
+            >
+              <Button
+                bg="none"
+                fontSize="0.875rem"
+                color="black"
+                onClick={() => {
+                  setTransactionHashFromClipboard()
+                }}
+              >
+                {hasCopied ? "Pasted!" : "Paste"}
+              </Button>
+            </InputRightElement>
+          </InputGroup>
+
+          <Button
+            variant="primary"
+            my={8}
+            onClick={() => {
+              console.log(
+                reviewCurrencyAddress,
+                totalAmount,
+                reviewCurrency,
+                reviewerAddress,
+                "YES"
+              );
+            }}
+          >
+            Mark Payment as Done
+          </Button>
+          </Flex>
+        }
       </Flex>
     </ModalBody>
   );
