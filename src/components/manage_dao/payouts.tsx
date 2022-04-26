@@ -26,28 +26,11 @@ import PayoutModalContent from './payoutModalContent';
 //   workspaceMembers: any;
 // }
 
-interface HistoryTablePlaceholderProps {
-  email: string;
-  reviewerAddress: string;
-  payerAddress: string;
-  txnAddress: string;
-  paidDate: string;
-  amount: string;
-}
-
 function Payouts() {
   const payModal = useDisclosure();
   const [payMode, setPayMode] = React.useState<number>(-1);
   const [selectedData, setSelectedData] = React.useState<any>();
   const [paymentOutside, setPaymentOutside] = React.useState<boolean>(false);
-  const [historyTablePlaceholders] = React.useState<HistoryTablePlaceholderProps[]>([{
-    email: '',
-    reviewerAddress: '',
-    payerAddress: '',
-    txnAddress: '',
-    paidDate: '',
-    amount: '',
-  }]);
 
   const [tabIndex, setTabIndex] = React.useState<number>(0);
 
@@ -69,7 +52,7 @@ function Payouts() {
     'Paid on',
     'Actions',
   ];
-  const tableDataFlex = [0.2741, 0.2622, 0, 0.2448, 0];
+  const tableDataFlex = [0.2741, 0.1, 0.2, 0.2448, 0.2];
 
   const payoutTablePlaceholders = [
     {
@@ -92,6 +75,33 @@ function Payouts() {
     },
   ];
 
+  const historyTablePlaceholders = [
+    {
+      email: 'madahavan@creatos.co',
+      reviewerAddress: '0xa2dDFc8a6C1F8868B80F2747D04532a6cDE9804d',
+      payerAddress: '0x0c9ccbada1411687f6ffa7df317af35b16b1fe0c',
+      txnAddress: '0xc9773e119fb6b4ec6f47d1637fc42ea2116fa6fa6a1577f00ed255a64b4f5956',
+      paidDate: '25th April 2022',
+      amount: '100 DAI',
+    },
+    {
+      email: 'vitalik@vitalik.co',
+      reviewerAddress: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+      payerAddress: '0x0c9ccbada1411687f6ffa7df317af35b16b1fe0c',
+      txnAddress: '0xc9773e119fb6b4ec6f47d1637fc42ea2116fa6fa6a1577f00ed255a64b4f5956',
+      paidDate: '25th April 2022',
+      amount: '1 ETH',
+    },
+    {
+      email: 'dhairya@creator.os',
+      reviewerAddress: '0x0CC3a9E0d0f958367168e5cdf2d1f35F7c54F875',
+      payerAddress: '0x0c9ccbada1411687f6ffa7df317af35b16b1fe0c',
+      txnAddress: '0xc9773e119fb6b4ec6f47d1637fc42ea2116fa6fa6a1577f00ed255a64b4f5956',
+      paidDate: '25th April 2022',
+      amount: '200 USDC',
+    },
+  ];
+
   const tempTableData = payoutTablePlaceholders.map((payoutData: any) => ({
     email: payoutData.email,
     address: payoutData.address,
@@ -101,7 +111,7 @@ function Payouts() {
 
   const historyTableData = historyTablePlaceholders.map((paidData: any) => ({
     email: paidData.email,
-    reviwerAddress: paidData.reviewerAddress,
+    reviewerAddress: paidData.reviewerAddress,
     payerAddress: paidData.payerAddress,
     paidDate: paidData.paidDate,
     amount: paidData.amount,
@@ -380,8 +390,8 @@ function Payouts() {
               >
                 {historyTableData.map((data: any, index: number) => (
                   <Flex>
-                    {data.reviewerAddress !== ''
-                      ? (
+                    {data.reviewerAddress === null
+                      ? null : (
                         <Flex
                           direction="row"
                           w="100%"
@@ -392,7 +402,6 @@ function Payouts() {
                           px={5}
                         >
                           <Text
-                            flex={tableDataFlex[1]}
                             minW="fit-content"
                             variant="tableBody"
                             textAlign="left"
@@ -401,25 +410,20 @@ function Payouts() {
                             {data.email}
                           </Text>
                           <Tooltip label={data.reviewerAddress}>
-                            <Flex flex={tableDataFlex[0]}>
+                            <Flex>
                               <Text textAlign="center" variant="tableBody">
-                                {trimAddress(data.reviewerAddress, 4)}
+                                {data.reviewerAddress !== '' && trimAddress(data.reviewerAddress, 4)}
                               </Text>
                               <Box mr="7px" />
                               <CopyIcon text={data.reviewerAddress} />
                             </Flex>
                           </Tooltip>
                           <Text textAlign="center" variant="tableBody">
-                            {trimAddress(data.payerAddress, 4)}
+                            {data.payererAddress !== '' && trimAddress(data.payerAddress, 4)}
                           </Text>
-                          <Text
-                            flex={tableDataFlex[1]}
-                            minW="fit-content"
-                            variant="tableBody"
-                          >
-                            {data.date}
-                          </Text>
+
                           <Text variant="tableBody">{data.amount}</Text>
+                          <Text variant="tableBody">{data.paidDate}</Text>
 
                           <Flex direction="row">
                             <Link
@@ -437,7 +441,7 @@ function Payouts() {
                             </Link>
                           </Flex>
                         </Flex>
-                      ) : null}
+                      )}
                   </Flex>
                 ))}
               </Flex>
