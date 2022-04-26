@@ -112,11 +112,12 @@ function Dropdown({
           sx={{
             '&::-webkit-scrollbar': {
               width: '4px',
-              borderRadius: '6px',
+              borderRadius: '12px',
               backgroundColor: '#E9E9ED',
             },
             '&::-webkit-scrollbar-thumb': {
               backgroundColor: '#BEBCC8',
+              borderRadius: '12px',
             },
           }}
         >
