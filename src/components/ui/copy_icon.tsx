@@ -4,6 +4,7 @@ import copy from 'copy-to-clipboard';
 
 interface Props {
   text: string;
+  // eslint-disable-next-line react/require-default-props
   h?: string;
 }
 

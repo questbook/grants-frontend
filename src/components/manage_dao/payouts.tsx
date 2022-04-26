@@ -37,7 +37,6 @@ function Payouts() {
 
   const payOptions = ['Pay from connected wallet', 'Pay from another wallet'];
 
-  const flex = [0.25, 0.2741, 0.2, 0.2316, 0.15];
   const tableHeaders = [
     'Member Email',
     'Member Address',
@@ -53,7 +52,6 @@ function Payouts() {
     'Paid on',
     'Actions',
   ];
-  const tableDataFlex = [0.2741, 0.1, 0.2, 0.2448, 0.2];
 
   const payoutTablePlaceholders = [
     {
@@ -138,32 +136,64 @@ function Payouts() {
       </Flex>
       <Flex w="100%" mt={8} alignItems="flex-start" direction="column">
         <Tabs
-        index={tabIndex}
-        variant="soft-rounded"
-        align="start"
-         w="100%">
+          index={tabIndex}
+          variant="soft-rounded"
+          align="start"
+          w="100%"
+        >
           <TabList>
-            <Tab onClick={() => setTabIndex(0)}>
+            <Tab
+              borderColor="#AAAAAA"
+              color="#AAAAAA"
+              _focus={{
+                boxShadow: 'none',
+                border: '1px solid',
+                borderColor: '#8850EA',
+              }}
+              _active={{
+                boxShadow: 'none',
+                border: '1px solid',
+                borderColor: '#8850EA',
+              }}
+              onClick={() => setTabIndex(0)}
+            >
               Outstanding
               {' '}
               {`(${tempTableData.length})`}
             </Tab>
-            <Tab onClick={() => setTabIndex(1)}>History</Tab>
+            <Tab
+              borderColor="#AAAAAA"
+              color="#AAAAAA"
+              _focus={{
+                boxShadow: 'none',
+                border: '1px solid',
+                borderColor: '#8850EA',
+              }}
+              _active={{
+                boxShadow: 'none',
+                border: '1px solid',
+                borderColor: '#8850EA',
+              }}
+              onClick={() => setTabIndex(1)}
+            >
+              History
+            </Tab>
           </TabList>
 
           <TabPanels>
             <TabPanel>
-            <Grid
-              gridAutoFlow="column"
-              gridTemplateColumns="repeat(5, 1fr)"
-              w="100%"
-              justifyItems="center"
-              alignContent="center"
-              py={4}
-              px={5}
-            >                {tableHeaders.map((header, index) => (
+              <Grid
+                gridAutoFlow="column"
+                gridTemplateColumns="repeat(5, 1fr)"
+                w="100%"
+                justifyItems="center"
+                alignContent="center"
+                py={4}
+                px={5}
+              >
+                {' '}
+                {tableHeaders.map((header) => (
                   <Text
-                    flex={flex[index]}
                     w="fit-content"
                     variant="tableHeader"
                   >
@@ -204,7 +234,7 @@ function Payouts() {
                               {trimAddress(data.address, 4)}
                             </Text>
                             <Box mr="7px" />
-                              <CopyIcon h="0.75rem" text={data.address} />
+                            <CopyIcon h="0.75rem" text={data.address} />
                           </Flex>
                         </Tooltip>
                         <Text
@@ -214,12 +244,8 @@ function Payouts() {
                         >
                           {data.date}
                         </Text>
-                        <Text
-variant="tableBody">{data.outstanding}</Text>
-                        <Flex
-                          direction="row"
-                          gap="0.5rem"
-                        >
+                        <Text variant="tableBody">{data.outstanding}</Text>
+                        <Flex direction="row" gap="0.5rem">
                           <Button
                             variant="outline"
                             color="brand.500"
@@ -296,15 +322,11 @@ variant="tableBody">{data.outstanding}</Text>
                           )
                         }
                       >
-                        <Flex
-                          direction="column"
-                          pb="1rem"
-                          mx="2rem"
-                        >
+                        <Flex direction="column" pb="1rem" mx="2rem">
                           {payMode === -1 && (
-                          <Text pt="1rem">
-                            Select a wallet to process this transaction
-                          </Text>
+                            <Text pt="1rem">
+                              Select a wallet to process this transaction
+                            </Text>
                           )}
                           {payMode === -1
                             ? payOptions.map((option, ind) => (
@@ -356,7 +378,7 @@ variant="tableBody">{data.outstanding}</Text>
                                     h="6px"
                                     icon={
                                       <Image src="/ui_icons/brand/chevron_right.svg" />
-                                    }
+                                      }
                                     onClick={() => {
                                       setPayMode(ind);
                                     }}
@@ -383,19 +405,18 @@ variant="tableBody">{data.outstanding}</Text>
               </Flex>
             </TabPanel>
             <TabPanel>
-            <Grid
-              gridAutoFlow="column"
-              gridTemplateColumns="repeat(5, 1fr)"
-              w="100%"
-              justifyItems="center"
-              alignContent="center"
-              py={4}
-              px={5}
-            >                {historyTableHeaders.map((header, index) => (
-                    <Text
-                    w="fit-content"
-                    variant="tableHeader"
-                  >
+              <Grid
+                gridAutoFlow="column"
+                gridTemplateColumns="repeat(5, 1fr)"
+                w="100%"
+                justifyItems="center"
+                alignContent="center"
+                py={4}
+                px={5}
+              >
+                {' '}
+                {historyTableHeaders.map((header) => (
+                  <Text w="fit-content" variant="tableHeader">
                     {header}
                   </Text>
                 ))}
@@ -408,59 +429,60 @@ variant="tableBody">{data.outstanding}</Text>
               >
                 {historyTableData.map((data: any, index: number) => (
                   <Flex>
-                    {data.reviewerAddress === null
-                      ? null : (
-                        <Grid
-                          gridAutoFlow="column"
-                          gridTemplateColumns="repeat(5, 1fr)"
-                          w="100%"
-                          justifyItems="center"
-                          alignContent="center"
-                          bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
-                          py={4}
-                          px={5}
+                    {data.reviewerAddress === null ? null : (
+                      <Grid
+                        gridAutoFlow="column"
+                        gridTemplateColumns="repeat(5, 1fr)"
+                        w="100%"
+                        justifyItems="center"
+                        alignContent="center"
+                        bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
+                        py={4}
+                        px={5}
+                      >
+                        <Text
+                          minW="fit-content"
+                          variant="tableBody"
+                          justifySelf="left"
                         >
-                          <Text
-                            minW="fit-content"
-                            variant="tableBody"
-                            justifySelf="left"
-                          >
-                            {' '}
-                            {data.email}
-                          </Text>
-                          <Tooltip label={data.reviewerAddress}>
+                          {' '}
+                          {data.email}
+                        </Text>
+                        <Tooltip label={data.reviewerAddress}>
                           <Flex alignItems="center">
-                              <Text textAlign="center" variant="tableBody">
-                                {data.reviewerAddress !== '' && trimAddress(data.reviewerAddress, 4)}
-                              </Text>
-                              <Box mr="7px" />
-                              <CopyIcon h="0.75rem" text={data.reviewerAddress} />
-                            </Flex>
-                          </Tooltip>
-                          <Text textAlign="center" variant="tableBody">
-                            {data.payererAddress !== '' && trimAddress(data.payerAddress, 4)}
-                          </Text>
-
-                          <Text variant="tableBody">{data.amount}</Text>
-                          <Text variant="tableBody">{data.paidDate}</Text>
-
-                          <Flex direction="row">
-                            <Link
-                              href={`https://www.etherscan.io/tx/${data.txnAddress}`}
-                              isExternal
-                            >
-                              View
-                              {' '}
-                              <Image
-                                display="inline-block"
-                                h="10px"
-                                w="10px"
-                                src="/ui_icons/link.svg"
-                              />
-                            </Link>
+                            <Text textAlign="center" variant="tableBody">
+                              {data.reviewerAddress !== ''
+                                && trimAddress(data.reviewerAddress, 4)}
+                            </Text>
+                            <Box mr="7px" />
+                            <CopyIcon h="0.75rem" text={data.reviewerAddress} />
                           </Flex>
-                        </Grid>
-                      )}
+                        </Tooltip>
+                        <Text textAlign="center" variant="tableBody">
+                          {data.payererAddress !== ''
+                            && trimAddress(data.payerAddress, 4)}
+                        </Text>
+
+                        <Text variant="tableBody">{data.amount}</Text>
+                        <Text variant="tableBody">{data.paidDate}</Text>
+
+                        <Flex direction="row">
+                          <Link
+                            href={`https://www.etherscan.io/tx/${data.txnAddress}`}
+                            isExternal
+                          >
+                            View
+                            {' '}
+                            <Image
+                              display="inline-block"
+                              h="10px"
+                              w="10px"
+                              src="/ui_icons/link.svg"
+                            />
+                          </Link>
+                        </Flex>
+                      </Grid>
+                    )}
                   </Flex>
                 ))}
               </Flex>

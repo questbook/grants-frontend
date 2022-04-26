@@ -413,20 +413,12 @@ function PayoutModalContent({
                 justifySelf="center"
                 justifyItems="center"
               />
-              <InputRightElement
-                alignSelf="center"
-                zIndex="0"
-                m="auto"
-                mt="0.25rem"
-                width="min-content"
-              >
+              <InputRightElement width="fit-content" p={3} mt="0.75rem">
                 <Button
-                  w="40px"
-                  h="90px"
-                  variant="primary"
                   bg="none"
                   fontSize="0.875rem"
                   color="black"
+                  h="1.75rem"
                   size="sm"
                   onClick={() => onCopy()}
                 >

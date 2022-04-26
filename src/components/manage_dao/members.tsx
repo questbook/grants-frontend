@@ -1,8 +1,8 @@
 import {
-  Flex, Text, Button, Tooltip, Box,
+  Grid, Flex, Text, Button, Tooltip, Box,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
-import { getFormattedDateFromUnixTimestampWithYear, getTextWithEllipses } from 'src/utils/formattingUtils';
+import { trimAddress, getFormattedDateFromUnixTimestampWithYear } from 'src/utils/formattingUtils';
 import CopyIcon from '../ui/copy_icon';
 import Modal from '../ui/modal';
 // import ConfirmationModalContent from './confirmationModalContent';
@@ -16,8 +16,8 @@ interface Props {
 function Members({ workspaceMembers }: Props) {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [tableData, setTableData] = React.useState<any>(null);
-  const flex = [0.2741, 0.1544, 0.2316, 0.2403, 0.0994];
   const tableHeaders = [
+    'Email',
     'Member Address',
     'Role',
     'Added on',
@@ -62,13 +62,22 @@ function Members({ workspaceMembers }: Props) {
         </Button>
       </Flex>
       <Flex w="100%" mt={8} alignItems="flex-start" direction="column">
-        <Flex direction="row" w="100%" justify="strech" align="center" py={2}>
-          {tableHeaders.map((header, index) => (
-            <Text flex={flex[index]} variant="tableHeader">
+        <Grid
+          gridAutoFlow="column"
+          gridTemplateColumns="repeat(5, 1fr)"
+          w="100%"
+          justifyItems="center"
+          alignContent="center"
+          py={4}
+          px={5}
+        >
+          {' '}
+          {tableHeaders.map((header) => (
+            <Text variant="tableHeader">
               {header}
             </Text>
           ))}
-        </Flex>
+        </Grid>
         <Flex
           direction="column"
           w="100%"
@@ -77,37 +86,41 @@ function Members({ workspaceMembers }: Props) {
         >
           {tableData
             && tableData.map((data: any, index: number) => (
-              <Flex
-                direction="row"
+              <Grid
+                gridAutoFlow="column"
+                gridTemplateColumns="repeat(5, 1fr)"
                 w="100%"
-                justify="stretch"
-                align="center"
+                justifyItems="center"
+                alignContent="center"
                 bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
                 py={4}
-                px={7}
+                px={5}
               >
+                <Text variant="tableBody">
+                  {data.email}
+                </Text>
                 <Tooltip label={data.address}>
-                  <Flex flex={tableDataFlex[0]}>
+                  <Flex alignItems="center">
                     <Text variant="tableBody">
-                      {getTextWithEllipses(data.address, 16)}
+                      {trimAddress(data.address, 4)}
                     </Text>
                     <Box mr="7px" />
                     <CopyIcon text={data.address} />
                   </Flex>
                 </Tooltip>
-                <Text flex={tableDataFlex[1]} variant="tableBody">
+                <Text variant="tableBody">
                   {roles.find((r) => r.value === data.role)?.label ?? 'Admin'}
                 </Text>
-                <Text flex={tableDataFlex[2]} variant="tableBody">
+                <Text variant="tableBody">
                   {getFormattedDateFromUnixTimestampWithYear(data.updatedAt)}
                 </Text>
                 <Tooltip label={data.address}>
-                  <Flex flex={tableDataFlex[3]}>
+                  <Flex alignItems="center">
                     <Text variant="tableBody">
-                      {getTextWithEllipses(data.address, 16)}
+                      {trimAddress(data.address, 4)}
                     </Text>
                     <Box mr="7px" />
-                    <CopyIcon text={data.address} />
+                    <CopyIcon h="0.75rem" text={data.address} />
                   </Flex>
                 </Tooltip>
                 <Box flex={tableDataFlex[4]}>
@@ -130,7 +143,7 @@ function Members({ workspaceMembers }: Props) {
                     Edit
                   </Button>
                 </Box>
-              </Flex>
+              </Grid>
             ))}
         </Flex>
       </Flex>
