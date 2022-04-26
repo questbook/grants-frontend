@@ -4,6 +4,7 @@ import {
   Flex,
   Text,
   Button,
+  Grid,
   Tooltip,
   Link,
   Box,
@@ -136,7 +137,11 @@ function Payouts() {
         </Text>
       </Flex>
       <Flex w="100%" mt={8} alignItems="flex-start" direction="column">
-        <Tabs index={tabIndex} variant="soft-rounded" align="start" w="100%">
+        <Tabs
+        index={tabIndex}
+        variant="soft-rounded"
+        align="start"
+         w="100%">
           <TabList>
             <Tab onClick={() => setTabIndex(0)}>
               Outstanding
@@ -148,8 +153,15 @@ function Payouts() {
 
           <TabPanels>
             <TabPanel>
-              <Flex direction="row" w="100%" pl={5} align="center" py={2}>
-                {tableHeaders.map((header, index) => (
+            <Grid
+              gridAutoFlow="column"
+              gridTemplateColumns="repeat(5, 1fr)"
+              w="100%"
+              justifyItems="center"
+              alignContent="center"
+              py={4}
+              px={5}
+            >                {tableHeaders.map((header, index) => (
                   <Text
                     flex={flex[index]}
                     w="fit-content"
@@ -158,7 +170,7 @@ function Payouts() {
                     {header}
                   </Text>
                 ))}
-              </Flex>
+              </Grid>
               <Flex
                 direction="column"
                 w="100%"
@@ -167,45 +179,45 @@ function Payouts() {
               >
                 {tempTableData
                   && tempTableData.map((data: any, index: number) => (
-                    <>
-                      <Flex
-                        direction="row"
+                    <Flex>
+                      <Grid
+                        gridAutoFlow="column"
+                        gridTemplateColumns="repeat(5, 1fr)"
                         w="100%"
-                        justify="space-between"
-                        align="center"
+                        justifyItems="center"
+                        alignContent="center"
                         bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
                         py={4}
                         px={5}
                       >
                         <Text
-                          flex={tableDataFlex[1]}
                           minW="fit-content"
                           variant="tableBody"
-                          textAlign="left"
+                          justifySelf="left"
                         >
                           {' '}
                           {data.email}
                         </Text>
                         <Tooltip label={data.address}>
-                          <Flex flex={tableDataFlex[0]}>
+                          <Flex alignItems="center">
                             <Text textAlign="center" variant="tableBody">
                               {trimAddress(data.address, 4)}
                             </Text>
                             <Box mr="7px" />
-                            <CopyIcon text={data.address} />
+                              <CopyIcon h="0.75rem" text={data.address} />
                           </Flex>
                         </Tooltip>
                         <Text
-                          flex={tableDataFlex[1]}
                           minW="fit-content"
                           variant="tableBody"
+                          justifySelf="end"
                         >
                           {data.date}
                         </Text>
-                        <Text variant="tableBody">{data.outstanding}</Text>
+                        <Text
+variant="tableBody">{data.outstanding}</Text>
                         <Flex
                           direction="row"
-                          flex={tableDataFlex[4]}
                           gap="0.5rem"
                         >
                           <Button
@@ -243,7 +255,7 @@ function Payouts() {
                             Pay now
                           </Button>
                         </Flex>
-                      </Flex>
+                      </Grid>
 
                       <Modal
                         isOpen={payModal.isOpen}
@@ -366,22 +378,28 @@ function Payouts() {
                           setTabIndex={setTabIndex}
                         />
                       </Modal>
-                    </>
+                    </Flex>
                   ))}
               </Flex>
             </TabPanel>
             <TabPanel>
-              <Flex direction="row" w="100%" pl={5} align="center" py={2}>
-                {historyTableHeaders.map((header, index) => (
-                  <Text
-                    flex={flex[index]}
+            <Grid
+              gridAutoFlow="column"
+              gridTemplateColumns="repeat(5, 1fr)"
+              w="100%"
+              justifyItems="center"
+              alignContent="center"
+              py={4}
+              px={5}
+            >                {historyTableHeaders.map((header, index) => (
+                    <Text
                     w="fit-content"
                     variant="tableHeader"
                   >
                     {header}
                   </Text>
                 ))}
-              </Flex>
+              </Grid>
               <Flex
                 direction="column"
                 w="100%"
@@ -392,11 +410,12 @@ function Payouts() {
                   <Flex>
                     {data.reviewerAddress === null
                       ? null : (
-                        <Flex
-                          direction="row"
+                        <Grid
+                          gridAutoFlow="column"
+                          gridTemplateColumns="repeat(5, 1fr)"
                           w="100%"
-                          justify="space-between"
-                          align="center"
+                          justifyItems="center"
+                          alignContent="center"
                           bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
                           py={4}
                           px={5}
@@ -404,18 +423,18 @@ function Payouts() {
                           <Text
                             minW="fit-content"
                             variant="tableBody"
-                            textAlign="left"
+                            justifySelf="left"
                           >
                             {' '}
                             {data.email}
                           </Text>
                           <Tooltip label={data.reviewerAddress}>
-                            <Flex>
+                          <Flex alignItems="center">
                               <Text textAlign="center" variant="tableBody">
                                 {data.reviewerAddress !== '' && trimAddress(data.reviewerAddress, 4)}
                               </Text>
                               <Box mr="7px" />
-                              <CopyIcon text={data.reviewerAddress} />
+                              <CopyIcon h="0.75rem" text={data.reviewerAddress} />
                             </Flex>
                           </Tooltip>
                           <Text textAlign="center" variant="tableBody">
@@ -440,7 +459,7 @@ function Payouts() {
                               />
                             </Link>
                           </Flex>
-                        </Flex>
+                        </Grid>
                       )}
                   </Flex>
                 ))}
