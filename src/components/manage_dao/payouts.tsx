@@ -26,7 +26,7 @@ import PayoutModalContent from './payoutModalContent';
 //   workspaceMembers: any;
 // }
 
-interface historyTablePlaceholderProps {
+interface HistoryTablePlaceholderProps {
   email: string;
   reviewerAddress: string;
   payerAddress: string;
@@ -40,13 +40,13 @@ function Payouts() {
   const [payMode, setPayMode] = React.useState<number>(-1);
   const [selectedData, setSelectedData] = React.useState<any>();
   const [paymentOutside, setPaymentOutside] = React.useState<boolean>(false);
-  const [historyTablePlaceholders, setHistoryTablePlaceholders] = React.useState<historyTablePlaceholderProps[]>([{
+  const [historyTablePlaceholders] = React.useState<HistoryTablePlaceholderProps[]>([{
     email: '',
     reviewerAddress: '',
     payerAddress: '',
     txnAddress: '',
     paidDate: '',
-    amount: ''
+    amount: '',
   }]);
 
   const [tabIndex, setTabIndex] = React.useState<number>(0);
@@ -68,7 +68,7 @@ function Payouts() {
     'Amount',
     'Paid on',
     'Actions',
-  ]
+  ];
   const tableDataFlex = [0.2741, 0.2622, 0, 0.2448, 0];
 
   const payoutTablePlaceholders = [
@@ -126,10 +126,11 @@ function Payouts() {
         </Text>
       </Flex>
       <Flex w="100%" mt={8} alignItems="flex-start" direction="column">
-        <Tabs  index={tabIndex} variant="soft-rounded" align="start" w="100%">
+        <Tabs index={tabIndex} variant="soft-rounded" align="start" w="100%">
           <TabList>
             <Tab onClick={() => setTabIndex(0)}>
-              Outstanding{" "}
+              Outstanding
+              {' '}
               {`(${tempTableData.length})`}
             </Tab>
             <Tab onClick={() => setTabIndex(1)}>History</Tab>
@@ -273,71 +274,76 @@ function Payouts() {
                           )
                         }
                       >
-                      <Flex direction="column" pb="1rem"
-                      mx="2rem">
-                      {payMode === -1 && <Text pt="1rem">
-                        Select a wallet to process this transaction
-                      </Text>}
-                        {payMode === -1
-                          ? payOptions.map((option, ind) => (
-                            <Button
-                              border="1px solid"
-                              borderColor="#6A4CFF"
-                              borderRadius="0.5rem"
-                              bgColor="rgba(149, 128, 255, 0.1)"
-                              onClick={() => {
-                                setPayMode(ind);
-                              }}
-                              p="1.5rem"
-                              h="4.5rem"
-                              mt="2rem"
-                            >
-                              <Flex
-                                w="100%"
-                                justify="space-between"
-                                align="center"
+                        <Flex
+                          direction="column"
+                          pb="1rem"
+                          mx="2rem"
+                        >
+                          {payMode === -1 && (
+                          <Text pt="1rem">
+                            Select a wallet to process this transaction
+                          </Text>
+                          )}
+                          {payMode === -1
+                            ? payOptions.map((option, ind) => (
+                              <Button
+                                border="1px solid"
+                                borderColor="#6A4CFF"
+                                borderRadius="0.5rem"
+                                bgColor="rgba(149, 128, 255, 0.1)"
+                                onClick={() => {
+                                  setPayMode(ind);
+                                }}
+                                p="1.5rem"
+                                h="4.5rem"
+                                mt="2rem"
                               >
-                                <Flex>
-                                  <Text variant="tableBody" color="#8850EA">
-                                    {option}
-                                    {' '}
-                                  </Text>
-                                  <Tooltip
-                                    label={`${
-                                      ind === 0
-                                        ? 'The reward will go through our smart contract directly into the reviewer wallet'
-                                        : 'You will have to send the reviewer rewards separately'
-                                    }`}
-                                    fontSize="md"
-                                  >
-                                    <Image
-                                      ml={2}
-                                      display="inline-block"
-                                      alt="another_wallet"
-                                      src="/ui_icons/info_brand_light.svg"
-                                      color="#8850EA"
-                                    />
-                                  </Tooltip>
-                                </Flex>
-                                <IconButton
-                                  aria-label="right_chevron"
-                                  variant="ghost"
-                                  _hover={{}}
-                                  _active={{}}
-                                  w="13px"
-                                  h="6px"
-                                  icon={
-                                    <Image src="/ui_icons/brand/chevron_right.svg" />
+                                <Flex
+                                  w="100%"
+                                  justify="space-between"
+                                  align="center"
+                                >
+                                  <Flex>
+                                    <Text variant="tableBody" color="#8850EA">
+                                      {option}
+                                      {' '}
+                                    </Text>
+                                    <Tooltip
+                                      label={`${
+                                        ind === 0
+                                          ? 'The reward will go through our smart contract directly into the reviewer wallet'
+                                          : 'You will have to send the reviewer rewards separately'
+                                      }`}
+                                      fontSize="md"
+                                    >
+                                      <Image
+                                        ml={2}
+                                        display="inline-block"
+                                        alt="another_wallet"
+                                        src="/ui_icons/info_brand_light.svg"
+                                        color="#8850EA"
+                                      />
+                                    </Tooltip>
+                                  </Flex>
+                                  <IconButton
+                                    aria-label="right_chevron"
+                                    variant="ghost"
+                                    _hover={{}}
+                                    _active={{}}
+                                    w="13px"
+                                    h="6px"
+                                    icon={
+                                      <Image src="/ui_icons/brand/chevron_right.svg" />
                                     }
-                                  onClick={() => {
-                                    setPayMode(ind);
-                                  }}
-                                />
-                              </Flex>
-                            </Button>
-                          ))
-                          : null}
-                          </Flex>
+                                    onClick={() => {
+                                      setPayMode(ind);
+                                    }}
+                                  />
+                                </Flex>
+                              </Button>
+                            ))
+                            : null}
+                        </Flex>
 
                         <PayoutModalContent
                           payMode={payMode}
@@ -347,8 +353,6 @@ function Payouts() {
                           onClose={payModal.onClose}
                           paymentOutside={paymentOutside}
                           setPaymentOutside={setPaymentOutside}
-                          setHistoryTablePlaceholders={setHistoryTablePlaceholders}
-                          historyTablePlaceholders={historyTablePlaceholders}
                           setTabIndex={setTabIndex}
                         />
                       </Modal>
@@ -375,65 +379,67 @@ function Payouts() {
                 borderRadius={4}
               >
                 {historyTableData.map((data: any, index: number) => (
-                    <>
-                    {data.reviwerAddress !== '' ?
-                    <Flex
-                      direction="row"
-                      w="100%"
-                      justify="space-between"
-                      align="center"
-                      bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
-                      py={4}
-                      px={5}
-                    >
-                      <Text
-                        flex={tableDataFlex[1]}
-                        minW="fit-content"
-                        variant="tableBody"
-                        textAlign="left"
-                      >
-                        {' '}
-                        {data.email}
-                      </Text>
-                      <Tooltip label={data.reviewerAddress}>
-                        <Flex flex={tableDataFlex[0]}>
-                          <Text textAlign="center" variant="tableBody">
-                            {trimAddress(data.reviewerAddress, 4)}
+                  <Flex>
+                    {data.reviewerAddress !== ''
+                      ? (
+                        <Flex
+                          direction="row"
+                          w="100%"
+                          justify="space-between"
+                          align="center"
+                          bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
+                          py={4}
+                          px={5}
+                        >
+                          <Text
+                            flex={tableDataFlex[1]}
+                            minW="fit-content"
+                            variant="tableBody"
+                            textAlign="left"
+                          >
+                            {' '}
+                            {data.email}
                           </Text>
-                          <Box mr="7px" />
-                          <CopyIcon text={data.reviewerAddress} />
-                        </Flex>
-                      </Tooltip>
-                      <Text textAlign="center" variant="tableBody">
-                        {trimAddress(data.payerAddress, 4)}
-                      </Text>
-                      <Text
-                        flex={tableDataFlex[1]}
-                        minW="fit-content"
-                        variant="tableBody"
-                      >
-                        {data.date}
-                      </Text>
-                      <Text variant="tableBody">{data.amount}</Text>
+                          <Tooltip label={data.reviewerAddress}>
+                            <Flex flex={tableDataFlex[0]}>
+                              <Text textAlign="center" variant="tableBody">
+                                {trimAddress(data.reviewerAddress, 4)}
+                              </Text>
+                              <Box mr="7px" />
+                              <CopyIcon text={data.reviewerAddress} />
+                            </Flex>
+                          </Tooltip>
+                          <Text textAlign="center" variant="tableBody">
+                            {trimAddress(data.payerAddress, 4)}
+                          </Text>
+                          <Text
+                            flex={tableDataFlex[1]}
+                            minW="fit-content"
+                            variant="tableBody"
+                          >
+                            {data.date}
+                          </Text>
+                          <Text variant="tableBody">{data.amount}</Text>
 
-                      <Flex direction="row">
-                      <Link
-                        href={`https://www.etherscan.io/tx/${data.txnAddress}`}
-                        isExternal
-                      >
-                        View
-                      {' '}
-                      <Image
-                        display="inline-block"
-                        h="10px"
-                        w="10px"
-                        src="/ui_icons/link.svg"
-                      />
-                      </Link>
-                      </Flex>
-                    </Flex> : null}
-                    </>
-                  ))}
+                          <Flex direction="row">
+                            <Link
+                              href={`https://www.etherscan.io/tx/${data.txnAddress}`}
+                              isExternal
+                            >
+                              View
+                              {' '}
+                              <Image
+                                display="inline-block"
+                                h="10px"
+                                w="10px"
+                                src="/ui_icons/link.svg"
+                              />
+                            </Link>
+                          </Flex>
+                        </Flex>
+                      ) : null}
+                  </Flex>
+                ))}
               </Flex>
             </TabPanel>
           </TabPanels>
