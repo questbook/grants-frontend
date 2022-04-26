@@ -1,7 +1,5 @@
 import { Button, Divider, Flex } from '@chakra-ui/react';
-import React, {
-  ReactElement, useState, useEffect, useContext,
-} from 'react';
+import React, { ReactElement, useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
 import { useGetWorkspaceDetailsQuery } from 'src/generated/graphql';
 import { Workspace } from 'src/types';
@@ -19,7 +17,7 @@ function ManageDAO() {
   const tabs = ['Settings', 'Members', 'Payouts'];
   const [selected, setSelected] = useState(
     // eslint-disable-next-line no-nested-ternary
-    router.query.tab === 'members' ? 1 : router.query.tab === 'payouts' ? 2 : 0,
+    router.query.tab === 'members' ? 1 : router.query.tab === 'payouts' ? 2 : 0
   );
   const [workspaceData, setWorkspaceData] = useState<Workspace>();
 
@@ -34,12 +32,10 @@ function ManageDAO() {
     if (!workspace) return;
     setQueryParams({
       client:
-      subgraphClients[
-        getSupportedChainIdFromWorkspace(workspace)!
-      ].client,
+        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
       variables: { workspaceID: workspace.id },
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspace]);
 
   const { data } = useGetWorkspaceDetailsQuery(queryParams);
@@ -55,7 +51,11 @@ function ManageDAO() {
 
   return (
     <Flex direction="row" w="100%" justify="space-evenly">
-      <Flex w={selected === 0 ? '100%' : '100%'} maxW="1036px" direction="column">
+      <Flex
+        w={selected === 0 ? '100%' : '100%'}
+        maxW="1036px"
+        direction="column"
+      >
         <Flex
           direction="row"
           w="full"
@@ -87,17 +87,18 @@ function ManageDAO() {
           ))}
         </Flex>
         <Divider variant="sidebar" mb={5} />
-        {// eslint-disable-next-line no-nested-ternary
+        {
+          // eslint-disable-next-line no-nested-ternary
           selected === 0 ? (
             <Settings workspaceData={workspaceData!} />
-          // eslint-disable-next-line no-nested-ternary
-          ) : selected === 1 ? (
+          ) : // eslint-disable-next-line no-nested-ternary
+          selected === 1 ? (
             <Members workspaceMembers={workspaceData?.members} />
-          // eslint-disable-next-line no-nested-ternary
-          ) : selected === 2 && (
-          <Payouts />
+          ) : (
+            // eslint-disable-next-line no-nested-ternary
+            selected === 2 && <Payouts />
           )
-}
+        }
       </Flex>
       <Flex w="auto" />
     </Flex>

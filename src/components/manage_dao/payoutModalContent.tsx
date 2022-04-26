@@ -41,12 +41,15 @@ import Dropdown from '../ui/forms/dropdown';
 
 interface Props {
   payMode: number;
-  setPayMode: any;
+  setPayMode: React.Dispatch<React.SetStateAction<number>>;
   reviewerAddress: string | any;
   reviews: number;
   onClose: () => void;
-  setPaymentOutside: any;
+  setPaymentOutside: React.Dispatch<React.SetStateAction<boolean>>;
   paymentOutside: boolean;
+  setHistoryTablePlaceholders: any;
+  historyTablePlaceholders: any;
+  setTabIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
 function PayoutModalContent({
@@ -57,6 +60,9 @@ function PayoutModalContent({
   // onClose,
   setPaymentOutside,
   paymentOutside,
+  setHistoryTablePlaceholders,
+  historyTablePlaceholders,
+  setTabIndex
 }: Props) {
   // WAGMI && ETH HOOKS
   const currentChain = useChainId() ?? SupportedChainId.RINKEBY;
@@ -68,7 +74,7 @@ function PayoutModalContent({
   // const toastRef = useRef<ToastId>();
 
   const supportedCurrencies = Object.keys(
-    CHAIN_INFO[currentChain].supportedCurrencies,
+    CHAIN_INFO[currentChain].supportedCurrencies
   )
     .map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
     .map((currency) => ({ ...currency, id: currency.address }));
@@ -92,10 +98,10 @@ function PayoutModalContent({
   }
 
   const [reviewCurrency, setReviewCurrency] = useState(
-    supportedCurrencies[0].label,
+    supportedCurrencies[0].label
   );
   const [reviewCurrencyAddress, setReviewCurrencyAddress] = useState(
-    supportedCurrencies[0].address,
+    supportedCurrencies[0].address
   );
 
   // STATES TO FILL WITH ETH HOOKS
@@ -120,7 +126,7 @@ function PayoutModalContent({
   useEffect(() => {
     if (currentChain) {
       const currencies = Object.keys(
-        CHAIN_INFO[currentChain].supportedCurrencies,
+        CHAIN_INFO[currentChain].supportedCurrencies
       )
         .map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
         .map((currency) => ({ ...currency, id: currency.address }));
@@ -145,7 +151,7 @@ function PayoutModalContent({
       try {
         const tempAddress = await signerStates.data?.getAddress();
         const tempWalletBalance = await rewardAssetContract.balanceOf(
-          tempAddress,
+          tempAddress
         );
         setWalletBalance(tempWalletBalance);
       } catch {
@@ -181,7 +187,7 @@ function PayoutModalContent({
 
   return (
     <ModalBody>
-      <Flex direction="column" gap="1rem">
+      <Flex direction="column" gap="1rem" overflow="hidden">
         {(payMode === 0 || (payMode === 1 && !paymentOutside)) && (
           <>
             <Flex
@@ -195,8 +201,7 @@ function PayoutModalContent({
                 Address:
               </Heading>
               <Text fontSize="0.875rem">
-                {trimAddress(reviewerAddress, 8)}
-                {' '}
+                {trimAddress(reviewerAddress, 8)}{' '}
                 <IconButton
                   alignItems="center"
                   justifyItems="center"
@@ -205,7 +210,7 @@ function PayoutModalContent({
                   variant="ghost"
                   _hover={{}}
                   _active={{}}
-                  icon={(
+                  icon={
                     <Image
                       src={
                         !hasCopied
@@ -213,7 +218,7 @@ function PayoutModalContent({
                           : '/ui_icons/copy/active.svg'
                       }
                     />
-                  )}
+                  }
                   onClick={() => onCopy()}
                 />
               </Text>
@@ -231,7 +236,9 @@ function PayoutModalContent({
                   isInvalid={
                     (reviewsToPay as any) > reviews || (reviewsToPay as any) < 1
                   }
-                  onChange={(e) => setReviewsToPay(parseInt(e.target.value, 10))}
+                  onChange={(e) =>
+                    setReviewsToPay(parseInt(e.target.value, 10))
+                  }
                   value={reviewsToPay}
                   h={12}
                   type="number"
@@ -252,8 +259,8 @@ function PayoutModalContent({
               <Text fontSize="0.75rem">
                 {(reviewsToPay as any) > reviews
                   ? `You can not pay more than ${reviews} reviews`
-                  : (reviewsToPay as any) < 1
-                    && 'You need to pay at least 1 review'}
+                  : (reviewsToPay as any) < 1 &&
+                    'You need to pay at least 1 review'}
               </Text>
             </Flex>
             <Flex direction="row">
@@ -315,23 +322,19 @@ function PayoutModalContent({
                         color="black"
                         size="sm"
                       >
-                        {totalAmount}
-                        {' '}
-                        {reviewCurrency}
+                        {totalAmount} {reviewCurrency}
                       </Text>
                     </InputRightElement>
                   </InputGroup>
 
                   <Text mt="0.75rem" color="#AAAAAA">
-                    Wallet Balance
-                    {' '}
+                    Wallet Balance{' '}
                     <Text
                       color="#AAAAAA"
                       display="inline-block"
                       fontWeight="bold"
                     >
-                      {`${formatAmount(walletBalance.toString())}`}
-                      {' '}
+                      {`${formatAmount(walletBalance.toString())}`}{' '}
                       {reviewCurrency}
                     </Text>
                   </Text>
@@ -341,17 +344,9 @@ function PayoutModalContent({
           </>
         )}
 
-        {paymentOutside
-          && (
-          <Stack
-            spacing="1rem"
-          >
-            <Flex
-              w="100%"
-              mt={7}
-              direction="row"
-              align="center"
-            >
+        {paymentOutside && (
+          <Stack spacing="1rem">
+            <Flex w="100%" mt={7} direction="row" align="center">
               <Flex
                 align="center"
                 justify="center"
@@ -361,18 +356,11 @@ function PayoutModalContent({
                 h="48px"
                 mr="1rem"
               >
-                1
+                <Text color="white">1</Text>
               </Flex>
-              <Text>
-                Open a wallet with funds.
-              </Text>
+              <Text>Open a wallet with funds.</Text>
             </Flex>
-            <Flex
-              w="100%"
-              mt={7}
-              direction="row"
-              align="center"
-            >
+            <Flex w="100%" mt={7} direction="row" align="center">
               <Flex
                 align="center"
                 justify="center"
@@ -382,22 +370,14 @@ function PayoutModalContent({
                 h="48px"
                 mr="1rem"
               >
-                2
+                <Text color="white">2</Text>
               </Flex>
               <Text>
-                Send
-                {' '}
-                {totalAmount !== 0 && `${totalAmount} ${reviewCurrency}`}
-                {' '}
+                Send {totalAmount !== 0 && `${totalAmount} ${reviewCurrency}`}{' '}
                 to the address below.
               </Text>
             </Flex>
-            <Flex
-              w="100%"
-              mt={7}
-              direction="row"
-              align="center"
-            >
+            <Flex w="100%" mt={7} direction="row" align="center">
               <Flex
                 align="center"
                 justify="center"
@@ -407,11 +387,9 @@ function PayoutModalContent({
                 h="48px"
                 mr="1rem"
               >
-                3
+                <Text color="white">3</Text>
               </Flex>
-              <Text>
-                Copy the TX hash and set payment as done.
-              </Text>
+              <Text>Copy the TX hash and set payment as done.</Text>
             </Flex>
 
             <Heading fontSize="0.875rem" textAlign="left">
@@ -456,14 +434,11 @@ function PayoutModalContent({
             </InputGroup>
 
             <Text color="#717A7C" fontSize="0.875rem">
-              NOTE: Send only
-              {' '}
-              {reviewCurrency}
-              {' '}
-              to the address in the Polygon network.
+              NOTE: Send only {reviewCurrency} to the address in the Polygon
+              network.
             </Text>
           </Stack>
-          )}
+        )}
 
         {payMode === 0 && (
           <>
@@ -474,18 +449,15 @@ function PayoutModalContent({
                 w="10px"
                 alt="wallet_info"
                 src="/ui_icons/info_brand.svg"
-              />
-              {' '}
+              />{' '}
               By pressing Make Payment you will have to approve the transaction
-              in your wallet.
-              {' '}
+              in your wallet.{' '}
               <Link
                 href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
                 isExternal
               >
                 Learn more
-              </Link>
-              {' '}
+              </Link>{' '}
               <Image
                 display="inline-block"
                 h="10px"
@@ -505,7 +477,7 @@ function PayoutModalContent({
                   totalAmount,
                   reviewCurrency,
                   reviewerAddress,
-                  finalAmount,
+                  finalAmount
                 );
               }}
             >
@@ -524,24 +496,22 @@ function PayoutModalContent({
                 reviewCurrencyAddress,
                 totalAmount,
                 reviewCurrency,
-                reviewerAddress,
+                reviewerAddress
               );
               // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-              reviewsToPay !== undefined
-                  && amountToPay !== undefined
-                  && !paymentOutside
+              reviewsToPay !== undefined &&
+              amountToPay !== undefined &&
+              !paymentOutside
                 ? (setFinalAmount(utils.parseUnits(totalAmount)),
-                setPaymentOutside(true)) : (
-                  setPaymentOutside(false),
-                  setPayMode(2));
+                  setPaymentOutside(true))
+                : (setPaymentOutside(false), setPayMode(2));
             }}
           >
             {paymentOutside ? 'Mark Payment as Done' : 'Make Payment'}
           </Button>
         )}
 
-        {payMode === 2
-          && (
+        {payMode === 2 && (
           <Flex direction="column" gap="1rem" overflow="hidden">
             <Flex
               w="100%"
@@ -554,8 +524,7 @@ function PayoutModalContent({
                 Address:
               </Heading>
               <Text fontSize="0.875rem">
-                {trimAddress(reviewerAddress, 8)}
-                {' '}
+                {trimAddress(reviewerAddress, 8)}{' '}
                 <IconButton
                   alignItems="center"
                   justifyItems="center"
@@ -564,15 +533,15 @@ function PayoutModalContent({
                   variant="ghost"
                   _hover={{}}
                   _active={{}}
-                  icon={(
+                  icon={
                     <Image
                       src={
-                      !hasCopied
-                        ? '/ui_icons/copy/normal.svg'
-                        : '/ui_icons/copy/active.svg'
-                    }
+                        !hasCopied
+                          ? '/ui_icons/copy/normal.svg'
+                          : '/ui_icons/copy/active.svg'
+                      }
                     />
-                )}
+                  }
                   onClick={() => onCopy()}
                 />
               </Text>
@@ -588,9 +557,11 @@ function PayoutModalContent({
                   min={1}
                   max={reviews}
                   isInvalid={
-                  (reviewsToPay as any) > reviews || (reviewsToPay as any) < 1
-                }
-                  onChange={(e) => setReviewsToPay(parseInt(e.target.value, 10))}
+                    (reviewsToPay as any) > reviews || (reviewsToPay as any) < 1
+                  }
+                  onChange={(e) =>
+                    setReviewsToPay(parseInt(e.target.value, 10))
+                  }
                   value={reviewsToPay}
                   h={12}
                   type="number"
@@ -611,8 +582,8 @@ function PayoutModalContent({
               <Text fontSize="0.75rem">
                 {(reviewsToPay as any) > reviews
                   ? `You can not pay more than ${reviews} reviews`
-                  : (reviewsToPay as any) < 1
-                  && 'You need to pay at least 1 review'}
+                  : (reviewsToPay as any) < 1 &&
+                    'You need to pay at least 1 review'}
               </Text>
             </Flex>
             <Flex direction="row">
@@ -684,21 +655,22 @@ function PayoutModalContent({
             <Button
               variant="primary"
               my={8}
-              onClick={() => {
+              onClick={async () => {
                 // eslint-disable-next-line no-console
                 console.log(
                   reviewCurrencyAddress,
                   totalAmount,
                   reviewCurrency,
                   reviewerAddress,
-                  'YES',
+                  'YES'
                 );
+                setTabIndex(1);
               }}
             >
               Mark Payment as Done
             </Button>
           </Flex>
-          )}
+        )}
       </Flex>
     </ModalBody>
   );

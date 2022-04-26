@@ -5,6 +5,7 @@ import {
   Text,
   Button,
   Tooltip,
+  Link,
   Box,
   Tabs,
   TabList,
@@ -25,11 +26,30 @@ import PayoutModalContent from './payoutModalContent';
 //   workspaceMembers: any;
 // }
 
+interface historyTablePlaceholderProps {
+  email: string;
+  reviewerAddress: string;
+  payerAddress: string;
+  txnAddress: string;
+  paidDate: string;
+  amount: string;
+}
+
 function Payouts() {
   const payModal = useDisclosure();
   const [payMode, setPayMode] = React.useState<number>(-1);
   const [selectedData, setSelectedData] = React.useState<any>();
   const [paymentOutside, setPaymentOutside] = React.useState<boolean>(false);
+  const [historyTablePlaceholders, setHistoryTablePlaceholders] = React.useState<historyTablePlaceholderProps[]>([{
+    email: '',
+    reviewerAddress: '',
+    payerAddress: '',
+    txnAddress: '',
+    paidDate: '',
+    amount: ''
+  }]);
+
+  const [tabIndex, setTabIndex] = React.useState<number>(0);
 
   const payOptions = ['Pay from connected wallet', 'Pay from another wallet'];
 
@@ -41,6 +61,14 @@ function Payouts() {
     'Outstanding Payout',
     'Actions',
   ];
+  const historyTableHeaders = [
+    'Member Email',
+    'Member Address',
+    'Paid from',
+    'Amount',
+    'Paid on',
+    'Actions',
+  ]
   const tableDataFlex = [0.2741, 0.2622, 0, 0.2448, 0];
 
   const payoutTablePlaceholders = [
@@ -71,6 +99,14 @@ function Payouts() {
     outstanding: payoutData.outstanding,
   }));
 
+  const historyTableData = historyTablePlaceholders.map((paidData: any) => ({
+    email: paidData.email,
+    reviwerAddress: paidData.reviewerAddress,
+    payerAddress: paidData.payerAddress,
+    paidDate: paidData.paidDate,
+    amount: paidData.amount,
+  }));
+
   React.useEffect(() => {
     if (payMode === -1) {
       setPaymentOutside(false);
@@ -90,13 +126,13 @@ function Payouts() {
         </Text>
       </Flex>
       <Flex w="100%" mt={8} alignItems="flex-start" direction="column">
-        <Tabs variant="soft-rounded" align="start" w="100%">
+        <Tabs  index={tabIndex} variant="soft-rounded" align="start" w="100%">
           <TabList>
-            <Tab>
-              Outstanding
+            <Tab onClick={() => setTabIndex(0)}>
+              Outstanding{" "}
               {`(${tempTableData.length})`}
             </Tab>
-            <Tab>History</Tab>
+            <Tab onClick={() => setTabIndex(1)}>History</Tab>
           </TabList>
 
           <TabPanels>
@@ -237,6 +273,11 @@ function Payouts() {
                           )
                         }
                       >
+                      <Flex direction="column" pb="1rem"
+                      mx="2rem">
+                      {payMode === -1 && <Text pt="1rem">
+                        Select a wallet to process this transaction
+                      </Text>}
                         {payMode === -1
                           ? payOptions.map((option, ind) => (
                             <Button
@@ -250,7 +291,6 @@ function Payouts() {
                               p="1.5rem"
                               h="4.5rem"
                               mt="2rem"
-                              mx="2rem"
                             >
                               <Flex
                                 w="100%"
@@ -297,6 +337,7 @@ function Payouts() {
                             </Button>
                           ))
                           : null}
+                          </Flex>
 
                         <PayoutModalContent
                           payMode={payMode}
@@ -306,6 +347,9 @@ function Payouts() {
                           onClose={payModal.onClose}
                           paymentOutside={paymentOutside}
                           setPaymentOutside={setPaymentOutside}
+                          setHistoryTablePlaceholders={setHistoryTablePlaceholders}
+                          historyTablePlaceholders={historyTablePlaceholders}
+                          setTabIndex={setTabIndex}
                         />
                       </Modal>
                     </>
@@ -314,7 +358,7 @@ function Payouts() {
             </TabPanel>
             <TabPanel>
               <Flex direction="row" w="100%" pl={5} align="center" py={2}>
-                {tableHeaders.map((header, index) => (
+                {historyTableHeaders.map((header, index) => (
                   <Text
                     flex={flex[index]}
                     w="fit-content"
@@ -330,8 +374,9 @@ function Payouts() {
                 border="1px solid #D0D3D3"
                 borderRadius={4}
               >
-                {tempTableData
-                  && tempTableData.map((data: any, index: number) => (
+                {historyTableData.map((data: any, index: number) => (
+                    <>
+                    {data.reviwerAddress !== '' ?
                     <Flex
                       direction="row"
                       w="100%"
@@ -350,15 +395,18 @@ function Payouts() {
                         {' '}
                         {data.email}
                       </Text>
-                      <Tooltip label={data.address}>
+                      <Tooltip label={data.reviewerAddress}>
                         <Flex flex={tableDataFlex[0]}>
                           <Text textAlign="center" variant="tableBody">
-                            {trimAddress(data.address, 4)}
+                            {trimAddress(data.reviewerAddress, 4)}
                           </Text>
                           <Box mr="7px" />
-                          <CopyIcon text={data.address} />
+                          <CopyIcon text={data.reviewerAddress} />
                         </Flex>
                       </Tooltip>
+                      <Text textAlign="center" variant="tableBody">
+                        {trimAddress(data.payerAddress, 4)}
+                      </Text>
                       <Text
                         flex={tableDataFlex[1]}
                         minW="fit-content"
@@ -366,48 +414,25 @@ function Payouts() {
                       >
                         {data.date}
                       </Text>
-                      <Text variant="tableBody">{data.outstanding}</Text>
-                      <Flex
-                        direction="row"
-                        flex={tableDataFlex[4]}
-                        gap="0.5rem"
+                      <Text variant="tableBody">{data.amount}</Text>
+
+                      <Flex direction="row">
+                      <Link
+                        href={`https://www.etherscan.io/tx/${data.txnAddress}`}
+                        isExternal
                       >
-                        <Button
-                          variant="outline"
-                          color="brand.500"
-                          fontWeight="500"
-                          fontSize="14px"
-                          lineHeight="14px"
-                          textAlign="center"
-                          borderRadius={8}
-                          borderColor="brand.500"
-                          height="2rem"
-                          onClick={() => {
-                            payModal.onOpen();
-                            setPayMode(2);
-                            setSelectedData(data);
-                          }}
-                        >
-                          Mark as done
-                        </Button>
-                        <Button
-                          variant="primary"
-                          fontWeight="500"
-                          fontSize="14px"
-                          lineHeight="14px"
-                          textAlign="center"
-                          height="2rem"
-                          px={3}
-                          onClick={() => {
-                            payModal.onOpen();
-                            setPayMode(-1);
-                            setSelectedData(data);
-                          }}
-                        >
-                          Pay now
-                        </Button>
+                        View
+                      {' '}
+                      <Image
+                        display="inline-block"
+                        h="10px"
+                        w="10px"
+                        src="/ui_icons/link.svg"
+                      />
+                      </Link>
                       </Flex>
-                    </Flex>
+                    </Flex> : null}
+                    </>
                   ))}
               </Flex>
             </TabPanel>
