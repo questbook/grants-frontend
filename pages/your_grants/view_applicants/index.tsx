@@ -125,6 +125,7 @@ function ViewApplicants() {
       const tempMember = workspace.members.find(
         (m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
       );
+      console.log(tempMember);
       setIsAdmin(
         tempMember?.accessLevel === 'admin'
           || tempMember?.accessLevel === 'owner',

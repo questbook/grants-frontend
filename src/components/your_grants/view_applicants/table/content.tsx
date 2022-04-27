@@ -15,12 +15,13 @@ import {
 import React, { ReactElement } from 'react';
 import CopyIcon from 'src/components/ui/copy_icon';
 import {
-  GrantApproved, Rejected, PendingReview, ResubmissionRequested, GrantComplete,
+  GrantApproved, Rejected, PendingReview, ResubmissionRequested, GrantComplete, AssignedToReview,
 } from '../states';
 import { TableFilters } from './TableFilters';
 
 const table_headers_flex = [0.231, 0.20, 0.15, 0.16, 0.16, 0.28, 0.116];
 const table_headers_flex_reviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
+
 
 function Content({
   filter,
@@ -39,7 +40,7 @@ function Content({
   // onRejectApplicationClick?: () => void;
   onManageApplicationClick?: (data?: any) => void;
   data: any[];
-  applicantionReviewer:[];
+  applicantionReviewer:Array;
   isReviewer : boolean;
   fundReceived: string;
 }) {
@@ -51,10 +52,11 @@ function Content({
     if (status === TableFilters.resubmit) return <ResubmissionRequested />;
     if (status === TableFilters.approved) return <GrantApproved />;
     if (status === TableFilters.rejected) return <Rejected />;
+    if (status === TableFilters.assigned) return <AssignedToReview />;
+
     return <GrantComplete />;
   };
-
-
+  console.log(applicantionReviewer);
   return (
     <Flex
       mt="10px"
@@ -297,7 +299,7 @@ function Content({
               <PopoverContent height="150px" width="inherit" right="60px" top="60px">
                 <PopoverHeader>Reviewer</PopoverHeader>
                 <PopoverBody overflowX="hidden" overflowY="auto">
-                  { applicantionReviewer.map((reviewer) => (
+                  { applicantionReviewer.map((reviewer:{ email: string }) => (
                     <SimpleGrid columns={1} spacing={3}>
                       <Text>{reviewer.email}</Text>
                     </SimpleGrid>
