@@ -40,7 +40,7 @@ function Content({
   // onRejectApplicationClick?: () => void;
   onManageApplicationClick?: (data?: any) => void;
   data: any[];
-  applicantionReviewer:Array;
+  applicantionReviewer:[];
   isReviewer : boolean;
   fundReceived: string;
 }) {
