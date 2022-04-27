@@ -19,6 +19,10 @@ import {
 } from '../states';
 import { TableFilters } from './TableFilters';
 
+
+const table_headers_flex = [0.231, 0.20, 0.15, 0.16, 0.16, 0.28, 0.116];
+const table_headers_flex_reviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
+
 function Content({
   filter,
   onViewApplicationFormClick,
@@ -28,6 +32,7 @@ function Content({
   data,
   applicantionReviewer,
   isReviewer,
+  fundReceived,
 }: {
   filter: number;
   onViewApplicationFormClick?: (data?: any) => void;
@@ -35,11 +40,10 @@ function Content({
   // onRejectApplicationClick?: () => void;
   onManageApplicationClick?: (data?: any) => void;
   data: any[];
-  applicantionReviewer:any[]
+  applicantionReviewer:Array<[]>;
   isReviewer : boolean;
+  fundReceived: string;
 }) {
-  const tableHeadersflex = [0.231, 0.20, 0.15, 0.16, 0.16, 0.28, 0.116];
-  const tableHeadersflexReviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
   const [isOpen, setIsOpen] = React.useState(false);
   const open = () => setIsOpen(!isOpen);
 
@@ -51,7 +55,6 @@ function Content({
     return <GrantComplete />;
   };
 
-  console.log();
 
   return (
     <Flex
@@ -76,7 +79,7 @@ function Content({
               py={4}
             >
 
-              <Flex direction="row" flex={tableHeadersflexReviewer[0]} align="center">
+              <Flex direction="row" flex={table_headers_flex_reviewer[0]} align="center">
                 <Tooltip label={item?.applicant_address}>
                   <Text
                     ml="19px"
@@ -92,7 +95,7 @@ function Content({
               </Flex>
 
               <Text
-                flex={tableHeadersflexReviewer[1]}
+                flex={table_headers_flex_reviewer[1]}
                 color="#717A7C"
                 variant="tableBody"
               >
@@ -100,14 +103,14 @@ function Content({
               </Text>
               <Text
                 textAlign="left"
-                flex={tableHeadersflexReviewer[2]}
+                flex={table_headers_flex_reviewer[2]}
                 variant="tableBody"
                 fontWeight="400"
               >
                 {item.project_name}
               </Text>
               <Flex
-                flex={tableHeadersflexReviewer[3]}
+                flex={table_headers_flex_reviewer[3]}
                 direction="row"
                 justifyContent="center"
                 alignItems="center"
@@ -127,14 +130,14 @@ function Content({
                   {item.funding_asked.symbol}
                 </Text>
               </Flex>
-              <Flex justifyContent="center" flex={tableHeadersflexReviewer[4]}>
+              <Flex justifyContent="center" flex={table_headers_flex_reviewer[4]}>
                 {getStatus(item.status)}
               </Flex>
               <Flex
                 display="flex"
                 flexDirection="column"
                 alignItems="center"
-                flex={tableHeadersflexReviewer[5]}
+                flex={table_headers_flex_reviewer[5]}
               >
                 <Button
                   variant="outline"
@@ -156,7 +159,6 @@ function Content({
                   // if (status === 2) return <GrantApproved />;
                   // if (status === 3) return <Rejected />;
                   // return <GrantComplete />;
-                    console.log(item.status);
                     if ((item.status === 2 || item.status === 4) && onManageApplicationClick) {
                       onManageApplicationClick({
                         applicationId: item.applicationId,
@@ -226,7 +228,7 @@ function Content({
             py={4}
           >
 
-            <Flex direction="row" flex={tableHeadersflex[0]} align="center">
+            <Flex direction="row" flex={table_headers_flex[0]} align="center">
               <Tooltip label={item?.applicant_address}>
                 <Text
                   ml="19px"
@@ -242,14 +244,14 @@ function Content({
             </Flex>
 
             <Text
-              flex={tableHeadersflex[1]}
+              flex={table_headers_flex[1]}
               color="#717A7C"
               variant="tableBody"
             >
               {item.project_name}
             </Text>
             <Flex
-              flex={tableHeadersflex[2]}
+              flex={table_headers_flex[2]}
               direction="row"
               justifyContent="center"
               alignItems="center"
@@ -264,7 +266,7 @@ function Content({
                 fontWeight="700"
                 letterSpacing={0.2}
               >
-                0
+                {fundReceived}
                 {' '}
                 /
                 {' '}
@@ -284,12 +286,12 @@ function Content({
                 justifyContent="center"
                 color="#717A7C"
                 variant="tableBody"
-                flex={tableHeadersflex[3]}
+                flex={table_headers_flex[3]}
                 textAlign="center"
               >
 
                 <PopoverTrigger>
-                  <Text onMouseEnter={open}>2</Text>
+                  <Text onMouseEnter={open}>{applicantionReviewer.length}</Text>
                 </PopoverTrigger>
 
               </Text>
@@ -304,17 +306,17 @@ function Content({
                 </PopoverBody>
               </PopoverContent>
             </Popover>
-            <Flex justifyContent="center" flex={tableHeadersflex[4]}>
+            <Flex justifyContent="center" flex={table_headers_flex[4]}>
               {getStatus(item.status)}
             </Flex>
-            <Flex justifyContent="center" flex={tableHeadersflex[5]}>
+            <Flex justifyContent="center" flex={table_headers_flex[5]}>
               {item.sent_on}
             </Flex>
             <Flex
               display="flex"
               flexDirection="column"
               alignItems="center"
-              flex={tableHeadersflex[6]}
+              flex={table_headers_flex[6]}
             >
               <Button
                 variant="outline"
@@ -336,7 +338,6 @@ function Content({
                   // if (status === 2) return <GrantApproved />;
                   // if (status === 3) return <Rejected />;
                   // return <GrantComplete />;
-                  console.log(item.status);
                   if ((item.status === 2 || item.status === 4) && onManageApplicationClick) {
                     onManageApplicationClick({
                       applicationId: item.applicationId,
