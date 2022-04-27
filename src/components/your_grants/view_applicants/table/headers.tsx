@@ -1,7 +1,7 @@
 import { Flex, ResponsiveValue, Text } from '@chakra-ui/react';
 import React from 'react';
 
-function Headers({ isReviewer }:{ isReviewer : boolean; }) {
+function Headers({ is_reviewer }:{ is_reviewer : boolean; }) {
   const tableHeaders = [
     'Applicant Address',
     'Project Name',
@@ -41,14 +41,14 @@ function Headers({ isReviewer }:{ isReviewer : boolean; }) {
     'center',
     'center',
   ];
-  const Tableduel = isReviewer ? (tableHeadersReviewer) : (tableHeaders);
+  const Tableduel = is_reviewer ? (tableHeadersReviewer) : (tableHeaders);
   return (
     <Flex direction="row" w="100%" justify="strech" align="center" py={0}>
       {Tableduel.map((header, index) => (
         <Text
           whiteSpace="nowrap"
-          textAlign={isReviewer ? (tableHeadersAlignReviewer[index] as ResponsiveValue<'left' | 'center'>) : ((tableHeadersAlign[index] as ResponsiveValue<'left' | 'center'>))}
-          flex={isReviewer ? (tableHeadersflexReviewer[index]) : (tableHeadersflex[index])}
+          textAlign={is_reviewer ? (tableHeadersAlignReviewer[index] as ResponsiveValue<'left' | 'center'>) : ((tableHeadersAlign[index] as ResponsiveValue<'left' | 'center'>))}
+          flex={is_reviewer ? (tableHeadersflexReviewer[index]) : (tableHeadersflex[index])}
           variant="tableHeader"
         >
           {header}
