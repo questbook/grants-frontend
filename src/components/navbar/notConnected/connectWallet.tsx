@@ -26,7 +26,10 @@ function ConnectWallet() {
       _disabled={{
         background: '#D0D3D3',
       }}
-      onClick={() => router.push('/connect_wallet')}
+      onClick={() => {
+        gtag('event', 'connect_wallet', {});
+        router.push('/connect_wallet');
+      }}
     >
       <Image
         h="30px"
