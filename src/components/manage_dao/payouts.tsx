@@ -23,15 +23,12 @@ import CopyIcon from '../ui/copy_icon';
 import Modal from '../ui/modal';
 import PayoutModalContent from './payoutModalContent';
 
-// interface Props {
-//   workspaceMembers: any;
-// }
-
-function Payouts() {
+function Payouts({ workspaceMembers }: any) {
   const payModal = useDisclosure();
   const [payMode, setPayMode] = React.useState<number>(-1);
   const [selectedData, setSelectedData] = React.useState<any>();
   const [paymentOutside, setPaymentOutside] = React.useState<boolean>(false);
+  const [tableData, setTableData] = React.useState<any>();
 
   const [tabIndex, setTabIndex] = React.useState<number>(0);
 
@@ -52,6 +49,16 @@ function Payouts() {
     'Paid on',
     'Actions',
   ];
+
+  React.useEffect(() => {
+    console.log(workspaceMembers);
+
+    if (!workspaceMembers) return;
+
+    const tempTableData = () => workspaceMembers.filter((reviews: any) => console.log(reviews.outstandingReviews))
+
+    tempTableData();
+  }, [workspaceMembers]);
 
   const payoutTablePlaceholders = [
     {
