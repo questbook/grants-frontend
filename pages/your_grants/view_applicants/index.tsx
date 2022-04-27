@@ -7,7 +7,7 @@ import React, {
   ReactElement, useContext, useEffect, useState,
 } from 'react';
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters';
-import { useGetApplicantsForAGrantQuery, useGetGrantDetailsQuery } from 'src/generated/graphql';
+import { useGetApplicantsForAGrantQuery, useGetApplicationDetailsQuery, useGetGrantDetailsQuery } from 'src/generated/graphql';
 import { SupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { getAssetInfo } from 'src/utils/tokenUtils';
@@ -35,7 +35,8 @@ function ViewApplicants() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAdmin, setIsAdmin] = React.useState<boolean>(false);
   const [isReviewer, setIsReviewer] = React.useState<boolean>(false);
-
+  const [applicantionReviewer, setApplicantionReviewer] = useState<any>([]);
+  const [applicantionId, setApplicantionId] = useState<any>(null);
 
   const [{ data: accountData }] = useAccount({
     fetchEns: false,
@@ -63,6 +64,13 @@ function ViewApplicants() {
   }, [router]);
 
   const [queryParams, setQueryParams] = useState<any>({
+    client:
+      subgraphClients[
+        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      ].client,
+  });
+
+  const [queryParamsReviewer, setQueryParamsReviewer] = useState<any>({
     client:
       subgraphClients[
         getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
@@ -110,7 +118,6 @@ function ViewApplicants() {
     if (data && data.grantApplications.length) {
       const fetchedApplicantsData = data.grantApplications.map((applicant) => {
         const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value;
-        console.log(applicant)
 
         return {
           grantTitle: applicant?.grant?.title,
@@ -146,12 +153,35 @@ function ViewApplicants() {
           status: TableFilters[applicant?.state],
         };
       });
+      setApplicantionId(fetchedApplicantsData[0].applicationId);
       setApplicantsData(fetchedApplicantsData);
       setDaoId(data.grantApplications[0].grant.workspace.id);
       setAcceptingApplications(data.grantApplications[0].grant.acceptingApplications);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error, loading]);
+
+  useEffect(() => {
+    if (!workspace) return;
+    setQueryParamsReviewer({
+      client:
+        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+      variables: {
+        applicationID: applicantionId,
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspace, applicantionId]);
+
+  const applicantdata = useGetApplicationDetailsQuery(queryParamsReviewer);
+
+  useEffect(() => {
+    if (applicantdata.data && applicantdata.data.grantApplication) {
+      console.log('grantApplication------>',applicantdata.data.grantApplication);
+      setApplicantionReviewer(applicantdata.data.grantApplication.reviewers);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [applicantdata]);
 
   const { data: grantData } = useGetGrantDetailsQuery(queryParams);
   useEffect(() => {
@@ -264,6 +294,7 @@ function ViewApplicants() {
         <Table
           title={applicantsData[0]?.grantTitle ?? 'Grant Title'}
           isReviewer={isReviewer}
+          applicantionReviewer={applicantionReviewer}
           data={applicantsData}
           onViewApplicantFormClick={(commentData: any) => router.push({
             pathname: '/your_grants/view_applicants/applicant_form/',

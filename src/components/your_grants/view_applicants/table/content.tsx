@@ -31,6 +31,7 @@ function Content({
   // onRejectApplicationClick,
   onManageApplicationClick,
   data,
+  applicantionReviewer,
   isReviewer,
 }: {
   filter: number;
@@ -39,6 +40,7 @@ function Content({
   // onRejectApplicationClick?: () => void;
   onManageApplicationClick?: (data?: any) => void;
   data: any[];
+  applicantionReviewer:any[]
   isReviewer : boolean;
 }) {
   const tableHeadersflex = [0.231, 0.20, 0.15, 0.16, 0.16, 0.28, 0.116];
@@ -54,7 +56,7 @@ function Content({
     return <GrantComplete />;
   };
 
-  console.log(data)
+  console.log();
 
   return (
     <Flex
@@ -279,7 +281,7 @@ function Content({
 
             <Popover
               isOpen={isOpen}
-              closeOnBlur= {true}
+              closeOnBlur
               isLazy
               placement="right"
             >
@@ -299,18 +301,11 @@ function Content({
               <PopoverContent height="150px" width="inherit" right="60px" top="60px">
                 <PopoverHeader>Reviewer</PopoverHeader>
                 <PopoverBody overflowX="hidden" overflowY="auto">
-                  <SimpleGrid columns={1} spacing={3}>
-                    <Text>rayn@gmail.com</Text>
-                    <Text>rayn@gmail.com</Text>
-                    <Text>rayn@gmail.com</Text>
-                    <Text>rayn@gmail.com</Text>
-                    <Text>rayn@gmail.com</Text>
-                    <Text>rayn@gmail.com</Text>
-                    <Text>rayn@gmail.com</Text>
-                    <Text>rayn@gmail.com</Text>
-
-                  </SimpleGrid>
-
+                  { applicantionReviewer.map((reviewer) => (
+                    <SimpleGrid columns={1} spacing={3}>
+                      <Text>{reviewer.email}</Text>
+                    </SimpleGrid>
+                  ))}
                 </PopoverBody>
               </PopoverContent>
             </Popover>
