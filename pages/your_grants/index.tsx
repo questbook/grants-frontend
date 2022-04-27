@@ -26,6 +26,7 @@ import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import FirstGrantEmptyState from 'src/components/your_grants/empty_states/first_grant';
 import LiveGrantEmptyState from 'src/components/your_grants/empty_states/live_grants';
 import ArchivedGrantEmptyState from 'src/components/your_grants/empty_states/archived_grant';
+import AllowAccessToPublicKeyModal from 'src/components/ui/accessToPublicKeyModal';
 import AddFunds from '../../src/components/funds/add_funds_modal';
 import Heading from '../../src/components/ui/heading';
 import YourGrantCard from '../../src/components/your_grants/yourGrantCard';
@@ -37,11 +38,17 @@ const PAGE_SIZE = 5;
 
 function YourGrants() {
   const router = useRouter();
+  const [pk, setPk] = useState<string>('*');
+  // useEffect(async () => {
+  //   const publicKey = await getPublicEncryptionKey();
+  // }, [getPublicEncryptionKey]);
+
   const [{ data: accountData }] = useAccount({
     fetchEns: false,
   });
   const { workspace, subgraphClients } = useContext(ApiClientsContext)!;
   const [isAdmin, setIsAdmin] = React.useState<boolean>(false);
+  const [isReviewer, setIsReviewer] = React.useState<boolean>(false);
 
   const containerRef = useRef(null);
   const [currentPage, setCurrentPage] = React.useState(0);
@@ -134,8 +141,25 @@ function YourGrants() {
         tempMember?.accessLevel === 'admin'
           || tempMember?.accessLevel === 'owner',
       );
+      setIsReviewer(tempMember?.accessLevel === 'reviewer');
     }
   }, [accountData, workspace]);
+
+  useEffect(() => {
+    console.log(pk);
+    if (!accountData?.address) return;
+    if (!workspace) return;
+    const k = workspace?.members?.find(
+      (m) => m.actorId.toLowerCase() === accountData!.address.toLowerCase(),
+    )?.publicKey?.toString();
+    console.log(k);
+    if (k && k.length > 0) {
+      setPk(k);
+    } else {
+      setPk('');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspace, accountData]);
 
   const {
     data: allGrantsCountData,
@@ -181,6 +205,7 @@ function YourGrants() {
 
   useEffect(() => {
     if (data && data.grants && data.grants.length > 0) {
+      console.log('data.grants', data.grants);
       if (
         grants.length > 0
         && grants[0].workspace.id === data.grants[0].workspace.id
@@ -325,6 +350,8 @@ function YourGrants() {
                 })}
                 acceptingApplications={grant.acceptingApplications}
                 isAdmin={isAdmin}
+                initialRubrics={grant.rubric}
+                workspaceId={grant.workspace.id}
               />
             ))}
 
@@ -344,9 +371,9 @@ function YourGrants() {
           w="26%"
           pos="sticky"
           minH="calc(100vh - 80px)"
-          display={isAdmin ? undefined : 'none'}
+          display={isAdmin || isReviewer ? undefined : 'none'}
         >
-          <Sidebar showCreateGrantItem={!grantCount[0] && !grantCount[1]} />
+          <Sidebar isReviewer={isReviewer} showCreateGrantItem={!grantCount[0] && !grantCount[1]} />
         </Flex>
       </Flex>
       {grantForFunding && grantRewardAsset && (
@@ -357,6 +384,14 @@ function YourGrants() {
           rewardAsset={grantRewardAsset}
         />
       )}
+
+      <AllowAccessToPublicKeyModal
+        hiddenModalOpen={pk.length === 0}
+        isAdmin={isAdmin}
+        setHiddenModalOpen={() => {
+          window.location.reload();
+        }}
+      />
     </>
   );
 }

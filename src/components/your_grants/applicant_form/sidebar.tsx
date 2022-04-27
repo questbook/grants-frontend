@@ -21,8 +21,9 @@ import {
   truncateStringFromMiddle,
 } from '../../../utils/formattingUtils';
 import { getAssetInfo } from '../../../utils/tokenUtils';
-import FloatingSidebar from '../../ui/sidebar/floatingSidebar';
 import MailTo from '../mail_to/mailTo';
+import ReviewDrawer from '../reviewerDrawer';
+import RubricSidebar from './rubric_sidebar';
 
 function Sidebar({
   showHiddenData,
@@ -46,106 +47,118 @@ function Sidebar({
       (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
     )?.values[0]?.value : undefined;
 
+  const [reviewDrawerOpen, setReviewDrawerOpen] = React.useState(false);
+
   return (
-    <FloatingSidebar>
-      <Heading
-        fontSize="16px"
-        fontWeight="400"
-        color="#414E50"
-        lineHeight="26px"
-        fontStyle="normal"
+    <>
+      <Flex
+        bg="white"
+        border="2px solid #D0D3D3"
+        borderRadius={8}
+        w={340}
+        direction="column"
+        alignItems="stretch"
+        px="28px"
+        py="22px"
       >
-        Application Details
-      </Heading>
-      <Flex direction="row" justify="start" w="full" mt={6} align="center">
-        <Image
-          h="45px"
-          w="45px"
-          src={
+        <Heading
+          fontSize="16px"
+          fontWeight="400"
+          color="#414E50"
+          lineHeight="26px"
+          fontStyle="normal"
+        >
+          Application Details
+        </Heading>
+        <Flex direction="row" justify="start" w="full" mt={6} align="center">
+          <Image
+            h="45px"
+            w="45px"
+            src={
             getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.icon
           }
-        />
-        <Box mx={3} />
-        <Tooltip label={applicationData?.applicantId}>
-          <Heading variant="applicationHeading" color="brand.500">
-            {truncateStringFromMiddle(applicationData?.applicantId)}
-          </Heading>
-        </Tooltip>
-        <Box mr={4} />
-        <CopyIcon text={applicationData?.applicantId} />
-      </Flex>
-      <Box my={4} />
-      <Flex direction="row" justify="space-between" w="full" align="center">
-        <Text variant="applicationText" lineHeight="32px">
-          Name
-        </Text>
-        <Heading variant="applicationHeading" lineHeight="32px">
-          {
+          />
+          <Box mx={3} />
+          <Tooltip label={applicationData?.applicantId}>
+            <Heading variant="applicationHeading" color="brand.500">
+              {truncateStringFromMiddle(applicationData?.applicantId)}
+            </Heading>
+          </Tooltip>
+          <Box mr={4} />
+          <CopyIcon text={applicationData?.applicantId} />
+        </Flex>
+        <Box my={4} />
+        <Flex direction="row" justify="space-between" w="full" align="center">
+          <Text variant="applicationText" lineHeight="32px">
+            Name
+          </Text>
+          <Heading variant="applicationHeading" lineHeight="32px">
+            {
             applicationData?.fields?.find(
               (fld: any) => fld?.id?.split('.')[1] === 'applicantName',
             )?.values[0]?.value
           }
-        </Heading>
-      </Flex>
-      <Flex direction="row" justify="space-between" w="full" align="center">
-        <Text variant="applicationText" lineHeight="32px">
-          Email
-        </Text>
-        <Heading variant="applicationHeading" lineHeight="32px">
-          {applicationData?.fields?.find(
-            (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
-          ) ? (
-            <>
-              {
+          </Heading>
+        </Flex>
+        <Flex direction="row" justify="space-between" w="full" align="center">
+          <Text variant="applicationText" lineHeight="32px">
+            Email
+          </Text>
+          <Heading variant="applicationHeading" lineHeight="32px">
+            {applicationData?.fields?.find(
+              (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
+            ) ? (
+              <>
+                {
                 applicationData?.fields?.find(
                   (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
                 )?.values[0]?.value
               }
-              <MailTo applicantEmail={applicantEmail} />
-            </>
-            ) : (
-              <Heading
-                variant="applicationHeading"
-                lineHeight="32px"
-                onClick={showHiddenData}
-                cursor="pointer"
-              >
-                Hidden
-                {' '}
-                <Text color="#6200EE" display="inline">
-                  View
-                </Text>
-              </Heading>
-            )}
-        </Heading>
-      </Flex>
-      <Flex direction="row" justify="space-between" w="full" align="center">
-        <Text variant="applicationText" lineHeight="32px">
-          Sent On
-        </Text>
-        <Heading variant="applicationHeading" lineHeight="32px">
-          {getFormattedFullDateFromUnixTimestamp(applicationData?.createdAtS)}
-        </Heading>
-      </Flex>
-      <Flex direction="column" w="full" align="start" mt={4}>
-        <Box
+                <MailTo applicantEmail={applicantEmail} />
+              </>
+              ) : (
+                <Heading
+                  variant="applicationHeading"
+                  lineHeight="32px"
+                  onClick={showHiddenData}
+                  cursor="pointer"
+                >
+                  Hidden
+                  {' '}
+                  <Text color="#6200EE" display="inline">
+                    View
+                  </Text>
+                </Heading>
+              )}
+          </Heading>
+        </Flex>
+        <Flex direction="row" justify="space-between" w="full" align="center">
+          <Text variant="applicationText" lineHeight="32px">
+            Sent On
+          </Text>
+          <Heading variant="applicationHeading" lineHeight="32px">
+            {getFormattedFullDateFromUnixTimestamp(applicationData?.createdAtS)}
+          </Heading>
+        </Flex>
+        <Flex direction="column" w="full" align="start" mt={4}>
+          <Box
           // variant="dashed"
-          border="1px dashed #A0A7A7"
-          h={0}
-          w="100%"
-          m={0}
-        />
-        <Text fontSize="10px" mt={6} lineHeight="12px">
-          FUNDING REQUESTED
-        </Text>
-        <Text
-          fontSize="20px"
-          lineHeight="40px"
-          fontWeight="500"
-          fontStyle="normal"
-          color="#122224"
-        >
-          {applicationData
+            border="1px dashed #A0A7A7"
+            h={0}
+            w="100%"
+            m={0}
+          />
+          <Text fontSize="10px" mt={6} lineHeight="12px">
+            FUNDING REQUESTED
+          </Text>
+          <Text
+            fontSize="20px"
+            lineHeight="40px"
+            fontWeight="500"
+            fontStyle="normal"
+            color="#122224"
+          >
+            {applicationData
             && formatAmount(
               applicationData?.fields?.find(
                 (fld: any) => fld?.id?.split('.')[1] === 'fundingAsk',
@@ -158,63 +171,169 @@ function Sidebar({
                 applicationData.grant.reward.asset.toLowerCase()
               ]?.decimals ?? 18,
             )}
-          {' '}
-          {getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.label}
-        </Text>
-        <Box
+            {' '}
+            {getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.label}
+          </Text>
+          <Box
           // variant="dashed"
-          border="1px dashed #A0A7A7"
-          h={0}
-          w="100%"
-          mt="17px"
-          mb={0}
-        />
+            border="1px dashed #A0A7A7"
+            h={0}
+            w="100%"
+            mt="17px"
+            mb={0}
+          />
+        </Flex>
+        <Button
+          onClick={() => onAcceptApplicationClick()}
+          variant="primary"
+          mt={7}
+          display={applicationData?.state === 'submitted' ? '' : 'none'}
+        >
+          Approve Application
+        </Button>
+        <Button
+          onClick={() => onAcceptApplicationClick()}
+          variant="primary"
+          mt={7}
+          disabled={applicationData?.state === 'resubmit'}
+          display={applicationData?.state === 'resubmit' ? '' : 'none'}
+        >
+          Accept Application
+        </Button>
+        <Text
+          mt={7}
+          fontSize="sm"
+          lineHeight="4"
+          align="center"
+          color="#717A7C"
+          display={applicationData?.state === 'resubmit' ? '' : 'none'}
+        >
+          This application has been asked for resubmission. The applicant has been
+          notified to resubmit.
+        </Text>
+        <Button
+          onClick={() => onResubmitApplicationClick()}
+          variant="resubmit"
+          mt={4}
+          display={applicationData?.state === 'submitted' ? '' : 'none'}
+        >
+          Ask to Resubmit
+        </Button>
+        <Button
+          onClick={() => onRejectApplicationClick()}
+          variant="reject"
+          mt={4}
+          display={applicationData?.state === 'submitted' ? '' : 'none'}
+        >
+          Reject Application
+        </Button>
       </Flex>
-      <Button
-        onClick={() => onAcceptApplicationClick()}
-        variant="primary"
-        mt={7}
-        display={applicationData?.state === 'submitted' ? '' : 'none'}
+
+      <Box mt={8} />
+
+      <RubricSidebar
+        total={applicationData
+          ?.reviewers.length ?? 0}
+        reviews={applicationData?.reviews}
+        rubric={applicationData?.grant.rubric}
+      />
+
+      <Box mt={8} />
+
+      <Flex
+        bg="white"
+        border="2px solid #D0D3D3"
+        borderRadius={8}
+        w={340}
+        direction="column"
+        alignItems="stretch"
+        px="28px"
+        py="22px"
       >
-        Approve Application
-      </Button>
-      <Button
-        onClick={() => onAcceptApplicationClick()}
-        variant="primary"
-        mt={7}
-        disabled={applicationData?.state === 'resubmit'}
-        display={applicationData?.state === 'resubmit' ? '' : 'none'}
+        <Flex direction="column">
+          <Text fontWeight="700">Application Reviewers</Text>
+          <Text mt={2}>Assign reviewers for application</Text>
+          <Button mt={4} onClick={() => setReviewDrawerOpen(true)}>
+            <Text fontWeight="700">Assign Reviewers</Text>
+          </Button>
+        </Flex>
+
+        <Flex direction="column">
+          <Text mb="14px" fontWeight="700" />
+          {applicationData
+            ?.reviewers
+            ?.map((r: any) => ({
+              email: r.email,
+              address: r.id.split('.')[1],
+            })).map((reviewer: any) => (
+              <Flex
+                w="100%"
+                h="64px"
+                align="center"
+                mt={2}
+                py={3}
+              >
+                <Image src="/ui_icons/reviewer_account.svg" />
+                <Flex direction="column" ml={4}>
+                  <Text
+                    fontWeight="700"
+                    color="#122224"
+                    fontSize="14px"
+                    lineHeight="20px"
+                  >
+                    {truncateStringFromMiddle(reviewer.address)}
+                  </Text>
+                  <Text mt={1} color="#717A7C" fontSize="12px">
+                    {reviewer.email}
+                  </Text>
+                </Flex>
+              </Flex>
+            ))}
+        </Flex>
+      </Flex>
+
+      <ReviewDrawer
+        reviewDrawerOpen={reviewDrawerOpen}
+        setReviewDrawerOpen={setReviewDrawerOpen}
+        grantAddress={applicationData?.grant.id}
+        chainId={chainId}
+        workspaceId={applicationData?.grant.workspace.id}
+        initialReviewers={applicationData?.reviewers}
+        reviews={applicationData?.reviews}
+        applicationId={applicationData?.id}
+        onClose={() => setReviewDrawerOpen(false)}
+      />
+
+      <Flex
+        bg="white"
+        border="2px solid #D0D3D3"
+        borderRadius={8}
+        w={340}
+        direction="column"
+        alignItems="stretch"
+        px="28px"
+        py="22px"
+        mt={8}
       >
-        Accept Application
-      </Button>
-      <Text
-        mt={7}
-        fontSize="sm"
-        lineHeight="4"
-        align="center"
-        color="#717A7C"
-        display={applicationData?.state === 'resubmit' ? '' : 'none'}
-      >
-        This application has been asked for resubmission. The applicant has been
-        notified to resubmit.
-      </Text>
-      <Button
-        onClick={() => onResubmitApplicationClick()}
-        variant="resubmit"
-        mt={4}
-        display={applicationData?.state === 'submitted' ? '' : 'none'}
-      >
-        Ask to Resubmit
-      </Button>
-      <Button
-        onClick={() => onRejectApplicationClick()}
-        variant="reject"
-        mt={4}
-        display={applicationData?.state === 'submitted' ? '' : 'none'}
-      >
-        Reject Application
-      </Button>
-    </FloatingSidebar>
+        <Flex direction="column">
+          <Text mb="14px" fontWeight="700">Evaluation Rubric</Text>
+          {applicationData?.grant?.rubric && applicationData
+            ?.grant
+            ?.rubric
+            .items.map((r: any) => ({
+              title: r.title,
+              description: r.details,
+            })).map((rubric: any) => (
+              <>
+                <Text mt={2} fontWeight="700" color="#122224" fontSize="14px">{rubric.title}</Text>
+                <Text color="#717A7C" fontSize="12px">{rubric.description}</Text>
+              </>
+            ))}
+        </Flex>
+      </Flex>
+
+      <Box mb={8} />
+    </>
   );
 }
 
