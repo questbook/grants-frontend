@@ -5,16 +5,11 @@ import {
   Image,
   Button,
   Tooltip,
-  PopoverArrow,
   Popover,
   PopoverBody,
-  PopoverCloseButton,
   PopoverContent,
   PopoverHeader,
   PopoverTrigger,
-  Grid,
-  GridItem,
-  useBoolean,
   SimpleGrid,
 } from '@chakra-ui/react';
 import React, { ReactElement } from 'react';
