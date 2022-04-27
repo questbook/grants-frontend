@@ -19,7 +19,6 @@ import {
 } from '../states';
 import { TableFilters } from './TableFilters';
 
-
 const table_headers_flex = [0.231, 0.20, 0.15, 0.16, 0.16, 0.28, 0.116];
 const table_headers_flex_reviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
 
@@ -40,7 +39,7 @@ function Content({
   // onRejectApplicationClick?: () => void;
   onManageApplicationClick?: (data?: any) => void;
   data: any[];
-  applicantionReviewer:Array<[]>;
+  applicantionReviewer:[];
   isReviewer : boolean;
   fundReceived: string;
 }) {

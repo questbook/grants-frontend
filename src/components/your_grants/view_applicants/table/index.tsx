@@ -23,7 +23,7 @@ function Table({
   data: any[];
   title: string;
   isReviewer : boolean;
-  applicantionReviewer: Array<[]>;
+  applicantionReviewer: [];
   fundReceived: string
   archiveGrantComponent: React.ReactNode;
 }) {
