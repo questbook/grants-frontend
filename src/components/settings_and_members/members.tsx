@@ -33,6 +33,7 @@ function Members({ workspaceMembers }: Props) {
       role: member.accessLevel,
       email: member.email,
       updatedAt: member.updatedAt,
+      addedBy: member.addedBy.actorId,
     }));
     setTableData(tempTableData);
   }, [workspaceMembers]);
@@ -102,10 +103,10 @@ function Members({ workspaceMembers }: Props) {
                 <Tooltip label={data.address}>
                   <Flex flex={tableDataFlex[3]}>
                     <Text variant="tableBody">
-                      {getTextWithEllipses(data.address, 16)}
+                      {getTextWithEllipses(data.addedBy, 16)}
                     </Text>
                     <Box mr="7px" />
-                    <CopyIcon text={data.address} />
+                    <CopyIcon text={data.addedBy} />
                   </Flex>
                 </Tooltip>
                 <Box flex={tableDataFlex[4]}>
@@ -139,7 +140,8 @@ function Members({ workspaceMembers }: Props) {
       >
         <ModalContent
           onClose={(
-            newMember: { address: string; email: string; role: string; updatedAt?: number; },
+            newMember:
+            { address: string; email: string; role: string; updatedAt?: number; addedBy?: string; },
             shouldRevoke?: boolean,
           ) => {
             if (!shouldRevoke) {
