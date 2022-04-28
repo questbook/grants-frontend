@@ -113,6 +113,7 @@ function Profile() {
               bg="white"
               boxSize="48px"
               onClick={() => {
+                console.log(social.value);
                 window.open(social.value, '_blank');
               }}
             />
