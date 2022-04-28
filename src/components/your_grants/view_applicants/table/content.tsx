@@ -15,13 +15,13 @@ import {
 import React, { ReactElement } from 'react';
 import CopyIcon from 'src/components/ui/copy_icon';
 import {
-  GrantApproved, Rejected, PendingReview, ResubmissionRequested, GrantComplete, AssignedToReview,
+  GrantApproved, Rejected, PendingReview, ResubmissionRequested, GrantComplete,
 } from '../states';
 import { TableFilters } from './TableFilters';
 
+
 const table_headers_flex = [0.231, 0.20, 0.15, 0.16, 0.16, 0.28, 0.116];
 const table_headers_flex_reviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
-
 
 function Content({
   filter,
@@ -40,7 +40,7 @@ function Content({
   // onRejectApplicationClick?: () => void;
   onManageApplicationClick?: (data?: any) => void;
   data: any[];
-  applicantionReviewer:[];
+  applicantionReviewer:Array<[]>;
   isReviewer : boolean;
   fundReceived: string;
 }) {
@@ -52,10 +52,10 @@ function Content({
     if (status === TableFilters.resubmit) return <ResubmissionRequested />;
     if (status === TableFilters.approved) return <GrantApproved />;
     if (status === TableFilters.rejected) return <Rejected />;
-    if (status === TableFilters.assigned) return <AssignedToReview />;
-
     return <GrantComplete />;
   };
+
+
   return (
     <Flex
       mt="10px"
@@ -253,11 +253,7 @@ function Content({
             </Text>
 
             <Flex
-<<<<<<< HEAD
-              flex={tableHeadersflex[3]}
-=======
               flex={table_headers_flex[2]}
->>>>>>> 9cea838 (issue fixed)
               direction="row"
               justifyContent="center"
               alignItems="center"
@@ -304,7 +300,7 @@ function Content({
               <PopoverContent height="150px" width="inherit" right="60px" top="60px">
                 <PopoverHeader>Reviewer</PopoverHeader>
                 <PopoverBody overflowX="hidden" overflowY="auto">
-                  { applicantionReviewer.map((reviewer:{ email: string }) => (
+                  { applicantionReviewer.map((reviewer) => (
                     <SimpleGrid columns={1} spacing={3}>
                       <Text>{reviewer.email}</Text>
                     </SimpleGrid>
@@ -315,17 +311,7 @@ function Content({
             <Flex justifyContent="center" flex={table_headers_flex[4]}>
               {getStatus(item.status)}
             </Flex>
-<<<<<<< HEAD
-
-            <Text
-              textAlign="left"
-              flex={tableHeadersflex[2]}
-              variant="tableBody"
-              fontWeight="400"
-            >
-=======
             <Flex justifyContent="center" flex={table_headers_flex[5]}>
->>>>>>> 9cea838 (issue fixed)
               {item.sent_on}
             </Text>
 
@@ -333,11 +319,7 @@ function Content({
               display="flex"
               flexDirection="column"
               alignItems="center"
-<<<<<<< HEAD
-              flex={tableHeadersflex[5]}
-=======
               flex={table_headers_flex[6]}
->>>>>>> 9cea838 (issue fixed)
             >
               <Button
                 variant="outline"
