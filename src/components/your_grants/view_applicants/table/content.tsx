@@ -56,7 +56,6 @@ function Content({
 
     return <GrantComplete />;
   };
-  console.log(applicantionReviewer);
   return (
     <Flex
       mt="10px"
