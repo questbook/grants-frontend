@@ -15,20 +15,24 @@ import {
   TabPanel,
   useDisclosure,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, {useContext} from 'react';
 import { trimAddress } from 'src/utils/formattingUtils';
 
 // import config from 'src/constants/config';
 import CopyIcon from '../ui/copy_icon';
 import Modal from '../ui/modal';
 import PayoutModalContent from './payoutModalContent';
+import { ApiClientsContext } from '../../../pages/_app';
 
-function Payouts({ workspaceMembers }: any) {
+import router from 'next/router'
+
+function Payouts() {
+  const { workspace } = useContext(ApiClientsContext)!;
+
   const payModal = useDisclosure();
   const [payMode, setPayMode] = React.useState<number>(-1);
   const [selectedData, setSelectedData] = React.useState<any>();
   const [paymentOutside, setPaymentOutside] = React.useState<boolean>(false);
-  const [tableData, setTableData] = React.useState<any>();
 
   const [tabIndex, setTabIndex] = React.useState<number>(0);
 
@@ -51,35 +55,10 @@ function Payouts({ workspaceMembers }: any) {
   ];
 
   React.useEffect(() => {
-    console.log(workspaceMembers);
-
-    if (!workspaceMembers) return;
-
-    const tempTableData = () => workspaceMembers.filter((reviews: any) => console.log(reviews.outstandingReviews))
-
-    tempTableData();
-  }, [workspaceMembers]);
-
-  const payoutTablePlaceholders = [
-    {
-      email: 'gomez@creatoros.co',
-      address: '0x0c9ccbada1411687f6ffa7df317af35b16b1fe0c',
-      date: '24 January 2022',
-      outstanding: 5,
-    },
-    {
-      email: 'vitalik@vitalik.co',
-      address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
-      date: '21 December 2021',
-      outstanding: 2,
-    },
-    {
-      email: 'yes@yes.co',
-      address: '0x4c6ef0b696325ac6bfe5f597bbc269ad1bd76825',
-      date: '10 October 2022',
-      outstanding: 10,
-    },
-  ];
+    if (!workspace) {
+      router.push('/');
+    };
+  });
 
   const historyTablePlaceholders = [
     {
@@ -107,13 +86,6 @@ function Payouts({ workspaceMembers }: any) {
       amount: '200 USDC',
     },
   ];
-
-  const tempTableData = payoutTablePlaceholders.map((payoutData: any) => ({
-    email: payoutData.email,
-    address: payoutData.address,
-    date: payoutData.date,
-    outstanding: payoutData.outstanding,
-  }));
 
   const historyTableData = historyTablePlaceholders.map((paidData: any) => ({
     email: paidData.email,
@@ -166,7 +138,7 @@ function Payouts({ workspaceMembers }: any) {
             >
               Outstanding
               {' '}
-              {`(${tempTableData.length})`}
+              {!workspace ? 0 : workspace!.members.map((data: any) => data.outstandingReviewIds.length !== 0 && `(${data.outstandingReviewIds.length})`)}
             </Tab>
             <Tab
               borderColor="#AAAAAA"
@@ -214,8 +186,7 @@ function Payouts({ workspaceMembers }: any) {
                 border="1px solid #D0D3D3"
                 borderRadius={4}
               >
-                {tempTableData
-                  && tempTableData.map((data: any, index: number) => (
+                {!workspace ? null : workspace!.members.map((data: any, index: number) => data.outstandingReviewIds.length !== 0 && (
                     <Flex>
                       <Grid
                         gridAutoFlow="column"
@@ -231,27 +202,39 @@ function Payouts({ workspaceMembers }: any) {
                           minW="fit-content"
                           variant="tableBody"
                           justifySelf="left"
+                          alignSelf="center"
                         >
                           {' '}
-                          {data.email}
+                          {data.email.length > 16 ?
+
+                          <Tooltip label={data.email}>
+                            <Flex alignSelf="center" alignItems="center">
+                              <Text alignSelf="center" textAlign="center" variant="tableBody">
+                                {trimAddress(data.email, 12)}
+                              </Text>
+                              <Box mr="7px" />
+                            </Flex>
+                          </Tooltip> : data.email}
+
                         </Text>
-                        <Tooltip label={data.address}>
+                        <Tooltip label={data.actorId}>
                           <Flex alignItems="center">
                             <Text textAlign="center" variant="tableBody">
-                              {trimAddress(data.address, 4)}
+                              {trimAddress(data.actorId, 4)}
                             </Text>
                             <Box mr="7px" />
-                            <CopyIcon h="0.75rem" text={data.address} />
+                            <CopyIcon h="0.75rem" text={data.actorId} />
                           </Flex>
                         </Tooltip>
                         <Text
                           minW="fit-content"
                           variant="tableBody"
-                          justifySelf="end"
+                          alignSelf="center"
                         >
-                          {data.date}
+                          {new Date(data.lastReviewSubmittedAt * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) }
                         </Text>
-                        <Text variant="tableBody">{data.outstanding}</Text>
+                        <Text                           alignSelf="center"
+variant="tableBody">{data.outstandingReviewIds.length}</Text>
                         <Flex direction="row" gap="0.5rem">
                           <Button
                             variant="outline"
@@ -399,8 +382,8 @@ function Payouts({ workspaceMembers }: any) {
                         <PayoutModalContent
                           payMode={payMode}
                           setPayMode={setPayMode}
-                          reviewerAddress={selectedData?.address}
-                          reviews={selectedData?.outstanding}
+                          reviewerAddress={selectedData?.actorId}
+                          reviews={selectedData?.outstandingReviewIds.length}
                           onClose={payModal.onClose}
                           paymentOutside={paymentOutside}
                           setPaymentOutside={setPaymentOutside}

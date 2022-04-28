@@ -3853,6 +3853,8 @@ export const GetWorkspaceMembersDocument = gql`
         publicKey
         email
         accessLevel
+        outstandingReviewIds
+        lastReviewSubmittedAt
       }
     }
   }
