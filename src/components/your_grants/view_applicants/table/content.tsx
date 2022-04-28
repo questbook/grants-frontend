@@ -19,10 +19,6 @@ import {
 } from '../states';
 import { TableFilters } from './TableFilters';
 
-const table_headers_flex = [0.231, 0.20, 0.15, 0.16, 0.16, 0.28, 0.116];
-const table_headers_flex_reviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
-
-
 function Content({
   filter,
   onViewApplicationFormClick,
@@ -46,7 +42,8 @@ function Content({
 }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const open = () => setIsOpen(!isOpen);
-
+  const tableHeadersFlex = [0.231, 0.20, 0.15, 0.16, 0.16, 0.28, 0.116];
+  const tableHeadersFlexReviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
   const getStatus = (status: number): ReactElement => {
     if (status === TableFilters.submitted) return <PendingReview />;
     if (status === TableFilters.resubmit) return <ResubmissionRequested />;
@@ -79,7 +76,7 @@ function Content({
               py={4}
             >
 
-              <Flex direction="row" flex={table_headers_flex_reviewer[0]} align="center">
+              <Flex direction="row" flex={tableHeadersFlexReviewer[0]} align="center">
                 <Tooltip label={item?.applicant_address}>
                   <Text
                     ml="19px"
@@ -95,7 +92,7 @@ function Content({
               </Flex>
 
               <Text
-                flex={table_headers_flex_reviewer[1]}
+                flex={tableHeadersFlexReviewer[1]}
                 color="#717A7C"
                 variant="tableBody"
               >
@@ -103,14 +100,14 @@ function Content({
               </Text>
               <Text
                 textAlign="left"
-                flex={table_headers_flex_reviewer[2]}
+                flex={tableHeadersFlexReviewer[2]}
                 variant="tableBody"
                 fontWeight="400"
               >
                 {item.project_name}
               </Text>
               <Flex
-                flex={table_headers_flex_reviewer[3]}
+                flex={tableHeadersFlexReviewer[3]}
                 direction="row"
                 justifyContent="center"
                 alignItems="center"
@@ -130,14 +127,14 @@ function Content({
                   {item.funding_asked.symbol}
                 </Text>
               </Flex>
-              <Flex justifyContent="center" flex={table_headers_flex_reviewer[4]}>
+              <Flex justifyContent="center" flex={tableHeadersFlexReviewer[4]}>
                 {getStatus(item.status)}
               </Flex>
               <Flex
                 display="flex"
                 flexDirection="column"
                 alignItems="center"
-                flex={table_headers_flex_reviewer[5]}
+                flex={tableHeadersFlexReviewer[5]}
               >
                 <Button
                   variant="outline"
@@ -228,7 +225,7 @@ function Content({
             py={4}
           >
 
-            <Flex direction="row" flex={table_headers_flex[0]} align="center">
+            <Flex direction="row" flex={tableHeadersFlex[0]} align="center">
               <Tooltip label={item?.applicant_address}>
                 <Text
                   ml="19px"
@@ -244,14 +241,14 @@ function Content({
             </Flex>
 
             <Text
-              flex={table_headers_flex[1]}
+              flex={tableHeadersFlex[1]}
               color="#717A7C"
               variant="tableBody"
             >
               {item.project_name}
             </Text>
             <Flex
-              flex={table_headers_flex[2]}
+              flex={tableHeadersFlex[2]}
               direction="row"
               justifyContent="center"
               alignItems="center"
@@ -286,7 +283,7 @@ function Content({
                 justifyContent="center"
                 color="#717A7C"
                 variant="tableBody"
-                flex={table_headers_flex[3]}
+                flex={tableHeadersFlex[3]}
                 textAlign="center"
               >
 
@@ -306,17 +303,17 @@ function Content({
                 </PopoverBody>
               </PopoverContent>
             </Popover>
-            <Flex justifyContent="center" flex={table_headers_flex[4]}>
+            <Flex justifyContent="center" flex={tableHeadersFlex[4]}>
               {getStatus(item.status)}
             </Flex>
-            <Flex justifyContent="center" flex={table_headers_flex[5]}>
+            <Flex justifyContent="center" flex={tableHeadersFlex[5]}>
               {item.sent_on}
             </Flex>
             <Flex
               display="flex"
               flexDirection="column"
               alignItems="center"
-              flex={table_headers_flex[6]}
+              flex={tableHeadersFlex[6]}
             >
               <Button
                 variant="outline"
