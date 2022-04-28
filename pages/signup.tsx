@@ -104,6 +104,7 @@ function SignupDao() {
       <CreateGrant
         hasClicked={createGrantLoading}
         onSubmit={(data) => {
+          console.log('grant data', data);
           setGrantData(data);
         }}
       />
@@ -143,6 +144,7 @@ function SignupDao() {
       <Form
         // hasClicked={workspaceLoading}
         onSubmit={(data) => {
+          console.log('Workspace Data: ', data);
           setWorkspaceData(data);
         }}
       />

@@ -168,6 +168,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 MyApp.getInitialProps = async (appContext: AppContext) => {
   // calls page's `getInitialProps` and fills `appProps.pageProps`
   const appProps = await App.getInitialProps(appContext);
+  console.log('appProps', appProps);
   return { ...appProps };
 };
 
