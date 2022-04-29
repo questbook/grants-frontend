@@ -364,6 +364,18 @@ export const CHAIN_INFO: ChainInfoMap = {
         address: '0x9e1028F5F1D5eDE59748FFceE5532509976840E0',
         decimals: 18,
       },
+      '0x8700dAec35aF8Ff88c16BdF0418774CB3D7599B4': {
+        icon: '/ui_icons/brand/currency/snx_symbol.svg',
+        label: 'SNX',
+        address: '0x8700dAec35aF8Ff88c16BdF0418774CB3D7599B4',
+        decimals: 18,
+      },
+      '0x8c6f28f2F1A3C87F0f938b96d27520d9751ec8d9': {
+        icon: '/ui_icons/brand/currency/sUSD_symbol.svg',
+        label: 'sUSD',
+        address: '0x8c6f28f2F1A3C87F0f938b96d27520d9751ec8d9',
+        decimals: 18,
+      },
     },
     subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-optimism-mainnet',
     rpcUrls: ['https://mainnet.optimism.io/'],
