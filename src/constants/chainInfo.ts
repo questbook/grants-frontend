@@ -358,22 +358,22 @@ export const CHAIN_INFO: ChainInfoMap = {
         address: '0x7f5c764cbc14f9669b88837ca1490cca17c31607',
         decimals: 6,
       },
-      '0x9e1028F5F1D5eDE59748FFceE5532509976840E0': {
+      '0x9e1028f5f1d5ede59748ffcee5532509976840e0': {
         icon: '/ui_icons/brand/currency/perp_symbol.svg',
         label: 'PERP',
-        address: '0x9e1028F5F1D5eDE59748FFceE5532509976840E0',
+        address: '0x9e1028f5f1d5ede59748ffcee5532509976840e0',
         decimals: 18,
       },
-      '0x8700dAec35aF8Ff88c16BdF0418774CB3D7599B4': {
+      '0x8700daec35af8ff88c16bdf0418774cb3d7599b4': {
         icon: '/ui_icons/brand/currency/snx_symbol.svg',
         label: 'SNX',
-        address: '0x8700dAec35aF8Ff88c16BdF0418774CB3D7599B4',
+        address: '0x8700daec35af8ff88c16bdf0418774cb3d7599b4',
         decimals: 18,
       },
-      '0x8c6f28f2F1A3C87F0f938b96d27520d9751ec8d9': {
+      '0x8c6f28f2f1a3c87f0f938b96d27520d9751ec8d9': {
         icon: '/ui_icons/brand/currency/sUSD_symbol.svg',
         label: 'sUSD',
-        address: '0x8c6f28f2F1A3C87F0f938b96d27520d9751ec8d9',
+        address: '0x8c6f28f2f1a3c87f0f938b96d27520d9751ec8d9',
         decimals: 18,
       },
     },
