@@ -54,6 +54,92 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "uint96[]",
+        "name": "_reviewIds",
+        "type": "uint96[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_asset",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_sender",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_reviewer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "time",
+        "type": "uint256"
+      }
+    ],
+    "name": "ReviewPaymentFulfilled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint96[]",
+        "name": "_reviewIds",
+        "type": "uint96[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_asset",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_reviewer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "_transactionHash",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "time",
+        "type": "uint256"
+      }
+    ],
+    "name": "ReviewPaymentMarkedDone",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "uint96",
         "name": "_reviewId",
@@ -233,6 +319,44 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint96",
+        "name": "_workspaceId",
+        "type": "uint96"
+      },
+      {
+        "internalType": "uint96[]",
+        "name": "_applicationIds",
+        "type": "uint96[]"
+      },
+      {
+        "internalType": "address",
+        "name": "_reviewer",
+        "type": "address"
+      },
+      {
+        "internalType": "uint96[]",
+        "name": "_reviewIds",
+        "type": "uint96[]"
+      },
+      {
+        "internalType": "contract IERC20",
+        "name": "_erc20Interface",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "fulfillPayment",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "grantFactory",
     "outputs": [
@@ -287,6 +411,49 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint96",
+        "name": "_workspaceId",
+        "type": "uint96"
+      },
+      {
+        "internalType": "uint96[]",
+        "name": "_applicationIds",
+        "type": "uint96[]"
+      },
+      {
+        "internalType": "address",
+        "name": "_reviewer",
+        "type": "address"
+      },
+      {
+        "internalType": "uint96[]",
+        "name": "_reviewIds",
+        "type": "uint96[]"
+      },
+      {
+        "internalType": "contract IERC20",
+        "name": "_erc20Interface",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_transactionHash",
+        "type": "string"
+      }
+    ],
+    "name": "markPaymentDone",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "owner",
     "outputs": [
@@ -327,6 +494,25 @@
         "internalType": "uint96",
         "name": "",
         "type": "uint96"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint96",
+        "name": "",
+        "type": "uint96"
+      }
+    ],
+    "name": "reviewPaymentsStatus",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",

@@ -29,7 +29,7 @@ import { useContract, useSigner } from 'wagmi';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { SupportedChainId } from 'src/constants/chains';
 import Loader from 'src/components/ui/loader';
-// import usePayReviewers from '../../hooks/usePayReviewers';
+import useMarkReviewPaymentDone from '../../hooks/useMarkReviewPaymentDone';
 
 // CONSTANTS AND ABIS
 import { trimAddress, formatAmount } from '../../utils/formattingUtils';
@@ -40,6 +40,8 @@ import Dropdown from '../ui/forms/dropdown';
 // import InfoToast from '../ui/infoToast';
 
 interface Props {
+  workspaceId: string;
+  reviewIds: string[],
   payMode: number;
   setPayMode: React.Dispatch<React.SetStateAction<number>>;
   reviewerAddress: string | any;
@@ -51,6 +53,8 @@ interface Props {
 }
 
 function PayoutModalContent({
+  workspaceId,
+  reviewIds,
   payMode,
   setPayMode,
   reviewerAddress,
@@ -82,6 +86,7 @@ function PayoutModalContent({
   const [finalAmount, setFinalAmount] = useState<BigNumber>();
   const [amountDeposited, setAmountDeposited] = useState<number>();
   const [transactionHash, setTransactionHash] = useState<string>();
+  const [submitPayment, setSubmitPayment] = useState<boolean>(false)
 
   async function setTransactionHashFromClipboard() {
     try {
@@ -104,12 +109,16 @@ function PayoutModalContent({
   const [walletBalance, setWalletBalance] = React.useState(0);
   const [loader, setLoader] = useState(false);
   // const [rewardAssetDecimals, setRewardAssetDecimals] = React.useState(0);
+  const [transactionData, txnLink, loading] = useMarkReviewPaymentDone(
+    workspaceId,
+    reviewIds,
+    totalAmount,
+    reviewerAddress,
+    reviewCurrencyAddress,
+    transactionHash
+  );
 
-  // const [payReviewerData, txnLink, loading] = usePayReviewers(
-  //   totalAmount,
-  //   reviewerAddress,
-  //   reviewCurrencyAddress,
-  // );
+  console.log(txnLink);
 
   useEffect(() => {
     if (amountToPay !== undefined && reviewsToPay !== undefined) {
@@ -628,6 +637,7 @@ function PayoutModalContent({
                 bg="rgba(241, 247, 255, 0.83)"
                 placeholder="Paste the TXN hash here"
                 value={transactionHash}
+                onChange={(e) => setTransactionHash(e.target.value)}
                 pr="4.5rem"
                 h={16}
               />
@@ -659,12 +669,14 @@ function PayoutModalContent({
                 // eslint-disable-next-line no-console
                 console.log(
                   reviewCurrencyAddress,
+                  reviewIds,
                   totalAmount,
                   reviewCurrency,
                   reviewerAddress,
-                  'YES',
+                  transactionHash,
                 );
                 setTabIndex(1);
+                setSubmitPayment(true);
               }}
             >
               Mark Payment as Done
