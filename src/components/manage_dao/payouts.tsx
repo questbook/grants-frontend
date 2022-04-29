@@ -16,18 +16,47 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import React, { useContext } from 'react';
-import { trimAddress } from 'src/utils/formattingUtils';
 
-// import config from 'src/constants/config';
+//TOOLS AND UTILS
+import { trimAddress, getFormattedDateFromUnixTimestampWithYear } from 'src/utils/formattingUtils';
+// import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+
+//UI COMPONENTS
 import CopyIcon from '../ui/copy_icon';
 import Modal from '../ui/modal';
 import PayoutModalContent from './payoutModalContent';
+
+//CONTEXT AND CONSTANTS
 import { ApiClientsContext } from '../../../pages/_app';
+// import { SupportedChainId } from 'src/constants/chains';
 
 import router from 'next/router';
 
 function Payouts() {
-  const { workspace } = useContext(ApiClientsContext)!;
+  const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
+
+  // const [queryParams, setQueryParams] = React.useState<any>({
+  //   client:
+  //     subgraphClients[
+  //       getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+  //     ].client,
+  // });
+  //
+  // useEffect(() => {
+  //   if (!workspace) return;
+  //   if (!grantID) return;
+  //
+  //   setQueryParams({
+  //     client:
+  //       subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+  //     variables: {
+  //       grantID,
+  //       first: PAGE_SIZE,
+  //       skip: 0,
+  //     },
+  //   });
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [workspace, grantID]);
 
   const payModal = useDisclosure();
   const [payMode, setPayMode] = React.useState<number>(-1);
@@ -243,13 +272,7 @@ function Payouts() {
                                 variant="tableBody"
                                 alignSelf="center"
                               >
-                                {new Date(
-                                  data.lastReviewSubmittedAt * 1000
-                                ).toLocaleDateString('en-US', {
-                                  year: 'numeric',
-                                  month: 'long',
-                                  day: 'numeric',
-                                })}
+                                {getFormattedDateFromUnixTimestampWithYear(data.lastReviewSubmittedAt)}
                               </Text>
                               <Text alignSelf="center" variant="tableBody">
                                 {data.outstandingReviewIds.length}

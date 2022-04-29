@@ -3,7 +3,7 @@ import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import { useAccount, useNetwork } from 'wagmi';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
-import { BigNumber } from 'ethers';
+// import { BigNumber } from 'ethers';
 import getErrorMessage from 'src/utils/errorUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ErrorToast from '../components/ui/toasts/errorToast';
@@ -13,7 +13,7 @@ import useApplicationReviewRegistryContract from './contracts/useApplicationRevi
 export default function useMarkReviewPaymentDone(
   workspaceId: string,
   reviewIds: string[],
-  totalAmount: BigNumber,
+  totalAmount: number,
   reviewerAddress?: string,
   reviewCurrencyAddress?: string,
   transactionHash?: string
@@ -34,10 +34,10 @@ export default function useMarkReviewPaymentDone(
   const currentChainId = useChainId();
 
   useEffect(() => {
-    if (totalAmount) {
+    console.log(totalAmount)
+    if (totalAmount !== 0) {
       setError(undefined);
       setIncorrectNetwork(false);
-      error
     } else if (transactionData) {
       setTransactionData(undefined);
       setIncorrectNetwork(false);
@@ -52,26 +52,27 @@ export default function useMarkReviewPaymentDone(
   }, [applicationReviewerContract]);
 
   useEffect(() => {
-    if (!totalAmount) return;
-    if (!transactionHash) return;
-    if (!reviewerAddress) return;
-    if (!reviewCurrencyAddress) return;
     if (incorrectNetwork) return;
     if (error) return;
     if (loading) return;
 
+    console.log('YES')
+
     async function markAsDone() {
+      console.log('YEEES222222222222')
+
       setLoading(true);
       try {
-        const updateTxn = await applicationReviewerContract.markPaymentDone(
+        const markPaymentTxb = await applicationReviewerContract.markPaymentDone(
           workspaceId,
+          reviewIds,
           reviewerAddress,
           reviewCurrencyAddress,
           totalAmount,
           transactionHash,
         );
 
-        const updateTxnData = await updateTxn.wait();
+        const updateTxnData = await markPaymentTxb.wait();
 
         setTransactionData(updateTxnData);
         setLoading(false);
@@ -156,6 +157,10 @@ export default function useMarkReviewPaymentDone(
     currentChainId,
     chainId,
     incorrectNetwork,
+    reviewIds,
+    transactionHash,
+    reviewerAddress,
+    reviewCurrencyAddress
   ]);
 
   return [
