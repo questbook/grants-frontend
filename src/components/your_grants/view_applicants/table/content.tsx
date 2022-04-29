@@ -5,11 +5,17 @@ import {
   Image,
   Button,
   Tooltip,
+  Popover,
+  PopoverBody,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
+  SimpleGrid,
 } from '@chakra-ui/react';
 import React, { ReactElement } from 'react';
 import CopyIcon from 'src/components/ui/copy_icon';
 import {
-  GrantApproved, Rejected, PendingReview, ResubmissionRequested, GrantComplete,
+  GrantApproved, Rejected, PendingReview, ResubmissionRequested, GrantComplete, AssignedToReview,
 } from '../states';
 import { TableFilters } from './TableFilters';
 
@@ -24,6 +30,9 @@ function Content({
   // onRejectApplicationClick,
   onManageApplicationClick,
   data,
+  applicantionReviewer,
+  isReviewer,
+  fundReceived,
 }: {
   filter: number;
   onViewApplicationFormClick?: (data?: any) => void;
@@ -31,6 +40,7 @@ function Content({
   // onRejectApplicationClick?: () => void;
   onManageApplicationClick?: (data?: any) => void;
   data: any[];
+<<<<<<< HEAD
 <<<<<<< HEAD
   applicantionReviewer:Array<[]>;
   isReviewer : boolean;
@@ -43,18 +53,33 @@ function Content({
 }) {
   const tableHeadersflex = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
 >>>>>>> 1f10abc (Revert "Applicant table update")
+=======
+  applicantionReviewer:[];
+  isReviewer : boolean;
+  fundReceived: string;
+}) {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const open = () => setIsOpen(!isOpen);
+  const tableHeadersFlex = [0.231, 0.20, 0.15, 0.16, 0.16, 0.28, 0.116];
+  const tableHeadersFlexReviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
+>>>>>>> 2991765 (Revert "Revert "Applicant table update"")
   const getStatus = (status: number): ReactElement => {
     if (status === TableFilters.submitted) return <PendingReview />;
     if (status === TableFilters.resubmit) return <ResubmissionRequested />;
     if (status === TableFilters.approved) return <GrantApproved />;
     if (status === TableFilters.rejected) return <Rejected />;
+    if (status === TableFilters.assigned) return <AssignedToReview />;
+
     return <GrantComplete />;
   };
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 
 =======
 >>>>>>> 1f10abc (Revert "Applicant table update")
+=======
+>>>>>>> 2991765 (Revert "Revert "Applicant table update"")
   return (
     <Flex
       mt="10px"
@@ -65,6 +90,9 @@ function Content({
       align="stretch"
     >
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2991765 (Revert "Revert "Applicant table update"")
       { isReviewer ? (
         data
           .filter((item) => (filter === -1 ? true : filter === item.status))
@@ -79,7 +107,11 @@ function Content({
               py={4}
             >
 
+<<<<<<< HEAD
               <Flex direction="row" flex={table_headers_flex_reviewer[0]} align="center">
+=======
+              <Flex direction="row" flex={tableHeadersFlexReviewer[0]} align="center">
+>>>>>>> 2991765 (Revert "Revert "Applicant table update"")
                 <Tooltip label={item?.applicant_address}>
                   <Text
                     ml="19px"
@@ -95,7 +127,11 @@ function Content({
               </Flex>
 
               <Text
+<<<<<<< HEAD
                 flex={table_headers_flex_reviewer[1]}
+=======
+                flex={tableHeadersFlexReviewer[1]}
+>>>>>>> 2991765 (Revert "Revert "Applicant table update"")
                 color="#717A7C"
                 variant="tableBody"
               >
@@ -103,14 +139,22 @@ function Content({
               </Text>
               <Text
                 textAlign="left"
+<<<<<<< HEAD
                 flex={table_headers_flex_reviewer[2]}
+=======
+                flex={tableHeadersFlexReviewer[2]}
+>>>>>>> 2991765 (Revert "Revert "Applicant table update"")
                 variant="tableBody"
                 fontWeight="400"
               >
                 {item.project_name}
               </Text>
               <Flex
+<<<<<<< HEAD
                 flex={table_headers_flex_reviewer[3]}
+=======
+                flex={tableHeadersFlexReviewer[3]}
+>>>>>>> 2991765 (Revert "Revert "Applicant table update"")
                 direction="row"
                 justifyContent="center"
                 alignItems="center"
@@ -130,14 +174,22 @@ function Content({
                   {item.funding_asked.symbol}
                 </Text>
               </Flex>
+<<<<<<< HEAD
               <Flex justifyContent="center" flex={table_headers_flex_reviewer[4]}>
+=======
+              <Flex justifyContent="center" flex={tableHeadersFlexReviewer[4]}>
+>>>>>>> 2991765 (Revert "Revert "Applicant table update"")
                 {getStatus(item.status)}
               </Flex>
               <Flex
                 display="flex"
                 flexDirection="column"
                 alignItems="center"
+<<<<<<< HEAD
                 flex={table_headers_flex_reviewer[5]}
+=======
+                flex={tableHeadersFlexReviewer[5]}
+>>>>>>> 2991765 (Revert "Revert "Applicant table update"")
               >
                 <Button
                   variant="outline"
@@ -216,9 +268,12 @@ function Content({
             </Flex>
           ))
       ) : (data
+<<<<<<< HEAD
 =======
       {data
 >>>>>>> 1f10abc (Revert "Applicant table update")
+=======
+>>>>>>> 2991765 (Revert "Revert "Applicant table update"")
         .filter((item) => (filter === -1 ? true : filter === item.status))
         .map((item, index) => (
           <Flex
@@ -232,10 +287,14 @@ function Content({
           >
 
 <<<<<<< HEAD
+<<<<<<< HEAD
             <Flex direction="row" flex={table_headers_flex[0]} align="center">
 =======
             <Flex direction="row" flex={tableHeadersflex[0]} align="center">
 >>>>>>> 1f10abc (Revert "Applicant table update")
+=======
+            <Flex direction="row" flex={tableHeadersFlex[0]} align="center">
+>>>>>>> 2991765 (Revert "Revert "Applicant table update"")
               <Tooltip label={item?.applicant_address}>
                 <Text
                   ml="19px"
@@ -252,20 +311,16 @@ function Content({
 
             <Text
 <<<<<<< HEAD
+<<<<<<< HEAD
               flex={table_headers_flex[1]}
 =======
               flex={tableHeadersflex[1]}
 >>>>>>> 1f10abc (Revert "Applicant table update")
+=======
+              flex={tableHeadersFlex[1]}
+>>>>>>> 2991765 (Revert "Revert "Applicant table update"")
               color="#717A7C"
               variant="tableBody"
-            >
-              {item.sent_on}
-            </Text>
-            <Text
-              textAlign="left"
-              flex={tableHeadersflex[2]}
-              variant="tableBody"
-              fontWeight="400"
             >
               {item.project_name}
 
@@ -273,10 +328,14 @@ function Content({
 
             <Flex
 <<<<<<< HEAD
+<<<<<<< HEAD
               flex={table_headers_flex[2]}
 =======
               flex={tableHeadersflex[3]}
 >>>>>>> 1f10abc (Revert "Applicant table update")
+=======
+              flex={tableHeadersFlex[2]}
+>>>>>>> 2991765 (Revert "Revert "Applicant table update"")
               direction="row"
               justifyContent="center"
               alignItems="center"
@@ -289,8 +348,9 @@ function Content({
                 fontSize="14px"
                 lineHeight="16px"
                 fontWeight="700"
-                letterSpacing={0.5}
+                letterSpacing={0.2}
               >
+<<<<<<< HEAD
 <<<<<<< HEAD
                 {fundReceived}
                 {' '}
@@ -298,12 +358,21 @@ function Content({
                 /
 =======
 >>>>>>> 1f10abc (Revert "Applicant table update")
+=======
+                {fundReceived}
+                {' '}
+                /
+                {' '}
+>>>>>>> 2991765 (Revert "Revert "Applicant table update"")
                 {item.funding_asked.amount}
                 {' '}
                 {item.funding_asked.symbol}
               </Text>
             </Flex>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2991765 (Revert "Revert "Applicant table update"")
 
             <Popover
               isOpen={isOpen}
@@ -315,7 +384,11 @@ function Content({
                 justifyContent="center"
                 color="#717A7C"
                 variant="tableBody"
+<<<<<<< HEAD
                 flex={table_headers_flex[3]}
+=======
+                flex={tableHeadersFlex[3]}
+>>>>>>> 2991765 (Revert "Revert "Applicant table update"")
                 textAlign="center"
               >
 
@@ -327,7 +400,11 @@ function Content({
               <PopoverContent height="150px" width="inherit" right="60px" top="60px">
                 <PopoverHeader>Reviewer</PopoverHeader>
                 <PopoverBody overflowX="hidden" overflowY="auto">
+<<<<<<< HEAD
                   { applicantionReviewer.map((reviewer) => (
+=======
+                  { applicantionReviewer.map((reviewer:{ email: string }) => (
+>>>>>>> 2991765 (Revert "Revert "Applicant table update"")
                     <SimpleGrid columns={1} spacing={3}>
                       <Text>{reviewer.email}</Text>
                     </SimpleGrid>
@@ -335,6 +412,7 @@ function Content({
                 </PopoverBody>
               </PopoverContent>
             </Popover>
+<<<<<<< HEAD
             <Flex justifyContent="center" flex={table_headers_flex[4]}>
               {getStatus(item.status)}
             </Flex>
@@ -347,15 +425,27 @@ function Content({
               {getStatus(item.status)}
             </Flex>
 >>>>>>> 1f10abc (Revert "Applicant table update")
+=======
+            <Flex justifyContent="center" flex={tableHeadersFlex[4]}>
+              {getStatus(item.status)}
+            </Flex>
+            <Flex justifyContent="center" flex={tableHeadersFlex[5]}>
+              {item.sent_on}
+            </Flex>
+>>>>>>> 2991765 (Revert "Revert "Applicant table update"")
             <Flex
               display="flex"
               flexDirection="column"
               alignItems="center"
 <<<<<<< HEAD
+<<<<<<< HEAD
               flex={table_headers_flex[6]}
 =======
               flex={tableHeadersflex[5]}
 >>>>>>> 1f10abc (Revert "Applicant table update")
+=======
+              flex={tableHeadersFlex[6]}
+>>>>>>> 2991765 (Revert "Revert "Applicant table update"")
             >
               <Button
                 variant="outline"
@@ -377,7 +467,6 @@ function Content({
                   // if (status === 2) return <GrantApproved />;
                   // if (status === 3) return <Rejected />;
                   // return <GrantComplete />;
-                  console.log(item.status);
                   if ((item.status === 2 || item.status === 4) && onManageApplicationClick) {
                     onManageApplicationClick({
                       applicationId: item.applicationId,
@@ -433,7 +522,7 @@ function Content({
               /> */}
             </Flex>
           </Flex>
-        ))}
+        )))}
     </Flex>
   );
 }
