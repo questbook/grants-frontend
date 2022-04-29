@@ -40,6 +40,7 @@ function GrantRewardsInput({
   console.log('SupportedCurrencies', supportedCurrencies);
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState(supportedCurrencies);
   const addERC = true;
   return (
     <Flex direction="column">
@@ -64,11 +65,15 @@ function GrantRewardsInput({
         <NewERC20Modal
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
+          setRewardCurrency={setRewardCurrency}
+          setRewardCurrencyAddress={setRewardCurrencyAddress}
+          supportedCurrenciesList={supportedCurrencies}
+          setSupportedCurrenciesList={setSupportedCurrenciesList}
         />
         <Box mt={5} ml={4} minW="132px" flex={0}>
           <Dropdown
             listItemsMinWidth="132px"
-            listItems={supportedCurrencies}
+            listItems={supportedCurrenciesList}
             value={rewardCurrency}
             // eslint-disable-next-line react/no-unstable-nested-components
             onChange={(data: any) => {

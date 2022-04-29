@@ -1,31 +1,59 @@
 import {
-  Flex, ModalBody, UnorderedList, ListItem, Box, Button,
+  Flex, ModalBody, UnorderedList, ListItem, Box, Button, ToastId, useToast,
 } from '@chakra-ui/react';
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { isValidAddress } from 'src/utils/validationUtils';
 import config from 'src/constants/config';
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils';
+import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace';
 import Loader from './loader';
 import Modal from './modal';
 import SingleLineInput from './forms/singleLineInput';
 import ImageUpload from './forms/imageUpload';
+import InfoToast from './infoToast';
+import ErrorToast from './toasts/errorToast';
 
 interface ModalProps {
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
+  setRewardCurrency: (rewardCurrency: string) => void;
+  setRewardCurrencyAddress: (rewardCurrencyAddress: string) => void;
+  setSupportedCurrenciesList: (supportedCurrencyList: Array<any>) => void;
+  supportedCurrenciesList: Token[];
 }
+
+type Token = {
+  address: string
+  decimals: number
+  icon: string
+  id: string
+  label: string
+};
 
 function NewERC20Modal({
   isModalOpen,
   setIsModalOpen,
+  setRewardCurrency,
+  setRewardCurrencyAddress,
+  supportedCurrenciesList,
+  setSupportedCurrenciesList,
 }: ModalProps) {
   const [tokenAddress, setTokenAddress] = useState<string>('');
   const [tokenName, setTokenName] = useState<string>('');
+  const [tokenSymbol, setTokenSymbol] = useState<string>('');
+  const [tokenDecimal, setTokenDecimal] = useState<string>('');
+  const [tokenIconIPFSURI, setTokenIconIPFSURI] = useState<string | undefined>('');
+  // const [newCurrency, setNewCurrency] = useState<Token>();
   const [tokenAddressError, setTokenAddressError] = useState<boolean>(false);
-  const [image, setImage] = React.useState<string>(config.defaultDAOImagePath);
-  const [imageFile, setImageFile] = React.useState<File | null>(null);
+  const [tokenIconError, setTokenIconError] = useState<boolean>(true);
+  const [image, setImage] = useState<string>(config.defaultDAOImagePath);
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
-  const imgRef = useRef();
+  const [tokenData, setTokenData] = useState<any>();
+  const [txnData, txnLink, loading] = useUpdateWorkspace(tokenData);
+
+  const toast = useToast();
+  const toastRef = React.useRef<ToastId>();
 
   const validateTokenAddress = () => {
     if (!tokenAddress || !isValidAddress(tokenAddress)) {
@@ -33,20 +61,30 @@ function NewERC20Modal({
     }
   };
 
+  // eslint-disable-next-line consistent-return
   const uploadLogo = async () => {
     let imageHash;
-    let imageIPFSURL;
+    let imageIPFSURL: string;
+    console.log('Uploading...');
     if (imageFile) {
       imageHash = (await uploadToIPFS(imageFile)).hash;
       imageIPFSURL = getUrlForIPFSHash(imageHash);
+      setTokenIconIPFSURI(imageIPFSURL);
+      setTokenIconError(false);
+      console.log('Image hash', imageIPFSURL);
+      return imageIPFSURL;
     }
-
-    console.log('Image hash', imageIPFSURL);
-    return imageIPFSURL;
-  };
-
-  const validateLogoSize = () => {
-
+    toastRef.current = toast({
+      position: 'top',
+      render: () => ErrorToast({
+        content: 'Please upload token icon',
+        close: () => {
+          if (toastRef.current) {
+            toast.close(toastRef.current);
+          }
+        },
+      }),
+    });
   };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,7 +97,19 @@ function NewERC20Modal({
       logoImage.src = URL.createObjectURL(img);
       logoImage.onload = () => {
         if (logoImage.height > 100 || logoImage.width > 100) {
-          alert('Upload image of dimesion 100*100px');
+          toastRef.current = toast({
+            position: 'top',
+            render: () => ErrorToast({
+              content: 'Please upload image of size 100 X 100 px',
+              close: () => {
+                if (toastRef.current) {
+                  toast.close(toastRef.current);
+                }
+              },
+            }),
+          });
+        } else {
+          setTokenIconError(false);
         }
       };
     }
@@ -68,12 +118,44 @@ function NewERC20Modal({
   const handleSubmit = async () => {
     validateTokenAddress();
     if (!tokenAddressError) {
-      uploadLogo();
+      uploadLogo().then((imgURI) => setTokenIconIPFSURI(imgURI));
+    }
+    if (!tokenAddressError && !tokenIconError && tokenIconIPFSURI && tokenAddress && tokenSymbol) {
+      setRewardCurrency(tokenSymbol);
+      setRewardCurrencyAddress(tokenAddress);
+      const newToken = {
+        address: tokenAddress,
+        decimals: 18,
+        icon: tokenIconIPFSURI,
+        id: tokenAddress,
+        label: tokenSymbol,
+      };
+      console.log('Supported Currencies list', supportedCurrenciesList);
+      setTokenData(newToken);
+      setSupportedCurrenciesList([...supportedCurrenciesList, newToken]);
+      console.log('New list of supported currencies', [...supportedCurrenciesList, newToken]);
     }
   };
-
+  useEffect(() => {
+    if (txnData) {
+      toastRef.current = toast({
+        position: 'top',
+        render: () => (
+          <InfoToast
+            link={txnLink}
+            close={() => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            }}
+          />
+        ),
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toast, txnData]);
   return (
-    <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add token" modalWidth={566}>
+    <Modal isOpen={isModalOpen} onClose={() => { setIsModalOpen(false); setImage(config.defaultDAOImagePath); }} title="Add token" modalWidth={566}>
       <ModalBody px={10}>
         <Flex direction="column">
           <Box my={4} />
@@ -91,14 +173,25 @@ function NewERC20Modal({
             isError={tokenAddressError}
             errorText="Address required with proper format"
           />
+
           <Box my={4} />
           <SingleLineInput
-            label="Token Name *"
-            placeholder="e.g. Ethereum"
+            label="Token Symbol *"
+            placeholder="e.g. ETH"
             subtext=""
-            value={tokenName}
+            value={tokenSymbol}
             onChange={(e) => {
-              setTokenName(e.target.value);
+              setTokenSymbol(e.target.value);
+            }}
+          />
+          <Box my={4} />
+          <SingleLineInput
+            label="Decimal *"
+            placeholder="e.g. 18"
+            subtext=""
+            value={tokenDecimal}
+            onChange={(e) => {
+              setTokenDecimal(e.target.value);
             }}
           />
           <Box my={4} />
@@ -106,13 +199,15 @@ function NewERC20Modal({
             <ImageUpload image={image} isError={false} onChange={handleImageChange} label="Add a logo" />
             <Box bg="#EBF9FC" borderWidth="1px" borderRadius="lg" borderColor="#98C6CD" ml={8} p={8} alignItems="center">
               <UnorderedList>
-                <ListItem>Upload atleast 100 X 100 px size</ListItem>
+                <ListItem>Upload logo of atleast 100 X 100 px size</ListItem>
                 <ListItem>.jpeg, .png and .svg formats allowed</ListItem>
               </UnorderedList>
             </Box>
           </Flex>
           <Box my={4} />
-          <Button variant="primary" onClick={handleSubmit}>Add Token</Button>
+          <Button variant="primary" onClick={handleSubmit}>
+            {loading ? <Loader /> : 'Add token'}
+          </Button>
 
         </Flex>
       </ModalBody>
