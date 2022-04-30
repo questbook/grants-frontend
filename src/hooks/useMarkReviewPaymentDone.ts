@@ -14,9 +14,10 @@ export default function useMarkReviewPaymentDone(
   workspaceId: string,
   reviewIds: string[],
   totalAmount: number,
+  submitMarkDone: boolean,
   reviewerAddress?: string,
   reviewCurrencyAddress?: string,
-  transactionHash?: string
+  transactionHash?: string,
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
@@ -59,7 +60,6 @@ export default function useMarkReviewPaymentDone(
     console.log('YES')
 
     async function markAsDone() {
-      console.log('YEEES222222222222')
 
       setLoading(true);
       try {
@@ -94,6 +94,7 @@ export default function useMarkReviewPaymentDone(
       }
     }
     try {
+      if (!submitMarkDone) return;
       if (!workspaceId) return;
       if (transactionData) return;
       if (!accountData || !accountData.address) {

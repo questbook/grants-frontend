@@ -1,4 +1,4 @@
-import {
+ import {
   Image,
   IconButton,
   Flex,
@@ -19,7 +19,7 @@ import React, { useContext } from 'react';
 
 //TOOLS AND UTILS
 import { trimAddress, getFormattedDateFromUnixTimestampWithYear } from 'src/utils/formattingUtils';
-// import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 
 //UI COMPONENTS
 import CopyIcon from '../ui/copy_icon';
@@ -28,35 +28,12 @@ import PayoutModalContent from './payoutModalContent';
 
 //CONTEXT AND CONSTANTS
 import { ApiClientsContext } from '../../../pages/_app';
-// import { SupportedChainId } from 'src/constants/chains';
+import { SupportedChainId } from 'src/constants/chains';
 
 import router from 'next/router';
 
 function Payouts() {
   const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
-
-  // const [queryParams, setQueryParams] = React.useState<any>({
-  //   client:
-  //     subgraphClients[
-  //       getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
-  //     ].client,
-  // });
-  //
-  // useEffect(() => {
-  //   if (!workspace) return;
-  //   if (!grantID) return;
-  //
-  //   setQueryParams({
-  //     client:
-  //       subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
-  //     variables: {
-  //       grantID,
-  //       first: PAGE_SIZE,
-  //       skip: 0,
-  //     },
-  //   });
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [workspace, grantID]);
 
   const payModal = useDisclosure();
   const [payMode, setPayMode] = React.useState<number>(-1);
@@ -87,6 +64,13 @@ function Payouts() {
     if (!workspace) {
       router.push('/');
     }
+  });
+
+  const [queryParams, setQueryParams] = React.useState<any>({
+    client:
+      subgraphClients[
+        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      ].client,
   });
 
   const historyTablePlaceholders = [

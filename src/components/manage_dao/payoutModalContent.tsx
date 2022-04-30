@@ -87,6 +87,7 @@ function PayoutModalContent({
   const [amountDeposited, setAmountDeposited] = useState<number>();
   const [transactionHash, setTransactionHash] = useState<string>();
   const [submitPayment, setSubmitPayment] = useState<boolean>(false)
+  const [submitMarkDone, setSubmitMarkDone] = useState<boolean>(false);
 
   async function setTransactionHashFromClipboard() {
     try {
@@ -676,7 +677,7 @@ function PayoutModalContent({
                   transactionHash,
                 );
                 setTabIndex(1);
-                setSubmitPayment(true);
+                setSubmitMarkDone(true);
               }}
             >
               Mark Payment as Done
