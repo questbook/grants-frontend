@@ -146,13 +146,13 @@ function YourGrants() {
   }, [accountData, workspace]);
 
   useEffect(() => {
-    console.log(pk);
+    // console.log(pk);
     if (!accountData?.address) return;
     if (!workspace) return;
     const k = workspace?.members?.find(
       (m) => m.actorId.toLowerCase() === accountData!.address.toLowerCase(),
     )?.publicKey?.toString();
-    console.log(k);
+    // console.log(k);
     if (k && k.length > 0) {
       setPk(k);
     } else {
@@ -205,7 +205,7 @@ function YourGrants() {
 
   useEffect(() => {
     if (data && data.grants && data.grants.length > 0) {
-      console.log('data.grants', data.grants);
+      // console.log('data.grants', data.grants);
       if (
         grants.length > 0
         && grants[0].workspace.id === data.grants[0].workspace.id

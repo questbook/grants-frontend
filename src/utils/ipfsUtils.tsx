@@ -17,7 +17,7 @@ export const uploadToIPFS = async (data: string | Blob): Promise<{ hash: string 
 };
 
 export const getFromIPFS = async (hash: string): Promise<string> => {
-  console.log(hash);
+  // console.log(hash);
   const fetchResult = await fetch(`https://ipfs.io/ipfs/${hash}`);
   const responseBody = await fetchResult.text();
   return responseBody;

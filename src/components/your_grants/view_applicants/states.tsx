@@ -112,6 +112,28 @@ function GrantComplete() {
   );
 }
 
+function AssignedToReview() {
+  return (
+    <Text
+      w="100%"
+      maxW={maxWidth}
+      bg="#C8E9DE"
+      color="#334640"
+      borderRadius="24px"
+      variant="tableHeader"
+      px={3}
+      py={1}
+      textAlign="center"
+      fontSize="12px"
+      lineHeight="20px"
+      fontWeight="400"
+      whiteSpace="nowrap"
+    >
+      Assigned to Review
+    </Text>
+  );
+}
+
 export {
-  GrantApproved, Rejected, PendingReview, ResubmissionRequested, GrantComplete,
+  GrantApproved, Rejected, PendingReview, ResubmissionRequested, GrantComplete, AssignedToReview,
 };

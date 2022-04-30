@@ -74,14 +74,14 @@ function ReviewerSidebar({
     } else {
       data = JSON.parse(ipfsData ?? '{}');
     }
-    console.log(data);
+    // console.log(data);
     setDecrpytLoading(false);
     setReviewSelected(data);
     setReviewerDrawerOpen(true);
   };
 
   const handleOnResubmit = () => {
-    console.log(reviewSelected);
+    // console.log(reviewSelected);
 
     // let error = false;
     // reviewSelected?.forEach((feedback: any) => {

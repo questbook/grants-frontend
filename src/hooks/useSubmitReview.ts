@@ -75,7 +75,7 @@ export default function useSubmitReview(
         // );
 
         const encryptedReview = {} as any;
-        console.log(accountData);
+        // console.log(accountData);
         const yourPublicKey = workspace?.members.find(
           (m) => m.actorId.toLowerCase() === accountData!.address.toLowerCase(),
         )?.publicKey;
@@ -83,7 +83,7 @@ export default function useSubmitReview(
         const encryptedHash = (await uploadToIPFS(encryptedData)).hash;
         encryptedReview[accountData!.address!] = encryptedHash;
 
-        console.log(workspace);
+        // console.log(workspace);
         workspace?.members.filter(
           (m) => (m.accessLevel === 'admin' || m.accessLevel === 'owner') && (m.publicKey && m.publicKey?.length > 0),
         ).map((m) => ({ key: m.publicKey, address: m.actorId }))
@@ -93,7 +93,7 @@ export default function useSubmitReview(
             encryptedReview[address] = encryptedAdminHash;
           });
 
-        console.log('encryptedReview', encryptedReview);
+        // console.log('encryptedReview', encryptedReview);
 
         const dataHash = (await uploadToIPFS(JSON.stringify(data))).hash;
 
@@ -105,7 +105,7 @@ export default function useSubmitReview(
           encryptedReview,
         });
 
-        console.log('ipfsHash', ipfsHash);
+        // console.log('ipfsHash', ipfsHash);
 
         if (!ipfsHash) {
           throw new Error('Error validating review data');
