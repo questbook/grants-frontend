@@ -51,12 +51,7 @@ function ShareMenu({
                 'Content-Type': 'application/json',
               } as HeadersInit,
               body: JSON.stringify(req),
-            }).then((response) => {
-              if (!response.ok) {
-                console.log(response);
-              }
-              return response.json();
-            }).then((data) => {
+            }).then((response) => response.json()).then((data) => {
               copy(data.link);
               setCopied(true);
             });

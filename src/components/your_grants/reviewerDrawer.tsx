@@ -72,13 +72,13 @@ function ReviewDrawer({
     const newIsReviewer: { [key: string]: boolean } = {};
     workspace.members.filter((member) => (member.publicKey ?? '').length > 0)
       .forEach((member: any) => {
-        console.log(member);
-        console.log(initialReviewers);
+        // console.log(member);
+        // console.log(initialReviewers);
         // eslint-disable-next-line max-len
         newIsReviewer[member.actorId] = initialReviewers.find((r: any) => r.id.split('.')[1] === member.actorId)
         !== undefined;
       });
-    console.log(newIsReviewer);
+    // console.log(newIsReviewer);
     setIsReviewer(newIsReviewer);
   }, [initialReviewers, workspace, reviews]);
 

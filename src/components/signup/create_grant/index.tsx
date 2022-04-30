@@ -20,7 +20,7 @@ function CreateGrant({
   const changeCurrentStep = (data: any, step: number) => {
     const newFormData = { ...formData };
     if (data.pii) {
-      console.log(formData);
+      // console.log(formData);
       if (formData.fields.applicantEmail) {
         newFormData.fields.applicantEmail = { ...formData.fields.applicantEmail, pii: true };
       }

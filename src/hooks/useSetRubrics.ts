@@ -39,7 +39,7 @@ export default function useSetRubrics(
   const currentChainId = useChainId();
 
   useEffect(() => {
-    console.log('data', data);
+    // console.log('data', data);
     if (data) {
       setError(undefined);
       setIncorrectNetwork(false);
@@ -77,7 +77,7 @@ export default function useSetRubrics(
           rubricHash = auxRubricHash;
         }
 
-        console.log('rubricHash', rubricHash);
+        // console.log('rubricHash', rubricHash);
 
         // console.log(workspaceId ?? Number(workspace?.id).toString());
         // console.log('ipfsHash', ipfsHash);

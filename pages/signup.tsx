@@ -143,7 +143,6 @@ function SignupDao() {
       <Form
         // hasClicked={workspaceLoading}
         onSubmit={(data) => {
-          // console.log('Workspace Data: ', data);
           setWorkspaceData(data);
         }}
       />

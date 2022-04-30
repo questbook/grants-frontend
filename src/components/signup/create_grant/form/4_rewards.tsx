@@ -53,7 +53,7 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
   }, [switchNetwork, workspace]);
 
   useEffect(() => {
-    console.log(currentChain);
+    // console.log(currentChain);
     if (currentChain) {
       const currencies = Object.keys(
         CHAIN_INFO[currentChain].supportedCurrencies,
