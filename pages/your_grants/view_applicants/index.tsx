@@ -7,12 +7,7 @@ import React, {
   ReactElement, useContext, useEffect, useState,
 } from 'react';
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters';
-import {
-  useGetApplicantsForAGrantQuery,
-  useGetApplicationDetailsQuery,
-  useGetGrantDetailsQuery,
-  ApplicationMilestone,
-} from 'src/generated/graphql';
+import { useGetApplicantsForAGrantQuery, useGetGrantDetailsQuery } from 'src/generated/graphql';
 import { SupportedChainId, DefaultSupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { getAssetInfo } from 'src/utils/tokenUtils';
@@ -23,8 +18,6 @@ import Modal from 'src/components/ui/modal';
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent';
 import useArchiveGrant from 'src/hooks/useArchiveGrant';
 import RubricDrawer from 'src/components/your_grants/rubricDrawer';
-import useApplicationMilestones from 'src/utils/queryUtil';
-import { BigNumber } from 'ethers';
 import { formatAmount } from '../../../src/utils/formattingUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Table from '../../../src/components/your_grants/view_applicants/table';
@@ -32,14 +25,6 @@ import NavbarLayout from '../../../src/layout/navbarLayout';
 import { ApiClientsContext } from '../../_app';
 
 const PAGE_SIZE = 500;
-
-function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
-  let val = BigNumber.from(0);
-  milestones.forEach((milestone) => {
-    val = val.add(milestone.amountPaid);
-  });
-  return val;
-}
 
 function ViewApplicants() {
   const [applicantsData, setApplicantsData] = useState<any>([]);
@@ -49,9 +34,6 @@ function ViewApplicants() {
   const [shouldShowButton, setShouldShowButton] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAdmin, setIsAdmin] = React.useState<boolean>(false);
-  const [isReviewer, setIsReviewer] = React.useState<boolean>(false);
-  const [applicantionReviewer, setApplicantionReviewer] = useState<any>([]);
-  const [applicantionId, setApplicantionId] = useState<any>(null);
 
   const [{ data: accountData }] = useAccount({
     fetchEns: false,
@@ -78,20 +60,7 @@ function ViewApplicants() {
     }
   }, [router]);
 
-  const {
-    data: {
-      milestones, decimals,
-    },
-
-  } = useApplicationMilestones(applicantionId);
   const [queryParams, setQueryParams] = useState<any>({
-    client:
-      subgraphClients[
-        getSupportedChainIdFromWorkspace(workspace) ?? DefaultSupportedChainId
-      ].client,
-  });
-
-  const [queryParamsReviewer, setQueryParamsReviewer] = useState<any>({
     client:
       subgraphClients[
         getSupportedChainIdFromWorkspace(workspace) ?? DefaultSupportedChainId
@@ -129,8 +98,6 @@ function ViewApplicants() {
         tempMember?.accessLevel === 'admin'
           || tempMember?.accessLevel === 'owner',
       );
-
-      setIsReviewer(tempMember?.accessLevel === 'reviewer');
     }
   }, [accountData, workspace]);
 
@@ -139,7 +106,6 @@ function ViewApplicants() {
     if (data && data.grantApplications.length) {
       const fetchedApplicantsData = data.grantApplications.map((applicant) => {
         const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value;
-
         return {
           grantTitle: applicant?.grant?.title,
           applicationId: applicant.id,
@@ -174,7 +140,6 @@ function ViewApplicants() {
           status: TableFilters[applicant?.state],
         };
       });
-      setApplicantionId(fetchedApplicantsData[0].applicationId);
       setApplicantsData(fetchedApplicantsData);
       setDaoId(data.grantApplications[0].grant.workspace.id);
       setAcceptingApplications(data.grantApplications[0].grant.acceptingApplications);
@@ -182,31 +147,12 @@ function ViewApplicants() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error, loading]);
 
-  useEffect(() => {
-    if (!workspace) return;
-    setQueryParamsReviewer({
-      client:
-        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
-      variables: {
-        applicationID: applicantionId,
-      },
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workspace, applicantionId]);
-
-  const applicantdata = useGetApplicationDetailsQuery(queryParamsReviewer);
-
-  useEffect(() => {
-    if (applicantdata.data && applicantdata.data.grantApplication) {
-      setApplicantionReviewer(applicantdata.data.grantApplication.reviewers);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [applicantdata]);
-
   const { data: grantData } = useGetGrantDetailsQuery(queryParams);
   useEffect(() => {
+    console.log('grantData', grantData);
     const initialRubrics = grantData?.grants[0].rubric;
     const newRubrics = [] as any[];
+    console.log('initialRubrics', initialRubrics);
     initialRubrics?.items.forEach((initalRubric) => {
       newRubrics.push({
         name: initalRubric.title,
@@ -270,6 +216,10 @@ function ViewApplicants() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [archiveGrantError]);
 
+  React.useEffect(() => {
+    console.log('Is Accepting Applications: ', isAcceptingApplications);
+  }, [isAcceptingApplications]);
+
   return (
     <Container maxW="100%" display="flex" px="70px">
       <Container
@@ -305,12 +255,10 @@ function ViewApplicants() {
           workspaceId={workspace?.id ?? ''}
           initialIsPrivate={grantData?.grants[0].rubric?.isPrivate ?? false}
         />
+
         <Table
           title={applicantsData[0]?.grantTitle ?? 'Grant Title'}
-          isReviewer={isReviewer}
-          applicantionReviewer={applicantionReviewer}
           data={applicantsData}
-          fundReceived={formatAmount(getTotalFundingRecv(milestones).toString(), decimals)}
           onViewApplicantFormClick={(commentData: any) => router.push({
             pathname: '/your_grants/view_applicants/applicant_form/',
             query: {
@@ -373,6 +321,8 @@ function ViewApplicants() {
           subtitle="The grant will be live, and applicants can apply for this grant."
           actionButtonText="Publish grant"
           actionButtonOnClick={() => {
+            console.log('Doing it!');
+            console.log('Is Accepting Applications (Button click): ', isAcceptingApplications);
             setIsAcceptingApplications([
               !isAcceptingApplications[0],
               isAcceptingApplications[1] + 1,

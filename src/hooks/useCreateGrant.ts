@@ -45,7 +45,7 @@ export default function useCreateGrant(
   const currentChainId = useChainId();
 
   useEffect(() => {
-    // console.log('data', data);
+    console.log('data', data);
     if (data) {
       setError(undefined);
       setIncorrectNetwork(false);
@@ -88,7 +88,7 @@ export default function useCreateGrant(
           grantManagers: data.grantManagers.length ? data.grantManagers : [accountData!.address],
         });
 
-        // console.log('ipfsHash', ipfsHash);
+        console.log('ipfsHash', ipfsHash);
 
         if (!ipfsHash) {
           throw new Error('Error validating grant data');
@@ -109,7 +109,7 @@ export default function useCreateGrant(
           rubricHash = auxRubricHash;
         }
 
-        // console.log('rubricHash', rubricHash);
+        console.log('rubricHash', rubricHash);
 
         // console.log(workspaceId ?? Number(workspace?.id).toString());
         // console.log('ipfsHash', ipfsHash);

@@ -64,7 +64,7 @@ export default function useSubmitApplication(
         ).hash;
         // eslint-disable-next-line no-param-reassign
         data.fields.projectDetails[0].value = detailsHash;
-        // console.log('Details hash: ', detailsHash);
+        console.log('Details hash: ', detailsHash);
         const {
           data: { ipfsHash },
         } = await validatorApi.validateGrantApplicationCreate(data);

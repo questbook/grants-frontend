@@ -72,7 +72,7 @@ function RubricDrawer({
         });
       }
 
-      // console.log('rubric', rubric);
+      console.log('rubric', rubric);
       setEditedRubricData({
         rubric: {
           isPrivate: shouldEncryptReviews,

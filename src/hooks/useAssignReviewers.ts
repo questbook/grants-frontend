@@ -40,7 +40,7 @@ export default function useAssignReviewers(
   const currentChainId = useChainId();
 
   useEffect(() => {
-    // console.log('data', data);
+    console.log('data', data);
     if (data) {
       setError(undefined);
       setIncorrectNetwork(false);

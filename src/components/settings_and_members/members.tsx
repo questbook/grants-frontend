@@ -42,7 +42,7 @@ function Members({ workspaceMembers }: Props) {
 
   // const [revokeModalOpen, setRevokeModalOpen] = React.useState(false);
 
-  // React.useEffect(() => { console.log(tableData); }, [tableData]);
+  React.useEffect(() => { console.log(tableData); }, [tableData]);
 
   return (
     <Flex direction="column" align="start" w="100%">

@@ -91,7 +91,7 @@ function YourGrantCard({
 
   useEffect(() => {
     const newRubrics = [] as any[];
-    // console.log('initialRubrics', initialRubrics);
+    console.log('initialRubrics', initialRubrics);
     initialRubrics?.items.forEach((initalRubric) => {
       newRubrics.push({
         name: initalRubric.title,
@@ -135,7 +135,7 @@ function YourGrantCard({
   }, [error]);
 
   React.useEffect(() => {
-    // console.log('isAcceptingApplications: ', isAcceptingApplications);
+    console.log('isAcceptingApplications: ', isAcceptingApplications);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAcceptingApplications]);
 

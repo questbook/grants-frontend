@@ -37,7 +37,8 @@ export function timeToString(
 }
 export function parseAmount(number: string, contractAddress?: string) {
   let decimals = 18;
-  // console.log(number);
+  console.log('nnnunun');
+  console.log(number);
 
   if (contractAddress) {
     let allCurrencies: any[] = [];
@@ -49,13 +50,13 @@ export function parseAmount(number: string, contractAddress?: string) {
       allCurrencies = [...allCurrencies, ...supportedCurrenciesArray];
     });
 
-    // console.log(allCurrencies);
-    // console.log(contractAddress);
+    console.log(allCurrencies);
+    console.log(contractAddress);
 
     decimals = allCurrencies.find((currency) => currency.address === contractAddress)
       ?.decimals || 18;
 
-    // console.log(decimals);
+    console.log(decimals);
     return ethers.utils.parseUnits(number, decimals).toString();
   }
 

@@ -112,9 +112,7 @@ function Profile() {
               )}
               bg="white"
               boxSize="48px"
-              onClick={() => {
-                window.open(social.value, '_blank');
-              }}
+              onClick={() => { window.open(social.value, '_blank'); }}
             />
           ))}
         </Flex>

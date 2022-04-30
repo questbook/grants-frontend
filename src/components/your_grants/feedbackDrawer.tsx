@@ -54,7 +54,7 @@ function FeedbackDrawer({
     setFeedbackData(newFeedbackData);
   }, [rubrics]);
   const handleOnSubmit = () => {
-    // console.log(feedbackData);
+    console.log(feedbackData);
 
     let error = false;
     feedbackData?.forEach((feedback) => {
@@ -150,7 +150,7 @@ function FeedbackDrawer({
                   numberOfStars={feedback.rubric.maximumPoints}
                   starRatedColor="#88BDEE"
                   changeRating={(r) => {
-                    // console.log(r);
+                    console.log(r);
                     const newFeedbackData = [...feedbackData];
                     newFeedbackData[index].rating = r;
                     setFeedbackData(newFeedbackData);

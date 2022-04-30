@@ -44,7 +44,7 @@ function RubricSidebar({
     });
     if (!publicDataPromises) return;
     const publicData = (await Promise.all(publicDataPromises)).map((data) => JSON.parse(data ?? '{}'));
-    // console.log(publicData);
+    console.log(publicData);
     setDetailedReviews(publicData);
 
     const results = [] as any;
@@ -78,14 +78,14 @@ function RubricSidebar({
       setAgainstPercentage(againstPercentage);
     }
 
-    // console.log(results);
+    console.log(results);
     setAggregatedResults(results);
     setLoading(false);
   };
 
   const getEncrpytedData = async () => {
     setLoading(true);
-    // console.log(reviews);
+    console.log(reviews);
     const privateDataPromises = reviews?.map((review) => {
       const decryptableData = review.data.filter((data: any) => data.id.split('.')[1].toLowerCase() === accountData?.address.toLowerCase());
       return decryptableData.length > 0 ? decryptableData[0] : undefined;
@@ -339,9 +339,8 @@ function RubricSidebar({
             {reviews?.map((review: any, i: number) => (
               <Button
                 onClick={() => {
-                  // console.log(review);
                   setReviewerDrawerOpen(true);
-                  // console.log(detailedReviews[i]);
+                  console.log(detailedReviews[i]);
                   setReviewSelected(detailedReviews[i]);
                 }}
                 mb={4}

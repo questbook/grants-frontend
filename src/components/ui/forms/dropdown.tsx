@@ -104,23 +104,7 @@ function Dropdown({
             )}
           </Container>
         </MenuButton>
-        <MenuList
-          minW={0}
-          py={0}
-          maxH="250px"
-          overflowY="scroll"
-          sx={{
-            '&::-webkit-scrollbar': {
-              width: '4px',
-              borderRadius: '12px',
-              backgroundColor: '#E9E9ED',
-            },
-            '&::-webkit-scrollbar-thumb': {
-              backgroundColor: '#BEBCC8',
-              borderRadius: '12px',
-            },
-          }}
-        >
+        <MenuList minW={0} py={0} maxH="250px" overflowY="scroll">
           {listItems.map(({ icon, label: text, id }) => (
             <MenuItem
               key={`menu-item-${text}`}
