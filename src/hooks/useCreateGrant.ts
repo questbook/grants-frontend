@@ -64,7 +64,7 @@ export default function useCreateGrant(
     if (error) return;
     if (loading) return;
 
-    console.log('YEEES')
+    console.log('YEEES');
 
     async function validate() {
       setLoading(true);

@@ -15,14 +15,14 @@ import {
   InputGroup,
   InputRightElement,
   Heading,
-  // ToastId,
+  ToastId,
   Stack,
   useClipboard,
-  // useToast,
+  useToast,
 } from '@chakra-ui/react';
 
 // UTILS AND HOOKS
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BigNumber, utils } from 'ethers';
 import useChainId from 'src/hooks/utils/useChainId';
 import { useContract, useSigner } from 'wagmi';
@@ -37,7 +37,7 @@ import ERC20ABI from '../../contracts/abi/ERC20.json';
 
 // UI AND COMPONENT TOOLS
 import Dropdown from '../ui/forms/dropdown';
-// import InfoToast from '../ui/infoToast';
+import InfoToast from '../ui/infoToast';
 
 interface Props {
   workspaceId: string;
@@ -61,7 +61,7 @@ function PayoutModalContent({
   setPayMode,
   reviewerAddress,
   reviews,
-  // onClose,
+  onClose,
   setPaymentOutside,
   paymentOutside,
   setTabIndex,
@@ -72,10 +72,10 @@ function PayoutModalContent({
 
   // CHAKRA HOOKS
   const { hasCopied, onCopy } = useClipboard(reviewerAddress);
-  // const toast = useToast();
-  // const toastRef = useRef<ToastId>();
+  const toast = useToast();
+  const toastRef = useRef<ToastId>();
 
-  console.log(applicationsId)
+  console.log(applicationsId);
 
   const supportedCurrencies = Object.keys(
     CHAIN_INFO[currentChain].supportedCurrencies,
@@ -90,7 +90,7 @@ function PayoutModalContent({
   const [finalAmount, setFinalAmount] = useState<BigNumber>();
   const [amountDeposited, setAmountDeposited] = useState<number>();
   const [transactionHash, setTransactionHash] = useState<string>();
-  const [submitPayment, setSubmitPayment] = useState<boolean>(false)
+  // const [submitPayment, setSubmitPayment] = useState<boolean>(false)
   const [submitMarkDone, setSubmitMarkDone] = useState<boolean>(false);
 
   async function setTransactionHashFromClipboard() {
@@ -118,7 +118,7 @@ function PayoutModalContent({
     workspaceId,
     reviewIds,
     applicationsId,
-    totalAmount,
+    utils.parseEther(totalAmount.toString()),
     submitMarkDone,
     reviewerAddress,
     reviewCurrencyAddress,
@@ -174,28 +174,28 @@ function PayoutModalContent({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalAmount]);
 
-  // useEffect(() => {
-  //   // console.log(depositTransactionData);
-  //   if (payReviewerData) {
-  //     onClose();
-  //     setFinalAmount(undefined);
-  //     setTotalAmount('');
-  //     toastRef.current = toast({
-  //       position: 'top',
-  //       render: () => (
-  //         <InfoToast
-  //           link={txnLink}
-  //           close={() => {
-  //             if (toastRef.current) {
-  //               toast.close(toastRef.current);
-  //             }
-  //           }}
-  //         />
-  //       ),
-  //     });
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [toast, payReviewerData]);
+  useEffect(() => {
+    // console.log(depositTransactionData);
+    if (transactionData) {
+      onClose();
+      setFinalAmount(undefined);
+      setTotalAmount('');
+      toastRef.current = toast({
+        position: 'top',
+        render: () => (
+          <InfoToast
+            link={txnLink}
+            close={() => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            }}
+          />
+        ),
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toast, transactionData]);
 
   return (
     <ModalBody>
@@ -686,7 +686,7 @@ function PayoutModalContent({
                 setSubmitMarkDone(true);
               }}
             >
-              Mark Payment as Done
+              {!loading ? 'Mark Payment as Done' : <Loader />}
             </Button>
           </Flex>
         )}

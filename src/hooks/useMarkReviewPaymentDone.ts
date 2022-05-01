@@ -6,6 +6,7 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 // import { BigNumber } from 'ethers';
 import getErrorMessage from 'src/utils/errorUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { BigNumber } from 'ethers';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useApplicationReviewRegistryContract from './contracts/useApplicationReviewRegistryContract';
@@ -14,7 +15,7 @@ export default function useMarkReviewPaymentDone(
   workspaceId: string,
   reviewIds: string[],
   applicationsIds: string[],
-  totalAmount: number,
+  totalAmount: BigNumber,
   submitMarkDone: boolean,
   reviewerAddress?: string,
   reviewCurrencyAddress?: string,
@@ -36,8 +37,8 @@ export default function useMarkReviewPaymentDone(
   const currentChainId = useChainId();
 
   useEffect(() => {
-    console.log(totalAmount)
-    if (totalAmount !== 0) {
+    console.log(totalAmount);
+    if (!totalAmount) {
       setError(undefined);
       setIncorrectNetwork(false);
     } else if (transactionData) {
@@ -58,10 +59,10 @@ export default function useMarkReviewPaymentDone(
     if (error) return;
     if (loading) return;
 
-    console.log('YES')
+    console.log('YES');
 
     async function markAsDone() {
-      console.log('YES2')
+      console.log('YES2');
 
       setLoading(true);
       try {
@@ -164,7 +165,7 @@ export default function useMarkReviewPaymentDone(
     reviewIds,
     transactionHash,
     reviewerAddress,
-    reviewCurrencyAddress
+    reviewCurrencyAddress,
   ]);
 
   return [

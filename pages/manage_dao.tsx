@@ -46,7 +46,7 @@ function ManageDAO() {
     if (!data) return;
     setWorkspaceData(data!.workspace!);
 
-    console.log(data)
+    console.log(data);
   }, [data]);
 
   const switchTab = (to: number) => {
@@ -100,7 +100,7 @@ function ManageDAO() {
               <Members workspaceMembers={workspaceData?.members} />
             ) : (
             // eslint-disable-next-line no-nested-ternary
-              selected === 2 && <Payouts workspaceMembers={workspaceData?.members}  />
+              selected === 2 && <Payouts />
             )
         }
       </Flex>

@@ -96,25 +96,25 @@ function Members({ workspaceMembers }: Props) {
                 py={4}
                 px={5}
               >
-              {data.email.length > 16 ? (
-                <Tooltip label={data.email}>
-                  <Flex
-                    alignSelf="center"
-                    alignItems="center"
-                  >
-                    <Text
+                {data.email.length > 16 ? (
+                  <Tooltip label={data.email}>
+                    <Flex
                       alignSelf="center"
-                      textAlign="center"
-                      variant="tableBody"
+                      alignItems="center"
                     >
-                      {trimAddress(data.email, 12)}
-                    </Text>
-                    <Box mr="7px" />
-                  </Flex>
-                </Tooltip>
-              ) : (
-                data.email
-              )}
+                      <Text
+                        alignSelf="center"
+                        textAlign="center"
+                        variant="tableBody"
+                      >
+                        {trimAddress(data.email, 12)}
+                      </Text>
+                      <Box mr="7px" />
+                    </Flex>
+                  </Tooltip>
+                ) : (
+                  data.email
+                )}
                 <Tooltip label={data.address}>
                   <Flex alignItems="center">
                     <Text variant="tableBody">

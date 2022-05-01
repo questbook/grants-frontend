@@ -1,4 +1,4 @@
- import {
+import {
   Image,
   IconButton,
   Flex,
@@ -17,26 +17,28 @@
 } from '@chakra-ui/react';
 import React, { useContext } from 'react';
 
-//TOOLS AND UTILS
-import { trimAddress, getFormattedDateFromUnixTimestampWithYear } from 'src/utils/formattingUtils';
+// TOOLS AND UTILS
+import {
+  trimAddress,
+  getFormattedDateFromUnixTimestampWithYear,
+} from 'src/utils/formattingUtils';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { useGetDaoGrantsQuery } from 'src/generated/graphql';
 
-//UI COMPONENTS
+// UI COMPONENTS
+import { SupportedChainId } from 'src/constants/chains';
+import router from 'next/router';
 import CopyIcon from '../ui/copy_icon';
 import Modal from '../ui/modal';
 import PayoutModalContent from './payoutModalContent';
 
-//CONTEXT AND CONSTANTS
+// CONTEXT AND CONSTANTS
 import { ApiClientsContext } from '../../../pages/_app';
-import { SupportedChainId } from 'src/constants/chains';
 
-import router from 'next/router';
-
-function Payouts({workspaceMembers}: any) {
+function Payouts() {
   const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
   const [applications, setApplications] = React.useState<any>([]);
-  const [applicationsId, setApplicationsId] = React.useState<any>([])
+  const [applicationsId, setApplicationsId] = React.useState<any>([]);
 
   const { data: grantsData } = useGetDaoGrantsQuery({
     client:
@@ -81,22 +83,20 @@ function Payouts({workspaceMembers}: any) {
 
   React.useEffect(() => {
     if (applications.length === 0 && grantsData) {
-    grantsData!.grants.filter((grant) => grant.applications[0].reviewers.length !== 0 && setApplications(
-        (array: any) => [...array, grant.applications[0]]))
+      grantsData!.grants.filter(
+        (grant) => grant.applications[0].reviewers.length !== 0
+          && setApplications((array: any) => [...array, grant.applications[0]]),
+      );
     }
 
     console.log(applications);
 
     if (applicationsId.length === 0 && applications.length !== 0) {
-      applications.forEach((app: any) =>
-        setApplicationsId(
-          (array: any) => [...array, app.id]
-        )
-    )
+      applications.forEach((app: any) => setApplicationsId((array: any) => [...array, app.id]));
     }
 
     console.log(applicationsId);
-}, [grantsData, applications])
+  }, [grantsData, applications, applicationsId]);
 
   const historyTablePlaceholders = [
     {
@@ -172,13 +172,17 @@ function Payouts({workspaceMembers}: any) {
               }}
               onClick={() => setTabIndex(0)}
             >
-              Outstanding{' '}
+              Outstanding
+              {' '}
               {applications.length === 0
                 ? 0
-                : applications.map((app: any) => app.reviewers.length !== 0 &&
-                    app.reviewers.map((reviewer: any) => reviewer.outstandingReviewIds.length !== 0 &&
-                      `(${reviewer.outstandingReviewIds.length})`
-                  ))}
+                : applications.map(
+                  (app: any) => app.reviewers.length !== 0
+                      && app.reviewers.map(
+                        (reviewer: any) => reviewer.outstandingReviewIds.length !== 0
+                          && `(${reviewer.outstandingReviewIds.length})`,
+                      ),
+                )}
             </Tab>
             <Tab
               borderColor="#AAAAAA"
@@ -223,10 +227,14 @@ function Payouts({workspaceMembers}: any) {
                 border="1px solid #D0D3D3"
                 borderRadius={4}
               >
-              {applications.length === 0
-                ? 0
-                : applications.map((app: any) => app.reviewers.length !== 0 &&
-                  app.reviewers.map((reviewer: any, index: any) => reviewer.outstandingReviewIds.length !== 0 && ( <Flex>
+                {applications.length === 0
+                  ? 0
+                  : applications.map(
+                    (app: any) => app.reviewers.length !== 0
+                        && app.reviewers.map(
+                          (reviewer: any, index: any) => reviewer.outstandingReviewIds.length !== 0
+                          && (
+                          <Flex>
                             <Grid
                               gridAutoFlow="column"
                               gridTemplateColumns="repeat(5, 1fr)"
@@ -266,11 +274,17 @@ function Payouts({workspaceMembers}: any) {
                               </Text>
                               <Tooltip label={reviewer.actorId}>
                                 <Flex alignItems="center">
-                                  <Text textAlign="center" variant="tableBody">
+                                  <Text
+                                    textAlign="center"
+                                    variant="tableBody"
+                                  >
                                     {trimAddress(reviewer.actorId, 4)}
                                   </Text>
                                   <Box mr="7px" />
-                                  <CopyIcon h="0.75rem" text={reviewer.actorId} />
+                                  <CopyIcon
+                                    h="0.75rem"
+                                    text={reviewer.actorId}
+                                  />
                                 </Flex>
                               </Tooltip>
                               <Text
@@ -278,7 +292,9 @@ function Payouts({workspaceMembers}: any) {
                                 variant="tableBody"
                                 alignSelf="center"
                               >
-                                {getFormattedDateFromUnixTimestampWithYear(reviewer.lastReviewSubmittedAt)}
+                                {getFormattedDateFromUnixTimestampWithYear(
+                                  reviewer.lastReviewSubmittedAt,
+                                )}
                               </Text>
                               <Text alignSelf="center" variant="tableBody">
                                 {reviewer.outstandingReviewIds.length}
@@ -328,118 +344,122 @@ function Payouts({workspaceMembers}: any) {
                                 // eslint-disable-next-line no-nested-ternary
                                 payMode === -1
                                   ? 'Pay From'
+                                // eslint-disable-next-line no-nested-ternary
+                                  : payMode === 0
+                                                || (payMode === 1 && !paymentOutside)
+                                    ? 'Pay Reviewer'
                                   // eslint-disable-next-line no-nested-ternary
-                                  : payMode === 0 ||
-                                    (payMode === 1 && !paymentOutside)
-                                  ? 'Pay Reviewer'
-                                  // eslint-disable-next-line no-nested-ternary
-                                  : payMode === 2
-                                  ? 'Fill Payment Details'
-                                  // eslint-disable-next-line no-nested-ternary
-                                  : paymentOutside &&
-                                    payMode === 1 &&
-                                    'Pay from external wallet'
+                                    : payMode === 2
+                                      ? 'Fill Payment Details'
+                                    // eslint-disable-next-line no-nested-ternary
+                                      : paymentOutside
+                                                && payMode === 1
+                                                && 'Pay from external wallet'
                               }`}
                               leftIcon={
-                                payMode !== -1 && (
-                                  <IconButton
-                                    mr="1rem"
-                                    ml="-1rem"
-                                    aria-label="Back"
-                                    variant="ghost"
-                                    _hover={{}}
-                                    _active={{}}
-                                    icon={
-                                      <Image src="/ui_icons/black/chevron_left.svg" />
-                                    }
-                                    onClick={() => {
-                                      setPayMode(-1);
-                                      setPaymentOutside(false);
-                                    }}
-                                    _focus={{ boxShadow: 'none' }}
-                                  />
-                                )
-                              }
+                                    payMode !== -1 && (
+                                      <IconButton
+                                        mr="1rem"
+                                        ml="-1rem"
+                                        aria-label="Back"
+                                        variant="ghost"
+                                        _hover={{}}
+                                        _active={{}}
+                                        icon={
+                                          <Image src="/ui_icons/black/chevron_left.svg" />
+                                        }
+                                        onClick={() => {
+                                          setPayMode(-1);
+                                          setPaymentOutside(false);
+                                        }}
+                                        _focus={{ boxShadow: 'none' }}
+                                      />
+                                    )
+                                  }
                             >
                               <Flex direction="column" pb="1rem" mx="2rem">
                                 {payMode === -1 && (
-                                  <Text pt="1rem">
-                                    Select a wallet to process this transaction
-                                  </Text>
+                                <Text pt="1rem">
+                                  Select a wallet to process this
+                                  transaction
+                                </Text>
                                 )}
                                 {payMode === -1
                                   ? payOptions.map((option, ind) => (
-                                      <Button
-                                        border="1px solid"
-                                        borderColor="#6A4CFF"
-                                        borderRadius="0.5rem"
-                                        bgColor="rgba(149, 128, 255, 0.1)"
-                                        onClick={() => {
-                                          setPayMode(ind);
-                                        }}
-                                        p="1.5rem"
-                                        h="4.5rem"
-                                        mt="2rem"
+                                    <Button
+                                      border="1px solid"
+                                      borderColor="#6A4CFF"
+                                      borderRadius="0.5rem"
+                                      bgColor="rgba(149, 128, 255, 0.1)"
+                                      onClick={() => {
+                                        setPayMode(ind);
+                                      }}
+                                      p="1.5rem"
+                                      h="4.5rem"
+                                      mt="2rem"
+                                    >
+                                      <Flex
+                                        w="100%"
+                                        justify="space-between"
+                                        align="center"
                                       >
-                                        <Flex
-                                          w="100%"
-                                          justify="space-between"
-                                          align="center"
-                                        >
-                                          <Flex>
-                                            <Text
-                                              variant="tableBody"
+                                        <Flex>
+                                          <Text
+                                            variant="tableBody"
+                                            color="#8850EA"
+                                          >
+                                            {option}
+                                            {' '}
+                                          </Text>
+                                          <Tooltip
+                                            label={`${
+                                              ind === 0
+                                                ? 'The reward will go through our smart contract directly into the reviewer wallet'
+                                                : 'You will have to send the reviewer rewards separately'
+                                            }`}
+                                            fontSize="md"
+                                          >
+                                            <Image
+                                              ml={2}
+                                              display="inline-block"
+                                              alt="another_wallet"
+                                              src="/ui_icons/info_brand_light.svg"
                                               color="#8850EA"
-                                            >
-                                              {option}{' '}
-                                            </Text>
-                                            <Tooltip
-                                              label={`${
-                                                ind === 0
-                                                  ? 'The reward will go through our smart contract directly into the reviewer wallet'
-                                                  : 'You will have to send the reviewer rewards separately'
-                                              }`}
-                                              fontSize="md"
-                                            >
-                                              <Image
-                                                ml={2}
-                                                display="inline-block"
-                                                alt="another_wallet"
-                                                src="/ui_icons/info_brand_light.svg"
-                                                color="#8850EA"
-                                              />
-                                            </Tooltip>
-                                          </Flex>
-                                          <IconButton
-                                            aria-label="right_chevron"
-                                            variant="ghost"
-                                            _hover={{}}
-                                            _active={{}}
-                                            w="13px"
-                                            h="6px"
-                                            icon={
-                                              <Image src="/ui_icons/brand/chevron_right.svg" />
-                                            }
-                                            onClick={() => {
-                                              setPayMode(ind);
-                                            }}
-                                          />
+                                            />
+                                          </Tooltip>
                                         </Flex>
-                                      </Button>
-                                    ))
+                                        <IconButton
+                                          aria-label="right_chevron"
+                                          variant="ghost"
+                                          _hover={{}}
+                                          _active={{}}
+                                          w="13px"
+                                          h="6px"
+                                          icon={
+                                            <Image src="/ui_icons/brand/chevron_right.svg" />
+                                                }
+                                          onClick={() => {
+                                            setPayMode(ind);
+                                          }}
+                                        />
+                                      </Flex>
+                                    </Button>
+                                  ))
                                   : null}
                               </Flex>
 
                               <PayoutModalContent
                                 workspaceId={workspace?.id}
                                 applicationsId={applicationsId}
-                                reviewIds={selectedData?.outstandingReviewIds}
+                                reviewIds={
+                                      selectedData?.outstandingReviewIds
+                                    }
                                 payMode={payMode}
                                 setPayMode={setPayMode}
                                 reviewerAddress={selectedData?.actorId}
                                 reviews={
-                                  selectedData?.outstandingReviewIds.length
-                                }
+                                      selectedData?.outstandingReviewIds.length
+                                    }
                                 onClose={payModal.onClose}
                                 paymentOutside={paymentOutside}
                                 setPaymentOutside={setPaymentOutside}
@@ -447,8 +467,9 @@ function Payouts({workspaceMembers}: any) {
                               />
                             </Modal>
                           </Flex>
-                        )
-                    ))}
+                          ),
+                        ),
+                  )}
               </Flex>
             </TabPanel>
             <TabPanel>
@@ -498,16 +519,16 @@ function Payouts({workspaceMembers}: any) {
                         <Tooltip label={data.reviewerAddress}>
                           <Flex alignItems="center">
                             <Text textAlign="center" variant="tableBody">
-                              {data.reviewerAddress !== '' &&
-                                trimAddress(data.reviewerAddress, 4)}
+                              {data.reviewerAddress !== ''
+                                && trimAddress(data.reviewerAddress, 4)}
                             </Text>
                             <Box mr="7px" />
                             <CopyIcon h="0.75rem" text={data.reviewerAddress} />
                           </Flex>
                         </Tooltip>
                         <Text textAlign="center" variant="tableBody">
-                          {data.payererAddress !== '' &&
-                            trimAddress(data.payerAddress, 4)}
+                          {data.payererAddress !== ''
+                            && trimAddress(data.payerAddress, 4)}
                         </Text>
 
                         <Text variant="tableBody">{data.amount}</Text>
@@ -518,7 +539,8 @@ function Payouts({workspaceMembers}: any) {
                             href={`https://www.etherscan.io/tx/${data.txnAddress}`}
                             isExternal
                           >
-                            View{' '}
+                            View
+                            {' '}
                             <Image
                               display="inline-block"
                               h="10px"
