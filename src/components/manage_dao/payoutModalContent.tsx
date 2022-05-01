@@ -42,6 +42,7 @@ import Dropdown from '../ui/forms/dropdown';
 interface Props {
   workspaceId: string;
   reviewIds: string[],
+  applicationsId: string[],
   payMode: number;
   setPayMode: React.Dispatch<React.SetStateAction<number>>;
   reviewerAddress: string | any;
@@ -54,6 +55,7 @@ interface Props {
 
 function PayoutModalContent({
   workspaceId,
+  applicationsId,
   reviewIds,
   payMode,
   setPayMode,
@@ -72,6 +74,8 @@ function PayoutModalContent({
   const { hasCopied, onCopy } = useClipboard(reviewerAddress);
   // const toast = useToast();
   // const toastRef = useRef<ToastId>();
+
+  console.log(applicationsId)
 
   const supportedCurrencies = Object.keys(
     CHAIN_INFO[currentChain].supportedCurrencies,
@@ -113,10 +117,12 @@ function PayoutModalContent({
   const [transactionData, txnLink, loading] = useMarkReviewPaymentDone(
     workspaceId,
     reviewIds,
+    applicationsId,
     totalAmount,
+    submitMarkDone,
     reviewerAddress,
     reviewCurrencyAddress,
-    transactionHash
+    transactionHash,
   );
 
   console.log(txnLink);

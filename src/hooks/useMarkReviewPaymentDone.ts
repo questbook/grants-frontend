@@ -13,6 +13,7 @@ import useApplicationReviewRegistryContract from './contracts/useApplicationRevi
 export default function useMarkReviewPaymentDone(
   workspaceId: string,
   reviewIds: string[],
+  applicationsIds: string[],
   totalAmount: number,
   submitMarkDone: boolean,
   reviewerAddress?: string,
@@ -60,13 +61,15 @@ export default function useMarkReviewPaymentDone(
     console.log('YES')
 
     async function markAsDone() {
+      console.log('YES2')
 
       setLoading(true);
       try {
         const markPaymentTxb = await applicationReviewerContract.markPaymentDone(
           workspaceId,
-          reviewIds,
+          applicationsIds,
           reviewerAddress,
+          reviewIds,
           reviewCurrencyAddress,
           totalAmount,
           transactionHash,

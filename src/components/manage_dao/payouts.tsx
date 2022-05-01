@@ -20,6 +20,7 @@ import React, { useContext } from 'react';
 //TOOLS AND UTILS
 import { trimAddress, getFormattedDateFromUnixTimestampWithYear } from 'src/utils/formattingUtils';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+import { useGetDaoGrantsQuery } from 'src/generated/graphql';
 
 //UI COMPONENTS
 import CopyIcon from '../ui/copy_icon';
@@ -32,8 +33,20 @@ import { SupportedChainId } from 'src/constants/chains';
 
 import router from 'next/router';
 
-function Payouts() {
+function Payouts({workspaceMembers}: any) {
   const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
+  const [applications, setApplications] = React.useState<any>([]);
+  const [applicationsId, setApplicationsId] = React.useState<any>([])
+
+  const { data: grantsData } = useGetDaoGrantsQuery({
+    client:
+      subgraphClients[
+        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      ].client,
+    variables: {
+      workspaceId: workspace?.id ?? '',
+    },
+  });
 
   const payModal = useDisclosure();
   const [payMode, setPayMode] = React.useState<number>(-1);
@@ -66,12 +79,24 @@ function Payouts() {
     }
   });
 
-  const [queryParams, setQueryParams] = React.useState<any>({
-    client:
-      subgraphClients[
-        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
-      ].client,
-  });
+  React.useEffect(() => {
+    if (applications.length === 0 && grantsData) {
+    grantsData!.grants.filter((grant) => grant.applications[0].reviewers.length !== 0 && setApplications(
+        (array: any) => [...array, grant.applications[0]]))
+    }
+
+    console.log(applications);
+
+    if (applicationsId.length === 0 && applications.length !== 0) {
+      applications.forEach((app: any) =>
+        setApplicationsId(
+          (array: any) => [...array, app.id]
+        )
+    )
+    }
+
+    console.log(applicationsId);
+}, [grantsData, applications])
 
   const historyTablePlaceholders = [
     {
@@ -148,13 +173,12 @@ function Payouts() {
               onClick={() => setTabIndex(0)}
             >
               Outstanding{' '}
-              {!workspace
+              {applications.length === 0
                 ? 0
-                : workspace!.members.map(
-                    (data: any) =>
-                      data.outstandingReviewIds.length !== 0 &&
-                      `(${data.outstandingReviewIds.length})`
-                  )}
+                : applications.map((app: any) => app.reviewers.length !== 0 &&
+                    app.reviewers.map((reviewer: any) => reviewer.outstandingReviewIds.length !== 0 &&
+                      `(${reviewer.outstandingReviewIds.length})`
+                  ))}
             </Tab>
             <Tab
               borderColor="#AAAAAA"
@@ -199,12 +223,10 @@ function Payouts() {
                 border="1px solid #D0D3D3"
                 borderRadius={4}
               >
-                {!workspace
-                  ? null
-                  : workspace!.members.map(
-                      (data: any, index: number) =>
-                        data.outstandingReviewIds.length !== 0 && (
-                          <Flex>
+              {applications.length === 0
+                ? 0
+                : applications.map((app: any) => app.reviewers.length !== 0 &&
+                  app.reviewers.map((reviewer: any, index: any) => reviewer.outstandingReviewIds.length !== 0 && ( <Flex>
                             <Grid
                               gridAutoFlow="column"
                               gridTemplateColumns="repeat(5, 1fr)"
@@ -222,8 +244,8 @@ function Payouts() {
                                 alignSelf="center"
                               >
                                 {' '}
-                                {data.email.length > 16 ? (
-                                  <Tooltip label={data.email}>
+                                {reviewer.email.length > 16 ? (
+                                  <Tooltip label={reviewer.email}>
                                     <Flex
                                       alignSelf="center"
                                       alignItems="center"
@@ -233,22 +255,22 @@ function Payouts() {
                                         textAlign="center"
                                         variant="tableBody"
                                       >
-                                        {trimAddress(data.email, 12)}
+                                        {trimAddress(reviewer.email, 12)}
                                       </Text>
                                       <Box mr="7px" />
                                     </Flex>
                                   </Tooltip>
                                 ) : (
-                                  data.email
+                                  reviewer.email
                                 )}
                               </Text>
-                              <Tooltip label={data.actorId}>
+                              <Tooltip label={reviewer.actorId}>
                                 <Flex alignItems="center">
                                   <Text textAlign="center" variant="tableBody">
-                                    {trimAddress(data.actorId, 4)}
+                                    {trimAddress(reviewer.actorId, 4)}
                                   </Text>
                                   <Box mr="7px" />
-                                  <CopyIcon h="0.75rem" text={data.actorId} />
+                                  <CopyIcon h="0.75rem" text={reviewer.actorId} />
                                 </Flex>
                               </Tooltip>
                               <Text
@@ -256,10 +278,10 @@ function Payouts() {
                                 variant="tableBody"
                                 alignSelf="center"
                               >
-                                {getFormattedDateFromUnixTimestampWithYear(data.lastReviewSubmittedAt)}
+                                {getFormattedDateFromUnixTimestampWithYear(reviewer.lastReviewSubmittedAt)}
                               </Text>
                               <Text alignSelf="center" variant="tableBody">
-                                {data.outstandingReviewIds.length}
+                                {reviewer.outstandingReviewIds.length}
                               </Text>
                               <Flex direction="row" gap="0.5rem">
                                 <Button
@@ -275,7 +297,7 @@ function Payouts() {
                                   onClick={() => {
                                     payModal.onOpen();
                                     setPayMode(2);
-                                    setSelectedData(data);
+                                    setSelectedData(reviewer);
                                   }}
                                 >
                                   Mark as done
@@ -291,7 +313,7 @@ function Payouts() {
                                   onClick={() => {
                                     payModal.onOpen();
                                     setPayMode(-1);
-                                    setSelectedData(data);
+                                    setSelectedData(reviewer);
                                   }}
                                 >
                                   Pay now
@@ -410,6 +432,7 @@ function Payouts() {
 
                               <PayoutModalContent
                                 workspaceId={workspace?.id}
+                                applicationsId={applicationsId}
                                 reviewIds={selectedData?.outstandingReviewIds}
                                 payMode={payMode}
                                 setPayMode={setPayMode}
@@ -425,7 +448,7 @@ function Payouts() {
                             </Modal>
                           </Flex>
                         )
-                    )}
+                    ))}
               </Flex>
             </TabPanel>
             <TabPanel>

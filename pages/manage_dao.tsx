@@ -100,7 +100,7 @@ function ManageDAO() {
               <Members workspaceMembers={workspaceData?.members} />
             ) : (
             // eslint-disable-next-line no-nested-ternary
-              selected === 2 && <Payouts />
+              selected === 2 && <Payouts workspaceMembers={workspaceData?.members}  />
             )
         }
       </Flex>
