@@ -1,12 +1,13 @@
 import * as React from 'react'
 
-import { SolanaWalletAdapter, WalletConnector } from '../../types'
+import { SolanaWalletAdapter, WalletConnector, WagmiConnector } from '../../types'
 
 import { useWallet as useWalletSolana } from '@solana/wallet-adapter-react';
 import { useConnect as useConnectWagmi } from 'wagmi';
 
 import { useAccount as useAccountWagmi } from "wagmi";
 import { useContext } from '../../context'
+
 
 type State = {
     connector?: WalletConnector
@@ -19,25 +20,39 @@ const initialState: State = {
 }
 
 export const useConnect = () => {
-    const [wagmiInfo] = useConnectWagmi();
-    const [accountState, disconnectWagmi] = useAccountWagmi();
+    const [wagmiInfo, connectWagmi] = useConnectWagmi();
+    const [, disconnectWagmi] = useAccountWagmi();
     const solanaInfo = useWalletSolana();
-
-    const [state, setState] = React.useState<State>(initialState)
+    const context = useContext()
 
     const connect = React.useCallback(
         async (walletConnector: WalletConnector) => {
             // Disconnecting both Wagmi and Solana
+            try {
+                if (disconnectWagmi) disconnectWagmi()
+                if (solanaInfo.disconnect) await solanaInfo.disconnect()
+            }
+            catch { }
 
-            disconnectWagmi()
-            await solanaInfo.disconnect()
-
-            // Connecting the wallet connector.
-            walletConnector?.connect()
-        }, [solanaInfo, wagmiInfo.data]);
-
-    React.useEffect(() => {
-    }, [wagmiInfo.data.connected, solanaInfo.connected])
+            if (walletConnector instanceof SolanaWalletAdapter) {
+                // For some reason, this doesn't work from the first time
+                try{
+                    solanaInfo.select(walletConnector.name)
+                    
+                    // await solanaInfo.connect()
+                    await walletConnector.connect()
+                }
+                catch (e){
+                    console.log(e)
+                }
+            }
+            else if (walletConnector instanceof WagmiConnector){
+                await connectWagmi(walletConnector);
+            }
+            else{
+                // add all other chains.
+            }
+        }, [solanaInfo.disconnect, disconnectWagmi, connectWagmi, solanaInfo.select]);
 
     return [
         {

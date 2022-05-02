@@ -1,8 +1,10 @@
+import { Chain, SwitchChainError, allChains } from 'wagmi-core'
 
 import { useNetwork as useNetworkWagmi } from "wagmi";
 import { useConnection as useConnectionSolana, useWallet as useWalletSolana } from "@solana/wallet-adapter-react";
 import { CHAIN_ID } from "../../constants";
 import { useContext } from '../../context'
+import { useCallback } from 'react';
 
 type State = {
     data: {
@@ -21,12 +23,35 @@ export const useNetwork = () => {
 
     const context = useContext()
 
+    const switchNetwork = useCallback(async (chainId: number) => {
+        // @TODO: add solana network switcher (does such thing exist?).
+        // if (chainId === CHAIN_ID['SOLANA']){
+        //     try {
+        //         if (disconnectWagmi) disconnectWagmi()
+        //         if (solanaInfo.disconnect) await solanaInfo.disconnect()
+        //     }
+        //     catch { }
+        //     try{
+        //         solanaInfo.select()
+                
+        //         // await solanaInfo.connect()
+        //         await walletConnector.connect()
+        //     }
+        //     catch (e){
+        //         console.log(e)
+        //     }
+        // }
+        if (wagmiNetworkData.chain?.id && switchNetworkWagmi){
+            switchNetworkWagmi(chainId)
+        }
+    }, [wagmiNetworkData.chain, switchNetworkWagmi])
+
     return [
         {
             data: {
                 chain: wagmiNetworkData.chain?.id ? {
                     id: wagmiNetworkData.chain?.id
-                } : (solanaConnection?.rpcEndpoint ? {
+                } : (solanaInfo.connected ? {
                     id: CHAIN_ID['SOLANA']
                 } : undefined),
         },

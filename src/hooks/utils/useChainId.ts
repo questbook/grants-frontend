@@ -31,7 +31,7 @@ export default function useChainId() {
       setChainId(undefined);
       return;
     }
-    setChainId(supportedChainIdFromNetworkData(networkData.chain?.id ?? -1));
+    setChainId(supportedChainIdFromNetworkData(networkData.chain?.id));
   }, [networkData.chain?.id]);
 
   return chainId;

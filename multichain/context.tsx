@@ -57,7 +57,7 @@ export const Provider: React.FC<React.PropsWithChildren<Props>> = ({
     solanaEndpoint,
     connectorStorageKey = 'multichain.walletconnector',
     walletConnectors: walletConnectors_ = [new InjectedConnector()],
-    wagmiProvider: wagmiProvider_ = null
+    wagmiProvider: wagmiProvider_ = undefined
 }) => {
     const [lastUsedConnector, setLastUsedWalletConnector] = useLocalStorage<
         string | null
@@ -85,25 +85,20 @@ export const Provider: React.FC<React.PropsWithChildren<Props>> = ({
     }
 
     return (
-        // <Context.Provider value={value}>
-        <SolanaConnectionProvider endpoint={solanaEndpoint} >
-            <SolanaWalletProvider wallets={solanaWalletAdapters}>
-                {wagmiProvider_ ?
+        <Context.Provider value={value}>
+            <SolanaConnectionProvider endpoint={solanaEndpoint} >
+                <SolanaWalletProvider wallets={solanaWalletAdapters}>
                     <WagmiProvider connectors={wagmiConnectors} provider={wagmiProvider_} >
                         {children}
-                    </WagmiProvider> :
-                    <WagmiProvider connectors={wagmiConnectors}>
-                        {children}
                     </WagmiProvider>
-                }
-            </SolanaWalletProvider>
-        </SolanaConnectionProvider>
-        // </Context.Provider>
+                </SolanaWalletProvider>
+            </SolanaConnectionProvider>
+        </Context.Provider>
     );
 }
 
 export const useContext = () => {
     const context = React.useContext(Context)
-    // if (!context) throw Error('Must be used within Provider')
+    if (!context) throw Error('Must be used within Provider')
     return context
 }

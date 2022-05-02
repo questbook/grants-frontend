@@ -37,7 +37,7 @@ export const useSigner = () => {
     const [wamgiSignerState, getSignerWagmi] = useSignerWagmi()
     const solanaInfo = useWalletSolana();
     const solanaConnection = useConnectionSolana()
-
+    const context = useContext()
     const state = React.useMemo(() => {
         if (wamgiSignerState && wamgiSignerState.data)
             return {

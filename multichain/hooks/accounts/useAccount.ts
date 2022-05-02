@@ -22,10 +22,7 @@ type State = {
 
 export const useAccount = ({ fetchEns }: Config = {}) => {
     const [accountState, disconnectWagmi] = useAccountWagmi();
-    const [wagmiInfo, _] = useConnectWagmi();
     const solanaInfo = useWalletSolana()
-
-    const context = useContext()
 
     const state = React.useMemo(() => {
         if (accountState.data?.address)
@@ -54,8 +51,11 @@ export const useAccount = ({ fetchEns }: Config = {}) => {
     }, [solanaInfo, accountState])
 
     const disconnect = React.useCallback(async () => {
-        disconnectWagmi()
-        await solanaInfo.disconnect()
+        try {
+            disconnectWagmi()
+            await solanaInfo.disconnect()
+        }
+        catch {}
     }, [solanaInfo.disconnect, disconnectWagmi])
 
     return [
