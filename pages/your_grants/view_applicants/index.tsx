@@ -50,8 +50,8 @@ function ViewApplicants() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAdmin, setIsAdmin] = React.useState<boolean>(false);
   const [isReviewer, setIsReviewer] = React.useState<boolean>(false);
-  const [applicantionReviewer, setApplicantionReviewer] = useState<any>([]);
-  const [applicantionId, setApplicantionId] = useState<any>(null);
+  const [applicationReviewer, setApplicantionReviewer] = useState<any>([]);
+  const [applicantionId, setApplicantionId] = useState<any>([]);
 
   const [{ data: accountData }] = useAccount({
     fetchEns: false,
@@ -136,6 +136,7 @@ function ViewApplicants() {
   }, [accountData, workspace]);
 
   const { data, error, loading } = useGetApplicantsForAGrantQuery(queryParams);
+
   useEffect(() => {
     if (data && data.grantApplications.length) {
       const fetchedApplicantsData = data.grantApplications.map((applicant) => {
@@ -173,9 +174,12 @@ function ViewApplicants() {
           },
           // status: applicationStatuses.indexOf(applicant?.state),
           status: TableFilters[applicant?.state],
+          reviewers: applicant.reviewers,
         };
       });
-      setApplicantionId(fetchedApplicantsData[0].applicationId);
+
+      console.log('fetch', fetchedApplicantsData);
+
       setApplicantsData(fetchedApplicantsData);
       setDaoId(data.grantApplications[0].grant.workspace.id);
       setAcceptingApplications(data.grantApplications[0].grant.acceptingApplications);
@@ -183,26 +187,6 @@ function ViewApplicants() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error, loading]);
 
-  useEffect(() => {
-    if (!workspace) return;
-    setQueryParamsReviewer({
-      client:
-        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
-      variables: {
-        applicationID: applicantionId,
-      },
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workspace, applicantionId]);
-
-  const applicantdata = useGetApplicationDetailsQuery(queryParamsReviewer);
-
-  useEffect(() => {
-    if (applicantdata.data && applicantdata.data.grantApplication) {
-      setApplicantionReviewer(applicantdata.data.grantApplication.reviewers);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [applicantdata]);
 
   const { data: grantData } = useGetGrantDetailsQuery(queryParams);
   useEffect(() => {
@@ -315,7 +299,6 @@ function ViewApplicants() {
         <Table
           title={applicantsData[0]?.grantTitle ?? 'Grant Title'}
           isReviewer={isReviewer}
-          applicantionReviewer={applicantionReviewer}
           data={applicantsData}
           fundReceived={formatAmount(getTotalFundingRecv(milestones).toString(), decimals)}
           onViewApplicantFormClick={(commentData: any) => router.push({

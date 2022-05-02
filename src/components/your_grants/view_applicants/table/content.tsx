@@ -26,7 +26,6 @@ function Content({
   // onRejectApplicationClick,
   onManageApplicationClick,
   data,
-  applicantionReviewer,
   isReviewer,
   fundReceived,
 }: {
@@ -36,7 +35,6 @@ function Content({
   // onRejectApplicationClick?: () => void;
   onManageApplicationClick?: (data?: any) => void;
   data: any[];
-  applicantionReviewer:[];
   isReviewer : boolean;
   fundReceived: string;
 }) {
@@ -53,6 +51,7 @@ function Content({
 
     return <GrantComplete />;
   };
+  console.log('data-content', data);
   return (
     <Flex
       mt="10px"
@@ -273,36 +272,38 @@ function Content({
               </Text>
             </Flex>
 
-            <Popover
-              isOpen={isOpen}
-              closeOnBlur
-              isLazy
-              placement="right"
+            <Text
+              justifyContent="center"
+              color="#717A7C"
+              variant="tableBody"
+              flex={tableHeadersFlex[3]}
+              textAlign="center"
             >
-              <Text
-                justifyContent="center"
-                color="#717A7C"
-                variant="tableBody"
-                flex={tableHeadersFlex[3]}
-                textAlign="center"
+
+              <Popover
+                closeOnBlur
+                isLazy
+                placement="right"
               >
-
                 <PopoverTrigger>
-                  <Text onMouseEnter={open}>{applicantionReviewer.length}</Text>
+                  <Text>{item.reviewers.length}</Text>
                 </PopoverTrigger>
+                {item.reviewers.map((reviewer) => (
 
-              </Text>
-              <PopoverContent height="150px" width="inherit" right="60px" top="60px">
-                <PopoverHeader>Reviewer</PopoverHeader>
-                <PopoverBody overflowX="hidden" overflowY="auto">
-                  { applicantionReviewer.map((reviewer:{ email: string }) => (
-                    <SimpleGrid columns={1} spacing={3}>
-                      <Text>{reviewer.email}</Text>
-                    </SimpleGrid>
-                  ))}
-                </PopoverBody>
-              </PopoverContent>
-            </Popover>
+                  <PopoverContent height="150px" width="inherit" right="60px" top="60px">
+                    <PopoverHeader>Reviewer</PopoverHeader>
+                    <PopoverBody overflowX="hidden" overflowY="auto">
+                      <SimpleGrid columns={1} spacing={3}>
+                        <Text>{reviewer.email}</Text>
+                      </SimpleGrid>
+                    </PopoverBody>
+                  </PopoverContent>
+                ))}
+
+              </Popover>
+
+            </Text>
+
             <Flex justifyContent="center" flex={tableHeadersFlex[4]}>
               {getStatus(item.status)}
             </Flex>
