@@ -1,9 +1,8 @@
 import React from 'react'
 import { Contract } from './contract'
 import { useContext } from '../../context'
-import { ContractInterface, Address, ContractProvider } from '../../types';
+import { ContractInterface, Address, ContractProvider, EvmContractSigner, EvmContractProvider } from '../../types';
 import { useContract as useContractWagmi } from 'wagmi';
-
 
 export type Config = {
   /** Contract address */
@@ -28,8 +27,14 @@ export const useContract = <Contract = any>({
   signerOrProvider,
 }: Config) => {
   const context = useContext()
+  const wagmiContract = useContractWagmi({
+    addressOrName: addressOrName.toString(),
+    contractInterface: contractInterface.abi!,
+    signerOrProvider: (signerOrProvider instanceof EvmContractSigner || signerOrProvider instanceof EvmContractProvider) ? signerOrProvider : undefined})
   return React.useMemo(() => {
-    
+    if (signerOrProvider instanceof EvmContractSigner || signerOrProvider instanceof EvmContractProvider){
+      return wagmiContract;
+    }
     return getContract<Contract>({
       addressOrName,
       contractInterface,
