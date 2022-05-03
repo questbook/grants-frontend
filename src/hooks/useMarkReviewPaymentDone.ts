@@ -3,17 +3,23 @@ import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import { useAccount, useNetwork } from 'wagmi';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
-import { BigNumber } from 'ethers';
+// import { BigNumber } from 'ethers';
 import getErrorMessage from 'src/utils/errorUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { BigNumber } from 'ethers';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
-import useERC20Contract from './contracts/useERC20Contract';
+import useApplicationReviewRegistryContract from './contracts/useApplicationReviewRegistryContract';
 
-export default function usePayReviewers(
-  totalAmount?: BigNumber,
+export default function useMarkReviewPaymentDone(
+  workspaceId: string,
+  reviewIds: string[],
+  applicationsIds: string[],
+  totalAmount: BigNumber,
+  submitMarkDone: boolean,
   reviewerAddress?: string,
   reviewCurrencyAddress?: string,
+  transactionHash?: string,
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
@@ -24,14 +30,15 @@ export default function usePayReviewers(
 
   const apiClients = useContext(ApiClientsContext)!;
   const { workspace } = apiClients;
-  const rewardContract = useERC20Contract(reviewCurrencyAddress);
+  const chainId = getSupportedChainIdFromWorkspace(workspace);
+  const applicationReviewerContract = useApplicationReviewRegistryContract(chainId);
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
   const currentChainId = useChainId();
-  const chainId = getSupportedChainIdFromWorkspace(workspace);
 
   useEffect(() => {
-    if (totalAmount) {
+    console.log(totalAmount);
+    if (!totalAmount) {
       setError(undefined);
       setIncorrectNetwork(false);
     } else if (transactionData) {
@@ -45,25 +52,33 @@ export default function usePayReviewers(
       setIncorrectNetwork(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rewardContract]);
+  }, [applicationReviewerContract]);
 
   useEffect(() => {
     if (incorrectNetwork) return;
     if (error) return;
     if (loading) return;
-    // console.log('calling createGrant');
 
-    async function validate() {
+    console.log('YES');
+
+    async function markAsDone() {
+      console.log('YES2');
+
       setLoading(true);
-      // console.log('calling validate');
       try {
-        const transferTxn = await rewardContract.transfer(
+        const markPaymentTxb = await applicationReviewerContract.markPaymentDone(
+          workspaceId,
+          applicationsIds,
           reviewerAddress,
+          reviewIds,
+          reviewCurrencyAddress,
           totalAmount,
+          transactionHash,
         );
-        const depositTransactionData = await transferTxn.wait();
 
-        setTransactionData(depositTransactionData);
+        const updateTxnData = await markPaymentTxb.wait();
+
+        setTransactionData(updateTxnData);
         setLoading(false);
       } catch (e: any) {
         const message = getErrorMessage(e);
@@ -83,8 +98,8 @@ export default function usePayReviewers(
       }
     }
     try {
-      if (!totalAmount) return;
-      if (!reviewerAddress) return;
+      if (!submitMarkDone) return;
+      if (!workspaceId) return;
       if (transactionData) return;
       if (!accountData || !accountData.address) {
         throw new Error('not connected to wallet');
@@ -93,29 +108,32 @@ export default function usePayReviewers(
         throw new Error('not connected to workspace');
       }
       if (!currentChainId) {
-        if (switchNetwork && chainId) { switchNetwork(chainId); }
+        if (switchNetwork && chainId) {
+          switchNetwork(chainId);
+        }
         setIncorrectNetwork(true);
         setLoading(false);
         return;
       }
       if (chainId !== currentChainId) {
-        if (switchNetwork && chainId) { switchNetwork(chainId); }
+        if (switchNetwork && chainId) {
+          switchNetwork(chainId);
+        }
         setIncorrectNetwork(true);
         setLoading(false);
         return;
       }
-      if (totalAmount.isZero()) throw new Error('Amount entered should be more than 0!');
-      if (totalAmount.isNegative()) throw new Error('Amount entered cannot be negative!');
       if (
-        !rewardContract
-        || rewardContract.address
+        !applicationReviewerContract
+        || applicationReviewerContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !rewardContract.signer
-        || !rewardContract.provider
+        || !applicationReviewerContract.signer
+        || !applicationReviewerContract.provider
       ) {
         return;
       }
-      validate();
+
+      markAsDone();
     } catch (e: any) {
       const message = getErrorMessage(e);
       setError(message);
@@ -138,15 +156,16 @@ export default function usePayReviewers(
     loading,
     toast,
     transactionData,
-    rewardContract,
     workspace,
     accountData,
     networkData,
     currentChainId,
-    reviewerAddress,
-    totalAmount,
     chainId,
     incorrectNetwork,
+    reviewIds,
+    transactionHash,
+    reviewerAddress,
+    reviewCurrencyAddress,
   ]);
 
   return [

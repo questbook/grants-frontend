@@ -34,12 +34,10 @@ function ManageDAO() {
     if (!workspace) return;
     setQueryParams({
       client:
-      subgraphClients[
-        getSupportedChainIdFromWorkspace(workspace)!
-      ].client,
+        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
       variables: { workspaceID: workspace.id },
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspace]);
 
   const { data } = useGetWorkspaceDetailsQuery(queryParams);
@@ -47,6 +45,8 @@ function ManageDAO() {
   useEffect(() => {
     if (!data) return;
     setWorkspaceData(data!.workspace!);
+
+    console.log(data);
   }, [data]);
 
   const switchTab = (to: number) => {
@@ -55,7 +55,11 @@ function ManageDAO() {
 
   return (
     <Flex direction="row" w="100%" justify="space-evenly">
-      <Flex w={selected === 0 ? '100%' : '100%'} maxW="1036px" direction="column">
+      <Flex
+        w={selected === 0 ? '100%' : '100%'}
+        maxW="1036px"
+        direction="column"
+      >
         <Flex
           direction="row"
           w="full"
@@ -87,17 +91,18 @@ function ManageDAO() {
           ))}
         </Flex>
         <Divider variant="sidebar" mb={5} />
-        {// eslint-disable-next-line no-nested-ternary
+        {
+          // eslint-disable-next-line no-nested-ternary
           selected === 0 ? (
             <Settings workspaceData={workspaceData!} />
-          // eslint-disable-next-line no-nested-ternary
-          ) : selected === 1 ? (
-            <Members workspaceMembers={workspaceData?.members} />
-          // eslint-disable-next-line no-nested-ternary
-          ) : selected === 2 && (
-          <Payouts />
-          )
-}
+          ) // eslint-disable-next-line no-nested-ternary
+            : selected === 1 ? (
+              <Members workspaceMembers={workspaceData?.members} />
+            ) : (
+            // eslint-disable-next-line no-nested-ternary
+              selected === 2 && <Payouts />
+            )
+        }
       </Flex>
       <Flex w="auto" />
     </Flex>

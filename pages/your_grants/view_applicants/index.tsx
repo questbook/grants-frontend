@@ -237,7 +237,7 @@ function ViewApplicants() {
         {isAdmin && (
         <Box pos="absolute" right="40px" top="48px">
           <Button variant="primary" onClick={() => setRubricDrawerOpen(true)}>
-            Setup Evaluation Rubric
+            {(grantData?.grants[0].rubric?.items.length ?? 0) > 0 ?? false ? 'Edit Evaluation Rubric' : 'Setup Evaluation Rubric'}
           </Button>
         </Box>
         )}

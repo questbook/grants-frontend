@@ -43,7 +43,7 @@ function RubricSidebar({
       return reviewData;
     });
     if (!publicDataPromises) return;
-    const publicData = (await Promise.all(publicDataPromises)).map((data) => JSON.parse(data));
+    const publicData = (await Promise.all(publicDataPromises)).map((data) => JSON.parse(data ?? '{}'));
     console.log(publicData);
     setDetailedReviews(publicData);
 
@@ -84,6 +84,7 @@ function RubricSidebar({
   };
 
   const getEncrpytedData = async () => {
+    setLoading(true);
     console.log(reviews);
     const privateDataPromises = reviews?.map((review) => {
       const decryptableData = review.data.filter((data: any) => data.id.split('.')[1].toLowerCase() === accountData?.address.toLowerCase());
@@ -94,15 +95,13 @@ function RubricSidebar({
     });
     if (!privateDataPromises) return;
 
-    console.log(privateDataPromises);
+    // console.log(privateDataPromises);
     // const privateData = await Promise.all((await Promise.all(privateDataPromises))
     //   .map(async (data) => JSON.parse(await decryptMessage(data) ?? '{}')));
 
     const privateData = await Promise.all(privateDataPromises);
-    console.log(privateData);
     const privateDecryptedData = await Promise.all(privateData.map(async (data) => JSON.parse(await decryptMessage(data) ?? '{}')));
 
-    console.log(privateDecryptedData);
     setDetailedReviews(privateDecryptedData);
     const results = [] as any;
     rubric.items.forEach((item: any) => {
@@ -135,7 +134,7 @@ function RubricSidebar({
       setAgainstPercentage(againstPercentage);
     }
 
-    console.log(results);
+    // console.log(results);
     setAggregatedResults(results);
     setLoading(false);
     setIsDecrypted(true);
@@ -205,10 +204,14 @@ function RubricSidebar({
           </Text>
         </Flex>
 
-        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-        <Link onClick={() => getEncrpytedData()} mt={5} fontSize="14px" lineHeight="24px" fontWeight="500">
-          Decrypt reviews to see the results
-        </Link>
+        {loading ? (
+          <Loader />
+        ) : (
+          // eslint-disable-next-line jsx-a11y/anchor-is-valid
+          <Link onClick={() => getEncrpytedData()} mt={5} fontSize="14px" lineHeight="24px" fontWeight="500">
+            Decrypt reviews to see the results
+          </Link>
+        )}
       </Flex>
     );
   }
@@ -381,76 +384,90 @@ function RubricSidebar({
         <DrawerContent>
 
           <Flex direction="column" overflow="scroll" p={8}>
-            <Text
-              mt="18px"
-              color="#122224"
-              fontWeight="bold"
-              fontSize="16px"
-              lineHeight="20px"
-            >
-              Overall Recommendation
-            </Text>
-            <Flex py={8}>
-              <Badge
-                isActive={reviewSelected?.isApproved}
-                label="YES"
-                onClick={() => {}}
-              />
-
-              <Box ml={4} />
-
-              <Badge
-                isActive={!reviewSelected?.isApproved}
-                label="NO"
-                onClick={() => {}}
-              />
-            </Flex>
-            {reviewSelected?.items?.map((feedback: any) => (
+            {reviewSelected && reviewSelected.items && reviewSelected.items.length > 0 ? (
               <>
-                <Flex
-                  mt={4}
-                  gap="2"
-                  direction="column"
+                <Text
+                  mt="18px"
+                  color="#122224"
+                  fontWeight="bold"
+                  fontSize="16px"
+                  lineHeight="20px"
                 >
-                  <Text
-                    mt="18px"
-                    color="#122224"
-                    fontWeight="bold"
-                    fontSize="16px"
-                    lineHeight="20px"
-                  >
-                    {feedback.rubric.title}
-                  </Text>
-                  <Text
-                    color="#69657B"
-                    fontWeight="bold"
-                    fontSize="12px"
-                    lineHeight="20px"
-                  >
-                    {feedback.rubric.details}
-                  </Text>
-
-                  <StarRatings
-                    numberOfStars={feedback.rubric.maximumPoints}
-                    starRatedColor="#88BDEE"
-                    rating={feedback.rating}
-                    name="rating"
-                    starHoverColor="#88BDEE"
-                    starDimension="18px"
+                  Overall Recommendation
+                </Text>
+                <Flex py={8}>
+                  <Badge
+                    isActive={reviewSelected?.isApproved}
+                    label="YES"
+                    onClick={() => {}}
                   />
 
-                  <MultiLineInput
-                    value={feedback.comment}
-                    onChange={() => {}}
-                    placeholder="Feedback"
-                    isError={false}
-                    errorText="Required"
-                    disabled
+                  <Box ml={4} />
+
+                  <Badge
+                    isActive={!reviewSelected?.isApproved}
+                    label="NO"
+                    onClick={() => {}}
                   />
                 </Flex>
-                <Divider mt={4} />
+                {reviewSelected?.items?.map((feedback: any) => (
+                  <>
+                    <Flex
+                      mt={4}
+                      gap="2"
+                      direction="column"
+                    >
+                      <Text
+                        mt="18px"
+                        color="#122224"
+                        fontWeight="bold"
+                        fontSize="16px"
+                        lineHeight="20px"
+                      >
+                        {feedback.rubric.title}
+                      </Text>
+                      <Text
+                        color="#69657B"
+                        fontWeight="bold"
+                        fontSize="12px"
+                        lineHeight="20px"
+                      >
+                        {feedback.rubric.details}
+                      </Text>
+
+                      <StarRatings
+                        numberOfStars={feedback.rubric.maximumPoints}
+                        starRatedColor="#88BDEE"
+                        rating={feedback.rating}
+                        name="rating"
+                        starHoverColor="#88BDEE"
+                        starDimension="18px"
+                      />
+
+                      <MultiLineInput
+                        value={feedback.comment}
+                        onChange={() => {}}
+                        placeholder="Feedback"
+                        isError={false}
+                        errorText="Required"
+                        disabled
+                      />
+                    </Flex>
+                    <Divider mt={4} />
+                  </>
+                ))}
               </>
-            ))}
+            ) : (
+              <Text
+                mt="18px"
+                color="#122224"
+                fontWeight="bold"
+                fontSize="16px"
+                lineHeight="20px"
+              >
+                Unable to decrpyt review
+              </Text>
+            )}
           </Flex>
         </DrawerContent>
       </Drawer>
