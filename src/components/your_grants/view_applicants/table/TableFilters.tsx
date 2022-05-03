@@ -11,6 +11,7 @@ enum TableFilters {
   'approved' = 2,
   'rejected' = 3,
   'completed' = 4,
+  'assigned' = 5,
 }
 
 enum TableFilterNames {
@@ -20,6 +21,7 @@ enum TableFilterNames {
   'approved' = 'Approved',
   'rejected' = 'Rejected',
   'completed' = 'Closed',
+  'assigned' = 'Assigned to review',
 }
 
 export { TableFilters, TableFilterNames };

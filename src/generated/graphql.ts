@@ -255,12 +255,15 @@ export type FundsTransfer_Filter = {
   application_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
   application_starts_with?: InputMaybe<Scalars['String']>;
   application_starts_with_nocase?: InputMaybe<Scalars['String']>;
+<<<<<<< HEAD
   asset?: InputMaybe<Scalars['Bytes']>;
   asset_contains?: InputMaybe<Scalars['Bytes']>;
   asset_in?: InputMaybe<Array<Scalars['Bytes']>>;
   asset_not?: InputMaybe<Scalars['Bytes']>;
   asset_not_contains?: InputMaybe<Scalars['Bytes']>;
   asset_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+=======
+>>>>>>> master
   createdAtS?: InputMaybe<Scalars['Int']>;
   createdAtS_gt?: InputMaybe<Scalars['Int']>;
   createdAtS_gte?: InputMaybe<Scalars['Int']>;
@@ -317,6 +320,7 @@ export type FundsTransfer_Filter = {
   milestone_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
   milestone_starts_with?: InputMaybe<Scalars['String']>;
   milestone_starts_with_nocase?: InputMaybe<Scalars['String']>;
+<<<<<<< HEAD
   review?: InputMaybe<Scalars['String']>;
   review_contains?: InputMaybe<Scalars['String']>;
   review_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -337,6 +341,8 @@ export type FundsTransfer_Filter = {
   review_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
   review_starts_with?: InputMaybe<Scalars['String']>;
   review_starts_with_nocase?: InputMaybe<Scalars['String']>;
+=======
+>>>>>>> master
   sender?: InputMaybe<Scalars['Bytes']>;
   sender_contains?: InputMaybe<Scalars['Bytes']>;
   sender_in?: InputMaybe<Array<Scalars['Bytes']>>;
