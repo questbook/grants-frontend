@@ -238,7 +238,9 @@ function Sidebar({
         rubric={applicationData?.grant.rubric}
       />
 
-      <Box mt={8} />
+      {!applicationData?.reviews || applicationData?.reviews.length === 0 ? null : (
+        <Box mt={8} />
+      )}
 
       <Flex
         bg="white"
