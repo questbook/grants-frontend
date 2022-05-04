@@ -37,7 +37,7 @@ export default function useMarkReviewPaymentDone(
   const currentChainId = useChainId();
 
   useEffect(() => {
-    console.log(totalAmount);
+    // console.log(totalAmount);
     if (!totalAmount) {
       setError(undefined);
       setIncorrectNetwork(false);
@@ -59,10 +59,10 @@ export default function useMarkReviewPaymentDone(
     if (error) return;
     if (loading) return;
 
-    console.log('YES');
+    // console.log('YES');
 
     async function markAsDone() {
-      console.log('YES2');
+      // console.log('YES2');
 
       setLoading(true);
       try {

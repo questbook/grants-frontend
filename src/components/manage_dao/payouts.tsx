@@ -38,7 +38,6 @@ import { ApiClientsContext } from '../../../pages/_app';
 function Payouts() {
   const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
   const [applications, setApplications] = React.useState<any>([]);
-  const [applicationsId, setApplicationsId] = React.useState<any>([]);
   const [outstandingReviews, setOutstandingReviews] = React.useState<any>([]);
   const [reviewers, setReviewers] = React.useState<any>([]);
 
@@ -94,12 +93,6 @@ function Payouts() {
 
     console.log(applications);
 
-    if (applicationsId.length === 0 && applications.length !== 0) {
-      applications.forEach((app: any) => setApplicationsId((array: any) => [...array, app.id]));
-    }
-
-    console.log(applicationsId);
-
     if (applications.length !== 0 && reviewers.length === 0) {
       applications.forEach(
         (app: any) => app.reviewers.length !== 0
@@ -113,13 +106,13 @@ function Payouts() {
     if (reviewers.length !== 0 && outstandingReviews.length === 0) {
       reviewers.forEach((reviewer: any) =>
         reviewer.outstandingReviewIds.length !== 0
-        && reviewer.outstandingReviewIds.forEach((id: any) => setOutstandingReviews((array: any) => [...array, id]))
+        && reviewer.outstandingReviewIds.filter((id: any) => setOutstandingReviews((array: any) => [...array, id]))
       )
     }
 
     console.log(outstandingReviews)
 
-  }, [grantsData, applications, applicationsId, reviewers, outstandingReviews]);
+  }, [grantsData, applications, reviewers, outstandingReviews]);
 
   const historyTablePlaceholders = [
     {
@@ -466,7 +459,7 @@ function Payouts() {
 
                               <PayoutModalContent
                                 workspaceId={workspace?.id}
-                                applicationsId={applicationsId}
+                                applications={applications}
                                 reviewIds={
                                       selectedData?.outstandingReviewIds
                                     }

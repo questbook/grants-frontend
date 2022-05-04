@@ -42,7 +42,7 @@ import InfoToast from '../ui/infoToast';
 interface Props {
   workspaceId: string;
   reviewIds: string[],
-  applicationsId: string[],
+  applications: string[],
   payMode: number;
   setPayMode: React.Dispatch<React.SetStateAction<number>>;
   reviewerAddress: string | any;
@@ -55,7 +55,7 @@ interface Props {
 
 function PayoutModalContent({
   workspaceId,
-  applicationsId,
+  applications,
   reviewIds,
   payMode,
   setPayMode,
@@ -75,8 +75,6 @@ function PayoutModalContent({
   const toast = useToast();
   const toastRef = useRef<ToastId>();
 
-  console.log(applicationsId);
-
   const supportedCurrencies = Object.keys(
     CHAIN_INFO[currentChain].supportedCurrencies,
   )
@@ -92,6 +90,32 @@ function PayoutModalContent({
   const [transactionHash, setTransactionHash] = useState<string>();
   // const [submitPayment, setSubmitPayment] = useState<boolean>(false)
   const [submitMarkDone, setSubmitMarkDone] = useState<boolean>(false);
+  const [applicationsId, setApplicationsId] = React.useState<any>([]);
+  const [applicationIdsToPay, setApplicationIdsToPay] = React.useState<any>([]);
+  const [reviewIdsToPay, setReviewIdsToPay] = React.useState<any>([]);
+
+  useEffect(() => {
+
+    if (applicationsId.length === 0) {
+    applications.forEach((app: any) =>
+      app.reviewers.forEach((reviewer: any) =>
+        reviewer.actorId === (reviewerAddress) && setApplicationsId((array: any) => [...array, app.id])
+    )
+    )
+  }
+
+  console.log(applicationsId)
+
+  if (applicationIdsToPay.length !== reviewsToPay){
+  setApplicationIdsToPay(applicationsId.slice(0, reviewsToPay));
+  console.log(applicationIdsToPay.length)
+}
+if (reviewIdsToPay.length !== reviewsToPay){
+  setReviewIdsToPay(reviewIds.slice(0, reviewsToPay));
+  console.log(reviewIdsToPay.length)
+}
+
+}, [applications, applicationsId, reviewsToPay, applicationIdsToPay, reviewIdsToPay])
 
   async function setTransactionHashFromClipboard() {
     try {

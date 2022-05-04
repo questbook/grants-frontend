@@ -113,7 +113,13 @@ function Members({ workspaceMembers }: Props) {
                     </Flex>
                   </Tooltip>
                 ) : (
-                  data.email
+                  <Text
+                    alignSelf="center"
+                    textAlign="center"
+                    variant="tableBody"
+                  >
+                  {data.email}
+                  </Text>
                 )}
                 <Tooltip label={data.address}>
                   <Flex alignItems="center">
