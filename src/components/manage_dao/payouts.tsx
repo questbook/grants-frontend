@@ -39,6 +39,7 @@ function Payouts() {
   const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
   const [applications, setApplications] = React.useState<any>([]);
   const [applicationsId, setApplicationsId] = React.useState<any>([]);
+  const [outstandingReviews, setOutstandingReviews] = React.useState<any>([]);
 
   const { data: grantsData } = useGetDaoGrantsQuery({
     client:
@@ -83,10 +84,11 @@ function Payouts() {
 
   React.useEffect(() => {
     if (applications.length === 0 && grantsData) {
-      grantsData!.grants.filter(
-        (grant) => grant.applications[0].reviewers.length !== 0
-          && setApplications((array: any) => [...array, grant.applications[0]]),
-      );
+      grantsData!.grants.forEach(
+        (grant) => grant.applications.filter((app: any) => app.reviewers.length !== 0
+          && setApplications((array: any) => [...array, app])
+      )
+    );
     }
 
     console.log(applications);
@@ -96,6 +98,14 @@ function Payouts() {
     }
 
     console.log(applicationsId);
+
+    // if (applications.length !== 0 && outstandingReviews.length === 0) {
+    //   applications.forEach(
+    //     (app: any) => app.reviewers.length !== 0
+    //         && console.log(app.reviewers)) }
+    //
+    //   console.log(outstandingReviews);
+
   }, [grantsData, applications, applicationsId]);
 
   const historyTablePlaceholders = [
@@ -140,6 +150,8 @@ function Payouts() {
     if (payMode === -1) {
       setPaymentOutside(false);
     }
+
+    console.log(grantsData)
   }, [payMode]);
 
   return (
@@ -176,9 +188,8 @@ function Payouts() {
               {' '}
               {applications.length === 0
                 ? 0
-                : applications.map(
-                  (app: any) => app.reviewers.length !== 0
-                      && app.reviewers.map(
+                : applications.forEach(
+                  (app: any) => app.reviewers.map(
                         (reviewer: any) => reviewer.outstandingReviewIds.length !== 0
                           && `(${reviewer.outstandingReviewIds.length})`,
                       ),
@@ -231,7 +242,7 @@ function Payouts() {
                   ? 0
                   : applications.map(
                     (app: any) => app.reviewers.length !== 0
-                        && app.reviewers.map(
+                        && app.reviewers.filter(
                           (reviewer: any, index: any) => reviewer.outstandingReviewIds.length !== 0
                           && (
                           <Flex>
