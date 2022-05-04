@@ -40,6 +40,7 @@ function Payouts() {
   const [applications, setApplications] = React.useState<any>([]);
   const [applicationsId, setApplicationsId] = React.useState<any>([]);
   const [outstandingReviews, setOutstandingReviews] = React.useState<any>([]);
+  const [reviewers, setReviewers] = React.useState<any>([]);
 
   const { data: grantsData } = useGetDaoGrantsQuery({
     client:
@@ -85,7 +86,7 @@ function Payouts() {
   React.useEffect(() => {
     if (applications.length === 0 && grantsData) {
       grantsData!.grants.forEach(
-        (grant) => grant.applications.filter((app: any) => app.reviewers.length !== 0
+        (grant) => grant.applications.forEach((app: any) => app.reviewers.length !== 0
           && setApplications((array: any) => [...array, app])
       )
     );
@@ -99,14 +100,26 @@ function Payouts() {
 
     console.log(applicationsId);
 
-    // if (applications.length !== 0 && outstandingReviews.length === 0) {
-    //   applications.forEach(
-    //     (app: any) => app.reviewers.length !== 0
-    //         && console.log(app.reviewers)) }
-    //
-    //   console.log(outstandingReviews);
+    if (applications.length !== 0 && reviewers.length === 0) {
+      applications.forEach(
+        (app: any) => app.reviewers.length !== 0
+            && app.reviewers.forEach(
+              (reviewer: any) => setReviewers((array: any) => [...array, reviewer]))
+            )
+          }
 
-  }, [grantsData, applications, applicationsId]);
+      console.log(reviewers);
+
+    if (reviewers.length !== 0 && outstandingReviews.length === 0) {
+      reviewers.forEach((reviewer: any) =>
+        reviewer.outstandingReviewIds.length !== 0
+        && reviewer.outstandingReviewIds.forEach((id: any) => setOutstandingReviews((array: any) => [...array, id]))
+      )
+    }
+
+    console.log(outstandingReviews)
+
+  }, [grantsData, applications, applicationsId, reviewers, outstandingReviews]);
 
   const historyTablePlaceholders = [
     {
@@ -186,14 +199,9 @@ function Payouts() {
             >
               Outstanding
               {' '}
-              {applications.length === 0
+              {outstandingReviews.length === 0
                 ? 0
-                : applications.forEach(
-                  (app: any) => app.reviewers.map(
-                        (reviewer: any) => reviewer.outstandingReviewIds.length !== 0
-                          && `(${reviewer.outstandingReviewIds.length})`,
-                      ),
-                )}
+                : `(${outstandingReviews.length})`}
             </Tab>
             <Tab
               borderColor="#AAAAAA"
@@ -238,12 +246,9 @@ function Payouts() {
                 border="1px solid #D0D3D3"
                 borderRadius={4}
               >
-                {applications.length === 0
+                {reviewers.length === 0
                   ? 0
-                  : applications.map(
-                    (app: any) => app.reviewers.length !== 0
-                        && app.reviewers.filter(
-                          (reviewer: any, index: any) => reviewer.outstandingReviewIds.length !== 0
+                  : reviewers.map((reviewer: any, index: any) => reviewer.outstandingReviewIds.length !== 0
                           && (
                           <Flex>
                             <Grid
@@ -479,8 +484,7 @@ function Payouts() {
                             </Modal>
                           </Flex>
                           ),
-                        ),
-                  )}
+                        )}
               </Flex>
             </TabPanel>
             <TabPanel>
