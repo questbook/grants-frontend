@@ -17,7 +17,7 @@ import InfoToast from 'src/components/ui/infoToast';
 import Modal from 'src/components/ui/modal';
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent';
 import useArchiveGrant from 'src/hooks/useArchiveGrant';
-import RubrikDrawer from 'src/components/your_grants/rubrikDrawer';
+import RubricDrawer from 'src/components/your_grants/rubricDrawer';
 import { formatAmount } from '../../../src/utils/formattingUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Table from '../../../src/components/your_grants/view_applicants/table';
@@ -40,9 +40,9 @@ function ViewApplicants() {
   const router = useRouter();
   const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
 
-  const [rubrikDrawerOpen, setRubrikDrawerOpen] = useState(false);
-  const [rubrikEditAllowed] = useState(true);
-  const [rubriks, setRubriks] = useState<any[]>([
+  const [rubricDrawerOpen, setRubricDrawerOpen] = useState(false);
+  const [rubricEditAllowed] = useState(true);
+  const [rubrics, setRubrics] = useState<any[]>([
     {
       name: '',
       nameError: false,
@@ -194,17 +194,17 @@ function ViewApplicants() {
         <Breadcrumbs path={['My Grants', 'View Applicants']} />
 
         <Box pos="absolute" right="40px" top="48px">
-          <Button variant="primary" onClick={() => setRubrikDrawerOpen(true)}>
-            Setup Evaluation Rubrik
+          <Button variant="primary" onClick={() => setRubricDrawerOpen(true)}>
+            Setup Evaluation Rubric
           </Button>
         </Box>
 
-        <RubrikDrawer
-          rubrikDrawerOpen={rubrikDrawerOpen}
-          setRubrikDrawerOpen={setRubrikDrawerOpen}
-          rubrikEditAllowed={rubrikEditAllowed}
-          rubriks={rubriks}
-          setRubriks={setRubriks}
+        <RubricDrawer
+          rubricDrawerOpen={rubricDrawerOpen}
+          setRubricDrawerOpen={setRubricDrawerOpen}
+          rubricEditAllowed={rubricEditAllowed}
+          rubrics={rubrics}
+          setRubrics={setRubrics}
         />
 
         <Table

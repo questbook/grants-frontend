@@ -16,7 +16,7 @@ import Modal from 'src/components/ui/modal';
 import Badge from './badge';
 import YourGrantMenu from './menu';
 import ChangeAccessibilityModalContent from './changeAccessibilityModalContent';
-import RubrikDrawer from '../rubrikDrawer';
+import RubricDrawer from '../rubricDrawer';
 
 interface YourGrantCardProps {
   grantID: string;
@@ -72,9 +72,9 @@ function YourGrantCard({
   const [isArchiveModalOpen, setIsArchiveModalOpen] = React.useState(false);
   const [isPublishGrantModalOpen, setIsPublishGrantModalOpen] = React.useState(false);
 
-  const [rubrikDrawerOpen, setRubrikDrawerOpen] = React.useState(false);
-  const [rubrikEditAllowed] = React.useState(true);
-  const [rubriks, setRubriks] = useState<any[]>([
+  const [rubricDrawerOpen, setRubricDrawerOpen] = React.useState(false);
+  const [rubricEditAllowed] = React.useState(true);
+  const [rubrics, setRubrics] = useState<any[]>([
     {
       name: '',
       nameError: false,
@@ -165,7 +165,7 @@ function YourGrantCard({
                 onViewApplicantsClick={onViewApplicantsClick}
                 onEditClick={onEditClick}
                 isAdmin={isAdmin}
-                setRubrikDrawerOpen={setRubrikDrawerOpen}
+                setRubricDrawerOpen={setRubricDrawerOpen}
               />
               {acceptingApplications && isAdmin && (
                 <Button
@@ -244,12 +244,12 @@ function YourGrantCard({
         />
       </Modal>
 
-      <RubrikDrawer
-        rubrikDrawerOpen={rubrikDrawerOpen}
-        setRubrikDrawerOpen={setRubrikDrawerOpen}
-        rubrikEditAllowed={rubrikEditAllowed}
-        rubriks={rubriks}
-        setRubriks={setRubriks}
+      <RubricDrawer
+        rubricDrawerOpen={rubricDrawerOpen}
+        setRubricDrawerOpen={setRubricDrawerOpen}
+        rubricEditAllowed={rubricEditAllowed}
+        rubrics={rubrics}
+        setRubrics={setRubrics}
       />
     </>
   );

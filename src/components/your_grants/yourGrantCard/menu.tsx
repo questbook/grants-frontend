@@ -20,7 +20,7 @@ interface Props {
   onViewApplicantsClick: (() => void) | undefined;
   onEditClick: (() => void) | undefined;
   isAdmin: boolean;
-  setRubrikDrawerOpen: ((arg0: boolean) => void);
+  setRubricDrawerOpen: ((arg0: boolean) => void);
 }
 
 interface MenuItemProps {
@@ -40,7 +40,7 @@ function YourGrantMenu({
   onViewApplicantsClick,
   onEditClick,
   isAdmin,
-  setRubrikDrawerOpen,
+  setRubricDrawerOpen,
 }: Props) {
   const [copied, setCopied] = React.useState(false);
 
@@ -65,7 +65,7 @@ function YourGrantMenu({
       iconWidth: '24px',
       iconHeight: '24px',
       text: 'Setup evaluation score',
-      onClick: () => setRubrikDrawerOpen(true),
+      onClick: () => setRubricDrawerOpen(true),
     },
   ];
   const archivedItems: MenuItemProps[] = [

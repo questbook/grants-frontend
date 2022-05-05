@@ -115,8 +115,8 @@ function Form({
     setDetailsRequired(newDetailsRequired);
   };
 
-  const [rubrikRequired, setRubrikRequired] = useState(false);
-  const [rubriks, setRubriks] = useState<any>([
+  const [rubricRequired, setRubricRequired] = useState(false);
+  const [rubrics, setRubrics] = useState<any>([
     {
       name: '',
       nameError: false,
@@ -191,20 +191,20 @@ function Form({
       error = true;
     }
 
-    if (rubrikRequired) {
-      const errorCheckedRubriks = rubriks.map((rubrik: any) => {
-        const errorCheckedRubrik = { ...rubrik };
-        if (rubrik.name.length <= 0) {
-          errorCheckedRubrik.nameError = true;
+    if (rubricRequired) {
+      const errorCheckedRubrics = rubrics.map((rubric: any) => {
+        const errorCheckedRubric = { ...rubric };
+        if (rubric.name.length <= 0) {
+          errorCheckedRubric.nameError = true;
           error = true;
         }
-        if (rubrik.description.length <= 0) {
-          errorCheckedRubrik.descriptionError = true;
+        if (rubric.description.length <= 0) {
+          errorCheckedRubric.descriptionError = true;
           error = true;
         }
-        return errorCheckedRubrik;
+        return errorCheckedRubric;
       });
-      setRubriks(errorCheckedRubriks);
+      setRubrics(errorCheckedRubrics);
     }
 
     if (!error) {
@@ -333,10 +333,10 @@ function Form({
         // setExtraFieldError={setExtraFieldError}
         multipleMilestones={multipleMilestones}
         setMultipleMilestones={setMultipleMilestones}
-        rubrikRequired={rubrikRequired}
-        setRubrikRequired={setRubrikRequired}
-        rubriks={rubriks}
-        setRubriks={setRubriks}
+        rubricRequired={rubricRequired}
+        setRubricRequired={setRubricRequired}
+        rubrics={rubrics}
+        setRubrics={setRubrics}
       />
 
       <Text

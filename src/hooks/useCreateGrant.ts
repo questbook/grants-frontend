@@ -87,9 +87,24 @@ export default function useCreateGrant(
           fields: data.fields,
           grantManagers: data.grantManagers.length ? data.grantManagers : [accountData!.address],
         });
+
+        console.log('ipfsHash', ipfsHash);
+
         if (!ipfsHash) {
           throw new Error('Error validating grant data');
         }
+
+        const {
+          data: { ipfsHash: rubricHash },
+        } = await validatorApi.validateRubricSet({
+          rubric: data.rubric,
+        });
+
+        if (!rubricHash) {
+          throw new Error('Error validating rubric data');
+        }
+
+        console.log('rubricHash', rubricHash);
 
         // console.log(workspaceId ?? Number(workspace?.id).toString());
         // console.log('ipfsHash', ipfsHash);
@@ -101,6 +116,7 @@ export default function useCreateGrant(
         const createGrantTransaction = await grantContract.createGrant(
           workspaceId ?? Number(workspace?.id).toString(),
           ipfsHash,
+          rubricHash,
           WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
           APPLICATION_REGISTRY_ADDRESS[currentChainId!],
         );
