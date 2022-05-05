@@ -127,7 +127,7 @@ function Content({
                 </Text>
               </Flex>
               <Flex justifyContent="center" flex={tableHeadersFlexReviewer[4]}>
-                {getStatus(item.status)}
+                { item.reviewer !== 0 && item.status === 0 ? getStatus(5) : getStatus(item.status)}
               </Flex>
               <Flex
                 display="flex"
@@ -271,41 +271,44 @@ function Content({
                 {item.funding_asked.symbol}
               </Text>
             </Flex>
-
-            <Text
-              justifyContent="center"
-              color="#717A7C"
-              variant="tableBody"
-              flex={tableHeadersFlex[3]}
-              textAlign="center"
-            >
+            <Flex justifyContent="center" flex={tableHeadersFlex[3]}>
 
               <Popover
                 closeOnBlur
                 isLazy
                 placement="right"
               >
-                <PopoverTrigger>
-                  <Text>{item.reviewers.length}</Text>
-                </PopoverTrigger>
-                {item.reviewers.map((reviewer) => (
 
-                  <PopoverContent height="150px" width="inherit" right="60px" top="60px">
-                    <PopoverHeader>Reviewer</PopoverHeader>
+                <PopoverTrigger>
+
+                  <Text
+                    color="#717A7C"
+                    variant="tableBody"
+                    textAlign="center"
+                  >
+                    {item.reviewers.length}
+
+                  </Text>
+
+                </PopoverTrigger>
+                <PopoverContent height="150px" width="inherit" right="3px" top="60px">
+                  <PopoverHeader>Reviewer</PopoverHeader>
+
+                  {item.reviewers.map((data) => (
                     <PopoverBody overflowX="hidden" overflowY="auto">
                       <SimpleGrid columns={1} spacing={3}>
-                        <Text>{reviewer.email}</Text>
+                        <Text>{data.email}</Text>
                       </SimpleGrid>
                     </PopoverBody>
-                  </PopoverContent>
-                ))}
+                  ))}
 
+                </PopoverContent>
               </Popover>
 
-            </Text>
+            </Flex>
 
             <Flex justifyContent="center" flex={tableHeadersFlex[4]}>
-              {getStatus(item.status)}
+              { item.reviewer !== 0 && item.status === 0 ? getStatus(5) : getStatus(item.status)}
             </Flex>
             <Flex justifyContent="center" flex={tableHeadersFlex[5]}>
               {item.sent_on}
