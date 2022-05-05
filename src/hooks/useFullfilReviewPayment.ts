@@ -67,7 +67,7 @@ export default function useFulfillReviewPayment(
 
       setFulfillLoading(true);
       try {
-        const txnApprove = await rewardContract.approve(accountData?.address, totalAmount, {from: accountData?.address});
+        const txnApprove = await rewardContract.approve(applicationReviewerContract.address, totalAmount);
         const approveData = await txnApprove.wait();
 
         console.log(approveData);
@@ -179,5 +179,6 @@ export default function useFulfillReviewPayment(
         .explorer.transactionHash}${fulfillPaymentData?.transactionHash}`
       : '',
     fulfillLoading,
+    error
   ];
 }

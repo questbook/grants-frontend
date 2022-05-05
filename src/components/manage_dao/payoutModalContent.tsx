@@ -156,7 +156,7 @@ function PayoutModalContent({
 
   console.log(txnLink);
 
-  const [fulfillPaymentData, fulfillTxnLink, fulfillLoading] = useFulfillReviewPayment(
+  const [fulfillPaymentData, fulfillTxnLink, fulfillLoading, error] = useFulfillReviewPayment(
     workspaceId,
     reviewIds,
     applicationsId,
@@ -257,9 +257,13 @@ function PayoutModalContent({
           />
         ),
       });
+    } else if (error) {
+      onClose();
+      setTotalAmount('');
+      setSubmitPayment(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [toast, fulfillPaymentData]);
+  }, [toast, fulfillPaymentData, error]);
 
   return (
     <ModalBody>
