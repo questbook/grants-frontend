@@ -224,7 +224,7 @@ export enum FundsTransferType {
   FundsDisbursed = 'funds_disbursed',
   FundsWithdrawn = 'funds_withdrawn',
   ReviewPaymentDone = 'review_payment_done'
-};
+}
 
 export type FundsTransfer_Filter = {
   amount?: InputMaybe<Scalars['BigInt']>;
@@ -1591,6 +1591,8 @@ export type Query = {
   rubrics: Array<Rubric>;
   social?: Maybe<Social>;
   socials: Array<Social>;
+  token?: Maybe<Token>;
+  tokens: Array<Token>;
   workspace?: Maybe<Workspace>;
   workspaceMember?: Maybe<WorkspaceMember>;
   workspaceMembers: Array<WorkspaceMember>;
@@ -1891,6 +1893,24 @@ export type QuerySocialsArgs = {
 };
 
 
+export type QueryTokenArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryTokensArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Token_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Token_Filter>;
+};
+
+
 export type QueryWorkspaceArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
@@ -2072,6 +2092,7 @@ export type Reward = {
   asset: Scalars['Bytes'];
   committed: Scalars['BigInt'];
   id: Scalars['ID'];
+  token?: Maybe<Token>;
 };
 
 export type Reward_Filter = {
@@ -2097,12 +2118,33 @@ export type Reward_Filter = {
   id_lte?: InputMaybe<Scalars['ID']>;
   id_not?: InputMaybe<Scalars['ID']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  token?: InputMaybe<Scalars['String']>;
+  token_contains?: InputMaybe<Scalars['String']>;
+  token_contains_nocase?: InputMaybe<Scalars['String']>;
+  token_ends_with?: InputMaybe<Scalars['String']>;
+  token_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  token_gt?: InputMaybe<Scalars['String']>;
+  token_gte?: InputMaybe<Scalars['String']>;
+  token_in?: InputMaybe<Array<Scalars['String']>>;
+  token_lt?: InputMaybe<Scalars['String']>;
+  token_lte?: InputMaybe<Scalars['String']>;
+  token_not?: InputMaybe<Scalars['String']>;
+  token_not_contains?: InputMaybe<Scalars['String']>;
+  token_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  token_not_ends_with?: InputMaybe<Scalars['String']>;
+  token_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  token_not_in?: InputMaybe<Array<Scalars['String']>>;
+  token_not_starts_with?: InputMaybe<Scalars['String']>;
+  token_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  token_starts_with?: InputMaybe<Scalars['String']>;
+  token_starts_with_nocase?: InputMaybe<Scalars['String']>;
 };
 
 export enum Reward_OrderBy {
   Asset = 'asset',
   Committed = 'committed',
-  Id = 'id'
+  Id = 'id',
+  Token = 'token'
 }
 
 export type Rubric = {
@@ -2370,6 +2412,8 @@ export type Subscription = {
   rubrics: Array<Rubric>;
   social?: Maybe<Social>;
   socials: Array<Social>;
+  token?: Maybe<Token>;
+  tokens: Array<Token>;
   workspace?: Maybe<Workspace>;
   workspaceMember?: Maybe<WorkspaceMember>;
   workspaceMembers: Array<WorkspaceMember>;
@@ -2670,6 +2714,24 @@ export type SubscriptionSocialsArgs = {
 };
 
 
+export type SubscriptionTokenArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionTokensArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Token_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Token_Filter>;
+};
+
+
 export type SubscriptionWorkspaceArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
@@ -2715,6 +2777,110 @@ export enum SupportedNetwork {
   Chain_1666700000 = 'chain_1666700000'
 }
 
+export type Token = {
+  __typename?: 'Token';
+  address: Scalars['Bytes'];
+  decimal: Scalars['Int'];
+  iconHash: Scalars['String'];
+  id: Scalars['ID'];
+  label: Scalars['String'];
+  workspace: Workspace;
+};
+
+export type Token_Filter = {
+  address?: InputMaybe<Scalars['Bytes']>;
+  address_contains?: InputMaybe<Scalars['Bytes']>;
+  address_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  address_not?: InputMaybe<Scalars['Bytes']>;
+  address_not_contains?: InputMaybe<Scalars['Bytes']>;
+  address_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  decimal?: InputMaybe<Scalars['Int']>;
+  decimal_gt?: InputMaybe<Scalars['Int']>;
+  decimal_gte?: InputMaybe<Scalars['Int']>;
+  decimal_in?: InputMaybe<Array<Scalars['Int']>>;
+  decimal_lt?: InputMaybe<Scalars['Int']>;
+  decimal_lte?: InputMaybe<Scalars['Int']>;
+  decimal_not?: InputMaybe<Scalars['Int']>;
+  decimal_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  iconHash?: InputMaybe<Scalars['String']>;
+  iconHash_contains?: InputMaybe<Scalars['String']>;
+  iconHash_contains_nocase?: InputMaybe<Scalars['String']>;
+  iconHash_ends_with?: InputMaybe<Scalars['String']>;
+  iconHash_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  iconHash_gt?: InputMaybe<Scalars['String']>;
+  iconHash_gte?: InputMaybe<Scalars['String']>;
+  iconHash_in?: InputMaybe<Array<Scalars['String']>>;
+  iconHash_lt?: InputMaybe<Scalars['String']>;
+  iconHash_lte?: InputMaybe<Scalars['String']>;
+  iconHash_not?: InputMaybe<Scalars['String']>;
+  iconHash_not_contains?: InputMaybe<Scalars['String']>;
+  iconHash_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  iconHash_not_ends_with?: InputMaybe<Scalars['String']>;
+  iconHash_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  iconHash_not_in?: InputMaybe<Array<Scalars['String']>>;
+  iconHash_not_starts_with?: InputMaybe<Scalars['String']>;
+  iconHash_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  iconHash_starts_with?: InputMaybe<Scalars['String']>;
+  iconHash_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  label?: InputMaybe<Scalars['String']>;
+  label_contains?: InputMaybe<Scalars['String']>;
+  label_contains_nocase?: InputMaybe<Scalars['String']>;
+  label_ends_with?: InputMaybe<Scalars['String']>;
+  label_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  label_gt?: InputMaybe<Scalars['String']>;
+  label_gte?: InputMaybe<Scalars['String']>;
+  label_in?: InputMaybe<Array<Scalars['String']>>;
+  label_lt?: InputMaybe<Scalars['String']>;
+  label_lte?: InputMaybe<Scalars['String']>;
+  label_not?: InputMaybe<Scalars['String']>;
+  label_not_contains?: InputMaybe<Scalars['String']>;
+  label_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  label_not_ends_with?: InputMaybe<Scalars['String']>;
+  label_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  label_not_in?: InputMaybe<Array<Scalars['String']>>;
+  label_not_starts_with?: InputMaybe<Scalars['String']>;
+  label_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  label_starts_with?: InputMaybe<Scalars['String']>;
+  label_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  workspace?: InputMaybe<Scalars['String']>;
+  workspace_contains?: InputMaybe<Scalars['String']>;
+  workspace_contains_nocase?: InputMaybe<Scalars['String']>;
+  workspace_ends_with?: InputMaybe<Scalars['String']>;
+  workspace_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  workspace_gt?: InputMaybe<Scalars['String']>;
+  workspace_gte?: InputMaybe<Scalars['String']>;
+  workspace_in?: InputMaybe<Array<Scalars['String']>>;
+  workspace_lt?: InputMaybe<Scalars['String']>;
+  workspace_lte?: InputMaybe<Scalars['String']>;
+  workspace_not?: InputMaybe<Scalars['String']>;
+  workspace_not_contains?: InputMaybe<Scalars['String']>;
+  workspace_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  workspace_not_ends_with?: InputMaybe<Scalars['String']>;
+  workspace_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  workspace_not_in?: InputMaybe<Array<Scalars['String']>>;
+  workspace_not_starts_with?: InputMaybe<Scalars['String']>;
+  workspace_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  workspace_starts_with?: InputMaybe<Scalars['String']>;
+  workspace_starts_with_nocase?: InputMaybe<Scalars['String']>;
+};
+
+export enum Token_OrderBy {
+  Address = 'address',
+  Decimal = 'decimal',
+  IconHash = 'iconHash',
+  Id = 'id',
+  Label = 'label',
+  Workspace = 'workspace'
+}
+
 /** Schema for a Workspace or DAO */
 export type Workspace = {
   __typename?: 'Workspace';
@@ -2739,6 +2905,8 @@ export type Workspace = {
   supportedNetworks: Array<SupportedNetwork>;
   /** Title of the workspace */
   title: Scalars['String'];
+  /** Custom tokens setup by the workspace */
+  tokens: Array<Token>;
   /** in seconds since epoch */
   updatedAtS: Scalars['Int'];
 };
@@ -2761,6 +2929,16 @@ export type WorkspaceSocialsArgs = {
   orderDirection?: InputMaybe<OrderDirection>;
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<Social_Filter>;
+};
+
+
+/** Schema for a Workspace or DAO */
+export type WorkspaceTokensArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Token_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<Token_Filter>;
 };
 
 export type WorkspaceMember = {
@@ -3096,6 +3274,7 @@ export enum Workspace_OrderBy {
   Socials = 'socials',
   SupportedNetworks = 'supportedNetworks',
   Title = 'title',
+  Tokens = 'tokens',
   UpdatedAtS = 'updatedAtS'
 }
 
@@ -3208,6 +3387,13 @@ export type GetDaoDetailsQueryVariables = Exact<{
 
 
 export type GetDaoDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, socials: Array<{ __typename?: 'Social', name: string, value: string }> } | null, grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
+
+export type GetFundSentForReviewQueryVariables = Exact<{
+  reviewId?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetFundSentForReviewQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', id: string, amount: string, sender: string, to: string, createdAtS: number, type: FundsTransferType, application?: { __typename?: 'GrantApplication', id: string } | null }> };
 
 export type GetFundSentForApplicationQueryVariables = Exact<{
   applicationId?: InputMaybe<Scalars['String']>;
@@ -3893,6 +4079,53 @@ export function useGetDaoDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetDaoDetailsQueryHookResult = ReturnType<typeof useGetDaoDetailsQuery>;
 export type GetDaoDetailsLazyQueryHookResult = ReturnType<typeof useGetDaoDetailsLazyQuery>;
 export type GetDaoDetailsQueryResult = Apollo.QueryResult<GetDaoDetailsQuery, GetDaoDetailsQueryVariables>;
+export const GetFundSentForReviewDocument = gql`
+    query getFundSentForReview($reviewId: String) {
+  fundsTransfers(
+    where: {review: $reviewId}
+    orderBy: createdAtS
+    orderDirection: desc
+  ) {
+    application {
+      id
+    }
+    id
+    amount
+    sender
+    to
+    createdAtS
+    type
+  }
+}
+    `;
+
+/**
+ * __useGetFundSentForReviewQuery__
+ *
+ * To run a query within a React component, call `useGetFundSentForReviewQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFundSentForReviewQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFundSentForReviewQuery({
+ *   variables: {
+ *      reviewId: // value for 'reviewId'
+ *   },
+ * });
+ */
+export function useGetFundSentForReviewQuery(baseOptions?: Apollo.QueryHookOptions<GetFundSentForReviewQuery, GetFundSentForReviewQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFundSentForReviewQuery, GetFundSentForReviewQueryVariables>(GetFundSentForReviewDocument, options);
+      }
+export function useGetFundSentForReviewLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFundSentForReviewQuery, GetFundSentForReviewQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFundSentForReviewQuery, GetFundSentForReviewQueryVariables>(GetFundSentForReviewDocument, options);
+        }
+export type GetFundSentForReviewQueryHookResult = ReturnType<typeof useGetFundSentForReviewQuery>;
+export type GetFundSentForReviewLazyQueryHookResult = ReturnType<typeof useGetFundSentForReviewLazyQuery>;
+export type GetFundSentForReviewQueryResult = Apollo.QueryResult<GetFundSentForReviewQuery, GetFundSentForReviewQueryVariables>;
 export const GetFundSentForApplicationDocument = gql`
     query getFundSentForApplication($applicationId: String) {
   fundsTransfers(

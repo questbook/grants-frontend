@@ -1,0 +1,16 @@
+query getFundSentForReview($reviewId: String) {
+  fundsTransfers(
+      where: {review: $application},
+      orderBy: createdAtS,
+      orderDirection: desc) {
+    application {
+      id
+    },
+    id,
+    amount,
+    sender,
+    to,
+    createdAtS,
+    type
+  }
+}

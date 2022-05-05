@@ -91,8 +91,6 @@ function Payouts() {
     );
     }
 
-    console.log(applications);
-
     if (applications.length !== 0 && reviewers.length === 0) {
       let revs: any = [];
       applications.filter(
@@ -105,15 +103,12 @@ function Payouts() {
       setReviewers(new Set(revs));
       }
 
-        console.log(reviewers);
-
     if (reviewers.length !== 0 && outstandingReviews.length === 0) {
       reviewers.forEach((reviewer: any) =>
         reviewer.outstandingReviewIds.length !== 0
         && reviewer.outstandingReviewIds.forEach((id: any) => setOutstandingReviews((array: any) => [...array, id]))
       )
     }
-    console.log(outstandingReviews)
 
   }, [grantsData, applications, reviewers, outstandingReviews]);
 

@@ -41,8 +41,8 @@ import InfoToast from '../ui/infoToast';
 
 interface Props {
   workspaceId: string;
-  reviewIds: string[],
-  applications: string[],
+  reviewIds: string[];
+  applications: string[];
   payMode: number;
   setPayMode: React.Dispatch<React.SetStateAction<number>>;
   reviewerAddress: string | any;
@@ -76,13 +76,13 @@ function PayoutModalContent({
   const toastRef = useRef<ToastId>();
 
   const supportedCurrencies = Object.keys(
-    CHAIN_INFO[currentChain].supportedCurrencies,
+    CHAIN_INFO[currentChain].supportedCurrencies
   )
     .map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
     .map((currency) => ({ ...currency, id: currency.address }));
 
   // STATES TO FILL WITH FORM INPUTS
-  const [reviewsToPay, setReviewsToPay] = useState<number>();
+  const [reviewsToPay, setReviewsToPay] = useState<number>(0);
   const [amountToPay, setAmountToPay] = useState<number>();
   const [totalAmount, setTotalAmount] = useState<any>(0);
   const [finalAmount, setFinalAmount] = useState<BigNumber>();
@@ -95,27 +95,32 @@ function PayoutModalContent({
   const [reviewIdsToPay, setReviewIdsToPay] = React.useState<any>([]);
 
   useEffect(() => {
-
     if (applicationsId.length === 0) {
-    applications.forEach((app: any) =>
-      app.reviewers.forEach((reviewer: any) =>
-        reviewer.actorId === (reviewerAddress) && setApplicationsId((array: any) => [...array, app.id])
-    )
-    )
+      applications.forEach((app: any) =>
+        app.reviewers.forEach(
+          (reviewer: any) =>
+            reviewer.actorId === reviewerAddress &&
+            setApplicationsId((array: any) => [...array, app.id])
+        )
+      );
+    }
+  }, [applications, applicationsId]);
+
+  useEffect (() => {
+    if (reviewsToPay !== 0 ) {
+      if (reviewsToPay !== applicationIdsToPay.length){
+        setApplicationIdsToPay(applicationsId.slice(0, reviewsToPay));
+      }
+
+      if (reviewsToPay !== reviewIdsToPay.length){
+      setReviewIdsToPay(reviewIds.slice(0, reviewsToPay));
+      }
   }
 
-  console.log(applicationsId)
-
-  if (applicationIdsToPay.length !== reviewsToPay){
-  setApplicationIdsToPay(applicationsId.slice(0, reviewsToPay));
   console.log(applicationIdsToPay.length)
-}
-if (reviewIdsToPay.length !== reviewsToPay){
-  setReviewIdsToPay(reviewIds.slice(0, reviewsToPay));
   console.log(reviewIdsToPay.length)
-}
 
-}, [applications, applicationsId, reviewsToPay, applicationIdsToPay, reviewIdsToPay])
+  }, [reviewsToPay])
 
   async function setTransactionHashFromClipboard() {
     try {
@@ -128,10 +133,10 @@ if (reviewIdsToPay.length !== reviewsToPay){
   }
 
   const [reviewCurrency, setReviewCurrency] = useState(
-    supportedCurrencies[0].label,
+    supportedCurrencies[0].label
   );
   const [reviewCurrencyAddress, setReviewCurrencyAddress] = useState(
-    supportedCurrencies[0].address,
+    supportedCurrencies[0].address
   );
 
   // STATES TO FILL WITH ETH HOOKS
@@ -146,7 +151,7 @@ if (reviewIdsToPay.length !== reviewsToPay){
     submitMarkDone,
     reviewerAddress,
     reviewCurrencyAddress,
-    transactionHash,
+    transactionHash
   );
 
   console.log(txnLink);
@@ -162,7 +167,7 @@ if (reviewIdsToPay.length !== reviewsToPay){
   useEffect(() => {
     if (currentChain) {
       const currencies = Object.keys(
-        CHAIN_INFO[currentChain].supportedCurrencies,
+        CHAIN_INFO[currentChain].supportedCurrencies
       )
         .map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
         .map((currency) => ({ ...currency, id: currency.address }));
@@ -183,18 +188,21 @@ if (reviewIdsToPay.length !== reviewsToPay){
     // eslint-disable-next-line wrap-iife
     // eslint-disable-next-line func-names
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    (async function () {
+    async function getBalance () {
       try {
         const tempAddress = await signerStates.data?.getAddress();
         const tempWalletBalance = await rewardAssetContract.balanceOf(
-          tempAddress,
+          tempAddress
         );
         setWalletBalance(tempWalletBalance);
+        console.log("YESS")
       } catch {
         // eslint-disable-next-line no-console
         console.error('could not');
       }
-    });
+    };
+
+    getBalance();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalAmount]);
 
@@ -237,8 +245,7 @@ if (reviewIdsToPay.length !== reviewsToPay){
                 Address:
               </Heading>
               <Text fontSize="0.875rem">
-                {trimAddress(reviewerAddress, 8)}
-                {' '}
+                {trimAddress(reviewerAddress, 8)}{' '}
                 <IconButton
                   alignItems="center"
                   justifyItems="center"
@@ -247,7 +254,7 @@ if (reviewIdsToPay.length !== reviewsToPay){
                   variant="ghost"
                   _hover={{}}
                   _active={{}}
-                  icon={(
+                  icon={
                     <Image
                       src={
                         !hasCopied
@@ -255,7 +262,7 @@ if (reviewIdsToPay.length !== reviewsToPay){
                           : '/ui_icons/copy/active.svg'
                       }
                     />
-                  )}
+                  }
                   onClick={() => onCopy()}
                 />
               </Text>
@@ -269,11 +276,13 @@ if (reviewIdsToPay.length !== reviewsToPay){
                   pr="4.5rem"
                   placeholder="Enter number of reviews"
                   min={1}
-                  max={reviews}
+                  max={reviewIds.length}
                   isInvalid={
                     (reviewsToPay as any) > reviews || (reviewsToPay as any) < 1
                   }
-                  onChange={(e) => setReviewsToPay(parseInt(e.target.value, 10))}
+                  onChange={(e) =>
+                    setReviewsToPay(parseInt(e.target.value, 10))
+                  }
                   value={reviewsToPay}
                   h={12}
                   type="number"
@@ -291,11 +300,11 @@ if (reviewIdsToPay.length !== reviewsToPay){
                   </Button>
                 </InputRightElement>
               </InputGroup>
-              <Text fontSize="0.75rem">
+              <Text fontSize="0.75rem" color="red" fontWeight="bold">
                 {(reviewsToPay as any) > reviews
                   ? `You can not pay more than ${reviews} reviews`
-                  : (reviewsToPay as any) < 1
-                    && 'You need to pay at least 1 review'}
+                  : (reviewsToPay as any) < 1 &&
+                    'You need to pay at least 1 review'}
               </Text>
             </Flex>
             <Flex direction="row">
@@ -357,23 +366,19 @@ if (reviewIdsToPay.length !== reviewsToPay){
                         color="black"
                         size="sm"
                       >
-                        {totalAmount}
-                        {' '}
-                        {reviewCurrency}
+                        {totalAmount} {reviewCurrency}
                       </Text>
                     </InputRightElement>
                   </InputGroup>
 
                   <Text mt="0.75rem" color="#AAAAAA">
-                    Wallet Balance
-                    {' '}
+                    Wallet Balance{' '}
                     <Text
                       color="#AAAAAA"
                       display="inline-block"
                       fontWeight="bold"
                     >
-                      {`${formatAmount(walletBalance.toString())}`}
-                      {' '}
+                      {`${formatAmount(walletBalance.toString())}`}{' '}
                       {reviewCurrency}
                     </Text>
                   </Text>
@@ -412,10 +417,7 @@ if (reviewIdsToPay.length !== reviewsToPay){
                 <Text color="white">2</Text>
               </Flex>
               <Text>
-                Send
-                {' '}
-                {totalAmount !== 0 && `${totalAmount} ${reviewCurrency}`}
-                {' '}
+                Send {totalAmount !== 0 && `${totalAmount} ${reviewCurrency}`}{' '}
                 to the address below.
               </Text>
             </Flex>
@@ -468,11 +470,7 @@ if (reviewIdsToPay.length !== reviewsToPay){
             </InputGroup>
 
             <Text color="#717A7C" fontSize="0.875rem">
-              NOTE: Send only
-              {' '}
-              {reviewCurrency}
-              {' '}
-              to the address in the Polygon
+              NOTE: Send only {reviewCurrency} to the address in the Polygon
               network.
             </Text>
           </Stack>
@@ -487,18 +485,15 @@ if (reviewIdsToPay.length !== reviewsToPay){
                 w="10px"
                 alt="wallet_info"
                 src="/ui_icons/info_brand.svg"
-              />
-              {' '}
+              />{' '}
               By pressing Make Payment you will have to approve the transaction
-              in your wallet.
-              {' '}
+              in your wallet.{' '}
               <Link
                 href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
                 isExternal
               >
                 Learn more
-              </Link>
-              {' '}
+              </Link>{' '}
               <Image
                 display="inline-block"
                 h="10px"
@@ -509,6 +504,7 @@ if (reviewIdsToPay.length !== reviewsToPay){
             <Button
               variant="primary"
               my={8}
+              isDisabled={reviewsToPay !== reviewIdsToPay.length}
               onClick={() => {
                 setLoader(!loader);
                 setFinalAmount(utils.parseUnits(totalAmount));
@@ -518,7 +514,7 @@ if (reviewIdsToPay.length !== reviewsToPay){
                   totalAmount,
                   reviewCurrency,
                   reviewerAddress,
-                  finalAmount,
+                  finalAmount
                 );
               }}
             >
@@ -531,20 +527,21 @@ if (reviewIdsToPay.length !== reviewsToPay){
           <Button
             variant="primary"
             my={8}
+            isDisabled={reviewsToPay !== reviewIdsToPay.length}
             onClick={() => {
               // eslint-disable-next-line no-console
               console.log(
                 reviewCurrencyAddress,
                 totalAmount,
                 reviewCurrency,
-                reviewerAddress,
+                reviewerAddress
               );
               // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-              reviewsToPay !== undefined
-              && amountToPay !== undefined
-              && !paymentOutside
+              reviewsToPay !== undefined &&
+              amountToPay !== undefined &&
+              !paymentOutside
                 ? (setFinalAmount(utils.parseUnits(totalAmount)),
-                setPaymentOutside(true))
+                  setPaymentOutside(true))
                 : (setPaymentOutside(false), setPayMode(2));
             }}
           >
@@ -565,8 +562,7 @@ if (reviewIdsToPay.length !== reviewsToPay){
                 Address:
               </Heading>
               <Text fontSize="0.875rem">
-                {trimAddress(reviewerAddress, 8)}
-                {' '}
+                {trimAddress(reviewerAddress, 8)}{' '}
                 <IconButton
                   alignItems="center"
                   justifyItems="center"
@@ -575,7 +571,7 @@ if (reviewIdsToPay.length !== reviewsToPay){
                   variant="ghost"
                   _hover={{}}
                   _active={{}}
-                  icon={(
+                  icon={
                     <Image
                       src={
                         !hasCopied
@@ -583,7 +579,7 @@ if (reviewIdsToPay.length !== reviewsToPay){
                           : '/ui_icons/copy/active.svg'
                       }
                     />
-                  )}
+                  }
                   onClick={() => onCopy()}
                 />
               </Text>
@@ -601,7 +597,9 @@ if (reviewIdsToPay.length !== reviewsToPay){
                   isInvalid={
                     (reviewsToPay as any) > reviews || (reviewsToPay as any) < 1
                   }
-                  onChange={(e) => setReviewsToPay(parseInt(e.target.value, 10))}
+                  onChange={(e) =>
+                    setReviewsToPay(parseInt(e.target.value, 10))
+                  }
                   value={reviewsToPay}
                   h={12}
                   type="number"
@@ -622,8 +620,8 @@ if (reviewIdsToPay.length !== reviewsToPay){
               <Text fontSize="0.75rem">
                 {(reviewsToPay as any) > reviews
                   ? `You can not pay more than ${reviews} reviews`
-                  : (reviewsToPay as any) < 1
-                    && 'You need to pay at least 1 review'}
+                  : (reviewsToPay as any) < 1 &&
+                    'You need to pay at least 1 review'}
               </Text>
             </Flex>
             <Flex direction="row">
@@ -696,6 +694,7 @@ if (reviewIdsToPay.length !== reviewsToPay){
             <Button
               variant="primary"
               my={8}
+              isDisabled={reviewsToPay !== reviewIdsToPay.length}
               onClick={async () => {
                 // eslint-disable-next-line no-console
                 console.log(
@@ -704,10 +703,10 @@ if (reviewIdsToPay.length !== reviewsToPay){
                   totalAmount,
                   reviewCurrency,
                   reviewerAddress,
-                  transactionHash,
+                  transactionHash
                 );
                 setTabIndex(1);
-                setSubmitMarkDone(true);
+              setSubmitMarkDone(true)
               }}
             >
               {!loading ? 'Mark Payment as Done' : <Loader />}
