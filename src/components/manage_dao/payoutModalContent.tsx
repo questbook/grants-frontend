@@ -30,6 +30,7 @@ import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { SupportedChainId } from 'src/constants/chains';
 import Loader from 'src/components/ui/loader';
 import useMarkReviewPaymentDone from '../../hooks/useMarkReviewPaymentDone';
+import useFulfillReviewPayment from '../../hooks/useFullfilReviewPayment';
 
 // CONSTANTS AND ABIS
 import { trimAddress, formatAmount } from '../../utils/formattingUtils';
@@ -85,10 +86,9 @@ function PayoutModalContent({
   const [reviewsToPay, setReviewsToPay] = useState<number>(0);
   const [amountToPay, setAmountToPay] = useState<number>();
   const [totalAmount, setTotalAmount] = useState<any>(0);
-  const [finalAmount, setFinalAmount] = useState<BigNumber>();
   const [amountDeposited, setAmountDeposited] = useState<number>();
   const [transactionHash, setTransactionHash] = useState<string>();
-  // const [submitPayment, setSubmitPayment] = useState<boolean>(false)
+  const [submitPayment, setSubmitPayment] = useState<boolean>(false)
   const [submitMarkDone, setSubmitMarkDone] = useState<boolean>(false);
   const [applicationsId, setApplicationsId] = React.useState<any>([]);
   const [applicationIdsToPay, setApplicationIdsToPay] = React.useState<any>([]);
@@ -156,6 +156,18 @@ function PayoutModalContent({
 
   console.log(txnLink);
 
+  const [fulfillPaymentData, fulfillTxnLink, fulfillLoading] = useFulfillReviewPayment(
+    workspaceId,
+    reviewIds,
+    applicationsId,
+    utils.parseEther(totalAmount.toString()),
+    submitPayment,
+    reviewerAddress,
+    reviewCurrencyAddress
+  );
+
+  console.log(fulfillPaymentData);
+
   useEffect(() => {
     if (amountToPay !== undefined && reviewsToPay !== undefined) {
       const amount = ((amountToPay as any) * reviewsToPay) as any;
@@ -207,10 +219,8 @@ function PayoutModalContent({
   }, [totalAmount]);
 
   useEffect(() => {
-    // console.log(depositTransactionData);
     if (transactionData) {
       onClose();
-      setFinalAmount(undefined);
       setTotalAmount('');
       toastRef.current = toast({
         position: 'top',
@@ -228,6 +238,28 @@ function PayoutModalContent({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, transactionData]);
+
+  useEffect(() => {
+    if (fulfillPaymentData) {
+      onClose();
+      setTotalAmount('');
+      setSubmitPayment(false);
+      toastRef.current = toast({
+        position: 'top',
+        render: () => (
+          <InfoToast
+            link={fulfillTxnLink}
+            close={() => {
+              if (toastRef.current) {
+                toast.close(toastRef.current);
+              }
+            }}
+          />
+        ),
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toast, fulfillPaymentData]);
 
   return (
     <ModalBody>
@@ -507,18 +539,17 @@ function PayoutModalContent({
               isDisabled={reviewsToPay !== reviewIdsToPay.length}
               onClick={() => {
                 setLoader(!loader);
-                setFinalAmount(utils.parseUnits(totalAmount));
+                setSubmitPayment(true)
                 // eslint-disable-next-line no-console
                 console.log(
                   reviewCurrencyAddress,
                   totalAmount,
                   reviewCurrency,
                   reviewerAddress,
-                  finalAmount
                 );
               }}
             >
-              {loader ? <Loader /> : 'Make Payment'}
+              {fulfillLoading ? <Loader /> : 'Make Payment'}
             </Button>
           </>
         )}
@@ -540,8 +571,7 @@ function PayoutModalContent({
               reviewsToPay !== undefined &&
               amountToPay !== undefined &&
               !paymentOutside
-                ? (setFinalAmount(utils.parseUnits(totalAmount)),
-                  setPaymentOutside(true))
+                ? (setPaymentOutside(true))
                 : (setPaymentOutside(false), setPayMode(2));
             }}
           >
