@@ -109,6 +109,36 @@ function YourGrantCard({
     }
   }, [initialRubrics]);
 
+  const [rubricDrawerOpen, setRubricDrawerOpen] = React.useState(false);
+  const [rubricEditAllowed] = React.useState(true);
+  const [maximumPoints, setMaximumPoints] = React.useState(5);
+  const [rubrics, setRubrics] = useState<any[]>([
+    {
+      name: '',
+      nameError: false,
+      description: '',
+      descriptionError: false,
+    },
+  ]);
+
+  useEffect(() => {
+    const newRubrics = [] as any[];
+    console.log('initialRubrics', initialRubrics);
+    initialRubrics?.items.forEach((initalRubric) => {
+      newRubrics.push({
+        name: initalRubric.title,
+        nameError: false,
+        description: initalRubric.details,
+        descriptionError: false,
+      });
+    });
+    if (newRubrics.length === 0) return;
+    setRubrics(newRubrics);
+    if (initialRubrics?.items[0].maximumPoints) {
+      setMaximumPoints(initialRubrics.items[0].maximumPoints);
+    }
+  }, [initialRubrics]);
+
   React.useEffect(() => {
     // console.log(transactionData);
     if (transactionData) {
@@ -190,9 +220,13 @@ function YourGrantCard({
                 onEditClick={onEditClick}
                 isAdmin={isAdmin}
                 setRubricDrawerOpen={setRubricDrawerOpen}
+<<<<<<< HEAD
                 initialRubricAvailable={
                   initialRubrics?.items.length > 0 ?? false
                 }
+=======
+                initialRubricAvailable={initialRubrics?.items.length > 0 ?? false}
+>>>>>>> master
               />
               {acceptingApplications && isAdmin && (
                 <Button
@@ -298,7 +332,11 @@ function YourGrantCard({
         chainId={chainId}
         grantAddress={grantID}
         workspaceId={workspaceId}
+<<<<<<< HEAD
         initialIsPrivate={initialRubrics?.isPrivate ?? false}
+=======
+        initialIsPrivate={initialRubrics && initialRubrics.isPrivate}
+>>>>>>> master
       />
     </>
   );

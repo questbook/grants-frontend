@@ -6,28 +6,37 @@ function Headers({ is_reviewer }:{ is_reviewer : boolean; }) {
     'Applicant Address',
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     'Project Name',
     'Funding',
     'Reviewers',
     'Status',
     'Last update on',
 =======
+=======
+>>>>>>> master
     'Project Name',
     'Funding',
     'Reviewer',
     'Status',
     'Last updated on',
+<<<<<<< HEAD
 >>>>>>> 2991765 (Revert "Revert "Applicant table update"")
+=======
+>>>>>>> master
     'Actions',
   ];
 
   const tableHeadersReviewer = [
     'Applicant Address',
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 1f10abc (Revert "Applicant table update")
 =======
 >>>>>>> 2991765 (Revert "Revert "Applicant table update"")
+=======
+>>>>>>> master
     'Sent On',
     'Project Name',
     'Funding Ask',

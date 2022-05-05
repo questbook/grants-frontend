@@ -51,6 +51,8 @@ function Sidebar({
 
   const [reviewDrawerOpen, setReviewDrawerOpen] = React.useState(false);
 
+  const [reviewDrawerOpen, setReviewDrawerOpen] = React.useState(false);
+
   return (
     <>
       <Flex
@@ -77,8 +79,13 @@ function Sidebar({
             h="45px"
             w="45px"
             src={
+<<<<<<< HEAD
               getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.icon
             }
+=======
+            getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.icon
+          }
+>>>>>>> master
           />
           <Box mx={3} />
           <Tooltip label={applicationData?.applicantId}>
@@ -96,10 +103,17 @@ function Sidebar({
           </Text>
           <Heading variant="applicationHeading" lineHeight="32px">
             {
+<<<<<<< HEAD
               applicationData?.fields?.find(
                 (fld: any) => fld?.id?.split('.')[1] === 'applicantName'
               )?.values[0]?.value
             }
+=======
+            applicationData?.fields?.find(
+              (fld: any) => fld?.id?.split('.')[1] === 'applicantName',
+            )?.values[0]?.value
+          }
+>>>>>>> master
           </Heading>
         </Flex>
         <Flex direction="row" justify="space-between" w="full" align="center">
@@ -108,6 +122,7 @@ function Sidebar({
           </Text>
           <Heading variant="applicationHeading" lineHeight="32px">
             {applicationData?.fields?.find(
+<<<<<<< HEAD
               (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail'
             ) ? (
               <>
@@ -131,6 +146,32 @@ function Sidebar({
                 </Text>
               </Heading>
             )}
+=======
+              (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
+            ) ? (
+              <>
+                {
+                applicationData?.fields?.find(
+                  (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
+                )?.values[0]?.value
+              }
+                <MailTo applicantEmail={applicantEmail} />
+              </>
+              ) : (
+                <Heading
+                  variant="applicationHeading"
+                  lineHeight="32px"
+                  onClick={showHiddenData}
+                  cursor="pointer"
+                >
+                  Hidden
+                  {' '}
+                  <Text color="#6200EE" display="inline">
+                    View
+                  </Text>
+                </Heading>
+              )}
+>>>>>>> master
           </Heading>
         </Flex>
         <Flex direction="row" justify="space-between" w="full" align="center">
@@ -143,7 +184,11 @@ function Sidebar({
         </Flex>
         <Flex direction="column" w="full" align="start" mt={4}>
           <Box
+<<<<<<< HEAD
             // variant="dashed"
+=======
+          // variant="dashed"
+>>>>>>> master
             border="1px dashed #A0A7A7"
             h={0}
             w="100%"
@@ -159,6 +204,7 @@ function Sidebar({
             fontStyle="normal"
             color="#122224"
           >
+<<<<<<< HEAD
             {applicationData &&
               formatAmount(
                 applicationData?.fields?.find(
@@ -179,6 +225,26 @@ function Sidebar({
           </Text>
           <Box
             // variant="dashed"
+=======
+            {applicationData
+            && formatAmount(
+              applicationData?.fields?.find(
+                (fld: any) => fld?.id?.split('.')[1] === 'fundingAsk',
+              )?.values[0]?.value ?? '0',
+              CHAIN_INFO[
+                getSupportedChainIdFromSupportedNetwork(
+                  applicationData.grant.workspace.supportedNetworks[0],
+                )
+              ]?.supportedCurrencies[
+                applicationData.grant.reward.asset.toLowerCase()
+              ]?.decimals ?? 18,
+            )}
+            {' '}
+            {getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.label}
+          </Text>
+          <Box
+          // variant="dashed"
+>>>>>>> master
             border="1px dashed #A0A7A7"
             h={0}
             w="100%"
@@ -211,8 +277,13 @@ function Sidebar({
           color="#717A7C"
           display={applicationData?.state === 'resubmit' ? '' : 'none'}
         >
+<<<<<<< HEAD
           This application has been asked for resubmission. The applicant has
           been notified to resubmit.
+=======
+          This application has been asked for resubmission. The applicant has been
+          notified to resubmit.
+>>>>>>> master
         </Text>
         <Button
           onClick={() => onResubmitApplicationClick()}
@@ -263,7 +334,12 @@ function Sidebar({
 
         <Flex direction="column">
           <Text mb="14px" fontWeight="700" />
+<<<<<<< HEAD
           {applicationData?.reviewers
+=======
+          {applicationData
+            ?.reviewers
+>>>>>>> master
             ?.map((r: any) => ({
               email: r.email,
               address: r.id.split('.')[1],
@@ -318,6 +394,7 @@ function Sidebar({
         mt={8}
       >
         <Flex direction="column">
+<<<<<<< HEAD
           <Text mb="14px" fontWeight="700">
             Evaluation Rubric
           </Text>
@@ -337,6 +414,21 @@ function Sidebar({
                   </Text>
                 </>
               ))}
+=======
+          <Text mb="14px" fontWeight="700">Evaluation Rubric</Text>
+          {applicationData?.grant?.rubric && applicationData
+            ?.grant
+            ?.rubric
+            .items.map((r: any) => ({
+              title: r.title,
+              description: r.details,
+            })).map((rubric: any) => (
+              <>
+                <Text mt={2} fontWeight="700" color="#122224" fontSize="14px">{rubric.title}</Text>
+                <Text color="#717A7C" fontSize="12px">{rubric.description}</Text>
+              </>
+            ))}
+>>>>>>> master
         </Flex>
       </Flex>
 
