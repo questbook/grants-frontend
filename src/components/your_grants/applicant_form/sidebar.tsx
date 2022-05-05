@@ -41,10 +41,12 @@ function Sidebar({
   const chainId = getSupportedChainIdFromWorkspace(workspace);
 
   const applicantEmail = applicationData?.fields?.find(
-    (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
-  ) ? applicationData?.fields?.find(
-      (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
-    )?.values[0]?.value : undefined;
+    (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail'
+  )
+    ? applicationData?.fields?.find(
+        (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail'
+      )?.values[0]?.value
+    : undefined;
 
   const [reviewDrawerOpen, setReviewDrawerOpen] = React.useState(false);
 
@@ -74,8 +76,8 @@ function Sidebar({
             h="45px"
             w="45px"
             src={
-            getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.icon
-          }
+              getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.icon
+            }
           />
           <Box mx={3} />
           <Tooltip label={applicationData?.applicantId}>
@@ -93,10 +95,10 @@ function Sidebar({
           </Text>
           <Heading variant="applicationHeading" lineHeight="32px">
             {
-            applicationData?.fields?.find(
-              (fld: any) => fld?.id?.split('.')[1] === 'applicantName',
-            )?.values[0]?.value
-          }
+              applicationData?.fields?.find(
+                (fld: any) => fld?.id?.split('.')[1] === 'applicantName'
+              )?.values[0]?.value
+            }
           </Heading>
         </Flex>
         <Flex direction="row" justify="space-between" w="full" align="center">
@@ -105,30 +107,29 @@ function Sidebar({
           </Text>
           <Heading variant="applicationHeading" lineHeight="32px">
             {applicationData?.fields?.find(
-              (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
+              (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail'
             ) ? (
               <>
                 {
-                applicationData?.fields?.find(
-                  (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
-                )?.values[0]?.value
-              }
+                  applicationData?.fields?.find(
+                    (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail'
+                  )?.values[0]?.value
+                }
                 <MailTo applicantEmail={applicantEmail} />
               </>
-              ) : (
-                <Heading
-                  variant="applicationHeading"
-                  lineHeight="32px"
-                  onClick={showHiddenData}
-                  cursor="pointer"
-                >
-                  Hidden
-                  {' '}
-                  <Text color="#6200EE" display="inline">
-                    View
-                  </Text>
-                </Heading>
-              )}
+            ) : (
+              <Heading
+                variant="applicationHeading"
+                lineHeight="32px"
+                onClick={showHiddenData}
+                cursor="pointer"
+              >
+                Hidden{' '}
+                <Text color="#6200EE" display="inline">
+                  View
+                </Text>
+              </Heading>
+            )}
           </Heading>
         </Flex>
         <Flex direction="row" justify="space-between" w="full" align="center">
@@ -141,7 +142,7 @@ function Sidebar({
         </Flex>
         <Flex direction="column" w="full" align="start" mt={4}>
           <Box
-          // variant="dashed"
+            // variant="dashed"
             border="1px dashed #A0A7A7"
             h={0}
             w="100%"
@@ -157,24 +158,26 @@ function Sidebar({
             fontStyle="normal"
             color="#122224"
           >
-            {applicationData
-            && formatAmount(
-              applicationData?.fields?.find(
-                (fld: any) => fld?.id?.split('.')[1] === 'fundingAsk',
-              )?.values[0]?.value ?? '0',
-              CHAIN_INFO[
-                getSupportedChainIdFromSupportedNetwork(
-                  applicationData.grant.workspace.supportedNetworks[0],
-                )
-              ]?.supportedCurrencies[
-                applicationData.grant.reward.asset.toLowerCase()
-              ]?.decimals ?? 18,
-            )}
-            {' '}
-            {getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.label}
+            {applicationData &&
+              formatAmount(
+                applicationData?.fields?.find(
+                  (fld: any) => fld?.id?.split('.')[1] === 'fundingAsk'
+                )?.values[0]?.value ?? '0',
+                CHAIN_INFO[
+                  getSupportedChainIdFromSupportedNetwork(
+                    applicationData.grant.workspace.supportedNetworks[0]
+                  )
+                ]?.supportedCurrencies[
+                  applicationData.grant.reward.asset.toLowerCase()
+                ]?.decimals ?? 18
+              )}{' '}
+            {
+              getAssetInfo(applicationData?.grant?.reward?.asset, chainId)
+                ?.label
+            }
           </Text>
           <Box
-          // variant="dashed"
+            // variant="dashed"
             border="1px dashed #A0A7A7"
             h={0}
             w="100%"
@@ -207,8 +210,8 @@ function Sidebar({
           color="#717A7C"
           display={applicationData?.state === 'resubmit' ? '' : 'none'}
         >
-          This application has been asked for resubmission. The applicant has been
-          notified to resubmit.
+          This application has been asked for resubmission. The applicant has
+          been notified to resubmit.
         </Text>
         <Button
           onClick={() => onResubmitApplicationClick()}
@@ -248,15 +251,19 @@ function Sidebar({
 
         <Flex direction="column">
           <Text mb="14px" fontWeight="700" />
-          {applicationData
-            ?.reviewers
+          {applicationData?.reviewers
             ?.map((r: any) => ({
               email: r.email,
               address: r.id.split('.')[1],
-            })).map((reviewer: any) => (
+            }))
+            .map((reviewer: any) => (
               <>
-                <Text mt={2} fontWeight="700" color="#122224" fontSize="14px">{reviewer.address}</Text>
-                <Text color="#717A7C" fontSize="12px">{reviewer.email}</Text>
+                <Text mt={2} fontWeight="700" color="#122224" fontSize="14px">
+                  {reviewer.address}
+                </Text>
+                <Text color="#717A7C" fontSize="12px">
+                  {reviewer.email}
+                </Text>
               </>
             ))}
         </Flex>
@@ -269,7 +276,6 @@ function Sidebar({
         chainId={chainId}
         workspaceId={applicationData?.grant.workspace.id}
         initialReviewers={applicationData?.reviewers}
-        // initialIsPrivate={applicationData?.grant.rubric.isPrivate}
         applicationId={applicationData?.id}
         onClose={() => setReviewDrawerOpen(false)}
       />
@@ -287,19 +293,25 @@ function Sidebar({
         mb={8}
       >
         <Flex direction="column">
-          <Text mb="14px" fontWeight="700">Evaluation Rubric</Text>
-          {applicationData?.grant?.rubric && applicationData
-            ?.grant
-            ?.rubric
-            .items.map((r: any) => ({
-              title: r.title,
-              description: r.details,
-            })).map((rubric: any) => (
-              <>
-                <Text mt={2} fontWeight="700" color="#122224" fontSize="14px">{rubric.title}</Text>
-                <Text color="#717A7C" fontSize="12px">{rubric.description}</Text>
-              </>
-            ))}
+          <Text mb="14px" fontWeight="700">
+            Evaluation Rubric
+          </Text>
+          {applicationData?.grant?.rubric &&
+            applicationData?.grant?.rubric.items
+              .map((r: any) => ({
+                title: r.title,
+                description: r.details,
+              }))
+              .map((rubric: any) => (
+                <>
+                  <Text mt={2} fontWeight="700" color="#122224" fontSize="14px">
+                    {rubric.title}
+                  </Text>
+                  <Text color="#717A7C" fontSize="12px">
+                    {rubric.description}
+                  </Text>
+                </>
+              ))}
         </Flex>
       </Flex>
     </>

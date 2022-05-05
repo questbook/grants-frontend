@@ -61,13 +61,13 @@ function YourGrantCard({
   workspaceId,
 }: YourGrantCardProps) {
   const [isAcceptingApplications, setIsAcceptingApplications] = React.useState<
-  [boolean, number]
+    [boolean, number]
   >([acceptingApplications, 0]);
 
   const [transactionData, txnLink, loading, error] = useArchiveGrant(
     isAcceptingApplications[0],
     isAcceptingApplications[1],
-    grantID,
+    grantID
   );
 
   const toastRef = React.useRef<ToastId>();
@@ -75,7 +75,9 @@ function YourGrantCard({
   const buttonRef = React.useRef<HTMLButtonElement>(null);
 
   const [isArchiveModalOpen, setIsArchiveModalOpen] = React.useState(false);
-  const [isPublishGrantModalOpen, setIsPublishGrantModalOpen] = React.useState(false);
+  const [isPublishGrantModalOpen, setIsPublishGrantModalOpen] = React.useState(
+    false
+  );
 
   const [rubricDrawerOpen, setRubricDrawerOpen] = React.useState(false);
   const [rubricEditAllowed] = React.useState(true);
@@ -171,9 +173,7 @@ function YourGrantCard({
             <Flex direction="row" align="center" w="full">
               <Image src={grantCurrencyIcon} />
               <Text ml={2} fontWeight="700" color="#3F06A0">
-                {grantAmount}
-                {' '}
-                {grantCurrency}
+                {grantAmount} {grantCurrency}
               </Text>
 
               <Box mr="auto" />
@@ -190,7 +190,9 @@ function YourGrantCard({
                 onEditClick={onEditClick}
                 isAdmin={isAdmin}
                 setRubricDrawerOpen={setRubricDrawerOpen}
-                initialRubricAvailable={initialRubrics && initialRubrics.items.length > 0}
+                initialRubricAvailable={
+                  initialRubrics?.items.length > 0 ?? false
+                }
               />
               {acceptingApplications && isAdmin && (
                 <Button
@@ -246,19 +248,35 @@ function YourGrantCard({
         isOpen={
           acceptingApplications ? isArchiveModalOpen : isPublishGrantModalOpen
         }
-        onClose={() => (acceptingApplications
-          ? setIsArchiveModalOpen(false)
-          : setIsPublishGrantModalOpen(false))}
+        onClose={() =>
+          acceptingApplications
+            ? setIsArchiveModalOpen(false)
+            : setIsPublishGrantModalOpen(false)
+        }
         title=""
       >
         <ChangeAccessibilityModalContent
-          onClose={() => (acceptingApplications
-            ? setIsArchiveModalOpen(false)
-            : setIsPublishGrantModalOpen(false))}
-          imagePath={`/illustrations/${acceptingApplications ? 'archive' : 'publish'}_grant.svg`}
-          title={acceptingApplications ? 'Are you sure you want to archive this grant?' : 'Are you sure you want to publish this grant?'}
-          subtitle={acceptingApplications ? 'The grant will no longer be visible to anyone. You will not receive any new applications for it.' : 'The grant will be live, and applicants can apply for this grant.'}
-          actionButtonText={acceptingApplications ? 'Archive Grant' : 'Publish Grant'}
+          onClose={() =>
+            acceptingApplications
+              ? setIsArchiveModalOpen(false)
+              : setIsPublishGrantModalOpen(false)
+          }
+          imagePath={`/illustrations/${
+            acceptingApplications ? 'archive' : 'publish'
+          }_grant.svg`}
+          title={
+            acceptingApplications
+              ? 'Are you sure you want to archive this grant?'
+              : 'Are you sure you want to publish this grant?'
+          }
+          subtitle={
+            acceptingApplications
+              ? 'The grant will no longer be visible to anyone. You will not receive any new applications for it.'
+              : 'The grant will be live, and applicants can apply for this grant.'
+          }
+          actionButtonText={
+            acceptingApplications ? 'Archive Grant' : 'Publish Grant'
+          }
           actionButtonOnClick={() => {
             setIsAcceptingApplications([
               !isAcceptingApplications[0],
@@ -280,7 +298,7 @@ function YourGrantCard({
         chainId={chainId}
         grantAddress={grantID}
         workspaceId={workspaceId}
-        initialIsPrivate={initialRubrics && initialRubrics.isPrivate}
+        initialIsPrivate={initialRubrics?.isPrivate ?? false}
       />
     </>
   );
