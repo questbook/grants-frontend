@@ -94,22 +94,25 @@ function Payouts() {
     console.log(applications);
 
     if (applications.length !== 0 && reviewers.length === 0) {
-      applications.forEach(
+      let revs: any = [];
+      applications.filter(
         (app: any) => app.reviewers.length !== 0
-            && app.reviewers.forEach(
-              (reviewer: any) => setReviewers((array: any) => [...array, reviewer]))
-            )
-          }
+            && app.reviewers.filter((reviewer: any) => {
+            !reviewers.includes(reviewer.actorId) &&
+            revs.push(reviewer);
+          }))
 
-      console.log(reviewers);
+      setReviewers(new Set(revs));
+      }
+
+        console.log(reviewers);
 
     if (reviewers.length !== 0 && outstandingReviews.length === 0) {
       reviewers.forEach((reviewer: any) =>
         reviewer.outstandingReviewIds.length !== 0
-        && reviewer.outstandingReviewIds.filter((id: any) => setOutstandingReviews((array: any) => [...array, id]))
+        && reviewer.outstandingReviewIds.forEach((id: any) => setOutstandingReviews((array: any) => [...array, id]))
       )
     }
-
     console.log(outstandingReviews)
 
   }, [grantsData, applications, reviewers, outstandingReviews]);
@@ -194,7 +197,7 @@ function Payouts() {
               {' '}
               {outstandingReviews.length === 0
                 ? 0
-                : `(${outstandingReviews.length})`}
+                : `(${new Set(outstandingReviews).size})`}
             </Tab>
             <Tab
               borderColor="#AAAAAA"
@@ -241,7 +244,7 @@ function Payouts() {
               >
                 {reviewers.length === 0
                   ? 0
-                  : reviewers.map((reviewer: any, index: any) => reviewer.outstandingReviewIds.length !== 0
+                  : [...reviewers].map((reviewer: any, index: any) => reviewer.outstandingReviewIds.length !== 0
                           && (
                           <Flex>
                             <Grid
