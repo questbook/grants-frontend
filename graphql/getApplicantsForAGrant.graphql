@@ -22,6 +22,7 @@ query getApplicantsForAGrant($first: Int, $skip: Int, $grantID: String!) {
     applicantId
     state
     createdAtS
+    updatedAtS
     fields {
       id
       values {

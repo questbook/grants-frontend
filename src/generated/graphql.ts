@@ -3357,7 +3357,7 @@ export type GetApplicantsForAGrantQueryVariables = Exact<{
 }>;
 
 
-export type GetApplicantsForAGrantQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, createdAtS: number, grant: { __typename?: 'Grant', id: string, title: string, funding: string, acceptingApplications: boolean, reward: { __typename?: 'Reward', asset: string }, workspace: { __typename?: 'Workspace', id: string, supportedNetworks: Array<SupportedNetwork> } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, reviewers: Array<{ __typename?: 'WorkspaceMember', email?: string | null, id: string }> }> };
+export type GetApplicantsForAGrantQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, createdAtS: number, updatedAtS: number, grant: { __typename?: 'Grant', id: string, title: string, funding: string, acceptingApplications: boolean, reward: { __typename?: 'Reward', asset: string }, workspace: { __typename?: 'Workspace', id: string, supportedNetworks: Array<SupportedNetwork> } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, reviewers: Array<{ __typename?: 'WorkspaceMember', email?: string | null, id: string }> }> };
 
 export type GetApplicationDetailsQueryVariables = Exact<{
   applicationID: Scalars['ID'];
@@ -3733,6 +3733,7 @@ export const GetApplicantsForAGrantDocument = gql`
     applicantId
     state
     createdAtS
+    updatedAtS
     fields {
       id
       values {

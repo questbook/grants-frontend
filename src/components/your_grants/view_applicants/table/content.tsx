@@ -8,9 +8,9 @@ import {
   Popover,
   PopoverBody,
   PopoverContent,
-  PopoverHeader,
   PopoverTrigger,
   SimpleGrid,
+  Heading,
 } from '@chakra-ui/react';
 import React, { ReactElement } from 'react';
 import CopyIcon from 'src/components/ui/copy_icon';
@@ -38,9 +38,7 @@ function Content({
   isReviewer : boolean;
   fundReceived: string;
 }) {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const open = () => setIsOpen(!isOpen);
-  const tableHeadersFlex = [0.231, 0.20, 0.15, 0.16, 0.16, 0.28, 0.116];
+  const tableHeadersFlex = [0.231, 0.20, 0.15, 0.13, 0.16, 0.25, 0.116];
   const tableHeadersFlexReviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
   const getStatus = (status: number): ReactElement => {
     if (status === TableFilters.submitted) return <PendingReview />;
@@ -249,8 +247,8 @@ function Content({
             <Flex
               flex={tableHeadersFlex[2]}
               direction="row"
-              justifyContent="center"
-              alignItems="center"
+              justifyContent="left"
+              alignItems="left"
             >
               <Image h={5} w={5} src={item.funding_asked.icon} />
               <Box mr={3} />
@@ -292,12 +290,11 @@ function Content({
 
                 </PopoverTrigger>
                 <PopoverContent height="150px" width="inherit" right="3px" top="60px">
-                  <PopoverHeader>Reviewer</PopoverHeader>
-
-                  {item.reviewers.map((data) => (
+                  <Heading margin="10px" line-height="16px" color="#717A7C" font-family="DM Sans" size="sm">REVIEWERS</Heading>
+                  {item.reviewers.map((reviewer) => (
                     <PopoverBody overflowX="hidden" overflowY="auto">
                       <SimpleGrid columns={1} spacing={3}>
-                        <Text>{data.email}</Text>
+                        <Text>{reviewer.email}</Text>
                       </SimpleGrid>
                     </PopoverBody>
                   ))}
@@ -311,7 +308,7 @@ function Content({
               { item.reviewer !== 0 && item.status === 0 ? getStatus(5) : getStatus(item.status)}
             </Flex>
             <Flex justifyContent="center" flex={tableHeadersFlex[5]}>
-              {item.sent_on}
+              {item.status === 0 ? item.sent_on : item.updated_on}
             </Flex>
             <Flex
               display="flex"
