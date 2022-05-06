@@ -217,6 +217,7 @@ function PayoutModalContent({
   useEffect(() => {
     if (transactionData) {
       onClose();
+      setSubmitMarkDone(false)
       toastRef.current = toast({
         position: 'top',
         render: () => (
@@ -230,6 +231,9 @@ function PayoutModalContent({
           />
         ),
       });
+    } else if (error) {
+      onClose();
+      setSubmitMarkDone(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, transactionData]);
