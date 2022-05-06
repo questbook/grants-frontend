@@ -118,6 +118,8 @@ function Payouts() {
       // eslint-disable-next-line max-len
         && reviewer.outstandingReviewIds.forEach((id: any) => setOutstandingReviews((array: any) => [...array, id])));
     }
+
+    console.log(outstandingReviews);
   }, [grantsData, applications, reviewers, outstandingReviews]);
 
   React.useEffect(() => {
@@ -126,6 +128,7 @@ function Payouts() {
         (review: any) => setReviewPayoutsDone((array: any) => [...array, review]),
       );
     }
+    console.log(reviewPayoutsDone);
   });
 
   React.useEffect(() => {

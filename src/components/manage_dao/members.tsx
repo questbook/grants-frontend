@@ -96,7 +96,7 @@ function Members({ workspaceMembers }: Props) {
                 py={4}
                 px={5}
               >
-                {data.email.length > 16 ? (
+                {data.email?.length > 16 ? (
                   <Tooltip label={data.email}>
                     <Flex
                       alignSelf="center"
