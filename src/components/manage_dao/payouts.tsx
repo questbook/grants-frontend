@@ -439,7 +439,7 @@ function Payouts() {
                               </Flex>
 
                               <PayoutModalContent
-                                workspaceId={workspace?.id}
+                                workspaceId={workspace!.id}
                                 applications={applications}
                                 reviewIds={
                                       selectedData?.outstandingReviewIds
