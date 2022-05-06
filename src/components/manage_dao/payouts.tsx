@@ -126,8 +126,6 @@ function Payouts() {
         (review: any) => setReviewPayoutsDone((array: any) => [...array, review]),
       );
     }
-
-    console.log(reviewPayoutsDone);
   });
 
   React.useEffect(() => {
