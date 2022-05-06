@@ -5,7 +5,7 @@ function Headers({ is_reviewer }:{ is_reviewer : boolean; }) {
   const tableHeaders = [
     'Applicant Address',
     'Project Name',
-    'Funding',
+    'Funding Ask',
     'Reviewer',
     'Status',
     'Last updated on',
