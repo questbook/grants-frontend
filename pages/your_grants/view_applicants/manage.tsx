@@ -168,8 +168,8 @@ function ManageGrant() {
     {
       icon: fundingIcon,
       title: formatAmount(
-        getTotalFundingRecv(milestones as ApplicationMilestone[]).toString(),
-        decimals),
+        getTotalFundingRecv(
+        milestones as ApplicationMilestone[]).toString(), decimals),
       subtitle: 'Funding Sent',
       content: (
         <Funding
@@ -188,8 +188,8 @@ function ManageGrant() {
       title:
         (fundingAsk ? formatAmount(fundingAsk.toString(), decimals) : null)
         || formatAmount(
-          getTotalFundingAsked(milestones as ApplicationMilestone[]).toString(),
-          decimals),
+          getTotalFundingAsked(
+            milestones as ApplicationMilestone[]).toString(), decimals),
       subtitle: 'Funding Requested',
       content: undefined, // <Funding fundTransfers={fundsDisbursed} assetId={rewardAsset} />,
     },
