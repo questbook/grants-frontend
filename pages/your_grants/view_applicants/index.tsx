@@ -22,7 +22,6 @@ import Modal from 'src/components/ui/modal';
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent';
 import useArchiveGrant from 'src/hooks/useArchiveGrant';
 import RubricDrawer from 'src/components/your_grants/rubricDrawer';
-import useApplicationMilestones from 'src/utils/queryUtil';
 import { BigNumber } from 'ethers';
 import { formatAmount } from '../../../src/utils/formattingUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
@@ -75,12 +74,6 @@ function ViewApplicants() {
     }
   }, [router]);
 
-  const {
-    data: {
-      milestones, decimals,
-    },
-
-  } = useApplicationMilestones(grantID);
   const [queryParams, setQueryParams] = useState<any>({
     client:
       subgraphClients[
@@ -295,7 +288,6 @@ function ViewApplicants() {
           title={applicantsData[0]?.grantTitle ?? 'Grant Title'}
           isReviewer={isReviewer}
           data={applicantsData}
-          fundReceived={formatAmount(getTotalFundingRecv(milestones).toString(), decimals)}
           onViewApplicantFormClick={(commentData: any) => router.push({
             pathname: '/your_grants/view_applicants/applicant_form/',
             query: {
