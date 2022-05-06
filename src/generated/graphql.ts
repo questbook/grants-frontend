@@ -20,7 +20,6 @@ export type Scalars = {
 
 /** the milestone of a grant application */
 export type ApplicationMilestone = {
-  __typename?: 'ApplicationMilestone';
   /** amount expected by applicant */
   amount: Scalars['BigInt'];
   /** amount paid by DAO */
