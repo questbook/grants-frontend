@@ -317,7 +317,10 @@ function ViewApplicants() {
           isReviewer={isReviewer}
           applicantionReviewer={applicantionReviewer}
           data={applicantsData}
-          fundReceived={formatAmount(getTotalFundingRecv(milestones as ApplicationMilestone[]).toString(), decimals)}
+          fundReceived={formatAmount(
+            getTotalFundingRecv(milestones as ApplicationMilestone[]).toString(),
+            decimals,
+          )}
           onViewApplicantFormClick={(commentData: any) => router.push({
             pathname: '/your_grants/view_applicants/applicant_form/',
             query: {
