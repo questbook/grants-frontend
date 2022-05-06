@@ -217,7 +217,7 @@ function PayoutModalContent({
   useEffect(() => {
     if (transactionData) {
       onClose();
-      setSubmitMarkDone(false)
+      setSubmitMarkDone(false);
       toastRef.current = toast({
         position: 'top',
         render: () => (
