@@ -27,7 +27,6 @@ function Content({
   onManageApplicationClick,
   data,
   isReviewer,
-  fundReceived,
 }: {
   filter: number;
   onViewApplicationFormClick?: (data?: any) => void;
@@ -36,7 +35,6 @@ function Content({
   onManageApplicationClick?: (data?: any) => void;
   data: any[];
   isReviewer : boolean;
-  fundReceived: string;
 }) {
   const tableHeadersFlex = [0.231, 0.20, 0.15, 0.13, 0.16, 0.25, 0.116];
   const tableHeadersFlexReviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
@@ -260,7 +258,7 @@ function Content({
                 fontWeight="700"
                 letterSpacing={0.2}
               >
-                {fundReceived}
+                {item.amount_paid}
                 {' '}
                 /
                 {' '}

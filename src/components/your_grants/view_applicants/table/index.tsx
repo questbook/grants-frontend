@@ -13,7 +13,6 @@ function Table({
   title,
   isReviewer,
   archiveGrantComponent,
-  fundReceived,
 }: {
   onViewApplicantFormClick?: (data? : any) => void;
   // onAcceptApplicationClick?: () => void;
@@ -22,7 +21,6 @@ function Table({
   data: any[];
   title: string;
   isReviewer : boolean;
-  fundReceived: string
   archiveGrantComponent: React.ReactNode;
 }) {
   const [filter, setFilter] = React.useState(-1);
@@ -43,7 +41,6 @@ function Table({
           data={data}
           isReviewer={isReviewer}
           filter={filter}
-          fundReceived={fundReceived}
           onViewApplicationFormClick={onViewApplicantFormClick}
                 // onAcceptApplicationClick={onAcceptApplicationClick}
                 // onRejectApplicationClick={onRejectApplicationClick}

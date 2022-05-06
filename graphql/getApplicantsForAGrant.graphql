@@ -9,7 +9,7 @@ query getApplicantsForAGrant($first: Int, $skip: Int, $grantID: String!) {
     grant {
       id
       title
-      funding
+      funding,
       reward {
         asset
       }
@@ -32,6 +32,16 @@ query getApplicantsForAGrant($first: Int, $skip: Int, $grantID: String!) {
     reviewers {
       email
       id
-    }
+    },
+   milestones {
+        id,
+        state,
+        title,
+        amount,
+        amountPaid,
+        updatedAtS,
+        feedbackDao,
+        feedbackDev
+      }
   }
 }
