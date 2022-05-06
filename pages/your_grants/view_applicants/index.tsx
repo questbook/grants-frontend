@@ -160,7 +160,7 @@ function ViewApplicants() {
           reviewers: applicant.reviewers,
           amount_paid: formatAmount(
             getTotalFundingRecv(
-              applicant.milestones,
+              applicant.milestones as ApplicationMilestone[],
             ).toString(),
             18,
           ),
