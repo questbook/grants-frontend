@@ -289,7 +289,7 @@ function Content({
                 </PopoverTrigger>
                 <PopoverContent height="150px" width="inherit" right="3px" top="60px">
                   <Heading margin="10px" line-height="16px" color="#717A7C" font-family="DM Sans" size="sm">REVIEWERS</Heading>
-                  {item.reviewers.map((reviewer) => (
+                  {item.reviewers.map((reviewer: { email: string }) => (
                     <PopoverBody overflowX="hidden" overflowY="auto">
                       <SimpleGrid columns={1} spacing={3}>
                         <Text>{reviewer.email}</Text>
