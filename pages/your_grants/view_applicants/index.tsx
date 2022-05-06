@@ -30,7 +30,7 @@ import { ApiClientsContext } from '../../_app';
 
 const PAGE_SIZE = 500;
 
-function getTotalFundingRecv(_amount_paid: string) {
+function getFundRecv(_amount_paid: string) {
   let val = BigNumber.from(0);
   val = val.add(_amount_paid);
   return val;
@@ -156,7 +156,7 @@ function ViewApplicants() {
           status: TableFilters[applicant?.state],
           reviewers: applicant.reviewers,
           amount_paid: formatAmount(
-            getTotalFundingRecv(
+            getFundRecv(
               applicant?.milestones[0].amountPaid,
             ).toString(),
             18,
