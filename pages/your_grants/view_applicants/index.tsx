@@ -10,6 +10,7 @@ import { TableFilters } from 'src/components/your_grants/view_applicants/table/T
 import {
   useGetApplicantsForAGrantQuery,
   useGetGrantDetailsQuery,
+  ApplicationMilestone,
 } from 'src/generated/graphql';
 import { SupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
@@ -21,6 +22,7 @@ import Modal from 'src/components/ui/modal';
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent';
 import useArchiveGrant from 'src/hooks/useArchiveGrant';
 import RubricDrawer from 'src/components/your_grants/rubricDrawer';
+import useApplicationMilestones from 'src/utils/queryUtil';
 import { BigNumber } from 'ethers';
 import { formatAmount } from '../../../src/utils/formattingUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
@@ -30,9 +32,11 @@ import { ApiClientsContext } from '../../_app';
 
 const PAGE_SIZE = 500;
 
-function getFundRecv(_amount_paid: string) {
+function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
   let val = BigNumber.from(0);
-  val = val.add(_amount_paid);
+  milestones.forEach((milestone) => {
+    val = val.add(milestone.amountPaid);
+  });
   return val;
 }
 
@@ -71,6 +75,12 @@ function ViewApplicants() {
     }
   }, [router]);
 
+  const {
+    data: {
+      milestones, decimals,
+    },
+
+  } = useApplicationMilestones(grantID);
   const [queryParams, setQueryParams] = useState<any>({
     client:
       subgraphClients[
@@ -156,8 +166,8 @@ function ViewApplicants() {
           status: TableFilters[applicant?.state],
           reviewers: applicant.reviewers,
           amount_paid: formatAmount(
-            getFundRecv(
-              applicant?.milestones[0].amountPaid,
+            getTotalFundingRecv(
+              applicant.milestones,
             ).toString(),
             18,
           ),
@@ -285,6 +295,7 @@ function ViewApplicants() {
           title={applicantsData[0]?.grantTitle ?? 'Grant Title'}
           isReviewer={isReviewer}
           data={applicantsData}
+          fundReceived={formatAmount(getTotalFundingRecv(milestones).toString(), decimals)}
           onViewApplicantFormClick={(commentData: any) => router.push({
             pathname: '/your_grants/view_applicants/applicant_form/',
             query: {
@@ -364,3 +375,5 @@ function ViewApplicants() {
 ViewApplicants.getLayout = function getLayout(page: ReactElement) {
   return <NavbarLayout>{page}</NavbarLayout>;
 };
+
+export default ViewApplicants;
