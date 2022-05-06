@@ -1,16 +1,18 @@
-query getFundSentForReview($reviewId: String) {
+query getFundSentforReviews($type: FundsTransferType) {
   fundsTransfers(
-      where: {review: $application},
+      where: {type: review_payment_done},
       orderBy: createdAtS,
       orderDirection: desc) {
-    application {
+
+    id,
+    review {
       id
     },
-    id,
     amount,
     sender,
     to,
     createdAtS,
     type
+    asset
   }
 }

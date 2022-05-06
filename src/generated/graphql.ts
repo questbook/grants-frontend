@@ -3388,12 +3388,12 @@ export type GetDaoDetailsQueryVariables = Exact<{
 
 export type GetDaoDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, socials: Array<{ __typename?: 'Social', name: string, value: string }> } | null, grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
 
-export type GetFundSentForReviewQueryVariables = Exact<{
-  reviewId?: InputMaybe<Scalars['String']>;
+export type GetFundSentforReviewsQueryVariables = Exact<{
+  type?: InputMaybe<FundsTransferType>;
 }>;
 
 
-export type GetFundSentForReviewQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', id: string, amount: string, sender: string, to: string, createdAtS: number, type: FundsTransferType, application?: { __typename?: 'GrantApplication', id: string } | null }> };
+export type GetFundSentforReviewsQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', id: string, amount: string, sender: string, to: string, createdAtS: number, type: FundsTransferType, asset: string, review?: { __typename?: 'Review', id: string } | null }> };
 
 export type GetFundSentForApplicationQueryVariables = Exact<{
   applicationId?: InputMaybe<Scalars['String']>;
@@ -4079,53 +4079,54 @@ export function useGetDaoDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetDaoDetailsQueryHookResult = ReturnType<typeof useGetDaoDetailsQuery>;
 export type GetDaoDetailsLazyQueryHookResult = ReturnType<typeof useGetDaoDetailsLazyQuery>;
 export type GetDaoDetailsQueryResult = Apollo.QueryResult<GetDaoDetailsQuery, GetDaoDetailsQueryVariables>;
-export const GetFundSentForReviewDocument = gql`
-    query getFundSentForReview($reviewId: String) {
+export const GetFundSentforReviewsDocument = gql`
+    query getFundSentforReviews($type: FundsTransferType) {
   fundsTransfers(
-    where: {review: $reviewId}
+    where: {type: review_payment_done}
     orderBy: createdAtS
     orderDirection: desc
   ) {
-    application {
+    id
+    review {
       id
     }
-    id
     amount
     sender
     to
     createdAtS
     type
+    asset
   }
 }
     `;
 
 /**
- * __useGetFundSentForReviewQuery__
+ * __useGetFundSentforReviewsQuery__
  *
- * To run a query within a React component, call `useGetFundSentForReviewQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetFundSentForReviewQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetFundSentforReviewsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFundSentforReviewsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetFundSentForReviewQuery({
+ * const { data, loading, error } = useGetFundSentforReviewsQuery({
  *   variables: {
- *      reviewId: // value for 'reviewId'
+ *      type: // value for 'type'
  *   },
  * });
  */
-export function useGetFundSentForReviewQuery(baseOptions?: Apollo.QueryHookOptions<GetFundSentForReviewQuery, GetFundSentForReviewQueryVariables>) {
+export function useGetFundSentforReviewsQuery(baseOptions?: Apollo.QueryHookOptions<GetFundSentforReviewsQuery, GetFundSentforReviewsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetFundSentForReviewQuery, GetFundSentForReviewQueryVariables>(GetFundSentForReviewDocument, options);
+        return Apollo.useQuery<GetFundSentforReviewsQuery, GetFundSentforReviewsQueryVariables>(GetFundSentforReviewsDocument, options);
       }
-export function useGetFundSentForReviewLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFundSentForReviewQuery, GetFundSentForReviewQueryVariables>) {
+export function useGetFundSentforReviewsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFundSentforReviewsQuery, GetFundSentforReviewsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetFundSentForReviewQuery, GetFundSentForReviewQueryVariables>(GetFundSentForReviewDocument, options);
+          return Apollo.useLazyQuery<GetFundSentforReviewsQuery, GetFundSentforReviewsQueryVariables>(GetFundSentforReviewsDocument, options);
         }
-export type GetFundSentForReviewQueryHookResult = ReturnType<typeof useGetFundSentForReviewQuery>;
-export type GetFundSentForReviewLazyQueryHookResult = ReturnType<typeof useGetFundSentForReviewLazyQuery>;
-export type GetFundSentForReviewQueryResult = Apollo.QueryResult<GetFundSentForReviewQuery, GetFundSentForReviewQueryVariables>;
+export type GetFundSentforReviewsQueryHookResult = ReturnType<typeof useGetFundSentforReviewsQuery>;
+export type GetFundSentforReviewsLazyQueryHookResult = ReturnType<typeof useGetFundSentforReviewsLazyQuery>;
+export type GetFundSentforReviewsQueryResult = Apollo.QueryResult<GetFundSentforReviewsQuery, GetFundSentforReviewsQueryVariables>;
 export const GetFundSentForApplicationDocument = gql`
     query getFundSentForApplication($applicationId: String) {
   fundsTransfers(

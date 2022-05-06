@@ -118,7 +118,7 @@ function Members({ workspaceMembers }: Props) {
                     textAlign="center"
                     variant="tableBody"
                   >
-                  {data.email}
+                    {data.email}
                   </Text>
                 )}
                 <Tooltip label={data.address}>

@@ -23,7 +23,9 @@ import {
   getFormattedDateFromUnixTimestampWithYear,
 } from 'src/utils/formattingUtils';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
-import { useGetDaoGrantsQuery } from 'src/generated/graphql';
+import { useGetDaoGrantsQuery, useGetFundSentforReviewsQuery } from 'src/generated/graphql';
+import { utils } from 'ethers';
+import { getAssetInfo } from 'src/utils/tokenUtils';
 
 // UI COMPONENTS
 import { SupportedChainId } from 'src/constants/chains';
@@ -40,6 +42,7 @@ function Payouts() {
   const [applications, setApplications] = React.useState<any>([]);
   const [outstandingReviews, setOutstandingReviews] = React.useState<any>([]);
   const [reviewers, setReviewers] = React.useState<any>([]);
+  const [reviewPayoutsDone, setReviewPayoutsDone] = React.useState<any>([]);
 
   const { data: grantsData } = useGetDaoGrantsQuery({
     client:
@@ -49,6 +52,13 @@ function Payouts() {
     variables: {
       workspaceId: workspace?.id ?? '',
     },
+  });
+
+  const { data: reviewsData } = useGetFundSentforReviewsQuery({
+    client:
+      subgraphClients[
+        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      ].client,
   });
 
   const payModal = useDisclosure();
@@ -68,7 +78,6 @@ function Payouts() {
     'Actions',
   ];
   const historyTableHeaders = [
-    'Member Email',
     'Member Address',
     'Paid from',
     'Amount',
@@ -85,77 +94,46 @@ function Payouts() {
   React.useEffect(() => {
     if (applications.length === 0 && grantsData) {
       grantsData!.grants.forEach(
-        (grant) => grant.applications.forEach((app: any) => app.reviewers.length !== 0
-          && setApplications((array: any) => [...array, app])
-      )
-    );
+        (grant: any) => grant.applications.forEach((app: any) => app.reviewers.length !== 0
+          && setApplications((array: any) => [...array, app])),
+      );
     }
 
     if (applications.length !== 0 && reviewers.length === 0) {
-      let revs: any = [];
-      applications.filter(
+      const revs: any = [];
+      applications.forEach(
         (app: any) => app.reviewers.length !== 0
-            && app.reviewers.filter((reviewer: any) => {
-            !reviewers.includes(reviewer.actorId) &&
-            revs.push(reviewer);
-          }))
+            && app.reviewers.forEach((reviewer: any) => {
+              // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+              !reviewers.includes(reviewer.actorId)
+            && revs.push(reviewer);
+            }),
+      );
 
       setReviewers(new Set(revs));
-      }
-
-    if (reviewers.length !== 0 && outstandingReviews.length === 0) {
-      reviewers.forEach((reviewer: any) =>
-        reviewer.outstandingReviewIds.length !== 0
-        && reviewer.outstandingReviewIds.forEach((id: any) => setOutstandingReviews((array: any) => [...array, id]))
-      )
     }
 
+    if (reviewers.length !== 0 && outstandingReviews.length === 0) {
+      reviewers.forEach((reviewer: any) => reviewer.outstandingReviewIds.length !== 0
+      // eslint-disable-next-line max-len
+        && reviewer.outstandingReviewIds.forEach((id: any) => setOutstandingReviews((array: any) => [...array, id])));
+    }
   }, [grantsData, applications, reviewers, outstandingReviews]);
 
-  const historyTablePlaceholders = [
-    {
-      email: 'madahavan@creatos.co',
-      reviewerAddress: '0xa2dDFc8a6C1F8868B80F2747D04532a6cDE9804d',
-      payerAddress: '0x0c9ccbada1411687f6ffa7df317af35b16b1fe0c',
-      txnAddress:
-        '0xc9773e119fb6b4ec6f47d1637fc42ea2116fa6fa6a1577f00ed255a64b4f5956',
-      paidDate: '25th April 2022',
-      amount: '100 DAI',
-    },
-    {
-      email: 'vitalik@vitalik.co',
-      reviewerAddress: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
-      payerAddress: '0x0c9ccbada1411687f6ffa7df317af35b16b1fe0c',
-      txnAddress:
-        '0xc9773e119fb6b4ec6f47d1637fc42ea2116fa6fa6a1577f00ed255a64b4f5956',
-      paidDate: '25th April 2022',
-      amount: '1 ETH',
-    },
-    {
-      email: 'dhairya@creator.os',
-      reviewerAddress: '0x0CC3a9E0d0f958367168e5cdf2d1f35F7c54F875',
-      payerAddress: '0x0c9ccbada1411687f6ffa7df317af35b16b1fe0c',
-      txnAddress:
-        '0xc9773e119fb6b4ec6f47d1637fc42ea2116fa6fa6a1577f00ed255a64b4f5956',
-      paidDate: '25th April 2022',
-      amount: '200 USDC',
-    },
-  ];
+  React.useEffect(() => {
+    if (reviewPayoutsDone.length === 0 && reviewsData) {
+      reviewsData!.fundsTransfers.forEach(
+        (review: any) => setReviewPayoutsDone((array: any) => [...array, review]),
+      );
+    }
 
-  const historyTableData = historyTablePlaceholders.map((paidData: any) => ({
-    email: paidData.email,
-    reviewerAddress: paidData.reviewerAddress,
-    payerAddress: paidData.payerAddress,
-    paidDate: paidData.paidDate,
-    amount: paidData.amount,
-  }));
+    console.log(reviewPayoutsDone);
+  });
 
   React.useEffect(() => {
     if (payMode === -1) {
       setPaymentOutside(false);
     }
-
-    console.log(grantsData)
   }, [payMode]);
 
   return (
@@ -191,7 +169,7 @@ function Payouts() {
               Outstanding
               {' '}
               {outstandingReviews.length === 0
-                ? 0
+                ? '(0)'
                 : `(${new Set(outstandingReviews).size})`}
             </Tab>
             <Tab
@@ -237,8 +215,13 @@ function Payouts() {
                 border="1px solid #D0D3D3"
                 borderRadius={4}
               >
-                {reviewers.length === 0
-                  ? 0
+                {outstandingReviews.length === 0
+                  ? (
+                    <Flex p={2} alignItems="center" justifyContent="center">
+                      <Text>There are no outstanding reviews to pay for</Text>
+                    </Flex>
+                  )
+                  // eslint-disable-next-line max-len
                   : [...reviewers].map((reviewer: any, index: any) => reviewer.outstandingReviewIds.length !== 0
                           && (
                           <Flex>
@@ -474,14 +457,13 @@ function Payouts() {
                               />
                             </Modal>
                           </Flex>
-                          ),
-                        )}
+                          ))}
               </Flex>
             </TabPanel>
             <TabPanel>
               <Grid
                 gridAutoFlow="column"
-                gridTemplateColumns="repeat(5, 1fr)"
+                gridTemplateColumns="repeat(4, 1fr)"
                 w="100%"
                 justifyItems="center"
                 alignContent="center"
@@ -501,12 +483,17 @@ function Payouts() {
                 border="1px solid #D0D3D3"
                 borderRadius={4}
               >
-                {historyTableData.map((data: any, index: number) => (
-                  <Flex>
-                    {data.reviewerAddress === null ? null : (
+                {reviewPayoutsDone.length === 0
+                  ? (
+                    <Flex p={2} alignItems="center" justifyContent="center">
+                      <Text>There is no payout history to show</Text>
+                    </Flex>
+                  )
+                  : reviewPayoutsDone.map((data: any, index: number) => (
+                    <Flex>
                       <Grid
                         gridAutoFlow="column"
-                        gridTemplateColumns="repeat(5, 1fr)"
+                        gridTemplateColumns="repeat(4, 1fr)"
                         w="100%"
                         justifyItems="center"
                         alignContent="center"
@@ -514,35 +501,40 @@ function Payouts() {
                         py={4}
                         px={5}
                       >
-                        <Text
-                          minW="fit-content"
-                          variant="tableBody"
-                          justifySelf="left"
-                        >
-                          {' '}
-                          {data.email}
-                        </Text>
-                        <Tooltip label={data.reviewerAddress}>
+                        <Tooltip label={data.to}>
                           <Flex alignItems="center">
                             <Text textAlign="center" variant="tableBody">
-                              {data.reviewerAddress !== ''
-                                && trimAddress(data.reviewerAddress, 4)}
+                              {trimAddress(data.to, 4)}
                             </Text>
                             <Box mr="7px" />
-                            <CopyIcon h="0.75rem" text={data.reviewerAddress} />
+                            <CopyIcon h="0.75rem" text={data.to} />
                           </Flex>
                         </Tooltip>
-                        <Text textAlign="center" variant="tableBody">
-                          {data.payererAddress !== ''
-                            && trimAddress(data.payerAddress, 4)}
-                        </Text>
 
-                        <Text variant="tableBody">{data.amount}</Text>
-                        <Text variant="tableBody">{data.paidDate}</Text>
+                        <Tooltip label={data.sender}>
+                          <Flex alignItems="center">
+                            <Text textAlign="center" variant="tableBody">
+                              {trimAddress(data.sender, 4)}
+                            </Text>
+                            <Box mr="7px" />
+                          </Flex>
+                        </Tooltip>
+
+                        <Text variant="tableBody">
+                          {utils.formatUnits(data.amount).slice(0, -2)}
+                          {' '}
+                          {getAssetInfo(
+                            data.asset,
+                            getSupportedChainIdFromWorkspace(workspace),
+                          ).label}
+                        </Text>
+                        <Text variant="tableBody">
+                          {getFormattedDateFromUnixTimestampWithYear(data.createdAtS)}
+                        </Text>
 
                         <Flex direction="row">
                           <Link
-                            href={`https://www.etherscan.io/tx/${data.txnAddress}`}
+                            href={`https://www.polygonscan.com/tx/${data.id.slice(0, -4)}`}
                             isExternal
                           >
                             View
@@ -556,9 +548,8 @@ function Payouts() {
                           </Link>
                         </Flex>
                       </Grid>
-                    )}
-                  </Flex>
-                ))}
+                    </Flex>
+                  ))}
               </Flex>
             </TabPanel>
           </TabPanels>

@@ -67,10 +67,13 @@ export default function useFulfillReviewPayment(
 
       setFulfillLoading(true);
       try {
-        const txnApprove = await rewardContract.approve(applicationReviewerContract.address, totalAmount);
-        const approveData = await txnApprove.wait();
+        const txnApprove = await rewardContract.approve(
+          applicationReviewerContract.address,
+          totalAmount,
+        );
+        await txnApprove.wait();
 
-        console.log(approveData);
+        console.log('WENT THROUGH');
 
         const fulfillPaymenTxn = await applicationReviewerContract.fulfillPayment(
           workspaceId,
@@ -179,6 +182,6 @@ export default function useFulfillReviewPayment(
         .explorer.transactionHash}${fulfillPaymentData?.transactionHash}`
       : '',
     fulfillLoading,
-    error
+    error,
   ];
 }

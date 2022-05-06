@@ -23,18 +23,18 @@ import {
 
 // UTILS AND HOOKS
 import React, { useState, useEffect, useRef } from 'react';
-import { BigNumber, utils } from 'ethers';
+import { utils } from 'ethers';
 import useChainId from 'src/hooks/utils/useChainId';
 import { useContract, useSigner } from 'wagmi';
+import Loader from 'src/components/ui/loader';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { SupportedChainId } from 'src/constants/chains';
-import Loader from 'src/components/ui/loader';
 import useMarkReviewPaymentDone from '../../hooks/useMarkReviewPaymentDone';
 import useFulfillReviewPayment from '../../hooks/useFullfilReviewPayment';
 
 // CONSTANTS AND ABIS
-import { trimAddress, formatAmount } from '../../utils/formattingUtils';
 import ERC20ABI from '../../contracts/abi/ERC20.json';
+import { trimAddress, formatAmount } from '../../utils/formattingUtils';
 
 // UI AND COMPONENT TOOLS
 import Dropdown from '../ui/forms/dropdown';
@@ -77,7 +77,7 @@ function PayoutModalContent({
   const toastRef = useRef<ToastId>();
 
   const supportedCurrencies = Object.keys(
-    CHAIN_INFO[currentChain].supportedCurrencies
+    CHAIN_INFO[currentChain].supportedCurrencies,
   )
     .map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
     .map((currency) => ({ ...currency, id: currency.address }));
@@ -85,10 +85,10 @@ function PayoutModalContent({
   // STATES TO FILL WITH FORM INPUTS
   const [reviewsToPay, setReviewsToPay] = useState<number>(0);
   const [amountToPay, setAmountToPay] = useState<number>();
-  const [totalAmount, setTotalAmount] = useState<any>(0);
+  const [totalAmount, setTotalAmount] = useState<number>(0);
   const [amountDeposited, setAmountDeposited] = useState<number>();
   const [transactionHash, setTransactionHash] = useState<string>();
-  const [submitPayment, setSubmitPayment] = useState<boolean>(false)
+  const [submitPayment, setSubmitPayment] = useState<boolean>(false);
   const [submitMarkDone, setSubmitMarkDone] = useState<boolean>(false);
   const [applicationsId, setApplicationsId] = React.useState<any>([]);
   const [applicationIdsToPay, setApplicationIdsToPay] = React.useState<any>([]);
@@ -96,31 +96,28 @@ function PayoutModalContent({
 
   useEffect(() => {
     if (applicationsId.length === 0) {
-      applications.forEach((app: any) =>
-        app.reviewers.forEach(
-          (reviewer: any) =>
-            reviewer.actorId === reviewerAddress &&
-            setApplicationsId((array: any) => [...array, app.id])
-        )
-      );
+      applications.forEach((app: any) => app.reviewers.forEach(
+        (reviewer: any) => reviewer.actorId === reviewerAddress
+            && setApplicationsId((array: any) => [...array, app.id]),
+      ));
     }
-  }, [applications, applicationsId]);
+  }, [applications, applicationsId, reviewerAddress]);
 
-  useEffect (() => {
-    if (reviewsToPay !== 0 ) {
-      if (reviewsToPay !== applicationIdsToPay.length){
+  useEffect(() => {
+    if (reviewsToPay !== 0) {
+      if (reviewsToPay !== applicationIdsToPay.length) {
         setApplicationIdsToPay(applicationsId.slice(0, reviewsToPay));
       }
 
-      if (reviewsToPay !== reviewIdsToPay.length){
-      setReviewIdsToPay(reviewIds.slice(0, reviewsToPay));
+      if (reviewsToPay !== reviewIdsToPay.length) {
+        setReviewIdsToPay(reviewIds.slice(0, reviewsToPay));
       }
-  }
+    }
 
-  console.log(applicationIdsToPay.length)
-  console.log(reviewIdsToPay.length)
-
-  }, [reviewsToPay])
+    console.log(applicationIdsToPay.length);
+    console.log(reviewIdsToPay.length);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reviewsToPay]);
 
   async function setTransactionHashFromClipboard() {
     try {
@@ -133,16 +130,15 @@ function PayoutModalContent({
   }
 
   const [reviewCurrency, setReviewCurrency] = useState(
-    supportedCurrencies[0].label
+    supportedCurrencies[0].label,
   );
   const [reviewCurrencyAddress, setReviewCurrencyAddress] = useState(
-    supportedCurrencies[0].address
+    supportedCurrencies[0].address,
   );
 
   // STATES TO FILL WITH ETH HOOKS
   const [walletBalance, setWalletBalance] = React.useState(0);
-  const [loader, setLoader] = useState(false);
-  // const [rewardAssetDecimals, setRewardAssetDecimals] = React.useState(0);
+
   const [transactionData, txnLink, loading] = useMarkReviewPaymentDone(
     workspaceId,
     reviewIds,
@@ -151,7 +147,7 @@ function PayoutModalContent({
     submitMarkDone,
     reviewerAddress,
     reviewCurrencyAddress,
-    transactionHash
+    transactionHash,
   );
 
   console.log(txnLink);
@@ -163,7 +159,7 @@ function PayoutModalContent({
     utils.parseEther(totalAmount.toString()),
     submitPayment,
     reviewerAddress,
-    reviewCurrencyAddress
+    reviewCurrencyAddress,
   );
 
   console.log(fulfillPaymentData);
@@ -172,14 +168,14 @@ function PayoutModalContent({
     if (amountToPay !== undefined && reviewsToPay !== undefined) {
       const amount = ((amountToPay as any) * reviewsToPay) as any;
 
-      setTotalAmount(amount.toString());
+      setTotalAmount(amount);
     }
   }, [amountToPay, reviewsToPay]);
 
   useEffect(() => {
     if (currentChain) {
       const currencies = Object.keys(
-        CHAIN_INFO[currentChain].supportedCurrencies
+        CHAIN_INFO[currentChain].supportedCurrencies,
       )
         .map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
         .map((currency) => ({ ...currency, id: currency.address }));
@@ -200,19 +196,19 @@ function PayoutModalContent({
     // eslint-disable-next-line wrap-iife
     // eslint-disable-next-line func-names
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    async function getBalance () {
+    async function getBalance() {
       try {
         const tempAddress = await signerStates.data?.getAddress();
         const tempWalletBalance = await rewardAssetContract.balanceOf(
-          tempAddress
+          tempAddress,
         );
         setWalletBalance(tempWalletBalance);
-        console.log("YESS")
+        console.log('YESS');
       } catch {
         // eslint-disable-next-line no-console
         console.error('could not');
       }
-    };
+    }
 
     getBalance();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -221,7 +217,6 @@ function PayoutModalContent({
   useEffect(() => {
     if (transactionData) {
       onClose();
-      setTotalAmount('');
       toastRef.current = toast({
         position: 'top',
         render: () => (
@@ -242,7 +237,6 @@ function PayoutModalContent({
   useEffect(() => {
     if (fulfillPaymentData) {
       onClose();
-      setTotalAmount('');
       setSubmitPayment(false);
       toastRef.current = toast({
         position: 'top',
@@ -257,9 +251,9 @@ function PayoutModalContent({
           />
         ),
       });
+      setTabIndex(1);
     } else if (error) {
       onClose();
-      setTotalAmount('');
       setSubmitPayment(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -281,7 +275,8 @@ function PayoutModalContent({
                 Address:
               </Heading>
               <Text fontSize="0.875rem">
-                {trimAddress(reviewerAddress, 8)}{' '}
+                {trimAddress(reviewerAddress, 8)}
+                {' '}
                 <IconButton
                   alignItems="center"
                   justifyItems="center"
@@ -290,7 +285,7 @@ function PayoutModalContent({
                   variant="ghost"
                   _hover={{}}
                   _active={{}}
-                  icon={
+                  icon={(
                     <Image
                       src={
                         !hasCopied
@@ -298,7 +293,7 @@ function PayoutModalContent({
                           : '/ui_icons/copy/active.svg'
                       }
                     />
-                  }
+                  )}
                   onClick={() => onCopy()}
                 />
               </Text>
@@ -316,9 +311,7 @@ function PayoutModalContent({
                   isInvalid={
                     (reviewsToPay as any) > reviews || (reviewsToPay as any) < 1
                   }
-                  onChange={(e) =>
-                    setReviewsToPay(parseInt(e.target.value, 10))
-                  }
+                  onChange={(e) => setReviewsToPay(parseInt(e.target.value, 10))}
                   value={reviewsToPay}
                   h={12}
                   type="number"
@@ -339,8 +332,8 @@ function PayoutModalContent({
               <Text fontSize="0.75rem" color="red" fontWeight="bold">
                 {(reviewsToPay as any) > reviews
                   ? `You can not pay more than ${reviews} reviews`
-                  : (reviewsToPay as any) < 1 &&
-                    'You need to pay at least 1 review'}
+                  : (reviewsToPay as any) < 1
+                    && 'You need to pay at least 1 review'}
               </Text>
             </Flex>
             <Flex direction="row">
@@ -402,19 +395,23 @@ function PayoutModalContent({
                         color="black"
                         size="sm"
                       >
-                        {totalAmount} {reviewCurrency}
+                        {totalAmount}
+                        {' '}
+                        {reviewCurrency}
                       </Text>
                     </InputRightElement>
                   </InputGroup>
 
                   <Text mt="0.75rem" color="#AAAAAA">
-                    Wallet Balance{' '}
+                    Wallet Balance
+                    {' '}
                     <Text
                       color="#AAAAAA"
                       display="inline-block"
                       fontWeight="bold"
                     >
-                      {`${formatAmount(walletBalance.toString())}`}{' '}
+                      {`${formatAmount(walletBalance.toString())}`}
+                      {' '}
                       {reviewCurrency}
                     </Text>
                   </Text>
@@ -453,7 +450,10 @@ function PayoutModalContent({
                 <Text color="white">2</Text>
               </Flex>
               <Text>
-                Send {totalAmount !== 0 && `${totalAmount} ${reviewCurrency}`}{' '}
+                Send
+                {' '}
+                {totalAmount !== 0 && `${totalAmount} ${reviewCurrency}`}
+                {' '}
                 to the address below.
               </Text>
             </Flex>
@@ -506,7 +506,11 @@ function PayoutModalContent({
             </InputGroup>
 
             <Text color="#717A7C" fontSize="0.875rem">
-              NOTE: Send only {reviewCurrency} to the address in the Polygon
+              NOTE: Send only
+              {' '}
+              {reviewCurrency}
+              {' '}
+              to the address in the Polygon
               network.
             </Text>
           </Stack>
@@ -521,15 +525,18 @@ function PayoutModalContent({
                 w="10px"
                 alt="wallet_info"
                 src="/ui_icons/info_brand.svg"
-              />{' '}
+              />
+              {' '}
               By pressing Make Payment you will have to approve the transaction
-              in your wallet.{' '}
+              in your wallet.
+              {' '}
               <Link
                 href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
                 isExternal
               >
                 Learn more
-              </Link>{' '}
+              </Link>
+              {' '}
               <Image
                 display="inline-block"
                 h="10px"
@@ -542,8 +549,7 @@ function PayoutModalContent({
               my={8}
               isDisabled={reviewsToPay !== reviewIdsToPay.length}
               onClick={() => {
-                setLoader(!loader);
-                setSubmitPayment(true)
+                setSubmitPayment(true);
                 // eslint-disable-next-line no-console
                 console.log(
                   reviewCurrencyAddress,
@@ -569,12 +575,12 @@ function PayoutModalContent({
                 reviewCurrencyAddress,
                 totalAmount,
                 reviewCurrency,
-                reviewerAddress
+                reviewerAddress,
               );
               // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-              reviewsToPay !== undefined &&
-              amountToPay !== undefined &&
-              !paymentOutside
+              reviewsToPay !== undefined
+              && amountToPay !== undefined
+              && !paymentOutside
                 ? (setPaymentOutside(true))
                 : (setPaymentOutside(false), setPayMode(2));
             }}
@@ -596,7 +602,8 @@ function PayoutModalContent({
                 Address:
               </Heading>
               <Text fontSize="0.875rem">
-                {trimAddress(reviewerAddress, 8)}{' '}
+                {trimAddress(reviewerAddress, 8)}
+                {' '}
                 <IconButton
                   alignItems="center"
                   justifyItems="center"
@@ -605,7 +612,7 @@ function PayoutModalContent({
                   variant="ghost"
                   _hover={{}}
                   _active={{}}
-                  icon={
+                  icon={(
                     <Image
                       src={
                         !hasCopied
@@ -613,7 +620,7 @@ function PayoutModalContent({
                           : '/ui_icons/copy/active.svg'
                       }
                     />
-                  }
+                  )}
                   onClick={() => onCopy()}
                 />
               </Text>
@@ -631,9 +638,7 @@ function PayoutModalContent({
                   isInvalid={
                     (reviewsToPay as any) > reviews || (reviewsToPay as any) < 1
                   }
-                  onChange={(e) =>
-                    setReviewsToPay(parseInt(e.target.value, 10))
-                  }
+                  onChange={(e) => setReviewsToPay(parseInt(e.target.value, 10))}
                   value={reviewsToPay}
                   h={12}
                   type="number"
@@ -654,8 +659,8 @@ function PayoutModalContent({
               <Text fontSize="0.75rem">
                 {(reviewsToPay as any) > reviews
                   ? `You can not pay more than ${reviews} reviews`
-                  : (reviewsToPay as any) < 1 &&
-                    'You need to pay at least 1 review'}
+                  : (reviewsToPay as any) < 1
+                    && 'You need to pay at least 1 review'}
               </Text>
             </Flex>
             <Flex direction="row">
@@ -737,10 +742,10 @@ function PayoutModalContent({
                   totalAmount,
                   reviewCurrency,
                   reviewerAddress,
-                  transactionHash
+                  transactionHash,
                 );
                 setTabIndex(1);
-              setSubmitMarkDone(true)
+                setSubmitMarkDone(true);
               }}
             >
               {!loading ? 'Mark Payment as Done' : <Loader />}
