@@ -250,7 +250,12 @@ function ViewApplicants() {
   }, [isAcceptingApplications]);
 
   return (
-    <Container maxW="100%" display="flex" px="70px">
+    <Container
+      maxW="100%"
+      display="flex"
+      px="70px"
+      mb="300px"
+    >
       <Container
         flex={1}
         display="flex"
