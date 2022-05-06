@@ -141,8 +141,8 @@ function PayoutModalContent({
 
   const [transactionData, txnLink, loading] = useMarkReviewPaymentDone(
     workspaceId,
-    reviewIds,
-    applicationsId,
+    reviewIdsToPay,
+    applicationIdsToPay,
     utils.parseEther(totalAmount.toString()),
     submitMarkDone,
     reviewerAddress,
@@ -154,8 +154,8 @@ function PayoutModalContent({
 
   const [fulfillPaymentData, fulfillTxnLink, fulfillLoading, error] = useFulfillReviewPayment(
     workspaceId,
-    reviewIds,
-    applicationsId,
+    reviewIdsToPay,
+    applicationIdsToPay,
     utils.parseEther(totalAmount.toString()),
     submitPayment,
     reviewerAddress,
