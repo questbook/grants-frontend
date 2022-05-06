@@ -168,7 +168,7 @@ function ManageGrant() {
     {
       icon: fundingIcon,
       // eslint-disable-next-line max-len
-      title: formatAmount(getTotalFundingAsked(milestones as ApplicationMilestone[]).toString(), decimals),
+      title: formatAmount(getTotalFundingRecv(milestones as ApplicationMilestone[]).toString(), decimals),
       subtitle: 'Funding Sent',
       content: (
         <Funding
