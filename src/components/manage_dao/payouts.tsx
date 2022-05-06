@@ -243,7 +243,7 @@ function Payouts() {
                                 alignSelf="center"
                               >
                                 {' '}
-                                {reviewer.email.length > 16 ? (
+                                {reviewer.email && reviewer.email.length > 16 ? (
                                   <Tooltip label={reviewer.email}>
                                     <Flex
                                       alignSelf="center"
