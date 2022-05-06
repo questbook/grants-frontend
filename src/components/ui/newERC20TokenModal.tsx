@@ -6,6 +6,7 @@ import { isValidAddress } from 'src/utils/validationUtils';
 import config from 'src/constants/config';
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils';
 import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace';
+import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
 import Loader from './loader';
 import Modal from './modal';
 import SingleLineInput from './forms/singleLineInput';
@@ -39,17 +40,22 @@ function NewERC20Modal({
   setSupportedCurrenciesList,
 }: ModalProps) {
   const [tokenAddress, setTokenAddress] = useState<string>('');
-  const [tokenName, setTokenName] = useState<string>('');
+  // const [tokenName, setTokenName] = useState<string>('');
   const [tokenSymbol, setTokenSymbol] = useState<string>('');
   const [tokenDecimal, setTokenDecimal] = useState<string>('');
   const [tokenIconIPFSURI, setTokenIconIPFSURI] = useState<string | undefined>('');
+  const [tokenIconHash, setTokenIconHash] = useState<string | undefined>('');
   // const [newCurrency, setNewCurrency] = useState<Token>();
   const [tokenAddressError, setTokenAddressError] = useState<boolean>(false);
   const [tokenIconError, setTokenIconError] = useState<boolean>(true);
   const [image, setImage] = useState<string>(config.defaultDAOImagePath);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
-  const [tokenData, setTokenData] = useState<any>();
+  const [tokenData, setTokenData] = useState<WorkspaceUpdateRequest>({
+    tokens: [{
+      label: '', address: '', decimal: 18, iconHash: '',
+    }],
+  });
   const [txnData, txnLink, loading] = useUpdateWorkspace(tokenData);
 
   const toast = useToast();
@@ -70,6 +76,7 @@ function NewERC20Modal({
       imageHash = (await uploadToIPFS(imageFile)).hash;
       imageIPFSURL = getUrlForIPFSHash(imageHash);
       setTokenIconIPFSURI(imageIPFSURL);
+      setTokenIconHash(imageHash);
       setTokenIconError(false);
       console.log('Image hash', imageIPFSURL);
       return imageIPFSURL;
@@ -125,8 +132,8 @@ function NewERC20Modal({
       setRewardCurrencyAddress(tokenAddress);
       const newToken = {
         address: tokenAddress,
-        decimals: 18,
-        icon: tokenIconIPFSURI,
+        decimals: tokenDecimal,
+        iconHash: tokenIconHash,
         id: tokenAddress,
         label: tokenSymbol,
       };
