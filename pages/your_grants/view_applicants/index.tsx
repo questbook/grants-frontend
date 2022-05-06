@@ -10,7 +10,6 @@ import { TableFilters } from 'src/components/your_grants/view_applicants/table/T
 import {
   useGetApplicantsForAGrantQuery,
   useGetGrantDetailsQuery,
-  ApplicationMilestone,
 } from 'src/generated/graphql';
 import { SupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
@@ -31,11 +30,9 @@ import { ApiClientsContext } from '../../_app';
 
 const PAGE_SIZE = 500;
 
-function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
+function getTotalFundingRecv(_amount_paid: string) {
   let val = BigNumber.from(0);
-  milestones.forEach((milestone) => {
-    val = val.add(milestone.amountPaid);
-  });
+  val = val.add(_amount_paid);
   return val;
 }
 
@@ -160,7 +157,7 @@ function ViewApplicants() {
           reviewers: applicant.reviewers,
           amount_paid: formatAmount(
             getTotalFundingRecv(
-              applicant.milestones,
+              applicant?.milestones[0].amountPaid,
             ).toString(),
             18,
           ),
