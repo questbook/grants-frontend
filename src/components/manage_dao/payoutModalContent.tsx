@@ -203,7 +203,6 @@ function PayoutModalContent({
           tempAddress,
         );
         setWalletBalance(tempWalletBalance);
-        console.log('YESS');
       } catch {
         // eslint-disable-next-line no-console
         console.error('could not');
@@ -313,7 +312,7 @@ function PayoutModalContent({
                   min={1}
                   max={reviewIds.length}
                   isInvalid={
-                    (reviewsToPay as any) > reviews || (reviewsToPay as any) < 1
+                    (reviewsToPay as number) > reviews || (reviewsToPay as number) < 1
                   }
                   onChange={(e) => setReviewsToPay(parseInt(e.target.value, 10))}
                   value={reviewsToPay}
@@ -334,9 +333,9 @@ function PayoutModalContent({
                 </InputRightElement>
               </InputGroup>
               <Text fontSize="0.75rem" color="red" fontWeight="bold">
-                {(reviewsToPay as any) > reviews
+                {(reviewsToPay as number) > reviews
                   ? `You can not pay more than ${reviews} reviews`
-                  : (reviewsToPay as any) < 1
+                  : (reviewsToPay as number) < 1
                     && 'You need to pay at least 1 review'}
               </Text>
             </Flex>
@@ -640,7 +639,7 @@ function PayoutModalContent({
                   min={1}
                   max={reviews}
                   isInvalid={
-                    (reviewsToPay as any) > reviews || (reviewsToPay as any) < 1
+                    (reviewsToPay as number) > reviews || (reviewsToPay as number) < 1
                   }
                   onChange={(e) => setReviewsToPay(parseInt(e.target.value, 10))}
                   value={reviewsToPay}
@@ -661,9 +660,9 @@ function PayoutModalContent({
                 </InputRightElement>
               </InputGroup>
               <Text fontSize="0.75rem">
-                {(reviewsToPay as any) > reviews
+                {(reviewsToPay as number) > reviews
                   ? `You can not pay more than ${reviews} reviews`
-                  : (reviewsToPay as any) < 1
+                  : (reviewsToPay as number) < 1
                     && 'You need to pay at least 1 review'}
               </Text>
             </Flex>
@@ -738,7 +737,7 @@ function PayoutModalContent({
               variant="primary"
               my={8}
               isDisabled={reviewsToPay !== reviewIdsToPay.length}
-              onClick={async () => {
+              onClick={() => {
                 // eslint-disable-next-line no-console
                 console.log(
                   reviewCurrencyAddress,
