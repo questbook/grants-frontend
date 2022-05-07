@@ -117,11 +117,13 @@ function AssignedToReview() {
     <Text
       w="100%"
       maxW={maxWidth}
-      bg="#C8E9DE"
-      color="#334640"
+      variant="outline"
+      bg="rgba(149, 128, 255, 0.1)"
+      color="brand.500"
       borderRadius="24px"
-      variant="tableHeader"
-      px={3}
+      border="1px solid #69B399"
+      borderColor="brand.500"
+      px={2}
       py={1}
       textAlign="center"
       fontSize="12px"
