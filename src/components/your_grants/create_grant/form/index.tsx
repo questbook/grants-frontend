@@ -8,7 +8,7 @@ import { CHAIN_INFO } from 'src/constants/chainInfo';
 import useChainId from 'src/hooks/utils/useChainId';
 import { SupportedChainId } from 'src/constants/chains';
 import { useAccount } from 'wagmi';
-import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
+import { WorkspaceUpdateRequest, Token } from '@questbook/service-validator-client';
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys';
 import { ApiClientsContext } from 'pages/_app';
 import { convertToRaw, EditorState } from 'draft-js';
@@ -132,6 +132,9 @@ function Form({
   // const [extraFieldError, setExtraFieldError] = useState(false);
 
   const [reward, setReward] = React.useState('');
+  const [rewardToken, setRewardToken] = React.useState<Token>({
+    label: '', address: '', decimal: '18', iconHash: '',
+  });
   const [rewardError, setRewardError] = React.useState(false);
 
   const currentChain = useChainId() ?? SupportedChainId.RINKEBY;
@@ -269,6 +272,7 @@ function Form({
         fields,
         reward,
         rewardCurrencyAddress,
+        rewardToken,
         date,
         grantManagers: admins,
         rubric: {
@@ -365,6 +369,8 @@ function Form({
       <GrantRewardsInput
         reward={reward}
         setReward={setReward}
+        rewardToken={rewardToken}
+        setRewardToken={setRewardToken}
         rewardError={rewardError}
         setRewardError={setRewardError}
         rewardCurrency={rewardCurrency}
@@ -417,7 +423,7 @@ function Form({
 
       <Button
         py={hasClicked ? 2 : 0}
-        onClick={hasClicked ? () => {} : handleOnSubmit}
+        onClick={hasClicked ? () => { } : handleOnSubmit}
         variant="primary"
         disabled={shouldEncrypt && !keySubmitted && !hasOwnerPublicKey}
       >

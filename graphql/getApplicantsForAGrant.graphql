@@ -12,6 +12,12 @@ query getApplicantsForAGrant($first: Int, $skip: Int, $grantID: String!) {
       funding
       reward {
         asset
+        token {
+          address,
+          label,
+          decimal,
+          iconHash
+        }
       }
       workspace {
         id

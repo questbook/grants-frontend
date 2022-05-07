@@ -13,6 +13,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import NewERC20Modal from 'src/components/ui/newERC20TokenModal';
 import Loader from 'src/components/ui/loader';
 import useEncryption from 'src/hooks/utils/useEncryption';
+import { Token } from '@questbook/service-validator-client';
 import Datepicker from '../../../ui/forms/datepicker';
 import Dropdown from '../../../ui/forms/dropdown';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
@@ -20,6 +21,8 @@ import SingleLineInput from '../../../ui/forms/singleLineInput';
 function GrantRewardsInput({
   reward,
   setReward,
+  rewardToken,
+  setRewardToken,
   rewardError,
   setRewardError,
   rewardCurrency,
@@ -41,6 +44,8 @@ function GrantRewardsInput({
 }: {
   reward: string;
   setReward: (rewards: string) => void;
+  rewardToken: Token
+  setRewardToken: (rewardToken: Token) => void;
   rewardError: boolean;
   setRewardError: (rewardError: boolean) => void;
   rewardCurrency: string;
@@ -91,6 +96,7 @@ function GrantRewardsInput({
           setIsModalOpen={setIsModalOpen}
           setRewardCurrency={setRewardCurrency}
           setRewardCurrencyAddress={setRewardCurrencyAddress}
+          setRewardToken={setRewardToken}
           supportedCurrenciesList={supportedCurrencies}
           setSupportedCurrenciesList={setSupportedCurrenciesList}
         />

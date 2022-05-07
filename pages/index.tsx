@@ -142,6 +142,7 @@ function BrowseGrants() {
               grant.funding,
               chainInfo?.decimals,
             );
+            console.log('Grants: ', grants);
             return (
               <GrantCard
                 daoID={grant.workspace.id}

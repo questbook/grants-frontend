@@ -6,7 +6,7 @@ import { isValidAddress } from 'src/utils/validationUtils';
 import config from 'src/constants/config';
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils';
 import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace';
-import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
+import { Token, WorkspaceUpdateRequest } from '@questbook/service-validator-client';
 import Loader from './loader';
 import Modal from './modal';
 import SingleLineInput from './forms/singleLineInput';
@@ -19,13 +19,14 @@ interface ModalProps {
   setIsModalOpen: (isModalOpen: boolean) => void;
   setRewardCurrency: (rewardCurrency: string) => void;
   setRewardCurrencyAddress: (rewardCurrencyAddress: string) => void;
+  setRewardToken: (rewardToken: Token) => void
   setSupportedCurrenciesList: (supportedCurrencyList: Array<any>) => void;
   supportedCurrenciesList: Token[];
 }
 
-type Token = {
+type TokenDisplay = {
   address: string
-  decimals: number
+  decimals: string
   icon: string
   id: string
   label: string
@@ -36,6 +37,7 @@ function NewERC20Modal({
   setIsModalOpen,
   setRewardCurrency,
   setRewardCurrencyAddress,
+  setRewardToken,
   supportedCurrenciesList,
   setSupportedCurrenciesList,
 }: ModalProps) {
@@ -44,7 +46,7 @@ function NewERC20Modal({
   const [tokenSymbol, setTokenSymbol] = useState<string>('');
   const [tokenDecimal, setTokenDecimal] = useState<string>('');
   const [tokenIconIPFSURI, setTokenIconIPFSURI] = useState<string | undefined>('');
-  const [tokenIconHash, setTokenIconHash] = useState<string | undefined>('');
+  const [tokenIconHash, setTokenIconHash] = useState<string>('');
   // const [newCurrency, setNewCurrency] = useState<Token>();
   const [tokenAddressError, setTokenAddressError] = useState<boolean>(false);
   const [tokenIconError, setTokenIconError] = useState<boolean>(true);
@@ -53,7 +55,7 @@ function NewERC20Modal({
 
   const [tokenData, setTokenData] = useState<WorkspaceUpdateRequest>({
     tokens: [{
-      label: '', address: '', decimal: 18, iconHash: '',
+      label: '', address: '', decimal: '', iconHash: '',
     }],
   });
   const [txnData, txnLink, loading] = useUpdateWorkspace(tokenData);
@@ -122,7 +124,18 @@ function NewERC20Modal({
     }
   };
 
-  const handleSubmit = async () => {
+  const configureNewToken = (token: Token): TokenDisplay => {
+    const newToken: TokenDisplay = {
+      id: token.address,
+      address: token.address,
+      decimals: token.decimal,
+      label: token.label,
+      icon: getUrlForIPFSHash(token.iconHash),
+    };
+    return newToken;
+  };
+
+  const handleSubmit = () => {
     validateTokenAddress();
     if (!tokenAddressError) {
       uploadLogo().then((imgURI) => setTokenIconIPFSURI(imgURI));
@@ -132,19 +145,22 @@ function NewERC20Modal({
       setRewardCurrencyAddress(tokenAddress);
       const newToken = {
         address: tokenAddress,
-        decimals: tokenDecimal,
+        decimal: tokenDecimal,
         iconHash: tokenIconHash,
         id: tokenAddress,
         label: tokenSymbol,
       };
       console.log('Supported Currencies list', supportedCurrenciesList);
-      setTokenData(newToken);
-      setSupportedCurrenciesList([...supportedCurrenciesList, newToken]);
+      setTokenData({ tokens: [newToken] });
+      setRewardToken(newToken);
+      const configuredToken = configureNewToken(newToken);
+      setSupportedCurrenciesList([...supportedCurrenciesList, configuredToken]);
       console.log('New list of supported currencies', [...supportedCurrenciesList, newToken]);
     }
   };
   useEffect(() => {
     if (txnData) {
+      setIsModalOpen(false);
       toastRef.current = toast({
         position: 'top',
         render: () => (
@@ -200,6 +216,7 @@ function NewERC20Modal({
             onChange={(e) => {
               setTokenDecimal(e.target.value);
             }}
+            type="number"
           />
           <Box my={4} />
           <Flex direction="row" my={4}>

@@ -15,7 +15,13 @@ query getAllGrants($first: Int, $skip: Int, $applicantId: Bytes!) {
   reward {
     committed,
     id,
-    asset
+    asset,
+    token {
+    address
+    label
+    decimal
+    iconHash
+    }
   },
   createdAtS,
   workspace {id, title, logoIpfsHash, supportedNetworks}, 
