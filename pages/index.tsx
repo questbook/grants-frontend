@@ -34,7 +34,8 @@ function BrowseGrants() {
   const router = useRouter();
   const { subgraphClients } = useContext(ApiClientsContext)!;
 
-  const allNetworkGrants = Object.keys(subgraphClients)!.map(
+  // Changing this to support Rinkeby only for testing!
+  const allNetworkGrants = Object.keys(subgraphClients)!.filter((key: string) => key === '4').map(
     // eslint-disable-next-line react-hooks/rules-of-hooks
     (key) => useGetAllGrantsLazyQuery({ client: subgraphClients[key].client }),
   );
