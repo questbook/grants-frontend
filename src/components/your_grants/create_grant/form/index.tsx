@@ -292,7 +292,8 @@ function Form({
       }
       if (customFields.length > 0) {
         customFields.forEach((customField: any, index: number) => {
-          fields[`customField${index}`] = {
+          const santizedCustomFieldValue = customField.value.split(' ').join('\\s');
+          fields[`customField${index}-${santizedCustomFieldValue}`] = {
             title: customField.value,
             inputType: 'short-form',
           };

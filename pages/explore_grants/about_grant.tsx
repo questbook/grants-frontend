@@ -146,10 +146,24 @@ function AboutGrant() {
     setGrantDetails(grantData?.details);
     setGrantSummary(grantData?.summary);
     setGrantRequiredFields(
-      grantData?.fields?.map((field: any) => ({
-        detail: getFieldLabelFromFieldTitle(field.title) ?? 'Invalid Field',
-        // detail: field.title,
-      })),
+      grantData?.fields?.map((field: any) => {
+        if (field.title.startsWith('customField')) {
+          const i = field.title.indexOf('-');
+          if (i !== -1) {
+            return (
+              {
+                detail: field.title.substring(i + 1).split('\\s').join(' '),
+              }
+            );
+          }
+        }
+        return (
+          {
+            detail: getFieldLabelFromFieldTitle(field.title) ?? 'Invalid Field',
+            // detail: field.title,
+          }
+        );
+      }),
     );
 
     setAcceptingApplications(grantData?.acceptingApplications);
