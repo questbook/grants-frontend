@@ -66,6 +66,7 @@ function ViewApplication() {
 
   useEffect(() => {
     if (data) {
+      console.log('data', data);
       setApplication(data.grantApplication);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -182,6 +183,7 @@ function ViewApplication() {
           }
           rewardCurrencyAddress={application?.grant?.reward?.asset}
           formData={formData}
+          application={application}
           grantTitle={application?.grant?.title || ''}
           sentDate={
             application?.createdAtS.toString()
