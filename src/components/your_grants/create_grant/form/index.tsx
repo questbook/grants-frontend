@@ -11,7 +11,9 @@ import { useAccount } from 'wagmi';
 import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys';
 import { ApiClientsContext } from 'pages/_app';
-import { convertToRaw, EditorState } from 'draft-js';
+import {
+  convertFromRaw, convertToRaw, EditorState,
+} from 'draft-js';
 import Title from './1_title';
 import Details from './2_details';
 import ApplicantDetails from './3_applicantDetails';
@@ -37,7 +39,15 @@ function Form({
   const [titleError, setTitleError] = useState(false);
   const [summaryError, setSummaryError] = useState(false);
 
-  const [details, setDetails] = useState(() => EditorState.createEmpty());
+  const [details, setDetails] = useState(EditorState.createWithContent(convertFromRaw({
+    entityMap: {},
+    blocks: [{
+      text: '',
+      key: 'foo',
+      type: 'unstyled',
+      entityRanges: [],
+    } as any],
+  })));
   const [detailsError, setDetailsError] = useState(false);
 
   const [shouldEncrypt, setShouldEncrypt] = useState(false);
@@ -105,6 +115,12 @@ function Form({
     .filter((obj) => obj != null);
   const [detailsRequired, setDetailsRequired] = useState(applicantDetails);
   // const [extraField, setExtraField] = useState(false);
+
+  const [customFieldsOptionIsVisible, setCustomFieldsOptionIsVisible] = React.useState(false);
+  const [customFields, setCustomFields] = useState<any[]>([{
+    value: '',
+    isError: false,
+  }]);
   const [multipleMilestones, setMultipleMilestones] = useState(false);
 
   const toggleDetailsRequired = (index: number) => {
@@ -192,6 +208,18 @@ function Form({
       error = true;
     }
 
+    if (customFieldsOptionIsVisible) {
+      const errorCheckedCustomFields = customFields.map((customField: any) => {
+        const errorCheckedCustomField = { ...customField };
+        if (customField.value.length <= 0) {
+          errorCheckedCustomField.isError = true;
+          error = true;
+        }
+        return errorCheckedCustomField;
+      });
+      setCustomFields(errorCheckedCustomFields);
+    }
+
     if (rubricRequired) {
       const errorCheckedRubrics = rubrics.map((rubric: any) => {
         const errorCheckedRubric = { ...rubric };
@@ -261,6 +289,14 @@ function Form({
         if (fields.memberDetails) {
           fields.memberDetails = { ...fields.memberDetails, pii: true };
         }
+      }
+      if (customFields.length > 0) {
+        customFields.forEach((customField: any, index: number) => {
+          fields[`customField${index}`] = {
+            title: customField.value,
+            inputType: 'short-form',
+          };
+        });
       }
       onSubmit({
         title,
@@ -343,6 +379,10 @@ function Form({
         // setExtraFieldDetails={setExtraFieldDetails}
         // extraFieldError={extraFieldError}
         // setExtraFieldError={setExtraFieldError}
+        customFields={customFields}
+        setCustomFields={setCustomFields}
+        customFieldsOptionIsVisible={customFieldsOptionIsVisible}
+        setCustomFieldsOptionIsVisible={setCustomFieldsOptionIsVisible}
         multipleMilestones={multipleMilestones}
         setMultipleMilestones={setMultipleMilestones}
         rubricRequired={rubricRequired}
