@@ -10,7 +10,6 @@ import { TableFilters } from 'src/components/your_grants/view_applicants/table/T
 import {
   useGetApplicantsForAGrantQuery,
   useGetGrantDetailsQuery,
-  ApplicationMilestone,
 } from 'src/generated/graphql';
 import { SupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
@@ -23,6 +22,7 @@ import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGran
 import useArchiveGrant from 'src/hooks/useArchiveGrant';
 import RubricDrawer from 'src/components/your_grants/rubricDrawer';
 import { BigNumber } from 'ethers';
+import { ApplicationMilestone } from 'src/types';
 import { formatAmount } from '../../../src/utils/formattingUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Table from '../../../src/components/your_grants/view_applicants/table';

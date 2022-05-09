@@ -18,8 +18,8 @@ import React, {
 import { useAccount } from 'wagmi';
 import { BigNumber } from 'ethers';
 import {
-  ApplicationMilestone,
   GetApplicationDetailsQuery,
+  GetApplicationMilestonesQuery,
   useGetApplicationDetailsQuery,
   useGetFundSentForApplicationQuery,
 } from 'src/generated/graphql';
@@ -47,7 +47,7 @@ import {
 } from '../../../src/utils/formattingUtils';
 import SendFundModalContent from '../../../src/components/your_grants/manage_grant/modals/sendFundModalContent';
 
-function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
+function getTotalFundingRecv(milestones: GetApplicationMilestonesQuery['grantApplications'][0]['milestones']) {
   let val = BigNumber.from(0);
   milestones.forEach((milestone) => {
     val = val.add(milestone.amountPaid);
@@ -55,7 +55,7 @@ function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
   return val;
 }
 
-function getTotalFundingAsked(milestones: ApplicationMilestone[]) {
+function getTotalFundingAsked(milestones: GetApplicationMilestonesQuery['grantApplications'][0]['milestones']) {
   let val = BigNumber.from(0);
   milestones.forEach((milestone) => {
     val = val.add(milestone.amount);
