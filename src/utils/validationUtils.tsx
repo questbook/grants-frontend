@@ -21,6 +21,8 @@ const getSupportedChainIdFromSupportedNetwork = (chainId: SupportedNetwork) => {
     return SupportedChainId.POLYGON_MAINNET;
   } if (chainId === SupportedNetwork.Chain_10) {
     return SupportedChainId.OPTIMISM_MAINNET;
+  } if (chainId === SupportedNetwork.Chain_245022926) {
+    return SupportedChainId.NEON_DEVNET;
   }
   // @TODO: needs type for harmony
   // if (chainId === SupportedNetwork.Chain_80001) {
@@ -49,6 +51,8 @@ const getSupportedValidatorNetworkFromChainId = (chainId: SupportedChainId) => {
     return SupportedValidatorNetwork._137;
   } if (chainId === SupportedChainId.OPTIMISM_MAINNET) {
     return SupportedValidatorNetwork._10;
+  } if (chainId === SupportedChainId.NEON_DEVNET) {
+    return SupportedValidatorNetwork._245022926;
   }
   // @TODO: needs type for harmony
   // if (chainId === SupportedNetwork.Chain_80001) {

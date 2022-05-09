@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { SupportedChainId } from 'src/constants/chains';
-import { useNetwork } from 'wagmi';
+import { chain, useNetwork } from 'wagmi';
 
 export default function useChainId() {
   const [{ data: networkData }] = useNetwork();
@@ -19,6 +19,9 @@ export default function useChainId() {
     }
     if (chainId === 10) {
       return SupportedChainId.OPTIMISM_MAINNET;
+    }
+    if (chainId === 245022926) {
+      return SupportedChainId.NEON_DEVNET;
     }
     return undefined;
   };

@@ -25,6 +25,8 @@ export type ApplicationMilestone = {
   amount: Scalars['BigInt'];
   /** amount paid by DAO */
   amountPaid: Scalars['BigInt'];
+  /** The grant application this milestone belongs to */
+  application: GrantApplication;
   /** Feedback from the grant DAO manager/applicant */
   feedbackDao?: Maybe<Scalars['String']>;
   /** Feedback from the developer */

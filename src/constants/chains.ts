@@ -4,6 +4,7 @@ export enum SupportedChainId {
   POLYGON_TESTNET = 80001,
   POLYGON_MAINNET = 137,
   OPTIMISM_MAINNET = 10,
+  NEON_DEVNET = 245022926,
 }
 
 export const ALL_SUPPORTED_CHAIN_IDS: SupportedChainId[] = Object.values(SupportedChainId).filter(
