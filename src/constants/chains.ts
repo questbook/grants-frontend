@@ -15,5 +15,5 @@ export const ALL_SUPPORTED_CHAIN_IDS: SupportedChainId[] = Object.values(
   (id) => typeof id === 'number'
         && ((process.env.IS_TEST === 'true'
             && id === SupportedChainId.RINKEBY)
-            || process.env.IS_TEST === 'false'),
+            || !process.env.IS_TEST),
 ) as SupportedChainId[];
