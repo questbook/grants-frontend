@@ -378,7 +378,7 @@ function Application({ applicationData, showHiddenData }: Props) {
             )}
           </Box>
 
-          <Box display={customFields.length > 0 ? '' : 'none'}>
+          <Box mt={12} display={customFields.length > 0 ? '' : 'none'}>
             <Heading variant="applicationHeading" ref={refs[3]}>
               Other Information
             </Heading>

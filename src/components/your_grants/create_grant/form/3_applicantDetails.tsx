@@ -184,6 +184,7 @@ function ApplicantDetails({
               </Text>
             </Box>
           </Flex>
+          <Box mt={6} />
         </>
       )}
 
