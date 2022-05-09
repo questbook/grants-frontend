@@ -12,6 +12,7 @@ import { WorkspaceUpdateRequest, Token } from '@questbook/service-validator-clie
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys';
 import { ApiClientsContext } from 'pages/_app';
 import { convertToRaw, EditorState } from 'draft-js';
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import Title from './1_title';
 import Details from './2_details';
 import ApplicantDetails from './3_applicantDetails';
@@ -151,6 +152,20 @@ function Form({
   const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
     supportedCurrencies[0].id,
   );
+
+  if (workspace?.tokens) {
+    for (let i = 0; i < workspace.tokens.length; i += 1) {
+      supportedCurrencies.push(
+        {
+          id: workspace.tokens[i].address,
+          address: workspace.tokens[i].address,
+          decimals: workspace.tokens[i].decimal,
+          label: workspace.tokens[i].label,
+          icon: getUrlForIPFSHash(workspace.tokens[i].iconHash),
+        },
+      );
+    }
+  }
 
   useEffect(() => {
     // console.log(currentChain);

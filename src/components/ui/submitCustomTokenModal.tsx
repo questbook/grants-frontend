@@ -53,11 +53,7 @@ function CustomTokenModal({
   const [image, setImage] = useState<string>(config.defaultDAOImagePath);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
-  const [tokenData, setTokenData] = useState<WorkspaceUpdateRequest>({
-    tokens: [{
-      label: '', address: '', decimal: '', iconHash: '',
-    }],
-  });
+  const [tokenData, setTokenData] = useState<WorkspaceUpdateRequest>();
   const [txnData, txnLink, loading] = useUpdateWorkspace(tokenData);
 
   const toast = useToast();
@@ -79,7 +75,7 @@ function CustomTokenModal({
       imageIPFSURL = getUrlForIPFSHash(imageHash);
       setTokenIconIPFSURI(imageIPFSURL);
       setTokenIconHash(imageHash);
-      setTokenIconError(false);
+      // setTokenIconError(false);
       console.log('Image hash', imageIPFSURL);
       return imageIPFSURL;
     }
@@ -106,6 +102,7 @@ function CustomTokenModal({
       logoImage.src = URL.createObjectURL(img);
       logoImage.onload = () => {
         if (logoImage.height > 100 || logoImage.width > 100) {
+          setTokenIconError(true);
           toastRef.current = toast({
             position: 'top',
             render: () => ErrorToast({
@@ -137,7 +134,20 @@ function CustomTokenModal({
 
   const handleSubmit = () => {
     validateTokenAddress();
-    if (!tokenAddressError) {
+    if (tokenIconError) {
+      toastRef.current = toast({
+        position: 'top',
+        render: () => ErrorToast({
+          content: 'Please upload image of size 100 X 100 px',
+          close: () => {
+            if (toastRef.current) {
+              toast.close(toastRef.current);
+            }
+          },
+        }),
+      });
+    }
+    if (!tokenAddressError && !tokenIconError) {
       uploadLogo().then((imgURI) => setTokenIconIPFSURI(imgURI));
     }
     if (!tokenAddressError && !tokenIconError && tokenIconIPFSURI && tokenAddress && tokenSymbol) {
