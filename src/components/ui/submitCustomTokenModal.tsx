@@ -160,12 +160,12 @@ function CustomTokenModal({
         id: tokenAddress,
         label: tokenSymbol,
       };
-      console.log('Supported Currencies list', supportedCurrenciesList);
+      // console.log('Supported Currencies list', supportedCurrenciesList);
       setTokenData({ tokens: [newToken] });
       setRewardToken(newToken);
       const configuredToken = configureNewToken(newToken);
       setSupportedCurrenciesList([...supportedCurrenciesList, configuredToken]);
-      console.log('New list of supported currencies', [...supportedCurrenciesList, newToken]);
+      // console.log('New list of supported currencies', [...supportedCurrenciesList, newToken]);
     }
   };
   useEffect(() => {
