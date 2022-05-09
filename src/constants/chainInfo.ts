@@ -238,76 +238,79 @@ export const CHAIN_INFO: ChainInfoMap = {
         address: '0x282d8efce846a88b159800bd4130ad77443fa1a1',
         decimals: 18,
       },
-      '0x9c2C5fd7b07E95EE044DDeba0E97a665F142394f': {
+      '0x9c2c5fd7b07e95ee044ddeba0e97a665f142394f': {
         icon: '/ui_icons/brand/currency/inch_symbol.svg',
         label: '1INCH',
-        address: '0x9c2C5fd7b07E95EE044DDeba0E97a665F142394f',
+        address: '0x9c2c5fd7b07e95ee044ddeba0e97a665f142394f',
         decimals: 18,
       },
-      '0x1B30e875754aaD79A55929EcfC24f4bd1cd40C08': {
-        icon: '/ui_icons/brand/currency/ankr_symbol.svg',
-        label: 'ANKR',
-        address: '0xC8E36f0a44fBecA89FdD5970439cBe62EB4b5d03',
-        decimals: 18,
-      },
-      '0x6C0AB120dBd11BA701AFF6748568311668F63FE0': {
+      /**
+       * verify if ANKR address is correct
+       */
+      // '0x1B30e875754aaD79A55929EcfC24f4bd1cd40C08': {
+      //   icon: '/ui_icons/brand/currency/ankr_symbol.svg',
+      //   label: 'ANKR',
+      //   address: '0x1B30e875754aaD79A55929EcfC24f4bd1cd40C08',
+      //   decimals: 18,
+      // },
+      '0x6c0ab120dbd11ba701aff6748568311668f63fe0': {
         icon: '/ui_icons/brand/currency/apwine_symbol.svg',
         label: 'APW',
-        address: '0x6C0AB120dBd11BA701AFF6748568311668F63FE0',
+        address: '0x6c0ab120dbd11ba701aff6748568311668f63fe0',
         decimals: 18,
       },
-      '0x236Ba47C763a8eE1a8F064E867d0751b1714fdF8': {
+      '0x236ba47c763a8ee1a8f064e867d0751b1714fdf8': {
         icon: '/ui_icons/brand/currency/boba_symbol.svg',
         label: 'BOBA',
-        address: '0x236Ba47C763a8eE1a8F064E867d0751b1714fdF8',
+        address: '0x236ba47c763a8ee1a8f064e867d0751b1714fdf8',
         decimals: 18,
       },
-      '0xd10852DF03Ea8b8Af0CC0B09cAc3f7dbB15e0433': {
+      '0xd10852df03ea8b8af0cc0b09cac3f7dbb15e0433': {
         icon: '/ui_icons/brand/currency/flux_symbol.svg',
         label: 'FLUX',
-        address: '0xd10852DF03Ea8b8Af0CC0B09cAc3f7dbB15e0433',
+        address: '0xd10852df03ea8b8af0cc0b09cac3f7dbb15e0433',
         decimals: 18,
       },
-      '0x3962F4A0A0051DccE0be73A7e09cEf5756736712': {
+      '0x3962f4a0a0051dcce0be73a7e09cef5756736712': {
         icon: '/ui_icons/brand/currency/livepeer_symbol.svg',
         label: 'LPT',
-        address: '0x3962F4A0A0051DccE0be73A7e09cEf5756736712',
+        address: '0x3962f4a0a0051dcce0be73a7e09cef5756736712',
         decimals: 18,
       },
-      '0x62c4b802f2153a281dc87994427F606f561Cc620': {
+      '0x62c4b802f2153a281dc87994427f606f561cc620': {
         icon: '/ui_icons/brand/currency/spruce.svg',
         label: 'SPR',
         address: '0x62c4b802f2153a281dc87994427F606f561Cc620',
         decimals: 18,
       },
-      '0x980111ae1B84E50222C8843e3A7a038F36Fecd2b': {
+      '0x980111ae1b84e50222c8843e3a7a038f36fecd2b': {
         icon: '/ui_icons/brand/currency/stackos_symbol.svg',
         label: 'STACK',
-        address: '0x62c4b802f2153a281dc87994427F606f561Cc620',
+        address: '0x980111ae1b84e50222c8843e3a7a038f36fecd2b',
         decimals: 18,
       },
-      '0x3066818837c5e6eD6601bd5a91B0762877A6B731': {
+      '0x3066818837c5e6ed6601bd5a91b0762877a6b731': {
         icon: '/ui_icons/brand/currency/uma_symbol.svg',
         label: 'UMA',
-        address: '0x3066818837c5e6eD6601bd5a91B0762877A6B731',
+        address: '0x3066818837c5e6ed6601bd5a91b0762877a6b731',
         decimals: 18,
       },
-      '0xb33EaAd8d922B1083446DC23f610c2567fB5180f': {
+      '0xb33eaad8d922b1083446dc23f610c2567fb5180f': {
         icon: '/ui_icons/brand/currency/uniswap_symbol.svg',
         label: 'UNI',
-        address: '0xb33EaAd8d922B1083446DC23f610c2567fB5180f',
+        address: '0xb33eaad8d922b1083446dc23f610c2567fb5180f',
         decimals: 18,
       },
-      '0xDA537104D6A5edd53c6fBba9A898708E465260b6': {
+      '0xda537104d6a5edd53c6fbba9a898708e465260b6': {
         icon: '/ui_icons/brand/currency/yearn_symbol.svg',
         label: 'YFI',
-        address: '0xDA537104D6A5edd53c6fBba9A898708E465260b6',
+        address: '0xda537104d6a5edd53c6fbba9a898708e465260b6',
         decimals: 18,
       },
-      '0x9A06Db14D639796B25A6ceC6A1bf614fd98815EC': {
+      '0x9a06db14d639796b25a6cec6a1bf614fd98815ec': {
         icon: '/ui_icons/brand/currency/zkp_icon.svg',
         label: 'ZKP',
-        address: '0x9A06Db14D639796B25A6ceC6A1bf614fd98815EC',
+        address: '0x9a06db14d639796b25a6cec6a1bf614fd98815ec',
         decimals: 18,
       },
     },
@@ -358,10 +361,22 @@ export const CHAIN_INFO: ChainInfoMap = {
         address: '0x7f5c764cbc14f9669b88837ca1490cca17c31607',
         decimals: 6,
       },
-      '0x9e1028F5F1D5eDE59748FFceE5532509976840E0': {
+      '0x9e1028f5f1d5ede59748ffcee5532509976840e0': {
         icon: '/ui_icons/brand/currency/perp_symbol.svg',
         label: 'PERP',
-        address: '0x9e1028F5F1D5eDE59748FFceE5532509976840E0',
+        address: '0x9e1028f5f1d5ede59748ffcee5532509976840e0',
+        decimals: 18,
+      },
+      '0x8700daec35af8ff88c16bdf0418774cb3d7599b4': {
+        icon: '/ui_icons/brand/currency/snx_symbol.svg',
+        label: 'SNX',
+        address: '0x8700daec35af8ff88c16bdf0418774cb3d7599b4',
+        decimals: 18,
+      },
+      '0x8c6f28f2f1a3c87f0f938b96d27520d9751ec8d9': {
+        icon: '/ui_icons/brand/currency/sUSD_symbol.svg',
+        label: 'sUSD',
+        address: '0x8c6f28f2f1a3c87f0f938b96d27520d9751ec8d9',
         decimals: 18,
       },
     },

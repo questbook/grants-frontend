@@ -45,6 +45,12 @@ function ApplicantDetails({ onSubmit }: Props) {
   const [milestoneSelectOptionIsVisible, setMilestoneSelectOptionIsVisible] = React.useState(false);
   const [multipleMilestones, setMultipleMilestones] = useState(false);
 
+  const [customFieldsOptionIsVisible, setCustomFieldsOptionIsVisible] = React.useState(false);
+  const [customFields, setCustomFields] = useState<any[]>([{
+    value: '',
+    isError: false,
+  }]);
+
   const toggleDetailsRequired = (index: number) => {
     const newDetailsRequired = [...detailsRequired];
     // TODO: create interface for detailsRequired
@@ -73,6 +79,17 @@ function ApplicantDetails({ onSubmit }: Props) {
         return errorCheckedRubric;
       });
       setRubrics(errorCheckedRubrics);
+    }
+    if (customFieldsOptionIsVisible) {
+      const errorCheckedCustomFields = customFields.map((customField: any) => {
+        const errorCheckedCustomField = { ...customField };
+        if (customField.value.length <= 0) {
+          errorCheckedCustomField.isError = true;
+          error = true;
+        }
+        return errorCheckedCustomField;
+      });
+      setCustomFields(errorCheckedCustomFields);
     }
     if (!error) {
       const requiredDetails = {} as any;
@@ -115,6 +132,15 @@ function ApplicantDetails({ onSubmit }: Props) {
           inputType: 'short-form',
         };
       }
+      if (customFields.length > 0) {
+        customFields.forEach((customField: any, index: number) => {
+          const santizedCustomFieldValue = customField.value.split(' ').join('\\s');
+          fields[`customField${index}-${santizedCustomFieldValue}`] = {
+            title: customField.value,
+            inputType: 'short-form',
+          };
+        });
+      }
       onSubmit({
         fields,
         rubric: {
@@ -144,6 +170,22 @@ function ApplicantDetails({ onSubmit }: Props) {
             const {
               title, required, id, tooltip,
             } = detail as any;
+            if (id === 'customFields') {
+              return (
+                <GridItem key={id} colSpan={1}>
+                  <Badge
+                    isActive={customFieldsOptionIsVisible}
+                    onClick={() => {
+                      setCustomFieldsOptionIsVisible(
+                        !customFieldsOptionIsVisible,
+                      );
+                    }}
+                    label="Other Information"
+                    tooltip="Get additional details in your application form."
+                  />
+                </GridItem>
+              );
+            }
             if (id === 'isMultipleMilestones') {
               return (
                 <GridItem colSpan={1}>
@@ -180,23 +222,80 @@ function ApplicantDetails({ onSubmit }: Props) {
 
         <Box mt={6} />
 
-        {/* {extraField ? (
-          <>
-            <SingleLineInput
-              label="Field Name"
-              placeholder="Sample Field"
-              isError={extraFieldError}
-              errorText="Required"
-              value={extraFieldDetails}
-              onChange={(e) => {
-                setExtraFieldError(false);
-                setExtraFieldDetails(e.target.value);
+        {customFieldsOptionIsVisible && (
+        <>
+          {customFields.map((customField, index) => (
+            <>
+              {index > 0 && (
+                <Flex mt={2} mb="-21px" gap="2" justifyContent="flex-end">
+                  <Box
+                    onClick={() => {
+                      const newCustomFields = [...customFields];
+                      newCustomFields.splice(index, 1);
+                      setCustomFields(newCustomFields);
+                    }}
+                    display="flex"
+                    alignItems="center"
+                    cursor="pointer"
+                    zIndex={1}
+                  >
+                    <Image
+                      h="12px"
+                      w="12px"
+                      src="/ui_icons/delete_red.svg"
+                      mr="6px"
+                      mt="-2px"
+                    />
+                    <Text fontWeight="500" fontSize="14px" color="#DF5252" lineHeight="20px">
+                      Delete
+                    </Text>
+                  </Box>
+                </Flex>
+              )}
+              <SingleLineInput
+                label={`Question ${index + 1}`}
+                value={customField.value}
+                onChange={(e) => {
+                  const newCustomFields = [...customFields];
+                  newCustomFields[index].value = e.target.value;
+                  newCustomFields[index].isError = false;
+                  setCustomFields(newCustomFields);
+                }}
+                placeholder="Field Label"
+                isError={customField.isError}
+                errorText="Required"
+                maxLength={30}
+              />
+              <Box mt={2} />
+            </>
+          ))}
+          <Flex mt={2} gap="2" justifyContent="flex-start">
+            <Box
+              onClick={() => {
+                const newCustomFields = [...customFields, {
+                  value: '',
+                  isError: false,
+                }];
+                setCustomFields(newCustomFields);
               }}
-              subtext="Letters and spaces are allowed."
-            />
-            <Box mt={8} />
-          </>
-        ) : null} */}
+              display="flex"
+              alignItems="center"
+              cursor="pointer"
+            >
+              <Image
+                h="16px"
+                w="15px"
+                src="/ui_icons/plus_circle.svg"
+                mr="6px"
+              />
+              <Text fontWeight="500" fontSize="14px" color="#8850EA" lineHeight="20px">
+                Add another criteria
+              </Text>
+            </Box>
+          </Flex>
+          <Box mt={6} />
+        </>
+        )}
 
         {milestoneSelectOptionIsVisible && (
         <>

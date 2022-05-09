@@ -7,7 +7,11 @@ import React, {
   ReactElement, useContext, useEffect, useState,
 } from 'react';
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters';
-import { useGetApplicantsForAGrantQuery, useGetGrantDetailsQuery } from 'src/generated/graphql';
+import {
+  useGetApplicantsForAGrantQuery,
+  useGetGrantDetailsQuery,
+  ApplicationMilestone,
+} from 'src/generated/graphql';
 import { SupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { getAssetInfo } from 'src/utils/tokenUtils';
@@ -18,6 +22,7 @@ import Modal from 'src/components/ui/modal';
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent';
 import useArchiveGrant from 'src/hooks/useArchiveGrant';
 import RubricDrawer from 'src/components/your_grants/rubricDrawer';
+import { BigNumber } from 'ethers';
 import { formatAmount } from '../../../src/utils/formattingUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Table from '../../../src/components/your_grants/view_applicants/table';
@@ -25,6 +30,14 @@ import NavbarLayout from '../../../src/layout/navbarLayout';
 import { ApiClientsContext } from '../../_app';
 
 const PAGE_SIZE = 500;
+
+function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
+  let val = BigNumber.from(0);
+  milestones.forEach((milestone) => {
+    val = val.add(milestone.amountPaid);
+  });
+  return val;
+}
 
 function ViewApplicants() {
   const [applicantsData, setApplicantsData] = useState<any>([]);
@@ -34,6 +47,7 @@ function ViewApplicants() {
   const [shouldShowButton, setShouldShowButton] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAdmin, setIsAdmin] = React.useState<boolean>(false);
+  const [isReviewer, setIsReviewer] = React.useState<boolean>(false);
 
   const [{ data: accountData }] = useAccount({
     fetchEns: false,
@@ -94,14 +108,18 @@ function ViewApplicants() {
       const tempMember = workspace.members.find(
         (m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
       );
+      console.log(tempMember);
       setIsAdmin(
         tempMember?.accessLevel === 'admin'
           || tempMember?.accessLevel === 'owner',
       );
+
+      setIsReviewer(tempMember?.accessLevel === 'reviewer');
     }
   }, [accountData, workspace]);
 
   const { data, error, loading } = useGetApplicantsForAGrantQuery(queryParams);
+
   useEffect(() => {
     if (data && data.grantApplications.length) {
       const fetchedApplicantsData = data.grantApplications.map((applicant) => {
@@ -111,6 +129,7 @@ function ViewApplicants() {
           applicationId: applicant.id,
           applicant_address: applicant.applicantId,
           sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
+          updated_on: moment.unix(applicant.updatedAtS).format('DD MMM YYYY'),
           // applicant_name: getFieldString('applicantName'),
           project_name: getFieldString('projectName'),
           funding_asked: {
@@ -138,8 +157,18 @@ function ViewApplicants() {
           },
           // status: applicationStatuses.indexOf(applicant?.state),
           status: TableFilters[applicant?.state],
+          reviewers: applicant.reviewers,
+          amount_paid: formatAmount(
+            getTotalFundingRecv(
+              applicant.milestones,
+            ).toString(),
+            18,
+          ),
         };
       });
+
+      console.log('fetch', fetchedApplicantsData);
+
       setApplicantsData(fetchedApplicantsData);
       setDaoId(data.grantApplications[0].grant.workspace.id);
       setAcceptingApplications(data.grantApplications[0].grant.acceptingApplications);
@@ -221,7 +250,12 @@ function ViewApplicants() {
   }, [isAcceptingApplications]);
 
   return (
-    <Container maxW="100%" display="flex" px="70px">
+    <Container
+      maxW="100%"
+      display="flex"
+      px="70px"
+      mb="300px"
+    >
       <Container
         flex={1}
         display="flex"
@@ -255,9 +289,9 @@ function ViewApplicants() {
           workspaceId={workspace?.id ?? ''}
           initialIsPrivate={grantData?.grants[0].rubric?.isPrivate ?? false}
         />
-
         <Table
           title={applicantsData[0]?.grantTitle ?? 'Grant Title'}
+          isReviewer={isReviewer}
           data={applicantsData}
           onViewApplicantFormClick={(commentData: any) => router.push({
             pathname: '/your_grants/view_applicants/applicant_form/',

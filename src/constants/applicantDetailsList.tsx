@@ -49,6 +49,12 @@ export default [
     isRequired: false,
   },
   {
+    title: 'Custom Fields',
+    id: 'customFields',
+    inputType: 'array',
+    isRequired: false,
+  },
+  {
     title: 'Milestones',
     id: 'isMultipleMilestones',
     inputType: 'array',

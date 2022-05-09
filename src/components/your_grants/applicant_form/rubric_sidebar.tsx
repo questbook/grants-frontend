@@ -339,6 +339,7 @@ function RubricSidebar({
             {reviews?.map((review: any, i: number) => (
               <Button
                 onClick={() => {
+                  console.log(review);
                   setReviewerDrawerOpen(true);
                   console.log(detailedReviews[i]);
                   setReviewSelected(detailedReviews[i]);

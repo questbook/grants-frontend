@@ -100,7 +100,7 @@ function Members({ workspaceMembers }: Props) {
                 <Text flex={tableDataFlex[2]} variant="tableBody">
                   {getFormattedDateFromUnixTimestampWithYear(data.updatedAt)}
                 </Text>
-                <Tooltip label={data.address}>
+                <Tooltip label={data.addedBy}>
                   <Flex flex={tableDataFlex[3]}>
                     <Text variant="tableBody">
                       {getTextWithEllipses(data.addedBy, 16)}
