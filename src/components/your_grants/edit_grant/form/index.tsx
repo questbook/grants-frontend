@@ -90,6 +90,23 @@ function Form({
   const [reward, setReward] = React.useState(formData.reward ?? '');
   const [rewardError, setRewardError] = React.useState(false);
 
+  useEffect(() => {
+    console.log('formData', formData);
+  }, [formData]);
+  const [customFieldsOptionIsVisible, setCustomFieldsOptionIsVisible] = React.useState(
+    Object.keys(formData).filter((key) => key.startsWith('customField')).length > 0,
+  );
+  const [customFields, setCustomFields] = useState<any[]>(
+    Object.keys(formData).filter((key) => key.startsWith('customField'))
+      .map((key) => {
+        const i = key.indexOf('-');
+        return ({
+          value: key.substring(i + 1).split('\\s').join(' '),
+          isError: false,
+        });
+      }),
+  );
+
   const currentChain = useChainId() ?? SupportedChainId.RINKEBY;
 
   const supportedCurrencies = Object.keys(
@@ -146,6 +163,18 @@ function Form({
       error = true;
     }
 
+    if (customFieldsOptionIsVisible) {
+      const errorCheckedCustomFields = customFields.map((customField: any) => {
+        const errorCheckedCustomField = { ...customField };
+        if (customField.value.length <= 0) {
+          errorCheckedCustomField.isError = true;
+          error = true;
+        }
+        return errorCheckedCustomField;
+      });
+      setCustomFields(errorCheckedCustomFields);
+    }
+
     if (!error) {
       const detailsString = JSON.stringify(
         convertToRaw(details.getCurrentContent()),
@@ -184,6 +213,16 @@ function Form({
           title: 'Funding Ask',
           inputType: 'short-form',
         };
+      }
+
+      if (customFields.length > 0) {
+        customFields.forEach((customField: any, index: number) => {
+          const santizedCustomFieldValue = customField.value.split(' ').join('\\s');
+          fields[`customField${index}-${santizedCustomFieldValue}`] = {
+            title: customField.value,
+            inputType: 'short-form',
+          };
+        });
       }
 
       // console.log(fields);
@@ -277,6 +316,10 @@ function Form({
         // setExtraFieldDetails={setExtraFieldDetails}
         // extraFieldError={extraFieldError}
         // setExtraFieldError={setExtraFieldError}
+        customFields={customFields}
+        setCustomFields={setCustomFields}
+        customFieldsOptionIsVisible={customFieldsOptionIsVisible}
+        setCustomFieldsOptionIsVisible={setCustomFieldsOptionIsVisible}
         multipleMilestones={multipleMilestones}
         setMultipleMilestones={setMultipleMilestones}
       />
