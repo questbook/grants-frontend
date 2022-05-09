@@ -19,7 +19,6 @@ import { useAccount } from 'wagmi';
 import { BigNumber } from 'ethers';
 import {
   GetApplicationDetailsQuery,
-  GetApplicationMilestonesQuery,
   useGetApplicationDetailsQuery,
   useGetFundSentForApplicationQuery,
 } from 'src/generated/graphql';
@@ -30,6 +29,7 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import config from 'src/constants/config';
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption';
 import CopyIcon from 'src/components/ui/copy_icon';
+import { ApplicationMilestone } from 'src/types';
 import InfoToast from '../../../src/components/ui/infoToast';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Heading from '../../../src/components/ui/heading';
@@ -47,7 +47,7 @@ import {
 } from '../../../src/utils/formattingUtils';
 import SendFundModalContent from '../../../src/components/your_grants/manage_grant/modals/sendFundModalContent';
 
-function getTotalFundingRecv(milestones: GetApplicationMilestonesQuery['grantApplications'][0]['milestones']) {
+function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
   let val = BigNumber.from(0);
   milestones.forEach((milestone) => {
     val = val.add(milestone.amountPaid);
@@ -55,7 +55,7 @@ function getTotalFundingRecv(milestones: GetApplicationMilestonesQuery['grantApp
   return val;
 }
 
-function getTotalFundingAsked(milestones: GetApplicationMilestonesQuery['grantApplications'][0]['milestones']) {
+function getTotalFundingAsked(milestones: ApplicationMilestone[]) {
   let val = BigNumber.from(0);
   milestones.forEach((milestone) => {
     val = val.add(milestone.amount);
