@@ -19,6 +19,12 @@ query getMyApplications($first: Int, $skip: Int, $applicantID: Bytes!) {
       }
       reward {
         asset
+        token {
+    address,
+    label,
+    decimal,
+    iconHash
+    }
       }
     }
     applicantId

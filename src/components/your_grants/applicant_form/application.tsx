@@ -16,7 +16,7 @@ import React, {
 } from 'react';
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer';
 import { GetApplicationDetailsQuery } from 'src/generated/graphql';
-import { getFromIPFS } from 'src/utils/ipfsUtils';
+import { getFromIPFS, getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { formatAmount } from '../../../utils/formattingUtils';
@@ -39,6 +39,8 @@ function Application({ applicationData, showHiddenData }: Props) {
     setSelected(currentSelection);
   };
 
+  const { workspace } = useContext(ApiClientsContext)!;
+  const chainId = getSupportedChainIdFromWorkspace(workspace);
   const refs = [useRef(null), useRef(null), useRef(null), useRef(null)];
   const tabs = ['Project Details', 'Funds Requested', 'About Team', 'Other Information'];
   const [projectTitle, setProjectTitle] = useState('');
@@ -58,6 +60,23 @@ function Application({ applicationData, showHiddenData }: Props) {
     setDecodedDetails(d);
   };
 
+  let icon : string;
+  let label : string;
+  let decimals;
+  if (applicationData?.grant.reward.token) {
+    label = applicationData.grant.reward.token.label;
+    icon = getUrlForIPFSHash(applicationData.grant.reward.token.iconHash);
+    decimals = applicationData.grant.reward.token.decimal;
+  } else {
+    label = getAssetInfo(
+      applicationData?.grant?.reward?.asset,
+      chainId,
+    )?.label;
+    icon = getAssetInfo(
+      applicationData?.grant?.reward?.asset,
+      chainId,
+    )?.icon;
+  }
   useEffect(() => {
     if (!applicationData) return;
     const getStringField = (fieldName: string) => applicationData?.fields?.find(({ id }) => id.split('.')[1] === fieldName)
@@ -101,8 +120,6 @@ function Application({ applicationData, showHiddenData }: Props) {
     }
   }, [applicationData]);
 
-  const { workspace } = useContext(ApiClientsContext)!;
-  const chainId = getSupportedChainIdFromWorkspace(workspace);
   return (
     <>
       <Flex mt="8px" direction="column" w="full">
@@ -227,10 +244,7 @@ function Application({ applicationData, showHiddenData }: Props) {
                   <Flex direction="row" justify="start" mt={3}>
                     <Image
                       src={
-                        getAssetInfo(
-                          applicationData?.grant?.reward?.asset,
-                          chainId,
-                        )?.icon
+                        icon
                       }
                     />
                     <Box ml={2} />
@@ -240,21 +254,18 @@ function Application({ applicationData, showHiddenData }: Props) {
                       </Heading>
                       <Text variant="applicationText">
                         {milestone?.amount && applicationData
-                        && formatAmount(
-                          milestone?.amount,
-                          CHAIN_INFO[
-                            getSupportedChainIdFromSupportedNetwork(
-                              applicationData.grant.workspace.supportedNetworks[0],
-                            )
-                          ]?.supportedCurrencies[applicationData.grant.reward.asset.toLowerCase()]
-                            ?.decimals ?? 18,
-                        )}
+                          && formatAmount(
+                            milestone?.amount,
+                            CHAIN_INFO[
+                              getSupportedChainIdFromSupportedNetwork(
+                                applicationData.grant.workspace.supportedNetworks[0],
+                              )
+                            ]?.supportedCurrencies[applicationData.grant.reward.asset.toLowerCase()]
+                              ?.decimals ?? 18,
+                          )}
                         {' '}
                         {
-                          getAssetInfo(
-                            applicationData?.grant?.reward?.asset,
-                            chainId,
-                          )?.label
+                          label
                         }
                       </Text>
                     </Flex>
@@ -285,17 +296,11 @@ function Application({ applicationData, showHiddenData }: Props) {
                   {applicationData
                     && formatAmount(
                       fundingAsk ?? '0',
-                      CHAIN_INFO[
-                        getSupportedChainIdFromSupportedNetwork(
-                          applicationData.grant.workspace.supportedNetworks[0],
-                        )
-                      ]?.supportedCurrencies[applicationData.grant.reward.asset.toLowerCase()]
-                        ?.decimals ?? 18,
+                      decimals ?? 18,
                     )}
                   {' '}
                   {
-                    getAssetInfo(applicationData?.grant?.reward?.asset, chainId)
-                      ?.label
+                    label
                   }
                 </Text>
               </Flex>

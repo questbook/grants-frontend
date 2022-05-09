@@ -34,11 +34,12 @@ function BrowseGrants() {
   const router = useRouter();
   const { subgraphClients } = useContext(ApiClientsContext)!;
 
+  // Changing this to support Rinkeby only for testing!
   const allNetworkGrants = Object.keys(subgraphClients)!.map(
     // eslint-disable-next-line react-hooks/rules-of-hooks
     (key) => useGetAllGrantsLazyQuery({ client: subgraphClients[key].client }),
   );
-  useEffect(() => {}, [subgraphClients]);
+  useEffect(() => { }, [subgraphClients]);
 
   const toast = useToast();
   const [grants, setGrants] = useState<GetAllGrantsQuery['grants']>([]);
@@ -103,7 +104,7 @@ function BrowseGrants() {
     const parentElement = (current as HTMLElement)?.parentNode as HTMLElement;
     const reachedBottom = Math.abs(
       parentElement.scrollTop
-          - (parentElement.scrollHeight - parentElement.clientHeight),
+      - (parentElement.scrollHeight - parentElement.clientHeight),
     ) < 10;
     if (reachedBottom) {
       getGrantData();
@@ -132,16 +133,30 @@ function BrowseGrants() {
         <Heading title="Discover grants" />
         {grants.length > 0
           && grants.map((grant) => {
+            let chainInfo;
+            let tokenIcon;
             const chainId = getSupportedChainIdFromSupportedNetwork(
               grant.workspace.supportedNetworks[0],
             );
-            const chainInfo = CHAIN_INFO[chainId]?.supportedCurrencies[
-              grant.reward.asset.toLowerCase()
-            ];
+            if (grant.reward.token) {
+              tokenIcon = getUrlForIPFSHash(grant.reward.token?.iconHash);
+              chainInfo = {
+                address: grant.reward.token.address,
+                label: grant.reward.token.label,
+                decimals: grant.reward.token.decimal,
+                icon: tokenIcon,
+              };
+            } else {
+              chainInfo = CHAIN_INFO[chainId]?.supportedCurrencies[
+                grant.reward.asset.toLowerCase()
+              ];
+            }
+
             const [isGrantVerified, funding] = verify(
               grant.funding,
               chainInfo?.decimals,
             );
+
             return (
               <GrantCard
                 daoID={grant.workspace.id}

@@ -9,6 +9,7 @@
 /coverage
 /pages/api/
 /pages/test.tsx
+tests/
 
 # next.js
 /.next/
@@ -41,3 +42,4 @@ yarn-error.log*
 yarn.lock
 
 .env
+test/
