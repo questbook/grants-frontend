@@ -40,5 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 
 yarn.lock
-.env
 
+.env

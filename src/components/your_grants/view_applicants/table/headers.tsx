@@ -5,7 +5,7 @@ function Headers({ is_reviewer }:{ is_reviewer : boolean; }) {
   const tableHeaders = [
     'Applicant Address',
     'Project Name',
-    'Funding',
+    'Funding Ask',
     'Reviewer',
     'Status',
     'Last updated on',
@@ -20,7 +20,7 @@ function Headers({ is_reviewer }:{ is_reviewer : boolean; }) {
     'Status',
     'Actions',
   ];
-  const tableHeadersflex = [0.231, 0.20, 0.15, 0.16, 0.16, 0.28, 0.116];
+  const tableHeadersflex = [0.231, 0.20, 0.15, 0.13, 0.16, 0.25, 0.116];
   const tableHeadersflexReviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
 
   const tableHeadersAlign = [

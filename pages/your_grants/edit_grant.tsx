@@ -66,7 +66,7 @@ function EditGrant() {
   const getDecodedDetails = async (detailsHash: string, grant: any) => {
     console.log(detailsHash);
     const d = await getFromIPFS(detailsHash);
-    setFormData({
+    const fd = {
       title: grant.title,
       summary: grant.summary,
       details: d,
@@ -99,7 +99,6 @@ function EditGrant() {
           )
         ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
           ?.decimals ?? 18,
-        true,
       ),
       rewardCurrency:
         CHAIN_INFO[
@@ -114,7 +113,16 @@ function EditGrant() {
           )
         ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.address,
       date: grant.deadline,
-    });
+    } as any;
+    grant.fields
+      .filter((field: any) => field.id.split('.')[1]
+        .startsWith('customField'))
+      .forEach((field: any) => {
+        const fieldId = field.id.split('.')[1];
+        fd[fieldId] = fieldId;
+      });
+
+    setFormData(fd);
   };
 
   useEffect(() => {
@@ -124,7 +132,7 @@ function EditGrant() {
         getDecodedDetails(grant.details, grant);
         return;
       }
-      setFormData({
+      const fd = {
         title: grant.title,
         summary: grant.summary,
         details: grant.details,
@@ -171,7 +179,16 @@ function EditGrant() {
             )
           ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.address,
         date: grant.deadline,
-      });
+      } as any;
+      grant.fields
+        .filter((field) => field.id.split('.')[1]
+          .startsWith('customField'))
+        .forEach((field) => {
+          const fieldId = field.id.split('.')[1];
+          fd[fieldId] = fieldId;
+        });
+
+      setFormData(fd);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error, queryLoading]);

@@ -8,9 +8,9 @@ import {
   Popover,
   PopoverBody,
   PopoverContent,
-  PopoverHeader,
   PopoverTrigger,
   SimpleGrid,
+  Heading,
 } from '@chakra-ui/react';
 import React, { ReactElement } from 'react';
 import CopyIcon from 'src/components/ui/copy_icon';
@@ -26,9 +26,7 @@ function Content({
   // onRejectApplicationClick,
   onManageApplicationClick,
   data,
-  applicantionReviewer,
   isReviewer,
-  fundReceived,
 }: {
   filter: number;
   onViewApplicationFormClick?: (data?: any) => void;
@@ -36,13 +34,9 @@ function Content({
   // onRejectApplicationClick?: () => void;
   onManageApplicationClick?: (data?: any) => void;
   data: any[];
-  applicantionReviewer:[];
   isReviewer : boolean;
-  fundReceived: string;
 }) {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const open = () => setIsOpen(!isOpen);
-  const tableHeadersFlex = [0.231, 0.20, 0.15, 0.16, 0.16, 0.28, 0.116];
+  const tableHeadersFlex = [0.231, 0.20, 0.15, 0.13, 0.16, 0.25, 0.116];
   const tableHeadersFlexReviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
   const getStatus = (status: number): ReactElement => {
     if (status === TableFilters.submitted) return <PendingReview />;
@@ -53,6 +47,7 @@ function Content({
 
     return <GrantComplete />;
   };
+  console.log('data-content', data);
   return (
     <Flex
       mt="10px"
@@ -128,7 +123,7 @@ function Content({
                 </Text>
               </Flex>
               <Flex justifyContent="center" flex={tableHeadersFlexReviewer[4]}>
-                {getStatus(item.status)}
+                { item.reviewer !== 0 && item.status === 0 ? getStatus(5) : getStatus(item.status)}
               </Flex>
               <Flex
                 display="flex"
@@ -250,8 +245,8 @@ function Content({
             <Flex
               flex={tableHeadersFlex[2]}
               direction="row"
-              justifyContent="center"
-              alignItems="center"
+              justifyContent="left"
+              alignItems="left"
             >
               <Image h={5} w={5} src={item.funding_asked.icon} />
               <Box mr={3} />
@@ -263,7 +258,7 @@ function Content({
                 fontWeight="700"
                 letterSpacing={0.2}
               >
-                {fundReceived}
+                {item.amount_paid}
                 {' '}
                 /
                 {' '}
@@ -272,42 +267,46 @@ function Content({
                 {item.funding_asked.symbol}
               </Text>
             </Flex>
+            <Flex justifyContent="center" flex={tableHeadersFlex[3]}>
 
-            <Popover
-              isOpen={isOpen}
-              closeOnBlur
-              isLazy
-              placement="right"
-            >
-              <Text
-                justifyContent="center"
-                color="#717A7C"
-                variant="tableBody"
-                flex={tableHeadersFlex[3]}
-                textAlign="center"
+              <Popover
+                closeOnBlur
+                isLazy
+                placement="right"
               >
 
                 <PopoverTrigger>
-                  <Text onMouseEnter={open}>{applicantionReviewer.length}</Text>
-                </PopoverTrigger>
 
-              </Text>
-              <PopoverContent height="150px" width="inherit" right="60px" top="60px">
-                <PopoverHeader>Reviewer</PopoverHeader>
-                <PopoverBody overflowX="hidden" overflowY="auto">
-                  { applicantionReviewer.map((reviewer:{ email: string }) => (
-                    <SimpleGrid columns={1} spacing={3}>
-                      <Text>{reviewer.email}</Text>
-                    </SimpleGrid>
+                  <Text
+                    color="#717A7C"
+                    variant="tableBody"
+                    textAlign="center"
+                  >
+                    {item.reviewers.length}
+
+                  </Text>
+
+                </PopoverTrigger>
+                <PopoverContent height="150px" width="inherit" right="3px" top="60px">
+                  <Heading margin="10px" line-height="16px" color="#717A7C" font-family="DM Sans" size="sm">REVIEWERS</Heading>
+                  {item.reviewers.map((reviewer: { email: string }) => (
+                    <PopoverBody overflowX="hidden" overflowY="auto">
+                      <SimpleGrid columns={1} spacing={3}>
+                        <Text>{reviewer.email}</Text>
+                      </SimpleGrid>
+                    </PopoverBody>
                   ))}
-                </PopoverBody>
-              </PopoverContent>
-            </Popover>
+
+                </PopoverContent>
+              </Popover>
+
+            </Flex>
+
             <Flex justifyContent="center" flex={tableHeadersFlex[4]}>
-              {getStatus(item.status)}
+              { item.reviewer !== 0 && item.status === 0 ? getStatus(5) : getStatus(item.status)}
             </Flex>
             <Flex justifyContent="center" flex={tableHeadersFlex[5]}>
-              {item.sent_on}
+              {item.status === 0 ? item.sent_on : item.updated_on}
             </Flex>
             <Flex
               display="flex"

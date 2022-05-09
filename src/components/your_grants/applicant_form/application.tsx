@@ -38,10 +38,11 @@ function Application({ applicationData, showHiddenData }: Props) {
     });
     setSelected(currentSelection);
   };
+
   const { workspace } = useContext(ApiClientsContext)!;
   const chainId = getSupportedChainIdFromWorkspace(workspace);
-  const refs = [useRef(null), useRef(null), useRef(null)];
-  const tabs = ['Project Details', 'Funds Requested', 'About Team'];
+  const refs = [useRef(null), useRef(null), useRef(null), useRef(null)];
+  const tabs = ['Project Details', 'Funds Requested', 'About Team', 'Other Information'];
   const [projectTitle, setProjectTitle] = useState('');
   const [projectLink, setProjectLink] = useState<any[]>([]);
   const [projectGoals, setProjectGoals] = useState('');
@@ -50,6 +51,7 @@ function Application({ applicationData, showHiddenData }: Props) {
   const [fundingBreakdown, setFundingBreakdown] = useState('');
   const [teamMembers, setTeamMembers] = useState('');
   const [memberDetails, setMemberDetails] = useState<any[]>([]);
+  const [customFields, setCustomFields] = useState<any[]>([]);
 
   const [decodedDetails, setDecodedDetails] = useState('');
   const getDecodedDetails = async (detailsHash: string) => {
@@ -57,9 +59,9 @@ function Application({ applicationData, showHiddenData }: Props) {
     const d = await getFromIPFS(detailsHash);
     setDecodedDetails(d);
   };
-  
-  let icon;
-  let label;
+
+  let icon : string;
+  let label : string;
   let decimals;
   if (applicationData?.grant.reward.token) {
     label = applicationData.grant.reward.token.label;
@@ -103,6 +105,19 @@ function Application({ applicationData, showHiddenData }: Props) {
         ?.find((fld: any) => fld?.id?.split('.')[1] === 'memberDetails')
         ?.values.map((val) => val.value) ?? [],
     );
+
+    if (applicationData.fields.length > 0) {
+      setCustomFields(applicationData.fields
+        .filter((field: any) => (field.id.split('.')[1].startsWith('customField')))
+        .map((field: any) => {
+          const i = field.id.indexOf('-');
+          return ({
+            title: field.id.substring(i + 1).split('\\s').join(' '),
+            value: field.values[0].value,
+            isError: false,
+          });
+        }));
+    }
   }, [applicationData]);
 
   return (
@@ -118,26 +133,29 @@ function Application({ applicationData, showHiddenData }: Props) {
           mb={8}
         >
           {tabs.map(
-            (tab, index) => (index < 2 || (index === 2 && teamMembers)) && (
-              <Button
-                variant="ghost"
-                h="54px"
-                w="full"
-                _hover={{
-                  background: '#F5F5F5',
-                }}
-                _focus={{}}
-                borderRadius={0}
-                background={selected === index ? '#E7DAFF' : 'white'}
-                color={selected === index ? 'brand.500' : '#122224'}
-                borderBottomColor={
-                  selected === index ? 'brand.500' : '#E7DAFF'
-                }
-                borderBottomWidth={selected === index ? '2px' : '1px'}
-                onClick={() => scroll(refs[index], index)}
-              >
-                {tab}
-              </Button>
+            (tab, index) => (index < 2
+              || (index === 2 && teamMembers)
+              || (index === 3 && customFields.length > 0)
+            ) && (
+            <Button
+              variant="ghost"
+              h="54px"
+              w="full"
+              _hover={{
+                background: '#F5F5F5',
+              }}
+              _focus={{}}
+              borderRadius={0}
+              background={selected === index ? '#E7DAFF' : 'white'}
+              color={selected === index ? 'brand.500' : '#122224'}
+              borderBottomColor={
+                    selected === index ? 'brand.500' : '#E7DAFF'
+                  }
+              borderBottomWidth={selected === index ? '2px' : '1px'}
+              onClick={() => scroll(refs[index], index)}
+            >
+              {tab}
+            </Button>
             ),
           )}
         </Flex>
@@ -363,6 +381,25 @@ function Application({ applicationData, showHiddenData }: Props) {
                 </Flex>
               </Box>
             )}
+          </Box>
+
+          <Box mt={12} display={customFields.length > 0 ? '' : 'none'}>
+            <Heading variant="applicationHeading" ref={refs[3]}>
+              Other Information
+            </Heading>
+
+            {customFields.map((customField: any, index: number) => (
+              <Box>
+                <Heading variant="applicationHeading" mt={3}>
+                  {index + 1}
+                  {'. '}
+                  {customField.title}
+                </Heading>
+                <Text variant="applicationText" mt={1}>
+                  {customField.value}
+                </Text>
+              </Box>
+            ))}
           </Box>
         </Flex>
         <Box my={10} />
