@@ -53,7 +53,7 @@ function CustomTokenModal({
   const [image, setImage] = useState<string>(config.defaultDAOImagePath);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
-  const [tokenData, setTokenData] = useState<WorkspaceUpdateRequest>();
+  const [tokenData, setTokenData] = useState<WorkspaceUpdateRequest | any>();
   const [txnData, txnLink, loading] = useUpdateWorkspace(tokenData);
 
   const toast = useToast();

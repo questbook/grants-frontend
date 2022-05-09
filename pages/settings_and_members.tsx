@@ -32,12 +32,10 @@ function SettingsAndMembers() {
     if (!workspace) return;
     setQueryParams({
       client:
-      subgraphClients[
-        getSupportedChainIdFromWorkspace(workspace)!
-      ].client,
+        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
       variables: { workspaceID: workspace.id },
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspace]);
 
   const { data } = useGetWorkspaceDetailsQuery(queryParams);
@@ -53,7 +51,11 @@ function SettingsAndMembers() {
 
   return (
     <Flex direction="row" w="100%" justify="space-evenly">
-      <Flex w={selected === 0 ? '100%' : '100%'} maxW="1036px" direction="column">
+      <Flex
+        w={selected === 0 ? '100%' : '100%'}
+        maxW="1036px"
+        direction="column"
+      >
         <Flex
           direction="row"
           w="full"
@@ -88,7 +90,11 @@ function SettingsAndMembers() {
         {selected === 0 ? (
           <Settings workspaceData={workspaceData!} />
         ) : (
-          <Members workspaceMembers={workspaceData?.members} />
+          <Members
+            workspaceMembers={workspaceData?.members.filter(
+              (member) => member.actorId !== member.addedBy.actorId,
+            )}
+          />
         )}
       </Flex>
       <Flex w="auto" />

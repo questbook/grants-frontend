@@ -21,6 +21,7 @@ import SingleLineInput from '../../../ui/forms/singleLineInput';
 function GrantRewardsInput({
   reward,
   setReward,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   rewardToken,
   setRewardToken,
   rewardError,
