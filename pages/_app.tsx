@@ -15,7 +15,6 @@ import {
   InjectedConnector,
   Provider,
 } from 'wagmi';
-import 'dotenv/config';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 // import dynamic from 'next/dynamic';
 import {
@@ -104,8 +103,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   const clients = useMemo(() => {
     const clientsObject = {} as { [chainId: string]: SubgraphClient };
-    console.log(process.env.IS_TEST);
-    console.log('YAAAAAA', ALL_SUPPORTED_CHAIN_IDS, typeof window);
     ALL_SUPPORTED_CHAIN_IDS.forEach((chnId) => {
       clientsObject[chnId] = new SubgraphClient(chnId);
     });
