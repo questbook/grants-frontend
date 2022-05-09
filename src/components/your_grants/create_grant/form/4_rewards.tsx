@@ -66,7 +66,7 @@ function GrantRewardsInput({
   shouldEncryptReviews: boolean;
   setShouldEncryptReviews: (shouldEncryptReviews: boolean) => void;
 }) {
-  // console.log('SupportedCurrencies', supportedCurrencies);
+  console.log('SupportedCurrencies', supportedCurrencies);
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState(supportedCurrencies);

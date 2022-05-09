@@ -66,6 +66,7 @@ function ViewApplication() {
 
   useEffect(() => {
     if (data) {
+      console.log('data', data);
       setApplication(data.grantApplication);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -31,7 +31,7 @@ function YourApplications() {
   const [{ data: accountData }] = useAccount();
   const [currentPage, setCurrentPage] = React.useState(0);
   // modified for testing
-  const allNetworkApplications = Object.keys(subgraphClients)!.map((key) => (
+  const allNetworkApplications = Object.keys(subgraphClients)!.filter((key: string) => key === '4').map((key) => (
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useGetMyApplicationsLazyQuery({ client: subgraphClients[key].client })
   ));
