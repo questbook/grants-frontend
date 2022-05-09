@@ -9,6 +9,7 @@
 /coverage
 /pages/api/
 /pages/test.tsx
+tests/
 
 # next.js
 /.next/
@@ -39,3 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 
 yarn.lock
+.env
+
