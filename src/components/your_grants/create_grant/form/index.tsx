@@ -74,6 +74,7 @@ function Form({
           && member.publicKey
           && member.publicKey !== '',
       );
+      console.log('Workspace', workspace);
       setHasOwnerPublicKey(hasPubKey);
     }
   }, [accountData, workspace]);

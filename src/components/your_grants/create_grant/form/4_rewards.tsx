@@ -10,7 +10,7 @@ import {
 import React from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 // import Modal from 'src/components/ui/modal';
-import NewERC20Modal from 'src/components/ui/newERC20TokenModal';
+import CustomTokenModal from 'src/components/ui/submitCustomTokenModal';
 import Loader from 'src/components/ui/loader';
 import useEncryption from 'src/hooks/utils/useEncryption';
 import { Token } from '@questbook/service-validator-client';
@@ -91,7 +91,7 @@ function GrantRewardsInput({
             type="number"
           />
         </Box>
-        <NewERC20Modal
+        <CustomTokenModal
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
           setRewardCurrency={setRewardCurrency}

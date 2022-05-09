@@ -32,7 +32,7 @@ type TokenDisplay = {
   label: string
 };
 
-function NewERC20Modal({
+function CustomTokenModal({
   isModalOpen,
   setIsModalOpen,
   setRewardCurrency,
@@ -239,4 +239,4 @@ function NewERC20Modal({
   );
 }
 
-export default NewERC20Modal;
+export default CustomTokenModal;

@@ -2773,6 +2773,8 @@ export enum SupportedNetwork {
   Chain_10 = 'chain_10',
   Chain_137 = 'chain_137',
   Chain_80001 = 'chain_80001',
+  Chain_245022926 = 'chain_245022926',
+  Chain_245022934 = 'chain_245022934',
   Chain_1666600000 = 'chain_1666600000',
   Chain_1666700000 = 'chain_1666700000'
 }
@@ -3458,7 +3460,7 @@ export type GetWorkspaceMembersQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, workspace: { __typename?: 'Workspace', id: string, ownerId: string, logoIpfsHash: string, title: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel }> } }> };
+export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, workspace: { __typename?: 'Workspace', id: string, ownerId: string, logoIpfsHash: string, title: string, supportedNetworks: Array<SupportedNetwork>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel }> } }> };
 
 
 export const GetAllGrantsDocument = gql`
@@ -4541,6 +4543,12 @@ export const GetWorkspaceMembersDocument = gql`
       logoIpfsHash
       title
       supportedNetworks
+      tokens {
+        address
+        label
+        decimal
+        iconHash
+      }
       members {
         id
         actorId

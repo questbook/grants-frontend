@@ -106,9 +106,23 @@ function AboutGrant() {
 
   useEffect(() => {
     if (!chainId || !grantData) return;
-
-    const chainInfo = CHAIN_INFO[chainId]
-      ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];
+    let chainInfo;
+    let tokenIcon;
+    if (grantData.reward.token) {
+      tokenIcon = getUrlForIPFSHash(grantData.reward.token?.iconHash);
+      chainInfo = {
+        address: grantData.reward.token.address,
+        label: grantData.reward.token.label,
+        decimals: grantData.reward.token.decimal,
+        icon: tokenIcon,
+      };
+    } else {
+      chainInfo = CHAIN_INFO[chainId]?.supportedCurrencies[
+        grantData.reward.asset.toLowerCase()
+      ];
+    }
+    // const chainInfo = CHAIN_INFO[chainId]
+    //   ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];
     const [localIsGrantVerified, localFunding] = verify(grantData?.funding, chainInfo?.decimals);
 
     setFunding(localFunding);
@@ -123,10 +137,16 @@ function AboutGrant() {
         ? formatAmount(grantData?.reward?.committed, chainInfo?.decimals ?? 18)
         : '',
     );
-    const supportedCurrencyObj = getAssetInfo(
-      grantData?.reward?.asset?.toLowerCase(),
-      chainId,
-    );
+    let supportedCurrencyObj;
+    if (grantData.reward.token) {
+      setRewardCurrency(chainInfo.label);
+      setRewardCurrencyCoin(chainInfo.icon);
+    } else {
+      supportedCurrencyObj = getAssetInfo(
+        grantData?.reward?.asset?.toLowerCase(),
+        chainId,
+      );
+    }
 
     if (supportedCurrencyObj) {
       setRewardCurrency(supportedCurrencyObj?.label);
@@ -161,7 +181,7 @@ function AboutGrant() {
   }, [workspace, accountData, daoId]);
 
   const [isAcceptingApplications, setIsAcceptingApplications] = React.useState<
-  [boolean, number]
+    [boolean, number]
   >([acceptingApplications, 0]);
 
   useEffect(() => {

@@ -30,6 +30,7 @@ import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Table from '../../../src/components/your_grants/view_applicants/table';
 import NavbarLayout from '../../../src/layout/navbarLayout';
 import { ApiClientsContext } from '../../_app';
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 
 const PAGE_SIZE = 500;
 
@@ -128,7 +129,7 @@ function ViewApplicants() {
       console.log(tempMember);
       setIsAdmin(
         tempMember?.accessLevel === 'admin'
-          || tempMember?.accessLevel === 'owner',
+        || tempMember?.accessLevel === 'owner',
       );
 
       setIsReviewer(tempMember?.accessLevel === 'reviewer');
@@ -136,11 +137,34 @@ function ViewApplicants() {
   }, [accountData, workspace]);
 
   const { data, error, loading } = useGetApplicantsForAGrantQuery(queryParams);
+  const { data: grantData } = useGetGrantDetailsQuery(queryParams);
   useEffect(() => {
     if (data && data.grantApplications.length) {
       const fetchedApplicantsData = data.grantApplications.map((applicant) => {
         const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value;
-
+        let decimal;
+        let label;
+        let icon;
+        if (grantData?.grants[0].reward.token) {
+          decimal = grantData?.grants[0].reward.token.decimal;
+          label = grantData?.grants[0].reward.token.label;
+          icon = getUrlForIPFSHash(grantData?.grants[0].reward.token.iconHash);
+        } else {
+          decimal = CHAIN_INFO[
+            getSupportedChainIdFromSupportedNetwork(
+              applicant.grant.workspace.supportedNetworks[0],
+            )
+          ]?.supportedCurrencies[applicant.grant.reward.asset.toLowerCase()]
+            ?.decimals;
+          label = getAssetInfo(
+            applicant?.grant?.reward?.asset?.toLowerCase(),
+            getSupportedChainIdFromWorkspace(workspace),
+          ).label;
+          icon = getAssetInfo(
+            applicant?.grant?.reward?.asset?.toLowerCase(),
+            getSupportedChainIdFromWorkspace(workspace),
+          ).icon;
+        }
         return {
           grantTitle: applicant?.grant?.title,
           applicationId: applicant.id,
@@ -155,21 +179,10 @@ function ViewApplicants() {
             amount:
               applicant && getFieldString('fundingAsk') ? formatAmount(
                 getFieldString('fundingAsk')!,
-                CHAIN_INFO[
-                  getSupportedChainIdFromSupportedNetwork(
-                    applicant.grant.workspace.supportedNetworks[0],
-                  )
-                ]?.supportedCurrencies[applicant.grant.reward.asset.toLowerCase()]
-                  ?.decimals ?? 18,
+                decimal ?? 18,
               ) : '1',
-            symbol: getAssetInfo(
-              applicant?.grant?.reward?.asset?.toLowerCase(),
-              getSupportedChainIdFromWorkspace(workspace),
-            ).label,
-            icon: getAssetInfo(
-              applicant?.grant?.reward?.asset?.toLowerCase(),
-              getSupportedChainIdFromWorkspace(workspace),
-            ).icon,
+            symbol: label,
+            icon,
           },
           // status: applicationStatuses.indexOf(applicant?.state),
           status: TableFilters[applicant?.state],
@@ -181,7 +194,7 @@ function ViewApplicants() {
       setAcceptingApplications(data.grantApplications[0].grant.acceptingApplications);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, error, loading]);
+  }, [data, error, loading, grantData]);
 
   useEffect(() => {
     if (!workspace) return;
@@ -204,7 +217,7 @@ function ViewApplicants() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applicantdata]);
 
-  const { data: grantData } = useGetGrantDetailsQuery(queryParams);
+  // const { data: grantData } = useGetGrantDetailsQuery(queryParams);
   useEffect(() => {
     console.log('grantData', grantData);
     const initialRubrics = grantData?.grants[0].rubric;
@@ -230,7 +243,7 @@ function ViewApplicants() {
   }, [workspace, accountData, daoId]);
 
   const [isAcceptingApplications, setIsAcceptingApplications] = React.useState<
-  [boolean, number]
+    [boolean, number]
   >([acceptingApplications, 0]);
 
   useEffect(() => {
@@ -292,11 +305,11 @@ function ViewApplicants() {
         <Breadcrumbs path={['My Grants', 'View Applicants']} />
 
         {isAdmin && (
-        <Box pos="absolute" right="40px" top="48px">
-          <Button variant="primary" onClick={() => setRubricDrawerOpen(true)}>
-            {(grantData?.grants[0].rubric?.items.length ?? 0) > 0 ?? false ? 'Edit Evaluation Rubric' : 'Setup Evaluation Rubric'}
-          </Button>
-        </Box>
+          <Box pos="absolute" right="40px" top="48px">
+            <Button variant="primary" onClick={() => setRubricDrawerOpen(true)}>
+              {(grantData?.grants[0].rubric?.items.length ?? 0) > 0 ?? false ? 'Edit Evaluation Rubric' : 'Setup Evaluation Rubric'}
+            </Button>
+          </Box>
         )}
 
         <RubricDrawer
