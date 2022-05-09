@@ -25,6 +25,8 @@ export type ApplicationMilestone = {
   amount: Scalars['BigInt'];
   /** amount paid by DAO */
   amountPaid: Scalars['BigInt'];
+  /** The grant application this milestone belongs to */
+  application: GrantApplication;
   /** Feedback from the grant DAO manager/applicant */
   feedbackDao?: Maybe<Scalars['String']>;
   /** Feedback from the developer */
@@ -2771,6 +2773,8 @@ export enum SupportedNetwork {
   Chain_10 = 'chain_10',
   Chain_137 = 'chain_137',
   Chain_80001 = 'chain_80001',
+  Chain_245022926 = 'chain_245022926',
+  Chain_245022934 = 'chain_245022934',
   Chain_1666600000 = 'chain_1666600000',
   Chain_1666700000 = 'chain_1666700000'
 }
@@ -3449,7 +3453,7 @@ export type GetWorkspaceDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, updatedAt: number }> } | null };
+export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, updatedAt: number, addedBy: { __typename?: 'WorkspaceMember', id: string, actorId: string } }> } | null };
 
 export type GetWorkspaceMembersQueryVariables = Exact<{
   actorId: Scalars['Bytes'];
@@ -4446,6 +4450,10 @@ export const GetWorkspaceDetailsDocument = gql`
       email
       accessLevel
       updatedAt
+      addedBy {
+        id
+        actorId
+      }
     }
   }
 }

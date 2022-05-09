@@ -39,4 +39,5 @@ yarn-error.log*
 *.tsbuildinfo
 
 yarn.lock
-package-lock.json
+
+.env
