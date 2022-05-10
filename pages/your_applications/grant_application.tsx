@@ -69,7 +69,7 @@ function ViewApplication() {
       console.log('data', data);
       setApplication(data.grantApplication);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error, loading]);
 
   useEffect(() => {
@@ -80,6 +80,17 @@ function ViewApplication() {
         ?.find(({ id }) => id.split('.')[1] === fieldName)
         ?.values[0]?.value ?? ''
     );
+    let decimals: number;
+    if (application.grant.reward.token) {
+      decimals = application.grant.reward.token.decimal;
+    } else {
+      decimals = CHAIN_INFO[
+        getSupportedChainIdFromSupportedNetwork(
+          application.grant.workspace.supportedNetworks[0],
+        )
+      ]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
+        ?.decimals;
+    }
 
     const fields = application?.fields;
     const fd: GrantApplicationProps = {
@@ -104,12 +115,7 @@ function ViewApplication() {
           milestoneReward:
             application ? formatAmount(
               ms.amount,
-              CHAIN_INFO[
-                getSupportedChainIdFromSupportedNetwork(
-                  application.grant.workspace.supportedNetworks[0],
-                )
-              ]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
-                ?.decimals ?? 18,
+              decimals ?? 18,
               true,
             ) : '1'
           ,
@@ -134,6 +140,23 @@ function ViewApplication() {
     setFormData(fd);
   }, [application]);
 
+  let label;
+  let icon;
+  let decimals;
+  if (application?.grant.reward.token) {
+    decimals = application.grant.reward.token.decimal;
+    label = application.grant.reward.token.label;
+    icon = getUrlForIPFSHash(application.grant.reward.token.iconHash);
+  } else {
+    decimals = CHAIN_INFO[
+      getSupportedChainIdFromSupportedNetwork(
+        application?.grant.workspace.supportedNetworks[0]!,
+      )
+    ]?.supportedCurrencies[application?.grant.reward.asset.toLowerCase()!]
+      ?.decimals;
+    label = getAssetInfo(application?.grant?.reward?.asset ?? '', chainId)?.label;
+    icon = getAssetInfo(application?.grant?.reward?.asset ?? '', chainId)?.icon;
+  }
   return (
     <Container maxW="100%" display="flex" px="70px">
       <Container
@@ -167,19 +190,14 @@ function ViewApplication() {
           rewardAmount={
             application ? formatAmount(
               application.grant.reward.committed,
-              CHAIN_INFO[
-                getSupportedChainIdFromSupportedNetwork(
-                  application.grant.workspace.supportedNetworks[0],
-                )
-              ]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
-                ?.decimals ?? 18,
+              decimals ?? 18,
             ) : '1'
           }
           rewardCurrency={
-            getAssetInfo(application?.grant?.reward?.asset ?? '', chainId)?.label
+            label
           }
           rewardCurrencyCoin={
-            getAssetInfo(application?.grant?.reward?.asset ?? '', chainId)?.icon
+            icon
           }
           rewardCurrencyAddress={application?.grant?.reward?.asset}
           formData={formData}
@@ -187,7 +205,7 @@ function ViewApplication() {
           grantTitle={application?.grant?.title || ''}
           sentDate={
             application?.createdAtS.toString()
-              ?? ''
+            ?? ''
           }
           daoLogo={getUrlForIPFSHash(
             application?.grant?.workspace?.logoIpfsHash || '',
@@ -199,9 +217,9 @@ function ViewApplication() {
             ?? []
           }
           piiFields={
-            application?.grant?.fields?.filter((field:any) => field.isPii).map((field:any) => field.id.split('.')[1])
+            application?.grant?.fields?.filter((field: any) => field.isPii).map((field: any) => field.id.split('.')[1])
             ?? []
-}
+          }
           applicationID={applicationID}
           workspace={application?.grant?.workspace}
         />

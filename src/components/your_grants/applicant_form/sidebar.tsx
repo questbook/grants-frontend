@@ -11,6 +11,7 @@ import { ApiClientsContext } from 'pages/_app';
 import React, { useContext } from 'react';
 import CopyIcon from 'src/components/ui/copy_icon';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import {
   getSupportedChainIdFromSupportedNetwork,
   getSupportedChainIdFromWorkspace,
@@ -48,6 +49,24 @@ function Sidebar({
     )?.values[0]?.value : undefined;
 
   const [reviewDrawerOpen, setReviewDrawerOpen] = React.useState(false);
+  let icon;
+  let label;
+  let decimals;
+  if (applicationData?.grant.reward.token) {
+    icon = getUrlForIPFSHash(applicationData.grant.reward.token.iconHash);
+    label = applicationData.grant.reward.token.label;
+    decimals = applicationData.grant.reward.token.decimal;
+  } else {
+    icon = getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.icon;
+    label = getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.label;
+    decimals = CHAIN_INFO[
+      getSupportedChainIdFromSupportedNetwork(
+        applicationData?.grant.workspace.supportedNetworks[0],
+      )
+    ]?.supportedCurrencies[
+      applicationData?.grant.reward.asset.toLowerCase()
+    ]?.decimals;
+  }
 
   return (
     <>
@@ -74,9 +93,7 @@ function Sidebar({
           <Image
             h="45px"
             w="45px"
-            src={
-            getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.icon
-          }
+            src={icon}
           />
           <Box mx={3} />
           <Tooltip label={applicationData?.applicantId}>
@@ -94,10 +111,10 @@ function Sidebar({
           </Text>
           <Heading variant="applicationHeading" lineHeight="32px">
             {
-            applicationData?.fields?.find(
-              (fld: any) => fld?.id?.split('.')[1] === 'applicantName',
-            )?.values[0]?.value
-          }
+              applicationData?.fields?.find(
+                (fld: any) => fld?.id?.split('.')[1] === 'applicantName',
+              )?.values[0]?.value
+            }
           </Heading>
         </Flex>
         <Flex direction="row" justify="space-between" w="full" align="center">
@@ -110,10 +127,10 @@ function Sidebar({
             ) ? (
               <>
                 {
-                applicationData?.fields?.find(
-                  (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
-                )?.values[0]?.value
-              }
+                  applicationData?.fields?.find(
+                    (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
+                  )?.values[0]?.value
+                }
                 <MailTo applicantEmail={applicantEmail} />
               </>
               ) : (
@@ -142,7 +159,7 @@ function Sidebar({
         </Flex>
         <Flex direction="column" w="full" align="start" mt={4}>
           <Box
-          // variant="dashed"
+            // variant="dashed"
             border="1px dashed #A0A7A7"
             h={0}
             w="100%"
@@ -159,23 +176,17 @@ function Sidebar({
             color="#122224"
           >
             {applicationData
-            && formatAmount(
-              applicationData?.fields?.find(
-                (fld: any) => fld?.id?.split('.')[1] === 'fundingAsk',
-              )?.values[0]?.value ?? '0',
-              CHAIN_INFO[
-                getSupportedChainIdFromSupportedNetwork(
-                  applicationData.grant.workspace.supportedNetworks[0],
-                )
-              ]?.supportedCurrencies[
-                applicationData.grant.reward.asset.toLowerCase()
-              ]?.decimals ?? 18,
-            )}
+              && formatAmount(
+                applicationData?.fields?.find(
+                  (fld: any) => fld?.id?.split('.')[1] === 'fundingAsk',
+                )?.values[0]?.value ?? '0',
+                decimals ?? 18,
+              )}
             {' '}
-            {getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.label}
+            {label}
           </Text>
           <Box
-          // variant="dashed"
+            // variant="dashed"
             border="1px dashed #A0A7A7"
             h={0}
             w="100%"
