@@ -146,12 +146,16 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
           // eslint-disable-next-line no-async-promise-executor
           (allWorkspaces) => new Promise(async (resolve) => {
             // console.log('calling grants');
-            const { data } = await allWorkspaces[0]({
-              variables: { actorId: userAddress },
-            });
-            if (data && data.workspaceMembers.length > 0) {
-              resolve(data.workspaceMembers.map((w) => w.workspace));
-            } else {
+            try {
+              const { data } = await allWorkspaces[0]({
+                variables: { actorId: userAddress },
+              });
+              if (data && data.workspaceMembers.length > 0) {
+                resolve(data.workspaceMembers.map((w) => w.workspace));
+              } else {
+                resolve([]);
+              }
+            } catch (err) {
               resolve([]);
             }
           }),
