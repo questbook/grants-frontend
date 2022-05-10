@@ -15,7 +15,6 @@ import useEncryption from 'src/hooks/utils/useEncryption';
 import { Token, WorkspaceUpdateRequest } from '@questbook/service-validator-client';
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys';
 import Tooltip from 'src/components/ui/tooltip';
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import CustomTokenModal from 'src/components/ui/submitCustomTokenModal';
 import Datepicker from '../../../ui/forms/datepicker';
 import Dropdown from '../../../ui/forms/dropdown';
