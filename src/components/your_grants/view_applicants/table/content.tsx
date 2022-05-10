@@ -27,6 +27,7 @@ function Content({
   onManageApplicationClick,
   data,
   isReviewer,
+  reviewerData,
 }: {
   filter: number;
   onViewApplicationFormClick?: (data?: any) => void;
@@ -35,6 +36,7 @@ function Content({
   onManageApplicationClick?: (data?: any) => void;
   data: any[];
   isReviewer : boolean;
+  reviewerData:any [];
 }) {
   const tableHeadersFlex = [0.231, 0.20, 0.15, 0.13, 0.16, 0.25, 0.116];
   const tableHeadersFlexReviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
@@ -44,10 +46,17 @@ function Content({
     if (status === TableFilters.approved) return <GrantApproved />;
     if (status === TableFilters.rejected) return <Rejected />;
     if (status === TableFilters.assigned) return <AssignedToReview />;
-
     return <GrantComplete />;
   };
-  console.log('data-content', data);
+
+  // const statusEdit = (reviewer:[]) => {
+  //   reviewer.map((review) => {
+  //     if (review.address === owner) {
+  //       return 5;
+  //     }
+  //   });
+  // };
+  console.log('data-content', reviewerData);
   return (
     <Flex
       mt="10px"
@@ -58,7 +67,7 @@ function Content({
       align="stretch"
     >
       { isReviewer ? (
-        data
+        reviewerData
           .filter((item) => (filter === -1 ? true : filter === item.status))
           .map((item, index) => (
             <Flex
@@ -123,7 +132,8 @@ function Content({
                 </Text>
               </Flex>
               <Flex justifyContent="center" flex={tableHeadersFlexReviewer[4]}>
-                { item.reviewer !== 0 && item.status === 0 ? getStatus(5) : getStatus(item.status)}
+                {/* { item.reviewers.length !== 0 && item.status === 0
+                  ? getStatus(5) : getStatus(item.status)} */}
               </Flex>
               <Flex
                 display="flex"
@@ -237,7 +247,7 @@ function Content({
 
             <Text
               flex={tableHeadersFlex[1]}
-              color="#717A7C"
+              color="#122224"
               variant="tableBody"
             >
               {item.project_name}
@@ -281,19 +291,22 @@ function Content({
                     color="#717A7C"
                     variant="tableBody"
                     textAlign="center"
+                    textDecoration="underline"
+                    textDecorationColor="#717A7C"
                   >
                     {item.reviewers.length}
 
                   </Text>
 
                 </PopoverTrigger>
-                <PopoverContent height="150px" width="inherit" right="3px" top="60px">
-                  <Heading margin="10px" line-height="16px" color="#717A7C" font-family="DM Sans" size="sm">REVIEWERS</Heading>
+                <PopoverContent height="150px" width="inherit" right="-3px" top="75px">
+                  <Heading margin="10px" line-height="16px" color="#717A7C" fontFamily="DM Sans" size="sm">REVIEWERS</Heading>
                   {item.reviewers.map((reviewer: { email: string }) => (
-                    <PopoverBody overflowX="hidden" overflowY="auto">
-                      <SimpleGrid columns={1} spacing={3}>
+                    <PopoverBody overflowX="hidden" overflowY="scroll" scrollBehavior="smooth">
+                      <Flex direction="column">
                         <Text>{reviewer.email}</Text>
-                      </SimpleGrid>
+
+                      </Flex>
                     </PopoverBody>
                   ))}
 
@@ -303,9 +316,11 @@ function Content({
             </Flex>
 
             <Flex justifyContent="center" flex={tableHeadersFlex[4]}>
-              { item.reviewer !== 0 && item.status === 0 ? getStatus(5) : getStatus(item.status)}
+              { item.reviewers.length !== 0 && item.status === 0
+                ? getStatus(5) : getStatus(item.status)}
             </Flex>
-            <Flex justifyContent="center" flex={tableHeadersFlex[5]}>
+
+            <Flex justifyContent="center" color="#717A7C" flex={tableHeadersFlex[5]}>
               {item.status === 0 ? item.sent_on : item.updated_on}
             </Flex>
             <Flex

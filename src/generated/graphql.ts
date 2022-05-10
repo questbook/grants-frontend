@@ -25,6 +25,8 @@ export type ApplicationMilestone = {
   amount: Scalars['BigInt'];
   /** amount paid by DAO */
   amountPaid: Scalars['BigInt'];
+  /** The grant application this milestone belongs to */
+  application: GrantApplication;
   /** Feedback from the grant DAO manager/applicant */
   feedbackDao?: Maybe<Scalars['String']>;
   /** Feedback from the developer */
@@ -2771,6 +2773,8 @@ export enum SupportedNetwork {
   Chain_10 = 'chain_10',
   Chain_137 = 'chain_137',
   Chain_80001 = 'chain_80001',
+  Chain_245022926 = 'chain_245022926',
+  Chain_245022934 = 'chain_245022934',
   Chain_1666600000 = 'chain_1666600000',
   Chain_1666700000 = 'chain_1666700000'
 }
@@ -3357,6 +3361,16 @@ export type GetApplicantsForAGrantQueryVariables = Exact<{
 
 export type GetApplicantsForAGrantQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, createdAtS: number, updatedAtS: number, grant: { __typename?: 'Grant', id: string, title: string, funding: string, acceptingApplications: boolean, reward: { __typename?: 'Reward', asset: string }, workspace: { __typename?: 'Workspace', id: string, supportedNetworks: Array<SupportedNetwork> } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, reviewers: Array<{ __typename?: 'WorkspaceMember', email?: string | null, id: string }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, state: MilestoneState, title: string, amount: string, amountPaid: string, updatedAtS?: number | null, feedbackDao?: string | null, feedbackDev?: string | null }> }> };
 
+export type GetApplicantsForAGrantReviewerQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+  grantID: Scalars['String'];
+  reviewerID: Scalars['String'];
+}>;
+
+
+export type GetApplicantsForAGrantReviewerQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, createdAtS: number, updatedAtS: number, grant: { __typename?: 'Grant', id: string, title: string, funding: string, acceptingApplications: boolean, reward: { __typename?: 'Reward', asset: string }, workspace: { __typename?: 'Workspace', id: string, supportedNetworks: Array<SupportedNetwork> } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, reviewers: Array<{ __typename?: 'WorkspaceMember', email?: string | null, id: string }> }> };
+
 export type GetApplicationDetailsQueryVariables = Exact<{
   applicationID: Scalars['ID'];
 }>;
@@ -3785,6 +3799,75 @@ export function useGetApplicantsForAGrantLazyQuery(baseOptions?: Apollo.LazyQuer
 export type GetApplicantsForAGrantQueryHookResult = ReturnType<typeof useGetApplicantsForAGrantQuery>;
 export type GetApplicantsForAGrantLazyQueryHookResult = ReturnType<typeof useGetApplicantsForAGrantLazyQuery>;
 export type GetApplicantsForAGrantQueryResult = Apollo.QueryResult<GetApplicantsForAGrantQuery, GetApplicantsForAGrantQueryVariables>;
+export const GetApplicantsForAGrantReviewerDocument = gql`
+    query getApplicantsForAGrantReviewer($first: Int, $skip: Int, $grantID: String!, $reviewerID: String!) {
+  grantApplications(
+    first: $first
+    where: {grant: $grantID, reviewers_contains: [$reviewerID]}
+    subgraphError: allow
+  ) {
+    id
+    grant {
+      id
+      title
+      funding
+      reward {
+        asset
+      }
+      workspace {
+        id
+        supportedNetworks
+      }
+      acceptingApplications
+    }
+    applicantId
+    state
+    createdAtS
+    updatedAtS
+    fields {
+      id
+      values {
+        value
+      }
+    }
+    reviewers {
+      email
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetApplicantsForAGrantReviewerQuery__
+ *
+ * To run a query within a React component, call `useGetApplicantsForAGrantReviewerQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetApplicantsForAGrantReviewerQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetApplicantsForAGrantReviewerQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *      grantID: // value for 'grantID'
+ *      reviewerID: // value for 'reviewerID'
+ *   },
+ * });
+ */
+export function useGetApplicantsForAGrantReviewerQuery(baseOptions: Apollo.QueryHookOptions<GetApplicantsForAGrantReviewerQuery, GetApplicantsForAGrantReviewerQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetApplicantsForAGrantReviewerQuery, GetApplicantsForAGrantReviewerQueryVariables>(GetApplicantsForAGrantReviewerDocument, options);
+      }
+export function useGetApplicantsForAGrantReviewerLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetApplicantsForAGrantReviewerQuery, GetApplicantsForAGrantReviewerQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetApplicantsForAGrantReviewerQuery, GetApplicantsForAGrantReviewerQueryVariables>(GetApplicantsForAGrantReviewerDocument, options);
+        }
+export type GetApplicantsForAGrantReviewerQueryHookResult = ReturnType<typeof useGetApplicantsForAGrantReviewerQuery>;
+export type GetApplicantsForAGrantReviewerLazyQueryHookResult = ReturnType<typeof useGetApplicantsForAGrantReviewerLazyQuery>;
+export type GetApplicantsForAGrantReviewerQueryResult = Apollo.QueryResult<GetApplicantsForAGrantReviewerQuery, GetApplicantsForAGrantReviewerQueryVariables>;
 export const GetApplicationDetailsDocument = gql`
     query getApplicationDetails($applicationID: ID!) {
   grantApplication(id: $applicationID, subgraphError: allow) {

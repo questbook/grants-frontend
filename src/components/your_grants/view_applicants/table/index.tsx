@@ -12,6 +12,7 @@ function Table({
   data,
   title,
   isReviewer,
+  reviewerData,
   archiveGrantComponent,
 }: {
   onViewApplicantFormClick?: (data? : any) => void;
@@ -22,6 +23,7 @@ function Table({
   title: string;
   isReviewer : boolean;
   archiveGrantComponent: React.ReactNode;
+  reviewerData: any[];
 }) {
   const [filter, setFilter] = React.useState(-1);
   useEffect(() => {
@@ -40,6 +42,7 @@ function Table({
         <Content
           data={data}
           isReviewer={isReviewer}
+          reviewerData={reviewerData}
           filter={filter}
           onViewApplicationFormClick={onViewApplicantFormClick}
                 // onAcceptApplicationClick={onAcceptApplicationClick}
