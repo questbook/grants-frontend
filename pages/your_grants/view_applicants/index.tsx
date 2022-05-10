@@ -111,9 +111,8 @@ function ViewApplicants() {
       );
 
       setIsReviewer(tempMember?.accessLevel === 'reviewer');
-      setIsActorId(tempMember?.actorId)
       setIsUser(tempMember?.id);
-
+      setIsActorId(tempMember?.id)
     }
   }, [accountData, workspace]);
 
@@ -208,7 +207,7 @@ function ViewApplicants() {
 
   const reviewData = useGetApplicantsForAGrantReviewerQuery(queryReviewerParams);
   useEffect(() => {
-    if (reviewData.data && reviewData.data.grantApplications.length && isReviewer) {
+    if (reviewData.data && reviewData.data.grantApplications.length) {
       const fetchedApplicantsData = reviewData.data.grantApplications.map((applicant) => {
         const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value;
         return {
@@ -253,7 +252,7 @@ function ViewApplicants() {
       setAcceptingApplications(reviewData.data.grantApplications[0].grant.acceptingApplications);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [reviewData]);
 
   const { data: grantData } = useGetGrantDetailsQuery(queryParams);
   useEffect(() => {

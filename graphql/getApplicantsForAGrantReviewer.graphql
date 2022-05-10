@@ -34,6 +34,20 @@ query getApplicantsForAGrantReviewer($first: Int, $skip: Int, $grantID: String!,
       email
       id
     },
+    reviews {
+      reviewer {
+        id
+      }
+      data {
+        id
+        manager {
+          id
+        }
+        data
+      }
+      publicReviewDataHash
+      id
+    }
 
   }
 }

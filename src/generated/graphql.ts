@@ -3369,7 +3369,7 @@ export type GetApplicantsForAGrantReviewerQueryVariables = Exact<{
 }>;
 
 
-export type GetApplicantsForAGrantReviewerQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, createdAtS: number, updatedAtS: number, grant: { __typename?: 'Grant', id: string, title: string, funding: string, acceptingApplications: boolean, reward: { __typename?: 'Reward', asset: string }, workspace: { __typename?: 'Workspace', id: string, supportedNetworks: Array<SupportedNetwork> } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, reviewers: Array<{ __typename?: 'WorkspaceMember', email?: string | null, id: string }> }> };
+export type GetApplicantsForAGrantReviewerQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, createdAtS: number, updatedAtS: number, grant: { __typename?: 'Grant', id: string, title: string, funding: string, acceptingApplications: boolean, reward: { __typename?: 'Reward', asset: string }, workspace: { __typename?: 'Workspace', id: string, supportedNetworks: Array<SupportedNetwork> } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, reviewers: Array<{ __typename?: 'WorkspaceMember', email?: string | null, id: string }>, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, reviewer?: { __typename?: 'WorkspaceMember', id: string } | null, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }> }> };
 
 export type GetApplicationDetailsQueryVariables = Exact<{
   applicationID: Scalars['ID'];
@@ -3832,6 +3832,20 @@ export const GetApplicantsForAGrantReviewerDocument = gql`
     }
     reviewers {
       email
+      id
+    }
+    reviews {
+      reviewer {
+        id
+      }
+      data {
+        id
+        manager {
+          id
+        }
+        data
+      }
+      publicReviewDataHash
       id
     }
   }

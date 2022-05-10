@@ -47,22 +47,32 @@ function Content({
     if (status === TableFilters.resubmit) return <ResubmissionRequested />;
     if (status === TableFilters.approved) return <GrantApproved />;
     if (status === TableFilters.rejected) return <Rejected />;
+    if (status === TableFilters.assigned) return <AssignedToReview />;
     return <GrantComplete />;
   };
 
   const getStatusReviewer = (status: number): ReactElement => {
     if (status === TableFilters.submitted) return <AssignedToReview />;
     if (status === TableFilters.approved) return <ReviewDone />;
+    return <ReviewDone />;
   };
 
-  // const statusEdit = (reviewer:[]) => {
-  //   reviewer.find((actorId) => {
-  //     if (actorId) {
-  //       return getStaus(5);
-  //     }
-  //   });
-  // };
-  console.log('data-content', reviewerData);
+  const statusEdit = (item:any) => {
+    let ans = 0;
+    item.reviewers.map((reviewer: { email: string }) => {
+      if (reviewer.id === actorId && item.status === 0) {
+        ans = 5;
+        console.log('matched', reviewer.id);
+      }
+      if (item.status !== 0) {
+        ans = item.status;
+      }
+    });
+    console.log('status', ans);
+    console.log('status', item.status);
+    return ans;
+  };
+  console.log('data-content', data);
   return (
     <Flex
       mt="10px"
@@ -138,8 +148,7 @@ function Content({
                 </Text>
               </Flex>
               <Flex justifyContent="center" flex={tableHeadersFlexReviewer[4]}>
-                {/* { getStatusReviewer(item.status)} */}
-
+                { getStatusReviewer(item.status)}
               </Flex>
               <Flex
                 display="flex"
@@ -305,12 +314,16 @@ function Content({
                   </Text>
 
                 </PopoverTrigger>
-                <PopoverContent height="150px" width="inherit" right="-3px" top="75px">
+                <PopoverContent height="140px" width="inherit" right="-3px" top="70px">
                   <Heading margin="10px" line-height="16px" color="#717A7C" fontFamily="DM Sans" size="sm">REVIEWERS</Heading>
                   <PopoverBody overflowX="hidden" overflowY="scroll" scrollBehavior="smooth">
                     {item.reviewers.map((reviewer: { email: string }) => (
                       <Flex direction="column">
-                        <Text>{reviewer.email}</Text>
+                        <Text
+                          mt="2"
+                        >
+                          {reviewer.email}
+                        </Text>
                       </Flex>
                     ))}
                   </PopoverBody>
@@ -321,7 +334,7 @@ function Content({
             </Flex>
 
             <Flex justifyContent="center" flex={tableHeadersFlex[4]}>
-              {getStatus(item.status)}
+              {statusEdit(item) ? getStatus(statusEdit(item)) : getStatus(item.status)}
             </Flex>
 
             <Flex justifyContent="center" color="#717A7C" flex={tableHeadersFlex[5]}>
