@@ -1,0 +1,53 @@
+query getApplicantsForAGrantReviewer($first: Int, $skip: Int, $grantID: String!,$reviewerIDs: [String!]) {
+  grantApplications(
+    first: $first,
+    where:{
+    grant: $grantID,
+    reviewers_contains: $reviewerIDs
+  },
+  subgraphError:allow) {
+    id
+    grant {
+      id
+      title
+      funding,
+      reward {
+        asset
+      }
+      workspace {
+        id
+        supportedNetworks
+      }
+      acceptingApplications
+    }
+    applicantId
+    state
+    createdAtS
+    updatedAtS
+    fields {
+      id
+      values {
+        value
+      }
+    },
+    reviewers {
+      email
+      id
+    },
+    reviews {
+      reviewer {
+        id
+      }
+      data {
+        id
+        manager {
+          id
+        }
+        data
+      }
+      publicReviewDataHash
+      id
+    }
+
+  }
+}
