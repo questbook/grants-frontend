@@ -21,12 +21,14 @@ interface ModalProps {
   setRewardCurrencyAddress: (rewardCurrencyAddress: string) => void;
   setRewardToken: (rewardToken: Token) => void
   setSupportedCurrenciesList: (supportedCurrencyList: Array<any>) => void;
-  supportedCurrenciesList: Token[];
+  supportedCurrenciesList: TokenDisplay[];
+  // setIsJustAddedToken: (isJustAddedToken: boolean) => void;
+  setIsJustAddedToken: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 type TokenDisplay = {
   address: string
-  decimals: string
+  decimals: number
   icon: string
   id: string
   label: string
@@ -40,6 +42,7 @@ function CustomTokenModal({
   setRewardToken,
   supportedCurrenciesList,
   setSupportedCurrenciesList,
+  setIsJustAddedToken,
 }: ModalProps) {
   const [tokenAddress, setTokenAddress] = useState<string>('');
   // const [tokenName, setTokenName] = useState<string>('');
@@ -58,6 +61,8 @@ function CustomTokenModal({
 
   const toast = useToast();
   const toastRef = React.useRef<ToastId>();
+
+  console.log('supportedCurrenciesList', supportedCurrenciesList);
 
   const validateTokenAddress = () => {
     if (!tokenAddress || !isValidAddress(tokenAddress)) {
@@ -125,7 +130,7 @@ function CustomTokenModal({
     const newToken: TokenDisplay = {
       id: token.address,
       address: token.address,
-      decimals: token.decimal,
+      decimals: parseInt(token.decimal, 10),
       label: token.label,
       icon: getUrlForIPFSHash(token.iconHash),
     };
@@ -163,6 +168,8 @@ function CustomTokenModal({
       console.log('Supported Currencies list', supportedCurrenciesList);
       setTokenData({ tokens: [newToken] });
       setRewardToken(newToken);
+      console.log('Logging type of setIsJUstAddedToken', typeof setIsJustAddedToken);
+      setIsJustAddedToken(true);
       const configuredToken = configureNewToken(newToken);
       setSupportedCurrenciesList([...supportedCurrenciesList, configuredToken]);
       console.log('New list of supported currencies', [...supportedCurrenciesList, newToken]);
