@@ -391,7 +391,7 @@ export const CHAIN_INFO: ChainInfoMap = {
       symbol: 'NEON',
       decimals: 18,
     },
-    icon: '/network_icons/eth_mainnet.svg',
+    icon: '/ui_icons/brand/currency/neon_symbol.svg',
     wallets: [
       {
         id: 'injected',
@@ -416,7 +416,7 @@ export const CHAIN_INFO: ChainInfoMap = {
         decimals: 9,
       },
       '0xf8ad328e98f85fccbf09e43b16dcbbda7e84beab': {
-        icon: '/ui_icons/brand/currency/weth_icon.svg',
+        icon: '/ui_icons/brand/currency/neon_symbol.svg',
         label: 'WNEON',
         address: '0xf8ad328e98f85fccbf09e43b16dcbbda7e84beab',
         decimals: 18,
