@@ -22,6 +22,7 @@ import { ApiClientsContext } from 'pages/_app';
 import { Grant } from 'src/types';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { SupportedChainId } from 'src/constants/chains';
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import WithdrawFunds from './withdraw_funds_modal';
 import AddFunds from './add_funds_modal';
 import Funding from '../your_grants/manage_grant/tables/funding';
@@ -68,7 +69,17 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
   //   console.log('data', data);
   // }, [data]);
 
-  const assetInfo = getAssetInfo(grant.reward.asset, getSupportedChainIdFromWorkspace(workspace));
+  // eslint-disable-next-line max-len
+  // const assetInfo = getAssetInfo(grant.reward.asset, getSupportedChainIdFromWorkspace(workspace));
+  let assetInfo;
+  if (grant.reward.token) {
+    assetInfo = {
+      label: grant.reward.token.label,
+      icon: getUrlForIPFSHash(grant.reward.token.iconHash),
+    };
+  } else {
+    assetInfo = getAssetInfo(grant.reward.asset, getSupportedChainIdFromWorkspace(workspace));
+  }
 
   const switchTab = (to: number) => {
     setSelected(to);

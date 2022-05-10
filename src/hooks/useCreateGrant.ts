@@ -81,6 +81,7 @@ export default function useCreateGrant(
           reward: {
             committed: parseAmount(data.reward, data.rewardCurrencyAddress),
             asset: data.rewardCurrencyAddress,
+            token: data.rewardToken,
           },
           creatorId: accountData!.address,
           workspaceId: getSupportedValidatorNetworkFromChainId(

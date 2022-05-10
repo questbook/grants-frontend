@@ -16,7 +16,13 @@ query getAllGrantsForADao($first: Int, $skip: Int, $workspaceId: String!, $accep
   reward {
     committed,
     id,
-    asset
+    asset,
+    token {
+    address,
+    label,
+    decimal,
+    iconHash
+    }
   }, 
   workspace {title, logoIpfsHash, supportedNetworks}, 
   deadline,

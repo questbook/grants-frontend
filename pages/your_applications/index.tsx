@@ -30,7 +30,7 @@ function YourApplications() {
   const containerRef = useRef(null);
   const [{ data: accountData }] = useAccount();
   const [currentPage, setCurrentPage] = React.useState(0);
-
+  // modified for testing
   const allNetworkApplications = Object.keys(subgraphClients)!.map((key) => (
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useGetMyApplicationsLazyQuery({ client: subgraphClients[key].client })
@@ -56,7 +56,7 @@ function YourApplications() {
           }
         })
       ));
-      Promise.all(promises).then((values:any[]) => {
+      Promise.all(promises).then((values: any[]) => {
         const allApplicationsData = [].concat(...values);
         allApplicationsData
           .sort((a: GrantApplication, b: GrantApplication) => b.createdAtS - a.createdAtS);
@@ -74,7 +74,7 @@ function YourApplications() {
     const parentElement = (current as HTMLElement)?.parentNode as HTMLElement;
     const reachedBottom = Math.abs(
       parentElement.scrollTop
-          - (parentElement.scrollHeight - parentElement.clientHeight),
+      - (parentElement.scrollHeight - parentElement.clientHeight),
     ) < 10;
     if (reachedBottom) {
       getMyApplicationsData();
@@ -110,7 +110,7 @@ function YourApplications() {
       >
         <Heading title="My Applications" />
 
-        { myApplications.length > 0
+        {myApplications.length > 0
           && myApplications.map((application: any) => (
             (
               <YourApplicationCard
@@ -170,15 +170,15 @@ function YourApplications() {
           ))}
 
         {myApplications.length === 0 && (
-        <Flex direction="column" mt={14} align="center">
-          <Empty
-            src="/illustrations/empty_states/no_applications.svg"
-            imgHeight="134px"
-            imgWidth="147px"
-            title="No applications"
-            subtitle="All your grant applications are shown here. Discover grants on our home page."
-          />
-        </Flex>
+          <Flex direction="column" mt={14} align="center">
+            <Empty
+              src="/illustrations/empty_states/no_applications.svg"
+              imgHeight="134px"
+              imgWidth="147px"
+              title="No applications"
+              subtitle="All your grant applications are shown here. Discover grants on our home page."
+            />
+          </Flex>
         )}
 
       </Container>

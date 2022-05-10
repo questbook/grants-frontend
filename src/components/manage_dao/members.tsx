@@ -1,8 +1,9 @@
-import {
-  Grid, Flex, Text, Button, Tooltip, Box,
-} from '@chakra-ui/react';
+import { Grid, Flex, Text, Button, Tooltip, Box } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
-import { trimAddress, getFormattedDateFromUnixTimestampWithYear } from 'src/utils/formattingUtils';
+import {
+  trimAddress,
+  getFormattedDateFromUnixTimestampWithYear,
+} from 'src/utils/formattingUtils';
 import CopyIcon from '../ui/copy_icon';
 import Modal from '../ui/modal';
 // import ConfirmationModalContent from './confirmationModalContent';
@@ -35,6 +36,7 @@ function Members({ workspaceMembers }: Props) {
       role: member.accessLevel,
       email: member.email,
       updatedAt: member.updatedAt,
+      addedBy: member.addedBy.actorId,
     }));
     setTableData(tempTableData);
   }, [workspaceMembers]);
@@ -44,7 +46,9 @@ function Members({ workspaceMembers }: Props) {
 
   // const [revokeModalOpen, setRevokeModalOpen] = React.useState(false);
 
-  React.useEffect(() => { console.log(tableData); }, [tableData]);
+  React.useEffect(() => {
+    console.log(tableData);
+  }, [tableData]);
 
   return (
     <Flex direction="column" align="start" w="100%">
@@ -57,7 +61,13 @@ function Members({ workspaceMembers }: Props) {
         >
           Manage Members
         </Text>
-        <Button variant="primaryCta" onClick={() => { setIsEdit(false); setIsModalOpen(true); }}>
+        <Button
+          variant="primaryCta"
+          onClick={() => {
+            setIsEdit(false);
+            setIsModalOpen(true);
+          }}
+        >
           Invite New
         </Button>
       </Flex>
@@ -73,9 +83,7 @@ function Members({ workspaceMembers }: Props) {
         >
           {' '}
           {tableHeaders.map((header) => (
-            <Text variant="tableHeader">
-              {header}
-            </Text>
+            <Text variant="tableHeader">{header}</Text>
           ))}
         </Grid>
         <Flex
@@ -84,8 +92,8 @@ function Members({ workspaceMembers }: Props) {
           border="1px solid #D0D3D3"
           borderRadius={4}
         >
-          {tableData
-            && tableData.map((data: any, index: number) => (
+          {tableData &&
+            tableData.map((data: any, index: number) => (
               <Grid
                 gridAutoFlow="column"
                 gridTemplateColumns="repeat(5, 1fr)"
@@ -98,10 +106,7 @@ function Members({ workspaceMembers }: Props) {
               >
                 {data.email?.length > 16 ? (
                   <Tooltip label={data.email}>
-                    <Flex
-                      alignSelf="center"
-                      alignItems="center"
-                    >
+                    <Flex alignSelf="center" alignItems="center">
                       <Text
                         alignSelf="center"
                         textAlign="center"
@@ -176,23 +181,33 @@ function Members({ workspaceMembers }: Props) {
       >
         <ModalContent
           onClose={(
-            newMember: { address: string; email: string; role: string; updatedAt?: number; },
-            shouldRevoke?: boolean,
+            newMember: {
+              address: string;
+              email: string;
+              role: string;
+              updatedAt?: number;
+              addedBy?: string;
+            },
+            shouldRevoke?: boolean
           ) => {
             if (!shouldRevoke) {
               if (tableData && tableData.length > 0) {
                 setTableData([
                   ...tableData.filter(
-                    (dt:any) => dt.address.toLowerCase() !== newMember.address.toLowerCase(),
+                    (dt: any) =>
+                      dt.address.toLowerCase() !==
+                      newMember.address.toLowerCase()
                   ),
-                  newMember]);
+                  newMember,
+                ]);
               } else {
                 setTableData([newMember]);
               }
             } else {
               setTableData([
                 ...tableData.filter(
-                  (dt:any) => dt.address.toLowerCase() !== newMember.address.toLowerCase(),
+                  (dt: any) =>
+                    dt.address.toLowerCase() !== newMember.address.toLowerCase()
                 ),
               ]);
             }
@@ -201,9 +216,14 @@ function Members({ workspaceMembers }: Props) {
           }}
           isEdit={isEdit}
           member={{
-            address: isEdit && selectedRow !== -1 ? tableData[selectedRow].address : '',
-            email: isEdit && selectedRow !== -1 ? tableData[selectedRow].email : '',
-            role: isEdit && selectedRow !== -1 ? tableData[selectedRow].role : '',
+            address:
+              isEdit && selectedRow !== -1
+                ? tableData[selectedRow].address
+                : '',
+            email:
+              isEdit && selectedRow !== -1 ? tableData[selectedRow].email : '',
+            role:
+              isEdit && selectedRow !== -1 ? tableData[selectedRow].role : '',
           }}
         />
       </Modal>

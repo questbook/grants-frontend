@@ -41,7 +41,6 @@ function ModalContent({
 
   const toastRef = React.useRef<ToastId>();
   useEffect(() => {
-    // console.log(depositTransactionData);
     if (txnData) {
       const dt = txnData.events[0].args;
       const newMemberAddress = dt[1][0];
@@ -54,6 +53,7 @@ function ModalContent({
         email: newMemberEmail,
         role: roles.find((r) => r.index === dtRole)?.value ?? '',
         updatedAt: time,
+        addedBy: txnData.from,
       }, dt[3].every((r:boolean) => !r));
       toastRef.current = toast({
         position: 'top',

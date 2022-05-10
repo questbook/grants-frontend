@@ -74,7 +74,7 @@ function ApplyGrant() {
     if (data && data.grants && data.grants.length > 0) {
       setGrantData(data.grants[0]);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error, loading]);
 
   useEffect(() => {
@@ -82,8 +82,23 @@ function ApplyGrant() {
     const localChainId = getSupportedChainIdFromSupportedNetwork(
       grantData.workspace.supportedNetworks[0],
     );
-    const chainInfo = CHAIN_INFO[localChainId]
-      ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];
+    let chainInfo;
+    let tokenIcon;
+    if (grantData.reward.token) {
+      tokenIcon = getUrlForIPFSHash(grantData.reward.token?.iconHash);
+      chainInfo = {
+        address: grantData.reward.token.address,
+        label: grantData.reward.token.label,
+        decimals: grantData.reward.token.decimal,
+        icon: tokenIcon,
+      };
+    } else {
+      chainInfo = CHAIN_INFO[localChainId]?.supportedCurrencies[
+        grantData.reward.asset.toLowerCase()
+      ];
+    }
+    // const chainInfo = CHAIN_INFO[localChainId]
+    //   ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];
     const [localIsGrantVerified, localFunding] = verify(grantData?.funding, chainInfo.decimals);
 
     setIsGrantVerified(localIsGrantVerified);
@@ -101,7 +116,18 @@ function ApplyGrant() {
         )
         : '',
     );
-    const supportedCurrencyObj = getAssetInfo(grantData?.reward?.asset?.toLowerCase(), chainId);
+
+    let supportedCurrencyObj;
+    if (grantData.reward.token) {
+      setRewardCurrency(chainInfo.label);
+      setRewardCurrencyCoin(chainInfo.icon);
+    } else {
+      supportedCurrencyObj = getAssetInfo(
+        grantData?.reward?.asset?.toLowerCase(),
+        chainId,
+      );
+    }
+    // supportedCurrencyObj = getAssetInfo(grantData?.reward?.asset?.toLowerCase(), chainId);
     // console.log('curr', supportedCurrencyObj);
     if (supportedCurrencyObj) {
       setRewardCurrency(supportedCurrencyObj?.label);
@@ -114,7 +140,7 @@ function ApplyGrant() {
     setGrantSummary(grantData?.summary);
     setGrantRequiredFields(grantData?.fields);
     setAcceptingApplications(grantData?.acceptingApplications);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [grantData]);
 
   useEffect(() => {
@@ -136,8 +162,8 @@ function ApplyGrant() {
           rewardCurrencyCoin={rewardCurrencyCoin}
           rewardCurrencyAddress={rewardCurrencyAddress}
           workspaceId={workspaceId}
-          grantRequiredFields={grantRequiredFields.map((field:any) => field.id.split('.')[1])}
-          piiFields={grantRequiredFields.filter((field:any) => field.isPii).map((field:any) => field.id.split('.')[1])}
+          grantRequiredFields={grantRequiredFields.map((field: any) => field.id.split('.')[1])}
+          piiFields={grantRequiredFields.filter((field: any) => field.isPii).map((field: any) => field.id.split('.')[1])}
           members={grantData?.workspace?.members}
           acceptingApplications={acceptingApplications}
           shouldShowButton={shouldShowButton}

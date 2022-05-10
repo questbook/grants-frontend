@@ -18,10 +18,26 @@ export const uploadToIPFS = async (data: string | Blob): Promise<{ hash: string 
 };
 
 export const getFromIPFS = async (hash: string): Promise<string> => {
-  console.log(hash);
-  const fetchResult = await fetch(`${IPFS_DOWNLOAD_ENDPOINT}?arg=${hash}`);
-  const responseBody = await fetchResult.text();
-  return responseBody;
+  try {
+    console.log(hash);
+    const fetchResult = await fetch(`${IPFS_DOWNLOAD_ENDPOINT}?arg=${hash}`);
+    const responseBody = await fetchResult.text();
+    return responseBody;
+  } catch (e) {
+    console.log(e);
+  }
+
+  // fallback
+  try {
+    console.log(hash);
+    const fetchResult = await fetch(`https://ipfs.io/ipfs/${hash}`);
+    const responseBody = await fetchResult.text();
+    return responseBody;
+  } catch (e) {
+    console.log(e);
+  }
+
+  return '';
 };
 
 export const getUrlForIPFSHash = (hash: string) => {

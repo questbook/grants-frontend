@@ -10,6 +10,12 @@ query getWorkspaceDetails($workspaceID: ID!) {
           name
           value
         }
+        tokens {
+    address,
+    label,
+    decimal,
+    iconHash
+    }
         members {
           id
           actorId
@@ -19,6 +25,10 @@ query getWorkspaceDetails($workspaceID: ID!) {
           updatedAt
           outstandingReviewIds
           lastReviewSubmittedAt
+          addedBy {
+            id
+            actorId
+          }
         }
     }
 }
