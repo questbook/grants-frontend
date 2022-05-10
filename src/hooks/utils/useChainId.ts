@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { SupportedChainId } from 'src/constants/chains';
-import { chain, useNetwork } from 'wagmi';
+import { useNetwork } from 'wagmi';
 
 export default function useChainId() {
   const [{ data: networkData }] = useNetwork();
