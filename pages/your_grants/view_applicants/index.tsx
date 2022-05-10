@@ -22,11 +22,8 @@ import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGran
 import useArchiveGrant from 'src/hooks/useArchiveGrant';
 import RubricDrawer from 'src/components/your_grants/rubricDrawer';
 import { BigNumber } from 'ethers';
-<<<<<<< HEAD
 import { ApplicationMilestone } from 'src/types';
-=======
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
->>>>>>> master
 import { formatAmount } from '../../../src/utils/formattingUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Table from '../../../src/components/your_grants/view_applicants/table';
