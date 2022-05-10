@@ -1,7 +1,8 @@
-import { Button, Divider, Flex } from '@chakra-ui/react';
+import { Button, Divider, Flex, Text } from '@chakra-ui/react';
 import React, {
   ReactElement, useState, useEffect, useContext,
 } from 'react';
+import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
 import { useGetWorkspaceDetailsQuery } from 'src/generated/graphql';
 import { Workspace } from 'src/types';
@@ -22,6 +23,9 @@ function ManageDAO() {
     router.query.tab === 'members' ? 1 : router.query.tab === 'payouts' ? 2 : 0,
   );
   const [workspaceData, setWorkspaceData] = useState<Workspace>();
+  const [isAdmin, setIsAdmin] = React.useState<boolean>(false);
+
+  const [{ data: accountData }] = useAccount({ fetchEns: false });
 
   const [queryParams, setQueryParams] = useState<any>({
     client:
@@ -53,7 +57,19 @@ function ManageDAO() {
     setSelected(to);
   };
 
+  useEffect(() => {
+    if (workspace && workspace.members
+      && workspace.members.length > 0 && accountData && accountData.address) {
+      const tempMember = workspace.members.find(
+        (m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
+      );
+      setIsAdmin(tempMember?.accessLevel === 'admin' || tempMember?.accessLevel === 'owner');
+    }
+  }, [accountData, workspace]);
+
   return (
+    <>
+    {isAdmin ? (
     <Flex direction="row" w="100%" justify="space-evenly">
       <Flex
         w={selected === 0 ? '100%' : '100%'}
@@ -105,7 +121,8 @@ function ManageDAO() {
         }
       </Flex>
       <Flex w="auto" />
-    </Flex>
+    </Flex>) : (<Text textAlign="center" p="2rem">You do not have access to this DAO settings</Text>)}
+    </>
   );
 }
 

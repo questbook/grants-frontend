@@ -52,6 +52,8 @@ function ReviewerSidebar({
 
   const { decryptMessage } = useEncryption();
 
+  console.log(applicationData);
+
   useEffect(() => {
     if (!applicationData) return;
     if (!accountData) return;
