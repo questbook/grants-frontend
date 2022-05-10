@@ -173,7 +173,6 @@ function Form({
   );
 
   if (workspace?.tokens) {
-    const tokens = [];
     for (let i = 0; i < workspace.tokens.length; i += 1) {
       supportedCurrencies.push(
         {
@@ -185,8 +184,6 @@ function Form({
         },
       );
     }
-    const allTokens = [...supportedCurrencies, ...tokens];
-    // setsupportCurrencies(allTokens);
   }
 
   useEffect(() => {
