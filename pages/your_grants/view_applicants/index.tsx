@@ -140,7 +140,7 @@ function ViewApplicants() {
         subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
         variables: {
           grantID,
-          reviewerID: isUser,
+          reviewerIDs: [isUser],
           first: PAGE_SIZE,
           skip: 0,
         },

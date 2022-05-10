@@ -1,9 +1,9 @@
-query getApplicantsForAGrantReviewer($first: Int, $skip: Int, $grantID: String!,$reviewerID: String!) {
+query getApplicantsForAGrantReviewer($first: Int, $skip: Int, $grantID: String!,$reviewerIDs: [String!]) {
   grantApplications(
     first: $first,
     where:{
     grant: $grantID,
-    reviewers_contains: [$reviewerID]
+    reviewers_contains: $reviewerIDs
   },
   subgraphError:allow) {
     id
