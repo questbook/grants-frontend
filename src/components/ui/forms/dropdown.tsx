@@ -14,7 +14,7 @@ import {
 import React, { useEffect } from 'react';
 
 interface DropdownProps {
-  listItems: { icon?: string; label: string, id?: string }[];
+  listItems: { icon?: string; label: string, id?: string; address?: string; decimals?: number }[];
   listItemsMinWidth?: string;
   label?: string;
   value?: string;
@@ -125,21 +125,26 @@ function Dropdown({
             },
           }}
         >
-          {listItems.map(({ icon, label: text, id }) => (
+          {listItems.map(({
+            icon, label: text, id, address, decimals,
+          }) => (
             <MenuItem
               key={`menu-item-${text}`}
               onClick={() => {
                 if (!onChange) return;
-                setSelected({ icon, label: text });
+                setSelected({
+                  icon, label: text, address, decimals,
+                });
                 if (id) {
-                  onChange({ id, label: text });
+                  onChange({
+                    id, label: text, address, decimals, icon,
+                  });
                 } else {
                   onChange(text);
                 }
               }}
               minW={listItemsMinWidth}
               p={0}
-            // variant="form"
             >
               <Flex
                 alignItems="center"

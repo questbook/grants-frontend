@@ -70,6 +70,7 @@ function GrantRewardsInput({
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState(supportedCurrencies);
+  const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false);
   const addERC = true;
   const { getPublicEncryptionKey } = useEncryption();
   return (
@@ -98,8 +99,9 @@ function GrantRewardsInput({
           setRewardCurrency={setRewardCurrency}
           setRewardCurrencyAddress={setRewardCurrencyAddress}
           setRewardToken={setRewardToken}
-          supportedCurrenciesList={supportedCurrencies}
+          supportedCurrenciesList={supportedCurrenciesList}
           setSupportedCurrenciesList={setSupportedCurrenciesList}
+          setIsJustAddedToken={setIsJustAddedToken}
         />
         <Box mt={5} ml={4} minW="132px" flex={0}>
           <Dropdown
@@ -108,11 +110,21 @@ function GrantRewardsInput({
             value={rewardCurrency}
             // eslint-disable-next-line react/no-unstable-nested-components
             onChange={(data: any) => {
+              console.log('tokenDATA', data);
               if (data === 'addERCToken') {
                 setIsModalOpen(true);
               }
               setRewardCurrency(data.label);
               setRewardCurrencyAddress(data.id);
+              if (data !== 'addERCToken' && !isJustAddedToken && data.icon.lastIndexOf('ui_icons') === -1) {
+                console.log('custom token', data);
+                setRewardToken({
+                  iconHash: data.icon.substring(data.icon.lastIndexOf('=') + 1),
+                  address: data.address,
+                  label: data.label,
+                  decimal: data.decimals.toString(),
+                });
+              }
             }}
             addERC={addERC}
           />

@@ -66,9 +66,22 @@ export default function useCreateGrant(
 
     async function validate() {
       setLoading(true);
-      // console.log('calling validate');
+      console.log('calling validate');
       try {
         const detailsHash = (await uploadToIPFS(data.details)).hash;
+        let reward;
+        if (data.rewardToken.address === '') {
+          reward = {
+            committed: parseAmount(data.reward, data.rewardCurrencyAddress),
+            asset: data.rewardCurrencyAddress,
+          };
+        } else {
+          reward = {
+            committed: parseAmount(data.reward, data.rewardCurrencyAddress),
+            asset: data.rewardCurrencyAddress,
+            token: data.rewardToken,
+          };
+        }
         const {
           data: { ipfsHash },
         } = await validatorApi.validateGrantCreate({
@@ -76,11 +89,7 @@ export default function useCreateGrant(
           summary: data.summary,
           details: detailsHash,
           deadline: data.date,
-          reward: {
-            committed: parseAmount(data.reward, data.rewardCurrencyAddress),
-            asset: data.rewardCurrencyAddress,
-            token: data.rewardToken,
-          },
+          reward,
           creatorId: accountData!.address,
           workspaceId: getSupportedValidatorNetworkFromChainId(
             (chainId ?? getSupportedChainIdFromWorkspace(workspace))!,
