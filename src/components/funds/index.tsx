@@ -107,7 +107,7 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
           {grant.title}
         </Text>
         <Flex direction="row" justify="start" align="center">
-          <Image src={assetInfo?.icon} alt="Ethereum Icon" />
+          <Image src={assetInfo?.icon} alt="Ethereum Icon" boxSize="36px" />
           <Box mr={2} />
           <Text
             fontWeight="700"
