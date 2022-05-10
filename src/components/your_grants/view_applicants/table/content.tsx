@@ -59,17 +59,16 @@ function Content({
 
   const statusEdit = (item:any) => {
     let ans = 0;
-    item.reviewers.map((reviewer: { email: string }) => {
+    // eslint-disable-next-line array-callback-return
+    item.reviewers.map((reviewer: any) => {
       if (reviewer.id === actorId && item.status === 0) {
-        ans = 5;
         console.log('matched', reviewer.id);
+        ans = 5;
       }
       if (item.status !== 0) {
         ans = item.status;
       }
     });
-    console.log('status', ans);
-    console.log('status', item.status);
     return ans;
   };
   console.log('data-content', data);

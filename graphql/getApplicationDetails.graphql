@@ -40,6 +40,12 @@ query getApplicationDetails($applicationID: ID!) {
         id
         asset
         committed
+        token {
+          address,
+          label,
+          decimal,
+          iconHash
+        }
       }
       fields {
         id

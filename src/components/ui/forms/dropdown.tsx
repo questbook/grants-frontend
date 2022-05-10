@@ -9,6 +9,7 @@ import {
   Image,
   Text,
   Box,
+  MenuDivider,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 
@@ -19,6 +20,7 @@ interface DropdownProps {
   value?: string;
   onChange?: Function;
   defaultIndex?: number;
+  addERC?: boolean;
 }
 
 const defaultProps = {
@@ -27,6 +29,7 @@ const defaultProps = {
   value: '',
   onChange: null,
   defaultIndex: 0,
+  addERC: false,
 };
 
 function Dropdown({
@@ -36,6 +39,7 @@ function Dropdown({
   onChange,
   defaultIndex,
   value,
+  addERC,
 }: DropdownProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const defaultSelected = listItems[defaultIndex ?? 0];
@@ -78,7 +82,7 @@ function Dropdown({
             h={12}
             justifyContent="flex-start"
           >
-            { value ? (
+            {value ? (
               <>
                 {listItems?.find(({ label: text }) => text === value)?.icon ? (
                   <Image
@@ -135,6 +139,7 @@ function Dropdown({
               }}
               minW={listItemsMinWidth}
               p={0}
+            // variant="form"
             >
               <Flex
                 alignItems="center"
@@ -153,6 +158,24 @@ function Dropdown({
               </Flex>
             </MenuItem>
           ))}
+          {addERC ? (
+            <div>
+              <MenuDivider />
+              <MenuItem minW={listItemsMinWidth} p={0} onClick={() => { if (!onChange) return; onChange('addERCToken'); }}>
+                <Flex
+                  alignItems="center"
+                  w="full"
+                  px={4}
+                  py={3}
+                  h={12}
+                  justifyContent="flex-start"
+                >
+                  <Image mr={3} h="18px" w="18px" src="/ui_icons/addERCToken.svg" />
+                  <Text fontWeight="400" fontSize="14px" color="#414E50">Add your ERC 20 Token</Text>
+                </Flex>
+              </MenuItem>
+            </div>
+          ) : null}
         </MenuList>
       </Menu>
     </Flex>
