@@ -9,13 +9,15 @@ export enum SupportedChainId {
   // NEON_DEVNET = 245022926,
 }
 
-const testingNetworks = [SupportedChainId.RINKEBY];
+const testingNetworks = [
+  SupportedChainId.RINKEBY,
+];
 
 export const ALL_SUPPORTED_CHAIN_IDS: SupportedChainId[] = Object.values(
   SupportedChainId,
 ).filter(
   (id) => typeof id === 'number'
-        && ((process.env.IS_TEST === 'true'
-            && testingNetworks.findIndex((network) => network === id) !== -1)
-            || !process.env.IS_TEST),
+    && ((process.env.IS_TEST === 'true'
+      && testingNetworks.findIndex((network) => network === id) !== -1)
+      || !process.env.IS_TEST || process.env.IS_TEST === 'false'),
 ) as SupportedChainId[];
