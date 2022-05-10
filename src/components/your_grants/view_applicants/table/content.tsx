@@ -9,13 +9,13 @@ import {
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
-  SimpleGrid,
   Heading,
 } from '@chakra-ui/react';
 import React, { ReactElement } from 'react';
 import CopyIcon from 'src/components/ui/copy_icon';
 import {
-  GrantApproved, Rejected, PendingReview, ResubmissionRequested, GrantComplete, AssignedToReview,
+  GrantApproved, Rejected, PendingReview, ResubmissionRequested,
+  GrantComplete, AssignedToReview, ReviewDone,
 } from '../states';
 import { TableFilters } from './TableFilters';
 
@@ -28,6 +28,7 @@ function Content({
   data,
   isReviewer,
   reviewerData,
+  actorId,
 }: {
   filter: number;
   onViewApplicationFormClick?: (data?: any) => void;
@@ -37,6 +38,7 @@ function Content({
   data: any[];
   isReviewer : boolean;
   reviewerData:any [];
+  actorId: string;
 }) {
   const tableHeadersFlex = [0.231, 0.20, 0.15, 0.13, 0.16, 0.25, 0.116];
   const tableHeadersFlexReviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116];
@@ -45,14 +47,18 @@ function Content({
     if (status === TableFilters.resubmit) return <ResubmissionRequested />;
     if (status === TableFilters.approved) return <GrantApproved />;
     if (status === TableFilters.rejected) return <Rejected />;
-    if (status === TableFilters.assigned) return <AssignedToReview />;
     return <GrantComplete />;
   };
 
+  const getStatusReviewer = (status: number): ReactElement => {
+    if (status === TableFilters.submitted) return <AssignedToReview />;
+    if (status === TableFilters.approved) return <ReviewDone />;
+  };
+
   // const statusEdit = (reviewer:[]) => {
-  //   reviewer.map((review) => {
-  //     if (review.address === owner) {
-  //       return 5;
+  //   reviewer.find((actorId) => {
+  //     if (actorId) {
+  //       return getStaus(5);
   //     }
   //   });
   // };
@@ -132,8 +138,8 @@ function Content({
                 </Text>
               </Flex>
               <Flex justifyContent="center" flex={tableHeadersFlexReviewer[4]}>
-                {/* { item.reviewers.length !== 0 && item.status === 0
-                  ? getStatus(5) : getStatus(item.status)} */}
+                {/* { getStatusReviewer(item.status)} */}
+
               </Flex>
               <Flex
                 display="flex"
@@ -301,14 +307,13 @@ function Content({
                 </PopoverTrigger>
                 <PopoverContent height="150px" width="inherit" right="-3px" top="75px">
                   <Heading margin="10px" line-height="16px" color="#717A7C" fontFamily="DM Sans" size="sm">REVIEWERS</Heading>
-                  {item.reviewers.map((reviewer: { email: string }) => (
-                    <PopoverBody overflowX="hidden" overflowY="scroll" scrollBehavior="smooth">
+                  <PopoverBody overflowX="hidden" overflowY="scroll" scrollBehavior="smooth">
+                    {item.reviewers.map((reviewer: { email: string }) => (
                       <Flex direction="column">
                         <Text>{reviewer.email}</Text>
-
                       </Flex>
-                    </PopoverBody>
-                  ))}
+                    ))}
+                  </PopoverBody>
 
                 </PopoverContent>
               </Popover>
@@ -316,8 +321,7 @@ function Content({
             </Flex>
 
             <Flex justifyContent="center" flex={tableHeadersFlex[4]}>
-              { item.reviewers.length !== 0 && item.status === 0
-                ? getStatus(5) : getStatus(item.status)}
+              {getStatus(item.status)}
             </Flex>
 
             <Flex justifyContent="center" color="#717A7C" flex={tableHeadersFlex[5]}>

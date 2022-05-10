@@ -11,6 +11,7 @@ function Table({
   onManageApplicationClick,
   data,
   title,
+  actorId,
   isReviewer,
   reviewerData,
   archiveGrantComponent,
@@ -21,6 +22,7 @@ function Table({
   onManageApplicationClick?: (data? : any) => void;
   data: any[];
   title: string;
+  actorId: string
   isReviewer : boolean;
   archiveGrantComponent: React.ReactNode;
   reviewerData: any[];
@@ -44,6 +46,7 @@ function Table({
           isReviewer={isReviewer}
           reviewerData={reviewerData}
           filter={filter}
+          actorId={actorId}
           onViewApplicationFormClick={onViewApplicantFormClick}
                 // onAcceptApplicationClick={onAcceptApplicationClick}
                 // onRejectApplicationClick={onRejectApplicationClick}

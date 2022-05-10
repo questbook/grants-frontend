@@ -51,6 +51,8 @@ function ViewApplicants() {
   const [isAdmin, setIsAdmin] = React.useState<boolean>(false);
   const [isReviewer, setIsReviewer] = React.useState<boolean>(false);
   const [isUser, setIsUser] = React.useState<any>('');
+  const [isActorId, setIsActorId] = React.useState<any>('');
+
 
   const [{ data: accountData }] = useAccount({
     fetchEns: false,
@@ -109,7 +111,9 @@ function ViewApplicants() {
       );
 
       setIsReviewer(tempMember?.accessLevel === 'reviewer');
+      setIsActorId(tempMember?.actorId)
       setIsUser(tempMember?.id);
+
     }
   }, [accountData, workspace]);
 
@@ -249,7 +253,7 @@ function ViewApplicants() {
       setAcceptingApplications(reviewData.data.grantApplications[0].grant.acceptingApplications);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reviewData]);
+  }, []);
 
   const { data: grantData } = useGetGrantDetailsQuery(queryParams);
   useEffect(() => {
@@ -369,6 +373,7 @@ function ViewApplicants() {
           isReviewer={isReviewer}
           data={applicantsData}
           reviewerData={reviewerData}
+          actorId={isActorId}
           onViewApplicantFormClick={(commentData: any) => router.push({
             pathname: '/your_grants/view_applicants/applicant_form/',
             query: {
