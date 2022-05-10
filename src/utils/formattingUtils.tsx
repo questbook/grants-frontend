@@ -35,7 +35,10 @@ export function timeToString(
       show_year ? date.getFullYear() : ''
     }`;
 }
-export function parseAmount(number: string, contractAddress?: string) {
+export function parseAmount(number: string, contractAddress?: string, decimal?: number) {
+  if (decimal) {
+    return ethers.utils.parseUnits(number, decimal).toString();
+  }
   let decimals = 18;
   console.log('nnnunun');
   console.log(number);

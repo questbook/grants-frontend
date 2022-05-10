@@ -77,7 +77,7 @@ export default function useCreateGrant(
           };
         } else {
           reward = {
-            committed: parseAmount(data.reward, data.rewardCurrencyAddress),
+            committed: parseAmount(data.reward, data.reward.token.decimal),
             asset: data.rewardCurrencyAddress,
             token: data.rewardToken,
           };
