@@ -171,7 +171,10 @@ function Form({
   const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
     supportedCurrencies[0].id,
   );
-
+  /**
+ * checks if the workspace already has custom tokens added
+ * if custom tokens found, append it to supportedCurrencies
+ */
   if (workspace?.tokens) {
     for (let i = 0; i < workspace.tokens.length; i += 1) {
       supportedCurrencies.push(
