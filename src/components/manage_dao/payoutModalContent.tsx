@@ -343,7 +343,7 @@ function PayoutModalContent({
               </InputGroup>
               <Text fontSize="0.75rem" color="red" fontWeight="bold">
                 {(reviewsToPay as number) > reviews
-                  ? `You can not pay more than ${reviews} reviews`
+                  ? `You cannot trigger payouts for more than ${reviews} reviews`
                   : (reviewsToPay as number) < 1
                     && 'You need to pay at least 1 review'}
               </Text>
@@ -359,7 +359,7 @@ function PayoutModalContent({
                   onChange={(value) => {
                     setAmountToPay(parseInt(value, 10));
                   }}
-                  value={amountToPay}
+                  value={isNaN(amountToPay as number) ? '' : amountToPay}
                   min={0}
                   step={0.01}
                 >
@@ -657,7 +657,7 @@ function PayoutModalContent({
               </InputGroup>
               <Text fontSize="0.75rem" color="red" fontWeight="bold">
                 {(reviewsToPay as number) > reviews
-                  ? `You can not pay more than ${reviews} reviews`
+                  ? `You cannot trigger payouts for more than ${reviews} reviews`
                   : (reviewsToPay as number) < 1
                     && 'You need to pay at least 1 review'}
               </Text>
@@ -673,7 +673,7 @@ function PayoutModalContent({
                   onChange={(value) => {
                     setAmountDeposited(parseInt(value, 10));
                   }}
-                  value={amountDeposited}
+                  value={isNaN(amountDeposited as number) ? '' : amountDeposited}
                   min={0}
                   step={0.01}
                 >
