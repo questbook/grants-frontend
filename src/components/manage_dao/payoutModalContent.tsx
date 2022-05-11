@@ -655,7 +655,7 @@ function PayoutModalContent({
                   </Button>
                 </InputRightElement>
               </InputGroup>
-              <Text fontSize="0.75rem">
+              <Text fontSize="0.75rem" color="red" fontWeight="bold">
                 {(reviewsToPay as number) > reviews
                   ? `You can not pay more than ${reviews} reviews`
                   : (reviewsToPay as number) < 1
