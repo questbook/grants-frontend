@@ -11,6 +11,7 @@ export enum SupportedChainId {
 
 const testingNetworks = [
   SupportedChainId.RINKEBY,
+  SupportedChainId.POLYGON_MAINNET
 ];
 
 export const ALL_SUPPORTED_CHAIN_IDS: SupportedChainId[] = Object.values(

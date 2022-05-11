@@ -9,9 +9,6 @@ import {
   Input,
   NumberInput,
   NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
   InputGroup,
   InputRightElement,
   Heading,
@@ -83,7 +80,7 @@ function PayoutModalContent({
     .map((currency) => ({ ...currency, id: currency.address }));
 
   // STATES TO FILL WITH FORM INPUTS
-  const [reviewsToPay, setReviewsToPay] = useState<number>(0);
+  const [reviewsToPay, setReviewsToPay] = useState<number>();
   const [amountToPay, setAmountToPay] = useState<number>();
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [amountDeposited, setAmountDeposited] = useState<number>();
@@ -163,14 +160,6 @@ function PayoutModalContent({
   );
 
   console.log(fulfillPaymentData);
-
-  useEffect(() => {
-    if (amountToPay !== undefined && reviewsToPay !== undefined) {
-      const amount = ((amountToPay as any) * reviewsToPay) as any;
-
-      setTotalAmount(amount);
-    }
-  }, [amountToPay, reviewsToPay]);
 
   useEffect(() => {
     if (currentChain) {
@@ -355,10 +344,6 @@ function PayoutModalContent({
                   step={0.01}
                 >
                   <NumberInputField h={12} minW="full" />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
                 </NumberInput>
               </Flex>
               <Flex direction="column" w="fit-content" mt="20px">
@@ -552,6 +537,8 @@ function PayoutModalContent({
               my={8}
               isDisabled={reviewsToPay !== reviewIdsToPay.length}
               onClick={() => {
+                reviewsToPay !== undefined && amountToPay !== undefined &&
+                setTotalAmount(reviewsToPay * amountToPay);
                 setSubmitPayment(true);
                 // eslint-disable-next-line no-console
                 console.log(
@@ -584,7 +571,7 @@ function PayoutModalContent({
               reviewsToPay !== undefined
               && amountToPay !== undefined
               && !paymentOutside
-                ? (setPaymentOutside(true))
+                ? (setPaymentOutside(true), setTotalAmount(reviewsToPay * amountToPay))
                 : (setPaymentOutside(false), setPayMode(2));
             }}
           >
@@ -682,10 +669,6 @@ function PayoutModalContent({
                   step={0.01}
                 >
                   <NumberInputField h={12} minW="full" />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
                 </NumberInput>
               </Flex>
               <Flex direction="column" w="fit-content" mt="20px">
@@ -738,15 +721,8 @@ function PayoutModalContent({
               my={8}
               isDisabled={reviewsToPay !== reviewIdsToPay.length}
               onClick={() => {
-                // eslint-disable-next-line no-console
-                console.log(
-                  reviewCurrencyAddress,
-                  reviewIds,
-                  totalAmount,
-                  reviewCurrency,
-                  reviewerAddress,
-                  transactionHash,
-                );
+                reviewsToPay !== undefined && amountToPay !== undefined &&
+                setTotalAmount(reviewsToPay * amountToPay);
                 setTabIndex(1);
                 setSubmitMarkDone(true);
               }}

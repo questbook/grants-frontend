@@ -137,6 +137,8 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 
   useEffect(() => {
     if (!accountData?.address) return;
+
+
     if (!getAllWorkspaces) return;
     // if (!set) return;
 
