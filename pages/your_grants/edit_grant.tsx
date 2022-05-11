@@ -69,6 +69,7 @@ function EditGrant() {
     let reward;
     let rewardCurrency;
     let rewardCurrencyAddress;
+    console.log('grant token while editing grant', grant);
     if (grant.reward.token) {
       reward = formatAmount(grant.reward.committed, grant.reward.token.decimal);
       rewardCurrency = grant.reward.token.label;
@@ -145,7 +146,9 @@ function EditGrant() {
       let reward;
       let rewardCurrency;
       let rewardCurrencyAddress;
+      console.log('grant token while editing grant', grant);
       if (grant.reward.token) {
+        console.log('grant token while editing grant', grant);
         reward = formatAmount(grant.reward.committed, grant.reward.token.decimal);
         rewardCurrency = grant.reward.token.label;
         rewardCurrencyAddress = grant.reward.token.address;
