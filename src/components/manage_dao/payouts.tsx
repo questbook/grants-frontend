@@ -26,18 +26,18 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { useGetDaoGrantsQuery, useGetFundSentforReviewsQuery } from 'src/generated/graphql';
 import { utils } from 'ethers';
 import { getAssetInfo } from 'src/utils/tokenUtils';
+import { SupportedChainId } from 'src/constants/chains';
+import router from 'next/router';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 import useChainId from '../../hooks/utils/useChainId';
 
 // UI COMPONENTS
-import { SupportedChainId } from 'src/constants/chains';
-import router from 'next/router';
 import CopyIcon from '../ui/copy_icon';
 import Modal from '../ui/modal';
 import PayoutModalContent from './payoutModalContent';
 
 // CONTEXT AND CONSTANTS
 import { ApiClientsContext } from '../../../pages/_app';
-import { CHAIN_INFO } from 'src/constants/chainInfo';
 
 function Payouts() {
   const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
@@ -121,8 +121,6 @@ function Payouts() {
       // eslint-disable-next-line max-len
         && reviewer.outstandingReviewIds.forEach((id: any) => setOutstandingReviews((array: any) => [...array, id])));
     }
-
-    console.log(outstandingReviews);
   }, [grantsData, applications, reviewers, outstandingReviews]);
 
   React.useEffect(() => {
@@ -131,7 +129,6 @@ function Payouts() {
         (review: any) => setReviewPayoutsDone((array: any) => [...array, review]),
       );
     }
-    console.log(reviewPayoutsDone);
   });
 
   React.useEffect(() => {
@@ -539,7 +536,7 @@ function Payouts() {
                         <Flex direction="row">
                           <Link
                             href={`${CHAIN_INFO[currentChainId as number]
-                              .explorer.transactionHash}${data.id.slice(0, -4)}`}
+                              .explorer.transactionHash}${data.id.substr(0, data.id.indexOf('.'))}`}
                             isExternal
                           >
                             View

@@ -40,7 +40,6 @@ function BrowseGrants() {
     (key) => useGetAllGrantsLazyQuery({ client: subgraphClients[key].client }),
   );
 
-
   useEffect(() => { }, [subgraphClients]);
 
   const toast = useToast();

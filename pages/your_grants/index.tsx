@@ -283,7 +283,7 @@ function YourGrants() {
     <>
       <Flex ref={containerRef} direction="row" justify="center">
         <Flex direction="column" w="55%" alignItems="stretch" pb={8} px={10}>
-          {isReviewer ? <Flex mt={4}/> : (
+          {isReviewer ? <Flex mt={4} /> : (
             <>
               <Heading title="Your grants" />
               <Flex direction="row" mt={4} mb={4}>

@@ -206,6 +206,7 @@ function PayoutModalContent({
     if (transactionData) {
       onClose();
       setSubmitMarkDone(false);
+      setTabIndex(1);
       toastRef.current = toast({
         position: 'top',
         render: () => (
@@ -250,6 +251,25 @@ function PayoutModalContent({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, fulfillPaymentData, error]);
+
+  const sendSubmit = () => {
+    if (reviewsToPay !== undefined
+      && amountDeposited !== undefined
+      && transactionHash !== undefined
+    ) {
+      setTotalAmount(reviewsToPay * (amountDeposited as number));
+      setSubmitMarkDone(true);
+    }
+  };
+
+  const sendPayment = () => {
+    if (reviewsToPay !== undefined
+      && amountToPay !== undefined
+    ) {
+      setTotalAmount(reviewsToPay * amountToPay);
+      setSubmitPayment(true);
+    }
+  };
 
   return (
     <ModalBody>
@@ -536,18 +556,7 @@ function PayoutModalContent({
               variant="primary"
               my={8}
               isDisabled={reviewsToPay !== reviewIdsToPay.length}
-              onClick={() => {
-                reviewsToPay !== undefined && amountToPay !== undefined &&
-                setTotalAmount(reviewsToPay * amountToPay);
-                setSubmitPayment(true);
-                // eslint-disable-next-line no-console
-                console.log(
-                  reviewCurrencyAddress,
-                  totalAmount,
-                  reviewCurrency,
-                  reviewerAddress,
-                );
-              }}
+              onClick={() => sendPayment()}
             >
               {fulfillLoading ? <Loader /> : 'Make Payment'}
             </Button>
@@ -720,12 +729,7 @@ function PayoutModalContent({
               variant="primary"
               my={8}
               isDisabled={reviewsToPay !== reviewIdsToPay.length}
-              onClick={() => {
-                reviewsToPay !== undefined && amountToPay !== undefined &&
-                setTotalAmount(reviewsToPay * amountToPay);
-                setTabIndex(1);
-                setSubmitMarkDone(true);
-              }}
+              onClick={() => sendSubmit()}
             >
               {!loading ? 'Mark Payment as Done' : <Loader />}
             </Button>

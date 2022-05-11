@@ -1,4 +1,6 @@
-import { Grid, Flex, Text, Button, Tooltip, Box } from '@chakra-ui/react';
+import {
+  Grid, Flex, Text, Button, Tooltip, Box,
+} from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import {
   trimAddress,
@@ -92,8 +94,8 @@ function Members({ workspaceMembers }: Props) {
           border="1px solid #D0D3D3"
           borderRadius={4}
         >
-          {tableData &&
-            tableData.map((data: any, index: number) => (
+          {tableData
+            && tableData.map((data: any, index: number) => (
               <Grid
                 gridAutoFlow="column"
                 gridTemplateColumns="repeat(5, 1fr)"
@@ -188,15 +190,14 @@ function Members({ workspaceMembers }: Props) {
               updatedAt?: number;
               addedBy?: string;
             },
-            shouldRevoke?: boolean
+            shouldRevoke?: boolean,
           ) => {
             if (!shouldRevoke) {
               if (tableData && tableData.length > 0) {
                 setTableData([
                   ...tableData.filter(
-                    (dt: any) =>
-                      dt.address.toLowerCase() !==
-                      newMember.address.toLowerCase()
+                    (dt: any) => dt.address.toLowerCase()
+                      !== newMember.address.toLowerCase(),
                   ),
                   newMember,
                 ]);
@@ -206,8 +207,7 @@ function Members({ workspaceMembers }: Props) {
             } else {
               setTableData([
                 ...tableData.filter(
-                  (dt: any) =>
-                    dt.address.toLowerCase() !== newMember.address.toLowerCase()
+                  (dt: any) => dt.address.toLowerCase() !== newMember.address.toLowerCase(),
                 ),
               ]);
             }
