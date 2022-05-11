@@ -12,9 +12,10 @@ import { useNetwork } from 'wagmi';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { ApiClientsContext } from 'pages/_app';
 import useEncryption from 'src/hooks/utils/useEncryption';
-import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
+import { Token, WorkspaceUpdateRequest } from '@questbook/service-validator-client';
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys';
 import Tooltip from 'src/components/ui/tooltip';
+import CustomTokenModal from 'src/components/ui/submitCustomTokenModal';
 import Datepicker from '../../../ui/forms/datepicker';
 import Dropdown from '../../../ui/forms/dropdown';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
@@ -29,8 +30,15 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
   const apiClients = useContext(ApiClientsContext)!;
   const { workspace } = apiClients;
   const [reward, setReward] = React.useState('');
+  const [rewardToken, setRewardToken] = React.useState<Token>({
+    label: '', address: '', decimal: '18', iconHash: '',
+  });
   const [rewardError, setRewardError] = React.useState(false);
-  const [,switchNetwork] = useNetwork();
+  const [, switchNetwork] = useNetwork();
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false);
+
+  const addERC = true;
 
   const currentChain = useChainId() ?? SupportedChainId.RINKEBY;
 
@@ -44,6 +52,22 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
   const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
     supportedCurrencies[0].address,
   );
+
+  const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState(supportedCurrencies);
+
+  // if (workspace?.tokens) {
+  //   for (let i = 0; i < workspace.tokens.length; i += 1) {
+  //     supportedCurrencies.push(
+  //       {
+  //         id: workspace.tokens[i].address,
+  //         address: workspace.tokens[i].address,
+  //         decimals: workspace.tokens[i].decimal,
+  //         label: workspace.tokens[i].label,
+  //         icon: getUrlForIPFSHash(workspace.tokens[i].iconHash),
+  //       },
+  //     );
+  //   }
+  // }
 
   useEffect(() => {
     if (workspace && switchNetwork) {
@@ -62,7 +86,7 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
       setRewardCurrency(currencies[0].label);
       setRewardCurrencyAddress(currencies[0].address);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentChain]);
 
   useEffect(() => {
@@ -110,7 +134,7 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
         pii = true;
       }
       onSubmit({
-        reward, rewardCurrencyAddress, date, pii, shouldEncryptReviews,
+        reward, rewardToken, rewardCurrencyAddress, date, pii, shouldEncryptReviews,
       });
     }
   };
@@ -138,16 +162,39 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
               type="number"
             />
           </Box>
+          <CustomTokenModal
+            isModalOpen={isModalOpen}
+            setIsModalOpen={setIsModalOpen}
+            setRewardCurrency={setRewardCurrency}
+            setRewardCurrencyAddress={setRewardCurrencyAddress}
+            setRewardToken={setRewardToken}
+            supportedCurrenciesList={supportedCurrencies}
+            setSupportedCurrenciesList={setSupportedCurrenciesList}
+            setIsJustAddedToken={setIsJustAddedToken}
+          />
           <Box mt={5} ml={4} minW="132px" flex={0}>
             <Dropdown
               listItemsMinWidth="132px"
-              listItems={supportedCurrencies}
+              listItems={supportedCurrenciesList}
               value={rewardCurrency}
               onChange={(data: any) => {
-                console.log(data);
+                console.log('data while signing up:', data);
+                if (data === 'addERCToken') {
+                  setIsModalOpen(true);
+                }
                 setRewardCurrency(data.label);
                 setRewardCurrencyAddress(data.id);
+                if (data !== 'addERCToken' && !isJustAddedToken && data.icon.lastIndexOf('ui_icons') === -1) {
+                  console.log('custom token', data);
+                  setRewardToken({
+                    iconHash: data.icon.substring(data.icon.lastIndexOf('=') + 1),
+                    address: data.address,
+                    label: data.label,
+                    decimal: data.decimals.toString(),
+                  });
+                }
               }}
+              addERC={addERC}
             />
           </Box>
         </Flex>
@@ -198,10 +245,10 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
             <Switch
               id="encrypt"
               onChange={
-              (e) => {
-                setShouldEncrypt(e.target.checked);
+                (e) => {
+                  setShouldEncrypt(e.target.checked);
+                }
               }
-             }
             />
             <Text
               fontSize="12px"
@@ -274,7 +321,7 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
         ref={buttonRef}
         mt="auto"
         variant="primary"
-        onClick={hasClicked ? () => {} : handleOnSubmit}
+        onClick={hasClicked ? () => { } : handleOnSubmit}
         py={hasClicked ? 2 : 0}
         w={hasClicked ? buttonRef.current?.offsetWidth : 'auto'}
       >
