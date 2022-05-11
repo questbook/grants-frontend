@@ -26,6 +26,7 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { useGetDaoGrantsQuery, useGetFundSentforReviewsQuery } from 'src/generated/graphql';
 import { utils } from 'ethers';
 import { getAssetInfo } from 'src/utils/tokenUtils';
+import useChainId from '../../hooks/utils/useChainId';
 
 // UI COMPONENTS
 import { SupportedChainId } from 'src/constants/chains';
@@ -36,6 +37,7 @@ import PayoutModalContent from './payoutModalContent';
 
 // CONTEXT AND CONSTANTS
 import { ApiClientsContext } from '../../../pages/_app';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
 
 function Payouts() {
   const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
@@ -43,6 +45,7 @@ function Payouts() {
   const [outstandingReviews, setOutstandingReviews] = React.useState<any>([]);
   const [reviewers, setReviewers] = React.useState<any>([]);
   const [reviewPayoutsDone, setReviewPayoutsDone] = React.useState<any>([]);
+  const currentChainId = useChainId();
 
   const { data: grantsData } = useGetDaoGrantsQuery({
     client:
@@ -535,7 +538,8 @@ function Payouts() {
 
                         <Flex direction="row">
                           <Link
-                            href={`https://www.polygonscan.com/tx/${data.id.slice(0, -4)}`}
+                            href={`${CHAIN_INFO[currentChainId as number]
+                              .explorer.transactionHash}${data.id.slice(0, -4)}`}
                             isExternal
                           >
                             View
