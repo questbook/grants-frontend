@@ -69,7 +69,7 @@ function ReviewerSidebar({
     ));
     const ipfsData = await getFromIPFS(reviewData.data);
     let data = {};
-    if (applicationData?.grant.rubric.isPrivate) {
+    if (applicationData?.grant.rubric?.isPrivate) {
       data = JSON.parse(await decryptMessage(ipfsData) ?? '{}');
     } else {
       data = JSON.parse(ipfsData ?? '{}');
@@ -100,7 +100,7 @@ function ReviewerSidebar({
     resubmitLoading,
   ] = useSubmitReview(
     editedFeedbackData,
-    applicationData?.grant.rubric.isPrivate,
+    applicationData?.grant.rubric?.isPrivate,
     chainId,
     applicationData?.grant.workspace.id,
     applicationData?.grant.id,
@@ -283,10 +283,10 @@ function ReviewerSidebar({
         workspaceId={applicationData?.grant.workspace.id}
         feedbacks={feedbacks}
         setFeedbacks={setFeedbacks}
-        rubrics={applicationData?.grant.rubric.items}
+        rubrics={applicationData?.grant.rubric?.items}
         feedbackEditAllowed
         applicationId={applicationData?.id}
-        isPrivate={applicationData?.grant.rubric.isPrivate}
+        isPrivate={applicationData?.grant.rubric?.isPrivate}
       />
     </>
   );

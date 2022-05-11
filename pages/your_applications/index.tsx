@@ -42,16 +42,20 @@ function YourApplications() {
       const promises = allNetworkApplications.map((allApplications) => (
         // eslint-disable-next-line no-async-promise-executor
         new Promise(async (resolve) => {
-          const { data } = await allApplications[0]({
-            variables: {
-              first: PAGE_SIZE,
-              skip: currentPage * PAGE_SIZE,
-              applicantID: accountData?.address || '',
-            },
-          });
-          if (data && data.grantApplications) {
-            resolve(data.grantApplications);
-          } else {
+          try {
+            const { data } = await allApplications[0]({
+              variables: {
+                first: PAGE_SIZE,
+                skip: currentPage * PAGE_SIZE,
+                applicantID: accountData?.address || '',
+              },
+            });
+            if (data && data.grantApplications) {
+              resolve(data.grantApplications);
+            } else {
+              resolve([]);
+            }
+          } catch (err) {
             resolve([]);
           }
         })

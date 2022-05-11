@@ -54,19 +54,23 @@ function BrowseGrants() {
         // eslint-disable-next-line no-async-promise-executor
         (allGrants) => new Promise(async (resolve) => {
           // console.log('calling grants');
-          const { data } = await allGrants[0]({
-            variables: {
-              first: PAGE_SIZE,
-              skip: currentPageLocal * PAGE_SIZE,
-              applicantId: accountData?.address ?? '',
-            },
-          });
-          if (data && data.grants) {
-            const filteredGrants = data.grants.filter(
-              (grant) => grant.applications.length === 0,
-            );
-            resolve(filteredGrants);
-          } else {
+          try {
+            const { data } = await allGrants[0]({
+              variables: {
+                first: PAGE_SIZE,
+                skip: currentPageLocal * PAGE_SIZE,
+                applicantId: accountData?.address ?? '',
+              },
+            });
+            if (data && data.grants) {
+              const filteredGrants = data.grants.filter(
+                (grant) => grant.applications.length === 0,
+              );
+              resolve(filteredGrants);
+            } else {
+              resolve([]);
+            }
+          } catch (err) {
             resolve([]);
           }
         }),
