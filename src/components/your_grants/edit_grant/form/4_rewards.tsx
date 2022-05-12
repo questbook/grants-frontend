@@ -2,8 +2,10 @@ import {
   Flex,
   Box,
 } from '@chakra-ui/react';
+import { Token } from '@questbook/service-validator-client';
 import React from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
+import CustomTokenModal from 'src/components/ui/submitCustomTokenModal';
 import Datepicker from '../../../ui/forms/datepicker';
 import Dropdown from '../../../ui/forms/dropdown';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
@@ -13,6 +15,7 @@ function GrantRewardsInput({
   setReward,
   rewardError,
   setRewardError,
+  setRewardToken,
   rewardCurrency,
   setRewardCurrency,
   setRewardCurrencyAddress,
@@ -26,6 +29,7 @@ function GrantRewardsInput({
   setReward: (rewards: string) => void;
   rewardError: boolean;
   setRewardError: (rewardError: boolean) => void;
+  setRewardToken: (rewardToken: Token) => void;
   rewardCurrency: string;
   setRewardCurrency: (rewardCurrency: string) => void;
   setRewardCurrencyAddress: (rewardCurrencyAddress: string) => void;
@@ -35,6 +39,10 @@ function GrantRewardsInput({
   setDateError: (dateError: boolean) => void;
   supportedCurrencies: any[];
 }) {
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState(supportedCurrencies);
+  const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false);
+  const addERC = true;
   return (
     <Flex direction="column">
 
@@ -55,15 +63,39 @@ function GrantRewardsInput({
             type="number"
           />
         </Box>
+        <CustomTokenModal
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          setRewardCurrency={setRewardCurrency}
+          setRewardCurrencyAddress={setRewardCurrencyAddress}
+          setRewardToken={setRewardToken}
+          supportedCurrenciesList={supportedCurrenciesList}
+          setSupportedCurrenciesList={setSupportedCurrenciesList}
+          setIsJustAddedToken={setIsJustAddedToken}
+        />
         <Box mt={5} ml={4} minW="132px" flex={0}>
           <Dropdown
             listItemsMinWidth="132px"
-            listItems={supportedCurrencies}
+            listItems={supportedCurrenciesList}
             value={rewardCurrency}
             onChange={(data: any) => {
+              console.log('tokenDATA', data);
+              if (data === 'addERCToken') {
+                setIsModalOpen(true);
+              }
               setRewardCurrency(data.label);
               setRewardCurrencyAddress(data.id);
+              if (data !== 'addERCToken' && !isJustAddedToken && data.icon.lastIndexOf('ui_icons') === -1) {
+                console.log('custom token', data);
+                setRewardToken({
+                  iconHash: data.icon.substring(data.icon.lastIndexOf('=') + 1),
+                  address: data.address,
+                  label: data.label,
+                  decimal: data.decimals.toString(),
+                });
+              }
             }}
+            addERC={addERC}
           />
         </Box>
       </Flex>
