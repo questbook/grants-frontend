@@ -1,5 +1,4 @@
 import {
-  Box,
   Divider, Flex, IconButton, Image, Text,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
@@ -81,16 +80,14 @@ function Profile() {
     >
       <Flex direction="column" h="300px" align="end" pos="relative">
         <Flex
-          h="210px"
-          direction="column"
           bg={workspaceData?.coverImageIpfsHash ? 'white' : 'brand.500'}
+          h="210px"
         >
-          <Box my="auto" />
           {workspaceData?.coverImageIpfsHash && (
             <Image
               fit="contain"
+              alignSelf="flex-end"
               justifySelf="flex-end"
-              h="210px"
               src={getUrlForIPFSHash(workspaceData?.coverImageIpfsHash)}
             />
           )}
