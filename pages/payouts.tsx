@@ -25,8 +25,9 @@ import NavbarLayout from '../src/layout/navbarLayout';
 
 export default function Payouts() {
   const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
-  const [reviewPayoutsDone, setReviewPayoutsDone] = React.useState<any>([]);
   const [isReviewer, setIsReviewer] = React.useState<boolean>(false);
+  const [reviewsDone, setReviewsDone] = React.useState<number>(0);
+  const [reviewPayoutsDone, setReviewPayoutsDone] = React.useState<any>([]);
   const [
     reviewPayoutsOutstanding,
     setReviewPayoutsOutstanding,
@@ -50,7 +51,7 @@ export default function Payouts() {
     }
   }, [account, workspace]);
 
-  const { data: reviewsData } = useGetFundSentforReviewerQuery({
+  const { data: reviewsPaidData } = useGetFundSentforReviewerQuery({
     client:
       subgraphClients[
         getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
@@ -69,10 +70,10 @@ export default function Payouts() {
   });
 
   React.useEffect(() => {
-    if (reviewPayoutsDone.length === 0 && reviewsData) {
-      setReviewPayoutsDone(reviewsData!.fundsTransfers);
+    if (reviewPayoutsDone.length === 0 && reviewsPaidData) {
+      setReviewPayoutsDone(reviewsPaidData!.fundsTransfers);
     }
-  }, [reviewPayoutsDone, reviewsData]);
+  }, [reviewPayoutsDone, reviewsPaidData]);
 
   React.useEffect(() => {
     if (reviewPayoutsOutstanding.length === 0) {
@@ -83,7 +84,14 @@ export default function Payouts() {
           ),
       );
     }
-  }, [reviewPayoutsOutstanding, reviewsData, account?.address, workspace?.members]);
+  }, [reviewPayoutsOutstanding, reviewsPaidData, account?.address, workspace?.members]);
+
+  React.useEffect(() => {
+    if (reviewsDone === 0) {
+      setReviewsDone(reviewPayoutsDone.length + reviewPayoutsOutstanding.length);
+    }
+    console.log(reviewsDone);
+  }, [reviewsDone, reviewPayoutsDone, reviewPayoutsOutstanding])
 
   return (
     <Flex>
@@ -100,7 +108,7 @@ export default function Payouts() {
               alignContent="center"
               gap="0.5rem"
             >
-              <Heading fontSize="1.5rem" gridArea="heading">{reviewPayoutsDone.length}</Heading>
+              <Heading fontSize="1.5rem" gridArea="heading">{reviewsDone}</Heading>
               <Text fontSize="1rem" color="#AAAAAA" gridArea="text">Reviews Done</Text>
               <Flex
                 w="40px"
