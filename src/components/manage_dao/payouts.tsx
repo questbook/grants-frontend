@@ -535,8 +535,7 @@ function Payouts() {
 
                         <Flex direction="row">
                           <Link
-                            href={`${CHAIN_INFO[currentChainId as number]
-                              .explorer.transactionHash}${data.id.substr(0, data.id.indexOf('.'))}`}
+                          href={`http://www.polygonscan.com/tx/${data.id.substr(0, data.id.indexOf('.'))}`}
                             isExternal
                           >
                             View
