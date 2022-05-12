@@ -1,4 +1,3 @@
-import { ViewIcon } from '@chakra-ui/icons';
 import {
   Menu,
   MenuButton,
@@ -65,7 +64,7 @@ function Actions({
                 onViewApplicationFormClick();
               }
             }}
-            icon={<ViewIcon color="#31373D" />}
+            icon={<Image src="/ui_icons/see.svg" />}
           >
             <Text
               fontSize="14px"
