@@ -6,6 +6,7 @@ import { SupportedChainId } from 'src/constants/chains';
 import { GrantApplicationUpdate } from '@questbook/service-validator-client';
 import getErrorMessage from 'src/utils/errorUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { uploadToIPFS } from 'src/utils/ipfsUtils';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useApplicationRegistryContract from './contracts/useApplicationRegistryContract';
@@ -55,6 +56,12 @@ export default function useResubmitApplication(
       setLoading(true);
       // console.log('calling validate');
       try {
+        const detailsHash = (
+          await uploadToIPFS(data.fields!.projectDetails[0].value)
+        ).hash;
+        // eslint-disable-next-line no-param-reassign
+        data.fields!.projectDetails[0].value = detailsHash;
+        console.log('Details hash: ', detailsHash);
         const {
           data: { ipfsHash },
         } = await validatorApi.validateGrantApplicationUpdate(data);

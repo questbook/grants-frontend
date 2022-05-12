@@ -14,6 +14,7 @@ import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspa
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { getFromIPFS } from 'src/utils/ipfsUtils';
 import { formatAmount } from 'src/utils/formattingUtils';
+import { ethers } from 'ethers';
 import InfoToast from '../../src/components/ui/infoToast';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/edit_grant/form';
@@ -66,6 +67,38 @@ function EditGrant() {
   const getDecodedDetails = async (detailsHash: string, grant: any) => {
     console.log(detailsHash);
     const d = await getFromIPFS(detailsHash);
+    let reward;
+    let rewardCurrency;
+    let rewardCurrencyAddress;
+    console.log('grant token while editing grant', grant);
+    if (grant.reward.token) {
+      reward = ethers.utils.formatUnits(
+        grant.reward.committed,
+        grant.reward.token.decimal,
+      ).toString();
+      rewardCurrency = grant.reward.token.label;
+      rewardCurrencyAddress = grant.reward.token.address;
+    } else {
+      reward = formatAmount(
+        grant.reward.committed,
+        CHAIN_INFO[
+          getSupportedChainIdFromSupportedNetwork(
+            grant.workspace.supportedNetworks[0],
+          )
+        ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+          ?.decimals ?? 18,
+      );
+      rewardCurrency = CHAIN_INFO[
+        getSupportedChainIdFromSupportedNetwork(
+          grant.workspace.supportedNetworks[0],
+        )
+      ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label ?? 'LOL';
+      rewardCurrencyAddress = CHAIN_INFO[
+        getSupportedChainIdFromSupportedNetwork(
+          grant.workspace.supportedNetworks[0],
+        )
+      ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.address;
+    }
     const fd = {
       title: grant.title,
       summary: grant.summary,
@@ -91,27 +124,9 @@ function EditGrant() {
       extraField:
         grant.fields.find((field: any) => field.id.includes('extraField'))
         !== undefined,
-      reward: formatAmount(
-        grant.reward.committed,
-        CHAIN_INFO[
-          getSupportedChainIdFromSupportedNetwork(
-            grant.workspace.supportedNetworks[0],
-          )
-        ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-          ?.decimals ?? 18,
-      ),
-      rewardCurrency:
-        CHAIN_INFO[
-          getSupportedChainIdFromSupportedNetwork(
-            grant.workspace.supportedNetworks[0],
-          )
-        ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label ?? 'LOL',
-      rewardCurrencyAddress:
-        CHAIN_INFO[
-          getSupportedChainIdFromSupportedNetwork(
-            grant.workspace.supportedNetworks[0],
-          )
-        ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.address,
+      reward,
+      rewardCurrency,
+      rewardCurrencyAddress,
       date: grant.deadline,
     } as any;
     grant.fields
@@ -131,6 +146,39 @@ function EditGrant() {
       if (grant.details.startsWith('Qm') && grant.details.length < 64) {
         getDecodedDetails(grant.details, grant);
         return;
+      }
+      let reward;
+      let rewardCurrency;
+      let rewardCurrencyAddress;
+      console.log('grant token while editing grant', grant);
+      if (grant.reward.token) {
+        console.log('grant token while editing grant', grant);
+        reward = ethers.utils.formatUnits(
+          grant.reward.committed,
+          grant.reward.token.decimal,
+        ).toString();
+        rewardCurrency = grant.reward.token.label;
+        rewardCurrencyAddress = grant.reward.token.address;
+      } else {
+        reward = formatAmount(
+          grant.reward.committed,
+          CHAIN_INFO[
+            getSupportedChainIdFromSupportedNetwork(
+              grant.workspace.supportedNetworks[0],
+            )
+          ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+            ?.decimals ?? 18,
+        );
+        rewardCurrency = CHAIN_INFO[
+          getSupportedChainIdFromSupportedNetwork(
+            grant.workspace.supportedNetworks[0],
+          )
+        ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label ?? 'LOL';
+        rewardCurrencyAddress = CHAIN_INFO[
+          getSupportedChainIdFromSupportedNetwork(
+            grant.workspace.supportedNetworks[0],
+          )
+        ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.address;
       }
       const fd = {
         title: grant.title,
@@ -157,27 +205,9 @@ function EditGrant() {
         extraField:
           grant.fields.find((field: any) => field.id.includes('extraField'))
           !== undefined,
-        reward: formatAmount(
-          grant.reward.committed,
-          CHAIN_INFO[
-            getSupportedChainIdFromSupportedNetwork(
-              grant.workspace.supportedNetworks[0],
-            )
-          ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-            ?.decimals ?? 18,
-        ),
-        rewardCurrency:
-          CHAIN_INFO[
-            getSupportedChainIdFromSupportedNetwork(
-              grant.workspace.supportedNetworks[0],
-            )
-          ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label ?? 'LOL',
-        rewardCurrencyAddress:
-          CHAIN_INFO[
-            getSupportedChainIdFromSupportedNetwork(
-              grant.workspace.supportedNetworks[0],
-            )
-          ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.address,
+        reward,
+        rewardCurrency,
+        rewardCurrencyAddress,
         date: grant.deadline,
       } as any;
       grant.fields
@@ -242,7 +272,7 @@ function EditGrant() {
         ),
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, transactionData, router]);
 
   useEffect(() => {
