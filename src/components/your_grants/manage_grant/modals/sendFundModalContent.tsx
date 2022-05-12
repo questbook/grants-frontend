@@ -1,4 +1,3 @@
-import { ChevronDownIcon } from '@chakra-ui/icons';
 import {
   ModalBody,
   Flex,
@@ -362,7 +361,7 @@ function ModalContent({
               color="#122224"
               background="#E8E9E9"
               _disabled={{ color: '#A0A7A7', background: '#F3F4F4' }}
-              rightIcon={<ChevronDownIcon />}
+              rightIcon={<Image src="/ui_icons/dropdown_arrow.svg" />}
               textAlign="left"
             >
               <Text
@@ -484,7 +483,7 @@ function ModalContent({
             <MenuButton
               w="100%"
               as={Button}
-              rightIcon={<ChevronDownIcon />}
+              rightIcon={<Image src="/ui_icons/dropdown_arrow.svg" />}
               textAlign="left"
             >
               <Text

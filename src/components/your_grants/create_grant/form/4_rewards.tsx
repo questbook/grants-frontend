@@ -1,4 +1,3 @@
-import { ChevronRightIcon } from '@chakra-ui/icons';
 import {
   Flex,
   Box,
@@ -210,7 +209,7 @@ function GrantRewardsInput({
               Allow access to your public key and encrypt the applicant form to
               proceed
             </Text>
-            <ChevronRightIcon color="brand.500" fontSize="2xl" />
+            <Image src="/ui_icons/brand/chevron_right.svg" />
             {loading && <Loader />}
           </Flex>
           <Flex alignItems="center" gap={2}>

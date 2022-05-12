@@ -11,8 +11,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.5.8",
-    "@chakra-ui/icons": "2.0.0",
-    "@chakra-ui/react": "2.0.0",
+    "@chakra-ui/react": "^1.8.0",
     "@draft-js-plugins/editor": "^4.1.2",
     "@draft-js-plugins/focus": "^4.1.2",
     "@draft-js-plugins/image": "^4.1.2",
