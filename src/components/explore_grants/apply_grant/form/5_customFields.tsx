@@ -42,10 +42,10 @@ function CustomFields({
                 newCustomFields[index].isError = false;
                 setCustomFields(newCustomFields);
               }}
-              placeholder="Field Label"
+              placeholder="Type your answer"
               isError={customField.isError}
               errorText="Required"
-              maxLength={30}
+              maxLength={120}
             />
             <Box mt={2} />
           </>
