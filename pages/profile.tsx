@@ -80,13 +80,11 @@ function Profile() {
     >
       <Flex direction="column" w="100%" h="300px" align="end" pos="relative">
         <Flex
-          w="100%"
           h="210px"
           bg={workspaceData?.coverImageIpfsHash ? 'white' : 'brand.500'}
         >
           {workspaceData?.coverImageIpfsHash && (
             <Image
-              w="100%"
               h="210px"
               src={getUrlForIPFSHash(workspaceData?.coverImageIpfsHash)}
             />
