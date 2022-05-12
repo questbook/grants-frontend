@@ -29,7 +29,7 @@ export class Contract {
     provider?: ContractProvider
     signer?: ContractProvider
     contract_?: any
-    contractLib: SolanaContractLib
+    contractLib: any
     functions: { [functionName: string]: ContractFunction }
 
     readonly [key: string]: ContractFunction<any> | any;

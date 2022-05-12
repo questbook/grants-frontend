@@ -26,6 +26,9 @@ import {
 } from '../src/utils/formattingUtils';
 import { ApiClientsContext } from './_app';
 
+import { SolanaWalletAdapter } from 'multichain/types'
+import useSolanaProgram from 'src/hooks/contracts/useSolanaProgram';
+
 const PAGE_SIZE = 40;
 
 function BrowseGrants() {
@@ -33,12 +36,13 @@ function BrowseGrants() {
   const [{ data: accountData }] = useAccount();
   const router = useRouter();
   const { subgraphClients } = useContext(ApiClientsContext)!;
+  const solanaProgrm = useSolanaProgram()
 
   const allNetworkGrants = Object.keys(subgraphClients)!.map(
     // eslint-disable-next-line react-hooks/rules-of-hooks
     (key) => useGetAllGrantsLazyQuery({ client: subgraphClients[key].client }),
   );
-  useEffect(() => {}, [subgraphClients]);
+  useEffect(() => { }, [subgraphClients]);
 
   const toast = useToast();
   const [grants, setGrants] = useState<GetAllGrantsQuery['grants']>([]);
@@ -70,7 +74,16 @@ function BrowseGrants() {
           }
         }),
       );
+      // @TODO: Add a promise for getting Solana's grants (subgraph is not ready so from the program itself).
+      if (solanaProgrm){
+        const t = await solanaProgrm.account.grant.all()
+        console.log(t)
+        console.log("Solana Program is not null")
+        promises.push(solanaProgrm.account.grant.all())
+      }
+      
       Promise.all(promises).then((values: any[]) => {
+        console.log(values)
         const allGrantsData = [].concat(
           ...values,
         ) as GetAllGrantsQuery['grants'];
@@ -103,7 +116,7 @@ function BrowseGrants() {
     const parentElement = (current as HTMLElement)?.parentNode as HTMLElement;
     const reachedBottom = Math.abs(
       parentElement.scrollTop
-          - (parentElement.scrollHeight - parentElement.clientHeight),
+      - (parentElement.scrollHeight - parentElement.clientHeight),
     ) < 10;
     if (reachedBottom) {
       getGrantData();

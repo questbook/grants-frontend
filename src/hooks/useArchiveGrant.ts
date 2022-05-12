@@ -8,17 +8,21 @@ import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useGrantContract from './contracts/useGrantContract';
+import useSolanaProgram from './contracts/useSolanaProgram';
+import { useWallet } from '@solana/wallet-adapter-react';
 
-export default function useArchiveGrant(newState: boolean, changeCount: number, grantId?: string) {
+export default function useArchiveGrant(newState: boolean, changeCount: number, grantId?: string, extraData?: any) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
   const [transactionData, setTransactionData] = React.useState<any>();
   const [{ data: accountData }] = useAccount();
   const [{ data: networkData }] = useNetwork();
+  const solanaInfo = useWallet()
 
   const apiClients = useContext(ApiClientsContext)!;
   const { validatorApi, workspace } = apiClients;
   const grantContract = useGrantContract(grantId);
+  const solanaProgram = useSolanaProgram()
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
   const currentChainId = useChainId();
@@ -38,11 +42,18 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
       setLoading(true);
 
       try {
-        const archiveGrantTransaction = await grantContract.updateGrantAccessibility(newState);
-        const archiveGrantTransactionData = await archiveGrantTransaction.wait();
-
-        setTransactionData(archiveGrantTransactionData);
-        setLoading(false);
+        if (solanaProgram && solanaInfo.wallet) {
+          // This is a signature
+          const archiveGrantTransaction = await solanaProgram.updateGrantAccessibility(0, newState, extraData.grant.publicKey, extraData.workspace.publicKey);
+          setTransactionData(archiveGrantTransaction);
+          setLoading(false);
+        }
+        else {
+          const archiveGrantTransaction = await grantContract.updateGrantAccessibility(newState);
+          const archiveGrantTransactionData = await archiveGrantTransaction.wait();
+          setTransactionData(archiveGrantTransactionData);
+          setLoading(false);
+        }
       } catch (e: any) {
         const message = getErrorMessage(e);
         setError(message);
@@ -80,7 +91,7 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
       if (
         !grantContract
         || grantContract.address
-          === '0x0000000000000000000000000000000000000000'
+        === '0x0000000000000000000000000000000000000000'
         || !grantContract.signer
         || !grantContract.provider
       ) {

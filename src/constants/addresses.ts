@@ -1,4 +1,5 @@
 import { SupportedChainId } from './chains';
+import { PublicKey } from "@solana/web3.js";
 
 type AddressMap = { [chainId: number]: string };
 
@@ -28,3 +29,7 @@ export const GRANT_FACTORY_ADDRESS: AddressMap = {
   [SupportedChainId.POLYGON_MAINNET]: '0x89497A254e886C229C370822b5fc2153B53A07Eb',
   // [SupportedChainId.POLYGON_MAINNET]: '0x6D0f81BDA11995f25921aAd5B43359630E65Ca96',
 };
+
+export const SOLANA_PROGRAM_ADDRESS = new PublicKey(
+  '8TedDGUNCD8b2y8ePC2dRpGFF5Wjfd9wiQZ9qoezEwGu'
+);

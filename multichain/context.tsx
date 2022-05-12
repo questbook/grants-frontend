@@ -99,6 +99,6 @@ export const Provider: React.FC<React.PropsWithChildren<Props>> = ({
 
 export const useContext = () => {
     const context = React.useContext(Context)
-    if (!context) throw Error('Must be used within Provider')
+    // if (!context) throw Error('Must be used within Provider')
     return context
 }

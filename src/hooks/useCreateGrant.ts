@@ -18,11 +18,14 @@ import { uploadToIPFS } from 'src/utils/ipfsUtils';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useGrantFactoryContract from './contracts/useGrantFactoryContract';
 import useChainId from './utils/useChainId';
+import { useWallet } from '@solana/wallet-adapter-react';
+import useSolanaProgram from './contracts/useSolanaProgram';
 
 export default function useCreateGrant(
   data: any,
   chainId?: SupportedChainId,
   workspaceId?: string,
+  extraData?: any
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
@@ -30,6 +33,8 @@ export default function useCreateGrant(
   const [transactionData, setTransactionData] = React.useState<any>();
   const [{ data: accountData }] = useAccount();
   const [{ data: networkData }, switchNetwork] = useNetwork();
+  const solanaInfo = useWallet()
+  const solanaProgram = useSolanaProgram()
 
   const apiClients = useContext(ApiClientsContext)!;
   const { validatorApi, workspace } = apiClients;
@@ -56,7 +61,7 @@ export default function useCreateGrant(
     if (incorrectNetwork) {
       setIncorrectNetwork(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [grantContract]);
 
   useEffect(() => {
@@ -90,24 +95,31 @@ export default function useCreateGrant(
         if (!ipfsHash) {
           throw new Error('Error validating grant data');
         }
+        if (solanaProgram && solanaInfo.wallet) {
+          // This is a signature
+          const createGrantTransactionData = await solanaProgram.createGrant(0, ipfsHash, extraData.workspace.publicKey);
+          setTransactionData(createGrantTransactionData);
+          setLoading(false);
+        }
+        else {
+          // console.log(workspaceId ?? Number(workspace?.id).toString());
+          // console.log('ipfsHash', ipfsHash);
+          // console.log(
+          //   WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
+          //   APPLICATION_REGISTRY_ADDRESS[currentChainId!],
+          // );
 
-        // console.log(workspaceId ?? Number(workspace?.id).toString());
-        // console.log('ipfsHash', ipfsHash);
-        // console.log(
-        //   WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
-        //   APPLICATION_REGISTRY_ADDRESS[currentChainId!],
-        // );
+          const createGrantTransaction = await grantContract.createGrant(
+            workspaceId ?? Number(workspace?.id).toString(),
+            ipfsHash,
+            WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
+            APPLICATION_REGISTRY_ADDRESS[currentChainId!],
+          );
+          const createGrantTransactionData = await createGrantTransaction.wait();
 
-        const createGrantTransaction = await grantContract.createGrant(
-          workspaceId ?? Number(workspace?.id).toString(),
-          ipfsHash,
-          WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
-          APPLICATION_REGISTRY_ADDRESS[currentChainId!],
-        );
-        const createGrantTransactionData = await createGrantTransaction.wait();
-
-        setTransactionData(createGrantTransactionData);
-        setLoading(false);
+          setTransactionData(createGrantTransactionData);
+          setLoading(false);
+        }
       } catch (e: any) {
         const message = getErrorMessage(e);
         setError(message);
@@ -152,7 +164,7 @@ export default function useCreateGrant(
       if (
         !grantContract
         || grantContract.address
-          === '0x0000000000000000000000000000000000000000'
+        === '0x0000000000000000000000000000000000000000'
         || !grantContract.signer
         || !grantContract.provider
       ) {
@@ -175,7 +187,7 @@ export default function useCreateGrant(
         }),
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     error,
     loading,

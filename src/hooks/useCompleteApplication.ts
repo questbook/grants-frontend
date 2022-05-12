@@ -10,10 +10,14 @@ import { CHAIN_INFO } from 'src/constants/chainInfo';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useApplicationRegistryContract from './contracts/useApplicationRegistryContract';
+import { useWallet } from '@solana/wallet-adapter-react';
+import useSolanaProgram from './contracts/useSolanaProgram';
+import { PublicKey } from '@solana/web3.js';
 
 export default function useCompleteApplication(
   data: any,
   applicationId: string | undefined,
+  extraData?: any
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
@@ -21,6 +25,8 @@ export default function useCompleteApplication(
   const [transactionData, setTransactionData] = React.useState<any>();
   const [{ data: accountData }] = useAccount();
   const [{ data: networkData }, switchNetwork] = useNetwork();
+  const solanaInfo = useWallet()
+  const solanaProgram = useSolanaProgram()
 
   const apiClients = useContext(ApiClientsContext)!;
   const { validatorApi, workspace } = apiClients;
@@ -42,7 +48,7 @@ export default function useCompleteApplication(
     if (incorrectNetwork) {
       setIncorrectNetwork(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applicationContract]);
 
   useEffect(() => {
@@ -60,16 +66,23 @@ export default function useCompleteApplication(
         if (!ipfsHash) {
           throw new Error('Error validating grant data');
         }
+        if (solanaProgram && solanaInfo.wallet) {
+          // This is a signature
+          const updateTxnData = await solanaProgram.completeApplication(extraData.grant.publicKey, extraData.workspace.publicKey, 0, extraData.application.publicKey);
+          setTransactionData(updateTxnData);
+          setLoading(false);
+        }
+        else {
+          const updateTxn = await applicationContract.completeApplication(
+            Number(applicationId),
+            Number(workspace!.id),
+            ipfsHash,
+          );
+          const updateTxnData = await updateTxn.wait();
 
-        const updateTxn = await applicationContract.completeApplication(
-          Number(applicationId),
-          Number(workspace!.id),
-          ipfsHash,
-        );
-        const updateTxnData = await updateTxn.wait();
-
-        setTransactionData(updateTxnData);
-        setLoading(false);
+          setTransactionData(updateTxnData);
+          setLoading(false);
+        }
       } catch (e: any) {
         const message = getErrorMessage(e);
         setError(message);
@@ -119,7 +132,7 @@ export default function useCompleteApplication(
       if (
         !applicationContract
         || applicationContract.address
-          === '0x0000000000000000000000000000000000000000'
+        === '0x0000000000000000000000000000000000000000'
         || !applicationContract.signer
         || !applicationContract.provider
       ) {
@@ -142,7 +155,7 @@ export default function useCompleteApplication(
         }),
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     error,
     loading,

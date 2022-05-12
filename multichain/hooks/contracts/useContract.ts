@@ -35,6 +35,7 @@ export const useContract = <Contract = any>({
     if (signerOrProvider instanceof EvmContractSigner || signerOrProvider instanceof EvmContractProvider){
       return wagmiContract;
     }
+    return null;
     return getContract<Contract>({
       addressOrName,
       contractInterface,
