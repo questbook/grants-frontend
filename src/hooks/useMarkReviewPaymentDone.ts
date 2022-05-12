@@ -2,24 +2,24 @@ import React, { useContext, useEffect } from 'react';
 import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import { useAccount, useNetwork } from 'wagmi';
-import {
-  getSupportedChainIdFromWorkspace,
-} from 'src/utils/validationUtils';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+// import { BigNumber } from 'ethers';
 import getErrorMessage from 'src/utils/errorUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { BigNumber } from 'ethers';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
-import useGrantContract from './contracts/useGrantContract';
-import useERC20Contract from './contracts/useERC20Contract';
+import useApplicationReviewRegistryContract from './contracts/useApplicationReviewRegistryContract';
 
-export default function useDisburseReward(
-  data: any,
-  grantId: string | undefined,
-  applicationId: string | undefined,
-  milestoneIndex: number | undefined,
-  rewardAssetAddress: string | undefined,
-  submitClicked: boolean,
-  setSubmitClicked: React.Dispatch<React.SetStateAction<boolean>>,
+export default function useMarkReviewPaymentDone(
+  workspaceId: string,
+  reviewIds: string[],
+  applicationsIds: string[],
+  totalAmount: BigNumber,
+  submitMarkDone: boolean,
+  reviewerAddress?: string,
+  reviewCurrencyAddress?: string,
+  transactionHash?: string,
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
@@ -29,61 +29,54 @@ export default function useDisburseReward(
   const [{ data: networkData }, switchNetwork] = useNetwork();
 
   const apiClients = useContext(ApiClientsContext)!;
-  const { validatorApi, workspace } = apiClients;
-  const currentChainId = useChainId();
+  const { workspace } = apiClients;
   const chainId = getSupportedChainIdFromWorkspace(workspace);
-
-  /** START: HEY YOU, WATCH OUT */
-  /** DO NOT CHANGE THE FUCKING ORDER OF THESE TWO CONTRACT INSTANCES... */
-  /** ...UNLESS YOU WANNA BREAK ALL HELL LOOSE */
-  const rewardContract = useERC20Contract(rewardAssetAddress);
-  const grantContract = useGrantContract(grantId);
-  /** END */
-
+  const applicationReviewerContract = useApplicationReviewRegistryContract(chainId);
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
+  const currentChainId = useChainId();
 
   useEffect(() => {
-    if (data) {
+    // console.log(totalAmount);
+    if (!totalAmount) {
       setError(undefined);
-      setLoading(false);
+      setIncorrectNetwork(false);
+    } else if (transactionData) {
+      setTransactionData(undefined);
       setIncorrectNetwork(false);
     }
-  }, [data]);
-
-  useEffect(() => {
-    if (submitClicked) {
-      setIncorrectNetwork(false);
-      setSubmitClicked(false);
-    }
-  }, [setSubmitClicked, submitClicked]);
+  }, [totalAmount, transactionData]);
 
   useEffect(() => {
     if (incorrectNetwork) {
       setIncorrectNetwork(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [grantContract]);
+  }, [applicationReviewerContract]);
 
   useEffect(() => {
     if (incorrectNetwork) return;
     if (error) return;
     if (loading) return;
 
-    async function validate() {
-      setLoading(true);
-      // console.log('calling validate');
-      try {
-        const txn = await rewardContract.approve(grantContract.address, data);
-        await txn.wait();
+    // console.log('YES');
 
-        const updateTxn = await grantContract.disburseRewardP2P(
-          applicationId,
-          milestoneIndex,
-          rewardAssetAddress,
-          data,
+    async function markAsDone() {
+      // console.log('YES2');
+
+      setLoading(true);
+      try {
+        const markPaymentTxb = await applicationReviewerContract.markPaymentDone(
+          workspaceId,
+          applicationsIds,
+          reviewerAddress,
+          reviewIds,
+          reviewCurrencyAddress,
+          totalAmount,
+          transactionHash,
         );
-        const updateTxnData = await updateTxn.wait();
+
+        const updateTxnData = await markPaymentTxb.wait();
 
         setTransactionData(updateTxnData);
         setLoading(false);
@@ -105,15 +98,9 @@ export default function useDisburseReward(
       }
     }
     try {
-      // console.log(data);
-      // console.log(milestoneIndex);
-      // console.log(applicationId);
-      // console.log(Number.isNaN(milestoneIndex));
-      if (Number.isNaN(milestoneIndex)) return;
-      if (!data) return;
-      if (!applicationId) return;
+      if (!submitMarkDone) return;
+      if (!workspaceId) return;
       if (transactionData) return;
-      if (!rewardAssetAddress) return;
       if (!accountData || !accountData.address) {
         throw new Error('not connected to wallet');
       }
@@ -136,29 +123,17 @@ export default function useDisburseReward(
         setLoading(false);
         return;
       }
-      if (!validatorApi) {
-        throw new Error('validatorApi or workspaceId is not defined');
-      }
-      // console.log(5);
       if (
-        !grantContract
-        || grantContract.address
+        !applicationReviewerContract
+        || applicationReviewerContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !grantContract.signer
-        || !grantContract.provider
+        || !applicationReviewerContract.signer
+        || !applicationReviewerContract.provider
       ) {
         return;
       }
-      if (
-        !rewardContract
-        || rewardContract.address
-          === '0x0000000000000000000000000000000000000000'
-        || !rewardContract.signer
-        || !rewardContract.provider
-      ) {
-        return;
-      }
-      validate();
+
+      markAsDone();
     } catch (e: any) {
       const message = getErrorMessage(e);
       setError(message);
@@ -181,19 +156,16 @@ export default function useDisburseReward(
     loading,
     toast,
     transactionData,
-    rewardContract,
-    grantContract,
-    validatorApi,
     workspace,
     accountData,
     networkData,
     currentChainId,
-    applicationId,
-    milestoneIndex,
-    rewardAssetAddress,
-    data,
     chainId,
     incorrectNetwork,
+    reviewIds,
+    transactionHash,
+    reviewerAddress,
+    reviewCurrencyAddress,
   ]);
 
   return [
@@ -203,6 +175,5 @@ export default function useDisburseReward(
         .explorer.transactionHash}${transactionData?.transactionHash}`
       : '',
     loading,
-    error,
   ];
 }

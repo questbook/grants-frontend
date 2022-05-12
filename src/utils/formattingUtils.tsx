@@ -91,13 +91,15 @@ function nFormatter(value: string, digits = 3) {
     : '0';
 }
 
+export const trimAddress = (address: string, digitQuantity: number) => `${address.slice(0, digitQuantity)}...${address.slice(-4)}`;
+
 function truncateTo(number: string, digits = 3) {
   const decimalIndex = number.indexOf('.');
   if (decimalIndex === -1) return number;
   let ret = number.substring(0, decimalIndex + 1);
   const lastSymbol = number.charCodeAt(number.length - 1);
   const containsSymbol = !(lastSymbol >= 48 && lastSymbol <= 57);
-  let isEntirelyZeroAfterDecimal = true;
+  const isEntirelyZeroAfterDecimal = true;
   for (
     let i = decimalIndex + 1;
     i
@@ -107,7 +109,8 @@ function truncateTo(number: string, digits = 3) {
     );
     i += 1
   ) {
-    isEntirelyZeroAfterDecimal &&= number.charCodeAt(i) === 48;
+    // eslint-disable-next-line  @typescript-eslint/no-unused-expressions
+    isEntirelyZeroAfterDecimal && number.charCodeAt(i) === 48;
     ret += number.charAt(i);
   }
   const returnValue = (isEntirelyZeroAfterDecimal ? ret.substring(0, decimalIndex) : ret)

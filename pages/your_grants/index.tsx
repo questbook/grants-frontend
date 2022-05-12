@@ -283,36 +283,40 @@ function YourGrants() {
     <>
       <Flex ref={containerRef} direction="row" justify="center">
         <Flex direction="column" w="55%" alignItems="stretch" pb={8} px={10}>
-          <Heading title="Your grants" />
-          <Flex direction="row" mt={4} mb={4}>
-            {tabs.map((tab) => (
-              <Button
-                padding="8px 24px"
-                borderRadius="52px"
-                minH="40px"
-                bg={selectedTab === tab.index ? 'brand.500' : 'white'}
-                color={selectedTab === tab.index ? 'white' : 'black'}
-                onClick={() => {
-                  setSelectedTab(tab.index);
-                  localStorage.setItem(
-                    'yourGrantsTabSelected',
-                    tab.index.toString(),
-                  );
-                }}
-                _hover={{}}
-                fontWeight="700"
-                fontSize="16px"
-                lineHeight="24px"
-                mr={3}
-                border={
-                  selectedTab === tab.index ? 'none' : '1px solid #A0A7A7'
-                }
-                key={tab.index}
-              >
-                {tab.label}
-              </Button>
-            ))}
-          </Flex>
+          {isReviewer ? <Flex mt={4} /> : (
+            <>
+              <Heading title="Your grants" />
+              <Flex direction="row" mt={4} mb={4}>
+                {tabs.map((tab) => (
+                  <Button
+                    padding="8px 24px"
+                    borderRadius="52px"
+                    minH="40px"
+                    bg={selectedTab === tab.index ? 'brand.500' : 'white'}
+                    color={selectedTab === tab.index ? 'white' : 'black'}
+                    onClick={() => {
+                      setSelectedTab(tab.index);
+                      localStorage.setItem(
+                        'yourGrantsTabSelected',
+                        tab.index.toString(),
+                      );
+                    }}
+                    _hover={{}}
+                    fontWeight="700"
+                    fontSize="16px"
+                    lineHeight="24px"
+                    mr={3}
+                    border={
+                      selectedTab === tab.index ? 'none' : '1px solid #A0A7A7'
+                    }
+                    key={tab.index}
+                  >
+                    {tab.label}
+                  </Button>
+                ))}
+              </Flex>
+            </>
+          )}
           {grants.length > 0
             && grants.map((grant: any) => {
               const grantAmount = grant.reward.committed;
@@ -404,7 +408,7 @@ function YourGrants() {
           w="26%"
           pos="sticky"
           minH="calc(100vh - 80px)"
-          display={isAdmin || isReviewer ? undefined : 'none'}
+          display={isAdmin ? undefined : 'none'}
         >
           <Sidebar isReviewer={isReviewer} showCreateGrantItem={!grantCount[0] && !grantCount[1]} />
         </Flex>

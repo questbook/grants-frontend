@@ -1,0 +1,23 @@
+query getDaoGrants( $workspaceId: String!) {
+  grants(
+    subgraphError: allow,
+    where: { workspace: $workspaceId}
+    orderBy: createdAtS,
+    orderDirection: desc
+  ) {
+  id,
+  creatorId,
+	applications {
+    id
+    reviews {
+      id
+    }
+    reviewers {
+      id
+      actorId
+      email
+      lastReviewSubmittedAt
+      outstandingReviewIds
+    }
+  }
+}}

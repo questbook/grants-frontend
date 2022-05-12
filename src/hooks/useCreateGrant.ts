@@ -64,6 +64,8 @@ export default function useCreateGrant(
     if (error) return;
     if (loading) return;
 
+    console.log('YEEES');
+
     async function validate() {
       setLoading(true);
       console.log('calling validate');
@@ -189,6 +191,7 @@ export default function useCreateGrant(
       ) {
         return;
       }
+
       validate();
     } catch (e: any) {
       const message = getErrorMessage(e);

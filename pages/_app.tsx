@@ -62,7 +62,7 @@ const chains = [
 // commenting to only support rinkeby
 // const defaultChain = chain.polygonMainnet;
 
-const defaultChain = chain.rinkeby;
+const defaultChain = chain.polygonMainnet;
 // Set up connectors
 const connectors = () => [
   new InjectedConnector({

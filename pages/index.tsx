@@ -39,6 +39,7 @@ function BrowseGrants() {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     (key) => useGetAllGrantsLazyQuery({ client: subgraphClients[key].client }),
   );
+
   useEffect(() => { }, [subgraphClients]);
 
   const toast = useToast();

@@ -42,7 +42,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
         root of children should also be a container with a max-width,
         this container is to render the scrollbar to extreme right of window
       */}
-      <Container ref={currentPageRef} maxW="100vw" p={0} overflow="scroll">
+      <Container ref={currentPageRef} maxW="100vw" p={0} overflow="auto">
         {children}
       </Container>
     </VStack>
