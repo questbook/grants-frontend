@@ -52,7 +52,7 @@ function Content({
   };
 
   // eslint-disable-next-line consistent-return
-  const getStatusReviewer = (status: number): ReactElement => {
+  const getStatusReviewer = (status: number) => {
     if (status === 0) return <AssignedToReview />;
     if (status === 9) return <ReviewDone />;
   };
