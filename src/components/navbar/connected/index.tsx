@@ -34,7 +34,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
     'funds',
     'manage_dao',
     'your_applications',
-    'payouts'
+    'payouts',
   ];
   const activeIndex = useActiveTabIndex(tabPaths);
 
@@ -143,7 +143,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
         tempMember?.accessLevel === 'admin'
         || tempMember?.accessLevel === 'owner',
       );
-      setIsReviewer(tempMember?.accessLevel === 'reviewer' || tempMember?.accessLevel === 'admin');
+      setIsReviewer(tempMember?.accessLevel === 'reviewer');
     }
   }, [accountData, workspace]);
 
@@ -292,7 +292,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
               <Box mr="12px" />
               <Flex h="100%" direction="column">
                 <Tab
-                  label={isReviewer ? "Grants Assigned" : "Grants"}
+                  label={isReviewer ? 'Grants Assigned' : 'Grants'}
                   icon={`/ui_icons/${
                     activeIndex === 0 ? 'brand' : 'gray'
                   }/tab_grants.svg`}
@@ -345,9 +345,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 <Flex h="100%" direction="column">
                   <Tab
                     label="Payouts"
-                    icon={`/ui_icons/${
-                      activeIndex === 3 ? 'brand' : 'gray'
-                    }/tab_funds.svg`}
+                    icon={activeIndex === 4 ? '/ui_icons/brand/tab_review_funds.svg' : '/ui_icons/gray/tab_funds.svg'}
                     isActive={activeIndex === 4}
                     onClick={() => {
                       router.push({

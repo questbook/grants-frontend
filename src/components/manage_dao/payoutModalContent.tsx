@@ -359,7 +359,7 @@ function PayoutModalContent({
                   onChange={(value) => {
                     setAmountToPay(parseInt(value, 10));
                   }}
-                  value={isNaN(amountToPay as number) ? '' : amountToPay}
+                  value={Number.isNaN(amountToPay as number) ? '' : amountToPay}
                   min={0}
                   step={0.01}
                 >
@@ -673,7 +673,7 @@ function PayoutModalContent({
                   onChange={(value) => {
                     setAmountDeposited(parseInt(value, 10));
                   }}
-                  value={isNaN(amountDeposited as number) ? '' : amountDeposited}
+                  value={Number.isNaN(amountDeposited as number) ? '' : amountDeposited}
                   min={0}
                   step={0.01}
                 >

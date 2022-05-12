@@ -28,8 +28,6 @@ import { utils } from 'ethers';
 import { getAssetInfo } from 'src/utils/tokenUtils';
 import { SupportedChainId } from 'src/constants/chains';
 import router from 'next/router';
-import { CHAIN_INFO } from 'src/constants/chainInfo';
-import useChainId from '../../hooks/utils/useChainId';
 
 // UI COMPONENTS
 import CopyIcon from '../ui/copy_icon';
@@ -45,7 +43,6 @@ function Payouts() {
   const [outstandingReviews, setOutstandingReviews] = React.useState<any>([]);
   const [reviewers, setReviewers] = React.useState<any>([]);
   const [reviewPayoutsDone, setReviewPayoutsDone] = React.useState<any>([]);
-  const currentChainId = useChainId();
 
   const { data: grantsData } = useGetDaoGrantsQuery({
     client:
@@ -535,7 +532,7 @@ function Payouts() {
 
                         <Flex direction="row">
                           <Link
-                          href={`http://www.polygonscan.com/tx/${data.id.substr(0, data.id.indexOf('.'))}`}
+                            href={`http://www.polygonscan.com/tx/${data.id.substr(0, data.id.indexOf('.'))}`}
                             isExternal
                           >
                             View

@@ -1,4 +1,6 @@
-import { Image, Flex, Heading, Text, Grid, Tooltip, Link, Box } from '@chakra-ui/react';
+import {
+  Image, Flex, Heading, Text, Grid, Tooltip, Link,
+} from '@chakra-ui/react';
 import React, { ReactElement, useContext } from 'react';
 
 // TOOLS AND UTILS
@@ -12,16 +14,14 @@ import { utils } from 'ethers';
 import { getAssetInfo } from 'src/utils/tokenUtils';
 import { SupportedChainId } from 'src/constants/chains';
 import router from 'next/router';
-import { CHAIN_INFO } from '../src/constants/chainInfo';
-import useChainId from '../src/hooks/utils/useChainId';
 import { useAccount } from 'wagmi';
+import CopyIcon from 'src/components/ui/copy_icon';
 
 // CONTEXT AND CONSTANTS
 import { ApiClientsContext } from './_app';
 
-//UI Components
+// UI Components
 import NavbarLayout from '../src/layout/navbarLayout';
-import CopyIcon from 'src/components/ui/copy_icon';
 
 export default function Payouts() {
   const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
@@ -31,23 +31,21 @@ export default function Payouts() {
     reviewPayoutsOutstanding,
     setReviewPayoutsOutstanding,
   ] = React.useState<any>([]);
-  const currentChainId = useChainId();
   const [{ data: account }] = useAccount();
 
   React.useEffect(() => {
     if (
-      workspace &&
-      workspace.members &&
-      workspace.members.length > 0 &&
-      account &&
-      account.address
+      workspace
+      && workspace.members
+      && workspace.members.length > 0
+      && account
+      && account.address
     ) {
       const tempMember = workspace.members.find(
-        (m) => m.actorId.toLowerCase() === account?.address?.toLowerCase()
+        (m) => m.actorId.toLowerCase() === account?.address?.toLowerCase(),
       );
       setIsReviewer(
-        tempMember?.accessLevel === 'reviewer' ||
-          tempMember?.accessLevel === 'admin'
+        tempMember?.accessLevel === 'reviewer',
       );
     }
   }, [account, workspace]);
@@ -74,78 +72,75 @@ export default function Payouts() {
     if (reviewPayoutsDone.length === 0 && reviewsData) {
       setReviewPayoutsDone(reviewsData!.fundsTransfers);
     }
-    console.log(reviewPayoutsDone);
-  });
+  }, [reviewPayoutsDone, reviewsData]);
 
   React.useEffect(() => {
     if (reviewPayoutsOutstanding.length === 0) {
       workspace?.members.forEach(
-        (member: any) =>
-          member.actorId === account?.address.toLowerCase() &&
-          member.outstandingReviewIds.filter((review: any) =>
-            setReviewPayoutsOutstanding((array: any) => [...array, review])
-          )
+        (member: any) => member.actorId === account?.address.toLowerCase()
+          && member.outstandingReviewIds.filter(
+            (review: any) => setReviewPayoutsOutstanding((array: any) => [...array, review]),
+          ),
       );
     }
-    console.log(reviewPayoutsOutstanding);
-  });
+  }, [reviewPayoutsOutstanding, reviewsData, account?.address, workspace?.members]);
 
   return (
-    <>
+    <Flex>
       {isReviewer ? (
         <Flex direction="column" w={{ base: '95vw', md: '70vw' }} m="auto">
-        <Grid mt={6} gap="1.5rem" gridAutoFlow="column">
-          <Grid
-            border="1px solid #D0D3D3"
-            borderRadius="4px"
-            py="1rem"
-            px="2rem"
-            gridTemplateColumns="3fr 1fr"
-            gridTemplateAreas='"heading icon" "text icon"'
-            alignContent="center"
-            gap="0.5rem"
-          >
-            <Heading fontSize="1.5rem" gridArea="heading">{reviewPayoutsDone.length}</Heading>
-            <Text fontSize="1rem" color="#AAAAAA" gridArea="text">Reviews Done</Text>
-            <Flex
-              w="40px"
-              h="40px"
-              gridArea="icon"
-              justifySelf="center"
-              alignSelf="center"
-              justifyContent="center"
-              alignItems="center"
+          <Grid mt={6} gap="1.5rem" gridAutoFlow="column">
+            <Grid
+              border="1px solid #D0D3D3"
+              borderRadius="4px"
+              py="1rem"
+              px="2rem"
+              gridTemplateColumns="3fr 1fr"
+              gridTemplateAreas='"heading icon" "text icon"'
+              alignContent="center"
+              gap="0.5rem"
             >
-              <Image
-              src="/illustrations/reviews_done.svg"
-              />
-            </Flex>
-          </Grid>
-          <Grid
-            border="1px solid #D0D3D3"
-            borderRadius="4px"
-            p="1rem"
-            gridTemplateColumns="3fr 1fr"
-            gridTemplateAreas='"heading icon" "text icon"'
-            alignContent="center"
-            gap="0.5rem"
-          >
-            <Heading fontSize="1.5rem" gridArea="heading">{reviewPayoutsOutstanding.length}</Heading>
-            <Text fontSize="1rem" color="#AAAAAA" gridArea="text">Outstanding Review Payouts</Text>
-            <Flex
-              w="40px"
-              h="40px"
-              gridArea="icon"
-              justifySelf="center"
-              alignSelf="center"
-              justifyContent="center"
-              alignItems="center"
+              <Heading fontSize="1.5rem" gridArea="heading">{reviewPayoutsDone.length}</Heading>
+              <Text fontSize="1rem" color="#AAAAAA" gridArea="text">Reviews Done</Text>
+              <Flex
+                w="40px"
+                h="40px"
+                gridArea="icon"
+                justifySelf="center"
+                alignSelf="center"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Image
+                  src="/illustrations/reviews_done.svg"
+                />
+              </Flex>
+            </Grid>
+            <Grid
+              border="1px solid #D0D3D3"
+              borderRadius="4px"
+              p="1rem"
+              gridTemplateColumns="3fr 1fr"
+              gridTemplateAreas='"heading icon" "text icon"'
+              alignContent="center"
+              gap="0.5rem"
             >
-              <Image
-                src="/illustrations/reviews_outstanding.svg"
-              />
-            </Flex>
-          </Grid>
+              <Heading fontSize="1.5rem" gridArea="heading">{reviewPayoutsOutstanding.length}</Heading>
+              <Text fontSize="1rem" color="#AAAAAA" gridArea="text">Outstanding Review Payouts</Text>
+              <Flex
+                w="40px"
+                h="40px"
+                gridArea="icon"
+                justifySelf="center"
+                alignSelf="center"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Image
+                  src="/illustrations/reviews_outstanding.svg"
+                />
+              </Flex>
+            </Grid>
           </Grid>
           <Grid
             gridAutoFlow="column"
@@ -153,7 +148,8 @@ export default function Payouts() {
             w="100%"
             justifyContent="space-between"
             alignContent="center"
-            py={4}
+            pb={2}
+            pt={4}
             px={5}
           >
             {' '}
@@ -196,17 +192,18 @@ export default function Payouts() {
                     </Tooltip>
 
                     <Text variant="tableBody" justifySelf="left">
-                      {utils.formatUnits(data.amount).slice(0, -2)}{' '}
+                      {utils.formatUnits(data.amount).slice(0, -2)}
+                      {' '}
                       {
                         getAssetInfo(
                           data.asset,
-                          getSupportedChainIdFromWorkspace(workspace)
+                          getSupportedChainIdFromWorkspace(workspace),
                         ).label
                       }
                     </Text>
                     <Text variant="tableBody" justifySelf="left">
                       {getFormattedDateFromUnixTimestampWithYear(
-                        data.createdAtS
+                        data.createdAtS,
                       )}
                     </Text>
 
@@ -215,7 +212,8 @@ export default function Payouts() {
                         href={`http://www.polygonscan.com/tx/${data.id.substr(0, data.id.indexOf('.'))}`}
                         isExternal
                       >
-                        View{' '}
+                        View
+                        {' '}
                         <Image
                           display="inline-block"
                           h="10px"
@@ -233,7 +231,7 @@ export default function Payouts() {
       ) : (
         <Text>You do not have access to this page</Text>
       )}
-    </>
+    </Flex>
   );
 }
 
