@@ -106,7 +106,7 @@ function CustomTokenModal({
       const logoImage = new Image();
       logoImage.src = URL.createObjectURL(img);
       logoImage.onload = () => {
-        if (logoImage.height > 100 || logoImage.width > 100) {
+        if (logoImage.height < 100 || logoImage.width < 100) {
           setTokenIconError(true);
           toastRef.current = toast({
             position: 'top',

@@ -158,7 +158,7 @@ function ApplicantDetails({
                 mr="6px"
               />
               <Text fontWeight="500" fontSize="14px" color="#8850EA" lineHeight="20px">
-                Add another criteria
+                Add another question
               </Text>
             </Box>
           </Flex>
