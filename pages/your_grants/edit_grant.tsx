@@ -14,6 +14,7 @@ import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspa
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { getFromIPFS } from 'src/utils/ipfsUtils';
 import { formatAmount } from 'src/utils/formattingUtils';
+import { ethers } from 'ethers';
 import InfoToast from '../../src/components/ui/infoToast';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/edit_grant/form';
@@ -71,7 +72,10 @@ function EditGrant() {
     let rewardCurrencyAddress;
     console.log('grant token while editing grant', grant);
     if (grant.reward.token) {
-      reward = formatAmount(grant.reward.committed, grant.reward.token.decimal);
+      reward = ethers.utils.formatUnits(
+        grant.reward.committed,
+        grant.reward.token.decimal,
+      ).toString();
       rewardCurrency = grant.reward.token.label;
       rewardCurrencyAddress = grant.reward.token.address;
     } else {
@@ -149,7 +153,10 @@ function EditGrant() {
       console.log('grant token while editing grant', grant);
       if (grant.reward.token) {
         console.log('grant token while editing grant', grant);
-        reward = formatAmount(grant.reward.committed, grant.reward.token.decimal);
+        reward = ethers.utils.formatUnits(
+          grant.reward.committed,
+          grant.reward.token.decimal,
+        ).toString();
         rewardCurrency = grant.reward.token.label;
         rewardCurrencyAddress = grant.reward.token.address;
       } else {
