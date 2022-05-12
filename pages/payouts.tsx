@@ -91,7 +91,7 @@ export default function Payouts() {
       setReviewsDone(reviewPayoutsDone.length + reviewPayoutsOutstanding.length);
     }
     console.log(reviewsDone);
-  }, [reviewsDone, reviewPayoutsDone, reviewPayoutsOutstanding])
+  }, [reviewsDone, reviewPayoutsDone, reviewPayoutsOutstanding]);
 
   return (
     <Flex>
