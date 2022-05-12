@@ -143,7 +143,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
         tempMember?.accessLevel === 'admin'
         || tempMember?.accessLevel === 'owner',
       );
-      setIsReviewer(tempMember?.accessLevel === 'reviewer');
+      setIsReviewer(tempMember?.accessLevel === 'reviewer' || tempMember?.accessLevel === 'admin');
     }
   }, [accountData, workspace]);
 

@@ -1,13 +1,5 @@
-import {
-  Image,
-  Flex,
-  Text,
-  Grid,
-  Tooltip,
-  Link,
-  Box,
-} from '@chakra-ui/react';
-import React, {ReactElement,  useContext } from 'react';
+import { Image, Flex, Text, Grid, Tooltip, Link, Box } from '@chakra-ui/react';
+import React, { ReactElement, useContext } from 'react';
 
 // TOOLS AND UTILS
 import {
@@ -15,14 +7,14 @@ import {
   getFormattedDateFromUnixTimestampWithYear,
 } from 'src/utils/formattingUtils';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
-import { useGetFundSentforReviewsQuery } from 'src/generated/graphql';
+import { useGetFundSentforReviewerQuery } from 'src/generated/graphql';
 import { utils } from 'ethers';
 import { getAssetInfo } from 'src/utils/tokenUtils';
 import { SupportedChainId } from 'src/constants/chains';
 import router from 'next/router';
 import { CHAIN_INFO } from '../src/constants/chainInfo';
 import useChainId from '../src/hooks/utils/useChainId';
-import {useAccount} from 'wagmi';
+import { useAccount } from 'wagmi';
 
 // CONTEXT AND CONSTANTS
 import { ApiClientsContext } from './_app';
@@ -34,22 +26,24 @@ import CopyIcon from 'src/components/ui/copy_icon';
 export default function Payouts() {
   const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
   const [reviewPayoutsDone, setReviewPayoutsDone] = React.useState<any>([]);
+  const [
+    reviewPayoutsOutstanding,
+    setReviewPayoutsOutstanding,
+  ] = React.useState<any>([]);
   const currentChainId = useChainId();
-  const [{data: account}] = useAccount();
+  const [{ data: account }] = useAccount();
 
-  const { data: reviewsData } = useGetFundSentforReviewsQuery({
+  const { data: reviewsData } = useGetFundSentforReviewerQuery({
     client:
       subgraphClients[
         getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
       ].client,
+    variables: {
+      to: account?.address,
+    },
   });
 
-  const historyTableHeaders = [
-    'Paid from',
-    'Amount',
-    'Paid on',
-    'Actions',
-  ];
+  const historyTableHeaders = ['Paid from', 'Amount', 'Paid on', 'Actions'];
 
   React.useEffect(() => {
     if (!workspace) {
@@ -59,18 +53,52 @@ export default function Payouts() {
 
   React.useEffect(() => {
     if (reviewPayoutsDone.length === 0 && reviewsData) {
-      reviewsData!.fundsTransfers.filter(
-        (review: any) => setReviewPayoutsDone((array: any) => [...array, review]))
+      setReviewPayoutsDone(reviewsData!.fundsTransfers);
     }
-    console.log(reviewPayoutsDone)
+    console.log(reviewPayoutsDone);
+  });
+
+  React.useEffect(() => {
+    if (reviewPayoutsOutstanding.length === 0) {
+      workspace?.members.forEach(
+        (member: any) =>
+          member.actorId === account?.address.toLowerCase() &&
+          member.outstandingReviewIds.filter((review: any) =>
+            setReviewPayoutsOutstanding((array: any) => [...array, review])
+          )
+      );
+    }
+    console.log(reviewPayoutsOutstanding);
   });
 
   return (
-    <Flex
-      direction="column"
-      w={{base: "100vw", md: '70vw'}}
-      m="auto"
-    >
+    <Flex direction="column" w={{ base: '95vw', md: '70vw' }} m="auto">
+      <Grid mt={6} gap="1.5rem" gridAutoFlow="column">
+        <Flex
+          direction="column"
+          w="100%"
+          border="1px solid #D0D3D3"
+          borderRadius={4}
+        >
+          <Image
+            w="100px"
+            h="100px"
+            src="/ui_icons/result_accepted_application.svg"
+          />
+        </Flex>
+        <Flex
+          direction="column"
+          w="100%"
+          border="1px solid #D0D3D3"
+          borderRadius={4}
+        >
+          <Image
+            w="100px"
+            h="100px"
+            src="/ui_icons/result_pending_application.svg"
+          />
+        </Flex>
+      </Grid>
       <Grid
         gridAutoFlow="column"
         gridTemplateColumns="repeat(3, 1fr)"
@@ -93,13 +121,12 @@ export default function Payouts() {
         border="1px solid #D0D3D3"
         borderRadius={4}
       >
-        {reviewPayoutsDone.length === 0
-          ? (
-            <Flex p={2} alignItems="center" justifyContent="center">
-              <Text>There is no payout history to show</Text>
-            </Flex>
-          )
-          : reviewPayoutsDone.map((data: any, index: number) => (
+        {reviewPayoutsDone.length === 0 ? (
+          <Flex p={2} alignItems="center" justifyContent="center">
+            <Text>There is no payout history to show</Text>
+          </Flex>
+        ) : (
+          reviewPayoutsDone.map((data: any, index: number) => (
             <Flex>
               <Grid
                 gridAutoFlow="column"
@@ -116,20 +143,18 @@ export default function Payouts() {
                     <Text textAlign="center" variant="tableBody">
                       {trimAddress(data.sender, 4)}
                     </Text>
-                    <CopyIcon
-                      h="0.75rem"
-                      text={data.sender}
-                    />
+                    <CopyIcon h="0.75rem" text={data.sender} />
                   </Flex>
                 </Tooltip>
 
                 <Text variant="tableBody" justifySelf="left">
-                  {utils.formatUnits(data.amount).slice(0, -2)}
-                  {' '}
-                  {getAssetInfo(
-                    data.asset,
-                    getSupportedChainIdFromWorkspace(workspace),
-                  ).label}
+                  {utils.formatUnits(data.amount).slice(0, -2)}{' '}
+                  {
+                    getAssetInfo(
+                      data.asset,
+                      getSupportedChainIdFromWorkspace(workspace)
+                    ).label
+                  }
                 </Text>
                 <Text variant="tableBody" justifySelf="left">
                   {getFormattedDateFromUnixTimestampWithYear(data.createdAtS)}
@@ -138,11 +163,13 @@ export default function Payouts() {
                 <Flex direction="row">
                   <Link
                     href={`
-                      ${CHAIN_INFO[currentChainId as number].explorer.transactionHash}${data.id.substr(0, data.id.indexOf('.'))}`}
+                      ${
+                        CHAIN_INFO[currentChainId as number].explorer
+                          .transactionHash
+                      }${data.id.substr(0, data.id.indexOf('.'))}`}
                     isExternal
                   >
-                    View
-                    {' '}
+                    View{' '}
                     <Image
                       display="inline-block"
                       h="10px"
@@ -153,10 +180,11 @@ export default function Payouts() {
                 </Flex>
               </Grid>
             </Flex>
-          ))}
+          ))
+        )}
       </Flex>
-      </Flex>
-  )
+    </Flex>
+  );
 }
 
 Payouts.getLayout = function getLayout(page: ReactElement) {
