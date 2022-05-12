@@ -51,10 +51,10 @@ function Content({
     return <GrantComplete />;
   };
 
+  // eslint-disable-next-line consistent-return
   const getStatusReviewer = (status: number): ReactElement => {
-    if (status === TableFilters.submitted) return <AssignedToReview />;
-    if (status === TableFilters.approved) return <ReviewDone />;
-    return <ReviewDone />;
+    if (status === 0) return <AssignedToReview />;
+    if (status === 9) return <ReviewDone />;
   };
 
   const statusEdit = (item:any) => {
@@ -71,6 +71,7 @@ function Content({
     });
     return ans;
   };
+
   console.log('data-content', data);
   return (
     <Flex
@@ -147,7 +148,7 @@ function Content({
                 </Text>
               </Flex>
               <Flex justifyContent="center" flex={tableHeadersFlexReviewer[4]}>
-                { getStatusReviewer(item.status)}
+                {getStatusReviewer(item.status)}
               </Flex>
               <Flex
                 display="flex"
