@@ -102,6 +102,12 @@ export const CHAIN_INFO: ChainInfoMap = {
         address: '0x9c2c5fd7b07e95ee044ddeba0e97a665f142394f',
         decimals: 18,
       },
+      '0x91c89a94567980f0e9723b487b0bed586ee96aa7': {
+        icon: '/ui_icons/brand/currency/biconomy_icon.svg',
+        label: 'BICO',
+        address: '0x91c89a94567980f0e9723b487b0bed586ee96aa7',
+        decimals: 18,
+      },
       /**
        * verify if ANKR address is correct
        */

@@ -19,14 +19,10 @@ function ApplicantDetails({
   detailsRequired,
   toggleDetailsRequired,
 
-  // extraField,
-  // setExtraField,
-
-  // extraFieldDetails,
-  // setExtraFieldDetails,
-
-  // extraFieldError,
-  // setExtraFieldError,
+  customFields,
+  setCustomFields,
+  customFieldsOptionIsVisible,
+  setCustomFieldsOptionIsVisible,
 
   multipleMilestones,
   setMultipleMilestones,
@@ -41,14 +37,10 @@ function ApplicantDetails({
   detailsRequired: any[];
   toggleDetailsRequired: (index: number) => void;
 
-  // extraField: boolean;
-  // setExtraField: (extraField: boolean) => void;
-
-  // extraFieldDetails: string;
-  // setExtraFieldDetails: (extraFieldDetails: string) => void;
-
-  // extraFieldError: boolean;
-  // setExtraFieldError: (extraFieldError: boolean) => void;
+  customFields: any[];
+  setCustomFields: (customFields: any[]) => void;
+  customFieldsOptionIsVisible: boolean;
+  setCustomFieldsOptionIsVisible: (customFieldsOptionIsVisible: boolean) => void;
 
   multipleMilestones: boolean;
   setMultipleMilestones: (multipleMilestones: boolean) => void;
@@ -69,6 +61,22 @@ function ApplicantDetails({
           const {
             title, required, tooltip, id,
           } = detail as any;
+          if (id === 'customFields') {
+            return (
+              <GridItem key={id} colSpan={1}>
+                <Badge
+                  isActive={customFieldsOptionIsVisible}
+                  onClick={() => {
+                    setCustomFieldsOptionIsVisible(
+                      !customFieldsOptionIsVisible,
+                    );
+                  }}
+                  label="Other Information"
+                  tooltip="Get additional details in your application form."
+                />
+              </GridItem>
+            );
+          }
           if (id === 'isMultipleMilestones') {
             return (
               <GridItem key={id} colSpan={1}>
@@ -105,23 +113,80 @@ function ApplicantDetails({
 
       <Box mt={6} />
 
-      {/* {extraField ? (
+      {customFieldsOptionIsVisible && (
         <>
-          <SingleLineInput
-            label="Field Name"
-            placeholder="Sample Field"
-            isError={extraFieldError}
-            errorText="Required"
-            value={extraFieldDetails}
-            onChange={(e) => {
-              setExtraFieldError(false);
-              setExtraFieldDetails(e.target.value);
-            }}
-            subtext="Letters and spaces are allowed."
-          />
-          <Box mt={8} />
+          {customFields.map((customField, index) => (
+            <>
+              {index > 0 && (
+                <Flex mt={2} mb="-21px" gap="2" justifyContent="flex-end">
+                  <Box
+                    onClick={() => {
+                      const newCustomFields = [...customFields];
+                      newCustomFields.splice(index, 1);
+                      setCustomFields(newCustomFields);
+                    }}
+                    display="flex"
+                    alignItems="center"
+                    cursor="pointer"
+                    zIndex={1}
+                  >
+                    <Image
+                      h="12px"
+                      w="12px"
+                      src="/ui_icons/delete_red.svg"
+                      mr="6px"
+                      mt="-2px"
+                    />
+                    <Text fontWeight="500" fontSize="14px" color="#DF5252" lineHeight="20px">
+                      Delete
+                    </Text>
+                  </Box>
+                </Flex>
+              )}
+              <SingleLineInput
+                label={`Question ${index + 1}`}
+                value={customField.value}
+                onChange={(e) => {
+                  const newCustomFields = [...customFields];
+                  newCustomFields[index].value = e.target.value;
+                  newCustomFields[index].isError = false;
+                  setCustomFields(newCustomFields);
+                }}
+                placeholder="Field Label"
+                isError={customField.isError}
+                errorText="Required"
+                maxLength={30}
+              />
+              <Box mt={2} />
+            </>
+          ))}
+          <Flex mt={2} gap="2" justifyContent="flex-start">
+            <Box
+              onClick={() => {
+                const newCustomFields = [...customFields, {
+                  value: '',
+                  isError: false,
+                }];
+                setCustomFields(newCustomFields);
+              }}
+              display="flex"
+              alignItems="center"
+              cursor="pointer"
+            >
+              <Image
+                h="16px"
+                w="15px"
+                src="/ui_icons/plus_circle.svg"
+                mr="6px"
+              />
+              <Text fontWeight="500" fontSize="14px" color="#8850EA" lineHeight="20px">
+                Add another question
+              </Text>
+            </Box>
+          </Flex>
+          <Box mt={6} />
         </>
-      ) : null} */}
+      )}
 
       {milestoneSelectOptionIsVisible && (
         <>

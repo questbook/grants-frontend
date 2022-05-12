@@ -41,6 +41,7 @@ import ApplicantDetails from './1_applicantDetails';
 import AboutProject from './3_aboutProject';
 import AboutTeam from './2_aboutTeam';
 import Funding from './4_funding';
+import CustomFields from './5_customFields';
 
 function Form({
   chainId,
@@ -59,6 +60,7 @@ function Form({
   applicationID,
   workspace,
   piiFields,
+  application,
 }: // grantID,
 {
   chainId: SupportedChainId | undefined;
@@ -77,6 +79,7 @@ function Form({
   applicationID: string;
   workspace: any;
   piiFields: string[];
+  application: any;
   // grantID: string;
 }) {
   const { encryptApplicationPII } = useApplicationEncryption();
@@ -98,7 +101,16 @@ function Form({
 
   const [projectLinks, setProjectLinks] = useState<any[]>([]);
 
-  const [projectDetails, setProjectDetails] = useState(() => EditorState.createEmpty());
+  const [projectDetails, setProjectDetails] = useState(EditorState
+    .createWithContent(convertFromRaw({
+      entityMap: {},
+      blocks: [{
+        text: '',
+        key: 'foo',
+        type: 'unstyled',
+        entityRanges: [],
+      } as any],
+    })));
   const [projectDetailsError, setProjectDetailsError] = useState(false);
 
   const [projectGoal, setProjectGoal] = useState('');
@@ -111,6 +123,19 @@ function Form({
 
   const [fundingBreakdown, setFundingBreakdown] = useState('');
   const [fundingBreakdownError, setFundingBreakdownError] = useState(false);
+
+  const [customFields, setCustomFields] = useState<any[]>([]);
+  // useEffect(() => {
+  //   if (customFields.length > 0) return;
+  //   setCustomFields(grantRequiredFields
+  //     .filter((field) => (field.startsWith('customField')))
+  //     .map((title) => ({
+  //       title,
+  //       value: '',
+  //       isError: false,
+  //     })));
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [grantRequiredFields]);
 
   const getProjectDetails = async (projectDetails: string) => {
     try {
@@ -166,11 +191,21 @@ function Form({
 
         setFundingAsk(formData.fundingAsk);
         setFundingBreakdown(formData.fundingBreakdown);
+
+        if (application.fields.length > 0) {
+          setCustomFields(application.fields
+            .filter((field: any) => (field.id.split('.')[1].startsWith('customField')))
+            .map((field: any) => ({
+              title: field.id.split('.')[1],
+              value: field.values[0].value,
+              isError: false,
+            })));
+        }
       }
     } catch (error) {
       // console.log(error);
     }
-  }, [formData]);
+  }, [formData, application]);
 
   const toastRef = React.useRef<ToastId>();
 
@@ -303,6 +338,17 @@ function Form({
       setFundingBreakdownError(true);
       error = true;
     }
+    if (customFields.length > 0) {
+      const errorCheckedCustomFields = customFields.map((customField: any) => {
+        const errorCheckedCustomField = { ...customField };
+        if (customField.value.length <= 0) {
+          errorCheckedCustomField.isError = true;
+          error = true;
+        }
+        return errorCheckedCustomField;
+      });
+      setCustomFields(errorCheckedCustomFields);
+    }
     if (error) {
       return;
     }
@@ -343,6 +389,10 @@ function Form({
       if (!grantRequiredFields.includes(field)) {
         delete data.fields![field as keyof GrantApplicationFieldsSubgraph];
       }
+    });
+
+    customFields.forEach((customField) => {
+      data.fields![customField.title] = [{ value: customField.value }];
     });
 
     let encryptedData;
@@ -581,6 +631,17 @@ function Form({
           readOnly={onSubmit === null}
           grantRequiredFields={grantRequiredFields}
         />
+
+        {customFields.length > 0 && (
+          <>
+            <Box mt="43px" />
+            <CustomFields
+              customFields={customFields}
+              setCustomFields={setCustomFields}
+              readOnly={onSubmit === null}
+            />
+          </>
+        )}
       </Container>
 
       {onSubmit && (

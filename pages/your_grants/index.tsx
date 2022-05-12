@@ -139,7 +139,7 @@ function YourGrants() {
       );
       setIsAdmin(
         tempMember?.accessLevel === 'admin'
-          || tempMember?.accessLevel === 'owner',
+        || tempMember?.accessLevel === 'owner',
       );
       setIsReviewer(tempMember?.accessLevel === 'reviewer');
     }
@@ -158,7 +158,7 @@ function YourGrants() {
     } else {
       setPk('');
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspace, accountData]);
 
   const {
@@ -226,11 +226,28 @@ function YourGrants() {
   const initialiseFundModal = async (grant: any) => {
     setAddFundsIsOpen(true);
     setGrantForFunding(grant.id);
-    const chainInfo = CHAIN_INFO[
-      getSupportedChainIdFromSupportedNetwork(
-        grant.workspace.supportedNetworks[0],
-      )
-    ]?.supportedCurrencies[grant.reward.asset.toLowerCase()];
+    let chainInfo;
+    let tokenIcon;
+    if (grant.reward.token) {
+      tokenIcon = getUrlForIPFSHash(grant.reward.token?.iconHash);
+      chainInfo = {
+        address: grant.reward.token.address,
+        label: grant.reward.token.label,
+        decimals: grant.reward.token.decimal,
+        icon: tokenIcon,
+      };
+    } else {
+      chainInfo = CHAIN_INFO[
+        getSupportedChainIdFromSupportedNetwork(
+          grant.workspace.supportedNetworks[0],
+        )
+      ]?.supportedCurrencies[grant.reward.asset.toLowerCase()];
+    }
+    // const chainInfo = CHAIN_INFO[
+    //   getSupportedChainIdFromSupportedNetwork(
+    //     grant.workspace.supportedNetworks[0],
+    //   )
+    // ]?.supportedCurrencies[grant.reward.asset.toLowerCase()];
     setGrantRewardAsset({
       address: grant.reward.asset,
       committed: BigNumber.from(grant.reward.committed),
@@ -245,7 +262,7 @@ function YourGrants() {
     const parentElement = (current as HTMLElement)?.parentNode as HTMLElement;
     const reachedBottom = Math.abs(
       parentElement.scrollTop
-          - (parentElement.scrollHeight - parentElement.clientHeight),
+      - (parentElement.scrollHeight - parentElement.clientHeight),
     ) < 10;
     if (reachedBottom) {
       setCurrentPage(currentPage + 1);
@@ -297,63 +314,79 @@ function YourGrants() {
             ))}
           </Flex>
           {grants.length > 0
-            && grants.map((grant: any) => (
-              <YourGrantCard
-                grantID={grant.id}
-                key={grant.id}
-                daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
-                grantTitle={grant.title}
-                grantDesc={grant.summary}
-                numOfApplicants={grant.numberOfApplications}
-                endTimestamp={new Date(grant.deadline).getTime()}
-                grantAmount={formatAmount(
-                  grant.reward.committed,
-                  CHAIN_INFO[
-                    getSupportedChainIdFromSupportedNetwork(
-                      grant.workspace.supportedNetworks[0],
-                    )
-                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-                    ?.decimals ?? 18,
-                )}
-                grantCurrency={
-                  CHAIN_INFO[
-                    getSupportedChainIdFromSupportedNetwork(
-                      grant.workspace.supportedNetworks[0],
-                    )
-                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-                    ?.label ?? 'LOL'
-                }
-                grantCurrencyIcon={
-                  CHAIN_INFO[
-                    getSupportedChainIdFromSupportedNetwork(
-                      grant.workspace.supportedNetworks[0],
-                    )
-                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-                    ?.icon ?? '/images/dummy/Ethereum Icon.svg'
-                }
-                state="done"
-                chainId={getSupportedChainIdFromSupportedNetwork(
-                  grant.workspace.supportedNetworks[0],
-                )}
-                onEditClick={() => router.push({
-                  pathname: '/your_grants/edit_grant/',
-                  query: {
-                    grantId: grant.id,
-                  },
-                })}
-                onAddFundsClick={() => initialiseFundModal(grant)}
-                onViewApplicantsClick={() => router.push({
-                  pathname: '/your_grants/view_applicants/',
-                  query: {
-                    grantId: grant.id,
-                  },
-                })}
-                acceptingApplications={grant.acceptingApplications}
-                isAdmin={isAdmin}
-                initialRubrics={grant.rubric}
-                workspaceId={grant.workspace.id}
-              />
-            ))}
+            && grants.map((grant: any) => {
+              const grantAmount = grant.reward.committed;
+              let decimals;
+              let icon;
+              let label;
+              if (grant.reward.token) {
+                decimals = grant.reward.token.decimal;
+                label = grant.reward.token.label;
+                icon = getUrlForIPFSHash(grant.reward.token.iconHash);
+              } else {
+                decimals = CHAIN_INFO[
+                  getSupportedChainIdFromSupportedNetwork(
+                    grant.workspace.supportedNetworks[0],
+                  )
+                ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+                  ?.decimals;
+                label = CHAIN_INFO[
+                  getSupportedChainIdFromSupportedNetwork(
+                    grant.workspace.supportedNetworks[0],
+                  )
+                ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+                  ?.label ?? 'LOL';
+                icon = CHAIN_INFO[
+                  getSupportedChainIdFromSupportedNetwork(
+                    grant.workspace.supportedNetworks[0],
+                  )
+                ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+                  ?.icon ?? '/images/dummy/Ethereum Icon.svg';
+              }
+
+              return (
+                <YourGrantCard
+                  grantID={grant.id}
+                  key={grant.id}
+                  daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
+                  grantTitle={grant.title}
+                  grantDesc={grant.summary}
+                  numOfApplicants={grant.numberOfApplications}
+                  endTimestamp={new Date(grant.deadline).getTime()}
+                  grantAmount={formatAmount(
+                    grantAmount,
+                    decimals ?? 18,
+                  )}
+                  grantCurrency={
+                    label ?? 'LOL'
+                  }
+                  grantCurrencyIcon={
+                    icon
+                  }
+                  state="done"
+                  chainId={getSupportedChainIdFromSupportedNetwork(
+                    grant.workspace.supportedNetworks[0],
+                  )}
+                  onEditClick={() => router.push({
+                    pathname: '/your_grants/edit_grant/',
+                    query: {
+                      grantId: grant.id,
+                    },
+                  })}
+                  onAddFundsClick={() => initialiseFundModal(grant)}
+                  onViewApplicantsClick={() => router.push({
+                    pathname: '/your_grants/view_applicants/',
+                    query: {
+                      grantId: grant.id,
+                    },
+                  })}
+                  acceptingApplications={grant.acceptingApplications}
+                  isAdmin={isAdmin}
+                  initialRubrics={grant.rubric}
+                  workspaceId={grant.workspace.id}
+                />
+              );
+            })}
 
           {grants.length === 0
             && !grantCount[0]

@@ -10,6 +10,12 @@ query getWorkspaceDetails($workspaceID: ID!) {
           name
           value
         }
+        tokens {
+    address,
+    label,
+    decimal,
+    iconHash
+    }
         members {
           id
           actorId
@@ -17,6 +23,10 @@ query getWorkspaceDetails($workspaceID: ID!) {
           email
           accessLevel
           updatedAt
+          addedBy {
+            id
+            actorId
+          }
         }
     }
 }

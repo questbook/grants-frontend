@@ -8,10 +8,13 @@ import { CHAIN_INFO } from 'src/constants/chainInfo';
 import useChainId from 'src/hooks/utils/useChainId';
 import { DefaultSupportedChainId } from 'src/constants/chains';
 import { useAccount } from 'wagmi';
-import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
+import { WorkspaceUpdateRequest, Token } from '@questbook/service-validator-client';
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys';
 import { ApiClientsContext } from 'pages/_app';
-import { convertToRaw, EditorState } from 'draft-js';
+import {
+  convertFromRaw, convertToRaw, EditorState,
+} from 'draft-js';
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import Title from './1_title';
 import Details from './2_details';
 import ApplicantDetails from './3_applicantDetails';
@@ -37,7 +40,15 @@ function Form({
   const [titleError, setTitleError] = useState(false);
   const [summaryError, setSummaryError] = useState(false);
 
-  const [details, setDetails] = useState(() => EditorState.createEmpty());
+  const [details, setDetails] = useState(EditorState.createWithContent(convertFromRaw({
+    entityMap: {},
+    blocks: [{
+      text: '',
+      key: 'foo',
+      type: 'unstyled',
+      entityRanges: [],
+    } as any],
+  })));
   const [detailsError, setDetailsError] = useState(false);
 
   const [shouldEncrypt, setShouldEncrypt] = useState(false);
@@ -73,6 +84,7 @@ function Form({
           && member.publicKey
           && member.publicKey !== '',
       );
+      console.log('Workspace', workspace);
       setHasOwnerPublicKey(hasPubKey);
     }
   }, [accountData, workspace]);
@@ -104,6 +116,12 @@ function Form({
     .filter((obj) => obj != null);
   const [detailsRequired, setDetailsRequired] = useState(applicantDetails);
   // const [extraField, setExtraField] = useState(false);
+
+  const [customFieldsOptionIsVisible, setCustomFieldsOptionIsVisible] = React.useState(false);
+  const [customFields, setCustomFields] = useState<any[]>([{
+    value: '',
+    isError: false,
+  }]);
   const [multipleMilestones, setMultipleMilestones] = useState(false);
 
   const toggleDetailsRequired = (index: number) => {
@@ -131,21 +149,44 @@ function Form({
   // const [extraFieldError, setExtraFieldError] = useState(false);
 
   const [reward, setReward] = React.useState('');
+  const [rewardToken, setRewardToken] = React.useState<Token>({
+    label: '', address: '', decimal: '18', iconHash: '',
+  });
   const [rewardError, setRewardError] = React.useState(false);
 
   const currentChain = useChainId() ?? DefaultSupportedChainId;
+
+  // const [supportCurrencies, setsupportCurrencies] = useState([{}]);
 
   const supportedCurrencies = Object.keys(
     CHAIN_INFO[currentChain].supportedCurrencies,
   )
     .map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
     .map((currency) => ({ ...currency, id: currency.address }));
+
   const [rewardCurrency, setRewardCurrency] = React.useState(
     supportedCurrencies[0].label,
   );
   const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
     supportedCurrencies[0].id,
   );
+  /**
+ * checks if the workspace already has custom tokens added
+ * if custom tokens found, append it to supportedCurrencies
+ */
+  if (workspace?.tokens) {
+    for (let i = 0; i < workspace.tokens.length; i += 1) {
+      supportedCurrencies.push(
+        {
+          id: workspace.tokens[i].address,
+          address: workspace.tokens[i].address,
+          decimals: workspace.tokens[i].decimal,
+          label: workspace.tokens[i].label,
+          icon: getUrlForIPFSHash(workspace.tokens[i].iconHash),
+        },
+      );
+    }
+  }
 
   useEffect(() => {
     // console.log(currentChain);
@@ -189,6 +230,18 @@ function Form({
     if (date.length <= 0) {
       setDateError(true);
       error = true;
+    }
+
+    if (customFieldsOptionIsVisible) {
+      const errorCheckedCustomFields = customFields.map((customField: any) => {
+        const errorCheckedCustomField = { ...customField };
+        if (customField.value.length <= 0) {
+          errorCheckedCustomField.isError = true;
+          error = true;
+        }
+        return errorCheckedCustomField;
+      });
+      setCustomFields(errorCheckedCustomFields);
     }
 
     if (rubricRequired) {
@@ -261,6 +314,15 @@ function Form({
           fields.memberDetails = { ...fields.memberDetails, pii: true };
         }
       }
+      if (customFields.length > 0) {
+        customFields.forEach((customField: any, index: number) => {
+          const santizedCustomFieldValue = customField.value.split(' ').join('\\s');
+          fields[`customField${index}-${santizedCustomFieldValue}`] = {
+            title: customField.value,
+            inputType: 'short-form',
+          };
+        });
+      }
       onSubmit({
         title,
         summary,
@@ -268,6 +330,7 @@ function Form({
         fields,
         reward,
         rewardCurrencyAddress,
+        rewardToken,
         date,
         grantManagers: admins,
         rubric: {
@@ -342,6 +405,10 @@ function Form({
         // setExtraFieldDetails={setExtraFieldDetails}
         // extraFieldError={extraFieldError}
         // setExtraFieldError={setExtraFieldError}
+        customFields={customFields}
+        setCustomFields={setCustomFields}
+        customFieldsOptionIsVisible={customFieldsOptionIsVisible}
+        setCustomFieldsOptionIsVisible={setCustomFieldsOptionIsVisible}
         multipleMilestones={multipleMilestones}
         setMultipleMilestones={setMultipleMilestones}
         rubricRequired={rubricRequired}
@@ -364,6 +431,8 @@ function Form({
       <GrantRewardsInput
         reward={reward}
         setReward={setReward}
+        rewardToken={rewardToken}
+        setRewardToken={setRewardToken}
         rewardError={rewardError}
         setRewardError={setRewardError}
         rewardCurrency={rewardCurrency}
@@ -416,7 +485,7 @@ function Form({
 
       <Button
         py={hasClicked ? 2 : 0}
-        onClick={hasClicked ? () => {} : handleOnSubmit}
+        onClick={hasClicked ? () => { } : handleOnSubmit}
         variant="primary"
         disabled={shouldEncrypt && !keySubmitted && !hasOwnerPublicKey}
       >

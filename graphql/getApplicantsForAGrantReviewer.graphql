@@ -1,8 +1,9 @@
-query getApplicantsForAGrant($first: Int, $skip: Int, $grantID: String!) {
+query getApplicantsForAGrantReviewer($first: Int, $skip: Int, $grantID: String!,$reviewerIDs: [String!]) {
   grantApplications(
     first: $first,
     where:{
-    grant: $grantID
+    grant: $grantID,
+    reviewers_contains: $reviewerIDs
   },
   subgraphError:allow) {
     id
@@ -12,12 +13,6 @@ query getApplicantsForAGrant($first: Int, $skip: Int, $grantID: String!) {
       funding,
       reward {
         asset
-        token {
-          address,
-          label,
-          decimal,
-          iconHash
-        }
       }
       workspace {
         id
@@ -39,15 +34,20 @@ query getApplicantsForAGrant($first: Int, $skip: Int, $grantID: String!) {
       email
       id
     },
-   milestones {
-        id,
-        state,
-        title,
-        amount,
-        amountPaid,
-        updatedAtS,
-        feedbackDao,
-        feedbackDev
+    reviews {
+      reviewer {
+        id
       }
+      data {
+        id
+        manager {
+          id
+        }
+        data
+      }
+      publicReviewDataHash
+      id
+    }
+
   }
 }

@@ -14,6 +14,7 @@ import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspa
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { getFromIPFS } from 'src/utils/ipfsUtils';
 import { formatAmount } from 'src/utils/formattingUtils';
+import { ethers } from 'ethers';
 import InfoToast from '../../src/components/ui/infoToast';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
 import Form from '../../src/components/your_grants/edit_grant/form';
@@ -65,7 +66,39 @@ function EditGrant() {
 
   const getDecodedDetails = async (detailsHash: string, grant: any) => {
     const d = await getFromIPFS(detailsHash);
-    setFormData({
+    let reward;
+    let rewardCurrency;
+    let rewardCurrencyAddress;
+    console.log('grant token while editing grant', grant);
+    if (grant.reward.token) {
+      reward = ethers.utils.formatUnits(
+        grant.reward.committed,
+        grant.reward.token.decimal,
+      ).toString();
+      rewardCurrency = grant.reward.token.label;
+      rewardCurrencyAddress = grant.reward.token.address;
+    } else {
+      reward = formatAmount(
+        grant.reward.committed,
+        CHAIN_INFO[
+          getSupportedChainIdFromSupportedNetwork(
+            grant.workspace.supportedNetworks[0],
+          )
+        ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+          ?.decimals ?? 18,
+      );
+      rewardCurrency = CHAIN_INFO[
+        getSupportedChainIdFromSupportedNetwork(
+          grant.workspace.supportedNetworks[0],
+        )
+      ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label ?? 'LOL';
+      rewardCurrencyAddress = CHAIN_INFO[
+        getSupportedChainIdFromSupportedNetwork(
+          grant.workspace.supportedNetworks[0],
+        )
+      ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.address;
+    }
+    const fd = {
       title: grant.title,
       summary: grant.summary,
       details: d,
@@ -90,30 +123,20 @@ function EditGrant() {
       extraField:
         grant.fields.find((field: any) => field.id.includes('extraField'))
         !== undefined,
-      reward: formatAmount(
-        grant.reward.committed,
-        CHAIN_INFO[
-          getSupportedChainIdFromSupportedNetwork(
-            grant.workspace.supportedNetworks[0],
-          )
-        ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-          ?.decimals ?? 18,
-        true,
-      ),
-      rewardCurrency:
-        CHAIN_INFO[
-          getSupportedChainIdFromSupportedNetwork(
-            grant.workspace.supportedNetworks[0],
-          )
-        ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label ?? 'LOL',
-      rewardCurrencyAddress:
-        CHAIN_INFO[
-          getSupportedChainIdFromSupportedNetwork(
-            grant.workspace.supportedNetworks[0],
-          )
-        ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.address,
+      reward,
+      rewardCurrency,
+      rewardCurrencyAddress,
       date: grant.deadline,
-    });
+    } as any;
+    grant.fields
+      .filter((field: any) => field.id.split('.')[1]
+        .startsWith('customField'))
+      .forEach((field: any) => {
+        const fieldId = field.id.split('.')[1];
+        fd[fieldId] = fieldId;
+      });
+
+    setFormData(fd);
   };
 
   useEffect(() => {
@@ -123,7 +146,40 @@ function EditGrant() {
         getDecodedDetails(grant.details, grant);
         return;
       }
-      setFormData({
+      let reward;
+      let rewardCurrency;
+      let rewardCurrencyAddress;
+      console.log('grant token while editing grant', grant);
+      if (grant.reward.token) {
+        console.log('grant token while editing grant', grant);
+        reward = ethers.utils.formatUnits(
+          grant.reward.committed,
+          grant.reward.token.decimal,
+        ).toString();
+        rewardCurrency = grant.reward.token.label;
+        rewardCurrencyAddress = grant.reward.token.address;
+      } else {
+        reward = formatAmount(
+          grant.reward.committed,
+          CHAIN_INFO[
+            getSupportedChainIdFromSupportedNetwork(
+              grant.workspace.supportedNetworks[0],
+            )
+          ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+            ?.decimals ?? 18,
+        );
+        rewardCurrency = CHAIN_INFO[
+          getSupportedChainIdFromSupportedNetwork(
+            grant.workspace.supportedNetworks[0],
+          )
+        ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label ?? 'LOL';
+        rewardCurrencyAddress = CHAIN_INFO[
+          getSupportedChainIdFromSupportedNetwork(
+            grant.workspace.supportedNetworks[0],
+          )
+        ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.address;
+      }
+      const fd = {
         title: grant.title,
         summary: grant.summary,
         details: grant.details,
@@ -148,29 +204,20 @@ function EditGrant() {
         extraField:
           grant.fields.find((field: any) => field.id.includes('extraField'))
           !== undefined,
-        reward: formatAmount(
-          grant.reward.committed,
-          CHAIN_INFO[
-            getSupportedChainIdFromSupportedNetwork(
-              grant.workspace.supportedNetworks[0],
-            )
-          ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-            ?.decimals ?? 18,
-        ),
-        rewardCurrency:
-          CHAIN_INFO[
-            getSupportedChainIdFromSupportedNetwork(
-              grant.workspace.supportedNetworks[0],
-            )
-          ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label ?? 'LOL',
-        rewardCurrencyAddress:
-          CHAIN_INFO[
-            getSupportedChainIdFromSupportedNetwork(
-              grant.workspace.supportedNetworks[0],
-            )
-          ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.address,
+        reward,
+        rewardCurrency,
+        rewardCurrencyAddress,
         date: grant.deadline,
-      });
+      } as any;
+      grant.fields
+        .filter((field) => field.id.split('.')[1]
+          .startsWith('customField'))
+        .forEach((field) => {
+          const fieldId = field.id.split('.')[1];
+          fd[fieldId] = fieldId;
+        });
+
+      setFormData(fd);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error, queryLoading]);
@@ -224,7 +271,7 @@ function EditGrant() {
         ),
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, transactionData, router]);
 
   useEffect(() => {
