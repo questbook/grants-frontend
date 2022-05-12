@@ -222,7 +222,23 @@ function ViewApplicants() {
   useEffect(() => {
     console.log('Review params: ', queryReviewerParams);
   }, [queryReviewerParams]);
+
   const reviewData = useGetApplicantsForAGrantReviewerQuery(queryReviewerParams);
+
+  const Reviewerstatus = (item:any) => {
+    const user = [];
+    // eslint-disable-next-line no-restricted-syntax
+    for (const n in item) {
+      if (item[n].reviewer.id === isActorId) {
+        user.push(isActorId);
+      }
+    }
+    if (user.length === 1) {
+      return 9;
+    }
+    return 0;
+  };
+
   useEffect(() => {
     console.log('Raw reviewer data: ', reviewData);
     if (reviewData.data && reviewData.data.grantApplications.length) {
@@ -259,7 +275,7 @@ function ViewApplicants() {
             ).icon,
           },
           // status: applicationStatuses.indexOf(applicant?.state),
-          status: TableFilters[applicant?.state],
+          status: Reviewerstatus(applicant.reviews),
           reviewers: applicant.reviewers,
         };
       });
