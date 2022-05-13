@@ -77,6 +77,16 @@ function Form({
   const [multipleMilestones, setMultipleMilestones] = useState(
     formData.isMultipleMilestones,
   );
+  const [defaultMilestoneFields, setDefaultMilestoneFields] = useState<any[]>(
+    Object.keys(formData).filter((key) => key.startsWith('defaultMilestone'))
+      .map((key) => {
+        const i = key.indexOf('-');
+        return ({
+          value: key.substring(i + 1).split('\\s').join(' '),
+          isError: false,
+        });
+      }),
+  );
 
   const toggleDetailsRequired = (index: number) => {
     const newDetailsRequired = [...detailsRequired];
@@ -202,6 +212,19 @@ function Form({
       setCustomFields(errorCheckedCustomFields);
     }
 
+    if (defaultMilestoneFields.length > 0) {
+      const errorCheckedDefaultMilestoneFields = defaultMilestoneFields
+        .map((defaultMilestoneField: any) => {
+          const errorCheckedDefaultMilestoneField = { ...defaultMilestoneField };
+          if (defaultMilestoneField.value.length <= 0) {
+            errorCheckedDefaultMilestoneField.isError = true;
+            error = true;
+          }
+          return errorCheckedDefaultMilestoneField;
+        });
+      setDefaultMilestoneFields(errorCheckedDefaultMilestoneFields);
+    }
+
     if (!error) {
       const detailsString = JSON.stringify(
         convertToRaw(details.getCurrentContent()),
@@ -242,7 +265,7 @@ function Form({
         };
       }
 
-      if (customFields.length > 0) {
+      if (customFieldsOptionIsVisible && customFields.length > 0) {
         customFields.forEach((customField: any, index: number) => {
           const santizedCustomFieldValue = customField.value.split(' ').join('\\s');
           fields[`customField${index}-${santizedCustomFieldValue}`] = {
@@ -251,7 +274,15 @@ function Form({
           };
         });
       }
-
+      if (defaultMilestoneFields.length > 0) {
+        defaultMilestoneFields.forEach((defaultMilestoneField: any, index: number) => {
+          const santizedDefaultMilestoneFieldValue = defaultMilestoneField.value.split(' ').join('\\s');
+          fields[`defaultMilestone${index}-${santizedDefaultMilestoneFieldValue}`] = {
+            title: defaultMilestoneField.value,
+            inputType: 'short-form',
+          };
+        });
+      }
       // console.log(fields);
       onSubmit({
         title,
@@ -350,6 +381,9 @@ function Form({
         setCustomFieldsOptionIsVisible={setCustomFieldsOptionIsVisible}
         multipleMilestones={multipleMilestones}
         setMultipleMilestones={setMultipleMilestones}
+        defaultMilestoneFields={defaultMilestoneFields}
+        setDefaultMilestoneFields={setDefaultMilestoneFields}
+        defaultMilestoneFieldsOptionIsVisible={Object.keys(formData).filter((key) => key.startsWith('defaultMilestone')).length > 0}
       />
 
       <Text

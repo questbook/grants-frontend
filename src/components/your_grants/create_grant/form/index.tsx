@@ -124,6 +124,7 @@ function Form({
     isError: false,
   }]);
   const [multipleMilestones, setMultipleMilestones] = useState(false);
+  const [defaultMilestoneFields, setDefaultMilestoneFields] = useState<any[]>([]);
 
   const toggleDetailsRequired = (index: number) => {
     const newDetailsRequired = [...detailsRequired];
@@ -245,6 +246,19 @@ function Form({
       setCustomFields(errorCheckedCustomFields);
     }
 
+    if (defaultMilestoneFields.length > 0) {
+      const errorCheckedDefaultMilestoneFields = defaultMilestoneFields
+        .map((defaultMilestoneField: any) => {
+          const errorCheckedDefaultMilestoneField = { ...defaultMilestoneField };
+          if (defaultMilestoneField.value.length <= 0) {
+            errorCheckedDefaultMilestoneField.isError = true;
+            error = true;
+          }
+          return errorCheckedDefaultMilestoneField;
+        });
+      setDefaultMilestoneFields(errorCheckedDefaultMilestoneFields);
+    }
+
     if (rubricRequired) {
       const errorCheckedRubrics = rubrics.map((rubric: any) => {
         const errorCheckedRubric = { ...rubric };
@@ -315,11 +329,20 @@ function Form({
           fields.memberDetails = { ...fields.memberDetails, pii: true };
         }
       }
-      if (customFields.length > 0) {
+      if (customFieldsOptionIsVisible && customFields.length > 0) {
         customFields.forEach((customField: any, index: number) => {
           const santizedCustomFieldValue = customField.value.split(' ').join('\\s');
           fields[`customField${index}-${santizedCustomFieldValue}`] = {
             title: customField.value,
+            inputType: 'short-form',
+          };
+        });
+      }
+      if (defaultMilestoneFields.length > 0) {
+        defaultMilestoneFields.forEach((defaultMilestoneField: any, index: number) => {
+          const santizedDefaultMilestoneFieldValue = defaultMilestoneField.value.split(' ').join('\\s');
+          fields[`defaultMilestone${index}-${santizedDefaultMilestoneFieldValue}`] = {
+            title: defaultMilestoneField.value,
             inputType: 'short-form',
           };
         });
@@ -412,6 +435,8 @@ function Form({
         setCustomFieldsOptionIsVisible={setCustomFieldsOptionIsVisible}
         multipleMilestones={multipleMilestones}
         setMultipleMilestones={setMultipleMilestones}
+        defaultMilestoneFields={defaultMilestoneFields}
+        setDefaultMilestoneFields={setDefaultMilestoneFields}
         rubricRequired={rubricRequired}
         setRubricRequired={setRubricRequired}
         rubrics={rubrics}
