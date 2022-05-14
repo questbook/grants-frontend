@@ -68,7 +68,7 @@ function GrantRewards({
       <Divider />
 
       <Flex alignItems="start">
-        <Flex direction="column">
+        <Flex direction="column" flex={1}>
           <Flex direction="row" alignItems="flex-start" mt="28px">
             <Image mt="2px" src="/sidebar/apply_for_grants.svg" />
             <Flex flex={1} direction="column" ml={3}>
