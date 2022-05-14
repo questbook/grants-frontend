@@ -3,7 +3,7 @@ import {
   Box,
 } from '@chakra-ui/react';
 import { Token } from '@questbook/service-validator-client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import CustomTokenModal from 'src/components/ui/submitCustomTokenModal';
 import Datepicker from '../../../ui/forms/datepicker';
@@ -40,7 +40,14 @@ function GrantRewardsInput({
   supportedCurrencies: any[];
 }) {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState(supportedCurrencies);
+  const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<any[]>([]);
+
+  useEffect(() => {
+    if (supportedCurrencies && supportedCurrencies.length > 0) {
+      setSupportedCurrenciesList(supportedCurrencies);
+    }
+  }, [supportedCurrencies]);
+
   const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false);
   const addERC = true;
   return (

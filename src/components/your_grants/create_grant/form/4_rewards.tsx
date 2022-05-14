@@ -6,7 +6,7 @@ import {
   Image,
   Switch,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 // import Modal from 'src/components/ui/modal';
 import CustomTokenModal from 'src/components/ui/submitCustomTokenModal';
@@ -68,7 +68,14 @@ function GrantRewardsInput({
   console.log('SupportedCurrencies', supportedCurrencies);
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState(supportedCurrencies);
+  const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<any[]>([]);
+
+  useEffect(() => {
+    if (supportedCurrencies && supportedCurrencies.length > 0) {
+      setSupportedCurrenciesList(supportedCurrencies);
+    }
+  }, [supportedCurrencies]);
+
   const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false);
   const addERC = true;
   const { getPublicEncryptionKey } = useEncryption();

@@ -53,7 +53,13 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
     supportedCurrencies[0].address,
   );
 
-  const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState(supportedCurrencies);
+  const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<any[]>([]);
+
+  useEffect(() => {
+    if (supportedCurrencies && supportedCurrencies.length > 0) {
+      setSupportedCurrenciesList(supportedCurrencies);
+    }
+  }, [supportedCurrencies]);
 
   // if (workspace?.tokens) {
   //   for (let i = 0; i < workspace.tokens.length; i += 1) {
