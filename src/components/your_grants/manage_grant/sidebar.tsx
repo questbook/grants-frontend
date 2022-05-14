@@ -174,6 +174,7 @@ function Sidebar({
               committed: BigNumber.from(grant.reward.committed),
               label: assetInfo?.label,
               icon: assetInfo?.icon,
+              decimals,
             }}
             contractFunding={grant.funding}
             onClose={() => setIsSendFundModalOpen(false)}

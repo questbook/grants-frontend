@@ -38,6 +38,7 @@ interface Props {
     committed: BigNumber;
     label: string;
     icon: string;
+    decimals?: number;
   };
   contractFunding: string;
   milestones: any[];
@@ -194,13 +195,12 @@ function ModalContent({
 
     if (hasError) return;
     setSubmitClickedP2P(true);
-    setDisburseP2PAmount(parseAmount(funding, rewardAsset.address));
+    setDisburseP2PAmount(parseAmount(funding, rewardAsset.address, rewardAssetDecimals));
   };
 
   useEffect(() => {
     (async function () {
       try {
-        // console.log('rewardContract', rewardAssetContract);
         if (!rewardAssetContract.provider) return;
         const assetDecimal = await rewardAssetContract.decimals();
         setRewardAssetDecimals(assetDecimal);
