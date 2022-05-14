@@ -40,6 +40,7 @@ interface Props {
   members: any[];
   acceptingApplications: boolean;
   shouldShowButton: boolean;
+  defaultMilestoneFields: any[];
 }
 
 // eslint-disable-next-line max-len
@@ -61,6 +62,7 @@ function Form({
   members,
   acceptingApplications,
   shouldShowButton,
+  defaultMilestoneFields,
 }: Props) {
   const [{ data: accountData }] = useAccount({
     fetchEns: false,
@@ -117,6 +119,17 @@ function Form({
       milestoneRewardIsError: false,
     },
   ]);
+
+  useEffect(() => {
+    if (defaultMilestoneFields && defaultMilestoneFields.length > 0) {
+      setProjectMilestones(defaultMilestoneFields.map((defaultMilestone) => ({
+        milestone: defaultMilestone.detail,
+        milestoneReward: '',
+        milestoneIsError: false,
+        milestoneRewardIsError: false,
+      })));
+    }
+  }, [defaultMilestoneFields]);
 
   const [fundingAsk, setFundingAsk] = useState('');
   const [fundingAskError, setFundingAskError] = useState(false);
@@ -423,11 +436,15 @@ function Form({
           grantRequiredFields={grantRequiredFields}
         />
 
-        <Box mt="43px" />
-        <CustomFields
-          customFields={customFields}
-          setCustomFields={setCustomFields}
-        />
+        {customFields && customFields.length > 0 && (
+          <>
+            <Box mt="43px" />
+            <CustomFields
+              customFields={customFields}
+              setCustomFields={setCustomFields}
+            />
+          </>
+        )}
       </Container>
 
       {acceptingApplications && (

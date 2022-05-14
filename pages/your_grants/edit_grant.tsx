@@ -137,6 +137,14 @@ function EditGrant() {
         fd[fieldId] = fieldId;
       });
 
+    grant.fields
+      .filter((field: any) => field.id.split('.')[1]
+        .startsWith('defaultMilestone'))
+      .forEach((field: any) => {
+        const fieldId = field.id.split('.')[1];
+        fd[fieldId] = fieldId;
+      });
+
     setFormData(fd);
   };
 
@@ -214,6 +222,14 @@ function EditGrant() {
         .filter((field) => field.id.split('.')[1]
           .startsWith('customField'))
         .forEach((field) => {
+          const fieldId = field.id.split('.')[1];
+          fd[fieldId] = fieldId;
+        });
+
+      grant.fields
+        .filter((field: any) => field.id.split('.')[1]
+          .startsWith('defaultMilestone'))
+        .forEach((field: any) => {
           const fieldId = field.id.split('.')[1];
           fd[fieldId] = fieldId;
         });
