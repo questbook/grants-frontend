@@ -81,9 +81,9 @@ function PayoutModalContent({
 
   // STATES TO FILL WITH FORM INPUTS
   const [reviewsToPay, setReviewsToPay] = useState<number>();
-  const [amountToPay, setAmountToPay] = useState<number>();
+  const [amountToPay, setAmountToPay] = useState<string>();
   const [totalAmount, setTotalAmount] = useState<number>(0);
-  const [amountDeposited, setAmountDeposited] = useState<number>();
+  const [amountDeposited, setAmountDeposited] = useState<string>();
   const [transactionHash, setTransactionHash] = useState<string>();
   const [submitPayment, setSubmitPayment] = useState<boolean>(false);
   const [submitMarkDone, setSubmitMarkDone] = useState<boolean>(false);
@@ -257,7 +257,7 @@ function PayoutModalContent({
       && amountDeposited !== undefined
       && transactionHash !== undefined
     ) {
-      setTotalAmount(reviewsToPay * (amountDeposited as number));
+      setTotalAmount(reviewsToPay * parseFloat(amountDeposited));
       setSubmitMarkDone(true);
     }
   };
@@ -266,10 +266,14 @@ function PayoutModalContent({
     if (reviewsToPay !== undefined
       && amountToPay !== undefined
     ) {
-      setTotalAmount(reviewsToPay * amountToPay);
+      setTotalAmount(reviewsToPay * parseFloat(amountToPay));
       setSubmitPayment(true);
     }
   };
+
+  useEffect(() => {
+    console.log(totalAmount);
+  }, [totalAmount])
 
   return (
     <ModalBody>
@@ -353,18 +357,19 @@ function PayoutModalContent({
                 <Heading fontSize="0.875rem" textAlign="left">
                   Amount per Review:
                 </Heading>
-                <NumberInput
+                <Input
                   mr="0.5rem"
                   placeholder="Enter Amount"
-                  onChange={(value) => {
-                    setAmountToPay(parseInt(value, 10));
+                  onChange={(e) => {
+                    setAmountToPay(e.target.value);
                   }}
-                  value={Number.isNaN(amountToPay as number) ? '' : amountToPay}
+                  value={Number.isNaN(parseFloat(amountToPay as string)) ? '' : amountToPay}
                   min={0}
-                  step={0.01}
+                  step={.01}
+                  pattern="^\d*(\.\d{0,2})?$"
+                  h={12}
                 >
-                  <NumberInputField h={12} minW="full" />
-                </NumberInput>
+                </Input>
               </Flex>
               <Flex direction="column" w="fit-content" mt="20px">
                 <Dropdown
@@ -580,7 +585,7 @@ function PayoutModalContent({
               reviewsToPay !== undefined
               && amountToPay !== undefined
               && !paymentOutside
-                ? (setPaymentOutside(true), setTotalAmount(reviewsToPay * amountToPay))
+                ? (setPaymentOutside(true), setTotalAmount(reviewsToPay * parseFloat(amountToPay)))
                 : (setPaymentOutside(false), setPayMode(2));
             }}
           >
@@ -667,18 +672,19 @@ function PayoutModalContent({
                 <Heading fontSize="0.875rem" textAlign="left">
                   Amount Deposited:
                 </Heading>
-                <NumberInput
+                <Input
                   mr="0.5rem"
                   placeholder="Enter Amount"
-                  onChange={(value) => {
-                    setAmountDeposited(parseInt(value, 10));
+                  onChange={(e) => {
+                    setAmountDeposited(e.target.value);
                   }}
-                  value={Number.isNaN(amountDeposited as number) ? '' : amountDeposited}
+                  value={Number.isNaN(parseFloat(amountDeposited as string)) ? '' : amountDeposited}
                   min={0}
-                  step={0.01}
+                  step={.01}
+                  pattern="^\d*(\.\d{0,2})?$"
+                  h={12}
                 >
-                  <NumberInputField h={12} minW="full" />
-                </NumberInput>
+                </Input>
               </Flex>
               <Flex direction="column" w="fit-content" mt="20px">
                 <Dropdown

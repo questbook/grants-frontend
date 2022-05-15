@@ -61,7 +61,7 @@ export default function Payouts() {
     },
   });
 
-  const historyTableHeaders = ['Paid from', 'Amount', 'Paid on', 'Actions'];
+  const historyTableHeaders = ['Paid from', 'Amount', 'Reviews', 'Paid on', 'Actions'];
 
   React.useEffect(() => {
     if (!workspace) {
@@ -152,7 +152,7 @@ export default function Payouts() {
           </Grid>
           <Grid
             gridAutoFlow="column"
-            gridTemplateColumns="repeat(3, 1fr)"
+            gridTemplateColumns="repeat(4, 1fr)"
             w="100%"
             justifyContent="space-between"
             alignContent="center"
@@ -182,7 +182,7 @@ export default function Payouts() {
                 <Flex>
                   <Grid
                     gridAutoFlow="column"
-                    gridTemplateColumns="repeat(3, 1fr)"
+                    gridTemplateColumns="repeat(4, 1fr)"
                     w="100%"
                     justifyContent="space-between"
                     alignContent="center"
@@ -209,7 +209,12 @@ export default function Payouts() {
                         ).label
                       }
                     </Text>
+
                     <Text variant="tableBody" justifySelf="left">
+                      {data.review.id}
+                    </Text>
+
+                    <Text variant="tableBody" justifySelf="start">
                       {getFormattedDateFromUnixTimestampWithYear(
                         data.createdAtS,
                       )}
