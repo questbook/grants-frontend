@@ -1,5 +1,11 @@
 import {
-  Image, Flex, Heading, Text, Grid, Tooltip, Link,
+  Image,
+  Flex,
+  Heading,
+  Text,
+  Grid,
+  Tooltip,
+  Link,
 } from '@chakra-ui/react';
 import React, { ReactElement, useContext } from 'react';
 
@@ -36,18 +42,16 @@ export default function Payouts() {
 
   React.useEffect(() => {
     if (
-      workspace
-      && workspace.members
-      && workspace.members.length > 0
-      && account
-      && account.address
+      workspace &&
+      workspace.members &&
+      workspace.members.length > 0 &&
+      account &&
+      account.address
     ) {
       const tempMember = workspace.members.find(
-        (m) => m.actorId.toLowerCase() === account?.address?.toLowerCase(),
+        (m) => m.actorId.toLowerCase() === account?.address?.toLowerCase()
       );
-      setIsReviewer(
-        tempMember?.accessLevel === 'reviewer',
-      );
+      setIsReviewer(tempMember?.accessLevel === 'reviewer');
     }
   }, [account, workspace]);
 
@@ -61,7 +65,13 @@ export default function Payouts() {
     },
   });
 
-  const historyTableHeaders = ['Paid from', 'Amount', 'Reviews', 'Paid on', 'Actions'];
+  const historyTableHeaders = [
+    'Paid from',
+    'Amount',
+    'Reviews',
+    'Paid on',
+    'Actions',
+  ];
 
   React.useEffect(() => {
     if (!workspace) {
@@ -78,17 +88,25 @@ export default function Payouts() {
   React.useEffect(() => {
     if (reviewPayoutsOutstanding.length === 0) {
       workspace?.members.forEach(
-        (member: any) => member.actorId === account?.address.toLowerCase()
-          && member.outstandingReviewIds.filter(
-            (review: any) => setReviewPayoutsOutstanding((array: any) => [...array, review]),
-          ),
+        (member: any) =>
+          member.actorId === account?.address.toLowerCase() &&
+          member.outstandingReviewIds.filter((review: any) =>
+            setReviewPayoutsOutstanding((array: any) => [...array, review])
+          )
       );
     }
-  }, [reviewPayoutsOutstanding, reviewsPaidData, account?.address, workspace?.members]);
+  }, [
+    reviewPayoutsOutstanding,
+    reviewsPaidData,
+    account?.address,
+    workspace?.members,
+  ]);
 
   React.useEffect(() => {
     if (reviewsDone === 0) {
-      setReviewsDone(reviewPayoutsDone.length + reviewPayoutsOutstanding.length);
+      setReviewsDone(
+        reviewPayoutsDone.length + reviewPayoutsOutstanding.length
+      );
     }
     console.log(reviewsDone);
   }, [reviewsDone, reviewPayoutsDone, reviewPayoutsOutstanding]);
@@ -108,8 +126,12 @@ export default function Payouts() {
               alignContent="center"
               gap="0.5rem"
             >
-              <Heading fontSize="1.5rem" gridArea="heading">{reviewsDone}</Heading>
-              <Text fontSize="1rem" color="#AAAAAA" gridArea="text">Reviews Done</Text>
+              <Heading fontSize="1.5rem" gridArea="heading">
+                {reviewsDone}
+              </Heading>
+              <Text fontSize="1rem" color="#AAAAAA" gridArea="text">
+                Reviews Done
+              </Text>
               <Flex
                 w="40px"
                 h="40px"
@@ -119,9 +141,7 @@ export default function Payouts() {
                 justifyContent="center"
                 alignItems="center"
               >
-                <Image
-                  src="/illustrations/reviews_done.svg"
-                />
+                <Image src="/illustrations/reviews_done.svg" />
               </Flex>
             </Grid>
             <Grid
@@ -133,8 +153,12 @@ export default function Payouts() {
               alignContent="center"
               gap="0.5rem"
             >
-              <Heading fontSize="1.5rem" gridArea="heading">{reviewPayoutsOutstanding.length}</Heading>
-              <Text fontSize="1rem" color="#AAAAAA" gridArea="text">Outstanding Review Payouts</Text>
+              <Heading fontSize="1.5rem" gridArea="heading">
+                {reviewPayoutsOutstanding.length}
+              </Heading>
+              <Text fontSize="1rem" color="#AAAAAA" gridArea="text">
+                Outstanding Review Payouts
+              </Text>
               <Flex
                 w="40px"
                 h="40px"
@@ -144,9 +168,7 @@ export default function Payouts() {
                 justifyContent="center"
                 alignItems="center"
               >
-                <Image
-                  src="/illustrations/reviews_outstanding.svg"
-                />
+                <Image src="/illustrations/reviews_outstanding.svg" />
               </Flex>
             </Grid>
           </Grid>
@@ -167,18 +189,14 @@ export default function Payouts() {
               </Text>
             ))}
           </Grid>
-          <Flex
-            direction="column"
-            w="100%"
-            border="1px solid #D0D3D3"
-            borderRadius={4}
-          >
-            {reviewPayoutsDone.length === 0 ? (
-              <Flex p={2} alignItems="center" justifyContent="center">
-                <Text>There is no payout history to show</Text>
-              </Flex>
-            ) : (
-              reviewPayoutsDone.map((data: any, index: number) => (
+          {reviewPayoutsDone.length !== 0 && reviewPayoutsOutstanding !== 0 ? (
+            <Flex
+              direction="column"
+              w="100%"
+              border="1px solid #D0D3D3"
+              borderRadius={4}
+            >
+              {reviewPayoutsDone.map((data: any, index: number) => (
                 <Flex>
                   <Grid
                     gridAutoFlow="column"
@@ -200,33 +218,34 @@ export default function Payouts() {
                     </Tooltip>
 
                     <Text variant="tableBody" justifySelf="left">
-                      {utils.formatUnits(data.amount).slice(0, -2)}
-                      {' '}
+                      {utils.formatUnits(data.amount).slice(0, -2)}{' '}
                       {
                         getAssetInfo(
                           data.asset,
-                          getSupportedChainIdFromWorkspace(workspace),
+                          getSupportedChainIdFromWorkspace(workspace)
                         ).label
                       }
                     </Text>
 
                     <Text variant="tableBody" justifySelf="left">
-                      {data.review.id}
+                      {data.review.length > 1 ? data.review.length : 1}
                     </Text>
 
                     <Text variant="tableBody" justifySelf="start">
                       {getFormattedDateFromUnixTimestampWithYear(
-                        data.createdAtS,
+                        data.createdAtS
                       )}
                     </Text>
 
                     <Flex direction="row">
                       <Link
-                        href={`http://www.polygonscan.com/tx/${data.id.substr(0, data.id.indexOf('.'))}`}
+                        href={`http://www.polygonscan.com/tx/${data.id.substr(
+                          0,
+                          data.id.indexOf('.')
+                        )}`}
                         isExternal
                       >
-                        View
-                        {' '}
+                        View{' '}
                         <Image
                           display="inline-block"
                           h="10px"
@@ -237,9 +256,47 @@ export default function Payouts() {
                     </Flex>
                   </Grid>
                 </Flex>
-              ))
-            )}
-          </Flex>
+              ))}
+            </Flex>
+          ) : (
+            <Flex
+              p={2}
+              alignItems="center"
+              justifyContent="center"
+              direction="column"
+              gap="1rem"
+            >
+              {reviewPayoutsDone.length < 1 &&
+              <>
+              <Image
+                w={40}
+                h={40}
+                src="/illustrations/empty_states/no_grants.svg"
+              />
+              <Heading>{"It's quite silent here"}</Heading>
+              <Text>
+                Click <Link href="/your_grants/">here</Link> to start reviewing
+                some grants to earn payouts
+              </Text>
+              </>
+            }
+            {reviewPayoutsDone.length >= 1 &&
+              <>
+              <Image
+                w={40}
+                h={40}
+                src="/illustrations/empty_states/no_deposits.svg"
+              />
+              <Heading>No Payouts yet...</Heading>
+              <Text>
+                Once a grant admin disburses funds to your address it will show
+                up here.
+              </Text>
+              </>
+            }
+
+            </Flex>
+          )}
         </Flex>
       ) : (
         <Text>You do not have access to this page</Text>
