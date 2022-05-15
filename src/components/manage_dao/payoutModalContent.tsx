@@ -7,8 +7,6 @@ import {
   IconButton,
   Image,
   Input,
-  NumberInput,
-  NumberInputField,
   InputGroup,
   InputRightElement,
   Heading,
@@ -273,7 +271,7 @@ function PayoutModalContent({
 
   useEffect(() => {
     console.log(totalAmount);
-  }, [totalAmount])
+  }, [totalAmount]);
 
   return (
     <ModalBody>
@@ -365,11 +363,10 @@ function PayoutModalContent({
                   }}
                   value={Number.isNaN(parseFloat(amountToPay as string)) ? '' : amountToPay}
                   min={0}
-                  step={.01}
+                  step={0.01}
                   pattern="^\d*(\.\d{0,2})?$"
                   h={12}
-                >
-                </Input>
+                />
               </Flex>
               <Flex direction="column" w="fit-content" mt="20px">
                 <Dropdown
@@ -680,11 +677,10 @@ function PayoutModalContent({
                   }}
                   value={Number.isNaN(parseFloat(amountDeposited as string)) ? '' : amountDeposited}
                   min={0}
-                  step={.01}
+                  step={0.01}
                   pattern="^\d*(\.\d{0,2})?$"
                   h={12}
-                >
-                </Input>
+                />
               </Flex>
               <Flex direction="column" w="fit-content" mt="20px">
                 <Dropdown

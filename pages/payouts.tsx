@@ -42,14 +42,14 @@ export default function Payouts() {
 
   React.useEffect(() => {
     if (
-      workspace &&
-      workspace.members &&
-      workspace.members.length > 0 &&
-      account &&
-      account.address
+      workspace
+      && workspace.members
+      && workspace.members.length > 0
+      && account
+      && account.address
     ) {
       const tempMember = workspace.members.find(
-        (m) => m.actorId.toLowerCase() === account?.address?.toLowerCase()
+        (m) => m.actorId.toLowerCase() === account?.address?.toLowerCase(),
       );
       setIsReviewer(tempMember?.accessLevel === 'reviewer');
     }
@@ -88,11 +88,10 @@ export default function Payouts() {
   React.useEffect(() => {
     if (reviewPayoutsOutstanding.length === 0) {
       workspace?.members.forEach(
-        (member: any) =>
-          member.actorId === account?.address.toLowerCase() &&
-          member.outstandingReviewIds.filter((review: any) =>
-            setReviewPayoutsOutstanding((array: any) => [...array, review])
-          )
+        (member: any) => member.actorId === account?.address.toLowerCase()
+          && member.outstandingReviewIds.filter((review: any) =>
+            // eslint-disable-next-line implicit-arrow-linebreak
+            setReviewPayoutsOutstanding((array: any) => [...array, review])),
       );
     }
   }, [
@@ -105,7 +104,7 @@ export default function Payouts() {
   React.useEffect(() => {
     if (reviewsDone === 0) {
       setReviewsDone(
-        reviewPayoutsDone.length + reviewPayoutsOutstanding.length
+        reviewPayoutsDone.length + reviewPayoutsOutstanding.length,
       );
     }
     console.log(reviewsDone);
@@ -218,11 +217,12 @@ export default function Payouts() {
                     </Tooltip>
 
                     <Text variant="tableBody" justifySelf="left">
-                      {utils.formatUnits(data.amount).slice(0, -2)}{' '}
+                      {utils.formatUnits(data.amount).slice(0, -2)}
+                      {' '}
                       {
                         getAssetInfo(
                           data.asset,
-                          getSupportedChainIdFromWorkspace(workspace)
+                          getSupportedChainIdFromWorkspace(workspace),
                         ).label
                       }
                     </Text>
@@ -233,7 +233,7 @@ export default function Payouts() {
 
                     <Text variant="tableBody" justifySelf="start">
                       {getFormattedDateFromUnixTimestampWithYear(
-                        data.createdAtS
+                        data.createdAtS,
                       )}
                     </Text>
 
@@ -241,11 +241,12 @@ export default function Payouts() {
                       <Link
                         href={`http://www.polygonscan.com/tx/${data.id.substr(
                           0,
-                          data.id.indexOf('.')
+                          data.id.indexOf('.'),
                         )}`}
                         isExternal
                       >
-                        View{' '}
+                        View
+                        {' '}
                         <Image
                           display="inline-block"
                           h="10px"
@@ -266,35 +267,38 @@ export default function Payouts() {
               direction="column"
               gap="1rem"
             >
-              {reviewPayoutsDone.length < 1 &&
-              <>
-              <Image
-                w={40}
-                h={40}
-                src="/illustrations/empty_states/no_grants.svg"
-              />
-              <Heading>{"It's quite silent here"}</Heading>
-              <Text>
-                Click <Link href="/your_grants/">here</Link> to start reviewing
-                some grants to earn payouts
-              </Text>
-              </>
-            }
-            {reviewPayoutsDone.length >= 1 &&
-              <>
-              <Image
-                w={40}
-                h={40}
-                src="/illustrations/empty_states/no_deposits.svg"
-              />
-              <Heading>No Payouts yet...</Heading>
-              <Text>
-                Once a grant admin disburses funds to your address it will show
-                up here.
-              </Text>
-              </>
-            }
-
+              {reviewPayoutsDone.length < 1 && (
+                <>
+                  <Image
+                    w={40}
+                    h={40}
+                    src="/illustrations/empty_states/no_grants.svg"
+                  />
+                  <Heading>It&apos;s quite silent here</Heading>
+                  <Text>
+                    Click
+                    {' '}
+                    <Link href="/your_grants/">here</Link>
+                    {' '}
+                    to start
+                    reviewing some grants to earn payouts
+                  </Text>
+                </>
+              )}
+              {reviewPayoutsDone.length >= 1 && (
+                <>
+                  <Image
+                    w={40}
+                    h={40}
+                    src="/illustrations/empty_states/no_deposits.svg"
+                  />
+                  <Heading>No Payouts yet...</Heading>
+                  <Text>
+                    Once a grant admin disburses funds to your address it will
+                    show up here.
+                  </Text>
+                </>
+              )}
             </Flex>
           )}
         </Flex>
