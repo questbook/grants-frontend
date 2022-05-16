@@ -11,13 +11,14 @@ export enum SupportedChainId {
 
 const testingNetworks = [
   SupportedChainId.RINKEBY,
+  SupportedChainId.POLYGON_MAINNET,
 ];
 
 export const ALL_SUPPORTED_CHAIN_IDS: SupportedChainId[] = Object.values(
   SupportedChainId,
 ).filter(
   (id) => typeof id === 'number'
-    && ((process.env.IS_TEST === 'true'
+    && ((process.env.NEXT_PUBLIC_IS_TEST === 'true'
       && testingNetworks.findIndex((network) => network === id) !== -1)
-      || !process.env.IS_TEST || process.env.IS_TEST === 'false'),
+      || !process.env.NEXT_PUBLIC_IS_TEST || process.env.NEXT_PUBLIC_IS_TEST === 'false'),
 ) as SupportedChainId[];

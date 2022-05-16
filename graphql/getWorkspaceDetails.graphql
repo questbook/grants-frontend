@@ -23,6 +23,8 @@ query getWorkspaceDetails($workspaceID: ID!) {
           email
           accessLevel
           updatedAt
+          outstandingReviewIds
+          lastReviewSubmittedAt
           addedBy {
             id
             actorId

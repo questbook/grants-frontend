@@ -32,8 +32,9 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
   const tabPaths = [
     'your_grants',
     'funds',
-    'settings_and_members',
+    'manage_dao',
     'your_applications',
+    'payouts',
   ];
   const activeIndex = useActiveTabIndex(tabPaths);
 
@@ -44,6 +45,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
   const apiClients = useContext(ApiClientsContext)!;
   const { workspace, setWorkspace, subgraphClients } = apiClients;
   const [isAdmin, setIsAdmin] = React.useState(false);
+  const [isReviewer, setIsReviewer] = React.useState<boolean>(false);
 
   // eslint-disable-next-line max-len
   const getNumberOfApplicationsClients = Object.keys(subgraphClients)!.map(
@@ -127,16 +129,27 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
     (key) => useGetWorkspaceMembersLazyQuery({ client: subgraphClients[key].client }),
   );
   useEffect(() => {
-    if (workspace && workspace.members && workspace.members.length > 0) {
+    if (
+      workspace
+      && workspace.members
+      && workspace.members.length > 0
+      && accountData
+      && accountData.address
+    ) {
       const tempMember = workspace.members.find(
         (m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
       );
-      setIsAdmin(tempMember?.accessLevel === 'admin' || tempMember?.accessLevel === 'owner');
+      setIsAdmin(
+        tempMember?.accessLevel === 'admin'
+        || tempMember?.accessLevel === 'owner',
+      );
+      setIsReviewer(tempMember?.accessLevel === 'reviewer');
     }
-  }, [accountData?.address, workspace]);
+  }, [accountData, workspace]);
 
   useEffect(() => {
     if (!accountData?.address) return;
+
     if (!getAllWorkspaces) return;
     // if (!set) return;
 
@@ -279,7 +292,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
               <Box mr="12px" />
               <Flex h="100%" direction="column">
                 <Tab
-                  label="Grants"
+                  label={isReviewer ? 'Grants Assigned' : 'Grants'}
                   icon={`/ui_icons/${
                     activeIndex === 0 ? 'brand' : 'gray'
                   }/tab_grants.svg`}
@@ -313,7 +326,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
               </Flex>
               <Flex h="100%" direction="column" display={isAdmin ? '' : 'none'}>
                 <Tab
-                  label="Settings And Members"
+                  label="Manage DAO"
                   icon={`/ui_icons/${
                     activeIndex === 2 ? 'brand' : 'gray'
                   }/tab_settings.svg`}
@@ -328,6 +341,23 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                   <Box w="100%" h="2px" bgColor="#8850EA" />
                 ) : null}
               </Flex>
+              {isReviewer && (
+                <Flex h="100%" direction="column">
+                  <Tab
+                    label="Payouts"
+                    icon={activeIndex === 4 ? '/ui_icons/brand/tab_review_funds.svg' : '/ui_icons/gray/tab_funds.svg'}
+                    isActive={activeIndex === 4}
+                    onClick={() => {
+                      router.push({
+                        pathname: `/${tabPaths[4]}`,
+                      });
+                    }}
+                  />
+                  {activeIndex === 4 ? (
+                    <Box w="100%" h="2px" bgColor="#8850EA" />
+                  ) : null}
+                </Flex>
+              )}
             </>
           ) : null}
 

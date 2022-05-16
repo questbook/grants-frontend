@@ -17,6 +17,7 @@ function GrantRewards({
   rewardCurrencyCoin,
   payoutDescription,
   chainId,
+  defaultMilestoneFields,
 }: {
   daoId: string;
   daoName: string;
@@ -28,6 +29,7 @@ function GrantRewards({
   rewardCurrencyCoin: string;
   payoutDescription: string;
   chainId: SupportedChainId | undefined;
+  defaultMilestoneFields: any[];
 }) {
   const theme = useTheme();
   const router = useRouter();
@@ -66,7 +68,7 @@ function GrantRewards({
       <Divider />
 
       <Flex alignItems="start">
-        <Flex direction="column">
+        <Flex direction="column" flex={1}>
           <Flex direction="row" alignItems="flex-start" mt="28px">
             <Image mt="2px" src="/sidebar/apply_for_grants.svg" />
             <Flex flex={1} direction="column" ml={3}>
@@ -85,6 +87,30 @@ function GrantRewards({
               </Text>
             </Flex>
           </Flex>
+
+          {defaultMilestoneFields && defaultMilestoneFields.length > 0 && (
+          <Flex direction="column" alignItems="flex-start" mt="28px">
+            {defaultMilestoneFields.map((field, index) => (
+              <Flex mt={2} alignItems="baseline" w="100%">
+                <Flex flex={0.1649}>
+                  <Text fontWeight="500">
+                    Milestone
+                    {' '}
+                    {index + 1}
+                    {' '}
+                    :
+                  </Text>
+                </Flex>
+                <Flex flex={0.8650} ml={3}>
+                  <Text w="100%" mt="1px" lineHeight="20px" fontSize="14px" fontWeight="400">
+                    {field.detail}
+                  </Text>
+                </Flex>
+              </Flex>
+            ))}
+          </Flex>
+          )}
+
           {isGrantVerified && (
           <Flex direction="row" alignItems="flex-start" mt="28px">
             <Image mt="2px" w="18px" h="21px" src="/ui_icons/verified.svg" />

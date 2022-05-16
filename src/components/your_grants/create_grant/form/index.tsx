@@ -124,6 +124,7 @@ function Form({
     isError: false,
   }]);
   const [multipleMilestones, setMultipleMilestones] = useState(false);
+  const [defaultMilestoneFields, setDefaultMilestoneFields] = useState<any[]>([]);
 
   const toggleDetailsRequired = (index: number) => {
     const newDetailsRequired = [...detailsRequired];
@@ -157,18 +158,24 @@ function Form({
 
   const currentChain = useChainId() ?? SupportedChainId.RINKEBY;
 
+  // const [supportCurrencies, setsupportCurrencies] = useState([{}]);
+
   const supportedCurrencies = Object.keys(
     CHAIN_INFO[currentChain].supportedCurrencies,
   )
     .map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
     .map((currency) => ({ ...currency, id: currency.address }));
+
   const [rewardCurrency, setRewardCurrency] = React.useState(
     supportedCurrencies[0].label,
   );
   const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
     supportedCurrencies[0].id,
   );
-
+  /**
+ * checks if the workspace already has custom tokens added
+ * if custom tokens found, append it to supportedCurrencies
+ */
   if (workspace?.tokens) {
     for (let i = 0; i < workspace.tokens.length; i += 1) {
       supportedCurrencies.push(
@@ -237,6 +244,19 @@ function Form({
         return errorCheckedCustomField;
       });
       setCustomFields(errorCheckedCustomFields);
+    }
+
+    if (defaultMilestoneFields.length > 0) {
+      const errorCheckedDefaultMilestoneFields = defaultMilestoneFields
+        .map((defaultMilestoneField: any) => {
+          const errorCheckedDefaultMilestoneField = { ...defaultMilestoneField };
+          if (defaultMilestoneField.value.length <= 0) {
+            errorCheckedDefaultMilestoneField.isError = true;
+            error = true;
+          }
+          return errorCheckedDefaultMilestoneField;
+        });
+      setDefaultMilestoneFields(errorCheckedDefaultMilestoneFields);
     }
 
     if (rubricRequired) {
@@ -309,11 +329,20 @@ function Form({
           fields.memberDetails = { ...fields.memberDetails, pii: true };
         }
       }
-      if (customFields.length > 0) {
+      if (customFieldsOptionIsVisible && customFields.length > 0) {
         customFields.forEach((customField: any, index: number) => {
           const santizedCustomFieldValue = customField.value.split(' ').join('\\s');
           fields[`customField${index}-${santizedCustomFieldValue}`] = {
             title: customField.value,
+            inputType: 'short-form',
+          };
+        });
+      }
+      if (defaultMilestoneFields.length > 0) {
+        defaultMilestoneFields.forEach((defaultMilestoneField: any, index: number) => {
+          const santizedDefaultMilestoneFieldValue = defaultMilestoneField.value.split(' ').join('\\s');
+          fields[`defaultMilestone${index}-${santizedDefaultMilestoneFieldValue}`] = {
+            title: defaultMilestoneField.value,
             inputType: 'short-form',
           };
         });
@@ -406,6 +435,8 @@ function Form({
         setCustomFieldsOptionIsVisible={setCustomFieldsOptionIsVisible}
         multipleMilestones={multipleMilestones}
         setMultipleMilestones={setMultipleMilestones}
+        defaultMilestoneFields={defaultMilestoneFields}
+        setDefaultMilestoneFields={setDefaultMilestoneFields}
         rubricRequired={rubricRequired}
         setRubricRequired={setRubricRequired}
         rubrics={rubrics}

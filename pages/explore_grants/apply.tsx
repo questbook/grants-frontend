@@ -167,6 +167,21 @@ function ApplyGrant() {
           members={grantData?.workspace?.members}
           acceptingApplications={acceptingApplications}
           shouldShowButton={shouldShowButton}
+          defaultMilestoneFields={grantData?.fields?.map((field: any) => {
+            // console.log(field);
+            // console.log(field.title.startsWith('defaultMilestone'));
+            if (field.title.startsWith('defaultMilestone')) {
+              const i = field.title.indexOf('-');
+              if (i !== -1) {
+                return (
+                  {
+                    detail: field.title.substring(i + 1).split('\\s').join(' '),
+                  }
+                );
+              }
+            }
+            return null;
+          }).filter((field: any) => field != null)}
         />
       </Flex>
 

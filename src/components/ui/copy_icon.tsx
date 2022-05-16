@@ -4,9 +4,11 @@ import copy from 'copy-to-clipboard';
 
 interface Props {
   text: string;
+  // eslint-disable-next-line react/require-default-props
+  h?: string;
 }
 
-function CopyIcon({ text }: Props) {
+function CopyIcon({ text, h }: Props) {
   const normalImagePath = '/ui_icons/copy/normal.svg';
   const hoverImagePath = '/ui_icons/copy/hover.svg';
   const activeImagePath = '/ui_icons/copy/active.svg';
@@ -21,6 +23,7 @@ function CopyIcon({ text }: Props) {
     <Tooltip label={tooltipLabel}>
       <Image
         m={0}
+        h={h}
         src={imageSource}
         onMouseOver={() => setImageSource(hoverImagePath)}
         onMouseLeave={() => { setImageSource(normalImagePath); setTooltipLabel(defaultTooltip); }}

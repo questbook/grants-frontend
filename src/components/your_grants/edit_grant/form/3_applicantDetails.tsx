@@ -17,6 +17,11 @@ function ApplicantDetails({
 
   multipleMilestones,
   setMultipleMilestones,
+
+  defaultMilestoneFields,
+  setDefaultMilestoneFields,
+
+  defaultMilestoneFieldsOptionIsVisible,
 }: {
   detailsRequired: any[];
   toggleDetailsRequired: (index: number) => void;
@@ -28,9 +33,15 @@ function ApplicantDetails({
 
   multipleMilestones: boolean;
   setMultipleMilestones: (multipleMilestones: boolean) => void;
+
+  defaultMilestoneFields: any[];
+  setDefaultMilestoneFields: (defaultMilestoneFields: any[]) => void;
+
+  defaultMilestoneFieldsOptionIsVisible: boolean;
 }) {
   const [milestoneSelectOptionIsVisible,
-    setMilestoneSelectOptionIsVisible] = React.useState(multipleMilestones ?? false);
+    setMilestoneSelectOptionIsVisible] = React.useState((multipleMilestones ?? false)
+     || (defaultMilestoneFieldsOptionIsVisible ?? false));
   return (
     <Flex py={0} direction="column">
       <Grid templateColumns="repeat(2, 1fr)" gap="18px" fontWeight="bold">
@@ -64,6 +75,7 @@ function ApplicantDetails({
                       !milestoneSelectOptionIsVisible,
                     );
                     setMultipleMilestones(false);
+                    setDefaultMilestoneFields([]);
                   }}
                   label="Milestones"
                   tooltip="Add milestones for the applicant to complete"
@@ -158,7 +170,7 @@ function ApplicantDetails({
                 mr="6px"
               />
               <Text fontWeight="500" fontSize="14px" color="#8850EA" lineHeight="20px">
-                Add another criteria
+                Add another question
               </Text>
             </Box>
           </Flex>
@@ -176,7 +188,12 @@ function ApplicantDetails({
           <Flex mt={1} maxW="420px">
             <Badge
               isActive={!multipleMilestones}
-              onClick={() => setMultipleMilestones(false)}
+              onClick={() => {
+                const newDefaultMilestoneFields = [...defaultMilestoneFields];
+                newDefaultMilestoneFields.splice(1);
+                setDefaultMilestoneFields(newDefaultMilestoneFields);
+                setMultipleMilestones(false);
+              }}
               label="Single Milestone"
               inActiveVariant="solid"
               variant="buttonGroupStart"
@@ -189,6 +206,78 @@ function ApplicantDetails({
               variant="buttonGroupEnd"
             />
           </Flex>
+
+          <Box mb={8} />
+          {defaultMilestoneFields.map((defaultMilestoneField, index) => (
+            <>
+              <Flex mt={2} mb="-21px" gap="2" justifyContent="flex-end">
+                <Box
+                  onClick={() => {
+                    const newDefaultMilestoneFields = [...defaultMilestoneFields];
+                    newDefaultMilestoneFields.splice(index, 1);
+                    setDefaultMilestoneFields(newDefaultMilestoneFields);
+                  }}
+                  display="flex"
+                  alignItems="center"
+                  cursor="pointer"
+                  zIndex={1}
+                >
+                  <Image
+                    h="12px"
+                    w="12px"
+                    src="/ui_icons/delete_red.svg"
+                    mr="6px"
+                    mt="-2px"
+                  />
+                  <Text fontWeight="500" fontSize="14px" color="#DF5252" lineHeight="20px">
+                    Delete
+                  </Text>
+                </Box>
+              </Flex>
+              <SingleLineInput
+                label={`Milestone ${index + 1}`}
+                value={defaultMilestoneField.value}
+                onChange={(e) => {
+                  const newDefaultMilestoneFields = [...defaultMilestoneFields];
+                  newDefaultMilestoneFields[index].value = e.target.value;
+                  newDefaultMilestoneFields[index].isError = false;
+                  setDefaultMilestoneFields(newDefaultMilestoneFields);
+                }}
+                placeholder="Field Label"
+                isError={defaultMilestoneField.isError}
+                errorText="Required"
+                maxLength={250}
+              />
+              <Box mt={1} />
+            </>
+          ))}
+          {(multipleMilestones || (!multipleMilestones && defaultMilestoneFields.length === 0)) && (
+            <Flex mt="-4px" gap="2" justifyContent="flex-start">
+              <Box
+                onClick={() => {
+                  const newDefaultMilestoneFields = [...defaultMilestoneFields, {
+                    value: '',
+                    isError: false,
+                  }];
+                  setDefaultMilestoneFields(newDefaultMilestoneFields);
+                }}
+                display="flex"
+                alignItems="center"
+                cursor="pointer"
+              >
+                <Image
+                  h="16px"
+                  w="15px"
+                  src="/ui_icons/plus_circle.svg"
+                  mr="6px"
+                />
+                <Text fontWeight="500" fontSize="14px" color="#8850EA" lineHeight="20px">
+                  Add another milestone
+                </Text>
+              </Box>
+            </Flex>
+          )}
+          <Box mt={6} />
         </>
       )}
     </Flex>

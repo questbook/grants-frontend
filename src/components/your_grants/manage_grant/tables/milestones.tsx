@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import {
-  Text, Flex, Button, MenuButton, Menu, MenuList, MenuItem,
+  Text, Flex, Button, MenuButton, Menu, MenuList, MenuItem, Image,
 } from '@chakra-ui/react';
-import {
-  ChevronDownIcon, ViewIcon,
-} from '@chakra-ui/icons';
 import moment from 'moment';
 import AbstractMilestonesTable, { AbstractMilestonesTableProps } from 'src/components/ui/tables/AbstractMilestonesTable';
 import { getMilestoneTitle } from 'src/utils/formattingUtils';
@@ -33,7 +30,7 @@ function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
             <MenuButton
               as={Button}
               aria-label="View More Options"
-              rightIcon={<ChevronDownIcon color="brand.500" />}
+              rightIcon={<Image src="/ui_icons/dropdown_arrow.svg" />}
               variant="outline"
               color="brand.500"
               fontWeight="500"
@@ -47,13 +44,13 @@ function Milestones(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
               Manage
             </MenuButton>
             <MenuList minW="164px" p={0}>
-              <MenuItem icon={<ViewIcon color="#31373D" />} onClick={() => setOpenedModal({ type: 'milestone-done', milestone })}>
+              <MenuItem icon={<Image src="/ui_icons/see.svg" />} onClick={() => setOpenedModal({ type: 'milestone-done', milestone })}>
                 <Text fontSize="14px" fontWeight="400" lineHeight="20px" color="#122224">Approve Milestone</Text>
               </MenuItem>
               {/* TODO: Need to change the icons */}
               {
                 status === 'requested' ? (
-                  <MenuItem icon={<ViewIcon color="#31373D" />} onClick={() => setOpenedModal({ type: 'milestone-view', milestone })}>
+                  <MenuItem icon={<Image src="/ui_icons/see.svg" />} onClick={() => setOpenedModal({ type: 'milestone-view', milestone })}>
                     <Text fontSize="14px" fontWeight="400" lineHeight="20px" color="#122224">View Grantee Submission</Text>
                   </MenuItem>
                 ) : (

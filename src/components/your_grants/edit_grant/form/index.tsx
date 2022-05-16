@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {
+  useContext, useEffect, useMemo, useState,
+} from 'react';
 import {
   Box, Button, Text, Image, Link, Flex,
 } from '@chakra-ui/react';
@@ -10,6 +12,9 @@ import { CHAIN_INFO } from 'src/constants/chainInfo';
 import {
   ContentState, convertFromRaw, convertToRaw, EditorState,
 } from 'draft-js';
+import { Token } from '@questbook/service-validator-client';
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
+import { ApiClientsContext } from 'pages/_app';
 import Title from './1_title';
 import Details from './2_details';
 import ApplicantDetails from './3_applicantDetails';
@@ -28,6 +33,7 @@ function Form({
   formData: any;
   hasClicked: boolean;
 }) {
+  const { workspace } = useContext(ApiClientsContext)!;
   const maxDescriptionLength = 300;
   const [title, setTitle] = useState(formData.title ?? '');
   const [summary, setSummary] = useState(formData.summary ?? '');
@@ -71,6 +77,16 @@ function Form({
   const [multipleMilestones, setMultipleMilestones] = useState(
     formData.isMultipleMilestones,
   );
+  const [defaultMilestoneFields, setDefaultMilestoneFields] = useState<any[]>(
+    Object.keys(formData).filter((key) => key.startsWith('defaultMilestone'))
+      .map((key) => {
+        const i = key.indexOf('-');
+        return ({
+          value: key.substring(i + 1).split('\\s').join(' '),
+          isError: false,
+        });
+      }),
+  );
 
   const toggleDetailsRequired = (index: number) => {
     const newDetailsRequired = [...detailsRequired];
@@ -89,6 +105,9 @@ function Form({
 
   const [reward, setReward] = React.useState(formData.reward ?? '');
   const [rewardError, setRewardError] = React.useState(false);
+  const [rewardToken, setRewardToken] = React.useState<Token>({
+    label: '', address: '', decimal: '18', iconHash: '',
+  });
 
   useEffect(() => {
     console.log('formData', formData);
@@ -120,6 +139,24 @@ function Form({
     formData.rewardCurrencyAddress ?? supportedCurrencies[0].id,
   );
 
+  /**
+   * checks if the workspace already has custom tokens added
+   * if custom tokens found, append it to supportedCurrencies
+   */
+  if (workspace?.tokens) {
+    for (let i = 0; i < workspace.tokens.length; i += 1) {
+      supportedCurrencies.push(
+        {
+          id: workspace.tokens[i].address,
+          address: workspace.tokens[i].address,
+          decimals: workspace.tokens[i].decimal,
+          label: workspace.tokens[i].label,
+          icon: getUrlForIPFSHash(workspace.tokens[i].iconHash),
+        },
+      );
+    }
+  }
+
   useEffect(() => {
     // console.log(currentChain);
     if (currentChain) {
@@ -130,7 +167,7 @@ function Form({
       setRewardCurrency(formData.rewardCurrency ?? supportedCurrencies[0].label);
       setRewardCurrencyAddress(formData.rewardCurrencyAddress ?? supportedCurrencies[0].address);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentChain]);
 
   const [date, setDate] = React.useState(formData.date ?? '');
@@ -175,6 +212,19 @@ function Form({
       setCustomFields(errorCheckedCustomFields);
     }
 
+    if (defaultMilestoneFields.length > 0) {
+      const errorCheckedDefaultMilestoneFields = defaultMilestoneFields
+        .map((defaultMilestoneField: any) => {
+          const errorCheckedDefaultMilestoneField = { ...defaultMilestoneField };
+          if (defaultMilestoneField.value.length <= 0) {
+            errorCheckedDefaultMilestoneField.isError = true;
+            error = true;
+          }
+          return errorCheckedDefaultMilestoneField;
+        });
+      setDefaultMilestoneFields(errorCheckedDefaultMilestoneFields);
+    }
+
     if (!error) {
       const detailsString = JSON.stringify(
         convertToRaw(details.getCurrentContent()),
@@ -215,7 +265,7 @@ function Form({
         };
       }
 
-      if (customFields.length > 0) {
+      if (customFieldsOptionIsVisible && customFields.length > 0) {
         customFields.forEach((customField: any, index: number) => {
           const santizedCustomFieldValue = customField.value.split(' ').join('\\s');
           fields[`customField${index}-${santizedCustomFieldValue}`] = {
@@ -224,7 +274,15 @@ function Form({
           };
         });
       }
-
+      if (defaultMilestoneFields.length > 0) {
+        defaultMilestoneFields.forEach((defaultMilestoneField: any, index: number) => {
+          const santizedDefaultMilestoneFieldValue = defaultMilestoneField.value.split(' ').join('\\s');
+          fields[`defaultMilestone${index}-${santizedDefaultMilestoneFieldValue}`] = {
+            title: defaultMilestoneField.value,
+            inputType: 'short-form',
+          };
+        });
+      }
       // console.log(fields);
       onSubmit({
         title,
@@ -232,6 +290,7 @@ function Form({
         details: detailsString,
         fields,
         reward,
+        rewardToken,
         rewardCurrencyAddress,
         date,
       });
@@ -247,7 +306,7 @@ function Form({
         <Button
           ref={buttonRef}
           w={hasClicked ? buttonRef.current?.offsetWidth : 'auto'}
-          onClick={hasClicked ? () => {} : handleOnSubmit}
+          onClick={hasClicked ? () => { } : handleOnSubmit}
           py={hasClicked ? 2 : 0}
           variant="primary"
         >
@@ -322,6 +381,9 @@ function Form({
         setCustomFieldsOptionIsVisible={setCustomFieldsOptionIsVisible}
         multipleMilestones={multipleMilestones}
         setMultipleMilestones={setMultipleMilestones}
+        defaultMilestoneFields={defaultMilestoneFields}
+        setDefaultMilestoneFields={setDefaultMilestoneFields}
+        defaultMilestoneFieldsOptionIsVisible={Object.keys(formData).filter((key) => key.startsWith('defaultMilestone')).length > 0}
       />
 
       <Text
@@ -340,6 +402,7 @@ function Form({
         setReward={setReward}
         rewardError={rewardError}
         setRewardError={setRewardError}
+        setRewardToken={setRewardToken}
         rewardCurrency={rewardCurrency}
         setRewardCurrency={setRewardCurrency}
         setRewardCurrencyAddress={setRewardCurrencyAddress}
@@ -375,7 +438,7 @@ function Form({
         </Text>
       </Flex>
 
-      <Button onClick={hasClicked ? () => {} : handleOnSubmit} py={hasClicked ? 2 : 0} variant="primary">
+      <Button onClick={hasClicked ? () => { } : handleOnSubmit} py={hasClicked ? 2 : 0} variant="primary">
         {hasClicked ? <Loader /> : 'Save Changes'}
       </Button>
     </>

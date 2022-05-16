@@ -2,19 +2,24 @@ import React, { useContext, useEffect } from 'react';
 import { ToastId, useToast } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import { useAccount, useNetwork } from 'wagmi';
-import { SupportedChainId } from 'src/constants/chains';
-import { GrantApplicationUpdate } from '@questbook/service-validator-client';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+// import { BigNumber } from 'ethers';
 import getErrorMessage from 'src/utils/errorUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
-import { uploadToIPFS } from 'src/utils/ipfsUtils';
+import { BigNumber } from 'ethers';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
-import useApplicationRegistryContract from './contracts/useApplicationRegistryContract';
+import useApplicationReviewRegistryContract from './contracts/useApplicationReviewRegistryContract';
 
-export default function useResubmitApplication(
-  data: GrantApplicationUpdate,
-  chainId?: SupportedChainId,
-  applicationId?: string,
+export default function useMarkReviewPaymentDone(
+  workspaceId: string,
+  reviewIds: string[],
+  applicationsIds: string[],
+  totalAmount: BigNumber,
+  submitMarkDone: boolean,
+  reviewerAddress?: string,
+  reviewCurrencyAddress?: string,
+  transactionHash?: string,
 ) {
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
@@ -24,58 +29,56 @@ export default function useResubmitApplication(
   const [{ data: networkData }, switchNetwork] = useNetwork();
 
   const apiClients = useContext(ApiClientsContext)!;
-  const { validatorApi } = apiClients;
-
-  const currentChainId = useChainId();
-  const applicationRegistryContract = useApplicationRegistryContract(chainId);
-
+  const { workspace } = apiClients;
+  const chainId = getSupportedChainIdFromWorkspace(workspace);
+  const applicationReviewerContract = useApplicationReviewRegistryContract(chainId);
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
+  const currentChainId = useChainId();
 
   useEffect(() => {
-    if (data) {
+    // console.log(totalAmount);
+    if (!totalAmount) {
       setError(undefined);
       setIncorrectNetwork(false);
+    } else if (transactionData) {
+      setTransactionData(undefined);
+      setIncorrectNetwork(false);
     }
-  }, [data]);
+  }, [totalAmount, transactionData]);
 
   useEffect(() => {
     if (incorrectNetwork) {
       setIncorrectNetwork(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [applicationRegistryContract]);
+  }, [applicationReviewerContract]);
 
   useEffect(() => {
     if (incorrectNetwork) return;
     if (error) return;
     if (loading) return;
-    // console.log('calling createGrant');
 
-    async function validate() {
+    // console.log('YES');
+
+    async function markAsDone() {
+      // console.log('YES2');
+
       setLoading(true);
-      // console.log('calling validate');
       try {
-        const detailsHash = (
-          await uploadToIPFS(data.fields!.projectDetails[0].value)
-        ).hash;
-        // eslint-disable-next-line no-param-reassign
-        data.fields!.projectDetails[0].value = detailsHash;
-        console.log('Details hash: ', detailsHash);
-        const {
-          data: { ipfsHash },
-        } = await validatorApi.validateGrantApplicationUpdate(data);
-        if (!ipfsHash) {
-          throw new Error('Error validating grant data');
-        }
-        const txn = await applicationRegistryContract.updateApplicationMetadata(
-          applicationId,
-          ipfsHash,
-          data.milestones!.length,
+        const markPaymentTxb = await applicationReviewerContract.markPaymentDone(
+          workspaceId,
+          applicationsIds,
+          reviewerAddress,
+          reviewIds,
+          reviewCurrencyAddress,
+          totalAmount,
+          transactionHash,
         );
-        const txnData = await txn.wait();
 
-        setTransactionData(txnData);
+        const updateTxnData = await markPaymentTxb.wait();
+
+        setTransactionData(updateTxnData);
         setLoading(false);
       } catch (e: any) {
         const message = getErrorMessage(e);
@@ -95,37 +98,42 @@ export default function useResubmitApplication(
       }
     }
     try {
-      if (!data) return;
+      if (!submitMarkDone) return;
+      if (!workspaceId) return;
       if (transactionData) return;
-      if (!chainId) return;
       if (!accountData || !accountData.address) {
         throw new Error('not connected to wallet');
       }
+      if (!workspace) {
+        throw new Error('not connected to workspace');
+      }
       if (!currentChainId) {
-        if (switchNetwork && chainId) { switchNetwork(chainId); }
+        if (switchNetwork && chainId) {
+          switchNetwork(chainId);
+        }
         setIncorrectNetwork(true);
         setLoading(false);
         return;
       }
       if (chainId !== currentChainId) {
-        if (switchNetwork && chainId) { switchNetwork(chainId); }
+        if (switchNetwork && chainId) {
+          switchNetwork(chainId);
+        }
         setIncorrectNetwork(true);
         setLoading(false);
         return;
       }
-      if (!validatorApi) {
-        throw new Error('validatorApi or workspaceId is not defined');
-      }
       if (
-        !applicationRegistryContract
-        || applicationRegistryContract.address
+        !applicationReviewerContract
+        || applicationReviewerContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !applicationRegistryContract.signer
-        || !applicationRegistryContract.provider
+        || !applicationReviewerContract.signer
+        || !applicationReviewerContract.provider
       ) {
         return;
       }
-      validate();
+
+      markAsDone();
     } catch (e: any) {
       const message = getErrorMessage(e);
       setError(message);
@@ -148,24 +156,24 @@ export default function useResubmitApplication(
     loading,
     toast,
     transactionData,
-    applicationRegistryContract,
-    validatorApi,
+    workspace,
     accountData,
     networkData,
     currentChainId,
     chainId,
-    data,
-    applicationId,
     incorrectNetwork,
+    reviewIds,
+    transactionHash,
+    reviewerAddress,
+    reviewCurrencyAddress,
   ]);
 
   return [
     transactionData,
-    chainId
-      ? `${CHAIN_INFO[chainId]
+    currentChainId
+      ? `${CHAIN_INFO[currentChainId]
         .explorer.transactionHash}${transactionData?.transactionHash}`
       : '',
     loading,
-    error,
   ];
 }

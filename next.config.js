@@ -10,7 +10,7 @@ const nextConfig = {
     return config;
   },
   env: {
-    IS_TEST: process.env.IS_TEST,
+    NEXT_PUBLIC_IS_TEST: process.env.NEXT_PUBLIC_IS_TEST,
   }
 }
 

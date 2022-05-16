@@ -44,6 +44,7 @@ function ApplicantDetails({ onSubmit }: Props) {
 
   const [milestoneSelectOptionIsVisible, setMilestoneSelectOptionIsVisible] = React.useState(false);
   const [multipleMilestones, setMultipleMilestones] = useState(false);
+  const [defaultMilestoneFields, setDefaultMilestoneFields] = useState<any[]>([]);
 
   const [customFieldsOptionIsVisible, setCustomFieldsOptionIsVisible] = React.useState(false);
   const [customFields, setCustomFields] = useState<any[]>([{
@@ -91,6 +92,18 @@ function ApplicantDetails({ onSubmit }: Props) {
       });
       setCustomFields(errorCheckedCustomFields);
     }
+    if (defaultMilestoneFields.length > 0) {
+      const errorCheckedDefaultMilestoneFields = defaultMilestoneFields
+        .map((defaultMilestoneField: any) => {
+          const errorCheckedDefaultMilestoneField = { ...defaultMilestoneField };
+          if (defaultMilestoneField.value.length <= 0) {
+            errorCheckedDefaultMilestoneField.isError = true;
+            error = true;
+          }
+          return errorCheckedDefaultMilestoneField;
+        });
+      setDefaultMilestoneFields(errorCheckedDefaultMilestoneFields);
+    }
     if (!error) {
       const requiredDetails = {} as any;
       detailsRequired.forEach((detail) => {
@@ -132,11 +145,20 @@ function ApplicantDetails({ onSubmit }: Props) {
           inputType: 'short-form',
         };
       }
-      if (customFields.length > 0) {
+      if (customFieldsOptionIsVisible && customFields.length > 0) {
         customFields.forEach((customField: any, index: number) => {
           const santizedCustomFieldValue = customField.value.split(' ').join('\\s');
           fields[`customField${index}-${santizedCustomFieldValue}`] = {
             title: customField.value,
+            inputType: 'short-form',
+          };
+        });
+      }
+      if (defaultMilestoneFields.length > 0) {
+        defaultMilestoneFields.forEach((defaultMilestoneField: any, index: number) => {
+          const santizedDefaultMilestoneFieldValue = defaultMilestoneField.value.split(' ').join('\\s');
+          fields[`defaultMilestone${index}-${santizedDefaultMilestoneFieldValue}`] = {
+            title: defaultMilestoneField.value,
             inputType: 'short-form',
           };
         });
@@ -188,7 +210,7 @@ function ApplicantDetails({ onSubmit }: Props) {
             }
             if (id === 'isMultipleMilestones') {
               return (
-                <GridItem colSpan={1}>
+                <GridItem key={id} colSpan={1}>
                   <Badge
                     isActive={milestoneSelectOptionIsVisible}
                     onClick={() => {
@@ -196,6 +218,7 @@ function ApplicantDetails({ onSubmit }: Props) {
                         !milestoneSelectOptionIsVisible,
                       );
                       setMultipleMilestones(false);
+                      setDefaultMilestoneFields([]);
                     }}
                     label="Milestones"
                     tooltip="Add milestones for the applicant to complete"
@@ -289,7 +312,7 @@ function ApplicantDetails({ onSubmit }: Props) {
                 mr="6px"
               />
               <Text fontWeight="500" fontSize="14px" color="#8850EA" lineHeight="20px">
-                Add another criteria
+                Add another question
               </Text>
             </Box>
           </Flex>
@@ -307,7 +330,12 @@ function ApplicantDetails({ onSubmit }: Props) {
           <Flex mt={1} maxW="420px">
             <Badge
               isActive={!multipleMilestones}
-              onClick={() => setMultipleMilestones(false)}
+              onClick={() => {
+                const newDefaultMilestoneFields = [...defaultMilestoneFields];
+                newDefaultMilestoneFields.splice(1);
+                setDefaultMilestoneFields(newDefaultMilestoneFields);
+                setMultipleMilestones(false);
+              }}
               label="Single Milestone"
               inActiveVariant="solid"
               variant="buttonGroupStart"
@@ -320,6 +348,78 @@ function ApplicantDetails({ onSubmit }: Props) {
               variant="buttonGroupEnd"
             />
           </Flex>
+
+          <Box mb={8} />
+          {defaultMilestoneFields.map((defaultMilestoneField, index) => (
+            <>
+              <Flex mt={2} mb="-21px" gap="2" justifyContent="flex-end">
+                <Box
+                  onClick={() => {
+                    const newDefaultMilestoneFields = [...defaultMilestoneFields];
+                    newDefaultMilestoneFields.splice(index, 1);
+                    setDefaultMilestoneFields(newDefaultMilestoneFields);
+                  }}
+                  display="flex"
+                  alignItems="center"
+                  cursor="pointer"
+                  zIndex={1}
+                >
+                  <Image
+                    h="12px"
+                    w="12px"
+                    src="/ui_icons/delete_red.svg"
+                    mr="6px"
+                    mt="-2px"
+                  />
+                  <Text fontWeight="500" fontSize="14px" color="#DF5252" lineHeight="20px">
+                    Delete
+                  </Text>
+                </Box>
+              </Flex>
+              <SingleLineInput
+                label={`Milestone ${index + 1}`}
+                value={defaultMilestoneField.value}
+                onChange={(e) => {
+                  const newDefaultMilestoneFields = [...defaultMilestoneFields];
+                  newDefaultMilestoneFields[index].value = e.target.value;
+                  newDefaultMilestoneFields[index].isError = false;
+                  setDefaultMilestoneFields(newDefaultMilestoneFields);
+                }}
+                placeholder="Field Label"
+                isError={defaultMilestoneField.isError}
+                errorText="Required"
+                maxLength={250}
+              />
+              <Box mt={1} />
+            </>
+          ))}
+          {(multipleMilestones || (!multipleMilestones && defaultMilestoneFields.length === 0)) && (
+          <Flex mt="-4px" gap="2" justifyContent="flex-start">
+            <Box
+              onClick={() => {
+                const newDefaultMilestoneFields = [...defaultMilestoneFields, {
+                  value: '',
+                  isError: false,
+                }];
+                setDefaultMilestoneFields(newDefaultMilestoneFields);
+              }}
+              display="flex"
+              alignItems="center"
+              cursor="pointer"
+            >
+              <Image
+                h="16px"
+                w="15px"
+                src="/ui_icons/plus_circle.svg"
+                mr="6px"
+              />
+              <Text fontWeight="500" fontSize="14px" color="#8850EA" lineHeight="20px">
+                Add another milestone
+              </Text>
+            </Box>
+          </Flex>
+          )}
+          <Box mt={6} />
         </>
         )}
 

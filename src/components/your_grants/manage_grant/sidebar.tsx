@@ -2,7 +2,6 @@ import {
   Box, Text, Flex, Image, Divider, Button, Link,
 } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
-// import { ExternalLinkIcon } from '@chakra-ui/icons';
 import React from 'react';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import config from 'src/constants/config';

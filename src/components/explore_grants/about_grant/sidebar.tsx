@@ -25,19 +25,24 @@ function Sidebar({
           Requisite for Application
         </Text>
         <VStack alignItems="stretch" mt={10} p={0} spacing={4}>
-          {grantRequiredFields?.map(({ detail, tooltip }) => (
-            <Text
-              fontWeight="400"
-              fontSize="16px"
-              lineHeight="20px"
-              key={`grant-required-field-${detail}`}
-            >
-              {detail}
-              {tooltip?.length ? (
-                <Tooltip icon="/ui_icons/tooltip_grey.svg" label={tooltip} />
-              ) : null}
-            </Text>
-          ))}
+          {grantRequiredFields?.map(({ detail, tooltip }) => {
+            if (!detail) {
+              return null;
+            }
+            return (
+              <Text
+                fontWeight="400"
+                fontSize="16px"
+                lineHeight="20px"
+                key={`grant-required-field-${detail}`}
+              >
+                {detail}
+                {tooltip?.length ? (
+                  <Tooltip icon="/ui_icons/tooltip_grey.svg" label={tooltip} />
+                ) : null}
+              </Text>
+            );
+          })}
         </VStack>
         {acceptingApplications && (
         <Button
