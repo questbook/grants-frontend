@@ -304,7 +304,7 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
             src="/ui_icons/info_brand.svg"
           />
           {' '}
-          By pressing Publish Grant you&apos;ll have to approve this transaction
+          By clicking Publish Grant you&apos;ll have to approve this transaction
           in your wallet.
           {' '}
           <Link

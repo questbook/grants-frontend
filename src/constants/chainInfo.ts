@@ -108,6 +108,12 @@ export const CHAIN_INFO: ChainInfoMap = {
       transactionHash: 'https://explorer.pops.one/tx/',
     },
     supportedCurrencies: {
+      '0x778fbd9df477b888534ebd84a3d2c9d5347bf149': {
+        icon: '/ui_icons/brand/currency/usdc_icon.svg',
+        label: 'USDC',
+        address: '0x778fbd9df477b888534ebd84a3d2c9d5347bf149',
+        decimals: 6,
+      },
       '0xc27255d7805fc79e4616d5cd50d6f4464aea75a3': {
         icon: '/ui_icons/brand/currency/dai_icon.svg',
         label: '1DAI',

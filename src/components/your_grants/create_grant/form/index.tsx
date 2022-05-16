@@ -490,7 +490,7 @@ function Form({
         />
         {' '}
         <Text variant="footer">
-          By pressing Publish Grant you&apos;ll have to approve this transaction
+          By clicking Publish Grant you&apos;ll have to approve this transaction
           in your wallet.
           {' '}
           <Link

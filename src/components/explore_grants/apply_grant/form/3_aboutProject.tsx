@@ -354,7 +354,7 @@ function AboutProject({
           src="/ui_icons/plus_circle.svg"
           alt="link"
         />
-        Add another milestone
+        Add a milestone
       </Text>
     </>
   );
