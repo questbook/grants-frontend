@@ -307,7 +307,7 @@ function ApplicantDetails({
         </Text>
         <Flex>
           <Text color="#717A7C" fontSize="14px" lineHeight="20px">
-            Once you recieve applications you can assign reviewers to each applicant,
+            Once you receive applications you can assign reviewers to each applicant,
             and setup a evaluation scorecard to get 360° feedback.
           </Text>
         </Flex>
