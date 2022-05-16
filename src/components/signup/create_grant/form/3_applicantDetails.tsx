@@ -452,7 +452,7 @@ function ApplicantDetails({ onSubmit }: Props) {
             </Text>
             <Flex>
               <Text color="#717A7C" fontSize="14px" lineHeight="20px">
-                Define a set of criteria for reviewers to evaluate the application
+                Define a set of criteria for reviewers to evaluate the application.
                 You can add this later too.
               </Text>
             </Flex>
