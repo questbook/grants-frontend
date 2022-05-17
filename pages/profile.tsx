@@ -1,5 +1,10 @@
 import {
-  Divider, Flex, IconButton, Image, Text,
+  Divider,
+  Stack,
+  Flex,
+  IconButton,
+  Image,
+  Text,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { useGetDaoDetailsQuery } from 'src/generated/graphql';
@@ -7,9 +12,7 @@ import NavbarLayout from 'src/layout/navbarLayout';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import { DAOGrant, DAOWorkspace } from 'src/types';
 import BrowseGrantCard from 'src/components/profile/grantCard';
-import {
-  formatAmount,
-} from 'src/utils/formattingUtils';
+import { formatAmount } from 'src/utils/formattingUtils';
 import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
 import SeeMore from 'src/components/profile/see_more';
@@ -34,7 +37,7 @@ function Profile() {
   useEffect(() => {
     if (router && router.query) {
       const { chainId: cId, daoId: dId } = router.query;
-      setChainId(cId as unknown as SupportedChainId);
+      setChainId((cId as unknown) as SupportedChainId);
       setDaoId(dId?.toString());
     }
   }, [router]);
@@ -77,11 +80,14 @@ function Profile() {
         lg: '52%',
       }}
       mx="auto"
+      borderLeft="1px solid #E8E9E9"
+      borderRight="1px solid #E8E9E9"
     >
-      <Flex direction="column" h="300px" align="end" pos="relative">
+      <Stack w="full">
         <Flex
           bg={workspaceData?.coverImageIpfsHash ? 'white' : 'brand.500'}
           h="210px"
+          w="fill"
         >
           {workspaceData?.coverImageIpfsHash && (
             <Image
@@ -93,78 +99,79 @@ function Profile() {
           )}
         </Flex>
 
-        <Flex direction="row">
-          {workspaceData?.socials.map((social) => (
-            <IconButton
-              aria-label={social.name}
-              // as={Button}
-              zIndex={10}
-              ml={3}
-              mt={3}
-              p={3}
-              border="1px solid #E8E9E9"
-              borderRadius="10px"
-              icon={(
-                <Image
-                  boxSize="24px"
-                  src={`/ui_icons/profile_${social.name}.svg`}
-                />
-              )}
-              bg="white"
-              boxSize="48px"
-              onClick={() => {
-                window.open(social.value, '_blank');
-              }}
-            />
-          ))}
-        </Flex>
-
-        <Flex pos="absolute" left="5%" bottom={0} w="100%">
-          <Flex direction="row" w="100%" align="end">
+        <Flex direction="column" m="auto" w="100%">
+          <Flex
+            direction="row"
+            w="100%"
+            align="end"
+            mt="-3.5rem"
+            px="1.5rem"
+            gap="1rem"
+          >
             <Image
               src={getUrlForIPFSHash(workspaceData?.logoIpfsHash!)}
               w="120px"
               h="120px"
+              borderRadius="12px"
             />
-            <Flex direction="column" align="start" ml={5}>
-              <Text variant="heading">{workspaceData?.title}</Text>
+
+            <Flex direction="column" align="start">
+              <Text variant="heading" fontWeight="700" fontSize="1.8rem">
+                {workspaceData?.title}
+              </Text>
               {chainID && (
-                <Flex
-                  direction="row"
-                  align="center"
-                  bg="#F3F4F4"
-                  border="1px solid #E8E9E9"
-                  borderRadius="8px"
-                  py={2}
-                  pr={4}
-                  pl={2}
+                <Text
+                  variant="applicationText"
+                  fontWeight="400"
+                  fontSize="1rem"
+                  color="#717A7C"
                 >
-                  <Image mr={3} boxSize="18px" src={CHAIN_INFO[chainID].icon} />
-                  <Text
-                    variant="applicationText"
-                    fontWeight="500"
-                    color="#717A7C"
-                  >
-                    {CHAIN_INFO[chainID].name}
-                  </Text>
-                </Flex>
+                  {CHAIN_INFO[chainID].name}
+                </Text>
               )}
             </Flex>
+
+            <Flex direction="row" alignSelf="start" justify="right" mt="3.5rem">
+              {workspaceData?.socials.map((social) => (
+                <IconButton
+                  aria-label={social.name}
+                  // as={Button}
+                  zIndex={10}
+                  border="1px solid #E8E9E9"
+                  borderRadius="10px"
+                  icon={
+                    <Image
+                      boxSize="1rem"
+                      src={`/ui_icons/profile_${social.name}.svg`}
+                    />
+                  }
+                  bg="white"
+                  boxSize="2.5rem"
+                  onClick={() => {
+                    window.open(social.value, '_blank');
+                  }}
+                />
+              ))}
+            </Flex>
           </Flex>
+
+          <Stack px="1.5rem">
+            {workspaceData?.about && <SeeMore text={workspaceData?.about} />}
+            </Stack>
+
+            <Divider />
+            <Stack px="1.5rem">
+            <Text my={4} variant="heading">
+              Browse Grants
+            </Text>
+            </Stack>
+
+            <Divider/>
+
         </Flex>
-      </Flex>
+      </Stack>
 
-      {workspaceData?.about && <SeeMore text={workspaceData?.about} />}
-
-      <Divider />
-
-      <Text my={4} variant="heading">
-        Browse Grants
-      </Text>
-
-      <Divider />
-
-      {grantData
+      {/*grantData
         && grantData.length > 0
         && grantData.map((grant) => {
           const chainId = getSupportedChainIdFromSupportedNetwork(
@@ -230,7 +237,7 @@ function Profile() {
               }}
             />
           );
-        })}
+        })*/}
     </Flex>
   );
 }
