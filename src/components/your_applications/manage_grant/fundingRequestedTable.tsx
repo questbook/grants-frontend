@@ -15,6 +15,13 @@ import {
   getTextWithEllipses,
 } from '../../../utils/formattingUtils';
 
+type Token = {
+  label: string;
+  address: string;
+  icon: string;
+  decimals: number
+};
+
 const TABLE_HEADERS = {
   milestoneTitle: {
     title: 'Funding Received',
@@ -25,32 +32,45 @@ const TABLE_HEADERS = {
       assetDecimals: any,
       __: any,
       chainId: SupportedChainId | undefined,
-    ) => (
-      <>
-        <Image
-          display="inline-block"
-          src={getAssetInfo(assetId, chainId)?.icon}
-          mr={2}
-          h="27px"
-          w="27px"
-        />
-        <Text textAlign="start" variant="applicationText">
-          {getMilestoneTitle(item.milestone)}
-          {' '}
-          -
-          {' '}
-          <Text
+      rewardToken: Token | undefined,
+    ) => {
+      let icon;
+      let label;
+      if (rewardToken) {
+        icon = rewardToken.icon;
+        label = rewardToken.label;
+      } else {
+        icon = getAssetInfo(assetId, chainId)?.icon;
+        label = getAssetInfo(assetId, chainId)?.label;
+      }
+
+      return (
+        <>
+          <Image
             display="inline-block"
-            variant="applicationText"
-            fontWeight="700"
-          >
-            {formatAmount(item.amount, assetDecimals)}
+            src={icon}
+            mr={2}
+            h="27px"
+            w="27px"
+          />
+          <Text textAlign="start" variant="applicationText">
+            {getMilestoneTitle(item.milestone)}
             {' '}
-            {getAssetInfo(assetId, chainId)?.label}
+            -
+            {' '}
+            <Text
+              display="inline-block"
+              variant="applicationText"
+              fontWeight="700"
+            >
+              {formatAmount(item.amount, assetDecimals)}
+              {' '}
+              {label}
+            </Text>
           </Text>
-        </Text>
-      </>
-    ),
+        </>
+      );
+    },
   },
   amount: {
     title: 'Amount',
@@ -154,6 +174,8 @@ export type FundingProps = {
   assetDecimals: number;
   grantId: string | null;
   chainId?: SupportedChainId | undefined;
+  // eslint-disable-next-line react/require-default-props
+  rewardToken?: Token;
 };
 
 function Funding({
@@ -163,6 +185,7 @@ function Funding({
   assetDecimals,
   grantId,
   chainId,
+  rewardToken,
 }: FundingProps) {
   const tableHeaders = useMemo(
     () => columns.map((column) => TABLE_HEADERS[column]),
@@ -234,7 +257,7 @@ function Funding({
                       align="center"
                       flex={flex}
                     >
-                      {content(item, assetId, assetDecimals, grantId, chainId)}
+                      {content(item, assetId, assetDecimals, grantId, chainId, rewardToken)}
                     </Flex>
                   ))}
               </Flex>

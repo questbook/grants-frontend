@@ -62,8 +62,6 @@ function CustomTokenModal({
   const toast = useToast();
   const toastRef = React.useRef<ToastId>();
 
-  console.log('supportedCurrenciesList', supportedCurrenciesList);
-
   const validateTokenAddress = () => {
     if (!tokenAddress || !isValidAddress(tokenAddress)) {
       setTokenAddressError(true);
@@ -81,7 +79,6 @@ function CustomTokenModal({
       setTokenIconIPFSURI(imageIPFSURL);
       setTokenIconHash(imageHash);
       // setTokenIconError(false);
-      console.log('Image hash', imageIPFSURL);
       return imageIPFSURL;
     }
     toastRef.current = toast({

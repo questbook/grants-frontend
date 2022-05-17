@@ -66,8 +66,6 @@ function GrantRewardsInput({
   shouldEncryptReviews: boolean;
   setShouldEncryptReviews: (shouldEncryptReviews: boolean) => void;
 }) {
-  console.log('SupportedCurrencies', supportedCurrencies);
-
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState(supportedCurrencies);
   const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false);
@@ -110,14 +108,12 @@ function GrantRewardsInput({
             value={rewardCurrency}
             // eslint-disable-next-line react/no-unstable-nested-components
             onChange={(data: any) => {
-              console.log('tokenDATA', data);
               if (data === 'addERCToken') {
                 setIsModalOpen(true);
               }
               setRewardCurrency(data.label);
               setRewardCurrencyAddress(data.id);
               if (data !== 'addERCToken' && !isJustAddedToken && data.icon.lastIndexOf('ui_icons') === -1) {
-                console.log('custom token', data);
                 setRewardToken({
                   iconHash: data.icon.substring(data.icon.lastIndexOf('=') + 1),
                   address: data.address,
