@@ -60,8 +60,8 @@ function Application({ applicationData, showHiddenData }: Props) {
     setDecodedDetails(d);
   };
 
-  let icon : string;
-  let label : string;
+  let icon: string;
+  let label: string;
   let decimals;
   if (applicationData?.grant.reward.token) {
     label = applicationData.grant.reward.token.label;
@@ -243,6 +243,7 @@ function Application({ applicationData, showHiddenData }: Props) {
                   </Text>
                   <Flex direction="row" justify="start" mt={3}>
                     <Image
+                      boxSize="48px"
                       src={
                         icon
                       }
@@ -282,10 +283,8 @@ function Application({ applicationData, showHiddenData }: Props) {
             </Heading>
             <Flex direction="row" justify="start" mt={3} mb={10}>
               <Image
-                src={
-                  getAssetInfo(applicationData?.grant?.reward?.asset, chainId)
-                    ?.icon
-                }
+                boxSize="48px"
+                src={icon}
               />
               <Box ml={2} />
               <Flex direction="column" justify="center" align="start">

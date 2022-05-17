@@ -31,8 +31,7 @@ export function timeToString(
       0,
       3,
     )}, ${date.getFullYear()}`
-    : `${months[date.getMonth()]} ${date.getUTCDate().toString()} ${
-      show_year ? date.getFullYear() : ''
+    : `${months[date.getMonth()]} ${date.getUTCDate().toString()} ${show_year ? date.getFullYear() : ''
     }`;
 }
 export function parseAmount(number: string, contractAddress?: string, decimal?: number) {
@@ -40,9 +39,6 @@ export function parseAmount(number: string, contractAddress?: string, decimal?: 
     return ethers.utils.parseUnits(number, decimal).toString();
   }
   let decimals = 18;
-  console.log('nnnunun');
-  console.log(number);
-
   if (contractAddress) {
     let allCurrencies: any[] = [];
     ALL_SUPPORTED_CHAIN_IDS.forEach((id) => {
@@ -59,7 +55,6 @@ export function parseAmount(number: string, contractAddress?: string, decimal?: 
     decimals = allCurrencies.find((currency) => currency.address === contractAddress)
       ?.decimals || 18;
 
-    console.log(decimals);
     return ethers.utils.parseUnits(number, decimals).toString();
   }
 
