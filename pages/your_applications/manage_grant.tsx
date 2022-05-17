@@ -261,6 +261,7 @@ function ManageGrant() {
             assetDecimals={decimals}
             grantId={applicationData.grant?.id}
             chainId={chainId}
+            rewardToken={rewardToken}
           />
         )}
       </Container>

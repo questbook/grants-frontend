@@ -52,6 +52,7 @@ function Application({ applicationData, showHiddenData }: Props) {
   const [teamMembers, setTeamMembers] = useState('');
   const [memberDetails, setMemberDetails] = useState<any[]>([]);
   const [customFields, setCustomFields] = useState<any[]>([]);
+  const [decimal, setDecimal] = useState<number>();
 
   const [decodedDetails, setDecodedDetails] = useState('');
   const getDecodedDetails = async (detailsHash: string) => {
@@ -105,6 +106,16 @@ function Application({ applicationData, showHiddenData }: Props) {
         ?.find((fld: any) => fld?.id?.split('.')[1] === 'memberDetails')
         ?.values.map((val) => val.value) ?? [],
     );
+    if (applicationData.grant.reward.token) {
+      setDecimal(applicationData.grant.reward.token.decimal);
+    } else {
+      setDecimal(CHAIN_INFO[
+        getSupportedChainIdFromSupportedNetwork(
+          applicationData.grant.workspace.supportedNetworks[0],
+        )
+      ]?.supportedCurrencies[applicationData.grant.reward.asset.toLowerCase()]
+        ?.decimals);
+    }
 
     if (applicationData.fields.length > 0) {
       setCustomFields(applicationData.fields
@@ -257,12 +268,7 @@ function Application({ applicationData, showHiddenData }: Props) {
                         {milestone?.amount && applicationData
                           && formatAmount(
                             milestone?.amount,
-                            CHAIN_INFO[
-                              getSupportedChainIdFromSupportedNetwork(
-                                applicationData.grant.workspace.supportedNetworks[0],
-                              )
-                            ]?.supportedCurrencies[applicationData.grant.reward.asset.toLowerCase()]
-                              ?.decimals ?? 18,
+                            decimal ?? 18,
                           )}
                         {' '}
                         {
