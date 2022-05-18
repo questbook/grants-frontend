@@ -79,7 +79,7 @@ function ManageGrant() {
 
   const {
     data: {
-      milestones, rewardAsset, fundingAsk, decimals,
+      milestones, rewardAsset, rewardToken, fundingAsk, decimals,
     },
     refetch: refetchMilestones,
   } = useApplicationMilestones(applicationID);
@@ -117,6 +117,8 @@ function ManageGrant() {
     },
   });
 
+  // console.log('Funds Disbursed', fundsDisbursed);
+
   const [applicationData, setApplicationData] = useState<GetApplicationDetailsQuery['grantApplication']>(null);
   const applicantEmail = useMemo(
     () => applicationData?.fields.find(
@@ -142,7 +144,14 @@ function ManageGrant() {
     }
   };
 
-  const assetInfo = getAssetInfo(rewardAsset, getSupportedChainIdFromWorkspace(workspace));
+  let assetInfo;
+
+  if (rewardToken) {
+    assetInfo = rewardToken;
+  } else {
+    assetInfo = getAssetInfo(rewardAsset, getSupportedChainIdFromWorkspace(workspace));
+  }
+
   const fundingIcon = assetInfo.icon;
 
   useEffect(() => {
@@ -162,6 +171,7 @@ function ManageGrant() {
           decimals={decimals}
           sendFundOpen={() => setIsSendFundModalOpen(true)}
           chainId={getSupportedChainIdFromWorkspace(workspace)}
+          rewardToken={rewardToken}
         />
       ),
     },
@@ -180,6 +190,7 @@ function ManageGrant() {
           grantId={applicationData?.grant?.id || ''}
           type="funding_sent"
           chainId={getSupportedChainIdFromWorkspace(workspace)}
+          rewardToken={rewardToken}
         />
       ),
     },

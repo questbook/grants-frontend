@@ -3,6 +3,12 @@ query getApplicationMilestones($grantId: ID!) {
       grant {
         reward {
           asset
+          token{
+          label
+          address
+          decimal
+          iconHash
+          }
         }
       },
       milestones {

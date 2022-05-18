@@ -287,7 +287,7 @@ function ApplicantDetails({
                   mr="6px"
                 />
                 <Text fontWeight="500" fontSize="14px" color="#8850EA" lineHeight="20px">
-                  Add another milestone
+                  Add a milestone
                 </Text>
               </Box>
             </Flex>
@@ -307,8 +307,8 @@ function ApplicantDetails({
         </Text>
         <Flex>
           <Text color="#717A7C" fontSize="14px" lineHeight="20px">
-            Once you recieve applications you can assign reviewers to each applicant,
-            and setup a evaluation scorecard to get 360° feedback.
+            Once you receive applications you can assign reviewers to each applicant,
+            and setup an evaluation scorecard to get feedback from them.
           </Text>
         </Flex>
       </Flex>
@@ -325,7 +325,7 @@ function ApplicantDetails({
           </Text>
           <Flex>
             <Text color="#717A7C" fontSize="14px" lineHeight="20px">
-              Define a set of criteria for reviewers to evaluate the application
+              Define a set of criteria for reviewers to evaluate the application.
               You can add this later too.
             </Text>
           </Flex>

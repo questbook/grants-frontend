@@ -82,7 +82,9 @@ function ViewApplication() {
     );
     let decimals: number;
     if (application.grant.reward.token) {
+      console.log('Application milestone ', application.milestones[0]);
       decimals = application.grant.reward.token.decimal;
+      console.log('decimals', decimals);
     } else {
       decimals = CHAIN_INFO[
         getSupportedChainIdFromSupportedNetwork(
@@ -109,31 +111,32 @@ function ViewApplication() {
       projectDetails: getStringField('projectDetails'),
       projectGoal: getStringField('projectGoals'),
       projectMilestones:
-        application.milestones.map((ms: any) => ({
-          milestone: ms.title,
-          // milestoneReward: ethers.utils.formatEther(ms.amount ?? '0'),
-          milestoneReward:
-            application ? formatAmount(
-              ms.amount,
-              decimals ?? 18,
-              true,
-            ) : '1'
-          ,
-        })) ?? [],
+        application.milestones.map((ms: any) => {
+          console.log('milestone', ms.amount);
+          return (
+            {
+              milestone: ms.title,
+              // milestoneReward: ethers.utils.formatEther(ms.amount ?? '0'),
+              milestoneReward:
+                application ? formatAmount(
+                  ms.amount,
+                  decimals ?? 18,
+                  true,
+                ) : '1'
+              ,
+            });
+        }) ?? [],
       // fundingAsk: ethers.utils.formatEther(getStringField('fundingAsk') ?? '0'),
       fundingAsk:
         application ? formatAmount(
           getStringField('fundingAsk'),
-          CHAIN_INFO[
-            getSupportedChainIdFromSupportedNetwork(
-              application.grant.workspace.supportedNetworks[0],
-            )
-          ]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
-            ?.decimals ?? 18,
+          decimals ?? 18,
           true,
         ) : '1',
       fundingBreakdown: getStringField('fundingBreakdown'),
     };
+
+    console.log('fd', fd.projectMilestones[0].milestoneReward);
     if (application?.grant?.fields?.find((field: any) => field.title === 'memberDetails') && !fd.membersDescription.length) {
       fd.membersDescription = [...Array(fd.teamMembers)].map(() => ({ description: '' }));
     }

@@ -53,7 +53,7 @@ function CustomTokenModal({
   // const [newCurrency, setNewCurrency] = useState<Token>();
   const [tokenAddressError, setTokenAddressError] = useState<boolean>(false);
   const [tokenIconError, setTokenIconError] = useState<boolean>(true);
-  const [image, setImage] = useState<string>(config.defaultDAOImagePath);
+  const [image, setImage] = useState<string>(config.defaultTokenUploadImagePath);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const [tokenData, setTokenData] = useState<WorkspaceUpdateRequest | any>();
@@ -61,8 +61,6 @@ function CustomTokenModal({
 
   const toast = useToast();
   const toastRef = React.useRef<ToastId>();
-
-  console.log('supportedCurrenciesList', supportedCurrenciesList);
 
   const validateTokenAddress = () => {
     if (!tokenAddress || !isValidAddress(tokenAddress)) {
@@ -81,7 +79,6 @@ function CustomTokenModal({
       setTokenIconIPFSURI(imageIPFSURL);
       setTokenIconHash(imageHash);
       // setTokenIconError(false);
-      console.log('Image hash', imageIPFSURL);
       return imageIPFSURL;
     }
     toastRef.current = toast({
@@ -195,7 +192,7 @@ function CustomTokenModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, txnData]);
   return (
-    <Modal isOpen={isModalOpen} onClose={() => { setIsModalOpen(false); setImage(config.defaultDAOImagePath); }} title="Add token" modalWidth={566}>
+    <Modal isOpen={isModalOpen} onClose={() => { setIsModalOpen(false); setImage(config.defaultTokenUploadImagePath); }} title="Add token" modalWidth={566}>
       <ModalBody px={10}>
         <Flex direction="column">
           <Box my={4} />
@@ -249,7 +246,7 @@ function CustomTokenModal({
           <Button variant="primary" onClick={handleSubmit}>
             {loading ? <Loader /> : 'Add token'}
           </Button>
-
+          <Box my={4} />
         </Flex>
       </ModalBody>
     </Modal>

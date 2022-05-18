@@ -15,6 +15,7 @@ import { SupportedChainId } from 'src/constants/chains';
 import VerifiedBadge from 'src/components/ui/verified_badge';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import verify from 'src/utils/grantUtils';
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import { getAssetInfo } from '../../src/utils/tokenUtils';
 import Sidebar from '../../src/components/your_applications/manage_grant/sidebar';
 import Breadcrumbs from '../../src/components/ui/breadcrumbs';
@@ -103,6 +104,11 @@ function ManageGrant() {
 
   const [isGrantVerified, setIsGrantVerified] = useState(false);
   const [grantFunding, setGrantFunding] = useState('');
+  const [fundingIcon, setFundingIcon] = useState('');
+  const [assetInfo, setAssetInfo] = useState({ label: '', icon: '' });
+  const [rewardToken, setRewardToken] = useState({
+    label: '', icon: '', decimals: 18, address: '',
+  });
 
   useEffect(() => {
     if (data && data.grantApplication && chainId) {
@@ -118,8 +124,30 @@ function ManageGrant() {
         id: application.id,
       });
 
-      const chainInfo = CHAIN_INFO[chainId]
-        ?.supportedCurrencies[application.grant.reward.asset.toLowerCase()];
+      let chainInfo;
+      // let assetInfo;
+
+      if (application.grant.reward.token) {
+        chainInfo = {
+          label: application.grant.reward.token.label,
+          address: application.grant.reward.token.address,
+          decimals: application.grant.reward.token.decimal,
+          icon: getUrlForIPFSHash(application.grant.reward.token.iconHash),
+        };
+        setRewardToken(chainInfo);
+        setAssetInfo({
+          label: chainInfo.label,
+          icon: chainInfo.icon,
+        });
+        setFundingIcon(chainInfo.icon);
+      } else {
+        chainInfo = CHAIN_INFO[chainId]
+          ?.supportedCurrencies[application.grant.reward.asset.toLowerCase()];
+        const asset = getAssetInfo(rewardAsset, chainId);
+        setAssetInfo(asset);
+        // setFundingIcon(assetInfo.icon);
+      }
+
       const [localIsGrantVerified, localFunding] = verify(
         application.grant.funding,
         chainInfo.decimals,
@@ -127,10 +155,10 @@ function ManageGrant() {
       setGrantFunding(localFunding);
       setIsGrantVerified(localIsGrantVerified);
     }
-  }, [data, error, loading, chainId]);
+  }, [data, error, rewardAsset, loading, chainId]);
 
-  const assetInfo = getAssetInfo(rewardAsset, chainId);
-  const fundingIcon = assetInfo.icon;
+  // const assetInfo = getAssetInfo(rewardAsset, chainId);
+  // const fundingIcon = assetInfo.icon;
 
   const tabs = [
     {
@@ -166,7 +194,7 @@ function ManageGrant() {
         <Text variant="heading" mt="18px">
           {applicationData.title}
           {isGrantVerified
-          && <VerifiedBadge grantAmount={grantFunding} grantCurrency={assetInfo.label} lineHeight="44px" />}
+            && <VerifiedBadge grantAmount={grantFunding} grantCurrency={assetInfo?.label} lineHeight="44px" />}
         </Text>
         <Box mt={5} />
 
@@ -188,7 +216,7 @@ function ManageGrant() {
               borderRadius={index !== selected ? 0 : '8px 8px 0px 0px'}
               borderRightWidth={
                 (index !== tabs.length - 1 && index + 1 !== selected)
-                || index === selected
+                  || index === selected
                   ? '2px'
                   : '0px'
               }
@@ -223,6 +251,7 @@ function ManageGrant() {
             rewardAssetId={rewardAsset}
             chainId={chainId}
             decimals={decimals}
+            rewardToken={rewardToken}
           />
         ) : (
           <Funding
@@ -232,6 +261,7 @@ function ManageGrant() {
             assetDecimals={decimals}
             grantId={applicationData.grant?.id}
             chainId={chainId}
+            rewardToken={rewardToken}
           />
         )}
       </Container>
