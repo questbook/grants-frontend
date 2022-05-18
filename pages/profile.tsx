@@ -1,26 +1,39 @@
+
+// UI Components
+import SeeMore from 'src/components/profile/see_more';
+import DaoData from 'src/components/profile/dao_data';
+
+import BrowseGrantCard from 'src/components/profile/grantCard';
+
 import {
   Divider,
   Stack,
+  VStack,
   Flex,
   IconButton,
   Image,
   Text,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { useGetDaoDetailsQuery } from 'src/generated/graphql';
+
+// APP LAYOUT & STATE
 import NavbarLayout from 'src/layout/navbarLayout';
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
+import { ApiClientsContext } from './_app';
+
+// CONSTANTS AND TYPES
 import { DAOGrant, DAOWorkspace } from 'src/types';
-import BrowseGrantCard from 'src/components/profile/grantCard';
+import { SupportedChainId } from 'src/constants/chains';
+import { CHAIN_INFO } from 'src/constants/chainInfo';
+
+// UTILS AND TOOLS
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import { formatAmount } from 'src/utils/formattingUtils';
 import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
-import SeeMore from 'src/components/profile/see_more';
-import { SupportedChainId } from 'src/constants/chains';
-import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import verify from 'src/utils/grantUtils';
-import { ApiClientsContext } from './_app';
+import { useGetDaoDetailsQuery } from 'src/generated/graphql';
+
 
 function Profile() {
   const router = useRouter();
@@ -155,9 +168,23 @@ function Profile() {
             </Flex>
           </Flex>
 
-          <Stack px="1.5rem">
+          <Stack
+          px="1.5rem">
             {workspaceData?.about && <SeeMore text={workspaceData?.about} />}
-            </Stack>
+          </Stack>
+
+          <Stack
+          px="1.5rem"
+          pb="2rem"
+          pt="1rem"
+          >
+           <DaoData
+            grants="50000"
+            winners="20"
+            applicants="1000"
+            time="1D"
+          />
+          </Stack>
 
             <Divider />
             <Stack px="1.5rem">
