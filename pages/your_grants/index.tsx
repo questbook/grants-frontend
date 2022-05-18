@@ -181,6 +181,10 @@ function YourGrants() {
     if (!workspace) return;
     if (!accountData) return;
 
+    const tempMember = workspace.members.find(
+      (m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
+    );
+    console.log("member",workspace?.id);
     setQueryParams({
       client:
         subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
@@ -189,9 +193,11 @@ function YourGrants() {
         skip: PAGE_SIZE * currentPage,
         workspaceId: workspace?.id,
         acceptingApplications: tabs[selectedTab].acceptingApplications,
+        actorId: tempMember?.actorId,
       },
       fetchPolicy: 'network-only',
     });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, workspace, accountData?.address, selectedTab]);
 

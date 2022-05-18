@@ -2965,15 +2965,12 @@ export type GetAllGrantsForADaoQueryVariables = Exact<{
 export type GetAllGrantsForADaoQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
 
 export type GetAllGrantsForCreatorQueryVariables = Exact<{
-  first?: InputMaybe<Scalars['Int']>;
-  skip?: InputMaybe<Scalars['Int']>;
-  creatorId?: InputMaybe<Scalars['Bytes']>;
   workspaceId?: InputMaybe<Scalars['String']>;
-  acceptingApplications?: InputMaybe<Scalars['Boolean']>;
+  actorId: Scalars['Bytes'];
 }>;
 
 
-export type GetAllGrantsForCreatorQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, acceptingApplications: boolean, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> }, rubric?: { __typename?: 'Rubric', isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }> };
+export type GetAllGrantsForCreatorQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, acceptingApplications: boolean, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', actorId: string }> }, rubric?: { __typename?: 'Rubric', isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }> };
 
 export type GetApplicantsForAGrantQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -3309,12 +3306,10 @@ export type GetAllGrantsForADaoQueryHookResult = ReturnType<typeof useGetAllGran
 export type GetAllGrantsForADaoLazyQueryHookResult = ReturnType<typeof useGetAllGrantsForADaoLazyQuery>;
 export type GetAllGrantsForADaoQueryResult = Apollo.QueryResult<GetAllGrantsForADaoQuery, GetAllGrantsForADaoQueryVariables>;
 export const GetAllGrantsForCreatorDocument = gql`
-    query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String, $acceptingApplications: Boolean) {
+    query getAllGrantsForCreator($workspaceId: String, $actorId: Bytes!) {
   grants(
-    first: $first
-    skip: $skip
     subgraphError: allow
-    where: {workspace: $workspaceId, acceptingApplications: $acceptingApplications}
+    where: {workspace: $workspaceId}
     orderBy: createdAtS
     orderDirection: desc
   ) {
@@ -3339,6 +3334,9 @@ export const GetAllGrantsForCreatorDocument = gql`
       title
       logoIpfsHash
       supportedNetworks
+      members(where: {actorId: $actorId}) {
+        actorId
+      }
     }
     deadline
     funding
@@ -3369,15 +3367,12 @@ export const GetAllGrantsForCreatorDocument = gql`
  * @example
  * const { data, loading, error } = useGetAllGrantsForCreatorQuery({
  *   variables: {
- *      first: // value for 'first'
- *      skip: // value for 'skip'
- *      creatorId: // value for 'creatorId'
  *      workspaceId: // value for 'workspaceId'
- *      acceptingApplications: // value for 'acceptingApplications'
+ *      actorId: // value for 'actorId'
  *   },
  * });
  */
-export function useGetAllGrantsForCreatorQuery(baseOptions?: Apollo.QueryHookOptions<GetAllGrantsForCreatorQuery, GetAllGrantsForCreatorQueryVariables>) {
+export function useGetAllGrantsForCreatorQuery(baseOptions: Apollo.QueryHookOptions<GetAllGrantsForCreatorQuery, GetAllGrantsForCreatorQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetAllGrantsForCreatorQuery, GetAllGrantsForCreatorQueryVariables>(GetAllGrantsForCreatorDocument, options);
       }
