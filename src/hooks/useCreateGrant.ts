@@ -64,11 +64,28 @@ export default function useCreateGrant(
     if (error) return;
     if (loading) return;
 
+    console.log('YEEES');
+
     async function validate() {
       setLoading(true);
-      // console.log('calling validate');
+      console.log('calling validate');
       try {
         const detailsHash = (await uploadToIPFS(data.details)).hash;
+        let reward;
+        if (data.rewardToken.address === '') {
+          reward = {
+            committed: parseAmount(data.reward, data.rewardCurrencyAddress),
+            asset: data.rewardCurrencyAddress,
+          };
+        } else {
+          console.log('Reward before parsing', data.reward, data.rewardToken.decimal);
+          reward = {
+            committed: parseAmount(data.reward, undefined, data.rewardToken.decimal),
+            asset: data.rewardCurrencyAddress,
+            token: data.rewardToken,
+          };
+          console.log('Reward after parsing', reward);
+        }
         const {
           data: { ipfsHash },
         } = await validatorApi.validateGrantCreate({
@@ -76,10 +93,7 @@ export default function useCreateGrant(
           summary: data.summary,
           details: detailsHash,
           deadline: data.date,
-          reward: {
-            committed: parseAmount(data.reward, data.rewardCurrencyAddress),
-            asset: data.rewardCurrencyAddress,
-          },
+          reward,
           creatorId: accountData!.address,
           workspaceId: getSupportedValidatorNetworkFromChainId(
             (chainId ?? getSupportedChainIdFromWorkspace(workspace))!,
@@ -179,6 +193,7 @@ export default function useCreateGrant(
       ) {
         return;
       }
+
       validate();
     } catch (e: any) {
       const message = getErrorMessage(e);

@@ -14,7 +14,7 @@ import Tooltip from '../tooltip';
 
 interface SingleLineInputProps {
   label?: string;
-  value: string | undefined;
+  value: string | undefined ;
   onChange: ChangeEventHandler<HTMLInputElement>;
   onClick?: () => void;
   placeholder?: string;

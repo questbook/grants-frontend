@@ -9,9 +9,15 @@ query getApplicantsForAGrant($first: Int, $skip: Int, $grantID: String!) {
     grant {
       id
       title
-      funding
+      funding,
       reward {
         asset
+        token {
+          address,
+          label,
+          decimal,
+          iconHash
+        }
       }
       workspace {
         id
@@ -22,11 +28,26 @@ query getApplicantsForAGrant($first: Int, $skip: Int, $grantID: String!) {
     applicantId
     state
     createdAtS
+    updatedAtS
     fields {
       id
       values {
         value
       }
-    }
+    },
+    reviewers {
+      email
+      id
+    },
+   milestones {
+        id,
+        state,
+        title,
+        amount,
+        amountPaid,
+        updatedAtS,
+        feedbackDao,
+        feedbackDev
+      }
   }
 }

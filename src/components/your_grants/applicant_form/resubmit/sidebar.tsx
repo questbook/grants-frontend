@@ -3,6 +3,7 @@ import {
 } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import React, { useContext } from 'react';
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { getFormattedFullDateFromUnixTimestamp, truncateStringFromMiddle } from '../../../../utils/formattingUtils';
 import { getAssetInfo } from '../../../../utils/tokenUtils';
@@ -27,6 +28,14 @@ function Sidebar(
       (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
     )?.values[0]?.value : undefined;
 
+  let icon: string;
+  if (applicationData.grant.reward.token) {
+    icon = getUrlForIPFSHash(applicationData.grant.reward.token.iconHash);
+  } else {
+    icon = getAssetInfo(applicationData?.grant?.reward?.asset, chainId)
+      ?.icon;
+  }
+
   return (
     <Box mt="8px">
       <FloatingSidebar>
@@ -40,7 +49,7 @@ function Sidebar(
           Application Details
         </Heading>
         <Flex direction="row" justify="start" w="full" mt={6} align="center">
-          <Image h="45px" w="45px" src={getAssetInfo(applicationData?.grant?.reward?.asset, chainId)?.icon} />
+          <Image h="45px" w="45px" src={icon} />
           <Box mx={3} />
           <Tooltip label={applicationData?.applicantId}>
             <Heading variant="applicationHeading" color="brand.500">
@@ -54,7 +63,7 @@ function Sidebar(
             Name
           </Text>
           <Heading variant="applicationHeading" lineHeight="32px">
-            {applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'applicantName').values[0]?.value}
+            {applicationData?.fields?.find((fld: any) => fld?.id?.split('.')[1] === 'applicantName').values[0]?.value}
           </Heading>
         </Flex>
         <Flex direction="row" justify="space-between" w="full" align="center">
@@ -62,13 +71,13 @@ function Sidebar(
             Email
           </Text>
           <Heading variant="applicationHeading" lineHeight="32px">
-            {(applicationData?.fields?.find((fld:any) => fld?.id?.split('.')[1] === 'applicantEmail')) ? (
+            {(applicationData?.fields?.find((fld: any) => fld?.id?.split('.')[1] === 'applicantEmail')) ? (
               <>
                 {
-                applicationData?.fields?.find(
-                  (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
-                )?.values[0]?.value
-              }
+                  applicationData?.fields?.find(
+                    (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
+                  )?.values[0]?.value
+                }
                 <MailTo applicantEmail={applicantEmail} />
               </>
             ) : (

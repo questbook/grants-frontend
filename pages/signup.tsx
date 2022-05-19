@@ -63,6 +63,7 @@ function SignupDao() {
         supportedNetworks: [`chain_${workspaceData.network}` as SupportedNetwork],
         title: workspaceData.name,
         members: [],
+        tokens: [],
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

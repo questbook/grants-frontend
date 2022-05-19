@@ -26,6 +26,13 @@ const TABLE_HEADERS = [
   },
 ];
 
+type Token = {
+  label: string;
+  address: string;
+  icon: string;
+  decimals: number
+};
+
 export type AbstractMilestonesTableProps = {
   milestones: ApplicationMilestone[]
   rewardAssetId: string
@@ -34,14 +41,27 @@ export type AbstractMilestonesTableProps = {
   renderStatus: (milestone: ApplicationMilestone) => React.ReactNode
   chainId?: SupportedChainId | undefined,
   decimals?: number,
+  // eslint-disable-next-line react/require-default-props
+  rewardToken?: Token,
 };
 
 function AbstractMilestonesTable(
   {
-    milestones, rewardAssetId, renderStatus, chainId, decimals,
+    milestones, rewardAssetId, renderStatus, chainId, decimals, rewardToken,
   }: AbstractMilestonesTableProps,
 ) {
-  const { icon: rewardIcon, label: rewardSymbol } = getAssetInfo(rewardAssetId, chainId);
+  let rewardIcon: string;
+  let rewardSymbol: string;
+  if (rewardToken) {
+    rewardIcon = rewardToken.icon;
+    rewardSymbol = rewardToken.label;
+  } else {
+    const asset = getAssetInfo(rewardAssetId, chainId);
+    rewardSymbol = asset.label;
+    rewardIcon = asset.icon;
+  }
+
+  // const { icon: rewardIcon, label: rewardSymbol } = getAssetInfo(rewardAssetId, chainId);
 
   return (
     <Flex
@@ -154,7 +174,7 @@ function AbstractMilestonesTable(
 }
 
 AbstractMilestonesTable.defaultProps = {
-  sendFundOpen: () => {},
+  sendFundOpen: () => { },
   chainId: undefined,
   decimals: 18,
 };

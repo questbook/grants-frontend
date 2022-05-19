@@ -1,5 +1,10 @@
 export default {
   Button: {
+    baseStyle: {
+      _hover: { boxShadow: 'none' },
+      _focus: { boxShadow: 'none' },
+      _active: { boxShadow: 'none' },
+    },
     variants: {
       primary: {
         height: 12,

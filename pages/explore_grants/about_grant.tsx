@@ -106,9 +106,23 @@ function AboutGrant() {
 
   useEffect(() => {
     if (!chainId || !grantData) return;
-
-    const chainInfo = CHAIN_INFO[chainId]
-      ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];
+    let chainInfo;
+    let tokenIcon;
+    if (grantData.reward.token) {
+      tokenIcon = getUrlForIPFSHash(grantData.reward.token?.iconHash);
+      chainInfo = {
+        address: grantData.reward.token.address,
+        label: grantData.reward.token.label,
+        decimals: grantData.reward.token.decimal,
+        icon: tokenIcon,
+      };
+    } else {
+      chainInfo = CHAIN_INFO[chainId]?.supportedCurrencies[
+        grantData.reward.asset.toLowerCase()
+      ];
+    }
+    // const chainInfo = CHAIN_INFO[chainId]
+    //   ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];
     const [localIsGrantVerified, localFunding] = verify(grantData?.funding, chainInfo?.decimals);
 
     setFunding(localFunding);
@@ -123,10 +137,16 @@ function AboutGrant() {
         ? formatAmount(grantData?.reward?.committed, chainInfo?.decimals ?? 18)
         : '',
     );
-    const supportedCurrencyObj = getAssetInfo(
-      grantData?.reward?.asset?.toLowerCase(),
-      chainId,
-    );
+    let supportedCurrencyObj;
+    if (grantData.reward.token) {
+      setRewardCurrency(chainInfo.label);
+      setRewardCurrencyCoin(chainInfo.icon);
+    } else {
+      supportedCurrencyObj = getAssetInfo(
+        grantData?.reward?.asset?.toLowerCase(),
+        chainId,
+      );
+    }
 
     if (supportedCurrencyObj) {
       setRewardCurrency(supportedCurrencyObj?.label);
@@ -146,10 +166,27 @@ function AboutGrant() {
     setGrantDetails(grantData?.details);
     setGrantSummary(grantData?.summary);
     setGrantRequiredFields(
-      grantData?.fields?.map((field: any) => ({
-        detail: getFieldLabelFromFieldTitle(field.title) ?? 'Invalid Field',
-        // detail: field.title,
-      })),
+      grantData?.fields?.map((field: any) => {
+        console.log(field);
+        console.log(field.title.startsWith('defaultMilestone'));
+        if (field.title.startsWith('defaultMilestone')) return null;
+        if (field.title.startsWith('customField')) {
+          const i = field.title.indexOf('-');
+          if (i !== -1) {
+            return (
+              {
+                detail: field.title.substring(i + 1).split('\\s').join(' '),
+              }
+            );
+          }
+        }
+        return (
+          {
+            detail: getFieldLabelFromFieldTitle(field.title) ?? 'Invalid Field',
+            // detail: field.title,
+          }
+        );
+      }).filter((field: any) => field != null),
     );
 
     setAcceptingApplications(grantData?.acceptingApplications);
@@ -284,6 +321,21 @@ function AboutGrant() {
             rewardCurrencyCoin={rewardCurrencyCoin}
             payoutDescription={payoutDescription}
             chainId={chainId}
+            defaultMilestoneFields={grantData?.fields?.map((field: any) => {
+              // console.log(field);
+              // console.log(field.title.startsWith('defaultMilestone'));
+              if (field.title.startsWith('defaultMilestone')) {
+                const i = field.title.indexOf('-');
+                if (i !== -1) {
+                  return (
+                    {
+                      detail: field.title.substring(i + 1).split('\\s').join(' '),
+                    }
+                  );
+                }
+              }
+              return null;
+            }).filter((field: any) => field != null)}
           />
 
           <Divider mt={7} />

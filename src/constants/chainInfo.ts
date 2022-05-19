@@ -108,6 +108,12 @@ export const CHAIN_INFO: ChainInfoMap = {
       transactionHash: 'https://explorer.pops.one/tx/',
     },
     supportedCurrencies: {
+      '0x778fbd9df477b888534ebd84a3d2c9d5347bf149': {
+        icon: '/ui_icons/brand/currency/usdc_icon.svg',
+        label: 'USDC',
+        address: '0x778fbd9df477b888534ebd84a3d2c9d5347bf149',
+        decimals: 6,
+      },
       '0xc27255d7805fc79e4616d5cd50d6f4464aea75a3': {
         icon: '/ui_icons/brand/currency/dai_icon.svg',
         label: '1DAI',
@@ -242,6 +248,12 @@ export const CHAIN_INFO: ChainInfoMap = {
         icon: '/ui_icons/brand/currency/inch_symbol.svg',
         label: '1INCH',
         address: '0x9c2c5fd7b07e95ee044ddeba0e97a665f142394f',
+        decimals: 18,
+      },
+      '0x91c89a94567980f0e9723b487b0bed586ee96aa7': {
+        icon: '/ui_icons/brand/currency/biconomy_icon.svg',
+        label: 'BICO',
+        address: '0x91c89a94567980f0e9723b487b0bed586ee96aa7',
         decimals: 18,
       },
       /**

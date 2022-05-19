@@ -19,17 +19,15 @@ function ApplicantDetails({
   detailsRequired,
   toggleDetailsRequired,
 
-  // extraField,
-  // setExtraField,
-
-  // extraFieldDetails,
-  // setExtraFieldDetails,
-
-  // extraFieldError,
-  // setExtraFieldError,
+  customFields,
+  setCustomFields,
+  customFieldsOptionIsVisible,
+  setCustomFieldsOptionIsVisible,
 
   multipleMilestones,
   setMultipleMilestones,
+  defaultMilestoneFields,
+  setDefaultMilestoneFields,
 
   rubricRequired,
   setRubricRequired,
@@ -41,17 +39,15 @@ function ApplicantDetails({
   detailsRequired: any[];
   toggleDetailsRequired: (index: number) => void;
 
-  // extraField: boolean;
-  // setExtraField: (extraField: boolean) => void;
-
-  // extraFieldDetails: string;
-  // setExtraFieldDetails: (extraFieldDetails: string) => void;
-
-  // extraFieldError: boolean;
-  // setExtraFieldError: (extraFieldError: boolean) => void;
+  customFields: any[];
+  setCustomFields: (customFields: any[]) => void;
+  customFieldsOptionIsVisible: boolean;
+  setCustomFieldsOptionIsVisible: (customFieldsOptionIsVisible: boolean) => void;
 
   multipleMilestones: boolean;
   setMultipleMilestones: (multipleMilestones: boolean) => void;
+  defaultMilestoneFields: any[];
+  setDefaultMilestoneFields: (defaultMilestoneFields: any[]) => void;
 
   rubricRequired: boolean;
   setRubricRequired: (rubricRequired: boolean) => void;
@@ -69,6 +65,22 @@ function ApplicantDetails({
           const {
             title, required, tooltip, id,
           } = detail as any;
+          if (id === 'customFields') {
+            return (
+              <GridItem key={id} colSpan={1}>
+                <Badge
+                  isActive={customFieldsOptionIsVisible}
+                  onClick={() => {
+                    setCustomFieldsOptionIsVisible(
+                      !customFieldsOptionIsVisible,
+                    );
+                  }}
+                  label="Other Information"
+                  tooltip="Get additional details in your application form."
+                />
+              </GridItem>
+            );
+          }
           if (id === 'isMultipleMilestones') {
             return (
               <GridItem key={id} colSpan={1}>
@@ -79,6 +91,7 @@ function ApplicantDetails({
                       !milestoneSelectOptionIsVisible,
                     );
                     setMultipleMilestones(false);
+                    setDefaultMilestoneFields([]);
                   }}
                   label="Milestones"
                   tooltip="Add milestones for the applicant to complete"
@@ -105,23 +118,80 @@ function ApplicantDetails({
 
       <Box mt={6} />
 
-      {/* {extraField ? (
+      {customFieldsOptionIsVisible && (
         <>
-          <SingleLineInput
-            label="Field Name"
-            placeholder="Sample Field"
-            isError={extraFieldError}
-            errorText="Required"
-            value={extraFieldDetails}
-            onChange={(e) => {
-              setExtraFieldError(false);
-              setExtraFieldDetails(e.target.value);
-            }}
-            subtext="Letters and spaces are allowed."
-          />
-          <Box mt={8} />
+          {customFields.map((customField, index) => (
+            <>
+              {index > 0 && (
+                <Flex mt={2} mb="-21px" gap="2" justifyContent="flex-end">
+                  <Box
+                    onClick={() => {
+                      const newCustomFields = [...customFields];
+                      newCustomFields.splice(index, 1);
+                      setCustomFields(newCustomFields);
+                    }}
+                    display="flex"
+                    alignItems="center"
+                    cursor="pointer"
+                    zIndex={1}
+                  >
+                    <Image
+                      h="12px"
+                      w="12px"
+                      src="/ui_icons/delete_red.svg"
+                      mr="6px"
+                      mt="-2px"
+                    />
+                    <Text fontWeight="500" fontSize="14px" color="#DF5252" lineHeight="20px">
+                      Delete
+                    </Text>
+                  </Box>
+                </Flex>
+              )}
+              <SingleLineInput
+                label={`Question ${index + 1}`}
+                value={customField.value}
+                onChange={(e) => {
+                  const newCustomFields = [...customFields];
+                  newCustomFields[index].value = e.target.value;
+                  newCustomFields[index].isError = false;
+                  setCustomFields(newCustomFields);
+                }}
+                placeholder="Field Label"
+                isError={customField.isError}
+                errorText="Required"
+                maxLength={30}
+              />
+              <Box mt={1} />
+            </>
+          ))}
+          <Flex mt="-4px" gap="2" justifyContent="flex-start">
+            <Box
+              onClick={() => {
+                const newCustomFields = [...customFields, {
+                  value: '',
+                  isError: false,
+                }];
+                setCustomFields(newCustomFields);
+              }}
+              display="flex"
+              alignItems="center"
+              cursor="pointer"
+            >
+              <Image
+                h="16px"
+                w="15px"
+                src="/ui_icons/plus_circle.svg"
+                mr="6px"
+              />
+              <Text fontWeight="500" fontSize="14px" color="#8850EA" lineHeight="20px">
+                Add another question
+              </Text>
+            </Box>
+          </Flex>
+          <Box mt={6} />
         </>
-      ) : null} */}
+      )}
 
       {milestoneSelectOptionIsVisible && (
         <>
@@ -133,7 +203,12 @@ function ApplicantDetails({
           <Flex mt={1} maxW="420px">
             <Badge
               isActive={!multipleMilestones}
-              onClick={() => setMultipleMilestones(false)}
+              onClick={() => {
+                const newDefaultMilestoneFields = [...defaultMilestoneFields];
+                newDefaultMilestoneFields.splice(1);
+                setDefaultMilestoneFields(newDefaultMilestoneFields);
+                setMultipleMilestones(false);
+              }}
               label="Single Milestone"
               inActiveVariant="solid"
               variant="buttonGroupStart"
@@ -146,6 +221,78 @@ function ApplicantDetails({
               variant="buttonGroupEnd"
             />
           </Flex>
+
+          <Box mb={8} />
+          {defaultMilestoneFields.map((defaultMilestoneField, index) => (
+            <>
+              <Flex mt={2} mb="-21px" gap="2" justifyContent="flex-end">
+                <Box
+                  onClick={() => {
+                    const newDefaultMilestoneFields = [...defaultMilestoneFields];
+                    newDefaultMilestoneFields.splice(index, 1);
+                    setDefaultMilestoneFields(newDefaultMilestoneFields);
+                  }}
+                  display="flex"
+                  alignItems="center"
+                  cursor="pointer"
+                  zIndex={1}
+                >
+                  <Image
+                    h="12px"
+                    w="12px"
+                    src="/ui_icons/delete_red.svg"
+                    mr="6px"
+                    mt="-2px"
+                  />
+                  <Text fontWeight="500" fontSize="14px" color="#DF5252" lineHeight="20px">
+                    Delete
+                  </Text>
+                </Box>
+              </Flex>
+              <SingleLineInput
+                label={`Milestone ${index + 1}`}
+                value={defaultMilestoneField.value}
+                onChange={(e) => {
+                  const newDefaultMilestoneFields = [...defaultMilestoneFields];
+                  newDefaultMilestoneFields[index].value = e.target.value;
+                  newDefaultMilestoneFields[index].isError = false;
+                  setDefaultMilestoneFields(newDefaultMilestoneFields);
+                }}
+                placeholder="Field Label"
+                isError={defaultMilestoneField.isError}
+                errorText="Required"
+                maxLength={250}
+              />
+              <Box mt={1} />
+            </>
+          ))}
+          {(multipleMilestones || (!multipleMilestones && defaultMilestoneFields.length === 0)) && (
+            <Flex mt="-4px" gap="2" justifyContent="flex-start">
+              <Box
+                onClick={() => {
+                  const newDefaultMilestoneFields = [...defaultMilestoneFields, {
+                    value: '',
+                    isError: false,
+                  }];
+                  setDefaultMilestoneFields(newDefaultMilestoneFields);
+                }}
+                display="flex"
+                alignItems="center"
+                cursor="pointer"
+              >
+                <Image
+                  h="16px"
+                  w="15px"
+                  src="/ui_icons/plus_circle.svg"
+                  mr="6px"
+                />
+                <Text fontWeight="500" fontSize="14px" color="#8850EA" lineHeight="20px">
+                  Add a milestone
+                </Text>
+              </Box>
+            </Flex>
+          )}
+          <Box mt={6} />
         </>
       )}
 
@@ -160,8 +307,8 @@ function ApplicantDetails({
         </Text>
         <Flex>
           <Text color="#717A7C" fontSize="14px" lineHeight="20px">
-            Once you recieve applications you can assign reviewers to each applicant,
-            and setup a evaluation scorecard to get 360° feedback.
+            Once you receive applications you can assign reviewers to each applicant,
+            and setup an evaluation scorecard to get feedback from them.
           </Text>
         </Flex>
       </Flex>
@@ -178,7 +325,7 @@ function ApplicantDetails({
           </Text>
           <Flex>
             <Text color="#717A7C" fontSize="14px" lineHeight="20px">
-              Define a set of criteria for reviewers to evaluate the application
+              Define a set of criteria for reviewers to evaluate the application.
               You can add this later too.
             </Text>
           </Flex>

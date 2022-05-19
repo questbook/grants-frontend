@@ -1,4 +1,3 @@
-import { ChevronRightIcon } from '@chakra-ui/icons';
 import {
   Flex,
   Box,
@@ -7,10 +6,13 @@ import {
   Image,
   Switch,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
+// import Modal from 'src/components/ui/modal';
+import CustomTokenModal from 'src/components/ui/submitCustomTokenModal';
 import Loader from 'src/components/ui/loader';
 import useEncryption from 'src/hooks/utils/useEncryption';
+import { Token } from '@questbook/service-validator-client';
 import Datepicker from '../../../ui/forms/datepicker';
 import Dropdown from '../../../ui/forms/dropdown';
 import SingleLineInput from '../../../ui/forms/singleLineInput';
@@ -18,6 +20,9 @@ import SingleLineInput from '../../../ui/forms/singleLineInput';
 function GrantRewardsInput({
   reward,
   setReward,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  rewardToken,
+  setRewardToken,
   rewardError,
   setRewardError,
   rewardCurrency,
@@ -39,6 +44,8 @@ function GrantRewardsInput({
 }: {
   reward: string;
   setReward: (rewards: string) => void;
+  rewardToken: Token
+  setRewardToken: (rewardToken: Token) => void;
   rewardError: boolean;
   setRewardError: (rewardError: boolean) => void;
   rewardCurrency: string;
@@ -58,6 +65,17 @@ function GrantRewardsInput({
   shouldEncryptReviews: boolean;
   setShouldEncryptReviews: (shouldEncryptReviews: boolean) => void;
 }) {
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<any[]>([]);
+
+  useEffect(() => {
+    if (supportedCurrencies && supportedCurrencies.length > 0) {
+      setSupportedCurrenciesList(supportedCurrencies);
+    }
+  }, [supportedCurrencies]);
+
+  const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false);
+  const addERC = true;
   const { getPublicEncryptionKey } = useEncryption();
   return (
     <Flex direction="column">
@@ -79,15 +97,38 @@ function GrantRewardsInput({
             type="number"
           />
         </Box>
+        <CustomTokenModal
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          setRewardCurrency={setRewardCurrency}
+          setRewardCurrencyAddress={setRewardCurrencyAddress}
+          setRewardToken={setRewardToken}
+          supportedCurrenciesList={supportedCurrenciesList}
+          setSupportedCurrenciesList={setSupportedCurrenciesList}
+          setIsJustAddedToken={setIsJustAddedToken}
+        />
         <Box mt={5} ml={4} minW="132px" flex={0}>
           <Dropdown
             listItemsMinWidth="132px"
-            listItems={supportedCurrencies}
+            listItems={supportedCurrenciesList}
             value={rewardCurrency}
+            // eslint-disable-next-line react/no-unstable-nested-components
             onChange={(data: any) => {
+              if (data === 'addERCToken') {
+                setIsModalOpen(true);
+              }
               setRewardCurrency(data.label);
               setRewardCurrencyAddress(data.id);
+              if (data !== 'addERCToken' && !isJustAddedToken && data.icon.lastIndexOf('ui_icons') === -1) {
+                setRewardToken({
+                  iconHash: data.icon.substring(data.icon.lastIndexOf('=') + 1),
+                  address: data.address,
+                  label: data.label,
+                  decimal: data.decimals.toString(),
+                });
+              }
             }}
+            addERC={addERC}
           />
         </Box>
       </Flex>
@@ -171,7 +212,7 @@ function GrantRewardsInput({
               Allow access to your public key and encrypt the applicant form to
               proceed
             </Text>
-            <ChevronRightIcon color="brand.500" fontSize="2xl" />
+            <Image src="/ui_icons/brand/chevron_right.svg" />
             {loading && <Loader />}
           </Flex>
           <Flex alignItems="center" gap={2}>

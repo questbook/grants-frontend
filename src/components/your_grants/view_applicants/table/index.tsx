@@ -11,10 +11,10 @@ function Table({
   onManageApplicationClick,
   data,
   title,
+  actorId,
   isReviewer,
+  reviewerData,
   archiveGrantComponent,
-  applicantionReviewer,
-  fundReceived,
 }: {
   onViewApplicantFormClick?: (data? : any) => void;
   // onAcceptApplicationClick?: () => void;
@@ -22,10 +22,10 @@ function Table({
   onManageApplicationClick?: (data? : any) => void;
   data: any[];
   title: string;
+  actorId: string
   isReviewer : boolean;
-  applicantionReviewer: [];
-  fundReceived: string
   archiveGrantComponent: React.ReactNode;
+  reviewerData: any[];
 }) {
   const [filter, setFilter] = React.useState(-1);
   useEffect(() => {
@@ -44,9 +44,9 @@ function Table({
         <Content
           data={data}
           isReviewer={isReviewer}
+          reviewerData={reviewerData}
           filter={filter}
-          applicantionReviewer={applicantionReviewer}
-          fundReceived={fundReceived}
+          actorId={actorId}
           onViewApplicationFormClick={onViewApplicantFormClick}
                 // onAcceptApplicationClick={onAcceptApplicationClick}
                 // onRejectApplicationClick={onRejectApplicationClick}

@@ -14,6 +14,12 @@ query getDAODetails($workspaceID: ID!, $daoID: String!) {
           name
           value
         }
+        tokens {
+            address
+            label
+            decimal
+            iconHash
+        }
     }
     
     grants(
@@ -31,7 +37,13 @@ query getDAODetails($workspaceID: ID!, $daoID: String!) {
     reward {
         committed,
         id,
-        asset
+        asset,
+        token {
+        address
+        label
+        decimal
+        iconHash
+        }
     }, 
     workspace {id, title, logoIpfsHash, supportedNetworks}, 
     deadline,

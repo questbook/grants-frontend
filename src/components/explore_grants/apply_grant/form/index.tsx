@@ -11,7 +11,7 @@ import useSubmitApplication from 'src/hooks/useSubmitApplication';
 import { SupportedChainId } from 'src/constants/chains';
 import { GrantApplicationRequest } from '@questbook/service-validator-client';
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption';
-import { convertToRaw, EditorState } from 'draft-js';
+import { convertFromRaw, convertToRaw, EditorState } from 'draft-js';
 import VerifiedBadge from 'src/components/ui/verified_badge';
 import { parseAmount } from '../../../../utils/formattingUtils';
 import { GrantApplicationFieldsSubgraph } from '../../../../types/application';
@@ -20,6 +20,7 @@ import ApplicantDetails from './1_applicantDetails';
 import AboutProject from './3_aboutProject';
 import AboutTeam from './2_aboutTeam';
 import Funding from './4_funding';
+import CustomFields from './5_customFields';
 
 interface Props {
   // onSubmit: (data: any) => void;
@@ -32,6 +33,7 @@ interface Props {
   funding: string;
   rewardAmount: string;
   rewardCurrency: string;
+  rewardDecimal: number | undefined;
   rewardCurrencyCoin: string;
   rewardCurrencyAddress: string | undefined;
   grantRequiredFields: string[];
@@ -39,6 +41,7 @@ interface Props {
   members: any[];
   acceptingApplications: boolean;
   shouldShowButton: boolean;
+  defaultMilestoneFields: any[];
 }
 
 // eslint-disable-next-line max-len
@@ -53,6 +56,7 @@ function Form({
   funding,
   rewardAmount,
   rewardCurrency,
+  rewardDecimal,
   rewardCurrencyCoin,
   rewardCurrencyAddress,
   grantRequiredFields,
@@ -60,6 +64,7 @@ function Form({
   members,
   acceptingApplications,
   shouldShowButton,
+  defaultMilestoneFields,
 }: Props) {
   const [{ data: accountData }] = useAccount({
     fetchEns: false,
@@ -93,7 +98,16 @@ function Form({
     },
   ]);
 
-  const [projectDetails, setProjectDetails] = useState(() => EditorState.createEmpty());
+  const [projectDetails, setProjectDetails] = useState(EditorState
+    .createWithContent(convertFromRaw({
+      entityMap: {},
+      blocks: [{
+        text: '',
+        key: 'foo',
+        type: 'unstyled',
+        entityRanges: [],
+      } as any],
+    })));
   const [projectDetailsError, setProjectDetailsError] = useState(false);
 
   const [projectGoal, setProjectGoal] = useState('');
@@ -108,11 +122,35 @@ function Form({
     },
   ]);
 
+  useEffect(() => {
+    if (defaultMilestoneFields && defaultMilestoneFields.length > 0) {
+      setProjectMilestones(defaultMilestoneFields.map((defaultMilestone) => ({
+        milestone: defaultMilestone.detail,
+        milestoneReward: '',
+        milestoneIsError: false,
+        milestoneRewardIsError: false,
+      })));
+    }
+  }, [defaultMilestoneFields]);
+
   const [fundingAsk, setFundingAsk] = useState('');
   const [fundingAskError, setFundingAskError] = useState(false);
 
   const [fundingBreakdown, setFundingBreakdown] = useState('');
   const [fundingBreakdownError, setFundingBreakdownError] = useState(false);
+
+  const [customFields, setCustomFields] = useState<any[]>([]);
+  useEffect(() => {
+    if (customFields.length > 0) return;
+    setCustomFields(grantRequiredFields
+      .filter((field) => (field.startsWith('customField')))
+      .map((title) => ({
+        title,
+        value: '',
+        isError: false,
+      })));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grantRequiredFields]);
 
   const toastRef = React.useRef<ToastId>();
   const toast = useToast();
@@ -230,6 +268,19 @@ function Form({
       setFundingBreakdownError(true);
       error = true;
     }
+
+    if (customFields.length > 0) {
+      const errorCheckedCustomFields = customFields.map((customField: any) => {
+        const errorCheckedCustomField = { ...customField };
+        if (customField.value.length <= 0) {
+          errorCheckedCustomField.isError = true;
+          error = true;
+        }
+        return errorCheckedCustomField;
+      });
+      setCustomFields(errorCheckedCustomFields);
+    }
+
     if (error) {
       return;
     }
@@ -248,7 +299,7 @@ function Form({
         applicantEmail: [{ value: applicantEmail }],
         projectName: [{ value: projectName }],
         projectDetails: [{ value: projectDetailsString }],
-        fundingAsk: [{ value: parseAmount(fundingAsk, rewardCurrencyAddress) }],
+        fundingAsk: [{ value: parseAmount(fundingAsk, rewardCurrencyAddress, rewardDecimal) }],
         fundingBreakdown: [{ value: fundingBreakdown }],
         teamMembers: [{ value: Number(teamMembers).toString() }],
         memberDetails: membersDescription.map((md) => ({ value: md.description })),
@@ -259,7 +310,7 @@ function Form({
       milestones: projectMilestones.map((pm) => (
         {
           title: pm.milestone,
-          amount: parseAmount(pm.milestoneReward, rewardCurrencyAddress),
+          amount: parseAmount(pm.milestoneReward, rewardCurrencyAddress, rewardDecimal),
         }
       )),
     };
@@ -268,6 +319,10 @@ function Form({
         delete data.fields[field as keyof GrantApplicationFieldsSubgraph];
       }
     });
+    customFields.forEach((customField) => {
+      data.fields[customField.title] = [{ value: customField.value }];
+    });
+    console.log(data);
     let encryptedData;
     if (piiFields.length > 0 && members) {
       encryptedData = await encryptApplicationPII(data, piiFields, members);
@@ -382,6 +437,16 @@ function Form({
           rewardCurrencyCoin={rewardCurrencyCoin}
           grantRequiredFields={grantRequiredFields}
         />
+
+        {customFields && customFields.length > 0 && (
+          <>
+            <Box mt="43px" />
+            <CustomFields
+              customFields={customFields}
+              setCustomFields={setCustomFields}
+            />
+          </>
+        )}
       </Container>
 
       {acceptingApplications && (
