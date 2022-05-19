@@ -11,7 +11,6 @@ import Badge from './badge';
 
 interface BrowseGrantCardProps {
   daoID: string;
-  daoIcon: string;
   daoName: string;
   isDaoVerified?: boolean;
   chainId: SupportedChainId | undefined;
@@ -34,7 +33,6 @@ interface BrowseGrantCardProps {
 
 function BrowseGrantCard({
   daoID,
-  daoIcon,
   daoName,
   isDaoVerified,
   chainId,
@@ -58,9 +56,10 @@ function BrowseGrantCard({
 
   return (
     <>
-      <Flex py={6} w="100%">
-        <Image objectFit="cover" h="54px" w="54px" src={daoIcon} />
-        <Flex flex={1} direction="column" ml={6}>
+      <Flex py={6} px="1.5rem" w="100%">
+
+        <Flex flex={1} direction="column">
+
           <Flex direction="row" alignItems="start">
             <Text maxW="50%">
               <Link

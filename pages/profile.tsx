@@ -1,15 +1,13 @@
-
 // UI Components
 import SeeMore from 'src/components/profile/see_more';
 import DaoData from 'src/components/profile/dao_data';
-
+import DaoAbout from 'src/components/profile/dao_about';
 import BrowseGrantCard from 'src/components/profile/grantCard';
 
 import {
   Divider,
   Stack,
-  VStack,
-  Flex,
+Button,  Flex,
   IconButton,
   Image,
   Text,
@@ -34,7 +32,6 @@ import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUti
 import verify from 'src/utils/grantUtils';
 import { useGetDaoDetailsQuery } from 'src/generated/graphql';
 
-
 function Profile() {
   const router = useRouter();
 
@@ -46,6 +43,16 @@ function Profile() {
   const [grantData, setGrantData] = React.useState<DAOGrant>();
   const [chainID, setChainId] = React.useState<SupportedChainId>();
   const [daoID, setDaoId] = React.useState<string>();
+
+  //Tab section
+  const tabs = ['Browse Grants', 'About'];
+  const [selected, setSelected] = useState(
+    // eslint-disable-next-line no-nested-ternary
+    router.query.tab === 'grants' ? 0 : router.query.tab === 'about' && 1,
+  );
+  const switchTab = (to: number) => {
+    setSelected(to);
+  };
 
   useEffect(() => {
     if (router && router.query) {
@@ -93,8 +100,10 @@ function Profile() {
         lg: '52%',
       }}
       mx="auto"
+      mb="1rem"
       borderLeft="1px solid #E8E9E9"
       borderRight="1px solid #E8E9E9"
+      borderBottom="1px solid #E8E9E9"
     >
       <Stack w="full">
         <Flex
@@ -168,37 +177,47 @@ function Profile() {
             </Flex>
           </Flex>
 
-          <Stack
-          px="1.5rem">
+          <Stack px="1.5rem">
             {workspaceData?.about && <SeeMore text={workspaceData?.about} />}
           </Stack>
 
-          <Stack
-          px="1.5rem"
-          pb="2rem"
-          pt="1rem"
-          >
-           <DaoData
-            grants="50000"
-            winners="20"
-            applicants="1000"
-            time="1D"
-          />
+          <Stack px="1.5rem" pb="2rem" pt="1rem">
+            <DaoData grants="50000" winners="20" applicants="1000" time="1D" />
           </Stack>
 
-            <Divider />
-            <Stack px="1.5rem">
-            <Text my={4} variant="heading">
-              Browse Grants
-            </Text>
-            </Stack>
+          <Divider />
+          <Stack px="1.5rem" py="1rem" direction="row" gap="1rem">
+            {tabs.map((tab, index) => (
+              <Button
+                variant="link"
+                ml={index === 0 ? 0 : 12}
+                _hover={{
+                  color: 'black',
+                }}
+                _focus={{}}
+                fontWeight="700"
+                fontStyle="normal"
+                fontSize="28px"
+                lineHeight="44px"
+                letterSpacing={-1}
+                borderRadius={0}
+                color={index === selected ? '#122224' : '#A0A7A7'}
+                onClick={() => switchTab(index)}
+              >
+                {tab}{" "}{tab === "Browse Grants" && `(${grantData?.length})`}
+              </Button>
+            ))}
+          </Stack>
 
-            <Divider/>
-
+          <Divider />
         </Flex>
       </Stack>
 
-      {/*grantData
+      {
+    // eslint-disable-next-line no-nested-ternary
+    selected === 0 ? (
+      <>
+      {grantData
         && grantData.length > 0
         && grantData.map((grant) => {
           const chainId = getSupportedChainIdFromSupportedNetwork(
@@ -215,7 +234,6 @@ function Profile() {
             <BrowseGrantCard
               daoID={grant.workspace.id}
               key={grant.id}
-              daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
               daoName={grant.workspace.title}
               isDaoVerified={false}
               grantTitle={grant.title}
@@ -264,7 +282,11 @@ function Profile() {
               }}
             />
           );
-        })*/}
+        })}
+        </>
+    ) // eslint-disable-next-line no-nested-ternary
+      : selected === 1 && (
+        <DaoAbout />)}
     </Flex>
   );
 }
