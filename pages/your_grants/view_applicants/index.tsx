@@ -25,13 +25,12 @@ import useArchiveGrant from 'src/hooks/useArchiveGrant';
 import RubricDrawer from 'src/components/your_grants/rubricDrawer';
 import { BigNumber } from 'ethers';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
-import Empty from 'src/components/ui/empty';
+import AppplicationTableEmptyState from 'src/components/your_applications/empty_states/applicantions_table';
 import { formatAmount } from '../../../src/utils/formattingUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Table from '../../../src/components/your_grants/view_applicants/table';
 import NavbarLayout from '../../../src/layout/navbarLayout';
 import { ApiClientsContext } from '../../_app';
-import AppplicationTableEmptyState from 'src/components/your_applications/empty_states/applicantions_table';
 
 const PAGE_SIZE = 500;
 

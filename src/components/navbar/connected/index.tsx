@@ -254,6 +254,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 )}
                 onClick={() => {
                   setWorkspace(userWorkspace);
+                  router.push('/your_grants');
                 }}
               >
                 {userWorkspace.title}

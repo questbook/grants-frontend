@@ -23,10 +23,7 @@ query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $worksp
     iconHash
     }
   }, 
-  workspace {id, title, logoIpfsHash, supportedNetworks,
-  members(where: {actorId: $actorId}) {
-        actorId
-      }}, 
+  workspace {id, title, logoIpfsHash, supportedNetworks}
   deadline,
   funding,
   numberOfApplications,

@@ -141,58 +141,59 @@ function YourGrantCard({
 
   return (
     <>
-      <Flex py={6} w="100%">
-        <Image objectFit="cover" h="54px" w="54px" src={daoIcon} />
-        <Flex flex={1} direction="column" ml={6}>
-          <Flex direction="row">
-            <Flex direction="column">
-              <Text lineHeight="24px" fontSize="18px" fontWeight="700">
-                {grantTitle}
-              </Text>
-              <Text lineHeight="24px" color="#122224" fontWeight="400">
-                {grantDesc}
-              </Text>
-            </Flex>
-            <Box mr="auto" />
-          </Flex>
-
-          <Box mt={6} />
-
-          <Badge
-            numOfApplicants={numOfApplicants}
-            endTimestamp={endTimestamp}
-          />
-
-          <Flex
-            direction={{ base: 'column', md: 'row' }}
-            mt={8}
-            alignItems="center"
-          >
-            <Flex direction="row" align="center" w="full">
-              <Image src={grantCurrencyIcon} boxSize="36px" />
-              <Text ml={2} fontWeight="700" color="#3F06A0">
-                {grantAmount}
-                {' '}
-                {grantCurrency}
-              </Text>
-
+      { isAdmin ? (
+        <Flex py={6} w="100%">
+          <Image objectFit="cover" h="54px" w="54px" src={daoIcon} />
+          <Flex flex={1} direction="column" ml={6}>
+            <Flex direction="row">
+              <Flex direction="column">
+                <Text lineHeight="24px" fontSize="18px" fontWeight="700">
+                  {grantTitle}
+                </Text>
+                <Text lineHeight="24px" color="#122224" fontWeight="400">
+                  {grantDesc}
+                </Text>
+              </Flex>
               <Box mr="auto" />
+            </Flex>
 
-              <YourGrantMenu
-                chainId={chainId}
-                grantID={grantID}
-                onArchiveGrantClick={() => {
-                  setIsArchiveModalOpen(true);
-                }}
-                isArchived={!acceptingApplications}
-                numOfApplicants={numOfApplicants}
-                onViewApplicantsClick={onViewApplicantsClick}
-                onEditClick={onEditClick}
-                isAdmin={isAdmin}
-                setRubricDrawerOpen={setRubricDrawerOpen}
-                initialRubricAvailable={initialRubrics?.items.length > 0 ?? false}
-              />
-              {acceptingApplications && isAdmin && (
+            <Box mt={6} />
+
+            <Badge
+              numOfApplicants={numOfApplicants}
+              endTimestamp={endTimestamp}
+            />
+
+            <Flex
+              direction={{ base: 'column', md: 'row' }}
+              mt={8}
+              alignItems="center"
+            >
+              <Flex direction="row" align="center" w="full">
+                <Image src={grantCurrencyIcon} boxSize="36px" />
+                <Text ml={2} fontWeight="700" color="#3F06A0">
+                  {grantAmount}
+                  {' '}
+                  {grantCurrency}
+                </Text>
+
+                <Box mr="auto" />
+
+                <YourGrantMenu
+                  chainId={chainId}
+                  grantID={grantID}
+                  onArchiveGrantClick={() => {
+                    setIsArchiveModalOpen(true);
+                  }}
+                  isArchived={!acceptingApplications}
+                  numOfApplicants={numOfApplicants}
+                  onViewApplicantsClick={onViewApplicantsClick}
+                  onEditClick={onEditClick}
+                  isAdmin={isAdmin}
+                  setRubricDrawerOpen={setRubricDrawerOpen}
+                  initialRubricAvailable={initialRubrics?.items.length > 0 ?? false}
+                />
+                {acceptingApplications && isAdmin && (
                 <Button
                   mr={2}
                   ml={5}
@@ -205,8 +206,8 @@ function YourGrantCard({
                 >
                   Add funds
                 </Button>
-              )}
-              {acceptingApplications && (
+                )}
+                {acceptingApplications && (
                 <Button
                   ml={2}
                   isDisabled={state === 'processing'}
@@ -222,8 +223,8 @@ function YourGrantCard({
                 >
                   {numOfApplicants > 0 ? 'View applicants' : 'Edit grant'}
                 </Button>
-              )}
-              {!acceptingApplications && isAdmin && (
+                )}
+                {!acceptingApplications && isAdmin && (
                 <Button
                   ml={5}
                   isDisabled={state === 'processing'}
@@ -236,11 +237,87 @@ function YourGrantCard({
                 >
                   Publish grant
                 </Button>
-              )}
+                )}
+              </Flex>
             </Flex>
           </Flex>
         </Flex>
-      </Flex>
+      ) : (
+
+        <Flex py={6} w="100%">
+          <Image objectFit="cover" h="54px" w="54px" src={daoIcon} />
+          <Flex flex={1} direction="column" ml={6}>
+            <Flex direction="row">
+              <Flex direction="column">
+                <Text lineHeight="24px" fontSize="18px" fontWeight="700">
+                  {grantTitle}
+                </Text>
+                <Text lineHeight="24px" color="#122224" fontWeight="400">
+                  {grantDesc}
+                </Text>
+              </Flex>
+              <Box mr="auto" />
+            </Flex>
+
+            <Box mt={6} />
+
+            <Badge
+              numOfApplicants={numOfApplicants}
+              endTimestamp={endTimestamp}
+            />
+
+            <Flex
+              direction={{ base: 'column', md: 'row' }}
+              mt={8}
+              alignItems="center"
+            >
+              <Flex direction="row" align="center" w="full">
+                <Image src={grantCurrencyIcon} boxSize="36px" />
+                <Text ml={2} fontWeight="700" color="#3F06A0">
+                  {grantAmount}
+                  {' '}
+                  {grantCurrency}
+                </Text>
+
+                <Box mr="auto" />
+
+                <YourGrantMenu
+                  chainId={chainId}
+                  grantID={grantID}
+                  onArchiveGrantClick={() => {
+                    setIsArchiveModalOpen(true);
+                  }}
+                  isArchived={!acceptingApplications}
+                  numOfApplicants={numOfApplicants}
+                  onViewApplicantsClick={onViewApplicantsClick}
+                  onEditClick={onEditClick}
+                  isAdmin={isAdmin}
+                  setRubricDrawerOpen={setRubricDrawerOpen}
+                  initialRubricAvailable={initialRubrics?.items.length > 0 ?? false}
+                />
+                {acceptingApplications && (
+                <Button
+                  ml={2}
+                  isDisabled={state === 'processing'}
+                  variant="primaryCta"
+                  onClick={() => {
+                    if (numOfApplicants <= 0 && onEditClick) {
+                      onEditClick();
+                    } else if (onViewApplicantsClick) {
+                      onViewApplicantsClick();
+                    }
+                  }}
+                  display={isAdmin || numOfApplicants > 0 ? undefined : 'none'}
+                >
+                  {numOfApplicants > 0 ? 'View applicants' : 'Edit grant'}
+                </Button>
+                )}
+
+              </Flex>
+            </Flex>
+          </Flex>
+        </Flex>
+      )}
       <Divider w="auto" />
       <Modal
         isOpen={
