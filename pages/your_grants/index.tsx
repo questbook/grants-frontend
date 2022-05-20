@@ -60,7 +60,6 @@ function YourGrants() {
 
   const containerRef = useRef(null);
   const [currentPage, setCurrentPage] = React.useState(0);
-  const [isUser, setIsUser] = React.useState<any>('');
 
   const [grants, setGrants] = React.useState<
   GetAllGrantsForCreatorQuery['grants']
@@ -166,7 +165,7 @@ function YourGrants() {
       const user: any = tempMember?.id;
       localStorage.setItem('id', user);
     }
-  }, [accountData, workspace, isUser]);
+  }, [accountData, workspace]);
 
   useEffect(() => {
     if (!workspace) return;
@@ -262,7 +261,7 @@ function YourGrants() {
   useEffect(() => {
     if (allGrantsReviewerData.data && allGrantsReviewerData.data.grantApplications
        && allGrantsReviewerData.data.grantApplications.length > 0) {
-      console.log("data.grantsReviewer.raw",allGrantsReviewerData.data.grantApplications);
+      console.log('data.grantsReviewer.raw', allGrantsReviewerData.data.grantApplications);
       // eslint-disable-next-line max-len
       const newReviewerData = removeDuplicates(allGrantsReviewerData.data.grantApplications);
 
