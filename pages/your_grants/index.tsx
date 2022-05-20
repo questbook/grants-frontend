@@ -157,7 +157,7 @@ function YourGrants() {
         || tempMember?.accessLevel === 'owner',
       );
       setIsReviewer(tempMember?.accessLevel === 'reviewer');
-      setIsUser(tempMember?.id);
+      // setIsUser(tempMember?.id);
 
       localStorage.setItem('id', tempMember?.id);
     }

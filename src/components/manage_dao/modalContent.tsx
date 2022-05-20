@@ -97,6 +97,31 @@ function ModalContent({
     setRevoking(false);
   };
 
+
+  const handleOwnerSubmit = async () => {
+    let hasError = false;
+
+    if (!memberAddress || !isValidAddress(memberAddress)) {
+      setMemberAddressError(true);
+      hasError = true;
+    }
+
+    if (!memberEmail || !isValidEmail(memberEmail)) {
+      setMemberEmailError(true);
+      hasError = true;
+    }
+
+    if (hasError) return;
+
+    // const rolesVar = role === 'admin' ? [1, 0] : [0, 1];
+    setMemberData({
+      memberAddress: [memberAddress, memberAddress],
+      memberEmail: [memberEmail, memberEmail],
+      memberRoles: [1, 0],
+      memberRolesEnabled: [false, true],
+    });
+  };
+
   const revokeAccess = () => {
     let hasError = false;
 
@@ -167,76 +192,113 @@ function ModalContent({
           type="email"
         />
         <Box my="31px" />
-        <Flex flex={1} direction="column">
-          <Text lineHeight="20px" fontWeight="bold">
-            Role *
-          </Text>
-        </Flex>
-        <Flex mt={1} maxW="420px">
-          {roles.map((r) => (
-            <>
-              <Badge
-                isActive={r.value === role}
-                onClick={() => setRole(r.value)}
-                label={r.label}
-                inActiveVariant="solid"
-                tooltip={r.tooltip}
-              />
-              {r.index < roles.length - 1 && <Box mr={4} />}
-            </>
-          ))}
-        </Flex>
-        <Flex direction="row" mt={6}>
-          <Text textAlign="left" variant="footer" fontSize="12px">
-            <Image display="inline-block" src="/ui_icons/info.svg" alt="pro tip" mb="-2px" />
-            {' '}
-            By pressing Send Invite you&apos;ll have to approve this transaction in your wallet.
-            {' '}
-            <Link href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46" isExternal>Learn more</Link>
-            {' '}
-            <Image
-              display="inline-block"
-              src="/ui_icons/link.svg"
-              alt="pro tip"
-              mb="-1px"
-              h="10px"
-              w="10px"
-            />
-          </Text>
-        </Flex>
-        <Box my={4} />
-        <Flex direction="row" justify="stretch">
-          {isEdit && (
-          <Button
-            w="48%"
-            variant="disconnect"
-            onClick={loading ? () => {} : () => {
-              setHidden(true);
-              setRevokeModalOpen(true);
-            }}
-            disabled={loading && !revoking}
-          >
-            {loading && revoking ? <Loader />
-              : (
+        { member?.role === 'owner' || member?.role === 'admin' ? (
+          <>
+            <Flex direction="row" mt={6}>
+              <Text textAlign="left" variant="footer" fontSize="12px">
+                <Image display="inline-block" src="/ui_icons/info.svg" alt="pro tip" mb="-2px" />
+                {' '}
+                By pressing Send Invite you&apos;ll have to approve this transaction in your wallet.
+                {' '}
+                <Link href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46" isExternal>Learn more</Link>
+                {' '}
+                <Image
+                  display="inline-block"
+                  src="/ui_icons/link.svg"
+                  alt="pro tip"
+                  mb="-1px"
+                  h="10px"
+                  w="10px"
+                />
+              </Text>
+            </Flex>
+            <Flex direction="row" justify="stretch">
+              {isEdit && <Box mx="auto" />}
+              <Button
+                w={isEdit ? '48%' : '100%'}
+                py={loading ? 2 : 0}
+                variant="primary"
+                onClick={loading ? () => {} : () => handleOwnerSubmit()}
+                disabled={loading}
+              >
+                {loading ? <Loader /> : 'Update'}
+              </Button>
+            </Flex>
+          </>
+        ) : (
+          <>
+            <Flex flex={1} direction="column">
+              <Text lineHeight="20px" fontWeight="bold">
+                Role *
+              </Text>
+            </Flex>
+            <Flex mt={1} maxW="420px">
+              {roles.map((r) => (
                 <>
-                  <span>Revoke Access</span>
-                  {' '}
-                  <Image ml={2} src="/ui_icons/delete_gray.svg" display="inline-block" />
+                  <Badge
+                    isActive={r.value === role}
+                    onClick={() => setRole(r.value)}
+                    label={r.label}
+                    inActiveVariant="solid"
+                    tooltip={r.tooltip}
+                  />
+                  {r.index < roles.length - 1 && <Box mr={4} />}
                 </>
+              ))}
+            </Flex>
+            <Flex direction="row" mt={6}>
+              <Text textAlign="left" variant="footer" fontSize="12px">
+                <Image display="inline-block" src="/ui_icons/info.svg" alt="pro tip" mb="-2px" />
+                {' '}
+                By pressing Send Invite you&apos;ll have to approve this transaction in your wallet.
+                {' '}
+                <Link href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46" isExternal>Learn more</Link>
+                {' '}
+                <Image
+                  display="inline-block"
+                  src="/ui_icons/link.svg"
+                  alt="pro tip"
+                  mb="-1px"
+                  h="10px"
+                  w="10px"
+                />
+              </Text>
+            </Flex>
+            <Box my={4} />
+            <Flex direction="row" justify="stretch">
+              {isEdit && (
+              <Button
+                w="48%"
+                variant="disconnect"
+                onClick={loading ? () => {} : () => {
+                  setHidden(true);
+                  setRevokeModalOpen(true);
+                }}
+                disabled={loading && !revoking}
+              >
+                {loading && revoking ? <Loader />
+                  : (
+                    <>
+                      <span>Revoke Access</span>
+                      {' '}
+                      <Image ml={2} src="/ui_icons/delete_gray.svg" display="inline-block" />
+                    </>
+                  )}
+              </Button>
               )}
-          </Button>
-          )}
-          {isEdit && <Box mx="auto" />}
-          <Button
-            w={isEdit ? '48%' : '100%'}
-            py={loading ? 2 : 0}
-            variant="primary"
-            onClick={loading ? () => {} : () => handleSubmit()}
-            disabled={loading && revoking}
-          >
-            {loading && !revoking ? <Loader /> : 'Send Invite'}
-          </Button>
-        </Flex>
+              {isEdit && <Box mx="auto" />}
+              <Button
+                w={isEdit ? '48%' : '100%'}
+                py={loading ? 2 : 0}
+                variant="primary"
+                onClick={loading ? () => {} : () => handleSubmit()}
+                disabled={loading && revoking}
+              >
+                {loading && !revoking ? <Loader /> : 'Send Invite'}
+              </Button>
+            </Flex>
+          </>
+        )}
         <Box my={8} />
       </ModalBody>
       <Modal
