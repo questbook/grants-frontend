@@ -25,6 +25,7 @@ import useArchiveGrant from 'src/hooks/useArchiveGrant';
 import RubricDrawer from 'src/components/your_grants/rubricDrawer';
 import { BigNumber } from 'ethers';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
+import AppplicationTableEmptyState from 'src/components/your_applications/empty_states/applicantions_table';
 import { formatAmount } from '../../../src/utils/formattingUtils';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Table from '../../../src/components/your_grants/view_applicants/table';
@@ -402,27 +403,29 @@ function ViewApplicants() {
           workspaceId={workspace?.id ?? ''}
           initialIsPrivate={grantData?.grants[0].rubric?.isPrivate ?? false}
         />
-        <Table
-          title={applicantsData[0]?.grantTitle ?? 'Grant Title'}
-          isReviewer={isReviewer}
-          data={applicantsData}
-          reviewerData={reviewerData}
-          actorId={isActorId}
-          onViewApplicantFormClick={(commentData: any) => router.push({
-            pathname: '/your_grants/view_applicants/applicant_form/',
-            query: {
-              commentData,
-              applicationId: commentData.applicationId,
-            },
-          })}
-          // eslint-disable-next-line @typescript-eslint/no-shadow
-          onManageApplicationClick={(data: any) => router.push({
-            pathname: '/your_grants/view_applicants/manage/',
-            query: {
-              applicationId: data.applicationId,
-            },
-          })}
-          archiveGrantComponent={!acceptingApplications && (
+
+        { (reviewerData.length > 0 || applicantsData.length > 0) && (isReviewer || isAdmin) ? (
+          <Table
+            title={applicantsData[0]?.grantTitle ?? 'Grant Title'}
+            isReviewer={isReviewer}
+            data={applicantsData}
+            reviewerData={reviewerData}
+            actorId={isActorId}
+            onViewApplicantFormClick={(commentData: any) => router.push({
+              pathname: '/your_grants/view_applicants/applicant_form/',
+              query: {
+                commentData,
+                applicationId: commentData.applicationId,
+              },
+            })}
+// eslint-disable-next-line @typescript-eslint/no-shadow
+            onManageApplicationClick={(data: any) => router.push({
+              pathname: '/your_grants/view_applicants/manage/',
+              query: {
+                applicationId: data.applicationId,
+              },
+            })}
+            archiveGrantComponent={!acceptingApplications && (
             <Flex
               maxW="100%"
               bg="#F3F4F4"
@@ -445,18 +448,23 @@ function ViewApplicants() {
               </Flex>
               <Box mr="auto" />
               {accountData?.address && shouldShowButton && (
-                <Button
-                  ref={buttonRef}
-                  w={archiveGrantLoading ? buttonRef?.current?.offsetWidth : 'auto'}
-                  variant="primary"
-                  onClick={() => setIsModalOpen(true)}
-                >
-                  Publish grant
-                </Button>
+              <Button
+                ref={buttonRef}
+                w={archiveGrantLoading ? buttonRef?.current?.offsetWidth : 'auto'}
+                variant="primary"
+                onClick={() => setIsModalOpen(true)}
+              >
+                Publish grant
+              </Button>
               )}
             </Flex>
-          )}
-        />
+            )}
+          />
+        ) : (
+          <AppplicationTableEmptyState />
+
+        )}
+
       </Container>
       <Modal
         isOpen={isModalOpen}

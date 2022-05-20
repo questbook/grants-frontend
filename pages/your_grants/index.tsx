@@ -13,8 +13,10 @@ import { BigNumber } from '@ethersproject/bignumber';
 import Sidebar from 'src/components/your_grants/sidebar/sidebar';
 import {
   GetAllGrantsForCreatorQuery,
+  GetAllGrantsForReviewerQuery,
   useGetAllGrantsCountForCreatorQuery,
   useGetAllGrantsForCreatorQuery,
+  useGetAllGrantsForReviewerQuery,
 } from 'src/generated/graphql';
 import { SupportedChainId } from 'src/constants/chains';
 import {
@@ -36,6 +38,12 @@ import { ApiClientsContext } from '../_app';
 
 const PAGE_SIZE = 5;
 
+function removeDuplicates(array: any) {
+  const uniq: any = {};
+  // eslint-disable-next-line no-return-assign
+  return array.filter((obj: any) => !uniq[obj.grant.id] && (uniq[obj.grant.id] = true));
+}
+
 function YourGrants() {
   const router = useRouter();
   const [pk, setPk] = useState<string>('*');
@@ -52,11 +60,23 @@ function YourGrants() {
 
   const containerRef = useRef(null);
   const [currentPage, setCurrentPage] = React.useState(0);
+
   const [grants, setGrants] = React.useState<
   GetAllGrantsForCreatorQuery['grants']
   >([]);
 
+  const [grantsReviewer, setGrantsReviewer] = React.useState<
+  GetAllGrantsForReviewerQuery['grantApplications']
+  >([]);
+
   const [queryParams, setQueryParams] = useState<any>({
+    client:
+      subgraphClients[
+        getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      ].client,
+  });
+
+  const [queryReviewerParams, setQueryReviewerParams] = useState<any>({
     client:
       subgraphClients[
         getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
@@ -142,8 +162,37 @@ function YourGrants() {
         || tempMember?.accessLevel === 'owner',
       );
       setIsReviewer(tempMember?.accessLevel === 'reviewer');
+      const user: any = tempMember?.id;
+      localStorage.setItem('id', user);
     }
   }, [accountData, workspace]);
+
+  useEffect(() => {
+    if (!workspace) return;
+    if (!accountData) return;
+    setQueryParams({
+      client:
+        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+      variables: {
+        first: PAGE_SIZE,
+        skip: PAGE_SIZE * currentPage,
+        workspaceId: workspace?.id,
+        acceptingApplications: tabs[selectedTab].acceptingApplications,
+      },
+      fetchPolicy: 'network-only',
+    });
+    setQueryReviewerParams({
+      client:
+        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+      variables: {
+        first: PAGE_SIZE,
+        skip: PAGE_SIZE * currentPage,
+        reviewerIDs: [localStorage.getItem('id')],
+      },
+      fetchPolicy: 'network-only',
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, workspace, accountData?.address, selectedTab]);
 
   useEffect(() => {
     console.log(pk);
@@ -177,25 +226,7 @@ function YourGrants() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allGrantsCountData, allGrantsCountError, allGrantsCountLoading]);
 
-  useEffect(() => {
-    if (!workspace) return;
-    if (!accountData) return;
-
-    setQueryParams({
-      client:
-        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
-      variables: {
-        first: PAGE_SIZE,
-        skip: PAGE_SIZE * currentPage,
-        workspaceId: workspace?.id,
-        acceptingApplications: tabs[selectedTab].acceptingApplications,
-      },
-      fetchPolicy: 'network-only',
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, workspace, accountData?.address, selectedTab]);
-
-  const { data, error, loading } = useGetAllGrantsForCreatorQuery(queryParams);
+  const data = useGetAllGrantsForCreatorQuery(queryParams);
   useEffect(() => {
     if (!workspace) return;
     setGrants([]);
@@ -204,20 +235,42 @@ function YourGrants() {
   }, [workspace, selectedTab]);
 
   useEffect(() => {
-    if (data && data.grants && data.grants.length > 0) {
-      console.log('data.grants', data.grants);
+    if (data.data && data.data.grants && data.data.grants.length > 0) {
+      console.log('data.grants', data.data.grants);
       if (
         grants.length > 0
-        && grants[0].workspace.id === data.grants[0].workspace.id
-        && grants[0].id !== data.grants[0].id
+        && grants[0].workspace.id === data.data.grants[0].workspace.id
+        && grants[0].id !== data.data.grants[0].id
       ) {
-        setGrants([...grants, ...data.grants]);
+        setGrants([...grants, ...data.data.grants]);
       } else {
-        setGrants(data.grants);
+        setGrants(data.data.grants);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, error, loading]);
+  }, [data]);
+
+  const allGrantsReviewerData = useGetAllGrantsForReviewerQuery(queryReviewerParams);
+  useEffect(() => {
+    if (!workspace) return;
+    setGrantsReviewer([]);
+    setCurrentPage(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspace, selectedTab]);
+
+  useEffect(() => {
+    if (allGrantsReviewerData.data && allGrantsReviewerData.data.grantApplications
+       && allGrantsReviewerData.data.grantApplications.length > 0) {
+      console.log('data.grantsReviewer.raw', allGrantsReviewerData.data.grantApplications);
+      // eslint-disable-next-line max-len
+      const newReviewerData = removeDuplicates(allGrantsReviewerData.data.grantApplications);
+
+      console.log('data.grantsReviewer', newReviewerData);
+
+      setGrantsReviewer(newReviewerData);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allGrantsReviewerData]);
 
   const [addFundsIsOpen, setAddFundsIsOpen] = React.useState(false);
   const [grantForFunding, setGrantForFunding] = React.useState(null);
@@ -317,7 +370,7 @@ function YourGrants() {
               </Flex>
             </>
           )}
-          {grants.length > 0
+          {isAdmin && grants.length > 0
             && grants.map((grant: any) => {
               const grantAmount = grant.reward.committed;
               let decimals;
@@ -392,17 +445,98 @@ function YourGrants() {
               );
             })}
 
-          {grants.length === 0
+          { isReviewer && grantsReviewer.length > 0
+              && grantsReviewer.map((grant: any) => {
+                const grantAmount = grant.grant.reward.committed;
+                let decimals;
+                let icon;
+                let label;
+                if (grant.grant.reward.token) {
+                  decimals = grant.grant.reward.token.decimal;
+                  label = grant.grant.reward.token.label;
+                  icon = getUrlForIPFSHash(grant.grant.reward.token.iconHash);
+                } else {
+                  decimals = CHAIN_INFO[
+                    getSupportedChainIdFromSupportedNetwork(
+                      grant.grant.workspace.supportedNetworks[0],
+                    )
+                  ]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
+                    ?.decimals;
+                  label = CHAIN_INFO[
+                    getSupportedChainIdFromSupportedNetwork(
+                      grant.grant.workspace.supportedNetworks[0],
+                    )
+                  ]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
+                    ?.label ?? 'LOL';
+                  icon = CHAIN_INFO[
+                    getSupportedChainIdFromSupportedNetwork(
+                      grant.grant.workspace.supportedNetworks[0],
+                    )
+                  ]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
+                    ?.icon ?? '/images/dummy/Ethereum Icon.svg';
+                }
+
+                return (
+                  <YourGrantCard
+                    grantID={grant.grant.id}
+                    key={grant.grant.id}
+                    daoIcon={getUrlForIPFSHash(grant.grant.workspace.logoIpfsHash)}
+                    grantTitle={grant.grant.title}
+                    grantDesc={grant.grant.summary}
+                    numOfApplicants={grant.grant.numberOfApplications}
+                    endTimestamp={new Date(grant.grant.deadline).getTime()}
+                    grantAmount={formatAmount(
+                      grantAmount,
+                      decimals ?? 18,
+                    )}
+                    grantCurrency={
+                      label ?? 'LOL'
+                    }
+                    grantCurrencyIcon={
+                      icon
+                    }
+                    state="done"
+                    chainId={getSupportedChainIdFromSupportedNetwork(
+                      grant.grant.workspace.supportedNetworks[0],
+                    )}
+                    onAddFundsClick={() => initialiseFundModal(grant.grant)}
+                    onViewApplicantsClick={() => router.push({
+                      pathname: '/your_grants/view_applicants/',
+                      query: {
+                        grantId: grant.grant.id,
+                      },
+                    })}
+                    acceptingApplications={grant.grant.acceptingApplications}
+                    isAdmin={isAdmin}
+                    initialRubrics={grant.grant.rubric}
+                    workspaceId={grant.grant.workspace.id}
+                  />
+                );
+              })}
+          { grants.length === 0 && isAdmin
+                && !grantCount[0]
+                && !grantCount[1]
+                && router.query.done && <FirstGrantEmptyState /> }
+          { grants.length === 0 && isAdmin
+                && !router.query.done
+                && (selectedTab === 0 ? (
+                  <LiveGrantEmptyState />
+                ) : (
+                  <ArchivedGrantEmptyState />
+                ))}
+
+          {grantsReviewer.length === 0 && isReviewer
             && !grantCount[0]
             && !grantCount[1]
             && router.query.done && <FirstGrantEmptyState />}
-          {grants.length === 0
+          {grantsReviewer.length === 0 && isReviewer
             && !router.query.done
             && (selectedTab === 0 ? (
               <LiveGrantEmptyState />
             ) : (
               <ArchivedGrantEmptyState />
             ))}
+
         </Flex>
         <Flex
           w="26%"
