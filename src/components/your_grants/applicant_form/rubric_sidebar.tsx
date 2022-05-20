@@ -163,6 +163,8 @@ function RubricSidebar({
     },
   ];
 
+  if (!reviews || reviews.length === 0) return null;
+
   if (loading) {
     return (
       <Flex
