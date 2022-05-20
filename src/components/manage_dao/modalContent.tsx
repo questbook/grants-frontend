@@ -97,7 +97,6 @@ function ModalContent({
     setRevoking(false);
   };
 
-
   const handleOwnerSubmit = async () => {
     let hasError = false;
 
