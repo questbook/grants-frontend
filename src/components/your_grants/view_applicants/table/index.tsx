@@ -1,6 +1,5 @@
 import { Flex, Text } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
-import Empty from 'src/components/ui/empty';
 import Content from './content';
 import Filter from './filter';
 import Headers from './headers';

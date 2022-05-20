@@ -195,8 +195,7 @@ function Content({
                         });
                       } else if (item.status === 0) {
                         onViewApplicationFormClick({ applicationId: item.applicationId });
-                      }
-                      else if (item.status === 9) {
+                      } else if (item.status === 9) {
                         onViewApplicationFormClick({ applicationId: item.applicationId });
                       }
                     }
