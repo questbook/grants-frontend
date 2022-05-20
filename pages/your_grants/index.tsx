@@ -38,6 +38,12 @@ import { ApiClientsContext } from '../_app';
 
 const PAGE_SIZE = 5;
 
+function removeDuplicates(array: any) {
+  const uniq: any = {};
+  // eslint-disable-next-line no-return-assign
+  return array.filter((obj: any) => !uniq[obj.grant.id] && (uniq[obj.grant.id] = true));
+}
+
 function YourGrants() {
   const router = useRouter();
   const [pk, setPk] = useState<string>('*');
@@ -157,11 +163,10 @@ function YourGrants() {
         || tempMember?.accessLevel === 'owner',
       );
       setIsReviewer(tempMember?.accessLevel === 'reviewer');
-      // setIsUser(tempMember?.id);
-
-      localStorage.setItem('id', tempMember?.id);
+      const user: any = tempMember?.id;
+      localStorage.setItem('id', user);
     }
-  }, [accountData, workspace]);
+  }, [accountData, workspace, isUser]);
 
   useEffect(() => {
     if (!workspace) return;
@@ -247,31 +252,23 @@ function YourGrants() {
   }, [data]);
 
   const allGrantsReviewerData = useGetAllGrantsForReviewerQuery(queryReviewerParams);
-  // useEffect(() => {
-  //   if (!workspace) return;
-  //   setGrantsReviewer([]);
-  //   setCurrentPage(0);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [workspace, selectedTab]);
+  useEffect(() => {
+    if (!workspace) return;
+    setGrantsReviewer([]);
+    setCurrentPage(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspace, selectedTab]);
 
   useEffect(() => {
     if (allGrantsReviewerData.data && allGrantsReviewerData.data.grantApplications
        && allGrantsReviewerData.data.grantApplications.length > 0) {
-      console.log(allGrantsReviewerData.data.grantApplications);
+      console.log("data.grantsReviewer.raw",allGrantsReviewerData.data.grantApplications);
       // eslint-disable-next-line max-len
-      const newReviewerData = [...allGrantsReviewerData.data.grantApplications.reduce((map, obj) => map.set(obj.grant.details, obj), new Map()).values()];
-      console.log('data.grantsReviewer', newReviewerData);
-      setGrantsReviewer(newReviewerData);
+      const newReviewerData = removeDuplicates(allGrantsReviewerData.data.grantApplications);
 
-      // if (
-      //   grants.length > 0
-      //   && grants[0].workspace.id === allGrantsReviewerData.grantApplications[0].workspace.id
-      //   && grants[0].id !== data.grants[0].id
-      // ) {
-      //   setGrants([...grants, ...data.grants]);
-      // } else {
-      //   setGrants(data.grants);
-      // }
+      console.log('data.grantsReviewer', newReviewerData);
+
+      setGrantsReviewer(newReviewerData);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allGrantsReviewerData]);
