@@ -78,11 +78,13 @@ export default function useCreateGrant(
             asset: data.rewardCurrencyAddress,
           };
         } else {
+          console.log('Reward before parsing', data.reward, data.rewardToken.decimal);
           reward = {
-            committed: parseAmount(data.reward, data.rewardToken.decimal),
+            committed: parseAmount(data.reward, undefined, data.rewardToken.decimal),
             asset: data.rewardCurrencyAddress,
             token: data.rewardToken,
           };
+          console.log('Reward after parsing', reward);
         }
         const {
           data: { ipfsHash },

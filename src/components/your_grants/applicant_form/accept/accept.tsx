@@ -14,6 +14,7 @@ import {
   getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import { formatAmount } from '../../../../utils/formattingUtils';
 import { getAssetInfo } from '../../../../utils/tokenUtils';
 
@@ -28,6 +29,26 @@ function Accept({
 }) {
   const { workspace } = useContext(ApiClientsContext)!;
   const chainId = getSupportedChainIdFromWorkspace(workspace);
+  let decimals: number;
+  let icon: string;
+  let label: string;
+  if (applicationData.grant.reward.token) {
+    decimals = applicationData.grant.reward.token.decimal;
+    label = applicationData.grant.reward.token.label;
+    icon = getUrlForIPFSHash(applicationData.grant.reward.token.iconHash);
+  } else {
+    decimals = CHAIN_INFO[
+      getSupportedChainIdFromSupportedNetwork(
+        applicationData.grant.workspace.supportedNetworks[0],
+      )
+    ]?.supportedCurrencies[
+      applicationData.grant.reward.asset.toLowerCase()
+    ]?.decimals ?? 18;
+    label = getAssetInfo(applicationData?.grant?.reward?.asset, chainId)
+      ?.label;
+    icon = getAssetInfo(applicationData?.grant?.reward?.asset, chainId)
+      ?.icon;
+  }
   return (
     <Container
       flex={1}
@@ -59,18 +80,11 @@ function Accept({
                 applicationData?.fields?.find(
                   (fld: any) => fld?.id?.split('.')[1] === 'fundingAsk',
                 )?.values[0].value ?? '0',
-                CHAIN_INFO[
-                  getSupportedChainIdFromSupportedNetwork(
-                    applicationData.grant.workspace.supportedNetworks[0],
-                  )
-                ]?.supportedCurrencies[
-                  applicationData.grant.reward.asset.toLowerCase()
-                ]?.decimals ?? 18,
+                decimals,
               )}
             {' '}
             {
-              getAssetInfo(applicationData?.grant?.reward?.asset, chainId)
-                ?.label
+              label
             }
           </Text>
         </Flex>
@@ -94,9 +108,9 @@ function Accept({
               </Text>
               <Flex direction="row" justify="start" align="center" mt={2}>
                 <Image
+                  boxSize="36px"
                   src={
-                    getAssetInfo(applicationData?.grant?.reward?.asset, chainId)
-                      ?.icon
+                    icon
                   }
                 />
                 <Flex direction="column" ml={3}>
@@ -113,20 +127,11 @@ function Accept({
                       && applicationData
                       && formatAmount(
                         milestone?.amount,
-                        CHAIN_INFO[
-                          getSupportedChainIdFromSupportedNetwork(
-                            applicationData.grant.workspace.supportedNetworks[0],
-                          )
-                        ]?.supportedCurrencies[
-                          applicationData.grant.reward.asset.toLowerCase()
-                        ]?.decimals ?? 18,
+                        decimals,
                       )}
                     {' '}
                     {
-                      getAssetInfo(
-                        applicationData?.grant?.reward?.asset,
-                        chainId,
-                      )?.label
+                      label
                     }
                   </Text>
                 </Flex>

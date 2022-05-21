@@ -33,6 +33,7 @@ interface Props {
   funding: string;
   rewardAmount: string;
   rewardCurrency: string;
+  rewardDecimal: number | undefined;
   rewardCurrencyCoin: string;
   rewardCurrencyAddress: string | undefined;
   grantRequiredFields: string[];
@@ -55,6 +56,7 @@ function Form({
   funding,
   rewardAmount,
   rewardCurrency,
+  rewardDecimal,
   rewardCurrencyCoin,
   rewardCurrencyAddress,
   grantRequiredFields,
@@ -297,7 +299,7 @@ function Form({
         applicantEmail: [{ value: applicantEmail }],
         projectName: [{ value: projectName }],
         projectDetails: [{ value: projectDetailsString }],
-        fundingAsk: [{ value: parseAmount(fundingAsk, rewardCurrencyAddress) }],
+        fundingAsk: [{ value: parseAmount(fundingAsk, rewardCurrencyAddress, rewardDecimal) }],
         fundingBreakdown: [{ value: fundingBreakdown }],
         teamMembers: [{ value: Number(teamMembers).toString() }],
         memberDetails: membersDescription.map((md) => ({ value: md.description })),
@@ -308,7 +310,7 @@ function Form({
       milestones: projectMilestones.map((pm) => (
         {
           title: pm.milestone,
-          amount: parseAmount(pm.milestoneReward, rewardCurrencyAddress),
+          amount: parseAmount(pm.milestoneReward, rewardCurrencyAddress, rewardDecimal),
         }
       )),
     };

@@ -52,6 +52,7 @@ function Application({ applicationData, showHiddenData }: Props) {
   const [teamMembers, setTeamMembers] = useState('');
   const [memberDetails, setMemberDetails] = useState<any[]>([]);
   const [customFields, setCustomFields] = useState<any[]>([]);
+  const [decimal, setDecimal] = useState<number>();
 
   const [decodedDetails, setDecodedDetails] = useState('');
   const getDecodedDetails = async (detailsHash: string) => {
@@ -60,8 +61,8 @@ function Application({ applicationData, showHiddenData }: Props) {
     setDecodedDetails(d);
   };
 
-  let icon : string;
-  let label : string;
+  let icon: string;
+  let label: string;
   let decimals;
   if (applicationData?.grant.reward.token) {
     label = applicationData.grant.reward.token.label;
@@ -105,6 +106,16 @@ function Application({ applicationData, showHiddenData }: Props) {
         ?.find((fld: any) => fld?.id?.split('.')[1] === 'memberDetails')
         ?.values.map((val) => val.value) ?? [],
     );
+    if (applicationData.grant.reward.token) {
+      setDecimal(applicationData.grant.reward.token.decimal);
+    } else {
+      setDecimal(CHAIN_INFO[
+        getSupportedChainIdFromSupportedNetwork(
+          applicationData.grant.workspace.supportedNetworks[0],
+        )
+      ]?.supportedCurrencies[applicationData.grant.reward.asset.toLowerCase()]
+        ?.decimals);
+    }
 
     if (applicationData.fields.length > 0) {
       setCustomFields(applicationData.fields
@@ -243,6 +254,7 @@ function Application({ applicationData, showHiddenData }: Props) {
                   </Text>
                   <Flex direction="row" justify="start" mt={3}>
                     <Image
+                      boxSize="48px"
                       src={
                         icon
                       }
@@ -256,12 +268,7 @@ function Application({ applicationData, showHiddenData }: Props) {
                         {milestone?.amount && applicationData
                           && formatAmount(
                             milestone?.amount,
-                            CHAIN_INFO[
-                              getSupportedChainIdFromSupportedNetwork(
-                                applicationData.grant.workspace.supportedNetworks[0],
-                              )
-                            ]?.supportedCurrencies[applicationData.grant.reward.asset.toLowerCase()]
-                              ?.decimals ?? 18,
+                            decimal ?? 18,
                           )}
                         {' '}
                         {
@@ -282,10 +289,8 @@ function Application({ applicationData, showHiddenData }: Props) {
             </Heading>
             <Flex direction="row" justify="start" mt={3} mb={10}>
               <Image
-                src={
-                  getAssetInfo(applicationData?.grant?.reward?.asset, chainId)
-                    ?.icon
-                }
+                boxSize="48px"
+                src={icon}
               />
               <Box ml={2} />
               <Flex direction="column" justify="center" align="start">

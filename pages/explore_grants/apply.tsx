@@ -29,6 +29,7 @@ function ApplyGrant() {
   const [funding, setFunding] = useState('');
   const [rewardAmount, setRewardAmount] = useState('');
   const [rewardCurrency, setRewardCurrency] = useState('');
+  const [rewardDecimal, setRewardDecimal] = useState<number | undefined>(undefined);
   const [rewardCurrencyCoin, setRewardCurrencyCoin] = useState('');
   const [rewardCurrencyAddress, setRewardCurrencyAddress] = useState();
   const [grantDetails, setGrantDetails] = useState('');
@@ -121,6 +122,7 @@ function ApplyGrant() {
     if (grantData.reward.token) {
       setRewardCurrency(chainInfo.label);
       setRewardCurrencyCoin(chainInfo.icon);
+      setRewardDecimal(parseInt(chainInfo.decimals, 10));
     } else {
       supportedCurrencyObj = getAssetInfo(
         grantData?.reward?.asset?.toLowerCase(),
@@ -159,6 +161,7 @@ function ApplyGrant() {
           funding={funding}
           rewardAmount={rewardAmount}
           rewardCurrency={rewardCurrency}
+          rewardDecimal={rewardDecimal}
           rewardCurrencyCoin={rewardCurrencyCoin}
           rewardCurrencyAddress={rewardCurrencyAddress}
           workspaceId={workspaceId}

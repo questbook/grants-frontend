@@ -1,21 +1,21 @@
-query getFundSentForApplication($applicationId: String) {
-  fundsTransfers(
-      where: {application: $applicationId}, 
-      orderBy: createdAtS, 
-      orderDirection: desc) {
-    
-    application {
-      id
-    },
-    milestone {
+  query getFundSentForApplication($applicationId: String) {
+    fundsTransfers(
+        where: {application: $applicationId}, 
+        orderBy: createdAtS, 
+        orderDirection: desc) {
+      
+      application {
+        id
+      },
+      milestone {
+        id,
+        title
+      },
       id,
-      title
-    },
-    id,
-    amount,
-    sender,
-    to,
-    createdAtS,
-    type
+      amount,
+      sender,
+      to,
+      createdAtS,
+      type
+    }
   }
-}
