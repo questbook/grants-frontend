@@ -39,7 +39,6 @@ function Table({
       </Flex>
       {archiveGrantComponent}
       <Flex w="100%" mt={10} align="center" direction="column" flex={1}>
-
         <Headers is_reviewer={isReviewer} />
         <Content
           data={data}

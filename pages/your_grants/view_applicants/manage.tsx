@@ -18,7 +18,6 @@ import React, {
 import { useAccount } from 'wagmi';
 import { BigNumber } from 'ethers';
 import {
-  ApplicationMilestone,
   GetApplicationDetailsQuery,
   useGetApplicationDetailsQuery,
   useGetFundSentForApplicationQuery,
@@ -30,6 +29,7 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import config from 'src/constants/config';
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption';
 import CopyIcon from 'src/components/ui/copy_icon';
+import { ApplicationMilestone } from 'src/types';
 import InfoToast from '../../../src/components/ui/infoToast';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Heading from '../../../src/components/ui/heading';
