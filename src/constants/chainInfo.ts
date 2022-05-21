@@ -395,4 +395,52 @@ export const CHAIN_INFO: ChainInfoMap = {
     subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-optimism-mainnet',
     rpcUrls: ['https://mainnet.optimism.io/'],
   },
+  [SupportedChainId.NEON_DEVNET]: {
+    id: SupportedChainId.NEON_DEVNET,
+    name: 'Neon Devnet',
+    nativeCurrency: {
+      name: 'Neon',
+      symbol: 'NEON',
+      decimals: 18,
+    },
+    icon: '/ui_icons/brand/currency/neon_symbol.svg',
+    wallets: [
+      {
+        id: 'injected',
+        name: 'Metamask',
+        icon: '/wallet_icons/metamask.svg',
+      },
+      {
+        id: 'walletConnect',
+        name: 'Wallet Connect',
+        icon: '/wallet_icons/walletconnect.svg',
+      },
+    ],
+    explorer: {
+      address: 'https://neonscan.org/address/',
+      transactionHash: 'https://neonscan.org/tx/',
+    },
+    supportedCurrencies: {
+      '0x7ad98aeadbbcdf3693b0b53c09da4033704c9322': {
+        icon: '/ui_icons/brand/currency/dai_icon.svg',
+        label: 'DAI',
+        address: '0x7ad98aeadbbcdf3693b0b53c09da4033704c9322',
+        decimals: 9,
+      },
+      '0xf8ad328e98f85fccbf09e43b16dcbbda7e84beab': {
+        icon: '/ui_icons/brand/currency/neon_symbol.svg',
+        label: 'WNEON',
+        address: '0xf8ad328e98f85fccbf09e43b16dcbbda7e84beab',
+        decimals: 18,
+      },
+      '0x2578c6c1ac883443388edd688ca10e87d088bfa8': {
+        icon: '/ui_icons/brand/currency/usdc_icon.svg',
+        label: 'USDC',
+        address: '0x2578c6c1ac883443388edd688ca10e87d088bfa8',
+        decimals: 6,
+      },
+    },
+    subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-neon-devnet',
+    rpcUrls: ['http://qb-neon-rpc.ap-south-1.elasticbeanstalk.com:9090/solana'],
+  },
 };
