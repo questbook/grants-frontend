@@ -47,6 +47,7 @@ function removeDuplicates(array: any) {
 function YourGrants() {
   const router = useRouter();
   const [pk, setPk] = useState<string>('*');
+  const [ignorePkModal, setIgnorePkModal] = useState(false);
   // useEffect(async () => {
   //   const publicKey = await getPublicEncryptionKey();
   // }, [getPublicEncryptionKey]);
@@ -557,8 +558,11 @@ function YourGrants() {
       )}
 
       <AllowAccessToPublicKeyModal
-        hiddenModalOpen={pk.length === 0}
+        hiddenModalOpen={!ignorePkModal && pk.length === 0}
         isAdmin={isAdmin}
+        setIgnorePkModal={(val: boolean) => {
+          setIgnorePkModal(val);
+        }}
         setHiddenModalOpen={() => {
           window.location.reload();
         }}

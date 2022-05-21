@@ -1,6 +1,6 @@
 import {
   Button,
-  Flex, Image, Link, ModalBody, Text,
+  Flex, IconButton, Image, Link, ModalBody, Text,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey';
@@ -9,12 +9,14 @@ import Modal from './modal';
 interface Props {
   hiddenModalOpen: boolean;
   setHiddenModalOpen: (hiddenModalOpen: boolean) => void;
+  setIgnorePkModal: (ignorePkModal: boolean) => void;
   isAdmin: boolean;
 }
 
 function AllowAccessToPublicKeyModal({
   hiddenModalOpen,
   setHiddenModalOpen,
+  setIgnorePkModal,
   isAdmin,
 }: Props) {
   const {
@@ -37,7 +39,22 @@ function AllowAccessToPublicKeyModal({
         modalWidth={719}
         showCloseButton={false}
       >
-        <ModalBody px={10}>
+        <ModalBody px={10} display="flex" flexDirection="column">
+
+          <IconButton
+            m={0}
+            ml="auto"
+            aria-label="close-button"
+            size="14px"
+            icon={<Image boxSize="14px" _active={{}} _hover={{}} src="/ui_icons/close.svg" />}
+            _hover={{}}
+            _active={{}}
+            variant="ghost"
+            onClick={() => {
+              setIgnorePkModal(true);
+            }}
+          />
+
           <Flex direction="column" align="center">
             <Text
               variant="heading"
