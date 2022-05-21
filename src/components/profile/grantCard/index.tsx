@@ -8,10 +8,12 @@ import { SupportedChainId } from 'src/constants/chains';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import VerifiedBadge from 'src/components/ui/verified_badge';
 import Badge from './badge';
+import moment from 'moment';
 
 interface BrowseGrantCardProps {
   daoID: string;
   daoName: string;
+  createdAt: number;
   isDaoVerified?: boolean;
   chainId: SupportedChainId | undefined;
 
@@ -34,6 +36,7 @@ interface BrowseGrantCardProps {
 function BrowseGrantCard({
   daoID,
   daoName,
+  createdAt,
   isDaoVerified,
   chainId,
 
@@ -55,12 +58,15 @@ function BrowseGrantCard({
   const router = useRouter();
 
   return (
-    <>
-      <Flex py={6} px="1.5rem" w="100%">
+    <Flex
+      borderY="1px solid #E8E9E9"
+    >
+      <Flex
+      py={6} px="1.5rem" w="100%">
 
         <Flex flex={1} direction="column">
 
-          <Flex direction="row" alignItems="start">
+          <Flex direction="row" alignItems="center">
             <Text maxW="50%">
               <Link
                 onClick={onTitleClick}
@@ -83,44 +89,12 @@ function BrowseGrantCard({
               )}
             </Text>
 
+            <Image mx={2} src="/ui_icons/green_dot.svg" display="inline-block" />
+
             <Box mr="auto" />
             <Badge
               numOfApplicants={numOfApplicants}
-              endTimestamp={endTimestamp}
             />
-          </Flex>
-
-          <Flex direction="row">
-            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-            <Link
-              onClick={() => {
-                router.push({
-                  pathname: '/profile',
-                  query: {
-                    daoId: daoID,
-                    chainId,
-                  },
-                });
-              }}
-              lineHeight="24px"
-              fontWeight="700"
-            >
-              {daoName}
-              {isDaoVerified && (
-              <Image
-                h={4}
-                w={4}
-                display="inline-block"
-                src="/ui_icons/verified.svg"
-                ml="2px"
-                mb="-2px"
-              />
-              )}
-            </Link>
-            <Text fontSize="16px" display="inline" color="#717A7C" fontWeight="400" lineHeight="24px" ml={2}>
-
-              {`• ${CHAIN_INFO[chainId!]?.name}`}
-            </Text>
           </Flex>
 
           <Text mt={5} lineHeight="24px" color="#122224" fontWeight="400">
@@ -134,6 +108,15 @@ function BrowseGrantCard({
               {' '}
               {grantCurrency}
             </Text>
+            <Image mx={2} src="/ui_icons/green_dot.svg" display="inline-block" />
+
+            <Image mr="6px" boxSize={3} src="/ui_icons/deadline.svg" display="inline-block" />
+            <Text as="span" fontSize="xs" display="inline-block">
+              Ends on
+              {' '}
+              {moment(endTimestamp).format('MMMM D')}
+            </Text>
+
             <Box mr="auto" />
             <Button onClick={onClick} variant="primaryCta">
               Apply Now
@@ -141,8 +124,7 @@ function BrowseGrantCard({
           </Flex>
         </Flex>
       </Flex>
-      <Divider w="auto" />
-    </>
+    </Flex>
   );
 }
 

@@ -5,9 +5,11 @@ import DaoAbout from 'src/components/profile/dao_about';
 import BrowseGrantCard from 'src/components/profile/grantCard';
 
 import {
+  Box,
   Divider,
   Stack,
-Button,  Flex,
+  Button,
+  Flex,
   IconButton,
   Image,
   Text,
@@ -48,7 +50,7 @@ function Profile() {
   const tabs = ['Browse Grants', 'About'];
   const [selected, setSelected] = useState(
     // eslint-disable-next-line no-nested-ternary
-    router.query.tab === 'grants' ? 0 : router.query.tab === 'about' && 1,
+    router.query.tab === 'grants' ? 0 : router.query.tab === 'about' && 1
   );
   const switchTab = (to: number) => {
     setSelected(to);
@@ -101,8 +103,7 @@ function Profile() {
       }}
       mx="auto"
       mb="1rem"
-      borderLeft="1px solid #E8E9E9"
-      borderRight="1px solid #E8E9E9"
+      borderX="1px solid #E8E9E9"
       borderBottom="1px solid #E8E9E9"
     >
       <Stack w="full">
@@ -152,6 +153,8 @@ function Profile() {
                 </Text>
               )}
             </Flex>
+
+            <Box mr="auto" />
 
             <Flex direction="row" alignSelf="start" justify="right" mt="3.5rem">
               {workspaceData?.socials.map((social) => (
@@ -204,7 +207,7 @@ function Profile() {
                 color={index === selected ? '#122224' : '#A0A7A7'}
                 onClick={() => switchTab(index)}
               >
-                {tab}{" "}{tab === "Browse Grants" && `(${grantData?.length})`}
+                {tab} {tab === 'Browse Grants' && `(${grantData?.length})`}
               </Button>
             ))}
           </Stack>
@@ -214,79 +217,83 @@ function Profile() {
       </Stack>
 
       {
-    // eslint-disable-next-line no-nested-ternary
-    selected === 0 ? (
-      <>
-      {grantData
-        && grantData.length > 0
-        && grantData.map((grant) => {
-          const chainId = getSupportedChainIdFromSupportedNetwork(
-            grant.workspace.supportedNetworks[0],
-          );
-          const chainInfo = CHAIN_INFO[chainId]?.supportedCurrencies[
-            grant.reward.asset.toLowerCase()
-          ];
-          const [isGrantVerified, funding] = verify(
-            grant.funding,
-            chainInfo?.decimals,
-          );
-          return (
-            <BrowseGrantCard
-              daoID={grant.workspace.id}
-              key={grant.id}
-              daoName={grant.workspace.title}
-              isDaoVerified={false}
-              grantTitle={grant.title}
-              grantDesc={grant.summary}
-              numOfApplicants={grant.numberOfApplications}
-              endTimestamp={new Date(grant.deadline!).getTime()}
-              grantAmount={formatAmount(
-                grant.reward.committed,
-                chainInfo?.decimals ?? 18,
-              )}
-              grantCurrency={chainInfo?.label ?? 'LOL'}
-              grantCurrencyIcon={
-                chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'
-              }
-              chainId={chainId}
-              isGrantVerified={isGrantVerified}
-              funding={funding}
-              onClick={() => {
-                if (!(accountData && accountData.address)) {
-                  router.push({
-                    pathname: '/connect_wallet',
-                    query: {
-                      flow: '/',
-                      grantId: grant.id,
-                      chainId,
-                    },
-                  });
-                  return;
-                }
-                router.push({
-                  pathname: '/explore_grants/about_grant',
-                  query: {
-                    grantId: grant.id,
-                    chainId,
-                  },
-                });
-              }}
-              onTitleClick={() => {
-                router.push({
-                  pathname: '/explore_grants/about_grant',
-                  query: {
-                    grantId: grant.id,
-                    chainId,
-                  },
-                });
-              }}
-            />
-          );
-        })}
-        </>
-    ) // eslint-disable-next-line no-nested-ternary
-      : selected === 1 && (
-        <DaoAbout />)}
+        // eslint-disable-next-line no-nested-ternary
+        selected === 0 ? (
+          <>
+            {grantData &&
+              grantData.length > 0 &&
+              grantData.map((grant) => {
+                const chainId = getSupportedChainIdFromSupportedNetwork(
+                  grant.workspace.supportedNetworks[0]
+                );
+                const chainInfo =
+                  CHAIN_INFO[chainId]?.supportedCurrencies[
+                    grant.reward.asset.toLowerCase()
+                  ];
+                const [isGrantVerified, funding] = verify(
+                  grant.funding,
+                  chainInfo?.decimals
+                );
+                return (
+                  <BrowseGrantCard
+                    daoID={grant.workspace.id}
+                    key={grant.id}
+                    daoName={grant.workspace.title}
+                    isDaoVerified={false}
+                    createdAt={grant.createdAtS}
+                    grantTitle={grant.title}
+                    grantDesc={grant.summary}
+                    numOfApplicants={grant.numberOfApplications}
+                    endTimestamp={new Date(grant.deadline!).getTime()}
+                    grantAmount={formatAmount(
+                      grant.reward.committed,
+                      chainInfo?.decimals ?? 18
+                    )}
+                    grantCurrency={chainInfo?.label ?? 'LOL'}
+                    grantCurrencyIcon={
+                      chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'
+                    }
+                    chainId={chainId}
+                    isGrantVerified={isGrantVerified}
+                    funding={funding}
+                    onClick={() => {
+                      if (!(accountData && accountData.address)) {
+                        router.push({
+                          pathname: '/connect_wallet',
+                          query: {
+                            flow: '/',
+                            grantId: grant.id,
+                            chainId,
+                          },
+                        });
+                        return;
+                      }
+                      router.push({
+                        pathname: '/explore_grants/about_grant',
+                        query: {
+                          grantId: grant.id,
+                          chainId,
+                        },
+                      });
+                    }}
+                    onTitleClick={() => {
+                      router.push({
+                        pathname: '/explore_grants/about_grant',
+                        query: {
+                          grantId: grant.id,
+                          chainId,
+                        },
+                      });
+                    }}
+                  />
+                );
+              })}
+          </>
+        ) : (
+          // eslint-disable-next-line no-nested-ternary
+          selected === 1 && <DaoAbout />
+        )
+      }
     </Flex>
   );
 }
