@@ -441,6 +441,6 @@ export const CHAIN_INFO: ChainInfoMap = {
       },
     },
     subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-neon-devnet',
-    rpcUrls: ['https://proxy.devnet.neonlabs.org/solana/'],
+    rpcUrls: ['http://qb-neon-rpc.ap-south-1.elasticbeanstalk.com:9090/solana'],
   },
 };
