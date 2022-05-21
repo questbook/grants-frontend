@@ -50,8 +50,8 @@ function AllowAccessToPublicKeyModal({
 
             <Text mt={4} variant="applicationText">
               {isAdmin
-                ? 'You’ve been invited to be a Admin for Polygon DAO'
-                : 'You’ve been invited to be a Reviewer for Polygon DAO'}
+                ? 'You’ve been invited to be as an Admin.'
+                : 'You’ve been invited to be as a Reviewer.'}
             </Text>
 
             {isAdmin ? null : (
@@ -81,10 +81,18 @@ function AllowAccessToPublicKeyModal({
             )}
 
             <Text mt={9} variant="applicantText" textAlign="center">
-              To get started, you can share your public key which allows you to
-              view the personal information such as email, and about team shared
-              by applicants. This data is encrypted, and is only visible to you if
-              you share your public key.
+              To get started with reviewing applications,
+              you are required to submit your public key that enables you to
+              {' '}
+              <b>view encrypted applicant details</b>
+              {' '}
+              such as email etc.
+              <br />
+              <br />
+              This along with the data submitted by the reviewers is encrypted and
+              {' '}
+              <b>will be visible to you only if you share your public key</b>
+              {' '}
               {' '}
               <Link
                 mx={1}

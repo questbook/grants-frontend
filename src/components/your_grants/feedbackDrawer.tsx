@@ -47,6 +47,7 @@ function FeedbackDrawer({
         newFeedbackData.push({
           rating: 0,
           comment: '',
+          isError: false,
           rubric,
         });
       });
@@ -57,13 +58,25 @@ function FeedbackDrawer({
     console.log(feedbackData);
 
     let error = false;
+    const newFeedbackData = [] as any[];
     feedbackData?.forEach((feedback) => {
-      if (feedback.rating === 0 && feedback.comment === '') {
+      const newFeedbackDataObject = { ...feedback };
+      if (feedback.rating === 0) {
         error = true;
+        newFeedbackDataObject.isError = true;
       }
+      newFeedbackData.push(newFeedbackDataObject);
     });
-    if (error) return;
-    setEditedFeedbackData({ isApproved, items: feedbackData });
+    if (error) {
+      setFeedbackData(newFeedbackData);
+      return;
+    }
+    const formattedFeedbackData = feedbackData?.map((feedback: any) => ({
+      rubric: feedback.rubric,
+      rating: feedback.rating,
+      comment: feedback.comment,
+    }));
+    setEditedFeedbackData({ isApproved, items: formattedFeedbackData });
   };
 
   const [
@@ -153,6 +166,7 @@ function FeedbackDrawer({
                     console.log(r);
                     const newFeedbackData = [...feedbackData];
                     newFeedbackData[index].rating = r;
+                    newFeedbackData[index].isError = false;
                     setFeedbackData(newFeedbackData);
                   }}
                   rating={feedback.rating}
@@ -160,6 +174,17 @@ function FeedbackDrawer({
                   starHoverColor="#88BDEE"
                   starDimension="18px"
                 />
+
+                {feedback.isError ? (
+                  <Text
+                    fontSize="14px"
+                    color="#EE7979"
+                    fontWeight="700"
+                    lineHeight="20px"
+                  >
+                    Star Rating is Mandatory Field
+                  </Text>
+                ) : null}
 
                 <MultiLineInput
                   value={feedback.comment}
@@ -170,7 +195,7 @@ function FeedbackDrawer({
                   }}
                   placeholder="Feedback"
                   isError={false}
-                  errorText="Required"
+                  errorText="Star Rating is Mandatory Field"
                   disabled={!feedbackEditAllowed}
                 />
               </Flex>
