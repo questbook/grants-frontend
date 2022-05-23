@@ -37,6 +37,7 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
   const [, switchNetwork] = useNetwork();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false);
+  // const [supportedCurrencies, setSupportedCurrencies] = React.useState([]);
 
   const addERC = true;
 
@@ -46,18 +47,22 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
     CHAIN_INFO[currentChain].supportedCurrencies,
   ).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
     .map((currency) => ({ ...currency, id: currency.address }));
+
   const [rewardCurrency, setRewardCurrency] = React.useState(
     supportedCurrencies[0].label,
   );
+
   const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
     supportedCurrencies[0].address,
   );
 
-  const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<any[]>([]);
+  // eslint-disable-next-line max-len
+  const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<any[]>([supportedCurrencies]);
 
   useEffect(() => {
     if (supportedCurrencies && supportedCurrencies.length > 0) {
-      setSupportedCurrenciesList(supportedCurrencies);
+      console.log('Supported Currencies', supportedCurrencies);
+      // setSupportedCurrenciesList(supportedCurrencies);
     }
   }, [supportedCurrencies]);
 
@@ -89,6 +94,8 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
         CHAIN_INFO[currentChain].supportedCurrencies,
       ).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
         .map((currency) => ({ ...currency, id: currency.address }));
+      // console.log('Reward Currency', rewardCurrency);
+      setSupportedCurrenciesList(currencies);
       setRewardCurrency(currencies[0].label);
       setRewardCurrencyAddress(currencies[0].address);
     }
@@ -184,14 +191,14 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
               listItems={supportedCurrenciesList}
               value={rewardCurrency}
               onChange={(data: any) => {
-                console.log('data while signing up:', data);
+                // console.log('data while signing up:', data);
                 if (data === 'addERCToken') {
                   setIsModalOpen(true);
                 }
                 setRewardCurrency(data.label);
                 setRewardCurrencyAddress(data.id);
                 if (data !== 'addERCToken' && !isJustAddedToken && data.icon.lastIndexOf('ui_icons') === -1) {
-                  console.log('custom token', data);
+                  // console.log('custom token', data);
                   setRewardToken({
                     iconHash: data.icon.substring(data.icon.lastIndexOf('=') + 1),
                     address: data.address,

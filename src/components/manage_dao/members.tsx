@@ -29,6 +29,11 @@ function Members({ workspaceMembers }: Props) {
   ];
   const tableDataFlex = [0.2622, 0.1632, 0.2448, 0.2591, 0.0734];
 
+  const handleEmptyEmail = (email?: string) => {
+    if (email) return email;
+    return '-';
+  };
+
   useEffect(() => {
     console.log(workspaceMembers);
 
@@ -125,7 +130,7 @@ function Members({ workspaceMembers }: Props) {
                     textAlign="center"
                     variant="tableBody"
                   >
-                    {data.email}
+                    {handleEmptyEmail(data.email)}
                   </Text>
                 )}
                 <Tooltip label={data.address}>
