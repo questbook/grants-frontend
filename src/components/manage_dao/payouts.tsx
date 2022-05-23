@@ -85,6 +85,11 @@ function Payouts() {
     'Actions',
   ];
 
+  const handleEmptyEmail = (email?: string) => {
+    if (email) return email;
+    return '-'
+  }
+
   React.useEffect(() => {
     if (!workspace) {
       router.push('/');
@@ -257,7 +262,7 @@ function Payouts() {
                                     </Flex>
                                   </Tooltip>
                                 ) : (
-                                  reviewer.email ? reviewer.email : '-'
+                                  handleEmptyEmail(reviewer.email)
                                 )}
                               </Text>
                               <Tooltip label={reviewer.actorId}>
