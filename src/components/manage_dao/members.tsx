@@ -32,7 +32,7 @@ function Members({ workspaceMembers }: Props) {
   const handleEmptyEmail = (email?: string) => {
     if (email) return email;
     return '-';
-  }
+  };
 
   useEffect(() => {
     console.log(workspaceMembers);

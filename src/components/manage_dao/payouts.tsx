@@ -88,7 +88,7 @@ function Payouts() {
   const handleEmptyEmail = (email?: string) => {
     if (email) return email;
     return '-';
-  }
+  };
 
   React.useEffect(() => {
     if (!workspace) {
