@@ -185,6 +185,7 @@ function GrantRewardsInput({
         <Flex justifyContent="center" gap={2} alignItems="center">
           <Switch
             id="encrypt"
+            isChecked={shouldEncrypt}
             onChange={(e) => {
               setShouldEncrypt(e.target.checked);
             }}
@@ -262,7 +263,8 @@ function GrantRewardsInput({
         </Flex>
         <Flex justifyContent="center" gap={2} alignItems="center">
           <Switch
-            id="encrypt"
+            id="encryptReviews"
+            isChecked={shouldEncryptReviews}
             onChange={(e) => {
               setShouldEncryptReviews(e.target.checked);
             }}

@@ -120,7 +120,7 @@ function ApplicantDetails({
 
       {customFieldsOptionIsVisible && (
         <>
-          {customFields.map((customField, index) => (
+          {customFields?.map((customField, index) => (
             <>
               {index > 0 && (
                 <Flex mt={2} mb="-21px" gap="2" justifyContent="flex-end">
@@ -333,6 +333,7 @@ function ApplicantDetails({
         <Flex justifyContent="center" gap={2} alignItems="center">
           <Switch
             id="encrypt"
+            isChecked={rubricRequired}
             onChange={(e) => {
               setRubricRequired(e.target.checked);
               const newRubrics = rubrics.map((rubric) => ({
