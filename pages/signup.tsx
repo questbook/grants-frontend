@@ -63,6 +63,7 @@ function SignupDao() {
         supportedNetworks: [`chain_${workspaceData.network}` as SupportedNetwork],
         title: workspaceData.name,
         members: [],
+        tokens: [],
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -104,7 +105,6 @@ function SignupDao() {
       <CreateGrant
         hasClicked={createGrantLoading}
         onSubmit={(data) => {
-          console.log('grant data', data);
           setGrantData(data);
         }}
       />
@@ -144,7 +144,6 @@ function SignupDao() {
       <Form
         // hasClicked={workspaceLoading}
         onSubmit={(data) => {
-          console.log('Workspace Data: ', data);
           setWorkspaceData(data);
         }}
       />

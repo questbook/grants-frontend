@@ -1,7 +1,6 @@
 import {
   Box, Link, Text, Flex, Image, Divider,
 } from '@chakra-ui/react';
-// import { ExternalLinkIcon } from '@chakra-ui/icons';
 import React from 'react';
 import { SupportedChainId } from 'src/constants/chains';
 import FloatingSidebar from '../../ui/sidebar/floatingSidebar';

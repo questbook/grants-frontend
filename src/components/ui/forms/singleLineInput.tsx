@@ -8,12 +8,13 @@ import {
   InputGroup,
   InputRightElement,
   PlacementWithLogical,
+  InputLeftElement,
 } from '@chakra-ui/react';
 import Tooltip from '../tooltip';
 
 interface SingleLineInputProps {
   label?: string;
-  value: string | undefined;
+  value: string | undefined ;
   onChange: ChangeEventHandler<HTMLInputElement>;
   onClick?: () => void;
   placeholder?: string;
@@ -27,6 +28,7 @@ interface SingleLineInputProps {
 
   labelRightElement?: React.ReactNode;
   inputRightElement?: React.ReactNode;
+  inputLeftElement?: React.ReactNode;
   type?: string;
   height?: string | number;
   visible?: boolean;
@@ -46,6 +48,7 @@ const defaultProps = {
   errorText: '',
   labelRightElement: null,
   inputRightElement: null,
+  inputLeftElement: null,
   type: 'text',
   height: 12,
   visible: true,
@@ -67,6 +70,7 @@ function SingleLineInput({
   onClick,
   labelRightElement,
   inputRightElement,
+  inputLeftElement,
   type,
   height,
   visible,
@@ -95,6 +99,7 @@ function SingleLineInput({
       </Flex>
 
       <InputGroup>
+        {inputLeftElement && <InputLeftElement h="100%" mt={0.5}>{inputLeftElement}</InputLeftElement>}
         <Input
           ref={ref}
           isDisabled={disabled}

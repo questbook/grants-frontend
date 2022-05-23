@@ -9,8 +9,9 @@ import SidebarComponent from '../../ui/sidebar/sidebar';
 
 interface Props {
   showCreateGrantItem: boolean;
+  isReviewer: boolean;
 }
-function Sidebar({ showCreateGrantItem }: Props) {
+function Sidebar({ showCreateGrantItem, isReviewer }: Props) {
   const { RenderModal, setHiddenModalOpen } = useSubmitPublicKey();
   const router = useRouter();
   const [listItems, setListItems] = useState<any[]>([]);
@@ -45,7 +46,7 @@ function Sidebar({ showCreateGrantItem }: Props) {
           'Invite core DAO members to set up grants, and add funds to it.',
         onSubmit: () => {
           router.push({
-            pathname: '/settings_and_members/',
+            pathname: '/manage_dao/',
             query: {
               tab: 'members',
             },
@@ -55,9 +56,11 @@ function Sidebar({ showCreateGrantItem }: Props) {
     ];
     if (!showCreateGrantItem) {
       items = items.filter((item) => item.title !== 'Create your first grant');
+    } else if (isReviewer) {
+      items = items.filter((item) => item.title === 'Get access to encrypted applicant data');
     }
     setListItems(items);
-  }, [router, setHiddenModalOpen, showCreateGrantItem]);
+  }, [router, setHiddenModalOpen, showCreateGrantItem, isReviewer]);
 
   return (
     <SidebarComponent

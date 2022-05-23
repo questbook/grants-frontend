@@ -17,6 +17,12 @@ export default function useChainId() {
     if (chainId === 80001) {
       return SupportedChainId.POLYGON_TESTNET;
     }
+    if (chainId === 10) {
+      return SupportedChainId.OPTIMISM_MAINNET;
+    }
+    if (chainId === 245022926) {
+      return SupportedChainId.NEON_DEVNET;
+    }
     return undefined;
   };
 

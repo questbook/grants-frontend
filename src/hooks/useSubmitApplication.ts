@@ -37,6 +37,7 @@ export default function useSubmitApplication(
 
   useEffect(() => {
     if (data) {
+      console.log('Application data', data);
       setError(undefined);
       setIncorrectNetwork(false);
     }

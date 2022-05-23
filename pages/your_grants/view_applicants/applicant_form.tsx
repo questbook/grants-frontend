@@ -22,6 +22,8 @@ import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption';
 import Modal from 'src/components/ui/modal';
+import { useAccount } from 'wagmi';
+import ReviewerSidebar from 'src/components/your_grants/applicant_form/reviewerSiderbar';
 import { ApiClientsContext } from '../../_app';
 import InfoToast from '../../../src/components/ui/infoToast';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
@@ -49,6 +51,17 @@ function ApplicantForm() {
   const toast = useToast();
   const router = useRouter();
   const [step, setStep] = useState(0);
+
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [{ data: accountData }] = useAccount();
+  useEffect(() => {
+    if (workspace && workspace.members && workspace.members.length > 0) {
+      const tempMember = workspace.members.find(
+        (m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
+      );
+      setIsAdmin(tempMember?.accessLevel === 'admin' || tempMember?.accessLevel === 'owner');
+    }
+  }, [accountData?.address, workspace]);
 
   const [applicationId, setApplicationId] = useState<any>('');
   const [applicationData, setApplicationData] = useState<GetApplicationDetailsQuery['grantApplication']>(null);
@@ -415,14 +428,37 @@ function ApplicantForm() {
                   </Flex>
                 </Flex>
               </Flex>
-              <Flex direction="column" mt={2}>
-                <Sidebar
-                  showHiddenData={showHiddenData}
-                  applicationData={applicationData}
-                  onAcceptApplicationClick={() => setStep(1)}
-                  onRejectApplicationClick={() => setStep(2)}
-                  onResubmitApplicationClick={() => setStep(3)}
-                />
+              <Flex
+                direction="column"
+                mt={2}
+                w={340}
+                alignItems="stretch"
+                pos="sticky"
+                top="36px"
+              >
+                {
+                  applicationData
+                    ?.reviewers.find((reviewer) => reviewer.id.split('.')[1] === accountData?.address.toLowerCase()) !== undefined && (
+                      <ReviewerSidebar
+                        showHiddenData={showHiddenData}
+                        applicationData={applicationData}
+                        isAdmin={isAdmin}
+                        onAcceptApplicationClick={() => setStep(1)}
+                        onRejectApplicationClick={() => setStep(2)}
+                        onResubmitApplicationClick={() => setStep(3)}
+                      />
+                  )
+                }
+                {isAdmin
+                  && (
+                    <Sidebar
+                      showHiddenData={showHiddenData}
+                      applicationData={applicationData}
+                      onAcceptApplicationClick={() => setStep(1)}
+                      onRejectApplicationClick={() => setStep(2)}
+                      onResubmitApplicationClick={() => setStep(3)}
+                    />
+                  )}
               </Flex>
             </Flex>
           </Flex>

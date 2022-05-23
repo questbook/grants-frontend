@@ -18,7 +18,6 @@ import React, {
 import { useAccount } from 'wagmi';
 import { BigNumber } from 'ethers';
 import {
-  ApplicationMilestone,
   GetApplicationDetailsQuery,
   useGetApplicationDetailsQuery,
   useGetFundSentForApplicationQuery,
@@ -30,6 +29,7 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import config from 'src/constants/config';
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption';
 import CopyIcon from 'src/components/ui/copy_icon';
+import { ApplicationMilestone } from 'src/types';
 import InfoToast from '../../../src/components/ui/infoToast';
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs';
 import Heading from '../../../src/components/ui/heading';
@@ -79,7 +79,7 @@ function ManageGrant() {
 
   const {
     data: {
-      milestones, rewardAsset, fundingAsk, decimals,
+      milestones, rewardAsset, rewardToken, fundingAsk, decimals,
     },
     refetch: refetchMilestones,
   } = useApplicationMilestones(applicationID);
@@ -117,6 +117,8 @@ function ManageGrant() {
     },
   });
 
+  // console.log('Funds Disbursed', fundsDisbursed);
+
   const [applicationData, setApplicationData] = useState<GetApplicationDetailsQuery['grantApplication']>(null);
   const applicantEmail = useMemo(
     () => applicationData?.fields.find(
@@ -142,7 +144,14 @@ function ManageGrant() {
     }
   };
 
-  const assetInfo = getAssetInfo(rewardAsset, getSupportedChainIdFromWorkspace(workspace));
+  let assetInfo;
+
+  if (rewardToken) {
+    assetInfo = rewardToken;
+  } else {
+    assetInfo = getAssetInfo(rewardAsset, getSupportedChainIdFromWorkspace(workspace));
+  }
+
   const fundingIcon = assetInfo.icon;
 
   useEffect(() => {
@@ -162,12 +171,15 @@ function ManageGrant() {
           decimals={decimals}
           sendFundOpen={() => setIsSendFundModalOpen(true)}
           chainId={getSupportedChainIdFromWorkspace(workspace)}
+          rewardToken={rewardToken}
         />
       ),
     },
     {
       icon: fundingIcon,
-      title: formatAmount(getTotalFundingRecv(milestones).toString(), decimals),
+      title: formatAmount(getTotalFundingRecv(
+        milestones as unknown as ApplicationMilestone[],
+      ).toString(), decimals),
       subtitle: 'Funding Sent',
       content: (
         <Funding
@@ -178,6 +190,7 @@ function ManageGrant() {
           grantId={applicationData?.grant?.id || ''}
           type="funding_sent"
           chainId={getSupportedChainIdFromWorkspace(workspace)}
+          rewardToken={rewardToken}
         />
       ),
     },
@@ -185,7 +198,9 @@ function ManageGrant() {
       icon: fundingIcon,
       title:
         (fundingAsk ? formatAmount(fundingAsk.toString(), decimals) : null)
-        || formatAmount(getTotalFundingAsked(milestones).toString(), decimals),
+        || formatAmount(getTotalFundingAsked(
+          milestones as unknown as ApplicationMilestone[],
+        ).toString(), decimals),
       subtitle: 'Funding Requested',
       content: undefined, // <Funding fundTransfers={fundsDisbursed} assetId={rewardAsset} />,
     },

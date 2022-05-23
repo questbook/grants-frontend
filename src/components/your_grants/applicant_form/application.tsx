@@ -16,7 +16,7 @@ import React, {
 } from 'react';
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer';
 import { GetApplicationDetailsQuery } from 'src/generated/graphql';
-import { getFromIPFS } from 'src/utils/ipfsUtils';
+import { getFromIPFS, getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import { formatAmount } from '../../../utils/formattingUtils';
@@ -39,8 +39,10 @@ function Application({ applicationData, showHiddenData }: Props) {
     setSelected(currentSelection);
   };
 
-  const refs = [useRef(null), useRef(null), useRef(null)];
-  const tabs = ['Project Details', 'Funds Requested', 'About Team'];
+  const { workspace } = useContext(ApiClientsContext)!;
+  const chainId = getSupportedChainIdFromWorkspace(workspace);
+  const refs = [useRef(null), useRef(null), useRef(null), useRef(null)];
+  const tabs = ['Project Details', 'Funds Requested', 'About Team', 'Other Information'];
   const [projectTitle, setProjectTitle] = useState('');
   const [projectLink, setProjectLink] = useState<any[]>([]);
   const [projectGoals, setProjectGoals] = useState('');
@@ -49,6 +51,8 @@ function Application({ applicationData, showHiddenData }: Props) {
   const [fundingBreakdown, setFundingBreakdown] = useState('');
   const [teamMembers, setTeamMembers] = useState('');
   const [memberDetails, setMemberDetails] = useState<any[]>([]);
+  const [customFields, setCustomFields] = useState<any[]>([]);
+  const [decimal, setDecimal] = useState<number>();
 
   const [decodedDetails, setDecodedDetails] = useState('');
   const getDecodedDetails = async (detailsHash: string) => {
@@ -57,6 +61,23 @@ function Application({ applicationData, showHiddenData }: Props) {
     setDecodedDetails(d);
   };
 
+  let icon: string;
+  let label: string;
+  let decimals;
+  if (applicationData?.grant.reward.token) {
+    label = applicationData.grant.reward.token.label;
+    icon = getUrlForIPFSHash(applicationData.grant.reward.token.iconHash);
+    decimals = applicationData.grant.reward.token.decimal;
+  } else {
+    label = getAssetInfo(
+      applicationData?.grant?.reward?.asset,
+      chainId,
+    )?.label;
+    icon = getAssetInfo(
+      applicationData?.grant?.reward?.asset,
+      chainId,
+    )?.icon;
+  }
   useEffect(() => {
     if (!applicationData) return;
     const getStringField = (fieldName: string) => applicationData?.fields?.find(({ id }) => id.split('.')[1] === fieldName)
@@ -85,10 +106,31 @@ function Application({ applicationData, showHiddenData }: Props) {
         ?.find((fld: any) => fld?.id?.split('.')[1] === 'memberDetails')
         ?.values.map((val) => val.value) ?? [],
     );
+    if (applicationData.grant.reward.token) {
+      setDecimal(applicationData.grant.reward.token.decimal);
+    } else {
+      setDecimal(CHAIN_INFO[
+        getSupportedChainIdFromSupportedNetwork(
+          applicationData.grant.workspace.supportedNetworks[0],
+        )
+      ]?.supportedCurrencies[applicationData.grant.reward.asset.toLowerCase()]
+        ?.decimals);
+    }
+
+    if (applicationData.fields.length > 0) {
+      setCustomFields(applicationData.fields
+        .filter((field: any) => (field.id.split('.')[1].startsWith('customField')))
+        .map((field: any) => {
+          const i = field.id.indexOf('-');
+          return ({
+            title: field.id.substring(i + 1).split('\\s').join(' '),
+            value: field.values[0].value,
+            isError: false,
+          });
+        }));
+    }
   }, [applicationData]);
 
-  const { workspace } = useContext(ApiClientsContext)!;
-  const chainId = getSupportedChainIdFromWorkspace(workspace);
   return (
     <>
       <Flex mt="8px" direction="column" w="full">
@@ -102,7 +144,10 @@ function Application({ applicationData, showHiddenData }: Props) {
           mb={8}
         >
           {tabs.map(
-            (tab, index) => (index < 2 || (index === 2 && teamMembers)) && (
+            (tab, index) => (index < 2
+              || (index === 2 && teamMembers)
+              || (index === 3 && customFields.length > 0)
+            ) && (
             <Button
               variant="ghost"
               h="54px"
@@ -209,11 +254,9 @@ function Application({ applicationData, showHiddenData }: Props) {
                   </Text>
                   <Flex direction="row" justify="start" mt={3}>
                     <Image
+                      boxSize="48px"
                       src={
-                        getAssetInfo(
-                          applicationData?.grant?.reward?.asset,
-                          chainId,
-                        )?.icon
+                        icon
                       }
                     />
                     <Box ml={2} />
@@ -223,21 +266,13 @@ function Application({ applicationData, showHiddenData }: Props) {
                       </Heading>
                       <Text variant="applicationText">
                         {milestone?.amount && applicationData
-                        && formatAmount(
-                          milestone?.amount,
-                          CHAIN_INFO[
-                            getSupportedChainIdFromSupportedNetwork(
-                              applicationData.grant.workspace.supportedNetworks[0],
-                            )
-                          ]?.supportedCurrencies[applicationData.grant.reward.asset.toLowerCase()]
-                            ?.decimals ?? 18,
-                        )}
+                          && formatAmount(
+                            milestone?.amount,
+                            decimal ?? 18,
+                          )}
                         {' '}
                         {
-                          getAssetInfo(
-                            applicationData?.grant?.reward?.asset,
-                            chainId,
-                          )?.label
+                          label
                         }
                       </Text>
                     </Flex>
@@ -254,10 +289,8 @@ function Application({ applicationData, showHiddenData }: Props) {
             </Heading>
             <Flex direction="row" justify="start" mt={3} mb={10}>
               <Image
-                src={
-                  getAssetInfo(applicationData?.grant?.reward?.asset, chainId)
-                    ?.icon
-                }
+                boxSize="48px"
+                src={icon}
               />
               <Box ml={2} />
               <Flex direction="column" justify="center" align="start">
@@ -268,17 +301,11 @@ function Application({ applicationData, showHiddenData }: Props) {
                   {applicationData
                     && formatAmount(
                       fundingAsk ?? '0',
-                      CHAIN_INFO[
-                        getSupportedChainIdFromSupportedNetwork(
-                          applicationData.grant.workspace.supportedNetworks[0],
-                        )
-                      ]?.supportedCurrencies[applicationData.grant.reward.asset.toLowerCase()]
-                        ?.decimals ?? 18,
+                      decimals ?? 18,
                     )}
                   {' '}
                   {
-                    getAssetInfo(applicationData?.grant?.reward?.asset, chainId)
-                      ?.label
+                    label
                   }
                 </Text>
               </Flex>
@@ -359,6 +386,25 @@ function Application({ applicationData, showHiddenData }: Props) {
                 </Flex>
               </Box>
             )}
+          </Box>
+
+          <Box mt={12} display={customFields.length > 0 ? '' : 'none'}>
+            <Heading variant="applicationHeading" ref={refs[3]}>
+              Other Information
+            </Heading>
+
+            {customFields.map((customField: any, index: number) => (
+              <Box>
+                <Heading variant="applicationHeading" mt={3}>
+                  {index + 1}
+                  {'. '}
+                  {customField.title}
+                </Heading>
+                <Text variant="applicationText" mt={1}>
+                  {customField.value}
+                </Text>
+              </Box>
+            ))}
           </Box>
         </Flex>
         <Box my={10} />

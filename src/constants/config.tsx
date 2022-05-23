@@ -9,6 +9,7 @@ const config = {
   defaultDAOImagePath: '/images/default_dao.svg',
   deafultDAOImageHash: 'QmeNL8mChbLFJvhx3YnLa6mMKGHiXwgxPVRVWnQxW651dR',
   supportLink: 'https://discord.gg/a3SkQX6gnW',
+  defaultTokenUploadImagePath: '/images/default_token_upload.svg',
 };
 
 export default config;

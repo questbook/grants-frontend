@@ -20,6 +20,8 @@ interface Props {
   onViewApplicantsClick: (() => void) | undefined;
   onEditClick: (() => void) | undefined;
   isAdmin: boolean;
+  setRubricDrawerOpen: (arg0: boolean) => void;
+  initialRubricAvailable: boolean;
 }
 
 interface MenuItemProps {
@@ -39,6 +41,8 @@ function YourGrantMenu({
   onViewApplicantsClick,
   onEditClick,
   isAdmin,
+  setRubricDrawerOpen,
+  initialRubricAvailable,
 }: Props) {
   const [copied, setCopied] = React.useState(false);
 
@@ -59,6 +63,19 @@ function YourGrantMenu({
       },
     },
   ];
+
+  const adminItems: MenuItemProps[] = [
+    {
+      iconPath: '/ui_icons/eval_setup.svg',
+      iconWidth: '24px',
+      iconHeight: '24px',
+      text: initialRubricAvailable
+        ? 'Edit evaluation score'
+        : 'Setup evaluation score',
+      onClick: () => setRubricDrawerOpen(true),
+    },
+  ];
+
   const archivedItems: MenuItemProps[] = [
     {
       iconPath: '/ui_icons/view_applicants.svg',
@@ -68,19 +85,27 @@ function YourGrantMenu({
         : onEditClick && onEditClick()),
     },
   ];
-  const nonArchivedItems: MenuItemProps[] = [{
-    iconPath: '/ui_icons/archive_grant.svg',
-    text: 'Archive grant',
-    onClick: () => onArchiveGrantClick && onArchiveGrantClick(),
-  }];
+  const nonArchivedItems: MenuItemProps[] = [
+    {
+      iconPath: '/ui_icons/archive_grant.svg',
+      text: 'Archive grant',
+      onClick: () => onArchiveGrantClick && onArchiveGrantClick(),
+    },
+  ];
 
   // eslint-disable-next-line no-nested-ternary
-  const items = isAdmin ? (isArchived
-    ? [...defaultItems, ...archivedItems]
-    : [...defaultItems, ...nonArchivedItems]) : [...defaultItems];
+  const items = isAdmin
+    ? isArchived
+      ? [...defaultItems, ...adminItems, ...archivedItems]
+      : [...defaultItems, ...adminItems, ...nonArchivedItems]
+    : [...defaultItems, ...archivedItems];
 
   return (
-    <MenuComponent closeOnSelect={false} placement="left" onClose={() => setCopied(false)}>
+    <MenuComponent
+      closeOnSelect={false}
+      placement="left"
+      onClose={() => setCopied(false)}
+    >
       <MenuButton
         as={IconButton}
         aria-label="View More Options"
@@ -91,11 +116,7 @@ function YourGrantMenu({
       />
       <MenuList minW="164px" p={0}>
         {items.map((item) => (
-          <MenuItem
-            onClick={item.onClick}
-            py="12px"
-            px="16px"
-          >
+          <MenuItem onClick={item.onClick} py="12px" px="16px">
             <Text
               fontSize="14px"
               fontWeight="400"

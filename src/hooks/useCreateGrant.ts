@@ -64,11 +64,28 @@ export default function useCreateGrant(
     if (error) return;
     if (loading) return;
 
+    console.log('YEEES');
+
     async function validate() {
       setLoading(true);
-      // console.log('calling validate');
+      console.log('calling validate');
       try {
         const detailsHash = (await uploadToIPFS(data.details)).hash;
+        let reward;
+        if (data.rewardToken.address === '') {
+          reward = {
+            committed: parseAmount(data.reward, data.rewardCurrencyAddress),
+            asset: data.rewardCurrencyAddress,
+          };
+        } else {
+          console.log('Reward before parsing', data.reward, data.rewardToken.decimal);
+          reward = {
+            committed: parseAmount(data.reward, undefined, data.rewardToken.decimal),
+            asset: data.rewardCurrencyAddress,
+            token: data.rewardToken,
+          };
+          console.log('Reward after parsing', reward);
+        }
         const {
           data: { ipfsHash },
         } = await validatorApi.validateGrantCreate({
@@ -76,10 +93,7 @@ export default function useCreateGrant(
           summary: data.summary,
           details: detailsHash,
           deadline: data.date,
-          reward: {
-            committed: parseAmount(data.reward, data.rewardCurrencyAddress),
-            asset: data.rewardCurrencyAddress,
-          },
+          reward,
           creatorId: accountData!.address,
           workspaceId: getSupportedValidatorNetworkFromChainId(
             (chainId ?? getSupportedChainIdFromWorkspace(workspace))!,
@@ -87,9 +101,29 @@ export default function useCreateGrant(
           fields: data.fields,
           grantManagers: data.grantManagers.length ? data.grantManagers : [accountData!.address],
         });
+
+        console.log('ipfsHash', ipfsHash);
+
         if (!ipfsHash) {
           throw new Error('Error validating grant data');
         }
+
+        let rubricHash = '';
+        if (data.rubric) {
+          const {
+            data: { ipfsHash: auxRubricHash },
+          } = await validatorApi.validateRubricSet({
+            rubric: data.rubric,
+          });
+
+          if (!auxRubricHash) {
+            throw new Error('Error validating rubric data');
+          }
+
+          rubricHash = auxRubricHash;
+        }
+
+        console.log('rubricHash', rubricHash);
 
         // console.log(workspaceId ?? Number(workspace?.id).toString());
         // console.log('ipfsHash', ipfsHash);
@@ -101,6 +135,7 @@ export default function useCreateGrant(
         const createGrantTransaction = await grantContract.createGrant(
           workspaceId ?? Number(workspace?.id).toString(),
           ipfsHash,
+          rubricHash,
           WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
           APPLICATION_REGISTRY_ADDRESS[currentChainId!],
         );
@@ -158,6 +193,7 @@ export default function useCreateGrant(
       ) {
         return;
       }
+
       validate();
     } catch (e: any) {
       const message = getErrorMessage(e);

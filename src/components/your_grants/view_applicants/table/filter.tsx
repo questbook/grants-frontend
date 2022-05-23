@@ -1,8 +1,7 @@
-import { ChevronDownIcon } from '@chakra-ui/icons';
 import {
   Button,
   Flex,
-  Menu, MenuButton, MenuItem, MenuList, Text,
+  Menu, MenuButton, MenuItem, MenuList, Text, Image,
 } from '@chakra-ui/react';
 import React from 'react';
 import FilterStates from '../filterStates';
@@ -26,7 +25,7 @@ function Filter({
           variant="link"
           _focus={{}}
           color="#6200EE"
-          rightIcon={<ChevronDownIcon color="brand.500" />}
+          rightIcon={<Image src="/ui_icons/dropdown_arrow.svg" />}
           fontSize="16px"
           fontWeight="500"
           w="fit-content"

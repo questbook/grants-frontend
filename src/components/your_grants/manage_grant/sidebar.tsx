@@ -2,7 +2,6 @@ import {
   Box, Text, Flex, Image, Divider, Button, Link,
 } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
-// import { ExternalLinkIcon } from '@chakra-ui/icons';
 import React from 'react';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import config from 'src/constants/config';
@@ -174,6 +173,7 @@ function Sidebar({
               committed: BigNumber.from(grant.reward.committed),
               label: assetInfo?.label,
               icon: assetInfo?.icon,
+              decimals,
             }}
             contractFunding={grant.funding}
             onClose={() => setIsSendFundModalOpen(false)}

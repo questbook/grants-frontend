@@ -6,7 +6,12 @@ query getGrantDetails($grantID: ID!) {
         summary, 
         details, 
         fields (first: 20) {id, title, inputType, isPii}
-        reward {id, asset, committed}, 
+        reward {id, asset, committed, token {
+    address,
+    label,
+    decimal,
+    iconHash
+    }}, 
         workspace {
             id, 
             title, 
@@ -22,5 +27,14 @@ query getGrantDetails($grantID: ID!) {
         deadline,
         funding,
         acceptingApplications,
+        rubric {
+            isPrivate
+            items {
+                id,
+                title,
+                details,
+                maximumPoints,
+            },
+        },
     }
 }

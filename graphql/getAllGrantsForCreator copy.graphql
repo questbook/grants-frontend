@@ -15,11 +15,26 @@ query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $worksp
   reward {
     committed,
     id,
-    asset
+    asset,
+    token {
+    address,
+    label,
+    decimal,
+    iconHash
+    }
   }, 
-  workspace {id, title, logoIpfsHash, supportedNetworks}, 
+  workspace {id, title, logoIpfsHash, supportedNetworks}
   deadline,
   funding,
   numberOfApplications,
   acceptingApplications,
+  rubric {
+    isPrivate
+    items {
+      id,
+      title,
+      details,
+      maximumPoints,
+    },
+  },
 }}

@@ -23,40 +23,59 @@ type TableContent = {
     assetId: string,
     assetDecimals: number,
     grantId: string,
-    chainId?: SupportedChainId
+    chainId?: SupportedChainId,
+    rewardToken?: Token
   ) => React.ReactChild;
+};
+
+type Token = {
+  label: string;
+  address: string;
+  icon: string;
+  decimals: number
 };
 
 const TABLE_HEADERS: { [id: string]: TableContent } = {
   milestoneTitle: {
     title: 'Funding Received',
     flex: 0.5,
-    content: (item, assetId, assetDecimals, __, chainId) => (
-      <>
-        <Image
-          display="inline-block"
-          src={getAssetInfo(assetId, chainId)?.icon}
-          mr={2}
-          h="27px"
-          w="27px"
-        />
-        <Text textAlign="start" variant="applicationText">
-          {getMilestoneTitle(item.milestone)}
-          {' '}
-          -
-          {' '}
-          <Text
+    content: (item, assetId, assetDecimals, __, chainId, rewardToken) => {
+      let icon;
+      let label;
+      if (rewardToken) {
+        icon = rewardToken.icon;
+        label = rewardToken.label;
+      } else {
+        icon = getAssetInfo(assetId, chainId)?.icon;
+        label = getAssetInfo(assetId, chainId)?.label;
+      }
+      return (
+        <>
+          <Image
             display="inline-block"
-            variant="applicationText"
-            fontWeight="700"
-          >
-            {formatAmount(item.amount, assetDecimals)}
+            src={icon}
+            mr={2}
+            h="27px"
+            w="27px"
+          />
+          <Text textAlign="start" variant="applicationText">
+            {getMilestoneTitle(item.milestone)}
             {' '}
-            {getAssetInfo(assetId, chainId)?.label}
+            -
+            {' '}
+            <Text
+              display="inline-block"
+              variant="applicationText"
+              fontWeight="700"
+            >
+              {formatAmount(item.amount, assetDecimals)}
+              {' '}
+              {label}
+            </Text>
           </Text>
-        </Text>
-      </>
-    ),
+        </>
+      );
+    },
   },
   amount: {
     title: 'Amount',
@@ -152,6 +171,8 @@ export type FundingProps = {
   grantId: string | null;
   type: string;
   chainId?: SupportedChainId;
+  // eslint-disable-next-line react/require-default-props
+  rewardToken?: Token;
 };
 
 function Funding({
@@ -162,6 +183,7 @@ function Funding({
   grantId,
   type,
   chainId,
+  rewardToken,
 }: FundingProps) {
   const tableHeaders = useMemo(
     () => columns.map((column) => TABLE_HEADERS[column]),
@@ -251,7 +273,7 @@ function Funding({
                       align="center"
                       flex={flex}
                     >
-                      {content(item, assetId, assetDecimals, grantId, chainId)}
+                      {content(item, assetId, assetDecimals, grantId, chainId, rewardToken)}
                     </Flex>
                   ))}
               </Flex>
