@@ -12,8 +12,7 @@ import React, {
   ReactElement, useContext, useEffect, useState,
 } from 'react';
 import { useRouter } from 'next/router';
-import { useGetGrantDetailsQuery } from 'src/generated/graphql';
-import { useGetGrantsAppliedToQuery } from 'src/generated/graphql';
+import { useGetGrantDetailsQuery, useGetGrantsAppliedToQuery } from 'src/generated/graphql';
 import { ApiClientsContext } from 'pages/_app';
 import GrantShare from 'src/components/ui/grantShare';
 import { SupportedChainId } from 'src/constants/chains';
@@ -107,20 +106,20 @@ function AboutGrant() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error, loading]);
-  
+
   const accounts = useAccount({
     fetchEns: false,
   });
 
   useEffect(() => {
     if (
-      accounts[0] &&
-      accounts[0].data &&
-      accounts[0].data.address.length > 0
+      accounts[0]
+      && accounts[0].data
+      && accounts[0].data.address.length > 0
     ) {
       setAccount(accounts[0].data.address);
     }
-  }, accounts);
+  }, [accounts]);
 
   useEffect(() => {
     if (!account) return;
@@ -131,7 +130,7 @@ function AboutGrant() {
         applicantID: account,
       },
     });
-  }, [chainId, account, data]);
+  }, [chainId, account, data, subgraphClients]);
 
   const res = useGetGrantsAppliedToQuery(queryParams);
 
@@ -142,11 +141,11 @@ function AboutGrant() {
   }, [res, data]);
 
   useEffect(() => {
-    const Id = userGrants.find((x: any) => x.grant.id == grantID);
+    const Id = userGrants.find((x: any) => x.grant.id === grantID);
     if (Id) {
       setAlreadyApplied(true);
     }
-  }, [userGrants, accounts]);
+  }, [userGrants, accounts, grantID]);
 
   useEffect(() => {
     if (!chainId || !grantData) return;
