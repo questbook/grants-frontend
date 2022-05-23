@@ -118,7 +118,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 
     getNumberOfApplications();
     getNumberOfGrants();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     accountData?.address,
     workspace?.id,
@@ -226,7 +226,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 w="32px"
                 h="32px"
                 mr="10px"
-                src={getUrlForIPFSHash(workspace.logoIpfsHash)}
+                src={router.pathname === '/' ? "/ui_icons/gray/see.svg" : getUrlForIPFSHash(workspace.logoIpfsHash)}
                 display="inline-block"
               />
               <Text
@@ -237,7 +237,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 overflow="hidden"
                 textOverflow="ellipsis"
               >
-                {workspace.title}
+                {router.pathname === '/' ? "Discover Grants" : workspace.title}
               </Text>
               <Image ml={2} src="/ui_icons/dropdown_arrow.svg" alt="options" />
             </Flex>
@@ -294,9 +294,8 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
               <Flex h="100%" direction="column">
                 <Tab
                   label={isReviewer ? 'Grants Assigned' : 'Grants'}
-                  icon={`/ui_icons/${
-                    activeIndex === 0 ? 'brand' : 'gray'
-                  }/tab_grants.svg`}
+                  icon={`/ui_icons/${activeIndex === 0 ? 'brand' : 'gray'
+                    }/tab_grants.svg`}
                   isActive={activeIndex === 0}
                   onClick={() => {
                     router.push({
@@ -311,9 +310,8 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
               <Flex h="100%" direction="column" display={isAdmin ? '' : 'none'}>
                 <Tab
                   label="Funds"
-                  icon={`/ui_icons/${
-                    activeIndex === 1 ? 'brand' : 'gray'
-                  }/tab_funds.svg`}
+                  icon={`/ui_icons/${activeIndex === 1 ? 'brand' : 'gray'
+                    }/tab_funds.svg`}
                   isActive={activeIndex === 1}
                   onClick={() => {
                     router.push({
@@ -328,9 +326,8 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
               <Flex h="100%" direction="column" display={isAdmin ? '' : 'none'}>
                 <Tab
                   label="Manage DAO"
-                  icon={`/ui_icons/${
-                    activeIndex === 2 ? 'brand' : 'gray'
-                  }/tab_settings.svg`}
+                  icon={`/ui_icons/${activeIndex === 2 ? 'brand' : 'gray'
+                    }/tab_settings.svg`}
                   isActive={activeIndex === 2}
                   onClick={() => {
                     router.push({
@@ -368,9 +365,8 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
             <Flex h="100%" direction="column">
               <Tab
                 label="My Applications"
-                icon={`/ui_icons/${
-                  activeIndex === 3 ? 'brand' : 'gray'
-                }/tab_grants.svg`}
+                icon={`/ui_icons/${activeIndex === 3 ? 'brand' : 'gray'
+                  }/tab_grants.svg`}
                 isActive={activeIndex === 3}
                 onClick={() => {
                   router.push({
