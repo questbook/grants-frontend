@@ -10,7 +10,6 @@ import { TableFilters } from 'src/components/your_grants/view_applicants/table/T
 import {
   useGetApplicantsForAGrantQuery,
   useGetGrantDetailsQuery,
-  ApplicationMilestone,
   useGetApplicantsForAGrantReviewerQuery,
 } from 'src/generated/graphql';
 import { SupportedChainId } from 'src/constants/chains';
@@ -24,6 +23,7 @@ import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGran
 import useArchiveGrant from 'src/hooks/useArchiveGrant';
 import RubricDrawer from 'src/components/your_grants/rubricDrawer';
 import { BigNumber } from 'ethers';
+import { ApplicationMilestone } from 'src/types';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import AppplicationTableEmptyState from 'src/components/your_applications/empty_states/applicantions_table';
 import { formatAmount } from '../../../src/utils/formattingUtils';
