@@ -10,6 +10,7 @@ import { useGetWorkspaceDetailsQuery } from 'src/generated/graphql';
 import { Workspace } from 'src/types';
 import { SupportedChainId } from 'src/constants/chains';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
+import Loader from 'src/components/ui/loader';
 import Members from '../src/components/manage_dao/members';
 import Settings from '../src/components/manage_dao/settings';
 import Payouts from '../src/components/manage_dao/payouts';
@@ -26,6 +27,7 @@ function ManageDAO() {
   );
   const [workspaceData, setWorkspaceData] = useState<Workspace>();
   const [isAdmin, setIsAdmin] = React.useState<boolean>(false);
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
   const [{ data: accountData }] = useAccount({ fetchEns: false });
 
@@ -66,6 +68,7 @@ function ManageDAO() {
         (m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
       );
       setIsAdmin(tempMember?.accessLevel === 'admin' || tempMember?.accessLevel === 'owner');
+      setIsLoading(false);
     }
   }, [accountData, workspace]);
 
@@ -124,7 +127,19 @@ function ManageDAO() {
           </Flex>
           <Flex w="auto" />
         </Flex>
-      ) : (<Text textAlign="center" p="2rem">You do not have access to this DAO settings</Text>)}
+      )
+        : (
+          <>
+            {' '}
+            {isLoading
+              ? (
+                <Flex m="auto" mt="25vh">
+                  <Loader />
+                </Flex>
+              )
+              : <Text textAlign="center" p="2rem">You do not have access to this DAO settings</Text>}
+          </>
+        )}
     </Flex>
   );
 }
