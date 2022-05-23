@@ -16,7 +16,7 @@ interface Props {
 }
 
 function Sidebar({
-  grantRequiredFields, grantID, chainId, acceptingApplications, alreadyApplied
+  grantRequiredFields, grantID, chainId, acceptingApplications, alreadyApplied,
 }: Props) {
   const router = useRouter();
   return (
