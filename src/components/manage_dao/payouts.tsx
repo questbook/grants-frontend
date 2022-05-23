@@ -257,7 +257,7 @@ function Payouts() {
                                     </Flex>
                                   </Tooltip>
                                 ) : (
-                                  reviewer.email
+                                  reviewer.email ? reviewer.email : '-'
                                 )}
                               </Text>
                               <Tooltip label={reviewer.actorId}>
