@@ -48,10 +48,7 @@ function Profile() {
 
   //Tab section
   const tabs = ['Browse Grants', 'About'];
-  const [selected, setSelected] = useState(
-    // eslint-disable-next-line no-nested-ternary
-    router.query.tab === 'grants' ? 0 : router.query.tab === 'about' && 1
-  );
+  const [selected, setSelected] = useState(0);
   const switchTab = (to: number) => {
     setSelected(to);
   };

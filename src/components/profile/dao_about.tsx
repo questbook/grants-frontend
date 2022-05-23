@@ -1,7 +1,14 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import {
-  Image, Text, Button, Flex, Box, Divider, Link,
+  Image,
+  Text,
+  Divider,
+  Button,
+  Flex,
+  Grid,
+  Box,
+  Link,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
@@ -10,18 +17,30 @@ interface DaoAboutProps {
   daoPartners?: string;
 }
 
-function DaoAbout({
-  daoAbout,
-  daoPartners
-}: DaoAboutProps) {
+function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
   const router = useRouter();
 
   return (
-    <Flex py={6} px="1.5rem" w="100%" h="full">
+    <Grid gridTemplateColumns="3fr 1fr" py={6} px="1.5rem" w="100%" h="full">
+    <Flex
+
+    >
       <Text>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pretium, malesuada magna nisi, amet pharetra volutpat, sit leo aliquet. Feugiat habitant orci nibh curabitur condimentum proin egestas tincidunt. Placerat odio bibendum diam nisi, sodales lacinia pellentesque. Faucibus turpis nunc egestas massa feugiat nunc, massa non. Proin iaculis massa vitae cras mattis volutpat enim ut.
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pretium,
+        malesuada magna nisi, amet pharetra volutpat, sit leo aliquet. Feugiat
+        habitant orci nibh curabitur condimentum proin egestas tincidunt.
+        Placerat odio bibendum diam nisi, sodales lacinia pellentesque. Faucibus
+        turpis nunc egestas massa feugiat nunc, massa non. Proin iaculis massa
+        vitae cras mattis volutpat enim ut.
       </Text>
     </Flex>
+    <Divider orientation="vertical" />
+    <Flex>
+      <Text>
+        ASD
+      </Text>
+    </Flex>
+    </Grid>
   );
 }
 

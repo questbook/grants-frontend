@@ -114,7 +114,7 @@ function BrowseGrantCard({
             <Text as="span" fontSize="xs" display="inline-block">
               Ends on
               {' '}
-              {moment(endTimestamp).format('MMMM D')}
+              <b>{moment(endTimestamp).format('MMMM D')}</b>
             </Text>
 
             <Box mr="auto" />
