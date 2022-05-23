@@ -84,7 +84,7 @@ function GrantRewardsInput({
         <Box minW="160px" flex={1}>
           <SingleLineInput
             label="Grant Reward"
-            placeholder="100"
+            placeholder="eg. 100"
             value={reward}
             onChange={(e) => {
               if (rewardError) {
