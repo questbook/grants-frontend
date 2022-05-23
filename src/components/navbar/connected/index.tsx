@@ -226,7 +226,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 w="32px"
                 h="32px"
                 mr="10px"
-                src={router.pathname === '/' ? "/ui_icons/gray/see.svg" : getUrlForIPFSHash(workspace.logoIpfsHash)}
+                src={router.pathname === '/' ? '/ui_icons/gray/see.svg' : getUrlForIPFSHash(workspace.logoIpfsHash)}
                 display="inline-block"
               />
               <Text
@@ -237,7 +237,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 overflow="hidden"
                 textOverflow="ellipsis"
               >
-                {router.pathname === '/' ? "Discover Grants" : workspace.title}
+                {router.pathname === '/' ? 'Discover Grants' : workspace.title}
               </Text>
               <Image ml={2} src="/ui_icons/dropdown_arrow.svg" alt="options" />
             </Flex>
@@ -295,7 +295,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 <Tab
                   label={isReviewer ? 'Grants Assigned' : 'Grants'}
                   icon={`/ui_icons/${activeIndex === 0 ? 'brand' : 'gray'
-                    }/tab_grants.svg`}
+                  }/tab_grants.svg`}
                   isActive={activeIndex === 0}
                   onClick={() => {
                     router.push({
@@ -311,7 +311,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 <Tab
                   label="Funds"
                   icon={`/ui_icons/${activeIndex === 1 ? 'brand' : 'gray'
-                    }/tab_funds.svg`}
+                  }/tab_funds.svg`}
                   isActive={activeIndex === 1}
                   onClick={() => {
                     router.push({
@@ -327,7 +327,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 <Tab
                   label="Manage DAO"
                   icon={`/ui_icons/${activeIndex === 2 ? 'brand' : 'gray'
-                    }/tab_settings.svg`}
+                  }/tab_settings.svg`}
                   isActive={activeIndex === 2}
                   onClick={() => {
                     router.push({
@@ -366,7 +366,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
               <Tab
                 label="My Applications"
                 icon={`/ui_icons/${activeIndex === 3 ? 'brand' : 'gray'
-                  }/tab_grants.svg`}
+                }/tab_grants.svg`}
                 isActive={activeIndex === 3}
                 onClick={() => {
                   router.push({
