@@ -99,11 +99,11 @@ function Dropdown({
               </>
             ) : (
               <>
-                {selected.icon && selected.icon.length ? (
+                {selected?.icon && selected?.icon.length ? (
                   <Image mr={3} h="24px" w="24px" src={selected.icon} />
                 ) : null}
                 <Text fontWeight="400" fontSize="14px" color="#414E50">
-                  {selected.label}
+                  {selected?.label}
                 </Text>
               </>
             )}

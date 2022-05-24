@@ -83,6 +83,10 @@ function AboutGrant() {
     client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
   });
 
+  const [applicantQueryParams, setApplicantQueryParams] = useState<any>({
+    client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
+  });
+
   useEffect(() => {
     if (!grantID) return;
     if (!chainId) return;
@@ -124,7 +128,7 @@ function AboutGrant() {
   useEffect(() => {
     if (!account) return;
     if (!chainId) return;
-    setQueryParams({
+    setApplicantQueryParams({
       client: subgraphClients[chainId as SupportedChainId].client,
       variables: {
         applicantID: account,
@@ -132,7 +136,7 @@ function AboutGrant() {
     });
   }, [chainId, account, data, subgraphClients]);
 
-  const res = useGetGrantsAppliedToQuery(queryParams);
+  const res = useGetGrantsAppliedToQuery(applicantQueryParams);
 
   useEffect(() => {
     if (res.data && res.data.grantApplications.length > 0) {

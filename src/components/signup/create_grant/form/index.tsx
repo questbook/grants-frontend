@@ -1,14 +1,13 @@
 import React from 'react';
 import {
-  Container,
-  Flex,
-  Text,
-  Progress,
+  Container, Flex, Text, Progress,
 } from '@chakra-ui/react';
+import { SupportedChainId } from 'src/constants/chains';
 import ApplicantDetails from './3_applicantDetails';
 import Details from './2_details';
 import GrantRewardsInput from './4_rewards';
 import Title from './1_title';
+import strings from '../../../../constants/strings.json';
 
 interface Props {
   currentStep: number;
@@ -16,11 +15,26 @@ interface Props {
   totalSteps: number;
   submitForm: (data: any) => void;
   hasClicked: boolean;
+  daoData: {
+    name: string;
+    description: string;
+    image: string;
+    network: SupportedChainId;
+    id: string;
+  };
 }
 
 function Form({
-  currentStep, incrementCurrentStep, totalSteps, submitForm, hasClicked,
+  currentStep,
+  incrementCurrentStep,
+  totalSteps,
+  submitForm,
+  hasClicked,
+  daoData,
 }: Props) {
+  const CACHE_KEY = strings.cache.create_grant;
+  const getKey = `${daoData.network}-${CACHE_KEY}-${daoData.id}`;
+
   const incrementFormInputStep = (data: any) => {
     console.log(data);
     if (currentStep < totalSteps - 1) {
@@ -30,11 +44,43 @@ function Form({
     }
   };
 
+  const [formData, setFormData] = React.useState({});
+
+  const constructCache = (data: any) => {
+    if (getKey.includes('undefined') || typeof window === 'undefined') return;
+
+    const newFormData = { ...formData, ...data };
+    console.log(newFormData);
+    localStorage.setItem(getKey, newFormData);
+    setFormData(newFormData);
+  };
+
   const formInputs = [
-    <Title onSubmit={incrementFormInputStep} key={0} />,
-    <Details onSubmit={incrementFormInputStep} key={1} />,
-    <ApplicantDetails onSubmit={incrementFormInputStep} key={2} />,
-    <GrantRewardsInput hasClicked={hasClicked} onSubmit={incrementFormInputStep} key={3} />,
+    <Title
+      onSubmit={incrementFormInputStep}
+      constructCache={constructCache}
+      cacheKey={getKey}
+      key={0}
+    />,
+    <Details
+      onSubmit={incrementFormInputStep}
+      constructCache={constructCache}
+      cacheKey={getKey}
+      key={1}
+    />,
+    <ApplicantDetails
+      onSubmit={incrementFormInputStep}
+      constructCache={constructCache}
+      cacheKey={getKey}
+      key={2}
+    />,
+    <GrantRewardsInput
+      hasClicked={hasClicked}
+      constructCache={constructCache}
+      cacheKey={getKey}
+      onSubmit={incrementFormInputStep}
+      key={3}
+    />,
   ];
 
   const getProgressValueFromStep = (step: number) => ((step + 1) / (totalSteps + 1)) * 100;

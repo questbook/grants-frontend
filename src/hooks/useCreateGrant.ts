@@ -18,6 +18,7 @@ import { uploadToIPFS } from 'src/utils/ipfsUtils';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useGrantFactoryContract from './contracts/useGrantFactoryContract';
 import useChainId from './utils/useChainId';
+import strings from '../constants/strings.json';
 
 export default function useCreateGrant(
   data: any,
@@ -140,6 +141,11 @@ export default function useCreateGrant(
           APPLICATION_REGISTRY_ADDRESS[currentChainId!],
         );
         const createGrantTransactionData = await createGrantTransaction.wait();
+
+        const CACHE_KEY = strings.cache.create_grant;
+        const cacheKey = `${chainId ?? getSupportedChainIdFromWorkspace(workspace)}-${CACHE_KEY}-${workspace?.id}`;
+        console.log('Deleting key: ', cacheKey);
+        if (typeof window !== 'undefined') localStorage.removeItem(cacheKey);
 
         setTransactionData(createGrantTransactionData);
         setLoading(false);

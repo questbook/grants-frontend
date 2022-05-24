@@ -1,7 +1,15 @@
 import React from 'react';
-import { Box, Text, useTheme } from '@chakra-ui/react';
+import {
+  Box, Text, Link, useTheme,
+} from '@chakra-ui/react';
 
-function Breadcrumbs({ path }: { path: string[] }) {
+interface BreadcrumbProps {
+  path: string[];
+  // eslint-disable-next-line react/require-default-props
+  id?: string;
+}
+
+function Breadcrumbs({ path, id }: BreadcrumbProps) {
   const theme = useTheme();
   return (
     <Text
@@ -19,7 +27,31 @@ function Breadcrumbs({ path }: { path: string[] }) {
         // eslint-disable-next-line consistent-return
         return (
           <Box key={`breadcrumb-${node}`} as="span">
-            {node}
+            <Link
+              href={`/${
+                // eslint-disable-next-line no-nested-ternary
+                node === 'My Grants'
+                  ? 'your_grants'
+                  // eslint-disable-next-line no-nested-ternary
+                  : node === 'Your Grants'
+                    ? 'your_grants'
+                    // eslint-disable-next-line no-nested-ternary
+                    : node === 'My Applications'
+                      ? 'your_applications'
+                      // eslint-disable-next-line no-nested-ternary
+                      : node === 'View Applicants'
+                        ? `your_grants/view_applicants/?grantId=${id}`
+                        // eslint-disable-next-line no-nested-ternary
+                        : node === 'View Application'
+                          ? `your_grants/view_applicants/applicant_form/?applicationId=${id}`
+                          // eslint-disable-next-line no-nested-ternary
+                          : node === 'Explore Grants'
+                            ? ''
+                            : null
+              }`}
+            >
+              {node}
+            </Link>
             {' '}
             /
             {' '}

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -51,9 +51,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
   // eslint-disable-next-line max-len
   const getNumberOfApplicationsClients = Object.keys(subgraphClients)!.map(
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    (key) => useGetNumberOfApplicationsLazyQuery({
-      client: subgraphClients[key].client,
-    }),
+    (key) => useGetNumberOfApplicationsLazyQuery({ client: subgraphClients[key].client }),
   );
 
   const getNumberOfGrantsClients = Object.fromEntries(
@@ -173,7 +171,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
           const allWorkspacesData = [].concat(...values) as MinimalWorkspace[];
           // setGrants([...grants, ...allGrantsData]);
           // setCurrentPage(currentPage + 1);
-          console.log('all workspaces', allWorkspacesData);
+          // console.log('all workspaces', allWorkspacesData);
           setWorkspaces([...workspaces, ...allWorkspacesData]);
 
           const i = allWorkspacesData.findIndex(
@@ -192,6 +190,18 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
     getWorkspaceData(accountData?.address);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const [isDiscover, setIsDiscover] = useState<boolean>(false);
+
+  const { pathname } = router;
+
+  useEffect(() => {
+    if (pathname !== '/') {
+      setIsDiscover(false);
+    } else {
+      setIsDiscover(true);
+    }
+  }, [pathname, isDiscover]);
 
   return (
     <Container
@@ -242,6 +252,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
               <Image ml={2} src="/ui_icons/dropdown_arrow.svg" alt="options" />
             </Flex>
           </MenuButton>
+
           <MenuList maxH="80vh" overflowY="auto">
             {workspaces.map((userWorkspace) => (
               <MenuItem
@@ -264,6 +275,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
               icon={<Image src="/ui_icons/gray/see.svg" />}
               onClick={() => {
                 router.push('/');
+                setIsDiscover(true);
               }}
             >
               Discover Grants
