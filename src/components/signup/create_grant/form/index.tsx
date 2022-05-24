@@ -40,7 +40,7 @@ function Form({
   daoData,
 }: Props) {
   const CACHE_KEY = strings.cache.create_grant;
-  const getKey = `${daoData.network}-${CACHE_KEY}-${daoData.id}`;
+  const getKey = `${daoData?.network}-${CACHE_KEY}-${daoData?.id}`;
 
   const incrementFormInputStep = (data: any) => {
     console.log(data);
