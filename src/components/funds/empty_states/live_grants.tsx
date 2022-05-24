@@ -26,7 +26,8 @@ function LiveGrantEmptyState() {
           mt={16}
           onClick={() => {
             router.push({
-              pathname: '/your_grants/create_grant/',
+              pathname: '/signup',
+              query: { create_grant: true },
             });
           }}
           maxW="163px"

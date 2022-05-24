@@ -1,23 +1,27 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import {
   Box, Button, Text, Image, Link, Flex,
 } from '@chakra-ui/react';
 import Loader from 'src/components/ui/loader';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
-import useChainId from 'src/hooks/utils/useChainId';
-import { SupportedChainId } from 'src/constants/chains';
 import { useAccount } from 'wagmi';
-import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
+import {
+  WorkspaceUpdateRequest,
+  Token,
+} from '@questbook/service-validator-client';
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys';
 import { ApiClientsContext } from 'pages/_app';
-import { convertToRaw, EditorState } from 'draft-js';
+import { convertFromRaw, convertToRaw, EditorState } from 'draft-js';
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import Title from './1_title';
 import Details from './2_details';
 import ApplicantDetails from './3_applicantDetails';
 import GrantRewardsInput from './4_rewards';
 import Heading from '../../../ui/heading';
 import applicantDetailsList from '../../../../constants/applicantDetailsList';
+import strings from '../../../../constants/strings.json';
 
 function Form({
   refs,
@@ -28,25 +32,60 @@ function Form({
   onSubmit: (data: any) => void;
   hasClicked: boolean;
 }) {
-  const { workspace } = useContext(ApiClientsContext)!;
+  const CACHE_KEY = strings.cache.create_grant;
+  const { workspace } = React.useContext(ApiClientsContext)!;
+
+  const [currentChain, setCurrentChain] = React.useState(
+    getSupportedChainIdFromWorkspace(workspace)!,
+  );
+
+  const [getKey, setGetKey] = React.useState(`${currentChain}-${CACHE_KEY}-${workspace?.id}`);
+
+  React.useEffect(() => {
+    setCurrentChain(getSupportedChainIdFromWorkspace(workspace)!);
+    setGetKey(`${currentChain}-${CACHE_KEY}-${workspace?.id}`);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspace, currentChain]);
+
   const [{ data: accountData }] = useAccount();
   const maxDescriptionLength = 300;
-  const [title, setTitle] = useState('');
-  const [summary, setSummary] = useState('');
 
-  const [titleError, setTitleError] = useState(false);
-  const [summaryError, setSummaryError] = useState(false);
+  // Grant Intro
+  const [title, setTitle] = React.useState('');
+  const [titleError, setTitleError] = React.useState(false);
 
-  const [details, setDetails] = useState(() => EditorState.createEmpty());
-  const [detailsError, setDetailsError] = useState(false);
+  const [summary, setSummary] = React.useState('');
+  const [summaryError, setSummaryError] = React.useState(false);
 
-  const [shouldEncrypt, setShouldEncrypt] = useState(false);
-  const [hasOwnerPublicKey, setHasOwnerPublicKey] = useState(false);
-  const [keySubmitted, setKeySubmitted] = useState(false);
-  const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({ publicKey: '' });
+  // Grant Details
+  const [details, setDetails] = React.useState(
+    EditorState.createWithContent(
+      convertFromRaw({
+        entityMap: {},
+        blocks: [
+          {
+            text: '',
+            key: 'foo',
+            type: 'unstyled',
+            entityRanges: [],
+          } as any,
+        ],
+      }),
+    ),
+  );
+  const [detailsError, setDetailsError] = React.useState(false);
+
+  // Applicant Details
+  const [shouldEncrypt, setShouldEncrypt] = React.useState(false);
+  const [hasOwnerPublicKey, setHasOwnerPublicKey] = React.useState(false);
+  const [keySubmitted, setKeySubmitted] = React.useState(false);
+  const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({
+    publicKey: '',
+  });
   const [transactionData, loading] = useUpdateWorkspacePublicKeys(publicKey);
 
-  const [admins, setAdmins] = useState<any[]>([]);
+  const [admins, setAdmins] = React.useState<any[]>([]);
+  const [maximumPoints, setMaximumPoints] = React.useState(5);
 
   // [TODO] : if different grantManagers are required for different grants
   // const [grantManagers, setGrantManagers] = useState<any[]>([accountData?.address]);
@@ -57,29 +96,36 @@ function Form({
   //   setGrantManagers(newGrantManagers);
   // };
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (transactionData) {
       setKeySubmitted(true);
       console.log('transactionData-----', transactionData);
     }
   }, [transactionData]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (workspace && workspace.members && accountData && accountData.address) {
-      const hasPubKey = workspace.members.some((member) => member.actorId.toLowerCase() === accountData?.address.toLowerCase() && member.publicKey && member.publicKey !== '');
+      const hasPubKey = workspace.members.some(
+        (member) => member.actorId.toLowerCase() === accountData?.address.toLowerCase()
+          && member.publicKey
+          && member.publicKey !== '',
+      );
+      console.log('Workspace', workspace);
       setHasOwnerPublicKey(hasPubKey);
     }
   }, [accountData, workspace]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (workspace && workspace.members) {
-      const adminAddresses = workspace.members.filter((member) => member.publicKey && member.publicKey !== '').map((member) => member.actorId);
+      const adminAddresses = workspace.members
+        .filter((member) => member.publicKey && member.publicKey !== '')
+        .map((member) => member.actorId);
       setAdmins(adminAddresses);
     }
   }, [workspace]);
 
-  const applicantDetails = applicantDetailsList.map(
-    ({
+  const applicantDetails = applicantDetailsList
+    .map(({
       title, tooltip, id, inputType, isRequired,
     }, index) => {
       if (index === applicantDetailsList.length - 1) return null;
@@ -92,11 +138,23 @@ function Form({
         index,
         inputType,
       };
-    },
-  ).filter((obj) => obj != null);
-  const [detailsRequired, setDetailsRequired] = useState(applicantDetails);
+    })
+    .filter((obj) => obj != null);
+  const [detailsRequired, setDetailsRequired] = React.useState(applicantDetails);
   // const [extraField, setExtraField] = useState(false);
-  const [multipleMilestones, setMultipleMilestones] = useState(false);
+
+  const [customFieldsOptionIsVisible, setCustomFieldsOptionIsVisible] = React.useState(false);
+  const [customFields, setCustomFields] = React.useState<any[]>([
+    {
+      value: '',
+      isError: false,
+    },
+  ]);
+  const [multipleMilestones, setMultipleMilestones] = React.useState(false);
+  const [milestoneSelectOptionIsVisible, setMilestoneSelectOptionIsVisible] = React.useState(false);
+  const [defaultMilestoneFields, setDefaultMilestoneFields] = React.useState<
+  any[]
+  >([]);
 
   const toggleDetailsRequired = (index: number) => {
     const newDetailsRequired = [...detailsRequired];
@@ -107,36 +165,72 @@ function Form({
     setDetailsRequired(newDetailsRequired);
   };
 
+  const [rubricRequired, setRubricRequired] = React.useState(false);
+  const [rubrics, setRubrics] = React.useState<any>([
+    {
+      name: '',
+      nameError: false,
+      description: '',
+      descriptionError: false,
+    },
+  ]);
+
+  const [shouldEncryptReviews, setShouldEncryptReviews] = React.useState(false);
+
   // const [extraFieldDetails, setExtraFieldDetails] = useState('');
   // const [extraFieldError, setExtraFieldError] = useState(false);
 
+  // Grant Rewards and Deadline
   const [reward, setReward] = React.useState('');
+  const [rewardToken, setRewardToken] = React.useState<Token>({
+    label: '',
+    address: '',
+    decimal: '18',
+    iconHash: '',
+  });
   const [rewardError, setRewardError] = React.useState(false);
 
-  const currentChain = useChainId() ?? SupportedChainId.RINKEBY;
+  // const [supportCurrencies, setsupportCurrencies] = useState([{}]);
 
   const supportedCurrencies = Object.keys(
-    CHAIN_INFO[currentChain].supportedCurrencies,
-  ).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
+    CHAIN_INFO[currentChain]?.supportedCurrencies ?? [],
+  )
+    .map((address) => CHAIN_INFO[currentChain]?.supportedCurrencies[address])
     .map((currency) => ({ ...currency, id: currency.address }));
-  const [rewardCurrency, setRewardCurrency] = React.useState(
-    supportedCurrencies[0].label,
-  );
-  const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
-    supportedCurrencies[0].id,
-  );
 
-  useEffect(() => {
+  const [rewardCurrency, setRewardCurrency] = React.useState(supportedCurrencies.length > 0
+    ? supportedCurrencies[0].label : '');
+  const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
+    supportedCurrencies.length > 0 ? supportedCurrencies[0].id : '',
+  );
+  /**
+   * checks if the workspace already has custom tokens added
+   * if custom tokens found, append it to supportedCurrencies
+   */
+  if (workspace?.tokens) {
+    for (let i = 0; i < workspace.tokens.length; i += 1) {
+      supportedCurrencies.push({
+        id: workspace.tokens[i].address,
+        address: workspace.tokens[i].address,
+        decimals: workspace.tokens[i].decimal,
+        label: workspace.tokens[i].label,
+        icon: getUrlForIPFSHash(workspace.tokens[i].iconHash),
+      });
+    }
+  }
+
+  React.useEffect(() => {
     // console.log(currentChain);
     if (currentChain) {
       const supportedCurrencies = Object.keys(
         CHAIN_INFO[currentChain].supportedCurrencies,
-      ).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
+      )
+        .map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
         .map((currency) => ({ ...currency, id: currency.address }));
       setRewardCurrency(supportedCurrencies[0].label);
       setRewardCurrencyAddress(supportedCurrencies[0].address);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentChain]);
 
   const [date, setDate] = React.useState('');
@@ -169,6 +263,50 @@ function Form({
       error = true;
     }
 
+    if (customFieldsOptionIsVisible) {
+      const errorCheckedCustomFields = customFields.map((customField: any) => {
+        const errorCheckedCustomField = { ...customField };
+        if (customField.value.length <= 0) {
+          errorCheckedCustomField.isError = true;
+          error = true;
+        }
+        return errorCheckedCustomField;
+      });
+      setCustomFields(errorCheckedCustomFields);
+    }
+
+    if (defaultMilestoneFields.length > 0) {
+      const errorCheckedDefaultMilestoneFields = defaultMilestoneFields.map(
+        (defaultMilestoneField: any) => {
+          const errorCheckedDefaultMilestoneField = {
+            ...defaultMilestoneField,
+          };
+          if (defaultMilestoneField.value.length <= 0) {
+            errorCheckedDefaultMilestoneField.isError = true;
+            error = true;
+          }
+          return errorCheckedDefaultMilestoneField;
+        },
+      );
+      setDefaultMilestoneFields(errorCheckedDefaultMilestoneFields);
+    }
+
+    if (rubricRequired) {
+      const errorCheckedRubrics = rubrics.map((rubric: any) => {
+        const errorCheckedRubric = { ...rubric };
+        if (rubric.name.length <= 0) {
+          errorCheckedRubric.nameError = true;
+          error = true;
+        }
+        if (rubric.description.length <= 0) {
+          errorCheckedRubric.descriptionError = true;
+          error = true;
+        }
+        return errorCheckedRubric;
+      });
+      setRubrics(errorCheckedRubrics);
+    }
+
     if (!error) {
       const detailsString = JSON.stringify(
         convertToRaw(details.getCurrentContent()),
@@ -184,12 +322,19 @@ function Form({
         }
       });
       const fields = { ...requiredDetails };
-      // if (extraFieldDetails != null && extraFieldDetails.length > 0) {
-      //   fields.extraField = {
-      //     title: 'Other Information',
-      //     inputType: 'short-form',
-      //   };
-      // }
+
+      const rubric = {} as any;
+
+      if (rubricRequired) {
+        rubrics.forEach((r: any, index: number) => {
+          rubric[index.toString()] = {
+            title: r.name,
+            details: r.description,
+            maximumPoints,
+          };
+        });
+      }
+
       if (multipleMilestones) {
         fields.isMultipleMilestones = {
           title: 'Milestones',
@@ -216,6 +361,30 @@ function Form({
           fields.memberDetails = { ...fields.memberDetails, pii: true };
         }
       }
+      if (customFieldsOptionIsVisible && customFields.length > 0) {
+        customFields.forEach((customField: any, index: number) => {
+          const santizedCustomFieldValue = customField.value
+            .split(' ')
+            .join('\\s');
+          fields[`customField${index}-${santizedCustomFieldValue}`] = {
+            title: customField.value,
+            inputType: 'short-form',
+          };
+        });
+      }
+      if (defaultMilestoneFields.length > 0) {
+        defaultMilestoneFields.forEach(
+          (defaultMilestoneField: any, index: number) => {
+            const santizedDefaultMilestoneFieldValue = defaultMilestoneField.value.split(' ').join('\\s');
+            fields[
+              `defaultMilestone${index}-${santizedDefaultMilestoneFieldValue}`
+            ] = {
+              title: defaultMilestoneField.value,
+              inputType: 'short-form',
+            };
+          },
+        );
+      }
       onSubmit({
         title,
         summary,
@@ -223,11 +392,112 @@ function Form({
         fields,
         reward,
         rewardCurrencyAddress,
+        rewardToken,
         date,
         grantManagers: admins,
+        rubric: {
+          isPrivate: shouldEncryptReviews,
+          rubric,
+        },
       });
     }
   };
+
+  React.useEffect(() => {
+    console.log('Key: ', getKey);
+    if (getKey.includes('undefined') || typeof window === 'undefined') return;
+    const data = localStorage.getItem(getKey);
+    if (data === 'undefined') return;
+    const formData = typeof window !== 'undefined' ? JSON.parse(data ?? '{}') : {};
+    console.log('Data from cache: ', formData);
+
+    setTitle(formData?.title);
+    setSummary(formData?.summary);
+    if (formData?.details) {
+      setDetails(
+        EditorState.createWithContent(convertFromRaw(formData?.details)),
+      );
+    }
+    if (formData?.detailsRequired) {
+      setDetailsRequired(formData?.detailsRequired);
+    }
+    if (formData?.rubricRequired) setRubricRequired(formData?.rubricRequired);
+    if (formData?.customFieldsOptionIsVisible) {
+      setCustomFieldsOptionIsVisible(formData?.customFieldsOptionIsVisible);
+    }
+    if (formData?.customFields) {
+      setCustomFields(formData?.customFields);
+    }
+    if (formData?.milestoneSelectOptionIsVisible) {
+      setMilestoneSelectOptionIsVisible(formData?.milestoneSelectOptionIsVisible);
+    }
+    if (formData?.multipleMilestones) {
+      setMultipleMilestones(formData?.multipleMilestones);
+    }
+    if (formData?.rubrics) {
+      setRubrics(formData?.rubrics);
+    }
+    if (formData?.maximumPoints) {
+      setMaximumPoints(formData?.maximumPoints);
+    }
+    if (formData?.reward) setReward(formData?.reward);
+    if (formData?.rewardToken) setRewardToken(formData?.rewardToken);
+    if (formData?.rewardCurrency) setRewardCurrency(formData?.rewardCurrency);
+    if (formData?.rewardCurrencyAddress) {
+      setRewardCurrencyAddress(formData?.rewardCurrencyAddress);
+    }
+    if (formData?.date) setDate(formData?.date);
+    if (formData?.shouldEncrypt) setShouldEncrypt(formData?.shouldEncrypt);
+    if (formData?.shouldEncryptReviews) {
+      setShouldEncryptReviews(formData?.shouldEncryptReviews);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getKey]);
+
+  React.useEffect(() => {
+    if (getKey.includes('undefined') || typeof window === 'undefined') return;
+    const formData = {
+      title,
+      summary,
+      details: convertToRaw(details.getCurrentContent()),
+      detailsRequired,
+      rubricRequired,
+      customFieldsOptionIsVisible,
+      customFields,
+      multipleMilestones,
+      milestoneSelectOptionIsVisible,
+      rubrics,
+      maximumPoints,
+      reward,
+      rewardToken,
+      rewardCurrency,
+      rewardCurrencyAddress,
+      date,
+      shouldEncrypt,
+      shouldEncryptReviews,
+    };
+    console.log(JSON.stringify(formData));
+    localStorage.setItem(getKey, JSON.stringify(formData));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    details,
+    reward,
+    rewardCurrencyAddress,
+    rewardToken,
+    summary,
+    detailsRequired,
+    rubricRequired,
+    rubrics,
+    maximumPoints,
+    customFieldsOptionIsVisible,
+    customFields,
+    title,
+    shouldEncrypt,
+    shouldEncryptReviews,
+    date,
+    multipleMilestones,
+    milestoneSelectOptionIsVisible,
+  ]);
 
   return (
     <>
@@ -293,14 +563,21 @@ function Form({
         // setExtraFieldDetails={setExtraFieldDetails}
         // extraFieldError={extraFieldError}
         // setExtraFieldError={setExtraFieldError}
+        customFields={customFields}
+        setCustomFields={setCustomFields}
+        customFieldsOptionIsVisible={customFieldsOptionIsVisible}
+        setCustomFieldsOptionIsVisible={setCustomFieldsOptionIsVisible}
         multipleMilestones={multipleMilestones}
         setMultipleMilestones={setMultipleMilestones}
-        shouldEncrypt={shouldEncrypt}
-        setShouldEncrypt={setShouldEncrypt}
-        loading={loading}
-        setPublicKey={setPublicKey}
-        hasOwnerPublicKey={hasOwnerPublicKey}
-        keySubmitted={keySubmitted}
+        milestoneSelectOptionIsVisible={milestoneSelectOptionIsVisible}
+        setMilestoneSelectOptionIsVisible={setMilestoneSelectOptionIsVisible}
+        defaultMilestoneFields={defaultMilestoneFields}
+        setDefaultMilestoneFields={setDefaultMilestoneFields}
+        rubricRequired={rubricRequired}
+        setRubricRequired={setRubricRequired}
+        rubrics={rubrics}
+        setRubrics={setRubrics}
+        setMaximumPoints={setMaximumPoints}
       />
 
       <Text
@@ -316,6 +593,8 @@ function Form({
       <GrantRewardsInput
         reward={reward}
         setReward={setReward}
+        rewardToken={rewardToken}
+        setRewardToken={setRewardToken}
         rewardError={rewardError}
         setRewardError={setRewardError}
         rewardCurrency={rewardCurrency}
@@ -326,9 +605,17 @@ function Form({
         dateError={dateError}
         setDateError={setDateError}
         supportedCurrencies={supportedCurrencies}
+        shouldEncrypt={shouldEncrypt}
+        setShouldEncrypt={setShouldEncrypt}
+        loading={loading}
+        setPublicKey={setPublicKey}
+        hasOwnerPublicKey={hasOwnerPublicKey}
+        keySubmitted={keySubmitted}
+        shouldEncryptReviews={shouldEncryptReviews}
+        setShouldEncryptReviews={setShouldEncryptReviews}
       />
 
-      <Flex alignItems="flex-start" mt={8} mb={10} maxW="400">
+      <Flex alignItems="flex-start" mt={8} mb={10} justify="stretch">
         <Image
           display="inline-block"
           h="10px"
@@ -338,11 +625,16 @@ function Form({
           mr={2}
         />
         {' '}
-        <Text variant="footer">
-          By pressing Publish Grant you&apos;ll have to approve this transaction
+        <Text variant="footer" w="100%">
+          By clicking Create Grant you&apos;ll have to approve this transaction
           in your wallet.
           {' '}
-          <Link href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46" isExternal>Learn more</Link>
+          <Link
+            href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
+            isExternal
+          >
+            Learn more
+          </Link>
           {' '}
           <Image
             display="inline-block"
@@ -357,7 +649,7 @@ function Form({
         py={hasClicked ? 2 : 0}
         onClick={hasClicked ? () => {} : handleOnSubmit}
         variant="primary"
-        disabled={shouldEncrypt && (!keySubmitted && !hasOwnerPublicKey)}
+        disabled={shouldEncrypt && !keySubmitted && !hasOwnerPublicKey}
       >
         {hasClicked ? <Loader /> : 'Create Grant'}
       </Button>

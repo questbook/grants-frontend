@@ -28,10 +28,14 @@
             "text": "to access your existing account on Questbook."
         }
     },
-    "settings_and_members": {},
+    "manage_dao": {},
     "signup": {},
     "index": {},
     "explore_grants": {},
     "your_applications": {},
-    "your_grants": {}
+    "your_grants": {},
+    "cache": {
+        "create_grant": "create-grant",
+        "apply_grant": "apply-grant"
+    }
 }

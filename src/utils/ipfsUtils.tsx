@@ -1,6 +1,7 @@
 import config from 'src/constants/config';
 
-const IPFS_UPLOAD_ENDPOINT = 'https://ipfs.infura.io:5001/api/v0/add?pin=true';
+const IPFS_UPLOAD_ENDPOINT = 'https://api.thegraph.com/ipfs/api/v0/add?pin=true';
+const IPFS_DOWNLOAD_ENDPOINT = 'https://api.thegraph.com/ipfs/api/v0/cat';
 
 export const uploadToIPFS = async (data: string | Blob): Promise<{ hash: string }> => {
   if (data === null) return { hash: config.deafultDAOImageHash };
@@ -16,19 +17,34 @@ export const uploadToIPFS = async (data: string | Blob): Promise<{ hash: string 
   return { hash: responseBody.Hash };
 };
 
+export const getFromIPFS = async (hash: string): Promise<string> => {
+  const urls = [
+    `${IPFS_DOWNLOAD_ENDPOINT}?arg=${hash}`,
+    `https://ipfs.io/ipfs/${hash}`,
+  ];
+
+  for (const url of urls) {
+    try {
+      const fetchResult = await fetch(`${IPFS_DOWNLOAD_ENDPOINT}?arg=${hash}`);
+      const responseBody = await fetchResult.text();
+      return responseBody;
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  return '';
+};
+
 export const getUrlForIPFSHash = (hash: string) => {
   // https://docs.ipfs.io/concepts/what-is-ipfs
   // https://infura.io/docs/ipfs#section/Getting-Started/Pin-a-file
   if (hash === '') return '';
-  // const v1 = CID.parse(hash).toV1();
-  // return `https://${v1}.ipfs.dweb.link/#x-ipfs-companion-no-redirect`;
-  // return `https://ipfs.infura.io:5001/api/v0/cat?arg=${v1}`;
-  // return `https://infura-ipfs.io:5001/api/v0/cat?arg=${hash}`;
-  return `https://api.thegraph.com/ipfs/api/v0/cat?arg=${hash}`;
-};
 
-export const getFromIPFS = async (hash: string): Promise<string> => {
-  const fetchResult = await fetch(`https://ipfs.infura.io:5001/api/v0/cat?arg=${hash}`, { method: 'post' });
-  const responseBody = await fetchResult.text();
-  return responseBody;
+  // api.thegraph is having problem returning svg files, will fix later
+  // this shoudln't affect in the near future as uploading svg files is not supported
+  if (hash === config.deafultDAOImageHash) {
+    return `https://ipfs.io/ipfs/${hash}`;
+  }
+  return `${IPFS_DOWNLOAD_ENDPOINT}?arg=${hash}`;
 };

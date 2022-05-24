@@ -11,6 +11,9 @@ function Table({
   onManageApplicationClick,
   data,
   title,
+  actorId,
+  isReviewer,
+  reviewerData,
   archiveGrantComponent,
 }: {
   onViewApplicantFormClick?: (data? : any) => void;
@@ -19,7 +22,10 @@ function Table({
   onManageApplicationClick?: (data? : any) => void;
   data: any[];
   title: string;
+  actorId: string
+  isReviewer : boolean;
   archiveGrantComponent: React.ReactNode;
+  reviewerData: any[];
 }) {
   const [filter, setFilter] = React.useState(-1);
   useEffect(() => {
@@ -33,19 +39,23 @@ function Table({
       </Flex>
       {archiveGrantComponent}
       <Flex w="100%" mt={10} align="center" direction="column" flex={1}>
-        <Headers />
+        <Headers is_reviewer={isReviewer} />
         <Content
           data={data}
+          isReviewer={isReviewer}
+          reviewerData={reviewerData}
           filter={filter}
+          actorId={actorId}
           onViewApplicationFormClick={onViewApplicantFormClick}
-          // onAcceptApplicationClick={onAcceptApplicationClick}
-          // onRejectApplicationClick={onRejectApplicationClick}
+                // onAcceptApplicationClick={onAcceptApplicationClick}
+                // onRejectApplicationClick={onRejectApplicationClick}
           onManageApplicationClick={(manageData: any) => {
             if (onManageApplicationClick) {
               onManageApplicationClick(manageData);
             }
           }}
         />
+
       </Flex>
 
       {/* Can we move this to next release */}

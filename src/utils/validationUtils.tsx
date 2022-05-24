@@ -19,6 +19,10 @@ const getSupportedChainIdFromSupportedNetwork = (chainId: SupportedNetwork) => {
     return SupportedChainId.POLYGON_TESTNET;
   } if (chainId === SupportedNetwork.Chain_137) {
     return SupportedChainId.POLYGON_MAINNET;
+  } if (chainId === SupportedNetwork.Chain_10) {
+    return SupportedChainId.OPTIMISM_MAINNET;
+  } if (chainId === SupportedNetwork.Chain_245022926) {
+    return SupportedChainId.NEON_DEVNET;
   }
   // @TODO: needs type for harmony
   // if (chainId === SupportedNetwork.Chain_80001) {
@@ -37,6 +41,7 @@ const getSupportedChainIdFromWorkspace = (workspace?: MinimalWorkspace) => {
   return getSupportedChainIdFromSupportedNetwork(chainId);
 };
 
+// eslint-disable-next-line arrow-body-style
 const getSupportedValidatorNetworkFromChainId = (chainId: SupportedChainId) => {
   if (chainId === SupportedChainId.RINKEBY) {
     return SupportedValidatorNetwork._4;
@@ -44,6 +49,10 @@ const getSupportedValidatorNetworkFromChainId = (chainId: SupportedChainId) => {
     return SupportedValidatorNetwork._80001;
   } if (chainId === SupportedChainId.POLYGON_MAINNET) {
     return SupportedValidatorNetwork._137;
+  } if (chainId === SupportedChainId.OPTIMISM_MAINNET) {
+    return SupportedValidatorNetwork._10;
+  } if (chainId === SupportedChainId.NEON_DEVNET) {
+    return SupportedValidatorNetwork._245022926;
   }
   // @TODO: needs type for harmony
   // if (chainId === SupportedNetwork.Chain_80001) {

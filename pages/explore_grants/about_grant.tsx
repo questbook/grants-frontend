@@ -12,7 +12,7 @@ import React, {
   ReactElement, useContext, useEffect, useState,
 } from 'react';
 import { useRouter } from 'next/router';
-import { useGetGrantDetailsQuery } from 'src/generated/graphql';
+import { useGetGrantDetailsQuery, useGetGrantsAppliedToQuery } from 'src/generated/graphql';
 import { ApiClientsContext } from 'pages/_app';
 import GrantShare from 'src/components/ui/grantShare';
 import { SupportedChainId } from 'src/constants/chains';
@@ -46,6 +46,7 @@ function AboutGrant() {
   const router = useRouter();
 
   const [grantData, setGrantData] = useState<any>(null);
+  const [userGrants, setUserGrants] = useState<any>([]);
   const [grantID, setGrantID] = useState<any>(null);
   const [title, setTitle] = useState('');
   const [deadline, setDeadline] = useState('');
@@ -65,6 +66,8 @@ function AboutGrant() {
   const [acceptingApplications, setAcceptingApplications] = useState(true);
   const [shouldShowButton, setShouldShowButton] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [alreadyApplied, setAlreadyApplied] = useState(false);
+  const [account, setAccount] = useState<any>(null);
 
   useEffect(() => {
     // console.log(router.query);
@@ -77,6 +80,10 @@ function AboutGrant() {
   }, [router.query]);
 
   const [queryParams, setQueryParams] = useState<any>({
+    client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
+  });
+
+  const [applicantQueryParams, setApplicantQueryParams] = useState<any>({
     client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
   });
 
@@ -104,11 +111,65 @@ function AboutGrant() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error, loading]);
 
+  const accounts = useAccount({
+    fetchEns: false,
+  });
+
+  useEffect(() => {
+    if (
+      accounts[0]
+      && accounts[0].data
+      && accounts[0].data.address.length > 0
+    ) {
+      setAccount(accounts[0].data.address);
+    }
+  }, [accounts]);
+
+  useEffect(() => {
+    if (!account) return;
+    if (!chainId) return;
+    setApplicantQueryParams({
+      client: subgraphClients[chainId as SupportedChainId].client,
+      variables: {
+        applicantID: account,
+      },
+    });
+  }, [chainId, account, data, subgraphClients]);
+
+  const res = useGetGrantsAppliedToQuery(applicantQueryParams);
+
+  useEffect(() => {
+    if (res.data && res.data.grantApplications.length > 0) {
+      setUserGrants(res.data.grantApplications);
+    }
+  }, [res, data]);
+
+  useEffect(() => {
+    const Id = userGrants.find((x: any) => x.grant.id === grantID);
+    if (Id) {
+      setAlreadyApplied(true);
+    }
+  }, [userGrants, accounts, grantID]);
+
   useEffect(() => {
     if (!chainId || !grantData) return;
-
-    const chainInfo = CHAIN_INFO[chainId]
-      ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];
+    let chainInfo;
+    let tokenIcon;
+    if (grantData.reward.token) {
+      tokenIcon = getUrlForIPFSHash(grantData.reward.token?.iconHash);
+      chainInfo = {
+        address: grantData.reward.token.address,
+        label: grantData.reward.token.label,
+        decimals: grantData.reward.token.decimal,
+        icon: tokenIcon,
+      };
+    } else {
+      chainInfo = CHAIN_INFO[chainId]?.supportedCurrencies[
+        grantData.reward.asset.toLowerCase()
+      ];
+    }
+    // const chainInfo = CHAIN_INFO[chainId]
+    //   ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];
     const [localIsGrantVerified, localFunding] = verify(grantData?.funding, chainInfo?.decimals);
 
     setFunding(localFunding);
@@ -123,10 +184,16 @@ function AboutGrant() {
         ? formatAmount(grantData?.reward?.committed, chainInfo?.decimals ?? 18)
         : '',
     );
-    const supportedCurrencyObj = getAssetInfo(
-      grantData?.reward?.asset?.toLowerCase(),
-      chainId,
-    );
+    let supportedCurrencyObj;
+    if (grantData.reward.token) {
+      setRewardCurrency(chainInfo.label);
+      setRewardCurrencyCoin(chainInfo.icon);
+    } else {
+      supportedCurrencyObj = getAssetInfo(
+        grantData?.reward?.asset?.toLowerCase(),
+        chainId,
+      );
+    }
 
     if (supportedCurrencyObj) {
       setRewardCurrency(supportedCurrencyObj?.label);
@@ -146,10 +213,27 @@ function AboutGrant() {
     setGrantDetails(grantData?.details);
     setGrantSummary(grantData?.summary);
     setGrantRequiredFields(
-      grantData?.fields?.map((field: any) => ({
-        detail: getFieldLabelFromFieldTitle(field.title) ?? 'Invalid Field',
-        // detail: field.title,
-      })),
+      grantData?.fields?.map((field: any) => {
+        console.log(field);
+        console.log(field.title.startsWith('defaultMilestone'));
+        if (field.title.startsWith('defaultMilestone')) return null;
+        if (field.title.startsWith('customField')) {
+          const i = field.title.indexOf('-');
+          if (i !== -1) {
+            return (
+              {
+                detail: field.title.substring(i + 1).split('\\s').join(' '),
+              }
+            );
+          }
+        }
+        return (
+          {
+            detail: getFieldLabelFromFieldTitle(field.title) ?? 'Invalid Field',
+            // detail: field.title,
+          }
+        );
+      }).filter((field: any) => field != null),
     );
 
     setAcceptingApplications(grantData?.acceptingApplications);
@@ -284,6 +368,21 @@ function AboutGrant() {
             rewardCurrencyCoin={rewardCurrencyCoin}
             payoutDescription={payoutDescription}
             chainId={chainId}
+            defaultMilestoneFields={grantData?.fields?.map((field: any) => {
+              // console.log(field);
+              // console.log(field.title.startsWith('defaultMilestone'));
+              if (field.title.startsWith('defaultMilestone')) {
+                const i = field.title.indexOf('-');
+                if (i !== -1) {
+                  return (
+                    {
+                      detail: field.title.substring(i + 1).split('\\s').join(' '),
+                    }
+                  );
+                }
+              }
+              return null;
+            }).filter((field: any) => field != null)}
           />
 
           <Divider mt={7} />
@@ -300,6 +399,7 @@ function AboutGrant() {
             grantID={grantData?.id}
             grantRequiredFields={grantRequiredFields}
             acceptingApplications={acceptingApplications}
+            alreadyApplied={alreadyApplied}
           />
         </Flex>
       </Flex>

@@ -32,7 +32,7 @@ function ImageUpload({
 
   return (
     <Flex direction="column" align="center">
-      <Text lineHeight="20px" fontWeight="bold">
+      <Text lineHeight="20px" fontWeight="bold" width="max-content">
         {label}
       </Text>
       <Flex

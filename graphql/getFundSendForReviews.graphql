@@ -1,0 +1,18 @@
+query getFundSentforReviews($type: FundsTransferType) {
+  fundsTransfers(
+      where: {type: review_payment_done},
+      orderBy: createdAtS,
+      orderDirection: desc) {
+
+    id,
+    review {
+      id
+    },
+    amount,
+    sender,
+    to,
+    createdAtS,
+    type
+    asset
+  }
+}

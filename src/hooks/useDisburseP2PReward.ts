@@ -76,6 +76,7 @@ export default function useDisburseReward(
       try {
         const txn = await rewardContract.approve(grantContract.address, data);
         await txn.wait();
+
         const updateTxn = await grantContract.disburseRewardP2P(
           applicationId,
           milestoneIndex,

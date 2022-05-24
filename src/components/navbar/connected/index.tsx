@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -23,6 +23,7 @@ import {
 import { ApiClientsContext } from 'pages/_app';
 import { useAccount } from 'wagmi';
 import { MinimalWorkspace } from 'src/types';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import Tab from './tab';
 import AccountDetails from './accountDetails';
 
@@ -32,8 +33,9 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
   const tabPaths = [
     'your_grants',
     'funds',
-    'settings_and_members',
+    'manage_dao',
     'your_applications',
+    'payouts',
   ];
   const activeIndex = useActiveTabIndex(tabPaths);
 
@@ -44,23 +46,27 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
   const apiClients = useContext(ApiClientsContext)!;
   const { workspace, setWorkspace, subgraphClients } = apiClients;
   const [isAdmin, setIsAdmin] = React.useState(false);
+  const [isReviewer, setIsReviewer] = React.useState<boolean>(false);
 
   // eslint-disable-next-line max-len
   const getNumberOfApplicationsClients = Object.keys(subgraphClients)!.map(
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    (key) => useGetNumberOfApplicationsLazyQuery({
-      client: subgraphClients[key].client,
-    }),
+    (key) => useGetNumberOfApplicationsLazyQuery({ client: subgraphClients[key].client }),
   );
 
-  const getNumberOfGrantsClients = Object.keys(subgraphClients)!.map(
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    (key) => useGetNumberOfGrantsLazyQuery({ client: subgraphClients[key].client }),
+  const getNumberOfGrantsClients = Object.fromEntries(
+    Object.keys(subgraphClients)!.map((key) => [
+      key,
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      useGetNumberOfGrantsLazyQuery({ client: subgraphClients[key].client }),
+    ]),
   );
 
   useEffect(() => {
     if (!accountData?.address) return;
     if (!workspace) return;
+
+    console.log('Workspace or Account changed!');
 
     const getNumberOfApplications = async () => {
       try {
@@ -90,22 +96,15 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 
     const getNumberOfGrants = async () => {
       try {
-        const promises = getNumberOfGrantsClients.map(
-          // eslint-disable-next-line no-async-promise-executor
-          (query) => new Promise(async (resolve) => {
-            const { data } = await query[0]({
-              variables: { workspaceId: workspace?.id },
-            });
-            if (data && data.grants.length > 0) {
-              resolve(data.grants.length);
-            } else {
-              resolve(0);
-            }
-          }),
-        );
-        Promise.all(promises).then((value: any[]) => {
-          setGrantsCount(value.reduce((a, b) => a + b, 0));
+        const query = getNumberOfGrantsClients[getSupportedChainIdFromWorkspace(workspace)!][0];
+        const { data } = await query({
+          variables: { workspaceId: workspace?.id },
         });
+        if (data && data.grants.length > 0) {
+          setGrantsCount(data.grants.length);
+        } else {
+          setGrantsCount(0);
+        }
       } catch (e) {
         toast({
           title: 'Error getting grants count',
@@ -116,27 +115,35 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 
     getNumberOfApplications();
     getNumberOfGrants();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    accountData?.address,
-    workspace?.id,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountData?.address, workspace?.id]);
 
   const getAllWorkspaces = Object.keys(subgraphClients)!.map(
     // eslint-disable-next-line react-hooks/rules-of-hooks
     (key) => useGetWorkspaceMembersLazyQuery({ client: subgraphClients[key].client }),
   );
   useEffect(() => {
-    if (workspace && workspace.members && workspace.members.length > 0) {
+    if (
+      workspace
+      && workspace.members
+      && workspace.members.length > 0
+      && accountData
+      && accountData.address
+    ) {
       const tempMember = workspace.members.find(
         (m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
       );
-      setIsAdmin(tempMember?.accessLevel === 'admin' || tempMember?.accessLevel === 'owner');
+      setIsAdmin(
+        tempMember?.accessLevel === 'admin'
+          || tempMember?.accessLevel === 'owner',
+      );
+      setIsReviewer(tempMember?.accessLevel === 'reviewer');
     }
-  }, [accountData?.address, workspace]);
+  }, [accountData, workspace]);
 
   useEffect(() => {
     if (!accountData?.address) return;
+
     if (!getAllWorkspaces) return;
     // if (!set) return;
 
@@ -146,12 +153,16 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
           // eslint-disable-next-line no-async-promise-executor
           (allWorkspaces) => new Promise(async (resolve) => {
             // console.log('calling grants');
-            const { data } = await allWorkspaces[0]({
-              variables: { actorId: userAddress },
-            });
-            if (data && data.workspaceMembers.length > 0) {
-              resolve(data.workspaceMembers.map((w) => w.workspace));
-            } else {
+            try {
+              const { data } = await allWorkspaces[0]({
+                variables: { actorId: userAddress },
+              });
+              if (data && data.workspaceMembers.length > 0) {
+                resolve(data.workspaceMembers.map((w) => w.workspace));
+              } else {
+                resolve([]);
+              }
+            } catch (err) {
               resolve([]);
             }
           }),
@@ -160,7 +171,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
           const allWorkspacesData = [].concat(...values) as MinimalWorkspace[];
           // setGrants([...grants, ...allGrantsData]);
           // setCurrentPage(currentPage + 1);
-          console.log('all workspaces', allWorkspacesData);
+          // console.log('all workspaces', allWorkspacesData);
           setWorkspaces([...workspaces, ...allWorkspacesData]);
 
           const i = allWorkspacesData.findIndex(
@@ -179,6 +190,18 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
     getWorkspaceData(accountData?.address);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const [isDiscover, setIsDiscover] = useState<boolean>(false);
+
+  const { pathname } = router;
+
+  useEffect(() => {
+    if (pathname !== '/') {
+      setIsDiscover(false);
+    } else {
+      setIsDiscover(true);
+    }
+  }, [pathname, isDiscover]);
 
   return (
     <Container
@@ -209,7 +232,11 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 w="32px"
                 h="32px"
                 mr="10px"
-                src={getUrlForIPFSHash(workspace.logoIpfsHash)}
+                src={
+                  router.pathname === '/'
+                    ? '/ui_icons/gray/see.svg'
+                    : getUrlForIPFSHash(workspace.logoIpfsHash)
+                }
                 display="inline-block"
               />
               <Text
@@ -220,11 +247,12 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 overflow="hidden"
                 textOverflow="ellipsis"
               >
-                {workspace.title}
+                {router.pathname === '/' ? 'Discover Grants' : workspace.title}
               </Text>
               <Image ml={2} src="/ui_icons/dropdown_arrow.svg" alt="options" />
             </Flex>
           </MenuButton>
+
           <MenuList maxH="80vh" overflowY="auto">
             {workspaces.map((userWorkspace) => (
               <MenuItem
@@ -237,6 +265,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 )}
                 onClick={() => {
                   setWorkspace(userWorkspace);
+                  router.push('/your_grants');
                 }}
               >
                 {userWorkspace.title}
@@ -246,6 +275,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
               icon={<Image src="/ui_icons/gray/see.svg" />}
               onClick={() => {
                 router.push('/');
+                setIsDiscover(true);
               }}
             >
               Discover Grants
@@ -275,7 +305,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
               <Box mr="12px" />
               <Flex h="100%" direction="column">
                 <Tab
-                  label="Grants"
+                  label={isReviewer ? 'Grants Assigned' : 'Grants'}
                   icon={`/ui_icons/${
                     activeIndex === 0 ? 'brand' : 'gray'
                   }/tab_grants.svg`}
@@ -309,7 +339,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
               </Flex>
               <Flex h="100%" direction="column" display={isAdmin ? '' : 'none'}>
                 <Tab
-                  label="Settings And Members"
+                  label="Manage DAO"
                   icon={`/ui_icons/${
                     activeIndex === 2 ? 'brand' : 'gray'
                   }/tab_settings.svg`}
@@ -324,6 +354,27 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                   <Box w="100%" h="2px" bgColor="#8850EA" />
                 ) : null}
               </Flex>
+              {isReviewer && (
+                <Flex h="100%" direction="column">
+                  <Tab
+                    label="Payouts"
+                    icon={
+                      activeIndex === 4
+                        ? '/ui_icons/brand/tab_review_funds.svg'
+                        : '/ui_icons/gray/tab_funds.svg'
+                    }
+                    isActive={activeIndex === 4}
+                    onClick={() => {
+                      router.push({
+                        pathname: `/${tabPaths[4]}`,
+                      });
+                    }}
+                  />
+                  {activeIndex === 4 ? (
+                    <Box w="100%" h="2px" bgColor="#8850EA" />
+                  ) : null}
+                </Flex>
+              )}
             </>
           ) : null}
 
@@ -352,11 +403,18 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
           <Box mr="8px" />
 
           <Button
-            display={isAdmin ? undefined : 'none'}
+            display={
+              isAdmin || !workspace || !workspace?.id ? undefined : 'none'
+            }
             onClick={() => {
               if (workspace?.id == null) {
                 router.push({
                   pathname: '/signup',
+                });
+              } else if (grantsCount === 0) {
+                router.push({
+                  pathname: '/signup',
+                  query: { create_grant: true },
                 });
               } else {
                 router.push({

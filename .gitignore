@@ -9,6 +9,7 @@
 /coverage
 /pages/api/
 /pages/test.tsx
+tests/
 
 # next.js
 /.next/
@@ -27,6 +28,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env
 .env.local
 .env.development.local
 .env.test.local
@@ -39,3 +41,6 @@ yarn-error.log*
 *.tsbuildinfo
 
 yarn.lock
+
+.env
+test/

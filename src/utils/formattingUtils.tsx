@@ -31,15 +31,14 @@ export function timeToString(
       0,
       3,
     )}, ${date.getFullYear()}`
-    : `${months[date.getMonth()]} ${date.getUTCDate().toString()} ${
-      show_year ? date.getFullYear() : ''
+    : `${months[date.getMonth()]} ${date.getUTCDate().toString()} ${show_year ? date.getFullYear() : ''
     }`;
 }
-export function parseAmount(number: string, contractAddress?: string) {
+export function parseAmount(number: string, contractAddress?: string, decimal?: number) {
+  if (decimal) {
+    return ethers.utils.parseUnits(number, decimal).toString();
+  }
   let decimals = 18;
-  console.log('nnnunun');
-  console.log(number);
-
   if (contractAddress) {
     let allCurrencies: any[] = [];
     ALL_SUPPORTED_CHAIN_IDS.forEach((id) => {
@@ -56,7 +55,6 @@ export function parseAmount(number: string, contractAddress?: string) {
     decimals = allCurrencies.find((currency) => currency.address === contractAddress)
       ?.decimals || 18;
 
-    console.log(decimals);
     return ethers.utils.parseUnits(number, decimals).toString();
   }
 
@@ -88,13 +86,15 @@ function nFormatter(value: string, digits = 3) {
     : '0';
 }
 
+export const trimAddress = (address: string, digitQuantity: number) => `${address.slice(0, digitQuantity)}...${address.slice(-4)}`;
+
 function truncateTo(number: string, digits = 3) {
   const decimalIndex = number.indexOf('.');
   if (decimalIndex === -1) return number;
   let ret = number.substring(0, decimalIndex + 1);
   const lastSymbol = number.charCodeAt(number.length - 1);
   const containsSymbol = !(lastSymbol >= 48 && lastSymbol <= 57);
-  let isEntirelyZeroAfterDecimal = true;
+  const isEntirelyZeroAfterDecimal = true;
   for (
     let i = decimalIndex + 1;
     i
@@ -104,7 +104,8 @@ function truncateTo(number: string, digits = 3) {
     );
     i += 1
   ) {
-    isEntirelyZeroAfterDecimal &&= number.charCodeAt(i) === 48;
+    // eslint-disable-next-line  @typescript-eslint/no-unused-expressions
+    isEntirelyZeroAfterDecimal && number.charCodeAt(i) === 48;
     ret += number.charAt(i);
   }
   const returnValue = (isEntirelyZeroAfterDecimal ? ret.substring(0, decimalIndex) : ret)

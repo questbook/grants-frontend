@@ -7,7 +7,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { NextPage } from 'next';
 import 'draft-js/dist/Draft.css';
 import {
-  Chain,
+  // Chain,
   chain,
   Connector,
   defaultChains,
@@ -24,7 +24,7 @@ import {
 import { MinimalWorkspace } from 'src/types';
 import {
   ALL_SUPPORTED_CHAIN_IDS,
-  SupportedChainId,
+  // SupportedChainId,
 } from 'src/constants/chains';
 import App from 'next/app';
 import { DefaultSeo } from 'next-seo';
@@ -54,8 +54,14 @@ const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
 const chains = [
   ...defaultChains,
   ...defaultL2Chains,
-  CHAIN_INFO[SupportedChainId.HARMONY_TESTNET_S0] as Chain,
+
+  // commenting to only support rinkeby
+  // CHAIN_INFO[SupportedChainId.HARMONY_TESTNET_S0] as Chain,
 ];
+
+// commenting to only support rinkeby
+// const defaultChain = chain.polygonMainnet;
+
 const defaultChain = chain.polygonMainnet;
 // Set up connectors
 const connectors = () => [
@@ -162,7 +168,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 MyApp.getInitialProps = async (appContext: AppContext) => {
   // calls page's `getInitialProps` and fills `appProps.pageProps`
   const appProps = await App.getInitialProps(appContext);
-  console.log('appProps', appProps);
   return { ...appProps };
 };
 
