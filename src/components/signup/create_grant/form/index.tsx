@@ -4,6 +4,8 @@ import {
   Flex,
   Text,
   Progress,
+  Image,
+  Button,
 } from '@chakra-ui/react';
 import ApplicantDetails from './3_applicantDetails';
 import Details from './2_details';
@@ -13,13 +15,14 @@ import Title from './1_title';
 interface Props {
   currentStep: number;
   incrementCurrentStep: (data: any) => void;
+  decrementCurrentStep: () => void;
   totalSteps: number;
   submitForm: (data: any) => void;
   hasClicked: boolean;
 }
 
 function Form({
-  currentStep, incrementCurrentStep, totalSteps, submitForm, hasClicked,
+  currentStep, incrementCurrentStep, decrementCurrentStep, totalSteps, submitForm, hasClicked,
 }: Props) {
   const incrementFormInputStep = (data: any) => {
     console.log(data);
@@ -27,6 +30,12 @@ function Form({
       incrementCurrentStep(data);
     } else {
       submitForm(data);
+    }
+  };
+
+  const decrementFormInputStep = () => {
+    if (currentStep > 0) {
+      decrementCurrentStep();
     }
   };
 
@@ -51,6 +60,21 @@ function Form({
         w="100%"
         maxW="496px"
       >
+        {currentStep > 0 && (
+        <Button
+          variant="ghost"
+          mb={10}
+          p={0}
+          _hover={{
+            textDecoration: 'underline',
+          }}
+          _active={{}}
+          leftIcon={<Image src="/ui_icons/back.svg" w="24px" h="24px" />}
+          onClick={decrementFormInputStep}
+        >
+          Back
+        </Button>
+        )}
         <Text color="#69657B" fontSize="12px" fontWeight="400">
           Grant Details
         </Text>

@@ -91,6 +91,7 @@ function CreateGrant({
         currentStep={currentStep}
         totalSteps={totalSteps}
         incrementCurrentStep={(data) => changeCurrentStep(data, currentStep + 1)}
+        decrementCurrentStep={() => changeCurrentStep({}, currentStep - 1)}
         submitForm={(data) => submitForm(data)}
         hasClicked={hasClicked}
       />
