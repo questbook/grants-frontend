@@ -67,6 +67,7 @@ function Sidebar({
     const initialRubrics = applicationData?.grant.rubric;
     const newRubrics = [] as any[];
     console.log('initialRubrics', initialRubrics);
+    console.log('application Data ', applicationData);
     initialRubrics?.items.forEach((initalRubric: any) => {
       newRubrics.push({
         name: initalRubric.title,
@@ -321,16 +322,16 @@ function Sidebar({
                 py={3}
               >
                 <Image src="/ui_icons/reviewer_account.svg" />
-                <Flex direction="column" ml={4}>
+                <Flex direction="column" ml={4} justifyContent="center">
                   <Text
                     fontWeight="700"
                     color="#122224"
                     fontSize="14px"
-                    lineHeight="20px"
+                    lineHeight="16px"
                   >
                     {truncateStringFromMiddle(reviewer.address)}
                   </Text>
-                  <Text mt={1} color="#717A7C" fontSize="12px">
+                  <Text mt={reviewer.email ? 1 : 0} color="#717A7C" fontSize="12px" lineHeight="16px">
                     {reviewer.email}
                   </Text>
                 </Flex>

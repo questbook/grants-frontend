@@ -3,7 +3,6 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import StarRatings from 'react-star-ratings';
-import Badge from 'src/components/ui/badge';
 import MultiLineInput from 'src/components/ui/forms/multiLineInput';
 import Loader from 'src/components/ui/loader';
 import useEncryption from 'src/hooks/utils/useEncryption';
@@ -30,6 +29,7 @@ function RubricSidebar({
   const [detailDrawerOpen, setDetailDrawerOpen] = React.useState(false);
   const [reviewerDrawerOpen, setReviewerDrawerOpen] = React.useState(false);
   const [reviewSelected, setReviewSelected] = React.useState<any>();
+  const [reviewerSelected, setReviewerSelected] = React.useState<any>();
 
   const [forPercentage, setForPercentage] = React.useState<number>(0);
   const [againstPercentage, setAgainstPercentage] = React.useState<number>(0);
@@ -207,7 +207,10 @@ function RubricSidebar({
         </Flex>
 
         {loading ? (
-          <Loader />
+          <>
+            <Box mt={5} />
+            <Loader />
+          </>
         ) : (
           // eslint-disable-next-line jsx-a11y/anchor-is-valid
           <Link onClick={() => getEncrpytedData()} mt={5} fontSize="14px" lineHeight="24px" fontWeight="500">
@@ -235,11 +238,23 @@ function RubricSidebar({
             Application Review
           </Text>
         </Flex>
-        <Text mt={3} variant="applicationText">
-          {total - detailedReviews.length}
-          {' '}
-          waiting
-        </Text>
+        <Flex mt={3} alignItems="center">
+          <Text fontSize="14px" mr="auto" variant="applicationText">
+            {detailedReviews.length}
+            /
+            {total}
+            {' '}
+            Reviews Submitted
+          </Text>
+
+          <Text fontSize="12px">
+            (
+            {total - detailedReviews.length}
+            {' '}
+            waiting)
+
+          </Text>
+        </Flex>
 
         <Box mt={2} />
 
@@ -277,7 +292,7 @@ function RubricSidebar({
                 </Flex>
                 <Text
                   position="absolute"
-                  right={0}
+                  right={2}
                   fontSize="18px"
                   lineHeight="24px"
                   fontWeight="700"
@@ -333,11 +348,29 @@ function RubricSidebar({
         isOpen={detailDrawerOpen}
         placement="right"
         onClose={() => setDetailDrawerOpen(false)}
-        size="md"
+        size="lg"
       >
         <DrawerOverlay />
         <DrawerContent>
-          <Flex direction="column" p={8} h="100%" overflow="scroll">
+          <Flex direction="column" py={8} px={4} h="100%" overflow="scroll">
+            <Flex px={4} mb={8} alignItems="center">
+              <Text
+                color="#122224"
+                fontWeight="bold"
+                fontSize="16px"
+                lineHeight="20px"
+                mr="auto"
+              >
+                Select Reviewer
+              </Text>
+              <Image
+                src="/ui_icons/close_drawer.svg"
+                cursor="pointer"
+                h="20px"
+                w="20px"
+                onClick={() => setDetailDrawerOpen(false)}
+              />
+            </Flex>
             {reviews?.map((review: any, i: number) => (
               <Button
                 onClick={() => {
@@ -345,28 +378,35 @@ function RubricSidebar({
                   setReviewerDrawerOpen(true);
                   console.log(detailedReviews[i]);
                   setReviewSelected(detailedReviews[i]);
+                  setReviewerSelected(review.reviewer);
                 }}
                 mb={4}
-                p={8}
+                py={8}
+                px={4}
+                mx="-2px"
+                backgroundColor="white"
               >
                 <Flex
                   w="100%"
                   h="64px"
                   align="center"
-                  mt={2}
                   py={3}
                 >
                   <Image src="/ui_icons/reviewer_account.svg" />
-                  <Flex direction="column" ml={4}>
+                  <Flex direction="column" ml={4} justifyContent="center" textAlign="left">
                     <Text
                       fontWeight="700"
                       color="#122224"
                       fontSize="14px"
-                      lineHeight="20px"
+                      lineHeight="16px"
                     >
                       {truncateStringFromMiddle(review.reviewer.id.split('.')[1])}
                     </Text>
+                    <Text mt={review.reviewer.email ? 1 : 0} color="#717A7C" fontSize="12px" lineHeight="16px">
+                      {review.reviewer.email}
+                    </Text>
                   </Flex>
+                  <Image ml="auto" mr={2} src="/ui_icons/drawer_navigate_right.svg" />
                 </Flex>
               </Button>
             ))}
@@ -380,6 +420,7 @@ function RubricSidebar({
         onClose={() => {
           setReviewerDrawerOpen(false);
           setReviewSelected(null);
+          setReviewerSelected(null);
         }}
         size="lg"
       >
@@ -387,6 +428,51 @@ function RubricSidebar({
         <DrawerContent>
 
           <Flex direction="column" overflow="scroll" p={8}>
+            <Flex mb={6} alignItems="center">
+              <Image
+                src="/ui_icons/back_arrow.svg"
+                cursor="pointer"
+                mr="12px"
+                h="16px"
+                w="16px"
+                onClick={() => {
+                  setReviewerDrawerOpen(false);
+                  setReviewSelected(null);
+                  setReviewerSelected(null);
+                }}
+              />
+              <Text
+                color="#122224"
+                fontWeight="bold"
+                fontSize="16px"
+                lineHeight="20px"
+              >
+                Application Feedback
+              </Text>
+            </Flex>
+
+            <Flex
+              w="100%"
+              h="64px"
+              align="center"
+              py={3}
+            >
+              <Image src="/ui_icons/reviewer_account.svg" />
+              <Flex direction="column" ml={4} justifyContent="center" textAlign="left">
+                <Text
+                  fontWeight="700"
+                  color="#122224"
+                  fontSize="14px"
+                  lineHeight="16px"
+                >
+                  {truncateStringFromMiddle(reviewerSelected?.id.split('.')[1])}
+                </Text>
+                <Text mt={reviewerSelected?.email ? 1 : 0} color="#717A7C" fontSize="12px" lineHeight="16px">
+                  {reviewerSelected?.email}
+                </Text>
+              </Flex>
+            </Flex>
+
             {reviewSelected && reviewSelected.items && reviewSelected.items.length > 0 ? (
               <>
                 <Text
@@ -398,20 +484,34 @@ function RubricSidebar({
                 >
                   Overall Recommendation
                 </Text>
-                <Flex py={8}>
-                  <Badge
-                    isActive={reviewSelected?.isApproved}
-                    label="YES"
+                <Flex pt="12px" pb="18px">
+                  <Button
                     onClick={() => {}}
-                  />
+                    variant={!reviewSelected?.isApproved ? 'outline' : 'solid'}
+                    h={12}
+                    minW="130px"
+                    colorScheme="brandGreen"
+                    borderRadius="6px"
+                  >
+                    <Image h="16px" w="16px" src={!reviewSelected?.isApproved ? '/ui_icons/like_up_green.svg' : '/ui_icons/like_up.svg'} />
+                    <Box mr="6px" />
+                    <Text color={!reviewSelected?.isApproved ? '#39C696' : '#FFFFFF'}>For</Text>
+                  </Button>
 
                   <Box ml={4} />
 
-                  <Badge
-                    isActive={!reviewSelected?.isApproved}
-                    label="NO"
+                  <Button
                     onClick={() => {}}
-                  />
+                    variant={reviewSelected?.isApproved ? 'outline' : 'solid'}
+                    h={12}
+                    minW="130px"
+                    colorScheme="brandRed"
+                    borderRadius="6px"
+                  >
+                    <Image h="16px" w="16px" src={reviewSelected?.isApproved ? '/ui_icons/like_down_red.svg' : '/ui_icons/like_down.svg'} />
+                    <Box mr="6px" />
+                    <Text color={reviewSelected?.isApproved ? '#EE7979' : '#FFFFFF'}>Against</Text>
+                  </Button>
                 </Flex>
                 {reviewSelected?.items?.map((feedback: any) => (
                   <>
@@ -425,27 +525,30 @@ function RubricSidebar({
                         color="#122224"
                         fontWeight="bold"
                         fontSize="16px"
-                        lineHeight="20px"
+                        lineHeight="12px"
                       >
                         {feedback.rubric.title}
                       </Text>
                       <Text
                         color="#69657B"
-                        fontWeight="bold"
+                        fontWeight="400"
                         fontSize="12px"
-                        lineHeight="20px"
+                        lineHeight="12px"
                       >
                         {feedback.rubric.details}
                       </Text>
 
-                      <StarRatings
-                        numberOfStars={feedback.rubric.maximumPoints}
-                        starRatedColor="#88BDEE"
-                        rating={feedback.rating}
-                        name="rating"
-                        starHoverColor="#88BDEE"
-                        starDimension="18px"
-                      />
+                      <Box mt="2px">
+                        <StarRatings
+                          numberOfStars={feedback.rubric.maximumPoints}
+                          starRatedColor="#88BDEE"
+                          rating={feedback.rating}
+                          name="rating"
+                          starHoverColor="#88BDEE"
+                          starDimension="18px"
+                          starSpacing="4px"
+                        />
+                      </Box>
 
                       <MultiLineInput
                         value={feedback.comment}
