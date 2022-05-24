@@ -1,13 +1,10 @@
 import { errorCodes, getMessageFromCode } from 'eth-rpc-errors';
 
 const TRANSACTION_UNDERPRICED_MSG = `
-Oh no, looks like the transaction didn't have enough gas to complete! 😔
-<br/><br/>
+Oh, no, it appears that the transaction did not have enough gas to go through 😭
+<br/>
 
-Try increasing the gas limits & gas prices by 30-40% when executing the transaction.
-(You can do this by clicking the "edit" button in metamask when the transaction popup opens)
-<br/><br/>
-You can read more about this issue
+Please try increasing the gas price and limit by 40% (by clicking the edit button on Metamask) and re-execute the transaction. Read more about it
 <a target='_blank' className='chakra-link' href='https://metamask.zendesk.com/hc/en-us/articles/360022895972-How-to-enable-Advanced-Gas-controls'>
   <u>here</u>
 </a>
