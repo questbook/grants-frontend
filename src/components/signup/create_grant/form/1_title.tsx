@@ -20,15 +20,6 @@ function Title({ onSubmit, constructCache, cacheKey }: Props) {
   const [summaryError, setSummaryError] = useState(false);
 
   React.useEffect(() => {
-    const formData = {
-      title,
-      summary,
-    };
-    constructCache(formData);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title, summary]);
-
-  React.useEffect(() => {
     if (cacheKey.includes('undefined') || typeof window === 'undefined') return;
     const data = localStorage.getItem(cacheKey);
     if (data === 'undefined') return;
@@ -38,6 +29,16 @@ function Title({ onSubmit, constructCache, cacheKey }: Props) {
     setTitle(formData?.title);
     setSummary(formData?.summary);
   }, [cacheKey]);
+
+  React.useEffect(() => {
+    if (cacheKey.includes('undefined') || typeof window === 'undefined') return;
+    const formData = {
+      title,
+      summary,
+    };
+    constructCache(formData);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [title, summary]);
 
   const handleOnSubmit = () => {
     let error = false;

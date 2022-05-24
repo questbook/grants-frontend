@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Container,
   Flex,
@@ -7,7 +7,8 @@ import {
   Image,
   Button,
 } from '@chakra-ui/react';
-import { SupportedChainId } from 'src/constants/chains';
+import { ApiClientsContext } from 'pages/_app';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import ApplicantDetails from './3_applicantDetails';
 import Details from './2_details';
 import GrantRewardsInput from './4_rewards';
@@ -21,13 +22,6 @@ interface Props {
   totalSteps: number;
   submitForm: (data: any) => void;
   hasClicked: boolean;
-  daoData: {
-    name: string;
-    description: string;
-    image: string;
-    network: SupportedChainId;
-    id: string;
-  };
 }
 
 function Form({
@@ -37,10 +31,10 @@ function Form({
   totalSteps,
   submitForm,
   hasClicked,
-  daoData,
 }: Props) {
   const CACHE_KEY = strings.cache.create_grant;
-  const getKey = `${daoData?.network}-${CACHE_KEY}-${daoData?.id}`;
+  const { workspace } = useContext(ApiClientsContext)!;
+  const getKey = `${getSupportedChainIdFromWorkspace(workspace)}-${CACHE_KEY}-${workspace?.id}`;
 
   const incrementFormInputStep = (data: any) => {
     console.log(data);
