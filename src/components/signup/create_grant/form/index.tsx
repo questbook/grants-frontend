@@ -58,12 +58,16 @@ function Form({
   };
   const [formData, setFormData] = React.useState({});
 
+  React.useEffect(() => {
+    console.log('Form DATA: ', formData);
+  }, [formData]);
+
   const constructCache = (data: any) => {
     if (getKey.includes('undefined') || typeof window === 'undefined') return;
 
     const newFormData = { ...formData, ...data };
     console.log(newFormData);
-    localStorage.setItem(getKey, newFormData);
+    localStorage.setItem(getKey, JSON.stringify(newFormData));
     setFormData(newFormData);
   };
 

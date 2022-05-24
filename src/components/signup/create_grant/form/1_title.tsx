@@ -20,10 +20,11 @@ function Title({ onSubmit, constructCache, cacheKey }: Props) {
   const [summaryError, setSummaryError] = useState(false);
 
   React.useEffect(() => {
-    constructCache({
+    const formData = {
       title,
       summary,
-    });
+    };
+    constructCache(formData);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title, summary]);
 
