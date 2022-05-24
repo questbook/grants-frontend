@@ -7,15 +7,36 @@ import SingleLineInput from '../../../ui/forms/singleLineInput';
 
 interface Props {
   onSubmit: (data: any) => void;
+  constructCache: (data: any) => void;
+  cacheKey: string;
 }
 
-function Title({ onSubmit }: Props) {
+function Title({ onSubmit, constructCache, cacheKey }: Props) {
   const maxDescriptionLength = 300;
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
 
   const [titleError, setTitleError] = useState(false);
   const [summaryError, setSummaryError] = useState(false);
+
+  React.useEffect(() => {
+    constructCache({
+      title,
+      summary,
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [title, summary]);
+
+  React.useEffect(() => {
+    if (cacheKey.includes('undefined') || typeof window === 'undefined') return;
+    const data = localStorage.getItem(cacheKey);
+    if (data === 'undefined') return;
+    const formData = JSON.parse(data ?? '{}');
+    console.log('Data from cache: ', formData);
+
+    setTitle(formData?.title);
+    setSummary(formData?.summary);
+  }, [cacheKey]);
 
   const handleOnSubmit = () => {
     let error = false;
