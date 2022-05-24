@@ -197,6 +197,23 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
   };
 
   React.useEffect(() => {
+    if (cacheKey.includes('undefined') || typeof window === 'undefined') return;
+    const data = localStorage.getItem(cacheKey);
+    if (data === 'undefined') return;
+    const formData = JSON.parse(data ?? '{}');
+    console.log('Data from cache: ', formData);
+
+    if (formData?.detailsRequired) setDetailsRequired(formData?.detailsRequired);
+    if (formData?.rubricRequired) setRubricRequired(formData?.rubricRequired);
+    if (formData?.customFieldsOptionIsVisible) {
+      setCustomFieldsOptionIsVisible(formData?.customFieldsOptionIsVisible);
+    }
+    if (formData?.customFields) setCustomFields(formData?.customFields);
+    if (formData?.rubrics) setRubrics(formData?.rubrics);
+    if (formData?.maximumPoints) setMaximumPoints(formData?.maximumPoints);
+  }, [cacheKey]);
+
+  React.useEffect(() => {
     const formData = {
       detailsRequired,
       rubricRequired,
@@ -215,23 +232,6 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
     rubricRequired,
     rubrics,
   ]);
-
-  React.useEffect(() => {
-    if (cacheKey.includes('undefined') || typeof window === 'undefined') return;
-    const data = localStorage.getItem(cacheKey);
-    if (data === 'undefined') return;
-    const formData = JSON.parse(data ?? '{}');
-    console.log('Data from cache: ', formData);
-
-    if (formData?.detailsRequired) setDetailsRequired(formData?.detailsRequired);
-    if (formData?.rubricRequired) setRubricRequired(formData?.rubricRequired);
-    if (formData?.customFieldsOptionIsVisible) {
-      setCustomFieldsOptionIsVisible(formData?.customFieldsOptionIsVisible);
-    }
-    if (formData?.customFields) setCustomFields(formData?.customFields);
-    if (formData?.rubrics) setRubrics(formData?.rubrics);
-    if (formData?.maximumPoints) setMaximumPoints(formData?.maximumPoints);
-  }, [cacheKey]);
 
   return (
     <>

@@ -16,13 +16,6 @@ function Details({ onSubmit, constructCache, cacheKey }: Props) {
   const [detailsError, setDetailsError] = useState(false);
 
   React.useEffect(() => {
-    constructCache({
-      details: convertToRaw(details.getCurrentContent()),
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [details]);
-
-  React.useEffect(() => {
     if (cacheKey.includes('undefined') || typeof window === 'undefined') return;
     const data = localStorage.getItem(cacheKey);
     if (data === 'undefined') return;
@@ -35,6 +28,13 @@ function Details({ onSubmit, constructCache, cacheKey }: Props) {
       );
     }
   }, [cacheKey]);
+
+  React.useEffect(() => {
+    constructCache({
+      details: convertToRaw(details.getCurrentContent()),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [details]);
 
   const handleOnSubmit = () => {
     let error = false;

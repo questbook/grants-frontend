@@ -107,7 +107,6 @@ function SignupDao() {
         onSubmit={(data) => {
           setGrantData(data);
         }}
-        daoData={daoData!}
       />
     );
   }
