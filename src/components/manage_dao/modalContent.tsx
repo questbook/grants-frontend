@@ -293,7 +293,7 @@ function ModalContent({
                 onClick={loading ? () => {} : () => handleSubmit()}
                 disabled={loading && revoking}
               >
-                {loading && !revoking ? <Loader /> : 'Update'}
+                {loading && !revoking ? <Loader /> : 'Invite'}
               </Button>
             </Flex>
           </>
