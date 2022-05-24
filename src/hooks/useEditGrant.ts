@@ -12,6 +12,7 @@ import { uploadToIPFS } from 'src/utils/ipfsUtils';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useGrantContract from './contracts/useGrantContract';
+import useApplicationReviewRegistryContract from './contracts/useApplicationReviewRegistryContract';
 
 export default function useEditGrant(
   data: any,
@@ -31,6 +32,9 @@ export default function useEditGrant(
   const toast = useToast();
   const currentChainId = useChainId();
   const chainId = getSupportedChainIdFromWorkspace(workspace);
+  const applicationReviewContract = useApplicationReviewRegistryContract(
+    chainId ?? getSupportedChainIdFromWorkspace(workspace),
+  );
 
   useEffect(() => {
     if (data) {
@@ -45,6 +49,13 @@ export default function useEditGrant(
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [grantContract]);
+
+  useEffect(() => {
+    if (incorrectNetwork) {
+      setIncorrectNetwork(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [applicationReviewContract]);
 
   useEffect(() => {
     if (incorrectNetwork) return;
@@ -84,9 +95,33 @@ export default function useEditGrant(
           throw new Error('Error validating grant data');
         }
 
+        let rubricHash = '';
+        if (data.rubric) {
+          const {
+            data: { ipfsHash: auxRubricHash },
+          } = await validatorApi.validateRubricSet({
+            rubric: data.rubric,
+          });
+
+          if (!auxRubricHash) {
+            throw new Error('Error validating rubric data');
+          }
+
+          rubricHash = auxRubricHash;
+        }
+
+        // console.log('rubricHash', rubricHash);
+
+        const rubricTxn = await applicationReviewContract.setRubrics(
+          Number(workspace?.id).toString(),
+          grantId,
+          rubricHash,
+        );
+
         const createGrantTransaction = await grantContract.updateGrant(
           ipfsHash,
         );
+        await rubricTxn.wait();
         const createGrantTransactionData = await createGrantTransaction.wait();
 
         setTransactionData(createGrantTransactionData);
@@ -138,6 +173,15 @@ export default function useEditGrant(
           === '0x0000000000000000000000000000000000000000'
         || !grantContract.signer
         || !grantContract.provider
+      ) {
+        return;
+      }
+      if (
+        !applicationReviewContract
+        || applicationReviewContract.address
+          === '0x0000000000000000000000000000000000000000'
+        || !applicationReviewContract.signer
+        || !applicationReviewContract.provider
       ) {
         return;
       }

@@ -12,9 +12,11 @@ import { CHAIN_INFO } from 'src/constants/chainInfo';
 import {
   ContentState, convertFromRaw, convertToRaw, EditorState,
 } from 'draft-js';
-import { Token } from '@questbook/service-validator-client';
+import { Token, WorkspaceUpdateRequest } from '@questbook/service-validator-client';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import { ApiClientsContext } from 'pages/_app';
+import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys';
+import { useAccount } from 'wagmi';
 import Title from './1_title';
 import Details from './2_details';
 import ApplicantDetails from './3_applicantDetails';
@@ -35,6 +37,7 @@ function Form({
 }) {
   const { workspace } = useContext(ApiClientsContext)!;
   const maxDescriptionLength = 300;
+  const [{ data: accountData }] = useAccount();
   const [title, setTitle] = useState(formData.title ?? '');
   const [summary, setSummary] = useState(formData.summary ?? '');
 
@@ -53,6 +56,45 @@ function Form({
     }
   }, [formData.details]));
   const [detailsError, setDetailsError] = useState(false);
+
+  const [shouldEncrypt, setShouldEncrypt] = useState(false);
+  const [hasOwnerPublicKey, setHasOwnerPublicKey] = useState(false);
+  const [keySubmitted, setKeySubmitted] = useState(false);
+  const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({
+    publicKey: '',
+  });
+  const [transactionData, loading] = useUpdateWorkspacePublicKeys(publicKey);
+
+  const [admins, setAdmins] = useState<any[]>([]);
+  const [maximumPoints, setMaximumPoints] = useState(5);
+
+  useEffect(() => {
+    if (transactionData) {
+      setKeySubmitted(true);
+      console.log('transactionData-----', transactionData);
+    }
+  }, [transactionData]);
+
+  useEffect(() => {
+    if (workspace && workspace.members && accountData && accountData.address) {
+      const hasPubKey = workspace.members.some(
+        (member) => member.actorId.toLowerCase() === accountData?.address.toLowerCase()
+          && member.publicKey
+          && member.publicKey !== '',
+      );
+      console.log('Workspace', workspace);
+      setHasOwnerPublicKey(hasPubKey);
+    }
+  }, [accountData, workspace]);
+
+  useEffect(() => {
+    if (workspace && workspace.members) {
+      const adminAddresses = workspace.members
+        .filter((member) => member.publicKey && member.publicKey !== '')
+        .map((member) => member.actorId);
+      setAdmins(adminAddresses);
+    }
+  }, [workspace]);
 
   const applicantDetails = applicantDetailsList.map(
     ({
@@ -99,6 +141,47 @@ function Form({
     ).required;
     setDetailsRequired(newDetailsRequired);
   };
+
+  const [rubricRequired, setRubricRequired] = useState(false);
+  const [rubrics, setRubrics] = useState<any>([
+    {
+      name: '',
+      nameError: false,
+      description: '',
+      descriptionError: false,
+    },
+  ]);
+
+  const [shouldEncryptReviews, setShouldEncryptReviews] = useState(false);
+
+  useEffect(() => {
+    if (!formData) return;
+
+    if (formData.isPii) {
+      setShouldEncrypt(true);
+    }
+
+    const initialRubrics = formData.rubric;
+    const newRubrics = [] as any[];
+    console.log('initialRubrics', initialRubrics);
+    initialRubrics?.items.forEach((initalRubric: any) => {
+      newRubrics.push({
+        name: initalRubric.title,
+        nameError: false,
+        description: initalRubric.details,
+        descriptionError: false,
+      });
+    });
+    if (newRubrics.length === 0) return;
+    setRubrics(newRubrics);
+    setRubricRequired(true);
+    if (formData.rubric.isPrivate) {
+      setShouldEncryptReviews(true);
+    }
+    if (initialRubrics?.items[0].maximumPoints) {
+      setMaximumPoints(initialRubrics.items[0].maximumPoints);
+    }
+  }, [formData]);
 
   // const [extraFieldDetails, setExtraFieldDetails] = useState(formData.extra_field ?? '');
   // const [extraFieldError, setExtraFieldError] = useState(false);
@@ -225,10 +308,27 @@ function Form({
       setDefaultMilestoneFields(errorCheckedDefaultMilestoneFields);
     }
 
+    if (rubricRequired) {
+      const errorCheckedRubrics = rubrics.map((rubric: any) => {
+        const errorCheckedRubric = { ...rubric };
+        if (rubric.name.length <= 0) {
+          errorCheckedRubric.nameError = true;
+          error = true;
+        }
+        if (rubric.description.length <= 0) {
+          errorCheckedRubric.descriptionError = true;
+          error = true;
+        }
+        return errorCheckedRubric;
+      });
+      setRubrics(errorCheckedRubrics);
+    }
+
     if (!error) {
       const detailsString = JSON.stringify(
         convertToRaw(details.getCurrentContent()),
       );
+
       const requiredDetails = {} as any;
       detailsRequired.forEach((detail) => {
         if (detail && detail.required) {
@@ -239,19 +339,25 @@ function Form({
         }
       });
       const fields = { ...requiredDetails };
-      // if (extraFieldDetails != null && extraFieldDetails.length > 0) {
-      //   fields.extraField = {
-      //     title: 'Other Information',
-      //     inputType: 'short-form',
-      //   };
-      // }
+
+      const rubric = {} as any;
+
+      if (rubricRequired) {
+        rubrics.forEach((r: any, index: number) => {
+          rubric[index.toString()] = {
+            title: r.name,
+            details: r.description,
+            maximumPoints,
+          };
+        });
+      }
+
       if (multipleMilestones) {
         fields.isMultipleMilestones = {
           title: 'Milestones',
           inputType: 'array',
         };
       }
-
       if (fields.teamMembers) {
         fields.memberDetails = {
           title: 'Member Details',
@@ -264,7 +370,14 @@ function Form({
           inputType: 'short-form',
         };
       }
-
+      if (shouldEncrypt && (keySubmitted || hasOwnerPublicKey)) {
+        if (fields.applicantEmail) {
+          fields.applicantEmail = { ...fields.applicantEmail, pii: true };
+        }
+        if (fields.memberDetails) {
+          fields.memberDetails = { ...fields.memberDetails, pii: true };
+        }
+      }
       if (customFieldsOptionIsVisible && customFields.length > 0) {
         customFields.forEach((customField: any, index: number) => {
           const santizedCustomFieldValue = customField.value.split(' ').join('\\s');
@@ -283,16 +396,20 @@ function Form({
           };
         });
       }
-      // console.log(fields);
       onSubmit({
         title,
         summary,
         details: detailsString,
         fields,
         reward,
-        rewardToken,
         rewardCurrencyAddress,
+        rewardToken,
         date,
+        grantManagers: admins,
+        rubric: {
+          isPrivate: shouldEncryptReviews,
+          rubric,
+        },
       });
     }
   };
@@ -384,6 +501,12 @@ function Form({
         defaultMilestoneFields={defaultMilestoneFields}
         setDefaultMilestoneFields={setDefaultMilestoneFields}
         defaultMilestoneFieldsOptionIsVisible={Object.keys(formData).filter((key) => key.startsWith('defaultMilestone')).length > 0}
+        rubricRequired={rubricRequired}
+        setRubricRequired={setRubricRequired}
+        rubrics={rubrics}
+        setRubrics={setRubrics}
+        setMaximumPoints={setMaximumPoints}
+        defaultRubricsPresent={formData.rubric.items.length > 0}
       />
 
       <Text
@@ -411,6 +534,16 @@ function Form({
         dateError={dateError}
         setDateError={setDateError}
         supportedCurrencies={supportedCurrencies}
+        shouldEncrypt={shouldEncrypt}
+        setShouldEncrypt={setShouldEncrypt}
+        loading={loading}
+        setPublicKey={setPublicKey}
+        hasOwnerPublicKey={hasOwnerPublicKey}
+        keySubmitted={keySubmitted}
+        defaultShouldEncrypt={formData.isPii}
+        defaultShouldEncryptReviews={formData.rubric.isPrivate}
+        shouldEncryptReviews={shouldEncryptReviews}
+        setShouldEncryptReviews={setShouldEncryptReviews}
       />
 
       <Flex alignItems="flex-start" mt={8} mb={10} maxW="400">

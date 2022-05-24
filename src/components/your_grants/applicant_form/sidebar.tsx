@@ -8,9 +8,10 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import CopyIcon from 'src/components/ui/copy_icon';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { SupportedChainId } from 'src/constants/chains';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import {
   getSupportedChainIdFromSupportedNetwork,
@@ -24,6 +25,7 @@ import {
 import { getAssetInfo } from '../../../utils/tokenUtils';
 import MailTo from '../mail_to/mailTo';
 import ReviewDrawer from '../reviewerDrawer';
+import RubricDrawer from '../rubricDrawer';
 import RubricSidebar from './rubric_sidebar';
 
 function Sidebar({
@@ -47,6 +49,38 @@ function Sidebar({
   ) ? applicationData?.fields?.find(
       (fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
     )?.values[0]?.value : undefined;
+
+  const [rubricDrawerOpen, setRubricDrawerOpen] = useState(false);
+  const [maximumPoints, setMaximumPoints] = React.useState(5);
+  const [rubricEditAllowed] = useState(true);
+  const [rubrics, setRubrics] = useState<any[]>([
+    {
+      name: '',
+      nameError: false,
+      description: '',
+      descriptionError: false,
+    },
+  ]);
+
+  useEffect(() => {
+    if (!applicationData) return;
+    const initialRubrics = applicationData?.grant.rubric;
+    const newRubrics = [] as any[];
+    console.log('initialRubrics', initialRubrics);
+    initialRubrics?.items.forEach((initalRubric: any) => {
+      newRubrics.push({
+        name: initalRubric.title,
+        nameError: false,
+        description: initalRubric.details,
+        descriptionError: false,
+      });
+    });
+    if (newRubrics.length === 0) return;
+    setRubrics(newRubrics);
+    if (initialRubrics?.items[0].maximumPoints) {
+      setMaximumPoints(initialRubrics.items[0].maximumPoints);
+    }
+  }, [applicationData]);
 
   const [reviewDrawerOpen, setReviewDrawerOpen] = React.useState(false);
   let icon;
@@ -329,7 +363,31 @@ function Sidebar({
         mt={8}
       >
         <Flex direction="column">
-          <Text mb="14px" fontWeight="700">Evaluation Rubric</Text>
+          <Flex
+            mb={
+            applicationData?.grant?.rubric && applicationData
+              ?.grant
+              ?.rubric
+              .items.length > 0 ? '14px' : '0'
+            }
+            alignItems="center"
+          >
+            <Text mr="auto" fontWeight="700">Evaluation Rubric</Text>
+            <Text
+              color="#8850EA"
+              fontWeight="700"
+              cursor="pointer"
+              fontSize="12px"
+              onClick={() => setRubricDrawerOpen(true)}
+            >
+              {
+            applicationData?.grant?.rubric && applicationData
+              ?.grant
+              ?.rubric
+              .items.length > 0 ? 'Edit' : 'Add'
+            }
+            </Text>
+          </Flex>
           {applicationData?.grant?.rubric && applicationData
             ?.grant
             ?.rubric
@@ -346,6 +404,20 @@ function Sidebar({
       </Flex>
 
       <Box mb={8} />
+
+      <RubricDrawer
+        rubricDrawerOpen={rubricDrawerOpen}
+        setRubricDrawerOpen={setRubricDrawerOpen}
+        rubricEditAllowed={rubricEditAllowed}
+        rubrics={rubrics}
+        setRubrics={setRubrics}
+        maximumPoints={maximumPoints}
+        setMaximumPoints={setMaximumPoints}
+        chainId={getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY}
+        grantAddress={applicationData?.grant.id}
+        workspaceId={workspace?.id ?? ''}
+        initialIsPrivate={applicationData?.grant.rubric?.isPrivate ?? false}
+      />
     </>
   );
 }
