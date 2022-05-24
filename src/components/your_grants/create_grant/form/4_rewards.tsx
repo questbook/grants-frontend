@@ -107,7 +107,7 @@ function GrantRewardsInput({
           setSupportedCurrenciesList={setSupportedCurrenciesList}
           setIsJustAddedToken={setIsJustAddedToken}
         />
-        <Box mt={5} ml={4} minW="132px" flex={0}>
+        <Box mt={5} ml={4} minW="148px" flex={0}>
           <Dropdown
             listItemsMinWidth="132px"
             listItems={supportedCurrenciesList}
