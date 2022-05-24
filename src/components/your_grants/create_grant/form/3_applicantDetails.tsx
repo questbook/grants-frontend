@@ -26,6 +26,8 @@ function ApplicantDetails({
 
   multipleMilestones,
   setMultipleMilestones,
+  milestoneSelectOptionIsVisible,
+  setMilestoneSelectOptionIsVisible,
   defaultMilestoneFields,
   setDefaultMilestoneFields,
 
@@ -46,6 +48,8 @@ function ApplicantDetails({
 
   multipleMilestones: boolean;
   setMultipleMilestones: (multipleMilestones: boolean) => void;
+  milestoneSelectOptionIsVisible: boolean;
+  setMilestoneSelectOptionIsVisible: (milestoneSelectOptionIsVisible: boolean) => void;
   defaultMilestoneFields: any[];
   setDefaultMilestoneFields: (defaultMilestoneFields: any[]) => void;
 
@@ -56,8 +60,6 @@ function ApplicantDetails({
 
   setMaximumPoints: (maximumPoints: number) => void;
 }) {
-  const [milestoneSelectOptionIsVisible, setMilestoneSelectOptionIsVisible] = React.useState(false);
-
   return (
     <Flex py={0} direction="column">
       <Grid templateColumns="repeat(2, 1fr)" gap="18px" fontWeight="bold">

@@ -151,6 +151,7 @@ function Form({
     },
   ]);
   const [multipleMilestones, setMultipleMilestones] = React.useState(false);
+  const [milestoneSelectOptionIsVisible, setMilestoneSelectOptionIsVisible] = React.useState(false);
   const [defaultMilestoneFields, setDefaultMilestoneFields] = React.useState<
   any[]
   >([]);
@@ -427,6 +428,12 @@ function Form({
     if (formData?.customFields) {
       setCustomFields(formData?.customFields);
     }
+    if (formData?.milestoneSelectOptionIsVisible) {
+      setMilestoneSelectOptionIsVisible(formData?.milestoneSelectOptionIsVisible);
+    }
+    if (formData?.multipleMilestones) {
+      setMultipleMilestones(formData?.multipleMilestones);
+    }
     if (formData?.rubrics) {
       setRubrics(formData?.rubrics);
     }
@@ -457,6 +464,8 @@ function Form({
       rubricRequired,
       customFieldsOptionIsVisible,
       customFields,
+      multipleMilestones,
+      milestoneSelectOptionIsVisible,
       rubrics,
       maximumPoints,
       reward,
@@ -485,6 +494,9 @@ function Form({
     title,
     shouldEncrypt,
     shouldEncryptReviews,
+    date,
+    multipleMilestones,
+    milestoneSelectOptionIsVisible,
   ]);
 
   return (
@@ -557,6 +569,8 @@ function Form({
         setCustomFieldsOptionIsVisible={setCustomFieldsOptionIsVisible}
         multipleMilestones={multipleMilestones}
         setMultipleMilestones={setMultipleMilestones}
+        milestoneSelectOptionIsVisible={milestoneSelectOptionIsVisible}
+        setMilestoneSelectOptionIsVisible={setMilestoneSelectOptionIsVisible}
         defaultMilestoneFields={defaultMilestoneFields}
         setDefaultMilestoneFields={setDefaultMilestoneFields}
         rubricRequired={rubricRequired}
