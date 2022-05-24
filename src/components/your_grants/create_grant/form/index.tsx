@@ -400,8 +400,10 @@ function Form({
   React.useEffect(() => {
     console.log('Key: ', getKey);
     if (getKey.includes('undefined')) return;
+    const data = localStorage.getItem(getKey);
+    if (data === 'undefined') return;
     const formData = typeof window !== 'undefined'
-      ? JSON.parse(localStorage.getItem(getKey) ?? '{}')
+      ? JSON.parse(data ?? '{}')
       : {};
     console.log('Data from cache: ', formData);
 
