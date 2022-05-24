@@ -1,17 +1,40 @@
 import {
   Flex, Text, Button, Box,
 } from '@chakra-ui/react';
-import { convertToRaw, EditorState } from 'draft-js';
+import { convertFromRaw, convertToRaw, EditorState } from 'draft-js';
 import React, { useState } from 'react';
 import RichTextEditor from 'src/components/ui/forms/richTextEditor';
 
 interface Props {
   onSubmit: (data: any) => void;
+  constructCache: (data: any) => void;
+  cacheKey: string;
 }
 
-function Details({ onSubmit }: Props) {
+function Details({ onSubmit, constructCache, cacheKey }: Props) {
   const [details, setDetails] = useState(() => EditorState.createEmpty());
   const [detailsError, setDetailsError] = useState(false);
+
+  React.useEffect(() => {
+    constructCache({
+      details: convertToRaw(details.getCurrentContent()),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [details]);
+
+  React.useEffect(() => {
+    if (cacheKey.includes('undefined') || typeof window === 'undefined') return;
+    const data = localStorage.getItem(cacheKey);
+    if (data === 'undefined') return;
+    const formData = JSON.parse(data ?? '{}');
+    console.log('Data from cache: ', formData);
+
+    if (formData?.details) {
+      setDetails(
+        EditorState.createWithContent(convertFromRaw(formData?.details)),
+      );
+    }
+  }, [cacheKey]);
 
   const handleOnSubmit = () => {
     let error = false;

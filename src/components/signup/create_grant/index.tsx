@@ -1,14 +1,22 @@
 import { Container } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
+import { SupportedChainId } from 'src/constants/chains';
 import { useAccount } from 'wagmi';
 import Form from './form';
 import TipsContainer from './tips';
 
 function CreateGrant({
-  onSubmit, hasClicked,
+  onSubmit, hasClicked, daoData,
 }: {
   onSubmit: (data: any) => void;
   hasClicked: boolean;
+  daoData: {
+    name: string;
+    description: string;
+    image: string;
+    network: SupportedChainId;
+    id: string;
+  };
 }) {
   const [{ data: accountData }] = useAccount();
   const totalSteps = 4;
@@ -93,6 +101,7 @@ function CreateGrant({
         incrementCurrentStep={(data) => changeCurrentStep(data, currentStep + 1)}
         submitForm={(data) => submitForm(data)}
         hasClicked={hasClicked}
+        daoData={daoData}
       />
       <TipsContainer currentTip={currentStep} />
     </Container>
