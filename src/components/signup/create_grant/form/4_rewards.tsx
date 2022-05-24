@@ -12,7 +12,10 @@ import { useNetwork } from 'wagmi';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import { ApiClientsContext } from 'pages/_app';
 import useEncryption from 'src/hooks/utils/useEncryption';
-import { Token, WorkspaceUpdateRequest } from '@questbook/service-validator-client';
+import {
+  Token,
+  WorkspaceUpdateRequest,
+} from '@questbook/service-validator-client';
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys';
 import Tooltip from 'src/components/ui/tooltip';
 import CustomTokenModal from 'src/components/ui/submitCustomTokenModal';
@@ -22,16 +25,26 @@ import SingleLineInput from '../../../ui/forms/singleLineInput';
 
 interface Props {
   onSubmit: (data: any) => void;
+  constructCache: (data: any) => void;
+  cacheKey: string;
   hasClicked: boolean;
 }
 
-function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
+function GrantRewardsInput({
+  onSubmit,
+  constructCache,
+  cacheKey,
+  hasClicked,
+}: Props) {
   const { getPublicEncryptionKey } = useEncryption();
   const apiClients = useContext(ApiClientsContext)!;
   const { workspace } = apiClients;
   const [reward, setReward] = React.useState('');
   const [rewardToken, setRewardToken] = React.useState<Token>({
-    label: '', address: '', decimal: '18', iconHash: '',
+    label: '',
+    address: '',
+    decimal: '18',
+    iconHash: '',
   });
   const [rewardError, setRewardError] = React.useState(false);
   const [, switchNetwork] = useNetwork();
@@ -45,7 +58,8 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
 
   const supportedCurrencies = Object.keys(
     CHAIN_INFO[currentChain].supportedCurrencies,
-  ).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
+  )
+    .map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
     .map((currency) => ({ ...currency, id: currency.address }));
 
   const [rewardCurrency, setRewardCurrency] = React.useState(
@@ -57,7 +71,9 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
   );
 
   // eslint-disable-next-line max-len
-  const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<any[]>([supportedCurrencies]);
+  const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<
+  any[]
+  >([supportedCurrencies]);
 
   useEffect(() => {
     if (supportedCurrencies && supportedCurrencies.length > 0) {
@@ -92,7 +108,8 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
     if (currentChain) {
       const currencies = Object.keys(
         CHAIN_INFO[currentChain].supportedCurrencies,
-      ).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
+      )
+        .map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
         .map((currency) => ({ ...currency, id: currency.address }));
       // console.log('Reward Currency', rewardCurrency);
       setSupportedCurrenciesList(currencies);
@@ -111,7 +128,9 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
 
   const [keySubmitted, setKeySubmitted] = useState(false);
   const [shouldEncrypt, setShouldEncrypt] = useState(false);
-  const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({ publicKey: '' });
+  const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({
+    publicKey: '',
+  });
   const [transactionData] = useUpdateWorkspacePublicKeys(publicKey);
 
   const [shouldEncryptReviews, setShouldEncryptReviews] = useState(false);
@@ -147,10 +166,58 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
         pii = true;
       }
       onSubmit({
-        reward, rewardToken, rewardCurrencyAddress, date, pii, shouldEncryptReviews,
+        reward,
+        rewardToken,
+        rewardCurrencyAddress,
+        date,
+        pii,
+        shouldEncryptReviews,
       });
     }
   };
+
+  React.useEffect(() => {
+    const formData = {
+      reward,
+      rewardToken,
+      rewardCurrency,
+      rewardCurrencyAddress,
+      date,
+      shouldEncrypt,
+      shouldEncryptReviews,
+    };
+    constructCache(formData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    date,
+    reward,
+    rewardCurrency,
+    rewardCurrencyAddress,
+    rewardToken,
+    shouldEncrypt,
+    shouldEncryptReviews,
+  ]);
+
+  React.useEffect(() => {
+    if (cacheKey.includes('undefined') || typeof window === 'undefined') return;
+    const data = localStorage.getItem(cacheKey);
+    if (data === 'undefined') return;
+    const formData = JSON.parse(data ?? '{}');
+    console.log('Data from cache: ', formData);
+
+    if (formData?.reward) setReward(formData?.reward);
+    if (formData?.rewardToken) setRewardToken(formData?.rewardToken);
+    if (formData?.rewardCurrency) setRewardCurrency(formData?.rewardCurrency);
+    if (formData?.rewardCurrencyAddress) {
+      setRewardCurrencyAddress(formData?.rewardCurrencyAddress);
+    }
+    if (formData?.date) setDate(formData?.date);
+    if (formData?.shouldEncrypt) setShouldEncrypt(formData?.shouldEncrypt);
+    if (formData?.shouldEncryptReviews) {
+      setShouldEncryptReviews(formData?.shouldEncryptReviews);
+    }
+  }, [cacheKey]);
+
   return (
     <>
       <Flex py={12} direction="column">
@@ -197,10 +264,16 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
                 }
                 setRewardCurrency(data.label);
                 setRewardCurrencyAddress(data.id);
-                if (data !== 'addERCToken' && !isJustAddedToken && data.icon.lastIndexOf('ui_icons') === -1) {
+                if (
+                  data !== 'addERCToken'
+                  && !isJustAddedToken
+                  && data.icon.lastIndexOf('ui_icons') === -1
+                ) {
                   // console.log('custom token', data);
                   setRewardToken({
-                    iconHash: data.icon.substring(data.icon.lastIndexOf('=') + 1),
+                    iconHash: data.icon.substring(
+                      data.icon.lastIndexOf('=') + 1,
+                    ),
                     address: data.address,
                     label: data.label,
                     decimal: data.decimals.toString(),
@@ -240,7 +313,12 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
 
         <Flex mt={8} gap="2">
           <Flex direction="column" flex={1}>
-            <Text color="#122224" fontWeight="bold" fontSize="16px" lineHeight="20px">
+            <Text
+              color="#122224"
+              fontWeight="bold"
+              fontSize="16px"
+              lineHeight="20px"
+            >
               Hide applicant personal data (email, and about team)
             </Text>
             <Flex>
@@ -257,19 +335,12 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
           <Flex justifyContent="center" gap={2} alignItems="center">
             <Switch
               id="encrypt"
-              onChange={
-                (e) => {
-                  setShouldEncrypt(e.target.checked);
-                }
-              }
+              onChange={(e) => {
+                setShouldEncrypt(e.target.checked);
+              }}
             />
-            <Text
-              fontSize="12px"
-              fontWeight="bold"
-              lineHeight="16px"
-            >
+            <Text fontSize="12px" fontWeight="bold" lineHeight="16px">
               {`${shouldEncrypt ? 'YES' : 'NO'}`}
-
             </Text>
           </Flex>
         </Flex>
@@ -334,7 +405,7 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
         ref={buttonRef}
         mt="auto"
         variant="primary"
-        onClick={hasClicked ? () => { } : handleOnSubmit}
+        onClick={hasClicked ? () => {} : handleOnSubmit}
         py={hasClicked ? 2 : 0}
         w={hasClicked ? buttonRef.current?.offsetWidth : 'auto'}
       >

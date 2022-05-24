@@ -399,12 +399,10 @@ function Form({
 
   React.useEffect(() => {
     console.log('Key: ', getKey);
-    if (getKey.includes('undefined')) return;
+    if (getKey.includes('undefined') || typeof window === 'undefined') return;
     const data = localStorage.getItem(getKey);
     if (data === 'undefined') return;
-    const formData = typeof window !== 'undefined'
-      ? JSON.parse(data ?? '{}')
-      : {};
+    const formData = typeof window !== 'undefined' ? JSON.parse(data ?? '{}') : {};
     console.log('Data from cache: ', formData);
 
     setTitle(formData?.title);
@@ -414,24 +412,38 @@ function Form({
         EditorState.createWithContent(convertFromRaw(formData?.details)),
       );
     }
-    if (formData?.detailsRequired) { setDetailsRequired(formData?.detailsRequired); }
-    setRubricRequired(formData?.rubricRequired);
-    setCustomFieldsOptionIsVisible(formData?.customFieldsOptionIsVisible);
-    if (formData?.customFields) { setCustomFields(formData?.customFields); }
-    if (formData?.rubrics) { setRubrics(formData?.rubrics); }
-    if (formData?.maximumPoints) { setMaximumPoints(formData?.maximumPoints); }
-    setReward(formData?.reward);
-    setRewardToken(formData?.rewardToken);
-    setRewardCurrency(formData?.rewardCurrency);
-    setRewardCurrencyAddress(formData?.rewardCurrencyAddress);
-    setDate(formData?.date);
-    setShouldEncrypt(formData?.shouldEncrypt);
-    setShouldEncryptReviews(formData?.shouldEncryptReviews);
+    if (formData?.detailsRequired) {
+      setDetailsRequired(formData?.detailsRequired);
+    }
+    if (formData?.rubricRequired) setRubricRequired(formData?.rubricRequired);
+    if (formData?.customFieldsOptionIsVisible) {
+      setCustomFieldsOptionIsVisible(formData?.customFieldsOptionIsVisible);
+    }
+    if (formData?.customFields) {
+      setCustomFields(formData?.customFields);
+    }
+    if (formData?.rubrics) {
+      setRubrics(formData?.rubrics);
+    }
+    if (formData?.maximumPoints) {
+      setMaximumPoints(formData?.maximumPoints);
+    }
+    if (formData?.reward) setReward(formData?.reward);
+    if (formData?.rewardToken) setRewardToken(formData?.rewardToken);
+    if (formData?.rewardCurrency) setRewardCurrency(formData?.rewardCurrency);
+    if (formData?.rewardCurrencyAddress) {
+      setRewardCurrencyAddress(formData?.rewardCurrencyAddress);
+    }
+    if (formData?.date) setDate(formData?.date);
+    if (formData?.shouldEncrypt) setShouldEncrypt(formData?.shouldEncrypt);
+    if (formData?.shouldEncryptReviews) {
+      setShouldEncryptReviews(formData?.shouldEncryptReviews);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getKey]);
 
   React.useEffect(() => {
-    if (getKey.includes('undefined')) return;
+    if (getKey.includes('undefined') || typeof window === 'undefined') return;
     const formData = {
       title,
       summary,
@@ -451,9 +463,7 @@ function Form({
       shouldEncryptReviews,
     };
     console.log(JSON.stringify(formData));
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(getKey, JSON.stringify(formData));
-    }
+    localStorage.setItem(getKey, JSON.stringify(formData));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     details,
