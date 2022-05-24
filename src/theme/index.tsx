@@ -31,6 +31,11 @@ const theme = extendTheme({
     },
     brandGreen: {
       500: '#01C37E',
+      600: '#01C37E',
+    },
+    brandRed: {
+      500: '#EE7979',
+      600: '#EE7979',
     },
   },
   components: {

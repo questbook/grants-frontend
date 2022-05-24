@@ -7,11 +7,11 @@ import {
   DrawerContent,
   Box,
   Divider,
+  Image,
 } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import React, { useContext, useEffect, useState } from 'react';
 import StarRatings from 'react-star-ratings';
-import Badge from 'src/components/ui/badge';
 import MultiLineInput from 'src/components/ui/forms/multiLineInput';
 import Loader from 'src/components/ui/loader';
 import useSubmitReview from 'src/hooks/useSubmitReview';
@@ -163,6 +163,27 @@ function ReviewerSidebar({
           <DrawerContent>
 
             <Flex direction="column" overflow="scroll" p={8}>
+              <Flex mb={8} alignItems="center">
+                <Image
+                  src="/ui_icons/back_arrow.svg"
+                  cursor="pointer"
+                  mr="12px"
+                  h="16px"
+                  w="16px"
+                  onClick={() => {
+                    setReviewerDrawerOpen(false);
+                    setReviewSelected(null);
+                  }}
+                />
+                <Text
+                  color="#122224"
+                  fontWeight="bold"
+                  fontSize="16px"
+                  lineHeight="20px"
+                >
+                  Application Feedback
+                </Text>
+              </Flex>
               <Text
                 mt="18px"
                 color="#122224"
@@ -172,20 +193,34 @@ function ReviewerSidebar({
               >
                 Overall Recommendation
               </Text>
-              <Flex py={8}>
-                <Badge
-                  isActive={reviewSelected?.isApproved}
-                  label="YES"
+              <Flex pt="12px" pb="18px">
+                <Button
                   onClick={() => {}}
-                />
+                  variant={!reviewSelected?.isApproved ? 'outline' : 'solid'}
+                  h={12}
+                  minW="130px"
+                  colorScheme="brandGreen"
+                  borderRadius="6px"
+                >
+                  <Image h="16px" w="16px" src={!reviewSelected?.isApproved ? '/ui_icons/like_up_green.svg' : '/ui_icons/like_up.svg'} />
+                  <Box mr="6px" />
+                  <Text color={!reviewSelected?.isApproved ? '#39C696' : '#FFFFFF'}>For</Text>
+                </Button>
 
                 <Box ml={4} />
 
-                <Badge
-                  isActive={!reviewSelected?.isApproved}
-                  label="NO"
+                <Button
                   onClick={() => {}}
-                />
+                  variant={reviewSelected?.isApproved ? 'outline' : 'solid'}
+                  h={12}
+                  minW="130px"
+                  colorScheme="brandRed"
+                  borderRadius="6px"
+                >
+                  <Image h="16px" w="16px" src={reviewSelected?.isApproved ? '/ui_icons/like_down_red.svg' : '/ui_icons/like_down.svg'} />
+                  <Box mr="6px" />
+                  <Text color={reviewSelected?.isApproved ? '#EE7979' : '#FFFFFF'}>Against</Text>
+                </Button>
               </Flex>
               {reviewSelected?.items?.map((feedback: any) => (
                 <>
@@ -195,31 +230,34 @@ function ReviewerSidebar({
                     direction="column"
                   >
                     <Text
-                      mt="18px"
                       color="#122224"
                       fontWeight="bold"
                       fontSize="16px"
-                      lineHeight="20px"
+                      lineHeight="12px"
                     >
                       {feedback.rubric.title}
                     </Text>
                     <Text
                       color="#69657B"
-                      fontWeight="bold"
+                      fontWeight="400"
                       fontSize="12px"
-                      lineHeight="20px"
+                      lineHeight="12px"
+                      mt="6px"
                     >
                       {feedback.rubric.details}
                     </Text>
 
-                    <StarRatings
-                      numberOfStars={feedback.rubric.maximumPoints}
-                      starRatedColor="#88BDEE"
-                      rating={feedback.rating}
-                      name="rating"
-                      starHoverColor="#88BDEE"
-                      starDimension="18px"
-                    />
+                    <Box mt="2px">
+                      <StarRatings
+                        numberOfStars={feedback.rubric.maximumPoints}
+                        starRatedColor="#88BDEE"
+                        rating={feedback.rating}
+                        name="rating"
+                        starHoverColor="#88BDEE"
+                        starDimension="18px"
+                        starSpacing="4px"
+                      />
+                    </Box>
 
                     <MultiLineInput
                       value={feedback.comment}

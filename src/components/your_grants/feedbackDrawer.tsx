@@ -1,5 +1,5 @@
 import {
-  Box, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, Text, Button,
+  Box, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, Text, Button, Image,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { SupportedChainId } from 'src/constants/chains';
@@ -8,7 +8,6 @@ import StarRatings from 'react-star-ratings';
 import useSubmitReview from 'src/hooks/useSubmitReview';
 import MultiLineInput from '../ui/forms/multiLineInput';
 import Loader from '../ui/loader';
-import Badge from '../ui/badge';
 
 function FeedbackDrawer({
   feedbackDrawerOpen,
@@ -110,8 +109,25 @@ function FeedbackDrawer({
       <DrawerContent>
 
         <Flex direction="column" overflow="scroll" p={8}>
+          <Flex mb={8} alignItems="center">
+            <Image
+              src="/ui_icons/back_arrow.svg"
+              cursor="pointer"
+              mr="12px"
+              h="16px"
+              w="16px"
+              onClick={() => setFeedbackDrawerOpen(false)}
+            />
+            <Text
+              color="#122224"
+              fontWeight="bold"
+              fontSize="16px"
+              lineHeight="20px"
+            >
+              Application Feedback
+            </Text>
+          </Flex>
           <Text
-            mt="18px"
             color="#122224"
             fontWeight="bold"
             fontSize="16px"
@@ -119,20 +135,34 @@ function FeedbackDrawer({
           >
             Overall Recommendation
           </Text>
-          <Flex py={8}>
-            <Badge
-              isActive={isApproved}
-              label="YES"
+          <Flex pt="12px" pb="18px">
+            <Button
               onClick={() => setIsApproved(true)}
-            />
+              variant={!isApproved ? 'outline' : 'solid'}
+              h={12}
+              minW="130px"
+              colorScheme="brandGreen"
+              borderRadius="6px"
+            >
+              <Image h="16px" w="16px" src={!isApproved ? '/ui_icons/like_up_green.svg' : '/ui_icons/like_up.svg'} />
+              <Box mr="6px" />
+              <Text color={!isApproved ? '#39C696' : '#FFFFFF'}>For</Text>
+            </Button>
 
             <Box ml={4} />
 
-            <Badge
-              isActive={!isApproved}
-              label="NO"
+            <Button
               onClick={() => setIsApproved(false)}
-            />
+              variant={isApproved ? 'outline' : 'solid'}
+              h={12}
+              minW="130px"
+              colorScheme="brandRed"
+              borderRadius="6px"
+            >
+              <Image h="16px" w="16px" src={isApproved ? '/ui_icons/like_down_red.svg' : '/ui_icons/like_down.svg'} />
+              <Box mr="6px" />
+              <Text color={isApproved ? '#EE7979' : '#FFFFFF'}>Against</Text>
+            </Button>
           </Flex>
           {feedbackData?.map((feedback, index) => (
             <>
@@ -142,38 +172,41 @@ function FeedbackDrawer({
                 direction="column"
               >
                 <Text
-                  mt="18px"
                   color="#122224"
                   fontWeight="bold"
                   fontSize="16px"
-                  lineHeight="20px"
+                  lineHeight="12px"
                 >
                   {feedback.rubric.title}
                 </Text>
                 <Text
                   color="#69657B"
-                  fontWeight="bold"
+                  fontWeight="400"
                   fontSize="12px"
-                  lineHeight="20px"
+                  lineHeight="12px"
+                  mt="6px"
                 >
                   {feedback.rubric.details}
                 </Text>
 
-                <StarRatings
-                  numberOfStars={feedback.rubric.maximumPoints}
-                  starRatedColor="#88BDEE"
-                  changeRating={(r) => {
-                    console.log(r);
-                    const newFeedbackData = [...feedbackData];
-                    newFeedbackData[index].rating = r;
-                    newFeedbackData[index].isError = false;
-                    setFeedbackData(newFeedbackData);
-                  }}
-                  rating={feedback.rating}
-                  name="rating"
-                  starHoverColor="#88BDEE"
-                  starDimension="18px"
-                />
+                <Box mt="2px">
+                  <StarRatings
+                    numberOfStars={feedback.rubric.maximumPoints}
+                    starRatedColor="#88BDEE"
+                    changeRating={(r) => {
+                      console.log(r);
+                      const newFeedbackData = [...feedbackData];
+                      newFeedbackData[index].rating = r;
+                      newFeedbackData[index].isError = false;
+                      setFeedbackData(newFeedbackData);
+                    }}
+                    rating={feedback.rating}
+                    name="rating"
+                    starHoverColor="#88BDEE"
+                    starDimension="18px"
+                    starSpacing="4px"
+                  />
+                </Box>
 
                 {feedback.isError ? (
                   <Text
