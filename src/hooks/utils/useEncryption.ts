@@ -1,12 +1,31 @@
+import { ToastId, useToast } from '@chakra-ui/react';
 import { encrypt } from '@metamask/eth-sig-util';
 import { ethers } from 'ethers';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
+import ErrorToast from 'src/components/ui/toasts/errorToast';
 import { useAccount } from 'wagmi';
 
 export default function useEncryption() {
   const [{ data: accountData }] = useAccount();
+  const toastRef = useRef<ToastId>();
+  const toast = useToast();
+
   const getPublicEncryptionKey = async (): Promise<string | undefined> => {
     const { ethereum } = window;
+
+    if (!ethereum) {
+      toastRef.current = toast({
+        position: 'top',
+        render: () => ErrorToast({
+          content: 'Encryption not supported with current wallet',
+          close: () => {
+            if (toastRef.current) {
+              toast.close(toastRef.current);
+            }
+          },
+        }),
+      });
+    }
 
     if (ethereum && accountData && accountData.address) {
       const pubEncryptionKey = await ethereum.request({

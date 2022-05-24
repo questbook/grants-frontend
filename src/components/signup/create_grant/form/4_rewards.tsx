@@ -140,9 +140,12 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
 
     if (!error) {
       let pk;
-      if (!keySubmitted) {
+      if ((shouldEncrypt || shouldEncryptReviews) && !keySubmitted) {
         pk = await getPublicEncryptionKey();
-        setPublicKey({ publicKey: pk || '' });
+        if (!pk) {
+          return;
+        }
+        setPublicKey({ publicKey: pk });
       }
       let pii = false;
       if (shouldEncrypt && keySubmitted) {
