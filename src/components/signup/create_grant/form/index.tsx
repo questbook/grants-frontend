@@ -7,6 +7,7 @@ import ApplicantDetails from './3_applicantDetails';
 import Details from './2_details';
 import GrantRewardsInput from './4_rewards';
 import Title from './1_title';
+import { cache } from '../../../../constants/strings.json';
 
 interface Props {
   currentStep: number;
@@ -31,7 +32,7 @@ function Form({
   hasClicked,
   daoData,
 }: Props) {
-  const CACHE_KEY = 'create-grant';
+  const CACHE_KEY = cache.create_grant;
   const getKey = `${daoData.network}-${CACHE_KEY}-${daoData.id}`;
 
   const incrementFormInputStep = (data: any) => {

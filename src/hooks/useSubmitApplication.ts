@@ -12,6 +12,7 @@ import { uploadToIPFS } from 'src/utils/ipfsUtils';
 import ErrorToast from '../components/ui/toasts/errorToast';
 import useChainId from './utils/useChainId';
 import useApplicationRegistryContract from './contracts/useApplicationRegistryContract';
+import { cache } from '../constants/strings.json';
 
 export default function useSubmitApplication(
   data: GrantApplicationRequest,
@@ -81,6 +82,10 @@ export default function useSubmitApplication(
           data.milestones.length,
         );
         const txnData = await txn.wait();
+
+        const CACHE_KEY = cache.apply_grant;
+        const cacheKey = `${chainId}-${CACHE_KEY}-${grantId}`;
+        if (typeof window !== 'undefined') localStorage.removeItem(cacheKey);
 
         setTransactionData(txnData);
         setLoading(false);

@@ -15,13 +15,13 @@ import { ApiClientsContext } from 'pages/_app';
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
-import { SupportedChainId } from 'src/constants/chains';
 import Title from './1_title';
 import Details from './2_details';
 import ApplicantDetails from './3_applicantDetails';
 import GrantRewardsInput from './4_rewards';
 import Heading from '../../../ui/heading';
 import applicantDetailsList from '../../../../constants/applicantDetailsList';
+import { cache } from '../../../../constants/strings.json';
 
 function Form({
   refs,
@@ -32,14 +32,20 @@ function Form({
   onSubmit: (data: any) => void;
   hasClicked: boolean;
 }) {
-  const CACHE_KEY = 'create-grant';
+  const CACHE_KEY = cache.create_grant;
   const { workspace } = React.useContext(ApiClientsContext)!;
 
-  const [currentChain] = React.useState(
-    getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY,
+  const [currentChain, setCurrentChain] = React.useState(
+    getSupportedChainIdFromWorkspace(workspace)!,
   );
 
-  const getKey = `${currentChain}-${CACHE_KEY}-${workspace?.id}`;
+  const [getKey, setGetKey] = React.useState(`${currentChain}-${CACHE_KEY}-${workspace?.id}`);
+
+  React.useEffect(() => {
+    setCurrentChain(getSupportedChainIdFromWorkspace(workspace)!);
+    setGetKey(`${currentChain}-${CACHE_KEY}-${workspace?.id}`);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspace, currentChain]);
 
   const [{ data: accountData }] = useAccount();
   const maxDescriptionLength = 300;
@@ -186,16 +192,15 @@ function Form({
   // const [supportCurrencies, setsupportCurrencies] = useState([{}]);
 
   const supportedCurrencies = Object.keys(
-    CHAIN_INFO[currentChain].supportedCurrencies,
+    CHAIN_INFO[currentChain]?.supportedCurrencies ?? [],
   )
-    .map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
+    .map((address) => CHAIN_INFO[currentChain]?.supportedCurrencies[address])
     .map((currency) => ({ ...currency, id: currency.address }));
 
-  const [rewardCurrency, setRewardCurrency] = React.useState(
-    supportedCurrencies[0].label,
-  );
+  const [rewardCurrency, setRewardCurrency] = React.useState(supportedCurrencies.length > 0
+    ? supportedCurrencies[0].label : '');
   const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
-    supportedCurrencies[0].id,
+    supportedCurrencies.length > 0 ? supportedCurrencies[0].id : '',
   );
   /**
    * checks if the workspace already has custom tokens added
