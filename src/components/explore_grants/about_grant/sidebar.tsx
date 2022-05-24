@@ -12,10 +12,11 @@ interface Props {
   grantID: string;
   chainId: SupportedChainId | undefined;
   acceptingApplications: boolean;
+  alreadyApplied: boolean;
 }
 
 function Sidebar({
-  grantRequiredFields, grantID, chainId, acceptingApplications,
+  grantRequiredFields, grantID, chainId, acceptingApplications, alreadyApplied,
 }: Props) {
   const router = useRouter();
   return (
@@ -44,7 +45,7 @@ function Sidebar({
             );
           })}
         </VStack>
-        {acceptingApplications && (
+        {acceptingApplications && !alreadyApplied && (
         <Button
           onClick={() => router.push({
             pathname: '/explore_grants/apply',
@@ -60,7 +61,15 @@ function Sidebar({
           Apply for Grant
         </Button>
         )}
-        {acceptingApplications && (
+        {acceptingApplications && alreadyApplied && (
+        <Button
+          mt={10}
+          variant="primary"
+        >
+          Already applied!
+        </Button>
+        )}
+        {acceptingApplications && !alreadyApplied && (
         <Text
           mt={2}
           color="#717A7C"
