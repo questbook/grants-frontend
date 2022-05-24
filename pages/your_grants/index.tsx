@@ -196,13 +196,13 @@ function YourGrants() {
   }, [currentPage, workspace, accountData?.address, selectedTab]);
 
   useEffect(() => {
-    console.log(pk);
+    /// console.log(pk);
     if (!accountData?.address) return;
     if (!workspace) return;
     const k = workspace?.members?.find(
       (m) => m.actorId.toLowerCase() === accountData!.address.toLowerCase(),
     )?.publicKey?.toString();
-    console.log(k);
+    // console.log(k);
     if (k && k.length > 0) {
       setPk(k);
     } else {
@@ -543,7 +543,7 @@ function YourGrants() {
           w="26%"
           pos="sticky"
           minH="calc(100vh - 80px)"
-          display={isAdmin ? undefined : 'none'}
+          // display={isAdmin ? undefined : 'none'}
         >
           <Sidebar isReviewer={isReviewer} showCreateGrantItem={!grantCount[0] && !grantCount[1]} />
         </Flex>
@@ -558,7 +558,10 @@ function YourGrants() {
       )}
 
       <AllowAccessToPublicKeyModal
-        hiddenModalOpen={!ignorePkModal && pk.length === 0}
+        hiddenModalOpen={
+          (allGrantsCountData !== undefined && grantCount[0] && grantCount[1])
+          && (!ignorePkModal && pk.length === 0)
+        }
         isAdmin={isAdmin}
         setIgnorePkModal={(val: boolean) => {
           setIgnorePkModal(val);

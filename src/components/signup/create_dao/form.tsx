@@ -15,6 +15,7 @@ import { SupportedChainId } from 'src/constants/chains';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import config from 'src/constants/config';
 import ErrorToast from 'src/components/ui/toasts/errorToast';
+import { useAccount } from 'wagmi';
 import ImageUpload from '../../ui/forms/imageUpload';
 import MultiLineInput from '../../ui/forms/multiLineInput';
 import SingleLineInput from '../../ui/forms/singleLineInput';
@@ -28,6 +29,7 @@ function Form({
     description: string;
     image: File | null;
     network: SupportedChainId;
+    ownerId: string;
   }) => void;
 }) {
   const chainId = useChainId();
@@ -44,6 +46,8 @@ function Form({
   const toast = useToast();
   const toastRef = React.useRef<ToastId>();
   const maxImageSize = 2;
+
+  const [accountData] = useAccount();
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -93,6 +97,7 @@ function Form({
       description: daoDescription,
       image: imageFile,
       network: chainId!,
+      ownerId: accountData.data?.address ?? '0x0000000000000000000000000000000000000000',
     });
   };
 

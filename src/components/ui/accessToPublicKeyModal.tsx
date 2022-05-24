@@ -82,7 +82,7 @@ function AllowAccessToPublicKeyModal({
                     'Review grant applicants assigned to you.',
                     'Receive payouts for reviews.',
                   ].map((item, index) => (
-                    <Flex justify="start" direction="row" mt={index === 0 ? 0 : 6}>
+                    <Flex key={item} justify="start" direction="row" mt={index === 0 ? 0 : 6}>
                       <Image
                         h="28px"
                         w="28px"

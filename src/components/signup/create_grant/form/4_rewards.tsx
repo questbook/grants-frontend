@@ -139,15 +139,17 @@ function GrantRewardsInput({ onSubmit, hasClicked }: Props) {
     console.log(rewardCurrencyAddress);
 
     if (!error) {
+      let pk;
       if (!keySubmitted) {
-        setPublicKey({ publicKey: (await getPublicEncryptionKey()) || '' });
+        pk = await getPublicEncryptionKey();
+        setPublicKey({ publicKey: pk || '' });
       }
       let pii = false;
       if (shouldEncrypt && keySubmitted) {
         pii = true;
       }
       onSubmit({
-        reward, rewardToken, rewardCurrencyAddress, date, pii, shouldEncryptReviews,
+        reward, rewardToken, rewardCurrencyAddress, date, pii, shouldEncryptReviews, publicKey: pk,
       });
     }
   };
