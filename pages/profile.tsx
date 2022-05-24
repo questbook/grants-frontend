@@ -32,7 +32,7 @@ import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import verify from 'src/utils/grantUtils';
-import { useGetDaoDetailsQuery } from 'src/generated/graphql';
+import { useGetDaoDetailsQuery, useGetAllGrantsForADaoQuery, useGetFundSentDisburseQuery } from 'src/generated/graphql';
 
 function Profile() {
   const router = useRouter();
@@ -45,6 +45,8 @@ function Profile() {
   const [grantData, setGrantData] = React.useState<DAOGrant>();
   const [chainID, setChainId] = React.useState<SupportedChainId>();
   const [daoID, setDaoId] = React.useState<string>();
+  const [grantsApplicants, setGrantsApplicants] = React.useState<any>([]);
+  const [grantsDisbursed, setGrantsDisbursed] = React.useState<any>([]);
 
   //Tab section
   const tabs = ['Browse Grants', 'About'];
@@ -89,6 +91,45 @@ function Profile() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error, loading]);
+
+  const { data: grantsData } = useGetAllGrantsForADaoQuery({
+    client:
+      subgraphClients[
+        getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) ?? SupportedChainId.RINKEBY
+      ].client,
+    variables: {
+      workspaceId: workspaceData?.id ?? '',
+      acceptingApplications: true,
+    },
+  });
+
+  console.log(grantsData);
+
+  const { data: fundsData } = useGetFundSentDisburseQuery({
+    client:
+      subgraphClients[
+        getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) ?? SupportedChainId.RINKEBY
+      ].client
+  });
+
+  console.log(fundsData);
+
+  useEffect(() => {
+    if (grantsData && grantsData.grants.length >= 1 && grantsApplicants.length === 0) {
+        grantsData.grants.forEach((grant) => {
+          setGrantsApplicants((array: any) => [...array, grant.numberOfApplications])
+        })
+    }
+  }, [grantData, grantsApplicants])
+
+  useEffect(() => {
+    if (fundsData && fundsData.fundsTransfers.length >= 1 && grantsDisbursed.length === 0) {
+        fundsData.fundsTransfers.forEach((disbursed) => {
+          setGrantsDisbursed((array: any) => [...array, disbursed.amount])
+        })
+    }
+    console.log(grantsDisbursed);
+  }, [grantData, grantsApplicants])
 
   return (
     <Flex
@@ -182,7 +223,14 @@ function Profile() {
           </Stack>
 
           <Stack px="1.5rem" pb="2rem" pt="1rem">
-            <DaoData grants="50000" winners="20" applicants="1000" time="1D" />
+            <DaoData
+            disbursed={formatAmount(
+              grantsDisbursed.reduce((sum: any, a: any) => sum + a, 0).toString(),
+              18
+            )}
+            winners="20"
+            applicants={grantsApplicants}
+            time="1D" />
           </Stack>
 
           <Divider />
@@ -217,9 +265,9 @@ function Profile() {
         // eslint-disable-next-line no-nested-ternary
         selected === 0 ? (
           <>
-            {grantData &&
-              grantData.length > 0 &&
-              grantData.map((grant) => {
+            {grantsData &&
+              grantsData.grants.length > 0 &&
+              grantsData.grants.map((grant) => {
                 const chainId = getSupportedChainIdFromSupportedNetwork(
                   grant.workspace.supportedNetworks[0]
                 );

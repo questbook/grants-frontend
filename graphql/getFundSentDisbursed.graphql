@@ -1,0 +1,18 @@
+query getFundSentDisburse($type: FundsTransferType) {
+  fundsTransfers(
+      where: {type: funds_disbursed},
+      orderBy: createdAtS,
+      orderDirection: desc) {
+
+    id,
+    review {
+      id
+    },
+    amount,
+    sender,
+    to,
+    createdAtS,
+    type
+    asset
+  }
+}

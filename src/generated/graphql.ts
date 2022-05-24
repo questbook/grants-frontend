@@ -3371,7 +3371,7 @@ export type GetAllGrantsForADaoQueryVariables = Exact<{
 }>;
 
 
-export type GetAllGrantsForADaoQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
+export type GetAllGrantsForADaoQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
 
 export type GetAllGrantsForCreatorQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -3455,6 +3455,13 @@ export type GetFundSentforReviewsQueryVariables = Exact<{
 
 
 export type GetFundSentforReviewsQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', id: string, amount: string, sender: string, to: string, createdAtS: number, type: FundsTransferType, asset: string, review?: { __typename?: 'Review', id: string } | null }> };
+
+export type GetFundSentDisburseQueryVariables = Exact<{
+  type?: InputMaybe<FundsTransferType>;
+}>;
+
+
+export type GetFundSentDisburseQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', id: string, amount: string, sender: string, to: string, createdAtS: number, type: FundsTransferType, asset: string, review?: { __typename?: 'Review', id: string } | null }> };
 
 export type GetFundSentForApplicationQueryVariables = Exact<{
   applicationId?: InputMaybe<Scalars['String']>;
@@ -3685,6 +3692,7 @@ export const GetAllGrantsForADaoDocument = gql`
       }
     }
     workspace {
+      id
       title
       logoIpfsHash
       supportedNetworks
@@ -4462,6 +4470,54 @@ export function useGetFundSentforReviewsLazyQuery(baseOptions?: Apollo.LazyQuery
 export type GetFundSentforReviewsQueryHookResult = ReturnType<typeof useGetFundSentforReviewsQuery>;
 export type GetFundSentforReviewsLazyQueryHookResult = ReturnType<typeof useGetFundSentforReviewsLazyQuery>;
 export type GetFundSentforReviewsQueryResult = Apollo.QueryResult<GetFundSentforReviewsQuery, GetFundSentforReviewsQueryVariables>;
+export const GetFundSentDisburseDocument = gql`
+    query getFundSentDisburse($type: FundsTransferType) {
+  fundsTransfers(
+    where: {type: funds_disbursed}
+    orderBy: createdAtS
+    orderDirection: desc
+  ) {
+    id
+    review {
+      id
+    }
+    amount
+    sender
+    to
+    createdAtS
+    type
+    asset
+  }
+}
+    `;
+
+/**
+ * __useGetFundSentDisburseQuery__
+ *
+ * To run a query within a React component, call `useGetFundSentDisburseQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFundSentDisburseQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFundSentDisburseQuery({
+ *   variables: {
+ *      type: // value for 'type'
+ *   },
+ * });
+ */
+export function useGetFundSentDisburseQuery(baseOptions?: Apollo.QueryHookOptions<GetFundSentDisburseQuery, GetFundSentDisburseQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFundSentDisburseQuery, GetFundSentDisburseQueryVariables>(GetFundSentDisburseDocument, options);
+      }
+export function useGetFundSentDisburseLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFundSentDisburseQuery, GetFundSentDisburseQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFundSentDisburseQuery, GetFundSentDisburseQueryVariables>(GetFundSentDisburseDocument, options);
+        }
+export type GetFundSentDisburseQueryHookResult = ReturnType<typeof useGetFundSentDisburseQuery>;
+export type GetFundSentDisburseLazyQueryHookResult = ReturnType<typeof useGetFundSentDisburseLazyQuery>;
+export type GetFundSentDisburseQueryResult = Apollo.QueryResult<GetFundSentDisburseQuery, GetFundSentDisburseQueryVariables>;
 export const GetFundSentForApplicationDocument = gql`
     query getFundSentForApplication($applicationId: String) {
   fundsTransfers(

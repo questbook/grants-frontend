@@ -1,18 +1,18 @@
 query getAllGrantsForADao($first: Int, $skip: Int, $workspaceId: String!, $acceptingApplications: Boolean!) {
   grants(
-    first: $first, 
-    skip: $skip, 
-    subgraphError: allow, 
+    first: $first,
+    skip: $skip,
+    subgraphError: allow,
     where: { workspace: $workspaceId, acceptingApplications: $acceptingApplications }
-    orderBy: createdAtS, 
+    orderBy: createdAtS,
     orderDirection: desc
   ) {
-  id, 
-  creatorId, 
-  title, 
+  id,
+  creatorId,
+  title,
   createdAtS,
-  summary, 
-  details, 
+  summary,
+  details,
   reward {
     committed,
     id,
@@ -23,8 +23,8 @@ query getAllGrantsForADao($first: Int, $skip: Int, $workspaceId: String!, $accep
     decimal,
     iconHash
     }
-  }, 
-  workspace {title, logoIpfsHash, supportedNetworks}, 
+  },
+  workspace {id, title, logoIpfsHash, supportedNetworks}, 
   deadline,
   funding,
   numberOfApplications,

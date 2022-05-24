@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import {
-  Image, Text, Button, Flex, Box, Divider, Link,
+  Image, Text, Button, Flex, Box, Stack, Link,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { SupportedChainId } from 'src/constants/chains';
@@ -79,14 +79,6 @@ function BrowseGrantCard({
               >
                 {grantTitle}
               </Link>
-              {isGrantVerified && (
-              <VerifiedBadge
-                grantAmount={funding}
-                grantCurrency={grantCurrency}
-                lineHeight="26px"
-                marginBottom={-1}
-              />
-              )}
             </Text>
 
             <Image mx={2} src="/ui_icons/green_dot.svg" display="inline-block" />
@@ -102,23 +94,43 @@ function BrowseGrantCard({
           </Text>
 
           <Flex direction="row" mt={8} alignItems="center">
+
+            <Stack
+              bgColor="#F5F5F5"
+              borderRadius="1.25rem"
+              h="1.5rem"
+              px="0.5rem"
+              justify="center"
+            >
+              <Text fontSize="0.85rem" lineHeight="1rem" fontWeight="400" color="#373737">
+              ${grantAmount}/grantee
+              </Text>
+              {isGrantVerified && (
+              <VerifiedBadge
+                grantAmount={funding}
+                grantCurrency={grantCurrency}
+                lineHeight="26px"
+                marginBottom={-1}
+              />
+              )}
+            </Stack>
+
+            <Image mx={2} src="/ui_icons/green_dot.svg" display="inline-block" />
             <Image src={grantCurrencyIcon} />
-            <Text ml={2} fontWeight="700" color="#3F06A0">
-              {grantAmount}
-              {' '}
-              {grantCurrency}
+            <Text ml={2} fontSize="0.85rem" lineHeight="1rem" fontWeight="400" color="#373737">
+              Paid in {" "}<b>{grantCurrency}</b>
             </Text>
             <Image mx={2} src="/ui_icons/green_dot.svg" display="inline-block" />
 
             <Image mr="6px" boxSize={3} src="/ui_icons/deadline.svg" display="inline-block" />
-            <Text as="span" fontSize="xs" display="inline-block">
+            <Text fontSize="0.85rem" lineHeight="1rem" display="inline-block">
               Ends on
               {' '}
               <b>{moment(endTimestamp).format('MMMM D')}</b>
             </Text>
 
             <Box mr="auto" />
-            <Button onClick={onClick} variant="primaryCta">
+            <Button onClick={onClick} variant="primaryCta" h="105px">
               Apply Now
             </Button>
           </Flex>

@@ -2,13 +2,13 @@ import React from 'react';
 import { Text, Heading, Grid, Flex } from '@chakra-ui/react';
 
 interface Props {
-  grants: string;
-  applicants: string;
+  disbursed: string;
+  applicants: Array<number>;
   winners: string;
   time: string;
 }
 
-function DaoData({ grants, applicants, winners, time }: Props) {
+function DaoData({ disbursed, applicants, winners, time }: Props) {
   return (
     <Grid
     gap="1rem"
@@ -23,7 +23,7 @@ function DaoData({ grants, applicants, winners, time }: Props) {
         color="#122224"
         fontSize="1.2rem"
         lineHeight="1.5rem"
-        >{grants}</Heading>
+        >{disbursed}</Heading>
         <Text
           fontSize="0.875rem"
           lineHeight="24px"
@@ -38,7 +38,7 @@ function DaoData({ grants, applicants, winners, time }: Props) {
       <Heading
       color="#122224"
       fontSize="1.2rem"
-      lineHeight="1.5rem">{applicants}</Heading>
+      lineHeight="1.5rem">{applicants.reduce((sum, a) => sum + a, 0)}</Heading>
         <Text
           fontSize="0.875rem"
           lineHeight="24px"
