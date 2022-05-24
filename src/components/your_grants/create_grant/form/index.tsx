@@ -21,7 +21,7 @@ import ApplicantDetails from './3_applicantDetails';
 import GrantRewardsInput from './4_rewards';
 import Heading from '../../../ui/heading';
 import applicantDetailsList from '../../../../constants/applicantDetailsList';
-import { cache } from '../../../../constants/strings.json';
+import strings from '../../../../constants/strings.json';
 
 function Form({
   refs,
@@ -32,7 +32,7 @@ function Form({
   onSubmit: (data: any) => void;
   hasClicked: boolean;
 }) {
-  const CACHE_KEY = cache.create_grant;
+  const CACHE_KEY = strings.cache.create_grant;
   const { workspace } = React.useContext(ApiClientsContext)!;
 
   const [currentChain, setCurrentChain] = React.useState(

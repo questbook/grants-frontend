@@ -29,7 +29,7 @@ import AboutProject from './3_aboutProject';
 import AboutTeam from './2_aboutTeam';
 import Funding from './4_funding';
 import CustomFields from './5_customFields';
-import { cache } from '../../../../constants/strings.json';
+import strings from '../../../../constants/strings.json';
 
 interface Props {
   // onSubmit: (data: any) => void;
@@ -78,7 +78,7 @@ function Form({
   const [{ data: accountData }] = useAccount({
     fetchEns: false,
   });
-  const CACHE_KEY = cache.apply_grant;
+  const CACHE_KEY = strings.cache.apply_grant;
   const getKey = `${chainId}-${CACHE_KEY}-${grantId}`;
 
   const { encryptApplicationPII } = useApplicationEncryption();
