@@ -177,6 +177,26 @@ function GrantRewardsInput({
   };
 
   React.useEffect(() => {
+    if (cacheKey.includes('undefined') || typeof window === 'undefined') return;
+    const data = localStorage.getItem(cacheKey);
+    if (data === 'undefined') return;
+    const formData = JSON.parse(data ?? '{}');
+    console.log('Data from cache: ', formData);
+
+    if (formData?.reward) setReward(formData?.reward);
+    if (formData?.rewardToken) setRewardToken(formData?.rewardToken);
+    if (formData?.rewardCurrency) setRewardCurrency(formData?.rewardCurrency);
+    if (formData?.rewardCurrencyAddress) {
+      setRewardCurrencyAddress(formData?.rewardCurrencyAddress);
+    }
+    if (formData?.date) setDate(formData?.date);
+    if (formData?.shouldEncrypt) setShouldEncrypt(formData?.shouldEncrypt);
+    if (formData?.shouldEncryptReviews) {
+      setShouldEncryptReviews(formData?.shouldEncryptReviews);
+    }
+  }, [cacheKey]);
+
+  React.useEffect(() => {
     const formData = {
       reward,
       rewardToken,
@@ -197,26 +217,6 @@ function GrantRewardsInput({
     shouldEncrypt,
     shouldEncryptReviews,
   ]);
-
-  React.useEffect(() => {
-    if (cacheKey.includes('undefined') || typeof window === 'undefined') return;
-    const data = localStorage.getItem(cacheKey);
-    if (data === 'undefined') return;
-    const formData = JSON.parse(data ?? '{}');
-    console.log('Data from cache: ', formData);
-
-    if (formData?.reward) setReward(formData?.reward);
-    if (formData?.rewardToken) setRewardToken(formData?.rewardToken);
-    if (formData?.rewardCurrency) setRewardCurrency(formData?.rewardCurrency);
-    if (formData?.rewardCurrencyAddress) {
-      setRewardCurrencyAddress(formData?.rewardCurrencyAddress);
-    }
-    if (formData?.date) setDate(formData?.date);
-    if (formData?.shouldEncrypt) setShouldEncrypt(formData?.shouldEncrypt);
-    if (formData?.shouldEncryptReviews) {
-      setShouldEncryptReviews(formData?.shouldEncryptReviews);
-    }
-  }, [cacheKey]);
 
   return (
     <>
