@@ -23,6 +23,7 @@ import {
 import { ApiClientsContext } from 'pages/_app';
 import { useAccount } from 'wagmi';
 import { MinimalWorkspace } from 'src/types';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import Tab from './tab';
 import AccountDetails from './accountDetails';
 
@@ -55,14 +56,19 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
     }),
   );
 
-  const getNumberOfGrantsClients = Object.keys(subgraphClients)!.map(
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    (key) => useGetNumberOfGrantsLazyQuery({ client: subgraphClients[key].client }),
+  const getNumberOfGrantsClients = Object.fromEntries(
+    Object.keys(subgraphClients)!.map((key) => [
+      key,
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      useGetNumberOfGrantsLazyQuery({ client: subgraphClients[key].client }),
+    ]),
   );
 
   useEffect(() => {
     if (!accountData?.address) return;
     if (!workspace) return;
+
+    console.log('Workspace or Account changed!');
 
     const getNumberOfApplications = async () => {
       try {
@@ -92,22 +98,15 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 
     const getNumberOfGrants = async () => {
       try {
-        const promises = getNumberOfGrantsClients.map(
-          // eslint-disable-next-line no-async-promise-executor
-          (query) => new Promise(async (resolve) => {
-            const { data } = await query[0]({
-              variables: { workspaceId: workspace?.id },
-            });
-            if (data && data.grants.length > 0) {
-              resolve(data.grants.length);
-            } else {
-              resolve(0);
-            }
-          }),
-        );
-        Promise.all(promises).then((value: any[]) => {
-          setGrantsCount(value.reduce((a, b) => a + b, 0));
+        const query = getNumberOfGrantsClients[getSupportedChainIdFromWorkspace(workspace)!][0];
+        const { data } = await query({
+          variables: { workspaceId: workspace?.id },
         });
+        if (data && data.grants.length > 0) {
+          setGrantsCount(data.grants.length);
+        } else {
+          setGrantsCount(0);
+        }
       } catch (e) {
         toast({
           title: 'Error getting grants count',
@@ -119,10 +118,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
     getNumberOfApplications();
     getNumberOfGrants();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    accountData?.address,
-    workspace?.id,
-  ]);
+  }, [accountData?.address, workspace?.id]);
 
   const getAllWorkspaces = Object.keys(subgraphClients)!.map(
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -141,7 +137,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
       );
       setIsAdmin(
         tempMember?.accessLevel === 'admin'
-        || tempMember?.accessLevel === 'owner',
+          || tempMember?.accessLevel === 'owner',
       );
       setIsReviewer(tempMember?.accessLevel === 'reviewer');
     }
@@ -226,7 +222,11 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 w="32px"
                 h="32px"
                 mr="10px"
-                src={router.pathname === '/' ? '/ui_icons/gray/see.svg' : getUrlForIPFSHash(workspace.logoIpfsHash)}
+                src={
+                  router.pathname === '/'
+                    ? '/ui_icons/gray/see.svg'
+                    : getUrlForIPFSHash(workspace.logoIpfsHash)
+                }
                 display="inline-block"
               />
               <Text
@@ -294,7 +294,8 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
               <Flex h="100%" direction="column">
                 <Tab
                   label={isReviewer ? 'Grants Assigned' : 'Grants'}
-                  icon={`/ui_icons/${activeIndex === 0 ? 'brand' : 'gray'
+                  icon={`/ui_icons/${
+                    activeIndex === 0 ? 'brand' : 'gray'
                   }/tab_grants.svg`}
                   isActive={activeIndex === 0}
                   onClick={() => {
@@ -310,7 +311,8 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
               <Flex h="100%" direction="column" display={isAdmin ? '' : 'none'}>
                 <Tab
                   label="Funds"
-                  icon={`/ui_icons/${activeIndex === 1 ? 'brand' : 'gray'
+                  icon={`/ui_icons/${
+                    activeIndex === 1 ? 'brand' : 'gray'
                   }/tab_funds.svg`}
                   isActive={activeIndex === 1}
                   onClick={() => {
@@ -326,7 +328,8 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
               <Flex h="100%" direction="column" display={isAdmin ? '' : 'none'}>
                 <Tab
                   label="Manage DAO"
-                  icon={`/ui_icons/${activeIndex === 2 ? 'brand' : 'gray'
+                  icon={`/ui_icons/${
+                    activeIndex === 2 ? 'brand' : 'gray'
                   }/tab_settings.svg`}
                   isActive={activeIndex === 2}
                   onClick={() => {
@@ -343,7 +346,11 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
                 <Flex h="100%" direction="column">
                   <Tab
                     label="Payouts"
-                    icon={activeIndex === 4 ? '/ui_icons/brand/tab_review_funds.svg' : '/ui_icons/gray/tab_funds.svg'}
+                    icon={
+                      activeIndex === 4
+                        ? '/ui_icons/brand/tab_review_funds.svg'
+                        : '/ui_icons/gray/tab_funds.svg'
+                    }
                     isActive={activeIndex === 4}
                     onClick={() => {
                       router.push({
@@ -365,7 +372,8 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
             <Flex h="100%" direction="column">
               <Tab
                 label="My Applications"
-                icon={`/ui_icons/${activeIndex === 3 ? 'brand' : 'gray'
+                icon={`/ui_icons/${
+                  activeIndex === 3 ? 'brand' : 'gray'
                 }/tab_grants.svg`}
                 isActive={activeIndex === 3}
                 onClick={() => {
@@ -383,11 +391,18 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
           <Box mr="8px" />
 
           <Button
-            display={isAdmin || !workspace || !workspace?.id ? undefined : 'none'}
+            display={
+              isAdmin || !workspace || !workspace?.id ? undefined : 'none'
+            }
             onClick={() => {
               if (workspace?.id == null) {
                 router.push({
                   pathname: '/signup',
+                });
+              } else if (grantsCount === 0) {
+                router.push({
+                  pathname: '/signup',
+                  query: { create_grant: true },
                 });
               } else {
                 router.push({
