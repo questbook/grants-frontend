@@ -65,6 +65,7 @@ query getApplicationDetails($applicationID: ID!) {
     reviews {
       reviewer {
         id
+        email
       }
       data {
         id

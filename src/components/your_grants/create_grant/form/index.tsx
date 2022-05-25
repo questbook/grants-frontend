@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box, Button, Text, Image, Link, Flex,
 } from '@chakra-ui/react';
@@ -14,6 +14,7 @@ import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys
 import { ApiClientsContext } from 'pages/_app';
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
+import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey';
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import Title from './1_title';
 import Details from './2_details';
@@ -49,40 +50,54 @@ function Form({
 
   const [{ data: accountData }] = useAccount();
   const maxDescriptionLength = 300;
+  const [title, setTitle] = useState('');
+  const [summary, setSummary] = useState('');
 
-  // Grant Intro
-  const [title, setTitle] = React.useState('');
-  const [titleError, setTitleError] = React.useState(false);
+  const [pk, setPk] = React.useState<string>('*');
+  const {
+    RenderModal,
+    setHiddenModalOpen: setHiddenPkModalOpen,
+    transactionData: newPkTransactionData,
+    publicKey: newPublicKey,
+  } = useSubmitPublicKey();
 
-  const [summary, setSummary] = React.useState('');
-  const [summaryError, setSummaryError] = React.useState(false);
+  useEffect(() => {
+    /// console.log(pk);
+    if (!accountData?.address) return;
+    if (!workspace) return;
+    const k = workspace?.members?.find(
+      (m) => m.actorId.toLowerCase() === accountData!.address.toLowerCase(),
+    )?.publicKey?.toString();
+    // console.log(k);
+    if (k && k.length > 0) {
+      setPk(k);
+    } else {
+      setPk('');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspace, accountData]);
 
-  // Grant Details
-  const [details, setDetails] = React.useState(
-    EditorState.createWithContent(
-      convertFromRaw({
-        entityMap: {},
-        blocks: [
-          {
-            text: '',
-            key: 'foo',
-            type: 'unstyled',
-            entityRanges: [],
-          } as any,
-        ],
-      }),
-    ),
-  );
-  const [detailsError, setDetailsError] = React.useState(false);
+  const [titleError, setTitleError] = useState(false);
+  const [summaryError, setSummaryError] = useState(false);
 
-  // Applicant Details
-  const [shouldEncrypt, setShouldEncrypt] = React.useState(false);
-  const [hasOwnerPublicKey, setHasOwnerPublicKey] = React.useState(false);
-  const [keySubmitted, setKeySubmitted] = React.useState(false);
-  const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({
+  const [details, setDetails] = useState(EditorState.createWithContent(convertFromRaw({
+    entityMap: {},
+    blocks: [{
+      text: '',
+      key: 'foo',
+      type: 'unstyled',
+      entityRanges: [],
+    } as any],
+  })));
+  const [detailsError, setDetailsError] = useState(false);
+
+  const [shouldEncrypt, setShouldEncrypt] = useState(false);
+  const [hasOwnerPublicKey, setHasOwnerPublicKey] = useState(false);
+  const [keySubmitted, setKeySubmitted] = useState(false);
+  const [publicKey] = React.useState<WorkspaceUpdateRequest>({
     publicKey: '',
   });
-  const [transactionData, loading] = useUpdateWorkspacePublicKeys(publicKey);
+  const [transactionData] = useUpdateWorkspacePublicKeys(publicKey);
 
   const [admins, setAdmins] = React.useState<any[]>([]);
   const [maximumPoints, setMaximumPoints] = React.useState(5);
@@ -385,7 +400,8 @@ function Form({
           },
         );
       }
-      onSubmit({
+
+      const s = {
         title,
         summary,
         details: detailsString,
@@ -399,10 +415,113 @@ function Form({
           isPrivate: shouldEncryptReviews,
           rubric,
         },
-      });
+      };
+
+      if ((shouldEncrypt || shouldEncryptReviews) && (!pk || pk === '*')) {
+        setHiddenPkModalOpen(true);
+        return;
+      }
+
+      onSubmit(s);
     }
   };
 
+  useEffect(() => {
+    if (newPkTransactionData && newPublicKey && newPublicKey.publicKey) {
+      // console.log(newPublicKey);
+      setPk(newPublicKey.publicKey);
+      const detailsString = JSON.stringify(
+        convertToRaw(details.getCurrentContent()),
+      );
+
+      const requiredDetails = {} as any;
+      detailsRequired.forEach((detail) => {
+        if (detail && detail.required) {
+          requiredDetails[detail.id] = {
+            title: detail.title,
+            inputType: detail.inputType,
+          };
+        }
+      });
+      const fields = { ...requiredDetails };
+
+      const rubric = {} as any;
+
+      if (rubricRequired) {
+        rubrics.forEach((r: any, index: number) => {
+          rubric[index.toString()] = {
+            title: r.name,
+            details: r.description,
+            maximumPoints,
+          };
+        });
+      }
+
+      if (multipleMilestones) {
+        fields.isMultipleMilestones = {
+          title: 'Milestones',
+          inputType: 'array',
+        };
+      }
+      if (fields.teamMembers) {
+        fields.memberDetails = {
+          title: 'Member Details',
+          inputType: 'array',
+        };
+      }
+      if (fields.fundingBreakdown) {
+        fields.fundingAsk = {
+          title: 'Funding Ask',
+          inputType: 'short-form',
+        };
+      }
+      if (shouldEncrypt && (keySubmitted || hasOwnerPublicKey)) {
+        if (fields.applicantEmail) {
+          fields.applicantEmail = { ...fields.applicantEmail, pii: true };
+        }
+        if (fields.memberDetails) {
+          fields.memberDetails = { ...fields.memberDetails, pii: true };
+        }
+      }
+      if (customFieldsOptionIsVisible && customFields.length > 0) {
+        customFields.forEach((customField: any, index: number) => {
+          const santizedCustomFieldValue = customField.value.split(' ').join('\\s');
+          fields[`customField${index}-${santizedCustomFieldValue}`] = {
+            title: customField.value,
+            inputType: 'short-form',
+          };
+        });
+      }
+      if (defaultMilestoneFields.length > 0) {
+        defaultMilestoneFields.forEach((defaultMilestoneField: any, index: number) => {
+          const santizedDefaultMilestoneFieldValue = defaultMilestoneField.value.split(' ').join('\\s');
+          fields[`defaultMilestone${index}-${santizedDefaultMilestoneFieldValue}`] = {
+            title: defaultMilestoneField.value,
+            inputType: 'short-form',
+          };
+        });
+      }
+
+      const s = {
+        title,
+        summary,
+        details: detailsString,
+        fields,
+        reward,
+        rewardCurrencyAddress,
+        rewardToken,
+        date,
+        grantManagers: admins,
+        rubric: {
+          isPrivate: shouldEncryptReviews,
+          rubric,
+        },
+      };
+
+      onSubmit(s);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newPkTransactionData, newPublicKey]);
   React.useEffect(() => {
     console.log('Key: ', getKey);
     if (getKey.includes('undefined') || typeof window === 'undefined') return;
@@ -607,10 +726,6 @@ function Form({
         supportedCurrencies={supportedCurrencies}
         shouldEncrypt={shouldEncrypt}
         setShouldEncrypt={setShouldEncrypt}
-        loading={loading}
-        setPublicKey={setPublicKey}
-        hasOwnerPublicKey={hasOwnerPublicKey}
-        keySubmitted={keySubmitted}
         shouldEncryptReviews={shouldEncryptReviews}
         setShouldEncryptReviews={setShouldEncryptReviews}
       />
@@ -649,10 +764,11 @@ function Form({
         py={hasClicked ? 2 : 0}
         onClick={hasClicked ? () => {} : handleOnSubmit}
         variant="primary"
-        disabled={shouldEncrypt && !keySubmitted && !hasOwnerPublicKey}
       >
         {hasClicked ? <Loader /> : 'Create Grant'}
       </Button>
+
+      <RenderModal />
     </>
   );
 }

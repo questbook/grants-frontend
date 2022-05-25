@@ -128,6 +128,8 @@ function EditGrant() {
       rewardCurrency,
       rewardCurrencyAddress,
       date: grant.deadline,
+      rubric: grant.rubric,
+      isPii: grant.fields.some((field: any) => field.isPii),
     } as any;
     grant.fields
       .filter((field: any) => field.id.split('.')[1]
@@ -217,6 +219,8 @@ function EditGrant() {
         rewardCurrency,
         rewardCurrencyAddress,
         date: grant.deadline,
+        rubric: grant.rubric,
+        isPii: grant.fields.some((field: any) => field.isPii),
       } as any;
       grant.fields
         .filter((field) => field.id.split('.')[1]
@@ -312,6 +316,7 @@ function EditGrant() {
             hasClicked={loading}
             formData={formData}
             onSubmit={(editdata: any) => {
+              console.log('editdata', editdata);
               setEditData(editdata);
             }}
             refs={sideBarDetails.map((detail) => detail[2])}

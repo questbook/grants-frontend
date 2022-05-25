@@ -1,14 +1,16 @@
 import {
-  Box, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, Text, Button,
+  Box, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, Text, Button, Image,
 } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { SupportedChainId } from 'src/constants/chains';
 // import useSetFeedbacks from 'src/hooks/useSetFeedbacks';
 import StarRatings from 'react-star-ratings';
 import useSubmitReview from 'src/hooks/useSubmitReview';
-import MultiLineInput from '../ui/forms/multiLineInput';
+import { useAccount } from 'wagmi';
+import { ApiClientsContext } from 'pages/_app';
+import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey';
 import Loader from '../ui/loader';
-import Badge from '../ui/badge';
+import MultiLineInput from '../ui/forms/multiLineInput';
 
 function FeedbackDrawer({
   feedbackDrawerOpen,
@@ -40,6 +42,50 @@ function FeedbackDrawer({
   const [editedFeedbackData, setEditedFeedbackData] = React.useState<any>();
   const [feedbackData, setFeedbackData] = React.useState<any[]>();
   const [isApproved, setIsApproved] = React.useState<boolean>(false);
+
+  const [pk, setPk] = React.useState<string>('*');
+  const [{ data: accountData }] = useAccount({
+    fetchEns: false,
+  });
+  const { workspace } = useContext(ApiClientsContext)!;
+
+  const {
+    RenderModal,
+    setHiddenModalOpen: setHiddenPkModalOpen,
+    transactionData,
+    publicKey: newPublicKey,
+  } = useSubmitPublicKey();
+
+  useEffect(() => {
+    if (transactionData && newPublicKey && newPublicKey.publicKey) {
+      console.log(newPublicKey);
+      setPk(newPublicKey.publicKey);
+      const formattedFeedbackData = feedbackData?.map((feedback: any) => ({
+        rubric: feedback.rubric,
+        rating: feedback.rating,
+        comment: feedback.comment,
+      }));
+      setEditedFeedbackData({ isApproved, items: formattedFeedbackData });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transactionData, newPublicKey]);
+
+  useEffect(() => {
+    /// console.log(pk);
+    if (!accountData?.address) return;
+    if (!workspace) return;
+    const k = workspace?.members?.find(
+      (m) => m.actorId.toLowerCase() === accountData!.address.toLowerCase(),
+    )?.publicKey?.toString();
+    // console.log(k);
+    if (k && k.length > 0) {
+      setPk(k);
+    } else {
+      setPk('');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspace, accountData]);
+
   useEffect(() => {
     const newFeedbackData = [] as any[];
     if (rubrics?.length > 0) {
@@ -71,6 +117,12 @@ function FeedbackDrawer({
       setFeedbackData(newFeedbackData);
       return;
     }
+
+    if (isPrivate && (!pk || pk === '*')) {
+      setHiddenPkModalOpen(true);
+      return;
+    }
+
     const formattedFeedbackData = feedbackData?.map((feedback: any) => ({
       rubric: feedback.rubric,
       rating: feedback.rating,
@@ -100,119 +152,157 @@ function FeedbackDrawer({
   }, [data, setFeedbackDrawerOpen]);
 
   return (
-    <Drawer
-      isOpen={feedbackDrawerOpen}
-      placement="right"
-      onClose={() => setFeedbackDrawerOpen(false)}
-      size="lg"
-    >
-      <DrawerOverlay />
-      <DrawerContent>
+    <>
+      <Drawer
+        isOpen={feedbackDrawerOpen}
+        placement="right"
+        onClose={() => setFeedbackDrawerOpen(false)}
+        size="lg"
+      >
+        <DrawerOverlay />
+        <DrawerContent>
 
-        <Flex direction="column" overflow="scroll" p={8}>
-          <Text
-            mt="18px"
-            color="#122224"
-            fontWeight="bold"
-            fontSize="16px"
-            lineHeight="20px"
-          >
-            Overall Recommendation
-          </Text>
-          <Flex py={8}>
-            <Badge
-              isActive={isApproved}
-              label="YES"
-              onClick={() => setIsApproved(true)}
-            />
-
-            <Box ml={4} />
-
-            <Badge
-              isActive={!isApproved}
-              label="NO"
-              onClick={() => setIsApproved(false)}
-            />
-          </Flex>
-          {feedbackData?.map((feedback, index) => (
-            <>
-              <Flex
-                mt={4}
-                gap="2"
-                direction="column"
+          <Flex direction="column" overflow="scroll" p={8}>
+            <Flex mb={8} alignItems="center">
+              <Image
+                src="/ui_icons/back_arrow.svg"
+                cursor="pointer"
+                mr="12px"
+                h="16px"
+                w="16px"
+                onClick={() => setFeedbackDrawerOpen(false)}
+              />
+              <Text
+                color="#122224"
+                fontWeight="bold"
+                fontSize="16px"
+                lineHeight="20px"
               >
-                <Text
-                  mt="18px"
-                  color="#122224"
-                  fontWeight="bold"
-                  fontSize="16px"
-                  lineHeight="20px"
-                >
-                  {feedback.rubric.title}
-                </Text>
-                <Text
-                  color="#69657B"
-                  fontWeight="bold"
-                  fontSize="12px"
-                  lineHeight="20px"
-                >
-                  {feedback.rubric.details}
-                </Text>
+                Application Feedback
+              </Text>
+            </Flex>
+            <Text
+              color="#122224"
+              fontWeight="bold"
+              fontSize="16px"
+              lineHeight="20px"
+            >
+              Overall Recommendation
+            </Text>
+            <Flex pt="12px" pb="18px">
+              <Button
+                onClick={() => setIsApproved(true)}
+                variant={!isApproved ? 'outline' : 'solid'}
+                h={12}
+                minW="130px"
+                colorScheme="brandGreen"
+                borderRadius="6px"
+              >
+                <Image h="16px" w="16px" src={!isApproved ? '/ui_icons/like_up_green.svg' : '/ui_icons/like_up.svg'} />
+                <Box mr="6px" />
+                <Text color={!isApproved ? '#39C696' : '#FFFFFF'}>For</Text>
+              </Button>
 
-                <StarRatings
-                  numberOfStars={feedback.rubric.maximumPoints}
-                  starRatedColor="#88BDEE"
-                  changeRating={(r) => {
-                    console.log(r);
-                    const newFeedbackData = [...feedbackData];
-                    newFeedbackData[index].rating = r;
-                    newFeedbackData[index].isError = false;
-                    setFeedbackData(newFeedbackData);
-                  }}
-                  rating={feedback.rating}
-                  name="rating"
-                  starHoverColor="#88BDEE"
-                  starDimension="18px"
-                />
+              <Box ml={4} />
 
-                {feedback.isError ? (
+              <Button
+                onClick={() => setIsApproved(false)}
+                variant={isApproved ? 'outline' : 'solid'}
+                h={12}
+                minW="130px"
+                colorScheme="brandRed"
+                borderRadius="6px"
+              >
+                <Image h="16px" w="16px" src={isApproved ? '/ui_icons/like_down_red.svg' : '/ui_icons/like_down.svg'} />
+                <Box mr="6px" />
+                <Text color={isApproved ? '#EE7979' : '#FFFFFF'}>Against</Text>
+              </Button>
+            </Flex>
+            {feedbackData?.map((feedback, index) => (
+              <>
+                <Flex
+                  mt={4}
+                  gap="2"
+                  direction="column"
+                >
                   <Text
-                    fontSize="14px"
-                    color="#EE7979"
-                    fontWeight="700"
-                    lineHeight="20px"
+                    color="#122224"
+                    fontWeight="bold"
+                    fontSize="16px"
+                    lineHeight="12px"
                   >
-                    Star Rating is Mandatory Field
+                    {feedback.rubric.title}
                   </Text>
-                ) : null}
+                  <Text
+                    color="#69657B"
+                    fontWeight="400"
+                    fontSize="12px"
+                    lineHeight="12px"
+                    mt="6px"
+                  >
+                    {feedback.rubric.details}
+                  </Text>
 
-                <MultiLineInput
-                  value={feedback.comment}
-                  onChange={(e) => {
-                    const newFeedbackData = [...feedbackData];
-                    newFeedbackData[index].comment = e.target.value;
-                    setFeedbackData(newFeedbackData);
-                  }}
-                  placeholder="Feedback"
-                  isError={false}
-                  errorText="Star Rating is Mandatory Field"
-                  disabled={!feedbackEditAllowed}
-                />
-              </Flex>
-              <Divider mt={4} />
-            </>
-          ))}
+                  <Box mt="2px">
+                    <StarRatings
+                      numberOfStars={feedback.rubric.maximumPoints}
+                      starRatedColor="#88BDEE"
+                      changeRating={(r) => {
+                        console.log(r);
+                        const newFeedbackData = [...feedbackData];
+                        newFeedbackData[index].rating = r;
+                        newFeedbackData[index].isError = false;
+                        setFeedbackData(newFeedbackData);
+                      }}
+                      rating={feedback.rating}
+                      name="rating"
+                      starHoverColor="#88BDEE"
+                      starDimension="18px"
+                      starSpacing="4px"
+                    />
+                  </Box>
 
-          <Box mt={12}>
-            <Button mt="auto" variant="primary" onClick={handleOnSubmit}>
-              {!loading ? 'Save' : (
-                <Loader />
-              )}
-            </Button>
-          </Box>
-        </Flex>
-      </DrawerContent>
-    </Drawer>
+                  {feedback.isError ? (
+                    <Text
+                      fontSize="14px"
+                      color="#EE7979"
+                      fontWeight="700"
+                      lineHeight="20px"
+                    >
+                      Star Rating is Mandatory Field
+                    </Text>
+                  ) : null}
+
+                  <MultiLineInput
+                    value={feedback.comment}
+                    onChange={(e) => {
+                      const newFeedbackData = [...feedbackData];
+                      newFeedbackData[index].comment = e.target.value;
+                      setFeedbackData(newFeedbackData);
+                    }}
+                    placeholder="Feedback"
+                    isError={false}
+                    errorText="Star Rating is Mandatory Field"
+                    disabled={!feedbackEditAllowed}
+                  />
+                </Flex>
+                <Divider mt={4} />
+              </>
+            ))}
+
+            <Box mt={12}>
+              <Button mt="auto" variant="primary" onClick={handleOnSubmit}>
+                {!loading ? 'Save' : (
+                  <Loader />
+                )}
+              </Button>
+            </Box>
+          </Flex>
+        </DrawerContent>
+      </Drawer>
+
+      <RenderModal />
+    </>
   );
 }
 

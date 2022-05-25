@@ -22,6 +22,9 @@ function SignupDao() {
   const [daoCreated, setDaoCreated] = React.useState(false);
   const [creatingGrant, setCreatingGrant] = React.useState(router.query.create_grant === 'true');
 
+  const [newWorkspaceObject, setNewWorkspaceObject] = React.useState<any>({});
+  const [newPublicKey, setNewPublicKey] = React.useState();
+
   const [daoData, setDaoData] = React.useState<{
     name: string;
     description: string;
@@ -56,15 +59,25 @@ function SignupDao() {
         id: Number(newId).toString(),
       });
       setDaoCreated(true);
-      setWorkspace({
+      const w = {
         id: Number(newId).toString(),
         logoIpfsHash: imageHash,
         ownerId: workspaceData.ownerId,
         supportedNetworks: [`chain_${workspaceData.network}` as SupportedNetwork],
         title: workspaceData.name,
-        members: [],
+        members: [{
+          accessLevel: 'owner' as any,
+          email: null,
+          id: `${Number(newId).toString()}.${workspaceData.ownerId}`,
+          lastReviewSubmittedAt: 0,
+          outstandingReviewIds: [],
+          actorId: workspaceData.ownerId,
+          publicKey: undefined,
+        }],
         tokens: [],
-      });
+      };
+      setNewWorkspaceObject(w);
+      setWorkspace(w);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceTransactionData, imageHash, workspaceData, router]);
@@ -80,6 +93,21 @@ function SignupDao() {
     // console.log(grantTransactionData);
     if (grantTransactionData) {
       setGrantData(null);
+
+      if (newPublicKey) {
+        const w = { ...newWorkspaceObject };
+        w.members = [{
+          accessLevel: 'owner',
+          email: null,
+          id: `${w.id}.${workspaceData.ownerId}`,
+          lastReviewSubmittedAt: 0,
+          outstandingReviewIds: [],
+          actorId: workspaceData.ownerId,
+          publicKey: newPublicKey,
+        }];
+        setWorkspace(w);
+      }
+
       router.replace({ pathname: '/your_grants', query: { done: 'yes' } });
 
       const link = transactionLink;
@@ -105,7 +133,12 @@ function SignupDao() {
       <CreateGrant
         hasClicked={createGrantLoading}
         onSubmit={(data) => {
-          setGrantData(data);
+          const dataCopy = { ...data };
+          if (data.publicKey) {
+            setNewPublicKey(data.publicKey);
+            delete dataCopy.publicKey;
+          }
+          setGrantData(dataCopy);
         }}
       />
     );

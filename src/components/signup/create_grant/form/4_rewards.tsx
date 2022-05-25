@@ -158,20 +158,20 @@ function GrantRewardsInput({
     console.log(rewardCurrencyAddress);
 
     if (!error) {
-      if (!keySubmitted) {
-        setPublicKey({ publicKey: (await getPublicEncryptionKey()) || '' });
+      let pk;
+      if ((shouldEncrypt || shouldEncryptReviews) && !keySubmitted) {
+        pk = await getPublicEncryptionKey();
+        if (!pk) {
+          return;
+        }
+        setPublicKey({ publicKey: pk });
       }
       let pii = false;
       if (shouldEncrypt && keySubmitted) {
         pii = true;
       }
       onSubmit({
-        reward,
-        rewardToken,
-        rewardCurrencyAddress,
-        date,
-        pii,
-        shouldEncryptReviews,
+        reward, rewardToken, rewardCurrencyAddress, date, pii, shouldEncryptReviews, publicKey: pk,
       });
     }
   };

@@ -1,6 +1,8 @@
 import {
   Flex,
   Box,
+  Text,
+  Switch,
 } from '@chakra-ui/react';
 import { Token } from '@questbook/service-validator-client';
 import React, { useEffect } from 'react';
@@ -24,6 +26,12 @@ function GrantRewardsInput({
   dateError,
   setDateError,
   supportedCurrencies,
+  shouldEncrypt,
+  setShouldEncrypt,
+  defaultShouldEncrypt,
+  defaultShouldEncryptReviews,
+  shouldEncryptReviews,
+  setShouldEncryptReviews,
 }: {
   reward: string;
   setReward: (rewards: string) => void;
@@ -38,6 +46,12 @@ function GrantRewardsInput({
   dateError: boolean;
   setDateError: (dateError: boolean) => void;
   supportedCurrencies: any[];
+  shouldEncrypt: boolean;
+  setShouldEncrypt: (shouldEncrypt: boolean) => void;
+  defaultShouldEncrypt: boolean;
+  defaultShouldEncryptReviews: boolean;
+  shouldEncryptReviews: boolean;
+  setShouldEncryptReviews: (shouldEncryptReviews: boolean) => void;
 }) {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<any[]>([]);
@@ -121,6 +135,84 @@ function GrantRewardsInput({
         errorText="Required"
         label="Grant Deadline"
       />
+
+      <Flex direction="column" mt={12}>
+        <Text
+          fontSize="18px"
+          fontWeight="700"
+          lineHeight="26px"
+          letterSpacing={0}
+        >
+          Grant privacy
+        </Text>
+      </Flex>
+
+      <Flex mt={8} gap="2" justifyContent="space-between">
+        <Flex direction="column">
+          <Text
+            color="#122224"
+            fontWeight="bold"
+            fontSize="16px"
+            lineHeight="20px"
+          >
+            Hide applicant personal data (email, and about team)
+          </Text>
+          <Flex>
+            <Text color="#717A7C" fontSize="14px" lineHeight="20px">
+              {shouldEncrypt
+                ? 'The applicant data will be visible only to DAO members.'
+                : 'The applicant data will be visible to everyone with the link.'}
+              {/* <Tooltip
+                icon="/ui_icons/tooltip_questionmark.svg"
+                label="Public key linked to your wallet will allow you to see the hidden data."
+                placement="bottom-start"
+              /> */}
+            </Text>
+          </Flex>
+        </Flex>
+        <Flex justifyContent="center" gap={2} alignItems="center">
+          <Switch
+            id="encrypt"
+            defaultChecked={defaultShouldEncrypt}
+            onChange={(e) => {
+              setShouldEncrypt(e.target.checked);
+            }}
+          />
+          <Text fontSize="12px" fontWeight="bold" lineHeight="16px">
+            {`${shouldEncrypt ? 'YES' : 'NO'}`}
+          </Text>
+        </Flex>
+      </Flex>
+
+      <Flex mt={8} gap="2" justifyContent="space-between">
+        <Flex direction="column">
+          <Text
+            color="#122224"
+            fontWeight="bold"
+            fontSize="16px"
+            lineHeight="20px"
+          >
+            Keep applicant reviews private
+          </Text>
+          <Flex>
+            <Text color="#717A7C" fontSize="14px" lineHeight="20px">
+              Private review is only visible to reviewers, DAO members.
+            </Text>
+          </Flex>
+        </Flex>
+        <Flex justifyContent="center" gap={2} alignItems="center">
+          <Switch
+            id="encrypt"
+            defaultChecked={defaultShouldEncryptReviews}
+            onChange={(e) => {
+              setShouldEncryptReviews(e.target.checked);
+            }}
+          />
+          <Text fontSize="12px" fontWeight="bold" lineHeight="16px">
+            {`${shouldEncryptReviews ? 'YES' : 'NO'}`}
+          </Text>
+        </Flex>
+      </Flex>
 
     </Flex>
   );

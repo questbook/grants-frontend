@@ -9,7 +9,6 @@ import {
   IconButton,
   Image,
   Checkbox,
-  Link,
 } from '@chakra-ui/react';
 import { ApiClientsContext } from 'pages/_app';
 import React, { useContext, useEffect, useState } from 'react';
@@ -70,7 +69,7 @@ function ReviewDrawer({
     if (!workspace) return;
     if (!initialReviewers) return;
     const newIsReviewer: { [key: string]: boolean } = {};
-    workspace.members.filter((member) => (member.publicKey ?? '').length > 0)
+    workspace.members
       .forEach((member: any) => {
         console.log(member);
         console.log(initialReviewers);
@@ -85,7 +84,6 @@ function ReviewDrawer({
   const handleOnSubmit = () => {
     setEditedReviewData({
       reviewers: workspace?.members
-        .filter((member) => (member.publicKey ?? '').length > 0)
         .map(
           (reviewer) => reviewer.id.split('.')[1],
         ),
@@ -120,7 +118,7 @@ function ReviewDrawer({
       isOpen={reviewDrawerOpen}
       placement="right"
       onClose={() => setReviewDrawerOpen(false)}
-      size="md"
+      size="lg"
     >
       <DrawerOverlay />
       <DrawerContent>
@@ -135,10 +133,10 @@ function ReviewDrawer({
               size="14px"
               icon={(
                 <Image
-                  boxSize="14px"
+                  boxSize="20px"
                   _active={{}}
                   _hover={{}}
-                  src="/ui_icons/close.svg"
+                  src="/ui_icons/close_drawer.svg"
                 />
               )}
               _hover={{}}
@@ -165,7 +163,7 @@ function ReviewDrawer({
           <Flex direction="column" overflowY="scroll" maxH="40%" mt={6}>
 
             {workspace?.members
-              .filter((member) => (member.publicKey ?? '').length > 0)
+              // .filter((member) => (member.publicKey ?? '').length > 0)
               .filter(
                 (member) => emailSearchText === ''
                     || (member.email && member.email.startsWith(emailSearchText)),
@@ -209,7 +207,7 @@ function ReviewDrawer({
                       >
                         {member.email ? member.email : member.actorId}
                       </Text>
-                      <Text mt={1} color="#717A7C" fontSize="12px">
+                      <Text mt={member.email || reviewExists ? 1 : 0} color="#717A7C" fontSize="12px">
                         {member.email
                           && truncateStringFromMiddle(member.actorId)}
                         {member.email ? ' | ' : ''}
@@ -226,15 +224,6 @@ function ReviewDrawer({
             The reviewers who have already submitted their
             reviews cannot be unassigned as reviewers.
             {' '}
-          </Text>
-
-          <Text fontSize="12px" color="#717A7C" mt={4}>
-            The reviewers who have not accepted the invite and submitted their
-            public key are not shown on this list.
-            {' '}
-            <Link href="/" fontWeight="700">
-              Learn More
-            </Link>
           </Text>
 
           <Box my="auto" />
@@ -289,7 +278,7 @@ function ReviewDrawer({
             </Text>
           </Flex> */}
 
-          <Flex direction="row" mt={6}>
+          <Flex direction="row" mt={6} alignItems="center">
             <Button mt="auto" variant="primary" onClick={handleOnSubmit}>
               {!loading ? 'Confirm' : <Loader />}
             </Button>

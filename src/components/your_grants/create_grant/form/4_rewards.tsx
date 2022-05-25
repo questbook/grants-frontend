@@ -1,17 +1,13 @@
 import {
   Flex,
   Box,
-  Link,
   Text,
-  Image,
   Switch,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 // import Modal from 'src/components/ui/modal';
 import CustomTokenModal from 'src/components/ui/submitCustomTokenModal';
-import Loader from 'src/components/ui/loader';
-import useEncryption from 'src/hooks/utils/useEncryption';
 import { Token } from '@questbook/service-validator-client';
 import Datepicker from '../../../ui/forms/datepicker';
 import Dropdown from '../../../ui/forms/dropdown';
@@ -35,10 +31,6 @@ function GrantRewardsInput({
   supportedCurrencies,
   shouldEncrypt,
   setShouldEncrypt,
-  loading,
-  setPublicKey,
-  hasOwnerPublicKey,
-  keySubmitted,
   shouldEncryptReviews,
   setShouldEncryptReviews,
 }: {
@@ -58,10 +50,6 @@ function GrantRewardsInput({
   supportedCurrencies: any[];
   shouldEncrypt: boolean;
   setShouldEncrypt: (shouldEncrypt: boolean) => void;
-  loading: boolean;
-  setPublicKey: (publicKey: any) => void;
-  hasOwnerPublicKey: boolean;
-  keySubmitted: boolean;
   shouldEncryptReviews: boolean;
   setShouldEncryptReviews: (shouldEncryptReviews: boolean) => void;
 }) {
@@ -76,7 +64,6 @@ function GrantRewardsInput({
 
   const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false);
   const addERC = true;
-  const { getPublicEncryptionKey } = useEncryption();
   return (
     <Flex direction="column">
 
@@ -195,55 +182,6 @@ function GrantRewardsInput({
           </Text>
         </Flex>
       </Flex>
-      {shouldEncrypt && !hasOwnerPublicKey && !keySubmitted && (
-        <Flex mt={8} gap="2" direction="column">
-          <Flex
-            gap="2"
-            cursor="pointer"
-            onClick={async () => setPublicKey({
-              publicKey: (await getPublicEncryptionKey()) || '',
-            })}
-          >
-            <Text
-              color="brand.500"
-              fontWeight="bold"
-              fontSize="16px"
-              lineHeight="24px"
-            >
-              Allow access to your public key and encrypt the applicant form to
-              proceed
-            </Text>
-            <Image src="/ui_icons/brand/chevron_right.svg" />
-            {loading && <Loader />}
-          </Flex>
-          <Flex alignItems="center" gap={2}>
-            <Image mt={1} src="/ui_icons/info.svg" />
-            <Text
-              color="#122224"
-              fontWeight="medium"
-              fontSize="14px"
-              lineHeight="20px"
-            >
-              By doing the above you’ll have to approve this transaction in your
-              wallet.
-            </Text>
-          </Flex>
-          <Link
-            href="https://www.notion.so/questbook/Why-is-public-key-required-e3fa53f34a5240d185d3d34744bb33f4"
-            isExternal
-          >
-            <Text
-              color="#122224"
-              fontWeight="normal"
-              fontSize="14px"
-              lineHeight="20px"
-              decoration="underline"
-            >
-              Why is this required?
-            </Text>
-          </Link>
-        </Flex>
-      )}
 
       <Flex mt={8} gap="2" justifyContent="space-between">
         <Flex direction="column">
