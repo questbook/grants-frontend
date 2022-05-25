@@ -57,6 +57,11 @@ function BrowseGrantCard({
 }: BrowseGrantCardProps) {
   const router = useRouter();
 
+  const dateFromCreation = new Date(createdAt).toString();
+  const currentDate = (new Date()).getTime();
+
+  console.log(currentDate)
+
   return (
     <Flex
       borderY="1px solid #E8E9E9"
@@ -82,6 +87,10 @@ function BrowseGrantCard({
             </Text>
 
             <Image mx={2} src="/ui_icons/green_dot.svg" display="inline-block" />
+
+            <Text fontSize="0.75rem" lineHeight="1rem" fontWeight="700" color="#8C8C8C">
+              {dateFromCreation}
+            </Text>
 
             <Box mr="auto" />
             <Badge

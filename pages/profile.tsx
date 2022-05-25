@@ -129,7 +129,7 @@ function Profile() {
         })
     }
     console.log(grantsDisbursed);
-  }, [grantData, grantsApplicants])
+  }, [fundsData, grantsApplicants])
 
   return (
     <Flex
