@@ -1,9 +1,9 @@
+import React, { useState } from 'react'
 import {
-  Flex, Button, Box, Text,
-} from '@chakra-ui/react';
-import React, { useState } from 'react';
-import MultiLineInput from '../../../ui/forms/multiLineInput';
-import SingleLineInput from '../../../ui/forms/singleLineInput';
+	Box, Button, Flex, Text,
+} from '@chakra-ui/react'
+import MultiLineInput from '../../../ui/forms/multiLineInput'
+import SingleLineInput from '../../../ui/forms/singleLineInput'
 
 interface Props {
   onSubmit: (data: any) => void;
@@ -12,100 +12,120 @@ interface Props {
 }
 
 function Title({ onSubmit, constructCache, cacheKey }: Props) {
-  const maxDescriptionLength = 300;
-  const [title, setTitle] = useState('');
-  const [summary, setSummary] = useState('');
+	const maxDescriptionLength = 300
+	const [title, setTitle] = useState('')
+	const [summary, setSummary] = useState('')
 
-  const [titleError, setTitleError] = useState(false);
-  const [summaryError, setSummaryError] = useState(false);
+	const [titleError, setTitleError] = useState(false)
+	const [summaryError, setSummaryError] = useState(false)
 
-  React.useEffect(() => {
-    if (cacheKey.includes('undefined') || typeof window === 'undefined') return;
-    const data = localStorage.getItem(cacheKey);
-    if (data === 'undefined') return;
-    const formData = JSON.parse(data ?? '{}');
-    console.log('Data from cache: ', formData);
+	React.useEffect(() => {
+		if(cacheKey.includes('undefined') || typeof window === 'undefined') {
+			return
+		}
 
-    setTitle(formData?.title);
-    setSummary(formData?.summary);
-  }, [cacheKey]);
+		const data = localStorage.getItem(cacheKey)
+		if(data === 'undefined') {
+			return
+		}
 
-  React.useEffect(() => {
-    if (cacheKey.includes('undefined') || typeof window === 'undefined') return;
-    const formData = {
-      title,
-      summary,
-    };
-    constructCache(formData);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title, summary]);
+		const formData = JSON.parse(data ?? '{}')
+		console.log('Data from cache: ', formData)
 
-  const handleOnSubmit = () => {
-    let error = false;
-    if (title.length <= 0) {
-      setTitleError(true);
-      error = true;
-    }
-    if (summary.length <= 0) {
-      setSummaryError(true);
-      error = true;
-    }
+		setTitle(formData?.title)
+		setSummary(formData?.summary)
+	}, [cacheKey])
 
-    if (!error) {
-      onSubmit({ title, summary });
-    }
-  };
+	React.useEffect(() => {
+		if(cacheKey.includes('undefined') || typeof window === 'undefined') {
+			return
+		}
 
-  return (
-    <>
-      <Flex py={12} direction="column" w="100%">
+		const formData = {
+			title,
+			summary,
+		}
+		constructCache(formData)
 
-        <Text variant="heading" fontSize="36px" lineHeight="48px">
+	}, [title, summary])
+
+	const handleOnSubmit = () => {
+		let error = false
+		if(title.length <= 0) {
+			setTitleError(true)
+			error = true
+		}
+
+		if(summary.length <= 0) {
+			setSummaryError(true)
+			error = true
+		}
+
+		if(!error) {
+			onSubmit({ title, summary })
+		}
+	}
+
+	return (
+		<>
+			<Flex
+				py={12}
+				direction="column"
+				w="100%">
+
+				<Text
+					variant="heading"
+					fontSize="36px"
+					lineHeight="48px">
           What&apos;s your grant about?
-        </Text>
+				</Text>
 
-        <Box mt={12} />
+				<Box mt={12} />
 
-        <SingleLineInput
-          label="Grant Title"
-          value={title}
-          onChange={(e) => {
-            setTitleError(false);
-            setTitle(e.target.value);
-          }}
-          placeholder="Decentralized batching contract"
-          subtext="Letters, spaces, and numbers are allowed."
-          isError={titleError}
-          errorText="Required"
-        />
+				<SingleLineInput
+					label="Grant Title"
+					value={title}
+					onChange={
+						(e) => {
+							setTitleError(false)
+							setTitle(e.target.value)
+						}
+					}
+					placeholder="Decentralized batching contract"
+					subtext="Letters, spaces, and numbers are allowed."
+					isError={titleError}
+					errorText="Required"
+				/>
 
-        <Box mt={12} />
+				<Box mt={12} />
 
-        <MultiLineInput
-          label="Grant Summary"
-          placeholder="A tool, script or tutorial to set up monitoring for miner GPU, CPU, & memory."
-          value={summary}
-          onChange={(e) => {
-            setSummaryError(false);
-            if (e.target.value.length <= maxDescriptionLength) {
-              setSummary(e.target.value);
-            }
-          }}
-          maxLength={maxDescriptionLength}
-          isError={summaryError}
-          errorText="Required"
-        />
+				<MultiLineInput
+					label="Grant Summary"
+					placeholder="A tool, script or tutorial to set up monitoring for miner GPU, CPU, & memory."
+					value={summary}
+					onChange={
+						(e) => {
+							setSummaryError(false)
+							if(e.target.value.length <= maxDescriptionLength) {
+								setSummary(e.target.value)
+							}
+						}
+					}
+					maxLength={maxDescriptionLength}
+					isError={summaryError}
+					errorText="Required"
+				/>
 
-      </Flex>
-      <Button
-        mt="auto"
-        variant="primary"
-        onClick={handleOnSubmit}
-      >
+			</Flex>
+			<Button
+				mt="auto"
+				variant="primary"
+				onClick={handleOnSubmit}
+			>
         Continue
-      </Button>
-    </>
-  );
+			</Button>
+		</>
+	)
 }
 
-export default Title;
+export default Title

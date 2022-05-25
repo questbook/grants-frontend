@@ -5,7 +5,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint ./src ./pages --ext .js,.ts,.jsx,.tsx",
+    "lint:fix": "eslint ./src ./pages --fix --ext .js,.ts,.jsx,.tsx",
     "export": "next export",
     "generate": "graphql-codegen --config codegen.yaml"
   },
@@ -49,6 +50,7 @@
     "wagmi": "^0.2.13"
   },
   "devDependencies": {
+    "@creatoros/eslint-config": "github:CreatorOS/eslint-config",
     "@graphql-codegen/cli": "^2.6.2",
     "@graphql-codegen/introspection": "^2.1.1",
     "@graphql-codegen/typescript": "^2.4.5",
@@ -60,16 +62,7 @@
     "@types/react": "17.0.38",
     "@types/react-datepicker": "^4.3.4",
     "@types/react-linkify": "^1.0.1",
-    "@typescript-eslint/eslint-plugin": "^5.10.1",
-    "@typescript-eslint/parser": "^5.10.1",
-    "eslint": "^8.7.0",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-airbnb-typescript": "^16.1.0",
-    "eslint-config-next": "12.0.8",
-    "eslint-plugin-import": "^2.25.4",
-    "eslint-plugin-jsx-a11y": "^6.5.1",
-    "eslint-plugin-react": "^7.28.0",
-    "eslint-plugin-react-hooks": "^4.3.0",
+    "eslint": "^7.14.0",
     "typescript": "4.5.5"
   }
 }
