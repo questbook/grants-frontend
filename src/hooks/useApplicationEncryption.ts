@@ -1,4 +1,7 @@
+import { ToastId, useToast } from '@chakra-ui/react';
 import { GrantApplicationFieldAnswerItem, GrantApplicationRequest } from '@questbook/service-validator-client';
+import { useRef } from 'react';
+import ErrorToast from 'src/components/ui/toasts/errorToast';
 import { GetApplicationDetailsQuery, GrantFieldAnswerItem } from 'src/generated/graphql';
 import { useAccount } from 'wagmi';
 import useEncryption from './utils/useEncryption';
@@ -6,6 +9,10 @@ import useEncryption from './utils/useEncryption';
 export default function useApplicationEncryption() {
   const { encryptMessage, decryptMessage } = useEncryption();
   const [{ data: accountData }] = useAccount();
+
+  const toastRef = useRef<ToastId>();
+  const toast = useToast();
+
   const encryptApplicationPII = async (
     data: GrantApplicationRequest,
     piiFields: string[],
@@ -37,7 +44,21 @@ export default function useApplicationEncryption() {
     if (!accountData || !accountData.address) return newData;
     const piiData = newData.pii.find((pii) => pii.id.split('.')[1].toLowerCase() === accountData.address.toLowerCase())!;
     console.log('piiData', piiData);
-    if (!piiData) return newData;
+    if (!piiData) {
+      console.log(newData);
+      toastRef.current = toast({
+        position: 'top',
+        render: () => ErrorToast({
+          content: 'User public key not present at time of encryption.',
+          close: () => {
+            if (toastRef.current) {
+              toast.close(toastRef.current);
+            }
+          },
+        }),
+      });
+      return newData;
+    }
     const applicationId = newData.pii[0].id.split('.')[0];
     let decryptedPiiData = await decryptMessage(piiData.data);
     console.log('decryptedPiiData', decryptedPiiData);
