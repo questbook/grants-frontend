@@ -20,7 +20,7 @@ import VerifiedBadge from 'src/components/ui/verified_badge'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
 import { CHAIN_INFO } from 'src/constants/chainInfo'
 import { SupportedChainId } from 'src/constants/chains'
-import { useGetGrantDetailsQuery, useGetGrantsAppliedToQuery, useGetApplicationDetailsQuery } from 'src/generated/graphql'
+import { useGetApplicationDetailsQuery, useGetGrantDetailsQuery, useGetGrantsAppliedToQuery } from 'src/generated/graphql'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import verify from 'src/utils/grantUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
@@ -68,8 +68,8 @@ function AboutGrant() {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [alreadyApplied, setAlreadyApplied] = useState(false)
 	const [account, setAccount] = useState<any>(null)
-  const [appliedAt, setAppliedAt] = useState<any>('')
-  const [applicationId, setApplicationId] = useState('')
+	const [appliedAt, setAppliedAt] = useState<any>('')
+	const [applicationId, setApplicationId] = useState('')
 
 	useEffect(() => {
 		// console.log(router.query);
@@ -89,9 +89,9 @@ function AboutGrant() {
 		client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
 	})
 
-  const [applicantionDetailsQueryParams, setApplicantionDetailsQueryParams] = useState<any>({
-    client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
-  });
+	const [applicantionDetailsQueryParams, setApplicantionDetailsQueryParams] = useState<any>({
+		client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
+	})
 
 	useEffect(() => {
 		if(!grantID) {
@@ -164,31 +164,34 @@ function AboutGrant() {
 	useEffect(() => {
 		const application = userGrants.find((x: any) => x.grant.id === grantID)
 		if(application) {
-      setApplicationId(application.id)
+			setApplicationId(application.id)
 			setAlreadyApplied(true)
 		}
 	}, [userGrants, accounts, grantID])
 
-  useEffect(() => {
-    if (!applicationId) return;
-    setApplicantionDetailsQueryParams({
-      client: subgraphClients[chainId as SupportedChainId].client,
-      variables: {
-        applicationID: applicationId,
-      },
-    });
-  },[applicationId, subgraphClients]);
+	useEffect(() => {
+		if(!applicationId) {
+			return
+		}
 
-  const applicationDetails = useGetApplicationDetailsQuery(applicantionDetailsQueryParams)
+		setApplicantionDetailsQueryParams({
+			client: subgraphClients[chainId as SupportedChainId].client,
+			variables: {
+				applicationID: applicationId,
+			},
+		})
+	}, [applicationId, subgraphClients])
 
-  useEffect(() => {
-    if(applicationDetails.data){
-      const secondsSinceEpoch = applicationDetails.data?.grantApplication?.createdAtS
-      const timeSinceEpoch = new Date(secondsSinceEpoch as number * 1000)
-      const timeInUTC = timeSinceEpoch.toUTCString()
-      setAppliedAt(timeInUTC)
-    }
-  },[applicationDetails])
+	const applicationDetails = useGetApplicationDetailsQuery(applicantionDetailsQueryParams)
+
+	useEffect(() => {
+		if(applicationDetails.data) {
+			const secondsSinceEpoch = applicationDetails.data?.grantApplication?.createdAtS
+			const timeSinceEpoch = new Date(secondsSinceEpoch as number * 1000)
+			const timeInUTC = timeSinceEpoch.toUTCString()
+			setAppliedAt(timeInUTC)
+		}
+	}, [applicationDetails])
 
 	useEffect(() => {
 		if(!chainId || !grantData) {
@@ -490,7 +493,7 @@ function AboutGrant() {
 						grantRequiredFields={grantRequiredFields}
 						acceptingApplications={acceptingApplications}
 						alreadyApplied={alreadyApplied}
-            appliedAt={appliedAt}
+						appliedAt={appliedAt}
 					/>
 				</Flex>
 			</Flex>
