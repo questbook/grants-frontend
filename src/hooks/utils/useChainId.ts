@@ -4,7 +4,6 @@ import { useNetwork } from 'wagmi'
 
 export default function useChainId() {
 	const { activeChain } = useNetwork()
-	console.log('NETWORK DATA: ', activeChain)
 	const supportedChainIdFromNetworkData = (chainId: number) => {
 		if(chainId === 4) {
 			return SupportedChainId.RINKEBY

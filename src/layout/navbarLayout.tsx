@@ -18,7 +18,6 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 	const currentPageRef = useRef(null)
 
 	useEffect(() => {
-		console.log('HERE!');
 		if(!connected && isDisconnected) {
 			setConnected(false)
 			toast({
@@ -28,16 +27,11 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 		} else if(isConnected) {
 			setConnected(true)
 		} else if (connected && isDisconnected) {
-			console.log('CONNECTORS: ', connectors);
 			connect(connectors[0]);
 			setConnected(true);
 		}
 
 	}, [isConnected, isDisconnected])
-
-	useEffect(() => {
-		console.log('CONNECTION: ', connected, isConnected, isConnecting, isReconnecting, isDisconnected, isError, isIdle)
-	}, [isConnected, isConnecting, isReconnecting, isDisconnected, isError, isIdle]);
 
 	return (
 		<VStack
