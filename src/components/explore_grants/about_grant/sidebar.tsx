@@ -84,11 +84,31 @@ function Sidebar({
 				{
 					acceptingApplications && alreadyApplied && (
 						<Button
-							mt={10}
-							variant="primary"
+            mt={10}
+            variant="primary"
+            isDisabled={true}
 						>
           Already applied!
 						</Button>
+					)
+				}
+        {
+					acceptingApplications && alreadyApplied && (
+						<Text
+            mt={2}
+            color="#717A7C"
+            textAlign="center"
+            fontWeight="400"
+            fontSize="12px"
+            lineHeight="16px"
+            mb={3}
+            >
+          You have sent your <a href="../../your_applications">
+          <u>
+          <b>application</b>
+          </u>
+          </a> for this grant at {appliedAt}.
+          </Text>
 					)
 				}
 				{
