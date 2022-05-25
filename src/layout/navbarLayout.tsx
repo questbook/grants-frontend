@@ -3,8 +3,6 @@ import { Container, useToast, VStack } from '@chakra-ui/react'
 import { useAccount, useConnect } from 'wagmi'
 import ConnectedNavbar from '../components/navbar/connected'
 import SignInNavbar from '../components/navbar/notConnected'
-import { useRouter } from 'next/router'
-
 interface Props {
   children: React.ReactNode;
   renderGetStarted?: boolean;
@@ -18,8 +16,6 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 
 	const [connected, setConnected] = React.useState(false)
 	const currentPageRef = useRef(null)
-
-	const router = useRouter()
 
 	useEffect(() => {
 		if(connected && !connectData.connected) {
@@ -43,7 +39,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 			p={0}>
 			{
 				accountData && connectData ? (
-					<ConnectedNavbar renderTabs={renderTabs! && router.pathname !== '/'} />
+					<ConnectedNavbar renderTabs={renderTabs!} />
 				) : (
 					<SignInNavbar renderGetStarted={renderGetStarted} />
 				)

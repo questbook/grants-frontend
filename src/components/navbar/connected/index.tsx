@@ -331,7 +331,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 				renderTabs ? (
 					<>
 						{
-							workspace?.id || grantsCount ? (
+							(workspace?.id || grantsCount) && router.pathname !== '/' ? (
 								<>
 									<Box mr="12px" />
 									<Flex
