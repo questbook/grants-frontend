@@ -1,182 +1,217 @@
+import React, { ReactElement, useEffect } from 'react'
 import {
-  Container,
-  useToast,
-  Text,
-  Flex,
-  Box,
-  VStack,
-  Image,
-  ToastId,
-  Link,
-} from '@chakra-ui/react';
-import { useRouter } from 'next/router';
-import React, { ReactElement, useEffect } from 'react';
-import { useConnect } from 'wagmi';
+	Box,
+	Container,
+	Flex,
+	Image,
+	Link,
+	Text,
+	ToastId,
+	useToast,
+	VStack,
+} from '@chakra-ui/react'
+import { useRouter } from 'next/router'
+import ErrorToast from 'src/components/ui/toasts/errorToast'
+import { CHAIN_INFO } from 'src/constants/chainInfo'
 import {
-  ALL_SUPPORTED_CHAIN_IDS,
-  SupportedChainId,
-} from 'src/constants/chains';
-import { CHAIN_INFO } from 'src/constants/chainInfo';
-import ErrorToast from 'src/components/ui/toasts/errorToast';
-import ModalContent from '../src/components/connect_wallet/modalContent';
-import WalletSelectButton from '../src/components/connect_wallet/walletSelectButton';
-import Modal from '../src/components/ui/modal';
-import SecondaryDropdown from '../src/components/ui/secondaryDropdown';
-import NavbarLayout from '../src/layout/navbarLayout';
-import strings from '../src/constants/strings.json';
+	ALL_SUPPORTED_CHAIN_IDS,
+	SupportedChainId,
+} from 'src/constants/chains'
+import { useConnect } from 'wagmi'
+import ModalContent from '../src/components/connect_wallet/modalContent'
+import WalletSelectButton from '../src/components/connect_wallet/walletSelectButton'
+import Modal from '../src/components/ui/modal'
+import SecondaryDropdown from '../src/components/ui/secondaryDropdown'
+import strings from '../src/constants/strings.json'
+import NavbarLayout from '../src/layout/navbarLayout'
 
 function ConnectWallet() {
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [
-    selectedNetworkId,
-    setSelectedNetworkId,
-  ] = React.useState<SupportedChainId>(ALL_SUPPORTED_CHAIN_IDS[0]);
-  const router = useRouter();
+	const [isModalOpen, setIsModalOpen] = React.useState(false)
+	const [
+		selectedNetworkId,
+		setSelectedNetworkId,
+	] = React.useState<SupportedChainId>(ALL_SUPPORTED_CHAIN_IDS[0])
+	const router = useRouter()
 
-  const [{ data: connectData, loading: connectLoading }] = useConnect();
+	const [{ data: connectData, loading: connectLoading }] = useConnect()
 
-  useEffect(() => {
-    if (!connectLoading && connectData && connectData.connected) {
-      if (router.query.flow === 'getting_started/dao') {
-        router.replace('/signup/');
-      } else if (router.query.flow === 'getting_started/developer') {
-        router.push({ pathname: '/' });
-      } else if (router.query.flow === '/') {
-        router.replace({
-          pathname: '/explore_grants/about_grant',
-          query: {
-            grantId: router.query.grantId,
-            chainId: router.query.chainId,
-          },
-        });
-      } else {
-        router.push({ pathname: '/' });
-      }
-    }
-  }, [connectLoading, connectData, router]);
+	useEffect(() => {
+		if(!connectLoading && connectData && connectData.connected) {
+			if(router.query.flow === 'getting_started/dao') {
+				router.replace('/signup/')
+			} else if(router.query.flow === 'getting_started/developer') {
+				router.push({ pathname: '/' })
+			} else if(router.query.flow === '/') {
+				router.replace({
+					pathname: '/explore_grants/about_grant',
+					query: {
+						grantId: router.query.grantId,
+						chainId: router.query.chainId,
+					},
+				})
+			} else {
+				router.push({ pathname: '/' })
+			}
+		}
+	}, [connectLoading, connectData, router])
 
-  const [{ data, error }, connect] = useConnect();
-  const toast = useToast();
-  const toastRef = React.useRef<ToastId>();
+	const [{ data, error }, connect] = useConnect()
+	const toast = useToast()
+	const toastRef = React.useRef<ToastId>()
 
-  useEffect(() => {
-    if (error) {
-      toastRef.current = toast({
-        position: 'top',
-        render: () => ErrorToast({
-          content: 'Please check your Metamask extension in the browser',
-          close: () => {
-            if (toastRef.current) {
-              toast.close(toastRef.current);
-            }
-          },
-        }),
-      });
-    }
-  }, [toast, error]);
+	useEffect(() => {
+		if(error) {
+			toastRef.current = toast({
+				position: 'top',
+				render: () => ErrorToast({
+					content: 'Please check your Metamask extension in the browser',
+					close: () => {
+						if(toastRef.current) {
+							toast.close(toastRef.current)
+						}
+					},
+				}),
+			})
+		}
+	}, [toast, error])
 
-  return (
-    <Container
-      maxW="100%"
-      display="flex"
-      px="70px"
-      flexDirection="column"
-      alignItems="center"
-    >
-      <Text mt="46px" variant="heading">
-        {strings.connect_wallet.heading}
-      </Text>
-      <Text mt={7} textAlign="center">
-        {strings.connect_wallet.subheading_1}
-        {' '}
-        {/* <Tooltip label={strings.connect_wallet.tooltip_label} /> */}
-        {strings.connect_wallet.subheading_2}
-      </Text>
+	return (
+		<Container
+			maxW="100%"
+			display="flex"
+			px="70px"
+			flexDirection="column"
+			alignItems="center"
+		>
+			<Text
+				mt="46px"
+				variant="heading">
+				{strings.connect_wallet.heading}
+			</Text>
+			<Text
+				mt={7}
+				textAlign="center">
+				{strings.connect_wallet.subheading_1}
+				{' '}
+				{/* <Tooltip label={strings.connect_wallet.tooltip_label} /> */}
+				{strings.connect_wallet.subheading_2}
+			</Text>
 
-      <Flex alignItems="baseline" mt={7}>
-        <Text fontWeight="400" color="#3E4969" mr={4}>
-          {strings.connect_wallet.dropdown_label}
-        </Text>
-        <SecondaryDropdown
-          listItemsMinWidth="280px"
-          listItems={ALL_SUPPORTED_CHAIN_IDS.map((chainId) => ({
-            id: chainId,
-            label: CHAIN_INFO[chainId].name,
-            icon: CHAIN_INFO[chainId].icon,
-          }))}
-          // value={rewardCurrency}
-          onChange={(id: SupportedChainId) => {
-            setSelectedNetworkId(id);
-          }}
-        />
-        {/* <Box mr={3} />
+			<Flex
+				alignItems="baseline"
+				mt={7}>
+				<Text
+					fontWeight="400"
+					color="#3E4969"
+					mr={4}>
+					{strings.connect_wallet.dropdown_label}
+				</Text>
+				<SecondaryDropdown
+					listItemsMinWidth="280px"
+					listItems={
+						ALL_SUPPORTED_CHAIN_IDS.map((chainId) => ({
+							id: chainId,
+							label: CHAIN_INFO[chainId].name,
+							icon: CHAIN_INFO[chainId].icon,
+						}))
+					}
+					// value={rewardCurrency}
+					onChange={
+						(id: SupportedChainId) => {
+							setSelectedNetworkId(id)
+						}
+					}
+				/>
+				{/* <Box mr={3} />
         <Tooltip
           h="14px"
           w="14px"
           label={strings.connect_wallet.tooltip_label}
         /> */}
-      </Flex>
+			</Flex>
 
-      <Box mt={7} />
+			<Box mt={7} />
 
-      <VStack
-        spacing={5}
-        width="100%"
-        maxW="496px"
-        flexDirection="column"
-        mt={7}
-      >
-        {CHAIN_INFO[selectedNetworkId].wallets.map(({ name, icon, id }) => (
-          <WalletSelectButton
-            key={id}
-            name={name}
-            icon={icon}
-            onClick={() => {
-              const connector = data.connectors.find((x) => x.id === id);
-              if (connector) {
-                connect(connector);
-              }
-            }}
-          />
-        ))}
-      </VStack>
+			<VStack
+				spacing={5}
+				width="100%"
+				maxW="496px"
+				flexDirection="column"
+				mt={7}
+			>
+				{
+					CHAIN_INFO[selectedNetworkId].wallets.map(({ name, icon, id }) => (
+						<WalletSelectButton
+							key={id}
+							name={name}
+							icon={icon}
+							onClick={
+								() => {
+									const connector = data.connectors.find((x) => x.id === id)
+									if(connector) {
+										connect(connector)
+									}
+								}
+							}
+						/>
+					))
+				}
+			</VStack>
 
-      {router.query.flow === 'getting_started/dao' && (
-        <Text variant="footer" mt="24px">
-          <Image
-            display="inline-block"
-            src="/ui_icons/protip.svg"
-            alt="pro tip"
-            mb="-2px"
-          />
-          {' '}
-          <Text variant="footer" fontWeight="700" display="inline-block">
+			{
+				router.query.flow === 'getting_started/dao' && (
+					<Text
+						variant="footer"
+						mt="24px">
+						<Image
+							display="inline-block"
+							src="/ui_icons/protip.svg"
+							alt="pro tip"
+							mb="-2px"
+						/>
+						{' '}
+						<Text
+							variant="footer"
+							fontWeight="700"
+							display="inline-block">
             Pro Tip:
-            {' '}
-          </Text>
-          {' '}
-          {strings.connect_wallet.protip}
-        </Text>
-      )}
+							{' '}
+						</Text>
+						{' '}
+						{strings.connect_wallet.protip}
+					</Text>
+				)
+			}
 
-      <Text variant="footer" my="36px">
-        {strings.connect_wallet.footer}
-        {' '}
-        <Link isExternal href="http://socionity.com/privacy.html">Terms of Service</Link>
-      </Text>
+			<Text
+				variant="footer"
+				my="36px">
+				{strings.connect_wallet.footer}
+				{' '}
+				<Link
+					isExternal
+					href="http://socionity.com/privacy.html">
+Terms of Service
+				</Link>
+			</Text>
 
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="Unlock Wallet"
-      >
-        <ModalContent onClose={() => setIsModalOpen(false)} />
-      </Modal>
-    </Container>
-  );
+			<Modal
+				isOpen={isModalOpen}
+				onClose={() => setIsModalOpen(false)}
+				title="Unlock Wallet"
+			>
+				<ModalContent onClose={() => setIsModalOpen(false)} />
+			</Modal>
+		</Container>
+	)
 }
 
-ConnectWallet.getLayout = function getLayout(page: ReactElement) {
-  return <NavbarLayout>{page}</NavbarLayout>;
-};
-export default ConnectWallet;
+ConnectWallet.getLayout = function(page: ReactElement) {
+	return (
+		<NavbarLayout>
+			{page}
+		</NavbarLayout>
+	)
+}
+
+export default ConnectWallet

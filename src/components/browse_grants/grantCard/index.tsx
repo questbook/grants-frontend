@@ -1,20 +1,20 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react';
+
+import React from 'react'
 import {
-  Image,
-  Text,
-  Button,
-  Flex,
-  Box,
-  Divider,
-  Link,
-} from '@chakra-ui/react';
-import { SupportedChainId } from 'src/constants/chains';
-import { useRouter } from 'next/router';
-import { CHAIN_INFO } from 'src/constants/chainInfo';
-import VerifiedBadge from 'src/components/ui/verified_badge';
-import ShareMenu from './menu';
-import Badge from './badge';
+	Box,
+	Button,
+	Divider,
+	Flex,
+	Image,
+	Link,
+	Text,
+} from '@chakra-ui/react'
+import { useRouter } from 'next/router'
+import VerifiedBadge from 'src/components/ui/verified_badge'
+import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { SupportedChainId } from 'src/constants/chains'
+import Badge from './badge'
+import ShareMenu from './menu'
 
 interface GrantCardProps {
   daoID: string;
@@ -41,129 +41,163 @@ interface GrantCardProps {
 }
 
 function GrantCard({
-  daoID,
-  grantID,
-  daoIcon,
-  daoName,
-  isDaoVerified,
-  chainId,
+	daoID,
+	grantID,
+	daoIcon,
+	daoName,
+	isDaoVerified,
+	chainId,
 
-  grantTitle,
-  grantDesc,
-  isGrantVerified,
-  funding,
+	grantTitle,
+	grantDesc,
+	isGrantVerified,
+	funding,
 
-  numOfApplicants,
-  endTimestamp,
+	numOfApplicants,
+	endTimestamp,
 
-  grantAmount,
-  grantCurrency,
-  grantCurrencyIcon,
+	grantAmount,
+	grantCurrency,
+	grantCurrencyIcon,
 
-  onClick,
-  onTitleClick,
+	onClick,
+	onTitleClick,
 }: GrantCardProps) {
-  const router = useRouter();
-  return (
-    <>
-      <Flex py={6} w="100%">
-        <Image objectFit="cover" h="54px" w="54px" src={daoIcon} />
-        <Flex flex={1} direction="column" ml={6}>
-          <Flex direction="row" alignItems="start">
-            <Text maxW="50%">
-              <Link
-                onClick={onTitleClick}
-                whiteSpace="normal"
-                textAlign="left"
-                lineHeight="26px"
-                fontSize="18px"
-                fontWeight="700"
-                color="#12224"
-              >
-                {grantTitle}
-              </Link>
-              {isGrantVerified && (
-              <VerifiedBadge
-                grantAmount={funding}
-                grantCurrency={grantCurrency}
-                lineHeight="26px"
-                marginBottom={-1}
-              />
-              )}
-            </Text>
+	const router = useRouter()
+	return (
+		<>
+			<Flex
+				py={6}
+				w="100%">
+				<Image
+					objectFit="cover"
+					h="54px"
+					w="54px"
+					src={daoIcon} />
+				<Flex
+					flex={1}
+					direction="column"
+					ml={6}>
+					<Flex
+						direction="row"
+						alignItems="start">
+						<Text maxW="50%">
+							<Link
+								onClick={onTitleClick}
+								whiteSpace="normal"
+								textAlign="left"
+								lineHeight="26px"
+								fontSize="18px"
+								fontWeight="700"
+								color="#12224"
+							>
+								{grantTitle}
+							</Link>
+							{
+								isGrantVerified && (
+									<VerifiedBadge
+										grantAmount={funding}
+										grantCurrency={grantCurrency}
+										lineHeight="26px"
+										marginBottom={-1}
+									/>
+								)
+							}
+						</Text>
 
-            <Box mr="auto" />
-            <Badge
-              numOfApplicants={numOfApplicants}
-              endTimestamp={endTimestamp}
-            />
-          </Flex>
+						<Box mr="auto" />
+						<Badge
+							numOfApplicants={numOfApplicants}
+							endTimestamp={endTimestamp}
+						/>
+					</Flex>
 
-          <Flex direction="row">
-            <Link
-              onClick={() => {
-                router.push({
-                  pathname: '/profile',
-                  query: {
-                    daoId: daoID,
-                    chainId,
-                  },
-                });
-              }}
-              lineHeight="24px"
-              fontWeight="700"
-            >
-              {daoName}
-              {isDaoVerified && (
-                <Image
-                  h={4}
-                  w={4}
-                  display="inline-block"
-                  src="/ui_icons/verified.svg"
-                  ml="2px"
-                  mb="-2px"
-                />
-              )}
-            </Link>
-            <Text
-              fontSize="16px"
-              color="#717A7C"
-              fontWeight="400"
-              lineHeight="24px"
-              ml={2}
-            >
-              {`• ${CHAIN_INFO[chainId!]?.name}`}
-            </Text>
-          </Flex>
+					<Flex direction="row">
+						<Link
+							onClick={
+								() => {
+									router.push({
+										pathname: '/profile',
+										query: {
+											daoId: daoID,
+											chainId,
+										},
+									})
+								}
+							}
+							lineHeight="24px"
+							fontWeight="700"
+						>
+							{daoName}
+							{
+								isDaoVerified && (
+									<Image
+										h={4}
+										w={4}
+										display="inline-block"
+										src="/ui_icons/verified.svg"
+										ml="2px"
+										mb="-2px"
+									/>
+								)
+							}
+						</Link>
+						<Text
+							fontSize="16px"
+							color="#717A7C"
+							fontWeight="400"
+							lineHeight="24px"
+							ml={2}
+						>
+							{`• ${CHAIN_INFO[chainId!]?.name}`}
+						</Text>
+					</Flex>
 
-          <Text mt={5} lineHeight="24px" color="#122224" fontWeight="400">
-            {grantDesc}
-          </Text>
+					<Text
+						mt={5}
+						lineHeight="24px"
+						color="#122224"
+						fontWeight="400">
+						{grantDesc}
+					</Text>
 
-          <Flex direction="row" mt={8} alignItems="center">
-            <Image boxSize="36px" src={grantCurrencyIcon} />
-            <Text ml={2} fontWeight="700" color="#3F06A0">
-              {grantAmount}
-              {' '}
-              {grantCurrency}
-            </Text>
-            <Box mr="auto" />
-            <ShareMenu chainId={chainId} grantID={grantID} />
-            <Button ml={7} onClick={onClick} variant="primaryCta">
+					<Flex
+						direction="row"
+						mt={8}
+						alignItems="center">
+						<Image
+							boxSize="36px"
+							src={grantCurrencyIcon} />
+						<Text
+							ml={2}
+							fontWeight="700"
+							color="#3F06A0">
+							{grantAmount}
+							{' '}
+							{grantCurrency}
+						</Text>
+						<Box mr="auto" />
+						<ShareMenu
+							chainId={chainId}
+							grantID={grantID} />
+						<Button
+							ml={7}
+							onClick={onClick}
+							variant="primaryCta">
               Apply Now
-            </Button>
-          </Flex>
-        </Flex>
-      </Flex>
-      <Divider w="auto" />
-    </>
-  );
+						</Button>
+					</Flex>
+				</Flex>
+			</Flex>
+			<Divider w="auto" />
+		</>
+	)
 }
 
 GrantCard.defaultProps = {
-  isGrantVerified: false,
-  isDaoVerified: false,
-  onClick: () => {},
-  onTitleClick: () => {},
-};
-export default GrantCard;
+	isGrantVerified: false,
+	isDaoVerified: false,
+	onClick: () => {},
+	onTitleClick: () => {},
+}
+export default GrantCard

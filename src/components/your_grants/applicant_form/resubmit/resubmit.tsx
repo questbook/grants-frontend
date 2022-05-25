@@ -1,17 +1,17 @@
+import React from 'react'
 import {
-  Container, Button, Text, Box,
-} from '@chakra-ui/react';
-import React from 'react';
-import Loader from 'src/components/ui/loader';
-import MultiLineInput from '../../../ui/forms/multiLineInput';
+	Box,
+	Button, Container, Text, } from '@chakra-ui/react'
+import Loader from 'src/components/ui/loader'
+import MultiLineInput from '../../../ui/forms/multiLineInput'
 
 function Resubmit({
-  onSubmit,
-  hasClicked,
-  comment,
-  setComment,
-  commentError,
-  setCommentError,
+	onSubmit,
+	hasClicked,
+	comment,
+	setComment,
+	commentError,
+	setCommentError,
 }: {
   onSubmit: (data: any) => void;
   hasClicked: boolean;
@@ -20,43 +20,54 @@ function Resubmit({
   commentError: boolean;
   setCommentError: (commentError: boolean) => void;
 }) {
-  return (
-    <Container
-      flex={1}
-      display="flex"
-      flexDirection="column"
-      maxW="502px"
-      alignItems="stretch"
-      pb={8}
-      px={0}
-      alignSelf="flex-start"
-      ml={0}
-    >
-      <Text fontSize="18px" lineHeight="26px" fontWeight="700">
+	return (
+		<Container
+			flex={1}
+			display="flex"
+			flexDirection="column"
+			maxW="502px"
+			alignItems="stretch"
+			pb={8}
+			px={0}
+			alignSelf="flex-start"
+			ml={0}
+		>
+			<Text
+				fontSize="18px"
+				lineHeight="26px"
+				fontWeight="700">
         Reason for Resubmission
-      </Text>
+			</Text>
 
-      <Box mt="24px" />
-      <MultiLineInput
-        label="Comments"
-        placeholder="Write an explanation as detailed as possible about every
+			<Box mt="24px" />
+			<MultiLineInput
+				label="Comments"
+				placeholder="Write an explanation as detailed as possible about every
         reason asking for resubmission."
-        value={comment}
-        onChange={(e) => {
-          if (commentError) {
-            setCommentError(false);
-          }
-          setComment(e.target.value);
-        }}
-        isError={commentError}
-        errorText="Required"
-      />
+				value={comment}
+				onChange={
+					(e) => {
+						if(commentError) {
+							setCommentError(false)
+						}
 
-      <Button onClick={() => (hasClicked ? {} : onSubmit({ comment }))} w="100%" mt={10} py={hasClicked ? 2 : 0} variant="primary">
-        {hasClicked ? <Loader /> : 'Ask to Resubmit'}
-      </Button>
-    </Container>
-  );
+						setComment(e.target.value)
+					}
+				}
+				isError={commentError}
+				errorText="Required"
+			/>
+
+			<Button
+				onClick={() => (hasClicked ? {} : onSubmit({ comment }))}
+				w="100%"
+				mt={10}
+				py={hasClicked ? 2 : 0}
+				variant="primary">
+				{hasClicked ? <Loader /> : 'Ask to Resubmit'}
+			</Button>
+		</Container>
+	)
 }
 
-export default Resubmit;
+export default Resubmit
