@@ -19,6 +19,7 @@ import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGran
 import { CHAIN_INFO } from 'src/constants/chainInfo'
 import { SupportedChainId } from 'src/constants/chains'
 import {
+	useGetApplicationDetailsQuery,
 	useGetGrantDetailsQuery,
 	useGetGrantsAppliedToQuery,
 } from 'src/generated/graphql'
@@ -67,6 +68,8 @@ function AboutGrant() {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [alreadyApplied, setAlreadyApplied] = useState(false)
 	const [account, setAccount] = useState<any>(null)
+	const [appliedAt, setAppliedAt] = useState<any>('')
+	const [applicationId, setApplicationId] = useState('')
 
 	useEffect(() => {
 		// console.log(router.query);
@@ -83,6 +86,10 @@ function AboutGrant() {
 	})
 
 	const [applicantQueryParams, setApplicantQueryParams] = useState<any>({
+		client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
+	})
+
+	const [applicantionDetailsQueryParams, setApplicantionDetailsQueryParams] = useState<any>({
 		client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
 	})
 
@@ -145,11 +152,36 @@ function AboutGrant() {
 	}, [res, data])
 
 	useEffect(() => {
-		const Id = userGrants.find((x: any) => x.grant.id === grantID)
-		if(Id) {
+		const application = userGrants.find((x: any) => x.grant.id === grantID)
+		if(application) {
+			setApplicationId(application.id)
 			setAlreadyApplied(true)
 		}
 	}, [userGrants, accountData, grantID])
+
+	useEffect(() => {
+		if(!applicationId) {
+			return
+		}
+
+		setApplicantionDetailsQueryParams({
+			client: subgraphClients[chainId as SupportedChainId].client,
+			variables: {
+				applicationID: applicationId,
+			},
+		})
+	}, [applicationId, subgraphClients])
+
+	const applicationDetails = useGetApplicationDetailsQuery(applicantionDetailsQueryParams)
+
+	useEffect(() => {
+		if(applicationDetails.data) {
+			const secondsSinceEpoch = applicationDetails.data?.grantApplication?.createdAtS
+			const timeSinceEpoch = new Date(secondsSinceEpoch as number * 1000)
+			const timeInUTC = timeSinceEpoch.toUTCString()
+			setAppliedAt(timeInUTC)
+		}
+	}, [applicationDetails])
 
 	useEffect(() => {
 		if(!chainId || !grantData) {
@@ -461,6 +493,7 @@ function AboutGrant() {
 						grantRequiredFields={grantRequiredFields}
 						acceptingApplications={acceptingApplications}
 						alreadyApplied={alreadyApplied}
+						appliedAt={appliedAt}
 					/>
 				</Flex>
 			</Flex>
