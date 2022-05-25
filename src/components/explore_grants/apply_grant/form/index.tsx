@@ -1,7 +1,15 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
-  Box, Button, Text, Image, Link, Flex, Container, useToast, ToastId,
+  Box,
+  Button,
+  Text,
+  Image,
+  Link,
+  Flex,
+  Container,
+  useToast,
+  ToastId,
 } from '@chakra-ui/react';
 import { useAccount, useSigner } from 'wagmi';
 import { useRouter } from 'next/router';
@@ -21,6 +29,7 @@ import AboutProject from './3_aboutProject';
 import AboutTeam from './2_aboutTeam';
 import Funding from './4_funding';
 import CustomFields from './5_customFields';
+import strings from '../../../../constants/strings.json';
 
 interface Props {
   // onSubmit: (data: any) => void;
@@ -69,51 +78,58 @@ function Form({
   const [{ data: accountData }] = useAccount({
     fetchEns: false,
   });
+  const CACHE_KEY = strings.cache.apply_grant;
+  const getKey = `${chainId}-${CACHE_KEY}-${grantId}`;
 
   const { encryptApplicationPII } = useApplicationEncryption();
   const [signer] = useSigner();
-  const [applicantName, setApplicantName] = useState('');
-  const [applicantNameError, setApplicantNameError] = useState(false);
+  const [applicantName, setApplicantName] = React.useState('');
+  const [applicantNameError, setApplicantNameError] = React.useState(false);
 
-  const [applicantEmail, setApplicantEmail] = useState('');
-  const [applicantEmailError, setApplicantEmailError] = useState(false);
+  const [applicantEmail, setApplicantEmail] = React.useState('');
+  const [applicantEmailError, setApplicantEmailError] = React.useState(false);
 
-  const [teamMembers, setTeamMembers] = useState<number | null>(1);
-  const [teamMembersError, setTeamMembersError] = useState(false);
+  const [teamMembers, setTeamMembers] = React.useState<number | null>(1);
+  const [teamMembersError, setTeamMembersError] = React.useState(false);
 
-  const [membersDescription, setMembersDescription] = useState([
+  const [membersDescription, setMembersDescription] = React.useState([
     {
       description: '',
       isError: false,
     },
   ]);
 
-  const [projectName, setProjectName] = useState('');
-  const [projectNameError, setProjectNameError] = useState(false);
+  const [projectName, setProjectName] = React.useState('');
+  const [projectNameError, setProjectNameError] = React.useState(false);
 
-  const [projectLinks, setProjectLinks] = useState([
+  const [projectLinks, setProjectLinks] = React.useState([
     {
       link: '',
       isError: false,
     },
   ]);
 
-  const [projectDetails, setProjectDetails] = useState(EditorState
-    .createWithContent(convertFromRaw({
-      entityMap: {},
-      blocks: [{
-        text: '',
-        key: 'foo',
-        type: 'unstyled',
-        entityRanges: [],
-      } as any],
-    })));
-  const [projectDetailsError, setProjectDetailsError] = useState(false);
+  const [projectDetails, setProjectDetails] = React.useState(
+    EditorState.createWithContent(
+      convertFromRaw({
+        entityMap: {},
+        blocks: [
+          {
+            text: '',
+            key: 'foo',
+            type: 'unstyled',
+            entityRanges: [],
+          } as any,
+        ],
+      }),
+    ),
+  );
+  const [projectDetailsError, setProjectDetailsError] = React.useState(false);
 
-  const [projectGoal, setProjectGoal] = useState('');
-  const [projectGoalError, setProjectGoalError] = useState(false);
+  const [projectGoal, setProjectGoal] = React.useState('');
+  const [projectGoalError, setProjectGoalError] = React.useState(false);
 
-  const [projectMilestones, setProjectMilestones] = useState([
+  const [projectMilestones, setProjectMilestones] = React.useState([
     {
       milestone: '',
       milestoneReward: '',
@@ -122,34 +138,38 @@ function Form({
     },
   ]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (defaultMilestoneFields && defaultMilestoneFields.length > 0) {
-      setProjectMilestones(defaultMilestoneFields.map((defaultMilestone) => ({
-        milestone: defaultMilestone.detail,
-        milestoneReward: '',
-        milestoneIsError: false,
-        milestoneRewardIsError: false,
-      })));
+      setProjectMilestones(
+        defaultMilestoneFields.map((defaultMilestone) => ({
+          milestone: defaultMilestone.detail,
+          milestoneReward: '',
+          milestoneIsError: false,
+          milestoneRewardIsError: false,
+        })),
+      );
     }
   }, [defaultMilestoneFields]);
 
-  const [fundingAsk, setFundingAsk] = useState('');
-  const [fundingAskError, setFundingAskError] = useState(false);
+  const [fundingAsk, setFundingAsk] = React.useState('');
+  const [fundingAskError, setFundingAskError] = React.useState(false);
 
-  const [fundingBreakdown, setFundingBreakdown] = useState('');
-  const [fundingBreakdownError, setFundingBreakdownError] = useState(false);
+  const [fundingBreakdown, setFundingBreakdown] = React.useState('');
+  const [fundingBreakdownError, setFundingBreakdownError] = React.useState(false);
 
-  const [customFields, setCustomFields] = useState<any[]>([]);
-  useEffect(() => {
+  const [customFields, setCustomFields] = React.useState<any[]>([]);
+  React.useEffect(() => {
     if (customFields.length > 0) return;
-    setCustomFields(grantRequiredFields
-      .filter((field) => (field.startsWith('customField')))
-      .map((title) => ({
-        title,
-        value: '',
-        isError: false,
-      })));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    setCustomFields(
+      grantRequiredFields
+        .filter((field) => field.startsWith('customField'))
+        .map((title) => ({
+          title,
+          value: '',
+          isError: false,
+        })),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [grantRequiredFields]);
 
   const toastRef = React.useRef<ToastId>();
@@ -157,13 +177,14 @@ function Form({
   const router = useRouter();
 
   const [formData, setFormData] = React.useState<GrantApplicationRequest>();
-  const [
-    txnData,
-    txnLink,
-    loading,
-  ] = useSubmitApplication(formData!, chainId, grantId, workspaceId);
+  const [txnData, txnLink, loading] = useSubmitApplication(
+    formData!,
+    chainId,
+    grantId,
+    workspaceId,
+  );
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (txnData) {
       toastRef.current = toast({
         position: 'top',
@@ -182,7 +203,7 @@ function Form({
         pathname: '/your_applications',
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, router, txnData]);
 
   const handleOnSubmit = async () => {
@@ -191,11 +212,17 @@ function Form({
       setApplicantNameError(true);
       error = true;
     }
-    if ((applicantEmail === '' || !isValidEmail(applicantEmail)) && grantRequiredFields.includes('applicantEmail')) {
+    if (
+      (applicantEmail === '' || !isValidEmail(applicantEmail))
+      && grantRequiredFields.includes('applicantEmail')
+    ) {
       setApplicantEmailError(true);
       error = true;
     }
-    if ((!teamMembers || teamMembers <= 0) && grantRequiredFields.includes('teamMembers')) {
+    if (
+      (!teamMembers || teamMembers <= 0)
+      && grantRequiredFields.includes('teamMembers')
+    ) {
       setTeamMembersError(true);
       error = true;
     }
@@ -203,7 +230,10 @@ function Form({
     let membersDescriptionError = false;
     const newMembersDescriptionArray = [...membersDescription];
     membersDescription.forEach((member, index) => {
-      if (member.description === '' && grantRequiredFields.includes('memberDetails')) {
+      if (
+        member.description === ''
+        && grantRequiredFields.includes('memberDetails')
+      ) {
         newMembersDescriptionArray[index].isError = true;
         membersDescriptionError = true;
       }
@@ -264,7 +294,10 @@ function Form({
       setFundingAskError(true);
       error = true;
     }
-    if (fundingBreakdown === '' && grantRequiredFields.includes('fundingBreakdown')) {
+    if (
+      fundingBreakdown === ''
+      && grantRequiredFields.includes('fundingBreakdown')
+    ) {
       setFundingBreakdownError(true);
       error = true;
     }
@@ -287,7 +320,7 @@ function Form({
     const projectDetailsString = JSON.stringify(
       convertToRaw(projectDetails.getCurrentContent()),
     );
-    const links = projectLinks.map((pl) => (pl.link));
+    const links = projectLinks.map((pl) => pl.link);
 
     if (!signer || !signer.data) return;
 
@@ -299,20 +332,38 @@ function Form({
         applicantEmail: [{ value: applicantEmail }],
         projectName: [{ value: projectName }],
         projectDetails: [{ value: projectDetailsString }],
-        fundingAsk: [{ value: parseAmount(fundingAsk, rewardCurrencyAddress, rewardDecimal) }],
+        fundingAsk: [
+          {
+            value: parseAmount(
+              fundingAsk,
+              rewardCurrencyAddress,
+              rewardDecimal,
+            ),
+          },
+        ],
         fundingBreakdown: [{ value: fundingBreakdown }],
         teamMembers: [{ value: Number(teamMembers).toString() }],
-        memberDetails: membersDescription.map((md) => ({ value: md.description })),
+        memberDetails: membersDescription.map((md) => ({
+          value: md.description,
+        })),
         projectLink: links.map((value) => ({ value })),
         projectGoals: [{ value: projectGoal }],
-        isMultipleMilestones: [{ value: grantRequiredFields.includes('isMultipleMilestones').toString() }],
+        isMultipleMilestones: [
+          {
+            value: grantRequiredFields
+              .includes('isMultipleMilestones')
+              .toString(),
+          },
+        ],
       },
-      milestones: projectMilestones.map((pm) => (
-        {
-          title: pm.milestone,
-          amount: parseAmount(pm.milestoneReward, rewardCurrencyAddress, rewardDecimal),
-        }
-      )),
+      milestones: projectMilestones.map((pm) => ({
+        title: pm.milestone,
+        amount: parseAmount(
+          pm.milestoneReward,
+          rewardCurrencyAddress,
+          rewardDecimal,
+        ),
+      })),
     };
     Object.keys(data.fields).forEach((field) => {
       if (!grantRequiredFields.includes(field)) {
@@ -332,37 +383,127 @@ function Form({
     setFormData(encryptedData || data);
   };
 
+  React.useEffect(() => {
+    console.log('Key: ', getKey);
+    if (getKey.includes('undefined') || typeof window === 'undefined') return;
+    const data = localStorage.getItem(getKey);
+    if (data === 'undefined') return;
+    const formDataLocal = typeof window !== 'undefined' ? JSON.parse(data ?? '{}') : {};
+    if (formDataLocal?.applicantName) {
+      setApplicantName(formDataLocal?.applicantName);
+    }
+    if (formDataLocal?.applicantEmail) {
+      setApplicantEmail(formDataLocal?.applicantEmail);
+    }
+    if (formDataLocal?.teamMembers) setTeamMembers(formDataLocal?.teamMembers);
+    if (formDataLocal?.membersDescription) {
+      setMembersDescription(formDataLocal?.membersDescription);
+    }
+    if (formDataLocal?.projectName) {
+      setProjectName(formDataLocal?.projectName);
+    }
+    if (formDataLocal?.projectLinks) setProjectLinks(formDataLocal?.projectLinks);
+    if (formDataLocal?.projectDetails) {
+      setProjectDetails(
+        EditorState.createWithContent(
+          convertFromRaw(formDataLocal?.projectDetails),
+        ),
+      );
+    }
+    if (formDataLocal?.projectGoal) setProjectGoal(formDataLocal?.projectGoal);
+    if (formDataLocal?.projectMilestones) setProjectMilestones(formDataLocal?.projectMilestones);
+    if (formDataLocal?.fundingAsk) setFundingAsk(formDataLocal?.fundingAsk);
+    if (formDataLocal?.fundingBreakdown) setFundingBreakdown(formDataLocal?.fundingBreakdown);
+    if (formDataLocal?.customFields) setCustomFields(formDataLocal?.customFields);
+    console.log('Data from cache: ', formDataLocal);
+  }, [getKey]);
+
+  React.useEffect(() => {
+    if (getKey.includes('undefined')) return;
+    const formDataLocal = {
+      applicantName,
+      applicantEmail,
+      teamMembers,
+      membersDescription,
+      projectName,
+      projectLinks,
+      projectDetails: convertToRaw(projectDetails.getCurrentContent()),
+      projectGoal,
+      projectMilestones,
+      fundingAsk,
+      fundingBreakdown,
+      customFields,
+    };
+    console.log(JSON.stringify(formDataLocal));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(getKey, JSON.stringify(formDataLocal));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    applicantName,
+    applicantEmail,
+    teamMembers,
+    membersDescription,
+    projectName,
+    projectLinks,
+    projectDetails,
+    projectGoal,
+    projectMilestones,
+    fundingAsk,
+    fundingBreakdown,
+    customFields,
+  ]);
+
   return (
-    <Flex my="30px" flexDirection="column" alignItems="center" w="100%" px="44px">
+    <Flex
+      my="30px"
+      flexDirection="column"
+      alignItems="center"
+      w="100%"
+      px="44px"
+    >
       {!acceptingApplications && (
-      <Flex
-        w="100%"
-        bg="#F3F4F4"
-        direction="row"
-        align="center"
-        px={8}
-        py={6}
-        mt={6}
-        mb={8}
-        border="1px solid #E8E9E9"
-        borderRadius="6px"
-      >
-        <Image src="/toast/warning.svg" w="42px" h="36px" />
-        <Flex direction="column" ml={6}>
-          <Text variant="tableHeader" color="#414E50">
-            {shouldShowButton && accountData?.address ? 'Grant is archived and cannot be discovered on the Home page.' : 'Grant is archived and closed for new applications.'}
-          </Text>
-          <Text variant="tableBody" color="#717A7C" fontWeight="400" mt={2}>
-            New applicants cannot apply to an archived grant.
-          </Text>
+        <Flex
+          w="100%"
+          bg="#F3F4F4"
+          direction="row"
+          align="center"
+          px={8}
+          py={6}
+          mt={6}
+          mb={8}
+          border="1px solid #E8E9E9"
+          borderRadius="6px"
+        >
+          <Image src="/toast/warning.svg" w="42px" h="36px" />
+          <Flex direction="column" ml={6}>
+            <Text variant="tableHeader" color="#414E50">
+              {shouldShowButton && accountData?.address
+                ? 'Grant is archived and cannot be discovered on the Home page.'
+                : 'Grant is archived and closed for new applications.'}
+            </Text>
+            <Text variant="tableBody" color="#717A7C" fontWeight="400" mt={2}>
+              New applicants cannot apply to an archived grant.
+            </Text>
+          </Flex>
         </Flex>
-      </Flex>
       )}
-      <Image objectFit="cover" h="96px" w="96px" src={daoLogo} alt="Polygon DAO" />
+      <Image
+        objectFit="cover"
+        h="96px"
+        w="96px"
+        src={daoLogo}
+        alt="Polygon DAO"
+      />
       <Text mt={6} variant="heading">
         {title}
-        {isGrantVerified
-          && <VerifiedBadge grantAmount={funding} grantCurrency={rewardCurrency} lineHeight="44px" />}
+        {isGrantVerified && (
+          <VerifiedBadge
+            grantAmount={funding}
+            grantCurrency={rewardCurrency}
+            lineHeight="44px"
+          />
+        )}
       </Text>
       <Text
         zIndex="1"
@@ -375,7 +516,12 @@ function Form({
       >
         Your Application Form
       </Text>
-      <Container mt="-12px" p={10} border="2px solid #E8E9E9" borderRadius="12px">
+      <Container
+        mt="-12px"
+        p={10}
+        border="2px solid #E8E9E9"
+        borderRadius="12px"
+      >
         <ApplicantDetails
           applicantName={applicantName}
           applicantNameError={applicantNameError}
@@ -450,30 +596,47 @@ function Form({
       </Container>
 
       {acceptingApplications && (
-      <Text mt={10} textAlign="center" variant="footer" fontSize="12px">
-        <Image display="inline-block" src="/ui_icons/info.svg" alt="pro tip" mb="-2px" />
-        {' '}
-        By pressing Submit Application you&apos;ll have to approve this transaction in your wallet.
-        {' '}
-        <Link href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46" isExternal>Learn more</Link>
-        {' '}
-        <Image
-          display="inline-block"
-          src="/ui_icons/link.svg"
-          alt="pro tip"
-          mb="-1px"
-          h="10px"
-          w="10px"
-        />
-      </Text>
+        <Text mt={10} textAlign="center" variant="footer" fontSize="12px">
+          <Image
+            display="inline-block"
+            src="/ui_icons/info.svg"
+            alt="pro tip"
+            mb="-2px"
+          />
+          {' '}
+          By pressing Submit Application you&apos;ll have to approve this
+          transaction in your wallet.
+          {' '}
+          <Link
+            href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
+            isExternal
+          >
+            Learn more
+          </Link>
+          {' '}
+          <Image
+            display="inline-block"
+            src="/ui_icons/link.svg"
+            alt="pro tip"
+            mb="-1px"
+            h="10px"
+            w="10px"
+          />
+        </Text>
       )}
 
       <Box mt={5} />
 
       {acceptingApplications && (
-      <Button onClick={loading ? () => {} : handleOnSubmit} mx={10} alignSelf="stretch" variant="primary" py={loading ? 2 : 0}>
-        {loading ? <Loader /> : 'Submit Application'}
-      </Button>
+        <Button
+          onClick={loading ? () => {} : handleOnSubmit}
+          mx={10}
+          alignSelf="stretch"
+          variant="primary"
+          py={loading ? 2 : 0}
+        >
+          {loading ? <Loader /> : 'Submit Application'}
+        </Button>
       )}
     </Flex>
   );

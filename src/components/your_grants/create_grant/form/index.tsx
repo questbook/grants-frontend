@@ -1,27 +1,28 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box, Button, Text, Image, Link, Flex,
 } from '@chakra-ui/react';
 import Loader from 'src/components/ui/loader';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
-import useChainId from 'src/hooks/utils/useChainId';
-import { SupportedChainId } from 'src/constants/chains';
 import { useAccount } from 'wagmi';
-import { WorkspaceUpdateRequest, Token } from '@questbook/service-validator-client';
+import {
+  WorkspaceUpdateRequest,
+  Token,
+} from '@questbook/service-validator-client';
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys';
 import { ApiClientsContext } from 'pages/_app';
-import {
-  convertFromRaw, convertToRaw, EditorState,
-} from 'draft-js';
+import { convertFromRaw, convertToRaw, EditorState } from 'draft-js';
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils';
 import Title from './1_title';
 import Details from './2_details';
 import ApplicantDetails from './3_applicantDetails';
 import GrantRewardsInput from './4_rewards';
 import Heading from '../../../ui/heading';
 import applicantDetailsList from '../../../../constants/applicantDetailsList';
+import strings from '../../../../constants/strings.json';
 
 function Form({
   refs,
@@ -32,7 +33,21 @@ function Form({
   onSubmit: (data: any) => void;
   hasClicked: boolean;
 }) {
-  const { workspace } = useContext(ApiClientsContext)!;
+  const CACHE_KEY = strings.cache.create_grant;
+  const { workspace } = React.useContext(ApiClientsContext)!;
+
+  const [currentChain, setCurrentChain] = React.useState(
+    getSupportedChainIdFromWorkspace(workspace)!,
+  );
+
+  const [getKey, setGetKey] = React.useState(`${currentChain}-${CACHE_KEY}-${workspace?.id}`);
+
+  React.useEffect(() => {
+    setCurrentChain(getSupportedChainIdFromWorkspace(workspace)!);
+    setGetKey(`${currentChain}-${CACHE_KEY}-${workspace?.id}`);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspace, currentChain]);
+
   const [{ data: accountData }] = useAccount();
   const maxDescriptionLength = 300;
   const [title, setTitle] = useState('');
@@ -84,8 +99,8 @@ function Form({
   });
   const [transactionData] = useUpdateWorkspacePublicKeys(publicKey);
 
-  const [admins, setAdmins] = useState<any[]>([]);
-  const [maximumPoints, setMaximumPoints] = useState(5);
+  const [admins, setAdmins] = React.useState<any[]>([]);
+  const [maximumPoints, setMaximumPoints] = React.useState(5);
 
   // [TODO] : if different grantManagers are required for different grants
   // const [grantManagers, setGrantManagers] = useState<any[]>([accountData?.address]);
@@ -96,14 +111,14 @@ function Form({
   //   setGrantManagers(newGrantManagers);
   // };
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (transactionData) {
       setKeySubmitted(true);
       console.log('transactionData-----', transactionData);
     }
   }, [transactionData]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (workspace && workspace.members && accountData && accountData.address) {
       const hasPubKey = workspace.members.some(
         (member) => member.actorId.toLowerCase() === accountData?.address.toLowerCase()
@@ -115,7 +130,7 @@ function Form({
     }
   }, [accountData, workspace]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (workspace && workspace.members) {
       const adminAddresses = workspace.members
         .filter((member) => member.publicKey && member.publicKey !== '')
@@ -140,16 +155,21 @@ function Form({
       };
     })
     .filter((obj) => obj != null);
-  const [detailsRequired, setDetailsRequired] = useState(applicantDetails);
+  const [detailsRequired, setDetailsRequired] = React.useState(applicantDetails);
   // const [extraField, setExtraField] = useState(false);
 
   const [customFieldsOptionIsVisible, setCustomFieldsOptionIsVisible] = React.useState(false);
-  const [customFields, setCustomFields] = useState<any[]>([{
-    value: '',
-    isError: false,
-  }]);
-  const [multipleMilestones, setMultipleMilestones] = useState(false);
-  const [defaultMilestoneFields, setDefaultMilestoneFields] = useState<any[]>([]);
+  const [customFields, setCustomFields] = React.useState<any[]>([
+    {
+      value: '',
+      isError: false,
+    },
+  ]);
+  const [multipleMilestones, setMultipleMilestones] = React.useState(false);
+  const [milestoneSelectOptionIsVisible, setMilestoneSelectOptionIsVisible] = React.useState(false);
+  const [defaultMilestoneFields, setDefaultMilestoneFields] = React.useState<
+  any[]
+  >([]);
 
   const toggleDetailsRequired = (index: number) => {
     const newDetailsRequired = [...detailsRequired];
@@ -160,8 +180,8 @@ function Form({
     setDetailsRequired(newDetailsRequired);
   };
 
-  const [rubricRequired, setRubricRequired] = useState(false);
-  const [rubrics, setRubrics] = useState<any>([
+  const [rubricRequired, setRubricRequired] = React.useState(false);
+  const [rubrics, setRubrics] = React.useState<any>([
     {
       name: '',
       nameError: false,
@@ -170,52 +190,51 @@ function Form({
     },
   ]);
 
-  const [shouldEncryptReviews, setShouldEncryptReviews] = useState(false);
+  const [shouldEncryptReviews, setShouldEncryptReviews] = React.useState(false);
 
   // const [extraFieldDetails, setExtraFieldDetails] = useState('');
   // const [extraFieldError, setExtraFieldError] = useState(false);
 
+  // Grant Rewards and Deadline
   const [reward, setReward] = React.useState('');
   const [rewardToken, setRewardToken] = React.useState<Token>({
-    label: '', address: '', decimal: '18', iconHash: '',
+    label: '',
+    address: '',
+    decimal: '18',
+    iconHash: '',
   });
   const [rewardError, setRewardError] = React.useState(false);
-
-  const currentChain = useChainId() ?? SupportedChainId.RINKEBY;
 
   // const [supportCurrencies, setsupportCurrencies] = useState([{}]);
 
   const supportedCurrencies = Object.keys(
-    CHAIN_INFO[currentChain].supportedCurrencies,
+    CHAIN_INFO[currentChain]?.supportedCurrencies ?? [],
   )
-    .map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
+    .map((address) => CHAIN_INFO[currentChain]?.supportedCurrencies[address])
     .map((currency) => ({ ...currency, id: currency.address }));
 
-  const [rewardCurrency, setRewardCurrency] = React.useState(
-    supportedCurrencies[0].label,
-  );
+  const [rewardCurrency, setRewardCurrency] = React.useState(supportedCurrencies.length > 0
+    ? supportedCurrencies[0].label : '');
   const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
-    supportedCurrencies[0].id,
+    supportedCurrencies.length > 0 ? supportedCurrencies[0].id : '',
   );
   /**
- * checks if the workspace already has custom tokens added
- * if custom tokens found, append it to supportedCurrencies
- */
+   * checks if the workspace already has custom tokens added
+   * if custom tokens found, append it to supportedCurrencies
+   */
   if (workspace?.tokens) {
     for (let i = 0; i < workspace.tokens.length; i += 1) {
-      supportedCurrencies.push(
-        {
-          id: workspace.tokens[i].address,
-          address: workspace.tokens[i].address,
-          decimals: workspace.tokens[i].decimal,
-          label: workspace.tokens[i].label,
-          icon: getUrlForIPFSHash(workspace.tokens[i].iconHash),
-        },
-      );
+      supportedCurrencies.push({
+        id: workspace.tokens[i].address,
+        address: workspace.tokens[i].address,
+        decimals: workspace.tokens[i].decimal,
+        label: workspace.tokens[i].label,
+        icon: getUrlForIPFSHash(workspace.tokens[i].iconHash),
+      });
     }
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     // console.log(currentChain);
     if (currentChain) {
       const supportedCurrencies = Object.keys(
@@ -272,15 +291,18 @@ function Form({
     }
 
     if (defaultMilestoneFields.length > 0) {
-      const errorCheckedDefaultMilestoneFields = defaultMilestoneFields
-        .map((defaultMilestoneField: any) => {
-          const errorCheckedDefaultMilestoneField = { ...defaultMilestoneField };
+      const errorCheckedDefaultMilestoneFields = defaultMilestoneFields.map(
+        (defaultMilestoneField: any) => {
+          const errorCheckedDefaultMilestoneField = {
+            ...defaultMilestoneField,
+          };
           if (defaultMilestoneField.value.length <= 0) {
             errorCheckedDefaultMilestoneField.isError = true;
             error = true;
           }
           return errorCheckedDefaultMilestoneField;
-        });
+        },
+      );
       setDefaultMilestoneFields(errorCheckedDefaultMilestoneFields);
     }
 
@@ -356,7 +378,9 @@ function Form({
       }
       if (customFieldsOptionIsVisible && customFields.length > 0) {
         customFields.forEach((customField: any, index: number) => {
-          const santizedCustomFieldValue = customField.value.split(' ').join('\\s');
+          const santizedCustomFieldValue = customField.value
+            .split(' ')
+            .join('\\s');
           fields[`customField${index}-${santizedCustomFieldValue}`] = {
             title: customField.value,
             inputType: 'short-form',
@@ -364,13 +388,17 @@ function Form({
         });
       }
       if (defaultMilestoneFields.length > 0) {
-        defaultMilestoneFields.forEach((defaultMilestoneField: any, index: number) => {
-          const santizedDefaultMilestoneFieldValue = defaultMilestoneField.value.split(' ').join('\\s');
-          fields[`defaultMilestone${index}-${santizedDefaultMilestoneFieldValue}`] = {
-            title: defaultMilestoneField.value,
-            inputType: 'short-form',
-          };
-        });
+        defaultMilestoneFields.forEach(
+          (defaultMilestoneField: any, index: number) => {
+            const santizedDefaultMilestoneFieldValue = defaultMilestoneField.value.split(' ').join('\\s');
+            fields[
+              `defaultMilestone${index}-${santizedDefaultMilestoneFieldValue}`
+            ] = {
+              title: defaultMilestoneField.value,
+              inputType: 'short-form',
+            };
+          },
+        );
       }
 
       const s = {
@@ -494,6 +522,101 @@ function Form({
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newPkTransactionData, newPublicKey]);
+  React.useEffect(() => {
+    console.log('Key: ', getKey);
+    if (getKey.includes('undefined') || typeof window === 'undefined') return;
+    const data = localStorage.getItem(getKey);
+    if (data === 'undefined') return;
+    const formData = typeof window !== 'undefined' ? JSON.parse(data ?? '{}') : {};
+    console.log('Data from cache: ', formData);
+
+    setTitle(formData?.title);
+    setSummary(formData?.summary);
+    if (formData?.details) {
+      setDetails(
+        EditorState.createWithContent(convertFromRaw(formData?.details)),
+      );
+    }
+    if (formData?.detailsRequired) {
+      setDetailsRequired(formData?.detailsRequired);
+    }
+    if (formData?.rubricRequired) setRubricRequired(formData?.rubricRequired);
+    if (formData?.customFieldsOptionIsVisible) {
+      setCustomFieldsOptionIsVisible(formData?.customFieldsOptionIsVisible);
+    }
+    if (formData?.customFields) {
+      setCustomFields(formData?.customFields);
+    }
+    if (formData?.milestoneSelectOptionIsVisible) {
+      setMilestoneSelectOptionIsVisible(formData?.milestoneSelectOptionIsVisible);
+    }
+    if (formData?.multipleMilestones) {
+      setMultipleMilestones(formData?.multipleMilestones);
+    }
+    if (formData?.rubrics) {
+      setRubrics(formData?.rubrics);
+    }
+    if (formData?.maximumPoints) {
+      setMaximumPoints(formData?.maximumPoints);
+    }
+    if (formData?.reward) setReward(formData?.reward);
+    if (formData?.rewardToken) setRewardToken(formData?.rewardToken);
+    if (formData?.rewardCurrency) setRewardCurrency(formData?.rewardCurrency);
+    if (formData?.rewardCurrencyAddress) {
+      setRewardCurrencyAddress(formData?.rewardCurrencyAddress);
+    }
+    if (formData?.date) setDate(formData?.date);
+    if (formData?.shouldEncrypt) setShouldEncrypt(formData?.shouldEncrypt);
+    if (formData?.shouldEncryptReviews) {
+      setShouldEncryptReviews(formData?.shouldEncryptReviews);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getKey]);
+
+  React.useEffect(() => {
+    if (getKey.includes('undefined') || typeof window === 'undefined') return;
+    const formData = {
+      title,
+      summary,
+      details: convertToRaw(details.getCurrentContent()),
+      detailsRequired,
+      rubricRequired,
+      customFieldsOptionIsVisible,
+      customFields,
+      multipleMilestones,
+      milestoneSelectOptionIsVisible,
+      rubrics,
+      maximumPoints,
+      reward,
+      rewardToken,
+      rewardCurrency,
+      rewardCurrencyAddress,
+      date,
+      shouldEncrypt,
+      shouldEncryptReviews,
+    };
+    console.log(JSON.stringify(formData));
+    localStorage.setItem(getKey, JSON.stringify(formData));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    details,
+    reward,
+    rewardCurrencyAddress,
+    rewardToken,
+    summary,
+    detailsRequired,
+    rubricRequired,
+    rubrics,
+    maximumPoints,
+    customFieldsOptionIsVisible,
+    customFields,
+    title,
+    shouldEncrypt,
+    shouldEncryptReviews,
+    date,
+    multipleMilestones,
+    milestoneSelectOptionIsVisible,
+  ]);
 
   return (
     <>
@@ -565,6 +688,8 @@ function Form({
         setCustomFieldsOptionIsVisible={setCustomFieldsOptionIsVisible}
         multipleMilestones={multipleMilestones}
         setMultipleMilestones={setMultipleMilestones}
+        milestoneSelectOptionIsVisible={milestoneSelectOptionIsVisible}
+        setMilestoneSelectOptionIsVisible={setMilestoneSelectOptionIsVisible}
         defaultMilestoneFields={defaultMilestoneFields}
         setDefaultMilestoneFields={setDefaultMilestoneFields}
         rubricRequired={rubricRequired}
@@ -605,7 +730,7 @@ function Form({
         setShouldEncryptReviews={setShouldEncryptReviews}
       />
 
-      <Flex alignItems="flex-start" mt={8} mb={10} maxW="400">
+      <Flex alignItems="flex-start" mt={8} mb={10} justify="stretch">
         <Image
           display="inline-block"
           h="10px"
@@ -615,8 +740,8 @@ function Form({
           mr={2}
         />
         {' '}
-        <Text variant="footer">
-          By clicking Publish Grant you&apos;ll have to approve this transaction
+        <Text variant="footer" w="100%">
+          By clicking Create Grant you&apos;ll have to approve this transaction
           in your wallet.
           {' '}
           <Link
@@ -637,7 +762,7 @@ function Form({
 
       <Button
         py={hasClicked ? 2 : 0}
-        onClick={hasClicked ? () => { } : handleOnSubmit}
+        onClick={hasClicked ? () => {} : handleOnSubmit}
         variant="primary"
       >
         {hasClicked ? <Loader /> : 'Create Grant'}

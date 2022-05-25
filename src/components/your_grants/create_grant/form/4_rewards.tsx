@@ -71,7 +71,7 @@ function GrantRewardsInput({
         <Box minW="160px" flex={1}>
           <SingleLineInput
             label="Grant Reward"
-            placeholder="100"
+            placeholder="e.g. 100"
             value={reward}
             onChange={(e) => {
               if (rewardError) {
@@ -94,7 +94,7 @@ function GrantRewardsInput({
           setSupportedCurrenciesList={setSupportedCurrenciesList}
           setIsJustAddedToken={setIsJustAddedToken}
         />
-        <Box mt={5} ml={4} minW="132px" flex={0}>
+        <Box mt={5} ml={4} minW="148px" flex={0}>
           <Dropdown
             listItemsMinWidth="132px"
             listItems={supportedCurrenciesList}
@@ -172,6 +172,7 @@ function GrantRewardsInput({
         <Flex justifyContent="center" gap={2} alignItems="center">
           <Switch
             id="encrypt"
+            isChecked={shouldEncrypt}
             onChange={(e) => {
               setShouldEncrypt(e.target.checked);
             }}
@@ -200,7 +201,8 @@ function GrantRewardsInput({
         </Flex>
         <Flex justifyContent="center" gap={2} alignItems="center">
           <Switch
-            id="encrypt"
+            id="encryptReviews"
+            isChecked={shouldEncryptReviews}
             onChange={(e) => {
               setShouldEncryptReviews(e.target.checked);
             }}

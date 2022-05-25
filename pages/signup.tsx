@@ -20,7 +20,7 @@ function SignupDao() {
   const { setWorkspace } = useContext(ApiClientsContext)!;
 
   const [daoCreated, setDaoCreated] = React.useState(false);
-  const [creatingGrant, setCreatingGrant] = React.useState(false);
+  const [creatingGrant, setCreatingGrant] = React.useState(router.query.create_grant === 'true');
 
   const [newWorkspaceObject, setNewWorkspaceObject] = React.useState<any>({});
   const [newPublicKey, setNewPublicKey] = React.useState();

@@ -33,5 +33,9 @@
     "index": {},
     "explore_grants": {},
     "your_applications": {},
-    "your_grants": {}
+    "your_grants": {},
+    "cache": {
+        "create_grant": "create-grant",
+        "apply_grant": "apply-grant"
+    }
 }
