@@ -106,11 +106,7 @@ function Settings({ workspaceData }: Props) {
 	}
 
 	useEffect(() => {
-		if(!workspaceData) {
-			return
-		}
-
-		if(Object.keys(workspaceData).length === 0) {
+		if(!workspaceData || !Object.keys(workspaceData).length) {
 			return
 		}
 
