@@ -12,7 +12,7 @@ import React, {
   ReactElement, useContext, useEffect, useState,
 } from 'react';
 import { useRouter } from 'next/router';
-import { useGetGrantDetailsQuery, useGetGrantsAppliedToQuery } from 'src/generated/graphql';
+import { useGetGrantDetailsQuery, useGetGrantsAppliedToQuery, useGetApplicationDetailsQuery } from 'src/generated/graphql';
 import { ApiClientsContext } from 'pages/_app';
 import GrantShare from 'src/components/ui/grantShare';
 import { SupportedChainId } from 'src/constants/chains';
@@ -68,6 +68,8 @@ function AboutGrant() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [alreadyApplied, setAlreadyApplied] = useState(false);
   const [account, setAccount] = useState<any>(null);
+  const [appliedAt, setAppliedAt] = useState<any>('');
+  const [applicationId, setApplicationId] = useState('');
 
   useEffect(() => {
     // console.log(router.query);
@@ -80,6 +82,10 @@ function AboutGrant() {
   }, [router.query]);
 
   const [queryParams, setQueryParams] = useState<any>({
+    client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
+  });
+
+  const [applicantionDetailsQueryParams, setApplicantionDetailsQueryParams] = useState<any>({
     client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
   });
 
@@ -137,7 +143,7 @@ function AboutGrant() {
   }, [chainId, account, data, subgraphClients]);
 
   const res = useGetGrantsAppliedToQuery(applicantQueryParams);
-
+  
   useEffect(() => {
     if (res.data && res.data.grantApplications.length > 0) {
       setUserGrants(res.data.grantApplications);
@@ -145,11 +151,34 @@ function AboutGrant() {
   }, [res, data]);
 
   useEffect(() => {
-    const Id = userGrants.find((x: any) => x.grant.id === grantID);
-    if (Id) {
+    const application = userGrants.find((x: any) => x.grant.id === grantID);
+    
+    if (application) {
+      setApplicationId(application.id)
       setAlreadyApplied(true);
     }
   }, [userGrants, accounts, grantID]);
+
+  useEffect(() => {
+    if (!applicationId) return;
+    setApplicantionDetailsQueryParams({
+      client: subgraphClients[chainId as SupportedChainId].client,
+      variables: {
+        applicationID: applicationId,
+      },
+    });
+  },[applicationId, subgraphClients]);
+
+  const applicationDetails = useGetApplicationDetailsQuery(applicantionDetailsQueryParams)
+
+  useEffect(() => {
+    if(applicationDetails.data){
+      const secondsSinceEpoch = applicationDetails.data?.grantApplication?.createdAtS;
+      const timeSinceEpoch = new Date(secondsSinceEpoch as number * 1000);
+      const timeInUTC = timeSinceEpoch.toUTCString();
+      setAppliedAt(timeInUTC);
+    }
+  },[applicationDetails])
 
   useEffect(() => {
     if (!chainId || !grantData) return;
@@ -214,8 +243,6 @@ function AboutGrant() {
     setGrantSummary(grantData?.summary);
     setGrantRequiredFields(
       grantData?.fields?.map((field: any) => {
-        console.log(field);
-        console.log(field.title.startsWith('defaultMilestone'));
         if (field.title.startsWith('defaultMilestone')) return null;
         if (field.title.startsWith('customField')) {
           const i = field.title.indexOf('-');
@@ -400,6 +427,7 @@ function AboutGrant() {
             grantRequiredFields={grantRequiredFields}
             acceptingApplications={acceptingApplications}
             alreadyApplied={alreadyApplied}
+            appliedAt={appliedAt}
           />
         </Flex>
       </Flex>

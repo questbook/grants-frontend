@@ -13,10 +13,11 @@ interface Props {
   chainId: SupportedChainId | undefined;
   acceptingApplications: boolean;
   alreadyApplied: boolean;
+  appliedAt: string;
 }
 
 function Sidebar({
-  grantRequiredFields, grantID, chainId, acceptingApplications, alreadyApplied,
+  grantRequiredFields, grantID, chainId, acceptingApplications, alreadyApplied, appliedAt,
 }: Props) {
   const router = useRouter();
   return (
@@ -63,11 +64,27 @@ function Sidebar({
         )}
         {acceptingApplications && alreadyApplied && (
         <Button
-          mt={10}
-          variant="primary"
-        >
-          Already applied!
-        </Button>
+        mt={10}
+        variant="primary"
+        isDisabled={true}
+      >
+        Apply for Grant
+      </Button>)}
+      {acceptingApplications && alreadyApplied &&(<Text
+      mt={2}
+      color="#717A7C"
+      textAlign="center"
+      fontWeight="400"
+      fontSize="12px"
+      lineHeight="16px"
+      mb={3}
+    >
+      You have sent your <a href="../../your_applications">
+        <u>
+          <b>application</b>
+        </u>
+      </a> for this grant at {appliedAt}.
+    </Text>
         )}
         {acceptingApplications && !alreadyApplied && (
         <Text
