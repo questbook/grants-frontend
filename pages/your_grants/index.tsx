@@ -559,8 +559,10 @@ function YourGrants() {
 
       <AllowAccessToPublicKeyModal
         hiddenModalOpen={
-          (allGrantsCountData !== undefined && grantCount[0] && grantCount[1])
-          && (!ignorePkModal && pk.length === 0)
+          (isAdmin && (
+            (allGrantsCountData !== undefined && grantCount[0] && grantCount[1])
+          && (!ignorePkModal && pk.length === 0)))
+          || (!isAdmin && (!ignorePkModal && pk.length === 0))
         }
         isAdmin={isAdmin}
         setIgnorePkModal={(val: boolean) => {
