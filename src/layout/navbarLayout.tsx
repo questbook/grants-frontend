@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { Container, useToast, VStack } from '@chakra-ui/react'
-import { useAccount, useConnect, useNetwork } from 'wagmi'
+import { useConnect } from 'wagmi'
 import ConnectedNavbar from '../components/navbar/connected'
 import SignInNavbar from '../components/navbar/notConnected'
 
@@ -26,9 +26,9 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 			})
 		} else if(isConnected) {
 			setConnected(true)
-		} else if (connected && isDisconnected) {
-			connect(connectors[0]);
-			setConnected(true);
+		} else if(connected && isDisconnected) {
+			connect(connectors[0])
+			setConnected(true)
 		}
 
 	}, [isConnected, isDisconnected])
@@ -42,7 +42,10 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 			p={0}>
 			{
 				connected ? (
-					<ConnectedNavbar renderTabs={renderTabs ?? true} connected={connected} setConnected={setConnected} />
+					<ConnectedNavbar
+						renderTabs={renderTabs ?? true}
+						connected={connected}
+						setConnected={setConnected} />
 				) : (
 					<SignInNavbar renderGetStarted={renderGetStarted} />
 				)

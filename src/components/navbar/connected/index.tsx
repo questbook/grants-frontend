@@ -523,7 +523,9 @@ function Navbar({ renderTabs, connected, setConnected }: { renderTabs: boolean, 
 				)
 			}
 
-			<AccountDetails connected={connected} setConnected={setConnected} />
+			<AccountDetails
+				connected={connected}
+				setConnected={setConnected} />
 		</Container>
 	)
 }
