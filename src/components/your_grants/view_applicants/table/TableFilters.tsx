@@ -24,4 +24,4 @@ enum TableFilterNames {
   'assigned' = 'Assigned to review',
 }
 
-export { TableFilters, TableFilterNames };
+export { TableFilters, TableFilterNames }

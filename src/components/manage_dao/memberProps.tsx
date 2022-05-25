@@ -6,4 +6,4 @@ interface MemberProps {
   addedBy?: string;
 }
 
-export default MemberProps;
+export default MemberProps
