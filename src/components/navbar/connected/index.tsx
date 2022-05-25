@@ -329,7 +329,7 @@ function Navbar({ renderTabs, connected, setConnected }: { renderTabs: boolean, 
 				renderTabs ? (
 					<>
 						{
-							workspace?.id || grantsCount ? (
+							(workspace?.id || grantsCount) && router.pathname !== '/' ? (
 								<>
 									<Box mr="12px" />
 									<Flex

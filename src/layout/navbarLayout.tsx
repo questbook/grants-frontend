@@ -3,7 +3,6 @@ import { Container, useToast, VStack } from '@chakra-ui/react'
 import { useConnect } from 'wagmi'
 import ConnectedNavbar from '../components/navbar/connected'
 import SignInNavbar from '../components/navbar/notConnected'
-
 interface Props {
   children: React.ReactNode;
   renderGetStarted?: boolean;
@@ -43,7 +42,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 			{
 				connected ? (
 					<ConnectedNavbar
-						renderTabs={renderTabs ?? true}
+						renderTabs={renderTabs!}
 						connected={connected}
 						setConnected={setConnected} />
 				) : (
