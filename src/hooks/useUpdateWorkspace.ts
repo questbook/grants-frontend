@@ -36,6 +36,7 @@ export default function useUpdateWorkspace(
     if (data) {
       setError(undefined);
       setIncorrectNetwork(false);
+      setTransactionData(undefined);
     }
   }, [data]);
 

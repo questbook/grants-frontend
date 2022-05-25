@@ -101,8 +101,7 @@ function Settings({ workspaceData }: Props) {
   };
 
   useEffect(() => {
-    if (!workspaceData) return;
-    if (Object.keys(workspaceData).length === 0) return;
+    if (!workspaceData || !Object.keys(workspaceData).length) return;
     const twitterSocial = workspaceData.socials.filter(
       (socials: any) => socials.name === 'twitter',
     );
