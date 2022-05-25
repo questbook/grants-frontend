@@ -183,10 +183,10 @@ function AboutGrant() {
 
   useEffect(() => {
     if(applicationDetails.data){
-      const secondsSinceEpoch = applicationDetails.data?.grantApplication?.createdAtS;
-      const timeSinceEpoch = new Date(secondsSinceEpoch as number * 1000);
-      const timeInUTC = timeSinceEpoch.toUTCString();
-      setAppliedAt(timeInUTC);
+      const secondsSinceEpoch = applicationDetails.data?.grantApplication?.createdAtS
+      const timeSinceEpoch = new Date(secondsSinceEpoch as number * 1000)
+      const timeInUTC = timeSinceEpoch.toUTCString()
+      setAppliedAt(timeInUTC)
     }
   },[applicationDetails])
 
