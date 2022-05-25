@@ -36,6 +36,7 @@ export default function useUpdateWorkspace(
     if (data) {
       setError(undefined);
       setIncorrectNetwork(false);
+      setTransactionData(undefined);
     }
   }, [data]);
 
@@ -69,7 +70,7 @@ export default function useUpdateWorkspace(
         );
         const updateTransactionData = await updateTransaction.wait();
 
-        setTransactionData(updateTransactionData);
+        setTransactionData({ });
         setLoading(false);
       } catch (e: any) {
         const message = getErrorMessage(e);
