@@ -9,6 +9,7 @@ interface Props {
 }
 
 function DaoData({ disbursed, applicants, winners, time }: Props) {
+
   return (
     <Grid
     gap="1rem"
