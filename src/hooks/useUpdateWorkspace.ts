@@ -70,7 +70,7 @@ export default function useUpdateWorkspace(
         );
         const updateTransactionData = await updateTransaction.wait();
 
-        setTransactionData({ });
+        setTransactionData(updateTransactionData);
         setLoading(false);
       } catch (e: any) {
         const message = getErrorMessage(e);
