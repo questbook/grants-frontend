@@ -30,7 +30,7 @@ const PAGE_SIZE = 40
 
 function BrowseGrants() {
 	const containerRef = useRef(null)
-	const [{ data: accountData }] = useAccount()
+	const { data: accountData } = useAccount()
 	const router = useRouter()
 	const { subgraphClients } = useContext(ApiClientsContext)!
 

@@ -3,7 +3,8 @@ import { SupportedChainId } from 'src/constants/chains'
 import { useNetwork } from 'wagmi'
 
 export default function useChainId() {
-	const [{ data: networkData }] = useNetwork()
+	const { activeChain } = useNetwork()
+	console.log('NETWORK DATA: ', activeChain)
 	const supportedChainIdFromNetworkData = (chainId: number) => {
 		if(chainId === 4) {
 			return SupportedChainId.RINKEBY
@@ -35,13 +36,13 @@ export default function useChainId() {
 	const [chainId, setChainId] = React.useState<SupportedChainId>()
 	useEffect(() => {
 		// console.log('changing net');
-		if(!networkData.chain?.id) {
+		if(!activeChain?.id) {
 			setChainId(undefined)
 			return
 		}
 
-		setChainId(supportedChainIdFromNetworkData(networkData.chain.id))
-	}, [networkData.chain?.id])
+		setChainId(supportedChainIdFromNetworkData(activeChain.id))
+	}, [activeChain?.id])
 
 	return chainId
 }

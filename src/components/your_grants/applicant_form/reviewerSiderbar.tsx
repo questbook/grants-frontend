@@ -37,7 +37,7 @@ function ReviewerSidebar({
 }) {
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
-	const [{ data: accountData }] = useAccount()
+	const { data: accountData } = useAccount()
 
 	const [feedbackDrawerOpen, setFeedbackDrawerOpen] = React.useState(false)
 	const [feedbacks, setFeedbacks] = React.useState<any[]>([])
@@ -64,7 +64,7 @@ function ReviewerSidebar({
 		}
 
 		const review = applicationData?.reviews.find((r: any) => (
-			r.reviewer.id.split('.')[1].toLowerCase() === accountData?.address.toLowerCase()
+			r.reviewer.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
 		))
 		setYourReview(review)
 
@@ -73,7 +73,7 @@ function ReviewerSidebar({
 	const handleSeeFeedbackClick = async() => {
 		setDecrpytLoading(true)
 		const reviewData = yourReview.data.find((d: any) => (
-			d.id.split('.')[1].toLowerCase() === accountData?.address.toLowerCase()
+			d.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
 		))
 		const ipfsData = await getFromIPFS(reviewData.data)
 		let data = {}

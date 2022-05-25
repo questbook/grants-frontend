@@ -33,10 +33,10 @@ function ConnectWallet() {
 	] = React.useState<SupportedChainId>(ALL_SUPPORTED_CHAIN_IDS[0])
 	const router = useRouter()
 
-	const [{ data: connectData, loading: connectLoading }] = useConnect()
+	const { data: connectData, isConnecting, isConnected, isReconnecting, isError, connect, connectors } = useConnect()
 
 	useEffect(() => {
-		if(!connectLoading && connectData && connectData.connected) {
+		if((!isConnecting || !isReconnecting) && connectData && isConnected) {
 			if(router.query.flow === 'getting_started/dao') {
 				router.replace('/signup/')
 			} else if(router.query.flow === 'getting_started/developer') {
@@ -53,14 +53,13 @@ function ConnectWallet() {
 				router.push({ pathname: '/' })
 			}
 		}
-	}, [connectLoading, connectData, router])
+	}, [isConnecting, isReconnecting, connectData, router])
 
-	const [{ data, error }, connect] = useConnect()
 	const toast = useToast()
 	const toastRef = React.useRef<ToastId>()
 
 	useEffect(() => {
-		if(error) {
+		if(isError) {
 			toastRef.current = toast({
 				position: 'top',
 				render: () => ErrorToast({
@@ -73,7 +72,7 @@ function ConnectWallet() {
 				}),
 			})
 		}
-	}, [toast, error])
+	}, [toast, isError])
 
 	return (
 		<Container
@@ -147,7 +146,7 @@ function ConnectWallet() {
 							icon={icon}
 							onClick={
 								() => {
-									const connector = data.connectors.find((x) => x.id === id)
+									const connector = connectors.find((x) => x.id === id)
 									if(connector) {
 										connect(connector)
 									}

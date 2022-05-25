@@ -1,6 +1,4 @@
-import React, {
-	ReactElement, useContext, useEffect, useState,
-} from 'react'
+import React, { ReactElement, useContext, useEffect, useState } from 'react'
 import {
 	Box,
 	Button,
@@ -20,7 +18,10 @@ import VerifiedBadge from 'src/components/ui/verified_badge'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
 import { CHAIN_INFO } from 'src/constants/chainInfo'
 import { SupportedChainId } from 'src/constants/chains'
-import { useGetGrantDetailsQuery, useGetGrantsAppliedToQuery } from 'src/generated/graphql'
+import {
+	useGetGrantDetailsQuery,
+	useGetGrantsAppliedToQuery,
+} from 'src/generated/graphql'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import verify from 'src/utils/grantUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
@@ -38,9 +39,7 @@ import {
 import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils'
 
 function AboutGrant() {
-	const [{ data: accountData }] = useAccount({
-		fetchEns: false,
-	})
+	const { data: accountData } = useAccount()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 
 	const router = useRouter()
@@ -103,7 +102,6 @@ function AboutGrant() {
 				grantID,
 			},
 		})
-
 	}, [chainId, grantID])
 
 	const { data, error, loading } = useGetGrantDetailsQuery(queryParams)
@@ -113,22 +111,13 @@ function AboutGrant() {
 		if(data && data.grants && data.grants.length > 0) {
 			setGrantData(data.grants[0])
 		}
-
 	}, [data, error, loading])
 
-	const accounts = useAccount({
-		fetchEns: false,
-	})
-
 	useEffect(() => {
-		if(
-			accounts[0]
-      && accounts[0].data
-      && accounts[0].data.address.length > 0
-		) {
-			setAccount(accounts[0].data.address)
+		if(accountData && accountData?.address && accountData?.address?.length > 0) {
+			setAccount(accountData.address)
 		}
-	}, [accounts])
+	}, [accountData])
 
 	useEffect(() => {
 		if(!account) {
@@ -160,7 +149,7 @@ function AboutGrant() {
 		if(Id) {
 			setAlreadyApplied(true)
 		}
-	}, [userGrants, accounts, grantID])
+	}, [userGrants, accountData, grantID])
 
 	useEffect(() => {
 		if(!chainId || !grantData) {
@@ -178,14 +167,18 @@ function AboutGrant() {
 				icon: tokenIcon,
 			}
 		} else {
-			chainInfo = CHAIN_INFO[chainId]?.supportedCurrencies[
-				grantData.reward.asset.toLowerCase()
-			]
+			chainInfo =
+        CHAIN_INFO[chainId]?.supportedCurrencies[
+        	grantData.reward.asset.toLowerCase()
+        ]
 		}
 
 		// const chainInfo = CHAIN_INFO[chainId]
 		//   ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];
-		const [localIsGrantVerified, localFunding] = verify(grantData?.funding, chainInfo?.decimals)
+		const [localIsGrantVerified, localFunding] = verify(
+			grantData?.funding,
+			chainInfo?.decimals
+		)
 
 		setFunding(localFunding)
 		setIsGrantVerified(localIsGrantVerified)
@@ -197,7 +190,7 @@ function AboutGrant() {
 		setRewardAmount(
 			grantData?.reward?.committed
 				? formatAmount(grantData?.reward?.committed, chainInfo?.decimals ?? 18)
-				: '',
+				: ''
 		)
 		let supportedCurrencyObj
 		if(grantData.reward.token) {
@@ -206,7 +199,7 @@ function AboutGrant() {
 		} else {
 			supportedCurrencyObj = getAssetInfo(
 				grantData?.reward?.asset?.toLowerCase(),
-				chainId,
+				chainId
 			)
 		}
 
@@ -218,8 +211,8 @@ function AboutGrant() {
 		// console.log(grantData?.fields);
 
 		if(
-			grantData?.fields.length
-      && grantData?.fields?.some((fd: any) => fd.title === 'isMultipleMilestones')
+			grantData?.fields.length &&
+      grantData?.fields?.some((fd: any) => fd.title === 'isMultipleMilestones')
 		) {
 			setPayoutDescription('Multiple')
 		} else {
@@ -229,35 +222,35 @@ function AboutGrant() {
 		setGrantDetails(grantData?.details)
 		setGrantSummary(grantData?.summary)
 		setGrantRequiredFields(
-			grantData?.fields?.map((field: any) => {
-				console.log(field)
-				console.log(field.title.startsWith('defaultMilestone'))
-				if(field.title.startsWith('defaultMilestone')) {
-					return null
-				}
-
-				if(field.title.startsWith('customField')) {
-					const i = field.title.indexOf('-')
-					if(i !== -1) {
-						return (
-							{
-								detail: field.title.substring(i + 1).split('\\s').join(' '),
-							}
-						)
+			grantData?.fields
+				?.map((field: any) => {
+					console.log(field)
+					console.log(field.title.startsWith('defaultMilestone'))
+					if(field.title.startsWith('defaultMilestone')) {
+						return null
 					}
-				}
 
-				return (
-					{
+					if(field.title.startsWith('customField')) {
+						const i = field.title.indexOf('-')
+						if(i !== -1) {
+							return {
+								detail: field.title
+									.substring(i + 1)
+									.split('\\s')
+									.join(' '),
+							}
+						}
+					}
+
+					return {
 						detail: getFieldLabelFromFieldTitle(field.title) ?? 'Invalid Field',
 						// detail: field.title,
 					}
-				)
-			}).filter((field: any) => field !== null),
+				})
+				.filter((field: any) => field !== null)
 		)
 
 		setAcceptingApplications(grantData?.acceptingApplications)
-
 	}, [grantData, chainId])
 
 	useEffect(() => {
@@ -265,18 +258,19 @@ function AboutGrant() {
 	}, [workspace, accountData, daoId])
 
 	const [isAcceptingApplications, setIsAcceptingApplications] = React.useState<
-  [boolean, number]
+    [boolean, number]
   >([acceptingApplications, 0])
 
 	useEffect(() => {
 		setIsAcceptingApplications([acceptingApplications, 0])
 	}, [acceptingApplications])
 
-	const [transactionData, txnLink, archiveGrantLoading, archiveGrantError] = useArchiveGrant(
-		isAcceptingApplications[0],
-		isAcceptingApplications[1],
-		grantID,
-	)
+	const [transactionData, txnLink, archiveGrantLoading, archiveGrantError] =
+    useArchiveGrant(
+    	isAcceptingApplications[0],
+    	isAcceptingApplications[1],
+    	grantID
+    )
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
@@ -302,12 +296,10 @@ function AboutGrant() {
 			})
 			setIsModalOpen(false)
 		}
-
 	}, [toast, transactionData])
 
 	React.useEffect(() => {
 		setIsAcceptingApplications([acceptingApplications, 0])
-
 	}, [archiveGrantError])
 
 	return (
@@ -340,7 +332,11 @@ function AboutGrant() {
 							<Text
 								variant="tableHeader"
 								color="#414E50">
-								{shouldShowButton && accountData?.address ? 'Grant is archived and cannot be discovered on the Home page.' : 'Grant is archived and closed for new applications.'}
+								{
+									shouldShowButton && accountData?.address
+										? 'Grant is archived and cannot be discovered on the Home page.'
+										: 'Grant is archived and closed for new applications.'
+								}
 							</Text>
 							<Text
 								variant="tableBody"
@@ -426,22 +422,25 @@ function AboutGrant() {
 						payoutDescription={payoutDescription}
 						chainId={chainId}
 						defaultMilestoneFields={
-							grantData?.fields?.map((field: any) => {
-							// console.log(field);
-							// console.log(field.title.startsWith('defaultMilestone'));
-								if(field.title.startsWith('defaultMilestone')) {
-									const i = field.title.indexOf('-')
-									if(i !== -1) {
-										return (
-											{
-												detail: field.title.substring(i + 1).split('\\s').join(' '),
+							grantData?.fields
+								?.map((field: any) => {
+								// console.log(field);
+								// console.log(field.title.startsWith('defaultMilestone'));
+									if(field.title.startsWith('defaultMilestone')) {
+										const i = field.title.indexOf('-')
+										if(i !== -1) {
+											return {
+												detail: field.title
+													.substring(i + 1)
+													.split('\\s')
+													.join(' '),
 											}
-										)
+										}
 									}
-								}
 
-								return null
-							}).filter((field: any) => field !== null)
+									return null
+								})
+								.filter((field: any) => field !== null)
 						}
 					/>
 

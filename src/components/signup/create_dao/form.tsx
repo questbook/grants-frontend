@@ -47,7 +47,7 @@ function Form({
 	const toastRef = React.useRef<ToastId>()
 	const maxImageSize = 2
 
-	const [accountData] = useAccount()
+	const { data: accountData } = useAccount()
 
 	const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if(event.target.files && event.target.files[0]) {
@@ -101,7 +101,7 @@ function Form({
 			description: daoDescription,
 			image: imageFile,
 			network: chainId!,
-			ownerId: accountData.data?.address ?? '0x0000000000000000000000000000000000000000',
+			ownerId: accountData?.address ?? '0x0000000000000000000000000000000000000000',
 		})
 	}
 

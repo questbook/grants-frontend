@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { Container, useToast, VStack } from '@chakra-ui/react'
-import { useAccount, useConnect } from 'wagmi'
+import { useAccount, useConnect, useNetwork } from 'wagmi'
 import ConnectedNavbar from '../components/navbar/connected'
 import SignInNavbar from '../components/navbar/notConnected'
 
@@ -11,25 +11,33 @@ interface Props {
 }
 
 function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
-	const [{ data: connectData }] = useConnect()
-	const [{ data: accountData }] = useAccount({ fetchEns: false })
+	const { isDisconnected, isConnected, isError, isIdle, isConnecting, isReconnecting, connect, connectors } = useConnect()
 	const toast = useToast()
 
 	const [connected, setConnected] = React.useState(false)
 	const currentPageRef = useRef(null)
 
 	useEffect(() => {
-		if(connected && !connectData.connected) {
+		console.log('HERE!');
+		if(!connected && isDisconnected) {
 			setConnected(false)
 			toast({
 				title: 'Disconnected',
 				status: 'info',
 			})
-		} else if(!connected && connectData.connected) {
+		} else if(isConnected) {
 			setConnected(true)
+		} else if (connected && isDisconnected) {
+			console.log('CONNECTORS: ', connectors);
+			connect(connectors[0]);
+			setConnected(true);
 		}
 
-	}, [connectData])
+	}, [isConnected, isDisconnected])
+
+	useEffect(() => {
+		console.log('CONNECTION: ', connected, isConnected, isConnecting, isReconnecting, isDisconnected, isError, isIdle)
+	}, [isConnected, isConnecting, isReconnecting, isDisconnected, isError, isIdle]);
 
 	return (
 		<VStack
@@ -39,8 +47,8 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 			spacing={0}
 			p={0}>
 			{
-				accountData && connectData ? (
-					<ConnectedNavbar renderTabs={renderTabs ?? true} />
+				connected ? (
+					<ConnectedNavbar renderTabs={renderTabs ?? true} connected={connected} setConnected={setConnected} />
 				) : (
 					<SignInNavbar renderGetStarted={renderGetStarted} />
 				)

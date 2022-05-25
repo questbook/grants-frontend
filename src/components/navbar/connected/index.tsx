@@ -27,9 +27,9 @@ import { useAccount } from 'wagmi'
 import AccountDetails from './accountDetails'
 import Tab from './tab'
 
-function Navbar({ renderTabs }: { renderTabs: boolean }) {
+function Navbar({ renderTabs, connected, setConnected }: { renderTabs: boolean, connected: boolean, setConnected: (connected: boolean) => void }) {
 	const toast = useToast()
-	const [{ data: accountData }] = useAccount()
+	const { data: accountData } = useAccount()
 	const tabPaths = [
 		'your_grants',
 		'funds',
@@ -70,8 +70,6 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 		if(!workspace) {
 			return
 		}
-
-		console.log('Workspace or Account changed!')
 
 		const getNumberOfApplications = async() => {
 			try {
@@ -525,7 +523,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 				)
 			}
 
-			<AccountDetails />
+			<AccountDetails connected={connected} setConnected={setConnected} />
 		</Container>
 	)
 }

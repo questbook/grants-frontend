@@ -7,29 +7,23 @@ import {
 	Configuration,
 	ValidationApi,
 } from '@questbook/service-validator-client'
-import { providers } from 'ethers'
 import { NextPage } from 'next'
 import type { AppContext, AppProps } from 'next/app'
 import App from 'next/app'
 import Head from 'next/head'
 import { DefaultSeo } from 'next-seo'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
 import {
 	ALL_SUPPORTED_CHAIN_IDS,
 	// SupportedChainId,
 } from 'src/constants/chains'
 import { MinimalWorkspace } from 'src/types'
 import getSeo from 'src/utils/seo'
-import {
-	// Chain,
-	chain,
-	Connector,
-	defaultChains,
-	defaultL2Chains,
-	InjectedConnector,
-	Provider,
-} from 'wagmi'
+import { chain, configureChains, createClient, defaultChains, defaultL2Chains, WagmiConfig } from 'wagmi'
+import { InjectedConnector } from 'wagmi/connectors/injected'
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+import { infuraProvider } from 'wagmi/providers/infura'
+import { publicProvider } from 'wagmi/providers/public'
 import '../styles/globals.css'
 import 'draft-js/dist/Draft.css'
 import SubgraphClient from '../src/graphql/subgraph'
@@ -45,52 +39,33 @@ type AppPropsWithLayout = AppProps & {
 
 const infuraId = process.env.NEXT_PUBLIC_INFURA_ID
 
-// Chains for connectors to support
-// const chains = [...defaultChains, ...defaultL2Chains].filter(
-//   (chain) => chain.name in ['mainnet', 'polygonMainnet'],
-// );
+const defaultChain = chain.polygon
+const { chains, provider, webSocketProvider } = configureChains([...defaultChains, ...defaultL2Chains, defaultChain], [
+	infuraProvider({ infuraId }),
+	publicProvider(),
+])
 
-// Pick chains
-const chains = [
-	...defaultChains,
-	...defaultL2Chains,
-
-	// commenting to only support rinkeby
-	// CHAIN_INFO[SupportedChainId.HARMONY_TESTNET_S0] as Chain,
-]
-
-// commenting to only support rinkeby
-// const defaultChain = chain.polygonMainnet;
-
-const defaultChain = chain.polygonMainnet
-// Set up connectors
-const connectors = () => [
-	new InjectedConnector({
-		chains,
-		options: { shimDisconnect: true, shimChainChangedDisconnect: true },
-	}),
-	new WalletConnectConnector({
-		options: {
-			infuraId,
-			qrcode: true,
-		},
-	}),
-]
-
-// Set up providers
-type ProviderConfig = { chainId?: number; connector?: Connector };
-
-const provider = ({ chainId }: ProviderConfig) => {
-	const rpcUrl = CHAIN_INFO[chainId!]?.rpcUrls[0]
-	if(!rpcUrl) {
-		return new providers.JsonRpcProvider(
-			CHAIN_INFO[defaultChain.id].rpcUrls[0],
-			'any',
-		)
-	}
-
-	return new providers.JsonRpcProvider(rpcUrl, 'any')
-}
+// Set up client
+const client = createClient({
+	autoConnect: true,
+	connectors: [
+		new InjectedConnector({
+			chains,
+			options: {
+				name: 'Injected',
+				shimDisconnect: true,
+			},
+		}),
+		new WalletConnectConnector({
+			chains,
+			options: {
+				qrcode: true,
+			},
+		}),
+	],
+	provider,
+	webSocketProvider,
+})
 
 export const ApiClientsContext = createContext<{
   validatorApi: ValidationApi;
@@ -159,16 +134,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					}
 				/>
 			</Head>
-			<Provider
-				autoConnect
-				connectors={connectors}
-				provider={provider}>
+			<WagmiConfig client={client}>
 				<ApiClientsContext.Provider value={apiClients}>
 					<ChakraProvider theme={theme}>
 						{getLayout(<Component {...pageProps} />)}
 					</ChakraProvider>
 				</ApiClientsContext.Provider>
-			</Provider>
+			</WagmiConfig>
 		</>
 	)
 }

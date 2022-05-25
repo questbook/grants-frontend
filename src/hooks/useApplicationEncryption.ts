@@ -8,7 +8,7 @@ import useEncryption from './utils/useEncryption'
 
 export default function useApplicationEncryption() {
 	const { encryptMessage, decryptMessage } = useEncryption()
-	const [{ data: accountData }] = useAccount()
+	const { data: accountData } = useAccount()
 
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
@@ -54,7 +54,7 @@ export default function useApplicationEncryption() {
 			return newData
 		}
 
-		const piiData = newData.pii.find((pii) => pii.id.split('.')[1].toLowerCase() === accountData.address.toLowerCase())!
+		const piiData = newData.pii.find((pii) => pii.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase())!
 		console.log('piiData', piiData)
 		if(!piiData) {
 			console.log(newData)

@@ -52,9 +52,7 @@ function YourGrants() {
 	//   const publicKey = await getPublicEncryptionKey();
 	// }, [getPublicEncryptionKey]);
 
-	const [{ data: accountData }] = useAccount({
-		fetchEns: false,
-	})
+	const { data: accountData } = useAccount()
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
 	const [isAdmin, setIsAdmin] = React.useState<boolean>(false)
 	const [isReviewer, setIsReviewer] = React.useState<boolean>(false)
@@ -217,7 +215,7 @@ function YourGrants() {
 		}
 
 		const k = workspace?.members?.find(
-			(m) => m.actorId.toLowerCase() === accountData!.address.toLowerCase(),
+			(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 		)?.publicKey?.toString()
 		// console.log(k);
 		if(k && k.length > 0) {

@@ -34,7 +34,7 @@ function RubricSidebar({
 	const [forPercentage, setForPercentage] = React.useState<number>(0)
 	const [againstPercentage, setAgainstPercentage] = React.useState<number>(0)
 
-	const [{ data: accountData }] = useAccount()
+	const { data: accountData } = useAccount()
 
 	const decodeReviews = async() => {
 		setLoading(true)
@@ -91,7 +91,7 @@ function RubricSidebar({
 		setLoading(true)
 		console.log(reviews)
 		const privateDataPromises = reviews?.map((review) => {
-			const decryptableData = review.data.filter((data: any) => data.id.split('.')[1].toLowerCase() === accountData?.address.toLowerCase())
+			const decryptableData = review.data.filter((data: any) => data.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase())
 			return decryptableData.length > 0 ? decryptableData[0] : undefined
 		}).flat().filter((review) => review !== undefined).map(async(review) => {
 			const reviewData = getFromIPFS(review.data)

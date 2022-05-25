@@ -75,14 +75,12 @@ function Form({
 	shouldShowButton,
 	defaultMilestoneFields,
 }: Props) {
-	const [{ data: accountData }] = useAccount({
-		fetchEns: false,
-	})
+	const { data: accountData } = useAccount()
 	const CACHE_KEY = strings.cache.apply_grant
 	const getKey = `${chainId}-${CACHE_KEY}-${grantId}`
 
 	const { encryptApplicationPII } = useApplicationEncryption()
-	const [signer] = useSigner()
+	const { data: signer } = useSigner()
 	const [applicantName, setApplicantName] = React.useState('')
 	const [applicantNameError, setApplicantNameError] = React.useState(false)
 
@@ -334,13 +332,13 @@ function Form({
 		)
 		const links = projectLinks.map((pl) => pl.link)
 
-		if(!signer || !signer.data) {
+		if(!signer || !signer) {
 			return
 		}
 
 		const data: GrantApplicationRequest = {
 			grantId,
-			applicantId: await signer?.data?.getAddress(),
+			applicantId: await signer?.getAddress(),
 			fields: {
 				applicantName: [{ value: applicantName }],
 				applicantEmail: [{ value: applicantEmail }],
