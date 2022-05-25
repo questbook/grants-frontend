@@ -138,7 +138,7 @@ Reward
 					</Flex>
 
 					{
-						!!defaultMilestoneFields.length && (
+						!!defaultMilestoneFields?.length && (
 							<Flex
 								direction="column"
 								alignItems="flex-start"
