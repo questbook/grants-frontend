@@ -4,7 +4,7 @@ import { Text, Heading, Grid, Flex } from '@chakra-ui/react';
 interface Props {
   disbursed: string;
   applicants: Array<number>;
-  winners: string;
+  winners: Array<number>;
   time: string;
 }
 
@@ -52,7 +52,7 @@ function DaoData({ disbursed, applicants, winners, time }: Props) {
       <Heading
       color="#122224"
       fontSize="1.2rem"
-      lineHeight="1.5rem">{winners}</Heading>
+      lineHeight="1.5rem">{winners.length}</Heading>
         <Text
           fontSize="0.875rem"
           lineHeight="24px"

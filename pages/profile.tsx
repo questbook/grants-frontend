@@ -47,6 +47,7 @@ function Profile() {
   const [daoID, setDaoId] = React.useState<string>();
   const [grantsApplicants, setGrantsApplicants] = React.useState<any>([]);
   const [grantsDisbursed, setGrantsDisbursed] = React.useState<any>([]);
+  const [grantWinners, setGrantWinners] = React.useState<any>([]);
 
   //Tab section
   const tabs = ['Browse Grants', 'About'];
@@ -134,6 +135,18 @@ function Profile() {
     }
     console.log(grantsDisbursed);
   }, [fundsData, grantsApplicants]);
+
+
+    useEffect(() => {
+      if (grantsData && grantsData.grants.length >= 1 && grantWinners.length === 0) {
+          grantsData.grants.forEach((grant) => {
+            grant.applications.forEach(
+            (app: any) => app.state === "approved" &&
+            setGrantWinners((winners: any) => [...winners, app])
+            )
+          })
+      }
+    }, [grantsData, grantWinners]);
 
   return (
     <Flex
@@ -232,7 +245,7 @@ function Profile() {
               grantsDisbursed.reduce((sum: any, a: any) => sum + a, 0).toString(),
               18
             )}
-            winners="20"
+            winners={grantWinners}
             applicants={grantsApplicants}
             time="1D" />
           </Stack>

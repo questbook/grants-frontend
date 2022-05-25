@@ -24,8 +24,12 @@ query getAllGrantsForADao($first: Int, $skip: Int, $workspaceId: String!, $accep
     iconHash
     }
   },
-  workspace {id, title, logoIpfsHash, supportedNetworks}, 
+  workspace {id, title, logoIpfsHash, supportedNetworks},
   deadline,
   funding,
   numberOfApplications,
+  applications {
+    id,
+    state
+  }
 }}
