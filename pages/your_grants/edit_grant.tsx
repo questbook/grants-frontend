@@ -12,6 +12,7 @@ import { CHAIN_INFO } from 'src/constants/chainInfo'
 import { SupportedChainId } from 'src/constants/chains'
 import { useGetGrantDetailsQuery } from 'src/generated/graphql'
 import useEditGrant from 'src/hooks/useEditGrant'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { formatAmount } from 'src/utils/formattingUtils'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -20,7 +21,6 @@ import Form from '../../src/components/your_grants/edit_grant/form'
 import Sidebar from '../../src/components/your_grants/edit_grant/sidebar'
 import NavbarLayout from '../../src/layout/navbarLayout'
 import { ApiClientsContext } from '../_app'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 function EditGrant() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!

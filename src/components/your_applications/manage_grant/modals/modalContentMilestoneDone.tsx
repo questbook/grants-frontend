@@ -4,10 +4,10 @@ import {
 import Loader from 'src/components/ui/loader'
 import { SupportedChainId } from 'src/constants/chains'
 import useRequestMilestoneApproval from 'src/hooks/useRequestMilestoneApproval'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { ApplicationMilestone } from 'src/types'
 import { getMilestoneMetadata } from '../../../../utils/formattingUtils'
 import MultiLineInput from '../../../ui/forms/multiLineInput'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 interface Props {
   chainId: SupportedChainId | undefined;

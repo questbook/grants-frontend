@@ -14,7 +14,7 @@ function useCustomToast(link: string, route?: string) {
 		console.log('CUSTOM TOAST: ', refresh, link)
 		if(refresh && link && !link.includes('undefined') && !link.includes('null')) {
 			toastRef.current = toast({
-        duration: 4000,
+				duration: 4000,
 				position: 'top',
 				render: () => {
 					return (
@@ -32,8 +32,11 @@ function useCustomToast(link: string, route?: string) {
 				},
 				onCloseComplete: () => {
 					console.log('Reloading page')
-          if (route) router.replace(route)
-          else router.reload()
+					if(route) {
+						router.replace(route)
+					} else {
+						router.reload()
+					}
 				}
 			})
 		}

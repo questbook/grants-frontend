@@ -20,6 +20,7 @@ import {
 	useGetGrantDetailsQuery,
 } from 'src/generated/graphql'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { ApplicationMilestone } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
@@ -30,7 +31,6 @@ import Table from '../../../src/components/your_grants/view_applicants/table'
 import NavbarLayout from '../../../src/layout/navbarLayout'
 import { formatAmount } from '../../../src/utils/formattingUtils'
 import { ApiClientsContext } from '../../_app'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 const PAGE_SIZE = 500
 

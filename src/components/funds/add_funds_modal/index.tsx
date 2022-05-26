@@ -17,6 +17,7 @@ import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
 import config from 'src/constants/config'
 import useDepositFunds from 'src/hooks/useDepositFunds'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useContract, useNetwork, useSigner } from 'wagmi'
 import animationData from '../../../../public/animations/Add_Funds.json'
@@ -25,7 +26,6 @@ import { formatAmount } from '../../../utils/formattingUtils'
 import Dropdown from '../../ui/forms/dropdown'
 import SingleLineInput from '../../ui/forms/singleLineInput'
 import Modal from '../../ui/modal'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 interface Props {
   isOpen: boolean;

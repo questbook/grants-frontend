@@ -24,6 +24,7 @@ import Loader from 'src/components/ui/loader'
 import { SupportedChainId } from 'src/constants/chains'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useResubmitApplication from 'src/hooks/useResubmitApplication'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { isValidEmail } from 'src/utils/validationUtils'
 import {
@@ -39,7 +40,6 @@ import AboutTeam from './2_aboutTeam'
 import AboutProject from './3_aboutProject'
 import Funding from './4_funding'
 import CustomFields from './5_customFields'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 function Form({
 	chainId,

@@ -1,5 +1,5 @@
 // UTILS AND HOOKS
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
 	Button,
 	Flex,
@@ -20,6 +20,7 @@ import Loader from 'src/components/ui/loader'
 import { CHAIN_INFO } from 'src/constants/chainInfo'
 import { SupportedChainId } from 'src/constants/chains'
 import useChainId from 'src/hooks/utils/useChainId'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { useContract, useSigner } from 'wagmi'
 // CONSTANTS AND ABIS
 import ERC20ABI from '../../contracts/abi/ERC20.json'
@@ -28,7 +29,6 @@ import useMarkReviewPaymentDone from '../../hooks/useMarkReviewPaymentDone'
 import { formatAmount, trimAddress } from '../../utils/formattingUtils'
 // UI AND COMPONENT TOOLS
 import Dropdown from '../ui/forms/dropdown'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 interface Props {
   workspaceId: string;

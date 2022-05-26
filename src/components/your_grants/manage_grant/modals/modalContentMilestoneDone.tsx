@@ -9,13 +9,13 @@ import {
 } from '@chakra-ui/react'
 import Loader from 'src/components/ui/loader'
 import useApproveMilestone from 'src/hooks/useApproveMilestone'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { ApplicationMilestone } from 'src/types'
 import {
 	getFormattedDateFromUnixTimestampWithYear,
 	getMilestoneMetadata,
 } from 'src/utils/formattingUtils'
 import MultiLineInput from '../../../ui/forms/multiLineInput'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 interface Props {
   milestone: ApplicationMilestone | undefined;

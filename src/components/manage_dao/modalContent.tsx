@@ -3,6 +3,7 @@ import {
 	Box, Button, Flex, Image, Link, ModalBody, Text } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import useAddMember from 'src/hooks/useAddMember'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { isValidAddress, isValidEmail } from 'src/utils/validationUtils'
 import Badge from '../ui/badge'
 import SingleLineInput from '../ui/forms/singleLineInput'
@@ -11,7 +12,6 @@ import Modal from '../ui/modal'
 import ConfirmationModalContent from './confirmationModalContent'
 import MemberProps from './memberProps'
 import roles from './roles'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 interface Props {
   onClose: (member: MemberProps, shouldRevoke?: boolean) => void;

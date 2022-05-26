@@ -17,6 +17,7 @@ import VerifiedBadge from 'src/components/ui/verified_badge'
 import { SupportedChainId } from 'src/constants/chains'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useSubmitApplication from 'src/hooks/useSubmitApplication'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { isValidEmail } from 'src/utils/validationUtils'
 import { useAccount, useSigner } from 'wagmi'
 import strings from '../../../../constants/strings.json'
@@ -27,7 +28,6 @@ import AboutTeam from './2_aboutTeam'
 import AboutProject from './3_aboutProject'
 import Funding from './4_funding'
 import CustomFields from './5_customFields'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 interface Props {
   // onSubmit: (data: any) => void;

@@ -5,6 +5,7 @@ import {
 import { Token, WorkspaceUpdateRequest } from '@questbook/service-validator-client'
 import config from 'src/constants/config'
 import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
 import { isValidAddress } from 'src/utils/validationUtils'
 import ImageUpload from './forms/imageUpload'
@@ -12,7 +13,6 @@ import SingleLineInput from './forms/singleLineInput'
 import ErrorToast from './toasts/errorToast'
 import Loader from './loader'
 import Modal from './modal'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 interface ModalProps {
   isModalOpen: boolean;

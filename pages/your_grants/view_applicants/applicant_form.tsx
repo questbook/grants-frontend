@@ -22,6 +22,7 @@ import {
 } from 'src/generated/graphql'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs'
@@ -36,7 +37,6 @@ import ResubmitSidebar from '../../../src/components/your_grants/applicant_form/
 import Sidebar from '../../../src/components/your_grants/applicant_form/sidebar'
 import NavbarLayout from '../../../src/layout/navbarLayout'
 import { ApiClientsContext } from '../../_app'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 function ApplicantForm() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!

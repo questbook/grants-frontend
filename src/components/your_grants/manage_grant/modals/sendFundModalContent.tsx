@@ -21,13 +21,13 @@ import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
 import useDisburseP2PReward from 'src/hooks/useDisburseP2PReward'
 import useDisburseReward from 'src/hooks/useDisburseReward'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useContract, useNetwork, useSigner } from 'wagmi'
 import ERC20ABI from '../../../../contracts/abi/ERC20.json'
 import { formatAmount, parseAmount } from '../../../../utils/formattingUtils'
 import Dropdown from '../../../ui/forms/dropdown'
 import SingleLineInput from '../../../ui/forms/singleLineInput'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 interface Props {
   isOpen: boolean;

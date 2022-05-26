@@ -6,18 +6,17 @@ import {
 	Link,
 	ModalBody,
 	Text,
-	useToast,
 } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import Loader from 'src/components/ui/loader'
 import { CHAIN_INFO } from 'src/constants/chainInfo'
 import useWithdrawFunds from 'src/hooks/useWithdrawFunds'
 import useChainId from 'src/hooks/utils/useChainId'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { parseAmount, truncateStringFromMiddle } from 'src/utils/formattingUtils'
 import Dropdown from '../../ui/forms/dropdown'
 import SingleLineInput from '../../ui/forms/singleLineInput'
 import Modal from '../../ui/modal'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 interface Props {
   isOpen: boolean;

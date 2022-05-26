@@ -24,6 +24,7 @@ import {
 } from 'src/generated/graphql'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useCompleteApplication from 'src/hooks/useCompleteApplication'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { ApplicationMilestone } from 'src/types'
 import useApplicationMilestones from 'src/utils/queryUtil'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -43,7 +44,6 @@ import {
 } from '../../../src/utils/formattingUtils'
 import { getAssetInfo } from '../../../src/utils/tokenUtils'
 import { ApiClientsContext } from '../../_app'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 	let val = BigNumber.from(0)
