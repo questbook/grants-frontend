@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
 	Box,
 	Button,
@@ -9,17 +9,16 @@ import {
 	ToastId,
 	useToast,
 } from '@chakra-ui/react'
+import SecondaryDropdown from 'src/components/ui/secondaryDropdown'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { CHAIN_INFO } from 'src/constants/chainInfo'
-import { SupportedChainId } from 'src/constants/chains'
+import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from 'src/constants/chains'
 import config from 'src/constants/config'
 import useChainId from 'src/hooks/utils/useChainId'
-import { highlightWordsInString } from 'src/utils/formattingUtils'
-import { useAccount } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 import ImageUpload from '../../ui/forms/imageUpload'
 import MultiLineInput from '../../ui/forms/multiLineInput'
 import SingleLineInput from '../../ui/forms/singleLineInput'
-import Tooltip from '../../ui/tooltip'
 
 function Form({
 	onSubmit: onFormSubmit,
@@ -48,6 +47,8 @@ function Form({
 	const maxImageSize = 2
 
 	const [accountData] = useAccount()
+	const [{ data: networkData }, switchNetwork] = useNetwork()
+	const [defaultItem, setDefaultItem] = useState<{ icon?: string; label: string, id: number }>()
 
 	const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if(event.target.files && event.target.files[0]) {
@@ -104,6 +105,15 @@ function Form({
 			ownerId: accountData.data?.address ?? '0x0000000000000000000000000000000000000000',
 		})
 	}
+
+	useEffect(() => {
+		console.log('chainID -->', chainId)
+		if(chainId) {
+			const newItem = { icon: CHAIN_INFO[chainId!].icon, label: CHAIN_INFO[chainId!].name, id: chainId }
+			setDefaultItem(newItem)
+		}
+
+	}, [chainId])
 
 	return (
 		<>
@@ -165,7 +175,7 @@ function Form({
 				<Flex
 					w="100%"
 					mt={1}>
-					<SingleLineInput
+					{/* <SingleLineInput
 						label="Network"
 						placeholder="Network"
 						value={
@@ -175,7 +185,7 @@ function Form({
 								].name
 								: 'Network not supported'
 						}
-						onChange={() => {}}
+						onChange={() => { }}
 						isError={false}
 						disabled
 						inputRightElement={
@@ -185,12 +195,10 @@ function Form({
 									label={
 										chainId
 											? highlightWordsInString(
-												`Your wallet is connected to the ${
-													CHAIN_INFO[chainId].name
+												`Your wallet is connected to the ${CHAIN_INFO[chainId].name
 												} Network. Your GrantsDAO will be created on the same network. To create a GrantsDAO on another network, connect a different wallet.`,
 												[
-													`${
-														CHAIN_INFO[chainId].name
+													`${CHAIN_INFO[chainId].name
 													} Network`,
 												],
 												'#122224',
@@ -199,6 +207,27 @@ function Form({
 									}
 								/>
 							)
+						}
+					/> */}
+					<SecondaryDropdown
+						listItemsMinWidth="100%"
+						dropdownWidth='100%'
+						listItems={
+							ALL_SUPPORTED_CHAIN_IDS.map((chainId) => ({
+								id: chainId,
+								label: CHAIN_INFO[chainId].name,
+								icon: CHAIN_INFO[chainId].icon,
+							}))
+						}
+						defaultItem={defaultItem}
+						// value={rewardCurrency}
+						onChange={
+							(id: SupportedChainId) => {
+								if(switchNetwork) {
+									const network = switchNetwork(id)
+								}
+								// setSelectedNetworkId(id)
+							}
 						}
 					/>
 				</Flex>
