@@ -311,7 +311,7 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 													)
 												}
 											}
-											label="Other Information"
+											label="Add Custom Field"
 											tooltip="Get additional details in your application form."
 										/>
 									</GridItem>
@@ -424,7 +424,7 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 											placeholder="Field Label"
 											isError={customField.isError}
 											errorText="Required"
-											maxLength={30}
+											maxLength={300}
 										/>
 										<Box mt={2} />
 									</>

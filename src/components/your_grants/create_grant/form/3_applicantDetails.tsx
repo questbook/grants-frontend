@@ -87,7 +87,7 @@ function ApplicantDetails({
 												)
 											}
 										}
-										label="Other Information"
+										label="Add Custom Field"
 										tooltip="Get additional details in your application form."
 									/>
 								</GridItem>
@@ -199,7 +199,7 @@ function ApplicantDetails({
 										placeholder="Field Label"
 										isError={customField.isError}
 										errorText="Required"
-										maxLength={30}
+										maxLength={300}
 									/>
 									<Box mt={1} />
 								</>
