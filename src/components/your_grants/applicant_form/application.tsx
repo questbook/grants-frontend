@@ -22,7 +22,7 @@ import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspa
 import { formatAmount } from '../../../utils/formattingUtils'
 import { getAssetInfo } from '../../../utils/tokenUtils'
 
-const TABS = ['Project Details', 'Funds Requested', 'About Team', 'Other Information']
+const TABS = ['Project Details', 'Funds Requested', 'About Team', 'Custom Fields']
 
 interface Props {
   applicationData: GetApplicationDetailsQuery['grantApplication'];
@@ -486,7 +486,7 @@ Funding Breakdown
 						<Heading
 							variant="applicationHeading"
 							ref={refs[3]}>
-								Other Information
+								Add Custom Field
 						</Heading>
 
 						{
