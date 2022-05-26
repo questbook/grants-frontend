@@ -45,7 +45,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	const [applicationCount, setApplicationCount] = React.useState(0)
 
 	const apiClients = useContext(ApiClientsContext)!
-	const { workspace, setWorkspace, subgraphClients } = apiClients
+	const { workspace, setWorkspace, subgraphClients, connected } = apiClients
 	const [isAdmin, setIsAdmin] = React.useState(false)
 	const [isReviewer, setIsReviewer] = React.useState<boolean>(false)
 
@@ -198,7 +198,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 
 		getWorkspaceData(accountData?.address)
 
-	}, [isConnected, accountData])
+	}, [isConnected, accountData, connected])
 
 	const [isDiscover, setIsDiscover] = useState<boolean>(false)
 
@@ -223,7 +223,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 			minH="80px"
 		>
 			{
-				isConnected ? (
+				connected ? (
 					<Menu>
 						<MenuButton
 							as={Button}
@@ -245,9 +245,9 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 									h="32px"
 									mr="10px"
 									src={
-										router.pathname === '/'
+										router.pathname === '/' || !workspace
 											? '/ui_icons/gray/see.svg'
-											: getUrlForIPFSHash(workspace!.logoIpfsHash)
+											: getUrlForIPFSHash(workspace.logoIpfsHash)
 									}
 									display="inline-block"
 								/>
@@ -259,7 +259,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 									overflow="hidden"
 									textOverflow="ellipsis"
 								>
-									{router.pathname === '/' ? 'Discover Grants' : workspace!.title}
+									{router.pathname === '/' || !workspace ? 'Discover Grants' : workspace.title}
 								</Text>
 								<Image
 									ml={2}
