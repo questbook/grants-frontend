@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import {
 	Button,
 	Flex,
@@ -15,17 +15,14 @@ import Loader from 'src/components/ui/loader'
 import { CHAIN_INFO } from 'src/constants/chainInfo'
 import useChainId from 'src/hooks/utils/useChainId'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import { ApiClientsContext } from 'pages/_app'
 
-export interface Props {
-  connected: boolean;
-  setConnected: (connected: boolean) => void;
-}
-
-function AccountDetails({ connected, setConnected }: Props) {
+function AccountDetails() {
 	const isOnline = true
 	const { data: accountData } = useAccount()
 	const { isDisconnected } = useConnect()
 	const { disconnect } = useDisconnect()
+	const { connected, setConnected } = useContext(ApiClientsContext)!;
 	const router = useRouter()
 
 	const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`

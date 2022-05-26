@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import { Container, useToast, VStack } from '@chakra-ui/react'
-import { useConnect } from 'wagmi'
+import { useAccount, useConnect, useNetwork } from 'wagmi'
 import ConnectedNavbar from '../components/navbar/connected'
 import SignInNavbar from '../components/navbar/notConnected'
+import { ApiClientsContext } from 'pages/_app'
 interface Props {
   children: React.ReactNode;
   renderGetStarted?: boolean;
@@ -10,10 +11,12 @@ interface Props {
 }
 
 function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
-	const { isDisconnected, isConnected, isError, isIdle, isConnecting, isReconnecting, connect, connectors } = useConnect()
+	const { isDisconnected, isConnected, isError, isIdle, isConnecting, isReconnecting, connect, connectors, data: connectData, status: connectStatus, error } = useConnect()
+	const { data: networkData, pendingChainId, activeChain, status: networkStatus } = useNetwork()
+	const { data: accountData, isLoading, isFetching, isFetched, isRefetching, isSuccess, status: accountStatus } = useAccount()
 	const toast = useToast()
 
-	const [connected, setConnected] = React.useState(false)
+	const { connected, setConnected } = useContext(ApiClientsContext)!;
 	const currentPageRef = useRef(null)
 
 	useEffect(() => {
@@ -32,6 +35,18 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 
 	}, [isConnected, isDisconnected])
 
+	useEffect(() => {
+		console.log('CONNECTION: ', connected, isConnected, isConnecting, isReconnecting, isDisconnected, isError, isIdle, connectData, connectStatus, error);
+	}, [connected, isConnected, isConnecting, isReconnecting, isDisconnected, isError, isIdle, connectStatus, error]);
+
+	useEffect(() => {
+		console.log('ACCOUNT: ', accountData, isLoading, isFetching, isFetched, isRefetching, isSuccess, accountStatus);
+	}, [accountData, isLoading, isFetching, isFetched, isRefetching, isSuccess, accountStatus]);
+
+	useEffect(() => {
+		console.log('USE NETWORK: ', activeChain, networkStatus, pendingChainId, networkData)
+	}, [pendingChainId, activeChain, networkStatus, networkData]);
+
 	return (
 		<VStack
 			alignItems="center"
@@ -41,10 +56,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 			p={0}>
 			{
 				connected ? (
-					<ConnectedNavbar
-						renderTabs={renderTabs!}
-						connected={connected}
-						setConnected={setConnected} />
+					<ConnectedNavbar renderTabs={renderTabs!} />
 				) : (
 					<SignInNavbar renderGetStarted={renderGetStarted} />
 				)

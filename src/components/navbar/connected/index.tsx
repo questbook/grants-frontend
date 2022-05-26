@@ -27,7 +27,7 @@ import { useAccount } from 'wagmi'
 import AccountDetails from './accountDetails'
 import Tab from './tab'
 
-function Navbar({ renderTabs, connected, setConnected }: { renderTabs: boolean, connected: boolean, setConnected: (connected: boolean) => void }) {
+function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	const toast = useToast()
 	const { data: accountData } = useAccount()
 	const tabPaths = [
@@ -523,9 +523,7 @@ function Navbar({ renderTabs, connected, setConnected }: { renderTabs: boolean, 
 				)
 			}
 
-			<AccountDetails
-				connected={connected}
-				setConnected={setConnected} />
+			<AccountDetails />
 		</Container>
 	)
 }
