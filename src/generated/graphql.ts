@@ -379,6 +379,8 @@ export type Grant = {
   creatorId: Scalars['Bytes'];
   /** ISO formatted date string */
   deadline?: Maybe<Scalars['String']>;
+  /** Deadlint for the grant, in seconds since epoch */
+  deadlineS: Scalars['Int'];
   /** Expectations & other details of the grant */
   details: Scalars['String'];
   /** Expected fields from the applicants of the grant */
@@ -1113,6 +1115,14 @@ export type Grant_Filter = {
   creatorId_not_contains?: InputMaybe<Scalars['Bytes']>;
   creatorId_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   deadline?: InputMaybe<Scalars['String']>;
+  deadlineS?: InputMaybe<Scalars['Int']>;
+  deadlineS_gt?: InputMaybe<Scalars['Int']>;
+  deadlineS_gte?: InputMaybe<Scalars['Int']>;
+  deadlineS_in?: InputMaybe<Array<Scalars['Int']>>;
+  deadlineS_lt?: InputMaybe<Scalars['Int']>;
+  deadlineS_lte?: InputMaybe<Scalars['Int']>;
+  deadlineS_not?: InputMaybe<Scalars['Int']>;
+  deadlineS_not_in?: InputMaybe<Array<Scalars['Int']>>;
   deadline_contains?: InputMaybe<Scalars['String']>;
   deadline_contains_nocase?: InputMaybe<Scalars['String']>;
   deadline_ends_with?: InputMaybe<Scalars['String']>;
@@ -1324,6 +1334,7 @@ export enum Grant_OrderBy {
   CreatedAtS = 'createdAtS',
   CreatorId = 'creatorId',
   Deadline = 'deadline',
+  DeadlineS = 'deadlineS',
   Details = 'details',
   Fields = 'fields',
   Funding = 'funding',
@@ -3348,6 +3359,7 @@ export type GetAllGrantsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
   applicantId: Scalars['Bytes'];
+  minDeadline: Scalars['Int'];
 }>;
 
 
@@ -3379,6 +3391,8 @@ export type GetAllGrantsForCreatorQueryVariables = Exact<{
   creatorId?: InputMaybe<Scalars['Bytes']>;
   workspaceId?: InputMaybe<Scalars['String']>;
   acceptingApplications?: InputMaybe<Scalars['Boolean']>;
+  minDeadline: Scalars['Int'];
+  maxDeadline: Scalars['Int'];
 }>;
 
 
@@ -3537,12 +3551,12 @@ export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers:
 
 
 export const GetAllGrantsDocument = gql`
-    query getAllGrants($first: Int, $skip: Int, $applicantId: Bytes!) {
+    query getAllGrants($first: Int, $skip: Int, $applicantId: Bytes!, $minDeadline: Int!) {
   grants(
     first: $first
     skip: $skip
     subgraphError: allow
-    where: {acceptingApplications: true}
+    where: {acceptingApplications: true, deadlineS_gte: $minDeadline}
     orderBy: createdAtS
     orderDirection: desc
   ) {
@@ -3594,6 +3608,7 @@ export const GetAllGrantsDocument = gql`
  *      first: // value for 'first'
  *      skip: // value for 'skip'
  *      applicantId: // value for 'applicantId'
+ *      minDeadline: // value for 'minDeadline'
  *   },
  * });
  */
@@ -3727,12 +3742,12 @@ export type GetAllGrantsForADaoQueryHookResult = ReturnType<typeof useGetAllGran
 export type GetAllGrantsForADaoLazyQueryHookResult = ReturnType<typeof useGetAllGrantsForADaoLazyQuery>;
 export type GetAllGrantsForADaoQueryResult = Apollo.QueryResult<GetAllGrantsForADaoQuery, GetAllGrantsForADaoQueryVariables>;
 export const GetAllGrantsForCreatorDocument = gql`
-    query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String, $acceptingApplications: Boolean) {
+    query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String, $acceptingApplications: Boolean, $minDeadline: Int!, $maxDeadline: Int!) {
   grants(
     first: $first
     skip: $skip
     subgraphError: allow
-    where: {workspace: $workspaceId, acceptingApplications: $acceptingApplications}
+    where: {workspace: $workspaceId, acceptingApplications: $acceptingApplications, deadlineS_gte: $minDeadline, deadlineS_lte: $maxDeadline}
     orderBy: createdAtS
     orderDirection: desc
   ) {
@@ -3792,10 +3807,12 @@ export const GetAllGrantsForCreatorDocument = gql`
  *      creatorId: // value for 'creatorId'
  *      workspaceId: // value for 'workspaceId'
  *      acceptingApplications: // value for 'acceptingApplications'
+ *      minDeadline: // value for 'minDeadline'
+ *      maxDeadline: // value for 'maxDeadline'
  *   },
  * });
  */
-export function useGetAllGrantsForCreatorQuery(baseOptions?: Apollo.QueryHookOptions<GetAllGrantsForCreatorQuery, GetAllGrantsForCreatorQueryVariables>) {
+export function useGetAllGrantsForCreatorQuery(baseOptions: Apollo.QueryHookOptions<GetAllGrantsForCreatorQuery, GetAllGrantsForCreatorQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetAllGrantsForCreatorQuery, GetAllGrantsForCreatorQueryVariables>(GetAllGrantsForCreatorDocument, options);
       }

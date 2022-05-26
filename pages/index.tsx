@@ -13,6 +13,7 @@ import {
 	GetAllGrantsQuery,
 	useGetAllGrantsLazyQuery,
 } from 'src/generated/graphql'
+import { unixTimestampSeconds } from 'src/utils/generics'
 import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
@@ -39,8 +40,6 @@ function BrowseGrants() {
 		(key) => useGetAllGrantsLazyQuery({ client: subgraphClients[key].client }),
 	)
 
-	useEffect(() => { }, [subgraphClients])
-
 	const toast = useToast()
 	const [grants, setGrants] = useState<GetAllGrantsQuery['grants']>([])
 
@@ -60,6 +59,7 @@ function BrowseGrants() {
 								first: PAGE_SIZE,
 								skip: currentPageLocal * PAGE_SIZE,
 								applicantId: accountData?.address ?? '',
+								minDeadline: unixTimestampSeconds(),
 							},
 						})
 						if(data && data.grants) {
