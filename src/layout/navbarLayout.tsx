@@ -19,26 +19,28 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 	const { connected, setConnected } = useContext(ApiClientsContext)!
 	const currentPageRef = useRef(null)
 
-	const [renderCount, setRenderCount] = useState(0);
+	const [renderCount, setRenderCount] = useState(0)
 
 	useEffect(() => {
 		console.log('Render Count: ', renderCount)
-	}, [renderCount]);
+	}, [renderCount])
 
 	useEffect(() => {
 		if(!connected && isDisconnected) {
 			setConnected(false)
-			if (renderCount > 0) toast({
-				title: 'Disconnected',
-				status: 'info',
-			})
+			if(renderCount > 0) {
+				toast({
+					title: 'Disconnected',
+					status: 'info',
+				})
+			}
 		} else if(isConnected) {
 			setConnected(true)
-			setRenderCount(renderCount + 1);
+			setRenderCount(renderCount + 1)
 		} else if(connected && isDisconnected) {
 			connect(connectors[0])
 			setConnected(true)
-			setRenderCount(renderCount + 1);
+			setRenderCount(renderCount + 1)
 		}
 
 	}, [isConnected, isDisconnected])
