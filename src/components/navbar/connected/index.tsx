@@ -23,13 +23,14 @@ import useActiveTabIndex from 'src/hooks/utils/useActiveTabIndex'
 import { MinimalWorkspace } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
+import { useAccount, useConnect } from 'wagmi'
 import AccountDetails from './accountDetails'
 import Tab from './tab'
 
 function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	const toast = useToast()
 	const { data: accountData } = useAccount()
+	const { isConnected } = useConnect()
 	const tabPaths = [
 		'your_grants',
 		'funds',
@@ -119,7 +120,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 		getNumberOfApplications()
 		getNumberOfGrants()
 
-	}, [accountData?.address, workspace?.id])
+	}, [accountData?.address, workspace?.id, isConnected])
 
 	const getAllWorkspaces = Object.keys(subgraphClients)!.map(
 
@@ -197,7 +198,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 
 		getWorkspaceData(accountData?.address)
 
-	}, [])
+	}, [isConnected, accountData])
 
 	const [isDiscover, setIsDiscover] = useState<boolean>(false)
 
@@ -222,7 +223,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 			minH="80px"
 		>
 			{
-				workspace ? (
+				isConnected ? (
 					<Menu>
 						<MenuButton
 							as={Button}
@@ -246,7 +247,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 									src={
 										router.pathname === '/'
 											? '/ui_icons/gray/see.svg'
-											: getUrlForIPFSHash(workspace.logoIpfsHash)
+											: getUrlForIPFSHash(workspace!.logoIpfsHash)
 									}
 									display="inline-block"
 								/>
@@ -258,7 +259,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 									overflow="hidden"
 									textOverflow="ellipsis"
 								>
-									{router.pathname === '/' ? 'Discover Grants' : workspace.title}
+									{router.pathname === '/' ? 'Discover Grants' : workspace!.title}
 								</Text>
 								<Image
 									ml={2}
