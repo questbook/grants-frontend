@@ -85,6 +85,7 @@ function Form({
 	const { encryptApplicationPII } = useApplicationEncryption()
 	const toast = useToast()
 	const router = useRouter()
+	const [onEdit, setOnEdit] = useState<boolean>(false);
 	const [applicantName, setApplicantName] = useState('')
 	const [applicantNameError, setApplicantNameError] = useState(false)
 
@@ -244,8 +245,8 @@ function Form({
 	}, [toast, router, txnData])
 
 	const handleOnSubmit = async() => {
-		// console.log(onSubmit);
-		if(!onSubmit) {
+		console.log(onEdit);
+		if(!onSubmit && !onEdit) {
 			return
 		}
 
@@ -584,6 +585,34 @@ function Form({
 				) : null
 			}
 
+			{state !== "resubmit" && state !== "rejected" && !onEdit ? <Button
+				onClick={() => setOnEdit(true)}
+				mt={8}
+				mb={4}
+				mx={10}
+				alignSelf="stretch"
+				variant="primary"
+				disabled={loading}
+			>
+			Edit Application
+			</Button> : null}
+
+			{
+				onEdit ? (
+					<Button
+						onClick={loading ? () => {} : handleOnSubmit}
+						py={loading ? 2 : 0}
+						mt={8}
+						mb={4}
+						mx={10}
+						alignSelf="stretch"
+						variant="primary"
+					>
+						{loading ? <Loader /> : 'Submit Edits'}
+					</Button>
+				) : null
+			}
+
 			<Text
 				zIndex="1"
 				px={9}
@@ -610,7 +639,7 @@ function Form({
 					setApplicantNameError={setApplicantNameError}
 					setApplicantEmail={setApplicantEmail}
 					setApplicantEmailError={setApplicantEmailError}
-					readOnly={onSubmit === null}
+					readOnly={onSubmit === null && onEdit === false}
 					grantRequiredFields={grantRequiredFields}
 				/>
 
@@ -622,7 +651,7 @@ function Form({
 					setTeamMembersError={setTeamMembersError}
 					membersDescription={membersDescription}
 					setMembersDescription={setMembersDescription}
-					readOnly={onSubmit === null}
+					readOnly={onSubmit === null && onEdit === false}
 					grantRequiredFields={grantRequiredFields}
 				/>
 
@@ -646,7 +675,7 @@ function Form({
 					setProjectMilestones={setProjectMilestones}
 					rewardCurrency={rewardCurrency}
 					rewardCurrencyCoin={rewardCurrencyCoin}
-					readOnly={onSubmit === null}
+					readOnly={onSubmit === null && onEdit === false}
 					grantRequiredFields={grantRequiredFields}
 				/>
 
@@ -663,7 +692,7 @@ function Form({
 					rewardAmount={rewardAmount}
 					rewardCurrency={rewardCurrency}
 					rewardCurrencyCoin={rewardCurrencyCoin}
-					readOnly={onSubmit === null}
+					readOnly={onSubmit === null && onEdit === false}
 					grantRequiredFields={grantRequiredFields}
 				/>
 
@@ -674,7 +703,7 @@ function Form({
 							<CustomFields
 								customFields={customFields}
 								setCustomFields={setCustomFields}
-								readOnly={onSubmit === null}
+								readOnly={onSubmit === null && onEdit === false}
 							/>
 						</>
 					)
@@ -682,7 +711,7 @@ function Form({
 			</Container>
 
 			{
-				onSubmit && (
+				onSubmit || onEdit && (
 					<Text
 						mt={10}
 						textAlign="center"
@@ -695,7 +724,7 @@ function Form({
 							mb="-2px"
 						/>
 						{' '}
-          By pressing Submit Application you&apos;ll have to approve this
+          By pressing {onSubmit ? "Submit Application" : "Submit Edits"} you&apos;ll have to approve this
           transaction in your wallet.
 						{' '}
 						<Link
@@ -715,6 +744,22 @@ function Form({
 						/>
 					</Text>
 				)
+			}
+
+			{
+				onEdit ? (
+					<Button
+						onClick={loading ? () => {} : handleOnSubmit}
+						py={loading ? 2 : 0}
+						mt={8}
+						mb={4}
+						mx={10}
+						alignSelf="stretch"
+						variant="primary"
+					>
+						{loading ? <Loader /> : 'Submit Edits'}
+					</Button>
+				) : null
 			}
 
 			<Box mt={5} />

@@ -58,7 +58,7 @@ function DateInput({
 				lineHeight="20px"
 				fontWeight="bold">
 				{label}
-				{tooltip && tooltip.length ? <Tooltip label={tooltip} /> : null}
+				{tooltip && tooltip.length ? <Tooltip label={tooltip} icon='/ui_icons/alert_circle.svg' placement="top-start"/> : null}
 			</Text>
 			<InputGroup>
 				<Input

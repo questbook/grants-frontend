@@ -149,6 +149,7 @@ function GrantRewardsInput({
 				value={date}
 				isError={dateError}
 				errorText="Required"
+				tooltip="This is the last date on/before which grantees can apply"
 				label="Grant Deadline"
 			/>
 
