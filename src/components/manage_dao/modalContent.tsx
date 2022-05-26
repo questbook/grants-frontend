@@ -195,9 +195,12 @@ function ModalContent({
 					value={memberEmail}
 					onChange={
 						(e) => {
-							if (!isValidEmail(e.target.value)) setMemberEmailError(true);
-							else setMemberEmailError(false);
-							
+							if(!isValidEmail(e.target.value)) {
+								setMemberEmailError(true)
+							} else {
+								setMemberEmailError(false)
+							}
+
 							setMemberEmail(e.target.value)
 						}
 					}
