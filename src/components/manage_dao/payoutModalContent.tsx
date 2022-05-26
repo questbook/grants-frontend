@@ -61,7 +61,7 @@ function PayoutModalContent({
 }: Props) {
 	// WAGMI && ETH HOOKS
 	const currentChain = useChainId() ?? SupportedChainId.RINKEBY
-	const [signerStates] = useSigner()
+	const { data: signer } = useSigner()
 
 	// CHAKRA HOOKS
 	const { hasCopied, onCopy } = useClipboard(reviewerAddress)
@@ -173,7 +173,7 @@ function PayoutModalContent({
 		addressOrName:
       reviewCurrencyAddress ?? '0x0000000000000000000000000000000000000000',
 		contractInterface: ERC20ABI,
-		signerOrProvider: signerStates.data,
+		signerOrProvider: signer,
 	})
 
 	useEffect(() => {
@@ -182,7 +182,7 @@ function PayoutModalContent({
 		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 		async function getBalance() {
 			try {
-				const tempAddress = await signerStates.data?.getAddress()
+				const tempAddress = await signer?.getAddress()
 				const tempWalletBalance = await rewardAssetContract.balanceOf(
 					tempAddress,
 				)

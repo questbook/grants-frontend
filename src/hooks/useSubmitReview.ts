@@ -26,8 +26,8 @@ export default function useSubmitReview(
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const [{ data: accountData }] = useAccount()
-	const [{ data: networkData }, switchNetwork] = useNetwork()
+	const { data: accountData } = useAccount()
+	const { data: networkData, switchNetwork } = useNetwork()
 	const { encryptMessage } = useEncryption()
 
 	const apiClients = useContext(ApiClientsContext)!
@@ -86,7 +86,7 @@ export default function useSubmitReview(
 				const encryptedReview = {} as any
 				console.log(accountData)
 				const yourPublicKey = workspace?.members.find(
-					(m) => m.actorId.toLowerCase() === accountData!.address.toLowerCase(),
+					(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 				)?.publicKey
 				const encryptedData = encryptMessage(JSON.stringify(data), yourPublicKey!)
 				const encryptedHash = (await uploadToIPFS(encryptedData)).hash
@@ -109,7 +109,7 @@ export default function useSubmitReview(
 				const {
 					data: { ipfsHash },
 				} = await validatorApi.validateReviewSet({
-					reviewer: accountData!.address,
+					reviewer: accountData?.address!,
 					publicReviewDataHash: isPrivate ? '' : dataHash,
 					encryptedReview,
 				})

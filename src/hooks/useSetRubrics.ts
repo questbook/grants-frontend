@@ -22,8 +22,8 @@ export default function useSetRubrics(
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const [{ data: accountData }] = useAccount()
-	const [{ data: networkData }, switchNetwork] = useNetwork()
+	const { data: accountData } = useAccount()
+	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients

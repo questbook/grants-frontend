@@ -13,8 +13,8 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 	const [error, setError] = React.useState<string>()
 	const [loading, setLoading] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const [{ data: accountData }] = useAccount()
-	const [{ data: networkData }] = useNetwork()
+	const { data: accountData } = useAccount()
+	const { data: networkData } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients

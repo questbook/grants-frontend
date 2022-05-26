@@ -47,7 +47,7 @@
     "subscriptions-transport-ws": "^0.11.0",
     "tlds": "^1.230.0",
     "use-file-picker": "^1.4.1",
-    "wagmi": "^0.2.13"
+    "wagmi": "^0.4.3"
   },
   "devDependencies": {
     "@creatoros/eslint-config": "github:CreatorOS/eslint-config",

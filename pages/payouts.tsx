@@ -35,7 +35,7 @@ export default function Payouts() {
 		reviewPayoutsOutstanding,
 		setReviewPayoutsOutstanding,
 	] = React.useState<any>([])
-	const [{ data: account }] = useAccount()
+	const { data: account } = useAccount()
 
 	React.useEffect(() => {
 		if(
@@ -85,7 +85,7 @@ export default function Payouts() {
 	React.useEffect(() => {
 		if(reviewPayoutsOutstanding.length === 0) {
 			workspace?.members.forEach(
-				(member) => member.actorId === account?.address.toLowerCase()
+				(member) => member.actorId === account?.address?.toLowerCase()
           && member.outstandingReviewIds.filter((review: any) => setReviewPayoutsOutstanding((array: any) => [...array, review])),
 			)
 		}

@@ -50,11 +50,11 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
 	const [isWithdrawFundsModalOpen, setIsWithdrawFundsModalOpen] = useState(false)
 	const [selected, setSelected] = React.useState(0)
 	const [fundingAssetDecimals, setFundingAssetDecimals] = React.useState(18)
-	const [signerStates] = useSigner()
+	const { data: signer } = useSigner()
 	const rewardAssetContract = useContract({
 		addressOrName: grant.reward.asset,
 		contractInterface: ERC20ABI,
-		signerOrProvider: signerStates.data,
+		signerOrProvider: signer,
 	})
 
 	const { data } = useGetFundingQuery({

@@ -44,9 +44,7 @@ function FeedbackDrawer({
 	const [isApproved, setIsApproved] = React.useState<boolean>(false)
 
 	const [pk, setPk] = React.useState<string>('*')
-	const [{ data: accountData }] = useAccount({
-		fetchEns: false,
-	})
+	const { data: accountData } = useAccount()
 	const { workspace } = useContext(ApiClientsContext)!
 
 	const {
@@ -81,7 +79,7 @@ function FeedbackDrawer({
 		}
 
 		const k = workspace?.members?.find(
-			(m) => m.actorId.toLowerCase() === accountData!.address.toLowerCase(),
+			(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 		)?.publicKey?.toString()
 		// console.log(k);
 		if(k && k.length > 0) {

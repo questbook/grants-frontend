@@ -1,5 +1,8 @@
 import React, {
-	createContext, ReactElement, ReactNode, useMemo,
+	createContext,
+	ReactElement,
+	ReactNode,
+	useMemo,
 } from 'react'
 import { ChakraProvider } from '@chakra-ui/react'
 // import dynamic from 'next/dynamic';
@@ -7,7 +10,6 @@ import {
 	Configuration,
 	ValidationApi,
 } from '@questbook/service-validator-client'
-import { providers } from 'ethers'
 import { NextPage } from 'next'
 import type { AppContext, AppProps } from 'next/app'
 import App from 'next/app'
@@ -21,15 +23,18 @@ import {
 import { MinimalWorkspace } from 'src/types'
 import getSeo from 'src/utils/seo'
 import {
-	// Chain,
+	allChains,
+	Chain,
 	chain,
-	Connector,
-	defaultChains,
-	defaultL2Chains,
-	InjectedConnector,
-	Provider,
+	configureChains,
+	createClient,
+	WagmiConfig,
 } from 'wagmi'
+import { InjectedConnector } from 'wagmi/connectors/injected'
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
+import { publicProvider } from 'wagmi/providers/public'
 import '../styles/globals.css'
 import 'draft-js/dist/Draft.css'
 import SubgraphClient from '../src/graphql/subgraph'
@@ -45,58 +50,56 @@ type AppPropsWithLayout = AppProps & {
 
 const infuraId = process.env.NEXT_PUBLIC_INFURA_ID
 
-// Chains for connectors to support
-// const chains = [...defaultChains, ...defaultL2Chains].filter(
-//   (chain) => chain.name in ['mainnet', 'polygonMainnet'],
-// );
+const defaultChain = chain.polygon
+const { chains, provider } = configureChains(allChains, [
+	jsonRpcProvider({
+		rpc: (chain: Chain) => {
+			const rpcUrl = CHAIN_INFO[chain.id]?.rpcUrls[0]
+			if(!rpcUrl) {
+				return { http: CHAIN_INFO[defaultChain.id].rpcUrls[0] }
+			}
 
-// Pick chains
-const chains = [
-	...defaultChains,
-	...defaultL2Chains,
-
-	// commenting to only support rinkeby
-	// CHAIN_INFO[SupportedChainId.HARMONY_TESTNET_S0] as Chain,
-]
-
-// commenting to only support rinkeby
-// const defaultChain = chain.polygonMainnet;
-
-const defaultChain = chain.polygonMainnet
-// Set up connectors
-const connectors = () => [
-	new InjectedConnector({
-		chains,
-		options: { shimDisconnect: true, shimChainChangedDisconnect: true },
-	}),
-	new WalletConnectConnector({
-		options: {
-			infuraId,
-			qrcode: true,
+			return { http: rpcUrl }
 		},
 	}),
-]
+	publicProvider(),
+])
 
-// Set up providers
-type ProviderConfig = { chainId?: number; connector?: Connector };
-
-const provider = ({ chainId }: ProviderConfig) => {
-	const rpcUrl = CHAIN_INFO[chainId!]?.rpcUrls[0]
-	if(!rpcUrl) {
-		return new providers.JsonRpcProvider(
-			CHAIN_INFO[defaultChain.id].rpcUrls[0],
-			'any',
-		)
-	}
-
-	return new providers.JsonRpcProvider(rpcUrl, 'any')
-}
+// Set up client
+const client = createClient({
+	autoConnect: true,
+	connectors: [
+		new InjectedConnector({
+			chains,
+			options: {
+				name: 'Injected',
+				shimDisconnect: true,
+			},
+		}),
+		new MetaMaskConnector({
+			chains,
+			options: {
+				shimDisconnect: true,
+			},
+		}),
+		new WalletConnectConnector({
+			chains,
+			options: {
+				infuraId,
+				qrcode: true,
+			},
+		}),
+	],
+	provider,
+})
 
 export const ApiClientsContext = createContext<{
   validatorApi: ValidationApi;
   workspace?: MinimalWorkspace;
-  setWorkspace:(workspace?: MinimalWorkspace) => void;
+  setWorkspace: (workspace?: MinimalWorkspace) => void;
   subgraphClients: { [chainId: string]: SubgraphClient };
+  connected: boolean;
+  setConnected: (connected: boolean) => void;
   	} | null>(null)
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
@@ -117,6 +120,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		return new ValidationApi(validatorConfiguration)
 	}, [])
 
+	const [connected, setConnected] = React.useState(false)
+
 	const apiClients = useMemo(
 		() => ({
 			validatorApi,
@@ -131,8 +136,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				setWorkspace(newWorkspace)
 			},
 			subgraphClients: clients,
+	  connected,
+	  setConnected,
 		}),
-		[validatorApi, workspace, setWorkspace, clients],
+		[validatorApi, workspace, setWorkspace, clients, connected, setConnected]
 	)
 
 	const seo = getSeo()
@@ -144,7 +151,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			<Head>
 				<script
 					async
-					src="https://www.googletagmanager.com/gtag/js?id=G-N9KVED0HQZ" />
+					src="https://www.googletagmanager.com/gtag/js?id=G-N9KVED0HQZ"
+				/>
 				<script
 					// eslint-disable-next-line react/no-danger
 					dangerouslySetInnerHTML={
@@ -159,16 +167,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					}
 				/>
 			</Head>
-			<Provider
-				autoConnect
-				connectors={connectors}
-				provider={provider}>
+			<WagmiConfig client={client}>
 				<ApiClientsContext.Provider value={apiClients}>
 					<ChakraProvider theme={theme}>
 						{getLayout(<Component {...pageProps} />)}
 					</ChakraProvider>
 				</ApiClientsContext.Provider>
-			</Provider>
+			</WagmiConfig>
 		</>
 	)
 }
