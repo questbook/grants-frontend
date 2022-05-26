@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Container, useToast, VStack } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
@@ -19,18 +19,26 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 	const { connected, setConnected } = useContext(ApiClientsContext)!
 	const currentPageRef = useRef(null)
 
+	const [renderCount, setRenderCount] = useState(0);
+
+	useEffect(() => {
+		console.log('Render Count: ', renderCount)
+	}, [renderCount]);
+
 	useEffect(() => {
 		if(!connected && isDisconnected) {
 			setConnected(false)
-			toast({
+			if (renderCount > 0) toast({
 				title: 'Disconnected',
 				status: 'info',
 			})
 		} else if(isConnected) {
 			setConnected(true)
+			setRenderCount(renderCount + 1);
 		} else if(connected && isDisconnected) {
 			connect(connectors[0])
 			setConnected(true)
+			setRenderCount(renderCount + 1);
 		}
 
 	}, [isConnected, isDisconnected])
