@@ -6,11 +6,9 @@ import {
 	Link,
 	ModalBody,
 	Text,
-	ToastId,
 	useToast,
 } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
-import InfoToast from 'src/components/ui/infoToast'
 import Loader from 'src/components/ui/loader'
 import { CHAIN_INFO } from 'src/constants/chainInfo'
 import useWithdrawFunds from 'src/hooks/useWithdrawFunds'
@@ -19,6 +17,7 @@ import { parseAmount, truncateStringFromMiddle } from 'src/utils/formattingUtils
 import Dropdown from '../../ui/forms/dropdown'
 import SingleLineInput from '../../ui/forms/singleLineInput'
 import Modal from '../../ui/modal'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 interface Props {
   isOpen: boolean;
@@ -40,11 +39,9 @@ function WithdrawFunds({
 	const [error, setError] = React.useState(false)
 	const [address, setAddress] = React.useState('')
 	const [addressError, setAddressError] = React.useState(false)
-	const toast = useToast()
 	const [submitClicked, setSubmitClicked] = useState(false)
 
 	const [transactionHash, setTransactionHash] = React.useState('')
-	const toastRef = React.useRef<ToastId>()
 
 	const [finalAmount, setFinalAmount] = React.useState<string>()
 	const [withdrawTransactionData, withdrawTxnLink, loading] = useWithdrawFunds(
@@ -63,6 +60,7 @@ function WithdrawFunds({
 		{ key: 'Withdrawal Address', value: truncateStringFromMiddle(address) }
 	]
 
+	const { setRefresh } = useCustomToast(withdrawTxnLink)
 	useEffect(() => {
 		// console.log(depositTransactionData);
 		if(withdrawTransactionData) {
@@ -70,24 +68,10 @@ function WithdrawFunds({
 			setTransactionHash(withdrawTransactionData.hash)
 			setFinalAmount(undefined)
 			setFunding('')
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={withdrawTxnLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
+			setRefresh(true)
 		}
 
-	}, [toast, withdrawTransactionData])
+	}, [withdrawTransactionData])
 
 	return (
 		<Modal

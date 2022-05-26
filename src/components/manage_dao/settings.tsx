@@ -5,15 +5,13 @@ import {
 	Image,
 	Link,
 	Text,
-	ToastId,
-	useToast,
 } from '@chakra-ui/react'
 import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace'
 import { Workspace } from 'src/types'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { getUrlForIPFSHash, uploadToIPFS } from '../../utils/ipfsUtils'
-import InfoToast from '../ui/infoToast'
 import EditForm from './edit_form'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 interface Props {
   workspaceData: Workspace;
@@ -32,32 +30,17 @@ function Settings({ workspaceData }: Props) {
     telegramChannel?: string;
   } | null>()
 
-	const toastRef = React.useRef<ToastId>()
-	const toast = useToast()
 
 	const [editData, setEditData] = useState<any>()
 	const [txnData, txnLink, loading] = useUpdateWorkspace(editData)
 
+	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		if(txnData) {
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={txnLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
+			setRefresh(true)
 		}
 
-	}, [toast, txnData])
+	}, [txnData])
 
 	const handleFormSubmit = async(data: any) => {
 		let imageHash = workspaceData.logoIpfsHash

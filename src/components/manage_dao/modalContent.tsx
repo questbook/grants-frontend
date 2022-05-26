@@ -1,18 +1,17 @@
 import React, { useEffect } from 'react'
 import {
-	Box, Button, Flex, Image, Link, ModalBody, Text, ToastId,
-	useToast, } from '@chakra-ui/react'
+	Box, Button, Flex, Image, Link, ModalBody, Text } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import useAddMember from 'src/hooks/useAddMember'
 import { isValidAddress, isValidEmail } from 'src/utils/validationUtils'
 import Badge from '../ui/badge'
 import SingleLineInput from '../ui/forms/singleLineInput'
-import InfoToast from '../ui/infoToast'
 import Loader from '../ui/loader'
 import Modal from '../ui/modal'
 import ConfirmationModalContent from './confirmationModalContent'
 import MemberProps from './memberProps'
 import roles from './roles'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 interface Props {
   onClose: (member: MemberProps, shouldRevoke?: boolean) => void;
@@ -28,7 +27,6 @@ function ModalContent({
 
 	const [memberEmail, setMemberEmail] = React.useState(member?.email || '')
 	const [memberEmailError, setMemberEmailError] = React.useState(false)
-	const toast = useToast()
 
 	const [memberData, setMemberData] = React.useState<any>()
 	const [txnData, txnLink, loading] = useAddMember(memberData)
@@ -39,7 +37,7 @@ function ModalContent({
 	const [hidden, setHidden] = React.useState(false)
 	const [revoking, setRevoking] = React.useState(false)
 
-	const toastRef = React.useRef<ToastId>()
+	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		if(txnData) {
 			const dt = txnData.events[0].args
@@ -55,24 +53,10 @@ function ModalContent({
 				updatedAt: time,
 				addedBy: txnData.from,
 			}, dt[3].every((r:boolean) => !r))
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={txnLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
+			setRefresh(true)
 		}
 
-	}, [toast, txnData])
+	}, [txnData])
 
 	const handleSubmit = async() => {
 		let hasError = false

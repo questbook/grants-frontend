@@ -3,11 +3,10 @@ import React, {
 } from 'react'
 import {
 	Box, Button,
-	Container, Flex, Image, Text, ToastId, useToast, } from '@chakra-ui/react'
+	Container, Flex, Image, Text } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import moment from 'moment'
 import { useRouter } from 'next/router'
-import InfoToast from 'src/components/ui/infoToast'
 import Modal from 'src/components/ui/modal'
 import AppplicationTableEmptyState from 'src/components/your_applications/empty_states/applicantions_table'
 import RubricDrawer from 'src/components/your_grants/rubricDrawer'
@@ -31,6 +30,7 @@ import Table from '../../../src/components/your_grants/view_applicants/table'
 import NavbarLayout from '../../../src/layout/navbarLayout'
 import { formatAmount } from '../../../src/utils/formattingUtils'
 import { ApiClientsContext } from '../../_app'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 const PAGE_SIZE = 500
 
@@ -339,32 +339,17 @@ function ViewApplicants() {
 		grantID,
 	)
 
-	const toastRef = React.useRef<ToastId>()
-	const toast = useToast()
 	const buttonRef = React.useRef<HTMLButtonElement>(null)
 
+	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		// console.log(transactionData);
 		if(transactionData) {
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={txnLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
 			setIsModalOpen(false)
+			setRefresh(true)
 		}
 
-	}, [toast, transactionData])
+	}, [transactionData])
 
 	React.useEffect(() => {
 		setIsAcceptingApplications([acceptingApplications, 0])

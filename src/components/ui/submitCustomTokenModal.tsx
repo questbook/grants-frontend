@@ -10,9 +10,9 @@ import { isValidAddress } from 'src/utils/validationUtils'
 import ImageUpload from './forms/imageUpload'
 import SingleLineInput from './forms/singleLineInput'
 import ErrorToast from './toasts/errorToast'
-import InfoToast from './infoToast'
 import Loader from './loader'
 import Modal from './modal'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 interface ModalProps {
   isModalOpen: boolean;
@@ -176,24 +176,11 @@ function CustomTokenModal({
 		}
 	}
 
+	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		if(txnData) {
 			setIsModalOpen(false)
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={txnLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
+			setRefresh(true)
 		}
 
 	}, [toast, txnData])

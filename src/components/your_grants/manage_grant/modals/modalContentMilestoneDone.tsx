@@ -6,10 +6,7 @@ import {
 	Image,
 	ModalBody,
 	Text,
-	ToastId,
-	useToast,
 } from '@chakra-ui/react'
-import InfoToast from 'src/components/ui/infoToast'
 import Loader from 'src/components/ui/loader'
 import useApproveMilestone from 'src/hooks/useApproveMilestone'
 import { ApplicationMilestone } from 'src/types'
@@ -18,6 +15,7 @@ import {
 	getMilestoneMetadata,
 } from 'src/utils/formattingUtils'
 import MultiLineInput from '../../../ui/forms/multiLineInput'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 interface Props {
   milestone: ApplicationMilestone | undefined;
@@ -28,9 +26,6 @@ function ModalContent({ milestone, done }: Props) {
 	const [details, setDetails] = useState('')
 	const [detailsError, setDetailsError] = useState(false)
 
-	const toastRef = React.useRef<ToastId>()
-	const toast = useToast()
-
 	const { milestoneIndex, applicationId } = getMilestoneMetadata(milestone)!
 	const [milestoneUpdate, setMilestoneUpdate] = useState<any>()
 	const [txn, txnLink, loading] = useApproveMilestone(
@@ -39,28 +34,15 @@ function ModalContent({ milestone, done }: Props) {
 		milestoneIndex,
 	)
 
+	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		if(txn) {
 			setMilestoneUpdate(undefined)
 			done()
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={txnLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
+			setRefresh(true)
 		}
 
-	}, [done, toast, txn])
+	}, [done, txn])
 
 	const markAsDone = async() => {
 		setMilestoneUpdate({ text: details })

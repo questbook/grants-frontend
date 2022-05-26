@@ -8,13 +8,11 @@ import {
 	Image,
 	ModalBody,
 	Text,
-	ToastId,
 	useToast,
 } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import { BigNumber, ethers } from 'ethers'
 import Lottie from 'lottie-react'
-import InfoToast from 'src/components/ui/infoToast'
 import Loader from 'src/components/ui/loader'
 import config from 'src/constants/config'
 import { formatAmount } from 'src/utils/formattingUtils'
@@ -26,6 +24,7 @@ import ERC20ABI from '../../../../contracts/abi/ERC20.json'
 import Dropdown from '../../../ui/forms/dropdown'
 import SingleLineInput from '../../../ui/forms/singleLineInput'
 import Modal from '../../../ui/modal'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 interface Props {
   isOpen: boolean;
@@ -75,24 +74,14 @@ function AddFunds({
 		})
 	}
 
-	const toastRef = React.useRef<ToastId>()
+	
 	const [hasClicked, setHasClicked] = React.useState(false)
-	const closeToast = () => {
-		if(toastRef.current) {
-			toast.close(toastRef.current)
-		}
-	}
+	const [txnLink, setTxnLink] = React.useState('')
+	const { setRefresh } = useCustomToast(txnLink)
 
 	const showToast = ({ link } : { link: string }) => {
-		toastRef.current = toast({
-			position: 'top',
-			render: () => (
-				<InfoToast
-					link={link}
-					close={closeToast}
-				/>
-			),
-		})
+		setTxnLink(link)
+		setRefresh(true)
 	}
 
 	const depositFunds = async() => {

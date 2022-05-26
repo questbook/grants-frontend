@@ -5,7 +5,7 @@ import React, {
 	useRef,
 	useState,
 } from 'react'
-import { Container, ToastId, useToast } from '@chakra-ui/react'
+import { Container } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
 import { CHAIN_INFO } from 'src/constants/chainInfo'
@@ -16,11 +16,11 @@ import { formatAmount } from 'src/utils/formattingUtils'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import Breadcrumbs from '../../src/components/ui/breadcrumbs'
-import InfoToast from '../../src/components/ui/infoToast'
 import Form from '../../src/components/your_grants/edit_grant/form'
 import Sidebar from '../../src/components/your_grants/edit_grant/sidebar'
 import NavbarLayout from '../../src/layout/navbarLayout'
 import { ApiClientsContext } from '../_app'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 function EditGrant() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
@@ -34,9 +34,6 @@ function EditGrant() {
 
 	const [currentStep, setCurrentStep] = useState(0)
 	const [grantID, setGrantID] = useState<string>()
-
-	const toastRef = React.useRef<ToastId>()
-	const toast = useToast()
 
 	const [formData, setFormData] = useState<any>(null)
 
@@ -282,28 +279,15 @@ function EditGrant() {
 	const [editData, setEditData] = useState<any>()
 	const [transactionData, txnLink, loading] = useEditGrant(editData, grantID)
 
+	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		// console.log(transactionData);
 		if(transactionData) {
 			router.replace({ pathname: '/your_grants', query: { done: 'yes' } })
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={txnLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
+			setRefresh(true)
 		}
 
-	}, [toast, transactionData, router])
+	}, [transactionData, router])
 
 	useEffect(() => {
 		setGrantID(router?.query?.grantId?.toString())

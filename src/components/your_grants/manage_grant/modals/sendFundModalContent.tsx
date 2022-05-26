@@ -27,7 +27,7 @@ import ERC20ABI from '../../../../contracts/abi/ERC20.json'
 import { formatAmount, parseAmount } from '../../../../utils/formattingUtils'
 import Dropdown from '../../../ui/forms/dropdown'
 import SingleLineInput from '../../../ui/forms/singleLineInput'
-import InfoToast from '../../../ui/infoToast'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 interface Props {
   isOpen: boolean;
@@ -99,27 +99,14 @@ function ModalContent({
 		}
 	}, [isOpen, switchNetwork, workspace])
 
+	const { setRefresh: setDisburseDataRefresh } = useCustomToast(disburseDataLink)
 	useEffect(() => {
 		// console.log(depositTransactionData);
 		if(disburseData) {
 			onClose()
 			setDisburseAmount(undefined)
 			setFunding('')
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={disburseDataLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
+			setDisburseDataRefresh(true)
 		} else if(disburseError) {
 			setDisburseAmount(undefined)
 			setFunding('')
@@ -165,27 +152,14 @@ function ModalContent({
 		setSubmitClickedP2P,
 	)
 
+	const { setRefresh: setDisburseP2PDataRefresh } = useCustomToast(disburseP2PDataLink)
 	useEffect(() => {
 		// console.log(depositTransactionData);
 		if(disburseP2PData) {
 			onClose()
 			setDisburseP2PAmount(undefined)
 			setFunding('')
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={disburseP2PDataLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
+			setDisburseP2PDataRefresh(true)
 		} else if(disburseP2PError) {
 			setDisburseP2PAmount(undefined)
 			setFunding('')

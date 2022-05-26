@@ -10,9 +10,7 @@ import {
 	Link,
 	ModalBody,
 	Text,
-	ToastId,
 	Tooltip,
-	useToast,
 } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import { useRouter } from 'next/router'
@@ -32,7 +30,6 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs'
 import Heading from '../../../src/components/ui/heading'
-import InfoToast from '../../../src/components/ui/infoToast'
 import Modal from '../../../src/components/ui/modal'
 import ModalContent from '../../../src/components/your_grants/manage_grant/modals/modalContentGrantComplete'
 import SendFundModalContent from '../../../src/components/your_grants/manage_grant/modals/sendFundModalContent'
@@ -46,6 +43,7 @@ import {
 } from '../../../src/utils/formattingUtils'
 import { getAssetInfo } from '../../../src/utils/tokenUtils'
 import { ApiClientsContext } from '../../_app'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 	let val = BigNumber.from(0)
@@ -206,34 +204,18 @@ function ManageGrant() {
 		},
 	]
 
-	const toastRef = React.useRef<ToastId>()
-	const toast = useToast()
-
 	const [update, setUpdate] = useState<any>()
 	const [txn, txnLink, loading] = useCompleteApplication(update, applicationData?.id)
 
+	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		if(txn) {
 			setUpdate(undefined)
 			setIsGrantCompleteModalOpen(false)
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={txnLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
+			setRefresh(true)
 		}
 
-	}, [toast, txn])
+	}, [txn])
 
 	const markApplicationComplete = async(comment: string) => {
 		setUpdate({

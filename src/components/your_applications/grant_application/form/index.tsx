@@ -8,8 +8,6 @@ import {
 	Image,
 	Link,
 	Text,
-	ToastId,
-	useToast,
 } from '@chakra-ui/react'
 import {
 	GrantApplicationRequest,
@@ -36,12 +34,12 @@ import {
 	getFormattedFullDateFromUnixTimestamp,
 	parseAmount,
 } from '../../../../utils/formattingUtils'
-import InfoToast from '../../../ui/infoToast'
 import ApplicantDetails from './1_applicantDetails'
 import AboutTeam from './2_aboutTeam'
 import AboutProject from './3_aboutProject'
 import Funding from './4_funding'
 import CustomFields from './5_customFields'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 function Form({
 	chainId,
@@ -83,7 +81,6 @@ function Form({
   // grantID: string;
 }) {
 	const { encryptApplicationPII } = useApplicationEncryption()
-	const toast = useToast()
 	const router = useRouter()
 	const [applicantName, setApplicantName] = useState('')
 	const [applicantNameError, setApplicantNameError] = useState(false)
@@ -210,8 +207,6 @@ function Form({
 		}
 	}, [formData, application])
 
-	const toastRef = React.useRef<ToastId>()
-
 	const [updateData, setUpdateData] = React.useState<any>()
 	const [txnData, txnLink, loading] = useResubmitApplication(
 		updateData,
@@ -219,29 +214,16 @@ function Form({
 		applicationID,
 	)
 
+	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		if(txnData) {
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={txnLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
 			router.push({
 				pathname: '/your_applications',
 			})
+			setRefresh(true)
 		}
 
-	}, [toast, router, txnData])
+	}, [router, txnData])
 
 	const handleOnSubmit = async() => {
 		// console.log(onSubmit);

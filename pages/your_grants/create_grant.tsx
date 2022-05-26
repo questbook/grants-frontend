@@ -7,12 +7,9 @@ import {
 	Container,
 	Flex,
 	Text,
-	ToastId,
-	useToast,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
-import InfoToast from 'src/components/ui/infoToast'
 import useCreateGrant from 'src/hooks/useCreateGrant'
 import useIntersection from 'src/hooks/utils/useIntersection'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -20,6 +17,7 @@ import { useNetwork } from 'wagmi'
 import Breadcrumbs from '../../src/components/ui/breadcrumbs'
 import Form from '../../src/components/your_grants/create_grant/form'
 import NavbarLayout from '../../src/layout/navbarLayout'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 function CreateGrant() {
 	const apiClients = useContext(ApiClientsContext)!
@@ -40,8 +38,6 @@ function CreateGrant() {
 	)
 	const grantRewardsInViewport = useIntersection(grantRewardsRef, '0px')
 
-	const toastRef = React.useRef<ToastId>()
-	const toast = useToast()
 
 	const scroll = (ref: any) => {
 		if(!ref.current) {
@@ -84,28 +80,16 @@ function CreateGrant() {
 		}
 	}, [switchNetwork, workspace])
 
+	const { setRefresh } = useCustomToast(blockExplorerLink)
+
 	useEffect(() => {
 		// console.log(transactionData);
 		if(transactionData) {
 			router.replace({ pathname: '/your_grants', query: { done: 'yes' } })
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={blockExplorerLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
+			setRefresh(true)
 		}
 
-	}, [toast, transactionData, router])
+	}, [transactionData, router])
 
 	const getColor = (index: number, color2: string, color1: string) => {
 		if(index === 3) {

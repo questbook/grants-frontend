@@ -13,9 +13,7 @@ import {
 	ModalBody,
 	Stack,
 	Text,
-	ToastId,
 	useClipboard,
-	useToast,
 } from '@chakra-ui/react'
 import { utils } from 'ethers'
 import Loader from 'src/components/ui/loader'
@@ -30,7 +28,7 @@ import useMarkReviewPaymentDone from '../../hooks/useMarkReviewPaymentDone'
 import { formatAmount, trimAddress } from '../../utils/formattingUtils'
 // UI AND COMPONENT TOOLS
 import Dropdown from '../ui/forms/dropdown'
-import InfoToast from '../ui/infoToast'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 interface Props {
   workspaceId: string;
@@ -65,8 +63,6 @@ function PayoutModalContent({
 
 	// CHAKRA HOOKS
 	const { hasCopied, onCopy } = useClipboard(reviewerAddress)
-	const toast = useToast()
-	const toastRef = useRef<ToastId>()
 
 	const supportedCurrencies = Object.keys(
 		CHAIN_INFO[currentChain].supportedCurrencies,
@@ -197,59 +193,33 @@ function PayoutModalContent({
 
 	}, [totalAmount])
 
+	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		if(transactionData) {
 			onClose()
 			setSubmitMarkDone(false)
 			setTabIndex(1)
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={txnLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
+			setRefresh(true)
 		} else if(error) {
 			onClose()
 			setSubmitMarkDone(false)
 		}
 
-	}, [toast, transactionData])
+	}, [transactionData])
 
+	const { setRefresh: fulfillTxnRefresh } = useCustomToast(fulfillTxnLink)
 	useEffect(() => {
 		if(fulfillPaymentData) {
 			onClose()
 			setSubmitPayment(false)
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={fulfillTxnLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
 			setTabIndex(1)
+			fulfillTxnRefresh(true)
 		} else if(error) {
 			onClose()
 			setSubmitPayment(false)
 		}
 
-	}, [toast, fulfillPaymentData, error])
+	}, [fulfillPaymentData, error])
 
 	const sendSubmit = () => {
 		if(reviewsToPay !== undefined

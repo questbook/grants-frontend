@@ -14,8 +14,8 @@ import {
 import copy from 'copy-to-clipboard'
 import { BigNumber, ethers } from 'ethers'
 import Lottie from 'lottie-react'
-import InfoToast from 'src/components/ui/infoToast'
 import Loader from 'src/components/ui/loader'
+import InfoToast from 'src/components/ui/toasts/infoToast'
 import config from 'src/constants/config'
 import { formatAmount } from 'src/utils/formattingUtils'
 import {

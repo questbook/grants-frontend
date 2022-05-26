@@ -8,8 +8,6 @@ import {
 	Image,
 	Link,
 	Text,
-	ToastId,
-	useToast,
 } from '@chakra-ui/react'
 import { GrantApplicationRequest } from '@questbook/service-validator-client'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
@@ -24,12 +22,12 @@ import { useAccount, useSigner } from 'wagmi'
 import strings from '../../../../constants/strings.json'
 import { GrantApplicationFieldsSubgraph } from '../../../../types/application'
 import { parseAmount } from '../../../../utils/formattingUtils'
-import InfoToast from '../../../ui/infoToast'
 import ApplicantDetails from './1_applicantDetails'
 import AboutTeam from './2_aboutTeam'
 import AboutProject from './3_aboutProject'
 import Funding from './4_funding'
 import CustomFields from './5_customFields'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 interface Props {
   // onSubmit: (data: any) => void;
@@ -173,8 +171,6 @@ function Form({
 
 	}, [grantRequiredFields])
 
-	const toastRef = React.useRef<ToastId>()
-	const toast = useToast()
 	const router = useRouter()
 
 	const [formData, setFormData] = React.useState<GrantApplicationRequest>()
@@ -185,29 +181,16 @@ function Form({
     workspaceId,
 	)
 
+	const { setRefresh } = useCustomToast(txnLink)
 	React.useEffect(() => {
 		if(txnData) {
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={txnLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
 			router.replace({
 				pathname: '/your_applications',
 			})
+			setRefresh(true)
 		}
 
-	}, [toast, router, txnData])
+	}, [router, txnData])
 
 	const handleOnSubmit = async() => {
 		let error = false

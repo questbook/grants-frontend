@@ -11,7 +11,7 @@ import Form from '../src/components/signup/create_dao/form'
 import Loading from '../src/components/signup/create_dao/loading'
 import CreateGrant from '../src/components/signup/create_grant'
 import DaoCreated from '../src/components/signup/daoCreated'
-import InfoToast from '../src/components/ui/infoToast'
+import InfoToast from '../src/components/ui/toasts/infoToast'
 import NavbarLayout from '../src/layout/navbarLayout'
 import { ApiClientsContext } from './_app'
 
