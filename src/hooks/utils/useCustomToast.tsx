@@ -3,18 +3,19 @@ import { ToastId, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import InfoToast from 'src/components/ui/toasts/infoToast'
 
-function useCustomToast(link: string, route?: string) {
+
+function useCustomToast(link: string, toastDuration?: number, route?: string, shouldRefresh?: boolean) {
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
 	const router = useRouter()
 
-	const [refresh, setRefresh] = useState(false)
+	const [refresh, setRefresh] = useState(shouldRefresh ?? false)
 
 	useEffect(() => {
 		console.log('CUSTOM TOAST: ', refresh, link)
 		if(refresh && link && !link.includes('undefined') && !link.includes('null')) {
 			toastRef.current = toast({
-				duration: 4000,
+				duration: toastDuration ?? 3500,
 				position: 'top',
 				render: () => {
 					return (
