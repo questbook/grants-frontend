@@ -61,7 +61,7 @@ export default [
 		isRequired: false,
 	},
 	// {
-	//   title: 'Other Information',
+	//   title: 'Add Custom Field',
 	//   id: 'extraField',
 	//   inputType: 'short-form',
 	//   isRequired: false,

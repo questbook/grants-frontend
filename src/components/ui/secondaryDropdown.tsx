@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
 	Box,
 	Button,
@@ -15,6 +15,8 @@ import {
 interface DropdownProps {
   listItems: { icon?: string; label: string, id: number }[];
   listItemsMinWidth?: string;
+  dropdownWidth?: string;
+  defaultItem?: { icon?: string; label: string, id: number };
   label?: string;
   // eslint-disable-next-line react/no-unused-prop-types
   value?: string;
@@ -23,6 +25,8 @@ interface DropdownProps {
 
 const defaultProps = {
 	listItemsMinWidth: '0',
+	dropdownWidth: 'auto',
+	defaultItem: null,
 	label: '',
 	value: '',
 	onChange: null,
@@ -31,16 +35,24 @@ const defaultProps = {
 function SecondaryDropdown({
 	listItems,
 	listItemsMinWidth,
+	defaultItem,
+	dropdownWidth,
 	label,
 	onChange,
 }: DropdownProps) {
 	const [isOpen, setIsOpen] = React.useState(false)
-	const defaultSelected = listItems[0]
+	const defaultSelected = defaultItem ?? listItems[0]
 	const [selected, setSelected] = React.useState(defaultSelected)
+	useEffect(() => {
+		if(defaultSelected) {
+			setSelected(defaultSelected)
+		}
+	}, [defaultItem])
 	return (
 		<Flex
 			flexDirection="column"
 			alignItems="stretch"
+			width={dropdownWidth}
 			position="relative">
 			{
 				label && label.length && (
