@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useRef } from 'react'
 import { Container, useToast, VStack } from '@chakra-ui/react'
+import { ApiClientsContext } from 'pages/_app'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
 import ConnectedNavbar from '../components/navbar/connected'
 import SignInNavbar from '../components/navbar/notConnected'
-import { ApiClientsContext } from 'pages/_app'
 interface Props {
   children: React.ReactNode;
   renderGetStarted?: boolean;
@@ -16,7 +16,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 	const { data: accountData, isLoading, isFetching, isFetched, isRefetching, isSuccess, status: accountStatus } = useAccount()
 	const toast = useToast()
 
-	const { connected, setConnected } = useContext(ApiClientsContext)!;
+	const { connected, setConnected } = useContext(ApiClientsContext)!
 	const currentPageRef = useRef(null)
 
 	useEffect(() => {
@@ -36,16 +36,16 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 	}, [isConnected, isDisconnected])
 
 	useEffect(() => {
-		console.log('CONNECTION: ', connected, isConnected, isConnecting, isReconnecting, isDisconnected, isError, isIdle, connectData, connectStatus, error);
-	}, [connected, isConnected, isConnecting, isReconnecting, isDisconnected, isError, isIdle, connectStatus, error]);
+		console.log('CONNECTION: ', connected, isConnected, isConnecting, isReconnecting, isDisconnected, isError, isIdle, connectData, connectStatus, error)
+	}, [connected, isConnected, isConnecting, isReconnecting, isDisconnected, isError, isIdle, connectStatus, error])
 
 	useEffect(() => {
-		console.log('ACCOUNT: ', accountData, isLoading, isFetching, isFetched, isRefetching, isSuccess, accountStatus);
-	}, [accountData, isLoading, isFetching, isFetched, isRefetching, isSuccess, accountStatus]);
+		console.log('ACCOUNT: ', accountData, isLoading, isFetching, isFetched, isRefetching, isSuccess, accountStatus)
+	}, [accountData, isLoading, isFetching, isFetched, isRefetching, isSuccess, accountStatus])
 
 	useEffect(() => {
 		console.log('USE NETWORK: ', activeChain, networkStatus, pendingChainId, networkData)
-	}, [pendingChainId, activeChain, networkStatus, networkData]);
+	}, [pendingChainId, activeChain, networkStatus, networkData])
 
 	return (
 		<VStack
