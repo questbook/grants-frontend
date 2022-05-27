@@ -86,6 +86,7 @@ function Form({
 	const toast = useToast()
 	const router = useRouter()
 	const [onEdit, setOnEdit] = useState<boolean>(false);
+	const [loadedData, setLoadedData] = useState<boolean>(false);
 	const [applicantName, setApplicantName] = useState('')
 	const [applicantNameError, setApplicantNameError] = useState(false)
 
@@ -164,7 +165,7 @@ function Form({
 
 	useEffect(() => {
 		try {
-			if(formData) {
+			if(formData && !loadedData) {
 				setApplicantName(formData.applicantName)
 				setApplicantEmail(formData.applicantEmail)
 				setTeamMembers(formData.teamMembers)
@@ -205,6 +206,7 @@ function Form({
 							isError: false,
 						})))
 				}
+				setLoadedData(true);
 			}
 		} catch(error) {
 			// console.log(error);
@@ -245,7 +247,7 @@ function Form({
 	}, [toast, router, txnData])
 
 	const handleOnSubmit = async() => {
-		console.log(onEdit);
+		// console.log(onEdit);
 		if(!onSubmit && !onEdit) {
 			return
 		}
@@ -422,7 +424,8 @@ function Form({
 			console.log('encryptedData -----', encryptedData)
 		}
 
-		setUpdateData(encryptedData || data)
+		setUpdateData(encryptedData || data);
+		setLoadedData(false);
 	}
 
 	return (
@@ -431,6 +434,7 @@ function Form({
 			flexDirection="column"
 			alignItems="center"
 			w="100%">
+			{!loadedData ? <Loader /> : <>
 			<Image
 				objectFit="cover"
 				h="96px"
@@ -779,6 +783,7 @@ function Form({
 					</Button>
 				) : null
 			}
+		</>}
 		</Flex>
 	)
 }
