@@ -20,6 +20,7 @@ import { useAccount } from 'wagmi'
 import GrantCard from '../src/components/browse_grants/grantCard'
 import Sidebar from '../src/components/browse_grants/sidebar'
 import Heading from '../src/components/ui/heading'
+import Loader from '../src/components/ui/loader'
 import NavbarLayout from '../src/layout/navbarLayout'
 import {
 	formatAmount,
@@ -44,11 +45,13 @@ function BrowseGrants() {
 
 	const toast = useToast()
 	const [grants, setGrants] = useState<GetAllGrantsQuery['grants']>([])
+	const [loadedData, setLoadedData] = useState<boolean>(false);
 
 	const [currentPage, setCurrentPage] = useState(0)
 
 
 	const getGrantData = async(firstTime: boolean = false) => {
+		setLoadedData(false);
 		try {
 			const currentPageLocal = firstTime ? 0 : currentPage
 			const promises = allNetworkGrants.map(
@@ -84,12 +87,14 @@ function BrowseGrants() {
 					setGrants(
 						allGrantsData.sort((a: any, b: any) => b.createdAtS - a.createdAtS),
 					)
+					setLoadedData(true)
 				} else {
 					setGrants(
 						[...grants, ...allGrantsData].sort(
 							(a: any, b: any) => b.createdAtS - a.createdAtS,
 						),
 					)
+					setLoadedData(true)
 				}
 
 				setCurrentPage(firstTime ? 1 : currentPage + 1)
@@ -116,7 +121,7 @@ function BrowseGrants() {
       - (parentElement.scrollHeight - parentElement.clientHeight),
 		) < 10
 		if(reachedBottom) {
-			getGrantData()
+			getGrantData();
 		}
 	}, [containerRef, getGrantData])
 
@@ -151,6 +156,7 @@ function BrowseGrants() {
 				pb={8}
 				px={10}>
 				<Heading title="Discover grants" />
+				{!loadedData ? <Loader /> : <>
 				{
 					grants.length > 0
           && grants.map((grant) => {
@@ -239,6 +245,7 @@ function BrowseGrants() {
           	)
           })
 				}
+				</>}
 			</Flex>
 			{
 				accountData && accountData.address ? null : (
