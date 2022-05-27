@@ -23,13 +23,14 @@ import useActiveTabIndex from 'src/hooks/utils/useActiveTabIndex'
 import { MinimalWorkspace } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
+import { useAccount, useConnect } from 'wagmi'
 import AccountDetails from './accountDetails'
 import Tab from './tab'
 
 function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	const toast = useToast()
-	const [{ data: accountData }] = useAccount()
+	const { data: accountData } = useAccount()
+	const { isConnected } = useConnect()
 	const tabPaths = [
 		'your_grants',
 		'funds',
@@ -44,7 +45,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	const [applicationCount, setApplicationCount] = React.useState(0)
 
 	const apiClients = useContext(ApiClientsContext)!
-	const { workspace, setWorkspace, subgraphClients } = apiClients
+	const { workspace, setWorkspace, subgraphClients, connected } = apiClients
 	const [isAdmin, setIsAdmin] = React.useState(false)
 	const [isReviewer, setIsReviewer] = React.useState<boolean>(false)
 
@@ -70,8 +71,6 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 		if(!workspace) {
 			return
 		}
-
-		console.log('Workspace or Account changed!')
 
 		const getNumberOfApplications = async() => {
 			try {
@@ -121,7 +120,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 		getNumberOfApplications()
 		getNumberOfGrants()
 
-	}, [accountData?.address, workspace?.id])
+	}, [accountData?.address, workspace?.id, isConnected])
 
 	const getAllWorkspaces = Object.keys(subgraphClients)!.map(
 
@@ -199,7 +198,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 
 		getWorkspaceData(accountData?.address)
 
-	}, [])
+	}, [isConnected, accountData, connected])
 
 	const [isDiscover, setIsDiscover] = useState<boolean>(false)
 
@@ -224,7 +223,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 			minH="80px"
 		>
 			{
-				workspace ? (
+				connected ? (
 					<Menu>
 						<MenuButton
 							as={Button}
@@ -246,7 +245,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 									h="32px"
 									mr="10px"
 									src={
-										router.pathname === '/'
+										router.pathname === '/' || !workspace
 											? '/ui_icons/gray/see.svg'
 											: getUrlForIPFSHash(workspace.logoIpfsHash)
 									}
@@ -260,7 +259,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 									overflow="hidden"
 									textOverflow="ellipsis"
 								>
-									{router.pathname === '/' ? 'Discover Grants' : workspace.title}
+									{router.pathname === '/' || !workspace ? 'Discover Grants' : workspace.title}
 								</Text>
 								<Image
 									ml={2}

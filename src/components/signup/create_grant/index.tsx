@@ -10,7 +10,7 @@ function CreateGrant({
   onSubmit: (data: any) => void;
   hasClicked: boolean;
 }) {
-	const [{ data: accountData }] = useAccount()
+	const { data: accountData } = useAccount()
 	const totalSteps = 4
 
 	const [formData, setFormData] = useState<any>({})

@@ -15,7 +15,7 @@ function GrantManagers({
   grantManagers: any[];
   toggleGrantManager: (address: string) => void;
 }) {
-	const [{ data: accountData }] = useAccount()
+	const { data: accountData } = useAccount()
 	return (
 		<Flex
 			py={0}

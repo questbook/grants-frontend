@@ -22,7 +22,7 @@ function CustomFields({
 				fontSize="16px"
 				lineHeight="20px"
 				color="#8850EA">
-        Other Information
+       Other Information
 				<Tooltip
 					icon="/ui_icons/tooltip_questionmark_brand.svg"
 					label="Additional details for the application form"

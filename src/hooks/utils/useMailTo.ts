@@ -11,12 +11,12 @@ export default function useMailTo(
 ) {
 	const apiClients = useContext(ApiClientsContext)!
 	const { workspace } = apiClients
-	const [{ data: accountData }] = useAccount()
+	const { data: accountData } = useAccount()
 	const [email, setEmail] = useState<string | null>()
 
 	useEffect(() => {
 		const managerEmail = workspace?.members.find(
-			(member) => member.actorId.toLowerCase() === accountData?.address.toLowerCase(),
+			(member) => member.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 		)?.email
 		setEmail(managerEmail)
 	}, [workspace, accountData])
