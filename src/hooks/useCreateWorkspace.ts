@@ -18,7 +18,7 @@ export default function useCreateWorkspace(
 	const [loading, setLoading] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
 	const [imageHash, setImageHash] = React.useState<string>()
-	const [{ data: accountData }] = useAccount()
+	const { data: accountData } = useAccount()
 
 	const chainId = useChainId()
 	const apiClients = useContext(ApiClientsContext)!
@@ -63,7 +63,7 @@ export default function useCreateWorkspace(
 				title: data.name,
 				about: data.description,
 				logoIpfsHash: uploadedImageHash,
-				creatorId: accountData!.address,
+				creatorId: accountData?.address!,
 				socials: [],
 				supportedNetworks: [getSupportedValidatorNetworkFromChainId(data.network)],
 			})

@@ -46,7 +46,7 @@ function GrantRewardsInput({
 		iconHash: '',
 	})
 	const [rewardError, setRewardError] = React.useState(false)
-	const [, switchNetwork] = useNetwork()
+	const { switchNetwork } = useNetwork()
 	const [isModalOpen, setIsModalOpen] = React.useState(false)
 	const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false)
 	// const [supportedCurrencies, setSupportedCurrencies] = React.useState([]);

@@ -32,7 +32,12 @@ function ConnectWallet() {
 					background: '#D0D3D3',
 				}
 			}
-			onClick={() => router.push('/connect_wallet')}
+			onClick={
+				() => {
+					console.log('Push Connect wallet')
+			 router.push('/connect_wallet')
+				}
+			}
 		>
 			<Image
 				h="30px"

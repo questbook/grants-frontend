@@ -38,7 +38,7 @@ function Form({
 }) {
 	const { workspace } = useContext(ApiClientsContext)!
 	const maxDescriptionLength = 300
-	const [{ data: accountData }] = useAccount()
+	const { data: accountData } = useAccount()
 	const [title, setTitle] = useState(formData.title ?? '')
 	const [summary, setSummary] = useState(formData.summary ?? '')
 
@@ -61,7 +61,7 @@ function Form({
 		}
 
 		const k = workspace?.members?.find(
-			(m) => m.actorId.toLowerCase() === accountData!.address.toLowerCase(),
+			(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 		)?.publicKey?.toString()
 		// console.log(k);
 		if(k && k.length > 0) {
@@ -110,7 +110,7 @@ function Form({
 	useEffect(() => {
 		if(workspace && workspace.members && accountData && accountData.address) {
 			const hasPubKey = workspace.members.some(
-				(member) => member.actorId.toLowerCase() === accountData?.address.toLowerCase()
+				(member) => member.actorId.toLowerCase() === accountData?.address?.toLowerCase()
           && member.publicKey
           && member.publicKey !== '',
 			)

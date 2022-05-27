@@ -8,7 +8,7 @@ import ApplicationReviewRegistryABI from '../../contracts/abi/ApplicationReviewR
 
 export default function useApplicationReviewRegistryContract(chainId?: SupportedChainId) {
 	const [addressOrName, setAddressOrName] = React.useState<string>()
-	const [signerStates] = useSigner()
+	const { data: signer } = useSigner()
 	useEffect(() => {
 		if(!chainId) {
 			return
@@ -21,7 +21,7 @@ export default function useApplicationReviewRegistryContract(chainId?: Supported
 		addressOrName:
       addressOrName ?? '0x0000000000000000000000000000000000000000',
 		contractInterface: ApplicationReviewRegistryABI,
-		signerOrProvider: signerStates.data,
+		signerOrProvider: signer,
 	})
 
 	return grantContract

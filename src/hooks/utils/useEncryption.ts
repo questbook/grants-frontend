@@ -6,7 +6,7 @@ import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { useAccount } from 'wagmi'
 
 export default function useEncryption() {
-	const [{ data: accountData }] = useAccount()
+	const { data: accountData } = useAccount()
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
 

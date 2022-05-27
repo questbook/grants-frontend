@@ -16,7 +16,7 @@ import {
 import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
+import { useAccount, useConnect } from 'wagmi'
 import GrantCard from '../src/components/browse_grants/grantCard'
 import Sidebar from '../src/components/browse_grants/sidebar'
 import Heading from '../src/components/ui/heading'
@@ -29,12 +29,13 @@ const PAGE_SIZE = 40
 
 function BrowseGrants() {
 	const containerRef = useRef(null)
-	const [{ data: accountData }] = useAccount()
+	const { data: accountData } = useAccount()
+	const { isDisconnected } = useConnect()
 	const router = useRouter()
-	const { subgraphClients } = useContext(ApiClientsContext)!
+	const { subgraphClients, connected } = useContext(ApiClientsContext)!
 
-	// Changing this to support Rinkeby only for testing!
-	const allNetworkGrants = Object.keys(subgraphClients)!.map((key) => useGetAllGrantsLazyQuery({ client: subgraphClients[key].client })
+	const allNetworkGrants = Object.keys(subgraphClients)!.map(
+		(key) => useGetAllGrantsLazyQuery({ client: subgraphClients[key].client }),
 	)
 
 	useEffect(() => {}, [subgraphClients])
@@ -250,7 +251,7 @@ function BrowseGrants() {
 				}
 			</Flex>
 			{
-				accountData && accountData.address ? null : (
+				!connected && isDisconnected && (
 					<Flex
 						w="26%"
 						pos="sticky"

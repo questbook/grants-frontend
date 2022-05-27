@@ -8,7 +8,7 @@ import GrantFactoryABI from '../../contracts/abi/GrantFactoryAbi.json'
 
 export default function useGrantFactoryContract(chainId?: SupportedChainId) {
 	const [addressOrName, setAddressOrName] = React.useState<string>()
-	const [signerStates] = useSigner()
+	const { data: signer } = useSigner()
 	useEffect(() => {
 		if(!chainId) {
 			return
@@ -21,7 +21,7 @@ export default function useGrantFactoryContract(chainId?: SupportedChainId) {
 		addressOrName:
       addressOrName ?? '0x0000000000000000000000000000000000000000',
 		contractInterface: GrantFactoryABI,
-		signerOrProvider: signerStates.data,
+		signerOrProvider: signer,
 	})
 
 	return grantContract
