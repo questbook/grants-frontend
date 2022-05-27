@@ -426,7 +426,6 @@ function Form({
 		}
 
 		setUpdateData(encryptedData || data)
-		setLoadedData(false)
 	}
 
 	return (
