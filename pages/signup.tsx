@@ -1,6 +1,6 @@
 import React, { ReactElement, useContext, useEffect } from 'react'
 import {
-	Container, Text, ToastId, useToast,
+	Container, Text
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { SupportedChainId } from 'src/constants/chains'
@@ -11,9 +11,9 @@ import Form from '../src/components/signup/create_dao/form'
 import Loading from '../src/components/signup/create_dao/loading'
 import CreateGrant from '../src/components/signup/create_grant'
 import DaoCreated from '../src/components/signup/daoCreated'
-import InfoToast from '../src/components/ui/toasts/infoToast'
 import NavbarLayout from '../src/layout/navbarLayout'
 import { ApiClientsContext } from './_app'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 function SignupDao() {
 	const router = useRouter()
@@ -32,9 +32,6 @@ function SignupDao() {
     network: SupportedChainId;
     id: string;
   } | null>(null)
-
-	const toastRef = React.useRef<ToastId>()
-	const toast = useToast()
 
 	const [workspaceData, setWorkspaceData] = React.useState<any>()
 	const [
@@ -89,6 +86,7 @@ function SignupDao() {
 		createGrantLoading,
 	] = useCreateGrant(grantData, workspaceData?.network, daoData?.id)
 
+	const { setRefresh } = useCustomToast(transactionLink)
 	useEffect(() => {
 		// console.log(grantTransactionData);
 		if(grantTransactionData) {
@@ -110,25 +108,10 @@ function SignupDao() {
 
 			router.replace({ pathname: '/your_grants', query: { done: 'yes' } })
 
-			const link = transactionLink
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={link}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
+			setRefresh(true)
 		}
 
-	}, [toast, grantTransactionData, router])
+	}, [grantTransactionData, router])
 
 	if(creatingGrant) {
 		return (
