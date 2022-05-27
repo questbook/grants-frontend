@@ -144,10 +144,10 @@ function GrantRewardsInput({
 							setDateError(false)
 						}
 
-						let date = new Date();
-						if (new Date(e.target.value) <= date) {
-							setOldDate(true);
-							setDateError(true);
+						const date = new Date()
+						if(new Date(e.target.value) <= date) {
+							setOldDate(true)
+							setDateError(true)
 						} else {
 							setDate(e.target.value)
 						}
@@ -155,7 +155,7 @@ function GrantRewardsInput({
 				}
 				value={date}
 				isError={dateError}
-				errorText={oldDate ? "Choose a date in the future" : "Date is Required"}
+				errorText={oldDate ? 'Choose a date in the future' : 'Date is Required'}
 				tooltip="This is the last date on/before which grantees can apply"
 				label="Grant Deadline"
 			/>
