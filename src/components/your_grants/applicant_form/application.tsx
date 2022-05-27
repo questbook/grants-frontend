@@ -288,14 +288,14 @@ Project Goals
 								projectMilestones.map((milestone: any, index: number) => (
 									<Box key={milestone.id}>
 										<Heading
-											variant="applicationHeading"
+											variant="applicationSubtitle"
 											mt={3}>
 												Milestone
 											{' '}
 											{index + 1}
 										</Heading>
 										<Text
-											variant="applicationText"
+											variant="applicationTextHeading"
 											mt={1}>
 											{milestone?.title}
 										</Text>
@@ -312,7 +312,7 @@ Project Goals
 												direction="column"
 												justify="center"
 												align="start">
-												<Heading variant="applicationHeading">
+												<Heading variant="applicationSubtitle">
                         Funding asked
 												</Heading>
 												<Text variant="applicationText">
