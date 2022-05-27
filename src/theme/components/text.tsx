@@ -21,6 +21,18 @@ export default {
 				lineHeight: '24px',
 				letterSpacing: '0.5px',
 			},
+			applicationTextHeading: {
+				color: '#122224',
+				fontWeight: '700',
+				fontSize: '16px',
+				lineHeight: '24px',
+			},
+			applicationFundingText: {
+				color: '#414E50',
+				fontWeight: '500',
+				fontSize: '16px',
+				lineHeight: '20px',
+			},
 			tableHeader: {
 				fontSize: '16px',
 				lineHeight: '24px',
