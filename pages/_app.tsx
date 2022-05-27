@@ -170,7 +170,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			<WagmiConfig client={client}>
 				<ApiClientsContext.Provider value={apiClients}>
 					<ChakraProvider theme={theme}>
-						{getLayout(<Component {...pageProps} />)}
+					// @ts-ignore
+					{getLayout(<Component {...pageProps} />)}
 					</ChakraProvider>
 				</ApiClientsContext.Provider>
 			</WagmiConfig>
