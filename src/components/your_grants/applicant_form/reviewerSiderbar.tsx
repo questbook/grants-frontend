@@ -368,7 +368,7 @@ Assigned to review (you)
 						color="#717A7C"
 						fontSize="12px">
             Review the application and provide
-            your feedback.
+            your comment.
 						{' '}
 					</Text>
 
