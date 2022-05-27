@@ -22,8 +22,6 @@ import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspa
 import { formatAmount } from '../../../utils/formattingUtils'
 import { getAssetInfo } from '../../../utils/tokenUtils'
 
-const TABS = ['Project Details', 'Funds Requested', 'About Team', 'Custom Fields']
-
 interface Props {
   applicationData: GetApplicationDetailsQuery['grantApplication'];
   showHiddenData: () => void;
@@ -155,15 +153,7 @@ function Application({ applicationData, showHiddenData }: Props) {
 					align="stretch"
 					mb={8}
 				>
-					{
-						TABS.map(
-							(tab, index) => (
-								index < 2
-								|| (index === 2 && teamMembers)
-								|| (index === 3 && customFields.length > 0)
-							) && (
 								<Button
-									key={tab}
 									variant="ghost"
 									h="54px"
 									w="full"
@@ -174,17 +164,14 @@ function Application({ applicationData, showHiddenData }: Props) {
 									}
 									_focus={{}}
 									borderRadius={0}
-									background={selected === index ? '#E7DAFF' : 'white'}
-									color={selected === index ? 'brand.500' : '#122224'}
-									borderBottomColor={selected === index ? 'brand.500' : '#E7DAFF'}
-									borderBottomWidth={selected === index ? '2px' : '1px'}
-									onClick={() => scroll(refs[index], index)}
+									background='white'
+									color='#122224'
+									borderBottomColor='#E7DAFF'
+									borderBottomWidth='1px'
+									fontSize="1.5rem"
 								>
-									{tab}
+								Grant Details
 								</Button>
-							),
-						)
-					}
 				</Flex>
 			</Flex>
 			<Flex
@@ -240,7 +227,7 @@ function Application({ applicationData, showHiddenData }: Props) {
 					<Heading
 						variant="applicationHeading"
 						mt={10}>
-            Project Details
+            Project Description
 					</Heading>
 					<Linkify
 						componentDecorator={
