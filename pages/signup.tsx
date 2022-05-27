@@ -7,13 +7,13 @@ import { SupportedChainId } from 'src/constants/chains'
 import { SupportedNetwork } from 'src/generated/graphql'
 import useCreateGrant from 'src/hooks/useCreateGrant'
 import useCreateWorkspace from 'src/hooks/useCreateWorkspace'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import Form from '../src/components/signup/create_dao/form'
 import Loading from '../src/components/signup/create_dao/loading'
 import CreateGrant from '../src/components/signup/create_grant'
 import DaoCreated from '../src/components/signup/daoCreated'
 import NavbarLayout from '../src/layout/navbarLayout'
 import { ApiClientsContext } from './_app'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 function SignupDao() {
 	const router = useRouter()
