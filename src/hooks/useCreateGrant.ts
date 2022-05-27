@@ -29,8 +29,8 @@ export default function useCreateGrant(
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const [{ data: accountData }] = useAccount()
-	const [{ data: networkData }, switchNetwork] = useNetwork()
+	const { data: accountData } = useAccount()
+	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients
@@ -105,7 +105,7 @@ export default function useCreateGrant(
 					details: detailsHash,
 					deadline: data.date,
 					reward,
-					creatorId: accountData!.address,
+					creatorId: accountData?.address!,
 					workspaceId: getSupportedValidatorNetworkFromChainId(
             (chainId ?? getSupportedChainIdFromWorkspace(workspace))!,
 					),

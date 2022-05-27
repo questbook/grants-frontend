@@ -85,9 +85,36 @@ function Sidebar({
 						<Button
 							mt={10}
 							variant="primary"
+							isDisabled={true}
 						>
           Already applied!
 						</Button>
+					)
+				}
+				{
+					acceptingApplications && alreadyApplied && (
+						<Text
+							mt={2}
+							color="#717A7C"
+							textAlign="center"
+							fontWeight="400"
+							fontSize="12px"
+							lineHeight="16px"
+							mb={3}
+						>
+          You’ve already applied. View details
+							{' '}
+							<a href="../../your_applications">
+								<u>
+									<b>
+here
+									</b>
+								</u>
+							</a>
+							{' '}
+.
+
+						</Text>
 					)
 				}
 				{

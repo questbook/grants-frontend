@@ -49,7 +49,7 @@ function ApplicantForm() {
 	const [step, setStep] = useState(0)
 
 	const [isAdmin, setIsAdmin] = useState(false)
-	const [{ data: accountData }] = useAccount()
+	const { data: accountData } = useAccount()
 	useEffect(() => {
 		if(workspace && workspace.members && workspace.members.length > 0) {
 			const tempMember = workspace.members.find(
@@ -485,7 +485,7 @@ Click on ‘Decrypt’ to view the details.
 							>
 								{
 									applicationData
-										?.reviewers.find((reviewer) => reviewer.id.split('.')[1] === accountData?.address.toLowerCase()) !== undefined && (
+										?.reviewers.find((reviewer) => reviewer.id.split('.')[1] === accountData?.address?.toLowerCase()) !== undefined && (
 										<ReviewerSidebar
 											showHiddenData={showHiddenData}
 											applicationData={applicationData}

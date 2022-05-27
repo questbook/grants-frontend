@@ -151,6 +151,7 @@ function GrantRewardsInput({
 				isError={dateError}
 				errorText="Required"
 				label="Grant Deadline"
+				tooltip="This is the last date on/before which grantees can apply"
 			/>
 
 			<Flex

@@ -22,7 +22,7 @@ import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspa
 import { formatAmount } from '../../../utils/formattingUtils'
 import { getAssetInfo } from '../../../utils/tokenUtils'
 
-const TABS = ['Project Details', 'Funds Requested', 'About Team', 'Other Information']
+const TABS = ['Project Details', 'Funds Requested', 'About Team', 'Custom Fields']
 
 interface Props {
   applicationData: GetApplicationDetailsQuery['grantApplication'];
@@ -301,14 +301,14 @@ Project Goals
 								projectMilestones.map((milestone: any, index: number) => (
 									<Box key={milestone.id}>
 										<Heading
-											variant="applicationHeading"
+											variant="applicationSubtitle"
 											mt={3}>
 												Milestone
 											{' '}
 											{index + 1}
 										</Heading>
 										<Text
-											variant="applicationText"
+											variant="applicationTextHeading"
 											mt={1}>
 											{milestone?.title}
 										</Text>
@@ -325,7 +325,7 @@ Project Goals
 												direction="column"
 												justify="center"
 												align="start">
-												<Heading variant="applicationHeading">
+												<Heading variant="applicationSubtitle">
                         Funding asked
 												</Heading>
 												<Text variant="applicationText">
@@ -486,7 +486,7 @@ Funding Breakdown
 						<Heading
 							variant="applicationHeading"
 							ref={refs[3]}>
-								Other Information
+								Add Custom Field
 						</Heading>
 
 						{

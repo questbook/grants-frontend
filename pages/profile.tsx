@@ -38,7 +38,7 @@ function Profile() {
 	const router = useRouter()
 
 	const { subgraphClients } = React.useContext(ApiClientsContext)!
-	const [{ data: accountData }] = useAccount()
+	const { data: accountData } = useAccount()
 
   // const [data, setData] = React.useState();
   const [workspaceData, setWorkspaceData] = React.useState<DAOWorkspace>();

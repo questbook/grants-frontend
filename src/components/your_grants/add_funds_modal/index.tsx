@@ -58,11 +58,11 @@ function AddFunds({
 	]
 
 	const toast = useToast()
-	const [signerStates] = useSigner()
+	const { data: signer } = useSigner()
 	const rewardAssetContract = useContract({
 		addressOrName: rewardAsset.address ?? '0x0000000000000000000000000000000000000000',
 		contractInterface: ERC20ABI,
-		signerOrProvider: signerStates.data,
+		signerOrProvider: signer,
 	})
 
 	const copyToClipboard = async() => {
@@ -142,7 +142,7 @@ function AddFunds({
 
 				const assetDecimal = await rewardAssetContract.decimals()
 				setRewardAssetDecimals(assetDecimal)
-				const tempAddress = await signerStates.data?.getAddress()
+				const tempAddress = await signer?.getAddress()
 				const tempWalletBalance = await rewardAssetContract.balanceOf(
 					// signerStates.data._address,
 					tempAddress,
@@ -152,7 +152,7 @@ function AddFunds({
 				console.error(e)
 			}
 		}())
-	}, [signerStates, rewardAssetContract])
+	}, [signer, rewardAssetContract])
 
 	return (
 		<Modal

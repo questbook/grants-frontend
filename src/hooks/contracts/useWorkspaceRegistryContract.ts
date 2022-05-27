@@ -8,7 +8,7 @@ import WorkspaceRegistryABI from '../../contracts/abi/WorkspaceRegistryAbi.json'
 
 export default function useWorkspaceRegistryContract(chainId?: SupportedChainId) {
 	const [addressOrName, setAddressOrName] = React.useState<string>()
-	const [signerStates] = useSigner()
+	const { data: signer } = useSigner()
 	useEffect(() => {
 		if(!chainId) {
 			return
@@ -21,7 +21,7 @@ export default function useWorkspaceRegistryContract(chainId?: SupportedChainId)
 		addressOrName:
       addressOrName ?? '0x0000000000000000000000000000000000000000',
 		contractInterface: WorkspaceRegistryABI,
-		signerOrProvider: signerStates.data,
+		signerOrProvider: signer,
 	})
 
 	return workspaceRegistryContract

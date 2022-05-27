@@ -22,6 +22,13 @@ export default {
 				lineSpacing: '0.5px',
 				lineHeight: '24px',
 			},
+			applicationSubtitle: {
+				color: '#717A7C',
+				fontWeight: '400',
+				fontSize: '16px',
+				lineSpacing: '0.5px',
+				lineHeight: '24px',
+			}
 		},
 	},
 }

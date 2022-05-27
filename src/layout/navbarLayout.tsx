@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Container, useToast, VStack } from '@chakra-ui/react'
-import { useAccount, useConnect } from 'wagmi'
+import { ApiClientsContext } from 'pages/_app'
+import { useAccount, useConnect, useNetwork } from 'wagmi'
 import ConnectedNavbar from '../components/navbar/connected'
 import SignInNavbar from '../components/navbar/notConnected'
-
 interface Props {
   children: React.ReactNode;
   renderGetStarted?: boolean;
@@ -11,25 +11,51 @@ interface Props {
 }
 
 function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
-	const [{ data: connectData }] = useConnect()
-	const [{ data: accountData }] = useAccount({ fetchEns: false })
+	const { isDisconnected, isConnected, isError, isIdle, isConnecting, isReconnecting, connect, connectors, data: connectData, status: connectStatus, error } = useConnect()
+	const { data: networkData, pendingChainId, activeChain, status: networkStatus } = useNetwork()
+	const { data: accountData, isLoading, isFetching, isFetched, isRefetching, isSuccess, status: accountStatus } = useAccount()
 	const toast = useToast()
 
-	const [connected, setConnected] = React.useState(false)
+	const { connected, setConnected } = useContext(ApiClientsContext)!
 	const currentPageRef = useRef(null)
 
+	const [renderCount, setRenderCount] = useState(0)
+
 	useEffect(() => {
-		if(connected && !connectData.connected) {
+		console.log('Render Count: ', renderCount)
+	}, [renderCount])
+
+	useEffect(() => {
+		if(!connected && isDisconnected) {
 			setConnected(false)
-			toast({
-				title: 'Disconnected',
-				status: 'info',
-			})
-		} else if(!connected && connectData.connected) {
+			if(renderCount > 0) {
+				toast({
+					title: 'Disconnected',
+					status: 'info',
+				})
+			}
+		} else if(isConnected) {
 			setConnected(true)
+			setRenderCount(renderCount + 1)
+		} else if(connected && isDisconnected) {
+			connect(connectors[0])
+			setConnected(true)
+			setRenderCount(renderCount + 1)
 		}
 
-	}, [connectData])
+	}, [isConnected, isDisconnected])
+
+	useEffect(() => {
+		console.log('CONNECTION: ', connected, isConnected, isConnecting, isReconnecting, isDisconnected, isError, isIdle, connectData, connectStatus, error)
+	}, [connected, isConnected, isConnecting, isReconnecting, isDisconnected, isError, isIdle, connectStatus, error])
+
+	useEffect(() => {
+		console.log('ACCOUNT: ', accountData, isLoading, isFetching, isFetched, isRefetching, isSuccess, accountStatus)
+	}, [accountData, isLoading, isFetching, isFetched, isRefetching, isSuccess, accountStatus])
+
+	useEffect(() => {
+		console.log('USE NETWORK: ', activeChain, networkStatus, pendingChainId, networkData)
+	}, [pendingChainId, activeChain, networkStatus, networkData])
 
 	return (
 		<VStack
@@ -39,8 +65,8 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 			spacing={0}
 			p={0}>
 			{
-				accountData && connectData ? (
-					<ConnectedNavbar renderTabs={renderTabs ?? true} />
+				connected ? (
+					<ConnectedNavbar renderTabs={renderTabs!} />
 				) : (
 					<SignInNavbar renderGetStarted={renderGetStarted} />
 				)

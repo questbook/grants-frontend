@@ -46,7 +46,7 @@ function GrantRewardsInput({
 		iconHash: '',
 	})
 	const [rewardError, setRewardError] = React.useState(false)
-	const [, switchNetwork] = useNetwork()
+	const { switchNetwork } = useNetwork()
 	const [isModalOpen, setIsModalOpen] = React.useState(false)
 	const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false)
 	// const [supportedCurrencies, setSupportedCurrencies] = React.useState([]);
@@ -345,6 +345,7 @@ function GrantRewardsInput({
 					isError={dateError}
 					errorText="Required"
 					label="Grant Deadline"
+					tooltip="This is the last date on/before which grantees can apply"
 				/>
 
 				<Flex

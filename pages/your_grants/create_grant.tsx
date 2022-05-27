@@ -24,7 +24,7 @@ import NavbarLayout from '../../src/layout/navbarLayout'
 function CreateGrant() {
 	const apiClients = useContext(ApiClientsContext)!
 	const { workspace } = apiClients
-	const [, switchNetwork] = useNetwork()
+	const { switchNetwork } = useNetwork()
 	const router = useRouter()
 
 	const grantInfoRef = useRef(null)
