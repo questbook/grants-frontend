@@ -153,25 +153,25 @@ function Application({ applicationData, showHiddenData }: Props) {
 					align="stretch"
 					mb={8}
 				>
-								<Button
-									variant="ghost"
-									h="54px"
-									w="full"
-									_hover={
-										{
-											background: '#F5F5F5',
-										}
-									}
-									_focus={{}}
-									borderRadius={0}
-									background='white'
-									color='#122224'
-									borderBottomColor='#E7DAFF'
-									borderBottomWidth='1px'
-									fontSize="1.5rem"
-								>
+					<Button
+						variant="ghost"
+						h="54px"
+						w="full"
+						_hover={
+							{
+								background: '#F5F5F5',
+							}
+						}
+						_focus={{}}
+						borderRadius={0}
+						background='white'
+						color='#122224'
+						borderBottomColor='#E7DAFF'
+						borderBottomWidth='1px'
+						fontSize="1.5rem"
+					>
 								Grant Details
-								</Button>
+					</Button>
 				</Flex>
 			</Flex>
 			<Flex
