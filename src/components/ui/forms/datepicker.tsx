@@ -75,6 +75,7 @@ function DateInput({
 					focusBorderColor={theme.colors.brand[500]}
 					h={12}
 					type="date"
+					min={new Date().toString()}
 				/>
 				{
 					inputRightElement && (
