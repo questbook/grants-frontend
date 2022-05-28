@@ -182,10 +182,17 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 					// console.log('all workspaces', allWorkspacesData);
 					setWorkspaces([...workspaces, ...allWorkspacesData])
 
-					const i = allWorkspacesData.findIndex(
-						(w) => w.id === localStorage.getItem('currentWorkspaceId') ?? 'undefined',
-					)
-					setWorkspace(allWorkspacesData[i === -1 ? 0 : i])
+					const savedWorkspaceData = localStorage.getItem('currentWorkspace')
+					if(!savedWorkspaceData || savedWorkspaceData === 'undefined') {
+						setWorkspace(allWorkspacesData[0])
+					} else {
+						const savedWorkspaceDataChain = savedWorkspaceData.split('-')[0]
+						const savedWorkspaceDataId = savedWorkspaceData.split('-')[1]
+						const i = allWorkspacesData.findIndex(
+							(w) => w.id === savedWorkspaceDataId && w.supportedNetworks[0] === savedWorkspaceDataChain,
+						)
+						setWorkspace(allWorkspacesData[i])
+					}
 				})
 			} catch(e) {
 				// console.log(e);

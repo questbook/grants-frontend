@@ -14,6 +14,7 @@ import {
 import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
 import useAssignReviewers from 'src/hooks/useAssignReviewers'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { truncateStringFromMiddle } from 'src/utils/formattingUtils'
 import SingleLineInput from '../ui/forms/singleLineInput'
 // import useSetReviews from 'src/hooks/useSetReviews';
@@ -99,7 +100,6 @@ function ReviewDrawer({
 
 	const [
 		data,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		transactionLink,
 		loading,
 	] = useAssignReviewers(
@@ -110,6 +110,12 @@ function ReviewDrawer({
 		applicationId,
 	)
 	// ] = useSetReviews(editedReviewData, chainId, workspaceId, grantAddress);
+
+	const { setRefresh } = useCustomToast(transactionLink)
+
+	useEffect(() => {
+		setRefresh(true)
+	}, [transactionLink])
 
 	const [emailSearchText, setEmailSearchText] = useState('')
 
