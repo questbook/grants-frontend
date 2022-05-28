@@ -13,11 +13,10 @@ interface Props {
   chainId: SupportedChainId | undefined;
   acceptingApplications: boolean;
   alreadyApplied: boolean;
-  appliedAt: string;
 }
 
 function Sidebar({
-	grantRequiredFields, grantID, chainId, acceptingApplications, alreadyApplied, appliedAt,
+	grantRequiredFields, grantID, chainId, acceptingApplications, alreadyApplied,
 }: Props) {
 	const router = useRouter()
 	return (
@@ -103,20 +102,18 @@ function Sidebar({
 							lineHeight="16px"
 							mb={3}
 						>
-          You have sent your
+          You’ve already applied. View details
 							{' '}
 							<a href="../../your_applications">
 								<u>
 									<b>
-application
+here
 									</b>
 								</u>
 							</a>
 							{' '}
-for this grant at
-							{' '}
-							{appliedAt}
 .
+
 						</Text>
 					)
 				}

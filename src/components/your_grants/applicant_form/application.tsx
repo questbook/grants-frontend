@@ -22,8 +22,6 @@ import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspa
 import { formatAmount } from '../../../utils/formattingUtils'
 import { getAssetInfo } from '../../../utils/tokenUtils'
 
-const TABS = ['Project Details', 'Funds Requested', 'About Team', 'Custom Fields']
-
 interface Props {
   applicationData: GetApplicationDetailsQuery['grantApplication'];
   showHiddenData: () => void;
@@ -155,36 +153,25 @@ function Application({ applicationData, showHiddenData }: Props) {
 					align="stretch"
 					mb={8}
 				>
-					{
-						TABS.map(
-							(tab, index) => (
-								index < 2
-								|| (index === 2 && teamMembers)
-								|| (index === 3 && customFields.length > 0)
-							) && (
-								<Button
-									key={tab}
-									variant="ghost"
-									h="54px"
-									w="full"
-									_hover={
-										{
-											background: '#F5F5F5',
-										}
-									}
-									_focus={{}}
-									borderRadius={0}
-									background={selected === index ? '#E7DAFF' : 'white'}
-									color={selected === index ? 'brand.500' : '#122224'}
-									borderBottomColor={selected === index ? 'brand.500' : '#E7DAFF'}
-									borderBottomWidth={selected === index ? '2px' : '1px'}
-									onClick={() => scroll(refs[index], index)}
-								>
-									{tab}
-								</Button>
-							),
-						)
-					}
+					<Button
+						variant="ghost"
+						h="54px"
+						w="full"
+						_hover={
+							{
+								background: '#F5F5F5',
+							}
+						}
+						_focus={{}}
+						borderRadius={0}
+						background='white'
+						color='#122224'
+						borderBottomColor='#E7DAFF'
+						borderBottomWidth='1px'
+						fontSize="1.5rem"
+					>
+								Grant Details
+					</Button>
 				</Flex>
 			</Flex>
 			<Flex
@@ -240,7 +227,7 @@ function Application({ applicationData, showHiddenData }: Props) {
 					<Heading
 						variant="applicationHeading"
 						mt={10}>
-            Project Details
+            Project Description
 					</Heading>
 					<Linkify
 						componentDecorator={
@@ -301,14 +288,14 @@ Project Goals
 								projectMilestones.map((milestone: any, index: number) => (
 									<Box key={milestone.id}>
 										<Heading
-											variant="applicationHeading"
+											variant="applicationSubtitle"
 											mt={3}>
 												Milestone
 											{' '}
 											{index + 1}
 										</Heading>
 										<Text
-											variant="applicationText"
+											variant="applicationTextHeading"
 											mt={1}>
 											{milestone?.title}
 										</Text>
@@ -325,7 +312,7 @@ Project Goals
 												direction="column"
 												justify="center"
 												align="start">
-												<Heading variant="applicationHeading">
+												<Heading variant="applicationSubtitle">
                         Funding asked
 												</Heading>
 												<Text variant="applicationText">
