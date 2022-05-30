@@ -25,6 +25,7 @@ interface BrowseGrantCardProps {
   grantAmount: string;
   grantCurrency: string;
   grantCurrencyIcon: string;
+  disbursedAmount: string;
 
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   onTitleClick?: React.MouseEventHandler<HTMLAnchorElement>;
@@ -48,6 +49,7 @@ function BrowseGrantCard({
   grantAmount,
   grantCurrency,
   grantCurrencyIcon,
+  disbursedAmount,
 
   onClick,
   onTitleClick,
@@ -139,21 +141,23 @@ function BrowseGrantCard({
               justify="center"
             >
               <Text
+                fontFamily="DM Sans"
                 fontSize="0.85rem"
                 lineHeight="1rem"
                 fontWeight="400"
                 color="#373737"
               >
-                ${grantAmount}/grantee
+                <b>${grantAmount}</b>/grantee
+                {isGrantVerified && (
+                  <VerifiedBadge
+                    grantAmount={funding}
+                    grantCurrency={grantCurrency}
+                    lineHeight="26px"
+                    disbursedAmount={disbursedAmount}
+                    marginBottom={-1}
+                  />
+                )}
               </Text>
-              {isGrantVerified && (
-                <VerifiedBadge
-                  grantAmount={funding}
-                  grantCurrency={grantCurrency}
-                  lineHeight="26px"
-                  marginBottom={-1}
-                />
-              )}
             </Stack>
 
             <Image

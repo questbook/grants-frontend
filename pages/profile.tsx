@@ -296,6 +296,7 @@ function Profile() {
                   grant.funding,
                   chainInfo?.decimals
                 );
+                console.log(grant);
                 return (
                   <BrowseGrantCard
                     daoID={grant.workspace.id}
@@ -309,6 +310,10 @@ function Profile() {
                     endTimestamp={new Date(grant.deadline!).getTime()}
                     grantAmount={formatAmount(
                       grant.reward.committed,
+                      chainInfo?.decimals ?? 18
+                    )}
+                    disbursedAmount={formatAmount(
+                      grant.funding,
                       chainInfo?.decimals ?? 18
                     )}
                     grantCurrency={chainInfo?.label ?? 'LOL'}
