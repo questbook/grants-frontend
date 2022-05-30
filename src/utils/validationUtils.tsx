@@ -33,6 +33,10 @@ const getSupportedChainIdFromSupportedNetwork = (chainId: SupportedNetwork) => {
 		return SupportedChainId.NEON_DEVNET
 	}
 
+	if(chainId === SupportedNetwork.Chain_44787) {
+		return SupportedChainId.NEON_DEVNET
+	}
+
 	// @TODO: needs type for harmony
 	// if (chainId === SupportedNetwork.Chain_80001) {
 	//   return SupportedChainId.HARMONY_TESTNET_S0;
@@ -46,7 +50,7 @@ const getSupportedChainIdFromWorkspace = (workspace?: MinimalWorkspace) => {
 	if(!workspace) {
 		return undefined
 	}
-
+	console.log(workspace.supportedNetworks)
 	const chainId = workspace.supportedNetworks[0] as SupportedNetwork
 	return getSupportedChainIdFromSupportedNetwork(chainId)
 }
@@ -72,6 +76,11 @@ const getSupportedValidatorNetworkFromChainId = (chainId: SupportedChainId) => {
 	if(chainId === SupportedChainId.NEON_DEVNET) {
 		return SupportedValidatorNetwork._245022926
 	}
+
+	// @TODO: un-comment these lines.
+	// if(chainId === SupportedChainId.CELO_ALFAJORES_TESTNET) {
+	// 	return SupportedValidatorNetwork._44787
+	// }
 
 	// @TODO: needs type for harmony
 	// if (chainId === SupportedNetwork.Chain_80001) {
