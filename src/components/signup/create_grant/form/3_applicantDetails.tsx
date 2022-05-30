@@ -869,7 +869,7 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 					</Box>
 				</Flex>
 
-				<Flex
+				{/* <Flex
 					opacity={rubricRequired ? 1 : 0.4}
 					direction="column"
 					mt={6}>
@@ -908,7 +908,7 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 							listItemsMinWidth="600px"
 						/>
 					</Box>
-				</Flex>
+				</Flex> */}
 			</Flex>
 			<Button
 				mt="auto"

@@ -622,7 +622,7 @@ function ApplicantDetails({
 				</Box>
 			</Flex>
 
-			<Flex
+			{/* <Flex
 				opacity={rubricRequired ? 1 : 0.4}
 				direction="column"
 				mt={6}>
@@ -656,7 +656,7 @@ function ApplicantDetails({
 						listItemsMinWidth="600px"
 					/>
 				</Box>
-			</Flex>
+			</Flex> */}
 		</Flex>
 	)
 }
