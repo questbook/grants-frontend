@@ -3,11 +3,8 @@ import React from 'react';
 import {
   Image,
   Text,
-  Divider,
-  Button,
   Flex,
   Grid,
-  Box,
   Link,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
@@ -33,6 +30,7 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
     <Flex
     p="1.5rem"
     direction="column"
+    gap="1.5rem"
     >
       <Text
       fontSize="1.5rem"
@@ -55,6 +53,9 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
               borderRadius="full"
               src="/illustrations/done.svg"
             />
+            <Flex
+            direction="column"
+            >
             <Text
             fontSize="1rem"
             lineHeight="1.5rem"
@@ -63,9 +64,21 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
             >
               {partner.name}
             </Text>
+            <Text
+            fontSize="1rem"
+            lineHeight="1.25rem"
+            fontWeight="400"
+            color="#707070"
+            >
+              {partner.industry}
+            </Text>
+            </Flex>
             {partner.link &&
             <Link
               href={partner.link}
+              mt={2}
+              alignSelf="start"
+              isExternal
             >
             <Image
               h="0.75rem"

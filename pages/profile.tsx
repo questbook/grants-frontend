@@ -155,12 +155,14 @@ function Profile() {
     }, [grantsData, grantsDisbursed])
 
     const daoPartners = [{
-      name: "yes",
-      link: "www.google.com"
+      name: "Google",
+      link: "www.google.com",
+      industry: "search"
     },
     {
-      name: "wow",
-      link: "www.twitter.com"
+      name: "Twitter",
+      link: "www.twitter.com",
+      industry: "social"
     }
   ]
 
