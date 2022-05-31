@@ -29,6 +29,7 @@ import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 // CONTEXT AND CONSTANTS
 import { ApiClientsContext } from '../../../pages/_app'
+import { CHAIN_INFO } from 'src/constants/chainInfo'
 // UI COMPONENTS
 import CopyIcon from '../ui/copy_icon'
 import Modal from '../ui/modal'
@@ -36,10 +37,15 @@ import PayoutModalContent from './payoutModalContent'
 
 function Payouts() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
+	const [workspaceChainId, setWorkspaceChainId] = React.useState<number>();
 	const [applications, setApplications] = React.useState<any>([])
 	const [outstandingReviews, setOutstandingReviews] = React.useState<any>([])
 	const [reviewers, setReviewers] = React.useState<any>([])
 	const [reviewPayoutsDone, setReviewPayoutsDone] = React.useState<any>([])
+
+	React.useEffect(() => {
+		setWorkspaceChainId(getSupportedChainIdFromWorkspace(workspace));
+	}, [workspace])
 
 	const { data: grantsData } = useGetDaoGrantsQuery({
 		client:
@@ -613,7 +619,15 @@ There is no payout history to show
 
 													<Flex direction="row">
 														<Link
-															href={`http://www.polygonscan.com/tx/${data.id.substr(0, data.id.indexOf('.'))}`}
+															href={
+																workspaceChainId ?
+																`${CHAIN_INFO[workspaceChainId]
+																		.explorer.transactionHash}${data.id.substr(
+																			0,
+																			data.id.indexOf('.'),
+																		)}`
+																	: ''
+															}
 															isExternal
 														>
                             View

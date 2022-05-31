@@ -21,21 +21,18 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
   const router = useRouter();
 
   return (
-    <Grid gridTemplateColumns="3fr 1fr" py={6} px="1.5rem" w="100%" h="full">
+    <Grid gridTemplateColumns="3fr 1fr" px="1.5rem" w="100%" h="full">
     <Flex
-
+      borderRight="1px solid #E8E9E9"
+      p="1.5rem"
     >
       <Text>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pretium,
-        malesuada magna nisi, amet pharetra volutpat, sit leo aliquet. Feugiat
-        habitant orci nibh curabitur condimentum proin egestas tincidunt.
-        Placerat odio bibendum diam nisi, sodales lacinia pellentesque. Faucibus
-        turpis nunc egestas massa feugiat nunc, massa non. Proin iaculis massa
-        vitae cras mattis volutpat enim ut.
+        {daoAbout}
       </Text>
     </Flex>
-    <Divider orientation="vertical" />
-    <Flex>
+    <Flex
+    p="1.5rem"
+    >
       <Text>
         ASD
       </Text>

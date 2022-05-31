@@ -23,6 +23,7 @@ function Settings({ workspaceData }: Props) {
 	// const [, setLoading] = React.useState(false);
 	const [formData, setFormData] = React.useState<{
     name: string;
+		bio: string;
     about: string;
     supportedNetwork: string;
     image?: string;
@@ -88,6 +89,7 @@ function Settings({ workspaceData }: Props) {
 		if(coverImageHash) {
 			d = {
 				title: data.name,
+				bio: data.bio,
 				about: data.about,
 				logoIpfsHash: imageHash,
 				coverImageIpfsHash: coverImageHash,
@@ -96,6 +98,7 @@ function Settings({ workspaceData }: Props) {
 		} else {
 			d = {
 				title: data.name,
+				bio: data.bio,
 				about: data.about,
 				logoIpfsHash: imageHash,
 				socials,

@@ -103,6 +103,8 @@ function Application({ applicationData, showHiddenData }: Props) {
 			setDecodedDetails(projectDetailsTemp)
 		}
 
+		console.log(decodedDetails)
+
 		setProjectGoals(getStringField('projectGoals'))
 		setProjectMilestones(applicationData?.milestones ?? [])
 		setFundingAsk(getStringField('fundingAsk'))

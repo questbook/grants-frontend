@@ -25,9 +25,11 @@ import { useAccount } from 'wagmi'
 import NavbarLayout from '../src/layout/navbarLayout'
 // CONTEXT AND CONSTANTS
 import { ApiClientsContext } from './_app'
+import { CHAIN_INFO } from 'src/constants/chainInfo'
 
 export default function Payouts() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
+	const [workspaceChainId, setWorkspaceChainId] = React.useState<number>();
 	const [isReviewer, setIsReviewer] = React.useState<boolean>(false)
 	const [reviewsDone, setReviewsDone] = React.useState<number>(0)
 	const [reviewPayoutsDone, setReviewPayoutsDone] = React.useState<any>([])
@@ -36,6 +38,10 @@ export default function Payouts() {
 		setReviewPayoutsOutstanding,
 	] = React.useState<any>([])
 	const { data: account } = useAccount()
+
+	React.useEffect(() => {
+		setWorkspaceChainId(getSupportedChainIdFromWorkspace(workspace));
+	}, [workspace])
 
 	React.useEffect(() => {
 		if(
@@ -277,11 +283,16 @@ export default function Payouts() {
 													<Flex direction="row">
 														<Link
 															href={
-																`http://www.polygonscan.com/tx/${data.id.substr(
-																	0,
-																	data.id.indexOf('.'),
-																)}`
+																workspaceChainId ?
+																`${CHAIN_INFO[workspaceChainId]
+																		.explorer.transactionHash}${data.id.substr(
+																			0,
+																			data.id.indexOf('.'),
+																		)}`
+																	: ''
 															}
+
+
 															isExternal
 														>
 															View

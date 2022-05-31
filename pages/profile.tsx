@@ -21,7 +21,7 @@ import NavbarLayout from 'src/layout/navbarLayout';
 import { ApiClientsContext } from './_app';
 
 // CONSTANTS AND TYPES
-import { DAOGrant, DAOWorkspace } from 'src/types';
+import { DAOWorkspace } from 'src/types';
 import { SupportedChainId } from 'src/constants/chains';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 
@@ -42,7 +42,6 @@ function Profile() {
 
   // const [data, setData] = React.useState();
   const [workspaceData, setWorkspaceData] = React.useState<DAOWorkspace>();
-  const [grantData, setGrantData] = React.useState<DAOGrant>();
   const [chainID, setChainId] = React.useState<SupportedChainId>();
   const [daoID, setDaoId] = React.useState<string>();
   const [grantsApplicants, setGrantsApplicants] = React.useState<any>([]);
@@ -109,14 +108,14 @@ function Profile() {
 
   console.log(grantsData);
 
-  const { data: fundsData } = useGetFundSentDisburseQuery({
-    client:
-      subgraphClients[
-        getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) ?? SupportedChainId.RINKEBY
-      ].client
-  });
-
-  console.log(fundsData);
+  // const { data: fundsData } = useGetFundSentDisburseQuery({
+  //   client:
+  //     subgraphClients[
+  //       getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) ?? SupportedChainId.RINKEBY
+  //     ].client
+  // });
+  //
+  // console.log(fundsData);
 
   useEffect(() => {
     if (grantsData && grantsData.grants.length >= 1 && grantsApplicants.length === 0) {
@@ -127,15 +126,14 @@ function Profile() {
     console.log(grantsApplicants)
   }, [grantsData, grantsApplicants]);
 
-  useEffect(() => {
-    if (fundsData && fundsData.fundsTransfers.length >= 1 && grantsDisbursed.length === 0) {
-        fundsData.fundsTransfers.forEach((disbursed) => {
-          setGrantsDisbursed((array: any) => [...array, disbursed.amount])
-        })
-    }
-    console.log(grantsDisbursed);
-  }, [fundsData, grantsApplicants]);
-
+  // useEffect(() => {
+  //   if (fundsData && fundsData.fundsTransfers.length >= 1 && grantsDisbursed.length === 0) {
+  //       fundsData.fundsTransfers.forEach((disbursed) => {
+  //         setGrantsDisbursed((array: any) => [...array, disbursed.amount])
+  //       })
+  //   }
+  //   console.log(grantsDisbursed);
+  // }, [fundsData, grantsApplicants]);
 
     useEffect(() => {
       if (grantsData && grantsData.grants.length >= 1 && grantWinners.length === 0) {
@@ -147,6 +145,16 @@ function Profile() {
           })
       }
     }, [grantsData, grantWinners]);
+
+    useEffect(() => {
+      if (grantsData && grantsData.grants.length > 0 && grantsDisbursed.length < 1) {
+        grantsData.grants.forEach((grant) =>
+          setGrantsDisbursed((array: any) => [...array, grant.funding])
+      )}
+      console.log(grantsDisbursed);
+    }, [grantsData, grantsDisbursed])
+
+    console.log(workspaceData)
 
   return (
     <Flex
@@ -296,7 +304,6 @@ function Profile() {
                   grant.funding,
                   chainInfo?.decimals
                 );
-                console.log(grant);
                 return (
                   <BrowseGrantCard
                     daoID={grant.workspace.id}
@@ -358,7 +365,9 @@ function Profile() {
           </>
         ) : (
           // eslint-disable-next-line no-nested-ternary
-          selected === 1 && <DaoAbout />
+          selected === 1 && <DaoAbout
+            daoAbout={workspaceData?.about}
+          />
         )
       }
     </Flex>

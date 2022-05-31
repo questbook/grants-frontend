@@ -18,6 +18,7 @@ function EditForm({
 }: {
   onSubmit: (data: {
     name: string;
+		bio: string;
     about: string;
     image?: File;
     coverImage?: File;
@@ -31,8 +32,11 @@ function EditForm({
 	const [daoName, setDaoName] = React.useState('')
 	const [daoNameError, setDaoNameError] = React.useState(false)
 
-	const [daoAbout, setDaoAbout] = React.useState('')
-	const [daoAboutError, setDaoAboutError] = React.useState(false)
+	const [daoAbout, setDaoAbout] = React.useState('');
+	const [daoAboutError, setDaoAboutError] = React.useState(false);
+
+	const [daoBio, setDaoBio] = React.useState('')
+	const [daoBioError, setDaoBioError] = React.useState(false)
 
 	const [supportedNetwork, setSupportedNetwork] = React.useState('')
 
@@ -60,6 +64,7 @@ function EditForm({
 		const networkName = supportedChainId ? CHAIN_INFO[supportedChainId].name : 'Unsupported Network'
 		setDaoName(formData.name)
 		setDaoAbout(formData.about)
+		setDaoBio(formData.bio)
 		setSupportedNetwork(networkName)
 		setImage(formData.image)
 		setCoverImage(formData.coverImage)
@@ -98,9 +103,15 @@ function EditForm({
 			error = true
 		}
 
+		if(!daoBio || daoBio.length === 0) {
+			setDaoBioError(true)
+			error = true
+		}
+
 		if(!error) {
 			onFormSubmit({
 				name: daoName,
+				bio: daoBio,
 				about: daoAbout,
 				image: imageFile!,
 				coverImage: coverImageFile!,
@@ -145,6 +156,28 @@ function EditForm({
 			</Flex>
 			<Flex
 				w="100%"
+				h="50%"
+			>
+			<MultiLineInput
+				label="Bio"
+				placeholder="Describe your DAO in 200 characters"
+				value={daoBio}
+				onChange={
+					(e) => {
+						if(daoBioError) {
+							setDaoBioError(false)
+						}
+
+						setDaoBio(e.target.value)
+					}
+				}
+				isError={daoBioError}
+				maxLength={200}
+				subtext={null}
+			/>
+			</Flex>
+			<Flex
+				w="100%"
 				mt={1}>
 				<MultiLineInput
 					label="About your Grants DAO"
@@ -160,7 +193,7 @@ function EditForm({
 						}
 					}
 					isError={daoAboutError}
-					maxLength={500}
+					maxLength={800}
 					subtext={null}
 				/>
 			</Flex>

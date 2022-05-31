@@ -44,7 +44,7 @@ function VerifiedBadge({
 					align="start">
 					<Grid
 						gridTemplateAreas="
-						'icon text text link'
+						'icon text link'
 						"
 						justifyContent="space-between"
 						borderBottom="1px solid #E8E9E9"
@@ -68,26 +68,22 @@ function VerifiedBadge({
 							lineHeight="16px"
 							gridArea="text"
 						>
-							Verified Grants
+							Verified Grant
 						</Text>
 						<Button
 							variant="link"
-							color="brand.500"
-							fontWeight="500"
-							fontStyle="normal"
-							fontSize="14px"
-							lineHeight="16px"
-							gridArea="link"
 							onClick={
 								() => {
 									window.open('https://questbook.notion.site/What-does-a-Verified-Grant-Mean-0e83ed1f3f4e4fe4ae994a19a75cf413/')
 								}
 							}
+							gridArea="link"
+							justifySelf="start"
+							paddingBlock={0}
 						>
 						<Image
 							h="0.75rem"
 							w="0.75rem"
-							display="inline-block"
 							src="/ui_icons/link.svg"
 							lineHeight={lineHeight}
 						/>
