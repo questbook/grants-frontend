@@ -7,7 +7,6 @@ import {
   Grid,
   Link,
 } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
 
 interface DaoAboutProps {
   daoAbout?: string;
@@ -15,7 +14,6 @@ interface DaoAboutProps {
 }
 
 function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
-  const router = useRouter();
 
   return (
     <Grid gridTemplateColumns="3fr 1fr" px="1.5rem" w="100%" h="full">
