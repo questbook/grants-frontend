@@ -50,7 +50,7 @@ const getSupportedChainIdFromWorkspace = (workspace?: MinimalWorkspace) => {
 	if(!workspace) {
 		return undefined
 	}
-	console.log(workspace.supportedNetworks)
+
 	const chainId = workspace.supportedNetworks[0] as SupportedNetwork
 	return getSupportedChainIdFromSupportedNetwork(chainId)
 }
