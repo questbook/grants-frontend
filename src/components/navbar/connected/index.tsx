@@ -496,7 +496,10 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 							display={isAdmin || !workspace || !workspace?.id ? undefined : 'none'}
 							onClick={
 								() => {
-									if(workspace?.id === null) {
+									console.log('Create a grant!')
+									console.log(workspace)
+									console.log(workspace?.id)
+									if(!workspace?.id) {
 										router.push({
 											pathname: '/signup',
 										})

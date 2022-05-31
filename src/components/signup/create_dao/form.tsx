@@ -224,7 +224,9 @@ function Form({
 						onChange={
 							(id: SupportedChainId) => {
 								if(switchNetwork) {
+									console.log(' (CREATE DAO) Switch Network before: ', chainId, id)
 									const network = switchNetwork(id)
+									console.log(' (CREATE DAO) Switch Network after: ', network, chainId, id)
 								}
 								// setSelectedNetworkId(id)
 							}
