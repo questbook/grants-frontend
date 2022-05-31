@@ -33,7 +33,7 @@ const getSupportedChainIdFromSupportedNetwork = (chainId: SupportedNetwork) => {
 		return SupportedChainId.NEON_DEVNET
 	}
 
-	if (chainId === SupportedNetwork.Chain_44787) {
+	if(chainId === SupportedNetwork.Chain_44787) {
 		return SupportedChainId.CELO_ALFAJORES_TESTNET
 	}
 
@@ -77,7 +77,7 @@ const getSupportedValidatorNetworkFromChainId = (chainId: SupportedChainId) => {
 		return SupportedValidatorNetwork._245022926
 	}
 
-	if (chainId === SupportedChainId.CELO_ALFAJORES_TESTNET) {
+	if(chainId === SupportedChainId.CELO_ALFAJORES_TESTNET) {
 		return SupportedValidatorNetwork._44787
 	}
 
