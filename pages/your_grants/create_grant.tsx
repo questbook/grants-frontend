@@ -76,6 +76,7 @@ function CreateGrant() {
 	useEffect(() => {
 		if(workspace && switchNetwork) {
 			const chainId = getSupportedChainIdFromWorkspace(workspace)
+			console.log(' (CREATE_GRANT) Switch Network: ', workspace, chainId)
 			switchNetwork(chainId!)
 		}
 	}, [switchNetwork, workspace])

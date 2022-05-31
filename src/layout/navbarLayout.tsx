@@ -45,17 +45,17 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 
 	}, [isConnected, isDisconnected])
 
-	useEffect(() => {
-		console.log('CONNECTION: ', connected, isConnected, isConnecting, isReconnecting, isDisconnected, isError, isIdle, connectData, connectStatus, error)
-	}, [connected, isConnected, isConnecting, isReconnecting, isDisconnected, isError, isIdle, connectStatus, error])
+	// useEffect(() => {
+	// 	console.log('CONNECTION: ', connected, isConnected, isConnecting, isReconnecting, isDisconnected, isError, isIdle, connectData, connectStatus, error)
+	// }, [connected, isConnected, isConnecting, isReconnecting, isDisconnected, isError, isIdle, connectStatus, error])
 
-	useEffect(() => {
-		console.log('ACCOUNT: ', accountData, isLoading, isFetching, isFetched, isRefetching, isSuccess, accountStatus)
-	}, [accountData, isLoading, isFetching, isFetched, isRefetching, isSuccess, accountStatus])
+	// useEffect(() => {
+	// 	console.log('ACCOUNT: ', accountData, isLoading, isFetching, isFetched, isRefetching, isSuccess, accountStatus)
+	// }, [accountData, isLoading, isFetching, isFetched, isRefetching, isSuccess, accountStatus])
 
-	useEffect(() => {
-		console.log('USE NETWORK: ', activeChain, networkStatus, pendingChainId, networkData)
-	}, [pendingChainId, activeChain, networkStatus, networkData])
+	// useEffect(() => {
+	// 	console.log('USE NETWORK: ', activeChain, networkStatus, pendingChainId, networkData)
+	// }, [pendingChainId, activeChain, networkStatus, networkData])
 
 	return (
 		<VStack
