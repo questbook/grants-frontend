@@ -9,7 +9,6 @@ import {
 	Switch,
 	Text,
 } from '@chakra-ui/react'
-import Dropdown from 'src/components/ui/forms/dropdown'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import applicantDetailsList from '../../../../constants/applicantDetailsList'
