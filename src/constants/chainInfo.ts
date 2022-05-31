@@ -443,4 +443,46 @@ export const CHAIN_INFO: ChainInfoMap = {
 		subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-neon-devnet',
 		rpcUrls: ['http://qb-neon-rpc.ap-south-1.elasticbeanstalk.com:9090/solana'],
 	},
+	[SupportedChainId.CELO_ALFAJORES_TESTNET]: {
+		id: SupportedChainId.CELO_ALFAJORES_TESTNET,
+		name: 'Celo Alfajores Testnet',
+		nativeCurrency: {
+			name: 'Celo',
+			symbol: 'Celo',
+			decimals: 18,
+		},
+		icon: '/network_icons/celo_alfajores_testnet_symbol.svg',
+		wallets: [
+			{
+				id: 'injected',
+				name: 'Metamask',
+				icon: '/wallet_icons/metamask.svg',
+			},
+			{
+				id: 'walletConnect',
+				name: 'Wallet Connect',
+				icon: '/wallet_icons/walletconnect.svg',
+			},
+		],
+		explorer: {
+			address: 'https://alfajores-blockscout.celo-testnet.org/address/',
+			transactionHash: 'https://alfajores-blockscout.celo-testnet.org/tx/',
+		},
+		supportedCurrencies: {
+			'0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9': {
+				icon: '/ui_icons/brand/currency/celo_icon.svg',
+				label: 'CELO',
+				address: '0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9',
+				decimals: 18,
+			},
+			'0x874069fa1eb16d44d622f2e0ca25eea172369bc1': {
+				icon: '/ui_icons/brand/currency/cusd_icon.svg',
+				label: 'cUSD',
+				address: '0x874069fa1eb16d44d622f2e0ca25eea172369bc1',
+				decimals: 18,
+			}
+		},
+		subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-celo-alfajores-testnet',
+		rpcUrls: ['https://alfajores-forno.celo-testnet.org'],
+	}
 }
