@@ -154,7 +154,15 @@ function Profile() {
       console.log(grantsDisbursed);
     }, [grantsData, grantsDisbursed])
 
-    console.log(workspaceData)
+    const daoPartners = [{
+      name: "yes",
+      link: "www.google.com"
+    },
+    {
+      name: "wow",
+      link: "www.twitter.com"
+    }
+  ]
 
   return (
     <Flex
@@ -367,6 +375,7 @@ function Profile() {
           // eslint-disable-next-line no-nested-ternary
           selected === 1 && <DaoAbout
             daoAbout={workspaceData?.about}
+            daoPartners={daoPartners}
           />
         )
       }

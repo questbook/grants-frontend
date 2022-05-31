@@ -129,6 +129,7 @@ function Settings({ workspaceData }: Props) {
 		// console.log(getUrlForIPFSHash(workspaceData?.logoIpfsHash));
 		setFormData({
 			name: workspaceData.title,
+			bio: workspaceData.bio,
 			about: workspaceData.about,
 			image: getUrlForIPFSHash(workspaceData?.logoIpfsHash),
 			supportedNetwork: workspaceData.supportedNetworks[0],
