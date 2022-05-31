@@ -576,33 +576,29 @@ function Form({
 						}
 
 						{
-							onSubmit ? (
+							onSubmit && !onEdit ? (
 								<Button
-									onClick={loading ? () => {} : handleOnSubmit}
+									onClick={() => setOnEdit(true)}
 									py={loading ? 2 : 0}
 									mt={8}
 									mb={4}
-									mx={10}
-									alignSelf="stretch"
 									variant="primary"
 								>
-									{loading ? <Loader /> : 'Resubmit Application'}
+									Edit Application for Resubmit
 								</Button>
 							) : null
 						}
 
 						{
-							state !== 'resubmit' && state !== 'rejected' && !onEdit ? (
+							state !== 'resubmit' && state !== 'rejected' && state !== 'approved' && !onEdit ? (
 								<Button
 									onClick={() => setOnEdit(true)}
 									mt={8}
 									mb={4}
-									mx={10}
-									alignSelf="stretch"
 									variant="primary"
 									disabled={loading}
 								>
-			Edit Application
+									Edit Application
 								</Button>
 							) : null
 						}
@@ -614,8 +610,6 @@ function Form({
 									py={loading ? 2 : 0}
 									mt={8}
 									mb={4}
-									mx={10}
-									alignSelf="stretch"
 									variant="primary"
 								>
 									{loading ? <Loader /> : 'Submit Edits'}
@@ -649,7 +643,7 @@ function Form({
 								setApplicantNameError={setApplicantNameError}
 								setApplicantEmail={setApplicantEmail}
 								setApplicantEmailError={setApplicantEmailError}
-								readOnly={onSubmit === null && onEdit === false}
+								readOnly={onEdit === false}
 								grantRequiredFields={grantRequiredFields}
 							/>
 
@@ -661,7 +655,7 @@ function Form({
 								setTeamMembersError={setTeamMembersError}
 								membersDescription={membersDescription}
 								setMembersDescription={setMembersDescription}
-								readOnly={onSubmit === null && onEdit === false}
+								readOnly={onEdit === false}
 								grantRequiredFields={grantRequiredFields}
 							/>
 
@@ -685,7 +679,7 @@ function Form({
 								setProjectMilestones={setProjectMilestones}
 								rewardCurrency={rewardCurrency}
 								rewardCurrencyCoin={rewardCurrencyCoin}
-								readOnly={onSubmit === null && onEdit === false}
+								readOnly={onEdit === false}
 								grantRequiredFields={grantRequiredFields}
 							/>
 
@@ -702,7 +696,7 @@ function Form({
 								rewardAmount={rewardAmount}
 								rewardCurrency={rewardCurrency}
 								rewardCurrencyCoin={rewardCurrencyCoin}
-								readOnly={onSubmit === null && onEdit === false}
+								readOnly={onEdit === false}
 								grantRequiredFields={grantRequiredFields}
 							/>
 
@@ -713,7 +707,7 @@ function Form({
 										<CustomFields
 											customFields={customFields}
 											setCustomFields={setCustomFields}
-											readOnly={onSubmit === null && onEdit === false}
+											readOnly={onEdit === false}
 										/>
 									</>
 								)
@@ -721,7 +715,7 @@ function Form({
 						</Container>
 
 						{
-							onSubmit || onEdit && (
+							onEdit && (
 								<Text
 									mt={10}
 									textAlign="center"
@@ -767,8 +761,6 @@ you&apos;ll have to approve this
 									py={loading ? 2 : 0}
 									mt={8}
 									mb={4}
-									mx={10}
-									alignSelf="stretch"
 									variant="primary"
 								>
 									{loading ? <Loader /> : 'Submit Edits'}
@@ -779,17 +771,15 @@ you&apos;ll have to approve this
 						<Box mt={5} />
 
 						{
-							onSubmit ? (
+							onSubmit && !onEdit ? (
 								<Button
-									onClick={loading ? () => {} : handleOnSubmit}
+									onClick={() => setOnEdit(true)}
 									py={loading ? 2 : 0}
 									mt={8}
 									mb={4}
-									mx={10}
-									alignSelf="stretch"
 									variant="primary"
 								>
-									{loading ? <Loader /> : 'Resubmit Application'}
+									Edit Application for Resubmit
 								</Button>
 							) : null
 						}
