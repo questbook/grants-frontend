@@ -469,16 +469,16 @@ export const CHAIN_INFO: ChainInfoMap = {
 			transactionHash: 'https://alfajores-blockscout.celo-testnet.org/tx/',
 		},
 		supportedCurrencies: {
-			'0xF194afDf50B03e69Bd7D057c1Aa9e10c9954E4C9': {
+			'0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9': {
 				icon: '/ui_icons/brand/currency/celo_icon.svg',
 				label: 'CELO',
-				address: '0xF194afDf50B03e69Bd7D057c1Aa9e10c9954E4C9',
+				address: '0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9',
 				decimals: 18,
 			},
-			'0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1': {
+			'0x874069fa1eb16d44d622f2e0ca25eea172369bc1': {
 				icon: '/ui_icons/brand/currency/cusd_icon.svg',
 				label: 'cUSD',
-				address: '0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1',
+				address: '0x874069fa1eb16d44d622f2e0ca25eea172369bc1',
 				decimals: 18,
 			}
 		},
