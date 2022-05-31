@@ -92,6 +92,7 @@ function AddFunds({
 	useEffect(() => {
 		if(workspace && switchNetwork && isOpen) {
 			const chainId = getSupportedChainIdFromWorkspace(workspace)
+			console.log(' (ADD FUNDS MODAL) Switch Network: ', workspace, chainId)
 			switchNetwork(chainId!)
 		}
 	}, [isOpen, switchNetwork, workspace])
