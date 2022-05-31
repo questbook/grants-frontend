@@ -2813,7 +2813,8 @@ export enum SupportedNetwork {
   Chain_245022926 = 'chain_245022926',
   Chain_245022934 = 'chain_245022934',
   Chain_1666600000 = 'chain_1666600000',
-  Chain_1666700000 = 'chain_1666700000'
+  Chain_1666700000 = 'chain_1666700000',
+  Chain_44787 = 'chain_44787',
 }
 
 export type Token = {
