@@ -379,6 +379,8 @@ export type Grant = {
   creatorId: Scalars['Bytes'];
   /** ISO formatted date string */
   deadline?: Maybe<Scalars['String']>;
+  /** Deadlint for the grant, in seconds since epoch */
+  deadlineS: Scalars['Int'];
   /** Expectations & other details of the grant */
   details: Scalars['String'];
   /** Expected fields from the applicants of the grant */
@@ -1113,6 +1115,14 @@ export type Grant_Filter = {
   creatorId_not_contains?: InputMaybe<Scalars['Bytes']>;
   creatorId_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   deadline?: InputMaybe<Scalars['String']>;
+  deadlineS?: InputMaybe<Scalars['Int']>;
+  deadlineS_gt?: InputMaybe<Scalars['Int']>;
+  deadlineS_gte?: InputMaybe<Scalars['Int']>;
+  deadlineS_in?: InputMaybe<Array<Scalars['Int']>>;
+  deadlineS_lt?: InputMaybe<Scalars['Int']>;
+  deadlineS_lte?: InputMaybe<Scalars['Int']>;
+  deadlineS_not?: InputMaybe<Scalars['Int']>;
+  deadlineS_not_in?: InputMaybe<Array<Scalars['Int']>>;
   deadline_contains?: InputMaybe<Scalars['String']>;
   deadline_contains_nocase?: InputMaybe<Scalars['String']>;
   deadline_ends_with?: InputMaybe<Scalars['String']>;
@@ -1324,6 +1334,7 @@ export enum Grant_OrderBy {
   CreatedAtS = 'createdAtS',
   CreatorId = 'creatorId',
   Deadline = 'deadline',
+  DeadlineS = 'deadlineS',
   Details = 'details',
   Fields = 'fields',
   Funding = 'funding',
@@ -2798,7 +2809,6 @@ export enum SupportedNetwork {
   Chain_4 = 'chain_4',
   Chain_10 = 'chain_10',
   Chain_137 = 'chain_137',
-  Chain_44787 = 'chain_44787',
   Chain_80001 = 'chain_80001',
   Chain_245022926 = 'chain_245022926',
   Chain_245022934 = 'chain_245022934',

@@ -33,8 +33,8 @@ const getSupportedChainIdFromSupportedNetwork = (chainId: SupportedNetwork) => {
 		return SupportedChainId.NEON_DEVNET
 	}
 
-	if(chainId === SupportedNetwork.Chain_44787) {
-		return SupportedChainId.NEON_DEVNET
+	if (chainId === SupportedNetwork.Chain_44787) {
+		return SupportedChainId.CELO_ALFAJORES_TESTNET
 	}
 
 	// @TODO: needs type for harmony
@@ -75,6 +75,10 @@ const getSupportedValidatorNetworkFromChainId = (chainId: SupportedChainId) => {
 
 	if(chainId === SupportedChainId.NEON_DEVNET) {
 		return SupportedValidatorNetwork._245022926
+	}
+
+	if (chainId === SupportedChainId.CELO_ALFAJORES_TESTNET) {
+		return SupportedValidatorNetwork._44787
 	}
 
 	// @TODO: un-comment these lines.
