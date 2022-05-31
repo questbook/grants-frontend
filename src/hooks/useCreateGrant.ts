@@ -198,6 +198,7 @@ export default function useCreateGrant(
 
 			if(!currentChainId) {
 				if(switchNetwork && chainId) {
+					console.log(' (CREATE GRANT HOOK) Switch Network (!currentChainId): ', workspace, chainId)
 					switchNetwork(chainId)
 				}
 
@@ -208,6 +209,7 @@ export default function useCreateGrant(
 
 			if(chainId !== currentChainId) {
 				if(switchNetwork && chainId) {
+					console.log(' (CREATE GRANT HOOK) Switch Network: (chainId !== currentChainId)', workspace, chainId)
 					switchNetwork(chainId)
 				}
 
