@@ -29,6 +29,10 @@ export default function useChainId() {
 			return SupportedChainId.NEON_DEVNET
 		}
 
+		if(chainId === 44787) {
+			return SupportedChainId.CELO_ALFAJORES_TESTNET
+		}
+
 		return undefined
 	}
 

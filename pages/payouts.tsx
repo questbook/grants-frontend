@@ -11,6 +11,7 @@ import {
 import { utils } from 'ethers'
 import router from 'next/router'
 import CopyIcon from 'src/components/ui/copy_icon'
+import { CHAIN_INFO } from 'src/constants/chainInfo'
 import { SupportedChainId } from 'src/constants/chains'
 import { useGetFundSentforReviewerQuery } from 'src/generated/graphql'
 // TOOLS AND UTILS
@@ -29,7 +30,7 @@ import { CHAIN_INFO } from 'src/constants/chainInfo'
 
 export default function Payouts() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
-	const [workspaceChainId, setWorkspaceChainId] = React.useState<number>();
+	const [workspaceChainId, setWorkspaceChainId] = React.useState<number>()
 	const [isReviewer, setIsReviewer] = React.useState<boolean>(false)
 	const [reviewsDone, setReviewsDone] = React.useState<number>(0)
 	const [reviewPayoutsDone, setReviewPayoutsDone] = React.useState<any>([])
@@ -40,7 +41,7 @@ export default function Payouts() {
 	const { data: account } = useAccount()
 
 	React.useEffect(() => {
-		setWorkspaceChainId(getSupportedChainIdFromWorkspace(workspace));
+		setWorkspaceChainId(getSupportedChainIdFromWorkspace(workspace))
 	}, [workspace])
 
 	React.useEffect(() => {
@@ -284,11 +285,11 @@ export default function Payouts() {
 														<Link
 															href={
 																workspaceChainId ?
-																`${CHAIN_INFO[workspaceChainId]
+																	`${CHAIN_INFO[workspaceChainId]
 																		.explorer.transactionHash}${data.id.substr(
-																			0,
-																			data.id.indexOf('.'),
-																		)}`
+																		0,
+																		data.id.indexOf('.'),
+																	)}`
 																	: ''
 															}
 

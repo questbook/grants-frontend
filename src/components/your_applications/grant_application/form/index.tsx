@@ -582,8 +582,6 @@ function Form({
 									py={loading ? 2 : 0}
 									mt={8}
 									mb={4}
-									mx={10}
-									alignSelf="stretch"
 									variant="primary"
 								>
 									Edit Application for Resubmit
@@ -597,8 +595,6 @@ function Form({
 									onClick={() => setOnEdit(true)}
 									mt={8}
 									mb={4}
-									mx={10}
-									alignSelf="stretch"
 									variant="primary"
 									disabled={loading}
 								>
@@ -614,8 +610,6 @@ function Form({
 									py={loading ? 2 : 0}
 									mt={8}
 									mb={4}
-									mx={10}
-									alignSelf="stretch"
 									variant="primary"
 								>
 									{loading ? <Loader /> : 'Submit Edits'}
@@ -767,8 +761,6 @@ you&apos;ll have to approve this
 									py={loading ? 2 : 0}
 									mt={8}
 									mb={4}
-									mx={10}
-									alignSelf="stretch"
 									variant="primary"
 								>
 									{loading ? <Loader /> : 'Submit Edits'}
@@ -785,8 +777,6 @@ you&apos;ll have to approve this
 									py={loading ? 2 : 0}
 									mt={8}
 									mb={4}
-									mx={10}
-									alignSelf="stretch"
 									variant="primary"
 								>
 									Edit Application for Resubmit

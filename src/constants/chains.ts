@@ -7,6 +7,7 @@ export enum SupportedChainId {
   POLYGON_MAINNET = 137,
   OPTIMISM_MAINNET = 10,
   NEON_DEVNET = 245022926,
+  CELO_ALFAJORES_TESTNET = 44787
 }
 
 const testingNetworks = [

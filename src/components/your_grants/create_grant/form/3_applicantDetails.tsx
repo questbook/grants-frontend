@@ -9,7 +9,6 @@ import {
 	Switch,
 	Text,
 } from '@chakra-ui/react'
-import Dropdown from 'src/components/ui/forms/dropdown'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import applicantDetailsList from '../../../../constants/applicantDetailsList'
@@ -623,7 +622,7 @@ function ApplicantDetails({
 				</Box>
 			</Flex>
 
-			<Flex
+			{/* <Flex
 				opacity={rubricRequired ? 1 : 0.4}
 				direction="column"
 				mt={6}>
@@ -657,7 +656,7 @@ function ApplicantDetails({
 						listItemsMinWidth="600px"
 					/>
 				</Box>
-			</Flex>
+			</Flex> */}
 		</Flex>
 	)
 }
