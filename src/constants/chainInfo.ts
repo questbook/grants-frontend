@@ -451,7 +451,7 @@ export const CHAIN_INFO: ChainInfoMap = {
 			symbol: 'Celo',
 			decimals: 18,
 		},
-		icon: '/network_icons/celo_alfajores_testnet_symbol.svg',
+		icon: '/network_icons/celo.svg',
 		wallets: [
 			{
 				id: 'injected',
