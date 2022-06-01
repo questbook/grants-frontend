@@ -14,6 +14,7 @@ import { CHAIN_INFO } from 'src/constants/chainInfo'
 import { SupportedChainId } from 'src/constants/chains'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
 import useChainId from 'src/hooks/utils/useChainId'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import useEncryption from 'src/hooks/utils/useEncryption'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useNetwork } from 'wagmi'
@@ -21,7 +22,6 @@ import 'react-datepicker/dist/react-datepicker.css'
 import Datepicker from '../../../ui/forms/datepicker'
 import Dropdown from '../../../ui/forms/dropdown'
 import SingleLineInput from '../../../ui/forms/singleLineInput'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 interface Props {
   onSubmit: (data: any) => void;

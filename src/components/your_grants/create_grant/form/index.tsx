@@ -13,6 +13,7 @@ import Loader from 'src/components/ui/loader'
 import { CHAIN_INFO } from 'src/constants/chainInfo'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
@@ -23,7 +24,6 @@ import Title from './1_title'
 import Details from './2_details'
 import ApplicantDetails from './3_applicantDetails'
 import GrantRewardsInput from './4_rewards'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 function Form({
 	refs,

@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { WorkspaceUpdateRequest } from '@questbook/service-validator-client'
 import { ApiClientsContext } from 'pages/_app'
+import { CHAIN_INFO } from 'src/constants/chainInfo'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
@@ -9,7 +10,6 @@ import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract'
 import useChainId from './utils/useChainId'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
 
 export default function useUpdateWorkspacePublicKeys(
 	data: WorkspaceUpdateRequest,

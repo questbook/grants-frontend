@@ -16,6 +16,7 @@ import { SupportedChainId } from 'src/constants/chains'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
 import useChainId from 'src/hooks/utils/useChainId'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { useAccount } from 'wagmi'
 import applicantDetailsList from '../../../../constants/applicantDetailsList'
@@ -24,7 +25,6 @@ import Title from './1_title'
 import Details from './2_details'
 import ApplicantDetails from './3_applicantDetails'
 import GrantRewardsInput from './4_rewards'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 function Form({
 	refs,
