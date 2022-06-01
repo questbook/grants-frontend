@@ -9,6 +9,7 @@ import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract'
 import useChainId from './utils/useChainId'
+import { CHAIN_INFO } from 'src/constants/chainInfo'
 
 export default function useUpdateWorkspacePublicKeys(
 	data: WorkspaceUpdateRequest,
@@ -183,5 +184,8 @@ export default function useUpdateWorkspacePublicKeys(
 		incorrectNetwork,
 	])
 
-	return [transactionData, loading]
+	return [transactionData, chainId ?? getSupportedChainIdFromWorkspace(workspace)
+		? `${CHAIN_INFO[chainId ?? getSupportedChainIdFromWorkspace(workspace)!]
+			.explorer.transactionHash}${transactionData?.transactionHash}`
+		: '',, loading]
 }

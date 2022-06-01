@@ -23,6 +23,7 @@ import Title from './1_title'
 import Details from './2_details'
 import ApplicantDetails from './3_applicantDetails'
 import GrantRewardsInput from './4_rewards'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 function Form({
 	refs,
@@ -103,8 +104,9 @@ function Form({
 	const [publicKey] = React.useState<WorkspaceUpdateRequest>({
 		publicKey: '',
 	})
-	const [transactionData] = useUpdateWorkspacePublicKeys(publicKey)
+	const [transactionData, transactionLink, loading] = useUpdateWorkspacePublicKeys(publicKey)
 
+	const { setRefresh } = useCustomToast(transactionLink)
 	const [admins, setAdmins] = React.useState<any[]>([])
 	const [maximumPoints, setMaximumPoints] = React.useState(5)
 
@@ -121,6 +123,7 @@ function Form({
 		if(transactionData) {
 			setKeySubmitted(true)
 			console.log('transactionData-----', transactionData)
+			setRefresh(true)
 		}
 	}, [transactionData])
 

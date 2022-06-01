@@ -21,6 +21,7 @@ import 'react-datepicker/dist/react-datepicker.css'
 import Datepicker from '../../../ui/forms/datepicker'
 import Dropdown from '../../../ui/forms/dropdown'
 import SingleLineInput from '../../../ui/forms/singleLineInput'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 
 interface Props {
   onSubmit: (data: any) => void;
@@ -131,13 +132,15 @@ function GrantRewardsInput({
 	const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({
 		publicKey: '',
 	})
-	const [transactionData] = useUpdateWorkspacePublicKeys(publicKey)
+	const [transactionData, transactionLink, loading] = useUpdateWorkspacePublicKeys(publicKey)
 
+	const { setRefresh } = useCustomToast(transactionLink)
 	const [shouldEncryptReviews, setShouldEncryptReviews] = useState(false)
 
 	useEffect(() => {
 		if(transactionData) {
 			setKeySubmitted(true)
+			setRefresh(true)
 		}
 	}, [transactionData])
 

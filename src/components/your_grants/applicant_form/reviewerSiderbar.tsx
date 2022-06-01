@@ -15,6 +15,7 @@ import { ApiClientsContext } from 'pages/_app'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import Loader from 'src/components/ui/loader'
 import useSubmitReview from 'src/hooks/useSubmitReview'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import useEncryption from 'src/hooks/utils/useEncryption'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import {
@@ -104,7 +105,6 @@ function ReviewerSidebar({
 
 	const [
 		data,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		transactionLink,
 		resubmitLoading,
 	] = useSubmitReview(
@@ -116,11 +116,14 @@ function ReviewerSidebar({
 		applicationData?.id,
 	)
 
+	const { setRefresh } = useCustomToast(transactionLink)
+
 	useEffect(() => {
 		if(data) {
 			setReviewerDrawerOpen(false)
 			setReviewSelected(null)
 			setFeedbackDrawerOpen(false)
+			setRefresh(true)
 		}
 	}, [data, setFeedbackDrawerOpen])
 
