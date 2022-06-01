@@ -127,7 +127,7 @@ export const CHAIN_INFO: ChainInfoMap = {
 				decimals: 18,
 			},
 		},
-		subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-harmonytest',
+		subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-harmony-testnet',
 		rpcUrls: ['https://api.s0.b.hmny.io'],
 	},
 	[SupportedChainId.POLYGON_TESTNET]: {
