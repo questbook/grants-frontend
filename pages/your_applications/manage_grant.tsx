@@ -151,7 +151,7 @@ function ManageGrant() {
 					?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
 				const asset = getAssetInfo(rewardAsset, chainId)
 				setAssetInfo(asset)
-				// setFundingIcon(assetInfo.icon);
+				setFundingIcon(asset.icon);
 			}
 
 			const [localIsGrantVerified, localFunding] = verify(
@@ -160,34 +160,33 @@ function ManageGrant() {
 			)
 			setGrantFunding(localFunding)
 			setIsGrantVerified(localIsGrantVerified)
-
-			setTabs([
-				{
-					title: milestones.length.toString(),
-					subtitle: milestones.length === 1 ? 'Milestone' : 'Milestones',
-				},
-				{
-					icon: fundingIcon,
-					title: formatAmount(getTotalFundingRecv(milestones).toString(), decimals),
-					subtitle: 'Funding Received',
-				},
-				{
-					icon: fundingIcon,
-					title:
-				(fundingAsk ? formatAmount(fundingAsk.toString(), decimals) : null)
-				|| formatAmount(getTotalFundingAsked(milestones).toString(), decimals),
-					subtitle: 'Funding Requested',
-				},
-			])
 		}
 	}, [data, error, rewardAsset, loading, chainId])
 
+	useEffect(() => {
+		if (!data) return
+		setTabs([
+			{
+				title: milestones.length.toString(),
+				subtitle: milestones.length === 1 ? 'Milestone' : 'Milestones',
+			},
+			{
+				icon: fundingIcon,
+				title: formatAmount(getTotalFundingRecv(milestones).toString(), decimals),
+				subtitle: 'Funding Received',
+			},
+			{
+				icon: fundingIcon,
+				title:
+			(fundingAsk ? formatAmount(fundingAsk.toString(), decimals) : null)
+			|| formatAmount(getTotalFundingAsked(milestones).toString(), decimals),
+				subtitle: 'Funding Requested',
+			},
+		])
+	}, [milestones, fundingIcon, fundingAsk])
+
 	// const assetInfo = getAssetInfo(rewardAsset, chainId);
 	// const fundingIcon = assetInfo.icon;
-
-	React.useEffect(() => {
-		console.log('TABS: ', tabs)
-	}, [tabs])
 
 	return (
 		<Container
