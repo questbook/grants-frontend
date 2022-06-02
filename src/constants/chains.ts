@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import 'dotenv/config'
 
 export enum SupportedChainId {
   // Not For PRODUCTION
@@ -8,20 +8,21 @@ export enum SupportedChainId {
   POLYGON_MAINNET = 137,
   OPTIMISM_MAINNET = 10,
   // NEON_DEVNET = 245022926,
+  // CELO_ALFAJORES_TESTNET = 44787
 }
 
-export const DefaultSupportedChainId = SupportedChainId.POLYGON_MAINNET;
+export const DefaultSupportedChainId = SupportedChainId.POLYGON_MAINNET
 
 // const testingNetworks = [
-//   SupportedChainId.RINKEBY,
+//   ?? DefaultSupportedChainId,
 // ];
-const testingNetworks = [] as SupportedChainId[];
+const testingNetworks = [] as SupportedChainId[]
 
 export const ALL_SUPPORTED_CHAIN_IDS: SupportedChainId[] = Object.values(
-  SupportedChainId,
+	SupportedChainId,
 ).filter(
-  (id) => typeof id === 'number'
+	(id) => typeof id === 'number'
     && ((process.env.NEXT_PUBLIC_IS_TEST === 'true'
       && testingNetworks.findIndex((network) => network === id) !== -1)
       || !process.env.NEXT_PUBLIC_IS_TEST || process.env.NEXT_PUBLIC_IS_TEST === 'false'),
-) as SupportedChainId[];
+) as SupportedChainId[]

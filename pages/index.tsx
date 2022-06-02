@@ -1,232 +1,275 @@
-import { Flex, useToast } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
 import React, {
-  ReactElement,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import { CHAIN_INFO } from 'src/constants/chainInfo';
+	ReactElement,
+	useCallback,
+	useContext,
+	useEffect,
+	useRef,
+	useState,
+} from 'react'
+import { Flex, useToast } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
+import { CHAIN_INFO } from 'src/constants/chainInfo'
 import {
-  useGetAllGrantsLazyQuery,
-  GetAllGrantsQuery,
-} from 'src/generated/graphql';
-import verify from 'src/utils/grantUtils';
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
-import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
-import { useAccount } from 'wagmi';
-import GrantCard from '../src/components/browse_grants/grantCard';
-import Sidebar from '../src/components/browse_grants/sidebar';
-import Heading from '../src/components/ui/heading';
-import NavbarLayout from '../src/layout/navbarLayout';
-import {
-  formatAmount,
-} from '../src/utils/formattingUtils';
-import { ApiClientsContext } from './_app';
+	GetAllGrantsQuery,
+	useGetAllGrantsLazyQuery,
+} from 'src/generated/graphql'
+import verify from 'src/utils/grantUtils'
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
+import { useAccount, useConnect } from 'wagmi'
+import GrantCard from '../src/components/browse_grants/grantCard'
+import Sidebar from '../src/components/browse_grants/sidebar'
+import Heading from '../src/components/ui/heading'
+import Loader from '../src/components/ui/loader'
+import NavbarLayout from '../src/layout/navbarLayout'
+import { formatAmount } from '../src/utils/formattingUtils'
+import { ApiClientsContext } from './_app'
 
-const PAGE_SIZE = 40;
+const PAGE_SIZE = 40
 
 function BrowseGrants() {
-  const containerRef = useRef(null);
-  const [{ data: accountData }] = useAccount();
-  const router = useRouter();
-  const { subgraphClients } = useContext(ApiClientsContext)!;
+	const containerRef = useRef(null)
+	const { data: accountData } = useAccount()
+	const { isDisconnected } = useConnect()
+	const router = useRouter()
+	const { subgraphClients, connected } = useContext(ApiClientsContext)!
 
-  // Changing this to support Rinkeby only for testing!
-  const allNetworkGrants = Object.keys(subgraphClients)!.map(
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    (key) => useGetAllGrantsLazyQuery({ client: subgraphClients[key].client }),
-  );
-  useEffect(() => { }, [subgraphClients]);
+	const allNetworkGrants = Object.keys(subgraphClients)!.map(
+		(key) => useGetAllGrantsLazyQuery({ client: subgraphClients[key].client }),
+	)
 
-  const toast = useToast();
-  const [grants, setGrants] = useState<GetAllGrantsQuery['grants']>([]);
+	useEffect(() => {}, [subgraphClients])
 
-  const [currentPage, setCurrentPage] = useState(0);
+	const toast = useToast()
+	const [grants, setGrants] = useState<GetAllGrantsQuery['grants']>([])
+	const [loadedData, setLoadedData] = useState<boolean>(false)
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const getGrantData = async (firstTime: boolean = false) => {
-    try {
-      const currentPageLocal = firstTime ? 0 : currentPage;
-      const promises = allNetworkGrants.map(
-        // eslint-disable-next-line no-async-promise-executor
-        (allGrants) => new Promise(async (resolve) => {
-          // console.log('calling grants');
-          try {
-            const { data } = await allGrants[0]({
-              variables: {
-                first: PAGE_SIZE,
-                skip: currentPageLocal * PAGE_SIZE,
-                applicantId: accountData?.address ?? '',
-              },
-            });
-            if (data && data.grants) {
-              const filteredGrants = data.grants.filter(
-                (grant) => grant.applications.length === 0,
-              );
-              resolve(filteredGrants);
-            } else {
-              resolve([]);
-            }
-          } catch (err) {
-            resolve([]);
-          }
-        }),
-      );
-      Promise.all(promises).then((values: any[]) => {
-        const allGrantsData = [].concat(
-          ...values,
-        ) as GetAllGrantsQuery['grants'];
-        if (firstTime) {
-          setGrants(
-            allGrantsData.sort((a: any, b: any) => b.createdAtS - a.createdAtS),
-          );
-        } else {
-          setGrants(
-            [...grants, ...allGrantsData].sort(
-              (a: any, b: any) => b.createdAtS - a.createdAtS,
-            ),
-          );
-        }
-        setCurrentPage(firstTime ? 1 : currentPage + 1);
-        // @TODO: Handle the case where a lot of the grants are filtered out.
-      });
-    } catch (e) {
-      // console.log(e);
-      toast({
-        title: 'Error loading grants',
-        status: 'error',
-      });
-    }
-  };
+	const [currentPage, setCurrentPage] = useState(0)
 
-  const handleScroll = useCallback(() => {
-    const { current } = containerRef;
-    if (!current) return;
-    const parentElement = (current as HTMLElement)?.parentNode as HTMLElement;
-    const reachedBottom = Math.abs(
-      parentElement.scrollTop
-      - (parentElement.scrollHeight - parentElement.clientHeight),
-    ) < 10;
-    if (reachedBottom) {
-      getGrantData();
-    }
-  }, [containerRef, getGrantData]);
+	const getGrantData = async(firstTime: boolean = false) => {
+		setLoadedData(false)
+		try {
+			const currentPageLocal = firstTime ? 0 : currentPage
+			const promises = allNetworkGrants.map(
+				// eslint-disable-next-line no-async-promise-executor
+				(allGrants) => new Promise(async(resolve) => {
+					// console.log('calling grants');
+					try {
+						const { data } = await allGrants[0]({
+							variables: {
+								first: PAGE_SIZE,
+								skip: currentPageLocal * PAGE_SIZE,
+								applicantId: accountData?.address ?? '',
+							},
+						})
+						if(data && data.grants) {
+							const filteredGrants = data.grants.filter(
+								(grant) => grant.applications.length === 0
+							)
+							resolve(filteredGrants)
+						} else {
+							resolve([])
+						}
+					} catch(err) {
+						resolve([])
+					}
+				})
+			)
+			Promise.all(promises).then((values: any[]) => {
+				const allGrantsData = [].concat(
+					...values
+				) as GetAllGrantsQuery['grants']
+				if(firstTime) {
+					setGrants(
+						allGrantsData.sort((a: any, b: any) => b.createdAtS - a.createdAtS)
+					)
+					setLoadedData(true)
+				} else {
+					setGrants(
+						[...grants, ...allGrantsData].sort(
+							(a: any, b: any) => b.createdAtS - a.createdAtS
+						)
+					)
+					setLoadedData(true)
+				}
 
-  useEffect(() => {
-    // setCurrentPage(0);
-    getGrantData(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountData?.address]);
+				setCurrentPage(firstTime ? 1 : currentPage + 1)
+				// @TODO: Handle the case where a lot of the grants are filtered out.
+			})
+		} catch(e) {
+			// console.log(e);
+			toast({
+				title: 'Error loading grants',
+				status: 'error',
+			})
+		}
+	}
 
-  useEffect(() => {
-    const { current } = containerRef;
-    if (!current) return;
-    const parentElement = (current as HTMLElement)?.parentNode as HTMLElement;
-    parentElement.addEventListener('scroll', handleScroll);
+	const handleScroll = useCallback(() => {
+		const { current } = containerRef
+		if(!current) {
+			return
+		}
 
-    // eslint-disable-next-line consistent-return
-    return () => parentElement.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
+		const parentElement = (current as HTMLElement)?.parentNode as HTMLElement
+		const reachedBottom =
+      Math.abs(
+      	parentElement.scrollTop -
+          (parentElement.scrollHeight - parentElement.clientHeight)
+      ) < 10
+		if(reachedBottom) {
+			getGrantData()
+		}
+	}, [containerRef, getGrantData])
 
-  return (
-    <Flex ref={containerRef} direction="row" justify="center">
-      <Flex direction="column" w="55%" alignItems="stretch" pb={8} px={10}>
-        <Heading title="Discover grants" />
-        {grants.length > 0
-          && grants.map((grant) => {
-            let chainInfo;
-            let tokenIcon;
-            const chainId = getSupportedChainIdFromSupportedNetwork(
-              grant.workspace.supportedNetworks[0],
-            );
-            if (grant.reward.token) {
-              tokenIcon = getUrlForIPFSHash(grant.reward.token?.iconHash);
-              chainInfo = {
-                address: grant.reward.token.address,
-                label: grant.reward.token.label,
-                decimals: grant.reward.token.decimal,
-                icon: tokenIcon,
-              };
-            } else {
-              chainInfo = CHAIN_INFO[chainId]?.supportedCurrencies[
-                grant.reward.asset.toLowerCase()
-              ];
-            }
+	useEffect(() => {
+		// setCurrentPage(0);
+		getGrantData(true)
+	}, [accountData?.address])
 
-            const [isGrantVerified, funding] = verify(
-              grant.funding,
-              chainInfo?.decimals,
-            );
+	useEffect(() => {
+		const { current } = containerRef
+		if(!current) {
+			return
+		}
 
-            return (
-              <GrantCard
-                daoID={grant.workspace.id}
-                key={grant.id}
-                grantID={grant.id}
-                daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
-                daoName={grant.workspace.title}
-                isDaoVerified={false}
-                grantTitle={grant.title}
-                grantDesc={grant.summary}
-                numOfApplicants={grant.numberOfApplications}
-                endTimestamp={new Date(grant.deadline!).getTime()}
-                grantAmount={formatAmount(
-                  grant.reward.committed,
-                  chainInfo?.decimals ?? 18,
-                )}
-                grantCurrency={chainInfo?.label ?? 'LOL'}
-                grantCurrencyIcon={
-                  chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'
-                }
-                isGrantVerified={isGrantVerified}
-                funding={funding}
-                chainId={chainId}
-                onClick={() => {
-                  if (!(accountData && accountData.address)) {
-                    router.push({
-                      pathname: '/connect_wallet',
-                      query: {
-                        flow: '/',
-                        grantId: grant.id,
-                        chainId,
-                      },
-                    });
-                    return;
-                  }
-                  router.push({
-                    pathname: '/explore_grants/about_grant',
-                    query: {
-                      grantId: grant.id,
-                      chainId,
-                    },
-                  });
-                }}
-                onTitleClick={() => {
-                  router.push({
-                    pathname: '/explore_grants/about_grant',
-                    query: {
-                      grantId: grant.id,
-                      chainId,
-                    },
-                  });
-                }}
-              />
-            );
-          })}
-      </Flex>
-      {accountData && accountData.address ? null : (
-        <Flex w="26%" pos="sticky" top={0}>
-          <Sidebar />
-        </Flex>
-      )}
-    </Flex>
-  );
+		const parentElement = (current as HTMLElement)?.parentNode as HTMLElement
+		parentElement.addEventListener('scroll', handleScroll)
+
+		// eslint-disable-next-line consistent-return
+		return () => parentElement.removeEventListener('scroll', handleScroll)
+	}, [handleScroll])
+
+	return (
+		<Flex
+			ref={containerRef}
+			direction="row"
+			justify="center">
+			<Flex
+				direction="column"
+				w="55%"
+				alignItems="stretch"
+				pb={8}
+				px={10}>
+				<Heading title="Discover grants" />
+				{
+					!loadedData ? (
+						<Loader />
+					) : (
+						<>
+							{
+								grants.length > 0 &&
+              grants.map((grant) => {
+              	let chainInfo
+              	let tokenIcon
+              	const chainId = getSupportedChainIdFromSupportedNetwork(
+              		grant.workspace.supportedNetworks[0]
+              	)
+              	if(grant.reward.token) {
+              		tokenIcon = getUrlForIPFSHash(grant.reward.token?.iconHash)
+              		chainInfo = {
+              			address: grant.reward.token.address,
+              			label: grant.reward.token.label,
+              			decimals: grant.reward.token.decimal,
+              			icon: tokenIcon,
+              		}
+              	} else {
+              		chainInfo =
+                    CHAIN_INFO[chainId]?.supportedCurrencies[
+                    	grant.reward.asset.toLowerCase()
+                    ]
+              	}
+
+              	const [isGrantVerified, funding] = verify(
+              		grant.funding,
+              		chainInfo?.decimals
+              	)
+
+              	return (
+              		<GrantCard
+              			daoID={grant.workspace.id}
+              			key={grant.id}
+              			grantID={grant.id}
+              			daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
+              			daoName={grant.workspace.title}
+              			isDaoVerified={false}
+              			grantTitle={grant.title}
+              			grantDesc={grant.summary}
+              			numOfApplicants={grant.numberOfApplications}
+              			endTimestamp={new Date(grant.deadline!).getTime()}
+              			grantAmount={
+              				formatAmount(
+              					grant.reward.committed,
+              					chainInfo?.decimals ?? 18
+              				)
+              			}
+              			grantCurrency={chainInfo?.label ?? 'LOL'}
+              			grantCurrencyIcon={chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'}
+              			isGrantVerified={isGrantVerified}
+              			funding={funding}
+              			chainId={chainId}
+              			onClick={
+              				() => {
+              					if(!(accountData && accountData.address)) {
+              						router.push({
+              							pathname: '/connect_wallet',
+              							query: {
+              								flow: '/',
+              								grantId: grant.id,
+              								chainId,
+              							},
+              						})
+              						return
+              					}
+
+              				router.push({
+              						pathname: '/explore_grants/about_grant',
+              						query: {
+              							grantId: grant.id,
+              							chainId,
+              						},
+              					})
+              				}
+              			}
+              			onTitleClick={
+              				() => {
+              					router.push({
+              						pathname: '/explore_grants/about_grant',
+              						query: {
+              							grantId: grant.id,
+              							chainId,
+              						},
+              					})
+              				}
+              			}
+              		/>
+              	)
+              })
+							}
+						</>
+					)
+				}
+			</Flex>
+			{
+				!connected && isDisconnected && (
+					<Flex
+						w="26%"
+						pos="sticky"
+						top={0}>
+						<Sidebar />
+					</Flex>
+				)
+			}
+		</Flex>
+	)
 }
 
-BrowseGrants.getLayout = function getLayout(page: ReactElement) {
-  return <NavbarLayout renderGetStarted>{page}</NavbarLayout>;
-};
-export default BrowseGrants;
+BrowseGrants.getLayout = function(page: ReactElement) {
+	return (
+		<NavbarLayout renderGetStarted>
+			{page}
+		</NavbarLayout>
+	)
+}
+
+export default BrowseGrants

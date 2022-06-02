@@ -1,10 +1,10 @@
-import React from 'react';
+import React from 'react'
 import {
-  Text, Flex, Box,
-} from '@chakra-ui/react';
-import { EditorState } from 'draft-js';
-import Tooltip from '../../tooltip';
-import TextEditor from './textEditor';
+	Box,
+	Flex, Text, } from '@chakra-ui/react'
+import { EditorState } from 'draft-js'
+import Tooltip from '../../tooltip'
+import TextEditor from './textEditor'
 
 interface RichTextEditorProps {
   label?: string;
@@ -21,67 +21,79 @@ interface RichTextEditorProps {
 }
 
 const defaultProps = {
-  label: '',
-  placeholder: '',
-  subtext: '',
-  maxLength: -1,
-  disabled: false,
-  tooltip: '',
-  errorText: '',
-  visible: true,
-};
-
-function RichTextEditor({
-  label,
-  value,
-  onChange,
-  placeholder,
-  isError,
-  errorText,
-  subtext,
-  tooltip,
-  visible,
-  disabled,
-}: RichTextEditorProps) {
-  return (
-    <Flex flex={1} direction="column" display={visible ? '' : 'none'}>
-      <Text lineHeight="20px" fontWeight="bold" mb={1}>
-        {label}
-        {tooltip && tooltip.length ? <Tooltip label={tooltip} /> : null}
-      </Text>
-      <TextEditor
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        readOnly={disabled}
-      />
-      {(subtext && subtext.length)
-      || (isError && errorText && errorText?.length) ? (
-        <Box mt={1} />
-        ) : null}
-      {isError && errorText && errorText?.length && (
-        <Text
-          fontSize="14px"
-          color="#EE7979"
-          fontWeight="700"
-          lineHeight="20px"
-        >
-          {errorText}
-        </Text>
-      )}
-      {subtext && subtext?.length && (
-        <Text
-          fontSize="12px"
-          color="#717A7C"
-          fontWeight="400"
-          lineHeight="20px"
-        >
-          {subtext}
-        </Text>
-      )}
-    </Flex>
-  );
+	label: '',
+	placeholder: '',
+	subtext: '',
+	maxLength: -1,
+	disabled: false,
+	tooltip: '',
+	errorText: '',
+	visible: true,
 }
 
-RichTextEditor.defaultProps = defaultProps;
-export default RichTextEditor;
+function RichTextEditor({
+	label,
+	value,
+	onChange,
+	placeholder,
+	isError,
+	errorText,
+	subtext,
+	tooltip,
+	visible,
+	disabled,
+}: RichTextEditorProps) {
+	return (
+		<Flex
+			flex={1}
+			direction="column"
+			display={visible ? '' : 'none'}>
+			<Text
+				lineHeight="20px"
+				fontWeight="bold"
+				mb={1}>
+				{label}
+				{tooltip && tooltip.length ? <Tooltip label={tooltip} /> : null}
+			</Text>
+			<TextEditor
+				placeholder={placeholder}
+				value={value}
+				onChange={onChange}
+				readOnly={disabled}
+			/>
+			{
+				(subtext && subtext.length)
+      || (isError && errorText && errorText?.length) ? (
+						<Box mt={1} />
+					) : null
+			}
+			{
+				isError && errorText && errorText?.length && (
+					<Text
+						fontSize="14px"
+						color="#EE7979"
+						fontWeight="700"
+						lineHeight="20px"
+					>
+						{errorText}
+					</Text>
+				)
+			}
+			{
+				subtext && subtext?.length && (
+					<Text
+						fontSize="12px"
+						color="#717A7C"
+						fontWeight="400"
+						lineHeight="20px"
+					>
+						{subtext}
+					</Text>
+				)
+			}
+		</Flex>
+	)
+}
+
+RichTextEditor.defaultProps = defaultProps
+export default RichTextEditor

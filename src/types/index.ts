@@ -1,11 +1,11 @@
 import {
-  GetAllGrantsForADaoQuery,
-  GetApplicationMilestonesQuery,
-  GetDaoDetailsQuery,
-  GetFundSentForApplicationQuery,
-  GetWorkspaceDetailsQuery,
-  GetWorkspaceMembersQuery,
-} from 'src/generated/graphql';
+	GetAllGrantsForADaoQuery,
+	GetApplicationMilestonesQuery,
+	GetDaoDetailsQuery,
+	GetFundSentForApplicationQuery,
+	GetWorkspaceDetailsQuery,
+	GetWorkspaceMembersQuery,
+} from 'src/generated/graphql'
 
 export type Grant = GetAllGrantsForADaoQuery['grants'][number];
 export type ApplicationMilestone = GetApplicationMilestonesQuery['grantApplications'][number]['milestones'][number];

@@ -1,185 +1,230 @@
-import { Flex } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
-import { ApiClientsContext } from 'pages/_app';
 import React, {
-  ReactElement, useContext, useEffect, useState,
-} from 'react';
-import { CHAIN_INFO } from 'src/constants/chainInfo';
-import { SupportedChainId, DefaultSupportedChainId } from 'src/constants/chains';
-import { useGetGrantDetailsQuery } from 'src/generated/graphql';
-import { formatAmount } from 'src/utils/formattingUtils';
-import { getAssetInfo } from 'src/utils/tokenUtils';
-import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
-import verify from 'src/utils/grantUtils';
-import Form from '../../src/components/explore_grants/apply_grant/form';
-import Sidebar from '../../src/components/explore_grants/apply_grant/sidebar';
-import NavbarLayout from '../../src/layout/navbarLayout';
-import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils';
+	ReactElement, useContext, useEffect, useState,
+} from 'react'
+import { Flex } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
+import { ApiClientsContext } from 'pages/_app'
+import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { DefaultSupportedChainId, SupportedChainId } from 'src/constants/chains'
+import { useGetGrantDetailsQuery } from 'src/generated/graphql'
+import { formatAmount } from 'src/utils/formattingUtils'
+import verify from 'src/utils/grantUtils'
+import { getAssetInfo } from 'src/utils/tokenUtils'
+import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
+import Form from '../../src/components/explore_grants/apply_grant/form'
+import Sidebar from '../../src/components/explore_grants/apply_grant/sidebar'
+import NavbarLayout from '../../src/layout/navbarLayout'
+import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils'
 
 function ApplyGrant() {
-  const { subgraphClients, workspace } = useContext(ApiClientsContext)!;
+	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 
-  const router = useRouter();
-  const [grantData, setGrantData] = useState<any>(null);
-  const [grantID, setGrantID] = useState<any>('');
-  const [title, setTitle] = useState('');
-  const [daoId, setDaoId] = useState('');
-  const [daoLogo, setDaoLogo] = useState('');
-  const [isGrantVerified, setIsGrantVerified] = useState(false);
-  const [funding, setFunding] = useState('');
-  const [rewardAmount, setRewardAmount] = useState('');
-  const [rewardCurrency, setRewardCurrency] = useState('');
-  const [rewardCurrencyCoin, setRewardCurrencyCoin] = useState('');
-  const [rewardCurrencyAddress, setRewardCurrencyAddress] = useState();
-  const [grantDetails, setGrantDetails] = useState('');
-  const [grantSummary, setGrantSummary] = useState('');
-  const [workspaceId, setWorkspaceId] = useState('');
-  const [grantRequiredFields, setGrantRequiredFields] = useState<any[]>([]);
-  const [chainId, setChainId] = useState<SupportedChainId>();
-  const [acceptingApplications, setAcceptingApplications] = useState(true);
-  const [shouldShowButton, setShouldShowButton] = useState(false);
+	const router = useRouter()
+	const [grantData, setGrantData] = useState<any>(null)
+	const [grantID, setGrantID] = useState<any>('')
+	const [title, setTitle] = useState('')
+	const [daoId, setDaoId] = useState('')
+	const [daoLogo, setDaoLogo] = useState('')
+	const [isGrantVerified, setIsGrantVerified] = useState(false)
+	const [funding, setFunding] = useState('')
+	const [rewardAmount, setRewardAmount] = useState('')
+	const [rewardCurrency, setRewardCurrency] = useState('')
+	const [rewardDecimal, setRewardDecimal] = useState<number | undefined>(undefined)
+	const [rewardCurrencyCoin, setRewardCurrencyCoin] = useState('')
+	const [rewardCurrencyAddress, setRewardCurrencyAddress] = useState()
+	const [grantDetails, setGrantDetails] = useState('')
+	const [grantSummary, setGrantSummary] = useState('')
+	const [workspaceId, setWorkspaceId] = useState('')
+	const [grantRequiredFields, setGrantRequiredFields] = useState<any[]>([])
+	const [chainId, setChainId] = useState<SupportedChainId>()
+	const [acceptingApplications, setAcceptingApplications] = useState(true)
+	const [shouldShowButton, setShouldShowButton] = useState(false)
 
-  useEffect(() => {
-    if (router && router.query) {
-      const { chainId: cId, grantId: gId } = router.query;
-      setChainId(cId as unknown as SupportedChainId);
-      setGrantID(gId);
-    }
-  }, [router]);
+	useEffect(() => {
+		if(router && router.query) {
+			const { chainId: cId, grantId: gId } = router.query
+			setChainId(cId as unknown as SupportedChainId)
+			setGrantID(gId)
+		}
+	}, [router])
 
-  const [queryParams, setQueryParams] = useState<any>({
-    client:
+	const [queryParams, setQueryParams] = useState<any>({
+		client:
       subgraphClients[
-        chainId ?? DefaultSupportedChainId
+      	chainId ?? DefaultSupportedChainId
       ].client,
-  });
+	})
 
-  useEffect(() => {
-    if (!grantID) return;
-    if (!chainId) return;
+	useEffect(() => {
+		if(!grantID) {
+			return
+		}
 
-    setQueryParams({
-      client:
+		if(!chainId) {
+			return
+		}
+
+		setQueryParams({
+			client:
         subgraphClients[chainId].client,
-      variables: {
-        grantID,
-      },
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainId, grantID]);
+			variables: {
+				grantID,
+			},
+		})
 
-  const { data, error, loading } = useGetGrantDetailsQuery(queryParams);
+	}, [chainId, grantID])
 
-  useEffect(() => {
-    if (data && data.grants && data.grants.length > 0) {
-      setGrantData(data.grants[0]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, error, loading]);
+	const { data, error, loading } = useGetGrantDetailsQuery(queryParams)
 
-  useEffect(() => {
-    if (!grantData) return;
-    const localChainId = getSupportedChainIdFromSupportedNetwork(
-      grantData.workspace.supportedNetworks[0],
-    );
-    let chainInfo;
-    let tokenIcon;
-    if (grantData.reward.token) {
-      tokenIcon = getUrlForIPFSHash(grantData.reward.token?.iconHash);
-      chainInfo = {
-        address: grantData.reward.token.address,
-        label: grantData.reward.token.label,
-        decimals: grantData.reward.token.decimal,
-        icon: tokenIcon,
-      };
-    } else {
-      chainInfo = CHAIN_INFO[localChainId]?.supportedCurrencies[
-        grantData.reward.asset.toLowerCase()
-      ];
-    }
-    // const chainInfo = CHAIN_INFO[localChainId]
-    //   ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];
-    const [localIsGrantVerified, localFunding] = verify(grantData?.funding, chainInfo.decimals);
+	useEffect(() => {
+		if(data && data.grants && data.grants.length > 0) {
+			setGrantData(data.grants[0])
+		}
 
-    setIsGrantVerified(localIsGrantVerified);
-    setFunding(localFunding);
-    setChainId(localChainId);
-    setTitle(grantData?.title);
-    setWorkspaceId(grantData?.workspace?.id);
-    setDaoId(grantData?.workspace?.id);
-    setDaoLogo(getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash));
-    setRewardAmount(
-      grantData?.reward?.committed
-        ? formatAmount(
-          grantData?.reward?.committed,
-          chainInfo?.decimals ?? 18,
-        )
-        : '',
-    );
+	}, [data, error, loading])
 
-    let supportedCurrencyObj;
-    if (grantData.reward.token) {
-      setRewardCurrency(chainInfo.label);
-      setRewardCurrencyCoin(chainInfo.icon);
-    } else {
-      supportedCurrencyObj = getAssetInfo(
-        grantData?.reward?.asset?.toLowerCase(),
-        chainId,
-      );
-    }
-    // supportedCurrencyObj = getAssetInfo(grantData?.reward?.asset?.toLowerCase(), chainId);
-    // console.log('curr', supportedCurrencyObj);
-    if (supportedCurrencyObj) {
-      setRewardCurrency(supportedCurrencyObj?.label);
-      setRewardCurrencyCoin(supportedCurrencyObj?.icon);
-      setRewardCurrencyAddress(grantData?.reward?.asset?.toLowerCase());
-    }
-    // console.log(grantData);
+	useEffect(() => {
+		if(!grantData) {
+			return
+		}
 
-    setGrantDetails(grantData?.details);
-    setGrantSummary(grantData?.summary);
-    setGrantRequiredFields(grantData?.fields);
-    setAcceptingApplications(grantData?.acceptingApplications);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [grantData]);
+		const localChainId = getSupportedChainIdFromSupportedNetwork(
+			grantData.workspace.supportedNetworks[0],
+		)
+		let chainInfo
+		let tokenIcon
+		if(grantData.reward.token) {
+			tokenIcon = getUrlForIPFSHash(grantData.reward.token?.iconHash)
+			chainInfo = {
+				address: grantData.reward.token.address,
+				label: grantData.reward.token.label,
+				decimals: grantData.reward.token.decimal,
+				icon: tokenIcon,
+			}
+		} else {
+			chainInfo = CHAIN_INFO[localChainId]?.supportedCurrencies[
+				grantData.reward.asset.toLowerCase()
+			]
+		}
 
-  useEffect(() => {
-    setShouldShowButton(daoId === workspace?.id);
-  }, [daoId, workspace]);
+		// const chainInfo = CHAIN_INFO[localChainId]
+		//   ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];
+		const [localIsGrantVerified, localFunding] = verify(grantData?.funding, chainInfo.decimals)
 
-  return (
-    <Flex direction="row" w="100%" justify="space-evenly">
-      <Flex direction="column" w="50%" h="100%">
-        <Form
-          chainId={chainId}
-          title={title}
-          grantId={grantID}
-          daoLogo={daoLogo}
-          isGrantVerified={isGrantVerified}
-          funding={funding}
-          rewardAmount={rewardAmount}
-          rewardCurrency={rewardCurrency}
-          rewardCurrencyCoin={rewardCurrencyCoin}
-          rewardCurrencyAddress={rewardCurrencyAddress}
-          workspaceId={workspaceId}
-          grantRequiredFields={grantRequiredFields.map((field: any) => field.id.split('.')[1])}
-          piiFields={grantRequiredFields.filter((field: any) => field.isPii).map((field: any) => field.id.split('.')[1])}
-          members={grantData?.workspace?.members}
-          acceptingApplications={acceptingApplications}
-          shouldShowButton={shouldShowButton}
-        />
-      </Flex>
+		setIsGrantVerified(localIsGrantVerified)
+		setFunding(localFunding)
+		setChainId(localChainId)
+		setTitle(grantData?.title)
+		setWorkspaceId(grantData?.workspace?.id)
+		setDaoId(grantData?.workspace?.id)
+		setDaoLogo(getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash))
+		setRewardAmount(
+			grantData?.reward?.committed
+				? formatAmount(
+					grantData?.reward?.committed,
+					chainInfo?.decimals ?? 18,
+				)
+				: '',
+		)
 
-      <Flex direction="column" w="50%">
-        <Sidebar grantSummary={grantSummary} grantDetails={grantDetails} />
-      </Flex>
+		let supportedCurrencyObj
+		if(grantData.reward.token) {
+			setRewardCurrency(chainInfo.label)
+			setRewardCurrencyCoin(chainInfo.icon)
+			setRewardDecimal(parseInt(chainInfo.decimals, 10))
+		} else {
+			supportedCurrencyObj = getAssetInfo(
+				grantData?.reward?.asset?.toLowerCase(),
+				chainId,
+			)
+		}
 
-    </Flex>
-  );
+		// supportedCurrencyObj = getAssetInfo(grantData?.reward?.asset?.toLowerCase(), chainId);
+		// console.log('curr', supportedCurrencyObj);
+		if(supportedCurrencyObj) {
+			setRewardCurrency(supportedCurrencyObj?.label)
+			setRewardCurrencyCoin(supportedCurrencyObj?.icon)
+			setRewardCurrencyAddress(grantData?.reward?.asset?.toLowerCase())
+		}
+		// console.log(grantData);
+
+		setGrantDetails(grantData?.details)
+		setGrantSummary(grantData?.summary)
+		setGrantRequiredFields(grantData?.fields)
+		setAcceptingApplications(grantData?.acceptingApplications)
+
+	}, [grantData])
+
+	useEffect(() => {
+		setShouldShowButton(daoId === workspace?.id)
+	}, [daoId, workspace])
+
+	return (
+		<Flex
+			direction="row"
+			w="100%"
+			justify="space-evenly">
+			<Flex
+				direction="column"
+				w="50%"
+				h="100%">
+				<Form
+					chainId={chainId}
+					title={title}
+					grantId={grantID}
+					daoLogo={daoLogo}
+					isGrantVerified={isGrantVerified}
+					funding={funding}
+					rewardAmount={rewardAmount}
+					rewardCurrency={rewardCurrency}
+					rewardDecimal={rewardDecimal}
+					rewardCurrencyCoin={rewardCurrencyCoin}
+					rewardCurrencyAddress={rewardCurrencyAddress}
+					workspaceId={workspaceId}
+					grantRequiredFields={grantRequiredFields.map((field: any) => field.id.split('.')[1])}
+					piiFields={grantRequiredFields.filter((field: any) => field.isPii).map((field: any) => field.id.split('.')[1])}
+					members={grantData?.workspace?.members}
+					acceptingApplications={acceptingApplications}
+					shouldShowButton={shouldShowButton}
+					defaultMilestoneFields={
+						grantData?.fields?.map((field: any) => {
+						// console.log(field);
+						// console.log(field.title.startsWith('defaultMilestone'));
+							if(field.title.startsWith('defaultMilestone')) {
+								const i = field.title.indexOf('-')
+								if(i !== -1) {
+									return (
+										{
+											detail: field.title.substring(i + 1).split('\\s').join(' '),
+										}
+									)
+								}
+							}
+
+							return null
+						}).filter((field: any) => field !== null)
+					}
+				/>
+			</Flex>
+
+			<Flex
+				direction="column"
+				w="50%">
+				<Sidebar
+					grantSummary={grantSummary}
+					grantDetails={grantDetails} />
+			</Flex>
+
+		</Flex>
+	)
 }
 
-ApplyGrant.getLayout = function getLayout(page: ReactElement) {
-  return <NavbarLayout>{page}</NavbarLayout>;
-};
+ApplyGrant.getLayout = function(page: ReactElement) {
+	return (
+		<NavbarLayout>
+			{page}
+		</NavbarLayout>
+	)
+}
 
-export default ApplyGrant;
+export default ApplyGrant

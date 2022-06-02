@@ -9,7 +9,7 @@ query($first: Int, $orderBy: BigInt, $orderDirection: String) {
     metadataURI
   }
 }
-`;
+`
 
 const getWorkspacesQuery = `
 query($ownerId: Bytes!) {
@@ -28,7 +28,7 @@ query($ownerId: Bytes!) {
   }
 }
 
-`;
+`
 const getWorkspaceMembersQuery = `
 query($actorId: Bytes!) {
   workspaceMembers(
@@ -50,6 +50,6 @@ query($actorId: Bytes!) {
     }
   }
 }
-`;
+`
 
-export { tokensQuery, getWorkspacesQuery, getWorkspaceMembersQuery };
+export { tokensQuery, getWorkspacesQuery, getWorkspaceMembersQuery }

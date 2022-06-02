@@ -1,20 +1,20 @@
-import { Flex, Text } from '@chakra-ui/react';
-import React from 'react';
-import Content from './content';
-import Filter from './filter';
-import Headers from './headers';
+import React, { useEffect } from 'react'
+import { Flex, Text } from '@chakra-ui/react'
+import Content from './content'
+import Filter from './filter'
+import Headers from './headers'
 
 function Table({
-  onViewApplicantFormClick,
-  // onAcceptApplicationClick,
-  // onRejectApplicationClick,
-  onManageApplicationClick,
-  data,
-  title,
-  actorId,
-  isReviewer,
-  reviewerData,
-  archiveGrantComponent,
+	onViewApplicantFormClick,
+	// onAcceptApplicationClick,
+	// onRejectApplicationClick,
+	onManageApplicationClick,
+	data,
+	title,
+	actorId,
+	isReviewer,
+	reviewerData,
+	archiveGrantComponent,
 }: {
   onViewApplicantFormClick?: (data? : any) => void;
   // onAcceptApplicationClick?: () => void;
@@ -27,40 +27,55 @@ function Table({
   archiveGrantComponent: React.ReactNode;
   reviewerData: any[];
 }) {
-  const [filter, setFilter] = React.useState(-1);
-  // useEffect(() => {
-  //   console.log(filter);
-  // }, [filter]);
-  return (
-    <>
-      <Flex direction="row" mt={3} align="center">
-        <Text variant="heading" mr={4}>{title}</Text>
-        <Filter filter={filter} setFilter={setFilter} />
-      </Flex>
-      {archiveGrantComponent}
-      <Flex w="100%" mt={10} align="center" direction="column" flex={1}>
+	const [filter, setFilter] = React.useState(-1)
+	useEffect(() => {
+		console.log(filter)
+	}, [filter])
+	return (
+		<>
+			<Flex
+				direction="row"
+				mt={3}
+				align="center">
+				<Text
+					variant="heading"
+					mr={4}>
+					{title}
+				</Text>
+				<Filter
+					filter={filter}
+					setFilter={setFilter} />
+			</Flex>
+			{archiveGrantComponent}
+			<Flex
+				w="100%"
+				mt={10}
+				align="center"
+				direction="column"
+				flex={1}>
+				<Headers is_reviewer={isReviewer} />
+				<Content
+					data={data}
+					isReviewer={isReviewer}
+					reviewerData={reviewerData}
+					filter={filter}
+					actorId={actorId}
+					onViewApplicationFormClick={onViewApplicantFormClick}
+					// onAcceptApplicationClick={onAcceptApplicationClick}
+					// onRejectApplicationClick={onRejectApplicationClick}
+					onManageApplicationClick={
+						(manageData: any) => {
+							if(onManageApplicationClick) {
+								onManageApplicationClick(manageData)
+							}
+						}
+					}
+				/>
 
-        <Headers is_reviewer={isReviewer} />
-        <Content
-          data={data}
-          isReviewer={isReviewer}
-          reviewerData={reviewerData}
-          filter={filter}
-          actorId={actorId}
-          onViewApplicationFormClick={onViewApplicantFormClick}
-                // onAcceptApplicationClick={onAcceptApplicationClick}
-                // onRejectApplicationClick={onRejectApplicationClick}
-          onManageApplicationClick={(manageData: any) => {
-            if (onManageApplicationClick) {
-              onManageApplicationClick(manageData);
-            }
-          }}
-        />
+			</Flex>
 
-      </Flex>
-
-      {/* Can we move this to next release */}
-      {/* <Flex
+			{/* Can we move this to next release */}
+			{/* <Flex
         direction="row"
         w="100%"
         justify="space-between"
@@ -142,14 +157,14 @@ function Table({
           </Flex>
         </Flex>
       </Flex> */}
-    </>
-  );
+		</>
+	)
 }
 
 Table.defaultProps = {
-  onViewApplicantFormClick: () => {},
-  // onAcceptApplicationClick: () => {},
-  // onRejectApplicationClick: () => {},
-  onManageApplicationClick: () => {},
-};
-export default Table;
+	onViewApplicantFormClick: () => {},
+	// onAcceptApplicationClick: () => {},
+	// onRejectApplicationClick: () => {},
+	onManageApplicationClick: () => {},
+}
+export default Table

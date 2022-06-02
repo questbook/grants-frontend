@@ -1,0 +1,3 @@
+extends: '@creatoros'
+parserOptions:
+  project: ./tsconfig.json
