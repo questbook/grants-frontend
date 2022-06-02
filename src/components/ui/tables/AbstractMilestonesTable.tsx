@@ -52,7 +52,7 @@ function AbstractMilestonesTable(
 ) {
 	let rewardIcon: string
 	let rewardSymbol: string
-	if(rewardToken) {
+	if(rewardToken && rewardToken.icon !== '') {
 		rewardIcon = rewardToken.icon
 		rewardSymbol = rewardToken.label
 	} else {
