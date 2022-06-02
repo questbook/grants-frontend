@@ -6,14 +6,12 @@ import {
 	Flex,
 	Image,
 	Text,
-	ToastId,
-	useToast,
 } from '@chakra-ui/react'
-import InfoToast from 'src/components/ui/infoToast'
 import Modal from 'src/components/ui/modal'
 import { SupportedChainId } from 'src/constants/chains'
 import { Rubric } from 'src/generated/graphql'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import RubricDrawer from '../rubricDrawer'
 import Badge from './badge'
 import ChangeAccessibilityModalContent from './changeAccessibilityModalContent'
@@ -70,8 +68,7 @@ function YourGrantCard({
 		grantID,
 	)
 
-	const toastRef = React.useRef<ToastId>()
-	const toast = useToast()
+	const { setRefresh } = useCustomToast(txnLink)
 	const buttonRef = React.useRef<HTMLButtonElement>(null)
 
 	const [isArchiveModalOpen, setIsArchiveModalOpen] = React.useState(false)
@@ -113,26 +110,12 @@ function YourGrantCard({
 	React.useEffect(() => {
 		// console.log(transactionData);
 		if(transactionData) {
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={txnLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
 			setIsArchiveModalOpen(false)
 			setIsPublishGrantModalOpen(false)
+			setRefresh(true)
 		}
 
-	}, [toast, transactionData])
+	}, [transactionData])
 
 	React.useEffect(() => {
 		setIsAcceptingApplications([acceptingApplications, 0])

@@ -13,6 +13,7 @@ import Loader from 'src/components/ui/loader'
 import { CHAIN_INFO } from 'src/constants/chainInfo'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
@@ -103,8 +104,9 @@ function Form({
 	const [publicKey] = React.useState<WorkspaceUpdateRequest>({
 		publicKey: '',
 	})
-	const [transactionData] = useUpdateWorkspacePublicKeys(publicKey)
+	const [transactionData, transactionLink, loading] = useUpdateWorkspacePublicKeys(publicKey)
 
+	const { setRefresh } = useCustomToast(transactionLink)
 	const [admins, setAdmins] = React.useState<any[]>([])
 	const [maximumPoints, setMaximumPoints] = React.useState(5)
 
@@ -121,6 +123,7 @@ function Form({
 		if(transactionData) {
 			setKeySubmitted(true)
 			console.log('transactionData-----', transactionData)
+			setRefresh(true)
 		}
 	}, [transactionData])
 

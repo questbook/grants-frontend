@@ -12,9 +12,10 @@ import useChainId from './utils/useChainId'
 export default function useArchiveGrant(newState: boolean, changeCount: number, grantId?: string) {
 	const [error, setError] = React.useState<string>()
 	const [loading, setLoading] = React.useState(false)
+	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
 	const { data: accountData } = useAccount()
-	const { data: networkData } = useNetwork()
+	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients
@@ -22,12 +23,21 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
 	const currentChainId = useChainId()
+	const chainId = getSupportedChainIdFromWorkspace(workspace)
 
 	useEffect(() => {
 		if(newState) {
 			setError(undefined)
+			setIncorrectNetwork(false)
 		}
 	}, [newState])
+
+	useEffect(() => {
+		if(incorrectNetwork) {
+			setIncorrectNetwork(false)
+		}
+
+	}, [grantContract])
 
 	useEffect(() => {
 		if(changeCount === 0) {
@@ -78,12 +88,28 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 				throw new Error('not connected to wallet')
 			}
 
-			if(!currentChainId) {
-				throw new Error('not connected to valid network')
-			}
-
 			if(!workspace) {
 				throw new Error('not connected to workspace')
+			}
+
+			if(!currentChainId) {
+				if(switchNetwork && chainId) {
+					switchNetwork(chainId)
+				}
+
+				setIncorrectNetwork(true)
+				setLoading(false)
+				return
+			}
+
+			if(chainId !== currentChainId) {
+				if(switchNetwork && chainId) {
+					switchNetwork(chainId)
+				}
+
+				setIncorrectNetwork(true)
+				setLoading(false)
+				return
 			}
 
 			if(getSupportedChainIdFromWorkspace(workspace) !== currentChainId) {

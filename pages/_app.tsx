@@ -128,9 +128,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			workspace,
 			setWorkspace: (newWorkspace?: MinimalWorkspace) => {
 				if(newWorkspace) {
-					localStorage.setItem('currentWorkspaceId', newWorkspace.id)
+					localStorage.setItem('currentWorkspace', newWorkspace.supportedNetworks[0] + '-' + newWorkspace.id)
 				} else {
-					localStorage.setItem('currentWorkspaceId', 'undefined')
+					localStorage.setItem('currentWorkspace', 'undefined')
 				}
 
 				setWorkspace(newWorkspace)

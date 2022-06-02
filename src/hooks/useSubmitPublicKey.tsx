@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { WorkspaceUpdateRequest } from '@questbook/service-validator-client'
+import { useRouter } from 'next/router'
 import SubmitPublicKeyModal from 'src/components/ui/submitPublicKeyModal'
 import SuccessToast from 'src/components/ui/toasts/successToast'
 import useChainId from './utils/useChainId'
@@ -11,6 +12,7 @@ export default function useSubmitPublicKey() {
 	const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({ publicKey: '' })
 	const [transactionData, loading] = useUpdateWorkspacePublicKeys(publicKey)
 
+	const router = useRouter()
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
 	const chainId = useChainId()
@@ -31,6 +33,9 @@ export default function useSubmitPublicKey() {
 						}
 					/>
 				),
+				onCloseComplete: () => {
+					router.reload()
+				}
 			})
 			setHiddenModalOpen(false)
 		}

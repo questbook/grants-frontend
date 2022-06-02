@@ -6,6 +6,7 @@ import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
 import useSetRubrics from 'src/hooks/useSetRubrics'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { useAccount } from 'wagmi'
 import Dropdown from '../ui/forms/dropdown'
 import MultiLineInput from '../ui/forms/multiLineInput'
@@ -161,9 +162,12 @@ function RubricDrawer({
 		loading,
 	] = useSetRubrics(editedRubricData, chainId, workspaceId, grantAddress)
 
+	const { setRefresh } = useCustomToast(transactionLink)
+
 	useEffect(() => {
 		if(data) {
 			setRubricDrawerOpen(false)
+			setRefresh(true)
 		}
 	}, [data, setRubricDrawerOpen])
 
