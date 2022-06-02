@@ -233,18 +233,24 @@ function ManageGrant() {
 									variant="ghost"
 									h="110px"
 									w="full"
-									_hover={{
-										background: '#F5F5F5',
-									}}
-									background={index !== selected
-										? 'linear-gradient(180deg, #FFFFFF 0%, #F3F4F4 100%)'
-										: 'white'}
+									_hover={
+										{
+											background: '#F5F5F5',
+										}
+									}
+									background={
+										index !== selected
+											? 'linear-gradient(180deg, #FFFFFF 0%, #F3F4F4 100%)'
+											: 'white'
+									}
 									_focus={{}}
 									borderRadius={index !== selected ? 0 : '8px 8px 0px 0px'}
-									borderRightWidth={(index !== tabs.length - 1 && index + 1 !== selected)
+									borderRightWidth={
+										(index !== tabs.length - 1 && index + 1 !== selected)
 										|| index === selected
-										? '2px'
-										: '0px'}
+											? '2px'
+											: '0px'
+									}
 									borderLeftWidth={index !== selected ? 0 : '2px'}
 									borderTopWidth={index !== selected ? 0 : '2px'}
 									borderBottomWidth={index !== selected ? '2px' : 0}
@@ -260,13 +266,15 @@ function ManageGrant() {
 											direction="row"
 											justify="center"
 											align="center">
-											{tab.icon && (
-												<Image
-													h="26px"
-													w="26px"
-													src={tab.icon}
-													alt={tab.icon} />
-											)}
+											{
+												tab.icon && (
+													<Image
+														h="26px"
+														w="26px"
+														src={tab.icon}
+														alt={tab.icon} />
+												)
+											}
 											<Box mx={1} />
 											<Text
 												fontWeight="700"
