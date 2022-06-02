@@ -40,6 +40,18 @@ function EditForm({
 
 	const [supportedNetwork, setSupportedNetwork] = React.useState('')
 
+	const [partnersRequired, setPartnersRequired] = React.useState(false)
+	const [partners, setPartners] = React.useState<any>([
+		{
+			name: '',
+			nameError: false,
+			industry: '',
+			industryError: false,
+			website: '',
+			websiteError: false
+		},
+	]);
+
 	const [image, setImage] = React.useState<string>(config.defaultDAOImagePath)
 	const [imageFile, setImageFile] = React.useState<File | null>(null)
 
@@ -210,38 +222,17 @@ function EditForm({
 				/>
 			</Flex>
 			<Flex
-				direction="column"
-				mt={8}>
-				<Text
-					fontSize="18px"
-					fontWeight="700"
-					lineHeight="26px"
-					letterSpacing={0}
-				>
-					Want to showcase your grant program partners?
-				</Text>
-				<Flex>
-					<Text
-						color="#717A7C"
-						fontSize="14px"
-						lineHeight="20px">
-						Once you receive applications you can assign reviewers to each applicant,
-						and setup an evaluation scorecard to get feedback from them.
-					</Text>
-				</Flex>
-			</Flex>
-			<Flex
 				mt={4}
 				gap="2"
 				justifyContent="space-between">
 				<Flex direction="column">
 					<Text
-						color="#122224"
-						fontWeight="bold"
-						fontSize="16px"
-						lineHeight="20px"
+						fontSize="18px"
+						fontWeight="700"
+						lineHeight="26px"
+						letterSpacing={0}
 					>
-						Evaluation rubric
+						Want to showcase your grant program partners?
 					</Text>
 					<Flex>
 						<Text
@@ -262,7 +253,7 @@ function EditForm({
 					onChange={
 						(e) => {
 							setPartnersRequired(e.target.checked)
-							const newRubrics = partners.map((partner) => ({
+							const newRubrics = partners.map((partner: any) => ({
 								...partner,
 								nameError: false,
 							}))
@@ -280,8 +271,8 @@ function EditForm({
 		</Flex>
 
 		{
-			partners.map((partner, index) => (
-				<>
+			partners.map((partner: any, index: any) => (
+				<Box>
 					<Flex
 						mt={4}
 						gap="2"
@@ -298,9 +289,7 @@ function EditForm({
 								fontSize="16px"
 								lineHeight="20px"
 							>
-							Criteria
-								{' '}
-								{index + 1}
+								Name
 							</Text>
 						</Flex>
 						<Flex
@@ -309,63 +298,28 @@ function EditForm({
 							alignItems="center"
 							flex={0.6673}>
 							<SingleLineInput
-								value={rubrics[index].name}
+								value={partners[index].name}
 								onChange={
 									(e) => {
-										const newRubrics = [...rubrics]
-										newRubrics[index].name = e.target.value
-										newRubrics[index].nameError = false
-										setRubrics(newRubrics)
+										const newPartners = [...partners]
+										newPartners[index].name = e.target.value
+										newPartners[index].nameError = false
+										setPartners(newPartners)
 									}
 								}
 								placeholder="Name"
-								isError={rubrics[index].nameError}
+								isError={partners[index].nameError}
 								errorText="Required"
-								disabled={!rubricRequired}
-							/>
-						</Flex>
-					</Flex>
-					<Flex
-						mt={6}
-						gap="2"
-						alignItems="flex-start"
-						opacity={rubricRequired ? 1 : 0.4}>
-						<Flex
-							direction="column"
-							flex={0.3327}>
-							<Text
-								mt="18px"
-								color="#122224"
-								fontWeight="bold"
-								fontSize="16px"
-								lineHeight="20px"
-							>
-							Description
-							</Text>
-						</Flex>
-						<Flex
-							justifyContent="center"
-							gap={2}
-							alignItems="center"
-							flex={0.6673}>
-							<MultiLineInput
-								value={rubrics[index].description}
-								onChange={
-									(e) => {
-										const newRubrics = [...rubrics]
-										newRubrics[index].description = e.target.value
-										newRubrics[index].descriptionError = false
-										setRubrics(newRubrics)
-									}
-								}
-								placeholder="Describe the evaluation criteria"
-								isError={rubrics[index].descriptionError}
-								errorText="Required"
-								disabled={!rubricRequired}
+								disabled={!partnersRequired}
 							/>
 						</Flex>
 					</Flex>
 
+					<Flex
+						mt={6}
+						gap="2"
+						alignItems="flex-start"
+						opacity={partnersRequired ? 1 : 0.4}>
 					<Flex
 						mt={2}
 						gap="2"
@@ -373,19 +327,19 @@ function EditForm({
 						<Box
 							onClick={
 								() => {
-									if(!rubricRequired) {
+									if(!partnersRequired) {
 										return
 									}
 
-									const newRubrics = [...rubrics]
-									newRubrics.splice(index, 1)
-									setRubrics(newRubrics)
+									const newPartners = [...partners]
+									newPartners.splice(index, 1)
+									setPartners(newPartners)
 								}
 							}
 							display="flex"
 							alignItems="center"
 							cursor="pointer"
-							opacity={rubricRequired ? 1 : 0.4}
+							opacity={partnersRequired ? 1 : 0.4}
 						>
 							<Image
 								h="16px"
@@ -402,8 +356,9 @@ function EditForm({
 							</Text>
 						</Box>
 					</Flex>
+					</Flex>
 					<Divider mt={4} />
-				</>
+				</Box>
 			))
 		}
 
