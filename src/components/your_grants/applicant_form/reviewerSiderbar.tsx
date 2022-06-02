@@ -77,6 +77,8 @@ function ReviewerSidebar({
 			d.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
 		))
 		const ipfsData = await getFromIPFS(reviewData.data)
+		console.log('IPFS DATA: ', ipfsData)
+		console.log('DATA: ', await decryptMessage(ipfsData))
 		let data = {}
 		if(applicationData?.grant.rubric?.isPrivate) {
 			data = JSON.parse(await decryptMessage(ipfsData) ?? '{}')
