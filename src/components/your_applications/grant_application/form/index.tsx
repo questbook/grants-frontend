@@ -8,8 +8,6 @@ import {
 	Image,
 	Link,
 	Text,
-	ToastId,
-	useToast,
 } from '@chakra-ui/react'
 import {
 	GrantApplicationRequest,
@@ -26,6 +24,7 @@ import Loader from 'src/components/ui/loader'
 import { SupportedChainId } from 'src/constants/chains'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useResubmitApplication from 'src/hooks/useResubmitApplication'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { isValidEmail } from 'src/utils/validationUtils'
 import {
@@ -36,7 +35,6 @@ import {
 	getFormattedFullDateFromUnixTimestamp,
 	parseAmount,
 } from '../../../../utils/formattingUtils'
-import InfoToast from '../../../ui/infoToast'
 import ApplicantDetails from './1_applicantDetails'
 import AboutTeam from './2_aboutTeam'
 import AboutProject from './3_aboutProject'
@@ -83,7 +81,6 @@ function Form({
   // grantID: string;
 }) {
 	const { encryptApplicationPII } = useApplicationEncryption()
-	const toast = useToast()
 	const router = useRouter()
 	const [onEdit, setOnEdit] = useState<boolean>(false)
 	const [loadedData, setLoadedData] = useState<boolean>(false)
@@ -214,8 +211,6 @@ function Form({
 		}
 	}, [formData, application])
 
-	const toastRef = React.useRef<ToastId>()
-
 	const [updateData, setUpdateData] = React.useState<any>()
 	const [txnData, txnLink, loading] = useResubmitApplication(
 		updateData,
@@ -223,29 +218,16 @@ function Form({
 		applicationID,
 	)
 
+	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		if(txnData) {
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={txnLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
 			router.push({
 				pathname: '/your_applications',
 			})
+			setRefresh(true)
 		}
 
-	}, [toast, router, txnData])
+	}, [router, txnData])
 
 	const handleOnSubmit = async() => {
 		// console.log(onEdit);

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import {
-	Box, Button, Flex, Image, ModalBody, Text, ToastId,
-	useToast, } from '@chakra-ui/react'
-import InfoToast from 'src/components/ui/infoToast'
+	Box, Button, Flex, Image, ModalBody, Text, } from '@chakra-ui/react'
 import Loader from 'src/components/ui/loader'
 import { SupportedChainId } from 'src/constants/chains'
 import useRequestMilestoneApproval from 'src/hooks/useRequestMilestoneApproval'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { ApplicationMilestone } from 'src/types'
 import { getMilestoneMetadata } from '../../../../utils/formattingUtils'
 import MultiLineInput from '../../../ui/forms/multiLineInput'
@@ -20,9 +19,6 @@ function ModalContent({ milestone, onClose, chainId }: Props) {
 	const [details, setDetails] = useState('')
 	const [detailsError, setDetailsError] = useState(false)
 
-	const toastRef = React.useRef<ToastId>()
-	const toast = useToast()
-
 	const { milestoneIndex, applicationId } = getMilestoneMetadata(milestone)!
 	const [milestoneUpdate, setMilestoneUpdate] = useState<any>()
 	const [txn, txnLink, loading] = useRequestMilestoneApproval(
@@ -32,28 +28,15 @@ function ModalContent({ milestone, onClose, chainId }: Props) {
 		milestoneIndex,
 	)
 
+	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		if(txn) {
 			setMilestoneUpdate(undefined)
 			onClose()
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={txnLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
+			setRefresh(true)
 		}
 
-	}, [toast, txn])
+	}, [txn])
 
 	const markAsDone = async() => {
 		if(!details) {

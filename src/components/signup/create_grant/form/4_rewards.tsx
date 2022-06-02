@@ -14,6 +14,7 @@ import { CHAIN_INFO } from 'src/constants/chainInfo'
 import { SupportedChainId } from 'src/constants/chains'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
 import useChainId from 'src/hooks/utils/useChainId'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import useEncryption from 'src/hooks/utils/useEncryption'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useNetwork } from 'wagmi'
@@ -131,13 +132,15 @@ function GrantRewardsInput({
 	const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({
 		publicKey: '',
 	})
-	const [transactionData] = useUpdateWorkspacePublicKeys(publicKey)
+	const [transactionData, transactionLink, loading] = useUpdateWorkspacePublicKeys(publicKey)
 
+	const { setRefresh } = useCustomToast(transactionLink)
 	const [shouldEncryptReviews, setShouldEncryptReviews] = useState(false)
 
 	useEffect(() => {
 		if(transactionData) {
 			setKeySubmitted(true)
+			setRefresh(true)
 		}
 	}, [transactionData])
 

@@ -8,7 +8,6 @@ import {
 	Image,
 	ModalBody,
 	Text,
-	ToastId,
 	useToast,
 } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
@@ -18,6 +17,7 @@ import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
 import config from 'src/constants/config'
 import useDepositFunds from 'src/hooks/useDepositFunds'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useContract, useNetwork, useSigner } from 'wagmi'
 import animationData from '../../../../public/animations/Add_Funds.json'
@@ -25,7 +25,6 @@ import ERC20ABI from '../../../contracts/abi/ERC20.json'
 import { formatAmount } from '../../../utils/formattingUtils'
 import Dropdown from '../../ui/forms/dropdown'
 import SingleLineInput from '../../ui/forms/singleLineInput'
-import InfoToast from '../../ui/infoToast'
 import Modal from '../../ui/modal'
 
 interface Props {
@@ -80,8 +79,6 @@ function AddFunds({
 		})
 	}
 
-	const toastRef = React.useRef<ToastId>()
-
 	const [finalAmount, setFinalAmount] = React.useState<BigNumber>()
 	const [depositTransactionData, txnLink, loading] = useDepositFunds(
 		finalAmount,
@@ -97,30 +94,17 @@ function AddFunds({
 		}
 	}, [isOpen, switchNetwork, workspace])
 
+	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		// console.log(depositTransactionData);
 		if(depositTransactionData) {
 			onClose()
 			setFinalAmount(undefined)
 			setFunding('')
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={txnLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
+			setRefresh(true)
 		}
 
-	}, [toast, depositTransactionData])
+	}, [depositTransactionData])
 
 	useEffect(() => {
 		// eslint-disable-next-line func-names
