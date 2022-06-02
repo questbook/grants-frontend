@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import {
-	Box, Button, Flex, Image, Link,
+	Box, Button, Flex, Image, Link, Divider, Switch,
 	Text, } from '@chakra-ui/react'
 import { CHAIN_INFO } from 'src/constants/chainInfo'
 import config from 'src/constants/config'
@@ -209,6 +209,204 @@ function EditForm({
 					disabled
 				/>
 			</Flex>
+			<Flex
+				direction="column"
+				mt={8}>
+				<Text
+					fontSize="18px"
+					fontWeight="700"
+					lineHeight="26px"
+					letterSpacing={0}
+				>
+					Want to showcase your grant program partners?
+				</Text>
+				<Flex>
+					<Text
+						color="#717A7C"
+						fontSize="14px"
+						lineHeight="20px">
+						Once you receive applications you can assign reviewers to each applicant,
+						and setup an evaluation scorecard to get feedback from them.
+					</Text>
+				</Flex>
+			</Flex>
+			<Flex
+				mt={4}
+				gap="2"
+				justifyContent="space-between">
+				<Flex direction="column">
+					<Text
+						color="#122224"
+						fontWeight="bold"
+						fontSize="16px"
+						lineHeight="20px"
+					>
+						Evaluation rubric
+					</Text>
+					<Flex>
+						<Text
+							color="#717A7C"
+							fontSize="14px"
+							lineHeight="20px">
+							You can add their names, logo, and a link to their site.
+						</Text>
+					</Flex>
+				</Flex>
+			<Flex
+				justifyContent="center"
+				gap={2}
+				alignItems="center">
+				<Switch
+					id="encrypt"
+					isChecked={partnersRequired}
+					onChange={
+						(e) => {
+							setPartnersRequired(e.target.checked)
+							const newRubrics = partners.map((partner) => ({
+								...partner,
+								nameError: false,
+							}))
+							setPartners(newRubrics)
+						}
+					}
+				/>
+				<Text
+					fontSize="12px"
+					fontWeight="bold"
+					lineHeight="16px">
+					{`${partnersRequired ? 'YES' : 'NO'}`}
+				</Text>
+			</Flex>
+		</Flex>
+
+		{
+			partners.map((partner, index) => (
+				<>
+					<Flex
+						mt={4}
+						gap="2"
+						alignItems="flex-start"
+						opacity={partnersRequired ? 1 : 0.4}
+					>
+						<Flex
+							direction="row"
+							flex={0.3327}>
+							<Text
+								mt="18px"
+								color="#122224"
+								fontWeight="bold"
+								fontSize="16px"
+								lineHeight="20px"
+							>
+							Criteria
+								{' '}
+								{index + 1}
+							</Text>
+						</Flex>
+						<Flex
+							justifyContent="center"
+							gap={2}
+							alignItems="center"
+							flex={0.6673}>
+							<SingleLineInput
+								value={rubrics[index].name}
+								onChange={
+									(e) => {
+										const newRubrics = [...rubrics]
+										newRubrics[index].name = e.target.value
+										newRubrics[index].nameError = false
+										setRubrics(newRubrics)
+									}
+								}
+								placeholder="Name"
+								isError={rubrics[index].nameError}
+								errorText="Required"
+								disabled={!rubricRequired}
+							/>
+						</Flex>
+					</Flex>
+					<Flex
+						mt={6}
+						gap="2"
+						alignItems="flex-start"
+						opacity={rubricRequired ? 1 : 0.4}>
+						<Flex
+							direction="column"
+							flex={0.3327}>
+							<Text
+								mt="18px"
+								color="#122224"
+								fontWeight="bold"
+								fontSize="16px"
+								lineHeight="20px"
+							>
+							Description
+							</Text>
+						</Flex>
+						<Flex
+							justifyContent="center"
+							gap={2}
+							alignItems="center"
+							flex={0.6673}>
+							<MultiLineInput
+								value={rubrics[index].description}
+								onChange={
+									(e) => {
+										const newRubrics = [...rubrics]
+										newRubrics[index].description = e.target.value
+										newRubrics[index].descriptionError = false
+										setRubrics(newRubrics)
+									}
+								}
+								placeholder="Describe the evaluation criteria"
+								isError={rubrics[index].descriptionError}
+								errorText="Required"
+								disabled={!rubricRequired}
+							/>
+						</Flex>
+					</Flex>
+
+					<Flex
+						mt={2}
+						gap="2"
+						justifyContent="flex-end">
+						<Box
+							onClick={
+								() => {
+									if(!rubricRequired) {
+										return
+									}
+
+									const newRubrics = [...rubrics]
+									newRubrics.splice(index, 1)
+									setRubrics(newRubrics)
+								}
+							}
+							display="flex"
+							alignItems="center"
+							cursor="pointer"
+							opacity={rubricRequired ? 1 : 0.4}
+						>
+							<Image
+								h="16px"
+								w="15px"
+								src="/ui_icons/delete_red.svg"
+								mr="6px"
+							/>
+							<Text
+								fontWeight="500"
+								fontSize="14px"
+								color="#DF5252"
+								lineHeight="20px">
+							Delete
+							</Text>
+						</Box>
+					</Flex>
+					<Divider mt={4} />
+				</>
+			))
+		}
+
 			<Flex
 				w="100%"
 				mt={10}>
