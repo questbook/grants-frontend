@@ -127,7 +127,7 @@ export const CHAIN_INFO: ChainInfoMap = {
 				decimals: 18,
 			},
 		},
-		subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-harmonytest',
+		subgraphClientUrl: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph-harmony-testnet',
 		rpcUrls: ['https://api.s0.b.hmny.io'],
 	},
 	[SupportedChainId.POLYGON_TESTNET]: {
@@ -451,7 +451,7 @@ export const CHAIN_INFO: ChainInfoMap = {
 			symbol: 'Celo',
 			decimals: 18,
 		},
-		icon: '/network_icons/celo_alfajores_testnet_symbol.svg',
+		icon: '/network_icons/celo.svg',
 		wallets: [
 			{
 				id: 'injected',
