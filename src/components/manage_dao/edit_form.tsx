@@ -52,6 +52,9 @@ function EditForm({
 		},
 	]);
 
+	const [partnerImage, setPartnerImage] = React.useState<string>(config.defaultDAOImagePath)
+	const [partnerImageFile, setPartnerImageFile] = React.useState<Array<File | null>>([null])
+
 	const [image, setImage] = React.useState<string>(config.defaultDAOImagePath)
 	const [imageFile, setImageFile] = React.useState<File | null>(null)
 
@@ -90,6 +93,14 @@ function EditForm({
 			const img = event.target.files[0]
 			setImageFile(img)
 			setImage(URL.createObjectURL(img))
+		}
+	}
+
+	const handlePartnerImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		if(event.target.files && event.target.files[0]) {
+			const img = event.target.files[0]
+			setPartnerImageFile(img)
+			setPartnerImage(URL.createObjectURL(img))
 		}
 	}
 
@@ -139,9 +150,11 @@ function EditForm({
 	return (
 		<>
 			<Flex
-				w="100%"
+				w="42rem"
 				mt={8}
-				alignItems="flex-start">
+				alignItems="flex-start"
+				gap="2rem"
+				>
 				<SingleLineInput
 					label="Grants DAO Name"
 					placeholder="Nouns DAO"
@@ -158,7 +171,6 @@ function EditForm({
 					}
 					isError={daoNameError}
 				/>
-				<Box ml={9} />
 				<ImageUpload
 					image={image}
 					isError={false}
@@ -167,7 +179,7 @@ function EditForm({
 				/>
 			</Flex>
 			<Flex
-				w="100%"
+			w="35rem"
 				h="50%"
 			>
 			<MultiLineInput
@@ -189,7 +201,7 @@ function EditForm({
 			/>
 			</Flex>
 			<Flex
-				w="100%"
+			w="35rem"
 				mt={1}>
 				<MultiLineInput
 					label="About your Grants DAO"
@@ -210,7 +222,7 @@ function EditForm({
 				/>
 			</Flex>
 			<Flex
-				w="100%"
+			w="35rem"
 				mt={1}>
 				<SingleLineInput
 					label="Network"
@@ -272,15 +284,17 @@ function EditForm({
 
 		{
 			partners.map((partner: any, index: any) => (
-				<Box>
+				<Box
+				w="42rem"
+				>
 					<Flex
 						mt={4}
 						gap="2"
 						alignItems="flex-start"
+						direction="column"
 						opacity={partnersRequired ? 1 : 0.4}
 					>
 						<Flex
-							direction="row"
 							flex={0.3327}>
 							<Text
 								mt="18px"
@@ -294,8 +308,9 @@ function EditForm({
 						</Flex>
 						<Flex
 							justifyContent="center"
-							gap={2}
-							alignItems="center"
+							w="full"
+							gap="1rem"
+							alignItems="flex-start"
 							flex={0.6673}>
 							<SingleLineInput
 								value={partners[index].name}
@@ -307,60 +322,156 @@ function EditForm({
 										setPartners(newPartners)
 									}
 								}
-								placeholder="Name"
+								placeholder="e.g. Partner DAO"
 								isError={partners[index].nameError}
+								errorText="Required"
+								disabled={!partnersRequired}
+							/>
+							<ImageUpload
+								image={partnerImage}
+								isError={false}
+								onChange={handlePartnerImageChange}
+								label="Partner logo"
+							/>
+						</Flex>
+					</Flex>
+
+					<Flex
+					w="35rem"
+						mt={4}
+						gap="2"
+						alignItems="flex-start"
+						direction="column"
+						opacity={partnersRequired ? 1 : 0.4}
+					>
+						<Flex
+							flex={0.3327}>
+							<Text
+								mt="18px"
+								color="#122224"
+								fontWeight="bold"
+								fontSize="16px"
+								lineHeight="20px"
+							>
+								Industry
+							</Text>
+						</Flex>
+						<Flex
+							justifyContent="center"
+							gap={2}
+							alignItems="center"
+							w="100%"
+							flex={0.6673}>
+							<SingleLineInput
+								value={partners[index].industry}
+								onChange={
+									(e) => {
+										const newPartners = [...partners]
+										newPartners[index].industry = e.target.value
+										newPartners[index].industryError = false
+										setPartners(newPartners)
+									}
+								}
+								placeholder="e.g. Security"
+								isError={partners[index].industryError}
 								errorText="Required"
 								disabled={!partnersRequired}
 							/>
 						</Flex>
 					</Flex>
 
+
 					<Flex
-						mt={6}
+					w="35rem"
+
+						mt={4}
 						gap="2"
 						alignItems="flex-start"
-						opacity={partnersRequired ? 1 : 0.4}>
-					<Flex
-						mt={2}
-						gap="2"
-						justifyContent="flex-end">
-						<Box
-							onClick={
-								() => {
-									if(!partnersRequired) {
-										return
-									}
-
-									const newPartners = [...partners]
-									newPartners.splice(index, 1)
-									setPartners(newPartners)
-								}
-							}
-							display="flex"
-							alignItems="center"
-							cursor="pointer"
-							opacity={partnersRequired ? 1 : 0.4}
-						>
-							<Image
-								h="16px"
-								w="15px"
-								src="/ui_icons/delete_red.svg"
-								mr="6px"
-							/>
+						direction="column"
+						opacity={partnersRequired ? 1 : 0.4}
+					>
+						<Flex
+							flex={0.3327}>
 							<Text
-								fontWeight="500"
-								fontSize="14px"
-								color="#DF5252"
-								lineHeight="20px">
-							Delete
+								mt="18px"
+								color="#122224"
+								fontWeight="bold"
+								fontSize="16px"
+								lineHeight="20px"
+							>
+								Website
 							</Text>
-						</Box>
+						</Flex>
+						<Flex
+							justifyContent="center"
+							gap={2}
+							alignItems="center"
+							w="full"
+							flex={0.6673}>
+							<SingleLineInput
+								value={partners[index].website}
+								onChange={
+									(e) => {
+										const newPartners = [...partners]
+										newPartners[index].website = e.target.value
+										newPartners[index].websiteError = false
+										setPartners(newPartners)
+									}
+								}
+								placeholder="e.g. www.example.com"
+								isError={partners[index].websiteError}
+								errorText="Required"
+								disabled={!partnersRequired}
+							/>
+						</Flex>
 					</Flex>
-					</Flex>
-					<Divider mt={4} />
 				</Box>
 			))
 		}
+
+		<Flex
+			mt="19px"
+			gap="2"
+			justifyContent="flex-start">
+			<Box
+				onClick={
+					() => {
+						if(!partnersRequired) {
+							return
+						}
+
+						const newPartners = [...partners, {
+							name: '',
+							nameError: false,
+							industry: '',
+							industryError: false,
+							website: '',
+							websiteError: false
+						}]
+						setPartners(newPartners)
+					}
+				}
+				display="flex"
+				alignItems="center"
+				cursor="pointer"
+				opacity={partnersRequired ? 1 : 0.4}
+			>
+				<Image
+					h="16px"
+					w="15px"
+					src="/ui_icons/plus_circle.svg"
+					mr="6px"
+				/>
+				<Text
+					fontWeight="500"
+					fontSize="14px"
+					color="#8850EA"
+					lineHeight="20px">
+					Add another service partner
+				</Text>
+			</Box>
+		</Flex>
+
 
 			<Flex
 				w="100%"
