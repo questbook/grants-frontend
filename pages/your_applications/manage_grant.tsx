@@ -151,7 +151,7 @@ function ManageGrant() {
 					?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
 				const asset = getAssetInfo(rewardAsset, chainId)
 				setAssetInfo(asset)
-				setFundingIcon(asset.icon);
+				setFundingIcon(asset.icon)
 			}
 
 			const [localIsGrantVerified, localFunding] = verify(
@@ -164,7 +164,10 @@ function ManageGrant() {
 	}, [data, error, rewardAsset, loading, chainId])
 
 	useEffect(() => {
-		if (!data) return
+		if(!data) {
+			return
+		}
+
 		setTabs([
 			{
 				title: milestones.length.toString(),
