@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Flex, Text } from '@chakra-ui/react'
-import config from 'src/constants/config'
+import config from 'src/constants/config.json'
 import SidebarComponent from '../../ui/sidebar/sidebar'
 import SidebarList from './sidebarList'
 

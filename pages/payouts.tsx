@@ -282,11 +282,7 @@ export default function Payouts() {
 
 													<Flex direction="row">
 														<Link
-															href={
-																workspaceChainId
-																	? `${getExplorerUrlForTxHash(workspaceChainId, data.id.substr(0, data.id.indexOf('.')))}`
-																	: ''
-															}
+															href={getExplorerUrlForTxHash(workspaceChainId, data.id.substr(0, data.id.indexOf('.')))}
 															isExternal
 														>
 															View
