@@ -15,11 +15,7 @@ import type { AppContext, AppProps } from 'next/app'
 import App from 'next/app'
 import Head from 'next/head'
 import { DefaultSeo } from 'next-seo'
-import { CHAIN_INFO } from 'src/constants/chains'
-import {
-	ALL_SUPPORTED_CHAIN_IDS,
-	// SupportedChainId,
-} from 'src/constants/chains'
+import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO } from 'src/constants/chains'
 import { MinimalWorkspace } from 'src/types'
 import getSeo from 'src/utils/seo'
 import {

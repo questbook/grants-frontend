@@ -24,17 +24,8 @@ export interface ChainInfo {
 	readonly id: SupportedChainId
 	readonly name: string
 	readonly isTestNetwork?: boolean
-	readonly nativeCurrency: {
-		name: string
-		symbol: string
-		decimals: number
-	},
 	readonly icon: string
-	readonly wallets: {
-		id: string
-		name: string
-		icon: string
-	}[],
+	readonly wallets: string[],
 	readonly explorer: {
 		address: string
 		transactionHash: string

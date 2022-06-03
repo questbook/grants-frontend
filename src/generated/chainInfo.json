@@ -9,18 +9,7 @@
 			"decimals": 18
 		},
 		"icon": "/network_icons/eth_mainnet.svg",
-		"wallets": [
-			{
-				"id": "injected",
-				"name": "Metamask",
-				"icon": "/wallet_icons/metamask.svg"
-			},
-			{
-				"id": "walletConnect",
-				"name": "Wallet Connect",
-				"icon": "/wallet_icons/walletconnect.svg"
-			}
-		],
+		"wallets": ["injected", "walletConnect"],
 		"explorer": {
 			"address": "https://rinkeby.etherscan.io/address/",
 			"transactionHash": "https://rinkeby.etherscan.io/tx/"
@@ -65,18 +54,7 @@
 			"decimals": 18
 		},
 		"icon": "/network_icons/eth_mainnet.svg",
-		"wallets": [
-			{
-				"id": "injected",
-				"name": "Metamask",
-				"icon": "/wallet_icons/metamask.svg"
-			},
-			{
-				"id": "walletConnect",
-				"name": "Wallet Connect",
-				"icon": "/wallet_icons/walletconnect.svg"
-			}
-		],
+		"wallets": ["injected", "walletConnect"],
 		"explorer": {
 			"address": "https://optimistic.etherscan.io/address/",
 			"transactionHash": "https://optimistic.etherscan.io/tx/"
@@ -139,18 +117,7 @@
 			"decimals": 18
 		},
 		"icon": "/network_icons/eth_mainnet.svg",
-		"wallets": [
-			{
-				"id": "injected",
-				"name": "Metamask",
-				"icon": "/wallet_icons/metamask.svg"
-			},
-			{
-				"id": "walletConnect",
-				"name": "Wallet Connect",
-				"icon": "/wallet_icons/walletconnect.svg"
-			}
-		],
+		"wallets": ["injected", "walletConnect"],
 		"explorer": {
 			"address": "https://polygonscan.com/address/",
 			"transactionHash": "https://polygonscan.com/tx/"
@@ -286,18 +253,7 @@
 		},
 		"isTestNetwork": true,
 		"icon": "/network_icons/celo.svg",
-		"wallets": [
-			{
-				"id": "injected",
-				"name": "Metamask",
-				"icon": "/wallet_icons/metamask.svg"
-			},
-			{
-				"id": "walletConnect",
-				"name": "Wallet Connect",
-				"icon": "/wallet_icons/walletconnect.svg"
-			}
-		],
+		"wallets": ["injected", "walletConnect"],
 		"explorer": {
 			"address": "https://alfajores-blockscout.celo-testnet.org/address/",
 			"transactionHash": "https://alfajores-blockscout.celo-testnet.org/tx/"
@@ -337,18 +293,7 @@
 		},
 		"isTestNetwork": true,
 		"icon": "/network_icons/eth_mainnet.svg",
-		"wallets": [
-			{
-				"id": "injected",
-				"name": "Metamask",
-				"icon": "/wallet_icons/metamask.svg"
-			},
-			{
-				"id": "walletConnect",
-				"name": "Wallet Connect",
-				"icon": "/wallet_icons/walletconnect.svg"
-			}
-		],
+		"wallets": ["injected", "walletConnect"],
 		"explorer": {
 			"address": "https://mumbai.polygonscan.com/address/",
 			"transactionHash": "https://mumbai.polygonscan.com/tx/"
@@ -387,18 +332,7 @@
 			"decimals": 18
 		},
 		"icon": "/ui_icons/brand/currency/neon_symbol.svg",
-		"wallets": [
-			{
-				"id": "injected",
-				"name": "Metamask",
-				"icon": "/wallet_icons/metamask.svg"
-			},
-			{
-				"id": "walletConnect",
-				"name": "Wallet Connect",
-				"icon": "/wallet_icons/walletconnect.svg"
-			}
-		],
+		"wallets": ["injected", "walletConnect"],
 		"explorer": {
 			"address": "https://neonscan.org/address/",
 			"transactionHash": "https://neonscan.org/tx/"
@@ -444,18 +378,7 @@
 		},
 		"isTestNetwork": true,
 		"icon": "/network_icons/harmony.svg",
-		"wallets": [
-			{
-				"id": "injected",
-				"name": "Metamask",
-				"icon": "/wallet_icons/metamask.svg"
-			},
-			{
-				"id": "walletConnect",
-				"name": "Wallet Connect",
-				"icon": "/wallet_icons/walletconnect.svg"
-			}
-		],
+		"wallets": ["injected", "walletConnect"],
 		"explorer": {
 			"address": "https://explorer.pops.one/address/",
 			"transactionHash": "https://explorer.pops.one/tx/"
