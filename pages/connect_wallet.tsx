@@ -17,6 +17,7 @@ import {
 	ALL_SUPPORTED_CHAIN_IDS,
 	SupportedChainId,
 } from 'src/constants/chains'
+import WALLETS from 'src/constants/wallets.json'
 import { useConnect } from 'wagmi'
 import ModalContent from '../src/components/connect_wallet/modalContent'
 import WalletSelectButton from '../src/components/connect_wallet/walletSelectButton'
@@ -34,6 +35,10 @@ function ConnectWallet() {
 	const router = useRouter()
 
 	const { data: connectData, isConnecting, isConnected, isReconnecting, isError, connect, connectors } = useConnect()
+
+	const wallets = CHAIN_INFO[selectedNetworkId].wallets
+		.map(w => WALLETS[w as keyof typeof WALLETS])
+		.filter(Boolean)
 
 	useEffect(() => {
 		if((!isConnecting || !isReconnecting) && connectData && isConnected) {
@@ -139,7 +144,7 @@ function ConnectWallet() {
 				mt={7}
 			>
 				{
-					CHAIN_INFO[selectedNetworkId].wallets.map(({ name, icon, id }) => (
+					wallets.map(({ name, icon, id }) => (
 						<WalletSelectButton
 							key={id}
 							name={name}
