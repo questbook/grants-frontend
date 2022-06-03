@@ -17,6 +17,13 @@ import MultiLineInput from '../ui/forms/multiLineInput';
 import SingleLineInput from '../ui/forms/singleLineInput';
 import Loader from '../ui/loader';
 
+interface PartnersProps {
+	name: string;
+	industry?: string;
+	website?: string;
+	image?: File;
+}
+
 function EditForm({
   onSubmit: onFormSubmit,
   formData,
@@ -28,6 +35,7 @@ function EditForm({
     about: string;
     image?: File;
     coverImage?: File;
+		partners?: PartnersProps;
     twitterHandle?: string;
     discordHandle?: string;
     telegramChannel?: string;
@@ -55,12 +63,10 @@ function EditForm({
       industryError: false,
       website: '',
       websiteError: false,
+			image: config.defaultDAOPartnerImagePath
     },
   ]);
 
-  const [partnerImage, setPartnerImage] = React.useState<string>(
-    config.defaultDAOImagePath
-  );
   const [partnersImageFile, setPartnerImageFile] = React.useState<
     Array<File | null>
   >([null]);
@@ -116,7 +122,7 @@ function EditForm({
     if (event.target.files && event.target.files[0]) {
       const img = event.target.files[0];
       setPartnerImageFile((partnerImages) => [...partnerImages, img]);
-      setPartnerImage(URL.createObjectURL(img));
+      setPartners((partnerImg: any) => [...partnerImg, URL.createObjectURL(img)]);
     }
   };
 
@@ -153,6 +159,7 @@ function EditForm({
         bio: daoBio,
         about: daoAbout,
         image: imageFile!,
+				partners: partners,
         coverImage: coverImageFile!,
         twitterHandle,
         discordHandle,
@@ -267,7 +274,7 @@ function EditForm({
       </Flex>
 
       {partners.map((partner: any, index: any) => (
-        <Box w="42rem">
+        <Box w="43rem">
           <Flex
             mt={4}
             gap="2"
@@ -341,10 +348,10 @@ function EditForm({
                 disabled={!partnersRequired}
               />
               <Box
+							mt="-2.2rem"
 							mb="-10rem">
-                {' '}
                 <ImageUpload
-                  image={partnerImage}
+                  image={partners[index].image}
                   isError={false}
                   onChange={handlePartnerImageChange}
                   label="Partner logo"

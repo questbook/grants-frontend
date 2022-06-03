@@ -7,6 +7,7 @@ const config = {
 	GrantFactoryAddress: '0x0E6B77F32c273aDae050Ab9d511Fc30Bb385DaAc',
 	subgraphUri: 'https://the-graph.questbook.app/subgraphs/name/qb-subgraph',
 	defaultDAOImagePath: '/images/default_dao.svg',
+	defaultDAOPartnerImagePath: '/images/default_token_upload.svg',
 	deafultDAOImageHash: 'QmeNL8mChbLFJvhx3YnLa6mMKGHiXwgxPVRVWnQxW651dR',
 	supportLink: 'https://discord.gg/a3SkQX6gnW',
 	defaultTokenUploadImagePath: '/images/default_token_upload.svg',
