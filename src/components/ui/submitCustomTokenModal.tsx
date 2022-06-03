@@ -176,11 +176,9 @@ function CustomTokenModal({
 		}
 	}
 
-	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		if(txnData) {
 			setIsModalOpen(false)
-			setRefresh(true)
 		}
 
 	}, [toast, txnData])
