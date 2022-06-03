@@ -1,4 +1,4 @@
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import supportedCurrencies from '../constants/supportedCurrencies'
 

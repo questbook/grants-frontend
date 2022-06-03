@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import {
 	Box, Button, Flex, Image, Link,
 	Text, } from '@chakra-ui/react'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import config from 'src/constants/config'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import CoverUpload from '../ui/forms/coverUpload'

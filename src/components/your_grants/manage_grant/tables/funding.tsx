@@ -5,7 +5,7 @@ import {
 	Text, Tooltip, } from '@chakra-ui/react'
 import moment from 'moment'
 import Empty from 'src/components/ui/empty'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import { FundTransfer } from 'src/types'
 import {

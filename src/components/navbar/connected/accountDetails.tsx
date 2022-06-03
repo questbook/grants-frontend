@@ -13,7 +13,7 @@ import {
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import useChainId from 'src/hooks/utils/useChainId'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 

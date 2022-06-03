@@ -8,7 +8,7 @@ import React, {
 } from 'react'
 import { Flex, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import {
 	GetAllGrantsQuery,
 	useGetAllGrantsLazyQuery,

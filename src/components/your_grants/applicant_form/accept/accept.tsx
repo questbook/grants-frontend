@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromSupportedNetwork,
