@@ -66,29 +66,29 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	// Detect network change
 	// Set workspaces to an empty array
 	useEffect(() => {
-		if (workspaces) {
+		if(workspaces) {
 			setWorkspaces([])
 		}
 	}, [activeConnector])
 
 	useEffect(() => {
-		if (!accountData?.address) {
+		if(!accountData?.address) {
 			return
 		}
 
-		if (!workspace) {
+		if(!workspace) {
 			return
 		}
 
-		const getNumberOfApplications = async () => {
+		const getNumberOfApplications = async() => {
 			try {
 				const promises = getNumberOfApplicationsClients.map(
 					// eslint-disable-next-line no-async-promise-executor
-					(query) => new Promise(async (resolve) => {
+					(query) => new Promise(async(resolve) => {
 						const { data } = await query[0]({
 							variables: { applicantId: accountData?.address },
 						})
-						if (data && data.grantApplications.length > 0) {
+						if(data && data.grantApplications.length > 0) {
 							resolve(data.grantApplications.length)
 						} else {
 							resolve(0)
@@ -98,7 +98,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 				Promise.all(promises).then((value: any[]) => {
 					setApplicationCount(value.reduce((a, b) => a + b, 0))
 				})
-			} catch (e) {
+			} catch(e) {
 				toast({
 					title: 'Error getting application count',
 					status: 'error',
@@ -106,18 +106,18 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 			}
 		}
 
-		const getNumberOfGrants = async () => {
+		const getNumberOfGrants = async() => {
 			try {
 				const query = getNumberOfGrantsClients[getSupportedChainIdFromWorkspace(workspace)!][0]
 				const { data } = await query({
 					variables: { workspaceId: workspace?.id },
 				})
-				if (data && data.grants.length > 0) {
+				if(data && data.grants.length > 0) {
 					setGrantsCount(data.grants.length)
 				} else {
 					setGrantsCount(0)
 				}
-			} catch (e) {
+			} catch(e) {
 				toast({
 					title: 'Error getting grants count',
 					status: 'error',
@@ -135,7 +135,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 		(key) => useGetWorkspaceMembersLazyQuery({ client: subgraphClients[key].client }),
 	)
 	useEffect(() => {
-		if (
+		if(
 			workspace
 			&& workspace.members
 			&& workspace.members.length > 0
@@ -154,32 +154,32 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	}, [accountData, workspace])
 
 	useEffect(() => {
-		if (!accountData?.address) {
+		if(!accountData?.address) {
 			return
 		}
 
-		if (!getAllWorkspaces) {
+		if(!getAllWorkspaces) {
 			return
 		}
 		// if (!set) return;
 
-		const getWorkspaceData = async (userAddress: string) => {
+		const getWorkspaceData = async(userAddress: string) => {
 			try {
 				console.log('getallworkspace', getAllWorkspaces)
 				const promises = getAllWorkspaces.map(
 					// eslint-disable-next-line no-async-promise-executor
-					(allWorkspaces) => new Promise(async (resolve) => {
+					(allWorkspaces) => new Promise(async(resolve) => {
 						// console.log('calling grants');
 						try {
 							const { data } = await allWorkspaces[0]({
 								variables: { actorId: userAddress },
 							})
-							if (data && data.workspaceMembers.length > 0) {
+							if(data && data.workspaceMembers.length > 0) {
 								resolve(data.workspaceMembers.map((w) => w.workspace))
 							} else {
 								resolve([])
 							}
-						} catch (err) {
+						} catch(err) {
 							resolve([])
 						}
 					}),
@@ -192,9 +192,8 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 					setWorkspaces([...workspaces, ...allWorkspacesData])
 
 
-
 					const savedWorkspaceData = localStorage.getItem('currentWorkspace')
-					if (!savedWorkspaceData || savedWorkspaceData === 'undefined') {
+					if(!savedWorkspaceData || savedWorkspaceData === 'undefined') {
 						setWorkspace(allWorkspacesData[0])
 					} else {
 						const savedWorkspaceDataChain = savedWorkspaceData.split('-')[0]
@@ -205,7 +204,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 						setWorkspace(allWorkspacesData[i])
 					}
 				})
-			} catch (e) {
+			} catch(e) {
 				// console.log(e);
 				toast({
 					title: 'Error getting workspace data',
@@ -223,7 +222,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	const { pathname } = router
 
 	useEffect(() => {
-		if (pathname !== '/') {
+		if(pathname !== '/') {
 			setIsDiscover(false)
 		} else {
 			setIsDiscover(true)
@@ -513,11 +512,11 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 									console.log('Create a grant!')
 									console.log(workspace)
 									console.log(workspace?.id)
-									if (!workspace?.id) {
+									if(!workspace?.id) {
 										router.push({
 											pathname: '/signup',
 										})
-									} else if (grantsCount === 0) {
+									} else if(grantsCount === 0) {
 										router.push({
 											pathname: '/signup',
 											query: { create_grant: true },
