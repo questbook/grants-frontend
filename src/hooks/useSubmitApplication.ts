@@ -2,9 +2,9 @@ import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { GrantApplicationRequest } from '@questbook/service-validator-client'
 import { ApiClientsContext } from 'pages/_app'
-import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import getErrorMessage from 'src/utils/errorUtils'
+import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import {
 	useAccount, useNetwork,
@@ -206,9 +206,7 @@ export default function useSubmitApplication(
 
 	return [
 		transactionData,
-		chainId
-			? `${CHAIN_INFO[chainId].explorer.transactionHash}${transactionData?.transactionHash}`
-			: '',
+		getExplorerUrlForTxHash(chainId, transactionData?.transactionHash),
 		loading,
 		error,
 	]

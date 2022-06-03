@@ -11,11 +11,11 @@ import {
 import { utils } from 'ethers'
 import router from 'next/router'
 import CopyIcon from 'src/components/ui/copy_icon'
-import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import { useGetFundSentforReviewerQuery } from 'src/generated/graphql'
 // TOOLS AND UTILS
 import {
+	getExplorerUrlForTxHash,
 	getFormattedDateFromUnixTimestampWithYear,
 	trimAddress,
 } from 'src/utils/formattingUtils'
@@ -282,15 +282,7 @@ export default function Payouts() {
 
 													<Flex direction="row">
 														<Link
-															href={
-																workspaceChainId ?
-																	`${CHAIN_INFO[workspaceChainId as SupportedChainId]
-																		.explorer.transactionHash}${data.id.substr(
-																		0,
-																		data.id.indexOf('.'),
-																	)}`
-																	: ''
-															}
+															href={getExplorerUrlForTxHash(workspaceChainId, data.id.substr(0, data.id.indexOf('.')))}
 															isExternal
 														>
 															View

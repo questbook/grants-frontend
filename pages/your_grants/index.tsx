@@ -123,7 +123,7 @@ function YourGrants() {
 	]
 	const [selectedTab, setSelectedTab] = useState(0)
 	useEffect(() => {
-		setSelectedTab(parseInt(localStorage.getItem('yourGrantsTabSelected') ?? '0', 10))
+		setSelectedTab(parseInt(localStorage.getItem('yourGrantsTabSelected') ?? '0'))
 	}, [])
 
 	const [grantCount, setGrantCount] = useState([true, true])
@@ -187,7 +187,7 @@ function YourGrants() {
 				first: PAGE_SIZE,
 				skip: PAGE_SIZE * currentPage,
 				workspaceId: workspace?.id,
-				acceptingApplications: tabs[selectedTab].acceptingApplications,
+				acceptingApplications: !!tabs[selectedTab]?.acceptingApplications,
 			},
 			fetchPolicy: 'network-only',
 		})
