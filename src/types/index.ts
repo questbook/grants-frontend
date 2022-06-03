@@ -16,6 +16,10 @@ export type Workspace = Exclude<GetWorkspaceDetailsQuery['workspace'], null | un
 export type DAOWorkspace = GetDaoDetailsQuery['workspace']
 export type DAOGrant = GetDaoDetailsQuery['grants']
 
+export type AddressMap = { [C in SupportedChainId]: string }
+
+export type QBContract = 'workspace' | 'grantFactory' | 'applications' | 'reviews'
+
 export interface ChainInfo {
 	readonly id: SupportedChainId
 	readonly name: string
@@ -43,6 +47,7 @@ export interface ChainInfo {
 			decimals: number
 		}
 	}
+	readonly qbContracts: { [C in QBContract]: string }
 	readonly subgraphClientUrl: string
 	readonly rpcUrls: string[]
 }

@@ -48,7 +48,13 @@
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-rinkeby",
 		"rpcUrls": [
 			"https://rinkeby.infura.io/v3/"
-		]
+		],
+		"qbContracts": {
+			"workspace": "0xC5bA1DD677a89f7675015cd96124702D5a2D3A40",
+			"applications": "0xa77f115310a5761D048790231B0BdB29FD857Ce2",
+			"grantFactory": "0xF76C1d6ED36d48aCF13d8c99c1ba497fb0073bdB",
+			"reviews": "0x54F1f6aAe77D2E3feA4c40A7d99E4aDcEFa00c79"
+		}
 	},
 	"10": {
 		"id": 10,
@@ -116,7 +122,13 @@
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-optimism-mainnet",
 		"rpcUrls": [
 			"https://mainnet.optimism.io/"
-		]
+		],
+		"qbContracts": {
+			"workspace": "0x2dB223158288B2299480aF577eDF30D5a533F137",
+			"applications": "0xF4Db8BdDF1029764e4E09e7cE34149371a9A7027",
+			"grantFactory": "0xf08bCcf3C9DE7Daf25BCe13C87D0dd69754E0a33",
+			"reviews": "0xab163375C1aD08e24005771cC9908a1C7c61Adaa"
+		}
 	},
 	"137": {
 		"id": 137,
@@ -256,7 +268,13 @@
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-polygon-mainnet",
 		"rpcUrls": [
 			"https://polygon-rpc.com/"
-		]
+		],
+		"qbContracts": {
+			"workspace": "0x168A72b08FCFF48192E0B1A27486f4394a4F86e1",
+			"applications": "0xE9d6c045232b7f4C07C151f368E747EBE46209E4",
+			"grantFactory": "0xC6b6356FBdcf6CC6EA4Cb90Cd11B7E3c5848F312",
+			"reviews": "0xdC5EbC9130a2e7Ad776E3503fa6Dcf16D80ca915"
+		}
 	},
 	"44787": {
 		"id": 44787,
@@ -301,7 +319,13 @@
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-celo-alfajores-testnet",
 		"rpcUrls": [
 			"https://alfajores-forno.celo-testnet.org"
-		]
+		],
+		"qbContracts": {
+			"workspace": "0xF39E0AA8cA215D41dF7c9AeB3aBa76FfdAd0951F",
+			"applications": "0xE9d6c045232b7f4C07C151f368E747EBE46209E4",
+			"grantFactory": "0xCc3367953734da16bC7740696617b62d80845C90",
+			"reviews": "0x6Cb5Ee567592eD1fBdA48413a1F95e848d289D34"
+		}
 	},
 	"80001": {
 		"id": 80001,
@@ -346,7 +370,13 @@
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-polygon-mumbai",
 		"rpcUrls": [
 			"https://rpc-mumbai.maticvigil.com/"
-		]
+		],
+		"qbContracts": {
+			"workspace": "0xda717ab1206c59493e1E5c66F4e0712B39EC6D81",
+			"applications": "0x2d49a247AA77cA433218C9567953645bE04A7b3A",
+			"grantFactory": "0x32798CC9da06363eF2b0eE12e54cD4476D9C891a",
+			"reviews": "0xF39E0AA8cA215D41dF7c9AeB3aBa76FfdAd0951F"
+		}
 	},
 	"245022926": {
 		"id": 245022926,
@@ -396,7 +426,13 @@
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-neon-devnet",
 		"rpcUrls": [
 			"http://qb-neon-rpc.ap-south-1.elasticbeanstalk.com:9090/solana"
-		]
+		],
+		"qbContracts": {
+			"workspace": "0x6D0f81BDA11995f25921aAd5B43359630E65Ca96",
+			"applications": "0x32798CC9da06363eF2b0eE12e54cD4476D9C891a",
+			"grantFactory": "0xda717ab1206c59493e1E5c66F4e0712B39EC6D81",
+			"reviews": "0x2d49a247AA77cA433218C9567953645bE04A7b3A"
+		}
 	},
 	"1666700000": {
 		"id": 1666700000,
@@ -447,6 +483,12 @@
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-harmony-testnet",
 		"rpcUrls": [
 			"https://api.s0.b.hmny.io"
-		]
+		],
+		"qbContracts": {
+			"workspace": "0x6D0f81BDA11995f25921aAd5B43359630E65Ca96",
+			"applications": "0x32798CC9da06363eF2b0eE12e54cD4476D9C891a",
+			"grantFactory": "0xda717ab1206c59493e1E5c66F4e0712B39EC6D81",
+			"reviews": "0x2d49a247AA77cA433218C9567953645bE04A7b3A"
+		}
 	}
 }
