@@ -282,8 +282,8 @@
 			"walletConnect"
 		],
 		"explorer": {
-			"address": "",
-			"transactionHash": ""
+			"address": "https://alfajores-blockscout.celo-testnet.org/address/{{address}}",
+			"transactionHash": "https://alfajores-blockscout.celo-testnet.org/tx/{{tx}}"
 		},
 		"supportedCurrencies": {
 			"0xE4fE50cdD716522A56204352f00AA110F731932d": {
