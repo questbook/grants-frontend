@@ -621,7 +621,7 @@ There is no payout history to show
 														<Link
 															href={
 																workspaceChainId ?
-																	`${CHAIN_INFO[workspaceChainId]
+																	`${CHAIN_INFO[workspaceChainId as SupportedChainId]
 																		.explorer.transactionHash}${data.id.substr(
 																		0,
 																		data.id.indexOf('.'),

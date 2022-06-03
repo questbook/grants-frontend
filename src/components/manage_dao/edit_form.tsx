@@ -3,7 +3,7 @@ import {
 	Box, Button, Flex, Image, Link,
 	Text, } from '@chakra-ui/react'
 import { CHAIN_INFO } from 'src/constants/chains'
-import config from 'src/constants/config'
+import config from 'src/constants/config.json'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import CoverUpload from '../ui/forms/coverUpload'
 import ImageUpload from '../ui/forms/imageUpload'

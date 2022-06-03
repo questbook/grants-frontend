@@ -1,4 +1,4 @@
-import config from 'src/constants/config'
+import config from 'src/constants/config.json'
 
 const IPFS_UPLOAD_ENDPOINT = 'https://api.thegraph.com/ipfs/api/v0/add?pin=true'
 const IPFS_DOWNLOAD_ENDPOINT = 'https://api.thegraph.com/ipfs/api/v0/cat'

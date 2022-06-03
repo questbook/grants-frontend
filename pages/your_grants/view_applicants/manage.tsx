@@ -16,7 +16,7 @@ import { BigNumber } from 'ethers'
 import { useRouter } from 'next/router'
 import CopyIcon from 'src/components/ui/copy_icon'
 import { SupportedChainId } from 'src/constants/chains'
-import config from 'src/constants/config'
+import config from 'src/constants/config.json'
 import {
 	GetApplicationDetailsQuery,
 	useGetApplicationDetailsQuery,

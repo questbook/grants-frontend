@@ -125,7 +125,7 @@ const TABLE_HEADERS = {
 			<Link
 				href={
 					currentChainId
-						? `${CHAIN_INFO[currentChainId]
+						? `${CHAIN_INFO[currentChainId as SupportedChainId]
 							.explorer.transactionHash}${item.id}`
 						: ''
 				}

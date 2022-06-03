@@ -4,7 +4,7 @@ import {
 	Text, } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import { CHAIN_INFO } from 'src/constants/chains'
-import config from 'src/constants/config'
+import config from 'src/constants/config.json'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { formatAmount } from '../../../utils/formattingUtils'
 import AddFunds from '../../funds/add_funds_modal'
