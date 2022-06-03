@@ -10,7 +10,7 @@ export default function useChainId() {
 		}
 
 		if(chainId === 1666700000) {
-			return SupportedChainId.HARMONY_TESTNET_S0
+			return SupportedChainId.HARMONY_TESTNET
 		}
 
 		if(chainId === 137) {
@@ -18,7 +18,7 @@ export default function useChainId() {
 		}
 
 		if(chainId === 80001) {
-			return SupportedChainId.POLYGON_TESTNET
+			return SupportedChainId.POLYGON_MUMBAI
 		}
 
 		if(chainId === 10) {
