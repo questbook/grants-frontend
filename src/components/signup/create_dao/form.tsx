@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react'
 import SecondaryDropdown from 'src/components/ui/secondaryDropdown'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from 'src/constants/chains'
 import config from 'src/constants/config'
 import useChainId from 'src/hooks/utils/useChainId'

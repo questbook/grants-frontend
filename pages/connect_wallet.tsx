@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import {
 	ALL_SUPPORTED_CHAIN_IDS,
 	SupportedChainId,

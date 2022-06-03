@@ -3,7 +3,7 @@ import React from 'react'
 import {
 	Box, Button, Container, Flex, Image,
 	Link, Text, } from '@chakra-ui/react'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 
 function DaoCreated({

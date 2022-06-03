@@ -2,7 +2,7 @@ import React from 'react'
 import { ethers } from 'ethers'
 import moment from 'moment'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import { ALL_SUPPORTED_CHAIN_IDS } from 'src/constants/chains'
 import { FundTransfer } from 'src/types'
 

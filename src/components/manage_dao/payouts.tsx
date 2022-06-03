@@ -18,7 +18,7 @@ import {
 } from '@chakra-ui/react'
 import { utils } from 'ethers'
 import router from 'next/router'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import { useGetDaoGrantsQuery, useGetFundSentforReviewsQuery } from 'src/generated/graphql'
 // TOOLS AND UTILS

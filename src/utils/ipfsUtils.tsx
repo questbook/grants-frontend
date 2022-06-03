@@ -5,7 +5,7 @@ const IPFS_DOWNLOAD_ENDPOINT = 'https://api.thegraph.com/ipfs/api/v0/cat'
 
 export const uploadToIPFS = async(data: string | Blob): Promise<{ hash: string }> => {
 	if(data === null) {
-		return { hash: config.deafultDAOImageHash }
+		return { hash: config.defaultDAOImageHash }
 	}
 
 	const form = new FormData()
@@ -52,7 +52,7 @@ export const getUrlForIPFSHash = (hash: string) => {
 
 	// api.thegraph is having problem returning svg files, will fix later
 	// this shoudln't affect in the near future as uploading svg files is not supported
-	if(hash === config.deafultDAOImageHash) {
+	if(hash === config.defaultDAOImageHash) {
 		return `https://ipfs.io/ipfs/${hash}`
 	}
 
