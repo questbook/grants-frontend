@@ -8,20 +8,26 @@ import {
   Switch,
   Text,
 } from '@chakra-ui/react';
+import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import { CHAIN_INFO } from 'src/constants/chainInfo';
 import config from 'src/constants/config';
-import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
+import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace';
+import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
+import { SettingsForm, Workspace } from 'src/types';
+import { generateWorkspaceUpdateRequest, workspaceDataToSettingsForm } from 'src/utils/settingsUtils';
 import CoverUpload from '../ui/forms/coverUpload';
 import ImageUpload from '../ui/forms/imageUpload';
 import MultiLineInput from '../ui/forms/multiLineInput';
 import SingleLineInput from '../ui/forms/singleLineInput';
 import Loader from '../ui/loader';
+import InfoToast from '../ui/toasts/infoToast';
+
 
 interface PartnersProps {
 	name: string;
 	industry?: string;
 	website?: string;
-	image?: File;
+	image?: string;
 }
 
 function EditForm({
@@ -117,14 +123,17 @@ function EditForm({
   };
 
   const handlePartnerImageChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
+		index: number
   ) => {
     if (event.target.files && event.target.files[0]) {
       const img = event.target.files[0];
       setPartnerImageFile((partnerImages) => [...partnerImages, img]);
-      setPartners((partnerImg: any) => [...partnerImg, URL.createObjectURL(img)]);
+      setPartners((partners: any) => [...partners, partners[index].image = URL.createObjectURL(img)]);
     }
   };
+
+	console.log(partners);
 
   const handleCoverImageChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -353,7 +362,7 @@ function EditForm({
                 <ImageUpload
                   image={partners[index].image}
                   isError={false}
-                  onChange={handlePartnerImageChange}
+                  onChange={(e) => handlePartnerImageChange(e, index)}
                   label="Partner logo"
                 />
               </Box>

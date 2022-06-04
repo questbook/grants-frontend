@@ -116,6 +116,7 @@ function Settings({ workspaceData }: Props) {
 			about: workspaceData.about,
 			image: getUrlForIPFSHash(workspaceData?.logoIpfsHash),
 			supportedNetwork: workspaceData.supportedNetworks[0],
+			partners: workspaceData.partners,
 			coverImage: getUrlForIPFSHash(workspaceData.coverImageIpfsHash || ''),
 			twitterHandle,
 			discordHandle,
