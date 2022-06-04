@@ -28,11 +28,12 @@ import { CHAIN_INFO } from 'src/constants/chainInfo';
 // UTILS AND TOOLS
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 import { formatAmount } from 'src/utils/formattingUtils';
+import { calculateUSDValue } from 'src/utils/calculatingUtils';
 import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import verify from 'src/utils/grantUtils';
-import { useGetDaoDetailsQuery, useGetAllGrantsForADaoQuery, useGetFundSentDisburseQuery } from 'src/generated/graphql';
+import { useGetDaoDetailsQuery, useGetAllGrantsForADaoQuery } from 'src/generated/graphql';
 
 function Profile() {
 	const router = useRouter()
@@ -45,7 +46,10 @@ function Profile() {
   const [chainID, setChainId] = React.useState<SupportedChainId>();
   const [daoID, setDaoId] = React.useState<string>();
   const [grantsApplicants, setGrantsApplicants] = React.useState<any>([]);
-  const [grantsDisbursed, setGrantsDisbursed] = React.useState<any>([]);
+  const [grantsDisbursed, setGrantsDisbursed] = React.useState<any>([{
+    token: '',
+    value: ''
+  }]);
   const [grantWinners, setGrantWinners] = React.useState<any>([]);
 
   //Tab section
@@ -149,7 +153,8 @@ function Profile() {
     useEffect(() => {
       if (grantsData && grantsData.grants.length > 0 && grantsDisbursed.length < 1) {
         grantsData.grants.forEach((grant) =>
-          setGrantsDisbursed((array: any) => [...array, grant.funding])
+          console.log(grant)
+          // setGrantsDisbursed((array: any) => [...array, grant.funding])
       )}
       console.log(grantsDisbursed);
     }, [grantsData, grantsDisbursed])
@@ -259,10 +264,7 @@ function Profile() {
 
           <Stack px="1.5rem" pb="2rem" pt="1rem">
             <DaoData
-            disbursed={formatAmount(
-              grantsDisbursed.reduce((sum: any, a: any) => sum + a, 0).toString(),
-              18
-            )}
+            disbursed='1000'
             winners={grantWinners}
             applicants={grantsApplicants}
             time="1D" />
