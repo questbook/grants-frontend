@@ -151,9 +151,24 @@ function Profile() {
     }, [grantsData, grantWinners]);
 
     useEffect(() => {
-      if (grantsData && grantsData.grants.length > 0 && grantsDisbursed.length < 1) {
-        grantsData.grants.forEach((grant) =>
-          console.log(grant)
+      if (grantsData) {
+        grantsData.grants.forEach((grant) => {
+          const chainId = getSupportedChainIdFromSupportedNetwork(
+            grant.workspace.supportedNetworks[0]
+          );
+
+          const tokenInfo =
+            CHAIN_INFO[chainId]?.supportedCurrencies[
+              grant.reward.asset.toLowerCase()
+            ];
+
+          const tokenValue = formatAmount(
+            grant.funding,
+            tokenInfo?.decimals ?? 18
+          )
+
+          console.log(calculateUSDValue(tokenValue, tokenInfo.label))
+        }
           // setGrantsDisbursed((array: any) => [...array, grant.funding])
       )}
       console.log(grantsDisbursed);
@@ -170,6 +185,11 @@ function Profile() {
       industry: "social"
     }
   ]
+
+  // disbursed={formatAmount(
+  //   grantsDisbursed.reduce((sum: any, a: any) => sum + a, 0).toString(),
+  //   18
+  // )}
 
   return (
     <Flex

@@ -2,10 +2,7 @@ import { useState } from "react";
 import { utils } from "ethers";
 import { createClient } from "urql";
 
-type Values = {
-  value: number | string | any;
-  token: string;
-};
+export function calculateUSDValue(value: number | string | any, token: string) {
 
 const wethPriceQuery = `
 {
@@ -78,11 +75,16 @@ const usdcPriceQuery = `
   }
 `
 
-export function calculateUSDValue({ value, token }: Values) {
-
   const client = createClient({
     url: "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2",
   });
+
+  const [wethPrice, setWethPrice] = useState<number>();
+  const [usdcPrice, setUsdcPrice] = useState<number>();
+  const [daiPrice, setDaiPrice] = useState<number>();
+  const [aavePrice, setAavePrice] = useState<number>();
+  const [wmaticPrice, setWmaticPrice] = useState<number>();
+  const [oceanPrice, setOceanPrice] = useState<number>();
 
   async function fetchWethPrice() {
     const data = await client.query(wethPriceQuery).toPromise();
@@ -113,13 +115,6 @@ export function calculateUSDValue({ value, token }: Values) {
     const data = await client.query(oceanPriceQuery).toPromise();
     setOceanPrice(data.data.pair.token0.derivedETH * data.data.bundle.ethPrice);
   }
-
-  const [wethPrice, setWethPrice] = useState<number>();
-  const [usdcPrice, setUsdcPrice] = useState<number>();
-  const [daiPrice, setDaiPrice] = useState<number>();
-  const [aavePrice, setAavePrice] = useState<number>();
-  const [wmaticPrice, setWmaticPrice] = useState<number>();
-  const [oceanPrice, setOceanPrice] = useState<number>();
 
   if (token === "WMATIC") {
     fetchWmaticPrice();
