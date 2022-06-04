@@ -157,7 +157,7 @@ export default function useCreateWorkspace(
 		data,
 	])
 
-	const networkChainId = getSupportedChainIdFromSupportedNetwork(`chain_${data.network}` as SupportedNetwork)
+	const networkChainId = getSupportedChainIdFromSupportedNetwork(`chain_${data?.network}` as SupportedNetwork)
 
 	return [
 		transactionData,
