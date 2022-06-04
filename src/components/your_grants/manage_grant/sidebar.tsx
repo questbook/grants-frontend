@@ -3,7 +3,7 @@ import {
 	Box, Button, Divider, Flex, Image, Link,
 	Text, } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
-import config from 'src/constants/config'
+import config from 'src/constants/config.json'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { formatAmount, getExplorerUrlForAddress } from '../../../utils/formattingUtils'
 import AddFunds from '../../funds/add_funds_modal'
