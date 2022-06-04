@@ -3,10 +3,9 @@ import {
 	Box, Button, Divider, Flex, Image, Link,
 	Text, } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
-import { CHAIN_INFO } from 'src/constants/chains'
-import config from 'src/constants/config'
+import config from 'src/constants/config.json'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import { formatAmount } from '../../../utils/formattingUtils'
+import { formatAmount, getExplorerUrlForAddress } from '../../../utils/formattingUtils'
 import AddFunds from '../../funds/add_funds_modal'
 import Modal from '../../ui/modal'
 import FloatingSidebar from '../../ui/sidebar/floatingSidebar'
@@ -96,10 +95,10 @@ function Sidebar({
 								{' '}
 								<Link
 									href={
-										grant
-											? `${CHAIN_INFO[getSupportedChainIdFromSupportedNetwork(grant.workspace.supportedNetworks[0])]
-												.explorer.address}${grant?.id}`
-											: ''
+										getExplorerUrlForAddress(
+											getSupportedChainIdFromSupportedNetwork(grant.workspace.supportedNetworks[0]),
+											grant?.id || ''
+										)
 									}
 									fontWeight="700"
 									color="brand.500"

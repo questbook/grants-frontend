@@ -3,9 +3,8 @@ import {
 	Box, Button, Flex, ListItem, ModalBody, ToastId, UnorderedList, useToast,
 } from '@chakra-ui/react'
 import { Token, WorkspaceUpdateRequest } from '@questbook/service-validator-client'
-import config from 'src/constants/config'
+import config from 'src/constants/config.json'
 import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
 import { isValidAddress } from 'src/utils/validationUtils'
 import ImageUpload from './forms/imageUpload'
@@ -176,11 +175,9 @@ function CustomTokenModal({
 		}
 	}
 
-	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		if(txnData) {
 			setIsModalOpen(false)
-			setRefresh(true)
 		}
 
 	}, [toast, txnData])

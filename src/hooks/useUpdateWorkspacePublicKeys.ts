@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { WorkspaceUpdateRequest } from '@questbook/service-validator-client'
 import { ApiClientsContext } from 'pages/_app'
-import { CHAIN_INFO } from 'src/constants/chains'
+import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
@@ -184,8 +184,9 @@ export default function useUpdateWorkspacePublicKeys(
 		incorrectNetwork,
 	])
 
-	return [transactionData, chainId ?? getSupportedChainIdFromWorkspace(workspace)
-		? `${CHAIN_INFO[chainId ?? getSupportedChainIdFromWorkspace(workspace)!]
-			.explorer.transactionHash}${transactionData?.transactionHash}`
-		: '',, loading]
+	return [
+		transactionData,
+		getExplorerUrlForTxHash(chainId ?? getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
+		loading
+	]
 }
