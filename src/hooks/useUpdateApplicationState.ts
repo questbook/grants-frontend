@@ -1,8 +1,8 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
 import getErrorMessage from 'src/utils/errorUtils'
+import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
@@ -209,10 +209,7 @@ export default function useUpdateApplicationState(
 
 	return [
 		transactionData,
-		currentChainId
-			? `${CHAIN_INFO[currentChainId]
-				.explorer.transactionHash}${transactionData?.transactionHash}`
-			: '',
+		getExplorerUrlForTxHash(currentChainId, transactionData?.transactionHash),
 		loading,
 		error,
 	]

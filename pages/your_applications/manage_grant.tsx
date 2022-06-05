@@ -6,7 +6,7 @@ import { BigNumber } from 'ethers'
 import moment from 'moment'
 import { useRouter } from 'next/router'
 import VerifiedBadge from 'src/components/ui/verified_badge'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import {
 	useGetApplicationDetailsQuery,
@@ -114,6 +114,7 @@ function ManageGrant() {
 	const [rewardToken, setRewardToken] = useState({
 		label: '', icon: '', decimals: 18, address: '',
 	})
+	const [tabs, setTabs] = useState<{icon?: string, title: string, subtitle: string}[]>([])
 
 	useEffect(() => {
 		if(data && data.grantApplication && chainId) {
@@ -150,7 +151,7 @@ function ManageGrant() {
 					?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
 				const asset = getAssetInfo(rewardAsset, chainId)
 				setAssetInfo(asset)
-				// setFundingIcon(assetInfo.icon);
+				setFundingIcon(asset.icon)
 			}
 
 			const [localIsGrantVerified, localFunding] = verify(
@@ -162,27 +163,33 @@ function ManageGrant() {
 		}
 	}, [data, error, rewardAsset, loading, chainId])
 
+	useEffect(() => {
+		if(!data) {
+			return
+		}
+
+		setTabs([
+			{
+				title: milestones.length.toString(),
+				subtitle: milestones.length === 1 ? 'Milestone' : 'Milestones',
+			},
+			{
+				icon: fundingIcon,
+				title: formatAmount(getTotalFundingRecv(milestones).toString(), decimals),
+				subtitle: 'Funding Received',
+			},
+			{
+				icon: fundingIcon,
+				title:
+			(fundingAsk ? formatAmount(fundingAsk.toString(), decimals) : null)
+			|| formatAmount(getTotalFundingAsked(milestones).toString(), decimals),
+				subtitle: 'Funding Requested',
+			},
+		])
+	}, [milestones, fundingIcon, fundingAsk])
+
 	// const assetInfo = getAssetInfo(rewardAsset, chainId);
 	// const fundingIcon = assetInfo.icon;
-
-	const tabs = [
-		{
-			title: milestones.length.toString(),
-			subtitle: milestones.length === 1 ? 'Milestone' : 'Milestones',
-		},
-		{
-			icon: fundingIcon,
-			title: formatAmount(getTotalFundingRecv(milestones).toString(), decimals),
-			subtitle: 'Funding Received',
-		},
-		{
-			icon: fundingIcon,
-			title:
-        (fundingAsk ? formatAmount(fundingAsk.toString(), decimals) : null)
-        || formatAmount(getTotalFundingAsked(milestones).toString(), decimals),
-			subtitle: 'Funding Requested',
-		},
-	]
 
 	return (
 		<Container
@@ -220,70 +227,73 @@ function ManageGrant() {
 					w="full"
 					align="center">
 					{
-						tabs.map((tab, index) => (
-							<Button
-								key={tab.title}
-								variant="ghost"
-								h="110px"
-								w="full"
-								_hover={
-									{
-										background: '#F5F5F5',
-									}
-								}
-								background={
-									index !== selected
-										? 'linear-gradient(180deg, #FFFFFF 0%, #F3F4F4 100%)'
-										: 'white'
-								}
-								_focus={{}}
-								borderRadius={index !== selected ? 0 : '8px 8px 0px 0px'}
-								borderRightWidth={
-									(index !== tabs.length - 1 && index + 1 !== selected)
-                  || index === selected
-										? '2px'
-										: '0px'
-								}
-								borderLeftWidth={index !== selected ? 0 : '2px'}
-								borderTopWidth={index !== selected ? 0 : '2px'}
-								borderBottomWidth={index !== selected ? '2px' : 0}
-								borderBottomRightRadius="-2px"
-								onClick={() => (index !== tabs.length - 1 ? setSelected(index) : null)}
-							>
-								<Flex
-									direction="column"
-									justify="center"
-									align="center"
-									w="100%">
-									<Flex
-										direction="row"
-										justify="center"
-										align="center">
+						tabs.map((tab, index) => {
+							console.log('TAB: ', tab)
+							return (
+								<Button
+									key={tab.title}
+									variant="ghost"
+									h="110px"
+									w="full"
+									_hover={
 										{
-											tab.icon && (
-												<Image
-													h="26px"
-													w="26px"
-													src={tab.icon}
-													alt={tab.icon} />
-											)
+											background: '#F5F5F5',
 										}
-										<Box mx={1} />
+									}
+									background={
+										index !== selected
+											? 'linear-gradient(180deg, #FFFFFF 0%, #F3F4F4 100%)'
+											: 'white'
+									}
+									_focus={{}}
+									borderRadius={index !== selected ? 0 : '8px 8px 0px 0px'}
+									borderRightWidth={
+										(index !== tabs.length - 1 && index + 1 !== selected)
+										|| index === selected
+											? '2px'
+											: '0px'
+									}
+									borderLeftWidth={index !== selected ? 0 : '2px'}
+									borderTopWidth={index !== selected ? 0 : '2px'}
+									borderBottomWidth={index !== selected ? '2px' : 0}
+									borderBottomRightRadius="-2px"
+									onClick={() => (index !== tabs.length - 1 ? setSelected(index) : null)}
+								>
+									<Flex
+										direction="column"
+										justify="center"
+										align="center"
+										w="100%">
+										<Flex
+											direction="row"
+											justify="center"
+											align="center">
+											{
+												tab.icon && (
+													<Image
+														h="26px"
+														w="26px"
+														src={tab.icon}
+														alt={tab.icon} />
+												)
+											}
+											<Box mx={1} />
+											<Text
+												fontWeight="700"
+												fontSize="26px"
+												lineHeight="40px">
+												{tab.title}
+											</Text>
+										</Flex>
 										<Text
-											fontWeight="700"
-											fontSize="26px"
-											lineHeight="40px">
-											{tab.title}
+											variant="applicationText"
+											color="#717A7C">
+											{tab.subtitle}
 										</Text>
 									</Flex>
-									<Text
-										variant="applicationText"
-										color="#717A7C">
-										{tab.subtitle}
-									</Text>
-								</Flex>
-							</Button>
-						))
+								</Button>
+							)
+						})
 					}
 				</Flex>
 

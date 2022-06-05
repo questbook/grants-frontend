@@ -22,11 +22,11 @@ import {
 } from 'src/generated/graphql'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs'
 import Heading from '../../../src/components/ui/heading'
-import InfoToast from '../../../src/components/ui/infoToast'
 import Accept from '../../../src/components/your_grants/applicant_form/accept/accept'
 import AcceptSidebar from '../../../src/components/your_grants/applicant_form/accept/sidebar'
 import Application from '../../../src/components/your_grants/applicant_form/application'
@@ -132,30 +132,17 @@ function ApplicantForm() {
 		setSubmitClicked,
 	)
 
+	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		if(txn) {
 			setState(undefined)
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={txnLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
 			router.replace({
 				pathname: '/your_grants/view_applicants',
 				query: {
 					grantId: applicationData?.grant?.id,
 				},
 			})
+			setRefresh(true)
 		} else if(error) {
 			setState(undefined)
 		}

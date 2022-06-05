@@ -8,8 +8,6 @@ import {
 	Image,
 	Link,
 	Text,
-	ToastId,
-	useToast,
 } from '@chakra-ui/react'
 import {
 	GrantApplicationRequest,
@@ -26,6 +24,7 @@ import Loader from 'src/components/ui/loader'
 import { SupportedChainId } from 'src/constants/chains'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useResubmitApplication from 'src/hooks/useResubmitApplication'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { isValidEmail } from 'src/utils/validationUtils'
 import {
@@ -36,7 +35,6 @@ import {
 	getFormattedFullDateFromUnixTimestamp,
 	parseAmount,
 } from '../../../../utils/formattingUtils'
-import InfoToast from '../../../ui/infoToast'
 import ApplicantDetails from './1_applicantDetails'
 import AboutTeam from './2_aboutTeam'
 import AboutProject from './3_aboutProject'
@@ -83,8 +81,9 @@ function Form({
   // grantID: string;
 }) {
 	const { encryptApplicationPII } = useApplicationEncryption()
-	const toast = useToast()
 	const router = useRouter()
+	const [onEdit, setOnEdit] = useState<boolean>(false)
+	const [loadedData, setLoadedData] = useState<boolean>(false)
 	const [applicantName, setApplicantName] = useState('')
 	const [applicantNameError, setApplicantNameError] = useState(false)
 
@@ -163,7 +162,7 @@ function Form({
 
 	useEffect(() => {
 		try {
-			if(formData) {
+			if(formData && !loadedData) {
 				setApplicantName(formData.applicantName)
 				setApplicantEmail(formData.applicantEmail)
 				setTeamMembers(formData.teamMembers)
@@ -204,13 +203,13 @@ function Form({
 							isError: false,
 						})))
 				}
+
+				setLoadedData(true)
 			}
 		} catch(error) {
 			// console.log(error);
 		}
 	}, [formData, application])
-
-	const toastRef = React.useRef<ToastId>()
 
 	const [updateData, setUpdateData] = React.useState<any>()
 	const [txnData, txnLink, loading] = useResubmitApplication(
@@ -219,33 +218,20 @@ function Form({
 		applicationID,
 	)
 
+	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		if(txnData) {
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={txnLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
 			router.push({
 				pathname: '/your_applications',
 			})
+			setRefresh(true)
 		}
 
-	}, [toast, router, txnData])
+	}, [router, txnData])
 
 	const handleOnSubmit = async() => {
-		// console.log(onSubmit);
-		if(!onSubmit) {
+		// console.log(onEdit);
+		if(!onSubmit && !onEdit) {
 			return
 		}
 
@@ -430,309 +416,357 @@ function Form({
 			flexDirection="column"
 			alignItems="center"
 			w="100%">
-			<Image
-				objectFit="cover"
-				h="96px"
-				w="96px"
-				src={daoLogo}
-				alt="Polygon DAO"
-			/>
-			<Text
-				mt={6}
-				variant="heading"
-				textAlign="center">
-				{grantTitle}
-			</Text>
+			{
+				!loadedData ? <Loader /> : (
+					<>
+						<Image
+							objectFit="cover"
+							h="96px"
+							w="96px"
+							src={daoLogo}
+							alt="Polygon DAO"
+						/>
+						<Text
+							mt={6}
+							variant="heading"
+							textAlign="center">
+							{grantTitle}
+						</Text>
 
-			<Text
-				mt="10px"
-				fontSize="16px"
-				lineHeight="24px"
-				fontWeight="500"
-				color="#717A7C"
-			>
-				<Image
-					mb="-2px"
-					src="/ui_icons/calendar.svg"
-					w="16px"
-					h="18px"
-					display="inline-block"
-				/>
-				{' '}
+						<Text
+							mt="10px"
+							fontSize="16px"
+							lineHeight="24px"
+							fontWeight="500"
+							color="#717A7C"
+						>
+							<Image
+								mb="-2px"
+								src="/ui_icons/calendar.svg"
+								w="16px"
+								h="18px"
+								display="inline-block"
+							/>
+							{' '}
         Sent on
-				{' '}
-				{getFormattedFullDateFromUnixTimestamp(Number(sentDate))}
-			</Text>
+							{' '}
+							{getFormattedFullDateFromUnixTimestamp(Number(sentDate))}
+						</Text>
 
-			{
-				state === 'rejected' && (
-					<Flex
-						alignItems="flex-start"
-						bgColor="#FFC0C0"
-						border="2px solid #EE7979"
-						px="26px"
-						py="22px"
-						borderRadius="6px"
-						mt={4}
-						mx={10}
-						alignSelf="stretch"
-					>
-						<Flex
-							alignItems="center"
-							justifyContent="center"
-							bgColor="#F7B7B7"
-							border="2px solid #EE7979"
-							borderRadius="40px"
-							p={2}
-							h="40px"
-							w="40px"
-							mt="5px"
-						>
-							<Image
-								h="40px"
-								w="40px"
-								src="/ui_icons/result_rejected_application.svg"
-								alt="Rejected"
-							/>
-						</Flex>
-						<Flex
-							ml="23px"
-							direction="column">
-							<Text
-								fontSize="16px"
-								lineHeight="24px"
-								fontWeight="700"
-								color="#7B4646"
-							>
+						{
+							state === 'rejected' && (
+								<Flex
+									alignItems="flex-start"
+									bgColor="#FFC0C0"
+									border="2px solid #EE7979"
+									px="26px"
+									py="22px"
+									borderRadius="6px"
+									mt={4}
+									mx={10}
+									alignSelf="stretch"
+								>
+									<Flex
+										alignItems="center"
+										justifyContent="center"
+										bgColor="#F7B7B7"
+										border="2px solid #EE7979"
+										borderRadius="40px"
+										p={2}
+										h="40px"
+										w="40px"
+										mt="5px"
+									>
+										<Image
+											h="40px"
+											w="40px"
+											src="/ui_icons/result_rejected_application.svg"
+											alt="Rejected"
+										/>
+									</Flex>
+									<Flex
+										ml="23px"
+										direction="column">
+										<Text
+											fontSize="16px"
+											lineHeight="24px"
+											fontWeight="700"
+											color="#7B4646"
+										>
               Application Rejected
-							</Text>
-							<Text
-								fontSize="16px"
-								lineHeight="24px"
-								fontWeight="400"
-								color="#7B4646"
-							>
-								{feedback}
-							</Text>
-						</Flex>
-					</Flex>
-				)
-			}
+										</Text>
+										<Text
+											fontSize="16px"
+											lineHeight="24px"
+											fontWeight="400"
+											color="#7B4646"
+										>
+											{feedback}
+										</Text>
+									</Flex>
+								</Flex>
+							)
+						}
 
-			{
-				state === 'resubmit' && (
-					<Flex
-						alignItems="flex-start"
-						bgColor="#FEF6D9"
-						border="2px solid #EFC094"
-						px="26px"
-						py="22px"
-						borderRadius="6px"
-						mt={4}
-						mx={10}
-						alignSelf="stretch"
-					>
-						<Flex
-							alignItems="center"
-							justifyContent="center"
-							h="36px"
-							w="42px">
-							<Image
-								h="40px"
-								w="40px"
-								src="/ui_icons/alert_triangle.svg"
-								alt="Resubmit"
-							/>
-						</Flex>
-						<Flex
-							ml="23px"
-							direction="column">
-							<Text
-								fontSize="16px"
-								lineHeight="24px"
-								fontWeight="700"
-								color="#7B4646"
-							>
+						{
+							state === 'resubmit' && (
+								<Flex
+									alignItems="flex-start"
+									bgColor="#FEF6D9"
+									border="2px solid #EFC094"
+									px="26px"
+									py="22px"
+									borderRadius="6px"
+									mt={4}
+									mx={10}
+									alignSelf="stretch"
+								>
+									<Flex
+										alignItems="center"
+										justifyContent="center"
+										h="36px"
+										w="42px">
+										<Image
+											h="40px"
+											w="40px"
+											src="/ui_icons/alert_triangle.svg"
+											alt="Resubmit"
+										/>
+									</Flex>
+									<Flex
+										ml="23px"
+										direction="column">
+										<Text
+											fontSize="16px"
+											lineHeight="24px"
+											fontWeight="700"
+											color="#7B4646"
+										>
               Resubmit your Application
-							</Text>
-							<Text
-								fontSize="16px"
-								lineHeight="24px"
-								fontWeight="400"
-								color="#7B4646"
-							>
-								{feedback}
-							</Text>
-						</Flex>
-					</Flex>
-				)
-			}
+										</Text>
+										<Text
+											fontSize="16px"
+											lineHeight="24px"
+											fontWeight="400"
+											color="#7B4646"
+										>
+											{feedback}
+										</Text>
+									</Flex>
+								</Flex>
+							)
+						}
 
-			{
-				onSubmit ? (
-					<Button
-						onClick={loading ? () => {} : handleOnSubmit}
-						py={loading ? 2 : 0}
-						mt={8}
-						mb={4}
-						mx={10}
-						alignSelf="stretch"
-						variant="primary"
-					>
-						{loading ? <Loader /> : 'Resubmit Application'}
-					</Button>
-				) : null
-			}
+						{
+							onSubmit && !onEdit ? (
+								<Button
+									onClick={() => setOnEdit(true)}
+									py={loading ? 2 : 0}
+									mt={8}
+									mb={4}
+									variant="primary"
+								>
+									Edit Application for Resubmit
+								</Button>
+							) : null
+						}
 
-			<Text
-				zIndex="1"
-				px={9}
-				bgColor="white"
-				mt="21px"
-				lineHeight="26px"
-				fontSize="18px"
-				fontWeight="500"
-			>
-        Your Application Form
-			</Text>
-			<Container
-				mt="-12px"
-				p={10}
-				border="2px solid #E8E9E9"
-				borderRadius="12px"
-			>
-				<ApplicantDetails
-					applicantName={applicantName}
-					applicantNameError={applicantNameError}
-					applicantEmail={applicantEmail}
-					applicantEmailError={applicantEmailError}
-					setApplicantName={setApplicantName}
-					setApplicantNameError={setApplicantNameError}
-					setApplicantEmail={setApplicantEmail}
-					setApplicantEmailError={setApplicantEmailError}
-					readOnly={onSubmit === null}
-					grantRequiredFields={grantRequiredFields}
-				/>
+						{
+							state !== 'resubmit' && state !== 'rejected' && state !== 'approved' && !onEdit ? (
+								<Button
+									onClick={() => setOnEdit(true)}
+									mt={8}
+									mb={4}
+									variant="primary"
+									disabled={loading}
+								>
+									Edit Application
+								</Button>
+							) : null
+						}
 
-				<Box mt="43px" />
-				<AboutTeam
-					teamMembers={teamMembers}
-					teamMembersError={teamMembersError}
-					setTeamMembers={setTeamMembers}
-					setTeamMembersError={setTeamMembersError}
-					membersDescription={membersDescription}
-					setMembersDescription={setMembersDescription}
-					readOnly={onSubmit === null}
-					grantRequiredFields={grantRequiredFields}
-				/>
+						{
+							onEdit ? (
+								<Button
+									onClick={loading ? () => {} : handleOnSubmit}
+									py={loading ? 2 : 0}
+									mt={8}
+									mb={4}
+									variant="primary"
+								>
+									{loading ? <Loader /> : 'Submit Edits'}
+								</Button>
+							) : null
+						}
 
-				<Box mt="19px" />
-				<AboutProject
-					projectName={projectName}
-					setProjectName={setProjectName}
-					projectNameError={projectNameError}
-					setProjectNameError={setProjectNameError}
-					projectLinks={projectLinks}
-					setProjectLinks={setProjectLinks}
-					projectDetails={projectDetails}
-					setProjectDetails={setProjectDetails}
-					projectDetailsError={projectDetailsError}
-					setProjectDetailsError={setProjectDetailsError}
-					projectGoal={projectGoal}
-					setProjectGoal={setProjectGoal}
-					projectGoalError={projectGoalError}
-					setProjectGoalError={setProjectGoalError}
-					projectMilestones={projectMilestones}
-					setProjectMilestones={setProjectMilestones}
-					rewardCurrency={rewardCurrency}
-					rewardCurrencyCoin={rewardCurrencyCoin}
-					readOnly={onSubmit === null}
-					grantRequiredFields={grantRequiredFields}
-				/>
-
-				<Box mt="43px" />
-				<Funding
-					fundingAsk={fundingAsk}
-					setFundingAsk={setFundingAsk}
-					fundingAskError={fundingAskError}
-					setFundingAskError={setFundingAskError}
-					fundingBreakdown={fundingBreakdown}
-					setFundingBreakdown={setFundingBreakdown}
-					fundingBreakdownError={fundingBreakdownError}
-					setFundingBreakdownError={setFundingBreakdownError}
-					rewardAmount={rewardAmount}
-					rewardCurrency={rewardCurrency}
-					rewardCurrencyCoin={rewardCurrencyCoin}
-					readOnly={onSubmit === null}
-					grantRequiredFields={grantRequiredFields}
-				/>
-
-				{
-					customFields.length > 0 && (
-						<>
-							<Box mt="43px" />
-							<CustomFields
-								customFields={customFields}
-								setCustomFields={setCustomFields}
-								readOnly={onSubmit === null}
-							/>
-						</>
-					)
-				}
-			</Container>
-
-			{
-				onSubmit && (
-					<Text
-						mt={10}
-						textAlign="center"
-						variant="footer"
-						fontSize="12px">
-						<Image
-							display="inline-block"
-							src="/ui_icons/info.svg"
-							alt="pro tip"
-							mb="-2px"
-						/>
-						{' '}
-          By pressing Submit Application you&apos;ll have to approve this
-          transaction in your wallet.
-						{' '}
-						<Link
-							href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
-							isExternal
+						<Text
+							zIndex="1"
+							px={9}
+							bgColor="white"
+							mt="21px"
+							lineHeight="26px"
+							fontSize="18px"
+							fontWeight="500"
 						>
+        Your Application Form
+						</Text>
+						<Container
+							mt="-12px"
+							p={10}
+							border="2px solid #E8E9E9"
+							borderRadius="12px"
+						>
+							<ApplicantDetails
+								applicantName={applicantName}
+								applicantNameError={applicantNameError}
+								applicantEmail={applicantEmail}
+								applicantEmailError={applicantEmailError}
+								setApplicantName={setApplicantName}
+								setApplicantNameError={setApplicantNameError}
+								setApplicantEmail={setApplicantEmail}
+								setApplicantEmailError={setApplicantEmailError}
+								readOnly={onEdit === false}
+								grantRequiredFields={grantRequiredFields}
+							/>
+
+							<Box mt="43px" />
+							<AboutTeam
+								teamMembers={teamMembers}
+								teamMembersError={teamMembersError}
+								setTeamMembers={setTeamMembers}
+								setTeamMembersError={setTeamMembersError}
+								membersDescription={membersDescription}
+								setMembersDescription={setMembersDescription}
+								readOnly={onEdit === false}
+								grantRequiredFields={grantRequiredFields}
+							/>
+
+							<Box mt="19px" />
+							<AboutProject
+								projectName={projectName}
+								setProjectName={setProjectName}
+								projectNameError={projectNameError}
+								setProjectNameError={setProjectNameError}
+								projectLinks={projectLinks}
+								setProjectLinks={setProjectLinks}
+								projectDetails={projectDetails}
+								setProjectDetails={setProjectDetails}
+								projectDetailsError={projectDetailsError}
+								setProjectDetailsError={setProjectDetailsError}
+								projectGoal={projectGoal}
+								setProjectGoal={setProjectGoal}
+								projectGoalError={projectGoalError}
+								setProjectGoalError={setProjectGoalError}
+								projectMilestones={projectMilestones}
+								setProjectMilestones={setProjectMilestones}
+								rewardCurrency={rewardCurrency}
+								rewardCurrencyCoin={rewardCurrencyCoin}
+								readOnly={onEdit === false}
+								grantRequiredFields={grantRequiredFields}
+							/>
+
+							<Box mt="43px" />
+							<Funding
+								fundingAsk={fundingAsk}
+								setFundingAsk={setFundingAsk}
+								fundingAskError={fundingAskError}
+								setFundingAskError={setFundingAskError}
+								fundingBreakdown={fundingBreakdown}
+								setFundingBreakdown={setFundingBreakdown}
+								fundingBreakdownError={fundingBreakdownError}
+								setFundingBreakdownError={setFundingBreakdownError}
+								rewardAmount={rewardAmount}
+								rewardCurrency={rewardCurrency}
+								rewardCurrencyCoin={rewardCurrencyCoin}
+								readOnly={onEdit === false}
+								grantRequiredFields={grantRequiredFields}
+							/>
+
+							{
+								customFields.length > 0 && (
+									<>
+										<Box mt="43px" />
+										<CustomFields
+											customFields={customFields}
+											setCustomFields={setCustomFields}
+											readOnly={onEdit === false}
+										/>
+									</>
+								)
+							}
+						</Container>
+
+						{
+							onEdit && (
+								<Text
+									mt={10}
+									textAlign="center"
+									variant="footer"
+									fontSize="12px">
+									<Image
+										display="inline-block"
+										src="/ui_icons/info.svg"
+										alt="pro tip"
+										mb="-2px"
+									/>
+									{' '}
+          By pressing
+									{' '}
+									{onSubmit ? 'Submit Application' : 'Submit Edits'}
+									{' '}
+you&apos;ll have to approve this
+          transaction in your wallet.
+									{' '}
+									<Link
+										href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
+										isExternal
+									>
             Learn more
-						</Link>
-						{' '}
-						<Image
-							display="inline-block"
-							src="/ui_icons/link.svg"
-							alt="pro tip"
-							mb="-1px"
-							h="10px"
-							w="10px"
-						/>
-					</Text>
+									</Link>
+									{' '}
+									<Image
+										display="inline-block"
+										src="/ui_icons/link.svg"
+										alt="pro tip"
+										mb="-1px"
+										h="10px"
+										w="10px"
+									/>
+								</Text>
+							)
+						}
+
+						{
+							onEdit ? (
+								<Button
+									onClick={loading ? () => {} : handleOnSubmit}
+									py={loading ? 2 : 0}
+									mt={8}
+									mb={4}
+									variant="primary"
+								>
+									{loading ? <Loader /> : 'Submit Edits'}
+								</Button>
+							) : null
+						}
+
+						<Box mt={5} />
+
+						{
+							onSubmit && !onEdit ? (
+								<Button
+									onClick={() => setOnEdit(true)}
+									py={loading ? 2 : 0}
+									mt={8}
+									mb={4}
+									variant="primary"
+								>
+									Edit Application for Resubmit
+								</Button>
+							) : null
+						}
+					</>
 				)
-			}
-
-			<Box mt={5} />
-
-			{
-				onSubmit ? (
-					<Button
-						onClick={loading ? () => {} : handleOnSubmit}
-						py={loading ? 2 : 0}
-						mt={8}
-						mb={4}
-						mx={10}
-						alignSelf="stretch"
-						variant="primary"
-					>
-						{loading ? <Loader /> : 'Resubmit Application'}
-					</Button>
-				) : null
 			}
 		</Flex>
 	)

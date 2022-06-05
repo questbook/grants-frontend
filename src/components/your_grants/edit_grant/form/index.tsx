@@ -11,11 +11,12 @@ import {
 } from 'draft-js'
 import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
 import useChainId from 'src/hooks/utils/useChainId'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { useAccount } from 'wagmi'
 import applicantDetailsList from '../../../../constants/applicantDetailsList'
@@ -95,8 +96,9 @@ function Form({
 	const [publicKey] = React.useState<WorkspaceUpdateRequest>({
 		publicKey: '',
 	})
-	const [transactionData] = useUpdateWorkspacePublicKeys(publicKey)
+	const [transactionData, transactionLink, loading] = useUpdateWorkspacePublicKeys(publicKey)
 
+	const { setRefresh } = useCustomToast(transactionLink)
 	const [admins, setAdmins] = useState<any[]>([])
 	const [maximumPoints, setMaximumPoints] = useState(5)
 
@@ -104,6 +106,7 @@ function Form({
 		if(transactionData) {
 			setKeySubmitted(true)
 			console.log('transactionData-----', transactionData)
+			setRefresh(true)
 		}
 	}, [transactionData])
 

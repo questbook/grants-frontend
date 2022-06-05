@@ -30,7 +30,7 @@ import Tab from './tab'
 function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	const toast = useToast()
 	const { data: accountData } = useAccount()
-	const { isConnected } = useConnect()
+	const { isConnected, activeConnector } = useConnect()
 	const tabPaths = [
 		'your_grants',
 		'funds',
@@ -56,12 +56,20 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	)
 
 	const getNumberOfGrantsClients = Object.fromEntries(
-    Object.keys(subgraphClients)!.map((key) => [
-    	key,
+		Object.keys(subgraphClients)!.map((key) => [
+			key,
 
-    	useGetNumberOfGrantsLazyQuery({ client: subgraphClients[key].client }),
-    ]),
+			useGetNumberOfGrantsLazyQuery({ client: subgraphClients[key].client }),
+		]),
 	)
+
+	// Detect network change
+	// Set workspaces to an empty array
+	useEffect(() => {
+		if(workspaces) {
+			setWorkspaces([])
+		}
+	}, [activeConnector])
 
 	useEffect(() => {
 		if(!accountData?.address) {
@@ -129,17 +137,17 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	useEffect(() => {
 		if(
 			workspace
-      && workspace.members
-      && workspace.members.length > 0
-      && accountData
-      && accountData.address
+			&& workspace.members
+			&& workspace.members.length > 0
+			&& accountData
+			&& accountData.address
 		) {
 			const tempMember = workspace.members.find(
 				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 			)
 			setIsAdmin(
 				tempMember?.accessLevel === 'admin'
-          || tempMember?.accessLevel === 'owner',
+				|| tempMember?.accessLevel === 'owner',
 			)
 			setIsReviewer(tempMember?.accessLevel === 'reviewer')
 		}
@@ -157,6 +165,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 
 		const getWorkspaceData = async(userAddress: string) => {
 			try {
+				console.log('getallworkspace', getAllWorkspaces)
 				const promises = getAllWorkspaces.map(
 					// eslint-disable-next-line no-async-promise-executor
 					(allWorkspaces) => new Promise(async(resolve) => {
@@ -182,10 +191,18 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 					// console.log('all workspaces', allWorkspacesData);
 					setWorkspaces([...workspaces, ...allWorkspacesData])
 
-					const i = allWorkspacesData.findIndex(
-						(w) => w.id === localStorage.getItem('currentWorkspaceId') ?? 'undefined',
-					)
-					setWorkspace(allWorkspacesData[i === -1 ? 0 : i])
+
+					const savedWorkspaceData = localStorage.getItem('currentWorkspace')
+					if(!savedWorkspaceData || savedWorkspaceData === 'undefined') {
+						setWorkspace(allWorkspacesData[0])
+					} else {
+						const savedWorkspaceDataChain = savedWorkspaceData.split('-')[0]
+						const savedWorkspaceDataId = savedWorkspaceData.split('-')[1]
+						const i = allWorkspacesData.findIndex(
+							(w) => w.id === savedWorkspaceDataId && w.supportedNetworks[0] === savedWorkspaceDataChain,
+						)
+						setWorkspace(allWorkspacesData[i])
+					}
 				})
 			} catch(e) {
 				// console.log(e);
@@ -303,7 +320,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 									}
 								}
 							>
-              Discover Grants
+								Discover Grants
 							</MenuItem>
 						</MenuList>
 					</Menu>
@@ -339,8 +356,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 										<Tab
 											label={isReviewer ? 'Grants Assigned' : 'Grants'}
 											icon={
-												`/ui_icons/${
-													activeIndex === 0 ? 'brand' : 'gray'
+												`/ui_icons/${activeIndex === 0 ? 'brand' : 'gray'
 												}/tab_grants.svg`
 											}
 											isActive={activeIndex === 0}
@@ -368,8 +384,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 										<Tab
 											label="Funds"
 											icon={
-												`/ui_icons/${
-													activeIndex === 1 ? 'brand' : 'gray'
+												`/ui_icons/${activeIndex === 1 ? 'brand' : 'gray'
 												}/tab_funds.svg`
 											}
 											isActive={activeIndex === 1}
@@ -397,8 +412,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 										<Tab
 											label="Manage DAO"
 											icon={
-												`/ui_icons/${
-													activeIndex === 2 ? 'brand' : 'gray'
+												`/ui_icons/${activeIndex === 2 ? 'brand' : 'gray'
 												}/tab_settings.svg`
 											}
 											isActive={activeIndex === 2}
@@ -465,8 +479,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 									<Tab
 										label="My Applications"
 										icon={
-											`/ui_icons/${
-												activeIndex === 3 ? 'brand' : 'gray'
+											`/ui_icons/${activeIndex === 3 ? 'brand' : 'gray'
 											}/tab_grants.svg`
 										}
 										isActive={activeIndex === 3}
@@ -496,7 +509,10 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 							display={isAdmin || !workspace || !workspace?.id ? undefined : 'none'}
 							onClick={
 								() => {
-									if(workspace?.id === null) {
+									console.log('Create a grant!')
+									console.log(workspace)
+									console.log(workspace?.id)
+									if(!workspace?.id) {
 										router.push({
 											pathname: '/signup',
 										})
@@ -516,7 +532,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 							variant="primary"
 							mr="12px"
 						>
-            Create a Grant
+							Create a Grant
 						</Button>
 					</>
 				) : (

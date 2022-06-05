@@ -7,7 +7,7 @@ import {
 import BN from 'bn.js'
 import { useRouter } from 'next/router'
 import Empty from 'src/components/ui/empty'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import { GrantApplication, useGetMyApplicationsLazyQuery } from 'src/generated/graphql'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'

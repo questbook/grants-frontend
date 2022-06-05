@@ -2,7 +2,7 @@ import React from 'react'
 import { ethers } from 'ethers'
 import moment from 'moment'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
 import { ALL_SUPPORTED_CHAIN_IDS } from 'src/constants/chains'
 import { FundTransfer } from 'src/types'
 
@@ -213,3 +213,11 @@ export const getChainIdFromResponse = (networkString: string): string => network
 
 // eslint-disable-next-line max-len
 export const getFieldLabelFromFieldTitle = (title: string) => applicantDetailsList.find((detail) => detail.id === title)?.title
+
+export const getExplorerUrlForAddress = (chainId: SupportedChainId | undefined, address: string) => {
+	return CHAIN_INFO[chainId!]?.explorer.address.replace('{{address}}', address) || ''
+}
+
+export const getExplorerUrlForTxHash = (chainId: SupportedChainId | undefined, tx: string) => {
+	return CHAIN_INFO[chainId!]?.explorer.transactionHash.replace('{{tx}}', tx) || ''
+}

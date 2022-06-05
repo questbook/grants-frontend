@@ -10,15 +10,13 @@ import {
 	Link,
 	ModalBody,
 	Text,
-	ToastId,
 	Tooltip,
-	useToast,
 } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import { useRouter } from 'next/router'
 import CopyIcon from 'src/components/ui/copy_icon'
 import { SupportedChainId } from 'src/constants/chains'
-import config from 'src/constants/config'
+import config from 'src/constants/config.json'
 import {
 	GetApplicationDetailsQuery,
 	useGetApplicationDetailsQuery,
@@ -26,13 +24,13 @@ import {
 } from 'src/generated/graphql'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useCompleteApplication from 'src/hooks/useCompleteApplication'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { ApplicationMilestone } from 'src/types'
 import useApplicationMilestones from 'src/utils/queryUtil'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs'
 import Heading from '../../../src/components/ui/heading'
-import InfoToast from '../../../src/components/ui/infoToast'
 import Modal from '../../../src/components/ui/modal'
 import ModalContent from '../../../src/components/your_grants/manage_grant/modals/modalContentGrantComplete'
 import SendFundModalContent from '../../../src/components/your_grants/manage_grant/modals/sendFundModalContent'
@@ -206,34 +204,18 @@ function ManageGrant() {
 		},
 	]
 
-	const toastRef = React.useRef<ToastId>()
-	const toast = useToast()
-
 	const [update, setUpdate] = useState<any>()
 	const [txn, txnLink, loading] = useCompleteApplication(update, applicationData?.id)
 
+	const { setRefresh } = useCustomToast(txnLink, 6000)
 	useEffect(() => {
 		if(txn) {
 			setUpdate(undefined)
 			setIsGrantCompleteModalOpen(false)
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={txnLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
+			setRefresh(true)
 		}
 
-	}, [toast, txn])
+	}, [txn])
 
 	const markApplicationComplete = async(comment: string) => {
 		setUpdate({

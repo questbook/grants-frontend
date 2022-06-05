@@ -10,10 +10,11 @@ import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
 import CustomTokenModal from 'src/components/ui/submitCustomTokenModal'
 import Tooltip from 'src/components/ui/tooltip'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
 import useChainId from 'src/hooks/utils/useChainId'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import useEncryption from 'src/hooks/utils/useEncryption'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useNetwork } from 'wagmi'
@@ -98,6 +99,7 @@ function GrantRewardsInput({
 	useEffect(() => {
 		if(workspace && switchNetwork) {
 			const chainId = getSupportedChainIdFromWorkspace(workspace)
+			console.log(' (CREATE_GRANT) Switch Network: ', workspace, chainId)
 			switchNetwork(chainId!)
 		}
 	}, [switchNetwork, workspace])
@@ -130,13 +132,15 @@ function GrantRewardsInput({
 	const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({
 		publicKey: '',
 	})
-	const [transactionData] = useUpdateWorkspacePublicKeys(publicKey)
+	const [transactionData, transactionLink, loading] = useUpdateWorkspacePublicKeys(publicKey)
 
+	const { setRefresh } = useCustomToast(transactionLink)
 	const [shouldEncryptReviews, setShouldEncryptReviews] = useState(false)
 
 	useEffect(() => {
 		if(transactionData) {
 			setKeySubmitted(true)
+			setRefresh(true)
 		}
 	}, [transactionData])
 
@@ -345,6 +349,7 @@ function GrantRewardsInput({
 					isError={dateError}
 					errorText="Required"
 					label="Grant Deadline"
+					tooltip="This is the last date on/before which grantees can apply"
 				/>
 
 				<Flex

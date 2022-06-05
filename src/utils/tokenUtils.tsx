@@ -1,34 +1,11 @@
-import { CHAIN_INFO } from 'src/constants/chainInfo'
-import { SupportedChainId } from 'src/constants/chains'
-import supportedCurrencies from '../constants/supportedCurrencies'
+import { CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
 
-export function getAssetInfo(
-	asset?: string,
-	chainId?: SupportedChainId,
-): { label: string; icon: string } {
-	if(!asset) {
-		return { label: '', icon: '' }
+export function getAssetInfo(asset?: string, chainId?: SupportedChainId) {
+	asset = asset?.toLowerCase()
+	const chain = CHAIN_INFO[chainId!] || CHAIN_INFO[SupportedChainId.RINKEBY]
+
+	return {
+		label: chain?.supportedCurrencies[asset!]?.label ?? '',
+		icon: chain?.supportedCurrencies[asset!]?.icon ?? '',
 	}
-
-	if(chainId) {
-		return {
-			label:
-        CHAIN_INFO[
-        	chainId
-        ]?.supportedCurrencies[asset.toLowerCase()]?.label
-        ?? 'LOL',
-			icon:
-        CHAIN_INFO[
-        	chainId
-        ]?.supportedCurrencies[asset.toLowerCase()]?.icon,
-		}
-	}
-
-	return (
-		supportedCurrencies.find(
-			(curr) => curr?.id.toLowerCase() === asset?.toLowerCase(),
-		) ?? { label: '', icon: '' }
-	)
 }
-
-export function dummy() {}

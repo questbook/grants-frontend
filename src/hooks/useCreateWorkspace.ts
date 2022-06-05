@@ -1,9 +1,9 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
 import { SupportedNetwork } from 'src/generated/graphql'
 import getErrorMessage from 'src/utils/errorUtils'
+import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
@@ -157,12 +157,11 @@ export default function useCreateWorkspace(
 		data,
 	])
 
+	const networkChainId = getSupportedChainIdFromSupportedNetwork(`chain_${data?.network}` as SupportedNetwork)
+
 	return [
 		transactionData,
-		data?.network
-			? `${CHAIN_INFO[getSupportedChainIdFromSupportedNetwork(`chain_${data.network}` as SupportedNetwork)]
-				.explorer.transactionHash}${transactionData?.transactionHash}`
-			: '',
+		getExplorerUrlForTxHash(networkChainId, transactionData?.transactionHash),
 		imageHash,
 		loading,
 		error,

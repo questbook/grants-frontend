@@ -6,25 +6,19 @@ import {
 	Flex,
 	Image,
 	Text,
-	ToastId,
-	useToast,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import Deadline from 'src/components/ui/deadline'
 import GrantShare from 'src/components/ui/grantShare'
-import InfoToast from 'src/components/ui/infoToast'
 import Modal from 'src/components/ui/modal'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
-import {
-	useGetApplicationDetailsQuery,
-	useGetGrantDetailsQuery,
-	useGetGrantsAppliedToQuery,
-} from 'src/generated/graphql'
+import { useGetGrantDetailsQuery, useGetGrantsAppliedToQuery } from 'src/generated/graphql'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
+import useCustomToast from 'src/hooks/utils/useCustomToast'
 import verify from 'src/utils/grantUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { useAccount } from 'wagmi'
@@ -68,8 +62,6 @@ function AboutGrant() {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [alreadyApplied, setAlreadyApplied] = useState(false)
 	const [account, setAccount] = useState<any>(null)
-	const [appliedAt, setAppliedAt] = useState<any>('')
-	const [applicationId, setApplicationId] = useState('')
 
 	useEffect(() => {
 		// console.log(router.query);
@@ -86,10 +78,6 @@ function AboutGrant() {
 	})
 
 	const [applicantQueryParams, setApplicantQueryParams] = useState<any>({
-		client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
-	})
-
-	const [applicantionDetailsQueryParams, setApplicantionDetailsQueryParams] = useState<any>({
 		client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
 	})
 
@@ -154,34 +142,9 @@ function AboutGrant() {
 	useEffect(() => {
 		const application = userGrants.find((x: any) => x.grant.id === grantID)
 		if(application) {
-			setApplicationId(application.id)
 			setAlreadyApplied(true)
 		}
 	}, [userGrants, accountData, grantID])
-
-	useEffect(() => {
-		if(!applicationId) {
-			return
-		}
-
-		setApplicantionDetailsQueryParams({
-			client: subgraphClients[chainId as SupportedChainId].client,
-			variables: {
-				applicationID: applicationId,
-			},
-		})
-	}, [applicationId, subgraphClients])
-
-	const applicationDetails = useGetApplicationDetailsQuery(applicantionDetailsQueryParams)
-
-	useEffect(() => {
-		if(applicationDetails.data) {
-			const secondsSinceEpoch = applicationDetails.data?.grantApplication?.createdAtS
-			const timeSinceEpoch = new Date(secondsSinceEpoch as number * 1000)
-			const timeInUTC = timeSinceEpoch.toUTCString()
-			setAppliedAt(timeInUTC)
-		}
-	}, [applicationDetails])
 
 	useEffect(() => {
 		if(!chainId || !grantData) {
@@ -304,31 +267,16 @@ function AboutGrant() {
     	grantID
     )
 
-	const toastRef = React.useRef<ToastId>()
-	const toast = useToast()
+	const { setRefresh } = useCustomToast(txnLink)
 	const buttonRef = React.useRef<HTMLButtonElement>(null)
 
 	useEffect(() => {
 		// console.log(transactionData);
 		if(transactionData) {
-			toastRef.current = toast({
-				position: 'top',
-				render: () => (
-					<InfoToast
-						link={txnLink}
-						close={
-							() => {
-								if(toastRef.current) {
-									toast.close(toastRef.current)
-								}
-							}
-						}
-					/>
-				),
-			})
+			setRefresh(true)
 			setIsModalOpen(false)
 		}
-	}, [toast, transactionData])
+	}, [transactionData])
 
 	React.useEffect(() => {
 		setIsAcceptingApplications([acceptingApplications, 0])
@@ -493,7 +441,6 @@ function AboutGrant() {
 						grantRequiredFields={grantRequiredFields}
 						acceptingApplications={acceptingApplications}
 						alreadyApplied={alreadyApplied}
-						appliedAt={appliedAt}
 					/>
 				</Flex>
 			</Flex>

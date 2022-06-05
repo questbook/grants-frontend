@@ -54,6 +54,7 @@ function GrantRewardsInput({
   setShouldEncryptReviews: (shouldEncryptReviews: boolean) => void;
 }) {
 	const [isModalOpen, setIsModalOpen] = React.useState(false)
+	const [oldDate, setOldDate] = React.useState(false)
 	const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<any[]>([])
 
 	useEffect(() => {
@@ -143,12 +144,19 @@ function GrantRewardsInput({
 							setDateError(false)
 						}
 
-						setDate(e.target.value)
+						const date = new Date()
+						if(new Date(e.target.value) <= date) {
+							setOldDate(true)
+							setDateError(true)
+						} else {
+							setDate(e.target.value)
+						}
 					}
 				}
 				value={date}
 				isError={dateError}
-				errorText="Required"
+				errorText={oldDate ? 'Choose a date in the future' : 'Date is Required'}
+				tooltip="This is the last date on/before which grantees can apply"
 				label="Grant Deadline"
 			/>
 

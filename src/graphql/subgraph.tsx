@@ -1,7 +1,7 @@
 import {
 	ApolloClient, gql,
 	HttpLink, InMemoryCache, } from '@apollo/client'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 
 class SubgraphClient {

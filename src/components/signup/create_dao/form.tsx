@@ -11,9 +11,9 @@ import {
 } from '@chakra-ui/react'
 import SecondaryDropdown from 'src/components/ui/secondaryDropdown'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from 'src/constants/chains'
-import config from 'src/constants/config'
+import config from 'src/constants/config.json'
 import useChainId from 'src/hooks/utils/useChainId'
 import { useAccount, useNetwork } from 'wagmi'
 import ImageUpload from '../../ui/forms/imageUpload'
@@ -224,7 +224,9 @@ function Form({
 						onChange={
 							(id: SupportedChainId) => {
 								if(switchNetwork) {
+									console.log(' (CREATE DAO) Switch Network before: ', chainId, id)
 									const network = switchNetwork(id)
+									console.log(' (CREATE DAO) Switch Network after: ', network, chainId, id)
 								}
 								// setSelectedNetworkId(id)
 							}

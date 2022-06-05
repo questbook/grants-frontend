@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import CopyIcon from 'src/components/ui/copy_icon'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import {

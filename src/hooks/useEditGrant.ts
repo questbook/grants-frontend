@@ -1,9 +1,8 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
 import getErrorMessage from 'src/utils/errorUtils'
-import { parseAmount } from 'src/utils/formattingUtils'
+import { getExplorerUrlForTxHash, parseAmount } from 'src/utils/formattingUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromWorkspace,
@@ -250,10 +249,7 @@ export default function useEditGrant(
 
 	return [
 		transactionData,
-		currentChainId
-			? `${CHAIN_INFO[currentChainId]
-				.explorer.transactionHash}${transactionData?.transactionHash}`
-			: '',
+		getExplorerUrlForTxHash(currentChainId, transactionData?.transactionHash),
 		loading,
 		error,
 	]

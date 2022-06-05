@@ -18,7 +18,7 @@ const getSupportedChainIdFromSupportedNetwork = (chainId: SupportedNetwork) => {
 	}
 
 	if(chainId === SupportedNetwork.Chain_80001) {
-		return SupportedChainId.POLYGON_TESTNET
+		return SupportedChainId.POLYGON_MUMBAI
 	}
 
 	if(chainId === SupportedNetwork.Chain_137) {
@@ -33,11 +33,15 @@ const getSupportedChainIdFromSupportedNetwork = (chainId: SupportedNetwork) => {
 		return SupportedChainId.NEON_DEVNET
 	}
 
+	if(chainId === SupportedNetwork.Chain_44787) {
+		return SupportedChainId.CELO_ALFAJORES_TESTNET
+	}
+
 	// @TODO: needs type for harmony
 	// if (chainId === SupportedNetwork.Chain_80001) {
-	//   return SupportedChainId.HARMONY_TESTNET_S0;
+	//   return SupportedChainId.HARMONY_TESTNET;
 	// }
-	return SupportedChainId.HARMONY_TESTNET_S0
+	return SupportedChainId.HARMONY_TESTNET
 	// cannot return undefined ?
 	// return undefined;
 }
@@ -57,7 +61,7 @@ const getSupportedValidatorNetworkFromChainId = (chainId: SupportedChainId) => {
 		return SupportedValidatorNetwork._4
 	}
 
-	if(chainId === SupportedChainId.POLYGON_TESTNET) {
+	if(chainId === SupportedChainId.POLYGON_MUMBAI) {
 		return SupportedValidatorNetwork._80001
 	}
 
@@ -73,10 +77,15 @@ const getSupportedValidatorNetworkFromChainId = (chainId: SupportedChainId) => {
 		return SupportedValidatorNetwork._245022926
 	}
 
+	if(chainId === SupportedChainId.CELO_ALFAJORES_TESTNET) {
+		return SupportedValidatorNetwork._44787
+	}
+
 	// @TODO: needs type for harmony
 	// if (chainId === SupportedNetwork.Chain_80001) {
-	//   return SupportedChainId.HARMONY_TESTNET_S0;
+	//   return SupportedChainId.HARMONY_TESTNET;
 	// }
+
 	return SupportedValidatorNetwork._1666700000
 }
 
