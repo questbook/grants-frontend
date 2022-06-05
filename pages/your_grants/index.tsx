@@ -11,6 +11,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { useRouter } from 'next/router'
 import AllowAccessToPublicKeyModal from 'src/components/ui/accessToPublicKeyModal'
 import ArchivedGrantEmptyState from 'src/components/your_grants/empty_states/archived_grant'
+import ExpiredGrantEmptyState from 'src/components/your_grants/empty_states/expired_grant'
 import FirstGrantEmptyState from 'src/components/your_grants/empty_states/first_grant'
 import LiveGrantEmptyState from 'src/components/your_grants/empty_states/live_grants'
 import Sidebar from 'src/components/your_grants/sidebar/sidebar'
@@ -51,14 +52,7 @@ const TABS = [
 			maxDeadline: UNIX_TIMESTAMP_MAX
 		},
 		label: 'Live Grants',
-		emptyState: {
-			icon: '/illustrations/empty_states/no_live_grant.svg',
-			title: 'It’s quite silent here!',
-			description: [
-				'Get started by creating your grant and post it in less than 2 minutes.',
-			],
-			shouldShowButton: true,
-		},
+		emptyState: () => <LiveGrantEmptyState />,
 	},
 	{
 		index: 1,
@@ -69,18 +63,7 @@ const TABS = [
 			maxDeadline: UNIX_TIMESTAMP_MAX
 		},
 		label: 'Archived',
-		emptyState: {
-			icon: '/illustrations/empty_states/no_archived_grant.svg',
-			title: 'No Grants archived.',
-			description: [
-				'When you archive a grant it will no longer be visible to anyone.',
-				[
-					'To archive a grant, click on the',
-					'icon on your live grant and select “Archive grant”.',
-				],
-			],
-			shouldShowButton: false,
-		},
+		emptyState: () => <ArchivedGrantEmptyState />,
 	},
 	{
 		index: 2,
@@ -92,14 +75,7 @@ const TABS = [
 			maxDeadline: unixTimestampSeconds(),
 		},
 		label: 'Expired Grants',
-		emptyState: {
-			icon: '/illustrations/empty_states/no_archived_grant.svg',
-			title: 'No Grants expired',
-			description: [
-				'Grants whose deadline has passed will appear here',
-			],
-			shouldShowButton: false,
-		},
+		emptyState: () => <ExpiredGrantEmptyState />
 	},
 ]
 
@@ -379,6 +355,10 @@ function YourGrants() {
 		}
 	}, [containerRef, currentPage])
 
+	const getEmptyStateForSelectedTab = () => (
+		TABS[selectedTab]?.emptyState()
+	)
+
 	useEffect(() => {
 		const { current } = containerRef
 		if(!current) {
@@ -599,35 +579,33 @@ function YourGrants() {
               })
 					}
 					{
-						grants.length === 0 && isAdmin
-                && !grantCount[0]
-                && !grantCount[1]
-                && router.query.done && <FirstGrantEmptyState />
+						grants.length === 0
+							&& isAdmin
+							&& !grantCount[0]
+							&& !grantCount[1]
+							&& router.query.done
+							&& <FirstGrantEmptyState />
 					}
 					{
-						grants.length === 0 && isAdmin
-                && !router.query.done
-                && (selectedTab === 0 ? (
-                	<LiveGrantEmptyState />
-                ) : (
-                	<ArchivedGrantEmptyState />
-                ))
+						grants.length === 0
+						&& isAdmin
+						&& !router.query.done
+						&& getEmptyStateForSelectedTab()
 					}
 
 					{
-						grantsReviewer.length === 0 && isReviewer
-            && !grantCount[0]
-            && !grantCount[1]
-            && router.query.done && <FirstGrantEmptyState />
+						grantsReviewer.length === 0
+						&& isReviewer
+						&& !grantCount[0]
+						&& !grantCount[1]
+						&& router.query.done
+						&& <FirstGrantEmptyState />
 					}
 					{
-						grantsReviewer.length === 0 && isReviewer
-            && !router.query.done
-            && (selectedTab === 0 ? (
-            	<LiveGrantEmptyState />
-            ) : (
-            	<ArchivedGrantEmptyState />
-            ))
+						grantsReviewer.length === 0
+						&& isReviewer
+						&& !router.query.done
+						&& getEmptyStateForSelectedTab()
 					}
 
 				</Flex>
