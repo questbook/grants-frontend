@@ -1,9 +1,9 @@
-query getAllGrants($first: Int, $skip: Int, $applicantId: Bytes!) {
+query getAllGrants($first: Int, $skip: Int, $applicantId: Bytes!, $minDeadline: Int!) {
   grants(
     first: $first, 
     skip: $skip, 
     subgraphError: allow, 
-    where: {acceptingApplications: true},
+    where: {acceptingApplications: true, deadlineS_gte: $minDeadline},
     orderBy: createdAtS, 
     orderDirection: desc
   ) {

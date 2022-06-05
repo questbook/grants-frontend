@@ -11,6 +11,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { useRouter } from 'next/router'
 import AllowAccessToPublicKeyModal from 'src/components/ui/accessToPublicKeyModal'
 import ArchivedGrantEmptyState from 'src/components/your_grants/empty_states/archived_grant'
+import ExpiredGrantEmptyState from 'src/components/your_grants/empty_states/expired_grant'
 import FirstGrantEmptyState from 'src/components/your_grants/empty_states/first_grant'
 import LiveGrantEmptyState from 'src/components/your_grants/empty_states/live_grants'
 import Sidebar from 'src/components/your_grants/sidebar/sidebar'
@@ -23,6 +24,7 @@ import {
 	useGetAllGrantsForCreatorQuery,
 	useGetAllGrantsForReviewerQuery,
 } from 'src/generated/graphql'
+import { UNIX_TIMESTAMP_MAX, unixTimestampSeconds } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromSupportedNetwork,
@@ -38,6 +40,45 @@ import { ApiClientsContext } from '../_app'
 
 const PAGE_SIZE = 5
 
+const TABS = [
+	{
+		index: 0,
+		query: {
+			// fetch all grants,
+			// currently accepting applications
+			// & those that haven't expired yet
+			acceptingApplications: true,
+			minDeadline: unixTimestampSeconds(),
+			maxDeadline: UNIX_TIMESTAMP_MAX
+		},
+		label: 'Live Grants',
+		emptyState: () => <LiveGrantEmptyState />,
+	},
+	{
+		index: 1,
+		query: {
+			// fetch all archived grants regardless of "acceptingApplications" state
+			acceptingApplications: false,
+			minDeadline: 0,
+			maxDeadline: UNIX_TIMESTAMP_MAX
+		},
+		label: 'Archived',
+		emptyState: () => <ArchivedGrantEmptyState />,
+	},
+	{
+		index: 2,
+		acceptingApplications: true,
+		query: {
+			// fetch all expired (not archived) grants
+			acceptingApplications: true,
+			minDeadline: 0,
+			maxDeadline: unixTimestampSeconds(),
+		},
+		label: 'Expired Grants',
+		emptyState: () => <ExpiredGrantEmptyState />
+	},
+]
+
 function removeDuplicates(array: any) {
 	const uniq: any = {}
 	// eslint-disable-next-line no-return-assign
@@ -48,9 +89,6 @@ function YourGrants() {
 	const router = useRouter()
 	const [pk, setPk] = useState<string>('*')
 	const [ignorePkModal, setIgnorePkModal] = useState(false)
-	// useEffect(async () => {
-	//   const publicKey = await getPublicEncryptionKey();
-	// }, [getPublicEncryptionKey]);
 
 	const { data: accountData } = useAccount()
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
@@ -89,44 +127,12 @@ function YourGrants() {
       ].client,
 	})
 
-	const tabs = [
-		{
-			index: 0,
-			acceptingApplications: true,
-			label: 'Live Grants',
-			emptyState: {
-				icon: '/illustrations/empty_states/no_live_grant.svg',
-				title: 'It’s quite silent here!',
-				description: [
-					'Get started by creating your grant and post it in less than 2 minutes.',
-				],
-				shouldShowButton: true,
-			},
-		},
-		{
-			index: 1,
-			acceptingApplications: false,
-			label: 'Archived',
-			emptyState: {
-				icon: '/illustrations/empty_states/no_archived_grant.svg',
-				title: 'No Grants archived.',
-				description: [
-					'When you archive a grant it will no longer be visible to anyone.',
-					[
-						'To archive a grant, click on the',
-						'icon on your live grant and select “Archive grant”.',
-					],
-				],
-				shouldShowButton: false,
-			},
-		},
-	]
 	const [selectedTab, setSelectedTab] = useState(0)
+	const [grantCount, setGrantCount] = useState([true, true])
+
 	useEffect(() => {
 		setSelectedTab(parseInt(localStorage.getItem('yourGrantsTabSelected') ?? '0'))
 	}, [])
-
-	const [grantCount, setGrantCount] = useState([true, true])
 
 	useEffect(() => {
 		if(!workspace) {
@@ -180,14 +186,15 @@ function YourGrants() {
 			return
 		}
 
+		const { query } = TABS[selectedTab]
+
 		setQueryParams({
-			client:
-        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+			client: subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
 			variables: {
 				first: PAGE_SIZE,
 				skip: PAGE_SIZE * currentPage,
 				workspaceId: workspace?.id,
-				acceptingApplications: !!tabs[selectedTab]?.acceptingApplications,
+				...query,
 			},
 			fetchPolicy: 'network-only',
 		})
@@ -348,6 +355,10 @@ function YourGrants() {
 		}
 	}, [containerRef, currentPage])
 
+	const getEmptyStateForSelectedTab = () => (
+		TABS[selectedTab]?.emptyState()
+	)
+
 	useEffect(() => {
 		const { current } = containerRef
 		if(!current) {
@@ -382,7 +393,7 @@ function YourGrants() {
 									mt={4}
 									mb={4}>
 									{
-										tabs.map((tab) => (
+										TABS.map((tab) => (
 											<Button
 												padding="8px 24px"
 												borderRadius="52px"
@@ -568,35 +579,33 @@ function YourGrants() {
               })
 					}
 					{
-						grants.length === 0 && isAdmin
-                && !grantCount[0]
-                && !grantCount[1]
-                && router.query.done && <FirstGrantEmptyState />
+						grants.length === 0
+							&& isAdmin
+							&& !grantCount[0]
+							&& !grantCount[1]
+							&& router.query.done
+							&& <FirstGrantEmptyState />
 					}
 					{
-						grants.length === 0 && isAdmin
-                && !router.query.done
-                && (selectedTab === 0 ? (
-                	<LiveGrantEmptyState />
-                ) : (
-                	<ArchivedGrantEmptyState />
-                ))
+						grants.length === 0
+						&& isAdmin
+						&& !router.query.done
+						&& getEmptyStateForSelectedTab()
 					}
 
 					{
-						grantsReviewer.length === 0 && isReviewer
-            && !grantCount[0]
-            && !grantCount[1]
-            && router.query.done && <FirstGrantEmptyState />
+						grantsReviewer.length === 0
+						&& isReviewer
+						&& !grantCount[0]
+						&& !grantCount[1]
+						&& router.query.done
+						&& <FirstGrantEmptyState />
 					}
 					{
-						grantsReviewer.length === 0 && isReviewer
-            && !router.query.done
-            && (selectedTab === 0 ? (
-            	<LiveGrantEmptyState />
-            ) : (
-            	<ArchivedGrantEmptyState />
-            ))
+						grantsReviewer.length === 0
+						&& isReviewer
+						&& !router.query.done
+						&& getEmptyStateForSelectedTab()
 					}
 
 				</Flex>

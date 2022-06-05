@@ -1,6 +1,6 @@
 import React from 'react'
 import { Image, Text } from '@chakra-ui/react'
-import moment from 'moment'
+import Deadline from 'src/components/ui/deadline'
 
 function Badge({
 	numOfApplicants,
@@ -43,9 +43,7 @@ function Badge({
 				as="span"
 				fontSize="xs"
 				display="inline-block">
-        Ends on
-				{' '}
-				{moment(endTimestamp).format('MMMM D')}
+        		<Deadline date={new Date(endTimestamp)} />
 			</Text>
 		</Text>
 	)

@@ -152,7 +152,7 @@ export function highlightWordsInString(
 
 export function getFormattedDate(timestamp: number) {
 	const date = new Date(timestamp)
-	return moment(date).format('LL')
+	return moment(date).format('DD MMM YY')
 }
 
 export function getFormattedDateFromUnixTimestamp(timestamp: number) {
