@@ -84,7 +84,7 @@ const getSupportedValidatorNetworkFromChainId = (chainId: SupportedChainId) => {
 	if(chainId === SupportedChainId.CELO_ALFAJORES_TESTNET) {
 		return SupportedValidatorNetwork._44787
 	}
-	
+
 	if(chainId === SupportedChainId.OPTIMISM_KOVAN) {
 		return SupportedValidatorNetwork._69
 	}
