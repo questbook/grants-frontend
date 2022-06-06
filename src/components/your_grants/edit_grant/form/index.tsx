@@ -11,7 +11,7 @@ import {
 } from 'draft-js'
 import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'

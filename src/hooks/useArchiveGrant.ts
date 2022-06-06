@@ -1,8 +1,8 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
 import getErrorMessage from 'src/utils/errorUtils'
+import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
@@ -164,9 +164,7 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 
 	return [
 		transactionData,
-		currentChainId
-			? `${CHAIN_INFO[currentChainId].explorer.transactionHash}${transactionData?.transactionHash}`
-			: '',
+		getExplorerUrlForTxHash(currentChainId, transactionData?.transactionHash),
 		loading,
 		error,
 	]

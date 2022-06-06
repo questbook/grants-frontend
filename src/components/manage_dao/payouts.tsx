@@ -22,6 +22,7 @@ import { SupportedChainId } from 'src/constants/chains'
 import { useGetDaoGrantsQuery, useGetFundSentforReviewsQuery } from 'src/generated/graphql'
 // TOOLS AND UTILS
 import {
+	getExplorerUrlForTxHash,
 	getFormattedDateFromUnixTimestampWithYear,
 	trimAddress,
 } from 'src/utils/formattingUtils'
@@ -37,7 +38,7 @@ import PayoutModalContent from './payoutModalContent'
 
 function Payouts() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
-	const [workspaceChainId, setWorkspaceChainId] = React.useState<number>()
+	const [workspaceChainId, setWorkspaceChainId] = React.useState<SupportedChainId>()
 	const [applications, setApplications] = React.useState<any>([])
 	const [outstandingReviews, setOutstandingReviews] = React.useState<any>([])
 	const [reviewers, setReviewers] = React.useState<any>([])
@@ -619,15 +620,7 @@ There is no payout history to show
 
 													<Flex direction="row">
 														<Link
-															href={
-																workspaceChainId ?
-																	`${CHAIN_INFO[workspaceChainId]
-																		.explorer.transactionHash}${data.id.substr(
-																		0,
-																		data.id.indexOf('.'),
-																	)}`
-																	: ''
-															}
+															href={getExplorerUrlForTxHash(workspaceChainId, data.id.substr(0, data.id.indexOf('.')))}
 															isExternal
 														>
                             View

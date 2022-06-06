@@ -15,11 +15,7 @@ import type { AppContext, AppProps } from 'next/app'
 import App from 'next/app'
 import Head from 'next/head'
 import { DefaultSeo } from 'next-seo'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
-import {
-	ALL_SUPPORTED_CHAIN_IDS,
-	// SupportedChainId,
-} from 'src/constants/chains'
+import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
 import { MinimalWorkspace } from 'src/types'
 import getSeo from 'src/utils/seo'
 import {
@@ -54,9 +50,9 @@ const defaultChain = chain.polygon
 const { chains, provider } = configureChains(allChains, [
 	jsonRpcProvider({
 		rpc: (chain: Chain) => {
-			const rpcUrl = CHAIN_INFO[chain.id]?.rpcUrls[0]
+			const rpcUrl = CHAIN_INFO[chain.id as SupportedChainId]?.rpcUrls[0]
 			if(!rpcUrl) {
-				return { http: CHAIN_INFO[defaultChain.id].rpcUrls[0] }
+				return { http: CHAIN_INFO[defaultChain.id as SupportedChainId].rpcUrls[0] }
 			}
 
 			return { http: rpcUrl }

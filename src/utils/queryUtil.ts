@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { ApiClientsContext } from 'pages/_app'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from 'src/constants/chains'
 import { useGetApplicationMilestonesQuery } from 'src/generated/graphql'
 import { getUrlForIPFSHash } from './ipfsUtils'

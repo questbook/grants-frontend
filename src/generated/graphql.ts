@@ -3361,6 +3361,7 @@ export type GetAllGrantsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
   applicantId: Scalars['Bytes'];
+  minDeadline: Scalars['Int'];
 }>;
 
 
@@ -3392,6 +3393,8 @@ export type GetAllGrantsForCreatorQueryVariables = Exact<{
   creatorId?: InputMaybe<Scalars['Bytes']>;
   workspaceId?: InputMaybe<Scalars['String']>;
   acceptingApplications?: InputMaybe<Scalars['Boolean']>;
+  minDeadline: Scalars['Int'];
+  maxDeadline: Scalars['Int'];
 }>;
 
 
@@ -3565,12 +3568,12 @@ export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers:
 
 
 export const GetAllGrantsDocument = gql`
-    query getAllGrants($first: Int, $skip: Int, $applicantId: Bytes!) {
+    query getAllGrants($first: Int, $skip: Int, $applicantId: Bytes!, $minDeadline: Int!) {
   grants(
     first: $first
     skip: $skip
     subgraphError: allow
-    where: {acceptingApplications: true}
+    where: {acceptingApplications: true, deadlineS_gte: $minDeadline}
     orderBy: createdAtS
     orderDirection: desc
   ) {
@@ -3622,6 +3625,7 @@ export const GetAllGrantsDocument = gql`
  *      first: // value for 'first'
  *      skip: // value for 'skip'
  *      applicantId: // value for 'applicantId'
+ *      minDeadline: // value for 'minDeadline'
  *   },
  * });
  */
@@ -3760,12 +3764,12 @@ export type GetAllGrantsForADaoQueryHookResult = ReturnType<typeof useGetAllGran
 export type GetAllGrantsForADaoLazyQueryHookResult = ReturnType<typeof useGetAllGrantsForADaoLazyQuery>;
 export type GetAllGrantsForADaoQueryResult = Apollo.QueryResult<GetAllGrantsForADaoQuery, GetAllGrantsForADaoQueryVariables>;
 export const GetAllGrantsForCreatorDocument = gql`
-    query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String, $acceptingApplications: Boolean) {
+    query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String, $acceptingApplications: Boolean, $minDeadline: Int!, $maxDeadline: Int!) {
   grants(
     first: $first
     skip: $skip
     subgraphError: allow
-    where: {workspace: $workspaceId, acceptingApplications: $acceptingApplications}
+    where: {workspace: $workspaceId, acceptingApplications: $acceptingApplications, deadlineS_gte: $minDeadline, deadlineS_lte: $maxDeadline}
     orderBy: createdAtS
     orderDirection: desc
   ) {
@@ -3825,10 +3829,12 @@ export const GetAllGrantsForCreatorDocument = gql`
  *      creatorId: // value for 'creatorId'
  *      workspaceId: // value for 'workspaceId'
  *      acceptingApplications: // value for 'acceptingApplications'
+ *      minDeadline: // value for 'minDeadline'
+ *      maxDeadline: // value for 'maxDeadline'
  *   },
  * });
  */
-export function useGetAllGrantsForCreatorQuery(baseOptions?: Apollo.QueryHookOptions<GetAllGrantsForCreatorQuery, GetAllGrantsForCreatorQueryVariables>) {
+export function useGetAllGrantsForCreatorQuery(baseOptions: Apollo.QueryHookOptions<GetAllGrantsForCreatorQuery, GetAllGrantsForCreatorQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetAllGrantsForCreatorQuery, GetAllGrantsForCreatorQueryVariables>(GetAllGrantsForCreatorDocument, options);
       }

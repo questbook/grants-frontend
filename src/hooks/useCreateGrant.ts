@@ -5,10 +5,9 @@ import {
 	APPLICATION_REGISTRY_ADDRESS,
 	WORKSPACE_REGISTRY_ADDRESS,
 } from 'src/constants/addresses'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
 import { SupportedChainId } from 'src/constants/chains'
 import getErrorMessage from 'src/utils/errorUtils'
-import { parseAmount } from 'src/utils/formattingUtils'
+import { getExplorerUrlForTxHash, parseAmount } from 'src/utils/formattingUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromWorkspace,
@@ -269,10 +268,7 @@ export default function useCreateGrant(
 
 	return [
 		transactionData,
-		chainId ?? getSupportedChainIdFromWorkspace(workspace)
-			? `${CHAIN_INFO[chainId ?? getSupportedChainIdFromWorkspace(workspace)!]
-				.explorer.transactionHash}${transactionData?.transactionHash}`
-			: '',
+		getExplorerUrlForTxHash(chainId ?? getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
 		loading,
 		error,
 	]

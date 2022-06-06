@@ -12,7 +12,7 @@ import AppplicationTableEmptyState from 'src/components/your_applications/empty_
 import RubricDrawer from 'src/components/your_grants/rubricDrawer'
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import {
 	useGetApplicantsForAGrantQuery,

@@ -7,6 +7,7 @@ import {
 	GetWorkspaceMembersQuery,
 	SupportedNetwork,
 } from 'src/generated/graphql'
+import SupportedChainId from 'src/generated/SupportedChainId'
 
 export type Grant = GetAllGrantsForADaoQuery['grants'][number];
 export type ApplicationMilestone = GetApplicationMilestonesQuery['grantApplications'][number]['milestones'][number];

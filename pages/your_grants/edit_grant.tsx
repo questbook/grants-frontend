@@ -8,7 +8,7 @@ import React, {
 import { Container } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import { useGetGrantDetailsQuery } from 'src/generated/graphql'
 import useEditGrant from 'src/hooks/useEditGrant'

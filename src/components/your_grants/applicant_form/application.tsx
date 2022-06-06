@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
+import { CHAIN_INFO } from 'src/constants/chains'
 import { GetApplicationDetailsQuery } from 'src/generated/graphql'
 import { getFromIPFS, getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'

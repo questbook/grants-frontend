@@ -5,11 +5,11 @@ import {
 	Text, Tooltip, } from '@chakra-ui/react'
 import moment from 'moment'
 import Empty from 'src/components/ui/empty'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
 import { SupportedChainId } from 'src/constants/chains'
 import { FundTransfer } from 'src/types'
 import {
 	formatAmount,
+	getExplorerUrlForTxHash,
 	getMilestoneTitle,
 	getTextWithEllipses,
 } from '../../../utils/formattingUtils'
@@ -123,12 +123,7 @@ const TABLE_HEADERS = {
 		flex: 0.1,
 		content: (item: FundTransfer, _: any, __: any, ___: any, currentChainId: any) => (
 			<Link
-				href={
-					currentChainId
-						? `${CHAIN_INFO[currentChainId]
-							.explorer.transactionHash}${item.id}`
-						: ''
-				}
+				href={getExplorerUrlForTxHash(currentChainId, item.id)}
 				isExternal
 			>
 				<Text

@@ -9,11 +9,10 @@ import {
 } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import Loader from 'src/components/ui/loader'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
 import useWithdrawFunds from 'src/hooks/useWithdrawFunds'
 import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
-import { parseAmount, truncateStringFromMiddle } from 'src/utils/formattingUtils'
+import { getExplorerUrlForTxHash, parseAmount, truncateStringFromMiddle } from 'src/utils/formattingUtils'
 import Dropdown from '../../ui/forms/dropdown'
 import SingleLineInput from '../../ui/forms/singleLineInput'
 import Modal from '../../ui/modal'
@@ -244,12 +243,7 @@ Your withdrawal is in progress.
 
 							<Link
 								mx={1}
-								href={
-									currentChainId
-										? `${CHAIN_INFO[currentChainId]
-											.explorer.transactionHash}${transactionHash}`
-										: ''
-								}
+								href={getExplorerUrlForTxHash(currentChainId, transactionHash)}
 								isExternal
 								variant="footer"
 								fontWeight="700"
