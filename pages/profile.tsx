@@ -46,10 +46,7 @@ function Profile() {
   const [chainID, setChainId] = React.useState<SupportedChainId>();
   const [daoID, setDaoId] = React.useState<string>();
   const [grantsApplicants, setGrantsApplicants] = React.useState<any>([]);
-  const [grantsDisbursed, setGrantsDisbursed] = React.useState<any>([{
-    token: '',
-    value: ''
-  }]);
+  const [grantsDisbursed, setGrantsDisbursed] = React.useState<any>([]);
   const [grantWinners, setGrantWinners] = React.useState<any>([]);
 
   //Tab section
@@ -151,7 +148,7 @@ function Profile() {
     }, [grantsData, grantWinners]);
 
     useEffect(() => {
-      if (grantsData) {
+      if (grantsData && grantsDisbursed.length === 0) {
         grantsData.grants.forEach((grant) => {
           const chainId = getSupportedChainIdFromSupportedNetwork(
             grant.workspace.supportedNetworks[0]
@@ -166,8 +163,9 @@ function Profile() {
             grant.funding,
             tokenInfo?.decimals ?? 18
           )
-
-          console.log(calculateUSDValue(tokenValue, tokenInfo.label))
+          calculateUSDValue(tokenValue, tokenInfo.label).then(function(promise) {
+            setGrantsDisbursed((array: any) => [...array, promise])
+          })
         }
           // setGrantsDisbursed((array: any) => [...array, grant.funding])
       )}
@@ -284,7 +282,7 @@ function Profile() {
 
           <Stack px="1.5rem" pb="2rem" pt="1rem">
             <DaoData
-            disbursed='1000'
+            disbursed={grantsDisbursed}
             winners={grantWinners}
             applicants={grantsApplicants}
             time="1D" />

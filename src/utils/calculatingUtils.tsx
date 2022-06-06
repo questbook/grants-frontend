@@ -1,8 +1,7 @@
-import { useState } from "react";
 import { utils } from "ethers";
 import { createClient } from "urql";
 
-export function calculateUSDValue(value: number | string | any, token: string) {
+export const calculateUSDValue = async(value: number | string | any, token: string) => {
 
 const wethPriceQuery = `
 {
@@ -79,87 +78,61 @@ const usdcPriceQuery = `
     url: "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2",
   });
 
-  const [wethPrice, setWethPrice] = useState<number>();
-  const [usdcPrice, setUsdcPrice] = useState<number>();
-  const [daiPrice, setDaiPrice] = useState<number>();
-  const [aavePrice, setAavePrice] = useState<number>();
-  const [wmaticPrice, setWmaticPrice] = useState<number>();
-  const [oceanPrice, setOceanPrice] = useState<number>();
+	let amount
 
   async function fetchWethPrice() {
     const data = await client.query(wethPriceQuery).toPromise();
-    setWethPrice(data.data.bundle.ethPrice);
+    amount = data.data.bundle.ethPrice
   }
 
   async function fetchDaiPrice() {
     const data = await client.query(daiPriceQuery).toPromise();
-    setWmaticPrice(data.data.pair.token0.derivedETH * data.data.bundle.ethPrice);
+    amount = data.data.pair.token0.derivedETH * data.data.bundle.ethPrice * value
   }
 
   async function fetchUsdcPrice() {
     const data = await client.query(usdcPriceQuery).toPromise();
-    setUsdcPrice(data.data.pair.token0.derivedETH * data.data.bundle.ethPrice);
+    amount = data.data.pair.token0.derivedETH * data.data.bundle.ethPrice
   }
 
   async function fetchWmaticPrice() {
     const data = await client.query(wmaticPriceQuery).toPromise();
-    setDaiPrice(data.data.pair.token0.derivedETH * data.data.bundle.ethPrice);
+  	amount = data.data.pair.token0.derivedETH * data.data.bundle.ethPrice
   }
 
   async function fetchAavePrice() {
     const data = await client.query(aavePriceQuery).toPromise();
-    setAavePrice(data.data.pair.token0.derivedETH * data.data.bundle.ethPrice);
+    amount = data.data.pair.token0.derivedETH * data.data.bundle.ethPrice
   }
 
   async function fetchOceanPrice() {
     const data = await client.query(oceanPriceQuery).toPromise();
-    setOceanPrice(data.data.pair.token0.derivedETH * data.data.bundle.ethPrice);
+    amount = data.data.pair.token0.derivedETH * data.data.bundle.ethPrice
   }
 
   if (token === "WMATIC") {
-    fetchWmaticPrice();
+    await fetchWmaticPrice();
   }
 
   if (token === "AAVE") {
-    fetchAavePrice();
+    await fetchAavePrice();
   }
 
   if (token === "WETH") {
-    fetchWethPrice()
+  	await fetchWethPrice()
   }
 
   if (token === "OCEAN") {
-    fetchOceanPrice()
+    await fetchOceanPrice()
   }
 
   if (token === "DAI") {
-    fetchUsdcPrice()
+    await fetchDaiPrice()
   }
 
   if (token === "USDC") {
-    fetchDaiPrice()
+    await fetchUsdcPrice()
   }
 
-  return
-      token === "WETH" &&
-      utils.commify(((wethPrice ?? 0) * (value ?? 0)).toString())
-
-      token === "DAI" &&
-      utils.commify(((daiPrice ?? 0) * (value ?? 0)).toString())
-
-      token === "USDC" &&
-      utils.commify(((usdcPrice ?? 0) * (value ?? 0)).toString())
-
-      token === "AAVE" &&
-      utils.commify(((aavePrice ?? 0) * (value ?? 0)).toString())
-
-      token === "WMATIC" &&
-        utils.commify(
-          ((wmaticPrice ?? 0) * (value ?? 0)).toString()
-        )
-
-      token === "OCEAN" &&
-        utils.commify(
-          ((oceanPrice ?? 0) * (value ?? 0)).toString()
-        )
+  return amount
 }
