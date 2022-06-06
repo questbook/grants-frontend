@@ -136,3 +136,30 @@ const usdcPriceQuery = `
 
   return amount
 }
+
+export const useTimeDifference = (current: number, previous: number) => {
+	let msPerMinute = 60 * 1000;
+	let msPerHour = msPerMinute * 60;
+	let msPerDay = msPerHour * 24;
+	let msPerWeek = msPerDay * 7;
+	let msPerMonth = msPerDay * 30;
+	let msPerYear = msPerDay * 365;
+
+	let elapsed = current - previous;
+
+	if (elapsed < msPerMinute) {
+		return Math.round(elapsed / 1000) + 's';
+	} else if (elapsed < msPerHour) {
+		return Math.round(elapsed / msPerMinute) + 'min';
+	} else if (elapsed < msPerDay) {
+		return Math.round(elapsed / msPerHour) + 'h';
+	} else if (elapsed < msPerWeek) {
+		return Math.round(elapsed / msPerDay) + 'd';
+	} else if (elapsed < msPerMonth) {
+		return Math.round(elapsed / msPerWeek) + 'w';
+	} else if (elapsed < msPerYear) {
+		return Math.round(elapsed / msPerMonth) + 'm';
+	} else {
+		return Math.round(elapsed / msPerYear) + 'y';
+	}
+};

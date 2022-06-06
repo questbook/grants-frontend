@@ -2,7 +2,7 @@ import React from 'react';
 import { Image, Text, Button, Flex, Box, Stack, Link } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { SupportedChainId } from 'src/constants/chains';
-import { CHAIN_INFO } from 'src/constants/chainInfo';
+import {useTimeDifference} from '../../../utils/calculatingUtils';
 import VerifiedBadge from 'src/components/ui/verified_badge';
 import Badge from './badge';
 import moment from 'moment';
@@ -57,32 +57,6 @@ function BrowseGrantCard({
   const router = useRouter();
 
   const currentDate = new Date().getTime();
-  const timeDifference = (current: number, previous: number) => {
-    let msPerMinute = 60 * 1000;
-    let msPerHour = msPerMinute * 60;
-    let msPerDay = msPerHour * 24;
-    let msPerWeek = msPerDay * 7;
-    let msPerMonth = msPerDay * 30;
-    let msPerYear = msPerDay * 365;
-
-    let elapsed = current - previous;
-
-    if (elapsed < msPerMinute) {
-      return Math.round(elapsed / 1000) + 's';
-    } else if (elapsed < msPerHour) {
-      return Math.round(elapsed / msPerMinute) + 'min';
-    } else if (elapsed < msPerDay) {
-      return Math.round(elapsed / msPerHour) + 'h';
-    } else if (elapsed < msPerWeek) {
-      return Math.round(elapsed / msPerDay) + 'd';
-    } else if (elapsed < msPerMonth) {
-      return Math.round(elapsed / msPerWeek) + 'w';
-    } else if (elapsed < msPerYear) {
-      return Math.round(elapsed / msPerMonth) + 'm';
-    } else {
-      return Math.round(elapsed / msPerYear) + 'y';
-    }
-  };
 
   return (
     <Flex borderY="1px solid #E8E9E9">
@@ -115,7 +89,7 @@ function BrowseGrantCard({
               fontWeight="700"
               color="#8C8C8C"
             >
-              {timeDifference(currentDate, createdAt * 1000)}
+              {useTimeDifference(currentDate, createdAt * 1000)}
             </Text>
 
             <Box mr="auto" />

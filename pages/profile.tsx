@@ -33,7 +33,7 @@ import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import verify from 'src/utils/grantUtils';
-import { useGetDaoDetailsQuery, useGetAllGrantsForADaoQuery } from 'src/generated/graphql';
+import { useGetDaoDetailsQuery, useGetAllGrantsForADaoQuery, useGetFundSentDisburseQuery } from 'src/generated/graphql';
 
 function Profile() {
 	const router = useRouter()
@@ -48,6 +48,7 @@ function Profile() {
   const [grantsApplicants, setGrantsApplicants] = React.useState<any>([]);
   const [grantsDisbursed, setGrantsDisbursed] = React.useState<any>([]);
   const [grantWinners, setGrantWinners] = React.useState<any>([]);
+  const [grantsWithFunding, setGrantsWithFunding] = React.useState<any>([]);
 
   //Tab section
   const tabs = ['Browse Grants', 'About'];
@@ -124,17 +125,24 @@ function Profile() {
           setGrantsApplicants((array: any) => [...array, grant.numberOfApplications])
         })
     }
-    console.log(grantsApplicants)
   }, [grantsData, grantsApplicants]);
 
+  useEffect(() => {
+    if (grantsData && grantsData.grants.length >= 1 && grantsWithFunding.length === 0) {
+          grantsData.grants.forEach((grant) => {
+          grant.funding !== '0' &&
+          setGrantsWithFunding((array: any) => [...array, grant])
+        })
+    }
+  }, [grantsData, grantsWithFunding]);
+
   // useEffect(() => {
-  //   if (fundsData && fundsData.fundsTransfers.length >= 1 && grantsDisbursed.length === 0) {
-  //       fundsData.fundsTransfers.forEach((disbursed) => {
-  //         setGrantsDisbursed((array: any) => [...array, disbursed.amount])
+  //   if (fundsData && fundsData.fundsTransfers.length != 7 && grantTime.length === 0) {
+  //       fundsData.fundsTransfers.forEach((created) => {
+  //         setFundingTime((array: any) => [...array, created.createdAtS])
   //       })
   //   }
-  //   console.log(grantsDisbursed);
-  // }, [fundsData, grantsApplicants]);
+  // }, [fundsData, grantTime]);
 
     useEffect(() => {
       if (grantsData && grantsData.grants.length >= 1 && grantWinners.length === 0) {
@@ -167,9 +175,7 @@ function Profile() {
             setGrantsDisbursed((array: any) => [...array, promise])
           })
         }
-          // setGrantsDisbursed((array: any) => [...array, grant.funding])
       )}
-      console.log(grantsDisbursed);
     }, [grantsData, grantsDisbursed])
 
     const daoPartners = [{
@@ -183,11 +189,6 @@ function Profile() {
       industry: "social"
     }
   ]
-
-  // disbursed={formatAmount(
-  //   grantsDisbursed.reduce((sum: any, a: any) => sum + a, 0).toString(),
-  //   18
-  // )}
 
   return (
     <Flex
@@ -282,10 +283,12 @@ function Profile() {
 
           <Stack px="1.5rem" pb="2rem" pt="1rem">
             <DaoData
+            workspaceNetwork={workspaceData?.supportedNetworks[0]}
             disbursed={grantsDisbursed}
             winners={grantWinners}
             applicants={grantsApplicants}
-            time="1D" />
+            grants={grantsData}
+             />
           </Stack>
 
           <Divider />

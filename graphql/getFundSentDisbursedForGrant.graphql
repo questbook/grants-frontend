@@ -1,16 +1,9 @@
-query getFundSentDisburse($type: FundsTransferType) {
+query getFundSentDisburseforGrant($type: FundsTransferType, $grant: String) {
   fundsTransfers(
-      where: {type: funds_disbursed},
+      where: {type: funds_disbursed, grant: $grant},
       orderBy: createdAtS,
       orderDirection: desc) {
-
     id,
-    review {
-      id
-    },
-    grant {
-      id
-    },
     amount,
     sender,
     to,
