@@ -25,10 +25,6 @@ export default function useChainId() {
 			return SupportedChainId.OPTIMISM_MAINNET
 		}
 
-		if(chainId === 69) {
-			return SupportedChainId.OPTIMISM_KOVAN
-		}
-
 		if(chainId === 245022926) {
 			return SupportedChainId.NEON_DEVNET
 		}
