@@ -37,6 +37,10 @@ const getSupportedChainIdFromSupportedNetwork = (chainId: SupportedNetwork) => {
 		return SupportedChainId.CELO_ALFAJORES_TESTNET
 	}
 
+	if(chainId === SupportedNetwork.Chain_69) {
+		return SupportedChainId.OPTIMISM_KOVAN
+	}
+
 	// @TODO: needs type for harmony
 	// if (chainId === SupportedNetwork.Chain_80001) {
 	//   return SupportedChainId.HARMONY_TESTNET;
@@ -79,6 +83,10 @@ const getSupportedValidatorNetworkFromChainId = (chainId: SupportedChainId) => {
 
 	if(chainId === SupportedChainId.CELO_ALFAJORES_TESTNET) {
 		return SupportedValidatorNetwork._44787
+	}
+
+	if(chainId === SupportedChainId.OPTIMISM_KOVAN) {
+		return SupportedValidatorNetwork._69
 	}
 
 	// @TODO: needs type for harmony

@@ -2805,16 +2805,13 @@ export type SubscriptionWorkspacesArgs = {
 };
 
 export enum SupportedNetwork {
-  Chain_1 = 'chain_1',
   Chain_4 = 'chain_4',
   Chain_10 = 'chain_10',
+  Chain_69 = 'chain_69',
   Chain_137 = 'chain_137',
-  Chain_42220 = 'chain_42220',
   Chain_44787 = 'chain_44787',
   Chain_80001 = 'chain_80001',
   Chain_245022926 = 'chain_245022926',
-  Chain_245022934 = 'chain_245022934',
-  Chain_1666600000 = 'chain_1666600000',
   Chain_1666700000 = 'chain_1666700000'
 }
 
