@@ -13,6 +13,11 @@ const theme = extendTheme({
 		body: 'DM Sans, sans-serif',
 		buttons: 'DM Sans, sans-serif',
 	},
+	// fonts: {
+	// 	body: 'nhg, sans-serif',
+	// 	heading: 'nhg, sans-serif',
+	// 	buttons: 'nhg, sans-serif',
+	// },
 	colors: {
 		brand: {
 			100: '#9580FF1A',
