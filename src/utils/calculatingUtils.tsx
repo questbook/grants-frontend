@@ -1,4 +1,3 @@
-import { utils } from "ethers";
 import { createClient } from "urql";
 
 export const calculateUSDValue = async(value: number | string | any, token: string) => {
@@ -78,11 +77,11 @@ const usdcPriceQuery = `
     url: "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2",
   });
 
-	let amount
+	let amount = 0;
 
   async function fetchWethPrice() {
     const data = await client.query(wethPriceQuery).toPromise();
-    amount = data.data.bundle.ethPrice
+    amount = data.data.bundle.ethPrice * value
   }
 
   async function fetchDaiPrice() {
@@ -92,22 +91,22 @@ const usdcPriceQuery = `
 
   async function fetchUsdcPrice() {
     const data = await client.query(usdcPriceQuery).toPromise();
-    amount = data.data.pair.token0.derivedETH * data.data.bundle.ethPrice
+    amount = data.data.pair.token0.derivedETH * data.data.bundle.ethPrice * value
   }
 
   async function fetchWmaticPrice() {
     const data = await client.query(wmaticPriceQuery).toPromise();
-  	amount = data.data.pair.token0.derivedETH * data.data.bundle.ethPrice
+  	amount = data.data.pair.token0.derivedETH * data.data.bundle.ethPrice * value
   }
 
   async function fetchAavePrice() {
     const data = await client.query(aavePriceQuery).toPromise();
-    amount = data.data.pair.token0.derivedETH * data.data.bundle.ethPrice
+    amount = data.data.pair.token0.derivedETH * data.data.bundle.ethPrice * value
   }
 
   async function fetchOceanPrice() {
     const data = await client.query(oceanPriceQuery).toPromise();
-    amount = data.data.pair.token0.derivedETH * data.data.bundle.ethPrice
+    amount = data.data.pair.token0.derivedETH * data.data.bundle.ethPrice * value
   }
 
   if (token === "WMATIC") {

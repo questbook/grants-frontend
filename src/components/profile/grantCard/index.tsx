@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Image, Text, Button, Flex, Box, Stack, Link } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { SupportedChainId } from 'src/constants/chains';
-import {useTimeDifference} from '../../../utils/calculatingUtils';
+import {useTimeDifference, calculateUSDValue} from '../../../utils/calculatingUtils';
 import VerifiedBadge from 'src/components/ui/verified_badge';
 import Badge from './badge';
 import moment from 'moment';
@@ -55,8 +55,13 @@ function BrowseGrantCard({
   onTitleClick,
 }: BrowseGrantCardProps) {
   const router = useRouter();
+  const [grantReward, setGrantReward] = useState<number>(0);
 
   const currentDate = new Date().getTime();
+
+  calculateUSDValue(grantAmount, grantCurrency).then(function(promise) {
+    setGrantReward(promise as number);
+  })
 
   return (
     <Flex borderY="1px solid #E8E9E9">
@@ -121,7 +126,7 @@ function BrowseGrantCard({
                 fontWeight="400"
                 color="#373737"
               >
-                <b>${grantAmount}</b>/grantee
+                <b>${grantReward !== null && grantReward.toFixed(0)}</b>/grantee
                 {isGrantVerified && (
                   <VerifiedBadge
                     grantAmount={funding}

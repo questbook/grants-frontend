@@ -23,7 +23,7 @@ import { ApiClientsContext } from './_app';
 // CONSTANTS AND TYPES
 import { DAOWorkspace } from 'src/types';
 import { SupportedChainId } from 'src/constants/chains';
-import { CHAIN_INFO } from 'src/constants/chainInfo';
+import { CHAIN_INFO } from 'src/constants/chains';
 
 // UTILS AND TOOLS
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';

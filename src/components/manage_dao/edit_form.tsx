@@ -15,7 +15,7 @@ import { CHAIN_INFO } from 'src/constants/chains';
 import config from 'src/constants/config';
 import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace';
 import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
-import { SettingsForm, Workspace } from 'src/types';
+import { SettingsForm, Workspace, PartnersProps } from 'src/types';
 import { generateWorkspaceUpdateRequest, workspaceDataToSettingsForm } from 'src/utils/settingsUtils';
 import CoverUpload from '../ui/forms/coverUpload';
 import ImageUpload from '../ui/forms/imageUpload';
@@ -38,15 +38,12 @@ const [editData, setEditData] = useState<WorkspaceUpdateRequest>();
 const [editError, setEditError] = useState<EditErrors>({ });
 
 const [partnersRequired, setPartnersRequired] = React.useState(false);
-const [partners, setPartners] = React.useState<any>([
+const [partners, setPartners] = React.useState<PartnersProps>([
   {
     name: '',
-    nameError: false,
     industry: '',
-    industryError: false,
     website: '',
-    websiteError: false,
-    image: config.defaultDAOPartnerImagePath
+    image: ''
   },
 ]);
 const [partnersImageFile, setPartnerImageFile] = React.useState<
@@ -61,11 +58,12 @@ const handlePartnerImageChange = (
   if (event.target.files && event.target.files[0]) {
     const img = event.target.files[0];
     setPartnerImageFile((partnerImages) => [...partnerImages, img]);
-    setPartners((partners: any) => [...partners, partners[index].image = URL.createObjectURL(img)]);
+
+    // setPartners((partner: PartnersProps) => [...partner, partners[index].image = URL.createObjectURL(img)]);
   }
 };
 
-  const [txnData, txnLink, loading] = useUpdateWorkspace(editData);
+  const [txnData, txnLink, loading] = useUpdateWorkspace(editData as any);
 
   const supportedNetwork = useMemo(() => {
     if (editedFormData) {
@@ -226,11 +224,11 @@ const handlePartnerImageChange = (
             isChecked={partnersRequired}
             onChange={(e) => {
               setPartnersRequired(e.target.checked);
-              const newRubrics = partners.map((partner: any) => ({
+              const newPartners = editedFormData?.partners.map((partner: any) => ({
                 ...partner,
                 nameError: false,
               }));
-              setPartners(newRubrics);
+              setPartners(newPartners as PartnersProps);
             }}
           />
           <Text fontSize="12px" fontWeight="bold" lineHeight="16px">
@@ -239,7 +237,7 @@ const handlePartnerImageChange = (
         </Flex>
       </Flex>
 
-      {partners.map((partner: any, index: any) => (
+      {editedFormData?.partners.map((partner: any, index: any) => (
         <Box w="43rem">
           <Flex
             mt={4}
@@ -270,7 +268,7 @@ const handlePartnerImageChange = (
 
                     const newPartners = [...partners]
                     newPartners.splice(index, 1)
-                    setPartners(newPartners)
+                    setPartners(newPartners as PartnersProps)
                   }
                 }
                 alignItems="center"
@@ -305,11 +303,9 @@ const handlePartnerImageChange = (
                 onChange={(e) => {
                   const newPartners = [...partners];
                   newPartners[index].name = e.target.value;
-                  newPartners[index].nameError = false;
-                  setPartners(newPartners);
+                  setPartners(newPartners as PartnersProps);
                 }}
                 placeholder="e.g. Partner DAO"
-                isError={partners[index].nameError}
                 errorText="Required"
                 disabled={!partnersRequired}
               />
@@ -317,7 +313,7 @@ const handlePartnerImageChange = (
               mt="-2.2rem"
               mb="-10rem">
                 <ImageUpload
-                  image={partners[index].image}
+                  image={editedFormData?.image || partners[index].image as any}
                   isError={false}
                   onChange={(e) => handlePartnerImageChange(e, index)}
                   label="Partner logo"
@@ -356,11 +352,9 @@ const handlePartnerImageChange = (
                 onChange={(e) => {
                   const newPartners = [...partners];
                   newPartners[index].industry = e.target.value;
-                  newPartners[index].industryError = false;
-                  setPartners(newPartners);
+                  setPartners(newPartners as any);
                 }}
                 placeholder="e.g. Security"
-                isError={partners[index].industryError}
                 errorText="Required"
                 disabled={!partnersRequired}
               />
@@ -397,11 +391,9 @@ const handlePartnerImageChange = (
                 onChange={(e) => {
                   const newPartners = [...partners];
                   newPartners[index].website = e.target.value;
-                  newPartners[index].websiteError = false;
-                  setPartners(newPartners);
+                  setPartners(newPartners as PartnersProps);
                 }}
                 placeholder="e.g. www.example.com"
-                isError={partners[index].websiteError}
                 errorText="Required"
                 disabled={!partnersRequired}
               />
@@ -421,14 +413,11 @@ const handlePartnerImageChange = (
               ...partners,
               {
                 name: '',
-                nameError: false,
                 industry: '',
-                industryError: false,
                 website: '',
-                websiteError: false,
               },
             ];
-            setPartners(newPartners);
+            setPartners(newPartners as PartnersProps);
           }}
           display="flex"
           alignItems="center"
