@@ -9,7 +9,6 @@ import React, {
 import { Button, Flex } from '@chakra-ui/react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useRouter } from 'next/router'
-import AllowAccessToPublicKeyModal from 'src/components/ui/accessToPublicKeyModal'
 import ArchivedGrantEmptyState from 'src/components/your_grants/empty_states/archived_grant'
 import ExpiredGrantEmptyState from 'src/components/your_grants/empty_states/expired_grant'
 import FirstGrantEmptyState from 'src/components/your_grants/empty_states/first_grant'
@@ -631,7 +630,8 @@ function YourGrants() {
 				)
 			}
 
-			<AllowAccessToPublicKeyModal
+			{/* Removing Public Key Modal Temporarily */}
+			{/* <AllowAccessToPublicKeyModal
 				hiddenModalOpen={
 					(isAdmin && (
 						(allGrantsCountData !== undefined && grantCount[0] && grantCount[1])
@@ -649,7 +649,7 @@ function YourGrants() {
 						window.location.reload()
 					}
 				}
-			/>
+			/> */}
 		</>
 	)
 }
