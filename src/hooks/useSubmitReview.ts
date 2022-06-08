@@ -84,25 +84,27 @@ export default function useSubmitReview(
 				// );
 
 				const encryptedReview = {} as any
-				console.log(accountData)
-				const yourPublicKey = workspace?.members.find(
-					(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
-				)?.publicKey
-				const encryptedData = encryptMessage(JSON.stringify(data), yourPublicKey!)
-				const encryptedHash = (await uploadToIPFS(encryptedData)).hash
-				encryptedReview[accountData!.address!] = encryptedHash
+				if(isPrivate) {
+					console.log(accountData)
+					const yourPublicKey = workspace?.members.find(
+						(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
+					)?.publicKey
+					const encryptedData = encryptMessage(JSON.stringify(data), yourPublicKey!)
+					const encryptedHash = (await uploadToIPFS(encryptedData)).hash
+					encryptedReview[accountData!.address!] = encryptedHash
 
-				console.log(workspace)
-				workspace?.members.filter(
-					(m) => (m.accessLevel === 'admin' || m.accessLevel === 'owner') && (m.publicKey && m.publicKey?.length > 0),
-				).map((m) => ({ key: m.publicKey, address: m.actorId }))
-					.forEach(async({ key, address }) => {
-						const encryptedAdminData = encryptMessage(JSON.stringify(data), key!)
-						const encryptedAdminHash = (await uploadToIPFS(encryptedAdminData)).hash
-						encryptedReview[address] = encryptedAdminHash
-					})
+					console.log(workspace)
+					workspace?.members.filter(
+						(m) => (m.accessLevel === 'admin' || m.accessLevel === 'owner') && (m.publicKey && m.publicKey?.length > 0),
+					).map((m) => ({ key: m.publicKey, address: m.actorId }))
+						.forEach(async({ key, address }) => {
+							const encryptedAdminData = encryptMessage(JSON.stringify(data), key!)
+							const encryptedAdminHash = (await uploadToIPFS(encryptedAdminData)).hash
+							encryptedReview[address] = encryptedAdminHash
+						})
 
-				console.log('encryptedReview', encryptedReview)
+					console.log('encryptedReview', encryptedReview)
+				}
 
 				const dataHash = (await uploadToIPFS(JSON.stringify(data))).hash
 
