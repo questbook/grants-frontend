@@ -276,7 +276,7 @@
 		"id": 44787,
 		"name": "Celo Testnet",
 		"isTestNetwork": true,
-		"icon": "/chain_assets",
+		"icon": "/chain_assets/celo.svg",
 		"wallets": [
 			"injected",
 			"walletConnect"
