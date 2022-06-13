@@ -14,8 +14,7 @@ import ExpiredGrantEmptyState from 'src/components/your_grants/empty_states/expi
 import FirstGrantEmptyState from 'src/components/your_grants/empty_states/first_grant'
 import LiveGrantEmptyState from 'src/components/your_grants/empty_states/live_grants'
 import Sidebar from 'src/components/your_grants/sidebar/sidebar'
-import { CHAIN_INFO } from 'src/constants/chains'
-import { SupportedChainId } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import {
 	GetAllGrantsForCreatorQuery,
 	GetAllGrantsForReviewerQuery,
@@ -108,21 +107,21 @@ function YourGrants() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
       ].client,
 	})
 
 	const [queryReviewerParams, setQueryReviewerParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
       ].client,
 	})
 
 	const [countQueryParams, setCountQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
       ].client,
 	})
 

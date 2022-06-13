@@ -10,8 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import CopyIcon from 'src/components/ui/copy_icon'
-import { CHAIN_INFO } from 'src/constants/chains'
-import { SupportedChainId } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromSupportedNetwork,
@@ -504,7 +503,7 @@ Evaluation Rubric
 				setRubrics={setRubrics}
 				maximumPoints={maximumPoints}
 				setMaximumPoints={setMaximumPoints}
-				chainId={getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY}
+				chainId={getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId}
 				grantAddress={applicationData?.grant.id}
 				workspaceId={workspace?.id ?? ''}
 				initialIsPrivate={applicationData?.grant.rubric?.isPrivate ?? false}

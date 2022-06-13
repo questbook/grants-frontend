@@ -12,8 +12,7 @@ import AppplicationTableEmptyState from 'src/components/your_applications/empty_
 import RubricDrawer from 'src/components/your_grants/rubricDrawer'
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
-import { CHAIN_INFO } from 'src/constants/chains'
-import { SupportedChainId } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import {
 	useGetApplicantsForAGrantQuery,
 	useGetApplicantsForAGrantReviewerQuery,
@@ -81,14 +80,14 @@ function ViewApplicants() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
       ].client,
 	})
 
 	const [queryReviewerParams, setQueryReviewerParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
       ].client,
 	})
 
@@ -402,7 +401,7 @@ function ViewApplicants() {
 					setRubrics={setRubrics}
 					maximumPoints={maximumPoints}
 					setMaximumPoints={setMaximumPoints}
-					chainId={getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY}
+					chainId={getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId}
 					grantAddress={grantID}
 					workspaceId={workspace?.id ?? ''}
 					initialIsPrivate={grantData?.grants[0].rubric?.isPrivate ?? false}
