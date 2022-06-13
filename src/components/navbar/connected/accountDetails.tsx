@@ -61,12 +61,14 @@ function AccountDetails() {
 							justify="center">
 							{
 								chainId ? (
-									<Image
-										h={8}
-										w={8}
-										src={CHAIN_INFO[chainId].icon}
-										alt="current network"
-									/>
+									(CHAIN_INFO[chainId].isTestNetwork && !SHOW_TEST_NETS) ? null : (
+										<Image
+											h={8}
+											w={8}
+											src={CHAIN_INFO[chainId].icon}
+											alt="current network"
+										/>
+									)
 								) : null
 							}
 							<VStack
