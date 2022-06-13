@@ -108,7 +108,7 @@
 	"69": {
 		"id": 69,
 		"name": "Optimism Testnet",
-		"isTestNetwork": false,
+		"isTestNetwork": true,
 		"icon": "/chain_assets/eth.svg",
 		"wallets": [
 			"injected",
