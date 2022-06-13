@@ -120,12 +120,20 @@ function GrantRewardsInput({
 
 								setRewardCurrency(data.label)
 								setRewardCurrencyAddress(data.id)
-								if(data !== 'addERCToken' && !isJustAddedToken && data.icon.lastIndexOf('ui_icons') === -1) {
+								if(data !== 'addERCToken' && !isJustAddedToken && data.icon.lastIndexOf('chain_assets') === -1) {
+									// console.log('On selecting reward', data)
 									setRewardToken({
 										iconHash: data.icon.substring(data.icon.lastIndexOf('=') + 1),
 										address: data.address,
 										label: data.label,
 										decimal: data.decimals.toString(),
+									})
+								} else {
+									setRewardToken({
+										label: '',
+										address: '',
+										decimal: '18',
+										iconHash: '',
 									})
 								}
 							}

@@ -432,6 +432,7 @@ function YourGrants() {
             	let icon
             	let label
             	if(grant.reward.token) {
+            		// console.log('Reward has token')
             		decimals = grant.reward.token.decimal
             		label = grant.reward.token.label
             		icon = getUrlForIPFSHash(grant.reward.token.iconHash)

@@ -167,11 +167,11 @@ function CustomTokenModal({
 			console.log('Supported Currencies list', supportedCurrenciesList)
 			setTokenData({ tokens: [newToken] })
 			setRewardToken(newToken)
-			console.log('Logging type of setIsJUstAddedToken', typeof setIsJustAddedToken)
+			// console.log('Logging type of setIsJUstAddedToken', typeof setIsJustAddedToken)
 			setIsJustAddedToken(true)
 			const configuredToken = configureNewToken(newToken)
 			setSupportedCurrenciesList([...supportedCurrenciesList, configuredToken])
-			console.log('New list of supported currencies', [...supportedCurrenciesList, newToken])
+			console.log('New list of supported currencies', [...supportedCurrenciesList, configuredToken])
 		}
 	}
 

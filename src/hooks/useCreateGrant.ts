@@ -82,6 +82,7 @@ export default function useCreateGrant(
 				const detailsHash = (await uploadToIPFS(data.details)).hash
 				let reward
 				if(data.rewardToken.address === '') {
+					console.log('grant data', data)
 					reward = {
 						committed: parseAmount(data.reward, data.rewardCurrencyAddress),
 						asset: data.rewardCurrencyAddress,
