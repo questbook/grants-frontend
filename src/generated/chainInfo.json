@@ -286,11 +286,23 @@
 			"transactionHash": "https://alfajores-blockscout.celo-testnet.org/tx/{{tx}}"
 		},
 		"supportedCurrencies": {
-			"0xE4fE50cdD716522A56204352f00AA110F731932d": {
+			"0x7d91E51C8F218f7140188A155f5C75388630B6a8": {
 				"icon": "/chain_assets/dai.svg",
 				"label": "DAI",
-				"address": "0xE4fE50cdD716522A56204352f00AA110F731932d",
-				"decimals": 9
+				"address": "0x7d91E51C8F218f7140188A155f5C75388630B6a8",
+				"decimals": 18
+			},
+			"0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9": {
+				"icon": "/chain_assets/celo_token.svg",
+				"label": "CELO",
+				"address": "0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9",
+				"decimals": 18
+			},
+			"0x874069fa1eb16d44d622f2e0ca25eea172369bc1": {
+				"icon": "/chain_assets/cusd.svg",
+				"label": "cUSD",
+				"address": "0x874069fa1eb16d44d622f2e0ca25eea172369bc1",
+				"decimals": 18
 			}
 		},
 		"qbContracts": {
