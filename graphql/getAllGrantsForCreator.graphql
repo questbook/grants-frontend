@@ -1,9 +1,14 @@
-query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String, $acceptingApplications: Boolean, $minDeadline: Int!, $maxDeadline: Int!) {
+query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String, $acceptingApplications: [Boolean!], $minDeadline: Int!, $maxDeadline: Int!) {
   grants(
     first: $first, 
     skip: $skip, 
     subgraphError: allow, 
-    where: { workspace: $workspaceId, acceptingApplications: $acceptingApplications, deadlineS_gte: $minDeadline, deadlineS_lte: $maxDeadline }
+    where: {
+      workspace: $workspaceId,
+      acceptingApplications_in: $acceptingApplications,
+      deadlineS_gte: $minDeadline,
+      deadlineS_lte: $maxDeadline 
+    }
     orderBy: createdAtS, 
     orderDirection: desc
   ) {

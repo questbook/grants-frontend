@@ -437,6 +437,8 @@ export type GrantApplication = {
   __typename?: 'GrantApplication';
   /** Address of the applicant */
   applicantId: Scalars['Bytes'];
+  /** People who will review this grant application */
+  applicationReviewers: Array<GrantApplicationReviewer>;
   /** in seconds since epoch */
   createdAtS: Scalars['Int'];
   /** Feedback from the grant DAO manager/applicant */
@@ -452,7 +454,7 @@ export type GrantApplication = {
   milestones: Array<ApplicationMilestone>;
   /** PII Data */
   pii: Array<PiiAnswer>;
-  /** People who will review the grant applications */
+  /** @deprecated (use 'applicationReviewers') People who will review the grant application */
   reviewers: Array<WorkspaceMember>;
   /** Reviews of the application */
   reviews: Array<Review>;
@@ -462,6 +464,15 @@ export type GrantApplication = {
   updatedAtS: Scalars['Int'];
   /** Version of the application, incremented on resubmission */
   version: Scalars['Int'];
+};
+
+
+export type GrantApplicationApplicationReviewersArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<GrantApplicationReviewer_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<GrantApplicationReviewer_Filter>;
 };
 
 
@@ -508,6 +519,62 @@ export type GrantApplicationReviewsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<Review_Filter>;
 };
+
+export type GrantApplicationReviewer = {
+  __typename?: 'GrantApplicationReviewer';
+  /** Unix timestamp of when the user was assigned */
+  assignedAtS: Scalars['Int'];
+  id: Scalars['ID'];
+  /** The member who was assigned */
+  member: WorkspaceMember;
+};
+
+export type GrantApplicationReviewer_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  assignedAtS?: InputMaybe<Scalars['Int']>;
+  assignedAtS_gt?: InputMaybe<Scalars['Int']>;
+  assignedAtS_gte?: InputMaybe<Scalars['Int']>;
+  assignedAtS_in?: InputMaybe<Array<Scalars['Int']>>;
+  assignedAtS_lt?: InputMaybe<Scalars['Int']>;
+  assignedAtS_lte?: InputMaybe<Scalars['Int']>;
+  assignedAtS_not?: InputMaybe<Scalars['Int']>;
+  assignedAtS_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  member?: InputMaybe<Scalars['String']>;
+  member_contains?: InputMaybe<Scalars['String']>;
+  member_contains_nocase?: InputMaybe<Scalars['String']>;
+  member_ends_with?: InputMaybe<Scalars['String']>;
+  member_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  member_gt?: InputMaybe<Scalars['String']>;
+  member_gte?: InputMaybe<Scalars['String']>;
+  member_in?: InputMaybe<Array<Scalars['String']>>;
+  member_lt?: InputMaybe<Scalars['String']>;
+  member_lte?: InputMaybe<Scalars['String']>;
+  member_not?: InputMaybe<Scalars['String']>;
+  member_not_contains?: InputMaybe<Scalars['String']>;
+  member_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  member_not_ends_with?: InputMaybe<Scalars['String']>;
+  member_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  member_not_in?: InputMaybe<Array<Scalars['String']>>;
+  member_not_starts_with?: InputMaybe<Scalars['String']>;
+  member_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  member_starts_with?: InputMaybe<Scalars['String']>;
+  member_starts_with_nocase?: InputMaybe<Scalars['String']>;
+};
+
+export enum GrantApplicationReviewer_OrderBy {
+  AssignedAtS = 'assignedAtS',
+  Id = 'id',
+  Member = 'member'
+}
 
 /** A revision after an update */
 export type GrantApplicationRevision = {
@@ -685,6 +752,12 @@ export type GrantApplication_Filter = {
   applicantId_not?: InputMaybe<Scalars['Bytes']>;
   applicantId_not_contains?: InputMaybe<Scalars['Bytes']>;
   applicantId_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  applicationReviewers?: InputMaybe<Array<Scalars['String']>>;
+  applicationReviewers_contains?: InputMaybe<Array<Scalars['String']>>;
+  applicationReviewers_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  applicationReviewers_not?: InputMaybe<Array<Scalars['String']>>;
+  applicationReviewers_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  applicationReviewers_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   createdAtS?: InputMaybe<Scalars['Int']>;
   createdAtS_gt?: InputMaybe<Scalars['Int']>;
   createdAtS_gte?: InputMaybe<Scalars['Int']>;
@@ -809,6 +882,7 @@ export type GrantApplication_Filter = {
 
 export enum GrantApplication_OrderBy {
   ApplicantId = 'applicantId',
+  ApplicationReviewers = 'applicationReviewers',
   CreatedAtS = 'createdAtS',
   FeedbackDao = 'feedbackDao',
   FeedbackDev = 'feedbackDev',
@@ -1592,6 +1666,8 @@ export type Query = {
   fundsTransfers: Array<FundsTransfer>;
   grant?: Maybe<Grant>;
   grantApplication?: Maybe<GrantApplication>;
+  grantApplicationReviewer?: Maybe<GrantApplicationReviewer>;
+  grantApplicationReviewers: Array<GrantApplicationReviewer>;
   grantApplicationRevision?: Maybe<GrantApplicationRevision>;
   grantApplicationRevisions: Array<GrantApplicationRevision>;
   grantApplications: Array<GrantApplication>;
@@ -1679,6 +1755,24 @@ export type QueryGrantApplicationArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryGrantApplicationReviewerArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryGrantApplicationReviewersArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<GrantApplicationReviewer_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<GrantApplicationReviewer_Filter>;
 };
 
 
@@ -2423,6 +2517,8 @@ export type Subscription = {
   fundsTransfers: Array<FundsTransfer>;
   grant?: Maybe<Grant>;
   grantApplication?: Maybe<GrantApplication>;
+  grantApplicationReviewer?: Maybe<GrantApplicationReviewer>;
+  grantApplicationReviewers: Array<GrantApplicationReviewer>;
   grantApplicationRevision?: Maybe<GrantApplicationRevision>;
   grantApplicationRevisions: Array<GrantApplicationRevision>;
   grantApplications: Array<GrantApplication>;
@@ -2510,6 +2606,24 @@ export type SubscriptionGrantApplicationArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionGrantApplicationReviewerArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionGrantApplicationReviewersArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<GrantApplicationReviewer_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<GrantApplicationReviewer_Filter>;
 };
 
 
@@ -3000,6 +3114,8 @@ export type WorkspaceMember = {
   outstandingReviewIds: Array<Scalars['String']>;
   /** Public key of the workspace member */
   publicKey?: Maybe<Scalars['String']>;
+  /** If the member was removed, when */
+  removedAt?: Maybe<Scalars['Int']>;
   /** Last update on member */
   updatedAt: Scalars['Int'];
   workspace: Workspace;
@@ -3115,6 +3231,14 @@ export type WorkspaceMember_Filter = {
   publicKey_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
   publicKey_starts_with?: InputMaybe<Scalars['String']>;
   publicKey_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  removedAt?: InputMaybe<Scalars['Int']>;
+  removedAt_gt?: InputMaybe<Scalars['Int']>;
+  removedAt_gte?: InputMaybe<Scalars['Int']>;
+  removedAt_in?: InputMaybe<Array<Scalars['Int']>>;
+  removedAt_lt?: InputMaybe<Scalars['Int']>;
+  removedAt_lte?: InputMaybe<Scalars['Int']>;
+  removedAt_not?: InputMaybe<Scalars['Int']>;
+  removedAt_not_in?: InputMaybe<Array<Scalars['Int']>>;
   updatedAt?: InputMaybe<Scalars['Int']>;
   updatedAt_gt?: InputMaybe<Scalars['Int']>;
   updatedAt_gte?: InputMaybe<Scalars['Int']>;
@@ -3155,6 +3279,7 @@ export enum WorkspaceMember_OrderBy {
   LastReviewSubmittedAt = 'lastReviewSubmittedAt',
   OutstandingReviewIds = 'outstandingReviewIds',
   PublicKey = 'publicKey',
+  RemovedAt = 'removedAt',
   UpdatedAt = 'updatedAt',
   Workspace = 'workspace'
 }
@@ -3389,7 +3514,7 @@ export type GetAllGrantsForCreatorQueryVariables = Exact<{
   skip?: InputMaybe<Scalars['Int']>;
   creatorId?: InputMaybe<Scalars['Bytes']>;
   workspaceId?: InputMaybe<Scalars['String']>;
-  acceptingApplications?: InputMaybe<Scalars['Boolean']>;
+  acceptingApplications?: InputMaybe<Array<Scalars['Boolean']> | Scalars['Boolean']>;
   minDeadline: Scalars['Int'];
   maxDeadline: Scalars['Int'];
 }>;
@@ -3741,12 +3866,12 @@ export type GetAllGrantsForADaoQueryHookResult = ReturnType<typeof useGetAllGran
 export type GetAllGrantsForADaoLazyQueryHookResult = ReturnType<typeof useGetAllGrantsForADaoLazyQuery>;
 export type GetAllGrantsForADaoQueryResult = Apollo.QueryResult<GetAllGrantsForADaoQuery, GetAllGrantsForADaoQueryVariables>;
 export const GetAllGrantsForCreatorDocument = gql`
-    query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String, $acceptingApplications: Boolean, $minDeadline: Int!, $maxDeadline: Int!) {
+    query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String, $acceptingApplications: [Boolean!], $minDeadline: Int!, $maxDeadline: Int!) {
   grants(
     first: $first
     skip: $skip
     subgraphError: allow
-    where: {workspace: $workspaceId, acceptingApplications: $acceptingApplications, deadlineS_gte: $minDeadline, deadlineS_lte: $maxDeadline}
+    where: {workspace: $workspaceId, acceptingApplications_in: $acceptingApplications, deadlineS_gte: $minDeadline, deadlineS_lte: $maxDeadline}
     orderBy: createdAtS
     orderDirection: desc
   ) {
