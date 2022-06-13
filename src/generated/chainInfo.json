@@ -140,7 +140,7 @@
 	"137": {
 		"id": 137,
 		"name": "Polygon Mainnet",
-		"isTestNetwork": true,
+		"isTestNetwork": false,
 		"icon": "/chain_assets/matic.svg",
 		"wallets": [
 			"injected",
