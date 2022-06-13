@@ -15,7 +15,7 @@ import {
 import { useRouter } from 'next/router'
 import Modal from 'src/components/ui/modal'
 import ReviewerSidebar from 'src/components/your_grants/applicant_form/reviewerSiderbar'
-import { SupportedChainId } from 'src/constants/chains'
+import { defaultChainId } from 'src/constants/chains'
 import {
 	GetApplicationDetailsQuery,
 	useGetApplicationDetailsQuery,
@@ -79,7 +79,7 @@ function ApplicantForm() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
       ].client,
 	})
 

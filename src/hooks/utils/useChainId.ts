@@ -37,7 +37,7 @@ export default function useChainId() {
 			return SupportedChainId.CELO_ALFAJORES_TESTNET
 		}
 
-		if(chainId === 1666600000){
+		if(chainId === 1666600000) {
 			return SupportedChainId.HARMONY_MAINNET
 		}
 

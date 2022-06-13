@@ -11,8 +11,7 @@ import {
 } from 'draft-js'
 import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
-import { CHAIN_INFO } from 'src/constants/chains'
-import { SupportedChainId } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
 import useChainId from 'src/hooks/utils/useChainId'
@@ -256,7 +255,7 @@ function Form({
 			}),
 	)
 
-	const currentChain = useChainId() ?? SupportedChainId.RINKEBY
+	const currentChain = useChainId() ?? defaultChainId
 
 	const supportedCurrencies = Object.keys(
 		CHAIN_INFO[currentChain].supportedCurrencies,

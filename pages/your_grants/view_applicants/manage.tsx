@@ -15,7 +15,7 @@ import {
 import { BigNumber } from 'ethers'
 import { useRouter } from 'next/router'
 import CopyIcon from 'src/components/ui/copy_icon'
-import { SupportedChainId } from 'src/constants/chains'
+import { defaultChainId } from 'src/constants/chains'
 import config from 'src/constants/config.json'
 import {
 	GetApplicationDetailsQuery,
@@ -97,7 +97,7 @@ function ManageGrant() {
 		client:
         subgraphClients[
         	getSupportedChainIdFromWorkspace(workspace)
-            ?? SupportedChainId.RINKEBY
+            ?? defaultChainId
         ].client,
 		variables: {
 			applicationID,
@@ -108,7 +108,7 @@ function ManageGrant() {
 		client:
       subgraphClients[
       	getSupportedChainIdFromWorkspace(workspace)
-          ?? SupportedChainId.RINKEBY
+          ?? defaultChainId
       ].client,
 		variables: {
 			applicationId: applicationID,

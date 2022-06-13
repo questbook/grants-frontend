@@ -5,7 +5,7 @@ import {
 import { useRouter } from 'next/router'
 import BrowseGrantCard from 'src/components/profile/grantCard'
 import SeeMore from 'src/components/profile/see_more'
-import { CHAIN_INFO } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import { useGetDaoDetailsQuery } from 'src/generated/graphql'
 import NavbarLayout from 'src/layout/navbarLayout'
@@ -40,7 +40,7 @@ function Profile() {
 	}, [router])
 
 	const [queryParams, setQueryParams] = useState<any>({
-		client: subgraphClients[chainID ?? SupportedChainId.RINKEBY].client,
+		client: subgraphClients[chainID ?? defaultChainId].client,
 	})
 
 	useEffect(() => {

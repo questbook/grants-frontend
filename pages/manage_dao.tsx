@@ -6,7 +6,7 @@ import {
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
-import { SupportedChainId } from 'src/constants/chains'
+import { defaultChainId } from 'src/constants/chains'
 import { useGetWorkspaceDetailsQuery } from 'src/generated/graphql'
 import { Workspace } from 'src/types'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -34,7 +34,7 @@ function ManageDAO() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
       ].client,
 	})
 

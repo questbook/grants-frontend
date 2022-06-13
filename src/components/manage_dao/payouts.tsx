@@ -18,7 +18,7 @@ import {
 } from '@chakra-ui/react'
 import { utils } from 'ethers'
 import router from 'next/router'
-import { SupportedChainId } from 'src/constants/chains'
+import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import { useGetDaoGrantsQuery, useGetFundSentforReviewsQuery } from 'src/generated/graphql'
 // TOOLS AND UTILS
 import {
@@ -50,7 +50,7 @@ function Payouts() {
 	const { data: grantsData } = useGetDaoGrantsQuery({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
       ].client,
 		variables: {
 			workspaceId: workspace?.id ?? '',
@@ -60,7 +60,7 @@ function Payouts() {
 	const { data: reviewsData } = useGetFundSentforReviewsQuery({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
       ].client,
 	})
 

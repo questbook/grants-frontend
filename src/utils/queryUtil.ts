@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { ApiClientsContext } from 'pages/_app'
-import { CHAIN_INFO } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from 'src/constants/chains'
 import { useGetApplicationMilestonesQuery } from 'src/generated/graphql'
 import { getUrlForIPFSHash } from './ipfsUtils'
@@ -11,7 +11,7 @@ const useApplicationMilestones = (grantId: string, chainId?: SupportedChainId) =
 	const fullData = useGetApplicationMilestonesQuery({
 		client:
       subgraphClients[
-      	(chainId ?? getSupportedChainIdFromWorkspace(workspace)) ?? SupportedChainId.RINKEBY
+      	(chainId ?? getSupportedChainIdFromWorkspace(workspace)) ?? defaultChainId
       ].client,
 		variables: {
 			grantId,
