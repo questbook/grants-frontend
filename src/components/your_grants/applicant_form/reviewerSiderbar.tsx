@@ -73,14 +73,17 @@ function ReviewerSidebar({
 
 	const handleSeeFeedbackClick = async() => {
 		setDecrpytLoading(true)
-		const reviewData = yourReview.data.find((d: any) => (
-			d.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
-		))
-		const ipfsData = await getFromIPFS(reviewData.data)
+
 		let data = {}
 		if(applicationData?.grant.rubric?.isPrivate) {
+			const reviewData = yourReview.data.find((d: any) => (
+				d.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
+			))
+			const ipfsData = await getFromIPFS(reviewData.data)
+
 			data = JSON.parse(await decryptMessage(ipfsData) ?? '{}')
 		} else {
+			const ipfsData = await getFromIPFS(yourReview.publicReviewDataHash)
 			data = JSON.parse(ipfsData ?? '{}')
 		}
 

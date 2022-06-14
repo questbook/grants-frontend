@@ -15,7 +15,7 @@ import {
 import { BigNumber } from '@ethersproject/bignumber'
 import { ethers } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
-import { SupportedChainId } from 'src/constants/chains'
+import { defaultChainId } from 'src/constants/chains'
 import ERC20ABI from 'src/contracts/abi/ERC20.json'
 import { useGetFundingQuery } from 'src/generated/graphql'
 import { Grant } from 'src/types'
@@ -60,7 +60,7 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
 	const { data } = useGetFundingQuery({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
       ].client,
 		variables: { grantId: grant.id },
 	})

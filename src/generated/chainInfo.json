@@ -108,7 +108,7 @@
 	"69": {
 		"id": 69,
 		"name": "Optimism Testnet",
-		"isTestNetwork": false,
+		"isTestNetwork": true,
 		"icon": "/chain_assets/eth.svg",
 		"wallets": [
 			"injected",
@@ -140,7 +140,7 @@
 	"137": {
 		"id": 137,
 		"name": "Polygon Mainnet",
-		"isTestNetwork": true,
+		"isTestNetwork": false,
 		"icon": "/chain_assets/matic.svg",
 		"wallets": [
 			"injected",
@@ -276,7 +276,7 @@
 		"id": 44787,
 		"name": "Celo Testnet",
 		"isTestNetwork": true,
-		"icon": "/chain_assets",
+		"icon": "/chain_assets/celo.svg",
 		"wallets": [
 			"injected",
 			"walletConnect"
@@ -286,11 +286,23 @@
 			"transactionHash": "https://alfajores-blockscout.celo-testnet.org/tx/{{tx}}"
 		},
 		"supportedCurrencies": {
-			"0xE4fE50cdD716522A56204352f00AA110F731932d": {
+			"0x7d91E51C8F218f7140188A155f5C75388630B6a8": {
 				"icon": "/chain_assets/dai.svg",
 				"label": "DAI",
-				"address": "0xE4fE50cdD716522A56204352f00AA110F731932d",
-				"decimals": 9
+				"address": "0x7d91E51C8F218f7140188A155f5C75388630B6a8",
+				"decimals": 18
+			},
+			"0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9": {
+				"icon": "/chain_assets/celo_token.svg",
+				"label": "CELO",
+				"address": "0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9",
+				"decimals": 18
+			},
+			"0x874069fa1eb16d44d622f2e0ca25eea172369bc1": {
+				"icon": "/chain_assets/cusd.svg",
+				"label": "cUSD",
+				"address": "0x874069fa1eb16d44d622f2e0ca25eea172369bc1",
+				"decimals": 18
 			}
 		},
 		"qbContracts": {
@@ -384,6 +396,38 @@
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-neon-devnet",
 		"rpcUrls": [
 			"http://neon-devnet-rpc.questbook.app:9090/solana"
+		]
+	},
+	"1666600000": {
+		"id": 1666600000,
+		"name": "Harmony Mainnet",
+		"isTestNetwork": false,
+		"icon": "/chain_assets/harmony.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://explorer.harmony.one/address/{{address}}/",
+			"transactionHash": "https://explorer.harmony.one/tx/{{tx}}/"
+		},
+		"supportedCurrencies": {
+			"0x985458E523dB3d53125813eD68c274899e9DfAb4": {
+				"icon": "/chain_assets/usdc.svg",
+				"label": "USDC",
+				"address": "0x985458E523dB3d53125813eD68c274899e9DfAb4",
+				"decimals": 6
+			}
+		},
+		"qbContracts": {
+			"applications": "0x32798CC9da06363eF2b0eE12e54cD4476D9C891a",
+			"workspace": "0x6D0f81BDA11995f25921aAd5B43359630E65Ca96",
+			"grantFactory": "0xda717ab1206c59493e1E5c66F4e0712B39EC6D81",
+			"reviews": "0x2d49a247AA77cA433218C9567953645bE04A7b3A"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-harmony-mainnet",
+		"rpcUrls": [
+			"https://api.harmony.one"
 		]
 	},
 	"1666700000": {

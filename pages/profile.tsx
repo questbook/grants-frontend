@@ -288,7 +288,7 @@ function Profile() {
             winners={grantWinners}
             applicants={grantsApplicants}
             grants={grantsData}
-            funds={fundingTime}
+            fundTimes={fundingTime}
              />
           </Stack>
 

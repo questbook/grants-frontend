@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { Text, Heading, Grid, Flex } from '@chakra-ui/react';
-import {useTimeDifference} from '../../utils/calculatingUtils';
+import {getAverageTime} from '../../utils/calculatingUtils';
 import { useGetFundSentDisburseforGrantQuery } from 'src/generated/graphql';
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import { SupportedChainId } from 'src/constants/chains';
@@ -11,18 +11,18 @@ interface Props {
   applicants: Array<number>;
   winners: Array<number>;
   grants: any;
-  funds: any;
+  fundTimes: any;
   // fundingTime: Array<number>;
 }
 
-function DaoData({ disbursed, applicants, winners, grants, funds }: Props) {
+function DaoData({ disbursed, applicants, winners, grants, fundTimes }: Props) {
 
   const [grantToCheck, setGrantoCheck] = useState<any>([]);
   const [fundsToCheck, setFundsToCheck] = useState<any>([]);
 
   useEffect(() => {
     console.log(grants);
-    console.log(funds);
+    console.log(getAverageTime(fundTimes));
     console.log(disbursed);
 
     if (grants && grants.length > 0) {
@@ -31,7 +31,7 @@ function DaoData({ disbursed, applicants, winners, grants, funds }: Props) {
         )
     }
     console.log(grantToCheck)
-  }, [disbursed, grants, funds])
+  }, [disbursed, grants, fundTimes])
 
   return (
     <Grid
@@ -88,7 +88,7 @@ function DaoData({ disbursed, applicants, winners, grants, funds }: Props) {
       <Heading
       color="#122224"
       fontSize="1.2rem"
-      lineHeight="1.5rem"></Heading>
+      lineHeight="1.5rem">{getAverageTime(fundTimes)}</Heading>
         <Text
           fontSize="0.875rem"
           lineHeight="24px"

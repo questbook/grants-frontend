@@ -162,3 +162,10 @@ export const useTimeDifference = (first: number, second: number) => {
 		return Math.round(elapsed / msPerYear) + 'y';
 	}
 };
+
+export const getAverageTime = (dates: Array<number>) => {
+  let result = (dates.reduce((sum: any, a: any) => sum + a, 0).toFixed(0)) / dates.length;
+  console.log(result);
+
+  return result;
+}

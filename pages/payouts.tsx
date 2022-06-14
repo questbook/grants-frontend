@@ -11,7 +11,7 @@ import {
 import { utils } from 'ethers'
 import router from 'next/router'
 import CopyIcon from 'src/components/ui/copy_icon'
-import { SupportedChainId } from 'src/constants/chains'
+import { defaultChainId } from 'src/constants/chains'
 import { useGetFundSentforReviewerQuery } from 'src/generated/graphql'
 // TOOLS AND UTILS
 import {
@@ -62,7 +62,7 @@ export default function Payouts() {
 	const { data: reviewsPaidData } = useGetFundSentforReviewerQuery({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
       ].client,
 		variables: {
 			to: account?.address,

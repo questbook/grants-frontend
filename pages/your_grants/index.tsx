@@ -9,14 +9,12 @@ import React, {
 import { Button, Flex } from '@chakra-ui/react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useRouter } from 'next/router'
-import AllowAccessToPublicKeyModal from 'src/components/ui/accessToPublicKeyModal'
 import ArchivedGrantEmptyState from 'src/components/your_grants/empty_states/archived_grant'
 import ExpiredGrantEmptyState from 'src/components/your_grants/empty_states/expired_grant'
 import FirstGrantEmptyState from 'src/components/your_grants/empty_states/first_grant'
 import LiveGrantEmptyState from 'src/components/your_grants/empty_states/live_grants'
 import Sidebar from 'src/components/your_grants/sidebar/sidebar'
-import { CHAIN_INFO } from 'src/constants/chains'
-import { SupportedChainId } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import {
 	GetAllGrantsForCreatorQuery,
 	GetAllGrantsForReviewerQuery,
@@ -47,7 +45,7 @@ const TABS = [
 			// fetch all grants,
 			// currently accepting applications
 			// & those that haven't expired yet
-			acceptingApplications: true,
+			acceptingApplications: [true],
 			minDeadline: unixTimestampSeconds(),
 			maxDeadline: UNIX_TIMESTAMP_MAX
 		},
@@ -57,9 +55,9 @@ const TABS = [
 	{
 		index: 1,
 		query: {
-			// fetch all archived grants regardless of "acceptingApplications" state
-			acceptingApplications: false,
-			minDeadline: 0,
+			// fetch all non-expired archived grants
+			acceptingApplications: [false],
+			minDeadline: unixTimestampSeconds(),
 			maxDeadline: UNIX_TIMESTAMP_MAX
 		},
 		label: 'Archived',
@@ -67,10 +65,9 @@ const TABS = [
 	},
 	{
 		index: 2,
-		acceptingApplications: true,
 		query: {
-			// fetch all expired (not archived) grants
-			acceptingApplications: true,
+			// fetch all expired (including archived) grants
+			acceptingApplications: [true, false],
 			minDeadline: 0,
 			maxDeadline: unixTimestampSeconds(),
 		},
@@ -109,21 +106,21 @@ function YourGrants() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
       ].client,
 	})
 
 	const [queryReviewerParams, setQueryReviewerParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
       ].client,
 	})
 
 	const [countQueryParams, setCountQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
       ].client,
 	})
 
@@ -433,6 +430,7 @@ function YourGrants() {
             	let icon
             	let label
             	if(grant.reward.token) {
+            		// console.log('Reward has token')
             		decimals = grant.reward.token.decimal
             		label = grant.reward.token.label
             		icon = getUrlForIPFSHash(grant.reward.token.iconHash)
@@ -631,7 +629,8 @@ function YourGrants() {
 				)
 			}
 
-			<AllowAccessToPublicKeyModal
+			{/* Removing Public Key Modal Temporarily */}
+			{/* <AllowAccessToPublicKeyModal
 				hiddenModalOpen={
 					(isAdmin && (
 						(allGrantsCountData !== undefined && grantCount[0] && grantCount[1])
@@ -649,7 +648,7 @@ function YourGrants() {
 						window.location.reload()
 					}
 				}
-			/>
+			/> */}
 		</>
 	)
 }

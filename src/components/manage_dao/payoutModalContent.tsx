@@ -17,8 +17,7 @@ import {
 } from '@chakra-ui/react'
 import { utils } from 'ethers'
 import Loader from 'src/components/ui/loader'
-import { CHAIN_INFO } from 'src/constants/chains'
-import { SupportedChainId } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { useContract, useSigner } from 'wagmi'
@@ -58,7 +57,7 @@ function PayoutModalContent({
 	setTabIndex,
 }: Props) {
 	// WAGMI && ETH HOOKS
-	const currentChain = useChainId() ?? SupportedChainId.RINKEBY
+	const currentChain = useChainId() ?? defaultChainId
 	const { data: signer } = useSigner()
 
 	// CHAKRA HOOKS
