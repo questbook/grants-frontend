@@ -219,5 +219,5 @@ export const getExplorerUrlForAddress = (chainId: SupportedChainId | undefined, 
 }
 
 export const getExplorerUrlForTxHash = (chainId: SupportedChainId | undefined, tx: string) => {
-	return CHAIN_INFO[chainId!]?.explorer.transactionHash.replace('{{tx}}', "tx") + tx || ''
+	return CHAIN_INFO[chainId!]?.explorer.transactionHash.replace('{{tx}}', 'tx') + tx || ''
 }
