@@ -1,4 +1,5 @@
 import { createClient } from "urql";
+import {BigNumber} from 'ethers';
 
 export const calculateUSDValue = async(value: number | string | any, token: string) => {
 
@@ -7,6 +8,7 @@ const wethPriceQuery = `
 	bundle(id: "1" ) {
 	 ethPrice
  }
+}
 `;
 
 const aavePriceQuery = `
@@ -81,10 +83,11 @@ const usdcPriceQuery = `
 
   async function fetchWethPrice() {
     const data = await client.query(wethPriceQuery).toPromise();
-    amount = data.data.bundle.ethPrice * value
+    amount = data.data.bundle.ethPrice * value;
   }
 
   async function fetchDaiPrice() {
+    console.log(value)
     const data = await client.query(daiPriceQuery).toPromise();
     amount = data.data.pair.token0.derivedETH * data.data.bundle.ethPrice * value
   }
@@ -171,7 +174,7 @@ export const getAverageTime = (fundingDates: Array<number>, grantDates: Array<nu
 	let twoWeeks = oneWeek * 2;
 
   let fundingDatesAverage = (fundingDates.reduce((sum: any, a: any) => sum + a, 0).toFixed(0)) / fundingDates.length;
-  let grantCreationAverage = (grantDates.reduce((sum: any, a: any) => sum + a, 0).toFixed(0)) / 2;
+  let grantCreationAverage = (grantDates.reduce((sum: any, a: any) => sum + a, 0).toFixed(0)) / grantDates.length;
 
   let average = fundingDatesAverage - grantCreationAverage;
 

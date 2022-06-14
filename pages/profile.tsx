@@ -170,9 +170,12 @@ function Profile() {
             grant.funding,
             tokenInfo?.decimals ?? 18
           )
-          calculateUSDValue(tokenValue, tokenInfo.label).then(function(promise) {
-            setGrantsDisbursed((array: any) => [...array, promise])
-          })
+
+          if (tokenInfo !== undefined && tokenValue !== '0') {
+            calculateUSDValue(tokenValue, tokenInfo.label).then(function(promise) {
+              setGrantsDisbursed((array: any) => [...array, promise])
+            })
+          }
         }
       )}
 
@@ -352,7 +355,9 @@ function Profile() {
                     endTimestamp={new Date(grant.deadline!).getTime()}
                     grantAmount={formatAmount(
                       grant.reward.committed,
-                      chainInfo?.decimals ?? 18
+                      chainInfo?.decimals ?? 18,
+                      false,
+                      true
                     )}
                     disbursedAmount={formatAmount(
                       grant.funding,
