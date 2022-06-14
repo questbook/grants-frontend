@@ -53,8 +53,8 @@
 			"walletConnect"
 		],
 		"explorer": {
-			"address": "https://optimistic.etherscan.io/{{address}}/",
-			"transactionHash": "https://optimistic.etherscan.io/{{tx}}/"
+			"address": "https://optimistic.etherscan.io/address/{{address}}/",
+			"transactionHash": "https://optimistic.etherscan.io/tx/{{tx}}/"
 		},
 		"supportedCurrencies": {
 			"0xda10009cbd5d07dd0cecc66161fc93d7c9000da1": {
@@ -115,8 +115,8 @@
 			"walletConnect"
 		],
 		"explorer": {
-			"address": "https://optimistic.etherscan.io/{{address}}/",
-			"transactionHash": "https://optimistic.etherscan.io/{{tx}}/"
+			"address": "https://optimistic.etherscan.io/address/{{address}}/",
+			"transactionHash": "https://optimistic.etherscan.io/tx/{{tx}}/"
 		},
 		"supportedCurrencies": {
 			"0xda10009cbd5d07dd0cecc66161fc93d7c9000da1": {
@@ -147,8 +147,8 @@
 			"walletConnect"
 		],
 		"explorer": {
-			"address": "https://polygonscan.com/{{address}}/",
-			"transactionHash": "https://polygonscan.com/{{tx}}/"
+			"address": "https://polygonscan.com/address/{{address}}/",
+			"transactionHash": "https://polygonscan.com/tx/{{tx}}/"
 		},
 		"supportedCurrencies": {
 			"0x8f3cf7ad23cd3cadbd9735aff958023239c6a063": {
@@ -326,8 +326,8 @@
 			"walletConnect"
 		],
 		"explorer": {
-			"address": "https://mumbai.polygonscan.com/{{address}}/",
-			"transactionHash": "https://mumbai.polygonscan.com/{{tx}}/"
+			"address": "https://mumbai.polygonscan.com/address/{{address}}/",
+			"transactionHash": "https://mumbai.polygonscan.com/tx/{{tx}}/"
 		},
 		"supportedCurrencies": {
 			"0x9c3c9283d3e44854697cd22d3faa240cfb032889": {
@@ -364,8 +364,8 @@
 			"walletConnect"
 		],
 		"explorer": {
-			"address": "https://neonscan.org/{{address}}/",
-			"transactionHash": "https://neonscan.org/{{tx}}/"
+			"address": "https://neonscan.org/address/{{address}}/",
+			"transactionHash": "https://neonscan.org/tx/{{tx}}/"
 		},
 		"supportedCurrencies": {
 			"0x7ad98aeadbbcdf3693b0b53c09da4033704c9322": {
@@ -440,8 +440,8 @@
 			"walletConnect"
 		],
 		"explorer": {
-			"address": "https://explorer.pops.one/{{address}}/",
-			"transactionHash": "https://explorer.pops.one/{{tx}}/"
+			"address": "https://explorer.pops.one/address/{{address}}/",
+			"transactionHash": "https://explorer.pops.one/tx/{{tx}}/"
 		},
 		"supportedCurrencies": {
 			"0x778fbd9df477b888534ebd84a3d2c9d5347bf149": {
