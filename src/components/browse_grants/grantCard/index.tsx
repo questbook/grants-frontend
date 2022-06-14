@@ -15,6 +15,7 @@ import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import Badge from './badge'
 import ShareMenu from './menu'
+import useDisburseReward from 'src/hooks/useDisburseP2PReward'
 
 interface GrantCardProps {
   daoID: string;

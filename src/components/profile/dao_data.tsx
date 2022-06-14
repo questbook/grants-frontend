@@ -11,45 +11,27 @@ interface Props {
   applicants: Array<number>;
   winners: Array<number>;
   grants: any;
+  funds: any;
   // fundingTime: Array<number>;
-  workspaceNetwork: any;
 }
 
-function DaoData({ workspaceNetwork, disbursed, applicants, winners, grants }: Props) {
-  const { subgraphClients } = React.useContext(ApiClientsContext)!
+function DaoData({ disbursed, applicants, winners, grants, funds }: Props) {
 
-  const [grantToCheck, setGrantoCheck] = useState(null);
+  const [grantToCheck, setGrantoCheck] = useState<any>([]);
+  const [fundsToCheck, setFundsToCheck] = useState<any>([]);
 
   useEffect(() => {
     console.log(grants);
+    console.log(funds);
+    console.log(disbursed);
 
-    if (grants && grants.length >= 1 && grantToCheck !== null) {
-          grants.forEach((grant: any) => {
-          setGrantoCheck(grant.id)
-        })
+    if (grants && grants.length > 0) {
+          grants.grants.forEach((grant: any) =>
+          setGrantoCheck((array: any) => [...array, grant.createdAtS])
+        )
     }
-    // var orderedGrantDates = grantTime.sort(function(a, b) {
-    //   return Date.parse(a) - Date.parse(b);
-    // });
-    //
-    // var orderedFundingDates = grantTime.sort(function(a, b) {
-    //   return Date.parse(a) - Date.parse(b);
-    // });
-    //
-    // console.log(useTimeDifference(orderedFundingDates[1], orderedGrantDates[1] * 1000))
-  }, [grants])
-
-  const { data: fundsData } = useGetFundSentDisburseforGrantQuery({
-    client:
-      subgraphClients[
-        getSupportedChainIdFromSupportedNetwork(workspaceNetwork) ?? SupportedChainId.RINKEBY
-      ].client,
-      variables: {
-        grant: grantToCheck ?? '',
-      },
-  });
-
-  console.log(fundsData)
+    console.log(grantToCheck)
+  }, [disbursed, grants, funds])
 
   return (
     <Grid

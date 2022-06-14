@@ -49,6 +49,7 @@ function Profile() {
   const [grantsDisbursed, setGrantsDisbursed] = React.useState<any>([]);
   const [grantWinners, setGrantWinners] = React.useState<any>([]);
   const [grantsWithFunding, setGrantsWithFunding] = React.useState<any>([]);
+  const [fundingTime, setFundingTime] = React.useState<any>([]);
 
   //Tab section
   const tabs = ['Browse Grants', 'About'];
@@ -110,14 +111,12 @@ function Profile() {
 
   console.log(grantsData);
 
-  // const { data: fundsData } = useGetFundSentDisburseQuery({
-  //   client:
-  //     subgraphClients[
-  //       getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) ?? SupportedChainId.RINKEBY
-  //     ].client
-  // });
-  //
-  // console.log(fundsData);
+  const { data: fundsData } = useGetFundSentDisburseQuery({
+    client:
+      subgraphClients[
+        getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) ?? SupportedChainId.RINKEBY
+      ].client
+  });
 
   useEffect(() => {
     if (grantsData && grantsData.grants.length >= 1 && grantsApplicants.length === 0) {
@@ -136,13 +135,13 @@ function Profile() {
     }
   }, [grantsData, grantsWithFunding]);
 
-  // useEffect(() => {
-  //   if (fundsData && fundsData.fundsTransfers.length != 7 && grantTime.length === 0) {
-  //       fundsData.fundsTransfers.forEach((created) => {
-  //         setFundingTime((array: any) => [...array, created.createdAtS])
-  //       })
-  //   }
-  // }, [fundsData, grantTime]);
+  useEffect(() => {
+    if (fundsData && fundsData.fundsTransfers.length != 7 && fundingTime.length === 0) {
+        fundsData.fundsTransfers.forEach((created) => {
+          setFundingTime((array: any) => [...array, created.createdAtS])
+        })
+    }
+  }, [fundsData, fundingTime]);
 
     useEffect(() => {
       if (grantsData && grantsData.grants.length >= 1 && grantWinners.length === 0) {
@@ -176,6 +175,8 @@ function Profile() {
           })
         }
       )}
+
+      console.log(grantsData, grantsDisbursed)
     }, [grantsData, grantsDisbursed])
 
     const daoPartners = [{
@@ -283,11 +284,11 @@ function Profile() {
 
           <Stack px="1.5rem" pb="2rem" pt="1rem">
             <DaoData
-            workspaceNetwork={workspaceData?.supportedNetworks[0]}
             disbursed={grantsDisbursed}
             winners={grantWinners}
             applicants={grantsApplicants}
             grants={grantsData}
+            funds={fundingTime}
              />
           </Stack>
 

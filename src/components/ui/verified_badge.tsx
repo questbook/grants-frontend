@@ -14,7 +14,7 @@ import {
 interface Props {
   grantAmount: string;
   grantCurrency: string;
-	disbursedAmount: string;
+  disbursedAmount?: string;
   lineHeight: string | number;
   marginBottom?: string | number;
 }

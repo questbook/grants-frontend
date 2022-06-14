@@ -136,7 +136,7 @@ const usdcPriceQuery = `
   return amount
 }
 
-export const useTimeDifference = (current: number, previous: number) => {
+export const useTimeDifference = (first: number, second: number) => {
 	let msPerMinute = 60 * 1000;
 	let msPerHour = msPerMinute * 60;
 	let msPerDay = msPerHour * 24;
@@ -144,7 +144,7 @@ export const useTimeDifference = (current: number, previous: number) => {
 	let msPerMonth = msPerDay * 30;
 	let msPerYear = msPerDay * 365;
 
-	let elapsed = current - previous;
+	let elapsed = first - second;
 
 	if (elapsed < msPerMinute) {
 		return Math.round(elapsed / 1000) + 's';

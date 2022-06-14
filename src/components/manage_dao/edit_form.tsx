@@ -38,7 +38,7 @@ const [editData, setEditData] = useState<WorkspaceUpdateRequest>();
 const [editError, setEditError] = useState<EditErrors>({ });
 
 const [partnersRequired, setPartnersRequired] = React.useState(false);
-const [partners, setPartners] = React.useState<PartnersProps>([
+const [partners, setPartners] = React.useState<any>([
   {
     name: '',
     industry: '',
@@ -59,7 +59,7 @@ const handlePartnerImageChange = (
     const img = event.target.files[0];
     setPartnerImageFile((partnerImages) => [...partnerImages, img]);
 
-    // setPartners((partner: PartnersProps) => [...partner, partners[index].image = URL.createObjectURL(img)]);
+    setPartners((partner: any) => [...partner, partners[index].image = URL.createObjectURL(img)]);
   }
 };
 
@@ -222,9 +222,9 @@ const handlePartnerImageChange = (
           <Switch
             id="encrypt"
             isChecked={partnersRequired}
-            onChange={(e) => {
+            onChange={(e: any) => {
               setPartnersRequired(e.target.checked);
-              const newPartners = editedFormData?.partners.map((partner: any) => ({
+              const newPartners = partners.map((partner: any) => ({
                 ...partner,
                 nameError: false,
               }));
@@ -237,7 +237,7 @@ const handlePartnerImageChange = (
         </Flex>
       </Flex>
 
-      {editedFormData?.partners.map((partner: any, index: any) => (
+      {partners.map((partner: any, index: any) => (
         <Box w="43rem">
           <Flex
             mt={4}
@@ -313,7 +313,7 @@ const handlePartnerImageChange = (
               mt="-2.2rem"
               mb="-10rem">
                 <ImageUpload
-                  image={editedFormData?.image || partners[index].image as any}
+                  image={partners[index].image as any}
                   isError={false}
                   onChange={(e) => handlePartnerImageChange(e, index)}
                   label="Partner logo"
