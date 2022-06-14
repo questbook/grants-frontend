@@ -11,18 +11,17 @@ interface Props {
   applicants: Array<number>;
   winners: Array<number>;
   grants: any;
-  fundTimes: any;
-  // fundingTime: Array<number>;
+  fundTimes: Array<number>;
+  grantsFundedTime: Array<number>;
 }
 
-function DaoData({ disbursed, applicants, winners, grants, fundTimes }: Props) {
+function DaoData({ disbursed, applicants, winners, grants, fundTimes, grantsFundedTime }: Props) {
 
   const [grantToCheck, setGrantoCheck] = useState<any>([]);
   const [fundsToCheck, setFundsToCheck] = useState<any>([]);
 
   useEffect(() => {
     console.log(grants);
-    console.log(getAverageTime(fundTimes));
     console.log(disbursed);
 
     if (grants && grants.length > 0) {
@@ -88,7 +87,7 @@ function DaoData({ disbursed, applicants, winners, grants, fundTimes }: Props) {
       <Heading
       color="#122224"
       fontSize="1.2rem"
-      lineHeight="1.5rem">{getAverageTime(fundTimes)}</Heading>
+      lineHeight="1.5rem">{getAverageTime(fundTimes, grantsFundedTime)}</Heading>
         <Text
           fontSize="0.875rem"
           lineHeight="24px"

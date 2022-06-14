@@ -163,9 +163,29 @@ export const useTimeDifference = (first: number, second: number) => {
 	}
 };
 
-export const getAverageTime = (dates: Array<number>) => {
-  let result = (dates.reduce((sum: any, a: any) => sum + a, 0).toFixed(0)) / dates.length;
-  console.log(result);
+export const getAverageTime = (fundingDates: Array<number>, grantDates: Array<number>) => {
+  let oneMinute = 60 * 1000;
+	let oneHour = oneMinute * 60;
+	let oneDay = oneHour * 24;
+	let oneWeek = oneDay * 7;
+	let twoWeeks = oneWeek * 2;
 
-  return result;
+  let fundingDatesAverage = (fundingDates.reduce((sum: any, a: any) => sum + a, 0).toFixed(0)) / fundingDates.length;
+  let grantCreationAverage = (grantDates.reduce((sum: any, a: any) => sum + a, 0).toFixed(0)) / grantDates.length;
+
+  let average = fundingDatesAverage - grantCreationAverage;
+
+	if (average < oneMinute) {
+		return Math.round(average / 1000) + 's';
+	} else if (average < oneHour) {
+		return Math.round(average / oneMinute) + 'min';
+	} else if (average < oneDay) {
+		return Math.round(average / oneHour) + 'h';
+	} else if (average < oneWeek) {
+		return Math.round(average / oneDay) + 'd';
+	} else if (average < twoWeeks) {
+		return Math.round(average / oneWeek) + 'w';
+	} else if (average >= twoWeeks) {
+    return "--"
+  }
 }

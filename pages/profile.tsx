@@ -48,7 +48,7 @@ function Profile() {
   const [grantsApplicants, setGrantsApplicants] = React.useState<any>([]);
   const [grantsDisbursed, setGrantsDisbursed] = React.useState<any>([]);
   const [grantWinners, setGrantWinners] = React.useState<any>([]);
-  const [grantsWithFunding, setGrantsWithFunding] = React.useState<any>([]);
+  const [grantsFundedTime, setGrantsFundedTime] = React.useState<any>([]);
   const [fundingTime, setFundingTime] = React.useState<any>([]);
 
   //Tab section
@@ -127,13 +127,13 @@ function Profile() {
   }, [grantsData, grantsApplicants]);
 
   useEffect(() => {
-    if (grantsData && grantsData.grants.length >= 1 && grantsWithFunding.length === 0) {
+    if (grantsData && grantsData.grants.length >= 1 && grantsFundedTime.length === 0) {
           grantsData.grants.forEach((grant) => {
           grant.funding !== '0' &&
-          setGrantsWithFunding((array: any) => [...array, grant])
+          setGrantsFundedTime((array: any) => [...array, grant.createdAtS])
         })
     }
-  }, [grantsData, grantsWithFunding]);
+  }, [grantsData, grantsFundedTime]);
 
   useEffect(() => {
     if (fundsData && fundsData.fundsTransfers.length != 7 && fundingTime.length === 0) {
@@ -289,6 +289,7 @@ function Profile() {
             applicants={grantsApplicants}
             grants={grantsData}
             fundTimes={fundingTime}
+            grantsFundedTime={grantsFundedTime}
              />
           </Stack>
 
