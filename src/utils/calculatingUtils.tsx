@@ -171,7 +171,7 @@ export const getAverageTime = (fundingDates: Array<number>, grantDates: Array<nu
 	let twoWeeks = oneWeek * 2;
 
   let fundingDatesAverage = (fundingDates.reduce((sum: any, a: any) => sum + a, 0).toFixed(0)) / fundingDates.length;
-  let grantCreationAverage = (grantDates.reduce((sum: any, a: any) => sum + a, 0).toFixed(0)) / grantDates.length;
+  let grantCreationAverage = (grantDates.reduce((sum: any, a: any) => sum + a, 0).toFixed(0)) / 2;
 
   let average = fundingDatesAverage - grantCreationAverage;
 
