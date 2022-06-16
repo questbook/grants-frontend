@@ -94,6 +94,8 @@ function Profile() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [data, error, loading])
 
+	console.log(workspaceData)
+
 	const { data: grantsData } = useGetAllGrantsForADaoQuery({
 		client:
       subgraphClients[
@@ -301,7 +303,7 @@ function Profile() {
 					</Flex>
 
 					<Stack px="1.5rem">
-						{workspaceData?.about && <SeeMore text={workspaceData?.about} />}
+						{workspaceData?.bio && <SeeMore text={workspaceData?.bio} />}
 					</Stack>
 
 					<Stack

@@ -17,12 +17,12 @@ export type Workspace = Exclude<GetWorkspaceDetailsQuery['workspace'], null | un
 export type DAOWorkspace = GetDaoDetailsQuery['workspace'];
 export type DAOGrant = GetDaoDetailsQuery['grants'];
 
-export type PartnersProps = [{
+export type PartnersProps = {
 	name: string;
 	industry: string;
 	website?: string;
 	image?: string;
-}]
+}
 
 export type SettingsForm = {
   name: string;

@@ -24,7 +24,7 @@ function Settings({ workspaceData }: Props) {
 		<Flex
 			direction="column"
 			align="start"
-			w="65%">
+			w="70%">
 			<Flex
 				direction="row"
 				w="full"
