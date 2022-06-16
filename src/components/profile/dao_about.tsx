@@ -1,5 +1,4 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import {
 	Flex,
 	Grid,
@@ -7,6 +6,7 @@ import {
 	Link,
 	Text,
 } from '@chakra-ui/react'
+import { getFromIPFS } from 'src/utils/ipfsUtils'
 
 interface DaoAboutProps {
   daoAbout?: string;
@@ -14,6 +14,25 @@ interface DaoAboutProps {
 }
 
 function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
+
+	const [decodedAbout, setDecodedAbout] = useState('')
+	const getDecodedAbout = async(detailsHash: string) => {
+		console.log(detailsHash)
+		const d = await getFromIPFS(detailsHash)
+		setDecodedAbout(d)
+	}
+
+	useEffect(() => {
+		if(!daoAbout) {
+			return
+		}
+
+		if(daoAbout.startsWith('Qm') && daoAbout.length < 64) {
+			getDecodedAbout(daoAbout)
+		} else {
+			setDecodedAbout(daoAbout)
+		}
+	}, [daoAbout])
 
 	return (
 		<Grid
@@ -26,7 +45,7 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
 				p="1.5rem"
 			>
 				<Text>
-					{daoAbout}
+					{decodedAbout}
 				</Text>
 			</Flex>
 			<Flex

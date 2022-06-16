@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Box,
   Button,
@@ -64,10 +64,7 @@ function EditForm({ workspaceData }: EditFormProps) {
   );
 
   const [partnersRequired, setPartnersRequired] = React.useState(false);
-  const [partners, setPartners] = React.useState<Array<PartnersProps>>([]);
-  const [partnersImageFile, setPartnerImageFile] = React.useState<
-    Array<File | null>
-  >([null]);
+  const [partners, setPartners] = React.useState<any>([]);
 
   const handlePartnerImageChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -76,12 +73,10 @@ function EditForm({ workspaceData }: EditFormProps) {
     if (event.target.files && event.target.files[0]) {
       const img = event.target.files[0];
 
-      setPartners((current) => [
-        ...current!,
-        (current[index].image = URL.createObjectURL(img)),
-      ]);
-    }
-  };
+	  let oldPartners = [...partners];
+	  oldPartners[index].image = URL.createObjectURL(img);
+	  setPartners(oldPartners)
+  }};
 
   React.useEffect(() => {
     console.log(partners);
