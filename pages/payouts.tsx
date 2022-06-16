@@ -26,7 +26,6 @@ import { useAccount } from 'wagmi'
 import NavbarLayout from '../src/layout/navbarLayout'
 // CONTEXT AND CONSTANTS
 import { ApiClientsContext } from './_app'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
 
 export default function Payouts() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!

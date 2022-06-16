@@ -1,8 +1,8 @@
-import { Image, Text } from '@chakra-ui/react';
-import React from 'react';
+import React from 'react'
+import { Image, Text } from '@chakra-ui/react'
 
 function Badge({
-  numOfApplicants,
+	numOfApplicants,
 }: {
   numOfApplicants: number;
 }) {
@@ -25,10 +25,10 @@ function Badge({
 				{numOfApplicants}
 				{' '}
         Applicant
-        {numOfApplicants > 1 || numOfApplicants === 0 ? 's' : ''}
-      </Text>
-    </Text>
-  );
+				{numOfApplicants > 1 || numOfApplicants === 0 ? 's' : ''}
+			</Text>
+		</Text>
+	)
 }
 
 export default Badge

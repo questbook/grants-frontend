@@ -30,7 +30,6 @@ import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 // CONTEXT AND CONSTANTS
 import { ApiClientsContext } from '../../../pages/_app'
-import { CHAIN_INFO } from 'src/constants/chainInfo'
 // UI COMPONENTS
 import CopyIcon from '../ui/copy_icon'
 import Modal from '../ui/modal'

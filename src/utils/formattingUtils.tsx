@@ -127,11 +127,11 @@ export function formatAmount(number: string, decimals = 18, isEditable = false, 
 		return truncateTo(value, decimals)
 	}
 
-	if (!isBig) {
-	const formattedValue = nFormatter(value)
-	return truncateTo(formattedValue)
+	if(!isBig) {
+		const formattedValue = nFormatter(value)
+		return truncateTo(formattedValue)
 	} else {
-	 return truncateTo(value)
+	 	return truncateTo(value)
 	}
 }
 

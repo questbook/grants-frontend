@@ -1,15 +1,13 @@
 import React from 'react'
 import {
-	Box,
 	Button,
 	Flex,
+	Grid,
 	Image,
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
-	Text,
-	Grid
-} from '@chakra-ui/react'
+	Text } from '@chakra-ui/react'
 
 interface Props {
   grantAmount: string;
@@ -26,8 +24,8 @@ function VerifiedBadge({
 		<Popover trigger="hover">
 			<PopoverTrigger>
 				<Image
-				h="1rem"
-				w="1rem"
+					h="1rem"
+					w="1rem"
 					display="inline-block"
 					src="/ui_icons/verified_badge.svg"
 					ml={1}
@@ -51,16 +49,16 @@ function VerifiedBadge({
 						w="full"
 						p={4}
 					>
-					<Image
-						h="1rem"
-						w="1rem"
-						display="inline-block"
-						src="/ui_icons/verified_badge.svg"
-						ml={1}
-						mr={2}
-						lineHeight={lineHeight}
-						gridArea="icon"
-					/>
+						<Image
+							h="1rem"
+							w="1rem"
+							display="inline-block"
+							src="/ui_icons/verified_badge.svg"
+							ml={1}
+							mr={2}
+							lineHeight={lineHeight}
+							gridArea="icon"
+						/>
 						<Text
 							fontWeight="700"
 							fontStyle="normal"
@@ -81,12 +79,12 @@ function VerifiedBadge({
 							justifySelf="start"
 							paddingBlock={0}
 						>
-						<Image
-							h="0.75rem"
-							w="0.75rem"
-							src="/ui_icons/link.svg"
-							lineHeight={lineHeight}
-						/>
+							<Image
+								h="0.75rem"
+								w="0.75rem"
+								src="/ui_icons/link.svg"
+								lineHeight={lineHeight}
+							/>
 						</Button>
 					</Grid>
 
@@ -97,25 +95,27 @@ function VerifiedBadge({
 						pt={4}
 						w="full"
 					>
-					<Text
-						color="#373737"
-						fontWeight="400"
-						fontStyle="normal"
-						fontSize="0.75rem"
-						lineHeight="1rem"
-					>
+						<Text
+							color="#373737"
+							fontWeight="400"
+							fontStyle="normal"
+							fontSize="0.75rem"
+							lineHeight="1rem"
+						>
             Funds deposited
-					</Text>
-					<Text
-						color="#373737"
-						fontWeight="700"
-						fontStyle="normal"
-						fontSize="0.75rem"
-						lineHeight="1rem"
-						justifySelf="end"
-					>
-						{grantAmount}{' '}{grantCurrency}
-					</Text>
+						</Text>
+						<Text
+							color="#373737"
+							fontWeight="700"
+							fontStyle="normal"
+							fontSize="0.75rem"
+							lineHeight="1rem"
+							justifySelf="end"
+						>
+							{grantAmount}
+							{' '}
+							{grantCurrency}
+						</Text>
 					</Grid>
 					<Grid
 						gridTemplateColumns="2fr 1fr"
@@ -123,25 +123,27 @@ function VerifiedBadge({
 						p={4}
 						w="full"
 					>
-					<Text
-						color="#373737"
-						fontWeight="400"
-						fontStyle="normal"
-						fontSize="0.75rem"
-						lineHeight="1rem"
-					>
+						<Text
+							color="#373737"
+							fontWeight="400"
+							fontStyle="normal"
+							fontSize="0.75rem"
+							lineHeight="1rem"
+						>
 						Funds sent to winners
-					</Text>
-					<Text
-						color="#373737"
-						fontWeight="700"
-						fontStyle="normal"
-						fontSize="0.75rem"
-						lineHeight="1rem"
-						justifySelf="end"
-					>
-						{disbursedAmount}{' '}{grantCurrency}
-					</Text>
+						</Text>
+						<Text
+							color="#373737"
+							fontWeight="700"
+							fontStyle="normal"
+							fontSize="0.75rem"
+							lineHeight="1rem"
+							justifySelf="end"
+						>
+							{disbursedAmount}
+							{' '}
+							{grantCurrency}
+						</Text>
 					</Grid>
 				</Flex>
 			</PopoverContent>

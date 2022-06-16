@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
 	Box,
 	Flex,
@@ -6,11 +6,8 @@ import {
 	Link,
 	Text,
 } from '@chakra-ui/react'
-import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { Workspace } from 'src/types'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import { getUrlForIPFSHash, uploadToIPFS } from '../../utils/ipfsUtils'
 import EditForm from './edit_form'
 
 interface Props {
@@ -21,7 +18,7 @@ function Settings({ workspaceData }: Props) {
 
 	interface Props {
 		workspaceData: Workspace;
-	  }	  
+	  }
 
 	return (
 		<Flex
