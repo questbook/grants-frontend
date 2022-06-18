@@ -32,6 +32,8 @@ function GrantDetails({
 		} else {
 			setDecodedDetails(grantDetails)
 		}
+
+		console.log(grantDetails, decodedDetails);
 	}, [grantDetails])
 
 	return (
@@ -86,14 +88,14 @@ function GrantDetails({
 					mt={3}
 					fontWeight="400">
 					{
-						decodedDetails ? (
+						decodedDetails !== '' ? (
 							<TextViewer
 							// value={useMemo(() => EditorState.createWithContent(
 							//   convertFromRaw(JSON.parse(grantDetails)),
 							// ), [grantDetails])}
 							// value={editorState}
 							// onChange={setEditorState}
-								grantDetails={decodedDetails}
+							text={decodedDetails}
 							/>
 						) : <Skeleton />
 					}

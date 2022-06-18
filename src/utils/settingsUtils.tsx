@@ -45,6 +45,7 @@ export const generateWorkspaceUpdateRequest = async(
 
 	applySimpleKeyUpdate('name', 'title')
 	applySimpleKeyUpdate('about', 'about')
+	applySimpleKeyUpdate('bio', 'bio')
 
 	if(newForm.image !== oldForm.image && newForm.image) {
 		req.logoIpfsHash = (await uploadToIPFS(newForm.image!)).hash
