@@ -272,6 +272,38 @@
 			"https://polygon-mainnet.g.alchemy.com/v2/"
 		]
 	},
+	"1001": {
+		"id": 1001,
+		"name": "Klaytn Testnet",
+		"isTestNetwork": true,
+		"icon": "/chain_assets/klay.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://baobab.scope.klaytn.com/account/{{address}}",
+			"transactionHash": "https://baobab.scope.klaytn.com/tx/{{tx}}"
+		},
+		"supportedCurrencies": {
+			"0x9330dd6713c8328a8d82b14e3f60a0f0b4cc7bfb": {
+				"icon": "/chain_assets/klay.svg",
+				"label": "KLAY",
+				"address": "0x9330dd6713c8328a8d82b14e3f60a0f0b4cc7bfb",
+				"decimals": 18
+			}
+		},
+		"qbContracts": {
+			"applications": "0xfe333a7526AFfD0aB20A4478D157DEEd0daAFECD",
+			"workspace": "0x39e2996A90C29f4ff584da164773a2c2Cc42c0dF",
+			"grantFactory": "0xC28cfc0A89A920313C6125fe4fD196E2308cB337",
+			"reviews": "0x6C3136f06dCcA37395B62fb858057e669b002f54"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-klaytn-testnet",
+		"rpcUrls": [
+			"https://api.baobab.klaytn.net:8651"
+		]
+	},
 	"44787": {
 		"id": 44787,
 		"name": "Celo Testnet",
