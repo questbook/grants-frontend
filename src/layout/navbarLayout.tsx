@@ -26,6 +26,8 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 	}, [renderCount])
 
 	useEffect(() => {
+		console.log('connected guy' + connected)
+
 		if(!connected && isDisconnected) {
 			setConnected(false)
 			if(renderCount > 0) {
