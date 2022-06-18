@@ -1,5 +1,5 @@
 import { WorkspaceUpdateRequest } from '@questbook/service-validator-client'
-import { SettingsForm, Workspace } from 'src/types'
+import { SettingsForm, Workspace, PartnersProps } from 'src/types'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
 
 export const workspaceDataToSettingsForm = (
@@ -22,7 +22,7 @@ export const workspaceDataToSettingsForm = (
 		bio: workspaceData.bio,
 		image: getUrlForIPFSHash(workspaceData?.logoIpfsHash),
 		supportedNetwork: workspaceData.supportedNetworks[0],
-		partners: workspaceData.partners,
+		partners: workspaceData.partners as PartnersProps[],
 		coverImage: getUrlForIPFSHash(workspaceData.coverImageIpfsHash || ''),
 		twitterHandle,
 		discordHandle,

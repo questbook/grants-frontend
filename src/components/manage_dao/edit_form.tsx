@@ -1,4 +1,6 @@
 import React, { SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
+
+// UI AND COMPONENTS 
 import {
   Box,
   Button,
@@ -11,29 +13,36 @@ import {
   ToastId,
   useToast,
 } from '@chakra-ui/react';
-import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
-import { CHAIN_INFO } from 'src/constants/chains';
-import config from 'src/constants/config';
-import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace';
-import { PartnersProps, SettingsForm, Workspace } from 'src/types';
-import {
-  generateWorkspaceUpdateRequest,
-  workspaceDataToSettingsForm,
-} from 'src/utils/settingsUtils';
-import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 import CoverUpload from '../ui/forms/coverUpload';
 import ImageUpload from '../ui/forms/imageUpload';
 import MultiLineInput from '../ui/forms/multiLineInput';
 import SingleLineInput from '../ui/forms/singleLineInput';
 import RichTextEditor from '../ui/forms/richTextEditor';
+import Loader from '../ui/loader';
+import InfoToast from '../ui/toasts/infoToast';
+import ErrorToast from '../ui/toasts/errorToast'
 import {
   ContentState,
   convertFromRaw,
   convertToRaw,
   EditorState,
 } from 'draft-js';
-import Loader from '../ui/loader';
-import InfoToast from '../ui/toasts/infoToast';
+
+// CONSTANTS AND TYPES
+import { CHAIN_INFO } from 'src/constants/chains';
+import config from 'src/constants/config';
+import { PartnersProps, SettingsForm, Workspace } from 'src/types';
+
+// UTILS AND TOOLS
+import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace';
+import { WorkspaceUpdateRequest } from '@questbook/service-validator-client';
+import {
+  generateWorkspaceUpdateRequest,
+  workspaceDataToSettingsForm,
+} from 'src/utils/settingsUtils';
+import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
+import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
+
 
 type EditFormProps = {
   workspaceData: Workspace | undefined;
@@ -65,18 +74,6 @@ function EditForm({ workspaceData }: EditFormProps) {
 
   const [partnersRequired, setPartnersRequired] = React.useState(false);
   const [partners, setPartners] = React.useState<any>([]);
-
-  const handlePartnerImageChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    if (event.target.files && event.target.files[0]) {
-      const img = event.target.files[0];
-
-	  let oldPartners = [...partners];
-	  oldPartners[index].image = URL.createObjectURL(img);
-	  setPartners(oldPartners)
-  }};
 
   React.useEffect(() => {
     console.log(partners);
@@ -164,8 +161,36 @@ function EditForm({ workspaceData }: EditFormProps) {
     }
   };
 
-  const createNewAbout = async () => {
-    const newAboutString = await JSON.stringify(
+  const handlePartnerImageChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+
+    if (event.target.files && event.target.files[0]) {
+      const img = event.target.files[0];
+      const maxImageSize = 2
+
+      if(img.size / 1024 / 1024 <= maxImageSize) {
+        let oldPartners = [...partners];
+        oldPartners[index].image = URL.createObjectURL(img);
+        setPartners(oldPartners)
+      } else {
+        toastRef.current = toast({
+          position: 'top',
+          render: () => ErrorToast({
+            content: `Image size exceeds ${maxImageSize} MB`,
+            close: () => {
+              if(toastRef.current) {
+                toast.close(toastRef.current)
+              }
+            },
+          }),
+        })
+      }
+  }};
+
+  const createNewAbout = async() => {
+     const newAboutString = await JSON.stringify(
       convertToRaw(newAbout.getCurrentContent())
     );
 
@@ -174,12 +199,36 @@ function EditForm({ workspaceData }: EditFormProps) {
     );
 
     if (oldAboutString !== newAboutString) {
-      updateFormData({ about: newAboutString });
+      let newAboutHash
+      try {
+        newAboutHash = (await uploadToIPFS(newAboutString)).hash
+      } catch {
+        console.log("could not upload")
+      } finally {
+        updateFormData({ about: newAboutHash });
+      }
     }
   };
 
+  const savePartners = async() => {
+    if (partners.length >= 1) {
+      let oldPartners = [...partners]
+      let partnerImageHash = '';
+      await Promise.all(oldPartners.map(async (partner, index) => {
+        partnerImageHash = (await uploadToIPFS(partner.image)).hash
+        oldPartners[index].image = partnerImageHash;
+      }));
+
+      console.log(oldPartners);
+      updateFormData({ partners: oldPartners });
+    }
+  }
+
   const handleSubmit = async () => {
-    await createNewAbout();
+    // await createNewAbout();
+    // await savePartners();
+
+    console.log(editedFormData);
 
     if (!editedFormData?.bio?.length) {
       return updateEditError('bio', 'Please enter a bio');
@@ -193,23 +242,23 @@ function EditForm({ workspaceData }: EditFormProps) {
       return updateEditError('about', 'Please enter about');
     }
 
-    const data = await generateWorkspaceUpdateRequest(
-      editedFormData,
-      workspaceDataToSettingsForm(workspaceData)!
-    );
+    // const data = await generateWorkspaceUpdateRequest(
+    //   editedFormData,
+    //   workspaceDataToSettingsForm(workspaceData)!
+    // );
 
-    if (!Object.keys(data).length) {
-      toast({
-        position: 'bottom-right',
-        title: 'No Changes to Save!',
-        status: 'info',
-        isClosable: true,
-        duration: 3000,
-      });
-      return undefined;
-    }
+    // if (!Object.keys(data).length) {
+    //   toast({
+    //     position: 'bottom-right',
+    //     title: 'No Changes to Save!',
+    //     status: 'info',
+    //     isClosable: true,
+    //     duration: 3000,
+    //   });
+    //   return undefined;
+    // }
 
-    return setEditData(data);
+    // return setEditData(data);
   };
 
   useEffect(() => {
@@ -254,7 +303,7 @@ function EditForm({ workspaceData }: EditFormProps) {
           value={editedFormData?.bio}
           onChange={(e) => updateFormData({ bio: e.target.value })}
           isError={hasError('bio')}
-          maxLength={500}
+          maxLength={200}
           subtext={null}
         />
       </Grid>

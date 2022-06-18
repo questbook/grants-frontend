@@ -27,9 +27,9 @@ export type PartnersProps = {
 export type SettingsForm = {
   name: string;
   about: string;
-	bio: string;
+  bio: string;
   supportedNetwork: SupportedNetwork;
-	partners: PartnersProps[];
+  partners?: PartnersProps[];
   image?: string;
   coverImage?: string;
   twitterHandle?: string;
