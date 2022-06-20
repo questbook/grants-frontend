@@ -1,24 +1,12 @@
-import React, { useEffect } from 'react'
 import { SupportedChainId } from 'src/constants/chains'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { useNetwork } from 'wagmi'
 
+/**
+ * Return the chain ID if supported by the app, otherwise return undefined
+ * @returns the chain ID if supported -- undefined otherwise
+ */
 export default function useChainId() {
 	const { activeChain } = useNetwork()
-	const supportedChainIdFromNetworkData = (chainId: number) => {
-		return CHAIN_INFO[chainId as SupportedChainId].id ?? undefined
-	}
-
-	const [chainId, setChainId] = React.useState<SupportedChainId>()
-	useEffect(() => {
-		// console.log('changing net');
-		if(!activeChain?.id) {
-			setChainId(undefined)
-			return
-		}
-
-		setChainId(supportedChainIdFromNetworkData(activeChain.id))
-	}, [activeChain?.id])
-
-	return chainId
+	return CHAIN_INFO[activeChain?.id as SupportedChainId]?.id
 }
