@@ -196,16 +196,10 @@ function EditForm({ workspaceData }: EditFormProps) {
         convertToRaw(newAbout.getCurrentContent())
       );
   
-      let newAboutHash
-        try {
-          newAboutHash = (await uploadToIPFS(newAboutString)).hash
-        } catch {
-          console.log("could not upload")
-        } finally {
-          updateFormData({ about: newAboutHash });
-        }
+    let newAboutHash = (await uploadToIPFS(newAboutString)).hash
+    updateFormData({ about: newAboutHash });
     }
-    
+
     if (changedPartners || changedPartnersImage) {
       let oldPartners = [...partners!]
       let partnerImageHash = '';
