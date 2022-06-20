@@ -4,6 +4,7 @@ import { ethers } from 'ethers'
 import { SupportedChainId } from 'src/constants/chains'
 import { SupportedNetwork } from 'src/generated/graphql'
 import { MinimalWorkspace } from 'src/types'
+import { CHAIN_INFO } from 'src/constants/chains'
 
 const isValidAddress = (address: string) => ethers.utils.isAddress(address)
 const isValidEmail = (email: string) => {
@@ -13,41 +14,14 @@ const isValidEmail = (email: string) => {
 }
 
 const getSupportedChainIdFromSupportedNetwork = (chainId: SupportedNetwork) => {
-	if(chainId === SupportedNetwork.Chain_4) {
-		return SupportedChainId.RINKEBY
-	}
+	
+	// console.log('chain Id', chainId)
+	if (!(chainId.slice(chainId.indexOf('_') + 1) === "undefined")) {
+		const chainid = parseInt(chainId.slice(chainId.indexOf('_') + 1))
+		return CHAIN_INFO[chainid as SupportedChainId].id
+	} 
 
-	if(chainId === SupportedNetwork.Chain_80001) {
-		return SupportedChainId.POLYGON_MUMBAI
-	}
-
-	if(chainId === SupportedNetwork.Chain_137) {
-		return SupportedChainId.POLYGON_MAINNET
-	}
-
-	if(chainId === SupportedNetwork.Chain_10) {
-		return SupportedChainId.OPTIMISM_MAINNET
-	}
-
-	if(chainId === SupportedNetwork.Chain_245022926) {
-		return SupportedChainId.NEON_DEVNET
-	}
-
-	if(chainId === SupportedNetwork.Chain_44787) {
-		return SupportedChainId.CELO_ALFAJORES_TESTNET
-	}
-
-	if(chainId === SupportedNetwork.Chain_69) {
-		return SupportedChainId.OPTIMISM_KOVAN
-	}
-
-	// @TODO: needs type for harmony
-	// if (chainId === SupportedNetwork.Chain_80001) {
-	//   return SupportedChainId.HARMONY_TESTNET;
-	// }
-	return SupportedChainId.HARMONY_TESTNET
-	// cannot return undefined ?
-	// return undefined;
+	return CHAIN_INFO["4"].id
 }
 
 const getSupportedChainIdFromWorkspace = (workspace?: MinimalWorkspace) => {
@@ -61,40 +35,7 @@ const getSupportedChainIdFromWorkspace = (workspace?: MinimalWorkspace) => {
 
 // eslint-disable-next-line arrow-body-style
 const getSupportedValidatorNetworkFromChainId = (chainId: SupportedChainId) => {
-	if(chainId === SupportedChainId.RINKEBY) {
-		return SupportedValidatorNetwork._4
-	}
-
-	if(chainId === SupportedChainId.POLYGON_MUMBAI) {
-		return SupportedValidatorNetwork._80001
-	}
-
-	if(chainId === SupportedChainId.POLYGON_MAINNET) {
-		return SupportedValidatorNetwork._137
-	}
-
-	if(chainId === SupportedChainId.OPTIMISM_MAINNET) {
-		return SupportedValidatorNetwork._10
-	}
-
-	if(chainId === SupportedChainId.NEON_DEVNET) {
-		return SupportedValidatorNetwork._245022926
-	}
-
-	if(chainId === SupportedChainId.CELO_ALFAJORES_TESTNET) {
-		return SupportedValidatorNetwork._44787
-	}
-
-	if(chainId === SupportedChainId.OPTIMISM_KOVAN) {
-		return SupportedValidatorNetwork._69
-	}
-
-	// @TODO: needs type for harmony
-	// if (chainId === SupportedNetwork.Chain_80001) {
-	//   return SupportedChainId.HARMONY_TESTNET;
-	// }
-
-	return SupportedValidatorNetwork._1666700000
+	return CHAIN_INFO[chainId].id.toString() as SupportedValidatorNetwork
 }
 
 export {
