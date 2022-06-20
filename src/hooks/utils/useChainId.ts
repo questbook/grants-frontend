@@ -41,6 +41,10 @@ export default function useChainId() {
 			return SupportedChainId.HARMONY_MAINNET
 		}
 
+		if(chainId === 1001) {
+			return SupportedChainId.KLAYTN_TESTNET
+		}
+
 		return undefined
 	}
 
