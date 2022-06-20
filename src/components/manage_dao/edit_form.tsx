@@ -43,7 +43,6 @@ import {
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils';
 
-
 type EditFormProps = {
   workspaceData: Workspace | undefined;
 };
@@ -73,7 +72,10 @@ function EditForm({ workspaceData }: EditFormProps) {
   );
 
   const [partnersRequired, setPartnersRequired] = React.useState(false);
-  const [partners, setPartners] = React.useState<any>([]);
+  const [partners, setPartners] = React.useState<PartnersProps[] | undefined>([]);
+  const [changedPartners, setChangedPartners] = React.useState(false);
+  const [changedAbout, setChangedAbout] = React.useState(false);
+  const [changedPartnersImage, setChangedPartnersImage] = React.useState(false);
 
   React.useEffect(() => {
     console.log(partners);
@@ -92,7 +94,6 @@ function EditForm({ workspaceData }: EditFormProps) {
             ContentState.createFromText(editedFormData.about)
           );
         }
-
         return EditorState.createEmpty();
       }
     }, [editedFormData?.about])
@@ -169,11 +170,11 @@ function EditForm({ workspaceData }: EditFormProps) {
     if (event.target.files && event.target.files[0]) {
       const img = event.target.files[0];
       const maxImageSize = 2
-
       if(img.size / 1024 / 1024 <= maxImageSize) {
-        let oldPartners = [...partners];
+        let oldPartners = [...partners!];
         oldPartners[index].image = URL.createObjectURL(img);
-        setPartners(oldPartners)
+        setPartners(oldPartners);
+        setChangedPartners(true);
       } else {
         toastRef.current = toast({
           position: 'top',
@@ -189,46 +190,33 @@ function EditForm({ workspaceData }: EditFormProps) {
       }
   }};
 
-  const createNewAbout = async() => {
-     const newAboutString = await JSON.stringify(
-      convertToRaw(newAbout.getCurrentContent())
-    );
-
-    const oldAboutString = await JSON.stringify(
-      convertToRaw(aboutData.getCurrentContent())
-    );
-
-    if (oldAboutString !== newAboutString) {
+  const handleSubmit = async() => {
+    if (changedAbout) {
+      const newAboutString = await JSON.stringify(
+        convertToRaw(newAbout.getCurrentContent())
+      );
+  
       let newAboutHash
-      try {
-        newAboutHash = (await uploadToIPFS(newAboutString)).hash
-      } catch {
-        console.log("could not upload")
-      } finally {
-        updateFormData({ about: newAboutHash });
-      }
+        try {
+          newAboutHash = (await uploadToIPFS(newAboutString)).hash
+        } catch {
+          console.log("could not upload")
+        } finally {
+          updateFormData({ about: newAboutHash });
+        }
     }
-  };
 
-  const savePartners = async() => {
-    if (partners.length >= 1) {
-      let oldPartners = [...partners]
+      let oldPartners = [...partners!]
       let partnerImageHash = '';
       await Promise.all(oldPartners.map(async (partner, index) => {
-        partnerImageHash = (await uploadToIPFS(partner.image)).hash
+        if (changedPartners || changedPartnersImage) {
+        partnerImageHash = (await uploadToIPFS(partner?.image!)).hash
         oldPartners[index].image = partnerImageHash;
+        updateFormData({ partners: oldPartners });
+       } else {
+        return
+       }
       }));
-
-      console.log(oldPartners);
-      updateFormData({ partners: oldPartners });
-    }
-  }
-
-  const handleSubmit = async () => {
-    // await createNewAbout();
-    // await savePartners();
-
-    console.log(editedFormData);
 
     if (!editedFormData?.bio?.length) {
       return updateEditError('bio', 'Please enter a bio');
@@ -238,32 +226,41 @@ function EditForm({ workspaceData }: EditFormProps) {
       return updateEditError('name', 'Please enter a name');
     }
 
-    if (!editedFormData?.about?.length) {
+    if (!editedFormData?.about?.startsWith('Qm')) {
       return updateEditError('about', 'Please enter about');
     }
 
-    // const data = await generateWorkspaceUpdateRequest(
-    //   editedFormData,
-    //   workspaceDataToSettingsForm(workspaceData)!
-    // );
+    console.log(editedFormData);
 
-    // if (!Object.keys(data).length) {
-    //   toast({
-    //     position: 'bottom-right',
-    //     title: 'No Changes to Save!',
-    //     status: 'info',
-    //     isClosable: true,
-    //     duration: 3000,
-    //   });
-    //   return undefined;
-    // }
+    const data = await generateWorkspaceUpdateRequest(
+      editedFormData,
+      workspaceDataToSettingsForm(workspaceData)!
+    );
 
-    // return setEditData(data);
+    if (!Object.keys(data).length) {
+      toast({
+        position: 'bottom-right',
+        title: 'No Changes to Save!',
+        status: 'info',
+        isClosable: true,
+        duration: 3000,
+      });
+      return undefined;
+    }
+
+    return setEditData(data);
   };
 
   useEffect(() => {
     setEditedFormData(workspaceDataToSettingsForm(workspaceData));
   }, [workspaceData]);
+
+  useEffect(() => {
+    if (!changedPartners) {
+      setPartners(editedFormData?.partners);
+      console.log(partners, editedFormData);
+    }
+  }, [editedFormData]);
 
   useEffect(() => {
     if (txnData) {
@@ -311,9 +308,10 @@ function EditForm({ workspaceData }: EditFormProps) {
         <RichTextEditor
           label="About your Grants DAO"
           placeholder="Write details about your grants, bounty, and other projects."
-          value={newAbout}
+          value={changedAbout ? newAbout : aboutData}
           onChange={(e: EditorState) => {
-            setNewAbout(e);
+            setNewAbout(e)
+            setChangedAbout(true)
           }}
           isError={hasError('about')}
           errorText="Required"
@@ -361,7 +359,7 @@ function EditForm({ workspaceData }: EditFormProps) {
             isChecked={partnersRequired}
             onChange={(e: any) => {
               setPartnersRequired(e.target.checked);
-              const newPartners = partners.map((partner: any) => ({
+              const newPartners = partners?.map((partner: any) => ({
                 ...partner,
                 nameError: false,
               }));
@@ -374,7 +372,7 @@ function EditForm({ workspaceData }: EditFormProps) {
         </Flex>
       </Grid>
 
-      {partners.map((partner: any, index: any) => (
+      {partners?.map((partner: any, index: any) => (
         <Box w="100%">
           <Grid
             minW="100%"
@@ -414,6 +412,7 @@ function EditForm({ workspaceData }: EditFormProps) {
                     const newPartners = [...partners];
                     newPartners.splice(index, 1);
                     setPartners(newPartners);
+                    setChangedPartners(true);
                   }}
                   alignItems="center"
                   cursor="pointer"
@@ -451,6 +450,7 @@ function EditForm({ workspaceData }: EditFormProps) {
                     const newPartners = [...partners];
                     newPartners[index].name = e.target.value;
                     setPartners(newPartners);
+                    setChangedPartners(true);
                   }}
                   placeholder="e.g. Partner DAO"
                   errorText="Required"
@@ -458,9 +458,12 @@ function EditForm({ workspaceData }: EditFormProps) {
                 />
                 <Box mt="-2.2rem" mb="-10rem">
                   <ImageUpload
-                    image={partners[index].image as any}
+                    image={changedPartners ? partners[index]?.image! : getUrlForIPFSHash(partners[index]?.image!)}
                     isError={false}
-                    onChange={(e) => handlePartnerImageChange(e, index)}
+                    onChange={(e) => {
+                      handlePartnerImageChange(e, index);
+                      setChangedPartnersImage(true);
+                    }}
                     label="Partner logo"
                   />
                 </Box>
@@ -496,6 +499,7 @@ function EditForm({ workspaceData }: EditFormProps) {
                   const newPartners = [...partners];
                   newPartners[index].industry = e.target.value;
                   setPartners(newPartners as any);
+                  setChangedPartners(true);
                 }}
                 placeholder="e.g. Security"
                 errorText="Required"
@@ -535,6 +539,7 @@ function EditForm({ workspaceData }: EditFormProps) {
                   const newPartners = [...partners];
                   newPartners[index].website = e.target.value;
                   setPartners(newPartners);
+                  setChangedPartners(true);
                 }}
                 placeholder="e.g. www.example.com"
                 errorText="Required"
@@ -553,7 +558,7 @@ function EditForm({ workspaceData }: EditFormProps) {
             }
 
             const newPartners = [
-              ...partners,
+              ...partners!,
               {
                 name: '',
                 industry: '',

@@ -197,12 +197,19 @@ function BrowseGrants() {
               			grantDesc={grant.summary}
               			numOfApplicants={grant.numberOfApplications}
               			endTimestamp={new Date(grant.deadline!).getTime()}
+						createdAt={grant.createdAtS}
               			grantAmount={
               				formatAmount(
               					grant.reward.committed,
               					chainInfo?.decimals ?? 18
               				)
               			}
+						  disbursedAmount={
+							formatAmount(
+								grant.funding,
+								chainInfo?.decimals ?? 18
+							)
+						}
               			grantCurrency={chainInfo?.label ?? 'LOL'}
               			grantCurrencyIcon={chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'}
               			isGrantVerified={isGrantVerified}

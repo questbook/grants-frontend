@@ -73,7 +73,30 @@ export const calculateUSDValue = async(value: number | string | any, token: stri
    }
   }
 `
-
+const perpPriceQuery = `
+{
+	bundle(id: "1" ) {
+	 ethPrice
+   }
+   pair(id: "0xf66369997ae562bc9eec2ab9541581252f9ca383"){
+	   token0 {
+		 derivedETH
+	   }
+   }
+  }
+`
+const ldoPriceQuery = `
+{
+	bundle(id: "1" ) {
+	 ethPrice
+   }
+   pair(id: "0x454f11d58e27858926d7a4ece8bfea2c33e97b13"){
+	   token0 {
+		 derivedETH
+	   }
+   }
+  }
+`
 	const client = createClient({
 		url: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2',
 	})
@@ -110,6 +133,16 @@ export const calculateUSDValue = async(value: number | string | any, token: stri
 		amount = data.data.pair.token0.derivedETH * data.data.bundle.ethPrice * value
 	}
 
+	async function fetchPerpPrice() {
+		const data = await client.query(perpPriceQuery).toPromise()
+		amount = data.data.pair.token0.derivedETH * data.data.bundle.ethPrice * value
+	}
+
+	async function fetchLdoPrice() {
+		const data = await client.query(ldoPriceQuery).toPromise()
+		amount = data.data.pair.token0.derivedETH * data.data.bundle.ethPrice * value
+	}
+	
 	if(token === 'WMATIC') {
 		await fetchWmaticPrice()
 	}
@@ -132,6 +165,14 @@ export const calculateUSDValue = async(value: number | string | any, token: stri
 
 	if(token === 'USDC') {
 		await fetchUsdcPrice()
+	}
+
+	if (token === 'PERP') {
+		await fetchPerpPrice()
+	}
+
+	if (token === 'LDO') {
+		await fetchLdoPrice()
 	}
 
 	return amount

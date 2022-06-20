@@ -11,7 +11,6 @@ import Badge from './badge'
 interface BrowseGrantCardProps {
   daoID: string;
   daoName: string;
-  createdAt: number;
   isDaoVerified?: boolean;
   chainId: SupportedChainId | undefined;
 
@@ -22,6 +21,7 @@ interface BrowseGrantCardProps {
 
   numOfApplicants: number;
   endTimestamp: number;
+  createdAt: number;
 
   grantAmount: string;
   grantCurrency: string;
@@ -33,7 +33,6 @@ interface BrowseGrantCardProps {
 }
 
 function BrowseGrantCard({
-	daoID,
 	daoName,
 	createdAt,
 	isDaoVerified,
