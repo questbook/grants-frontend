@@ -21,6 +21,7 @@ import MultiLineInput from '../../ui/forms/multiLineInput'
 import SingleLineInput from '../../ui/forms/singleLineInput'
 import { EditorState, convertFromRaw, convertToRaw } from 'draft-js'
 import RichTextEditor from '../../ui/forms/richTextEditor';
+import { uploadToIPFS } from 'src/utils/ipfsUtils'
 
 function Form({
 	onSubmit: onFormSubmit,
@@ -94,20 +95,19 @@ function Form({
 		}
 	}
 
-	const createAbout = async () => {
-		const newAboutString = await JSON.stringify(
-		  convertToRaw(daoAbout.getCurrentContent())
-		);
-	
-		if (newAboutString !== '') {
-		  setStringAbout(newAboutString);
-		}
-	  };
-
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		let error = false
 
-		createAbout();
+		const aboutString = await JSON.stringify(
+			convertToRaw(daoAbout.getCurrentContent())
+		  );
+	  
+		if (aboutString !== '') {
+			let newAboutHash = (await uploadToIPFS(aboutString)).hash
+			setStringAbout(newAboutHash);
+		}
+
+		console.log(stringAbout);
 
 		if(!daoName || daoName.length === 0) {
 			setDaoNameError(true)
@@ -131,14 +131,14 @@ function Form({
 			return
 		}
 
-		onFormSubmit({
-			name: daoName,
-			bio: daoBio,
-			about: stringAbout!,
-			image: imageFile,
-			network: chainId!,
-			ownerId: accountData?.address ?? '0x0000000000000000000000000000000000000000',
-		})
+		// onFormSubmit({
+		// 	name: daoName,
+		// 	bio: daoBio,
+		// 	about: stringAbout!,
+		// 	image: imageFile,
+		// 	network: chainId!,
+		// 	ownerId: accountData?.address ?? '0x0000000000000000000000000000000000000000',
+		// })
 	}
 
 	useEffect(() => {

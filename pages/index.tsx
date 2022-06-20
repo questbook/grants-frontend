@@ -151,7 +151,7 @@ function BrowseGrants() {
 				alignItems="stretch"
 				pb={8}
 				px={10}>
-				<Heading title="Discover grants" />
+				<Heading dontRenderDivider title="Browse grants" />
 				{
 					!loadedData ? (
 						<Loader />

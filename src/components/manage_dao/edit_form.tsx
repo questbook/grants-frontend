@@ -205,18 +205,16 @@ function EditForm({ workspaceData }: EditFormProps) {
           updateFormData({ about: newAboutHash });
         }
     }
-
+    
+    if (changedPartners || changedPartnersImage) {
       let oldPartners = [...partners!]
       let partnerImageHash = '';
       await Promise.all(oldPartners.map(async (partner, index) => {
-        if (changedPartners || changedPartnersImage) {
         partnerImageHash = (await uploadToIPFS(partner?.image!)).hash
         oldPartners[index].image = partnerImageHash;
         updateFormData({ partners: oldPartners });
-       } else {
-        return
-       }
-      }));
+      }))
+    }
 
     if (!editedFormData?.bio?.length) {
       return updateEditError('bio', 'Please enter a bio');

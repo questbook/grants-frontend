@@ -138,7 +138,7 @@ function GrantCard({
 						fontWeight="700"
 						color="#8C8C8C"
 					>
-						{useTimeDifference(currentDate, createdAt * 1000)}
+						{useTimeDifference(currentDate, createdAt * 1000)} ago
 					</Text>
 
 					<Box mr="auto" />
@@ -250,7 +250,11 @@ function GrantCard({
 					</Text>
 
 					<Box mr="auto" />
+					<ShareMenu
+					chainId={chainId}
+					grantID={grantID} />
 					<Button
+						ml={7}
 						onClick={onClick}
 						variant="primaryCta"
 						h="36px">
@@ -260,132 +264,6 @@ function GrantCard({
 			</Flex>
 		</Flex>
 	</Flex>)
-		{/*<>
-			<Flex
-				py={6}
-				w="100%">
-				<Image
-					objectFit="cover"
-					h="54px"
-					w="54px"
-					src={daoIcon} />
-				<Flex
-					flex={1}
-					direction="column"
-					ml={6}>
-					<Flex
-						direction="row"
-						alignItems="start">
-						<Text maxW="50%">
-							<Link
-								onClick={onTitleClick}
-								whiteSpace="normal"
-								textAlign="left"
-								lineHeight="26px"
-								fontSize="18px"
-								fontWeight="700"
-								color="#12224"
-							>
-								{grantTitle}
-							</Link>
-							{
-								isGrantVerified && (
-									<VerifiedBadge
-										grantAmount={funding}
-										grantCurrency={grantCurrency}
-										lineHeight="26px"
-										marginBottom={-1}
-									/>
-								)
-							}
-						</Text>
-
-						<Box mr="auto" />
-						<Badge
-							numOfApplicants={numOfApplicants}
-							endTimestamp={endTimestamp}
-						/>
-					</Flex>
-
-					<Flex direction="row">
-						<Link
-							onClick={
-								() => {
-									router.push({
-										pathname: '/profile',
-										query: {
-											daoId: daoID,
-											chainId,
-										},
-									})
-								}
-							}
-							lineHeight="24px"
-							fontWeight="700"
-						>
-							{daoName}
-							{
-								isDaoVerified && (
-									<Image
-										h={4}
-										w={4}
-										display="inline-block"
-										src="/ui_icons/verified.svg"
-										ml="2px"
-										mb="-2px"
-									/>
-								)
-							}
-						</Link>
-						<Text
-							fontSize="16px"
-							color="#717A7C"
-							fontWeight="400"
-							lineHeight="24px"
-							ml={2}
-						>
-							{`• ${CHAIN_INFO[chainId!]?.name}`}
-						</Text>
-					</Flex>
-
-					<Text
-						mt={5}
-						lineHeight="24px"
-						color="#122224"
-						fontWeight="400">
-						{grantDesc}
-					</Text>
-
-					<Flex
-						direction="row"
-						mt={8}
-						alignItems="center">
-						<Image
-							boxSize="36px"
-							src={grantCurrencyIcon} />
-						<Text
-							ml={2}
-							fontWeight="700"
-							color="#3F06A0">
-							{grantAmount}
-							{' '}
-							{grantCurrency}
-						</Text>
-						<Box mr="auto" />
-						<ShareMenu
-							chainId={chainId}
-							grantID={grantID} />
-						<Button
-							ml={7}
-							onClick={onClick}
-							variant="primaryCta">
-              Apply Now
-						</Button>
-					</Flex>
-				</Flex>
-			</Flex>
-			<Divider w="auto" />
-						</>*/}
 }
 
 GrantCard.defaultProps = {
