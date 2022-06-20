@@ -15,8 +15,8 @@ const isValidEmail = (email: string) => {
 
 const getSupportedChainIdFromSupportedNetwork = (chainId: SupportedNetwork) => {
 
-	// console.log('chain Id', chainId)
-	if(!(chainId.slice(chainId.indexOf('_') + 1) === 'undefined')) {
+	console.log('chain Id', chainId)
+	if(chainId !== undefined && !(chainId.slice(chainId.indexOf('_') + 1) === 'undefined')) {
 		const chainid = parseInt(chainId.slice(chainId.indexOf('_') + 1))
 		return CHAIN_INFO[chainid as SupportedChainId].id
 	}
