@@ -2,9 +2,9 @@
 import { SupportedNetwork as SupportedValidatorNetwork } from '@questbook/service-validator-client/dist/api'
 import { ethers } from 'ethers'
 import { SupportedChainId } from 'src/constants/chains'
+import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedNetwork } from 'src/generated/graphql'
 import { MinimalWorkspace } from 'src/types'
-import { CHAIN_INFO } from 'src/constants/chains'
 
 const isValidAddress = (address: string) => ethers.utils.isAddress(address)
 const isValidEmail = (email: string) => {
@@ -14,14 +14,14 @@ const isValidEmail = (email: string) => {
 }
 
 const getSupportedChainIdFromSupportedNetwork = (chainId: SupportedNetwork) => {
-	
+
 	// console.log('chain Id', chainId)
-	if (!(chainId.slice(chainId.indexOf('_') + 1) === "undefined")) {
+	if(!(chainId.slice(chainId.indexOf('_') + 1) === 'undefined')) {
 		const chainid = parseInt(chainId.slice(chainId.indexOf('_') + 1))
 		return CHAIN_INFO[chainid as SupportedChainId].id
-	} 
+	}
 
-	return CHAIN_INFO["4"].id
+	return CHAIN_INFO['4'].id
 }
 
 const getSupportedChainIdFromWorkspace = (workspace?: MinimalWorkspace) => {
