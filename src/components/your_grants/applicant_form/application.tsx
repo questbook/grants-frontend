@@ -254,7 +254,7 @@ function Application({ applicationData, showHiddenData }: Props) {
 							{
 								decodedDetails ? (
 									<TextViewer
-										grantDetails={decodedDetails}
+										text={decodedDetails}
 									/>
 								) : null
 							}

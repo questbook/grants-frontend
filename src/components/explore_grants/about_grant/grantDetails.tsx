@@ -27,13 +27,13 @@ function GrantDetails({
 			return
 		}
 
-		if(grantDetails.startsWith('Qm') && grantDetails.length < 64) {
+		if(grantDetails.length) {
 			getDecodedDetails(grantDetails)
 		} else {
 			setDecodedDetails(grantDetails)
 		}
 
-		console.log(grantDetails, decodedDetails);
+		console.log(grantDetails)
 	}, [grantDetails])
 
 	return (
@@ -95,7 +95,7 @@ function GrantDetails({
 							// ), [grantDetails])}
 							// value={editorState}
 							// onChange={setEditorState}
-							text={decodedDetails}
+								text={decodedDetails}
 							/>
 						) : <Skeleton />
 					}

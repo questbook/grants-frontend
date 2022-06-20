@@ -1,23 +1,22 @@
 
-import React, {useState, useEffect} from 'react'
+import React, { useEffect, useState } from 'react'
 import {
 	Box,
 	Button,
-	Stack,
 	Flex,
 	Image,
 	Link,
+	Stack,
 	Text,
 } from '@chakra-ui/react'
+import moment from 'moment'
 import { useRouter } from 'next/router'
 import VerifiedBadge from 'src/components/ui/verified_badge'
-import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
+import { nFormatter } from 'src/utils/formattingUtils'
+import { calculateUSDValue, useTimeDifference } from '../../../utils/calculatingUtils'
 import Badge from './badge'
 import ShareMenu from './menu'
-import { calculateUSDValue, useTimeDifference } from '../../../utils/calculatingUtils'
-import { nFormatter } from 'src/utils/formattingUtils'
-import moment from 'moment'
 
 interface GrantCardProps {
   daoID: string;
@@ -86,26 +85,26 @@ function GrantCard({
 
 	return (
 		<Flex borderY="1px solid #E8E9E9">
-		<Flex
-			py={6}
-			px="1.5rem"
-			w="100%">
 			<Flex
-				flex={1}
-				gap="1rem"
-				direction="column">
+				py={6}
+				px="1.5rem"
+				w="100%">
 				<Flex
-					direction="row"
-					alignItems="center"
-					gap="0.75rem"
+					flex={1}
+					gap="1rem"
+					direction="column">
+					<Flex
+						direction="row"
+						alignItems="center"
+						gap="0.75rem"
 					>
-					<Image
-					objectFit="cover"
-					h="2rem"
-					w="2rem"
-					borderRadius="4px"
-					src={daoIcon} />
-					<Link
+						<Image
+							objectFit="cover"
+							h="2rem"
+							w="2rem"
+							borderRadius="4px"
+							src={daoIcon} />
+						<Link
 							onClick={
 								() => {
 									router.push({
@@ -127,143 +126,154 @@ function GrantCard({
 							{daoName}
 						</Link>
 
-					<Image
-						src="/ui_icons/green_dot.svg"
-						display="inline-block"
-					/>
+						<Image
+							src="/ui_icons/green_dot.svg"
+							display="inline-block"
+						/>
 
-					<Text
-						fontSize="0.75rem"
-						lineHeight="1rem"
-						fontWeight="700"
-						color="#8C8C8C"
-					>
-						{useTimeDifference(currentDate, createdAt * 1000)} ago
+						<Text
+							fontSize="0.75rem"
+							lineHeight="1rem"
+							fontWeight="700"
+							color="#8C8C8C"
+						>
+							{useTimeDifference(currentDate, createdAt * 1000)}
+							{' '}
+ago
+						</Text>
+
+						<Box mr="auto" />
+						<Badge
+							numOfApplicants={numOfApplicants} />
+					</Flex>
+
+					<Text maxW="50%">
+						<Link
+							onClick={onTitleClick}
+							whiteSpace="normal"
+							textAlign="left"
+							lineHeight="26px"
+							fontSize="18px"
+							fontWeight="700"
+							color="#12224"
+						>
+							{grantTitle}
+						</Link>
 					</Text>
 
-					<Box mr="auto" />
-					<Badge 
-					numOfApplicants={numOfApplicants} />
-				</Flex>
-
-				<Text maxW="50%">
-					<Link
-						onClick={onTitleClick}
-						whiteSpace="normal"
-						textAlign="left"
-						lineHeight="26px"
-						fontSize="18px"
-						fontWeight="700"
-						color="#12224"
+					<Text
+						lineHeight="24px"
+						color="#373737"
+						fontSize="1rem"
+						fontWeight="400"
 					>
-						{grantTitle}
-					</Link>
-				</Text>
+						{grantDesc}
+					</Text>
 
-				<Text
-					lineHeight="24px"
-					color="#373737"
-					fontSize="1rem"
-					fontWeight="400"
-				>
-					{grantDesc}
-				</Text>
+					<Flex
+						direction="row"
+						mt={8}
+						alignItems="center">
+						<Stack
+							bgColor="#F5F5F5"
+							borderRadius="1.25rem"
+							h="1.5rem"
+							px="0.5rem"
+							justify="center"
+						>
+							<Text
+								fontFamily="DM Sans"
+								fontSize="0.85rem"
+								lineHeight="1rem"
+								fontWeight="400"
+								color="#373737"
+							>
+								<b>
+									{
+										grantReward !== 0 ? `$${nFormatter(grantReward.toFixed(0))}` : (
+											<>
+												{grantAmount}
+												{' '}
+												{grantCurrency}
+											</>
+										)
+									}
+								</b>
+/grantee
+								{
+									isGrantVerified && (
+										<VerifiedBadge
+											grantAmount={funding}
+											grantCurrency={grantCurrency}
+											lineHeight="26px"
+											disbursedAmount={disbursedAmount}
+											marginBottom={-1}
+										/>
+									)
+								}
+							</Text>
+						</Stack>
 
-				<Flex
-					direction="row"
-					mt={8}
-					alignItems="center">
-					<Stack
-						bgColor="#F5F5F5"
-						borderRadius="1.25rem"
-						h="1.5rem"
-						px="0.5rem"
-						justify="center"
-					>
+						<Image
+							mx={4}
+							src="/ui_icons/green_dot.svg"
+							display="inline-block"
+						/>
+						<Image
+							boxSize={4}
+							src={grantCurrencyIcon} />
 						<Text
-							fontFamily="DM Sans"
+							ml={2}
 							fontSize="0.85rem"
 							lineHeight="1rem"
 							fontWeight="400"
 							color="#373737"
 						>
-							<b>
-								{grantReward !== 0 ? `$${nFormatter(grantReward.toFixed(0))}` : <>{grantAmount}{" "}{grantCurrency}</>}
-							</b>
-/grantee
-							{
-								isGrantVerified && (
-									<VerifiedBadge
-										grantAmount={funding}
-										grantCurrency={grantCurrency}
-										lineHeight="26px"
-										disbursedAmount={disbursedAmount}
-										marginBottom={-1}
-									/>
-								)
-							}
-						</Text>
-					</Stack>
-
-					<Image
-						mx={4}
-						src="/ui_icons/green_dot.svg"
-						display="inline-block"
-					/>
-					<Image
-						boxSize={4}
-						src={grantCurrencyIcon} />
-					<Text
-						ml={2}
-						fontSize="0.85rem"
-						lineHeight="1rem"
-						fontWeight="400"
-						color="#373737"
-					>
 		  Paid in
-						{' '}
-						<b>
-							{grantCurrency}
-						</b>
-					</Text>
-					<Image
-						mx={4}
-						src="/ui_icons/green_dot.svg"
-						display="inline-block"
-					/>
+							{' '}
+							<b>
+								{grantCurrency}
+							</b>
+						</Text>
+						<Image
+							mx={4}
+							src="/ui_icons/green_dot.svg"
+							display="inline-block"
+						/>
 
-					<Image
-						mr="6px"
-						boxSize={3}
-						src="/ui_icons/deadline.svg"
-						display="inline-block"
-					/>
-					<Text
-						fontSize="0.85rem"
-						lineHeight="1rem"
-						display="inline-block">
+						<Image
+							mr="6px"
+							boxSize={3}
+							src="/ui_icons/deadline.svg"
+							display="inline-block"
+						/>
+						<Text
+							fontSize="0.85rem"
+							lineHeight="1rem"
+							display="inline-block">
 		  Ends on
-						{' '}
-						<b>
-							{moment(endTimestamp).format('MMMM D')}
-						</b>
-					</Text>
+							{' '}
+							<b>
+								{moment(endTimestamp).format('MMMM D')}
+							</b>
+						</Text>
 
-					<Box mr="auto" />
-					<ShareMenu
-					chainId={chainId}
-					grantID={grantID} />
-					<Button
-						ml={7}
-						onClick={onClick}
-						variant="primaryCta"
-						h="36px">
+						<Box mr="auto" />
+						<ShareMenu
+							chainId={chainId}
+							grantID={grantID} />
+						<Button
+							ml={7}
+							onClick={onClick}
+							variant="primaryCta"
+							h="36px">
 		  Apply Now
-					</Button>
+						</Button>
+					</Flex>
 				</Flex>
 			</Flex>
 		</Flex>
-	</Flex>)
+	)
 }
 
 GrantCard.defaultProps = {

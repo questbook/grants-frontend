@@ -1,14 +1,13 @@
-import React, {useState, useEffect} from 'react'
+import React, { useEffect, useState } from 'react'
+import Linkify from 'react-linkify'
 import {
 	Box,
 	Flex,
 	Grid,
 	Image,
 	Link,
-	Text,
-	Skeleton
-} from '@chakra-ui/react'
-import Linkify from 'react-linkify'
+	Skeleton,
+	Text } from '@chakra-ui/react'
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 
@@ -31,13 +30,13 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
 			return
 		}
 
-		if(daoAbout.length > 64) {
+		if(daoAbout.length) {
 			getDecodedAbout(daoAbout)
 		} else {
 			setDecodedAbout(daoAbout)
 		}
 
-		console.log(decodedAbout);
+		console.log(decodedAbout)
 	}, [daoAbout])
 
 	return (
@@ -50,34 +49,34 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
 				borderRight="1px solid #E8E9E9"
 				p="1.5rem"
 			>
-					<Linkify
-				componentDecorator={
-					(
-						decoratedHref: string,
-						decoratedText: string,
-						key: number,
-					) => (
-						<Link
-							key={key}
-							href={decoratedHref}
-							isExternal>
-							{decoratedText}
-						</Link>
-					)
-				}
-			>
-				<Box
-					mt={3}
-					fontWeight="400">
-					{
-						decodedAbout !== '' ? (
-							<TextViewer
-							text={decodedAbout}
-							/>
-						) : <Skeleton />
+				<Linkify
+					componentDecorator={
+						(
+							decoratedHref: string,
+							decoratedText: string,
+							key: number,
+						) => (
+							<Link
+								key={key}
+								href={decoratedHref}
+								isExternal>
+								{decoratedText}
+							</Link>
+						)
 					}
-				</Box>
-			</Linkify>
+				>
+					<Box
+						mt={3}
+						fontWeight="400">
+						{
+							decodedAbout !== '' ? (
+								<TextViewer
+									text={decodedAbout}
+								/>
+							) : <Skeleton />
+						}
+					</Box>
+				</Linkify>
 			</Flex>
 			<Flex
 				p="1.5rem"
@@ -94,8 +93,9 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
 				</Text>
 				{
 					daoPartners.length >= 1 &&
-        daoPartners.map((partner: any) => (
+        daoPartners.map((partner: any, index: number) => (
         	<Grid
+        		key={index}
         		gridTemplateColumns="1fr 1fr 1fr"
         		alignItems="center"
         		justifyContent="space-between"

@@ -91,10 +91,7 @@ function Profile() {
 		if(data) {
 			setWorkspaceData(data?.workspace!)
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [data, error, loading])
-
-	console.log(workspaceData)
 
 	const { data: grantsData } = useGetAllGrantsForADaoQuery({
 		client:
@@ -106,8 +103,6 @@ function Profile() {
 			acceptingApplications: true,
 		},
 	})
-
-	console.log(grantsData)
 
 	const { data: fundsData } = useGetFundSentDisburseQuery({
 		client:
@@ -134,7 +129,7 @@ function Profile() {
 	}, [grantsData, grantsFundedTime])
 
 	useEffect(() => {
-		if(fundsData && fundsData.fundsTransfers.length != 7 && fundingTime.length === 0) {
+		if(fundsData && fundsData.fundsTransfers.length !== 7 && fundingTime.length === 0) {
 			fundsData.fundsTransfers.forEach((created) => {
 				setFundingTime((array: any) => [...array, created.createdAtS])
 			})
@@ -276,8 +271,9 @@ function Profile() {
 							justify="right"
 							mt="3.5rem">
 							{
-								workspaceData?.socials.map((social) => (
+								workspaceData?.socials.map((social, index) => (
 									<IconButton
+										key={index}
 										aria-label={social.name}
 										// as={Button}
 										zIndex={10}
@@ -329,6 +325,7 @@ function Profile() {
 						{
 							tabs.map((tab, index) => (
 								<Button
+									key={index}
 									variant="link"
 									ml={index === 0 ? 0 : 12}
 									_hover={

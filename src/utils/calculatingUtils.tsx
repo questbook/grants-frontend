@@ -73,7 +73,7 @@ export const calculateUSDValue = async(value: number | string | any, token: stri
    }
   }
 `
-const perpPriceQuery = `
+	const perpPriceQuery = `
 {
 	bundle(id: "1" ) {
 	 ethPrice
@@ -85,7 +85,7 @@ const perpPriceQuery = `
    }
   }
 `
-const ldoPriceQuery = `
+	const ldoPriceQuery = `
 {
 	bundle(id: "1" ) {
 	 ethPrice
@@ -142,7 +142,7 @@ const ldoPriceQuery = `
 		const data = await client.query(ldoPriceQuery).toPromise()
 		amount = data.data.pair.token0.derivedETH * data.data.bundle.ethPrice * value
 	}
-	
+
 	if(token === 'WMATIC') {
 		await fetchWmaticPrice()
 	}
@@ -167,11 +167,11 @@ const ldoPriceQuery = `
 		await fetchUsdcPrice()
 	}
 
-	if (token === 'PERP') {
+	if(token === 'PERP') {
 		await fetchPerpPrice()
 	}
 
-	if (token === 'LDO') {
+	if(token === 'LDO') {
 		await fetchLdoPrice()
 	}
 
@@ -213,20 +213,20 @@ export const getAverageTime = (fundingDates: Array<number>, grantDates: Array<nu
 	const oneWeek = oneDay * 7
 	const twoWeeks = oneWeek * 2
 
-  let fundingDatesAverage = 0
-  let grantCreationAverage = 0
-  let average = 0
+	let fundingDatesAverage = 0
+	let grantCreationAverage = 0
+	let average = 0
 
-  if (fundingDates.length >= 1){
-	fundingDatesAverage = (fundingDates.reduce((sum: any, a: any) => sum + a, 0).toFixed(0)) / fundingDates.length;
-	grantCreationAverage = (grantDates.reduce((sum: any, a: any) => sum + a, 0).toFixed(0)) / grantDates.length;
-  }
+	if(fundingDates.length >= 1) {
+		fundingDatesAverage = (fundingDates.reduce((sum: any, a: any) => sum + a, 0).toFixed(0)) / fundingDates.length
+		grantCreationAverage = (grantDates.reduce((sum: any, a: any) => sum + a, 0).toFixed(0)) / grantDates.length
+	}
 
 	average = fundingDatesAverage - grantCreationAverage
 
-  if (average < oneSecond) {
-    return '--'
-  }	else if(average < oneMinute) {
+	if(average < oneSecond) {
+		return '--'
+	}	else if(average < oneMinute) {
 		return Math.round(average / 1000) + 's'
 	} else if(average < oneHour) {
 		return Math.round(average / oneMinute) + 'min'

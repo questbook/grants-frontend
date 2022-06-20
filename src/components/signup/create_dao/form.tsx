@@ -9,19 +9,19 @@ import {
 	ToastId,
 	useToast,
 } from '@chakra-ui/react'
+import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import SecondaryDropdown from 'src/components/ui/secondaryDropdown'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from 'src/constants/chains'
 import config from 'src/constants/config.json'
 import useChainId from 'src/hooks/utils/useChainId'
+import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { useAccount, useNetwork } from 'wagmi'
 import ImageUpload from '../../ui/forms/imageUpload'
 import MultiLineInput from '../../ui/forms/multiLineInput'
+import RichTextEditor from '../../ui/forms/richTextEditor'
 import SingleLineInput from '../../ui/forms/singleLineInput'
-import { EditorState, convertFromRaw, convertToRaw } from 'draft-js'
-import RichTextEditor from '../../ui/forms/richTextEditor';
-import { uploadToIPFS } from 'src/utils/ipfsUtils'
 
 function Form({
 	onSubmit: onFormSubmit,
@@ -95,19 +95,19 @@ function Form({
 		}
 	}
 
-	const handleSubmit = async () => {
+	const handleSubmit = async() => {
 		let error = false
 
 		const aboutString = await JSON.stringify(
 			convertToRaw(daoAbout.getCurrentContent())
-		  );
-	  
-		if (aboutString !== '') {
-			let newAboutHash = (await uploadToIPFS(aboutString)).hash
-			setStringAbout(newAboutHash);
+		  )
+
+		if(aboutString !== '') {
+			const newAboutHash = (await uploadToIPFS(aboutString)).hash
+			setStringAbout(newAboutHash)
 		}
 
-		console.log(stringAbout);
+		console.log(stringAbout)
 
 		if(!daoName || daoName.length === 0) {
 			setDaoNameError(true)
@@ -190,21 +190,23 @@ function Form({
 					w="100%"
 					mt={1}>
 					<RichTextEditor
-					label="About your Grants DAO"
-					placeholder="Write details about your grants, bounty, and other projects."
-					value={daoAbout}
-					onChange={(e: EditorState) => {
-						setDaoAbout(e);
-					}}
-					isError={daoAboutError}
-					errorText="Required"
-					maxLength={800}
+						label="About your Grants DAO"
+						placeholder="Write details about your grants, bounty, and other projects."
+						value={daoAbout}
+						onChange={
+							(e: EditorState) => {
+								setDaoAbout(e)
+							}
+						}
+						isError={daoAboutError}
+						errorText="Required"
+						maxLength={800}
 					/>
 				</Flex>
 				<Flex
-				w="100%"
-				mt={1}>
-						<MultiLineInput
+					w="100%"
+					mt={1}>
+					<MultiLineInput
 						label="Bio"
 						placeholder="A small description of your dao in a few sentences"
 						value={daoBio}

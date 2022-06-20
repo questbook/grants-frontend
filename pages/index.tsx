@@ -151,7 +151,9 @@ function BrowseGrants() {
 				alignItems="stretch"
 				pb={8}
 				px={10}>
-				<Heading dontRenderDivider title="Browse grants" />
+				<Heading
+					dontRenderDivider
+					title="Browse grants" />
 				{
 					!loadedData ? (
 						<Loader />
@@ -197,7 +199,7 @@ function BrowseGrants() {
               			grantDesc={grant.summary}
               			numOfApplicants={grant.numberOfApplications}
               			endTimestamp={new Date(grant.deadline!).getTime()}
-						createdAt={grant.createdAtS}
+              			createdAt={grant.createdAtS}
               			grantAmount={
               				formatAmount(
               					grant.reward.committed,
@@ -205,11 +207,11 @@ function BrowseGrants() {
               				)
               			}
 						  disbursedAmount={
-							formatAmount(
-								grant.funding,
-								chainInfo?.decimals ?? 18
-							)
-						}
+              				formatAmount(
+              					grant.funding,
+              					chainInfo?.decimals ?? 18
+              				)
+              			}
               			grantCurrency={chainInfo?.label ?? 'LOL'}
               			grantCurrencyIcon={chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'}
               			isGrantVerified={isGrantVerified}

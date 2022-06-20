@@ -1,6 +1,5 @@
 import React from 'react'
 import { Image, Text } from '@chakra-ui/react'
-import Deadline from 'src/components/ui/deadline'
 
 function Badge({
 	numOfApplicants,

@@ -1,5 +1,5 @@
 import { WorkspaceUpdateRequest } from '@questbook/service-validator-client'
-import { SettingsForm, Workspace, PartnersProps } from 'src/types'
+import { PartnersProps, SettingsForm, Workspace } from 'src/types'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
 
 export const workspaceDataToSettingsForm = (
