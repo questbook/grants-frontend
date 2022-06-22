@@ -25,7 +25,7 @@ import config from 'src/constants/config'
 // UTILS AND TOOLS
 import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace'
 import { PartnersProps, SettingsForm, Workspace } from 'src/types'
-import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
+import { getUrlForIPFSHash, uploadToIPFS, getFromIPFS } from 'src/utils/ipfsUtils'
 import {
 	generateWorkspaceUpdateRequest,
 	workspaceDataToSettingsForm,
@@ -52,6 +52,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 	const [editedFormData, setEditedFormData] = useState<SettingsForm>()
 	const [editData, setEditData] = useState<WorkspaceUpdateRequest>()
 	const [editError, setEditError] = useState<EditErrors>({})
+	const [aboutFromWorkspaceData, setaboutFromWorkspaceData] = useState(false)
 	const [newAbout, setNewAbout] = useState(
 		EditorState.createWithContent(
 			convertFromRaw({
@@ -68,30 +69,13 @@ function EditForm({ workspaceData }: EditFormProps) {
 		)
 	)
 
-	const [partnersRequired, setPartnersRequired] = React.useState(false)
+	const [partnersRequired, setPartnersRequired] = useState(false)
 	// const [partners, setPartners] = React.useState<PartnersProps[] | undefined>([])
-	const [changedPartners, setChangedPartners] = React.useState(false)
-	const [changedAbout, setChangedAbout] = React.useState(false)
-	const [changedPartnersImage, setChangedPartnersImage] = React.useState(false)
+	const [changedPartners, setChangedPartners] = useState(false)
+	const [changedAbout, setChangedAbout] = useState(false)
+	const [changedPartnersImage, setChangedPartnersImage] = useState(false)
 
 	const [txnData, txnLink, loading] = useUpdateWorkspace(editData as any)
-
-	const [aboutData, setAboutData] = useState(
-		useMemo(() => {
-			try {
-				const data = JSON.parse(editedFormData?.about!)
-				return EditorState.createWithContent(convertFromRaw(data))
-			} catch(e) {
-				if(editedFormData?.about) {
-					return EditorState.createWithContent(
-						ContentState.createFromText(editedFormData.about)
-					)
-				}
-
-				return EditorState.createEmpty()
-			}
-		}, [editedFormData?.about])
-	)
 
 	const supportedNetwork = useMemo(() => {
 		if(editedFormData) {
@@ -187,15 +171,6 @@ function EditForm({ workspaceData }: EditFormProps) {
 	}
 
 	const handleSubmit = async() => {
-		if(changedAbout) {
-			const newAboutString = await JSON.stringify(
-				convertToRaw(newAbout.getCurrentContent())
-			)
-
-			const newAboutHash = (await uploadToIPFS(newAboutString)).hash
-			updateFormData({ about: newAboutHash })
-		}
-
 		if(changedPartners || changedPartnersImage) {
 			const oldPartners = [...editedFormData?.partners!]
 			let partnerImageHash = ''
@@ -206,7 +181,16 @@ function EditForm({ workspaceData }: EditFormProps) {
 			updateFormData({ partners: oldPartners })
 		}
 
-		console.log(editedFormData);
+		if(changedAbout) {
+			const newAboutString = await JSON.stringify(
+				convertToRaw(newAbout.getCurrentContent())
+			);
+
+			const newAboutHash = await (await uploadToIPFS(newAboutString)).hash
+
+			updateFormData({ about: newAboutHash });
+		}
+
 
 		if(!editedFormData?.bio?.length) {
 			return updateEditError('bio', 'Please enter a bio')
@@ -245,10 +229,27 @@ function EditForm({ workspaceData }: EditFormProps) {
 		setEditedFormData(workspaceDataToSettingsForm(workspaceData))
 	}, [workspaceData])
 
-	React.useEffect(() => {
-		console.log(editedFormData?.partners)
-		console.log(workspaceData)
-	}, [editedFormData?.partners])
+	const getDecodedAbout = async(detailsHash: string) => {
+		const d = await getFromIPFS(detailsHash)
+		const data = await JSON.parse(d)
+		setNewAbout(EditorState.createWithContent(convertFromRaw(data)))
+		setaboutFromWorkspaceData(true);
+	}
+
+	useEffect(() => {
+		if (workspaceData?.about.startsWith('Qm') && !aboutFromWorkspaceData) {
+			getDecodedAbout(workspaceData?.about)
+		}
+	}, [workspaceData])
+
+	useEffect(() => {
+		console.log(changedAbout)
+	}, [changedAbout])
+
+	// React.useEffect(() => {
+	// 	console.log(editedFormData?.partners)
+	// 	console.log(workspaceData)
+	// }, [editedFormData?.partners])
 	
 	useEffect(() => {
 		if(txnData) {
@@ -301,7 +302,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 				<RichTextEditor
 					label="About your Grants DAO"
 					placeholder="Write details about your grants, bounty, and other projects."
-					value={changedAbout ? newAbout : aboutData}
+					value={newAbout}
 					onChange={
 						(e: EditorState) => {
 							setNewAbout(e)
