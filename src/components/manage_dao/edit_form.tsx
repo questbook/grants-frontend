@@ -14,7 +14,6 @@ import {
 } from '@chakra-ui/react'
 import { WorkspaceUpdateRequest } from '@questbook/service-validator-client'
 import {
-	ContentState,
 	convertFromRaw,
 	convertToRaw,
 	EditorState,
@@ -24,8 +23,8 @@ import { CHAIN_INFO } from 'src/constants/chains'
 import config from 'src/constants/config'
 // UTILS AND TOOLS
 import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace'
-import { PartnersProps, SettingsForm, Workspace } from 'src/types'
-import { getUrlForIPFSHash, uploadToIPFS, getFromIPFS } from 'src/utils/ipfsUtils'
+import { SettingsForm, Workspace } from 'src/types'
+import { getFromIPFS, getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
 import {
 	generateWorkspaceUpdateRequest,
 	workspaceDataToSettingsForm,
@@ -152,7 +151,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 			if(img.size / 1024 / 1024 <= maxImageSize) {
 				const oldPartners = [...editedFormData?.partners!]
 				oldPartners[index].image = URL.createObjectURL(img)
-				updateFormData({partners: oldPartners})
+				updateFormData({ partners: oldPartners })
 				setChangedPartners(true)
 			} else {
 				toastRef.current = toast({
@@ -184,11 +183,11 @@ function EditForm({ workspaceData }: EditFormProps) {
 		if(changedAbout) {
 			const newAboutString = await JSON.stringify(
 				convertToRaw(newAbout.getCurrentContent())
-			);
+			)
 
 			const newAboutHash = await (await uploadToIPFS(newAboutString)).hash
 
-			updateFormData({ about: newAboutHash });
+			updateFormData({ about: newAboutHash })
 		}
 
 
@@ -209,22 +208,22 @@ function EditForm({ workspaceData }: EditFormProps) {
 			workspaceDataToSettingsForm(workspaceData)!
 		)
 
-			if(!Object.keys(data).length) {
-				toast({
-					position: 'bottom-right',
-					title: 'No Changes to Save!',
-					status: 'info',
-					isClosable: true,
-					duration: 3000,
-				})
-				return undefined
-			}
-	
-			console.log(data)
-	
-			// return setEditData(data)
+		if(!Object.keys(data).length) {
+			toast({
+				position: 'bottom-right',
+				title: 'No Changes to Save!',
+				status: 'info',
+				isClosable: true,
+				duration: 3000,
+			})
+			return undefined
 		}
-	
+
+		console.log(data)
+
+		// return setEditData(data)
+	}
+
 	useEffect(() => {
 		setEditedFormData(workspaceDataToSettingsForm(workspaceData))
 	}, [workspaceData])
@@ -233,11 +232,11 @@ function EditForm({ workspaceData }: EditFormProps) {
 		const d = await getFromIPFS(detailsHash)
 		const data = await JSON.parse(d)
 		setNewAbout(EditorState.createWithContent(convertFromRaw(data)))
-		setaboutFromWorkspaceData(true);
+		setaboutFromWorkspaceData(true)
 	}
 
 	useEffect(() => {
-		if (workspaceData?.about.startsWith('Qm') && !aboutFromWorkspaceData) {
+		if(workspaceData?.about.startsWith('Qm') && !aboutFromWorkspaceData) {
 			getDecodedAbout(workspaceData?.about)
 		}
 	}, [workspaceData])
@@ -250,7 +249,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 	// 	console.log(editedFormData?.partners)
 	// 	console.log(workspaceData)
 	// }, [editedFormData?.partners])
-	
+
 	useEffect(() => {
 		if(txnData) {
 			showInfoToast(txnLink)
@@ -366,7 +365,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 									...partner,
 									nameError: false,
 								}))
-								updateFormData({partners: newPartners})
+								updateFormData({ partners: newPartners })
 							}
 						}
 					/>
@@ -422,7 +421,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 
 												const newPartners = [...editedFormData?.partners!]
 												newPartners.splice(index, 1)
-												updateFormData({partners: newPartners})
+												updateFormData({ partners: newPartners })
 												setChangedPartners(true)
 											}
 										}
@@ -462,7 +461,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 									(e) => {
 										const newPartners = [...editedFormData.partners!]
 										newPartners[index].name = e.target.value
-										updateFormData({partners: newPartners})
+										updateFormData({ partners: newPartners })
 										setChangedPartners(true)
 									}
 								}
@@ -517,7 +516,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 										(e) => {
 											const newPartners = [...editedFormData?.partners!]
 											newPartners[index].industry = e.target.value
-											updateFormData({partners: newPartners})
+											updateFormData({ partners: newPartners })
 											setChangedPartners(true)
 										}
 									}
@@ -559,7 +558,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 										(e) => {
 											const newPartners = [...editedFormData?.partners!]
 											newPartners[index].website = e.target.value
-											updateFormData({partners: newPartners})
+											updateFormData({ partners: newPartners })
 											setChangedPartners(true)
 										}
 									}
@@ -592,7 +591,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 									website: '',
 								},
 							]
-							updateFormData({partners: newPartners})
+							updateFormData({ partners: newPartners })
 						}
 					}
 					display="flex"

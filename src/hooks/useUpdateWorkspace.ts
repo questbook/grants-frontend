@@ -63,7 +63,7 @@ export default function useUpdateWorkspace(
 
 		async function validate() {
 			setLoading(true)
-			console.log(data);
+			console.log(data)
 			try {
 				const {
 					data: { ipfsHash },
@@ -72,7 +72,7 @@ export default function useUpdateWorkspace(
 					throw new Error('Error validating grant data')
 				}
 
-				console.log(ipfsHash);
+				console.log(ipfsHash)
 
 				const updateTransaction = await workspaceRegistryContract.updateWorkspaceMetadata(
 					Number(workspace!.id),

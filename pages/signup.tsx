@@ -34,6 +34,22 @@ function SignupDao() {
     id: string;
   } | null>(null)
 
+	//   const [newAbout, setNewAbout] = useState(
+	//     EditorState.createWithContent(
+	//       convertFromRaw({
+	//         entityMap: {},
+	//         blocks: [
+	//           {
+	//             text: '',
+	//             key: 'foo',
+	//             type: 'unstyled',
+	//             entityRanges: [],
+	//           } as any,
+	//         ],
+	//       })
+	//     )
+	//   )
+
 	const [workspaceData, setWorkspaceData] = React.useState<any>()
 	const [
 		workspaceTransactionData,
