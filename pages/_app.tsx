@@ -35,13 +35,14 @@ import '../styles/globals.css'
 import 'draft-js/dist/Draft.css'
 import SubgraphClient from '../src/graphql/subgraph'
 import theme from '../src/theme'
+import { Wallet } from 'ethers'
 
 type NextPageWithLayout = NextPage & {
-  getLayout?: (page: ReactElement) => ReactNode;
+	getLayout?: (page: ReactElement) => ReactNode;
 };
 
 type AppPropsWithLayout = AppProps & {
-  Component: NextPageWithLayout;
+	Component: NextPageWithLayout;
 };
 
 const infuraId = process.env.NEXT_PUBLIC_INFURA_ID
@@ -51,7 +52,7 @@ const { chains, provider } = configureChains(allChains, [
 	jsonRpcProvider({
 		rpc: (chain: Chain) => {
 			const rpcUrl = CHAIN_INFO[chain.id as SupportedChainId]?.rpcUrls[0]
-			if(!rpcUrl) {
+			if (!rpcUrl) {
 				return { http: CHAIN_INFO[defaultChain.id as SupportedChainId].rpcUrls[0] }
 			}
 
@@ -90,16 +91,22 @@ const client = createClient({
 })
 
 export const ApiClientsContext = createContext<{
-  validatorApi: ValidationApi;
-  workspace?: MinimalWorkspace;
-  setWorkspace: (workspace?: MinimalWorkspace) => void;
-  subgraphClients: { [chainId: string]: SubgraphClient };
-  connected: boolean;
-  setConnected: (connected: boolean) => void;
-  	} | null>(null)
+	validatorApi: ValidationApi;
+	workspace?: MinimalWorkspace;
+	setWorkspace: (workspace?: MinimalWorkspace) => void;
+	subgraphClients: { [chainId: string]: SubgraphClient };
+	connected: boolean;
+	setConnected: (connected: boolean) => void;
+} | null>(null);
+
+export const WebwalletContext = createContext<{
+	webwallet?: Wallet,
+	setWebwallet: (webwallet?: Wallet) => void;
+} | null>(null);
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-	const [workspace, setWorkspace] = React.useState<MinimalWorkspace>()
+	const [webwallet, setWebwallet] = React.useState<Wallet>();
+	const [workspace, setWorkspace] = React.useState<MinimalWorkspace>();
 
 	const clients = useMemo(() => {
 		const clientsObject = {} as { [chainId: string]: SubgraphClient }
@@ -123,7 +130,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			validatorApi,
 			workspace,
 			setWorkspace: (newWorkspace?: MinimalWorkspace) => {
-				if(newWorkspace) {
+				if (newWorkspace) {
 					localStorage.setItem('currentWorkspace', newWorkspace.supportedNetworks[0] + '-' + newWorkspace.id)
 				} else {
 					localStorage.setItem('currentWorkspace', 'undefined')
@@ -132,10 +139,26 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				setWorkspace(newWorkspace)
 			},
 			subgraphClients: clients,
-	  connected,
-	  setConnected,
+			connected,
+			setConnected,
 		}),
 		[validatorApi, workspace, setWorkspace, clients, connected, setConnected]
+	)
+
+	const webwalletContextValue = useMemo(
+		() => ({
+			webwallet,
+			setWebwallet: (newWebwallet?: Wallet) => {
+				if (newWebwallet) {
+					localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey);
+				} else {
+					localStorage.removeItem('webwalletPrivateKey')
+				}
+
+				setWebwallet(newWebwallet);
+			}
+		}),
+		[webwallet, setWebwallet]
 	)
 
 	const seo = getSeo()
@@ -166,7 +189,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			<WagmiConfig client={client}>
 				<ApiClientsContext.Provider value={apiClients}>
 					<ChakraProvider theme={theme}>
-						{getLayout(<Component {...pageProps} />)}
+						<WebwalletContext.Provider value={webwalletContextValue}>
+							{getLayout(<Component {...pageProps} />)}
+						</WebwalletContext.Provider>
 					</ChakraProvider>
 				</ApiClientsContext.Provider>
 			</WagmiConfig>
@@ -174,7 +199,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	)
 }
 
-MyApp.getInitialProps = async(appContext: AppContext) => {
+MyApp.getInitialProps = async (appContext: AppContext) => {
 	// calls page's `getInitialProps` and fills `appProps.pageProps`
 	const appProps = await App.getInitialProps(appContext)
 	return { ...appProps }

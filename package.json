@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.5.8",
+    "@biconomy/mexa": "^2.0.32",
     "@chakra-ui/react": "^1.8.0",
     "@draft-js-plugins/editor": "^4.1.2",
     "@draft-js-plugins/focus": "^4.1.2",
