@@ -294,10 +294,10 @@
 			}
 		},
 		"qbContracts": {
-			"applications": "0xfe333a7526AFfD0aB20A4478D157DEEd0daAFECD",
-			"workspace": "0x39e2996A90C29f4ff584da164773a2c2Cc42c0dF",
-			"grantFactory": "0xC28cfc0A89A920313C6125fe4fD196E2308cB337",
-			"reviews": "0x6C3136f06dCcA37395B62fb858057e669b002f54"
+			"applications": "0xD5c4F27fdBC665DBe851fFa5bB8a7DB934B8e05f",
+			"workspace": "0x635CBA2Aa0064f90A66107c8c144a4Fc8Dc6b6Ac",
+			"grantFactory": "0xe374A2407b6Ac748caC70300DD5A88ba39769a49",
+			"reviews": "0x367F1D6ac3EF6586DA9F893BB38Af5571A9EC10A"
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-klaytn-testnet",
 		"rpcUrls": [

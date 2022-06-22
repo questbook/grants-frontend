@@ -69,14 +69,10 @@ function EditForm({ workspaceData }: EditFormProps) {
 	)
 
 	const [partnersRequired, setPartnersRequired] = React.useState(false)
-	const [partners, setPartners] = React.useState<PartnersProps[] | undefined>([])
+	// const [partners, setPartners] = React.useState<PartnersProps[] | undefined>([])
 	const [changedPartners, setChangedPartners] = React.useState(false)
 	const [changedAbout, setChangedAbout] = React.useState(false)
 	const [changedPartnersImage, setChangedPartnersImage] = React.useState(false)
-
-	React.useEffect(() => {
-		console.log(partners)
-	}, [partners])
 
 	const [txnData, txnLink, loading] = useUpdateWorkspace(editData as any)
 
@@ -170,9 +166,9 @@ function EditForm({ workspaceData }: EditFormProps) {
 			const img = event.target.files[0]
 			const maxImageSize = 2
 			if(img.size / 1024 / 1024 <= maxImageSize) {
-				const oldPartners = [...partners!]
+				const oldPartners = [...editedFormData?.partners!]
 				oldPartners[index].image = URL.createObjectURL(img)
-				setPartners(oldPartners)
+				updateFormData({partners: oldPartners})
 				setChangedPartners(true)
 			} else {
 				toastRef.current = toast({
@@ -201,14 +197,16 @@ function EditForm({ workspaceData }: EditFormProps) {
 		}
 
 		if(changedPartners || changedPartnersImage) {
-			const oldPartners = [...partners!]
+			const oldPartners = [...editedFormData?.partners!]
 			let partnerImageHash = ''
 			await Promise.all(oldPartners.map(async(partner, index) => {
-				partnerImageHash = (await uploadToIPFS(partner?.image!)).hash
+				partnerImageHash = await (await uploadToIPFS(partner?.image!)).hash
 				oldPartners[index].image = partnerImageHash
-				updateFormData({ partners: oldPartners })
 			}))
+			updateFormData({ partners: oldPartners })
 		}
+
+		console.log(editedFormData);
 
 		if(!editedFormData?.bio?.length) {
 			return updateEditError('bio', 'Please enter a bio')
@@ -222,38 +220,36 @@ function EditForm({ workspaceData }: EditFormProps) {
 			return updateEditError('about', 'Please enter about')
 		}
 
-		console.log(editedFormData)
-
 		const data = await generateWorkspaceUpdateRequest(
 			editedFormData,
-      workspaceDataToSettingsForm(workspaceData)!
+			workspaceDataToSettingsForm(workspaceData)!
 		)
 
-		if(!Object.keys(data).length) {
-			toast({
-				position: 'bottom-right',
-				title: 'No Changes to Save!',
-				status: 'info',
-				isClosable: true,
-				duration: 3000,
-			})
-			return undefined
+			if(!Object.keys(data).length) {
+				toast({
+					position: 'bottom-right',
+					title: 'No Changes to Save!',
+					status: 'info',
+					isClosable: true,
+					duration: 3000,
+				})
+				return undefined
+			}
+	
+			console.log(data)
+	
+			// return setEditData(data)
 		}
-
-		return setEditData(data)
-	}
-
+	
 	useEffect(() => {
 		setEditedFormData(workspaceDataToSettingsForm(workspaceData))
 	}, [workspaceData])
 
-	useEffect(() => {
-		if(!changedPartners) {
-			setPartners(editedFormData?.partners)
-			console.log(partners, editedFormData)
-		}
-	}, [editedFormData])
-
+	React.useEffect(() => {
+		console.log(editedFormData?.partners)
+		console.log(workspaceData)
+	}, [editedFormData?.partners])
+	
 	useEffect(() => {
 		if(txnData) {
 			showInfoToast(txnLink)
@@ -365,11 +361,11 @@ function EditForm({ workspaceData }: EditFormProps) {
 						onChange={
 							(e: any) => {
 								setPartnersRequired(e.target.checked)
-								const newPartners = partners?.map((partner: any) => ({
+								const newPartners = editedFormData?.partners?.map((partner: any) => ({
 									...partner,
 									nameError: false,
 								}))
-								setPartners(newPartners)
+								updateFormData({partners: newPartners})
 							}
 						}
 					/>
@@ -383,7 +379,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 			</Grid>
 
 			{
-				partners?.map((partner: any, index: any) => (
+				editedFormData?.partners?.map((partner: any, index: any) => (
 					<Box
 						w="100%"
 						key={index}>
@@ -423,9 +419,9 @@ function EditForm({ workspaceData }: EditFormProps) {
 													return
 												}
 
-												const newPartners = [...partners]
+												const newPartners = [...editedFormData?.partners!]
 												newPartners.splice(index, 1)
-												setPartners(newPartners)
+												updateFormData({partners: newPartners})
 												setChangedPartners(true)
 											}
 										}
@@ -460,12 +456,12 @@ function EditForm({ workspaceData }: EditFormProps) {
 							opacity={partnersRequired ? 1 : 0.4}
 						>
 							<SingleLineInput
-								value={partners[index].name}
+								value={editedFormData.partners![index].name}
 								onChange={
 									(e) => {
-										const newPartners = [...partners]
+										const newPartners = [...editedFormData.partners!]
 										newPartners[index].name = e.target.value
-										setPartners(newPartners)
+										updateFormData({partners: newPartners})
 										setChangedPartners(true)
 									}
 								}
@@ -477,7 +473,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 								mt="-2.2rem"
 								mb="-10rem">
 								<ImageUpload
-									image={changedPartners ? partners[index]?.image! : getUrlForIPFSHash(partners[index]?.image!)}
+									image={changedPartners ? editedFormData.partners![index].image! : getUrlForIPFSHash(editedFormData.partners![index]?.image!)}
 									isError={false}
 									onChange={
 										(e) => {
@@ -515,12 +511,12 @@ function EditForm({ workspaceData }: EditFormProps) {
 								w="100%"
 							>
 								<SingleLineInput
-									value={partners[index].industry}
+									value={editedFormData.partners![index].industry}
 									onChange={
 										(e) => {
-											const newPartners = [...partners]
+											const newPartners = [...editedFormData?.partners!]
 											newPartners[index].industry = e.target.value
-											setPartners(newPartners as any)
+											updateFormData({partners: newPartners})
 											setChangedPartners(true)
 										}
 									}
@@ -557,12 +553,12 @@ function EditForm({ workspaceData }: EditFormProps) {
 								flex={0.6673}
 							>
 								<SingleLineInput
-									value={partners[index].website}
+									value={editedFormData.partners![index].website}
 									onChange={
 										(e) => {
-											const newPartners = [...partners]
+											const newPartners = [...editedFormData?.partners!]
 											newPartners[index].website = e.target.value
-											setPartners(newPartners)
+											updateFormData({partners: newPartners})
 											setChangedPartners(true)
 										}
 									}
@@ -588,14 +584,14 @@ function EditForm({ workspaceData }: EditFormProps) {
 							}
 
 							const newPartners = [
-								...partners!,
+								...editedFormData?.partners!,
 								{
 									name: '',
 									industry: '',
 									website: '',
 								},
 							]
-							setPartners(newPartners)
+							updateFormData({partners: newPartners})
 						}
 					}
 					display="flex"

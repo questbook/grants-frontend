@@ -36,16 +36,20 @@ export const generateWorkspaceUpdateRequest = async(
 ) => {
 	const req: WorkspaceUpdateRequest = {}
 
+	console.log(newForm);
+	console.log(oldForm);
+
 	const applySimpleKeyUpdate = (key: keyof SettingsForm, wKey: keyof WorkspaceUpdateRequest) => {
 		// @ts-ignore
 		if(newForm[key] !== oldForm[key]) {
-			req[wKey] = newForm[key]
+			req[wKey] = newForm[key] as any
 		}
 	}
 
 	applySimpleKeyUpdate('name', 'title')
 	applySimpleKeyUpdate('about', 'about')
 	applySimpleKeyUpdate('bio', 'bio')
+	applySimpleKeyUpdate('partners', 'partners')
 
 	if(newForm.image !== oldForm.image && newForm.image) {
 		req.logoIpfsHash = (await uploadToIPFS(newForm.image!)).hash

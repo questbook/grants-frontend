@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import { SupportedChainId } from 'src/constants/chains'
 import { nFormatter } from 'src/utils/formattingUtils'
-import { calculateUSDValue, useTimeDifference } from '../../../utils/calculatingUtils'
+import { calculateUSDValue, useTimeDifference } from 'src/utils/calculatingUtils'
 import Badge from './badge'
 
 interface BrowseGrantCardProps {
@@ -61,7 +61,7 @@ function BrowseGrantCard({
 
 	useEffect(() => {
 		if(grantReward === 0) {
-			calculateUSDValue(grantAmount, grantCurrency).then((promise) => {
+			calculateUSDValue(grantAmount, grantCurrency).then((promise: any) => {
 				setGrantReward(promise as number)
 			})
 		}
