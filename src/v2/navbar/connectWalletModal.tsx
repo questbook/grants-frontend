@@ -1,6 +1,5 @@
 import React from 'react'
-import { ChakraProvider, Text } from '@chakra-ui/react'
-import themev2 from '../themev2'
+import { Text } from '@chakra-ui/react'
 
 function ConnectWalletModal() {
 	return (
@@ -16,13 +15,16 @@ function ConnectWalletModal() {
 		// 		</ModalBody>
 		// 	</ModalContent>
 		// </Modal>
-		<ChakraProvider
-			theme={themev2}
-			cssVarsRoot={'body'}>
-			<Text>
-Open
-			</Text>
-		</ChakraProvider>
+	// 		<ChakraProvider
+	// 			theme={themev2}
+	// 			cssVarsRoot={'body'}>
+	// 			<Text>
+	// Open
+	// 			</Text>
+	// 		</ChakraProvider>
+		<Text>
+cop
+		</Text>
 	)
 }
 

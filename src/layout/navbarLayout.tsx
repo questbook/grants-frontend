@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Container, useToast, VStack } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
-import ConnectWalletModal from 'src/v2/navbar/connectWalletModal'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
 import ConnectedNavbar from '../components/navbar/connected'
 import SignInNavbar from '../components/navbar/notConnected'
@@ -77,9 +76,6 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
         root of children should also be a container with a max-width,
         this container is to render the scrollbar to extreme right of window
       */}
-
-
-			<ConnectWalletModal />
 
 			<Container
 				ref={currentPageRef}
