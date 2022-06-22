@@ -1,11 +1,6 @@
 import { WorkspaceUpdateRequest } from '@questbook/service-validator-client'
 import { PartnersProps, SettingsForm, Workspace } from 'src/types'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
-import {
-	convertFromRaw,
-	convertToRaw,
-	EditorState,
-} from 'draft-js';
 
 export const workspaceDataToSettingsForm = (
 	workspaceData: Workspace | undefined,

@@ -183,14 +183,14 @@ function EditForm({ workspaceData }: EditFormProps) {
 		if(changedAbout) {
 			const newAboutString = await JSON.stringify(
 				convertToRaw(newAbout.getCurrentContent())
-			);
+			)
 
 			await Promise.all([newAboutString]).then((result) => {
 				console.log(result[0])
-				updateFormData({about: result[0]});
+				updateFormData({ about: result[0] })
 			})
 
-			console.log(editedFormData?.about);
+			console.log(editedFormData?.about)
 		}
 
 		if(!editedFormData?.bio?.length) {
