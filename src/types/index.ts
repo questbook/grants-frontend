@@ -1,3 +1,4 @@
+import { EditorState } from 'draft-js'
 import {
 	GetAllGrantsForADaoQuery,
 	GetApplicationMilestonesQuery,
@@ -20,13 +21,13 @@ export type DAOGrant = GetDaoDetailsQuery['grants'];
 export type PartnersProps = {
 	name: string;
 	industry: string;
-	website?: string;
-	image?: string;
+	website?: string | null;
+	image?: string | null;
 }
 
 export type SettingsForm = {
   name: string;
-  about: string;
+  about: EditorState;
   bio: string;
   supportedNetwork: SupportedNetwork;
   partners?: PartnersProps[];

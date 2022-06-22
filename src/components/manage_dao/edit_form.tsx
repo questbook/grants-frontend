@@ -13,18 +13,13 @@ import {
 	useToast,
 } from '@chakra-ui/react'
 import { WorkspaceUpdateRequest } from '@questbook/service-validator-client'
-import {
-	convertFromRaw,
-	convertToRaw,
-	EditorState,
-} from 'draft-js'
 // CONSTANTS AND TYPES
 import { CHAIN_INFO } from 'src/constants/chains'
 import config from 'src/constants/config'
 // UTILS AND TOOLS
 import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace'
 import { SettingsForm, Workspace } from 'src/types'
-import { getFromIPFS, getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
+import { getUrlForIPFSHash, isIpfsHash } from 'src/utils/ipfsUtils'
 import {
 	generateWorkspaceUpdateRequest,
 	workspaceDataToSettingsForm,
@@ -45,41 +40,23 @@ type EditFormProps = {
 
 type EditErrors = { [K in keyof SettingsForm]?: { error: string } };
 
+const MAX_IMAGE_SIZE_MB = 2
+
 function EditForm({ workspaceData }: EditFormProps) {
 	const toast = useToast()
 
 	const [editedFormData, setEditedFormData] = useState<SettingsForm>()
 	const [editData, setEditData] = useState<WorkspaceUpdateRequest>()
 	const [editError, setEditError] = useState<EditErrors>({})
-	const [aboutFromWorkspaceData, setaboutFromWorkspaceData] = useState(false)
-	const [newAbout, setNewAbout] = useState(
-		EditorState.createWithContent(
-			convertFromRaw({
-				entityMap: {},
-				blocks: [
-          {
-          	text: '',
-          	key: 'foo',
-          	type: 'unstyled',
-          	entityRanges: [],
-          } as any,
-				],
-			})
-		)
-	)
 
 	const [partnersRequired, setPartnersRequired] = useState(false)
-	// const [partners, setPartners] = React.useState<PartnersProps[] | undefined>([])
-	const [changedPartners, setChangedPartners] = useState(false)
-	const [changedAbout, setChangedAbout] = useState(false)
-	const [changedPartnersImage, setChangedPartnersImage] = useState(false)
 
 	const [txnData, txnLink, loading] = useUpdateWorkspace(editData as any)
 
 	const supportedNetwork = useMemo(() => {
 		if(editedFormData) {
 			const supportedChainId = getSupportedChainIdFromSupportedNetwork(
-        editedFormData!.supportedNetwork
+        		editedFormData!.supportedNetwork
 			)
 			const networkName = supportedChainId
 				? CHAIN_INFO[supportedChainId].name
@@ -117,8 +94,11 @@ function EditForm({ workspaceData }: EditFormProps) {
 		error: string | undefined
 	) => setEditError((err) => ({ ...err, [key]: error ? { error } : undefined }))
 
+	/**
+	 * Update the edited form data with the newly updated key/value pair
+	 * @param update the updated keys
+	 */
 	const updateFormData = (update: Partial<SettingsForm>) => {
-		// eslint-disable-next-line guard-for-in, no-restricted-syntax
 		for(const key in update) {
 			updateEditError(key as any, undefined)
 		}
@@ -134,8 +114,8 @@ function EditForm({ workspaceData }: EditFormProps) {
 		key: 'image' | 'coverImage',
 		event: React.ChangeEvent<HTMLInputElement>
 	) => {
-		if(event.target.files && event.target.files[0]) {
-			const img = event.target.files[0]
+		const img = event.target.files?.[0]
+		if(img) {
 			updateFormData({ [key]: URL.createObjectURL(img).toString() })
 		}
 	}
@@ -144,20 +124,17 @@ function EditForm({ workspaceData }: EditFormProps) {
 		event: React.ChangeEvent<HTMLInputElement>,
 		index: number
 	) => {
-
-		if(event.target.files && event.target.files[0]) {
-			const img = event.target.files[0]
-			const maxImageSize = 2
-			if(img.size / 1024 / 1024 <= maxImageSize) {
-				const oldPartners = [...editedFormData?.partners!]
-				oldPartners[index].image = URL.createObjectURL(img)
-				updateFormData({ partners: oldPartners })
-				setChangedPartners(true)
+		const img = event.target.files?.[0]
+		if(img) {
+			if(img.size / 1024 / 1024 <= MAX_IMAGE_SIZE_MB) {
+				const partners = [...editedFormData?.partners!]
+				partners[index].image = URL.createObjectURL(img)
+				updateFormData({ partners })
 			} else {
 				toastRef.current = toast({
 					position: 'top',
 					render: () => ErrorToast({
-						content: `Image size exceeds ${maxImageSize} MB`,
+						content: `Image size exceeds ${MAX_IMAGE_SIZE_MB} MB`,
 						close: () => {
 							if(toastRef.current) {
 								toast.close(toastRef.current)
@@ -170,29 +147,6 @@ function EditForm({ workspaceData }: EditFormProps) {
 	}
 
 	const handleSubmit = async() => {
-		if(changedPartners || changedPartnersImage) {
-			const oldPartners = [...editedFormData?.partners!]
-			let partnerImageHash = ''
-			await Promise.all(oldPartners.map(async(partner, index) => {
-				partnerImageHash = await (await uploadToIPFS(partner?.image!)).hash
-				oldPartners[index].image = partnerImageHash
-			}))
-			updateFormData({ partners: oldPartners })
-		}
-
-		if(changedAbout) {
-			const newAboutString = await JSON.stringify(
-				convertToRaw(newAbout.getCurrentContent())
-			)
-
-			await Promise.all([newAboutString]).then((result) => {
-				console.log(result[0])
-				updateFormData({ about: result[0] })
-			})
-
-			console.log(editedFormData?.about)
-		}
-
 		if(!editedFormData?.bio?.length) {
 			return updateEditError('bio', 'Please enter a bio')
 		}
@@ -201,7 +155,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 			return updateEditError('name', 'Please enter a name')
 		}
 
-		if(!editedFormData?.about?.startsWith('Qm')) {
+		if(!editedFormData?.about?.getCurrentContent()?.hasText()) {
 			return updateEditError('about', 'Please enter about')
 		}
 
@@ -209,6 +163,8 @@ function EditForm({ workspaceData }: EditFormProps) {
 			editedFormData,
 			workspaceDataToSettingsForm(workspaceData)!
 		)
+
+		console.log(data)
 
 		if(!Object.keys(data).length) {
 			toast({
@@ -220,37 +176,11 @@ function EditForm({ workspaceData }: EditFormProps) {
 			})
 			return undefined
 		}
-
-		console.log(data)
-
-		// return setEditData(data)
 	}
 
 	useEffect(() => {
 		setEditedFormData(workspaceDataToSettingsForm(workspaceData))
 	}, [workspaceData])
-
-	const getDecodedAbout = async(detailsHash: string) => {
-		const d = await getFromIPFS(detailsHash)
-		const data = await JSON.parse(d)
-		setNewAbout(EditorState.createWithContent(convertFromRaw(data)))
-		setaboutFromWorkspaceData(true)
-	}
-
-	useEffect(() => {
-		if(workspaceData?.about.startsWith('Qm') && !aboutFromWorkspaceData) {
-			getDecodedAbout(workspaceData?.about)
-		}
-	}, [workspaceData])
-
-	useEffect(() => {
-		console.log(changedAbout)
-	}, [changedAbout])
-
-	// React.useEffect(() => {
-	// 	console.log(editedFormData?.partners)
-	// 	console.log(workspaceData)
-	// }, [editedFormData?.partners])
 
 	useEffect(() => {
 		if(txnData) {
@@ -300,20 +230,21 @@ function EditForm({ workspaceData }: EditFormProps) {
 				w="100%"
 				gridTemplateColumns="4fr 1fr"
 				justifyItems="space-between">
-				<RichTextEditor
-					label="About your Grants DAO"
-					placeholder="Write details about your grants, bounty, and other projects."
-					value={newAbout}
-					onChange={
-						(e: EditorState) => {
-							setNewAbout(e)
-							setChangedAbout(true)
-						}
-					}
-					isError={hasError('about')}
-					errorText="Required"
-					maxLength={800}
-				/>
+				{
+					editedFormData?.about
+						? (
+							<RichTextEditor
+								label="About your Grants DAO"
+								placeholder="Write details about your grants, bounty, and other projects."
+								value={editedFormData!.about!}
+								onChange={about => updateFormData({ about })}
+								isError={hasError('about')}
+								errorText="Required"
+								maxLength={800}
+							/>
+						)
+						: undefined
+				}
 			</Grid>
 			<Grid
 				w="100%"
@@ -344,13 +275,13 @@ function EditForm({ workspaceData }: EditFormProps) {
 						letterSpacing={0}
 						w="full"
 					>
-            Do you want to showcase your grant program partners?
+            			Do you want to showcase your grant program partners?
 					</Text>
 					<Text
 						color="#717A7C"
 						fontSize="14px"
 						lineHeight="20px">
-            You can add their names, logo, and a link to their site.
+            			You can add their names, logo, and a link to their site.
 					</Text>
 				</Flex>
 				<Flex
@@ -381,7 +312,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 			</Grid>
 
 			{
-				editedFormData?.partners?.map((partner: any, index: any) => (
+				editedFormData?.partners?.map((partner, index) => (
 					<Box
 						w="100%"
 						key={index}>
@@ -412,7 +343,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 										fontSize="16px"
 										lineHeight="20px"
 									>
-                  Partner Name
+										Partner Name
 									</Text>
 									<Flex
 										onClick={
@@ -424,14 +355,13 @@ function EditForm({ workspaceData }: EditFormProps) {
 												const newPartners = [...editedFormData?.partners!]
 												newPartners.splice(index, 1)
 												updateFormData({ partners: newPartners })
-												setChangedPartners(true)
 											}
 										}
 										alignItems="center"
 										cursor="pointer"
 										opacity={partnersRequired ? 1 : 0.4}
 										gap="0.25rem"
-				  justifySelf="flex-end"
+										justifySelf="flex-end"
 									>
 										<Image
 											h="0.875rem"
@@ -444,7 +374,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 											color="#DF5252"
 											lineHeight="20px"
 										>
-                    Delete
+											Delete
 										</Text>
 									</Flex>
 								</Flex>
@@ -458,13 +388,11 @@ function EditForm({ workspaceData }: EditFormProps) {
 							opacity={partnersRequired ? 1 : 0.4}
 						>
 							<SingleLineInput
-								value={editedFormData.partners![index].name}
+								value={partner.name}
 								onChange={
 									(e) => {
-										const newPartners = [...editedFormData.partners!]
-										newPartners[index].name = e.target.value
-										updateFormData({ partners: newPartners })
-										setChangedPartners(true)
+										partner.name = e.target.value
+										updateFormData({ partners: [...editedFormData.partners!] })
 									}
 								}
 								placeholder="e.g. Partner DAO"
@@ -475,14 +403,9 @@ function EditForm({ workspaceData }: EditFormProps) {
 								mt="-2.2rem"
 								mb="-10rem">
 								<ImageUpload
-									image={changedPartners ? editedFormData.partners![index].image! : getUrlForIPFSHash(editedFormData.partners![index]?.image!)}
+									image={isIpfsHash(partner.image) ? getUrlForIPFSHash(partner.image!) : partner.image!}
 									isError={false}
-									onChange={
-										(e) => {
-											handlePartnerImageChange(e, index)
-											setChangedPartnersImage(true)
-										}
-									}
+									onChange={e => handlePartnerImageChange(e, index)}
 									label="Partner logo"
 								/>
 							</Box>
@@ -503,7 +426,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 									fontSize="16px"
 									lineHeight="20px"
 								>
-                Industry
+									Industry
 								</Text>
 							</Flex>
 							<Flex
@@ -513,13 +436,11 @@ function EditForm({ workspaceData }: EditFormProps) {
 								w="100%"
 							>
 								<SingleLineInput
-									value={editedFormData.partners![index].industry}
+									value={partner.industry}
 									onChange={
 										(e) => {
-											const newPartners = [...editedFormData?.partners!]
-											newPartners[index].industry = e.target.value
-											updateFormData({ partners: newPartners })
-											setChangedPartners(true)
+											partner.industry = e.target.value
+											updateFormData({ partners: [...editedFormData?.partners!] })
 										}
 									}
 									placeholder="e.g. Security"
@@ -544,7 +465,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 									fontSize="16px"
 									lineHeight="20px"
 								>
-                Website
+									Website
 								</Text>
 							</Flex>
 							<Flex
@@ -555,13 +476,11 @@ function EditForm({ workspaceData }: EditFormProps) {
 								flex={0.6673}
 							>
 								<SingleLineInput
-									value={editedFormData.partners![index].website}
+									value={partner.website || undefined}
 									onChange={
 										(e) => {
-											const newPartners = [...editedFormData?.partners!]
-											newPartners[index].website = e.target.value
-											updateFormData({ partners: newPartners })
-											setChangedPartners(true)
+											partner.website = e.target.value
+											updateFormData({ partners: [...editedFormData!.partners!] })
 										}
 									}
 									placeholder="e.g. www.example.com"
@@ -612,7 +531,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 						color="#8850EA"
 						lineHeight="20px"
 					>
-            Add another service partner
+						Add another service partner
 					</Text>
 				</Box>
 			</Flex>
@@ -680,14 +599,14 @@ function EditForm({ workspaceData }: EditFormProps) {
 						mb="-2px"
 					/>
 					{' '}
-          By pressing the button Save Changes below you&apos;ll have to approve
-          this transaction in your wallet.
+					By pressing the button Save Changes below you&apos;ll have to approve
+					this transaction in your wallet.
 					{' '}
 					<Link
 						href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
 						isExternal
 					>
-            Learn more
+            			Learn more
 					</Link>
 					{' '}
 					<Image
