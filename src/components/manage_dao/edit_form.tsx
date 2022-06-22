@@ -183,13 +183,15 @@ function EditForm({ workspaceData }: EditFormProps) {
 		if(changedAbout) {
 			const newAboutString = await JSON.stringify(
 				convertToRaw(newAbout.getCurrentContent())
-			)
+			);
 
-			const newAboutHash = await (await uploadToIPFS(newAboutString)).hash
+			await Promise.all([newAboutString]).then((result) => {
+				console.log(result[0])
+				updateFormData({about: result[0]});
+			})
 
-			updateFormData({ about: newAboutHash })
+			console.log(editedFormData?.about);
 		}
-
 
 		if(!editedFormData?.bio?.length) {
 			return updateEditError('bio', 'Please enter a bio')

@@ -1,6 +1,11 @@
 import { WorkspaceUpdateRequest } from '@questbook/service-validator-client'
 import { PartnersProps, SettingsForm, Workspace } from 'src/types'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
+import {
+	convertFromRaw,
+	convertToRaw,
+	EditorState,
+} from 'draft-js';
 
 export const workspaceDataToSettingsForm = (
 	workspaceData: Workspace | undefined,
@@ -50,6 +55,12 @@ export const generateWorkspaceUpdateRequest = async(
 
 	if(newForm.image !== oldForm.image && newForm.image) {
 		req.logoIpfsHash = (await uploadToIPFS(newForm.image!)).hash
+	}
+
+	if(newForm.about !== oldForm.about && newForm.about) {
+		const newAboutHash = (await uploadToIPFS(newForm.about)).hash
+
+		req.about = newAboutHash
 	}
 
 	if(newForm.coverImage !== oldForm.coverImage && newForm.coverImage) {
