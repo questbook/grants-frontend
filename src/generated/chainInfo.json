@@ -105,6 +105,50 @@
 			"https://optimism-mainnet.infura.io/v3/"
 		]
 	},
+	"42": {
+		"id": 42,
+		"name": "Kovan",
+		"isTestNetwork": true,
+		"icon": "/chain_assets/eth.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://kovan.etherscan.io/address/{{address}}",
+			"transactionHash": "https://kovan.etherscan.io/tx/{{tx}}"
+		},
+		"supportedCurrencies": {
+			"0x04DF6e4121c27713ED22341E7c7Df330F56f289B": {
+				"icon": "/chain_assets/dai.svg",
+				"label": "DAI",
+				"address": "0x04DF6e4121c27713ED22341E7c7Df330F56f289B",
+				"decimals": 18
+			},
+			"0xd0A1E359811322d97991E03f863a0C30C2cF029C": {
+				"icon": "/chain_assets/weth.svg",
+				"label": "WETH",
+				"address": "0xd0A1E359811322d97991E03f863a0C30C2cF029C",
+				"decimals": 18
+			},
+			"0xe22da380ee6B445bb8273C81944ADEB6E8450422": {
+				"icon": "/chain_assets/usdc.svg",
+				"label": "USDC",
+				"address": "0xe22da380ee6B445bb8273C81944ADEB6E8450422",
+				"decimals": 6
+			}
+		},
+		"qbContracts": {
+			"applications": "0x611a8740ed9B18d7C78e2286E651c4970eEC4AA1",
+			"workspace": "0xA23FAe98239E5a8d5F1D2944725d06F2E79226EB",
+			"grantFactory": "0xAeee48268A49508FB246E7D563f5b01Fd10f4758",
+			"reviews": "0x2704726624bEeE50435aA5364820C61026B56214"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-kovan",
+		"rpcUrls": [
+			"https://kovan.infura.io/v3/"
+		]
+	},
 	"69": {
 		"id": 69,
 		"name": "Optimism Testnet",
