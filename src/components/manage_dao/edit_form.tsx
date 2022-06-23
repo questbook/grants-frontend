@@ -179,7 +179,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 			return undefined
 		}
 
-		setEditData(data);
+		setEditData(data)
 	}
 
 	useEffect(() => {
