@@ -176,18 +176,6 @@ function Profile() {
 		console.log(grantsData, grantsDisbursed)
 	}, [grantsData, grantsDisbursed])
 
-	const daoPartners = [{
-		name: 'Google',
-		link: 'www.google.com',
-		industry: 'search'
-	},
-	{
-		name: 'Twitter',
-		link: 'www.twitter.com',
-		industry: 'social'
-	}
-	]
-
 	return (
 		<Flex
 			direction="column"
@@ -448,7 +436,7 @@ function Profile() {
 					selected === 1 && (
 						<DaoAbout
 							daoAbout={workspaceData?.about}
-							daoPartners={daoPartners}
+							daoPartners={workspaceData?.partners}
 						/>
 					)
 				)

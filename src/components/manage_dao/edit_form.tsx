@@ -19,7 +19,6 @@ import config from 'src/constants/config'
 // UTILS AND TOOLS
 import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace'
 import { SettingsForm, Workspace } from 'src/types'
-import { getUrlForIPFSHash, isIpfsHash } from 'src/utils/ipfsUtils'
 import {
 	generateWorkspaceUpdateRequest,
 	workspaceDataToSettingsForm,
@@ -128,7 +127,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 		if(img) {
 			if(img.size / 1024 / 1024 <= MAX_IMAGE_SIZE_MB) {
 				const partners = [...editedFormData?.partners!]
-				partners[index].image = URL.createObjectURL(img)
+				partners[index].partnerImageHash = URL.createObjectURL(img)
 				updateFormData({ partners })
 			} else {
 				toastRef.current = toast({
@@ -147,6 +146,9 @@ function EditForm({ workspaceData }: EditFormProps) {
 	}
 
 	const handleSubmit = async() => {
+		console.log(editedFormData?.image!)
+		console.log(editedFormData)
+
 		if(!editedFormData?.bio?.length) {
 			return updateEditError('bio', 'Please enter a bio')
 		}
@@ -176,10 +178,16 @@ function EditForm({ workspaceData }: EditFormProps) {
 			})
 			return undefined
 		}
+
+		// setEditData(data);
 	}
 
 	useEffect(() => {
 		setEditedFormData(workspaceDataToSettingsForm(workspaceData))
+		if(workspaceData && workspaceData!.partners!.length >= 1) {
+			setPartnersRequired(true)
+		}
+
 	}, [workspaceData])
 
 	useEffect(() => {
@@ -206,7 +214,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 					isError={hasError('name')}
 				/>
 				<ImageUpload
-					image={editedFormData?.image || config.defaultDAOImagePath}
+					image={editedFormData?.image! || config.defaultDAOImagePath}
 					isError={false}
 					onChange={(e) => handleImageChange('image', e)}
 					label="Add a logo"
@@ -403,7 +411,8 @@ function EditForm({ workspaceData }: EditFormProps) {
 								mt="-2.2rem"
 								mb="-10rem">
 								<ImageUpload
-									image={isIpfsHash(partner.image) ? getUrlForIPFSHash(partner.image!) : partner.image!}
+									// image={isIpfsHash(partner.partnerImageHash) ? getUrlForIPFSHash(partner.partnerImageHash!) : partner.partnerImageHash!}
+									image={partner.partnerImageHash! || config.defaultDAOImagePath}
 									isError={false}
 									onChange={e => handlePartnerImageChange(e, index)}
 									label="Partner logo"
@@ -531,7 +540,11 @@ function EditForm({ workspaceData }: EditFormProps) {
 						color="#8850EA"
 						lineHeight="20px"
 					>
-						Add another service partner
+						Add
+						{' '}
+						{editedFormData! && editedFormData!.partners!.length >= 1 ? 'another' : 'a'}
+						{' '}
+service partner
 					</Text>
 				</Box>
 			</Flex>

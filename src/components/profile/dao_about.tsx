@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Linkify from 'react-linkify'
 import {
 	Box,
@@ -9,7 +9,6 @@ import {
 	Skeleton,
 	Text } from '@chakra-ui/react'
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer'
-import { getFromIPFS } from 'src/utils/ipfsUtils'
 
 interface DaoAboutProps {
   daoAbout?: string;
@@ -18,26 +17,26 @@ interface DaoAboutProps {
 
 function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
 
-	const [decodedAbout, setDecodedAbout] = useState('')
-	const getDecodedAbout = async(detailsHash: string) => {
-		console.log(detailsHash)
-		const d = await getFromIPFS(detailsHash)
-		setDecodedAbout(d)
-	}
+	// const [decodedAbout, setDecodedAbout] = useState('')
+	// const getDecodedAbout = async(detailsHash: string) => {
+	// 	console.log(detailsHash)
+	// 	const d = await getFromIPFS(detailsHash)
+	// 	setDecodedAbout(d)
+	// }
 
-	useEffect(() => {
-		if(!daoAbout) {
-			return
-		}
+	// useEffect(() => {
+	// 	if(!daoAbout) {
+	// 		return
+	// 	}
 
-		if(daoAbout.length) {
-			getDecodedAbout(daoAbout)
-		} else {
-			setDecodedAbout(daoAbout)
-		}
+	// 	if(daoAbout.length) {
+	// 		getDecodedAbout(daoAbout)
+	// 	} else {
+	// 		setDecodedAbout(daoAbout)
+	// 	}
 
-		console.log(decodedAbout)
-	}, [daoAbout])
+	// 	console.log(decodedAbout)
+	// }, [daoAbout])
 
 	return (
 		<Grid
@@ -69,9 +68,9 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
 						mt={3}
 						fontWeight="400">
 						{
-							decodedAbout !== '' ? (
+							daoAbout !== '' ? (
 								<TextViewer
-									text={decodedAbout}
+									text={daoAbout!}
 								/>
 							) : <Skeleton />
 						}

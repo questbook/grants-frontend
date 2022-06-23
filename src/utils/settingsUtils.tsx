@@ -95,13 +95,13 @@ export const generateWorkspaceUpdateRequest = async(
 				oldPartner?.name !== newPartner.name
 				|| oldPartner?.industry !== newPartner.industry
 				|| oldPartner?.website !== newPartner.website
-				|| oldPartner?.image !== newPartner.image
+				|| oldPartner?.partnerImageHash !== newPartner.partnerImageHash
 			) {
 				changedPartners = true
 			}
 
-			if(oldPartner?.image !== newPartner.image) {
-				newPartner.image = (await uploadToIPFS(newPartner?.image!)).hash
+			if(oldPartner?.partnerImageHash !== newPartner.partnerImageHash) {
+				newPartner.partnerImageHash = (await uploadToIPFS(newPartner?.partnerImageHash!)).hash
 			}
 
 			// delete to mark as processed
@@ -116,7 +116,7 @@ export const generateWorkspaceUpdateRequest = async(
 
 		// partners have changed
 		if(changedPartners) {
-			req.partners = newForm.partners!.map(p => ({ ...p, website: p.website || '' }))
+			req.partners = newForm.partners!.map(p => ({ ...p, website: p.website || '', partnerImageHash: p.partnerImageHash || '' }))
 		}
 	}
 

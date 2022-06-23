@@ -22,7 +22,7 @@ export type PartnersProps = {
 	name: string;
 	industry: string;
 	website?: string | null;
-	image?: string | null;
+	partnerImageHash?: string | null | undefined;
 }
 
 export type SettingsForm = {

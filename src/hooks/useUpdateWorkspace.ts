@@ -72,8 +72,6 @@ export default function useUpdateWorkspace(
 					throw new Error('Error validating grant data')
 				}
 
-				console.log(ipfsHash)
-
 				const updateTransaction = await workspaceRegistryContract.updateWorkspaceMetadata(
 					Number(workspace!.id),
 					ipfsHash,
