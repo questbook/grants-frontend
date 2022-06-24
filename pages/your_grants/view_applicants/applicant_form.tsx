@@ -47,9 +47,6 @@ function ApplicantForm() {
 	const toast = useToast()
 	const router = useRouter()
 	const [step, setStep] = useState(0)
-	useEffect(() => {
-		console.log('Step: ', step)
-	}, [step])
 
 	const [isAdmin, setIsAdmin] = useState(false)
 	const { data: accountData } = useAccount()
