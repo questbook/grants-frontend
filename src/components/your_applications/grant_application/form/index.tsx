@@ -666,21 +666,25 @@ function Form({
 							/>
 
 							<Box mt="43px" />
-							{grantRequiredFields.includes('fundingBreakdown') && <Funding
-								fundingAsk={fundingAsk}
-								setFundingAsk={setFundingAsk}
-								fundingAskError={fundingAskError}
-								setFundingAskError={setFundingAskError}
-								fundingBreakdown={fundingBreakdown}
-								setFundingBreakdown={setFundingBreakdown}
-								fundingBreakdownError={fundingBreakdownError}
-								setFundingBreakdownError={setFundingBreakdownError}
-								rewardAmount={rewardAmount}
-								rewardCurrency={rewardCurrency}
-								rewardCurrencyCoin={rewardCurrencyCoin}
-								readOnly={onEdit === false}
-								grantRequiredFields={grantRequiredFields}
-							/>}
+							{
+								grantRequiredFields.includes('fundingBreakdown') && (
+									<Funding
+										fundingAsk={fundingAsk}
+										setFundingAsk={setFundingAsk}
+										fundingAskError={fundingAskError}
+										setFundingAskError={setFundingAskError}
+										fundingBreakdown={fundingBreakdown}
+										setFundingBreakdown={setFundingBreakdown}
+										fundingBreakdownError={fundingBreakdownError}
+										setFundingBreakdownError={setFundingBreakdownError}
+										rewardAmount={rewardAmount}
+										rewardCurrency={rewardCurrency}
+										rewardCurrencyCoin={rewardCurrencyCoin}
+										readOnly={onEdit === false}
+										grantRequiredFields={grantRequiredFields}
+									/>
+								)
+							}
 
 							{
 								customFields.length > 0 && (
