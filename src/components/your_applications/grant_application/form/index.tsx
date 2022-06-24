@@ -666,7 +666,7 @@ function Form({
 							/>
 
 							<Box mt="43px" />
-							<Funding
+							{grantRequiredFields.includes('fundingBreakdown') && <Funding
 								fundingAsk={fundingAsk}
 								setFundingAsk={setFundingAsk}
 								fundingAskError={fundingAskError}
@@ -680,7 +680,7 @@ function Form({
 								rewardCurrencyCoin={rewardCurrencyCoin}
 								readOnly={onEdit === false}
 								grantRequiredFields={grantRequiredFields}
-							/>
+							/>}
 
 							{
 								customFields.length > 0 && (
