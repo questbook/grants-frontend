@@ -53,8 +53,8 @@
 			"walletConnect"
 		],
 		"explorer": {
-			"address": "https://optimistic.etherscan.io/{{address}}/",
-			"transactionHash": "https://optimistic.etherscan.io/{{tx}}/"
+			"address": "https://optimistic.etherscan.io/address/{{address}}/",
+			"transactionHash": "https://optimistic.etherscan.io/tx/{{tx}}/"
 		},
 		"supportedCurrencies": {
 			"0xda10009cbd5d07dd0cecc66161fc93d7c9000da1": {
@@ -105,6 +105,50 @@
 			"https://optimism-mainnet.infura.io/v3/"
 		]
 	},
+	"42": {
+		"id": 42,
+		"name": "Kovan",
+		"isTestNetwork": true,
+		"icon": "/chain_assets/eth.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://kovan.etherscan.io/address/{{address}}",
+			"transactionHash": "https://kovan.etherscan.io/tx/{{tx}}"
+		},
+		"supportedCurrencies": {
+			"0x04df6e4121c27713ed22341e7c7df330f56f289b": {
+				"icon": "/chain_assets/dai.svg",
+				"label": "DAI",
+				"address": "0x04df6e4121c27713ed22341e7c7df330f56f289b",
+				"decimals": 18
+			},
+			"0xd0a1e359811322d97991e03f863a0c30c2cf029c": {
+				"icon": "/chain_assets/weth.svg",
+				"label": "WETH",
+				"address": "0xd0a1e359811322d97991e03f863a0c30c2cf029c",
+				"decimals": 18
+			},
+			"0xe22da380ee6b445bb8273c81944adeb6e8450422": {
+				"icon": "/chain_assets/usdc.svg",
+				"label": "USDC",
+				"address": "0xe22da380ee6b445bb8273c81944adeb6e8450422",
+				"decimals": 6
+			}
+		},
+		"qbContracts": {
+			"applications": "0x611a8740ed9B18d7C78e2286E651c4970eEC4AA1",
+			"workspace": "0xA23FAe98239E5a8d5F1D2944725d06F2E79226EB",
+			"grantFactory": "0xAeee48268A49508FB246E7D563f5b01Fd10f4758",
+			"reviews": "0x2704726624bEeE50435aA5364820C61026B56214"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-kovan",
+		"rpcUrls": [
+			"https://kovan.infura.io/v3/"
+		]
+	},
 	"69": {
 		"id": 69,
 		"name": "Optimism Testnet",
@@ -115,8 +159,8 @@
 			"walletConnect"
 		],
 		"explorer": {
-			"address": "https://optimistic.etherscan.io/{{address}}/",
-			"transactionHash": "https://optimistic.etherscan.io/{{tx}}/"
+			"address": "https://optimistic.etherscan.io/address/{{address}}/",
+			"transactionHash": "https://optimistic.etherscan.io/tx/{{tx}}/"
 		},
 		"supportedCurrencies": {
 			"0xda10009cbd5d07dd0cecc66161fc93d7c9000da1": {
@@ -147,8 +191,8 @@
 			"walletConnect"
 		],
 		"explorer": {
-			"address": "https://polygonscan.com/{{address}}/",
-			"transactionHash": "https://polygonscan.com/{{tx}}/"
+			"address": "https://polygonscan.com/address/{{address}}/",
+			"transactionHash": "https://polygonscan.com/tx/{{tx}}/"
 		},
 		"supportedCurrencies": {
 			"0x8f3cf7ad23cd3cadbd9735aff958023239c6a063": {
@@ -272,6 +316,102 @@
 			"https://polygon-mainnet.g.alchemy.com/v2/"
 		]
 	},
+	"1001": {
+		"id": 1001,
+		"name": "Klaytn Testnet",
+		"isTestNetwork": true,
+		"icon": "/chain_assets/klay.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://baobab.scope.klaytn.com/account/{{address}}",
+			"transactionHash": "https://baobab.scope.klaytn.com/tx/{{tx}}"
+		},
+		"supportedCurrencies": {
+			"0x9330dd6713c8328a8d82b14e3f60a0f0b4cc7bfb": {
+				"icon": "/chain_assets/klay.svg",
+				"label": "KLAY",
+				"address": "0x9330dd6713c8328a8d82b14e3f60a0f0b4cc7bfb",
+				"decimals": 18
+			}
+		},
+		"qbContracts": {
+			"applications": "0xD5c4F27fdBC665DBe851fFa5bB8a7DB934B8e05f",
+			"workspace": "0x635CBA2Aa0064f90A66107c8c144a4Fc8Dc6b6Ac",
+			"grantFactory": "0xe374A2407b6Ac748caC70300DD5A88ba39769a49",
+			"reviews": "0x367F1D6ac3EF6586DA9F893BB38Af5571A9EC10A"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-klaytn-testnet",
+		"rpcUrls": [
+			"https://api.baobab.klaytn.net:8651"
+		]
+	},
+	"2153": {
+		"id": 2153,
+		"name": "Findora Testnet",
+		"isTestNetwork": true,
+		"icon": "/chain_assets/findora.png",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://testnet-anvil.evm.findorascan.io/address/{{address}}",
+			"transactionHash": "https://testnet-anvil.evm.findorascan.io/tx/{{tx}}"
+		},
+		"supportedCurrencies": {
+			"0x0000000000000000000000000000000000001000": {
+				"icon": "/chain_assets/findora.png",
+				"label": "FRA",
+				"address": "0x0000000000000000000000000000000000001000",
+				"decimals": 18
+			}
+		},
+		"qbContracts": {
+			"applications": "0x32798CC9da06363eF2b0eE12e54cD4476D9C891a",
+			"workspace": "0x6D0f81BDA11995f25921aAd5B43359630E65Ca96",
+			"grantFactory": "0xda717ab1206c59493e1E5c66F4e0712B39EC6D81",
+			"reviews": "0x2d49a247AA77cA433218C9567953645bE04A7b3A"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-findora-testnet",
+		"rpcUrls": [
+			"https://prod-testnet.prod.findora.org:8545"
+		]
+	},
+	"8217": {
+		"id": 8217,
+		"name": "Klaytn Mainnet",
+		"isTestNetwork": false,
+		"icon": "/chain_assets/klay.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://scope.klaytn.com/account/{{address}}",
+			"transactionHash": "https://scope.klaytn.com/tx/{{tx}}"
+		},
+		"supportedCurrencies": {
+			"0xe4f05a66ec68b54a58b17c22107b02e0232cc817": {
+				"icon": "/chain_assets/klay.svg",
+				"label": "WKLAY",
+				"address": "0xe4f05a66ec68b54a58b17c22107b02e0232cc817",
+				"decimals": 18
+			}
+		},
+		"qbContracts": {
+			"applications": "0x2d49a247AA77cA433218C9567953645bE04A7b3A",
+			"workspace": "0xda717ab1206c59493e1E5c66F4e0712B39EC6D81",
+			"grantFactory": "0x32798CC9da06363eF2b0eE12e54cD4476D9C891a",
+			"reviews": "0x6Cb5Ee567592eD1fBdA48413a1F95e848d289D34"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-klaytn-mainnet",
+		"rpcUrls": [
+			"https://public-node-api.klaytnapi.com/v1/cypress"
+		]
+	},
 	"44787": {
 		"id": 44787,
 		"name": "Celo Testnet",
@@ -286,11 +426,23 @@
 			"transactionHash": "https://alfajores-blockscout.celo-testnet.org/tx/{{tx}}"
 		},
 		"supportedCurrencies": {
-			"0xE4fE50cdD716522A56204352f00AA110F731932d": {
+			"0x7d91E51C8F218f7140188A155f5C75388630B6a8": {
 				"icon": "/chain_assets/dai.svg",
 				"label": "DAI",
-				"address": "0xE4fE50cdD716522A56204352f00AA110F731932d",
-				"decimals": 9
+				"address": "0x7d91E51C8F218f7140188A155f5C75388630B6a8",
+				"decimals": 18
+			},
+			"0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9": {
+				"icon": "/chain_assets/celo_token.svg",
+				"label": "CELO",
+				"address": "0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9",
+				"decimals": 18
+			},
+			"0x874069fa1eb16d44d622f2e0ca25eea172369bc1": {
+				"icon": "/chain_assets/cusd.svg",
+				"label": "cUSD",
+				"address": "0x874069fa1eb16d44d622f2e0ca25eea172369bc1",
+				"decimals": 18
 			}
 		},
 		"qbContracts": {
@@ -314,8 +466,8 @@
 			"walletConnect"
 		],
 		"explorer": {
-			"address": "https://mumbai.polygonscan.com/{{address}}/",
-			"transactionHash": "https://mumbai.polygonscan.com/{{tx}}/"
+			"address": "https://mumbai.polygonscan.com/address/{{address}}/",
+			"transactionHash": "https://mumbai.polygonscan.com/tx/{{tx}}/"
 		},
 		"supportedCurrencies": {
 			"0x9c3c9283d3e44854697cd22d3faa240cfb032889": {
@@ -352,8 +504,8 @@
 			"walletConnect"
 		],
 		"explorer": {
-			"address": "https://neonscan.org/{{address}}/",
-			"transactionHash": "https://neonscan.org/{{tx}}/"
+			"address": "https://neonscan.org/address/{{address}}/",
+			"transactionHash": "https://neonscan.org/tx/{{tx}}/"
 		},
 		"supportedCurrencies": {
 			"0x7ad98aeadbbcdf3693b0b53c09da4033704c9322": {
@@ -428,8 +580,8 @@
 			"walletConnect"
 		],
 		"explorer": {
-			"address": "https://explorer.pops.one/{{address}}/",
-			"transactionHash": "https://explorer.pops.one/{{tx}}/"
+			"address": "https://explorer.pops.one/address/{{address}}/",
+			"transactionHash": "https://explorer.pops.one/tx/{{tx}}/"
 		},
 		"supportedCurrencies": {
 			"0x778fbd9df477b888534ebd84a3d2c9d5347bf149": {

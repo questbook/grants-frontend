@@ -385,6 +385,8 @@ export type Grant = {
   details: Scalars['String'];
   /** Expected fields from the applicants of the grant */
   fields: Array<GrantField>;
+  /** List of fund transfer records for the grant */
+  fundTransfers: Array<FundsTransfer>;
   /** Funding currently present in the grant */
   funding: Scalars['BigInt'];
   id: Scalars['ID'];
@@ -425,6 +427,15 @@ export type GrantFieldsArgs = {
 };
 
 
+export type GrantFundTransfersArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<FundsTransfer_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<FundsTransfer_Filter>;
+};
+
+
 export type GrantManagersArgs = {
   first?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<GrantManager_OrderBy>;
@@ -437,6 +448,8 @@ export type GrantApplication = {
   __typename?: 'GrantApplication';
   /** Address of the applicant */
   applicantId: Scalars['Bytes'];
+  /** People who will review this grant application */
+  applicationReviewers: Array<GrantApplicationReviewer>;
   /** in seconds since epoch */
   createdAtS: Scalars['Int'];
   /** Feedback from the grant DAO manager/applicant */
@@ -452,7 +465,7 @@ export type GrantApplication = {
   milestones: Array<ApplicationMilestone>;
   /** PII Data */
   pii: Array<PiiAnswer>;
-  /** People who will review the grant applications */
+  /** @deprecated (use 'applicationReviewers') People who will review the grant application */
   reviewers: Array<WorkspaceMember>;
   /** Reviews of the application */
   reviews: Array<Review>;
@@ -462,6 +475,15 @@ export type GrantApplication = {
   updatedAtS: Scalars['Int'];
   /** Version of the application, incremented on resubmission */
   version: Scalars['Int'];
+};
+
+
+export type GrantApplicationApplicationReviewersArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<GrantApplicationReviewer_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<GrantApplicationReviewer_Filter>;
 };
 
 
@@ -508,6 +530,62 @@ export type GrantApplicationReviewsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<Review_Filter>;
 };
+
+export type GrantApplicationReviewer = {
+  __typename?: 'GrantApplicationReviewer';
+  /** Unix timestamp of when the user was assigned */
+  assignedAtS: Scalars['Int'];
+  id: Scalars['ID'];
+  /** The member who was assigned */
+  member: WorkspaceMember;
+};
+
+export type GrantApplicationReviewer_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  assignedAtS?: InputMaybe<Scalars['Int']>;
+  assignedAtS_gt?: InputMaybe<Scalars['Int']>;
+  assignedAtS_gte?: InputMaybe<Scalars['Int']>;
+  assignedAtS_in?: InputMaybe<Array<Scalars['Int']>>;
+  assignedAtS_lt?: InputMaybe<Scalars['Int']>;
+  assignedAtS_lte?: InputMaybe<Scalars['Int']>;
+  assignedAtS_not?: InputMaybe<Scalars['Int']>;
+  assignedAtS_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  member?: InputMaybe<Scalars['String']>;
+  member_contains?: InputMaybe<Scalars['String']>;
+  member_contains_nocase?: InputMaybe<Scalars['String']>;
+  member_ends_with?: InputMaybe<Scalars['String']>;
+  member_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  member_gt?: InputMaybe<Scalars['String']>;
+  member_gte?: InputMaybe<Scalars['String']>;
+  member_in?: InputMaybe<Array<Scalars['String']>>;
+  member_lt?: InputMaybe<Scalars['String']>;
+  member_lte?: InputMaybe<Scalars['String']>;
+  member_not?: InputMaybe<Scalars['String']>;
+  member_not_contains?: InputMaybe<Scalars['String']>;
+  member_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  member_not_ends_with?: InputMaybe<Scalars['String']>;
+  member_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  member_not_in?: InputMaybe<Array<Scalars['String']>>;
+  member_not_starts_with?: InputMaybe<Scalars['String']>;
+  member_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  member_starts_with?: InputMaybe<Scalars['String']>;
+  member_starts_with_nocase?: InputMaybe<Scalars['String']>;
+};
+
+export enum GrantApplicationReviewer_OrderBy {
+  AssignedAtS = 'assignedAtS',
+  Id = 'id',
+  Member = 'member'
+}
 
 /** A revision after an update */
 export type GrantApplicationRevision = {
@@ -685,6 +763,12 @@ export type GrantApplication_Filter = {
   applicantId_not?: InputMaybe<Scalars['Bytes']>;
   applicantId_not_contains?: InputMaybe<Scalars['Bytes']>;
   applicantId_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  applicationReviewers?: InputMaybe<Array<Scalars['String']>>;
+  applicationReviewers_contains?: InputMaybe<Array<Scalars['String']>>;
+  applicationReviewers_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  applicationReviewers_not?: InputMaybe<Array<Scalars['String']>>;
+  applicationReviewers_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  applicationReviewers_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   createdAtS?: InputMaybe<Scalars['Int']>;
   createdAtS_gt?: InputMaybe<Scalars['Int']>;
   createdAtS_gte?: InputMaybe<Scalars['Int']>;
@@ -809,6 +893,7 @@ export type GrantApplication_Filter = {
 
 export enum GrantApplication_OrderBy {
   ApplicantId = 'applicantId',
+  ApplicationReviewers = 'applicationReviewers',
   CreatedAtS = 'createdAtS',
   FeedbackDao = 'feedbackDao',
   FeedbackDev = 'feedbackDev',
@@ -1337,6 +1422,7 @@ export enum Grant_OrderBy {
   DeadlineS = 'deadlineS',
   Details = 'details',
   Fields = 'fields',
+  FundTransfers = 'fundTransfers',
   Funding = 'funding',
   Id = 'id',
   Managers = 'managers',
@@ -1582,6 +1668,116 @@ export enum PiiAnswer_OrderBy {
   Manager = 'manager'
 }
 
+export type Partner = {
+  __typename?: 'Partner';
+  id: Scalars['ID'];
+  industry: Scalars['String'];
+  name: Scalars['String'];
+  partnerImageHash?: Maybe<Scalars['String']>;
+  website?: Maybe<Scalars['String']>;
+};
+
+export type Partner_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  industry?: InputMaybe<Scalars['String']>;
+  industry_contains?: InputMaybe<Scalars['String']>;
+  industry_contains_nocase?: InputMaybe<Scalars['String']>;
+  industry_ends_with?: InputMaybe<Scalars['String']>;
+  industry_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  industry_gt?: InputMaybe<Scalars['String']>;
+  industry_gte?: InputMaybe<Scalars['String']>;
+  industry_in?: InputMaybe<Array<Scalars['String']>>;
+  industry_lt?: InputMaybe<Scalars['String']>;
+  industry_lte?: InputMaybe<Scalars['String']>;
+  industry_not?: InputMaybe<Scalars['String']>;
+  industry_not_contains?: InputMaybe<Scalars['String']>;
+  industry_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  industry_not_ends_with?: InputMaybe<Scalars['String']>;
+  industry_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  industry_not_in?: InputMaybe<Array<Scalars['String']>>;
+  industry_not_starts_with?: InputMaybe<Scalars['String']>;
+  industry_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  industry_starts_with?: InputMaybe<Scalars['String']>;
+  industry_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  name_contains?: InputMaybe<Scalars['String']>;
+  name_contains_nocase?: InputMaybe<Scalars['String']>;
+  name_ends_with?: InputMaybe<Scalars['String']>;
+  name_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  name_gt?: InputMaybe<Scalars['String']>;
+  name_gte?: InputMaybe<Scalars['String']>;
+  name_in?: InputMaybe<Array<Scalars['String']>>;
+  name_lt?: InputMaybe<Scalars['String']>;
+  name_lte?: InputMaybe<Scalars['String']>;
+  name_not?: InputMaybe<Scalars['String']>;
+  name_not_contains?: InputMaybe<Scalars['String']>;
+  name_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  name_not_ends_with?: InputMaybe<Scalars['String']>;
+  name_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  name_not_in?: InputMaybe<Array<Scalars['String']>>;
+  name_not_starts_with?: InputMaybe<Scalars['String']>;
+  name_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  name_starts_with?: InputMaybe<Scalars['String']>;
+  name_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  partnerImageHash?: InputMaybe<Scalars['String']>;
+  partnerImageHash_contains?: InputMaybe<Scalars['String']>;
+  partnerImageHash_contains_nocase?: InputMaybe<Scalars['String']>;
+  partnerImageHash_ends_with?: InputMaybe<Scalars['String']>;
+  partnerImageHash_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  partnerImageHash_gt?: InputMaybe<Scalars['String']>;
+  partnerImageHash_gte?: InputMaybe<Scalars['String']>;
+  partnerImageHash_in?: InputMaybe<Array<Scalars['String']>>;
+  partnerImageHash_lt?: InputMaybe<Scalars['String']>;
+  partnerImageHash_lte?: InputMaybe<Scalars['String']>;
+  partnerImageHash_not?: InputMaybe<Scalars['String']>;
+  partnerImageHash_not_contains?: InputMaybe<Scalars['String']>;
+  partnerImageHash_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  partnerImageHash_not_ends_with?: InputMaybe<Scalars['String']>;
+  partnerImageHash_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  partnerImageHash_not_in?: InputMaybe<Array<Scalars['String']>>;
+  partnerImageHash_not_starts_with?: InputMaybe<Scalars['String']>;
+  partnerImageHash_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  partnerImageHash_starts_with?: InputMaybe<Scalars['String']>;
+  partnerImageHash_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  website?: InputMaybe<Scalars['String']>;
+  website_contains?: InputMaybe<Scalars['String']>;
+  website_contains_nocase?: InputMaybe<Scalars['String']>;
+  website_ends_with?: InputMaybe<Scalars['String']>;
+  website_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  website_gt?: InputMaybe<Scalars['String']>;
+  website_gte?: InputMaybe<Scalars['String']>;
+  website_in?: InputMaybe<Array<Scalars['String']>>;
+  website_lt?: InputMaybe<Scalars['String']>;
+  website_lte?: InputMaybe<Scalars['String']>;
+  website_not?: InputMaybe<Scalars['String']>;
+  website_not_contains?: InputMaybe<Scalars['String']>;
+  website_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  website_not_ends_with?: InputMaybe<Scalars['String']>;
+  website_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  website_not_in?: InputMaybe<Array<Scalars['String']>>;
+  website_not_starts_with?: InputMaybe<Scalars['String']>;
+  website_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  website_starts_with?: InputMaybe<Scalars['String']>;
+  website_starts_with_nocase?: InputMaybe<Scalars['String']>;
+};
+
+export enum Partner_OrderBy {
+  Id = 'id',
+  Industry = 'industry',
+  Name = 'name',
+  PartnerImageHash = 'partnerImageHash',
+  Website = 'website'
+}
+
 export type Query = {
   __typename?: 'Query';
   /** Access to subgraph metadata */
@@ -1592,6 +1788,8 @@ export type Query = {
   fundsTransfers: Array<FundsTransfer>;
   grant?: Maybe<Grant>;
   grantApplication?: Maybe<GrantApplication>;
+  grantApplicationReviewer?: Maybe<GrantApplicationReviewer>;
+  grantApplicationReviewers: Array<GrantApplicationReviewer>;
   grantApplicationRevision?: Maybe<GrantApplicationRevision>;
   grantApplicationRevisions: Array<GrantApplicationRevision>;
   grantApplications: Array<GrantApplication>;
@@ -1606,6 +1804,8 @@ export type Query = {
   grants: Array<Grant>;
   notification?: Maybe<Notification>;
   notifications: Array<Notification>;
+  partner?: Maybe<Partner>;
+  partners: Array<Partner>;
   piianswer?: Maybe<PiiAnswer>;
   piianswers: Array<PiiAnswer>;
   review?: Maybe<Review>;
@@ -1679,6 +1879,24 @@ export type QueryGrantApplicationArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryGrantApplicationReviewerArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryGrantApplicationReviewersArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<GrantApplicationReviewer_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<GrantApplicationReviewer_Filter>;
 };
 
 
@@ -1809,6 +2027,24 @@ export type QueryNotificationsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<Notification_Filter>;
+};
+
+
+export type QueryPartnerArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryPartnersArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Partner_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Partner_Filter>;
 };
 
 
@@ -2423,6 +2659,8 @@ export type Subscription = {
   fundsTransfers: Array<FundsTransfer>;
   grant?: Maybe<Grant>;
   grantApplication?: Maybe<GrantApplication>;
+  grantApplicationReviewer?: Maybe<GrantApplicationReviewer>;
+  grantApplicationReviewers: Array<GrantApplicationReviewer>;
   grantApplicationRevision?: Maybe<GrantApplicationRevision>;
   grantApplicationRevisions: Array<GrantApplicationRevision>;
   grantApplications: Array<GrantApplication>;
@@ -2437,6 +2675,8 @@ export type Subscription = {
   grants: Array<Grant>;
   notification?: Maybe<Notification>;
   notifications: Array<Notification>;
+  partner?: Maybe<Partner>;
+  partners: Array<Partner>;
   piianswer?: Maybe<PiiAnswer>;
   piianswers: Array<PiiAnswer>;
   review?: Maybe<Review>;
@@ -2510,6 +2750,24 @@ export type SubscriptionGrantApplicationArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionGrantApplicationReviewerArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionGrantApplicationReviewersArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<GrantApplicationReviewer_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<GrantApplicationReviewer_Filter>;
 };
 
 
@@ -2640,6 +2898,24 @@ export type SubscriptionNotificationsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<Notification_Filter>;
+};
+
+
+export type SubscriptionPartnerArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionPartnersArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Partner_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Partner_Filter>;
 };
 
 
@@ -2809,9 +3085,11 @@ export enum SupportedNetwork {
   Chain_10 = 'chain_10',
   Chain_69 = 'chain_69',
   Chain_137 = 'chain_137',
+  Chain_1001 = 'chain_1001',
   Chain_44787 = 'chain_44787',
   Chain_80001 = 'chain_80001',
   Chain_245022926 = 'chain_245022926',
+  Chain_1666600000 = 'chain_1666600000',
   Chain_1666700000 = 'chain_1666700000'
 }
 
@@ -2926,6 +3204,8 @@ export type Workspace = {
   __typename?: 'Workspace';
   /** General info about the workspace */
   about: Scalars['String'];
+  /** Quick description of the workspace */
+  bio: Scalars['String'];
   /** Cover image for the workspace */
   coverImageIpfsHash?: Maybe<Scalars['String']>;
   /** in seconds since epoch */
@@ -2939,6 +3219,7 @@ export type Workspace = {
   metadataHash: Scalars['String'];
   /** Address of the owner of the workspace */
   ownerId: Scalars['Bytes'];
+  partners: Array<Partner>;
   /** List of social media handles of the workspace */
   socials: Array<Social>;
   /** List of supported networks of the workspace */
@@ -2959,6 +3240,16 @@ export type WorkspaceMembersArgs = {
   orderDirection?: InputMaybe<OrderDirection>;
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<WorkspaceMember_Filter>;
+};
+
+
+/** Schema for a Workspace or DAO */
+export type WorkspacePartnersArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Partner_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<Partner_Filter>;
 };
 
 
@@ -3000,6 +3291,8 @@ export type WorkspaceMember = {
   outstandingReviewIds: Array<Scalars['String']>;
   /** Public key of the workspace member */
   publicKey?: Maybe<Scalars['String']>;
+  /** If the member was removed, when */
+  removedAt?: Maybe<Scalars['Int']>;
   /** Last update on member */
   updatedAt: Scalars['Int'];
   workspace: Workspace;
@@ -3115,6 +3408,14 @@ export type WorkspaceMember_Filter = {
   publicKey_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
   publicKey_starts_with?: InputMaybe<Scalars['String']>;
   publicKey_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  removedAt?: InputMaybe<Scalars['Int']>;
+  removedAt_gt?: InputMaybe<Scalars['Int']>;
+  removedAt_gte?: InputMaybe<Scalars['Int']>;
+  removedAt_in?: InputMaybe<Array<Scalars['Int']>>;
+  removedAt_lt?: InputMaybe<Scalars['Int']>;
+  removedAt_lte?: InputMaybe<Scalars['Int']>;
+  removedAt_not?: InputMaybe<Scalars['Int']>;
+  removedAt_not_in?: InputMaybe<Array<Scalars['Int']>>;
   updatedAt?: InputMaybe<Scalars['Int']>;
   updatedAt_gt?: InputMaybe<Scalars['Int']>;
   updatedAt_gte?: InputMaybe<Scalars['Int']>;
@@ -3155,6 +3456,7 @@ export enum WorkspaceMember_OrderBy {
   LastReviewSubmittedAt = 'lastReviewSubmittedAt',
   OutstandingReviewIds = 'outstandingReviewIds',
   PublicKey = 'publicKey',
+  RemovedAt = 'removedAt',
   UpdatedAt = 'updatedAt',
   Workspace = 'workspace'
 }
@@ -3182,6 +3484,26 @@ export type Workspace_Filter = {
   about_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
   about_starts_with?: InputMaybe<Scalars['String']>;
   about_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  bio?: InputMaybe<Scalars['String']>;
+  bio_contains?: InputMaybe<Scalars['String']>;
+  bio_contains_nocase?: InputMaybe<Scalars['String']>;
+  bio_ends_with?: InputMaybe<Scalars['String']>;
+  bio_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  bio_gt?: InputMaybe<Scalars['String']>;
+  bio_gte?: InputMaybe<Scalars['String']>;
+  bio_in?: InputMaybe<Array<Scalars['String']>>;
+  bio_lt?: InputMaybe<Scalars['String']>;
+  bio_lte?: InputMaybe<Scalars['String']>;
+  bio_not?: InputMaybe<Scalars['String']>;
+  bio_not_contains?: InputMaybe<Scalars['String']>;
+  bio_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  bio_not_ends_with?: InputMaybe<Scalars['String']>;
+  bio_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  bio_not_in?: InputMaybe<Array<Scalars['String']>>;
+  bio_not_starts_with?: InputMaybe<Scalars['String']>;
+  bio_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  bio_starts_with?: InputMaybe<Scalars['String']>;
+  bio_starts_with_nocase?: InputMaybe<Scalars['String']>;
   coverImageIpfsHash?: InputMaybe<Scalars['String']>;
   coverImageIpfsHash_contains?: InputMaybe<Scalars['String']>;
   coverImageIpfsHash_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -3264,6 +3586,12 @@ export type Workspace_Filter = {
   ownerId_not?: InputMaybe<Scalars['Bytes']>;
   ownerId_not_contains?: InputMaybe<Scalars['Bytes']>;
   ownerId_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  partners?: InputMaybe<Array<Scalars['String']>>;
+  partners_contains?: InputMaybe<Array<Scalars['String']>>;
+  partners_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  partners_not?: InputMaybe<Array<Scalars['String']>>;
+  partners_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  partners_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   socials?: InputMaybe<Array<Scalars['String']>>;
   socials_contains?: InputMaybe<Array<Scalars['String']>>;
   socials_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
@@ -3308,6 +3636,7 @@ export type Workspace_Filter = {
 
 export enum Workspace_OrderBy {
   About = 'about',
+  Bio = 'bio',
   CoverImageIpfsHash = 'coverImageIpfsHash',
   CreatedAtS = 'createdAtS',
   Id = 'id',
@@ -3315,6 +3644,7 @@ export enum Workspace_OrderBy {
   Members = 'members',
   MetadataHash = 'metadataHash',
   OwnerId = 'ownerId',
+  Partners = 'partners',
   Socials = 'socials',
   SupportedNetworks = 'supportedNetworks',
   Title = 'title',
@@ -3389,7 +3719,7 @@ export type GetAllGrantsForCreatorQueryVariables = Exact<{
   skip?: InputMaybe<Scalars['Int']>;
   creatorId?: InputMaybe<Scalars['Bytes']>;
   workspaceId?: InputMaybe<Scalars['String']>;
-  acceptingApplications?: InputMaybe<Scalars['Boolean']>;
+  acceptingApplications?: InputMaybe<Array<Scalars['Boolean']> | Scalars['Boolean']>;
   minDeadline: Scalars['Int'];
   maxDeadline: Scalars['Int'];
 }>;
@@ -3741,12 +4071,12 @@ export type GetAllGrantsForADaoQueryHookResult = ReturnType<typeof useGetAllGran
 export type GetAllGrantsForADaoLazyQueryHookResult = ReturnType<typeof useGetAllGrantsForADaoLazyQuery>;
 export type GetAllGrantsForADaoQueryResult = Apollo.QueryResult<GetAllGrantsForADaoQuery, GetAllGrantsForADaoQueryVariables>;
 export const GetAllGrantsForCreatorDocument = gql`
-    query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String, $acceptingApplications: Boolean, $minDeadline: Int!, $maxDeadline: Int!) {
+    query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String, $acceptingApplications: [Boolean!], $minDeadline: Int!, $maxDeadline: Int!) {
   grants(
     first: $first
     skip: $skip
     subgraphError: allow
-    where: {workspace: $workspaceId, acceptingApplications: $acceptingApplications, deadlineS_gte: $minDeadline, deadlineS_lte: $maxDeadline}
+    where: {workspace: $workspaceId, acceptingApplications_in: $acceptingApplications, deadlineS_gte: $minDeadline, deadlineS_lte: $maxDeadline}
     orderBy: createdAtS
     orderDirection: desc
   ) {
