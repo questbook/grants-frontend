@@ -45,7 +45,7 @@ const TABS = [
 			// fetch all grants,
 			// currently accepting applications
 			// & those that haven't expired yet
-			acceptingApplications: [true],
+			acceptingApplications: true,
 			minDeadline: unixTimestampSeconds(),
 			maxDeadline: UNIX_TIMESTAMP_MAX
 		},
@@ -55,9 +55,9 @@ const TABS = [
 	{
 		index: 1,
 		query: {
-			// fetch all non-expired archived grants
-			acceptingApplications: [false],
-			minDeadline: unixTimestampSeconds(),
+			// fetch all archived grants regardless of "acceptingApplications" state
+			acceptingApplications: false,
+			minDeadline: 0,
 			maxDeadline: UNIX_TIMESTAMP_MAX
 		},
 		label: 'Archived',
@@ -65,9 +65,10 @@ const TABS = [
 	},
 	{
 		index: 2,
+		acceptingApplications: true,
 		query: {
-			// fetch all expired (including archived) grants
-			acceptingApplications: [true, false],
+			// fetch all expired (not archived) grants
+			acceptingApplications: true,
 			minDeadline: 0,
 			maxDeadline: unixTimestampSeconds(),
 		},

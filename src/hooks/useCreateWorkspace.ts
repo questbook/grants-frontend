@@ -57,7 +57,6 @@ export default function useCreateWorkspace(
 			const uploadedImageHash = (await uploadToIPFS(data.image)).hash
 			// console.log('Network: ', data.network);
 			// console.log('Network Return: ', getSupportedValidatorNetworkFromChainId(data.network));
-			console.log('data.network', data.network)
 			const {
 				data: { ipfsHash },
 			} = await validatorApi.validateWorkspaceCreate({

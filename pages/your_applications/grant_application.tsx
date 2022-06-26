@@ -135,7 +135,7 @@ function ViewApplication() {
         }) ?? [],
 			// fundingAsk: ethers.utils.formatEther(getStringField('fundingAsk') ?? '0'),
 			fundingAsk:
-        application && getStringField('fundingAsk') !== '' ? formatAmount(
+        application ? formatAmount(
         	getStringField('fundingAsk'),
         	decimals ?? 18,
         	true,

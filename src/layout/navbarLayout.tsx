@@ -65,7 +65,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 			spacing={0}
 			p={0}>
 			{
-				connected && accountData?.address ? (
+				connected ? (
 					<ConnectedNavbar renderTabs={renderTabs!} />
 				) : (
 					<SignInNavbar renderGetStarted={renderGetStarted} />

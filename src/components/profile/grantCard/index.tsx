@@ -158,9 +158,7 @@ function BrowseGrantCard({
 						direction="row"
 						mt={8}
 						alignItems="center">
-						<Image
-							src={grantCurrencyIcon}
-							boxSize='28px' />
+						<Image src={grantCurrencyIcon} />
 						<Text
 							ml={2}
 							fontWeight="700"

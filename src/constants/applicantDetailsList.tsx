@@ -22,7 +22,7 @@ export default [
 		tooltip: 'Details on how the project will use funding to achieve goals.',
 		id: 'fundingBreakdown',
 		inputType: 'long-form',
-		isRequired: false,
+		isRequired: true,
 	},
 	{
 		title: 'Project Name',
