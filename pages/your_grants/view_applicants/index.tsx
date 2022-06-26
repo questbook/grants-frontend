@@ -209,7 +209,7 @@ function ViewApplicants() {
 					amount_paid: formatAmount(
 						getTotalFundingRecv(
               applicant.milestones as unknown as ApplicationMilestone[],
-						).toString(), 
+						).toString(),
 						decimal ?? 18,
 					),
 				}
