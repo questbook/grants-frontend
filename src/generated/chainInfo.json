@@ -407,11 +407,11 @@
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-findora-testnet",
 		"rpcUrls": [
-			"https://prod-testnet.prod.findora.org:8545"
+			"https://ev2awpyss5.execute-api.ap-south-1.amazonaws.com/v0/findora"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Findora",
+			"symbol": "FRA",
 			"decimals": 18
 		}
 	},
