@@ -1,21 +1,114 @@
-import { useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
+import { ToastId, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { ApiClientsContext } from 'pages/_app'
+import ErrorToast from 'src/components/ui/toasts/errorToast'
+import useWorkspaceRegistryContract from 'src/hooks/contracts/useWorkspaceRegistryContract'
+import getErrorMessage from 'src/utils/errorUtils'
+import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
 import CreateDaoFinal from 'src/v2/components/Onboarding/CreateDao/CreateDaoFinal'
 import CreateDaoNameInput from 'src/v2/components/Onboarding/CreateDao/CreateDaoNameInput'
 import CreateDaoNetworkSelect from 'src/v2/components/Onboarding/CreateDao/CreateDaoNetworkSelect'
 import { NetworkSelectOption } from 'src/v2/components/Onboarding/SupportedNetworksData'
+import CreateDaoModal from 'src/v2/components/Onboarding/UI/CreateDaoModal'
 import BackgroundImageLayout from 'src/v2/components/Onboarding/UI/Layout/BackgroundImageLayout'
 import OnboardingCard from 'src/v2/components/Onboarding/UI/Layout/OnboardingCard'
+import { useAccount, useConnect, useNetwork, useSigner } from 'wagmi'
 
 const OnboardingCreateDao = () => {
 	const router = useRouter()
+	const { data: accountData } = useAccount()
 	const [step, setStep] = useState(0)
 	const [daoName, setDaoName] = useState<string>()
 	const [daoNetwork, setDaoNetwork] = useState<NetworkSelectOption>()
+	const [daoImageFile, setDaoImageFile] = useState<File | null>(null)
+	const [callOnContractChange, setCallOnContractChange] = useState(false)
+
+	const { activeChain, switchNetworkAsync, data } = useNetwork()
+	const {
+		isError: isErrorConnecting,
+		connect,
+		connectors
+	} = useConnect()
+
+	const workspaceRegistryContract = useWorkspaceRegistryContract(
+		daoNetwork?.id,
+	)
+	const { validatorApi } = useContext(ApiClientsContext)!
+	const toastRef = useRef<ToastId>()
+	const toast = useToast()
+
+	const createWorkspace = async() => {
+		setCallOnContractChange(false)
+		try {
+			if(activeChain?.id !== daoNetwork?.id) {
+				console.log('switching')
+				await switchNetworkAsync!(daoNetwork?.id)
+				console.log('create workspace again on contract object update')
+				setCallOnContractChange(true)
+				return
+			}
+
+			console.log('creating workspace')
+			const uploadedImageHash = (await uploadToIPFS(daoImageFile)).hash
+			const {
+				data: { ipfsHash },
+			} = await validatorApi.validateWorkspaceCreate({
+				title: daoName!,
+				about: '',
+				logoIpfsHash: uploadedImageHash,
+				creatorId: accountData!.address!,
+				socials: [],
+				supportedNetworks: [getSupportedValidatorNetworkFromChainId(daoNetwork!.id)],
+			})
+			if(!ipfsHash) {
+				throw new Error('Error validating grant data')
+			}
+
+			const createWorkspaceTransaction = await workspaceRegistryContract.createWorkspace(ipfsHash)
+			const createWorkspaceTransactionData = await createWorkspaceTransaction.wait()
+
+			console.log(createWorkspaceTransactionData)
+			router.push({ pathname: '/your_grants' })
+		} catch(e) {
+			const message = getErrorMessage(e)
+			toastRef.current = toast({
+				position: 'top',
+				render: () => ErrorToast({
+					content: message,
+					close: () => {
+						if(toastRef.current) {
+							toast.close(toastRef.current)
+						}
+					},
+				}),
+			})
+		}
+	}
+
+	useEffect(() => {
+		console.log(workspaceRegistryContract)
+		if(activeChain?.id === daoNetwork?.id && callOnContractChange) {
+			setCallOnContractChange(false)
+			createWorkspace()
+		}
+	}, [workspaceRegistryContract])
+	useEffect(() => console.log('data', data), [data])
+
+	const { data: signer } = useSigner()
+	useEffect(() => {
+		console.log(signer)
+		if(!signer) {
+			const connector = connectors.find((x) => x.id === 'injected')
+			connect(connector)
+		}
+	}, [signer])
 
 	const steps = [
 		<CreateDaoNameInput
 			key={'createdao-onboardingstep-0'}
+			daoName={daoName}
 			onSubmit={
 				(name) => {
 					setDaoName(name)
@@ -24,6 +117,7 @@ const OnboardingCreateDao = () => {
 			} />,
 		<CreateDaoNetworkSelect
 			key={'createdao-onboardingstep-1'}
+			daoNetwork={daoNetwork}
 			onSubmit={
 				(network) => {
 					setDaoNetwork(network)
@@ -35,6 +129,9 @@ const OnboardingCreateDao = () => {
 			key={'createdao-onboardingstep-2'}
 			daoNetwork={daoNetwork!}
 			daoName={daoName!}
+			daoImageFile={daoImageFile}
+			onImageFileChange={(image) => setDaoImageFile(image)}
+			onSubmit={activeChain?.id && daoNetwork?.id && ((activeChain.id !== daoNetwork.id && switchNetworkAsync) || (activeChain.id === daoNetwork.id)) ? () => createWorkspace() : null}
 		/>,
 	]
 
@@ -69,19 +166,28 @@ const OnboardingCreateDao = () => {
 	}
 
 	return (
-		<BackgroundImageLayout
-			imageSrc={'/onboarding-create-dao.png'}
-			imageBackgroundColor={'#C2E7DA'}
-			imageProps={
-				{
-					mixBlendMode: 'hard-light'
+		<>
+			<BackgroundImageLayout
+				imageSrc={'/onboarding-create-dao.png'}
+				imageBackgroundColor={'#C2E7DA'}
+				imageProps={
+					{
+						mixBlendMode: 'hard-light'
+					}
 				}
-			}
-		>
-			<OnboardingCard onBackClick={backClick}>
-				{steps[step]}
-			</OnboardingCard>
-		</BackgroundImageLayout>
+			>
+				<OnboardingCard onBackClick={backClick}>
+					{steps[step]}
+				</OnboardingCard>
+			</BackgroundImageLayout>
+			<CreateDaoModal
+				isOpen={step === 3}
+				onClose={() => {}}
+				daoName={daoName}
+				daoNetwork={daoNetwork}
+				daoImageFile={daoImageFile}
+			/>
+		</>
 	)
 }
 

@@ -1,19 +1,67 @@
-import { useState } from 'react'
-import { Box, Button, Flex, Heading, IconButton, Text } from '@chakra-ui/react'
+import { useEffect, useState } from 'react'
+import { Box, Flex, Heading, Skeleton, Text } from '@chakra-ui/react'
+import { formatEther } from 'ethers/lib/utils'
+import { CHAIN_INFO } from 'src/constants/chains'
+import useWorkspaceRegistryContract from 'src/hooks/contracts/useWorkspaceRegistryContract'
 import { GasStation } from 'src/v2/assets/custom chakra icons/GasStation'
-import { ImageUploadIcon } from 'src/v2/assets/custom chakra icons/ImageUploadIcon'
-import { Organization } from 'src/v2/assets/custom chakra icons/Organization'
+import { useProvider } from 'wagmi'
 import { NetworkSelectOption } from '../SupportedNetworksData'
 import ContinueButton from '../UI/Misc/ContinueButton'
+import DaoImageUpload from '../UI/Misc/DaoImageUpload'
 
 const CreateDaoFinal = ({
 	daoName,
-	daoNetwork
+	daoNetwork,
+	daoImageFile,
+	onImageFileChange,
+	onSubmit,
 }: {
   daoName: string,
-  daoNetwork: NetworkSelectOption
+  daoNetwork: NetworkSelectOption,
+	daoImageFile: File | null,
+	onImageFileChange: (image: File | null) => void
+	onSubmit: (() => Promise<void>) | null
 }) => {
-	const [transactionFeesIsLoading, setTransactionFeesIsLoading] = useState(false)
+	const provider = useProvider()
+	const [ gasEstimate, setGasEstimate ] = useState<string>()
+	const [newDaoImageFile, setNewDaoImageFile] = useState<File | null>(null)
+
+	const workspaceRegistryContract = useWorkspaceRegistryContract(
+		daoNetwork.id,
+	)
+
+	useEffect(() => {
+		if(daoImageFile && !newDaoImageFile) {
+			setNewDaoImageFile(daoImageFile)
+		}
+	}, [daoImageFile])
+
+	const estimateCreateWorkspace = async(hash: string) => {
+		setGasEstimate(undefined)
+		try {
+			const estimate = await workspaceRegistryContract.estimateGas.createWorkspace(hash,)
+			const gasPrice = await provider.getGasPrice()
+			setGasEstimate(formatEther(estimate.mul(gasPrice)))
+		} catch(e) {
+			// console.log(e)
+			// console.log('error', Date.now())
+			// console.log(workspaceRegistryContract)
+
+			// @TODO
+			// getting cannot estimate gas error unpredictably
+		}
+	}
+
+	useEffect(() => {
+		console.log(workspaceRegistryContract.signer, provider)
+		if(workspaceRegistryContract.signer !== null && provider !== null) {
+			estimateCreateWorkspace('0000000000000000000000000000000000000000000000')
+		}
+	}, [workspaceRegistryContract, provider])
+
+	useEffect(() => {
+		onImageFileChange(newDaoImageFile)
+	}, [newDaoImageFile])
 
 	return (
 		<>
@@ -21,29 +69,11 @@ const CreateDaoFinal = ({
         My DAO
 			</Heading>
 			<Flex mt={6}>
-				<Box pos={'relative'}>
-					<Button
-						bg={'#C2E7DA'}
-						boxSize={'72px'}
-					>
-						<Organization
-							color={'#389373'}
-							boxSize={8} />
-					</Button>
-					<IconButton
-						bg={'white'}
-						icon={<ImageUploadIcon />}
-						aria-label={'upload dao icon image'}
-						boxShadow={'0px 2px 4px rgba(31, 31, 51, 0.1)'}
-						boxSize={'30px'}
-						borderRadius={'30px'}
-						minW={0}
-						minH={0}
-						pos={'absolute'}
-						bottom={'-15px'}
-						left={'calc(50% - 15px)'}
-					/>
-				</Box>
+
+				<DaoImageUpload
+					daoImageFile={newDaoImageFile}
+					setDaoImageFile={setNewDaoImageFile} />
+
 				<Flex
 					ml={4}
 					direction={'column'}>
@@ -80,20 +110,26 @@ const CreateDaoFinal = ({
 				mt={14}
 				justifyContent={'center'}
 			>
-				<Flex
-					bg={'#F0F0F7'}
-					borderRadius={'base'}
-					px={3}>
-					<GasStation
-						color={'#89A6FB'}
-						boxSize={5} />
-					<Text
-						ml={2}
-						mt={'1.5px'}
-						fontSize={'xs'}>
-          Network Fee $12
-					</Text>
-				</Flex>
+				<Skeleton isLoaded={gasEstimate !== undefined}>
+					<Flex
+						bg={'#F0F0F7'}
+						borderRadius={'base'}
+						px={3}>
+						<GasStation
+							color={'#89A6FB'}
+							boxSize={5} />
+						<Text
+							ml={2}
+							mt={'1.5px'}
+							fontSize={'xs'}>
+              Network Fee -
+							{' '}
+							{gasEstimate}
+							{' '}
+							{CHAIN_INFO[daoNetwork.id].nativeCurrency.symbol}
+						</Text>
+					</Flex>
+				</Skeleton>
 			</Flex>
 
 			<Flex
@@ -101,8 +137,8 @@ const CreateDaoFinal = ({
 				justifyContent={'center'}
 			>
 				<ContinueButton
-					onClick={() => {}}
-					disabled={transactionFeesIsLoading}
+					onClick={() => onSubmit!()}
+					disabled={onSubmit === null}
 					props={
 						{
 							minW: '343px',

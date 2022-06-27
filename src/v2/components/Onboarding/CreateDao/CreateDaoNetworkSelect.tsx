@@ -1,20 +1,37 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, Flex, Heading, Text } from '@chakra-ui/react'
 import { CHAIN_INFO } from 'src/constants/chains'
 import useChainId from 'src/hooks/utils/useChainId'
-import { NetworkSelectOption } from '../SupportedNetworksData'
+import { NetworkSelectOption, supportedNetworks } from '../SupportedNetworksData'
 import AlertBanner from '../UI/Misc/AlertBanner'
 import ContinueButton from '../UI/Misc/ContinueButton'
 import NetworkSelect from '../UI/Misc/NetworkSelect'
 
 
 const CreateDaoNetworkSelect = ({
-	onSubmit
+	onSubmit,
+	daoNetwork,
 }: {
-	onSubmit: (network: NetworkSelectOption) => void
+	onSubmit: (network: NetworkSelectOption) => void,
+	daoNetwork: NetworkSelectOption | undefined
 }) => {
 	const [newDaoSelectedNetwork, setNewDaoSelectedNetwork] = useState<NetworkSelectOption>()
 	const chainId = useChainId()
+
+	useEffect(() => {
+		if(!newDaoSelectedNetwork && !daoNetwork) {
+			const currentSupportedNetwork = supportedNetworks.find((network) => network.id === chainId)
+			console.log(currentSupportedNetwork)
+			setNewDaoSelectedNetwork(currentSupportedNetwork)
+		}
+	}, [chainId])
+
+	useEffect(() => {
+		if(daoNetwork) {
+			setNewDaoSelectedNetwork(daoNetwork)
+		}
+	}, [daoNetwork])
+
 	return (
 		<>
 			<Heading variant={'small'}>

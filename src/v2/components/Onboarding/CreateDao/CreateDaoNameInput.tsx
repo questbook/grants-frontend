@@ -5,13 +5,21 @@ import { IdeaBulb } from 'src/v2/assets/custom chakra icons/IdeaBulb'
 import ContinueButton from '../UI/Misc/ContinueButton'
 
 const CreateDaoNameInput = ({
+	daoName,
 	onSubmit,
 }: {
+	daoName: string | undefined,
   onSubmit: (name: string) => void
 }) => {
 	const [newDaoName, setNewDaoName] = useState('')
 	const [newDaoNameIsError, setNewDaoNameIsError] = useState(false)
 	const [newDaoInputIsFocused, setNewDaoInputIsFocused] = useState(false)
+
+	useEffect(() => {
+		if(daoName && !newDaoName) {
+			setNewDaoName(daoName)
+		}
+	}, [daoName])
 
 	const errorConditions = [{
 		description: 'Numbers, spaces, and letters are allowed',
@@ -34,7 +42,7 @@ const CreateDaoNameInput = ({
 			errorConditions.some(condition => condition.errorFunction(newDaoName))
 		)
 
-		console.log(errorConditions.some(condition => condition.errorFunction(newDaoName)))
+		// console.log(errorConditions.some(condition => condition.errorFunction(newDaoName)))
 	}, [newDaoName])
 	return (
 		<>

@@ -190,3 +190,5 @@ a {
     max-width: 100% !important;
   }
 }
+
+@keyframes spinner {to{transform:rotate(1turn)}}

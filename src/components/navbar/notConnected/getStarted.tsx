@@ -1,12 +1,11 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Button, Text } from '@chakra-ui/react'
-import { useRouter } from 'next/router'
-import ConnectWalletModal from 'src/v2/components/ConnectWalletModal'
 
-function GetStarted() {
-	const router = useRouter()
-	const [connectWalletModalIsOpen, setConnectWalletModalIsOpen] = useState(false)
-
+function GetStarted({
+	onGetStartedClick
+}: {
+	onGetStartedClick: () => void
+}) {
 	/* this button style is not required anywhere in design */
 	return (
 		<>
@@ -34,7 +33,7 @@ function GetStarted() {
 				background="linear-gradient(96.85deg, #6F25F1 -21.73%, #00E1FF 110.75%)"
 				px={6}
 				py={3}
-				onClick={() => setConnectWalletModalIsOpen(true)}
+				onClick={onGetStartedClick}
 			>
 				<Text
 					fontFamily="DM Sans"
@@ -43,11 +42,6 @@ function GetStarted() {
         Get Started
 				</Text>
 			</Button>
-			<ConnectWalletModal
-				isOpen={connectWalletModalIsOpen}
-				onClose={() => setConnectWalletModalIsOpen(false)}
-				redirect={() => router.push({ pathname: '/onboarding' })}
-			/>
 		</>
 	)
 }
