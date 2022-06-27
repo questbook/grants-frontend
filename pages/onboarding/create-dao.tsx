@@ -24,6 +24,7 @@ const OnboardingCreateDao = () => {
 	const [daoNetwork, setDaoNetwork] = useState<NetworkSelectOption>()
 	const [daoImageFile, setDaoImageFile] = useState<File | null>(null)
 	const [callOnContractChange, setCallOnContractChange] = useState(false)
+	const [currentStep, setCurrentStep] = useState<number>()
 
 	const { activeChain, switchNetworkAsync, data } = useNetwork()
 	const {
@@ -41,16 +42,24 @@ const OnboardingCreateDao = () => {
 
 	const createWorkspace = async() => {
 		setCallOnContractChange(false)
+		setCurrentStep(0)
 		try {
 			if(activeChain?.id !== daoNetwork?.id) {
 				console.log('switching')
 				await switchNetworkAsync!(daoNetwork?.id)
 				console.log('create workspace again on contract object update')
 				setCallOnContractChange(true)
+				setTimeout(() => {
+					if(callOnContractChange && activeChain?.id !== daoNetwork?.id) {
+						setCallOnContractChange(false)
+						throw new Error('Error switching network')
+					}
+				}, 60000)
 				return
 			}
 
 			console.log('creating workspace')
+			setCurrentStep(1)
 			const uploadedImageHash = (await uploadToIPFS(daoImageFile)).hash
 			const {
 				data: { ipfsHash },
@@ -66,12 +75,18 @@ const OnboardingCreateDao = () => {
 				throw new Error('Error validating grant data')
 			}
 
+			setCurrentStep(2)
 			const createWorkspaceTransaction = await workspaceRegistryContract.createWorkspace(ipfsHash)
+			setCurrentStep(3)
 			const createWorkspaceTransactionData = await createWorkspaceTransaction.wait()
 
 			console.log(createWorkspaceTransactionData)
-			router.push({ pathname: '/your_grants' })
+			setCurrentStep(5)
+			setTimeout(() => {
+				router.push({ pathname: '/your_grants' })
+			}, 2000)
 		} catch(e) {
+			setCurrentStep(undefined)
 			const message = getErrorMessage(e)
 			toastRef.current = toast({
 				position: 'top',
@@ -181,11 +196,21 @@ const OnboardingCreateDao = () => {
 				</OnboardingCard>
 			</BackgroundImageLayout>
 			<CreateDaoModal
-				isOpen={step === 3}
+				isOpen={currentStep !== undefined}
 				onClose={() => {}}
 				daoName={daoName}
 				daoNetwork={daoNetwork}
 				daoImageFile={daoImageFile}
+				steps={
+					[
+						'Connect your wallet',
+						'Uploading data to IPFS',
+						'Sign transaction',
+						'Waiting for transaction to complete',
+						'DAO created on-chain'
+					]
+				}
+				currentStep={currentStep}
 			/>
 		</>
 	)

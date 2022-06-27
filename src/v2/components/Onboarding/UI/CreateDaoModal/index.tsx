@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { AlertDialogOverlay, Box, Button, Flex, Heading, Image, Modal, ModalBody, ModalContent, Text } from '@chakra-ui/react'
 import { Organization } from 'src/v2/assets/custom chakra icons/Organization'
-import { NetworkSelectOption } from '../SupportedNetworksData'
+import { NetworkSelectOption } from '../../SupportedNetworksData'
+import ModalStep from './ModalStep'
 
 const CreateDaoModal = ({
 	isOpen,
@@ -9,6 +10,8 @@ const CreateDaoModal = ({
 	daoName,
 	daoNetwork,
 	daoImageFile,
+	steps,
+	currentStep,
 }: {
 	isOpen: boolean,
 	onClose: () => void,
@@ -16,16 +19,9 @@ const CreateDaoModal = ({
   daoName: string | undefined,
   daoNetwork: NetworkSelectOption | undefined,
 	daoImageFile: File | null,
+	steps: string[],
+	currentStep: number | undefined,
 }) => {
-
-	const [loadingStarted, setLoadingStarted] = useState(false)
-	useEffect(() => {
-		setTimeout(() => {
-			console.log(loadingStarted)
-			setLoadingStarted(true)
-		}, 25000)
-	}, [])
-
 	return (
 		<Modal
 			isOpen={isOpen}
@@ -120,73 +116,21 @@ const CreateDaoModal = ({
 						</Flex>
 					</Flex>
 
-					<Flex
-						mt={4}
-						alignItems={'center'}>
+					<Box mt={4} />
 
-						{
-							loadingStarted ? (
-								<Box
-									minW={4}
-									minH={4}
-									p={'2px'}
-									bg={'linear-gradient(180deg, #89A6FB 5.88%, #B6F72B 94.12%)'}
-									style={
-										{
-											aspectRatio: '1',
-											WebkitMask: 'conic-gradient(#0000,#000), linear-gradient(#000 0 0) content-box',
-											WebkitMaskComposite: 'source-out'
-										}
-									}
-									borderRadius={'50%'}
-									boxSizing={'border-box'}
-									animation={'spinner 0.45s linear infinite'}
-							 />
-							) : (
-								<Box
-									minW={4}
-									minH={4}
-									p={'2px'}
-									bg={'linear-gradient(180deg, #89A6FB 5.88%, #B6F72B 94.12%)'}
-									style={
-										{
-											aspectRatio: '1',
-											WebkitMask: 'conic-gradient(#0000,#000), linear-gradient(#000 0 0) content-box',
-											WebkitMaskComposite: 'source-out'
-										}
-									}
-									borderRadius={'50%'}
-									boxSizing={'border-box'}
-									animation={'spinner 0.45s linear infinite'}
-							 />
-							)
-						}
+					{
+						steps.map((step, index) => (
+							<ModalStep
+								key={`create-dao-step${index}`}
+								loadingFinished={index < (currentStep ?? -1)}
+								loadingStarted={index === currentStep}
+								step={step}
+								index={index}
+							/>
+						))
+					}
 
-						<Text
-							fontWeight={'500'}
-							ml={3}>
-              Uploading data to IPFS
-						</Text>
-					</Flex>
-
-					<Flex
-						mt={4}
-						alignItems={'center'}>
-						<Box
-							minW={4}
-							minH={4}
-							borderColor={'#E0E0EC'}
-							borderWidth={'2px'}
-
-							borderRadius={'50%'}
-							boxSizing={'border-box'}
-						 />
-						<Text
-							fontWeight={'500'}
-							ml={3}>
-              Uploading data to IPFS
-						</Text>
-					</Flex>
+					<Box mt={4} />
 
 				</ModalBody>
 			</ModalContent>
