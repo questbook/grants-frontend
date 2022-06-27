@@ -1,5 +1,5 @@
 schema:
-  - https://the-graph.questbook.app/subgraphs/name/qb-subgraph-rinkeby
+  - https://the-graph.questbook.app/subgraphs/name/qb-subgraph-rinkeby?version=pending
 documents:
   - ./graphql/*.graphql
 overwrite: true

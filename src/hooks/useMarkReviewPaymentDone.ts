@@ -2,9 +2,9 @@ import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
-import { CHAIN_INFO } from 'src/constants/chains'
 // import { BigNumber } from 'ethers';
 import getErrorMessage from 'src/utils/errorUtils'
+import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
@@ -194,10 +194,7 @@ export default function useMarkReviewPaymentDone(
 
 	return [
 		transactionData,
-		currentChainId
-			? `${CHAIN_INFO[currentChainId]
-				.explorer.transactionHash}${transactionData?.transactionHash}`
-			: '',
+		getExplorerUrlForTxHash(currentChainId, transactionData?.transactionHash),
 		loading,
 	]
 }

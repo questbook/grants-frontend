@@ -3,7 +3,7 @@ import { Button, Flex } from '@chakra-ui/react'
 import ArchivedGrantEmptyState from 'src/components/funds/empty_states/archived_grant'
 import LiveGrantEmptyState from 'src/components/funds/empty_states/live_grants'
 import Heading from 'src/components/ui/heading'
-import { SupportedChainId } from 'src/constants/chains'
+import { defaultChainId } from 'src/constants/chains'
 import { useGetAllGrantsForADaoQuery } from 'src/generated/graphql'
 import {
 	getSupportedChainIdFromWorkspace,
@@ -28,7 +28,7 @@ function AddFunds() {
 	const { data } = useGetAllGrantsForADaoQuery({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? SupportedChainId.RINKEBY
+      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
       ].client,
 		variables: {
 			workspaceId: workspace?.id ?? '',

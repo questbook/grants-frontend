@@ -5,10 +5,9 @@ import {
 	APPLICATION_REGISTRY_ADDRESS,
 	WORKSPACE_REGISTRY_ADDRESS,
 } from 'src/constants/addresses'
-import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import getErrorMessage from 'src/utils/errorUtils'
-import { parseAmount } from 'src/utils/formattingUtils'
+import { getExplorerUrlForTxHash, parseAmount } from 'src/utils/formattingUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromWorkspace,
@@ -83,6 +82,7 @@ export default function useCreateGrant(
 				const detailsHash = (await uploadToIPFS(data.details)).hash
 				let reward
 				if(data.rewardToken.address === '') {
+					console.log('grant data', data)
 					reward = {
 						committed: parseAmount(data.reward, data.rewardCurrencyAddress),
 						asset: data.rewardCurrencyAddress,
@@ -269,10 +269,7 @@ export default function useCreateGrant(
 
 	return [
 		transactionData,
-		chainId ?? getSupportedChainIdFromWorkspace(workspace)
-			? `${CHAIN_INFO[chainId ?? getSupportedChainIdFromWorkspace(workspace)!]
-				.explorer.transactionHash}${transactionData?.transactionHash}`
-			: '',
+		getExplorerUrlForTxHash(chainId ?? getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
 		loading,
 		error,
 	]

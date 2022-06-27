@@ -10,7 +10,7 @@ import useUpdateWorkspacePublicKeys from './useUpdateWorkspacePublicKeys'
 export default function useSubmitPublicKey() {
 	const [hiddenModalOpen, setHiddenModalOpen] = useState(false)
 	const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({ publicKey: '' })
-	const [transactionData, loading] = useUpdateWorkspacePublicKeys(publicKey)
+	const [transactionData, _, loading] = useUpdateWorkspacePublicKeys(publicKey)
 
 	const router = useRouter()
 	const toastRef = React.useRef<ToastId>()

@@ -3,9 +3,8 @@ import {
 	Box, Button, Flex, ListItem, ModalBody, ToastId, UnorderedList, useToast,
 } from '@chakra-ui/react'
 import { Token, WorkspaceUpdateRequest } from '@questbook/service-validator-client'
-import config from 'src/constants/config'
+import config from 'src/constants/config.json'
 import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
 import { isValidAddress } from 'src/utils/validationUtils'
 import ImageUpload from './forms/imageUpload'
@@ -168,19 +167,17 @@ function CustomTokenModal({
 			console.log('Supported Currencies list', supportedCurrenciesList)
 			setTokenData({ tokens: [newToken] })
 			setRewardToken(newToken)
-			console.log('Logging type of setIsJUstAddedToken', typeof setIsJustAddedToken)
+			// console.log('Logging type of setIsJUstAddedToken', typeof setIsJustAddedToken)
 			setIsJustAddedToken(true)
 			const configuredToken = configureNewToken(newToken)
 			setSupportedCurrenciesList([...supportedCurrenciesList, configuredToken])
-			console.log('New list of supported currencies', [...supportedCurrenciesList, newToken])
+			console.log('New list of supported currencies', [...supportedCurrenciesList, configuredToken])
 		}
 	}
 
-	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		if(txnData) {
 			setIsModalOpen(false)
-			setRefresh(true)
 		}
 
 	}, [toast, txnData])

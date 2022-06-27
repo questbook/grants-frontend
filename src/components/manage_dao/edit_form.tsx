@@ -2,8 +2,8 @@ import React, { useEffect } from 'react'
 import {
 	Box, Button, Flex, Image, Link,
 	Text, } from '@chakra-ui/react'
-import { CHAIN_INFO } from 'src/constants/chains'
-import config from 'src/constants/config'
+import { CHAIN_INFO, SHOW_TEST_NETS } from 'src/constants/chains'
+import config from 'src/constants/config.json'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import CoverUpload from '../ui/forms/coverUpload'
 import ImageUpload from '../ui/forms/imageUpload'
@@ -57,7 +57,7 @@ function EditForm({
 		}
 
 		const supportedChainId = getSupportedChainIdFromSupportedNetwork(formData.supportedNetwork)
-		const networkName = supportedChainId ? CHAIN_INFO[supportedChainId].name : 'Unsupported Network'
+		const networkName = supportedChainId ? ((CHAIN_INFO[supportedChainId].isTestNetwork && !SHOW_TEST_NETS) ? 'Unsupported Network' : CHAIN_INFO[supportedChainId].name) : 'Unsupported Network'
 		setDaoName(formData.name)
 		setDaoAbout(formData.about)
 		setSupportedNetwork(networkName)

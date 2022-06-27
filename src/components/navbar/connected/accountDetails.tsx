@@ -13,7 +13,7 @@ import {
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
-import { CHAIN_INFO } from 'src/constants/chains'
+import { CHAIN_INFO, SHOW_TEST_NETS } from 'src/constants/chains'
 import useChainId from 'src/hooks/utils/useChainId'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 
@@ -61,12 +61,14 @@ function AccountDetails() {
 							justify="center">
 							{
 								chainId ? (
-									<Image
-										h={8}
-										w={8}
-										src={CHAIN_INFO[chainId].icon}
-										alt="current network"
-									/>
+									(CHAIN_INFO[chainId].isTestNetwork && !SHOW_TEST_NETS) ? null : (
+										<Image
+											h={8}
+											w={8}
+											src={CHAIN_INFO[chainId].icon}
+											alt="current network"
+										/>
+									)
 								) : null
 							}
 							<VStack
@@ -91,7 +93,7 @@ function AccountDetails() {
 										fontWeight="500"
 										color="#122224"
 									>
-										{chainId ? CHAIN_INFO[chainId].name : 'Unsupported Network'}
+										{chainId ? ((CHAIN_INFO[chainId].isTestNetwork && !SHOW_TEST_NETS) ? 'Unsupported Network' : CHAIN_INFO[chainId].name) : 'Unsupported Network'}
 									</Text>
 								</Flex>
 

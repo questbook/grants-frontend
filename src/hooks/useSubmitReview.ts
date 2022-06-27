@@ -1,10 +1,10 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
-import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import useEncryption from 'src/hooks/utils/useEncryption'
 import getErrorMessage from 'src/utils/errorUtils'
+import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromWorkspace,
@@ -84,25 +84,27 @@ export default function useSubmitReview(
 				// );
 
 				const encryptedReview = {} as any
-				console.log(accountData)
-				const yourPublicKey = workspace?.members.find(
-					(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
-				)?.publicKey
-				const encryptedData = encryptMessage(JSON.stringify(data), yourPublicKey!)
-				const encryptedHash = (await uploadToIPFS(encryptedData)).hash
-				encryptedReview[accountData!.address!] = encryptedHash
+				if(isPrivate) {
+					console.log(accountData)
+					const yourPublicKey = workspace?.members.find(
+						(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
+					)?.publicKey
+					const encryptedData = encryptMessage(JSON.stringify(data), yourPublicKey!)
+					const encryptedHash = (await uploadToIPFS(encryptedData)).hash
+					encryptedReview[accountData!.address!] = encryptedHash
 
-				console.log(workspace)
-				workspace?.members.filter(
-					(m) => (m.accessLevel === 'admin' || m.accessLevel === 'owner') && (m.publicKey && m.publicKey?.length > 0),
-				).map((m) => ({ key: m.publicKey, address: m.actorId }))
-					.forEach(async({ key, address }) => {
-						const encryptedAdminData = encryptMessage(JSON.stringify(data), key!)
-						const encryptedAdminHash = (await uploadToIPFS(encryptedAdminData)).hash
-						encryptedReview[address] = encryptedAdminHash
-					})
+					console.log(workspace)
+					workspace?.members.filter(
+						(m) => (m.accessLevel === 'admin' || m.accessLevel === 'owner') && (m.publicKey && m.publicKey?.length > 0),
+					).map((m) => ({ key: m.publicKey, address: m.actorId }))
+						.forEach(async({ key, address }) => {
+							const encryptedAdminData = encryptMessage(JSON.stringify(data), key!)
+							const encryptedAdminHash = (await uploadToIPFS(encryptedAdminData)).hash
+							encryptedReview[address] = encryptedAdminHash
+						})
 
-				console.log('encryptedReview', encryptedReview)
+					console.log('encryptedReview', encryptedReview)
+				}
 
 				const dataHash = (await uploadToIPFS(JSON.stringify(data))).hash
 
@@ -246,10 +248,7 @@ export default function useSubmitReview(
 
 	return [
 		transactionData,
-		chainId ?? getSupportedChainIdFromWorkspace(workspace)
-			? `${CHAIN_INFO[chainId ?? getSupportedChainIdFromWorkspace(workspace)!]
-				.explorer.transactionHash}${transactionData?.transactionHash}`
-			: '',
+		getExplorerUrlForTxHash(chainId ?? getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
 		loading,
 		error,
 	]

@@ -9,11 +9,12 @@ import {
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
+import Deadline from 'src/components/ui/deadline'
 import GrantShare from 'src/components/ui/grantShare'
 import Modal from 'src/components/ui/modal'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
-import { CHAIN_INFO } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import { useGetGrantDetailsQuery, useGetGrantsAppliedToQuery } from 'src/generated/graphql'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
@@ -29,7 +30,6 @@ import NavbarLayout from '../../src/layout/navbarLayout'
 import {
 	formatAmount,
 	getFieldLabelFromFieldTitle,
-	getFormattedDate,
 } from '../../src/utils/formattingUtils'
 import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils'
 
@@ -43,7 +43,7 @@ function AboutGrant() {
 	const [userGrants, setUserGrants] = useState<any>([])
 	const [grantID, setGrantID] = useState<any>(null)
 	const [title, setTitle] = useState('')
-	const [deadline, setDeadline] = useState('')
+	const [deadline, setDeadline] = useState<Date>()
 	const [isGrantVerified, setIsGrantVerified] = useState(false)
 	const [daoId, setDaoId] = useState('')
 	const [daoName, setDaoName] = useState('')
@@ -74,11 +74,11 @@ function AboutGrant() {
 	}, [router.query])
 
 	const [queryParams, setQueryParams] = useState<any>({
-		client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
+		client: subgraphClients[chainId ?? defaultChainId].client,
 	})
 
 	const [applicantQueryParams, setApplicantQueryParams] = useState<any>({
-		client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
+		client: subgraphClients[chainId ?? defaultChainId].client,
 	})
 
 	useEffect(() => {
@@ -177,7 +177,7 @@ function AboutGrant() {
 
 		setFunding(localFunding)
 		setIsGrantVerified(localIsGrantVerified)
-		setDeadline(getFormattedDate(grantData?.deadline))
+		setDeadline(new Date(grantData?.deadline))
 		setTitle(grantData?.title)
 		setDaoId(grantData?.workspace?.id)
 		setDaoName(grantData?.workspace?.title)
@@ -370,7 +370,7 @@ function AboutGrant() {
 							mt="-3px"
 							boxSize={3}
 							src="/ui_icons/calendar.svg" />
-						{`Ends on ${deadline}`}
+						<Deadline date={deadline} />
 						<Image
 							mx={2}
 							src="/ui_icons/green_dot.svg" />

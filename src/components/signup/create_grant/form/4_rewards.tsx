@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
 import {
 	Box, Button, Flex, Image, Link, Switch,
-	Text, } from '@chakra-ui/react'
+	Text,
+} from '@chakra-ui/react'
 import {
 	Token,
 	WorkspaceUpdateRequest,
@@ -10,8 +11,7 @@ import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
 import CustomTokenModal from 'src/components/ui/submitCustomTokenModal'
 import Tooltip from 'src/components/ui/tooltip'
-import { CHAIN_INFO } from 'src/constants/chains'
-import { SupportedChainId } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
 import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
@@ -24,10 +24,10 @@ import Dropdown from '../../../ui/forms/dropdown'
 import SingleLineInput from '../../../ui/forms/singleLineInput'
 
 interface Props {
-  onSubmit: (data: any) => void;
-  constructCache: (data: any) => void;
-  cacheKey: string;
-  hasClicked: boolean;
+	onSubmit: (data: any) => void;
+	constructCache: (data: any) => void;
+	cacheKey: string;
+	hasClicked: boolean;
 }
 
 function GrantRewardsInput({
@@ -54,7 +54,7 @@ function GrantRewardsInput({
 
 	const addERC = true
 
-	const currentChain = useChainId() ?? SupportedChainId.RINKEBY
+	const currentChain = useChainId() ?? defaultChainId
 
 	const supportedCurrencies = Object.keys(
 		CHAIN_INFO[currentChain].supportedCurrencies,
@@ -72,8 +72,8 @@ function GrantRewardsInput({
 
 	// eslint-disable-next-line max-len
 	const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<
-  any[]
-  >([supportedCurrencies])
+		any[]
+	>([supportedCurrencies])
 
 	useEffect(() => {
 		if(supportedCurrencies && supportedCurrencies.length > 0) {
@@ -256,7 +256,7 @@ function GrantRewardsInput({
 					variant="heading"
 					fontSize="36px"
 					lineHeight="48px">
-          What&apos;s the reward and deadline for the grant?
+					What&apos;s the reward and deadline for the grant?
 				</Text>
 
 				<Flex
@@ -304,26 +304,27 @@ function GrantRewardsInput({
 							value={rewardCurrency}
 							onChange={
 								(data: any) => {
-								// console.log('data while signing up:', data);
+									// console.log('data while signing up:', data);
 									if(data === 'addERCToken') {
 										setIsModalOpen(true)
 									}
 
 									setRewardCurrency(data.label)
 									setRewardCurrencyAddress(data.id)
-									if(
-										data !== 'addERCToken'
-                  && !isJustAddedToken
-                  && data.icon.lastIndexOf('ui_icons') === -1
-									) {
-									// console.log('custom token', data);
+									if(data !== 'addERCToken' && !isJustAddedToken && data.icon.lastIndexOf('chain_assets') === -1) {
+										// console.log('On selecting reward', data)
 										setRewardToken({
-											iconHash: data.icon.substring(
-												data.icon.lastIndexOf('=') + 1,
-											),
+											iconHash: data.icon.substring(data.icon.lastIndexOf('=') + 1),
 											address: data.address,
 											label: data.label,
 											decimal: data.decimals.toString(),
+										})
+									} else {
+										setRewardToken({
+											label: '',
+											address: '',
+											decimal: '18',
+											iconHash: '',
 										})
 									}
 								}
@@ -361,7 +362,7 @@ function GrantRewardsInput({
 						lineHeight="26px"
 						letterSpacing={0}
 					>
-            Grant privacy
+						Grant privacy
 					</Text>
 				</Flex>
 
@@ -377,14 +378,14 @@ function GrantRewardsInput({
 							fontSize="16px"
 							lineHeight="20px"
 						>
-              Hide applicant personal data (email, and about team)
+							Hide applicant personal data (email, and about team)
 						</Text>
 						<Flex>
 							<Text
 								color="#717A7C"
 								fontSize="14px"
 								lineHeight="20px">
-                You will be using your public key to access this data.
+								You will be using your public key to access this data.
 								<Tooltip
 									icon="/ui_icons/tooltip_questionmark.svg"
 									label="Public key linked to your wallet will allow you to see the hidden data."
@@ -427,14 +428,14 @@ function GrantRewardsInput({
 							fontSize="16px"
 							lineHeight="20px"
 						>
-              Keep applicant reviews private
+							Keep applicant reviews private
 						</Text>
 						<Flex>
 							<Text
 								color="#717A7C"
 								fontSize="14px"
 								lineHeight="20px">
-                Private review is only visible to reviewers, DAO members.
+								Private review is only visible to reviewers, DAO members.
 							</Text>
 						</Flex>
 					</Flex>
@@ -472,14 +473,14 @@ function GrantRewardsInput({
 						src="/ui_icons/info_brand.svg"
 					/>
 					{' '}
-          By clicking Publish Grant you&apos;ll have to approve this transaction
-          in your wallet.
+					By clicking Publish Grant you&apos;ll have to approve this transaction
+					in your wallet.
 					{' '}
 					<Link
 						href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
 						isExternal
 					>
-            Learn more
+						Learn more
 					</Link>
 					{' '}
 					<Image
@@ -495,7 +496,7 @@ function GrantRewardsInput({
 				ref={buttonRef}
 				mt="auto"
 				variant="primary"
-				onClick={hasClicked ? () => {} : handleOnSubmit}
+				onClick={hasClicked ? () => { } : handleOnSubmit}
 				py={hasClicked ? 2 : 0}
 				w={hasClicked ? buttonRef.current?.offsetWidth : 'auto'}
 			>

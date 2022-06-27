@@ -5,7 +5,7 @@ import {
 import { useRouter } from 'next/router'
 import BrowseGrantCard from 'src/components/profile/grantCard'
 import SeeMore from 'src/components/profile/see_more'
-import { CHAIN_INFO } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import { useGetDaoDetailsQuery } from 'src/generated/graphql'
 import NavbarLayout from 'src/layout/navbarLayout'
@@ -40,7 +40,7 @@ function Profile() {
 	}, [router])
 
 	const [queryParams, setQueryParams] = useState<any>({
-		client: subgraphClients[chainID ?? SupportedChainId.RINKEBY].client,
+		client: subgraphClients[chainID ?? defaultChainId].client,
 	})
 
 	useEffect(() => {
@@ -198,84 +198,99 @@ function Profile() {
 			<Text
 				my={4}
 				variant="heading">
-        Browse Grants
+				Browse Grants
 			</Text>
 
 			<Divider />
 
 			{
 				grantData
-        && grantData.length > 0
-        && grantData.map((grant) => {
-        	const chainId = getSupportedChainIdFromSupportedNetwork(
-        		grant.workspace.supportedNetworks[0],
-        	)
-        	const chainInfo = CHAIN_INFO[chainId]?.supportedCurrencies[
-        		grant.reward.asset.toLowerCase()
-        	]
-        	const [isGrantVerified, funding] = verify(
-        		grant.funding,
-        		chainInfo?.decimals,
-        	)
-        	return (
-        		<BrowseGrantCard
-        			daoID={grant.workspace.id}
-        			key={grant.id}
-        			daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
-        			daoName={grant.workspace.title}
-        			isDaoVerified={false}
-        			grantTitle={grant.title}
-        			grantDesc={grant.summary}
-        			numOfApplicants={grant.numberOfApplications}
-        			endTimestamp={new Date(grant.deadline!).getTime()}
-        			grantAmount={
-        				formatAmount(
-        				grant.reward.committed,
-        				chainInfo?.decimals ?? 18,
-        			)
-        			}
-        			grantCurrency={chainInfo?.label ?? 'LOL'}
-        			grantCurrencyIcon={chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'}
-        			chainId={chainId}
-        			isGrantVerified={isGrantVerified}
-        			funding={funding}
-        			onClick={
-        				() => {
-        				if(!(accountData && accountData.address)) {
-        					router.push({
-        						pathname: '/connect_wallet',
-        						query: {
-        							flow: '/',
-        							grantId: grant.id,
-        							chainId,
-        						},
-        					})
-        						return
-        				}
+				&& grantData.length > 0
+				&& grantData.map((grant) => {
 
-        				router.push({
-        					pathname: '/explore_grants/about_grant',
-        					query: {
-        						grantId: grant.id,
-        						chainId,
-        					},
-        				})
-        				}
-        			}
-        			onTitleClick={
-        				() => {
-        				router.push({
-        					pathname: '/explore_grants/about_grant',
-        					query: {
-        						grantId: grant.id,
-        						chainId,
-        					},
-        				})
-        				}
-        			}
-        		/>
-        	)
-        })
+					let tokenIcon, chainInfo
+					const chainId = getSupportedChainIdFromSupportedNetwork(
+						grant.workspace.supportedNetworks[0],
+					)
+					if(grant.reward.token) {
+						tokenIcon = getUrlForIPFSHash(grant.reward.token?.iconHash)
+						chainInfo = {
+							address: grant.reward.token.address,
+							label: grant.reward.token.label,
+							decimals: grant.reward.token.decimal,
+							icon: tokenIcon,
+						}
+					} else {
+						chainInfo =
+							CHAIN_INFO[chainId]?.supportedCurrencies[
+								grant.reward.asset.toLowerCase()
+							]
+					}
+
+
+					const [isGrantVerified, funding] = verify(
+						grant.funding,
+						chainInfo?.decimals,
+					)
+					return (
+						<BrowseGrantCard
+							daoID={grant.workspace.id}
+							key={grant.id}
+							daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
+							daoName={grant.workspace.title}
+							isDaoVerified={false}
+							grantTitle={grant.title}
+							grantDesc={grant.summary}
+							numOfApplicants={grant.numberOfApplications}
+							endTimestamp={new Date(grant.deadline!).getTime()}
+							grantAmount={
+								formatAmount(
+									grant.reward.committed,
+									chainInfo?.decimals ?? 18,
+								)
+							}
+							grantCurrency={chainInfo?.label ?? 'LOL'}
+							grantCurrencyIcon={chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'}
+							chainId={chainId}
+							isGrantVerified={isGrantVerified}
+							funding={funding}
+							onClick={
+								() => {
+									if(!(accountData && accountData.address)) {
+										router.push({
+											pathname: '/connect_wallet',
+											query: {
+												flow: '/',
+												grantId: grant.id,
+												chainId,
+											},
+										})
+										return
+									}
+
+									router.push({
+										pathname: '/explore_grants/about_grant',
+										query: {
+											grantId: grant.id,
+											chainId,
+										},
+									})
+								}
+							}
+							onTitleClick={
+								() => {
+									router.push({
+										pathname: '/explore_grants/about_grant',
+										query: {
+											grantId: grant.id,
+											chainId,
+										},
+									})
+								}
+							}
+						/>
+					)
+				})
 			}
 		</Flex>
 	)

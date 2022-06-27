@@ -6,7 +6,7 @@ import { BigNumber } from 'ethers'
 import moment from 'moment'
 import { useRouter } from 'next/router'
 import VerifiedBadge from 'src/components/ui/verified_badge'
-import { CHAIN_INFO } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import {
 	useGetApplicationDetailsQuery,
@@ -73,7 +73,7 @@ function ManageGrant() {
 	} = useApplicationMilestones(applicationID, chainId)
 
 	const { data: fundsDisbursed } = useGetFundSentForApplicationQuery({
-		client: subgraphClients[chainId ?? SupportedChainId.RINKEBY].client,
+		client: subgraphClients[chainId ?? defaultChainId].client,
 		variables: {
 			applicationId: applicationID,
 		},
@@ -82,7 +82,7 @@ function ManageGrant() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	chainId ?? SupportedChainId.RINKEBY
+      	chainId ?? defaultChainId
       ].client,
 	})
 

@@ -7,7 +7,7 @@ import React, {
 import { Container } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
-import { CHAIN_INFO } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import {
 	GetApplicationDetailsQuery,
@@ -44,7 +44,7 @@ function ViewApplication() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	chainId ?? SupportedChainId.RINKEBY
+      	chainId ?? defaultChainId
       ].client,
 	})
 
@@ -135,7 +135,7 @@ function ViewApplication() {
         }) ?? [],
 			// fundingAsk: ethers.utils.formatEther(getStringField('fundingAsk') ?? '0'),
 			fundingAsk:
-        application ? formatAmount(
+        application && getStringField('fundingAsk') !== '' ? formatAmount(
         	getStringField('fundingAsk'),
         	decimals ?? 18,
         	true,
