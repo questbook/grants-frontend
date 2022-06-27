@@ -41,6 +41,11 @@ export interface ChainInfo {
 	readonly qbContracts: { [C in QBContract]: string }
 	readonly subgraphClientUrl: string
 	readonly rpcUrls: string[]
+	readonly nativeCurrency: {
+		name: string
+		symbol: string
+		decimals: number
+	}
 }
 
 export type ChainInfoMap = { readonly [chainId in SupportedChainId]: ChainInfo }

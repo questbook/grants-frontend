@@ -28,6 +28,18 @@ export default {
 				fontSize: '16px',
 				lineSpacing: '0.5px',
 				lineHeight: '24px',
+			},
+			content: {
+				fontSize: '2rem',
+				fontWeight: '500',
+				lineHeight: '2.5rem',
+				fontFamily: 'Neue-Haas-Grotesk-Display, sans-serif',
+			},
+			small: {
+				fontSize: '1.5rem',
+				fontWeight: '700',
+				lineHeight: '32px',
+				fontFamily: 'Neue-Haas-Grotesk-Display, sans-serif',
 			}
 		},
 	},
