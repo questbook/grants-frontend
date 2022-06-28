@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Box, Grid, Flex, Text, Heading, Image } from '@chakra-ui/react';
+import { Box, Grid, Flex, Text, Heading, Image, Button, Link } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { SupportedChainId } from 'src/constants/chains';
 import { useGetDaoDetailsQuery } from 'src/generated/graphql';
@@ -57,7 +57,7 @@ export default function Embed() {
   }, [data, error, loading]);
 
   return (
-    <Flex w={width} h={height} bgColor="white" p="3rem" direction="column" borderRadius="1rem" gap="3rem" justifyItems="center"	>
+    <Flex w={width} h={height} bgColor="white" p="3rem" direction="column" borderRadius="1rem" gap="2rem" justifyItems="center"	>
       <Flex justifyContent="center" direction="column" gap="1rem">
         <Heading
           fontFamily="DM Sans"
@@ -89,10 +89,12 @@ export default function Embed() {
 	  w="700px"
 	  h="140px"
 	  alignSelf="center"
+	  p="1.5rem"
 	  >
 		<Flex 
 		w="100%"
-		m="auto"
+		justifyContent="center"
+		alignContent="center"
 		gap="0.5rem">
 		<Image
 		objectFit="cover"
@@ -116,6 +118,38 @@ export default function Embed() {
 
 		</Grid>
       </Box>
+	  <Button
+	  	m="auto"
+	  	p="12px 32px"
+		w="200px"
+	  	variant="primary"
+	  >
+		Apply for Grants
+	  </Button>
+	  <Flex justifyItems="center" alignItems="center" justifyContent="center" gap="0.5rem">
+	<Link
+		href="https://www.questbook.app"
+		isExternal
+		_hover={{textDecoration: "none"}}
+	>
+	<Text
+	  	textAlign="center"
+          fontFamily="DM Sans"
+          color="#AAAAAA"
+          fontWeight="400"
+          fontSize="0.875rem"
+          lineHeight="1rem"
+	  >
+		Powered by
+	  </Text>
+	  </Link>
+	  <Link
+		href="https://www.questbook.app"
+		isExternal
+	>
+	  <Image src="/questbook_logo_full.svg"/>
+	  </Link>
+	  </Flex>
     </Flex>
   );
 }
