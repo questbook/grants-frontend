@@ -152,7 +152,7 @@ export default function Embed() {
 		<Flex
 			m="auto"
 			mt="10%"
-			w={{base: "90%", md: "70%", xl: "50%"}}
+			w={{ base: '90%', md: '70%', xl: '50%' }}
 			h="fit-content"
 			bgColor="white"
 			p="3rem"
@@ -183,7 +183,7 @@ export default function Embed() {
 					fontWeight="400"
 					fontSize="1rem"
 					lineHeight="1.5rem"
-					w={{base: "90%", md: "70%", xl: "50%"}}
+					w={{ base: '90%', md: '70%', xl: '50%' }}
 					m="auto"
 				>
           The ultimate aim through this program is to help developers build
@@ -195,7 +195,7 @@ export default function Embed() {
 				gap="2rem"
 				border="1px solid #C4C4C4"
 				borderRadius="0.5rem"
-				w={{base: "90%", md: "70%"}}
+				w={{ base: '90%', md: '70%' }}
 				h="fit-content"
 				alignSelf="center"
 				p="1.5rem"
@@ -226,13 +226,15 @@ export default function Embed() {
 				</Flex>
 				<Grid
 					gap="1rem"
-					gridTemplateColumns={{base: "repeat(2, 1fr)", md: "repeat(4, 1fr)"}}
+					gridTemplateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
 					m="auto"
 					w="100%"
 					justifyItems="center"
 					alignItems="center"
 				>
-					<Flex minW={{base: "120px", md: "auto"}} direction="column">
+					<Flex
+						minW={{ base: '120px', md: 'auto' }}
+						direction="column">
 						<Heading
 							color="#122224"
 							fontSize="1.2rem"
@@ -254,7 +256,9 @@ export default function Embed() {
 						</Text>
 					</Flex>
 
-					<Flex minW={{base: "120px", md: "auto"}} direction="column">
+					<Flex
+						minW={{ base: '120px', md: 'auto' }}
+						direction="column">
 						<Heading
 							color="#122224"
 							fontSize="1.2rem"
@@ -271,7 +275,9 @@ export default function Embed() {
 						</Text>
 					</Flex>
 
-					<Flex minW={{base: "120px", md: "auto"}} direction="column">
+					<Flex
+						minW={{ base: '120px', md: 'auto' }}
+						direction="column">
 						<Heading
 							color="#122224"
 							fontSize="1.2rem"
@@ -288,7 +294,9 @@ export default function Embed() {
 						</Text>
 					</Flex>
 
-					<Flex minW={{base: "120px", md: "auto"}} direction="column">
+					<Flex
+						minW={{ base: '120px', md: 'auto' }}
+						direction="column">
 						<Heading
 							color="#122224"
 							fontSize="1.2rem"
