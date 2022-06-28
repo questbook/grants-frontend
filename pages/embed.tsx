@@ -147,7 +147,8 @@ export default function Embed() {
 
 	return (
 		<Flex
-			id="frame"
+			mt="2%"
+			ml="2%"
 			w={{ base: '90%', md: '70%', xl: '50%' }}
 			h="fit-content"
 			bgColor="white"

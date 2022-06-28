@@ -78,9 +78,8 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
 							) : <Skeleton />
 						}
 
-
 						<embed
-							src="https://bafybeicstpam2tgutkntez42msilvl5wxsok6xay4ry7byai4u3pq7dnfa.on.fleek.co/embed/?daoId=0x3&chainId=137/#frame"
+							src="https://localhost:3000/embed/?daoId=0x3&chainId=137"
 							type="text/html"
 							width="500"
 							height="700"
