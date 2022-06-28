@@ -150,14 +150,17 @@ export default function Embed() {
 
 	return (
 		<Flex
-			w={width}
-			h={height}
+			m="auto"
+			mt="10%"
+			w={{base: "90%", md: "70%", xl: "50%"}}
+			h="fit-content"
 			bgColor="white"
 			p="3rem"
 			direction="column"
 			borderRadius="1rem"
 			gap="1.5rem"
 			justifyItems="center"
+			boxShadow="0px 4px 20px -8px rgba(9, 17, 18, 0.2)"
 		>
 			<Flex
 				justifyContent="center"
@@ -180,7 +183,7 @@ export default function Embed() {
 					fontWeight="400"
 					fontSize="1rem"
 					lineHeight="1.5rem"
-					w="60%"
+					w={{base: "90%", md: "70%", xl: "50%"}}
 					m="auto"
 				>
           The ultimate aim through this program is to help developers build
@@ -188,12 +191,12 @@ export default function Embed() {
 				</Text>
 			</Flex>
 			<Flex
-	  	direction="column"
+	  			direction="column"
 				gap="2rem"
 				border="1px solid #C4C4C4"
 				borderRadius="0.5rem"
-				w="700px"
-				h="200px"
+				w={{base: "90%", md: "70%"}}
+				h="fit-content"
 				alignSelf="center"
 				p="1.5rem"
 			>
@@ -223,11 +226,13 @@ export default function Embed() {
 				</Flex>
 				<Grid
 					gap="1rem"
-					gridTemplateColumns="repeat(4, 1fr)"
-		  m="auto"
+					gridTemplateColumns={{base: "repeat(2, 1fr)", md: "repeat(4, 1fr)"}}
+					m="auto"
 					w="100%"
+					justifyItems="center"
+					alignItems="center"
 				>
-					<Flex direction="column">
+					<Flex minW={{base: "120px", md: "auto"}} direction="column">
 						<Heading
 							color="#122224"
 							fontSize="1.2rem"
@@ -249,7 +254,7 @@ export default function Embed() {
 						</Text>
 					</Flex>
 
-					<Flex direction="column">
+					<Flex minW={{base: "120px", md: "auto"}} direction="column">
 						<Heading
 							color="#122224"
 							fontSize="1.2rem"
@@ -266,7 +271,7 @@ export default function Embed() {
 						</Text>
 					</Flex>
 
-					<Flex direction="column">
+					<Flex minW={{base: "120px", md: "auto"}} direction="column">
 						<Heading
 							color="#122224"
 							fontSize="1.2rem"
@@ -283,7 +288,7 @@ export default function Embed() {
 						</Text>
 					</Flex>
 
-					<Flex direction="column">
+					<Flex minW={{base: "120px", md: "auto"}} direction="column">
 						<Heading
 							color="#122224"
 							fontSize="1.2rem"
