@@ -259,7 +259,7 @@ function Profile() {
 							justify="right"
 							mt="3.5rem"
 							gap="0.5rem"
-							>
+						>
 							{
 								workspaceData?.socials.map((social, index) => (
 									<IconButton

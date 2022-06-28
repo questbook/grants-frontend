@@ -18,7 +18,8 @@ import { CHAIN_INFO } from 'src/constants/chains'
 import config from 'src/constants/config'
 // UTILS AND TOOLS
 import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace'
-import { SettingsForm, Workspace, PartnersProps } from 'src/types'
+import { PartnersProps, SettingsForm, Workspace } from 'src/types'
+import { getUrlForIPFSHash, isIpfsHash } from 'src/utils/ipfsUtils'
 import {
 	generateWorkspaceUpdateRequest,
 	workspaceDataToSettingsForm,
@@ -32,7 +33,6 @@ import SingleLineInput from '../ui/forms/singleLineInput'
 import Loader from '../ui/loader'
 import ErrorToast from '../ui/toasts/errorToast'
 import InfoToast from '../ui/toasts/infoToast'
-import {isIpfsHash, getUrlForIPFSHash} from 'src/utils/ipfsUtils';
 
 type EditFormProps = {
   workspaceData: Workspace | undefined;
@@ -49,8 +49,8 @@ function EditForm({ workspaceData }: EditFormProps) {
 	const [editData, setEditData] = useState<WorkspaceUpdateRequest>()
 	const [editError, setEditError] = useState<EditErrors>({})
 
-	const [partnersRequired, setPartnersRequired] = useState(false);
-	const [partners, setPartners] = useState<PartnersProps[]>([]);
+	const [partnersRequired, setPartnersRequired] = useState(false)
+	const [partners, setPartners] = useState<PartnersProps[]>([])
 
 	const [txnData, txnLink, loading] = useUpdateWorkspace(editData as any)
 
@@ -188,7 +188,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 		setEditedFormData(workspaceDataToSettingsForm(workspaceData))
 		if(workspaceData && workspaceData!.partners!.length >= 1) {
 			setPartnersRequired(true)
-			setPartners(workspaceData.partners);
+			setPartners(workspaceData.partners)
 		}
 
 	}, [workspaceData])
@@ -313,7 +313,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 									...partner,
 									nameError: false,
 								}))
-								updateFormData({partners: newPartners})
+								updateFormData({ partners: newPartners })
 							}
 						}
 					/>
@@ -408,7 +408,8 @@ function EditForm({ workspaceData }: EditFormProps) {
 									(e) => {
 										const newPartners = [...partners]
 										newPartners[index].name = e.target.value
-										setPartners(newPartners)											}
+										setPartners(newPartners)
+									}
 								}
 								placeholder="e.g. Partner DAO"
 								errorText="Required"
@@ -457,7 +458,8 @@ function EditForm({ workspaceData }: EditFormProps) {
 										(e) => {
 											const newPartners = [...partners]
 											newPartners[index].industry = e.target.value
-											setPartners( newPartners)												}
+											setPartners(newPartners)
+										}
 									}
 									placeholder="e.g. Security"
 									errorText="Required"
@@ -497,7 +499,8 @@ function EditForm({ workspaceData }: EditFormProps) {
 										(e) => {
 											const newPartners = [...partners]
 											newPartners[index].website = e.target.value
-											setPartners( newPartners)										}
+											setPartners(newPartners)
+										}
 									}
 									placeholder="e.g. www.example.com"
 									errorText="Required"
@@ -528,7 +531,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 									website: '',
 								},
 							]
-							updateFormData({partners: newPartners})
+							updateFormData({ partners: newPartners })
 						}
 					}
 					display="flex"
