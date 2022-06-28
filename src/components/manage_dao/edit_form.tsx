@@ -18,7 +18,7 @@ import { CHAIN_INFO } from 'src/constants/chains'
 import config from 'src/constants/config'
 // UTILS AND TOOLS
 import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace'
-import { SettingsForm, Workspace } from 'src/types'
+import { SettingsForm, Workspace, PartnersProps } from 'src/types'
 import {
 	generateWorkspaceUpdateRequest,
 	workspaceDataToSettingsForm,
@@ -32,6 +32,7 @@ import SingleLineInput from '../ui/forms/singleLineInput'
 import Loader from '../ui/loader'
 import ErrorToast from '../ui/toasts/errorToast'
 import InfoToast from '../ui/toasts/infoToast'
+import {isIpfsHash, getUrlForIPFSHash} from 'src/utils/ipfsUtils';
 
 type EditFormProps = {
   workspaceData: Workspace | undefined;
@@ -48,7 +49,8 @@ function EditForm({ workspaceData }: EditFormProps) {
 	const [editData, setEditData] = useState<WorkspaceUpdateRequest>()
 	const [editError, setEditError] = useState<EditErrors>({})
 
-	const [partnersRequired, setPartnersRequired] = useState(false)
+	const [partnersRequired, setPartnersRequired] = useState(false);
+	const [partners, setPartners] = useState<PartnersProps[]>([]);
 
 	const [txnData, txnLink, loading] = useUpdateWorkspace(editData as any)
 
@@ -126,9 +128,9 @@ function EditForm({ workspaceData }: EditFormProps) {
 		const img = event.target.files?.[0]
 		if(img) {
 			if(img.size / 1024 / 1024 <= MAX_IMAGE_SIZE_MB) {
-				const partners = [...editedFormData?.partners!]
-				partners[index].partnerImageHash = URL.createObjectURL(img)
-				updateFormData({ partners })
+				const oldPartners = [...partners!]
+				oldPartners[index].partnerImageHash = URL.createObjectURL(img)
+				setPartners(partners)
 			} else {
 				toastRef.current = toast({
 					position: 'top',
@@ -179,16 +181,21 @@ function EditForm({ workspaceData }: EditFormProps) {
 			return undefined
 		}
 
-		setEditData(data)
+		// setEditData(data)
 	}
 
 	useEffect(() => {
 		setEditedFormData(workspaceDataToSettingsForm(workspaceData))
 		if(workspaceData && workspaceData!.partners!.length >= 1) {
 			setPartnersRequired(true)
+			setPartners(workspaceData.partners);
 		}
 
 	}, [workspaceData])
+
+	useEffect(() => {
+		console.log(partners)
+	}, [partners])
 
 	useEffect(() => {
 		if(txnData) {
@@ -302,11 +309,11 @@ function EditForm({ workspaceData }: EditFormProps) {
 						onChange={
 							(e: any) => {
 								setPartnersRequired(e.target.checked)
-								const newPartners = editedFormData?.partners?.map((partner: any) => ({
+								const newPartners = editedFormData!.partners?.map((partner: any) => ({
 									...partner,
 									nameError: false,
 								}))
-								updateFormData({ partners: newPartners })
+								updateFormData({partners: newPartners})
 							}
 						}
 					/>
@@ -320,7 +327,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 			</Grid>
 
 			{
-				editedFormData?.partners?.map((partner, index) => (
+				partners!.map((partner, index) => (
 					<Box
 						w="100%"
 						key={index}>
@@ -360,9 +367,9 @@ function EditForm({ workspaceData }: EditFormProps) {
 													return
 												}
 
-												const newPartners = [...editedFormData?.partners!]
+												const newPartners = [...partners!]
 												newPartners.splice(index, 1)
-												updateFormData({ partners: newPartners })
+												setPartners(newPartners)
 											}
 										}
 										alignItems="center"
@@ -399,9 +406,9 @@ function EditForm({ workspaceData }: EditFormProps) {
 								value={partner.name}
 								onChange={
 									(e) => {
-										partner.name = e.target.value
-										updateFormData({ partners: [...editedFormData.partners!] })
-									}
+										const newPartners = [...partners]
+										newPartners[index].name = e.target.value
+										setPartners(newPartners)											}
 								}
 								placeholder="e.g. Partner DAO"
 								errorText="Required"
@@ -411,8 +418,8 @@ function EditForm({ workspaceData }: EditFormProps) {
 								mt="-2.2rem"
 								mb="-10rem">
 								<ImageUpload
-									// image={isIpfsHash(partner.partnerImageHash) ? getUrlForIPFSHash(partner.partnerImageHash!) : partner.partnerImageHash!}
-									image={partner.partnerImageHash! || config.defaultDAOImagePath}
+									image={isIpfsHash(partner.partnerImageHash) ? getUrlForIPFSHash(partner.partnerImageHash!) : partner.partnerImageHash!}
+									// image={partner.partnerImageHash! || config.defaultDAOImagePath}
 									isError={false}
 									onChange={e => handlePartnerImageChange(e, index)}
 									label="Partner logo"
@@ -448,9 +455,9 @@ function EditForm({ workspaceData }: EditFormProps) {
 									value={partner.industry}
 									onChange={
 										(e) => {
-											partner.industry = e.target.value
-											updateFormData({ partners: [...editedFormData?.partners!] })
-										}
+											const newPartners = [...partners]
+											newPartners[index].industry = e.target.value
+											setPartners( newPartners)												}
 									}
 									placeholder="e.g. Security"
 									errorText="Required"
@@ -488,9 +495,9 @@ function EditForm({ workspaceData }: EditFormProps) {
 									value={partner.website || undefined}
 									onChange={
 										(e) => {
-											partner.website = e.target.value
-											updateFormData({ partners: [...editedFormData!.partners!] })
-										}
+											const newPartners = [...partners]
+											newPartners[index].website = e.target.value
+											setPartners( newPartners)										}
 									}
 									placeholder="e.g. www.example.com"
 									errorText="Required"
@@ -514,14 +521,14 @@ function EditForm({ workspaceData }: EditFormProps) {
 							}
 
 							const newPartners = [
-								...editedFormData?.partners!,
+								...editedFormData!.partners!,
 								{
 									name: '',
 									industry: '',
 									website: '',
 								},
 							]
-							updateFormData({ partners: newPartners })
+							updateFormData({partners: newPartners})
 						}
 					}
 					display="flex"
@@ -542,7 +549,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 					>
 						Add
 						{' '}
-						{editedFormData! && editedFormData!.partners!.length >= 1 ? 'another' : 'a'}
+						{editedFormData?.partners! && editedFormData?.partners!.length >= 1 ? 'another' : 'a'}
 						{' '}
 service partner
 					</Text>
