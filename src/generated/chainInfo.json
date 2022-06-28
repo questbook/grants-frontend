@@ -382,7 +382,7 @@
 		"id": 2153,
 		"name": "Findora Testnet",
 		"isTestNetwork": true,
-		"icon": "/chain_assets/findora.png",
+		"icon": "/chain_assets/findora.svg",
 		"wallets": [
 			"injected",
 			"walletConnect"
@@ -393,7 +393,7 @@
 		},
 		"supportedCurrencies": {
 			"0x0000000000000000000000000000000000001000": {
-				"icon": "/chain_assets/findora.png",
+				"icon": "/chain_assets/findora.svg",
 				"label": "FRA",
 				"address": "0x0000000000000000000000000000000000001000",
 				"decimals": 18
