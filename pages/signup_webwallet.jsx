@@ -1,5 +1,5 @@
 
-import React, { ReactElement, useContext, useEffect } from 'react';
+import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import { Wallet, getDefaultProvider, Contract } from 'ethers';
 import {
     Flex,
@@ -14,8 +14,9 @@ import {
 import { useRouter } from 'next/router'
 import NavbarLayout from '../src/layout/navbarLayout';
 import { WebwalletContext } from './_app';
-
+import axios from 'axios';
 import { Biconomy } from '@biconomy/mexa';
+import { route } from 'next/dist/server/router';
 
 
 const getWebwalletLocally = () => {
@@ -58,10 +59,11 @@ let biconomyWalletClient;
 function SignupWebwallet(props) {
 
     const { webwallet, setWebwallet } = useContext(WebwalletContext);
-
-    const handleCreateWebwallet = () => {
-        // @TODO: handle github oauth.
-        // ...
+    
+    const handleCreateWebwallet = async () => {
+        
+        window.location.replace(`https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}`)
+        // let response = await axios.get("https://github.com/login/oauth/authorize", {params: {client_id: process.env.CLIENT_ID}})
 
         let newWebwallet;
         const localWebwallet = getWebwalletLocally();
