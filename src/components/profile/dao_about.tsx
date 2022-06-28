@@ -1,7 +1,6 @@
 import React from 'react'
 import Linkify from 'react-linkify'
 import {
-	AspectRatio,
 	Box,
 	Flex,
 	Grid,
@@ -79,14 +78,13 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
 							) : <Skeleton />
 						}
 
-				  <AspectRatio
-							maxW="100%"
-							maxH="400px"
-							ratio={4 / 9}>
-							<iframe
-								src="http://0475-186-104-143-85.ngrok.io/embed/?daoId=0x3&chainId=137/#frame"
-							/>
-						</AspectRatio>
+
+						<embed
+							src="https://bafybeicstpam2tgutkntez42msilvl5wxsok6xay4ry7byai4u3pq7dnfa.on.fleek.co/embed/?daoId=0x3&chainId=137/#frame"
+							type="text/html"
+							width="500"
+							height="700"
+						/>
 					</Box>
 				</Linkify>
 			</Flex>
