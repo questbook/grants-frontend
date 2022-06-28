@@ -50,7 +50,7 @@ function Application({ applicationData, showHiddenData }: Props) {
 	const [projectLink, setProjectLink] = useState<any[]>([])
 	const [projectGoals, setProjectGoals] = useState('')
 	const [projectMilestones, setProjectMilestones] = useState<any[]>([])
-	const [fundingAsk, setFundingAsk] = useState('0')
+	const [fundingAsk, setFundingAsk] = useState('')
 	const [fundingBreakdown, setFundingBreakdown] = useState('')
 	const [teamMembers, setTeamMembers] = useState('')
 	const [memberDetails, setMemberDetails] = useState<any[]>([])
@@ -363,10 +363,10 @@ Project Goals
 									color="brand.500">
 									{
 										applicationData
-                    && formatAmount(
-                    	fundingAsk ?? '0',
+                    && fundingAsk && fundingAsk !== '' && formatAmount(
+                    	fundingAsk,
                     	decimals ?? 18,
-                    )
+										)
 									}
 									{' '}
 									{label}

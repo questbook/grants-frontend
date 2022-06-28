@@ -1,9 +1,4 @@
-import React, {
-	createContext,
-	ReactElement,
-	ReactNode,
-	useMemo,
-} from 'react'
+import React, { createContext, ReactElement, ReactNode, useMemo } from 'react'
 import { ChakraProvider } from '@chakra-ui/react'
 // import dynamic from 'next/dynamic';
 import {
@@ -15,7 +10,11 @@ import type { AppContext, AppProps } from 'next/app'
 import App from 'next/app'
 import Head from 'next/head'
 import { DefaultSeo } from 'next-seo'
-import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
+import {
+	ALL_SUPPORTED_CHAIN_IDS,
+	CHAIN_INFO,
+	SupportedChainId,
+} from 'src/constants/chains'
 import { MinimalWorkspace } from 'src/types'
 import getSeo from 'src/utils/seo'
 import {
@@ -52,7 +51,9 @@ const { chains, provider } = configureChains(allChains, [
 		rpc: (chain: Chain) => {
 			const rpcUrl = CHAIN_INFO[chain.id as SupportedChainId]?.rpcUrls[0]
 			if(!rpcUrl) {
-				return { http: CHAIN_INFO[defaultChain.id as SupportedChainId].rpcUrls[0] }
+				return {
+					http: CHAIN_INFO[defaultChain.id as SupportedChainId].rpcUrls[0],
+				}
 			}
 
 			return { http: rpcUrl }
@@ -96,6 +97,8 @@ export const ApiClientsContext = createContext<{
   subgraphClients: { [chainId: string]: SubgraphClient };
   connected: boolean;
   setConnected: (connected: boolean) => void;
+  grantsCount: number;
+  setGrantsCount: (grantsCount: number) => void;
   	} | null>(null)
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
@@ -117,6 +120,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}, [])
 
 	const [connected, setConnected] = React.useState(false)
+	const [grantsCount, setGrantsCount] = React.useState(0)
 
 	const apiClients = useMemo(
 		() => ({
@@ -124,7 +128,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			workspace,
 			setWorkspace: (newWorkspace?: MinimalWorkspace) => {
 				if(newWorkspace) {
-					localStorage.setItem('currentWorkspace', newWorkspace.supportedNetworks[0] + '-' + newWorkspace.id)
+					localStorage.setItem(
+						'currentWorkspace',
+						newWorkspace.supportedNetworks[0] + '-' + newWorkspace.id
+					)
 				} else {
 					localStorage.setItem('currentWorkspace', 'undefined')
 				}
@@ -132,8 +139,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				setWorkspace(newWorkspace)
 			},
 			subgraphClients: clients,
-	  connected,
-	  setConnected,
+			connected,
+			setConnected,
+			grantsCount,
+			setGrantsCount,
 		}),
 		[validatorApi, workspace, setWorkspace, clients, connected, setConnected]
 	)
