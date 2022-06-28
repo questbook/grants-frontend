@@ -385,6 +385,8 @@ export type Grant = {
   details: Scalars['String'];
   /** Expected fields from the applicants of the grant */
   fields: Array<GrantField>;
+  /** List of fund transfer records for the grant */
+  fundTransfers: Array<FundsTransfer>;
   /** Funding currently present in the grant */
   funding: Scalars['BigInt'];
   id: Scalars['ID'];
@@ -422,6 +424,15 @@ export type GrantFieldsArgs = {
   orderDirection?: InputMaybe<OrderDirection>;
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<GrantField_Filter>;
+};
+
+
+export type GrantFundTransfersArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<FundsTransfer_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<FundsTransfer_Filter>;
 };
 
 
@@ -1411,6 +1422,7 @@ export enum Grant_OrderBy {
   DeadlineS = 'deadlineS',
   Details = 'details',
   Fields = 'fields',
+  FundTransfers = 'fundTransfers',
   Funding = 'funding',
   Id = 'id',
   Managers = 'managers',
@@ -3073,9 +3085,11 @@ export enum SupportedNetwork {
   Chain_10 = 'chain_10',
   Chain_69 = 'chain_69',
   Chain_137 = 'chain_137',
+  Chain_1001 = 'chain_1001',
   Chain_44787 = 'chain_44787',
   Chain_80001 = 'chain_80001',
   Chain_245022926 = 'chain_245022926',
+  Chain_1666600000 = 'chain_1666600000',
   Chain_1666700000 = 'chain_1666700000'
 }
 

@@ -3,6 +3,7 @@ import button from './components/button'
 import container from './components/container'
 import divider from './components/divider'
 import header from './components/header'
+import input from './components/input'
 import link from './components/link'
 import progress from './components/progress'
 import text from './components/text'
@@ -13,6 +14,11 @@ const theme = extendTheme({
 		body: 'DM Sans, sans-serif',
 		buttons: 'DM Sans, sans-serif',
 	},
+	// fonts: {
+	// 	body: 'nhg, sans-serif',
+	// 	heading: 'nhg, sans-serif',
+	// 	buttons: 'nhg, sans-serif',
+	// },
 	colors: {
 		brand: {
 			100: '#9580FF1A',
@@ -37,6 +43,46 @@ const theme = extendTheme({
 			500: '#EE7979',
 			600: '#EE7979',
 		},
+		white: {
+			'offWhite': '#F0F0F7',
+		},
+		black: '#1F1F33',
+		brandText: '#4E4E6B',
+		brandSubtext: '#7D7DA0',
+		blue: {
+			100: '#AFAFCC',
+			500: '#2B67F6',
+		},
+		greenTextBackground: '#79F2C0',
+		greenTextDark: '#36B37E',
+		brandGrey:{
+			500: '#F0F0F7',
+			600: '#EBEBF3',
+			700: '#DCDCE6',
+		},
+		red: '#F25A5A',
+		brandv2: {
+			500: '#1F1F33',
+			600: '#3F3F53',
+			700: '#5F5F72',
+		},
+		yellow: '#FFCE00',
+		bannerGrey: '#F0F0F7'
+	},
+	sizes: {
+		connectWallet: '41.5rem',
+	},
+	space: {
+		4.5: '1.125rem',
+		12.5: '3.125rem',
+		25: '6.25rem',
+	},
+	styles: {
+		sizes: {
+			container: {
+				content: '1128px'
+			}
+		}
 	},
 	components: {
 		...container,
@@ -46,6 +92,7 @@ const theme = extendTheme({
 		...divider,
 		...text,
 		...progress,
+		...input,
 		Menu: {
 			variants: {
 				form: {

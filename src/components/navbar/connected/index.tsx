@@ -44,11 +44,10 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	const activeIndex = useActiveTabIndex(tabPaths)
 
 	const [workspaces, setWorkspaces] = React.useState<MinimalWorkspace[]>([])
-	const [grantsCount, setGrantsCount] = React.useState(0)
 	const [applicationCount, setApplicationCount] = React.useState(0)
 
 	const apiClients = useContext(ApiClientsContext)!
-	const { workspace, setWorkspace, subgraphClients, connected } = apiClients
+	const { workspace, setWorkspace, subgraphClients, connected, grantsCount, setGrantsCount } = apiClients
 	const [isAdmin, setIsAdmin] = React.useState(false)
 	const [isReviewer, setIsReviewer] = React.useState<boolean>(false)
 	// const [accountData, setaccountData] = React.useState<any>()

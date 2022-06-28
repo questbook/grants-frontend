@@ -1,8 +1,10 @@
 import React, {
 	ReactElement,
 } from 'react'
-import { Box, Button, Container, Flex, Grid, Heading, Image, Menu, MenuButton, MenuItem, MenuList, ResponsiveValue, Spacer, Text } from '@chakra-ui/react'
-import NavbarLayout from '../../src/layout/navbarLayout'
+import { Box, Button, Container, Flex, Heading, Image, Menu, MenuButton, MenuItem, MenuList, ResponsiveValue, Spacer, Text, Tooltip } from '@chakra-ui/react'
+import NavbarLayout from '../../src/layout/navbarLayout';
+import Chart from "react-apexcharts";
+
 
 const TableHeader = [
 	'Name',
@@ -14,11 +16,11 @@ const TableHeader = [
 
 
 const tableHeadersAlign = [
+	'start',
 	'center',
 	'center',
 	'center',
 	'center',
-	'right',
 ]
 const data = [
 	{
@@ -72,7 +74,9 @@ const data = [
 		'status':'reviwed'
 	},
 ]
-const tableHeadersflex = [0.40, 0.40, 0.10, 0.20, 0.17]
+const tableHeadersflex = [0.20, 0.40, 0.10, 0.20, 0.17]
+
+const tableBodyFlex = [0.25, 0.40, 0.10, 0.20, 0.17]
 
 function DaoDashboard() {
 
@@ -358,30 +362,36 @@ Repeats Applicants
 
 					<Heading
 						fontSize="24px"
-						fontWeight="700" >
-						Grants
+						fontWeight="700"
+						mt="10"
+						 >
+						Grants (
+						{data.length}
+)
 					</Heading>
 
 					<Flex
-						mt="6"
+						mt="2"
 					>
 
 						<Flex
 						 direction="column"
 					     width="100%"
 						 align="center"
-						 borderRadius="8px"
+						 borderRadius="8px 8px 0px 0px"
 						 borderBottom="1px solid #E8E9E9"
 						 background="#FFFFFF"
 						 height="56px"
 						 boxShadow="0px 0px 8px rgba(18, 34, 36, 0.08)"
 						>
-							<Grid
+							<Flex
 								w="100%"
-								templateColumns='28% 16% 12% 21% 11%'
-								gap={3}
 								py={0}
 								mt="4"
+								align="center"
+								justify="strech"
+
+
 							>
 
 								{
@@ -393,8 +403,9 @@ Repeats Applicants
 											fontWeight="700"
 											fontSize="16px"
 											lineHeight="24px"
-											textAlign={tableHeadersAlign[index]}
+											textAlign={tableHeadersAlign[index] as ResponsiveValue<'left' | 'center'>}
 											flex={tableHeadersflex[index]}
+											ml="20px"
 
 
 										>
@@ -404,7 +415,7 @@ Repeats Applicants
 									))
 
 								}
-							</Grid>
+							</Flex>
 
 							<Flex
 								mt="15px"
@@ -412,37 +423,39 @@ Repeats Applicants
 								w="100%"
 								border="1px solid #E8E9E9"
 								align="stretch"
+								mb="10"
 
 							>
 
 								{
 									data.map((item, index) => (
 
-										<Grid
+										<Flex
 											key={index}
-											templateColumns='30% 10% 20% auto auto'
 											gap={3}
 											w="100%"
 											bg={(index + 1) % 2 === 0 ? '#F7F9F9' : '#FFFFFF'}
 											px={0}
 											py={5}>
 											{/* <Flex> */}
-
-											<Text
-												flex={tableHeadersflex[0]}
-												align="center"
+											<Flex
+												flex={tableBodyFlex[0]}
+												align="start"
 												fontWeight="400"
 												fontSize="16px"
 												lineHeight="24px"
-												// width="229px"
+												ml="20px"
 											>
-												{item.name}
-											</Text>
-											{/* </Flex> */}
-
+												<Tooltip label={item?.name}>
+													<Text>
+														{`${item.name.substring(0, 31)}...${item.name.substring(0, 30) > 32 ? "more":""}`}
+													</Text>
+												</Tooltip>
+												{/* </Flex> */}
+											</Flex>
 
 											<Text
-												flex={tableHeadersflex[1]}
+												flex={tableBodyFlex[1]}
 												align="center"
 												letterSpacing="0.5px"
 											>
@@ -450,7 +463,7 @@ Repeats Applicants
 											</Text>
 
 											<Text
-												flex={tableHeadersflex[2]}
+												flex={tableBodyFlex[2]}
 												align="center"
 												letterSpacing="0.5px"
 												width="inherit"
@@ -459,7 +472,7 @@ Repeats Applicants
 											</Text>
 
 											<Text
-												flex={tableHeadersflex[3]}
+												flex={tableBodyFlex[3]}
 												align="center"
 												letterSpacing="0.5px"
 												width="inherit"
@@ -471,7 +484,7 @@ Repeats Applicants
 												display="flex"
 												flexDirection="column"
 												alignItems="center"
-												flex={tableHeadersflex[4]}
+												flex={tableBodyFlex[4]}
 											>
 												<Button
 													fontWeight="500"
@@ -494,7 +507,7 @@ Repeats Applicants
 
 											</Flex>
 
-										</Grid>
+										</Flex>
 									))
 
 								}

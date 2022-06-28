@@ -41,7 +41,12 @@
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-rinkeby",
 		"rpcUrls": [
 			"https://rinkeby.infura.io/v3/"
-		]
+		],
+		"nativeCurrency": {
+			"name": "Rinkeby ETH",
+			"symbol": "ETH",
+			"decimals": 18
+		}
 	},
 	"10": {
 		"id": 10,
@@ -103,7 +108,61 @@
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-optimism-mainnet",
 		"rpcUrls": [
 			"https://optimism-mainnet.infura.io/v3/"
-		]
+		],
+		"nativeCurrency": {
+			"name": "Unsupported Currency",
+			"symbol": "UNSUP",
+			"decimals": 18
+		}
+	},
+	"42": {
+		"id": 42,
+		"name": "Kovan",
+		"isTestNetwork": true,
+		"icon": "/chain_assets/eth.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://kovan.etherscan.io/address/{{address}}",
+			"transactionHash": "https://kovan.etherscan.io/tx/{{tx}}"
+		},
+		"supportedCurrencies": {
+			"0x04df6e4121c27713ed22341e7c7df330f56f289b": {
+				"icon": "/chain_assets/dai.svg",
+				"label": "DAI",
+				"address": "0x04df6e4121c27713ed22341e7c7df330f56f289b",
+				"decimals": 18
+			},
+			"0xd0a1e359811322d97991e03f863a0c30c2cf029c": {
+				"icon": "/chain_assets/weth.svg",
+				"label": "WETH",
+				"address": "0xd0a1e359811322d97991e03f863a0c30c2cf029c",
+				"decimals": 18
+			},
+			"0xe22da380ee6b445bb8273c81944adeb6e8450422": {
+				"icon": "/chain_assets/usdc.svg",
+				"label": "USDC",
+				"address": "0xe22da380ee6b445bb8273c81944adeb6e8450422",
+				"decimals": 6
+			}
+		},
+		"qbContracts": {
+			"applications": "0x611a8740ed9B18d7C78e2286E651c4970eEC4AA1",
+			"workspace": "0xA23FAe98239E5a8d5F1D2944725d06F2E79226EB",
+			"grantFactory": "0xAeee48268A49508FB246E7D563f5b01Fd10f4758",
+			"reviews": "0x2704726624bEeE50435aA5364820C61026B56214"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-kovan",
+		"rpcUrls": [
+			"https://kovan.infura.io/v3/"
+		],
+		"nativeCurrency": {
+			"name": "Unsupported Currency",
+			"symbol": "UNSUP",
+			"decimals": 18
+		}
 	},
 	"69": {
 		"id": 69,
@@ -135,7 +194,12 @@
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-optimism-kovan",
 		"rpcUrls": [
 			"https://optimism-kovan.infura.io/v3/"
-		]
+		],
+		"nativeCurrency": {
+			"name": "Unsupported Currency",
+			"symbol": "UNSUP",
+			"decimals": 18
+		}
 	},
 	"137": {
 		"id": 137,
@@ -223,10 +287,10 @@
 				"address": "0x3962f4a0a0051dcce0be73a7e09cef5756736712",
 				"decimals": 18
 			},
-			"0x62c4b802f2153a281dc87994427F606f561Cc620": {
+			"0x62c4b802f2153a281dc87994427f606f561cc620": {
 				"icon": "/chain_assets/spruce.svg",
 				"label": "SPR",
-				"address": "0x62c4b802f2153a281dc87994427F606f561Cc620",
+				"address": "0x62c4b802f2153a281dc87994427f606f561cc620",
 				"decimals": 18
 			},
 			"0x980111ae1b84e50222c8843e3a7a038f36fecd2b": {
@@ -270,7 +334,12 @@
 		"rpcUrls": [
 			"https://polygon-mainnet.infura.io/v3/",
 			"https://polygon-mainnet.g.alchemy.com/v2/"
-		]
+		],
+		"nativeCurrency": {
+			"name": "Unsupported Currency",
+			"symbol": "UNSUP",
+			"decimals": 18
+		}
 	},
 	"1001": {
 		"id": 1001,
@@ -294,15 +363,94 @@
 			}
 		},
 		"qbContracts": {
-			"applications": "0xfe333a7526AFfD0aB20A4478D157DEEd0daAFECD",
-			"workspace": "0x39e2996A90C29f4ff584da164773a2c2Cc42c0dF",
-			"grantFactory": "0xC28cfc0A89A920313C6125fe4fD196E2308cB337",
-			"reviews": "0x6C3136f06dCcA37395B62fb858057e669b002f54"
+			"applications": "0xD5c4F27fdBC665DBe851fFa5bB8a7DB934B8e05f",
+			"workspace": "0x635CBA2Aa0064f90A66107c8c144a4Fc8Dc6b6Ac",
+			"grantFactory": "0xe374A2407b6Ac748caC70300DD5A88ba39769a49",
+			"reviews": "0x367F1D6ac3EF6586DA9F893BB38Af5571A9EC10A"
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-klaytn-testnet",
 		"rpcUrls": [
 			"https://api.baobab.klaytn.net:8651"
-		]
+		],
+		"nativeCurrency": {
+			"name": "Unsupported Currency",
+			"symbol": "UNSUP",
+			"decimals": 18
+		}
+	},
+	"2153": {
+		"id": 2153,
+		"name": "Findora Testnet",
+		"isTestNetwork": true,
+		"icon": "/chain_assets/findora.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://testnet-anvil.evm.findorascan.io/address/{{address}}",
+			"transactionHash": "https://testnet-anvil.evm.findorascan.io/tx/{{tx}}"
+		},
+		"supportedCurrencies": {
+			"0x0000000000000000000000000000000000001000": {
+				"icon": "/chain_assets/findora.svg",
+				"label": "FRA",
+				"address": "0x0000000000000000000000000000000000001000",
+				"decimals": 18
+			}
+		},
+		"qbContracts": {
+			"applications": "0x32798CC9da06363eF2b0eE12e54cD4476D9C891a",
+			"workspace": "0x6D0f81BDA11995f25921aAd5B43359630E65Ca96",
+			"grantFactory": "0xda717ab1206c59493e1E5c66F4e0712B39EC6D81",
+			"reviews": "0x2d49a247AA77cA433218C9567953645bE04A7b3A"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-findora-testnet",
+		"rpcUrls": [
+			"https://ev2awpyss5.execute-api.ap-south-1.amazonaws.com/v0/findora"
+		],
+		"nativeCurrency": {
+			"name": "Findora",
+			"symbol": "FRA",
+			"decimals": 18
+		}
+	},
+	"8217": {
+		"id": 8217,
+		"name": "Klaytn Mainnet",
+		"isTestNetwork": false,
+		"icon": "/chain_assets/klay.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://scope.klaytn.com/account/{{address}}",
+			"transactionHash": "https://scope.klaytn.com/tx/{{tx}}"
+		},
+		"supportedCurrencies": {
+			"0xe4f05a66ec68b54a58b17c22107b02e0232cc817": {
+				"icon": "/chain_assets/klay.svg",
+				"label": "WKLAY",
+				"address": "0xe4f05a66ec68b54a58b17c22107b02e0232cc817",
+				"decimals": 18
+			}
+		},
+		"qbContracts": {
+			"applications": "0x2d49a247AA77cA433218C9567953645bE04A7b3A",
+			"workspace": "0xda717ab1206c59493e1E5c66F4e0712B39EC6D81",
+			"grantFactory": "0x32798CC9da06363eF2b0eE12e54cD4476D9C891a",
+			"reviews": "0x6Cb5Ee567592eD1fBdA48413a1F95e848d289D34"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-klaytn-mainnet",
+		"rpcUrls": [
+			"https://public-node-api.klaytnapi.com/v1/cypress"
+		],
+		"nativeCurrency": {
+			"name": "Unsupported Currency",
+			"symbol": "UNSUP",
+			"decimals": 18
+		}
 	},
 	"44787": {
 		"id": 44787,
@@ -318,10 +466,10 @@
 			"transactionHash": "https://alfajores-blockscout.celo-testnet.org/tx/{{tx}}"
 		},
 		"supportedCurrencies": {
-			"0x7d91E51C8F218f7140188A155f5C75388630B6a8": {
+			"0x7d91e51c8f218f7140188a155f5c75388630b6a8": {
 				"icon": "/chain_assets/dai.svg",
 				"label": "DAI",
-				"address": "0x7d91E51C8F218f7140188A155f5C75388630B6a8",
+				"address": "0x7d91e51c8f218f7140188a155f5c75388630b6a8",
 				"decimals": 18
 			},
 			"0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9": {
@@ -346,7 +494,12 @@
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-celo-alfajores-testnet",
 		"rpcUrls": [
 			"https://alfajores-forno.celo-testnet.org"
-		]
+		],
+		"nativeCurrency": {
+			"name": "Unsupported Currency",
+			"symbol": "UNSUP",
+			"decimals": 18
+		}
 	},
 	"80001": {
 		"id": 80001,
@@ -384,7 +537,12 @@
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-polygon-mumbai",
 		"rpcUrls": [
 			"https://polygon-mumbai.infura.io/v3/"
-		]
+		],
+		"nativeCurrency": {
+			"name": "Unsupported Currency",
+			"symbol": "UNSUP",
+			"decimals": 18
+		}
 	},
 	"245022926": {
 		"id": 245022926,
@@ -428,7 +586,12 @@
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-neon-devnet",
 		"rpcUrls": [
 			"http://neon-devnet-rpc.questbook.app:9090/solana"
-		]
+		],
+		"nativeCurrency": {
+			"name": "Unsupported Currency",
+			"symbol": "UNSUP",
+			"decimals": 18
+		}
 	},
 	"1666600000": {
 		"id": 1666600000,
@@ -444,10 +607,10 @@
 			"transactionHash": "https://explorer.harmony.one/tx/{{tx}}/"
 		},
 		"supportedCurrencies": {
-			"0x985458E523dB3d53125813eD68c274899e9DfAb4": {
+			"0x985458e523db3d53125813ed68c274899e9dfab4": {
 				"icon": "/chain_assets/usdc.svg",
 				"label": "USDC",
-				"address": "0x985458E523dB3d53125813eD68c274899e9DfAb4",
+				"address": "0x985458e523db3d53125813ed68c274899e9dfab4",
 				"decimals": 6
 			}
 		},
@@ -460,7 +623,12 @@
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-harmony-mainnet",
 		"rpcUrls": [
 			"https://api.harmony.one"
-		]
+		],
+		"nativeCurrency": {
+			"name": "Unsupported Currency",
+			"symbol": "UNSUP",
+			"decimals": 18
+		}
 	},
 	"1666700000": {
 		"id": 1666700000,
@@ -504,6 +672,11 @@
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-harmony-testnet",
 		"rpcUrls": [
 			"https://api.s0.pops.one"
-		]
+		],
+		"nativeCurrency": {
+			"name": "Unsupported Currency",
+			"symbol": "UNSUP",
+			"decimals": 18
+		}
 	}
 }

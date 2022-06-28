@@ -1,9 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Container, useToast, VStack } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
+import ConnectWalletModal from 'src/v2/components/ConnectWalletModal'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
 import ConnectedNavbar from '../components/navbar/connected'
 import SignInNavbar from '../components/navbar/notConnected'
+
 interface Props {
   children: React.ReactNode;
   renderGetStarted?: boolean;
@@ -15,6 +18,10 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 	const { data: networkData, pendingChainId, activeChain, status: networkStatus } = useNetwork()
 	const { data: accountData, isLoading, isFetching, isFetched, isRefetching, isSuccess, status: accountStatus } = useAccount()
 	const toast = useToast()
+
+	const router = useRouter()
+	const [connectWalletModalIsOpen, setConnectWalletModalIsOpen] = useState(false)
+
 
 	const { connected, setConnected } = useContext(ApiClientsContext)!
 	const currentPageRef = useRef(null)
@@ -60,31 +67,41 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 	// }, [pendingChainId, activeChain, networkStatus, networkData])
 
 	return (
-		<VStack
-			alignItems="center"
-			maxH="100vh"
-			width="100%"
-			spacing={0}
-			p={0}>
-			{
-				connected && accountData?.address ? (
-					<ConnectedNavbar renderTabs={renderTabs!} />
-				) : (
-					<SignInNavbar renderGetStarted={renderGetStarted} />
-				)
-			}
-			{/*
+		<>
+			<VStack
+				alignItems="center"
+				maxH="100vh"
+				width="100%"
+				spacing={0}
+				p={0}>
+				{
+					connected ? (
+						<ConnectedNavbar renderTabs={renderTabs!} />
+					) : (
+						<SignInNavbar
+							renderGetStarted={renderGetStarted}
+							onGetStartedClick={() => setConnectWalletModalIsOpen(true)} />
+					)
+				}
+				{/*
         root of children should also be a container with a max-width,
         this container is to render the scrollbar to extreme right of window
       */}
-			<Container
-				ref={currentPageRef}
-				maxW="100vw"
-				p={0}
-				overflow="auto">
-				{children}
-			</Container>
-		</VStack>
+
+				<Container
+					ref={currentPageRef}
+					maxW="100vw"
+					p={0}
+					overflow="auto">
+					{children}
+				</Container>
+			</VStack>
+			<ConnectWalletModal
+				isOpen={connectWalletModalIsOpen}
+				onClose={() => setConnectWalletModalIsOpen(false)}
+				redirect={() => router.push({ pathname: '/onboarding' })}
+			/>
+		</>
 	)
 }
 

@@ -58,6 +58,7 @@ function Headers({ is_reviewer }:{ is_reviewer : boolean; }) {
 						textAlign={is_reviewer ? (tableHeadersAlignReviewer[index] as ResponsiveValue<'left' | 'center'>) : ((tableHeadersAlign[index] as ResponsiveValue<'left' | 'center'>))}
 						flex={is_reviewer ? (tableHeadersflexReviewer[index]) : (tableHeadersflex[index])}
 						variant="tableHeader"
+
 					>
 						{header}
 					</Text>
