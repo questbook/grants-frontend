@@ -146,10 +146,9 @@ export default function Embed() {
 		}
 	}, [grantsData, grantsDisbursed])
 
-	console.log(grantsData)
-
 	return (
 		<Flex
+			id="frame"
 			m="auto"
 			mt="10%"
 			w={{ base: '90%', md: '70%', xl: '50%' }}
@@ -314,13 +313,19 @@ export default function Embed() {
 					</Flex>
 				</Grid>
 			</Flex>
+			<Link
+			m="auto"
+			href={`https://www.questbook.app/profile/?daoId=${daoID}&chainId=${chainID}`}
+			isExternal
+			_hover={{ textDecoration: 'none' }}
+			>
 			<Button
-				m="auto"
 				p="12px 32px"
 				w="200px"
 				variant="primary">
         Apply for Grants
 			</Button>
+			</Link>
 			<Flex
 				justifyItems="center"
 				alignItems="center"
