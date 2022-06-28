@@ -1,13 +1,13 @@
 import React from 'react'
 import Linkify from 'react-linkify'
 import {
+	AspectRatio,
 	Box,
 	Flex,
 	Grid,
 	Image,
 	Link,
 	Skeleton,
-	AspectRatio,
 	Text } from '@chakra-ui/react'
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer'
 
@@ -48,6 +48,7 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
 			<Flex
 				borderRight="1px solid #E8E9E9"
 				p="1.5rem"
+				w="100%"
 			>
 				<Linkify
 					componentDecorator={
@@ -66,6 +67,8 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
 					}
 				>
 					<Box
+						w="100%"
+
 						mt={3}
 						fontWeight="400">
 						{
@@ -76,13 +79,14 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
 							) : <Skeleton />
 						}
 
-				  <AspectRatio maxW="100%" maxH="400px" ratio={4 / 9}>
-                  <iframe
-                    scrolling="no"
-                    allowTransparency
-                    src="https://reimagined.liquidswap.trade/swap?outputCurrency=0xA808B22ffd2c472aD1278088F16D4010E6a54D5F/#swap-page"
-                  />
-                  </AspectRatio>
+				  <AspectRatio
+							maxW="100%"
+							maxH="400px"
+							ratio={4 / 9}>
+							<iframe
+								src="http://0475-186-104-143-85.ngrok.io/embed/?daoId=0x3&chainId=137/#frame"
+							/>
+						</AspectRatio>
 					</Box>
 				</Linkify>
 			</Flex>

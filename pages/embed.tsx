@@ -37,7 +37,6 @@ export default function Embed() {
 	const [grantsApplicants, setGrantsApplicants] = useState<any>([])
 	const [grantsDisbursed, setGrantsDisbursed] = useState<any>([])
 	const [grantRecipients, setGrantRecipients] = useState<any>([])
-	const [grantsFundedTime, setGrantsFundedTime] = useState<any>([])
 
 	useEffect(() => {
 		if(router && router.query) {
@@ -149,8 +148,6 @@ export default function Embed() {
 	return (
 		<Flex
 			id="frame"
-			m="auto"
-			mt="10%"
 			w={{ base: '90%', md: '70%', xl: '50%' }}
 			h="fit-content"
 			bgColor="white"
@@ -314,17 +311,17 @@ export default function Embed() {
 				</Grid>
 			</Flex>
 			<Link
-			m="auto"
-			href={`https://www.questbook.app/profile/?daoId=${daoID}&chainId=${chainID}`}
-			isExternal
-			_hover={{ textDecoration: 'none' }}
+				m="auto"
+				href={`https://www.questbook.app/profile/?daoId=${daoID}&chainId=${chainID}`}
+				isExternal
+				_hover={{ textDecoration: 'none' }}
 			>
-			<Button
-				p="12px 32px"
-				w="200px"
-				variant="primary">
+				<Button
+					p="12px 32px"
+					w="200px"
+					variant="primary">
         Apply for Grants
-			</Button>
+				</Button>
 			</Link>
 			<Flex
 				justifyItems="center"
