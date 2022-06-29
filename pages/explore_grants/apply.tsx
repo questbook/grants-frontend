@@ -4,7 +4,7 @@ import React, {
 import { Flex } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
-import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
+import { defaultChainId } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import { useGetGrantDetailsQuery } from 'src/generated/graphql'
 import { formatAmount } from 'src/utils/formattingUtils'

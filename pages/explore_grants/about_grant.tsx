@@ -14,7 +14,7 @@ import GrantShare from 'src/components/ui/grantShare'
 import Modal from 'src/components/ui/modal'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
-import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
+import { defaultChainId } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import { useGetGrantDetailsQuery, useGetGrantsAppliedToQuery } from 'src/generated/graphql'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
@@ -150,6 +150,7 @@ function AboutGrant() {
 		if(!chainId || !grantData) {
 			return
 		}
+
 		const chainInfo = getChainInfo(grantData, chainId)
 
 		// const chainInfo = CHAIN_INFO[chainId]

@@ -24,6 +24,7 @@ import {
 } from 'src/generated/graphql'
 import { UNIX_TIMESTAMP_MAX, unixTimestampSeconds } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getChainInfo } from 'src/utils/tokenUtils'
 import {
 	getSupportedChainIdFromSupportedNetwork,
 	getSupportedChainIdFromWorkspace,
@@ -35,7 +36,6 @@ import YourGrantCard from '../../src/components/your_grants/yourGrantCard'
 import NavbarLayout from '../../src/layout/navbarLayout'
 import { formatAmount } from '../../src/utils/formattingUtils'
 import { ApiClientsContext } from '../_app'
-import { getChainInfo } from 'src/utils/tokenUtils'
 
 const PAGE_SIZE = 5
 

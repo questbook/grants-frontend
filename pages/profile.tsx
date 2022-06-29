@@ -15,10 +15,10 @@ import {
 } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
 import { ApiClientsContext } from './_app'
-import { getChainInfo } from 'src/utils/tokenUtils'
 
 function Profile() {
 	const router = useRouter()

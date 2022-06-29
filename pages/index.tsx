@@ -8,7 +8,6 @@ import React, {
 } from 'react'
 import { Flex, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { CHAIN_INFO } from 'src/constants/chains'
 import {
 	GetAllGrantsQuery,
 	useGetAllGrantsLazyQuery,
@@ -16,6 +15,7 @@ import {
 import { unixTimestampSeconds } from 'src/utils/generics'
 import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { useAccount, useConnect } from 'wagmi'
 import GrantCard from '../src/components/browse_grants/grantCard'
@@ -25,7 +25,6 @@ import Loader from '../src/components/ui/loader'
 import NavbarLayout from '../src/layout/navbarLayout'
 import { formatAmount } from '../src/utils/formattingUtils'
 import { ApiClientsContext } from './_app'
-import { getChainInfo } from 'src/utils/tokenUtils'
 
 const PAGE_SIZE = 40
 
