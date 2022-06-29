@@ -18,6 +18,7 @@ import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
 import { ApiClientsContext } from './_app'
+import { getChainInfo } from 'src/utils/tokenUtils'
 
 function Profile() {
 	const router = useRouter()
@@ -207,26 +208,10 @@ function Profile() {
 				grantData
 				&& grantData.length > 0
 				&& grantData.map((grant) => {
-
-					let tokenIcon, chainInfo
 					const chainId = getSupportedChainIdFromSupportedNetwork(
 						grant.workspace.supportedNetworks[0],
 					)
-					if(grant.reward.token) {
-						tokenIcon = getUrlForIPFSHash(grant.reward.token?.iconHash)
-						chainInfo = {
-							address: grant.reward.token.address,
-							label: grant.reward.token.label,
-							decimals: grant.reward.token.decimal,
-							icon: tokenIcon,
-						}
-					} else {
-						chainInfo =
-							CHAIN_INFO[chainId]?.supportedCurrencies[
-								grant.reward.asset.toLowerCase()
-							]
-					}
-
+					const chainInfo = getChainInfo(grant, chainId)
 
 					const [isGrantVerified, funding] = verify(
 						grant.funding,

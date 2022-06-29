@@ -35,6 +35,7 @@ import YourGrantCard from '../../src/components/your_grants/yourGrantCard'
 import NavbarLayout from '../../src/layout/navbarLayout'
 import { formatAmount } from '../../src/utils/formattingUtils'
 import { ApiClientsContext } from '../_app'
+import { getChainInfo } from 'src/utils/tokenUtils'
 
 const PAGE_SIZE = 5
 
@@ -305,23 +306,10 @@ function YourGrants() {
 	const initialiseFundModal = async(grant: any) => {
 		setAddFundsIsOpen(true)
 		setGrantForFunding(grant.id)
-		let chainInfo
-		let tokenIcon
-		if(grant.reward.token) {
-			tokenIcon = getUrlForIPFSHash(grant.reward.token?.iconHash)
-			chainInfo = {
-				address: grant.reward.token.address,
-				label: grant.reward.token.label,
-				decimals: grant.reward.token.decimal,
-				icon: tokenIcon,
-			}
-		} else {
-			chainInfo = CHAIN_INFO[
-				getSupportedChainIdFromSupportedNetwork(
-					grant.workspace.supportedNetworks[0],
-				)
-			]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-		}
+		const chainId = getSupportedChainIdFromSupportedNetwork(
+			grant.workspace.supportedNetworks[0],
+		)
+		const chainInfo = getChainInfo(grant, chainId)
 
 		// const chainInfo = CHAIN_INFO[
 		//   getSupportedChainIdFromSupportedNetwork(

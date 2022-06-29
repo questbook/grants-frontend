@@ -9,7 +9,7 @@ import { SupportedChainId } from 'src/constants/chains'
 import { useGetGrantDetailsQuery } from 'src/generated/graphql'
 import { formatAmount } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'
-import { getAssetInfo } from 'src/utils/tokenUtils'
+import { getAssetInfo, getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import Form from '../../src/components/explore_grants/apply_grant/form'
 import Sidebar from '../../src/components/explore_grants/apply_grant/sidebar'
@@ -91,21 +91,7 @@ function ApplyGrant() {
 		const localChainId = getSupportedChainIdFromSupportedNetwork(
 			grantData.workspace.supportedNetworks[0],
 		)
-		let chainInfo
-		let tokenIcon
-		if(grantData.reward.token) {
-			tokenIcon = getUrlForIPFSHash(grantData.reward.token?.iconHash)
-			chainInfo = {
-				address: grantData.reward.token.address,
-				label: grantData.reward.token.label,
-				decimals: grantData.reward.token.decimal,
-				icon: tokenIcon,
-			}
-		} else {
-			chainInfo = CHAIN_INFO[localChainId]?.supportedCurrencies[
-				grantData.reward.asset.toLowerCase()
-			]
-		}
+		const chainInfo = getChainInfo(grantData, localChainId)
 
 		// const chainInfo = CHAIN_INFO[localChainId]
 		//   ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];
@@ -131,7 +117,7 @@ function ApplyGrant() {
 		if(grantData.reward.token) {
 			setRewardCurrency(chainInfo.label)
 			setRewardCurrencyCoin(chainInfo.icon)
-			setRewardDecimal(parseInt(chainInfo.decimals, 10))
+			setRewardDecimal(chainInfo.decimals)
 		} else {
 			supportedCurrencyObj = getAssetInfo(
 				grantData?.reward?.asset?.toLowerCase(),
