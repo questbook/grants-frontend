@@ -44,8 +44,8 @@ function Profile() {
 	const [grantsApplicants, setGrantsApplicants] = React.useState<any>([])
 	const [grantsDisbursed, setGrantsDisbursed] = React.useState<any>([])
 	const [grantWinners, setGrantWinners] = React.useState<any>([])
-	const [grantsFundedTime, setGrantsFundedTime] = React.useState<any>([])
 	const [fundingTime, setFundingTime] = React.useState<any>([])
+	const [applicationTime, setApplicationTime] = React.useState<any>([])
 
 	//Tab section
 	const tabs = ['Browse Grants', 'About']
@@ -120,21 +120,22 @@ function Profile() {
 	}, [grantsData, grantsApplicants])
 
 	useEffect(() => {
-		if(grantsData && grantsData.grants.length >= 1 && grantsFundedTime.length === 0) {
-			grantsData.grants.forEach((grant) => {
-				grant.funding !== '0' &&
-          setGrantsFundedTime((array: any) => [...array, grant.createdAtS])
-			})
-		}
-	}, [grantsData, grantsFundedTime])
-
-	useEffect(() => {
 		if(fundsData && fundsData.fundsTransfers.length !== 7 && fundingTime.length === 0) {
 			fundsData.fundsTransfers.forEach((created) => {
 				setFundingTime((array: any) => [...array, created.createdAtS])
 			})
 		}
 	}, [fundsData, fundingTime])
+
+	useEffect(() => {
+		if(grantsData && grantsData.grants.length >= 1) {
+			grantsData.grants.forEach((grant) => {
+				grant.applications.filter((app) => {
+					app.state === 'approved' && setApplicationTime((array: any) => [...array, app.updatedAtS])
+				})
+			})
+		}
+	}, [grantsData])
 
 	useEffect(() => {
 		if(grantsData && grantsData.grants.length >= 1 && grantWinners.length === 0) {
@@ -172,8 +173,6 @@ function Profile() {
 			}
 			)
 		}
-
-		console.log(grantsData, grantsDisbursed)
 	}, [grantsData, grantsDisbursed])
 
 	return (
@@ -302,7 +301,7 @@ function Profile() {
 							applicants={grantsApplicants}
 							grants={grantsData}
 							fundTimes={fundingTime}
-							grantsFundedTime={grantsFundedTime}
+							applicationTime={applicationTime}
 						/>
 					</Stack>
 

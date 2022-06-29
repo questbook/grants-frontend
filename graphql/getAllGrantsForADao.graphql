@@ -30,6 +30,8 @@ query getAllGrantsForADao($first: Int, $skip: Int, $workspaceId: String!, $accep
   numberOfApplications,
   applications {
     id,
-    state
+    state,
+    createdAtS,
+    updatedAtS
   }
 }}

@@ -205,7 +205,7 @@ export const useTimeDifference = (first: number, second: number) => {
 	}
 }
 
-export const getAverageTime = (fundingDates: Array<number>, grantDates: Array<number>) => {
+export const getAverageTime = (applicationTimes: Array<number>, fundingTimes: Array<number>) => {
 	const oneSecond = 60 * 1
 	const oneMinute = 60 * 1000
 	const oneHour = oneMinute * 60
@@ -214,15 +214,15 @@ export const getAverageTime = (fundingDates: Array<number>, grantDates: Array<nu
 	const twoWeeks = oneWeek * 2
 
 	let fundingDatesAverage = 0
-	let grantCreationAverage = 0
+	let applicationSentAverage = 0
 	let average = 0
 
-	if(fundingDates.length >= 1) {
-		fundingDatesAverage = (fundingDates.reduce((sum: any, a: any) => sum + a, 0).toFixed(0)) / fundingDates.length
-		grantCreationAverage = (grantDates.reduce((sum: any, a: any) => sum + a, 0).toFixed(0)) / grantDates.length
+	if(fundingTimes.length >= 1) {
+		fundingDatesAverage = (applicationTimes.reduce((sum: any, a: any) => sum + a, 0).toFixed(0)) / applicationTimes.length
+		applicationSentAverage = (fundingTimes.reduce((sum: any, a: any) => sum + a, 0).toFixed(0)) / fundingTimes.length
 	}
 
-	average = fundingDatesAverage - grantCreationAverage
+	average = fundingDatesAverage - applicationSentAverage
 
 	if(average < oneSecond) {
 		return '--'
