@@ -1,13 +1,9 @@
 import React from 'react'
 import { Button, Flex } from '@chakra-ui/react'
 import router from 'next/router'
-import { ApiClientsContext } from 'pages/_app'
 import Empty from 'src/components/ui/empty'
 
 function LiveGrantEmptyState() {
-	const apiClients = React.useContext(ApiClientsContext)!
-	const { workspace, grantsCount } = apiClients
-
 	return (
 		<Flex
 			direction="row"
@@ -32,23 +28,11 @@ function LiveGrantEmptyState() {
 					mt={16}
 					onClick={
 						() => {
-							console.log('Create a grant!')
-							console.log(workspace)
-							console.log(workspace?.id)
-							if(!workspace?.id) {
-								router.push({
-									pathname: '/signup',
-								})
-							} else if(grantsCount === 0) {
-								router.push({
-									pathname: '/signup',
-									query: { create_grant: true },
-								})
-							} else {
-								router.push({
-									pathname: '/your_grants/create_grant/',
-								})
-							}
+							router.push({
+								pathname: '/signup',
+								query: { create_grant: true },
+							})
+
 						}
 					}
 					maxW="163px"
