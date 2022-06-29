@@ -24,6 +24,7 @@ import {
 } from 'src/generated/graphql'
 import { UNIX_TIMESTAMP_MAX, unixTimestampSeconds } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getChainInfo } from 'src/utils/tokenUtils'
 import {
 	getSupportedChainIdFromSupportedNetwork,
 	getSupportedChainIdFromWorkspace,
@@ -305,23 +306,10 @@ function YourGrants() {
 	const initialiseFundModal = async(grant: any) => {
 		setAddFundsIsOpen(true)
 		setGrantForFunding(grant.id)
-		let chainInfo
-		let tokenIcon
-		if(grant.reward.token) {
-			tokenIcon = getUrlForIPFSHash(grant.reward.token?.iconHash)
-			chainInfo = {
-				address: grant.reward.token.address,
-				label: grant.reward.token.label,
-				decimals: grant.reward.token.decimal,
-				icon: tokenIcon,
-			}
-		} else {
-			chainInfo = CHAIN_INFO[
-				getSupportedChainIdFromSupportedNetwork(
-					grant.workspace.supportedNetworks[0],
-				)
-			]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-		}
+		const chainId = getSupportedChainIdFromSupportedNetwork(
+			grant.workspace.supportedNetworks[0],
+		)
+		const chainInfo = getChainInfo(grant, chainId)
 
 		// const chainInfo = CHAIN_INFO[
 		//   getSupportedChainIdFromSupportedNetwork(

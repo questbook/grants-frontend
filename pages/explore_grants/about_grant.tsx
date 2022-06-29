@@ -14,13 +14,13 @@ import GrantShare from 'src/components/ui/grantShare'
 import Modal from 'src/components/ui/modal'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
-import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
+import { defaultChainId } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import { useGetGrantDetailsQuery, useGetGrantsAppliedToQuery } from 'src/generated/graphql'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import verify from 'src/utils/grantUtils'
-import { getAssetInfo } from 'src/utils/tokenUtils'
+import { getAssetInfo, getChainInfo } from 'src/utils/tokenUtils'
 import { useAccount } from 'wagmi'
 import GrantDetails from '../../src/components/explore_grants/about_grant/grantDetails'
 import GrantRewards from '../../src/components/explore_grants/about_grant/grantRewards'
@@ -151,22 +151,7 @@ function AboutGrant() {
 			return
 		}
 
-		let chainInfo
-		let tokenIcon
-		if(grantData.reward.token) {
-			tokenIcon = getUrlForIPFSHash(grantData.reward.token?.iconHash)
-			chainInfo = {
-				address: grantData.reward.token.address,
-				label: grantData.reward.token.label,
-				decimals: grantData.reward.token.decimal,
-				icon: tokenIcon,
-			}
-		} else {
-			chainInfo =
-        CHAIN_INFO[chainId]?.supportedCurrencies[
-        	grantData.reward.asset.toLowerCase()
-        ]
-		}
+		const chainInfo = getChainInfo(grantData, chainId)
 
 		// const chainInfo = CHAIN_INFO[chainId]
 		//   ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];

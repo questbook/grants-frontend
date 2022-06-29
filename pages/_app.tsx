@@ -97,8 +97,6 @@ export const ApiClientsContext = createContext<{
   subgraphClients: { [chainId: string]: SubgraphClient };
   connected: boolean;
   setConnected: (connected: boolean) => void;
-  grantsCount: number;
-  setGrantsCount: (grantsCount: number) => void;
   	} | null>(null)
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
