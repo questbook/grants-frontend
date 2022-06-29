@@ -64,24 +64,26 @@ export const generateWorkspaceUpdateRequest = async(
 	}
 
 	applySimpleKeyUpdate('name', 'title')
-	applySimpleKeyUpdate('about', 'about')
 	applySimpleKeyUpdate('bio', 'bio')
 
 	if(newForm.image !== oldForm.image && newForm.image) {
-		req.logoIpfsHash = (await uploadToIPFS(newForm.image!)).hash
+		let newImage = await fetch(newForm.image).then(image => image.blob());
+		req.logoIpfsHash = (await uploadToIPFS(newImage)).hash
 	}
 
-	const newAbout = JSON.stringify(convertToRaw(newForm.about.getCurrentContent()))
-	const oldAbout = JSON.stringify(convertToRaw(oldForm.about.getCurrentContent()))
+	const newAbout = JSON.stringify(convertToRaw(newForm.about.getCurrentContent()));
+	const oldAbout = JSON.stringify(convertToRaw(oldForm.about.getCurrentContent()));
+	
 	if(oldAbout !== newAbout) {
 		req.about = newAbout
 	}
 
 	if(newForm.coverImage !== oldForm.coverImage && newForm.coverImage) {
-		req.coverImageIpfsHash = (await uploadToIPFS(newForm.coverImage!)).hash
+		let newImage = await fetch(newForm.coverImage).then(image => image.blob());
+		req.coverImageIpfsHash = (await uploadToIPFS(newImage)).hash
 	}
 
-	if(newForm.partners) {
+	if(newForm.partners!.length >= 1) {
 		// if any partner is changed
 		let changedPartners = false
 		const oldPartnersMap: { [_: string]: PartnersProps | undefined } = { }
@@ -101,7 +103,8 @@ export const generateWorkspaceUpdateRequest = async(
 			}
 
 			if(oldPartner?.partnerImageHash !== newPartner.partnerImageHash) {
-				newPartner.partnerImageHash = (await uploadToIPFS(newPartner?.partnerImageHash!)).hash
+				let newImage = await fetch(newPartner.partnerImageHash!).then(image => image.blob());
+				newPartner.partnerImageHash = (await uploadToIPFS(newImage)).hash
 			}
 
 			// delete to mark as processed
@@ -118,6 +121,8 @@ export const generateWorkspaceUpdateRequest = async(
 		if(changedPartners) {
 			req.partners = newForm.partners!.map(p => ({ ...p, website: p.website || '', partnerImageHash: p.partnerImageHash || '' }))
 		}
+	} else {
+		req.partners = []
 	}
 
 	if(

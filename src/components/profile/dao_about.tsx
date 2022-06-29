@@ -9,6 +9,7 @@ import {
 	Skeleton,
 	Text } from '@chakra-ui/react'
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer'
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
 
 interface DaoAboutProps {
   daoAbout?: string;
@@ -77,13 +78,6 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
 								/>
 							) : <Skeleton />
 						}
-
-						<embed
-							src="https://localhost:3000/embed/?daoId=0x3&chainId=137"
-							type="text/html"
-							width="500"
-							height="700"
-						/>
 					</Box>
 				</Linkify>
 			</Flex>
@@ -105,15 +99,16 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
         daoPartners.map((partner: any, index: number) => (
         	<Grid
         		key={index}
-        		gridTemplateColumns="1fr 1fr 1fr"
+        		gridTemplateColumns="3fr 1fr 1fr"
         		alignItems="center"
         		justifyContent="space-between"
+				gap="0.75rem"
         	>
         		<Image
         			h="3rem"
         			w="3rem"
         			borderRadius="full"
-        			src="/illustrations/done.svg"
+        			src={getUrlForIPFSHash(partner.partnerImageHash) || "/illustrations/done.svg"}
         		/>
         		<Flex
         			direction="column"
@@ -136,9 +131,9 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
         			</Text>
         		</Flex>
         		{
-        			partner.link && (
+        			partner.website && (
         				<Link
-        					href={partner.link}
+        					href={partner.website}
         					mt={2}
         					alignSelf="start"
         					isExternal
