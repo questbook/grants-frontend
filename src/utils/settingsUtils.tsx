@@ -67,19 +67,19 @@ export const generateWorkspaceUpdateRequest = async(
 	applySimpleKeyUpdate('bio', 'bio')
 
 	if(newForm.image !== oldForm.image && newForm.image) {
-		let newImage = await fetch(newForm.image).then(image => image.blob());
+		const newImage = await fetch(newForm.image).then(image => image.blob())
 		req.logoIpfsHash = (await uploadToIPFS(newImage)).hash
 	}
 
-	const newAbout = JSON.stringify(convertToRaw(newForm.about.getCurrentContent()));
-	const oldAbout = JSON.stringify(convertToRaw(oldForm.about.getCurrentContent()));
-	
+	const newAbout = JSON.stringify(convertToRaw(newForm.about.getCurrentContent()))
+	const oldAbout = JSON.stringify(convertToRaw(oldForm.about.getCurrentContent()))
+
 	if(oldAbout !== newAbout) {
 		req.about = newAbout
 	}
 
 	if(newForm.coverImage !== oldForm.coverImage && newForm.coverImage) {
-		let newImage = await fetch(newForm.coverImage).then(image => image.blob());
+		const newImage = await fetch(newForm.coverImage).then(image => image.blob())
 		req.coverImageIpfsHash = (await uploadToIPFS(newImage)).hash
 	}
 
@@ -103,7 +103,7 @@ export const generateWorkspaceUpdateRequest = async(
 			}
 
 			if(oldPartner?.partnerImageHash !== newPartner.partnerImageHash) {
-				let newImage = await fetch(newPartner.partnerImageHash!).then(image => image.blob());
+				const newImage = await fetch(newPartner.partnerImageHash!).then(image => image.blob())
 				newPartner.partnerImageHash = (await uploadToIPFS(newImage)).hash
 			}
 

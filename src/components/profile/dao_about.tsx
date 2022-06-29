@@ -9,7 +9,7 @@ import {
 	Skeleton,
 	Text } from '@chakra-ui/react'
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils';
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 interface DaoAboutProps {
   daoAbout?: string;
@@ -102,13 +102,13 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
         		gridTemplateColumns="3fr 1fr 1fr"
         		alignItems="center"
         		justifyContent="space-between"
-				gap="0.75rem"
+        		gap="0.75rem"
         	>
         		<Image
         			h="3rem"
         			w="3rem"
         			borderRadius="full"
-        			src={getUrlForIPFSHash(partner.partnerImageHash) || "/illustrations/done.svg"}
+        			src={getUrlForIPFSHash(partner.partnerImageHash) || '/illustrations/done.svg'}
         		/>
         		<Flex
         			direction="column"

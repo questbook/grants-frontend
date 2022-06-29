@@ -120,7 +120,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 		event: React.ChangeEvent<HTMLInputElement>
 	) => {
 		if(event.target.files && event.target.files[0]) {
-			const img = event.target.files[0]	
+			const img = event.target.files[0]
 			updateFormData({ [key]: URL.createObjectURL(img) })
 		}
 	}
@@ -130,11 +130,11 @@ function EditForm({ workspaceData }: EditFormProps) {
 		index: number
 	) => {
 		if(event.target.files && event.target.files[0]) {
-			const img = event.target.files[0]		
+			const img = event.target.files[0]
 			if(img.size / 1024 / 1024 <= MAX_IMAGE_SIZE_MB) {
 				const newPartners = [...partners!]
 				newPartners[index].partnerImageHash = URL.createObjectURL(img)
-				updateFormData({partners: newPartners})
+				updateFormData({ partners: newPartners })
 			} else {
 				toastRef.current = toast({
 					position: 'top',
@@ -364,8 +364,8 @@ function EditForm({ workspaceData }: EditFormProps) {
 
 												const newPartners = [...partners!]
 												newPartners.splice(index, 1)
-												setPartners(newPartners);
-												updateFormData({partners: newPartners});
+												setPartners(newPartners)
+												updateFormData({ partners: newPartners })
 											}
 										}
 										alignItems="center"
@@ -404,7 +404,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 									(e) => {
 										const newPartners = [...partners]
 										newPartners[index].name = e.target.value
-										updateFormData({partners: newPartners})
+										updateFormData({ partners: newPartners })
 									}
 								}
 								placeholder="e.g. Partner DAO"
@@ -455,7 +455,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 										(e) => {
 											const newPartners = [...partners]
 											newPartners[index].industry = e.target.value
-											updateFormData({partners: newPartners})
+											updateFormData({ partners: newPartners })
 										}
 									}
 									placeholder="e.g. Security"
@@ -497,7 +497,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 										(e) => {
 											const newPartners = [...partners]
 											newPartners[index].website = e.target.value
-											updateFormData({partners: newPartners})
+											updateFormData({ partners: newPartners })
 										}
 									}
 									placeholder="e.g. https://www.example.com"
@@ -530,7 +530,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 									website: '',
 								},
 							]
-							setPartners( newPartners )
+							setPartners(newPartners)
 						}
 					}
 					display="flex"
