@@ -8,7 +8,6 @@ import React, {
 } from 'react'
 import { Flex, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { CHAIN_INFO } from 'src/constants/chains'
 import {
 	GetAllGrantsQuery,
 	useGetAllGrantsLazyQuery,
@@ -16,6 +15,7 @@ import {
 import { unixTimestampSeconds } from 'src/utils/generics'
 import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { useAccount, useConnect } from 'wagmi'
 import GrantCard from '../src/components/browse_grants/grantCard'
@@ -160,25 +160,10 @@ function BrowseGrants() {
 							{
 								grants.length > 0 &&
               grants.map((grant) => {
-              	let chainInfo
-              	let tokenIcon
               	const chainId = getSupportedChainIdFromSupportedNetwork(
               		grant.workspace.supportedNetworks[0]
               	)
-              	if(grant.reward.token) {
-              		tokenIcon = getUrlForIPFSHash(grant.reward.token?.iconHash)
-              		chainInfo = {
-              			address: grant.reward.token.address,
-              			label: grant.reward.token.label,
-              			decimals: grant.reward.token.decimal,
-              			icon: tokenIcon,
-              		}
-              	} else {
-              		chainInfo =
-                    CHAIN_INFO[chainId]?.supportedCurrencies[
-                    	grant.reward.asset.toLowerCase()
-                    ]
-              	}
+              	const chainInfo = getChainInfo(grant, chainId)
 
               	const [isGrantVerified, funding] = verify(
               		grant.funding,
