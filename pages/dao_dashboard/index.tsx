@@ -1,28 +1,16 @@
 import React, {
 	ReactElement,
 } from 'react'
-import { Box, Button, Container, Flex, Heading, Image, Menu, MenuButton, MenuItem, MenuList, ResponsiveValue, Spacer, Text, Tooltip } from '@chakra-ui/react'
-import NavbarLayout from '../../src/layout/navbarLayout';
-import Chart from "react-apexcharts";
+import { Box, Button, Container, Flex, Heading, Image, Menu, MenuButton, MenuItem, MenuList, Spacer, Text } from '@chakra-ui/react'
+import DoaDashTableEmptyState from 'src/components/dao_dashboard/empty_states/dao_dashboard'
+import BarGraph from 'src/components/dao_dashboard/graph/bar_graph'
+import LineGraph from 'src/components/dao_dashboard/graph/line_graph'
+import DaoStatBoard from 'src/components/dao_dashboard/statboard/stat_board'
+import TableContent from 'src/components/dao_dashboard/table/content'
+import Header from 'src/components/dao_dashboard/table/headers'
+import NavbarLayout from '../../src/layout/navbarLayout'
 
-
-const TableHeader = [
-	'Name',
-	'Pending applications',
-	'$ Disbursed',
-	'Response TAT',
-	'Action'
-]
-
-
-const tableHeadersAlign = [
-	'start',
-	'center',
-	'center',
-	'center',
-	'center',
-]
-const data = [
+const Tabledata = [
 	{
 		'name':'LP management tools for perp v2 LP management tools for perp v2',
 		'Pendingapp':'15',
@@ -74,11 +62,9 @@ const data = [
 		'status':'reviwed'
 	},
 ]
-const tableHeadersflex = [0.20, 0.40, 0.10, 0.20, 0.17]
-
-const tableBodyFlex = [0.25, 0.40, 0.10, 0.20, 0.17]
 
 function DaoDashboard() {
+
 
 	return (
 
@@ -88,8 +74,8 @@ function DaoDashboard() {
 				display="flex"
 				px="70px"
 				mb="300px"
-				background="#E5E5E5"
 				height="100%"
+
 			>
 				<Container
 					flex={1}
@@ -182,141 +168,11 @@ function DaoDashboard() {
 						</Menu>
 					</Flex>
 
-
-					<Flex
-						mt="5"
-						width="1040px"
-						height="84px"
-						background="#FFFFFF"
-						boxShadow="0px 0px 8px rgba(18, 34, 36, 0.08)"
-						borderRadius="8px"
-						display="flex"
-
-					 >
+					<DaoStatBoard
 
 
-						<Flex
-							margin="5"
-							display="flex"
-							gap="60px"
-						>
+					/>
 
-
-							<Flex
-								display="flex"
-								flexDirection="column"
-								alignItems="flex-start"
-							>
-
-								<Flex>
-									<Text
-										fontWeight={700}
-										fontSize="20px"
-										lineHeight="24px"
-									>
-                             6,347
-									</Text>
-									<Text
-										fontWeight="400"
-										fontSize="14px"
-										lineHeight="24px"
-										color="#00AD84"
-										ml="10px"
-									>
-									+40%
-									</Text>
-								</Flex>
-
-								<Text
-				 fontSize="16px"
-				 color="#AAAAAA"
-				 fontWeight="400"
-				 lineHeight="24px"
-				 >
-Total Applicants
-								</Text>
-
-							</Flex>
-
-
-							<Flex
-								display="flex"
-								flexDirection="column"
-								alignItems="flex-start"
-							>
-
-								<Flex>
-									<Text
-										fontWeight={700}
-										fontSize="20px"
-										lineHeight="24px"
-									>
-                             2,636
-									</Text>
-									<Text
-										fontWeight="400"
-										fontSize="14px"
-										lineHeight="24px"
-										color="#EE7979"
-										ml="10px"
-
-									>
-									-4%
-									</Text>
-								</Flex>
-
-								<Text
-				 fontSize="16px"
-				 color="#AAAAAA"
-				 fontWeight="400"
-				 lineHeight="24px"
-				 >
-Unique Applicants
-								</Text>
-
-							</Flex>
-
-							<Flex
-								display="flex"
-								flexDirection="column"
-								alignItems="flex-start"
-							>
-
-								<Flex>
-									<Text
-										fontWeight={700}
-										fontSize="20px"
-										lineHeight="24px"
-									>
-                             3,800
-									</Text>
-									<Text
-										fontWeight="400"
-										fontSize="14px"
-										lineHeight="24px"
-										color="#00AD84"
-										ml="10px"
-
-									>
-									+7%
-									</Text>
-								</Flex>
-
-								<Text
-				 fontSize="16px"
-				 color="#AAAAAA"
-				 fontWeight="400"
-				 lineHeight="24px"
-				 >
-Repeats Applicants
-								</Text>
-
-							</Flex>
-
-						</Flex>
-
-
-					</Flex>
 
 					<Flex mt="4">
 
@@ -326,33 +182,15 @@ Repeats Applicants
 							flexDirection="row"
 							alignItems="flex-start"
 							gap="20px"
+
 						>
-							<Flex
-								width="512px"
-								height="248px"
-								borderRadius="8px"
-								background="#FFFFFF"
+							<BarGraph
 
-							 >
-								<Text>
-									Application Recieved
-								</Text>
+							/>
 
-
-							</Flex>
-
-							<Flex
-								width="512px"
-								height="248px"
-								borderRadius="8px"
-								background="#FFFFFF"
-							 >
-								<Text>
-									Application Recieved
-								</Text>
-
-
-							</Flex>
+							<LineGraph
+								app_count={''}
+								title={''} />
 
 
 						</Flex>
@@ -366,7 +204,7 @@ Repeats Applicants
 						mt="10"
 						 >
 						Grants (
-						{data.length}
+						{Tabledata.length}
 )
 					</Heading>
 
@@ -382,137 +220,36 @@ Repeats Applicants
 						 borderBottom="1px solid #E8E9E9"
 						 background="#FFFFFF"
 						 height="56px"
-						 boxShadow="0px 0px 8px rgba(18, 34, 36, 0.08)"
+						 boxShadow="0px 0px 8px rgba(18, 34, 36, 0.15)"
 						>
-							<Flex
-								w="100%"
-								py={0}
-								mt="4"
-								align="center"
-								justify="strech"
+							<Header />
+							{
+								Tabledata.length === 0 ? (
 
-
-							>
-
-								{
-                         		TableHeader.map((header, index) => (
-
-										<Text
-											whiteSpace="nowrap"
-											key={header}
-											fontWeight="700"
-											fontSize="16px"
-											lineHeight="24px"
-											textAlign={tableHeadersAlign[index] as ResponsiveValue<'left' | 'center'>}
-											flex={tableHeadersflex[index]}
-											ml="20px"
-
-
-										>
-											{header}
-										</Text>
-
-									))
-
-								}
-							</Flex>
-
-							<Flex
-								mt="15px"
-								direction="column"
-								w="100%"
-								border="1px solid #E8E9E9"
-								align="stretch"
-								mb="10"
-
-							>
-
-								{
-									data.map((item, index) => (
+									<>
 
 										<Flex
-											key={index}
-											gap={3}
+											mt="15px"
+											direction="column"
 											w="100%"
-											bg={(index + 1) % 2 === 0 ? '#F7F9F9' : '#FFFFFF'}
-											px={0}
-											py={5}>
-											{/* <Flex> */}
-											<Flex
-												flex={tableBodyFlex[0]}
-												align="start"
-												fontWeight="400"
-												fontSize="16px"
-												lineHeight="24px"
-												ml="20px"
-											>
-												<Tooltip label={item?.name}>
-													<Text>
-														{`${item.name.substring(0, 31)}...${item.name.substring(0, 30) > 32 ? "more":""}`}
-													</Text>
-												</Tooltip>
-												{/* </Flex> */}
-											</Flex>
-
-											<Text
-												flex={tableBodyFlex[1]}
-												align="center"
-												letterSpacing="0.5px"
-											>
-												{item.Pendingapp}
-											</Text>
-
-											<Text
-												flex={tableBodyFlex[2]}
-												align="center"
-												letterSpacing="0.5px"
-												width="inherit"
-											>
-												{item.disburded}
-											</Text>
-
-											<Text
-												flex={tableBodyFlex[3]}
-												align="center"
-												letterSpacing="0.5px"
-												width="inherit"
-											>
-												{item.responseTa}
-											</Text>
-
-											<Flex
-												display="flex"
-												flexDirection="column"
-												alignItems="center"
-												flex={tableBodyFlex[4]}
-											>
-												<Button
-													fontWeight="500"
-													background="#8850EA"
-													fontSize="14px"
-													lineHeight="14px"
-													textAlign="center"
-													borderRadius={8}
-													borderColor="brand.500"
-													_focus={{}}
-													p={0}
-													minW={0}
-													w="88px"
-													h="32px"
-													color="white"
-
-												>
-                Review
-												</Button>
-
-											</Flex>
-
+											border="1px solid #E8E9E9"
+											align="stretch"
+											background="#FFFFFF"
+										>
+											<DoaDashTableEmptyState
+											 />
 										</Flex>
-									))
+									</>
+								) : (
 
-								}
+									<>
+										<TableContent
+							 data={Tabledata}
+										/>
 
-							</Flex>
+									</>
+								)
+							}
 						</Flex>
 
 					</Flex>

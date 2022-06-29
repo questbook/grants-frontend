@@ -2,7 +2,7 @@ import React from 'react'
 import { Flex } from '@chakra-ui/react'
 import Empty from 'src/components/ui/empty'
 
-function DoaDashBoardEmptyState() {
+function DoaDashTableEmptyState() {
 	return (
 		<Flex
 			direction="row"
@@ -10,17 +10,17 @@ function DoaDashBoardEmptyState() {
 			<Flex
 				direction="column"
 				justify="center"
-				h="100%"
+				h="300px"
 				align="center"
-				mt={10}
+				mt={3}
 				mx="auto"
 			>
 				<Empty
-					src="/illustrations/empty_states/first_grant.svg"
+					src="/illustrations/empty_states/no_daodash_table.svg"
 					imgHeight="174px"
 					imgWidth="146px"
-					title="No grant applicants assigned to you."
-					subtitle="All the grant applicants assigned to you will be visible here."
+					title="You have no pending applications"
+					subtitle=""
 				/>
 
 			</Flex>
@@ -28,4 +28,4 @@ function DoaDashBoardEmptyState() {
 	)
 }
 
-export default DoaDashBoardEmptyState
+export default DoaDashTableEmptyState
