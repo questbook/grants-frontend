@@ -523,7 +523,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 										})
 									} else {
 										router.push({
-											pathname: '/your_grants/create_grant/',
+											pathname: '/your_grants/contribution_type/',
 										})
 									}
 								}
