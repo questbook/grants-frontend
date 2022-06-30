@@ -16,7 +16,7 @@ jobs:
         node-version: 16.x
 
     - name: Install packages
-      run: npm i
+      run: npm i --legacy-peer-deps
     
     - name: Check linting
       run: yarn lint

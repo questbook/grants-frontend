@@ -1,6 +1,7 @@
 export default {
 	Button: {
 		baseStyle: {
+			fontWeight: '500',
 			_hover: { boxShadow: 'none' },
 			_focus: { boxShadow: 'none' },
 			_active: { boxShadow: 'none' },
@@ -96,6 +97,45 @@ export default {
 				},
 				backgroundImage: 'linear-gradient(to right, #DD5E89 0%, #F7BB97 51%, #DD5E89 100%)',
 			},
+			primaryV2: {
+				bg: '#1F1F33',
+				color: '#ffffff',
+				lineHeighth: '1.25rem',
+				'&:hover': {
+					bg: '#3F3F53',
+				},
+				'&:active': {
+					bg: '#5F5F72',
+				},
+				'&:disabled': {
+					bg: '#E0E0EC',
+					opacity: 1,
+					color: '#AFAFCC',
+					'&:hover': {
+						bg: '#E0E0EC',
+					}
+				},
+			},
+			primaryLightV2: {
+				bg: '#1F1F33',
+				color: '#ffffff',
+				lineHeighth: '1.25rem',
+				'&:hover': {
+					bg: '#3F3F53',
+				},
+				'&:active': {
+					bg: '#5F5F72',
+				},
+				'&:disabled': {
+					bg: '#E0E0EC',
+					opacity: 1,
+					color: 'white',
+					'&:hover': {
+						bg: '#E0E0EC',
+					}
+				},
+
+			}
 		},
 	},
 }

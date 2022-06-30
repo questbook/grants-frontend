@@ -15,6 +15,7 @@ import {
 } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
 import { ApiClientsContext } from './_app'
@@ -198,84 +199,83 @@ function Profile() {
 			<Text
 				my={4}
 				variant="heading">
-        Browse Grants
+				Browse Grants
 			</Text>
 
 			<Divider />
 
 			{
 				grantData
-        && grantData.length > 0
-        && grantData.map((grant) => {
-        	const chainId = getSupportedChainIdFromSupportedNetwork(
-        		grant.workspace.supportedNetworks[0],
-        	)
-        	const chainInfo = CHAIN_INFO[chainId]?.supportedCurrencies[
-        		grant.reward.asset.toLowerCase()
-        	]
-        	const [isGrantVerified, funding] = verify(
-        		grant.funding,
-        		chainInfo?.decimals,
-        	)
-        	return (
-        		<BrowseGrantCard
-        			daoID={grant.workspace.id}
-        			key={grant.id}
-        			daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
-        			daoName={grant.workspace.title}
-        			isDaoVerified={false}
-        			grantTitle={grant.title}
-        			grantDesc={grant.summary}
-        			numOfApplicants={grant.numberOfApplications}
-        			endTimestamp={new Date(grant.deadline!).getTime()}
-        			grantAmount={
-        				formatAmount(
-        				grant.reward.committed,
-        				chainInfo?.decimals ?? 18,
-        			)
-        			}
-        			grantCurrency={chainInfo?.label ?? 'LOL'}
-        			grantCurrencyIcon={chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'}
-        			chainId={chainId}
-        			isGrantVerified={isGrantVerified}
-        			funding={funding}
-        			onClick={
-        				() => {
-        				if(!(accountData && accountData.address)) {
-        					router.push({
-        						pathname: '/connect_wallet',
-        						query: {
-        							flow: '/',
-        							grantId: grant.id,
-        							chainId,
-        						},
-        					})
-        						return
-        				}
+				&& grantData.length > 0
+				&& grantData.map((grant) => {
+					const chainId = getSupportedChainIdFromSupportedNetwork(
+						grant.workspace.supportedNetworks[0],
+					)
+					const chainInfo = getChainInfo(grant, chainId)
 
-        				router.push({
-        					pathname: '/explore_grants/about_grant',
-        					query: {
-        						grantId: grant.id,
-        						chainId,
-        					},
-        				})
-        				}
-        			}
-        			onTitleClick={
-        				() => {
-        				router.push({
-        					pathname: '/explore_grants/about_grant',
-        					query: {
-        						grantId: grant.id,
-        						chainId,
-        					},
-        				})
-        				}
-        			}
-        		/>
-        	)
-        })
+					const [isGrantVerified, funding] = verify(
+						grant.funding,
+						chainInfo?.decimals,
+					)
+					return (
+						<BrowseGrantCard
+							daoID={grant.workspace.id}
+							key={grant.id}
+							daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
+							daoName={grant.workspace.title}
+							isDaoVerified={false}
+							grantTitle={grant.title}
+							grantDesc={grant.summary}
+							numOfApplicants={grant.numberOfApplications}
+							endTimestamp={new Date(grant.deadline!).getTime()}
+							grantAmount={
+								formatAmount(
+									grant.reward.committed,
+									chainInfo?.decimals ?? 18,
+								)
+							}
+							grantCurrency={chainInfo?.label ?? 'LOL'}
+							grantCurrencyIcon={chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'}
+							chainId={chainId}
+							isGrantVerified={isGrantVerified}
+							funding={funding}
+							onClick={
+								() => {
+									if(!(accountData && accountData.address)) {
+										router.push({
+											pathname: '/connect_wallet',
+											query: {
+												flow: '/',
+												grantId: grant.id,
+												chainId,
+											},
+										})
+										return
+									}
+
+									router.push({
+										pathname: '/explore_grants/about_grant',
+										query: {
+											grantId: grant.id,
+											chainId,
+										},
+									})
+								}
+							}
+							onTitleClick={
+								() => {
+									router.push({
+										pathname: '/explore_grants/about_grant',
+										query: {
+											grantId: grant.id,
+											chainId,
+										},
+									})
+								}
+							}
+						/>
+					)
+				})
 			}
 		</Flex>
 	)

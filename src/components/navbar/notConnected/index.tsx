@@ -5,11 +5,12 @@ import ConnectWallet from './connectWallet'
 import GetStarted from './getStarted'
 
 interface Props {
-  renderGetStarted?: boolean;
+  renderGetStarted?: boolean
+	onGetStartedClick: () => void
 }
 const defaultProps = { renderGetStarted: false }
 
-function Navbar({ renderGetStarted }: Props) {
+function Navbar({ renderGetStarted, onGetStartedClick }: Props) {
 	const router = useRouter()
 	return (
 		<Container
@@ -31,7 +32,7 @@ function Navbar({ renderGetStarted }: Props) {
 				alt="Questbook"
 				cursor="pointer"
 			/>
-			{renderGetStarted ? <GetStarted /> : null}
+			{renderGetStarted ? <GetStarted onGetStartedClick={onGetStartedClick} /> : null}
 			<ConnectWallet />
 		</Container>
 	)

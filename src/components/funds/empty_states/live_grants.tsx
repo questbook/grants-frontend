@@ -32,6 +32,7 @@ function LiveGrantEmptyState() {
 								pathname: '/signup',
 								query: { create_grant: true },
 							})
+
 						}
 					}
 					maxW="163px"
@@ -40,7 +41,6 @@ function LiveGrantEmptyState() {
 				>
           Create a Grant
 				</Button>
-
 			</Flex>
 		</Flex>
 	)

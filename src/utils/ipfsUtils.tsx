@@ -3,7 +3,7 @@ import config from 'src/constants/config.json'
 const IPFS_UPLOAD_ENDPOINT = 'https://api.thegraph.com/ipfs/api/v0/add?pin=true'
 const IPFS_DOWNLOAD_ENDPOINT = 'https://api.thegraph.com/ipfs/api/v0/cat'
 
-export const uploadToIPFS = async(data: string | Blob): Promise<{ hash: string }> => {
+export const uploadToIPFS = async(data: string | Blob | null): Promise<{ hash: string }> => {
 	if(data === null) {
 		return { hash: config.defaultDAOImageHash }
 	}

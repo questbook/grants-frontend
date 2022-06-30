@@ -210,7 +210,7 @@ function ViewApplicants() {
 						getTotalFundingRecv(
               applicant.milestones as unknown as ApplicationMilestone[],
 						).toString(),
-						18,
+						decimal ?? 18,
 					),
 				}
 			})

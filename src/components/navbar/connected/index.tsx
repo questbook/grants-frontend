@@ -41,13 +41,14 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	const activeIndex = useActiveTabIndex(tabPaths)
 
 	const [workspaces, setWorkspaces] = React.useState<MinimalWorkspace[]>([])
-	const [grantsCount, setGrantsCount] = React.useState(0)
 	const [applicationCount, setApplicationCount] = React.useState(0)
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { workspace, setWorkspace, subgraphClients, connected } = apiClients
 	const [isAdmin, setIsAdmin] = React.useState(false)
 	const [isReviewer, setIsReviewer] = React.useState<boolean>(false)
+
+	const [grantsCount, setGrantsCount] = React.useState(0)
 
 	// eslint-disable-next-line max-len
 	const getNumberOfApplicationsClients = Object.keys(subgraphClients)!.map(

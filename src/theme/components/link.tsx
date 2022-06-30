@@ -9,6 +9,10 @@ export default {
 				color: 'black',
 				fontWeight: 400,
 			},
+			basev2: {
+				fontWeight: '500',
+				color: 'black',
+			},
 		},
 	},
 }
