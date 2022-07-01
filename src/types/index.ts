@@ -45,6 +45,7 @@ export type QBContract = 'workspace' | 'grantFactory' | 'applications' | 'review
 export interface ChainInfo {
 	readonly id: SupportedChainId
 	readonly name: string
+	readonly shortname: string
 	readonly isTestNetwork?: boolean
 	readonly icon: string
 	readonly wallets: string[],

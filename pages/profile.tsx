@@ -166,7 +166,7 @@ function Profile() {
 				)
 
 				if(tokenInfo !== undefined && tokenValue !== '0') {
-					calculateUSDValue(tokenValue, tokenInfo.label).then((promise) => {
+					calculateUSDValue(tokenValue, tokenInfo.address, chainId).then((promise) => {
 						setGrantsDisbursed((array: any) => [...array, promise])
 					})
 				}

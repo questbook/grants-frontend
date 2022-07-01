@@ -18,6 +18,7 @@ import {
 } from 'src/generated/graphql'
 import { DAOWorkspace } from 'src/types'
 import { calculateUSDValue } from 'src/utils/calculatingUtils'
+import {getChainName} from 'src/utils/tokenUtils'
 import { formatAmount } from 'src/utils/formattingUtils'
 //TOOLS and UTILS
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
@@ -126,6 +127,8 @@ export default function Embed() {
 					grant.workspace.supportedNetworks[0]
 				)
 
+				const chainName = getChainName(chainId);
+
 				const tokenInfo =
           CHAIN_INFO[chainId]?.supportedCurrencies[
           	grant.reward.asset.toLowerCase()
@@ -137,7 +140,7 @@ export default function Embed() {
 				)
 
 				if(tokenInfo !== undefined && tokenValue !== '0') {
-					calculateUSDValue(tokenValue, tokenInfo.label).then((promise) => {
+					calculateUSDValue(tokenValue, tokenInfo.address, chainName).then((promise) => {
 						setGrantsDisbursed((array: any) => [...array, promise])
 					})
 				}

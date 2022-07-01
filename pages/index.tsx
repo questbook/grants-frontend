@@ -15,7 +15,7 @@ import {
 import { unixTimestampSeconds } from 'src/utils/generics'
 import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
-import { getChainInfo } from 'src/utils/tokenUtils'
+import { getChainInfo, getChainName } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { useAccount, useConnect } from 'wagmi'
 import GrantCard from '../src/components/browse_grants/grantCard'
@@ -167,6 +167,8 @@ function BrowseGrants() {
               	)
               	const chainInfo = getChainInfo(grant, chainId)
 
+				const chainName = getChainName(chainId);
+
               	const [isGrantVerified, funding] = verify(
               		grant.funding,
               		chainInfo?.decimals
@@ -198,6 +200,8 @@ function BrowseGrants() {
               				)
               			}
               			grantCurrency={chainInfo?.label ?? 'LOL'}
+						grantCurrencyChain={chainName}
+						grantCurrencyAddress={chainInfo?.address}
               			grantCurrencyIcon={chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'}
               			isGrantVerified={isGrantVerified}
               			funding={funding}

@@ -14,7 +14,7 @@ import { useRouter } from 'next/router'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import { SupportedChainId } from 'src/constants/chains'
 import { nFormatter } from 'src/utils/formattingUtils'
-import { calculateUSDValue, useTimeDifference } from '../../../utils/calculatingUtils'
+import { calculateUSDValue, useTimeDifference } from 'src/utils/calculatingUtils'
 import Badge from './badge'
 import ShareMenu from './menu'
 
@@ -37,6 +37,8 @@ interface GrantCardProps {
 
   grantAmount: string;
   grantCurrency: string;
+  grantCurrencyAddress: string;
+  grantCurrencyChain: string;
   grantCurrencyIcon: string;
   disbursedAmount: string;
 
@@ -63,6 +65,8 @@ function GrantCard({
 
 	grantAmount,
 	grantCurrency,
+	grantCurrencyAddress,
+	grantCurrencyChain,
 	grantCurrencyIcon,
 
 	onClick,
@@ -77,7 +81,7 @@ function GrantCard({
 
 	useEffect(() => {
 		if(grantReward === 0) {
-			calculateUSDValue(grantAmount, grantCurrency).then((promise) => {
+			calculateUSDValue(grantAmount, grantCurrencyAddress, grantCurrencyChain).then((promise: any) => {
 				setGrantReward(promise as number)
 			})
 		}

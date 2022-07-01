@@ -417,7 +417,6 @@ function EditForm({ workspaceData }: EditFormProps) {
 								mb="-10rem">
 								<ImageUpload
 									image={isIpfsHash(partner.partnerImageHash) ? getUrlForIPFSHash(partner.partnerImageHash!) : partner.partnerImageHash!}
-									// image={partner.partnerImageHash! || config.defaultDAOImagePath}
 									isError={false}
 									onChange={e => handlePartnerImageChange(e, index)}
 									label="Partner logo"
