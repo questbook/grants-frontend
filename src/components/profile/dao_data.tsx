@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Flex, Grid, Heading, Text } from '@chakra-ui/react'
 import { getAverageTime } from '../../utils/calculatingUtils'
 
@@ -12,21 +12,6 @@ interface Props {
 }
 
 function DaoData({ disbursed, applicants, winners, grants, fundTimes, applicationTime }: Props) {
-
-	const [grantToCheck, setGrantoCheck] = useState<any>([])
-	// const [fundsToCheck, setFundsToCheck] = useState<any>([])
-
-	useEffect(() => {
-		console.log(grants)
-		console.log(disbursed)
-
-		if(grants && grants.length > 0) {
-			grants.grants.forEach((grant: any) => setGrantoCheck((array: any) => [...array, grant.createdAtS])
-			)
-		}
-
-		console.log(grantToCheck)
-	}, [disbursed, grants, fundTimes])
 
 	return (
 		<Grid

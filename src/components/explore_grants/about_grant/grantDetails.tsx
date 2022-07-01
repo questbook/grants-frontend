@@ -32,8 +32,6 @@ function GrantDetails({
 		} else {
 			setDecodedDetails(grantDetails)
 		}
-
-		console.log(grantDetails)
 	}, [grantDetails])
 
 	return (

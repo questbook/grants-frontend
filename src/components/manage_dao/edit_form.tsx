@@ -15,7 +15,7 @@ import {
 import { WorkspaceUpdateRequest } from '@questbook/service-validator-client'
 // CONSTANTS AND TYPES
 import { CHAIN_INFO } from 'src/constants/chains'
-import config from 'src/constants/config'
+import config from 'src/constants/config.json'
 // UTILS AND TOOLS
 import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace'
 import { PartnersProps, SettingsForm, Workspace } from 'src/types'
