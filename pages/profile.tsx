@@ -166,7 +166,7 @@ function Profile() {
 				)
 
 				if(tokenInfo !== undefined && tokenValue !== '0') {
-					calculateUSDValue(tokenValue, tokenInfo.address, chainId).then((promise) => {
+					calculateUSDValue(tokenValue, tokenInfo.pair).then((promise) => {
 						setGrantsDisbursed((array: any) => [...array, promise])
 					})
 				}
@@ -390,6 +390,7 @@ function Profile() {
               			}
               			grantCurrency={chainInfo?.label ?? 'LOL'}
               			grantCurrencyIcon={chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'}
+						grantCurrencyPair={chainInfo?.pair}
               			chainId={chainId}
               			isGrantVerified={isGrantVerified}
               			funding={funding}

@@ -200,8 +200,7 @@ function BrowseGrants() {
               				)
               			}
               			grantCurrency={chainInfo?.label ?? 'LOL'}
-						grantCurrencyChain={chainName}
-						grantCurrencyAddress={chainInfo?.address}
+						grantCurrencyPair={chainInfo?.pair}
               			grantCurrencyIcon={chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'}
               			isGrantVerified={isGrantVerified}
               			funding={funding}

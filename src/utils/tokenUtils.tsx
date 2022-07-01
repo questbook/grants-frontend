@@ -35,6 +35,7 @@ export function getChainInfo(grant: any, chainId: SupportedChainId) : ChainInfo[
 		chainInfo = {
 			address: grant.reward.token.address,
 			label: grant.reward.token.label,
+			pair: "null",
 			decimals: parseInt(grant.reward.token.decimal, 10),
 			icon: tokenIcon,
 		}

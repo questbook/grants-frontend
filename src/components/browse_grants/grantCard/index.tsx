@@ -37,8 +37,7 @@ interface GrantCardProps {
 
   grantAmount: string;
   grantCurrency: string;
-  grantCurrencyAddress: string;
-  grantCurrencyChain: string;
+  grantCurrencyPair: string;
   grantCurrencyIcon: string;
   disbursedAmount: string;
 
@@ -65,8 +64,7 @@ function GrantCard({
 
 	grantAmount,
 	grantCurrency,
-	grantCurrencyAddress,
-	grantCurrencyChain,
+	grantCurrencyPair,
 	grantCurrencyIcon,
 
 	onClick,
@@ -81,7 +79,7 @@ function GrantCard({
 
 	useEffect(() => {
 		if(grantReward === 0) {
-			calculateUSDValue(grantAmount, grantCurrencyAddress, grantCurrencyChain).then((promise: any) => {
+			calculateUSDValue(grantAmount, grantCurrencyPair).then((promise: any) => {
 				setGrantReward(promise as number)
 			})
 		}
