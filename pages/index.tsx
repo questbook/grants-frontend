@@ -15,7 +15,7 @@ import {
 import { unixTimestampSeconds } from 'src/utils/generics'
 import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
-import { getChainInfo, getChainName } from 'src/utils/tokenUtils'
+import { getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { useAccount, useConnect } from 'wagmi'
 import GrantCard from '../src/components/browse_grants/grantCard'
@@ -166,8 +166,6 @@ function BrowseGrants() {
               		grant.workspace.supportedNetworks[0]
               	)
               	const chainInfo = getChainInfo(grant, chainId)
-
-              	const chainName = getChainName(chainId)
 
               	const [isGrantVerified, funding] = verify(
               		grant.funding,

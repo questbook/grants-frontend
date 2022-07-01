@@ -16,13 +16,6 @@ export function getAssetInfo(asset?: string, chainId?: SupportedChainId) {
 	}
 }
 
-export function getChainName(chainId: SupportedChainId) {
-	const chainName =
-      CHAIN_INFO[chainId]?.shortname
-
-	return chainName
-}
-
 export function getChainInfo(grant: any, chainId: SupportedChainId) : ChainInfo['supportedCurrencies'][string] {
 	// let chainInfo: ChainInfo['supportedCurrencies'][string]
 	let tokenIcon: string

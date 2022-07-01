@@ -21,7 +21,6 @@ import { calculateUSDValue } from 'src/utils/calculatingUtils'
 import { formatAmount } from 'src/utils/formattingUtils'
 //TOOLS and UTILS
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
-import { getChainName } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { ApiClientsContext } from './_app'
 
@@ -126,8 +125,6 @@ export default function Embed() {
 				const chainId = getSupportedChainIdFromSupportedNetwork(
 					grant.workspace.supportedNetworks[0]
 				)
-
-				const chainName = getChainName(chainId)
 
 				const tokenInfo =
           CHAIN_INFO[chainId]?.supportedCurrencies[
