@@ -18,10 +18,10 @@ import {
 } from 'src/generated/graphql'
 import { DAOWorkspace } from 'src/types'
 import { calculateUSDValue } from 'src/utils/calculatingUtils'
-import {getChainName} from 'src/utils/tokenUtils'
 import { formatAmount } from 'src/utils/formattingUtils'
 //TOOLS and UTILS
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getChainName } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { ApiClientsContext } from './_app'
 
@@ -40,7 +40,7 @@ export default function Embed() {
 	const [grantRecipients, setGrantRecipients] = useState<any>([])
 
 	useEffect(() => {
-		if(router && router.query) {
+		if(router?.query) {
 			const { chainId: cId, daoId: dId } = router.query
 			setChainId(cId as unknown as SupportedChainId)
 			setDaoId(dId?.toString())
@@ -127,7 +127,7 @@ export default function Embed() {
 					grant.workspace.supportedNetworks[0]
 				)
 
-				const chainName = getChainName(chainId);
+				const chainName = getChainName(chainId)
 
 				const tokenInfo =
           CHAIN_INFO[chainId]?.supportedCurrencies[

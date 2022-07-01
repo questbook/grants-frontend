@@ -167,7 +167,7 @@ function BrowseGrants() {
               	)
               	const chainInfo = getChainInfo(grant, chainId)
 
-				const chainName = getChainName(chainId);
+              	const chainName = getChainName(chainId)
 
               	const [isGrantVerified, funding] = verify(
               		grant.funding,
@@ -200,7 +200,7 @@ function BrowseGrants() {
               				)
               			}
               			grantCurrency={chainInfo?.label ?? 'LOL'}
-						grantCurrencyPair={chainInfo?.pair}
+              			grantCurrencyPair={chainInfo?.pair}
               			grantCurrencyIcon={chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'}
               			isGrantVerified={isGrantVerified}
               			funding={funding}

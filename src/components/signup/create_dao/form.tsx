@@ -16,7 +16,6 @@ import { CHAIN_INFO } from 'src/constants/chains'
 import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from 'src/constants/chains'
 import config from 'src/constants/config.json'
 import useChainId from 'src/hooks/utils/useChainId'
-import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { useAccount, useNetwork } from 'wagmi'
 import ImageUpload from '../../ui/forms/imageUpload'
 import MultiLineInput from '../../ui/forms/multiLineInput'
@@ -58,7 +57,6 @@ function Form({
 			})
 		  )
 	)
-	const [stringAbout, setStringAbout] = React.useState<string>()
 	const [daoAboutError, setDaoAboutError] = React.useState(false)
 
 	const [image, setImage] = React.useState<string>(config.defaultDAOImagePath)
@@ -102,20 +100,8 @@ function Form({
 			convertToRaw(daoAbout.getCurrentContent())
 		  )
 
-		if(aboutString !== '') {
-			const newAboutHash = (await uploadToIPFS(aboutString)).hash
-			setStringAbout(newAboutHash)
-		}
-
-		console.log(stringAbout)
-
 		if(!daoName || daoName.length === 0) {
 			setDaoNameError(true)
-			error = true
-		}
-
-		if(!stringAbout || stringAbout.length !== 0) {
-			setDaoAboutError(true)
 			error = true
 		}
 
@@ -131,14 +117,16 @@ function Form({
 			return
 		}
 
-		// onFormSubmit({
-		// 	name: daoName,
-		// 	bio: daoBio,
-		// 	about: stringAbout!,
-		// 	image: imageFile,
-		// 	network: chainId!,
-		// 	ownerId: accountData?.address ?? '0x0000000000000000000000000000000000000000',
-		// })
+		console.log(aboutString, daoBio)
+
+		onFormSubmit({
+			name: daoName,
+			bio: daoBio,
+			about: aboutString,
+			image: imageFile,
+			network: chainId!,
+			ownerId: accountData?.address ?? '0x0000000000000000000000000000000000000000',
+		})
 	}
 
 	useEffect(() => {

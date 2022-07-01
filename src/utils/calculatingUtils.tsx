@@ -9,7 +9,7 @@ export const calculateUSDValue = async(value: number | string | any, tokenPair: 
  }
 }
 `
-const priceQuery = `
+	const priceQuery = `
 {
 	bundle(id: "1" ) {
 	 ethPrice
@@ -21,7 +21,7 @@ const priceQuery = `
    }
   }
 `
- 	let amount = 0;
+ 	let amount = 0
 
 	const client = createClient({
 		url: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2',
@@ -40,7 +40,7 @@ const priceQuery = `
 	if(tokenPair === '0x0') {
 		await fetchWethPrice()
 	} else if(tokenPair !== 'null') {
-		await fetchTokenPrice();
+		await fetchTokenPrice()
 	}
 
 	return amount

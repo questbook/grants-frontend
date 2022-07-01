@@ -17,10 +17,10 @@ export function getAssetInfo(asset?: string, chainId?: SupportedChainId) {
 }
 
 export function getChainName(chainId: SupportedChainId) {
-	let chainName =
+	const chainName =
       CHAIN_INFO[chainId]?.shortname
 
-	return chainName;
+	return chainName
 }
 
 export function getChainInfo(grant: any, chainId: SupportedChainId) : ChainInfo['supportedCurrencies'][string] {
@@ -35,7 +35,7 @@ export function getChainInfo(grant: any, chainId: SupportedChainId) : ChainInfo[
 		chainInfo = {
 			address: grant.reward.token.address,
 			label: grant.reward.token.label,
-			pair: "null",
+			pair: 'null',
 			decimals: parseInt(grant.reward.token.decimal, 10),
 			icon: tokenIcon,
 		}

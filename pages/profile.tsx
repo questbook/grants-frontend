@@ -390,7 +390,7 @@ function Profile() {
               			}
               			grantCurrency={chainInfo?.label ?? 'LOL'}
               			grantCurrencyIcon={chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'}
-						grantCurrencyPair={chainInfo?.pair}
+              			grantCurrencyPair={chainInfo?.pair}
               			chainId={chainId}
               			isGrantVerified={isGrantVerified}
               			funding={funding}
