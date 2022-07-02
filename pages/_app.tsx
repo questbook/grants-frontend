@@ -188,11 +188,11 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			</Head>
 			<WagmiConfig client={client}>
 				<ApiClientsContext.Provider value={apiClients}>
-					<ChakraProvider theme={theme}>
-						<WebwalletContext.Provider value={webwalletContextValue}>
+					<WebwalletContext.Provider value={webwalletContextValue}>
+						<ChakraProvider theme={theme}>
 							{getLayout(<Component {...pageProps} />)}
-						</WebwalletContext.Provider>
-					</ChakraProvider>
+						</ChakraProvider>
+					</WebwalletContext.Provider>
 				</ApiClientsContext.Provider>
 			</WagmiConfig>
 		</>
