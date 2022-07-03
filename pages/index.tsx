@@ -142,6 +142,7 @@ function BrowseGrants() {
 
 	return (
 		<Flex
+			w="100%"
 			ref={containerRef}
 			direction="row"
 			justify="center">
