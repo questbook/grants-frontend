@@ -13,11 +13,11 @@ import {
     Button
 } from '@chakra-ui/react';
 import NavbarLayout from '../src/layout/navbarLayout';
-import { WebwalletContext } from './_app';
+import { GitHubTokenContext, WebwalletContext } from './_app';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import { Biconomy } from '@biconomy/mexa';
-
+import redirect from 'nextjs-redirect'
 
 const EIP712_SAFE_TX_TYPE = {
     // "SafeTx(address to,uint256 value,bytes data,uint8 operation,uint256 safeTxGas,uint256 baseGas,uint256 gasPrice,address gasToken,address refundReceiver,uint256 nonce)"
@@ -35,23 +35,7 @@ const EIP712_SAFE_TX_TYPE = {
     ]
 }
 import { route } from 'next/dist/server/router';
-
-
-const getWebwalletLocally = () => {
-    const webwalletPrivateKey = localStorage.getItem('webwalletPrivateKey');
-    if (!webwalletPrivateKey) {
-        return undefined;
-    }
-    try {
-        const webwallet = new Wallet(webwalletPrivateKey);
-        return webwallet;
-    }
-    catch {
-        return undefined;
-    }
-}
-
-
+import { useRouter } from 'next/router';
 
 const config = {
     contract: {
@@ -104,53 +88,86 @@ let biconomyWalletClient;
 let contract;
 let scwAddress;
 
-export const createWebwallet = () => {
-    const localWebwallet = getWebwalletLocally();
-    if (localWebwallet) {
-        return localWebwallet;
-    }
-    else {
-        newWebwallet = Wallet.createRandom();
-    }
-    console.log(newWebwallet);
-}
+// export const createWebwallet = (localWebwallet) => {
+//     if (localWebwallet) 
+//         return localWebwallet;
+//     else return Wallet.createRandom();
+// }
+
+// const getWebwalletLocally = () => {
+//     const webwalletPrivateKey = localStorage.getItem('webwalletPrivateKey');
+//     if (!webwalletPrivateKey) {
+//         return undefined;
+//     }
+//     try {
+//         const webwallet = new Wallet(webwalletPrivateKey);
+//         return webwallet;
+//     }
+//     catch {
+//         return undefined;
+//     }
+// }
 
 function SignupWebwallet(props) {
 
-    // const { webwallet, setWebwallet } = useContext(WebwalletContext);
-    const [ webwallet, setWebwallet ] = useState(null);
+    const { webwallet, setWebwallet } = useContext(WebwalletContext);
+    const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext);
+    const [nonce, setNonce] = useState();
+
     const [currentNumber, setCurrentNumber] = useState(31);
-    const [loggedInGitHub, setLoggedInGitHub] = useState(true);
+
+    const router = useRouter();
+
+    const signNonce = async (nonce) => {
+        let nonceHash = ethers.utils.hashMessage(nonce);
+        let nonceSig = await webwallet.signMessage(nonce);
+        nonceSig = ethers.utils.splitSignature(nonceSig);
+
+        return { v: nonceSig.v, r: nonceSig.r, s: nonceSig.s, transactionHash: nonceHash };
+    }
+
+    const getNonce = async () => {
+
+    }
 
     useEffect(async () => {
-        let newWebwallet = createWebwallet();
-        let res = await axios.post("https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/get_nonce",
-        {
-            webwallet_address: newWebwallet.address
-        });
-        let res2 = await axios.post("https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/check",
-        {
-            data : { 
-                signedNonce: {v: 2, r: "2", s: "4", transactionHash: "0x111"},
-                nonce: "1112",
-                webwallet_address: "0x111"
+        let res = await
+            axios.post("http://localhost:3001/v0/get_nonce",
+                {
+                    webwallet_address: webwallet.address
+                });
+        if (res.data) {
+            console.log("THIS IS DATA", res.data);
+            if (res.data.nonce === "Token expired")
+                setIsLoggedIn(false);
+            else {
+                let _nonce = res.data.nonce;
+                let signedNonce = await signNonce(_nonce);
+                console.log("SignedNonce", signedNonce);
+                let res2 = await axios.post("http://localhost:3001/v0/check",
+                    {
+                        data: {
+                            signedNonce: signedNonce,
+                            nonce: _nonce,
+                            webwallet_address: "0x38FC46E8f99E337C580A7B90889aF9f1E4B3A0EC"
+                        }
+                    })
+                console.log("THIS IS RES222", res2);
+                setNonce(nonce);
+
+                setIsLoggedIn(true);
             }
-        })
-        console.log("THIS IS RES", res2);
-        if(res.data){
-            if(res.data.nonce === "Token expired")
-                setLoggedInGitHub(false); 
-            else setLoggedInGitHub(true);
         }
+
+
     }, [])
 
     useEffect(() => {
-        console.log("HERE ARE STATES", loggedInGitHub, webwallet)
-        if(!loggedInGitHub && webwallet){
-            console.log("THIS IS WEBWALLET", webwallet);
-            window.location.replace(`https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}`);
+        if (!isLoggedIn && webwallet) {
+            // redirect(`https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}`)
+            // window.location.replace(`https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}`);
         }
-    }, [loggedInGitHub, webwallet])
+    }, [isLoggedIn, webwallet])
 
     const getNumberFromContract = async () => {
         let result = await contract.retrieve();
@@ -162,10 +179,8 @@ function SignupWebwallet(props) {
     };
 
     const handleCreateWebwallet = async () => {
-        // @TODO: handle github oauth.
-        // ...
 
-        let newWebwallet = createWebwallet();
+        let newWebwallet = createWebwallet(webwallet);
         setWebwallet(newWebwallet);
 
         let jsonRpcProvider = new ethers.providers.JsonRpcProvider("https://kovan.infura.io/v3/dfaf304639664a2e900ce55509038cb2");
@@ -204,11 +219,11 @@ function SignupWebwallet(props) {
     }
 
     const deploySCW = async () => {
-        const { doesWalletExist, walletAddress } = await biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address });
+        let { doesWalletExist, walletAddress } = await biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address });
         if (!doesWalletExist) {
             console.log('Wallet does not exist');
             console.log('Deploying wallet');
-            const walletAddress = await biconomyWalletClient.checkIfWalletExistsAndDeploy({ eoa: webwallet.address }); // default index(salt) 0
+            walletAddress = await biconomyWalletClient.checkIfWalletExistsAndDeploy({ eoa: webwallet.address }); // default index(salt) 0
             console.log('Wallet deployed at address', walletAddress);
             setSCWAddress(walletAddress);
         } else {
@@ -219,8 +234,7 @@ function SignupWebwallet(props) {
     }
 
     const handleSendGaslessTransaction = async () => {
-        console.log(getDefaultProvider())
-        console.log(window.ethereum);
+
         if (!biconomy) {
             alert('Biconomy is not ready! Please wait.');
             return;
@@ -248,7 +262,7 @@ function SignupWebwallet(props) {
                 Create webwallet
             </Button>}
 
-            {webwallet &&
+            {webwallet && isLoggedIn &&
                 <form onSubmit={handleSendGaslessTransaction}>
                     <Input
                         id='number'

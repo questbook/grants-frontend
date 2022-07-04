@@ -2,6 +2,7 @@ import React, {
 	createContext,
 	ReactElement,
 	ReactNode,
+	useEffect,
 	useMemo,
 } from 'react'
 import { ChakraProvider } from '@chakra-ui/react'
@@ -104,9 +105,77 @@ export const WebwalletContext = createContext<{
 	setWebwallet: (webwallet?: Wallet) => void;
 } | null>(null);
 
+export const GitHubTokenContext = createContext<{
+	isLoggedIn?: boolean,
+	setIsLoggedIn: (isLoggedIn?: boolean) => void;
+} | null>(null);
+
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [webwallet, setWebwallet] = React.useState<Wallet>();
 	const [workspace, setWorkspace] = React.useState<MinimalWorkspace>();
+	const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>();
+
+	const getIsLoggedIn = () => {
+		if (typeof window === 'undefined')
+			return undefined;
+		
+		let _isLoggedIn = localStorage.getItem("isLoggedInGitHub");
+				
+		if (!_isLoggedIn)
+			return undefined;
+		
+		if(_isLoggedIn === "1")
+			return true;
+
+		return false;
+	}
+
+	const githubTokenContextValue = useMemo(
+		() => ({
+			isLoggedIn: getIsLoggedIn(),
+			setIsLoggedIn: (newIsLoggedIn?: boolean) => {
+				if (newIsLoggedIn) {
+					localStorage.setItem('isLoggedInGitHub', "1");
+				} else {
+					localStorage.setItem('isLoggedInGitHub', "0")
+				}
+
+				setIsLoggedIn(newIsLoggedIn);
+			}
+		})
+		, [isLoggedIn, setIsLoggedIn]
+	);
+
+	const createWebWallet = () => {
+		if (typeof window === 'undefined')
+			return undefined;
+		let privateKey = localStorage.getItem("webwalletPrivateKey");
+		if (!privateKey)
+			return undefined;
+		try {
+			const newWebwallet = new Wallet(privateKey);
+			return newWebwallet;
+		}
+
+		catch {
+			return undefined;
+		}
+	}
+	const webwalletContextValue = useMemo(
+		() => ({
+			webwallet: createWebWallet(),
+			setWebwallet: (newWebwallet?: Wallet) => {
+				if (newWebwallet) {
+					localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey);
+				} else {
+					localStorage.removeItem('webwalletPrivateKey')
+				}
+
+				setWebwallet(newWebwallet);
+			}
+		}),
+		[webwallet, setWebwallet]
+	)
 
 	const clients = useMemo(() => {
 		const clientsObject = {} as { [chainId: string]: SubgraphClient }
@@ -145,24 +214,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		[validatorApi, workspace, setWorkspace, clients, connected, setConnected]
 	)
 
-	const webwalletContextValue = useMemo(
-		() => ({
-			webwallet,
-			setWebwallet: (newWebwallet?: Wallet) => {
-				if (newWebwallet) {
-					localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey);
-				} else {
-					localStorage.removeItem('webwalletPrivateKey')
-				}
-
-				setWebwallet(newWebwallet);
-			}
-		}),
-		[webwallet, setWebwallet]
-	)
-
 	const seo = getSeo()
-
 	const getLayout = Component.getLayout ?? ((page) => page)
 	return (
 		<>
@@ -189,9 +241,11 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			<WagmiConfig client={client}>
 				<ApiClientsContext.Provider value={apiClients}>
 					<WebwalletContext.Provider value={webwalletContextValue}>
-						<ChakraProvider theme={theme}>
-							{getLayout(<Component {...pageProps} />)}
-						</ChakraProvider>
+						<GitHubTokenContext.Provider value={githubTokenContextValue}>
+							<ChakraProvider theme={theme}>
+								{getLayout(<Component {...pageProps} />)}
+							</ChakraProvider>
+						</GitHubTokenContext.Provider>
 					</WebwalletContext.Provider>
 				</ApiClientsContext.Provider>
 			</WagmiConfig>
