@@ -2,9 +2,8 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Flex, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
+import NavBar from 'src/v2/components/NavBar'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
-import ConnectedNavbar from '../components/navbar/connected'
-import SignInNavbar from '../components/navbar/notConnected'
 
 interface Props {
   children: React.ReactNode;
@@ -77,7 +76,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 
 	return (
 		<>
-			{
+			{/* {
 				connected ? (
 					<ConnectedNavbar renderTabs={renderTabs!} />
 				) : (
@@ -86,7 +85,9 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 						onGetStartedClick={() => setConnectWalletModalIsOpen(true)}
 					/>
 				)
-			}
+			} */}
+			<NavBar
+				onGetStartedClick={() => setConnectWalletModalIsOpen(true)} />
 			<Flex
 				w="100vw"
 				h="100vh"
