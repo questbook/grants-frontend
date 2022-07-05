@@ -8,15 +8,19 @@ import {
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useAccount, useConnect } from 'wagmi'
 
+enum TabIndex {
+	DISCOVER, MY_APPLICATIONS, DASHBOARD, GRANTS_AND_BOUNTIES, TRANSACTIONS, INTEGRATIONS, SETTINGS, PAYOUTS
+}
+
 const TABS = [
-	{ id: 'discover', index: 0, name: 'Discover', path: '/' },
-	{ id: 'my_applications', index: 1, name: 'My Applications', path: '/your_applications' },
-	{ id: 'dashboard', index: 2, name: 'Dashboard', path: '' },
-	{ id: 'grants_and_bounties', index: 3, name: 'Grants And Bounties', path: '' },
-	{ id: 'transactions', index: 4, name: 'Transactions', path: '' },
-	{ id: 'integrations', index: 5, name: 'Integrations', path: '' },
-	{ id: 'settings', index: 6, name: 'Settings', path: '' },
-	{ id: 'payouts', index: 7, name: 'Payouts', path: '' }
+	{ id: 'discover', index: TabIndex.DISCOVER, name: 'Discover', path: '/' },
+	{ id: 'my_applications', index: TabIndex.MY_APPLICATIONS, name: 'My Applications', path: '/your_applications' },
+	{ id: 'dashboard', index: TabIndex.DASHBOARD, name: 'Dashboard', path: '/upcoming' },
+	{ id: 'grants_and_bounties', index: TabIndex.GRANTS_AND_BOUNTIES, name: 'Grants And Bounties', path: '/your_grants' },
+	{ id: 'transactions', index: TabIndex.TRANSACTIONS, name: 'Transactions', path: '/funds' },
+	{ id: 'integrations', index: TabIndex.INTEGRATIONS, name: 'Integrations', path: '/upcoming' },
+	{ id: 'settings', index: TabIndex.SETTINGS, name: 'Settings', path: '/manage_dao' },
+	{ id: 'payouts', index: TabIndex.PAYOUTS, name: 'Payouts', path: '/payouts' }
 ]
 
 function useGetTabs() {
@@ -128,4 +132,4 @@ function useGetTabs() {
 	}
 }
 
-export { useGetTabs }
+export { useGetTabs, TabIndex, TABS }

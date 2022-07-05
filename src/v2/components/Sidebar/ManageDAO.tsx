@@ -95,7 +95,6 @@ function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 					w="100%">
 					{
 						workspaces.map((workspace: MinimalWorkspace, index: number) => {
-						// console.log(workspace)
 							return (
 								<Flex
 									key={`${workspace.id}-${workspace.supportedNetworks[0]}`}

@@ -1,13 +1,15 @@
 import React from 'react'
 import { Box, Button, Flex, Image, useToast } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { useGetWorkspaceMembersLazyQuery } from 'src/generated/graphql'
 import { MinimalWorkspace } from 'src/types'
 import getRole from 'src/utils/memberUtils'
+import getTabFromPath from 'src/utils/tabUtils'
 import { useAccount, useConnect } from 'wagmi'
 import ManageDAO from './ManageDAO'
 import SidebarItem from './SidebarItem'
-import { useGetTabs } from './Tabs'
+import { TabIndex, useGetTabs } from './Tabs'
 
 function Sidebar() {
 	const [topTabs, bottomTabs] = useGetTabs()
@@ -16,24 +18,18 @@ function Sidebar() {
 	const { workspace, setWorkspace, subgraphClients, connected } =
     React.useContext(ApiClientsContext)!
 
+	const router = useRouter()
 	const toast = useToast()
 
-	React.useEffect(() => {
-		const savedWorkspaceData = localStorage.getItem('currentWorkspace')
-		console.log('SAVED WORKSPACE: ', savedWorkspaceData)
-	}, [])
+	const [tabSelected, setTabSelected] = React.useState<TabIndex>(getTabFromPath(router.pathname))
 
 	React.useEffect(() => {
-		console.log('TOP TABS: ', topTabs)
-		console.log('BOTTOM TABS: ', bottomTabs)
-	}, [topTabs, bottomTabs])
+		setTabSelected(getTabFromPath(router.pathname))
+	}, [router.pathname])
 
-	const [tabSelected, setTabSelected] = React.useState(topTabs[0].index)
-	// const [bottomTabSelected, setBottomTabSelected] = React.useState(bottomTabs.length > 0 ? bottomTabs[0].index : 0)
 	const [workspaces, setWorkspaces] = React.useState<MinimalWorkspace[]>([])
 
-	const getAllWorkspaces = Object.keys(subgraphClients)!.map((key) => useGetWorkspaceMembersLazyQuery({ client: subgraphClients[key].client })
-	)
+	const getAllWorkspaces = Object.keys(subgraphClients)!.map((key) => useGetWorkspaceMembersLazyQuery({ client: subgraphClients[key].client }))
 	React.useEffect(() => {
 		if(!accountData?.address) {
 			return
@@ -42,15 +38,12 @@ function Sidebar() {
 		if(!getAllWorkspaces) {
 			return
 		}
-		// if (!set) return;
 
 		const getWorkspaceData = async(userAddress: string) => {
 			try {
 				console.log('getallworkspace', getAllWorkspaces)
 				const promises = getAllWorkspaces.map(
-					// eslint-disable-next-line no-async-promise-executor
 					(allWorkspaces) => new Promise(async(resolve) => {
-						// console.log('calling grants');
 						try {
 							const { data } = await allWorkspaces[0]({
 								variables: { actorId: userAddress },
@@ -67,9 +60,6 @@ function Sidebar() {
 				)
 				Promise.all(promises).then((values: any[]) => {
 					const allWorkspacesData = [].concat(...values) as MinimalWorkspace[]
-					// setGrants([...grants, ...allGrantsData]);
-					// setCurrentPage(currentPage + 1);
-					// console.log('all workspaces', allWorkspacesData);
 					setWorkspaces([...workspaces, ...allWorkspacesData])
 
 					const savedWorkspaceData = localStorage.getItem('currentWorkspace')
@@ -86,7 +76,6 @@ function Sidebar() {
 					}
 				})
 			} catch(e) {
-				// console.log(e);
 				toast({
 					title: 'Error getting workspace data',
 					status: 'error',
@@ -124,6 +113,7 @@ function Sidebar() {
 							onClick={
 								() => {
 									setTabSelected(tab.index)
+									router.push({ pathname: tab.path })
 								}
 							}
 						/>
@@ -137,7 +127,7 @@ function Sidebar() {
 			<ManageDAO
 				workspaces={workspaces}
 				onWorkspaceClick={
-					(index: number) => {
+					(index: TabIndex) => {
 						setWorkspace(workspaces[index])
 					}
 				}
@@ -164,6 +154,7 @@ function Sidebar() {
 							onClick={
 								() => {
 									setTabSelected(tab.index)
+									router.push({ pathname: tab.path })
 								}
 							}
 						/>
