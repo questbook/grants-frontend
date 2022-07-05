@@ -1,11 +1,11 @@
 import React from 'react'
 import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { MinimalWorkspace } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import getRole from 'src/utils/memberUtils'
 import { useAccount } from 'wagmi'
-import { useRouter } from 'next/router'
 
 interface Props {
   workspaces: MinimalWorkspace[];
@@ -144,14 +144,16 @@ function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 					mx={0}
 					mt={2}
 					px={0}
-                    onClick={() => {
-                        router.push({pathname: '/onboarding/create-dao'})	
-                    }}
+					onClick={
+						() => {
+							router.push({ pathname: '/onboarding/create-dao' })
+						}
+					}
 				>
           Create New DAO
 				</Button>
 			</Flex>
-            <Flex
+			<Flex
 				bg="#E0E0EC"
 				height="2px"
 				w="100%"

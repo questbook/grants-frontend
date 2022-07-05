@@ -172,9 +172,11 @@ function Sidebar() {
         		fontSize="14px"
         		lineHeight="20px"
         		color="white"
-				onClick={() => {
-					router.push({pathname: '/onboarding/create-dao'})	
-				}}
+        		onClick={
+        			() => {
+        			router.push({ pathname: '/onboarding/create-dao' })
+        		}
+        		}
         	>
             Create your DAO
         	</Button>
