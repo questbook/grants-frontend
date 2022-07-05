@@ -3,6 +3,7 @@ import { Flex, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import NavBar from 'src/v2/components/NavBar'
+import Sidebar from 'src/v2/components/Sidebar'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
 
 interface Props {
@@ -92,16 +93,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 				w="100vw"
 				h="100vh"
 				overflow="scroll">
-				<Flex
-					position="sticky"
-					left={0}
-					top={0}
-					h="100vh"
-					maxW="240px"
-					bg="yellow"
-				>
-          Hello
-				</Flex>
+				<Sidebar />
 				{children}
 			</Flex>
 		</>
