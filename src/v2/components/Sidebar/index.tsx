@@ -133,14 +133,9 @@ function Sidebar() {
 				}
 			/>
 			<Flex
-				bg="#E0E0EC"
-				height="2px"
-				w="100%"
-				mt={2} />
-			<Flex
 				direction="column"
 				align="stretch"
-				mt={3}
+				mt={2}
 				mb={2}
 				mx={6}>
 				{
@@ -177,6 +172,9 @@ function Sidebar() {
         		fontSize="14px"
         		lineHeight="20px"
         		color="white"
+				onClick={() => {
+					router.push({pathname: '/onboarding/create-dao'})	
+				}}
         	>
             Create your DAO
         	</Button>

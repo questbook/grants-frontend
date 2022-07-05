@@ -5,6 +5,7 @@ import { MinimalWorkspace } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import getRole from 'src/utils/memberUtils'
 import { useAccount } from 'wagmi'
+import { useRouter } from 'next/router'
 
 interface Props {
   workspaces: MinimalWorkspace[];
@@ -16,16 +17,7 @@ function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 	const { data: accountData } = useAccount()
 	const [expanded, setExpanded] = React.useState(false)
 
-	//   const [member, setMember] = React.useState('');
-	//   React.useEffect(() => {
-	//     if (!workspace) return;
-	//     if (!accountData) return;
-	//     const mem = workspace.members.find(
-	//       (m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase()
-	//     );
-	//     if (!mem || !mem?.accessLevel) return;
-	//     setMember(mem.accessLevel[0].toUpperCase() + mem.accessLevel.slice(1));
-	//   }, [accountData, workspace]);
+	const router = useRouter()
 
 	return workspace && workspace.id && accountData?.address ? (
 		<Flex
@@ -152,10 +144,18 @@ function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 					mx={0}
 					mt={2}
 					px={0}
+                    onClick={() => {
+                        router.push({pathname: '/onboarding/create-dao'})	
+                    }}
 				>
           Create New DAO
 				</Button>
 			</Flex>
+            <Flex
+				bg="#E0E0EC"
+				height="2px"
+				w="100%"
+				mt={4} />
 		</Flex>
 	) : (
 		<Flex />
