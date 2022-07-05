@@ -1,18 +1,20 @@
 import React from 'react'
-import { Flex, Text, useToast } from '@chakra-ui/react'
+import { Box, Button, Flex, Image, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import { useGetWorkspaceMembersLazyQuery } from 'src/generated/graphql'
 import { MinimalWorkspace } from 'src/types'
+import getRole from 'src/utils/memberUtils'
 import { useAccount, useConnect } from 'wagmi'
+import ManageDAO from './ManageDAO'
 import SidebarItem from './SidebarItem'
 import { useGetTabs } from './Tabs'
-import ManageDAO from './ManageDAO'
 
 function Sidebar() {
 	const [topTabs, bottomTabs] = useGetTabs()
 	const { data: accountData } = useAccount()
 	const { isConnected } = useConnect()
-	const { setWorkspace, subgraphClients, connected } = React.useContext(ApiClientsContext)!
+	const { workspace, setWorkspace, subgraphClients, connected } =
+    React.useContext(ApiClientsContext)!
 
 	const toast = useToast()
 
@@ -100,7 +102,7 @@ function Sidebar() {
 			position="sticky"
 			left={0}
 			top={0}
-			h="100vh"
+			h="calc(100vh - 80px)"
 			w="20%"
 			bg="#F0F0F7"
 			direction="column"
@@ -132,13 +134,19 @@ function Sidebar() {
 				bg="#E0E0EC"
 				height="2px"
 				w="100%" />
-			<ManageDAO workspaces={workspaces} onWorkspaceClick={(index: number) => {
-				setWorkspace(workspaces[index])
-			}} />
+			<ManageDAO
+				workspaces={workspaces}
+				onWorkspaceClick={
+					(index: number) => {
+						setWorkspace(workspaces[index])
+					}
+				}
+			/>
 			<Flex
 				bg="#E0E0EC"
 				height="2px"
-				w="100%" />
+				w="100%"
+				mt={2} />
 			<Flex
 				direction="column"
 				align="stretch"
@@ -162,6 +170,27 @@ function Sidebar() {
 					))
 				}
 			</Flex>
+			<Box my="auto" />
+			{
+				workspaces.length === 0 ||
+        ((workspace && accountData?.address && getRole(workspace, accountData?.address) === 'Reviewer') && (
+        	<Button
+        		m={4}
+        		h="40px"
+        		bg="#1F1F33"
+        		leftIcon={
+        			<Image
+        				boxSize="20px"
+        			src="/ui_icons/rocket.svg" />
+        		}
+        		fontSize="14px"
+        		lineHeight="20px"
+        		color="white"
+        	>
+            Create your DAO
+        	</Button>
+        ))
+			}
 		</Flex>
 	)
 }
