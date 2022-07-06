@@ -109,13 +109,13 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
         				{partner.industry}
         			</Text>
         		</Flex>
-				{
+        		{
         			partner.website && (
         				<Link
         					href={partner.website}
         					isExternal
-							alignSelf="start"
-							mt={2}
+        					alignSelf="start"
+        					mt={2}
         				>
         					<Image
         						minH="0.75rem"
