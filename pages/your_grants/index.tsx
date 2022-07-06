@@ -6,7 +6,7 @@ import React, {
 	useRef,
 	useState,
 } from 'react'
-import { Button, Flex } from '@chakra-ui/react'
+import { Button, Flex, Text } from '@chakra-ui/react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useRouter } from 'next/router'
 import ArchivedGrantEmptyState from 'src/components/your_grants/empty_states/archived_grant'
@@ -31,7 +31,6 @@ import {
 } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
 import AddFunds from '../../src/components/funds/add_funds_modal'
-import Heading from '../../src/components/ui/heading'
 import YourGrantCard from '../../src/components/your_grants/yourGrantCard'
 import NavbarLayout from '../../src/layout/navbarLayout'
 import { formatAmount } from '../../src/utils/formattingUtils'
@@ -382,7 +381,31 @@ function YourGrants() {
 							<Flex mt={4} />
 						) : (
 							<>
-								<Heading title="Your grants" />
+								<Flex
+									mt="18px"
+									align="center"
+									justify="space-between">
+									<Text variant="heading">
+Your grants
+									</Text>
+									{
+										grants.length > 0 && (
+											<Button
+												variant="primaryV2"
+												onClick={
+													() => {
+														console.log('Create a grant!')
+														router.push({
+															pathname: '/your_grants/create_grant/',
+														})
+
+													}
+												}>
+Post a Grant / Bounty
+											</Button>
+										)
+									}
+								</Flex>
 								<Flex
 									direction="row"
 									mt={4}
