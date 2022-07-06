@@ -18,32 +18,35 @@ import axios from 'axios';
 import { ethers } from 'ethers';
 import { Biconomy } from '@biconomy/mexa';
 import redirect from 'nextjs-redirect'
-
-const EIP712_SAFE_TX_TYPE = {
-    // "SafeTx(address to,uint256 value,bytes data,uint8 operation,uint256 safeTxGas,uint256 baseGas,uint256 gasPrice,address gasToken,address refundReceiver,uint256 nonce)"
-    SafeTx: [
-        { type: "address", name: "to" },
-        { type: "uint256", name: "value" },
-        { type: "bytes", name: "data" },
-        { type: "uint8", name: "operation" },
-        { type: "uint256", name: "safeTxGas" },
-        { type: "uint256", name: "baseGas" },
-        { type: "uint256", name: "gasPrice" },
-        { type: "address", name: "gasToken" },
-        { type: "address", name: "refundReceiver" },
-        { type: "uint256", name: "nonce" },
-    ]
-}
+import { getSignedNonce, registerWebHook, sendGaslessTransaction } from '../src/utils/gaslessUtils';
 import { route } from 'next/dist/server/router';
 import { useRouter } from 'next/router';
 
 const config = {
     contract: {
-        address: "0x755910743B41377d4BE29600a7429eC3Bc9f8b25",
+        address: "0xf2A2E064Fd0BE4Eb287df20B9b24A0cDAE4A0328",
         abi: [
             {
                 "inputs": [],
-                "name": "retrieve",
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_value",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "setValue",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "value",
                 "outputs": [
                     {
                         "internalType": "uint256",
@@ -52,19 +55,6 @@ const config = {
                     }
                 ],
                 "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "num",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "store",
-                "outputs": [],
-                "stateMutability": "nonpayable",
                 "type": "function"
             }
         ]
@@ -88,12 +78,6 @@ let biconomyWalletClient;
 let contract;
 let scwAddress;
 
-// export const createWebwallet = (localWebwallet) => {
-//     if (localWebwallet) 
-//         return localWebwallet;
-//     else return Wallet.createRandom();
-// }
-
 // const getWebwalletLocally = () => {
 //     const webwalletPrivateKey = localStorage.getItem('webwalletPrivateKey');
 //     if (!webwalletPrivateKey) {
@@ -107,162 +91,117 @@ let scwAddress;
 //         return undefined;
 //     }
 // }
+const jsonRpcProvider = new ethers.providers.JsonRpcProvider("https://polygon-mumbai.g.alchemy.com/v2/lfupuQhoZXWzMzn_OJ_zD9RHK0exz_b4");
+
+const authToken = 'ce87a0be-951a-4475-ad2a-b5b5f93f278a' // authToken from the dashboard
+const apiKey = 'qPZRgkerc.afb7905a-12b8-4c90-8e6b-48479f9e58d1' // apiKey from the dashboard
+const webHookId = 'b8400628-c963-4761-9369-a14ec9ca2e6f'
+
 
 function SignupWebwallet(props) {
 
     const { webwallet, setWebwallet } = useContext(WebwalletContext);
     const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext);
-    const [nonce, setNonce] = useState();
 
+    const [nonce, setNonce] = useState();
     const [currentNumber, setCurrentNumber] = useState(31);
 
-    const router = useRouter();
-
-    const signNonce = async (nonce) => {
-        let nonceHash = ethers.utils.hashMessage(nonce);
-        let nonceSig = await webwallet.signMessage(nonce);
-        nonceSig = ethers.utils.splitSignature(nonceSig);
-
-        return { v: nonceSig.v, r: nonceSig.r, s: nonceSig.s, transactionHash: nonceHash };
-    }
-
-    const getNonce = async () => {
-
-    }
-
     useEffect(async () => {
-        let res = await
-            axios.post("http://localhost:3001/v0/get_nonce",
-                {
-                    webwallet_address: webwallet.address
-                });
-        if (res.data) {
-            console.log("THIS IS DATA", res.data);
-            if (res.data.nonce === "Token expired")
-                setIsLoggedIn(false);
-            else {
-                let _nonce = res.data.nonce;
-                let signedNonce = await signNonce(_nonce);
-                console.log("SignedNonce", signedNonce);
-                let res2 = await axios.post("http://localhost:3001/v0/check",
+        // localStorage.removeItem("webwalletPrivateKey");
+        // registerWebHook(authToken, apiKey)
+        if (webwallet) {
+            let res = await
+                axios.post("https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/get_nonce",
                     {
-                        data: {
-                            signedNonce: signedNonce,
-                            nonce: _nonce,
-                            webwallet_address: "0x38FC46E8f99E337C580A7B90889aF9f1E4B3A0EC"
-                        }
-                    })
-                console.log("THIS IS RES222", res2);
-                setNonce(nonce);
+                        webwallet_address: webwallet.address
+                    });
+            console.log(res);
+            if (res.data) {
+                console.log("THIS IS DATA", res.data);
+                if (res.data.nonce === "Token expired")
+                    setIsLoggedIn(false);
+                else {
+                    let _nonce = res.data.nonce;
+                    setNonce(_nonce);
+                    setIsLoggedIn(true);
+                }
+                // let res2 = await axios.post("http://localhost:3001/v0/check",
+                //     {
+                //         data: {
+                //             signedNonce: signedNonce,
+                //             nonce: _nonce,
+                //             webwallet_address: "0x38FC46E8f99E337C580A7B90889aF9f1E4B3A0EC"
+                //         }
+                //     })
+                // console.log("THIS IS RES222", res2);
 
-                setIsLoggedIn(true);
             }
         }
 
 
-    }, [])
+    }, [webwallet]);
 
     useEffect(() => {
-        if (!isLoggedIn && webwallet) {
-            // redirect(`https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}`)
-            // window.location.replace(`https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}`);
+        console.log("HERE ARE THE STATES", isLoggedIn, webwallet, biconomy);
+        
+        if(!webwallet){
+            setWebwallet(Wallet.createRandom());
         }
+
+        if (!isLoggedIn && webwallet) {
+            window.location.replace(`https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}`);
+        }
+
     }, [isLoggedIn, webwallet])
 
-    const getNumberFromContract = async () => {
-        let result = await contract.retrieve();
-        if (result !== 0 && result) {
-            setCurrentNumber(parseInt(currentNumber));
-        } else {
-            alert(result);
-        }
-    };
+    const initiateBiconomy = async () => {
+        console.log(webwallet, isLoggedIn, biconomy);
+        if (webwallet && isLoggedIn && !biconomy) {
 
-    const handleCreateWebwallet = async () => {
+            biconomy = new Biconomy(jsonRpcProvider,
+                {
+                    apiKey: apiKey,
+                    debug: true
+                });
 
-        let newWebwallet = createWebwallet(webwallet);
-        setWebwallet(newWebwallet);
+            biconomy.onEvent(biconomy.READY, async () => {
+                console.log('Inside biconomy ready event');
 
-        let jsonRpcProvider = new ethers.providers.JsonRpcProvider("https://kovan.infura.io/v3/dfaf304639664a2e900ce55509038cb2");
+                // here should change the contract
+                contract = new ethers.Contract(
+                    config.contract.address,
+                    config.contract.abi,
+                    webwallet
+                );
 
-        biconomy = new Biconomy(jsonRpcProvider,
-            {
-                apiKey: config.apiKey.test,
-                debug: true
+                biconomyWalletClient = biconomy.biconomyWalletClient;
+
+                console.log("CLIENT WALLET", biconomyWalletClient)
+
+                let walletAddress = await deploySCW(webwallet, biconomyWalletClient);
+                scwAddress = walletAddress;
+
+            }).onEvent(biconomy.ERROR, (error, message) => {
+                console.log(message);
+                console.log(error);
             });
-
-        biconomy.onEvent(biconomy.READY, async () => {
-            console.log('Inside biconomy ready event');
-            // Initialize your dapp here like getting user accounts etc
-            contract = new ethers.Contract(
-                config.contract.address,
-                config.contract.abi,
-                newWebwallet
-            );
-
-            walletContract = new ethers.Contract(
-                config.walletFactory.address,
-                config.walletFactory.abi,
-                newWebwallet
-            );
-
-            biconomyWalletClient = biconomy.biconomyWalletClient;
-            console.log("CLIENT WALLET", biconomyWalletClient)
-            contractInterface = new ethers.utils.Interface(config.contract.abi);
-            await deploySCW();
-            getNumberFromContract();
-        }).onEvent(biconomy.ERROR, (error, message) => {
-            // Handle error while initializing mexa
-            console.log(message);
-            console.log(error);
-        });
-    }
-
-    const deploySCW = async () => {
-        let { doesWalletExist, walletAddress } = await biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address });
-        if (!doesWalletExist) {
-            console.log('Wallet does not exist');
-            console.log('Deploying wallet');
-            walletAddress = await biconomyWalletClient.checkIfWalletExistsAndDeploy({ eoa: webwallet.address }); // default index(salt) 0
-            console.log('Wallet deployed at address', walletAddress);
-            setSCWAddress(walletAddress);
-        } else {
-            console.log(`Wallet already exists for: ${webwallet.address}`);
-            console.log(`Wallet address: ${walletAddress}`);
-            setSCWAddress(walletAddress);
         }
     }
 
-    const handleSendGaslessTransaction = async () => {
+    const handleSendGaslessTransaction = async (e) => {
+        e.preventDefault();
 
-        if (!biconomy) {
-            alert('Biconomy is not ready! Please wait.');
-            return;
-        }
+        await initiateBiconomy();
 
-        const { data } = await contract.populateTransaction.store(newNumber);
-        const safeTxBody = await biconomyWalletClient.buildExecTransaction({ data, to: config.contract.address, walletAddress: scwAddress });
-        const signature = await webwallet._signTypedData({ verifyingContract: scwAddress, chainId: ethers.BigNumber.from("42") }, EIP712_SAFE_TX_TYPE, safeTxBody)
-        let newSignature = "0x";
-        newSignature += signature.slice(2);
-
-        //contact us for personal sign code snippet
-
-        const result = await biconomyWalletClient.sendBiconomyWalletTransaction({ execTransactionBody: safeTxBody, walletAddress: scwAddress, signature: newSignature }); // signature appended
-        console.log(result);
+        let transactionHash = await sendGaslessTransaction(biconomy, contract, 'setValue', [22], config.contract.address, biconomyWalletClient,
+            scwAddress, webwallet, "80001", webHookId);
+        console.log(transactionHash);
     }
+
 
     return (
         <Flex width='100%' flexDir='row' justifyContent='center'>
-
-            {!webwallet && <Button
-                onClick={handleCreateWebwallet}
-                variant="primary"
-                my={16}>
-                Create webwallet
-            </Button>}
-
-            {webwallet && isLoggedIn &&
+            {webwallet &&
                 <form onSubmit={handleSendGaslessTransaction}>
                     <Input
                         id='number'
