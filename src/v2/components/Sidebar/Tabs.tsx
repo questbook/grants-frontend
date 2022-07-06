@@ -15,10 +15,10 @@ enum TabIndex {
 const TABS = [
 	{ id: 'discover', index: TabIndex.DISCOVER, name: 'Discover', path: '/' },
 	{ id: 'my_applications', index: TabIndex.MY_APPLICATIONS, name: 'My Applications', path: '/your_applications' },
-	{ id: 'dashboard', index: TabIndex.DASHBOARD, name: 'Dashboard', path: '/upcoming' },
+	{ id: 'dashboard', index: TabIndex.DASHBOARD, name: 'Dashboard', path: '/dashboard' },
 	{ id: 'grants_and_bounties', index: TabIndex.GRANTS_AND_BOUNTIES, name: 'Grants And Bounties', path: '/your_grants' },
 	{ id: 'transactions', index: TabIndex.TRANSACTIONS, name: 'Transactions', path: '/funds' },
-	{ id: 'integrations', index: TabIndex.INTEGRATIONS, name: 'Integrations', path: '/upcoming' },
+	{ id: 'integrations', index: TabIndex.INTEGRATIONS, name: 'Integrations', path: '/integrations' },
 	{ id: 'settings', index: TabIndex.SETTINGS, name: 'Settings', path: '/manage_dao' },
 	{ id: 'payouts', index: TabIndex.PAYOUTS, name: 'Payouts', path: '/payouts' }
 ]

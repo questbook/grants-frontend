@@ -16,34 +16,11 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 	const {
 		isDisconnected,
 		isConnected,
-		isError,
-		isIdle,
-		isConnecting,
-		isReconnecting,
 		connect,
 		connectors,
-		data: connectData,
-		status: connectStatus,
-		error,
 	} = useConnect()
-	const {
-		data: networkData,
-		pendingChainId,
-		activeChain,
-		status: networkStatus,
-	} = useNetwork()
-	const {
-		data: accountData,
-		isLoading,
-		isFetching,
-		isFetched,
-		isRefetching,
-		isSuccess,
-		status: accountStatus,
-	} = useAccount()
 	const toast = useToast()
 
-	const router = useRouter()
 	const [connectWalletModalIsOpen, setConnectWalletModalIsOpen] =
     useState(false)
 
@@ -51,10 +28,6 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 	const currentPageRef = useRef(null)
 
 	const [renderCount, setRenderCount] = useState(0)
-
-	useEffect(() => {
-		console.log('Render Count: ', renderCount)
-	}, [renderCount])
 
 	useEffect(() => {
 		if(!connected && isDisconnected) {
@@ -93,7 +66,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 				w="100vw"
 				h="100vh"
 				overflow="scroll">
-				<Sidebar />
+				{connected && <Sidebar />}
 				{children}
 			</Flex>
 		</>
