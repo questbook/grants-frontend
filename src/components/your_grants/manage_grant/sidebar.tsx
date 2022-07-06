@@ -196,13 +196,17 @@ function Sidebar({
 										committed: BigNumber.from(grant.reward.committed),
 										label: assetInfo?.label,
 										icon: assetInfo?.icon,
+										offchain: true, //todo assetInfo?.offchain
 										decimals,
 									}
 								}
-								contractFunding={grant.funding}
 								onClose={() => setIsSendFundModalOpen(false)}
 								grantId={grant.id}
 								applicationId={applicationId}
+								safe={{
+									address: '123', //todo: grant.workspace.safe.address,
+									chain: 9000001,//todo: grant.workspace.safe.chain,
+								}}
 							/>
 						</Modal>
 					)
