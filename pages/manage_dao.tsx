@@ -79,7 +79,11 @@ function ManageDAO() {
 	}, [accountData, workspace])
 
 	return (
-		<Flex>
+		<Flex
+			w="100%"
+			maxH="calc(100vh - 80px)"
+			overflowY="scroll"
+			mb={4}>
 			{
 				isAdmin ? (
 					<Flex
@@ -127,7 +131,9 @@ function ManageDAO() {
 								}
 							</Flex>
 							<Divider
-								variant="sidebar"
+								w={selected === 0 ? '70%' : '100%'}
+								bg="#A0A7A7"
+								height="1px"
 								mb={5} />
 							{
 							// eslint-disable-next-line no-nested-ternary
