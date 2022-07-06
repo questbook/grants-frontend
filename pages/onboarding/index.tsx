@@ -22,7 +22,7 @@ const OnboardingCreateDao = () => {
 	const { data: accountData } = useAccount()
 	const [step, setStep] = useState(0)
 	const [daoName, setDaoName] = useState<string>()
-	const [safeAddress, setSafeAddress] = useState<string>()
+	const [safeAddress, setSafeAddress] = useState<string | null>()
 	const [daoNetwork, setDaoNetwork] = useState<NetworkSelectOption>()
 	const [daoImageFile, setDaoImageFile] = useState<File | null>(null)
 	const [callOnContractChange, setCallOnContractChange] = useState(false)
