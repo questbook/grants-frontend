@@ -14,12 +14,14 @@ const CreateDaoFinal = ({
 	daoNetwork,
 	daoImageFile,
 	onImageFileChange,
+	safeAddress,
 	onSubmit,
 }: {
   daoName: string,
   daoNetwork: NetworkSelectOption,
 	daoImageFile: File | null,
 	onImageFileChange: (image: File | null) => void
+	safeAddress: string | null
 	onSubmit: (() => Promise<void>) | null
 }) => {
 	const provider = useProvider()
@@ -66,8 +68,11 @@ const CreateDaoFinal = ({
 	return (
 		<>
 			<Heading variant={'small'}>
-        My DAO
+        		My Domain
 			</Heading>
+			<Text color={'brandSubtext'}>
+				Safe Address : {safeAddress || "Not attached"}
+			</Text>
 			<Flex mt={6}>
 
 				<DaoImageUpload
@@ -147,7 +152,7 @@ const CreateDaoFinal = ({
 					}
 					content={
 						<>
-            Create Dao
+            Create Domain
 						</>
 					}
 				/>

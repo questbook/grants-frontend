@@ -35,22 +35,13 @@ const CreateDaoNetworkSelect = ({
 	return (
 		<>
 			<Heading variant={'small'}>
-      Which network should the DAO be on?
+      			Which network are your funds on?
 			</Heading>
-
-			<AlertBanner
-				type={chainId ? 'info' : 'warning'}
-				message={
-					<>
-						Your wallet is connected to
-						{' '}
-						<span style={{ fontWeight: 500, fontSize: '14px' }}>
-							{chainId ? CHAIN_INFO[chainId].name : 'Unsupported Network'}
-						</span>
-						.
-					</>
-				}
-			/>
+			<Text
+				color={'brandSubtext'} 
+				variant={'small'}>
+					Select the network on which your multi-sig safe resides
+			</Text>
 
 			<Flex
 				alignItems={'stretch'}
@@ -69,25 +60,12 @@ const CreateDaoNetworkSelect = ({
 						w={'full'}
 						direction={'column'}
 						h={'full'}
-
 					>
 						<NetworkSelect
 							value={newDaoSelectedNetwork}
 							onChange={(newValue) => newValue && setNewDaoSelectedNetwork(newValue)}
 							placeholder="Select a network"
 						/>
-
-						{
-							newDaoSelectedNetwork && chainId !== newDaoSelectedNetwork.id && (
-								<Text
-									color={'brandSubtext'}
-									fontSize={'sm'}
-									mt={'auto'}
-								>
-							Before creating your DAO on-chain, you will be asked to switch the network in your wallet.
-								</Text>
-							)
-						}
 
 					</Flex>
 				</Flex>
