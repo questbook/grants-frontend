@@ -40,6 +40,7 @@ function AddFunds() {
 
 	return (
 		<Flex
+			w="100%"
 			direction="row"
 			justify="center">
 			<Flex

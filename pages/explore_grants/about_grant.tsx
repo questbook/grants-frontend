@@ -1,12 +1,5 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react'
-import {
-	Box,
-	Button,
-	Divider,
-	Flex,
-	Image,
-	Text,
-} from '@chakra-ui/react'
+import { Box, Button, Divider, Flex, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import Deadline from 'src/components/ui/deadline'
@@ -16,7 +9,10 @@ import VerifiedBadge from 'src/components/ui/verified_badge'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
 import { defaultChainId } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
-import { useGetGrantDetailsQuery, useGetGrantsAppliedToQuery } from 'src/generated/graphql'
+import {
+	useGetGrantDetailsQuery,
+	useGetGrantsAppliedToQuery,
+} from 'src/generated/graphql'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import verify from 'src/utils/grantUtils'
@@ -109,7 +105,11 @@ function AboutGrant() {
 	}, [data, error, loading])
 
 	useEffect(() => {
-		if(accountData && accountData?.address && accountData?.address?.length > 0) {
+		if(
+			accountData &&
+      accountData?.address &&
+      accountData?.address?.length > 0
+		) {
 			setAccount(accountData.address)
 		}
 	}, [accountData])
@@ -270,10 +270,11 @@ function AboutGrant() {
 	return (
 		<Flex
 			direction="column"
-			w="72%"
-			mx="auto"
+			w="100%"
 			mb={8}>
-			<Breadcrumbs path={['Explore Grants', 'About Grant']} />
+			<Box ml="15px">
+				<Breadcrumbs path={['Explore Grants', 'About Grant']} />
+			</Box>
 			{
 				!acceptingApplications && (
 					<Flex
@@ -327,10 +328,13 @@ function AboutGrant() {
 					</Flex>
 				)
 			}
-			<Flex direction="row">
+			<Flex
+				direction="row"
+				justify="center"
+				w="100%">
 				<Flex
 					direction="column"
-					w="64%">
+					w="54%">
 					<Text
 						variant="heading"
 						mt="18px">
