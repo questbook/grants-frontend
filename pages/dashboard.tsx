@@ -3,7 +3,9 @@ import { ReactElement } from "react";
 import NavbarLayout from "src/layout/navbarLayout";
 
 function Dashboard() {
-    return <Flex />
+    return <Flex w="100%" h="100vh" justify="center" align="center">
+        Coming soon...
+    </Flex>
 }
 
 Dashboard.getLayout = function(page: ReactElement) {
