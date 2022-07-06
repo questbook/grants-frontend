@@ -112,15 +112,16 @@ function YourApplications() {
 	return (
 		<Flex
 			ref={containerRef}
-			w="100%">
+			w="100%"
+		>
 			<Flex
 				flex={1}
-				display="flex"
-				flexDirection="column"
-				maxW="834px"
+				direction="column"
+				maxW="65%"
 				alignItems="stretch"
 				pb={8}
 				px={10}
+				mx="auto"
 			>
 				<Heading title="My Applications" />
 
