@@ -7,10 +7,11 @@ import useWorkspaceRegistryContract from 'src/hooks/contracts/useWorkspaceRegist
 import getErrorMessage from 'src/utils/errorUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
+import ConnectWalletModal from 'src/v2/components/ConnectWalletModal'
+import CreateDaoFinal from 'src/v2/components/Onboarding/CreateDao/CreateDaoFinal'
 import CreateDaoNameInput from 'src/v2/components/Onboarding/CreateDao/CreateDaoNameInput'
 import CreateDaoNetworkSelect from 'src/v2/components/Onboarding/CreateDao/CreateDaoNetworkSelect'
 import CreateDaoSafeAddressInput from 'src/v2/components/Onboarding/CreateDao/CreateDaoSafeInput'
-import CreateDaoFinal from 'src/v2/components/Onboarding/CreateDao/CreateDaoFinal'
 import { NetworkSelectOption } from 'src/v2/components/Onboarding/SupportedNetworksData'
 import CreateDaoModal from 'src/v2/components/Onboarding/UI/CreateDaoModal'
 import BackgroundImageLayout from 'src/v2/components/Onboarding/UI/Layout/BackgroundImageLayout'
@@ -22,11 +23,14 @@ const OnboardingCreateDao = () => {
 	const { data: accountData } = useAccount()
 	const [step, setStep] = useState(0)
 	const [daoName, setDaoName] = useState<string>()
-	const [safeAddress, setSafeAddress] = useState<string | null>()
+	const [safeAddress, setSafeAddress] = useState<string>('')
 	const [daoNetwork, setDaoNetwork] = useState<NetworkSelectOption>()
 	const [daoImageFile, setDaoImageFile] = useState<File | null>(null)
 	const [callOnContractChange, setCallOnContractChange] = useState(false)
 	const [currentStep, setCurrentStep] = useState<number>()
+
+	const [connectWalletModalIsOpen, setConnectWalletModalIsOpen] = useState<boolean>(false)
+	const [switchNetworkDialogue, setSwitchNetworkDialogue] = useState(false)
 
 	const { activeChain, switchNetworkAsync, data } = useNetwork()
 	const {
@@ -42,12 +46,28 @@ const OnboardingCreateDao = () => {
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
 
-	const createWorkspace = async() => {
-		if(!signer) {
-			const connector = connectors.find((x) => x.id === 'injected')
-			connect(connector)
-			//todo allow wallet connect
+	const { data: signer } = useSigner()
+	console.log('signer', signer)
+	const { data: networkData } = useNetwork()
+
+	useEffect(() => {
+		if(accountData?.address && signer && connectWalletModalIsOpen) {
+			setConnectWalletModalIsOpen(false)
+			createWorkspace()
 		}
+	}, [accountData, signer])
+
+	const createWorkspace = async() => {
+
+		console.log('accountData?.address', accountData?.address)
+		console.log('signer', signer)
+		if(!signer) {
+			// const connector = connectors.find((x) => x.id === 'injected')
+			// connect(connector)
+			setConnectWalletModalIsOpen(true)
+			return
+		}
+
 		setCallOnContractChange(false)
 		setCurrentStep(0)
 		try {
@@ -118,7 +138,6 @@ const OnboardingCreateDao = () => {
 	}, [workspaceRegistryContract])
 	useEffect(() => console.log('data', data), [data])
 
-	const { data: signer } = useSigner()
 
 	const steps = [
 		<CreateDaoNameInput
@@ -142,7 +161,8 @@ const OnboardingCreateDao = () => {
 		/>,
 		<CreateDaoSafeAddressInput
 			key={'createdao-onboardingstep-2'}
-			onSubmit={(address) => {
+			onSubmit={
+				(address) => {
 					setSafeAddress(address)
 					nextClick()
 				}
@@ -231,6 +251,9 @@ const OnboardingCreateDao = () => {
 				}
 				currentStep={currentStep}
 			/>
+			<ConnectWalletModal
+				isOpen={connectWalletModalIsOpen}
+				onClose={() => setConnectWalletModalIsOpen(false)} />
 		</>
 	)
 }
