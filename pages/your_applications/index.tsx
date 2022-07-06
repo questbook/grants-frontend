@@ -1,8 +1,7 @@
 import React, {
 	ReactElement, useCallback, useContext, useEffect, useRef,
 } from 'react'
-import {
-	Container, Flex,
+import { Flex,
 } from '@chakra-ui/react'
 import BN from 'bn.js'
 import { useRouter } from 'next/router'
@@ -111,12 +110,10 @@ function YourApplications() {
 	}, [handleScroll])
 
 	return (
-		<Container
+		<Flex
 			ref={containerRef}
-			maxW="100%"
-			display="flex"
-			px="70px">
-			<Container
+			w="100%">
+			<Flex
 				flex={1}
 				display="flex"
 				flexDirection="column"
@@ -215,8 +212,8 @@ function YourApplications() {
 					)
 				}
 
-			</Container>
-		</Container>
+			</Flex>
+		</Flex>
 	)
 }
 

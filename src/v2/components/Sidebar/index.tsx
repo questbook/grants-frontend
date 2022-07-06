@@ -92,9 +92,10 @@ function Sidebar() {
 			left={0}
 			top={0}
 			h="calc(100vh - 80px)"
-			w="20%"
+			w="25vw"
 			bg="#F0F0F7"
 			direction="column"
+			overflowY="scroll"
 		>
 			<Flex
 				direction="column"
