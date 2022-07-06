@@ -228,6 +228,7 @@ function Form({
 		.map((address) => CHAIN_INFO[currentChain]?.supportedCurrencies[address])
 		.map((currency) => ({ ...currency, id: currency.address }))
 
+	console.log(supportedCurrencies)
 	const [rewardCurrency, setRewardCurrency] = React.useState(supportedCurrencies.length > 0
 		? supportedCurrencies[0].label : '')
 	const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(

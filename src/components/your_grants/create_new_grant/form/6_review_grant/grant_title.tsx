@@ -1,20 +1,11 @@
-import React from 'react'
 import { Box, Flex, Text } from '@chakra-ui/react'
-import SingleLineInput from '../../../ui/formsV2/singleLineInput'
+import SingleLineInput from 'src/components/ui/formsV2/singleLineInput'
 
-function Title({
+function ReviewGrantTitle({
 	title,
 	setTitle,
 	titleError,
-	setTitleError,
-	maxDescriptionLength,
-}: {
-  title: string;
-  setTitle: (title: string) => void;
-  titleError: boolean;
-  setTitleError: (titleError: boolean) => void;
-  maxDescriptionLength: number;
-}) {
+	setTitleError, }) {
 	return (
 		<Flex
 			direction="column"
@@ -54,30 +45,8 @@ function Title({
 				maxLength={300}
 			/>
 
-			<Box mt={'5px'}>
-				<Box
-					display={'flex'}
-					flexDirection={'row'}
-					mb={'8px'}>
-					<img src='/new_icons/idea_bulb.svg' />
-					<Text
-						fontSize={'14px'}
-						fontWeight={'500'}
-						marginLeft={'10px'}>
-						For example, here’s how others write a grant title:
-					</Text>
-				</Box>
-				<ul style={{ paddingLeft: '20px', fontSize:'14px' }}>
-					<li>
-						Example 1
-					</li>
-					<li>
-						Example 2
-					</li>
-				</ul>
-			</Box>
 		</Flex>
 	)
 }
 
-export default Title
+export default ReviewGrantTitle

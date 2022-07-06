@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import React, { useEffect, useState } from 'react'
 import {
-	Box, } from '@chakra-ui/react'
+	Box, Text, } from '@chakra-ui/react'
 import {
 	Token,
 	WorkspaceUpdateRequest,
@@ -14,24 +14,29 @@ import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { supportedNetworks } from 'src/v2/components/Onboarding/SupportedNetworksData'
 import { useAccount } from 'wagmi'
-import applicantDetailsList from '../../../../constants/applicantDetailsList'
+import applicantDetailsList from '../../../../constants/newApplicantDetailsList'
 import strings from '../../../../constants/strings.json'
 import Title from './1_title'
 import Details from './2_details'
 import ApplicantDetails from './3_applicantDetails'
 import EvaluationDetails from './4_evaluation'
 import GrantRewardsInput from './5_rewards'
+import ReviewGrant from './6_review_grant'
+import CreateGrantsModal from './CreateGrantModal'
 
 function NewForm({
 	refs,
 	onSubmit,
+	currentStep,
 	hasClicked,
 	currentState,
 	setCurrentState
 }: {
   refs: any[];
   onSubmit: (data: any) => void;
+  currentStep: number;
   hasClicked: boolean;
   currentState: number;
   setCurrentState: (data: any) => void;
@@ -54,7 +59,7 @@ function NewForm({
 	const { data: accountData } = useAccount()
 	const maxDescriptionLength = 300
 	const [title, setTitle] = useState('')
-	const [summary, setSummary] = useState('')
+	const [summary, setSummary] = useState('New grants')
 
 	const [pk, setPk] = React.useState<string>('*')
 	const {
@@ -152,21 +157,14 @@ function NewForm({
 
 	const applicantDetails = applicantDetailsList
 		.map(({
-			title, tooltip, id, inputType, isRequired,
+			title, id, inputType, isRequired, mandatory
 		}, index) => {
-			if(index === applicantDetailsList.length - 1) {
-				return null
-			}
-
-			if(index === applicantDetailsList.length - 2) {
-				return null
-			}
 
 			return {
 				title,
 				required: isRequired ?? false,
+				mandatory: mandatory ?? false,
 				id,
-				tooltip,
 				index,
 				inputType,
 			}
@@ -230,8 +228,8 @@ function NewForm({
 		.map((address) => CHAIN_INFO[currentChain]?.supportedCurrencies[address])
 		.map((currency) => ({ ...currency, id: currency.address }))
 
-	const [rewardCurrency, setRewardCurrency] = React.useState(supportedCurrencies.length > 0
-		? supportedCurrencies[0].label : '')
+
+	const [rewardCurrency, setRewardCurrency] = React.useState('')
 	const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
 		supportedCurrencies.length > 0 ? supportedCurrencies[0].id : '',
 	)
@@ -269,34 +267,30 @@ function NewForm({
 	const [dateError, setDateError] = React.useState(false)
 
 	const handleOnSubmit = () => {
+		console.log('handleOnSubmit called')
 		let error = false
 		if(title.length <= 0) {
 			setTitleError(true)
 			error = true
-		}
-
-		if(summary.length <= 0) {
-			setSummaryError(true)
-			error = true
+			console.log('error found in title')
 		}
 
 		if(!details.getCurrentContent().hasText()) {
 			setDetailsError(true)
 			error = true
+			console.log('error found in details')
 		}
 
-		// if (extraField && extraFieldDetails.length <= 0) {
-		//   setExtraFieldError(true);
-		//   error = true;
-		// }
 		if(reward.length <= 0) {
 			setRewardError(true)
 			error = true
+			console.log('error found in rewards')
 		}
 
 		if(date.length <= 0) {
 			setDateError(true)
 			error = true
+			console.log('error found in date')
 		}
 
 		if(customFieldsOptionIsVisible) {
@@ -305,6 +299,7 @@ function NewForm({
 				if(customField.value.length <= 0) {
 					errorCheckedCustomField.isError = true
 					error = true
+					console.log('error found in custom fields')
 				}
 
 				return errorCheckedCustomField
@@ -321,6 +316,7 @@ function NewForm({
 					if(defaultMilestoneField.value.length <= 0) {
 						errorCheckedDefaultMilestoneField.isError = true
 						error = true
+						console.log('error found in milestones')
 					}
 
 					return errorCheckedDefaultMilestoneField
@@ -335,11 +331,13 @@ function NewForm({
 				if(rubric.name.length <= 0) {
 					errorCheckedRubric.nameError = true
 					error = true
+					console.log('error found in rubric name')
 				}
 
 				if(rubric.description.length <= 0) {
 					errorCheckedRubric.descriptionError = true
 					error = true
+					console.log('error found in rubric description')
 				}
 
 				return errorCheckedRubric
@@ -348,6 +346,7 @@ function NewForm({
 		}
 
 		if(!error) {
+			console.log('no error found')
 			const detailsString = JSON.stringify(
 				convertToRaw(details.getCurrentContent()),
 			)
@@ -456,6 +455,10 @@ function NewForm({
 			onSubmit(s)
 		}
 	}
+
+	useEffect(() => {
+		console.log('currentStep', currentStep)
+	}, [currentStep])
 
 	useEffect(() => {
 		if(newPkTransactionData && newPublicKey && newPublicKey.publicKey) {
@@ -574,7 +577,7 @@ function NewForm({
 		console.log('Data from cache: ', formData)
 
 		setTitle(formData?.title)
-		setSummary(formData?.summary)
+		// setSummary(formData?.summary)
 		if(formData?.details) {
 			setDetails(
 				EditorState.createWithContent(convertFromRaw(formData?.details)),
@@ -669,7 +672,7 @@ function NewForm({
 			shouldEncryptReviews,
 		}
 		console.log(JSON.stringify(formData))
-		localStorage.setItem(getKey, JSON.stringify(formData))
+		// localStorage.setItem(getKey, JSON.stringify(formData))
 
 	}, [
 		details,
@@ -702,10 +705,6 @@ function NewForm({
 							setTitle={setTitle}
 							titleError={titleError}
 							setTitleError={setTitleError}
-							summary={summary}
-							setSummary={setSummary}
-							summaryError={summaryError}
-							setSummaryError={setSummaryError}
 							maxDescriptionLength={maxDescriptionLength}
 						/>
 					</Box>
@@ -721,6 +720,8 @@ function NewForm({
 							setDetails={setDetails}
 							detailsError={detailsError}
 							setDetailsError={setDetailsError}
+							currentState={currentState}
+							setCurrentState={setCurrentState}
 						/>
 					</Box>
 				) : null
@@ -733,12 +734,6 @@ function NewForm({
 						<ApplicantDetails
 							detailsRequired={detailsRequired}
 							toggleDetailsRequired={toggleDetailsRequired}
-							// extraField={extraField}
-							// setExtraField={setExtraField}
-							// extraFieldDetails={extraFieldDetails}
-							// setExtraFieldDetails={setExtraFieldDetails}
-							// extraFieldError={extraFieldError}
-							// setExtraFieldError={setExtraFieldError}
 							customFields={customFields}
 							setCustomFields={setCustomFields}
 							customFieldsOptionIsVisible={customFieldsOptionIsVisible}
@@ -749,7 +744,8 @@ function NewForm({
 							setMilestoneSelectOptionIsVisible={setMilestoneSelectOptionIsVisible}
 							defaultMilestoneFields={defaultMilestoneFields}
 							setDefaultMilestoneFields={setDefaultMilestoneFields}
-
+							shouldEncrypt={shouldEncrypt}
+							setShouldEncrypt={setShouldEncrypt}
 							setMaximumPoints={setMaximumPoints}
 						/>
 					</Box>
@@ -796,8 +792,94 @@ function NewForm({
 				) : null
 			}
 
+			{
+				currentState === 5 ? (
+					<>
+						<ReviewGrant
+							title={title}
+							setTitle={setTitle}
+							titleError={titleError}
+							setTitleError={setTitleError}
+							details={details}
+							setDetails={setDetails}
+							detailsError={detailsError}
+							setDetailsError={setDetailsError}
+							applicantDetailsList={applicantDetailsList}
+							detailsRequired={detailsRequired}
+							toggleDetailsRequired={toggleDetailsRequired}
+							customFieldsOptionIsVisible={customFieldsOptionIsVisible}
+							setCustomFieldsOptionIsVisible={setCustomFieldsOptionIsVisible}
+							customFields={customFields}
+							setCustomFields={setCustomFields}
+							milestoneSelectOptionIsVisible={milestoneSelectOptionIsVisible}
+							defaultMilestoneFields={defaultMilestoneFields}
+							setDefaultMilestoneFields={setDefaultMilestoneFields}
+							setMilestoneSelectOptionIsVisible={setMilestoneSelectOptionIsVisible}
+							shouldEncrypt={shouldEncrypt}
+							setShouldEncrypt={setShouldEncrypt}
+							rubricRequired={rubricRequired}
+							setRubricRequired={setRubricRequired}
+							rubrics={rubrics}
+							setRubrics={setRubrics}
+							supportedCurrencies={supportedCurrencies}
+							reward={reward}
+							setReward={setReward}
+							rewardError={rewardError}
+							setRewardError={setRewardError}
+							rewardCurrency={rewardCurrency}
+							setRewardCurrency={setRewardCurrency}
+							setRewardCurrencyAddress={setRewardCurrencyAddress}
+							setRewardToken={setRewardToken}
+							dateError={dateError}
+							setDateError={setDateError}
+							date={date}
+							setDate={setDate} />
+
+						<Box
+							width={'100%'}
+							as='button'
+							borderRadius='sm'
+							bg='#1F1F33'
+							color='white'
+							display={'flex'}
+							justifyContent={'center'}
+							paddingLeft={'12px'}
+							paddingRight={'12px'}
+							paddingTop={'6px'}
+							paddingBottom={'6px'}
+							onClick={
+								() => {
+									console.log('publish button clicked')
+									handleOnSubmit()
+								}
+							}>
+							<Text fontWeight={'500'}>
+                                    Publish grant
+							</Text>
+						</Box>
+					</>
+				) : null
+			}
 
 			<RenderModal />
+
+			<CreateGrantsModal
+				isOpen={currentStep !== undefined}
+				onClose={() => {}}
+				daoName={workspace?.title}
+				daoNetwork={supportedNetworks.find((network) => network.id === currentChain)}
+				daoImageFile={null}
+				steps={
+					[
+						'Connect your wallet',
+						'Uploading data to IPFS',
+						'Sign transaction',
+						'Waiting for transaction to complete',
+						'DAO created on-chain'
+					]
+				}
+				currentStep={currentStep}
+			/>
 		</>
 	)
 }

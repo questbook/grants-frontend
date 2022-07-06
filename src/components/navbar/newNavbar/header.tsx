@@ -37,27 +37,12 @@ function NavbarHeader({ currentState }:{currentState:number}) {
 						bottom={0}>
                         Let&apos;s scale contributors
 					</Text>
-				) : null
-			}
-			{
-				pageUrl.includes('review_new_grant') ? (
-					<Text
-						fontSize='5xl'
-						color={'#B6F72B'}
-						fontWeight={'700'}
-						position={'absolute'}
-						bottom={0}>
-                        Review your grant
-					</Text>
-				) : null
-			}
-			{
-				pageUrl.includes('create_new_grant') ? (
+				) : pageUrl.includes('create_new_grant') ? (
 					<Box
-
 						position={'absolute'}
-						left={0}
-						bottom={0}>
+						bottom={0}
+
+					>
 						<Box
 							display={'flex'}
 							flexDirection={'row'} >

@@ -140,7 +140,18 @@ function ContributionType() {
 			<div style={{ position: 'absolute', bottom: 0, paddingBottom: 36, paddingLeft: 40, paddingRight:40, width: '100%' }}>
 				<Box
 					display={'flex'}
-					flexDirection='row'>
+					flexDirection='row'
+					alignItems={'center'}>
+					{
+						contributionType === 'bounty' ? (
+							<Text
+								fontSize={'12px'}
+								color={'#7D7DA0'}
+								marginLeft={'auto'}>
+						You will be redirected to a survey to understand your bounty needs & use cases better.
+							</Text>
+						) : null
+					}
 					<Box
 						as='button'
 						borderRadius='sm'
@@ -151,12 +162,17 @@ function ContributionType() {
 						paddingRight={'12px'}
 						paddingTop={'6px'}
 						paddingBottom={'6px'}
-						marginLeft={'auto'}>
+						marginLeft={contributionType === 'bounty' ? '16px' : 'auto'}
+					>
 						<Text fontWeight={'500'}>
                                 Back
 						</Text>
 					</Box>
-					<Link href={'/your_grants/create_new_grant'}>
+					<Link
+						href={
+							contributionType === 'bounty' ?
+								'https://airtable.com/shrOZjffuc12E6mu7' : '/your_grants/create_new_grant'
+						}>
 						<Box
 							as='button'
 							borderRadius='sm'

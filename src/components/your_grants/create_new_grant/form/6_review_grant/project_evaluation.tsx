@@ -2,54 +2,13 @@ import { Box, Flex, Image, Text } from '@chakra-ui/react'
 import CustomSwitch from 'src/components/ui/formsV2/customSwitch'
 import SingleLineInput from 'src/components/ui/formsV2/singleLineInput'
 
-function EvaluationDetails({
+function ReviewProjectEvaluation({
 	rubricRequired,
 	setRubricRequired,
 	rubrics,
-	setRubrics,
-}:{
-    rubricRequired: boolean;
-    setRubricRequired: (rubricRequired: boolean) => void;
-    rubrics: any[];
-    setRubrics: (rubrics: any[]) => void;
-}) {
+	setRubrics }) {
 	return (
 		<Box>
-			<Flex
-				direction="column"
-				mt={8}
-				bg={'white'}
-				paddingTop={'28px'}
-				paddingBottom={'28px'}
-				paddingLeft={'32px'}
-				paddingRight={'32px'}
-				borderRadius={'4px'}
-				mb={'20px'}>
-
-				<Flex
-					alignItems={'center'}
-					flexDirection='column'>
-					<Image
-						src='/new_icons/evaluation_rubrics.svg'
-						width={'72px'}
-						mb={'8px'} />
-					<Text
-						fontSize="18px"
-						fontWeight="700"
-						lineHeight="26px"
-						letterSpacing={0}
-						mb={'8px'}
-					>
-          				Evaluate your applicants
-					</Text>
-					<Text
-						color="#717A7C"
-						fontSize="14px"
-						lineHeight="20px">
-            			Once applicants send in their applications, you can assign reviewers to each applicant.
-					</Text>
-				</Flex>
-			</Flex>
 
 			<Flex
 				mt={4}
@@ -272,4 +231,4 @@ function EvaluationDetails({
 	)
 }
 
-export default EvaluationDetails
+export default ReviewProjectEvaluation

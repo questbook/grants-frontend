@@ -1,23 +1,12 @@
-import React from 'react'
 import { Box, Flex, Text } from '@chakra-ui/react'
 import { EditorState } from 'draft-js'
 import RichTextEditor from 'src/components/ui/formsV2/richTextEditor'
 
-function Details({
+function ReviewGrantDetails({
 	details,
 	setDetails,
 	detailsError,
-	setDetailsError,
-	currentState,
-	setCurrentState
-}: {
-  details: EditorState;
-  setDetails: (details: EditorState) => void;
-  detailsError: boolean;
-  setDetailsError: (detailsError: boolean) => void;
-  currentState: number;
-  setCurrentState: (data: any) => void;
-}) {
+	setDetailsError, }) {
 	return (
 		<Flex
 			direction="column"
@@ -57,27 +46,10 @@ function Details({
 				}
 				errorText="Required"
 				maxLength={-1}
+				disabled={true}
 			/>
-			<Box
-				as='button'
-				width={'100%'}
-				justifyContent={'center'}
-				mt={'20px'}
-				onClick={
-					() => {
-						setCurrentState(currentState + 1)
-					}
-				}>
-				<Text
-					fontSize={'16px'}
-					color={'#7D7DA0'}
-					textAlign={'center'}
-					fontWeight={'700'}>
-					Skip for now
-				</Text>
-			</Box>
 		</Flex>
 	)
 }
 
-export default Details
+export default ReviewGrantDetails

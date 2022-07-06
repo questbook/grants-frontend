@@ -1,0 +1,56 @@
+export default [
+	{
+		title: 'Name',
+		id: 'applicantName',
+		inputType: 'short-form',
+		isRequired: true,
+		mandatory: true,
+	},
+	{
+		title: 'Email',
+		id: 'applicantEmail',
+		inputType: 'short-form',
+		isRequired: true,
+		mandatory: true,
+	},
+	{
+		title: 'Project name',
+		id: 'projectName',
+		inputType: 'short-form',
+		isRequired: true,
+		mandatory: true,
+	},
+	{
+		title: 'Details',
+		id: 'projectDetails',
+		inputType: 'long-form',
+		isRequired: true,
+		mandatory: true,
+	},
+	{
+		title: 'Funding breakdown',
+		id: 'fundingBreakdown',
+		inputType: 'long-form',
+		isRequired: true,
+		mandatory: true,
+	},
+	{
+		title: 'Project link',
+		id: 'projectlink',
+		inputType: 'long-form',
+		isRequired: false,
+		mandatory: false,
+	},
+	// {
+	// 	title: 'Custom Fields',
+	// 	id: 'customFields',
+	// 	inputType: 'array',
+	// 	isRequired: false,
+	// },
+	// {
+	// 	title: 'Milestones',
+	// 	id: 'isMultipleMilestones',
+	// 	inputType: 'array',
+	// 	isRequired: false,
+	// },
+]

@@ -1,56 +1,24 @@
 import React, { useEffect } from 'react'
-import {
-	Box,
-	Flex,
-	Text,
-} from '@chakra-ui/react'
-import { Token } from '@questbook/service-validator-client'
-// import Modal from 'src/components/ui/modal';
+import { Box, Flex, Text } from '@chakra-ui/react'
+import Datepicker from 'src/components/ui/formsV2/datepicker'
+import Dropdown from 'src/components/ui/formsV2/dropdown'
+import SingleLineInput from 'src/components/ui/formsV2/singleLineInput'
 import CustomTokenModal from 'src/components/ui/submitCustomTokenModal'
-import 'react-datepicker/dist/react-datepicker.css'
-import Datepicker from '../../../ui/formsV2/datepicker'
-import Dropdown from '../../../ui/formsV2/dropdown'
-import SingleLineInput from '../../../ui/formsV2/singleLineInput'
 
-function GrantRewardsInput({
+function ReviewGrantReward({
+	supportedCurrencies,
 	reward,
 	setReward,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	rewardToken,
-	setRewardToken,
 	rewardError,
 	setRewardError,
 	rewardCurrency,
 	setRewardCurrency,
 	setRewardCurrencyAddress,
-	date,
-	setDate,
+	setRewardToken,
 	dateError,
 	setDateError,
-	supportedCurrencies,
-	shouldEncrypt,
-	setShouldEncrypt,
-	shouldEncryptReviews,
-	setShouldEncryptReviews,
-}: {
-  reward: string;
-  setReward: (rewards: string) => void;
-  rewardToken: Token
-  setRewardToken: (rewardToken: Token) => void;
-  rewardError: boolean;
-  setRewardError: (rewardError: boolean) => void;
-  rewardCurrency: string;
-  setRewardCurrency: (rewardCurrency: string) => void;
-  setRewardCurrencyAddress: (rewardCurrencyAddress: string) => void;
-  date: string;
-  setDate: (date: string) => void;
-  dateError: boolean;
-  setDateError: (dateError: boolean) => void;
-  supportedCurrencies: any[];
-  shouldEncrypt: boolean;
-  setShouldEncrypt: (shouldEncrypt: boolean) => void;
-  shouldEncryptReviews: boolean;
-  setShouldEncryptReviews: (shouldEncryptReviews: boolean) => void;
+	date,
+	setDate,
 }) {
 	const [isModalOpen, setIsModalOpen] = React.useState(false)
 	const [oldDate, setOldDate] = React.useState(false)
@@ -213,4 +181,4 @@ function GrantRewardsInput({
 	)
 }
 
-export default GrantRewardsInput
+export default ReviewGrantReward
