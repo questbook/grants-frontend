@@ -28,7 +28,7 @@ const CreateDaoNameInput = ({
 		description: 'Minimum 5 characters',
 		errorFunction: (string: string) => string && string.length < 5,
 	}, {
-		description: 'Ex: Ethereum DAO, Polygon DAO.',
+		description: 'Ex: Ethereum Defi Domain, Solana NFT/Games Domain',
 		errorFunction: (string: string) => false,
 	}]
 
@@ -47,10 +47,10 @@ const CreateDaoNameInput = ({
 	return (
 		<>
 			<Text color={'brandText'}>
-        Let’s begin the adventure.
+        		Let’s begin the adventure.
 			</Text>
 			<Heading variant={'small'}>
-        What would you like to call your DAO?
+				What would you call your Domain?
 			</Heading>
 
 			<Flex
@@ -70,7 +70,7 @@ const CreateDaoNameInput = ({
 					ml={4}>
 					<Input
 						variant={'brandFlushed'}
-						placeholder={'DAO Name'}
+						placeholder={'Name of your Domain'}
 						_placeholder={
 							{
 								color: 'blue.100',
@@ -112,6 +112,7 @@ const CreateDaoNameInput = ({
 							</Flex>
 						))
 					}
+
 				</Flex>
 			</Flex>
 
