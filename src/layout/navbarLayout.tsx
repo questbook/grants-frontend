@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Flex, useToast } from '@chakra-ui/react'
-import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import NavBar from 'src/v2/components/NavBar'
 import Sidebar from 'src/v2/components/Sidebar'
-import { useAccount, useConnect, useNetwork } from 'wagmi'
+import { useConnect } from 'wagmi'
 
 interface Props {
   children: React.ReactNode;
