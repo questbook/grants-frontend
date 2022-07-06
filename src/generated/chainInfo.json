@@ -572,10 +572,10 @@
 			}
 		},
 		"qbContracts": {
-			"applications": "0x261ec50d06A2E1812bCa92a76ad98f41D7bD641A",
-			"workspace": "0xDE5DaE7a56972589f6c1D80cf3b2eE9aAa8303cF",
-			"grantFactory": "0x02961f1ba548B58A1Ffe3B381cda7CAdfC70f422",
-			"reviews": "0x03EC09846a59e1Cdd89aadAAb728B4611CcFDe78"
+			"workspace": "0xda717ab1206c59493e1E5c66F4e0712B39EC6D81",
+			"applications": "0x2d49a247AA77cA433218C9567953645bE04A7b3A",
+			"grantFactory": "0x32798CC9da06363eF2b0eE12e54cD4476D9C891a",
+			"reviews": "0xF39E0AA8cA215D41dF7c9AeB3aBa76FfdAd0951F"
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-polygon-mumbai",
 		"rpcUrls": [
