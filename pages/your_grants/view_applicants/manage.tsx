@@ -567,19 +567,6 @@ View
 						isOpen={isSendFundModalOpen}
 						onClose={() => setIsSendFundModalOpen(false)}
 						title="Send Funds"
-						rightIcon={
-							(
-								<Button
-									_focus={{}}
-									variant="link"
-									color="#AA82F0"
-									leftIcon={<Image src="/sidebar/discord_icon.svg" />}
-									onClick={() => window.open(config.supportLink)}
-								>
-              Support 24*7
-								</Button>
-							)
-						}
 					>
 						<SendFundModalContent
 							isOpen={isSendFundModalOpen}
@@ -590,6 +577,7 @@ View
 									committed: BigNumber.from(applicationData.grant.reward.committed),
 									label: assetInfo?.label,
 									icon: assetInfo?.icon,
+									offchain: true, //todo: assetInfo?.offchain,
 								}
 							}
 							contractFunding={applicationData.grant.funding}

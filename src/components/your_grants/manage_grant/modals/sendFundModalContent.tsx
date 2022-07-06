@@ -15,6 +15,7 @@ import {
 	Text,
 	ToastId,
 	useToast,
+	Input
 } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
@@ -28,6 +29,7 @@ import ERC20ABI from '../../../../contracts/abi/ERC20.json'
 import { formatAmount, parseAmount } from '../../../../utils/formattingUtils'
 import Dropdown from '../../../ui/forms/dropdown'
 import SingleLineInput from '../../../ui/forms/singleLineInput'
+import { getApplicantAddress, getFundsInSafe } from 'src/utils/safeBalances'
 
 interface Props {
   isOpen: boolean;
@@ -38,21 +40,27 @@ interface Props {
     label: string;
     icon: string;
     decimals?: number;
+	offchain: boolean;
   };
-  contractFunding: string;
+  safe: {
+	chain: number;
+	address: string;
+  }
   milestones: any[];
   applicationId: string;
   grantId: string;
+  chainId: number;
 }
 
 function ModalContent({
 	isOpen,
 	onClose,
 	rewardAsset,
-	contractFunding,
 	milestones,
 	applicationId,
 	grantId,
+	safe, 
+	chainId,
 }: Props) {
 	const apiClients = useContext(ApiClientsContext)!
 	const { workspace } = apiClients
@@ -64,6 +72,9 @@ function ModalContent({
 	const [rewardAssetDecimals, setRewardAssetDecimals] = React.useState(0)
 	const [submitClicked, setSubmitClicked] = useState(false)
 	const [submitClickedP2P, setSubmitClickedP2P] = useState(false)
+	const [safeBalance, setSafeBalance] = useState(0)
+	const [safeTransactionStep, setSafeTransactionStep] = useState(0)
+	const [applicantAddress, setApplicantAddress] = useState('')
 
 	const [walletBalance, setWalletBalance] = React.useState(0)
 	// const toast = useToast();
@@ -91,6 +102,7 @@ function ModalContent({
 		submitClicked,
 		setSubmitClicked,
 	)
+	const [recordingTransaction, setRecordingTransaction] = useState(false);
 
 	useEffect(() => {
 		if(workspace && switchNetwork && isOpen) {
@@ -114,25 +126,15 @@ function ModalContent({
 
 	}, [toast, disburseData, disburseError])
 
-	const sendFundsFromContract = async() => {
-		let hasError = false
 
-		if(selectedMilestone === -1) {
-			hasError = true
-		}
-
-		if(funding === '') {
-			setError(true)
-			hasError = true
-		}
-
-		if(hasError) {
-			return
-		}
-
-		setSubmitClicked(true)
-		setDisburseAmount(parseAmount(funding, rewardAsset.address))
-	}
+	useEffect(() => {
+		getFundsInSafe(safe.chain, safe.address, rewardAsset).then(() =>{
+			setSafeBalance(safeBalance)
+		})
+		getApplicantAddress(chainId, grantId, applicationId).then((address) => {
+			setApplicantAddress(address)
+		});
+	}, [])
 
 	const [disburseP2PAmount, setDisburseP2PAmount] = useState<any>()
 	const [
@@ -187,6 +189,14 @@ function ModalContent({
 		setDisburseP2PAmount(parseAmount(funding, rewardAsset.address, rewardAssetDecimals))
 	}
 
+	const recordTransaction = async() => {
+		// todo: record the transaction on chain
+		// confirm if transaction has completed using transaction hash & safe chain
+		setRecordingTransaction(true)
+		//if transaction not completed, show error & setRecordinTransaction(false)
+		
+	}
+
 	useEffect(() => {
 		(async function() {
 			try {
@@ -221,7 +231,7 @@ function ModalContent({
 						<Heading
 							variant="applicationHeading"
 							mt={4}>
-            Use funds from the grant smart contract
+            Send funds from Safe
 						</Heading>
 						<Flex
 							direction="row"
@@ -250,7 +260,7 @@ function ModalContent({
 										color="brand.500"
 									>
 										{
-											`${formatAmount(contractFunding.toString(), rewardAssetDecimals)} ${
+											`${formatAmount(safeBalance.toString(), rewardAssetDecimals)} ${
 												rewardAsset?.label
 											}`
 										}
@@ -311,6 +321,7 @@ function ModalContent({
 								p={0}
 								colorScheme="brand"
 								isChecked={checkedItems[1]}
+								disabled={rewardAsset.offchain}
 								onChange={() => setCheckedItems([false, true])}
 							/>
 						</Flex>
@@ -338,7 +349,7 @@ function ModalContent({
 			}
 
 			{
-				chosen === 0 && (
+				chosen === 0 && safeTransactionStep == 0 && (
 					<Flex
 						direction="column"
 						justify="start"
@@ -366,38 +377,72 @@ function ModalContent({
               Change
 							</Heading>
 						</Button>
-
 						<Flex
-							direction="row"
+							align="start"
 							justify="start"
-							align="center"
-							mt={6}>
-							<Image src={rewardAsset.icon} />
-							<Flex
-								direction="column"
-								ml={2}>
-								<Text
-									variant="applicationText"
-									fontWeight="700">
-                Funds Available
-								</Text>
-								<Text
-									fontSize="14px"
-									lineHeight="20px"
-									fontWeight="700"
-									color="brand.500"
-								>
-									{
-										`${formatAmount(contractFunding.toString(), rewardAssetDecimals)} ${
-											rewardAsset?.label
-										}`
-									}
-								</Text>
-							</Flex>
-						</Flex>
+							marginTop={2}
+							marginLeft={6}
+							marginRight={6}
+							direction="column"
+						>
+							<Text>
+						<ol>
+							<li>Copy the applicant's address below</li>
+							<li>Open your multi-sig safe &amp; transfer funds to applicant</li>
+							<li>Hit continue</li>
+						</ol>
+							</Text>
+							<Input
+								mt={4}
+								readOnly
+								value={applicantAddress}
+							/>
 
-						<Box mt={8} />
+						</Flex>
+						
+						<Button
+							variant="primary"
+							w="100%"
+							my={10}
+							onClick={() => setSafeTransactionStep(1)}
+							py={disburseLoading ? 2 : 0}
+						>
+							{disburseLoading ? <Loader /> : 'Continue'}
+						</Button>
+					</Flex>
+				)
+			}
+			{
+				chosen === 0 && safeTransactionStep == 1 && (
+					<Flex
+						direction="column"
+						justify="start"
+						align="start">
 						<Heading
+							variant="applicationHeading"
+							mt={4}>
+            Sending funds from safe
+						</Heading>
+						<Button
+							mt={1}
+							variant="link"
+							_focus={{}}
+							onClick={
+								() => {
+									setChosen(-1)
+									setSelectedMilestone(-1)
+									setFunding('')
+								}
+							}
+						>
+							<Heading
+								variant="applicationHeading"
+								color="brand.500">
+              Change
+							</Heading>
+						</Button>
+						<Heading
+							mt={4}
 							variant="applicationHeading"
 							color="#122224">
             Milestone
@@ -441,61 +486,16 @@ function ModalContent({
 								}
 							</MenuList>
 						</Menu>
-
-						<Flex
-							direction="row"
-							w="100%"
-							alignItems="start"
-							justify="space-between"
-							mt={8}
-						>
-							<Flex
-								w="70%"
-								direction="column">
-								<SingleLineInput
-									label="Amount to be disbursed"
-									placeholder="100"
-									value={funding}
-									onChange={
-										(e) => {
-											if(error) {
-												setError(false)
-											}
-
-											setFunding(e.target.value)
-										}
-									}
-									isError={error}
-									errorText="Required"
-									type="number"
-								/>
-							</Flex>
-							<Flex
-								direction="column"
-								w="25%"
-								mt="20px">
-								<Dropdown
-									listItemsMinWidth="132px"
-									listItems={
-										[
-											{
-												icon: rewardAsset?.icon,
-												label: rewardAsset?.label,
-											},
-										]
-									}
-								/>
-							</Flex>
-						</Flex>
-
+						<Input
+							placeholder='Enter Transaction Hash'
+						/>
 						<Button
 							variant="primary"
 							w="100%"
 							my={10}
-							onClick={disburseLoading ? () => {} : sendFundsFromContract}
-							py={disburseLoading ? 2 : 0}
+							onClick={() => recordTransaction()}
 						>
-							{disburseLoading ? <Loader /> : 'Send Funds'}
+							{recordingTransaction ? <Loader /> : 'Record Transaction'}
 						</Button>
 					</Flex>
 				)
