@@ -18,27 +18,6 @@ interface DaoAboutProps {
 
 function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
 
-	// const [decodedAbout, setDecodedAbout] = useState('')
-	// const getDecodedAbout = async(detailsHash: string) => {
-	// 	console.log(detailsHash)
-	// 	const d = await getFromIPFS(detailsHash)
-	// 	setDecodedAbout(d)
-	// }
-
-	// useEffect(() => {
-	// 	if(!daoAbout) {
-	// 		return
-	// 	}
-
-	// 	if(daoAbout.length) {
-	// 		getDecodedAbout(daoAbout)
-	// 	} else {
-	// 		setDecodedAbout(daoAbout)
-	// 	}
-
-	// 	console.log(decodedAbout)
-	// }, [daoAbout])
-
 	return (
 		<Grid
 			gridTemplateColumns="3fr 1fr"
@@ -105,8 +84,8 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
         		gap="0.75rem"
         	>
         		<Image
-        			h="3rem"
-        			w="3rem"
+        			minH="3rem"
+        			minW="3rem"
         			borderRadius="full"
         			src={getUrlForIPFSHash(partner.partnerImageHash) || '/illustrations/done.svg'}
         		/>
@@ -130,17 +109,17 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
         				{partner.industry}
         			</Text>
         		</Flex>
-        		{
+				{
         			partner.website && (
         				<Link
         					href={partner.website}
-        					mt={2}
-        					alignSelf="start"
         					isExternal
+							alignSelf="start"
+							mt={2}
         				>
         					<Image
-        						h="0.75rem"
-        						w="0.75rem"
+        						minH="0.75rem"
+        						minW="0.75rem"
         						src="/ui_icons/link.svg"
         					/>
         				</Link>
