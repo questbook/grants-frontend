@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Box, Flex, Heading, Skeleton, Text } from '@chakra-ui/react'
+import { Box, Flex, Heading, Text } from '@chakra-ui/react'
 import { formatEther } from 'ethers/lib/utils'
-import { CHAIN_INFO } from 'src/constants/chains'
 import useWorkspaceRegistryContract from 'src/hooks/contracts/useWorkspaceRegistryContract'
-import { GasStation } from 'src/v2/assets/custom chakra icons/GasStation'
 import { useProvider } from 'wagmi'
 import { NetworkSelectOption } from '../SupportedNetworksData'
 import ContinueButton from '../UI/Misc/ContinueButton'
@@ -71,7 +69,9 @@ const CreateDaoFinal = ({
         		My Domain
 			</Heading>
 			<Text color={'brandSubtext'}>
-				Safe Address : {safeAddress || "Not attached"}
+				Safe Address :
+				{' '}
+				{safeAddress || 'Not attached'}
 			</Text>
 			<Flex mt={6}>
 
@@ -111,7 +111,7 @@ const CreateDaoFinal = ({
 				</Flex>
 			</Flex>
 
-			<Flex
+			{/* <Flex
 				mt={14}
 				justifyContent={'center'}
 			>
@@ -135,7 +135,7 @@ const CreateDaoFinal = ({
 						</Text>
 					</Flex>
 				</Skeleton>
-			</Flex>
+			</Flex> */}
 
 			<Flex
 				mt={4}
