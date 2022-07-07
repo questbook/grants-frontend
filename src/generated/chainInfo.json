@@ -17,18 +17,21 @@
 				"icon": "/chain_assets/dai.svg",
 				"label": "DAI",
 				"address": "0xc7ad46e0b8a400bb3c915120d284aafba8fc4735",
+				"pair": "0xa478c2975ab1ea89e8196811f51a7b7ade33eb11",
 				"decimals": 18
 			},
 			"0xc778417e063141139fce010982780140aa0cd5ab": {
 				"icon": "/chain_assets/weth.svg",
 				"label": "WETH",
 				"address": "0xc778417e063141139fce010982780140aa0cd5ab",
+				"pair": "0x0",
 				"decimals": 18
 			},
 			"0xeb8f08a975ab53e34d8a0330e0d34de942c95926": {
 				"icon": "/chain_assets/usdc.svg",
 				"label": "USDC",
 				"address": "0xeb8f08a975ab53e34d8a0330e0d34de942c95926",
+				"pair": "0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc",
 				"decimals": 6
 			}
 		},
@@ -66,36 +69,42 @@
 				"icon": "/chain_assets/dai.svg",
 				"label": "DAI",
 				"address": "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1",
+				"pair": "0xa478c2975ab1ea89e8196811f51a7b7ade33eb11",
 				"decimals": 18
 			},
 			"0x4200000000000000000000000000000000000006": {
 				"icon": "/chain_assets/weth.svg",
 				"label": "WETH",
 				"address": "0x4200000000000000000000000000000000000006",
+				"pair": "0x0",
 				"decimals": 18
 			},
 			"0x7f5c764cbc14f9669b88837ca1490cca17c31607": {
 				"icon": "/chain_assets/usdc.svg",
 				"label": "USDC",
 				"address": "0x7f5c764cbc14f9669b88837ca1490cca17c31607",
+				"pair": "0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc",
 				"decimals": 6
 			},
 			"0x9e1028f5f1d5ede59748ffcee5532509976840e0": {
 				"icon": "/chain_assets/perp.svg",
 				"label": "PERP",
 				"address": "0x9e1028f5f1d5ede59748ffcee5532509976840e0",
+				"pair": "0xf66369997ae562bc9eec2ab9541581252f9ca383",
 				"decimals": 18
 			},
 			"0x8700daec35af8ff88c16bdf0418774cb3d7599b4": {
 				"icon": "/chain_assets/snx.svg",
 				"label": "SNX",
 				"address": "0x8700daec35af8ff88c16bdf0418774cb3d7599b4",
+				"pair": "0x43ae24960e5534731fc831386c07755a2dc33d47",
 				"decimals": 18
 			},
 			"0x8c6f28f2f1a3c87f0f938b96d27520d9751ec8d9": {
 				"icon": "/chain_assets/sUSD.svg",
 				"label": "sUSD",
 				"address": "0x8c6f28f2f1a3c87f0f938b96d27520d9751ec8d9",
+				"pair": "0xf80758ab42c3b07da84053fd88804bcb6baa4b5c",
 				"decimals": 18
 			}
 		},
@@ -133,18 +142,21 @@
 				"icon": "/chain_assets/dai.svg",
 				"label": "DAI",
 				"address": "0x04df6e4121c27713ed22341e7c7df330f56f289b",
+				"pair": "0xa478c2975ab1ea89e8196811f51a7b7ade33eb11",
 				"decimals": 18
 			},
 			"0xd0a1e359811322d97991e03f863a0c30c2cf029c": {
 				"icon": "/chain_assets/weth.svg",
 				"label": "WETH",
 				"address": "0xd0a1e359811322d97991e03f863a0c30c2cf029c",
+				"pair": "0x0",
 				"decimals": 18
 			},
 			"0xe22da380ee6b445bb8273c81944adeb6e8450422": {
 				"icon": "/chain_assets/usdc.svg",
 				"label": "USDC",
 				"address": "0xe22da380ee6b445bb8273c81944adeb6e8450422",
+				"pair": "0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc",
 				"decimals": 6
 			}
 		},
@@ -182,6 +194,7 @@
 				"icon": "/chain_assets/dai.svg",
 				"label": "DAI",
 				"address": "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1",
+				"pair": "0xa478c2975ab1ea89e8196811f51a7b7ade33eb11",
 				"decimals": 18
 			}
 		},
@@ -219,42 +232,49 @@
 				"icon": "/chain_assets/dai.svg",
 				"label": "DAI",
 				"address": "0x8f3cf7ad23cd3cadbd9735aff958023239c6a063",
+				"pair": "0xa478c2975ab1ea89e8196811f51a7b7ade33eb11",
 				"decimals": 18
 			},
 			"0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270": {
 				"icon": "/chain_assets/matic.svg",
 				"label": "WMATIC",
 				"address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+				"pair": "0x819f3450da6f110ba6ea52195b3beafa246062de",
 				"decimals": 18
 			},
 			"0x7ceb23fd6bc0add59e62ac25578270cff1b9f619": {
 				"icon": "/chain_assets/weth.svg",
 				"label": "WETH",
 				"address": "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+				"pair": "0x0",
 				"decimals": 18
 			},
 			"0x2791bca1f2de4661ed88a30c99a7a9449aa84174": {
 				"icon": "/chain_assets/usdc.svg",
 				"label": "USDC",
 				"address": "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
+				"pair": "0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc",
 				"decimals": 6
 			},
 			"0xd6df932a45c0f255f85145f286ea0b292b21c90b": {
 				"icon": "/chain_assets/aave.svg",
 				"label": "AAVE",
 				"address": "0xd6df932a45c0f255f85145f286ea0b292b21c90b",
+				"pair": "0xdfc14d2af169b0d36c4eff567ada9b2e0cae044f",
 				"decimals": 18
 			},
 			"0x282d8efce846a88b159800bd4130ad77443fa1a1": {
 				"icon": "/chain_assets/ocean.svg",
 				"label": "OCEAN",
 				"address": "0x282d8efce846a88b159800bd4130ad77443fa1a1",
+				"pair": "0x9b7dad79fc16106b47a3dab791f389c167e15eb0",
 				"decimals": 18
 			},
 			"0x9c2c5fd7b07e95ee044ddeba0e97a665f142394f": {
 				"icon": "/chain_assets/inch.svg",
 				"label": "1INCH",
 				"address": "0x9c2c5fd7b07e95ee044ddeba0e97a665f142394f",
+				"pair": "0x26aad2da94c59524ac0d93f6d6cbf9071d7086f2",
 				"decimals": 18
 			},
 			"0x91c89a94567980f0e9723b487b0bed586ee96aa7": {
@@ -273,12 +293,14 @@
 				"icon": "/chain_assets/boba.svg",
 				"label": "BOBA",
 				"address": "0x236ba47c763a8ee1a8f064e867d0751b1714fdf8",
+				"pair": "0xcc6c24c992059ced4a390b9d2f743645bfe1de49",
 				"decimals": 18
 			},
 			"0xd10852df03ea8b8af0cc0b09cac3f7dbb15e0433": {
 				"icon": "/chain_assets/flux.svg",
 				"label": "FLUX",
 				"address": "0xd10852df03ea8b8af0cc0b09cac3f7dbb15e0433",
+				"pair": "0x27fa67302c513f5512bbfa5065800c2d7b3871f4",
 				"decimals": 18
 			},
 			"0x3962f4a0a0051dcce0be73a7e09cef5756736712": {
@@ -297,6 +319,7 @@
 				"icon": "/chain_assets/stackos.svg",
 				"label": "STACK",
 				"address": "0x980111ae1b84e50222c8843e3a7a038f36fecd2b",
+				"pair": "0x635b58600509acfe70e0bd4c4935c08182774e58",
 				"decimals": 18
 			},
 			"0x3066818837c5e6ed6601bd5a91b0762877a6b731": {
@@ -309,12 +332,14 @@
 				"icon": "/chain_assets/uniswap.svg",
 				"label": "UNI",
 				"address": "0xb33eaad8d922b1083446dc23f610c2567fb5180f",
+				"pair": "0xd3d2e2692501a5c9ca623199d38826e513033a17",
 				"decimals": 18
 			},
 			"0xda537104d6a5edd53c6fbba9a898708e465260b6": {
 				"icon": "/chain_assets/yearn.svg",
 				"label": "YFI",
 				"address": "0xda537104d6a5edd53c6fbba9a898708e465260b6",
+				"pair": "0x2fdbadf3c4d5a8666bc06645b8358ab803996e28",
 				"decimals": 18
 			},
 			"0x9a06db14d639796b25a6cec6a1bf614fd98815ec": {
@@ -513,6 +538,7 @@
 				"icon": "/chain_assets/dai.svg",
 				"label": "DAI",
 				"address": "0x7d91e51c8f218f7140188a155f5c75388630b6a8",
+				"pair": "0xa478c2975ab1ea89e8196811f51a7b7ade33eb11",
 				"decimals": 18
 			},
 			"0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9": {
@@ -562,20 +588,22 @@
 				"icon": "/chain_assets/matic.svg",
 				"label": "WMATIC",
 				"address": "0x9c3c9283d3e44854697cd22d3faa240cfb032889",
+				"pair": "0x819f3450da6f110ba6ea52195b3beafa246062de",
 				"decimals": 18
 			},
 			"0xe6b8a5cf854791412c1f6efc7caf629f5df1c747": {
 				"icon": "/chain_assets/usdc.svg",
 				"label": "USDC",
 				"address": "0xe6b8a5cf854791412c1f6efc7caf629f5df1c747",
+				"pair": "0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc",
 				"decimals": 6
 			}
 		},
 		"qbContracts": {
-			"workspace": "0xda717ab1206c59493e1E5c66F4e0712B39EC6D81",
-			"applications": "0x2d49a247AA77cA433218C9567953645bE04A7b3A",
-			"grantFactory": "0x32798CC9da06363eF2b0eE12e54cD4476D9C891a",
-			"reviews": "0xF39E0AA8cA215D41dF7c9AeB3aBa76FfdAd0951F"
+			"applications": "0x261ec50d06A2E1812bCa92a76ad98f41D7bD641A",
+			"workspace": "0xDE5DaE7a56972589f6c1D80cf3b2eE9aAa8303cF",
+			"grantFactory": "0x02961f1ba548B58A1Ffe3B381cda7CAdfC70f422",
+			"reviews": "0x03EC09846a59e1Cdd89aadAAb728B4611CcFDe78"
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-polygon-mumbai",
 		"rpcUrls": [
@@ -605,6 +633,7 @@
 				"icon": "/chain_assets/dai.svg",
 				"label": "DAI",
 				"address": "0x7ad98aeadbbcdf3693b0b53c09da4033704c9322",
+				"pair": "0xa478c2975ab1ea89e8196811f51a7b7ade33eb11",
 				"decimals": 9
 			},
 			"0xf8ad328e98f85fccbf09e43b16dcbbda7e84beab": {
@@ -617,6 +646,7 @@
 				"icon": "/chain_assets/usdc.svg",
 				"label": "USDC",
 				"address": "0x2578c6c1ac883443388edd688ca10e87d088bfa8",
+				"pair": "0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc",
 				"decimals": 6
 			}
 		},
@@ -654,6 +684,7 @@
 				"icon": "/chain_assets/usdc.svg",
 				"label": "USDC",
 				"address": "0x985458e523db3d53125813ed68c274899e9dfab4",
+				"pair": "0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc",
 				"decimals": 6
 			}
 		},
@@ -691,18 +722,21 @@
 				"icon": "/chain_assets/usdc.svg",
 				"label": "USDC",
 				"address": "0x778fbd9df477b888534ebd84a3d2c9d5347bf149",
+				"pair": "0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc",
 				"decimals": 6
 			},
 			"0xc27255d7805fc79e4616d5cd50d6f4464aea75a3": {
 				"icon": "/chain_assets/dai.svg",
 				"label": "1DAI",
 				"address": "0xc27255d7805fc79e4616d5cd50d6f4464aea75a3",
+				"pair": "0xa478c2975ab1ea89e8196811f51a7b7ade33eb11",
 				"decimals": 18
 			},
 			"0x1e120b3b4af96e7f394ecaf84375b1c661830013": {
 				"icon": "/chain_assets/weth.svg",
 				"label": "1ETH",
 				"address": "0x1e120b3b4af96e7f394ecaf84375b1c661830013",
+				"pair": "0x0",
 				"decimals": 18
 			}
 		},
