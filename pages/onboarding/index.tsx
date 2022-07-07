@@ -105,8 +105,8 @@ const OnboardingCreateDao = () => {
 
 			setCurrentStep(2)
 			const param2 = formatBytes32String(safeAddress)
-			const param3 = hexlify(4)
-			// console.log(`param2 ${param2}`, `param3 ${param3}`)
+			const param3 = hexlify(daoNetwork?.id)
+			console.log(`param2 ${param2}`, `param3 ${param3}`)
 			const createWorkspaceTransaction = await workspaceRegistryContract.createWorkspace(ipfsHash, param2, param3)
 			setCurrentStep(3)
 			const createWorkspaceTransactionData = await createWorkspaceTransaction.wait()

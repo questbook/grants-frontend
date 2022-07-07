@@ -7,6 +7,7 @@ import {
 	Flex,
 	Heading,
 	Image,
+	Input,
 	Menu,
 	MenuButton,
 	MenuItem,
@@ -14,23 +15,21 @@ import {
 	ModalBody,
 	Text,
 	ToastId,
-	useToast,
-	Input
-} from '@chakra-ui/react'
+	useToast } from '@chakra-ui/react'
+import copy from 'copy-to-clipboard'
 import { BigNumber } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
-import copy from 'copy-to-clipboard'
 import Loader from 'src/components/ui/loader'
 import useDisburseP2PReward from 'src/hooks/useDisburseP2PReward'
 import useDisburseReward from 'src/hooks/useDisburseReward'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
+import { getFundsInSafe } from 'src/utils/safeBalances'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useContract, useNetwork, useSigner } from 'wagmi'
 import ERC20ABI from '../../../../contracts/abi/ERC20.json'
 import { formatAmount, parseAmount } from '../../../../utils/formattingUtils'
 import Dropdown from '../../../ui/forms/dropdown'
 import SingleLineInput from '../../../ui/forms/singleLineInput'
-import { getApplicantAddress, getFundsInSafe } from 'src/utils/safeBalances'
 
 interface Props {
   isOpen: boolean;
@@ -61,7 +60,7 @@ function ModalContent({
 	milestones,
 	applicationId,
 	grantId,
-	safe, 
+	safe,
 	chainId,
 	applicantReceivingAddress,
 }: Props) {
@@ -105,7 +104,7 @@ function ModalContent({
 		submitClicked,
 		setSubmitClicked,
 	)
-	const [recordingTransaction, setRecordingTransaction] = useState(false);
+	const [recordingTransaction, setRecordingTransaction] = useState(false)
 
 	useEffect(() => {
 		if(workspace && switchNetwork && isOpen) {
@@ -131,7 +130,7 @@ function ModalContent({
 
 
 	useEffect(() => {
-		getFundsInSafe(safe.chain, safe.address, rewardAsset).then(() =>{
+		getFundsInSafe(safe.chain, safe.address, rewardAsset).then(() => {
 			setSafeBalance(safeBalance)
 		})
 	}, [])
@@ -194,7 +193,7 @@ function ModalContent({
 		// confirm if transaction has completed using transaction hash & safe chain
 		setRecordingTransaction(true)
 		//if transaction not completed, show error & setRecordinTransaction(false)
-		
+
 	}
 
 	useEffect(() => {
@@ -386,7 +385,7 @@ function ModalContent({
 							direction="column"
 						>
 							{
-								["Copy applicant's address below", "Open your multi-sig safe and transfer funds to applicant", "Hit continue"].map((text, index) => (
+								["Copy applicant's address below", 'Open your multi-sig safe and transfer funds to applicant', 'Hit continue'].map((text, index) => (
 									<Flex
 										key={index}
 										direction="row"
@@ -417,7 +416,7 @@ function ModalContent({
 									</Flex>
 								))
 							}
-							
+
 							<Flex
 								direction='row'
 								mt={8}
@@ -434,21 +433,23 @@ function ModalContent({
 								/>
 								<Button
 									variant='primary'
-									onClick={() => {
-										copy(applicantReceivingAddress!)
-										setCopied(true)
-										setTimeout(() => {
-											setCopied(false)
-										}, 2000)
-									}}
+									onClick={
+										() => {
+											copy(applicantReceivingAddress!)
+											setCopied(true)
+											setTimeout(() => {
+												setCopied(false)
+											}, 2000)
+										}
+									}
 								>
-									{copied? "Copied!": "Copy"}
+									{copied ? 'Copied!' : 'Copy'}
 								</Button>
 							</Flex>
-							
+
 
 						</Flex>
-						
+
 						<Button
 							variant="primary"
 							w="100%"
