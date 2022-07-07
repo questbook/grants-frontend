@@ -279,7 +279,7 @@ function Form({
 					id: workspace.tokens[i].address,
 					address: workspace.tokens[i].address,
 					decimals: workspace.tokens[i].decimal,
-					pair: 'null',
+					pair: '',
 					label: workspace.tokens[i].label,
 					icon: getUrlForIPFSHash(workspace.tokens[i].iconHash),
 				},

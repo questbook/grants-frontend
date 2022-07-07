@@ -37,7 +37,7 @@ interface GrantCardProps {
 
   grantAmount: string;
   grantCurrency: string;
-  grantCurrencyPair: string;
+  grantCurrencyPair: string | null;
   grantCurrencyIcon: string;
   disbursedAmount: string;
 

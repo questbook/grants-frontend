@@ -211,6 +211,8 @@ export type FundsTransfer = {
   sender: Scalars['Bytes'];
   /** The address to which funds were sent */
   to: Scalars['Bytes'];
+  /** Hash/signature of the transaction */
+  transactionHash?: Maybe<Scalars['Bytes']>;
   /** What the type of funds transfer is */
   type: FundsTransferType;
 };
@@ -347,6 +349,12 @@ export type FundsTransfer_Filter = {
   to_not?: InputMaybe<Scalars['Bytes']>;
   to_not_contains?: InputMaybe<Scalars['Bytes']>;
   to_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  transactionHash?: InputMaybe<Scalars['Bytes']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   type?: InputMaybe<FundsTransferType>;
   type_in?: InputMaybe<Array<FundsTransferType>>;
   type_not?: InputMaybe<FundsTransferType>;
@@ -364,6 +372,7 @@ export enum FundsTransfer_OrderBy {
   Review = 'review',
   Sender = 'sender',
   To = 'to',
+  TransactionHash = 'transactionHash',
   Type = 'type'
 }
 
@@ -1823,6 +1832,8 @@ export type Query = {
   workspace?: Maybe<Workspace>;
   workspaceMember?: Maybe<WorkspaceMember>;
   workspaceMembers: Array<WorkspaceMember>;
+  workspaceSafe?: Maybe<WorkspaceSafe>;
+  workspaceSafes: Array<WorkspaceSafe>;
   workspaces: Array<Workspace>;
 };
 
@@ -2196,6 +2207,24 @@ export type QueryWorkspaceMembersArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<WorkspaceMember_Filter>;
+};
+
+
+export type QueryWorkspaceSafeArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryWorkspaceSafesArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<WorkspaceSafe_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<WorkspaceSafe_Filter>;
 };
 
 
@@ -2694,6 +2723,8 @@ export type Subscription = {
   workspace?: Maybe<Workspace>;
   workspaceMember?: Maybe<WorkspaceMember>;
   workspaceMembers: Array<WorkspaceMember>;
+  workspaceSafe?: Maybe<WorkspaceSafe>;
+  workspaceSafes: Array<WorkspaceSafe>;
   workspaces: Array<Workspace>;
 };
 
@@ -3070,6 +3101,24 @@ export type SubscriptionWorkspaceMembersArgs = {
 };
 
 
+export type SubscriptionWorkspaceSafeArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionWorkspaceSafesArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<WorkspaceSafe_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<WorkspaceSafe_Filter>;
+};
+
+
 export type SubscriptionWorkspacesArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']>;
@@ -3089,6 +3138,7 @@ export enum SupportedNetwork {
   Chain_1001 = 'chain_1001',
   Chain_2153 = 'chain_2153',
   Chain_8217 = 'chain_8217',
+  Chain_42220 = 'chain_42220',
   Chain_44787 = 'chain_44787',
   Chain_80001 = 'chain_80001',
   Chain_245022926 = 'chain_245022926',
@@ -3099,6 +3149,7 @@ export enum SupportedNetwork {
 export type Token = {
   __typename?: 'Token';
   address: Scalars['Bytes'];
+  chainId?: Maybe<Scalars['BigInt']>;
   decimal: Scalars['Int'];
   iconHash: Scalars['String'];
   id: Scalars['ID'];
@@ -3115,6 +3166,14 @@ export type Token_Filter = {
   address_not?: InputMaybe<Scalars['Bytes']>;
   address_not_contains?: InputMaybe<Scalars['Bytes']>;
   address_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  chainId?: InputMaybe<Scalars['BigInt']>;
+  chainId_gt?: InputMaybe<Scalars['BigInt']>;
+  chainId_gte?: InputMaybe<Scalars['BigInt']>;
+  chainId_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  chainId_lt?: InputMaybe<Scalars['BigInt']>;
+  chainId_lte?: InputMaybe<Scalars['BigInt']>;
+  chainId_not?: InputMaybe<Scalars['BigInt']>;
+  chainId_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   decimal?: InputMaybe<Scalars['Int']>;
   decimal_gt?: InputMaybe<Scalars['Int']>;
   decimal_gte?: InputMaybe<Scalars['Int']>;
@@ -3195,6 +3254,7 @@ export type Token_Filter = {
 
 export enum Token_OrderBy {
   Address = 'address',
+  ChainId = 'chainId',
   Decimal = 'decimal',
   IconHash = 'iconHash',
   Id = 'id',
@@ -3223,6 +3283,8 @@ export type Workspace = {
   /** Address of the owner of the workspace */
   ownerId: Scalars['Bytes'];
   partners: Array<Partner>;
+  /** Workpsace safe */
+  safe?: Maybe<WorkspaceSafe>;
   /** List of social media handles of the workspace */
   socials: Array<Social>;
   /** List of supported networks of the workspace */
@@ -3464,6 +3526,71 @@ export enum WorkspaceMember_OrderBy {
   Workspace = 'workspace'
 }
 
+export type WorkspaceSafe = {
+  __typename?: 'WorkspaceSafe';
+  /** Address of the safe */
+  address: Scalars['Bytes'];
+  /** Chain ID of the chain */
+  chainId: Scalars['BigInt'];
+  id: Scalars['ID'];
+  /** Workspace of the space */
+  workspace: Workspace;
+};
+
+export type WorkspaceSafe_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  address?: InputMaybe<Scalars['Bytes']>;
+  address_contains?: InputMaybe<Scalars['Bytes']>;
+  address_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  address_not?: InputMaybe<Scalars['Bytes']>;
+  address_not_contains?: InputMaybe<Scalars['Bytes']>;
+  address_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  chainId?: InputMaybe<Scalars['BigInt']>;
+  chainId_gt?: InputMaybe<Scalars['BigInt']>;
+  chainId_gte?: InputMaybe<Scalars['BigInt']>;
+  chainId_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  chainId_lt?: InputMaybe<Scalars['BigInt']>;
+  chainId_lte?: InputMaybe<Scalars['BigInt']>;
+  chainId_not?: InputMaybe<Scalars['BigInt']>;
+  chainId_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  workspace?: InputMaybe<Scalars['String']>;
+  workspace_contains?: InputMaybe<Scalars['String']>;
+  workspace_contains_nocase?: InputMaybe<Scalars['String']>;
+  workspace_ends_with?: InputMaybe<Scalars['String']>;
+  workspace_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  workspace_gt?: InputMaybe<Scalars['String']>;
+  workspace_gte?: InputMaybe<Scalars['String']>;
+  workspace_in?: InputMaybe<Array<Scalars['String']>>;
+  workspace_lt?: InputMaybe<Scalars['String']>;
+  workspace_lte?: InputMaybe<Scalars['String']>;
+  workspace_not?: InputMaybe<Scalars['String']>;
+  workspace_not_contains?: InputMaybe<Scalars['String']>;
+  workspace_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  workspace_not_ends_with?: InputMaybe<Scalars['String']>;
+  workspace_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  workspace_not_in?: InputMaybe<Array<Scalars['String']>>;
+  workspace_not_starts_with?: InputMaybe<Scalars['String']>;
+  workspace_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  workspace_starts_with?: InputMaybe<Scalars['String']>;
+  workspace_starts_with_nocase?: InputMaybe<Scalars['String']>;
+};
+
+export enum WorkspaceSafe_OrderBy {
+  Address = 'address',
+  ChainId = 'chainId',
+  Id = 'id',
+  Workspace = 'workspace'
+}
+
 export type Workspace_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
@@ -3648,6 +3775,7 @@ export enum Workspace_OrderBy {
   MetadataHash = 'metadataHash',
   OwnerId = 'ownerId',
   Partners = 'partners',
+  Safe = 'safe',
   Socials = 'socials',
   SupportedNetworks = 'supportedNetworks',
   Title = 'title',
