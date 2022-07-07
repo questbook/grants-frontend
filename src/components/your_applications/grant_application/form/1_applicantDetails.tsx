@@ -15,6 +15,11 @@ function ApplicantDetails({
 	setApplicantEmailError,
 	readOnly,
 	grantRequiredFields,
+	receivingAddress,
+	receivingAddressError,
+	setReceivingAddress,
+	setReceivingAddressError,
+
 }: {
   applicantName: string;
   setApplicantName: (applicantName: string) => void;
@@ -26,6 +31,11 @@ function ApplicantDetails({
   setApplicantEmailError: (applicantEmailError: boolean) => void;
   readOnly?: boolean;
   grantRequiredFields: string[];
+  receivingAddress: string;
+  receivingAddressError: boolean;
+  setReceivingAddress: (receivingAddress: string) => void;
+  setReceivingAddressError: (receivingAddressError: boolean) => void;
+
 }) {
 	return (
 		<>
@@ -56,6 +66,25 @@ function ApplicantDetails({
 				disabled={readOnly}
 				visible={grantRequiredFields.includes('applicantName')}
 			/>
+			<SingleLineInput
+				label="Receiving Address"
+				placeholder=""
+				onChange={
+					(e) => {
+						if(receivingAddressError) {
+							setReceivingAddressError(false)
+						}
+
+						setReceivingAddress(e.target.value)
+					}
+				}
+				isError={receivingAddressError}
+				errorText="Required"
+				value={receivingAddress}
+				disabled={readOnly}
+				visible={true}
+			/>
+
 			<Box mt={6} />
 			<SingleLineInput
 				label="Applicant Email"

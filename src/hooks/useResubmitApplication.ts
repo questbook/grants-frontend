@@ -67,6 +67,9 @@ export default function useResubmitApplication(
 				const detailsHash = (
 					await uploadToIPFS(data.fields!.projectDetails[0].value)
 				).hash
+				console.log("Uploaded to ipfs....")
+				console.log(data)
+				console.log(detailsHash)
         // eslint-disable-next-line no-param-reassign
         data.fields!.projectDetails[0].value = detailsHash
         console.log('Details hash: ', detailsHash)
@@ -77,6 +80,7 @@ export default function useResubmitApplication(
         	throw new Error('Error validating grant data')
         }
 
+		console.log(ipfsHash)
         const txn = await applicationRegistryContract.updateApplicationMetadata(
         	applicationId,
         	ipfsHash,

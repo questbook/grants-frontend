@@ -10,6 +10,7 @@ import AddFunds from '../../funds/add_funds_modal'
 import Modal from '../../ui/modal'
 import FloatingSidebar from '../../ui/sidebar/floatingSidebar'
 import SendFundModalContent from './modals/sendFundModalContent'
+import { GrantApplication } from 'src/generated/graphql'
 
 interface Props {
   grant: any;
@@ -17,128 +18,19 @@ interface Props {
   milestones: any[];
   applicationId: string;
   decimals: number;
+  applicationData: GrantApplication
 }
 
 function Sidebar({
-	grant, assetInfo, milestones, applicationId, decimals,
+	grant, assetInfo, milestones, applicationId, decimals, applicationData
 }: Props) {
 	const [isAddFundModalOpen, setIsAddFundModalOpen] = React.useState(false)
 	const [isSendFundModalOpen, setIsSendFundModalOpen] = React.useState(false)
+	const getStringField = (fieldName: string) => applicationData?.fields?.find(({ id }) => id.split('.')[1] === fieldName)
+
 	return (
 		<Box my="154px">
 			<FloatingSidebar>
-				<Text
-					variant="applicationText"
-					color="#414E50">
-          Funds available for disbursal
-				</Text>
-				<Flex
-					direction="row"
-					justify="start"
-					align="center">
-					<Image
-						h="26px"
-						w="26px"
-						src={assetInfo?.icon}
-						alt="eth"
-					/>
-					<Box mx={1} />
-					<Text
-						fontWeight="700"
-						fontSize="26px"
-						lineHeight="40px">
-						{grant && grant.funding ? formatAmount(grant?.funding, decimals) : null}
-					</Text>
-					<Box mr={3} />
-					{
-						grant && parseInt(grant.funding, 10) > 0 && (
-							<Button
-								variant="link"
-								_focus={{}}
-								color="brand.500"
-								onClick={() => setIsAddFundModalOpen(true)}
-							>
-              Add Funds
-							</Button>
-						)
-					}
-				</Flex>
-				{
-					grant && parseInt(grant.funding, 10) === 0 && (
-						<>
-							<Text
-								fontSize="14px"
-								lineHeight="20px"
-								letterSpacing={0.5}
-								fontWeight="400"
-								mt={3}
-							>
-              Is your DAO using a multi-sig?
-							</Text>
-							<Text
-								fontSize="14px"
-								lineHeight="20px"
-								letterSpacing={0.5}
-								fontWeight="400"
-								mt={3}
-							>
-              One multi-sig approval for all milestones.
-							</Text>
-							<Text
-								fontSize="14px"
-								lineHeight="20px"
-								letterSpacing={0.5}
-								fontWeight="400"
-								mt={3}
-							>
-              Add funds to your
-								{' '}
-								<Link
-									href={
-										getExplorerUrlForAddress(
-											getSupportedChainIdFromSupportedNetwork(grant.workspace.supportedNetworks[0]),
-											grant?.id || ''
-										)
-									}
-									fontWeight="700"
-									color="brand.500"
-									isExternal
-								>
-                verified grant smart contract
-									{' '}
-									<Image
-										src="/ui_icons/link.svg"
-										alt="link"
-										display="inline-block"
-									/>
-								</Link>
-								{' '}
-              to fund grantees in 1 click.
-							</Text>
-							<Button
-								variant="primary"
-								mt={6}
-								onClick={() => setIsAddFundModalOpen(true)}
-							>
-              Add Funds
-							</Button>
-						</>
-					)
-				}
-				<Divider mt={3} />
-				<Text
-					fontSize="14px"
-					lineHeight="20px"
-					letterSpacing={0.5}
-					fontWeight="400"
-					mt="19px"
-				>
-					{
-						grant && parseInt(grant.funding, 10) > 0
-							? 'Send funds from your wallet or verified grant smart contract'
-							: 'Send funds from your wallet'
-					}
-				</Text>
 				<Button
 					mt="22px"
 					variant="outline"
@@ -173,19 +65,6 @@ function Sidebar({
 							isOpen={isSendFundModalOpen}
 							onClose={() => setIsSendFundModalOpen(false)}
 							title="Send Funds"
-							rightIcon={
-								(
-									<Button
-										_focus={{}}
-										variant="link"
-										color="#AA82F0"
-										leftIcon={<Image src="/sidebar/discord_icon.svg" />}
-										onClick={() => window.open(config.supportLink)}
-									>
-              Support 24*7
-									</Button>
-								)
-							}
 						>
 							<SendFundModalContent
 								isOpen={isSendFundModalOpen}
@@ -196,7 +75,7 @@ function Sidebar({
 										committed: BigNumber.from(grant.reward.committed),
 										label: assetInfo?.label,
 										icon: assetInfo?.icon,
-										offchain: true, //todo assetInfo?.offchain
+										chainId: 80001, //todo@madhavan assetInfo?.chainId
 										decimals,
 									}
 								}
@@ -204,9 +83,11 @@ function Sidebar({
 								grantId={grant.id}
 								applicationId={applicationId}
 								safe={{
-									address: '123', //todo: grant.workspace.safe.address,
-									chain: 9000001,//todo: grant.workspace.safe.chain,
+									address: 'CFejqDTfiaGk3BE84ykcYugdQtYthcaZ4GL8ZngYDRE5', //todo@madhavan: grant.workspace.safe.address,
+									chain: 80001,//todo@madhavan: grant.workspace.safe.chain,
 								}}
+								chainId={getSupportedChainIdFromSupportedNetwork(grant.workspace.supportedNetworks[0])}
+								applicantReceivingAddress={(getStringField('receivingAddress') && getStringField('receivingAddress')!.values.length > 0) ? getStringField('receivingAddress')?.values[0].value : undefined}
 							/>
 						</Modal>
 					)

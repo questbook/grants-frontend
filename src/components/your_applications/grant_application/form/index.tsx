@@ -90,6 +90,9 @@ function Form({
 	const [applicantEmail, setApplicantEmail] = useState('')
 	const [applicantEmailError, setApplicantEmailError] = useState(false)
 
+	const [receivingAddress, setReceivingAddress] = useState('')
+	const [receivingAddressError, setReceivingAddressError] = useState(false)
+
 	const [teamMembers, setTeamMembers] = useState(1)
 	const [teamMembersError, setTeamMembersError] = useState(false)
 
@@ -162,9 +165,12 @@ function Form({
 
 	useEffect(() => {
 		try {
+			console.log("fd", formData)
 			if(formData && !loadedData) {
+				console.log("formdata", formData)
 				setApplicantName(formData.applicantName)
 				setApplicantEmail(formData.applicantEmail)
+				setReceivingAddress(formData.receivingAddress)
 				setTeamMembers(formData.teamMembers)
 				setMembersDescription(
 					formData?.membersDescription.map((member: any) => ({
@@ -395,6 +401,8 @@ function Form({
       data.fields![customField.title] = [{ value: customField.value }]
 		})
 
+		data.fields!['receivingAddress'] = [{ value: receivingAddress }]
+
 		let encryptedData
 
 		if(piiFields.length > 0 && workspace && workspace.members) {
@@ -408,6 +416,7 @@ function Form({
 		}
 
 		setUpdateData(encryptedData || data)
+		console.log(data);
 	}
 
 	return (
@@ -627,6 +636,10 @@ function Form({
 								setApplicantEmailError={setApplicantEmailError}
 								readOnly={onEdit === false}
 								grantRequiredFields={grantRequiredFields}
+								receivingAddress={receivingAddress}
+								receivingAddressError={receivingAddressError}
+								setReceivingAddress={setReceivingAddress}
+								setReceivingAddressError={setReceivingAddressError}
 							/>
 
 							<Box mt="43px" />
