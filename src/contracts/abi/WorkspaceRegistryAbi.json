@@ -244,6 +244,16 @@
         "internalType": "string",
         "name": "_metadataHash",
         "type": "string"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_safeAddress",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_safeChainId",
+        "type": "uint256"
       }
     ],
     "name": "createWorkspace",

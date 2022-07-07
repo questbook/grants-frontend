@@ -26,9 +26,9 @@ export function getChainInfo(grant: any, chainId: SupportedChainId) : ChainInfo[
 	if(!chainInfo) {
 		tokenIcon = getUrlForIPFSHash(grant.reward.token?.iconHash)
 		chainInfo = {
-			address: grant.reward.token.address,
-			label: grant.reward.token.label,
-			decimals: parseInt(grant.reward.token.decimal, 10),
+			address: grant.reward?.token?.address,
+			label: grant.reward?.token?.label,
+			decimals: parseInt(grant.reward?.token?.decimal, 10),
 			icon: tokenIcon,
 		}
 	}

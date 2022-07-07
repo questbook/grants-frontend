@@ -1,5 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
+import { formatBytes32String, hexlify } from 'ethers/lib/utils'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
@@ -103,7 +104,10 @@ const OnboardingCreateDao = () => {
 			}
 
 			setCurrentStep(2)
-			const createWorkspaceTransaction = await workspaceRegistryContract.createWorkspace(ipfsHash)
+			const param2 = formatBytes32String('safeAddress')
+			const param3 = hexlify(4)
+			console.log(`param2 ${param2}`, `param3 ${param3}`)
+			const createWorkspaceTransaction = await workspaceRegistryContract.createWorkspace(ipfsHash, param2, param3)
 			setCurrentStep(3)
 			const createWorkspaceTransactionData = await createWorkspaceTransaction.wait()
 
