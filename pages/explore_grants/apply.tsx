@@ -149,6 +149,7 @@ function ApplyGrant() {
 		<Flex
 			direction="row"
 			w="100%"
+			// px="10%"
 			justify="space-evenly">
 			<Flex
 				direction="column"

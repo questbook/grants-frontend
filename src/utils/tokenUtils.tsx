@@ -23,8 +23,10 @@ export function getChainInfo(grant: any, chainId: SupportedChainId) : ChainInfo[
       CHAIN_INFO[chainId]?.supportedCurrencies[
       	grant.reward.asset.toLowerCase()
       ]
-	if(!chainInfo) {
-		tokenIcon = getUrlForIPFSHash(grant.reward.token?.iconHash)
+
+	  console.log('WOWW2', chainInfo, !chainInfo)
+	if(!chainInfo && grant.reward.token) {
+		tokenIcon = getUrlForIPFSHash(grant.reward.token.iconHash)
 		chainInfo = {
 			address: grant.reward.token.address,
 			label: grant.reward.token.label,
@@ -32,7 +34,16 @@ export function getChainInfo(grant: any, chainId: SupportedChainId) : ChainInfo[
 			decimals: parseInt(grant.reward.token.decimal, 10),
 			icon: tokenIcon,
 		}
+	} else if(!chainInfo && !grant.reward.token) {
+		chainInfo = {
+			address: '',
+			label: 'UNSUP',
+			decimals: 18,
+			icon: '',
+		}
 	}
+
+	console.log('WOWW2', chainInfo, grant.reward)
 
 	return chainInfo
 }

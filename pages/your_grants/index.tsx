@@ -6,7 +6,7 @@ import React, {
 	useRef,
 	useState,
 } from 'react'
-import { Button, Flex } from '@chakra-ui/react'
+import { Button, Flex, Text } from '@chakra-ui/react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useRouter } from 'next/router'
 import ArchivedGrantEmptyState from 'src/components/your_grants/empty_states/archived_grant'
@@ -31,7 +31,6 @@ import {
 } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
 import AddFunds from '../../src/components/funds/add_funds_modal'
-import Heading from '../../src/components/ui/heading'
 import YourGrantCard from '../../src/components/your_grants/yourGrantCard'
 import NavbarLayout from '../../src/layout/navbarLayout'
 import { formatAmount } from '../../src/utils/formattingUtils'
@@ -48,7 +47,7 @@ const TABS = [
 			// & those that haven't expired yet
 			acceptingApplications: [true],
 			minDeadline: unixTimestampSeconds(),
-			maxDeadline: UNIX_TIMESTAMP_MAX
+			maxDeadline: UNIX_TIMESTAMP_MAX,
 		},
 		label: 'Live Grants',
 		emptyState: () => <LiveGrantEmptyState />,
@@ -59,7 +58,7 @@ const TABS = [
 			// fetch all non-expired archived grants
 			acceptingApplications: [false],
 			minDeadline: unixTimestampSeconds(),
-			maxDeadline: UNIX_TIMESTAMP_MAX
+			maxDeadline: UNIX_TIMESTAMP_MAX,
 		},
 		label: 'Archived',
 		emptyState: () => <ArchivedGrantEmptyState />,
@@ -73,14 +72,16 @@ const TABS = [
 			maxDeadline: unixTimestampSeconds(),
 		},
 		label: 'Expired Grants',
-		emptyState: () => <ExpiredGrantEmptyState />
+		emptyState: () => <ExpiredGrantEmptyState />,
 	},
 ]
 
 function removeDuplicates(array: any) {
 	const uniq: any = {}
 	// eslint-disable-next-line no-return-assign
-	return array.filter((obj: any) => !uniq[obj.grant.id] && (uniq[obj.grant.id] = true))
+	return array.filter(
+		(obj: any) => !uniq[obj.grant.id] && (uniq[obj.grant.id] = true)
+	)
 }
 
 function YourGrants() {
@@ -97,11 +98,11 @@ function YourGrants() {
 	const [currentPage, setCurrentPage] = React.useState(0)
 
 	const [grants, setGrants] = React.useState<
-  GetAllGrantsForCreatorQuery['grants']
+    GetAllGrantsForCreatorQuery['grants']
   >([])
 
 	const [grantsReviewer, setGrantsReviewer] = React.useState<
-  GetAllGrantsForReviewerQuery['grantApplications']
+    GetAllGrantsForReviewerQuery['grantApplications']
   >([])
 
 	const [queryParams, setQueryParams] = useState<any>({
@@ -129,7 +130,9 @@ function YourGrants() {
 	const [grantCount, setGrantCount] = useState([true, true])
 
 	useEffect(() => {
-		setSelectedTab(parseInt(localStorage.getItem('yourGrantsTabSelected') ?? '0'))
+		setSelectedTab(
+			parseInt(localStorage.getItem('yourGrantsTabSelected') ?? '0')
+		)
 	}, [])
 
 	useEffect(() => {
@@ -151,23 +154,22 @@ function YourGrants() {
 			},
 			fetchPolicy: 'network-only',
 		})
-
 	}, [currentPage, workspace, accountData?.address])
 
 	useEffect(() => {
 		if(
-			workspace
-      && workspace.members
-      && workspace.members.length > 0
-      && accountData
-      && accountData.address
+			workspace &&
+      workspace.members &&
+      workspace.members.length > 0 &&
+      accountData &&
+      accountData.address
 		) {
 			const tempMember = workspace.members.find(
-				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
+				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase()
 			)
 			setIsAdmin(
-				tempMember?.accessLevel === 'admin'
-        || tempMember?.accessLevel === 'owner',
+				tempMember?.accessLevel === 'admin' ||
+          tempMember?.accessLevel === 'owner'
 			)
 			setIsReviewer(tempMember?.accessLevel === 'reviewer')
 			const user: any = tempMember?.id
@@ -187,7 +189,8 @@ function YourGrants() {
 		const { query } = TABS[selectedTab]
 
 		setQueryParams({
-			client: subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+			client:
+        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
 			variables: {
 				first: PAGE_SIZE,
 				skip: PAGE_SIZE * currentPage,
@@ -206,7 +209,6 @@ function YourGrants() {
 			},
 			fetchPolicy: 'network-only',
 		})
-
 	}, [currentPage, workspace, accountData?.address, selectedTab])
 
 	useEffect(() => {
@@ -219,16 +221,17 @@ function YourGrants() {
 			return
 		}
 
-		const k = workspace?.members?.find(
-			(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
-		)?.publicKey?.toString()
+		const k = workspace?.members
+			?.find(
+				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase()
+			)
+			?.publicKey?.toString()
 		// console.log(k);
 		if(k && k.length > 0) {
 			setPk(k)
 		} else {
 			setPk('')
 		}
-
 	}, [workspace, accountData])
 
 	const {
@@ -244,7 +247,6 @@ function YourGrants() {
 				allGrantsCountData.archived.length > 0,
 			])
 		}
-
 	}, [allGrantsCountData, allGrantsCountError, allGrantsCountLoading])
 
 	const data = useGetAllGrantsForCreatorQuery(queryParams)
@@ -255,26 +257,25 @@ function YourGrants() {
 
 		setGrants([])
 		setCurrentPage(0)
-
 	}, [workspace, selectedTab])
 
 	useEffect(() => {
 		if(data.data && data.data.grants && data.data.grants.length > 0) {
 			console.log('data.grants', data.data.grants)
 			if(
-				grants.length > 0
-        && grants[0].workspace.id === data.data.grants[0].workspace.id
-        && grants[0].id !== data.data.grants[0].id
+				grants.length > 0 &&
+        grants[0].workspace.id === data.data.grants[0].workspace.id &&
+        grants[0].id !== data.data.grants[0].id
 			) {
 				setGrants([...grants, ...data.data.grants])
 			} else {
 				setGrants(data.data.grants)
 			}
 		}
-
 	}, [data])
 
-	const allGrantsReviewerData = useGetAllGrantsForReviewerQuery(queryReviewerParams)
+	const allGrantsReviewerData =
+    useGetAllGrantsForReviewerQuery(queryReviewerParams)
 	useEffect(() => {
 		if(!workspace) {
 			return
@@ -282,21 +283,27 @@ function YourGrants() {
 
 		setGrantsReviewer([])
 		setCurrentPage(0)
-
 	}, [workspace, selectedTab])
 
 	useEffect(() => {
-		if(allGrantsReviewerData.data && allGrantsReviewerData.data.grantApplications
-       && allGrantsReviewerData.data.grantApplications.length > 0) {
-			console.log('data.grantsReviewer.raw', allGrantsReviewerData.data.grantApplications)
+		if(
+			allGrantsReviewerData.data &&
+      allGrantsReviewerData.data.grantApplications &&
+      allGrantsReviewerData.data.grantApplications.length > 0
+		) {
+			console.log(
+				'data.grantsReviewer.raw',
+				allGrantsReviewerData.data.grantApplications
+			)
 			// eslint-disable-next-line max-len
-			const newReviewerData = removeDuplicates(allGrantsReviewerData.data.grantApplications)
+			const newReviewerData = removeDuplicates(
+				allGrantsReviewerData.data.grantApplications
+			)
 
 			console.log('data.grantsReviewer', newReviewerData)
 
 			setGrantsReviewer(newReviewerData)
 		}
-
 	}, [allGrantsReviewerData])
 
 	const [addFundsIsOpen, setAddFundsIsOpen] = React.useState(false)
@@ -307,7 +314,7 @@ function YourGrants() {
 		setAddFundsIsOpen(true)
 		setGrantForFunding(grant.id)
 		const chainId = getSupportedChainIdFromSupportedNetwork(
-			grant.workspace.supportedNetworks[0],
+			grant.workspace.supportedNetworks[0]
 		)
 		const chainInfo = getChainInfo(grant, chainId)
 
@@ -331,18 +338,17 @@ function YourGrants() {
 		}
 
 		const parentElement = (current as HTMLElement)?.parentNode as HTMLElement
-		const reachedBottom = Math.abs(
-			parentElement.scrollTop
-      - (parentElement.scrollHeight - parentElement.clientHeight),
-		) < 10
+		const reachedBottom =
+      Math.abs(
+      	parentElement.scrollTop -
+          (parentElement.scrollHeight - parentElement.clientHeight)
+      ) < 10
 		if(reachedBottom) {
 			setCurrentPage(currentPage + 1)
 		}
 	}, [containerRef, currentPage])
 
-	const getEmptyStateForSelectedTab = () => (
-		TABS[selectedTab]?.emptyState()
-	)
+	const getEmptyStateForSelectedTab = () => TABS[selectedTab]?.emptyState()
 
 	useEffect(() => {
 		const { current } = containerRef
@@ -360,6 +366,7 @@ function YourGrants() {
 	return (
 		<>
 			<Flex
+				w="100%"
 				ref={containerRef}
 				direction="row"
 				justify="center">
@@ -370,9 +377,35 @@ function YourGrants() {
 					pb={8}
 					px={10}>
 					{
-						isReviewer ? <Flex mt={4} /> : (
+						isReviewer ? (
+							<Flex mt={4} />
+						) : (
 							<>
-								<Heading title="Your grants" />
+								<Flex
+									mt="18px"
+									align="center"
+									justify="space-between">
+									<Text variant="heading">
+Your grants
+									</Text>
+									{
+										grants.length > 0 && (
+											<Button
+												variant="primaryV2"
+												onClick={
+													() => {
+														console.log('Create a grant!')
+														router.push({
+															pathname: '/your_grants/create_grant/',
+														})
+
+													}
+												}>
+Post a Grant / Bounty
+											</Button>
+										)
+									}
+								</Flex>
 								<Flex
 									direction="row"
 									mt={4}
@@ -390,7 +423,7 @@ function YourGrants() {
 														setSelectedTab(tab.index)
 														localStorage.setItem(
 															'yourGrantsTabSelected',
-															tab.index.toString(),
+															tab.index.toString()
 														)
 													}
 												}
@@ -411,8 +444,9 @@ function YourGrants() {
 						)
 					}
 					{
-						isAdmin && grants.length > 0
-            && grants.map((grant: any) => {
+						isAdmin &&
+            grants.length > 0 &&
+            grants.map((grant: any) => {
             	const grantAmount = grant.reward.committed
             	let decimals
             	let icon
@@ -423,24 +457,27 @@ function YourGrants() {
             		label = grant.reward.token.label
             		icon = getUrlForIPFSHash(grant.reward.token.iconHash)
             	} else {
-            		decimals = CHAIN_INFO[
-            			getSupportedChainIdFromSupportedNetwork(
-            				grant.workspace.supportedNetworks[0],
-            			)
-            		]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-            			?.decimals
-            		label = CHAIN_INFO[
-            			getSupportedChainIdFromSupportedNetwork(
-            				grant.workspace.supportedNetworks[0],
-            			)
-            		]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-            			?.label ?? 'LOL'
-            		icon = CHAIN_INFO[
-            			getSupportedChainIdFromSupportedNetwork(
-            				grant.workspace.supportedNetworks[0],
-            			)
-            		]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-            			?.icon ?? '/images/dummy/Ethereum Icon.svg'
+            		decimals =
+                  CHAIN_INFO[
+                  	getSupportedChainIdFromSupportedNetwork(
+                  		grant.workspace.supportedNetworks[0]
+                  	)
+                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+                  	?.decimals
+            		label =
+                  CHAIN_INFO[
+                  	getSupportedChainIdFromSupportedNetwork(
+                  		grant.workspace.supportedNetworks[0]
+                  	)
+                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+                  	?.label ?? 'LOL'
+            		icon =
+                  CHAIN_INFO[
+                  	getSupportedChainIdFromSupportedNetwork(
+                  		grant.workspace.supportedNetworks[0]
+                  	)
+                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+                  	?.icon ?? '/images/dummy/Ethereum Icon.svg'
             	}
 
             	return (
@@ -452,36 +489,31 @@ function YourGrants() {
             			grantDesc={grant.summary}
             			numOfApplicants={grant.numberOfApplications}
             			endTimestamp={new Date(grant.deadline).getTime()}
-            			grantAmount={
-            				formatAmount(
-            				grantAmount,
-            				decimals ?? 18,
-            			)
-            			}
+            			grantAmount={formatAmount(grantAmount, decimals ?? 18)}
             			grantCurrency={label ?? 'LOL'}
             			grantCurrencyIcon={icon}
             			state="done"
             			chainId={
             				getSupportedChainIdFromSupportedNetwork(
-            				grant.workspace.supportedNetworks[0],
+            				grant.workspace.supportedNetworks[0]
             			)
             			}
             			onEditClick={
             				() => router.push({
-            				pathname: '/your_grants/edit_grant/',
-            				query: {
-            					grantId: grant.id,
-            				},
-            			})
+            					pathname: '/your_grants/edit_grant/',
+            					query: {
+            						grantId: grant.id,
+            					},
+            				})
             			}
             			onAddFundsClick={() => initialiseFundModal(grant)}
             			onViewApplicantsClick={
             				() => router.push({
-            				pathname: '/your_grants/view_applicants/',
-            				query: {
-            					grantId: grant.id,
-            				},
-            			})
+            					pathname: '/your_grants/view_applicants/',
+            					query: {
+            						grantId: grant.id,
+            					},
+            				})
             			}
             			acceptingApplications={grant.acceptingApplications}
             			isAdmin={isAdmin}
@@ -493,107 +525,107 @@ function YourGrants() {
 					}
 
 					{
-						isReviewer && grantsReviewer.length > 0
-              && grantsReviewer.map((grant: any) => {
-              	const grantAmount = grant.grant.reward.committed
-              	let decimals
-              	let icon
-              	let label
-              	if(grant.grant.reward.token) {
-              		decimals = grant.grant.reward.token.decimal
-              		label = grant.grant.reward.token.label
-              		icon = getUrlForIPFSHash(grant.grant.reward.token.iconHash)
-              	} else {
-              		decimals = CHAIN_INFO[
-              			getSupportedChainIdFromSupportedNetwork(
-              				grant.grant.workspace.supportedNetworks[0],
-              			)
-              		]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
-              			?.decimals
-              		label = CHAIN_INFO[
-              			getSupportedChainIdFromSupportedNetwork(
-              				grant.grant.workspace.supportedNetworks[0],
-              			)
-              		]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
-              			?.label ?? 'LOL'
-              		icon = CHAIN_INFO[
-              			getSupportedChainIdFromSupportedNetwork(
-              				grant.grant.workspace.supportedNetworks[0],
-              			)
-              		]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
-              			?.icon ?? '/images/dummy/Ethereum Icon.svg'
-              	}
+						isReviewer &&
+            grantsReviewer.length > 0 &&
+            grantsReviewer.map((grant: any) => {
+            	const grantAmount = grant.grant.reward.committed
+            	let decimals
+            	let icon
+            	let label
+            	if(grant.grant.reward.token) {
+            		decimals = grant.grant.reward.token.decimal
+            		label = grant.grant.reward.token.label
+            		icon = getUrlForIPFSHash(grant.grant.reward.token.iconHash)
+            	} else {
+            		decimals =
+                  CHAIN_INFO[
+                  	getSupportedChainIdFromSupportedNetwork(
+                  		grant.grant.workspace.supportedNetworks[0]
+                  	)
+                  ]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
+                  	?.decimals
+            		label =
+                  CHAIN_INFO[
+                  	getSupportedChainIdFromSupportedNetwork(
+                  		grant.grant.workspace.supportedNetworks[0]
+                  	)
+                  ]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
+                  	?.label ?? 'LOL'
+            		icon =
+                  CHAIN_INFO[
+                  	getSupportedChainIdFromSupportedNetwork(
+                  		grant.grant.workspace.supportedNetworks[0]
+                  	)
+                  ]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
+                  	?.icon ?? '/images/dummy/Ethereum Icon.svg'
+            	}
 
-              	return (
-              		<YourGrantCard
-              			grantID={grant.grant.id}
-              			key={grant.grant.id}
-              			daoIcon={getUrlForIPFSHash(grant.grant.workspace.logoIpfsHash)}
-              			grantTitle={grant.grant.title}
-              			grantDesc={grant.grant.summary}
-              			numOfApplicants={grant.grant.numberOfApplications}
-              			endTimestamp={new Date(grant.grant.deadline).getTime()}
-              			grantAmount={
-              				formatAmount(
-              				grantAmount,
-              				decimals ?? 18,
-              			)
-              			}
-              			grantCurrency={label ?? 'LOL'}
-              			grantCurrencyIcon={icon}
-              			state="done"
-              			chainId={
-              				getSupportedChainIdFromSupportedNetwork(
-              				grant.grant.workspace.supportedNetworks[0],
-              			)
-              			}
-              			onAddFundsClick={() => initialiseFundModal(grant.grant)}
-              			onViewApplicantsClick={
-              				() => router.push({
-              				pathname: '/your_grants/view_applicants/',
-              				query: {
-              					grantId: grant.grant.id,
-              				},
-              			})
-              			}
-              			acceptingApplications={grant.grant.acceptingApplications}
-              			isAdmin={isAdmin}
-              			initialRubrics={grant.grant.rubric}
-              			workspaceId={grant.grant.workspace.id}
-              		/>
-              	)
-              })
+            	return (
+            		<YourGrantCard
+            			grantID={grant.grant.id}
+            			key={grant.grant.id}
+            			daoIcon={
+            				getUrlForIPFSHash(
+            				grant.grant.workspace.logoIpfsHash
+            			)
+            			}
+            			grantTitle={grant.grant.title}
+            			grantDesc={grant.grant.summary}
+            			numOfApplicants={grant.grant.numberOfApplications}
+            			endTimestamp={new Date(grant.grant.deadline).getTime()}
+            			grantAmount={formatAmount(grantAmount, decimals ?? 18)}
+            			grantCurrency={label ?? 'LOL'}
+            			grantCurrencyIcon={icon}
+            			state="done"
+            			chainId={
+            				getSupportedChainIdFromSupportedNetwork(
+            				grant.grant.workspace.supportedNetworks[0]
+            			)
+            			}
+            			onAddFundsClick={() => initialiseFundModal(grant.grant)}
+            			onViewApplicantsClick={
+            				() => router.push({
+            					pathname: '/your_grants/view_applicants/',
+            					query: {
+            						grantId: grant.grant.id,
+            					},
+            				})
+            			}
+            			acceptingApplications={grant.grant.acceptingApplications}
+            			isAdmin={isAdmin}
+            			initialRubrics={grant.grant.rubric}
+            			workspaceId={grant.grant.workspace.id}
+            		/>
+            	)
+            })
 					}
 					{
-						grants.length === 0
-							&& isAdmin
-							&& !grantCount[0]
-							&& !grantCount[1]
-							&& router.query.done
-							&& <FirstGrantEmptyState />
+						grants.length === 0 &&
+            isAdmin &&
+            !grantCount[0] &&
+            !grantCount[1] &&
+            router.query.done && <FirstGrantEmptyState />
 					}
 					{
-						grants.length === 0
-						&& isAdmin
-						&& !router.query.done
-						&& getEmptyStateForSelectedTab()
-					}
-
-					{
-						grantsReviewer.length === 0
-						&& isReviewer
-						&& !grantCount[0]
-						&& !grantCount[1]
-						&& router.query.done
-						&& <FirstGrantEmptyState />
-					}
-					{
-						grantsReviewer.length === 0
-						&& isReviewer
-						&& !router.query.done
-						&& getEmptyStateForSelectedTab()
+						grants.length === 0 &&
+            isAdmin &&
+            !router.query.done &&
+            getEmptyStateForSelectedTab()
 					}
 
+					{
+						grantsReviewer.length === 0 &&
+            isReviewer &&
+            !grantCount[0] &&
+            !grantCount[1] &&
+            router.query.done && <FirstGrantEmptyState />
+					}
+					{
+						grantsReviewer.length === 0 &&
+            isReviewer &&
+            !router.query.done &&
+            getEmptyStateForSelectedTab()
+					}
 				</Flex>
 				<Flex
 					w="26%"
@@ -603,7 +635,8 @@ function YourGrants() {
 				>
 					<Sidebar
 						isReviewer={isReviewer}
-						showCreateGrantItem={!grantCount[0] && !grantCount[1]} />
+						showCreateGrantItem={!grantCount[0] && !grantCount[1]}
+					/>
 				</Flex>
 			</Flex>
 			{
