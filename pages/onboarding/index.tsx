@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { formatBytes32String, hexlify } from 'ethers/lib/utils'
+import { base58, formatBytes32String, hexlify } from 'ethers/lib/utils'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
@@ -104,7 +104,7 @@ const OnboardingCreateDao = () => {
 			}
 
 			setCurrentStep(2)
-			const param2 = formatBytes32String(safeAddress)
+			const param2 = formatSafeAddress(safeAddress, daoNetwork?.id)
 			const param3 = hexlify(daoNetwork?.id)
 			console.log(`param2 ${param2}`, `param3 ${param3}`)
 			const createWorkspaceTransaction = await workspaceRegistryContract.createWorkspace(ipfsHash, param2, param3)
@@ -260,6 +260,16 @@ const OnboardingCreateDao = () => {
 				onClose={() => setConnectWalletModalIsOpen(false)} />
 		</>
 	)
+}
+
+const SOLANA_CHAIN_ID = 900001
+
+function formatSafeAddress(address: string, chainId: number) {
+	if(chainId === SOLANA_CHAIN_ID) {
+		return base58.decode(address)
+	}
+
+	return formatBytes32String(address)
 }
 
 export default OnboardingCreateDao
