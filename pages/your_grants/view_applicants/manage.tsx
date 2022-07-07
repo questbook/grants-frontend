@@ -232,6 +232,8 @@ function ManageGrant() {
 			setIsAdmin(tempMember?.accessLevel === 'admin' || tempMember?.accessLevel === 'owner')
 		}
 	}, [accountData, workspace])
+	const getStringField = (fieldName: string) => applicationData?.fields?.find(({ id }) => id.split('.')[1] === fieldName)
+
 
 	function renderModal() {
 		return (
@@ -545,6 +547,7 @@ View
 						grant={applicationData?.grant}
 						applicationId={applicationID}
 						decimals={decimals}
+						applicationData={applicationData}
 					/>
 				)
 			}
@@ -577,13 +580,18 @@ View
 									committed: BigNumber.from(applicationData.grant.reward.committed),
 									label: assetInfo?.label,
 									icon: assetInfo?.icon,
-									offchain: true, //todo: assetInfo?.offchain,
+									chainId: 80001, //todo@madhavan: assetInfo?.offchain,
 								}
 							}
-							contractFunding={applicationData.grant.funding}
 							onClose={() => setIsSendFundModalOpen(false)}
 							grantId={applicationData.grant.id}
 							applicationId={applicationID}
+							safe={{
+								chain: 80001, //todo@madhavan: applicationData.grant.safe.chain,
+								address: 'CFejqDTfiaGk3BE84ykcYugdQtYthcaZ4GL8ZngYDRE5' //todo@madhavan: applicationData.grant.safe.address,
+							}}
+							chainId={getSupportedChainIdFromWorkspace(workspace)}
+							applicantReceivingAddress={getStringField('receivingAddress')}
 						/>
 					</Modal>
 				)

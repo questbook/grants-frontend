@@ -14,6 +14,11 @@ function ApplicantDetails({
 	applicantEmailError,
 	setApplicantEmailError,
 	grantRequiredFields,
+	receivingAddress,
+	receivingAddressError,
+	setReceivingAddress,
+	setReceivingAddressError,
+
 }: {
   applicantName: string;
   setApplicantName: (applicantName: string) => void;
@@ -24,6 +29,11 @@ function ApplicantDetails({
   applicantEmailError: boolean;
   setApplicantEmailError: (applicantEmailError: boolean) => void;
   grantRequiredFields: string[];
+  receivingAddress: string;
+  receivingAddressError: boolean;
+  setReceivingAddress: (receivingAddress: string) => void;
+  setReceivingAddressError: (receivingAddressError: boolean) => void;
+
 }) {
 	return (
 		<>
@@ -72,6 +82,25 @@ function ApplicantDetails({
 				visible={grantRequiredFields.includes('applicantEmail')}
 				type="email"
 			/>
+			<Box mt={4}/>
+			<SingleLineInput
+				label="Address to receive funds"
+				placeholder=""
+				value={receivingAddress}
+				onChange={
+					(e) => {
+						console.log(e.target.value)
+						if(receivingAddressError) {
+							setReceivingAddressError(false)
+						}
+						setReceivingAddress(e.target.value)
+					}
+				}
+				isError={receivingAddressError}
+				errorText="Required"
+			/>
+
+
 		</>
 	)
 }

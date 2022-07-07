@@ -1,5 +1,6 @@
 export interface GrantApplicationProps {
   applicantName: string;
+  receivingAddress: string;
   applicantEmail:string;
   teamMembers: number;
   membersDescription: { description: string }[];
@@ -15,6 +16,7 @@ export interface GrantApplicationProps {
 
 export interface GrantApplicationFieldsSubgraph {
   applicantName: string[];
+  receivingAddress: string[];
   applicantEmail:string[];
   projectName: string[];
   projectDetails: string[];

@@ -23,6 +23,7 @@ function Funding({
 	rewardCurrencyCoin,
 
 	grantRequiredFields,
+
 }: {
   fundingAsk: string;
   setFundingAsk: (fundingAsk: string) => void;
@@ -39,6 +40,7 @@ function Funding({
   rewardCurrencyCoin: string;
 
   grantRequiredFields: string[];
+
 }) {
 	return (
 		<>
@@ -111,6 +113,7 @@ Grant Reward
 						errorText="Required"
 						type="number"
 					/>
+					
 				</Box>
 				<Box
 					mt={5}
@@ -130,6 +133,8 @@ Grant Reward
 					/>
 				</Box>
 			</Flex>
+
+			<Box mt={8} />
 
 			<Box mt={8} />
 

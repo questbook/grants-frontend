@@ -153,6 +153,9 @@ function Form({
 	const [fundingBreakdown, setFundingBreakdown] = React.useState('')
 	const [fundingBreakdownError, setFundingBreakdownError] = React.useState(false)
 
+	const [receivingAddress, setReceivingAddress] = React.useState('')
+	const [receivingAddressError, setReceivingAddressError] = React.useState(false)
+
 	const [customFields, setCustomFields] = React.useState<any[]>([])
 	React.useEffect(() => {
 		if(customFields.length > 0) {
@@ -371,6 +374,7 @@ function Form({
 		customFields.forEach((customField) => {
 			data.fields[customField.title] = [{ value: customField.value }]
 		})
+		data.fields["receivingAddress"] = [{ value: receivingAddress }]
 		console.log(data)
 		let encryptedData
 		if(piiFields.length > 0 && members) {
@@ -446,6 +450,10 @@ function Form({
 			setCustomFields(formDataLocal?.customFields)
 		}
 
+		if(formDataLocal?.receivingAddress){
+			setReceivingAddress(formDataLocal?.receivingAddress)
+		}
+
 		console.log('Data from cache: ', formDataLocal)
 	}, [getKey])
 
@@ -466,6 +474,7 @@ function Form({
 			projectMilestones,
 			fundingAsk,
 			fundingBreakdown,
+			receivingAddress,
 			customFields,
 		}
 		console.log(JSON.stringify(formDataLocal))
@@ -485,6 +494,7 @@ function Form({
 		projectMilestones,
 		fundingAsk,
 		fundingBreakdown,
+		receivingAddress,
 		customFields,
 	])
 
@@ -585,6 +595,11 @@ function Form({
 					setApplicantEmail={setApplicantEmail}
 					setApplicantEmailError={setApplicantEmailError}
 					grantRequiredFields={grantRequiredFields}
+					receivingAddress={receivingAddress}
+					setReceivingAddressError={setReceivingAddressError}
+					receivingAddressError={receivingAddressError}
+					setReceivingAddress={setReceivingAddress}
+
 				/>
 
 				<Box mt="43px" />

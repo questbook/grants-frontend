@@ -19,6 +19,7 @@ import {
 } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
+import copy from 'copy-to-clipboard'
 import Loader from 'src/components/ui/loader'
 import useDisburseP2PReward from 'src/hooks/useDisburseP2PReward'
 import useDisburseReward from 'src/hooks/useDisburseReward'
@@ -40,7 +41,7 @@ interface Props {
     label: string;
     icon: string;
     decimals?: number;
-	offchain: boolean;
+	chainId: number ;
   };
   safe: {
 	chain: number;
@@ -49,7 +50,8 @@ interface Props {
   milestones: any[];
   applicationId: string;
   grantId: string;
-  chainId: number;
+  chainId: number | undefined;
+  applicantReceivingAddress : string | undefined;
 }
 
 function ModalContent({
@@ -61,6 +63,7 @@ function ModalContent({
 	grantId,
 	safe, 
 	chainId,
+	applicantReceivingAddress,
 }: Props) {
 	const apiClients = useContext(ApiClientsContext)!
 	const { workspace } = apiClients
@@ -74,7 +77,6 @@ function ModalContent({
 	const [submitClickedP2P, setSubmitClickedP2P] = useState(false)
 	const [safeBalance, setSafeBalance] = useState(0)
 	const [safeTransactionStep, setSafeTransactionStep] = useState(0)
-	const [applicantAddress, setApplicantAddress] = useState('')
 
 	const [walletBalance, setWalletBalance] = React.useState(0)
 	// const toast = useToast();
@@ -91,6 +93,7 @@ function ModalContent({
 	const toastRef = React.useRef<ToastId>()
 
 	const [disburseAmount, setDisburseAmount] = useState<any>()
+	const [copied, setCopied] = useState(false)
 	const [disburseData, disburseDataLink, disburseLoading, disburseError] = useDisburseReward(
 		disburseAmount,
 		grantId,
@@ -131,9 +134,6 @@ function ModalContent({
 		getFundsInSafe(safe.chain, safe.address, rewardAsset).then(() =>{
 			setSafeBalance(safeBalance)
 		})
-		getApplicantAddress(chainId, grantId, applicationId).then((address) => {
-			setApplicantAddress(address)
-		});
 	}, [])
 
 	const [disburseP2PAmount, setDisburseP2PAmount] = useState<any>()
@@ -190,7 +190,7 @@ function ModalContent({
 	}
 
 	const recordTransaction = async() => {
-		// todo: record the transaction on chain
+		// todo@madhavan: record the transaction on chain
 		// confirm if transaction has completed using transaction hash & safe chain
 		setRecordingTransaction(true)
 		//if transaction not completed, show error & setRecordinTransaction(false)
@@ -321,7 +321,7 @@ function ModalContent({
 								p={0}
 								colorScheme="brand"
 								isChecked={checkedItems[1]}
-								disabled={rewardAsset.offchain}
+								disabled={('chainId' in rewardAsset) && (rewardAsset.chainId !== chainId)}
 								onChange={() => setCheckedItems([false, true])}
 							/>
 						</Flex>
@@ -357,7 +357,7 @@ function ModalContent({
 						<Heading
 							variant="applicationHeading"
 							mt={4}>
-            Sending funds from grant smart contract
+            Sending funds from safe
 						</Heading>
 						<Button
 							mt={1}
@@ -381,22 +381,71 @@ function ModalContent({
 							align="start"
 							justify="start"
 							marginTop={2}
-							marginLeft={6}
-							marginRight={6}
+							marginLeft={2}
+							marginRight={2}
 							direction="column"
 						>
-							<Text>
-						<ol>
-							<li>Copy the applicant's address below</li>
-							<li>Open your multi-sig safe &amp; transfer funds to applicant</li>
-							<li>Hit continue</li>
-						</ol>
-							</Text>
-							<Input
-								mt={4}
-								readOnly
-								value={applicantAddress}
-							/>
+							{
+								["Copy applicant's address below", "Open your multi-sig safe and transfer funds to applicant", "Hit continue"].map((text, index) => (
+									<Flex
+										key={index}
+										direction="row"
+										justify="start"
+										mt={4}
+										align="center">
+										<Flex
+											bg="brand.500"
+											w={6}
+											h={6}
+											borderRadius="50%"
+											justify="center"
+											align="center"
+											mr={4}
+										>
+											<Text
+												h={6}
+												w={6}
+												mt={0}
+												color="white"
+												textAlign="center">
+												{index + 1}
+											</Text>
+										</Flex>
+										<Text>
+											{text}
+										</Text>
+									</Flex>
+								))
+							}
+							
+							<Flex
+								direction='row'
+								mt={8}
+								w="100%"
+								backgroundColor='#F3F4F4'
+								p={2}
+								borderRadius={4}
+							>
+								<Input
+									id='receivingAddress'
+									readOnly
+									value={applicantReceivingAddress}
+									border={0}
+								/>
+								<Button
+									variant='primary'
+									onClick={() => {
+										copy(applicantReceivingAddress!)
+										setCopied(true)
+										setTimeout(() => {
+											setCopied(false)
+										}, 2000)
+									}}
+								>
+									{copied? "Copied!": "Copy"}
+								</Button>
+							</Flex>
+							
 
 						</Flex>
 						
@@ -487,7 +536,8 @@ function ModalContent({
 							</MenuList>
 						</Menu>
 						<Input
-							placeholder='Enter Transaction Hash'
+							mt={4}
+							placeholder='Paste Transaction Hash'
 						/>
 						<Button
 							variant="primary"

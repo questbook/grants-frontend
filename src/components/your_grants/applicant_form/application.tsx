@@ -47,6 +47,7 @@ function Application({ applicationData, showHiddenData }: Props) {
 	const refs = [useRef(null), useRef(null), useRef(null), useRef(null)]
 
 	const [projectTitle, setProjectTitle] = useState('')
+	const [receivingAddress, setReceivingAddress] = useState('')
 	const [projectLink, setProjectLink] = useState<any[]>([])
 	const [projectGoals, setProjectGoals] = useState('')
 	const [projectMilestones, setProjectMilestones] = useState<any[]>([])
@@ -96,6 +97,7 @@ function Application({ applicationData, showHiddenData }: Props) {
 				?.values.map((val) => ({ link: val.value })) ?? [],
 		)
 
+		setReceivingAddress(getStringField('receivingAddress'))
 		const projectDetailsTemp = getStringField('projectDetails')
 		if(projectDetailsTemp.startsWith('Qm') && projectDetailsTemp.length < 64) {
 			getDecodedDetails(projectDetailsTemp)
@@ -495,6 +497,19 @@ Funding Breakdown
 							))
 						}
 					</Box>
+					<Box display={receivingAddress && receivingAddress !== '' ? '' : 'none'}>
+						<Heading
+							variant="applicationHeading"
+							ref={refs[0]}>
+              Receiving Address
+						</Heading>
+						<Text
+							variant="applicationText"
+							mt={2}>
+							{receivingAddress}
+						</Text>
+					</Box>
+
 				</Flex>
 				<Box my={10} />
 			</Flex>

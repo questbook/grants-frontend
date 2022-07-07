@@ -104,6 +104,7 @@ function ViewApplication() {
 		const fields = application?.fields
 		const fd: GrantApplicationProps = {
 			applicantName: getStringField('applicantName'),
+			receivingAddress: getStringField('receivingAddress'),
 			applicantEmail: getStringField('applicantEmail'),
 			teamMembers: +(getStringField('teamMembers') || '1'),
 			membersDescription:

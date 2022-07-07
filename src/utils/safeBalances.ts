@@ -1,4 +1,6 @@
 export async function getFundsInSafe(safeChain, safeAddress, rewardAsset){
+    return 0;
+    //todo@madhavan 
     if(!rewardAsset.offchain) {
         const safeContract = useContract({
             addressOrName: rewardAsset.address,
@@ -21,12 +23,7 @@ export async function getFundsInSafe(safeChain, safeAddress, rewardAsset){
     return 0
 }
 
-export async function getApplicantAddress(chainId, grantId, applicationId) {
-    // todo : get applicant address from application
-    return '0x0000000000000000000000000000000000000000'
-}
-
 export async function getTransaction(safeChain: number, safeAddress: number, hash: string) {
-    // todo : get transaction from hash
+    // todo@madhavan : get transaction from hash
     // is origin == safeAddress
 }
