@@ -7,6 +7,7 @@ import {
 	Flex,
 	Heading,
 	Image,
+	Input,
 	Menu,
 	MenuButton,
 	MenuItem,
@@ -15,7 +16,6 @@ import {
 	Text,
 	ToastId,
 	useToast,
-	Input
 } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
@@ -30,7 +30,7 @@ import ERC20ABI from '../../../../contracts/abi/ERC20.json'
 import { formatAmount, parseAmount } from '../../../../utils/formattingUtils'
 import Dropdown from '../../../ui/forms/dropdown'
 import SingleLineInput from '../../../ui/forms/singleLineInput'
-import { getApplicantAddress, getFundsInSafe } from 'src/utils/safeBalances'
+import { getFundsInSafe } from 'src/utils/safeBalances'
 
 interface Props {
   isOpen: boolean;
