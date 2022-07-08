@@ -529,8 +529,8 @@ Embed profile stats
 							</Text>
 						</Flex>
 					</ModalHeader >
-					<ModalBody 
-					gap="1rem"
+					<ModalBody
+						gap="1rem"
 					 m="auto"
 					 >
 						<embed
