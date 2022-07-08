@@ -30,7 +30,7 @@ export function getChainInfo(grant: any, chainId: SupportedChainId) : ChainInfo[
 		chainInfo = {
 			address: grant.reward.token.address,
 			label: grant.reward.token.label,
-			pair: '',
+			pair: undefined,
 			decimals: parseInt(grant.reward.token.decimal, 10),
 			icon: tokenIcon,
 		}
@@ -39,7 +39,7 @@ export function getChainInfo(grant: any, chainId: SupportedChainId) : ChainInfo[
 			address: '',
 			label: 'UNSUP',
 			decimals: 18,
-			pair: '',
+			pair: undefined,
 			icon: '',
 		}
 	}

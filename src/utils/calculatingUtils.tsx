@@ -34,12 +34,13 @@ export const calculateUSDValue = async(value: number | string | any, tokenPair: 
 
 	async function fetchTokenPrice() {
 		const data = await client.query(priceQuery).toPromise()
-		amount = data.data.pair.token0.derivedETH * data.data.bundle.ethPrice * value
+		amount = (data?.data?.pair?.token0! ? data.data.pair.token0.derivedETH : 0) * data.data.bundle.ethPrice * value
+		console.log(amount)
 	}
 
 	if(tokenPair === '0x0') {
 		await fetchWethPrice()
-	} else if(tokenPair !== null) {
+	} else if(tokenPair !== undefined) {
 		await fetchTokenPrice()
 	}
 
