@@ -56,7 +56,7 @@ export interface ChainInfo {
 		[address: string]: {
 			icon: string
 			label: string
-			pair: string
+			pair?: string
 			address: string
 			decimals: number
 		}
