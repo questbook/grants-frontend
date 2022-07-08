@@ -26,10 +26,11 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useAccount, useConnect } from 'wagmi'
 import AccountDetails from './accountDetails'
 import Tab from './tab'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 
 function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	const toast = useToast()
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const { isConnected, activeConnector } = useConnect()
 	const tabPaths = [
 		'your_grants',

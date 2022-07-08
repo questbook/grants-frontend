@@ -21,7 +21,9 @@ import { getFromIPFS } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
+// import { useAccount } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount';
+
 import FeedbackDrawer from '../feedbackDrawer'
 
 function ReviewerSidebar({
@@ -38,7 +40,7 @@ function ReviewerSidebar({
 }) {
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 
 	const [feedbackDrawerOpen, setFeedbackDrawerOpen] = React.useState(false)
 	const [feedbacks, setFeedbacks] = React.useState<any[]>([])

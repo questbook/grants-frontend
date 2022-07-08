@@ -110,25 +110,93 @@ export const GitHubTokenContext = createContext<{
 	setIsLoggedIn: (isLoggedIn?: boolean) => void;
 } | null>(null);
 
+export const ScwAddressContext = createContext<{
+	scwAddress?: string,
+	setScwAddress: (scwAddress?: string) => void;
+} | null>(null);
+
+export const NonceContext = createContext<{
+	nonce?: string,
+	setNonce: (nonce?: string) => void;
+} | null>(null);
+
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [webwallet, setWebwallet] = React.useState<Wallet>();
 	const [workspace, setWorkspace] = React.useState<MinimalWorkspace>();
 	const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>();
+	const [scwAddress, setScwAddress] = React.useState<string>();
+	const [nonce, setNonce] = React.useState<string>();
 
 	const getIsLoggedIn = () => {
 		if (typeof window === 'undefined')
 			return undefined;
-		
+
 		let _isLoggedIn = localStorage.getItem("isLoggedInGitHub");
-				
+
 		if (!_isLoggedIn)
 			return undefined;
-		
-		if(_isLoggedIn === "1")
+
+		if (_isLoggedIn === "1")
 			return true;
 
 		return false;
 	}
+
+	const getScwAddress = () => {
+		if (typeof window === 'undefined')
+			return undefined;
+
+		let _scwAddress = localStorage.getItem("scwAddress");
+
+		if (!_scwAddress)
+			return undefined;
+
+		return _scwAddress
+	}
+
+	const getNonce = () => {
+		if (typeof window === 'undefined')
+			return undefined;
+
+		let _nonce = localStorage.getItem("nonce");
+
+		if (!_nonce)
+			return undefined;
+
+		return nonce
+	}
+
+	const nonceContextValue = useMemo(
+		() => ({
+			nonce: getNonce(),
+			setNonce: (newNonce?: string) => {
+				if (newNonce) {
+					localStorage.setItem('nonce', newNonce);
+				} else {
+					localStorage.removeItem('nonce')
+				}
+
+				setNonce(newNonce);
+			}
+		})
+		, [nonce, setNonce]
+	)
+
+	const scwAddressContextValue = useMemo(
+		() => ({
+			scwAddress: getScwAddress(),
+			setScwAddress: (newScwAddress?: string) => {
+				if (newScwAddress) {
+					localStorage.setItem('scwAddress', newScwAddress);
+				} else {
+					localStorage.removeItem('scwAddress')
+				}
+
+				setScwAddress(newScwAddress);
+			}
+		})
+		, [scwAddress, setScwAddress]
+	)
 
 	const githubTokenContextValue = useMemo(
 		() => ({
@@ -242,9 +310,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				<ApiClientsContext.Provider value={apiClients}>
 					<WebwalletContext.Provider value={webwalletContextValue}>
 						<GitHubTokenContext.Provider value={githubTokenContextValue}>
-							<ChakraProvider theme={theme}>
-								{getLayout(<Component {...pageProps} />)}
-							</ChakraProvider>
+							<ScwAddressContext.Provider value={scwAddressContextValue}>
+								<NonceContext.Provider value={nonceContextValue}>
+									<ChakraProvider theme={theme}>
+										{getLayout(<Component {...pageProps} />)}
+									</ChakraProvider>
+								</NonceContext.Provider>
+							</ScwAddressContext.Provider>
 						</GitHubTokenContext.Provider>
 					</WebwalletContext.Provider>
 				</ApiClientsContext.Provider>

@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState } from 'react'
 import { ApiClientsContext } from 'pages/_app'
-import { useAccount } from 'wagmi'
+// import { useAccount } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount';
+
 
 export default function useMailTo(
 	to : string | undefined = undefined,
@@ -11,7 +13,7 @@ export default function useMailTo(
 ) {
 	const apiClients = useContext(ApiClientsContext)!
 	const { workspace } = apiClients
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const [email, setEmail] = useState<string | null>()
 
 	useEffect(() => {

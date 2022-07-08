@@ -13,6 +13,7 @@ import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useApplicationReviewRegistryContract from './contracts/useApplicationReviewRegistryContract'
 import useChainId from './utils/useChainId'
+import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 
 export default function useSubmitReview(
 	data: any,
@@ -26,7 +27,7 @@ export default function useSubmitReview(
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 	const { encryptMessage } = useEncryption()
 

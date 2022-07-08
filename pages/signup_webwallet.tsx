@@ -1,6 +1,6 @@
 
-import React, { ReactElement, useContext, useEffect, useState } from 'react';
-import { Wallet, getDefaultProvider, Contract } from 'ethers';
+import React, { useContext, useEffect, useState, useMemo } from 'react';
+import { Wallet } from 'ethers';
 import {
     Flex,
     Input,
@@ -15,21 +15,34 @@ import {
 import NavbarLayout from '../src/layout/navbarLayout';
 import { GitHubTokenContext, WebwalletContext } from './_app';
 import axios from 'axios';
-import { ethers } from 'ethers';
+import { ethers, Contract } from 'ethers';
 import { Biconomy } from '@biconomy/mexa';
-import redirect from 'nextjs-redirect'
-import { getSignedNonce, registerWebHook, sendGaslessTransaction } from '../src/utils/gaslessUtils';
-import { route } from 'next/dist/server/router';
+import { registerWebHook, sendGaslessTransaction, deploySCW, jsonRpcProvider, getEventData, getTransactionReceipt, addDapp } from '../src/utils/gaslessUtils';
 import { useRouter } from 'next/router';
+import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses';
+import { BiconomyWalletClient } from 'src/types/gasless';
 
 const config = {
     contract: {
-        address: "0xf2A2E064Fd0BE4Eb287df20B9b24A0cDAE4A0328",
+        address: "0xEf464fd1bb4951B4Af89bbFd6C46dd970b1Fa2AF",
         abi: [
             {
                 "inputs": [],
                 "stateMutability": "nonpayable",
                 "type": "constructor"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "value",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "GetValue",
+                "type": "event"
             },
             {
                 "inputs": [
@@ -73,84 +86,33 @@ const config = {
     }
 }
 
-let biconomy;
-let biconomyWalletClient;
-let contract;
-let scwAddress;
-
-// const getWebwalletLocally = () => {
-//     const webwalletPrivateKey = localStorage.getItem('webwalletPrivateKey');
-//     if (!webwalletPrivateKey) {
-//         return undefined;
-//     }
-//     try {
-//         const webwallet = new Wallet(webwalletPrivateKey);
-//         return webwallet;
-//     }
-//     catch {
-//         return undefined;
-//     }
-// }
-const jsonRpcProvider = new ethers.providers.JsonRpcProvider("https://polygon-mumbai.g.alchemy.com/v2/lfupuQhoZXWzMzn_OJ_zD9RHK0exz_b4");
+let biconomy: any;
+let biconomyWalletClient: BiconomyWalletClient;
+let contract: Contract;
+let scwAddress: string;
 
 const authToken = 'ce87a0be-951a-4475-ad2a-b5b5f93f278a' // authToken from the dashboard
+
 const apiKey = 'qPZRgkerc.afb7905a-12b8-4c90-8e6b-48479f9e58d1' // apiKey from the dashboard
 const webHookId = 'b8400628-c963-4761-9369-a14ec9ca2e6f'
 
+function SignupWebwallet() {
 
-function SignupWebwallet(props) {
-
-    const { webwallet, setWebwallet } = useContext(WebwalletContext);
-    const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext);
-
-    const [nonce, setNonce] = useState();
-    const [currentNumber, setCurrentNumber] = useState(31);
-
-    useEffect(async () => {
-        // localStorage.removeItem("webwalletPrivateKey");
-        // registerWebHook(authToken, apiKey)
-        if (webwallet) {
-            let res = await
-                axios.post("https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/get_nonce",
-                    {
-                        webwallet_address: webwallet.address
-                    });
-            console.log(res);
-            if (res.data) {
-                console.log("THIS IS DATA", res.data);
-                if (res.data.nonce === "Token expired")
-                    setIsLoggedIn(false);
-                else {
-                    let _nonce = res.data.nonce;
-                    setNonce(_nonce);
-                    setIsLoggedIn(true);
-                }
-                // let res2 = await axios.post("http://localhost:3001/v0/check",
-                //     {
-                //         data: {
-                //             signedNonce: signedNonce,
-                //             nonce: _nonce,
-                //             webwallet_address: "0x38FC46E8f99E337C580A7B90889aF9f1E4B3A0EC"
-                //         }
-                //     })
-                // console.log("THIS IS RES222", res2);
-
-            }
-        }
-
-
-    }, [webwallet]);
+    const { webwallet, setWebwallet } = useContext(WebwalletContext)!
+    const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!
+    const [number, setNumber] = useState<string>("one");
 
     useEffect(() => {
-        console.log("HERE ARE THE STATES", isLoggedIn, webwallet, biconomy);
-        
-        if(!webwallet){
-            setWebwallet(Wallet.createRandom());
-        }
+        // setNumber("two");
+        // localStorage.removeItem('webwalletPrivateKey');
+        // localStorage.removeItem('isLoggedInGitHub');
+        // if (!webwallet) {
+        //     setWebwallet(Wallet.createRandom());
+        // }
 
-        if (!isLoggedIn && webwallet) {
-            window.location.replace(`https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}`);
-        }
+        // if (!isLoggedIn && webwallet) {
+        //     window.location.href = `https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}`;
+        // }
 
     }, [isLoggedIn, webwallet])
 
@@ -175,51 +137,89 @@ function SignupWebwallet(props) {
                 );
 
                 biconomyWalletClient = biconomy.biconomyWalletClient;
+                console.log("biconomyWalletClient", biconomyWalletClient);
 
                 console.log("CLIENT WALLET", biconomyWalletClient)
 
                 let walletAddress = await deploySCW(webwallet, biconomyWalletClient);
                 scwAddress = walletAddress;
 
-            }).onEvent(biconomy.ERROR, (error, message) => {
+            }).onEvent(biconomy.ERROR, (error: any, message: any) => {
                 console.log(message);
                 console.log(error);
             });
+            console.log("DONE HERE")
         }
-    }
+    };
 
-    const handleSendGaslessTransaction = async (e) => {
+    const handleInitiateBiconomy = async (e: any) => {
         e.preventDefault();
 
         await initiateBiconomy();
 
-        let transactionHash = await sendGaslessTransaction(biconomy, contract, 'setValue', [22], config.contract.address, biconomyWalletClient,
-            scwAddress, webwallet, "80001", webHookId);
-        console.log(transactionHash);
+    }
+
+    const handleSendGaslessTransaction = async (e: any) => {
+        e.preventDefault();
+        // contract.on("GetValue", async (...args) => {
+        //     console.log("THIS IS EVENT", ...args);
+        // })
+
+        // const receipt = await jsonRpcProvider.getTransactionReceipt("0x933f36a114e19e87e70865fa1aafff46acb4cc373515d6a5b254b10dee79d35f");
+        // console.log("THIS IS RECEIPT", receipt);
+        // let abi = [ "event GetValue(uint value)" ];
+        // let iface = new ethers.utils.Interface(abi);
+        // let log = iface.parseLog(receipt.logs[0]); // here you can add your own logic to find the correct log
+        // console.log(log)
+        // const {value} = log.args;
+
+        // console.log("THIS IS EVENT NAME", log.eventFragment.name)
+        // console.log("PROBABLY THIS IS VALUE", parseInt(value));
+
+        // let { value } = await getEventData("0xe5704321b85844233e1971660d167acf6066f638e25d90fd0c15f372144b591b", "GetValue", config.contract.abi);
+        // console.log(ethers.BigNumber.from(value).toNumber());
+
+        // // jsonRpcProvider.once("0xe5704321b85844233e1971660d167acf6066f638e25d90fd0c15f372144b591b", async (value) => {
+        // //     console.log("Got the value", value);
+        // // });
+        
+        // console.log("HERE 2")
+        // console.log(await getTransactionReceipt("0x647486ca5fe26f952aacaeeb35287b5c2cab522274f2454ed92007d906e02e1c"))
+        // let transactionHash: string | undefined | boolean;
+
+        // console.log("ENTERING")
+        // transactionHash = await sendGaslessTransaction(biconomy, contract, 'setValue', [332], config.contract.address, biconomyWalletClient,
+        //     scwAddress, webwallet, "80001", webHookId, nonce);
+
+        // console.log(transactionHash);
+        // let something = await getEventData(transactionHash, "GetValue", config.contract.abi);
+        console.log(process.env.BICO_AUTH_TOKEN);
+        await addDapp('darr3', "80001", process.env.BICO_AUTH_TOKEN);
+        // console.log("THIS IS EVENT", something);
+
     }
 
 
     return (
         <Flex width='100%' flexDir='row' justifyContent='center'>
+            {number}
             {webwallet &&
-                <form onSubmit={handleSendGaslessTransaction}>
-                    <Input
-                        id='number'
-                        type='number'
-                        placeholder='31'
-                        value={currentNumber}
-                        onChange={() => setCurrentNumber(parseInt(currentNumber))}
-                    />
+                <form onSubmit={handleInitiateBiconomy}>
                     <Button mt={4} colorScheme='teal' type='submit'>
-                        Submit
+                        Initiate Biconomy
                     </Button>
                 </form>
             }
+            <form onSubmit={handleSendGaslessTransaction}>
+                <Button mt={4} colorScheme='teal' type='submit'>
+                    Send Transaction
+                </Button>
+            </form>
         </Flex>
     )
 }
 
-SignupWebwallet.getLayout = function (page) {
+SignupWebwallet.getLayout = function (page: any) {
     return (
         <NavbarLayout>
             {page}

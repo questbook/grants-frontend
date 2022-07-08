@@ -24,7 +24,9 @@ import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
+// import { useAccount } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount';
+
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs'
 import Heading from '../../../src/components/ui/heading'
 import Accept from '../../../src/components/your_grants/applicant_form/accept/accept'
@@ -49,7 +51,7 @@ function ApplicantForm() {
 	const [step, setStep] = useState(0)
 
 	const [isAdmin, setIsAdmin] = useState(false)
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	useEffect(() => {
 		if(workspace && workspace.members && workspace.members.length > 0) {
 			const tempMember = workspace.members.find(

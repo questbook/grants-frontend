@@ -13,6 +13,7 @@ import ErrorToast from '../components/ui/toasts/errorToast'
 import strings from '../constants/strings.json'
 import useApplicationRegistryContract from './contracts/useApplicationRegistryContract'
 import useChainId from './utils/useChainId'
+import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 
 export default function useSubmitApplication(
 	data: GrantApplicationRequest,
@@ -24,7 +25,7 @@ export default function useSubmitApplication(
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!

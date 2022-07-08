@@ -28,7 +28,9 @@ import {
 	getSupportedChainIdFromSupportedNetwork,
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
+// import { useAccount } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount';
+
 import AddFunds from '../../src/components/funds/add_funds_modal'
 import Heading from '../../src/components/ui/heading'
 import YourGrantCard from '../../src/components/your_grants/yourGrantCard'
@@ -87,7 +89,7 @@ function YourGrants() {
 	const [pk, setPk] = useState<string>('*')
 	const [ignorePkModal, setIgnorePkModal] = useState(false)
 
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
 	const [isAdmin, setIsAdmin] = React.useState<boolean>(false)
 	const [isReviewer, setIsReviewer] = React.useState<boolean>(false)

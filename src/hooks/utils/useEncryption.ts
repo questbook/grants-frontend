@@ -3,10 +3,12 @@ import { ToastId, useToast } from '@chakra-ui/react'
 import { encrypt } from '@metamask/eth-sig-util'
 import { ethers } from 'ethers'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
-import { useAccount } from 'wagmi'
+// import { useAccount } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount';
+
 
 export default function useEncryption() {
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
 

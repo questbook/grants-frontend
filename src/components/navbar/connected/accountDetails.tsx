@@ -16,10 +16,11 @@ import Loader from 'src/components/ui/loader'
 import { CHAIN_INFO, SHOW_TEST_NETS } from 'src/constants/chains'
 import useChainId from 'src/hooks/utils/useChainId'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 
 function AccountDetails() {
 	const isOnline = true
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const { isDisconnected } = useConnect()
 	const { disconnect } = useDisconnect()
 	const { connected, setConnected } = useContext(ApiClientsContext)!
@@ -113,7 +114,9 @@ function AccountDetails() {
 				}
 			</MenuButton>
 			{
-				!(connected && isDisconnected) && (
+				// @TODO FIX HERE
+				// !(connected && isDisconnected) && 
+				(
 					<MenuList>
 						<MenuItem isDisabled>
           Signed in with
@@ -123,7 +126,7 @@ function AccountDetails() {
 						<MenuItem
 							onClick={
 								() => {
-									setConnected(false)
+									// TODO FIX HERE setConnected(false)
 									disconnect()
 									router.replace('/')
 								}

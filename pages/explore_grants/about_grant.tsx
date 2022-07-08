@@ -21,7 +21,9 @@ import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import verify from 'src/utils/grantUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
-import { useAccount } from 'wagmi'
+// import { useAccount } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount';
+
 import GrantDetails from '../../src/components/explore_grants/about_grant/grantDetails'
 import GrantRewards from '../../src/components/explore_grants/about_grant/grantRewards'
 import Sidebar from '../../src/components/explore_grants/about_grant/sidebar'
@@ -34,7 +36,7 @@ import {
 import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils'
 
 function AboutGrant() {
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 
 	const router = useRouter()

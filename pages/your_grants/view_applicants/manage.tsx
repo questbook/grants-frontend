@@ -28,7 +28,9 @@ import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { ApplicationMilestone } from 'src/types'
 import useApplicationMilestones from 'src/utils/queryUtil'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
+// import { useAccount } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount';
+
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs'
 import Heading from '../../../src/components/ui/heading'
 import Modal from '../../../src/components/ui/modal'
@@ -73,7 +75,7 @@ function ManageGrant() {
 	const [applicationID, setApplicationID] = useState<any>()
 	const router = useRouter()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 
 	const {
 		data: {

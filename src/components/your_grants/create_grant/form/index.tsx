@@ -16,7 +16,9 @@ import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
+// import { useAccount } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount';
+
 import applicantDetailsList from '../../../../constants/applicantDetailsList'
 import strings from '../../../../constants/strings.json'
 import Heading from '../../../ui/heading'
@@ -49,7 +51,7 @@ function Form({
 
 	}, [workspace, currentChain])
 
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const maxDescriptionLength = 300
 	const [title, setTitle] = useState('')
 	const [summary, setSummary] = useState('')

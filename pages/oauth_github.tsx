@@ -20,6 +20,7 @@ function GitHubOauth() {
         console.log("THIS IS CODE", _code)
         console.log("GITHUB", localStorage.getItem("webwalletPrivateKey"));
         console.log("WEB", webwallet);
+        
         if (_code && webwallet) {
             axios.post("https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/add_user", {
                     code: _code,
@@ -37,7 +38,7 @@ function GitHubOauth() {
                 console.log(status)
                 if(status === true){
                     setIsLoggedIn(true);
-                    router.push('/signup_webwallet')
+                    window.history.go(-1);
                 }
             })
         }

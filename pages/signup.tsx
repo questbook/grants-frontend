@@ -13,25 +13,29 @@ import Loading from '../src/components/signup/create_dao/loading'
 import CreateGrant from '../src/components/signup/create_grant'
 import DaoCreated from '../src/components/signup/daoCreated'
 import NavbarLayout from '../src/layout/navbarLayout'
-import { ApiClientsContext } from './_app'
+import { ApiClientsContext, WebwalletContext, GitHubTokenContext } from './_app'
+import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 
 function SignupDao() {
 	const router = useRouter()
+
 	const { setWorkspace } = useContext(ApiClientsContext)!
 
 	const [daoCreated, setDaoCreated] = React.useState(false)
+
 	const [creatingGrant, setCreatingGrant] = React.useState(router.query.create_grant === 'true')
 
 	const [newWorkspaceObject, setNewWorkspaceObject] = React.useState<any>({})
 	const [newPublicKey, setNewPublicKey] = React.useState()
 
 	const [daoData, setDaoData] = React.useState<{
-    name: string;
-    description: string;
-    image: string;
-    network: SupportedChainId;
-    id: string;
-  } | null>(null)
+		name: string;
+		description: string;
+		image: string;
+		network: SupportedChainId;
+		id: string;
+	} | null>(null)
 
 	const [workspaceData, setWorkspaceData] = React.useState<any>()
 	const [
@@ -42,14 +46,12 @@ function SignupDao() {
 	] = useCreateWorkspace(workspaceData)
 
 	useEffect(() => {
-		if(
+		if (
 			workspaceData
-      && workspaceTransactionData
-      && workspaceTransactionData.events.length > 0
-      && workspaceTransactionData.events[0].event === 'WorkspaceCreated'
-      && imageHash
+			&& workspaceTransactionData
+			&& imageHash
 		) {
-			const newId = workspaceTransactionData.events[0].args.id
+			const newId = workspaceTransactionData.args.id
 			setDaoData({
 				...workspaceData,
 				image: imageHash,
@@ -84,15 +86,15 @@ function SignupDao() {
 		grantTransactionData,
 		transactionLink,
 		createGrantLoading,
-	] = useCreateGrant(grantData, workspaceData?.network, daoData?.id)
+	] = useCreateGrant(grantData, workspaceData?.network, daoData?.id);
 
 	const { setRefresh } = useCustomToast(transactionLink)
 	useEffect(() => {
 		// console.log(grantTransactionData);
-		if(grantTransactionData) {
+		if (grantTransactionData) {
 			setGrantData(null)
 
-			if(newPublicKey) {
+			if (newPublicKey) {
 				const w = { ...newWorkspaceObject }
 				w.members = [{
 					accessLevel: 'owner',
@@ -113,14 +115,14 @@ function SignupDao() {
 
 	}, [grantTransactionData, router])
 
-	if(creatingGrant) {
+	if (creatingGrant) {
 		return (
 			<CreateGrant
 				hasClicked={createGrantLoading}
 				onSubmit={
 					(data) => {
 						const dataCopy = { ...data }
-						if(data.publicKey) {
+						if (data.publicKey) {
 							setNewPublicKey(data.publicKey)
 							delete dataCopy.publicKey
 						}
@@ -132,7 +134,7 @@ function SignupDao() {
 		)
 	}
 
-	if(daoCreated && daoData) {
+	if (daoCreated && daoData) {
 		return (
 			<DaoCreated
 				daoName={daoData.name}
@@ -144,7 +146,7 @@ function SignupDao() {
 		)
 	}
 
-	if(workspaceLoading) {
+	if (workspaceLoading) {
 		return <Loading />
 	}
 
@@ -159,19 +161,19 @@ function SignupDao() {
 			<Text
 				mt="46px"
 				variant="heading">
-        What should we call your Grants DAO?
+				What should we call your Grants DAO?
 			</Text>
 			<Text
 				mt={7}
 				maxW="676px"
 				textAlign="center">
-        A Grants DAO is a neatly arranged space where you can manage grants,
-        review grant applications and fund grants.
+				A Grants DAO is a neatly arranged space where you can manage grants,
+				review grant applications and fund grants.
 			</Text>
 			<Form
-				// hasClicked={workspaceLoading}
 				onSubmit={
 					(data) => {
+						console.log("GOT HERE");
 						setWorkspaceData(data)
 					}
 				}
@@ -180,7 +182,7 @@ function SignupDao() {
 	)
 }
 
-SignupDao.getLayout = function(page: ReactElement) {
+SignupDao.getLayout = function (page: ReactElement) {
 	return (
 		<NavbarLayout renderTabs={false}>
 			{page}

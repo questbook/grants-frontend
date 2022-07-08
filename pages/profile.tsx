@@ -16,14 +16,16 @@ import {
 import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
+// import { useAccount } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount';
+
 import { ApiClientsContext } from './_app'
 
 function Profile() {
 	const router = useRouter()
 
 	const { subgraphClients } = React.useContext(ApiClientsContext)!
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 
 	// const [data, setData] = React.useState();
 	const [workspaceData, setWorkspaceData] = React.useState<DAOWorkspace>()

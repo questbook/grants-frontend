@@ -11,6 +11,7 @@ import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract'
 import useChainId from './utils/useChainId'
+import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 
 export default function useUpdateWorkspace(
 	data: WorkspaceUpdateRequest,
@@ -19,7 +20,7 @@ export default function useUpdateWorkspace(
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!

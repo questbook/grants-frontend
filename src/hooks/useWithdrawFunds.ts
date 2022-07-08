@@ -8,6 +8,7 @@ import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useGrantContract from './contracts/useGrantContract'
 import useChainId from './utils/useChainId'
+import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 
 export default function useWithdrawFunds(
 	setSubmitClicked: React.Dispatch<React.SetStateAction<boolean>>,
@@ -21,7 +22,7 @@ export default function useWithdrawFunds(
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!

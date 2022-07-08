@@ -9,7 +9,9 @@ import { SupportedChainId } from 'src/constants/chains'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useSubmitReview from 'src/hooks/useSubmitReview'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
-import { useAccount } from 'wagmi'
+// import { useAccount } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount';
+
 import MultiLineInput from '../ui/forms/multiLineInput'
 import Loader from '../ui/loader'
 
@@ -45,7 +47,7 @@ function FeedbackDrawer({
 	const [isApproved, setIsApproved] = React.useState<boolean>(false)
 
 	const [pk, setPk] = React.useState<string>('*')
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const { workspace } = useContext(ApiClientsContext)!
 
 	const {

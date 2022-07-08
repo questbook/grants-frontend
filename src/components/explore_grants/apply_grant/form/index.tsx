@@ -73,7 +73,7 @@ function Form({
 	shouldShowButton,
 	defaultMilestoneFields,
 }: Props) {
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const CACHE_KEY = strings.cache.apply_grant
 	const getKey = `${chainId}-${CACHE_KEY}-${grantId}`
 

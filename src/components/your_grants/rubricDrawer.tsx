@@ -7,7 +7,9 @@ import { SupportedChainId } from 'src/constants/chains'
 import useSetRubrics from 'src/hooks/useSetRubrics'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
-import { useAccount } from 'wagmi'
+// import { useAccount } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount';
+
 import Dropdown from '../ui/forms/dropdown'
 import MultiLineInput from '../ui/forms/multiLineInput'
 import SingleLineInput from '../ui/forms/singleLineInput'
@@ -48,7 +50,7 @@ function RubricDrawer({
 	const [editedRubricData, setEditedRubricData] = React.useState<any>()
 
 	const [pk, setPk] = React.useState<string>('*')
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const { workspace } = useContext(ApiClientsContext)!
 
 	const {

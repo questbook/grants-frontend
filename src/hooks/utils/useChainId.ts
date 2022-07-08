@@ -50,13 +50,16 @@ export default function useChainId() {
 
 	const [chainId, setChainId] = React.useState<SupportedChainId>()
 	useEffect(() => {
-		// console.log('changing net');
-		if(!activeChain?.id) {
-			setChainId(undefined)
-			return
-		}
 
-		setChainId(supportedChainIdFromNetworkData(activeChain.id))
+		// @TODO FIX HERE 
+		setChainId(80001);
+		// console.log('changing net');
+		// if(!activeChain?.id) {
+		// 	setChainId(undefined)
+		// 	return
+		// }
+
+		// setChainId(supportedChainIdFromNetworkData(activeChain.id))
 	}, [activeChain?.id])
 
 	return chainId

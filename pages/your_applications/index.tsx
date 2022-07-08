@@ -10,7 +10,9 @@ import Empty from 'src/components/ui/empty'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { GrantApplication, useGetMyApplicationsLazyQuery } from 'src/generated/graphql'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
+// import { useAccount } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount';
+
 import Heading from '../../src/components/ui/heading'
 import YourApplicationCard from '../../src/components/your_applications/yourApplicationCard'
 import NavbarLayout from '../../src/layout/navbarLayout'
@@ -28,7 +30,7 @@ function YourApplications() {
 	const [myApplications, setMyApplications] = React.useState<any>([])
 
 	const containerRef = useRef(null)
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const [currentPage, setCurrentPage] = React.useState(0)
 	// modified for testing
 	const allNetworkApplications = Object.keys(subgraphClients)!.map((key) => (

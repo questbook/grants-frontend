@@ -1,24 +1,43 @@
-import React, { useContext, useEffect } from 'react'
-import { ToastId, useToast } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
-import { SupportedNetwork } from 'src/generated/graphql'
-import getErrorMessage from 'src/utils/errorUtils'
-import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { uploadToIPFS } from 'src/utils/ipfsUtils'
-import { getSupportedChainIdFromSupportedNetwork, getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
-import ErrorToast from '../components/ui/toasts/errorToast'
-import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract'
-import useChainId from './utils/useChainId'
+import React, { useContext, useEffect } from 'react';
+import { ToastId, useToast } from '@chakra-ui/react';
+import { ApiClientsContext } from 'pages/_app';
+import { SupportedNetwork } from 'src/generated/graphql';
+import getErrorMessage from 'src/utils/errorUtils';
+import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils';
+import { uploadToIPFS } from 'src/utils/ipfsUtils';
+import { getSupportedChainIdFromSupportedNetwork, getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils';
+import ErrorToast from '../components/ui/toasts/errorToast';
+import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract';
+import useChainId from './utils/useChainId';
 
+import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses';
+import { WebwalletContext, GitHubTokenContext } from 'pages/_app';
+import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
+import { apiKey, webHookId ,getTransactionReceipt, registerWebHook, sendGaslessTransaction, deploySCW, jsonRpcProvider, getEventData } from 'src/utils/gaslessUtils';
+import { ethers } from 'ethers';
+import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount';
 export default function useCreateWorkspace(
-	data: any,
+	data: any
 ) {
+
+	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
+	const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!
+
+	const [
+		biconomy,
+		biconomyWalletClient,
+		scwAddress
+	] = useBiconomy({
+		apiKey: apiKey,
+		targetContractABI: WorkspaceRegistryAbi
+	});
+
 	const [error, setError] = React.useState<string>()
 	const [loading, setLoading] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
 	const [imageHash, setImageHash] = React.useState<string>()
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount();
 
 	const chainId = useChainId()
 	const apiClients = useContext(ApiClientsContext)!
@@ -29,6 +48,8 @@ export default function useCreateWorkspace(
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
+
+	const networkChainId = getSupportedChainIdFromSupportedNetwork(`chain_${data?.network}` as SupportedNetwork)
 
 	useEffect(() => {
 		if(data) {
@@ -41,6 +62,8 @@ export default function useCreateWorkspace(
 	}, [data])
 
 	useEffect(() => {
+		console.log("THIS IS ERROR", error)
+		console.log("THIS IS LOADING", loading)
 		if(error) {
 			return
 		}
@@ -57,6 +80,7 @@ export default function useCreateWorkspace(
 			const uploadedImageHash = (await uploadToIPFS(data.image)).hash
 			// console.log('Network: ', data.network);
 			// console.log('Network Return: ', getSupportedValidatorNetworkFromChainId(data.network));
+			console.log("THIS IS ADDRESS", accountData.address)
 			const {
 				data: { ipfsHash },
 			} = await validatorApi.validateWorkspaceCreate({
@@ -73,8 +97,32 @@ export default function useCreateWorkspace(
 
 			try {
 				// eslint-disable-next-line max-len
-				const createWorkspaceTransaction = await workspaceRegistryContract.createWorkspace(ipfsHash)
-				const createWorkspaceTransactionData = await createWorkspaceTransaction.wait()
+				console.log("Workspace registry address", WORKSPACE_REGISTRY_ADDRESS[networkChainId])
+				let transactionHash: string | undefined | boolean;
+
+				const targetContractObject = new ethers.Contract(
+					WORKSPACE_REGISTRY_ADDRESS[networkChainId],
+					WorkspaceRegistryAbi,
+					webwallet
+				);
+				console.log("ENTERING")
+				transactionHash = await sendGaslessTransaction(biconomy, targetContractObject, 'createWorkspace', [ipfsHash], 
+				WORKSPACE_REGISTRY_ADDRESS[networkChainId], biconomyWalletClient,
+				scwAddress, webwallet, `${networkChainId}`, webHookId, nonce);
+
+				console.log(transactionHash);
+				let receipt = await getTransactionReceipt(transactionHash);
+
+				console.log("THIS IS RECEIPT", receipt);
+				
+				const createWorkspaceTransactionData = await getEventData(receipt, "WorkspaceCreated", WorkspaceRegistryAbi)
+				
+				if(createWorkspaceTransactionData){
+					console.log("THIS IS EVENT", createWorkspaceTransactionData.args);
+				}
+
+				// const createWorkspaceTransaction = await workspaceRegistryContract.createWorkspace(ipfsHash)
+				// const createWorkspaceTransactionData = await createWorkspaceTransaction.wait()
 
 				setTransactionData(createWorkspaceTransactionData)
 				setImageHash(uploadedImageHash)
@@ -98,33 +146,36 @@ export default function useCreateWorkspace(
 		}
 
 		try {
+			console.log(data);
 			if(!data) {
 				return
 			}
-
+			console.log(transactionData);
 			if(transactionData) {
 				return
 			}
+			console.log(accountData, accountData.address)
 
 			if(!accountData || !accountData.address) {
 				throw new Error('not connected to wallet')
 			}
-
+			console.log(chainId);
 			if(!chainId) {
 				throw new Error('not connected to valid network')
 			}
-
+			console.log(validatorApi);
 			if(!validatorApi) {
 				throw new Error('validatorApi or workspaceId is not defined')
 			}
-
+			console.log(workspaceRegistryContract);
 			if(
 				!workspaceRegistryContract
         || workspaceRegistryContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !workspaceRegistryContract.signer
-        || !workspaceRegistryContract.provider
+        // || !workspaceRegistryContract.signer
+        // || !workspaceRegistryContract.provider
 			) {
+				console.log("ERROR HERE")
 				return
 			}
 
@@ -156,8 +207,6 @@ export default function useCreateWorkspace(
 		accountData,
 		data,
 	])
-
-	const networkChainId = getSupportedChainIdFromSupportedNetwork(`chain_${data?.network}` as SupportedNetwork)
 
 	return [
 		transactionData,

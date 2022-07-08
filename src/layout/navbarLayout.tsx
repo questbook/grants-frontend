@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Container, useToast, VStack } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import ConnectedNavbar from '../components/navbar/connected'
 import SignInNavbar from '../components/navbar/notConnected'
 interface Props {
@@ -13,7 +14,7 @@ interface Props {
 function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 	const { isDisconnected, isConnected, isError, isIdle, isConnecting, isReconnecting, connect, connectors, data: connectData, status: connectStatus, error } = useConnect()
 	const { data: networkData, pendingChainId, activeChain, status: networkStatus } = useNetwork()
-	const { data: accountData, isLoading, isFetching, isFetched, isRefetching, isSuccess, status: accountStatus } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const toast = useToast()
 
 	const { connected, setConnected } = useContext(ApiClientsContext)!
@@ -26,22 +27,24 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 	}, [renderCount])
 
 	useEffect(() => {
-		if(!connected && isDisconnected) {
-			setConnected(false)
-			if(renderCount > 0) {
-				toast({
-					title: 'Disconnected',
-					status: 'info',
-				})
-			}
-		} else if(isConnected) {
-			setConnected(true)
+		// @TODO FIX HERE
+		setConnected(true);
+		// if(!connected && isDisconnected) {
+		// 	setConnected(false)
+		// 	if(renderCount > 0) {
+		// 		toast({
+		// 			title: 'Disconnected',
+		// 			status: 'info',
+		// 		})
+		// 	}
+		// } else if(isConnected) {
+		// 	setConnected(true)
 			setRenderCount(renderCount + 1)
-		} else if(connected && isDisconnected) {
-			connect(connectors[0])
-			setConnected(true)
-			setRenderCount(renderCount + 1)
-		}
+		// } else if(connected && isDisconnected) {
+		// 	connect(connectors[0])
+		// 	setConnected(true)
+		// 	setRenderCount(renderCount + 1)
+		// }
 
 	}, [isConnected, isDisconnected])
 

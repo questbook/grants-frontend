@@ -1,6 +1,8 @@
 import React, { useRef, useState } from 'react'
 import { Container } from '@chakra-ui/react'
-import { useAccount } from 'wagmi'
+// import { useAccount } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount';
+
 import Form from './form'
 import TipsContainer from './tips'
 
@@ -10,7 +12,7 @@ function CreateGrant({
   onSubmit: (data: any) => void;
   hasClicked: boolean;
 }) {
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const totalSteps = 4
 
 	const [formData, setFormData] = useState<any>({})
