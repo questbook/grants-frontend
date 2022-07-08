@@ -137,7 +137,7 @@ export default function Embed() {
 				)
 
 				if(tokenInfo !== undefined && tokenValue !== '0') {
-					calculateUSDValue(tokenValue, tokenInfo.pair).then((promise) => {
+					calculateUSDValue(tokenValue, tokenInfo.pair!).then((promise) => {
 						setGrantsDisbursed((array: any) => [...array, promise])
 					})
 				}
