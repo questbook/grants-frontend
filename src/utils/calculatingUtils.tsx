@@ -42,6 +42,7 @@ export const calculateUSDValue = async(value: number | string | any, tokenPair: 
 	} else if(tokenPair !== null) {
 		await fetchTokenPrice()
 	}
+
 	console.log(tokenPair)
 
 	return amount

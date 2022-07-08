@@ -5,10 +5,19 @@ import {
 	Button,
 	Divider,
 	Flex,
+	Heading,
 	IconButton,
 	Image,
+	Modal,
+	ModalBody,
+	ModalCloseButton,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+	ModalOverlay,
 	Stack,
 	Text,
+	useDisclosure
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import DaoAbout from 'src/components/profile/dao_about'
@@ -33,6 +42,7 @@ import { ApiClientsContext } from './_app'
 
 function Profile() {
 	const router = useRouter()
+	const { onOpen, isOpen, onClose } = useDisclosure()
 
 	const { subgraphClients } = React.useContext(ApiClientsContext)!
 	const { data: accountData } = useAccount()
@@ -294,7 +304,10 @@ function Profile() {
 					<Stack
 						px="1.5rem"
 						pb="2rem"
-						pt="1rem">
+						pt="1rem"
+						direction="row"
+						justifyContent="space-between"
+					>
 						<DaoData
 							disbursed={grantsDisbursed}
 							winners={grantWinners}
@@ -303,6 +316,22 @@ function Profile() {
 							fundTimes={fundingTime}
 							applicationTime={applicationTime}
 						/>
+						<Button
+							p="4px 8px"
+							border="1px solid #E8E9E9"
+							bg="none"
+							h="2rem"
+							w="fit-content"
+							alignSelf="end"
+							fontSize="0.875rem"
+							lineHeight="2rem"
+							color="#373737"
+							onClick={() => onOpen()}
+						>
+							{'</>'}
+							{' '}
+Embed profile stats
+						</Button>
 					</Stack>
 
 					<Divider />
@@ -443,6 +472,48 @@ function Profile() {
 					)
 				)
 			}
+
+			<Modal
+				isOpen={isOpen}
+				onClose={onClose}
+				size="xl">
+				<ModalOverlay />
+				<ModalContent>
+					<ModalHeader
+						p="16px"
+						borderBottom="1px solid #E8E9E9">
+						<ModalCloseButton />
+						<Flex
+							direction="column"
+							gap="0.5rem">
+							<Heading
+								fontFamily="DM Sans"
+								fontStyle="normal"
+								fontWeight="500"
+								fontSize="1.25rem"
+								lineHeight="1.5rem"
+								color="#1F1F33"
+							>
+							Embed profile stats
+							</Heading>
+							<Text
+								fontFamily="DM Sans"
+								fontStyle="normal"
+								fontWeight="400"
+								fontSize="0.875rem"
+								lineHeight="1.25rem"
+								color="#7D7DA0"
+							>
+						Use embed codes for your profile. They are easy to embed on any website and are a great way to get applicants for your DAO.
+							</Text>
+						</Flex>
+					</ModalHeader >
+					<ModalBody>
+						<embed src="" />
+					</ModalBody>
+					<ModalFooter />
+				</ModalContent>
+			</Modal>
 		</Flex>
 	)
 }
