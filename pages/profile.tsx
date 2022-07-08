@@ -18,9 +18,8 @@ import {
 	ModalOverlay,
 	Stack,
 	Text,
-	useDisclosure,
-	useClipboard
-} from '@chakra-ui/react'
+	useClipboard,
+	useDisclosure } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import DaoAbout from 'src/components/profile/dao_about'
 import DaoData from 'src/components/profile/dao_data'
@@ -28,7 +27,7 @@ import BrowseGrantCard from 'src/components/profile/grantCard'
 import SeeMore from 'src/components/profile/see_more'
 import { SupportedChainId } from 'src/constants/chains'
 import { CHAIN_INFO } from 'src/constants/chains'
-import { useGetAllGrantsForADaoQuery, useGetDaoDetailsQuery, useGetFundsAndProfileDataQuery, useGetFundSentDisburseQuery } from 'src/generated/graphql'
+import { useGetDaoDetailsQuery, useGetFundsAndProfileDataQuery } from 'src/generated/graphql'
 // APP LAYOUT & STATE
 import NavbarLayout from 'src/layout/navbarLayout'
 // CONSTANTS AND TYPES
@@ -107,9 +106,9 @@ function Profile() {
 
 	// const { data: grantsData } = useGetAllGrantsForADaoQuery({
 	// 	client:
-    //   subgraphClients[
-    //   	getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) ?? SupportedChainId.RINKEBY
-    //   ].client,
+	//   subgraphClients[
+	//   	getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) ?? SupportedChainId.RINKEBY
+	//   ].client,
 	// 	variables: {
 	// 		workspaceId: workspaceData?.id ?? '',
 	// 		acceptingApplications: true,
@@ -118,9 +117,9 @@ function Profile() {
 
 	// const { data: fundsData } = useGetFundSentDisburseQuery({
 	// 	client:
-    //   subgraphClients[
-    //   	getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) ?? SupportedChainId.RINKEBY
-    //   ].client
+	//   subgraphClients[
+	//   	getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) ?? SupportedChainId.RINKEBY
+	//   ].client
 	// })
 
 	const { data: allDaoData } = useGetFundsAndProfileDataQuery({
@@ -129,9 +128,9 @@ function Profile() {
       	getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) ?? SupportedChainId.RINKEBY
       ].client,
 	  variables: {
-		workspaceId: workspaceData?.id ?? '',
-		acceptingApplications: true,
-	},
+			workspaceId: workspaceData?.id ?? '',
+			acceptingApplications: true,
+		},
 	})
 
 	useEffect(() => {
@@ -199,11 +198,11 @@ function Profile() {
 	}, [allDaoData, grantsDisbursed])
 
 	const value = `<embed src="https://bafybeidbyejvtw6a2dx2efranirw7rfgnylagn2hw245pnarbmabcqzram.on.fleek.co/embed/?daoId=${daoID}&chainId=${chainID}" type="text/html" width="700" height="700" />`
-	const { hasCopied, onCopy } = useClipboard(value);
-	const [codeActive, setCodeActive] = useState(false);
+	const { hasCopied, onCopy } = useClipboard(value)
+	const [codeActive, setCodeActive] = useState(false)
 	const closeModal = () => {
-		onClose();
-		setCodeActive(false);
+		onClose()
+		setCodeActive(false)
 	}
 
 	return (
@@ -480,7 +479,7 @@ Embed profile stats
               			}
               		/>
               	)
-              })
+							})
 						}
 					</>
 				) : (
@@ -498,7 +497,7 @@ Embed profile stats
 				isOpen={isOpen}
 				onClose={() => closeModal()}
 				size="3xl"
-				>
+			>
 				<ModalOverlay />
 				<ModalContent>
 					<ModalHeader
@@ -531,30 +530,39 @@ Embed profile stats
 						</Flex>
 					</ModalHeader >
 					<ModalBody gap="1rem">
-					<embed src={`https://bafybeidbyejvtw6a2dx2efranirw7rfgnylagn2hw245pnarbmabcqzram.on.fleek.co/embed/?daoId=${daoID}&chainId=${chainID}`} type="text/html" width="725" height="600" />
-					{codeActive && <Code
-						p="1rem"
-						children={value}
-					/>}
+						<embed
+							src={`https://bafybeidbyejvtw6a2dx2efranirw7rfgnylagn2hw245pnarbmabcqzram.on.fleek.co/embed/?daoId=${daoID}&chainId=${chainID}`}
+							type="text/html"
+							width="725"
+							height="600" />
+						{
+							codeActive && (
+								<Code
+									p="1rem"
+									// eslint-disable-next-line react/no-children-prop
+									children={value}
+								/>
+							)
+						}
 					</ModalBody>
-					<ModalFooter 
-					borderTop="1px solid #E8E9E9"
-					justifyContent="center"
+					<ModalFooter
+						borderTop="1px solid #E8E9E9"
+						justifyContent="center"
 					>
-					<Button
-						onClick={() => !codeActive ? setCodeActive(true) : onCopy()}
-						color="#FFFFFF"
-						bg="#1F1F33"
-						p="1rem"
-						_hover={{bg:"#1F1F33", color:"#FFFFFF"}}
-						_focus={{bg:"#1F1F33", color:"#FFFFFF"}}
-						_active={{bg:"#1F1F33", color:"#FFFFFF"}}
-						w="90%"
-						borderRadius="0.5rem"
-						justifySelf="center"
-					>
-						{!codeActive ? "Get embed code" : hasCopied ? "Copied" : "Copy"}
-					</Button>
+						<Button
+							onClick={() => !codeActive ? setCodeActive(true) : onCopy()}
+							color="#FFFFFF"
+							bg="#1F1F33"
+							p="1rem"
+							_hover={{ bg:'#1F1F33', color:'#FFFFFF' }}
+							_focus={{ bg:'#1F1F33', color:'#FFFFFF' }}
+							_active={{ bg:'#1F1F33', color:'#FFFFFF' }}
+							w="90%"
+							borderRadius="0.5rem"
+							justifySelf="center"
+						>
+							{!codeActive ? 'Get embed code' : hasCopied ? 'Copied' : 'Copy'}
+						</Button>
 					</ModalFooter>
 				</ModalContent>
 			</Modal>
