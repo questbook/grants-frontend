@@ -529,7 +529,10 @@ Embed profile stats
 							</Text>
 						</Flex>
 					</ModalHeader >
-					<ModalBody gap="1rem">
+					<ModalBody 
+					gap="1rem"
+					 m="auto"
+					 >
 						<embed
 							src={`https://bafybeidbyejvtw6a2dx2efranirw7rfgnylagn2hw245pnarbmabcqzram.on.fleek.co/embed/?daoId=${daoID}&chainId=${chainID}`}
 							type="text/html"
@@ -538,6 +541,7 @@ Embed profile stats
 						{
 							codeActive && (
 								<Code
+									w="98%"
 									p="1rem"
 									// eslint-disable-next-line react/no-children-prop
 									children={value}
