@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import {
 	Box,
 	Button,
+	Code,
 	Divider,
 	Flex,
 	Heading,
@@ -17,7 +18,8 @@ import {
 	ModalOverlay,
 	Stack,
 	Text,
-	useDisclosure
+	useDisclosure,
+	useClipboard
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import DaoAbout from 'src/components/profile/dao_about'
@@ -26,7 +28,7 @@ import BrowseGrantCard from 'src/components/profile/grantCard'
 import SeeMore from 'src/components/profile/see_more'
 import { SupportedChainId } from 'src/constants/chains'
 import { CHAIN_INFO } from 'src/constants/chains'
-import { useGetAllGrantsForADaoQuery, useGetDaoDetailsQuery, useGetFundSentDisburseQuery } from 'src/generated/graphql'
+import { useGetAllGrantsForADaoQuery, useGetDaoDetailsQuery, useGetFundsAndProfileDataQuery, useGetFundSentDisburseQuery } from 'src/generated/graphql'
 // APP LAYOUT & STATE
 import NavbarLayout from 'src/layout/navbarLayout'
 // CONSTANTS AND TYPES
@@ -103,64 +105,75 @@ function Profile() {
 		}
 	}, [data, error, loading])
 
-	const { data: grantsData } = useGetAllGrantsForADaoQuery({
+	// const { data: grantsData } = useGetAllGrantsForADaoQuery({
+	// 	client:
+    //   subgraphClients[
+    //   	getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) ?? SupportedChainId.RINKEBY
+    //   ].client,
+	// 	variables: {
+	// 		workspaceId: workspaceData?.id ?? '',
+	// 		acceptingApplications: true,
+	// 	},
+	// })
+
+	// const { data: fundsData } = useGetFundSentDisburseQuery({
+	// 	client:
+    //   subgraphClients[
+    //   	getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) ?? SupportedChainId.RINKEBY
+    //   ].client
+	// })
+
+	const { data: allDaoData } = useGetFundsAndProfileDataQuery({
 		client:
       subgraphClients[
       	getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) ?? SupportedChainId.RINKEBY
       ].client,
-		variables: {
-			workspaceId: workspaceData?.id ?? '',
-			acceptingApplications: true,
-		},
-	})
-
-	const { data: fundsData } = useGetFundSentDisburseQuery({
-		client:
-      subgraphClients[
-      	getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) ?? SupportedChainId.RINKEBY
-      ].client
+	  variables: {
+		workspaceId: workspaceData?.id ?? '',
+		acceptingApplications: true,
+	},
 	})
 
 	useEffect(() => {
-		if(grantsData && grantsData.grants.length >= 1 && grantsApplicants.length === 0) {
-			grantsData.grants.forEach((grant) => {
+		if(allDaoData && allDaoData.grants.length >= 1 && grantsApplicants.length === 0) {
+			allDaoData.grants.forEach((grant) => {
 				setGrantsApplicants((array: any) => [...array, grant.numberOfApplications])
 			})
 		}
-	}, [grantsData, grantsApplicants])
+	}, [allDaoData, grantsApplicants])
 
 	useEffect(() => {
-		if(fundsData && fundsData.fundsTransfers.length !== 7 && fundingTime.length === 0) {
-			fundsData.fundsTransfers.forEach((created) => {
+		if(allDaoData && allDaoData.fundsTransfers.length !== 7 && fundingTime.length === 0) {
+			allDaoData.fundsTransfers.forEach((created) => {
 				setFundingTime((array: any) => [...array, created.createdAtS])
 			})
 		}
-	}, [fundsData, fundingTime])
+	}, [allDaoData, fundingTime])
 
 	useEffect(() => {
-		if(grantsData && grantsData.grants.length >= 1) {
-			grantsData.grants.forEach((grant) => {
+		if(allDaoData && allDaoData.grants.length >= 1) {
+			allDaoData.grants.forEach((grant) => {
 				grant.applications.filter((app) => {
 					app.state === 'approved' && setApplicationTime((array: any) => [...array, app.updatedAtS])
 				})
 			})
 		}
-	}, [grantsData])
+	}, [allDaoData])
 
 	useEffect(() => {
-		if(grantsData && grantsData.grants.length >= 1 && grantWinners.length === 0) {
-			grantsData.grants.forEach((grant) => {
+		if(allDaoData && allDaoData.grants.length >= 1 && grantWinners.length === 0) {
+			allDaoData.grants.forEach((grant) => {
 				grant.applications.forEach(
 					(app: any) => app.state === 'approved' &&
             setGrantWinners((winners: any) => [...winners, app])
 				)
 			})
 		}
-	}, [grantsData, grantWinners])
+	}, [allDaoData, grantWinners])
 
 	useEffect(() => {
-		if(grantsData && grantsDisbursed.length === 0) {
-			grantsData.grants.forEach((grant) => {
+		if(allDaoData && grantsDisbursed.length === 0) {
+			allDaoData.grants.forEach((grant) => {
 				const chainId = getSupportedChainIdFromSupportedNetwork(
 					grant.workspace.supportedNetworks[0]
 				)
@@ -183,7 +196,15 @@ function Profile() {
 			}
 			)
 		}
-	}, [grantsData, grantsDisbursed])
+	}, [allDaoData, grantsDisbursed])
+
+	const value = `<embed src="https://bafybeidbyejvtw6a2dx2efranirw7rfgnylagn2hw245pnarbmabcqzram.on.fleek.co/embed/?daoId=${daoID}&chainId=${chainID}" type="text/html" width="700" height="700" />`
+	const { hasCopied, onCopy } = useClipboard(value);
+	const [codeActive, setCodeActive] = useState(false);
+	const closeModal = () => {
+		onClose();
+		setCodeActive(false);
+	}
 
 	return (
 		<Flex
@@ -312,7 +333,7 @@ function Profile() {
 							disbursed={grantsDisbursed}
 							winners={grantWinners}
 							applicants={grantsApplicants}
-							grants={grantsData}
+							grants={allDaoData}
 							fundTimes={fundingTime}
 							applicationTime={applicationTime}
 						/>
@@ -363,7 +384,7 @@ Embed profile stats
 								>
 									{tab}
 									{' '}
-									{tab === 'Browse Grants' && `(${grantsData?.grants.length})`}
+									{tab === 'Browse Grants' && `(${allDaoData?.grants.length})`}
 								</Button>
 							))
 						}
@@ -378,9 +399,9 @@ Embed profile stats
 				selected === 0 ? (
 					<>
 						{
-							grantsData &&
-              grantsData.grants.length > 0 &&
-              grantsData.grants.map((grant) => {
+							allDaoData &&
+							allDaoData.grants.length > 0 &&
+							allDaoData.grants.map((grant) => {
               	const chainId = getSupportedChainIdFromSupportedNetwork(
               		grant.workspace.supportedNetworks[0]
               	)
@@ -475,8 +496,9 @@ Embed profile stats
 
 			<Modal
 				isOpen={isOpen}
-				onClose={onClose}
-				size="xl">
+				onClose={() => closeModal()}
+				size="3xl"
+				>
 				<ModalOverlay />
 				<ModalContent>
 					<ModalHeader
@@ -508,10 +530,32 @@ Embed profile stats
 							</Text>
 						</Flex>
 					</ModalHeader >
-					<ModalBody>
-						<embed src="" />
+					<ModalBody gap="1rem">
+					<embed src={`https://bafybeidbyejvtw6a2dx2efranirw7rfgnylagn2hw245pnarbmabcqzram.on.fleek.co/embed/?daoId=${daoID}&chainId=${chainID}`} type="text/html" width="725" height="600" />
+					{codeActive && <Code
+						p="1rem"
+						children={value}
+					/>}
 					</ModalBody>
-					<ModalFooter />
+					<ModalFooter 
+					borderTop="1px solid #E8E9E9"
+					justifyContent="center"
+					>
+					<Button
+						onClick={() => !codeActive ? setCodeActive(true) : onCopy()}
+						color="#FFFFFF"
+						bg="#1F1F33"
+						p="1rem"
+						_hover={{bg:"#1F1F33", color:"#FFFFFF"}}
+						_focus={{bg:"#1F1F33", color:"#FFFFFF"}}
+						_active={{bg:"#1F1F33", color:"#FFFFFF"}}
+						w="90%"
+						borderRadius="0.5rem"
+						justifySelf="center"
+					>
+						{!codeActive ? "Get embed code" : hasCopied ? "Copied" : "Copy"}
+					</Button>
+					</ModalFooter>
 				</ModalContent>
 			</Modal>
 		</Flex>
