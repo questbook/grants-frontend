@@ -6,6 +6,7 @@ import ErrorToast from 'src/components/ui/toasts/errorToast'
 // import { useAccount } from 'wagmi'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount';
 
+// @TODO what does this component do?
 
 export default function useEncryption() {
 	const { data: accountData } = useQuestbookAccount()
