@@ -197,7 +197,7 @@ function Profile() {
 		}
 	}, [allDaoData, grantsDisbursed])
 
-	const value = `<embed src="https://bafybeidbyejvtw6a2dx2efranirw7rfgnylagn2hw245pnarbmabcqzram.on.fleek.co/embed/?daoId=${daoID}&chainId=${chainID}" type="text/html" width="700" height="700" />`
+	const value = `<embed src="https://www.questbook.app/embed/?daoId=${daoID}&chainId=${chainID}" type="text/html" width="700" height="700" />`
 	const { hasCopied, onCopy } = useClipboard(value)
 	const [codeActive, setCodeActive] = useState(false)
 	const closeModal = () => {
@@ -533,20 +533,18 @@ Embed profile stats
 						gap="1rem"
 					 m="auto"
 					 >
-						<embed
-							src={`https://bafybeidbyejvtw6a2dx2efranirw7rfgnylagn2hw245pnarbmabcqzram.on.fleek.co/embed/?daoId=${daoID}&chainId=${chainID}`}
-							type="text/html"
-							width="725"
-							height="600" />
-						{
-							codeActive && (
+					{
+						!codeActive ? (
+						<Image
+							src="/images/embed_sample.png"
+							height="360" />
+						) :
 								<Code
 									w="98%"
 									p="1rem"
 									// eslint-disable-next-line react/no-children-prop
 									children={value}
 								/>
-							)
 						}
 					</ModalBody>
 					<ModalFooter

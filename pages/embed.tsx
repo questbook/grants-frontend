@@ -320,7 +320,11 @@ export default function Embed() {
 				<Button
 					p="12px 32px"
 					w="200px"
-					variant="primary">
+					bg="#1F1F33"
+					borderRadius="8px"
+					color="white"
+					_hover={{bg: "gray"}}
+					>
         Apply for Grants
 				</Button>
 			</Link>
