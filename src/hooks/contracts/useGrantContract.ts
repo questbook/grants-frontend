@@ -6,7 +6,7 @@ export default function useGrantContract(grantId?: string) {
 	const grantContract = useContract({
 		addressOrName:
       grantId ?? '0x0000000000000000000000000000000000000000',
-		contractInterface: GrantABI,
+		contractInterface: GrantABI.abi,
 		signerOrProvider: signer,
 	})
 
