@@ -151,8 +151,12 @@ function BrowseGrants() {
 			w="100%"
 			ref={containerRef}
 			direction="row"
-			justify="center">
+			justify="center"
+			>
 			<Flex
+						border="1px solid #E8E9E9"
+		p="0"
+		paddingInline="0"
 				direction="column"
 				w="55%"
 				alignItems="stretch"
