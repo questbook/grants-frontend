@@ -86,10 +86,13 @@ function GrantCard({
 	}, [grantReward, grantAmount, grantCurrency])
 
 	return (
-		<Flex borderY="1px solid #E8E9E9">
+		<Flex
+			w="full"
+			border="1px solid #E8E9E9"
+		>
 			<Flex
+				px="2rem"
 				py={6}
-				px="1.5rem"
 				w="100%">
 				<Flex
 					flex={1}
@@ -174,7 +177,7 @@ ago
 
 					<Flex
 						direction="row"
-						mt={8}
+						mt="1.5rem"
 						alignItems="center">
 						<Stack
 							bgColor="#F5F5F5"

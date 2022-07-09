@@ -323,8 +323,8 @@ export default function Embed() {
 					bg="#1F1F33"
 					borderRadius="8px"
 					color="white"
-					_hover={{bg: "gray"}}
-					>
+					_hover={{ bg: 'gray' }}
+				>
         Apply for Grants
 				</Button>
 			</Link>

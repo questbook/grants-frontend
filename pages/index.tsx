@@ -152,19 +152,26 @@ function BrowseGrants() {
 			ref={containerRef}
 			direction="row"
 			justify="center"
-			>
+		>
 			<Flex
-						border="1px solid #E8E9E9"
-		p="0"
-		paddingInline="0"
+				p="0"
+				paddingInline="0"
 				direction="column"
 				w="55%"
 				alignItems="stretch"
 				pb={8}
-				px={10}>
-				<Heading
-					dontRenderDivider
-					title="Browse grants" />
+			>
+				<Flex
+					borderX="1px solid #E8E9E9"
+					p="1.5rem"
+				>
+					<Heading
+						dontRenderDivider
+						title="Browse grants"
+						mt="0"
+					/>
+				</Flex>
+
 				{
 					<>
 						{

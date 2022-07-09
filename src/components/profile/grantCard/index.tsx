@@ -70,7 +70,11 @@ function BrowseGrantCard({
 	}, [grantReward, grantAmount, grantCurrency])
 
 	return (
-		<Flex borderY="1px solid #E8E9E9">
+		<Flex
+			w="full"
+			border="1px solid #E8E9E9"
+		>
+			{' '}
 			<Flex
 				py={6}
 				px="1.5rem"
@@ -126,7 +130,7 @@ function BrowseGrantCard({
 
 					<Flex
 						direction="row"
-						mt={8}
+						mt="1.5rem"
 						alignItems="center">
 						<Stack
 							bgColor="#F5F5F5"

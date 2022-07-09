@@ -533,18 +533,19 @@ Embed profile stats
 						gap="1rem"
 					 m="auto"
 					 >
-					{
-						!codeActive ? (
-						<Image
-							src="/images/embed_sample.png"
-							height="360" />
-						) :
+						{
+							!codeActive ? (
+								<Image
+									src="/images/embed_sample.png"
+									height="360" />
+							) : (
 								<Code
 									w="98%"
 									p="1rem"
 									// eslint-disable-next-line react/no-children-prop
 									children={value}
 								/>
+							)
 						}
 					</ModalBody>
 					<ModalFooter
