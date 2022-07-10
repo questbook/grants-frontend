@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useRouter } from "next/router";
 import { GitHubTokenContext, WebwalletContext } from './_app';
 import NavbarLayout from '../src/layout/navbarLayout';
-import { Flex, Heading, Text} from "@chakra-ui/react";
+import { Flex, Heading, Text } from "@chakra-ui/react";
 
 function GitHubOauth() {
 
@@ -13,34 +13,33 @@ function GitHubOauth() {
     const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!;
 
     useEffect(() => {
-        if(isLoggedIn){
-            router.push('/signup_webwallet')
-        }
         const _code = router.query.code;
         console.log("THIS IS CODE", _code)
         console.log("GITHUB", localStorage.getItem("webwalletPrivateKey"));
         console.log("WEB", webwallet);
-        
+        if(!_code && isLoggedIn){
+            router.push('/');
+        }
         if (_code && webwallet) {
             axios.post("https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/add_user", {
-                    code: _code,
-                    webwallet_address: webwallet.address
+                code: _code,
+                webwallet_address: webwallet.address
+            })
+                .then(res => {
+                    if (res)
+                        return res.data
                 })
-            .then(res => {
-                if(res)
-                    return res.data
-            })
-            .then(data => {
-                if(data)
-                    return data.authorize
-            })
-            .then(status => {
-                console.log(status)
-                if(status === true){
-                    setIsLoggedIn(true);
-                    window.history.go(-1);
-                }
-            })
+                .then(data => {
+                    if (data)
+                        return data.authorize
+                })
+                .then(status => {
+                    console.log(status)
+                    if (status === true) {
+                        setIsLoggedIn(true);
+                        router.push('/')
+                    }
+                })
         }
         else {
             setMsg("Something went wrong. Please try again");
@@ -48,7 +47,7 @@ function GitHubOauth() {
 
     }, [])
 
-    return (       
+    return (
         <Flex width='100%' flexDir='row' justifyContent='center'>
             {msg}
         </Flex>
@@ -56,7 +55,7 @@ function GitHubOauth() {
 
 }
 
-GitHubOauth.getLayout = function(page: ReactElement) {
+GitHubOauth.getLayout = function (page: ReactElement) {
     return (
         <NavbarLayout>
             {page}
