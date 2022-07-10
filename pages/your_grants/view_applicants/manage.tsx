@@ -16,7 +16,6 @@ import { BigNumber } from 'ethers'
 import { useRouter } from 'next/router'
 import CopyIcon from 'src/components/ui/copy_icon'
 import { defaultChainId } from 'src/constants/chains'
-import config from 'src/constants/config.json'
 import {
 	GetApplicationDetailsQuery,
 	useGetApplicationDetailsQuery,
@@ -81,6 +80,8 @@ function ManageGrant() {
 		},
 		refetch: refetchMilestones,
 	} = useApplicationMilestones(applicationID)
+
+	console.log('fundingAsk', formatAmount(getTotalFundingAsked(milestones).toString(), decimals))
 
 	useEffect(() => {
 		console.log(decimals)
@@ -586,10 +587,12 @@ View
 							onClose={() => setIsSendFundModalOpen(false)}
 							grantId={applicationData.grant.id}
 							applicationId={applicationID}
-							safe={{
-								chain: 80001, //todo@madhavan: applicationData.grant.safe.chain,
-								address: 'CFejqDTfiaGk3BE84ykcYugdQtYthcaZ4GL8ZngYDRE5' //todo@madhavan: applicationData.grant.safe.address,
-							}}
+							safe={
+								{
+									chain: 80001, //todo@madhavan: applicationData.grant.safe.chain,
+									address: 'CFejqDTfiaGk3BE84ykcYugdQtYthcaZ4GL8ZngYDRE5' //todo@madhavan: applicationData.grant.safe.address,
+								}
+							}
 							chainId={getSupportedChainIdFromWorkspace(workspace)}
 							applicantReceivingAddress={getStringField('receivingAddress')}
 						/>

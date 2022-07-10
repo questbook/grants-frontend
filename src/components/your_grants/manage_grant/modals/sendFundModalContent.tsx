@@ -17,20 +17,20 @@ import {
 	ToastId,
 	useToast,
 } from '@chakra-ui/react'
+import copy from 'copy-to-clipboard'
 import { BigNumber } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
-import copy from 'copy-to-clipboard'
 import Loader from 'src/components/ui/loader'
 import useDisburseP2PReward from 'src/hooks/useDisburseP2PReward'
 import useDisburseReward from 'src/hooks/useDisburseReward'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
+import { getFundsInSafe } from 'src/utils/safeBalances'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useContract, useNetwork, useSigner } from 'wagmi'
 import ERC20ABI from '../../../../contracts/abi/ERC20.json'
 import { formatAmount, parseAmount } from '../../../../utils/formattingUtils'
 import Dropdown from '../../../ui/forms/dropdown'
 import SingleLineInput from '../../../ui/forms/singleLineInput'
-import { getFundsInSafe } from 'src/utils/safeBalances'
 
 interface Props {
   isOpen: boolean;
@@ -61,10 +61,12 @@ function ModalContent({
 	milestones,
 	applicationId,
 	grantId,
-	safe, 
+	workspaceId,
+	safe,
 	chainId,
 	applicantReceivingAddress,
 }: Props) {
+	console.log('applicationId', applicationId)
 	const apiClients = useContext(ApiClientsContext)!
 	const { workspace } = apiClients
 	const [checkedItems, setCheckedItems] = React.useState([true, false])
@@ -77,6 +79,8 @@ function ModalContent({
 	const [submitClickedP2P, setSubmitClickedP2P] = useState(false)
 	const [safeBalance, setSafeBalance] = useState(0)
 	const [safeTransactionStep, setSafeTransactionStep] = useState(0)
+
+	const [transactionHash, setTransactionHash] = useState<string>()
 
 	const [walletBalance, setWalletBalance] = React.useState(0)
 	// const toast = useToast();
@@ -105,7 +109,7 @@ function ModalContent({
 		submitClicked,
 		setSubmitClicked,
 	)
-	const [recordingTransaction, setRecordingTransaction] = useState(false);
+	const [recordingTransaction, setRecordingTransaction] = useState(false)
 
 	useEffect(() => {
 		if(workspace && switchNetwork && isOpen) {
@@ -131,7 +135,7 @@ function ModalContent({
 
 
 	useEffect(() => {
-		getFundsInSafe(safe.chain, safe.address, rewardAsset).then(() =>{
+		getFundsInSafe(safe.chain, safe.address, rewardAsset).then(() => {
 			setSafeBalance(safeBalance)
 		})
 	}, [])
@@ -189,12 +193,17 @@ function ModalContent({
 		setDisburseP2PAmount(parseAmount(funding, rewardAsset.address, rewardAssetDecimals))
 	}
 
+	//applicationId (from props),
+	//milestoneID (from selectedMilestone props),
+	//transactionHash (from state),
+	//amount (from selectedMilestone props) => recordTransaction
 	const recordTransaction = async() => {
+		console.log('button clicked')
 		// todo@madhavan: record the transaction on chain
 		// confirm if transaction has completed using transaction hash & safe chain
 		setRecordingTransaction(true)
 		//if transaction not completed, show error & setRecordinTransaction(false)
-		
+
 	}
 
 	useEffect(() => {
@@ -386,7 +395,7 @@ function ModalContent({
 							direction="column"
 						>
 							{
-								["Copy applicant's address below", "Open your multi-sig safe and transfer funds to applicant", "Hit continue"].map((text, index) => (
+								["Copy applicant's address below", 'Open your multi-sig safe and transfer funds to applicant', 'Hit continue'].map((text, index) => (
 									<Flex
 										key={index}
 										direction="row"
@@ -417,7 +426,7 @@ function ModalContent({
 									</Flex>
 								))
 							}
-							
+
 							<Flex
 								direction='row'
 								mt={8}
@@ -434,21 +443,23 @@ function ModalContent({
 								/>
 								<Button
 									variant='primary'
-									onClick={() => {
-										copy(applicantReceivingAddress!)
-										setCopied(true)
-										setTimeout(() => {
-											setCopied(false)
-										}, 2000)
-									}}
+									onClick={
+										() => {
+											copy(applicantReceivingAddress!)
+											setCopied(true)
+											setTimeout(() => {
+												setCopied(false)
+											}, 2000)
+										}
+									}
 								>
-									{copied? "Copied!": "Copy"}
+									{copied ? 'Copied!' : 'Copy'}
 								</Button>
 							</Flex>
-							
+
 
 						</Flex>
-						
+
 						<Button
 							variant="primary"
 							w="100%"
@@ -538,6 +549,12 @@ function ModalContent({
 						<Input
 							mt={4}
 							placeholder='Paste Transaction Hash'
+							value={transactionHash}
+							onChange={
+								(evt) => {
+									setTransactionHash(evt.target.value)
+								}
+							}
 						/>
 						<Button
 							variant="primary"
