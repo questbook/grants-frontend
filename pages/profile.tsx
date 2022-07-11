@@ -142,7 +142,7 @@ function Profile() {
 	}, [allDaoData, grantsApplicants])
 
 	useEffect(() => {
-		if(allDaoData && allDaoData.fundsTransfers.length !== 7 && fundingTime.length === 0) {
+		if(allDaoData && fundingTime.length === 0) {
 			allDaoData.fundsTransfers.forEach((created) => {
 				setFundingTime((array: any) => [...array, created.createdAtS])
 			})
@@ -153,7 +153,7 @@ function Profile() {
 		if(allDaoData && allDaoData.grants.length >= 1) {
 			allDaoData.grants.forEach((grant) => {
 				grant.applications.filter((app) => {
-					app.state === 'approved' && setApplicationTime((array: any) => [...array, app.updatedAtS])
+					app.state === 'approved' && setApplicationTime((array: any) => [...array, app.createdAtS])
 				})
 			})
 		}

@@ -93,7 +93,7 @@ export const getAverageTime = (applicationTimes: Array<number>, fundingTimes: Ar
 		applicationSentAverage = (fundingTimes.reduce((sum: any, a: any) => sum + a, 0).toFixed(0)) / fundingTimes.length
 	}
 
-	average = fundingDatesAverage - applicationSentAverage
+	average = applicationSentAverage - fundingDatesAverage
 
 	if(average < oneSecond) {
 		return '--'
