@@ -6,6 +6,7 @@ import { MinimalWorkspace } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import getRole from 'src/utils/memberUtils'
 import { useAccount } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 
 interface Props {
   workspaces: MinimalWorkspace[];
@@ -14,7 +15,7 @@ interface Props {
 
 function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 	const { workspace } = React.useContext(ApiClientsContext)!
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const [expanded, setExpanded] = React.useState(false)
 
 	const router = useRouter()

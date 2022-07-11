@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.5.8",
-    "@biconomy/mexa": "^2.0.33",
+    "@biconomy/mexa": "^2.0.34",
     "@chakra-ui/react": "^1.8.0",
     "@draft-js-plugins/editor": "^4.1.2",
     "@draft-js-plugins/focus": "^4.1.2",
@@ -23,7 +23,7 @@
     "@emotion/styled": "^11.6.0",
     "@ethersproject/bignumber": "^5.5.0",
     "@metamask/eth-sig-util": "^4.0.0",
-    "@questbook/service-validator-client": "github:questbook/service-validator-typescript-client",
+    "@questbook/service-validator-client": "Fusegithub:questbook/service-validator-typescript-client",
     "@toast-ui/editor": "^3.1.2",
     "@toast-ui/react-editor": "^3.1.2",
     "@types/react-star-ratings": "^2.3.0",

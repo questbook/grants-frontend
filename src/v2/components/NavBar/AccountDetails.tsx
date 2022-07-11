@@ -12,10 +12,11 @@ import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 
 function AccountDetails() {
 	const isOnline = true
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const { isDisconnected } = useConnect()
 	const { disconnect } = useDisconnect()
 	const { connected, setConnected } = useContext(ApiClientsContext)!

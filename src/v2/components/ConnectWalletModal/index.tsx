@@ -5,6 +5,7 @@ import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWa
 import { useAccount, useConnect } from 'wagmi'
 import ConnectWalletButton from './ConnectWalletButton'
 import ConnectWalletErrorState from './ConnectWalletErrorState'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 
 const ConnectWalletModal = ({
 	isOpen,
@@ -26,7 +27,7 @@ const ConnectWalletModal = ({
 
 	const {
 		data: accountData
-	} = useAccount()
+	} = useQuestbookAccount()
 
 	const availableWallets = [{
 		name: 'Metamask',

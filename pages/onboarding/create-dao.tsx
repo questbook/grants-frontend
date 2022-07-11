@@ -15,10 +15,11 @@ import CreateDaoModal from 'src/v2/components/Onboarding/UI/CreateDaoModal'
 import BackgroundImageLayout from 'src/v2/components/Onboarding/UI/Layout/BackgroundImageLayout'
 import OnboardingCard from 'src/v2/components/Onboarding/UI/Layout/OnboardingCard'
 import { useAccount, useConnect, useNetwork, useSigner } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 
 const OnboardingCreateDao = () => {
 	const router = useRouter()
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const [step, setStep] = useState(0)
 	const [daoName, setDaoName] = useState<string>()
 	const [daoNetwork, setDaoNetwork] = useState<NetworkSelectOption>()

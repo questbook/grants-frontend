@@ -10,10 +10,11 @@ import { useAccount, useConnect } from 'wagmi'
 import ManageDAO from './ManageDAO'
 import SidebarItem from './SidebarItem'
 import { TabIndex, useGetTabs } from './Tabs'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 
 function Sidebar() {
 	const [topTabs, bottomTabs] = useGetTabs()
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const { isConnected } = useConnect()
 	const { workspace, setWorkspace, subgraphClients, connected } =
     React.useContext(ApiClientsContext)!
@@ -45,9 +46,11 @@ function Sidebar() {
 				const promises = getAllWorkspaces.map(
 					(allWorkspaces) => new Promise(async(resolve) => {
 						try {
+
 							const { data } = await allWorkspaces[0]({
 								variables: { actorId: userAddress },
 							})
+							console.log("THIS ISSSS DATA", data);
 							if(data && data.workspaceMembers.length > 0) {
 								resolve(data.workspaceMembers.map((w) => w.workspace))
 							} else {

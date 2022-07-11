@@ -7,6 +7,8 @@ import { useNetwork } from 'wagmi'
  * @returns the chain ID if supported -- undefined otherwise
  */
 export default function useChainId() {
+	// @TODO: Change here!
 	const { activeChain } = useNetwork()
-	return CHAIN_INFO[activeChain?.id as SupportedChainId]?.id
+	// return CHAIN_INFO[activeChain?.id as SupportedChainId]?.id
+	return CHAIN_INFO["80001"]?.id
 }
