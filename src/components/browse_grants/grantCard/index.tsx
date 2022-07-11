@@ -1,19 +1,13 @@
-
 import React, { useEffect, useState } from 'react'
-import {
-	Box,
-	Button,
-	Flex,
-	Image,
-	Link,
-	Stack,
-	Text,
-} from '@chakra-ui/react'
+import { Box, Button, Flex, Image, Link, Stack, Text } from '@chakra-ui/react'
 import moment from 'moment'
 import { useRouter } from 'next/router'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import { SupportedChainId } from 'src/constants/chains'
-import { calculateUSDValue, useTimeDifference } from 'src/utils/calculatingUtils'
+import {
+	calculateUSDValue,
+	useTimeDifference,
+} from 'src/utils/calculatingUtils'
 import { nFormatter } from 'src/utils/formattingUtils'
 import Badge from './badge'
 import ShareMenu from './menu'
@@ -79,36 +73,38 @@ function GrantCard({
 
 	useEffect(() => {
 		if(grantReward === 0) {
-			calculateUSDValue(grantAmount, grantCurrencyPair!).then((promise: any) => {
-				setGrantReward(promise as number)
-			})
+			calculateUSDValue(grantAmount, grantCurrencyPair!).then(
+				(promise: any) => {
+					setGrantReward(promise as number)
+				}
+			)
 		}
 	}, [grantReward, grantAmount, grantCurrency])
 
 	return (
 		<Flex
 			w="full"
-			border="1px solid #E8E9E9"
-		>
+			border="1px solid #E8E9E9">
 			<Flex
 				px="2rem"
-				py={6}
+				pt="1rem"
+				pb="1.5rem"
 				w="100%">
 				<Flex
 					flex={1}
-					gap="1rem"
+					gap="1.5rem"
 					direction="column">
 					<Flex
 						direction="row"
 						alignItems="center"
-						gap="0.75rem"
-					>
+						gap="0.75rem">
 						<Image
 							objectFit="cover"
 							h="2rem"
 							w="2rem"
 							borderRadius="4px"
-							src={daoIcon} />
+							src={daoIcon}
+						/>
 						<Link
 							onClick={
 								() => {
@@ -133,8 +129,7 @@ function GrantCard({
 
 						<Image
 							src="/ui_icons/green_dot.svg"
-							display="inline-block"
-						/>
+							display="inline-block" />
 
 						<Text
 							fontSize="0.75rem"
@@ -148,11 +143,12 @@ ago
 						</Text>
 
 						<Box mr="auto" />
-						<Badge
-							numOfApplicants={numOfApplicants} />
+						<Badge numOfApplicants={numOfApplicants} />
 					</Flex>
 
-					<Text maxW="50%">
+					<Text
+						mt="-0.5rem"
+						maxW="50%">
 						<Link
 							onClick={onTitleClick}
 							whiteSpace="normal"
@@ -167,6 +163,7 @@ ago
 					</Text>
 
 					<Text
+						mt="-1rem"
 						lineHeight="24px"
 						color="#373737"
 						fontSize="1rem"
@@ -177,7 +174,6 @@ ago
 
 					<Flex
 						direction="row"
-						mt="1.5rem"
 						alignItems="center">
 						<Stack
 							bgColor="#F5F5F5"
@@ -195,7 +191,9 @@ ago
 							>
 								<b>
 									{
-										grantReward !== 0 ? `$${nFormatter(grantReward.toFixed(0))}` : (
+										grantReward !== 0 ? (
+											`$${nFormatter(grantReward.toFixed(0))}`
+										) : (
 											<>
 												{grantAmount}
 												{' '}
@@ -204,7 +202,7 @@ ago
 										)
 									}
 								</b>
-/grantee
+                /grantee
 								{
 									isGrantVerified && (
 										<VerifiedBadge
@@ -234,7 +232,7 @@ ago
 							fontWeight="400"
 							color="#373737"
 						>
-		  Paid in
+              Paid in
 							{' '}
 							<b>
 								{grantCurrency}
@@ -256,7 +254,7 @@ ago
 							fontSize="0.85rem"
 							lineHeight="1rem"
 							display="inline-block">
-		  Ends on
+              Ends on
 							{' '}
 							<b>
 								{moment(endTimestamp).format('MMMM D')}
@@ -272,7 +270,7 @@ ago
 							onClick={onClick}
 							variant="primaryCta"
 							h="36px">
-		  Apply Now
+              Apply Now
 						</Button>
 					</Flex>
 				</Flex>
