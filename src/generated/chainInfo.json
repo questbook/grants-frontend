@@ -425,10 +425,10 @@
 			}
 		},
 		"qbContracts": {
-			"applications": "0xF93F605142Fb1Efad7Aa58253dDffF67775b4520",
-			"workspace": "0xfEc77DcD17d4b4F435893e8da0A7FC5d77DD4A1C",
-			"grantFactory": "0xCc86D90D96831AF8CF2c1E051ae98Ffa991414d2",
-			"reviews": "0xF839b31c6b3062B033536B4fe47789C47b187fc9"
+			"applications": "0xaFaC7a1229509A6dF7f75AAF1B28C1e927D6A542",
+			"workspace": "0x6C95c4b887eAcC52612e3D79575A1b00Ace05A4d",
+			"grantFactory": "0xc782342D667f8355869E9f5D23f245804aB10F56",
+			"reviews": "0xB2594525944249664F577fD6812CA03a09FDffdf"
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-findora-testnet",
 		"rpcUrls": [
