@@ -67,7 +67,7 @@ export const useTimeDifference = (first: number, second: number) => {
 	} else if(elapsed < msPerMonth) {
 		return Math.round(elapsed / msPerWeek) + 'w'
 	} else if(elapsed < msPerYear) {
-		return Math.round(elapsed / msPerMonth) + 'm'
+		return Math.round(elapsed / msPerMonth) + 'mo'
 	} else {
 		return Math.round(elapsed / msPerYear) + 'y'
 	}
