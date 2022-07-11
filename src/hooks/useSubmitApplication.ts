@@ -6,14 +6,13 @@ import { SupportedChainId } from 'src/constants/chains'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
-import {
-	useAccount, useNetwork,
+import { useNetwork,
 } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import strings from '../constants/strings.json'
 import useApplicationRegistryContract from './contracts/useApplicationRegistryContract'
-import useChainId from './utils/useChainId'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
+import useChainId from './utils/useChainId'
 
 export default function useSubmitApplication(
 	data: GrantApplicationRequest,

@@ -19,7 +19,7 @@ import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useSubmitApplication from 'src/hooks/useSubmitApplication'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { isValidEmail } from 'src/utils/validationUtils'
-import { useAccount, useSigner } from 'wagmi'
+import { useSigner } from 'wagmi'
 import strings from '../../../../constants/strings.json'
 import { GrantApplicationFieldsSubgraph } from '../../../../types/application'
 import { parseAmount } from '../../../../utils/formattingUtils'
@@ -193,6 +193,7 @@ function Form({
 	}, [router, txnData])
 
 	const handleOnSubmit = async() => {
+		console.log(grantRequiredFields)
 		let error = false
 		if(applicantName === '' && grantRequiredFields.includes('applicantName')) {
 			setApplicantNameError(true)
@@ -319,6 +320,8 @@ function Form({
 			return
 		}
 
+		console.log('Funding asked: ', fundingAsk)
+
 		const data: GrantApplicationRequest = {
 			grantId,
 			applicantId: await signer?.getAddress(),
@@ -327,7 +330,7 @@ function Form({
 				applicantEmail: [{ value: applicantEmail }],
 				projectName: [{ value: projectName }],
 				projectDetails: [{ value: projectDetailsString }],
-				fundingAsk: [
+				fundingAsk: fundingAsk !== '' ? [
 					{
 						value: parseAmount(
 							fundingAsk,
@@ -335,7 +338,7 @@ function Form({
 							rewardDecimal,
 						),
 					},
-				],
+				] : [],
 				fundingBreakdown: [{ value: fundingBreakdown }],
 				teamMembers: [{ value: Number(teamMembers).toString() }],
 				memberDetails: membersDescription.map((md) => ({
@@ -619,20 +622,24 @@ function Form({
 				/>
 
 				<Box mt="43px" />
-				<Funding
-					fundingAsk={fundingAsk}
-					setFundingAsk={setFundingAsk}
-					fundingAskError={fundingAskError}
-					setFundingAskError={setFundingAskError}
-					fundingBreakdown={fundingBreakdown}
-					setFundingBreakdown={setFundingBreakdown}
-					fundingBreakdownError={fundingBreakdownError}
-					setFundingBreakdownError={setFundingBreakdownError}
-					rewardAmount={rewardAmount}
-					rewardCurrency={rewardCurrency}
-					rewardCurrencyCoin={rewardCurrencyCoin}
-					grantRequiredFields={grantRequiredFields}
-				/>
+				{
+					grantRequiredFields.includes('fundingBreakdown') && (
+						<Funding
+							fundingAsk={fundingAsk}
+							setFundingAsk={setFundingAsk}
+							fundingAskError={fundingAskError}
+							setFundingAskError={setFundingAskError}
+							fundingBreakdown={fundingBreakdown}
+							setFundingBreakdown={setFundingBreakdown}
+							fundingBreakdownError={fundingBreakdownError}
+							setFundingBreakdownError={setFundingBreakdownError}
+							rewardAmount={rewardAmount}
+							rewardCurrency={rewardCurrency}
+							rewardCurrencyCoin={rewardCurrencyCoin}
+							grantRequiredFields={grantRequiredFields}
+						/>
+					)
+				}
 
 				{
 					customFields && customFields.length > 0 && (

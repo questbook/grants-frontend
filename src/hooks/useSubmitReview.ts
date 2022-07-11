@@ -9,11 +9,11 @@ import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useAccount, useNetwork } from 'wagmi'
+import { useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useApplicationReviewRegistryContract from './contracts/useApplicationReviewRegistryContract'
-import useChainId from './utils/useChainId'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
+import useChainId from './utils/useChainId'
 
 export default function useSubmitReview(
 	data: any,

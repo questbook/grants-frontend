@@ -1,12 +1,5 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react'
-import {
-	Box,
-	Button,
-	Divider,
-	Flex,
-	Image,
-	Text,
-} from '@chakra-ui/react'
+import { Box, Button, Divider, Flex, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import Deadline from 'src/components/ui/deadline'
@@ -14,16 +7,18 @@ import GrantShare from 'src/components/ui/grantShare'
 import Modal from 'src/components/ui/modal'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
-import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
+import { defaultChainId } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
-import { useGetGrantDetailsQuery, useGetGrantsAppliedToQuery } from 'src/generated/graphql'
+import {
+	useGetGrantDetailsQuery,
+	useGetGrantsAppliedToQuery,
+} from 'src/generated/graphql'
+// import { useAccount } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import verify from 'src/utils/grantUtils'
-import { getAssetInfo } from 'src/utils/tokenUtils'
-// import { useAccount } from 'wagmi'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount';
-
+import { getAssetInfo, getChainInfo } from 'src/utils/tokenUtils'
 import GrantDetails from '../../src/components/explore_grants/about_grant/grantDetails'
 import GrantRewards from '../../src/components/explore_grants/about_grant/grantRewards'
 import Sidebar from '../../src/components/explore_grants/about_grant/sidebar'
@@ -111,7 +106,11 @@ function AboutGrant() {
 	}, [data, error, loading])
 
 	useEffect(() => {
-		if(accountData && accountData?.address && accountData?.address?.length > 0) {
+		if(
+			accountData &&
+      accountData?.address &&
+      accountData?.address?.length > 0
+		) {
 			setAccount(accountData.address)
 		}
 	}, [accountData])
@@ -153,22 +152,7 @@ function AboutGrant() {
 			return
 		}
 
-		let chainInfo
-		let tokenIcon
-		if(grantData.reward.token) {
-			tokenIcon = getUrlForIPFSHash(grantData.reward.token?.iconHash)
-			chainInfo = {
-				address: grantData.reward.token.address,
-				label: grantData.reward.token.label,
-				decimals: grantData.reward.token.decimal,
-				icon: tokenIcon,
-			}
-		} else {
-			chainInfo =
-        CHAIN_INFO[chainId]?.supportedCurrencies[
-        	grantData.reward.asset.toLowerCase()
-        ]
-		}
+		const chainInfo = getChainInfo(grantData, chainId)
 
 		// const chainInfo = CHAIN_INFO[chainId]
 		//   ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];
@@ -287,10 +271,11 @@ function AboutGrant() {
 	return (
 		<Flex
 			direction="column"
-			w="72%"
-			mx="auto"
+			w="100%"
 			mb={8}>
-			<Breadcrumbs path={['Explore Grants', 'About Grant']} />
+			<Box ml="15px">
+				<Breadcrumbs path={['Explore Grants', 'About Grant']} />
+			</Box>
 			{
 				!acceptingApplications && (
 					<Flex
@@ -344,10 +329,13 @@ function AboutGrant() {
 					</Flex>
 				)
 			}
-			<Flex direction="row">
+			<Flex
+				direction="row"
+				justify="center"
+				w="100%">
 				<Flex
 					direction="column"
-					w="64%">
+					w="54%">
 					<Text
 						variant="heading"
 						mt="18px">

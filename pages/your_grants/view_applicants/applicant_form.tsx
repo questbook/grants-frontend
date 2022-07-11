@@ -1,6 +1,4 @@
-import React, {
-	ReactElement, useContext,
-	useEffect, useState, } from 'react'
+import React, { ReactElement, useContext, useEffect, useState } from 'react'
 import {
 	Box,
 	Button,
@@ -20,15 +18,13 @@ import {
 	GetApplicationDetailsQuery,
 	useGetApplicationDetailsQuery,
 } from 'src/generated/graphql'
+// import { useAccount } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-// import { useAccount } from 'wagmi'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount';
-
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs'
-import Heading from '../../../src/components/ui/heading'
 import Accept from '../../../src/components/your_grants/applicant_form/accept/accept'
 import AcceptSidebar from '../../../src/components/your_grants/applicant_form/accept/sidebar'
 import Application from '../../../src/components/your_grants/applicant_form/application'
@@ -55,14 +51,18 @@ function ApplicantForm() {
 	useEffect(() => {
 		if(workspace && workspace.members && workspace.members.length > 0) {
 			const tempMember = workspace.members.find(
-				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
+				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase()
 			)
-			setIsAdmin(tempMember?.accessLevel === 'admin' || tempMember?.accessLevel === 'owner')
+			setIsAdmin(
+				tempMember?.accessLevel === 'admin' ||
+          tempMember?.accessLevel === 'owner'
+			)
 		}
 	}, [accountData?.address, workspace])
 
 	const [applicationId, setApplicationId] = useState<any>('')
-	const [applicationData, setApplicationData] = useState<GetApplicationDetailsQuery['grantApplication']>(null)
+	const [applicationData, setApplicationData] =
+    useState<GetApplicationDetailsQuery['grantApplication']>(null)
 	const [submitClicked, setSubmitClicked] = useState(false)
 
 	const [resubmitComment, setResubmitComment] = useState('')
@@ -101,7 +101,6 @@ function ApplicantForm() {
 				applicationID: applicationId,
 			},
 		})
-
 	}, [workspace, applicationId])
 
 	const {
@@ -114,7 +113,6 @@ function ApplicantForm() {
 			console.log('grantApplication------>', data.grantApplication)
 			setApplicationData(data.grantApplication)
 		}
-
 	}, [data, queryError, queryLoading])
 
 	useEffect(() => {
@@ -131,7 +129,7 @@ function ApplicantForm() {
 		applicationData?.id,
 		state,
 		submitClicked,
-		setSubmitClicked,
+		setSubmitClicked
 	)
 
 	const { setRefresh } = useCustomToast(txnLink)
@@ -148,7 +146,6 @@ function ApplicantForm() {
 		} else if(error) {
 			setState(undefined)
 		}
-
 	}, [toastRef, toast, router, applicationData, txn, error])
 
 	const [hiddenModalOpen, setHiddenModalOpen] = useState(false)
@@ -157,7 +154,7 @@ function ApplicantForm() {
 		if(applicationData) {
 			setHiddenModalOpen(true)
 			const decryptedApplicationData = await decryptApplicationPII(
-				applicationData,
+				applicationData
 			)
 			if(decryptedApplicationData) {
 				setApplicationData(decryptedApplicationData)
@@ -245,7 +242,8 @@ Click on ‘Decrypt’ to view the details.
 						<Button
 							mb={10}
 							variant="primary"
-							onClick={() => setHiddenModalOpen(false)}>
+							onClick={() => setHiddenModalOpen(false)}
+						>
               ok
 						</Button>
 					</Flex>
@@ -314,30 +312,27 @@ Click on ‘Decrypt’ to view the details.
 			<>
 				<Flex
 					direction="row"
-					w="72%"
+					w="100%"
 					mx="auto">
 					<Flex
 						direction="column"
 						w="100%"
-						m={0}
+						mx="44px"
 						p={0}
 						h="100%">
-						<Flex
-							direction="column"
-							alignItems="stretch"
-							pb={6}
-							px={0}
-							w="100%"
-						>
+						<Box ml="30px">
 							<Breadcrumbs
 								path={['Your Grants', 'View Applicants', 'Applicant Form']}
 								id={applicationData?.grant?.id}
 							/>
-							<Heading
-								mt="18px"
-								title={applicationData?.grant?.title || ''} />
-						</Flex>
+						</Box>
 
+						<Text
+							mt="18px"
+							mb={6}
+							variant="heading">
+							{applicationData?.grant?.title || ''}
+						</Text>
 						<Flex
 							direction="row"
 							w="100%"
@@ -467,14 +462,17 @@ Click on ‘Decrypt’ to view the details.
 							<Flex
 								direction="column"
 								mt={2}
+								ml={4}
 								w={340}
 								alignItems="stretch"
 								pos="sticky"
 								top="36px"
 							>
 								{
-									applicationData
-										?.reviewers.find((reviewer) => reviewer.id.split('.')[1] === accountData?.address?.toLowerCase()) !== undefined && (
+									applicationData?.reviewers.find(
+										(reviewer) => reviewer.id.split('.')[1] ===
+                    accountData?.address?.toLowerCase()
+									) !== undefined && (
 										<ReviewerSidebar
 											showHiddenData={showHiddenData}
 											applicationData={applicationData}
@@ -486,16 +484,15 @@ Click on ‘Decrypt’ to view the details.
 									)
 								}
 								{
-									isAdmin
-                  && (
-                  	<Sidebar
-                  		showHiddenData={showHiddenData}
-                  		applicationData={applicationData}
-                  		onAcceptApplicationClick={() => setStep(1)}
-                  		onRejectApplicationClick={() => setStep(2)}
-                  		onResubmitApplicationClick={() => setStep(3)}
-                  	/>
-                  )
+									isAdmin && (
+										<Sidebar
+											showHiddenData={showHiddenData}
+											applicationData={applicationData}
+											onAcceptApplicationClick={() => setStep(1)}
+											onRejectApplicationClick={() => setStep(2)}
+											onResubmitApplicationClick={() => setStep(3)}
+										/>
+									)
 								}
 							</Flex>
 						</Flex>

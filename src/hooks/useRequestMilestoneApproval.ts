@@ -5,11 +5,11 @@ import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { useAccount, useNetwork } from 'wagmi'
+import { useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useApplicationRegistryContract from './contracts/useApplicationRegistryContract'
-import useChainId from './utils/useChainId'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
+import useChainId from './utils/useChainId'
 
 export default function useRequestMilestoneApproval(
 	data: any,

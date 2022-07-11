@@ -8,17 +8,17 @@ import React, {
 } from 'react'
 import { Flex, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { CHAIN_INFO } from 'src/constants/chains'
 import {
 	GetAllGrantsQuery,
 	useGetAllGrantsLazyQuery,
 } from 'src/generated/graphql'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { unixTimestampSeconds } from 'src/utils/generics'
 import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import { useAccount, useConnect } from 'wagmi'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import { useConnect } from 'wagmi'
 import GrantCard from '../src/components/browse_grants/grantCard'
 import Sidebar from '../src/components/browse_grants/sidebar'
 import Heading from '../src/components/ui/heading'
@@ -42,12 +42,14 @@ function BrowseGrants() {
 
 	const toast = useToast()
 	const [grants, setGrants] = useState<GetAllGrantsQuery['grants']>([])
-	const [loadedData, setLoadedData] = useState<boolean>(false)
+	const [loading, setLoading] = useState<Boolean>(false)
+	const [allDataFetched, setAllDataFectched] = useState<Boolean>(false)
 
 	const [currentPage, setCurrentPage] = useState(0)
 
 	const getGrantData = async(firstTime: boolean = false) => {
-		setLoadedData(false)
+
+		setLoading(true)
 		try {
 			const currentPageLocal = firstTime ? 0 : currentPage
 			const promises = allNetworkGrants.map(
@@ -80,18 +82,23 @@ function BrowseGrants() {
 				const allGrantsData = [].concat(
 					...values
 				) as GetAllGrantsQuery['grants']
+				if(allGrantsData.length < PAGE_SIZE) {
+					setAllDataFectched(true)
+				}
+
 				if(firstTime) {
 					setGrants(
 						allGrantsData.sort((a: any, b: any) => b.createdAtS - a.createdAtS)
 					)
-					setLoadedData(true)
+
+					setLoading(false)
 				} else {
 					setGrants(
 						[...grants, ...allGrantsData].sort(
 							(a: any, b: any) => b.createdAtS - a.createdAtS
 						)
 					)
-					setLoadedData(true)
+					setLoading(false)
 				}
 
 				setCurrentPage(firstTime ? 1 : currentPage + 1)
@@ -114,10 +121,9 @@ function BrowseGrants() {
 
 		const parentElement = (current as HTMLElement)?.parentNode as HTMLElement
 		const reachedBottom =
-      Math.abs(
-      	parentElement.scrollTop -
-          (parentElement.scrollHeight - parentElement.clientHeight)
-      ) < 10
+			Math.abs(
+				parentElement.scrollHeight - parentElement.clientHeight - parentElement.scrollTop
+			) < 10
 		if(reachedBottom) {
 			getGrantData()
 		}
@@ -143,6 +149,7 @@ function BrowseGrants() {
 
 	return (
 		<Flex
+			w="100%"
 			ref={containerRef}
 			direction="row"
 			justify="center">
@@ -154,101 +161,85 @@ function BrowseGrants() {
 				px={10}>
 				<Heading title="Discover grants" />
 				{
-					!loadedData ? (
-						<Loader />
-					) : (
-						<>
-							{
-								grants.length > 0 &&
-              grants.map((grant) => {
-              	let chainInfo
-              	let tokenIcon
-              	const chainId = getSupportedChainIdFromSupportedNetwork(
-              		grant.workspace.supportedNetworks[0]
-              	)
-              	if(grant.reward.token) {
-              		tokenIcon = getUrlForIPFSHash(grant.reward.token?.iconHash)
-              		chainInfo = {
-              			address: grant.reward.token.address,
-              			label: grant.reward.token.label,
-              			decimals: grant.reward.token.decimal,
-              			icon: tokenIcon,
-              		}
-              	} else {
-              		chainInfo =
-                    CHAIN_INFO[chainId]?.supportedCurrencies[
-                    	grant.reward.asset.toLowerCase()
-                    ]
-              	}
 
-              	const [isGrantVerified, funding] = verify(
-              		grant.funding,
-              		chainInfo?.decimals
-              	)
+					<>
+						{
+							grants.length > 0 &&
+							grants.map((grant) => {
+								const chainId = getSupportedChainIdFromSupportedNetwork(
+									grant.workspace.supportedNetworks[0]
+								)
+								const chainInfo = getChainInfo(grant, chainId)
 
-              	return (
-              		<GrantCard
-              			daoID={grant.workspace.id}
-              			key={grant.id}
-              			grantID={grant.id}
-              			daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
-              			daoName={grant.workspace.title}
-              			isDaoVerified={false}
-              			grantTitle={grant.title}
-              			grantDesc={grant.summary}
-              			numOfApplicants={grant.numberOfApplications}
-              			endTimestamp={new Date(grant.deadline!).getTime()}
-              			grantAmount={
-              				formatAmount(
-              					grant.reward.committed,
-              					chainInfo?.decimals ?? 18
-              				)
-              			}
-              			grantCurrency={chainInfo?.label ?? 'LOL'}
-              			grantCurrencyIcon={chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'}
-              			isGrantVerified={isGrantVerified}
-              			funding={funding}
-              			chainId={chainId}
-              			onClick={
-              				() => {
-              					if(!(accountData && accountData.address)) {
-              						router.push({
-              							pathname: '/connect_wallet',
-              							query: {
-              								flow: '/',
-              								grantId: grant.id,
-              								chainId,
-              							},
-              						})
-              						return
-              					}
+								const [isGrantVerified, funding] = verify(
+									grant.funding,
+									chainInfo?.decimals
+								)
 
-              				router.push({
-              						pathname: '/explore_grants/about_grant',
-              						query: {
-              							grantId: grant.id,
-              							chainId,
-              						},
-              					})
-              				}
-              			}
-              			onTitleClick={
-              				() => {
-              					router.push({
-              						pathname: '/explore_grants/about_grant',
-              						query: {
-              							grantId: grant.id,
-              							chainId,
-              						},
-              					})
-              				}
-              			}
-              		/>
-              	)
-              })
-							}
-						</>
-					)
+								return (
+									<GrantCard
+										daoID={grant.workspace.id}
+										key={grant.id}
+										grantID={grant.id}
+										daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
+										daoName={grant.workspace.title}
+										isDaoVerified={false}
+										grantTitle={grant.title}
+										grantDesc={grant.summary}
+										numOfApplicants={grant.numberOfApplications}
+										endTimestamp={new Date(grant.deadline!).getTime()}
+										grantAmount={
+											formatAmount(
+												grant.reward.committed,
+												chainInfo?.decimals ?? 18
+											)
+										}
+										grantCurrency={chainInfo?.label ?? 'LOL'}
+										grantCurrencyIcon={chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'}
+										isGrantVerified={isGrantVerified}
+										funding={funding}
+										chainId={chainId}
+										onClick={
+											() => {
+												if(!(accountData && accountData.address)) {
+													router.push({
+														pathname: '/connect_wallet',
+														query: {
+															flow: '/',
+															grantId: grant.id,
+															chainId,
+														},
+													})
+													return
+												}
+
+												router.push({
+													pathname: '/explore_grants/about_grant',
+													query: {
+														grantId: grant.id,
+														chainId,
+													},
+												})
+											}
+										}
+										onTitleClick={
+											() => {
+												router.push({
+													pathname: '/explore_grants/about_grant',
+													query: {
+														grantId: grant.id,
+														chainId,
+													},
+												})
+											}
+										}
+									/>
+								)
+							})
+						}
+						{loading ? <Loader /> : allDataFetched ?? <></>}
+					</>
+
 				}
 			</Flex>
 			{

@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { Container, useToast, VStack } from '@chakra-ui/react'
+import { Flex, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
-import { useAccount, useConnect, useNetwork } from 'wagmi'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import ConnectedNavbar from '../components/navbar/connected'
-import SignInNavbar from '../components/navbar/notConnected'
+import NavBar from 'src/v2/components/NavBar'
+import Sidebar from 'src/v2/components/Sidebar'
+import { useConnect, useNetwork } from 'wagmi'
 interface Props {
   children: React.ReactNode;
   renderGetStarted?: boolean;
@@ -17,6 +17,9 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 	const { data: accountData } = useQuestbookAccount()
 	const toast = useToast()
 
+	const [connectWalletModalIsOpen, setConnectWalletModalIsOpen] =
+    useState(false)
+
 	const { connected, setConnected } = useContext(ApiClientsContext)!
 	const currentPageRef = useRef(null)
 
@@ -28,7 +31,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 
 	useEffect(() => {
 		// @TODO FIX HERE
-		setConnected(true);
+		setConnected(true)
 		// if(!connected && isDisconnected) {
 		// 	setConnected(false)
 		// 	if(renderCount > 0) {
@@ -39,7 +42,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 		// 	}
 		// } else if(isConnected) {
 		// 	setConnected(true)
-			setRenderCount(renderCount + 1)
+		setRenderCount(renderCount + 1)
 		// } else if(connected && isDisconnected) {
 		// 	connect(connectors[0])
 		// 	setConnected(true)
@@ -48,44 +51,28 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 
 	}, [isConnected, isDisconnected])
 
-	// useEffect(() => {
-	// 	console.log('CONNECTION: ', connected, isConnected, isConnecting, isReconnecting, isDisconnected, isError, isIdle, connectData, connectStatus, error)
-	// }, [connected, isConnected, isConnecting, isReconnecting, isDisconnected, isError, isIdle, connectStatus, error])
-
-	// useEffect(() => {
-	// 	console.log('ACCOUNT: ', accountData, isLoading, isFetching, isFetched, isRefetching, isSuccess, accountStatus)
-	// }, [accountData, isLoading, isFetching, isFetched, isRefetching, isSuccess, accountStatus])
-
-	// useEffect(() => {
-	// 	console.log('USE NETWORK: ', activeChain, networkStatus, pendingChainId, networkData)
-	// }, [pendingChainId, activeChain, networkStatus, networkData])
-
 	return (
-		<VStack
-			alignItems="center"
-			maxH="100vh"
-			width="100%"
-			spacing={0}
-			p={0}>
-			{
-				connected && accountData?.address ? (
+		<>
+			{/* {
+				connected ? (
 					<ConnectedNavbar renderTabs={renderTabs!} />
 				) : (
-					<SignInNavbar renderGetStarted={renderGetStarted} />
+					<SignInNavbar
+						renderGetStarted={renderGetStarted}
+						onGetStartedClick={() => setConnectWalletModalIsOpen(true)}
+					/>
 				)
-			}
-			{/*
-        root of children should also be a container with a max-width,
-        this container is to render the scrollbar to extreme right of window
-      */}
-			<Container
-				ref={currentPageRef}
-				maxW="100vw"
-				p={0}
-				overflow="auto">
+			} */}
+			<NavBar
+				onGetStartedClick={() => setConnectWalletModalIsOpen(true)} />
+			<Flex
+				w="100vw"
+				h="100vh"
+				overflow="scroll">
+				{connected && <Sidebar />}
 				{children}
-			</Container>
-		</VStack>
+			</Flex>
+		</>
 	)
 }
 

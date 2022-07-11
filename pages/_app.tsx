@@ -1,22 +1,21 @@
-import React, {
-	createContext,
-	ReactElement,
-	ReactNode,
-	useEffect,
-	useMemo,
-} from 'react'
+import React, { createContext, ReactElement, ReactNode, useMemo } from 'react'
 import { ChakraProvider } from '@chakra-ui/react'
 // import dynamic from 'next/dynamic';
 import {
 	Configuration,
 	ValidationApi,
 } from '@questbook/service-validator-client'
+import { Wallet } from 'ethers'
 import { NextPage } from 'next'
 import type { AppContext, AppProps } from 'next/app'
 import App from 'next/app'
 import Head from 'next/head'
 import { DefaultSeo } from 'next-seo'
-import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
+import {
+	ALL_SUPPORTED_CHAIN_IDS,
+	CHAIN_INFO,
+	SupportedChainId,
+} from 'src/constants/chains'
 import { MinimalWorkspace } from 'src/types'
 import getSeo from 'src/utils/seo'
 import {
@@ -36,7 +35,6 @@ import '../styles/globals.css'
 import 'draft-js/dist/Draft.css'
 import SubgraphClient from '../src/graphql/subgraph'
 import theme from '../src/theme'
-import { Wallet } from 'ethers'
 
 type NextPageWithLayout = NextPage & {
 	getLayout?: (page: ReactElement) => ReactNode;
@@ -53,8 +51,10 @@ const { chains, provider } = configureChains(allChains, [
 	jsonRpcProvider({
 		rpc: (chain: Chain) => {
 			const rpcUrl = CHAIN_INFO[chain.id as SupportedChainId]?.rpcUrls[0]
-			if (!rpcUrl) {
-				return { http: CHAIN_INFO[defaultChain.id as SupportedChainId].rpcUrls[0] }
+			if(!rpcUrl) {
+				return {
+					http: CHAIN_INFO[defaultChain.id as SupportedChainId].rpcUrls[0],
+				}
 			}
 
 			return { http: rpcUrl }
@@ -98,70 +98,77 @@ export const ApiClientsContext = createContext<{
 	subgraphClients: { [chainId: string]: SubgraphClient };
 	connected: boolean;
 	setConnected: (connected: boolean) => void;
-} | null>(null);
+		} | null>(null)
 
 export const WebwalletContext = createContext<{
 	webwallet?: Wallet,
 	setWebwallet: (webwallet?: Wallet) => void;
-} | null>(null);
+		} | null>(null)
 
 export const GitHubTokenContext = createContext<{
 	isLoggedIn?: boolean,
 	setIsLoggedIn: (isLoggedIn?: boolean) => void;
-} | null>(null);
+		} | null>(null)
 
 export const ScwAddressContext = createContext<{
 	scwAddress?: string,
 	setScwAddress: (scwAddress?: string) => void;
-} | null>(null);
+		} | null>(null)
 
 export const NonceContext = createContext<{
 	nonce?: string,
 	setNonce: (nonce?: string) => void;
-} | null>(null);
+		} | null>(null)
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-	const [webwallet, setWebwallet] = React.useState<Wallet>();
-	const [workspace, setWorkspace] = React.useState<MinimalWorkspace>();
-	const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>();
-	const [scwAddress, setScwAddress] = React.useState<string>();
-	const [nonce, setNonce] = React.useState<string>();
+	const [webwallet, setWebwallet] = React.useState<Wallet>()
+	const [workspace, setWorkspace] = React.useState<MinimalWorkspace>()
+	const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>()
+	const [scwAddress, setScwAddress] = React.useState<string>()
+	const [nonce, setNonce] = React.useState<string>()
 
 	const getIsLoggedIn = () => {
-		if (typeof window === 'undefined')
-			return undefined;
+		if(typeof window === 'undefined') {
+			return undefined
+		}
 
-		let _isLoggedIn = localStorage.getItem("isLoggedInGitHub");
+		const _isLoggedIn = localStorage.getItem('isLoggedInGitHub')
 
-		if (!_isLoggedIn)
-			return undefined;
+		if(!_isLoggedIn) {
+			return undefined
+		}
 
-		if (_isLoggedIn === "1")
-			return true;
+		if(_isLoggedIn === '1') {
+			return true
+		}
 
-		return false;
+		return false
 	}
 
 	const getScwAddress = () => {
-		if (typeof window === 'undefined')
-			return undefined;
+		if(typeof window === 'undefined') {
+			return undefined
+		}
 
-		let _scwAddress = localStorage.getItem("scwAddress");
+		const _scwAddress = localStorage.getItem('scwAddress')
 
-		if (!_scwAddress)
-			return undefined;
+		if(!_scwAddress) {
+			return undefined
+		}
 
 		return _scwAddress
 	}
 
 	const getNonce = () => {
-		if (typeof window === 'undefined')
-			return undefined;
+		if(typeof window === 'undefined') {
+			return undefined
+		}
 
-		let _nonce = localStorage.getItem("nonce");
+		const _nonce = localStorage.getItem('nonce')
 
-		if (!_nonce)
-			return undefined;
+		if(!_nonce) {
+			return undefined
+		}
 
 		return nonce
 	}
@@ -170,13 +177,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		() => ({
 			nonce: getNonce(),
 			setNonce: (newNonce?: string) => {
-				if (newNonce) {
-					localStorage.setItem('nonce', newNonce);
+				if(newNonce) {
+					localStorage.setItem('nonce', newNonce)
 				} else {
 					localStorage.removeItem('nonce')
 				}
 
-				setNonce(newNonce);
+				setNonce(newNonce)
 			}
 		})
 		, [nonce, setNonce]
@@ -186,13 +193,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		() => ({
 			scwAddress: getScwAddress(),
 			setScwAddress: (newScwAddress?: string) => {
-				if (newScwAddress) {
-					localStorage.setItem('scwAddress', newScwAddress);
+				if(newScwAddress) {
+					localStorage.setItem('scwAddress', newScwAddress)
 				} else {
 					localStorage.removeItem('scwAddress')
 				}
 
-				setScwAddress(newScwAddress);
+				setScwAddress(newScwAddress)
 			}
 		})
 		, [scwAddress, setScwAddress]
@@ -202,44 +209,47 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		() => ({
 			isLoggedIn: getIsLoggedIn(),
 			setIsLoggedIn: (newIsLoggedIn?: boolean) => {
-				if (newIsLoggedIn) {
-					localStorage.setItem('isLoggedInGitHub', "1");
+				if(newIsLoggedIn) {
+					localStorage.setItem('isLoggedInGitHub', '1')
 				} else {
-					localStorage.setItem('isLoggedInGitHub', "0")
+					localStorage.setItem('isLoggedInGitHub', '0')
 				}
 
-				setIsLoggedIn(newIsLoggedIn);
+				setIsLoggedIn(newIsLoggedIn)
 			}
 		})
 		, [isLoggedIn, setIsLoggedIn]
-	);
+	)
 
 	const createWebWallet = () => {
-		if (typeof window === 'undefined')
-			return undefined;
-		let privateKey = localStorage.getItem("webwalletPrivateKey");
-		if (!privateKey)
-			return undefined;
-		try {
-			const newWebwallet = new Wallet(privateKey);
-			return newWebwallet;
+		if(typeof window === 'undefined') {
+			return undefined
 		}
 
-		catch {
-			return undefined;
+		const privateKey = localStorage.getItem('webwalletPrivateKey')
+		if(!privateKey) {
+			return undefined
+		}
+
+		try {
+			const newWebwallet = new Wallet(privateKey)
+			return newWebwallet
+		} catch{
+			return undefined
 		}
 	}
+
 	const webwalletContextValue = useMemo(
 		() => ({
 			webwallet: createWebWallet(),
 			setWebwallet: (newWebwallet?: Wallet) => {
-				if (newWebwallet) {
-					localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey);
+				if(newWebwallet) {
+					localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
 				} else {
 					localStorage.removeItem('webwalletPrivateKey')
 				}
 
-				setWebwallet(newWebwallet);
+				setWebwallet(newWebwallet)
 			}
 		}),
 		[webwallet, setWebwallet]
@@ -261,14 +271,18 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}, [])
 
 	const [connected, setConnected] = React.useState(false)
+	const [grantsCount, setGrantsCount] = React.useState(0)
 
 	const apiClients = useMemo(
 		() => ({
 			validatorApi,
 			workspace,
 			setWorkspace: (newWorkspace?: MinimalWorkspace) => {
-				if (newWorkspace) {
-					localStorage.setItem('currentWorkspace', newWorkspace.supportedNetworks[0] + '-' + newWorkspace.id)
+				if(newWorkspace) {
+					localStorage.setItem(
+						'currentWorkspace',
+						newWorkspace.supportedNetworks[0] + '-' + newWorkspace.id
+					)
 				} else {
 					localStorage.setItem('currentWorkspace', 'undefined')
 				}
@@ -278,6 +292,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			subgraphClients: clients,
 			connected,
 			setConnected,
+			grantsCount,
+			setGrantsCount,
 		}),
 		[validatorApi, workspace, setWorkspace, clients, connected, setConnected]
 	)
@@ -325,7 +341,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	)
 }
 
-MyApp.getInitialProps = async (appContext: AppContext) => {
+MyApp.getInitialProps = async(appContext: AppContext) => {
 	// calls page's `getInitialProps` and fills `appProps.pageProps`
 	const appProps = await App.getInitialProps(appContext)
 	return { ...appProps }

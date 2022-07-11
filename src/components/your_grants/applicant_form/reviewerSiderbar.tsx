@@ -14,6 +14,8 @@ import {
 import { ApiClientsContext } from 'pages/_app'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import Loader from 'src/components/ui/loader'
+// import { useAccount } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSubmitReview from 'src/hooks/useSubmitReview'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import useEncryption from 'src/hooks/utils/useEncryption'
@@ -21,9 +23,6 @@ import { getFromIPFS } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-// import { useAccount } from 'wagmi'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount';
-
 import FeedbackDrawer from '../feedbackDrawer'
 
 function ReviewerSidebar({

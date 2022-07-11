@@ -14,12 +14,12 @@ import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from 'src/constants/chains'
 import config from 'src/constants/config.json'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useChainId from 'src/hooks/utils/useChainId'
-import { useAccount, useNetwork } from 'wagmi'
+import { useNetwork } from 'wagmi'
 import ImageUpload from '../../ui/forms/imageUpload'
 import MultiLineInput from '../../ui/forms/multiLineInput'
 import SingleLineInput from '../../ui/forms/singleLineInput'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 
 function Form({
 	onSubmit: onFormSubmit,
@@ -85,7 +85,8 @@ function Form({
 			setDaoDescriptionError(true)
 			error = true
 		}
-		console.log("GG", chainId);
+
+		console.log('GG', chainId)
 		if(!chainId) {
 			error = true
 		}
@@ -97,6 +98,7 @@ function Form({
 		if(error) {
 			return
 		}
+
 		// console.log("TTTT", chainId, accountData.address);
 		onFormSubmit({
 			name: daoName,

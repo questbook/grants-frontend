@@ -14,9 +14,9 @@ import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
 import { CHAIN_INFO, SHOW_TEST_NETS } from 'src/constants/chains'
-import useChainId from 'src/hooks/utils/useChainId'
-import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import useChainId from 'src/hooks/utils/useChainId'
+import { useConnect, useDisconnect } from 'wagmi'
 
 function AccountDetails() {
 	const isOnline = true
@@ -115,7 +115,7 @@ function AccountDetails() {
 			</MenuButton>
 			{
 				// @TODO FIX HERE
-				// !(connected && isDisconnected) && 
+				// !(connected && isDisconnected) &&
 				(
 					<MenuList>
 						<MenuItem isDisabled>

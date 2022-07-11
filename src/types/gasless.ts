@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { ethers } from 'ethers'
 
 export type BiconomyWalletClient = {
     engine: any
@@ -21,10 +21,10 @@ export type BiconomyWalletClient = {
     sendBiconomyWalletTransaction: (params: SendBiconomyWalletTransactionParams) => Promise<string>
 }
 
-export type SendBiconomyWalletTransactionParams = { 
-    execTransactionBody: BuildExecTransaction, 
-    walletAddress: string, 
-    signature: string, 
+export type SendBiconomyWalletTransactionParams = {
+    execTransactionBody: BuildExecTransaction,
+    walletAddress: string,
+    signature: string,
     webHookAttributes: WebHookAttributesType
 }
 

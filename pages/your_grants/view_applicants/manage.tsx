@@ -22,15 +22,14 @@ import {
 	useGetApplicationDetailsQuery,
 	useGetFundSentForApplicationQuery,
 } from 'src/generated/graphql'
+// import { useAccount } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useCompleteApplication from 'src/hooks/useCompleteApplication'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { ApplicationMilestone } from 'src/types'
 import useApplicationMilestones from 'src/utils/queryUtil'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-// import { useAccount } from 'wagmi'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount';
-
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs'
 import Heading from '../../../src/components/ui/heading'
 import Modal from '../../../src/components/ui/modal'

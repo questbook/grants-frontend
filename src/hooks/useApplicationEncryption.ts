@@ -4,8 +4,7 @@ import { GrantApplicationFieldAnswerItem, GrantApplicationRequest } from '@quest
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { GetApplicationDetailsQuery, GrantFieldAnswerItem } from 'src/generated/graphql'
 // import { useAccount } from 'wagmi'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount';
-
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useEncryption from './utils/useEncryption'
 
 export default function useApplicationEncryption() {

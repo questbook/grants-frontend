@@ -13,9 +13,7 @@ import Loading from '../src/components/signup/create_dao/loading'
 import CreateGrant from '../src/components/signup/create_grant'
 import DaoCreated from '../src/components/signup/daoCreated'
 import NavbarLayout from '../src/layout/navbarLayout'
-import { ApiClientsContext, WebwalletContext, GitHubTokenContext } from './_app'
-import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
-import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
+import { ApiClientsContext } from './_app'
 
 function SignupDao() {
 	const router = useRouter()
@@ -46,7 +44,7 @@ function SignupDao() {
 	] = useCreateWorkspace(workspaceData)
 
 	useEffect(() => {
-		if (
+		if(
 			workspaceData
 			&& workspaceTransactionData
 			&& imageHash
@@ -86,15 +84,15 @@ function SignupDao() {
 		grantTransactionData,
 		transactionLink,
 		createGrantLoading,
-	] = useCreateGrant(grantData, workspaceData?.network, daoData?.id);
+	] = useCreateGrant(grantData, workspaceData?.network, daoData?.id)
 
 	const { setRefresh } = useCustomToast(transactionLink)
 	useEffect(() => {
 		// console.log(grantTransactionData);
-		if (grantTransactionData) {
+		if(grantTransactionData) {
 			setGrantData(null)
 
-			if (newPublicKey) {
+			if(newPublicKey) {
 				const w = { ...newWorkspaceObject }
 				w.members = [{
 					accessLevel: 'owner',
@@ -115,14 +113,14 @@ function SignupDao() {
 
 	}, [grantTransactionData, router])
 
-	if (creatingGrant) {
+	if(creatingGrant) {
 		return (
 			<CreateGrant
 				hasClicked={createGrantLoading}
 				onSubmit={
 					(data) => {
 						const dataCopy = { ...data }
-						if (data.publicKey) {
+						if(data.publicKey) {
 							setNewPublicKey(data.publicKey)
 							delete dataCopy.publicKey
 						}
@@ -134,7 +132,7 @@ function SignupDao() {
 		)
 	}
 
-	if (daoCreated && daoData) {
+	if(daoCreated && daoData) {
 		return (
 			<DaoCreated
 				daoName={daoData.name}
@@ -146,7 +144,7 @@ function SignupDao() {
 		)
 	}
 
-	if (workspaceLoading) {
+	if(workspaceLoading) {
 		return <Loading />
 	}
 
@@ -173,7 +171,7 @@ function SignupDao() {
 			<Form
 				onSubmit={
 					(data) => {
-						console.log("GOT HERE");
+						console.log('GOT HERE')
 						setWorkspaceData(data)
 					}
 				}
@@ -182,7 +180,7 @@ function SignupDao() {
 	)
 }
 
-SignupDao.getLayout = function (page: ReactElement) {
+SignupDao.getLayout = function(page: ReactElement) {
 	return (
 		<NavbarLayout renderTabs={false}>
 			{page}

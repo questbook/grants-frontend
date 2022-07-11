@@ -19,14 +19,14 @@ import {
 	useGetNumberOfGrantsLazyQuery,
 	useGetWorkspaceMembersLazyQuery,
 } from 'src/generated/graphql'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useActiveTabIndex from 'src/hooks/utils/useActiveTabIndex'
 import { MinimalWorkspace } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount, useConnect } from 'wagmi'
+import { useConnect } from 'wagmi'
 import AccountDetails from './accountDetails'
 import Tab from './tab'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 
 function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	const toast = useToast()
@@ -42,13 +42,14 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	const activeIndex = useActiveTabIndex(tabPaths)
 
 	const [workspaces, setWorkspaces] = React.useState<MinimalWorkspace[]>([])
-	const [grantsCount, setGrantsCount] = React.useState(0)
 	const [applicationCount, setApplicationCount] = React.useState(0)
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { workspace, setWorkspace, subgraphClients, connected } = apiClients
 	const [isAdmin, setIsAdmin] = React.useState(false)
 	const [isReviewer, setIsReviewer] = React.useState<boolean>(false)
+
+	const [grantsCount, setGrantsCount] = React.useState(0)
 
 	// eslint-disable-next-line max-len
 	const getNumberOfApplicationsClients = Object.keys(subgraphClients)!.map(

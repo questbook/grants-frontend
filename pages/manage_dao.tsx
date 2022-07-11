@@ -8,11 +8,10 @@ import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetWorkspaceDetailsQuery } from 'src/generated/graphql'
+// import { useAccount } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { Workspace } from 'src/types'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-// import { useAccount } from 'wagmi'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount';
-
 import Members from '../src/components/manage_dao/members'
 import Payouts from '../src/components/manage_dao/payouts'
 import Settings from '../src/components/manage_dao/settings'
@@ -81,7 +80,12 @@ function ManageDAO() {
 	}, [accountData, workspace])
 
 	return (
-		<Flex>
+		<Flex
+			w="100%"
+			px={10}
+			maxH="calc(100vh - 80px)"
+			overflowY="scroll"
+			mb={4}>
 			{
 				isAdmin ? (
 					<Flex
@@ -129,7 +133,9 @@ function ManageDAO() {
 								}
 							</Flex>
 							<Divider
-								variant="sidebar"
+								w={selected === 0 ? '70%' : '100%'}
+								bg="#A0A7A7"
+								height="1px"
 								mb={5} />
 							{
 							// eslint-disable-next-line no-nested-ternary
