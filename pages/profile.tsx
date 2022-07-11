@@ -217,6 +217,7 @@ function Profile() {
 			}
 			mx="auto"
 			mb="1rem"
+			pb="1rem"
 			borderX="1px solid #E8E9E9"
 			// borderBottom="1px solid #E8E9E9"
 		>
