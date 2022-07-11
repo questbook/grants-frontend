@@ -112,7 +112,7 @@ function ModalContent({
 		setSubmitClicked,
 	)
 
-	const transactionData = useRecordTransaction(
+	const [safeTxnData, safeTxnDataLink, safeTxnLoading, safeTxnError] = useRecordTransaction(
 		grantId,
 		applicationId,
 		selectedMilestone === -1
@@ -125,8 +125,6 @@ function ModalContent({
 		submitClickedSafeTxn,
 		setSubmitClickedSafeTxn
 	)
-
-	console.log('transactionData', transactionData)
 
 	useEffect(() => {
 		if(workspace && switchNetwork && isOpen) {
@@ -149,6 +147,17 @@ function ModalContent({
 		}
 
 	}, [toast, disburseData, disburseError])
+
+	useEffect(() => {
+		if(safeTxnData) {
+			onClose()
+			setDisburseAmount(undefined)
+			setTransactionHash('')
+		} else if(safeTxnError) {
+			setDisburseAmount(undefined)
+			setFunding('')
+		}
+	}, [safeTxnData, safeTxnError])
 
 
 	useEffect(() => {
@@ -210,28 +219,12 @@ function ModalContent({
 		setDisburseP2PAmount(parseAmount(funding, rewardAsset.address, rewardAssetDecimals))
 	}
 
-	//applicationId (from props),
-	//milestoneID (from selectedMilestone props),
-	//transactionHash (from state),
-	//amount (from selectedMilestone props) => recordTransaction
 	const recordTransaction = async() => {
 		setSubmitClickedSafeTxn(true)
 		console.log('button clicked')
 		// todo@madhavan: record the transaction on chain
 		// confirm if transaction has completed using transaction hash & safe chain
 		setRecordingTransaction(true)
-		console.log('params', applicationId,
-			milestones[selectedMilestone].id.split('.')[1],
-			transactionHash,
-			milestones[selectedMilestone].amount)
-		// const txnData = await grantContract.recordTransaction(
-		// 	applicationId,
-		// 	milestones[selectedMilestone].id.split('.')[1],
-		// 	transactionHash,
-		// 	milestones[selectedMilestone].amount)
-		// console.log(await txnData.wait())
-		//if transaction not completed, show error & setRecordinTransaction(false)
-
 	}
 
 	useEffect(() => {
@@ -590,7 +583,7 @@ function ModalContent({
 							my={10}
 							onClick={() => recordTransaction()}
 						>
-							{recordingTransaction ? <Loader /> : 'Record Transaction'}
+							{safeTxnLoading ? <Loader /> : 'Record Transaction'}
 						</Button>
 					</Flex>
 				)

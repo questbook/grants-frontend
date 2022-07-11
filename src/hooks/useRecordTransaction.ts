@@ -36,16 +36,17 @@ export default function useRecordTransaction(
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
 
-	useEffect(() => {
-		if(transactionHash) {
-			setError(undefined)
-			setLoading(false)
-			setIncorrectNetwork(false)
-		}
-	}, [transactionHash])
+	// useEffect(() => {
+	// 	if(transactionHash) {
+	// 		setError(undefined)
+	// 		setLoading(false)
+	// 		setIncorrectNetwork(false)
+	// 	}
+	// }, [transactionHash])
 
 	useEffect(() => {
 		if(submitClicked) {
+			setError(undefined)
 			setIncorrectNetwork(false)
 			setSubmitClicked(false)
 		}
@@ -74,20 +75,13 @@ export default function useRecordTransaction(
 		async function validate() {
 			setLoading(true)
 			try {
-				console.log('params', applicationId,
-					milestoneIndex,
-					transactionHash,
-					amount,)
-				console.log('calling contract method')
 				const updateTxn = await grantContract.recordTransaction(
-					1,
-					0,
+					applicationId,
+					milestoneIndex,
 				 	transactionHash,
-					20,
+					amount,
 				)
-				console.log('updateTxn', updateTxn)
 				const updateTxnData = await updateTxn.wait()
-
 				setTransactionData(updateTxnData)
 				setLoading(false)
 			} catch(e: any) {
