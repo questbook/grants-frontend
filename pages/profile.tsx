@@ -153,7 +153,7 @@ function Profile() {
 		if(allDaoData && allDaoData.grants.length >= 1) {
 			allDaoData.grants.forEach((grant) => {
 				grant.applications.filter((app) => {
-					app.state === 'approved' && setApplicationTime((array: any) => [...array, app.createdAtS])
+					app.state === 'approved' && setApplicationTime((array: any) => [...array, app.updatedAtS])
 				})
 			})
 		}
