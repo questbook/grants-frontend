@@ -81,8 +81,6 @@ function ManageGrant() {
 		refetch: refetchMilestones,
 	} = useApplicationMilestones(applicationID)
 
-	console.log('fundingAsk', formatAmount(getTotalFundingAsked(milestones).toString(), decimals))
-
 	useEffect(() => {
 		console.log(decimals)
 	}, [decimals])

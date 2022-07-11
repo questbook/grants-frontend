@@ -23,6 +23,7 @@ import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
 import useDisburseP2PReward from 'src/hooks/useDisburseP2PReward'
 import useDisburseReward from 'src/hooks/useDisburseReward'
+import useRecordTransaction from 'src/hooks/useRecordTransaction'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getFundsInSafe } from 'src/utils/safeBalances'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -61,7 +62,6 @@ function ModalContent({
 	milestones,
 	applicationId,
 	grantId,
-	workspaceId,
 	safe,
 	chainId,
 	applicantReceivingAddress,
@@ -77,6 +77,8 @@ function ModalContent({
 	const [rewardAssetDecimals, setRewardAssetDecimals] = React.useState(0)
 	const [submitClicked, setSubmitClicked] = useState(false)
 	const [submitClickedP2P, setSubmitClickedP2P] = useState(false)
+	const [submitClickedSafeTxn, setSubmitClickedSafeTxn] = useState(false)
+	const [recordingTransaction, setRecordingTransaction] = useState(false)
 	const [safeBalance, setSafeBalance] = useState(0)
 	const [safeTransactionStep, setSafeTransactionStep] = useState(0)
 
@@ -109,7 +111,22 @@ function ModalContent({
 		submitClicked,
 		setSubmitClicked,
 	)
-	const [recordingTransaction, setRecordingTransaction] = useState(false)
+
+	const transactionData = useRecordTransaction(
+		grantId,
+		applicationId,
+		selectedMilestone === -1
+			? undefined
+			: milestones[selectedMilestone].id.split('.')[1],
+		transactionHash,
+		selectedMilestone === -1
+			? undefined
+			: milestones[selectedMilestone].amount,
+		submitClickedSafeTxn,
+		setSubmitClickedSafeTxn
+	)
+
+	console.log('transactionData', transactionData)
 
 	useEffect(() => {
 		if(workspace && switchNetwork && isOpen) {
@@ -198,10 +215,21 @@ function ModalContent({
 	//transactionHash (from state),
 	//amount (from selectedMilestone props) => recordTransaction
 	const recordTransaction = async() => {
+		setSubmitClickedSafeTxn(true)
 		console.log('button clicked')
 		// todo@madhavan: record the transaction on chain
 		// confirm if transaction has completed using transaction hash & safe chain
 		setRecordingTransaction(true)
+		console.log('params', applicationId,
+			milestones[selectedMilestone].id.split('.')[1],
+			transactionHash,
+			milestones[selectedMilestone].amount)
+		// const txnData = await grantContract.recordTransaction(
+		// 	applicationId,
+		// 	milestones[selectedMilestone].id.split('.')[1],
+		// 	transactionHash,
+		// 	milestones[selectedMilestone].amount)
+		// console.log(await txnData.wait())
 		//if transaction not completed, show error & setRecordinTransaction(false)
 
 	}
