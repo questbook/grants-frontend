@@ -35,7 +35,6 @@ export const calculateUSDValue = async(value: number | string | any, tokenPair: 
 	async function fetchTokenPrice() {
 		const data = await client.query(priceQuery).toPromise()
 		amount = (data?.data?.pair?.token0! ? data.data.pair.token0.derivedETH : 0) * data.data.bundle.ethPrice * value
-		console.log(amount)
 	}
 
 	if(tokenPair === '0x0') {
@@ -43,8 +42,6 @@ export const calculateUSDValue = async(value: number | string | any, tokenPair: 
 	} else if(tokenPair !== undefined) {
 		await fetchTokenPrice()
 	}
-
-	console.log(tokenPair)
 
 	return amount
 }
