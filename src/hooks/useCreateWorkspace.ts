@@ -60,10 +60,12 @@ export default function useCreateWorkspace(
 				data: { ipfsHash },
 			} = await validatorApi.validateWorkspaceCreate({
 				title: data.name,
-				about: data.description,
+				bio: data.bio,
+				about: data.about,
 				logoIpfsHash: uploadedImageHash,
 				creatorId: accountData?.address!,
 				socials: [],
+				partners: [],
 				supportedNetworks: [getSupportedValidatorNetworkFromChainId(data.network)],
 			})
 			if(!ipfsHash) {

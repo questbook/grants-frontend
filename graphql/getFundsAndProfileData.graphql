@@ -1,4 +1,24 @@
-query getAllGrantsForADao($first: Int, $skip: Int, $workspaceId: String!, $acceptingApplications: Boolean!) {
+query getFundsAndProfileData($type: FundsTransferType, $first: Int, $skip: Int, $workspaceId: String!, $acceptingApplications: Boolean!) {
+  fundsTransfers(
+      where: {type: funds_disbursed},
+      orderBy: createdAtS,
+      orderDirection: desc) {
+
+    id,
+    review {
+      id
+    },
+    grant {
+      id
+    },
+    amount,
+    sender,
+    to,
+    createdAtS,
+    type
+    asset
+  }
+
   grants(
     first: $first,
     skip: $skip,

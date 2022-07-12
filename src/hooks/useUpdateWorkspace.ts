@@ -63,7 +63,7 @@ export default function useUpdateWorkspace(
 
 		async function validate() {
 			setLoading(true)
-			// console.log('calling validate');
+			console.log(data)
 			try {
 				const {
 					data: { ipfsHash },

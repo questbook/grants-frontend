@@ -9,6 +9,7 @@ import {
 	ToastId,
 	useToast,
 } from '@chakra-ui/react'
+import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import SecondaryDropdown from 'src/components/ui/secondaryDropdown'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { CHAIN_INFO } from 'src/constants/chains'
@@ -18,6 +19,7 @@ import useChainId from 'src/hooks/utils/useChainId'
 import { useAccount, useNetwork } from 'wagmi'
 import ImageUpload from '../../ui/forms/imageUpload'
 import MultiLineInput from '../../ui/forms/multiLineInput'
+import RichTextEditor from '../../ui/forms/richTextEditor'
 import SingleLineInput from '../../ui/forms/singleLineInput'
 
 function Form({
@@ -25,7 +27,8 @@ function Form({
 }: {
   onSubmit: (data: {
     name: string;
-    description: string;
+	bio: string;
+    about: string;
     image: File | null;
     network: SupportedChainId;
     ownerId: string;
@@ -36,8 +39,25 @@ function Form({
 	const [daoName, setDaoName] = React.useState('')
 	const [daoNameError, setDaoNameError] = React.useState(false)
 
-	const [daoDescription, setDaoDescription] = React.useState('')
-	const [daoDescriptionError, setDaoDescriptionError] = React.useState(false)
+	const [daoBio, setDaoBio] = React.useState('')
+	const [daoBioError, setDaoBioError] = React.useState(false)
+
+	const [daoAbout, setDaoAbout] = React.useState(
+		EditorState.createWithContent(
+			convertFromRaw({
+			  entityMap: {},
+			  blocks: [
+				{
+				  text: '',
+				  key: 'foo',
+				  type: 'unstyled',
+				  entityRanges: [],
+				} as any,
+			  ],
+			})
+		  )
+	)
+	const [daoAboutError, setDaoAboutError] = React.useState(false)
 
 	const [image, setImage] = React.useState<string>(config.defaultDAOImagePath)
 	const [imageFile, setImageFile] = React.useState<File | null>(null)
@@ -73,15 +93,15 @@ function Form({
 		}
 	}
 
-	const handleSubmit = () => {
+	const handleSubmit = async() => {
 		let error = false
+
+		const aboutString = await JSON.stringify(
+			convertToRaw(daoAbout.getCurrentContent())
+		  )
+
 		if(!daoName || daoName.length === 0) {
 			setDaoNameError(true)
-			error = true
-		}
-
-		if(!daoDescription || daoDescription.length === 0) {
-			setDaoDescriptionError(true)
 			error = true
 		}
 
@@ -97,9 +117,12 @@ function Form({
 			return
 		}
 
+		console.log(aboutString, daoBio)
+
 		onFormSubmit({
 			name: daoName,
-			description: daoDescription,
+			bio: daoBio,
+			about: aboutString,
 			image: imageFile,
 			network: chainId!,
 			ownerId: accountData?.address ?? '0x0000000000000000000000000000000000000000',
@@ -154,22 +177,39 @@ function Form({
 				<Flex
 					w="100%"
 					mt={1}>
-					<MultiLineInput
+					<RichTextEditor
 						label="About your Grants DAO"
-						placeholder="A summary about your Grants DAO containing your mission statement and grant focus areas"
-						value={daoDescription}
+						placeholder="Write details about your grants, bounty, and other projects."
+						value={daoAbout}
 						onChange={
-							(e) => {
-								if(daoDescriptionError) {
-									setDaoDescriptionError(false)
-								}
-
-								setDaoDescription(e.target.value)
+							(e: EditorState) => {
+								setDaoAbout(e)
 							}
 						}
-						isError={daoDescriptionError}
+						isError={daoAboutError}
 						errorText="Required"
-						maxLength={500}
+						maxLength={800}
+					/>
+				</Flex>
+				<Flex
+					w="100%"
+					mt={1}>
+					<MultiLineInput
+						label="Bio"
+						placeholder="A small description of your dao in a few sentences"
+						value={daoBio}
+						onChange={
+							(e) => {
+								if(daoAboutError) {
+									setDaoBioError(false)
+								}
+
+								setDaoBio(e.target.value)
+							}
+						}
+						isError={daoBioError}
+						errorText="Required"
+						maxLength={200}
 					/>
 				</Flex>
 				<Flex

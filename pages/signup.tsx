@@ -27,7 +27,8 @@ function SignupDao() {
 
 	const [daoData, setDaoData] = React.useState<{
     name: string;
-    description: string;
+	bio: string;
+    about: string;
     image: string;
     network: SupportedChainId;
     id: string;

@@ -27,6 +27,8 @@
     "@toast-ui/editor": "^3.1.2",
     "@toast-ui/react-editor": "^3.1.2",
     "@types/react-star-ratings": "^2.3.0",
+    "axios": "^0.27.2",
+    "axios-retry": "^3.3.1",
     "bn.js": "^5.2.0",
     "chakra-react-select": "^4.0.3",
     "copy-to-clipboard": "^3.3.1",
@@ -49,6 +51,7 @@
     "react-star-ratings": "^2.3.0",
     "subscriptions-transport-ws": "^0.11.0",
     "tlds": "^1.230.0",
+    "urql": "^2.2.1",
     "use-file-picker": "^1.4.1",
     "wagmi": "^0.4.3"
   },
