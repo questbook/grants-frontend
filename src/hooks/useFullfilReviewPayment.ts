@@ -8,8 +8,8 @@ import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
-import useApplicationReviewRegistryContract from './contracts/useApplicationReviewRegistryContract'
 import useERC20Contract from './contracts/useERC20Contract'
+import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
 
 export default function useFulfillReviewPayment(
@@ -31,7 +31,7 @@ export default function useFulfillReviewPayment(
 	const apiClients = useContext(ApiClientsContext)!
 	const { workspace } = apiClients
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
-	const applicationReviewerContract = useApplicationReviewRegistryContract(chainId)
+	const applicationReviewerContract = useQBContract('reviews', chainId)
 	const rewardContract = useERC20Contract(reviewCurrencyAddress)
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()

@@ -11,7 +11,7 @@ import {
 } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import strings from '../constants/strings.json'
-import useApplicationRegistryContract from './contracts/useApplicationRegistryContract'
+import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
 
 export default function useSubmitApplication(
@@ -31,7 +31,7 @@ export default function useSubmitApplication(
 	const { validatorApi } = apiClients
 
 	const currentChainId = useChainId()
-	const applicationRegistryContract = useApplicationRegistryContract(chainId)
+	const applicationRegistryContract = useQBContract('applications', chainId)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()

@@ -9,7 +9,7 @@ import {
 } from 'src/utils/validationUtils'
 import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
-import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract'
+import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
 
 export default function useUpdateWorkspace(
@@ -27,7 +27,7 @@ export default function useUpdateWorkspace(
 
 	const currentChainId = useChainId()
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
-	const workspaceRegistryContract = useWorkspaceRegistryContract(chainId)
+	const workspaceRegistryContract = useQBContract('workspace', chainId)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()

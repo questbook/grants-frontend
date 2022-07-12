@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Box, Flex, Heading, Skeleton, Text } from '@chakra-ui/react'
 import { formatEther } from 'ethers/lib/utils'
 import { CHAIN_INFO } from 'src/constants/chains'
-import useWorkspaceRegistryContract from 'src/hooks/contracts/useWorkspaceRegistryContract'
+import useQBContract from 'src/hooks/contracts/useQBContract'
 import { GasStation } from 'src/v2/assets/custom chakra icons/GasStation'
 import { useProvider } from 'wagmi'
 import { NetworkSelectOption } from '../SupportedNetworksData'
@@ -26,7 +26,8 @@ const CreateDaoFinal = ({
 	const [ gasEstimate, setGasEstimate ] = useState<string>()
 	const [newDaoImageFile, setNewDaoImageFile] = useState<File | null>(null)
 
-	const workspaceRegistryContract = useWorkspaceRegistryContract(
+	const workspaceRegistryContract = useQBContract(
+		'workspace',
 		daoNetwork.id,
 	)
 

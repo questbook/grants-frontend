@@ -3,7 +3,7 @@ import { ToastId, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
-import useWorkspaceRegistryContract from 'src/hooks/contracts/useWorkspaceRegistryContract'
+import useQBContract from 'src/hooks/contracts/useQBContract'
 import getErrorMessage from 'src/utils/errorUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
@@ -32,9 +32,7 @@ const OnboardingCreateDao = () => {
 		connectors
 	} = useConnect()
 
-	const workspaceRegistryContract = useWorkspaceRegistryContract(
-		daoNetwork?.id,
-	)
+	const workspaceRegistryContract = useQBContract('workspace', daoNetwork?.id)
 	const { validatorApi } = useContext(ApiClientsContext)!
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
