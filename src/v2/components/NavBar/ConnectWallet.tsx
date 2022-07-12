@@ -1,14 +1,19 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
 	Button, Image, Text,
 	VStack, } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import ConnectWalletModal from 'src/v2/components/ConnectWalletModal'
 
-function ConnectWallet() {
+function ConnectWallet({ onGetStartedBtnClicked, setGetStartedClicked }) {
 	const [connectWalletModalIsOpen, setConnectWalletModalIsOpen] = useState(false)
 	const router = useRouter()
 
+	useEffect(() => {
+		if(onGetStartedBtnClicked) {
+			setConnectWalletModalIsOpen(true)
+		}
+	}, [onGetStartedBtnClicked])
 	/* this button style is not required anywhere in design */
 	return (
 		<>
@@ -70,7 +75,12 @@ function ConnectWallet() {
 
 			<ConnectWalletModal
 				isOpen={connectWalletModalIsOpen}
-				onClose={() => setConnectWalletModalIsOpen(false)}
+				onClose={
+					() => {
+						setConnectWalletModalIsOpen(false)
+						setGetStartedClicked(false)
+					}
+				}
 			/>
 		</>
 	)

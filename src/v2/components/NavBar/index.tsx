@@ -7,10 +7,10 @@ import AccountDetails from './AccountDetails'
 import ConnectWallet from './ConnectWallet'
 
 interface Props {
-  onGetStartedClick: () => void;
+  onGetStartedClick: boolean;
 }
 
-function NavBar({ onGetStartedClick }: Props) {
+function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicked }) {
 	// const { connected } = useContext(ApiClientsContext)!
 	const { isDisconnected } = useConnect()
 	const router = useRouter()
@@ -70,7 +70,13 @@ function NavBar({ onGetStartedClick }: Props) {
 			}
 			{!isDisconnected && <AccountDetails />}
 			{/* {!connected && <GetStarted onGetStartedClick={onGetStartedClick} />} */}
-			{isDisconnected && <ConnectWallet />}
+			{
+				isDisconnected && (
+					<ConnectWallet
+						onGetStartedBtnClicked={onGetStartedBtnClicked}
+						setGetStartedClicked={setGetStartedClicked} />
+				)
+			}
 		</Container>
 	)
 }

@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import NavBar from 'src/v2/components/NavBar'
@@ -6,6 +6,7 @@ import { useConnect } from 'wagmi'
 
 function BrowseDaoHeader() {
 	const { connected } = useContext(ApiClientsContext)!
+	const [getStartedClicked, setGetStartedClicked] = useState(false)
 	const { isDisconnected } = useConnect()
 	return (
 		<Box
@@ -32,7 +33,9 @@ function BrowseDaoHeader() {
 				top={0}
 				background={isDisconnected ? 'linear-gradient(0deg, rgba(31, 31, 51, 0.25), rgba(31, 31, 51, 0.25)), linear-gradient(107.56deg, rgba(31, 31, 51, 0.225) 0%, rgba(31, 31, 51, 0) 100%)' : ''}
 			>
-				<NavBar />
+				<NavBar
+					onGetStartedBtnClicked={getStartedClicked}
+					setGetStartedClicked={setGetStartedClicked} />
 				{
 					isDisconnected && (
 						<Flex
@@ -64,7 +67,12 @@ function BrowseDaoHeader() {
 								background="white"
 								mb={'44px'}
 								fontSize={'16px'}
-								fontWeight={'500'}>
+								fontWeight={'500'}
+								onClick={
+									() => {
+										setGetStartedClicked(true)
+									}
+								}>
                     Get started
 							</Button>
 						</Flex>
