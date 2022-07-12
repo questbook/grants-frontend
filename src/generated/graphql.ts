@@ -3843,7 +3843,7 @@ export type GetAllGrantsForADaoQueryVariables = Exact<{
 }>;
 
 
-export type GetAllGrantsForADaoQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
+export type GetAllGrantsForADaoQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> }, applications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, updatedAtS: number }> }> };
 
 export type GetAllGrantsForCreatorQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -3918,7 +3918,7 @@ export type GetDaoDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetDaoDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }> } | null, grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
+export type GetDaoDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, bio: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }> } | null, grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
 
 export type GetFundSentforReviewerQueryVariables = Exact<{
   type?: InputMaybe<FundsTransferType>;
@@ -3935,6 +3935,21 @@ export type GetFundSentforReviewsQueryVariables = Exact<{
 
 export type GetFundSentforReviewsQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', id: string, amount: string, sender: string, to: string, createdAtS: number, type: FundsTransferType, asset: string, review?: { __typename?: 'Review', id: string } | null }> };
 
+export type GetFundSentDisburseQueryVariables = Exact<{
+  type?: InputMaybe<FundsTransferType>;
+}>;
+
+
+export type GetFundSentDisburseQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', id: string, amount: string, sender: string, to: string, createdAtS: number, type: FundsTransferType, asset: string, review?: { __typename?: 'Review', id: string } | null, grant: { __typename?: 'Grant', id: string } }> };
+
+export type GetFundSentDisburseforGrantQueryVariables = Exact<{
+  type?: InputMaybe<FundsTransferType>;
+  grant?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetFundSentDisburseforGrantQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', id: string, amount: string, sender: string, to: string, createdAtS: number, type: FundsTransferType, asset: string }> };
+
 export type GetFundSentForApplicationQueryVariables = Exact<{
   applicationId?: InputMaybe<Scalars['String']>;
 }>;
@@ -3948,6 +3963,17 @@ export type GetFundingQueryVariables = Exact<{
 
 
 export type GetFundingQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', id: string, amount: string, sender: string, to: string, createdAtS: number, type: FundsTransferType, grant: { __typename?: 'Grant', id: string }, application?: { __typename?: 'GrantApplication', id: string } | null, milestone?: { __typename?: 'ApplicationMilestone', id: string, title: string } | null }> };
+
+export type GetFundsAndProfileDataQueryVariables = Exact<{
+  type?: InputMaybe<FundsTransferType>;
+  first?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+  workspaceId: Scalars['String'];
+  acceptingApplications: Scalars['Boolean'];
+}>;
+
+
+export type GetFundsAndProfileDataQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', id: string, amount: string, sender: string, to: string, createdAtS: number, type: FundsTransferType, asset: string, review?: { __typename?: 'Review', id: string } | null, grant: { __typename?: 'Grant', id: string } }>, grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> }, applications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, updatedAtS: number }> }> };
 
 export type GetGrantApplicationQueryVariables = Exact<{
   grantID: Scalars['String'];
@@ -4005,7 +4031,7 @@ export type GetWorkspaceDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, updatedAt: number, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number, addedBy: { __typename?: 'WorkspaceMember', id: string, actorId: string } }> } | null };
+export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, bio: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, updatedAt: number, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number, addedBy: { __typename?: 'WorkspaceMember', id: string, actorId: string } }> } | null };
 
 export type GetWorkspaceMembersQueryVariables = Exact<{
   actorId: Scalars['Bytes'];
@@ -4165,6 +4191,7 @@ export const GetAllGrantsForADaoDocument = gql`
       }
     }
     workspace {
+      id
       title
       logoIpfsHash
       supportedNetworks
@@ -4172,6 +4199,12 @@ export const GetAllGrantsForADaoDocument = gql`
     deadline
     funding
     numberOfApplications
+    applications {
+      id
+      state
+      createdAtS
+      updatedAtS
+    }
   }
 }
     `;
@@ -4807,11 +4840,18 @@ export const GetDaoDetailsDocument = gql`
     query getDAODetails($workspaceID: ID!, $daoID: String!) {
   workspace(id: $workspaceID, subgraphError: allow) {
     id
+    bio
     title
     about
     logoIpfsHash
     coverImageIpfsHash
     supportedNetworks
+    partners {
+      name
+      industry
+      website
+      partnerImageHash
+    }
     socials {
       name
       value
@@ -4984,6 +5024,103 @@ export function useGetFundSentforReviewsLazyQuery(baseOptions?: Apollo.LazyQuery
 export type GetFundSentforReviewsQueryHookResult = ReturnType<typeof useGetFundSentforReviewsQuery>;
 export type GetFundSentforReviewsLazyQueryHookResult = ReturnType<typeof useGetFundSentforReviewsLazyQuery>;
 export type GetFundSentforReviewsQueryResult = Apollo.QueryResult<GetFundSentforReviewsQuery, GetFundSentforReviewsQueryVariables>;
+export const GetFundSentDisburseDocument = gql`
+    query getFundSentDisburse($type: FundsTransferType) {
+  fundsTransfers(
+    where: {type: funds_disbursed}
+    orderBy: createdAtS
+    orderDirection: desc
+  ) {
+    id
+    review {
+      id
+    }
+    grant {
+      id
+    }
+    amount
+    sender
+    to
+    createdAtS
+    type
+    asset
+  }
+}
+    `;
+
+/**
+ * __useGetFundSentDisburseQuery__
+ *
+ * To run a query within a React component, call `useGetFundSentDisburseQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFundSentDisburseQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFundSentDisburseQuery({
+ *   variables: {
+ *      type: // value for 'type'
+ *   },
+ * });
+ */
+export function useGetFundSentDisburseQuery(baseOptions?: Apollo.QueryHookOptions<GetFundSentDisburseQuery, GetFundSentDisburseQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFundSentDisburseQuery, GetFundSentDisburseQueryVariables>(GetFundSentDisburseDocument, options);
+      }
+export function useGetFundSentDisburseLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFundSentDisburseQuery, GetFundSentDisburseQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFundSentDisburseQuery, GetFundSentDisburseQueryVariables>(GetFundSentDisburseDocument, options);
+        }
+export type GetFundSentDisburseQueryHookResult = ReturnType<typeof useGetFundSentDisburseQuery>;
+export type GetFundSentDisburseLazyQueryHookResult = ReturnType<typeof useGetFundSentDisburseLazyQuery>;
+export type GetFundSentDisburseQueryResult = Apollo.QueryResult<GetFundSentDisburseQuery, GetFundSentDisburseQueryVariables>;
+export const GetFundSentDisburseforGrantDocument = gql`
+    query getFundSentDisburseforGrant($type: FundsTransferType, $grant: String) {
+  fundsTransfers(
+    where: {type: funds_disbursed, grant: $grant}
+    orderBy: createdAtS
+    orderDirection: desc
+  ) {
+    id
+    amount
+    sender
+    to
+    createdAtS
+    type
+    asset
+  }
+}
+    `;
+
+/**
+ * __useGetFundSentDisburseforGrantQuery__
+ *
+ * To run a query within a React component, call `useGetFundSentDisburseforGrantQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFundSentDisburseforGrantQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFundSentDisburseforGrantQuery({
+ *   variables: {
+ *      type: // value for 'type'
+ *      grant: // value for 'grant'
+ *   },
+ * });
+ */
+export function useGetFundSentDisburseforGrantQuery(baseOptions?: Apollo.QueryHookOptions<GetFundSentDisburseforGrantQuery, GetFundSentDisburseforGrantQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFundSentDisburseforGrantQuery, GetFundSentDisburseforGrantQueryVariables>(GetFundSentDisburseforGrantDocument, options);
+      }
+export function useGetFundSentDisburseforGrantLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFundSentDisburseforGrantQuery, GetFundSentDisburseforGrantQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFundSentDisburseforGrantQuery, GetFundSentDisburseforGrantQueryVariables>(GetFundSentDisburseforGrantDocument, options);
+        }
+export type GetFundSentDisburseforGrantQueryHookResult = ReturnType<typeof useGetFundSentDisburseforGrantQuery>;
+export type GetFundSentDisburseforGrantLazyQueryHookResult = ReturnType<typeof useGetFundSentDisburseforGrantLazyQuery>;
+export type GetFundSentDisburseforGrantQueryResult = Apollo.QueryResult<GetFundSentDisburseforGrantQuery, GetFundSentDisburseforGrantQueryVariables>;
 export const GetFundSentForApplicationDocument = gql`
     query getFundSentForApplication($applicationId: String) {
   fundsTransfers(
@@ -5089,6 +5226,102 @@ export function useGetFundingLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetFundingQueryHookResult = ReturnType<typeof useGetFundingQuery>;
 export type GetFundingLazyQueryHookResult = ReturnType<typeof useGetFundingLazyQuery>;
 export type GetFundingQueryResult = Apollo.QueryResult<GetFundingQuery, GetFundingQueryVariables>;
+export const GetFundsAndProfileDataDocument = gql`
+    query getFundsAndProfileData($type: FundsTransferType, $first: Int, $skip: Int, $workspaceId: String!, $acceptingApplications: Boolean!) {
+  fundsTransfers(
+    where: {type: funds_disbursed}
+    orderBy: createdAtS
+    orderDirection: desc
+  ) {
+    id
+    review {
+      id
+    }
+    grant {
+      id
+    }
+    amount
+    sender
+    to
+    createdAtS
+    type
+    asset
+  }
+  grants(
+    first: $first
+    skip: $skip
+    subgraphError: allow
+    where: {workspace: $workspaceId, acceptingApplications: $acceptingApplications}
+    orderBy: createdAtS
+    orderDirection: desc
+  ) {
+    id
+    creatorId
+    title
+    createdAtS
+    summary
+    details
+    reward {
+      committed
+      id
+      asset
+      token {
+        address
+        label
+        decimal
+        iconHash
+      }
+    }
+    workspace {
+      id
+      title
+      logoIpfsHash
+      supportedNetworks
+    }
+    deadline
+    funding
+    numberOfApplications
+    applications {
+      id
+      state
+      createdAtS
+      updatedAtS
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetFundsAndProfileDataQuery__
+ *
+ * To run a query within a React component, call `useGetFundsAndProfileDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFundsAndProfileDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFundsAndProfileDataQuery({
+ *   variables: {
+ *      type: // value for 'type'
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *      workspaceId: // value for 'workspaceId'
+ *      acceptingApplications: // value for 'acceptingApplications'
+ *   },
+ * });
+ */
+export function useGetFundsAndProfileDataQuery(baseOptions: Apollo.QueryHookOptions<GetFundsAndProfileDataQuery, GetFundsAndProfileDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFundsAndProfileDataQuery, GetFundsAndProfileDataQueryVariables>(GetFundsAndProfileDataDocument, options);
+      }
+export function useGetFundsAndProfileDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFundsAndProfileDataQuery, GetFundsAndProfileDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFundsAndProfileDataQuery, GetFundsAndProfileDataQueryVariables>(GetFundsAndProfileDataDocument, options);
+        }
+export type GetFundsAndProfileDataQueryHookResult = ReturnType<typeof useGetFundsAndProfileDataQuery>;
+export type GetFundsAndProfileDataLazyQueryHookResult = ReturnType<typeof useGetFundsAndProfileDataLazyQuery>;
+export type GetFundsAndProfileDataQueryResult = Apollo.QueryResult<GetFundsAndProfileDataQuery, GetFundsAndProfileDataQueryVariables>;
 export const GetGrantApplicationDocument = gql`
     query getGrantApplication($grantID: String!, $applicantID: Bytes!) {
   grantApplications(
@@ -5403,10 +5636,17 @@ export const GetWorkspaceDetailsDocument = gql`
   workspace(id: $workspaceID, subgraphError: allow) {
     id
     title
+    bio
     about
     logoIpfsHash
     coverImageIpfsHash
     supportedNetworks
+    partners {
+      name
+      industry
+      website
+      partnerImageHash
+    }
     socials {
       name
       value

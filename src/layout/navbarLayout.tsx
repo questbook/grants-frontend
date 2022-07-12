@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Flex, useToast } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
+import ConnectWalletModal from 'src/v2/components/ConnectWalletModal'
 import NavBar from 'src/v2/components/NavBar'
 import Sidebar from 'src/v2/components/Sidebar'
 import { useConnect } from 'wagmi'
@@ -19,7 +21,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 		connectors,
 	} = useConnect()
 	const toast = useToast()
-
+	const router = useRouter()
 	const [connectWalletModalIsOpen, setConnectWalletModalIsOpen] =
     useState(false)
 
@@ -70,6 +72,11 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 				{connected && <Sidebar />}
 				{children}
 			</Flex>
+			<ConnectWalletModal
+				isOpen={connectWalletModalIsOpen}
+				onClose={() => setConnectWalletModalIsOpen(false)}
+				redirect={() => router.push({ pathname: '/onboarding' })}
+			/>
 		</>
 	)
 }
