@@ -27,7 +27,7 @@ function GrantDetails({
 			return
 		}
 
-		if(grantDetails.startsWith('Qm') && grantDetails.length < 64) {
+		if(grantDetails.length) {
 			getDecodedDetails(grantDetails)
 		} else {
 			setDecodedDetails(grantDetails)
@@ -86,14 +86,14 @@ function GrantDetails({
 					mt={3}
 					fontWeight="400">
 					{
-						decodedDetails ? (
+						decodedDetails !== '' ? (
 							<TextViewer
 							// value={useMemo(() => EditorState.createWithContent(
 							//   convertFromRaw(JSON.parse(grantDetails)),
 							// ), [grantDetails])}
 							// value={editorState}
 							// onChange={setEditorState}
-								grantDetails={decodedDetails}
+								text={decodedDetails}
 							/>
 						) : <Skeleton />
 					}

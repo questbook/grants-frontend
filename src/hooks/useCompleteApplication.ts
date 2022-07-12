@@ -8,7 +8,7 @@ import {
 } from 'src/utils/validationUtils'
 import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
-import useApplicationRegistryContract from './contracts/useApplicationRegistryContract'
+import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
 
 export default function useCompleteApplication(
@@ -26,7 +26,7 @@ export default function useCompleteApplication(
 	const { validatorApi, workspace } = apiClients
 	const currentChainId = useChainId()
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
-	const applicationContract = useApplicationRegistryContract(chainId)
+	const applicationContract = useQBContract('applications', chainId)
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
 

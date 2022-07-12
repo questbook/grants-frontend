@@ -36,10 +36,10 @@
 			}
 		},
 		"qbContracts": {
-			"workspace": "0x8BffF1DeB6dA2C632C630E0d1C38407B2e03d5dE",
-			"applications": "0xdC5EbC9130a2e7Ad776E3503fa6Dcf16D80ca915",
-			"grantFactory": "0xb03DfB2e4A9341211E654428A7d434a29D400C16",
-			"reviews": "0x02961f1ba548B58A1Ffe3B381cda7CAdfC70f422"
+			"applications": "0xD139A265C19e9A97b0963ff6F64999789d1Cf6Aa",
+			"workspace": "0xEF77967DEae683D5a66E480cc2D7B9e38cc79a1f",
+			"grantFactory": "0xF6C563C9A9956ED23B396aF9252d640B1512a3d1",
+			"reviews": "0xCbFD79d3Fd1FE493fDC87CF8809805978F9a83d0"
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-rinkeby",
 		"rpcUrls": [
@@ -425,10 +425,10 @@
 			}
 		},
 		"qbContracts": {
-			"applications": "0xF93F605142Fb1Efad7Aa58253dDffF67775b4520",
-			"workspace": "0xfEc77DcD17d4b4F435893e8da0A7FC5d77DD4A1C",
-			"grantFactory": "0xCc86D90D96831AF8CF2c1E051ae98Ffa991414d2",
-			"reviews": "0xF839b31c6b3062B033536B4fe47789C47b187fc9"
+			"applications": "0xaFaC7a1229509A6dF7f75AAF1B28C1e927D6A542",
+			"workspace": "0x6C95c4b887eAcC52612e3D79575A1b00Ace05A4d",
+			"grantFactory": "0xc782342D667f8355869E9f5D23f245804aB10F56",
+			"reviews": "0xB2594525944249664F577fD6812CA03a09FDffdf"
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-findora-testnet",
 		"rpcUrls": [

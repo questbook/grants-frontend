@@ -9,7 +9,7 @@ import {
 } from 'src/utils/validationUtils'
 import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
-import useApplicationReviewRegistryContract from './contracts/useApplicationReviewRegistryContract'
+import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
 
 export default function useAssignReviewers(
@@ -28,13 +28,13 @@ export default function useAssignReviewers(
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients
-	const applicationReviewContract = useApplicationReviewRegistryContract(
-		chainId ?? getSupportedChainIdFromWorkspace(workspace),
-	)
+
 	if(!chainId) {
 		// eslint-disable-next-line no-param-reassign
 		chainId = getSupportedChainIdFromWorkspace(workspace)
 	}
+
+	const applicationReviewContract = useQBContract('reviews', chainId)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
@@ -80,9 +80,9 @@ export default function useAssignReviewers(
 				// );
 
 				const createGrantTransaction = await applicationReviewContract.assignReviewers(
-					workspaceId ?? Number(workspace?.id).toString(),
-					applicationId,
-					grantAddress,
+					workspaceId ?? workspace!.id,
+					applicationId!,
+					grantAddress!,
 					data.reviewers,
 					data.active,
 				)

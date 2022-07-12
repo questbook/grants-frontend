@@ -95,9 +95,9 @@ export default function useDisburseReward(
 				const [txn, updateTxn] = await Promise.all([
 					rewardContract.approve(grantContract.address, data),
 					grantContract.disburseRewardP2P(
-						applicationId,
-						milestoneIndex,
-						rewardAssetAddress,
+						+applicationId!,
+						milestoneIndex!,
+						rewardAssetAddress!,
 						data,
 					)
 				])

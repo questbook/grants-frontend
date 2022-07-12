@@ -9,7 +9,7 @@ import {
 } from 'src/utils/validationUtils'
 import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
-import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract'
+import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
 
 export default function useUpdateWorkspace(
@@ -27,7 +27,7 @@ export default function useUpdateWorkspace(
 
 	const currentChainId = useChainId()
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
-	const workspaceRegistryContract = useWorkspaceRegistryContract(chainId)
+	const workspaceRegistryContract = useQBContract('workspace', chainId)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
@@ -63,7 +63,7 @@ export default function useUpdateWorkspace(
 
 		async function validate() {
 			setLoading(true)
-			// console.log('calling validate');
+			console.log(data)
 			try {
 				const {
 					data: { ipfsHash },
@@ -73,7 +73,7 @@ export default function useUpdateWorkspace(
 				}
 
 				const updateTransaction = await workspaceRegistryContract.updateWorkspaceMetadata(
-					Number(workspace!.id),
+					+workspace!.id,
 					ipfsHash,
 				)
 				const updateTransactionData = await updateTransaction.wait()
@@ -141,10 +141,10 @@ export default function useUpdateWorkspace(
 
 			if(
 				!workspaceRegistryContract
-        || workspaceRegistryContract.address
-          === '0x0000000000000000000000000000000000000000'
-        || !workspaceRegistryContract.signer
-        || !workspaceRegistryContract.provider
+				|| workspaceRegistryContract.address
+				=== '0x0000000000000000000000000000000000000000'
+				|| !workspaceRegistryContract.signer
+				|| !workspaceRegistryContract.provider
 			) {
 				return
 			}

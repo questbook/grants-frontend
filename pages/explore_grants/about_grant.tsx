@@ -272,9 +272,6 @@ function AboutGrant() {
 			direction="column"
 			w="100%"
 			mb={8}>
-			<Box ml="15px">
-				<Breadcrumbs path={['Explore Grants', 'About Grant']} />
-			</Box>
 			{
 				!acceptingApplications && (
 					<Flex
@@ -335,6 +332,7 @@ function AboutGrant() {
 				<Flex
 					direction="column"
 					w="54%">
+					<Breadcrumbs path={['Explore Grants', 'About Grant']} />
 					<Text
 						variant="heading"
 						mt="18px">

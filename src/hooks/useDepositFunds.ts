@@ -66,8 +66,8 @@ export default function useDepositFunds(
 			// console.log('calling validate');
 			try {
 				const transferTxn = await rewardContract.transfer(
-					grantAddress,
-					finalAmount,
+					grantAddress!,
+					finalAmount!,
 				)
 				const depositTransactionData = await transferTxn.wait()
 

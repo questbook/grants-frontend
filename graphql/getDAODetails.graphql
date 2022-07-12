@@ -5,11 +5,18 @@
 query getDAODetails($workspaceID: ID!, $daoID: String!) {
      workspace(id: $workspaceID, subgraphError: allow) {
         id
+        bio
         title
         about
         logoIpfsHash
         coverImageIpfsHash
         supportedNetworks
+        partners {
+            name
+            industry
+            website
+            partnerImageHash
+        }
         socials {
           name
           value
