@@ -65,11 +65,11 @@ export default function useAddMember(
 			// console.log(data);
 			try {
 				const updateTransaction = await workspaceRegistryContract.updateWorkspaceMembers(
-          workspace!.id,
-          data.memberAddress,
-          data.memberRoles,
-          data.memberRolesEnabled,
-          data.memberEmail,
+					workspace!.id,
+					data.memberAddress,
+					data.memberRoles,
+					data.memberRolesEnabled,
+					data.memberEmail,
 				)
 				const updateTransactionData = await updateTransaction.wait()
 
@@ -132,10 +132,9 @@ export default function useAddMember(
 
 			if(
 				!workspaceRegistryContract
-        || workspaceRegistryContract.address
-          === '0x0000000000000000000000000000000000000000'
-        || !workspaceRegistryContract.signer
-        || !workspaceRegistryContract.provider
+        		|| workspaceRegistryContract.address === '0x0000000000000000000000000000000000000000'
+        		|| !workspaceRegistryContract.signer
+        		|| !workspaceRegistryContract.provider
 			) {
 				return
 			}

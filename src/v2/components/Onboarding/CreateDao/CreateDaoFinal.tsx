@@ -39,7 +39,7 @@ const CreateDaoFinal = ({
 	const estimateCreateWorkspace = async(hash: string) => {
 		setGasEstimate(undefined)
 		try {
-			const estimate = await workspaceRegistryContract.estimateGas.createWorkspace(hash,)
+			const estimate = await workspaceRegistryContract.estimateGas.createWorkspace(hash, new Uint8Array(32), 0)
 			const gasPrice = await provider.getGasPrice()
 			setGasEstimate(formatEther(estimate.mul(gasPrice)))
 		} catch(e) {
@@ -53,7 +53,6 @@ const CreateDaoFinal = ({
 	}
 
 	useEffect(() => {
-		console.log(workspaceRegistryContract.signer, provider)
 		if(workspaceRegistryContract.signer !== null && provider !== null) {
 			estimateCreateWorkspace('0000000000000000000000000000000000000000000000')
 		}

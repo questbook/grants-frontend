@@ -143,10 +143,10 @@ export default function useUpdateWorkspacePublicKeys(
 
 			if(
 				!workspaceRegistryContract
-        || workspaceRegistryContract.address
-          === '0x0000000000000000000000000000000000000000'
-        || !workspaceRegistryContract.signer
-        || !workspaceRegistryContract.provider
+				|| workspaceRegistryContract.address
+				=== '0x0000000000000000000000000000000000000000'
+				|| !workspaceRegistryContract.signer
+				|| !workspaceRegistryContract.provider
 			) {
 				return
 			}

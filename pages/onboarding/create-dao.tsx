@@ -28,7 +28,6 @@ const OnboardingCreateDao = () => {
 
 	const { activeChain, switchNetworkAsync, data } = useNetwork()
 	const {
-		isError: isErrorConnecting,
 		connect,
 		connectors
 	} = useConnect()
@@ -78,9 +77,8 @@ const OnboardingCreateDao = () => {
 			setCurrentStep(2)
 			const createWorkspaceTransaction = await workspaceRegistryContract.createWorkspace(ipfsHash, new Uint8Array(32), 0)
 			setCurrentStep(3)
-			const createWorkspaceTransactionData = await createWorkspaceTransaction.wait()
+			await createWorkspaceTransaction.wait()
 
-			console.log(createWorkspaceTransactionData)
 			setCurrentStep(5)
 			setTimeout(() => {
 				router.push({ pathname: '/your_grants' })
@@ -103,17 +101,14 @@ const OnboardingCreateDao = () => {
 	}
 
 	useEffect(() => {
-		console.log(workspaceRegistryContract)
 		if(activeChain?.id === daoNetwork?.id && callOnContractChange) {
 			setCallOnContractChange(false)
 			createWorkspace()
 		}
 	}, [workspaceRegistryContract])
-	useEffect(() => console.log('data', data), [data])
 
 	const { data: signer } = useSigner()
 	useEffect(() => {
-		console.log(signer)
 		if(!signer) {
 			const connector = connectors.find((x) => x.id === 'injected')
 			connect(connector)

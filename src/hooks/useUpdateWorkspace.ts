@@ -73,7 +73,7 @@ export default function useUpdateWorkspace(
 				}
 
 				const updateTransaction = await workspaceRegistryContract.updateWorkspaceMetadata(
-					Number(workspace!.id),
+					+workspace!.id,
 					ipfsHash,
 				)
 				const updateTransactionData = await updateTransaction.wait()
@@ -141,10 +141,10 @@ export default function useUpdateWorkspace(
 
 			if(
 				!workspaceRegistryContract
-        || workspaceRegistryContract.address
-          === '0x0000000000000000000000000000000000000000'
-        || !workspaceRegistryContract.signer
-        || !workspaceRegistryContract.provider
+				|| workspaceRegistryContract.address
+				=== '0x0000000000000000000000000000000000000000'
+				|| !workspaceRegistryContract.signer
+				|| !workspaceRegistryContract.provider
 			) {
 				return
 			}
