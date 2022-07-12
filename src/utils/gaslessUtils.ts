@@ -18,7 +18,7 @@ const EIP712_WALLET_TX_TYPE = {
 }
 
 export const apiKey = 'qPZRgkerc.afb7905a-12b8-4c90-8e6b-48479f9e58d1' // apiKey from the dashboard
-export const webHookId = 'b8400628-c963-4761-9369-a14ec9ca2e6f'
+export const webHookId = '0f15c7b1-2fd9-47af-82f6-9bdb0304c721'
 
 export const jsonRpcProvider = new ethers.providers.JsonRpcProvider('https://polygon-mumbai.g.alchemy.com/v2/lfupuQhoZXWzMzn_OJ_zD9RHK0exz_b4')
 
@@ -64,7 +64,7 @@ export const registerWebHook = async(authToken: string, apiKey: string) => {
 	const responseJSON = await response.json()
 
 	let webHookId = false
-
+	console.log(responseJSON)
 	try {
 		webHookId = responseJSON.data.webHookId
 	} catch{
@@ -102,7 +102,9 @@ export const addDapp = async(dappName: string, networkId: string, authToken: str
 }
 
 export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: BiconomyWalletClient) => {
+	console.log("I'm here")
 	var { doesWalletExist, walletAddress } = await biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address })
+	console.log("I'm not here")
 	let scwAddress
 
 	if(!doesWalletExist) {

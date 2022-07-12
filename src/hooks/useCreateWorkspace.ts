@@ -106,10 +106,7 @@ export default function useCreateWorkspace(
 					webwallet
 				)
 				console.log('ENTERING')
-<<<<<<< Updated upstream
-=======
 				console.log(networkChainId, scwAddress, webwallet, nonce, webHookId);
->>>>>>> Stashed changes
 				const transactionHash = await sendGaslessTransaction(biconomy, targetContractObject, 'createWorkspace', [ipfsHash, new Uint8Array(32), 0],
 					WORKSPACE_REGISTRY_ADDRESS[networkChainId], biconomyWalletClient,
 					scwAddress, webwallet, `${networkChainId}`, webHookId, nonce)

@@ -24,7 +24,7 @@ export function getChainInfo(grant: any, chainId: SupportedChainId) : ChainInfo[
       	grant.reward.asset.toLowerCase()
       ]
 
-	  console.log('WOWW2', chainInfo, !chainInfo)
+	//   console.log('WOWW2', chainInfo, !chainInfo)
 	if(!chainInfo && grant.reward.token) {
 		tokenIcon = getUrlForIPFSHash(grant.reward.token.iconHash)
 		chainInfo = {
@@ -42,7 +42,7 @@ export function getChainInfo(grant: any, chainId: SupportedChainId) : ChainInfo[
 		}
 	}
 
-	console.log('WOWW2', chainInfo, grant.reward)
+	// console.log('WOWW2', chainInfo, grant.reward)
 
 	return chainInfo
 }

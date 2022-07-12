@@ -164,24 +164,29 @@ export default function useCreateGrant(
 				// );
 
 				// let transactionHash: string | undefined | boolean
+				console.log("THIS IS ADDRESS", GRANT_FACTORY_ADDRESS[currentChainId!], currentChainId)
 
 				const targetContractObject = new ethers.Contract(
 					GRANT_FACTORY_ADDRESS[currentChainId!],
 					GrantFactoryAbi,
 					webwallet
 				)
+				
 				console.log('ENTERING')
 
-				const methodArgs = [workspaceId ?? Number(workspace?.id).toString(),
+				const methodArgs = [
+					workspaceId ?? Number(workspace?.id).toString(),
 					ipfsHash,
 					rubricHash,
 					WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
-					APPLICATION_REGISTRY_ADDRESS[currentChainId!]
+					APPLICATION_REGISTRY_ADDRESS[currentChainId!],
 				]
+				
+				console.log("THESE ARE METHODS", methodArgs);
 
 				const transactionHash = await sendGaslessTransaction(biconomy, targetContractObject, 'createGrant', methodArgs,
 					GRANT_FACTORY_ADDRESS[currentChainId!], biconomyWalletClient,
-					scwAddress, webwallet, `${currentChainId}`, webHookId, nonce)
+					scwAddress, webwallet, `${currentChainId}`, webHookId, nonce);
 
 				console.log(transactionHash)
 				const receipt = await getTransactionReceipt(transactionHash)

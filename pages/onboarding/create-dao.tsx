@@ -16,16 +16,34 @@ import BackgroundImageLayout from 'src/v2/components/Onboarding/UI/Layout/Backgr
 import OnboardingCard from 'src/v2/components/Onboarding/UI/Layout/OnboardingCard'
 import { useAccount, useConnect, useNetwork, useSigner } from 'wagmi'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import { ethers } from 'ethers';
+import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
+import { apiKey, getEventData, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
+import { GitHubTokenContext, WebwalletContext } from 'pages/_app'
+import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
+import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 
 const OnboardingCreateDao = () => {
 	const router = useRouter()
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const [step, setStep] = useState(0)
 	const [daoName, setDaoName] = useState<string>()
 	const [daoNetwork, setDaoNetwork] = useState<NetworkSelectOption>()
 	const [daoImageFile, setDaoImageFile] = useState<File | null>(null)
 	const [callOnContractChange, setCallOnContractChange] = useState(false)
 	const [currentStep, setCurrentStep] = useState<number>()
+
+	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
+	const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!
+
+	const [
+		biconomy,
+		biconomyWalletClient,
+		scwAddress
+	] = useBiconomy({
+		apiKey: apiKey,
+		targetContractABI: WorkspaceRegistryAbi
+	})
 
 	const { activeChain, switchNetworkAsync, data } = useNetwork()
 	const {
@@ -75,11 +93,36 @@ const OnboardingCreateDao = () => {
 			if(!ipfsHash) {
 				throw new Error('Error validating grant data')
 			}
-
+			if(!daoNetwork){
+				throw new Error("No network specified");
+			}
 			setCurrentStep(2)
-			const createWorkspaceTransaction = await workspaceRegistryContract.createWorkspace(ipfsHash, new Uint8Array(32), 0)
+
+			const targetContractObject = new ethers.Contract(
+				WORKSPACE_REGISTRY_ADDRESS[daoNetwork.id],
+				WorkspaceRegistryAbi,
+				webwallet
+			)
+			console.log('ENTERING')
+			console.log(daoNetwork.id, scwAddress, webwallet, nonce, webHookId);
+			const transactionHash = await sendGaslessTransaction(biconomy, targetContractObject, 'createWorkspace', [ipfsHash, new Uint8Array(32), 0],
+				WORKSPACE_REGISTRY_ADDRESS[daoNetwork.id], biconomyWalletClient,
+				scwAddress, webwallet, `${daoNetwork.id}`, webHookId, nonce)
+
+			console.log(transactionHash)
+			const receipt = await getTransactionReceipt(transactionHash)
+
+			console.log('THIS IS RECEIPT', receipt)
+
+			const createWorkspaceTransactionData = await getEventData(receipt, 'WorkspaceCreated', WorkspaceRegistryAbi)
+
+			if(createWorkspaceTransactionData) {
+				console.log('THIS IS EVENT', createWorkspaceTransactionData.args)
+			}
+
+			// const createWorkspaceTransaction = await workspaceRegistryContract.createWorkspace(ipfsHash, new Uint8Array(32), 0)
 			setCurrentStep(3)
-			const createWorkspaceTransactionData = await createWorkspaceTransaction.wait()
+			// const createWorkspaceTransactionData = await createWorkspaceTransaction.wait()
 
 			console.log(createWorkspaceTransactionData)
 			setCurrentStep(5)
@@ -105,7 +148,9 @@ const OnboardingCreateDao = () => {
 
 	useEffect(() => {
 		console.log(workspaceRegistryContract)
-		if(activeChain?.id === daoNetwork?.id && callOnContractChange) {
+		console.log("HERE I AM", activeChain?.id, daoNetwork?.id, callOnContractChange)
+		//@TODO: FIX HERE
+		if(/*activeChain?.id ===*/ daoNetwork?.id && callOnContractChange) {
 			setCallOnContractChange(false)
 			createWorkspace()
 		}
