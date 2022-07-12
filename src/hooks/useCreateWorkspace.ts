@@ -8,7 +8,7 @@ import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
-import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract'
+import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
 
 export default function useCreateWorkspace(
@@ -23,9 +23,7 @@ export default function useCreateWorkspace(
 	const chainId = useChainId()
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi } = apiClients
-	const workspaceRegistryContract = useWorkspaceRegistryContract(
-		data?.network,
-	)
+	const workspaceRegistryContract = useQBContract('workspace', data?.network)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
@@ -121,10 +119,9 @@ export default function useCreateWorkspace(
 
 			if(
 				!workspaceRegistryContract
-        || workspaceRegistryContract.address
-          === '0x0000000000000000000000000000000000000000'
-        || !workspaceRegistryContract.signer
-        || !workspaceRegistryContract.provider
+				|| workspaceRegistryContract.address === '0x0000000000000000000000000000000000000000'
+				|| !workspaceRegistryContract.signer
+				|| !workspaceRegistryContract.provider
 			) {
 				return
 			}

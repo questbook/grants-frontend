@@ -1,3 +1,4 @@
+import { ApplicationRegistryAbi, ApplicationReviewRegistryAbi, GrantFactoryAbi, WorkspaceRegistryAbi } from 'src/generated/contracts'
 import {
 	GetAllGrantsForADaoQuery,
 	GetApplicationMilestonesQuery,
@@ -19,6 +20,13 @@ export type DAOGrant = GetDaoDetailsQuery['grants']
 export type AddressMap = { [C in SupportedChainId]: string }
 
 export type QBContract = 'workspace' | 'grantFactory' | 'applications' | 'reviews'
+
+export type QBContractABIMap = {
+	'workspace': WorkspaceRegistryAbi
+	'grantFactory': GrantFactoryAbi
+	'applications': ApplicationRegistryAbi
+	'reviews': ApplicationReviewRegistryAbi
+}
 
 export interface ChainInfo {
 	readonly id: SupportedChainId
