@@ -3867,6 +3867,11 @@ export type GetAllGrantsForReviewerQueryVariables = Exact<{
 
 export type GetAllGrantsForReviewerQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, grant: { __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, acceptingApplications: boolean, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> }, rubric?: { __typename?: 'Rubric', isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null } }> };
 
+export type GetAllWorkspacesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllWorkspacesQuery = { __typename?: 'Query', workspaces: Array<{ __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork> }> };
+
 export type GetApplicantsForAGrantQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
@@ -4395,6 +4400,45 @@ export function useGetAllGrantsForReviewerLazyQuery(baseOptions?: Apollo.LazyQue
 export type GetAllGrantsForReviewerQueryHookResult = ReturnType<typeof useGetAllGrantsForReviewerQuery>;
 export type GetAllGrantsForReviewerLazyQueryHookResult = ReturnType<typeof useGetAllGrantsForReviewerLazyQuery>;
 export type GetAllGrantsForReviewerQueryResult = Apollo.QueryResult<GetAllGrantsForReviewerQuery, GetAllGrantsForReviewerQueryVariables>;
+export const GetAllWorkspacesDocument = gql`
+    query getAllWorkspaces {
+  workspaces(subgraphError: allow) {
+    id
+    title
+    about
+    logoIpfsHash
+    coverImageIpfsHash
+    supportedNetworks
+  }
+}
+    `;
+
+/**
+ * __useGetAllWorkspacesQuery__
+ *
+ * To run a query within a React component, call `useGetAllWorkspacesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllWorkspacesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllWorkspacesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllWorkspacesQuery(baseOptions?: Apollo.QueryHookOptions<GetAllWorkspacesQuery, GetAllWorkspacesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllWorkspacesQuery, GetAllWorkspacesQueryVariables>(GetAllWorkspacesDocument, options);
+      }
+export function useGetAllWorkspacesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllWorkspacesQuery, GetAllWorkspacesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllWorkspacesQuery, GetAllWorkspacesQueryVariables>(GetAllWorkspacesDocument, options);
+        }
+export type GetAllWorkspacesQueryHookResult = ReturnType<typeof useGetAllWorkspacesQuery>;
+export type GetAllWorkspacesLazyQueryHookResult = ReturnType<typeof useGetAllWorkspacesLazyQuery>;
+export type GetAllWorkspacesQueryResult = Apollo.QueryResult<GetAllWorkspacesQuery, GetAllWorkspacesQueryVariables>;
 export const GetApplicantsForAGrantDocument = gql`
     query getApplicantsForAGrant($first: Int, $skip: Int, $grantID: String!) {
   grantApplications(first: $first, where: {grant: $grantID}, subgraphError: allow) {
