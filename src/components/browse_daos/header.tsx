@@ -34,6 +34,7 @@ function BrowseDaoHeader() {
 				background={isDisconnected ? 'linear-gradient(0deg, rgba(31, 31, 51, 0.25), rgba(31, 31, 51, 0.25)), linear-gradient(107.56deg, rgba(31, 31, 51, 0.225) 0%, rgba(31, 31, 51, 0) 100%)' : ''}
 			>
 				<NavBar
+					onGetStartedClick={false}
 					onGetStartedBtnClicked={getStartedClicked}
 					setGetStartedClicked={setGetStartedClicked} />
 				{

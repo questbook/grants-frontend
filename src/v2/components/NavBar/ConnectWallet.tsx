@@ -5,7 +5,7 @@ import {
 import { useRouter } from 'next/router'
 import ConnectWalletModal from 'src/v2/components/ConnectWalletModal'
 
-function ConnectWallet({ onGetStartedBtnClicked, setGetStartedClicked }) {
+function ConnectWallet({ onGetStartedBtnClicked, setGetStartedClicked } :{onGetStartedBtnClicked:boolean, setGetStartedClicked:(value: boolean)=>void}) {
 	const [connectWalletModalIsOpen, setConnectWalletModalIsOpen] = useState(false)
 	const router = useRouter()
 

@@ -60,7 +60,9 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 				)
 			} */}
 			<NavBar
-				onGetStartedClick={() => setConnectWalletModalIsOpen(true)} />
+				onGetStartedClick={true}
+				onGetStartedBtnClicked={false}
+				setGetStartedClicked={() => {}} />
 			<Flex
 				w="100vw"
 				h="100vh"

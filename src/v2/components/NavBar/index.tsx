@@ -8,9 +8,11 @@ import ConnectWallet from './ConnectWallet'
 
 interface Props {
   onGetStartedClick: boolean;
+  onGetStartedBtnClicked: boolean;
+  setGetStartedClicked: (value:boolean)=>void;
 }
 
-function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicked }) {
+function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicked }: Props) {
 	// const { connected } = useContext(ApiClientsContext)!
 	const { isDisconnected } = useConnect()
 	const router = useRouter()

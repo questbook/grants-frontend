@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Box, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 
-function DaoCard({ logo, name, daoId, chainId }) {
+function DaoCard({ logo, name, daoId, chainId }:{logo:string, name:string, daoId:string, chainId:any }) {
 	const router = useRouter()
 	const [isActive, setIsActive] = useState(false)
 	return (

@@ -4,6 +4,7 @@ import AllDaosGrid from 'src/components/browse_daos/all_daos'
 import BrowseDaoHeader from 'src/components/browse_daos/header'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { useGetAllWorkspacesLazyQuery } from 'src/generated/graphql'
+import { Workspace } from 'src/types'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import Sidebar from 'src/v2/components/Sidebar'
 import { useConnect } from 'wagmi'
@@ -19,7 +20,7 @@ function BrowseDao() {
 	const { isDisconnected } = useConnect()
 
 	const [allWorkspaces, setAllWorkspaces] = useState([])
-	const [selectedChainId, setSelectedChainId] = useState()
+	const [selectedChainId, setSelectedChainId] = useState<number|undefined>()
 	const [selectedWorkspaces, setSelectedWorkspaces] = useState([])
 
 	const getAllWorkspacesData = async() => {
@@ -59,12 +60,12 @@ function BrowseDao() {
 	}, [])
 
 	useEffect(() => {
-		setSelectedChainId(null)
+		setSelectedChainId(undefined)
 	}, [isDisconnected])
 
 	useEffect(() => {
 		if(selectedChainId) {
-			const filteredWorkspaces = allWorkspaces.filter((workspace) => selectedChainId === getSupportedChainIdFromSupportedNetwork(workspace.supportedNetworks[0]))
+			const filteredWorkspaces = allWorkspaces.filter((workspace:Workspace) => selectedChainId === getSupportedChainIdFromSupportedNetwork(workspace.supportedNetworks[0]))
 			setSelectedWorkspaces(filteredWorkspaces)
 		}
 	}, [selectedChainId])
