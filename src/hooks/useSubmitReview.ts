@@ -124,8 +124,8 @@ export default function useSubmitReview(
 
 				const createGrantTransaction = await applicationReviewContract.submitReview(
 					workspaceId ?? Number(workspace?.id).toString(),
-					applicationId,
-					grantAddress,
+					applicationId!,
+					grantAddress!,
 					ipfsHash,
 				)
 				const createGrantTransactionData = await createGrantTransaction.wait()

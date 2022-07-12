@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
-import { WorkspaceRegistryAbi } from 'src/generated/contracts/WorkspaceRegistryAbi'
+import type { WorkspaceRegistryAbi } from 'src/generated/contracts/WorkspaceRegistryAbi'
 import { useContract, useSigner } from 'wagmi'
 import WorkspaceRegistryABI from '../../contracts/abi/WorkspaceRegistryAbi.json'
 

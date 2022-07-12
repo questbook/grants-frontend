@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react'
 import { APPLICATION_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
+import type { ApplicationRegistryAbi } from 'src/generated/contracts'
 import { useContract, useSigner } from 'wagmi'
 import ApplicationRegistryABI from '../../contracts/abi/ApplicationRegistryAbi.json'
 
@@ -17,7 +18,7 @@ export default function useApplicationRegistryContract(chainId?: SupportedChainI
 		setAddressOrName(APPLICATION_REGISTRY_ADDRESS[chainId])
 	}, [chainId])
 
-	const grantContract = useContract({
+	const grantContract = useContract<ApplicationRegistryAbi>({
 		addressOrName:
       addressOrName ?? '0x0000000000000000000000000000000000000000',
 		contractInterface: ApplicationRegistryABI,

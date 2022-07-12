@@ -97,7 +97,7 @@ export default function useSetRubrics(
 
 				const createGrantTransaction = await applicationReviewContract.setRubrics(
 					workspaceId ?? Number(workspace?.id).toString(),
-					grantAddress,
+					grantAddress!,
 					rubricHash,
 				)
 				const createGrantTransactionData = await createGrantTransaction.wait()

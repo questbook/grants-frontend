@@ -71,7 +71,7 @@ export default function useApproveMilestone(
 				}
 
 				const updateTxn = await applicationContract.approveMilestone(
-					applicationId,
+					applicationId!,
 					Number(milestoneIndex),
 					Number(workspace!.id),
 					ipfsHash,

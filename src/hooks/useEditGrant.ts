@@ -121,8 +121,8 @@ export default function useEditGrant(
 				// console.log('rubricHash', rubricHash);
 
 				const rubricTxn = await applicationReviewContract.setRubrics(
-					Number(workspace?.id).toString(),
-					grantId,
+					workspace!.id,
+					grantId!,
 					rubricHash,
 				)
 

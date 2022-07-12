@@ -80,9 +80,9 @@ export default function useAssignReviewers(
 				// );
 
 				const createGrantTransaction = await applicationReviewContract.assignReviewers(
-					workspaceId ?? Number(workspace?.id).toString(),
-					applicationId,
-					grantAddress,
+					workspaceId ?? workspace!.id,
+					applicationId!,
+					grantAddress!,
 					data.reviewers,
 					data.active,
 				)

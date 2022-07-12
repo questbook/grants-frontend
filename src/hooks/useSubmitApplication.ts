@@ -84,7 +84,7 @@ export default function useSubmitApplication(
 				}
 
 				const txn = await applicationRegistryContract.submitApplication(
-					grantId,
+					grantId!,
 					Number(workspaceId).toString(),
 					ipfsHash,
 					data.milestones.length,

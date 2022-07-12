@@ -85,7 +85,7 @@ export default function useUpdateApplicationState(
 				const updateTxn = await applicationContract.updateApplicationState(
 					Number(applicationId),
 					Number(workspace!.id),
-					state,
+					state!,
 					ipfsHash,
 				)
 				const updateTxnData = await updateTxn.wait()

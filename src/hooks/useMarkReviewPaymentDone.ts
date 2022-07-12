@@ -77,11 +77,11 @@ export default function useMarkReviewPaymentDone(
 				const markPaymentTxb = await applicationReviewerContract.markPaymentDone(
 					workspaceId,
 					applicationsIds,
-					reviewerAddress,
+					reviewerAddress!,
 					reviewIds,
-					reviewCurrencyAddress,
+					reviewCurrencyAddress!,
 					totalAmount,
-					transactionHash,
+					transactionHash!,
 				)
 
 				const updateTxnData = await markPaymentTxb.wait()

@@ -86,9 +86,9 @@ export default function useFulfillReviewPayment(
 				const fulfillPaymenTxn = await applicationReviewerContract.fulfillPayment(
 					workspaceId,
 					applicationsIds,
-					reviewerAddress,
+					reviewerAddress!,
 					reviewIds,
-					reviewCurrencyAddress,
+					reviewCurrencyAddress!,
 					totalAmount,
 				)
 
