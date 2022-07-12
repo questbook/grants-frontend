@@ -1,28 +1,31 @@
-import { useContext } from 'react'
 import { Container, Flex, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { ApiClientsContext } from 'pages/_app'
 import { CHAIN_INFO, SHOW_TEST_NETS } from 'src/constants/chains'
 import useChainId from 'src/hooks/utils/useChainId'
+import { useConnect } from 'wagmi'
 import AccountDetails from './AccountDetails'
 import ConnectWallet from './ConnectWallet'
-import GetStarted from './GetStarted'
 
 interface Props {
   onGetStartedClick: () => void;
 }
 
 function NavBar({ onGetStartedClick }: Props) {
-	const { connected } = useContext(ApiClientsContext)!
+	// const { connected } = useContext(ApiClientsContext)!
+	const { isDisconnected } = useConnect()
 	const router = useRouter()
+	console.log(router.pathname)
 	const chainId = useChainId()
 
 	return (
 		<Container
 			zIndex={1}
-			variant="header-container"
+			variant={!isDisconnected || !router.pathname.includes('browse_dao') ? 'header-container' : ''}
+			display='flex'
 			maxW="100vw"
-			px={8}>
+			bg={!isDisconnected && router.pathname.includes('browse_dao') ? 'transparent' : ''}
+			px={'42px'}
+			py={'16px'}>
 			<Image
 				onClick={
 					() => router.push({
@@ -30,12 +33,12 @@ function NavBar({ onGetStartedClick }: Props) {
 					})
 				}
 				mr="auto"
-				src="/ui_icons/qb.svg"
+				src={isDisconnected && router.pathname.includes('browse_dao') ? '/ui_icons/qb_white.svg' : '/ui_icons/qb.svg'}
 				alt="Questbook"
 				cursor="pointer"
 			/>
 			{
-				connected && (
+				!isDisconnected && (
 					<Flex
 						align="center"
 						justify="center"
@@ -65,9 +68,9 @@ function NavBar({ onGetStartedClick }: Props) {
 
 				)
 			}
-			{connected && <AccountDetails />}
-			{!connected && <GetStarted onGetStartedClick={onGetStartedClick} />}
-			{!connected && <ConnectWallet />}
+			{!isDisconnected && <AccountDetails />}
+			{/* {!connected && <GetStarted onGetStartedClick={onGetStartedClick} />} */}
+			{isDisconnected && <ConnectWallet />}
 		</Container>
 	)
 }

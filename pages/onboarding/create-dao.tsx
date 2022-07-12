@@ -187,7 +187,7 @@ const OnboardingCreateDao = () => {
 				imageBackgroundColor={'#C2E7DA'}
 				imageProps={
 					{
-						mixBlendMode: 'hard-light'
+						mixBlendMode: 'color-dodge'
 					}
 				}
 			>
