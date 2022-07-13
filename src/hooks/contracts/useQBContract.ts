@@ -3,7 +3,10 @@ import { SupportedChainId } from 'src/constants/chains'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { QBContract, QBContractABIMap } from 'src/types'
 import { useContract, useSigner } from 'wagmi'
-import WorkspaceRegistryABI from '../../contracts/abi/WorkspaceRegistryAbi.json'
+import ApplicationRegistryAbi from '../../contracts/abi/ApplicationRegistryAbi.json'
+import ApplicationReviewRegistryAbi from '../../contracts/abi/ApplicationReviewRegistryAbi.json'
+import GrantFactoryAbi from '../../contracts/abi/GrantFactoryAbi.json'
+import WorkspaceRegistryAbi from '../../contracts/abi/WorkspaceRegistryAbi.json'
 
 export default function useQBContract<C extends QBContract>(name: C, chainId?: SupportedChainId) {
 	const { data: signer } = useSigner()
@@ -14,9 +17,16 @@ export default function useQBContract<C extends QBContract>(name: C, chainId?: S
 
 	const contract = useContract<QBContractABIMap[C]>({
 		addressOrName,
-		contractInterface: WorkspaceRegistryABI,
+		contractInterface: CONTRACT_INTERFACE_MAP[name],
 		signerOrProvider: signer,
 	})
 
 	return contract
 }
+
+const CONTRACT_INTERFACE_MAP = {
+	workspace: WorkspaceRegistryAbi,
+	grantFactory: GrantFactoryAbi,
+	applications: ApplicationRegistryAbi,
+	reviews: ApplicationReviewRegistryAbi,
+} as const
