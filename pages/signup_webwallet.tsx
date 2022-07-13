@@ -8,7 +8,7 @@ import { Contract, ethers } from 'ethers'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import NavbarLayout from '../src/layout/navbarLayout'
 import { addDapp, deploySCW, jsonRpcProvider, apiKey, registerWebHook } from '../src/utils/gaslessUtils'
-import { GitHubTokenContext, ScwAddressContext, WebwalletContext } from './_app'
+import { GitHubTokenContext, ScwAddressContext, WebwalletContext, BiconomyContext } from './_app'
 
 const config = {
 	contract: {
@@ -85,6 +85,7 @@ function SignupWebwallet() {
 	const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!
 	const { scwAddress, setScwAddress} = useContext(ScwAddressContext)!
 	const [number, setNumber] = useState<string>('one')
+	const { biconomyDaoObj, setBiconomyDaoObj } = useContext(BiconomyContext)!
 
 	useEffect(() => {
 		// setNumber("two");
@@ -92,6 +93,9 @@ function SignupWebwallet() {
 		// localStorage.removeItem('isLoggedInGitHub');
 		// localStorage.removeItem('scwAddress');
 		// localStorage.removeItem('nonce');
+
+		setBiconomyDaoObj(null);
+		setScwAddress(undefined);
 
 		console.log("DONE", isLoggedIn, webwallet, scwAddress);
 		// if (!webwallet) {
@@ -181,9 +185,10 @@ function SignupWebwallet() {
 
 		// console.log(transactionHash);
 		// let something = await getEventData(transactionHash, "GetValue", config.contract.abi);
-		console.log(process.env.BICO_AUTH_TOKEN)
-		if(process.env.BICO_AUTH_TOKEN)
-			console.log(await registerWebHook(process.env.BICO_AUTH_TOKEN, apiKey));
+		// console.log(process.env.BICO_AUTH_TOKEN)
+		console.log(webwallet?.privateKey);
+		// if(process.env.BICO_AUTH_TOKEN)
+		// 	console.log(await registerWebHook(process.env.BICO_AUTH_TOKEN, apiKey));
 		// await addDapp('bico-rinkeby', '4', process.env.BICO_AUTH_TOKEN)
 		// console.log("THIS IS EVENT", something);
 

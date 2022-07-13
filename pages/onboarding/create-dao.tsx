@@ -45,6 +45,9 @@ const OnboardingCreateDao = () => {
 		targetContractABI: WorkspaceRegistryAbi
 	})
 
+	console.log("THIS IS BICONOMY", biconomy)
+	console.log("THIS IS BICONOMY SECOND", biconomyWalletClient)
+
 	const { activeChain, switchNetworkAsync, data } = useNetwork()
 	const {
 		isError: isErrorConnecting,
