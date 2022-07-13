@@ -1,14 +1,11 @@
-import React, {
-	ReactElement, useContext, useEffect, useState,
-} from 'react'
-import {
-	Box, Button,
-	Container, Flex, Image, Text } from '@chakra-ui/react'
+import React, { ReactElement, useContext, useEffect, useState } from 'react'
+import { Box, Button, Container, Flex, Image, Text } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import moment from 'moment'
 import { useRouter } from 'next/router'
 import Modal from 'src/components/ui/modal'
-import AppplicationTableEmptyState from 'src/components/your_applications/empty_states/applicantions_table'
+import AppplicationTableEmptyState from 'src/components/your_applications/empty_states/applications_table'
+import GrantStatsBox from 'src/components/your_grants/grantStatsBox'
 import RubricDrawer from 'src/components/your_grants/rubricDrawer'
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
@@ -16,6 +13,7 @@ import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import {
 	useGetApplicantsForAGrantQuery,
 	useGetApplicantsForAGrantReviewerQuery,
+	useGetFundSentDisburseforGrantQuery,
 	useGetGrantDetailsQuery,
 } from 'src/generated/graphql'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
@@ -23,7 +21,10 @@ import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { ApplicationMilestone } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
-import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import {
+	getSupportedChainIdFromSupportedNetwork,
+	getSupportedChainIdFromWorkspace,
+} from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
 import Breadcrumbs from '../../../src/components/ui/breadcrumbs'
 import Table from '../../../src/components/your_grants/view_applicants/table'
@@ -53,6 +54,7 @@ function ViewApplicants() {
 	const [isReviewer, setIsReviewer] = React.useState<boolean>(false)
 	const [isUser, setIsUser] = React.useState<any>('')
 	const [isActorId, setIsActorId] = React.useState<any>('')
+	const [totalDisbursed, setTotalDisbursed] = useState(0)
 
 	const { data: accountData } = useAccount()
 	const router = useRouter()
@@ -91,21 +93,28 @@ function ViewApplicants() {
       ].client,
 	})
 
+	const [queryFundsParams, setQueryFundsParams] = useState<any>({
+		client:
+      subgraphClients[
+      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+      ].client,
+	})
+
 	useEffect(() => {
 		if(
-			workspace
-      && workspace.members
-      && workspace.members.length > 0
-      && accountData
-      && accountData.address
+			workspace &&
+      workspace.members &&
+      workspace.members.length > 0 &&
+      accountData &&
+      accountData.address
 		) {
 			const tempMember = workspace.members.find(
-				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
+				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase()
 			)
 			console.log(tempMember)
 			setIsAdmin(
-				tempMember?.accessLevel === 'admin'
-        || tempMember?.accessLevel === 'owner',
+				tempMember?.accessLevel === 'admin' ||
+          tempMember?.accessLevel === 'owner'
 			)
 
 			setIsReviewer(tempMember?.accessLevel === 'reviewer')
@@ -135,13 +144,21 @@ function ViewApplicants() {
 					skip: 0,
 				},
 			})
+
+			setQueryFundsParams({
+				client:
+          subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+				variables: {
+					grantID,
+				},
+			})
 		}
 
 		if(isReviewer) {
 			console.log('reviewer', isUser)
 			setQueryReviewerParams({
 				client:
-        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+          subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
 				variables: {
 					grantID,
 					reviewerIDs: [isUser],
@@ -150,15 +167,17 @@ function ViewApplicants() {
 				},
 			})
 		}
-
 	}, [workspace, grantID, isUser])
 
 	const { data, error, loading } = useGetApplicantsForAGrantQuery(queryParams)
 	const { data: grantData } = useGetGrantDetailsQuery(queryParams)
+	const { data: fundsDisbursed } = useGetFundSentDisburseforGrantQuery(queryFundsParams)
+
 	useEffect(() => {
 		if(data && data.grantApplications.length) {
 			const fetchedApplicantsData = data.grantApplications.map((applicant) => {
-				const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
+				const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))
+					?.values[0]?.value
 				let decimal
 				let label
 				let icon
@@ -167,19 +186,20 @@ function ViewApplicants() {
 					label = grantData?.grants[0].reward.token.label
 					icon = getUrlForIPFSHash(grantData?.grants[0].reward.token.iconHash)
 				} else {
-					decimal = CHAIN_INFO[
-						getSupportedChainIdFromSupportedNetwork(
-							applicant.grant.workspace.supportedNetworks[0],
-						)
-					]?.supportedCurrencies[applicant.grant.reward.asset.toLowerCase()]
-						?.decimals
+					decimal =
+            CHAIN_INFO[
+            	getSupportedChainIdFromSupportedNetwork(
+            		applicant.grant.workspace.supportedNetworks[0]
+            	)
+            ]?.supportedCurrencies[applicant.grant.reward.asset.toLowerCase()]
+            	?.decimals
 					label = getAssetInfo(
 						applicant?.grant?.reward?.asset?.toLowerCase(),
-						getSupportedChainIdFromWorkspace(workspace),
+						getSupportedChainIdFromWorkspace(workspace)
 					).label
 					icon = getAssetInfo(
 						applicant?.grant?.reward?.asset?.toLowerCase(),
-						getSupportedChainIdFromWorkspace(workspace),
+						getSupportedChainIdFromWorkspace(workspace)
 					).icon
 				}
 
@@ -196,10 +216,9 @@ function ViewApplicants() {
 						//   getFieldString('fundingAsk') ?? '0',
 						// ),
 						amount:
-              applicant && getFieldString('fundingAsk') ? formatAmount(
-                getFieldString('fundingAsk')!,
-                decimal ?? 18,
-              ) : '1',
+              applicant && getFieldString('fundingAsk')
+              	? formatAmount(getFieldString('fundingAsk')!, decimal ?? 18)
+              	: '1',
 						symbol: label,
 						icon,
 					},
@@ -208,9 +227,9 @@ function ViewApplicants() {
 					reviewers: applicant.reviewers,
 					amount_paid: formatAmount(
 						getTotalFundingRecv(
-              applicant.milestones as unknown as ApplicationMilestone[],
+              applicant.milestones as unknown as ApplicationMilestone[]
 						).toString(),
-						decimal ?? 18,
+						decimal ?? 18
 					),
 				}
 			})
@@ -219,18 +238,20 @@ function ViewApplicants() {
 
 			setApplicantsData(fetchedApplicantsData)
 			setDaoId(data.grantApplications[0].grant.workspace.id)
-			setAcceptingApplications(data.grantApplications[0].grant.acceptingApplications)
+			setAcceptingApplications(
+				data.grantApplications[0].grant.acceptingApplications
+			)
 		}
-
 	}, [data, error, loading, grantData])
 
 	useEffect(() => {
 		console.log('Review params: ', queryReviewerParams)
 	}, [queryReviewerParams])
 
-	const reviewData = useGetApplicantsForAGrantReviewerQuery(queryReviewerParams)
+	const reviewData =
+    useGetApplicantsForAGrantReviewerQuery(queryReviewerParams)
 
-	const Reviewerstatus = (item:any) => {
+	const Reviewerstatus = (item: any) => {
 		const user = []
 		// eslint-disable-next-line no-restricted-syntax
 		for(const n in item) {
@@ -250,50 +271,57 @@ function ViewApplicants() {
 		console.log('Raw reviewer data: ', reviewData)
 		if(reviewData.data && reviewData.data.grantApplications.length) {
 			console.log('Reviewer Applications: ', reviewData.data)
-			const fetchedApplicantsData = reviewData.data.grantApplications.map((applicant) => {
-				const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
-				return {
-					grantTitle: applicant?.grant?.title,
-					applicationId: applicant.id,
-					applicant_address: applicant.applicantId,
-					sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
-					project_name: getFieldString('projectName'),
-					funding_asked: {
-						// amount: formatAmount(
-						//   getFieldString('fundingAsk') ?? '0',
-						// ),
-						amount:
-              applicant && getFieldString('fundingAsk') ? formatAmount(
-                getFieldString('fundingAsk')!,
-                CHAIN_INFO[
-                	getSupportedChainIdFromSupportedNetwork(
-                		applicant.grant.workspace.supportedNetworks[0],
+			const fetchedApplicantsData = reviewData.data.grantApplications.map(
+				(applicant) => {
+					const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))
+						?.values[0]?.value
+					return {
+						grantTitle: applicant?.grant?.title,
+						applicationId: applicant.id,
+						applicant_address: applicant.applicantId,
+						sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
+						project_name: getFieldString('projectName'),
+						funding_asked: {
+							// amount: formatAmount(
+							//   getFieldString('fundingAsk') ?? '0',
+							// ),
+							amount:
+                applicant && getFieldString('fundingAsk')
+                	? formatAmount(
+                      getFieldString('fundingAsk')!,
+                      CHAIN_INFO[
+                      	getSupportedChainIdFromSupportedNetwork(
+                      		applicant.grant.workspace.supportedNetworks[0]
+                      	)
+                      ]?.supportedCurrencies[
+                      	applicant.grant.reward.asset.toLowerCase()
+                      ]?.decimals ?? 18
                 	)
-                ]?.supportedCurrencies[applicant.grant.reward.asset.toLowerCase()]
-                	?.decimals ?? 18,
-              ) : '1',
-						symbol: getAssetInfo(
-							applicant?.grant?.reward?.asset?.toLowerCase(),
-							getSupportedChainIdFromWorkspace(workspace),
-						).label,
-						icon: getAssetInfo(
-							applicant?.grant?.reward?.asset?.toLowerCase(),
-							getSupportedChainIdFromWorkspace(workspace),
-						).icon,
-					},
-					// status: applicationStatuses.indexOf(applicant?.state),
-					status: Reviewerstatus(applicant.reviews),
-					reviewers: applicant.reviewers,
+                	: '1',
+							symbol: getAssetInfo(
+								applicant?.grant?.reward?.asset?.toLowerCase(),
+								getSupportedChainIdFromWorkspace(workspace)
+							).label,
+							icon: getAssetInfo(
+								applicant?.grant?.reward?.asset?.toLowerCase(),
+								getSupportedChainIdFromWorkspace(workspace)
+							).icon,
+						},
+						// status: applicationStatuses.indexOf(applicant?.state),
+						status: Reviewerstatus(applicant.reviews),
+						reviewers: applicant.reviewers,
+					}
 				}
-			})
+			)
 
 			console.log('fetch', fetchedApplicantsData)
 
 			setReviewerData(fetchedApplicantsData)
 			setDaoId(reviewData.data.grantApplications[0].grant.workspace.id)
-			setAcceptingApplications(reviewData.data.grantApplications[0].grant.acceptingApplications)
+			setAcceptingApplications(
+				reviewData.data.grantApplications[0].grant.acceptingApplications
+			)
 		}
-
 	}, [reviewData])
 
 	// const { data: grantData } = useGetGrantDetailsQuery(queryParams);
@@ -321,22 +349,33 @@ function ViewApplicants() {
 	}, [grantData])
 
 	useEffect(() => {
+		const total = fundsDisbursed?.fundsTransfers.reduce(
+			(sum, { amount }) => sum + parseInt(amount), 0
+		)
+		// Fetch decimals
+		if(total) {
+			setTotalDisbursed(total / (10 ** 18))
+		}
+	}, [fundsDisbursed])
+
+	useEffect(() => {
 		setShouldShowButton(daoId === workspace?.id)
 	}, [workspace, accountData, daoId])
 
 	const [isAcceptingApplications, setIsAcceptingApplications] = React.useState<
-  [boolean, number]
+    [boolean, number]
   >([acceptingApplications, 0])
 
 	useEffect(() => {
 		setIsAcceptingApplications([acceptingApplications, 0])
 	}, [acceptingApplications])
 
-	const [transactionData, txnLink, archiveGrantLoading, archiveGrantError] = useArchiveGrant(
-		isAcceptingApplications[0],
-		isAcceptingApplications[1],
-		grantID,
-	)
+	const [transactionData, txnLink, archiveGrantLoading, archiveGrantError] =
+    useArchiveGrant(
+    	isAcceptingApplications[0],
+    	isAcceptingApplications[1],
+    	grantID
+    )
 
 	const buttonRef = React.useRef<HTMLButtonElement>(null)
 
@@ -347,12 +386,10 @@ function ViewApplicants() {
 			setIsModalOpen(false)
 			setRefresh(true)
 		}
-
 	}, [transactionData])
 
 	React.useEffect(() => {
 		setIsAcceptingApplications([acceptingApplications, 0])
-
 	}, [archiveGrantError])
 
 	React.useEffect(() => {
@@ -364,8 +401,7 @@ function ViewApplicants() {
 			maxW="100%"
 			display="flex"
 			px="70px"
-			mb="300px"
-		>
+			mb="300px">
 			<Container
 				flex={1}
 				display="flex"
@@ -376,23 +412,12 @@ function ViewApplicants() {
 				px={10}
 				pos="relative"
 			>
-				<Breadcrumbs path={['My Grants', 'View Applicants']} />
-
-				{
-					isAdmin && (
-						<Box
-							pos="absolute"
-							right="40px"
-							top="48px">
-							<Button
-								variant="primary"
-								onClick={() => setRubricDrawerOpen(true)}>
-								{(grantData?.grants[0].rubric?.items.length ?? 0) > 0 ?? false ? 'Edit Evaluation Rubric' : 'Setup Evaluation Rubric'}
-							</Button>
-						</Box>
-					)
-				}
-
+				<Breadcrumbs path={['Grants & Bounties', 'View Applicants']} />
+				<GrantStatsBox
+					numberOfApplicants={applicantsData.length}
+		  totalDisbursed={totalDisbursed}
+				/>
+				
 				<RubricDrawer
 					rubricDrawerOpen={rubricDrawerOpen}
 					setRubricDrawerOpen={setRubricDrawerOpen}
@@ -408,87 +433,123 @@ function ViewApplicants() {
 				/>
 
 				{
-					(reviewerData.length > 0 || applicantsData.length > 0) && (isReviewer || isAdmin) ? (
-						<Table
-							title={applicantsData[0]?.grantTitle ?? 'Grant Title'}
-							isReviewer={isReviewer}
-							data={applicantsData}
-							reviewerData={reviewerData}
-							actorId={isActorId}
-							onViewApplicantFormClick={
-								(commentData: any) => router.push({
-									pathname: '/your_grants/view_applicants/applicant_form/',
-									query: {
-										commentData,
-										applicationId: commentData.applicationId,
-									},
-								})
-							}
-							// eslint-disable-next-line @typescript-eslint/no-shadow
-							onManageApplicationClick={
-								(data: any) => router.push({
-									pathname: '/your_grants/view_applicants/manage/',
-									query: {
-										applicationId: data.applicationId,
-									},
-								})
-							}
-							archiveGrantComponent={
-								!acceptingApplications && (
-									<Flex
-										maxW="100%"
-										bg="#F3F4F4"
-										direction="row"
-										align="center"
-										px={8}
-										py={6}
-										mt={6}
-										border="1px solid #E8E9E9"
-										borderRadius="6px"
-									>
-										<Image
-											src="/toast/warning.svg"
-											w="42px"
-											h="36px" />
+					(reviewerData.length > 0 || applicantsData.length > 0) &&
+        (isReviewer || isAdmin) ? (
+							<Table
+								title={applicantsData[0]?.grantTitle ?? 'Grant Title'}
+								isReviewer={isReviewer}
+								data={applicantsData}
+								reviewerData={reviewerData}
+								actorId={isActorId}
+								onViewApplicantFormClick={
+									(commentData: any) => router.push({
+										pathname: '/your_grants/view_applicants/applicant_form/',
+										query: {
+											commentData,
+											applicationId: commentData.applicationId,
+										},
+									})
+								}
+								// eslint-disable-next-line @typescript-eslint/no-shadow
+								onManageApplicationClick={
+									(data: any) => router.push({
+										pathname: '/your_grants/view_applicants/manage/',
+										query: {
+											applicationId: data.applicationId,
+										},
+									})
+								}
+								archiveGrantComponent={
+									!acceptingApplications && (
+										<Flex
+											maxW="100%"
+											bg="#F3F4F4"
+											direction="row"
+											align="center"
+											px={8}
+											py={6}
+											mt={6}
+											border="1px solid #E8E9E9"
+											borderRadius="6px"
+										>
+											<Image
+												src="/toast/warning.svg"
+												w="42px"
+												h="36px" />
+											<Flex
+												direction="column"
+												ml={6}>
+												<Text
+													variant="tableHeader"
+													color="#414E50">
+													{
+														shouldShowButton && accountData?.address
+															? 'Grant is archived and cannot be discovered on the Home page.'
+															: 'Grant is archived and closed for new applications.'
+													}
+												</Text>
+												<Text
+													variant="tableBody"
+													color="#717A7C"
+													fontWeight="400"
+													mt={2}
+												>
+                      New applicants cannot apply to an archived grant.
+												</Text>
+											</Flex>
+											<Box mr="auto" />
+											{
+												accountData?.address && shouldShowButton && (
+													<Button
+														ref={buttonRef}
+														w={
+															archiveGrantLoading
+																? buttonRef?.current?.offsetWidth
+																: 'auto'
+														}
+														variant="primary"
+														onClick={() => setIsModalOpen(true)}
+													>
+                      Publish grant
+													</Button>
+												)
+											}
+										</Flex>
+									)
+								}
+							/>
+						) : (
+							<Flex
+								direction="column"
+								w="100%">
+								<AppplicationTableEmptyState />
+								{
+									isAdmin && (
 										<Flex
 											direction="column"
-											ml={6}>
-											<Text
-												variant="tableHeader"
-												color="#414E50">
-												{shouldShowButton && accountData?.address ? 'Grant is archived and cannot be discovered on the Home page.' : 'Grant is archived and closed for new applications.'}
-											</Text>
-											<Text
-												variant="tableBody"
-												color="#717A7C"
-												fontWeight="400"
-												mt={2}>
-                  New applicants cannot apply to an archived grant.
-											</Text>
-										</Flex>
-										<Box mr="auto" />
-										{
-											accountData?.address && shouldShowButton && (
+											justify="center"
+											h="100%"
+											align="center"
+											mt={10}
+											mx="auto"
+										>
+											<Box
+												pos="relative"
+												right="40px"
+												top="48px">
 												<Button
-													ref={buttonRef}
-													w={archiveGrantLoading ? buttonRef?.current?.offsetWidth : 'auto'}
-													variant="primary"
-													onClick={() => setIsModalOpen(true)}
+													variant="primaryV2"
+													onClick={() => setRubricDrawerOpen(true)}
 												>
-                Publish grant
+                    Create scoring rubric
 												</Button>
-											)
-										}
-									</Flex>
-								)
-							}
-						/>
-					) : (
-						<AppplicationTableEmptyState />
-
-					)
+											</Box>
+										</Flex>
+									)
+								}
+							</Flex>
+						)
 				}
-
 			</Container>
 			<Modal
 				isOpen={isModalOpen}
@@ -504,7 +565,10 @@ function ViewApplicants() {
 					actionButtonOnClick={
 						() => {
 							console.log('Doing it!')
-							console.log('Is Accepting Applications (Button click): ', isAcceptingApplications)
+							console.log(
+								'Is Accepting Applications (Button click): ',
+								isAcceptingApplications
+							)
 							setIsAcceptingApplications([
 								!isAcceptingApplications[0],
 								isAcceptingApplications[1] + 1,

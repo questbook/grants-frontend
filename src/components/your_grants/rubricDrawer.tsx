@@ -188,15 +188,16 @@ function RubricDrawer({
 						p={8}>
 						<Flex
 							mb={8}
-							alignItems="center">
+							alignItems="center"
+						>
 							<Text
 								color="#122224"
 								fontWeight="bold"
-								fontSize="16px"
+								fontSize="24px"
 								lineHeight="20px"
 								mr="auto"
 							>
-                Setup evaluation score
+                Scoring Rubric
 							</Text>
 							<Image
 								src="/ui_icons/close_drawer.svg"
