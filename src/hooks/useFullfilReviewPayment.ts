@@ -6,12 +6,12 @@ import { ApiClientsContext } from 'pages/_app'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount, useNetwork } from 'wagmi'
+import { useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useApplicationReviewRegistryContract from './contracts/useApplicationReviewRegistryContract'
 import useERC20Contract from './contracts/useERC20Contract'
-import useChainId from './utils/useChainId'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
+import useChainId from './utils/useChainId'
 
 export default function useFulfillReviewPayment(
 	workspaceId: string,

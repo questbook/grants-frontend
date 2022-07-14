@@ -1,10 +1,17 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
+import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
+import { GitHubTokenContext, WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
+import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
 import useWorkspaceRegistryContract from 'src/hooks/contracts/useWorkspaceRegistryContract'
+import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
+import { apiKey, getEventData, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
 import CreateDaoFinal from 'src/v2/components/Onboarding/CreateDao/CreateDaoFinal'
@@ -14,14 +21,7 @@ import { NetworkSelectOption } from 'src/v2/components/Onboarding/SupportedNetwo
 import CreateDaoModal from 'src/v2/components/Onboarding/UI/CreateDaoModal'
 import BackgroundImageLayout from 'src/v2/components/Onboarding/UI/Layout/BackgroundImageLayout'
 import OnboardingCard from 'src/v2/components/Onboarding/UI/Layout/OnboardingCard'
-import { useAccount, useConnect, useNetwork, useSigner } from 'wagmi'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import { ethers } from 'ethers';
-import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
-import { apiKey, getEventData, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
-import { GitHubTokenContext, WebwalletContext } from 'pages/_app'
-import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
-import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import { useConnect, useNetwork, useSigner } from 'wagmi'
 
 const OnboardingCreateDao = () => {
 	const router = useRouter()
@@ -45,8 +45,8 @@ const OnboardingCreateDao = () => {
 		targetContractABI: WorkspaceRegistryAbi
 	})
 
-	console.log("THIS IS BICONOMY", biconomy)
-	console.log("THIS IS BICONOMY SECOND", biconomyWalletClient)
+	console.log('THIS IS BICONOMY', biconomy)
+	console.log('THIS IS BICONOMY SECOND', biconomyWalletClient)
 
 	const { activeChain, switchNetworkAsync, data } = useNetwork()
 	const {
@@ -96,9 +96,11 @@ const OnboardingCreateDao = () => {
 			if(!ipfsHash) {
 				throw new Error('Error validating grant data')
 			}
-			if(!daoNetwork){
-				throw new Error("No network specified");
+
+			if(!daoNetwork) {
+				throw new Error('No network specified')
 			}
+
 			setCurrentStep(2)
 
 			const targetContractObject = new ethers.Contract(
@@ -107,7 +109,7 @@ const OnboardingCreateDao = () => {
 				webwallet
 			)
 			console.log('ENTERING')
-			console.log(daoNetwork.id, scwAddress, webwallet, nonce, webHookId);
+			console.log(daoNetwork.id, scwAddress, webwallet, nonce, webHookId)
 			const transactionHash = await sendGaslessTransaction(biconomy, targetContractObject, 'createWorkspace', [ipfsHash, new Uint8Array(32), 0],
 				WORKSPACE_REGISTRY_ADDRESS[daoNetwork.id], biconomyWalletClient,
 				scwAddress, webwallet, `${daoNetwork.id}`, webHookId, nonce)
@@ -151,7 +153,7 @@ const OnboardingCreateDao = () => {
 
 	useEffect(() => {
 		console.log(workspaceRegistryContract)
-		console.log("HERE I AM", activeChain?.id, daoNetwork?.id, callOnContractChange)
+		console.log('HERE I AM', activeChain?.id, daoNetwork?.id, callOnContractChange)
 		//@TODO: FIX HERE
 		if(/*activeChain?.id ===*/ daoNetwork?.id && callOnContractChange) {
 			setCallOnContractChange(false)

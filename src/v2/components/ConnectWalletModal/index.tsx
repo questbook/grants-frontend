@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { AlertDialogOverlay, Box, Flex, Image, Link, Modal, ModalBody, ModalContent, Text, VStack } from '@chakra-ui/react'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
-import { useAccount, useConnect } from 'wagmi'
+import { useConnect } from 'wagmi'
 import ConnectWalletButton from './ConnectWalletButton'
 import ConnectWalletErrorState from './ConnectWalletErrorState'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 
 const ConnectWalletModal = ({
 	isOpen,
