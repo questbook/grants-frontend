@@ -18,6 +18,7 @@ export default function useRecordTransaction(
 	milestoneIndex: number | undefined,
 	transactionHash: string | undefined,
 	amount: BigNumber,
+	rewardAssetAddress: string | undefined,
 	submitClicked: boolean,
 	setSubmitClicked: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
@@ -78,6 +79,7 @@ export default function useRecordTransaction(
 				const updateTxn = await grantContract.recordTransaction(
 					applicationId,
 					milestoneIndex,
+					rewardAssetAddress,
 				 	transactionHash,
 					amount,
 				)

@@ -122,6 +122,7 @@ function ModalContent({
 		selectedMilestone === -1
 			? undefined
 			: milestones[selectedMilestone].amount,
+		rewardAsset.address,
 		submitClickedSafeTxn,
 		setSubmitClickedSafeTxn
 	)
