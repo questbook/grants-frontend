@@ -15,7 +15,15 @@ const nextConfig = {
 		CLIENT_ID: process.env.CLIENT_ID,
 		CLIENT_SECRET: process.env.CLIENT_SECRET,
 		BICO_AUTH_TOKEN: process.env.BICO_AUTH_TOKEN
-	}
+	},
+	async rewrites() {
+        return [
+          {
+            source: '/nothing/:path*',
+            destination: 'https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/:path*',
+          },
+        ]
+      },
 }
 
 module.exports = nextConfig
