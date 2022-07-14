@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { Box, Button, Container, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Text, useToast } from '@chakra-ui/react'
+import { ApiClientsContext } from 'pages/_app'
 import AllDaosGrid from 'src/components/browse_daos/all_daos'
 import BrowseDaoHeader from 'src/components/browse_daos/header'
 import { CHAIN_INFO } from 'src/constants/chains'
@@ -8,7 +9,6 @@ import { Workspace } from 'src/types'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import Sidebar from 'src/v2/components/Sidebar'
 import { useConnect } from 'wagmi'
-import { ApiClientsContext } from './_app'
 
 function BrowseDao() {
 	const { subgraphClients, connected } = useContext(ApiClientsContext)!

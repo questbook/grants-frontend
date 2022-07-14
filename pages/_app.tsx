@@ -15,6 +15,8 @@ import {
 	CHAIN_INFO,
 	SupportedChainId,
 } from 'src/constants/chains'
+import SubgraphClient from 'src/graphql/subgraph'
+import theme from 'src/theme'
 import { MinimalWorkspace } from 'src/types'
 import getSeo from 'src/utils/seo'
 import {
@@ -32,8 +34,6 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { publicProvider } from 'wagmi/providers/public'
 import '../styles/globals.css'
 import 'draft-js/dist/Draft.css'
-import SubgraphClient from '../src/graphql/subgraph'
-import theme from '../src/theme'
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;

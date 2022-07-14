@@ -1,16 +1,16 @@
 import React, { ReactElement, useContext, useEffect } from 'react'
 import { Button, Flex } from '@chakra-ui/react'
+import { ApiClientsContext } from 'pages/_app'
+import FundForAGrant from 'src/components/funds'
 import ArchivedGrantEmptyState from 'src/components/funds/empty_states/archived_grant'
 import LiveGrantEmptyState from 'src/components/funds/empty_states/live_grants'
 import Heading from 'src/components/ui/heading'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetAllGrantsForADaoQuery } from 'src/generated/graphql'
+import NavbarLayout from 'src/layout/navbarLayout'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import FundForAGrant from '../src/components/funds'
-import NavbarLayout from '../src/layout/navbarLayout'
-import { ApiClientsContext } from './_app'
 
 function AddFunds() {
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
