@@ -1,5 +1,5 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react'
-import { Box, Button, Container, Flex, Image, Text } from '@chakra-ui/react'
+import { Box, Button, Container, Flex, Heading, Image, Text } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import moment from 'moment'
 import { useRouter } from 'next/router'
@@ -55,6 +55,8 @@ function ViewApplicants() {
 	const [isUser, setIsUser] = React.useState<any>('')
 	const [isActorId, setIsActorId] = React.useState<any>('')
 	const [totalDisbursed, setTotalDisbursed] = useState(0)
+	const [rewardTokenDecimals, setRewardTokenDecimals] = useState(18)
+	const [grantTitle, setGrantTitle] = useState('Grant Title')
 
 	const { data: accountData } = useAccount()
 	const router = useRouter()
@@ -203,6 +205,7 @@ function ViewApplicants() {
 					).icon
 				}
 
+				setRewardTokenDecimals(decimal)
 				return {
 					grantTitle: applicant?.grant?.title,
 					applicationId: applicant.id,
@@ -237,6 +240,7 @@ function ViewApplicants() {
 			console.log('fetch', fetchedApplicantsData)
 
 			setApplicantsData(fetchedApplicantsData)
+			setGrantTitle(applicantsData[0]?.grantTitle)
 			setDaoId(data.grantApplications[0].grant.workspace.id)
 			setAcceptingApplications(
 				data.grantApplications[0].grant.acceptingApplications
@@ -352,9 +356,8 @@ function ViewApplicants() {
 		const total = fundsDisbursed?.fundsTransfers.reduce(
 			(sum, { amount }) => sum + parseInt(amount), 0
 		)
-		// Fetch decimals
 		if(total) {
-			setTotalDisbursed(total / (10 ** 18))
+			setTotalDisbursed(total / (10 ** rewardTokenDecimals))
 		}
 	}, [fundsDisbursed])
 
@@ -413,11 +416,18 @@ function ViewApplicants() {
 				pos="relative"
 			>
 				<Breadcrumbs path={['Grants & Bounties', 'View Applicants']} />
+				<Flex ml="-50px">
+					<Box p='2'>
+						<Heading size='md'>
+							{grantTitle}
+						</Heading>
+					</Box>
+				</Flex>
 				<GrantStatsBox
 					numberOfApplicants={applicantsData.length}
 		  totalDisbursed={totalDisbursed}
 				/>
-				
+
 				<RubricDrawer
 					rubricDrawerOpen={rubricDrawerOpen}
 					setRubricDrawerOpen={setRubricDrawerOpen}
@@ -436,7 +446,6 @@ function ViewApplicants() {
 					(reviewerData.length > 0 || applicantsData.length > 0) &&
         (isReviewer || isAdmin) ? (
 							<Table
-								title={applicantsData[0]?.grantTitle ?? 'Grant Title'}
 								isReviewer={isReviewer}
 								data={applicantsData}
 								reviewerData={reviewerData}

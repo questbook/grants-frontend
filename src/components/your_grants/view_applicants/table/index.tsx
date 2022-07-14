@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Flex, Text } from '@chakra-ui/react'
+import { Flex } from '@chakra-ui/react'
 import Content from './content'
 import Filter from './filter'
 import Headers from './headers'
@@ -10,7 +10,6 @@ function Table({
 	// onRejectApplicationClick,
 	onManageApplicationClick,
 	data,
-	title,
 	actorId,
 	isReviewer,
 	reviewerData,
@@ -21,7 +20,6 @@ function Table({
   // onRejectApplicationClick?: () => void;
   onManageApplicationClick?: (data? : any) => void;
   data: any[];
-  title: string;
   actorId: string
   isReviewer : boolean;
   archiveGrantComponent: React.ReactNode;
@@ -37,11 +35,6 @@ function Table({
 				direction="row"
 				mt={3}
 				align="center">
-				<Text
-					variant="heading"
-					mr={4}>
-					{title}
-				</Text>
 				<Filter
 					filter={filter}
 					setFilter={setFilter} />

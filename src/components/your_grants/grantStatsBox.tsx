@@ -6,12 +6,12 @@ interface Props {
   totalDisbursed: number;
 }
 
-function GrantStatsBox({numberOfApplicants, totalDisbursed }: Props) {
+function GrantStatsBox({ numberOfApplicants, totalDisbursed }: Props) {
 
 	return (
 		<Box
 			marginTop="30"
-			marginLeft="-30"
+			marginLeft="-39"
 			box-sizing="border-box"
 			border="1px solid #D2D2E3"
 			borderRadius="4px"
@@ -24,7 +24,7 @@ function GrantStatsBox({numberOfApplicants, totalDisbursed }: Props) {
 					border="1px solid #D2D2E3"
 					h="152px">
 					<VStack
-						align="left"
+						align="center"
 						spacing={4}>
 						<Image
 							src="/ui_icons/applicants_total.svg"
@@ -45,7 +45,7 @@ Total Applicants
 					border="1px solid #D2D2E3"
 					h="152px">
 					<VStack
-						align="left"
+						align="center"
 						spacing={4}>
 						<Image
 							src="/ui_icons/review.svg"
@@ -65,7 +65,7 @@ Reviews
 					border="1px solid #D2D2E3"
 					h="152px">
 					<VStack
-						align="left"
+						align="center"
 						spacing={4}>
 						<Image
 							src="/ui_icons/dollar_icon.svg"
