@@ -36,10 +36,10 @@
 			}
 		},
 		"qbContracts": {
-			"applications": "0xD139A265C19e9A97b0963ff6F64999789d1Cf6Aa",
-			"workspace": "0xEF77967DEae683D5a66E480cc2D7B9e38cc79a1f",
-			"grantFactory": "0xF6C563C9A9956ED23B396aF9252d640B1512a3d1",
-			"reviews": "0xCbFD79d3Fd1FE493fDC87CF8809805978F9a83d0"
+			"applications": "0x3f718a42d1E7EDE928b81A72eE9eF3d63607d999",
+			"workspace": "0x85d6F1C1129778e87eD3671E332AA364d0beb5D1",
+			"grantFactory": "0xB6E5b2faBe68B7212d1c25f44480a4B75812B901",
+			"reviews": "0xfbFeEc614A6468BF29888B1591D6bb2fde223Ae5"
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-rinkeby",
 		"rpcUrls": [
