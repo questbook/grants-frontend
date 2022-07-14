@@ -9,7 +9,7 @@ import {
 } from 'src/utils/validationUtils'
 import { useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
-import useApplicationReviewRegistryContract from './contracts/useApplicationReviewRegistryContract'
+import useQBContract from './contracts/useQBContract'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
 
@@ -28,13 +28,13 @@ export default function useSetRubrics(
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients
-	const applicationReviewContract = useApplicationReviewRegistryContract(
-		chainId ?? getSupportedChainIdFromWorkspace(workspace),
-	)
+
 	if(!chainId) {
 		// eslint-disable-next-line no-param-reassign
 		chainId = getSupportedChainIdFromWorkspace(workspace)
 	}
+
+	const applicationReviewContract = useQBContract('reviews', chainId)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
@@ -98,7 +98,7 @@ export default function useSetRubrics(
 
 				const createGrantTransaction = await applicationReviewContract.setRubrics(
 					workspaceId ?? Number(workspace?.id).toString(),
-					grantAddress,
+					grantAddress!,
 					rubricHash,
 				)
 				const createGrantTransactionData = await createGrantTransaction.wait()

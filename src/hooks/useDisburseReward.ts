@@ -75,9 +75,9 @@ export default function useDisburseReward(
 			setLoading(true)
 			try {
 				const updateTxn = await grantContract.disburseReward(
-					applicationId,
-					milestoneIndex,
-					rewardAssetAddress,
+					applicationId!,
+					milestoneIndex!,
+					rewardAssetAddress!,
 					data,
 				)
 				const updateTxnData = await updateTxn.wait()

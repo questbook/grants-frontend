@@ -28,12 +28,13 @@ function SignupDao() {
 	const [newPublicKey, setNewPublicKey] = React.useState()
 
 	const [daoData, setDaoData] = React.useState<{
-		name: string;
-		description: string;
-		image: string;
-		network: SupportedChainId;
-		id: string;
-	} | null>(null)
+    name: string;
+	bio: string;
+    about: string;
+    image: string;
+    network: SupportedChainId;
+    id: string;
+  } | null>(null)
 
 	const [workspaceData, setWorkspaceData] = React.useState<any>()
 	const [

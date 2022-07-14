@@ -23,7 +23,7 @@ import {
 import { useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import strings from '../constants/strings.json'
-import useGrantFactoryContract from './contracts/useGrantFactoryContract'
+import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
 
 export default function useCreateGrant(
@@ -53,13 +53,13 @@ export default function useCreateGrant(
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients
-	const grantContract = useGrantFactoryContract(
-		chainId ?? getSupportedChainIdFromWorkspace(workspace),
-	)
+
 	if(!chainId) {
 		// eslint-disable-next-line no-param-reassign
 		chainId = getSupportedChainIdFromWorkspace(workspace)
 	}
+
+	const grantContract = useQBContract('grantFactory', chainId)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
@@ -183,6 +183,14 @@ export default function useCreateGrant(
 				]
 
 				console.log('THESE ARE METHODS', methodArgs)
+
+				if(!scwAddress || typeof scwAddress !== 'string') {
+					return
+				}
+
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string') {
+					return
+				}
 
 				const transactionHash = await sendGaslessTransaction(biconomy, targetContractObject, 'createGrant', methodArgs,
 					GRANT_FACTORY_ADDRESS[currentChainId!], biconomyWalletClient,

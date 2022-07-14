@@ -14,7 +14,7 @@ import { apiKey, getEventData, getTransactionReceipt, sendGaslessTransaction, we
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
 import ErrorToast from '../components/ui/toasts/errorToast'
-import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract'
+import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
 
 export default function useCreateWorkspace(
@@ -42,9 +42,7 @@ export default function useCreateWorkspace(
 	const chainId = useChainId()
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi } = apiClients
-	const workspaceRegistryContract = useWorkspaceRegistryContract(
-		data?.network,
-	)
+	const workspaceRegistryContract = useQBContract('workspace', data?.network)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
@@ -85,10 +83,12 @@ export default function useCreateWorkspace(
 				data: { ipfsHash },
 			} = await validatorApi.validateWorkspaceCreate({
 				title: data.name,
-				about: data.description,
+				bio: data.bio,
+				about: data.about,
 				logoIpfsHash: uploadedImageHash,
 				creatorId: accountData?.address!,
 				socials: [],
+				partners: [],
 				supportedNetworks: [getSupportedValidatorNetworkFromChainId(data.network)],
 			})
 			if(!ipfsHash) {
@@ -107,8 +107,13 @@ export default function useCreateWorkspace(
 				)
 				console.log('ENTERING')
 				console.log(networkChainId, scwAddress, webwallet, nonce, webHookId)
-				if (!scwAddress || typeof scwAddress !== 'string') return
-				if (!biconomyWalletClient || typeof biconomyWalletClient === 'string') return
+				if(!scwAddress || typeof scwAddress !== 'string') {
+					return
+				}
+
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string') {
+					return
+				}
 
 				const transactionHash = await sendGaslessTransaction(biconomy, targetContractObject, 'createWorkspace', [ipfsHash, new Uint8Array(32), 0],
 					WORKSPACE_REGISTRY_ADDRESS[networkChainId], biconomyWalletClient,
@@ -179,10 +184,9 @@ export default function useCreateWorkspace(
 			console.log(workspaceRegistryContract)
 			if(
 				!workspaceRegistryContract
-        || workspaceRegistryContract.address
-          === '0x0000000000000000000000000000000000000000'
-			// || !workspaceRegistryContract.signer
-			// || !workspaceRegistryContract.provider
+				|| workspaceRegistryContract.address === '0x0000000000000000000000000000000000000000'
+				|| !workspaceRegistryContract.signer
+				|| !workspaceRegistryContract.provider
 			) {
 				console.log('ERROR HERE')
 				return

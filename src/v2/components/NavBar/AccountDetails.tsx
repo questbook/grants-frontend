@@ -69,7 +69,7 @@ function AccountDetails() {
 								() => {
 									setConnected(false)
 									disconnect()
-									router.replace('/')
+									// router.replace('/')
 								}
 							}
 							icon={<Image src="/ui_icons/logout.svg" />}

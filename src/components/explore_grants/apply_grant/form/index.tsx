@@ -15,6 +15,7 @@ import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import { SupportedChainId } from 'src/constants/chains'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useSubmitApplication from 'src/hooks/useSubmitApplication'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
@@ -117,8 +118,8 @@ function Form({
           	entityRanges: [],
           } as any,
 				],
-			}),
-		),
+			})
+		)
 	)
 	const [projectDetailsError, setProjectDetailsError] = React.useState(false)
 
@@ -142,7 +143,7 @@ function Form({
 					milestoneReward: '',
 					milestoneIsError: false,
 					milestoneRewardIsError: false,
-				})),
+				}))
 			)
 		}
 	}, [defaultMilestoneFields])
@@ -151,7 +152,8 @@ function Form({
 	const [fundingAskError, setFundingAskError] = React.useState(false)
 
 	const [fundingBreakdown, setFundingBreakdown] = React.useState('')
-	const [fundingBreakdownError, setFundingBreakdownError] = React.useState(false)
+	const [fundingBreakdownError, setFundingBreakdownError] =
+    React.useState(false)
 
 	const [customFields, setCustomFields] = React.useState<any[]>([])
 	React.useEffect(() => {
@@ -166,9 +168,8 @@ function Form({
 					title,
 					value: '',
 					isError: false,
-				})),
+				}))
 		)
-
 	}, [grantRequiredFields])
 
 	const router = useRouter()
@@ -178,7 +179,7 @@ function Form({
     formData!,
     chainId,
     grantId,
-    workspaceId,
+    workspaceId
 	)
 
 	const { setRefresh } = useCustomToast(txnLink)
@@ -189,7 +190,6 @@ function Form({
 			})
 			setRefresh(true)
 		}
-
 	}, [router, txnData])
 
 	const handleOnSubmit = async() => {
@@ -201,16 +201,16 @@ function Form({
 		}
 
 		if(
-			(applicantEmail === '' || !isValidEmail(applicantEmail))
-      && grantRequiredFields.includes('applicantEmail')
+			(applicantEmail === '' || !isValidEmail(applicantEmail)) &&
+      grantRequiredFields.includes('applicantEmail')
 		) {
 			setApplicantEmailError(true)
 			error = true
 		}
 
 		if(
-			(!teamMembers || teamMembers <= 0)
-      && grantRequiredFields.includes('teamMembers')
+			(!teamMembers || teamMembers <= 0) &&
+      grantRequiredFields.includes('teamMembers')
 		) {
 			setTeamMembersError(true)
 			error = true
@@ -220,8 +220,8 @@ function Form({
 		const newMembersDescriptionArray = [...membersDescription]
 		membersDescription.forEach((member, index) => {
 			if(
-				member.description === ''
-        && grantRequiredFields.includes('memberDetails')
+				member.description === '' &&
+        grantRequiredFields.includes('memberDetails')
 			) {
 				newMembersDescriptionArray[index].isError = true
 				membersDescriptionError = true
@@ -287,8 +287,8 @@ function Form({
 		}
 
 		if(
-			fundingBreakdown === ''
-      && grantRequiredFields.includes('fundingBreakdown')
+			fundingBreakdown === '' &&
+      grantRequiredFields.includes('fundingBreakdown')
 		) {
 			setFundingBreakdownError(true)
 			error = true
@@ -312,7 +312,7 @@ function Form({
 		}
 
 		const projectDetailsString = JSON.stringify(
-			convertToRaw(projectDetails.getCurrentContent()),
+			convertToRaw(projectDetails.getCurrentContent())
 		)
 		const links = projectLinks.map((pl) => pl.link)
 
@@ -330,15 +330,18 @@ function Form({
 				applicantEmail: [{ value: applicantEmail }],
 				projectName: [{ value: projectName }],
 				projectDetails: [{ value: projectDetailsString }],
-				fundingAsk: fundingAsk !== '' ? [
-					{
-						value: parseAmount(
-							fundingAsk,
-							rewardCurrencyAddress,
-							rewardDecimal,
-						),
-					},
-				] : [],
+				fundingAsk:
+          fundingAsk !== ''
+          	? [
+          		{
+          			value: parseAmount(
+          				fundingAsk,
+          				rewardCurrencyAddress,
+          				rewardDecimal
+          			),
+          		},
+          	]
+          	: [],
 				fundingBreakdown: [{ value: fundingBreakdown }],
 				teamMembers: [{ value: Number(teamMembers).toString() }],
 				memberDetails: membersDescription.map((md) => ({
@@ -359,7 +362,7 @@ function Form({
 				amount: parseAmount(
 					pm.milestoneReward,
 					rewardCurrencyAddress,
-					rewardDecimal,
+					rewardDecimal
 				),
 			})),
 		}
@@ -393,7 +396,8 @@ function Form({
 			return
 		}
 
-		const formDataLocal = typeof window !== 'undefined' ? JSON.parse(data ?? '{}') : {}
+		const formDataLocal =
+      typeof window !== 'undefined' ? JSON.parse(data ?? '{}') : {}
 		if(formDataLocal?.applicantName) {
 			setApplicantName(formDataLocal?.applicantName)
 		}
@@ -421,8 +425,8 @@ function Form({
 		if(formDataLocal?.projectDetails) {
 			setProjectDetails(
 				EditorState.createWithContent(
-					convertFromRaw(formDataLocal?.projectDetails),
-				),
+					convertFromRaw(formDataLocal?.projectDetails)
+				)
 			)
 		}
 
@@ -472,7 +476,6 @@ function Form({
 		if(typeof window !== 'undefined') {
 			localStorage.setItem(getKey, JSON.stringify(formDataLocal))
 		}
-
 	}, [
 		applicantName,
 		applicantEmail,
