@@ -21,6 +21,7 @@ import {
 	useClipboard,
 	useDisclosure } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { ApiClientsContext } from 'pages/_app'
 import DaoAbout from 'src/components/profile/dao_about'
 import DaoData from 'src/components/profile/dao_data'
 import BrowseGrantCard from 'src/components/profile/grantCard'
@@ -39,7 +40,6 @@ import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
-import { ApiClientsContext } from './_app'
 
 function Profile() {
 	const router = useRouter()

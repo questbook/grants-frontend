@@ -3,10 +3,13 @@ import { Box, Button, Container, Flex, Heading, Image, Text, HStack } from '@cha
 import { BigNumber } from 'ethers'
 import moment from 'moment'
 import { useRouter } from 'next/router'
+import { ApiClientsContext } from 'pages/_app'
+import Breadcrumbs from 'src/components/ui/breadcrumbs'
 import Modal from 'src/components/ui/modal'
 import AppplicationTableEmptyState from 'src/components/your_applications/empty_states/applications_table'
 import GrantStatsBox from 'src/components/your_grants/grantStatsBox'
 import RubricDrawer from 'src/components/your_grants/rubricDrawer'
+import Table from 'src/components/your_grants/view_applicants/table'
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
@@ -18,7 +21,9 @@ import {
 } from 'src/generated/graphql'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
+import NavbarLayout from 'src/layout/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
+import { formatAmount } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import {
@@ -26,11 +31,6 @@ import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
-import Breadcrumbs from '../../../src/components/ui/breadcrumbs'
-import Table from '../../../src/components/your_grants/view_applicants/table'
-import NavbarLayout from '../../../src/layout/navbarLayout'
-import { formatAmount } from '../../../src/utils/formattingUtils'
-import { ApiClientsContext } from '../../_app'
 
 const PAGE_SIZE = 500
 

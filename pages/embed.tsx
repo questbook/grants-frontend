@@ -9,6 +9,7 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { ApiClientsContext } from 'pages/_app'
 // TYPES, STATES, and CONSTANTS
 import { SupportedChainId } from 'src/constants/chains'
 import { CHAIN_INFO } from 'src/constants/chains'
@@ -22,7 +23,6 @@ import { formatAmount } from 'src/utils/formattingUtils'
 //TOOLS and UTILS
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import { ApiClientsContext } from './_app'
 
 export default function Embed() {
 	const width = '1080px'
