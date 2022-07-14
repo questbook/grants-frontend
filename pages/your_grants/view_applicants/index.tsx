@@ -1,5 +1,5 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react'
-import { Box, Button, Container, Flex, Heading, Image, Text } from '@chakra-ui/react'
+import { Box, Button, Container, Flex, Heading, Image, Text, HStack } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import moment from 'moment'
 import { useRouter } from 'next/router'
@@ -57,6 +57,7 @@ function ViewApplicants() {
 	const [totalDisbursed, setTotalDisbursed] = useState(0)
 	const [rewardTokenDecimals, setRewardTokenDecimals] = useState(18)
 	const [grantTitle, setGrantTitle] = useState('Grant Title')
+	const [applicationsFilter, setApplicationsFilter] = useState('Accepted')
 
 	const { data: accountData } = useAccount()
 	const router = useRouter()
@@ -427,7 +428,21 @@ function ViewApplicants() {
 					numberOfApplicants={applicantsData.length}
 		  totalDisbursed={totalDisbursed}
 				/>
-
+				<Box>
+				<Flex>
+					<HStack spacing="14px">
+					<Button w="128px" h="28px" variant="primaryV2" onClick= {() => setApplicationsFilter('Accepted')} >
+						Accepted
+					</Button>
+					<Button w="128px" h="28px" variant="primaryV2" onClick= {() => setApplicationsFilter('In Review')} >
+						In Review
+					</Button>
+					<Button w="128px" h="28px" variant="primaryV2" onClick= {() => setApplicationsFilter('Rejected')}>
+						Rejected
+					</Button>
+					</HStack>
+					</Flex>
+				</Box>
 				<RubricDrawer
 					rubricDrawerOpen={rubricDrawerOpen}
 					setRubricDrawerOpen={setRubricDrawerOpen}
@@ -450,6 +465,7 @@ function ViewApplicants() {
 								data={applicantsData}
 								reviewerData={reviewerData}
 								actorId={isActorId}
+								applicationsFilter = {applicationsFilter}
 								onViewApplicantFormClick={
 									(commentData: any) => router.push({
 										pathname: '/your_grants/view_applicants/applicant_form/',

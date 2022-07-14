@@ -12,6 +12,7 @@ function GrantStatsBox({ numberOfApplicants, totalDisbursed }: Props) {
 		<Box
 			marginTop="30"
 			marginLeft="-39"
+			marginBottom="10"
 			box-sizing="border-box"
 			border="1px solid #D2D2E3"
 			borderRadius="4px"
