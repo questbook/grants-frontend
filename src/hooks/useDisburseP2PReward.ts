@@ -92,21 +92,54 @@ export default function useDisburseReward(
 				// 	data,
 				// )
 
-				const [txn, updateTxn] = await Promise.all([
-					rewardContract.approve(grantContract.address, data),
-					grantContract.disburseRewardP2P(
-						+applicationId!,
-						milestoneIndex!,
-						rewardAssetAddress!,
+				let txn
+				let updateTxn
+				//let contractAcc = false
+				if(accountData?.connector?.name === 'WalletConnect') {
+					const [txnWalletConnect, updateTxnWalletConnect] = await Promise.all([
+						rewardContract.approve(grantContract.address, data),
+						grantContract.disburseRewardP2P(
+							applicationId,
+							milestoneIndex,
+							rewardAssetAddress,
+							data,
+						)
+					])
+					txn = txnWalletConnect
+					updateTxn = updateTxnWalletConnect
+					//contractAcc = true
+
+				} else {
+					const txnInjected = await rewardContract.approve(grantContract.address, data)
+					const updateTxnInjected = await grantContract.disburseRewardP2P(
+						applicationId,
+						milestoneIndex,
+						rewardAssetAddress,
 						data,
 					)
-				])
+					txn = txnInjected
+					updateTxn = updateTxnInjected
+				}
 
 				await txn.wait()
 				const updateTxnData = await updateTxn.wait()
 
 				setTransactionData(updateTxnData)
 				setLoading(false)
+				// if(contractAcc) {
+				// 	console.log('WalletConnect', contractAcc)
+				// 	toastRef.current = toast({
+				// 		position: 'top',
+				// 		render: () => InfoToast({
+				// 			link: 'Transaction Submitted',
+				// 			close: () => {
+				// 				if(toastRef.current) {
+				// 					toast.close(toastRef.current)
+				// 				}
+				// 			},
+				// 		}),
+				// 	})
+				// }
 			} catch(e: any) {
 				const message = getErrorMessage(e)
 				setError(message)
