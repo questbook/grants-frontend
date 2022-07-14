@@ -92,8 +92,11 @@ function SignupWebwallet() {
 		// localStorage.removeItem('scwAddress');
 		// localStorage.removeItem('nonce');
 
-		setBiconomyDaoObj(null)
-		setScwAddress(undefined)
+		// setBiconomyDaoObj(null);
+		// setScwAddress(undefined);
+		setIsLoggedIn(true);
+		// setWebwallet(undefined);
+		// setScwAddress(undefined);
 
 		console.log('DONE', isLoggedIn, webwallet, scwAddress)
 		// if (!webwallet) {
