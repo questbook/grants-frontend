@@ -1,0 +1,10 @@
+{
+    "900001":{
+        "name": "Solana",
+        "icon": "/chain_assets/solana.svg",
+        "daoChainId" :"245022926",
+        "explorer": {
+			"transactionHash": "https://solscan.io/tx/{{tx}}/"
+		}
+    }
+}

@@ -21,7 +21,14 @@ export interface NetworkSelectOption extends OptionBase {
 //   	},
 //   }
 
-export const supportedNetworks = ALL_SUPPORTED_CHAIN_IDS.map((chainId) => ({
+const solana = { id: 245022926,
+	label: 'Solana',
+	icon: (
+		<Image
+			src={'/chain_assets/solana.svg'}
+			boxSize={5} />
+	), }
+const allchains = ALL_SUPPORTED_CHAIN_IDS.map((chainId) => ({
 	id: chainId,
 	label: CHAIN_INFO[chainId].name,
 	icon: (
@@ -29,5 +36,5 @@ export const supportedNetworks = ALL_SUPPORTED_CHAIN_IDS.map((chainId) => ({
 			src={CHAIN_INFO[chainId].icon}
 			boxSize={5} />
 	),
-} as NetworkSelectOption)
-)
+}))
+export const supportedNetworks = [...allchains, solana]

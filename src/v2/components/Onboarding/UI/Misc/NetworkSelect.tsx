@@ -110,55 +110,58 @@ const NetworkSelect = ({
   value: NetworkSelectOption | undefined;
   onChange: (value: NetworkSelectOption | null) => void;
   placeholder: string;
-}) => (
-	<Select<NetworkSelectOption, false, GroupBase<NetworkSelectOption>>
-		options={supportedNetworks}
-		placeholder={placeholder}
-		maxMenuHeight={240}
-		isSearchable={false}
-		blurInputOnSelect
-		value={value}
-		onChange={onChange}
-		components={
-			{
-				Option,
-				DropdownIndicator,
-				SingleValue,
-				Control,
-				Placeholder,
+}) => {
+	console.log('supportedNetworks', supportedNetworks)
+	return (
+		<Select<NetworkSelectOption, false, GroupBase<NetworkSelectOption>>
+			options={supportedNetworks}
+			placeholder={placeholder}
+			maxMenuHeight={240}
+			isSearchable={false}
+			blurInputOnSelect
+			value={value}
+			onChange={onChange}
+			components={
+				{
+					Option,
+					DropdownIndicator,
+					SingleValue,
+					Control,
+					Placeholder,
+				}
 			}
-		}
-		chakraStyles={
-			{
-				indicatorSeparator: (provided) => ({
-					...provided,
-					display: 'none'
-				}),
-				control: (provided) => ({
-					...provided,
-					border: 'none',
-					boxShadow: 'none',
-					cursor: 'pointer',
-				}),
-				menuList: (provided) => ({
-					...provided,
-					py: '4px',
-					border: 'none'
-				}),
-				menu: (provided) => ({
-					...provided,
-					border: 'none',
-					boxShadow: '0px 3px 5px rgba(31, 31, 51, 0.2), 0px 0px 1px rgba(31, 31, 51, 0.31)',
-					borderRadius: '3px',
-				}),
-				valueContainer: (provided) => ({
-					...provided,
-					display: 'flex',
-					padding: '0px',
-				}),
+			chakraStyles={
+				{
+					indicatorSeparator: (provided) => ({
+						...provided,
+						display: 'none'
+					}),
+					control: (provided) => ({
+						...provided,
+						border: 'none',
+						boxShadow: 'none',
+						cursor: 'pointer',
+					}),
+					menuList: (provided) => ({
+						...provided,
+						py: '4px',
+						border: 'none'
+					}),
+					menu: (provided) => ({
+						...provided,
+						border: 'none',
+						boxShadow: '0px 3px 5px rgba(31, 31, 51, 0.2), 0px 0px 1px rgba(31, 31, 51, 0.31)',
+						borderRadius: '3px',
+					}),
+					valueContainer: (provided) => ({
+						...provided,
+						display: 'flex',
+						padding: '0px',
+					}),
+				}
 			}
-		}
-	/>
-)
+		/>
+	)
+}
 
 export default NetworkSelect
