@@ -61,14 +61,16 @@ export const useBiconomy = (data: any) => {
 
 			if(!biconomyWalletClient) {
 				setBiconomyWalletClient(_biconomyWalletClient)
-			}	
+			}
 		}).onEvent(_biconomy.ERROR, (error: any, message: any) => {
 			console.log(message)
 			console.log(error)
 		})
 
-		if(!biconomyDaoObj)
+		if(!biconomyDaoObj) {
 			setBiconomyDaoObj(_biconomy)
+		}
+
 		console.log('DONE HERE')
 
 	}

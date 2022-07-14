@@ -94,7 +94,7 @@ function SignupWebwallet() {
 
 		// setBiconomyDaoObj(null);
 		// setScwAddress(undefined);
-		setIsLoggedIn(true);
+		setIsLoggedIn(true)
 		// setWebwallet(undefined);
 		// setScwAddress(undefined);
 
