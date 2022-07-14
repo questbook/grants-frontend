@@ -7,20 +7,20 @@ import React, {
 import { Container } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
+import Breadcrumbs from 'src/components/ui/breadcrumbs'
+import Form from 'src/components/your_applications/grant_application/form'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import {
 	GetApplicationDetailsQuery,
 	useGetApplicationDetailsQuery,
 } from 'src/generated/graphql'
+import NavbarLayout from 'src/layout/navbarLayout'
+import { GrantApplicationProps } from 'src/types/application'
 import { formatAmount } from 'src/utils/formattingUtils'
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import Breadcrumbs from '../../src/components/ui/breadcrumbs'
-import Form from '../../src/components/your_applications/grant_application/form'
-import NavbarLayout from '../../src/layout/navbarLayout'
-import { GrantApplicationProps } from '../../src/types/application'
-import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils'
-import { getAssetInfo } from '../../src/utils/tokenUtils'
 
 function ViewApplication() {
 	const apiClients = useContext(ApiClientsContext)!

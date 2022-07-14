@@ -9,11 +9,14 @@ import React, {
 import { Button, Flex, Text } from '@chakra-ui/react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useRouter } from 'next/router'
+import { ApiClientsContext } from 'pages/_app'
+import AddFunds from 'src/components/funds/add_funds_modal'
 import ArchivedGrantEmptyState from 'src/components/your_grants/empty_states/archived_grant'
 import ExpiredGrantEmptyState from 'src/components/your_grants/empty_states/expired_grant'
 import FirstGrantEmptyState from 'src/components/your_grants/empty_states/first_grant'
 import LiveGrantEmptyState from 'src/components/your_grants/empty_states/live_grants'
 import Sidebar from 'src/components/your_grants/sidebar/sidebar'
+import YourGrantCard from 'src/components/your_grants/yourGrantCard'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import {
 	GetAllGrantsForCreatorQuery,
@@ -22,6 +25,8 @@ import {
 	useGetAllGrantsForCreatorQuery,
 	useGetAllGrantsForReviewerQuery,
 } from 'src/generated/graphql'
+import NavbarLayout from 'src/layout/navbarLayout'
+import { formatAmount } from 'src/utils/formattingUtils'
 import { UNIX_TIMESTAMP_MAX, unixTimestampSeconds } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getChainInfo } from 'src/utils/tokenUtils'
@@ -30,11 +35,6 @@ import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
-import AddFunds from '../../src/components/funds/add_funds_modal'
-import YourGrantCard from '../../src/components/your_grants/yourGrantCard'
-import NavbarLayout from '../../src/layout/navbarLayout'
-import { formatAmount } from '../../src/utils/formattingUtils'
-import { ApiClientsContext } from '../_app'
 
 const PAGE_SIZE = 5
 
