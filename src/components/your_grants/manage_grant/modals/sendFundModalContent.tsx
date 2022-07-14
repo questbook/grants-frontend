@@ -149,11 +149,14 @@ function ModalContent({
 
 	}, [toast, disburseData, disburseError])
 
+	const { setRefresh: setSafeTxnDataRefresh } = useCustomToast(safeTxnDataLink)
+
 	useEffect(() => {
 		if(safeTxnData) {
 			onClose()
 			setDisburseAmount(undefined)
 			setTransactionHash('')
+			setSafeTxnDataRefresh(true)
 		} else if(safeTxnError) {
 			setDisburseAmount(undefined)
 			setFunding('')
