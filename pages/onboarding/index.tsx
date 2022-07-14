@@ -4,7 +4,7 @@ import { base58, formatBytes32String, hexlify } from 'ethers/lib/utils'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
-import useWorkspaceRegistryContract from 'src/hooks/contracts/useWorkspaceRegistryContract'
+import useQBContract from 'src/hooks/contracts/useQBContract'
 import getErrorMessage from 'src/utils/errorUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
@@ -40,7 +40,7 @@ const OnboardingCreateDao = () => {
 		connectors
 	} = useConnect()
 
-	const workspaceRegistryContract = useWorkspaceRegistryContract(
+	const workspaceRegistryContract = useQBContract('workspace',
 		daoNetwork?.id,
 	)
 	const { validatorApi } = useContext(ApiClientsContext)!
@@ -66,6 +66,7 @@ const OnboardingCreateDao = () => {
 			// const connector = connectors.find((x) => x.id === 'injected')
 			// connect(connector)
 			setConnectWalletModalIsOpen(true)
+			getSuu
 			return
 		}
 
