@@ -13,12 +13,12 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { BigNumber } from '@ethersproject/bignumber'
-import { ethers } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
 import { defaultChainId } from 'src/constants/chains'
 import ERC20ABI from 'src/contracts/abi/ERC20.json'
 import { useGetFundingQuery } from 'src/generated/graphql'
 import { Grant } from 'src/types'
+import { formatAmount } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -26,7 +26,6 @@ import { useContract, useSigner } from 'wagmi'
 import Funding from '../your_grants/manage_grant/tables/funding'
 import AddFunds from './add_funds_modal'
 import WithdrawFunds from './withdraw_funds_modal'
-import { formatAmount } from 'src/utils/formattingUtils'
 
 export type FundForAGrantProps = {
   grant: Grant;
