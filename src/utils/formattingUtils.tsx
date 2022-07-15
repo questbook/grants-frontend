@@ -145,16 +145,13 @@ export function formatAmount(
 	isEditable = false,
 	digits = 3
 ) {
-	console.log('WWW1: ', number, decimals, isEditable)
 	const value = ethers.utils.formatUnits(number, decimals).toString()
-	console.log('WWW2: ', value)
 
 	if(isEditable) {
 		return value
 	} else {
 		if(value.indexOf('.') === -1) {
 			const formattedValue = nFormatter(value, digits)
-			console.log('WWW3: ', formattedValue)
 			return formattedValue
 		} else {
 			const postDecimal = value.substring(
@@ -165,7 +162,6 @@ export function formatAmount(
 				value.substring(0, value.indexOf('.')),
 				digits
 			)
-			console.log('WWW4: ', preDecimal, postDecimal)
 	  const lastSymbol = preDecimal.charCodeAt(preDecimal.length - 1)
   	  const containsSymbol = !(lastSymbol >= 48 && lastSymbol <= 57)
 			if(!containsSymbol && !isAllZero(postDecimal)) {
