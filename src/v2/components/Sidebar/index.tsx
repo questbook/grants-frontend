@@ -60,6 +60,9 @@ function Sidebar() {
 				)
 				Promise.all(promises).then((values: any[]) => {
 					const allWorkspacesData = [].concat(...values) as MinimalWorkspace[]
+					allWorkspacesData.sort((a, b) => {
+						return b.createdAtS - a.createdAtS
+					})
 					setWorkspaces([...workspaces, ...allWorkspacesData])
 
 					const savedWorkspaceData = localStorage.getItem('currentWorkspace')

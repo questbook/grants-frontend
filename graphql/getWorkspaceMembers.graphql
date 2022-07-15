@@ -15,6 +15,7 @@ query getWorkspaceMembers($actorId: Bytes!) {
       logoIpfsHash
       title
       supportedNetworks
+      createdAtS
       tokens {
         address
         label

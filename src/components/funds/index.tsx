@@ -26,6 +26,7 @@ import { useContract, useSigner } from 'wagmi'
 import Funding from '../your_grants/manage_grant/tables/funding'
 import AddFunds from './add_funds_modal'
 import WithdrawFunds from './withdraw_funds_modal'
+import { formatAmount } from 'src/utils/formattingUtils'
 
 export type FundForAGrantProps = {
   grant: Grant;
@@ -145,7 +146,7 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
 						letterSpacing={0.5}
 						color="brand.500"
 					>
-						{ethers.utils.formatUnits(grant.funding, fundingAssetDecimals)}
+						{formatAmount(grant.funding, fundingAssetDecimals)}
 						{' '}
 						{assetInfo?.label}
 					</Text>

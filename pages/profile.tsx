@@ -411,7 +411,6 @@ Embed profile stats
               					grant.reward.committed,
               					chainInfo?.decimals || 18,
               					false,
-              					true
               				)
               			}
               			disbursedAmount={
