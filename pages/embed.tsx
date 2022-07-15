@@ -44,7 +44,7 @@ export default function Embed() {
 	}, [router])
 
 	const [queryParams, setQueryParams] = useState<any>({
-		client: subgraphClients[chainID ?? defaultChainId].client,
+		client: subgraphClients[chainID || defaultChainId].client,
 	})
 
 	useEffect(() => {
@@ -78,10 +78,10 @@ export default function Embed() {
       subgraphClients[
       	getSupportedChainIdFromSupportedNetwork(
           workspaceData?.supportedNetworks[0]!
-      	) ?? defaultChainId
+      	) || defaultChainId
       ].client,
 		variables: {
-			workspaceId: workspaceData?.id ?? '',
+			workspaceId: workspaceData?.id || '',
 			acceptingApplications: true,
 		},
 	})
@@ -130,7 +130,7 @@ export default function Embed() {
 
 				const tokenValue = formatAmount(
 					grant.funding,
-					tokenInfo?.decimals ?? 18
+					tokenInfo?.decimals || 18
 				)
 
 				if(tokenInfo !== undefined && tokenValue !== '0') {

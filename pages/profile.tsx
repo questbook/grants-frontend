@@ -74,7 +74,7 @@ function Profile() {
 	}, [router])
 
 	const [queryParams, setQueryParams] = useState<any>({
-		client: subgraphClients[chainID ?? defaultChainId].client,
+		client: subgraphClients[chainID || defaultChainId].client,
 	})
 
 	useEffect(() => {
@@ -107,10 +107,10 @@ function Profile() {
 	const { data: allDaoData } = useGetFundsAndProfileDataQuery({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) ?? defaultChainId
+      	getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) || defaultChainId
       ].client,
 	  variables: {
-			workspaceId: workspaceData?.id ?? '',
+			workspaceId: workspaceData?.id || '',
 			acceptingApplications: true,
 		},
 	})
@@ -166,7 +166,7 @@ function Profile() {
 
 				const tokenValue = formatAmount(
 					grant.funding,
-					tokenInfo?.decimals ?? 18
+					tokenInfo?.decimals || 18
 				)
 
 				if(tokenInfo !== undefined && tokenValue !== '0') {
@@ -409,7 +409,7 @@ Embed profile stats
               			grantAmount={
               				formatAmount(
               					grant.reward.committed,
-              					chainInfo?.decimals ?? 18,
+              					chainInfo?.decimals || 18,
               					false,
               					true
               				)
@@ -417,11 +417,11 @@ Embed profile stats
               			disbursedAmount={
               				formatAmount(
               					grant.funding,
-              					chainInfo?.decimals ?? 18
+              					chainInfo?.decimals || 18
               				)
               			}
-              			grantCurrency={chainInfo?.label ?? 'LOL'}
-              			grantCurrencyIcon={chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'}
+              			grantCurrency={chainInfo?.label || 'LOL'}
+              			grantCurrencyIcon={chainInfo?.icon || '/images/dummy/Ethereum Icon.svg'}
               			grantCurrencyPair={chainInfo?.pair || null}
               			chainId={chainId}
               			isGrantVerified={isGrantVerified}

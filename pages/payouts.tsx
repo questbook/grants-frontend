@@ -61,7 +61,7 @@ export default function Payouts() {
 	const { data: reviewsPaidData } = useGetFundSentforReviewerQuery({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
       ].client,
 		variables: {
 			to: account?.address,

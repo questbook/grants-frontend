@@ -34,7 +34,7 @@ function ManageDAO() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
       ].client,
 	})
 
