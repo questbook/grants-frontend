@@ -268,6 +268,12 @@ const _abi = [
       {
         indexed: false,
         internalType: "address",
+        name: "asset",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
         name: "sender",
         type: "address",
       },
@@ -340,6 +346,11 @@ const _abi = [
         type: "uint96",
       },
       {
+        internalType: "address",
+        name: "_applicantWalletAddress",
+        type: "address",
+      },
+      {
         internalType: "uint96",
         name: "_milestoneId",
         type: "uint96",
@@ -366,6 +377,11 @@ const _abi = [
         internalType: "uint96",
         name: "_applicationId",
         type: "uint96",
+      },
+      {
+        internalType: "address",
+        name: "_applicantWalletAddress",
+        type: "address",
       },
       {
         internalType: "uint96",
@@ -491,6 +507,11 @@ const _abi = [
         internalType: "uint96",
         name: "_milestoneId",
         type: "uint96",
+      },
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
       },
       {
         internalType: "bytes",
