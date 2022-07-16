@@ -250,6 +250,42 @@ const _abi = [
     type: "event",
   },
   {
+    inputs: [],
+    name: "anonAuthoriserAddress",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint96",
+        name: "_id",
+        type: "uint96",
+      },
+      {
+        internalType: "uint8",
+        name: "_role",
+        type: "uint8",
+      },
+      {
+        internalType: "address",
+        name: "publicKeyAddress",
+        type: "address",
+      },
+    ],
+    name: "createInviteLink",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "string",
@@ -325,6 +361,44 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint96",
+        name: "_id",
+        type: "uint96",
+      },
+      {
+        internalType: "string",
+        name: "_email",
+        type: "string",
+      },
+      {
+        internalType: "uint8",
+        name: "_role",
+        type: "uint8",
+      },
+      {
+        internalType: "uint8",
+        name: "signatureV",
+        type: "uint8",
+      },
+      {
+        internalType: "bytes32",
+        name: "signatureR",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "signatureS",
+        type: "bytes32",
+      },
+    ],
+    name: "joinViaInviteLink",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -420,6 +494,19 @@ const _abi = [
   {
     inputs: [],
     name: "unpause",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "addr",
+        type: "address",
+      },
+    ],
+    name: "updateAnonAuthoriserAddress",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
