@@ -346,11 +346,6 @@ const _abi = [
         type: "uint96",
       },
       {
-        internalType: "address",
-        name: "_applicantWalletAddress",
-        type: "address",
-      },
-      {
         internalType: "uint96",
         name: "_milestoneId",
         type: "uint96",
