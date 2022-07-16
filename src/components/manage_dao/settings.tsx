@@ -35,7 +35,7 @@ function Settings({ workspaceData }: Props) {
 					fontSize="18px"
 					lineHeight="26px"
 				>
-          Workspace Settings
+          DAO Settings
 				</Text>
 				<Link
 					href={
