@@ -6,10 +6,8 @@ import {
 	getFormattedDateFromUnixTimestampWithYear,
 	trimAddress,
 } from 'src/utils/formattingUtils'
+import InviteModal from 'src/v2/components/InviteModal'
 import CopyIcon from '../ui/copy_icon'
-import Modal from '../ui/modal'
-// import ConfirmationModalContent from './confirmationModalContent';
-import ModalContent from './modalContent'
 import roles from './roles'
 
 interface Props {
@@ -17,7 +15,7 @@ interface Props {
 }
 
 function Members({ workspaceMembers }: Props) {
-	const [isModalOpen, setIsModalOpen] = React.useState(false)
+	const [isInviteModalOpen, setIsInviteModalOpen] = React.useState(false)
 	const [tableData, setTableData] = React.useState<any>(null)
 	const tableHeaders = [
 		'Email',
@@ -55,12 +53,6 @@ function Members({ workspaceMembers }: Props) {
 	const [isEdit, setIsEdit] = React.useState(false)
 	const [selectedRow, setSelectedRow] = React.useState(-1)
 
-	// const [revokeModalOpen, setRevokeModalOpen] = React.useState(false);
-
-	React.useEffect(() => {
-		console.log(tableData)
-	}, [tableData])
-
 	return (
 		<Flex
 			direction="column"
@@ -76,18 +68,18 @@ function Members({ workspaceMembers }: Props) {
 					fontSize="18px"
 					lineHeight="26px"
 				>
-          Manage Members
+          			Manage Members
 				</Text>
 				<Button
 					variant="primaryCta"
 					onClick={
 						() => {
 							setIsEdit(false)
-							setIsModalOpen(true)
+							setIsInviteModalOpen(true)
 						}
 					}
 				>
-          Invite New
+          			Invite New
 				</Button>
 			</Flex>
 			<Flex
@@ -214,7 +206,11 @@ function Members({ workspaceMembers }: Props) {
 					}
 				</Flex>
 			</Flex>
-			<Modal
+			<InviteModal
+				isOpen={isInviteModalOpen}
+				onClose={() => setIsInviteModalOpen(false)} />
+			{/**
+			 * <Modal
 				isOpen={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
 				title={`${isEdit ? 'Edit' : 'Invite'} Member`}
@@ -270,6 +266,7 @@ function Members({ workspaceMembers }: Props) {
 					}
 				/>
 			</Modal>
+			 */}
 		</Flex>
 	)
 }
