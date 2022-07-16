@@ -11,11 +11,14 @@ import ErrorToast from '../components/ui/toasts/errorToast'
 import useERC20Contract from './contracts/useERC20Contract'
 import useGrantContract from './contracts/useGrantContract'
 import useChainId from './utils/useChainId'
+import useQBContract from 'src/hooks/contracts/useQBContract'
 
 export default function useDisburseReward(
 	data: any,
 	grantId: string | undefined,
 	applicationId: string | undefined,
+	applicantWalletAddress: string | undefined,
+	workspaceId: string | undefined,
 	milestoneIndex: number | undefined,
 	rewardAssetAddress: string | undefined,
 	submitClicked: boolean,
@@ -39,7 +42,7 @@ export default function useDisburseReward(
 	const rewardContract = useERC20Contract(rewardAssetAddress)
 	const grantContract = useGrantContract(grantId)
 	/** END */
-
+	const workspaceRegistryContract = useQBContract('workspace', chainId)
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
 
@@ -82,27 +85,29 @@ export default function useDisburseReward(
 			setLoading(true)
 			// console.log('calling validate');
 			try {
-				// const txn = await rewardContract.approve(grantContract.address, data)
-				// await txn.wait()
-
-				// const updateTxn = await grantContract.disburseRewardP2P(
-				// 	applicationId,
-				// 	milestoneIndex,
-				// 	rewardAssetAddress,
-				// 	data,
-				// )
-
-				const [txn, updateTxn] = await Promise.all([
-					rewardContract.approve(grantContract.address, data),
-					grantContract.disburseRewardP2P(
-						+applicationId!,
-						milestoneIndex!,
-						rewardAssetAddress!,
-						data,
-					)
-				])
-
+				const txn = await rewardContract.approve(workspaceRegistryContract.address, data)
 				await txn.wait()
+
+				const updateTxn = await workspaceRegistryContract.disburseRewardP2P(
+					applicationId!,
+					applicantWalletAddress!,
+					milestoneIndex!,
+					rewardAssetAddress!,
+					data,
+					workspace?.id!
+				)
+				// const [txn, updateTxn] = await Promise.all([
+				// 	rewardContract.approve(grantContract.address, data),
+				// 	grantContract.disburseRewardP2P(
+				// 		applicationId!,
+				// 		applicantWalletAddress!,
+				// 		milestoneIndex!,
+				// 		rewardAssetAddress!,
+				// 		data,
+				// 	)
+				// ])
+
+				// await txn.wait()
 				const updateTxnData = await updateTxn.wait()
 
 				setTransactionData(updateTxnData)
