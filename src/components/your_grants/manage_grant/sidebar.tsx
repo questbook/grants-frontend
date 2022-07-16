@@ -140,12 +140,12 @@ function Sidebar({
 					}
 				</Text>
 				<Button
-								variant="primary"
-								mt={6}
-								onClick={() => setIsAddFundModalOpen(true)}
-							>
+					variant="primary"
+					mt={6}
+					onClick={() => setIsAddFundModalOpen(true)}
+				>
               Add Funds
-							</Button>
+				</Button>
 				<Button
 					mt="22px"
 					variant="outline"
