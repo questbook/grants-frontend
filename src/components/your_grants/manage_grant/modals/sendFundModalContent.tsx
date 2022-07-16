@@ -68,7 +68,7 @@ function ModalContent({
 	const [submitClicked, setSubmitClicked] = useState(false)
 	const [submitClickedP2P, setSubmitClickedP2P] = useState(false)
 	const [applicantWalletAddress, setApplicantWalletAddress] = useState(applicantId)
-	console.log("Applicant Id --> ", applicantId)
+	console.log('Applicant Id --> ', applicantId)
 
 	const [walletBalance, setWalletBalance] = React.useState(0)
 	// const toast = useToast();
@@ -98,7 +98,7 @@ function ModalContent({
 	)
 
 	useEffect(() => {
-		if (workspace && switchNetwork && isOpen) {
+		if(workspace && switchNetwork && isOpen) {
 			const chainId = getSupportedChainIdFromWorkspace(workspace)
 			switchNetwork(chainId!)
 		}
@@ -107,31 +107,31 @@ function ModalContent({
 	const { setRefresh: setDisburseDataRefresh } = useCustomToast(disburseDataLink)
 	useEffect(() => {
 		// console.log(depositTransactionData);
-		if (disburseData) {
+		if(disburseData) {
 			onClose()
 			setDisburseAmount(undefined)
 			setFunding('')
 			setDisburseDataRefresh(true)
-		} else if (disburseError) {
+		} else if(disburseError) {
 			setDisburseAmount(undefined)
 			setFunding('')
 		}
 
 	}, [toast, disburseData, disburseError])
 
-	const sendFundsFromContract = async () => {
+	const sendFundsFromContract = async() => {
 		let hasError = false
 
-		if (selectedMilestone === -1) {
+		if(selectedMilestone === -1) {
 			hasError = true
 		}
 
-		if (funding === '') {
+		if(funding === '') {
 			setError(true)
 			hasError = true
 		}
 
-		if (hasError) {
+		if(hasError) {
 			return
 		}
 
@@ -162,36 +162,36 @@ function ModalContent({
 	const { setRefresh: setDisburseP2PDataRefresh } = useCustomToast(disburseP2PDataLink)
 	useEffect(() => {
 		// console.log(depositTransactionData);
-		if (disburseP2PData) {
+		if(disburseP2PData) {
 			onClose()
 			setDisburseP2PAmount(undefined)
 			setFunding('')
 			setDisburseP2PDataRefresh(true)
-		} else if (disburseP2PError) {
+		} else if(disburseP2PError) {
 			setDisburseP2PAmount(undefined)
 			setFunding('')
 		}
 
 	}, [toast, disburseP2PData, disburseP2PError])
 
-	const sendFundsFromWallet = async () => {
+	const sendFundsFromWallet = async() => {
 		let hasError = false
 
-		if (selectedMilestone === -1) {
+		if(selectedMilestone === -1) {
 			hasError = true
 		}
 
-		if (funding === '') {
+		if(funding === '') {
 			setError(true)
 			hasError = true
 		}
 
-		if (hasError) {
+		if(hasError) {
 			return
 		}
 
-		if (applicantWalletAddress === applicantId) {
-			setApplicantWalletAddress("0x0000000000000000000000000000000000000000")
+		if(applicantWalletAddress === applicantId) {
+			setApplicantWalletAddress('0x0000000000000000000000000000000000000000')
 		}
 
 		setSubmitClickedP2P(true)
@@ -199,9 +199,9 @@ function ModalContent({
 	}
 
 	useEffect(() => {
-		(async function () {
+		(async function() {
 			try {
-				if (!rewardAssetContract.provider) {
+				if(!rewardAssetContract.provider) {
 					return
 				}
 
@@ -215,7 +215,7 @@ function ModalContent({
 				// console.log('tempAddress', tempAddress);
 				// console.log(tempWalletBalance);
 				setWalletBalance(tempWalletBalance)
-			} catch (e) {
+			} catch(e) {
 				console.error(e)
 			}
 		}())
@@ -332,7 +332,7 @@ function ModalContent({
 								() => {
 									setDisburseAmount(undefined)
 									setDisburseP2PAmount(undefined)
-									if (checkedItems[0]) {
+									if(checkedItems[0]) {
 										setChosen(0)
 									} else {
 										setChosen(1)
@@ -465,7 +465,7 @@ function ModalContent({
 									value={funding}
 									onChange={
 										(e) => {
-											if (error) {
+											if(error) {
 												setError(false)
 											}
 
@@ -623,7 +623,7 @@ function ModalContent({
 									value={funding}
 									onChange={
 										(e) => {
-											if (error) {
+											if(error) {
 												setError(false)
 											}
 
@@ -653,26 +653,26 @@ function ModalContent({
 							</Flex>
 						</Flex>
 						<Flex
-								w="100%"
-								direction="column"
-								mt={8}>
-								<SingleLineInput
-									label="Wallet address (Funds will be sent to this address)"
-									placeholder="0x230fb4c4d462eEF9e6790447Cf57271E519bB697"
-									value={applicantWalletAddress}
-									onChange={
-										(e) => {
-											if (error) {
-												setError(false)
-											}
-											
-											setApplicantWalletAddress(e.target.value)
+							w="100%"
+							direction="column"
+							mt={8}>
+							<SingleLineInput
+								label="Wallet address (Funds will be sent to this address)"
+								placeholder="0x230fb4c4d462eEF9e6790447Cf57271E519bB697"
+								value={applicantWalletAddress}
+								onChange={
+									(e) => {
+										if(error) {
+											setError(false)
 										}
+
+										setApplicantWalletAddress(e.target.value)
 									}
-									isError={error}
-									errorText="Required"
-								/>
-							</Flex>
+								}
+								isError={error}
+								errorText="Required"
+							/>
+						</Flex>
 						<Button
 							variant="primary"
 							w="100%"

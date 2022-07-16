@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
+import useQBContract from 'src/hooks/contracts/useQBContract'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
@@ -11,7 +12,6 @@ import ErrorToast from '../components/ui/toasts/errorToast'
 import useERC20Contract from './contracts/useERC20Contract'
 import useGrantContract from './contracts/useGrantContract'
 import useChainId from './utils/useChainId'
-import useQBContract from 'src/hooks/contracts/useQBContract'
 
 export default function useDisburseReward(
 	data: any,
