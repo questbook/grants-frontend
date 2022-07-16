@@ -18,7 +18,6 @@ export default function useDisburseReward(
 	grantId: string | undefined,
 	applicationId: string | undefined,
 	applicantWalletAddress: string | undefined,
-	workspaceId: string | undefined,
 	milestoneIndex: number | undefined,
 	rewardAssetAddress: string | undefined,
 	submitClicked: boolean,

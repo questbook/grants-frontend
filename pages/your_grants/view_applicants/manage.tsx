@@ -599,7 +599,6 @@ View
 							grantId={applicationData.grant.id}
 							applicantId={applicationData?.applicantId}
 							applicationId={applicationID}
-							workspaceId={workspace?.id!}
 						/>
 					</Modal>
 				)

@@ -213,7 +213,6 @@ function Sidebar({
 								grantId={grant.id}
 								applicantId={applicantId}
 								applicationId={applicationId}
-								workspaceId={workspaceId}
 							/>
 						</Modal>
 					)

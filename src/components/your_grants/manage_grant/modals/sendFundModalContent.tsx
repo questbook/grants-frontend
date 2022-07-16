@@ -44,7 +44,6 @@ interface Props {
 	applicationId: string;
 	applicantId: string;
 	grantId: string;
-	workspaceId: string;
 }
 
 function ModalContent({
@@ -150,7 +149,6 @@ function ModalContent({
 		grantId,
 		applicationId,
 		applicantWalletAddress,
-		workspace?.id,
 		selectedMilestone === -1
 			? undefined
 			: milestones[selectedMilestone].id.split('.')[1],
