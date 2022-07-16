@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Flex, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
@@ -26,7 +26,6 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
     useState(false)
 
 	const { connected, setConnected } = useContext(ApiClientsContext)!
-	const currentPageRef = useRef(null)
 
 	const [renderCount, setRenderCount] = useState(0)
 

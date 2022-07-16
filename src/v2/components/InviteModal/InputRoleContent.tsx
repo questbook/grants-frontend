@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Button, Divider, HStack, Image, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, Spinner, Text, VStack } from '@chakra-ui/react'
+import { Button, Divider, HStack, Image, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, Spinner, Text, useToast, VStack } from '@chakra-ui/react'
+import { serialiseInviteInfoIntoUrl, useMakeInvite } from 'src/utils/invite'
 import RoleSelect from './RoleSelect'
 
 export type InputRoleContentProps = {
@@ -11,13 +12,28 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 	const [selectedRole, setSelectedRole] = useState<number>()
 	const [creatingLink, setCreatingLink] = useState(false)
 
-	const createLink = () => {
+	const toast = useToast()
+
+	const { makeInvite } = useMakeInvite(selectedRole || 0)
+
+	const createLink = async() => {
 		setCreatingLink(true)
-		// TODO: actually use invite link gen
-		setTimeout(() => {
-			onLinkCreated('https://questbook.app/invite?w=1&r=0&k=145422232212232a3s48201edf')
+
+		try {
+			const info = await makeInvite()
+			const url = serialiseInviteInfoIntoUrl(info)
+
+			onLinkCreated(url)
+		} catch(error: any) {
+			console.error('error ', error)
+			toast({
+				title: `Error in generating the invite: "${error.message}"`,
+				status: 'error',
+				isClosable: true
+			})
+		} finally {
 			setCreatingLink(false)
-		}, 2000)
+		}
 	}
 
 	return (
