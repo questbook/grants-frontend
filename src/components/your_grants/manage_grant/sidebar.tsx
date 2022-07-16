@@ -16,11 +16,13 @@ interface Props {
   assetInfo: any;
   milestones: any[];
   applicationId: string;
+  applicantId: string;
+  workspaceId: string;
   decimals: number;
 }
 
 function Sidebar({
-	grant, assetInfo, milestones, applicationId, decimals,
+	grant, assetInfo, milestones, applicationId, applicantId, workspaceId, decimals,
 }: Props) {
 	const [isAddFundModalOpen, setIsAddFundModalOpen] = React.useState(false)
 	const [isSendFundModalOpen, setIsSendFundModalOpen] = React.useState(false)
@@ -202,7 +204,9 @@ function Sidebar({
 								contractFunding={grant.funding}
 								onClose={() => setIsSendFundModalOpen(false)}
 								grantId={grant.id}
+								applicantId={applicantId}
 								applicationId={applicationId}
+								workspaceId={workspaceId}
 							/>
 						</Modal>
 					)

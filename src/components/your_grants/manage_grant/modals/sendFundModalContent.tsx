@@ -30,19 +30,21 @@ import Dropdown from '../../../ui/forms/dropdown'
 import SingleLineInput from '../../../ui/forms/singleLineInput'
 
 interface Props {
-  isOpen: boolean;
-  onClose: () => void;
-  rewardAsset: {
-    address: string;
-    committed: BigNumber;
-    label: string;
-    icon: string;
-    decimals?: number;
-  };
-  contractFunding: string;
-  milestones: any[];
-  applicationId: string;
-  grantId: string;
+	isOpen: boolean;
+	onClose: () => void;
+	rewardAsset: {
+		address: string;
+		committed: BigNumber;
+		label: string;
+		icon: string;
+		decimals?: number;
+	};
+	contractFunding: string;
+	milestones: any[];
+	applicationId: string;
+	applicantId: string;
+	grantId: string;
+	workspaceId: string;
 }
 
 function ModalContent({
@@ -52,6 +54,7 @@ function ModalContent({
 	contractFunding,
 	milestones,
 	applicationId,
+	applicantId,
 	grantId,
 }: Props) {
 	const apiClients = useContext(ApiClientsContext)!
@@ -64,6 +67,8 @@ function ModalContent({
 	const [rewardAssetDecimals, setRewardAssetDecimals] = React.useState(0)
 	const [submitClicked, setSubmitClicked] = useState(false)
 	const [submitClickedP2P, setSubmitClickedP2P] = useState(false)
+	const [applicantWalletAddress, setApplicantWalletAddress] = useState(applicantId)
+	console.log("Applicant Id --> ", applicantId)
 
 	const [walletBalance, setWalletBalance] = React.useState(0)
 	// const toast = useToast();
@@ -71,7 +76,7 @@ function ModalContent({
 	const { switchNetwork } = useNetwork()
 	const rewardAssetContract = useContract({
 		addressOrName:
-      rewardAsset.address ?? '0x0000000000000000000000000000000000000000',
+			rewardAsset.address ?? '0x0000000000000000000000000000000000000000',
 		contractInterface: ERC20ABI,
 		signerOrProvider: signer,
 	})
@@ -93,7 +98,7 @@ function ModalContent({
 	)
 
 	useEffect(() => {
-		if(workspace && switchNetwork && isOpen) {
+		if (workspace && switchNetwork && isOpen) {
 			const chainId = getSupportedChainIdFromWorkspace(workspace)
 			switchNetwork(chainId!)
 		}
@@ -102,31 +107,31 @@ function ModalContent({
 	const { setRefresh: setDisburseDataRefresh } = useCustomToast(disburseDataLink)
 	useEffect(() => {
 		// console.log(depositTransactionData);
-		if(disburseData) {
+		if (disburseData) {
 			onClose()
 			setDisburseAmount(undefined)
 			setFunding('')
 			setDisburseDataRefresh(true)
-		} else if(disburseError) {
+		} else if (disburseError) {
 			setDisburseAmount(undefined)
 			setFunding('')
 		}
 
 	}, [toast, disburseData, disburseError])
 
-	const sendFundsFromContract = async() => {
+	const sendFundsFromContract = async () => {
 		let hasError = false
 
-		if(selectedMilestone === -1) {
+		if (selectedMilestone === -1) {
 			hasError = true
 		}
 
-		if(funding === '') {
+		if (funding === '') {
 			setError(true)
 			hasError = true
 		}
 
-		if(hasError) {
+		if (hasError) {
 			return
 		}
 
@@ -144,6 +149,8 @@ function ModalContent({
 		disburseP2PAmount,
 		grantId,
 		applicationId,
+		applicantWalletAddress,
+		workspace?.id,
 		selectedMilestone === -1
 			? undefined
 			: milestones[selectedMilestone].id.split('.')[1],
@@ -155,32 +162,36 @@ function ModalContent({
 	const { setRefresh: setDisburseP2PDataRefresh } = useCustomToast(disburseP2PDataLink)
 	useEffect(() => {
 		// console.log(depositTransactionData);
-		if(disburseP2PData) {
+		if (disburseP2PData) {
 			onClose()
 			setDisburseP2PAmount(undefined)
 			setFunding('')
 			setDisburseP2PDataRefresh(true)
-		} else if(disburseP2PError) {
+		} else if (disburseP2PError) {
 			setDisburseP2PAmount(undefined)
 			setFunding('')
 		}
 
 	}, [toast, disburseP2PData, disburseP2PError])
 
-	const sendFundsFromWallet = async() => {
+	const sendFundsFromWallet = async () => {
 		let hasError = false
 
-		if(selectedMilestone === -1) {
+		if (selectedMilestone === -1) {
 			hasError = true
 		}
 
-		if(funding === '') {
+		if (funding === '') {
 			setError(true)
 			hasError = true
 		}
 
-		if(hasError) {
+		if (hasError) {
 			return
+		}
+
+		if (applicantWalletAddress === applicantId) {
+			setApplicantWalletAddress("0x0000000000000000000000000000000000000000")
 		}
 
 		setSubmitClickedP2P(true)
@@ -188,9 +199,9 @@ function ModalContent({
 	}
 
 	useEffect(() => {
-		(async function() {
+		(async function () {
 			try {
-				if(!rewardAssetContract.provider) {
+				if (!rewardAssetContract.provider) {
 					return
 				}
 
@@ -204,7 +215,7 @@ function ModalContent({
 				// console.log('tempAddress', tempAddress);
 				// console.log(tempWalletBalance);
 				setWalletBalance(tempWalletBalance)
-			} catch(e) {
+			} catch (e) {
 				console.error(e)
 			}
 		}())
@@ -221,7 +232,7 @@ function ModalContent({
 						<Heading
 							variant="applicationHeading"
 							mt={4}>
-            Use funds from the grant smart contract
+							Use funds from the grant smart contract
 						</Heading>
 						<Flex
 							direction="row"
@@ -241,7 +252,7 @@ function ModalContent({
 									<Text
 										variant="applicationText"
 										fontWeight="700">
-                  Funds Available
+										Funds Available
 									</Text>
 									<Text
 										fontSize="14px"
@@ -250,8 +261,7 @@ function ModalContent({
 										color="brand.500"
 									>
 										{
-											`${formatAmount(contractFunding.toString(), rewardAssetDecimals)} ${
-												rewardAsset?.label
+											`${formatAmount(contractFunding.toString(), rewardAssetDecimals)} ${rewardAsset?.label
 											}`
 										}
 									</Text>
@@ -270,7 +280,7 @@ function ModalContent({
 						<Heading
 							variant="applicationHeading"
 							mt={6}>
-            Use funds from the wallet linked to your account
+							Use funds from the wallet linked to your account
 						</Heading>
 						<Flex
 							direction="row"
@@ -290,7 +300,7 @@ function ModalContent({
 									<Text
 										variant="applicationText"
 										fontWeight="700">
-                  Funds Available
+										Funds Available
 									</Text>
 									<Text
 										fontSize="14px"
@@ -299,8 +309,7 @@ function ModalContent({
 										color="brand.500"
 									>
 										{
-											`${formatAmount(walletBalance.toString(), rewardAssetDecimals)} ${
-												rewardAsset?.label
+											`${formatAmount(walletBalance.toString(), rewardAssetDecimals)} ${rewardAsset?.label
 											}`
 										}
 									</Text>
@@ -323,7 +332,7 @@ function ModalContent({
 								() => {
 									setDisburseAmount(undefined)
 									setDisburseP2PAmount(undefined)
-									if(checkedItems[0]) {
+									if (checkedItems[0]) {
 										setChosen(0)
 									} else {
 										setChosen(1)
@@ -331,7 +340,7 @@ function ModalContent({
 								}
 							}
 						>
-            Continue
+							Continue
 						</Button>
 					</Flex>
 				)
@@ -346,7 +355,7 @@ function ModalContent({
 						<Heading
 							variant="applicationHeading"
 							mt={4}>
-            Sending funds from grant smart contract
+							Sending funds from grant smart contract
 						</Heading>
 						<Button
 							mt={1}
@@ -363,7 +372,7 @@ function ModalContent({
 							<Heading
 								variant="applicationHeading"
 								color="brand.500">
-              Change
+								Change
 							</Heading>
 						</Button>
 
@@ -379,7 +388,7 @@ function ModalContent({
 								<Text
 									variant="applicationText"
 									fontWeight="700">
-                Funds Available
+									Funds Available
 								</Text>
 								<Text
 									fontSize="14px"
@@ -388,8 +397,7 @@ function ModalContent({
 									color="brand.500"
 								>
 									{
-										`${formatAmount(contractFunding.toString(), rewardAssetDecimals)} ${
-											rewardAsset?.label
+										`${formatAmount(contractFunding.toString(), rewardAssetDecimals)} ${rewardAsset?.label
 										}`
 									}
 								</Text>
@@ -400,7 +408,7 @@ function ModalContent({
 						<Heading
 							variant="applicationHeading"
 							color="#122224">
-            Milestone
+							Milestone
 						</Heading>
 						<Menu matchWidth>
 							<MenuButton
@@ -419,8 +427,7 @@ function ModalContent({
 									{
 										selectedMilestone === -1
 											? 'Select a milestone'
-											: `Milestone ${selectedMilestone + 1}: ${
-												milestones[selectedMilestone].title
+											: `Milestone ${selectedMilestone + 1}: ${milestones[selectedMilestone].title
 											}`
 									}
 								</Text>
@@ -458,7 +465,7 @@ function ModalContent({
 									value={funding}
 									onChange={
 										(e) => {
-											if(error) {
+											if (error) {
 												setError(false)
 											}
 
@@ -487,12 +494,11 @@ function ModalContent({
 								/>
 							</Flex>
 						</Flex>
-
 						<Button
 							variant="primary"
 							w="100%"
 							my={10}
-							onClick={disburseLoading ? () => {} : sendFundsFromContract}
+							onClick={disburseLoading ? () => { } : sendFundsFromContract}
 							py={disburseLoading ? 2 : 0}
 						>
 							{disburseLoading ? <Loader /> : 'Send Funds'}
@@ -510,7 +516,7 @@ function ModalContent({
 						<Heading
 							variant="applicationHeading"
 							mt={4}>
-            Sending funds from wallet linked to your account
+							Sending funds from wallet linked to your account
 						</Heading>
 						<Button
 							mt={1}
@@ -527,7 +533,7 @@ function ModalContent({
 							<Heading
 								variant="applicationHeading"
 								color="brand.500">
-              Change
+								Change
 							</Heading>
 						</Button>
 
@@ -543,7 +549,7 @@ function ModalContent({
 								<Text
 									variant="applicationText"
 									fontWeight="700">
-                Funds Available
+									Funds Available
 								</Text>
 								<Text
 									fontSize="14px"
@@ -552,8 +558,7 @@ function ModalContent({
 									color="brand.500"
 								>
 									{
-										`${formatAmount(walletBalance.toString(), rewardAssetDecimals)} ${
-											rewardAsset?.label
+										`${formatAmount(walletBalance.toString(), rewardAssetDecimals)} ${rewardAsset?.label
 										}`
 									}
 								</Text>
@@ -564,7 +569,7 @@ function ModalContent({
 						<Heading
 							variant="applicationHeading"
 							color="#122224">
-            Milestone
+							Milestone
 						</Heading>
 						<Menu matchWidth>
 							<MenuButton
@@ -580,8 +585,7 @@ function ModalContent({
 									{
 										selectedMilestone === -1
 											? 'Select a milestone'
-											: `Milestone ${selectedMilestone + 1}: ${
-												milestones[selectedMilestone].title
+											: `Milestone ${selectedMilestone + 1}: ${milestones[selectedMilestone].title
 											}`
 									}
 								</Text>
@@ -619,7 +623,7 @@ function ModalContent({
 									value={funding}
 									onChange={
 										(e) => {
-											if(error) {
+											if (error) {
 												setError(false)
 											}
 
@@ -648,12 +652,32 @@ function ModalContent({
 								/>
 							</Flex>
 						</Flex>
-
+						<Flex
+								w="100%"
+								direction="column"
+								mt={8}>
+								<SingleLineInput
+									label="Wallet address (Funds will be sent to this address)"
+									placeholder="0x230fb4c4d462eEF9e6790447Cf57271E519bB697"
+									value={applicantWalletAddress}
+									onChange={
+										(e) => {
+											if (error) {
+												setError(false)
+											}
+											
+											setApplicantWalletAddress(e.target.value)
+										}
+									}
+									isError={error}
+									errorText="Required"
+								/>
+							</Flex>
 						<Button
 							variant="primary"
 							w="100%"
 							my={10}
-							onClick={disburseP2PLoading ? () => {} : sendFundsFromWallet}
+							onClick={disburseP2PLoading ? () => { } : sendFundsFromWallet}
 							py={disburseP2PLoading ? 2 : 0}
 						>
 							{disburseP2PLoading ? <Loader /> : 'Send Funds'}
