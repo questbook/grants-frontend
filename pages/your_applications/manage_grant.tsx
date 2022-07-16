@@ -72,7 +72,7 @@ function ManageGrant() {
 	} = useApplicationMilestones(applicationID, chainId)
 
 	const { data: fundsDisbursed } = useGetFundSentForApplicationQuery({
-		client: subgraphClients[chainId ?? defaultChainId].client,
+		client: subgraphClients[chainId || defaultChainId].client,
 		variables: {
 			applicationId: applicationID,
 		},
@@ -81,7 +81,7 @@ function ManageGrant() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	chainId ?? defaultChainId
+      	chainId || defaultChainId
       ].client,
 	})
 

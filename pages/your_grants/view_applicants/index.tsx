@@ -80,14 +80,14 @@ function ViewApplicants() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
       ].client,
 	})
 
 	const [queryReviewerParams, setQueryReviewerParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
       ].client,
 	})
 
@@ -193,12 +193,12 @@ function ViewApplicants() {
 					project_name: getFieldString('projectName'),
 					funding_asked: {
 						// amount: formatAmount(
-						//   getFieldString('fundingAsk') ?? '0',
+						//   getFieldString('fundingAsk') || '0',
 						// ),
 						amount:
               applicant && getFieldString('fundingAsk') ? formatAmount(
                 getFieldString('fundingAsk')!,
-                decimal ?? 18,
+                decimal || 18,
               ) : '1',
 						symbol: label,
 						icon,
@@ -210,7 +210,7 @@ function ViewApplicants() {
 						getTotalFundingRecv(
               applicant.milestones as unknown as ApplicationMilestone[],
 						).toString(),
-						decimal ?? 18,
+						decimal || 18,
 					),
 				}
 			})
@@ -260,7 +260,7 @@ function ViewApplicants() {
 					project_name: getFieldString('projectName'),
 					funding_asked: {
 						// amount: formatAmount(
-						//   getFieldString('fundingAsk') ?? '0',
+						//   getFieldString('fundingAsk') || '0',
 						// ),
 						amount:
               applicant && getFieldString('fundingAsk') ? formatAmount(
@@ -270,7 +270,7 @@ function ViewApplicants() {
                 		applicant.grant.workspace.supportedNetworks[0],
                 	)
                 ]?.supportedCurrencies[applicant.grant.reward.asset.toLowerCase()]
-                	?.decimals ?? 18,
+                	?.decimals || 18,
               ) : '1',
 						symbol: getAssetInfo(
 							applicant?.grant?.reward?.asset?.toLowerCase(),
@@ -387,7 +387,7 @@ function ViewApplicants() {
 							<Button
 								variant="primary"
 								onClick={() => setRubricDrawerOpen(true)}>
-								{(grantData?.grants[0].rubric?.items.length ?? 0) > 0 ?? false ? 'Edit Evaluation Rubric' : 'Setup Evaluation Rubric'}
+								{(grantData?.grants[0].rubric?.items.length || 0) > 0 || false ? 'Edit Evaluation Rubric' : 'Setup Evaluation Rubric'}
 							</Button>
 						</Box>
 					)
@@ -401,16 +401,16 @@ function ViewApplicants() {
 					setRubrics={setRubrics}
 					maximumPoints={maximumPoints}
 					setMaximumPoints={setMaximumPoints}
-					chainId={getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId}
+					chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
 					grantAddress={grantID}
-					workspaceId={workspace?.id ?? ''}
-					initialIsPrivate={grantData?.grants[0].rubric?.isPrivate ?? false}
+					workspaceId={workspace?.id || ''}
+					initialIsPrivate={grantData?.grants[0].rubric?.isPrivate || false}
 				/>
 
 				{
 					(reviewerData.length > 0 || applicantsData.length > 0) && (isReviewer || isAdmin) ? (
 						<Table
-							title={applicantsData[0]?.grantTitle ?? 'Grant Title'}
+							title={applicantsData[0]?.grantTitle || 'Grant Title'}
 							isReviewer={isReviewer}
 							data={applicantsData}
 							reviewerData={reviewerData}

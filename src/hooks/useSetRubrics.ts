@@ -88,7 +88,7 @@ export default function useSetRubrics(
 
 				console.log('rubricHash', rubricHash)
 
-				// console.log(workspaceId ?? Number(workspace?.id).toString());
+				// console.log(workspaceId || Number(workspace?.id).toString());
 				// console.log('ipfsHash', ipfsHash);
 				// console.log(
 				//   WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
@@ -96,7 +96,7 @@ export default function useSetRubrics(
 				// );
 
 				const createGrantTransaction = await applicationReviewContract.setRubrics(
-					workspaceId ?? Number(workspace?.id).toString(),
+					workspaceId || Number(workspace?.id).toString(),
 					grantAddress!,
 					rubricHash,
 				)
@@ -215,7 +215,7 @@ export default function useSetRubrics(
 
 	return [
 		transactionData,
-		getExplorerUrlForTxHash(chainId ?? getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
+		getExplorerUrlForTxHash(chainId || getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
 		loading,
 		error,
 	]

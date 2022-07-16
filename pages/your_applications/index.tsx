@@ -143,7 +143,7 @@ function YourApplications() {
           						application.grant.workspace.supportedNetworks[0],
           					)
           				]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
-          					?.decimals ?? 18,
+          					?.decimals || 18,
           			)
           			}
           			currency={
@@ -152,7 +152,7 @@ function YourApplications() {
           					application.grant.workspace.supportedNetworks[0],
           				)
           			]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
-          				?.label ?? 'LOL'
+          				?.label || 'LOL'
           			}
           			isDaoVerified={false}
           			status={application.state}

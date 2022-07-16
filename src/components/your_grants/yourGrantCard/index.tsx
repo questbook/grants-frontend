@@ -205,7 +205,7 @@ function YourGrantCard({
 										onEditClick={onEditClick}
 										isAdmin={isAdmin}
 										setRubricDrawerOpen={setRubricDrawerOpen}
-										initialRubricAvailable={initialRubrics?.items.length > 0 ?? false}
+										initialRubricAvailable={initialRubrics?.items.length > 0 || false}
 									/>
 									{
 										acceptingApplications && isAdmin && (
@@ -217,7 +217,7 @@ function YourGrantCard({
 												color="brand.500"
 												borderColor="brand.500"
 												h="32px"
-												onClick={onAddFundsClick ?? (() => {})}
+												onClick={onAddFundsClick || (() => {})}
 											>
                   Add funds
 											</Button>
@@ -342,7 +342,7 @@ function YourGrantCard({
 										onEditClick={onEditClick}
 										isAdmin={isAdmin}
 										setRubricDrawerOpen={setRubricDrawerOpen}
-										initialRubricAvailable={initialRubrics?.items.length > 0 ?? false}
+										initialRubricAvailable={initialRubrics?.items.length > 0 || false}
 									/>
 									{
 										acceptingApplications && (

@@ -39,7 +39,7 @@ function EditGrant() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
       ].client,
 	})
 
@@ -84,13 +84,13 @@ function EditGrant() {
 						grant.workspace.supportedNetworks[0],
 					)
 				]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-					?.decimals ?? 18,
+					?.decimals || 18,
 			)
 			rewardCurrency = CHAIN_INFO[
 				getSupportedChainIdFromSupportedNetwork(
 					grant.workspace.supportedNetworks[0],
 				)
-			]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label ?? 'LOL'
+			]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label || 'LOL'
 			rewardCurrencyAddress = CHAIN_INFO[
 				getSupportedChainIdFromSupportedNetwork(
 					grant.workspace.supportedNetworks[0],
@@ -177,13 +177,13 @@ function EditGrant() {
 							grant.workspace.supportedNetworks[0],
 						)
 					]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-						?.decimals ?? 18,
+						?.decimals || 18,
 				)
 				rewardCurrency = CHAIN_INFO[
 					getSupportedChainIdFromSupportedNetwork(
 						grant.workspace.supportedNetworks[0],
 					)
-				]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label ?? 'LOL'
+				]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label || 'LOL'
 				rewardCurrencyAddress = CHAIN_INFO[
 					getSupportedChainIdFromSupportedNetwork(
 						grant.workspace.supportedNetworks[0],

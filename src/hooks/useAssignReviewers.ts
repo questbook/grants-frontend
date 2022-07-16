@@ -72,7 +72,7 @@ export default function useAssignReviewers(
 			setLoading(true)
 			// console.log('calling validate');
 			try {
-				// console.log(workspaceId ?? Number(workspace?.id).toString());
+				// console.log(workspaceId || Number(workspace?.id).toString());
 				// console.log('ipfsHash', ipfsHash);
 				// console.log(
 				//   WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
@@ -80,7 +80,7 @@ export default function useAssignReviewers(
 				// );
 
 				const createGrantTransaction = await applicationReviewContract.assignReviewers(
-					workspaceId ?? workspace!.id,
+					workspaceId || workspace!.id,
 					applicationId!,
 					grantAddress!,
 					data.reviewers,
@@ -206,7 +206,7 @@ export default function useAssignReviewers(
 
 	return [
 		transactionData,
-		getExplorerUrlForTxHash(chainId ?? getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
+		getExplorerUrlForTxHash(chainId || getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
 		loading,
 		error,
 	]

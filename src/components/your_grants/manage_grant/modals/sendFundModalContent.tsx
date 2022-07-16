@@ -76,7 +76,7 @@ function ModalContent({
 	const { switchNetwork } = useNetwork()
 	const rewardAssetContract = useContract({
 		addressOrName:
-			rewardAsset.address ?? '0x0000000000000000000000000000000000000000',
+      rewardAsset.address || '0x0000000000000000000000000000000000000000',
 		contractInterface: ERC20ABI,
 		signerOrProvider: signer,
 	})
