@@ -50,7 +50,7 @@ function Sidebar({
 						{grant && grant.funding ? formatAmount(grant?.funding, decimals) : null}
 					</Text>
 					<Box mr={3} />
-					{
+					{/* {
 						grant && parseInt(grant.funding, 10) > 0 && (
 							<Button
 								variant="link"
@@ -61,7 +61,7 @@ function Sidebar({
               Add Funds
 							</Button>
 						)
-					}
+					} */}
 				</Flex>
 				{
 					grant && parseInt(grant.funding, 10) === 0 && (
@@ -139,6 +139,13 @@ function Sidebar({
 							: 'Send funds from your wallet'
 					}
 				</Text>
+				<Button
+					variant="primary"
+					mt={6}
+					onClick={() => setIsAddFundModalOpen(true)}
+				>
+              Add Funds
+				</Button>
 				<Button
 					mt="22px"
 					variant="outline"
