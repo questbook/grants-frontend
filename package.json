@@ -10,7 +10,8 @@
     "lint:fix": "eslint ./src ./pages --fix --ext .js,.ts,.jsx,.tsx",
     "export": "next export",
     "generate:typechain": "typechain --target ethers-v5 --out-dir src/generated/contracts src/contracts/abi/*.json",
-    "generate": "graphql-codegen --config codegen.yaml && npm run generate:typechain"
+    "generate:graphql": "graphql-codegen --config codegen.yaml",
+    "generate": "npm run generate:graphql && npm run generate:typechain"
   },
   "dependencies": {
     "@apollo/client": "^3.5.8",
