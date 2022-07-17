@@ -67,7 +67,7 @@ function ModalContent({
 	const [submitClicked, setSubmitClicked] = useState(false)
 	const [submitClickedP2P, setSubmitClickedP2P] = useState(false)
 	const [applicantWalletAddress, setApplicantWalletAddress] = useState(applicantId)
-	
+
 	const [walletBalance, setWalletBalance] = React.useState(0)
 	// const toast = useToast();
 	const { data: signer } = useSigner()
