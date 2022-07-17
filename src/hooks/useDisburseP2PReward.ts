@@ -3,6 +3,7 @@ import { ToastId, useToast } from '@chakra-ui/react'
 import { BigNumber, utils } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
 import SuccessToast from 'src/components/ui/toasts/successToast'
+import useQBContract from 'src/hooks/contracts/useQBContract'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
@@ -43,7 +44,7 @@ export default function useDisburseReward(
 	const rewardContract = useERC20Contract(rewardAssetAddress)
 	const grantContract = useGrantContract(grantId)
 	/** END */
-
+	const workspaceRegistryContract = useQBContract('workspace', chainId)
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
 
@@ -83,7 +84,7 @@ export default function useDisburseReward(
 						},
 					}),
 				})
-				grantContract.disburseRewardP2P(
+				workspaceRegistryContract.disburseRewardP2P(
 					applicationId,
 					milestoneIndex,
 					rewardAssetAddress,
@@ -172,7 +173,7 @@ export default function useDisburseReward(
 								},
 							}),
 						})
-						await Promise.all([grantContract.disburseRewardP2P(
+						await Promise.all([workspaceRegistryContract.disburseRewardP2P(
 							applicationId,
 							milestoneIndex,
 							rewardAssetAddress,
@@ -199,7 +200,7 @@ export default function useDisburseReward(
 				} else {
 					console.log('EOA account', data)
 					await Promise.all([rewardContract.approve(grantContract.address, data),
-						grantContract.disburseRewardP2P(
+						workspaceRegistryContract.disburseRewardP2P(
 							applicationId,
 							milestoneIndex,
 							rewardAssetAddress,
