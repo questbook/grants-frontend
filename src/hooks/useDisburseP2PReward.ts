@@ -73,7 +73,7 @@ export default function useDisburseReward(
 
 	async function approvalEvent() {
 		await rewardContract.once('Approval', (from, to, amount, eventDetail) => {
-			if(from === accountData?.address && to === utils.getAddress(grantContract.address!)) {
+			if(from === accountData?.address && to === utils.getAddress(workspaceRegistryContract.address!)) {
 				toastRef.current = toast({
 					position: 'top',
 					render: () => CustomToast({
@@ -146,11 +146,11 @@ export default function useDisburseReward(
 				const account = await provider.getCode(accountData?.address!)
 				if(account !== '0x') {
 
-					// const getAllowance = utils.formatUnits(await rewardContract.allowance(accountData?.address!, grantContract.address), 'gwei')
-					const getAllowance = await rewardContract.allowance(accountData?.address!, grantContract.address)
+					// const getAllowance = utils.formatUnits(await rewardContract.allowance(accountData?.address!, workspaceRegistryContract.address), 'gwei')
+					const getAllowance = await rewardContract.allowance(accountData?.address!, workspaceRegistryContract.address)
 					if(parseInt(getAllowance.toString()) === 0) {
-						// console.log('getAllowance 1', getAllowance, data)
-						rewardContract.approve(grantContract.address, data)
+						console.log('getAllowance 1', getAllowance, data)
+						rewardContract.approve(workspaceRegistryContract.address, data)
 						toastRef.current = toast({
 							position: 'top',
 							render: () => CustomToast({
@@ -164,7 +164,7 @@ export default function useDisburseReward(
 						})
 						await Promise.all([approvalEvent(), disburseRewardP2PEvent()])
 					} else if(parseInt(getAllowance.toString()) > parseInt(data)) {
-						// console.log('Disburse', typeof(data), parseInt(getAllowance.toString()))
+						console.log('Disburse', typeof(data), parseInt(getAllowance.toString()))
 						toastRef.current = toast({
 							position: 'top',
 							render: () => CustomToast({
@@ -187,7 +187,7 @@ export default function useDisburseReward(
 
 					} else {
 						// console.log('getAllowance 2', typeof(data), (parseInt(getAllowance.toString()) + parseInt(data)).toString())
-						await rewardContract.approve(grantContract.address, (parseInt(getAllowance.toString()) + parseInt(data)).toString())
+						await rewardContract.approve(workspaceRegistryContract.address, (parseInt(getAllowance.toString()) + parseInt(data)).toString())
 						toastRef.current = toast({
 							position: 'top',
 							render: () => CustomToast({
@@ -204,7 +204,7 @@ export default function useDisburseReward(
 
 				} else {
 					console.log('EOA account', data)
-					await Promise.all([rewardContract.approve(grantContract.address, data),
+					await Promise.all([rewardContract.approve(workspaceRegistryContract.address, data),
 						workspaceRegistryContract.disburseRewardP2P(
 							applicationId!,
 							applicantWalletAddress!,
@@ -294,7 +294,7 @@ export default function useDisburseReward(
 			// console.log(5);
 			if(
 				!grantContract
-        || grantContract.address
+        || workspaceRegistryContract.address
           === '0x0000000000000000000000000000000000000000'
         || !grantContract.signer
         || !grantContract.provider
