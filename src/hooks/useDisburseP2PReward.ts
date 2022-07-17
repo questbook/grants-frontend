@@ -72,7 +72,7 @@ export default function useDisburseReward(
 	}, [grantContract])
 
 	async function approvalEvent() {
-		await rewardContract.once('Approval', (from, to, amount, eventDetail) => {
+		 rewardContract.once('Approval', (from, to, amount, eventDetail) => {
 			if(from === accountData?.address && to === utils.getAddress(workspaceRegistryContract.address!)) {
 				toastRef.current = toast({
 					position: 'top',
@@ -100,8 +100,9 @@ export default function useDisburseReward(
 	}
 
 	async function disburseRewardP2PEvent() {
-		await grantContract.once('DisburseReward', (applicationIdEvent, milestoneId, asset, sender, amount, isP2P, eventDetail) => {
-			// console.log('DisburseReward', accountData?.address, sender, BigNumber.from(applicationId).toNumber(), applicationIdEvent.toNumber())
+		console.log('Got to disburse event')
+		workspaceRegistryContract.once('DisburseReward', (applicationIdEvent, milestoneId, asset, sender, amount, isP2P, eventDetail) => {
+			console.log('DisburseReward', eventDetail)
 			if(utils.getAddress(sender) === accountData?.address && BigNumber.from(applicationId).toNumber() === applicationIdEvent.toNumber()) {
 				setTransactionData(eventDetail)
 				setLoading(false)
@@ -141,12 +142,10 @@ export default function useDisburseReward(
 			// console.log('calling validate')
 			try {
 
-				let txn
-				let updateTxn
 				const account = await provider.getCode(accountData?.address!)
 				if(account !== '0x') {
 
-					// const getAllowance = utils.formatUnits(await rewardContract.allowance(accountData?.address!, workspaceRegistryContract.address), 'gwei')
+					console.log('account is not 0x')
 					const getAllowance = await rewardContract.allowance(accountData?.address!, workspaceRegistryContract.address)
 					if(parseInt(getAllowance.toString()) === 0) {
 						console.log('getAllowance 1', getAllowance, data)
@@ -186,7 +185,7 @@ export default function useDisburseReward(
 						), disburseRewardP2PEvent()])
 
 					} else {
-						// console.log('getAllowance 2', typeof(data), (parseInt(getAllowance.toString()) + parseInt(data)).toString())
+						console.log('getAllowance 2', typeof(data), (parseInt(getAllowance.toString()) + parseInt(data)).toString())
 						await rewardContract.approve(workspaceRegistryContract.address, (parseInt(getAllowance.toString()) + parseInt(data)).toString())
 						toastRef.current = toast({
 							position: 'top',
@@ -199,6 +198,7 @@ export default function useDisburseReward(
 								},
 							}),
 						})
+
 						await Promise.all([approvalEvent(), disburseRewardP2PEvent()])
 					}
 
