@@ -1,9 +1,7 @@
-import { useContext, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Button, HStack, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Progress, Spacer, Text, VStack } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
 import { ROLES } from 'src/constants'
-import { defaultChainId } from 'src/constants/chains'
-import { useGetDaoNameLazyQuery } from 'src/generated/graphql'
+import useDAOName from 'src/hooks/useDAOName'
 import { InviteInfo } from 'src/utils/invite'
 import { ForwardArrow } from 'src/v2/assets/custom chakra icons/Arrows/ForwardArrow'
 import ControlBar from '../ControlBar'
@@ -137,31 +135,6 @@ const RoleDataDisplay = ({ role }: { role: number }) => {
 			</VStack>
 		</VStack>
 	)
-}
-
-const DEFAULT_DAO_NAME = 'A DAO'
-
-const useDAOName = (workspaceId?: number, chainId?: number) => {
-	const { subgraphClients } = useContext(ApiClientsContext)!
-
-	const { client } = subgraphClients[chainId?.toString() || '']
-		|| subgraphClients[defaultChainId]
-	const [daoNameFetch, result] = useGetDaoNameLazyQuery({ client })
-
-	useEffect(() => {
-		(async() => {
-			if(typeof workspaceId !== 'undefined') {
-				const workspaceIdStr = '0x' + workspaceId.toString(16)
-				await daoNameFetch({
-					variables: { workspaceID: workspaceIdStr }
-				})
-			}
-		})()
-	}, [workspaceId, daoNameFetch])
-
-	return result?.error
-		? DEFAULT_DAO_NAME
-		: result?.data?.workspace?.title
 }
 
 const ROLE_DATA = {
