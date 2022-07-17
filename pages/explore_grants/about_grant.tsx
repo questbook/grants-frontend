@@ -70,11 +70,11 @@ function AboutGrant() {
 	}, [router.query])
 
 	const [queryParams, setQueryParams] = useState<any>({
-		client: subgraphClients[chainId ?? defaultChainId].client,
+		client: subgraphClients[chainId || defaultChainId].client,
 	})
 
 	const [applicantQueryParams, setApplicantQueryParams] = useState<any>({
-		client: subgraphClients[chainId ?? defaultChainId].client,
+		client: subgraphClients[chainId || defaultChainId].client,
 	})
 
 	useEffect(() => {
@@ -169,7 +169,7 @@ function AboutGrant() {
 		setDaoLogo(getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash))
 		setRewardAmount(
 			grantData?.reward?.committed
-				? formatAmount(grantData?.reward?.committed, chainInfo?.decimals ?? 18)
+				? formatAmount(grantData?.reward?.committed, chainInfo?.decimals || 18)
 				: ''
 		)
 		let supportedCurrencyObj
@@ -223,7 +223,7 @@ function AboutGrant() {
 					}
 
 					return {
-						detail: getFieldLabelFromFieldTitle(field.title) ?? 'Invalid Field',
+						detail: getFieldLabelFromFieldTitle(field.title) || 'Invalid Field',
 						// detail: field.title,
 					}
 				})

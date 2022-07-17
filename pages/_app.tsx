@@ -32,7 +32,7 @@ import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { publicProvider } from 'wagmi/providers/public'
-import '../styles/globals.css'
+import 'styles/globals.css'
 import 'draft-js/dist/Draft.css'
 
 type NextPageWithLayout = NextPage & {
@@ -147,7 +147,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 	const seo = getSeo()
 
-	const getLayout = Component.getLayout ?? ((page) => page)
+	const getLayout = Component.getLayout || ((page) => page)
 	return (
 		<>
 			<DefaultSeo {...seo} />

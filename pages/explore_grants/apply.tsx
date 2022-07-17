@@ -51,7 +51,7 @@ function ApplyGrant() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	chainId ?? defaultChainId
+      	chainId || defaultChainId
       ].client,
 	})
 
@@ -108,7 +108,7 @@ function ApplyGrant() {
 			grantData?.reward?.committed
 				? formatAmount(
 					grantData?.reward?.committed,
-					chainInfo?.decimals ?? 18,
+					chainInfo?.decimals || 18,
 				)
 				: '',
 		)

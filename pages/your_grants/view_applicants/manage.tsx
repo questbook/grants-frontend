@@ -97,7 +97,7 @@ function ManageGrant() {
 		client:
         subgraphClients[
         	getSupportedChainIdFromWorkspace(workspace)
-            ?? defaultChainId
+            || defaultChainId
         ].client,
 		variables: {
 			applicationID,
@@ -108,7 +108,7 @@ function ManageGrant() {
 		client:
       subgraphClients[
       	getSupportedChainIdFromWorkspace(workspace)
-          ?? defaultChainId
+          || defaultChainId
       ].client,
 		variables: {
 			applicationId: applicationID,
@@ -153,7 +153,7 @@ function ManageGrant() {
 	const fundingIcon = assetInfo.icon
 
 	useEffect(() => {
-		setApplicationID(router?.query?.applicationId ?? '')
+		setApplicationID(router?.query?.applicationId || '')
 		refetchApplicationDetails()
 	}, [router, accountData, refetchApplicationDetails])
 
@@ -544,6 +544,8 @@ View
 						assetInfo={assetInfo}
 						grant={applicationData?.grant}
 						applicationId={applicationID}
+						applicantId={applicationData?.applicantId!}
+						workspaceId={workspace?.id!}
 						decimals={decimals}
 					/>
 				)
@@ -595,6 +597,7 @@ View
 							contractFunding={applicationData.grant.funding}
 							onClose={() => setIsSendFundModalOpen(false)}
 							grantId={applicationData.grant.id}
+							applicantId={applicationData?.applicantId}
 							applicationId={applicationID}
 						/>
 					</Modal>

@@ -125,7 +125,7 @@ function Form({
 			about: aboutString,
 			image: imageFile,
 			network: chainId!,
-			ownerId: accountData?.address ?? '0x0000000000000000000000000000000000000000',
+			ownerId: accountData?.address || '0x0000000000000000000000000000000000000000',
 		})
 	}
 

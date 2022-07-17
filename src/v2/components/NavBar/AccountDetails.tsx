@@ -55,7 +55,7 @@ function AccountDetails() {
 							fontSize="14px"
 							lineHeight="20px"
 						>
-							{formatAddress(accountData?.address ?? '')}
+							{formatAddress(accountData?.address || '')}
 						</Text>
 					)
 				}

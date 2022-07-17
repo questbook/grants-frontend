@@ -20,6 +20,7 @@ export default function useDisburseReward(
 	data: any,
 	grantId: string | undefined,
 	applicationId: string | undefined,
+	applicantWalletAddress: string | undefined,
 	milestoneIndex: number | undefined,
 	rewardAssetAddress: string | undefined,
 	submitClicked: boolean,
@@ -85,10 +86,12 @@ export default function useDisburseReward(
 					}),
 				})
 				workspaceRegistryContract.disburseRewardP2P(
-					applicationId,
-					milestoneIndex,
-					rewardAssetAddress,
+					applicationId!,
+					applicantWalletAddress!,
+					milestoneIndex!,
+					rewardAssetAddress!,
 					data,
+					workspace?.id!
 				)
 			}
 
@@ -174,10 +177,12 @@ export default function useDisburseReward(
 							}),
 						})
 						await Promise.all([workspaceRegistryContract.disburseRewardP2P(
-							applicationId,
-							milestoneIndex,
-							rewardAssetAddress,
+							applicationId!,
+							applicantWalletAddress!,
+							milestoneIndex!,
+							rewardAssetAddress!,
 							data,
+							workspace?.id!
 						), disburseRewardP2PEvent()])
 
 					} else {
@@ -201,10 +206,12 @@ export default function useDisburseReward(
 					console.log('EOA account', data)
 					await Promise.all([rewardContract.approve(grantContract.address, data),
 						workspaceRegistryContract.disburseRewardP2P(
-							applicationId,
-							milestoneIndex,
-							rewardAssetAddress,
+							applicationId!,
+							applicantWalletAddress!,
+							milestoneIndex!,
+							rewardAssetAddress!,
 							data,
+							workspace?.id!
 						),
 						disburseRewardP2PEvent()])
 				}

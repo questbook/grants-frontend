@@ -58,7 +58,7 @@ function BrowseGrants() {
 							variables: {
 								first: PAGE_SIZE,
 								skip: currentPageLocal * PAGE_SIZE,
-								applicantId: accountData?.address ?? '',
+								applicantId: accountData?.address || '',
 								minDeadline: unixTimestampSeconds(),
 							},
 						})
@@ -203,17 +203,17 @@ function BrowseGrants() {
               			grantAmount={
               				formatAmount(
               					grant.reward.committed,
-              					chainInfo?.decimals ?? 18
+              					chainInfo?.decimals || 18
               				)
               			}
               			disbursedAmount={
               				formatAmount(
               					grant.funding,
-              					chainInfo?.decimals ?? 18
+              					chainInfo?.decimals || 18
               				)
               			}
-              			grantCurrency={chainInfo?.label ?? 'LOL'}
-              			grantCurrencyIcon={chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'}
+              			grantCurrency={chainInfo?.label || 'LOL'}
+              			grantCurrencyIcon={chainInfo?.icon || '/images/dummy/Ethereum Icon.svg'}
               			grantCurrencyPair={chainInfo?.pair!}
               			isGrantVerified={isGrantVerified}
               			funding={funding}
@@ -256,7 +256,7 @@ function BrowseGrants() {
               	)
               })
 						}
-						{loading ? <Loader /> : allDataFetched ?? <></>}
+						{loading ? <Loader /> : allDataFetched || <></>}
 					</>
 				}
 			</Flex>

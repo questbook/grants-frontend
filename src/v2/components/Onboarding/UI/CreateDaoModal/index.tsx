@@ -122,7 +122,7 @@ const CreateDaoModal = ({
 						steps.map((step, index) => (
 							<ModalStep
 								key={`create-dao-step${index}`}
-								loadingFinished={index < (currentStep ?? -1)}
+								loadingFinished={index < (currentStep || -1)}
 								loadingStarted={index === currentStep}
 								step={step}
 								index={index}

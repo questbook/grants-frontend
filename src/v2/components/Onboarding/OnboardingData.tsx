@@ -34,7 +34,7 @@ export const onboardingData = {
 	},
 	dao: {
 		title: 'Run Grants program',
-		description: 'For DAOs, protocols, and fundss',
+		description: 'For DAOs, protocols, and funds',
 		image: <Image
 			w={'40.67px'}
 			h={'56px'}
