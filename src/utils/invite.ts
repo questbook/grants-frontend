@@ -9,6 +9,7 @@ export type InviteInfo = {
 	workspaceId: number
 	role: number
 	privateKey: Uint8Array
+	chainId: number
 }
 
 /**
@@ -26,11 +27,13 @@ export const extractInviteInfo = (url?: string): InviteInfo | undefined => {
 	const workspaceIdStr = params.get('w')
 	const roleStr = params.get('r')
 	const privateKeyStr = params.get('k')
+	const chainIdStr = params.get('c')
 
 	if(
 		typeof workspaceIdStr === 'string'
 		&& typeof roleStr === 'string'
 		&& typeof privateKeyStr === 'string'
+		&& typeof chainIdStr === 'string'
 	) {
 		const workspaceId = +workspaceIdStr
 		if(Number.isNaN(workspaceId)) {
@@ -42,6 +45,11 @@ export const extractInviteInfo = (url?: string): InviteInfo | undefined => {
 			throw new Error('Invalid role in invite')
 		}
 
+		const chainId = +chainIdStr
+		if(Number.isNaN(chainId)) {
+			throw new Error('Invalid chain ID in invite')
+		}
+
 		const privateKey = base58.decode(privateKeyStr)
 		if(privateKey.length !== 32) {
 			throw new Error('Invalid private key in invite')
@@ -50,7 +58,8 @@ export const extractInviteInfo = (url?: string): InviteInfo | undefined => {
 		return {
 			workspaceId,
 			role,
-			privateKey
+			privateKey,
+			chainId
 		}
 	}
 }
@@ -61,12 +70,13 @@ export const extractInviteInfo = (url?: string): InviteInfo | undefined => {
  * @returns URL that can be shared
  */
 export const serialiseInviteInfoIntoUrl = (info: InviteInfo) => {
-	const { workspaceId, role, privateKey } = info
+	const { workspaceId, role, privateKey, chainId } = info
 	const url = new URL(window.location.href)
 	url.pathname = ''
 	url.searchParams.set('w', workspaceId.toString())
 	url.searchParams.set('r', role.toString())
 	url.searchParams.set('k', base58.encode(privateKey))
+	url.searchParams.set('c', chainId.toString())
 	return url.toString()
 }
 
@@ -81,9 +91,6 @@ export const useMakeInvite = (role: number) => {
 			// convert "0x" encoded hex to a number
 			const workspaceId = parseInt(workspace!.id.replace('0x', ''), 16)
 
-			console.log(workspaceRegistry.address)
-			const addr = await workspaceRegistry.anonAuthoriserAddress()
-
 			const tx = await workspaceRegistry.createInviteLink(
 				workspaceId,
 				role,
@@ -94,7 +101,8 @@ export const useMakeInvite = (role: number) => {
 			return {
 				workspaceId,
 				role,
-				privateKey: Buffer.from(privateKey)
+				privateKey: Buffer.from(privateKey),
+				chainId: chainId!,
 			}
 		},
 		[role, workspace?.id, workspaceRegistry]
