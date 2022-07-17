@@ -258,6 +258,7 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     "ApplicationSubmitted(uint96,address,address,string,uint48,uint256)": EventFragment;
     "ApplicationUpdated(uint96,address,string,uint8,uint48,uint256)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "MilestoneUpdated(uint96,uint96,uint8,string,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Upgraded(address)": EventFragment;
@@ -267,6 +268,7 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "ApplicationSubmitted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApplicationUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MilestoneUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
@@ -324,6 +326,13 @@ export type BeaconUpgradedEvent = TypedEvent<
 >;
 
 export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
+
+export interface InitializedEventObject {
+  version: number;
+}
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface MilestoneUpdatedEventObject {
   _id: BigNumber;
@@ -777,6 +786,9 @@ export interface ApplicationRegistryAbi extends BaseContract {
     BeaconUpgraded(
       beacon?: PromiseOrValue<string> | null
     ): BeaconUpgradedEventFilter;
+
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
 
     "MilestoneUpdated(uint96,uint96,uint8,string,uint256)"(
       _id?: null,

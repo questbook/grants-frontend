@@ -159,6 +159,7 @@ export interface GrantFactoryAbiInterface extends utils.Interface {
     "BeaconUpgraded(address)": EventFragment;
     "GrantCreated(address,uint96,string,uint256)": EventFragment;
     "GrantImplementationUpdated(address,bool,bytes)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Paused(address)": EventFragment;
     "Unpaused(address)": EventFragment;
@@ -169,6 +170,7 @@ export interface GrantFactoryAbiInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "GrantCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "GrantImplementationUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
@@ -221,6 +223,13 @@ export type GrantImplementationUpdatedEvent = TypedEvent<
 
 export type GrantImplementationUpdatedEventFilter =
   TypedEventFilter<GrantImplementationUpdatedEvent>;
+
+export interface InitializedEventObject {
+  version: number;
+}
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface OwnershipTransferredEventObject {
   previousOwner: string;
@@ -485,6 +494,9 @@ export interface GrantFactoryAbi extends BaseContract {
       success?: null,
       data?: null
     ): GrantImplementationUpdatedEventFilter;
+
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: PromiseOrValue<string> | null,
