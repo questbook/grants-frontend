@@ -21,9 +21,11 @@ import NavbarLayout from 'src/layout/navbarLayout'
 import { formatAmount } from 'src/utils/formattingUtils'
 import { unixTimestampSeconds } from 'src/utils/generics'
 import verify from 'src/utils/grantUtils'
+import { extractInviteInfo, InviteInfo } from 'src/utils/invite'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
+import AcceptInviteModal from 'src/v2/components/AcceptInviteModal'
 import { useAccount, useConnect } from 'wagmi'
 
 const PAGE_SIZE = 40
@@ -35,8 +37,7 @@ function BrowseGrants() {
 	const router = useRouter()
 	const { subgraphClients, connected } = useContext(ApiClientsContext)!
 
-	const allNetworkGrants = Object.keys(subgraphClients)!.map((key) => useGetAllGrantsLazyQuery({ client: subgraphClients[key].client })
-	)
+	const allNetworkGrants = Object.keys(subgraphClients)!.map((key) => useGetAllGrantsLazyQuery({ client: subgraphClients[key].client }))
 
 	const toast = useToast()
 	const [grants, setGrants] = useState<GetAllGrantsQuery['grants']>([])
@@ -44,6 +45,8 @@ function BrowseGrants() {
 	const [allDataFetched, setAllDataFectched] = useState<Boolean>(false)
 
 	const [currentPage, setCurrentPage] = useState(0)
+
+	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
 
 	const getGrantData = async(firstTime: boolean = false) => {
 		setLoading(true)
@@ -117,12 +120,11 @@ function BrowseGrants() {
 		}
 
 		const parentElement = (current as HTMLElement)?.parentNode as HTMLElement
-		const reachedBottom =
-      Math.abs(
-      	parentElement.scrollHeight -
-          parentElement.clientHeight -
-          parentElement.scrollTop
-      ) < 10
+		const reachedBottom = Math.abs(
+			parentElement.scrollHeight -
+			parentElement.clientHeight -
+			parentElement.scrollTop
+		) < 10
 		if(reachedBottom) {
 			getGrantData()
 		}
@@ -145,6 +147,24 @@ function BrowseGrants() {
 		// eslint-disable-next-line consistent-return
 		return () => parentElement.removeEventListener('scroll', handleScroll)
 	}, [handleScroll])
+
+	useEffect(() => {
+		try {
+			const inviteInfo = extractInviteInfo()
+			console.log('invite ', inviteInfo)
+			if(inviteInfo) {
+				setInviteInfo(inviteInfo)
+			}
+		} catch(error: any) {
+			console.error('invalid invite ', error)
+			toast({
+				title: `Invalid invite "${error.message}"`,
+				status: 'error',
+				duration: 9000,
+				isClosable: true,
+			})
+		}
+	}, [])
 
 	return (
 		<Flex
@@ -270,6 +290,14 @@ function BrowseGrants() {
 					</Flex>
 				)
 			}
+			<AcceptInviteModal
+				inviteInfo={inviteInfo}
+				onClose={
+					() => {
+						setInviteInfo(undefined)
+						window.history.pushState(undefined, '', '/')
+					}
+				} />
 		</Flex>
 	)
 }
