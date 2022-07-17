@@ -4,6 +4,7 @@ import moment from 'moment'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
 import { CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
 import { ALL_SUPPORTED_CHAIN_IDS } from 'src/constants/chains'
+import safeNetworkInfo from 'src/constants/safeNetwork.json'
 import { FundTransfer } from 'src/types'
 
 export function timeToString(
@@ -225,4 +226,8 @@ export const getExplorerUrlForAddress = (chainId: SupportedChainId | undefined, 
 
 export const getExplorerUrlForTxHash = (chainId: SupportedChainId | undefined, tx: string) => {
 	return CHAIN_INFO[chainId!]?.explorer.transactionHash.replace('{{tx}}', tx) || ''
+}
+
+export const getExplorerUrlForSafeTxHash = (safechainId: SupportedChainId | undefined, tx: string) => {
+	return safeNetworkInfo[safechainId!]?.explorer.transactionHash.replace('{{tx}}', tx) || ''
 }

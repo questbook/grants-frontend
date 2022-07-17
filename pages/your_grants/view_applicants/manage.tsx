@@ -188,6 +188,7 @@ function ManageGrant() {
 					type="funding_sent"
 					chainId={getSupportedChainIdFromWorkspace(workspace)}
 					rewardToken={rewardToken}
+					workspace={workspace}
 				/>
 			),
 		},

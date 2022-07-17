@@ -66,7 +66,6 @@ const OnboardingCreateDao = () => {
 			// const connector = connectors.find((x) => x.id === 'injected')
 			// connect(connector)
 			setConnectWalletModalIsOpen(true)
-			getSuu
 			return
 		}
 

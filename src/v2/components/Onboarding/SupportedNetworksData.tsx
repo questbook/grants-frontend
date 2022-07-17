@@ -1,6 +1,7 @@
 import { Image } from '@chakra-ui/react'
 import { OptionBase } from 'chakra-react-select'
 import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO } from 'src/constants/chains'
+import safeNetwork from 'src/constants/safeNetwork.json'
 import SupportedChainId from 'src/generated/SupportedChainId'
 
 export interface NetworkSelectOption extends OptionBase {
@@ -21,13 +22,17 @@ export interface NetworkSelectOption extends OptionBase {
 //   	},
 //   }
 
-const solana = { id: 245022926,
-	label: 'Solana',
+
+const solana = {
+	id: safeNetwork['900001'].daoChainId,
+	label: safeNetwork['900001'].name,
 	icon: (
 		<Image
-			src={'/chain_assets/solana.svg'}
+			src={safeNetwork['900001'].icon}
 			boxSize={5} />
-	), }
+	),
+}
+
 const allchains = ALL_SUPPORTED_CHAIN_IDS.map((chainId) => ({
 	id: chainId,
 	label: CHAIN_INFO[chainId].name,

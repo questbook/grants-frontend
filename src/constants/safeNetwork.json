@@ -6,5 +6,13 @@
         "explorer": {
 			"transactionHash": "https://solscan.io/tx/{{tx}}/"
 		}
+    },
+    "4":{
+        "name": "Rinkeby",
+        "icon": "/chain_assets/eth.svg",
+        "daoChainId" :"4",
+        "explorer": {
+			"transactionHash": "https://rinkeby.etherscan.io/tx/{{tx}}"
+		}
     }
 }

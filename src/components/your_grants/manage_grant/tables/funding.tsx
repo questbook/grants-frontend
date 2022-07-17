@@ -1,14 +1,17 @@
 /* eslint-disable react/no-unstable-nested-components */
-import React, { useMemo } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import {
 	Flex, Image, Link,
-	Text, Tooltip, } from '@chakra-ui/react'
+	Text, Tooltip, useToast, } from '@chakra-ui/react'
 import moment from 'moment'
+import { ApiClientsContext } from 'pages/_app'
 import Empty from 'src/components/ui/empty'
 import { SupportedChainId } from 'src/constants/chains'
-import { FundTransfer } from 'src/types'
+import { useGetSafeNetworkForWorkspaceLazyQuery } from 'src/generated/graphql'
+import { FundTransfer, Workspace } from 'src/types'
 import {
 	formatAmount,
+	getExplorerUrlForSafeTxHash,
 	getExplorerUrlForTxHash,
 	getMilestoneTitle,
 	getTextWithEllipses,
@@ -24,6 +27,7 @@ type TableContent = {
     assetDecimals: number,
     grantId: string,
     chainId?: SupportedChainId,
+	safeChainId?: SupportedChainId,
     rewardToken?: Token
   ) => React.ReactChild;
 };
@@ -39,7 +43,7 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 	milestoneTitle: {
 		title: 'Funding Received',
 		flex: 0.5,
-		content: (item, assetId, assetDecimals, __, chainId, rewardToken) => {
+		content: (item, assetId, assetDecimals, __, chainId, ___, rewardToken) => {
 			let icon
 			let label
 			if(rewardToken) {
@@ -122,9 +126,9 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 	action: {
 		title: 'Action',
 		flex: 0.1,
-		content: (item, _, __, ___, chainId) => (
+		content: (item, _, __, ___, chainId, safeChainId) => (
 			<Link
-				href={getExplorerUrlForTxHash(chainId, item.id)}
+				href={safeChainId ? getExplorerUrlForSafeTxHash(safeChainId, item.id) : getExplorerUrlForTxHash(chainId, item.id)}
 				isExternal
 			>
 				<Text
@@ -183,6 +187,7 @@ export type FundingProps = {
   chainId?: SupportedChainId;
   // eslint-disable-next-line react/require-default-props
   rewardToken?: Token;
+  workspace: Workspace;
 };
 
 function Funding({
@@ -194,7 +199,58 @@ function Funding({
 	type,
 	chainId,
 	rewardToken,
+	workspace
 }: FundingProps) {
+
+
+	const { subgraphClients, connected } = useContext(ApiClientsContext)!
+	const safeNetworkId = useGetSafeNetworkForWorkspaceLazyQuery({ client: subgraphClients[chainId].client })
+
+	const toast = useToast()
+
+	const [safeChainId, setSafeChainId] = useState('')
+
+	const getSafeNetwork = async() => {
+		try {
+			const promises = safeNetworkId.map(
+				// eslint-disable-next-line no-async-promise-executor
+				(safeIds) => new Promise(async(resolve) => {
+					try {
+						const { data } = await safeIds({
+							variables: {
+								workspaceID: workspace.id
+							},
+						})
+						if(data && data.workspace) {
+							resolve(data.workspace)
+						} else {
+							resolve([])
+						}
+					} catch(err) {
+						resolve([])
+					}
+				})
+			)
+			Promise.all(promises).then((values: any[]) => {
+				const safeNetworkID = [].concat(
+					...values
+				)
+				if(safeNetworkID[0].safe.id) {
+					setSafeChainId(safeNetworkID[0].safe.id)
+				}
+			})
+		} catch(e) {
+			toast({
+				title: 'Error loading workspaces',
+				status: 'error',
+			})
+		}
+	}
+
+	useEffect(() => {
+		getSafeNetwork()
+	}, [])
+
 	const tableHeaders = useMemo(
 		() => columns.map((column) => TABLE_HEADERS[column]),
 		[columns],
@@ -302,7 +358,7 @@ function Funding({
                   		align="center"
                   		flex={flex}
                   	>
-                  		{content(item, assetId, assetDecimals, grantId, chainId, rewardToken)}
+                  		{content(item, assetId, assetDecimals, grantId, chainId, safeChainId, rewardToken)}
                   	</Flex>
                   ))
 										}

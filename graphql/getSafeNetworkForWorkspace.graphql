@@ -1,0 +1,9 @@
+query getSafeNetworkForWorkspace($workspaceID: ID!) {
+    workspace(id: $workspaceID, subgraphError: allow) {
+        id
+        title
+        safe {
+            id
+        }
+    }
+}

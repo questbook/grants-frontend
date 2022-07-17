@@ -40,7 +40,7 @@ export interface GrantAbiInterface extends utils.Interface {
     "numApplicants()": FunctionFragment;
     "owner()": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
-    "recordTransaction(uint96,uint96,bytes,uint256)": FunctionFragment;
+    "recordTransaction(uint96,uint96,address,bytes,uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "updateGrant(string)": FunctionFragment;
@@ -131,6 +131,7 @@ export interface GrantAbiInterface extends utils.Interface {
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
       PromiseOrValue<BytesLike>,
       PromiseOrValue<BigNumberish>
     ]
@@ -255,7 +256,7 @@ export interface GrantAbiInterface extends utils.Interface {
     "GrantUpdated(uint96,string,bool,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "TransactionRecord(uint96,uint96,address,bytes,uint256,uint256)": EventFragment;
+    "TransactionRecord(uint96,uint96,address,address,bytes,uint256,uint256)": EventFragment;
     "Upgraded(address)": EventFragment;
   };
 
@@ -386,13 +387,14 @@ export type OwnershipTransferredEventFilter =
 export interface TransactionRecordEventObject {
   applicationId: BigNumber;
   milestoneId: BigNumber;
+  asset: string;
   sender: string;
   transactionHash: string;
   amount: BigNumber;
   time: BigNumber;
 }
 export type TransactionRecordEvent = TypedEvent<
-  [BigNumber, BigNumber, string, string, BigNumber, BigNumber],
+  [BigNumber, BigNumber, string, string, string, BigNumber, BigNumber],
   TransactionRecordEventObject
 >;
 
@@ -477,6 +479,7 @@ export interface GrantAbi extends BaseContract {
     recordTransaction(
       _applicationId: PromiseOrValue<BigNumberish>,
       _milestoneId: PromiseOrValue<BigNumberish>,
+      _asset: PromiseOrValue<string>,
       _transactionHash: PromiseOrValue<BytesLike>,
       _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -568,6 +571,7 @@ export interface GrantAbi extends BaseContract {
   recordTransaction(
     _applicationId: PromiseOrValue<BigNumberish>,
     _milestoneId: PromiseOrValue<BigNumberish>,
+    _asset: PromiseOrValue<string>,
     _transactionHash: PromiseOrValue<BytesLike>,
     _amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -657,6 +661,7 @@ export interface GrantAbi extends BaseContract {
     recordTransaction(
       _applicationId: PromiseOrValue<BigNumberish>,
       _milestoneId: PromiseOrValue<BigNumberish>,
+      _asset: PromiseOrValue<string>,
       _transactionHash: PromiseOrValue<BytesLike>,
       _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -804,9 +809,10 @@ export interface GrantAbi extends BaseContract {
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
 
-    "TransactionRecord(uint96,uint96,address,bytes,uint256,uint256)"(
+    "TransactionRecord(uint96,uint96,address,address,bytes,uint256,uint256)"(
       applicationId?: PromiseOrValue<BigNumberish> | null,
       milestoneId?: null,
+      asset?: null,
       sender?: null,
       transactionHash?: null,
       amount?: null,
@@ -815,6 +821,7 @@ export interface GrantAbi extends BaseContract {
     TransactionRecord(
       applicationId?: PromiseOrValue<BigNumberish> | null,
       milestoneId?: null,
+      asset?: null,
       sender?: null,
       transactionHash?: null,
       amount?: null,
@@ -874,6 +881,7 @@ export interface GrantAbi extends BaseContract {
     recordTransaction(
       _applicationId: PromiseOrValue<BigNumberish>,
       _milestoneId: PromiseOrValue<BigNumberish>,
+      _asset: PromiseOrValue<string>,
       _transactionHash: PromiseOrValue<BytesLike>,
       _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -966,6 +974,7 @@ export interface GrantAbi extends BaseContract {
     recordTransaction(
       _applicationId: PromiseOrValue<BigNumberish>,
       _milestoneId: PromiseOrValue<BigNumberish>,
+      _asset: PromiseOrValue<string>,
       _transactionHash: PromiseOrValue<BytesLike>,
       _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

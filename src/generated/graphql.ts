@@ -4026,6 +4026,13 @@ export type GetNumberOfGrantsQueryVariables = Exact<{
 
 export type GetNumberOfGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string }> };
 
+export type GetSafeNetworkForWorkspaceQueryVariables = Exact<{
+  workspaceID: Scalars['ID'];
+}>;
+
+
+export type GetSafeNetworkForWorkspaceQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, safe?: { __typename?: 'WorkspaceSafe', id: string } | null } | null };
+
 export type GetWorkspaceDetailsQueryVariables = Exact<{
   workspaceID: Scalars['ID'];
 }>;
@@ -5631,6 +5638,45 @@ export function useGetNumberOfGrantsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetNumberOfGrantsQueryHookResult = ReturnType<typeof useGetNumberOfGrantsQuery>;
 export type GetNumberOfGrantsLazyQueryHookResult = ReturnType<typeof useGetNumberOfGrantsLazyQuery>;
 export type GetNumberOfGrantsQueryResult = Apollo.QueryResult<GetNumberOfGrantsQuery, GetNumberOfGrantsQueryVariables>;
+export const GetSafeNetworkForWorkspaceDocument = gql`
+    query getSafeNetworkForWorkspace($workspaceID: ID!) {
+  workspace(id: $workspaceID, subgraphError: allow) {
+    id
+    title
+    safe {
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetSafeNetworkForWorkspaceQuery__
+ *
+ * To run a query within a React component, call `useGetSafeNetworkForWorkspaceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSafeNetworkForWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSafeNetworkForWorkspaceQuery({
+ *   variables: {
+ *      workspaceID: // value for 'workspaceID'
+ *   },
+ * });
+ */
+export function useGetSafeNetworkForWorkspaceQuery(baseOptions: Apollo.QueryHookOptions<GetSafeNetworkForWorkspaceQuery, GetSafeNetworkForWorkspaceQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetSafeNetworkForWorkspaceQuery, GetSafeNetworkForWorkspaceQueryVariables>(GetSafeNetworkForWorkspaceDocument, options);
+      }
+export function useGetSafeNetworkForWorkspaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSafeNetworkForWorkspaceQuery, GetSafeNetworkForWorkspaceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetSafeNetworkForWorkspaceQuery, GetSafeNetworkForWorkspaceQueryVariables>(GetSafeNetworkForWorkspaceDocument, options);
+        }
+export type GetSafeNetworkForWorkspaceQueryHookResult = ReturnType<typeof useGetSafeNetworkForWorkspaceQuery>;
+export type GetSafeNetworkForWorkspaceLazyQueryHookResult = ReturnType<typeof useGetSafeNetworkForWorkspaceLazyQuery>;
+export type GetSafeNetworkForWorkspaceQueryResult = Apollo.QueryResult<GetSafeNetworkForWorkspaceQuery, GetSafeNetworkForWorkspaceQueryVariables>;
 export const GetWorkspaceDetailsDocument = gql`
     query getWorkspaceDetails($workspaceID: ID!) {
   workspace(id: $workspaceID, subgraphError: allow) {
