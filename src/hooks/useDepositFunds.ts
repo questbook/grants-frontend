@@ -48,9 +48,6 @@ export default function useDepositFunds(
 
 	}, [rewardContract])
 
-	// const validate = useCallback(async(grantAddress, finalAmount) => {
-
-	// }, [])
 	async function validate() {
 		setLoading(true)
 		try {
