@@ -191,7 +191,6 @@ const OnboardingCreateDao = () => {
 			</BackgroundImageLayout>
 			<NetworkTransactionModal
 				isOpen={currentStep !== undefined}
-				onClose={() => setCurrentStep(undefined)}
 				title='Creating DAO on-chain...'
 				subtitle='creating DAO'
 				description={

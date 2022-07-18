@@ -86,7 +86,7 @@ export const useMakeInvite = (role: number) => {
 	const workspaceRegistry = useQBContract('workspace', chainId)
 
 	const makeInvite = useCallback(
-		async(): Promise<InviteInfo> => {
+		async(didSign?: () => void): Promise<InviteInfo> => {
 			const { privateKey, address } = generateKeyPairAndAddress()
 			// convert "0x" encoded hex to a number
 			const workspaceId = parseInt(workspace!.id.replace('0x', ''), 16)
@@ -96,6 +96,7 @@ export const useMakeInvite = (role: number) => {
 				role,
 				address,
 			)
+			didSign?.()
 			await tx.wait()
 
 			return {

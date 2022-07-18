@@ -6,7 +6,6 @@ import { CheckCircle } from '../assets/custom chakra icons/CheckCircle'
 
 export type NetworkTransactionModalProps = {
 	isOpen: boolean
-	onClose: () => void
 	/** main title of the transaction */
 	title: string
 	/** two words about what we're doing on chain, eg. "creating invite link" */
@@ -27,7 +26,6 @@ type ModalStepProps = {
 
 export default ({
 	isOpen,
-	onClose,
 	title,
 	subtitle,
 	description,
@@ -41,7 +39,7 @@ export default ({
 	return (
 		<Modal
 			isOpen={isOpen}
-			onClose={onClose}
+			onClose={() => { }}
 			isCentered
 			scrollBehavior={'outside'}
 			size='sm'
