@@ -181,7 +181,7 @@ function Sidebar() {
         	>
             Create your DAO
         	</Button>
-        )
+				)
 			}
 		</Flex>
 	)
