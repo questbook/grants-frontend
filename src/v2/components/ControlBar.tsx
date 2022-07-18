@@ -43,7 +43,11 @@ export default function ControlBar({ points, currentIndex }: ControlBarProps) {
 										: (
 											<Circle
 												size='3.5'
-												bg={colorScheme} />
+												bg={colorScheme}>
+												<Circle
+													bg='v2LightGrey'
+													size='1.5' />
+											</Circle>
 										)
 								}
 								<Text
