@@ -187,10 +187,6 @@ function ModalContent({
 			return
 		}
 
-		if(applicantWalletAddress === applicantId) {
-			setApplicantWalletAddress('0x0000000000000000000000000000000000000000')
-		}
-
 		setSubmitClickedP2P(true)
 		setDisburseP2PAmount(parseAmount(funding, rewardAsset.address, rewardAssetDecimals))
 	}
@@ -242,7 +238,9 @@ function ModalContent({
 								direction="row"
 								justify="start"
 								align="center">
-								<Image src={rewardAsset.icon} />
+								<Image
+									src={rewardAsset.icon}
+									boxSize="36px" />
 								<Flex
 									direction="column"
 									ml={2}>
@@ -290,7 +288,9 @@ function ModalContent({
 								direction="row"
 								justify="start"
 								align="center">
-								<Image src={rewardAsset.icon} />
+								<Image
+									src={rewardAsset.icon}
+									boxSize="36px" />
 								<Flex
 									direction="column"
 									ml={2}>
@@ -378,7 +378,9 @@ function ModalContent({
 							justify="start"
 							align="center"
 							mt={6}>
-							<Image src={rewardAsset.icon} />
+							<Image
+								src={rewardAsset.icon}
+								boxSize="36px" />
 							<Flex
 								direction="column"
 								ml={2}>
@@ -539,7 +541,9 @@ function ModalContent({
 							justify="start"
 							align="center"
 							mt={6}>
-							<Image src={rewardAsset.icon} />
+							<Image
+								src={rewardAsset.icon}
+								boxSize="36px" />
 							<Flex
 								direction="column"
 								ml={2}>
