@@ -238,7 +238,9 @@ function ModalContent({
 								direction="row"
 								justify="start"
 								align="center">
-								<Image src={rewardAsset.icon} boxSize="36px" />
+								<Image
+									src={rewardAsset.icon}
+									boxSize="36px" />
 								<Flex
 									direction="column"
 									ml={2}>
@@ -286,7 +288,9 @@ function ModalContent({
 								direction="row"
 								justify="start"
 								align="center">
-								<Image src={rewardAsset.icon} boxSize="36px"/>
+								<Image
+									src={rewardAsset.icon}
+									boxSize="36px" />
 								<Flex
 									direction="column"
 									ml={2}>
@@ -374,7 +378,9 @@ function ModalContent({
 							justify="start"
 							align="center"
 							mt={6}>
-							<Image src={rewardAsset.icon} boxSize="36px"/>
+							<Image
+								src={rewardAsset.icon}
+								boxSize="36px" />
 							<Flex
 								direction="column"
 								ml={2}>
