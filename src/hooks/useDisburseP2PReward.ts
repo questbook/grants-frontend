@@ -161,7 +161,7 @@ export default function useDisburseReward(
 								},
 							}),
 						})
-						await Promise.all([approvalEvent(), disburseRewardP2PEvent()])
+						 Promise.all([approvalEvent(), disburseRewardP2PEvent()])
 					} else if(parseInt(getAllowance.toString()) > parseInt(data)) {
 						console.log('Disburse', typeof(data), parseInt(getAllowance.toString()))
 						toastRef.current = toast({
@@ -175,7 +175,7 @@ export default function useDisburseReward(
 								},
 							}),
 						})
-						await Promise.all([workspaceRegistryContract.disburseRewardP2P(
+						 Promise.all([workspaceRegistryContract.disburseRewardP2P(
 							applicationId!,
 							applicantWalletAddress!,
 							milestoneIndex!,
@@ -186,7 +186,7 @@ export default function useDisburseReward(
 
 					} else {
 						console.log('getAllowance 2', typeof(data), (parseInt(getAllowance.toString()) + parseInt(data)).toString())
-						await rewardContract.approve(workspaceRegistryContract.address, (parseInt(getAllowance.toString()) + parseInt(data)).toString())
+						 rewardContract.approve(workspaceRegistryContract.address, (parseInt(getAllowance.toString()) + parseInt(data)).toString())
 						toastRef.current = toast({
 							position: 'top',
 							render: () => CustomToast({
@@ -199,12 +199,12 @@ export default function useDisburseReward(
 							}),
 						})
 
-						await Promise.all([approvalEvent(), disburseRewardP2PEvent()])
+						 Promise.all([approvalEvent(), disburseRewardP2PEvent()])
 					}
 
 				} else {
 					console.log('EOA account', data)
-					await Promise.all([rewardContract.approve(workspaceRegistryContract.address, data),
+					 Promise.all([rewardContract.approve(workspaceRegistryContract.address, data),
 						workspaceRegistryContract.disburseRewardP2P(
 							applicationId!,
 							applicantWalletAddress!,
