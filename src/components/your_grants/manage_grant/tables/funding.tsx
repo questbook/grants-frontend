@@ -128,7 +128,7 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 		flex: 0.1,
 		content: (item, _, __, ___, chainId, safeChainId) => (
 			<Link
-				href={safeChainId ? getExplorerUrlForSafeTxHash(safeChainId, item.id) : getExplorerUrlForTxHash(chainId, item.id)}
+				href={safeChainId ? getExplorerUrlForSafeTxHash(safeChainId.includes('x') ? safeChainId.split('x')[1] : safeChainId, item.id) : getExplorerUrlForTxHash(chainId, item.id)}
 				isExternal
 			>
 				<Text
