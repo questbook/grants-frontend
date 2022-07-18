@@ -204,16 +204,19 @@ export default function useDisburseReward(
 
 				} else {
 					console.log('EOA account', data)
-					 Promise.all([rewardContract.approve(workspaceRegistryContract.address, data),
-						workspaceRegistryContract.disburseRewardP2P(
+					 rewardContract.approve(workspaceRegistryContract.address, data)
+					const transDetail = await workspaceRegistryContract.disburseRewardP2P(
 							applicationId!,
 							applicantWalletAddress!,
 							milestoneIndex!,
 							rewardAssetAddress!,
 							data,
 							workspace?.id!
-						),
-						disburseRewardP2PEvent()])
+					)
+					// disburseRewardP2PEvent()
+					const transDetailMined = transDetail.wait()
+					setTransactionData(transDetailMined)
+					setLoading(false)
 				}
 
 			} catch(e: any) {
