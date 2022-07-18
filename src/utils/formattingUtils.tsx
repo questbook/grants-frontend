@@ -229,6 +229,5 @@ export const getExplorerUrlForTxHash = (chainId: SupportedChainId | undefined, t
 }
 
 export const getExplorerUrlForSafeTxHash = (safechainId: SupportedChainId | undefined, tx: string) => {
-	console.log('url', safechainId)
 	return safeNetworkInfo[safechainId!]?.explorer.transactionHash.replace('{{tx}}', tx) || ''
 }
