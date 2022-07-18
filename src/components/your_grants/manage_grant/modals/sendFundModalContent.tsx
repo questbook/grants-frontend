@@ -541,7 +541,9 @@ function ModalContent({
 							justify="start"
 							align="center"
 							mt={6}>
-							<Image src={rewardAsset.icon} />
+							<Image
+								src={rewardAsset.icon}
+								boxSize="36px" />
 							<Flex
 								direction="column"
 								ml={2}>
