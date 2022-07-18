@@ -204,7 +204,7 @@ export default function useDisburseReward(
 
 				} else {
 					console.log('EOA account', data)
-					const tx =  await rewardContract.approve(workspaceRegistryContract.address, data)
+					const tx = await rewardContract.approve(workspaceRegistryContract.address, data)
 					await tx.wait()
 					const transDetail = await workspaceRegistryContract.disburseRewardP2P(
 							applicationId!,
