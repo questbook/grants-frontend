@@ -187,10 +187,6 @@ function ModalContent({
 			return
 		}
 
-		if(applicantWalletAddress === applicantId) {
-			setApplicantWalletAddress('0x0000000000000000000000000000000000000000')
-		}
-
 		setSubmitClickedP2P(true)
 		setDisburseP2PAmount(parseAmount(funding, rewardAsset.address, rewardAssetDecimals))
 	}
