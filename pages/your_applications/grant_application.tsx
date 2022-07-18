@@ -44,7 +44,7 @@ function ViewApplication() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	chainId ?? defaultChainId
+      	chainId || defaultChainId
       ].client,
 	})
 
@@ -85,7 +85,7 @@ function ViewApplication() {
 		const getStringField = (fieldName: string) => (
 			application?.fields
 				?.find(({ id }) => id.split('.')[1] === fieldName)
-				?.values[0]?.value ?? ''
+				?.values[0]?.value || ''
 		)
 		let decimals: number
 		if(application.grant.reward.token) {
@@ -109,12 +109,12 @@ function ViewApplication() {
 			membersDescription:
         fields
         	.find((f: any) => f.id.split('.')[1] === 'memberDetails')
-        	?.values.map((val) => ({ description: val.value })) ?? [],
+        	?.values.map((val) => ({ description: val.value })) || [],
 			projectName: getStringField('projectName'),
 			projectLinks:
         fields
         	.find((f: any) => f.id.split('.')[1] === 'projectLink')
-        	?.values.map((val) => ({ link: val.value })) ?? [],
+        	?.values.map((val) => ({ link: val.value })) || [],
 			projectDetails: getStringField('projectDetails'),
 			projectGoal: getStringField('projectGoals'),
 			projectMilestones:
@@ -123,21 +123,21 @@ function ViewApplication() {
         	return (
         		{
         			milestone: ms.title,
-        			// milestoneReward: ethers.utils.formatEther(ms.amount ?? '0'),
+        			// milestoneReward: ethers.utils.formatEther(ms.amount || '0'),
         			milestoneReward:
                 application ? formatAmount(
                 	ms.amount,
-                	decimals ?? 18,
+                	decimals || 18,
                 	true,
                 ) : '1'
         			,
         		})
-        }) ?? [],
-			// fundingAsk: ethers.utils.formatEther(getStringField('fundingAsk') ?? '0'),
+        }) || [],
+			// fundingAsk: ethers.utils.formatEther(getStringField('fundingAsk') || '0'),
 			fundingAsk:
         application && getStringField('fundingAsk') !== '' ? formatAmount(
         	getStringField('fundingAsk'),
-        	decimals ?? 18,
+        	decimals || 18,
         	true,
         ) : '1',
 			fundingBreakdown: getStringField('fundingBreakdown'),
@@ -165,8 +165,8 @@ function ViewApplication() {
 			)
 		]?.supportedCurrencies[application?.grant.reward.asset.toLowerCase()!]
 			?.decimals
-		label = getAssetInfo(application?.grant?.reward?.asset ?? '', chainId)?.label
-		icon = getAssetInfo(application?.grant?.reward?.asset ?? '', chainId)?.icon
+		label = getAssetInfo(application?.grant?.reward?.asset || '', chainId)?.label
+		icon = getAssetInfo(application?.grant?.reward?.asset || '', chainId)?.icon
 	}
 
 	return (
@@ -207,7 +207,7 @@ function ViewApplication() {
 					rewardAmount={
 						application ? formatAmount(
 							application.grant.reward.committed,
-							decimals ?? 18,
+							decimals || 18,
 						) : '1'
 					}
 					rewardCurrency={label}
@@ -218,7 +218,7 @@ function ViewApplication() {
 					grantTitle={application?.grant?.title || ''}
 					sentDate={
 						application?.createdAtS.toString()
-            ?? ''
+            || ''
 					}
 					daoLogo={
 						getUrlForIPFSHash(
@@ -229,11 +229,11 @@ function ViewApplication() {
 					feedback={application?.feedbackDao || ''}
 					grantRequiredFields={
 						application?.grant?.fields?.map((field: any) => field.id.split('.')[1])
-            ?? []
+            || []
 					}
 					piiFields={
 						application?.grant?.fields?.filter((field: any) => field.isPii).map((field: any) => field.id.split('.')[1])
-            ?? []
+            || []
 					}
 					applicationID={applicationID}
 					workspace={application?.grant?.workspace}

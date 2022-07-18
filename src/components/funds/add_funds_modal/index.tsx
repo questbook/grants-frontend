@@ -64,7 +64,7 @@ function AddFunds({
 	const { data: signer } = useSigner()
 	const rewardAssetContract = useContract({
 		addressOrName:
-      rewardAsset.address ?? '0x0000000000000000000000000000000000000000',
+      rewardAsset.address || '0x0000000000000000000000000000000000000000',
 		contractInterface: ERC20ABI,
 		signerOrProvider: signer,
 	})
@@ -96,7 +96,7 @@ function AddFunds({
 
 	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
-		// console.log(depositTransactionData);
+
 		if(depositTransactionData) {
 			onClose()
 			setFinalAmount(undefined)

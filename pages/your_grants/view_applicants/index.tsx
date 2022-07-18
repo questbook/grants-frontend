@@ -85,14 +85,14 @@ function ViewApplicants() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
       ].client,
 	})
 
 	const [queryReviewerParams, setQueryReviewerParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
       ].client,
 	})
 
@@ -217,12 +217,13 @@ function ViewApplicants() {
 					project_name: getFieldString('projectName'),
 					funding_asked: {
 						// amount: formatAmount(
-						//   getFieldString('fundingAsk') ?? '0',
+						//   getFieldString('fundingAsk') || '0',
 						// ),
 						amount:
-              applicant && getFieldString('fundingAsk')
-              	? formatAmount(getFieldString('fundingAsk')!, decimal ?? 18)
-              	: '1',
+              applicant && getFieldString('fundingAsk') ? formatAmount(
+                getFieldString('fundingAsk')!,
+                decimal || 18,
+              ) : '1',
 						symbol: label,
 						icon,
 					},
@@ -233,7 +234,7 @@ function ViewApplicants() {
 						getTotalFundingRecv(
               applicant.milestones as unknown as ApplicationMilestone[]
 						).toString(),
-						decimal ?? 18
+						decimal || 18,
 					),
 				}
 			})
@@ -276,47 +277,42 @@ function ViewApplicants() {
 		console.log('Raw reviewer data: ', reviewData)
 		if(reviewData.data && reviewData.data.grantApplications.length) {
 			console.log('Reviewer Applications: ', reviewData.data)
-			const fetchedApplicantsData = reviewData.data.grantApplications.map(
-				(applicant) => {
-					const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))
-						?.values[0]?.value
-					return {
-						grantTitle: applicant?.grant?.title,
-						applicationId: applicant.id,
-						applicant_address: applicant.applicantId,
-						sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
-						project_name: getFieldString('projectName'),
-						funding_asked: {
-							// amount: formatAmount(
-							//   getFieldString('fundingAsk') ?? '0',
-							// ),
-							amount:
-                applicant && getFieldString('fundingAsk')
-                	? formatAmount(
-                      getFieldString('fundingAsk')!,
-                      CHAIN_INFO[
-                      	getSupportedChainIdFromSupportedNetwork(
-                      		applicant.grant.workspace.supportedNetworks[0]
-                      	)
-                      ]?.supportedCurrencies[
-                      	applicant.grant.reward.asset.toLowerCase()
-                      ]?.decimals ?? 18
+			const fetchedApplicantsData = reviewData.data.grantApplications.map((applicant) => {
+				const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
+				return {
+					grantTitle: applicant?.grant?.title,
+					applicationId: applicant.id,
+					applicant_address: applicant.applicantId,
+					sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
+					project_name: getFieldString('projectName'),
+					funding_asked: {
+						// amount: formatAmount(
+						//   getFieldString('fundingAsk') || '0',
+						// ),
+						amount:
+              applicant && getFieldString('fundingAsk') ? formatAmount(
+                getFieldString('fundingAsk')!,
+                CHAIN_INFO[
+                	getSupportedChainIdFromSupportedNetwork(
+                		applicant.grant.workspace.supportedNetworks[0],
                 	)
-                	: '1',
-							symbol: getAssetInfo(
-								applicant?.grant?.reward?.asset?.toLowerCase(),
-								getSupportedChainIdFromWorkspace(workspace)
-							).label,
-							icon: getAssetInfo(
-								applicant?.grant?.reward?.asset?.toLowerCase(),
-								getSupportedChainIdFromWorkspace(workspace)
-							).icon,
-						},
-						// status: applicationStatuses.indexOf(applicant?.state),
-						status: Reviewerstatus(applicant.reviews),
-						reviewers: applicant.reviewers,
-					}
+                ]?.supportedCurrencies[applicant.grant.reward.asset.toLowerCase()]
+                	?.decimals || 18,
+              ) : '1',
+						symbol: getAssetInfo(
+							applicant?.grant?.reward?.asset?.toLowerCase(),
+							getSupportedChainIdFromWorkspace(workspace),
+						).label,
+						icon: getAssetInfo(
+							applicant?.grant?.reward?.asset?.toLowerCase(),
+							getSupportedChainIdFromWorkspace(workspace),
+						).icon,
+					},
+					// status: applicationStatuses.indexOf(applicant?.state),
+					status: Reviewerstatus(applicant.reviews),
+					reviewers: applicant.reviewers,
 				}
+			}
 			)
 
 			console.log('fetch', fetchedApplicantsData)
@@ -416,33 +412,23 @@ function ViewApplicants() {
 				px={10}
 				pos="relative"
 			>
-				<Breadcrumbs path={['Grants & Bounties', 'View Applicants']} />
-				<Flex ml="-50px">
-					<Box p='2'>
-						<Heading size='md'>
-							{grantTitle}
-						</Heading>
-					</Box>
-				</Flex>
-				<GrantStatsBox
-					numberOfApplicants={applicantsData.length}
-		  totalDisbursed={totalDisbursed}
-				/>
-				<Box>
-				<Flex>
-					<HStack spacing="14px">
-					<Button w="128px" h="28px" variant="primaryV2" onClick= {() => setApplicationsFilter('Accepted')} >
-						Accepted
-					</Button>
-					<Button w="128px" h="28px" variant="primaryV2" onClick= {() => setApplicationsFilter('In Review')} >
-						In Review
-					</Button>
-					<Button w="128px" h="28px" variant="primaryV2" onClick= {() => setApplicationsFilter('Rejected')}>
-						Rejected
-					</Button>
-					</HStack>
-					</Flex>
-				</Box>
+				<Breadcrumbs path={['My Grants', 'View Applicants']} />
+
+				{
+					isAdmin && (
+						<Box
+							pos="absolute"
+							right="40px"
+							top="48px">
+							<Button
+								variant="primary"
+								onClick={() => setRubricDrawerOpen(true)}>
+								{(grantData?.grants[0].rubric?.items.length || 0) > 0 || false ? 'Edit Evaluation Rubric' : 'Setup Evaluation Rubric'}
+							</Button>
+						</Box>
+					)
+				}
+
 				<RubricDrawer
 					rubricDrawerOpen={rubricDrawerOpen}
 					setRubricDrawerOpen={setRubricDrawerOpen}
@@ -451,41 +437,55 @@ function ViewApplicants() {
 					setRubrics={setRubrics}
 					maximumPoints={maximumPoints}
 					setMaximumPoints={setMaximumPoints}
-					chainId={getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId}
+					chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
 					grantAddress={grantID}
-					workspaceId={workspace?.id ?? ''}
-					initialIsPrivate={grantData?.grants[0].rubric?.isPrivate ?? false}
+					workspaceId={workspace?.id || ''}
+					initialIsPrivate={grantData?.grants[0].rubric?.isPrivate || false}
 				/>
 
 				{
-					(reviewerData.length > 0 || applicantsData.length > 0) &&
-        (isReviewer || isAdmin) ? (
-							<Table
-								isReviewer={isReviewer}
-								data={applicantsData}
-								reviewerData={reviewerData}
-								actorId={isActorId}
-								applicationsFilter = {applicationsFilter}
-								onViewApplicantFormClick={
-									(commentData: any) => router.push({
-										pathname: '/your_grants/view_applicants/applicant_form/',
-										query: {
-											commentData,
-											applicationId: commentData.applicationId,
-										},
-									})
-								}
-								// eslint-disable-next-line @typescript-eslint/no-shadow
-								onManageApplicationClick={
-									(data: any) => router.push({
-										pathname: '/your_grants/view_applicants/manage/',
-										query: {
-											applicationId: data.applicationId,
-										},
-									})
-								}
-								archiveGrantComponent={
-									!acceptingApplications && (
+					(reviewerData.length > 0 || applicantsData.length > 0) && (isReviewer || isAdmin) ? (
+						<Table
+							isReviewer={isReviewer}
+							data={applicantsData}
+							reviewerData={reviewerData}
+							actorId={isActorId}
+							applicationsFilter = {applicationsFilter}
+							onViewApplicantFormClick={
+								(commentData: any) => router.push({
+									pathname: '/your_grants/view_applicants/applicant_form/',
+									query: {
+										commentData,
+										applicationId: commentData.applicationId,
+									},
+								})
+							}
+							// eslint-disable-next-line @typescript-eslint/no-shadow
+							onManageApplicationClick={
+								(data: any) => router.push({
+									pathname: '/your_grants/view_applicants/manage/',
+									query: {
+										applicationId: data.applicationId,
+									},
+								})
+							}
+							archiveGrantComponent={
+								!acceptingApplications && (
+									<Flex
+										maxW="100%"
+										bg="#F3F4F4"
+										direction="row"
+										align="center"
+										px={8}
+										py={6}
+										mt={6}
+										border="1px solid #E8E9E9"
+										borderRadius="6px"
+									>
+										<Image
+											src="/toast/warning.svg"
+											w="42px"
+											h="36px" />
 										<Flex
 											maxW="100%"
 											bg="#F3F4F4"
@@ -539,6 +539,7 @@ function ViewApplicants() {
 													</Button>
 												)
 											}
+										</Flex>
 										</Flex>
 									)
 								}

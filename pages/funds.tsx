@@ -22,16 +22,16 @@ function AddFunds() {
 	const [selectedTab, setSelectedTab] = React.useState(0)
 
 	useEffect(() => {
-		setSelectedTab(parseInt(localStorage.getItem('fundsTabSelected') ?? '0', 10))
+		setSelectedTab(parseInt(localStorage.getItem('fundsTabSelected') || '0', 10))
 	}, [])
 
 	const { data } = useGetAllGrantsForADaoQuery({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
       ].client,
 		variables: {
-			workspaceId: workspace?.id ?? '',
+			workspaceId: workspace?.id || '',
 			acceptingApplications: tabs[selectedTab].acceptingApplications,
 		},
 	})
