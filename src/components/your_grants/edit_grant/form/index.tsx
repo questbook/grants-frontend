@@ -39,8 +39,8 @@ function Form({
 	const { workspace } = useContext(ApiClientsContext)!
 	const maxDescriptionLength = 300
 	const { data: accountData } = useAccount()
-	const [title, setTitle] = useState(formData.title ?? '')
-	const [summary, setSummary] = useState(formData.summary ?? '')
+	const [title, setTitle] = useState(formData.title || '')
+	const [summary, setSummary] = useState(formData.summary || '')
 
 	const [pk, setPk] = React.useState<string>('*')
 	const {
@@ -144,7 +144,7 @@ function Form({
 
 			return {
 				title,
-				required: formData[id] ?? (isRequired ?? false),
+				required: formData[id] || (isRequired || false),
 				id,
 				tooltip,
 				index,
@@ -229,10 +229,10 @@ function Form({
 		}
 	}, [formData])
 
-	// const [extraFieldDetails, setExtraFieldDetails] = useState(formData.extra_field ?? '');
+	// const [extraFieldDetails, setExtraFieldDetails] = useState(formData.extra_field || '');
 	// const [extraFieldError, setExtraFieldError] = useState(false);
 
-	const [reward, setReward] = React.useState(formData.reward ?? '')
+	const [reward, setReward] = React.useState(formData.reward || '')
 	const [rewardError, setRewardError] = React.useState(false)
 	const [rewardToken, setRewardToken] = React.useState<Token>({
 		label: '', address: '', decimal: '18', iconHash: '',
@@ -255,17 +255,17 @@ function Form({
 			}),
 	)
 
-	const currentChain = useChainId() ?? defaultChainId
+	const currentChain = useChainId() || defaultChainId
 
 	const supportedCurrencies = Object.keys(
 		CHAIN_INFO[currentChain].supportedCurrencies,
 	).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
 		.map((currency) => ({ ...currency, id: currency.address }))
 	const [rewardCurrency, setRewardCurrency] = React.useState(
-		formData.rewardCurrency ?? supportedCurrencies[0].label,
+		formData.rewardCurrency || supportedCurrencies[0].label,
 	)
 	const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
-		formData.rewardCurrencyAddress ?? supportedCurrencies[0].id,
+		formData.rewardCurrencyAddress || supportedCurrencies[0].id,
 	)
 
 	/**
@@ -294,13 +294,13 @@ function Form({
 				CHAIN_INFO[currentChain].supportedCurrencies,
 			).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
 				.map((currency) => ({ ...currency, id: currency.address }))
-			setRewardCurrency(formData.rewardCurrency ?? supportedCurrencies[0].label)
-			setRewardCurrencyAddress(formData.rewardCurrencyAddress ?? supportedCurrencies[0].address)
+			setRewardCurrency(formData.rewardCurrency || supportedCurrencies[0].label)
+			setRewardCurrencyAddress(formData.rewardCurrencyAddress || supportedCurrencies[0].address)
 		}
 
 	}, [currentChain])
 
-	const [date, setDate] = React.useState(formData.date ?? '')
+	const [date, setDate] = React.useState(formData.date || '')
 	const [dateError, setDateError] = React.useState(false)
 
 	const handleOnSubmit = () => {

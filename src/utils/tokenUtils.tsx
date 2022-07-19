@@ -11,8 +11,8 @@ export function getAssetInfo(asset?: string, chainId?: SupportedChainId) {
 	const chain = CHAIN_INFO[chainId!] || CHAIN_INFO[defaultChainId]
 
 	return {
-		label: chain?.supportedCurrencies[asset!]?.label ?? '',
-		icon: chain?.supportedCurrencies[asset!]?.icon ?? '',
+		label: chain?.supportedCurrencies[asset!]?.label || '',
+		icon: chain?.supportedCurrencies[asset!]?.icon || '',
 	}
 }
 

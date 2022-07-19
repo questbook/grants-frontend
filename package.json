@@ -1,6 +1,7 @@
 {
-  "name": "qb",
+  "name": "@questbook/grants-frontend",
   "private": true,
+  "type": "commonjs",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,7 +10,8 @@
     "lint:fix": "eslint ./src ./pages --fix --ext .js,.ts,.jsx,.tsx",
     "export": "next export",
     "generate:typechain": "typechain --target ethers-v5 --out-dir src/generated/contracts src/contracts/abi/*.json",
-    "generate": "graphql-codegen --config codegen.yaml && npm run generate:typechain"
+    "generate:graphql": "graphql-codegen --config codegen.yaml",
+    "generate": "npm run generate:graphql && npm run generate:typechain"
   },
   "dependencies": {
     "@apollo/client": "^3.5.8",
@@ -42,14 +44,13 @@
     "lottie-react": "^2.2.1",
     "moment": "^2.29.1",
     "multiformats": "^9.6.4",
-    "next": "12.0.8",
+    "next": "^12.0.8",
     "next-seo": "^4.28.1",
     "react": "^17.0.2",
     "react-datepicker": "^4.6.0",
     "react-dom": "^17.0.2",
     "react-linkify": "^1.0.0-alpha",
     "react-star-ratings": "^2.3.0",
-    "subscriptions-transport-ws": "^0.11.0",
     "tlds": "^1.230.0",
     "urql": "^2.2.1",
     "use-file-picker": "^1.4.1",

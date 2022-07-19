@@ -33,7 +33,7 @@ export interface GrantAbiInterface extends utils.Interface {
     "active()": FunctionFragment;
     "applicationReg()": FunctionFragment;
     "disburseReward(uint96,uint96,address,uint256)": FunctionFragment;
-    "disburseRewardP2P(uint96,uint96,address,uint256)": FunctionFragment;
+    "disburseRewardP2P(uint96,address,uint96,address,uint256)": FunctionFragment;
     "incrementApplicant()": FunctionFragment;
     "initialize(uint96,string,address,address,address)": FunctionFragment;
     "metadataHash()": FunctionFragment;
@@ -94,6 +94,7 @@ export interface GrantAbiInterface extends utils.Interface {
     functionFragment: "disburseRewardP2P",
     values: [
       PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>
@@ -449,6 +450,7 @@ export interface GrantAbi extends BaseContract {
 
     disburseRewardP2P(
       _applicationId: PromiseOrValue<BigNumberish>,
+      _applicantWalletAddress: PromiseOrValue<string>,
       _milestoneId: PromiseOrValue<BigNumberish>,
       _erc20Interface: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
@@ -541,6 +543,7 @@ export interface GrantAbi extends BaseContract {
 
   disburseRewardP2P(
     _applicationId: PromiseOrValue<BigNumberish>,
+    _applicantWalletAddress: PromiseOrValue<string>,
     _milestoneId: PromiseOrValue<BigNumberish>,
     _erc20Interface: PromiseOrValue<string>,
     _amount: PromiseOrValue<BigNumberish>,
@@ -633,6 +636,7 @@ export interface GrantAbi extends BaseContract {
 
     disburseRewardP2P(
       _applicationId: PromiseOrValue<BigNumberish>,
+      _applicantWalletAddress: PromiseOrValue<string>,
       _milestoneId: PromiseOrValue<BigNumberish>,
       _erc20Interface: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
@@ -851,6 +855,7 @@ export interface GrantAbi extends BaseContract {
 
     disburseRewardP2P(
       _applicationId: PromiseOrValue<BigNumberish>,
+      _applicantWalletAddress: PromiseOrValue<string>,
       _milestoneId: PromiseOrValue<BigNumberish>,
       _erc20Interface: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
@@ -944,6 +949,7 @@ export interface GrantAbi extends BaseContract {
 
     disburseRewardP2P(
       _applicationId: PromiseOrValue<BigNumberish>,
+      _applicantWalletAddress: PromiseOrValue<string>,
       _milestoneId: PromiseOrValue<BigNumberish>,
       _erc20Interface: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
