@@ -8,7 +8,7 @@ import { Contract, ethers } from 'ethers'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import NavbarLayout from '../src/layout/navbarLayout'
 import { addDapp, deploySCW, jsonRpcProvider, apiKey, registerWebHook } from '../src/utils/gaslessUtils'
-import { GitHubTokenContext, ScwAddressContext, WebwalletContext, BiconomyContext } from './_app'
+import { GitHubTokenContext, ScwAddressContext, WebwalletContext, BiconomyContext, NonceContext } from './_app'
 
 const config = {
 	contract: {
@@ -85,6 +85,7 @@ function SignupWebwallet() {
 	const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!
 	const { scwAddress, setScwAddress} = useContext(ScwAddressContext)!
 	const [number, setNumber] = useState<string>('one')
+	const { nonce, setNonce } = useContext(NonceContext)!
 	const { biconomyDaoObj, setBiconomyDaoObj } = useContext(BiconomyContext)!
 
 	useEffect(() => {
@@ -96,11 +97,12 @@ function SignupWebwallet() {
 
 		// setBiconomyDaoObj(null);
 		// setScwAddress(undefined);
-		setIsLoggedIn(true);
+		// setIsLoggedIn(false);
+		// setNonce(undefined);
 		// setWebwallet(undefined);
 		// setScwAddress(undefined);
 
-		console.log("DONE", isLoggedIn, webwallet, scwAddress);
+		console.log("DONE", isLoggedIn, webwallet, scwAddress, nonce);
 		// if (!webwallet) {
 		//     setWebwallet(Wallet.createRandom());
 		// }

@@ -66,7 +66,7 @@ function ConnectWallet() {
 					</Text>
 				</VStack>
 			</Button>
-
+			
 			<ConnectWalletModal
 				isOpen={connectWalletModalIsOpen}
 				onClose={() => setConnectWalletModalIsOpen(false)}

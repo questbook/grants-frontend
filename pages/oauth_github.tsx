@@ -3,7 +3,8 @@ import { Flex } from '@chakra-ui/react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import NavbarLayout from '../src/layout/navbarLayout'
-import { GitHubTokenContext, WebwalletContext } from './_app'
+import { GitHubTokenContext, WebwalletContext, NonceContext } from './_app'
+import { getNonce } from '../src/utils/gaslessUtils'
 
 function GitHubOauth() {
 
@@ -11,6 +12,7 @@ function GitHubOauth() {
 	const [msg, setMsg] = useState<string>('Redirecting you in a second ...')
 	const { webwallet } = useContext(WebwalletContext)!
 	const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!
+	const { nonce, setNonce } = useContext(NonceContext)!
 
 	useEffect(() => {
 		const _code = router.query.code
@@ -22,20 +24,20 @@ function GitHubOauth() {
 		// 	router.push('/')
 		// }
 
-		if(_code && webwallet) {
+		if (_code && webwallet) {
 			console.log("HERE")
 			axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/add_user', {
 				code: _code,
 				webwallet_address: webwallet.address
 			})
 				.then(res => {
-					if(res) {
+					if (res) {
 						console.log("got here", res)
 						return res.data
 					}
 				})
 				.then(data => {
-					if(data) {
+					if (data) {
 						console.log("and here")
 						return data.authorize
 					}
@@ -43,8 +45,14 @@ function GitHubOauth() {
 				.then(status => {
 					console.log("finally here")
 					console.log(status)
-					if(status === true) {
+					if (status === true) {
+						getNonce(webwallet)
+							.then(_nonce => {
+								setNonce(_nonce)
+							})
+							.catch(err => console.log(err));
 						setIsLoggedIn(true)
+						router.push('/');
 					}
 				})
 				.catch(err => alert(err));
@@ -65,7 +73,7 @@ function GitHubOauth() {
 
 }
 
-GitHubOauth.getLayout = function(page: ReactElement) {
+GitHubOauth.getLayout = function (page: ReactElement) {
 	return (
 		<NavbarLayout>
 			{page}
