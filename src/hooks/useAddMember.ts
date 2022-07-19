@@ -8,7 +8,7 @@ import {
 } from 'src/utils/validationUtils'
 import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
-import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract'
+import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
 
 export default function useAddMember(
@@ -26,7 +26,7 @@ export default function useAddMember(
 
 	const currentChainId = useChainId()
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
-	const workspaceRegistryContract = useWorkspaceRegistryContract(chainId)
+	const workspaceRegistryContract = useQBContract('workspace', chainId)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
@@ -65,11 +65,11 @@ export default function useAddMember(
 			// console.log(data);
 			try {
 				const updateTransaction = await workspaceRegistryContract.updateWorkspaceMembers(
-          workspace!.id,
-          data.memberAddress,
-          data.memberRoles,
-          data.memberRolesEnabled,
-          data.memberEmail,
+					workspace!.id,
+					data.memberAddress,
+					data.memberRoles,
+					data.memberRolesEnabled,
+					data.memberEmail,
 				)
 				const updateTransactionData = await updateTransaction.wait()
 
@@ -132,10 +132,9 @@ export default function useAddMember(
 
 			if(
 				!workspaceRegistryContract
-        || workspaceRegistryContract.address
-          === '0x0000000000000000000000000000000000000000'
-        || !workspaceRegistryContract.signer
-        || !workspaceRegistryContract.provider
+        		|| workspaceRegistryContract.address === '0x0000000000000000000000000000000000000000'
+        		|| !workspaceRegistryContract.signer
+        		|| !workspaceRegistryContract.provider
 			) {
 				return
 			}

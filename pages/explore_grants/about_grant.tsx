@@ -1,37 +1,33 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react'
-import {
-	Box,
-	Button,
-	Divider,
-	Flex,
-	Image,
-	Text,
-} from '@chakra-ui/react'
+import { Box, Button, Divider, Flex, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
+import GrantDetails from 'src/components/explore_grants/about_grant/grantDetails'
+import GrantRewards from 'src/components/explore_grants/about_grant/grantRewards'
+import Sidebar from 'src/components/explore_grants/about_grant/sidebar'
+import Breadcrumbs from 'src/components/ui/breadcrumbs'
 import Deadline from 'src/components/ui/deadline'
 import GrantShare from 'src/components/ui/grantShare'
 import Modal from 'src/components/ui/modal'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
-import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
+import { defaultChainId } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
-import { useGetGrantDetailsQuery, useGetGrantsAppliedToQuery } from 'src/generated/graphql'
+import {
+	useGetGrantDetailsQuery,
+	useGetGrantsAppliedToQuery,
+} from 'src/generated/graphql'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
-import verify from 'src/utils/grantUtils'
-import { getAssetInfo } from 'src/utils/tokenUtils'
-import { useAccount } from 'wagmi'
-import GrantDetails from '../../src/components/explore_grants/about_grant/grantDetails'
-import GrantRewards from '../../src/components/explore_grants/about_grant/grantRewards'
-import Sidebar from '../../src/components/explore_grants/about_grant/sidebar'
-import Breadcrumbs from '../../src/components/ui/breadcrumbs'
-import NavbarLayout from '../../src/layout/navbarLayout'
+import NavbarLayout from 'src/layout/navbarLayout'
 import {
 	formatAmount,
 	getFieldLabelFromFieldTitle,
-} from '../../src/utils/formattingUtils'
-import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils'
+} from 'src/utils/formattingUtils'
+import verify from 'src/utils/grantUtils'
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getAssetInfo, getChainInfo } from 'src/utils/tokenUtils'
+import { useAccount } from 'wagmi'
 
 function AboutGrant() {
 	const { data: accountData } = useAccount()
@@ -74,11 +70,11 @@ function AboutGrant() {
 	}, [router.query])
 
 	const [queryParams, setQueryParams] = useState<any>({
-		client: subgraphClients[chainId ?? defaultChainId].client,
+		client: subgraphClients[chainId || defaultChainId].client,
 	})
 
 	const [applicantQueryParams, setApplicantQueryParams] = useState<any>({
-		client: subgraphClients[chainId ?? defaultChainId].client,
+		client: subgraphClients[chainId || defaultChainId].client,
 	})
 
 	useEffect(() => {
@@ -109,7 +105,11 @@ function AboutGrant() {
 	}, [data, error, loading])
 
 	useEffect(() => {
-		if(accountData && accountData?.address && accountData?.address?.length > 0) {
+		if(
+			accountData &&
+      accountData?.address &&
+      accountData?.address?.length > 0
+		) {
 			setAccount(accountData.address)
 		}
 	}, [accountData])
@@ -151,22 +151,7 @@ function AboutGrant() {
 			return
 		}
 
-		let chainInfo
-		let tokenIcon
-		if(grantData.reward.token) {
-			tokenIcon = getUrlForIPFSHash(grantData.reward.token?.iconHash)
-			chainInfo = {
-				address: grantData.reward.token.address,
-				label: grantData.reward.token.label,
-				decimals: grantData.reward.token.decimal,
-				icon: tokenIcon,
-			}
-		} else {
-			chainInfo =
-        CHAIN_INFO[chainId]?.supportedCurrencies[
-        	grantData.reward.asset.toLowerCase()
-        ]
-		}
+		const chainInfo = getChainInfo(grantData, chainId)
 
 		// const chainInfo = CHAIN_INFO[chainId]
 		//   ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];
@@ -184,7 +169,7 @@ function AboutGrant() {
 		setDaoLogo(getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash))
 		setRewardAmount(
 			grantData?.reward?.committed
-				? formatAmount(grantData?.reward?.committed, chainInfo?.decimals ?? 18)
+				? formatAmount(grantData?.reward?.committed, chainInfo?.decimals || 18)
 				: ''
 		)
 		let supportedCurrencyObj
@@ -238,7 +223,7 @@ function AboutGrant() {
 					}
 
 					return {
-						detail: getFieldLabelFromFieldTitle(field.title) ?? 'Invalid Field',
+						detail: getFieldLabelFromFieldTitle(field.title) || 'Invalid Field',
 						// detail: field.title,
 					}
 				})
@@ -285,10 +270,8 @@ function AboutGrant() {
 	return (
 		<Flex
 			direction="column"
-			w="72%"
-			mx="auto"
+			w="100%"
 			mb={8}>
-			<Breadcrumbs path={['Explore Grants', 'About Grant']} />
 			{
 				!acceptingApplications && (
 					<Flex
@@ -342,10 +325,14 @@ function AboutGrant() {
 					</Flex>
 				)
 			}
-			<Flex direction="row">
+			<Flex
+				direction="row"
+				justify="center"
+				w="100%">
 				<Flex
 					direction="column"
-					w="64%">
+					w="54%">
+					<Breadcrumbs path={['Explore Grants', 'About Grant']} />
 					<Text
 						variant="heading"
 						mt="18px">

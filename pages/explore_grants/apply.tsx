@@ -4,17 +4,17 @@ import React, {
 import { Flex } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
-import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
+import Form from 'src/components/explore_grants/apply_grant/form'
+import Sidebar from 'src/components/explore_grants/apply_grant/sidebar'
+import { defaultChainId } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import { useGetGrantDetailsQuery } from 'src/generated/graphql'
+import NavbarLayout from 'src/layout/navbarLayout'
 import { formatAmount } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'
-import { getAssetInfo } from 'src/utils/tokenUtils'
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getAssetInfo, getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import Form from '../../src/components/explore_grants/apply_grant/form'
-import Sidebar from '../../src/components/explore_grants/apply_grant/sidebar'
-import NavbarLayout from '../../src/layout/navbarLayout'
-import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils'
 
 function ApplyGrant() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
@@ -51,7 +51,7 @@ function ApplyGrant() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	chainId ?? defaultChainId
+      	chainId || defaultChainId
       ].client,
 	})
 
@@ -91,21 +91,7 @@ function ApplyGrant() {
 		const localChainId = getSupportedChainIdFromSupportedNetwork(
 			grantData.workspace.supportedNetworks[0],
 		)
-		let chainInfo
-		let tokenIcon
-		if(grantData.reward.token) {
-			tokenIcon = getUrlForIPFSHash(grantData.reward.token?.iconHash)
-			chainInfo = {
-				address: grantData.reward.token.address,
-				label: grantData.reward.token.label,
-				decimals: grantData.reward.token.decimal,
-				icon: tokenIcon,
-			}
-		} else {
-			chainInfo = CHAIN_INFO[localChainId]?.supportedCurrencies[
-				grantData.reward.asset.toLowerCase()
-			]
-		}
+		const chainInfo = getChainInfo(grantData, localChainId)
 
 		// const chainInfo = CHAIN_INFO[localChainId]
 		//   ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];
@@ -122,7 +108,7 @@ function ApplyGrant() {
 			grantData?.reward?.committed
 				? formatAmount(
 					grantData?.reward?.committed,
-					chainInfo?.decimals ?? 18,
+					chainInfo?.decimals || 18,
 				)
 				: '',
 		)
@@ -131,7 +117,7 @@ function ApplyGrant() {
 		if(grantData.reward.token) {
 			setRewardCurrency(chainInfo.label)
 			setRewardCurrencyCoin(chainInfo.icon)
-			setRewardDecimal(parseInt(chainInfo.decimals, 10))
+			setRewardDecimal(chainInfo.decimals)
 		} else {
 			supportedCurrencyObj = getAssetInfo(
 				grantData?.reward?.asset?.toLowerCase(),
@@ -163,6 +149,7 @@ function ApplyGrant() {
 		<Flex
 			direction="row"
 			w="100%"
+			// px="10%"
 			justify="space-evenly">
 			<Flex
 				direction="column"

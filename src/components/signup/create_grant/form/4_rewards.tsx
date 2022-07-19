@@ -54,7 +54,7 @@ function GrantRewardsInput({
 
 	const addERC = true
 
-	const currentChain = useChainId() ?? defaultChainId
+	const currentChain = useChainId() || defaultChainId
 
 	const supportedCurrencies = Object.keys(
 		CHAIN_INFO[currentChain].supportedCurrencies,
@@ -193,7 +193,7 @@ function GrantRewardsInput({
 			return
 		}
 
-		const formData = JSON.parse(data ?? '{}')
+		const formData = JSON.parse(data || '{}')
 		console.log('Data from cache: ', formData)
 
 		if(formData?.reward) {
