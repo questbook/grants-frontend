@@ -30,7 +30,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 	}, [renderCount])
 
 	useEffect(() => {
-		// @TODO FIX HERE
+		// @TODO-gasless: FIX HERE
 		setConnected(true)
 		// if(!connected && isDisconnected) {
 		// 	setConnected(false)

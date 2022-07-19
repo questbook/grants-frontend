@@ -46,8 +46,6 @@ export const useBiconomy = (data: any) => {
 		_biconomy.onEvent(_biconomy.READY, async () => {
 			console.log('Inside biconomy ready event')
 
-			// @TODO: here should change the contract
-
 			const _biconomyWalletClient = _biconomy.biconomyWalletClient
 			console.log('biconomyWalletClient', _biconomyWalletClient)
 

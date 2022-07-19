@@ -114,7 +114,7 @@ function AccountDetails() {
 				}
 			</MenuButton>
 			{
-				// @TODO FIX HERE
+				// @TODO-gasless: FIX HERE
 				// !(connected && isDisconnected) &&
 				(
 					<MenuList>
@@ -126,7 +126,7 @@ function AccountDetails() {
 						<MenuItem
 							onClick={
 								() => {
-									// TODO FIX HERE setConnected(false)
+									// @TODO-gasless: FIX HERE setConnected(false)
 									disconnect()
 									router.replace('/')
 								}

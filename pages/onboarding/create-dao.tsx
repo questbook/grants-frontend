@@ -152,7 +152,7 @@ const OnboardingCreateDao = () => {
 	useEffect(() => {
 		console.log(workspaceRegistryContract)
 		console.log("HERE I AM", activeChain?.id, daoNetwork?.id, callOnContractChange)
-		//@TODO: FIX HERE
+		//@TODO-gasless: FIX HERE
 		if(/*activeChain?.id ===*/ daoNetwork?.id && callOnContractChange) {
 			setCallOnContractChange(false)
 			createWorkspace()

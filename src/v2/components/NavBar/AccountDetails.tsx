@@ -18,7 +18,8 @@ function AccountDetails() {
 	const isOnline = true
 	const { data: accountData } = useQuestbookAccount()
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
-	const { isDisconnected } = useConnect()
+	const { isDisconnected } = useConnect() // @TODO: change the way we see if a user is connect or not
+											// cause now it's only with metmask
 	const { disconnect } = useDisconnect()
 	const { connected, setConnected } = useContext(ApiClientsContext)!
 	const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!
