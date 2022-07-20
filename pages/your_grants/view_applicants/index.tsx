@@ -476,6 +476,36 @@ Archive grant
 					initialIsPrivate={grantData?.grants[0].rubric?.isPrivate || false}
 				/>
 
+				<Modal
+					isOpen={acceptingApplications ? isArchiveModalOpen : false}
+					onClose={
+						() => (acceptingApplications
+							? setIsArchiveModalOpen(false)
+							: () => {})
+					}
+					title=""
+				>
+					<ChangeAccessibilityModalContent
+						onClose={
+							() => (acceptingApplications
+								? setIsArchiveModalOpen(false)
+								: () => {})
+						}
+						imagePath={`/illustrations/${acceptingApplications ? 'archive' : 'publish'}_grant.svg`}
+						title={acceptingApplications ? 'Are you sure you want to archive this grant?' : 'Are you sure you want to publish this grant?'}
+						subtitle={acceptingApplications ? 'The grant will no longer be visible to anyone. You will not receive any new applications for it.' : 'The grant will be live, and applicants can apply for this grant.'}
+						actionButtonText={acceptingApplications ? 'Archive Grant' : 'Publish Grant'}
+						actionButtonOnClick={
+							() => {
+								setIsAcceptingApplications([
+									!isAcceptingApplications[0],
+									isAcceptingApplications[1] + 1,
+								])
+							}
+						}
+						loading={loading}
+					/>
+				</Modal>
 				{
 					(reviewerData.length > 0 || applicantsData.length > 0) && (isReviewer || isAdmin) ? (
 						<Table
