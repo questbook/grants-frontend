@@ -544,6 +544,8 @@ View
 						assetInfo={assetInfo}
 						grant={applicationData?.grant}
 						applicationId={applicationID}
+						applicantId={applicationData?.applicantId!}
+						workspaceId={workspace?.id!}
 						decimals={decimals}
 					/>
 				)
@@ -595,6 +597,7 @@ View
 							contractFunding={applicationData.grant.funding}
 							onClose={() => setIsSendFundModalOpen(false)}
 							grantId={applicationData.grant.id}
+							applicantId={applicationData?.applicantId}
 							applicationId={applicationID}
 						/>
 					</Modal>

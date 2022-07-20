@@ -96,7 +96,7 @@ function AddFunds({
 
 	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
-		// console.log(depositTransactionData);
+
 		if(depositTransactionData) {
 			onClose()
 			setFinalAmount(undefined)

@@ -46,6 +46,55 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
+        indexed: true,
+        internalType: "uint96",
+        name: "applicationId",
+        type: "uint96",
+      },
+      {
+        indexed: false,
+        internalType: "uint96",
+        name: "milestoneId",
+        type: "uint96",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "asset",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "isP2P",
+        type: "bool",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "time",
+        type: "uint256",
+      },
+    ],
+    name: "DisburseReward",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: false,
         internalType: "uint8",
         name: "version",
@@ -263,6 +312,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "applicationReg",
+    outputs: [
+      {
+        internalType: "contract IApplicationRegistry",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint96",
@@ -304,6 +366,44 @@ const _abi = [
       },
     ],
     name: "createWorkspace",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint96",
+        name: "_applicationId",
+        type: "uint96",
+      },
+      {
+        internalType: "address",
+        name: "_applicantWalletAddress",
+        type: "address",
+      },
+      {
+        internalType: "uint96",
+        name: "_milestoneId",
+        type: "uint96",
+      },
+      {
+        internalType: "contract IERC20",
+        name: "_erc20Interface",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_amount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint96",
+        name: "_workspaceId",
+        type: "uint96",
+      },
+    ],
+    name: "disburseRewardP2P",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
