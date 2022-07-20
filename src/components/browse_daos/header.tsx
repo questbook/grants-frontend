@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react'
-import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Text } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import NavBar from 'src/v2/components/NavBar'
 import { useConnect } from 'wagmi'
@@ -10,11 +10,11 @@ function BrowseDaoHeader() {
 	const { isDisconnected } = useConnect()
 	return (
 		<Box
-			background={isDisconnected ? '#1F1F33' : 'white'}
-			height={isDisconnected ? '316px' : '80px'}
+			background={'white'}
+			height={{ base:isDisconnected ? '316px' : '80px', md:'80px' }}
 			width={'100%'}
 			position={'relative'}>
-			{
+			{/* {
 				isDisconnected && (
 					<Image
 						src={'/images/browse_dao.png'}
@@ -25,13 +25,13 @@ function BrowseDaoHeader() {
 
 					/>
 				)
-			}
+			} */}
 			<Box
+
 				position={'absolute'}
 				width={'100%'}
 				height={'100%'}
 				top={0}
-				background={isDisconnected ? 'linear-gradient(0deg, rgba(31, 31, 51, 0.25), rgba(31, 31, 51, 0.25)), linear-gradient(107.56deg, rgba(31, 31, 51, 0.225) 0%, rgba(31, 31, 51, 0) 100%)' : ''}
 			>
 				<NavBar
 					onGetStartedClick={false}
@@ -40,20 +40,23 @@ function BrowseDaoHeader() {
 				{
 					isDisconnected && (
 						<Flex
+							display={{ base:'flex', md:'none' }}
 							direction={'column'}
 							alignItems={'center'}
 							position={'absolute'}
 							width={'100%'}
+							// mx={{ base:'20px', sm:'0px' }}
+							// my={{ base:'-10px', sm:'0px' }}
 							bottom={0}>
 							<Text
-								color={'white'}
+								color={'black'}
 								fontWeight={'500'}
-								fontSize={'40px'}>
+								fontSize={{ base:'25px', sm:'30px', lg:'40px' }}>
                     Your entire grant program on-chain
 							</Text>
 							<Text
 								width={'440px'}
-								color={'white'}
+								color={'black'}
 								fontWeight={'400'}
 								fontSize={'16px'}
 								align={'center'}
@@ -65,7 +68,8 @@ function BrowseDaoHeader() {
 								py={'8px'}
 								borderRadius={'4px'}
 								height={'40px'}
-								background="white"
+								background="black"
+								color={'white'}
 								mb={'44px'}
 								fontSize={'16px'}
 								fontWeight={'500'}

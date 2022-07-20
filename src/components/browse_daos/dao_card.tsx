@@ -7,7 +7,7 @@ function DaoCard({ logo, name, daoId, chainId, noOfApplicants, totalAmount }:{lo
 	const [isActive, setIsActive] = useState(false)
 	return (
 		<Box
-			w={'411px'}
+			w={'100%'}
 			h={'172px'}
 			background={'white'}
 			p={'24px'}

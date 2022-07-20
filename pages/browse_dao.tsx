@@ -26,7 +26,7 @@ function BrowseDao() {
 	const [allWorkspaces, setAllWorkspaces] = useState([])
 	// const [selectedChainId, setSelectedChainId] = useState<number|undefined>()
 	const [sortedWorkspaces, setSortedWorkspaces] = useState([])
-	const [selectedSorting, setSelectedSorting] = useState('grant_reward')
+	const [selectedSorting, setSelectedSorting] = useState('grant_rewards')
 
 	const [currentPage, setCurrentPage] = useState(0)
 	const [allDataFetched, setAllDataFectched] = useState<Boolean>(false)
@@ -148,28 +148,23 @@ function BrowseDao() {
 	}, [])
 
 	useEffect(() => {
-		// if(selectedChainId) {
-		// 	const filteredWorkspaces = allWorkspaces.filter((workspace:Workspace) => selectedChainId === getSupportedChainIdFromSupportedNetwork(workspace.chainID))
-		// 	setSelectedWorkspaces(filteredWorkspaces)
-		// }
 		console.log('selectedSorting', selectedSorting)
-		if(selectedSorting === 'grant_reward') {
-			var workspaces = allWorkspaces
+		if(selectedSorting === 'grant_rewards') {
+			var workspaces = [...allWorkspaces]
 			workspaces.sort((a, b) => {
-				if(a.amount < b.amount) {
-				  return -1
-				}
-
-				if(a.amount > b.amount) {
-				  return 1
-				}
-
-				return 0
+				return parseFloat(b.amount) - parseFloat(a.amount) || isNaN(a.amount) - isNaN(b.amount)
 			})
-			console.log('sorted workspace', workspaces)
+			console.log('sorted reward-wise workspace', workspaces)
+			setSortedWorkspaces(workspaces)
+		} else if(selectedSorting === 'no_of_applicants') {
+			var workspaces = [...allWorkspaces]
+			workspaces.sort((a, b) => {
+				return parseFloat(b.noOfApplicants) - parseFloat(a.noOfApplicants) || isNaN(a.noOfApplicants) - isNaN(b.noOfApplicants)
+			})
+			console.log('sorted applicant-wise workspace', workspaces)
 			setSortedWorkspaces(workspaces)
 		}
-	}, [selectedSorting])
+	}, [selectedSorting, allWorkspaces])
 
 
 	return (
@@ -182,8 +177,9 @@ function BrowseDao() {
 
 			<Flex>
 				{
-					!isDisconnected && (
+					 (
 						<Flex
+							display={{ base:'none', lg:'flex' }}
 							w="20%"
 							pos="sticky"
 							top={0}>
@@ -191,10 +187,12 @@ function BrowseDao() {
 						</Flex>
 					)
 				}
-				<Container maxW='1280px'>
+				<Container
+					maxWidth={'1280px'}
+					w="80%">
 					<Flex
 						my={'16px'}
-						width={'1280px'}>
+						maxWidth={'1280px'}>
 						<Text
 							fontSize={'24px'}
 							fontWeight={'700'}>
@@ -246,7 +244,7 @@ function BrowseDao() {
 							</Menu>
 						</Box>
 					</Flex>
-					<AllDaosGrid allWorkspaces={allWorkspaces} />
+					<AllDaosGrid allWorkspaces={sortedWorkspaces} />
 				</Container>
 			</Flex>
 		</Box>

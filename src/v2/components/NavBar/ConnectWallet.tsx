@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import {
-	Button, Image, Text,
+	Button, Image, Menu, MenuButton, MenuItem, MenuList, Text,
 	VStack, } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import ConnectWalletModal from 'src/v2/components/ConnectWalletModal'
 
 function ConnectWallet({ onGetStartedBtnClicked, setGetStartedClicked } :{onGetStartedBtnClicked:boolean, setGetStartedClicked:(value: boolean)=>void}) {
 	const [connectWalletModalIsOpen, setConnectWalletModalIsOpen] = useState(false)
+	const [mobileOpen, setMobileOpen] = useState(false)
 	const router = useRouter()
 
 	useEffect(() => {
@@ -23,7 +24,9 @@ function ConnectWallet({ onGetStartedBtnClicked, setGetStartedClicked } :{onGetS
 				py={2}
 				borderRadius={8}
 				height={'40px'}
-				background={router.pathname.includes('browse_dao') ? 'white' : '#F0F0F7'}
+
+				color={router.pathname.includes('browse_dao') ? 'white' : 'black'}
+				background={router.pathname.includes('browse_dao') ? 'black' : '#F0F0F7'}
 				// transition="all 1s"
 				// background="linear-gradient(180deg, #717A7C 0%, #414E50 100%)"
 				// _hover={
@@ -48,14 +51,16 @@ function ConnectWallet({ onGetStartedBtnClicked, setGetStartedClicked } :{onGetS
 				}
 			>
 				<Image
+					display={{ base:'none', md:'inherit' }}
 					h="20px"
 					w="20px"
-					src="/ui_icons/user_account_black.svg"
+					src={router.pathname.includes('browse_dao') ? '/ui_icons/light_user_account.svg' : '/ui_icons/user_account_black.svg'}
 					alt="account_circle"
+
 				/>
 				<VStack
 					spacing={0}
-					ml={3}
+					ml={1}
 					mr={1}
 					alignItems="flex-start">
 					{/* <Text
@@ -65,13 +70,41 @@ function ConnectWallet({ onGetStartedBtnClicked, setGetStartedClicked } :{onGetS
           Sign in to your account
 					</Text> */}
 					<Text
-						fontSize="16px"
+						fontSize="14px"
 						fontWeight="500"
-						color={'#1F1F33'}>
+						px={'8px'}
+						py={'4px'}
+						borderRadius={'5px'}
+					>
           Connect Wallet
 					</Text>
 				</VStack>
 			</Button>
+
+			<Menu >
+				<MenuButton
+					display={{ sm:'', md:'none' }}
+					as={Button}
+					aria-label='Options'
+					rightIcon={!mobileOpen ? <Image src={'/ui_icons/hamburger.svg'} /> : <Image src={'/ui_icons/cross.svg'} />}
+					variant='outline'
+					onClick={() => setMobileOpen(prev => !prev)}
+					borderWidth={'0px'}
+					_hover={{ bg:'white' }}
+					_active={{ bg:'white' }}
+
+				/>
+
+				<MenuList >
+					<MenuItem >
+     					Discover
+					</MenuItem>
+					<MenuItem>
+						Active applications
+					</MenuItem>
+
+				</MenuList>
+			</Menu>
 
 			<ConnectWalletModal
 				isOpen={connectWalletModalIsOpen}
