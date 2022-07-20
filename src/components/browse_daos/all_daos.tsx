@@ -1,5 +1,4 @@
 import { Grid, GridItem } from '@chakra-ui/react'
-import { Workspace } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import DaoCard from './dao_card'
@@ -16,7 +15,7 @@ function AllDaosGrid({ allWorkspaces }:{allWorkspaces: any}) {
 
 		>
 			{
-				allWorkspaces.map((workspace: Workspace, index: number) => {
+				allWorkspaces.map((workspace: any, index: number) => {
 					if(index === 0) {
 						return (
 							<>

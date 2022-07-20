@@ -23,9 +23,9 @@ function BrowseDao() {
 	const { data: accountData } = useAccount()
 	const { isDisconnected } = useConnect()
 
-	const [allWorkspaces, setAllWorkspaces] = useState([])
+	const [allWorkspaces, setAllWorkspaces] = useState([] as any[])
 	// const [selectedChainId, setSelectedChainId] = useState<number|undefined>()
-	const [sortedWorkspaces, setSortedWorkspaces] = useState([])
+	const [sortedWorkspaces, setSortedWorkspaces] = useState([] as any[])
 	const [selectedSorting, setSelectedSorting] = useState('grant_rewards')
 
 	const [currentPage, setCurrentPage] = useState(0)
@@ -99,7 +99,7 @@ function BrowseDao() {
 	}
 
 	useEffect(() => {
-		var obj = {}
+		var obj = {} as any
 		if(grants.length > 0) {
 			grants.map((grant, i) => {
 				obj [`${grant.workspace.id}-${grant.workspace.supportedNetworks[0]}`] = obj [`${grant.workspace.id}-${grant.workspace.supportedNetworks[0]}`] || []
@@ -117,11 +117,11 @@ function BrowseDao() {
 		}
 	}, [grants])
 
-	const formatDataforWorkspace = (workspaces) => {
+	const formatDataforWorkspace = (workspaces: any) => {
 		var result = Object.keys(workspaces).map((key) => {
 			var totalamount = 0
 			if(workspaces[key].length > 1) {
-				workspaces[key].map((grant) => {
+				workspaces[key].map((grant: any) => {
 					totalamount += Number(formatAmount(grant.amount))
 				})
 			}
@@ -151,15 +151,15 @@ function BrowseDao() {
 		console.log('selectedSorting', selectedSorting)
 		if(selectedSorting === 'grant_rewards') {
 			var workspaces = [...allWorkspaces]
-			workspaces.sort((a, b) => {
-				return parseFloat(b.amount) - parseFloat(a.amount) || isNaN(a.amount) - isNaN(b.amount)
+			workspaces.sort((a:any, b:any) => {
+				return parseFloat(b.amount) - parseFloat(a.amount) || Number(isNaN(a.amount)) - Number(isNaN(b.amount))
 			})
 			console.log('sorted reward-wise workspace', workspaces)
 			setSortedWorkspaces(workspaces)
 		} else if(selectedSorting === 'no_of_applicants') {
 			var workspaces = [...allWorkspaces]
 			workspaces.sort((a, b) => {
-				return parseFloat(b.noOfApplicants) - parseFloat(a.noOfApplicants) || isNaN(a.noOfApplicants) - isNaN(b.noOfApplicants)
+				return parseFloat(b.noOfApplicants) - parseFloat(a.noOfApplicants) || Number(isNaN(a.noOfApplicants)) - Number(isNaN(b.noOfApplicants))
 			})
 			console.log('sorted applicant-wise workspace', workspaces)
 			setSortedWorkspaces(workspaces)
