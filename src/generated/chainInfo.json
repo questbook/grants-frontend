@@ -680,17 +680,17 @@
 			"transactionHash": "https://testnet.aurorascan.dev/tx/{{tx}}"
 		},
 		"supportedCurrencies": {
-			"0x9e70345a1b3D2D55FB29be4aDbd2A6E38eE57D83": {
+			"0x9e70345a1b3d2d55fb29be4adbd2a6e38ee57d83": {
 				"icon": "/chain_assets/weth.svg",
 				"label": "WETH",
-				"address": "0x9e70345a1b3D2D55FB29be4aDbd2A6E38eE57D83",
+				"address": "0x9e70345a1b3d2d55fb29be4adbd2a6e38ee57d83",
 				"pair": "0x0",
 				"decimals": 18
 			},
-			"0xaAb34177b4B5Ca686D3Ee1ce705133cB3554b183": {
+			"0xaab34177b4b5ca686d3ee1ce705133cb3554b183": {
 				"icon": "/chain_assets/usdc.svg",
 				"label": "USDC",
-				"address": "0xaAb34177b4B5Ca686D3Ee1ce705133cB3554b183",
+				"address": "0xaab34177b4b5ca686d3ee1ce705133cb3554b183",
 				"pair": "0x0",
 				"decimals": 6
 			}
