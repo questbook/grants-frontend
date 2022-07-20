@@ -6,7 +6,7 @@ function GetStartedCard() {
 	return (
 		<Box
 			w={'100%'}
-			h={'172px'}
+			minHeight={'172px'}
 			background={'white'}
 			p={'24px'}
 			position={'relative'}

@@ -49,9 +49,12 @@ function BrowseDaoHeader() {
 							// my={{ base:'-10px', sm:'0px' }}
 							bottom={0}>
 							<Text
+								textAlign={'center'}
 								color={'black'}
 								fontWeight={'500'}
-								fontSize={{ base:'25px', sm:'30px', lg:'40px' }}>
+								fontSize={{ base:'25px', sm:'30px', lg:'40px' }}
+								pt={'100px'}
+								pl={'20px'}>
                     Your entire grant program on-chain
 							</Text>
 							<Text
@@ -60,7 +63,8 @@ function BrowseDaoHeader() {
 								fontWeight={'400'}
 								fontSize={'16px'}
 								align={'center'}
-								mb={'24px'}>
+								mb={'24px'}
+								px={'20px'}>
                     Grow your ecosystem by providing incentives to builders through grants.
 							</Text>
 							<Button

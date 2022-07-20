@@ -99,10 +99,6 @@ function ConnectWallet({ onGetStartedBtnClicked, setGetStartedClicked } :{onGetS
 					<MenuItem >
      					Discover
 					</MenuItem>
-					<MenuItem>
-						Active applications
-					</MenuItem>
-
 				</MenuList>
 			</Menu>
 
