@@ -46,7 +46,9 @@ function TableContent({ data }:{data:any}) {
 											<Tooltip label={item?.name}>
 												<Text>
 													{`${item.name.substring(0, 31)}`}
-													<Text color="#8E48D3" >...more</Text>
+													<Text color="#8E48D3" >
+...more
+													</Text>
 												</Text>
 											</Tooltip>
 										</>

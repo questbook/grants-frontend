@@ -117,7 +117,7 @@ function BarGraph() {
 							<Flex>
 
 								<Chart
-									options={barChartOptionsDashboard}
+									options={barChartOptionsDashboard as any}
 									series={barChartDataDashboard}
 									type="line"
 									width="512px"
@@ -168,7 +168,7 @@ function BarGraph() {
 							<Flex>
 
 								<Chart
-									options={barChartOptionsDashboard}
+									options={barChartOptionsDashboard as any}
 									series={barChartDataDashboard}
 									type="bar"
 									width="512px"
