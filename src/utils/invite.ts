@@ -1,8 +1,11 @@
 import { useCallback, useContext } from 'react'
-import { generateKeyPairAndAddress } from '@questbook/anon-authoriser'
+import { generateInputForAuthorisation, generateKeyPairAndAddress } from '@questbook/anon-authoriser'
+import { WorkspaceMemberUpdate } from '@questbook/service-validator-client'
 import { base58 } from 'ethers/lib/utils'
 import { ApiClientsContext } from 'pages/_app'
 import useQBContract from 'src/hooks/contracts/useQBContract'
+import { useAccount } from 'wagmi'
+import { delay } from './generics'
 import { getSupportedChainIdFromWorkspace } from './validationUtils'
 
 export type InviteInfo = {
@@ -110,4 +113,63 @@ export const useMakeInvite = (role: number) => {
 	)
 
 	return { makeInvite }
+}
+
+type JoinInviteStep = 'ipfs-uploaded' | 'tx-signed' | 'tx-confirmed'
+
+export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemberUpdate) => {
+	const { data: account } = useAccount()
+	const { validatorApi } = useContext(ApiClientsContext)!
+	const workspaceRegistry = useQBContract('workspace', inviteInfo?.chainId)
+
+	const joinInvite = useCallback(
+		async(didReachStep?: (step: JoinInviteStep) => void) => {
+			if(!account?.address) {
+				throw new Error('account not connected')
+			}
+
+			const {
+				data: { ipfsHash }
+			} = await validatorApi.validateWorkspaceMemberUpdate(profileInfo)
+
+			didReachStep?.('ipfs-uploaded')
+
+			const signature = generateInputForAuthorisation(
+				account.address!,
+				workspaceRegistry.address,
+				inviteInfo.privateKey,
+			)
+
+			const tx = await workspaceRegistry.joinViaInviteLink(
+				inviteInfo.workspaceId,
+				'',
+				inviteInfo.role,
+				signature.v,
+				signature.r,
+				signature.s
+			)
+
+			didReachStep?.('tx-signed')
+
+			await tx.wait()
+
+			didReachStep?.('tx-confirmed')
+
+			await delay(2000)
+		},
+		[profileInfo, workspaceRegistry, validatorApi, inviteInfo, account]
+	)
+
+	const getJoinInviteGasEstimate = useCallback(() => {
+		return workspaceRegistry.estimateGas.joinViaInviteLink(
+			inviteInfo?.workspaceId || '0x0',
+			'',
+			inviteInfo?.role,
+			0x0,
+			new Uint8Array(32),
+			new Uint8Array(32)
+		)
+	}, [workspaceRegistry, inviteInfo?.workspaceId, inviteInfo?.role])
+
+	return { joinInvite, getJoinInviteGasEstimate }
 }

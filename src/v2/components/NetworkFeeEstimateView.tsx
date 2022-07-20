@@ -16,23 +16,21 @@ const NetworkFeeEstimateView = ({ chainId, getEstimate }: NetworkFeeEstimateView
 	const provider = useProvider()
 	const [gasEstimate, setGasEstimate] = useState<string>()
 
-	const symbol = CHAIN_INFO[chainId || inbuiltChainId].nativeCurrency.symbol
-
-	const fetchGasEstimate = async() => {
-		setGasEstimate(undefined)
-		try {
-			const estimate = await getEstimate()
-			const gasPrice = await provider.getGasPrice()
-			setGasEstimate(formatEther(estimate.mul(gasPrice)))
-		} catch(e) {
-			console.error('error in fetching gas estimate ', e)
-			setGasEstimate('NaN')
-		}
-	}
+	const symbol = CHAIN_INFO[chainId || inbuiltChainId]?.nativeCurrency.symbol
 
 	useEffect(() => {
-		fetchGasEstimate()
-	}, [getEstimate])
+		(async() => {
+			setGasEstimate(undefined)
+			try {
+				const estimate = await getEstimate()
+				const gasPrice = await provider.getGasPrice()
+				setGasEstimate(formatEther(estimate.mul(gasPrice)))
+			} catch(e) {
+				console.error('error in fetching gas estimate ', e)
+				setGasEstimate('NaN')
+			}
+		})()
+	}, [getEstimate, setGasEstimate, provider])
 
 	return (
 		<Flex
