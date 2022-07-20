@@ -1,13 +1,15 @@
 import React, {
-	ReactElement,
+	ReactElement, useContext, useEffect, useState,
 } from 'react'
 import { Box, Button, Container, Flex, Heading, Image, Menu, MenuButton, MenuItem, MenuList, Spacer, Text } from '@chakra-ui/react'
+import { ApiClientsContext } from 'pages/_app'
 import DoaDashTableEmptyState from 'src/components/dao_dashboard/empty_states/dao_dashboard'
 import BarGraph from 'src/components/dao_dashboard/graph/bar_graph'
 import LineGraph from 'src/components/dao_dashboard/graph/line_graph'
 import DaoStatBoard from 'src/components/dao_dashboard/statboard/stat_board'
 import TableContent from 'src/components/dao_dashboard/table/content'
 import Header from 'src/components/dao_dashboard/table/headers'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import NavbarLayout from '../../src/layout/navbarLayout'
 
 const Tabledata = [
@@ -65,6 +67,52 @@ const Tabledata = [
 
 function DaoDashboard() {
 
+	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
+	const [daoStats, setDaoStats] = useState<{
+		totalApplicants: number,
+		uniqueApplicants: number,
+		repeatApplicants: number,
+	}>()
+
+	useEffect(() => {
+		console.log(workspace)
+		console.log(getSupportedChainIdFromWorkspace(workspace)!)
+	}, [])
+
+	useEffect(() => {
+		if(!workspace || !getSupportedChainIdFromWorkspace(workspace)!) {
+			return
+		}
+
+		if(daoStats) {
+			return
+		}
+
+		getAnalyticsData()
+
+	}, [workspace, daoStats])
+
+	const getAnalyticsData = async() => {
+		const res = await fetch('http://43.204.147.240:3300/workspace-analytics', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				chainId: getSupportedChainIdFromWorkspace(workspace)!,
+				workspaceId: workspace!.id
+			})
+		})
+
+		const data = await res.json()
+		console.log('res', data)
+
+		setDaoStats({
+			totalApplicants: data.totalApplicants,
+			repeatApplicants: data.repeatApplicants,
+			uniqueApplicants: data.uniqueApplicants,
+		})
+	}
 
 	return (
 
@@ -100,14 +148,14 @@ function DaoDashboard() {
 
 						<Menu
 							placement="bottom"
-							align="right"
+							// align="right"
 						>
 							<Box
 								width="169px"
 								height="32px"
 								borderRadius="8px"
 								border="1px solid #AAAAAA"
-								align="center"
+								alignItems="center"
 							>
 								<MenuButton
 									as={Button}
@@ -169,8 +217,9 @@ function DaoDashboard() {
 					</Flex>
 
 					<DaoStatBoard
-
-
+						totalApplicants={daoStats?.totalApplicants ?? 0}
+						uniqueApplicants={daoStats?.uniqueApplicants ?? 0}
+						repeatApplicants={daoStats?.repeatApplicants ?? 0}
 					/>
 
 
