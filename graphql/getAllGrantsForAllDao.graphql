@@ -1,9 +1,7 @@
-query getAllGrantsForADao($first: Int, $skip: Int, $workspaceId: String!, $acceptingApplications: Boolean!) {
+query getAllGrantsForAllDao($acceptingApplications: Boolean!) {
   grants(
-    first: $first,
-    skip: $skip,
     subgraphError: allow,
-    where: { workspace: $workspaceId, acceptingApplications: $acceptingApplications }
+    where: { acceptingApplications: $acceptingApplications }
     orderBy: createdAtS,
     orderDirection: desc
   ) {

@@ -13,10 +13,10 @@ function AllDaosGrid({ allWorkspaces }:{allWorkspaces: any}) {
 				allWorkspaces.map((workspace: Workspace, index: number) => (
 					<GridItem key={index}>
 						<DaoCard
-							logo={getUrlForIPFSHash(workspace.logoIpfsHash)}
-							name={workspace.title}
-							daoId={workspace.id}
-							chainId={getSupportedChainIdFromSupportedNetwork(workspace.supportedNetworks[0])} />
+							logo={getUrlForIPFSHash(workspace.icon)}
+							name={workspace.name}
+							daoId={workspace.workspaceID}
+							chainId={getSupportedChainIdFromSupportedNetwork(workspace.chainID)} />
 					</GridItem>
 				))
 			}

@@ -41,7 +41,6 @@ function Sidebar() {
 
 		const getWorkspaceData = async(userAddress: string) => {
 			try {
-				console.log('getallworkspace', getAllWorkspaces)
 				const promises = getAllWorkspaces.map(
 					(allWorkspaces) => new Promise(async(resolve) => {
 						try {

@@ -3845,6 +3845,13 @@ export type GetAllGrantsForADaoQueryVariables = Exact<{
 
 export type GetAllGrantsForADaoQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> }, applications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, updatedAtS: number }> }> };
 
+export type GetAllGrantsForAllDaoQueryVariables = Exact<{
+  acceptingApplications: Scalars['Boolean'];
+}>;
+
+
+export type GetAllGrantsForAllDaoQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> }, applications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, updatedAtS: number }> }> };
+
 export type GetAllGrantsForCreatorQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
@@ -4239,6 +4246,77 @@ export function useGetAllGrantsForADaoLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetAllGrantsForADaoQueryHookResult = ReturnType<typeof useGetAllGrantsForADaoQuery>;
 export type GetAllGrantsForADaoLazyQueryHookResult = ReturnType<typeof useGetAllGrantsForADaoLazyQuery>;
 export type GetAllGrantsForADaoQueryResult = Apollo.QueryResult<GetAllGrantsForADaoQuery, GetAllGrantsForADaoQueryVariables>;
+export const GetAllGrantsForAllDaoDocument = gql`
+    query getAllGrantsForAllDao($acceptingApplications: Boolean!) {
+  grants(
+    subgraphError: allow
+    where: {acceptingApplications: $acceptingApplications}
+    orderBy: createdAtS
+    orderDirection: desc
+  ) {
+    id
+    creatorId
+    title
+    createdAtS
+    summary
+    details
+    reward {
+      committed
+      id
+      asset
+      token {
+        address
+        label
+        decimal
+        iconHash
+      }
+    }
+    workspace {
+      id
+      title
+      logoIpfsHash
+      supportedNetworks
+    }
+    deadline
+    funding
+    numberOfApplications
+    applications {
+      id
+      state
+      createdAtS
+      updatedAtS
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAllGrantsForAllDaoQuery__
+ *
+ * To run a query within a React component, call `useGetAllGrantsForAllDaoQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllGrantsForAllDaoQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllGrantsForAllDaoQuery({
+ *   variables: {
+ *      acceptingApplications: // value for 'acceptingApplications'
+ *   },
+ * });
+ */
+export function useGetAllGrantsForAllDaoQuery(baseOptions: Apollo.QueryHookOptions<GetAllGrantsForAllDaoQuery, GetAllGrantsForAllDaoQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllGrantsForAllDaoQuery, GetAllGrantsForAllDaoQueryVariables>(GetAllGrantsForAllDaoDocument, options);
+      }
+export function useGetAllGrantsForAllDaoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllGrantsForAllDaoQuery, GetAllGrantsForAllDaoQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllGrantsForAllDaoQuery, GetAllGrantsForAllDaoQueryVariables>(GetAllGrantsForAllDaoDocument, options);
+        }
+export type GetAllGrantsForAllDaoQueryHookResult = ReturnType<typeof useGetAllGrantsForAllDaoQuery>;
+export type GetAllGrantsForAllDaoLazyQueryHookResult = ReturnType<typeof useGetAllGrantsForAllDaoLazyQuery>;
+export type GetAllGrantsForAllDaoQueryResult = Apollo.QueryResult<GetAllGrantsForAllDaoQuery, GetAllGrantsForAllDaoQueryVariables>;
 export const GetAllGrantsForCreatorDocument = gql`
     query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String, $acceptingApplications: [Boolean!], $minDeadline: Int!, $maxDeadline: Int!) {
   grants(
