@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Flex, Text, Spacer } from '@chakra-ui/react'
+import { Flex, Spacer, Text } from '@chakra-ui/react'
 import Content from './content'
 import Filter from './filter'
 import Headers from './headers'
@@ -11,7 +11,7 @@ function Table({
 	onManageApplicationClick,
 	data,
 	actorId,
-  applicationsFilter,
+	applicationsFilter,
 	isReviewer,
 	reviewerData,
 	archiveGrantComponent,
@@ -37,8 +37,12 @@ function Table({
 				direction="row"
 				mt={3}
 				align="center">
-          <Text fontStyle = "bold"> {applicationsFilter} </Text>
-          <Spacer/>
+				<Text fontStyle="bold">
+					{' '}
+					{applicationsFilter}
+					{' '}
+				</Text>
+				<Spacer />
 				<Filter
 					filter={filter}
 					setFilter={setFilter} />

@@ -32,6 +32,7 @@ function Breadcrumbs({ path, id }: BreadcrumbProps) {
 							key={`breadcrumb-${node}`}
 							as="span">
 							<Link
+								color="#7D7DA0"
 								href={
 									`/${
 										// eslint-disable-next-line no-nested-ternary
@@ -71,7 +72,7 @@ function Breadcrumbs({ path, id }: BreadcrumbProps) {
 			<Box
 				as="span"
 				display="inline-block"
-				color={theme.colors.brand[500]}
+				color="#7D7DA0"
 				fontWeight="bold"
 			>
 				{path[path.length - 1]}

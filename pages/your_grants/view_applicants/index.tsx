@@ -1,5 +1,8 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react'
-import { Box, Button, Container, Flex, Heading, Image, Text, HStack } from '@chakra-ui/react'
+import { Box, Button, Container, Flex, Heading, Image, Menu,
+	MenuButton,
+	MenuItem, 	MenuList,
+	Spacer, Text } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import moment from 'moment'
 import { useRouter } from 'next/router'
@@ -56,7 +59,7 @@ function ViewApplicants() {
 	const [isActorId, setIsActorId] = React.useState<any>('')
 	const [totalDisbursed, setTotalDisbursed] = useState(0)
 	const [rewardTokenDecimals, setRewardTokenDecimals] = useState(18)
-	const [grantTitle, setGrantTitle] = useState('Grant Title')
+	const [grantTitle, setGrantTitle] = useState<any>('Grant Title')
 	const [applicationsFilter, setApplicationsFilter] = useState('Accepted')
 
 	const { data: accountData } = useAccount()
@@ -64,6 +67,7 @@ function ViewApplicants() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 
 	const [rubricDrawerOpen, setRubricDrawerOpen] = useState(false)
+	const [isArchiveModalOpen, setIsArchiveModalOpen] = React.useState(false)
 	const [maximumPoints, setMaximumPoints] = React.useState(5)
 	const [rubricEditAllowed] = useState(true)
 	const [rubrics, setRubrics] = useState<any[]>([
@@ -242,12 +246,13 @@ function ViewApplicants() {
 			console.log('fetch', fetchedApplicantsData)
 
 			setApplicantsData(fetchedApplicantsData)
-			setGrantTitle(applicantsData[0]?.grantTitle)
 			setDaoId(data.grantApplications[0].grant.workspace.id)
 			setAcceptingApplications(
 				data.grantApplications[0].grant.acceptingApplications
 			)
 		}
+
+		setGrantTitle(grantData?.grants[0]?.title)
 	}, [data, error, loading, grantData])
 
 	useEffect(() => {
@@ -400,6 +405,7 @@ function ViewApplicants() {
 		<Container
 			maxW="100%"
 			display="flex"
+			bg="#F0F0F7"
 			px="70px"
 			mb="300px">
 			<Container
@@ -412,22 +418,49 @@ function ViewApplicants() {
 				px={10}
 				pos="relative"
 			>
-				<Breadcrumbs path={['My Grants', 'View Applicants']} />
+				<Breadcrumbs path={['Grants & Bounties', 'Applicants']} />
+				<Flex ml="-50px">
+					<Box p='2'>
+						<Heading size='md'>
+							{grantTitle}
+						</Heading>
+					</Box>
+					<Spacer />
+					<Menu>
+						<MenuButton
+							as={Button}
+							backgroundColor="#E0E0EC" >
+							<Image src="/ui_icons/grant_options_dropdown.svg" />
+						</MenuButton>
+						<MenuList>
+							<MenuItem>
+								<Image
+									src="/ui_icons/grant_options_setup_evaluation.svg"
+									mr="12px" />
+								{' '}
+								<span onClick={() => setRubricDrawerOpen(true)}>
+Setup application evaluation
+									{' '}
+								</span>
+							</MenuItem>
+							<MenuItem>
+								<Image
+									src="/ui_icons/grant_options_archive_grant.svg"
+									mr="12px" />
+								{' '}
+								<span onClick={() => setIsArchiveModalOpen(true)} >
+Archive grant
+									{' '}
+								</span>
+							</MenuItem>
+						</MenuList>
+					</Menu>
+				</Flex>
 
-				{
-					isAdmin && (
-						<Box
-							pos="absolute"
-							right="40px"
-							top="48px">
-							<Button
-								variant="primary"
-								onClick={() => setRubricDrawerOpen(true)}>
-								{(grantData?.grants[0].rubric?.items.length || 0) > 0 || false ? 'Edit Evaluation Rubric' : 'Setup Evaluation Rubric'}
-							</Button>
-						</Box>
-					)
-				}
+				<GrantStatsBox
+					numberOfApplicants={applicantsData.length}
+		  totalDisbursed={totalDisbursed}
+				/>
 
 				<RubricDrawer
 					rubricDrawerOpen={rubricDrawerOpen}
@@ -450,7 +483,7 @@ function ViewApplicants() {
 							data={applicantsData}
 							reviewerData={reviewerData}
 							actorId={isActorId}
-							applicationsFilter = {applicationsFilter}
+							applicationsFilter={applicationsFilter}
 							onViewApplicantFormClick={
 								(commentData: any) => router.push({
 									pathname: '/your_grants/view_applicants/applicant_form/',
@@ -540,41 +573,41 @@ function ViewApplicants() {
 												)
 											}
 										</Flex>
-										</Flex>
-									)
-								}
-							/>
-						) : (
-							<Flex
-								direction="column"
-								w="100%">
-								<AppplicationTableEmptyState />
-								{
-									isAdmin && (
-										<Flex
-											direction="column"
-											justify="center"
-											h="100%"
-											align="center"
-											mt={10}
-											mx="auto"
-										>
-											<Box
-												pos="relative"
-												right="40px"
-												top="48px">
-												<Button
-													variant="primaryV2"
-													onClick={() => setRubricDrawerOpen(true)}
-												>
-                    Create scoring rubric
-												</Button>
-											</Box>
-										</Flex>
-									)
-								}
-							</Flex>
-						)
+									</Flex>
+								)
+							}
+						/>
+					) : (
+						<Flex
+							direction="column"
+							w="100%">
+							<AppplicationTableEmptyState />
+							{
+								isAdmin && (
+									<Flex
+										direction="column"
+										justify="center"
+										h="100%"
+										align="center"
+										mt={10}
+										mx="auto"
+									>
+										<Box
+											pos="relative"
+											right="40px"
+											top="48px">
+											<Button
+												variant="primaryV2"
+												onClick={() => setRubricDrawerOpen(true)}
+											>
+                    Setup application evaluation
+											</Button>
+										</Box>
+									</Flex>
+								)
+							}
+						</Flex>
+					)
 				}
 			</Container>
 			<Modal
