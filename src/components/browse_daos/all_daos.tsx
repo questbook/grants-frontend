@@ -16,7 +16,9 @@ function AllDaosGrid({ allWorkspaces }:{allWorkspaces: any}) {
 							logo={getUrlForIPFSHash(workspace.icon)}
 							name={workspace.name}
 							daoId={workspace.workspaceID}
-							chainId={getSupportedChainIdFromSupportedNetwork(workspace.chainID)} />
+							chainId={getSupportedChainIdFromSupportedNetwork(workspace.chainID)}
+							noOfApplicants={workspace.noOfApplicants}
+							totalAmount={workspace.amount} />
 					</GridItem>
 				))
 			}

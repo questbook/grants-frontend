@@ -3846,7 +3846,10 @@ export type GetAllGrantsForADaoQueryVariables = Exact<{
 export type GetAllGrantsForADaoQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> }, applications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, updatedAtS: number }> }> };
 
 export type GetAllGrantsForAllDaoQueryVariables = Exact<{
-  acceptingApplications: Scalars['Boolean'];
+  first?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+  applicantId: Scalars['Bytes'];
+  minDeadline: Scalars['Int'];
 }>;
 
 
@@ -4247,10 +4250,12 @@ export type GetAllGrantsForADaoQueryHookResult = ReturnType<typeof useGetAllGran
 export type GetAllGrantsForADaoLazyQueryHookResult = ReturnType<typeof useGetAllGrantsForADaoLazyQuery>;
 export type GetAllGrantsForADaoQueryResult = Apollo.QueryResult<GetAllGrantsForADaoQuery, GetAllGrantsForADaoQueryVariables>;
 export const GetAllGrantsForAllDaoDocument = gql`
-    query getAllGrantsForAllDao($acceptingApplications: Boolean!) {
+    query getAllGrantsForAllDao($first: Int, $skip: Int, $applicantId: Bytes!, $minDeadline: Int!) {
   grants(
+    first: $first
+    skip: $skip
     subgraphError: allow
-    where: {acceptingApplications: $acceptingApplications}
+    where: {acceptingApplications: true, deadlineS_gte: $minDeadline}
     orderBy: createdAtS
     orderDirection: desc
   ) {
@@ -4302,7 +4307,10 @@ export const GetAllGrantsForAllDaoDocument = gql`
  * @example
  * const { data, loading, error } = useGetAllGrantsForAllDaoQuery({
  *   variables: {
- *      acceptingApplications: // value for 'acceptingApplications'
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *      applicantId: // value for 'applicantId'
+ *      minDeadline: // value for 'minDeadline'
  *   },
  * });
  */

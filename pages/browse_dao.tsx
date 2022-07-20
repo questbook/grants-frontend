@@ -2,11 +2,9 @@ import { useContext, useEffect, useState } from 'react'
 import { Box, Button, Container, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Text, useToast } from '@chakra-ui/react'
 import AllDaosGrid from 'src/components/browse_daos/all_daos'
 import BrowseDaoHeader from 'src/components/browse_daos/header'
-import { CHAIN_INFO } from 'src/constants/chains'
-import { GetAllGrantsQuery, useGetAllGrantsForAllDaoLazyQuery, useGetAllWorkspacesLazyQuery } from 'src/generated/graphql'
-import { Workspace } from 'src/types'
+import { GetAllGrantsQuery, useGetAllGrantsLazyQuery, useGetAllWorkspacesLazyQuery } from 'src/generated/graphql'
 import { formatAmount } from 'src/utils/formattingUtils'
-import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
+import { unixTimestampSeconds } from 'src/utils/generics'
 import Sidebar from 'src/v2/components/Sidebar'
 import { useAccount, useConnect } from 'wagmi'
 import { ApiClientsContext } from './_app'
@@ -20,14 +18,15 @@ function BrowseDao() {
 	const allNetworkWorkspace = Object.keys(subgraphClients)!.map(
 		(key) => useGetAllWorkspacesLazyQuery({ client: subgraphClients[key].client }),
 	)
-	const allNetworkGrantsForDao = Object.keys(subgraphClients)!.map((key) => useGetAllGrantsForAllDaoLazyQuery({ client: subgraphClients[key].client })
+	const allNetworkGrantsForDao = Object.keys(subgraphClients)!.map((key) => useGetAllGrantsLazyQuery({ client: subgraphClients[key].client })
 	)
 	const { data: accountData } = useAccount()
 	const { isDisconnected } = useConnect()
 
 	const [allWorkspaces, setAllWorkspaces] = useState([])
-	const [selectedChainId, setSelectedChainId] = useState<number|undefined>()
-	const [selectedWorkspaces, setSelectedWorkspaces] = useState([])
+	// const [selectedChainId, setSelectedChainId] = useState<number|undefined>()
+	const [sortedWorkspaces, setSortedWorkspaces] = useState([])
+	const [selectedSorting, setSelectedSorting] = useState('grant_reward')
 
 	const [currentPage, setCurrentPage] = useState(0)
 	const [allDataFetched, setAllDataFectched] = useState<Boolean>(false)
@@ -44,10 +43,14 @@ function BrowseDao() {
 					try {
 						const { data } = await allGrants[0]({
 							variables: {
-								acceptingApplications: true,
+								first: PAGE_SIZE,
+								skip: currentPageLocal * PAGE_SIZE,
+								applicantId: accountData?.address ?? '',
+								minDeadline: unixTimestampSeconds(),
 							},
 						})
 						if(data && data.grants) {
+							console.log('data.grants', data.grants)
 							const filteredGrants = data.grants.filter(
 								(grant) => grant.applications.length === 0
 							)
@@ -67,8 +70,6 @@ function BrowseDao() {
 				if(allGrantsData.length < PAGE_SIZE) {
 					setAllDataFectched(true)
 				}
-
-				console.log('allGrantsData', allGrantsData)
 
 				if(firstTime) {
 					setGrants(
@@ -112,7 +113,6 @@ function BrowseDao() {
 						noOfApplicants: grant.numberOfApplications
 					})
 			})
-			console.log('allgrants after filter', obj)
 			formatDataforWorkspace(obj)
 		}
 	}, [grants])
@@ -137,57 +137,40 @@ function BrowseDao() {
 			}
 			return (dao)
 		})
-		console.log('allgrants after formating', result)
 		setAllWorkspaces(result)
 	}
 
-	// const getAllWorkspacesData = async() => {
-	// 	try {
-	// 		const promises = allNetworkWorkspace.map(
-	// 			// eslint-disable-next-line no-async-promise-executor
-	// 			(allWorkspaces) => new Promise(async(resolve) => {
-	// 				try {
-	// 					const { data } = await allWorkspaces[0]({})
-	// 					if(data && data.workspaces) {
-	// 						resolve(data.workspaces)
-	// 					} else {
-	// 						resolve([])
-	// 					}
-	// 				} catch(err) {
-	// 					resolve([])
-	// 				}
-	// 			})
-	// 		)
-	// 		Promise.all(promises).then((values: any[]) => {
-	// 			const allWorkspacesData = [].concat(
-	// 				...values
-	// 			)
-	// 			console.log('allworkspaces', allWorkspacesData)
-	// 			setAllWorkspaces(allWorkspacesData)
-	// 		})
-	// 	} catch(e) {
-	// 		toast({
-	// 			title: 'Error loading workspaces',
-	// 			status: 'error',
-	// 		})
-	// 	}
-	// }
-
 	useEffect(() => {
-		// getAllWorkspacesData()
-		getGrantData()
+		getGrantData(true)
+		setTimeout(() => {
+			getGrantData()
+		}, 1000)
 	}, [])
 
 	useEffect(() => {
-		setSelectedChainId(undefined)
-	}, [isDisconnected])
+		// if(selectedChainId) {
+		// 	const filteredWorkspaces = allWorkspaces.filter((workspace:Workspace) => selectedChainId === getSupportedChainIdFromSupportedNetwork(workspace.chainID))
+		// 	setSelectedWorkspaces(filteredWorkspaces)
+		// }
+		console.log('selectedSorting', selectedSorting)
+		if(selectedSorting === 'grant_reward') {
+			var workspaces = allWorkspaces
+			workspaces.sort((a, b) => {
+				if(a.amount < b.amount) {
+				  return -1
+				}
 
-	useEffect(() => {
-		if(selectedChainId) {
-			const filteredWorkspaces = allWorkspaces.filter((workspace:Workspace) => selectedChainId === getSupportedChainIdFromSupportedNetwork(workspace.chainID))
-			setSelectedWorkspaces(filteredWorkspaces)
+				if(a.amount > b.amount) {
+				  return 1
+				}
+
+				return 0
+			})
+			console.log('sorted workspace', workspaces)
+			setSortedWorkspaces(workspaces)
 		}
-	}, [selectedChainId])
+	}, [selectedSorting])
+
 
 	return (
 		<Box
@@ -222,37 +205,48 @@ function BrowseDao() {
 								<MenuButton
 									as={Button}
 									rightIcon={<Image src={'/ui_icons/black_down.svg'} />}>
-    Network
+    								Sort by
 								</MenuButton>
 								<MenuList>
-									{
-										Object.values(CHAIN_INFO)
-											.map(({ id, name, icon }, index) => (
-												<MenuItem
-													key={index}
-													onClick={
-														() => {
-															setSelectedChainId(id)
-														}
-													}>
-													<Image
-														boxSize='2rem'
-														borderRadius='full'
-														src={icon}
-														alt='Fluffybuns the destroyer'
-														mr='12px'
-													/>
-													<span>
-														{name}
-													</span>
-												</MenuItem>
-											))
-									}
+									<MenuItem
+										justifyContent={'center'}
+										bg={'#F0F0F7'}>
+										<Text
+											fontWeight={'700'}>
+											Sort by
+										</Text>
+									</MenuItem>
+									<MenuItem
+										onClick={
+											() => {
+												setSelectedSorting('grant_rewards')
+											}
+										}>
+										<Flex>
+											<Image src={selectedSorting === 'grant_rewards' ? '/ui_icons/sorting_checked.svg' : '/ui_icons/sorting_unchecked.svg'} />
+											<Text ml={'10px'}>
+													Grant rewards
+											</Text>
+										</Flex>
+									</MenuItem>
+									<MenuItem
+										onClick={
+											() => {
+												setSelectedSorting('no_of_applicants')
+											}
+										}>
+										<Flex>
+											<Image src={selectedSorting === 'no_of_applicants' ? '/ui_icons/sorting_checked.svg' : '/ui_icons/sorting_unchecked.svg'} />
+											<Text ml={'10px'}>
+													Number of Applicants
+											</Text>
+										</Flex>
+									</MenuItem>
 								</MenuList>
 							</Menu>
 						</Box>
 					</Flex>
-					<AllDaosGrid allWorkspaces={selectedChainId ? selectedWorkspaces : allWorkspaces} />
+					<AllDaosGrid allWorkspaces={allWorkspaces} />
 				</Container>
 			</Flex>
 		</Box>

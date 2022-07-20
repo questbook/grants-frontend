@@ -1,8 +1,10 @@
-query getAllGrantsForAllDao($acceptingApplications: Boolean!) {
+query getAllGrantsForAllDao($first: Int, $skip: Int, $applicantId: Bytes!, $minDeadline: Int!) {
   grants(
-    subgraphError: allow,
-    where: { acceptingApplications: $acceptingApplications }
-    orderBy: createdAtS,
+    first: $first, 
+    skip: $skip, 
+    subgraphError: allow, 
+    where: {acceptingApplications: true, deadlineS_gte: $minDeadline},
+    orderBy: createdAtS, 
     orderDirection: desc
   ) {
     id,
