@@ -2,19 +2,19 @@ import { useContext, useEffect, useState } from 'react'
 import { Biconomy } from '@biconomy/mexa'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import { deploySCW, jsonRpcProvider } from 'src/utils/gaslessUtils'
-import { BiconomyContext, GitHubTokenContext, ScwAddressContext, WebwalletContext } from '../../../pages/_app'
+import { GitHubTokenContext, ScwAddressContext, WebwalletContext } from '../../../pages/_app'
 
 export const useBiconomy = (data: any) => {
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 	const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!
 	const { scwAddress, setScwAddress } = useContext(ScwAddressContext)!
 	// const { biconomyDaoObj, setBiconomyDaoObj } = useContext(BiconomyContext)!
-	const [biconomyDaoObj, setBiconomyDaoObj] = useState();
-	const [biconomyWalletClient, setBiconomyWalletClient] = useState<BiconomyWalletClient>();
+	const [biconomyDaoObj, setBiconomyDaoObj] = useState()
+	const [biconomyWalletClient, setBiconomyWalletClient] = useState<BiconomyWalletClient>()
 
 	useEffect(() => {
-		console.log("EHERE", biconomyDaoObj);
-		if (isLoggedIn && webwallet && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress)) {
+		console.log('EHERE', biconomyDaoObj)
+		if(isLoggedIn && webwallet && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress)) {
 			initiateBiconomy()
 				.then(res => console.log(res))
 				.catch(error => console.log(error))
@@ -22,49 +22,53 @@ export const useBiconomy = (data: any) => {
 	}, [webwallet, isLoggedIn, biconomyDaoObj, biconomyWalletClient, scwAddress])
 
 
-	const initiateBiconomy = async () => {
-		if(!webwallet)
-			return;
+	const initiateBiconomy = async() => {
+		if(!webwallet) {
+			return
+		}
+
 		console.log(webwallet, isLoggedIn, biconomyDaoObj)
 
 		console.log('CREATING BICONOMY OBJ')
-		let _biconomy: any;
+		let _biconomy: any
 
-		if (!biconomyDaoObj) {
+		if(!biconomyDaoObj) {
 			_biconomy = new Biconomy(jsonRpcProvider,
 				{
 					apiKey: data.apiKey,
 					debug: true
 				})
+		} else {
+			_biconomy = biconomyDaoObj
 		}
-		else {
-			_biconomy = biconomyDaoObj;
-		}
-		
+
 
 		console.log('BICONOMY OBJ CREATED', _biconomy)
-		_biconomy.onEvent(_biconomy.READY, async () => {
+		_biconomy.onEvent(_biconomy.READY, async() => {
 			console.log('Inside biconomy ready event')
 
 			const _biconomyWalletClient = _biconomy.biconomyWalletClient
 			console.log('biconomyWalletClient', _biconomyWalletClient)
 
-			if (!scwAddress) {
+			if(!scwAddress) {
 				const walletAddress = await deploySCW(webwallet, _biconomyWalletClient)
 				setScwAddress(walletAddress)
 			} else {
 				console.log('SCW Wallet already exists at Address', scwAddress)
 			}
-			if(!biconomyWalletClient){
+
+			if(!biconomyWalletClient) {
 				setBiconomyWalletClient(_biconomyWalletClient)
-			}	
+			}
 		}).onEvent(_biconomy.ERROR, (error: any, message: any) => {
 			console.log(message)
 			console.log(error)
 		})
 
-		if(!biconomyDaoObj)
+		if(!biconomyDaoObj) {
 			setBiconomyDaoObj(_biconomy)
+		}
+
 		console.log('DONE HERE')
 
 	}
@@ -75,4 +79,4 @@ export const useBiconomy = (data: any) => {
 		biconomyWalletClient,
 		scwAddress
 	]
-}	
+}

@@ -26,12 +26,12 @@ export const useNonce = () => {
 	}, [isLoggedIn, webwallet])
 
 	useEffect(() => {
-		console.log("What is going on here?????", webwallet, nonce, isLoggedIn);
+		console.log('What is going on here?????', webwallet, nonce, isLoggedIn)
 		if(webwallet && (!nonce || nonce === 'Token expired') && isLoggedIn) {
 			// console.log("NOW GOT HERE")
 			getUseNonce()
 				.then(_nonce => {
-					console.log("THIS IS NONCE", _nonce, isLoggedIn);
+					console.log('THIS IS NONCE', _nonce, isLoggedIn)
 					if(!_nonce) {
 						setNonce('')
 						setIsLoggedIn(false)

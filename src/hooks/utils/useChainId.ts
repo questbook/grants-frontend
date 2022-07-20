@@ -1,4 +1,3 @@
-import { SupportedChainId } from 'src/constants/chains'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { useNetwork } from 'wagmi'
 
@@ -10,5 +9,5 @@ export default function useChainId() {
 	// @TODO-gasless: Change here!
 	const { activeChain } = useNetwork()
 	// return CHAIN_INFO[activeChain?.id as SupportedChainId]?.id
-	return CHAIN_INFO["80001"]?.id
+	return CHAIN_INFO['80001']?.id
 }

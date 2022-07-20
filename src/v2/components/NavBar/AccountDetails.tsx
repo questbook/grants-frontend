@@ -8,18 +8,20 @@ import {
 	MenuList,
 	Text,
 } from '@chakra-ui/react'
+import { Wallet } from 'ethers'
 import { useRouter } from 'next/router'
-import { ApiClientsContext, GitHubTokenContext, NonceContext, WebwalletContext } from 'pages/_app'
+import { ApiClientsContext, GitHubTokenContext, NonceContext, ScwAddressContext, WebwalletContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
-import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import {Wallet} from 'ethers'
+import { useConnect, useDisconnect } from 'wagmi'
+
 function AccountDetails() {
 	const isOnline = true
 	const { data: accountData } = useQuestbookAccount()
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
+	const { scwAddress } = useContext(ScwAddressContext)!
 	const { isDisconnected } = useConnect() // @TODO: change the way we see if a user is connect or not
-											// cause now it's only with metmask
+	// cause now it's only with metmask
 	const { disconnect } = useDisconnect()
 	const { connected, setConnected } = useContext(ApiClientsContext)!
 	const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!
@@ -29,34 +31,50 @@ function AccountDetails() {
 	const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`
 
 	const buttonRef = React.useRef<HTMLButtonElement>(null)
-	console.log("GITHUB TOKEN", isLoggedIn, nonce);
+	console.log('GITHUB TOKEN', isLoggedIn, nonce)
+
+	React.useEffect(() => {
+		console.log('SCW Address: ', scwAddress)
+	}, [scwAddress])
 	return (
 		<Menu>
-			{!isLoggedIn && <Button
-				px={2.5}
-				borderRadius="2px"
-				marginLeft="12px"
-				onClick={() => {
-					if(!webwallet) {
-						setWebwallet(Wallet.createRandom())
-					}
-					
-					window.location.href = `https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}`
-				}}
-				>
+			{
+				!isLoggedIn && (
+					<Button
+						px={2.5}
+						borderRadius="2px"
+						marginLeft="12px"
+						onClick={
+							() => {
+								if(!webwallet) {
+									setWebwallet(Wallet.createRandom())
+								}
+
+								window.location.href = `https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}`
+							}
+						}
+					>
 				GitHub Login
-			</Button>}
-			{isLoggedIn && <Button
-				px={2.5}
-				borderRadius="2px"
-				marginLeft="12px"
-				onClick={() => {
-					setIsLoggedIn(false);
-					setNonce(undefined);
-				}}
-				>
+					</Button>
+				)
+			}
+			{/* {
+				isLoggedIn && (
+					<Button
+						px={2.5}
+						borderRadius="2px"
+						marginLeft="12px"
+						onClick={
+							() => {
+								setIsLoggedIn(false)
+								setNonce(undefined)
+							}
+						}
+					>
 				GitHub Logout
-			</Button>}
+					</Button>
+				)
+			} */}
 
 			<MenuButton
 				ref={buttonRef}
@@ -77,7 +95,7 @@ function AccountDetails() {
 				w={connected && isDisconnected ? buttonRef.current?.offsetWidth : 'auto'}
 			>
 				{
-					connected && isDisconnected ? (
+					connected && isDisconnected && !scwAddress ? (
 						<Loader />
 					) : (
 						<Text
@@ -86,7 +104,7 @@ function AccountDetails() {
 							fontSize="14px"
 							lineHeight="20px"
 						>
-							{formatAddress(accountData?.address ?? '')}
+							{formatAddress(scwAddress ?? (accountData?.address ?? ''))}
 						</Text>
 					)
 				}
@@ -99,6 +117,8 @@ function AccountDetails() {
 								() => {
 									setConnected(false)
 									disconnect()
+									setIsLoggedIn(false)
+									setNonce(undefined)
 									router.replace('/')
 								}
 							}

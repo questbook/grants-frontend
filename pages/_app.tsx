@@ -35,8 +35,6 @@ import '../styles/globals.css'
 import 'draft-js/dist/Draft.css'
 import SubgraphClient from '../src/graphql/subgraph'
 import theme from '../src/theme'
-import { Biconomy } from '@biconomy/mexa';
-import { BiconomyWalletClient } from 'src/types/gasless'
 
 type NextPageWithLayout = NextPage & {
 	getLayout?: (page: ReactElement) => ReactNode;
@@ -53,7 +51,7 @@ const { chains, provider } = configureChains(allChains, [
 	jsonRpcProvider({
 		rpc: (chain: Chain) => {
 			const rpcUrl = CHAIN_INFO[chain.id as SupportedChainId]?.rpcUrls[0]
-			if (!rpcUrl) {
+			if(!rpcUrl) {
 				return {
 					http: CHAIN_INFO[defaultChain.id as SupportedChainId].rpcUrls[0],
 				}
@@ -100,54 +98,54 @@ export const ApiClientsContext = createContext<{
 	subgraphClients: { [chainId: string]: SubgraphClient };
 	connected: boolean;
 	setConnected: (connected: boolean) => void;
-} | null>(null)
+		} | null>(null)
 
 
 export const GitHubTokenContext = createContext<{
 	isLoggedIn?: boolean,
 	setIsLoggedIn: (isLoggedIn?: boolean) => void;
-} | null>(null)
+		} | null>(null)
 
 export const WebwalletContext = createContext<{
 	webwallet?: Wallet,
 	setWebwallet: (webwallet?: Wallet) => void;
-} | null>(null)
+		} | null>(null)
 
 export const ScwAddressContext = createContext<{
 	scwAddress?: string,
 	setScwAddress: (scwAddress?: string) => void;
-} | null>(null)
+		} | null>(null)
 
 export const NonceContext = createContext<{
 	nonce?: string,
 	setNonce: (nonce?: string) => void;
-} | null>(null)
+		} | null>(null)
 
 export const BiconomyContext = createContext<{
 	biconomyDaoObj: any,
 	setBiconomyDaoObj: (biconomyDaoObj: any) => void;
-} | null>(null);
+		} | null>(null)
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [webwallet, setWebwallet] = React.useState<Wallet>()
 	const [workspace, setWorkspace] = React.useState<MinimalWorkspace>()
 	const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>()
 	const [scwAddress, setScwAddress] = React.useState<string>()
-	const [biconomyDaoObj, setBiconomyDaoObj] = React.useState<any>();
+	const [biconomyDaoObj, setBiconomyDaoObj] = React.useState<any>()
 	const [nonce, setNonce] = React.useState<string>()
 
 	const getIsLoggedIn = () => {
-		if (typeof window === 'undefined') {
+		if(typeof window === 'undefined') {
 			return undefined
 		}
 
 		const _isLoggedIn = localStorage.getItem('isLoggedInGitHub')
 
-		if (!_isLoggedIn) {
+		if(!_isLoggedIn) {
 			return undefined
 		}
 
-		if (_isLoggedIn === '1') {
+		if(_isLoggedIn === '1') {
 			return true
 		}
 
@@ -155,13 +153,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}
 
 	const getScwAddress = () => {
-		if (typeof window === 'undefined') {
+		if(typeof window === 'undefined') {
 			return undefined
 		}
 
 		const _scwAddress = localStorage.getItem('scwAddress')
 
-		if (!_scwAddress) {
+		if(!_scwAddress) {
 			return undefined
 		}
 
@@ -169,26 +167,29 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}
 
 	const getNonce = () => {
-		if (typeof window === 'undefined') {
+		if(typeof window === 'undefined') {
 			return undefined
 		}
 
 		const _nonce = localStorage.getItem('nonce')
 
-		if (!_nonce) {
+		if(!_nonce) {
 			return undefined
 		}
 
-		return nonce
+		return _nonce
 	}
 
 	const nonceContextValue = useMemo(
 		() => ({
 			nonce: getNonce(),
 			setNonce: (newNonce?: string) => {
-				if (newNonce) {
+				console.log('called nonce: ', newNonce)
+				if(newNonce) {
+					console.log('setting nonce', newNonce)
 					localStorage.setItem('nonce', newNonce)
 				} else {
+					console.log('removing nonce: ', localStorage.getItem('nonce'))
 					localStorage.removeItem('nonce')
 				}
 
@@ -202,7 +203,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		() => ({
 			scwAddress: getScwAddress(),
 			setScwAddress: (newScwAddress?: string) => {
-				if (newScwAddress) {
+				if(newScwAddress) {
 					localStorage.setItem('scwAddress', newScwAddress)
 				} else {
 					localStorage.removeItem('scwAddress')
@@ -218,7 +219,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		() => ({
 			isLoggedIn: getIsLoggedIn(),
 			setIsLoggedIn: (newIsLoggedIn?: boolean) => {
-				if (newIsLoggedIn) {
+				if(newIsLoggedIn) {
 					localStorage.setItem('isLoggedInGitHub', '1')
 				} else {
 					localStorage.setItem('isLoggedInGitHub', '0')
@@ -231,38 +232,38 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	)
 
 	const createWebWallet = () => {
-		if (typeof window === 'undefined') {
+		if(typeof window === 'undefined') {
 			return undefined
 		}
 
 		const privateKey = localStorage.getItem('webwalletPrivateKey')
-		if (!privateKey) {
+		if(!privateKey) {
 			return undefined
 		}
 
 		try {
 			const newWebwallet = new Wallet(privateKey)
 			return newWebwallet
-		} catch {
+		} catch{
 			return undefined
 		}
 	}
 
 
 	const getBiconomyDaoObj = () => {
-		if (typeof window === 'undefined') {
+		if(typeof window === 'undefined') {
 			return undefined
 		}
 
 		let _biconomyDaoObj = localStorage.getItem('biconomyDaoObj')
-		if (!_biconomyDaoObj) {
+		if(!_biconomyDaoObj) {
 			return undefined
 		}
 
 		try {
-			_biconomyDaoObj = JSON.parse(_biconomyDaoObj);
+			_biconomyDaoObj = JSON.parse(_biconomyDaoObj)
 			return _biconomyDaoObj
-		} catch {
+		} catch{
 			return undefined
 		}
 	}
@@ -271,7 +272,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		() => ({
 			webwallet: createWebWallet(),
 			setWebwallet: (newWebwallet?: Wallet) => {
-				if (newWebwallet) {
+				if(newWebwallet) {
 					localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
 				} else {
 					localStorage.removeItem('webwalletPrivateKey')
@@ -288,7 +289,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		() => ({
 			biconomyDaoObj: getBiconomyDaoObj(),
 			setBiconomyDaoObj: (newBiconomyDaoObj?: any) => {
-				if (newBiconomyDaoObj) {
+				if(newBiconomyDaoObj) {
 					localStorage.setItem('biconomyDaoObj', JSON.stringify(newBiconomyDaoObj))
 				} else {
 					localStorage.removeItem('biconomyDaoObj')
@@ -323,7 +324,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			validatorApi,
 			workspace,
 			setWorkspace: (newWorkspace?: MinimalWorkspace) => {
-				if (newWorkspace) {
+				if(newWorkspace) {
 					localStorage.setItem(
 						'currentWorkspace',
 						newWorkspace.supportedNetworks[0] + '-' + newWorkspace.id
@@ -388,7 +389,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	)
 }
 
-MyApp.getInitialProps = async (appContext: AppContext) => {
+MyApp.getInitialProps = async(appContext: AppContext) => {
 	// calls page's `getInitialProps` and fills `appProps.pageProps`
 	const appProps = await App.getInitialProps(appContext)
 	return { ...appProps }

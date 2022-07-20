@@ -3,8 +3,8 @@ import { Flex } from '@chakra-ui/react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import NavbarLayout from '../src/layout/navbarLayout'
-import { GitHubTokenContext, WebwalletContext, NonceContext } from './_app'
 import { getNonce } from '../src/utils/gaslessUtils'
+import { GitHubTokenContext, NonceContext, WebwalletContext } from './_app'
 
 function GitHubOauth() {
 
@@ -19,43 +19,43 @@ function GitHubOauth() {
 		console.log('THIS IS CODE', _code)
 		console.log('GITHUB', localStorage.getItem('webwalletPrivateKey'))
 		console.log('WEB', webwallet)
-		console.log("IS LOGGED IN", isLoggedIn)
-		// if(isLoggedIn) {	
+		console.log('IS LOGGED IN', isLoggedIn)
+		// if(isLoggedIn) {
 		// 	router.push('/')
 		// }
 
-		if (_code && webwallet) {
-			console.log("HERE")
+		if(_code && webwallet) {
+			console.log('HERE')
 			axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/add_user', {
 				code: _code,
 				webwallet_address: webwallet.address
 			})
 				.then(res => {
-					if (res) {
-						console.log("got here", res)
+					if(res) {
+						console.log('got here', res)
 						return res.data
 					}
 				})
 				.then(data => {
-					if (data) {
-						console.log("and here")
+					if(data) {
+						console.log('and here')
 						return data.authorize
 					}
 				})
 				.then(status => {
-					console.log("finally here")
+					console.log('finally here')
 					console.log(status)
-					if (status === true) {
+					if(status === true) {
 						getNonce(webwallet)
 							.then(_nonce => {
 								setNonce(_nonce)
 							})
-							.catch(err => console.log(err));
+							.catch(err => console.log(err))
 						setIsLoggedIn(true)
-						router.push('/');
+						router.push('/')
 					}
 				})
-				.catch(err => alert(err));
+				.catch(err => alert(err))
 		} else {
 			setMsg('Something went wrong. Please try again')
 		}
@@ -73,7 +73,7 @@ function GitHubOauth() {
 
 }
 
-GitHubOauth.getLayout = function (page: ReactElement) {
+GitHubOauth.getLayout = function(page: ReactElement) {
 	return (
 		<NavbarLayout>
 			{page}
