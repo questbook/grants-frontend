@@ -158,8 +158,8 @@ function Sidebar() {
 			</Flex>
 			<Box my="auto" />
 			{
-				workspaces.length === 0 ||
-        ((workspace && accountData?.address && getRole(workspace, accountData?.address) === 'Reviewer') && (
+				(!workspaces || workspaces.length === 0 ||
+        (workspace && accountData?.address && getRole(workspace, accountData?.address) === 'Reviewer')) && (
         	<Button
         		m={4}
         		h="40px"
@@ -180,7 +180,7 @@ function Sidebar() {
         	>
             Create your DAO
         	</Button>
-        ))
+				)
 			}
 		</Flex>
 	)

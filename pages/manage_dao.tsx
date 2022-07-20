@@ -5,17 +5,17 @@ import {
 	Button, Divider, Flex, Text,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { ApiClientsContext } from 'pages/_app'
+import Members from 'src/components/manage_dao/members'
+import Payouts from 'src/components/manage_dao/payouts'
+import Settings from 'src/components/manage_dao/settings'
 import Loader from 'src/components/ui/loader'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetWorkspaceDetailsQuery } from 'src/generated/graphql'
+import NavbarLayout from 'src/layout/navbarLayout'
 import { Workspace } from 'src/types'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
-import Members from '../src/components/manage_dao/members'
-import Payouts from '../src/components/manage_dao/payouts'
-import Settings from '../src/components/manage_dao/settings'
-import NavbarLayout from '../src/layout/navbarLayout'
-import { ApiClientsContext } from './_app'
 
 function ManageDAO() {
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
@@ -34,7 +34,7 @@ function ManageDAO() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
       ].client,
 	})
 

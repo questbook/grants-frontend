@@ -8,18 +8,18 @@ import React, {
 import { Container } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
+import { ApiClientsContext } from 'pages/_app'
+import Breadcrumbs from 'src/components/ui/breadcrumbs'
+import Form from 'src/components/your_grants/edit_grant/form'
+import Sidebar from 'src/components/your_grants/edit_grant/sidebar'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import { useGetGrantDetailsQuery } from 'src/generated/graphql'
 import useEditGrant from 'src/hooks/useEditGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
+import NavbarLayout from 'src/layout/navbarLayout'
 import { formatAmount } from 'src/utils/formattingUtils'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import Breadcrumbs from '../../src/components/ui/breadcrumbs'
-import Form from '../../src/components/your_grants/edit_grant/form'
-import Sidebar from '../../src/components/your_grants/edit_grant/sidebar'
-import NavbarLayout from '../../src/layout/navbarLayout'
-import { ApiClientsContext } from '../_app'
 
 function EditGrant() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
@@ -39,7 +39,7 @@ function EditGrant() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
       ].client,
 	})
 
@@ -84,13 +84,13 @@ function EditGrant() {
 						grant.workspace.supportedNetworks[0],
 					)
 				]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-					?.decimals ?? 18,
+					?.decimals || 18,
 			)
 			rewardCurrency = CHAIN_INFO[
 				getSupportedChainIdFromSupportedNetwork(
 					grant.workspace.supportedNetworks[0],
 				)
-			]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label ?? 'LOL'
+			]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label || 'LOL'
 			rewardCurrencyAddress = CHAIN_INFO[
 				getSupportedChainIdFromSupportedNetwork(
 					grant.workspace.supportedNetworks[0],
@@ -177,13 +177,13 @@ function EditGrant() {
 							grant.workspace.supportedNetworks[0],
 						)
 					]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-						?.decimals ?? 18,
+						?.decimals || 18,
 				)
 				rewardCurrency = CHAIN_INFO[
 					getSupportedChainIdFromSupportedNetwork(
 						grant.workspace.supportedNetworks[0],
 					)
-				]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label ?? 'LOL'
+				]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label || 'LOL'
 				rewardCurrencyAddress = CHAIN_INFO[
 					getSupportedChainIdFromSupportedNetwork(
 						grant.workspace.supportedNetworks[0],

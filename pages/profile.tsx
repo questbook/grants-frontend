@@ -19,19 +19,21 @@ import {
 	Stack,
 	Text,
 	useClipboard,
-	useDisclosure } from '@chakra-ui/react'
+	useDisclosure,
+} from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { ApiClientsContext } from 'pages/_app'
 import DaoAbout from 'src/components/profile/dao_about'
 import DaoData from 'src/components/profile/dao_data'
 import BrowseGrantCard from 'src/components/profile/grantCard'
 import SeeMore from 'src/components/profile/see_more'
-import { SupportedChainId } from 'src/constants/chains'
+import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { useGetDaoDetailsQuery, useGetFundsAndProfileDataQuery } from 'src/generated/graphql'
 // APP LAYOUT & STATE
 import NavbarLayout from 'src/layout/navbarLayout'
 // CONSTANTS AND TYPES
-import { DAOWorkspace } from 'src/types'
+import type { DAOWorkspace } from 'src/types'
 import { calculateUSDValue } from 'src/utils/calculatingUtils'
 import { formatAmount } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'
@@ -39,7 +41,6 @@ import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
-import { ApiClientsContext } from './_app'
 
 function Profile() {
 	const router = useRouter()
@@ -48,7 +49,6 @@ function Profile() {
 	const { subgraphClients } = React.useContext(ApiClientsContext)!
 	const { data: accountData } = useAccount()
 
-	// const [data, setData] = React.useState();
 	const [workspaceData, setWorkspaceData] = React.useState<DAOWorkspace>()
 	const [chainID, setChainId] = React.useState<SupportedChainId>()
 	const [daoID, setDaoId] = React.useState<string>()
@@ -74,7 +74,7 @@ function Profile() {
 	}, [router])
 
 	const [queryParams, setQueryParams] = useState<any>({
-		client: subgraphClients[chainID ?? SupportedChainId.RINKEBY].client,
+		client: subgraphClients[chainID || defaultChainId].client,
 	})
 
 	useEffect(() => {
@@ -104,31 +104,13 @@ function Profile() {
 		}
 	}, [data, error, loading])
 
-	// const { data: grantsData } = useGetAllGrantsForADaoQuery({
-	// 	client:
-	//   subgraphClients[
-	//   	getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) ?? SupportedChainId.RINKEBY
-	//   ].client,
-	// 	variables: {
-	// 		workspaceId: workspaceData?.id ?? '',
-	// 		acceptingApplications: true,
-	// 	},
-	// })
-
-	// const { data: fundsData } = useGetFundSentDisburseQuery({
-	// 	client:
-	//   subgraphClients[
-	//   	getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) ?? SupportedChainId.RINKEBY
-	//   ].client
-	// })
-
 	const { data: allDaoData } = useGetFundsAndProfileDataQuery({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) ?? SupportedChainId.RINKEBY
+      	getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) || defaultChainId
       ].client,
 	  variables: {
-			workspaceId: workspaceData?.id ?? '',
+			workspaceId: workspaceData?.id || '',
 			acceptingApplications: true,
 		},
 	})
@@ -184,7 +166,7 @@ function Profile() {
 
 				const tokenValue = formatAmount(
 					grant.funding,
-					tokenInfo?.decimals ?? 18
+					tokenInfo?.decimals || 18
 				)
 
 				if(tokenInfo !== undefined && tokenValue !== '0') {
@@ -427,7 +409,7 @@ Embed profile stats
               			grantAmount={
               				formatAmount(
               					grant.reward.committed,
-              					chainInfo?.decimals ?? 18,
+              					chainInfo?.decimals || 18,
               					false,
               					true
               				)
@@ -435,11 +417,11 @@ Embed profile stats
               			disbursedAmount={
               				formatAmount(
               					grant.funding,
-              					chainInfo?.decimals ?? 18
+              					chainInfo?.decimals || 18
               				)
               			}
-              			grantCurrency={chainInfo?.label ?? 'LOL'}
-              			grantCurrencyIcon={chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'}
+              			grantCurrency={chainInfo?.label || 'LOL'}
+              			grantCurrencyIcon={chainInfo?.icon || '/images/dummy/Ethereum Icon.svg'}
               			grantCurrencyPair={chainInfo?.pair || null}
               			chainId={chainId}
               			isGrantVerified={isGrantVerified}

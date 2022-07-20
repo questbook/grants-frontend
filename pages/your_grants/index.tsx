@@ -9,11 +9,14 @@ import React, {
 import { Button, Flex, Text } from '@chakra-ui/react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useRouter } from 'next/router'
+import { ApiClientsContext } from 'pages/_app'
+import AddFunds from 'src/components/funds/add_funds_modal'
 import ArchivedGrantEmptyState from 'src/components/your_grants/empty_states/archived_grant'
 import ExpiredGrantEmptyState from 'src/components/your_grants/empty_states/expired_grant'
 import FirstGrantEmptyState from 'src/components/your_grants/empty_states/first_grant'
 import LiveGrantEmptyState from 'src/components/your_grants/empty_states/live_grants'
 import Sidebar from 'src/components/your_grants/sidebar/sidebar'
+import YourGrantCard from 'src/components/your_grants/yourGrantCard'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import {
 	GetAllGrantsForCreatorQuery,
@@ -22,6 +25,8 @@ import {
 	useGetAllGrantsForCreatorQuery,
 	useGetAllGrantsForReviewerQuery,
 } from 'src/generated/graphql'
+import NavbarLayout from 'src/layout/navbarLayout'
+import { formatAmount } from 'src/utils/formattingUtils'
 import { UNIX_TIMESTAMP_MAX, unixTimestampSeconds } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getChainInfo } from 'src/utils/tokenUtils'
@@ -30,11 +35,6 @@ import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
-import AddFunds from '../../src/components/funds/add_funds_modal'
-import YourGrantCard from '../../src/components/your_grants/yourGrantCard'
-import NavbarLayout from '../../src/layout/navbarLayout'
-import { formatAmount } from '../../src/utils/formattingUtils'
-import { ApiClientsContext } from '../_app'
 
 const PAGE_SIZE = 5
 
@@ -108,21 +108,21 @@ function YourGrants() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
       ].client,
 	})
 
 	const [queryReviewerParams, setQueryReviewerParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
       ].client,
 	})
 
 	const [countQueryParams, setCountQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
       ].client,
 	})
 
@@ -131,7 +131,7 @@ function YourGrants() {
 
 	useEffect(() => {
 		setSelectedTab(
-			parseInt(localStorage.getItem('yourGrantsTabSelected') ?? '0')
+			parseInt(localStorage.getItem('yourGrantsTabSelected') || '0')
 		)
 	}, [])
 
@@ -326,8 +326,8 @@ function YourGrants() {
 		setGrantRewardAsset({
 			address: grant.reward.asset,
 			committed: BigNumber.from(grant.reward.committed),
-			label: chainInfo?.label ?? 'LOL',
-			icon: chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg',
+			label: chainInfo?.label || 'LOL',
+			icon: chainInfo?.icon || '/images/dummy/Ethereum Icon.svg',
 		})
 	}
 
@@ -470,14 +470,14 @@ Post a Grant / Bounty
                   		grant.workspace.supportedNetworks[0]
                   	)
                   ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-                  	?.label ?? 'LOL'
+                  	?.label || 'LOL'
             		icon =
                   CHAIN_INFO[
                   	getSupportedChainIdFromSupportedNetwork(
                   		grant.workspace.supportedNetworks[0]
                   	)
                   ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-                  	?.icon ?? '/images/dummy/Ethereum Icon.svg'
+                  	?.icon || '/images/dummy/Ethereum Icon.svg'
             	}
 
             	return (
@@ -489,8 +489,8 @@ Post a Grant / Bounty
             			grantDesc={grant.summary}
             			numOfApplicants={grant.numberOfApplications}
             			endTimestamp={new Date(grant.deadline).getTime()}
-            			grantAmount={formatAmount(grantAmount, decimals ?? 18)}
-            			grantCurrency={label ?? 'LOL'}
+            			grantAmount={formatAmount(grantAmount, decimals || 18)}
+            			grantCurrency={label || 'LOL'}
             			grantCurrencyIcon={icon}
             			state="done"
             			chainId={
@@ -550,14 +550,14 @@ Post a Grant / Bounty
                   		grant.grant.workspace.supportedNetworks[0]
                   	)
                   ]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
-                  	?.label ?? 'LOL'
+                  	?.label || 'LOL'
             		icon =
                   CHAIN_INFO[
                   	getSupportedChainIdFromSupportedNetwork(
                   		grant.grant.workspace.supportedNetworks[0]
                   	)
                   ]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
-                  	?.icon ?? '/images/dummy/Ethereum Icon.svg'
+                  	?.icon || '/images/dummy/Ethereum Icon.svg'
             	}
 
             	return (
@@ -573,8 +573,8 @@ Post a Grant / Bounty
             			grantDesc={grant.grant.summary}
             			numOfApplicants={grant.grant.numberOfApplications}
             			endTimestamp={new Date(grant.grant.deadline).getTime()}
-            			grantAmount={formatAmount(grantAmount, decimals ?? 18)}
-            			grantCurrency={label ?? 'LOL'}
+            			grantAmount={formatAmount(grantAmount, decimals || 18)}
+            			grantCurrency={label || 'LOL'}
             			grantCurrencyIcon={icon}
             			state="done"
             			chainId={

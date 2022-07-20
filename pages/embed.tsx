@@ -9,25 +9,22 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { ApiClientsContext } from 'pages/_app'
 // TYPES, STATES, and CONSTANTS
-import { SupportedChainId } from 'src/constants/chains'
+import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import { CHAIN_INFO } from 'src/constants/chains'
 import {
 	useGetAllGrantsForADaoQuery,
 	useGetDaoDetailsQuery,
 } from 'src/generated/graphql'
-import { DAOWorkspace } from 'src/types'
+import type { DAOWorkspace } from 'src/types'
 import { calculateUSDValue } from 'src/utils/calculatingUtils'
 import { formatAmount } from 'src/utils/formattingUtils'
 //TOOLS and UTILS
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import { ApiClientsContext } from './_app'
 
 export default function Embed() {
-	const width = '1080px'
-	const height = '480px'
-
 	const router = useRouter()
 	const { subgraphClients } = useContext(ApiClientsContext)!
 
@@ -47,7 +44,7 @@ export default function Embed() {
 	}, [router])
 
 	const [queryParams, setQueryParams] = useState<any>({
-		client: subgraphClients[chainID ?? SupportedChainId.RINKEBY].client,
+		client: subgraphClients[chainID || defaultChainId].client,
 	})
 
 	useEffect(() => {
@@ -81,10 +78,10 @@ export default function Embed() {
       subgraphClients[
       	getSupportedChainIdFromSupportedNetwork(
           workspaceData?.supportedNetworks[0]!
-      	) ?? SupportedChainId.RINKEBY
+      	) || defaultChainId
       ].client,
 		variables: {
-			workspaceId: workspaceData?.id ?? '',
+			workspaceId: workspaceData?.id || '',
 			acceptingApplications: true,
 		},
 	})
@@ -133,7 +130,7 @@ export default function Embed() {
 
 				const tokenValue = formatAmount(
 					grant.funding,
-					tokenInfo?.decimals ?? 18
+					tokenInfo?.decimals || 18
 				)
 
 				if(tokenInfo !== undefined && tokenValue !== '0') {

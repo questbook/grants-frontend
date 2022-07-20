@@ -8,23 +8,23 @@ import React, {
 } from 'react'
 import { Flex, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { ApiClientsContext } from 'pages/_app'
+import GrantCard from 'src/components/browse_grants/grantCard'
+import Sidebar from 'src/components/browse_grants/sidebar'
+import Heading from 'src/components/ui/heading'
+import Loader from 'src/components/ui/loader'
 import {
 	GetAllGrantsQuery,
 	useGetAllGrantsLazyQuery,
 } from 'src/generated/graphql'
+import NavbarLayout from 'src/layout/navbarLayout'
+import { formatAmount } from 'src/utils/formattingUtils'
 import { unixTimestampSeconds } from 'src/utils/generics'
 import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { useAccount, useConnect } from 'wagmi'
-import GrantCard from '../src/components/browse_grants/grantCard'
-import Sidebar from '../src/components/browse_grants/sidebar'
-import Heading from '../src/components/ui/heading'
-import Loader from '../src/components/ui/loader'
-import NavbarLayout from '../src/layout/navbarLayout'
-import { formatAmount } from '../src/utils/formattingUtils'
-import { ApiClientsContext } from './_app'
 
 const PAGE_SIZE = 40
 
@@ -58,7 +58,7 @@ function BrowseGrants() {
 							variables: {
 								first: PAGE_SIZE,
 								skip: currentPageLocal * PAGE_SIZE,
-								applicantId: accountData?.address ?? '',
+								applicantId: accountData?.address || '',
 								minDeadline: unixTimestampSeconds(),
 							},
 						})
@@ -205,17 +205,17 @@ function BrowseGrants() {
               			grantAmount={
               				formatAmount(
               					grant.reward.committed,
-              					chainInfo?.decimals ?? 18
+              					chainInfo?.decimals || 18
               				)
               			}
               			disbursedAmount={
               				formatAmount(
               					grant.funding,
-              					chainInfo?.decimals ?? 18
+              					chainInfo?.decimals || 18
               				)
               			}
-              			grantCurrency={chainInfo?.label ?? 'LOL'}
-              			grantCurrencyIcon={chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'}
+              			grantCurrency={chainInfo?.label || 'LOL'}
+              			grantCurrencyIcon={chainInfo?.icon || '/images/dummy/Ethereum Icon.svg'}
               			grantCurrencyPair={chainInfo?.pair!}
               			isGrantVerified={isGrantVerified}
               			funding={funding}
@@ -258,7 +258,7 @@ function BrowseGrants() {
               	)
               })
 						}
-						{loading ? <Loader /> : allDataFetched ?? <></>}
+						{loading ? <Loader /> : allDataFetched || <></>}
 					</>
 				}
 			</Flex>

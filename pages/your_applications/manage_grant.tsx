@@ -5,24 +5,24 @@ import {
 import { BigNumber } from 'ethers'
 import moment from 'moment'
 import { useRouter } from 'next/router'
+import { ApiClientsContext } from 'pages/_app'
+import Breadcrumbs from 'src/components/ui/breadcrumbs'
 import VerifiedBadge from 'src/components/ui/verified_badge'
+import Funding from 'src/components/your_applications/manage_grant/fundingRequestedTable'
+import MilestoneTable from 'src/components/your_applications/manage_grant/milestoneTable'
+import Sidebar from 'src/components/your_applications/manage_grant/sidebar'
 import { defaultChainId } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import {
 	useGetApplicationDetailsQuery,
 	useGetFundSentForApplicationQuery,
 } from 'src/generated/graphql'
+import NavbarLayout from 'src/layout/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
+import { formatAmount } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'
 import useApplicationMilestones from 'src/utils/queryUtil'
-import Breadcrumbs from '../../src/components/ui/breadcrumbs'
-import Funding from '../../src/components/your_applications/manage_grant/fundingRequestedTable'
-import MilestoneTable from '../../src/components/your_applications/manage_grant/milestoneTable'
-import Sidebar from '../../src/components/your_applications/manage_grant/sidebar'
-import NavbarLayout from '../../src/layout/navbarLayout'
-import { formatAmount } from '../../src/utils/formattingUtils'
-import { getChainInfo } from '../../src/utils/tokenUtils'
-import { ApiClientsContext } from '../_app'
+import { getChainInfo } from 'src/utils/tokenUtils'
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 	let val = BigNumber.from(0)
@@ -72,7 +72,7 @@ function ManageGrant() {
 	} = useApplicationMilestones(applicationID, chainId)
 
 	const { data: fundsDisbursed } = useGetFundSentForApplicationQuery({
-		client: subgraphClients[chainId ?? defaultChainId].client,
+		client: subgraphClients[chainId || defaultChainId].client,
 		variables: {
 			applicationId: applicationID,
 		},
@@ -81,7 +81,7 @@ function ManageGrant() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	chainId ?? defaultChainId
+      	chainId || defaultChainId
       ].client,
 	})
 

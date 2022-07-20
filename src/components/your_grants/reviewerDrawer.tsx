@@ -190,7 +190,7 @@ function ReviewDrawer({
 
 						{
 							workspace?.members
-							// .filter((member) => (member.publicKey ?? '').length > 0)
+							// .filter((member) => (member.publicKey || '').length > 0)
 								.filter(
 									(member) => emailSearchText === ''
                     || (member.email && member.email.startsWith(emailSearchText)),

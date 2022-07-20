@@ -36,10 +36,10 @@
 			}
 		},
 		"qbContracts": {
-			"applications": "0xD139A265C19e9A97b0963ff6F64999789d1Cf6Aa",
-			"workspace": "0xEF77967DEae683D5a66E480cc2D7B9e38cc79a1f",
-			"grantFactory": "0xF6C563C9A9956ED23B396aF9252d640B1512a3d1",
-			"reviews": "0xCbFD79d3Fd1FE493fDC87CF8809805978F9a83d0"
+			"applications": "0x3f718a42d1E7EDE928b81A72eE9eF3d63607d999",
+			"workspace": "0x85d6F1C1129778e87eD3671E332AA364d0beb5D1",
+			"grantFactory": "0xB6E5b2faBe68B7212d1c25f44480a4B75812B901",
+			"reviews": "0xfbFeEc614A6468BF29888B1591D6bb2fde223Ae5"
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-rinkeby",
 		"rpcUrls": [
@@ -403,6 +403,51 @@
 			"decimals": 18
 		}
 	},
+	"1287": {
+		"id": 1287,
+		"name": "Moonbase Alpha",
+		"isTestNetwork": true,
+		"icon": "/chain_assets/eth.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://moonbase.moonscan.io/address/{{address}}",
+			"transactionHash": "https://moonbase.moonscan.io/tx/{{tx}}"
+		},
+		"supportedCurrencies": {
+			"0x3a9c9484e0e82596fb4c2e7fec97106c4c2310fa": {
+				"icon": "/chain_assets/eth.svg",
+				"label": "ELP",
+				"address": "0x3a9c9484e0e82596fb4c2e7fec97106c4c2310fa",
+				"pair": "0x0",
+				"decimals": 18
+			},
+			"0xed13b028697febd70f34cf9a9e280a8f1e98fd29": {
+				"icon": "/chain_assets/eth.svg",
+				"label": "NEPT",
+				"address": "0xed13b028697febd70f34cf9a9e280a8f1e98fd29",
+				"pair": "0x0",
+				"decimals": 18
+			}
+		},
+		"qbContracts": {
+			"applications": "0xF4Db8BdDF1029764e4E09e7cE34149371a9A7027",
+			"workspace": "0x2dB223158288B2299480aF577eDF30D5a533F137",
+			"grantFactory": "0xf08bCcf3C9DE7Daf25BCe13C87D0dd69754E0a33",
+			"reviews": "0xab163375C1aD08e24005771cC9908a1C7c61Adaa"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-moonbase-alpha",
+		"rpcUrls": [
+			"https://rpc.api.moonbase.moonbeam.network"
+		],
+		"nativeCurrency": {
+			"name": "DEV",
+			"symbol": "DEV",
+			"decimals": 18
+		}
+	},
 	"2153": {
 		"id": 2153,
 		"name": "Findora Testnet",
@@ -425,10 +470,10 @@
 			}
 		},
 		"qbContracts": {
-			"applications": "0xaFaC7a1229509A6dF7f75AAF1B28C1e927D6A542",
-			"workspace": "0x6C95c4b887eAcC52612e3D79575A1b00Ace05A4d",
-			"grantFactory": "0xc782342D667f8355869E9f5D23f245804aB10F56",
-			"reviews": "0xB2594525944249664F577fD6812CA03a09FDffdf"
+			"applications": "0x5f12ad812bE963A2d73BeAB23ecdc6fc02d9ce45",
+			"workspace": "0xBbc87cE003542c25E70b1A63d4F00Fac99733590",
+			"grantFactory": "0x96d854825678CD02A8eEA22a53Ee6DC6D1aE9722",
+			"reviews": "0x8ee0b5412441d85c2BF32b83d24886B2B2D686c2"
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-findora-testnet",
 		"rpcUrls": [
@@ -474,6 +519,44 @@
 		"nativeCurrency": {
 			"name": "Unsupported Currency",
 			"symbol": "UNSUP",
+			"decimals": 18
+		}
+	},
+	"9000": {
+		"id": 9000,
+		"name": "Evmos Testnet",
+		"isTestNetwork": true,
+		"icon": "/chain_assets/eth.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://evm.evmos.dev/address/{{address}}",
+			"transactionHash": "https://evm.evmos.dev/tx/{{tx}}"
+		},
+		"supportedCurrencies": {
+			"0xae95d4890bf4471501e0066b6c6244e1caaee791": {
+				"icon": "/chain_assets/usdc.svg",
+				"label": "USDC",
+				"address": "0xae95d4890bf4471501e0066b6c6244e1caaee791",
+				"pair": "0x0",
+				"decimals": 6
+			}
+		},
+		"qbContracts": {
+			"applications": "0xF4Db8BdDF1029764e4E09e7cE34149371a9A7027",
+			"workspace": "0x2dB223158288B2299480aF577eDF30D5a533F137",
+			"grantFactory": "0xf08bCcf3C9DE7Daf25BCe13C87D0dd69754E0a33",
+			"reviews": "0xab163375C1aD08e24005771cC9908a1C7c61Adaa"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-evmos-testnet",
+		"rpcUrls": [
+			"https://eth.bd.evmos.dev:8545"
+		],
+		"nativeCurrency": {
+			"name": "Test EVMOS",
+			"symbol": "tEVMOS",
 			"decimals": 18
 		}
 	},
@@ -663,6 +746,51 @@
 		"nativeCurrency": {
 			"name": "Unsupported Currency",
 			"symbol": "UNSUP",
+			"decimals": 18
+		}
+	},
+	"1313161555": {
+		"id": 1313161555,
+		"name": "Aurora Testnet",
+		"isTestNetwork": true,
+		"icon": "/chain_assets/eth.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://testnet.aurorascan.dev/address/{{address}}",
+			"transactionHash": "https://testnet.aurorascan.dev/tx/{{tx}}"
+		},
+		"supportedCurrencies": {
+			"0x9e70345a1b3d2d55fb29be4adbd2a6e38ee57d83": {
+				"icon": "/chain_assets/weth.svg",
+				"label": "WETH",
+				"address": "0x9e70345a1b3d2d55fb29be4adbd2a6e38ee57d83",
+				"pair": "0x0",
+				"decimals": 18
+			},
+			"0xaab34177b4b5ca686d3ee1ce705133cb3554b183": {
+				"icon": "/chain_assets/usdc.svg",
+				"label": "USDC",
+				"address": "0xaab34177b4b5ca686d3ee1ce705133cb3554b183",
+				"pair": "0x0",
+				"decimals": 6
+			}
+		},
+		"qbContracts": {
+			"applications": "0xC6b6356FBdcf6CC6EA4Cb90Cd11B7E3c5848F312",
+			"workspace": "0x168A72b08FCFF48192E0B1A27486f4394a4F86e1",
+			"grantFactory": "0xCc3367953734da16bC7740696617b62d80845C90",
+			"reviews": "0x6178d7Ac94E045d39850Ef6f35cCD0D4851DAbeC"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-aurora-testnet",
+		"rpcUrls": [
+			"https://testnet.aurora.dev/"
+		],
+		"nativeCurrency": {
+			"name": "Aurora ETH",
+			"symbol": "ETH",
 			"decimals": 18
 		}
 	},

@@ -5,17 +5,17 @@ import { Flex,
 } from '@chakra-ui/react'
 import BN from 'bn.js'
 import { useRouter } from 'next/router'
+import { ApiClientsContext } from 'pages/_app'
 import Empty from 'src/components/ui/empty'
+import Heading from 'src/components/ui/heading'
+import YourApplicationCard from 'src/components/your_applications/yourApplicationCard'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { GrantApplication, useGetMyApplicationsLazyQuery } from 'src/generated/graphql'
+import NavbarLayout from 'src/layout/navbarLayout'
+import { formatAmount, getChainIdFromResponse, getFormattedDateFromUnixTimestamp } from 'src/utils/formattingUtils'
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
-import Heading from '../../src/components/ui/heading'
-import YourApplicationCard from '../../src/components/your_applications/yourApplicationCard'
-import NavbarLayout from '../../src/layout/navbarLayout'
-import { formatAmount, getChainIdFromResponse, getFormattedDateFromUnixTimestamp } from '../../src/utils/formattingUtils'
-import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils'
-import { ApiClientsContext } from '../_app'
 
 const PAGE_SIZE = 20
 
@@ -143,7 +143,7 @@ function YourApplications() {
           						application.grant.workspace.supportedNetworks[0],
           					)
           				]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
-          					?.decimals ?? 18,
+          					?.decimals || 18,
           			)
           			}
           			currency={
@@ -152,7 +152,7 @@ function YourApplications() {
           					application.grant.workspace.supportedNetworks[0],
           				)
           			]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
-          				?.label ?? 'LOL'
+          				?.label || 'LOL'
           			}
           			isDaoVerified={false}
           			status={application.state}

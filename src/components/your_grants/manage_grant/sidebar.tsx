@@ -16,11 +16,13 @@ interface Props {
   assetInfo: any;
   milestones: any[];
   applicationId: string;
+  applicantId: string;
+  workspaceId: string;
   decimals: number;
 }
 
 function Sidebar({
-	grant, assetInfo, milestones, applicationId, decimals,
+	grant, assetInfo, milestones, applicationId, applicantId, workspaceId, decimals,
 }: Props) {
 	const [isAddFundModalOpen, setIsAddFundModalOpen] = React.useState(false)
 	const [isSendFundModalOpen, setIsSendFundModalOpen] = React.useState(false)
@@ -50,7 +52,7 @@ function Sidebar({
 						{grant && grant.funding ? formatAmount(grant?.funding, decimals) : null}
 					</Text>
 					<Box mr={3} />
-					{
+					{/* {
 						grant && parseInt(grant.funding, 10) > 0 && (
 							<Button
 								variant="link"
@@ -61,7 +63,7 @@ function Sidebar({
               Add Funds
 							</Button>
 						)
-					}
+					} */}
 				</Flex>
 				{
 					grant && parseInt(grant.funding, 10) === 0 && (
@@ -140,6 +142,13 @@ function Sidebar({
 					}
 				</Text>
 				<Button
+					variant="primary"
+					mt={6}
+					onClick={() => setIsAddFundModalOpen(true)}
+				>
+              Add Funds
+				</Button>
+				<Button
 					mt="22px"
 					variant="outline"
 					color="brand.500"
@@ -202,6 +211,7 @@ function Sidebar({
 								contractFunding={grant.funding}
 								onClose={() => setIsSendFundModalOpen(false)}
 								grantId={grant.id}
+								applicantId={applicantId}
 								applicationId={applicationId}
 							/>
 						</Modal>

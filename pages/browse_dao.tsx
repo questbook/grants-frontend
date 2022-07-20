@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { Box, Button, Container, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Text, useToast } from '@chakra-ui/react'
+import { ApiClientsContext } from 'pages/_app'
 import AllDaosGrid from 'src/components/browse_daos/all_daos'
 import BrowseDaoHeader from 'src/components/browse_daos/header'
 import { GetAllGrantsQuery, useGetAllGrantsLazyQuery, useGetAllWorkspacesLazyQuery } from 'src/generated/graphql'
@@ -7,7 +8,6 @@ import { formatAmount } from 'src/utils/formattingUtils'
 import { unixTimestampSeconds } from 'src/utils/generics'
 import Sidebar from 'src/v2/components/Sidebar'
 import { useAccount, useConnect } from 'wagmi'
-import { ApiClientsContext } from './_app'
 
 const PAGE_SIZE = 40
 

@@ -107,7 +107,7 @@ export default function useCreateGrant(
 					reward,
 					creatorId: accountData?.address!,
 					workspaceId: getSupportedValidatorNetworkFromChainId(
-            (chainId ?? getSupportedChainIdFromWorkspace(workspace))!,
+            (chainId || getSupportedChainIdFromWorkspace(workspace))!,
 					),
 					fields: data.fields,
 					grantManagers: data.grantManagers.length ? data.grantManagers : [accountData!.address],
@@ -136,7 +136,7 @@ export default function useCreateGrant(
 
 				console.log('rubricHash', rubricHash)
 
-				// console.log(workspaceId ?? Number(workspace?.id).toString());
+				// console.log(workspaceId || Number(workspace?.id).toString());
 				// console.log('ipfsHash', ipfsHash);
 				// console.log(
 				//   WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
@@ -144,7 +144,7 @@ export default function useCreateGrant(
 				// );
 
 				const createGrantTransaction = await grantContract.createGrant(
-					workspaceId ?? Number(workspace?.id).toString(),
+					workspaceId || Number(workspace?.id).toString(),
 					ipfsHash,
 					rubricHash,
 					WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
@@ -153,7 +153,7 @@ export default function useCreateGrant(
 				const createGrantTransactionData = await createGrantTransaction.wait()
 
 				const CACHE_KEY = strings.cache.create_grant
-				const cacheKey = `${chainId ?? getSupportedChainIdFromWorkspace(workspace)}-${CACHE_KEY}-${workspace?.id}`
+				const cacheKey = `${chainId || getSupportedChainIdFromWorkspace(workspace)}-${CACHE_KEY}-${workspace?.id}`
 				console.log('Deleting key: ', cacheKey)
 				if(typeof window !== 'undefined') {
 					localStorage.removeItem(cacheKey)
@@ -269,7 +269,7 @@ export default function useCreateGrant(
 
 	return [
 		transactionData,
-		getExplorerUrlForTxHash(chainId ?? getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
+		getExplorerUrlForTxHash(chainId || getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
 		loading,
 		error,
 	]
