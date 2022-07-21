@@ -45,7 +45,7 @@ const OnboardingCreateDao = () => {
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 	const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!
 
-	const [biconomy, biconomyWalletClient, scwAddress] = useBiconomy({
+	const {biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress} = useBiconomy({
 		apiKey: apiKey,
 		targetContractABI: WorkspaceRegistryAbi,
 	})
@@ -112,7 +112,10 @@ const OnboardingCreateDao = () => {
 
 			setCurrentStep(2)
 			
-			if(!biconomyWalletClient)
+			if(!isBiconomyInitialised)
+				return;
+
+			if(!biconomyWalletClient || typeof biconomyWalletClient === "string" || !scwAddress)
 				return;
 
 			const targetContractObject = new ethers.Contract(
@@ -122,6 +125,7 @@ const OnboardingCreateDao = () => {
 			)
 			console.log('ENTERING')
 			console.log(daoNetwork.id, scwAddress, webwallet, nonce, webHookId)
+			
 			const transactionHash = await sendGaslessTransaction(
 				biconomy,
 				targetContractObject,
