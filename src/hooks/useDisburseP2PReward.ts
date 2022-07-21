@@ -9,7 +9,7 @@ import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useAccount, useNetwork, useProvider } from 'wagmi'
+import { useNetwork, useProvider } from 'wagmi'
 import CustomToast from '../components/ui/toasts/customToast'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useERC20Contract from './contracts/useERC20Contract'

@@ -11,8 +11,8 @@ import { useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useGrantContract from './contracts/useGrantContract'
 import useQBContract from './contracts/useQBContract'
-import useChainId from './utils/useChainId'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
+import useChainId from './utils/useChainId'
 
 export default function useEditGrant(
 	data: any,

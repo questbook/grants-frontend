@@ -27,7 +27,6 @@ import {
 } from 'src/utils/formattingUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
 
 export default function Payouts() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!

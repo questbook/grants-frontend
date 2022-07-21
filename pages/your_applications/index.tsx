@@ -17,7 +17,6 @@ import NavbarLayout from 'src/layout/navbarLayout'
 import { formatAmount, getChainIdFromResponse, getFormattedDateFromUnixTimestamp } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
 
 const PAGE_SIZE = 20
 

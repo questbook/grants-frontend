@@ -25,7 +25,7 @@ import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import { useAccount, useConnect } from 'wagmi'
+import { useConnect } from 'wagmi'
 
 const PAGE_SIZE = 40
 

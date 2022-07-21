@@ -10,8 +10,8 @@ import { useNetwork,
 } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import strings from '../constants/strings.json'
-import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useQBContract from './contracts/useQBContract'
+import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
 
 export default function useSubmitApplication(

@@ -35,7 +35,6 @@ import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
 
 function ApplicantForm() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!

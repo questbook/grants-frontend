@@ -40,7 +40,6 @@ import verify from 'src/utils/grantUtils'
 // UTILS AND TOOLS
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
 
 function Profile() {
 	const router = useRouter()

@@ -17,7 +17,6 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { Workspace } from 'src/types'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
 
 function ManageDAO() {
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
