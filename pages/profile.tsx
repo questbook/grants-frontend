@@ -239,30 +239,9 @@ function Profile() {
 							borderRadius="12px"
 						/>
 
-						<Flex
-							direction="column"
-							align="start">
-							<Text
-								variant="heading"
-								fontWeight="700"
-								fontSize="1.8rem">
-								{workspaceData?.title}
-							</Text>
-							{
-								chainID && (
-									<Text
-										variant="applicationText"
-										fontWeight="400"
-										fontSize="1rem"
-										color="#717A7C"
-									>
-										{CHAIN_INFO[chainID].name}
-									</Text>
-								)
-							}
-						</Flex>
 
 						<Box mr="auto" />
+
 
 						<Flex
 							direction="row"
@@ -297,6 +276,30 @@ function Profile() {
 								))
 							}
 						</Flex>
+					</Flex>
+					<Flex
+						pl={'25px'}
+						direction="column"
+						align="start">
+						<Text
+							variant="heading"
+							fontWeight="700"
+							fontSize="20px">
+							{workspaceData?.title}
+						</Text>
+						{
+							chainID && (
+								<Text
+									variant="applicationText"
+									fontWeight="400"
+									fontSize="1rem"
+									color="#717A7C"
+									lineHeight={'10px'}
+								>
+									{CHAIN_INFO[chainID].name}
+								</Text>
+							)
+						}
 					</Flex>
 
 					<Stack px="1.5rem">

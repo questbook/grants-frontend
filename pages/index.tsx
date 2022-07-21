@@ -26,6 +26,7 @@ import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { useConnect } from 'wagmi'
+import BrowseDao from './browse_dao'
 
 const PAGE_SIZE = 40
 
@@ -285,4 +286,4 @@ BrowseGrants.getLayout = function(page: ReactElement) {
 	)
 }
 
-export default BrowseGrants
+export default BrowseDao
