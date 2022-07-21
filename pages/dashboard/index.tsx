@@ -98,6 +98,7 @@ function DaoDashboard() {
 			headers: {
 				'Content-Type': 'application/json'
 			},
+			referrerPolicy: 'unsafe-url',
 			body: JSON.stringify({
 				chainId: getSupportedChainIdFromWorkspace(workspace)!,
 				workspaceId: workspace!.id
