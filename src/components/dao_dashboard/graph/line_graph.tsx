@@ -128,7 +128,7 @@ function LineGraph({ app_count, title }:{app_count:string, title: string}) {
 							<Flex >
 
 								<Chart
-									options={lineChartOptionsProfile2}
+									options={lineChartOptionsProfile2 as any}
 									series={lineChartDataProfile2}
 									type="line"
 									width="512px"
@@ -184,7 +184,7 @@ function LineGraph({ app_count, title }:{app_count:string, title: string}) {
 							<Flex >
 
 								<Chart
-									options={lineChartOptionsProfile2}
+									options={lineChartOptionsProfile2 as any}
 									series={lineChartDataProfile2}
 									type="line"
 									width="512px"

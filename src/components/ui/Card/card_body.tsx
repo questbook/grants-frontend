@@ -1,6 +1,6 @@
 import { Box, useStyleConfig } from '@chakra-ui/react'
 
-function CardBody(props) {
+function CardBody(props: any) {
 	const { variant, children, ...rest } = props
 	const styles = useStyleConfig('CardBody', { variant })
 	// Pass the computed styles into the `__css` prop
