@@ -1,6 +1,7 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react'
 import { Box, Button, Container, Flex, Heading, Image, Menu,
 	MenuButton,
+	MenuGroup,
 	MenuItem, 	MenuList,
 	Spacer, Text } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
@@ -405,23 +406,26 @@ function ViewApplicants() {
 		<Container
 			maxW="100%"
 			display="flex"
+			flexDirection="column"
 			bg="#F0F0F7"
-			px="70px"
-			mb="300px">
+		>
 			<Container
 				flex={1}
 				display="flex"
 				flexDirection="column"
-				maxW="1116px"
-				alignItems="stretch"
-				pb={8}
+				maxW="100%"
+				maxH="300"
 				px={10}
 				pos="relative"
+
 			>
-				<Breadcrumbs path={['Grants & Bounties', 'Applicants']} />
-				<Flex ml="-50px">
+				<Flex ml={16}>
+					{' '}
+					<Breadcrumbs path={['Grants & Bounties', 'Applicants']} />
+				</Flex>
+				<Flex >
 					<Box p='2'>
-						<Heading size='md'>
+						<Heading size='lg'>
 							{grantTitle}
 						</Heading>
 					</Box>
@@ -433,26 +437,30 @@ function ViewApplicants() {
 							<Image src="/ui_icons/grant_options_dropdown.svg" />
 						</MenuButton>
 						<MenuList>
-							<MenuItem>
-								<Image
-									src="/ui_icons/grant_options_setup_evaluation.svg"
-									mr="12px" />
-								{' '}
-								<span onClick={() => setRubricDrawerOpen(true)}>
+							<MenuGroup
+								title='Profile'
+								color="#7D7DA0">
+								<MenuItem onClick={() => setRubricDrawerOpen(true)}>
+									<Image
+										src="/ui_icons/grant_options_setup_evaluation.svg"
+										mr="12px" />
+									{' '}
+
 Setup application evaluation
 									{' '}
-								</span>
-							</MenuItem>
-							<MenuItem>
-								<Image
-									src="/ui_icons/grant_options_archive_grant.svg"
-									mr="12px" />
-								{' '}
-								<span onClick={() => setIsArchiveModalOpen(true)} >
+
+								</MenuItem>
+								<MenuItem onClick={() => setIsArchiveModalOpen(true)}>
+									<Image
+										src="/ui_icons/grant_options_archive_grant.svg"
+										mr="12px" />
+									{' '}
+
 Archive grant
 									{' '}
-								</span>
-							</MenuItem>
+
+								</MenuItem>
+							</MenuGroup>
 						</MenuList>
 					</Menu>
 				</Flex>
@@ -461,79 +469,50 @@ Archive grant
 					numberOfApplicants={applicantsData.length}
 		  totalDisbursed={totalDisbursed}
 				/>
-
-				<RubricDrawer
-					rubricDrawerOpen={rubricDrawerOpen}
-					setRubricDrawerOpen={setRubricDrawerOpen}
-					rubricEditAllowed={rubricEditAllowed}
-					rubrics={rubrics}
-					setRubrics={setRubrics}
-					maximumPoints={maximumPoints}
-					setMaximumPoints={setMaximumPoints}
-					chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
-					grantAddress={grantID}
-					workspaceId={workspace?.id || ''}
-					initialIsPrivate={grantData?.grants[0].rubric?.isPrivate || false}
-				/>
-
-				<Modal
-					isOpen={acceptingApplications ? isArchiveModalOpen : false}
-					onClose={
-						() => (acceptingApplications
-							? setIsArchiveModalOpen(false)
-							: () => {})
-					}
-					title=""
-				>
-					<ChangeAccessibilityModalContent
-						onClose={
-							() => (acceptingApplications
-								? setIsArchiveModalOpen(false)
-								: () => {})
+			</Container>
+			{
+				(reviewerData.length > 0 || applicantsData.length > 0) && (isReviewer || isAdmin) ? (
+					<Table
+						isReviewer={isReviewer}
+						data={applicantsData}
+						reviewerData={reviewerData}
+						actorId={isActorId}
+						applicationsFilter={applicationsFilter}
+						onViewApplicantFormClick={
+							(commentData: any) => router.push({
+								pathname: '/your_grants/view_applicants/applicant_form/',
+								query: {
+									commentData,
+									applicationId: commentData.applicationId,
+								},
+							})
 						}
-						imagePath={`/illustrations/${acceptingApplications ? 'archive' : 'publish'}_grant.svg`}
-						title={acceptingApplications ? 'Are you sure you want to archive this grant?' : 'Are you sure you want to publish this grant?'}
-						subtitle={acceptingApplications ? 'The grant will no longer be visible to anyone. You will not receive any new applications for it.' : 'The grant will be live, and applicants can apply for this grant.'}
-						actionButtonText={acceptingApplications ? 'Archive Grant' : 'Publish Grant'}
-						actionButtonOnClick={
-							() => {
-								setIsAcceptingApplications([
-									!isAcceptingApplications[0],
-									isAcceptingApplications[1] + 1,
-								])
-							}
+						// eslint-disable-next-line @typescript-eslint/no-shadow
+						onManageApplicationClick={
+							(data: any) => router.push({
+								pathname: '/your_grants/view_applicants/manage/',
+								query: {
+									applicationId: data.applicationId,
+								},
+							})
 						}
-						loading={loading}
-					/>
-				</Modal>
-				{
-					(reviewerData.length > 0 || applicantsData.length > 0) && (isReviewer || isAdmin) ? (
-						<Table
-							isReviewer={isReviewer}
-							data={applicantsData}
-							reviewerData={reviewerData}
-							actorId={isActorId}
-							applicationsFilter={applicationsFilter}
-							onViewApplicantFormClick={
-								(commentData: any) => router.push({
-									pathname: '/your_grants/view_applicants/applicant_form/',
-									query: {
-										commentData,
-										applicationId: commentData.applicationId,
-									},
-								})
-							}
-							// eslint-disable-next-line @typescript-eslint/no-shadow
-							onManageApplicationClick={
-								(data: any) => router.push({
-									pathname: '/your_grants/view_applicants/manage/',
-									query: {
-										applicationId: data.applicationId,
-									},
-								})
-							}
-							archiveGrantComponent={
-								!acceptingApplications && (
+						archiveGrantComponent={
+							!acceptingApplications && (
+								<Flex
+									maxW="100%"
+									bg="#F3F4F4"
+									direction="row"
+									align="center"
+									px={8}
+									py={6}
+									mt={6}
+									border="1px solid #E8E9E9"
+									borderRadius="6px"
+								>
+									<Image
+										src="/toast/warning.svg"
+										w="42px"
+										h="36px" />
 									<Flex
 										maxW="100%"
 										bg="#F3F4F4"
@@ -550,121 +529,125 @@ Archive grant
 											w="42px"
 											h="36px" />
 										<Flex
-											maxW="100%"
-											bg="#F3F4F4"
-											direction="row"
-											align="center"
-											px={8}
-											py={6}
-											mt={6}
-											border="1px solid #E8E9E9"
-											borderRadius="6px"
-										>
-											<Image
-												src="/toast/warning.svg"
-												w="42px"
-												h="36px" />
-											<Flex
-												direction="column"
-												ml={6}>
-												<Text
-													variant="tableHeader"
-													color="#414E50">
-													{
-														shouldShowButton && accountData?.address
-															? 'Grant is archived and cannot be discovered on the Home page.'
-															: 'Grant is archived and closed for new applications.'
-													}
-												</Text>
-												<Text
-													variant="tableBody"
-													color="#717A7C"
-													fontWeight="400"
-													mt={2}
-												>
-                      New applicants cannot apply to an archived grant.
-												</Text>
-											</Flex>
-											<Box mr="auto" />
-											{
-												accountData?.address && shouldShowButton && (
-													<Button
-														ref={buttonRef}
-														w={
-															archiveGrantLoading
-																? buttonRef?.current?.offsetWidth
-																: 'auto'
-														}
-														variant="primary"
-														onClick={() => setIsModalOpen(true)}
-													>
-                      Publish grant
-													</Button>
-												)
-											}
-										</Flex>
-									</Flex>
-								)
-							}
-						/>
-					) : (
-						<Flex
-							direction="column"
-							w="100%">
-							<AppplicationTableEmptyState />
-							{
-								isAdmin && (
-									<Flex
-										direction="column"
-										justify="center"
-										h="100%"
-										align="center"
-										mt={10}
-										mx="auto"
-									>
-										<Box
-											pos="relative"
-											right="40px"
-											top="48px">
-											<Button
-												variant="primaryV2"
-												onClick={() => setRubricDrawerOpen(true)}
+											direction="column"
+											ml={6}>
+											<Text
+												variant="tableHeader"
+												color="#414E50">
+												{
+													shouldShowButton && accountData?.address
+														? 'Grant is archived and cannot be discovered on the Home page.'
+														: 'Grant is archived and closed for new applications.'
+												}
+											</Text>
+											<Text
+												variant="tableBody"
+												color="#717A7C"
+												fontWeight="400"
+												mt={2}
 											>
-                    Setup application evaluation
-											</Button>
-										</Box>
+                      New applicants cannot apply to an archived grant.
+											</Text>
+										</Flex>
+										<Box mr="auto" />
+										{
+											accountData?.address && shouldShowButton && (
+												<Button
+													ref={buttonRef}
+													w={
+														archiveGrantLoading
+															? buttonRef?.current?.offsetWidth
+															: 'auto'
+													}
+													variant="primary"
+													onClick={() => setIsModalOpen(true)}
+												>
+                      Publish grant
+												</Button>
+											)
+										}
 									</Flex>
-								)
-							}
-						</Flex>
-					)
-				}
-			</Container>
+								</Flex>
+							)
+						}
+					/>
+				) : (
+					<Flex
+						direction="column"
+						maxW="100%"
+						backgroundColor="#FFFFFF"
+
+					>
+						<AppplicationTableEmptyState />
+						{
+							isAdmin && (
+								<Flex
+									direction="column"
+									justify="center"
+									h="100%"
+									align="center"
+									backgroundColor="#F0F0F7"
+									mx="auto"
+									mt={20}
+									mb={20}
+								>
+
+									<Button
+										variant="primaryV2"
+										onClick={() => setRubricDrawerOpen(true)}
+									>
+                    Setup application evaluation
+									</Button>
+
+								</Flex>
+							)
+						}
+					</Flex>
+				)
+			}
+
+			<RubricDrawer
+				rubricDrawerOpen={rubricDrawerOpen}
+				setRubricDrawerOpen={setRubricDrawerOpen}
+				rubricEditAllowed={rubricEditAllowed}
+				rubrics={rubrics}
+				setRubrics={setRubrics}
+				maximumPoints={maximumPoints}
+				setMaximumPoints={setMaximumPoints}
+				chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
+				grantAddress={grantID}
+				workspaceId={workspace?.id || ''}
+				initialIsPrivate={grantData?.grants[0].rubric?.isPrivate || false}
+			/>
+
 			<Modal
-				isOpen={isModalOpen}
-				onClose={() => setIsModalOpen(false)}
+				isOpen={acceptingApplications ? isArchiveModalOpen : false}
+				onClose={
+					() => (acceptingApplications
+						? setIsArchiveModalOpen(false)
+						: () => {})
+				}
 				title=""
 			>
 				<ChangeAccessibilityModalContent
-					onClose={() => setIsModalOpen(false)}
-					imagePath="/illustrations/publish_grant.svg"
-					title="Are you sure you want to publish this grant?"
-					subtitle="The grant will be live, and applicants can apply for this grant."
-					actionButtonText="Publish grant"
+					onClose={
+						() => (acceptingApplications
+							? setIsArchiveModalOpen(false)
+							: () => {})
+					}
+					imagePath={`/illustrations/${acceptingApplications ? 'archive' : 'publish'}_grant.svg`}
+					title={acceptingApplications ? 'Are you sure you want to archive this grant?' : 'Are you sure you want to publish this grant?'}
+					subtitle={acceptingApplications ? 'The grant will no longer be visible to anyone. You will not receive any new applications for it.' : 'The grant will be live, and applicants can apply for this grant.'}
+					actionButtonText={acceptingApplications ? 'Arcive Grant' : 'Publish Grant'}
 					actionButtonOnClick={
 						() => {
-							console.log('Doing it!')
-							console.log(
-								'Is Accepting Applications (Button click): ',
-								isAcceptingApplications
-							)
 							setIsAcceptingApplications([
 								!isAcceptingApplications[0],
 								isAcceptingApplications[1] + 1,
 							])
 						}
 					}
-					loading={archiveGrantLoading}
+					loading={loading}
 				/>
 			</Modal>
 		</Container>
