@@ -83,6 +83,8 @@ function BrowseGrants() {
 					setAllDataFectched(true)
 				}
 
+				console.log('allGrantsData', allGrantsData)
+
 				if(firstTime) {
 					setGrants(
 						allGrantsData.sort((a: any, b: any) => b.createdAtS - a.createdAtS)
