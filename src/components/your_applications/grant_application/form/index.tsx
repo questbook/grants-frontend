@@ -168,14 +168,14 @@ function Form({
 				setTeamMembers(formData.teamMembers)
 				setMembersDescription(
 					formData?.membersDescription.map((member: any) => ({
-						description: member.description || '',
+						description: member.description ?? '',
 						isError: false,
 					})),
 				)
 				setProjectName(formData.projectName)
 				setProjectLinks(
 					formData?.projectLinks.map((link: any) => ({
-						link: link.link || '',
+						link: link.link ?? '',
 						isError: false,
 					})),
 				)
@@ -184,8 +184,8 @@ function Form({
 				setProjectGoal(formData.projectGoal)
 				setProjectMilestones(
 					formData?.projectMilestones.map((milestone: any) => ({
-						milestone: milestone.milestone || '',
-						milestoneReward: milestone.milestoneReward || '',
+						milestone: milestone.milestone ?? '',
+						milestoneReward: milestone.milestoneReward ?? '',
 						milestoneIsError: false,
 						milestoneRewardIsError: false,
 					})),

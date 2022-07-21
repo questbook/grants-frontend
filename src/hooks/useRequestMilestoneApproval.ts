@@ -7,7 +7,7 @@ import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
-import useQBContract from './contracts/useQBContract'
+import useApplicationRegistryContract from './contracts/useApplicationRegistryContract'
 import useChainId from './utils/useChainId'
 
 export default function useRequestMilestoneApproval(
@@ -26,7 +26,7 @@ export default function useRequestMilestoneApproval(
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi } = apiClients
 	const currentChainId = useChainId()
-	const applicationContract = useQBContract('applications', chainId)
+	const applicationContract = useApplicationRegistryContract(chainId)
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
 	if(chainId) {
@@ -74,7 +74,7 @@ export default function useRequestMilestoneApproval(
 				}
 
 				const updateTxn = await applicationContract.requestMilestoneApproval(
-					applicationId!,
+					applicationId,
 					Number(milestoneIndex),
 					ipfsHash,
 				)

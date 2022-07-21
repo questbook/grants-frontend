@@ -50,17 +50,17 @@ function Payouts() {
 	const { data: grantsData } = useGetDaoGrantsQuery({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
       ].client,
 		variables: {
-			workspaceId: workspace?.id || '',
+			workspaceId: workspace?.id ?? '',
 		},
 	})
 
 	const { data: reviewsData } = useGetFundSentforReviewsQuery({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
       ].client,
 	})
 

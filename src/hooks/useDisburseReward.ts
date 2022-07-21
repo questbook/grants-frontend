@@ -1,15 +1,12 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { BigNumber, utils } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
-import SuccessToast from 'src/components/ui/toasts/successToast'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
 import { useAccount, useNetwork } from 'wagmi'
-import CustomToast from '../components/ui/toasts/customToast'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useGrantContract from './contracts/useGrantContract'
 import useChainId from './utils/useChainId'
@@ -60,31 +57,6 @@ export default function useDisburseReward(
 
 	}, [grantContract])
 
-	async function disburseRewardEvent() {
-		// console.log('Got to disburse event')
-		grantContract.once('DisburseReward', (applicationIdEvent, milestoneId, asset, sender, amount, isP2P, eventDetail) => {
-			console.log('DisburseReward', eventDetail)
-			if(utils.getAddress(sender) === accountData?.address && BigNumber.from(applicationId).toNumber() === applicationIdEvent.toNumber()) {
-				setTransactionData(eventDetail)
-				setLoading(false)
-				toastRef.current = toast({
-					position: 'top',
-					render: () => SuccessToast({
-						heading: 'Success!',
-						body: 'Reward has been disbursed',
-						close: () => {
-							if(toastRef.current) {
-								toast.close(toastRef.current)
-							}
-						},
-					}),
-				})
-			}
-
-			return eventDetail
-		})
-	}
-
 	useEffect(() => {
 		if(incorrectNetwork) {
 			return
@@ -101,26 +73,16 @@ export default function useDisburseReward(
 		async function validate() {
 			setLoading(true)
 			try {
-				// console.log('Got to validate')
-				grantContract.disburseReward(
-					applicationId!,
-					milestoneIndex!,
-					rewardAssetAddress!,
+				const updateTxn = await grantContract.disburseReward(
+					applicationId,
+					milestoneIndex,
+					rewardAssetAddress,
 					data,
 				)
-				toastRef.current = toast({
-					position: 'top',
-					render: () => CustomToast({
-						content: 'Waiting for the signature - please sign the transaction',
-						close: () => {
-							if(toastRef.current) {
-								toast.close(toastRef.current)
-							}
-						},
-					}),
-				})
+				const updateTxnData = await updateTxn.wait()
 
-				disburseRewardEvent()
+				setTransactionData(updateTxnData)
+				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
 				setError(message)

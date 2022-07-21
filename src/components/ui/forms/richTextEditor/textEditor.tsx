@@ -129,7 +129,7 @@ function BlockStyleControls({
 			{
 				BLOCK_TYPES.map((type) => (
 					<StyleButton
-						key={type.label || type.icon}
+						key={type.label ?? type.icon}
 						active={type.style === blockType}
 						icon={type.icon}
 						onToggle={onToggle}

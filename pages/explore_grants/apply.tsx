@@ -4,17 +4,17 @@ import React, {
 import { Flex } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
-import Form from 'src/components/explore_grants/apply_grant/form'
-import Sidebar from 'src/components/explore_grants/apply_grant/sidebar'
 import { defaultChainId } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import { useGetGrantDetailsQuery } from 'src/generated/graphql'
-import NavbarLayout from 'src/layout/navbarLayout'
 import { formatAmount } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo, getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
+import Form from '../../src/components/explore_grants/apply_grant/form'
+import Sidebar from '../../src/components/explore_grants/apply_grant/sidebar'
+import NavbarLayout from '../../src/layout/navbarLayout'
+import { getUrlForIPFSHash } from '../../src/utils/ipfsUtils'
 
 function ApplyGrant() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
@@ -51,7 +51,7 @@ function ApplyGrant() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	chainId || defaultChainId
+      	chainId ?? defaultChainId
       ].client,
 	})
 
@@ -108,7 +108,7 @@ function ApplyGrant() {
 			grantData?.reward?.committed
 				? formatAmount(
 					grantData?.reward?.committed,
-					chainInfo?.decimals || 18,
+					chainInfo?.decimals ?? 18,
 				)
 				: '',
 		)
@@ -149,7 +149,6 @@ function ApplyGrant() {
 		<Flex
 			direction="row"
 			w="100%"
-			// px="10%"
 			justify="space-evenly">
 			<Flex
 				direction="column"

@@ -3,17 +3,17 @@ import {
 	Container, Text
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { ApiClientsContext } from 'pages/_app'
-import Form from 'src/components/signup/create_dao/form'
-import Loading from 'src/components/signup/create_dao/loading'
-import CreateGrant from 'src/components/signup/create_grant'
-import DaoCreated from 'src/components/signup/daoCreated'
 import { SupportedChainId } from 'src/constants/chains'
 import { SupportedNetwork } from 'src/generated/graphql'
 import useCreateGrant from 'src/hooks/useCreateGrant'
 import useCreateWorkspace from 'src/hooks/useCreateWorkspace'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
-import NavbarLayout from 'src/layout/navbarLayout'
+import Form from '../src/components/signup/create_dao/form'
+import Loading from '../src/components/signup/create_dao/loading'
+import CreateGrant from '../src/components/signup/create_grant'
+import DaoCreated from '../src/components/signup/daoCreated'
+import NavbarLayout from '../src/layout/navbarLayout'
+import { ApiClientsContext } from './_app'
 
 function SignupDao() {
 	const router = useRouter()
@@ -27,8 +27,7 @@ function SignupDao() {
 
 	const [daoData, setDaoData] = React.useState<{
     name: string;
-	bio: string;
-    about: string;
+    description: string;
     image: string;
     network: SupportedChainId;
     id: string;

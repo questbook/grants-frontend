@@ -9,13 +9,13 @@ function useCustomToast(link: string, toastDuration?: number, route?: string, sh
 	const toast = useToast()
 	const router = useRouter()
 
-	const [refresh, setRefresh] = useState(shouldRefresh || false)
+	const [refresh, setRefresh] = useState(shouldRefresh ?? false)
 
 	useEffect(() => {
 		console.log('CUSTOM TOAST: ', refresh, link)
 		if(refresh && link && !link.includes('undefined') && !link.includes('null')) {
 			toastRef.current = toast({
-				duration: toastDuration || 3500,
+				duration: toastDuration ?? 3500,
 				position: 'top',
 				render: () => {
 					return (

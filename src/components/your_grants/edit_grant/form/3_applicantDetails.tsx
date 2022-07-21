@@ -57,8 +57,8 @@ function ApplicantDetails({
   setMaximumPoints: (maximumPoints: number) => void;
 }) {
 	const [milestoneSelectOptionIsVisible,
-		setMilestoneSelectOptionIsVisible] = React.useState((multipleMilestones || false)
-     || (defaultMilestoneFieldsOptionIsVisible || false))
+		setMilestoneSelectOptionIsVisible] = React.useState((multipleMilestones ?? false)
+     || (defaultMilestoneFieldsOptionIsVisible ?? false))
 	return (
 		<Flex
 			py={0}

@@ -1,5 +1,3 @@
-import { EditorState } from 'draft-js'
-import { ApplicationRegistryAbi, ApplicationReviewRegistryAbi, GrantFactoryAbi, WorkspaceRegistryAbi } from 'src/generated/contracts'
 import {
 	GetAllGrantsForADaoQuery,
 	GetApplicationMilestonesQuery,
@@ -7,48 +5,20 @@ import {
 	GetFundSentForApplicationQuery,
 	GetWorkspaceDetailsQuery,
 	GetWorkspaceMembersQuery,
-	SupportedNetwork,
 } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 
-export type Grant = GetAllGrantsForADaoQuery['grants'][number];
-export type ApplicationMilestone = GetApplicationMilestonesQuery['grantApplications'][number]['milestones'][number];
-export type FundTransfer = GetFundSentForApplicationQuery['fundsTransfers'][number];
-export type MinimalWorkspace = GetWorkspaceMembersQuery['workspaceMembers'][number]['workspace'];
-export type Workspace = Exclude<GetWorkspaceDetailsQuery['workspace'], null | undefined>;
-export type DAOWorkspace = GetDaoDetailsQuery['workspace'];
-export type DAOGrant = GetDaoDetailsQuery['grants'];
-
-export type PartnersProps = {
-	name: string;
-	industry: string;
-	website?: string | null;
-	partnerImageHash?: string | null | undefined;
-}
-
-export type SettingsForm = {
-  name: string;
-  about: EditorState;
-  bio: string;
-  supportedNetwork: SupportedNetwork;
-  partners?: PartnersProps[];
-  image?: string;
-  coverImage?: string;
-  twitterHandle?: string;
-  discordHandle?: string;
-  telegramChannel?: string;
-};
+export type Grant = GetAllGrantsForADaoQuery['grants'][number]
+export type ApplicationMilestone = GetApplicationMilestonesQuery['grantApplications'][number]['milestones'][number]
+export type FundTransfer = GetFundSentForApplicationQuery['fundsTransfers'][number]
+export type MinimalWorkspace = GetWorkspaceMembersQuery['workspaceMembers'][number]['workspace']
+export type Workspace = Exclude<GetWorkspaceDetailsQuery['workspace'], null | undefined>
+export type DAOWorkspace = GetDaoDetailsQuery['workspace']
+export type DAOGrant = GetDaoDetailsQuery['grants']
 
 export type AddressMap = { [C in SupportedChainId]: string }
 
 export type QBContract = 'workspace' | 'grantFactory' | 'applications' | 'reviews'
-
-export type QBContractABIMap = {
-	'workspace': WorkspaceRegistryAbi
-	'grantFactory': GrantFactoryAbi
-	'applications': ApplicationRegistryAbi
-	'reviews': ApplicationReviewRegistryAbi
-}
 
 export interface ChainInfo {
 	readonly id: SupportedChainId
@@ -64,7 +34,6 @@ export interface ChainInfo {
 		[address: string]: {
 			icon: string
 			label: string
-			pair?: string
 			address: string
 			decimals: number
 		}

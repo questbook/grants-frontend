@@ -5,9 +5,7 @@ import SupportedChainId from '../generated/SupportedChainId'
 
 // by default, we show all test nets
 export const SHOW_TEST_NETS = process.env.NEXT_PUBLIC_IS_TEST !== 'false'
-export const defaultChainId = process.env.NEXT_PUBLIC_IS_TEST === 'true'
-	? SupportedChainId.RINKEBY
-	: SupportedChainId.POLYGON_MAINNET
+export const defaultChainId = process.env.NEXT_PUBLIC_IS_TEST === 'true' ? SupportedChainId.RINKEBY : SupportedChainId.POLYGON_MAINNET
 export const CHAIN_INFO = chainInfo as ChainInfoMap
 
 // when SHOW_TEST_NETS = true, we show every chain
