@@ -19,7 +19,7 @@ function AccountDetails() {
 	const isOnline = true
 	const { data: accountData } = useQuestbookAccount()
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
-	const { scwAddress } = useContext(ScwAddressContext)!
+	const { scwAddress, setScwAddress } = useContext(ScwAddressContext)!
 	const { isDisconnected } = useConnect() // @TODO: change the way we see if a user is connect or not
 	// cause now it's only with metmask
 	const { disconnect } = useDisconnect()
@@ -46,7 +46,7 @@ function AccountDetails() {
 						marginLeft="12px"
 						onClick={
 							() => {
-								if(!webwallet) {
+								if (!webwallet) {
 									setWebwallet(Wallet.createRandom())
 								}
 
@@ -54,7 +54,7 @@ function AccountDetails() {
 							}
 						}
 					>
-				GitHub Login
+						GitHub Login
 					</Button>
 				)
 			}
@@ -76,41 +76,54 @@ function AccountDetails() {
 				)
 			} */}
 
-			<MenuButton
-				ref={buttonRef}
-				as={Button}
-				variant="solid"
-				px={2.5}
-				py={2}
-				ml={3}
-				borderRadius="2px"
-				rightIcon={
-					!(connected && isDisconnected) && (
-						<Image
-							mr={2}
-							src="/ui_icons/arrow-drop-down-line.svg"
-							alt="options" />
-					)
-				}
-				w={connected && isDisconnected ? buttonRef.current?.offsetWidth : 'auto'}
-			>
-				{
-					connected && isDisconnected && !scwAddress ? (
-						<Loader />
-					) : (
-						<Text
-							color="#122224"
-							fontWeight="500"
-							fontSize="14px"
-							lineHeight="20px"
-						>
-							{formatAddress(scwAddress ?? (accountData?.address ?? ''))}
-						</Text>
-					)
-				}
-			</MenuButton>
 			{
-				!(connected && isDisconnected) && (
+				isLoggedIn && (<MenuButton
+					ref={buttonRef}
+					as={Button}
+					variant="solid"
+					px={2.5}
+					py={2}
+					ml={3}
+					borderRadius="2px"
+					rightIcon={
+						!(connected && isDisconnected) && (
+							<Image
+								mr={2}
+								src="/ui_icons/arrow-drop-down-line.svg"
+								alt="options" />
+						)
+					}
+					w={connected && isDisconnected ? buttonRef.current?.offsetWidth : 'auto'}
+				>
+					{
+						// @TODO-gasless: FIX HERE
+						// connected && isDisconnected  ? (
+						// 	<Loader />
+						// ) : (
+						// 	<Text
+						// 		color="#122224"
+						// 		fontWeight="500"
+						// 		fontSize="14px"
+						// 		lineHeight="20px"
+						// 	>
+						// 		{formatAddress(scwAddress ?? (accountData?.address ?? ''))}
+						// 	</Text>
+						// )
+						(
+							<Text
+								color="#122224"
+								fontWeight="500"
+								fontSize="14px"
+								lineHeight="20px"
+							>
+								{formatAddress(scwAddress ?? (accountData?.address ?? ""))}
+							</Text>
+						)
+					}
+				</MenuButton>)
+			}
+			{
+				(!(connected && isDisconnected) || (isLoggedIn)) && (
 					<MenuList>
 						<MenuItem
 							onClick={
@@ -124,7 +137,7 @@ function AccountDetails() {
 							}
 							icon={<Image src="/ui_icons/logout.svg" />}
 						>
-            Logout
+							Logout
 						</MenuItem>
 					</MenuList>
 				)

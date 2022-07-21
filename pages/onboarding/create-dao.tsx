@@ -55,9 +55,9 @@ const OnboardingCreateDao = () => {
 	useEffect(() => {
 		console.log('THIS IS BICONOMY', biconomy)
 		console.log('THIS IS BICONOMY SECOND', biconomyWalletClient)
-		if (biconomy && biconomyWalletClient) setIsBiconomyInitialised(true)
+		if (biconomy && biconomyWalletClient && scwAddress) setIsBiconomyInitialised(true)
 		else setIsBiconomyInitialised(false)
-	}, [biconomy, biconomyWalletClient])
+	}, [biconomy, biconomyWalletClient, scwAddress])
 
 	const { activeChain, switchNetworkAsync, data } = useNetwork()
 	const { isError: isErrorConnecting, connect, connectors } = useConnect()
@@ -111,6 +111,9 @@ const OnboardingCreateDao = () => {
 			}
 
 			setCurrentStep(2)
+			
+			if(!biconomyWalletClient)
+				return;
 
 			const targetContractObject = new ethers.Contract(
 				WORKSPACE_REGISTRY_ADDRESS[daoNetwork.id],
@@ -229,7 +232,7 @@ const OnboardingCreateDao = () => {
 			isBiconomyInitialised={isBiconomyInitialised} 
 			onSubmit={
 				activeChain?.id &&
-        daoNetwork?.id &&
+        daoNetwork?.id && 
         ((activeChain.id !== daoNetwork.id && switchNetworkAsync) ||
           activeChain.id === daoNetwork.id)
 					? () => createWorkspace()

@@ -35,7 +35,8 @@ function NavBar({ onGetStartedClick }: Props) {
 				cursor="pointer"
 			/>
 			{
-				connected && (
+				// @TODO-gasless: FIX HERE
+				true && (
 					<Flex
 						align="center"
 						justify="center"
@@ -65,9 +66,13 @@ function NavBar({ onGetStartedClick }: Props) {
 
 				)
 			}
-			{connected && <AccountDetails />}
-			{!connected && <GetStarted onGetStartedClick={onGetStartedClick} />}
-			{!connected && <ConnectWallet />}
+
+			{true && <AccountDetails /> // @TODO-gasless: FIX HERE
+			}
+			{!connected && false && <GetStarted onGetStartedClick={onGetStartedClick} />// @TODO-gasless: FIX HERE
+			}
+			{!connected && false && <ConnectWallet />// @TODO-gasless: FIX HERE
+			}
 		</Container>
 	)
 }

@@ -47,7 +47,7 @@ export const useBiconomy = (data: any) => {
 		_biconomy.onEvent(_biconomy.READY, async() => {
 			console.log('Inside biconomy ready event')
 
-			const _biconomyWalletClient = _biconomy.biconomyWalletClient
+			const _biconomyWalletClient: BiconomyWalletClient = _biconomy.biconomyWalletClient
 			console.log('biconomyWalletClient', _biconomyWalletClient)
 
 			if(!scwAddress) {
@@ -69,10 +69,7 @@ export const useBiconomy = (data: any) => {
 			setBiconomyDaoObj(_biconomy)
 		}
 
-		console.log('DONE HERE')
-
 	}
-
 
 	return [
 		biconomyDaoObj,
