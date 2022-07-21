@@ -151,7 +151,6 @@ function BrowseGrants() {
 	useEffect(() => {
 		try {
 			const inviteInfo = extractInviteInfo()
-			console.log('invite ', inviteInfo)
 			if(inviteInfo) {
 				setInviteInfo(inviteInfo)
 			}
