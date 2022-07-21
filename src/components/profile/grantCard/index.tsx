@@ -1,17 +1,15 @@
-
-import React from 'react'
-import {
-	Box, Button, Divider, Flex, Image, Link,
-	Text, } from '@chakra-ui/react'
+import React, { useEffect, useState } from 'react'
+import { Box, Button, Flex, Image, Link, Stack, Text } from '@chakra-ui/react'
+import moment from 'moment'
 import { useRouter } from 'next/router'
+import Badge from 'src/components/browse_grants/grantCard/badge'
 import VerifiedBadge from 'src/components/ui/verified_badge'
-import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
-import Badge from './badge'
+import { calculateUSDValue, useTimeDifference } from 'src/utils/calculatingUtils'
+import { nFormatter } from 'src/utils/formattingUtils'
 
 interface BrowseGrantCardProps {
   daoID: string;
-  daoIcon: string;
   daoName: string;
   isDaoVerified?: boolean;
   chainId: SupportedChainId | undefined;
@@ -23,19 +21,21 @@ interface BrowseGrantCardProps {
 
   numOfApplicants: number;
   endTimestamp: number;
+  createdAt: number;
 
   grantAmount: string;
   grantCurrency: string;
+  grantCurrencyPair: string | null;
   grantCurrencyIcon: string;
+  disbursedAmount: string;
 
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   onTitleClick?: React.MouseEventHandler<HTMLAnchorElement>;
 }
 
 function BrowseGrantCard({
-	daoID,
-	daoIcon,
 	daoName,
+	createdAt,
 	isDaoVerified,
 	chainId,
 
@@ -49,30 +49,42 @@ function BrowseGrantCard({
 
 	grantAmount,
 	grantCurrency,
+	grantCurrencyPair,
 	grantCurrencyIcon,
+	disbursedAmount,
 
 	onClick,
 	onTitleClick,
 }: BrowseGrantCardProps) {
 	const router = useRouter()
+	const [grantReward, setGrantReward] = useState<number>(0)
+
+	const currentDate = new Date().getTime()
+
+	useEffect(() => {
+		if(grantReward === 0) {
+			calculateUSDValue(grantAmount, grantCurrencyPair).then((promise: any) => {
+				setGrantReward(promise as number)
+			})
+		}
+	}, [grantReward, grantAmount, grantCurrency])
 
 	return (
-		<>
+		<Flex
+			w="full"
+			border="1px solid #E8E9E9"
+		>
+			{' '}
 			<Flex
 				py={6}
+				px="1.5rem"
 				w="100%">
-				<Image
-					objectFit="cover"
-					h="54px"
-					w="54px"
-					src={daoIcon} />
 				<Flex
 					flex={1}
-					direction="column"
-					ml={6}>
+					direction="column">
 					<Flex
 						direction="row"
-						alignItems="start">
+						alignItems="center">
 						<Text maxW="50%">
 							<Link
 								onClick={onTitleClick}
@@ -85,101 +97,137 @@ function BrowseGrantCard({
 							>
 								{grantTitle}
 							</Link>
-							{
-								isGrantVerified && (
-									<VerifiedBadge
-										grantAmount={funding}
-										grantCurrency={grantCurrency}
-										lineHeight="26px"
-										marginBottom={-1}
-									/>
-								)
-							}
+						</Text>
+
+						<Image
+							mx={2}
+							src="/ui_icons/green_dot.svg"
+							display="inline-block"
+						/>
+
+						<Text
+							fontSize="0.75rem"
+							lineHeight="1rem"
+							fontWeight="700"
+							color="#8C8C8C"
+						>
+							{useTimeDifference(currentDate, createdAt * 1000)}
 						</Text>
 
 						<Box mr="auto" />
-						<Badge
-							numOfApplicants={numOfApplicants}
-							endTimestamp={endTimestamp}
-						/>
-					</Flex>
-
-					<Flex direction="row">
-						<Link
-							onClick={
-								() => {
-									router.push({
-										pathname: '/profile',
-										query: {
-											daoId: daoID,
-											chainId,
-										},
-									})
-								}
-							}
-							lineHeight="24px"
-							fontWeight="700"
-						>
-							{daoName}
-							{
-								isDaoVerified && (
-									<Image
-										h={4}
-										w={4}
-										display="inline-block"
-										src="/ui_icons/verified.svg"
-										ml="2px"
-										mb="-2px"
-									/>
-								)
-							}
-						</Link>
-						<Text
-							fontSize="16px"
-							display="inline"
-							color="#717A7C"
-							fontWeight="400"
-							lineHeight="24px"
-							ml={2}>
-
-							{`• ${CHAIN_INFO[chainId!]?.name}`}
-						</Text>
 					</Flex>
 
 					<Text
 						mt={5}
 						lineHeight="24px"
-						color="#122224"
-						fontWeight="400">
+						color="#373737"
+						fontSize="1rem"
+						fontWeight="400"
+					>
 						{grantDesc}
 					</Text>
 
 					<Flex
 						direction="row"
-						mt={8}
+						mt="1.5rem"
 						alignItems="center">
+						<Stack
+							bgColor="#F5F5F5"
+							borderRadius="1.25rem"
+							h="1.5rem"
+							px="0.5rem"
+							justify="center"
+						>
+							<Text
+								fontFamily="DM Sans"
+								fontSize="0.85rem"
+								lineHeight="1rem"
+								fontWeight="400"
+								color="#373737"
+							>
+								<b>
+
+									{grantReward !== 0 ? `$${nFormatter(grantReward.toFixed(0))}` : grantAmount}
+								</b>
+/grantee
+								{
+									isGrantVerified && (
+										<VerifiedBadge
+											grantAmount={funding}
+											grantCurrency={grantCurrency}
+											lineHeight="26px"
+											disbursedAmount={disbursedAmount}
+											marginBottom={-1}
+										/>
+									)
+								}
+							</Text>
+						</Stack>
+
 						<Image
-							src={grantCurrencyIcon}
-							boxSize='28px' />
+							mx={4}
+							src="/ui_icons/green_dot.svg"
+							display="inline-block"
+						/>
+						<Image
+							boxSize={4}
+							src={grantCurrencyIcon} />
 						<Text
 							ml={2}
-							fontWeight="700"
-							color="#3F06A0">
-							{grantAmount}
+							fontSize="0.85rem"
+							lineHeight="1rem"
+							fontWeight="400"
+							color="#373737"
+						>
+              Paid in
 							{' '}
-							{grantCurrency}
+							<b>
+								{grantCurrency}
+							</b>
 						</Text>
+						<Image
+							mx={4}
+							src="/ui_icons/green_dot.svg"
+							display="inline-block"
+						/>
+
+						<Image
+							mr="6px"
+							boxSize={3}
+							src="/ui_icons/deadline.svg"
+							display="inline-block"
+						/>
+						<Text
+							fontSize="0.85rem"
+							lineHeight="1rem"
+							display="inline-block">
+              Ends on
+							{' '}
+							<b>
+								{moment(endTimestamp).format('MMMM D')}
+							</b>
+						</Text>
+
 						<Box mr="auto" />
+
+					</Flex>
+
+					<Flex
+						justifyContent={'space-between'}
+						py={'15px'}>
+						<Badge numOfApplicants={numOfApplicants} />
+
 						<Button
 							onClick={onClick}
-							variant="primaryCta">
+							variant="primaryCta"
+							h="105px">
               Apply Now
 						</Button>
+
 					</Flex>
 				</Flex>
 			</Flex>
-			<Divider w="auto" />
-		</>
+		</Flex>
 	)
 }
 

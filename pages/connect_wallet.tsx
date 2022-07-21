@@ -11,20 +11,20 @@ import {
 	VStack,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import ModalContent from 'src/components/connect_wallet/modalContent'
+import WalletSelectButton from 'src/components/connect_wallet/walletSelectButton'
+import Modal from 'src/components/ui/modal'
+import SecondaryDropdown from 'src/components/ui/secondaryDropdown'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { CHAIN_INFO } from 'src/constants/chains'
 import {
 	ALL_SUPPORTED_CHAIN_IDS,
 	SupportedChainId,
 } from 'src/constants/chains'
+import strings from 'src/constants/strings.json'
 import WALLETS from 'src/constants/wallets.json'
+import NavbarLayout from 'src/layout/navbarLayout'
 import { useConnect } from 'wagmi'
-import ModalContent from '../src/components/connect_wallet/modalContent'
-import WalletSelectButton from '../src/components/connect_wallet/walletSelectButton'
-import Modal from '../src/components/ui/modal'
-import SecondaryDropdown from '../src/components/ui/secondaryDropdown'
-import strings from '../src/constants/strings.json'
-import NavbarLayout from '../src/layout/navbarLayout'
 
 function ConnectWallet() {
 	const [isModalOpen, setIsModalOpen] = React.useState(false)

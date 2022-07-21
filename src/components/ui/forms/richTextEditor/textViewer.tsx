@@ -31,20 +31,20 @@ const plugins = [resizeablePlugin, imagePlugin, linkifyPlugin]
 function TextViewer({
 	// value: editorState,
 	// onChange: setEditorState,
-	grantDetails,
+	text,
 }: {
   // value: EditorState;
   // onChange: (editorState: EditorState) => void;
-  grantDetails: string;
+  text: string;
 }) {
 	const ref = useRef(null)
 	const [editorState, setEditorState] = React.useState(() => {
 		try {
-			const o = JSON.parse(grantDetails)
+			const o = JSON.parse(text)
 			return EditorState.createWithContent(convertFromRaw(o))
 		} catch(e) {
-			if(grantDetails) {
-				return EditorState.createWithContent(ContentState.createFromText(grantDetails))
+			if(text) {
+				return EditorState.createWithContent(ContentState.createFromText(text))
 			}
 
 			return EditorState.createEmpty()
@@ -53,19 +53,19 @@ function TextViewer({
 
 	useEffect(() => {
 		try {
-			const o = JSON.parse(grantDetails)
+			const o = JSON.parse(text)
 			const newState = EditorState.createWithContent(convertFromRaw(o))
-			EditorState.push(newState, ContentState.createFromText(grantDetails), 'change-block-data')
+			EditorState.push(newState, ContentState.createFromText(text), 'change-block-data')
 		} catch(e) {
-			if(grantDetails) {
-				const newState = EditorState.createWithContent(ContentState.createFromText(grantDetails))
-				EditorState.push(newState, ContentState.createFromText(grantDetails), 'change-block-data')
+			if(text) {
+				const newState = EditorState.createWithContent(ContentState.createFromText(text))
+				EditorState.push(newState, ContentState.createFromText(text), 'change-block-data')
 			} else {
 				const newState = EditorState.createEmpty()
-				EditorState.push(newState, ContentState.createFromText(grantDetails), 'change-block-data')
+				EditorState.push(newState, ContentState.createFromText(text), 'change-block-data')
 			}
 		}
-	}, [grantDetails])
+	}, [text])
 
 	const onChange = (state: EditorState) => {
 		setEditorState(state)

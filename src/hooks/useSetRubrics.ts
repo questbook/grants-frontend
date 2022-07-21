@@ -9,7 +9,7 @@ import {
 } from 'src/utils/validationUtils'
 import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
-import useApplicationReviewRegistryContract from './contracts/useApplicationReviewRegistryContract'
+import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
 
 export default function useSetRubrics(
@@ -27,13 +27,13 @@ export default function useSetRubrics(
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients
-	const applicationReviewContract = useApplicationReviewRegistryContract(
-		chainId ?? getSupportedChainIdFromWorkspace(workspace),
-	)
+
 	if(!chainId) {
 		// eslint-disable-next-line no-param-reassign
 		chainId = getSupportedChainIdFromWorkspace(workspace)
 	}
+
+	const applicationReviewContract = useQBContract('reviews', chainId)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
@@ -88,7 +88,7 @@ export default function useSetRubrics(
 
 				console.log('rubricHash', rubricHash)
 
-				// console.log(workspaceId ?? Number(workspace?.id).toString());
+				// console.log(workspaceId || Number(workspace?.id).toString());
 				// console.log('ipfsHash', ipfsHash);
 				// console.log(
 				//   WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
@@ -96,8 +96,8 @@ export default function useSetRubrics(
 				// );
 
 				const createGrantTransaction = await applicationReviewContract.setRubrics(
-					workspaceId ?? Number(workspace?.id).toString(),
-					grantAddress,
+					workspaceId || Number(workspace?.id).toString(),
+					grantAddress!,
 					rubricHash,
 				)
 				const createGrantTransactionData = await createGrantTransaction.wait()
@@ -215,7 +215,7 @@ export default function useSetRubrics(
 
 	return [
 		transactionData,
-		getExplorerUrlForTxHash(chainId ?? getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
+		getExplorerUrlForTxHash(chainId || getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
 		loading,
 		error,
 	]

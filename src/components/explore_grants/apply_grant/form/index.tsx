@@ -393,7 +393,7 @@ function Form({
 			return
 		}
 
-		const formDataLocal = typeof window !== 'undefined' ? JSON.parse(data ?? '{}') : {}
+		const formDataLocal = typeof window !== 'undefined' ? JSON.parse(data || '{}') : {}
 		if(formDataLocal?.applicantName) {
 			setApplicantName(formDataLocal?.applicantName)
 		}
