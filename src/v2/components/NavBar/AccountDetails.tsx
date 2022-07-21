@@ -77,7 +77,8 @@ function AccountDetails() {
 			} */}
 
 			{
-				isLoggedIn && (<MenuButton
+				isLoggedIn &&
+				(<MenuButton
 					ref={buttonRef}
 					as={Button}
 					variant="solid"
@@ -120,7 +121,8 @@ function AccountDetails() {
 							</Text>
 						)
 					}
-				</MenuButton>)
+				</MenuButton>
+				)
 			}
 			{
 				(!(connected && isDisconnected) || (isLoggedIn)) && (

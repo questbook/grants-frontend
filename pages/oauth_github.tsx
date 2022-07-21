@@ -5,7 +5,6 @@ import { useRouter } from 'next/router'
 import NavbarLayout from '../src/layout/navbarLayout'
 import { getNonce } from '../src/utils/gaslessUtils'
 import { GitHubTokenContext, NonceContext, WebwalletContext } from './_app'
-import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 
 function GitHubOauth() {
 
