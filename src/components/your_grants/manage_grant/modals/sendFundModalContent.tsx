@@ -76,7 +76,7 @@ function ModalContent({
 	const rewardAssetContract = useContract({
 		addressOrName:
       rewardAsset.address || '0x0000000000000000000000000000000000000000',
-		contractInterface: ERC20ProxyABI,
+		contractInterface: ERC20ABI,
 		signerOrProvider: signer,
 	})
 
