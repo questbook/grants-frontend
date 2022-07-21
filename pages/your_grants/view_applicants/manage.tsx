@@ -14,16 +14,7 @@ import {
 } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import { useRouter } from 'next/router'
-import { ApiClientsContext } from 'pages/_app'
-import Breadcrumbs from 'src/components/ui/breadcrumbs'
 import CopyIcon from 'src/components/ui/copy_icon'
-import Heading from 'src/components/ui/heading'
-import Modal from 'src/components/ui/modal'
-import ModalContent from 'src/components/your_grants/manage_grant/modals/modalContentGrantComplete'
-import SendFundModalContent from 'src/components/your_grants/manage_grant/modals/sendFundModalContent'
-import Sidebar from 'src/components/your_grants/manage_grant/sidebar'
-import Funding from 'src/components/your_grants/manage_grant/tables/funding'
-import Milestones from 'src/components/your_grants/manage_grant/tables/milestones'
 import { defaultChainId } from 'src/constants/chains'
 import config from 'src/constants/config.json'
 import {
@@ -34,16 +25,25 @@ import {
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useCompleteApplication from 'src/hooks/useCompleteApplication'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
-import NavbarLayout from 'src/layout/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
+import useApplicationMilestones from 'src/utils/queryUtil'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { useAccount } from 'wagmi'
+import Breadcrumbs from '../../../src/components/ui/breadcrumbs'
+import Heading from '../../../src/components/ui/heading'
+import Modal from '../../../src/components/ui/modal'
+import ModalContent from '../../../src/components/your_grants/manage_grant/modals/modalContentGrantComplete'
+import SendFundModalContent from '../../../src/components/your_grants/manage_grant/modals/sendFundModalContent'
+import Sidebar from '../../../src/components/your_grants/manage_grant/sidebar'
+import Funding from '../../../src/components/your_grants/manage_grant/tables/funding'
+import Milestones from '../../../src/components/your_grants/manage_grant/tables/milestones'
+import NavbarLayout from '../../../src/layout/navbarLayout'
 import {
 	formatAmount,
 	getFormattedDateFromUnixTimestampWithYear,
-} from 'src/utils/formattingUtils'
-import useApplicationMilestones from 'src/utils/queryUtil'
-import { getAssetInfo } from 'src/utils/tokenUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
+} from '../../../src/utils/formattingUtils'
+import { getAssetInfo } from '../../../src/utils/tokenUtils'
+import { ApiClientsContext } from '../../_app'
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 	let val = BigNumber.from(0)
@@ -97,7 +97,7 @@ function ManageGrant() {
 		client:
         subgraphClients[
         	getSupportedChainIdFromWorkspace(workspace)
-            || defaultChainId
+            ?? defaultChainId
         ].client,
 		variables: {
 			applicationID,
@@ -108,7 +108,7 @@ function ManageGrant() {
 		client:
       subgraphClients[
       	getSupportedChainIdFromWorkspace(workspace)
-          || defaultChainId
+          ?? defaultChainId
       ].client,
 		variables: {
 			applicationId: applicationID,
@@ -153,7 +153,7 @@ function ManageGrant() {
 	const fundingIcon = assetInfo.icon
 
 	useEffect(() => {
-		setApplicationID(router?.query?.applicationId || '')
+		setApplicationID(router?.query?.applicationId ?? '')
 		refetchApplicationDetails()
 	}, [router, accountData, refetchApplicationDetails])
 
@@ -544,8 +544,6 @@ View
 						assetInfo={assetInfo}
 						grant={applicationData?.grant}
 						applicationId={applicationID}
-						applicantId={applicationData?.applicantId!}
-						workspaceId={workspace?.id!}
 						decimals={decimals}
 					/>
 				)
@@ -597,7 +595,6 @@ View
 							contractFunding={applicationData.grant.funding}
 							onClose={() => setIsSendFundModalOpen(false)}
 							grantId={applicationData.grant.id}
-							applicantId={applicationData?.applicantId}
 							applicationId={applicationID}
 						/>
 					</Modal>

@@ -11,7 +11,7 @@ const useApplicationMilestones = (grantId: string, chainId?: SupportedChainId) =
 	const fullData = useGetApplicationMilestonesQuery({
 		client:
       subgraphClients[
-      	(chainId || getSupportedChainIdFromWorkspace(workspace)) || defaultChainId
+      	(chainId ?? getSupportedChainIdFromWorkspace(workspace)) ?? defaultChainId
       ].client,
 		variables: {
 			grantId,
@@ -34,7 +34,7 @@ const useApplicationMilestones = (grantId: string, chainId?: SupportedChainId) =
 			icon: getUrlForIPFSHash(grantApp?.grant?.reward?.token.iconHash),
 		}
 	} else {
-		rewardAsset = grantApp?.grant?.reward?.asset || ''
+		rewardAsset = grantApp?.grant?.reward?.asset ?? ''
 	}
 
 	let decimals

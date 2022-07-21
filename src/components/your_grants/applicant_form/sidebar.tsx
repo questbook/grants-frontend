@@ -262,8 +262,8 @@ function Sidebar({
               && formatAmount(
               	applicationData?.fields?.find(
               		(fld: any) => fld?.id?.split('.')[1] === 'fundingAsk',
-              	)?.values[0]?.value || '0',
-              	decimals || 18,
+              	)?.values[0]?.value ?? '0',
+              	decimals ?? 18,
               )
 						}
 						{' '}
@@ -329,7 +329,7 @@ function Sidebar({
 			<RubricSidebar
 				total={
 					applicationData
-						?.reviewers.length || 0
+						?.reviewers.length ?? 0
 				}
 				reviews={applicationData?.reviews}
 				rubric={applicationData?.grant.rubric}
@@ -503,10 +503,10 @@ Evaluation Rubric
 				setRubrics={setRubrics}
 				maximumPoints={maximumPoints}
 				setMaximumPoints={setMaximumPoints}
-				chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
+				chainId={getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId}
 				grantAddress={applicationData?.grant.id}
-				workspaceId={workspace?.id || ''}
-				initialIsPrivate={applicationData?.grant.rubric?.isPrivate || false}
+				workspaceId={workspace?.id ?? ''}
+				initialIsPrivate={applicationData?.grant.rubric?.isPrivate ?? false}
 			/>
 		</>
 	)

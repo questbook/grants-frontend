@@ -162,7 +162,7 @@ function Form({
 
 			return {
 				title,
-				required: isRequired || false,
+				required: isRequired ?? false,
 				id,
 				tooltip,
 				index,
@@ -223,7 +223,7 @@ function Form({
 	// const [supportCurrencies, setsupportCurrencies] = useState([{}]);
 
 	const supportedCurrencies = Object.keys(
-		CHAIN_INFO[currentChain]?.supportedCurrencies || [],
+		CHAIN_INFO[currentChain]?.supportedCurrencies ?? [],
 	)
 		.map((address) => CHAIN_INFO[currentChain]?.supportedCurrencies[address])
 		.map((currency) => ({ ...currency, id: currency.address }))
@@ -243,7 +243,6 @@ function Form({
 				id: workspace.tokens[i].address,
 				address: workspace.tokens[i].address,
 				decimals: workspace.tokens[i].decimal,
-				pair: '',
 				label: workspace.tokens[i].label,
 				icon: getUrlForIPFSHash(workspace.tokens[i].iconHash),
 			})
@@ -569,7 +568,7 @@ function Form({
 			return
 		}
 
-		const formData = typeof window !== 'undefined' ? JSON.parse(data || '{}') : {}
+		const formData = typeof window !== 'undefined' ? JSON.parse(data ?? '{}') : {}
 		console.log('Data from cache: ', formData)
 
 		setTitle(formData?.title)

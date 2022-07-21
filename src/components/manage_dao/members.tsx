@@ -171,7 +171,7 @@ function Members({ workspaceMembers }: Props) {
             			</Flex>
             		</Tooltip>
             		<Text variant="tableBody">
-            			{roles.find((r) => r.value === data.role)?.label || 'Admin'}
+            			{roles.find((r) => r.value === data.role)?.label ?? 'Admin'}
             		</Text>
             		<Text variant="tableBody">
             			{getFormattedDateFromUnixTimestampWithYear(data.updatedAt)}

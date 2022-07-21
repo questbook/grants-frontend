@@ -9,7 +9,7 @@ import {
 } from 'src/utils/validationUtils'
 import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
-import useQBContract from './contracts/useQBContract'
+import useApplicationReviewRegistryContract from './contracts/useApplicationReviewRegistryContract'
 import useChainId from './utils/useChainId'
 
 export default function useAssignReviewers(
@@ -28,13 +28,13 @@ export default function useAssignReviewers(
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients
-
+	const applicationReviewContract = useApplicationReviewRegistryContract(
+		chainId ?? getSupportedChainIdFromWorkspace(workspace),
+	)
 	if(!chainId) {
 		// eslint-disable-next-line no-param-reassign
 		chainId = getSupportedChainIdFromWorkspace(workspace)
 	}
-
-	const applicationReviewContract = useQBContract('reviews', chainId)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
@@ -72,7 +72,7 @@ export default function useAssignReviewers(
 			setLoading(true)
 			// console.log('calling validate');
 			try {
-				// console.log(workspaceId || Number(workspace?.id).toString());
+				// console.log(workspaceId ?? Number(workspace?.id).toString());
 				// console.log('ipfsHash', ipfsHash);
 				// console.log(
 				//   WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
@@ -80,9 +80,9 @@ export default function useAssignReviewers(
 				// );
 
 				const createGrantTransaction = await applicationReviewContract.assignReviewers(
-					workspaceId || workspace!.id,
-					applicationId!,
-					grantAddress!,
+					workspaceId ?? Number(workspace?.id).toString(),
+					applicationId,
+					grantAddress,
 					data.reviewers,
 					data.active,
 				)
@@ -206,7 +206,7 @@ export default function useAssignReviewers(
 
 	return [
 		transactionData,
-		getExplorerUrlForTxHash(chainId || getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
+		getExplorerUrlForTxHash(chainId ?? getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
 		loading,
 		error,
 	]

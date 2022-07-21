@@ -11,8 +11,8 @@ export function getAssetInfo(asset?: string, chainId?: SupportedChainId) {
 	const chain = CHAIN_INFO[chainId!] || CHAIN_INFO[defaultChainId]
 
 	return {
-		label: chain?.supportedCurrencies[asset!]?.label || '',
-		icon: chain?.supportedCurrencies[asset!]?.icon || '',
+		label: chain?.supportedCurrencies[asset!]?.label ?? '',
+		icon: chain?.supportedCurrencies[asset!]?.icon ?? '',
 	}
 }
 
@@ -23,23 +23,13 @@ export function getChainInfo(grant: any, chainId: SupportedChainId) : ChainInfo[
       CHAIN_INFO[chainId]?.supportedCurrencies[
       	grant.reward.asset.toLowerCase()
       ]
-
-	if(!chainInfo && grant.reward.token) {
-		tokenIcon = getUrlForIPFSHash(grant.reward.token.iconHash)
+	if(!chainInfo) {
+		tokenIcon = getUrlForIPFSHash(grant.reward.token?.iconHash)
 		chainInfo = {
 			address: grant.reward.token.address,
 			label: grant.reward.token.label,
-			pair: undefined,
 			decimals: parseInt(grant.reward.token.decimal, 10),
 			icon: tokenIcon,
-		}
-	} else if(!chainInfo && !grant.reward.token) {
-		chainInfo = {
-			address: '',
-			label: 'UNSUP',
-			decimals: 18,
-			pair: undefined,
-			icon: '',
 		}
 	}
 

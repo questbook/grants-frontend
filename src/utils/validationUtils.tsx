@@ -1,6 +1,6 @@
 import { SupportedNetwork as SupportedValidatorNetwork } from '@questbook/service-validator-client/dist/api'
 import { ethers } from 'ethers'
-import { defaultChainId, SupportedChainId } from 'src/constants/chains'
+import { SupportedChainId } from 'src/constants/chains'
 import { SupportedNetwork } from 'src/generated/graphql'
 import { MinimalWorkspace } from 'src/types'
 
@@ -26,8 +26,8 @@ const getSupportedChainIdFromSupportedNetwork = (chain: SupportedNetwork | undef
 		}
 	}
 
-	// if the chain ID failed to decode -- return the default chain
-	return defaultChainId
+	// if the chain ID failed to decode -- return Rinkeby
+	return SupportedChainId.RINKEBY
 }
 
 const getSupportedValidatorNetworkFromChainId = (chainId: SupportedChainId) => (

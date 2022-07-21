@@ -140,8 +140,8 @@ function YourGrantMenu({
 								<Image
 									mr={18}
 									display="inline-block"
-									h={item.iconHeight || '20px'}
-									w={item.iconWidth || '20px'}
+									h={item.iconHeight ?? '20px'}
+									w={item.iconWidth ?? '20px'}
 									src={item.iconPath}
 								/>
 								{item.text}

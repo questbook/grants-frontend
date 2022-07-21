@@ -81,10 +81,10 @@ function ReviewerSidebar({
 			))
 			const ipfsData = await getFromIPFS(reviewData.data)
 
-			data = JSON.parse(await decryptMessage(ipfsData) || '{}')
+			data = JSON.parse(await decryptMessage(ipfsData) ?? '{}')
 		} else {
 			const ipfsData = await getFromIPFS(yourReview.publicReviewDataHash)
-			data = JSON.parse(ipfsData || '{}')
+			data = JSON.parse(ipfsData ?? '{}')
 		}
 
 		console.log(data)

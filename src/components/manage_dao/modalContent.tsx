@@ -49,7 +49,7 @@ function ModalContent({
 			onClose({
 				address: newMemberAddress,
 				email: newMemberEmail,
-				role: roles.find((r) => r.index === dtRole)?.value || '',
+				role: roles.find((r) => r.index === dtRole)?.value ?? '',
 				updatedAt: time,
 				addedBy: txnData.from,
 			}, dt[3].every((r:boolean) => !r))

@@ -8,7 +8,7 @@ import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
-import useQBContract from './contracts/useQBContract'
+import useApplicationRegistryContract from './contracts/useApplicationRegistryContract'
 import useChainId from './utils/useChainId'
 
 export default function useResubmitApplication(
@@ -27,7 +27,7 @@ export default function useResubmitApplication(
 	const { validatorApi } = apiClients
 
 	const currentChainId = useChainId()
-	const applicationRegistryContract = useQBContract('applications', chainId)
+	const applicationRegistryContract = useApplicationRegistryContract(chainId)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
@@ -78,7 +78,7 @@ export default function useResubmitApplication(
         }
 
         const txn = await applicationRegistryContract.updateApplicationMetadata(
-        	applicationId!,
+        	applicationId,
         	ipfsHash,
           data.milestones!.length,
         )

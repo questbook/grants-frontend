@@ -60,7 +60,7 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
 	const { data } = useGetFundingQuery({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
       ].client,
 		variables: { grantId: grant.id },
 	})

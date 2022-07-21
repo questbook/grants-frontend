@@ -8,7 +8,7 @@ import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
-import useQBContract from './contracts/useQBContract'
+import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract'
 import useChainId from './utils/useChainId'
 
 export default function useCreateWorkspace(
@@ -23,7 +23,9 @@ export default function useCreateWorkspace(
 	const chainId = useChainId()
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi } = apiClients
-	const workspaceRegistryContract = useQBContract('workspace', data?.network)
+	const workspaceRegistryContract = useWorkspaceRegistryContract(
+		data?.network,
+	)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
@@ -60,12 +62,10 @@ export default function useCreateWorkspace(
 				data: { ipfsHash },
 			} = await validatorApi.validateWorkspaceCreate({
 				title: data.name,
-				bio: data.bio,
-				about: data.about,
+				about: data.description,
 				logoIpfsHash: uploadedImageHash,
 				creatorId: accountData?.address!,
 				socials: [],
-				partners: [],
 				supportedNetworks: [getSupportedValidatorNetworkFromChainId(data.network)],
 			})
 			if(!ipfsHash) {
@@ -74,7 +74,7 @@ export default function useCreateWorkspace(
 
 			try {
 				// eslint-disable-next-line max-len
-				const createWorkspaceTransaction = await workspaceRegistryContract.createWorkspace(ipfsHash, new Uint8Array(32), 0)
+				const createWorkspaceTransaction = await workspaceRegistryContract.createWorkspace(ipfsHash)
 				const createWorkspaceTransactionData = await createWorkspaceTransaction.wait()
 
 				setTransactionData(createWorkspaceTransactionData)
@@ -121,9 +121,10 @@ export default function useCreateWorkspace(
 
 			if(
 				!workspaceRegistryContract
-				|| workspaceRegistryContract.address === '0x0000000000000000000000000000000000000000'
-				|| !workspaceRegistryContract.signer
-				|| !workspaceRegistryContract.provider
+        || workspaceRegistryContract.address
+          === '0x0000000000000000000000000000000000000000'
+        || !workspaceRegistryContract.signer
+        || !workspaceRegistryContract.provider
 			) {
 				return
 			}

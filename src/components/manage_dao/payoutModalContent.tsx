@@ -57,7 +57,7 @@ function PayoutModalContent({
 	setTabIndex,
 }: Props) {
 	// WAGMI && ETH HOOKS
-	const currentChain = useChainId() || defaultChainId
+	const currentChain = useChainId() ?? defaultChainId
 	const { data: signer } = useSigner()
 
 	// CHAKRA HOOKS
@@ -166,7 +166,7 @@ function PayoutModalContent({
 
 	const rewardAssetContract = useContract({
 		addressOrName:
-      reviewCurrencyAddress || '0x0000000000000000000000000000000000000000',
+      reviewCurrencyAddress ?? '0x0000000000000000000000000000000000000000',
 		contractInterface: ERC20ABI,
 		signerOrProvider: signer,
 	})

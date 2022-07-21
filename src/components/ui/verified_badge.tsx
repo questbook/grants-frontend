@@ -1,33 +1,33 @@
 import React from 'react'
 import {
+	Box,
 	Button,
 	Flex,
-	Grid,
 	Image,
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
-	Text } from '@chakra-ui/react'
+	Text,
+} from '@chakra-ui/react'
 
 interface Props {
   grantAmount: string;
   grantCurrency: string;
-  disbursedAmount?: string;
   lineHeight: string | number;
   marginBottom?: string | number;
 }
 
 function VerifiedBadge({
-	grantAmount, grantCurrency, disbursedAmount, lineHeight, marginBottom,
+	grantAmount, grantCurrency, lineHeight, marginBottom,
 }: Props) {
 	return (
 		<Popover trigger="hover">
 			<PopoverTrigger>
 				<Image
-					h="1rem"
-					w="1rem"
+					h="20px"
+					w="17px"
 					display="inline-block"
-					src="/ui_icons/verified_badge.svg"
+					src="/ui_icons/verified.svg"
 					ml={1}
 					mb={marginBottom}
 					lineHeight={lineHeight}
@@ -36,115 +36,54 @@ function VerifiedBadge({
 			<PopoverContent
 				bg="white"
 				borderRadius="8px"
+				p={4}
 				maxW="210px">
 				<Flex
 					direction="column"
 					align="start">
-					<Grid
-						gridTemplateAreas="
-						'icon text link'
-						"
-						justifyContent="space-between"
-						borderBottom="1px solid #E8E9E9"
-						w="full"
-						p={4}
+					<Text
+						fontWeight="700"
+						fontStyle="normal"
+						fontSize="14px"
+						lineHeight="16px"
 					>
-						<Image
-							h="1rem"
-							w="1rem"
-							display="inline-block"
-							src="/ui_icons/verified_badge.svg"
-							ml={1}
-							mr={2}
-							lineHeight={lineHeight}
-							gridArea="icon"
-						/>
-						<Text
-							fontWeight="700"
+            Verified Grants
+					</Text>
+					<Text
+						mt={2}
+						color="#717A7C"
+						fontWeight="400"
+						fontStyle="normal"
+						fontSize="14px"
+						lineHeight="21px"
+					>
+            Funds deposited as reward
+						{' '}
+						{grantAmount}
+						{' '}
+						{grantCurrency}
+					</Text>
+					<Flex
+						direction="row"
+						w="100%">
+						<Box mr="auto" />
+						<Button
+							mt={2}
+							variant="link"
+							color="brand.500"
+							fontWeight="500"
 							fontStyle="normal"
 							fontSize="14px"
 							lineHeight="16px"
-							gridArea="text"
-						>
-							Verified Grant
-						</Text>
-						<Button
-							variant="link"
 							onClick={
 								() => {
 									window.open('https://questbook.notion.site/What-does-a-Verified-Grant-Mean-0e83ed1f3f4e4fe4ae994a19a75cf413/')
 								}
 							}
-							gridArea="link"
-							justifySelf="start"
-							paddingBlock={0}
 						>
-							<Image
-								h="0.75rem"
-								w="0.75rem"
-								src="/ui_icons/link.svg"
-								lineHeight={lineHeight}
-							/>
+              Learn More
 						</Button>
-					</Grid>
-
-					<Grid
-						gridTemplateColumns="2fr 1fr"
-						justifyContent="space-between"
-						px={4}
-						pt={4}
-						w="full"
-					>
-						<Text
-							color="#373737"
-							fontWeight="400"
-							fontStyle="normal"
-							fontSize="0.75rem"
-							lineHeight="1rem"
-						>
-            Funds deposited
-						</Text>
-						<Text
-							color="#373737"
-							fontWeight="700"
-							fontStyle="normal"
-							fontSize="0.75rem"
-							lineHeight="1rem"
-							justifySelf="end"
-						>
-							{grantAmount}
-							{' '}
-							{grantCurrency}
-						</Text>
-					</Grid>
-					<Grid
-						gridTemplateColumns="2fr 1fr"
-						justifyContent="space-between"
-						p={4}
-						w="full"
-					>
-						<Text
-							color="#373737"
-							fontWeight="400"
-							fontStyle="normal"
-							fontSize="0.75rem"
-							lineHeight="1rem"
-						>
-						Funds sent to winners
-						</Text>
-						<Text
-							color="#373737"
-							fontWeight="700"
-							fontStyle="normal"
-							fontSize="0.75rem"
-							lineHeight="1rem"
-							justifySelf="end"
-						>
-							{disbursedAmount}
-							{' '}
-							{grantCurrency}
-						</Text>
-					</Grid>
+					</Flex>
 				</Flex>
 			</PopoverContent>
 		</Popover>

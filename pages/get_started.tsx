@@ -1,9 +1,9 @@
 import React, { ReactElement, useState } from 'react'
 import { useRouter } from 'next/router'
-import Dao from 'src/components/get_started/dao'
-import GetStartedComponent from 'src/components/get_started/get_started'
-import Talent from 'src/components/get_started/talent'
-import NavbarLayout from 'src/layout/navbarLayout'
+import Dao from '../src/components/get_started/dao'
+import GetStartedComponent from '../src/components/get_started/get_started'
+import Talent from '../src/components/get_started/talent'
+import NavbarLayout from '../src/layout/navbarLayout'
 
 function GetStarted() {
 	// @TODO: scroll up on step change

@@ -20,7 +20,7 @@ function Sidebar({
 }: Props) {
 	const router = useRouter()
 	return (
-		<Box my="41px">
+		<Box my="71px">
 			<FloatingSidebar>
 				<Text
 					variant="heading"

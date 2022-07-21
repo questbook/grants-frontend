@@ -214,19 +214,6 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "uint8",
-        "name": "version",
-        "type": "uint8"
-      }
-    ],
-    "name": "Initialized",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
         "indexed": true,
         "internalType": "address",
         "name": "previousOwner",
@@ -240,55 +227,6 @@
       }
     ],
     "name": "OwnershipTransferred",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint96",
-        "name": "applicationId",
-        "type": "uint96"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint96",
-        "name": "milestoneId",
-        "type": "uint96"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "asset",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "bytes",
-        "name": "transactionHash",
-        "type": "bytes"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "time",
-        "type": "uint256"
-      }
-    ],
-    "name": "TransactionRecord",
     "type": "event"
   },
   {
@@ -364,11 +302,6 @@
         "internalType": "uint96",
         "name": "_applicationId",
         "type": "uint96"
-      },
-      {
-        "internalType": "address",
-        "name": "_applicantWalletAddress",
-        "type": "address"
       },
       {
         "internalType": "uint96",
@@ -481,39 +414,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint96",
-        "name": "_applicationId",
-        "type": "uint96"
-      },
-      {
-        "internalType": "uint96",
-        "name": "_milestoneId",
-        "type": "uint96"
-      },
-      {
-        "internalType": "address",
-        "name": "_asset",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes",
-        "name": "_transactionHash",
-        "type": "bytes"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "recordTransaction",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

@@ -41,7 +41,7 @@ function SecondaryDropdown({
 	onChange,
 }: DropdownProps) {
 	const [isOpen, setIsOpen] = React.useState(false)
-	const defaultSelected = defaultItem || listItems[0]
+	const defaultSelected = defaultItem ?? listItems[0]
 	const [selected, setSelected] = React.useState(defaultSelected)
 	useEffect(() => {
 		if(defaultSelected) {

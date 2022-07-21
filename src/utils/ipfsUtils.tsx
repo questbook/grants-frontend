@@ -63,5 +63,3 @@ export const getUrlForIPFSHash = (hash: string) => {
 	// return `https://infura-ipfs.io:5001/api/v0/cat?arg=${hash}`;
 	// return `https://ipfs.io/ipfs/${hash}`;
 }
-
-export const isIpfsHash = (str: string | undefined | null) => !!str && str.startsWith('Qm') && str.length < 256

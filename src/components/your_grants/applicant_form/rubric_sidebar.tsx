@@ -46,7 +46,7 @@ function RubricSidebar({
 			return
 		}
 
-		const publicData = (await Promise.all(publicDataPromises)).map((data) => JSON.parse(data || '{}'))
+		const publicData = (await Promise.all(publicDataPromises)).map((data) => JSON.parse(data ?? '{}'))
 		console.log(publicData)
 		setDetailedReviews(publicData)
 
@@ -103,10 +103,10 @@ function RubricSidebar({
 
 		// console.log(privateDataPromises);
 		// const privateData = await Promise.all((await Promise.all(privateDataPromises))
-		//   .map(async (data) => JSON.parse(await decryptMessage(data) || '{}')));
+		//   .map(async (data) => JSON.parse(await decryptMessage(data) ?? '{}')));
 
 		const privateData = await Promise.all(privateDataPromises)
-		const privateDecryptedData = await Promise.all(privateData.map(async(data) => JSON.parse(await decryptMessage(data) || '{}')))
+		const privateDecryptedData = await Promise.all(privateData.map(async(data) => JSON.parse(await decryptMessage(data) ?? '{}')))
 
 		setDetailedReviews(privateDecryptedData)
 		const results = [] as any

@@ -46,7 +46,7 @@ function MultiLineInput({
 	const [currentLength, setCurrentLength] = React.useState(value?.length)
 
 	useEffect(() => {
-		setCurrentLength(value?.length || 0)
+		setCurrentLength(value?.length ?? 0)
 	}, [value])
 
 	return (

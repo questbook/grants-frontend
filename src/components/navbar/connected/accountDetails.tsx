@@ -104,7 +104,7 @@ function AccountDetails() {
 										fontSize="16px"
 										lineHeight="24px"
 									>
-										{formatAddress(accountData?.address || '')}
+										{formatAddress(accountData?.address ?? '')}
 									</Text>
 								</Flex>
 							</VStack>
