@@ -25,6 +25,7 @@ import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useContract, useNetwork, useSigner } from 'wagmi'
 import ERC20ABI from '../../../../contracts/abi/ERC20.json'
+import ERC20ProxyABI from 'src/contracts/abi/ERC20Proxy.json'
 import { formatAmount, parseAmount } from '../../../../utils/formattingUtils'
 import Dropdown from '../../../ui/forms/dropdown'
 import SingleLineInput from '../../../ui/forms/singleLineInput'
@@ -75,7 +76,7 @@ function ModalContent({
 	const rewardAssetContract = useContract({
 		addressOrName:
       rewardAsset.address || '0x0000000000000000000000000000000000000000',
-		contractInterface: ERC20ABI,
+		contractInterface: ERC20ProxyABI,
 		signerOrProvider: signer,
 	})
 
