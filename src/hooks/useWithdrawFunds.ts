@@ -75,9 +75,9 @@ export default function useWithdrawFunds(
 			setLoading(true)
 			try {
 				const transferTxn = await grantContract.withdrawFunds(
-					rewardAddress,
-					finalAmount,
-					address,
+					rewardAddress!,
+					finalAmount!,
+					address!,
 				)
 				const depositTransactionData = await transferTxn.wait()
 

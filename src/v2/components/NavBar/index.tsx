@@ -1,36 +1,57 @@
-import { useContext } from 'react'
 import { Container, Flex, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { ApiClientsContext } from 'pages/_app'
 import { CHAIN_INFO, SHOW_TEST_NETS } from 'src/constants/chains'
 import useChainId from 'src/hooks/utils/useChainId'
+import { useConnect } from 'wagmi'
 import AccountDetails from './AccountDetails'
 import ConnectWallet from './ConnectWallet'
-import GetStarted from './GetStarted'
 
 interface Props {
-  onGetStartedClick: () => void;
+  onGetStartedClick: boolean;
+  onGetStartedBtnClicked: boolean;
+  setGetStartedClicked: (value:boolean)=>void;
 }
 
-function NavBar({ onGetStartedClick }: Props) {
-	const { connected } = useContext(ApiClientsContext)!
+function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicked }: Props) {
+	// const { connected } = useContext(ApiClientsContext)!
+	const { isDisconnected } = useConnect()
 	const router = useRouter()
+	console.log(router.pathname)
 	const chainId = useChainId()
 
 	return (
 		<Container
 			zIndex={1}
-			variant="header-container"
+			variant={'header-container'}
+			display='flex'
 			maxW="100vw"
-			px={8}>
+			bg={ 'white'}
+			ps={'42px'}
+			pe={'15px'}
+			py={'16px'}
+			minWidth={{ base:'-webkit-fill-available' }}
+		>
 			<Image
 				onClick={
 					() => router.push({
 						pathname: '/',
 					})
 				}
+				display={{ base:'none', lg:'inherit' }}
 				mr="auto"
-				src="/ui_icons/qb.svg"
+				src={isDisconnected && router.pathname.includes('browse_dao') ? '/ui_icons/qb.svg' : '/ui_icons/qb.svg'}
+				alt="Questbook"
+				cursor="pointer"
+			/>
+			<Image
+				onClick={
+					() => router.push({
+						pathname: '/',
+					})
+				}
+				display={{ base:'inherit', lg:'none' }}
+				mr="auto"
+				src={isDisconnected && router.pathname.includes('browse_dao') ? '/ui_icons/questbookMobile.svg' : '/ui_icons/qb.svg'}
 				alt="Questbook"
 				cursor="pointer"
 			/>
@@ -68,9 +89,15 @@ function NavBar({ onGetStartedClick }: Props) {
 			}
 
 			{true && <AccountDetails /> /* @TODO-gasless: FIX HERE */}
-			{!connected && false && <GetStarted onGetStartedClick={onGetStartedClick} />/* @TODO-gasless: FIX HERE */}
-			{!connected && false && <ConnectWallet />/* @TODO-gasless: FIX HERE */}
 
+			{/* {!connected && <GetStarted onGetStartedClick={onGetStartedClick} />} */}
+			{
+				isDisconnected && false && (
+					<ConnectWallet
+						onGetStartedBtnClicked={onGetStartedBtnClicked}
+						setGetStartedClicked={setGetStartedClicked} />
+				)
+			}
 		</Container>
 	)
 }

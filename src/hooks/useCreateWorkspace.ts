@@ -14,7 +14,7 @@ import { apiKey, getEventData, getTransactionReceipt, sendGaslessTransaction, we
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
 import ErrorToast from '../components/ui/toasts/errorToast'
-import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract'
+import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
 
 export default function useCreateWorkspace(
@@ -38,9 +38,7 @@ export default function useCreateWorkspace(
 	const chainId = useChainId()
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi } = apiClients
-	const workspaceRegistryContract = useWorkspaceRegistryContract(
-		data?.network,
-	)
+	const workspaceRegistryContract = useQBContract('workspace', data?.network)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
@@ -81,10 +79,12 @@ export default function useCreateWorkspace(
 				data: { ipfsHash },
 			} = await validatorApi.validateWorkspaceCreate({
 				title: data.name,
-				about: data.description,
+				bio: data.bio,
+				about: data.about,
 				logoIpfsHash: uploadedImageHash,
 				creatorId: accountData?.address!,
 				socials: [],
+				partners: [],
 				supportedNetworks: [getSupportedValidatorNetworkFromChainId(data.network)],
 			})
 			if(!ipfsHash) {

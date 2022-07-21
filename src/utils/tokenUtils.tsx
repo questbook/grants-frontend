@@ -11,8 +11,8 @@ export function getAssetInfo(asset?: string, chainId?: SupportedChainId) {
 	const chain = CHAIN_INFO[chainId!] || CHAIN_INFO[defaultChainId]
 
 	return {
-		label: chain?.supportedCurrencies[asset!]?.label ?? '',
-		icon: chain?.supportedCurrencies[asset!]?.icon ?? '',
+		label: chain?.supportedCurrencies[asset!]?.label || '',
+		icon: chain?.supportedCurrencies[asset!]?.icon || '',
 	}
 }
 
@@ -30,6 +30,7 @@ export function getChainInfo(grant: any, chainId: SupportedChainId) : ChainInfo[
 		chainInfo = {
 			address: grant.reward.token.address,
 			label: grant.reward.token.label,
+			pair: undefined,
 			decimals: parseInt(grant.reward.token.decimal, 10),
 			icon: tokenIcon,
 		}
@@ -38,6 +39,7 @@ export function getChainInfo(grant: any, chainId: SupportedChainId) : ChainInfo[
 			address: '',
 			label: 'UNSUP',
 			decimals: 18,
+			pair: undefined,
 			icon: '',
 		}
 	}

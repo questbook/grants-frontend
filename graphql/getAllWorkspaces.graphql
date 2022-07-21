@@ -1,0 +1,10 @@
+query getAllWorkspaces {
+    workspaces( subgraphError: allow) {
+        id
+        title
+        about
+        logoIpfsHash
+        coverImageIpfsHash
+        supportedNetworks
+    }
+}

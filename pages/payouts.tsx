@@ -10,11 +10,15 @@ import {
 } from '@chakra-ui/react'
 import { utils } from 'ethers'
 import router from 'next/router'
+// CONTEXT AND CONSTANTS
+import { ApiClientsContext } from 'pages/_app'
 import CopyIcon from 'src/components/ui/copy_icon'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetFundSentforReviewerQuery } from 'src/generated/graphql'
 // import { useAccount } from 'wagmi'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+// UI Components
+import NavbarLayout from 'src/layout/navbarLayout'
 // TOOLS AND UTILS
 import {
 	getExplorerUrlForTxHash,
@@ -23,10 +27,6 @@ import {
 } from 'src/utils/formattingUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-// UI Components
-import NavbarLayout from '../src/layout/navbarLayout'
-// CONTEXT AND CONSTANTS
-import { ApiClientsContext } from './_app'
 
 export default function Payouts() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
@@ -62,7 +62,7 @@ export default function Payouts() {
 	const { data: reviewsPaidData } = useGetFundSentforReviewerQuery({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
       ].client,
 		variables: {
 			to: accountData?.address,

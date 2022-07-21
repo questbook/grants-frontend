@@ -1,6 +1,7 @@
 {
-  "name": "qb",
+  "name": "@questbook/grants-frontend",
   "private": true,
+  "type": "commonjs",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -8,7 +9,9 @@
     "lint": "eslint ./src ./pages --ext .js,.ts,.jsx,.tsx",
     "lint:fix": "eslint ./src ./pages --fix --ext .js,.ts,.jsx,.tsx",
     "export": "next export",
-    "generate": "graphql-codegen --config codegen.yaml"
+    "generate:typechain": "typechain --target ethers-v5 --out-dir src/generated/contracts src/contracts/abi/*.json",
+    "generate:graphql": "graphql-codegen --config codegen.yaml",
+    "generate": "npm run generate:graphql && npm run generate:typechain"
   },
   "dependencies": {
     "@apollo/client": "^3.5.8",
@@ -27,6 +30,8 @@
     "@toast-ui/editor": "^3.1.2",
     "@toast-ui/react-editor": "^3.1.2",
     "@types/react-star-ratings": "^2.3.0",
+    "axios": "^0.27.2",
+    "axios-retry": "^3.3.1",
     "bn.js": "^5.2.0",
     "chakra-react-select": "^4.0.3",
     "copy-to-clipboard": "^3.3.1",
@@ -40,7 +45,7 @@
     "lottie-react": "^2.2.1",
     "moment": "^2.29.1",
     "multiformats": "^9.6.4",
-    "next": "12.0.8",
+    "next": "^12.0.8",
     "next-seo": "^4.28.1",
     "nextjs-redirect": "^6.0.1",
     "react": "^17.0.2",
@@ -48,8 +53,8 @@
     "react-dom": "^17.0.2",
     "react-linkify": "^1.0.0-alpha",
     "react-star-ratings": "^2.3.0",
-    "subscriptions-transport-ws": "^0.11.0",
     "tlds": "^1.230.0",
+    "urql": "^2.2.1",
     "use-file-picker": "^1.4.1",
     "wagmi": "^0.4.3"
   },
@@ -60,6 +65,8 @@
     "@graphql-codegen/typescript": "^2.4.5",
     "@graphql-codegen/typescript-operations": "^2.3.2",
     "@graphql-codegen/typescript-react-apollo": "^3.2.8",
+    "@typechain/ethers-v5": "^10.1.0",
+    "@types/bn.js": "^5.1.0",
     "@types/draft-js": "^0.11.9",
     "@types/linkify-it": "^3.0.2",
     "@types/node": "17.0.12",
@@ -67,6 +74,7 @@
     "@types/react-datepicker": "^4.3.4",
     "@types/react-linkify": "^1.0.1",
     "eslint": "^7.14.0",
+    "typechain": "^8.1.0",
     "typescript": "4.5.5"
   }
 }

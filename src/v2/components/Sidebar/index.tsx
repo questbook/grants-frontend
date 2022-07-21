@@ -42,7 +42,6 @@ function Sidebar() {
 
 		const getWorkspaceData = async(userAddress: string) => {
 			try {
-				console.log('getallworkspace', getAllWorkspaces)
 				const promises = getAllWorkspaces.map(
 					(allWorkspaces) => new Promise(async(resolve) => {
 						try {
@@ -164,8 +163,8 @@ function Sidebar() {
 			</Flex>
 			<Box my="auto" />
 			{
-				workspaces.length === 0 ||
-        ((workspace && accountData?.address && getRole(workspace, accountData?.address) === 'Reviewer') && (
+				(!workspaces || workspaces.length === 0 ||
+        (workspace && accountData?.address && getRole(workspace, accountData?.address) === 'Reviewer')) && (
         	<Button
         		m={4}
         		h="40px"
@@ -186,7 +185,7 @@ function Sidebar() {
         	>
             Create your DAO
         	</Button>
-        ))
+				)
 			}
 		</Flex>
 	)
