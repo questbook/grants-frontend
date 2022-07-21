@@ -552,7 +552,7 @@
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-evmos-testnet",
 		"rpcUrls": [
-			"https://eth.bd.evmos.dev:8545"
+			"https://41d67fdgs4.execute-api.ap-south-1.amazonaws.com/v0/evmos"
 		],
 		"nativeCurrency": {
 			"name": "Test EVMOS",
