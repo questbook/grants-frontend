@@ -11,7 +11,6 @@ import {
 import { Wallet } from 'ethers'
 import { useRouter } from 'next/router'
 import { ApiClientsContext, GitHubTokenContext, NonceContext, ScwAddressContext, WebwalletContext } from 'pages/_app'
-import Loader from 'src/components/ui/loader'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { useConnect, useDisconnect } from 'wagmi'
 
@@ -46,7 +45,7 @@ function AccountDetails() {
 						marginLeft="12px"
 						onClick={
 							() => {
-								if (!webwallet) {
+								if(!webwallet) {
 									setWebwallet(Wallet.createRandom())
 								}
 
@@ -78,25 +77,26 @@ function AccountDetails() {
 
 			{
 				isLoggedIn &&
-				(<MenuButton
-					ref={buttonRef}
-					as={Button}
-					variant="solid"
-					px={2.5}
-					py={2}
-					ml={3}
-					borderRadius="2px"
-					rightIcon={
-						!(connected && isDisconnected) && (
-							<Image
-								mr={2}
-								src="/ui_icons/arrow-drop-down-line.svg"
-								alt="options" />
-						)
-					}
-					w={connected && isDisconnected ? buttonRef.current?.offsetWidth : 'auto'}
-				>
-					{
+				(
+					<MenuButton
+						ref={buttonRef}
+						as={Button}
+						variant="solid"
+						px={2.5}
+						py={2}
+						ml={3}
+						borderRadius="2px"
+						rightIcon={
+							!(connected && isDisconnected) && (
+								<Image
+									mr={2}
+									src="/ui_icons/arrow-drop-down-line.svg"
+									alt="options" />
+							)
+						}
+						w={connected && isDisconnected ? buttonRef.current?.offsetWidth : 'auto'}
+					>
+						{
 						// @TODO-gasless: FIX HERE
 						// connected && isDisconnected  ? (
 						// 	<Loader />
@@ -110,18 +110,18 @@ function AccountDetails() {
 						// 		{formatAddress(scwAddress ?? (accountData?.address ?? ''))}
 						// 	</Text>
 						// )
-						(
-							<Text
-								color="#122224"
-								fontWeight="500"
-								fontSize="14px"
-								lineHeight="20px"
-							>
-								{formatAddress(scwAddress ?? (accountData?.address ?? ""))}
-							</Text>
-						)
-					}
-				</MenuButton>
+							(
+								<Text
+									color="#122224"
+									fontWeight="500"
+									fontSize="14px"
+									lineHeight="20px"
+								>
+									{formatAddress(scwAddress ?? (accountData?.address ?? ''))}
+								</Text>
+							)
+						}
+					</MenuButton>
 				)
 			}
 			{

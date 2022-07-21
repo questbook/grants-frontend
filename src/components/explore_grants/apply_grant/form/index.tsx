@@ -15,6 +15,7 @@ import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import { SupportedChainId } from 'src/constants/chains'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useSubmitApplication from 'src/hooks/useSubmitApplication'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
@@ -28,7 +29,6 @@ import AboutTeam from './2_aboutTeam'
 import AboutProject from './3_aboutProject'
 import Funding from './4_funding'
 import CustomFields from './5_customFields'
-import {useQuestbookAccount} from 'src/hooks/gasless/useQuestbookAccount'
 
 interface Props {
   // onSubmit: (data: any) => void;

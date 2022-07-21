@@ -36,7 +36,7 @@ export default function useCreateGrant(
 	const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!
 
 
-	const {biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress} = useBiconomy({
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,
 		targetContractABI: GrantFactoryAbi,
 	})
@@ -160,8 +160,10 @@ export default function useCreateGrant(
 				//   APPLICATION_REGISTRY_ADDRESS[currentChainId!],
 				// );
 
-				if(!biconomyWalletClient || typeof biconomyWalletClient === "string" || !scwAddress)
-					return;
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					return
+				}
+
 				// let transactionHash: string | undefined | boolean
 				console.log('THIS IS ADDRESS', GRANT_FACTORY_ADDRESS[currentChainId!], currentChainId)
 

@@ -14,7 +14,7 @@ export const useBiconomy = (data: any) => {
 
 	useEffect(() => {
 		console.log('EHERE', biconomyDaoObj)
-		if (isLoggedIn && webwallet && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress)) {
+		if(isLoggedIn && webwallet && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress)) {
 			initiateBiconomy()
 				.then(res => console.log(res))
 				.catch(error => console.log(error))
@@ -22,8 +22,8 @@ export const useBiconomy = (data: any) => {
 	}, [webwallet, isLoggedIn, biconomyDaoObj, biconomyWalletClient, scwAddress])
 
 
-	const initiateBiconomy = async () => {
-		if (!webwallet) {
+	const initiateBiconomy = async() => {
+		if(!webwallet) {
 			return
 		}
 
@@ -32,7 +32,7 @@ export const useBiconomy = (data: any) => {
 		console.log('CREATING BICONOMY OBJ')
 		let _biconomy: any
 
-		if (!biconomyDaoObj) {
+		if(!biconomyDaoObj) {
 			_biconomy = new Biconomy(jsonRpcProvider,
 				{
 					apiKey: data.apiKey,
@@ -44,20 +44,20 @@ export const useBiconomy = (data: any) => {
 
 
 		console.log('BICONOMY OBJ CREATED', _biconomy)
-		_biconomy.onEvent(_biconomy.READY, async () => {
+		_biconomy.onEvent(_biconomy.READY, async() => {
 			console.log('Inside biconomy ready event')
 
 			const _biconomyWalletClient: BiconomyWalletClient = _biconomy.biconomyWalletClient
 			console.log('biconomyWalletClient', _biconomyWalletClient)
 
-			if (!scwAddress) {
+			if(!scwAddress) {
 				const walletAddress = await deploySCW(webwallet, _biconomyWalletClient)
 				setScwAddress(walletAddress)
 			} else {
 				console.log('SCW Wallet already exists at Address', scwAddress)
 			}
 
-			if (!biconomyWalletClient) {
+			if(!biconomyWalletClient) {
 				setBiconomyWalletClient(_biconomyWalletClient)
 			}
 		}).onEvent(_biconomy.ERROR, (error: any, message: any) => {
@@ -65,7 +65,7 @@ export const useBiconomy = (data: any) => {
 			console.log(error)
 		})
 
-		if (!biconomyDaoObj) {
+		if(!biconomyDaoObj) {
 			setBiconomyDaoObj(_biconomy)
 		}
 
@@ -74,6 +74,6 @@ export const useBiconomy = (data: any) => {
 	return {
 		biconomyDaoObj: biconomyDaoObj,
 		biconomyWalletClient: biconomyWalletClient,
-		scwAddress: scwAddress 
+		scwAddress: scwAddress
 	}
 }

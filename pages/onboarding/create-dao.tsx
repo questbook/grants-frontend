@@ -45,7 +45,7 @@ const OnboardingCreateDao = () => {
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 	const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!
 
-	const {biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress} = useBiconomy({
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,
 		targetContractABI: WorkspaceRegistryAbi,
 	})
@@ -55,8 +55,11 @@ const OnboardingCreateDao = () => {
 	useEffect(() => {
 		console.log('THIS IS BICONOMY', biconomy)
 		console.log('THIS IS BICONOMY SECOND', biconomyWalletClient)
-		if (biconomy && biconomyWalletClient && scwAddress) setIsBiconomyInitialised(true)
-		else setIsBiconomyInitialised(false)
+		if(biconomy && biconomyWalletClient && scwAddress) {
+			setIsBiconomyInitialised(true)
+		} else {
+			setIsBiconomyInitialised(false)
+		}
 	}, [biconomy, biconomyWalletClient, scwAddress])
 
 	const { activeChain, switchNetworkAsync, data } = useNetwork()
@@ -111,12 +114,14 @@ const OnboardingCreateDao = () => {
 			}
 
 			setCurrentStep(2)
-			
-			if(!isBiconomyInitialised)
-				return;
 
-			if(!biconomyWalletClient || typeof biconomyWalletClient === "string" || !scwAddress)
-				return;
+			if(!isBiconomyInitialised) {
+				return
+			}
+
+			if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+				return
+			}
 
 			const targetContractObject = new ethers.Contract(
 				WORKSPACE_REGISTRY_ADDRESS[daoNetwork.id],
@@ -125,7 +130,7 @@ const OnboardingCreateDao = () => {
 			)
 			console.log('ENTERING')
 			console.log(daoNetwork.id, scwAddress, webwallet, nonce, webHookId)
-			
+
 			const transactionHash = await sendGaslessTransaction(
 				biconomy,
 				targetContractObject,
@@ -236,7 +241,7 @@ const OnboardingCreateDao = () => {
 			isBiconomyInitialised={isBiconomyInitialised}
 			onSubmit={
 				activeChain?.id &&
-        daoNetwork?.id && 
+        daoNetwork?.id &&
         ((activeChain.id !== daoNetwork.id && switchNetworkAsync) ||
           activeChain.id === daoNetwork.id)
 					? () => createWorkspace()

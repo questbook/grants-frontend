@@ -67,9 +67,9 @@ function NavBar({ onGetStartedClick }: Props) {
 				)
 			}
 
-			{true && <AccountDetails /> /* @TODO-gasless: FIX HERE */}{!connected && false && <GetStarted onGetStartedClick={onGetStartedClick} />// @TODO-gasless: FIX HERE
-			}{!connected && false && <ConnectWallet />// @TODO-gasless: FIX HERE
-			}
+			{true && <AccountDetails /> /* @TODO-gasless: FIX HERE */}
+			{!connected && false && <GetStarted onGetStartedClick={onGetStartedClick} />/* @TODO-gasless: FIX HERE */}
+			{!connected && false && <ConnectWallet />/* @TODO-gasless: FIX HERE */}
 
 		</Container>
 	)
