@@ -169,6 +169,7 @@ function BrowseDao() {
 
 	return (
 		<Box
+			width={{ base: 'max-content', sm:'100%' }}
 			background={'#F5F5FA'}
 			minHeight={'100vh'}
 			height={'100%'}

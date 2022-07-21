@@ -28,7 +28,9 @@ function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicke
 			bg={ 'white'}
 			ps={'42px'}
 			pe={'15px'}
-			py={'16px'}>
+			py={'16px'}
+			minWidth={{ base:'-webkit-fill-available' }}
+		>
 			<Image
 				onClick={
 					() => router.push({
