@@ -149,7 +149,7 @@ export const sendGaslessTransaction = async(biconomy: any, targetContractObject:
 	console.log('HERE1')
 	const { data } = await targetContractObject.populateTransaction[targetContractMethod](...targetContractArgs)
 	console.log('HERE2')
-	console.log("HERE 00", biconomyWalletClient)
+	console.log('HERE 00', biconomyWalletClient)
 	console.log(biconomyWalletClient, data, targetContractAddress, scwAddress)
 	const safeTxBody = await biconomyWalletClient.buildExecTransaction({ data, to: targetContractAddress, walletAddress: scwAddress })
 

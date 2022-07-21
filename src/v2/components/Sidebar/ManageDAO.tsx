@@ -2,11 +2,10 @@ import React from 'react'
 import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { MinimalWorkspace } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import getRole from 'src/utils/memberUtils'
-import { useAccount } from 'wagmi'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 
 interface Props {
   workspaces: MinimalWorkspace[];

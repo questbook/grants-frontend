@@ -35,13 +35,10 @@ export default function useCreateGrant(
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 	const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!
 
-	const [
-		biconomy,
-		biconomyWalletClient,
-		scwAddress
-	] = useBiconomy({
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,
-		targetContractABI: GrantFactoryAbi
+		targetContractABI: GrantFactoryAbi,
 	})
 
 	const [error, setError] = React.useState<string>()
@@ -163,15 +160,19 @@ export default function useCreateGrant(
 				//   APPLICATION_REGISTRY_ADDRESS[currentChainId!],
 				// );
 
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					return
+				}
+
 				// let transactionHash: string | undefined | boolean
-				console.log("THIS IS ADDRESS", GRANT_FACTORY_ADDRESS[currentChainId!], currentChainId)
+				console.log('THIS IS ADDRESS', GRANT_FACTORY_ADDRESS[currentChainId!], currentChainId)
 
 				const targetContractObject = new ethers.Contract(
 					GRANT_FACTORY_ADDRESS[currentChainId!],
 					GrantFactoryAbi,
 					webwallet
 				)
-				
+
 				console.log('ENTERING')
 
 				const methodArgs = [
@@ -181,12 +182,12 @@ export default function useCreateGrant(
 					WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
 					APPLICATION_REGISTRY_ADDRESS[currentChainId!],
 				]
-				
-				console.log("THESE ARE METHODS", methodArgs);
+
+				console.log('THESE ARE METHODS', methodArgs)
 
 				const transactionHash = await sendGaslessTransaction(biconomy, targetContractObject, 'createGrant', methodArgs,
 					GRANT_FACTORY_ADDRESS[currentChainId!], biconomyWalletClient,
-					scwAddress, webwallet, `${currentChainId}`, webHookId, nonce);
+					scwAddress, webwallet, `${currentChainId}`, webHookId, nonce)
 
 				console.log(transactionHash)
 				const receipt = await getTransactionReceipt(transactionHash)

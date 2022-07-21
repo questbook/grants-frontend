@@ -15,12 +15,14 @@ const CreateDaoFinal = ({
 	daoImageFile,
 	onImageFileChange,
 	onSubmit,
+	isBiconomyInitialised
 }: {
   daoName: string,
   daoNetwork: NetworkSelectOption,
 	daoImageFile: File | null,
-	onImageFileChange: (image: File | null) => void
-	onSubmit: (() => Promise<void>) | null
+	onImageFileChange: (image: File | null) => void,
+	onSubmit: (() => Promise<void>) | null,
+	isBiconomyInitialised: boolean
 }) => {
 	const provider = useProvider()
 	const [ gasEstimate, setGasEstimate ] = useState<string>()
@@ -138,7 +140,7 @@ const CreateDaoFinal = ({
 			>
 				<ContinueButton
 					onClick={() => onSubmit!()}
-					disabled={onSubmit === null}
+					disabled={onSubmit === null || !isBiconomyInitialised}
 					props={
 						{
 							minW: '343px',

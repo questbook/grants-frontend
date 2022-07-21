@@ -3,14 +3,14 @@ import { Box, Button, Flex, Image, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { useGetWorkspaceMembersLazyQuery } from 'src/generated/graphql'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { MinimalWorkspace } from 'src/types'
 import getRole from 'src/utils/memberUtils'
 import getTabFromPath from 'src/utils/tabUtils'
-import { useAccount, useConnect } from 'wagmi'
+import { useConnect } from 'wagmi'
 import ManageDAO from './ManageDAO'
 import SidebarItem from './SidebarItem'
 import { TabIndex, useGetTabs } from './Tabs'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 
 function Sidebar() {
 	const [topTabs, bottomTabs] = useGetTabs()
@@ -50,7 +50,7 @@ function Sidebar() {
 							const { data } = await allWorkspaces[0]({
 								variables: { actorId: userAddress },
 							})
-							console.log("THIS ISSSS DATA", data);
+							console.log('THIS ISSSS DATA', data)
 							if(data && data.workspaceMembers.length > 0) {
 								resolve(data.workspaceMembers.map((w) => w.workspace))
 							} else {
@@ -63,7 +63,9 @@ function Sidebar() {
 				)
 				Promise.all(promises).then((values: any[]) => {
 					const allWorkspacesData = [].concat(...values) as MinimalWorkspace[]
-					setWorkspaces([...workspaces, ...allWorkspacesData])
+					const tempSet = new Set([...workspaces, ...allWorkspacesData])
+					console.log('WORKSPACE SET: ', tempSet)
+					setWorkspaces(Array.from(tempSet))
 
 					const savedWorkspaceData = localStorage.getItem('currentWorkspace')
 					if(!savedWorkspaceData || savedWorkspaceData === 'undefined') {

@@ -24,13 +24,9 @@ export default function useCreateWorkspace(
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 	const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!
 
-	const [
-		biconomy,
-		biconomyWalletClient,
-		scwAddress
-	] = useBiconomy({
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,
-		targetContractABI: WorkspaceRegistryAbi
+		targetContractABI: WorkspaceRegistryAbi,
 	})
 
 	const [error, setError] = React.useState<string>()
@@ -96,6 +92,11 @@ export default function useCreateWorkspace(
 			}
 
 			try {
+
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					return
+				}
+
 				// eslint-disable-next-line max-len
 				console.log('Workspace registry address', WORKSPACE_REGISTRY_ADDRESS[networkChainId])
 				// let transactionHash: string | undefined | boolean
@@ -106,14 +107,14 @@ export default function useCreateWorkspace(
 					webwallet
 				)
 				console.log('ENTERING')
-				console.log(networkChainId, scwAddress, webwallet, nonce, webHookId);
+				console.log(networkChainId, scwAddress, webwallet, nonce, webHookId)
 				const transactionHash = await sendGaslessTransaction(biconomy, targetContractObject, 'createWorkspace', [ipfsHash, new Uint8Array(32), 0],
 					WORKSPACE_REGISTRY_ADDRESS[networkChainId], biconomyWalletClient,
 					scwAddress, webwallet, `${networkChainId}`, webHookId, nonce)
 
 				console.log(transactionHash)
 				const receipt = await getTransactionReceipt(transactionHash)
- 
+
 				console.log('THIS IS RECEIPT', receipt)
 
 				const createWorkspaceTransactionData = await getEventData(receipt, 'WorkspaceCreated', WorkspaceRegistryAbi)
@@ -176,10 +177,10 @@ export default function useCreateWorkspace(
 			console.log(workspaceRegistryContract)
 			if(
 				!workspaceRegistryContract
-        || workspaceRegistryContract.address
-          === '0x0000000000000000000000000000000000000000'
-			// || !workspaceRegistryContract.signer
-			// || !workspaceRegistryContract.provider
+				|| workspaceRegistryContract.address
+				=== '0x0000000000000000000000000000000000000000'
+				// || !workspaceRegistryContract.signer
+				// || !workspaceRegistryContract.provider
 			) {
 				console.log('ERROR HERE')
 				return

@@ -5,9 +5,9 @@ import {
 	useGetNumberOfApplicationsLazyQuery,
 	useGetNumberOfGrantsLazyQuery,
 } from 'src/generated/graphql'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount, useConnect } from 'wagmi'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { useConnect } from 'wagmi'
 
 enum TabIndex {
 	DISCOVER, MY_APPLICATIONS, DASHBOARD, GRANTS_AND_BOUNTIES, TRANSACTIONS, INTEGRATIONS, SETTINGS, PAYOUTS
