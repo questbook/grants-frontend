@@ -60,7 +60,7 @@ function GitHubOauth() {
 			setMsg('Something went wrong. Please try again')
 		}
 
-	}, [])
+	}, [router])
 
 	return (
 		<Flex
