@@ -63,7 +63,9 @@ function Sidebar() {
 				)
 				Promise.all(promises).then((values: any[]) => {
 					const allWorkspacesData = [].concat(...values) as MinimalWorkspace[]
-					setWorkspaces([...workspaces, ...allWorkspacesData])
+					const tempSet = new Set([...workspaces, ...allWorkspacesData])
+					console.log('WORKSPACE SET: ', tempSet)
+					setWorkspaces(Array.from(tempSet))
 
 					const savedWorkspaceData = localStorage.getItem('currentWorkspace')
 					if(!savedWorkspaceData || savedWorkspaceData === 'undefined') {

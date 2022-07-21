@@ -229,7 +229,7 @@ const OnboardingCreateDao = () => {
 			daoName={daoName!}
 			daoImageFile={daoImageFile}
 			onImageFileChange={(image) => setDaoImageFile(image)}
-			isBiconomyInitialised={isBiconomyInitialised} 
+			isBiconomyInitialised={isBiconomyInitialised}
 			onSubmit={
 				activeChain?.id &&
         daoNetwork?.id && 

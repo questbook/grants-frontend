@@ -16,7 +16,7 @@ export const useQuestbookAccount = () => {
 	}, [nonce])
 
 	useEffect(() => {
-		console.log("HYY", nonce, webwallet, scwAddress);
+		console.log('HYY', nonce, webwallet, scwAddress)
 		if(nonce && webwallet && scwAddress && !gaslessData) {
 			setGaslessData({
 				address: scwAddress,
