@@ -8,23 +8,23 @@ import React, {
 } from 'react'
 import { Flex, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { ApiClientsContext } from 'pages/_app'
+import GrantCard from 'src/components/browse_grants/grantCard'
+import Sidebar from 'src/components/browse_grants/sidebar'
+import Heading from 'src/components/ui/heading'
+import Loader from 'src/components/ui/loader'
 import {
 	GetAllGrantsQuery,
 	useGetAllGrantsLazyQuery,
 } from 'src/generated/graphql'
+import NavbarLayout from 'src/layout/navbarLayout'
+import { formatAmount } from 'src/utils/formattingUtils'
 import { unixTimestampSeconds } from 'src/utils/generics'
 import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { useAccount, useConnect } from 'wagmi'
-import GrantCard from '../src/components/browse_grants/grantCard'
-import Sidebar from '../src/components/browse_grants/sidebar'
-import Heading from '../src/components/ui/heading'
-import Loader from '../src/components/ui/loader'
-import NavbarLayout from '../src/layout/navbarLayout'
-import { formatAmount } from '../src/utils/formattingUtils'
-import { ApiClientsContext } from './_app'
 
 const PAGE_SIZE = 40
 
@@ -35,18 +35,18 @@ function BrowseGrants() {
 	const router = useRouter()
 	const { subgraphClients, connected } = useContext(ApiClientsContext)!
 
-	const allNetworkGrants = Object.keys(subgraphClients)!.map(
-		(key) => useGetAllGrantsLazyQuery({ client: subgraphClients[key].client }),
+	const allNetworkGrants = Object.keys(subgraphClients)!.map((key) => useGetAllGrantsLazyQuery({ client: subgraphClients[key].client })
 	)
 
 	const toast = useToast()
 	const [grants, setGrants] = useState<GetAllGrantsQuery['grants']>([])
-	const [loadedData, setLoadedData] = useState<boolean>(false)
+	const [loading, setLoading] = useState<Boolean>(false)
+	const [allDataFetched, setAllDataFectched] = useState<Boolean>(false)
 
 	const [currentPage, setCurrentPage] = useState(0)
 
 	const getGrantData = async(firstTime: boolean = false) => {
-		setLoadedData(false)
+		setLoading(true)
 		try {
 			const currentPageLocal = firstTime ? 0 : currentPage
 			const promises = allNetworkGrants.map(
@@ -58,7 +58,7 @@ function BrowseGrants() {
 							variables: {
 								first: PAGE_SIZE,
 								skip: currentPageLocal * PAGE_SIZE,
-								applicantId: accountData?.address ?? '',
+								applicantId: accountData?.address || '',
 								minDeadline: unixTimestampSeconds(),
 							},
 						})
@@ -79,18 +79,25 @@ function BrowseGrants() {
 				const allGrantsData = [].concat(
 					...values
 				) as GetAllGrantsQuery['grants']
+				if(allGrantsData.length < PAGE_SIZE) {
+					setAllDataFectched(true)
+				}
+
+				console.log('allGrantsData', allGrantsData)
+
 				if(firstTime) {
 					setGrants(
 						allGrantsData.sort((a: any, b: any) => b.createdAtS - a.createdAtS)
 					)
-					setLoadedData(true)
+
+					setLoading(false)
 				} else {
 					setGrants(
 						[...grants, ...allGrantsData].sort(
 							(a: any, b: any) => b.createdAtS - a.createdAtS
 						)
 					)
-					setLoadedData(true)
+					setLoading(false)
 				}
 
 				setCurrentPage(firstTime ? 1 : currentPage + 1)
@@ -114,8 +121,9 @@ function BrowseGrants() {
 		const parentElement = (current as HTMLElement)?.parentNode as HTMLElement
 		const reachedBottom =
       Math.abs(
-      	parentElement.scrollTop -
-          (parentElement.scrollHeight - parentElement.clientHeight)
+      	parentElement.scrollHeight -
+          parentElement.clientHeight -
+          parentElement.scrollTop
       ) < 10
 		if(reachedBottom) {
 			getGrantData()
@@ -142,23 +150,34 @@ function BrowseGrants() {
 
 	return (
 		<Flex
+			w="100%"
 			ref={containerRef}
 			direction="row"
-			justify="center">
+			justify="center"
+		>
 			<Flex
+				p="0"
+				paddingInline="0"
 				direction="column"
 				w="55%"
 				alignItems="stretch"
 				pb={8}
-				px={10}>
-				<Heading title="Discover grants" />
+			>
+				<Flex
+					borderX="1px solid #E8E9E9"
+					p="1.5rem"
+				>
+					<Heading
+						dontRenderDivider
+						title="Browse grants"
+						mt="0"
+					/>
+				</Flex>
+
 				{
-					!loadedData ? (
-						<Loader />
-					) : (
-						<>
-							{
-								grants.length > 0 &&
+					<>
+						{
+							grants.length > 0 &&
               grants.map((grant) => {
               	const chainId = getSupportedChainIdFromSupportedNetwork(
               		grant.workspace.supportedNetworks[0]
@@ -182,14 +201,22 @@ function BrowseGrants() {
               			grantDesc={grant.summary}
               			numOfApplicants={grant.numberOfApplications}
               			endTimestamp={new Date(grant.deadline!).getTime()}
+              			createdAt={grant.createdAtS}
               			grantAmount={
               				formatAmount(
               					grant.reward.committed,
-              					chainInfo?.decimals ?? 18
+              					chainInfo?.decimals || 18
               				)
               			}
-              			grantCurrency={chainInfo?.label ?? 'LOL'}
-              			grantCurrencyIcon={chainInfo?.icon ?? '/images/dummy/Ethereum Icon.svg'}
+              			disbursedAmount={
+              				formatAmount(
+              					grant.funding,
+              					chainInfo?.decimals || 18
+              				)
+              			}
+              			grantCurrency={chainInfo?.label || 'LOL'}
+              			grantCurrencyIcon={chainInfo?.icon || '/images/dummy/Ethereum Icon.svg'}
+              			grantCurrencyPair={chainInfo?.pair!}
               			isGrantVerified={isGrantVerified}
               			funding={funding}
               			chainId={chainId}
@@ -230,9 +257,9 @@ function BrowseGrants() {
               		/>
               	)
               })
-							}
-						</>
-					)
+						}
+						{loading ? <Loader /> : allDataFetched || <></>}
+					</>
 				}
 			</Flex>
 			{

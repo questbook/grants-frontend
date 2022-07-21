@@ -29,7 +29,7 @@ function Title({ onSubmit, constructCache, cacheKey }: Props) {
 			return
 		}
 
-		const formData = JSON.parse(data ?? '{}')
+		const formData = JSON.parse(data || '{}')
 		console.log('Data from cache: ', formData)
 
 		setTitle(formData?.title)

@@ -88,12 +88,12 @@ function Application({ applicationData, showHiddenData }: Props) {
 		}
 
 		const getStringField = (fieldName: string) => applicationData?.fields?.find(({ id }) => id.split('.')[1] === fieldName)
-			?.values[0]?.value ?? ''
+			?.values[0]?.value || ''
 		setProjectTitle(getStringField('projectName'))
 		setProjectLink(
 			applicationData?.fields
 				?.find((fld: any) => fld?.id?.split('.')[1] === 'projectLink')
-				?.values.map((val) => ({ link: val.value })) ?? [],
+				?.values.map((val) => ({ link: val.value })) || [],
 		)
 
 		const projectDetailsTemp = getStringField('projectDetails')
@@ -103,15 +103,17 @@ function Application({ applicationData, showHiddenData }: Props) {
 			setDecodedDetails(projectDetailsTemp)
 		}
 
+		console.log(decodedDetails)
+
 		setProjectGoals(getStringField('projectGoals'))
-		setProjectMilestones(applicationData?.milestones ?? [])
+		setProjectMilestones(applicationData?.milestones || [])
 		setFundingAsk(getStringField('fundingAsk'))
 		setFundingBreakdown(getStringField('fundingBreakdown'))
 		setTeamMembers(getStringField('teamMembers'))
 		setMemberDetails(
 			applicationData?.fields
 				?.find((fld: any) => fld?.id?.split('.')[1] === 'memberDetails')
-				?.values.map((val) => val.value) ?? [],
+				?.values.map((val) => val.value) || [],
 		)
 		if(applicationData.grant.reward.token) {
 			setDecimal(applicationData.grant.reward.token.decimal)
@@ -252,7 +254,7 @@ function Application({ applicationData, showHiddenData }: Props) {
 							{
 								decodedDetails ? (
 									<TextViewer
-										grantDetails={decodedDetails}
+										text={decodedDetails}
 									/>
 								) : null
 							}
@@ -320,7 +322,7 @@ Project Goals
 														milestone?.amount && applicationData
                           && formatAmount(
                           	milestone?.amount,
-                          	decimal ?? 18,
+                          	decimal || 18,
                           )
 													}
 													{' '}
@@ -363,7 +365,7 @@ Project Goals
 										applicationData
                     && fundingAsk && fundingAsk !== '' && formatAmount(
                     	fundingAsk,
-                    	decimals ?? 18,
+                    	decimals || 18,
 										)
 									}
 									{' '}

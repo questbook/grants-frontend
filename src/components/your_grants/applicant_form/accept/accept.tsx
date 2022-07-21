@@ -43,7 +43,7 @@ function Accept({
 			)
 		]?.supportedCurrencies[
 			applicationData.grant.reward.asset.toLowerCase()
-		]?.decimals ?? 18
+		]?.decimals || 18
 		label = getAssetInfo(applicationData?.grant?.reward?.asset, chainId)
 			?.label
 		icon = getAssetInfo(applicationData?.grant?.reward?.asset, chainId)
@@ -93,7 +93,7 @@ function Accept({
               && formatAmount(
               	applicationData?.fields?.find(
               		(fld: any) => fld?.id?.split('.')[1] === 'fundingAsk',
-              	)?.values[0].value ?? '0',
+              	)?.values[0].value || '0',
               	decimals,
               )
 						}

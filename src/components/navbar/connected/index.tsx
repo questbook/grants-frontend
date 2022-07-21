@@ -166,7 +166,6 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 
 		const getWorkspaceData = async(userAddress: string) => {
 			try {
-				console.log('getallworkspace', getAllWorkspaces)
 				const promises = getAllWorkspaces.map(
 					// eslint-disable-next-line no-async-promise-executor
 					(allWorkspaces) => new Promise(async(resolve) => {
