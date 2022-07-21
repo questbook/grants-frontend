@@ -21,20 +21,36 @@ function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicke
 	return (
 		<Container
 			zIndex={1}
-			variant={!isDisconnected || !router.pathname.includes('browse_dao') ? 'header-container' : ''}
+			variant={'header-container'}
 			display='flex'
 			maxW="100vw"
-			bg={!isDisconnected && router.pathname.includes('browse_dao') ? 'transparent' : ''}
-			px={'42px'}
-			py={'16px'}>
+			bg={ 'white'}
+			ps={'42px'}
+			pe={'15px'}
+			py={'16px'}
+			minWidth={{ base:'-webkit-fill-available' }}
+		>
 			<Image
 				onClick={
 					() => router.push({
 						pathname: '/',
 					})
 				}
+				display={{ base:'none', lg:'inherit' }}
 				mr="auto"
-				src={isDisconnected && router.pathname.includes('browse_dao') ? '/ui_icons/qb_white.svg' : '/ui_icons/qb.svg'}
+				src={isDisconnected && router.pathname.includes('browse_dao') ? '/ui_icons/qb.svg' : '/ui_icons/qb.svg'}
+				alt="Questbook"
+				cursor="pointer"
+			/>
+			<Image
+				onClick={
+					() => router.push({
+						pathname: '/',
+					})
+				}
+				display={{ base:'inherit', lg:'none' }}
+				mr="auto"
+				src={isDisconnected && router.pathname.includes('browse_dao') ? '/ui_icons/questbookMobile.svg' : '/ui_icons/qb.svg'}
 				alt="Questbook"
 				cursor="pointer"
 			/>

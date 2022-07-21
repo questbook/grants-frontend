@@ -27,6 +27,7 @@ import { getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import AcceptInviteModal from 'src/v2/components/AcceptInviteModal'
 import { useAccount, useConnect } from 'wagmi'
+import BrowseDao from './browse_dao'
 
 const PAGE_SIZE = 40
 
@@ -85,6 +86,8 @@ function BrowseGrants() {
 				if(allGrantsData.length < PAGE_SIZE) {
 					setAllDataFectched(true)
 				}
+
+				console.log('allGrantsData', allGrantsData)
 
 				if(firstTime) {
 					setGrants(
@@ -309,4 +312,4 @@ BrowseGrants.getLayout = function(page: ReactElement) {
 	)
 }
 
-export default BrowseGrants
+export default BrowseDao

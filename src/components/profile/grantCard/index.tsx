@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { Box, Button, Flex, Image, Link, Stack, Text } from '@chakra-ui/react'
 import moment from 'moment'
 import { useRouter } from 'next/router'
+import Badge from 'src/components/browse_grants/grantCard/badge'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import { SupportedChainId } from 'src/constants/chains'
 import { calculateUSDValue, useTimeDifference } from 'src/utils/calculatingUtils'
 import { nFormatter } from 'src/utils/formattingUtils'
-import Badge from './badge'
 
 interface BrowseGrantCardProps {
   daoID: string;
@@ -115,7 +115,6 @@ function BrowseGrantCard({
 						</Text>
 
 						<Box mr="auto" />
-						<Badge numOfApplicants={numOfApplicants} />
 					</Flex>
 
 					<Text
@@ -210,12 +209,21 @@ function BrowseGrantCard({
 						</Text>
 
 						<Box mr="auto" />
+
+					</Flex>
+
+					<Flex
+						justifyContent={'space-between'}
+						py={'15px'}>
+						<Badge numOfApplicants={numOfApplicants} />
+
 						<Button
 							onClick={onClick}
 							variant="primaryCta"
 							h="105px">
               Apply Now
 						</Button>
+
 					</Flex>
 				</Flex>
 			</Flex>

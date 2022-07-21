@@ -1,10 +1,10 @@
-query getAllGrantsForADao($first: Int, $skip: Int, $workspaceId: String!, $acceptingApplications: Boolean!) {
+query getAllGrantsForAllDao($first: Int, $skip: Int, $applicantId: Bytes!, $minDeadline: Int!) {
   grants(
-    first: $first,
-    skip: $skip,
-    subgraphError: allow,
-    where: { workspace: $workspaceId, acceptingApplications: $acceptingApplications }
-    orderBy: createdAtS,
+    first: $first, 
+    skip: $skip, 
+    subgraphError: allow, 
+    where: {acceptingApplications: true, deadlineS_gte: $minDeadline},
+    orderBy: createdAtS, 
     orderDirection: desc
   ) {
     id,
