@@ -481,7 +481,6 @@ Embed profile stats
 			<Modal
 				isOpen={isOpen}
 				onClose={() => closeModal()}
-				// @ts-ignore
 				size="3xl"
 			>
 				<ModalOverlay />
