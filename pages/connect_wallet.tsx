@@ -35,14 +35,14 @@ function ConnectWallet() {
 	const router = useRouter()
 
 	const { data: connectData, isConnecting, isConnected, isReconnecting, isError, connect, connectors } = useConnect()
-	const {activeChain} = useNetwork()
+	const { activeChain } = useNetwork()
 
 	const wallets = CHAIN_INFO[selectedNetworkId].wallets
 		.map(w => WALLETS[w as keyof typeof WALLETS])
 		.filter(Boolean)
 
 	useEffect(() => {
-		console.log("Connect wallet", activeChain)
+		console.log('Connect wallet', activeChain)
 		if((!isConnecting || !isReconnecting) && connectData && isConnected) {
 			if(router.query.flow === 'getting_started/dao') {
 				router.replace('/signup/')
