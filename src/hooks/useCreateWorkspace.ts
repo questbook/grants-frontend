@@ -24,13 +24,9 @@ export default function useCreateWorkspace(
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 	const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!
 
-	const [
-		biconomy,
-		biconomyWalletClient,
-		scwAddress
-	] = useBiconomy({
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,
-		targetContractABI: WorkspaceRegistryAbi
+		targetContractABI: WorkspaceRegistryAbi,
 	})
 
 	const [error, setError] = React.useState<string>()
@@ -52,7 +48,7 @@ export default function useCreateWorkspace(
 	const networkChainId = getSupportedChainIdFromSupportedNetwork(`chain_${data?.network}` as SupportedNetwork)
 
 	useEffect(() => {
-		if(data) {
+		if (data) {
 			setError(undefined)
 		}
 	}, [data])
@@ -64,11 +60,11 @@ export default function useCreateWorkspace(
 	useEffect(() => {
 		console.log('THIS IS ERROR', error)
 		console.log('THIS IS LOADING', loading)
-		if(error) {
+		if (error) {
 			return
 		}
 
-		if(loading) {
+		if (loading) {
 			return
 		}
 		// console.log('calling createGrant');
@@ -91,11 +87,15 @@ export default function useCreateWorkspace(
 				socials: [],
 				supportedNetworks: [getSupportedValidatorNetworkFromChainId(data.network)],
 			})
-			if(!ipfsHash) {
+			if (!ipfsHash) {
 				throw new Error('Error validating grant data')
 			}
 
 			try {
+
+				if (!biconomyWalletClient || typeof biconomyWalletClient === "string" || !scwAddress)
+					return;
+
 				// eslint-disable-next-line max-len
 				console.log('Workspace registry address', WORKSPACE_REGISTRY_ADDRESS[networkChainId])
 				// let transactionHash: string | undefined | boolean
@@ -118,7 +118,7 @@ export default function useCreateWorkspace(
 
 				const createWorkspaceTransactionData = await getEventData(receipt, 'WorkspaceCreated', WorkspaceRegistryAbi)
 
-				if(createWorkspaceTransactionData) {
+				if (createWorkspaceTransactionData) {
 					console.log('THIS IS EVENT', createWorkspaceTransactionData.args)
 				}
 
@@ -128,7 +128,7 @@ export default function useCreateWorkspace(
 				setTransactionData(createWorkspaceTransactionData)
 				setImageHash(uploadedImageHash)
 				setLoading(false)
-			} catch(e: any) {
+			} catch (e: any) {
 				const message = getErrorMessage(e)
 				setError(message)
 				setLoading(false)
@@ -137,7 +137,7 @@ export default function useCreateWorkspace(
 					render: () => ErrorToast({
 						content: message,
 						close: () => {
-							if(toastRef.current) {
+							if (toastRef.current) {
 								toast.close(toastRef.current)
 							}
 						},
@@ -148,45 +148,45 @@ export default function useCreateWorkspace(
 
 		try {
 			console.log(data)
-			if(!data) {
+			if (!data) {
 				return
 			}
 
 			console.log(transactionData)
-			if(transactionData) {
+			if (transactionData) {
 				return
 			}
 
 			console.log(accountData, accountData.address)
 
-			if(!accountData || !accountData.address) {
+			if (!accountData || !accountData.address) {
 				throw new Error('not connected to wallet')
 			}
 
 			console.log(chainId)
-			if(!chainId) {
+			if (!chainId) {
 				throw new Error('not connected to valid network')
 			}
 
 			console.log(validatorApi)
-			if(!validatorApi) {
+			if (!validatorApi) {
 				throw new Error('validatorApi or workspaceId is not defined')
 			}
 
 			console.log(workspaceRegistryContract)
-			if(
+			if (
 				!workspaceRegistryContract
-        || workspaceRegistryContract.address
-          === '0x0000000000000000000000000000000000000000'
-			// || !workspaceRegistryContract.signer
-			// || !workspaceRegistryContract.provider
+				|| workspaceRegistryContract.address
+				=== '0x0000000000000000000000000000000000000000'
+				// || !workspaceRegistryContract.signer
+				// || !workspaceRegistryContract.provider
 			) {
 				console.log('ERROR HERE')
 				return
 			}
 
 			validate()
-		} catch(e: any) {
+		} catch (e: any) {
 			const message = getErrorMessage(e)
 			setError(message)
 			setLoading(false)
@@ -195,7 +195,7 @@ export default function useCreateWorkspace(
 				render: () => ErrorToast({
 					content: message,
 					close: () => {
-						if(toastRef.current) {
+						if (toastRef.current) {
 							toast.close(toastRef.current)
 						}
 					},
