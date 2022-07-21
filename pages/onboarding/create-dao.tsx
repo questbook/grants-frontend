@@ -7,9 +7,9 @@ import { GitHubTokenContext, WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
-import useWorkspaceRegistryContract from 'src/hooks/contracts/useWorkspaceRegistryContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import useQBContract from 'src/hooks/contracts/useQBContract'
 import getErrorMessage from 'src/utils/errorUtils'
 import {
 	apiKey,
@@ -63,11 +63,12 @@ const OnboardingCreateDao = () => {
 	}, [biconomy, biconomyWalletClient, scwAddress])
 
 	const { activeChain, switchNetworkAsync, data } = useNetwork()
-	const { isError: isErrorConnecting, connect, connectors } = useConnect()
+	const {
+		connect,
+		connectors
+	} = useConnect()
 
-	const workspaceRegistryContract = useWorkspaceRegistryContract(
-		daoNetwork?.id
-	)
+	const workspaceRegistryContract = useQBContract('workspace', daoNetwork?.id)
 	const { validatorApi } = useContext(ApiClientsContext)!
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
@@ -164,7 +165,6 @@ const OnboardingCreateDao = () => {
 			setCurrentStep(3)
 			// const createWorkspaceTransactionData = await createWorkspaceTransaction.wait()
 
-			console.log(createWorkspaceTransactionData)
 			setCurrentStep(5)
 			setTimeout(() => {
 				router.push({ pathname: '/your_grants' })
@@ -200,11 +200,9 @@ const OnboardingCreateDao = () => {
 			createWorkspace()
 		}
 	}, [workspaceRegistryContract])
-	useEffect(() => console.log('data', data), [data])
 
 	const { data: signer } = useSigner()
 	useEffect(() => {
-		console.log(signer)
 		if(!signer) {
 			const connector = connectors.find((x) => x.id === 'injected')
 			connect(connector)
@@ -287,7 +285,7 @@ const OnboardingCreateDao = () => {
 				imageBackgroundColor={'#C2E7DA'}
 				imageProps={
 					{
-						mixBlendMode: 'hard-light',
+						mixBlendMode: 'color-dodge'
 					}
 				}
 			>

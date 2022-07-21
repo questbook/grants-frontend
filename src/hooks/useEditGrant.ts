@@ -9,10 +9,10 @@ import {
 } from 'src/utils/validationUtils'
 import { useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
-import useApplicationReviewRegistryContract from './contracts/useApplicationReviewRegistryContract'
 import useGrantContract from './contracts/useGrantContract'
-import { useQuestbookAccount } from './gasless/useQuestbookAccount'
+import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
+import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 
 export default function useEditGrant(
 	data: any,
@@ -32,9 +32,7 @@ export default function useEditGrant(
 	const toast = useToast()
 	const currentChainId = useChainId()
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
-	const applicationReviewContract = useApplicationReviewRegistryContract(
-		chainId ?? getSupportedChainIdFromWorkspace(workspace),
-	)
+	const applicationReviewContract = useQBContract('reviews', chainId)
 
 	useEffect(() => {
 		if(data) {
@@ -122,8 +120,8 @@ export default function useEditGrant(
 				// console.log('rubricHash', rubricHash);
 
 				const rubricTxn = await applicationReviewContract.setRubrics(
-					Number(workspace?.id).toString(),
-					grantId,
+					workspace!.id,
+					grantId!,
 					rubricHash,
 				)
 

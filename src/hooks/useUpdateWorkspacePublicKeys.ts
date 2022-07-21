@@ -8,8 +8,8 @@ import {
 } from 'src/utils/validationUtils'
 import { useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
-import useWorkspaceRegistryContract from './contracts/useWorkspaceRegistryContract'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
+import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
 
 export default function useUpdateWorkspacePublicKeys(
@@ -27,7 +27,7 @@ export default function useUpdateWorkspacePublicKeys(
 
 	const currentChainId = useChainId()
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
-	const workspaceRegistryContract = useWorkspaceRegistryContract(chainId)
+	const workspaceRegistryContract = useQBContract('workspace', chainId)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
@@ -144,10 +144,10 @@ export default function useUpdateWorkspacePublicKeys(
 
 			if(
 				!workspaceRegistryContract
-        || workspaceRegistryContract.address
-          === '0x0000000000000000000000000000000000000000'
-        || !workspaceRegistryContract.signer
-        || !workspaceRegistryContract.provider
+				|| workspaceRegistryContract.address
+				=== '0x0000000000000000000000000000000000000000'
+				|| !workspaceRegistryContract.signer
+				|| !workspaceRegistryContract.provider
 			) {
 				return
 			}
@@ -187,7 +187,7 @@ export default function useUpdateWorkspacePublicKeys(
 
 	return [
 		transactionData,
-		getExplorerUrlForTxHash(chainId ?? getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
+		getExplorerUrlForTxHash(chainId || getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
 		loading
 	]
 }

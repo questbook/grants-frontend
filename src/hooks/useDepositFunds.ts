@@ -1,11 +1,12 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { BigNumber } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useNetwork } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
+import CustomToast from '../components/ui/toasts/customToast'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useERC20Contract from './contracts/useERC20Contract'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
@@ -48,6 +49,50 @@ export default function useDepositFunds(
 
 	}, [rewardContract])
 
+	async function validate() {
+		setLoading(true)
+		try {
+			toastRef.current = toast({
+				position: 'top',
+				render: () => CustomToast({
+					content: 'Go to your Gnosis wallet to approve transaction',
+					close: () => {
+						if(toastRef.current) {
+							toast.close(toastRef.current)
+						}
+					},
+				}),
+			})
+			const transferTxn = rewardContract.transfer(
+			grantAddress!,
+			finalAmount!,
+			)
+
+			await rewardContract.once('Transfer', (from, to, amount, event) => {
+				if(from === accountData?.address && to === utils.getAddress(grantAddress!)) {
+					setTransactionData(event)
+					setLoading(false)
+				}
+			})
+
+		} catch(e: any) {
+			const message = getErrorMessage(e)
+			setError(message)
+			setLoading(false)
+			toastRef.current = toast({
+				position: 'top',
+				render: () => ErrorToast({
+					content: message,
+					close: () => {
+						if(toastRef.current) {
+							toast.close(toastRef.current)
+						}
+					},
+				}),
+			})
+		}
+	}
+
 	useEffect(() => {
 		if(incorrectNetwork) {
 			return
@@ -60,37 +105,9 @@ export default function useDepositFunds(
 		if(loading) {
 			return
 		}
+
 		// console.log('calling createGrant');
 
-		async function validate() {
-			setLoading(true)
-			// console.log('calling validate');
-			try {
-				const transferTxn = await rewardContract.transfer(
-					grantAddress,
-					finalAmount,
-				)
-				const depositTransactionData = await transferTxn.wait()
-
-				setTransactionData(depositTransactionData)
-				setLoading(false)
-			} catch(e: any) {
-				const message = getErrorMessage(e)
-				setError(message)
-				setLoading(false)
-				toastRef.current = toast({
-					position: 'top',
-					render: () => ErrorToast({
-						content: message,
-						close: () => {
-							if(toastRef.current) {
-								toast.close(toastRef.current)
-							}
-						},
-					}),
-				})
-			}
-		}
 
 		try {
 			if(!finalAmount) {
@@ -98,10 +115,6 @@ export default function useDepositFunds(
 			}
 
 			if(!grantAddress) {
-				return
-			}
-
-			if(transactionData) {
 				return
 			}
 
@@ -152,6 +165,10 @@ export default function useDepositFunds(
 			}
 
 			validate()
+			if(transactionData) {
+				return
+			}
+
 		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)

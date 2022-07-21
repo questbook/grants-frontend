@@ -11,8 +11,18 @@ import {
 	useToast,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { ApiClientsContext } from 'pages/_app'
+import Breadcrumbs from 'src/components/ui/breadcrumbs'
 import Modal from 'src/components/ui/modal'
+import Accept from 'src/components/your_grants/applicant_form/accept/accept'
+import AcceptSidebar from 'src/components/your_grants/applicant_form/accept/sidebar'
+import Application from 'src/components/your_grants/applicant_form/application'
+import Reject from 'src/components/your_grants/applicant_form/reject/reject'
+import RejectSidebar from 'src/components/your_grants/applicant_form/reject/sidebar'
+import Resubmit from 'src/components/your_grants/applicant_form/resubmit/resubmit'
+import ResubmitSidebar from 'src/components/your_grants/applicant_form/resubmit/sidebar'
 import ReviewerSidebar from 'src/components/your_grants/applicant_form/reviewerSiderbar'
+import Sidebar from 'src/components/your_grants/applicant_form/sidebar'
 import { defaultChainId } from 'src/constants/chains'
 import {
 	GetApplicationDetailsQuery,
@@ -23,18 +33,9 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
+import NavbarLayout from 'src/layout/navbarLayout'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import Breadcrumbs from '../../../src/components/ui/breadcrumbs'
-import Accept from '../../../src/components/your_grants/applicant_form/accept/accept'
-import AcceptSidebar from '../../../src/components/your_grants/applicant_form/accept/sidebar'
-import Application from '../../../src/components/your_grants/applicant_form/application'
-import Reject from '../../../src/components/your_grants/applicant_form/reject/reject'
-import RejectSidebar from '../../../src/components/your_grants/applicant_form/reject/sidebar'
-import Resubmit from '../../../src/components/your_grants/applicant_form/resubmit/resubmit'
-import ResubmitSidebar from '../../../src/components/your_grants/applicant_form/resubmit/sidebar'
-import Sidebar from '../../../src/components/your_grants/applicant_form/sidebar'
-import NavbarLayout from '../../../src/layout/navbarLayout'
-import { ApiClientsContext } from '../../_app'
+import { useAccount } from 'wagmi'
 
 function ApplicantForm() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
@@ -81,7 +82,7 @@ function ApplicantForm() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
       ].client,
 	})
 

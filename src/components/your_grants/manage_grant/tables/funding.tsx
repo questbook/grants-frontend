@@ -5,7 +5,7 @@ import {
 	Text, Tooltip, } from '@chakra-ui/react'
 import moment from 'moment'
 import Empty from 'src/components/ui/empty'
-import { SupportedChainId } from 'src/constants/chains'
+import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import { FundTransfer } from 'src/types'
 import {
 	formatAmount,
@@ -318,6 +318,7 @@ function Funding({
 }
 
 Funding.defaultProps = {
-	chainId: SupportedChainId.RINKEBY,
+	chainId: defaultChainId
 }
+
 export default Funding

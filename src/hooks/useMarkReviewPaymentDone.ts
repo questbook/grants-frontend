@@ -8,8 +8,8 @@ import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
-import useApplicationReviewRegistryContract from './contracts/useApplicationReviewRegistryContract'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
+import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
 
 export default function useMarkReviewPaymentDone(
@@ -31,8 +31,10 @@ export default function useMarkReviewPaymentDone(
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { workspace } = apiClients
+
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
-	const applicationReviewerContract = useApplicationReviewRegistryContract(chainId)
+	const applicationReviewerContract = useQBContract('reviews', chainId)
+
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
 	const currentChainId = useChainId()
@@ -78,11 +80,11 @@ export default function useMarkReviewPaymentDone(
 				const markPaymentTxb = await applicationReviewerContract.markPaymentDone(
 					workspaceId,
 					applicationsIds,
-					reviewerAddress,
+					reviewerAddress!,
 					reviewIds,
-					reviewCurrencyAddress,
+					reviewCurrencyAddress!,
 					totalAmount,
-					transactionHash,
+					transactionHash!,
 				)
 
 				const updateTxnData = await markPaymentTxb.wait()

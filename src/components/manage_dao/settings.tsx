@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
 	Box,
 	Flex,
@@ -6,11 +6,8 @@ import {
 	Link,
 	Text,
 } from '@chakra-ui/react'
-import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { Workspace } from 'src/types'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import { getUrlForIPFSHash, uploadToIPFS } from '../../utils/ipfsUtils'
 import EditForm from './edit_form'
 
 interface Props {
@@ -18,113 +15,16 @@ interface Props {
 }
 
 function Settings({ workspaceData }: Props) {
-	// const [, setLoading] = React.useState(false);
-	const [formData, setFormData] = React.useState<{
-    name: string;
-    about: string;
-    supportedNetwork: string;
-    image?: string;
-    coverImage?: string;
-    twitterHandle?: string;
-    discordHandle?: string;
-    telegramChannel?: string;
-  } | null>()
 
-
-	const [editData, setEditData] = useState<any>()
-	const [txnData, txnLink, loading] = useUpdateWorkspace(editData)
-
-	const { setRefresh } = useCustomToast(txnLink)
-	useEffect(() => {
-		if(txnData) {
-			setRefresh(true)
-		}
-
-	}, [txnData])
-
-	const handleFormSubmit = async(data: any) => {
-		let imageHash = workspaceData.logoIpfsHash
-		let coverImageHash = workspaceData.coverImageIpfsHash
-		const socials = []
-
-		if(data.image) {
-			imageHash = (await uploadToIPFS(data.image)).hash
-		}
-
-		if(data.coverImage) {
-			coverImageHash = (await uploadToIPFS(data.coverImage)).hash
-		}
-
-		if(data.twitterHandle) {
-			socials.push({ name: 'twitter', value: data.twitterHandle })
-		}
-
-		if(data.discordHandle) {
-			socials.push({ name: 'discord', value: data.discordHandle })
-		}
-
-		if(data.telegramChannel) {
-			socials.push({ name: 'telegram', value: data.telegramChannel })
-		}
-
-		let d = {}
-		if(coverImageHash) {
-			d = {
-				title: data.name,
-				about: data.about,
-				logoIpfsHash: imageHash,
-				coverImageIpfsHash: coverImageHash,
-				socials,
-			}
-		} else {
-			d = {
-				title: data.name,
-				about: data.about,
-				logoIpfsHash: imageHash,
-				socials,
-			}
-		}
-
-		setEditData(d)
-	}
-
-	useEffect(() => {
-		if(!workspaceData || !Object.keys(workspaceData).length) {
-			return
-		}
-
-		const twitterSocial = workspaceData.socials.filter(
-			(socials: any) => socials.name === 'twitter',
-		)
-		const twitterHandle = twitterSocial.length > 0 ? twitterSocial[0].value : undefined
-		const discordSocial = workspaceData.socials.filter(
-			(socials: any) => socials.name === 'discord',
-		)
-		const discordHandle = discordSocial.length > 0 ? discordSocial[0].value : undefined
-		const telegramSocial = workspaceData.socials.filter(
-			(socials: any) => socials.name === 'telegram',
-		)
-		const telegramChannel = telegramSocial.length > 0 ? telegramSocial[0].value : undefined
-		// console.log('loaded', workspaceData);
-		// console.log(getUrlForIPFSHash(workspaceData?.logoIpfsHash));
-		setFormData({
-			name: workspaceData.title,
-			about: workspaceData.about,
-			image: getUrlForIPFSHash(workspaceData?.logoIpfsHash),
-			supportedNetwork: workspaceData.supportedNetworks[0],
-			coverImage: getUrlForIPFSHash(workspaceData.coverImageIpfsHash || ''),
-			twitterHandle,
-			discordHandle,
-			telegramChannel,
-		})
-
-	}, [workspaceData])
+	interface Props {
+		workspaceData: Workspace;
+	  }
 
 	return (
 		<Flex
 			direction="column"
 			align="start"
-			w="65%">
+			w="70%">
 			<Flex
 				direction="row"
 				w="full"
@@ -135,7 +35,7 @@ function Settings({ workspaceData }: Props) {
 					fontSize="18px"
 					lineHeight="26px"
 				>
-          Workspace Settings
+          DAO Settings
 				</Text>
 				<Link
 					href={
@@ -161,9 +61,7 @@ function Settings({ workspaceData }: Props) {
 				</Link>
 			</Flex>
 			<EditForm
-				hasClicked={loading}
-				onSubmit={handleFormSubmit}
-				formData={formData}
+				workspaceData={workspaceData}
 			/>
 			<Box my={10} />
 		</Flex>

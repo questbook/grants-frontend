@@ -14,7 +14,7 @@ enum TabIndex {
 }
 
 const TABS = [
-	{ id: 'discover', index: TabIndex.DISCOVER, name: 'Discover', path: '/' },
+	{ id: 'discover', index: TabIndex.DISCOVER, name: 'Discover', path: '/browse_dao' },
 	{ id: 'my_applications', index: TabIndex.MY_APPLICATIONS, name: 'My Applications', path: '/your_applications' },
 	{ id: 'dashboard', index: TabIndex.DASHBOARD, name: 'Dashboard', path: '/dashboard' },
 	{ id: 'grants_and_bounties', index: TabIndex.GRANTS_AND_BOUNTIES, name: 'Grants And Bounties', path: '/your_grants' },
@@ -106,7 +106,7 @@ function useGetTabs() {
 	console.log('WORKSPACE: ', workspace)
 	if(!workspace || !workspace.id) {
 		// Pure applicant
-		return [ [TABS[0], TABS[1]], [] ]
+		return [ [TABS[0]], [] ]
 	} else {
 		const member = workspace.members.find((m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase())
 		if(!member) {
