@@ -42,7 +42,7 @@ function Dropdown({
 	addERC,
 }: DropdownProps) {
 	const [isOpen, setIsOpen] = React.useState(false)
-	const defaultSelected = listItems[defaultIndex ?? 0]
+	const defaultSelected = listItems[defaultIndex || 0]
 	const [selected, setSelected] = React.useState(defaultSelected)
 	useEffect(() => {
 		setSelected(defaultSelected)

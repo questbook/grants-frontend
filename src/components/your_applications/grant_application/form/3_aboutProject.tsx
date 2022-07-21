@@ -219,7 +219,7 @@ function AboutProject({
 
 			{/* {readOnly ? (
         <TextViewer
-          grantDetails={projectDetailsString}
+          text={projectDetailsString}
         />
       ) : ( */}
 			<RichTextEditor
