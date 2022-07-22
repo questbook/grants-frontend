@@ -235,7 +235,20 @@ function Sidebar({
 						<Modal
 							isOpen={isApproveModalOpen}
 							onClose={() => setIsApproveModalOpen(false)}
-							title="Approve Funds"
+							title="Approve Fund Disbursal"
+							modalWidth="600px"
+							rightIcon={
+								(
+									<Button
+										_focus={{}}
+										variant="link"
+										color="#AA82F0"
+										onClick={() => window.open(config.supportLink)}
+									>
+										Why? Learn More Here
+									</Button>
+								)
+							}
 						>
 							<ApproveFundModal
 								isOpen={isApproveModalOpen}
