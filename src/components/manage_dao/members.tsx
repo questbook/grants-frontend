@@ -193,7 +193,7 @@ function Members({ workspaceMembers }: Props) {
             				onClick={
             					() => {
             					setIsEdit(true)
-            						setIsModalOpen(true)
+            						setIsInviteModalOpen(true)
             						setSelectedRow(index)
             					}
             				}
