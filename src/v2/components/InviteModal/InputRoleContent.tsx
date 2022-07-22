@@ -111,7 +111,7 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 							}
 							onClick={createLink}
 							colorScheme='brandv2'>
-						Create invite link
+							Create invite link
 						</Button>
 					</HStack>
 				</ModalFooter>
