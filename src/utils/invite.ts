@@ -1,8 +1,10 @@
-import { useCallback, useContext } from 'react'
+import { useCallback, useContext, useMemo } from 'react'
 import { generateInputForAuthorisation, generateKeyPairAndAddress } from '@questbook/anon-authoriser'
 import { WorkspaceMemberUpdate } from '@questbook/service-validator-client'
 import { base58 } from 'ethers/lib/utils'
 import { ApiClientsContext } from 'pages/_app'
+import { defaultChainId } from 'src/constants/chains'
+import { useGetWorkspaceMemberExistsLazyQuery } from 'src/generated/graphql'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useAccount } from 'wagmi'
 import { delay } from './generics'
@@ -94,20 +96,25 @@ export const useMakeInvite = (role: number) => {
 			// convert "0x" encoded hex to a number
 			const workspaceId = parseInt(workspace!.id.replace('0x', ''), 16)
 
+			console.log('creating invite ', { workspaceId, role, address })
+
 			const tx = await workspaceRegistry.createInviteLink(
-				workspaceId,
+				workspace!.id,
 				role,
 				address,
 			)
 			didSign?.()
 			await tx.wait()
 
-			return {
+			const inviteInfo: InviteInfo = {
 				workspaceId,
 				role,
 				privateKey: Buffer.from(privateKey),
 				chainId: chainId!,
 			}
+			console.log('created invite ', inviteInfo)
+
+			return inviteInfo
 		},
 		[role, workspace?.id, workspaceRegistry]
 	)
@@ -119,12 +126,26 @@ type JoinInviteStep = 'ipfs-uploaded' | 'tx-signed' | 'tx-confirmed'
 
 export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemberUpdate) => {
 	const { data: account } = useAccount()
-	const { validatorApi } = useContext(ApiClientsContext)!
+	const { validatorApi, subgraphClients } = useContext(ApiClientsContext)!
 	const workspaceRegistry = useQBContract('workspace', inviteInfo?.chainId)
+
+	const { client } = subgraphClients[inviteInfo?.chainId] || subgraphClients[defaultChainId]
+
+	const [fetchMembers] = useGetWorkspaceMemberExistsLazyQuery({ client })
+
+	const signature = useMemo(() => (
+		(account?.address && inviteInfo?.privateKey)
+			? generateInputForAuthorisation(
+				account.address!,
+				workspaceRegistry.address,
+				inviteInfo.privateKey,
+			)
+			: undefined
+	), [account?.address, workspaceRegistry.address, inviteInfo?.privateKey])
 
 	const joinInvite = useCallback(
 		async(didReachStep?: (step: JoinInviteStep) => void) => {
-			if(!account?.address) {
+			if(!signature) {
 				throw new Error('account not connected')
 			}
 
@@ -134,42 +155,59 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 
 			didReachStep?.('ipfs-uploaded')
 
-			const signature = generateInputForAuthorisation(
-				account.address!,
-				workspaceRegistry.address,
-				inviteInfo.privateKey,
-			)
-
-			const tx = await workspaceRegistry.joinViaInviteLink(
-				inviteInfo.workspaceId,
-				'',
-				inviteInfo.role,
-				signature.v,
-				signature.r,
-				signature.s
-			)
+			// const tx = await workspaceRegistry.joinViaInviteLink(
+			// 	inviteInfo.workspaceId,
+			// 	ipfsHash,
+			// 	inviteInfo.role,
+			// 	signature.v,
+			// 	signature.r,
+			// 	signature.s,
+			// )
 
 			didReachStep?.('tx-signed')
 
-			await tx.wait()
+			// await tx.wait()
 
 			didReachStep?.('tx-confirmed')
 
-			await delay(2000)
+			const memberId = `${numberToHex(inviteInfo.workspaceId)}.${account!.address!.toLowerCase()}`
+
+			console.log(`polling for member "${memberId}"`)
+
+			let didIndex = false
+			do {
+				const result = await fetchMembers({
+					variables: { id: memberId },
+				})
+
+				console.log('here 2', result)
+
+				didIndex = !!result.data?.workspaceMember
+				await delay(2000)
+			} while(!didIndex)
+
+			console.log('indexed ')
 		},
-		[profileInfo, workspaceRegistry, validatorApi, inviteInfo, account]
+		[profileInfo, workspaceRegistry, validatorApi, inviteInfo, signature, fetchMembers]
 	)
 
 	const getJoinInviteGasEstimate = useCallback(() => {
+		if(!signature) {
+			// Requirements to calculate GAS not met
+			return undefined
+		}
+
 		return workspaceRegistry.estimateGas.joinViaInviteLink(
-			inviteInfo?.workspaceId || '0x0',
-			'',
-			inviteInfo?.role,
-			0x0,
-			new Uint8Array(32),
-			new Uint8Array(32)
+			inviteInfo.workspaceId,
+			'123', // placeholder for metadata hash
+			inviteInfo.role,
+			signature.v,
+			signature.r,
+			signature.s
 		)
-	}, [workspaceRegistry, inviteInfo?.workspaceId, inviteInfo?.role])
+	}, [workspaceRegistry, inviteInfo, signature])
 
 	return { joinInvite, getJoinInviteGasEstimate }
 }
+
+const numberToHex = (num: number) => `0x${num.toString(16)}`

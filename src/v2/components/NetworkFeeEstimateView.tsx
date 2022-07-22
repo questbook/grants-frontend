@@ -8,7 +8,7 @@ import { useProvider } from 'wagmi'
 
 type NetworkFeeEstimateViewProps = {
 	chainId?: SupportedChainId
-	getEstimate: () => Promise<BigNumber>
+	getEstimate: () => Promise<BigNumber | undefined>
 }
 
 const NetworkFeeEstimateView = ({ chainId, getEstimate }: NetworkFeeEstimateViewProps) => {
@@ -23,8 +23,12 @@ const NetworkFeeEstimateView = ({ chainId, getEstimate }: NetworkFeeEstimateView
 			setGasEstimate(undefined)
 			try {
 				const estimate = await getEstimate()
-				const gasPrice = await provider.getGasPrice()
-				setGasEstimate(formatEther(estimate.mul(gasPrice)))
+				if(estimate) {
+					const gasPrice = await provider.getGasPrice()
+					setGasEstimate(formatEther(estimate.mul(gasPrice)))
+				} else {
+					setGasEstimate(undefined)
+				}
 			} catch(e) {
 				console.error('error in fetching gas estimate ', e)
 				setGasEstimate('NaN')

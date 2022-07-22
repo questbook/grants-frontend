@@ -3142,6 +3142,7 @@ export enum SupportedNetwork {
   Chain_44787 = 'chain_44787',
   Chain_80001 = 'chain_80001',
   Chain_245022926 = 'chain_245022926',
+  Chain_1313161555 = 'chain_1313161555',
   Chain_1666600000 = 'chain_1666600000',
   Chain_1666700000 = 'chain_1666700000'
 }
@@ -3348,12 +3349,16 @@ export type WorkspaceMember = {
   /** Address of the workspace member who added this member */
   addedBy: WorkspaceMember;
   email?: Maybe<Scalars['String']>;
+  /** Full name of the user */
+  fullName?: Maybe<Scalars['String']>;
   /** Globally unique ID of the member */
   id: Scalars['ID'];
   /** Timestamp of when the last review was done */
   lastReviewSubmittedAt: Scalars['Int'];
   /** The review IDs for which this member is owed a payment */
   outstandingReviewIds: Array<Scalars['String']>;
+  /** Hash of profile picture on IPFS */
+  profilePictureIpfsHash?: Maybe<Scalars['String']>;
   /** Public key of the workspace member */
   publicKey?: Maybe<Scalars['String']>;
   /** If the member was removed, when */
@@ -3431,6 +3436,26 @@ export type WorkspaceMember_Filter = {
   email_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
   email_starts_with?: InputMaybe<Scalars['String']>;
   email_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  fullName?: InputMaybe<Scalars['String']>;
+  fullName_contains?: InputMaybe<Scalars['String']>;
+  fullName_contains_nocase?: InputMaybe<Scalars['String']>;
+  fullName_ends_with?: InputMaybe<Scalars['String']>;
+  fullName_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  fullName_gt?: InputMaybe<Scalars['String']>;
+  fullName_gte?: InputMaybe<Scalars['String']>;
+  fullName_in?: InputMaybe<Array<Scalars['String']>>;
+  fullName_lt?: InputMaybe<Scalars['String']>;
+  fullName_lte?: InputMaybe<Scalars['String']>;
+  fullName_not?: InputMaybe<Scalars['String']>;
+  fullName_not_contains?: InputMaybe<Scalars['String']>;
+  fullName_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  fullName_not_ends_with?: InputMaybe<Scalars['String']>;
+  fullName_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  fullName_not_in?: InputMaybe<Array<Scalars['String']>>;
+  fullName_not_starts_with?: InputMaybe<Scalars['String']>;
+  fullName_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  fullName_starts_with?: InputMaybe<Scalars['String']>;
+  fullName_starts_with_nocase?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['ID']>;
   id_gt?: InputMaybe<Scalars['ID']>;
   id_gte?: InputMaybe<Scalars['ID']>;
@@ -3453,6 +3478,26 @@ export type WorkspaceMember_Filter = {
   outstandingReviewIds_not?: InputMaybe<Array<Scalars['String']>>;
   outstandingReviewIds_not_contains?: InputMaybe<Array<Scalars['String']>>;
   outstandingReviewIds_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  profilePictureIpfsHash?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_contains?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_contains_nocase?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_ends_with?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_gt?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_gte?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_in?: InputMaybe<Array<Scalars['String']>>;
+  profilePictureIpfsHash_lt?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_lte?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_not?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_not_contains?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_not_ends_with?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_not_in?: InputMaybe<Array<Scalars['String']>>;
+  profilePictureIpfsHash_not_starts_with?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_starts_with?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_starts_with_nocase?: InputMaybe<Scalars['String']>;
   publicKey?: InputMaybe<Scalars['String']>;
   publicKey_contains?: InputMaybe<Scalars['String']>;
   publicKey_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -3517,9 +3562,11 @@ export enum WorkspaceMember_OrderBy {
   AddedAt = 'addedAt',
   AddedBy = 'addedBy',
   Email = 'email',
+  FullName = 'fullName',
   Id = 'id',
   LastReviewSubmittedAt = 'lastReviewSubmittedAt',
   OutstandingReviewIds = 'outstandingReviewIds',
+  ProfilePictureIpfsHash = 'profilePictureIpfsHash',
   PublicKey = 'publicKey',
   RemovedAt = 'removedAt',
   UpdatedAt = 'updatedAt',
@@ -4049,6 +4096,13 @@ export type GetWorkspaceDetailsQueryVariables = Exact<{
 
 
 export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, bio: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, updatedAt: number, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number, addedBy: { __typename?: 'WorkspaceMember', id: string, actorId: string } }> } | null };
+
+export type GetWorkspaceMemberExistsQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetWorkspaceMemberExistsQuery = { __typename?: 'Query', workspaceMember?: { __typename?: 'WorkspaceMember', id: string } | null };
 
 export type GetWorkspaceMembersQueryVariables = Exact<{
   actorId: Scalars['Bytes'];
@@ -5834,6 +5888,41 @@ export function useGetWorkspaceDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetWorkspaceDetailsQueryHookResult = ReturnType<typeof useGetWorkspaceDetailsQuery>;
 export type GetWorkspaceDetailsLazyQueryHookResult = ReturnType<typeof useGetWorkspaceDetailsLazyQuery>;
 export type GetWorkspaceDetailsQueryResult = Apollo.QueryResult<GetWorkspaceDetailsQuery, GetWorkspaceDetailsQueryVariables>;
+export const GetWorkspaceMemberExistsDocument = gql`
+    query getWorkspaceMemberExists($id: ID!) {
+  workspaceMember(id: $id) {
+    id
+  }
+}
+    `;
+
+/**
+ * __useGetWorkspaceMemberExistsQuery__
+ *
+ * To run a query within a React component, call `useGetWorkspaceMemberExistsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWorkspaceMemberExistsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetWorkspaceMemberExistsQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetWorkspaceMemberExistsQuery(baseOptions: Apollo.QueryHookOptions<GetWorkspaceMemberExistsQuery, GetWorkspaceMemberExistsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetWorkspaceMemberExistsQuery, GetWorkspaceMemberExistsQueryVariables>(GetWorkspaceMemberExistsDocument, options);
+      }
+export function useGetWorkspaceMemberExistsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetWorkspaceMemberExistsQuery, GetWorkspaceMemberExistsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetWorkspaceMemberExistsQuery, GetWorkspaceMemberExistsQueryVariables>(GetWorkspaceMemberExistsDocument, options);
+        }
+export type GetWorkspaceMemberExistsQueryHookResult = ReturnType<typeof useGetWorkspaceMemberExistsQuery>;
+export type GetWorkspaceMemberExistsLazyQueryHookResult = ReturnType<typeof useGetWorkspaceMemberExistsLazyQuery>;
+export type GetWorkspaceMemberExistsQueryResult = Apollo.QueryResult<GetWorkspaceMemberExistsQuery, GetWorkspaceMemberExistsQueryVariables>;
 export const GetWorkspaceMembersDocument = gql`
     query getWorkspaceMembers($actorId: Bytes!) {
   workspaceMembers(

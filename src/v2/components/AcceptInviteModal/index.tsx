@@ -6,7 +6,8 @@ import useDAOName from 'src/hooks/useDAOName'
 import { delay } from 'src/utils/generics'
 import { InviteInfo, useJoinInvite } from 'src/utils/invite'
 import { ForwardArrow } from 'src/v2/assets/custom chakra icons/Arrows/ForwardArrow'
-import { useAccount } from 'wagmi'
+import { useAccount, useConnect } from 'wagmi'
+import ConnectWalletModal from '../ConnectWalletModal'
 import ControlBar from '../ControlBar'
 import NetworkFeeEstimateView from '../NetworkFeeEstimateView'
 import NetworkTransactionModal from '../NetworkTransactionModal'
@@ -28,7 +29,7 @@ type DisplayProps = {
 	workspaceId?: string
 	role: number
 	profile: DAOMemberProfile
-	getJoinInviteGasEstimate: () => Promise<BigNumber>
+	getJoinInviteGasEstimate: () => Promise<BigNumber | undefined>
 	updateProfile<T extends keyof DAOMemberProfile>(key: T, value: DAOMemberProfile[T]): void
 	nextStep: () => void
 }
@@ -36,6 +37,8 @@ type DisplayProps = {
 export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 	const { data: accountData } = useAccount()
 	const daoName = useDAOName(inviteInfo?.workspaceId, inviteInfo?.chainId)
+
+	const { isDisconnected } = useConnect()
 
 	const toast = useToast()
 
@@ -84,7 +87,8 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 					setInviteJoinStep(3)
 				}
 			})
-			setInviteJoinStep(4)
+
+			setInviteJoinStep(5)
 
 			await delay(3_000)
 
@@ -92,6 +96,8 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 				title: `All set! You're now a member of ${daoName}!`,
 				status: 'success',
 			})
+
+			onClose()
 		} catch(error: any) {
 			console.error('error in join ', error)
 
@@ -117,7 +123,7 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 		<>
 			<Modal
 				isCentered={true}
-				isOpen={!!inviteInfo}
+				isOpen={!!inviteInfo && !isDisconnected}
 				size='3xl'
 				onClose={onClose}
 			>
@@ -163,6 +169,7 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 							</Text>
 							<Text
 								noOfLines={1}
+								fontSize='sm'
 								color='#3F8792'>
 								{profile.walletAddress}
 							</Text>
@@ -184,6 +191,10 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 						'Profile created on-chain'
 					]
 				}
+			/>
+			<ConnectWalletModal
+				isOpen={isDisconnected && !!inviteInfo}
+				onClose={() => { }}
 			/>
 		</>
 	)
@@ -290,7 +301,7 @@ const Step2LeftDisplay = ({ profile }: DisplayProps) => {
 							Upload picture
 						</Text>
 					</Button>
-					<input
+					<Input
 						style={{ display: 'none' }}
 						ref={imageUploadRef}
 						type='file'
