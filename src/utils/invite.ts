@@ -191,20 +191,23 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 		[profileInfo, workspaceRegistry, validatorApi, inviteInfo, signature, fetchMembers]
 	)
 
-	const getJoinInviteGasEstimate = useCallback(() => {
+	const getJoinInviteGasEstimate = useCallback(async() => {
 		if(!signature) {
 			// Requirements to calculate GAS not met
 			return undefined
 		}
 
-		return workspaceRegistry.estimateGas.joinViaInviteLink(
-			inviteInfo.workspaceId,
-			'123', // placeholder for metadata hash
-			inviteInfo.role,
-			signature.v,
-			signature.r,
-			signature.s
-		)
+		const result = await workspaceRegistry
+			.estimateGas
+			.joinViaInviteLink(
+				inviteInfo.workspaceId,
+				'123', // placeholder for metadata hash
+				inviteInfo.role,
+				signature.v,
+				signature.r,
+				signature.s
+			)
+		return result
 	}, [workspaceRegistry, inviteInfo, signature])
 
 	return { joinInvite, getJoinInviteGasEstimate }
