@@ -117,7 +117,7 @@ function AccountDetails() {
 									fontSize="14px"
 									lineHeight="20px"
 								>
-									{formatAddress(scwAddress ?? (accountData?.address ?? ''))}
+									{formatAddress('')}
 								</Text>
 							)
 						}
