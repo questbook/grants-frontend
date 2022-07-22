@@ -50,7 +50,7 @@ export default function useDisburseReward(
 	const toast = useToast()
 
 	useEffect(() => {
-		if (data) {
+		if(data) {
 			setError(undefined)
 			setLoading(false)
 			setIncorrectNetwork(false)
@@ -58,28 +58,29 @@ export default function useDisburseReward(
 	}, [data])
 
 	useEffect(() => {
-		if (submitClicked) {
+		if(submitClicked) {
 			setIncorrectNetwork(false)
 			setSubmitClicked(false)
 		}
 	}, [setSubmitClicked, submitClicked])
 
 	useEffect(() => {
-		if (incorrectNetwork) {
+		if(incorrectNetwork) {
 			setIncorrectNetwork(false)
 		}
 
 	}, [grantContract])
 
 	async function approvalEvent() {
-		rewardContract.once('Approval', (from, to, amount, eventDetail) => {
-			if (from === accountData?.address && to === utils.getAddress(workspaceRegistryContract.address!)) {
+		const filter = rewardContract.filters.Approval(accountData?.address, utils.getAddress(workspaceRegistryContract.address!))
+		rewardContract.on(filter, (from, to, amount, eventDetail) => {
+			if(from === accountData?.address && to === utils.getAddress(workspaceRegistryContract.address!)) {
 				toastRef.current = toast({
 					position: 'top',
 					render: () => CustomToast({
 						content: 'Waiting for the signature - please sign the transaction',
 						close: () => {
-							if (toastRef.current) {
+							if(toastRef.current) {
 								toast.close(toastRef.current)
 							}
 						},
@@ -101,18 +102,19 @@ export default function useDisburseReward(
 
 	async function disburseRewardP2PEvent() {
 		console.log('Got to disburse event')
-		workspaceRegistryContract.once('DisburseReward', (applicationIdEvent, milestoneId, asset, sender, amount, isP2P, eventDetail) => {
+		const filter = workspaceRegistryContract.filters.DisburseReward(BigNumber.from(applicationId).toNumber())
+		workspaceRegistryContract.on(filter, (applicationIdEvent, milestoneId, asset, sender, amount, isP2P, eventDetail) => {
 			console.log('DisburseReward', eventDetail)
-			if (utils.getAddress(sender) === accountData?.address && BigNumber.from(applicationId).toNumber() === applicationIdEvent.toNumber()) {
+			if(utils.getAddress(sender) === accountData?.address && BigNumber.from(applicationId).toNumber() === applicationIdEvent.toNumber()) {
 				setTransactionData(eventDetail)
 				setLoading(false)
 				toastRef.current = toast({
 					position: 'top',
 					render: () => SuccessToast({
 						heading: 'Success!',
-						body: 'Reward has been disbursed',
+						body: 'Reward has been disbursed 🎊',
 						close: () => {
-							if (toastRef.current) {
+							if(toastRef.current) {
 								toast.close(toastRef.current)
 							}
 						},
@@ -125,15 +127,15 @@ export default function useDisburseReward(
 	}
 
 	useEffect(() => {
-		if (incorrectNetwork) {
+		if(incorrectNetwork) {
 			return
 		}
 
-		if (error) {
+		if(error) {
 			return
 		}
 
-		if (loading) {
+		if(loading) {
 			return
 		}
 
@@ -143,33 +145,33 @@ export default function useDisburseReward(
 			try {
 
 				const account = await provider.getCode(accountData?.address!)
-				if (account !== '0x') {
+				if(account !== '0x') {
 
 					console.log('account is not 0x')
 					const getAllowance = await rewardContract.allowance(accountData?.address!, workspaceRegistryContract.address)
-					if (parseInt(getAllowance.toString()) === 0) {
+					if(parseInt(getAllowance.toString()) === 0) {
 						console.log('getAllowance 1', getAllowance, data)
-						await rewardContract.approve(workspaceRegistryContract.address, data)
+						rewardContract.approve(workspaceRegistryContract.address, data)
 						toastRef.current = toast({
 							position: 'top',
 							render: () => CustomToast({
 								content: 'Waiting for approval to complete - please sign off',
 								close: () => {
-									if (toastRef.current) {
+									if(toastRef.current) {
 										toast.close(toastRef.current)
 									}
 								},
 							}),
 						})
 						Promise.all([approvalEvent(), disburseRewardP2PEvent()])
-					} else if (parseInt(getAllowance.toString()) > parseInt(data)) {
+					} else if(parseInt(getAllowance.toString()) > parseInt(data)) {
 						console.log('Disburse', typeof (data), parseInt(getAllowance.toString()))
 						toastRef.current = toast({
 							position: 'top',
 							render: () => CustomToast({
 								content: 'Waiting for the signature - please sign the transaction',
 								close: () => {
-									if (toastRef.current) {
+									if(toastRef.current) {
 										toast.close(toastRef.current)
 									}
 								},
@@ -186,13 +188,13 @@ export default function useDisburseReward(
 
 					} else {
 						console.log('getAllowance 2', typeof (data), (parseInt(getAllowance.toString()) + parseInt(data)).toString())
-						let tx = await rewardContract.approve(workspaceRegistryContract.address, (parseInt(getAllowance.toString()) + parseInt(data)).toString())
+						rewardContract.approve(workspaceRegistryContract.address, (parseInt(getAllowance.toString()) + parseInt(data)).toString())
 						toastRef.current = toast({
 							position: 'top',
 							render: () => CustomToast({
 								content: 'Waiting for approval to complete - please sign off',
 								close: () => {
-									if (toastRef.current) {
+									if(toastRef.current) {
 										toast.close(toastRef.current)
 									}
 								},
@@ -219,7 +221,7 @@ export default function useDisburseReward(
 					setLoading(false)
 				}
 
-			} catch (e: any) {
+			} catch(e: any) {
 				const message = getErrorMessage(e)
 				setError(message)
 				setLoading(false)
@@ -228,7 +230,7 @@ export default function useDisburseReward(
 					render: () => ErrorToast({
 						content: message,
 						close: () => {
-							if (toastRef.current) {
+							if(toastRef.current) {
 								toast.close(toastRef.current)
 							}
 						},
@@ -242,36 +244,36 @@ export default function useDisburseReward(
 			// console.log(milestoneIndex);
 			// console.log(applicationId);
 			// console.log(Number.isNaN(milestoneIndex));
-			if (Number.isNaN(milestoneIndex)) {
+			if(Number.isNaN(milestoneIndex)) {
 				return
 			}
 
-			if (!data) {
+			if(!data) {
 				return
 			}
 
-			if (!applicationId) {
+			if(!applicationId) {
 				return
 			}
 
-			if (transactionData) {
+			if(transactionData) {
 				return
 			}
 
-			if (!rewardAssetAddress) {
+			if(!rewardAssetAddress) {
 				return
 			}
 
-			if (!accountData || !accountData.address) {
+			if(!accountData || !accountData.address) {
 				throw new Error('not connected to wallet')
 			}
 
-			if (!workspace) {
+			if(!workspace) {
 				throw new Error('not connected to workspace')
 			}
 
-			if (!currentChainId) {
-				if (switchNetwork && chainId) {
+			if(!currentChainId) {
+				if(switchNetwork && chainId) {
 					switchNetwork(chainId)
 				}
 
@@ -280,8 +282,8 @@ export default function useDisburseReward(
 				return
 			}
 
-			if (chainId !== currentChainId) {
-				if (switchNetwork && chainId) {
+			if(chainId !== currentChainId) {
+				if(switchNetwork && chainId) {
 					switchNetwork(chainId)
 				}
 
@@ -290,12 +292,12 @@ export default function useDisburseReward(
 				return
 			}
 
-			if (!validatorApi) {
+			if(!validatorApi) {
 				throw new Error('validatorApi or workspaceId is not defined')
 			}
 
 			// console.log(5);
-			if (
+			if(
 				!grantContract
 				|| workspaceRegistryContract.address
 				=== '0x0000000000000000000000000000000000000000'
@@ -305,7 +307,7 @@ export default function useDisburseReward(
 				return
 			}
 
-			if (
+			if(
 				!rewardContract
 				|| rewardContract.address
 				=== '0x0000000000000000000000000000000000000000'
@@ -316,7 +318,7 @@ export default function useDisburseReward(
 			}
 
 			validate()
-		} catch (e: any) {
+		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)
 			setLoading(false)
@@ -325,7 +327,7 @@ export default function useDisburseReward(
 				render: () => ErrorToast({
 					content: message,
 					close: () => {
-						if (toastRef.current) {
+						if(toastRef.current) {
 							toast.close(toastRef.current)
 						}
 					},

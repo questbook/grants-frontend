@@ -4,6 +4,7 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
+import ApproveFundModal from 'src/components/your_grants/manage_grant/modals/ApproveFundModalContent'
 import config from 'src/constants/config.json'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { formatAmount, getExplorerUrlForAddress } from '../../../utils/formattingUtils'
@@ -11,9 +12,6 @@ import AddFunds from '../../funds/add_funds_modal'
 import Modal from '../../ui/modal'
 import FloatingSidebar from '../../ui/sidebar/floatingSidebar'
 import SendFundModalContent from './modals/sendFundModalContent'
-import SingleLineInput from 'src/components/ui/forms/singleLineInput'
-import ApproveFundModal from 'src/components/your_grants/manage_grant/modals/ApproveFundModalContent'
-import App from 'next/app'
 
 interface Props {
 	grant: any;
@@ -154,8 +152,12 @@ function Sidebar({
 					Add Funds
 				</Button>
 				<Button
-					mt="22px" variant="outline" color="Background.500" h="48px"
-					w="100%" onClick={() => setIsApproveModalOpen(true)}>
+					mt="22px"
+					variant="outline"
+					color="Background.500"
+					h="48px"
+					w="100%"
+					onClick={() => setIsApproveModalOpen(true)}>
 					Approve Fund Disbursal
 				</Button>
 				<Button
@@ -230,12 +232,12 @@ function Sidebar({
 
 				{
 					grant && (
-						<Modal 
+						<Modal
 							isOpen={isApproveModalOpen}
 							onClose={() => setIsApproveModalOpen(false)}
 							title="Approve Funds"
-							>
-								<ApproveFundModal
+						>
+							<ApproveFundModal
 								isOpen={isApproveModalOpen}
 								rewardAsset={
 									{
@@ -246,7 +248,7 @@ function Sidebar({
 										decimals,
 									}
 								}
-								onClose={() => setIsApproveModalOpen(false)}/>
+								onClose={() => setIsApproveModalOpen(false)} />
 						</Modal>
 					)
 				}
