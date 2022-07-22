@@ -77,7 +77,7 @@ function ModalContent({
 				position: 'top',
 				render: () => SuccessToast({
 					heading: 'Success!',
-					body: 'Fund disbursal approved 🎉',
+					body: 'Yay! Your approve transaction has been completed. Click Send Funds to start disbursing funds to the applicants. ',
 					close: () => {
 						if(toastRef.current) {
 							toast.close(toastRef.current)
@@ -105,7 +105,7 @@ function ModalContent({
 		toastRef.current = toast({
 			position: 'top',
 			render: () => CustomToast({
-				content: 'Waiting for approval to complete - please sign off',
+				content: 'Approve transaction has been initiated on Gnosis. Please open Wallet Connect app on Gnosis ',
 				close: () => {
 					if(toastRef.current) {
 						toast.close(toastRef.current)
@@ -125,8 +125,8 @@ function ModalContent({
 				align="start">
 				<Box my={4}>
 					<SingleLineInput
-						label='Funds to approve'
-						placeholder='$10000'
+						label='Enter the amount that you want to approve for funds disbursal'
+						placeholder='10000'
 						value={approvalAmount}
 						onChange={
 							(e) => {

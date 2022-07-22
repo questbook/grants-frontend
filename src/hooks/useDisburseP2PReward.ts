@@ -78,7 +78,7 @@ export default function useDisburseReward(
 				toastRef.current = toast({
 					position: 'top',
 					render: () => CustomToast({
-						content: 'Waiting for the signature - please sign the transaction',
+						content: 'Transaction for sending funds has been initiated on Gnosis. Please open Wallet Connect app on Gnosis ',
 						close: () => {
 							if(toastRef.current) {
 								toast.close(toastRef.current)
@@ -112,7 +112,7 @@ export default function useDisburseReward(
 					position: 'top',
 					render: () => SuccessToast({
 						heading: 'Success!',
-						body: 'Reward has been disbursed 🎊',
+						body: 'Yay! The grant reward has been disbursed to the applicant',
 						close: () => {
 							if(toastRef.current) {
 								toast.close(toastRef.current)
@@ -155,7 +155,7 @@ export default function useDisburseReward(
 						toastRef.current = toast({
 							position: 'top',
 							render: () => CustomToast({
-								content: 'Waiting for approval to complete - please sign off',
+								content: 'Approve transaction has been initiated on Gnosis. Please open Wallet Connect app on Gnosis ',
 								close: () => {
 									if(toastRef.current) {
 										toast.close(toastRef.current)
@@ -169,7 +169,7 @@ export default function useDisburseReward(
 						toastRef.current = toast({
 							position: 'top',
 							render: () => CustomToast({
-								content: 'Waiting for the signature - please sign the transaction',
+								content: 'Transaction for sending funds has been initiated on Gnosis. Please open Wallet Connect app on Gnosis ',
 								close: () => {
 									if(toastRef.current) {
 										toast.close(toastRef.current)
