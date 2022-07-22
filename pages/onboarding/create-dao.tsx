@@ -13,8 +13,6 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
 import {
 	apiKey,
-	getEventData,
-	getTransactionReceipt,
 	sendGaslessTransaction,
 	webHookId,
 } from 'src/utils/gaslessUtils'
