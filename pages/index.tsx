@@ -21,11 +21,9 @@ import NavbarLayout from 'src/layout/navbarLayout'
 import { formatAmount } from 'src/utils/formattingUtils'
 import { unixTimestampSeconds } from 'src/utils/generics'
 import verify from 'src/utils/grantUtils'
-import { extractInviteInfo, InviteInfo } from 'src/utils/invite'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import AcceptInviteModal from 'src/v2/components/AcceptInviteModal'
 import { useAccount, useConnect } from 'wagmi'
 import BrowseDao from './browse_dao'
 
@@ -46,8 +44,6 @@ function BrowseGrants() {
 	const [allDataFetched, setAllDataFectched] = useState<Boolean>(false)
 
 	const [currentPage, setCurrentPage] = useState(0)
-
-	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
 
 	const getGrantData = async(firstTime: boolean = false) => {
 		setLoading(true)
@@ -86,8 +82,6 @@ function BrowseGrants() {
 				if(allGrantsData.length < PAGE_SIZE) {
 					setAllDataFectched(true)
 				}
-
-				console.log('allGrantsData', allGrantsData)
 
 				if(firstTime) {
 					setGrants(
@@ -151,23 +145,6 @@ function BrowseGrants() {
 		return () => parentElement.removeEventListener('scroll', handleScroll)
 	}, [handleScroll])
 
-	useEffect(() => {
-		try {
-			const inviteInfo = extractInviteInfo()
-			if(inviteInfo) {
-				setInviteInfo(inviteInfo)
-			}
-		} catch(error: any) {
-			console.error('invalid invite ', error)
-			toast({
-				title: `Invalid invite "${error.message}"`,
-				status: 'error',
-				duration: 9000,
-				isClosable: true,
-			})
-		}
-	}, [])
-
 	return (
 		<Flex
 			w="100%"
@@ -198,85 +175,85 @@ function BrowseGrants() {
 					<>
 						{
 							grants.length > 0 &&
-              grants.map((grant) => {
-              	const chainId = getSupportedChainIdFromSupportedNetwork(
-              		grant.workspace.supportedNetworks[0]
-              	)
-              	const chainInfo = getChainInfo(grant, chainId)
+							grants.map((grant) => {
+								const chainId = getSupportedChainIdFromSupportedNetwork(
+									grant.workspace.supportedNetworks[0]
+								)
+								const chainInfo = getChainInfo(grant, chainId)
 
-              	const [isGrantVerified, funding] = verify(
-              		grant.funding,
-              		chainInfo?.decimals
-              	)
+								const [isGrantVerified, funding] = verify(
+									grant.funding,
+									chainInfo?.decimals
+								)
 
-              	return (
-              		<GrantCard
-              			daoID={grant.workspace.id}
-              			key={grant.id}
-              			grantID={grant.id}
-              			daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
-              			daoName={grant.workspace.title}
-              			isDaoVerified={false}
-              			grantTitle={grant.title}
-              			grantDesc={grant.summary}
-              			numOfApplicants={grant.numberOfApplications}
-              			endTimestamp={new Date(grant.deadline!).getTime()}
-              			createdAt={grant.createdAtS}
-              			grantAmount={
-              				formatAmount(
-              					grant.reward.committed,
-              					chainInfo?.decimals || 18
-              				)
-              			}
-              			disbursedAmount={
-              				formatAmount(
-              					grant.funding,
-              					chainInfo?.decimals || 18
-              				)
-              			}
-              			grantCurrency={chainInfo?.label || 'LOL'}
-              			grantCurrencyIcon={chainInfo?.icon || '/images/dummy/Ethereum Icon.svg'}
-              			grantCurrencyPair={chainInfo?.pair!}
-              			isGrantVerified={isGrantVerified}
-              			funding={funding}
-              			chainId={chainId}
-              			onClick={
-              				() => {
-              					if(!(accountData && accountData.address)) {
-              						router.push({
-              							pathname: '/connect_wallet',
-              							query: {
-              								flow: '/',
-              								grantId: grant.id,
-              								chainId,
-              							},
-              						})
-              						return
-              					}
+								return (
+									<GrantCard
+										daoID={grant.workspace.id}
+										key={grant.id}
+										grantID={grant.id}
+										daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
+										daoName={grant.workspace.title}
+										isDaoVerified={false}
+										grantTitle={grant.title}
+										grantDesc={grant.summary}
+										numOfApplicants={grant.numberOfApplications}
+										endTimestamp={new Date(grant.deadline!).getTime()}
+										createdAt={grant.createdAtS}
+										grantAmount={
+											formatAmount(
+												grant.reward.committed,
+												chainInfo?.decimals || 18
+											)
+										}
+										disbursedAmount={
+											formatAmount(
+												grant.funding,
+												chainInfo?.decimals || 18
+											)
+										}
+										grantCurrency={chainInfo?.label || 'LOL'}
+										grantCurrencyIcon={chainInfo?.icon || '/images/dummy/Ethereum Icon.svg'}
+										grantCurrencyPair={chainInfo?.pair!}
+										isGrantVerified={isGrantVerified}
+										funding={funding}
+										chainId={chainId}
+										onClick={
+											() => {
+												if(!(accountData && accountData.address)) {
+													router.push({
+														pathname: '/connect_wallet',
+														query: {
+															flow: '/',
+															grantId: grant.id,
+															chainId,
+														},
+													})
+													return
+												}
 
-              				router.push({
-              						pathname: '/explore_grants/about_grant',
-              						query: {
-              							grantId: grant.id,
-              							chainId,
-              						},
-              					})
-              				}
-              			}
-              			onTitleClick={
-              				() => {
-              					router.push({
-              						pathname: '/explore_grants/about_grant',
-              						query: {
-              							grantId: grant.id,
-              							chainId,
-              						},
-              					})
-              				}
-              			}
-              		/>
-              	)
-              })
+												router.push({
+													pathname: '/explore_grants/about_grant',
+													query: {
+														grantId: grant.id,
+														chainId,
+													},
+												})
+											}
+										}
+										onTitleClick={
+											() => {
+												router.push({
+													pathname: '/explore_grants/about_grant',
+													query: {
+														grantId: grant.id,
+														chainId,
+													},
+												})
+											}
+										}
+									/>
+								)
+							})
 						}
 						{loading ? <Loader /> : allDataFetched || <></>}
 					</>
@@ -292,14 +269,6 @@ function BrowseGrants() {
 					</Flex>
 				)
 			}
-			<AcceptInviteModal
-				inviteInfo={inviteInfo}
-				onClose={
-					() => {
-						setInviteInfo(undefined)
-						window.history.pushState(undefined, '', '/')
-					}
-				} />
 		</Flex>
 	)
 }
