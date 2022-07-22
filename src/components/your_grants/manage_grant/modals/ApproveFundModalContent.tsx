@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import {
+    Box,
     Button,
     Flex,
     ModalBody,
@@ -83,13 +84,13 @@ function ModalContent({
                     }),
                 })
             }
-            
+
         })
         onClose()
     }
 
     async function approveDisbursal() {
-        setTimeout(()=>{
+        setTimeout(() => {
             onClose()
         }, 3000)
         if (!rewardAssetContract.provider) {
@@ -97,7 +98,7 @@ function ModalContent({
         }
         const decimals = await rewardAssetContract.decimals()
         const amount = parseAmount(approvalAmount, rewardAsset.address, decimals)
-        
+
         toastRef.current = toast({
             position: 'top',
             render: () => CustomToast({
@@ -114,25 +115,28 @@ function ModalContent({
     }
 
     return (
-        <ModalBody>
+        <ModalBody px={10}>
             <Flex
                 direction="column"
                 justify="start"
                 align="start">
-                <SingleLineInput
-                    label='Funds to approve'
-                    placeholder='$10000'
-                    value={approvalAmount}
-                    onChange={
-                        (e) => {
-                            if (error) {
-                                setError(false)
-                            }
+                <Box my={4}>
+                    <SingleLineInput
+                        label='Funds to approve'
+                        placeholder='$10000'
+                        value={approvalAmount}
+                        onChange={
+                            (e) => {
+                                if (error) {
+                                    setError(false)
+                                }
 
-                            setApprovalAmount(e.target.value)
-                        }
-                    } />
-                <Button onClick={approveDisbursal}>Approve</Button>
+                                setApprovalAmount(e.target.value)
+                            }
+                        } />
+                </Box>
+
+                <Button my={4} variant='primary' onClick={approveDisbursal}>Approve</Button>
             </Flex>
         </ModalBody>
     )

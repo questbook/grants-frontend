@@ -198,18 +198,7 @@ export default function useDisburseReward(
 								},
 							}),
 						})
-						await tx.wait()
-						let disburseTxn = await workspaceRegistryContract.disburseRewardP2P(
-							applicationId!,
-							applicantWalletAddress!,
-							milestoneIndex!,
-							rewardAssetAddress!,
-							data,
-							workspace?.id!
-						)
-						await disburseTxn.wait()
-						console.log("Disbursal done", disburseTxn)
-						//  Promise.all([approvalEvent(), disburseRewardP2PEvent()])
+						Promise.all([approvalEvent(), disburseRewardP2PEvent()])
 					}
 
 				} else {
