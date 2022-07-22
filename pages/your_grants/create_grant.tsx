@@ -68,7 +68,7 @@ function CreateGrant() {
 			'Grant reward & submission deadline',
 			grantRewardsRef,
 		],
-	]
+	] as const
 
 	const [formData, setFormData] = useState<any>()
 	const [transactionData, blockExplorerLink, loading] = useCreateGrant(formData)
