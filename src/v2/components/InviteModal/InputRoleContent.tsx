@@ -120,7 +120,6 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 			<NetworkTransactionModal
 				currentStepIndex={createLinkStep || 0}
 				isOpen={typeof createLinkStep !== 'undefined'}
-				title='Network transaction'
 				subtitle='creating invite link'
 				description={
 					<HStack w='100%'>

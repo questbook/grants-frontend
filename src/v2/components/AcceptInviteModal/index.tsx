@@ -154,7 +154,6 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 			<NetworkTransactionModal
 				currentStepIndex={inviteJoinStep || 0}
 				isOpen={typeof inviteJoinStep !== 'undefined'}
-				title='Network transaction'
 				subtitle='creating profile'
 				description={
 					<HStack w='100%'>

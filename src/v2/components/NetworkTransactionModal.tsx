@@ -6,8 +6,6 @@ import { CheckCircle } from '../assets/custom chakra icons/CheckCircle'
 
 export type NetworkTransactionModalProps = {
 	isOpen: boolean
-	/** main title of the transaction */
-	title: string
 	/** two words about what we're doing on chain, eg. "creating invite link" */
 	subtitle: string
 
@@ -26,7 +24,6 @@ type ModalStepProps = {
 
 export default ({
 	isOpen,
-	title,
 	subtitle,
 	description,
 	currentStepIndex,
@@ -59,7 +56,7 @@ export default ({
 							spacing='1'
 							align='start'>
 							<Text fontSize='xl'>
-								{title}
+								Network transaction
 							</Text>
 							<HStack spacing='1'>
 								<Text
