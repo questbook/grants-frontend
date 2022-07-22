@@ -146,20 +146,20 @@ const OnboardingCreateDao = () => {
 				nonce
 			)
 
-			console.log(transactionHash)
-			const receipt = await getTransactionReceipt(transactionHash)
+			// console.log(transactionHash)
+			// const receipt = await getTransactionReceipt(transactionHash)
 
-			console.log('THIS IS RECEIPT', receipt)
+			// console.log('THIS IS RECEIPT', receipt)
 
-			const createWorkspaceTransactionData = await getEventData(
-				receipt,
-				'WorkspaceCreated',
-				WorkspaceRegistryAbi
-			)
+			// const createWorkspaceTransactionData = await getEventData(
+			// 	receipt,
+			// 	'WorkspaceCreated',
+			// 	WorkspaceRegistryAbi
+			// )
 
-			if(createWorkspaceTransactionData) {
-				console.log('THIS IS EVENT', createWorkspaceTransactionData.args)
-			}
+			// if(createWorkspaceTransactionData) {
+			// 	console.log('THIS IS EVENT', createWorkspaceTransactionData.args)
+			// }
 
 			// const createWorkspaceTransaction = await workspaceRegistryContract.createWorkspace(ipfsHash, new Uint8Array(32), 0)
 			setCurrentStep(3)
