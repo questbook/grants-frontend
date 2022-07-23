@@ -6,7 +6,8 @@ import { ApiClientsContext } from 'pages/_app'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetWorkspaceMemberExistsLazyQuery } from 'src/generated/graphql'
 import useQBContract from 'src/hooks/contracts/useQBContract'
-import { useAccount } from 'wagmi'
+import useChainId from 'src/hooks/utils/useChainId'
+import { useAccount, useNetwork } from 'wagmi'
 import { delay } from './generics'
 import { getSupportedChainIdFromWorkspace } from './validationUtils'
 
@@ -126,6 +127,8 @@ type JoinInviteStep = 'ipfs-uploaded' | 'tx-signed' | 'tx-confirmed'
 
 export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemberUpdate) => {
 	const { data: account } = useAccount()
+	const connectedChainId = useChainId()
+	const { switchNetworkAsync } = useNetwork()
 	const { validatorApi, subgraphClients } = useContext(ApiClientsContext)!
 	const workspaceRegistry = useQBContract('workspace', inviteInfo?.chainId)
 
@@ -188,13 +191,18 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 
 			console.log('indexed ')
 		},
-		[profileInfo, workspaceRegistry, validatorApi, inviteInfo, signature, fetchMembers]
+		[profileInfo, workspaceRegistry, validatorApi, inviteInfo, signature, fetchMembers, switchNetworkAsync, connectedChainId]
 	)
 
 	const getJoinInviteGasEstimate = useCallback(async() => {
 		if(!signature) {
 			// Requirements to calculate GAS not met
 			return undefined
+		}
+
+		// switch during gas estimation so that we use the correct chain
+		if(connectedChainId !== inviteInfo.chainId) {
+			await switchNetworkAsync?.(inviteInfo.chainId)
 		}
 
 		const result = await workspaceRegistry
