@@ -155,18 +155,18 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 
 			didReachStep?.('ipfs-uploaded')
 
-			// const tx = await workspaceRegistry.joinViaInviteLink(
-			// 	inviteInfo.workspaceId,
-			// 	ipfsHash,
-			// 	inviteInfo.role,
-			// 	signature.v,
-			// 	signature.r,
-			// 	signature.s,
-			// )
+			const tx = await workspaceRegistry.joinViaInviteLink(
+				inviteInfo.workspaceId,
+				ipfsHash,
+				inviteInfo.role,
+				signature.v,
+				signature.r,
+				signature.s,
+			)
 
 			didReachStep?.('tx-signed')
 
-			// await tx.wait()
+			await tx.wait()
 
 			didReachStep?.('tx-confirmed')
 
