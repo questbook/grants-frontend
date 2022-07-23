@@ -1,6 +1,7 @@
 import { createElement, useEffect, useRef, useState } from 'react'
 import { Button, HStack, Image, Input, Modal, ModalCloseButton, ModalContent, ModalOverlay, Progress, Spacer, Text, useToast, VStack } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
+import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { ROLES } from 'src/constants'
 import useDAOName from 'src/hooks/useDAOName'
 import { delay } from 'src/utils/generics'
@@ -101,9 +102,14 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 		} catch(error: any) {
 			console.error('error in join ', error)
 
-			toast({
-				title: `Error in joining the DAO: "${error.message}"`,
-				status: 'error'
+			const toastId = toast({
+				render: () => ErrorToast({
+					content: `Error in joining the DAO: "${error.message}"`,
+					close: () => {
+						toast.close(toastId!)
+					},
+				}),
+				duration: 9000,
 			})
 		} finally {
 			setInviteJoinStep(undefined)
