@@ -183,13 +183,9 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 					variables: { id: memberId },
 				})
 
-				console.log('here 2', result)
-
 				didIndex = !!result.data?.workspaceMember
 				await delay(2000)
 			} while(!didIndex)
-
-			console.log('indexed ')
 		},
 		[profileInfo, workspaceRegistry, validatorApi, inviteInfo, signature, fetchMembers, switchNetworkAsync, connectedChainId]
 	)
