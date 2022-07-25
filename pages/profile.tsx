@@ -6,6 +6,7 @@ import {
 	Code,
 	Divider,
 	Flex,
+	Heading,
 	IconButton,
 	Image,
 	Modal,
@@ -17,7 +18,6 @@ import {
 	ModalOverlay,
 	Stack,
 	Text,
-	Heading,
 	useClipboard,
 	useDisclosure,
 } from '@chakra-ui/react'
