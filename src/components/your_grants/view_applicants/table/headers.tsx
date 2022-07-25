@@ -3,7 +3,7 @@ import { Flex, ResponsiveValue, Text } from '@chakra-ui/react'
 
 const tableHeaders = [
 	'Applicant Address',
-	'Project Name',
+	'Proposals',
 	'Funding Sent',
 	'Reviewer',
 	'Status',

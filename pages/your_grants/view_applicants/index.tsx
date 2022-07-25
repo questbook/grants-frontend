@@ -1,5 +1,5 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react'
-import { Box, Button, Container, Flex, Heading, Image, Menu,
+import { Box, Button, Container, Flex, Heading, HStack, Image, Menu,
 	MenuButton,
 	MenuGroup,
 	MenuItem, 	MenuList,
@@ -62,6 +62,9 @@ function ViewApplicants() {
 	const [rewardTokenDecimals, setRewardTokenDecimals] = useState(18)
 	const [grantTitle, setGrantTitle] = useState<any>('Grant Title')
 	const [applicationsFilter, setApplicationsFilter] = useState('Accepted')
+	const [isAcceptedActive, setIsAcceptedActive] = useState(true)
+	const [isInReviewActive, setIsInReviewActive] = useState(false)
+	const [isRejectedActive, setIsRejectedActive] = useState(false)
 
 	const { data: accountData } = useAccount()
 	const router = useRouter()
@@ -99,6 +102,9 @@ function ViewApplicants() {
       subgraphClients[
       	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
       ].client,
+	//   variables:{
+	// 	  grantID: grantID
+	//   }
 	})
 
 	const [queryFundsParams, setQueryFundsParams] = useState<any>({
@@ -469,50 +475,97 @@ Archive grant
 					numberOfApplicants={applicantsData.length}
 		  totalDisbursed={totalDisbursed}
 				/>
+
+
 			</Container>
 			{
 				(reviewerData.length > 0 || applicantsData.length > 0) && (isReviewer || isAdmin) ? (
-					<Table
-						isReviewer={isReviewer}
-						data={applicantsData}
-						reviewerData={reviewerData}
-						actorId={isActorId}
-						applicationsFilter={applicationsFilter}
-						onViewApplicantFormClick={
-							(commentData: any) => router.push({
-								pathname: '/your_grants/view_applicants/applicant_form/',
-								query: {
-									commentData,
-									applicationId: commentData.applicationId,
-								},
-							})
-						}
-						// eslint-disable-next-line @typescript-eslint/no-shadow
-						onManageApplicationClick={
-							(data: any) => router.push({
-								pathname: '/your_grants/view_applicants/manage/',
-								query: {
-									applicationId: data.applicationId,
-								},
-							})
-						}
-						archiveGrantComponent={
-							!acceptingApplications && (
-								<Flex
-									maxW="100%"
-									bg="#F3F4F4"
-									direction="row"
-									align="center"
-									px={8}
-									py={6}
-									mt={6}
-									border="1px solid #E8E9E9"
-									borderRadius="6px"
-								>
-									<Image
-										src="/toast/warning.svg"
-										w="42px"
-										h="36px" />
+					<Flex direction="column">
+						<HStack spacing='24px'>
+							<Box
+								as="button"
+								w='128px'
+								h='28px'
+								font-style='normal'
+								font-weight='400'
+								font-size='14px'
+								line-height='20px'
+								textColor={isAcceptedActive ? '#FFFFFF' : '#1F1F33'}
+								bg={isAcceptedActive ? '#1F1F33' : '#E0E0EC'}
+								onClick={
+									() => {
+										setIsAcceptedActive(!isAcceptedActive), setIsInReviewActive(false), setIsRejectedActive(false), setApplicationsFilter('Accepted')
+									}
+								}>
+								{' '}
+Accepted
+								{' '}
+							</Box>
+							<Box
+								as="button"
+								w='128px'
+								h='28px'
+								font-style='normal'
+								font-weight='400'
+								font-size='14px'
+								line-height='20px'
+								textColor={isInReviewActive ? '#FFFFFF' : '#1F1F33'}
+								bg={isInReviewActive ? '#1F1F33' : '#E0E0EC'}
+								onClick={
+									() => {
+										setIsAcceptedActive(false), setIsInReviewActive(!isInReviewActive), setIsRejectedActive(false), setApplicationsFilter('In Review')
+									}
+								}>
+								{' '}
+In Review
+								{' '}
+							</Box>
+							<Box
+								as="button"
+								w='128px'
+								h='28px'
+								font-style='normal'
+								font-weight='400'
+								font-size='14px'
+								line-height='20px'
+								textColor={isRejectedActive ? '#FFFFFF' : '#1F1F33'}
+								bg={isRejectedActive ? '#1F1F33' : '#E0E0EC'}
+								onClick={
+									() => {
+										setIsAcceptedActive(false), setIsInReviewActive(false), setIsRejectedActive(!isRejectedActive), setApplicationsFilter('Rejected')
+									}
+								}>
+								{' '}
+Rejected
+								{' '}
+							</Box>
+						</HStack>
+						<Table
+							isReviewer={isReviewer}
+							data={applicantsData}
+							reviewerData={reviewerData}
+							actorId={isActorId}
+							applicationsFilter={applicationsFilter}
+							onViewApplicantFormClick={
+								(commentData: any) => router.push({
+									pathname: '/your_grants/view_applicants/applicant_form/',
+									query: {
+										commentData,
+										applicationId: commentData.applicationId,
+									},
+								})
+							}
+							// eslint-disable-next-line @typescript-eslint/no-shadow
+							onManageApplicationClick={
+								(data: any) => router.push({
+									pathname: '/your_grants/view_applicants/manage/',
+									query: {
+										applicationId: data.applicationId,
+									},
+								})
+							}
+							archiveGrantComponent={
+								!acceptingApplications && (
 									<Flex
 										maxW="100%"
 										bg="#F3F4F4"
@@ -529,48 +582,64 @@ Archive grant
 											w="42px"
 											h="36px" />
 										<Flex
-											direction="column"
-											ml={6}>
-											<Text
-												variant="tableHeader"
-												color="#414E50">
-												{
-													shouldShowButton && accountData?.address
-														? 'Grant is archived and cannot be discovered on the Home page.'
-														: 'Grant is archived and closed for new applications.'
-												}
-											</Text>
-											<Text
-												variant="tableBody"
-												color="#717A7C"
-												fontWeight="400"
-												mt={2}
-											>
-                      New applicants cannot apply to an archived grant.
-											</Text>
-										</Flex>
-										<Box mr="auto" />
-										{
-											accountData?.address && shouldShowButton && (
-												<Button
-													ref={buttonRef}
-													w={
-														archiveGrantLoading
-															? buttonRef?.current?.offsetWidth
-															: 'auto'
+											maxW="100%"
+											bg="#F3F4F4"
+											direction="row"
+											align="center"
+											px={8}
+											py={6}
+											mt={6}
+											border="1px solid #E8E9E9"
+											borderRadius="6px"
+										>
+											<Image
+												src="/toast/warning.svg"
+												w="42px"
+												h="36px" />
+											<Flex
+												direction="column"
+												ml={6}>
+												<Text
+													variant="tableHeader"
+													color="#414E50">
+													{
+														shouldShowButton && accountData?.address
+															? 'Grant is archived and cannot be discovered on the Home page.'
+															: 'Grant is archived and closed for new applications.'
 													}
-													variant="primary"
-													onClick={() => setIsModalOpen(true)}
+												</Text>
+												<Text
+													variant="tableBody"
+													color="#717A7C"
+													fontWeight="400"
+													mt={2}
 												>
+                      New applicants cannot apply to an archived grant.
+												</Text>
+											</Flex>
+											<Box mr="auto" />
+											{
+												accountData?.address && shouldShowButton && (
+													<Button
+														ref={buttonRef}
+														w={
+															archiveGrantLoading
+																? buttonRef?.current?.offsetWidth
+																: 'auto'
+														}
+														variant="primary"
+														onClick={() => setIsModalOpen(true)}
+													>
                       Publish grant
-												</Button>
-											)
-										}
+													</Button>
+												)
+											}
+										</Flex>
 									</Flex>
-								</Flex>
-							)
-						}
-					/>
+								)
+							}
+						/>
+					</Flex>
 				) : (
 					<Flex
 						direction="column"
