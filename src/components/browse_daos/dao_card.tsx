@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import { Box, Image, Text } from '@chakra-ui/react'
+import { Box, Flex, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 
-function DaoCard({ logo, name, daoId, chainId }:{logo:string, name:string, daoId:string, chainId:any }) {
+function DaoCard({ logo, name, daoId, chainId, noOfApplicants, totalAmount }:{logo:string, name:string, daoId:string, chainId:any, noOfApplicants:string, totalAmount: number }) {
 	const router = useRouter()
 	const [isActive, setIsActive] = useState(false)
 	return (
 		<Box
-			w={'411px'}
+			w={'100%'}
 			h={'172px'}
 			background={'white'}
 			p={'24px'}
@@ -36,16 +36,45 @@ function DaoCard({ logo, name, daoId, chainId }:{logo:string, name:string, daoId
 					})
 				}
 			}>
-			<Image
-				src={logo}
-				my={'8px'}
-				w={'56px'}
-				h={'56p'} />
+			<Flex>
+				<Image
+					src={logo}
+					my={'8px'}
+					w={'56px'}
+					h={'56p'} />
+				<Text
+					ml={'auto'}
+					fontWeight={'700'}
+					fontSize={'12px'}>
+					{noOfApplicants}
+				</Text>
+				<Text
+					ml={'3px'}
+					color={'#555570'}
+					fontSize={'12px'}>
+Applicants
+				</Text>
+			</Flex>
 			<Text
 				fontSize={'20px'}
-				fontWeight={'500'}>
+				fontWeight={'500'}
+				mb={'5px'}>
 				{name}
 			</Text>
+			<Flex>
+				<Text
+					fontSize={'14px'}
+					fontWeight={'600'}>
+					$
+					{totalAmount ? totalAmount : 0}
+				</Text>
+				<Text
+					ml={'5px'}
+					fontSize={'14px'}
+					color={'#555570'}>
+					grants
+				</Text>
+			</Flex>
 			{
 				isActive && (
 					<Box
@@ -57,14 +86,15 @@ function DaoCard({ logo, name, daoId, chainId }:{logo:string, name:string, daoId
 						alignItems={'center'}
 						as={'button'}
 						onClick={() => {}}>
+
 						<Text
 							fontSize={'14px'}
 							fontWeight={'500'}
-							color={'#0065FF'}
+							color={'#1F1F33'}
 							mr={'8px'}>
                     Apply for grants
 						</Text>
-						<Image src='/ui_icons/blue_right_arrow.svg' />
+						<Image src='/ui_icons/black_right_arrow.svg' />
 					</Box>
 				)
 			}

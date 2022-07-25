@@ -24,7 +24,7 @@ import {
 import strings from 'src/constants/strings.json'
 import WALLETS from 'src/constants/wallets.json'
 import NavbarLayout from 'src/layout/navbarLayout'
-import { useConnect } from 'wagmi'
+import { useConnect, useNetwork } from 'wagmi'
 
 function ConnectWallet() {
 	const [isModalOpen, setIsModalOpen] = React.useState(false)
@@ -35,12 +35,14 @@ function ConnectWallet() {
 	const router = useRouter()
 
 	const { data: connectData, isConnecting, isConnected, isReconnecting, isError, connect, connectors } = useConnect()
+	const { activeChain } = useNetwork()
 
 	const wallets = CHAIN_INFO[selectedNetworkId].wallets
 		.map(w => WALLETS[w as keyof typeof WALLETS])
 		.filter(Boolean)
 
 	useEffect(() => {
+		console.log('Connect wallet', activeChain)
 		if((!isConnecting || !isReconnecting) && connectData && isConnected) {
 			if(router.query.flow === 'getting_started/dao') {
 				router.replace('/signup/')

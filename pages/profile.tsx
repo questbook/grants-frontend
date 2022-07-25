@@ -6,7 +6,6 @@ import {
 	Code,
 	Divider,
 	Flex,
-	Heading,
 	IconButton,
 	Image,
 	Modal,
@@ -240,30 +239,9 @@ function Profile() {
 							borderRadius="12px"
 						/>
 
-						<Flex
-							direction="column"
-							align="start">
-							<Text
-								variant="heading"
-								fontWeight="700"
-								fontSize="1.8rem">
-								{workspaceData?.title}
-							</Text>
-							{
-								chainID && (
-									<Text
-										variant="applicationText"
-										fontWeight="400"
-										fontSize="1rem"
-										color="#717A7C"
-									>
-										{CHAIN_INFO[chainID].name}
-									</Text>
-								)
-							}
-						</Flex>
 
 						<Box mr="auto" />
+
 
 						<Flex
 							direction="row"
@@ -299,6 +277,30 @@ function Profile() {
 							}
 						</Flex>
 					</Flex>
+					<Flex
+						pl={'25px'}
+						direction="column"
+						align="start">
+						<Text
+							variant="heading"
+							fontWeight="700"
+							fontSize="20px">
+							{workspaceData?.title}
+						</Text>
+						{
+							chainID && (
+								<Text
+									variant="applicationText"
+									fontWeight="400"
+									fontSize="1rem"
+									color="#717A7C"
+									lineHeight={'10px'}
+								>
+									{CHAIN_INFO[chainID].name}
+								</Text>
+							)
+						}
+					</Flex>
 
 					<Stack px="1.5rem">
 						{workspaceData?.bio && <SeeMore text={workspaceData?.bio} />}
@@ -319,7 +321,7 @@ function Profile() {
 							fundTimes={fundingTime}
 							applicationTime={applicationTime}
 						/>
-						<Button
+						{/* <Button
 							p="4px 8px"
 							border="1px solid #E8E9E9"
 							bg="none"
@@ -334,7 +336,7 @@ function Profile() {
 							{'</>'}
 							{' '}
 Embed profile stats
-						</Button>
+						</Button> */}
 					</Stack>
 
 					<Divider />
@@ -490,7 +492,7 @@ Embed profile stats
 						<Flex
 							direction="column"
 							gap="0.5rem">
-							<Heading
+							{/* <Heading
 								fontFamily="DM Sans"
 								fontStyle="normal"
 								fontWeight="500"
@@ -499,7 +501,7 @@ Embed profile stats
 								color="#1F1F33"
 							>
 							Embed profile stats
-							</Heading>
+							</Heading> */}
 							<Text
 								fontFamily="DM Sans"
 								fontStyle="normal"
