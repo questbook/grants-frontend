@@ -1,15 +1,14 @@
 import React, { useEffect } from 'react'
 import {
 	Box,
-	Button, Flex, Grid, Text, Tooltip, } from '@chakra-ui/react'
+	Button, Flex, Grid, Modal, ModalContent, ModalHeader, ModalOverlay, Text, Tooltip, } from '@chakra-ui/react'
 import {
 	getFormattedDateFromUnixTimestampWithYear,
 	trimAddress,
 } from 'src/utils/formattingUtils'
+import InviteModal from 'src/v2/components/InviteModal'
 import CopyIcon from '../ui/copy_icon'
-import Modal from '../ui/modal'
-// import ConfirmationModalContent from './confirmationModalContent';
-import ModalContent from './modalContent'
+import EditModalContent from './modalContent'
 import roles from './roles'
 
 interface Props {
@@ -17,7 +16,9 @@ interface Props {
 }
 
 function Members({ workspaceMembers }: Props) {
-	const [isModalOpen, setIsModalOpen] = React.useState(false)
+	const [isInviteModalOpen, setIsInviteModalOpen] = React.useState(false)
+	const [isEditModalOpen, setIsEditModalOpen] = React.useState(false)
+	const [selectedRow, setSelectedRow] = React.useState(-1)
 	const [tableData, setTableData] = React.useState<any>(null)
 	const tableHeaders = [
 		'Email',
@@ -52,15 +53,6 @@ function Members({ workspaceMembers }: Props) {
 		setTableData(tempTableData)
 	}, [workspaceMembers])
 
-	const [isEdit, setIsEdit] = React.useState(false)
-	const [selectedRow, setSelectedRow] = React.useState(-1)
-
-	// const [revokeModalOpen, setRevokeModalOpen] = React.useState(false);
-
-	React.useEffect(() => {
-		console.log(tableData)
-	}, [tableData])
-
 	return (
 		<Flex
 			direction="column"
@@ -76,18 +68,17 @@ function Members({ workspaceMembers }: Props) {
 					fontSize="18px"
 					lineHeight="26px"
 				>
-          Manage Members
+          			Manage Members
 				</Text>
 				<Button
 					variant="primaryCta"
 					onClick={
 						() => {
-							setIsEdit(false)
-							setIsModalOpen(true)
+							setIsInviteModalOpen(true)
 						}
 					}
 				>
-          Invite New
+          			Invite New
 				</Button>
 			</Flex>
 			<Flex
@@ -200,8 +191,7 @@ function Members({ workspaceMembers }: Props) {
             				height="32px"
             				onClick={
             					() => {
-            					setIsEdit(true)
-            						setIsModalOpen(true)
+            						setIsEditModalOpen(true)
             						setSelectedRow(index)
             					}
             				}
@@ -214,62 +204,67 @@ function Members({ workspaceMembers }: Props) {
 					}
 				</Flex>
 			</Flex>
-			<Modal
-				isOpen={isModalOpen}
-				onClose={() => setIsModalOpen(false)}
-				title={`${isEdit ? 'Edit' : 'Invite'} Member`}
-			>
-				<ModalContent
-					onClose={
-						(
-							newMember: {
-              address: string;
-              email: string;
-              role: string;
-              updatedAt?: number;
-              addedBy?: string;
-            },
-							shouldRevoke?: boolean,
-						) => {
-							if(!shouldRevoke) {
-								if(tableData && tableData.length > 0) {
-									setTableData([
-										...tableData.filter(
-											(dt: any) => dt.address.toLowerCase()
-                      !== newMember.address.toLowerCase(),
-										),
-										newMember,
-									])
-								} else {
-									setTableData([newMember])
-								}
-							} else {
-								setTableData([
-									...tableData.filter(
-										(dt: any) => dt.address.toLowerCase() !== newMember.address.toLowerCase(),
-									),
-								])
-							}
+			<InviteModal
+				isOpen={isInviteModalOpen}
+				onClose={() => setIsInviteModalOpen(false)} />
+			<Box>
+				<Modal
+					isCentered={true}
+					size='md'
+					isOpen={isEditModalOpen}
+					onClose={() => setIsEditModalOpen(false)}
+				>
+					<ModalOverlay />
+					<ModalContent>
+						<ModalHeader>
+							Edit Member
+						</ModalHeader>
+						<EditModalContent
+							onClose={
+								(
+									newMember: {
+								address: string;
+								email: string;
+								role: string;
+								updatedAt?: number;
+								addedBy?: string;
+							},
+									shouldRevoke?: boolean,
+								) => {
+									if(!shouldRevoke) {
+										if(tableData && tableData.length > 0) {
+											setTableData([
+												...tableData.filter(
+													(dt: any) => dt.address.toLowerCase() !== newMember.address.toLowerCase(),
+												),
+												newMember,
+											])
+										} else {
+											setTableData([newMember])
+										}
+									} else {
+										setTableData([
+											...tableData.filter(
+												(dt: any) => dt.address.toLowerCase() !== newMember.address.toLowerCase(),
+											),
+										])
+									}
 
-							setIsEdit(false)
-							setIsModalOpen(false)
-						}
-					}
-					isEdit={isEdit}
-					member={
-						{
-							address:
-              isEdit && selectedRow !== -1
-              	? tableData[selectedRow].address
-              	: '',
-							email:
-              isEdit && selectedRow !== -1 ? tableData[selectedRow].email : '',
-							role:
-              isEdit && selectedRow !== -1 ? tableData[selectedRow].role : '',
-						}
-					}
-				/>
-			</Modal>
+									setIsEditModalOpen(false)
+								}
+							}
+							isEdit={true}
+							member={
+								{
+									address: tableData?.[selectedRow]?.address || '',
+									email: tableData?.[selectedRow]?.email || '',
+									role: tableData?.[selectedRow]?.role || '',
+								}
+							}
+						/>
+					</ModalContent>
+				</Modal>
+			</Box>
 		</Flex>
 	)
 }

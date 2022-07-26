@@ -309,6 +309,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "Unpaused(address)": EventFragment;
     "Upgraded(address)": EventFragment;
     "WorkspaceCreated(uint96,address,string,uint256)": EventFragment;
+    "WorkspaceMemberUpdated(uint96,address,uint8,bool,string,uint256)": EventFragment;
     "WorkspaceMembersUpdated(uint96,address[],uint8[],bool[],string[],uint256)": EventFragment;
     "WorkspaceSafeUpdated(uint96,bytes32,uint256,uint256)": EventFragment;
     "WorkspaceUpdated(uint96,address,string,uint256)": EventFragment;
@@ -323,6 +324,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WorkspaceCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "WorkspaceMemberUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WorkspaceMembersUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WorkspaceSafeUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WorkspaceUpdated"): EventFragment;
@@ -418,6 +420,22 @@ export type WorkspaceCreatedEvent = TypedEvent<
 
 export type WorkspaceCreatedEventFilter =
   TypedEventFilter<WorkspaceCreatedEvent>;
+
+export interface WorkspaceMemberUpdatedEventObject {
+  id: BigNumber;
+  member: string;
+  role: number;
+  enabled: boolean;
+  metadataHash: string;
+  time: BigNumber;
+}
+export type WorkspaceMemberUpdatedEvent = TypedEvent<
+  [BigNumber, string, number, boolean, string, BigNumber],
+  WorkspaceMemberUpdatedEventObject
+>;
+
+export type WorkspaceMemberUpdatedEventFilter =
+  TypedEventFilter<WorkspaceMemberUpdatedEvent>;
 
 export interface WorkspaceMembersUpdatedEventObject {
   id: BigNumber;
@@ -536,7 +554,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
 
     joinViaInviteLink(
       _id: PromiseOrValue<BigNumberish>,
-      _email: PromiseOrValue<string>,
+      _metadataHash: PromiseOrValue<string>,
       _role: PromiseOrValue<BigNumberish>,
       signatureV: PromiseOrValue<BigNumberish>,
       signatureR: PromiseOrValue<BytesLike>,
@@ -672,7 +690,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
 
   joinViaInviteLink(
     _id: PromiseOrValue<BigNumberish>,
-    _email: PromiseOrValue<string>,
+    _metadataHash: PromiseOrValue<string>,
     _role: PromiseOrValue<BigNumberish>,
     signatureV: PromiseOrValue<BigNumberish>,
     signatureR: PromiseOrValue<BytesLike>,
@@ -806,7 +824,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
 
     joinViaInviteLink(
       _id: PromiseOrValue<BigNumberish>,
-      _email: PromiseOrValue<string>,
+      _metadataHash: PromiseOrValue<string>,
       _role: PromiseOrValue<BigNumberish>,
       signatureV: PromiseOrValue<BigNumberish>,
       signatureR: PromiseOrValue<BytesLike>,
@@ -964,6 +982,23 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       time?: null
     ): WorkspaceCreatedEventFilter;
 
+    "WorkspaceMemberUpdated(uint96,address,uint8,bool,string,uint256)"(
+      id?: PromiseOrValue<BigNumberish> | null,
+      member?: null,
+      role?: null,
+      enabled?: null,
+      metadataHash?: null,
+      time?: null
+    ): WorkspaceMemberUpdatedEventFilter;
+    WorkspaceMemberUpdated(
+      id?: PromiseOrValue<BigNumberish> | null,
+      member?: null,
+      role?: null,
+      enabled?: null,
+      metadataHash?: null,
+      time?: null
+    ): WorkspaceMemberUpdatedEventFilter;
+
     "WorkspaceMembersUpdated(uint96,address[],uint8[],bool[],string[],uint256)"(
       id?: PromiseOrValue<BigNumberish> | null,
       members?: null,
@@ -1055,7 +1090,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
 
     joinViaInviteLink(
       _id: PromiseOrValue<BigNumberish>,
-      _email: PromiseOrValue<string>,
+      _metadataHash: PromiseOrValue<string>,
       _role: PromiseOrValue<BigNumberish>,
       signatureV: PromiseOrValue<BigNumberish>,
       signatureR: PromiseOrValue<BytesLike>,
@@ -1187,7 +1222,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
 
     joinViaInviteLink(
       _id: PromiseOrValue<BigNumberish>,
-      _email: PromiseOrValue<string>,
+      _metadataHash: PromiseOrValue<string>,
       _role: PromiseOrValue<BigNumberish>,
       signatureV: PromiseOrValue<BigNumberish>,
       signatureR: PromiseOrValue<BytesLike>,

@@ -6,6 +6,8 @@ import BrowseDaoHeader from 'src/components/browse_daos/header'
 import { GetAllGrantsQuery, useGetAllGrantsLazyQuery, useGetAllWorkspacesLazyQuery } from 'src/generated/graphql'
 import { formatAmount } from 'src/utils/formattingUtils'
 import { unixTimestampSeconds } from 'src/utils/generics'
+import { extractInviteInfo, InviteInfo } from 'src/utils/invite'
+import AcceptInviteModal from 'src/v2/components/AcceptInviteModal'
 import Sidebar from 'src/v2/components/Sidebar'
 import { useAccount, useConnect } from 'wagmi'
 
@@ -31,6 +33,8 @@ function BrowseDao() {
 	const [currentPage, setCurrentPage] = useState(0)
 	const [allDataFetched, setAllDataFectched] = useState<Boolean>(false)
 	const [grants, setGrants] = useState<GetAllGrantsQuery['grants']>([])
+
+	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
 
 	const getGrantData = async(firstTime: boolean = false) => {
 		// setLoading(true)
@@ -148,24 +152,39 @@ function BrowseDao() {
 	}, [])
 
 	useEffect(() => {
-		console.log('selectedSorting', selectedSorting)
 		if(selectedSorting === 'grant_rewards') {
 			var workspaces = [...allWorkspaces]
 			workspaces.sort((a:any, b:any) => {
 				return parseFloat(b.amount) - parseFloat(a.amount) || Number(isNaN(a.amount)) - Number(isNaN(b.amount))
 			})
-			console.log('sorted reward-wise workspace', workspaces)
+			console.log('sorted reward-wise workspace')
 			setSortedWorkspaces(workspaces)
 		} else if(selectedSorting === 'no_of_applicants') {
 			var workspaces = [...allWorkspaces]
 			workspaces.sort((a, b) => {
 				return parseFloat(b.noOfApplicants) - parseFloat(a.noOfApplicants) || Number(isNaN(a.noOfApplicants)) - Number(isNaN(b.noOfApplicants))
 			})
-			console.log('sorted applicant-wise workspace', workspaces)
+			console.log('sorted applicant-wise workspace')
 			setSortedWorkspaces(workspaces)
 		}
 	}, [selectedSorting, allWorkspaces])
 
+	useEffect(() => {
+		try {
+			const inviteInfo = extractInviteInfo()
+			if(inviteInfo) {
+				setInviteInfo(inviteInfo)
+			}
+		} catch(error: any) {
+			console.error('invalid invite ', error)
+			toast({
+				title: `Invalid invite "${error.message}"`,
+				status: 'error',
+				duration: 9000,
+				isClosable: true,
+			})
+		}
+	}, [])
 
 	return (
 		<Box
@@ -248,6 +267,15 @@ function BrowseDao() {
 					<AllDaosGrid allWorkspaces={sortedWorkspaces} />
 				</Container>
 			</Flex>
+
+			<AcceptInviteModal
+				inviteInfo={inviteInfo}
+				onClose={
+					() => {
+						setInviteInfo(undefined)
+						window.history.pushState(undefined, '', '/')
+					}
+				} />
 		</Box>
 	)
 }
