@@ -1,7 +1,7 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
 	Box, Button, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, Image, Link,
-	Switch, Text, } from '@chakra-ui/react'
+	Progress,	Spacer,	Switch, Text } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
 import useSetRubrics from 'src/hooks/useSetRubrics'
@@ -46,6 +46,7 @@ function RubricDrawer({
 	}, [initialIsPrivate])
 
 	const [editedRubricData, setEditedRubricData] = React.useState<any>()
+	const [setupStep, setSetupStep] = useState(0)
 
 	const [pk, setPk] = React.useState<string>('*')
 	const { data: accountData } = useAccount()
@@ -180,13 +181,13 @@ function RubricDrawer({
 				size="lg"
 			>
 				<DrawerOverlay />
-				<DrawerContent>
+				<DrawerContent backgroundColor="#F5F5FA">
 
 					<Flex
 						direction="column"
 						overflow="scroll"
-						p={8}>
-						<Flex
+					>
+						{/* <Flex
 							mb={8}
 							alignItems="center"
 						>
@@ -206,6 +207,138 @@ function RubricDrawer({
 								w="20px"
 								onClick={() => setRubricDrawerOpen(false)}
 							/>
+						</Flex> */}
+						<Flex
+							backgroundColor="#FFFFFF"
+							alignItems="flex-start"
+							padding="16px">
+							<Flex position="relative">
+								<Image
+									src="/ui_icons/drawer_top_logo.svg"
+									mr="8" />
+								<Image
+									src="/ui_icons/drawer_top_logo_inside.svg"
+									mr="8"
+									position="absolute"
+									top="30%"
+									left="4%" />
+								<Box >
+									<Text
+										fontWeight="500"
+										fontSize="20px"
+										lineHeight="24px"
+										color="#1F1F33">
+Setup applicant evaluation
+									</Text>
+									<Text
+										fontWeight="400"
+										fontSize="14px"
+										lineHeight="20px"
+										color="#7D7DA0">
+Define a scoring rubric and assign reviewers.
+									</Text>
+								</Box>
+							</Flex>
+							<Spacer />
+							<Image
+								src="/ui_icons/close_drawer.svg"
+								cursor="pointer"
+								h="20px"
+								w="20px"
+								onClick={() => setRubricDrawerOpen(false)}
+							/>
+						</Flex>
+
+						<Flex
+							flexDirection="column"
+							alignItems="flex-start"
+							mt={10}>
+
+							<Flex>
+								<Flex
+									flexDirection="column"
+									ml={24} >
+									<Progress
+										colorScheme={setupStep ? '#1F1F33' : 'messenger'}
+										value={100}
+										borderRadius="100px"
+										w="200px"
+										h="4px" />
+									<Flex>
+										<Image
+											src={setupStep ? '/ui_icons/setup_evaluation_black_bullet.svg' : '/ui_icons/setup_evaluation_blue_bullet.svg'}
+											h="20px"
+											w="20px"
+										/>
+										<Text
+											fontWeight="500"
+											fontSize="12px"
+											lineHeight="16px"
+											color={setupStep ? '#1F1F33' : '#4C9AFF'}>
+Scoring Rubric
+										</Text>
+									</Flex>
+								</Flex>
+
+								<Flex
+									flexDirection="column"
+									ml={4}>
+									<Progress
+										colorScheme={setupStep ? 'messenger' : '#D2D2E3'}
+										value={100}
+										borderRadius="100px"
+										w="200px"
+										h="4px" />
+									<Flex>
+										<Image
+											src={setupStep ? '/ui_icons/setup_evaluation_blue_bullet.svg' : '/ui_icons/setup_evaluation_transparent_bullet.svg'}
+											h="20px"
+											w="20px"
+										/>
+										<Text
+											fontWeight="500"
+											fontSize="12px"
+											lineHeight="16px"
+											color={setupStep ? '#4C9AFF' : '#AFAFCC'}>
+Reviewers
+										</Text>
+									</Flex>
+								</Flex>
+							</Flex>
+
+							<Flex
+								alignItems="flex-start"
+								padding="16px"
+								gap="16px">
+								<Image src="/ui_icons/scoring_rubric_logo.svg" />
+								<Box>
+									<Text
+										fontWeight="500"
+										fontSize="16px"
+										lineHeight="24px"
+										color="#1F1F33">
+Scoring Rubric
+									</Text>
+									<Text
+										fontWeight="500"
+										fontSize="14px"
+										lineHeight="20px"
+										color="#7D7DA0"
+
+										letter-spacing="0.5px">
+										<Text
+											as="span"
+											color="#7D7DA0"
+											fontWeight="400"
+											letter-spacing="0.5px">
+											{' '}
+Total score is the sum of quality scores.
+											{' '}
+										</Text>
+										Learn about scores
+									</Text>
+								</Box>
+							</Flex>
 						</Flex>
 						{
 							rubrics.map((rubric, index) => (
