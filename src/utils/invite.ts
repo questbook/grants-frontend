@@ -4,7 +4,7 @@ import { WorkspaceMemberUpdate } from '@questbook/service-validator-client'
 import { base58 } from 'ethers/lib/utils'
 import { ApiClientsContext } from 'pages/_app'
 import { defaultChainId } from 'src/constants/chains'
-import { useGetWorkspaceMemberExistsLazyQuery } from 'src/generated/graphql'
+import { useGetWorkspaceMemberExistsQuery } from 'src/generated/graphql'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import useChainId from 'src/hooks/utils/useChainId'
 import { useAccount, useNetwork } from 'wagmi'
@@ -134,7 +134,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 
 	const { client } = subgraphClients[inviteInfo?.chainId] || subgraphClients[defaultChainId]
 
-	const [fetchMembers] = useGetWorkspaceMemberExistsLazyQuery({ client })
+	const { fetchMore: fetchMembers } = useGetWorkspaceMemberExistsQuery({ client, skip: true, fetchPolicy: 'network-only' })
 
 	const signature = useMemo(() => (
 		(account?.address && inviteInfo?.privateKey)
@@ -175,16 +175,16 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 
 			const memberId = `${numberToHex(inviteInfo.workspaceId)}.${account!.address!.toLowerCase()}`
 
-			console.log(`polling for member "${memberId}"`)
-
 			let didIndex = false
 			do {
+				console.log(`polling for member "${memberId}"`)
+				await delay(2000)
 				const result = await fetchMembers({
 					variables: { id: memberId },
 				})
 
 				didIndex = !!result.data?.workspaceMember
-				await delay(2000)
+				console.log(`poll success: ${didIndex}`)
 			} while(!didIndex)
 		},
 		[profileInfo, workspaceRegistry, validatorApi, inviteInfo, signature, fetchMembers, switchNetworkAsync, connectedChainId]
