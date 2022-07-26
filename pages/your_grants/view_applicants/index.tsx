@@ -65,6 +65,8 @@ function ViewApplicants() {
 	const [isAcceptedActive, setIsAcceptedActive] = useState(true)
 	const [isInReviewActive, setIsInReviewActive] = useState(false)
 	const [isRejectedActive, setIsRejectedActive] = useState(false)
+	const [isRubricSet, setIsRubricSet] = useState(true)
+	const [isSetupEvaluationBoxOpen, setIsSetupEvaluationBoxOpen] = useState(true)
 
 	const { data: accountData } = useAccount()
 	const router = useRouter()
@@ -352,9 +354,11 @@ function ViewApplicants() {
 			})
 		})
 		if(newRubrics.length === 0) {
+			setIsRubricSet(false)
 			return
 		}
 
+		setIsRubricSet(true)
 		setRubrics(newRubrics)
 		if(initialRubrics?.items[0].maximumPoints) {
 			setMaximumPoints(initialRubrics.items[0].maximumPoints)
@@ -444,7 +448,7 @@ function ViewApplicants() {
 						</MenuButton>
 						<MenuList>
 							<MenuGroup
-								title='Profile'
+								title='Grant options'
 								color="#7D7DA0">
 								<MenuItem onClick={() => setRubricDrawerOpen(true)}>
 									<Image
@@ -481,65 +485,122 @@ Archive grant
 			{
 				(reviewerData.length > 0 || applicantsData.length > 0) && (isReviewer || isAdmin) ? (
 					<Flex direction="column">
-						<HStack spacing='24px'>
-							<Box
-								as="button"
-								w='128px'
-								h='28px'
-								font-style='normal'
-								font-weight='400'
-								font-size='14px'
-								line-height='20px'
-								textColor={isAcceptedActive ? '#FFFFFF' : '#1F1F33'}
-								bg={isAcceptedActive ? '#1F1F33' : '#E0E0EC'}
-								onClick={
-									() => {
-										setIsAcceptedActive(!isAcceptedActive), setIsInReviewActive(false), setIsRejectedActive(false), setApplicationsFilter('Accepted')
-									}
-								}>
-								{' '}
+						{
+							isRubricSet && (
+								<HStack spacing='24px'>
+									<Box
+										as="button"
+										w='128px'
+										h='28px'
+										font-style='normal'
+										font-weight='400'
+										font-size='14px'
+										line-height='20px'
+										textColor={isAcceptedActive ? '#FFFFFF' : '#1F1F33'}
+										bg={isAcceptedActive ? '#1F1F33' : '#E0E0EC'}
+										onClick={
+											() => {
+												setIsAcceptedActive(!isAcceptedActive), setIsInReviewActive(false), setIsRejectedActive(false), setApplicationsFilter('Accepted')
+											}
+										}>
+										{' '}
 Accepted
-								{' '}
-							</Box>
-							<Box
-								as="button"
-								w='128px'
-								h='28px'
-								font-style='normal'
-								font-weight='400'
-								font-size='14px'
-								line-height='20px'
-								textColor={isInReviewActive ? '#FFFFFF' : '#1F1F33'}
-								bg={isInReviewActive ? '#1F1F33' : '#E0E0EC'}
-								onClick={
-									() => {
-										setIsAcceptedActive(false), setIsInReviewActive(!isInReviewActive), setIsRejectedActive(false), setApplicationsFilter('In Review')
-									}
-								}>
-								{' '}
+										{' '}
+									</Box>
+									<Box
+										as="button"
+										w='128px'
+										h='28px'
+										font-style='normal'
+										font-weight='400'
+										font-size='14px'
+										line-height='20px'
+										textColor={isInReviewActive ? '#FFFFFF' : '#1F1F33'}
+										bg={isInReviewActive ? '#1F1F33' : '#E0E0EC'}
+										onClick={
+											() => {
+												setIsAcceptedActive(false), setIsInReviewActive(!isInReviewActive), setIsRejectedActive(false), setApplicationsFilter('In Review')
+											}
+										}>
+										{' '}
 In Review
-								{' '}
-							</Box>
-							<Box
-								as="button"
-								w='128px'
-								h='28px'
-								font-style='normal'
-								font-weight='400'
-								font-size='14px'
-								line-height='20px'
-								textColor={isRejectedActive ? '#FFFFFF' : '#1F1F33'}
-								bg={isRejectedActive ? '#1F1F33' : '#E0E0EC'}
-								onClick={
-									() => {
-										setIsAcceptedActive(false), setIsInReviewActive(false), setIsRejectedActive(!isRejectedActive), setApplicationsFilter('Rejected')
-									}
-								}>
-								{' '}
+										{' '}
+									</Box>
+									<Box
+										as="button"
+										w='128px'
+										h='28px'
+										font-style='normal'
+										font-weight='400'
+										font-size='14px'
+										line-height='20px'
+										textColor={isRejectedActive ? '#FFFFFF' : '#1F1F33'}
+										bg={isRejectedActive ? '#1F1F33' : '#E0E0EC'}
+										onClick={
+											() => {
+												setIsAcceptedActive(false), setIsInReviewActive(false), setIsRejectedActive(!isRejectedActive), setApplicationsFilter('Rejected')
+											}
+										}>
+										{' '}
 Rejected
-								{' '}
-							</Box>
-						</HStack>
+										{' '}
+									</Box>
+								</HStack>
+							)
+						}
+
+
+						{
+							!isRubricSet && isSetupEvaluationBoxOpen && (
+								<Flex
+									flexDirection="row"
+									backgroundColor="#E3DDF2"
+									alignItems="flex-start"
+									padding="16px"
+									gap="16px">
+									<Flex flexDirection="row">
+										<Flex flexDirection="column" >
+											<Image
+												src="/ui_icons/reverse_exclamation.svg"
+												mr="8.33" />
+										</Flex>
+										<Box>
+											<Text
+												fontWeight="500"
+												fontSize="16px"
+												lineHeight="20px"
+												color="#1F1F33">
+Setup application evaluation
+											</Text>
+											<Text
+												fontWeight="400"
+												fontSize="14px"
+												lineHeight="20px"
+												color="#1F1F33">
+On receiving applicants, define a scoring rubric and assign reviewers to evaluate the applicants. Learn more
+											</Text>
+											<Text
+												fontWeight="500"
+												fontSize="14px"
+												lineHeight="20px"
+												color="#7356BF"
+												as="button"
+												onClick={() => setRubricDrawerOpen(true)}>
+Setup now
+											</Text>
+										</Box>
+									</Flex>
+									<Spacer />
+									<Flex flexDirection="column" >
+										<Box as="button">
+											<Image
+												src="/ui_icons/close_drawer.svg"
+												onClick={() => setIsSetupEvaluationBoxOpen(false) } />
+										</Box>
+									</Flex>
+								</Flex>
+							)
+						}
 						<Table
 							isReviewer={isReviewer}
 							data={applicantsData}
