@@ -16,7 +16,7 @@ import { useConnect, useDisconnect } from 'wagmi'
 
 function AccountDetails() {
 	const isOnline = true
-	const { data: accountData, nonce } = useQuestbookAccount()
+	const { data: accountData, nonce, setNonce } = useQuestbookAccount()
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 	const { scwAddress, setScwAddress } = useContext(ScwAddressContext)!
 	const { isDisconnected } = useConnect() // @TODO: change the way we see if a user is connect or not
@@ -24,7 +24,6 @@ function AccountDetails() {
 	const { disconnect } = useDisconnect()
 	const { connected, setConnected } = useContext(ApiClientsContext)!
 	const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!
-	const { nonce, setNonce } = useContext(NonceContext)!
 	const router = useRouter()
 
 	const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`
