@@ -403,6 +403,51 @@
 			"decimals": 18
 		}
 	},
+	"1287": {
+		"id": 1287,
+		"name": "Moonbase Alpha",
+		"isTestNetwork": true,
+		"icon": "/chain_assets/eth.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://moonbase.moonscan.io/address/{{address}}",
+			"transactionHash": "https://moonbase.moonscan.io/tx/{{tx}}"
+		},
+		"supportedCurrencies": {
+			"0x3a9c9484e0e82596fb4c2e7fec97106c4c2310fa": {
+				"icon": "/chain_assets/eth.svg",
+				"label": "ELP",
+				"address": "0x3a9c9484e0e82596fb4c2e7fec97106c4c2310fa",
+				"pair": "0x0",
+				"decimals": 18
+			},
+			"0xed13b028697febd70f34cf9a9e280a8f1e98fd29": {
+				"icon": "/chain_assets/eth.svg",
+				"label": "NEPT",
+				"address": "0xed13b028697febd70f34cf9a9e280a8f1e98fd29",
+				"pair": "0x0",
+				"decimals": 18
+			}
+		},
+		"qbContracts": {
+			"applications": "0xF4Db8BdDF1029764e4E09e7cE34149371a9A7027",
+			"workspace": "0x2dB223158288B2299480aF577eDF30D5a533F137",
+			"grantFactory": "0xf08bCcf3C9DE7Daf25BCe13C87D0dd69754E0a33",
+			"reviews": "0xab163375C1aD08e24005771cC9908a1C7c61Adaa"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-moonbase-alpha",
+		"rpcUrls": [
+			"https://rpc.api.moonbase.moonbeam.network"
+		],
+		"nativeCurrency": {
+			"name": "DEV",
+			"symbol": "DEV",
+			"decimals": 18
+		}
+	},
 	"2153": {
 		"id": 2153,
 		"name": "Findora Testnet",
@@ -474,6 +519,44 @@
 		"nativeCurrency": {
 			"name": "Unsupported Currency",
 			"symbol": "UNSUP",
+			"decimals": 18
+		}
+	},
+	"9000": {
+		"id": 9000,
+		"name": "Evmos Testnet",
+		"isTestNetwork": true,
+		"icon": "/chain_assets/eth.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://evm.evmos.dev/address/{{address}}",
+			"transactionHash": "https://evm.evmos.dev/tx/{{tx}}"
+		},
+		"supportedCurrencies": {
+			"0xae95d4890bf4471501e0066b6c6244e1caaee791": {
+				"icon": "/chain_assets/usdc.svg",
+				"label": "USDC",
+				"address": "0xae95d4890bf4471501e0066b6c6244e1caaee791",
+				"pair": "0x0",
+				"decimals": 6
+			}
+		},
+		"qbContracts": {
+			"applications": "0xF4Db8BdDF1029764e4E09e7cE34149371a9A7027",
+			"workspace": "0x2dB223158288B2299480aF577eDF30D5a533F137",
+			"grantFactory": "0xf08bCcf3C9DE7Daf25BCe13C87D0dd69754E0a33",
+			"reviews": "0xab163375C1aD08e24005771cC9908a1C7c61Adaa"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-evmos-testnet",
+		"rpcUrls": [
+			"https://41d67fdgs4.execute-api.ap-south-1.amazonaws.com/v0/evmos"
+		],
+		"nativeCurrency": {
+			"name": "Test EVMOS",
+			"symbol": "tEVMOS",
 			"decimals": 18
 		}
 	},
@@ -663,6 +746,51 @@
 		"nativeCurrency": {
 			"name": "Unsupported Currency",
 			"symbol": "UNSUP",
+			"decimals": 18
+		}
+	},
+	"1313161555": {
+		"id": 1313161555,
+		"name": "Aurora Testnet",
+		"isTestNetwork": true,
+		"icon": "/chain_assets/eth.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://testnet.aurorascan.dev/address/{{address}}",
+			"transactionHash": "https://testnet.aurorascan.dev/tx/{{tx}}"
+		},
+		"supportedCurrencies": {
+			"0x9e70345a1b3d2d55fb29be4adbd2a6e38ee57d83": {
+				"icon": "/chain_assets/weth.svg",
+				"label": "WETH",
+				"address": "0x9e70345a1b3d2d55fb29be4adbd2a6e38ee57d83",
+				"pair": "0x0",
+				"decimals": 18
+			},
+			"0xaab34177b4b5ca686d3ee1ce705133cb3554b183": {
+				"icon": "/chain_assets/usdc.svg",
+				"label": "USDC",
+				"address": "0xaab34177b4b5ca686d3ee1ce705133cb3554b183",
+				"pair": "0x0",
+				"decimals": 6
+			}
+		},
+		"qbContracts": {
+			"applications": "0xC6b6356FBdcf6CC6EA4Cb90Cd11B7E3c5848F312",
+			"workspace": "0x168A72b08FCFF48192E0B1A27486f4394a4F86e1",
+			"grantFactory": "0xCc3367953734da16bC7740696617b62d80845C90",
+			"reviews": "0x6178d7Ac94E045d39850Ef6f35cCD0D4851DAbeC"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-aurora-testnet",
+		"rpcUrls": [
+			"https://testnet.aurora.dev/"
+		],
+		"nativeCurrency": {
+			"name": "Aurora ETH",
+			"symbol": "ETH",
 			"decimals": 18
 		}
 	},
