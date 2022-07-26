@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Flex, Text } from '@chakra-ui/react'
 import dynamic from 'next/dynamic'
 
@@ -33,7 +33,7 @@ const barChartOptionsDashboard = {
 	  theme: 'dark',
 	},
 	xaxis: {
-	  categories: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+	  categories: [],
 	  show: true,
 	  labels: {
 			show: true,
@@ -64,7 +64,7 @@ const barChartOptionsDashboard = {
 	plotOptions: {
 	  bar: {
 			borderRadius: 2,
-			columnWidth: '20px',
+			columnWidth: '32px',
 	  },
 	},
 	responsive: [
@@ -81,8 +81,101 @@ const barChartOptionsDashboard = {
 	],
 }
 
-function BarGraph() {
+function BarGraph({
+	applications,
+	totalApplicants,
+}: {
+	applications: any[],
+	totalApplicants: number
+}) {
 
+	const [seriesData, setSeriesData] = useState<any[]>([{
+		data: []
+	}])
+
+	const [seriesOptions, setSeriesOptions] = useState<any>(barChartOptionsDashboard)
+
+	useEffect(() => {
+		console.log(applications)
+		const series = applications.map((app) => (app.applications ?? 0))
+		console.log(series)
+		setSeriesData([{
+			name: 'Applications',
+			data: series
+		}])
+
+		const options = {
+			chart: {
+				toolbar: {
+					show: false,
+				},
+			},
+			tooltip: {
+				style: {
+					fontSize: '12px',
+					fontFamily: 'Plus Jakarta Display',
+				},
+				onDatasetHover: {
+					style: {
+						fontSize: '12px',
+						fontFamily: 'Plus Jakarta Display',
+					},
+				},
+				theme: 'dark',
+			},
+			xaxis: {
+				categories: [],
+				show: true,
+				labels: {
+					show: true,
+					style: {
+						colors: '#AAAAAA',
+						fontSize: '12px',
+					},
+				},
+				axisBorder: {
+					show: false,
+				},
+				axisTicks: {
+					show: false,
+				},
+			},
+			yaxis: {
+				show: false,
+			},
+			grid: {
+				show: false,
+			},
+			fill: {
+				colors: '#BD96E3',
+			},
+			dataLabels: {
+				enabled: false,
+			},
+			plotOptions: {
+				bar: {
+					borderRadius: 2,
+					columnWidth: '32px',
+				},
+			},
+			responsive: [
+				{
+					breakpoint: 768,
+					options: {
+						plotOptions: {
+							bar: {
+								borderRadius: 0,
+							},
+						},
+					},
+				},
+			],
+		} as any
+		options.xaxis.categories = applications.map((app) => (app.date.getDate()))
+
+		setSeriesOptions(options)
+
+	}, [applications])
 
 	return (
 
@@ -153,8 +246,8 @@ function BarGraph() {
 									fontSize='lg'
 									fontWeight='700'
 								>
-											58,000
-									<Text
+									{totalApplicants}
+									{/* <Text
 										as='span'
 										color='green.400'
 										ml="8px"
@@ -162,14 +255,14 @@ function BarGraph() {
 										fontWeight='400'
 									>
                      +5%
-									</Text>
+									</Text> */}
 								</Text>
 							</Flex>
 							<Flex>
 
 								<Chart
-									options={barChartOptionsDashboard as any}
-									series={barChartDataDashboard}
+									options={seriesOptions as any}
+									series={seriesData}
 									type="bar"
 									width="512px"
 									height="160px"

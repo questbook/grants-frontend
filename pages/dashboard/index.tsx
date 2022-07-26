@@ -1,7 +1,7 @@
 import React, {
 	ReactElement, useContext, useEffect, useState,
 } from 'react'
-import { Box, Button, Container, Flex, Heading, Image, Menu, MenuButton, MenuItem, MenuList, Spacer, Text } from '@chakra-ui/react'
+import { Container, Flex, Heading, Spacer, Text } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import DoaDashTableEmptyState from 'src/components/dao_dashboard/empty_states/dao_dashboard'
 import BarGraph from 'src/components/dao_dashboard/graph/bar_graph'
@@ -9,61 +9,64 @@ import LineGraph from 'src/components/dao_dashboard/graph/line_graph'
 import DaoStatBoard from 'src/components/dao_dashboard/statboard/stat_board'
 import TableContent from 'src/components/dao_dashboard/table/content'
 import Header from 'src/components/dao_dashboard/table/headers'
+import { defaultChainId } from 'src/constants/chains'
+import { GetAllGrantsForCreatorQuery, useGetAllGrantsForCreatorQuery } from 'src/generated/graphql'
+import { UNIX_TIMESTAMP_MAX, UNIX_TIMESTAMP_MIN } from 'src/utils/generics'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import NavbarLayout from '../../src/layout/navbarLayout'
 
-const Tabledata = [
-	{
-		'name':'LP management tools for perp v2 LP management tools for perp v2',
-		'Pendingapp':'15',
-		'disburded':'$12500',
-		'responseTa':'6d12hr',
-		'status':'reviwed'
-	},
+// const Tabledata = [
+// 	{
+// 		'name':'LP management tools for perp v2 LP management tools for perp v2',
+// 		'Pendingapp':'15',
+// 		'disburded':'$12500',
+// 		'responseTa':'6d12hr',
+// 		'status':'reviwed'
+// 	},
 
-	{
-		'name':'LP management tools for perp v2',
-		'Pendingapp':'15',
-		'disburded':'$12500',
-		'responseTa':'6d12hr',
-		'status':'reviwed'
-	},
-	{
-		'name':'LP management tools for perp v2',
-		'Pendingapp':'15',
-		'disburded':'$12500',
-		'responseTa':'6d12hr',
-		'status':'reviwed'
-	},
-	{
-		'name':'LP management tools for perp v2',
-		'Pendingapp':'15',
-		'disburded':'$12500',
-		'responseTa':'6d12hr',
-		'status':'reviwed'
-	},
-	{
-		'name':'Unity implementation of metametalang',
-		'Pendingapp':'200',
-		'disburded':'$1000500',
-		'responseTa':'6d12hr',
-		'status':'reviwed'
-	},
-	{
-		'name':'LP management tools for perp v2',
-		'Pendingapp':'15',
-		'disburded':'$12500',
-		'responseTa':'6d12hr',
-		'status':'reviwed'
-	},
-	{
-		'name':'Unity implementation of metametalang',
-		'Pendingapp':'15',
-		'disburded':'$12500',
-		'responseTa':'6d12hr',
-		'status':'reviwed'
-	},
-]
+// 	{
+// 		'name':'LP management tools for perp v2',
+// 		'Pendingapp':'15',
+// 		'disburded':'$12500',
+// 		'responseTa':'6d12hr',
+// 		'status':'reviwed'
+// 	},
+// 	{
+// 		'name':'LP management tools for perp v2',
+// 		'Pendingapp':'15',
+// 		'disburded':'$12500',
+// 		'responseTa':'6d12hr',
+// 		'status':'reviwed'
+// 	},
+// 	{
+// 		'name':'LP management tools for perp v2',
+// 		'Pendingapp':'15',
+// 		'disburded':'$12500',
+// 		'responseTa':'6d12hr',
+// 		'status':'reviwed'
+// 	},
+// 	{
+// 		'name':'Unity implementation of metametalang',
+// 		'Pendingapp':'200',
+// 		'disburded':'$1000500',
+// 		'responseTa':'6d12hr',
+// 		'status':'reviwed'
+// 	},
+// 	{
+// 		'name':'LP management tools for perp v2',
+// 		'Pendingapp':'15',
+// 		'disburded':'$12500',
+// 		'responseTa':'6d12hr',
+// 		'status':'reviwed'
+// 	},
+// 	{
+// 		'name':'Unity implementation of metametalang',
+// 		'Pendingapp':'15',
+// 		'disburded':'$12500',
+// 		'responseTa':'6d12hr',
+// 		'status':'reviwed'
+// 	},
+// ]
 
 function DaoDashboard() {
 
@@ -72,6 +75,10 @@ function DaoDashboard() {
 		totalApplicants: number,
 		uniqueApplicants: number,
 		repeatApplicants: number,
+		everydayApplications: any[],
+		everydayFunding: any[],
+		totalFunding: number,
+		grantsFunding: any,
 	}>()
 
 	useEffect(() => {
@@ -88,31 +95,212 @@ function DaoDashboard() {
 			return
 		}
 
+		const query = {
+			// fetch all grants,
+			acceptingApplications: [true, false],
+			minDeadline: UNIX_TIMESTAMP_MIN,
+			maxDeadline: UNIX_TIMESTAMP_MAX,
+		}
+
+		setQueryParams({
+			client:
+		    subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+			variables: {
+				first: 999,
+				skip: 0,
+				workspaceId: workspace?.id,
+				...query,
+			},
+			fetchPolicy: 'network-only',
+		})
+
+		// Testing
+		// setQueryParams({
+		// 	client:
+		//     subgraphClients['137'].client,
+		// 	variables: {
+		// 		first: 999,
+		// 		skip: 0,
+		// 		workspaceId: '0x2',
+		// 		...query,
+		// 	},
+		// 	fetchPolicy: 'network-only',
+		// })
+
 		getAnalyticsData()
 
 	}, [workspace, daoStats])
 
+	const [grants, setGrants] = React.useState<
+    GetAllGrantsForCreatorQuery['grants']
+  >([])
+	const [queryParams, setQueryParams] = useState<any>({
+		client:
+      subgraphClients[
+      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+      ].client,
+	})
+	const data = useGetAllGrantsForCreatorQuery(queryParams)
+
+	useEffect(() => {
+		if(data.data && data.data.grants && data.data.grants.length > 0) {
+			console.log('data.grants', data.data.grants)
+			if(
+				grants.length > 0 &&
+        grants[0].workspace.id === data.data.grants[0].workspace.id &&
+        grants[0].id !== data.data.grants[0].id
+			) {
+				setGrants([...grants, ...data.data.grants])
+			} else {
+				setGrants(data.data.grants)
+			}
+		}
+	}, [data])
+
 	const getAnalyticsData = async() => {
-		const res = await fetch('http://43.204.147.240:3300/workspace-analytics', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			referrerPolicy: 'unsafe-url',
-			body: JSON.stringify({
-				chainId: getSupportedChainIdFromWorkspace(workspace)!,
-				workspaceId: workspace!.id
+		try {
+			const res = await fetch('https://www.questbook-analytics.com/workspace-analytics', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				referrerPolicy: 'unsafe-url',
+				body: JSON.stringify({
+					chainId: getSupportedChainIdFromWorkspace(workspace)!,
+					workspaceId: workspace!.id
+				})
+
+				// For testing
+				// body: JSON.stringify({
+				// 	chainId: 137,
+				// 	workspaceId: '0x2'
+				// })
 			})
+
+			const data = await res.json()
+			console.log('res', data)
+
+			const { everydayFunding, totalFunding } = extractLast30Fundings(data)
+
+			const grantsFunding = {} as any
+			data?.grantsFunding?.forEach((f: any) => {
+				grantsFunding[f.grantId] = f.funding
+			})
+
+			console.log(grantsFunding)
+
+			setDaoStats({
+				totalApplicants: data.totalApplicants,
+				repeatApplicants: data.repeatApplicants,
+				uniqueApplicants: data.uniqueApplicants,
+				everydayApplications: extractLast30Applications(data),
+				everydayFunding,
+				totalFunding,
+				grantsFunding,
+			})
+		} catch(e) {
+			console.log(e)
+		}
+	}
+
+	const extractLast30Applications = (data: any) => {
+		const everydayApplications = data.everydayApplications
+
+		if(!everydayApplications) {
+			return []
+		}
+
+		// console.log(everydayApplications)
+
+		const everydayApplicationsMap = {} as any
+		everydayApplications.forEach((application: any) => {
+			everydayApplicationsMap[application.fordate] = application.numApps
 		})
 
-		const data = await res.json()
-		console.log('res', data)
+		const date = new Date(everydayApplications[0].fordate)
+		// console.log(date)
 
-		setDaoStats({
-			totalApplicants: data.totalApplicants,
-			repeatApplicants: data.repeatApplicants,
-			uniqueApplicants: data.uniqueApplicants,
+		let today = new Date()
+		// console.log('today', today)
+
+
+		// console.log('everydayApplicationsMap', everydayApplicationsMap)
+
+		const everydayApplicationsLast30 = []
+		for(let i = 0; i < 30; i++) {
+			const timekey = today.toISOString().split('T')[0] + 'T00:00:00.000Z'
+			// 00:00:00.000Z
+			if(everydayApplicationsMap[timekey]) {
+				everydayApplicationsLast30.push({
+					date: today,
+					applications: everydayApplicationsMap[timekey]
+				})
+			} else {
+				everydayApplicationsLast30.push({
+					date: today,
+					applications: 0
+				})
+			}
+
+			today = new Date(today.setDate(today.getDate() - 1))
+		}
+
+		// console.log('everydayApplicationsLast30', everydayApplicationsLast30)
+		return everydayApplicationsLast30.reverse()
+	}
+
+	const extractLast30Fundings = (data: any) => {
+		const everydayFundings = data.everydayFunding
+		let totalFunding = 0
+
+		if(!everydayFundings || everydayFundings.length === 0) {
+			return {
+				everydayFunding: [],
+				totalFunding,
+			}
+		}
+
+		// console.log(everydayApplications)
+
+		const everydayFundingsMap = {} as any
+		everydayFundings.forEach((application: any) => {
+			totalFunding += parseInt(application.funding)
+			everydayFundingsMap[application.fordate] = application.funding
 		})
+
+		const date = new Date(everydayFundings[0].fordate)
+		// console.log(date)
+
+		let today = new Date()
+		// console.log('today', today)
+
+
+		// console.log('everydayApplicationsMap', everydayApplicationsMap)
+
+		const everydayFundingsLast30 = []
+		for(let i = 0; i < 30; i++) {
+			const timekey = today.toISOString().split('T')[0] + 'T00:00:00.000Z'
+			// 00:00:00.000Z
+			if(everydayFundingsMap[timekey]) {
+				everydayFundingsLast30.push({
+					date: today,
+					funding: everydayFundingsMap[timekey]
+				})
+			} else {
+				everydayFundingsLast30.push({
+					date: today,
+					funding: 0
+				})
+			}
+
+			today = new Date(today.setDate(today.getDate() - 1))
+		}
+
+		// console.log('everydayApplicationsLast30', everydayApplicationsLast30)
+		return {
+			everydayFunding: everydayFundingsLast30.reverse(),
+			totalFunding,
+		}
 	}
 
 	return (
@@ -147,7 +335,7 @@ function DaoDashboard() {
 						</Text>
 						<Spacer />
 
-						<Menu
+						{/* <Menu
 							placement="bottom"
 							// align="right"
 						>
@@ -214,7 +402,7 @@ function DaoDashboard() {
 								</MenuItem>
 
 							</MenuList>
-						</Menu>
+						</Menu> */}
 					</Flex>
 
 					<DaoStatBoard
@@ -235,12 +423,16 @@ function DaoDashboard() {
 
 						>
 							<BarGraph
-
+								applications={daoStats?.everydayApplications ?? []}
+								totalApplicants={daoStats?.totalApplicants ?? 0}
 							/>
 
 							<LineGraph
 								app_count={''}
-								title={''} />
+								title={''}
+								fundings={daoStats?.everydayFunding ?? []}
+								totalFunding={daoStats?.totalFunding ?? 0}
+							/>
 
 
 						</Flex>
@@ -254,7 +446,7 @@ function DaoDashboard() {
 						mt="10"
 						 >
 						Grants (
-						{Tabledata.length}
+						{grants.length}
 )
 					</Heading>
 
@@ -274,7 +466,7 @@ function DaoDashboard() {
 						>
 							<Header />
 							{
-								Tabledata.length === 0 ? (
+								grants?.length === 0 ? (
 
 									<>
 
@@ -294,7 +486,13 @@ function DaoDashboard() {
 
 									<>
 										<TableContent
-							 data={Tabledata}
+							 				grants={
+												grants.map((g) => ({
+													name: g.title,
+													id: g.id
+							 					}))
+											}
+											funding={daoStats?.grantsFunding ?? {}}
 										/>
 
 									</>

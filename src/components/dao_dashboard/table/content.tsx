@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Button, Flex, Text, Tooltip } from '@chakra-ui/react'
 
 const tableBodyFlex = [0.25, 0.40, 0.10, 0.20, 0.17]
 
-function TableContent({ data }:{data:any}) {
+function TableContent({ grants, funding }:{grants:any[], funding: any}) {
 
+	useEffect(() => {
+		console.log('data', grants)
+	}, [grants])
 
 	return (
 		<>
@@ -20,7 +23,7 @@ function TableContent({ data }:{data:any}) {
 			>
 
 				{
-					data.map((item:any, index:any) => (
+					grants.map((item:any, index:any) => (
 
 						<Flex
 							key={index}
@@ -70,7 +73,8 @@ function TableContent({ data }:{data:any}) {
 								align="center"
 								letterSpacing="0.5px"
 							>
-								{item.Pendingapp}
+								{/* {item.Pendingapp} */}
+								-
 							</Text>
 
 							<Text
@@ -79,7 +83,8 @@ function TableContent({ data }:{data:any}) {
 								letterSpacing="0.5px"
 								width="inherit"
 							>
-								{item.disburded}
+								$
+								{funding[item.id] ?? 0}
 							</Text>
 
 							<Text
@@ -88,7 +93,8 @@ function TableContent({ data }:{data:any}) {
 								letterSpacing="0.5px"
 								width="inherit"
 							>
-								{item.responseTa}
+								{/* {item.responseTa} */}
+								-
 							</Text>
 
 							<Flex

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Flex, Text } from '@chakra-ui/react'
 import dynamic from 'next/dynamic'
 
@@ -7,7 +7,7 @@ const data: number | never[] = []
 const lineChartDataProfile2 = [
 	{
 	  name: 'Mobile apps',
-	  data: [100, 250, 300, 220, 500, 250, 300, 230, 300, 350, 250, 400],
+	  data: [0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 	}
 ]
 
@@ -30,20 +30,9 @@ const lineChartOptionsProfile2 = {
 	},
 	xaxis: {
 		show: true,
-	  categories: [
-			'Jan',
-			'Feb',
-			'Mar',
-			'Apr',
-			'May',
-			'Jun',
-			'Jul',
-			'Aug',
-			'Sep',
-			'Oct',
-			'Nov',
-			'Dec',
-	  ],
+	  // categories: [
+		// 	'21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20' ],
+		categories: [],
 	  labels: {
 			show: true,
 			style: {
@@ -90,7 +79,105 @@ const lineChartOptionsProfile2 = {
 	colors: ['#582CFF'],
 }
 
-function LineGraph({ app_count, title }:{app_count:string, title: string}) {
+function LineGraph({
+	app_count,
+	title,
+	fundings,
+	totalFunding,
+}:{
+	app_count:string,
+	title: string,
+	fundings: any[],
+	totalFunding: number,
+}) {
+
+	const [seriesData, setSeriesData] = useState<any[]>([{
+		data: []
+	}])
+
+	const [seriesOptions, setSeriesOptions] = useState<any>(lineChartOptionsProfile2)
+
+	useEffect(() => {
+
+		console.log(fundings)
+		const series = fundings.map((app) => (app.funding))
+		console.log(series)
+		setSeriesData([{
+			name: 'Funds transfered',
+			data: series
+		}])
+
+		const options = {
+			chart: {
+				toolbar: {
+					show: false,
+				},
+				redrawOnParentResize: true
+			},
+			tooltip: {
+				theme: 'dark',
+			},
+			dataLabels: {
+				enabled: false,
+			},
+			stroke: {
+				curve: 'smooth',
+			},
+			xaxis: {
+				show: true,
+				// categories: [
+				// 	'21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20' ],
+				categories: [],
+				labels: {
+					show: true,
+					style: {
+						colors: '#AAAAAA',
+						fontSize: '12px',
+					},
+				},
+				axisBorder: {
+					show: false,
+				},
+				axisTicks: {
+					show: false,
+				},
+			},
+			yaxis: {
+				show: false,
+				labels: {
+					style: {
+						colors: '#c8cfca',
+						fontSize: '12px',
+					},
+				},
+			},
+			legend: {
+				show: false,
+			},
+			grid: {
+				show: false,
+			},
+			// fill: {
+			//   type: 'gradient',
+			//   gradient: {
+			// 		shade: 'dark',
+			// 		type: 'vertical',
+			// 		shadeIntensity: 0,
+			// 		gradientToColors: undefined, // optional, if not defined - uses the shades of same color in series
+			// 		inverseColors: true,
+			// 		opacityFrom: 0.8,
+			// 		opacityTo: 0,
+			// 		stops: [],
+			//   },
+			//   colors: ['#582CFF'],
+			// },
+			colors: ['#582CFF'],
+		} as any
+		options.xaxis.categories = fundings.map((app) => (app.date.getDate()))
+
+		setSeriesOptions(options)
+
+	}, [fundings])
 
 
 	return (
@@ -170,22 +257,23 @@ function LineGraph({ app_count, title }:{app_count:string, title: string}) {
 									fontSize='lg'
 									fontWeight='700'
 								>
-								$580,374,737.06
-									<Text
+								$
+									{totalFunding}
+									{/* <Text
 										as='span'
 										color='green.400'
 										ml="8px"
 										fontSize="14px"
 										fontWeight='400'>
 		 +52%
-									</Text>
+									</Text> */}
 								</Text>
 							</Flex>
 							<Flex >
 
 								<Chart
-									options={lineChartOptionsProfile2 as any}
-									series={lineChartDataProfile2}
+									options={seriesOptions as any}
+									series={seriesData}
 									type="line"
 									width="512px"
 									height="160px"
