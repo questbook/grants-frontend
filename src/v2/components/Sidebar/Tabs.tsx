@@ -60,10 +60,6 @@ function useGetTabs() {
 			)
 			Promise.all(promises).then((value: any[]) => {
 				const sum = value.reduce((a, b) => a + b, 0)
-				toast({
-					title: `Total application count: ${sum}`,
-					status: 'info',
-				})
 				setApplicationCount(sum)
 			})
 		} catch(e) {
