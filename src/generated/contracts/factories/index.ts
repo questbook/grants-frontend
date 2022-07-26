@@ -4,6 +4,7 @@
 export { ApplicationRegistryAbi__factory } from "./ApplicationRegistryAbi__factory";
 export { ApplicationReviewRegistryAbi__factory } from "./ApplicationReviewRegistryAbi__factory";
 export { ERC20__factory } from "./ERC20__factory";
+export { ERC20Proxy__factory } from "./ERC20Proxy__factory";
 export { GrantAbi__factory } from "./GrantAbi__factory";
 export { GrantFactoryAbi__factory } from "./GrantFactoryAbi__factory";
 export { WorkspaceRegistryAbi__factory } from "./WorkspaceRegistryAbi__factory";

@@ -3142,6 +3142,7 @@ export enum SupportedNetwork {
   Chain_44787 = 'chain_44787',
   Chain_80001 = 'chain_80001',
   Chain_245022926 = 'chain_245022926',
+  Chain_1313161555 = 'chain_1313161555',
   Chain_1666600000 = 'chain_1666600000',
   Chain_1666700000 = 'chain_1666700000'
 }
@@ -3348,12 +3349,16 @@ export type WorkspaceMember = {
   /** Address of the workspace member who added this member */
   addedBy: WorkspaceMember;
   email?: Maybe<Scalars['String']>;
+  /** Full name of the user */
+  fullName?: Maybe<Scalars['String']>;
   /** Globally unique ID of the member */
   id: Scalars['ID'];
   /** Timestamp of when the last review was done */
   lastReviewSubmittedAt: Scalars['Int'];
   /** The review IDs for which this member is owed a payment */
   outstandingReviewIds: Array<Scalars['String']>;
+  /** Hash of profile picture on IPFS */
+  profilePictureIpfsHash?: Maybe<Scalars['String']>;
   /** Public key of the workspace member */
   publicKey?: Maybe<Scalars['String']>;
   /** If the member was removed, when */
@@ -3431,6 +3436,26 @@ export type WorkspaceMember_Filter = {
   email_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
   email_starts_with?: InputMaybe<Scalars['String']>;
   email_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  fullName?: InputMaybe<Scalars['String']>;
+  fullName_contains?: InputMaybe<Scalars['String']>;
+  fullName_contains_nocase?: InputMaybe<Scalars['String']>;
+  fullName_ends_with?: InputMaybe<Scalars['String']>;
+  fullName_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  fullName_gt?: InputMaybe<Scalars['String']>;
+  fullName_gte?: InputMaybe<Scalars['String']>;
+  fullName_in?: InputMaybe<Array<Scalars['String']>>;
+  fullName_lt?: InputMaybe<Scalars['String']>;
+  fullName_lte?: InputMaybe<Scalars['String']>;
+  fullName_not?: InputMaybe<Scalars['String']>;
+  fullName_not_contains?: InputMaybe<Scalars['String']>;
+  fullName_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  fullName_not_ends_with?: InputMaybe<Scalars['String']>;
+  fullName_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  fullName_not_in?: InputMaybe<Array<Scalars['String']>>;
+  fullName_not_starts_with?: InputMaybe<Scalars['String']>;
+  fullName_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  fullName_starts_with?: InputMaybe<Scalars['String']>;
+  fullName_starts_with_nocase?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['ID']>;
   id_gt?: InputMaybe<Scalars['ID']>;
   id_gte?: InputMaybe<Scalars['ID']>;
@@ -3453,6 +3478,26 @@ export type WorkspaceMember_Filter = {
   outstandingReviewIds_not?: InputMaybe<Array<Scalars['String']>>;
   outstandingReviewIds_not_contains?: InputMaybe<Array<Scalars['String']>>;
   outstandingReviewIds_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  profilePictureIpfsHash?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_contains?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_contains_nocase?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_ends_with?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_gt?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_gte?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_in?: InputMaybe<Array<Scalars['String']>>;
+  profilePictureIpfsHash_lt?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_lte?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_not?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_not_contains?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_not_ends_with?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_not_in?: InputMaybe<Array<Scalars['String']>>;
+  profilePictureIpfsHash_not_starts_with?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_starts_with?: InputMaybe<Scalars['String']>;
+  profilePictureIpfsHash_starts_with_nocase?: InputMaybe<Scalars['String']>;
   publicKey?: InputMaybe<Scalars['String']>;
   publicKey_contains?: InputMaybe<Scalars['String']>;
   publicKey_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -3517,9 +3562,11 @@ export enum WorkspaceMember_OrderBy {
   AddedAt = 'addedAt',
   AddedBy = 'addedBy',
   Email = 'email',
+  FullName = 'fullName',
   Id = 'id',
   LastReviewSubmittedAt = 'lastReviewSubmittedAt',
   OutstandingReviewIds = 'outstandingReviewIds',
+  ProfilePictureIpfsHash = 'profilePictureIpfsHash',
   PublicKey = 'publicKey',
   RemovedAt = 'removedAt',
   UpdatedAt = 'updatedAt',
@@ -4021,7 +4068,7 @@ export type GetMyApplicationsQuery = { __typename?: 'Query', grantApplications: 
 export type GetNumberOfApplicationsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
-  applicantId?: InputMaybe<Scalars['Bytes']>;
+  applicantId: Scalars['Bytes'];
 }>;
 
 
@@ -5644,7 +5691,7 @@ export type GetMyApplicationsQueryHookResult = ReturnType<typeof useGetMyApplica
 export type GetMyApplicationsLazyQueryHookResult = ReturnType<typeof useGetMyApplicationsLazyQuery>;
 export type GetMyApplicationsQueryResult = Apollo.QueryResult<GetMyApplicationsQuery, GetMyApplicationsQueryVariables>;
 export const GetNumberOfApplicationsDocument = gql`
-    query getNumberOfApplications($first: Int, $skip: Int, $applicantId: Bytes) {
+    query getNumberOfApplications($first: Int, $skip: Int, $applicantId: Bytes!) {
   grantApplications(where: {applicantId: $applicantId}, subgraphError: allow) {
     id
   }
@@ -5669,7 +5716,7 @@ export const GetNumberOfApplicationsDocument = gql`
  *   },
  * });
  */
-export function useGetNumberOfApplicationsQuery(baseOptions?: Apollo.QueryHookOptions<GetNumberOfApplicationsQuery, GetNumberOfApplicationsQueryVariables>) {
+export function useGetNumberOfApplicationsQuery(baseOptions: Apollo.QueryHookOptions<GetNumberOfApplicationsQuery, GetNumberOfApplicationsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetNumberOfApplicationsQuery, GetNumberOfApplicationsQueryVariables>(GetNumberOfApplicationsDocument, options);
       }
