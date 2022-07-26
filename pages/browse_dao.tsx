@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { ReactElement, useContext, useEffect, useState } from 'react'
 import { Box, Button, Container, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Text, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import AllDaosGrid from 'src/components/browse_daos/all_daos'
@@ -8,6 +8,7 @@ import { formatAmount } from 'src/utils/formattingUtils'
 import { unixTimestampSeconds } from 'src/utils/generics'
 import Sidebar from 'src/v2/components/Sidebar'
 import { useAccount, useConnect } from 'wagmi'
+import NavbarLayout from 'src/layout/navbarLayout'
 
 const PAGE_SIZE = 40
 
@@ -168,29 +169,91 @@ function BrowseDao() {
 
 
 	return (
-		<Box
-			width={{ base: 'max-content', sm:'100%' }}
-			background={'#F5F5FA'}
-			minHeight={'100vh'}
-			height={'100%'}
-			pb={'50px'}>
-			<BrowseDaoHeader />
+		// <Box
+		// 	width={{ base: 'max-content', sm:'100%' }}
+		// 	background={'#F5F5FA'}
+		// 	minHeight={'100vh'}
+		// 	height={'100%'}
+		// 	pb={'50px'}>
+		// 	<BrowseDaoHeader />
 
-			<Flex>
-				{
-					 (
-						<Flex
-							display={{ base:'none', lg:'flex' }}
-							w="20%"
-							pos="sticky"
-							top={0}>
-							<Sidebar />
-						</Flex>
-					)
-				}
-				<Container
+		// 	<Flex>
+		// 		{
+		// 			 (
+		// 				<Flex
+		// 					display={{ base:'none', lg:'flex' }}
+		// 					w="20%"
+		// 					pos="sticky"
+		// 					top={0}>
+		// 					<Sidebar />
+		// 				</Flex>
+		// 			)
+		// 		}
+		// 		<Container
+		// 			maxWidth={'1280px'}
+		// 			w="80%">
+		// 			<Flex
+		// 				my={'16px'}
+		// 				maxWidth={'1280px'}>
+		// 				<Text
+		// 					fontSize={'24px'}
+		// 					fontWeight={'700'}>
+		// 				Discover
+		// 				</Text>
+		// 				<Box marginLeft={'auto'}>
+		// 					<Menu>
+		// 						<MenuButton
+		// 							as={Button}
+		// 							rightIcon={<Image src={'/ui_icons/black_down.svg'} />}>
+    	// 							Sort by
+		// 						</MenuButton>
+		// 						<MenuList>
+		// 							<MenuItem
+		// 								justifyContent={'center'}
+		// 								bg={'#F0F0F7'}>
+		// 								<Text
+		// 									fontWeight={'700'}>
+		// 									Sort by
+		// 								</Text>
+		// 							</MenuItem>
+		// 							<MenuItem
+		// 								onClick={
+		// 									() => {
+		// 										setSelectedSorting('grant_rewards')
+		// 									}
+		// 								}>
+		// 								<Flex>
+		// 									<Image src={selectedSorting === 'grant_rewards' ? '/ui_icons/sorting_checked.svg' : '/ui_icons/sorting_unchecked.svg'} />
+		// 									<Text ml={'10px'}>
+		// 											Grant rewards
+		// 									</Text>
+		// 								</Flex>
+		// 							</MenuItem>
+		// 							<MenuItem
+		// 								onClick={
+		// 									() => {
+		// 										setSelectedSorting('no_of_applicants')
+		// 									}
+		// 								}>
+		// 								<Flex>
+		// 									<Image src={selectedSorting === 'no_of_applicants' ? '/ui_icons/sorting_checked.svg' : '/ui_icons/sorting_unchecked.svg'} />
+		// 									<Text ml={'10px'}>
+		// 											Number of Applicants
+		// 									</Text>
+		// 								</Flex>
+		// 							</MenuItem>
+		// 						</MenuList>
+		// 					</Menu>
+		// 				</Box>
+		// 			</Flex>
+		// 			<AllDaosGrid allWorkspaces={sortedWorkspaces} />
+		// 		</Container>
+		// 	</Flex>
+		// </Box>
+
+		<Container
 					maxWidth={'1280px'}
-					w="80%">
+					w="100%">
 					<Flex
 						my={'16px'}
 						maxWidth={'1280px'}>
@@ -247,8 +310,14 @@ function BrowseDao() {
 					</Flex>
 					<AllDaosGrid allWorkspaces={sortedWorkspaces} />
 				</Container>
-			</Flex>
-		</Box>
+	)
+}
+
+BrowseDao.getLayout = function(page: ReactElement) {
+	return (
+		<NavbarLayout>
+			{page}
+		</NavbarLayout>
 	)
 }
 
