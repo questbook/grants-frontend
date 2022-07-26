@@ -39,7 +39,7 @@ function Form({
 }) {
 	const { workspace } = useContext(ApiClientsContext)!
 	const maxDescriptionLength = 300
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const [title, setTitle] = useState(formData.title || '')
 	const [summary, setSummary] = useState(formData.summary || '')
 

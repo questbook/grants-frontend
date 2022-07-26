@@ -32,7 +32,7 @@ const PAGE_SIZE = 40
 
 function BrowseGrants() {
 	const containerRef = useRef(null)
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { isDisconnected } = useConnect()
 	const router = useRouter()
 	const { subgraphClients, connected } = useContext(ApiClientsContext)!

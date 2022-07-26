@@ -1,8 +1,18 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
+import { ethers } from 'ethers'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
+import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import {
+	apiKey,
+	getTransactionReceipt,
+	sendGaslessTransaction,
+	webHookId
+} from 'src/utils/gaslessUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
@@ -19,7 +29,7 @@ export default function useAddMember(
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
@@ -31,6 +41,26 @@ export default function useAddMember(
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
+
+	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		apiKey: apiKey,
+		targetContractABI: WorkspaceRegistryAbi,
+	})
+
+	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState<boolean>(false)
+
+	useEffect(() => {
+		console.log('THIS IS BICONOMY', biconomy)
+		console.log('THIS IS BICONOMY SECOND', biconomyWalletClient)
+		if(biconomy && biconomyWalletClient && scwAddress) {
+			setIsBiconomyInitialised(true)
+		} else {
+			setIsBiconomyInitialised(false)
+		}
+	}, [biconomy, biconomyWalletClient, scwAddress])
+
 
 	useEffect(() => {
 		if(data) {
@@ -65,14 +95,43 @@ export default function useAddMember(
 			// console.log('calling validate');
 			// console.log(data);
 			try {
-				const updateTransaction = await workspaceRegistryContract.updateWorkspaceMembers(
-					workspace!.id,
-					data.memberAddress,
-					data.memberRoles,
-					data.memberRolesEnabled,
-					data.memberEmail,
+				// const updateTransaction = await workspaceRegistryContract.updateWorkspaceMembers(
+				// 	workspace!.id,
+				// 	data.memberAddress,
+				// 	data.memberRoles,
+				// 	data.memberRolesEnabled,
+				// 	data.memberEmail,
+				// )
+				// const updateTransactionData = await updateTransaction.wait()
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					return
+				}
+
+				const targetContractObject = new ethers.Contract(
+					WORKSPACE_REGISTRY_ADDRESS[currentChainId],
+					WorkspaceRegistryAbi,
+					webwallet
 				)
-				const updateTransactionData = await updateTransaction.wait()
+
+				const transactionHash = await sendGaslessTransaction(
+					biconomy,
+					targetContractObject,
+					'createWorkspace',
+					[workspace!.id,
+						data.memberAddress,
+						data.memberRoles,
+						data.memberRolesEnabled,
+						data.memberEmail, ],
+					WORKSPACE_REGISTRY_ADDRESS[currentChainId],
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					webHookId,
+					nonce
+				)
+
+				const updateTransactionData = await getTransactionReceipt(transactionHash)
 
 				setTransactionData(updateTransactionData)
 				setLoading(false)
@@ -95,6 +154,7 @@ export default function useAddMember(
 		}
 
 		try {
+
 			if(!data) {
 				return
 			}
@@ -133,9 +193,9 @@ export default function useAddMember(
 
 			if(
 				!workspaceRegistryContract
-        		|| workspaceRegistryContract.address === '0x0000000000000000000000000000000000000000'
-        		|| !workspaceRegistryContract.signer
-        		|| !workspaceRegistryContract.provider
+				|| workspaceRegistryContract.address === '0x0000000000000000000000000000000000000000'
+				|| !workspaceRegistryContract.signer
+				|| !workspaceRegistryContract.provider
 			) {
 				return
 			}

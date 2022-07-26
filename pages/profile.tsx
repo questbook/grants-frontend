@@ -46,7 +46,7 @@ function Profile() {
 	const { onOpen, isOpen, onClose } = useDisclosure()
 
 	const { subgraphClients } = React.useContext(ApiClientsContext)!
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 
 	const [workspaceData, setWorkspaceData] = React.useState<DAOWorkspace>()
 	const [chainID, setChainId] = React.useState<SupportedChainId>()

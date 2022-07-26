@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
-import { GitHubTokenContext, WebwalletContext } from 'pages/_app'
+import { WebwalletContext } from 'pages/_app'
 import {
 	APPLICATION_REGISTRY_ADDRESS,
 	GRANT_FACTORY_ADDRESS,
@@ -33,7 +33,6 @@ export default function useCreateGrant(
 ) {
 
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
-	const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!
 
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({

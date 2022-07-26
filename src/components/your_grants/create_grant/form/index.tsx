@@ -50,7 +50,7 @@ function Form({
 
 	}, [workspace, currentChain])
 
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const maxDescriptionLength = 300
 	const [title, setTitle] = useState('')
 	const [summary, setSummary] = useState('')

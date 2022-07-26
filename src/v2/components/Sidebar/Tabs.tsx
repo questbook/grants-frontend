@@ -25,7 +25,7 @@ const TABS = [
 ]
 
 function useGetTabs() {
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { isConnected } = useConnect()
 	const { workspace, subgraphClients } = React.useContext(ApiClientsContext)!
 

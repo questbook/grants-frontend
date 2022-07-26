@@ -46,7 +46,7 @@ function FeedbackDrawer({
 	const [isApproved, setIsApproved] = React.useState<boolean>(false)
 
 	const [pk, setPk] = React.useState<string>('*')
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { workspace } = useContext(ApiClientsContext)!
 
 	const {

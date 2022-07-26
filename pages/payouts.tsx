@@ -38,7 +38,7 @@ export default function Payouts() {
 		reviewPayoutsOutstanding,
 		setReviewPayoutsOutstanding,
 	] = React.useState<any>([])
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 
 	React.useEffect(() => {
 		setWorkspaceChainId(getSupportedChainIdFromWorkspace(workspace))

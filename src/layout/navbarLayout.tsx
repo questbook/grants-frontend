@@ -16,7 +16,7 @@ interface Props {
 function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 	const { isDisconnected, isConnected, isError, isIdle, isConnecting, isReconnecting, connect, connectors, data: connectData, status: connectStatus, error } = useConnect()
 	const { data: networkData, pendingChainId, activeChain, status: networkStatus } = useNetwork()
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const toast = useToast()
 	const router = useRouter()
 	const [connectWalletModalIsOpen, setConnectWalletModalIsOpen] =

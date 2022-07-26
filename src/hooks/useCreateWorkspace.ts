@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
-import { GitHubTokenContext, WebwalletContext } from 'pages/_app'
+import { WebwalletContext } from 'pages/_app'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
 import { SupportedNetwork } from 'src/generated/graphql'
@@ -22,7 +22,6 @@ export default function useCreateWorkspace(
 ) {
 
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
-	const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,

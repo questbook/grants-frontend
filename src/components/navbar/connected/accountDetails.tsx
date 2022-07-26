@@ -20,7 +20,7 @@ import { useConnect, useDisconnect } from 'wagmi'
 
 function AccountDetails() {
 	const isOnline = true
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { isDisconnected } = useConnect()
 	const { disconnect } = useDisconnect()
 	const { connected, setConnected } = useContext(ApiClientsContext)!

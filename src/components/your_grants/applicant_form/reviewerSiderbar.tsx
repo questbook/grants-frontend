@@ -39,7 +39,7 @@ function ReviewerSidebar({
 }) {
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 
 	const [feedbackDrawerOpen, setFeedbackDrawerOpen] = React.useState(false)
 	const [feedbacks, setFeedbacks] = React.useState<any[]>([])

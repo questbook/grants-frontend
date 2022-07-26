@@ -16,7 +16,7 @@ function GrantManagers({
   grantManagers: any[];
   toggleGrantManager: (address: string) => void;
 }) {
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	return (
 		<Flex
 			py={0}

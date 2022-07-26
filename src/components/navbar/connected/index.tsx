@@ -30,7 +30,7 @@ import Tab from './tab'
 
 function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	const toast = useToast()
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { isConnected, activeConnector } = useConnect()
 	const tabPaths = [
 		'your_grants',

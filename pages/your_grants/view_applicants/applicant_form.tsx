@@ -47,7 +47,7 @@ function ApplicantForm() {
 	const [step, setStep] = useState(0)
 
 	const [isAdmin, setIsAdmin] = useState(false)
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	useEffect(() => {
 		if(workspace && workspace.members && workspace.members.length > 0) {
 			const tempMember = workspace.members.find(

@@ -14,7 +14,7 @@ import { TabIndex, useGetTabs } from './Tabs'
 
 function Sidebar() {
 	const [topTabs, bottomTabs] = useGetTabs()
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { isConnected } = useConnect()
 	const { workspace, setWorkspace, subgraphClients, connected } =
     React.useContext(ApiClientsContext)!

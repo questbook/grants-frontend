@@ -13,7 +13,7 @@ export default function useMailTo(
 ) {
 	const apiClients = useContext(ApiClientsContext)!
 	const { workspace } = apiClients
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const [email, setEmail] = useState<string | null>()
 
 	useEffect(() => {

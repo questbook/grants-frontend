@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from 'react'
-import { useAccount, useConnect } from 'wagmi'
 import { NonceContext, ScwAddressContext, WebwalletContext } from '../../../pages/_app'
 
 export const useQuestbookAccount = () => {
@@ -8,15 +7,15 @@ export const useQuestbookAccount = () => {
 	const { nonce, setNonce } = useContext(NonceContext)!
 
 	const [gaslessData, setGaslessData] = useState<any>()
-	const { data: accountData } = useAccount()
-	const { data: connectData, isConnecting, isConnected, isReconnecting, isError, connect, connectors } = useConnect()
+	// const { data: accountData } = useAccount()
+	// const { data: connectData, isConnecting, isConnected, isReconnecting, isError, connect, connectors } = useConnect()
+
+	// useEffect(() => {
+	// 	console.log('Changed nonce: ', nonce)
+	// }, [nonce])
 
 	useEffect(() => {
-		console.log('Changed nonce: ', nonce)
-	}, [nonce])
-
-	useEffect(() => {
-		console.log('HYY', nonce, webwallet, scwAddress)
+		// console.log('HYY', nonce, webwallet, scwAddress)
 		if(nonce && webwallet && scwAddress && !gaslessData) {
 			setGaslessData({
 				address: scwAddress,
@@ -30,5 +29,5 @@ export const useQuestbookAccount = () => {
 		// }
 	}, [nonce, webwallet, scwAddress, gaslessData])
 
-	return { data: gaslessData, nonce: nonce }
+	return { data: gaslessData, nonce }
 }

@@ -25,7 +25,7 @@ export type SendBiconomyWalletTransactionParams = {
     execTransactionBody: BuildExecTransaction,
     walletAddress: string,
     signature: string,
-    webHookAttributes: WebHookAttributesType
+    webHookAttributes?: WebHookAttributesType
 }
 
 export type WebHookAttributesType = {

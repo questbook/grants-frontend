@@ -36,7 +36,7 @@ function RubricSidebar({
 	const [forPercentage, setForPercentage] = React.useState<number>(0)
 	const [againstPercentage, setAgainstPercentage] = React.useState<number>(0)
 
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 
 	const decodeReviews = async() => {
 		setLoading(true)

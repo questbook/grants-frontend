@@ -31,7 +31,7 @@ import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo, getChainInfo } from 'src/utils/tokenUtils'
 
 function AboutGrant() {
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 
 	const router = useRouter()

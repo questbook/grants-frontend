@@ -24,6 +24,7 @@ const CreateDaoFinal = ({
 	onSubmit: (() => Promise<void>) | null,
 	isBiconomyInitialised: boolean
 }) => {
+	console.log('HHHH', isBiconomyInitialised, onSubmit)
 	const provider = useProvider()
 	const [ gasEstimate, setGasEstimate ] = useState<string>()
 	const [newDaoImageFile, setNewDaoImageFile] = useState<File | null>(null)

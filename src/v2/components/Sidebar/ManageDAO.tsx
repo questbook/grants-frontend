@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, GitHubTokenContext } from 'pages/_app'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { MinimalWorkspace } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
@@ -14,12 +14,13 @@ interface Props {
 
 function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 	const { workspace } = React.useContext(ApiClientsContext)!
-	const { data: accountData } = useQuestbookAccount()
+	const { isLoggedIn } = React.useContext(GitHubTokenContext)!
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const [expanded, setExpanded] = React.useState(false)
-
+	console.log('Logged in', isLoggedIn)
 	const router = useRouter()
 
-	return workspace && workspace.id && accountData?.address ? (
+	return isLoggedIn && workspace && workspace.id && accountData?.address ? (
 		<Flex
 			direction="column"
 			mx={6}
@@ -86,7 +87,7 @@ function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 					maxH="80%"
 					w="100%">
 					{
-						workspaces.map((workspace: MinimalWorkspace, index: number) => {
+						(workspaces.map((workspace: MinimalWorkspace, index: number) => {
 							return (
 								<Flex
 									key={`${workspace.id}-${workspace.supportedNetworks[0]}`}
@@ -126,7 +127,7 @@ function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 									</Flex>
 								</Flex>
 							)
-						})
+						}))
 					}
 				</Flex>
 				<Button

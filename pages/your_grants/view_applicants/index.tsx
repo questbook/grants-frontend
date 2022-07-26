@@ -55,7 +55,7 @@ function ViewApplicants() {
 	const [isUser, setIsUser] = React.useState<any>('')
 	const [isActorId, setIsActorId] = React.useState<any>('')
 
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const router = useRouter()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 

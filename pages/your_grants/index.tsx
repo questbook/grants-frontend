@@ -90,7 +90,7 @@ function YourGrants() {
 	const [pk, setPk] = useState<string>('*')
 	const [ignorePkModal, setIgnorePkModal] = useState(false)
 
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
 	const [isAdmin, setIsAdmin] = React.useState<boolean>(false)
 	const [isReviewer, setIsReviewer] = React.useState<boolean>(false)

@@ -16,7 +16,7 @@ import { useConnect, useDisconnect } from 'wagmi'
 
 function AccountDetails() {
 	const isOnline = true
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 	const { scwAddress, setScwAddress } = useContext(ScwAddressContext)!
 	const { isDisconnected } = useConnect() // @TODO: change the way we see if a user is connect or not
@@ -117,7 +117,7 @@ function AccountDetails() {
 									fontSize="14px"
 									lineHeight="20px"
 								>
-									{formatAddress('')}
+									{formatAddress(scwAddress!)}
 								</Text>
 							)
 						}

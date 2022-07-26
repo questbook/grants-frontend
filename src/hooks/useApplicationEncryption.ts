@@ -9,7 +9,7 @@ import useEncryption from './utils/useEncryption'
 
 export default function useApplicationEncryption() {
 	const { encryptMessage, decryptMessage } = useEncryption()
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
