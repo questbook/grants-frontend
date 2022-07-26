@@ -1,4 +1,5 @@
-import { useMemo } from 'react'
+import { WebwalletContext } from 'pages/_app'
+import { useContext, useMemo } from 'react'
 import { SupportedChainId } from 'src/constants/chains'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { QBContract, QBContractABIMap } from 'src/types'
@@ -9,7 +10,7 @@ import GrantFactoryAbi from '../../contracts/abi/GrantFactoryAbi.json'
 import WorkspaceRegistryAbi from '../../contracts/abi/WorkspaceRegistryAbi.json'
 
 export default function useQBContract<C extends QBContract>(name: C, chainId?: SupportedChainId) {
-	const { data: signer } = useSigner()
+	const { webwallet: signer } = useContext(WebwalletContext)!
 	const addressOrName = useMemo(() => {
 		const address = CHAIN_INFO[chainId!]?.qbContracts?.[name]
 		return address || '0x0000000000000000000000000000000000000000'

@@ -14,7 +14,8 @@ import {
 	apiKey,
 	getTransactionReceipt,
 	sendGaslessTransaction,
-	webHookId } from 'src/utils/gaslessUtils'
+	webHookId
+} from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
 import CreateDaoFinal from 'src/v2/components/Onboarding/CreateDao/CreateDaoFinal'
@@ -25,6 +26,7 @@ import CreateDaoModal from 'src/v2/components/Onboarding/UI/CreateDaoModal'
 import BackgroundImageLayout from 'src/v2/components/Onboarding/UI/Layout/BackgroundImageLayout'
 import OnboardingCard from 'src/v2/components/Onboarding/UI/Layout/OnboardingCard'
 import { useConnect, useNetwork, useSigner } from 'wagmi'
+import useQBContract from 'src/hooks/contracts/useQBContract'
 
 const OnboardingCreateDao = () => {
 	const router = useRouter()
@@ -39,35 +41,34 @@ const OnboardingCreateDao = () => {
 
 	const { webwallet } = useContext(WebwalletContext)!
 
+	// console.log(daoNetwork?.id.toString())
+
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,
 		targetContractABI: WorkspaceRegistryAbi,
+		chainId: "80001"
 	})
-
-	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
+	
+	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState("not ready")
 
 	useEffect(() => {
-		console.log('THIS IS BICONOMY', biconomy)
-		console.log('THIS IS BICONOMY SECOND', biconomyWalletClient)
-		if(biconomy && biconomyWalletClient && scwAddress) {
-			setIsBiconomyInitialised(true)
-		} else {
-			setIsBiconomyInitialised(false)
-		}
+		if (biconomy && biconomyWalletClient && scwAddress) {
+			setIsBiconomyInitialised("ready")
+		} 
 	}, [biconomy, biconomyWalletClient, scwAddress])
 
-	const { activeChain, switchNetworkAsync, data } = useNetwork()
 	const {
 		connect,
 		connectors
 	} = useConnect()
 
-	// const workspaceRegistryContract = useQBContract('workspace', daoNetwork?.id)
+	const targetContractObject = useQBContract('workspace', daoNetwork?.id)
+
 	const { validatorApi } = useContext(ApiClientsContext)!
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
 
-	const createWorkspace = async() => {
+	const createWorkspace = async () => {
 		setCallOnContractChange(false)
 		setCurrentStep(0)
 		try {
@@ -100,29 +101,21 @@ const OnboardingCreateDao = () => {
 					getSupportedValidatorNetworkFromChainId(daoNetwork!.id),
 				],
 			})
-			if(!ipfsHash) {
+			if (!ipfsHash) {
 				throw new Error('Error validating grant data')
 			}
 
-			if(!daoNetwork) {
+			if (!daoNetwork) {
+
 				throw new Error('No network specified')
 			}
 
 			setCurrentStep(2)
 
-			if(!isBiconomyInitialised) {
+
+			if (typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
 				return
 			}
-
-			if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
-				return
-			}
-
-			const targetContractObject = new ethers.Contract(
-				WORKSPACE_REGISTRY_ADDRESS[daoNetwork.id],
-				WorkspaceRegistryAbi,
-				webwallet
-			)
 
 			const transactionHash = await sendGaslessTransaction(
 				biconomy,
@@ -138,7 +131,7 @@ const OnboardingCreateDao = () => {
 				nonce
 			)
 
-			await getTransactionReceipt(transactionHash)
+			await getTransactionReceipt(transactionHash, daoNetwork.id.toString())
 
 			setCurrentStep(3)
 
@@ -146,7 +139,7 @@ const OnboardingCreateDao = () => {
 			setTimeout(() => {
 				router.push({ pathname: '/your_grants' })
 			}, 2000)
-		} catch(e) {
+		} catch (e) {
 			setCurrentStep(undefined)
 			const message = getErrorMessage(e)
 			toastRef.current = toast({
@@ -154,7 +147,7 @@ const OnboardingCreateDao = () => {
 				render: () => ErrorToast({
 					content: message,
 					close: () => {
-						if(toastRef.current) {
+						if (toastRef.current) {
 							toast.close(toastRef.current)
 						}
 					},
@@ -164,23 +157,18 @@ const OnboardingCreateDao = () => {
 	}
 
 	// useEffect(() => {
-	// 	console.log(workspaceRegistryContract)
-	// 	console.log(
-	// 		'HERE I AM',
-	// 		activeChain?.id,
-	// 		daoNetwork?.id,
-	// 		callOnContractChange
-	// 	)
-	// 	//@TODO-gasless: FIX HERE
-	// 	if(/*activeChain?.id ===*/ daoNetwork?.id && callOnContractChange) {
+
+	// 	if(isBiconomyInitialised === "ready" && daoNetwork){
 	// 		setCallOnContractChange(false)
 	// 		createWorkspace()
+	// 		.then(() => {setIsBiconomyInitialised("done")})
 	// 	}
-	// }, [workspaceRegistryContract])
+
+	// }, [targetContractObject, isBiconomyInitialised, daoNetwork])
 
 	const { data: signer } = useSigner()
 	useEffect(() => {
-		if(!signer) {
+		if (!signer) {
 			const connector = connectors.find((x) => x.id === 'injected')
 			connect(connector)
 		}
@@ -216,9 +204,9 @@ const OnboardingCreateDao = () => {
 			isBiconomyInitialised={isBiconomyInitialised}
 			onSubmit={() => createWorkspace()}
 		// 		activeChain?.id &&
-			// daoNetwork?.id &&
-			// ((activeChain.id !== daoNetwork.id && switchNetworkAsync) ||
-			//   activeChain.id === daoNetwork.id)
+		// daoNetwork?.id &&
+		// ((activeChain.id !== daoNetwork.id && switchNetworkAsync) ||
+		//   activeChain.id === daoNetwork.id)
 		// 			? () => createWorkspace()
 		// 			: null
 		// 	}
@@ -226,12 +214,12 @@ const OnboardingCreateDao = () => {
 	]
 
 	const nextClick = () => {
-		if(step === 0) {
+		if (step === 0) {
 			setStep(1)
 			return
 		}
 
-		if(step === 1) {
+		if (step === 1) {
 			setStep(2)
 			return
 		}
@@ -242,12 +230,12 @@ const OnboardingCreateDao = () => {
 	}
 
 	const backClick = () => {
-		if(step === 2) {
+		if (step === 2) {
 			setStep(1)
 			return
 		}
 
-		if(step === 1) {
+		if (step === 1) {
 			setStep(0)
 			return
 		}
@@ -272,7 +260,7 @@ const OnboardingCreateDao = () => {
 			</BackgroundImageLayout>
 			<CreateDaoModal
 				isOpen={currentStep !== undefined}
-				onClose={() => {}}
+				onClose={() => { }}
 				daoName={daoName}
 				daoNetwork={daoNetwork}
 				daoImageFile={daoImageFile}

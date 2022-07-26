@@ -22,7 +22,7 @@ const CreateDaoFinal = ({
 	daoImageFile: File | null,
 	onImageFileChange: (image: File | null) => void,
 	onSubmit: (() => Promise<void>) | null,
-	isBiconomyInitialised: boolean
+	isBiconomyInitialised: string
 }) => {
 	console.log('HHHH', isBiconomyInitialised, onSubmit)
 	const provider = useProvider()
@@ -141,7 +141,7 @@ const CreateDaoFinal = ({
 			>
 				<ContinueButton
 					onClick={() => onSubmit!()}
-					disabled={onSubmit === null || !isBiconomyInitialised}
+					disabled={onSubmit === null || isBiconomyInitialised !== "ready"}
 					props={
 						{
 							minW: '343px',

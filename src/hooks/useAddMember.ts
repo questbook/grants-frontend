@@ -131,7 +131,7 @@ export default function useAddMember(
 					nonce
 				)
 
-				const updateTransactionData = await getTransactionReceipt(transactionHash)
+				const updateTransactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
 
 				setTransactionData(updateTransactionData)
 				setLoading(false)

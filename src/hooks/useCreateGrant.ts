@@ -55,7 +55,7 @@ export default function useCreateGrant(
 		chainId = getSupportedChainIdFromWorkspace(workspace)
 	}
 
-	const grantContract = useQBContract('grantFactory', chainId)
+	const targetContractObject = useQBContract('grantFactory', chainId)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
@@ -152,25 +152,12 @@ export default function useCreateGrant(
 
 				console.log('rubricHash', rubricHash)
 
-				// console.log(workspaceId || Number(workspace?.id).toString());
-				// console.log('ipfsHash', ipfsHash);
-				// console.log(
-				//   WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
-				//   APPLICATION_REGISTRY_ADDRESS[currentChainId!],
-				// );
-
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
 					return
 				}
 
 				// let transactionHash: string | undefined | boolean
 				console.log('THIS IS ADDRESS', GRANT_FACTORY_ADDRESS[currentChainId!], currentChainId)
-
-				const targetContractObject = new ethers.Contract(
-					GRANT_FACTORY_ADDRESS[currentChainId!],
-					GrantFactoryAbi,
-					webwallet
-				)
 
 				console.log('ENTERING')
 
@@ -189,7 +176,7 @@ export default function useCreateGrant(
 					scwAddress, webwallet, `${currentChainId}`, webHookId, nonce)
 
 				console.log(transactionHash)
-				const receipt = await getTransactionReceipt(transactionHash)
+				const receipt = await getTransactionReceipt(transactionHash, currentChainId.toString())
 
 				console.log('THIS IS RECEIPT', receipt)
 

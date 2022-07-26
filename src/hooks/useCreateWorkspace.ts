@@ -112,7 +112,7 @@ export default function useCreateWorkspace(
 					scwAddress, webwallet, `${networkChainId}`, webHookId, nonce)
 
 				console.log(transactionHash)
-				const receipt = await getTransactionReceipt(transactionHash)
+				const receipt = await getTransactionReceipt(transactionHash, networkChainId.toString())
 
 				console.log('THIS IS RECEIPT', receipt)
 

@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import { Biconomy } from '@biconomy/mexa'
 import { BiconomyWalletClient } from 'src/types/gasless'
-import { deploySCW, jsonRpcProvider } from 'src/utils/gaslessUtils'
+import { deploySCW, jsonRpcProviders } from 'src/utils/gaslessUtils'
 import { GitHubTokenContext, ScwAddressContext, WebwalletContext } from '../../../pages/_app'
 
 export const useBiconomy = (data: any) => {
@@ -33,7 +33,7 @@ export const useBiconomy = (data: any) => {
 		let _biconomy: any
 
 		if(!biconomyDaoObj) {
-			_biconomy = new Biconomy(jsonRpcProvider,
+			_biconomy = new Biconomy(jsonRpcProviders[data.chainId],
 				{
 					apiKey: data.apiKey,
 					debug: true
