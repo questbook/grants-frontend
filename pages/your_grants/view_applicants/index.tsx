@@ -577,7 +577,17 @@ Setup application evaluation
 												fontSize="14px"
 												lineHeight="20px"
 												color="#1F1F33">
-On receiving applicants, define a scoring rubric and assign reviewers to evaluate the applicants. Learn more
+On receiving applicants, define a scoring rubric and assign reviewers to evaluate the applicants.
+												<Text
+													as="span"
+													color="#1F1F33"
+													fontWeight="500"
+													fontSize="14px"
+													lineHeight="20px">
+													{' '}
+											Learn more
+													{' '}
+												</Text>
 											</Text>
 											<Text
 												fontWeight="500"

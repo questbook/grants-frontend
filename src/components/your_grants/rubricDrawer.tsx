@@ -1,17 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react'
 import {
-	Box, Button, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, Image, Link,
-	Progress,	Spacer,	Switch, Text } from '@chakra-ui/react'
+	Box, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, Image,
+	Input,	Progress,	Spacer, Text } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
 import useSetRubrics from 'src/hooks/useSetRubrics'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { useAccount } from 'wagmi'
-import Dropdown from '../ui/forms/dropdown'
-import MultiLineInput from '../ui/forms/multiLineInput'
-import SingleLineInput from '../ui/forms/singleLineInput'
-import Loader from '../ui/loader'
 
 function RubricDrawer({
 	rubricDrawerOpen,
@@ -39,6 +35,7 @@ function RubricDrawer({
   initialIsPrivate: boolean;
 }) {
 	const [shouldEncryptReviews, setShouldEncryptReviews] = React.useState(false)
+
 	useEffect(() => {
 		if(initialIsPrivate) {
 			setShouldEncryptReviews(true)
@@ -245,7 +242,11 @@ Define a scoring rubric and assign reviewers.
 								cursor="pointer"
 								h="20px"
 								w="20px"
-								onClick={() => setRubricDrawerOpen(false)}
+								onClick={
+									() => {
+										setRubricDrawerOpen(false); setSetupStep(0)
+									}
+								}
 							/>
 						</Flex>
 
@@ -259,7 +260,7 @@ Define a scoring rubric and assign reviewers.
 									flexDirection="column"
 									ml={24} >
 									<Progress
-										colorScheme={setupStep ? '#1F1F33' : 'messenger'}
+										colorScheme={setupStep ? 'blackAlpha' : 'messenger'}
 										value={100}
 										borderRadius="100px"
 										w="200px"
@@ -310,14 +311,15 @@ Reviewers
 								alignItems="flex-start"
 								padding="16px"
 								gap="16px">
-								<Image src="/ui_icons/scoring_rubric_logo.svg" />
+								{!setupStep && <Image src="/ui_icons/scoring_rubric_logo.svg" />}
+								{setupStep > 0 && <Image src="/ui_icons/assign_reviewers_red.svg" />}
 								<Box>
 									<Text
 										fontWeight="500"
 										fontSize="16px"
 										lineHeight="24px"
 										color="#1F1F33">
-Scoring Rubric
+										{setupStep ? 'Assign Reviewers' : 'Scoring Rubric'}
 									</Text>
 									<Text
 										fontWeight="500"
@@ -325,31 +327,52 @@ Scoring Rubric
 										lineHeight="20px"
 										color="#7D7DA0"
 
-										letter-spacing="0.5px">
+										letterSpacing="0.5px">
 										<Text
 											as="span"
 											color="#7D7DA0"
 											fontWeight="400"
 											letter-spacing="0.5px">
 											{' '}
-Total score is the sum of quality scores.
+											{setupStep ? 'Reviewers are auto assigned equally.' : 'Total score is the sum of quality scores.'}
 											{' '}
 										</Text>
-										Learn about scores
+										{setupStep ? 'Learn about auto assign' : 'Learn about scores'}
 									</Text>
 								</Box>
 							</Flex>
+
+						</Flex>
+						<Flex
+							direction="column"
+							backgroundColor="#FFFFFF"
+							ml={20}
+						>
+							<Text
+								color="#1F1F33"
+								fontWeight="500"
+								fontSize="14px"
+								lineHeight="20px">
+Scoring Qualities
+							</Text>
+							<Text
+								color="#7D7DA0"
+								fontWeight="400"
+								fontSize="12px"
+								lineHeight="20px">
+Define the quality, and add a description
+							</Text>
 						</Flex>
 						{
 							rubrics.map((rubric, index) => (
 								<>
 									<Flex
-										mt={4}
+										flexDirection="column"
 										gap="2"
 										alignItems="flex-start"
-										opacity={rubricEditAllowed ? 1 : 0.4}
+										backgroundColor="#FFFFFF"
 									>
-										<Flex
+										{/* <Flex
 											direction="column"
 											flex={0.3327}>
 											<Text
@@ -363,13 +386,17 @@ Total score is the sum of quality scores.
 												{' '}
 												{index + 1}
 											</Text>
-										</Flex>
+										</Flex> */}
 										<Flex
 											justifyContent="center"
 											gap={2}
+											margin={2}
 											alignItems="center"
+											backgroundColor="#FFFFFF"
 											flex={0.6673}>
-											<SingleLineInput
+											<Input
+
+												variant='flushed'
 												value={rubrics[index].name}
 												onChange={
 													(e) => {
@@ -379,19 +406,30 @@ Total score is the sum of quality scores.
 														setRubrics(newRubrics)
 													}
 												}
-												placeholder="Name"
-												isError={rubrics[index].nameError}
-												errorText="Required"
-												disabled={!rubricEditAllowed}
+												placeholder="َQuality"
+												borderColor={rubrics[index].nameError || rubrics[index].name.length > 30 ? 'red' : 'inherit'}
+												isDisabled={!rubricEditAllowed}
+
 											/>
+
+										</Flex>
+										<Flex
+											flexDirection="row"
+											width="250px">
+											<Spacer />
+											<Box>
+												{rubrics[index].name.length}
+/30
+											</Box>
 										</Flex>
 									</Flex>
 									<Flex
-										mt={6}
+										flexDirection="column"
 										gap="2"
 										alignItems="flex-start"
+										backgroundColor="#FFFFFF"
 										opacity={rubricEditAllowed ? 1 : 0.4}>
-										<Flex
+										{/* <Flex
 											direction="column"
 											flex={0.3327}>
 											<Text
@@ -403,31 +441,42 @@ Total score is the sum of quality scores.
 											>
                       Description
 											</Text>
-										</Flex>
+										</Flex> */}
 										<Flex
 											justifyContent="center"
 											gap={2}
 											alignItems="center"
+											backgroundColor="#FFFFFF"
 											flex={0.6673}>
-											<MultiLineInput
+											<Input
+												variant='flushed'
 												value={rubrics[index].description}
 												onChange={
 													(e) => {
 														const newRubrics = [...rubrics]
 														newRubrics[index].description = e.target.value
 														newRubrics[index].descriptionError = false
+
 														setRubrics(newRubrics)
 													}
 												}
-												placeholder="Describe the evaluation criteria"
-												isError={rubrics[index].descriptionError}
-												errorText="Required"
-												disabled={!rubricEditAllowed}
+												placeholder="Description"
+												borderColor={rubrics[index].descriptionError || rubrics[index].description.length > 100 ? 'red' : 'inherit'}
+												isDisabled={!rubricEditAllowed}
 											/>
+										</Flex>
+										<Flex
+											flexDirection="row"
+											width="250px">
+											<Spacer />
+											<Box>
+												{rubrics[index].description.length}
+/100
+											</Box>
 										</Flex>
 									</Flex>
 
-									<Flex
+									{/* <Flex
 										mt={2}
 										gap="2"
 										justifyContent="flex-end">
@@ -462,7 +511,7 @@ Total score is the sum of quality scores.
                       Delete
 											</Text>
 										</Box>
-									</Flex>
+									</Flex> */}
 									<Divider mt={4} />
 								</>
 							))
@@ -494,22 +543,22 @@ Total score is the sum of quality scores.
 								opacity={rubricEditAllowed ? 1 : 0.4}
 							>
 								<Image
-									h="16px"
-									w="15px"
-									src="/ui_icons/plus_circle.svg"
+									h="16.67px"
+									w="16.67px"
+									src="/ui_icons/plus_circle_blue.svg"
 									mr="6px"
 								/>
 								<Text
 									fontWeight="500"
 									fontSize="14px"
-									color="#8850EA"
+									color="#0065FF"
 									lineHeight="20px">
-                  Add another criteria
+                  Add another quality
 								</Text>
 							</Box>
 						</Flex>
 
-						<Flex
+						{/* <Flex
 							opacity={rubricEditAllowed ? 1 : 0.4}
 							direction="column"
 							mt={6}>
@@ -639,7 +688,40 @@ Total score is the sum of quality scores.
 									)
 								}
 							</Button>
-						</Box>
+						</Box> */}
+						<Spacer />
+						<Flex
+							backgroundColor="#FFFFFF"
+							alignItems="flex-start"
+							padding="16px">
+							<Spacer />
+
+							<Flex
+								alignItems="center"
+								padding="6px 20px"
+								w="153px"
+								h="40px"
+								background="#E0E0EC"
+								borderRadius="3px"
+								cursor="pointer"
+								onClick={
+									() => {
+										setSetupStep(1)
+									}
+								}
+							>
+								<Text
+									width="113px"
+									height="24px"
+									fontWeight="500"
+									fontSize="16px"
+									lineHeight="24px"
+									textAlign="center"
+									color="#FFFFFF">
+									Next
+								</Text>
+							</Flex>
+						</Flex>
 					</Flex>
 				</DrawerContent>
 			</Drawer>
