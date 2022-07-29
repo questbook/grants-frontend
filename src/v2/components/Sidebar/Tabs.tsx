@@ -126,10 +126,10 @@ function useGetTabs() {
 		} else {
 			if(applicationCount > 0) {
 				// Reviewer with applicants
-				return [ TABS.slice(0, 2), [TABS[2], TABS[7]] ]
+				return [ TABS.slice(0, 2), [TABS[2], TABS[3], TABS[7]] ]
 			} else {
 				// Reviewer without applicants
-				return [ TABS.slice(0, 1), [TABS[2], TABS[7]] ]
+				return [ TABS.slice(0, 1), [TABS[2], TABS[3], TABS[7]] ]
 			}
 		}
 	}
