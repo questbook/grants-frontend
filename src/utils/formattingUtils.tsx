@@ -9,7 +9,7 @@ import { FundTransfer } from 'src/types'
 export function timeToString(
 	timestamp: number,
 	type?: 'day_first' | 'month_first',
-	show_year?: boolean,
+	show_year?: boolean
 ) {
 	const date = new Date(timestamp)
 	const months = [
@@ -29,13 +29,18 @@ export function timeToString(
 	return type === 'day_first'
 		? `${date.getUTCDate().toString()} ${months[date.getMonth()].substring(
 			0,
-			3,
+			3
 		)}, ${date.getFullYear()}`
-		: `${months[date.getMonth()]} ${date.getUTCDate().toString()} ${show_year ? date.getFullYear() : ''
+		: `${months[date.getMonth()]} ${date.getUTCDate().toString()} ${
+			show_year ? date.getFullYear() : ''
 		}`
 }
 
-export function parseAmount(number: string, contractAddress?: string, decimal?: number) {
+export function parseAmount(
+	number: string,
+	contractAddress?: string,
+	decimal?: number
+) {
 	if(decimal) {
 		return ethers.utils.parseUnits(number, decimal).toString()
 	}
@@ -46,7 +51,7 @@ export function parseAmount(number: string, contractAddress?: string, decimal?: 
 		ALL_SUPPORTED_CHAIN_IDS.forEach((id) => {
 			const { supportedCurrencies } = CHAIN_INFO[id]
 			const supportedCurrenciesArray = Object.keys(supportedCurrencies).map(
-				(i) => supportedCurrencies[i],
+				(i) => supportedCurrencies[i]
 			)
 			allCurrencies = [...allCurrencies, ...supportedCurrenciesArray]
 		})
@@ -54,8 +59,9 @@ export function parseAmount(number: string, contractAddress?: string, decimal?: 
 		console.log(allCurrencies)
 		console.log(contractAddress)
 
-		decimals = allCurrencies.find((currency) => currency.address === contractAddress)
-			?.decimals || 18
+		decimals =
+      allCurrencies.find((currency) => currency.address === contractAddress)
+      	?.decimals || 18
 
 		return ethers.utils.parseUnits(number, decimals).toString()
 	}
@@ -66,6 +72,7 @@ export function parseAmount(number: string, contractAddress?: string, decimal?: 
 
 export function nFormatter(value: string, digits = 3) {
 	const num = Math.abs(Number(value))
+
 	if(num < 10000) {
 		return value
 	}
@@ -103,42 +110,73 @@ function truncateTo(number: string, digits = 3) {
 	const isEntirelyZeroAfterDecimal = true
 	for(
 		let i = decimalIndex + 1;
-		i
-    < Math.min(
+		i <
+    Math.min(
     	decimalIndex + digits + 1,
-    	containsSymbol ? number.length - 1 : number.length,
+    	containsSymbol ? number.length - 1 : number.length
     );
 		i += 1
 	) {
 		// eslint-disable-next-line  @typescript-eslint/no-unused-expressions
-		isEntirelyZeroAfterDecimal && number.charCodeAt(i) === 48
-		ret += number.charAt(i)
+		if(isEntirelyZeroAfterDecimal && number.charCodeAt(i) === 48) {
+			ret += number.charAt(i)
+		}
 	}
 
-	const returnValue = (isEntirelyZeroAfterDecimal ? ret.substring(0, decimalIndex) : ret)
-    + (containsSymbol ? number.charAt(number.length - 1) : '')
+	const returnValue =
+    (isEntirelyZeroAfterDecimal ? ret.substring(0, decimalIndex) : ret) +
+    (containsSymbol ? number.charAt(number.length - 1) : '')
 	return returnValue
 }
 
-export function formatAmount(number: string, decimals = 18, isEditable = false, isBig = false) {
+function isAllZero(number: string) {
+	for(let i = 0; i < number.length; i += 1) {
+		if(number.charCodeAt(i) !== 48) {
+	  return false
+		}
+	}
+
+	return true
+}
+
+export function formatAmount(
+	number: string,
+	decimals = 18,
+	isEditable = false,
+	digits = 3
+) {
 	const value = ethers.utils.formatUnits(number, decimals).toString()
 
 	if(isEditable) {
-		return truncateTo(value, decimals)
-	}
-
-	if(!isBig) {
-		const formattedValue = nFormatter(value)
-		return truncateTo(formattedValue)
+		return value
 	} else {
-	 	return truncateTo(value)
+		if(value.indexOf('.') === -1) {
+			const formattedValue = nFormatter(value, digits)
+			return formattedValue
+		} else {
+			const postDecimal = value.substring(
+				value.indexOf('.') + 1,
+				Math.min(value.length, value.indexOf('.') + digits + 1)
+			)
+			const preDecimal = nFormatter(
+				value.substring(0, value.indexOf('.')),
+				digits
+			)
+	  const lastSymbol = preDecimal.charCodeAt(preDecimal.length - 1)
+  	  const containsSymbol = !(lastSymbol >= 48 && lastSymbol <= 57)
+			if(!containsSymbol && !isAllZero(postDecimal)) {
+				return `${preDecimal}.${postDecimal}`
+			} else {
+				return preDecimal
+			}
+		}
 	}
 }
 
 export function highlightWordsInString(
 	string: string,
 	words: string[],
-	color: string,
+	color: string
 ) {
 	const regex = new RegExp(`(${words.join('|')})`, 'gi')
 	const formatted = string.replace(regex, (match) => `<span>${match}<span>`)
@@ -165,7 +203,7 @@ export function getFormattedDateFromUnixTimestamp(timestamp: number) {
 }
 
 export function getFormattedDateFromUnixTimestampWithYear(
-	timestamp: number | undefined,
+	timestamp: number | undefined
 ) {
 	return timestamp ? moment.unix(timestamp).format('MMM DD, YYYY') : undefined
 }
@@ -182,7 +220,7 @@ export function truncateStringFromMiddle(str: string) {
 	if(str.length > 10) {
 		return `${str.substring(0, 4)}...${str.substring(
 			str.length - 4,
-			str.length,
+			str.length
 		)}`
 	}
 
@@ -212,17 +250,27 @@ export function getMilestoneTitle(milestone: FundTransfer['milestone']) {
 	return 'Unknown Milestone'
 }
 
-export const getTextWithEllipses = (txt: string, maxLength = 7) => (txt?.length > maxLength ? `${txt.slice(0, maxLength)}...` : txt)
+export const getTextWithEllipses = (txt: string, maxLength = 7) => txt?.length > maxLength ? `${txt.slice(0, maxLength)}...` : txt
 
 export const getChainIdFromResponse = (networkString: string): string => networkString?.split('_')[1]
 
 // eslint-disable-next-line max-len
 export const getFieldLabelFromFieldTitle = (title: string) => applicantDetailsList.find((detail) => detail.id === title)?.title
 
-export const getExplorerUrlForAddress = (chainId: SupportedChainId | undefined, address: string) => {
-	return CHAIN_INFO[chainId!]?.explorer.address.replace('{{address}}', address) || ''
+export const getExplorerUrlForAddress = (
+	chainId: SupportedChainId | undefined,
+	address: string
+) => {
+	return (
+		CHAIN_INFO[chainId!]?.explorer.address.replace('{{address}}', address) || ''
+	)
 }
 
-export const getExplorerUrlForTxHash = (chainId: SupportedChainId | undefined, tx: string) => {
-	return CHAIN_INFO[chainId!]?.explorer.transactionHash.replace('{{tx}}', tx) || ''
+export const getExplorerUrlForTxHash = (
+	chainId: SupportedChainId | undefined,
+	tx: string
+) => {
+	return (
+		CHAIN_INFO[chainId!]?.explorer.transactionHash.replace('{{tx}}', tx) || ''
+	)
 }

@@ -73,6 +73,7 @@ function SignupDao() {
 					publicKey: undefined,
 				}],
 				tokens: [],
+				createdAtS: new Date().getTime(),
 			}
 			setNewWorkspaceObject(w)
 			setWorkspace(w)

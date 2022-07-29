@@ -6,7 +6,6 @@ import React, {
 	useState,
 } from 'react'
 import { Container } from '@chakra-ui/react'
-import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import Breadcrumbs from 'src/components/ui/breadcrumbs'
@@ -70,9 +69,9 @@ function EditGrant() {
 		let rewardCurrencyAddress
 		console.log('grant token while editing grant', grant)
 		if(grant.reward.token) {
-			reward = ethers.utils.formatUnits(
+			reward = formatAmount(
 				grant.reward.committed,
-				grant.reward.token.decimal,
+				grant.reward.token.decimal, true
 			).toString()
 			rewardCurrency = grant.reward.token.label
 			rewardCurrencyAddress = grant.reward.token.address
@@ -84,7 +83,7 @@ function EditGrant() {
 						grant.workspace.supportedNetworks[0],
 					)
 				]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-					?.decimals || 18,
+					?.decimals || 18, true
 			)
 			rewardCurrency = CHAIN_INFO[
 				getSupportedChainIdFromSupportedNetwork(
@@ -163,9 +162,9 @@ function EditGrant() {
 			console.log('grant token while editing grant', grant)
 			if(grant.reward.token) {
 				console.log('grant token while editing grant', grant)
-				reward = ethers.utils.formatUnits(
+				reward = formatAmount(
 					grant.reward.committed,
-					grant.reward.token.decimal,
+					grant.reward.token.decimal, true,
 				).toString()
 				rewardCurrency = grant.reward.token.label
 				rewardCurrencyAddress = grant.reward.token.address
@@ -177,7 +176,7 @@ function EditGrant() {
 							grant.workspace.supportedNetworks[0],
 						)
 					]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-						?.decimals || 18,
+						?.decimals || 18, true,
 				)
 				rewardCurrency = CHAIN_INFO[
 					getSupportedChainIdFromSupportedNetwork(

@@ -211,7 +211,7 @@ function ManageGrant() {
 					w="full"
 					align="center">
 					{
-						tabs.map((tab, index) => {
+						tabs.slice(-3).map((tab, index) => {
 							console.log('TAB: ', tab)
 							return (
 								<Button
