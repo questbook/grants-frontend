@@ -43,69 +43,72 @@ function useGetTabs() {
 	const [grantsCount, setGrantsCount] = React.useState(0)
 	const toast = useToast()
 
+	const getNumberOfApplications = async() => {
+		try {
+			const promises = getNumberOfApplicationsClients.map(
+				// eslint-disable-next-line no-async-promise-executor
+				(query) => new Promise(async(resolve) => {
+					const { data } = await query[0]({
+						variables: { applicantId: accountData?.address! },
+					})
+					if(data && data.grantApplications.length > 0) {
+						resolve(data.grantApplications.length)
+					} else {
+						resolve(0)
+					}
+				}),
+			)
+			Promise.all(promises).then((value: any[]) => {
+				const sum = value.reduce((a, b) => a + b, 0)
+				setApplicationCount(sum)
+			})
+		} catch(e) {
+			toast({
+				title: 'Error getting application count',
+				status: 'error',
+			})
+		}
+	}
+
+	const getNumberOfGrants = async() => {
+		try {
+			const query = getNumberOfGrantsClients[getSupportedChainIdFromWorkspace(workspace)!][0]
+			const { data } = await query({
+				variables: { workspaceId: workspace?.id! },
+			})
+			if(data && data.grants.length > 0) {
+				setGrantsCount(data.grants.length)
+			} else {
+				setGrantsCount(0)
+			}
+		} catch(e) {
+			toast({
+				title: 'Error getting grants count',
+				status: 'error',
+			})
+		}
+	}
+
+	React.useEffect(() => {
+		if(!workspace || !workspace?.id) {
+			return
+		}
+
+		getNumberOfGrants()
+	}, [accountData?.address, workspace?.id, isConnected])
+
 	React.useEffect(() => {
 		if(!accountData?.address) {
 			return
 		}
 
-		if(!workspace) {
-			return
-		}
-
-		const getNumberOfApplications = async() => {
-			try {
-				const promises = getNumberOfApplicationsClients.map(
-					// eslint-disable-next-line no-async-promise-executor
-					(query) => new Promise(async(resolve) => {
-						const { data } = await query[0]({
-							variables: { applicantId: accountData?.address },
-						})
-						if(data && data.grantApplications.length > 0) {
-							resolve(data.grantApplications.length)
-						} else {
-							resolve(0)
-						}
-					}),
-				)
-				Promise.all(promises).then((value: any[]) => {
-					setApplicationCount(value.reduce((a, b) => a + b, 0))
-				})
-			} catch(e) {
-				toast({
-					title: 'Error getting application count',
-					status: 'error',
-				})
-			}
-		}
-
-		const getNumberOfGrants = async() => {
-			try {
-				const query = getNumberOfGrantsClients[getSupportedChainIdFromWorkspace(workspace)!][0]
-				const { data } = await query({
-					variables: { workspaceId: workspace?.id },
-				})
-				if(data && data.grants.length > 0) {
-					setGrantsCount(data.grants.length)
-				} else {
-					setGrantsCount(0)
-				}
-			} catch(e) {
-				toast({
-					title: 'Error getting grants count',
-					status: 'error',
-				})
-			}
-		}
-
 		getNumberOfApplications()
-		getNumberOfGrants()
-
-	}, [accountData?.address, workspace?.id, isConnected])
+	}, [accountData?.address, isConnected])
 
 	console.log('WORKSPACE: ', workspace)
 	if(!workspace || !workspace.id) {
 		// Pure applicant
-		return [ [TABS[0]], [] ]
+		return [ [TABS[0], TABS[1]], [] ]
 	} else {
 		const member = workspace.members.find((m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase())
 		if(!member) {

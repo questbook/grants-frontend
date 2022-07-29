@@ -4075,7 +4075,7 @@ export type GetMyApplicationsQuery = { __typename?: 'Query', grantApplications: 
 export type GetNumberOfApplicationsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
-  applicantId?: InputMaybe<Scalars['Bytes']>;
+  applicantId: Scalars['Bytes'];
 }>;
 
 
@@ -5744,7 +5744,7 @@ export type GetMyApplicationsQueryHookResult = ReturnType<typeof useGetMyApplica
 export type GetMyApplicationsLazyQueryHookResult = ReturnType<typeof useGetMyApplicationsLazyQuery>;
 export type GetMyApplicationsQueryResult = Apollo.QueryResult<GetMyApplicationsQuery, GetMyApplicationsQueryVariables>;
 export const GetNumberOfApplicationsDocument = gql`
-    query getNumberOfApplications($first: Int, $skip: Int, $applicantId: Bytes) {
+    query getNumberOfApplications($first: Int, $skip: Int, $applicantId: Bytes!) {
   grantApplications(where: {applicantId: $applicantId}, subgraphError: allow) {
     id
   }
@@ -5769,7 +5769,7 @@ export const GetNumberOfApplicationsDocument = gql`
  *   },
  * });
  */
-export function useGetNumberOfApplicationsQuery(baseOptions?: Apollo.QueryHookOptions<GetNumberOfApplicationsQuery, GetNumberOfApplicationsQueryVariables>) {
+export function useGetNumberOfApplicationsQuery(baseOptions: Apollo.QueryHookOptions<GetNumberOfApplicationsQuery, GetNumberOfApplicationsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetNumberOfApplicationsQuery, GetNumberOfApplicationsQueryVariables>(GetNumberOfApplicationsDocument, options);
       }
