@@ -25,8 +25,8 @@
     "@emotion/styled": "^11.6.0",
     "@ethersproject/bignumber": "^5.6.2",
     "@metamask/eth-sig-util": "^4.0.0",
-    "@questbook/anon-authoriser": "github:questbook/anon-authoriser",
-    "@questbook/service-validator-client": "github:questbook/service-validator-typescript-client",
+    "@questbook/anon-authoriser": "git+https://github.com/questbook/anon-authoriser",
+    "@questbook/service-validator-client": "git+https://github.com/questbook/service-validator-typescript-client",
     "@toast-ui/editor": "^3.1.2",
     "@toast-ui/react-editor": "^3.1.2",
     "@types/react-star-ratings": "^2.3.0",
@@ -58,7 +58,7 @@
     "wagmi": "^0.4.3"
   },
   "devDependencies": {
-    "@creatoros/eslint-config": "github:CreatorOS/eslint-config",
+    "@creatoros/eslint-config": "git+https://github.com/CreatorOS/eslint-config",
     "@graphql-codegen/cli": "^2.6.2",
     "@graphql-codegen/introspection": "^2.1.1",
     "@graphql-codegen/typescript": "^2.4.5",
