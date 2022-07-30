@@ -1,0 +1,5 @@
+query getWorkspaceMemberExists($id: ID!) {
+	workspaceMember(id: $id) {
+		id
+	}
+}

@@ -83,6 +83,7 @@ function BrowseGrantCard({
 					flex={1}
 					direction="column">
 					<Flex
+						justifyContent={'space-around'}
 						direction="row"
 						alignItems="center">
 						<Text maxW="50%">
@@ -115,6 +116,8 @@ function BrowseGrantCard({
 						</Text>
 
 						<Box mr="auto" />
+
+						<Badge numOfApplicants={numOfApplicants} />
 					</Flex>
 
 					<Text

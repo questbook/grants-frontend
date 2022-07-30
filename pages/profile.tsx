@@ -6,6 +6,7 @@ import {
 	Code,
 	Divider,
 	Flex,
+	Heading,
 	IconButton,
 	Image,
 	Modal,
@@ -321,7 +322,7 @@ function Profile() {
 							fundTimes={fundingTime}
 							applicationTime={applicationTime}
 						/>
-						{/* <Button
+						<Button
 							p="4px 8px"
 							border="1px solid #E8E9E9"
 							bg="none"
@@ -336,7 +337,7 @@ function Profile() {
 							{'</>'}
 							{' '}
 Embed profile stats
-						</Button> */}
+						</Button>
 					</Stack>
 
 					<Divider />
@@ -492,7 +493,7 @@ Embed profile stats
 						<Flex
 							direction="column"
 							gap="0.5rem">
-							{/* <Heading
+							<Heading
 								fontFamily="DM Sans"
 								fontStyle="normal"
 								fontWeight="500"
@@ -501,7 +502,7 @@ Embed profile stats
 								color="#1F1F33"
 							>
 							Embed profile stats
-							</Heading> */}
+							</Heading>
 							<Text
 								fontFamily="DM Sans"
 								fontStyle="normal"

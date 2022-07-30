@@ -16,7 +16,6 @@ function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicke
 	// const { connected } = useContext(ApiClientsContext)!
 	const { isDisconnected } = useConnect()
 	const router = useRouter()
-	console.log(router.pathname)
 	const chainId = useChainId()
 
 	return (

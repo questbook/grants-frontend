@@ -4,6 +4,7 @@
 export type { ApplicationRegistryAbi } from "./ApplicationRegistryAbi";
 export type { ApplicationReviewRegistryAbi } from "./ApplicationReviewRegistryAbi";
 export type { ERC20 } from "./ERC20";
+export type { ERC20Proxy } from "./ERC20Proxy";
 export type { GrantAbi } from "./GrantAbi";
 export type { GrantFactoryAbi } from "./GrantFactoryAbi";
 export type { WorkspaceRegistryAbi } from "./WorkspaceRegistryAbi";
@@ -11,6 +12,7 @@ export * as factories from "./factories";
 export { ApplicationRegistryAbi__factory } from "./factories/ApplicationRegistryAbi__factory";
 export { ApplicationReviewRegistryAbi__factory } from "./factories/ApplicationReviewRegistryAbi__factory";
 export { ERC20__factory } from "./factories/ERC20__factory";
+export { ERC20Proxy__factory } from "./factories/ERC20Proxy__factory";
 export { GrantAbi__factory } from "./factories/GrantAbi__factory";
 export { GrantFactoryAbi__factory } from "./factories/GrantFactoryAbi__factory";
 export { WorkspaceRegistryAbi__factory } from "./factories/WorkspaceRegistryAbi__factory";

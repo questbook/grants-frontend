@@ -30,10 +30,12 @@ import {
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+import { infuraProvider } from 'wagmi/providers/infura'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { publicProvider } from 'wagmi/providers/public'
 import 'styles/globals.css'
 import 'draft-js/dist/Draft.css'
+
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -60,6 +62,7 @@ const { chains, provider } = configureChains(allChains, [
 		},
 	}),
 	publicProvider(),
+	infuraProvider({ infuraId })
 ])
 
 // Set up client
@@ -82,8 +85,11 @@ const client = createClient({
 		new WalletConnectConnector({
 			chains,
 			options: {
-				infuraId,
 				qrcode: true,
+				rpc: {
+					'137': `https://polygon-mainnet.infura.io/v3/${infuraId}`,
+					'4': `https://rinkeby.infura.io/v3/${infuraId}`
+				},
 			},
 		}),
 	],

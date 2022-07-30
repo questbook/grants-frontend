@@ -119,8 +119,8 @@
 			"https://optimism-mainnet.infura.io/v3/"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Optimistic Ethereum",
+			"symbol": "ETH",
 			"decimals": 18
 		}
 	},
@@ -171,8 +171,8 @@
 			"https://kovan.infura.io/v3/"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Kovan",
+			"symbol": "KOV",
 			"decimals": 18
 		}
 	},
@@ -209,8 +209,8 @@
 			"https://optimism-kovan.infura.io/v3/"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Optimism Kovan",
+			"symbol": "KOR",
 			"decimals": 18
 		}
 	},
@@ -361,8 +361,8 @@
 			"https://polygon-mainnet.g.alchemy.com/v2/"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Polygon Mainnet",
+			"symbol": "MATIC",
 			"decimals": 18
 		}
 	},
@@ -398,8 +398,8 @@
 			"https://api.baobab.klaytn.net:8651"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Klaytn Testnet",
+			"symbol": "KLAY",
 			"decimals": 18
 		}
 	},
@@ -517,8 +517,8 @@
 			"https://public-node-api.klaytnapi.com/v1/cypress"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Klaytn Mainnet",
+			"symbol": "KLAY",
 			"decimals": 18
 		}
 	},
@@ -552,7 +552,7 @@
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-evmos-testnet",
 		"rpcUrls": [
-			"https://eth.bd.evmos.dev:8545"
+			"https://41d67fdgs4.execute-api.ap-south-1.amazonaws.com/v0/evmos"
 		],
 		"nativeCurrency": {
 			"name": "Test EVMOS",
@@ -648,8 +648,8 @@
 			"https://alfajores-forno.celo-testnet.org"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Celo Alfajores Testnet",
+			"symbol": "CELO",
 			"decimals": 18
 		}
 	},
@@ -693,8 +693,8 @@
 			"https://polygon-mumbai.infura.io/v3/"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Polygon Testnet",
+			"symbol": "MATIC",
 			"decimals": 18
 		}
 	},
@@ -744,8 +744,8 @@
 			"http://neon-devnet-rpc.questbook.app:9090/solana"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Neon Devnet",
+			"symbol": "NEON",
 			"decimals": 18
 		}
 	},
@@ -827,8 +827,8 @@
 			"https://api.harmony.one"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Harmony Mainnet",
+			"symbol": "ONE",
 			"decimals": 18
 		}
 	},
@@ -879,8 +879,8 @@
 			"https://api.s0.pops.one"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Harmony Testnet",
+			"symbol": "ONE",
 			"decimals": 18
 		}
 	}
