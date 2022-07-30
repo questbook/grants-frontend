@@ -31,7 +31,7 @@ function ConnectWallet({ onGetStartedBtnClicked, setGetStartedClicked } :{onGetS
 					display={{ base:'none', md:'inherit' }}
 					h="20px"
 					w="20px"
-					src={router.pathname.includes('browse_dao') || router.pathname.includes('profile') ? '/ui_icons/light_user_account.svg' : '/ui_icons/user_account_black.svg'}
+					src={'/ui_icons/light_user_account.svg'}
 					alt="account_circle"
 					mr={'10px'}
 				/>

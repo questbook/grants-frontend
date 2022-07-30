@@ -25,7 +25,7 @@
     "@emotion/styled": "^11.6.0",
     "@ethersproject/bignumber": "^5.6.2",
     "@metamask/eth-sig-util": "^4.0.0",
-    "@questbook/anon-authoriser": "https://github.com/questbook/anon-authoriser",
+    "@questbook/anon-authoriser": "github:questbook/anon-authoriser",
     "@questbook/service-validator-client": "github:questbook/service-validator-typescript-client",
     "@toast-ui/editor": "^3.1.2",
     "@toast-ui/react-editor": "^3.1.2",
