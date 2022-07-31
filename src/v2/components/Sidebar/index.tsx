@@ -128,9 +128,13 @@ function Sidebar() {
 					))
 				}
 			</Flex>
-			{workspaces.length > 0 && <Divider
-				bg="#E0E0EC"
-				height="1px" />}
+			{
+				workspaces.length > 0 && (
+					<Divider
+						bg="#E0E0EC"
+						height="1px" />
+				)
+			}
 			<Flex
 				direction="column"
 				align="stretch"
@@ -157,7 +161,8 @@ function Sidebar() {
 			</Flex>
 			<Divider
 				bg="#E0E0EC"
-				height="1px" mt={6} />
+				height="1px"
+				mt={6} />
 			{/* <Flex
 				bg="#E0E0EC"
 				height="2px"
