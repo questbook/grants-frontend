@@ -22,6 +22,7 @@ function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicke
 		<Container
 			zIndex={1}
 			variant={'header-container'}
+			maxH="64px"
 			display='flex'
 			maxW="100vw"
 			bg={ 'white'}

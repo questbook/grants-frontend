@@ -1,10 +1,9 @@
 import React from 'react'
-import { Box, Button, Flex, Image, useToast } from '@chakra-ui/react'
+import { Divider, Flex, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { useGetWorkspaceMembersLazyQuery } from 'src/generated/graphql'
 import { MinimalWorkspace } from 'src/types'
-import getRole from 'src/utils/memberUtils'
 import getTabFromPath from 'src/utils/tabUtils'
 import { useAccount, useConnect } from 'wagmi'
 import ManageDAO from './ManageDAO'
@@ -90,40 +89,13 @@ function Sidebar() {
 			position="sticky"
 			left={0}
 			top={0}
-			h="calc(100vh - 80px)"
+			h="calc(100vh - 64px)"
 			w="25vw"
-			bg="#F0F0F7"
+			bg="white"
 			direction="column"
 			overflowY="scroll"
+			border="1px solid #E0E0EC"
 		>
-			<Flex
-				direction="column"
-				align="stretch"
-				mt={3}
-				mb={2}
-				mx={6}>
-				{
-					topTabs.map((tab, index) => (
-						<SidebarItem
-							key={tab.id}
-							index={tab.index}
-							selected={tabSelected}
-							id={tab.id}
-							name={tab.name}
-							onClick={
-								() => {
-									setTabSelected(tab.index)
-									router.push({ pathname: tab.path })
-								}
-							}
-						/>
-					))
-				}
-			</Flex>
-			<Flex
-				bg="#E0E0EC"
-				height="2px"
-				w="100%" />
 			<ManageDAO
 				workspaces={workspaces}
 				onWorkspaceClick={
@@ -137,7 +109,7 @@ function Sidebar() {
 				align="stretch"
 				mt={2}
 				mb={2}
-				mx={6}>
+				mx={2}>
 				{
 					bottomTabs.map((tab, index) => (
 						<SidebarItem
@@ -156,8 +128,42 @@ function Sidebar() {
 					))
 				}
 			</Flex>
-			<Box my="auto" />
-			{
+			{workspaces.length > 0 && <Divider
+				bg="#E0E0EC"
+				height="1px" />}
+			<Flex
+				direction="column"
+				align="stretch"
+				mt={workspaces.length > 0 ? 4 : 0}
+				mb={2}
+				mx={2}>
+				{
+					topTabs.map((tab, index) => (
+						<SidebarItem
+							key={tab.id}
+							index={tab.index}
+							selected={tabSelected}
+							id={tab.id}
+							name={tab.name}
+							onClick={
+								() => {
+									setTabSelected(tab.index)
+									router.push({ pathname: tab.path })
+								}
+							}
+						/>
+					))
+				}
+			</Flex>
+			<Divider
+				bg="#E0E0EC"
+				height="1px" mt={6} />
+			{/* <Flex
+				bg="#E0E0EC"
+				height="2px"
+				w="100%" /> */}
+			{/* <Box my="auto" /> */}
+			{/* {
 				(!workspaces || workspaces.length === 0 ||
         (workspace && accountData?.address && getRole(workspace, accountData?.address) === 'Reviewer')) && (
         	<Button
@@ -181,7 +187,7 @@ function Sidebar() {
             Create your DAO
         	</Button>
 				)
-			}
+			} */}
 		</Flex>
 	)
 }

@@ -82,7 +82,7 @@ function ManageDAO() {
 		<Flex
 			w="100%"
 			px={10}
-			maxH="calc(100vh - 80px)"
+			maxH="calc(100vh - 64px)"
 			overflowY="scroll"
 			mb={4}>
 			{

@@ -13,13 +13,13 @@ function SidebarItem({ id, selected, index, name, onClick }: Props) {
 
 	return (
 		<Flex
-			bg={isSelected ? '#1F1F33' : Flex.defaultProps}
+			bg={isSelected ? '#F0F0F7' : Flex.defaultProps}
 	  my={1}
-	  py={3}
+	  py={4}
 			px={4}
 	  w="100%"
 			borderRadius="2px"
-			h="40px"
+			h={8}
 			justify="start"
 			align="center"
 	  onClick={onClick}
@@ -31,13 +31,13 @@ function SidebarItem({ id, selected, index, name, onClick }: Props) {
 						index === selected ? 'selected' : 'unselected'
 					}.svg`
 				}
-				boxSize="24px"
+				boxSize="20px"
 			/>
 			<Text
-				color={isSelected ? '#B6F72B' : '#7D7DA0'}
+				color={isSelected ? '#1F1F33' : '#7D7DA0'}
 				ml={4}
 				fontSize="14px"
-				lineHeight="40px"
+				lineHeight={isSelected ? '16px' : '20px'}
 				fontWeight="500"
 			>
 				{name}

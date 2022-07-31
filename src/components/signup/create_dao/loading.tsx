@@ -10,7 +10,7 @@ import animationData from '../../../../public/animations/Loading.json'
 function Loading() {
 	return (
 		<Container
-			minH="calc(100vh - 80px)"
+			minH="calc(100vh - 64px)"
 			justifyContent="center"
 			display="flex"
 			flexDirection="column"

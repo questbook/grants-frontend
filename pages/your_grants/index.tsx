@@ -628,7 +628,7 @@ Post a Grant / Bounty
 				<Flex
 					w="26%"
 					pos="sticky"
-					minH="calc(100vh - 80px)"
+					minH="calc(100vh - 64px)"
 					// display={isAdmin ? undefined : 'none'}
 				>
 					<Sidebar
