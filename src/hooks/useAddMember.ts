@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
@@ -16,11 +16,11 @@ import {
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useNetwork } from 'wagmi'
+import { useNetwork } from './gasless/useNetwork'
+
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
-import useChainId from './utils/useChainId'
 
 export default function useAddMember(
 	data: any,
@@ -35,7 +35,8 @@ export default function useAddMember(
 	const apiClients = useContext(ApiClientsContext)!
 	const { workspace } = apiClients
 
-	const currentChainId = useChainId()
+	const currentChainId = useMemo(() => networkData.id, [networkData])
+
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 	const workspaceRegistryContract = useQBContract('workspace', chainId)
 
