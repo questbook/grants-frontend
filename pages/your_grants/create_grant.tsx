@@ -17,7 +17,8 @@ import useCustomToast from 'src/hooks/utils/useCustomToast'
 import useIntersection from 'src/hooks/utils/useIntersection'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useNetwork } from 'wagmi'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
+import SupportedChainId from 'src/generated/SupportedChainId'
 
 function CreateGrant() {
 	const apiClients = useContext(ApiClientsContext)!
@@ -74,12 +75,12 @@ function CreateGrant() {
 	const [transactionData, blockExplorerLink, loading] = useCreateGrant(formData)
 
 	useEffect(() => {
-		if(workspace && switchNetwork) {
+		if(workspace) {
 			const chainId = getSupportedChainIdFromWorkspace(workspace)
 			console.log(' (CREATE_GRANT) Switch Network: ', workspace, chainId)
-			switchNetwork(chainId!)
+			switchNetwork(chainId!.toString() as unknown as SupportedChainId)
 		}
-	}, [switchNetwork, workspace])
+	}, [workspace])
 
 	const { setRefresh } = useCustomToast(blockExplorerLink)
 

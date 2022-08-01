@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { ethers } from 'ethers'
+import { ethers, Wallet } from 'ethers'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { WebwalletContext } from 'pages/_app'
@@ -39,7 +39,7 @@ const OnboardingCreateDao = () => {
 	const [callOnContractChange, setCallOnContractChange] = useState(false)
 	const [currentStep, setCurrentStep] = useState<number>()
 
-	const { webwallet } = useContext(WebwalletContext)!
+	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 
 	// console.log(daoNetwork?.id.toString())
 
@@ -57,10 +57,10 @@ const OnboardingCreateDao = () => {
 		} 
 	}, [biconomy, biconomyWalletClient, scwAddress])
 
-	const {
-		connect,
-		connectors
-	} = useConnect()
+	// const {
+	// 	connect,
+	// 	connectors
+	// } = useConnect()
 
 	const targetContractObject = useQBContract('workspace', daoNetwork?.id)
 
@@ -166,13 +166,21 @@ const OnboardingCreateDao = () => {
 
 	// }, [targetContractObject, isBiconomyInitialised, daoNetwork])
 
-	const { data: signer } = useSigner()
+
+	// Removed for implementing gasless wallet instead of injected connectors.
+	// const { data: signer } = useSigner()
+	// useEffect(() => {
+	// 	if (!signer) {
+	// 		const connector = connectors.find((x) => x.id === 'injected')
+	// 		connect(connector)
+	// 	}
+	// }, [signer])
+
 	useEffect(() => {
-		if (!signer) {
-			const connector = connectors.find((x) => x.id === 'injected')
-			connect(connector)
+		if (!webwallet){
+			setWebwallet(Wallet.createRandom());
 		}
-	}, [signer])
+	}, [webwallet, setWebwallet])
 
 	const steps = [
 		<CreateDaoNameInput

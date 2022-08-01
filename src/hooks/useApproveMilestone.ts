@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useMemo } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import getErrorMessage from 'src/utils/errorUtils'
@@ -6,11 +6,10 @@ import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useNetwork } from 'wagmi'
+import { useNetwork } from './gasless/useNetwork'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
-import useChainId from './utils/useChainId'
 
 export default function useApproveMilestone(
 	data: any,
@@ -26,7 +25,7 @@ export default function useApproveMilestone(
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients
-	const currentChainId = useChainId()
+	const currentChainId =  useMemo(() => networkData.id, [networkData])
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 	const applicationContract = useQBContract('applications', chainId)
 	const toastRef = React.useRef<ToastId>()

@@ -8,7 +8,7 @@ import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useNetwork } from 'wagmi'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import CustomToast from '../components/ui/toasts/customToast'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useGrantContract from './contracts/useGrantContract'

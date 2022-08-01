@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useMemo } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
@@ -7,11 +7,10 @@ import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useNetwork } from 'wagmi'
+import { useNetwork } from './gasless/useNetwork'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
-import useChainId from './utils/useChainId'
 
 export default function useAssignReviewers(
 	data: any,
@@ -39,7 +38,7 @@ export default function useAssignReviewers(
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
-	const currentChainId = useChainId()
+	const currentChainId =  useMemo(() => networkData.id, [networkData])
 
 	useEffect(() => {
 		console.log('data', data)

@@ -20,11 +20,13 @@ import {
 	getSupportedChainIdFromWorkspace,
 	getSupportedValidatorNetworkFromChainId,
 } from 'src/utils/validationUtils'
-import { useNetwork } from 'wagmi'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import strings from '../constants/strings.json'
 import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
+
+// @TODO fix grantContract
 
 export default function useCreateGrant(
 	data: any,
@@ -33,7 +35,6 @@ export default function useCreateGrant(
 ) {
 
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
-
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,

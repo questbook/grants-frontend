@@ -1,14 +1,13 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useMemo } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useNetwork } from 'wagmi'
+import { useNetwork } from './gasless/useNetwork'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useGrantContract from './contracts/useGrantContract'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
-import useChainId from './utils/useChainId'
 
 export default function useArchiveGrant(newState: boolean, changeCount: number, grantId?: string) {
 	const [error, setError] = React.useState<string>()
@@ -23,7 +22,7 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 	const grantContract = useGrantContract(grantId)
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
-	const currentChainId = useChainId()
+	const currentChainId = useMemo(() => networkData.id, [networkData])
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 
 	useEffect(() => {

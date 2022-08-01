@@ -6,7 +6,7 @@ import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useNetwork } from 'wagmi'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
