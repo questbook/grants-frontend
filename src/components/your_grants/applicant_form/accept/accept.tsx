@@ -147,7 +147,7 @@ function Accept({
 									<Text
 										variant="applicationText"
 										fontWeight="700">
-								Funding Ask
+								Milestone Reward
 									</Text>
 									<Text
 										fontSize="14px"
