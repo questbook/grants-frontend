@@ -323,7 +323,7 @@ function Profile() {
 							applicationTime={applicationTime}
 						/>
 						<Button
-							p="4px 8px"
+							px="8px"
 							border="1px solid #E8E9E9"
 							bg="none"
 							h="2rem"
@@ -333,6 +333,7 @@ function Profile() {
 							lineHeight="2rem"
 							color="#373737"
 							onClick={() => onOpen()}
+							display={{ base: 'none', md: 'block' }}
 						>
 							{'</>'}
 							{' '}
