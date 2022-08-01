@@ -18,7 +18,6 @@ function Breadcrumbs({ path, id }: BreadcrumbProps) {
 			fontSize="16px"
 			lineHeight="24px"
 			color="#122224"
-			ml="-56px"
 		>
 			{
 				path.map((node, index) => {
