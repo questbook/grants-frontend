@@ -64,7 +64,6 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 				w="100vw"
 				h="100vh"
 				overflow="scroll">
-        (
 				<Flex
 					display={{ base: 'none', lg: 'flex' }}
 					w="20%"
@@ -73,7 +72,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 				>
 					<Sidebar />
 				</Flex>
-        )
+
 				{/* <Sidebar /> */}
 				{children}
 			</Flex>
