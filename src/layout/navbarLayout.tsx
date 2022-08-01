@@ -68,7 +68,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 				w="100vw"
 				h="100vh"
 				overflow="scroll">
-				{connected && <Sidebar />}
+				<Sidebar />
 				{children}
 			</Flex>
 			<ConnectWalletModal

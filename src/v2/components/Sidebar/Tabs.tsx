@@ -108,7 +108,11 @@ function useGetTabs() {
 	console.log('WORKSPACE: ', workspace)
 	if(!workspace || !workspace.id) {
 		// Pure applicant
-		return [ [TABS[0], TABS[1]], [] ]
+		if(applicationCount > 0) {
+			return [ [TABS[0], TABS[1]], [] ]
+		} else {
+			return [ [TABS[0]], [] ]
+		}
 	} else {
 		const member = workspace.members.find((m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase())
 		if(!member) {
