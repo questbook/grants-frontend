@@ -55,7 +55,7 @@ export default function useCreateGrant(
 		chainId = getSupportedChainIdFromWorkspace(workspace)
 	}
 
-	const targetContractObject = useQBContract('grantFactory', chainId)
+	const grantContract = useQBContract('grantFactory', chainId)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
@@ -171,7 +171,7 @@ export default function useCreateGrant(
 
 				console.log('THESE ARE METHODS', methodArgs)
 
-				const transactionHash = await sendGaslessTransaction(biconomy, targetContractObject, 'createGrant', methodArgs,
+				const transactionHash = await sendGaslessTransaction(biconomy, grantContract, 'createGrant', methodArgs,
 					GRANT_FACTORY_ADDRESS[currentChainId!], biconomyWalletClient,
 					scwAddress, webwallet, `${currentChainId}`, webHookId, nonce)
 
@@ -182,18 +182,6 @@ export default function useCreateGrant(
 
 				const createGrantTransactionData = receipt// await getEventData(receipt, "WorkspaceCreated", GrantFactoryAbi)
 
-				if(createGrantTransactionData) {
-					console.log('THIS IS EVENT', createGrantTransactionData)
-				}
-
-				// const createGrantTransaction = await grantContract.createGrant(
-				// 	workspaceId ?? Number(workspace?.id).toString(),
-				// 	ipfsHash,
-				// 	rubricHash,
-				// 	WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
-				// 	APPLICATION_REGISTRY_ADDRESS[currentChainId!],
-				// )
-				// const createGrantTransactionData = await createGrantTransaction.wait()
 
 				const CACHE_KEY = strings.cache.create_grant
 				const cacheKey = `${chainId || getSupportedChainIdFromWorkspace(workspace)}-${CACHE_KEY}-${workspace?.id}`
