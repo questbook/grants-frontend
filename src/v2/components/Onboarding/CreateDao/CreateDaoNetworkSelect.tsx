@@ -74,7 +74,7 @@ const CreateDaoNetworkSelect = ({
 						<NetworkSelect
 							value={newDaoSelectedNetwork}
 							onChange={(newValue) => newValue && setNewDaoSelectedNetwork(newValue)}
-							placeholder="Select a network"
+							placeholder='Select a network'
 						/>
 
 						{

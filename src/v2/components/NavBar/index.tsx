@@ -16,7 +16,6 @@ function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicke
 	// const { connected } = useContext(ApiClientsContext)!
 	const { isDisconnected } = useConnect()
 	const router = useRouter()
-	console.log(router.pathname)
 	const chainId = useChainId()
 
 	return (
@@ -39,7 +38,7 @@ function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicke
 				}
 				display={{ base:'none', lg:'inherit' }}
 				mr="auto"
-				src={isDisconnected && router.pathname.includes('browse_dao') ? '/ui_icons/qb.svg' : '/ui_icons/qb.svg'}
+				src={isDisconnected ? '/ui_icons/qb.svg' : '/ui_icons/qb.svg'}
 				alt="Questbook"
 				cursor="pointer"
 			/>
@@ -51,7 +50,7 @@ function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicke
 				}
 				display={{ base:'inherit', lg:'none' }}
 				mr="auto"
-				src={isDisconnected && router.pathname.includes('browse_dao') ? '/ui_icons/questbookMobile.svg' : '/ui_icons/qb.svg'}
+				src={isDisconnected ? '/ui_icons/questbookMobile.svg' : '/ui_icons/qb.svg'}
 				alt="Questbook"
 				cursor="pointer"
 			/>

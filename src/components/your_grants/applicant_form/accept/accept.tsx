@@ -1,7 +1,6 @@
 import React, { useContext } from 'react'
 import {
 	Button,
-	Container,
 	Divider,
 	Flex,
 	Image,
@@ -51,11 +50,10 @@ function Accept({
 	}
 
 	return (
-		<Container
-			flex={1}
-			display="flex"
+		<Flex
 			flexDirection="column"
-			maxW="660px"
+			w="25vw"
+			maxW="1260px"
 			alignItems="stretch"
 			pb={8}
 			px={0}
@@ -149,7 +147,7 @@ function Accept({
 									<Text
 										variant="applicationText"
 										fontWeight="700">
-								Funding Ask
+								Milestone Reward
 									</Text>
 									<Text
 										fontSize="14px"
@@ -184,7 +182,7 @@ function Accept({
 			>
 				{hasClicked ? <Loader /> : 'Accept Application'}
 			</Button>
-		</Container>
+		</Flex>
 	)
 }
 
