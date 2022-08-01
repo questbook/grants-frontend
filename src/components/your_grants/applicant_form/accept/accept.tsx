@@ -51,11 +51,10 @@ function Accept({
 	}
 
 	return (
-		<Container
-			flex={1}
-			display="flex"
+		<Flex
 			flexDirection="column"
-			maxW="660px"
+			w="25vw"
+			maxW="1260px"
 			alignItems="stretch"
 			pb={8}
 			px={0}
@@ -184,7 +183,7 @@ function Accept({
 			>
 				{hasClicked ? <Loader /> : 'Accept Application'}
 			</Button>
-		</Container>
+		</Flex>
 	)
 }
 

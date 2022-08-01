@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+	Flex,
 	Box,
 	Button, Container, Text, } from '@chakra-ui/react'
 import Loader from 'src/components/ui/loader'
@@ -21,11 +22,10 @@ function Resubmit({
   setCommentError: (commentError: boolean) => void;
 }) {
 	return (
-		<Container
-			flex={1}
-			display="flex"
+		<Flex
 			flexDirection="column"
-			maxW="502px"
+			w="25vw"
+			maxW="1260px"
 			alignItems="stretch"
 			pb={8}
 			px={0}
@@ -66,7 +66,7 @@ function Resubmit({
 				variant="primary">
 				{hasClicked ? <Loader /> : 'Ask to Resubmit'}
 			</Button>
-		</Container>
+		</Flex>
 	)
 }
 
