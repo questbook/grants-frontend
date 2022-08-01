@@ -16,7 +16,7 @@ function DaoData({ disbursed, applicants, winners, grants, fundTimes, applicatio
 	return (
 		<Grid
 			gap="1rem"
-			gridTemplateColumns="repeat(4, 1fr)"
+			gridTemplateColumns={{ base: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)' }}
 			w={
 				{
 					base: '100%',
@@ -34,10 +34,11 @@ $
 					{disbursed.reduce((sum, a) => sum + a, 0).toFixed(0)}
 				</Heading>
 				<Text
-					fontSize="0.875rem"
+					fontSize="14px"
 					lineHeight="24px"
 					fontWeight="400"
 					color="#AAAAAA"
+					width={'150px'}
 				>
           Grants Disbursed
 				</Text>
@@ -77,7 +78,9 @@ Winners
 				</Text>
 			</Flex>
 
-			<Flex direction="column">
+			<Flex
+				direction="column"
+				display={{ base: 'none' }}>
 				<Heading
 					color="#122224"
 					fontSize="1.2rem"

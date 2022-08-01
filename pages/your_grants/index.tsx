@@ -12,6 +12,7 @@ import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import AddFunds from 'src/components/funds/add_funds_modal'
 import ArchivedGrantEmptyState from 'src/components/your_grants/empty_states/archived_grant'
+import AssignedGrantEmptyState from 'src/components/your_grants/empty_states/assigned_grant'
 import ExpiredGrantEmptyState from 'src/components/your_grants/empty_states/expired_grant'
 import FirstGrantEmptyState from 'src/components/your_grants/empty_states/first_grant'
 import LiveGrantEmptyState from 'src/components/your_grants/empty_states/live_grants'
@@ -377,71 +378,68 @@ function YourGrants() {
 					pb={8}
 					px={10}>
 					{
-						isReviewer ? (
-							<Flex mt={4} />
-						) : (
-							<>
-								<Flex
-									mt="18px"
-									align="center"
-									justify="space-between">
-									<Text variant="heading">
-Your grants
-									</Text>
-									{
-										grants.length > 0 && (
-											<Button
-												variant="primaryV2"
-												onClick={
-													() => {
-														console.log('Create a grant!')
-														router.push({
-															pathname: '/your_grants/create_grant/',
-														})
+						<>
+							<Flex
+								mt="18px"
+								align="center"
+								justify="space-between">
+								<Text variant="heading">
+									{isReviewer ? 'Assigned Grants' : 'Your grants'}
+								</Text>
+								{
+									isAdmin && grants.length > 0 && (
+										<Button
+											variant="primaryV2"
+											onClick={
+												() => {
+													console.log('Create a grant!')
+													router.push({
+														pathname: '/your_grants/create_grant/',
+													})
 
-													}
-												}>
-Post a Grant / Bounty
-											</Button>
-										)
-									}
-								</Flex>
-								<Flex
-									direction="row"
-									mt={4}
-									mb={4}>
-									{
-										TABS.map((tab) => (
-											<Button
-												padding="8px 24px"
-												borderRadius="52px"
-												minH="40px"
-												bg={selectedTab === tab.index ? 'brand.500' : 'white'}
-												color={selectedTab === tab.index ? 'white' : 'black'}
-												onClick={
-													() => {
-														setSelectedTab(tab.index)
-														localStorage.setItem(
-															'yourGrantsTabSelected',
-															tab.index.toString()
-														)
-													}
 												}
-												_hover={{}}
-												fontWeight="700"
-												fontSize="16px"
-												lineHeight="24px"
-												mr={3}
-												border={selectedTab === tab.index ? 'none' : '1px solid #A0A7A7'}
-												key={tab.index}
-											>
-												{tab.label}
-											</Button>
-										))
-									}
-								</Flex>
-							</>
-						)
+											}>
+Post a Grant / Bounty
+										</Button>
+									)
+								}
+							</Flex>
+							<Flex
+								direction="row"
+								mt={4}
+								mb={4}>
+								{
+									isAdmin && TABS.map((tab) => (
+										<Button
+											padding="8px 24px"
+											borderRadius="52px"
+											minH="40px"
+											bg={selectedTab === tab.index ? 'brand.500' : 'white'}
+											color={selectedTab === tab.index ? 'white' : 'black'}
+											onClick={
+												() => {
+													setSelectedTab(tab.index)
+													localStorage.setItem(
+														'yourGrantsTabSelected',
+														tab.index.toString()
+													)
+												}
+											}
+											_hover={{}}
+											fontWeight="700"
+											fontSize="16px"
+											lineHeight="24px"
+											mr={3}
+											border={selectedTab === tab.index ? 'none' : '1px solid #A0A7A7'}
+											key={tab.index}
+										>
+											{tab.label}
+										</Button>
+									))
+								}
+							</Flex>
+						</>
+
 					}
 					{
 						isAdmin &&
@@ -618,13 +616,13 @@ Post a Grant / Bounty
             isReviewer &&
             !grantCount[0] &&
             !grantCount[1] &&
-            router.query.done && <FirstGrantEmptyState />
+            router.query.done && <AssignedGrantEmptyState />
 					}
 					{
 						grantsReviewer.length === 0 &&
             isReviewer &&
             !router.query.done &&
-            getEmptyStateForSelectedTab()
+            <AssignedGrantEmptyState />
 					}
 				</Flex>
 				<Flex

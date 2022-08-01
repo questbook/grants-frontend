@@ -41,7 +41,9 @@ function DaoCard({ logo, name, daoId, chainId, noOfApplicants, totalAmount }:{lo
 					src={logo}
 					my={'8px'}
 					w={'56px'}
-					h={'56p'} />
+					h={'56px'}
+					objectFit={'cover'}
+					borderRadius={'4px'} />
 				<Text
 					ml={'auto'}
 					fontWeight={'700'}
@@ -58,7 +60,8 @@ Applicants
 			<Text
 				fontSize={'20px'}
 				fontWeight={'500'}
-				mb={'5px'}>
+				mb={'5px'}
+				noOfLines={1}>
 				{name}
 			</Text>
 			<Flex>
