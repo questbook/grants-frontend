@@ -4,13 +4,18 @@ import {
 	Input,	Progress,	RangeSlider,
 	RangeSliderFilledTrack,
 	RangeSliderThumb,	RangeSliderTrack,
-	Spacer, Text, } from '@chakra-ui/react'
+	Skeleton,	Spacer, Text } from '@chakra-ui/react'
+import { formatEther } from 'ethers/lib/utils'
 import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
+import { CHAIN_INFO } from 'src/constants/chains'
+import useQBContract from 'src/hooks/contracts/useQBContract'
 import useSetRubrics from 'src/hooks/useSetRubrics'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
-import { useAccount } from 'wagmi'
+import { GasStation } from 'src/v2/assets/custom chakra icons/GasStation'
+import { NetworkSelectOption } from 'src/v2/components/Onboarding/SupportedNetworksData'
+import { useAccount, useProvider } from 'wagmi'
 
 function RubricDrawer({
 	rubricDrawerOpen,
@@ -33,11 +38,13 @@ function RubricDrawer({
   maximumPoints: number;
   setMaximumPoints: (maximumPoints: number) => void;
   grantAddress: string;
-  chainId: SupportedChainId | undefined;
+  chainId: SupportedChainId;
   workspaceId: string;
   initialIsPrivate: boolean;
 }) {
 	const [shouldEncryptReviews, setShouldEncryptReviews] = React.useState(false)
+	const [gasEstimate, setGasEstimate] = React.useState<any>('')
+	const [daoNetwork, setDaoNetwork] = useState<NetworkSelectOption>()
 
 	useEffect(() => {
 		if(initialIsPrivate) {
@@ -171,6 +178,25 @@ function RubricDrawer({
 			setRefresh(true)
 		}
 	}, [data, setRubricDrawerOpen])
+
+	const applicationReviewContract = useQBContract('reviews', chainId)
+	const provider = useProvider()
+	const estimateSetRubric = async() => {
+		setGasEstimate(undefined)
+		try {
+			const estimate = await applicationReviewContract.estimateGas.setRubrics(workspaceId, grantAddress, 'bafkreiboy5njxjyusnps6oayqg7famhocgymhaqp5p53p2kd6fhzhxqiny')
+			const gasPrice = await provider.getGasPrice()
+			setGasEstimate(formatEther(estimate.mul(gasPrice)))
+		} catch(e) {
+			console.log(e)
+		}
+	}
+
+	useEffect(() => {
+		if(applicationReviewContract.signer !== null && provider !== null) {
+			estimateSetRubric()
+		}
+	}, [applicationReviewContract, provider])
 
 	return (
 		<>
@@ -731,7 +757,30 @@ Define the quality, and add a description
 							backgroundColor="#FFFFFF"
 							alignItems="flex-start"
 							padding="16px">
-
+							{
+								setupStep && (
+									<Skeleton isLoaded={gasEstimate !== undefined}>
+										<Flex
+											bg={'#F0F0F7'}
+											borderRadius={'base'}
+											px={3}>
+											<GasStation
+												color={'#89A6FB'}
+												boxSize={5} />
+											<Text
+												ml={2}
+												mt={'1.5px'}
+												fontSize={'xs'}>
+              Network Fee -
+												{' '}
+												{gasEstimate}
+												{' '}
+												{CHAIN_INFO[chainId].nativeCurrency.symbol}
+											</Text>
+										</Flex>
+									</Skeleton>
+								)
+							}
 							<Spacer />
 
 							<Flex
@@ -743,9 +792,12 @@ Define the quality, and add a description
 								borderRadius="3px"
 								cursor="pointer"
 								onClick={
-									() => {
-										setSetupStep(1)
-									}
+									setupStep ? () => {
+										handleOnSubmit()
+									} :
+										() => {
+											setSetupStep(1)
+										}
 								}
 							>
 								<Text
