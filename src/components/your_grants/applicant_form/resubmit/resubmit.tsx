@@ -1,8 +1,8 @@
 import React from 'react'
 import {
-	Flex,
 	Box,
-	Button, Container, Text, } from '@chakra-ui/react'
+	Button, 	Flex,
+	Text, } from '@chakra-ui/react'
 import Loader from 'src/components/ui/loader'
 import MultiLineInput from '../../../ui/forms/multiLineInput'
 
