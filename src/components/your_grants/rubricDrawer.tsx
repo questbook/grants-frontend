@@ -1,7 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react'
 import {
 	Box, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, Image,
-	Input,	Progress,	Spacer, Text } from '@chakra-ui/react'
+	Input,	Progress,	RangeSlider,
+	RangeSliderFilledTrack,
+	RangeSliderThumb,	RangeSliderTrack,
+	Spacer, Text, } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
 import useSetRubrics from 'src/hooks/useSetRubrics'
@@ -183,6 +186,7 @@ function RubricDrawer({
 					<Flex
 						direction="column"
 						overflow="scroll"
+						height="812px"
 					>
 						{/* <Flex
 							mb={8}
@@ -353,17 +357,47 @@ Reviewers
 								fontWeight="500"
 								fontSize="14px"
 								lineHeight="20px">
-Scoring Qualities
+								{setupStep ? 'Select the number of reviewers assigned per applicant' : 'Scoring Qualities'}
 							</Text>
-							<Text
-								color="#7D7DA0"
-								fontWeight="400"
-								fontSize="12px"
-								lineHeight="20px">
+							{
+								!setupStep && (
+									<Text
+										color="#7D7DA0"
+										fontWeight="400"
+										fontSize="12px"
+										lineHeight="20px">
 Define the quality, and add a description
-							</Text>
+									</Text>
+								)
+							}
+							{
+								setupStep && (
+									<RangeSlider
+										defaultValue={[20]}
+										step={20}>
+										<RangeSliderTrack>
+											<RangeSliderFilledTrack
+												background='linear-gradient(90deg, #0065FF 0%, #00FFA3 100%)'
+											/>
+										</RangeSliderTrack>
+										<RangeSliderThumb
+											boxSize={4}
+											index={0}>
+	  <Box
+												width="50px"
+												height="24px">
+	  <Image
+													src="/ui_icons/slider_thumb_blue.svg"
+													width="50px"
+													height="24px" />
+	  </Box>
+										</RangeSliderThumb>
+									</RangeSlider>
+								)
+							}
 						</Flex>
 						{
+							!setupStep &&
 							rubrics.map((rubric, index) => (
 								<>
 									<Flex
@@ -517,47 +551,50 @@ Define the quality, and add a description
 							))
 						}
 
-						<Flex
-							mt="19px"
-							gap="2"
-							justifyContent="flex-start">
-							<Box
-								onClick={
-									() => {
-										if(!rubricEditAllowed) {
-											return
+						{
+							!setupStep && (
+								<Flex
+									mt="19px"
+									gap="2"
+									justifyContent="flex-start">
+									<Box
+										onClick={
+											() => {
+												if(!rubricEditAllowed) {
+													return
+												}
+
+												const newRubrics = [...rubrics, {
+													name: '',
+													nameError: false,
+													description: '',
+													descriptionError: false,
+												}]
+												setRubrics(newRubrics)
+											}
 										}
-
-										const newRubrics = [...rubrics, {
-											name: '',
-											nameError: false,
-											description: '',
-											descriptionError: false,
-										}]
-										setRubrics(newRubrics)
-									}
-								}
-								display="flex"
-								alignItems="center"
-								cursor="pointer"
-								opacity={rubricEditAllowed ? 1 : 0.4}
-							>
-								<Image
-									h="16.67px"
-									w="16.67px"
-									src="/ui_icons/plus_circle_blue.svg"
-									mr="6px"
-								/>
-								<Text
-									fontWeight="500"
-									fontSize="14px"
-									color="#0065FF"
-									lineHeight="20px">
+										display="flex"
+										alignItems="center"
+										cursor="pointer"
+										opacity={rubricEditAllowed ? 1 : 0.4}
+									>
+										<Image
+											h="16.67px"
+											w="16.67px"
+											src="/ui_icons/plus_circle_blue.svg"
+											mr="6px"
+										/>
+										<Text
+											fontWeight="500"
+											fontSize="14px"
+											color="#0065FF"
+											lineHeight="20px">
                   Add another quality
-								</Text>
-							</Box>
-						</Flex>
-
+										</Text>
+									</Box>
+								</Flex>
+							)
+						}
 						{/* <Flex
 							opacity={rubricEditAllowed ? 1 : 0.4}
 							direction="column"
@@ -694,6 +731,7 @@ Define the quality, and add a description
 							backgroundColor="#FFFFFF"
 							alignItems="flex-start"
 							padding="16px">
+
 							<Spacer />
 
 							<Flex
@@ -701,7 +739,7 @@ Define the quality, and add a description
 								padding="6px 20px"
 								w="153px"
 								h="40px"
-								background="#E0E0EC"
+								background={setupStep ? '#1F1F33' : '#E0E0EC'}
 								borderRadius="3px"
 								cursor="pointer"
 								onClick={
@@ -718,7 +756,7 @@ Define the quality, and add a description
 									lineHeight="24px"
 									textAlign="center"
 									color="#FFFFFF">
-									Next
+									{setupStep ? 'Confirm' : 'Next'}
 								</Text>
 							</Flex>
 						</Flex>

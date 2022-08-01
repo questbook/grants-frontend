@@ -342,7 +342,7 @@ function ViewApplicants() {
 	// const { data: grantData } = useGetGrantDetailsQuery(queryParams);
 	useEffect(() => {
 		console.log('grantData', grantData)
-		const initialRubrics = grantData?.grants[0].rubric
+		const initialRubrics = grantData?.grants[0]?.rubric
 		const newRubrics = [] as any[]
 		console.log('initialRubrics', initialRubrics)
 		initialRubrics?.items.forEach((initalRubric) => {
@@ -757,7 +757,7 @@ Setup now
 				chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
 				grantAddress={grantID}
 				workspaceId={workspace?.id || ''}
-				initialIsPrivate={grantData?.grants[0].rubric?.isPrivate || false}
+				initialIsPrivate={grantData?.grants[0]?.rubric?.isPrivate || false}
 			/>
 
 			<Modal
