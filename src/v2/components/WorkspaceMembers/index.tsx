@@ -4,29 +4,24 @@ import {
 	Box,
 	Button,
 	Center,
-	Checkbox,
 	Flex,
-	Grid,
-	GridItem,
 	Spacer,
 	Table,
 	Tag,
 	Tbody,
-	Td,
 	Th,
 	Thead,
 	Tr,
 	Wrap,
 	WrapItem,
 } from '@chakra-ui/react'
-import { capitalizeFirstLetter } from 'src/utils/generics'
 import { ApiClientsContext } from '../../../../pages/_app'
 import Loader from '../../../components/ui/loader'
 import { defaultChainId } from '../../../constants/chains'
 import { useGetWorkspaceMembersByWorkspaceIdQuery, WorkspaceMemberAccessLevel } from '../../../generated/graphql'
-import { getFormattedDateFromUnixTimestampWithYear } from '../../../utils/formattingUtils'
 import { getSupportedChainIdFromWorkspace } from '../../../utils/validationUtils'
 import InviteModal from '../InviteModal'
+import MemberRow from './MemberRow'
 
 const PAGE_SIZE = 7
 
@@ -170,33 +165,9 @@ function WorkspaceMembers() {
 									<Tbody>
 										{
                       members!.map((member: any) => (
-                      	<Tr key={member.id}>
-                      		<Td>
-                      			<Checkbox />
-                      		</Td>
-                      		<Td>
-                      			<Grid>
-                      				<GridItem fontWeight={'bold'}>
-                      					{member.fullName}
-                      				</GridItem>
-                      				<GridItem color={'#9292AF'}>
-                      					{member.actorId}
-                      				</GridItem>
-                      			</Grid>
-                      		</Td>
-                      		<Td>
-                      			<Tag
-                      				bg={'#FFC403'}
-                      				borderRadius={2}
-                      				fontWeight={'bold'}
-                      			>
-                      				{capitalizeFirstLetter(member.accessLevel)}
-                      			</Tag>
-                      		</Td>
-                      		<Td>
-                      			{getFormattedDateFromUnixTimestampWithYear(member.addedAt)}
-                      		</Td>
-                      	</Tr>
+                      	<MemberRow
+                      		key={member.id}
+                      		member={member} />
                       ))
 										}
 									</Tbody>
