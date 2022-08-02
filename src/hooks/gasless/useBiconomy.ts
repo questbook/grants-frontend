@@ -2,10 +2,10 @@ import { useContext, useEffect, useState } from 'react'
 import { Biconomy } from '@biconomy/mexa'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import { deploySCW, jsonRpcProviders } from 'src/utils/gaslessUtils'
-import { WebwalletContext, BiconomyContext } from '../../../pages/_app'
+import { BiconomyContext, WebwalletContext } from '../../../pages/_app'
 
 export const useBiconomy = (data: any) => {
-	const { webwallet, scwAddress, setScwAddress, nonce,  } = useContext(WebwalletContext)!
+	const { webwallet, scwAddress, setScwAddress, nonce, } = useContext(WebwalletContext)!
 	const { biconomyDaoObj, setBiconomyDaoObj } = useContext(BiconomyContext)!
 	const [biconomyWalletClient, setBiconomyWalletClient] = useState<BiconomyWalletClient>()
 

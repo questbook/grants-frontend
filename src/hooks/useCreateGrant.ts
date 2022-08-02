@@ -1,6 +1,5 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { ethers } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
 import { WebwalletContext } from 'pages/_app'
 import {
@@ -11,6 +10,7 @@ import {
 import { SupportedChainId } from 'src/constants/chains'
 import GrantFactoryAbi from 'src/contracts/abi/GrantFactoryAbi.json'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash, parseAmount } from 'src/utils/formattingUtils'
@@ -20,7 +20,6 @@ import {
 	getSupportedChainIdFromWorkspace,
 	getSupportedValidatorNetworkFromChainId,
 } from 'src/utils/validationUtils'
-import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import strings from '../constants/strings.json'
 import useQBContract from './contracts/useQBContract'

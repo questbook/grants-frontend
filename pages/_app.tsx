@@ -53,7 +53,7 @@ const { chains, provider } = configureChains(allChains, [
 	jsonRpcProvider({
 		rpc: (chain: Chain) => {
 			const rpcUrl = CHAIN_INFO[chain.id as SupportedChainId]?.rpcUrls[0]
-			if (!rpcUrl) {
+			if(!rpcUrl) {
 				return {
 					http: CHAIN_INFO[defaultChain.id as SupportedChainId].rpcUrls[0],
 				}
@@ -104,7 +104,7 @@ export const ApiClientsContext = createContext<{
 	subgraphClients: { [chainId: string]: SubgraphClient };
 	connected: boolean;
 	setConnected: (connected: boolean) => void;
-} | null>(null)
+		} | null>(null)
 
 export const WebwalletContext = createContext<{
 	webwallet?: Wallet;
@@ -115,15 +115,15 @@ export const WebwalletContext = createContext<{
 	setScwAddress: (scwAddress?: string) => void;
 	nonce?: string;
 	setNonce: (nonce?: string) => void;
-} | null>(null)
+		} | null>(null)
 
 export const BiconomyContext = createContext<{
 	biconomyDaoObj: any,
 	setBiconomyDaoObj: (biconomyDaoObj: any) => void;
-} | null>(null)
+		} | null>(null)
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-	const [network, switchNetwork] = React.useState<SupportedChainId>();
+	const [network, switchNetwork] = React.useState<SupportedChainId>()
 	const [webwallet, setWebwallet] = React.useState<Wallet>()
 	const [workspace, setWorkspace] = React.useState<MinimalWorkspace>()
 	const [scwAddress, setScwAddress] = React.useState<string>()
@@ -131,13 +131,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [nonce, setNonce] = React.useState<string>()
 
 	const getScwAddress = () => {
-		if (typeof window === 'undefined') {
+		if(typeof window === 'undefined') {
 			return undefined
 		}
 
 		const _scwAddress = localStorage.getItem('scwAddress')
 
-		if (!_scwAddress) {
+		if(!_scwAddress) {
 			return undefined
 		}
 
@@ -145,13 +145,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}
 
 	const getNonce = () => {
-		if (typeof window === 'undefined') {
+		if(typeof window === 'undefined') {
 			return undefined
 		}
 
 		const _nonce = localStorage.getItem('nonce')
 
-		if (!_nonce) {
+		if(!_nonce) {
 			return undefined
 		}
 
@@ -159,13 +159,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}
 
 	const getNetwork = () => {
-		if (typeof window === 'undefined') {
+		if(typeof window === 'undefined') {
 			return undefined
 		}
 
 		const _network = localStorage.getItem('network')
 
-		if (!_network) {
+		if(!_network) {
 			return undefined
 		}
 
@@ -173,19 +173,19 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}
 
 	const createWebWallet = () => {
-		if (typeof window === 'undefined') {
+		if(typeof window === 'undefined') {
 			return undefined
 		}
 
 		const privateKey = localStorage.getItem('webwalletPrivateKey')
-		if (!privateKey) {
+		if(!privateKey) {
 			return undefined
 		}
 
 		try {
 			const newWebwallet = new Wallet(privateKey)
 			return newWebwallet
-		} catch {
+		} catch{
 			return undefined
 		}
 	}
@@ -212,25 +212,27 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		() => ({
 			webwallet: webwallet || createWebWallet(),
 			setWebwallet: (newWebwallet?: Wallet) => {
-				if (newWebwallet) {
+				if(newWebwallet) {
 					localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
 				} else {
 					localStorage.removeItem('webwalletPrivateKey')
 				}
+
 				setWebwallet(newWebwallet)
 			},
 			network: getNetwork(),
 			switchNetwork: (newNetwork?: SupportedChainId) => {
-				if (newNetwork) {
+				if(newNetwork) {
 					localStorage.setItem('network', newNetwork.toString())
 				} else {
 					localStorage.removeItem('network')
 				}
+
 				switchNetwork(newNetwork)
 			},
 			scwAddress: getScwAddress(),
 			setScwAddress: (newScwAddress?: string) => {
-				if (newScwAddress) {
+				if(newScwAddress) {
 					localStorage.setItem('scwAddress', newScwAddress)
 				} else {
 					localStorage.removeItem('scwAddress')
@@ -241,7 +243,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			nonce: getNonce(),
 			setNonce: (newNonce?: string) => {
 				console.log('called nonce: ', newNonce)
-				if (newNonce) {
+				if(newNonce) {
 					console.log('setting nonce', newNonce)
 					localStorage.setItem('nonce', newNonce)
 				} else {
@@ -286,7 +288,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			validatorApi,
 			workspace,
 			setWorkspace: (newWorkspace?: MinimalWorkspace) => {
-				if (newWorkspace) {
+				if(newWorkspace) {
 					localStorage.setItem(
 						'currentWorkspace',
 						newWorkspace.supportedNetworks[0] + '-' + newWorkspace.id
@@ -346,7 +348,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	)
 }
 
-MyApp.getInitialProps = async (appContext: AppContext) => {
+MyApp.getInitialProps = async(appContext: AppContext) => {
 	// calls page's `getInitialProps` and fills `appProps.pageProps`
 	const appProps = await App.getInitialProps(appContext)
 	return { ...appProps }

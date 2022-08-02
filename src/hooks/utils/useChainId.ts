@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { CHAIN_INFO } from 'src/constants/chains'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 
 /**

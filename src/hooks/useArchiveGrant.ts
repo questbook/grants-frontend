@@ -4,9 +4,9 @@ import { ApiClientsContext } from 'pages/_app'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useNetwork } from './gasless/useNetwork'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useGrantContract from './contracts/useGrantContract'
+import { useNetwork } from './gasless/useNetwork'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 
 export default function useArchiveGrant(newState: boolean, changeCount: number, grantId?: string) {

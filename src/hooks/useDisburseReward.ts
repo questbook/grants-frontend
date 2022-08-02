@@ -3,12 +3,12 @@ import { ToastId, useToast } from '@chakra-ui/react'
 import { BigNumber, utils } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
 import SuccessToast from 'src/components/ui/toasts/successToast'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import CustomToast from '../components/ui/toasts/customToast'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useGrantContract from './contracts/useGrantContract'

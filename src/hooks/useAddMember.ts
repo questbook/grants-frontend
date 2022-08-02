@@ -16,10 +16,9 @@ import {
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useNetwork } from './gasless/useNetwork'
-
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
+import { useNetwork } from './gasless/useNetwork'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 
 export default function useAddMember(

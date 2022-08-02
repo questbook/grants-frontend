@@ -22,7 +22,7 @@ function AccountDetails() {
 	// cause now it's only with metmask
 	const { disconnect } = useDisconnect()
 	const { connected, setConnected } = useContext(ApiClientsContext)!
-	
+
 	const router = useRouter()
 
 	const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`
@@ -122,7 +122,7 @@ function AccountDetails() {
 				)
 			}
 			{
-				(!(connected && isDisconnected) || (nonce && nonce !== "Token expired")) && (
+				(!(connected && isDisconnected) || (nonce && nonce !== 'Token expired')) && (
 					<MenuList>
 						<MenuItem
 							onClick={

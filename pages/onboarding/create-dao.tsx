@@ -1,12 +1,13 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { ethers, Wallet } from 'ethers'
+import { Wallet } from 'ethers'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
+import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
@@ -25,8 +26,6 @@ import { NetworkSelectOption } from 'src/v2/components/Onboarding/SupportedNetwo
 import CreateDaoModal from 'src/v2/components/Onboarding/UI/CreateDaoModal'
 import BackgroundImageLayout from 'src/v2/components/Onboarding/UI/Layout/BackgroundImageLayout'
 import OnboardingCard from 'src/v2/components/Onboarding/UI/Layout/OnboardingCard'
-import { useConnect, useNetwork, useSigner } from 'wagmi'
-import useQBContract from 'src/hooks/contracts/useQBContract'
 
 const OnboardingCreateDao = () => {
 	const router = useRouter()
@@ -46,15 +45,15 @@ const OnboardingCreateDao = () => {
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,
 		targetContractABI: WorkspaceRegistryAbi,
-		chainId: "80001"
+		chainId: '80001'
 	})
-	
-	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState("not ready")
+
+	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState('not ready')
 
 	useEffect(() => {
-		if (biconomy && biconomyWalletClient && scwAddress) {
-			setIsBiconomyInitialised("ready")
-		} 
+		if(biconomy && biconomyWalletClient && scwAddress) {
+			setIsBiconomyInitialised('ready')
+		}
 	}, [biconomy, biconomyWalletClient, scwAddress])
 
 	// const {
@@ -68,7 +67,7 @@ const OnboardingCreateDao = () => {
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
 
-	const createWorkspace = async () => {
+	const createWorkspace = async() => {
 		setCallOnContractChange(false)
 		setCurrentStep(0)
 		try {
@@ -101,11 +100,11 @@ const OnboardingCreateDao = () => {
 					getSupportedValidatorNetworkFromChainId(daoNetwork!.id),
 				],
 			})
-			if (!ipfsHash) {
+			if(!ipfsHash) {
 				throw new Error('Error validating grant data')
 			}
 
-			if (!daoNetwork) {
+			if(!daoNetwork) {
 
 				throw new Error('No network specified')
 			}
@@ -113,7 +112,7 @@ const OnboardingCreateDao = () => {
 			setCurrentStep(2)
 
 
-			if (typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
+			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
 				return
 			}
 
@@ -139,7 +138,7 @@ const OnboardingCreateDao = () => {
 			setTimeout(() => {
 				router.push({ pathname: '/your_grants' })
 			}, 2000)
-		} catch (e) {
+		} catch(e) {
 			setCurrentStep(undefined)
 			const message = getErrorMessage(e)
 			toastRef.current = toast({
@@ -147,7 +146,7 @@ const OnboardingCreateDao = () => {
 				render: () => ErrorToast({
 					content: message,
 					close: () => {
-						if (toastRef.current) {
+						if(toastRef.current) {
 							toast.close(toastRef.current)
 						}
 					},
@@ -177,8 +176,8 @@ const OnboardingCreateDao = () => {
 	// }, [signer])
 
 	useEffect(() => {
-		if (!webwallet){
-			setWebwallet(Wallet.createRandom());
+		if(!webwallet) {
+			setWebwallet(Wallet.createRandom())
 		}
 	}, [webwallet, setWebwallet])
 
@@ -222,12 +221,12 @@ const OnboardingCreateDao = () => {
 	]
 
 	const nextClick = () => {
-		if (step === 0) {
+		if(step === 0) {
 			setStep(1)
 			return
 		}
 
-		if (step === 1) {
+		if(step === 1) {
 			setStep(2)
 			return
 		}
@@ -238,12 +237,12 @@ const OnboardingCreateDao = () => {
 	}
 
 	const backClick = () => {
-		if (step === 2) {
+		if(step === 2) {
 			setStep(1)
 			return
 		}
 
-		if (step === 1) {
+		if(step === 1) {
 			setStep(0)
 			return
 		}

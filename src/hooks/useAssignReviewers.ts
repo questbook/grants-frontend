@@ -7,9 +7,9 @@ import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useNetwork } from './gasless/useNetwork'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
+import { useNetwork } from './gasless/useNetwork'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 
 export default function useAssignReviewers(
@@ -38,7 +38,7 @@ export default function useAssignReviewers(
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
-	const currentChainId =  useMemo(() => networkData.id, [networkData])
+	const currentChainId = useMemo(() => networkData.id, [networkData])
 
 	useEffect(() => {
 		console.log('data', data)

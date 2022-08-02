@@ -141,7 +141,7 @@ const CreateDaoFinal = ({
 			>
 				<ContinueButton
 					onClick={() => onSubmit!()}
-					disabled={onSubmit === null || isBiconomyInitialised !== "ready"}
+					disabled={onSubmit === null || isBiconomyInitialised !== 'ready'}
 					props={
 						{
 							minW: '343px',
