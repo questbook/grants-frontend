@@ -103,6 +103,7 @@ function WorkspaceMembers() {
 										bg={'#E0E0EC'}
 										marginRight={2}
 										paddingTop={1}
+										fontSize={15}
 										paddingBottom={1}
 										borderRadius={2}
 									>
