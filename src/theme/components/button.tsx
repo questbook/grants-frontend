@@ -113,7 +113,7 @@ export default {
 					color: '#AFAFCC',
 					'&:hover': {
 						bg: '#E0E0EC',
-					}
+					},
 				},
 			},
 			primaryLightV2: {
@@ -132,10 +132,16 @@ export default {
 					color: 'white',
 					'&:hover': {
 						bg: '#E0E0EC',
-					}
+					},
 				},
 
-			}
+			},
+			inviteLink: {
+				_selected: { color: '#E0E0EC', bg: '#1F1F32' },
+				bg: '#1F1F32',
+				color: '#E0E0EC',
+				borderRadius: 4,
+			},
 		},
 	},
 }

@@ -118,10 +118,7 @@ function WorkspaceMembers() {
 					<Button
 						onClick={() => setIsInviteModalOpen(true)}
 						leftIcon={<LinkIcon />}
-						bg={'#1F1F32'}
-						colorScheme={'#E0E0EC'}
-						borderRadius={4}
-						variant='solid'>
+						variant={'inviteLink'}>
             Create invite link
 					</Button>
 				</Flex>
