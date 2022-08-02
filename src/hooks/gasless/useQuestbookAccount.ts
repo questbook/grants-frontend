@@ -1,10 +1,8 @@
 import { useContext, useEffect, useState } from 'react'
-import { NonceContext, ScwAddressContext, WebwalletContext } from '../../../pages/_app'
+import { WebwalletContext } from '../../../pages/_app'
 
 export const useQuestbookAccount = () => {
-	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
-	const { scwAddress, setScwAddress } = useContext(ScwAddressContext)!
-	const { nonce, setNonce } = useContext(NonceContext)!
+	const { webwallet, scwAddress, nonce, setNonce } = useContext(WebwalletContext)!
 
 	const [gaslessData, setGaslessData] = useState<any>()
 	// const { data: accountData } = useAccount()

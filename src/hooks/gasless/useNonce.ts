@@ -1,50 +1,33 @@
 import { useContext, useEffect } from 'react'
 import { Wallet } from 'ethers'
-import { GitHubTokenContext, NonceContext, WebwalletContext } from '../../../pages/_app'
+import { WebwalletContext } from '../../../pages/_app'
 import { getNonce } from '../../utils/gaslessUtils'
 
 export const useNonce = () => {
-	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
-	const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!
-	const { nonce, setNonce } = useContext(NonceContext)!
+	const { webwallet, setWebwallet, nonce, setNonce } = useContext(WebwalletContext)!
 
-	const getUseNonce = async() => {
-		const nonce = await getNonce(webwallet)
-		return nonce
+	const getUseNonce = async () => {
+		const _nonce = await getNonce(webwallet);
+		return _nonce;
 	}
 
 	useEffect(() => {
-		// console.log("isLoggedIn or webwallet changed", webwallet, isLoggedIn)
-		if(!webwallet) {
+		if (!webwallet) {
 			setWebwallet(Wallet.createRandom())
 		}
 
-		if(!isLoggedIn && webwallet) {
-			console.log('TTTTTTTTTTTTT')
-			window.location.href = `https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}`
-		}
-	}, [isLoggedIn, webwallet])
-
-	useEffect(() => {
-		console.log('What is going on here?????', webwallet, nonce, isLoggedIn)
-		if(webwallet && (!nonce || nonce === 'Token expired') && isLoggedIn) {
-			// console.log("NOW GOT HERE")
+		if (webwallet && !nonce) {
 			getUseNonce()
 				.then(_nonce => {
-					console.log('THIS IS NONCE', _nonce, isLoggedIn)
-					if(!_nonce) {
-						setNonce('')
-						setIsLoggedIn(false)
+					if (!_nonce) {
+						setNonce(undefined)
 					} else {
-						if(!isLoggedIn) {
-							setIsLoggedIn(true)
-						}
-
-						setNonce(_nonce)
+						if (_nonce === "Token expired")
+							setNonce(undefined)
 					}
 				})
 		}
-	}, [webwallet, isLoggedIn, nonce])
+	}, [webwallet, nonce])
 
 	return nonce
 }

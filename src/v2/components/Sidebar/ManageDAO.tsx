@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { ApiClientsContext, GitHubTokenContext } from 'pages/_app'
+import { ApiClientsContext } from 'pages/_app'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { MinimalWorkspace } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
@@ -14,13 +14,11 @@ interface Props {
 
 function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 	const { workspace } = React.useContext(ApiClientsContext)!
-	const { isLoggedIn } = React.useContext(GitHubTokenContext)!
 	const { data: accountData, nonce } = useQuestbookAccount()
 	const [expanded, setExpanded] = React.useState(false)
-	console.log('Logged in', isLoggedIn)
 	const router = useRouter()
 
-	return isLoggedIn && workspace && workspace.id && accountData?.address ? (
+	return nonce && workspace && workspace.id && accountData?.address ? (
 		<Flex
 			direction="column"
 			mx={6}

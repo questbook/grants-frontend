@@ -106,26 +106,14 @@ export const ApiClientsContext = createContext<{
 	setConnected: (connected: boolean) => void;
 } | null>(null)
 
-
-export const GitHubTokenContext = createContext<{
-	isLoggedIn?: boolean,
-	setIsLoggedIn: (isLoggedIn?: boolean) => void;
-} | null>(null)
-
 export const WebwalletContext = createContext<{
-	webwallet?: Wallet,
+	webwallet?: Wallet;
 	setWebwallet: (webwallet?: Wallet) => void;
-	network?: SupportedChainId
+	network?: SupportedChainId;
 	switchNetwork: (newNetwork: SupportedChainId) => void;
-} | null>(null)
-
-export const ScwAddressContext = createContext<{
-	scwAddress?: string,
+	scwAddress?: string;
 	setScwAddress: (scwAddress?: string) => void;
-} | null>(null)
-
-export const NonceContext = createContext<{
-	nonce?: string,
+	nonce?: string;
 	setNonce: (nonce?: string) => void;
 } | null>(null)
 
@@ -138,28 +126,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [network, switchNetwork] = React.useState<SupportedChainId>();
 	const [webwallet, setWebwallet] = React.useState<Wallet>()
 	const [workspace, setWorkspace] = React.useState<MinimalWorkspace>()
-	const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>()
 	const [scwAddress, setScwAddress] = React.useState<string>()
 	const [biconomyDaoObj, setBiconomyDaoObj] = React.useState<any>()
 	const [nonce, setNonce] = React.useState<string>()
-
-	const getIsLoggedIn = () => {
-		if (typeof window === 'undefined') {
-			return undefined
-		}
-
-		const _isLoggedIn = localStorage.getItem('isLoggedInGitHub')
-
-		if (!_isLoggedIn) {
-			return undefined
-		}
-
-		if (_isLoggedIn === '1') {
-			return true
-		}
-
-		return false
-	}
 
 	const getScwAddress = () => {
 		if (typeof window === 'undefined') {
@@ -189,56 +158,19 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		return _nonce
 	}
 
-	const nonceContextValue = useMemo(
-		() => ({
-			nonce: getNonce(),
-			setNonce: (newNonce?: string) => {
-				console.log('called nonce: ', newNonce)
-				if (newNonce) {
-					console.log('setting nonce', newNonce)
-					localStorage.setItem('nonce', newNonce)
-				} else {
-					console.log('removing nonce: ', localStorage.getItem('nonce'))
-					localStorage.removeItem('nonce')
-				}
+	const getNetwork = () => {
+		if (typeof window === 'undefined') {
+			return undefined
+		}
 
-				setNonce(newNonce)
-			}
-		})
-		, [nonce, setNonce]
-	)
+		const _network = localStorage.getItem('network')
 
-	const scwAddressContextValue = useMemo(
-		() => ({
-			scwAddress: getScwAddress(),
-			setScwAddress: (newScwAddress?: string) => {
-				if (newScwAddress) {
-					localStorage.setItem('scwAddress', newScwAddress)
-				} else {
-					localStorage.removeItem('scwAddress')
-				}
+		if (!_network) {
+			return undefined
+		}
 
-				setScwAddress(newScwAddress)
-			}
-		})
-		, [scwAddress, setScwAddress]
-	)
-
-	const githubTokenContextValue = useMemo(
-		() => ({
-			isLoggedIn: getIsLoggedIn(),
-			setIsLoggedIn: (newIsLoggedIn?: boolean) => {
-				if (newIsLoggedIn) {
-					localStorage.setItem('isLoggedInGitHub', '1')
-				} else {
-					localStorage.setItem('isLoggedInGitHub', '0')
-				}
-
-				setIsLoggedIn(newIsLoggedIn)
-			}
-		})
-		, [isLoggedIn, setIsLoggedIn]
-	)
+		return parseInt(_network)
+	}
 
 	const createWebWallet = () => {
 		if (typeof window === 'undefined') {
@@ -258,24 +190,23 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		}
 	}
 
+	// const getBiconomyDaoObj = () => {
+	// 	if (typeof window === 'undefined') {
+	// 		return undefined
+	// 	}
 
-	const getBiconomyDaoObj = () => {
-		if (typeof window === 'undefined') {
-			return undefined
-		}
+	// 	let _biconomyDaoObj = localStorage.getItem('biconomyDaoObj')
+	// 	if (!_biconomyDaoObj) {
+	// 		return undefined
+	// 	}
 
-		let _biconomyDaoObj = localStorage.getItem('biconomyDaoObj')
-		if (!_biconomyDaoObj) {
-			return undefined
-		}
-
-		try {
-			_biconomyDaoObj = JSON.parse(_biconomyDaoObj)
-			return _biconomyDaoObj
-		} catch {
-			return undefined
-		}
-	}
+	// 	try {
+	// 		_biconomyDaoObj = JSON.parse(_biconomyDaoObj)
+	// 		return _biconomyDaoObj
+	// 	} catch {
+	// 		return undefined
+	// 	}
+	// }
 
 	const webwalletContextValue = useMemo(
 		() => ({
@@ -288,24 +219,46 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				}
 				setWebwallet(newWebwallet)
 			},
-			network,
-			switchNetwork
+			network: getNetwork(),
+			switchNetwork: (newNetwork?: SupportedChainId) => {
+				if (newNetwork) {
+					localStorage.setItem('network', newNetwork.toString())
+				} else {
+					localStorage.removeItem('network')
+				}
+				switchNetwork(newNetwork)
+			},
+			scwAddress: getScwAddress(),
+			setScwAddress: (newScwAddress?: string) => {
+				if (newScwAddress) {
+					localStorage.setItem('scwAddress', newScwAddress)
+				} else {
+					localStorage.removeItem('scwAddress')
+				}
+
+				setScwAddress(newScwAddress)
+			},
+			nonce: getNonce(),
+			setNonce: (newNonce?: string) => {
+				console.log('called nonce: ', newNonce)
+				if (newNonce) {
+					console.log('setting nonce', newNonce)
+					localStorage.setItem('nonce', newNonce)
+				} else {
+					console.log('removing nonce: ', localStorage.getItem('nonce'))
+					localStorage.removeItem('nonce')
+				}
+
+				setNonce(newNonce)
+			}
 		}),
-		[webwallet, setWebwallet, network, switchNetwork]
+		[webwallet, setWebwallet, network, switchNetwork, scwAddress, setScwAddress, nonce, setNonce]
 	)
 
 	const biconomyDaoObjContextValue = useMemo(
 		() => ({
-			biconomyDaoObj: getBiconomyDaoObj(),
-			setBiconomyDaoObj: (newBiconomyDaoObj?: any) => {
-				if (newBiconomyDaoObj) {
-					localStorage.setItem('biconomyDaoObj', JSON.stringify(newBiconomyDaoObj))
-				} else {
-					localStorage.removeItem('biconomyDaoObj')
-				}
-
-				setBiconomyDaoObj(newBiconomyDaoObj)
-			}
+			biconomyDaoObj,
+			setBiconomyDaoObj
 		}),
 		[biconomyDaoObj, setBiconomyDaoObj]
 	)
@@ -381,17 +334,11 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			<WagmiConfig client={client}>
 				<ApiClientsContext.Provider value={apiClients}>
 					<WebwalletContext.Provider value={webwalletContextValue}>
-						<GitHubTokenContext.Provider value={githubTokenContextValue}>
-							<ScwAddressContext.Provider value={scwAddressContextValue}>
-								<NonceContext.Provider value={nonceContextValue}>
-									<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
-										<ChakraProvider theme={theme}>
-											{getLayout(<Component {...pageProps} />)}
-										</ChakraProvider>
-									</BiconomyContext.Provider>
-								</NonceContext.Provider>
-							</ScwAddressContext.Provider>
-						</GitHubTokenContext.Provider>
+						<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
+							<ChakraProvider theme={theme}>
+								{getLayout(<Component {...pageProps} />)}
+							</ChakraProvider>
+						</BiconomyContext.Provider>
 					</WebwalletContext.Provider>
 				</ApiClientsContext.Provider>
 			</WagmiConfig>

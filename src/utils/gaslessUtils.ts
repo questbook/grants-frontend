@@ -146,7 +146,7 @@ export const sendGaslessTransaction = async (biconomy: any, targetContractObject
 	}
 
 	if (nonce === 'Token expired') {
-		alert('Your GitHub session has terminated. Please log in again.')
+		alert('Your Session has terminated. Please log in again.')
 		return false
 	}
 

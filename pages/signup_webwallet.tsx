@@ -6,7 +6,7 @@ import {
 import { Contract } from 'ethers'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import NavbarLayout from '../src/layout/navbarLayout'
-import { BiconomyContext, GitHubTokenContext, NonceContext, ScwAddressContext, WebwalletContext } from './_app'
+import { BiconomyContext, WebwalletContext } from './_app'
 
 const config = {
 	contract: {
@@ -79,11 +79,8 @@ let scwAddress: string
 
 function SignupWebwallet() {
 
-	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
-	const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!
-	const { scwAddress, setScwAddress } = useContext(ScwAddressContext)!
+	const { webwallet, setWebwallet, scwAddress, nonce } = useContext(WebwalletContext)!
 	const [number, setNumber] = useState<string>('one')
-	const { nonce, setNonce } = useContext(NonceContext)!
 	const { biconomyDaoObj, setBiconomyDaoObj } = useContext(BiconomyContext)!
 
 	useEffect(() => {
@@ -100,7 +97,7 @@ function SignupWebwallet() {
 		// setWebwallet(undefined);
 		// setScwAddress(undefined);
 
-		console.log('DONE', isLoggedIn, webwallet, scwAddress, nonce)
+		console.log('DONE', webwallet, scwAddress, nonce)
 		// if (!webwallet) {
 		//     setWebwallet(Wallet.createRandom());
 		// }

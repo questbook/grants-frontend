@@ -10,26 +10,24 @@ import {
 } from '@chakra-ui/react'
 import { Wallet } from 'ethers'
 import { useRouter } from 'next/router'
-import { ApiClientsContext, GitHubTokenContext, NonceContext, ScwAddressContext, WebwalletContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { useConnect, useDisconnect } from 'wagmi'
 
 function AccountDetails() {
 	const isOnline = true
 	const { data: accountData, nonce, setNonce } = useQuestbookAccount()
-	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
-	const { scwAddress, setScwAddress } = useContext(ScwAddressContext)!
+	const { webwallet, setWebwallet, scwAddress } = useContext(WebwalletContext)!
 	const { isDisconnected } = useConnect() // @TODO: change the way we see if a user is connect or not
 	// cause now it's only with metmask
 	const { disconnect } = useDisconnect()
 	const { connected, setConnected } = useContext(ApiClientsContext)!
-	const { isLoggedIn, setIsLoggedIn } = useContext(GitHubTokenContext)!
+	
 	const router = useRouter()
 
 	const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`
 
 	const buttonRef = React.useRef<HTMLButtonElement>(null)
-	console.log('GITHUB TOKEN', isLoggedIn, nonce)
 
 	React.useEffect(() => {
 		console.log('SCW Address: ', scwAddress)
@@ -37,7 +35,7 @@ function AccountDetails() {
 	return (
 		<Menu>
 			{
-				!isLoggedIn && (
+				!nonce && (
 					<Button
 						px={2.5}
 						borderRadius="2px"
@@ -75,7 +73,7 @@ function AccountDetails() {
 			} */}
 
 			{
-				isLoggedIn &&
+				nonce &&
 				(
 					<MenuButton
 						ref={buttonRef}
@@ -124,14 +122,13 @@ function AccountDetails() {
 				)
 			}
 			{
-				(!(connected && isDisconnected) || (isLoggedIn)) && (
+				(!(connected && isDisconnected) || (nonce && nonce !== "Token expired")) && (
 					<MenuList>
 						<MenuItem
 							onClick={
 								() => {
 									setConnected(false)
 									disconnect()
-									setIsLoggedIn(false)
 									setNonce(undefined)
 									router.replace('/')
 								}
