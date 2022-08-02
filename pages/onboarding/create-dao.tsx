@@ -26,6 +26,7 @@ import { NetworkSelectOption } from 'src/v2/components/Onboarding/SupportedNetwo
 import CreateDaoModal from 'src/v2/components/Onboarding/UI/CreateDaoModal'
 import BackgroundImageLayout from 'src/v2/components/Onboarding/UI/Layout/BackgroundImageLayout'
 import OnboardingCard from 'src/v2/components/Onboarding/UI/Layout/OnboardingCard'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 
 const OnboardingCreateDao = () => {
 	const router = useRouter()
@@ -37,15 +38,17 @@ const OnboardingCreateDao = () => {
 	const [daoImageFile, setDaoImageFile] = useState<File | null>(null)
 	const [callOnContractChange, setCallOnContractChange] = useState(false)
 	const [currentStep, setCurrentStep] = useState<number>()
+	const { network } = useNetwork();
 
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
-
+	console.log("THIS IS WEBWALLRT", webwallet);
+	const { switchNetwork } = useNetwork();
 	// console.log(daoNetwork?.id.toString())
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,
 		targetContractABI: WorkspaceRegistryAbi,
-		chainId: '80001'
+		chainId: network
 	})
 
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState('not ready')
@@ -56,10 +59,6 @@ const OnboardingCreateDao = () => {
 		}
 	}, [biconomy, biconomyWalletClient, scwAddress])
 
-	// const {
-	// 	connect,
-	// 	connectors
-	// } = useConnect()
 
 	const targetContractObject = useQBContract('workspace', daoNetwork?.id)
 
@@ -175,12 +174,6 @@ const OnboardingCreateDao = () => {
 	// 	}
 	// }, [signer])
 
-	useEffect(() => {
-		if(!webwallet) {
-			setWebwallet(Wallet.createRandom())
-		}
-	}, [webwallet, setWebwallet])
-
 	const steps = [
 		<CreateDaoNameInput
 			key={'createdao-onboardingstep-0'}
@@ -197,7 +190,9 @@ const OnboardingCreateDao = () => {
 			daoNetwork={daoNetwork}
 			onSubmit={
 				(network) => {
-					setDaoNetwork(network)
+					setDaoNetwork(network);
+					switchNetwork(network.id);
+					console.log("NETWORK", network)
 					nextClick()
 				}
 			}

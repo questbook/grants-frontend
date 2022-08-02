@@ -1,4 +1,4 @@
-import React, { createContext, ReactElement, ReactNode, useMemo } from 'react'
+import React, { createContext, ReactElement, ReactNode, useEffect, useMemo } from 'react'
 import { ChakraProvider } from '@chakra-ui/react'
 // import dynamic from 'next/dynamic';
 import {
@@ -36,6 +36,7 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { publicProvider } from 'wagmi/providers/public'
 import 'styles/globals.css'
 import 'draft-js/dist/Draft.css'
+import { jsonRpcProviders } from 'src/utils/gaslessUtils'
 
 
 type NextPageWithLayout = NextPage & {
@@ -130,10 +131,14 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [biconomyDaoObj, setBiconomyDaoObj] = React.useState<any>()
 	const [nonce, setNonce] = React.useState<string>()
 
+	useEffect(() => {
+		setWebwallet(createWebWallet());
+		setScwAddress(getScwAddress());
+		setNonce(getNonce());
+		switchNetwork(getNetwork());
+	}, [setWebwallet, setScwAddress, setNonce, switchNetwork]);
+
 	const getScwAddress = () => {
-		if(typeof window === 'undefined') {
-			return undefined
-		}
 
 		const _scwAddress = localStorage.getItem('scwAddress')
 
@@ -145,9 +150,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}
 
 	const getNonce = () => {
-		if(typeof window === 'undefined') {
-			return undefined
-		}
 
 		const _nonce = localStorage.getItem('nonce')
 
@@ -159,9 +161,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}
 
 	const getNetwork = () => {
-		if(typeof window === 'undefined') {
-			return undefined
-		}
 
 		const _network = localStorage.getItem('network')
 
@@ -172,21 +171,25 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		return parseInt(_network)
 	}
 
-	const createWebWallet = () => {
-		if(typeof window === 'undefined') {
-			return undefined
-		}
+	const createWebWallet = () => {	
 
-		const privateKey = localStorage.getItem('webwalletPrivateKey')
+		const privateKey = localStorage.getItem('webwalletPrivateKey');
+		
+		let newWebwallet = Wallet.createRandom();
+		newWebwallet = newWebwallet.connect(jsonRpcProviders["80001"]);
+
 		if(!privateKey) {
-			return undefined
+			localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
+			return newWebwallet;
 		}
 
 		try {
-			const newWebwallet = new Wallet(privateKey)
+			newWebwallet = new Wallet(privateKey);
+			newWebwallet = newWebwallet.connect(jsonRpcProviders["80001"]);
 			return newWebwallet
 		} catch{
-			return undefined
+			localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
+			return newWebwallet;
 		}
 	}
 
@@ -210,7 +213,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 	const webwalletContextValue = useMemo(
 		() => ({
-			webwallet: webwallet || createWebWallet(),
+			webwallet: webwallet,
 			setWebwallet: (newWebwallet?: Wallet) => {
 				if(newWebwallet) {
 					localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
@@ -220,7 +223,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 				setWebwallet(newWebwallet)
 			},
-			network: getNetwork(),
+			network: network,
 			switchNetwork: (newNetwork?: SupportedChainId) => {
 				if(newNetwork) {
 					localStorage.setItem('network', newNetwork.toString())
@@ -230,7 +233,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 				switchNetwork(newNetwork)
 			},
-			scwAddress: getScwAddress(),
+			scwAddress: scwAddress,
 			setScwAddress: (newScwAddress?: string) => {
 				if(newScwAddress) {
 					localStorage.setItem('scwAddress', newScwAddress)
@@ -240,7 +243,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 				setScwAddress(newScwAddress)
 			},
-			nonce: getNonce(),
+			nonce: nonce,
 			setNonce: (newNonce?: string) => {
 				console.log('called nonce: ', newNonce)
 				if(newNonce) {
@@ -309,6 +312,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	)
 
 	const seo = getSeo()
+
+
 
 	const getLayout = Component.getLayout || ((page) => page)
 	return (

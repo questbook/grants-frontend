@@ -7,6 +7,7 @@ import { Contract } from 'ethers'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import NavbarLayout from '../src/layout/navbarLayout'
 import { BiconomyContext, WebwalletContext } from './_app'
+import { addDapp } from 'src/utils/gaslessUtils'
 
 const config = {
 	contract: {
@@ -79,34 +80,15 @@ let scwAddress: string
 
 function SignupWebwallet() {
 
-	const { webwallet, setWebwallet, scwAddress, nonce } = useContext(WebwalletContext)!
+	const { webwallet, setWebwallet, scwAddress, nonce, setNonce } = useContext(WebwalletContext)!
 	const [number, setNumber] = useState<string>('one')
 	const { biconomyDaoObj, setBiconomyDaoObj } = useContext(BiconomyContext)!
 
 	useEffect(() => {
-		// setNumber("two");
-		// localStorage.removeItem('webwalletPrivateKey');
-		// localStorage.removeItem('isLoggedInGitHub');
-		// localStorage.removeItem('scwAddress');
-		// localStorage.removeItem('nonce');
+		setNonce(undefined);
+		console.log(nonce);
 
-		// setBiconomyDaoObj(null);
-		// setScwAddress(undefined);
-		// setIsLoggedIn(false);
-		// setNonce(undefined);
-		// setWebwallet(undefined);
-		// setScwAddress(undefined);
-
-		console.log('DONE', webwallet, scwAddress, nonce)
-		// if (!webwallet) {
-		//     setWebwallet(Wallet.createRandom());
-		// }
-
-		// if (!isLoggedIn && webwallet) {
-		//     window.location.href = `https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}`;
-		// }
-
-	})
+	}, [nonce])
 
 	// const initiateBiconomy = async() => {
 	// 	console.log(webwallet, isLoggedIn, biconomy)

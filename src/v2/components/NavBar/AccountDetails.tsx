@@ -34,7 +34,7 @@ function AccountDetails() {
 	}, [scwAddress])
 	return (
 		<Menu>
-			{
+			{/* {
 				!nonce && (
 					<Button
 						px={2.5}
@@ -45,15 +45,13 @@ function AccountDetails() {
 								if(!webwallet) {
 									setWebwallet(Wallet.createRandom())
 								}
-
-								window.location.href = `https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}`
 							}
 						}
 					>
-						GitHub Login
+						Create Webwallet
 					</Button>
 				)
-			}
+			} */}
 			{/* {
 				isLoggedIn && (
 					<Button
