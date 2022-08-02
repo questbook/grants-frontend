@@ -6,7 +6,6 @@ import {
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
-import Members from 'src/components/manage_dao/members'
 import Payouts from 'src/components/manage_dao/payouts'
 import Settings from 'src/components/manage_dao/settings'
 import Loader from 'src/components/ui/loader'
@@ -16,6 +15,7 @@ import NavbarLayout from 'src/layout/navbarLayout'
 import { Workspace } from 'src/types'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
+import WorkspaceMembers from '../src/v2/components/WorkspaceMembers'
 
 function ManageDAO() {
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
@@ -82,6 +82,7 @@ function ManageDAO() {
 		<Flex
 			w="100%"
 			px={10}
+			bg={'#F5F5FA'}
 			maxH="calc(100vh - 80px)"
 			overflowY="scroll"
 			mb={4}>
@@ -142,7 +143,7 @@ function ManageDAO() {
 									<Settings workspaceData={workspaceData!} />
 								) // eslint-disable-next-line no-nested-ternary
 									: selected === 1 ? (
-										<Members workspaceMembers={workspaceData?.members} />
+										<WorkspaceMembers />
 									) : (
 									// eslint-disable-next-line no-nested-ternary
 										selected === 2 && <Payouts />

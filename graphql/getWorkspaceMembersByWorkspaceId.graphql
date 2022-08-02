@@ -1,0 +1,23 @@
+query getWorkspaceMembersByWorkspaceId(
+    $workspaceId: String!
+    $accessLevelsIn: [WorkspaceMemberAccessLevel!]!
+    $first: Int
+    $skip: Int
+) {
+    workspaceMembers(
+        where: {
+            workspace: $workspaceId
+            accessLevel_in: $accessLevelsIn
+        }
+        first: $first
+        skip: $skip
+        subgraphError: allow
+    ) {
+        id
+        actorId
+        fullName
+        profilePictureIpfsHash
+        accessLevel
+        addedAt
+    }
+}
