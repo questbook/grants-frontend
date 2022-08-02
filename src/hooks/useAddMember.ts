@@ -43,7 +43,7 @@ export default function useAddMember(
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
 
-	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
+	const { webwallet } = useContext(WebwalletContext)!
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,

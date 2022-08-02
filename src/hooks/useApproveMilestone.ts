@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
@@ -10,6 +10,16 @@ import { useNetwork } from './gasless/useNetwork'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
+
+import {
+	apiKey,
+	getTransactionReceipt,
+	sendGaslessTransaction,
+	webHookId
+} from 'src/utils/gaslessUtils'
+
+import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.json'
+import { useBiconomy } from './gasless/useBiconomy'
 
 export default function useApproveMilestone(
 	data: any,
@@ -25,14 +35,21 @@ export default function useApproveMilestone(
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients
-	const currentChainId =  useMemo(() => networkData.id, [networkData])
+	const currentChainId = useMemo(() => networkData.id, [networkData])
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 	const applicationContract = useQBContract('applications', chainId)
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
 
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		apiKey: apiKey,
+		targetContractABI: ApplicationRegistryAbi,
+	})
+
+	const { webwallet } = useContext(WebwalletContext)!
+
 	useEffect(() => {
-		if(data) {
+		if (data) {
 			setError(undefined)
 			setLoading(false)
 			setIncorrectNetwork(false)
@@ -40,22 +57,22 @@ export default function useApproveMilestone(
 	}, [data])
 
 	useEffect(() => {
-		if(incorrectNetwork) {
+		if (incorrectNetwork) {
 			setIncorrectNetwork(false)
 		}
 
 	}, [applicationContract])
 
 	useEffect(() => {
-		if(incorrectNetwork) {
+		if (incorrectNetwork) {
 			return
 		}
 
-		if(error) {
+		if (error) {
 			return
 		}
 
-		if(loading) {
+		if (loading) {
 			return
 		}
 
@@ -66,21 +83,36 @@ export default function useApproveMilestone(
 				const {
 					data: { ipfsHash },
 				} = await validatorApi.validateApplicationMilestoneUpdate(data)
-				if(!ipfsHash) {
+				if (!ipfsHash) {
 					throw new Error('Error validating grant data')
 				}
 
-				const updateTxn = await applicationContract.approveMilestone(
-					applicationId!,
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					return
+				}
+
+				const transactionHash = await sendGaslessTransaction(
+					biconomy,
+					applicationContract,
+					'approveMilestone',
+					[applicationId!,
 					Number(milestoneIndex),
 					Number(workspace!.id),
-					ipfsHash,
+						ipfsHash,],
+					applicationContract.address,
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					webHookId,
+					nonce
 				)
-				const updateTxnData = await updateTxn.wait()
 
-				setTransactionData(updateTxnData)
+				const updateTransactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
+
+				setTransactionData(updateTransactionData)
 				setLoading(false)
-			} catch(e: any) {
+			} catch (e: any) {
 				const message = getErrorMessage(e)
 				setError(message)
 				setLoading(false)
@@ -89,7 +121,7 @@ export default function useApproveMilestone(
 					render: () => ErrorToast({
 						content: message,
 						close: () => {
-							if(toastRef.current) {
+							if (toastRef.current) {
 								toast.close(toastRef.current)
 							}
 						},
@@ -103,32 +135,32 @@ export default function useApproveMilestone(
 			// console.log(milestoneIndex);
 			// console.log(applicationId);
 			// console.log(Number.isNaN(milestoneIndex));
-			if(Number.isNaN(milestoneIndex)) {
+			if (Number.isNaN(milestoneIndex)) {
 				return
 			}
 
-			if(!data) {
+			if (!data) {
 				return
 			}
 
-			if(!applicationId) {
+			if (!applicationId) {
 				return
 			}
 
-			if(transactionData) {
+			if (transactionData) {
 				return
 			}
 
-			if(!accountData || !accountData.address) {
+			if (!accountData || !accountData.address) {
 				throw new Error('not connected to wallet')
 			}
 
-			if(!workspace) {
+			if (!workspace) {
 				throw new Error('not connected to workspace')
 			}
 
-			if(!currentChainId) {
-				if(switchNetwork && chainId) {
+			if (!currentChainId) {
+				if (switchNetwork && chainId) {
 					switchNetwork(chainId)
 				}
 
@@ -137,8 +169,8 @@ export default function useApproveMilestone(
 				return
 			}
 
-			if(chainId !== currentChainId) {
-				if(switchNetwork && chainId) {
+			if (chainId !== currentChainId) {
+				if (switchNetwork && chainId) {
 					switchNetwork(chainId)
 				}
 
@@ -147,22 +179,22 @@ export default function useApproveMilestone(
 				return
 			}
 
-			if(!validatorApi) {
+			if (!validatorApi) {
 				throw new Error('validatorApi or workspaceId is not defined')
 			}
 
-			if(
+			if (
 				!applicationContract
-        || applicationContract.address
-          === '0x0000000000000000000000000000000000000000'
-        || !applicationContract.signer
-        || !applicationContract.provider
+				|| applicationContract.address
+				=== '0x0000000000000000000000000000000000000000'
+				|| !applicationContract.signer
+				|| !applicationContract.provider
 			) {
 				return
 			}
 
 			validate()
-		} catch(e: any) {
+		} catch (e: any) {
 			const message = getErrorMessage(e)
 			setError(message)
 			setLoading(false)
@@ -171,7 +203,7 @@ export default function useApproveMilestone(
 				render: () => ErrorToast({
 					content: message,
 					close: () => {
-						if(toastRef.current) {
+						if (toastRef.current) {
 							toast.close(toastRef.current)
 						}
 					},
