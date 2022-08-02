@@ -6,14 +6,14 @@ import {
 	Center,
 	Flex,
 	Spacer,
+	Tab,
 	Table,
-	Tag,
+	TabList,
+	Tabs,
 	Tbody,
 	Th,
 	Thead,
 	Tr,
-	Wrap,
-	WrapItem,
 } from '@chakra-ui/react'
 import { ApiClientsContext } from '../../../../pages/_app'
 import Loader from '../../../components/ui/loader'
@@ -86,34 +86,33 @@ function WorkspaceMembers() {
 				<Flex
 					direction={'row'}
 				>
-					<Wrap>
-						{
-							USER_TYPES.map((userType, index) => (
-								<WrapItem key={index}>
-									<Tag
-										onClick={
-											() => {
-												setPage(0)
-												setSelectedUserTypeIdx(index)
-											}
-										}
-										bg={index === selectedUserTypeIdx ? '#1F1F32' : '#E0E0EC'}
-										fontSize={18}
-										borderRadius={2}
+					<Tabs
+						borderBottom={'transparent'}
+						onChange={
+							(index) => {
+								setPage(0)
+								setSelectedUserTypeIdx(index)
+							}
+						}>
+						<TabList>
+							{
+								USER_TYPES.map((userType, index) => (
+									<Tab
+										key={index}
+										_selected={{ color: '#E0E0EC', bg: '#1F1F32' }}
+										bg={'#E0E0EC'}
+										marginRight={2}
 										paddingTop={1}
 										paddingBottom={1}
-										letterSpacing={-1}
-										textTransform={'none'}
-										cursor={'pointer'}
-										color={index === selectedUserTypeIdx ? '#E0E0EC' : '#1F1F32'}>
+										borderRadius={2}
+									>
 										{userType.name}
-									</Tag>
-								</WrapItem>
-							),
-							)
-						}
-
-					</Wrap>
+									</Tab>
+								),
+								)
+							}
+						</TabList>
+					</Tabs>
 					<Spacer />
 					<Button
 						onClick={() => setIsInviteModalOpen(true)}
