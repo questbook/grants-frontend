@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
 import {
 	Box, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, Image,
-	Input,	Progress,	RangeSlider,
+	Input, Progress, RangeSlider,
 	RangeSliderFilledTrack,
-	RangeSliderThumb,	RangeSliderTrack,
-	Skeleton,	Spacer, Text } from '@chakra-ui/react'
+	RangeSliderMark,
+	RangeSliderThumb, RangeSliderTrack,
+	Skeleton, Spacer, Text
+} from '@chakra-ui/react'
 import { formatEther } from 'ethers/lib/utils'
 import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
@@ -30,24 +32,27 @@ function RubricDrawer({
 	workspaceId,
 	initialIsPrivate,
 }: {
-  rubricDrawerOpen: boolean;
-  setRubricDrawerOpen: (rubricDrawerOpen: boolean) => void;
-  rubrics: any[];
-  setRubrics: (rubrics: any[]) => void;
-  rubricEditAllowed: boolean;
-  maximumPoints: number;
-  setMaximumPoints: (maximumPoints: number) => void;
-  grantAddress: string;
-  chainId: SupportedChainId;
-  workspaceId: string;
-  initialIsPrivate: boolean;
+	rubricDrawerOpen: boolean;
+	setRubricDrawerOpen: (rubricDrawerOpen: boolean) => void;
+	rubrics: any[];
+	setRubrics: (rubrics: any[]) => void;
+	rubricEditAllowed: boolean;
+	maximumPoints: number;
+	setMaximumPoints: (maximumPoints: number) => void;
+	grantAddress: string;
+	chainId: SupportedChainId;
+	workspaceId: string;
+	initialIsPrivate: boolean;
 }) {
 	const [shouldEncryptReviews, setShouldEncryptReviews] = React.useState(false)
 	const [gasEstimate, setGasEstimate] = React.useState<any>('')
 	const [daoNetwork, setDaoNetwork] = useState<NetworkSelectOption>()
 
+	// @TODO: change this value to whatever it should be.
+	const [maxReviewrs, setMaxReviewrs] = useState<number>(5);
+
 	useEffect(() => {
-		if(initialIsPrivate) {
+		if (initialIsPrivate) {
 			setShouldEncryptReviews(true)
 		}
 	}, [initialIsPrivate])
@@ -67,12 +72,12 @@ function RubricDrawer({
 	} = useSubmitPublicKey()
 
 	useEffect(() => {
-		if(transactionData && newPublicKey && newPublicKey.publicKey) {
+		if (transactionData && newPublicKey && newPublicKey.publicKey) {
 			console.log(newPublicKey)
 			setPk(newPublicKey.publicKey)
 			const rubric = {} as any
 
-			if(rubrics.length > 0) {
+			if (rubrics.length > 0) {
 				rubrics.forEach((r, index) => {
 					rubric[index.toString()] = {
 						title: r.name,
@@ -95,11 +100,11 @@ function RubricDrawer({
 
 	useEffect(() => {
 		/// console.log(pk);
-		if(!accountData?.address) {
+		if (!accountData?.address) {
 			return
 		}
 
-		if(!workspace) {
+		if (!workspace) {
 			return
 		}
 
@@ -107,7 +112,7 @@ function RubricDrawer({
 			(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 		)?.publicKey?.toString()
 		// console.log(k);
-		if(k && k.length > 0) {
+		if (k && k.length > 0) {
 			setPk(k)
 		} else {
 			setPk('')
@@ -117,15 +122,15 @@ function RubricDrawer({
 
 	const handleOnSubmit = () => {
 		let error = false
-		if(rubrics.length > 0) {
+		if (rubrics.length > 0) {
 			const errorCheckedRubrics = rubrics.map((rubric: any) => {
 				const errorCheckedRubric = { ...rubric }
-				if(rubric.name.length <= 0) {
+				if (rubric.name.length <= 0) {
 					errorCheckedRubric.nameError = true
 					error = true
 				}
 
-				if(rubric.description.length <= 0) {
+				if (rubric.description.length <= 0) {
 					errorCheckedRubric.descriptionError = true
 					error = true
 				}
@@ -135,15 +140,15 @@ function RubricDrawer({
 			setRubrics(errorCheckedRubrics)
 		}
 
-		if(!error) {
-			if(shouldEncryptReviews && (!pk || pk === '*')) {
+		if (!error) {
+			if (shouldEncryptReviews && (!pk || pk === '*')) {
 				setHiddenPkModalOpen(true)
 				return
 			}
 
 			const rubric = {} as any
 
-			if(rubrics.length > 0) {
+			if (rubrics.length > 0) {
 				rubrics.forEach((r, index) => {
 					rubric[index.toString()] = {
 						title: r.name,
@@ -173,7 +178,7 @@ function RubricDrawer({
 	const { setRefresh } = useCustomToast(transactionLink)
 
 	useEffect(() => {
-		if(data) {
+		if (data) {
 			setRubricDrawerOpen(false)
 			setRefresh(true)
 		}
@@ -181,19 +186,19 @@ function RubricDrawer({
 
 	const applicationReviewContract = useQBContract('reviews', chainId)
 	const provider = useProvider()
-	const estimateSetRubric = async() => {
+	const estimateSetRubric = async () => {
 		setGasEstimate(undefined)
 		try {
 			const estimate = await applicationReviewContract.estimateGas.setRubrics(workspaceId, grantAddress, 'bafkreiboy5njxjyusnps6oayqg7famhocgymhaqp5p53p2kd6fhzhxqiny')
 			const gasPrice = await provider.getGasPrice()
 			setGasEstimate(formatEther(estimate.mul(gasPrice)))
-		} catch(e) {
+		} catch (e) {
 			console.log(e)
 		}
 	}
 
 	useEffect(() => {
-		if(applicationReviewContract.signer !== null && provider !== null) {
+		if (applicationReviewContract.signer !== null && provider !== null) {
 			estimateSetRubric()
 		}
 	}, [applicationReviewContract, provider])
@@ -255,14 +260,14 @@ function RubricDrawer({
 										fontSize="20px"
 										lineHeight="24px"
 										color="#1F1F33">
-Setup applicant evaluation
+										Setup applicant evaluation
 									</Text>
 									<Text
 										fontWeight="400"
 										fontSize="14px"
 										lineHeight="20px"
 										color="#7D7DA0">
-Define a scoring rubric and assign reviewers.
+										Define a scoring rubric and assign reviewers.
 									</Text>
 								</Box>
 							</Flex>
@@ -283,19 +288,30 @@ Define a scoring rubric and assign reviewers.
 						<Flex
 							flexDirection="column"
 							alignItems="flex-start"
-							mt={10}>
+							mt={10}
+							ml={7}
+							maxW='100%'
+						>
 
-							<Flex>
+							<Flex
+								// maxW='100%'
+								w='90%'
+							>
 								<Flex
 									flexDirection="column"
-									ml={24} >
+									// ml={24} 
+									w='50%'
+									gap={2}
+								>
 									<Progress
 										colorScheme={setupStep ? 'blackAlpha' : 'messenger'}
 										value={100}
 										borderRadius="100px"
-										w="200px"
+										w="100%"
 										h="4px" />
-									<Flex>
+									<Flex
+										gap={1}
+									>
 										<Image
 											src={setupStep ? '/ui_icons/setup_evaluation_black_bullet.svg' : '/ui_icons/setup_evaluation_blue_bullet.svg'}
 											h="20px"
@@ -306,21 +322,26 @@ Define a scoring rubric and assign reviewers.
 											fontSize="12px"
 											lineHeight="16px"
 											color={setupStep ? '#1F1F33' : '#4C9AFF'}>
-Scoring Rubric
+											Scoring Rubric
 										</Text>
 									</Flex>
 								</Flex>
 
 								<Flex
 									flexDirection="column"
-									ml={4}>
+									ml={4}
+									gap={2}
+									w='50%'
+								>
 									<Progress
 										colorScheme={setupStep ? 'messenger' : '#D2D2E3'}
 										value={100}
 										borderRadius="100px"
-										w="200px"
+										w="100%"
 										h="4px" />
-									<Flex>
+									<Flex
+										gap={1}
+									>
 										<Image
 											src={setupStep ? '/ui_icons/setup_evaluation_blue_bullet.svg' : '/ui_icons/setup_evaluation_transparent_bullet.svg'}
 											h="20px"
@@ -331,7 +352,7 @@ Scoring Rubric
 											fontSize="12px"
 											lineHeight="16px"
 											color={setupStep ? '#4C9AFF' : '#AFAFCC'}>
-Reviewers
+											Reviewers
 										</Text>
 									</Flex>
 								</Flex>
@@ -340,9 +361,11 @@ Reviewers
 							<Flex
 								alignItems="flex-start"
 								padding="16px"
-								gap="16px">
-								{!setupStep && <Image src="/ui_icons/scoring_rubric_logo.svg" />}
-								{setupStep > 0 && <Image src="/ui_icons/assign_reviewers_red.svg" />}
+								gap="16px"
+								pl={0}
+							>
+								{!setupStep && <Image mt={4} src="/ui_icons/scoring_rubric_logo.svg" />}
+								{setupStep > 0 && <Image mt={4} src="/ui_icons/assign_reviewers_red.svg" />}
 								<Box>
 									<Text
 										fontWeight="500"
@@ -362,7 +385,9 @@ Reviewers
 											as="span"
 											color="#7D7DA0"
 											fontWeight="400"
-											letter-spacing="0.5px">
+											letterSpacing="0.5px"
+											lineHeight={2}
+										>
 											{' '}
 											{setupStep ? 'Reviewers are auto assigned equally.' : 'Total score is the sum of quality scores.'}
 											{' '}
@@ -376,14 +401,24 @@ Reviewers
 						<Flex
 							direction="column"
 							backgroundColor="#FFFFFF"
-							ml={20}
+							alignItems='center'
+							alignContent='center'
+							align='center'
+							ml='auto'
+							mr='auto'
+							p={4}
+							pb={7}
+							w='90%'
+							borderRadius='2px'
 						>
 							<Text
 								color="#1F1F33"
 								fontWeight="500"
 								fontSize="14px"
-								lineHeight="20px">
-								{setupStep ? 'Select the number of reviewers assigned per applicant' : 'Scoring Qualities'}
+								lineHeight="20px"
+								mb={2}
+							>
+								{!!setupStep ? 'Select the number of reviewers assigned per applicant' : 'Scoring Qualities'}
 							</Text>
 							{
 								!setupStep && (
@@ -392,16 +427,33 @@ Reviewers
 										fontWeight="400"
 										fontSize="12px"
 										lineHeight="20px">
-Define the quality, and add a description
+										Define the quality, and add a description
 									</Text>
 								)
 							}
 							{
-								setupStep && (
+								!!setupStep && (
 									<RangeSlider
-										defaultValue={[20]}
-										step={20}>
-										<RangeSliderTrack>
+										defaultValue={[2]}
+										// step={20}
+										min={1}
+										max={maxReviewrs}
+										size='lg'
+									>
+										{[...Array(maxReviewrs)].map((_, index) =>
+											<RangeSliderMark key={index} value={index + 1} mt='2' ml='-1'
+												fontWeight={500} fontSize='12px' lineHeight='12px' color='#7D7DA0'
+											>
+												{index + 1}
+											</RangeSliderMark>
+										)}
+										{/* {[...Array(maxReviewrs - 2)].map((_, index) =>
+											<RangeSliderMark key={index} value={index + 2} ml='-1' mt='' zIndex={2}
+											>
+												<Image src='/ui_icons/slider_mark.svg' />
+											</RangeSliderMark>
+										)} */}
+										<RangeSliderTrack >
 											<RangeSliderFilledTrack
 												background='linear-gradient(90deg, #0065FF 0%, #00FFA3 100%)'
 											/>
@@ -409,30 +461,30 @@ Define the quality, and add a description
 										<RangeSliderThumb
 											boxSize={4}
 											index={0}>
-	  <Box
+											<Box
 												width="50px"
 												height="24px">
-	  <Image
+												<Image
 													src="/ui_icons/slider_thumb_blue.svg"
 													width="50px"
 													height="24px" />
-	  </Box>
+											</Box>
 										</RangeSliderThumb>
 									</RangeSlider>
 								)
 							}
-						</Flex>
-						{
-							!setupStep &&
-							rubrics.map((rubric, index) => (
-								<>
-									<Flex
-										flexDirection="column"
-										gap="2"
-										alignItems="flex-start"
-										backgroundColor="#FFFFFF"
-									>
-										{/* <Flex
+							{/* </Flex> */}
+							{
+								!setupStep &&
+								rubrics.map((rubric, index) => (
+									<React.Fragment >
+										<Flex
+											flexDirection="column"
+											gap="2"
+											alignItems="flex-start"
+											w='90%'
+										>
+											{/* <Flex
 											direction="column"
 											flex={0.3327}>
 											<Text
@@ -442,54 +494,54 @@ Define the quality, and add a description
 												fontSize="16px"
 												lineHeight="20px"
 											>
-                      Criteria
+                     						Criteria
 												{' '}
 												{index + 1}
 											</Text>
-										</Flex> */}
-										<Flex
-											justifyContent="center"
-											gap={2}
-											margin={2}
-											alignItems="center"
-											backgroundColor="#FFFFFF"
-											flex={0.6673}>
-											<Input
+											</Flex> */}
+											<Flex
+												gap={2}
+												margin={2}
+												flex={0.6673}
+												w='100%'
+											>
+												<Input
 
-												variant='flushed'
-												value={rubrics[index].name}
-												onChange={
-													(e) => {
-														const newRubrics = [...rubrics]
-														newRubrics[index].name = e.target.value
-														newRubrics[index].nameError = false
-														setRubrics(newRubrics)
+													variant='flushed'
+													value={rubrics[index].name}
+													onChange={
+														(e) => {
+															const newRubrics = [...rubrics]
+															newRubrics[index].name = e.target.value
+															newRubrics[index].nameError = false
+															setRubrics(newRubrics)
+														}
 													}
-												}
-												placeholder="َQuality"
-												borderColor={rubrics[index].nameError || rubrics[index].name.length > 30 ? 'red' : 'inherit'}
-												isDisabled={!rubricEditAllowed}
+													placeholder="َQuality"
+													borderColor={rubrics[index].nameError || rubrics[index].name.length > 30 ? 'red' : 'inherit'}
+													isDisabled={!rubricEditAllowed}
 
-											/>
+												/>
 
+											</Flex>
+											<Flex
+												flexDirection="row"
+												width="100%">
+												<Spacer />
+												<Box>
+													{rubrics[index].name.length}
+													/30
+												</Box>
+											</Flex>
 										</Flex>
 										<Flex
-											flexDirection="row"
-											width="250px">
-											<Spacer />
-											<Box>
-												{rubrics[index].name.length}
-/30
-											</Box>
-										</Flex>
-									</Flex>
-									<Flex
-										flexDirection="column"
-										gap="2"
-										alignItems="flex-start"
-										backgroundColor="#FFFFFF"
-										opacity={rubricEditAllowed ? 1 : 0.4}>
-										{/* <Flex
+											flexDirection="column"
+											gap="2"
+											alignItems="flex-start"
+											opacity={rubricEditAllowed ? 1 : 0.4}
+											w='90%'
+										>
+											{/* <Flex
 											direction="column"
 											flex={0.3327}>
 											<Text
@@ -499,44 +551,43 @@ Define the quality, and add a description
 												fontSize="16px"
 												lineHeight="20px"
 											>
-                      Description
 											</Text>
 										</Flex> */}
-										<Flex
-											justifyContent="center"
-											gap={2}
-											alignItems="center"
-											backgroundColor="#FFFFFF"
-											flex={0.6673}>
-											<Input
-												variant='flushed'
-												value={rubrics[index].description}
-												onChange={
-													(e) => {
-														const newRubrics = [...rubrics]
-														newRubrics[index].description = e.target.value
-														newRubrics[index].descriptionError = false
+											<Flex
+												gap={2}
+												margin={2}
+												flex={0.6673}
+												w='100%'
+											>
+												<Input
+													variant='flushed'
+													value={rubrics[index].description}
+													onChange={
+														(e) => {
+															const newRubrics = [...rubrics]
+															newRubrics[index].description = e.target.value
+															newRubrics[index].descriptionError = false
 
-														setRubrics(newRubrics)
+															setRubrics(newRubrics)
+														}
 													}
-												}
-												placeholder="Description"
-												borderColor={rubrics[index].descriptionError || rubrics[index].description.length > 100 ? 'red' : 'inherit'}
-												isDisabled={!rubricEditAllowed}
-											/>
+													placeholder="Description"
+													borderColor={rubrics[index].descriptionError || rubrics[index].description.length > 100 ? 'red' : 'inherit'}
+													isDisabled={!rubricEditAllowed}
+												/>
+											</Flex>
+											<Flex
+												flexDirection="row"
+												width="100%">
+												<Spacer />
+												<Box>
+													{rubrics[index].description.length}
+													/100
+												</Box>
+											</Flex>
 										</Flex>
-										<Flex
-											flexDirection="row"
-											width="250px">
-											<Spacer />
-											<Box>
-												{rubrics[index].description.length}
-/100
-											</Box>
-										</Flex>
-									</Flex>
 
-									{/* <Flex
+										{/* <Flex
 										mt={2}
 										gap="2"
 										justifyContent="flex-end">
@@ -572,21 +623,22 @@ Define the quality, and add a description
 											</Text>
 										</Box>
 									</Flex> */}
-									<Divider mt={4} />
-								</>
-							))
-						}
-
+										<Divider mt={4} />
+									</React.Fragment>
+								))
+							}
+						</Flex>
 						{
 							!setupStep && (
 								<Flex
+									ml={10}
 									mt="19px"
 									gap="2"
 									justifyContent="flex-start">
 									<Box
 										onClick={
 											() => {
-												if(!rubricEditAllowed) {
+												if (!rubricEditAllowed) {
 													return
 												}
 
@@ -615,7 +667,7 @@ Define the quality, and add a description
 											fontSize="14px"
 											color="#0065FF"
 											lineHeight="20px">
-                  Add another quality
+											Add another quality
 										</Text>
 									</Box>
 								</Flex>
@@ -758,7 +810,7 @@ Define the quality, and add a description
 							alignItems="flex-start"
 							padding="16px">
 							{
-								setupStep && (
+								!!setupStep && (
 									<Skeleton isLoaded={gasEstimate !== undefined}>
 										<Flex
 											bg={'#F0F0F7'}
@@ -771,7 +823,7 @@ Define the quality, and add a description
 												ml={2}
 												mt={'1.5px'}
 												fontSize={'xs'}>
-              Network Fee -
+												Network Fee -
 												{' '}
 												{gasEstimate}
 												{' '}
@@ -788,7 +840,7 @@ Define the quality, and add a description
 								padding="6px 20px"
 								w="153px"
 								h="40px"
-								background={setupStep ? '#1F1F33' : '#E0E0EC'}
+								background={!!setupStep ? '#1F1F33' : '#E0E0EC'}
 								borderRadius="3px"
 								cursor="pointer"
 								onClick={
@@ -812,6 +864,7 @@ Define the quality, and add a description
 								</Text>
 							</Flex>
 						</Flex>
+
 					</Flex>
 				</DrawerContent>
 			</Drawer>

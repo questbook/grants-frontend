@@ -485,7 +485,7 @@ function ViewApplicants() {
 				<GrantStatsBox
 					numberOfApplicants={applicantsData.length}
 					totalDisbursed={totalDisbursed}
-					// numberOfReviews={reviewsData.length}
+					numberOfReviews={reviewsData.length}
 				/>
 
 
