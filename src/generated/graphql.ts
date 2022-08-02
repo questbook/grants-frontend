@@ -4163,7 +4163,7 @@ export type GetWorkspaceMembersByWorkspaceIdQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceMembersByWorkspaceIdQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, accessLevel: WorkspaceMemberAccessLevel, addedAt: number }> };
+export type GetWorkspaceMembersByWorkspaceIdQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, addedAt: number }> };
 
 
 export const GetAllGrantsDocument = gql`
@@ -6051,6 +6051,7 @@ export const GetWorkspaceMembersByWorkspaceIdDocument = gql`
     id
     actorId
     fullName
+    profilePictureIpfsHash
     accessLevel
     addedAt
   }

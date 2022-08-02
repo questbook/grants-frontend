@@ -1,4 +1,6 @@
-import { Checkbox, Grid, GridItem, Tag, Td, Tr } from '@chakra-ui/react'
+import React from 'react'
+import { Box, Checkbox, Flex, Grid, GridItem, Image, Tag, Td, Tr } from '@chakra-ui/react'
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getFormattedDateFromUnixTimestampWithYear } from '../../../utils/formattingUtils'
 import { capitalizeFirstLetter } from '../../../utils/generics'
 
@@ -13,14 +15,28 @@ function MemberRow({ member }: Props) {
 				<Checkbox />
 			</Td>
 			<Td>
-				<Grid>
-					<GridItem fontWeight={'bold'}>
-						{member.fullName}
-					</GridItem>
-					<GridItem color={'#9292AF'}>
-						{member.actorId}
-					</GridItem>
-				</Grid>
+				<Flex direction={'row'}>
+					{
+						member.profilePictureIpfsHash && (
+							<>
+								<Image
+									src={getUrlForIPFSHash(member.profilePictureIpfsHash)}
+									borderRadius={'50'}
+									boxSize='50px'
+								/>
+								<Box w={2} />
+							</>
+						)
+					}
+					<Grid>
+						<GridItem fontWeight={'bold'}>
+							{member.fullName}
+						</GridItem>
+						<GridItem color={'#9292AF'}>
+							{member.actorId}
+						</GridItem>
+					</Grid>
+				</Flex>
 			</Td>
 			<Td>
 				<Tag

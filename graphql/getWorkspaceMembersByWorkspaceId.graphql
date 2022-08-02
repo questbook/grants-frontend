@@ -16,6 +16,7 @@ query getWorkspaceMembersByWorkspaceId(
         id
         actorId
         fullName
+        profilePictureIpfsHash
         accessLevel
         addedAt
     }
