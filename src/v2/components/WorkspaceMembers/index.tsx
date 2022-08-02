@@ -25,7 +25,7 @@ import MemberRow from './MemberRow'
 
 const PAGE_SIZE = 7
 
-const userTypes = [
+const USER_TYPES = [
 	{
 		'name': 'All',
 		'accessLevels': Object.values(WorkspaceMemberAccessLevel),
@@ -41,7 +41,7 @@ const userTypes = [
 ]
 
 
-const tableHeaders = ['', 'Member', 'Role', 'Joined on']
+const TABLE_HEADERS = ['', 'Member', 'Role', 'Joined on']
 
 function WorkspaceMembers() {
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
@@ -62,7 +62,7 @@ function WorkspaceMembers() {
 			workspaceId: workspace!.id,
 			first: PAGE_SIZE,
 			skip: page * PAGE_SIZE,
-			accessLevelsIn: userTypes[selectedUserTypeIdx].accessLevels,
+			accessLevelsIn: USER_TYPES[selectedUserTypeIdx].accessLevels,
 		},
 	})
 
@@ -87,7 +87,7 @@ function WorkspaceMembers() {
 				>
 					<Wrap>
 						{
-							userTypes.map((userType, index) => (
+							USER_TYPES.map((userType, index) => (
 								<WrapItem key={index}>
 									<Tag
 										onClick={
@@ -134,7 +134,7 @@ function WorkspaceMembers() {
 						<Thead>
 							<Tr>
 								{
-									tableHeaders.map((tableHeader) => (
+									TABLE_HEADERS.map((tableHeader) => (
 										<Th
 											key={tableHeader}
 											fontSize={18}
