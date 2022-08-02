@@ -6,7 +6,6 @@ import {
 	Center,
 	Flex,
 	Spacer,
-	Tab,
 	Table,
 	TabList,
 	Tabs,
@@ -21,6 +20,7 @@ import { defaultChainId } from '../../../constants/chains'
 import { useGetWorkspaceMembersByWorkspaceIdQuery, WorkspaceMemberAccessLevel } from '../../../generated/graphql'
 import { getSupportedChainIdFromWorkspace } from '../../../utils/validationUtils'
 import InviteModal from '../InviteModal'
+import AccessLevelTab from './AccessLevelTab'
 import MemberRow from './MemberRow'
 import PaginatorView from './PaginatorView'
 
@@ -97,18 +97,9 @@ function WorkspaceMembers() {
 						<TabList>
 							{
 								USER_TYPES.map((userType, index) => (
-									<Tab
+									<AccessLevelTab
 										key={index}
-										_selected={{ color: '#E0E0EC', bg: '#1F1F32' }}
-										bg={'#E0E0EC'}
-										marginRight={2}
-										paddingTop={1}
-										fontSize={15}
-										paddingBottom={1}
-										borderRadius={2}
-									>
-										{userType.name}
-									</Tab>
+										accessLevel={userType.name} />
 								),
 								)
 							}
