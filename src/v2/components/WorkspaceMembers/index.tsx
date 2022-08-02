@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon, LinkIcon } from '@chakra-ui/icons'
 import {
 	Box,
@@ -58,11 +58,11 @@ function WorkspaceMembers() {
 	const [page, setPage] = useState(0)
 	const [hasMoreData, setHasMoreData] = useState(true)
 
+	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+	const { client } = subgraphClients[chainId]
+
 	const { data } = useGetWorkspaceMembersByWorkspaceIdQuery({
-		client:
-    subgraphClients[
-    	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-    ].client,
+		client,
 		variables: {
 			workspaceId: workspace!.id,
 			first: PAGE_SIZE,
@@ -80,7 +80,7 @@ function WorkspaceMembers() {
 		setMembers(data!.workspaceMembers)
 	}, [data, page, selectedUserTypeIdx])
 
-	const [isInviteModalOpen, setIsInviteModalOpen] = React.useState(false)
+	const [isInviteModalOpen, setIsInviteModalOpen] = useState(false)
 
 	return (
 		<>

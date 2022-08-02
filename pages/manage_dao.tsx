@@ -143,7 +143,6 @@ function ManageDAO() {
 									<Settings workspaceData={workspaceData!} />
 								) // eslint-disable-next-line no-nested-ternary
 									: selected === 1 ? (
-										// <Members workspaceMembers={workspaceData?.members} />
 										<WorkspaceMembers />
 									) : (
 									// eslint-disable-next-line no-nested-ternary
