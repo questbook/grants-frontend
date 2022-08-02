@@ -151,11 +151,11 @@ function WorkspaceMembers() {
 						</Thead>
 						<Tbody>
 							{
-                members!.map((member: any) => (
-                	<MemberRow
-                		key={member.id}
-                		member={member} />
-                ))
+								members && members!.map((member: any) => (
+									<MemberRow
+										key={member.id}
+										member={member} />
+								))
 							}
 						</Tbody>
 					</Table>
