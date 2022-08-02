@@ -149,10 +149,16 @@ function WorkspaceMembers() {
 								}
 							</Tr>
 						</Thead>
+						<Tbody>
+							{
+                members!.map((member: any) => (
+                	<MemberRow
+                		key={member.id}
+                		member={member} />
+                ))
+							}
+						</Tbody>
 					</Table>
-					{/* used 2 tables, one surrounding the header and other surrounding the body,
-					to show the No members text and the loader in the center,
-					else they're aligned towards the left i.e. in the 1st column.. */}
 					{
 						members === undefined ? (
 							<Center padding={5}>
@@ -162,21 +168,7 @@ function WorkspaceMembers() {
 							<Center padding={5}>
 								{`No ${page === 0 ? '' : 'more '}members!`}
 							</Center>
-						)
-							:
-							(
-								<Table>
-									<Tbody>
-										{
-                      members!.map((member: any) => (
-                      	<MemberRow
-                      		key={member.id}
-                      		member={member} />
-                      ))
-										}
-									</Tbody>
-								</Table>
-							)
+						) : <Box />
 					}
 				</Box>
 				<Box h={2} />
