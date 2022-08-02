@@ -17,16 +17,24 @@ function MemberRow({ member }: Props) {
 			<Td>
 				<Flex direction={'row'}>
 					{
-						member.profilePictureIpfsHash && (
-							<>
-								<Image
-									src={getUrlForIPFSHash(member.profilePictureIpfsHash)}
-									borderRadius={'50'}
-									boxSize='50px'
-								/>
-								<Box w={2} />
-							</>
-						)
+						<>
+							{
+								member.profilePictureIpfsHash ? (
+									<Image
+										src={getUrlForIPFSHash(member.profilePictureIpfsHash)}
+										borderRadius={'50'}
+										boxSize='50px'
+									/>
+								) : (
+									<Box
+										bg={'grey'}
+										borderRadius={50}
+										boxSize='50px'
+									/>
+								)
+							}
+							<Box w={2} />
+						</>
 					}
 					<Grid>
 						<GridItem fontWeight={'bold'}>
