@@ -45,14 +45,13 @@ const USER_TYPES = [
 const TABLE_HEADERS = ['', 'Member', 'Role', 'Joined on']
 
 function WorkspaceMembers() {
-	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
-
+	const [isInviteModalOpen, setIsInviteModalOpen] = useState(false)
 	const [selectedUserTypeIdx, setSelectedUserTypeIdx] = useState(0)
-
 	const [members, setMembers] = useState<Array<any> | undefined>(undefined)
-
 	const [page, setPage] = useState(0)
 	const [hasMoreData, setHasMoreData] = useState(true)
+
+	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
 
 	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 	const { client } = subgraphClients[chainId]
@@ -75,8 +74,6 @@ function WorkspaceMembers() {
 		setHasMoreData(data!.workspaceMembers.length >= PAGE_SIZE)
 		setMembers(data!.workspaceMembers)
 	}, [data, page, selectedUserTypeIdx])
-
-	const [isInviteModalOpen, setIsInviteModalOpen] = useState(false)
 
 	return (
 		<>
