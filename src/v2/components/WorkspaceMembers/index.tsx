@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
-import { ChevronLeftIcon, ChevronRightIcon, LinkIcon } from '@chakra-ui/icons'
+import { LinkIcon } from '@chakra-ui/icons'
 import {
 	Box,
 	Button,
@@ -22,6 +22,7 @@ import { useGetWorkspaceMembersByWorkspaceIdQuery, WorkspaceMemberAccessLevel } 
 import { getSupportedChainIdFromWorkspace } from '../../../utils/validationUtils'
 import InviteModal from '../InviteModal'
 import MemberRow from './MemberRow'
+import PaginatorView from './PaginatorView'
 
 const PAGE_SIZE = 7
 
@@ -178,31 +179,11 @@ function WorkspaceMembers() {
 				<Box h={2} />
 				<Flex
 					justifyContent={'end'}>
-					<Box
-						boxShadow={'lg'}
-						borderRadius={7.5}
-						bg={'white'}>
-						<Flex
-							alignItems={'center'}>
-							<Button
-								bg={'inherit'}
-								disabled={page === 0}
-								onClick={() => setPage((page) => page - 1)}
-							>
-								<ChevronLeftIcon />
-							</Button>
-							<Box w={2.5} />
-							{page + 1}
-							<Box w={2.5} />
-							<Button
-								bg={'inherit'}
-								disabled={!hasMoreData}
-								onClick={() => setPage((page) => page + 1)}
-							>
-								<ChevronRightIcon />
-							</Button>
-						</Flex>
-					</Box>
+					<PaginatorView
+						currentPage={page}
+						onPageChange={setPage}
+						hasMoreData={hasMoreData}
+					/>
 				</Flex>
 			</Flex>
 			<InviteModal

@@ -12,7 +12,7 @@ function MemberRow({ member }: Props) {
 	return (
 		<Tr>
 			<Td>
-				<Checkbox />
+				<Checkbox disabled />
 			</Td>
 			<Td>
 				<Flex direction={'row'}>
