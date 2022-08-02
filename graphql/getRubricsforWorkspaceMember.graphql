@@ -1,0 +1,5 @@
+  query getRubricsForWorkspaceMemberQuery ($id :String){
+    rubrics (where: {addedBy_ends_with : $id}) {
+      id
+    }
+  }

@@ -1,21 +1,26 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import {
 	Box, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, Image,
 	Input,	Progress,	RangeSlider,
 	RangeSliderFilledTrack,
 	RangeSliderThumb,	RangeSliderTrack,
-	Skeleton,	Spacer, Text } from '@chakra-ui/react'
+	Skeleton,	Spacer, Text, ToastId, useToast } from '@chakra-ui/react'
 import { formatEther } from 'ethers/lib/utils'
+import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
 import { CHAIN_INFO } from 'src/constants/chains'
+import { useGetRubricsForWorkspaceMemberQueryQuery } from 'src/generated/graphql'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import useSetRubrics from 'src/hooks/useSetRubrics'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
+import {
+	getSupportedChainIdFromWorkspace,
+} from 'src/utils/validationUtils'
 import { GasStation } from 'src/v2/assets/custom chakra icons/GasStation'
 import { NetworkSelectOption } from 'src/v2/components/Onboarding/SupportedNetworksData'
 import { useAccount, useProvider } from 'wagmi'
+import SetRubricsModal from './setRubricsModal'
 
 function RubricDrawer({
 	rubricDrawerOpen,
@@ -54,17 +59,47 @@ function RubricDrawer({
 
 	const [editedRubricData, setEditedRubricData] = React.useState<any>()
 	const [setupStep, setSetupStep] = useState(0)
+	const [isSetRubricsModalOpen, setIsSetRubricsModalOpen] = useState(false)
+	const [currentStep, setCurrentStep] = useState<number>()
+	const [newRubric, setNewRubric] = useState<any>()
 
 	const [pk, setPk] = React.useState<string>('*')
 	const { data: accountData } = useAccount()
-	const { workspace } = useContext(ApiClientsContext)!
+	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 
+	const [queryParams, setQueryParams] = useState<any>({
+		client:
+			subgraphClients[
+				getSupportedChainIdFromWorkspace(workspace) || 4
+			].client,
+	})
+
+	const toastRef = useRef<ToastId>()
+	const toast = useToast()
+	const router = useRouter()
 	const {
 		RenderModal,
 		setHiddenModalOpen: setHiddenPkModalOpen,
 		transactionData,
 		publicKey: newPublicKey,
 	} = useSubmitPublicKey()
+
+	useEffect(() => {
+		const addr = accountData?.address?.toLowerCase()
+
+		setQueryParams({
+			client:
+				subgraphClients[chainId].client,
+			variables: {
+				id:addr
+			},
+		})
+	}, [workspace, accountData])
+
+	const { data: queryData, loading, error: queryError } = useGetRubricsForWorkspaceMemberQueryQuery(queryParams)
+
+
+	const [rubricsData, rubricsTransaction, rubricsLoading, rubricsError] = useSetRubrics(editedRubricData, chainId, workspaceId, grantAddress)
 
 	useEffect(() => {
 		if(transactionData && newPublicKey && newPublicKey.publicKey) {
@@ -115,6 +150,37 @@ function RubricDrawer({
 
 	}, [workspace, accountData])
 
+	useEffect(() => {
+		if(isSetRubricsModalOpen) {
+			if(rubricsData) {
+				setCurrentStep(2)
+			} else {
+				setCurrentStep(0)
+			}
+
+			if(rubricsLoading) {
+				setCurrentStep(1)
+			}
+		}
+	}, [isSetRubricsModalOpen, rubricsData, rubricsLoading])
+
+	useEffect(() => {
+		console.log(queryData, loading, queryError)
+		if(currentStep === 2 && queryData) {
+			const tempRubric = queryData?.rubrics.find((x) => x.id === grantAddress)
+			setNewRubric(tempRubric)
+		}
+	}, [queryData, loading, queryError, currentStep])
+
+	useEffect(() => {
+		if(newRubric) {
+			setCurrentStep(4)
+			setTimeout(() => {
+				setCurrentStep(5)
+				setIsSetRubricsModalOpen(false)
+			}, 2000)
+		}
+	}, [newRubric])
 	const handleOnSubmit = () => {
 		let error = false
 		if(rubrics.length > 0) {
@@ -161,23 +227,55 @@ function RubricDrawer({
 				},
 			})
 		}
+
+		setRubricDrawerOpen(false)
+		setIsSetRubricsModalOpen(true)
+		// try {
+		// 	setCurrentStep(0)
+		// 	//@TODO: switch network
+		// 	setCurrentStep(1)
+		// 	console.log(rubricsData)
+		// 	if(rubricsData)
+		// 	setCurrentStep(3)
+		// 	const newRubric = queryData?.rubrics.find((x) => x.id === grantAddress)
+		// 	if(newRubric) {
+		// 		setCurrentStep(4)
+		// 	}
+		// 	setTimeout(() => {
+		// 		router.push({ pathname: '/your_grants/view_applicants' })
+		// 	}, 2000)
+		// } catch(e) {
+		// 	setCurrentStep(undefined)
+		// 	const message = getErrorMessage(e)
+		// 	toastRef.current = toast({
+		// 		position: 'top',
+		// 		render: () => ErrorToast({
+		// 			content: message,
+		// 			close: () => {
+		// 				if(toastRef.current) {
+		// 					toast.close(toastRef.current)
+		// 				}
+		// 			},
+		// 		}),
+		// 	})
+		// }
 	}
 
-	const [
-		data,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		transactionLink,
-		loading,
-	] = useSetRubrics(editedRubricData, chainId, workspaceId, grantAddress)
+	// const [
+	// 	data,
+	// 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	// 	transactionLink,
+	// 	loading,
+	// ] = useSetRubrics(editedRubricData, chainId, workspaceId, grantAddress)
 
-	const { setRefresh } = useCustomToast(transactionLink)
+	// const { setRefresh } = useCustomToast(transactionLink)
 
-	useEffect(() => {
-		if(data) {
-			setRubricDrawerOpen(false)
-			setRefresh(true)
-		}
-	}, [data, setRubricDrawerOpen])
+	// useEffect(() => {
+	// 	if(data) {
+	// 		setRubricDrawerOpen(false)
+	// 		setRefresh(true)
+	// 	}
+	// }, [data, setRubricDrawerOpen])
 
 	const applicationReviewContract = useQBContract('reviews', chainId)
 	const provider = useProvider()
@@ -817,7 +915,27 @@ Define the quality, and add a description
 			</Drawer>
 
 			<RenderModal />
-
+			{
+				isSetRubricsModalOpen && (
+					<SetRubricsModal
+						isOpen={currentStep !== undefined}
+						onClose={() => {}}
+						daoName={'get the name'}
+						daoNetwork={daoNetwork}
+						daoImageFile={null}
+						steps={
+							[
+								'Open your wallet',
+								'Confirm Transaction',
+								'Waiting for transaction to complete',
+								'Wait for indexing to complete',
+								'Applicant evaluation setup on-chain'
+							]
+						}
+						currentStep={currentStep}
+					/>
+				)
+			}
 		</>
 	)
 }

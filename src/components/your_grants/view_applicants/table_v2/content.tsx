@@ -43,23 +43,23 @@ function Content({
 	const tableHeadersFlex = [0.231, 0.20, 0.15, 0.13, 0.16, 0.25, 0.116]
 	const tableHeadersFlexReviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116]
 	const getStatus = (status: number): ReactElement => {
-		if (status === TableFilters.submitted) {
+		if(status === TableFilters.submitted) {
 			return <PendingReview />
 		}
 
-		if (status === TableFilters.resubmit) {
+		if(status === TableFilters.resubmit) {
 			return <ResubmissionRequested />
 		}
 
-		if (status === TableFilters.approved) {
+		if(status === TableFilters.approved) {
 			return <GrantApproved />
 		}
 
-		if (status === TableFilters.rejected) {
+		if(status === TableFilters.rejected) {
 			return <Rejected />
 		}
 
-		if (status === TableFilters.assigned) {
+		if(status === TableFilters.assigned) {
 			return <AssignedToReview />
 		}
 
@@ -68,11 +68,11 @@ function Content({
 
 	// eslint-disable-next-line consistent-return
 	const getStatusReviewer = (status: number) => {
-		if (status === 0) {
+		if(status === 0) {
 			return <AssignedToReview />
 		}
 
-		if (status === 9) {
+		if(status === 9) {
 			return <ReviewDone />
 		}
 	}
@@ -81,12 +81,12 @@ function Content({
 		let ans = 0
 		// eslint-disable-next-line array-callback-return
 		item.reviewers.map((reviewer: any) => {
-			if (reviewer.id === actorId && item.status === 0) {
+			if(reviewer.id === actorId && item.status === 0) {
 				console.log('matched', reviewer.id)
 				ans = 5
 			}
 
-			if (item.status !== 0) {
+			if(item.status !== 0) {
 				ans = item.status
 			}
 		})
@@ -207,27 +207,27 @@ function Content({
 												// if (status === 2) return <GrantApproved />;
 												// if (status === 3) return <Rejected />;
 												// return <GrantComplete />;
-												if ((item.status === 2 || item.status === 4) && onManageApplicationClick) {
+												if((item.status === 2 || item.status === 4) && onManageApplicationClick) {
 													onManageApplicationClick({
 														applicationId: item.applicationId,
 													})
 													return
 												}
 
-												if (onViewApplicationFormClick) {
-													if (item.status === 3) {
+												if(onViewApplicationFormClick) {
+													if(item.status === 3) {
 														onViewApplicationFormClick({
 															rejectionComment: 'rejectionComment',
 															applicationId: item.applicationId,
 														})
-													} else if (item.status === 1) {
+													} else if(item.status === 1) {
 														onViewApplicationFormClick({
 															resubmissionComment: 'resubmissionComment',
 															applicationId: item.applicationId,
 														})
-													} else if (item.status === 0) {
+													} else if(item.status === 0) {
 														onViewApplicationFormClick({ applicationId: item.applicationId })
-													} else if (item.status === 9) {
+													} else if(item.status === 9) {
 														onViewApplicationFormClick({ applicationId: item.applicationId })
 													}
 												}
@@ -434,25 +434,25 @@ function Content({
 											// if (status === 2) return <GrantApproved />;
 											// if (status === 3) return <Rejected />;
 											// return <GrantComplete />;
-											if ((item.status === 2 || item.status === 4) && onManageApplicationClick) {
+											if((item.status === 2 || item.status === 4) && onManageApplicationClick) {
 												onManageApplicationClick({
 													applicationId: item.applicationId,
 												})
 												return
 											}
 
-											if (onViewApplicationFormClick) {
-												if (item.status === 3) {
+											if(onViewApplicationFormClick) {
+												if(item.status === 3) {
 													onViewApplicationFormClick({
 														rejectionComment: 'rejectionComment',
 														applicationId: item.applicationId,
 													})
-												} else if (item.status === 1) {
+												} else if(item.status === 1) {
 													onViewApplicationFormClick({
 														resubmissionComment: 'resubmissionComment',
 														applicationId: item.applicationId,
 													})
-												} else if (item.status === 0) {
+												} else if(item.status === 0) {
 													onViewApplicationFormClick({ applicationId: item.applicationId })
 												}
 											}

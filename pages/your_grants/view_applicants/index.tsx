@@ -37,7 +37,6 @@ import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
-import ReviewerSidebar from 'src/components/your_grants/applicant_form/reviewerSiderbar'
 
 const PAGE_SIZE = 500
 
@@ -90,7 +89,7 @@ function ViewApplicants() {
 	])
 
 	useEffect(() => {
-		if (router && router.query) {
+		if(router && router.query) {
 			const { grantId: gId } = router.query
 			setGrantID(gId)
 		}
@@ -121,7 +120,7 @@ function ViewApplicants() {
 	})
 
 	useEffect(() => {
-		if (
+		if(
 			workspace &&
 			workspace.members &&
 			workspace.members.length > 0 &&
@@ -144,17 +143,17 @@ function ViewApplicants() {
 	}, [accountData, workspace])
 
 	useEffect(() => {
-		if (!workspace) {
+		if(!workspace) {
 			return
 		}
 
-		if (!grantID) {
+		if(!grantID) {
 			return
 		}
 
 		console.log('Grant ID: ', grantID)
 		console.log('isUser: ', isUser)
-		if (isAdmin) {
+		if(isAdmin) {
 			setQueryParams({
 				client:
 					subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
@@ -174,7 +173,7 @@ function ViewApplicants() {
 			})
 		}
 
-		if (isReviewer) {
+		if(isReviewer) {
 			console.log('reviewer', isUser)
 			setQueryReviewerParams({
 				client:
@@ -194,14 +193,14 @@ function ViewApplicants() {
 	const { data: fundsDisbursed } = useGetFundSentDisburseforGrantQuery(queryFundsParams)
 
 	useEffect(() => {
-		if (data && data.grantApplications.length) {
+		if(data && data.grantApplications.length) {
 			const fetchedApplicantsData = data.grantApplications.map((applicant) => {
 				const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))
 					?.values[0]?.value
 				let decimal
 				let label
 				let icon
-				if (grantData?.grants[0].reward.token) {
+				if(grantData?.grants[0].reward.token) {
 					decimal = grantData?.grants[0].reward.token.decimal
 					label = grantData?.grants[0].reward.token.label
 					icon = getUrlForIPFSHash(grantData?.grants[0].reward.token.iconHash)
@@ -278,13 +277,13 @@ function ViewApplicants() {
 	const Reviewerstatus = (item: any) => {
 		const user = []
 		// eslint-disable-next-line no-restricted-syntax
-		for (const n in item) {
-			if (item[n].reviewer.id === isActorId) {
+		for(const n in item) {
+			if(item[n].reviewer.id === isActorId) {
 				user.push(isActorId)
 			}
 		}
 
-		if (user.length === 1) {
+		if(user.length === 1) {
 			return 9
 		}
 
@@ -293,7 +292,7 @@ function ViewApplicants() {
 
 	useEffect(() => {
 		console.log('Raw reviewer data: ', reviewData)
-		if (reviewData.data && reviewData.data.grantApplications.length) {
+		if(reviewData.data && reviewData.data.grantApplications.length) {
 			console.log('Reviewer Applications: ', reviewData.data)
 			const fetchedApplicantsData = reviewData.data.grantApplications.map((applicant) => {
 				const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
@@ -357,14 +356,14 @@ function ViewApplicants() {
 				descriptionError: false,
 			})
 		})
-		if (newRubrics.length === 0) {
+		if(newRubrics.length === 0) {
 			setIsRubricSet(false)
 			return
 		}
 
 		setIsRubricSet(true)
 		setRubrics(newRubrics)
-		if (initialRubrics?.items[0].maximumPoints) {
+		if(initialRubrics?.items[0].maximumPoints) {
 			setMaximumPoints(initialRubrics.items[0].maximumPoints)
 		}
 	}, [grantData])
@@ -373,7 +372,7 @@ function ViewApplicants() {
 		const total = fundsDisbursed?.fundsTransfers.reduce(
 			(sum, { amount }) => sum + parseInt(amount), 0
 		)
-		if (total) {
+		if(total) {
 			setTotalDisbursed(total / (10 ** rewardTokenDecimals))
 		}
 	}, [fundsDisbursed])
@@ -402,7 +401,7 @@ function ViewApplicants() {
 	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		// console.log(transactionData);
-		if (transactionData) {
+		if(transactionData) {
 			setIsModalOpen(false)
 			setRefresh(true)
 		}
@@ -423,7 +422,7 @@ function ViewApplicants() {
 			flexDirection="column"
 			bg="#F0F0F7"
 			pl={10}
-			>
+		>
 			<Container
 				flex={1}
 				display="flex"
@@ -439,8 +438,13 @@ function ViewApplicants() {
 					{' '}
 					<Breadcrumbs path={['Grants & Bounties', 'Applicants']} />
 				</Flex>
-				<Flex pl={0} ml={0} mb={5}>
-					<Box p='2' pl={0}>
+				<Flex
+					pl={0}
+					ml={0}
+					mb={5}>
+					<Box
+						p='2'
+						pl={0}>
 						<Heading size='lg'>
 							{grantTitle}
 						</Heading>
@@ -485,7 +489,7 @@ function ViewApplicants() {
 				<GrantStatsBox
 					numberOfApplicants={applicantsData.length}
 					totalDisbursed={totalDisbursed}
-					// numberOfReviews={reviewsData.length}
+					numberOfReviews={reviewsData.length}
 				/>
 
 
@@ -803,7 +807,7 @@ function ViewApplicants() {
 	)
 }
 
-ViewApplicants.getLayout = function (page: ReactElement) {
+ViewApplicants.getLayout = function(page: ReactElement) {
 	return (
 		<NavbarLayout>
 			{page}

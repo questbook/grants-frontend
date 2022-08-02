@@ -85,7 +85,8 @@ function GrantStatsBox({ numberOfApplicants, totalDisbursed, numberOfReviews }: 
 								w="19px" />
 
 							<Text variant="ApplicantsStatsMajor">
-								${totalDisbursed}
+								$
+								{totalDisbursed}
 							</Text>
 
 							<Text variant="ApplicantsStatsMinor">
