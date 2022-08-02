@@ -19,7 +19,7 @@ function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 
 	const router = useRouter()
 
-	return workspace && workspace.id && accountData?.address ? (
+	return (
 		<Flex
 			direction="column"
 			mt={4}>
@@ -36,7 +36,7 @@ function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 				</Text>
 				<Image
 					mt={2}
-					src={getUrlForIPFSHash(workspace.logoIpfsHash)}
+					src={getUrlForIPFSHash(workspace!.logoIpfsHash)}
 					boxSize="40px"
 				/>
 				<Flex mt={2}>
@@ -45,7 +45,7 @@ function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 							fontWeight="500"
 							fontSize="16px"
 							lineHeight="24px">
-							{workspace.title}
+							{workspace!.title}
 						</Text>
 						<Text
 							fontSize="14px"
@@ -53,7 +53,7 @@ function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 							fontWeight="500"
 							color="#7D7DA0"
 						>
-							{getRole(workspace, accountData?.address)}
+							{getRole(workspace!, accountData?.address!)}
 						</Text>
 					</Flex>
 					<Box mx="auto" />
@@ -77,8 +77,7 @@ function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 			<Divider
 				bg="#E0E0EC"
 				height="1px"
-				mt={2}
-				my={3} />
+				mt={2} />
 			<Flex
 				direction="column"
 				ml={6}>
@@ -90,7 +89,8 @@ function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 						direction="column"
 						overflowY="scroll"
 						maxH="80%"
-						w="100%">
+						w="100%"
+						py={3}>
 						{
 							workspaces.map((workspace: MinimalWorkspace, index: number) => {
 								return (
@@ -129,7 +129,7 @@ function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 												lineHeight="14px"
 												fontWeight="400"
 												color="#7D7DA0"
-					  mt={1}
+												mt={1}
 											>
 												{getRole(workspace, accountData?.address!)}
 											</Text>
@@ -140,7 +140,6 @@ function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 						}
 					</Flex>
 					<Button
-						height="20%"
 						fontWeight="500"
 						fontSize="12px"
 						lineHeight="16px"
@@ -153,14 +152,13 @@ function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 						_hover={{ fontWeight: 700 }}
 						_active={{}}
 						mx={0}
-						mt={4}
+						mt={2}
 						px={0}
 						onClick={
 							() => {
 								router.push({ pathname: '/onboarding/create-dao' })
 							}
 						}
-						// variant="unstyled"
 					>
             Create New DAO
 					</Button>
@@ -171,13 +169,10 @@ function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 					<Divider
 						bg="#E0E0EC"
 						height="1px"
-						mt={6} />
+						mt={4} />
 				)
 			}
-
 		</Flex>
-	) : (
-		<Flex />
 	)
 }
 

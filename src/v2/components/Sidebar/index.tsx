@@ -6,7 +6,7 @@ import { useGetWorkspaceMembersLazyQuery } from 'src/generated/graphql'
 import { MinimalWorkspace } from 'src/types'
 import getTabFromPath from 'src/utils/tabUtils'
 import { useAccount, useConnect } from 'wagmi'
-import ManageDAO from './ManageDAO'
+import ManageDAO from './Domains'
 import SidebarItem from './SidebarItem'
 import { TabIndex, useGetTabs } from './Tabs'
 
@@ -96,19 +96,22 @@ function Sidebar() {
 			overflowY="scroll"
 			border="1px solid #E0E0EC"
 		>
-			<ManageDAO
-				workspaces={workspaces}
-				onWorkspaceClick={
-					(index: TabIndex) => {
-						setWorkspace(workspaces[index])
-					}
-				}
-			/>
+			{
+				workspace && workspace.id && accountData?.address && (
+					<ManageDAO
+						workspaces={workspaces}
+						onWorkspaceClick={
+							(index: TabIndex) => {
+								setWorkspace(workspaces[index])
+							}
+						}
+					/>
+				)
+			}
 			<Flex
 				direction="column"
 				align="stretch"
-				mt={2}
-				mb={2}
+				my={2}
 				mx={2}>
 				{
 					bottomTabs.map((tab, index) => (
@@ -138,8 +141,7 @@ function Sidebar() {
 			<Flex
 				direction="column"
 				align="stretch"
-				mt={workspaces.length > 0 ? 4 : 0}
-				mb={2}
+				my={2}
 				mx={2}>
 				{
 					topTabs.map((tab, index) => (
@@ -162,37 +164,7 @@ function Sidebar() {
 			<Divider
 				bg="#E0E0EC"
 				height="1px"
-				mt={6} />
-			{/* <Flex
-				bg="#E0E0EC"
-				height="2px"
-				w="100%" /> */}
-			{/* <Box my="auto" /> */}
-			{/* {
-				(!workspaces || workspaces.length === 0 ||
-        (workspace && accountData?.address && getRole(workspace, accountData?.address) === 'Reviewer')) && (
-        	<Button
-        		m={4}
-        		h="40px"
-        		bg="#1F1F33"
-        		leftIcon={
-        			<Image
-        				boxSize="20px"
-        			src="/ui_icons/rocket.svg" />
-        		}
-        		fontSize="14px"
-        		lineHeight="20px"
-        		color="white"
-        		onClick={
-        			() => {
-        			router.push({ pathname: '/onboarding/create-dao' })
-        		}
-        		}
-        	>
-            Create your DAO
-        	</Button>
-				)
-			} */}
+				mt={2} />
 		</Flex>
 	)
 }
