@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Checkbox, Flex, Grid, GridItem, Image, Tag, Td, Tr } from '@chakra-ui/react'
+import { Box, Checkbox, Circle, Flex, Grid, GridItem, Image, Tag, Td, Tr } from '@chakra-ui/react'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getFormattedDateFromUnixTimestampWithYear } from '../../../utils/formattingUtils'
 import { capitalizeFirstLetter } from '../../../utils/generics'
@@ -22,14 +22,13 @@ function MemberRow({ member }: Props) {
 								member.profilePictureIpfsHash ? (
 									<Image
 										src={getUrlForIPFSHash(member.profilePictureIpfsHash)}
-										borderRadius={'50'}
-										boxSize='50px'
+										borderRadius={'50%'}
+										boxSize='40px'
 									/>
 								) : (
-									<Box
+									<Circle
 										bg={'grey'}
-										borderRadius={50}
-										boxSize='50px'
+										size='40px'
 									/>
 								)
 							}
