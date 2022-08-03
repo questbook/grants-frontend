@@ -51,7 +51,7 @@ const TABLE_HEADERS = ['', 'Member', 'Role', 'Joined on']
 function WorkspaceMembers() {
 	const [isInviteModalOpen, setIsInviteModalOpen] = useState(false)
 	const [selectedUserTypeIdx, setSelectedUserTypeIdx] = useState(0)
-	const [members, setMembers] = useState<Array<Partial<WorkspaceMember>> | undefined>(undefined)
+	const [members, setMembers] = useState<Partial<WorkspaceMember>[] | undefined>(undefined)
 	const [page, setPage] = useState(0)
 	const [hasMoreData, setHasMoreData] = useState(true)
 
