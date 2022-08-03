@@ -1,9 +1,10 @@
 import { useContext, useEffect, useState } from 'react'
 import { WebwalletContext } from '../../../pages/_app'
+import { useNonce } from 'src/hooks/gasless/useNonce'
 
 export const useQuestbookAccount = () => {
-	const { webwallet, scwAddress, nonce, setNonce } = useContext(WebwalletContext)!
-
+	const { webwallet, scwAddress, setNonce } = useContext(WebwalletContext)!
+	const nonce = useNonce();
 	const [gaslessData, setGaslessData] = useState<any>()
 	// const { data: accountData } = useAccount()
 	// const { data: connectData, isConnecting, isConnected, isReconnecting, isError, connect, connectors } = useConnect()

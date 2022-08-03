@@ -26,7 +26,7 @@ export const useBiconomy = (data: any) => {
 
 		console.log(webwallet, nonce, biconomyDaoObj)
 
-		console.log('CREATING BICONOMY OBJ')
+		console.log('CREATING BICONOMY OBJ', data.chainId)
 		let _biconomy: any
 
 		if(!biconomyDaoObj) {
