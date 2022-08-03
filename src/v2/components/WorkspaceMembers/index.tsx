@@ -17,7 +17,11 @@ import {
 import { ApiClientsContext } from '../../../../pages/_app'
 import Loader from '../../../components/ui/loader'
 import { defaultChainId } from '../../../constants/chains'
-import { useGetWorkspaceMembersByWorkspaceIdQuery, WorkspaceMemberAccessLevel } from '../../../generated/graphql'
+import {
+	useGetWorkspaceMembersByWorkspaceIdQuery,
+	WorkspaceMember,
+	WorkspaceMemberAccessLevel,
+} from '../../../generated/graphql'
 import { getSupportedChainIdFromWorkspace } from '../../../utils/validationUtils'
 import InviteModal from '../InviteModal'
 import AccessLevelTab from './AccessLevelTab'
@@ -47,7 +51,7 @@ const TABLE_HEADERS = ['', 'Member', 'Role', 'Joined on']
 function WorkspaceMembers() {
 	const [isInviteModalOpen, setIsInviteModalOpen] = useState(false)
 	const [selectedUserTypeIdx, setSelectedUserTypeIdx] = useState(0)
-	const [members, setMembers] = useState<Array<any> | undefined>(undefined)
+	const [members, setMembers] = useState<Array<Partial<WorkspaceMember>> | undefined>(undefined)
 	const [page, setPage] = useState(0)
 	const [hasMoreData, setHasMoreData] = useState(true)
 
@@ -136,7 +140,7 @@ function WorkspaceMembers() {
 						</Thead>
 						<Tbody>
 							{
-								members && members!.map((member: any) => (
+								members && members!.map((member) => (
 									<MemberRow
 										key={member.id}
 										member={member} />
