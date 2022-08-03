@@ -6,7 +6,7 @@ export default {
 		},
 		variants: {
 			sidebar: {
-				background: '#A0A7A7',
+				background: '#E0E0EC',
 				height: '1px',
 				opacity: 0.6,
 			},

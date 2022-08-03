@@ -27,7 +27,7 @@ function Sidebar({
 				borderRadius={12}
 				direction="column"
 				w="100%"
-				maxW="calc(40vw - 80px)"
+				maxW="calc(40vw - 64px)"
 				overflowY="scroll"
 				position="absolute"
 				maxH="calc(100vh - 150px)"

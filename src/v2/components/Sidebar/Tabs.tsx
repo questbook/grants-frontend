@@ -9,7 +9,7 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useAccount, useConnect } from 'wagmi'
 
 enum TabIndex {
-	DISCOVER, MY_APPLICATIONS, DASHBOARD, GRANTS_AND_BOUNTIES, TRANSACTIONS, INTEGRATIONS, SETTINGS, PAYOUTS
+	DISCOVER, MY_APPLICATIONS, DASHBOARD, GRANTS_AND_BOUNTIES, SAFE, APPS, SETTINGS, PAYOUTS
 }
 
 const TABS = [
@@ -17,8 +17,8 @@ const TABS = [
 	{ id: 'my_applications', index: TabIndex.MY_APPLICATIONS, name: 'My Applications', path: '/your_applications' },
 	{ id: 'dashboard', index: TabIndex.DASHBOARD, name: 'Dashboard', path: '/dashboard' },
 	{ id: 'grants_and_bounties', index: TabIndex.GRANTS_AND_BOUNTIES, name: 'Grants And Bounties', path: '/your_grants' },
-	{ id: 'transactions', index: TabIndex.TRANSACTIONS, name: 'Transactions', path: '/funds' },
-	{ id: 'integrations', index: TabIndex.INTEGRATIONS, name: 'Integrations', path: '/integrations' },
+	{ id: 'safe', index: TabIndex.SAFE, name: 'Safe', path: '/safe' },
+	{ id: 'apps', index: TabIndex.APPS, name: 'Apps', path: '/apps' },
 	{ id: 'settings', index: TabIndex.SETTINGS, name: 'Settings', path: '/manage_dao' },
 	{ id: 'payouts', index: TabIndex.PAYOUTS, name: 'Payouts', path: '/payouts' }
 ]
@@ -108,7 +108,11 @@ function useGetTabs() {
 	console.log('WORKSPACE: ', workspace)
 	if(!workspace || !workspace.id) {
 		// Pure applicant
-		return [ [TABS[0], TABS[1]], [] ]
+		if(applicationCount > 0) {
+			return [ [TABS[0], TABS[1]], [] ]
+		} else {
+			return [ [TABS[0]], [] ]
+		}
 	} else {
 		const member = workspace.members.find((m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase())
 		if(!member) {
