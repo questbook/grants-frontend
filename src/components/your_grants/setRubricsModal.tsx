@@ -1,27 +1,93 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { AlertDialogOverlay, Box, Button, Flex, Heading, Image, Modal, ModalBody, ModalContent, Text } from '@chakra-ui/react'
+import { ApiClientsContext } from 'pages/_app'
+import { SupportedChainId } from 'src/constants/chains'
+import { useGetRubricsForWorkspaceMemberQueryQuery } from 'src/generated/graphql'
+import useSetRubrics from 'src/hooks/useSetRubrics'
+import {
+	getSupportedChainIdFromWorkspace,
+} from 'src/utils/validationUtils'
 import { Organization } from 'src/v2/assets/custom chakra icons/Organization'
 import { NetworkSelectOption } from 'src/v2/components/Onboarding/SupportedNetworksData'
 import ModalStep from 'src/v2/components/Onboarding/UI/CreateDaoModal/ModalStep'
+import { useAccount } from 'wagmi'
 
 const SetRubricsModal = ({
 	isOpen,
+	setIsOpen,
 	onClose,
+	rubrics,
+	chainId,
+	workspaceId,
+	grantAddress,
 	daoName,
 	daoNetwork,
 	daoImageFile,
 	steps,
-	currentStep,
+	// currentStep,
 }: {
 	isOpen: boolean,
+	setIsOpen : (val: any) => void,
 	onClose: () => void,
+	rubrics:any,
 	redirect?: () => void,
+	grantAddress: string;
+	chainId: SupportedChainId;
+	workspaceId: string;
   daoName: string | undefined,
   daoNetwork: NetworkSelectOption | undefined,
 	daoImageFile: File | null,
 	steps: string[],
-	currentStep: number | undefined,
+	// currentStep: number | undefined,
 }) => {
+	const [isDone, setIsDone] = useState(false)
+	const [currentStep, setCurrentStep] = useState<number | undefined>(1)
+	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
+	const [queryParams, setQueryParams] = useState<any>({
+		client:
+			subgraphClients[
+				getSupportedChainIdFromWorkspace(workspace) || 4
+			].client,
+	})
+
+	const { data: accountData } = useAccount()
+	useEffect(() => {
+		const addr = accountData?.address?.toLowerCase()
+
+		setQueryParams({
+			client:
+				subgraphClients[chainId].client,
+			variables: {
+				id:addr
+			},
+		})
+	}, [workspace, accountData])
+
+	const { data: queryData, loading, error: queryError } = useGetRubricsForWorkspaceMemberQueryQuery(queryParams)
+	const [rubricsData, rubricsTransaction, rubricsTxnConfirmed, rubricsLoading, rubricsError] = useSetRubrics(rubrics, chainId, workspaceId, grantAddress)
+
+	useEffect (() => {
+		if(rubricsTxnConfirmed && currentStep === 1) {
+			setCurrentStep(2)
+		} else if(rubricsData && currentStep === 2) {
+			setCurrentStep(3)
+		} else if(queryData && currentStep === 3) {
+			setCurrentStep(4)
+		} else if(currentStep === 4) {
+			setTimeout(() => {
+				setCurrentStep(undefined)
+				setIsDone(true)
+					 		}, 2000)
+
+		}
+
+	}, [rubricsData, rubricsLoading, rubricsTxnConfirmed, queryData, loading, queryError, currentStep])
+
+	useEffect (() => {
+		if(isDone) {
+			setIsOpen(false)
+		}
+	}, [setIsOpen, isDone])
 	return (
 		<Modal
 			isOpen={isOpen}
@@ -49,7 +115,7 @@ const SetRubricsModal = ({
 						fontSize={'2xl'}
 						m={8}
 						mb={5}>
-            Creating DAO on-chain...
+            Setting up applicant evaluation on-chain..
 					</Heading>
 
 					<Flex

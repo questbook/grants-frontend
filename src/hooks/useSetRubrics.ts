@@ -24,6 +24,7 @@ export default function useSetRubrics(
 	const [transactionData, setTransactionData] = React.useState<any>()
 	const { data: accountData } = useAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
+	const [txnConfirmed, setTxnConfirmed] = React.useState(false)
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients
@@ -100,6 +101,7 @@ export default function useSetRubrics(
 					grantAddress!,
 					rubricHash,
 				)
+				setTxnConfirmed(true)
 				const createGrantTransactionData = await createGrantTransaction.wait()
 
 				setTransactionData(createGrantTransactionData)
@@ -108,6 +110,7 @@ export default function useSetRubrics(
 				const message = getErrorMessage(e)
 				setError(message)
 				setLoading(false)
+				setTxnConfirmed(false)
 				toastRef.current = toast({
 					position: 'top',
 					render: () => ErrorToast({
@@ -182,6 +185,7 @@ export default function useSetRubrics(
 			const message = getErrorMessage(e)
 			setError(message)
 			setLoading(false)
+			setTxnConfirmed(false)
 			toastRef.current = toast({
 				position: 'top',
 				render: () => ErrorToast({
@@ -211,11 +215,13 @@ export default function useSetRubrics(
 		data,
 		grantAddress,
 		incorrectNetwork,
+		txnConfirmed
 	])
 
 	return [
 		transactionData,
 		getExplorerUrlForTxHash(chainId || getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
+		txnConfirmed,
 		loading,
 		error,
 	]
