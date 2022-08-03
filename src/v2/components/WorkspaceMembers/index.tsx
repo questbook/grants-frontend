@@ -17,7 +17,11 @@ import {
 import { ApiClientsContext } from '../../../../pages/_app'
 import Loader from '../../../components/ui/loader'
 import { defaultChainId } from '../../../constants/chains'
-import { useGetWorkspaceMembersByWorkspaceIdQuery, WorkspaceMemberAccessLevel } from '../../../generated/graphql'
+import {
+	useGetWorkspaceMembersByWorkspaceIdQuery,
+	WorkspaceMember,
+	WorkspaceMemberAccessLevel,
+} from '../../../generated/graphql'
 import { getSupportedChainIdFromWorkspace } from '../../../utils/validationUtils'
 import InviteModal from '../InviteModal'
 import AccessLevelTab from './AccessLevelTab'
@@ -45,14 +49,13 @@ const USER_TYPES = [
 const TABLE_HEADERS = ['', 'Member', 'Role', 'Joined on']
 
 function WorkspaceMembers() {
-	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
-
+	const [isInviteModalOpen, setIsInviteModalOpen] = useState(false)
 	const [selectedUserTypeIdx, setSelectedUserTypeIdx] = useState(0)
-
-	const [members, setMembers] = useState<Array<any> | undefined>(undefined)
-
+	const [members, setMembers] = useState<Partial<WorkspaceMember>[]>()
 	const [page, setPage] = useState(0)
 	const [hasMoreData, setHasMoreData] = useState(true)
+
+	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
 
 	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 	const { client } = subgraphClients[chainId]
@@ -75,8 +78,6 @@ function WorkspaceMembers() {
 		setHasMoreData(data!.workspaceMembers.length >= PAGE_SIZE)
 		setMembers(data!.workspaceMembers)
 	}, [data, page, selectedUserTypeIdx])
-
-	const [isInviteModalOpen, setIsInviteModalOpen] = useState(false)
 
 	return (
 		<>
@@ -139,7 +140,7 @@ function WorkspaceMembers() {
 						</Thead>
 						<Tbody>
 							{
-								members && members!.map((member: any) => (
+								members && members!.map((member) => (
 									<MemberRow
 										key={member.id}
 										member={member} />
