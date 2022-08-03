@@ -8,7 +8,6 @@ import {
 	MenuList,
 	Text,
 } from '@chakra-ui/react'
-import { Wallet } from 'ethers'
 import { useRouter } from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'

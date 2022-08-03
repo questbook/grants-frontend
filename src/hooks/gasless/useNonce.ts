@@ -1,5 +1,4 @@
 import { useContext, useEffect } from 'react'
-import { Wallet } from 'ethers'
 import { WebwalletContext } from '../../../pages/_app'
 import { getNonce } from '../../utils/gaslessUtils'
 
@@ -13,27 +12,25 @@ export const useNonce = () => {
 
 	useEffect(() => {
 		if(!webwallet) {
-			return ;
+			return
 		}
 
 		if(webwallet && !nonce) {
 			getUseNonce()
 				.then(_nonce => {
-					console.log("GOT NONCE", _nonce);
+					console.log('GOT NONCE', _nonce)
 					if(!_nonce) {
 						setNonce(undefined)
-					} 
-					else {
+					} else {
 						if(_nonce === 'Token expired') {
 							setNonce(undefined)
-						}
-						else{
-							setNonce(_nonce);
+						} else {
+							setNonce(_nonce)
 						}
 					}
 				})
 		}
-	}, [webwallet, nonce,])
+	}, [webwallet, nonce, ])
 
 	return nonce
 }

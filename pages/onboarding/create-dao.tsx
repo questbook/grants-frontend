@@ -1,6 +1,5 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { Wallet } from 'ethers'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { WebwalletContext } from 'pages/_app'
@@ -9,6 +8,7 @@ import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
 import {
@@ -26,7 +26,6 @@ import { NetworkSelectOption } from 'src/v2/components/Onboarding/SupportedNetwo
 import CreateDaoModal from 'src/v2/components/Onboarding/UI/CreateDaoModal'
 import BackgroundImageLayout from 'src/v2/components/Onboarding/UI/Layout/BackgroundImageLayout'
 import OnboardingCard from 'src/v2/components/Onboarding/UI/Layout/OnboardingCard'
-import { useNetwork } from 'src/hooks/gasless/useNetwork'
 
 const OnboardingCreateDao = () => {
 	const router = useRouter()
@@ -38,11 +37,11 @@ const OnboardingCreateDao = () => {
 	const [daoImageFile, setDaoImageFile] = useState<File | null>(null)
 	const [callOnContractChange, setCallOnContractChange] = useState(false)
 	const [currentStep, setCurrentStep] = useState<number>()
-	const { network } = useNetwork();
+	const { network } = useNetwork()
 
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
-	console.log("THIS IS WEBWALLRT", webwallet);
-	const { switchNetwork } = useNetwork();
+	console.log('THIS IS WEBWALLRT', webwallet)
+	const { switchNetwork } = useNetwork()
 	// console.log(daoNetwork?.id.toString())
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
@@ -190,9 +189,9 @@ const OnboardingCreateDao = () => {
 			daoNetwork={daoNetwork}
 			onSubmit={
 				(network) => {
-					setDaoNetwork(network);
-					switchNetwork(network.id);
-					console.log("NETWORK", network)
+					setDaoNetwork(network)
+					switchNetwork(network.id)
+					console.log('NETWORK', network)
 					nextClick()
 				}
 			}

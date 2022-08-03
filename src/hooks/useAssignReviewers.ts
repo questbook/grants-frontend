@@ -1,14 +1,18 @@
 import React, { useContext, useEffect, useMemo } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
+import ApplicationReviewRegistryAbi from 'src/contracts/abi/ApplicationReviewRegistryAbi.json'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { apiKey, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
+import { useBiconomy } from './gasless/useBiconomy'
 import { useNetwork } from './gasless/useNetwork'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 
@@ -28,6 +32,14 @@ export default function useAssignReviewers(
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients
+
+
+	const { webwallet } = useContext(WebwalletContext)!
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		apiKey: apiKey,
+		targetContractABI: ApplicationReviewRegistryAbi,
+	})
 
 	if(!chainId) {
 		// eslint-disable-next-line no-param-reassign
@@ -79,16 +91,40 @@ export default function useAssignReviewers(
 				//   APPLICATION_REGISTRY_ADDRESS[currentChainId!],
 				// );
 
-				const createGrantTransaction = await applicationReviewContract.assignReviewers(
-					workspaceId || workspace!.id,
-					applicationId!,
-					grantAddress!,
-					data.reviewers,
-					data.active,
-				)
-				const createGrantTransactionData = await createGrantTransaction.wait()
+				// const createGrantTransaction = await applicationReviewContract.assignReviewers(
+				// 	workspaceId || workspace!.id,
+				// 	applicationId!,
+				// 	grantAddress!,
+				// 	data.reviewers,
+				// 	data.active,
+				// )
+				// const createGrantTransactionData = await createGrantTransaction.wait()
 
-				setTransactionData(createGrantTransactionData)
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					return
+				}
+
+				const transactionHash = await sendGaslessTransaction(
+					biconomy,
+					applicationReviewContract,
+					'assignReviewers',
+					[workspaceId || workspace!.id,
+						applicationId!,
+						grantAddress!,
+						data.reviewers,
+						data.active, ],
+					APPLICATION_REVIEW_REGISTRY_ADDRESS[currentChainId],
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					webHookId,
+					nonce
+				)
+
+				const updateTransactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
+
+				setTransactionData(updateTransactionData)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)

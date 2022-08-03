@@ -19,6 +19,7 @@ import {
 import SubgraphClient from 'src/graphql/subgraph'
 import theme from 'src/theme'
 import { MinimalWorkspace } from 'src/types'
+import { jsonRpcProviders } from 'src/utils/gaslessUtils'
 import getSeo from 'src/utils/seo'
 import {
 	allChains,
@@ -36,7 +37,6 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { publicProvider } from 'wagmi/providers/public'
 import 'styles/globals.css'
 import 'draft-js/dist/Draft.css'
-import { jsonRpcProviders } from 'src/utils/gaslessUtils'
 
 
 type NextPageWithLayout = NextPage & {
@@ -132,11 +132,11 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [nonce, setNonce] = React.useState<string>()
 
 	useEffect(() => {
-		setWebwallet(createWebWallet());
-		setScwAddress(getScwAddress());
-		setNonce(getNonce());
-		switchNetwork(getNetwork());
-	}, [setWebwallet, setScwAddress, setNonce, switchNetwork]);
+		setWebwallet(createWebWallet())
+		setScwAddress(getScwAddress())
+		setNonce(getNonce())
+		switchNetwork(getNetwork())
+	}, [setWebwallet, setScwAddress, setNonce, switchNetwork])
 
 	const getScwAddress = () => {
 
@@ -171,25 +171,25 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		return parseInt(_network)
 	}
 
-	const createWebWallet = () => {	
+	const createWebWallet = () => {
 
-		const privateKey = localStorage.getItem('webwalletPrivateKey');
-		
-		let newWebwallet = Wallet.createRandom();
-		newWebwallet = newWebwallet.connect(jsonRpcProviders["80001"]);
+		const privateKey = localStorage.getItem('webwalletPrivateKey')
+
+		let newWebwallet = Wallet.createRandom()
+		newWebwallet = newWebwallet.connect(jsonRpcProviders['80001'])
 
 		if(!privateKey) {
 			localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
-			return newWebwallet;
+			return newWebwallet
 		}
 
 		try {
-			newWebwallet = new Wallet(privateKey);
-			newWebwallet = newWebwallet.connect(jsonRpcProviders["80001"]);
+			newWebwallet = new Wallet(privateKey)
+			newWebwallet = newWebwallet.connect(jsonRpcProviders['80001'])
 			return newWebwallet
 		} catch{
 			localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
-			return newWebwallet;
+			return newWebwallet
 		}
 	}
 
@@ -312,7 +312,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	)
 
 	const seo = getSeo()
-
 
 
 	const getLayout = Component.getLayout || ((page) => page)
