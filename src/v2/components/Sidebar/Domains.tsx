@@ -61,7 +61,7 @@ function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 						workspaces.length > 0 && (
 							<Image
 								mr={2}
-								src="/ui_icons/arrow-drop-down-line-gray.svg"
+								src={expanded ? '/ui_icons/arrow-drop-down-line-gray-expanded.svg' : '/ui_icons/arrow-drop-down-line-gray.svg'}
 								alt="options"
 								onClick={
 									() => {

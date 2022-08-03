@@ -28,6 +28,7 @@ function SidebarItem({ id, selected, index, name, onClick }: Props) {
 			justifyContent="start"
 			bg={isSelected ? '#F0F0F7' : 'white'}
 			color={isSelected ? '#1F1F33' : '#7D7DA0'}
+			_hover={{ bg: '#F0F0F7' }}
 			pl={4}
 			py={2}
 			onClick={onClick}
