@@ -6,7 +6,7 @@ import { useGetWorkspaceMembersLazyQuery } from 'src/generated/graphql'
 import { MinimalWorkspace } from 'src/types'
 import getTabFromPath from 'src/utils/tabUtils'
 import { useAccount, useConnect } from 'wagmi'
-import ManageDAO from './Domains'
+import Domains from './Domains'
 import SidebarItem from './SidebarItem'
 import { TabIndex, useGetTabs } from './Tabs'
 
@@ -98,7 +98,7 @@ function Sidebar() {
 		>
 			{
 				workspace && workspace.id && accountData?.address && (
-					<ManageDAO
+					<Domains
 						workspaces={workspaces}
 						onWorkspaceClick={
 							(index: TabIndex) => {
@@ -133,9 +133,7 @@ function Sidebar() {
 			</Flex>
 			{
 				workspaces.length > 0 && (
-					<Divider
-						bg="#E0E0EC"
-						height="1px" />
+					<Divider variant="sidebar" />
 				)
 			}
 			<Flex
@@ -162,8 +160,7 @@ function Sidebar() {
 				}
 			</Flex>
 			<Divider
-				bg="#E0E0EC"
-				height="1px"
+				variant="sidebar"
 				mt={2} />
 		</Flex>
 	)

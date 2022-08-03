@@ -12,7 +12,7 @@ interface Props {
   onWorkspaceClick: (index: number) => void;
 }
 
-function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
+function Domains({ workspaces, onWorkspaceClick }: Props) {
 	const { workspace } = React.useContext(ApiClientsContext)!
 	const { data: accountData } = useAccount()
 	const [expanded, setExpanded] = React.useState(false)
@@ -75,8 +75,7 @@ function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 				</Flex>
 			</Flex>
 			<Divider
-				bg="#E0E0EC"
-				height="1px"
+				variant="sidebar"
 				mt={2} />
 			<Flex
 				direction="column"
@@ -167,8 +166,7 @@ function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 			{
 				expanded && (
 					<Divider
-						bg="#E0E0EC"
-						height="1px"
+						variant="sidebar"
 						mt={4} />
 				)
 			}
@@ -176,4 +174,4 @@ function ManageDAO({ workspaces, onWorkspaceClick }: Props) {
 	)
 }
 
-export default ManageDAO
+export default Domains
