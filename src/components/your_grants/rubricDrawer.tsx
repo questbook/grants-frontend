@@ -1,22 +1,19 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import {
 	Box, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, Image,
 	Input, Progress, RangeSlider,
 	RangeSliderFilledTrack,
 	RangeSliderMark,
 	RangeSliderThumb,	RangeSliderTrack,
-	Skeleton,	Spacer, Text, ToastId, useToast } from '@chakra-ui/react'
-import { formatEther } from 'ethers/lib/utils'
-import { useRouter } from 'next/router'
+	Spacer, Text } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
-import { CHAIN_INFO } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
-import { GasStation } from 'src/v2/assets/custom chakra icons/GasStation'
+import NetworkFeeEstimateView from 'src/v2/components/NetworkFeeEstimateView'
 import { NetworkSelectOption } from 'src/v2/components/Onboarding/SupportedNetworksData'
 import { supportedNetworks } from 'src/v2/components/Onboarding/SupportedNetworksData'
-import { useAccount, useProvider } from 'wagmi'
+import { useAccount } from 'wagmi'
 import SetRubricsModal from './setRubricsModal'
 
 function RubricDrawer({
@@ -45,7 +42,6 @@ function RubricDrawer({
 	initialIsPrivate: boolean;
 }) {
 	const [shouldEncryptReviews, setShouldEncryptReviews] = React.useState(false)
-	const [gasEstimate, setGasEstimate] = React.useState<any>('')
 	const [daoNetwork, setDaoNetwork] = useState<NetworkSelectOption>()
 
 	// @TODO: change this value to whatever it should be.
@@ -63,11 +59,8 @@ function RubricDrawer({
 
 	const [pk, setPk] = React.useState<string>('*')
 	const { data: accountData } = useAccount()
-	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
+	const { workspace } = useContext(ApiClientsContext)!
 
-	const toastRef = useRef<ToastId>()
-	const toast = useToast()
-	const router = useRouter()
 	const {
 		RenderModal,
 		setHiddenModalOpen: setHiddenPkModalOpen,
@@ -185,24 +178,16 @@ function RubricDrawer({
 	}
 
 	const applicationReviewContract = useQBContract('reviews', chainId)
-	const provider = useProvider()
-	const estimateSetRubric = async() => {
-		setGasEstimate(undefined)
-		try {
-			const estimate = await applicationReviewContract.estimateGas.setRubrics(workspaceId, grantAddress, 'bafkreiboy5njxjyusnps6oayqg7famhocgymhaqp5p53p2kd6fhzhxqiny')
-			const gasPrice = await provider.getGasPrice()
-			setGasEstimate(formatEther(estimate.mul(gasPrice)))
-		} catch(e) {
-			console.log(e)
-		}
-	}
 
-	useEffect(() => {
-		if(applicationReviewContract.signer !== null && provider !== null) {
-			estimateSetRubric()
-		}
-	}, [applicationReviewContract, provider])
-
+	const getSetRubricsGasEstimate = useCallback(
+		() => {
+			return applicationReviewContract.estimateGas.setRubrics(
+				// random hash -- just to estimate gas
+				workspaceId, grantAddress, 'bafkreiboy5njxjyusnps6oayqg7famhocgymhaqp5p53p2kd6fhzhxqiny'
+			)
+		},
+		[applicationReviewContract],
+	)
 	return (
 		<>
 			<Drawer
@@ -615,26 +600,9 @@ function RubricDrawer({
 							padding="16px">
 							{
 								!!setupStep && (
-									<Skeleton isLoaded={gasEstimate !== undefined}>
-										<Flex
-											bg={'#F0F0F7'}
-											borderRadius={'base'}
-											px={3}>
-											<GasStation
-												color={'#89A6FB'}
-												boxSize={5} />
-											<Text
-												ml={2}
-												mt={'1.5px'}
-												fontSize={'xs'}>
-												Network Fee -
-												{' '}
-												{gasEstimate}
-												{' '}
-												{CHAIN_INFO[chainId].nativeCurrency.symbol}
-											</Text>
-										</Flex>
-									</Skeleton>
+									<NetworkFeeEstimateView
+										getEstimate={getSetRubricsGasEstimate}
+										chainId={chainId} />
 								)
 							}
 							<Spacer />
