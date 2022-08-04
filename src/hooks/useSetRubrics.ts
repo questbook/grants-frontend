@@ -25,6 +25,7 @@ export default function useSetRubrics(
 	const { data: accountData } = useAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 	const [txnConfirmed, setTxnConfirmed] = React.useState(false)
+	const [walletShouldOpen, setWalletShouldOpen] = React.useState(false)
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients
@@ -95,7 +96,7 @@ export default function useSetRubrics(
 				//   WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
 				//   APPLICATION_REGISTRY_ADDRESS[currentChainId!],
 				// );
-
+				setWalletShouldOpen(true)
 				const createGrantTransaction = await applicationReviewContract.setRubrics(
 					workspaceId || Number(workspace?.id).toString(),
 					grantAddress!,
@@ -110,6 +111,7 @@ export default function useSetRubrics(
 				const message = getErrorMessage(e)
 				setError(message)
 				setLoading(false)
+				setWalletShouldOpen(false)
 				setTxnConfirmed(false)
 				toastRef.current = toast({
 					position: 'top',
@@ -186,6 +188,7 @@ export default function useSetRubrics(
 			setError(message)
 			setLoading(false)
 			setTxnConfirmed(false)
+			setWalletShouldOpen(false)
 			toastRef.current = toast({
 				position: 'top',
 				render: () => ErrorToast({
@@ -215,13 +218,15 @@ export default function useSetRubrics(
 		data,
 		grantAddress,
 		incorrectNetwork,
-		txnConfirmed
+		txnConfirmed,
+		walletShouldOpen
 	])
 
 	return [
 		transactionData,
 		getExplorerUrlForTxHash(chainId || getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
 		txnConfirmed,
+		walletShouldOpen,
 		loading,
 		error,
 	]

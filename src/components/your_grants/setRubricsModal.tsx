@@ -41,7 +41,7 @@ const SetRubricsModal = ({
 	// currentStep: number | undefined,
 }) => {
 	const [isDone, setIsDone] = useState(false)
-	const [currentStep, setCurrentStep] = useState<number | undefined>(1)
+	const [currentStep, setCurrentStep] = useState<number | undefined>(0)
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
@@ -53,7 +53,6 @@ const SetRubricsModal = ({
 	const { data: accountData } = useAccount()
 	useEffect(() => {
 		const addr = accountData?.address?.toLowerCase()
-
 		setQueryParams({
 			client:
 				subgraphClients[chainId].client,
@@ -64,9 +63,13 @@ const SetRubricsModal = ({
 	}, [workspace, accountData])
 
 	const { data: queryData, loading, error: queryError } = useGetRubricsForWorkspaceMemberQueryQuery(queryParams)
-	const [rubricsData, rubricsTransaction, rubricsTxnConfirmed, rubricsLoading, rubricsError] = useSetRubrics(rubrics, chainId, workspaceId, grantAddress)
+	const [rubricsData, rubricsTransaction, rubricsTxnConfirmed, walletShouldOpen, rubricsLoading, rubricsError] = useSetRubrics(rubrics, chainId, workspaceId, grantAddress)
 
 	useEffect (() => {
+		if(walletShouldOpen && currentStep === 0) {
+			setCurrentStep(1)
+		}
+
 		if(rubricsTxnConfirmed && currentStep === 1) {
 			setCurrentStep(2)
 		} else if(rubricsData && currentStep === 2) {
@@ -81,13 +84,13 @@ const SetRubricsModal = ({
 
 		}
 
-	}, [rubricsData, rubricsLoading, rubricsTxnConfirmed, queryData, loading, queryError, currentStep])
+	}, [rubricsData, rubricsLoading, rubricsTxnConfirmed, walletShouldOpen, queryData, loading, queryError, currentStep])
 
 	useEffect (() => {
-		if(isDone) {
+		if(isDone || queryError !== undefined || rubricsError !== undefined) {
 			setIsOpen(false)
 		}
-	}, [setIsOpen, isDone])
+	}, [setIsOpen, isDone, queryError, rubricsError])
 	return (
 		<Modal
 			isOpen={isOpen}
@@ -187,7 +190,7 @@ const SetRubricsModal = ({
 					{
 						steps.map((step, index) => (
 							<ModalStep
-								key={`create-dao-step${index}`}
+								key={`set-rubric-step${index}`}
 								loadingFinished={index < (currentStep || -1)}
 								loadingStarted={index === currentStep}
 								step={step}

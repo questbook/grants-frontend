@@ -117,6 +117,9 @@ function RubricDrawer({
 			return
 		}
 
+		const network = supportedNetworks.find((x) => x.id === chainId)
+		setDaoNetwork(network)
+
 		const k = workspace?.members?.find(
 			(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 		)?.publicKey?.toString()
@@ -178,52 +181,8 @@ function RubricDrawer({
 
 		setRubricDrawerOpen(false)
 		setIsSetRubricsModalOpen(true)
-		// try {
-		// 	setCurrentStep(0)
-		// 	//@TODO: switch network
-		// 	setCurrentStep(1)
-		// 	console.log(rubricsData)
-		// 	if(rubricsData)
-		// 	setCurrentStep(3)
-		// 	const newRubric = queryData?.rubrics.find((x) => x.id === grantAddress)
-		// 	if(newRubric) {
-		// 		setCurrentStep(4)
-		// 	}
-		// 	setTimeout(() => {
-		// 		router.push({ pathname: '/your_grants/view_applicants' })
-		// 	}, 2000)
-		// } catch(e) {
-		// 	setCurrentStep(undefined)
-		// 	const message = getErrorMessage(e)
-		// 	toastRef.current = toast({
-		// 		position: 'top',
-		// 		render: () => ErrorToast({
-		// 			content: message,
-		// 			close: () => {
-		// 				if(toastRef.current) {
-		// 					toast.close(toastRef.current)
-		// 				}
-		// 			},
-		// 		}),
-		// 	})
-		// }
+
 	}
-
-	// const [
-	// 	data,
-	// 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	// 	transactionLink,
-	// 	loading,
-	// ] = useSetRubrics(editedRubricData, chainId, workspaceId, grantAddress)
-
-	// const { setRefresh } = useCustomToast(transactionLink)
-
-	// useEffect(() => {
-	// 	if(data) {
-	// 		setRubricDrawerOpen(false)
-	// 		setRefresh(true)
-	// 	}
-	// }, [data, setRubricDrawerOpen])
 
 	const applicationReviewContract = useQBContract('reviews', chainId)
 	const provider = useProvider()
@@ -726,7 +685,7 @@ function RubricDrawer({
 						workspaceId={workspaceId}
 						grantAddress={grantAddress}
 						daoName={workspace?.title}
-						daoNetwork={supportedNetworks[chainId]}
+						daoNetwork={daoNetwork}
 						daoImageFile={null}
 						steps={
 							[
