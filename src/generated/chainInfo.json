@@ -428,6 +428,7 @@
 				"icon": "/chain_assets/unlock.svg",
 				"label": "UDT",
 				"address": "0xf7e78d9c4c74df889a83c8c8d6d05bf70ff75876",
+				"pair": "0x0",
 				"decimals": 18
 			}
 		},
