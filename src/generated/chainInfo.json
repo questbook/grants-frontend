@@ -124,6 +124,82 @@
 			"decimals": 18
 		}
 	},
+	"40": {
+		"id": 40,
+		"name": "Telos Mainnet",
+		"isTestNetwork": false,
+		"icon": "/chain_assets/telos.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://www.teloscan.io/address/{{address}}/",
+			"transactionHash": "https://www.teloscan.io/tx/{{tx}}/"
+		},
+		"supportedCurrencies": {
+			"0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b": {
+				"icon": "/chain_assets/usdc.svg",
+				"label": "USDC",
+				"address": "0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b",
+				"pair": "0x0",
+				"decimals": 6
+			}
+		},
+		"qbContracts": {
+			"applications": "0xcbE56313F2A7592d97caf909d6A8b8cD72e9Fbae",
+			"workspace": "0x02bE08DeD04a6A7F7D4b5593cD303AC8Cef652DB",
+			"grantFactory": "0x56A4a132e3Ab595F657F4B2c4A3e1484F38C32b6",
+			"reviews": "0x4dF627729f8a79F3A8bCD42C069d15bC4777830A"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-telos-mainnet",
+		"rpcUrls": [
+			"https://mainnet.telos.net/evm"
+		],
+		"nativeCurrency": {
+			"name": "Telos Mainnet",
+			"symbol": "TLOS",
+			"decimals": 18
+		}
+	},
+	"41": {
+		"id": 41,
+		"name": "Telos Testnet",
+		"isTestNetwork": true,
+		"icon": "/chain_assets/telos.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://testnet.teloscan.io/address/{{address}}/",
+			"transactionHash": "https://testnet.teloscan.io/tx/{{tx}}/"
+		},
+		"supportedCurrencies": {
+			"0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b": {
+				"icon": "/chain_assets/usdc.svg",
+				"label": "USDC",
+				"address": "0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b",
+				"pair": "0x0",
+				"decimals": 6
+			}
+		},
+		"qbContracts": {
+			"applications": "0x0022B3FB492596C86CF114b460D9Bd6a9cf80Ba2",
+			"workspace": "0x0c58ff1573c0c3F07B54D4dE0Ab19e047F4785FB",
+			"grantFactory": "0xbD4c8Aea352851D2c043D31B07B155B7F14505AC",
+			"reviews": "0xe99Be727911552f671e18f37C42d0d6961f07675"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-telos-testnet",
+		"rpcUrls": [
+			"https://testnet.telos.net/evm"
+		],
+		"nativeCurrency": {
+			"name": "Telos Testnet",
+			"symbol": "TLOS",
+			"decimals": 18
+		}
+	},
 	"42": {
 		"id": 42,
 		"name": "Kovan",

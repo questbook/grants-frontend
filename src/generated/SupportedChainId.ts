@@ -17,6 +17,8 @@ enum SupportedChainId {
 	POLYGON_MAINNET = 137,
 	POLYGON_MUMBAI = 80001,
 	RINKEBY = 4,
+	TELOS_MAINNET = 40,
+	TELOS_TESTNET = 41,
 }
 
 export default SupportedChainId
