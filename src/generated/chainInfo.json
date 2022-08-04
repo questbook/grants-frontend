@@ -423,6 +423,12 @@
 				"label": "ZKP",
 				"address": "0x9a06db14d639796b25a6cec6a1bf614fd98815ec",
 				"decimals": 18
+			},
+			"0xf7e78d9c4c74df889a83c8c8d6d05bf70ff75876": {
+				"icon": "/chain_assets/unlock.svg",
+				"label": "UDT",
+				"address": "0xf7e78d9c4c74df889a83c8c8d6d05bf70ff75876",
+				"decimals": 18
 			}
 		},
 		"qbContracts": {
