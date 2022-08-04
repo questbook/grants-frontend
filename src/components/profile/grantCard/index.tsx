@@ -76,13 +76,14 @@ function BrowseGrantCard({
 		>
 			{' '}
 			<Flex
-				py={6}
-				px="1.5rem"
+				py={{ base: '16px', md: 6 }}
+				px={{ base: '16px', md:'1.5rem' }}
 				w="100%">
 				<Flex
 					flex={1}
 					direction="column">
 					<Flex
+						justifyContent={'space-around'}
 						direction="row"
 						alignItems="center">
 						<Text maxW="50%">
@@ -115,6 +116,8 @@ function BrowseGrantCard({
 						</Text>
 
 						<Box mr="auto" />
+
+						<Badge numOfApplicants={numOfApplicants} />
 					</Flex>
 
 					<Text
@@ -140,7 +143,7 @@ function BrowseGrantCard({
 						>
 							<Text
 								fontFamily="DM Sans"
-								fontSize="0.85rem"
+								fontSize={{ base: '12px', md: '0.85rem' }}
 								lineHeight="1rem"
 								fontWeight="400"
 								color="#373737"
@@ -165,7 +168,7 @@ function BrowseGrantCard({
 						</Stack>
 
 						<Image
-							mx={4}
+							mx={{ base: '8px', md: 4 }}
 							src="/ui_icons/green_dot.svg"
 							display="inline-block"
 						/>
@@ -174,7 +177,7 @@ function BrowseGrantCard({
 							src={grantCurrencyIcon} />
 						<Text
 							ml={2}
-							fontSize="0.85rem"
+							fontSize={{ base: '12px', md: '0.85rem' }}
 							lineHeight="1rem"
 							fontWeight="400"
 							color="#373737"
@@ -186,7 +189,7 @@ function BrowseGrantCard({
 							</b>
 						</Text>
 						<Image
-							mx={4}
+							mx={{ base: '8px', md: 4 }}
 							src="/ui_icons/green_dot.svg"
 							display="inline-block"
 						/>
@@ -198,17 +201,16 @@ function BrowseGrantCard({
 							display="inline-block"
 						/>
 						<Text
-							fontSize="0.85rem"
+							fontSize={{ base: '12px', md: '0.85rem' }}
 							lineHeight="1rem"
-							display="inline-block">
+							display="inline-block"
+							width={{ base: '100px' }}>
               Ends on
 							{' '}
 							<b>
 								{moment(endTimestamp).format('MMMM D')}
 							</b>
 						</Text>
-
-						<Box mr="auto" />
 
 					</Flex>
 

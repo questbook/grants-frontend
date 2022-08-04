@@ -11,7 +11,7 @@ function FloatingSidebar({
 	const theme = useTheme()
 	return (
 		<Flex
-			// h="calc(100vh - 80px)"
+			// h="calc(100vh - 64px)"
 			bg={theme.colors.backgrounds.floatingSidebar}
 			border="1px solid #E8E9E9"
 			borderRadius={12}

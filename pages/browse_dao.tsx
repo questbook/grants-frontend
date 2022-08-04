@@ -1,12 +1,13 @@
-import { useContext, useEffect, useState } from 'react'
+import { ReactElement, useContext, useEffect, useState } from 'react'
 import { Box, Button, Container, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Text, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import AllDaosGrid from 'src/components/browse_daos/all_daos'
-import BrowseDaoHeader from 'src/components/browse_daos/header'
 import { GetAllGrantsQuery, useGetAllGrantsLazyQuery, useGetAllWorkspacesLazyQuery } from 'src/generated/graphql'
+import NavbarLayout from 'src/layout/navbarLayout'
 import { formatAmount } from 'src/utils/formattingUtils'
 import { unixTimestampSeconds } from 'src/utils/generics'
-import Sidebar from 'src/v2/components/Sidebar'
+import { extractInviteInfo, InviteInfo } from 'src/utils/invite'
+import AcceptInviteModal from 'src/v2/components/AcceptInviteModal'
 import { useAccount, useConnect } from 'wagmi'
 
 const PAGE_SIZE = 40
@@ -31,6 +32,8 @@ function BrowseDao() {
 	const [currentPage, setCurrentPage] = useState(0)
 	const [allDataFetched, setAllDataFectched] = useState<Boolean>(false)
 	const [grants, setGrants] = useState<GetAllGrantsQuery['grants']>([])
+
+	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
 
 	const getGrantData = async(firstTime: boolean = false) => {
 		// setLoading(true)
@@ -148,107 +151,208 @@ function BrowseDao() {
 	}, [])
 
 	useEffect(() => {
-		console.log('selectedSorting', selectedSorting)
 		if(selectedSorting === 'grant_rewards') {
 			var workspaces = [...allWorkspaces]
 			workspaces.sort((a:any, b:any) => {
 				return parseFloat(b.amount) - parseFloat(a.amount) || Number(isNaN(a.amount)) - Number(isNaN(b.amount))
 			})
-			console.log('sorted reward-wise workspace', workspaces)
+			console.log('sorted reward-wise workspace')
 			setSortedWorkspaces(workspaces)
 		} else if(selectedSorting === 'no_of_applicants') {
 			var workspaces = [...allWorkspaces]
 			workspaces.sort((a, b) => {
 				return parseFloat(b.noOfApplicants) - parseFloat(a.noOfApplicants) || Number(isNaN(a.noOfApplicants)) - Number(isNaN(b.noOfApplicants))
 			})
-			console.log('sorted applicant-wise workspace', workspaces)
+			console.log('sorted applicant-wise workspace')
 			setSortedWorkspaces(workspaces)
 		}
 	}, [selectedSorting, allWorkspaces])
 
+	useEffect(() => {
+		try {
+			const inviteInfo = extractInviteInfo()
+			if(inviteInfo) {
+				setInviteInfo(inviteInfo)
+			}
+		} catch(error: any) {
+			console.error('invalid invite ', error)
+			toast({
+				title: `Invalid invite "${error.message}"`,
+				status: 'error',
+				duration: 9000,
+				isClosable: true,
+			})
+		}
+	}, [])
 
 	return (
-		<Box
-			width={{ base: 'max-content', sm:'100%' }}
-			background={'#F5F5FA'}
-			minHeight={'100vh'}
-			height={'100%'}
-			pb={'50px'}>
-			<BrowseDaoHeader />
+	// <Box
+	// 	width={{ base: 'max-content', sm:'100%' }}
+	// 	background={'#F5F5FA'}
+	// 	minHeight={'100vh'}
+	// 	height={'100%'}
+	// 	pb={'50px'}>
+	// 	<BrowseDaoHeader />
 
-			<Flex>
-				{
-					 (
-						<Flex
-							display={{ base:'none', lg:'flex' }}
-							w="20%"
-							pos="sticky"
-							top={0}>
-							<Sidebar />
-						</Flex>
-					)
-				}
-				<Container
-					maxWidth={'1280px'}
-					w="80%">
-					<Flex
-						my={'16px'}
-						maxWidth={'1280px'}>
-						<Text
-							fontSize={'24px'}
-							fontWeight={'700'}>
+	// 	<Flex>
+	// 		{
+	// 			 (
+	// 				<Flex
+	// 					display={{ base:'none', lg:'flex' }}
+	// 					w="20%"
+	// 					pos="sticky"
+	// 					top={0}>
+	// 					<Sidebar />
+	// 				</Flex>
+	// 			)
+	// 		}
+	// 		<Container
+	// 			maxWidth={'1280px'}
+	// 			w="80%">
+	// 			<Flex
+	// 				my={'16px'}
+	// 				maxWidth={'1280px'}>
+	// 				<Text
+	// 					fontSize={'24px'}
+	// 					fontWeight={'700'}>
+	// 				Discover
+	// 				</Text>
+	// 				<Box marginLeft={'auto'}>
+	// 					<Menu>
+	// 						<MenuButton
+	// 							as={Button}
+	// 							rightIcon={<Image src={'/ui_icons/black_down.svg'} />}>
+    	// 							Sort by
+	// 						</MenuButton>
+	// 						<MenuList>
+	// 							<MenuItem
+	// 								justifyContent={'center'}
+	// 								bg={'#F0F0F7'}>
+	// 								<Text
+	// 									fontWeight={'700'}>
+	// 									Sort by
+	// 								</Text>
+	// 							</MenuItem>
+	// 							<MenuItem
+	// 								onClick={
+	// 									() => {
+	// 										setSelectedSorting('grant_rewards')
+	// 									}
+	// 								}>
+	// 								<Flex>
+	// 									<Image src={selectedSorting === 'grant_rewards' ? '/ui_icons/sorting_checked.svg' : '/ui_icons/sorting_unchecked.svg'} />
+	// 									<Text ml={'10px'}>
+	// 											Grant rewards
+	// 									</Text>
+	// 								</Flex>
+	// 							</MenuItem>
+	// 							<MenuItem
+	// 								onClick={
+	// 									() => {
+	// 										setSelectedSorting('no_of_applicants')
+	// 									}
+	// 								}>
+	// 								<Flex>
+	// 									<Image src={selectedSorting === 'no_of_applicants' ? '/ui_icons/sorting_checked.svg' : '/ui_icons/sorting_unchecked.svg'} />
+	// 									<Text ml={'10px'}>
+	// 											Number of Applicants
+	// 									</Text>
+	// 								</Flex>
+	// 							</MenuItem>
+	// 						</MenuList>
+	// 					</Menu>
+	// 				</Box>
+	// 			</Flex>
+	// 			<AllDaosGrid allWorkspaces={sortedWorkspaces} />
+	// 		</Container>
+	// 	</Flex>
+
+		// 	<AcceptInviteModal
+		// 		inviteInfo={inviteInfo}
+		// 		onClose={
+		// 			() => {
+		// 				setInviteInfo(undefined)
+		// 				window.history.pushState(undefined, '', '/')
+		// 			}
+		// 		} />
+		// </Box>
+		<>
+			<Container
+				maxWidth={'1280px'}
+				w="100%">
+				<Flex
+					my={'16px'}
+					maxWidth={'1280px'}>
+					<Text
+						fontSize={'24px'}
+						fontWeight={'700'}>
 						Discover
-						</Text>
-						<Box marginLeft={'auto'}>
-							<Menu>
-								<MenuButton
-									as={Button}
-									rightIcon={<Image src={'/ui_icons/black_down.svg'} />}>
+					</Text>
+					<Box marginLeft={'auto'}>
+						<Menu>
+							<MenuButton
+								as={Button}
+								rightIcon={<Image src={'/ui_icons/black_down.svg'} />}>
     								Sort by
-								</MenuButton>
-								<MenuList>
-									<MenuItem
-										justifyContent={'center'}
-										bg={'#F0F0F7'}>
-										<Text
-											fontWeight={'700'}>
+							</MenuButton>
+							<MenuList>
+								<MenuItem
+									justifyContent={'center'}
+									bg={'#F0F0F7'}>
+									<Text
+										fontWeight={'700'}>
 											Sort by
-										</Text>
-									</MenuItem>
-									<MenuItem
-										onClick={
-											() => {
-												setSelectedSorting('grant_rewards')
-											}
-										}>
-										<Flex>
-											<Image src={selectedSorting === 'grant_rewards' ? '/ui_icons/sorting_checked.svg' : '/ui_icons/sorting_unchecked.svg'} />
-											<Text ml={'10px'}>
+									</Text>
+								</MenuItem>
+								<MenuItem
+									onClick={
+										() => {
+											setSelectedSorting('grant_rewards')
+										}
+									}>
+									<Flex>
+										<Image src={selectedSorting === 'grant_rewards' ? '/ui_icons/sorting_checked.svg' : '/ui_icons/sorting_unchecked.svg'} />
+										<Text ml={'10px'}>
 													Grant rewards
-											</Text>
-										</Flex>
-									</MenuItem>
-									<MenuItem
-										onClick={
-											() => {
-												setSelectedSorting('no_of_applicants')
-											}
-										}>
-										<Flex>
-											<Image src={selectedSorting === 'no_of_applicants' ? '/ui_icons/sorting_checked.svg' : '/ui_icons/sorting_unchecked.svg'} />
-											<Text ml={'10px'}>
+										</Text>
+									</Flex>
+								</MenuItem>
+								<MenuItem
+									onClick={
+										() => {
+											setSelectedSorting('no_of_applicants')
+										}
+									}>
+									<Flex>
+										<Image src={selectedSorting === 'no_of_applicants' ? '/ui_icons/sorting_checked.svg' : '/ui_icons/sorting_unchecked.svg'} />
+										<Text ml={'10px'}>
 													Number of Applicants
-											</Text>
-										</Flex>
-									</MenuItem>
-								</MenuList>
-							</Menu>
-						</Box>
-					</Flex>
-					<AllDaosGrid allWorkspaces={sortedWorkspaces} />
-				</Container>
-			</Flex>
-		</Box>
+										</Text>
+									</Flex>
+								</MenuItem>
+							</MenuList>
+						</Menu>
+					</Box>
+				</Flex>
+				<AllDaosGrid allWorkspaces={sortedWorkspaces} />
+			</Container>
+			<AcceptInviteModal
+				inviteInfo={inviteInfo}
+				onClose={
+					() => {
+						setInviteInfo(undefined)
+						window.history.pushState(undefined, '', '/')
+					}
+				} />
+		</>
+	)
+}
+
+BrowseDao.getLayout = function(page: ReactElement) {
+	return (
+		<NavbarLayout>
+			{page}
+		</NavbarLayout>
 	)
 }
 

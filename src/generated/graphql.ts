@@ -4021,6 +4021,13 @@ export type GetDaoDetailsQueryVariables = Exact<{
 
 export type GetDaoDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, bio: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }> } | null, grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
 
+export type GetDaoNameQueryVariables = Exact<{
+  workspaceID: Scalars['ID'];
+}>;
+
+
+export type GetDaoNameQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null } | null };
+
 export type GetFundSentforReviewerQueryVariables = Exact<{
   type?: InputMaybe<FundsTransferType>;
   to?: InputMaybe<Scalars['Bytes']>;
@@ -4112,7 +4119,7 @@ export type GetMyApplicationsQuery = { __typename?: 'Query', grantApplications: 
 export type GetNumberOfApplicationsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
-  applicantId?: InputMaybe<Scalars['Bytes']>;
+  applicantId: Scalars['Bytes'];
 }>;
 
 
@@ -4141,12 +4148,29 @@ export type GetWorkspaceDetailsQueryVariables = Exact<{
 
 export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, bio: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, updatedAt: number, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number, addedBy: { __typename?: 'WorkspaceMember', id: string, actorId: string } }> } | null };
 
+export type GetWorkspaceMemberExistsQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetWorkspaceMemberExistsQuery = { __typename?: 'Query', workspaceMember?: { __typename?: 'WorkspaceMember', id: string } | null };
+
 export type GetWorkspaceMembersQueryVariables = Exact<{
   actorId: Scalars['Bytes'];
 }>;
 
 
 export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, workspace: { __typename?: 'Workspace', id: string, ownerId: string, logoIpfsHash: string, title: string, supportedNetworks: Array<SupportedNetwork>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number }> } }> };
+
+export type GetWorkspaceMembersByWorkspaceIdQueryVariables = Exact<{
+  workspaceId: Scalars['String'];
+  accessLevelsIn: Array<WorkspaceMemberAccessLevel> | WorkspaceMemberAccessLevel;
+  first?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type GetWorkspaceMembersByWorkspaceIdQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, addedAt: number }> };
 
 
 export const GetAllGrantsDocument = gql`
@@ -5111,6 +5135,45 @@ export function useGetDaoDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetDaoDetailsQueryHookResult = ReturnType<typeof useGetDaoDetailsQuery>;
 export type GetDaoDetailsLazyQueryHookResult = ReturnType<typeof useGetDaoDetailsLazyQuery>;
 export type GetDaoDetailsQueryResult = Apollo.QueryResult<GetDaoDetailsQuery, GetDaoDetailsQueryVariables>;
+export const GetDaoNameDocument = gql`
+    query getDAOName($workspaceID: ID!) {
+  workspace(id: $workspaceID) {
+    id
+    title
+    about
+    logoIpfsHash
+    coverImageIpfsHash
+  }
+}
+    `;
+
+/**
+ * __useGetDaoNameQuery__
+ *
+ * To run a query within a React component, call `useGetDaoNameQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDaoNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDaoNameQuery({
+ *   variables: {
+ *      workspaceID: // value for 'workspaceID'
+ *   },
+ * });
+ */
+export function useGetDaoNameQuery(baseOptions: Apollo.QueryHookOptions<GetDaoNameQuery, GetDaoNameQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDaoNameQuery, GetDaoNameQueryVariables>(GetDaoNameDocument, options);
+      }
+export function useGetDaoNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDaoNameQuery, GetDaoNameQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDaoNameQuery, GetDaoNameQueryVariables>(GetDaoNameDocument, options);
+        }
+export type GetDaoNameQueryHookResult = ReturnType<typeof useGetDaoNameQuery>;
+export type GetDaoNameLazyQueryHookResult = ReturnType<typeof useGetDaoNameLazyQuery>;
+export type GetDaoNameQueryResult = Apollo.QueryResult<GetDaoNameQuery, GetDaoNameQueryVariables>;
 export const GetFundSentforReviewerDocument = gql`
     query getFundSentforReviewer($type: FundsTransferType, $to: Bytes) {
   fundsTransfers(
@@ -5742,7 +5805,7 @@ export type GetMyApplicationsQueryHookResult = ReturnType<typeof useGetMyApplica
 export type GetMyApplicationsLazyQueryHookResult = ReturnType<typeof useGetMyApplicationsLazyQuery>;
 export type GetMyApplicationsQueryResult = Apollo.QueryResult<GetMyApplicationsQuery, GetMyApplicationsQueryVariables>;
 export const GetNumberOfApplicationsDocument = gql`
-    query getNumberOfApplications($first: Int, $skip: Int, $applicantId: Bytes) {
+    query getNumberOfApplications($first: Int, $skip: Int, $applicantId: Bytes!) {
   grantApplications(where: {applicantId: $applicantId}, subgraphError: allow) {
     id
   }
@@ -5767,7 +5830,7 @@ export const GetNumberOfApplicationsDocument = gql`
  *   },
  * });
  */
-export function useGetNumberOfApplicationsQuery(baseOptions?: Apollo.QueryHookOptions<GetNumberOfApplicationsQuery, GetNumberOfApplicationsQueryVariables>) {
+export function useGetNumberOfApplicationsQuery(baseOptions: Apollo.QueryHookOptions<GetNumberOfApplicationsQuery, GetNumberOfApplicationsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetNumberOfApplicationsQuery, GetNumberOfApplicationsQueryVariables>(GetNumberOfApplicationsDocument, options);
       }
@@ -5921,6 +5984,41 @@ export function useGetWorkspaceDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetWorkspaceDetailsQueryHookResult = ReturnType<typeof useGetWorkspaceDetailsQuery>;
 export type GetWorkspaceDetailsLazyQueryHookResult = ReturnType<typeof useGetWorkspaceDetailsLazyQuery>;
 export type GetWorkspaceDetailsQueryResult = Apollo.QueryResult<GetWorkspaceDetailsQuery, GetWorkspaceDetailsQueryVariables>;
+export const GetWorkspaceMemberExistsDocument = gql`
+    query getWorkspaceMemberExists($id: ID!) {
+  workspaceMember(id: $id) {
+    id
+  }
+}
+    `;
+
+/**
+ * __useGetWorkspaceMemberExistsQuery__
+ *
+ * To run a query within a React component, call `useGetWorkspaceMemberExistsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWorkspaceMemberExistsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetWorkspaceMemberExistsQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetWorkspaceMemberExistsQuery(baseOptions: Apollo.QueryHookOptions<GetWorkspaceMemberExistsQuery, GetWorkspaceMemberExistsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetWorkspaceMemberExistsQuery, GetWorkspaceMemberExistsQueryVariables>(GetWorkspaceMemberExistsDocument, options);
+      }
+export function useGetWorkspaceMemberExistsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetWorkspaceMemberExistsQuery, GetWorkspaceMemberExistsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetWorkspaceMemberExistsQuery, GetWorkspaceMemberExistsQueryVariables>(GetWorkspaceMemberExistsDocument, options);
+        }
+export type GetWorkspaceMemberExistsQueryHookResult = ReturnType<typeof useGetWorkspaceMemberExistsQuery>;
+export type GetWorkspaceMemberExistsLazyQueryHookResult = ReturnType<typeof useGetWorkspaceMemberExistsLazyQuery>;
+export type GetWorkspaceMemberExistsQueryResult = Apollo.QueryResult<GetWorkspaceMemberExistsQuery, GetWorkspaceMemberExistsQueryVariables>;
 export const GetWorkspaceMembersDocument = gql`
     query getWorkspaceMembers($actorId: Bytes!) {
   workspaceMembers(
@@ -5984,3 +6082,51 @@ export function useGetWorkspaceMembersLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetWorkspaceMembersQueryHookResult = ReturnType<typeof useGetWorkspaceMembersQuery>;
 export type GetWorkspaceMembersLazyQueryHookResult = ReturnType<typeof useGetWorkspaceMembersLazyQuery>;
 export type GetWorkspaceMembersQueryResult = Apollo.QueryResult<GetWorkspaceMembersQuery, GetWorkspaceMembersQueryVariables>;
+export const GetWorkspaceMembersByWorkspaceIdDocument = gql`
+    query getWorkspaceMembersByWorkspaceId($workspaceId: String!, $accessLevelsIn: [WorkspaceMemberAccessLevel!]!, $first: Int, $skip: Int) {
+  workspaceMembers(
+    where: {workspace: $workspaceId, accessLevel_in: $accessLevelsIn}
+    first: $first
+    skip: $skip
+    subgraphError: allow
+  ) {
+    id
+    actorId
+    fullName
+    profilePictureIpfsHash
+    accessLevel
+    addedAt
+  }
+}
+    `;
+
+/**
+ * __useGetWorkspaceMembersByWorkspaceIdQuery__
+ *
+ * To run a query within a React component, call `useGetWorkspaceMembersByWorkspaceIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWorkspaceMembersByWorkspaceIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetWorkspaceMembersByWorkspaceIdQuery({
+ *   variables: {
+ *      workspaceId: // value for 'workspaceId'
+ *      accessLevelsIn: // value for 'accessLevelsIn'
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *   },
+ * });
+ */
+export function useGetWorkspaceMembersByWorkspaceIdQuery(baseOptions: Apollo.QueryHookOptions<GetWorkspaceMembersByWorkspaceIdQuery, GetWorkspaceMembersByWorkspaceIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetWorkspaceMembersByWorkspaceIdQuery, GetWorkspaceMembersByWorkspaceIdQueryVariables>(GetWorkspaceMembersByWorkspaceIdDocument, options);
+      }
+export function useGetWorkspaceMembersByWorkspaceIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetWorkspaceMembersByWorkspaceIdQuery, GetWorkspaceMembersByWorkspaceIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetWorkspaceMembersByWorkspaceIdQuery, GetWorkspaceMembersByWorkspaceIdQueryVariables>(GetWorkspaceMembersByWorkspaceIdDocument, options);
+        }
+export type GetWorkspaceMembersByWorkspaceIdQueryHookResult = ReturnType<typeof useGetWorkspaceMembersByWorkspaceIdQuery>;
+export type GetWorkspaceMembersByWorkspaceIdLazyQueryHookResult = ReturnType<typeof useGetWorkspaceMembersByWorkspaceIdLazyQuery>;
+export type GetWorkspaceMembersByWorkspaceIdQueryResult = Apollo.QueryResult<GetWorkspaceMembersByWorkspaceIdQuery, GetWorkspaceMembersByWorkspaceIdQueryVariables>;

@@ -55,7 +55,7 @@ const theme = extendTheme({
 		},
 		greenTextBackground: '#79F2C0',
 		greenTextDark: '#36B37E',
-		brandGrey:{
+		brandGrey: {
 			500: '#F0F0F7',
 			600: '#EBEBF3',
 			700: '#DCDCE6',
@@ -67,7 +67,10 @@ const theme = extendTheme({
 			700: '#5F5F72',
 		},
 		yellow: '#FFCE00',
-		bannerGrey: '#F0F0F7'
+		bannerGrey: '#F0F0F7',
+		v2Grey: '#555570',
+		primary: '#745FE8',
+		v2LightGrey: '#D2D2E3',
 	},
 	sizes: {
 		connectWallet: '41.5rem',
@@ -80,9 +83,9 @@ const theme = extendTheme({
 	styles: {
 		sizes: {
 			container: {
-				content: '1128px'
-			}
-		}
+				content: '1128px',
+			},
+		},
 	},
 	components: {
 		...container,
