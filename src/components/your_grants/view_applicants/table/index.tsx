@@ -4,7 +4,7 @@ import Content from './content'
 import Filter from './filter'
 import Headers from './headers'
 
-function Table({
+function ApplicantsTable({
 	onViewApplicantFormClick,
 	// onAcceptApplicationClick,
 	// onRejectApplicationClick,
@@ -162,10 +162,10 @@ function Table({
 	)
 }
 
-Table.defaultProps = {
+ApplicantsTable.defaultProps = {
 	onViewApplicantFormClick: () => {},
 	// onAcceptApplicationClick: () => {},
 	// onRejectApplicationClick: () => {},
 	onManageApplicationClick: () => {},
 }
-export default Table
+export default ApplicantsTable

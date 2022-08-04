@@ -15,7 +15,7 @@ import Modal from 'src/components/ui/modal'
 import AppplicationTableEmptyState from 'src/components/your_applications/empty_states/applications_table'
 import GrantStatsBox from 'src/components/your_grants/grantStatsBox'
 import RubricDrawer from 'src/components/your_grants/rubricDrawer'
-import Table from 'src/components/your_grants/view_applicants/table'
+import ApplicantsTable from 'src/components/your_grants/view_applicants/table'
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
@@ -623,7 +623,7 @@ function ViewApplicants() {
 								</Flex>
 							)
 						}
-						<Table
+						<ApplicantsTable
 							isReviewer={isReviewer}
 							data={applicantsData}
 							reviewerData={reviewerData}

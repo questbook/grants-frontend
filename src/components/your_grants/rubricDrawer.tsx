@@ -5,14 +5,24 @@ import {
 	RangeSliderFilledTrack,
 	RangeSliderMark,
 	RangeSliderThumb,	RangeSliderTrack,
-	Spacer, Text } from '@chakra-ui/react'
+	Spacer, Table, Tbody, Text } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
+import { defaultChainId } from 'src/constants/chains'
+import {
+	useGetWorkspaceMembersByWorkspaceIdQuery,
+	WorkspaceMember,
+	WorkspaceMemberAccessLevel,
+} from 'src/generated/graphql'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
+import {
+	getSupportedChainIdFromWorkspace,
+} from 'src/utils/validationUtils'
 import NetworkFeeEstimateView from 'src/v2/components/NetworkFeeEstimateView'
 import { NetworkSelectOption } from 'src/v2/components/Onboarding/SupportedNetworksData'
 import { supportedNetworks } from 'src/v2/components/Onboarding/SupportedNetworksData'
+import MemberRow from 'src/v2/components/WorkspaceMembers/MemberRow'
 import { useAccount } from 'wagmi'
 import SetRubricsModal from './setRubricsModal'
 
@@ -59,7 +69,8 @@ function RubricDrawer({
 
 	const [pk, setPk] = React.useState<string>('*')
 	const { data: accountData } = useAccount()
-	const { workspace } = useContext(ApiClientsContext)!
+	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
+
 
 	const {
 		RenderModal,
@@ -188,6 +199,40 @@ function RubricDrawer({
 		},
 		[applicationReviewContract],
 	)
+
+	const [daoMembers, setDaoMembers] = useState<Partial<WorkspaceMember>[]>()
+	const [membersQueryParams, setMembersQueryParams] = useState<any>({
+		client:
+			subgraphClients[
+				getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+			].client,
+	})
+
+	useEffect(() => {
+		if(!workspace) {
+			return
+		}
+
+		setMembersQueryParams({
+			client:
+			subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+			variables: {
+				workspaceId: workspace!.id,
+				accessLevelsIn: [WorkspaceMemberAccessLevel['Owner']],
+			},
+		})
+	}, [workspace])
+
+	const { data: members, error: membersError, loading:membersLoading } = useGetWorkspaceMembersByWorkspaceIdQuery(membersQueryParams)
+
+	useEffect(() => {
+
+		console.log(members, membersError, membersLoading)
+		if(members) {
+			setDaoMembers(members!.workspaceMembers)
+		}
+	}, [members, membersError, membersLoading])
+
 	return (
 		<>
 			<Drawer
@@ -638,6 +683,17 @@ function RubricDrawer({
 						</Flex>
 
 					</Flex>
+					{/* <Table>
+						<Tbody>
+							{
+								daoMembers && daoMembers!.map((member: Partial<WorkspaceMember>) => (
+									<MemberRow
+										key={member.id}
+										member={member} />
+								))
+							}
+						</Tbody>
+					</Table> */}
 				</DrawerContent>
 			</Drawer>
 
