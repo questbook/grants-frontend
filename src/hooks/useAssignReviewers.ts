@@ -3,7 +3,6 @@ import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
-import ApplicationReviewRegistryAbi from 'src/contracts/abi/ApplicationReviewRegistryAbi.json'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { apiKey, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
@@ -38,7 +37,7 @@ export default function useAssignReviewers(
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,
-		targetContractABI: ApplicationReviewRegistryAbi,
+		// targetContractABI: ApplicationReviewRegistryAbi,
 	})
 
 	if(!chainId) {

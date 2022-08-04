@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useMemo } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
-import GrantABI from 'src/contracts/abi/GrantAbi.json'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { apiKey, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
@@ -31,7 +30,7 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,
-		targetContractABI: GrantABI,
+		// targetContractABI: GrantABI,
 	})
 
 	const { webwallet } = useContext(WebwalletContext)!

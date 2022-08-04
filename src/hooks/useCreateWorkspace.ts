@@ -25,7 +25,7 @@ export default function useCreateWorkspace(
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,
-		targetContractABI: WorkspaceRegistryAbi,
+		// targetContractABI: WorkspaceRegistryAbi,
 	})
 
 	const [error, setError] = React.useState<string>()

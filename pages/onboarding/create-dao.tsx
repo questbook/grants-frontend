@@ -5,7 +5,6 @@ import { ApiClientsContext } from 'pages/_app'
 import { WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
-import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
@@ -46,8 +45,8 @@ const OnboardingCreateDao = () => {
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,
-		targetContractABI: WorkspaceRegistryAbi,
-		chainId: network
+		// targetContractABI: WorkspaceRegistryAbi,
+		// chainId: network
 	})
 
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState('not ready')

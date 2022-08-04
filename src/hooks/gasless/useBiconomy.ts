@@ -3,11 +3,14 @@ import { Biconomy } from '@biconomy/mexa'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import { deploySCW, jsonRpcProviders } from 'src/utils/gaslessUtils'
 import { BiconomyContext, WebwalletContext } from '../../../pages/_app'
+import { useNetwork } from './useNetwork'
 
-export const useBiconomy = (data: any) => {
+
+export const useBiconomy = (data: { apiKey: string, }) => {
 	const { webwallet, scwAddress, setScwAddress, nonce, } = useContext(WebwalletContext)!
 	const { biconomyDaoObj, setBiconomyDaoObj } = useContext(BiconomyContext)!
 	const [biconomyWalletClient, setBiconomyWalletClient] = useState<BiconomyWalletClient>()
+	const { network } = useNetwork()
 
 	useEffect(() => {
 		console.log('EHERE', biconomyDaoObj)
@@ -20,17 +23,17 @@ export const useBiconomy = (data: any) => {
 
 
 	const initiateBiconomy = async() => {
-		if(!webwallet) {
+		if(!webwallet || !network) {
 			return
 		}
 
 		console.log(webwallet, nonce, biconomyDaoObj)
 
-		console.log('CREATING BICONOMY OBJ', data.chainId)
+		console.log('CREATING BICONOMY OBJ', network.toString())
 		let _biconomy: any
 
 		if(!biconomyDaoObj) {
-			_biconomy = new Biconomy(jsonRpcProviders[data.chainId],
+			_biconomy = new Biconomy(jsonRpcProviders[network.toString()],
 				{
 					apiKey: data.apiKey,
 					debug: true

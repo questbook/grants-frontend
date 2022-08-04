@@ -8,7 +8,6 @@ import {
 	WORKSPACE_REGISTRY_ADDRESS,
 } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
-import GrantFactoryAbi from 'src/contracts/abi/GrantFactoryAbi.json'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
@@ -37,7 +36,7 @@ export default function useCreateGrant(
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,
-		targetContractABI: GrantFactoryAbi,
+		// targetContractABI: GrantFactoryAbi,
 	})
 
 	const [error, setError] = React.useState<string>()
