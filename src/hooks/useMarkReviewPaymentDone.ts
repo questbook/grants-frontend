@@ -100,7 +100,7 @@ export default function useMarkReviewPaymentDone(
 				// const updateTxnData = await markPaymentTxb1.wait()
 
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
-					return
+					throw new Error('Zero wallet is not ready')
 				}
 
 				const markPaymentTxb = await sendGaslessTransaction(

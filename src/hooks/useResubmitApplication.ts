@@ -77,7 +77,7 @@ export default function useResubmitApplication(
 			try {
 
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
-					return
+					throw new Error('Zero wallet is not ready')
 				}
 
 				const detailsHash = (

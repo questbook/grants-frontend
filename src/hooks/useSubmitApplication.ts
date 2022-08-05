@@ -2,20 +2,20 @@ import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { GrantApplicationRequest } from '@questbook/service-validator-client'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { APPLICATION_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { apiKey, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { useNetwork,
 } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import strings from '../constants/strings.json'
 import useQBContract from './contracts/useQBContract'
+import { useBiconomy } from './gasless/useBiconomy'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
-import { useBiconomy } from './gasless/useBiconomy'
-import { apiKey, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
-import { APPLICATION_REGISTRY_ADDRESS } from 'src/constants/addresses'
 
 export default function useSubmitApplication(
 	data: GrantApplicationRequest,
@@ -80,7 +80,7 @@ export default function useSubmitApplication(
 			try {
 
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
-					return
+					throw new Error('Zero wallet is not ready')
 				}
 
 				const detailsHash = (

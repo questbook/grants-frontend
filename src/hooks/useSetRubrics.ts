@@ -1,20 +1,20 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { apiKey, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
+import { useBiconomy } from './gasless/useBiconomy'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
-import { apiKey, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
-import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
-import { useBiconomy } from './gasless/useBiconomy'
 
 export default function useSetRubrics(
 	data: any,
@@ -83,7 +83,7 @@ export default function useSetRubrics(
 			try {
 
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
-					return
+					throw new Error('Zero wallet is not ready')
 				}
 
 				let rubricHash = ''
@@ -123,7 +123,7 @@ export default function useSetRubrics(
 					'setRubrics',
 					[workspaceId || Number(workspace?.id).toString(),
 						grantAddress!,
-						rubricHash,],
+						rubricHash, ],
 					APPLICATION_REVIEW_REGISTRY_ADDRESS[currentChainId],
 					biconomyWalletClient,
 					scwAddress,

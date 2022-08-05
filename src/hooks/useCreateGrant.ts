@@ -152,7 +152,7 @@ export default function useCreateGrant(
 				console.log('rubricHash', rubricHash)
 
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
-					return
+					throw new Error('Zero wallet is not ready')
 				}
 
 				// let transactionHash: string | undefined | boolean

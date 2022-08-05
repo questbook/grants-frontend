@@ -93,7 +93,7 @@ export default function useCreateWorkspace(
 			try {
 
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
-					return
+					throw new Error('Zero wallet is not ready')
 				}
 
 				// eslint-disable-next-line max-len

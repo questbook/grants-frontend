@@ -85,7 +85,7 @@ export default function useEditGrant(
 			console.log('calling validate', data)
 			try {
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
-					return
+					throw new Error('Zero wallet is not ready')
 				}
 
 				const detailsHash = (await uploadToIPFS(data.details)).hash

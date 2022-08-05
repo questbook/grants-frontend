@@ -86,7 +86,7 @@ export default function useApproveMilestone(
 				}
 
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
-					return
+					throw new Error('Zero wallet is not ready')
 				}
 
 				const transactionHash = await sendGaslessTransaction(

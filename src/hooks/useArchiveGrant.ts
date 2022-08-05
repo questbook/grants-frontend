@@ -70,7 +70,7 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 				// const archiveGrantTransactionData = await archiveGrantTransaction.wait()
 
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
-					return
+					throw new Error('Zero wallet is not ready')
 				}
 
 				const transactionHash = await sendGaslessTransaction(

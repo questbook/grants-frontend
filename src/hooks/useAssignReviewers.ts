@@ -100,7 +100,7 @@ export default function useAssignReviewers(
 				// const createGrantTransactionData = await createGrantTransaction.wait()
 
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
-					return
+					throw new Error('Zero wallet is not ready')
 				}
 
 				const transactionHash = await sendGaslessTransaction(
