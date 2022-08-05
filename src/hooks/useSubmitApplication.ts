@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { GrantApplicationRequest } from '@questbook/service-validator-client'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
@@ -13,6 +13,9 @@ import strings from '../constants/strings.json'
 import useQBContract from './contracts/useQBContract'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
+import { useBiconomy } from './gasless/useBiconomy'
+import { apiKey, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
+import { APPLICATION_REGISTRY_ADDRESS } from 'src/constants/addresses'
 
 export default function useSubmitApplication(
 	data: GrantApplicationRequest,
@@ -35,6 +38,12 @@ export default function useSubmitApplication(
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
+
+	const { webwallet } = useContext(WebwalletContext)!
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		apiKey: apiKey,
+	})
 
 	useEffect(() => {
 		if(data) {
@@ -69,6 +78,11 @@ export default function useSubmitApplication(
 			setLoading(true)
 			// console.log('calling validate');
 			try {
+
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					return
+				}
+
 				const detailsHash = (
 					await uploadToIPFS(data.fields.projectDetails[0].value)
 				).hash
@@ -83,13 +97,32 @@ export default function useSubmitApplication(
 					throw new Error('Error validating grant data')
 				}
 
-				const txn = await applicationRegistryContract.submitApplication(
-					grantId!,
-					Number(workspaceId).toString(),
-					ipfsHash,
-					data.milestones.length,
+				// const txn = await applicationRegistryContract.submitApplication(
+				// 	grantId!,
+				// 	Number(workspaceId).toString(),
+				// 	ipfsHash,
+				// 	data.milestones.length,
+				// )
+				// const txnData = await txn.wait()
+
+				const transactionHash = await sendGaslessTransaction(
+					biconomy,
+					applicationRegistryContract,
+					'submitApplication',
+					[grantId!,
+						Number(workspaceId).toString(),
+						ipfsHash,
+						data.milestones.length, ],
+					APPLICATION_REGISTRY_ADDRESS[currentChainId],
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					webHookId,
+					nonce
 				)
-				const txnData = await txn.wait()
+
+				const transactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
 
 				const CACHE_KEY = strings.cache.apply_grant
 				const cacheKey = `${chainId}-${CACHE_KEY}-${grantId}`
@@ -98,7 +131,7 @@ export default function useSubmitApplication(
 					localStorage.removeItem(cacheKey)
 				}
 
-				setTransactionData(txnData)
+				setTransactionData(transactionData)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
