@@ -1,14 +1,17 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { GrantApplicationUpdate } from '@questbook/service-validator-client'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { APPLICATION_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { apiKey, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
+import { useBiconomy } from './gasless/useBiconomy'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
 
@@ -32,6 +35,13 @@ export default function useResubmitApplication(
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
+
+	const { webwallet } = useContext(WebwalletContext)!
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		apiKey: apiKey,
+		// targetContractABI: ApplicationReviewRegistryAbi,
+	})
 
 	useEffect(() => {
 		if(data) {
@@ -65,28 +75,51 @@ export default function useResubmitApplication(
 			setLoading(true)
 			// console.log('calling validate');
 			try {
+
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					return
+				}
+
 				const detailsHash = (
 					await uploadToIPFS(data.fields!.projectDetails[0].value)
 				).hash
-        // eslint-disable-next-line no-param-reassign
-        data.fields!.projectDetails[0].value = detailsHash
-        console.log('Details hash: ', detailsHash)
-        const {
-        	data: { ipfsHash },
-        } = await validatorApi.validateGrantApplicationUpdate(data)
-        if(!ipfsHash) {
-        	throw new Error('Error validating grant data')
-        }
+				// eslint-disable-next-line no-param-reassign
+				data.fields!.projectDetails[0].value = detailsHash
+				console.log('Details hash: ', detailsHash)
+				const {
+					data: { ipfsHash },
+				} = await validatorApi.validateGrantApplicationUpdate(data)
+				if(!ipfsHash) {
+					throw new Error('Error validating grant data')
+				}
 
-        const txn = await applicationRegistryContract.updateApplicationMetadata(
-        	applicationId!,
-        	ipfsHash,
-          data.milestones!.length,
-        )
-        const txnData = await txn.wait()
+				// const txn = await applicationRegistryContract.updateApplicationMetadata(
+				// 	applicationId!,
+				// 	ipfsHash,
+				// 	data.milestones!.length,
+				// )
+				// const txnData = await txn.wait()
 
-        setTransactionData(txnData)
-        setLoading(false)
+				const transactionHash = await sendGaslessTransaction(
+					biconomy,
+					applicationRegistryContract,
+					'updateApplicationMetadata',
+					[applicationId!,
+						ipfsHash,
+						data.milestones!.length, ],
+					APPLICATION_REGISTRY_ADDRESS[currentChainId],
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					webHookId,
+					nonce
+				)
+
+				const transactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
+
+				setTransactionData(transactionData)
+				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
 				setError(message)
@@ -148,10 +181,10 @@ export default function useResubmitApplication(
 
 			if(
 				!applicationRegistryContract
-        || applicationRegistryContract.address
-          === '0x0000000000000000000000000000000000000000'
-        || !applicationRegistryContract.signer
-        || !applicationRegistryContract.provider
+				|| applicationRegistryContract.address
+				=== '0x0000000000000000000000000000000000000000'
+				|| !applicationRegistryContract.signer
+				|| !applicationRegistryContract.provider
 			) {
 				return
 			}

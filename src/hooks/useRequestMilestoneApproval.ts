@@ -1,13 +1,16 @@
 /* eslint-disable eqeqeq */
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { APPLICATION_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { apiKey, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
+import { useBiconomy } from './gasless/useBiconomy'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
 
@@ -30,6 +33,14 @@ export default function useRequestMilestoneApproval(
 	const applicationContract = useQBContract('applications', chainId)
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
+
+	const { webwallet } = useContext(WebwalletContext)!
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		apiKey: apiKey,
+		// targetContractABI: ApplicationReviewRegistryAbi,
+	})
+
 	if(chainId) {
 		// eslint-disable-next-line no-param-reassign
 		chainId = parseInt(chainId as unknown as string, 10)
@@ -67,6 +78,11 @@ export default function useRequestMilestoneApproval(
 			setLoading(true)
 			// console.log('calling validate');
 			try {
+
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					return
+				}
+
 				const {
 					data: { ipfsHash },
 				} = await validatorApi.validateApplicationMilestoneUpdate(data)
@@ -74,14 +90,32 @@ export default function useRequestMilestoneApproval(
 					throw new Error('Error validating grant data')
 				}
 
-				const updateTxn = await applicationContract.requestMilestoneApproval(
-					applicationId!,
-					Number(milestoneIndex),
-					ipfsHash,
-				)
-				const updateTxnData = await updateTxn.wait()
+				// const updateTxn = await applicationContract.requestMilestoneApproval(
+				// 	applicationId!,
+				// 	Number(milestoneIndex),
+				// 	ipfsHash,
+				// )
+				// const updateTxnData = await updateTxn.wait()
 
-				setTransactionData(updateTxnData)
+				const transactionHash = await sendGaslessTransaction(
+					biconomy,
+					applicationContract,
+					'requestMilestoneApproval',
+					[applicationId!,
+						Number(milestoneIndex),
+						ipfsHash, ],
+					APPLICATION_REGISTRY_ADDRESS[currentChainId],
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					webHookId,
+					nonce
+				)
+
+				const updateTransactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
+
+				setTransactionData(updateTransactionData)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)

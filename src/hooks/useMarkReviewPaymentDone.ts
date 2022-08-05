@@ -1,14 +1,17 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 // import { BigNumber } from 'ethers';
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { apiKey, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
+import { useBiconomy } from './gasless/useBiconomy'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
 
@@ -38,6 +41,13 @@ export default function useMarkReviewPaymentDone(
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
 	const currentChainId = useChainId()
+
+	const { webwallet } = useContext(WebwalletContext)!
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		apiKey: apiKey,
+		// targetContractABI: ApplicationReviewRegistryAbi,
+	})
 
 	useEffect(() => {
 		// console.log(totalAmount);
@@ -77,19 +87,45 @@ export default function useMarkReviewPaymentDone(
 
 			setLoading(true)
 			try {
-				const markPaymentTxb = await applicationReviewerContract.markPaymentDone(
-					workspaceId,
-					applicationsIds,
-					reviewerAddress!,
-					reviewIds,
-					reviewCurrencyAddress!,
-					totalAmount,
-					transactionHash!,
+				// const markPaymentTxb1 = await applicationReviewerContract.markPaymentDone(
+				// 	workspaceId,
+				// 	applicationsIds,
+				// 	reviewerAddress!,
+				// 	reviewIds,
+				// 	reviewCurrencyAddress!,
+				// 	totalAmount,
+				// 	transactionHash!,
+				// )
+
+				// const updateTxnData = await markPaymentTxb1.wait()
+
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					return
+				}
+
+				const markPaymentTxb = await sendGaslessTransaction(
+					biconomy,
+					applicationReviewerContract,
+					'markPaymentDone',
+					[workspaceId,
+						applicationsIds,
+						reviewerAddress!,
+						reviewIds,
+						reviewCurrencyAddress!,
+						totalAmount,
+						transactionHash!, ],
+					APPLICATION_REVIEW_REGISTRY_ADDRESS[currentChainId],
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					webHookId,
+					nonce
 				)
 
-				const updateTxnData = await markPaymentTxb.wait()
+				const updateTransactionData = await getTransactionReceipt(markPaymentTxb, currentChainId.toString())
 
-				setTransactionData(updateTxnData)
+				setTransactionData(updateTransactionData)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
