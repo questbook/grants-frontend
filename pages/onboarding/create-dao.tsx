@@ -1,14 +1,13 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { Wallet } from 'ethers'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
-import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
 import {
@@ -26,7 +25,6 @@ import { NetworkSelectOption } from 'src/v2/components/Onboarding/SupportedNetwo
 import CreateDaoModal from 'src/v2/components/Onboarding/UI/CreateDaoModal'
 import BackgroundImageLayout from 'src/v2/components/Onboarding/UI/Layout/BackgroundImageLayout'
 import OnboardingCard from 'src/v2/components/Onboarding/UI/Layout/OnboardingCard'
-import { useNetwork } from 'src/hooks/gasless/useNetwork'
 
 const OnboardingCreateDao = () => {
 	const router = useRouter()
@@ -44,8 +42,8 @@ const OnboardingCreateDao = () => {
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,
-		targetContractABI: WorkspaceRegistryAbi,
-		chainId: network
+		// targetContractABI: WorkspaceRegistryAbi,
+		// chainId: network
 	})
 
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState('not ready')
@@ -187,9 +185,9 @@ const OnboardingCreateDao = () => {
 			daoNetwork={daoNetwork}
 			onSubmit={
 				(network) => {
-					setDaoNetwork(network);
-					switchNetwork(network.id);
-					console.log("NETWORK", network)
+					setDaoNetwork(network)
+					switchNetwork(network.id)
+					console.log('NETWORK', network)
 					nextClick()
 				}
 			}

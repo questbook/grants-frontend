@@ -1,14 +1,17 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { WorkspaceUpdateRequest } from '@questbook/service-validator-client'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { apiKey, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
+import { useBiconomy } from './gasless/useBiconomy'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
 
@@ -31,6 +34,13 @@ export default function useUpdateWorkspacePublicKeys(
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
+
+	const { webwallet } = useContext(WebwalletContext)!
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		apiKey: apiKey,
+	})
+
 
 	useEffect(() => {
 		if(data) {
@@ -64,6 +74,11 @@ export default function useUpdateWorkspacePublicKeys(
 			setLoading(true)
 			// console.log('calling validate');
 			try {
+
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					throw new Error('Zero wallet is not ready')
+				}
+
 				const {
 					data: { ipfsHash },
 				} = await validatorApi.validateWorkspaceUpdate(data)
@@ -71,11 +86,28 @@ export default function useUpdateWorkspacePublicKeys(
 					throw new Error('Error validating grant data')
 				}
 
-				const updateTransaction = await workspaceRegistryContract.updateWorkspaceMetadata(
-					Number(workspace!.id),
-					ipfsHash,
+				// const updateTransaction1 = await workspaceRegistryContract.updateWorkspaceMetadata(
+				// 	Number(workspace!.id),
+				// 	ipfsHash,
+				// )
+				// const updateTransactionData1 = await updateTransaction1.wait()
+
+				const transactionHash = await sendGaslessTransaction(
+					biconomy,
+					workspaceRegistryContract,
+					'updateWorkspaceMetadata',
+					[Number(workspace!.id),
+						ipfsHash, ],
+					WORKSPACE_REGISTRY_ADDRESS[currentChainId],
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					webHookId,
+					nonce
 				)
-				const updateTransactionData = await updateTransaction.wait()
+
+				const updateTransactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
 
 				setTransactionData(updateTransactionData)
 				setLoading(false)

@@ -7,7 +7,6 @@ import { Contract } from 'ethers'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import NavbarLayout from '../src/layout/navbarLayout'
 import { BiconomyContext, WebwalletContext } from './_app'
-import { addDapp } from 'src/utils/gaslessUtils'
 
 const config = {
 	contract: {

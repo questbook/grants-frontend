@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
-import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.json'
+import { APPLICATION_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
@@ -41,7 +41,7 @@ export default function useApproveMilestone(
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,
-		targetContractABI: ApplicationRegistryAbi,
+		// targetContractABI: ApplicationRegistryAbi,
 	})
 
 	const { webwallet } = useContext(WebwalletContext)!
@@ -86,7 +86,7 @@ export default function useApproveMilestone(
 				}
 
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
-					return
+					throw new Error('Zero wallet is not ready')
 				}
 
 				const transactionHash = await sendGaslessTransaction(
@@ -97,7 +97,7 @@ export default function useApproveMilestone(
 						Number(milestoneIndex),
 						Number(workspace!.id),
 						ipfsHash, ],
-					applicationContract.address,
+					APPLICATION_REGISTRY_ADDRESS[currentChainId],
 					biconomyWalletClient,
 					scwAddress,
 					webwallet,

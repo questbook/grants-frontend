@@ -46,7 +46,7 @@ export default function useAddMember(
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,
-		targetContractABI: WorkspaceRegistryAbi,
+		// targetContractABI: WorkspaceRegistryAbi,
 	})
 
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState<boolean>(false)
@@ -104,7 +104,7 @@ export default function useAddMember(
 				// )
 				// const updateTransactionData = await updateTransaction.wait()
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
-					return
+					throw new Error('Zero wallet is not ready')
 				}
 
 				const targetContractObject = new ethers.Contract(

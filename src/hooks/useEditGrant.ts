@@ -1,9 +1,11 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash, parseAmount } from 'src/utils/formattingUtils'
+import { apiKey, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromWorkspace,
@@ -11,6 +13,7 @@ import {
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useGrantContract from './contracts/useGrantContract'
 import useQBContract from './contracts/useQBContract'
+import { useBiconomy } from './gasless/useBiconomy'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
 
@@ -33,6 +36,14 @@ export default function useEditGrant(
 	const currentChainId = useChainId()
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 	const applicationReviewContract = useQBContract('reviews', chainId)
+
+	const { webwallet } = useContext(WebwalletContext)!
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		apiKey: apiKey,
+		// targetContractABI: ApplicationReviewRegistryAbi,
+	})
+
 
 	useEffect(() => {
 		if(data) {
@@ -73,6 +84,10 @@ export default function useEditGrant(
 			setLoading(true)
 			console.log('calling validate', data)
 			try {
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					throw new Error('Zero wallet is not ready')
+				}
+
 				const detailsHash = (await uploadToIPFS(data.details)).hash
 				let reward
 				if(data.rewardToken.address === '') {
@@ -119,17 +134,51 @@ export default function useEditGrant(
 
 				// console.log('rubricHash', rubricHash);
 
-				const rubricTxn = await applicationReviewContract.setRubrics(
-					workspace!.id,
-					grantId!,
-					rubricHash,
+				// const rubricTxn = await applicationReviewContract.setRubrics(
+				// 	workspace!.id,
+				// 	grantId!,
+				// 	rubricHash,
+				// )
+
+				// const createGrantTransaction = await grantContract.updateGrant(
+				// 	ipfsHash,
+				// )
+				// await rubricTxn.wait()
+				// const createGrantTransactionData = await createGrantTransaction.wait()
+
+				const rubricTxn = await sendGaslessTransaction(
+					biconomy,
+					applicationReviewContract,
+					'setRubrics',
+					[workspace!.id,
+						grantId!,
+						rubricHash, ],
+					APPLICATION_REVIEW_REGISTRY_ADDRESS[currentChainId],
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					webHookId,
+					nonce
 				)
 
-				const createGrantTransaction = await grantContract.updateGrant(
-					ipfsHash,
+				const createGrantTransaction = await sendGaslessTransaction(
+					biconomy,
+					grantContract,
+					'updateGrant',
+					[ipfsHash, ],
+					grantId!,
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					webHookId,
+					nonce
 				)
-				await rubricTxn.wait()
-				const createGrantTransactionData = await createGrantTransaction.wait()
+
+				await getTransactionReceipt(rubricTxn, currentChainId.toString())
+
+				const createGrantTransactionData = await getTransactionReceipt(createGrantTransaction, currentChainId.toString())
 
 				setTransactionData(createGrantTransactionData)
 				setLoading(false)

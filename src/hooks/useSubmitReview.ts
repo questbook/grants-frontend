@@ -1,17 +1,20 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import useEncryption from 'src/hooks/utils/useEncryption'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { apiKey, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
+import { useBiconomy } from './gasless/useBiconomy'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
 
@@ -31,19 +34,26 @@ export default function useSubmitReview(
 	const { data: networkData, switchNetwork } = useNetwork()
 	const { encryptMessage } = useEncryption()
 
-	const apiClients = useContext(ApiClientsContext)!
-	const { validatorApi, workspace } = apiClients
-
-	if(!chainId) {
-		// eslint-disable-next-line no-param-reassign
-		chainId = getSupportedChainIdFromWorkspace(workspace)
-	}
+	const { validatorApi, workspace } = useContext(ApiClientsContext)!
 
 	const applicationReviewContract = useQBContract('reviews', chainId)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
 	const currentChainId = useChainId()
+
+	const { webwallet } = useContext(WebwalletContext)!
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		apiKey: apiKey,
+	})
+
+	// const { validatorApi, workspace } = apiClients
+
+	if(!chainId) {
+		// eslint-disable-next-line no-param-reassign
+		chainId = getSupportedChainIdFromWorkspace(workspace)
+	}
 
 	useEffect(() => {
 		console.log('data', data)
@@ -77,6 +87,11 @@ export default function useSubmitReview(
 			setLoading(true)
 			// console.log('calling validate');
 			try {
+
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					throw new Error('Zero wallet is not ready')
+				}
+
 				// console.log(workspaceId || Number(workspace?.id).toString());
 				// console.log('ipfsHash', ipfsHash);
 				// console.log(
@@ -123,15 +138,35 @@ export default function useSubmitReview(
 					throw new Error('Error validating review data')
 				}
 
-				const createGrantTransaction = await applicationReviewContract.submitReview(
-					workspaceId || Number(workspace?.id).toString(),
-					applicationId!,
-					grantAddress!,
-					ipfsHash,
-				)
-				const createGrantTransactionData = await createGrantTransaction.wait()
+				// const createGrantTransaction = await applicationReviewContract.submitReview(
+				// 	workspaceId || Number(workspace?.id).toString(),
+				// 	applicationId!,
+				// 	grantAddress!,
+				// 	ipfsHash,
+				// )
+				// const createGrantTransactionData = await createGrantTransaction.wait()
 
-				setTransactionData(createGrantTransactionData)
+
+				const transactionHash = await sendGaslessTransaction(
+					biconomy,
+					applicationReviewContract,
+					'submitReview',
+					[workspaceId || Number(workspace?.id).toString(),
+						applicationId!,
+						grantAddress!,
+						ipfsHash, ],
+					APPLICATION_REVIEW_REGISTRY_ADDRESS[currentChainId],
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					webHookId,
+					nonce
+				)
+
+				const transactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
+
+				setTransactionData(transactionData)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)

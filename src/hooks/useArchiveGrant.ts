@@ -1,13 +1,16 @@
 import React, { useContext, useEffect, useMemo } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { apiKey, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useGrantContract from './contracts/useGrantContract'
+import { useBiconomy } from './gasless/useBiconomy'
 import { useNetwork } from './gasless/useNetwork'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
+
 
 export default function useArchiveGrant(newState: boolean, changeCount: number, grantId?: string) {
 	const [error, setError] = React.useState<string>()
@@ -24,6 +27,13 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 	const toast = useToast()
 	const currentChainId = useMemo(() => networkData.id, [networkData])
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		apiKey: apiKey,
+		// targetContractABI: GrantABI,
+	})
+
+	const { webwallet } = useContext(WebwalletContext)!
 
 	useEffect(() => {
 		if(newState) {
@@ -56,10 +66,30 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 			setLoading(true)
 
 			try {
-				const archiveGrantTransaction = await grantContract.updateGrantAccessibility(newState)
-				const archiveGrantTransactionData = await archiveGrantTransaction.wait()
+				// const archiveGrantTransaction = await grantContract.updateGrantAccessibility(newState)
+				// const archiveGrantTransactionData = await archiveGrantTransaction.wait()
 
-				setTransactionData(archiveGrantTransactionData)
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					throw new Error('Zero wallet is not ready')
+				}
+
+				const transactionHash = await sendGaslessTransaction(
+					biconomy,
+					grantContract,
+					'updateGrantAccessibility',
+					[newState, ],
+					grantId || '0x0000000000000000000000000000000000000000',
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					webHookId,
+					nonce
+				)
+
+				const updateTransactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
+
+				setTransactionData(updateTransactionData)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
