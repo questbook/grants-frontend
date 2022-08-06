@@ -80,15 +80,16 @@ let scwAddress: string
 
 function SignupWebwallet() {
 
-	const { webwallet, setWebwallet, scwAddress, nonce, setNonce } = useContext(WebwalletContext)!
+	const { webwallet, setWebwallet, scwAddress, setScwAddress, nonce, setNonce } = useContext(WebwalletContext)!
 	const [number, setNumber] = useState<string>('one')
 	const { biconomyDaoObj, setBiconomyDaoObj } = useContext(BiconomyContext)!
 
 	useEffect(() => {
 		setNonce(undefined);
-		console.log(nonce);
-
-	}, [nonce])
+		setWebwallet(undefined);
+		setScwAddress(undefined);
+		setNonce(undefined);
+	}, [])
 
 	// const initiateBiconomy = async() => {
 	// 	console.log(webwallet, isLoggedIn, biconomy)

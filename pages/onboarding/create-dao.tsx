@@ -38,12 +38,9 @@ const OnboardingCreateDao = () => {
 	const [daoImageFile, setDaoImageFile] = useState<File | null>(null)
 	const [callOnContractChange, setCallOnContractChange] = useState(false)
 	const [currentStep, setCurrentStep] = useState<number>()
-	const { network } = useNetwork();
+	const { network, switchNetwork } = useNetwork();
 
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
-	console.log("THIS IS WEBWALLRT", webwallet);
-	const { switchNetwork } = useNetwork();
-	// console.log(daoNetwork?.id.toString())
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,
