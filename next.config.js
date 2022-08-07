@@ -12,9 +12,7 @@ const nextConfig = {
 	},
 	env: {
 		NEXT_PUBLIC_IS_TEST: process.env.NEXT_PUBLIC_IS_TEST,
-		CLIENT_ID: "33757236b2fdb527f204"
-		// CLIENT_SECRET: process.env.CLIENT_SECRET,
-		// BICO_AUTH_TOKEN: process.env.BICO_AUTH_TOKEN
+		BICO_AUTH_TOKEN: process.env.BICO_AUTH_TOKEN
 	}
 }
 

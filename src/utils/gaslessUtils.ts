@@ -17,8 +17,8 @@ const EIP712_WALLET_TX_TYPE = {
 	]
 }
 
-export const apiKey = 'qPZRgkerc.afb7905a-12b8-4c90-8e6b-48479f9e58d1' // apiKey from the dashboard
-export const webHookId = '0f15c7b1-2fd9-47af-82f6-9bdb0304c721'
+export const apiKey = 'qypYydNmh.85fb44d4-bc3a-4434-8e51-a929f54de521' // apiKey from the dashboard
+export const webHookId = "c9b1f58d-316b-41bf-af3a-f7de4e92c801"
 
 export const jsonRpcProviders: { [key: string]: ethers.providers.JsonRpcProvider } =
 {
@@ -79,6 +79,7 @@ export const registerWebHook = async(authToken: string, apiKey: string) => {
 }
 
 export const addDapp = async(dappName: string, networkId: string, authToken: string | undefined) => {
+	console.log("AUTH TOKEN", authToken)
 	if(!authToken) {
 		return false
 	}
@@ -110,7 +111,7 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 	var { doesWalletExist, walletAddress } = await biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address })
 	console.log("I'm not here")
 	let scwAddress
-
+	console.log("WEEEE", webwallet.address);
 	if(!doesWalletExist) {
 		console.log('Wallet does not exist')
 		console.log('Deploying wallet')

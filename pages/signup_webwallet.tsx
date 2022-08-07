@@ -7,6 +7,7 @@ import { Contract } from 'ethers'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import NavbarLayout from '../src/layout/navbarLayout'
 import { BiconomyContext, WebwalletContext } from './_app'
+import { addDapp, apiKey, jsonRpcProviders, registerWebHook } from 'src/utils/gaslessUtils'
 
 const config = {
 	contract: {
@@ -84,10 +85,7 @@ function SignupWebwallet() {
 	const { biconomyDaoObj, setBiconomyDaoObj } = useContext(BiconomyContext)!
 
 	useEffect(() => {
-		setNonce(undefined);
-		setWebwallet(undefined);
-		setScwAddress(undefined);
-		setNonce(undefined);
+		
 	}, [])
 
 	// const initiateBiconomy = async() => {

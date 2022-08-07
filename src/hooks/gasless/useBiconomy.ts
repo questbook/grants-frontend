@@ -32,6 +32,8 @@ export const useBiconomy = (data: { apiKey: string, }) => {
 		console.log('CREATING BICONOMY OBJ', network.toString())
 		let _biconomy: any
 
+		jsonRpcProviders[network.toString()].getBalance("0x9C910261B77bEeaa84289D098EbD309Ec748E9EF")
+		.then(res => console.log("quertt", network.toString(), res));
 		if(!biconomyDaoObj) {
 			_biconomy = new Biconomy(jsonRpcProviders[network.toString()],
 				{
