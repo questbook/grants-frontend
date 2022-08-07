@@ -1,5 +1,5 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react'
-import { Flex, Text } from '@chakra-ui/react'
+import { Center, Flex, Text } from '@chakra-ui/react'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { useAccount } from 'wagmi'
 import { WorkspaceMemberAccessLevel } from '../src/generated/graphql'
@@ -42,7 +42,13 @@ function Dashboard() {
 				letterSpacing={-1}>
         Dashboard
 			</Text>
-			{isReviewer && <ReviewerDashboard />}
+			{
+				isReviewer ? <ReviewerDashboard /> : (
+					<Center>
+            Coming soon...
+					</Center>
+				)
+			}
 		</Flex>
 	)
 }
