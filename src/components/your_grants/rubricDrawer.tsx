@@ -275,18 +275,21 @@ function RubricDrawer({
 						setSetupStep(false)
 					}
 				}
-				size="lg"
+				size="sm"
 			>
 				<DrawerOverlay />
 				<DrawerContent backgroundColor="#F5F5FA">
 					<Flex
 						direction="column"
 						overflow="scroll"
-						height="812px">
+						height="812px"
+						width="452px"
+					>
 						<Flex
 							backgroundColor="#FFFFFF"
 							alignItems="flex-start"
 							padding="16px"
+							boxShadow="0px 1px 1px rgba(31, 31, 51, 0.2), 0px 0px 1px rgba(31, 31, 51, 0.25);"
 						>
 							<Flex position="relative">
 								<Image
@@ -471,32 +474,23 @@ function RubricDrawer({
 								</Box>
 							</Flex>
 						</Flex>
-						<Flex
-							direction="column"
-							backgroundColor="#FFFFFF"
-							alignItems="center"
-							ml="auto"
-							mr="auto"
-							p={4}
-							pb={7}
-							w="90%"
-							borderRadius="2px"
-						>
-							<Text
-								color="#1F1F33"
-								fontWeight="500"
-								fontSize="14px"
-								lineHeight="20px"
-								mb={2}
-							>
-								{
-									!!setupStep
-										? 'Select the number of reviewers assigned per applicant'
-										: 'Scoring Qualities'
-								}
-							</Text>
-							{
-								!setupStep && (
+
+						{
+							!setupStep && (
+								<Flex
+									flexDirection="column"
+									alignItems="flex-start"
+									mt={5}
+									ml={7}
+									maxW="100%">
+									<Text
+										color="#1F1F33"
+										fontWeight="500"
+										fontSize="14px"
+										lineHeight="20px"
+									>
+                 Scoring Qualities
+									</Text>
 									<Text
 										color="#7D7DA0"
 										fontWeight="400"
@@ -505,10 +499,38 @@ function RubricDrawer({
 									>
                   Define the quality, and add a description
 									</Text>
+								</Flex>
+							)
+						}
+
+						<Flex
+							direction="column"
+							backgroundColor={setupStep ? '#FFFFFF' : '#F5F5FA' }
+							alignItems="left"
+							ml={7}
+							mr="auto"
+							p={4}
+							pb={7}
+							w="404px"
+							borderRadius="2px"
+						>
+							{
+								setupStep && (
+									<Text
+										color="#1F1F33"
+										fontWeight="500"
+										fontSize="14px"
+										lineHeight="20px"
+										mb={2}
+									>
+								 Select the number of reviewers assigned per applicant
+
+									</Text>
 								)
 							}
+
 							{
-								!!setupStep && (
+								setupStep && (
 									<RangeSlider
 										defaultValue={[2]}
 										// step={20}
@@ -556,7 +578,15 @@ function RubricDrawer({
 							{
 								!setupStep &&
                 rubrics.map((_rubric, index) => (
-                	<React.Fragment key={index}>
+                	<Flex
+                		key={index}
+                		flexDirection="column"
+                		mt={2}
+                		backgroundColor="#FFFFFF"
+                		ml={-4}
+                		mr="auto"
+                		alignItems="flex-start"
+                		w="90%" >
                 		<Flex
                 			flexDirection="column"
                 			gap="2"
@@ -588,6 +618,35 @@ function RubricDrawer({
                 					}
                 					isDisabled={!rubricEditAllowed}
                 				/>
+                				<Flex
+                					mt={2}
+                					gap="2"
+                					justifyContent="flex-start">
+                					<Box
+                						onClick={
+                							() => {
+                								if(!rubricEditAllowed) {
+                									return
+                								}
+
+                								const newRubrics = [...rubrics]
+                								newRubrics.splice(index, 1)
+                								setRubrics(newRubrics)
+                							}
+                						}
+                						display="flex"
+                						alignItems="center"
+                						cursor="pointer"
+                						opacity={rubricEditAllowed ? 1 : 0.4}
+                					>
+                						<Image
+                							h="16px"
+                							w="15px"
+                							src="/ui_icons/delete_red.svg"
+                							mr="6px"
+                						/>
+                					</Box>
+                				</Flex>
                 			</Flex>
                 			<Flex
                 				flexDirection="row"
@@ -644,7 +703,7 @@ function RubricDrawer({
                 			</Flex>
                 		</Flex>
                 		<Divider mt={4} />
-                	</React.Fragment>
+                	</Flex>
                 ))
 							}
 						</Flex>
@@ -652,7 +711,7 @@ function RubricDrawer({
 							!setupStep && (
 								<Flex
 									ml={10}
-									mt="19px"
+									mt="20px"
 									gap="2"
 									justifyContent="flex-start">
 									<Box
@@ -723,7 +782,11 @@ function RubricDrawer({
                   Select Reviewers
 										{' '}
 									</Text>
-									<Flex backgroundColor="#F0F0F7">
+									<Flex
+										backgroundColor="#F0F0F7"
+										padding="6 12"
+										borderRadius="2 px"
+										mt={2}>
 										<Image
 											w="13.54"
 											h="13.54"
@@ -742,13 +805,20 @@ function RubricDrawer({
 									</Flex>
 									<Flex
 										w="90%"
-										direction="row">
+										direction="row"
+										mt={2}
+									>
 										<Checkbox
 											isChecked={allChecked}
 											onChange={
-												(e) => setCheckedItems(
-													Array(daoMembers?.length).fill(e.target.checked)
-												)
+												(e) => {
+													if(daoMembers?.length) {
+														setCheckedItems(
+															Array(daoMembers?.length).fill(e.target.checked)
+														)
+														setMembersCount(daoMembers?.length)
+													}
+												}
 											}
 										>
 											<Text
@@ -789,8 +859,12 @@ function RubricDrawer({
 									</Flex>
 									<CheckboxGroup
 										colorScheme="blue"
-										defaultValue={[0]}>
-										<VStack alignItems="left">
+										defaultValue={[0]}
+									>
+										<VStack
+											alignItems="left"
+											mt={2}
+											spacing={2}>
 											{
 												daoMembers &&
                       daoMembers!.map(
@@ -860,9 +934,10 @@ function RubricDrawer({
 							backgroundColor="#FFFFFF"
 							alignItems="flex-start"
 							padding="16px"
+							boxShadow="0px 1px 1px rgba(31, 31, 51, 0.2), 0px 0px 1px rgba(31, 31, 51, 0.25);"
 						>
 							{
-								!!setupStep && (
+								setupStep && (
 									<NetworkFeeEstimateView
 										getEstimate={getSetRubricsGasEstimate}
 										chainId={chainId}
