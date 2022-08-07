@@ -4134,6 +4134,17 @@ export type GetNumberOfGrantsQueryVariables = Exact<{
 
 export type GetNumberOfGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string }> };
 
+export type GetReviewerApplicationsQueryVariables = Exact<{
+  workspaceId?: InputMaybe<Scalars['String']>;
+  reviewerId: Scalars['Bytes'];
+  applicationStateIn: Array<ApplicationState> | ApplicationState;
+  first?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type GetReviewerApplicationsQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, applicantId: string, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> };
+
 export type GetWorkspaceDetailsQueryVariables = Exact<{
   workspaceID: Scalars['ID'];
 }>;
@@ -5871,6 +5882,61 @@ export function useGetNumberOfGrantsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetNumberOfGrantsQueryHookResult = ReturnType<typeof useGetNumberOfGrantsQuery>;
 export type GetNumberOfGrantsLazyQueryHookResult = ReturnType<typeof useGetNumberOfGrantsLazyQuery>;
 export type GetNumberOfGrantsQueryResult = Apollo.QueryResult<GetNumberOfGrantsQuery, GetNumberOfGrantsQueryVariables>;
+export const GetReviewerApplicationsDocument = gql`
+    query getReviewerApplications($workspaceId: String, $reviewerId: Bytes!, $applicationStateIn: [ApplicationState!]!, $first: Int, $skip: Int) {
+  grantApplications(
+    where: {state_in: $applicationStateIn, grant_: {workspace: $workspaceId}, reviewers_: {actorId_contains: $reviewerId}}
+    first: $first
+    skip: $skip
+    subgraphError: allow
+    orderBy: createdAtS
+    orderDirection: desc
+  ) {
+    id
+    state
+    createdAtS
+    applicantId
+    fields {
+      id
+      values {
+        value
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetReviewerApplicationsQuery__
+ *
+ * To run a query within a React component, call `useGetReviewerApplicationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetReviewerApplicationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetReviewerApplicationsQuery({
+ *   variables: {
+ *      workspaceId: // value for 'workspaceId'
+ *      reviewerId: // value for 'reviewerId'
+ *      applicationStateIn: // value for 'applicationStateIn'
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *   },
+ * });
+ */
+export function useGetReviewerApplicationsQuery(baseOptions: Apollo.QueryHookOptions<GetReviewerApplicationsQuery, GetReviewerApplicationsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetReviewerApplicationsQuery, GetReviewerApplicationsQueryVariables>(GetReviewerApplicationsDocument, options);
+      }
+export function useGetReviewerApplicationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetReviewerApplicationsQuery, GetReviewerApplicationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetReviewerApplicationsQuery, GetReviewerApplicationsQueryVariables>(GetReviewerApplicationsDocument, options);
+        }
+export type GetReviewerApplicationsQueryHookResult = ReturnType<typeof useGetReviewerApplicationsQuery>;
+export type GetReviewerApplicationsLazyQueryHookResult = ReturnType<typeof useGetReviewerApplicationsLazyQuery>;
+export type GetReviewerApplicationsQueryResult = Apollo.QueryResult<GetReviewerApplicationsQuery, GetReviewerApplicationsQueryVariables>;
 export const GetWorkspaceDetailsDocument = gql`
     query getWorkspaceDetails($workspaceID: ID!) {
   workspace(id: $workspaceID, subgraphError: allow) {

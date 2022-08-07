@@ -1,0 +1,35 @@
+query getReviewerApplications(
+    $workspaceId: String
+    $reviewerId: Bytes!
+    $applicationStateIn: [ApplicationState!]!
+    $first: Int
+    $skip: Int
+) {
+    grantApplications(
+        where: {
+            state_in: $applicationStateIn
+            grant_: {
+                workspace: $workspaceId
+            }
+             reviewers_: {
+               actorId_contains: $reviewerId
+             }
+        }
+        first: $first
+        skip: $skip
+        subgraphError: allow
+        orderBy: createdAtS
+        orderDirection: desc
+    ) {
+        id
+        state
+        createdAtS
+        applicantId
+        fields {
+            id
+            values {
+                value
+            }
+        }
+    }
+}
