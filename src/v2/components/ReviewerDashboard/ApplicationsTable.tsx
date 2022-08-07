@@ -111,7 +111,7 @@ function ApplicationsTable({
 		<>
 			<Text
 				fontWeight={'700'}
-				fontSize={'30px'}
+				fontSize={'24px'}
 				lineHeight={'44px'}
 				letterSpacing={-1}
 			>
