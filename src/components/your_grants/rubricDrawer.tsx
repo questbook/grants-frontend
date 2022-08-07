@@ -85,7 +85,6 @@ function RubricDrawer({
 	const [daoMembers, setDaoMembers] = useState<Partial<WorkspaceMember>[]>()
 	const [checkedItems, setCheckedItems] = React.useState<boolean[]>([])
 	const allChecked = checkedItems.every(Boolean)
-
 	const [pk, setPk] = React.useState<string>('*')
 	const { data: accountData } = useAccount()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
@@ -282,7 +281,7 @@ function RubricDrawer({
 					<Flex
 						direction="column"
 						overflow="scroll"
-						height="812px"
+						height="930px"
 						width="452px"
 					>
 						<Flex
@@ -816,7 +815,9 @@ function RubricDrawer({
 														setCheckedItems(
 															Array(daoMembers?.length).fill(e.target.checked)
 														)
-														setMembersCount(daoMembers?.length)
+														e.target.checked ?
+															setSelectedMembersCount(daoMembers?.length)
+															: setSelectedMembersCount(0)
 													}
 												}
 											}

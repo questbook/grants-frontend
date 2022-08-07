@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { AlertDialogOverlay, Box, Button, Flex, Heading, Image, Modal, ModalBody, ModalContent, Text } from '@chakra-ui/react'
+import { AlertDialogOverlay, Box, Button, Flex, Heading, Image, Modal, ModalBody, ModalContent, Text, ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
 import { useGetRubricsForWorkspaceMemberQueryQuery } from 'src/generated/graphql'
@@ -65,6 +65,9 @@ const SetRubricsModal = ({
 	const { data: queryData, loading, error: queryError } = useGetRubricsForWorkspaceMemberQueryQuery(queryParams)
 	const [rubricsData, rubricsTransaction, rubricsTxnConfirmed, walletShouldOpen, rubricsLoading, rubricsError] = useSetRubrics(rubrics, chainId, workspaceId, grantAddress)
 
+	const toastRef = React.useRef<ToastId>()
+	const toast = useToast()
+
 	useEffect (() => {
 		if(walletShouldOpen && currentStep === 0) {
 			setCurrentStep(1)
@@ -79,6 +82,14 @@ const SetRubricsModal = ({
 		} else if(currentStep === 4) {
 			setTimeout(() => {
 				setCurrentStep(undefined)
+				toastRef.current = toast({
+					title: 'All set, your applicant evaluation is live!',
+					position:'top-right',
+					description: 'Reviewers can now evaluate applicants with the scoring rubric.',
+					status: 'success',
+					duration: 6000,
+					isClosable: true,
+				  })
 				setIsDone(true)
 					 		}, 2000)
 
