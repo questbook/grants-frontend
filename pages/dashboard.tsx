@@ -1,4 +1,4 @@
-import React, { ReactElement, useContext, useEffect, useState } from 'react'
+import React, { ReactElement, useContext, useMemo } from 'react'
 import { Center, Flex, Text } from '@chakra-ui/react'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { useAccount } from 'wagmi'
@@ -7,12 +7,10 @@ import ReviewerDashboard from '../src/v2/components/ReviewerDashboard'
 import { ApiClientsContext } from './_app'
 
 function Dashboard() {
-	const [isReviewer, setIsReviewer] = useState<boolean>(false)
-
 	const { data: accountData } = useAccount()
 	const { workspace } = useContext(ApiClientsContext)!
 
-	useEffect(() => {
+	const isReviewer = useMemo<boolean>(() => {
 		if(
 			workspace
       && workspace.members
@@ -23,8 +21,10 @@ function Dashboard() {
 			const tempMember = workspace.members.find(
 				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 			)
-			setIsReviewer(tempMember?.accessLevel === WorkspaceMemberAccessLevel.Reviewer)
+			return tempMember?.accessLevel === WorkspaceMemberAccessLevel.Reviewer
 		}
+
+		return false
 	}, [accountData, workspace])
 
 	return (
