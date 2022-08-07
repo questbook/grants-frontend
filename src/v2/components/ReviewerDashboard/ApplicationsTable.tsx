@@ -41,7 +41,7 @@ type Props = {
   header: string,
   showApplicationState: boolean,
   showReviewButton: boolean,
-  applicationStateIn?: ApplicationState[],
+  applicationStateIn: ApplicationState[],
 }
 
 
@@ -55,8 +55,6 @@ function ApplicationsTable({
 	const [applications, setApplications] = useState<Application[]>()
 	const [page, setPage] = useState(0)
 	const [hasMoreData, setHasMoreData] = useState(true)
-
-	applicationStateIn ??= Object.values(ApplicationState)
 
 	const TABLE_HEADERS = ['Proposals', 'Submitted on']
 
