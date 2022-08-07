@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 import {
 	Box,
 	Button,
@@ -52,19 +52,8 @@ function ApplicationsTable({
 	showApplicationState,
 	showReviewButton,
 }: Props) {
-	const [applications, setApplications] = useState<Application[]>()
 	const [page, setPage] = useState(0)
 	const [hasMoreData, setHasMoreData] = useState(true)
-
-	const TABLE_HEADERS = ['Proposals', 'Submitted on']
-
-	if(showApplicationState && !TABLE_HEADERS.includes('Status')) {
-		TABLE_HEADERS.push('Status')
-	}
-
-	if(showReviewButton && !TABLE_HEADERS.includes('Review')) {
-		TABLE_HEADERS.push('Review')
-	}
 
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
 
@@ -82,9 +71,7 @@ function ApplicationsTable({
 		},
 	})
 
-	const router = useRouter()
-
-	useEffect(() => {
+	const applications = useMemo(() => {
 		if(!data) {
 			return
 		}
@@ -104,8 +91,21 @@ function ApplicationsTable({
 				applicantName: getFieldString('applicantName')!,
 			}
 		})
-		setApplications(fetchedApplications)
-	}, [data, page])
+
+		return fetchedApplications
+	}, [page, data])
+
+	const TABLE_HEADERS = ['Proposals', 'Submitted on']
+
+	if(showApplicationState && !TABLE_HEADERS.includes('Status')) {
+		TABLE_HEADERS.push('Status')
+	}
+
+	if(showReviewButton && !TABLE_HEADERS.includes('Review')) {
+		TABLE_HEADERS.push('Review')
+	}
+
+	const router = useRouter()
 
 	return (
 		<>
