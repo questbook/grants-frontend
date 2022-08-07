@@ -1,15 +1,48 @@
-import { ReactElement } from 'react'
-import { Flex } from '@chakra-ui/react'
+import React, { ReactElement, useContext, useEffect, useState } from 'react'
+import { Flex, Text } from '@chakra-ui/react'
 import NavbarLayout from 'src/layout/navbarLayout'
+import { useAccount } from 'wagmi'
+import { WorkspaceMemberAccessLevel } from '../src/generated/graphql'
+import ReviewerDashboard from '../src/v2/components/ReviewerDashboard'
+import { ApiClientsContext } from './_app'
 
 function Dashboard() {
+	const [isReviewer, setIsReviewer] = useState<boolean>(false)
+
+	const { data: accountData } = useAccount()
+	const { workspace } = useContext(ApiClientsContext)!
+
+	useEffect(() => {
+		if(
+			workspace
+      && workspace.members
+      && workspace.members.length > 0
+      && accountData
+      && accountData.address
+		) {
+			const tempMember = workspace.members.find(
+				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
+			)
+			setIsReviewer(tempMember?.accessLevel === WorkspaceMemberAccessLevel.Reviewer)
+		}
+	}, [accountData, workspace])
+
 	return (
 		<Flex
-			w="100%"
-			h="100vh"
-			justify="center"
-			align="center">
-        Coming soon...
+			w='100%'
+			h='100vh'
+			bg={'#F5F5FA'}
+			padding={'40px'}
+			direction={'column'}
+		>
+			<Text
+				fontWeight={'700'}
+				fontSize={'30px'}
+				lineHeight={'44px'}
+				letterSpacing={-1}>
+        Dashboard
+			</Text>
+			{isReviewer && <ReviewerDashboard />}
 		</Flex>
 	)
 }
