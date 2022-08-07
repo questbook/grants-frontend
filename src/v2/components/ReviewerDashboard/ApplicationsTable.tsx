@@ -52,6 +52,10 @@ function ApplicationsTable({
 	showApplicationState,
 	showReviewButton,
 }: Props) {
+	const [applications, setApplications] = useState<Application[]>()
+	const [page, setPage] = useState(0)
+	const [hasMoreData, setHasMoreData] = useState(true)
+
 	applicationStateIn ??= Object.values(ApplicationState)
 
 	const TABLE_HEADERS = ['Proposals', 'Submitted on']
@@ -63,10 +67,6 @@ function ApplicationsTable({
 	if(showReviewButton && !TABLE_HEADERS.includes('Review')) {
 		TABLE_HEADERS.push('Review')
 	}
-
-	const [applications, setApplications] = useState<Application[]>()
-	const [page, setPage] = useState(0)
-	const [hasMoreData, setHasMoreData] = useState(true)
 
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
 
