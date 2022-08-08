@@ -134,6 +134,8 @@ export const sendGaslessTransaction = async(biconomy: any, targetContractObject:
 	console.log(biconomy, targetContractObject, targetContractMethod, targetContractArgs, targetContractAddress,
 		biconomyWalletClient, scwAddress, webwallet, chainId, webHookId, nonce)
 
+		console.log("ffff", targetContractAddress);
+
 	if(!biconomy) {
 		alert('Biconomy is not ready! Please wait.')
 		return false

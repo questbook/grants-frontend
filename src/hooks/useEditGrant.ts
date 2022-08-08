@@ -21,6 +21,7 @@ export default function useEditGrant(
 	data: any,
 	grantId?: string,
 ) {
+	console.log(grantId);
 	const [error, setError] = React.useState<string>()
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
@@ -162,6 +163,8 @@ export default function useEditGrant(
 					nonce
 				)
 
+				await getTransactionReceipt(rubricTxn, currentChainId.toString())
+
 				const createGrantTransaction = await sendGaslessTransaction(
 					biconomy,
 					grantContract,
@@ -175,8 +178,6 @@ export default function useEditGrant(
 					webHookId,
 					nonce
 				)
-
-				await getTransactionReceipt(rubricTxn, currentChainId.toString())
 
 				const createGrantTransactionData = await getTransactionReceipt(createGrantTransaction, currentChainId.toString())
 
