@@ -1,26 +1,21 @@
 import React, { ReactElement } from 'react'
-import {
-	Box,
-	Button,
-	Flex,
-	Heading,
-	Image,
-	Popover,
-	PopoverBody,
-	PopoverContent,
-	PopoverTrigger,
-	Text,
-	Tooltip,
-} from '@chakra-ui/react'
+import { Box, Button, Flex, Image, Text, Tooltip } from '@chakra-ui/react'
 import CopyIcon from 'src/components/ui/copy_icon'
 import {
-	AssignedToReview, GrantApproved, GrantComplete, PendingReview, Rejected, ResubmissionRequested,
+	AssignedToReview,
+	GrantApproved,
+	GrantComplete,
+	PendingReview,
+	Rejected,
+	ResubmissionRequested,
 	ReviewDone,
 } from '../states'
 import { TableFilters } from './TableFilters'
 
 function Content({
 	filter,
+	applicationsStatus,
+	isEvaluationSet,
 	onViewApplicationFormClick,
 	// onAcceptApplicationClick,
 	// onRejectApplicationClick,
@@ -31,17 +26,20 @@ function Content({
 	actorId,
 }: {
   filter: number;
+  applicationsStatus: string;
+  isEvaluationSet: boolean;
   onViewApplicationFormClick?: (data?: any) => void;
   // onAcceptApplicationClick?: () => void;
   // onRejectApplicationClick?: () => void;
   onManageApplicationClick?: (data?: any) => void;
   data: any[];
-  isReviewer : boolean;
-  reviewerData:any [];
+  isReviewer: boolean;
+  reviewerData: any[];
   actorId: string;
 }) {
-	const tableHeadersFlex = [0.231, 0.20, 0.15, 0.13, 0.16, 0.25, 0.116]
+	const tableHeadersFlex = [0.231, 0.2, 0.15, 0.13, 0.16, 0.25, 0.116]
 	const tableHeadersFlexReviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116]
+	const tableHeadersFlexPendingForReview = [0.5, 0.2, 0.15, 0.13]
 	const getStatus = (status: number): ReactElement => {
 		if(status === TableFilters.submitted) {
 			return <PendingReview />
@@ -77,7 +75,7 @@ function Content({
 		}
 	}
 
-	const statusEdit = (item:any) => {
+	const statusEdit = (item: any) => {
 		let ans = 0
 		// eslint-disable-next-line array-callback-return
 		item.reviewers.map((reviewer: any) => {
@@ -94,14 +92,15 @@ function Content({
 	}
 
 	return (
-		<Flex
-			mt="10px"
-			direction="column"
-			w="100%"
-			border="1px solid #D0D3D3"
-			borderRadius={4}
-			align="stretch"
-		>
+	// <Flex
+	//   // mt="10px"
+	//   direction="column"
+	//   w="100%"
+	//   border="1px #E0E0EC"
+	//   borderRadius={4}
+	//   align="stretch"
+	// >
+		<React.Fragment>
 			{
 				isReviewer ? (
 					reviewerData
@@ -117,19 +116,25 @@ function Content({
 								px={0}
 								py={4}
 							>
-
 								<Flex
 									direction="row"
 									flex={tableHeadersFlexReviewer[0]}
-									align="center">
+									align="center"
+								>
 									<Tooltip label={item?.applicant_address}>
 										<Text
 											ml="19px"
 											mr="-19px"
-											variant="tableBody"
-										>
+											variant="tableBody">
 											{'     '}
-											{`${item.applicant_address.substring(0, 4)}...${item.applicant_address.substring(item.applicant_address.length - 4)}`}
+											{
+												`${item.applicant_address.substring(
+													0,
+													4
+												)}...${item.applicant_address.substring(
+													item.applicant_address.length - 4
+												)}`
+											}
 										</Text>
 									</Tooltip>
 									<Box mr={8} />
@@ -207,7 +212,10 @@ function Content({
 												// if (status === 2) return <GrantApproved />;
 												// if (status === 3) return <Rejected />;
 												// return <GrantComplete />;
-												if((item.status === 2 || item.status === 4) && onManageApplicationClick) {
+												if(
+													(item.status === 2 || item.status === 4) &&
+                      onManageApplicationClick
+												) {
 													onManageApplicationClick({
 														applicationId: item.applicationId,
 													})
@@ -226,9 +234,13 @@ function Content({
 															applicationId: item.applicationId,
 														})
 													} else if(item.status === 0) {
-														onViewApplicationFormClick({ applicationId: item.applicationId })
+														onViewApplicationFormClick({
+															applicationId: item.applicationId,
+														})
 													} else if(item.status === 9) {
-														onViewApplicationFormClick({ applicationId: item.applicationId })
+														onViewApplicationFormClick({
+															applicationId: item.applicationId,
+														})
 													}
 												}
 											}
@@ -236,264 +248,125 @@ function Content({
 									>
                   View
 									</Button>
-									{/* <Actions
-                status={item.status}
-                onViewApplicationFormClick={() => {
-                  if (item.status === 0 && onManageApplicationClick) {
-                    onManageApplicationClick({
-                      applicationId: item.applicationId,
-                    });
-                    return;
-                  }
-                  if (onViewApplicationFormClick) {
-                    if (item.status === 1) {
-                      onViewApplicationFormClick({
-                        rejectionComment: 'rejectionComment',
-                        applicationId: item.applicationId,
-                      });
-                    } else if (item.status === 2) {
-                      onViewApplicationFormClick({
-                        resubmissionComment: 'resubmissionComment',
-                        applicationId: item.applicationId,
-                      });
-                    } else {
-                      onViewApplicationFormClick({ applicationId: item.applicationId });
-                    }
-                  }
-                }}
-                onAcceptApplicationClick={onAcceptApplicationClick}
-                onRejectApplicationClick={onRejectApplicationClick}
-              /> */}
 								</Flex>
 							</Flex>
 						))
-				) : (data
-					.filter((item) => (filter === -1 ? true : filter === item.status))
-					.map((item, index) => (
-						<Flex
-							key={index}
-							direction="row"
-							w="100%"
-							justify="stretch"
-							align="center"
-							bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
-							px={0}
-							py={4}
-						>
-
+				) : !isEvaluationSet ? (
+					data
+						.filter((item) => (filter === -1 ? true : filter === item.status))
+						.map((item, index) => (
 							<Flex
+								key={item.id}
 								direction="row"
-								flex={tableHeadersFlex[0]}
-								align="center">
-								<Tooltip label={item?.applicant_address}>
+								w="100%"
+								h="64px"
+								justify="stretch"
+								align="center"
+								bg="#FFFFFF"
+								px={0}
+							//   py={4}
+							>
+								<Box
+									h="60px"
+									flex={tableHeadersFlexPendingForReview[0]}
+									alignItems="center"
+									border="1px"
+									borderColor="#E0E0EC"
+								>
+									<Box
+										h="40px"
+										w="40px"
+										ml="5">
+										<Image
+											w="38px"
+											h="38px"
+											borderRadius="22.1667px"
+											src="/ui_icons/generic_dao_member.svg"
+										/>
+									</Box>
 									<Text
-										ml="19px"
-										mr="-19px"
-										variant="tableBody"
+										color="#1F1F33"
+										fontSize="14px"
+										lineHeight="20px"
+										fontWeight="500"
+										textAlign="left"
 									>
-										{'     '}
-										{`${item.applicant_address.substring(0, 4)}...${item.applicant_address.substring(item.applicant_address.length - 4)}`}
+										{item.project_name}
 									</Text>
-								</Tooltip>
-								<Box mr={8} />
-								<CopyIcon text={item?.applicant_address} />
-							</Flex>
+								</Box>
 
-							<Text
-								flex={tableHeadersFlex[1]}
-								color="#122224"
-								variant="tableBody"
-							>
-								{item.project_name}
-							</Text>
-							<Flex
-								flex={tableHeadersFlex[2]}
-								direction="row"
-								justifyContent="left"
-								alignItems="left"
-							>
-								<Image
-									h={5}
-									w={5}
-									src={item.funding_asked.icon} />
-								<Box mr={3} />
-								<Text
-									whiteSpace="nowrap"
-									color="brand.500"
-									fontSize="14px"
-									lineHeight="16px"
-									fontWeight="700"
-									letterSpacing={0.2}
+			  <Box
+									h="60px"
+									flex={tableHeadersFlexPendingForReview[1]}
+									alignItems="center"
+									border="1px"
+									borderColor="#E0E0EC"
 								>
-									{item.amount_paid}
-									{' '}
-                /
-									{' '}
-									{item.funding_asked.amount}
-									{' '}
-									{item.funding_asked.symbol}
-								</Text>
-							</Flex>
-							<Flex
-								justifyContent="center"
-								flex={tableHeadersFlex[3]}>
+									<Text
+										color="#AFAFCC"
+										fontSize="14px"
+										lineHeight="20px"
+										fontWeight="500"
+										textAlign="center"
+									>
+                Add Status
+									</Text>
+			  </Box>
 
-								<Popover
-									closeOnBlur
-									isLazy
-									placement="right"
+			  <Box
+									h="60px"
+									flex={tableHeadersFlexPendingForReview[2]}
+									alignItems="center"
+									border="1px"
+									borderColor="#E0E0EC"
 								>
-
-									<PopoverTrigger>
-
-										<Text
-											color="#717A7C"
-											variant="tableBody"
-											textAlign="center"
-											textDecoration="underline"
-											textDecorationColor="#717A7C"
-										>
-											{item.reviewers.length}
-
-										</Text>
-
-									</PopoverTrigger>
-									<PopoverContent
-										height="140px"
-										width="inherit"
-										right="-3px"
-										top="70px">
-										<Heading
-											margin="10px"
-											line-height="16px"
-											color="#717A7C"
-											fontFamily="DM Sans"
-											size="sm">
-REVIEWERS
-										</Heading>
-										<PopoverBody
-											overflowX="hidden"
-											overflowY="scroll"
-											scrollBehavior="smooth">
-											{
-												item.reviewers.map((reviewer: { email: string }) => (
-													<Flex
-														key={reviewer.email}
-														direction="column">
-														<Text
-															mt="2"
-														>
-															{reviewer.email}
-														</Text>
-													</Flex>
-												))
-											}
-										</PopoverBody>
-
-									</PopoverContent>
-								</Popover>
-
-							</Flex>
-
-							<Flex
-								justifyContent="center"
-								flex={tableHeadersFlex[4]}>
-								{statusEdit(item) ? getStatus(statusEdit(item)) : getStatus(item.status)}
-							</Flex>
-
-							<Flex
-								justifyContent="center"
-								color="#717A7C"
-								flex={tableHeadersFlex[5]}>
-								{item.status === 0 ? item.sent_on : item.updated_on}
-							</Flex>
-							<Flex
-								display="flex"
-								flexDirection="column"
-								alignItems="center"
-								flex={tableHeadersFlex[6]}
-							>
-								<Button
-									variant="outline"
-									color="brand.500"
-									fontWeight="500"
-									fontSize="14px"
-									lineHeight="14px"
-									textAlign="center"
-									borderRadius={8}
-									borderColor="brand.500"
-									_focus={{}}
-									p={0}
-									minW={0}
-									w="88px"
-									h="32px"
-									onClick={
-										() => {
-											//               if (status === 0) return <PendingReview />;
-											// if (status === 1) return <ResubmissionRequested />;
-											// if (status === 2) return <GrantApproved />;
-											// if (status === 3) return <Rejected />;
-											// return <GrantComplete />;
-											if((item.status === 2 || item.status === 4) && onManageApplicationClick) {
-												onManageApplicationClick({
-													applicationId: item.applicationId,
-												})
-												return
-											}
-
-											if(onViewApplicationFormClick) {
-												if(item.status === 3) {
-													onViewApplicationFormClick({
-														rejectionComment: 'rejectionComment',
-														applicationId: item.applicationId,
-													})
-												} else if(item.status === 1) {
-													onViewApplicationFormClick({
-														resubmissionComment: 'resubmissionComment',
-														applicationId: item.applicationId,
-													})
-												} else if(item.status === 0) {
-													onViewApplicationFormClick({ applicationId: item.applicationId })
-												}
-											}
-										}
-									}
+									<Text
+										color="#1F1F33"
+										fontSize="14px"
+										lineHeight="20px"
+										fontWeight="500"
+										textAlign="center"
+									>
+                --
+									</Text>
+			  </Box>
+			  <Box
+									h="60px"
+									flex={tableHeadersFlexPendingForReview[3]}
+									alignItems="center"
+									border="1px"
+									borderColor="#E0E0EC"
 								>
-                View
-								</Button>
-								{/* <Actions
-                status={item.status}
-                onViewApplicationFormClick={() => {
-                  if (item.status === 0 && onManageApplicationClick) {
-                    onManageApplicationClick({
-                      applicationId: item.applicationId,
-                    });
-                    return;
-                  }
-                  if (onViewApplicationFormClick) {
-                    if (item.status === 1) {
-                      onViewApplicationFormClick({
-                        rejectionComment: 'rejectionComment',
-                        applicationId: item.applicationId,
-                      });
-                    } else if (item.status === 2) {
-                      onViewApplicationFormClick({
-                        resubmissionComment: 'resubmissionComment',
-                        applicationId: item.applicationId,
-                      });
-                    } else {
-                      onViewApplicationFormClick({ applicationId: item.applicationId });
-                    }
-                  }
-                }}
-                onAcceptApplicationClick={onAcceptApplicationClick}
-                onRejectApplicationClick={onRejectApplicationClick}
-              /> */}
+									<Text
+										color="#1F1F33"
+										fontSize="14px"
+										lineHeight="20px"
+										fontWeight="500"
+										textAlign="center"
+									>
+                --
+									</Text>
+			  </Box>
 							</Flex>
-						</Flex>
-					)))
+						))
+				) : applicationsStatus === 'Accepted' ? (
+					<Flex>
+fill
+						{' '}
+					</Flex>
+				) : applicationsStatus === 'Rejected' ? (
+					<Flex>
+fill
+						{' '}
+					</Flex>
+				) : (
+					<Flex>
+fill
+						{' '}
+					</Flex>
+				)
 			}
-		</Flex>
+		</React.Fragment>
 	)
 }
 

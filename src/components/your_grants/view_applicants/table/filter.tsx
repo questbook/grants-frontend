@@ -18,7 +18,13 @@ function Filter({
 		<Flex
 			direction="row"
 			justify="start"
-			align="center">
+			align="flex-start"
+			padding="6px 13px"
+			gap="4px"
+			bg="#F0F0F7"
+			borderRadius="2px"
+			mr="10"
+		>
 			<Menu placement="bottom">
 				<MenuButton
 					as={Button}
@@ -27,9 +33,10 @@ function Filter({
 					// pl="16px"
 					variant="link"
 					_focus={{}}
-					color="#6200EE"
+					color="#1F1F33"
 					rightIcon={<Image src="/ui_icons/dropdown_arrow.svg" />}
-					fontSize="16px"
+					fontSize="14px"
+					lineHeight="20px"
 					fontWeight="500"
 					w="fit-content"
 					mx="auto"

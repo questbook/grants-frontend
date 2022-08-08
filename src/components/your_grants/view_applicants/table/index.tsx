@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Flex, Spacer, Text } from '@chakra-ui/react'
+import { Flex, Text } from '@chakra-ui/react'
 import Content from './content'
 import Filter from './filter'
 import Headers from './headers'
@@ -13,6 +13,7 @@ function ApplicantsTable({
 	actorId,
 	applicationsFilter,
 	isReviewer,
+	isEvaluationSet,
 	reviewerData,
 	archiveGrantComponent,
 }: {
@@ -24,6 +25,7 @@ function ApplicantsTable({
   actorId: string;
   applicationsFilter: string;
   isReviewer : boolean;
+  isEvaluationSet:boolean;
   archiveGrantComponent: React.ReactNode;
   reviewerData: any[];
 }) {
@@ -36,13 +38,26 @@ function ApplicantsTable({
 			<Flex
 				direction="row"
 				mt={3}
-				align="center">
-				<Text fontStyle="bold">
+				align="center"
+				bg="#FFFFFF"
+				w="100%"
+				justify="stretch"
+				boxShadow="inset 0px -1px 0px #E0E0EC;"
+				h="48px"
+			>
+				<Text
+					color="#1F1F33"
+					fontSize="14px"
+					lineHeight="20px"
+					fontWeight="700"
+					flex="1"
+					ml={24}
+				>
 					{' '}
 					{applicationsFilter}
 					{' '}
 				</Text>
-				<Spacer />
+
 				<Filter
 					filter={filter}
 					setFilter={setFilter} />
@@ -50,16 +65,21 @@ function ApplicantsTable({
 			{archiveGrantComponent}
 			<Flex
 				w="100%"
-				mt={10}
+				// mt={10}
 				align="center"
 				direction="column"
 				flex={1}>
-				<Headers is_reviewer={isReviewer} />
+				<Headers
+					is_reviewer={isReviewer}
+					isEvaluationSet={isEvaluationSet}
+					applicationsStatus={applicationsFilter} />
 				<Content
 					data={data}
 					isReviewer={isReviewer}
 					reviewerData={reviewerData}
 					filter={filter}
+					applicationsStatus={applicationsFilter}
+					isEvaluationSet={isEvaluationSet}
 					actorId={actorId}
 					onViewApplicationFormClick={onViewApplicantFormClick}
 					// onAcceptApplicationClick={onAcceptApplicationClick}

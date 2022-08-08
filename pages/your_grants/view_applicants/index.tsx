@@ -64,7 +64,7 @@ function ViewApplicants() {
 	const [totalDisbursed, setTotalDisbursed] = useState(0)
 	const [rewardTokenDecimals, setRewardTokenDecimals] = useState(18)
 	const [grantTitle, setGrantTitle] = useState<any>('Grant Title')
-	const [applicationsFilter, setApplicationsFilter] = useState('Accepted')
+	const [applicationsFilter, setApplicationsFilter] = useState('Pending For Review')
 	const [isAcceptedActive, setIsAcceptedActive] = useState(true)
 	const [isInReviewActive, setIsInReviewActive] = useState(false)
 	const [isRejectedActive, setIsRejectedActive] = useState(false)
@@ -625,6 +625,7 @@ function ViewApplicants() {
 						}
 						<ApplicantsTable
 							isReviewer={isReviewer}
+							isEvaluationSet={isRubricSet}
 							data={applicantsData}
 							reviewerData={reviewerData}
 							actorId={isActorId}
