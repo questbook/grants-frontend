@@ -1,12 +1,10 @@
 import React, { useContext, useEffect } from 'react'
-// import useSetFeedbacks from 'src/hooks/useSetFeedbacks';
 import StarRatings from 'react-star-ratings'
 import {
 	Box, Button, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, Image,
 	Text, } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
-// import { useAccount } from 'wagmi'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useSubmitReview from 'src/hooks/useSubmitReview'

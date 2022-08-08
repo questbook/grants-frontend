@@ -3,7 +3,6 @@ import { ToastId, useToast } from '@chakra-ui/react'
 import { GrantApplicationFieldAnswerItem, GrantApplicationRequest } from '@questbook/service-validator-client'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { GetApplicationDetailsQuery, GrantFieldAnswerItem } from 'src/generated/graphql'
-// import { useAccount } from 'wagmi'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useEncryption from './utils/useEncryption'
 

@@ -8,7 +8,6 @@ import {
 } from 'src/utils/formattingUtils'
 import CopyIcon from '../ui/copy_icon'
 import Modal from '../ui/modal'
-// import ConfirmationModalContent from './confirmationModalContent';
 import ModalContent from './modalContent'
 import roles from './roles'
 

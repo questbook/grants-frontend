@@ -3,7 +3,6 @@ import { ToastId, useToast } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
-// import { BigNumber } from 'ethers';
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'

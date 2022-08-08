@@ -12,7 +12,6 @@ import {
 import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
-// import { useAccount } from 'wagmi'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'

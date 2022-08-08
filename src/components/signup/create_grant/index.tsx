@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react'
 import { Container } from '@chakra-ui/react'
-// import { useAccount } from 'wagmi'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import Form from './form'
 import TipsContainer from './tips'

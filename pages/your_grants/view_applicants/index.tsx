@@ -21,7 +21,6 @@ import {
 	useGetApplicantsForAGrantReviewerQuery,
 	useGetGrantDetailsQuery,
 } from 'src/generated/graphql'
-// import { useAccount } from 'wagmi'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'

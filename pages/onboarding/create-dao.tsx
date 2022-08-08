@@ -36,7 +36,7 @@ const OnboardingCreateDao = () => {
 	const [daoImageFile, setDaoImageFile] = useState<File | null>(null)
 	const [callOnContractChange, setCallOnContractChange] = useState(false)
 	const [currentStep, setCurrentStep] = useState<number>()
-	const { network, switchNetwork } = useNetwork();
+	const { network, switchNetwork } = useNetwork()
 
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 

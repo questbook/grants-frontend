@@ -2,7 +2,6 @@ import React from 'react'
 import {
 	Box,
 	Flex, Grid, GridItem, } from '@chakra-ui/react'
-// import { useAccount } from 'wagmi'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { truncateStringFromMiddle } from 'src/utils/formattingUtils'
 import Badge from '../../../ui/badge'

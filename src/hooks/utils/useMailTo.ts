@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
 import { ApiClientsContext } from 'pages/_app'
-// import { useAccount } from 'wagmi'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 
 

@@ -28,7 +28,6 @@ import {
 	GetApplicationDetailsQuery,
 	useGetApplicationDetailsQuery,
 } from 'src/generated/graphql'
-// import { useAccount } from 'wagmi'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState'

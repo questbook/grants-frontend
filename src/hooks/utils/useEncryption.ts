@@ -3,7 +3,6 @@ import { ToastId, useToast } from '@chakra-ui/react'
 import { encrypt } from '@metamask/eth-sig-util'
 import { ethers } from 'ethers'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
-// import { useAccount } from 'wagmi'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 
 // @TODO what does this component do?

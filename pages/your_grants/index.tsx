@@ -25,7 +25,6 @@ import {
 	useGetAllGrantsForCreatorQuery,
 	useGetAllGrantsForReviewerQuery,
 } from 'src/generated/graphql'
-// import { useAccount } from 'wagmi'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { formatAmount } from 'src/utils/formattingUtils'

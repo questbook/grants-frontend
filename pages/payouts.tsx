@@ -15,7 +15,6 @@ import { ApiClientsContext } from 'pages/_app'
 import CopyIcon from 'src/components/ui/copy_icon'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetFundSentforReviewerQuery } from 'src/generated/graphql'
-// import { useAccount } from 'wagmi'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 // UI Components
 import NavbarLayout from 'src/layout/navbarLayout'

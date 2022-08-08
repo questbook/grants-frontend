@@ -5,7 +5,6 @@ import {
 	Drawer, DrawerContent, DrawerOverlay, Flex, Image, Link, Text, } from '@chakra-ui/react'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import Loader from 'src/components/ui/loader'
-// import { useAccount } from 'wagmi'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useEncryption from 'src/hooks/utils/useEncryption'
 import { truncateStringFromMiddle } from 'src/utils/formattingUtils'
