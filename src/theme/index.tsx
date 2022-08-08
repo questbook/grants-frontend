@@ -46,7 +46,12 @@ const theme = extendTheme({
 		white: {
 			'offWhite': '#F0F0F7',
 		},
-		black: '#1F1F33',
+		black: {
+			1: '#1F1F33',
+			2: '#555570',
+			3: '#7D7DA0',
+			400: '#1F1F33'
+		},
 		brandText: '#4E4E6B',
 		brandSubtext: '#7D7DA0',
 		blue: {
@@ -71,6 +76,16 @@ const theme = extendTheme({
 		v2Grey: '#555570',
 		primary: '#745FE8',
 		v2LightGrey: '#D2D2E3',
+		green: {
+			1: '#E3F6C1',
+			2: '#0DC98B',
+			3: '#0E753A'
+		},
+		violet: {
+			1: '#C8CBFC',
+			2: '#785EF0',
+			3: '#5245C2'
+		}
 	},
 	sizes: {
 		connectWallet: '41.5rem',
