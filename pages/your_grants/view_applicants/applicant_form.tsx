@@ -112,7 +112,7 @@ function ApplicantForm() {
 			console.log('grantApplication------>', data.grantApplication)
 			setApplicationData(data.grantApplication)
 		}
-	}, [data, queryError, queryLoading])
+	}, [data, queryError, queryLoading, applicationData])
 
 	useEffect(() => {
 		if(router.query.flow === 'approved') {
