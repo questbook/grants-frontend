@@ -9,6 +9,7 @@ const tableHeaders = [
 	'Status',
 	'Last updated on',
 	'Actions',
+	'Batch'
 ]
 
 const tableHeadersReviewer = [
@@ -19,7 +20,7 @@ const tableHeadersReviewer = [
 	'Status',
 	'Actions',
 ]
-const tableHeadersflex = [0.231, 0.20, 0.15, 0.13, 0.16, 0.25, 0.116]
+const tableHeadersflex = [0.231, 0.20, 0.15, 0.13, 0.16, 0.25, 0.116, 0.1]
 const tableHeadersflexReviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116]
 
 const tableHeadersAlign = [

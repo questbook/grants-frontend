@@ -1,10 +1,11 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement, useState } from 'react'
 import {
 	Box,
 	Button,
 	Flex,
 	Heading,
 	Image,
+	ModalBody,
 	Popover,
 	PopoverBody,
 	PopoverContent,
@@ -12,7 +13,15 @@ import {
 	Text,
 	Tooltip,
 } from '@chakra-ui/react'
+import { ethers } from 'ethers'
+import { encodeMulti, encodeSingle, MetaTransaction } from 'ethers-multisend'
+import { TransactionType } from 'ethers-multisend'
 import CopyIcon from 'src/components/ui/copy_icon'
+import SingleLineInput from 'src/components/ui/forms/singleLineInput'
+import Modal from 'src/components/ui/modal'
+import useApplicationMilestones from 'src/utils/queryUtil'
+import { useAccount } from 'wagmi'
+import submitTx from '../multisendUtils'
 import {
 	AssignedToReview, GrantApproved, GrantComplete, PendingReview, Rejected, ResubmissionRequested,
 	ReviewDone,
@@ -40,8 +49,22 @@ function Content({
   reviewerData:any [];
   actorId: string;
 }) {
-	const tableHeadersFlex = [0.231, 0.20, 0.15, 0.13, 0.16, 0.25, 0.116]
-	const tableHeadersFlexReviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116]
+	const tableHeadersFlex = [0.231, 0.20, 0.15, 0.13, 0.16, 0.25, 0.116, 0.1]
+	const tableHeadersFlexReviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116, 0.1]
+
+	const [isAddToBatchModalOpen, setIsAddToBatchModalOpen] = useState(false)
+	const [recipientAddress, setRecipientAddress] = useState('')
+	const [fundAmount, setFundAmount] = useState('')
+	const [transactions, setTransactions] = useState<MetaTransaction[]>([])
+
+	const { data: accountData } = useAccount()
+	const {
+		data: {
+			milestones, rewardAsset, rewardToken, fundingAsk, decimals,
+		},
+		refetch: refetchMilestones,
+	} = useApplicationMilestones(data[0].applicationId)
+
 	const getStatus = (status: number): ReactElement => {
 		if(status === TableFilters.submitted) {
 			return <PendingReview />
@@ -91,6 +114,29 @@ function Content({
 			}
 		})
 		return ans
+	}
+
+	const addToBatch = () => {
+		const encodedTx = encodeSingle({
+			type: TransactionType.transferFunds,
+			id: '1',
+			token: '0xE3D997D569b5b03B577C6a2Edd1d2613FE776cb0',
+			to: recipientAddress,
+			amount: ethers.utils.parseUnits(fundAmount, decimals).toString(),
+			decimals: decimals
+		})
+
+		console.log('Encoded Tx', encodedTx)
+		if(transactions) {
+			setTransactions([encodedTx])
+		} else {
+			setTransactions([...transactions, encodedTx])
+		}
+	}
+
+	const executeTransaction = () => {
+		const encodedMultiTransactions = encodeMulti(transactions)
+		submitTx(accountData?.address, accountData?.address, '', encodedMultiTransactions)
 	}
 
 	return (
@@ -490,10 +536,43 @@ REVIEWERS
                 onRejectApplicationClick={onRejectApplicationClick}
               /> */}
 							</Flex>
+							<Button
+								variant='primaryCta'
+								onClick={() => setIsAddToBatchModalOpen(true)}>
+Add to batch
+							</Button>
 						</Flex>
 					)))
 			}
+			<Button onClick={executeTransaction}>
+Execute Transaction
+			</Button>
+			<Modal
+				title='Add Recipient Details'
+				isOpen={isAddToBatchModalOpen}
+				onClose={() => setIsAddToBatchModalOpen(false)}>
+				<ModalBody>
+					<Flex
+						display='flex'
+						flexDirection='column'>
+						<SingleLineInput
+							placeholder='Enter recipient address'
+							value={recipientAddress}
+							onChange={(e) => setRecipientAddress(e.target.value)} />
+						<SingleLineInput
+							placeholder='Enter Amount to be disbursed'
+							value={fundAmount}
+							onChange={(e) => setFundAmount(e.target.value)} />
+						<Button
+							variant='primaryCta'
+							onClick={() => addToBatch()}>
+Add to batch
+						</Button>
+					</Flex>
+				</ModalBody>
+			</Modal>
 		</Flex>
+
 	)
 }
 
