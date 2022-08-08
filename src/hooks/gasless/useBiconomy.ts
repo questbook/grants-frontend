@@ -13,8 +13,8 @@ export const useBiconomy = (data: { apiKey: string, }) => {
 	const { network } = useNetwork()
 
 	useEffect(() => {
-		console.log('EHERE', biconomyDaoObj)
-		if(nonce && webwallet && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress)) {
+		console.log('STEP1', nonce, webwallet, biconomyWalletClient);
+		if (nonce && webwallet && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress)) {
 			initiateBiconomy()
 				.then(res => console.log(res))
 				.catch(error => console.log(error))
@@ -22,54 +22,45 @@ export const useBiconomy = (data: { apiKey: string, }) => {
 	}, [webwallet, nonce, biconomyDaoObj, biconomyWalletClient, scwAddress])
 
 
-	const initiateBiconomy = async() => {
-		if(!webwallet || !network) {
+	const initiateBiconomy = async () => {
+		console.log("STEP2", webwallet, network)
+		if (!webwallet || !network) {
 			return
 		}
 
 		console.log(webwallet, nonce, biconomyDaoObj)
 
 		console.log('CREATING BICONOMY OBJ', network.toString())
-		let _biconomy: any
-
-		jsonRpcProviders[network.toString()].getBalance('0x9C910261B77bEeaa84289D098EbD309Ec748E9EF')
-			.then(res => console.log('quertt', network.toString(), res))
-		if(!biconomyDaoObj) {
-			_biconomy = new Biconomy(jsonRpcProviders[network.toString()],
-				{
-					apiKey: data.apiKey,
-					debug: true
-				})
-		} else {
-			_biconomy = biconomyDaoObj
-		}
-
+		let _biconomy = new Biconomy(jsonRpcProviders[network.toString()],
+			{
+				apiKey: data.apiKey,
+				debug: true
+			})
 
 		console.log('BICONOMY OBJ CREATED', _biconomy)
-		_biconomy.onEvent(_biconomy.READY, async() => {
+		_biconomy.onEvent(_biconomy.READY, async () => {
 			console.log('Inside biconomy ready event')
 
 			const _biconomyWalletClient: BiconomyWalletClient = _biconomy.biconomyWalletClient
 			console.log('biconomyWalletClient', _biconomyWalletClient)
 
-			if(!scwAddress) {
+			if (!scwAddress) {
 				const walletAddress = await deploySCW(webwallet, _biconomyWalletClient)
 				setScwAddress(walletAddress)
 			} else {
 				console.log('SCW Wallet already exists at Address', scwAddress)
 			}
 
-			if(!biconomyWalletClient) {
+			if (!biconomyWalletClient) {
 				setBiconomyWalletClient(_biconomyWalletClient)
 			}
+
+			if (!biconomyDaoObj)
+				setBiconomyDaoObj(_biconomy)
 		}).onEvent(_biconomy.ERROR, (error: any, message: any) => {
 			console.log(message)
 			console.log(error)
 		})
-
-		if(!biconomyDaoObj) {
-			setBiconomyDaoObj(_biconomy)
-		}
 
 	}
 
