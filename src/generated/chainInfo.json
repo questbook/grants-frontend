@@ -290,6 +290,43 @@
 			"decimals": 18
 		}
 	},
+	"100": {
+		"id": 100,
+		"name": "Gnosis Mainnet",
+		"isTestNetwork": false,
+		"icon": "/chain_assets/gnosis.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://blockscout.com/xdai/mainnet/address/{{address}}/",
+			"transactionHash": "https://blockscout.com/xdai/mainnet/tx/{{tx}}/"
+		},
+		"supportedCurrencies": {
+			"0x9c58bacc331c9aa871afd802db6379a98e80cedb": {
+				"icon": "/chain_assets/gnosis.svg",
+				"label": "GNO",
+				"address": "0x9c58bacc331c9aa871afd802db6379a98e80cedb",
+				"decimals": 18
+			}
+		},
+		"qbContracts": {
+			"applications": "0xd137DfA74B1c379C346ff738939Ae0D376A1AC71",
+			"workspace": "0xAa7C567f03eB3c4294d6B27d23BDaCAfA7433A1D",
+			"grantFactory": "0xcc66b74182a59F8354704D5377B0Ec1d3aec9c33",
+			"reviews": "0x9FCC64bE19E623dA69FA66C5320015E6939aFb65"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-gnosis-mainnet",
+		"rpcUrls": [
+			"https://rpc.gnosischain.com/"
+		],
+		"nativeCurrency": {
+			"name": "Gnosis Mainnet",
+			"symbol": "GNO",
+			"decimals": 18
+		}
+	},
 	"137": {
 		"id": 137,
 		"name": "Polygon Mainnet",
