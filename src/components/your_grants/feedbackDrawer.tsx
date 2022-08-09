@@ -1,9 +1,20 @@
 import React, { useContext, useEffect } from 'react'
 // import useSetFeedbacks from 'src/hooks/useSetFeedbacks';
-import StarRatings from 'react-star-ratings'
 import {
-	Box, Button, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, Image,
-	Text, } from '@chakra-ui/react'
+	Box,
+	Button,
+	Divider,
+	Drawer,
+	DrawerContent,
+	DrawerOverlay,
+	Flex,
+	Image,
+	Slider,
+	SliderFilledTrack, SliderMark,
+	SliderThumb,
+	SliderTrack,
+	Text,
+} from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
@@ -109,21 +120,11 @@ function FeedbackDrawer({
 	const handleOnSubmit = () => {
 		console.log(feedbackData)
 
-		let error = false
 		const newFeedbackData = [] as any[]
 		feedbackData?.forEach((feedback) => {
 			const newFeedbackDataObject = { ...feedback }
-			if(feedback.rating === 0) {
-				error = true
-				newFeedbackDataObject.isError = true
-			}
-
 			newFeedbackData.push(newFeedbackDataObject)
 		})
-		if(error) {
-			setFeedbackData(newFeedbackData)
-			return
-		}
 
 		if(isPrivate && (!pk || pk === '*')) {
 			setHiddenPkModalOpen(true)
@@ -173,6 +174,7 @@ function FeedbackDrawer({
 				<DrawerContent>
 
 					<Flex
+						bg={'#f5f5fa'}
 						direction="column"
 						overflow="scroll"
 						p={8}>
@@ -249,6 +251,9 @@ Against
 							feedbackData?.map((feedback, index) => (
 								<>
 									<Flex
+										bg={'white'}
+										borderRadius={'10px'}
+										padding={'30px'}
 										mt={4}
 										gap="2"
 										direction="column"
@@ -270,28 +275,40 @@ Against
 										>
 											{feedback.rubric.details}
 										</Text>
-
-										<Box mt="2px">
-											<StarRatings
-												numberOfStars={feedback.rubric.maximumPoints}
-												starRatedColor="#88BDEE"
-												changeRating={
-													(r) => {
-														console.log(r)
-														const newFeedbackData = [...feedbackData]
-														newFeedbackData[index].rating = r
-														newFeedbackData[index].isError = false
-														setFeedbackData(newFeedbackData)
-													}
+										<Slider
+											min={0}
+											defaultValue={0}
+											step={1}
+											max={feedback.rubric.maximumPoints - 1}
+											onChangeEnd={
+												(r) => {
+													const newFeedbackData = [...feedbackData]
+													newFeedbackData[index].rating = r
+													newFeedbackData[index].isError = false
+													console.log(newFeedbackData)
+													setFeedbackData(newFeedbackData)
 												}
-												rating={feedback.rating}
-												name="rating"
-												starHoverColor="#88BDEE"
-												starDimension="18px"
-												starSpacing="4px"
-											/>
-										</Box>
-
+											}
+										>
+											{
+												Array.from({ length: feedback.rubric.maximumPoints },
+													(_, i) => (
+														<SliderMark
+															paddingTop={'10px'}
+															value={i}>
+															{i}
+														</SliderMark>
+													)
+												)
+											}
+											<SliderTrack>
+												<Box />
+												<SliderFilledTrack />
+											</SliderTrack>
+											<SliderThumb
+												style={{ border: '2px solid' }} />
+										</Slider>
+										<Box h={5} />
 										{
 											feedback.isError ? (
 												<Text
@@ -300,11 +317,10 @@ Against
 													fontWeight="700"
 													lineHeight="20px"
 												>
-                      Star Rating is Mandatory Field
+                      Rating is Mandatory Field
 												</Text>
 											) : null
 										}
-
 										<MultiLineInput
 											value={feedback.comment}
 											onChange={
@@ -314,7 +330,7 @@ Against
 													setFeedbackData(newFeedbackData)
 												}
 											}
-											placeholder="Feedback"
+											placeholder="Comments"
 											isError={false}
 											errorText="Star Rating is Mandatory Field"
 											disabled={!feedbackEditAllowed}
