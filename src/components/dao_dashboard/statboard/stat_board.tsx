@@ -5,10 +5,14 @@ function DaoStatBoard({
 	totalApplicants,
 	uniqueApplicants,
 	repeatApplicants,
+	winnerApplicants,
+	tat,
 }: {
-	totalApplicants: number,
-	uniqueApplicants: number,
-	repeatApplicants: number,
+  totalApplicants: number;
+  uniqueApplicants: number;
+  repeatApplicants: number;
+  winnerApplicants: number;
+	tat: number;
 }) {
 	return (
 		<>
@@ -274,7 +278,7 @@ function DaoStatBoard({
 									</Text>
 								</Flex>
 
-								{/* <Flex
+								<Flex
 									display="flex"
 									flexDirection="column"
 									alignItems="flex-start"
@@ -284,9 +288,9 @@ function DaoStatBoard({
 											fontWeight={700}
 											fontSize="20px"
 											lineHeight="24px">
-                    3,800
+											{winnerApplicants}
 										</Text>
-										<Text
+										{/* <Text
 											fontWeight="400"
 											fontSize="14px"
 											lineHeight="24px"
@@ -294,7 +298,7 @@ function DaoStatBoard({
 											ml="10px"
 										>
                     +7%
-										</Text>
+										</Text> */}
 									</Flex>
 
 									<Text
@@ -317,9 +321,11 @@ function DaoStatBoard({
 											fontWeight={700}
 											fontSize="20px"
 											lineHeight="24px">
-                    6d12hr
+											{Math.floor(tat) === NaN ? 0 : Math.floor(tat)}
+											{' '}
+minutes
 										</Text>
-										<Text
+										{/* <Text
 											fontWeight="400"
 											fontSize="14px"
 											lineHeight="24px"
@@ -327,7 +333,7 @@ function DaoStatBoard({
 											ml="10px"
 										>
                     +7%
-										</Text>
+										</Text> */}
 									</Flex>
 
 									<Text
@@ -338,7 +344,7 @@ function DaoStatBoard({
 									>
                   TAT for disburdal
 									</Text>
-								</Flex> */}
+								</Flex>
 							</Flex>
 						</Flex>
 					</>

@@ -173,7 +173,7 @@ function LineGraph({
 			// },
 			colors: ['#582CFF'],
 		} as any
-		options.xaxis.categories = fundings.map((app) => (app.date.getDate()))
+		options.xaxis.categories = fundings.map((app) => (app.date.getDate() + 1))
 
 		setSeriesOptions(options)
 

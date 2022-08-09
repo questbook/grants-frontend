@@ -1,9 +1,12 @@
 import React, { useEffect } from 'react'
 import { Button, Flex, Text, Tooltip } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 
 const tableBodyFlex = [0.25, 0.40, 0.10, 0.20, 0.17]
 
-function TableContent({ grants, funding }:{grants:any[], funding: any}) {
+function TableContent({ grants, funding, pending, tat }:{grants:any[], funding: any, pending: any, tat: any}) {
+
+	const router = useRouter()
 
 	useEffect(() => {
 		console.log('data', grants)
@@ -74,7 +77,7 @@ function TableContent({ grants, funding }:{grants:any[], funding: any}) {
 								letterSpacing="0.5px"
 							>
 								{/* {item.Pendingapp} */}
-								-
+								{pending[item.id] ?? 0}
 							</Text>
 
 							<Text
@@ -94,7 +97,9 @@ function TableContent({ grants, funding }:{grants:any[], funding: any}) {
 								width="inherit"
 							>
 								{/* {item.responseTa} */}
-								-
+								{Math.floor(tat[item.id]) === NaN ? 0 : Math.floor(tat[item.id])}
+								{' '}
+minutes
 							</Text>
 
 							<Flex
@@ -117,7 +122,14 @@ function TableContent({ grants, funding }:{grants:any[], funding: any}) {
 									w="88px"
 									h="32px"
 									color="white"
-
+									onClick={
+										() => router.push({
+											pathname: '/your_grants/view_applicants',
+											query: {
+												grantId: item.id
+											}
+										})
+									}
 								>
                 Review
 								</Button>

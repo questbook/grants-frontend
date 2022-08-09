@@ -171,7 +171,7 @@ function BarGraph({
 				},
 			],
 		} as any
-		options.xaxis.categories = applications.map((app) => (app.date.getDate()))
+		options.xaxis.categories = applications.map((app) => (app.date.getDate() + 1))
 
 		setSeriesOptions(options)
 
