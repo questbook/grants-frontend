@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Box, Flex, HStack, Image, Spacer, Text } from '@chakra-ui/react'
+import { Organization } from 'src/v2/assets/custom chakra icons/Organization'
 import AccountDetails from 'src/v2/components/NavBar/AccountDetails'
+import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import { ConfirmData, DomainName, SafeAddress } from 'src/v2/components/Onboarding/CreateDomain'
 import QuestbookLogo from 'src/v2/components/QuestbookLogo'
-import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
-import { Organization } from 'src/v2/assets/custom chakra icons/Organization'
 
 const OnboardingCreateDomain = () => {
 	const [step, setStep] = useState(0)

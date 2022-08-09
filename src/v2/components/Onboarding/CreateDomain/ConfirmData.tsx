@@ -63,13 +63,16 @@ My domain
 										variant="v2_title">
 										{formatAddress(safeAddress)}
 									</Text>
-									<Text ml={2}
+									<Text
+										ml={2}
 										variant="v2_metadata"
 										fontWeight="500">
 (Verified signer:
-										{formatAddress(signerAddress)})
+										{formatAddress(signerAddress)}
+)
 									</Text>
-									<Image ml={2}
+									<Image
+										ml={2}
 										src="/ui_icons/verified-signer.svg"
 										boxSize="16px" />
 								</Flex>
@@ -102,14 +105,18 @@ My domain
 				onClick={onCreateDomain}>
             Create Domain
 			</Button>
-			{!isVerified && <Text
-				variant="v2_body"
-				color="black.2"
-				mt={2}
-				textAlign="center">
+			{
+				!isVerified && (
+					<Text
+						variant="v2_body"
+						color="black.2"
+						mt={2}
+						textAlign="center">
 You will be asked to verify that you’re a signer on the safe.
-				{' '}
-			</Text>}
+						{' '}
+					</Text>
+				)
+			}
 		</>
 	)
 }
