@@ -89,7 +89,7 @@ function CreateGrant({
 			display="flex"
 			w="100%"
 			maxW="100%"
-			minH="calc(100vh - 80px)"
+			minH="calc(100vh - 64px)"
 			px={0}
 			py={0}
 		>

@@ -113,7 +113,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 					// eslint-disable-next-line no-async-promise-executor
 					(query) => new Promise(async(resolve) => {
 						const { data } = await query[0]({
-							variables: { applicantId: accountData?.address },
+							variables: { applicantId: accountData?.address! },
 						})
 						if(data && data.grantApplications.length > 0) {
 							resolve(data.grantApplications.length)
@@ -175,7 +175,6 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 
 		const getWorkspaceData = async(userAddress: string) => {
 			try {
-				console.log('getallworkspace', getAllWorkspaces)
 				const promises = getAllWorkspaces.map(
 					// eslint-disable-next-line no-async-promise-executor
 					(allWorkspaces) => new Promise(async(resolve) => {

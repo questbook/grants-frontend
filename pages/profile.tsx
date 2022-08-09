@@ -206,7 +206,7 @@ function Profile() {
 			<Stack w="full">
 				<Flex
 					bg={workspaceData?.coverImageIpfsHash ? 'white' : 'brand.500'}
-					h="210px"
+					h={{ base: '125px', md:'210px' }}
 					w="fill"
 				>
 					{
@@ -240,30 +240,9 @@ function Profile() {
 							borderRadius="12px"
 						/>
 
-						<Flex
-							direction="column"
-							align="start">
-							<Text
-								variant="heading"
-								fontWeight="700"
-								fontSize="1.8rem">
-								{workspaceData?.title}
-							</Text>
-							{
-								chainID && (
-									<Text
-										variant="applicationText"
-										fontWeight="400"
-										fontSize="1rem"
-										color="#717A7C"
-									>
-										{CHAIN_INFO[chainID].name}
-									</Text>
-								)
-							}
-						</Flex>
 
 						<Box mr="auto" />
+
 
 						<Flex
 							direction="row"
@@ -299,6 +278,30 @@ function Profile() {
 							}
 						</Flex>
 					</Flex>
+					<Flex
+						pl={'25px'}
+						direction="column"
+						align="start">
+						<Text
+							variant="heading"
+							fontWeight="700"
+							fontSize="20px">
+							{workspaceData?.title}
+						</Text>
+						{
+							chainID && (
+								<Text
+									variant="applicationText"
+									fontWeight="400"
+									fontSize="1rem"
+									color="#717A7C"
+									lineHeight={'10px'}
+								>
+									{CHAIN_INFO[chainID].name}
+								</Text>
+							)
+						}
+					</Flex>
 
 					<Stack px="1.5rem">
 						{workspaceData?.bio && <SeeMore text={workspaceData?.bio} />}
@@ -306,7 +309,7 @@ function Profile() {
 
 					<Stack
 						px="1.5rem"
-						pb="2rem"
+						pb={{ base: '16px', md:'2rem' }}
 						pt="1rem"
 						direction="row"
 						justifyContent="space-between"
@@ -320,7 +323,7 @@ function Profile() {
 							applicationTime={applicationTime}
 						/>
 						<Button
-							p="4px 8px"
+							px="8px"
 							border="1px solid #E8E9E9"
 							bg="none"
 							h="2rem"
@@ -330,6 +333,7 @@ function Profile() {
 							lineHeight="2rem"
 							color="#373737"
 							onClick={() => onOpen()}
+							display={{ base: 'none', md: 'block' }}
 						>
 							{'</>'}
 							{' '}
@@ -339,8 +343,8 @@ Embed profile stats
 
 					<Divider />
 					<Stack
-						px="1.5rem"
-						py="1rem"
+						px={{ base: '16px', md: '1.5rem' }}
+						py={{ base: '12px', md:'1rem' }}
 						direction="row"
 						gap="1rem">
 						{
@@ -357,8 +361,8 @@ Embed profile stats
 									_focus={{}}
 									fontWeight="700"
 									fontStyle="normal"
-									fontSize="28px"
-									lineHeight="44px"
+									fontSize={{ base: '16px', md: '28px' }}
+									// lineHeight="44px"
 									letterSpacing={-1}
 									borderRadius={0}
 									color={index === selected ? '#122224' : '#A0A7A7'}
