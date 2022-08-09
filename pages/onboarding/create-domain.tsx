@@ -200,7 +200,13 @@ const OnboardingCreateDomain = () => {
 						'Your domain is now on-chain'
 					]
 				} />
-			<VerifySignerModal isOpen={isVerifySignerModalOpen} onClose={() => { setIsVerifySignerModalOpen(false) }} />
+			<VerifySignerModal
+				isOpen={isVerifySignerModalOpen}
+				onClose={
+					() => {
+						setIsVerifySignerModalOpen(false)
+					}
+				} />
 		</>
 	)
 }

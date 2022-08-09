@@ -47,7 +47,7 @@ const VerifySignerModal = ({
 	const [isError, setIsError] = React.useState(false)
 
 	useEffect(() => {
-		if (isOpen) {
+		if(isOpen) {
 			setIsError(false)
 		}
 	}, [isOpen])
@@ -58,8 +58,8 @@ const VerifySignerModal = ({
 
 	useEffect(() => {
 		console.log(accountData)
-		if (accountData) {
-			if (!redirectInitiated && redirect && connectClicked) {
+		if(accountData) {
+			if(!redirectInitiated && redirect && connectClicked) {
 				setRedirectInitiated(true)
 				setConnectClicked(false)
 				redirect()
@@ -100,7 +100,8 @@ const VerifySignerModal = ({
 						) : (
 							<Flex
 								direction={'column'}
-								alignItems={'center'} py={6}>
+								alignItems={'center'}
+								py={6}>
 								<Image
 									boxSize="48px"
 									src='/ui_icons/verify-signer-top.svg'
@@ -108,12 +109,15 @@ const VerifySignerModal = ({
 								/>
 
 								<Text
-									mt={6} variant="v2_heading_3" fontWeight="500"
+									mt={6}
+									variant="v2_heading_3"
+									fontWeight="500"
 								>
 									Verify you’re a signer
 								</Text>
 								<Text
-									variant="v2_body" color="black.3">
+									variant="v2_body"
+									color="black.3">
 									Connect your wallet which is a signer on the safe.
 								</Text>
 
@@ -135,7 +139,7 @@ const VerifySignerModal = ({
 													() => {
 														const connector = connectors.find((x) => x.id === wallet.id)
 														setConnectClicked(true)
-														if (connector) {
+														if(connector) {
 															connect(connector)
 														}
 													}
@@ -144,9 +148,21 @@ const VerifySignerModal = ({
 									}
 								</VStack>
 
-								<Text mt={6} variant="v2_body">Need help? Join our <Link mx={0.25} fontWeight="500"
-									color={'black.1'}
-									isExternal href="https://youtube.com">Discord</Link> to get instant support.</Text>
+								<Text
+									mt={6}
+									variant="v2_body">
+Need help? Join our
+									<Link
+										mx={0.25}
+										fontWeight="500"
+										color={'black.1'}
+										isExternal
+										href="https://youtube.com">
+Discord
+									</Link>
+									{' '}
+to get instant support.
+								</Text>
 
 								<Box h={5} />
 
