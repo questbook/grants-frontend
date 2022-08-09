@@ -20,7 +20,7 @@ import Sidebar from 'src/components/your_grants/sidebar/sidebar'
 import YourGrantCard from 'src/components/your_grants/yourGrantCard'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import {
-	GetAllGrantsForCreatorQuery ,
+	GetAllGrantsForCreatorQuery,
 	GetAllGrantsForReviewerQuery,
 	useGetAllGrantsCountForCreatorQuery,
 	useGetAllGrantsForCreatorQuery,
