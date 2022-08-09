@@ -97,9 +97,8 @@ function TableContent({ grants, funding, pending, tat }:{grants:any[], funding: 
 								width="inherit"
 							>
 								{/* {item.responseTa} */}
-								{Math.floor(tat[item.id]) === NaN ? 0 : Math.floor(tat[item.id])}
-								{' '}
-minutes
+								{Number.isNaN(Math.floor(tat[item.id])) ? '-' : `${Math.floor(tat[item.id])} minutes`}
+
 							</Text>
 
 							<Flex
