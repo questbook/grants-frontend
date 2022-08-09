@@ -11,9 +11,9 @@ query getReviewerApplications(
             grant_: {
                 workspace: $workspaceId
             }
-             reviewers_: {
-               actorId_contains: $reviewerId
-             }
+            reviewers_: {
+                actorId_contains: $reviewerId
+            }
         }
         first: $first
         skip: $skip
@@ -25,6 +25,14 @@ query getReviewerApplications(
         state
         createdAtS
         applicantId
+        grant {
+            workspace {
+                supportedNetworks
+            }
+            reward {
+                asset
+            }
+        }
         fields {
             id
             values {

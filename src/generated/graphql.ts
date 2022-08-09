@@ -4143,7 +4143,7 @@ export type GetReviewerApplicationsQueryVariables = Exact<{
 }>;
 
 
-export type GetReviewerApplicationsQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, applicantId: string, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> };
+export type GetReviewerApplicationsQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, applicantId: string, grant: { __typename?: 'Grant', workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork> }, reward: { __typename?: 'Reward', asset: string } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> };
 
 export type GetWorkspaceDetailsQueryVariables = Exact<{
   workspaceID: Scalars['ID'];
@@ -5896,6 +5896,14 @@ export const GetReviewerApplicationsDocument = gql`
     state
     createdAtS
     applicantId
+    grant {
+      workspace {
+        supportedNetworks
+      }
+      reward {
+        asset
+      }
+    }
     fields {
       id
       values {
