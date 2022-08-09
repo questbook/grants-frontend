@@ -5,6 +5,7 @@ import AccountDetails from 'src/v2/components/NavBar/AccountDetails'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import { ConfirmData, DomainName, SafeAddress } from 'src/v2/components/Onboarding/CreateDomain'
 import QuestbookLogo from 'src/v2/components/QuestbookLogo'
+import VerifySignerModal from 'src/v2/components/VerifySignerModal'
 
 const OnboardingCreateDomain = () => {
 	const [step, setStep] = useState(0)
@@ -23,6 +24,7 @@ const OnboardingCreateDomain = () => {
 	// State variables for step 3 and 4
 	const [daoImageFile, setDaoImageFile] = useState<File | null>(null)
 	const [isOwner, setIsOwner] = useState(false)
+	const [isVerifySignerModalOpen, setIsVerifySignerModalOpen] = useState(false)
 
 	useEffect(() => {
 		if(!setIsSafeAddressVerified) {
@@ -92,7 +94,8 @@ const OnboardingCreateDomain = () => {
 			onCreateDomain={
 				() => {
 					console.log('Is Owner: ', isOwner)
-					if(!isOwner) {
+					if(!isOwner && !isVerifySignerModalOpen) {
+						setIsVerifySignerModalOpen(true)
 						setIsOwner(true)
 					} else {
 						setCurrentStep(1)
@@ -197,6 +200,7 @@ const OnboardingCreateDomain = () => {
 						'Your domain is now on-chain'
 					]
 				} />
+			<VerifySignerModal isOpen={isVerifySignerModalOpen} onClose={() => { setIsVerifySignerModalOpen(false) }} />
 		</>
 	)
 }
