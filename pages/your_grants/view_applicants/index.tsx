@@ -1,9 +1,6 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react'
 import {
-	Box, Button, Container, Flex, Heading, HStack, Image, Menu,
-	MenuButton,
-	MenuGroup,
-	MenuItem, MenuList,
+	Box, Button, Container, Flex, Heading, Image,
 	Spacer, Text
 } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
@@ -36,6 +33,9 @@ import {
 	getSupportedChainIdFromSupportedNetwork,
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
+import ApplicationStatusBar from 'src/v2/components/View_applicants/ApplicationsStatusBar'
+import DropdownMenu from 'src/v2/components/View_applicants/DropdownMenu'
+import SetupRubricAlert from 'src/v2/components/View_applicants/SetupRubricAlert'
 import { useAccount } from 'wagmi'
 
 const PAGE_SIZE = 500
@@ -65,10 +65,10 @@ function ViewApplicants() {
 	const [rewardTokenDecimals, setRewardTokenDecimals] = useState(18)
 	const [grantTitle, setGrantTitle] = useState<any>('Grant Title')
 	const [applicationsFilter, setApplicationsFilter] = useState('Pending For Review')
-	const [isAcceptedActive, setIsAcceptedActive] = useState(true)
+	const [isAcceptedActive, setIsAcceptedActive] = useState(false)
 	const [isInReviewActive, setIsInReviewActive] = useState(false)
 	const [isRejectedActive, setIsRejectedActive] = useState(false)
-	const [isRubricSet, setIsRubricSet] = useState(true)
+	const [isRubricSet, setIsRubricSet] = useState(false)
 	const [isSetupEvaluationBoxOpen, setIsSetupEvaluationBoxOpen] = useState(true)
 
 	const { data: accountData } = useAccount()
@@ -267,10 +267,6 @@ function ViewApplicants() {
 		setGrantTitle(grantData?.grants[0]?.title)
 	}, [data, error, loading, grantData])
 
-	useEffect(() => {
-		console.log('Review params: ', queryReviewerParams)
-	}, [queryReviewerParams])
-
 	const reviewData =
 		useGetApplicantsForAGrantReviewerQuery(queryReviewerParams)
 
@@ -369,6 +365,12 @@ function ViewApplicants() {
 	}, [grantData])
 
 	useEffect(() => {
+		if(isRubricSet) {
+			setApplicationsFilter('In Review'); setIsInReviewActive(true)
+		}
+	}, [isRubricSet])
+
+	useEffect(() => {
 		const total = fundsDisbursed?.fundsTransfers.reduce(
 			(sum, { amount }) => sum + parseInt(amount), 0
 		)
@@ -411,10 +413,6 @@ function ViewApplicants() {
 		setIsAcceptingApplications([acceptingApplications, 0])
 	}, [archiveGrantError])
 
-	React.useEffect(() => {
-		console.log('Is Accepting Applications: ', isAcceptingApplications)
-	}, [isAcceptingApplications])
-
 	return (
 		<Container
 			maxW="100%"
@@ -449,41 +447,15 @@ function ViewApplicants() {
 							{grantTitle}
 						</Heading>
 					</Box>
+
 					<Spacer />
-					<Menu >
-						<MenuButton
-							mr={5}
-							as={Button}
-							backgroundColor="#E0E0EC" >
-							<Image src="/ui_icons/grant_options_dropdown.svg" />
-						</MenuButton>
-						<MenuList>
-							<MenuGroup
-								title='Grant options'
-								color="#7D7DA0">
-								<MenuItem onClick={() => setRubricDrawerOpen(true)}>
-									<Image
-										src="/ui_icons/grant_options_setup_evaluation.svg"
-										mr="12px" />
-									{' '}
 
-									Setup application evaluation
-									{' '}
-
-								</MenuItem>
-								<MenuItem onClick={() => setIsArchiveModalOpen(true)}>
-									<Image
-										src="/ui_icons/grant_options_archive_grant.svg"
-										mr="12px" />
-									{' '}
-
-									Archive grant
-									{' '}
-
-								</MenuItem>
-							</MenuGroup>
-						</MenuList>
-					</Menu>
+					<DropdownMenu
+						title="Grant Options"
+						actions={[() => setRubricDrawerOpen(true), () => setIsArchiveModalOpen(true)]}
+						images={['/ui_icons/grant_options_setup_evaluation.svg', '/ui_icons/grant_options_archive_grant.svg']}
+						texts={['Setup application evaluation', 'Archive grant' ]}
+					/>
 				</Flex>
 
 				<GrantStatsBox
@@ -499,130 +471,40 @@ function ViewApplicants() {
 					<Flex direction="column">
 						{
 							isRubricSet && (
-								<HStack spacing='24px'>
-									<Box
-										as="button"
-										w='128px'
-										h='28px'
-										font-style='normal'
-										font-weight='400'
-										font-size='14px'
-										line-height='20px'
-										textColor={isAcceptedActive ? '#FFFFFF' : '#1F1F33'}
-										bg={isAcceptedActive ? '#1F1F33' : '#E0E0EC'}
-										onClick={
-											() => {
-												setIsAcceptedActive(!isAcceptedActive), setIsInReviewActive(false), setIsRejectedActive(false), setApplicationsFilter('Accepted')
-											}
-										}>
-										{' '}
-										Accepted
-										{' '}
-									</Box>
-									<Box
-										as="button"
-										w='128px'
-										h='28px'
-										font-style='normal'
-										font-weight='400'
-										font-size='14px'
-										line-height='20px'
-										textColor={isInReviewActive ? '#FFFFFF' : '#1F1F33'}
-										bg={isInReviewActive ? '#1F1F33' : '#E0E0EC'}
-										onClick={
-											() => {
-												setIsAcceptedActive(false), setIsInReviewActive(!isInReviewActive), setIsRejectedActive(false), setApplicationsFilter('In Review')
-											}
-										}>
-										{' '}
-										In Review
-										{' '}
-									</Box>
-									<Box
-										as="button"
-										w='128px'
-										h='28px'
-										font-style='normal'
-										font-weight='400'
-										font-size='14px'
-										line-height='20px'
-										textColor={isRejectedActive ? '#FFFFFF' : '#1F1F33'}
-										bg={isRejectedActive ? '#1F1F33' : '#E0E0EC'}
-										onClick={
-											() => {
-												setIsAcceptedActive(false), setIsInReviewActive(false), setIsRejectedActive(!isRejectedActive), setApplicationsFilter('Rejected')
-											}
-										}>
-										{' '}
-										Rejected
-										{' '}
-									</Box>
-								</HStack>
+								<ApplicationStatusBar
+									isAcceptedActive={isAcceptedActive}
+								 isInReviewActive={isInReviewActive}
+								  isRejectedActive={isRejectedActive}
+								  onClickFirst={
+										() => {
+											setIsAcceptedActive(!isAcceptedActive), setIsInReviewActive(false), setIsRejectedActive(false), setApplicationsFilter('Accepted')
+										}
+									}
+									onClickSecond={
+										() => {
+											setIsAcceptedActive(false), setIsInReviewActive(!isInReviewActive), setIsRejectedActive(false), setApplicationsFilter('In Review')
+										}
+									}
+									onClickThird={
+										() => {
+											setIsAcceptedActive(false), setIsInReviewActive(false), setIsRejectedActive(!isRejectedActive), setApplicationsFilter('Rejected')
+										}
+									}
+
+								/>
 							)
+
 						}
 
 
 						{
 							!isRubricSet && isSetupEvaluationBoxOpen && (
-								<Flex
-									flexDirection="row"
-									backgroundColor="#E3DDF2"
-									alignItems="flex-start"
-									padding="16px"
-									gap="16px">
-									<Flex flexDirection="row">
-										<Flex flexDirection="column" >
-											<Image
-												src="/ui_icons/reverse_exclamation.svg"
-												mr="8.33" />
-										</Flex>
-										<Box>
-											<Text
-												fontWeight="500"
-												fontSize="16px"
-												lineHeight="20px"
-												color="#1F1F33">
-												Setup application evaluation
-											</Text>
-											<Text
-												fontWeight="400"
-												fontSize="14px"
-												lineHeight="20px"
-												color="#1F1F33">
-												On receiving applicants, define a scoring rubric and assign reviewers to evaluate the applicants.
-												<Text
-													as="span"
-													color="#1F1F33"
-													fontWeight="500"
-													fontSize="14px"
-													lineHeight="20px">
-													{' '}
-													Learn more
-													{' '}
-												</Text>
-											</Text>
-											<Text
-												fontWeight="500"
-												fontSize="14px"
-												lineHeight="20px"
-												color="#7356BF"
-												as="button"
-												onClick={() => setRubricDrawerOpen(true)}>
-												Setup now
-											</Text>
-										</Box>
-									</Flex>
-									<Spacer />
-									<Flex flexDirection="column" >
-										<Box as="button">
-											<Image
-												src="/ui_icons/close_drawer.svg"
-												onClick={() => setIsSetupEvaluationBoxOpen(false)} />
-										</Box>
-									</Flex>
-								</Flex>
+								<SetupRubricAlert
+									onClick={() => setRubricDrawerOpen(true)}
+									onClose={() => setIsSetupEvaluationBoxOpen(false)} />
 							)
 						}
+
 						<ApplicantsTable
 							isReviewer={isReviewer}
 							isEvaluationSet={isRubricSet}
