@@ -9,7 +9,6 @@ import {
 	Table,
 	Tbody,
 	Td,
-	Text,
 	Th,
 	Thead,
 	Tr,
@@ -17,11 +16,15 @@ import {
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from '../../../../pages/_app'
 import Loader from '../../../components/ui/loader'
-import { defaultChainId } from '../../../constants/chains'
+import { CHAIN_INFO, defaultChainId } from '../../../constants/chains'
 import { ApplicationState, useGetReviewerApplicationsQuery } from '../../../generated/graphql'
-import { getFormattedDateFromUnixTimestampWithYear } from '../../../utils/formattingUtils'
+import { formatAmount, getFormattedDateFromUnixTimestampWithYear } from '../../../utils/formattingUtils'
 import { capitalizeFirstLetter } from '../../../utils/generics'
-import { getSupportedChainIdFromWorkspace } from '../../../utils/validationUtils'
+import { getAssetInfo } from '../../../utils/tokenUtils'
+import {
+	getSupportedChainIdFromSupportedNetwork,
+	getSupportedChainIdFromWorkspace,
+} from '../../../utils/validationUtils'
 import PaginatorView from '../WorkspaceMembers/PaginatorView'
 
 const PAGE_SIZE = 5
@@ -31,6 +34,7 @@ type Application = {
   submittedOn: number,
   state: ApplicationState,
   projectName: string,
+  reward: string,
   applicantId: string,
   applicantName: string,
   applicantEmail?: string,
@@ -38,7 +42,6 @@ type Application = {
 
 type Props = {
   reviewerId: string,
-  header: string,
   showApplicationState: boolean,
   showReviewButton: boolean,
   applicationStateIn: ApplicationState[],
@@ -47,7 +50,6 @@ type Props = {
 
 function ApplicationsTable({
 	reviewerId,
-	header,
 	applicationStateIn,
 	showApplicationState,
 	showReviewButton,
@@ -81,9 +83,25 @@ function ApplicationsTable({
 		const fetchedApplications: Application[] = data!.grantApplications.map((application) => {
 			const getFieldString = (name: string) => application.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
 
+			const rewardAmount = getFieldString('fundingAsk') ? formatAmount(
+        getFieldString('fundingAsk')!,
+        CHAIN_INFO[
+        	getSupportedChainIdFromSupportedNetwork(
+        		application.grant.workspace.supportedNetworks[0],
+        	)
+        ]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
+        	?.decimals || 18,
+			) : '1'
+
+			const tokenLabel = getAssetInfo(
+				application?.grant?.reward?.asset?.toLowerCase(),
+				getSupportedChainIdFromWorkspace(workspace),
+			).label
+
 			return {
 				id: application.id,
 				submittedOn: application.createdAtS,
+				reward: `${rewardAmount} ${tokenLabel}`,
 				state: application.state,
 				applicantId: application.applicantId,
 				projectName: getFieldString('projectName')!,
@@ -95,7 +113,7 @@ function ApplicationsTable({
 		return fetchedApplications
 	}, [page, data])
 
-	const TABLE_HEADERS = ['Proposals', 'Submitted on']
+	const TABLE_HEADERS = ['Project Name', 'Funding ask', 'Submitted on']
 
 	if(showApplicationState && !TABLE_HEADERS.includes('Status')) {
 		TABLE_HEADERS.push('Status')
@@ -109,15 +127,6 @@ function ApplicationsTable({
 
 	return (
 		<>
-			<Text
-				fontWeight={'700'}
-				fontSize={'24px'}
-				lineHeight={'44px'}
-				letterSpacing={-1}
-			>
-				{header}
-			</Text>
-			<Box h={2} />
 			<Box
 				boxShadow={'lg'}
 				borderRadius={7.5}
@@ -156,6 +165,9 @@ function ApplicationsTable({
 												{`${application.applicantName} • ${application.applicantEmail ?? application.applicantId}`}
 											</GridItem>
 										</Grid>
+									</Td>
+									<Td>
+										{application.reward}
 									</Td>
 									<Td>
 										{getFormattedDateFromUnixTimestampWithYear(application.submittedOn)}
