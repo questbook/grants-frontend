@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { Button, Flex, Text, Tooltip } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { formatMinutes } from 'src/utils/dashboardFormating'
 
 const tableBodyFlex = [0.25, 0.40, 0.10, 0.20, 0.17]
 
@@ -97,8 +98,8 @@ function TableContent({ grants, funding, pending, tat }:{grants:any[], funding: 
 								width="inherit"
 							>
 								{/* {item.responseTa} */}
-								{Number.isNaN(Math.floor(tat[item.id])) ? '-' : `${Math.floor(tat[item.id])} minutes`}
-
+								{/* {Number.isNaN(Math.floor(tat[item.id])) ? '-' : `${Math.floor(tat[item.id])} minutes`} */}
+								{Number.isNaN(Math.floor(tat[item.id])) ? '-' : formatMinutes(tat[item.id])}
 							</Text>
 
 							<Flex

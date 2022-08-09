@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Flex, Text } from '@chakra-ui/react'
+import { formatMinutes } from 'src/utils/dashboardFormating'
 
 function DaoStatBoard({
 	totalApplicants,
@@ -14,6 +15,9 @@ function DaoStatBoard({
   winnerApplicants: number;
 	tat: number;
 }) {
+	useEffect(() => {
+		formatMinutes(tat)
+	}, [tat])
 	return (
 		<>
 			{
@@ -321,9 +325,7 @@ function DaoStatBoard({
 											fontWeight={700}
 											fontSize="20px"
 											lineHeight="24px">
-											{Math.floor(tat) === NaN ? 0 : Math.floor(tat)}
-											{' '}
-minutes
+											{Math.floor(tat) === NaN ? '0 min' : formatMinutes(Math.floor(tat))}
 										</Text>
 										{/* <Text
 											fontWeight="400"
