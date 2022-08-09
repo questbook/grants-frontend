@@ -9,7 +9,7 @@ import {
 	DrawerOverlay,
 	Flex,
 	Image,
-	Text,
+	Text, useToast,
 } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
@@ -22,6 +22,7 @@ import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
+import { ApplicationState, GetApplicationDetailsQuery } from '../../../generated/graphql'
 import FeedbackDrawer from '../feedbackDrawer'
 
 function ReviewerSidebar({
@@ -34,7 +35,7 @@ function ReviewerSidebar({
   onAcceptApplicationClick: () => void;
   onRejectApplicationClick: () => void;
   onResubmitApplicationClick: () => void;
-  applicationData: any;
+  applicationData: GetApplicationDetailsQuery['grantApplication'];
 }) {
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
@@ -52,6 +53,8 @@ function ReviewerSidebar({
 	const [editedFeedbackData, setEditedFeedbackData] = React.useState<any>()
 
 	const { decryptMessage } = useEncryption()
+
+	const toast = useToast()
 
 	console.log(applicationData)
 
@@ -112,7 +115,7 @@ function ReviewerSidebar({
 		resubmitLoading,
 	] = useSubmitReview(
 		editedFeedbackData,
-		applicationData?.grant.rubric?.isPrivate,
+		applicationData!.grant.rubric!.isPrivate,
 		chainId,
 		applicationData?.grant.workspace.id,
 		applicationData?.grant.id,
@@ -379,7 +382,21 @@ Assigned to review (you)
 					</Text>
 
 					<Button
-						onClick={() => setFeedbackDrawerOpen(true)}
+						disabled={applicationData?.state !== ApplicationState.Submitted}
+						onClick={
+							() => {
+								if(applicationData?.grant.rubric?.items && applicationData?.grant.rubric?.items?.length === 0) {
+									toast({
+										title: 'Evaluation Rubric not present!',
+										description: 'Evaluation Rubric required for review, contact grant administrator!',
+										status: 'warning',
+										isClosable: true,
+									})
+								} else {
+									setFeedbackDrawerOpen(true)
+								}
+							}
+						}
 						mt={6}
 						variant="primary">
 Review Application
@@ -390,15 +407,15 @@ Review Application
 			<FeedbackDrawer
 				feedbackDrawerOpen={feedbackDrawerOpen}
 				setFeedbackDrawerOpen={setFeedbackDrawerOpen}
-				grantAddress={applicationData?.grant.id}
+				grantAddress={applicationData!.grant.id}
 				chainId={chainId}
-				workspaceId={applicationData?.grant.workspace.id}
+				workspaceId={applicationData!.grant.workspace.id}
 				feedbacks={feedbacks}
 				setFeedbacks={setFeedbacks}
-				rubrics={applicationData?.grant.rubric?.items}
+				rubrics={applicationData!.grant.rubric!.items}
 				feedbackEditAllowed
-				applicationId={applicationData?.id}
-				isPrivate={applicationData?.grant.rubric?.isPrivate}
+				applicationId={applicationData!.id}
+				isPrivate={applicationData!.grant.rubric!.isPrivate}
 			/>
 		</>
 	)
