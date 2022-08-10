@@ -1,5 +1,6 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react'
 import { Container, Flex, Heading, Spacer, Text } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import DoaDashTableEmptyState from 'src/components/dao_dashboard/empty_states/dao_dashboard'
 import BarGraph from 'src/components/dao_dashboard/graph/bar_graph'
@@ -7,13 +8,12 @@ import LineGraph from 'src/components/dao_dashboard/graph/line_graph'
 import DaoStatBoard from 'src/components/dao_dashboard/statboard/stat_board'
 import TableContent from 'src/components/dao_dashboard/table/content'
 import Header from 'src/components/dao_dashboard/table/headers'
-import { defaultChainId } from 'src/constants/chains'
+import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import {
 	GetAllGrantsForCreatorQuery,
 	useGetAllGrantsForCreatorQuery,
 } from 'src/generated/graphql'
 import { UNIX_TIMESTAMP_MAX, UNIX_TIMESTAMP_MIN } from 'src/utils/generics'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import NavbarLayout from '../../src/layout/navbarLayout'
 
 // const Tabledata = [
@@ -71,6 +71,11 @@ import NavbarLayout from '../../src/layout/navbarLayout'
 
 function DaoDashboard() {
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
+	const router = useRouter()
+
+	const [chainID, setChainId] = React.useState<SupportedChainId>()
+	const [daoID, setDaoId] = React.useState<string>()
+
 	const [daoStats, setDaoStats] = useState<{
     totalApplicants: number;
     uniqueApplicants: number;
@@ -86,12 +91,15 @@ function DaoDashboard() {
   }>()
 
 	useEffect(() => {
-		console.log(workspace)
-		console.log(getSupportedChainIdFromWorkspace(workspace)!)
-	}, [])
+		if(router && router.query) {
+			const { chainId: cId, daoId: dId } = router.query
+			setChainId((cId as unknown) as SupportedChainId)
+			setDaoId(dId?.toString())
+		}
+	}, [router])
 
 	useEffect(() => {
-		if(!workspace || !getSupportedChainIdFromWorkspace(workspace)!) {
+		if(!daoID || !chainID) {
 			return
 		}
 
@@ -108,11 +116,11 @@ function DaoDashboard() {
 
 		setQueryParams({
 			client:
-        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+        subgraphClients[chainID].client,
 			variables: {
 				first: 999,
 				skip: 0,
-				workspaceId: workspace?.id,
+				workspaceId: daoID,
 				...query,
 			},
 			fetchPolicy: 'network-only',
@@ -140,7 +148,7 @@ function DaoDashboard() {
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+      	chainID || defaultChainId
       ].client,
 	})
 	const data = useGetAllGrantsForCreatorQuery(queryParams)
@@ -172,8 +180,8 @@ function DaoDashboard() {
 					},
 					referrerPolicy: 'unsafe-url',
 					body: JSON.stringify({
-						chainId: getSupportedChainIdFromWorkspace(workspace)!,
-						workspaceId: workspace!.id,
+						chainId: chainID,
+						workspaceId: daoID,
 					}),
 
 					// For testing
