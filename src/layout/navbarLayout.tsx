@@ -11,6 +11,7 @@ interface Props {
   children: React.ReactNode;
   renderGetStarted?: boolean;
   renderTabs?: boolean;
+  renderSidebar?: boolean;
 }
 
 function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
@@ -73,14 +74,18 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 				w="100vw"
 				h="100vh"
 				overflow="scroll">
-				<Flex
-					display={{ base: 'none', lg: 'flex' }}
-					w="20%"
-					pos="sticky"
-					top={0}
-				>
-					<Sidebar />
-				</Flex>
+				{
+					renderSidebar && connected && (
+						<Flex
+							display={{ base: 'none', lg: 'flex' }}
+							w="20%"
+							pos="sticky"
+							top={0}
+						>
+							<Sidebar />
+						</Flex>
+					)
+				}
 
 				{/* <Sidebar /> */}
 				{children}
@@ -97,5 +102,6 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 NavbarLayout.defaultProps = {
 	renderGetStarted: false,
 	renderTabs: true,
+	renderSidebar: true
 }
 export default NavbarLayout
