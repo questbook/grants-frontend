@@ -190,7 +190,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				inbox="cb5e60c6-dfe5-481d-9dde-3f13e83344cd"
 				title="Welcome to Questbook Support"
 				subtitle="Have a question? Please feel free to ask here - we'll respond ASAP, hopefully now!"
-				primaryColor="#073dde"
+				primaryColor="#1F1F33"
 				newMessagePlaceholder="Type your question ..."
 				showAgentAvailability={false}
 				agentAvailableText="We're online right now!"
