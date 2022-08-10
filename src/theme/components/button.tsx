@@ -100,7 +100,8 @@ export default {
 			primaryV2: {
 				bg: '#1F1F33',
 				color: '#ffffff',
-				lineHeighth: '1.25rem',
+				lineHeight: '1.25rem',
+				borderRadius: '4px',
 				'&:hover': {
 					bg: '#3F3F53',
 				},
@@ -134,14 +135,10 @@ export default {
 						bg: '#E0E0EC',
 					},
 				},
-
 			},
-			inviteLink: {
-				_selected: { color: '#E0E0EC', bg: '#1F1F32' },
-				bg: '#1F1F32',
-				color: '#E0E0EC',
-				borderRadius: 4,
-			},
+			ghost: {
+				color: '#555570',
+			}
 		},
 	},
 }

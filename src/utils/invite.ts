@@ -87,12 +87,14 @@ export const serialiseInviteInfoIntoUrl = (info: InviteInfo) => {
 }
 
 export const useMakeInvite = (role: number) => {
+	const { switchNetwork } = useNetwork()
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 	const workspaceRegistry = useQBContract('workspace', chainId)
 
 	const makeInvite = useCallback(
 		async(didSign?: () => void): Promise<InviteInfo> => {
+			switchNetwork && switchNetwork?.(chainId)
 			const { privateKey, address } = generateKeyPairAndAddress()
 			// convert "0x" encoded hex to a number
 			const workspaceId = parseInt(workspace!.id.replace('0x', ''), 16)
@@ -120,7 +122,28 @@ export const useMakeInvite = (role: number) => {
 		[role, workspace?.id, workspaceRegistry]
 	)
 
-	return { makeInvite }
+	const getMakeInviteGasEstimate = useCallback(
+		async() => {
+			if(!workspace) {
+				return undefined
+			}
+
+			const fakeAddress = '0x' + [...Array(40)].map(() => 1).join('')
+
+			const estimate = await workspaceRegistry
+				.estimateGas
+				.createInviteLink(
+					workspace?.id,
+					role,
+					// testing address
+					fakeAddress,
+				)
+			return estimate
+		},
+		[workspaceRegistry, role, workspace?.id]
+	)
+
+	return { makeInvite, getMakeInviteGasEstimate }
 }
 
 type JoinInviteStep = 'ipfs-uploaded' | 'tx-signed' | 'tx-confirmed'
