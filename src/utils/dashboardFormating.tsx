@@ -23,7 +23,7 @@ export const formatMinutes = (s: number) => {
 	}
 
 	if(i < 3 && res[i + 1] > 0) {
-		ans = `${ans}${res[i + 1]}${suffix[i + 1]}`
+		ans = `${ans} ${res[i + 1]}${suffix[i + 1]}`
 	}
 
 	// console.log(ans)

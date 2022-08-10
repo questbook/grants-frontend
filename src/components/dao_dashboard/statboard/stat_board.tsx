@@ -278,7 +278,7 @@ function DaoStatBoard({
 										fontWeight="400"
 										lineHeight="24px"
 									>
-                  Repeats Applicants
+                  Repeat Applicants
 									</Text>
 								</Flex>
 
@@ -311,7 +311,7 @@ function DaoStatBoard({
 										fontWeight="400"
 										lineHeight="24px"
 									>
-                  Grant winners
+                  Grant Winners
 									</Text>
 								</Flex>
 
@@ -344,7 +344,7 @@ function DaoStatBoard({
 										fontWeight="400"
 										lineHeight="24px"
 									>
-                  TAT for disburdal
+                  TAT for Disbursal
 									</Text>
 								</Flex>
 							</Flex>

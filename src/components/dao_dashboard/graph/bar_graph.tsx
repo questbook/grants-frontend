@@ -203,7 +203,7 @@ function BarGraph({
 								<Text
 									fontSize='16px'
 								>
-	Application recieved
+	Applications Recieved
 								</Text>
 
 							</Flex>
@@ -240,7 +240,7 @@ function BarGraph({
 								<Text
 									fontSize='16px'
 								>
-                Application recieved
+                Applications Recieved
 								</Text>
 								<Text
 									fontSize='lg'

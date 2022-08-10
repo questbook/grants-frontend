@@ -208,7 +208,7 @@ function LineGraph({
 								<Text
 									fontSize='16px'
 								>
-                Total grants disburded
+                Total Funds Disbursed
 								</Text>
 
 							</Flex>
@@ -251,7 +251,7 @@ function LineGraph({
 								<Text
 									fontSize='16px'
 								>
-	Total grants disburded
+	Total Funds Disbursed
 								</Text>
 								<Text
 									fontSize='lg'
