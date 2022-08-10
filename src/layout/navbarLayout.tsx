@@ -7,6 +7,7 @@ import ConnectWalletModal from 'src/v2/components/ConnectWalletModal'
 import NavBar from 'src/v2/components/NavBar'
 import Sidebar from 'src/v2/components/Sidebar'
 import { useConnect, useNetwork } from 'wagmi'
+
 interface Props {
   children: React.ReactNode;
   renderGetStarted?: boolean;
@@ -14,7 +15,7 @@ interface Props {
   renderSidebar?: boolean;
 }
 
-function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
+function NavbarLayout({ children, renderGetStarted, renderTabs, renderSidebar }: Props) {
 	const { isDisconnected, isConnected, isError, isIdle, isConnecting, isReconnecting, connect, connectors, data: connectData, status: connectStatus, error } = useConnect()
 	const { data: networkData, pendingChainId, activeChain, status: networkStatus } = useNetwork()
 	const { data: accountData, nonce } = useQuestbookAccount()
