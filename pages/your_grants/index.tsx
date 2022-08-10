@@ -131,12 +131,16 @@ function YourGrants() {
 	const [grantCount, setGrantCount] = useState([true, true])
 
 	useEffect(() => {
+		console.count("FERR9")
+
 		setSelectedTab(
 			parseInt(localStorage.getItem('yourGrantsTabSelected') || '0')
 		)
 	}, [])
 
 	useEffect(() => {
+		console.count("FERR8")
+
 		if(!workspace) {
 			return
 		}
@@ -158,6 +162,8 @@ function YourGrants() {
 	}, [currentPage, workspace, accountData?.address])
 
 	useEffect(() => {
+		console.count("FERR7")
+
 		if(
 			workspace &&
       workspace.members &&
@@ -179,6 +185,8 @@ function YourGrants() {
 	}, [accountData, workspace])
 
 	useEffect(() => {
+		console.count("FERR6")
+
 		if(!workspace) {
 			return
 		}
@@ -213,6 +221,8 @@ function YourGrants() {
 	}, [currentPage, workspace, accountData?.address, selectedTab])
 
 	useEffect(() => {
+		console.count("FERR5")
+
 		/// console.log(pk);
 		if(!accountData?.address) {
 			return
@@ -242,6 +252,8 @@ function YourGrants() {
 	} = useGetAllGrantsCountForCreatorQuery(countQueryParams)
 
 	useEffect(() => {
+		console.count("FERR4")
+
 		if(allGrantsCountData) {
 			setGrantCount([
 				allGrantsCountData.liveGrants.length > 0,
@@ -252,6 +264,8 @@ function YourGrants() {
 
 	const data = useGetAllGrantsForCreatorQuery(queryParams)
 	useEffect(() => {
+		console.count("FERR3")
+
 		if(!workspace) {
 			return
 		}
@@ -261,6 +275,8 @@ function YourGrants() {
 	}, [workspace, selectedTab])
 
 	useEffect(() => {
+		console.count("FERR2")
+
 		if(data.data && data.data.grants && data.data.grants.length > 0) {
 			console.log('data.grants', data.data.grants)
 			if(
@@ -287,6 +303,7 @@ function YourGrants() {
 	}, [workspace, selectedTab])
 
 	useEffect(() => {
+		console.count("FERR1")
 		if(
 			allGrantsReviewerData.data &&
       allGrantsReviewerData.data.grantApplications &&

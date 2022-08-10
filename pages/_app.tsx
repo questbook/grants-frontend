@@ -37,6 +37,7 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { publicProvider } from 'wagmi/providers/public'
 import 'styles/globals.css'
 import 'draft-js/dist/Draft.css'
+import { BiconomyWalletClient } from 'src/types/gasless'
 
 
 type NextPageWithLayout = NextPage & {
@@ -119,8 +120,12 @@ export const WebwalletContext = createContext<{
 		} | null>(null)
 
 export const BiconomyContext = createContext<{
-	biconomyDaoObj: any,
-	setBiconomyDaoObj: (biconomyDaoObj: any) => void;
+	biconomyDaoObj?: any,
+	setBiconomyDaoObj: (biconomyDaoObj: any) => void,
+	biconomyWalletClient?: BiconomyWalletClient, 
+	setBiconomyWalletClient: (biconomyWalletClient: BiconomyWalletClient) => void,
+	loading: boolean,
+	setIsLoading: (loading: boolean) => void;
 		} | null>(null)
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
@@ -129,7 +134,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [workspace, setWorkspace] = React.useState<MinimalWorkspace>()
 	const [scwAddress, setScwAddress] = React.useState<string>()
 	const [biconomyDaoObj, setBiconomyDaoObj] = React.useState<any>()
+	const [biconomyWalletClient, setBiconomyWalletClient] = React.useState<BiconomyWalletClient>()
 	const [nonce, setNonce] = React.useState<string>()
+	const [loading, setIsLoading] = React.useState<boolean>(false);
 
 	useEffect(() => {
 		setWebwallet(createWebWallet())
@@ -263,9 +270,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const biconomyDaoObjContextValue = useMemo(
 		() => ({
 			biconomyDaoObj,
-			setBiconomyDaoObj
+			setBiconomyDaoObj,
+			biconomyWalletClient, 
+			setBiconomyWalletClient,
+			loading,
+			setIsLoading
 		}),
-		[biconomyDaoObj, setBiconomyDaoObj]
+		[biconomyDaoObj, setBiconomyDaoObj, biconomyWalletClient, setBiconomyWalletClient, loading, setIsLoading]
 	)
 
 	const clients = useMemo(() => {

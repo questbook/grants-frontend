@@ -13,8 +13,8 @@ import {
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useGrantContract from './contracts/useGrantContract'
 import useQBContract from './contracts/useQBContract'
-import { useBiconomy } from './gasless/useBiconomy'
-import { useQuestbookAccount } from './gasless/useQuestbookAccount'
+import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
 
 export default function useEditGrant(
@@ -45,6 +45,9 @@ export default function useEditGrant(
 		// targetContractABI: ApplicationReviewRegistryAbi,
 	})
 
+	useEffect(() => {
+		console.count("I'm inside");
+	}, [])
 
 	useEffect(() => {
 		if(data) {

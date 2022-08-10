@@ -44,6 +44,10 @@ export default function useSubmitApplication(
 		apiKey: apiKey,
 	})
 
+	// useEffect(() => {
+	// 	console.log("HEER", biconomyWalletClient)
+	// }, [])
+
 	useEffect(() => {
 		if(data) {
 			console.log('Application data', data)

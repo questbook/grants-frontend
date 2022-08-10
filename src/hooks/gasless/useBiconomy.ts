@@ -8,19 +8,18 @@ import { useNetwork } from './useNetwork'
 
 export const useBiconomy = (data: { apiKey: string, }) => {
 	const { webwallet, scwAddress, setScwAddress, nonce, } = useContext(WebwalletContext)!
-	const { biconomyDaoObj, setBiconomyDaoObj } = useContext(BiconomyContext)!
-	const [biconomyWalletClient, setBiconomyWalletClient] = useState<BiconomyWalletClient>()
+	const { biconomyDaoObj, setBiconomyDaoObj, biconomyWalletClient, setBiconomyWalletClient, loading, setIsLoading } = useContext(BiconomyContext)!
 	const { network } = useNetwork()
 
 	useEffect(() => {
 		console.log('STEP1', nonce, webwallet, biconomyWalletClient)
-		if(nonce && webwallet && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress)) {
+		if(!loading && nonce && webwallet && network && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress)) {
+			setIsLoading(true);
 			initiateBiconomy()
 				.then(res => console.log(res))
 				.catch(error => console.log(error))
 		}
-	}, [webwallet, nonce, biconomyDaoObj, biconomyWalletClient, scwAddress, setScwAddress, setBiconomyWalletClient, setBiconomyDaoObj])
-
+	}, [webwallet, nonce, biconomyDaoObj, biconomyWalletClient, scwAddress, network]);
 
 	const initiateBiconomy = async() => {
 		console.log('STEP2', webwallet, network)
@@ -28,7 +27,9 @@ export const useBiconomy = (data: { apiKey: string, }) => {
 			return
 		}
 
-		console.log(webwallet, nonce, biconomyDaoObj)
+		console.log("DAODAO1", biconomyDaoObj)
+		console.log("DAODAO2", biconomyWalletClient)
+		console.log("DAODAO3", scwAddress)
 
 		console.log('CREATING BICONOMY OBJ', network.toString())
 		const _biconomy = new Biconomy(jsonRpcProviders[network.toString()],
@@ -58,7 +59,10 @@ export const useBiconomy = (data: { apiKey: string, }) => {
 			if(!biconomyDaoObj) {
 				setBiconomyDaoObj(_biconomy)
 			}
+
+			setIsLoading(false);
 		}).onEvent(_biconomy.ERROR, (error: any, message: any) => {
+			setIsLoading(false);
 			console.log(message)
 			console.log(error)
 		})
