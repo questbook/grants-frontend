@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic'
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false })
 
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 const data = [2]
 const barChartDataDashboard = [
@@ -37,9 +38,10 @@ const barChartOptionsDashboard = {
 	  show: true,
 	  labels: {
 			show: true,
+			rotate: 0,
 			style: {
-		  colors: '#AAAAAA',
-		  fontSize: '12px',
+				colors: '#AAAAAA',
+				fontSize: '12px',
 			},
 	  },
 	  axisBorder: {
@@ -113,12 +115,12 @@ function BarGraph({
 			tooltip: {
 				style: {
 					fontSize: '12px',
-					fontFamily: 'Plus Jakarta Display',
+					fontFamily: 'DM Sans,sans-serif',
 				},
 				onDatasetHover: {
 					style: {
 						fontSize: '12px',
-						fontFamily: 'Plus Jakarta Display',
+						fontFamily: 'DM Sans,sans-serif',
 					},
 				},
 				theme: 'dark',
@@ -128,6 +130,7 @@ function BarGraph({
 				show: true,
 				labels: {
 					show: true,
+					rotate: 0,
 					style: {
 						colors: '#AAAAAA',
 						fontSize: '12px',
@@ -171,7 +174,14 @@ function BarGraph({
 				},
 			],
 		} as any
-		options.xaxis.categories = applications.map((app) => (app.date.getDate() + 1))
+		options.xaxis.categories = applications.map((app, i) => {
+			if(i % 7 === 0) {
+				const d = new Date(app.date.getTime() + 86400000)
+				return `${d.getDate()} ${months[d.getMonth()]}`
+			}
+
+			return ''
+		})
 
 		setSeriesOptions(options)
 

@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { Flex, Text } from '@chakra-ui/react'
 import dynamic from 'next/dynamic'
 
+
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false })
 const data: number | never[] = []
 const lineChartDataProfile2 = [
@@ -130,6 +134,7 @@ function LineGraph({
 				categories: [],
 				labels: {
 					show: true,
+					rotate: 0,
 					style: {
 						colors: '#AAAAAA',
 						fontSize: '12px',
@@ -173,7 +178,14 @@ function LineGraph({
 			// },
 			colors: ['#582CFF'],
 		} as any
-		options.xaxis.categories = fundings.map((app) => (app.date.getDate() + 1))
+		options.xaxis.categories = fundings.map((app, i) => {
+			if(i % 7 === 0) {
+				const d = new Date(app.date.getTime() + 86400000)
+				return `${d.getDate()} ${months[d.getMonth()]}`
+			}
+
+			return ''
+		})
 
 		setSeriesOptions(options)
 

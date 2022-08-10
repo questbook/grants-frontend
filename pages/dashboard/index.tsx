@@ -466,9 +466,11 @@ function DaoDashboard() {
 						fontSize="24px"
 						fontWeight="700"
 						mt="10">
-            Grants (
-						{grants.length}
-)
+						{
+							!grants || grants.filter(item => !daoStats?.grantsPending[item.id] || daoStats?.grantsPending[item.id] === 0).length > 0 ?
+								'Grants' :
+								`Grants (${grants.length})`
+						}
 					</Heading>
 
 					<Flex mt="2">
@@ -484,7 +486,7 @@ function DaoDashboard() {
 						>
 							<Header />
 							{
-								grants?.length === 0 ? (
+								!grants || grants.filter(item => !daoStats?.grantsPending[item.id] || daoStats?.grantsPending[item.id] === 0).length > 0 ? (
 									<>
 										<Flex
 											mt="15px"
