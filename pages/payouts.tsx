@@ -113,7 +113,7 @@ export default function Payouts() {
 	}, [reviewsDone, reviewPayoutsDone, reviewPayoutsOutstanding])
 
 	return (
-		<Flex>
+		<Flex w="100%">
 			{
 				isReviewer ? (
 					<Flex

@@ -119,8 +119,84 @@
 			"https://optimism-mainnet.infura.io/v3/"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Optimistic Ethereum",
+			"symbol": "ETH",
+			"decimals": 18
+		}
+	},
+	"40": {
+		"id": 40,
+		"name": "Telos Mainnet",
+		"isTestNetwork": false,
+		"icon": "/chain_assets/telos.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://www.teloscan.io/address/{{address}}/",
+			"transactionHash": "https://www.teloscan.io/tx/{{tx}}/"
+		},
+		"supportedCurrencies": {
+			"0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b": {
+				"icon": "/chain_assets/usdc.svg",
+				"label": "USDC",
+				"address": "0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b",
+				"pair": "0x0",
+				"decimals": 6
+			}
+		},
+		"qbContracts": {
+			"applications": "0x6BE9f5605C30787EC25841685aEb2eEE0462F6E8",
+			"workspace": "0x2F49964b7736B804a61F3ccC14A970dD77C0C43c",
+			"grantFactory": "0x3a77d002474aC5e4f7b2D084AD37c28Ff966b0f5",
+			"reviews": "0x10BEd93621f8BeE7B8f7E2fCA5D2060D08f81a12"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-telos-mainnet",
+		"rpcUrls": [
+			"https://mainnet.telos.net/evm"
+		],
+		"nativeCurrency": {
+			"name": "Telos Mainnet",
+			"symbol": "TLOS",
+			"decimals": 18
+		}
+	},
+	"41": {
+		"id": 41,
+		"name": "Telos Testnet",
+		"isTestNetwork": true,
+		"icon": "/chain_assets/telos.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://testnet.teloscan.io/address/{{address}}/",
+			"transactionHash": "https://testnet.teloscan.io/tx/{{tx}}/"
+		},
+		"supportedCurrencies": {
+			"0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b": {
+				"icon": "/chain_assets/usdc.svg",
+				"label": "USDC",
+				"address": "0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b",
+				"pair": "0x0",
+				"decimals": 6
+			}
+		},
+		"qbContracts": {
+			"applications": "0x084aCcB463c38D7e050cf7099B4D11C9EBa78a2E",
+			"workspace": "0xdB902Ecd8B2c8b6aA5f8eF839216451AB78B4cB6",
+			"grantFactory": "0x7bec92f06E02605622D8Bd1D91739f7c4E6867A0",
+			"reviews": "0xF386f93269cb23Ff1b5c0635Ff4258d607BF7ae4"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-telos-testnet",
+		"rpcUrls": [
+			"https://testnet.telos.net/evm"
+		],
+		"nativeCurrency": {
+			"name": "Telos Testnet",
+			"symbol": "TLOS",
 			"decimals": 18
 		}
 	},
@@ -171,8 +247,8 @@
 			"https://kovan.infura.io/v3/"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Kovan",
+			"symbol": "KOV",
 			"decimals": 18
 		}
 	},
@@ -209,8 +285,45 @@
 			"https://optimism-kovan.infura.io/v3/"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Optimism Kovan",
+			"symbol": "KOR",
+			"decimals": 18
+		}
+	},
+	"100": {
+		"id": 100,
+		"name": "Gnosis Mainnet",
+		"isTestNetwork": false,
+		"icon": "/chain_assets/gnosis.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://blockscout.com/xdai/mainnet/address/{{address}}/",
+			"transactionHash": "https://blockscout.com/xdai/mainnet/tx/{{tx}}/"
+		},
+		"supportedCurrencies": {
+			"0x9c58bacc331c9aa871afd802db6379a98e80cedb": {
+				"icon": "/chain_assets/gnosis.svg",
+				"label": "GNO",
+				"address": "0x9c58bacc331c9aa871afd802db6379a98e80cedb",
+				"decimals": 18
+			}
+		},
+		"qbContracts": {
+			"applications": "0x084aCcB463c38D7e050cf7099B4D11C9EBa78a2E",
+			"workspace": "0x37d2df191899C715fE840671C6240C4Be05aF6B3",
+			"grantFactory": "0xAAD5fD023BB96867aF3dCE443F0252CF53FB0424",
+			"reviews": "0xF386f93269cb23Ff1b5c0635Ff4258d607BF7ae4"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-gnosis-mainnet",
+		"rpcUrls": [
+			"https://rpc.gnosischain.com/"
+		],
+		"nativeCurrency": {
+			"name": "Gnosis Mainnet",
+			"symbol": "GNO",
 			"decimals": 18
 		}
 	},
@@ -347,6 +460,13 @@
 				"label": "ZKP",
 				"address": "0x9a06db14d639796b25a6cec6a1bf614fd98815ec",
 				"decimals": 18
+			},
+			"0xf7e78d9c4c74df889a83c8c8d6d05bf70ff75876": {
+				"icon": "/chain_assets/unlock.svg",
+				"label": "UDT",
+				"address": "0xf7e78d9c4c74df889a83c8c8d6d05bf70ff75876",
+				"pair": "0x0",
+				"decimals": 18
 			}
 		},
 		"qbContracts": {
@@ -361,8 +481,8 @@
 			"https://polygon-mainnet.g.alchemy.com/v2/"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Polygon Mainnet",
+			"symbol": "MATIC",
 			"decimals": 18
 		}
 	},
@@ -398,8 +518,8 @@
 			"https://api.baobab.klaytn.net:8651"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Klaytn Testnet",
+			"symbol": "KLAY",
 			"decimals": 18
 		}
 	},
@@ -517,8 +637,8 @@
 			"https://public-node-api.klaytnapi.com/v1/cypress"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Klaytn Mainnet",
+			"symbol": "KLAY",
 			"decimals": 18
 		}
 	},
@@ -648,8 +768,8 @@
 			"https://alfajores-forno.celo-testnet.org"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Celo Alfajores Testnet",
+			"symbol": "CELO",
 			"decimals": 18
 		}
 	},
@@ -693,8 +813,8 @@
 			"https://polygon-mumbai.infura.io/v3/"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Polygon Testnet",
+			"symbol": "MATIC",
 			"decimals": 18
 		}
 	},
@@ -744,8 +864,8 @@
 			"http://neon-devnet-rpc.questbook.app:9090/solana"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Neon Devnet",
+			"symbol": "NEON",
 			"decimals": 18
 		}
 	},
@@ -827,8 +947,8 @@
 			"https://api.harmony.one"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Harmony Mainnet",
+			"symbol": "ONE",
 			"decimals": 18
 		}
 	},
@@ -879,8 +999,8 @@
 			"https://api.s0.pops.one"
 		],
 		"nativeCurrency": {
-			"name": "Unsupported Currency",
-			"symbol": "UNSUP",
+			"name": "Harmony Testnet",
+			"symbol": "ONE",
 			"decimals": 18
 		}
 	}

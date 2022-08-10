@@ -1,8 +1,10 @@
 import React from 'react'
 import {
 	Box, Button, Divider, Flex, Image, Link,
-	Text, } from '@chakra-ui/react'
+	Text,
+} from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
+import ApproveFundModal from 'src/components/your_grants/manage_grant/modals/ApproveFundModalContent'
 import config from 'src/constants/config.json'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { formatAmount, getExplorerUrlForAddress } from '../../../utils/formattingUtils'
@@ -12,13 +14,13 @@ import FloatingSidebar from '../../ui/sidebar/floatingSidebar'
 import SendFundModalContent from './modals/sendFundModalContent'
 
 interface Props {
-  grant: any;
-  assetInfo: any;
-  milestones: any[];
-  applicationId: string;
-  applicantId: string;
-  workspaceId: string;
-  decimals: number;
+	grant: any;
+	assetInfo: any;
+	milestones: any[];
+	applicationId: string;
+	applicantId: string;
+	workspaceId: string;
+	decimals: number;
 }
 
 function Sidebar({
@@ -26,13 +28,14 @@ function Sidebar({
 }: Props) {
 	const [isAddFundModalOpen, setIsAddFundModalOpen] = React.useState(false)
 	const [isSendFundModalOpen, setIsSendFundModalOpen] = React.useState(false)
+	const [isApproveModalOpen, setIsApproveModalOpen] = React.useState(false)
 	return (
 		<Box my="154px">
 			<FloatingSidebar>
 				<Text
 					variant="applicationText"
 					color="#414E50">
-          Funds available for disbursal
+					Funds available for disbursal
 				</Text>
 				<Flex
 					direction="row"
@@ -75,7 +78,7 @@ function Sidebar({
 								fontWeight="400"
 								mt={3}
 							>
-              Is your DAO using a multi-sig?
+								Is your DAO using a multi-sig?
 							</Text>
 							<Text
 								fontSize="14px"
@@ -84,7 +87,7 @@ function Sidebar({
 								fontWeight="400"
 								mt={3}
 							>
-              One multi-sig approval for all milestones.
+								One multi-sig approval for all milestones.
 							</Text>
 							<Text
 								fontSize="14px"
@@ -93,7 +96,7 @@ function Sidebar({
 								fontWeight="400"
 								mt={3}
 							>
-              Add funds to your
+								Add funds to your
 								{' '}
 								<Link
 									href={
@@ -106,7 +109,7 @@ function Sidebar({
 									color="brand.500"
 									isExternal
 								>
-                verified grant smart contract
+									verified grant smart contract
 									{' '}
 									<Image
 										src="/ui_icons/link.svg"
@@ -115,14 +118,14 @@ function Sidebar({
 									/>
 								</Link>
 								{' '}
-              to fund grantees in 1 click.
+								to fund grantees in 1 click.
 							</Text>
 							<Button
 								variant="primary"
 								mt={6}
 								onClick={() => setIsAddFundModalOpen(true)}
 							>
-              Add Funds
+								Add Funds
 							</Button>
 						</>
 					)
@@ -146,7 +149,16 @@ function Sidebar({
 					mt={6}
 					onClick={() => setIsAddFundModalOpen(true)}
 				>
-              Add Funds
+					Add Funds
+				</Button>
+				<Button
+					mt="22px"
+					variant="outline"
+					color="Background.500"
+					h="48px"
+					w="100%"
+					onClick={() => setIsApproveModalOpen(true)}>
+					Approve Fund Disbursal
 				</Button>
 				<Button
 					mt="22px"
@@ -157,7 +169,7 @@ function Sidebar({
 					w="100%"
 					onClick={() => setIsSendFundModalOpen(true)}
 				>
-          Send Funds
+					Send Funds
 				</Button>
 				{
 					grant && (
@@ -191,7 +203,7 @@ function Sidebar({
 										leftIcon={<Image src="/sidebar/discord_icon.svg" />}
 										onClick={() => window.open(config.supportLink)}
 									>
-              Support 24*7
+										Support 24*7
 									</Button>
 								)
 							}
@@ -214,6 +226,42 @@ function Sidebar({
 								applicantId={applicantId}
 								applicationId={applicationId}
 							/>
+						</Modal>
+					)
+				}
+
+				{
+					grant && (
+						<Modal
+							isOpen={isApproveModalOpen}
+							onClose={() => setIsApproveModalOpen(false)}
+							title="Approve Fund Disbursal"
+							modalWidth="600px"
+							rightIcon={
+								(
+									<Button
+										_focus={{}}
+										variant="link"
+										color="#AA82F0"
+										onClick={() => window.open(config.supportLink)}
+									>
+										Why? Learn More Here
+									</Button>
+								)
+							}
+						>
+							<ApproveFundModal
+								isOpen={isApproveModalOpen}
+								rewardAsset={
+									{
+										address: grant.reward.asset,
+										committed: BigNumber.from(grant.reward.committed),
+										label: assetInfo?.label,
+										icon: assetInfo?.icon,
+										decimals,
+									}
+								}
+								onClose={() => setIsApproveModalOpen(false)} />
 						</Modal>
 					)
 				}

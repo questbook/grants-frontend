@@ -691,7 +691,10 @@ function Form({
 	])
 
 	return (
-		<>
+		<Flex
+			direction="column"
+			pb="10rem"
+		>
 			<Heading
 				mt="18px"
 				title="Create a grant" />
@@ -849,7 +852,7 @@ function Form({
 			</Button>
 
 			<RenderModal />
-		</>
+		</Flex>
 	)
 }
 
