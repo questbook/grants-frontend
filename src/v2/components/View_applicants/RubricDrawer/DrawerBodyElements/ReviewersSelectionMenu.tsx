@@ -147,16 +147,14 @@ export const ReviewersSlectionMenu = ({ allChecked,
                       	(member: Partial<WorkspaceMember>, index) => (
                       		<Checkbox
                       			key={member.actorId}
-                      			value={index}
                       			isChecked={checkedItems[index]}
                       			onChange={
                       				(e) => {
                       				e.target.checked
                       					? setSelectedMembersCount((val) => val + 1)
                       					: setSelectedMembersCount((val) => val - 1)
-                      					const tempArr: boolean[] = Array(
-                      					daoMembers.length
-                      				).fill(false)
+                      					const tempArr: boolean[] = []
+                      					tempArr.push(...checkedItems)
                       					tempArr[index] = e.target.checked
                       					setCheckedItems(tempArr)
                       				}

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Flex, Text } from '@chakra-ui/react'
+import { Checkbox, CheckboxGroup, Flex, Text } from '@chakra-ui/react'
 import Content from './content'
 import Filter from './filter'
 import Headers from './headers'
@@ -17,22 +17,27 @@ function ApplicantsTable({
 	reviewerData,
 	archiveGrantComponent,
 }: {
-  onViewApplicantFormClick?: (data? : any) => void;
+  onViewApplicantFormClick?: (data?: any) => void;
   // onAcceptApplicationClick?: () => void;
   // onRejectApplicationClick?: () => void;
-  onManageApplicationClick?: (data? : any) => void;
+  onManageApplicationClick?: (data?: any) => void;
   data: any[];
   actorId: string;
   applicationsFilter: string;
-  isReviewer : boolean;
-  isEvaluationSet:boolean;
+  isReviewer: boolean;
+  isEvaluationSet: boolean;
   archiveGrantComponent: React.ReactNode;
   reviewerData: any[];
 }) {
 	const [filter, setFilter] = React.useState(-1)
+	const [checkedItems, setCheckedItems] = React.useState<boolean[]>(
+		Array(data.length).fill(false)
+	)
+	const allChecked = checkedItems.every(Boolean)
 	useEffect(() => {
 		console.log(filter)
 	}, [filter])
+
 	return (
 		<>
 			<Flex
@@ -63,36 +68,106 @@ function ApplicantsTable({
 					setFilter={setFilter} />
 			</Flex>
 			{archiveGrantComponent}
+
 			<Flex
 				w="100%"
 				// mt={10}
-				align="center"
+				align="left"
 				direction="column"
-				flex={1}>
+				flex={1}
+			>
+
 				<Headers
 					is_reviewer={isReviewer}
 					isEvaluationSet={isEvaluationSet}
-					applicationsStatus={applicationsFilter} />
-				<Content
-					data={data}
-					isReviewer={isReviewer}
-					reviewerData={reviewerData}
-					filter={filter}
 					applicationsStatus={applicationsFilter}
-					isEvaluationSet={isEvaluationSet}
-					actorId={actorId}
-					onViewApplicationFormClick={onViewApplicantFormClick}
-					// onAcceptApplicationClick={onAcceptApplicationClick}
-					// onRejectApplicationClick={onRejectApplicationClick}
-					onManageApplicationClick={
-						(manageData: any) => {
-							if(onManageApplicationClick) {
-								onManageApplicationClick(manageData)
-							}
-						}
+					checkbox={
+						<Flex
+							direction="row"
+
+							justify="stretch"
+							align="center"
+							bg="#FFFFFF"
+							px={0}
+							//   py={4}
+							border="1px"
+							borderColor="#E0E0EC"
+						>
+							<Checkbox
+								h="58.5px"
+								w="40px"
+								bg="#FFFFFF"
+								isChecked={allChecked}
+								onChange={(e) => setCheckedItems(Array(data.length).fill(e.target.checked))}
+								ml={15}
+							/>
+						</Flex>
 					}
 				/>
+				<Flex
+					alignItems="left"
+					h='300px'
+					overflowX="hidden"
+					overflowY="auto">
+					<Flex direction="column">
 
+						<CheckboxGroup colorScheme="blue">
+							{
+								data.map((application, index) => {
+									return (
+										<Flex
+											key={application.applicantId}
+											direction="row"
+											h="58px"
+											justify="stretch"
+											align="center"
+											bg="#FFFFFF"
+											px={0}
+											//   py={4}
+											border="1px"
+											borderColor="#E0E0EC"
+
+										>
+											<Checkbox
+												h="58px"
+												w="40px"
+												isChecked={checkedItems[index]}
+												onChange={
+													(e) => {
+														const tempArr: boolean[] = []
+														tempArr.push(...checkedItems)
+														tempArr[index] = e.target.checked
+														setCheckedItems(tempArr)
+													}
+												}
+												ml={15}
+											/>
+										</Flex>
+									)
+								})
+							}
+						</CheckboxGroup>
+					</Flex>
+					<Content
+						data={data}
+						isReviewer={isReviewer}
+						reviewerData={reviewerData}
+						filter={filter}
+						applicationsStatus={applicationsFilter}
+						isEvaluationSet={isEvaluationSet}
+						actorId={actorId}
+						onViewApplicationFormClick={onViewApplicantFormClick}
+						// onAcceptApplicationClick={onAcceptApplicationClick}
+						// onRejectApplicationClick={onRejectApplicationClick}
+						onManageApplicationClick={
+							(manageData: any) => {
+								if(onManageApplicationClick) {
+									onManageApplicationClick(manageData)
+								}
+							}
+						}
+					/>
+				</Flex>
 			</Flex>
 
 			{/* Can we move this to next release */}

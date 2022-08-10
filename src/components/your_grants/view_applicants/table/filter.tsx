@@ -23,7 +23,7 @@ function Filter({
 			gap="4px"
 			bg="#F0F0F7"
 			borderRadius="2px"
-			mr="10"
+			mr="5"
 		>
 			<Menu placement="bottom">
 				<MenuButton

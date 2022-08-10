@@ -39,7 +39,7 @@ function Content({
 }) {
 	const tableHeadersFlex = [0.231, 0.2, 0.15, 0.13, 0.16, 0.25, 0.116]
 	const tableHeadersFlexReviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116]
-	const tableHeadersFlexPendingForReview = [0.5, 0.2, 0.15, 0.13]
+	const tableHeadersFlexPendingForReview = [0.5, 0.3, 0.15, 0.13]
 	const getStatus = (status: number): ReactElement => {
 		if(status === TableFilters.submitted) {
 			return <PendingReview />
@@ -92,15 +92,16 @@ function Content({
 	}
 
 	return (
-	// <Flex
-	//   // mt="10px"
-	//   direction="column"
-	//   w="100%"
-	//   border="1px #E0E0EC"
-	//   borderRadius={4}
-	//   align="stretch"
-	// >
-		<React.Fragment>
+		<Flex
+	  // mt="10px"
+	  direction="column"
+	  w="100%"
+	  border="1px #E0E0EC"
+	  borderRadius={4}
+	  align="stretch"
+
+		>
+
 			{
 				isReviewer ? (
 					reviewerData
@@ -115,6 +116,7 @@ function Content({
 								bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
 								px={0}
 								py={4}
+
 							>
 								<Flex
 									direction="row"
@@ -259,14 +261,14 @@ function Content({
 								key={item.id}
 								direction="row"
 								w="100%"
-								h="64px"
+								h="58px"
 								justify="stretch"
 								align="center"
 								bg="#FFFFFF"
 								px={0}
 							//   py={4}
 							>
-								<Box
+								<Flex
 									h="60px"
 									flex={tableHeadersFlexPendingForReview[0]}
 									alignItems="center"
@@ -293,16 +295,18 @@ function Content({
 									>
 										{item.project_name}
 									</Text>
-								</Box>
+								</Flex>
 
 			  <Box
 									h="60px"
+
 									flex={tableHeadersFlexPendingForReview[1]}
 									alignItems="center"
 									border="1px"
 									borderColor="#E0E0EC"
 								>
 									<Text
+
 										color="#AFAFCC"
 										fontSize="14px"
 										lineHeight="20px"
@@ -366,7 +370,7 @@ fill
 					</Flex>
 				)
 			}
-		</React.Fragment>
+		</Flex>
 	)
 }
 

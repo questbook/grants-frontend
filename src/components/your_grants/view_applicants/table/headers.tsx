@@ -43,7 +43,7 @@ const tableHeadersReviewer = [
 ]
 const tableHeadersFlex = [0.231, 0.20, 0.15, 0.13, 0.16, 0.25, 0.116]
 const tableHeadersFlexReviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116]
-const tableHeadersFlexPendingForReview = [0.5, 0.20, 0.15, 0.13]
+const tableHeadersFlexPendingForReview = [0.5, 0.3, 0.15, 0.13]
 const tableHeadersFlexAccepted = [0.5, 0.20, 0.15, 0.13]
 const tableHeadersFlexInReview = [0.5, 0.20, 0.15, 0.13]
 const tableHeadersFlexRejected = [0.5, 0.20, 0.15, 0.13]
@@ -66,24 +66,27 @@ const tableHeadersAlignReviewer = [
 	'center',
 ]
 
-function Headers({ is_reviewer, isEvaluationSet, applicationsStatus }:{ is_reviewer : boolean; isEvaluationSet:boolean; applicationsStatus:string }) {
+function Headers({ is_reviewer, isEvaluationSet, applicationsStatus, checkbox }:{ is_reviewer : boolean; isEvaluationSet:boolean; applicationsStatus:string, checkbox: React.ReactNode }) {
 	const Tableduel = is_reviewer ? (tableHeadersReviewer) :
 					 !isEvaluationSet ? (tableHeadersPendingForReview) :
 					 applicationsStatus === 'Accepted' ? tableHeadersAccepted :
 					 applicationsStatus === 'Rejected' ? tableHeadersRejected :
 					 tableHeadersInReview
 	return (
+
+
 		<Flex
 			direction="row"
 			w="100%"
 			h="60px"
-			justify="strech"
+
 			align="center"
 			py={0}
 			bg="#FFFFFF"
 			boxShadow="inset 0px -1px 0px #E0E0EC;"
 
 		>
+			{checkbox}
 			{
 				Tableduel.map((header, index) => (
 					<Box
@@ -96,6 +99,7 @@ function Headers({ is_reviewer, isEvaluationSet, applicationsStatus }:{ is_revie
 										applicationsStatus === 'Rejected' ? tableHeadersFlexRejected[index] :
 											tableHeadersFlexInReview[index]
 						}
+						mr={index === Tableduel.length - 1 ? 3 : 0}
 						alignItems="center"
 						border="1px"
 						borderColor="#E0E0EC"
@@ -121,6 +125,7 @@ function Headers({ is_reviewer, isEvaluationSet, applicationsStatus }:{ is_revie
 				))
 			}
 		</Flex>
+
 	)
 }
 
