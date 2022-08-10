@@ -151,13 +151,13 @@ export default function useCreateGrant(
 
 				console.log('rubricHash', rubricHash)
 
-				console.log("WHAT IS THIS", biconomyWalletClient, scwAddress);
+				console.log('WHAT IS THIS', biconomyWalletClient, scwAddress)
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
-					throw new Error('Zero wallet is not ready');
+					throw new Error('Zero wallet is not ready')
 				}
 
 				// let transactionHash: string | undefined | boolean
-				console.log('THIS IS ADDRESS', GRANT_FACTORY_ADDRESS[currentChainId!], currentChainId);
+				console.log('THIS IS ADDRESS', GRANT_FACTORY_ADDRESS[currentChainId!], currentChainId)
 
 				console.log('ENTERING')
 

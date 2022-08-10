@@ -21,7 +21,7 @@ export default function useEditGrant(
 	data: any,
 	grantId?: string,
 ) {
-	console.log(grantId);
+	console.log(grantId)
 	const [error, setError] = React.useState<string>()
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)

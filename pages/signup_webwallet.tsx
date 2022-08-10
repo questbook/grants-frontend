@@ -3,10 +3,8 @@ import React, { useContext, useEffect, useState } from 'react'
 import {
 	Button,
 	Flex } from '@chakra-ui/react'
-import { Contract } from 'ethers'
-import { BiconomyWalletClient } from 'src/types/gasless'
 import NavbarLayout from '../src/layout/navbarLayout'
-import { BiconomyContext, WebwalletContext } from './_app'
+import { WebwalletContext } from './_app'
 
 function SignupWebwallet() {
 
