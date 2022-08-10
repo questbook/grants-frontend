@@ -113,17 +113,27 @@ function BarGraph({
 				},
 			},
 			tooltip: {
-				style: {
-					fontSize: '12px',
-					fontFamily: 'DM Sans,sans-serif',
-				},
-				onDatasetHover: {
-					style: {
-						fontSize: '12px',
-						fontFamily: 'DM Sans,sans-serif',
-					},
-				},
-				theme: 'dark',
+				// style: {
+				// 	fontSize: '12px',
+				// 	fontFamily: 'DM Sans,sans-serif',
+				// },
+				// onDatasetHover: {
+				// 	style: {
+				// 		fontSize: '12px',
+				// 		fontFamily: 'DM Sans,sans-serif',
+				// 	},
+				// },
+				// theme: 'dark',
+				custom: ({ series, seriesIndex, dataPointIndex, w }: {series: any, seriesIndex: any, dataPointIndex: any, w: any}) => {
+					const d = new Date(applications[dataPointIndex].date.getTime() + 86400000)
+					return (
+						`<div class='barhover'>
+							<span style='color: #373737; font-weight: 700'>${d.getDate()}</span> ${months[d.getMonth()]}
+							<br />
+							<span style='color: #373737; font-weight: 700'>${series[seriesIndex][dataPointIndex]}</span> Applicants
+						</div>`
+					)
+				}
 			},
 			xaxis: {
 				categories: [],
