@@ -19,7 +19,7 @@ export const useBiconomy = (data: { apiKey: string, }) => {
 				.then(res => console.log(res))
 				.catch(error => console.log(error))
 		}
-	}, [webwallet, nonce, biconomyDaoObj, biconomyWalletClient, scwAddress])
+	}, [webwallet, nonce, biconomyDaoObj, biconomyWalletClient, scwAddress, setScwAddress, setBiconomyWalletClient, setBiconomyDaoObj])
 
 
 	const initiateBiconomy = async () => {

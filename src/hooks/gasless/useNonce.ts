@@ -14,7 +14,7 @@ export const useNonce = () => {
 		if(!webwallet) {
 			return
 		}
-
+		console.log("GOT NONCE", nonce)
 		if(webwallet && !nonce) {
 			getUseNonce()
 				.then(_nonce => {
@@ -30,7 +30,7 @@ export const useNonce = () => {
 					}
 				})
 		}
-	}, [webwallet, nonce, ])
+	}, [webwallet, nonce, setNonce])
 
 	return nonce
 }
