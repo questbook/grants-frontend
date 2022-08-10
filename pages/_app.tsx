@@ -1,5 +1,6 @@
 import React, { createContext, ReactElement, ReactNode, useMemo } from 'react'
 import { ChakraProvider } from '@chakra-ui/react'
+import { ChatWidget } from '@papercups-io/chat-widget'
 // import dynamic from 'next/dynamic';
 import {
 	Configuration,
@@ -35,8 +36,6 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { publicProvider } from 'wagmi/providers/public'
 import 'styles/globals.css'
 import 'draft-js/dist/Draft.css'
-import {ChatWidget} from "@papercups-io/chat-widget";
-
 
 
 type NextPageWithLayout = NextPage & {
