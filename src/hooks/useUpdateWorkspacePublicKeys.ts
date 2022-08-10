@@ -42,7 +42,7 @@ export default function useUpdateWorkspacePublicKeys(
 	})
 
 	useEffect(() => {
-		console.log("ERQQW", biconomyWalletClient);
+		console.log('ERQQW', biconomyWalletClient)
 	}, [])
 
 	useEffect(() => {

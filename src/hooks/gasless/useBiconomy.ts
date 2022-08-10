@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect } from 'react'
 import { Biconomy } from '@biconomy/mexa'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import { deploySCW, jsonRpcProviders } from 'src/utils/gaslessUtils'
@@ -14,12 +14,12 @@ export const useBiconomy = (data: { apiKey: string, }) => {
 	useEffect(() => {
 		console.log('STEP1', nonce, webwallet, biconomyWalletClient)
 		if(!loading && nonce && webwallet && network && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress)) {
-			setIsLoading(true);
+			setIsLoading(true)
 			initiateBiconomy()
 				.then(res => console.log(res))
 				.catch(error => console.log(error))
 		}
-	}, [webwallet, nonce, biconomyDaoObj, biconomyWalletClient, scwAddress, network]);
+	}, [webwallet, nonce, biconomyDaoObj, biconomyWalletClient, scwAddress, network])
 
 	const initiateBiconomy = async() => {
 		console.log('STEP2', webwallet, network)
@@ -27,9 +27,9 @@ export const useBiconomy = (data: { apiKey: string, }) => {
 			return
 		}
 
-		console.log("DAODAO1", biconomyDaoObj)
-		console.log("DAODAO2", biconomyWalletClient)
-		console.log("DAODAO3", scwAddress)
+		console.log('DAODAO1', biconomyDaoObj)
+		console.log('DAODAO2', biconomyWalletClient)
+		console.log('DAODAO3', scwAddress)
 
 		console.log('CREATING BICONOMY OBJ', network.toString())
 		const _biconomy = new Biconomy(jsonRpcProviders[network.toString()],
@@ -60,9 +60,9 @@ export const useBiconomy = (data: { apiKey: string, }) => {
 				setBiconomyDaoObj(_biconomy)
 			}
 
-			setIsLoading(false);
+			setIsLoading(false)
 		}).onEvent(_biconomy.ERROR, (error: any, message: any) => {
-			setIsLoading(false);
+			setIsLoading(false)
 			console.log(message)
 			console.log(error)
 		})

@@ -131,7 +131,7 @@ function YourGrants() {
 	const [grantCount, setGrantCount] = useState([true, true])
 
 	useEffect(() => {
-		console.count("FERR9")
+		console.count('FERR9')
 
 		setSelectedTab(
 			parseInt(localStorage.getItem('yourGrantsTabSelected') || '0')
@@ -139,7 +139,7 @@ function YourGrants() {
 	}, [])
 
 	useEffect(() => {
-		console.count("FERR8")
+		console.count('FERR8')
 
 		if(!workspace) {
 			return
@@ -162,7 +162,7 @@ function YourGrants() {
 	}, [currentPage, workspace, accountData?.address])
 
 	useEffect(() => {
-		console.count("FERR7")
+		console.count('FERR7')
 
 		if(
 			workspace &&
@@ -185,7 +185,7 @@ function YourGrants() {
 	}, [accountData, workspace])
 
 	useEffect(() => {
-		console.count("FERR6")
+		console.count('FERR6')
 
 		if(!workspace) {
 			return
@@ -221,7 +221,7 @@ function YourGrants() {
 	}, [currentPage, workspace, accountData?.address, selectedTab])
 
 	useEffect(() => {
-		console.count("FERR5")
+		console.count('FERR5')
 
 		/// console.log(pk);
 		if(!accountData?.address) {
@@ -252,7 +252,7 @@ function YourGrants() {
 	} = useGetAllGrantsCountForCreatorQuery(countQueryParams)
 
 	useEffect(() => {
-		console.count("FERR4")
+		console.count('FERR4')
 
 		if(allGrantsCountData) {
 			setGrantCount([
@@ -264,7 +264,7 @@ function YourGrants() {
 
 	const data = useGetAllGrantsForCreatorQuery(queryParams)
 	useEffect(() => {
-		console.count("FERR3")
+		console.count('FERR3')
 
 		if(!workspace) {
 			return
@@ -275,7 +275,7 @@ function YourGrants() {
 	}, [workspace, selectedTab])
 
 	useEffect(() => {
-		console.count("FERR2")
+		console.count('FERR2')
 
 		if(data.data && data.data.grants && data.data.grants.length > 0) {
 			console.log('data.grants', data.data.grants)
@@ -303,7 +303,7 @@ function YourGrants() {
 	}, [workspace, selectedTab])
 
 	useEffect(() => {
-		console.count("FERR1")
+		console.count('FERR1')
 		if(
 			allGrantsReviewerData.data &&
       allGrantsReviewerData.data.grantApplications &&

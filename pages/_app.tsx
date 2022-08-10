@@ -19,6 +19,7 @@ import {
 import SubgraphClient from 'src/graphql/subgraph'
 import theme from 'src/theme'
 import { MinimalWorkspace } from 'src/types'
+import { BiconomyWalletClient } from 'src/types/gasless'
 import { jsonRpcProviders } from 'src/utils/gaslessUtils'
 import getSeo from 'src/utils/seo'
 import {
@@ -37,7 +38,6 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { publicProvider } from 'wagmi/providers/public'
 import 'styles/globals.css'
 import 'draft-js/dist/Draft.css'
-import { BiconomyWalletClient } from 'src/types/gasless'
 
 
 type NextPageWithLayout = NextPage & {
@@ -122,7 +122,7 @@ export const WebwalletContext = createContext<{
 export const BiconomyContext = createContext<{
 	biconomyDaoObj?: any,
 	setBiconomyDaoObj: (biconomyDaoObj: any) => void,
-	biconomyWalletClient?: BiconomyWalletClient, 
+	biconomyWalletClient?: BiconomyWalletClient,
 	setBiconomyWalletClient: (biconomyWalletClient: BiconomyWalletClient) => void,
 	loading: boolean,
 	setIsLoading: (loading: boolean) => void;
@@ -136,7 +136,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [biconomyDaoObj, setBiconomyDaoObj] = React.useState<any>()
 	const [biconomyWalletClient, setBiconomyWalletClient] = React.useState<BiconomyWalletClient>()
 	const [nonce, setNonce] = React.useState<string>()
-	const [loading, setIsLoading] = React.useState<boolean>(false);
+	const [loading, setIsLoading] = React.useState<boolean>(false)
 
 	useEffect(() => {
 		setWebwallet(createWebWallet())
@@ -271,7 +271,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		() => ({
 			biconomyDaoObj,
 			setBiconomyDaoObj,
-			biconomyWalletClient, 
+			biconomyWalletClient,
 			setBiconomyWalletClient,
 			loading,
 			setIsLoading
