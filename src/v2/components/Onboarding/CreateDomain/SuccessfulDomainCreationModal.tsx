@@ -1,5 +1,5 @@
 import React from 'react'
-import { AlertDialogOverlay, Modal, ModalBody, ModalContent } from '@chakra-ui/react'
+import { AlertDialogOverlay, Image, Modal, ModalBody, ModalContent } from '@chakra-ui/react'
 
 const SuccessfulDomainCreationModal = ({
 	isOpen,
@@ -16,6 +16,7 @@ const SuccessfulDomainCreationModal = ({
 			onClose={onClose}
 			isCentered
 			scrollBehavior={'outside'}
+			size="2xl"
 		>
 			<AlertDialogOverlay
 				background={'rgba(240, 240, 247, 0.7)'}
@@ -23,7 +24,6 @@ const SuccessfulDomainCreationModal = ({
 			/>
 
 			<ModalContent
-				w={'36rem'}
 				boxShadow={'none'}
 				filter={'drop-shadow(2px 4px 40px rgba(31, 31, 51, 0.05))'}
 				borderRadius={'base'}
@@ -33,7 +33,17 @@ const SuccessfulDomainCreationModal = ({
 				<ModalBody
 					p={0}
 				>
-					
+					<Image
+						src="/ui_icons/domain-created-top.svg"
+						w="100%"
+						h="23%" />
+					<Image
+						src="/ui_icons/domain-created-illustration.png"
+						w='50%'
+						h="291px"
+						mx="auto"
+						border="1px solid black" />
+					{/* <Text variant='' ></Text> */}
 				</ModalBody>
 			</ModalContent>
 
@@ -42,3 +52,9 @@ const SuccessfulDomainCreationModal = ({
 }
 
 export default SuccessfulDomainCreationModal
+
+// height: 291px;
+// width: 388.836181640625px;
+// left: 591px;
+// top: 53.54833984375px;
+// border-radius: 0px;

@@ -15,12 +15,10 @@ interface Props {
 	onChange: ChangeEventHandler<HTMLInputElement>;
 	isError?: boolean;
 	isPasted?: boolean;
-	setIsPasted?: (isPasted: boolean) => void;
 	isVerified?: boolean;
-	setIsVerified?: (isVerified: boolean) => void;
 }
 
-function TextField({ label, optionalText, helperText, helperLinkText, helperLinkUrl, placeholder, maxLength, value, onChange, isPasted, setIsPasted, isVerified, setIsVerified }: Props) {
+function TextField({ label, optionalText, helperText, helperLinkText, helperLinkUrl, placeholder, maxLength, value, onChange, isPasted, isVerified}: Props) {
 	const [currentLength, setCurrentLength] = React.useState(value?.toString().length)
 
 	React.useEffect(() => {

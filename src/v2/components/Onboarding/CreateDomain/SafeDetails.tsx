@@ -1,17 +1,18 @@
 import { Box, Button, CircularProgress, Flex, Text } from '@chakra-ui/react'
+import Dropdown from '../../InputFields/Dropdown';
 import TextField from '../../InputFields/TextField'
 
 interface Props {
-    step: number;
-    safeAddress: string;
-    setSafeAddress: (safeAddress: string) => void;
-    isPasted?: boolean;
-    setIsPasted?: (isPasted: boolean) => void;
-    isVerified?: boolean;
-    setIsVerified?: (isVerified: boolean) => void;
-    isLoading?: boolean;
-    setIsLoading?: (isLoading: boolean) => void;
-    onContinue: () => void;
+	step: number;
+	safeAddress: string;
+	setSafeAddress: (safeAddress: string) => void;
+	isPasted?: boolean;
+	setIsPasted?: (isPasted: boolean) => void;
+	isVerified?: boolean;
+	setIsVerified?: (isVerified: boolean) => void;
+	isLoading?: boolean;
+	setIsLoading?: (isLoading: boolean) => void;
+	onContinue: () => void;
 }
 
 function SafeDetails({ step, safeAddress, setSafeAddress, isPasted, setIsPasted, isVerified, setIsVerified, isLoading, setIsLoading, onContinue }: Props) {
@@ -20,18 +21,18 @@ function SafeDetails({ step, safeAddress, setSafeAddress, isPasted, setIsPasted,
 			<Text
 				variant="v2_body"
 				color="black.3">
-            Let’s begin the adventure.
+				Let’s begin the adventure.
 			</Text>
 			<Text
 				variant="v2_heading_3"
 				fontWeight="500">
-            Create a domain
+				Create a domain
 			</Text>
 			<Text
 				variant="v2_body"
 				fontWeight="500"
 				mt={6}>
-            To create a domain, you need a safe.
+				To create a domain, you need a safe.
 			</Text>
 			<Box mb="auto" />
 			<TextField
@@ -47,9 +48,7 @@ function SafeDetails({ step, safeAddress, setSafeAddress, isPasted, setIsPasted,
 					}
 				}
 				isPasted={isPasted}
-				setIsPasted={setIsPasted}
-				isVerified={isVerified}
-				setIsVerified={setIsVerified} />
+				isVerified={isVerified} />
 			{
 				isLoading && (
 					<Flex
@@ -63,12 +62,23 @@ function SafeDetails({ step, safeAddress, setSafeAddress, isPasted, setIsPasted,
 							ml={2}
 							variant="v2_metadata"
 							color="black.3">
-								Looking up safes with this address on different networks...
+							Looking up safes with this address on different networks...
 						</Text>
 					</Flex>
 				)
 			}
-
+			{step === 1 && <Box mt={6} />}
+			{
+				step === 1 && (
+					<Dropdown
+						label="Safes Found"
+						helperText="Associated with this address on all networks."
+						helperLinkText="Learn about supported networks"
+						helperLinkUrl='https://youtube.com'
+						value={''}
+						onChange={(e) => { }} />
+				)
+			}
 
 			<Button
 				variant="primaryV2"
@@ -76,7 +86,7 @@ function SafeDetails({ step, safeAddress, setSafeAddress, isPasted, setIsPasted,
 				mt={6}
 				disabled={!isVerified}
 				onClick={onContinue}>
-            Continue
+				Continue
 			</Button>
 		</>
 	)

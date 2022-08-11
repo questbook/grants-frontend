@@ -4,6 +4,7 @@ import { Organization } from 'src/v2/assets/custom chakra icons/Organization'
 import AccountDetails from 'src/v2/components/NavBar/AccountDetails'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import { ConfirmData, DomainName, SafeAddress } from 'src/v2/components/Onboarding/CreateDomain'
+import SuccessfulDomainCreationModal from 'src/v2/components/Onboarding/CreateDomain/SuccessfulDomainCreationModal'
 import QuestbookLogo from 'src/v2/components/QuestbookLogo'
 import VerifySignerModal from 'src/v2/components/VerifySignerModal'
 
@@ -25,6 +26,8 @@ const OnboardingCreateDomain = () => {
 	const [daoImageFile, setDaoImageFile] = useState<File | null>(null)
 	const [isOwner, setIsOwner] = useState(false)
 	const [isVerifySignerModalOpen, setIsVerifySignerModalOpen] = useState(false)
+
+	const [isDomainCreationSuccessful, setIsDomainCreationSuccessful] = useState(false)
 
 	useEffect(() => {
 		if(!setIsSafeAddressVerified) {
@@ -98,7 +101,10 @@ const OnboardingCreateDomain = () => {
 						setIsVerifySignerModalOpen(true)
 						setIsOwner(true)
 					} else {
-						setCurrentStep(1)
+						// This would open the Network Transaction Modal
+						// setCurrentStep(1)
+						// This would open the final successful domain creation modal
+						setIsDomainCreationSuccessful(true)
 						setIsOwner(false)
 					}
 				}
@@ -205,6 +211,13 @@ const OnboardingCreateDomain = () => {
 				onClose={
 					() => {
 						setIsVerifySignerModalOpen(false)
+					}
+				} />
+			<SuccessfulDomainCreationModal
+				isOpen={isDomainCreationSuccessful}
+				onClose={
+					() => {
+						setIsDomainCreationSuccessful(false)
 					}
 				} />
 		</>
