@@ -116,7 +116,7 @@ export default function useAddMember(
 				const transactionHash = await sendGaslessTransaction(
 					biconomy,
 					targetContractObject,
-					'createWorkspace',
+					'updateWorkspaceMembers',
 					[workspace!.id,
 						data.memberAddress,
 						data.memberRoles,

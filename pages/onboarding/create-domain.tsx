@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Box, Flex, HStack, Image, Spacer, Text } from '@chakra-ui/react'
+import useSafeUSDBalances from 'src/hooks/useSafeUSDBalances'
 import { Organization } from 'src/v2/assets/custom chakra icons/Organization'
 import AccountDetails from 'src/v2/components/NavBar/AccountDetails'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
@@ -16,6 +17,7 @@ const OnboardingCreateDomain = () => {
 	const [isSafeAddressPasted, setIsSafeAddressPasted] = useState(false)
 	const [isSafeAddressVerified, setIsSafeAddressVerified] = useState(false)
 	const [isSafesLoading, setIsSafesLoading] = useState(true)
+	const { data: safesUSDBalance } = useSafeUSDBalances({ safeAddress })
 
 	// State variables for step 2
 	const [domainName, setDomainName] = useState('')
@@ -31,14 +33,14 @@ const OnboardingCreateDomain = () => {
 			return
 		}
 
-		if(safeAddress.length > 0) {
+		if(Object.keys(safesUSDBalance).length > 0) {
 			setIsSafeAddressVerified(true)
 			setIsSafeAddressPasted(true)
 		} else {
 			setIsSafeAddressVerified(false)
 			setIsSafeAddressPasted(false)
 		}
-	}, [safeAddress])
+	}, [safesUSDBalance])
 
 	useEffect(() => {
 		if(!setIsDomainNameVerified) {
