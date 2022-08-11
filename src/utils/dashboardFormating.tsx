@@ -1,7 +1,7 @@
 export const formatMinutes = (s: number) => {
 	let n = s
 	const inAMonth = [43200, 1440, 60, 1]
-	const suffix = ['m', 'd', 'hr', 'min']
+	const suffix = ['mo', 'd', 'hr', 'min']
 	const res = [0, 0, 0, 0]
 
 	for(let i = 0; i < 4; i++) {

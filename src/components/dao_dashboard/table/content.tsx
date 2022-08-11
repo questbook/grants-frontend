@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
-import { Button, Flex, Text, Tooltip } from '@chakra-ui/react'
+import { Button, Flex, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { formatMinutes } from 'src/utils/dashboardFormating'
+import GrantsNameTableContent from './grantsNameTableContent'
 
 const tableBodyFlex = [0.25, 0.40, 0.10, 0.20, 0.17]
 
@@ -50,31 +51,7 @@ function TableContent({ grants, funding, pending, tat }:{grants:any[], funding: 
 									lineHeight="24px"
 									ml="20px"
 								>
-									{
-
-										item.name.length > 31 ? (
-
-											<>
-												<Tooltip label={item?.name}>
-													<Text>
-														{`${item.name.substring(0, 31)}`}
-														<Text color="#8E48D3" >
-...more
-														</Text>
-													</Text>
-												</Tooltip>
-											</>
-										) : (
-
-											<>
-												{' '}
-												<Text>
-													{item?.name}
-												</Text>
-											</>
-										)
-
-									}
+									<GrantsNameTableContent name={item.name} />
 								</Flex>
 
 								<Text
