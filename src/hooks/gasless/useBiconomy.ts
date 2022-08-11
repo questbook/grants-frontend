@@ -45,12 +45,12 @@ export const useBiconomy = (data: { apiKey: string, }) => {
 			const _biconomyWalletClient: BiconomyWalletClient = _biconomy.biconomyWalletClient
 			console.log('biconomyWalletClient', _biconomyWalletClient)
 
-			if(!scwAddress) {
-				const walletAddress = await deploySCW(webwallet, _biconomyWalletClient)
+			const walletAddress = await deploySCW(webwallet, _biconomyWalletClient)
+			console.log("SCWSCW", walletAddress, scwAddress);
+			if(walletAddress === scwAddress)
 				setScwAddress(walletAddress)
-			} else {
-				console.log('SCW Wallet already exists at Address', scwAddress)
-			}
+			else console.log('SCW Wallet already exists at Address', scwAddress)
+			
 
 			if(!biconomyWalletClient) {
 				setBiconomyWalletClient(_biconomyWalletClient)

@@ -105,9 +105,10 @@ const OnboardingCreateDao = () => {
 			}
 
 			setCurrentStep(2)
-
+			console.log(12344343);
 
 			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
+				console.log("54321")
 				return
 			}
 

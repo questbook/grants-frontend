@@ -17,13 +17,14 @@ const EIP712_WALLET_TX_TYPE = {
 	]
 }
 
-export const apiKey = 'qypYydNmh.85fb44d4-bc3a-4434-8e51-a929f54de521' // apiKey from the dashboard
-export const webHookId = 'c9b1f58d-316b-41bf-af3a-f7de4e92c801'
+export const apiKey = "LFz8akx_Y.99c8e15c-beb0-4d81-b0f4-d283538cfdfd" // apiKey from the dashboard
+export const webHookId = "08f721b0-b445-436b-863b-69e4e492f863"
 
 export const jsonRpcProviders: { [key: string]: ethers.providers.JsonRpcProvider } =
 {
 	'80001': new ethers.providers.JsonRpcProvider('https://polygon-mumbai.g.alchemy.com/v2/X6pnQlJfJq00b8MT53QihWBINEgHZHGp'),
-	'4': new ethers.providers.JsonRpcProvider('https://eth-rinkeby.alchemyapi.io/v2/4CCa54H4pABZcHMOMLJfRySfhMkvQFrs')
+	'4': new ethers.providers.JsonRpcProvider('https://eth-rinkeby.alchemyapi.io/v2/4CCa54H4pABZcHMOMLJfRySfhMkvQFrs'),
+	'5': new ethers.providers.JsonRpcProvider('https://eth-goerli.g.alchemy.com/v2/Kafi2TspXAOPnHhfNYvL6avWXhQR-exd')
 }
 
 export const signNonce = async(webwallet: Wallet, nonce: string) => {

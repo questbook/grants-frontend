@@ -149,7 +149,7 @@ export default function useEditGrant(
 				// )
 				// await rubricTxn.wait()
 				// const createGrantTransactionData = await createGrantTransaction.wait()
-
+				console.log("rubric hash", rubricHash);
 				const rubricTxn = await sendGaslessTransaction(
 					biconomy,
 					applicationReviewContract,
