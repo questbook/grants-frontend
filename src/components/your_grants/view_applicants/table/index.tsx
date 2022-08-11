@@ -12,6 +12,7 @@ function ApplicantsTable({
 	data,
 	actorId,
 	applicationsFilter,
+	adminDidAcceptOrReject,
 	isReviewer,
 	isEvaluationSet,
 	reviewerData,
@@ -24,6 +25,7 @@ function ApplicantsTable({
   data: any[];
   actorId: string;
   applicationsFilter: string;
+  adminDidAcceptOrReject: boolean;
   isReviewer: boolean;
   isEvaluationSet: boolean;
   archiveGrantComponent: React.ReactNode;
@@ -81,6 +83,7 @@ function ApplicantsTable({
 					is_reviewer={isReviewer}
 					isEvaluationSet={isEvaluationSet}
 					applicationsStatus={applicationsFilter}
+					adminDidAcceptOrReject={adminDidAcceptOrReject}
 					checkbox={
 						<Flex
 							direction="row"
@@ -154,6 +157,7 @@ function ApplicantsTable({
 						reviewerData={reviewerData}
 						filter={filter}
 						applicationsStatus={applicationsFilter}
+						adminDidAcceptOrReject={adminDidAcceptOrReject}
 						isEvaluationSet={isEvaluationSet}
 						actorId={actorId}
 						onViewApplicationFormClick={onViewApplicantFormClick}

@@ -1,20 +1,15 @@
-import React, { ReactElement } from 'react'
+import React from 'react'
 import { Box, Button, Flex, Image, Text, Tooltip } from '@chakra-ui/react'
 import CopyIcon from 'src/components/ui/copy_icon'
 import {
 	AssignedToReview,
-	GrantApproved,
-	GrantComplete,
-	PendingReview,
-	Rejected,
-	ResubmissionRequested,
 	ReviewDone,
 } from '../states'
-import { TableFilters } from './TableFilters'
 
 function Content({
 	filter,
 	applicationsStatus,
+	adminDidAcceptOrReject,
 	isEvaluationSet,
 	onViewApplicationFormClick,
 	// onAcceptApplicationClick,
@@ -27,6 +22,7 @@ function Content({
 }: {
   filter: number;
   applicationsStatus: string;
+  adminDidAcceptOrReject:boolean;
   isEvaluationSet: boolean;
   onViewApplicationFormClick?: (data?: any) => void;
   // onAcceptApplicationClick?: () => void;
@@ -40,29 +36,32 @@ function Content({
 	const tableHeadersFlex = [0.231, 0.2, 0.15, 0.13, 0.16, 0.25, 0.116]
 	const tableHeadersFlexReviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116]
 	const tableHeadersFlexPendingForReview = [0.5, 0.3, 0.15, 0.13]
-	const getStatus = (status: number): ReactElement => {
-		if(status === TableFilters.submitted) {
-			return <PendingReview />
-		}
+	const tableHeadersFlexAccepted = [0.5, 0.20, 0.15, 0.13]
+	const tableHeadersFlexInReview = [0.5, 0.20, 0.15, 0.13]
+	const tableHeadersFlexRejected = [0.5, 0.20, 0.15]
+	// const getStatus = (status: number): ReactElement => {
+	// 	if(status === TableFilters.submitted) {
+	// 		return <PendingReview />
+	// 	}
 
-		if(status === TableFilters.resubmit) {
-			return <ResubmissionRequested />
-		}
+	// 	if(status === TableFilters.resubmit) {
+	// 		return <ResubmissionRequested />
+	// 	}
 
-		if(status === TableFilters.approved) {
-			return <GrantApproved />
-		}
+	// 	if(status === TableFilters.approved) {
+	// 		return <GrantApproved />
+	// 	}
 
-		if(status === TableFilters.rejected) {
-			return <Rejected />
-		}
+	// 	if(status === TableFilters.rejected) {
+	// 		return <Rejected />
+	// 	}
 
-		if(status === TableFilters.assigned) {
-			return <AssignedToReview />
-		}
+	// 	if(status === TableFilters.assigned) {
+	// 		return <AssignedToReview />
+	// 	}
 
-		return <GrantComplete />
-	}
+	// 	return <GrantComplete />
+	// }
 
 	// eslint-disable-next-line consistent-return
 	const getStatusReviewer = (status: number) => {
@@ -253,9 +252,9 @@ function Content({
 								</Flex>
 							</Flex>
 						))
-				) : !isEvaluationSet ? (
+				) : !isEvaluationSet && !adminDidAcceptOrReject ? (
 					data
-						.filter((item) => (filter === -1 ? true : filter === item.status))
+						.filter((item) => ('In Review' === item.status))
 						.map((item, index) => (
 							<Flex
 								key={item.id}
@@ -354,20 +353,146 @@ function Content({
 							</Flex>
 						))
 				) : applicationsStatus === 'Accepted' ? (
-					<Flex>
-fill
-						{' '}
-					</Flex>
+					data
+						.filter((item) => (applicationsStatus === item.status))
+						.map((item, index) => (
+							<Flex
+								key={item.id}
+								direction="row"
+								w="100%"
+								h="58px"
+								justify="stretch"
+								align="center"
+								bg="#FFFFFF"
+								px={0}
+							//   py={4}
+							>
+								<Flex
+									h="60px"
+									flex={tableHeadersFlexAccepted[0]}
+									alignItems="center"
+									border="1px"
+									borderColor="#E0E0EC"
+								>
+									<Box
+										h="40px"
+										w="40px"
+										ml="5">
+										<Image
+											w="38px"
+											h="38px"
+											borderRadius="22.1667px"
+											src="/ui_icons/generic_dao_member.svg"
+										/>
+									</Box>
+									<Text
+										color="#1F1F33"
+										fontSize="14px"
+										lineHeight="20px"
+										fontWeight="500"
+										textAlign="left"
+									>
+										{item.project_name}
+									</Text>
+								</Flex>
+
+
+							</Flex>
+						))
 				) : applicationsStatus === 'Rejected' ? (
-					<Flex>
-fill
-						{' '}
-					</Flex>
+					data
+						.filter((item) => (applicationsStatus === item.status))
+						.map((item, index) => (
+							<Flex
+								key={item.id}
+								direction="row"
+								w="100%"
+								h="58px"
+								justify="stretch"
+								align="center"
+								bg="#FFFFFF"
+								px={0}
+							//   py={4}
+							>
+								<Flex
+									h="60px"
+									flex={tableHeadersFlexRejected[0]}
+									alignItems="center"
+									border="1px"
+									borderColor="#E0E0EC"
+								>
+									<Box
+										h="40px"
+										w="40px"
+										ml="5">
+										<Image
+											w="38px"
+											h="38px"
+											borderRadius="22.1667px"
+											src="/ui_icons/generic_dao_member.svg"
+										/>
+									</Box>
+									<Text
+										color="#1F1F33"
+										fontSize="14px"
+										lineHeight="20px"
+										fontWeight="500"
+										textAlign="left"
+									>
+										{item.project_name}
+									</Text>
+								</Flex>
+
+
+							</Flex>
+						))
 				) : (
-					<Flex>
-fill
-						{' '}
-					</Flex>
+					data
+						.filter((item) => (applicationsStatus === item.status))
+						.map((item, index) => (
+							<Flex
+								key={item.id}
+								direction="row"
+								w="100%"
+								h="58px"
+								justify="stretch"
+								align="center"
+								bg="#FFFFFF"
+								px={0}
+							//   py={4}
+							>
+								<Flex
+									h="60px"
+									flex={tableHeadersFlexInReview[0]}
+									alignItems="center"
+									border="1px"
+									borderColor="#E0E0EC"
+								>
+									<Box
+										h="40px"
+										w="40px"
+										ml="5">
+										<Image
+											w="38px"
+											h="38px"
+											borderRadius="22.1667px"
+											src="/ui_icons/generic_dao_member.svg"
+										/>
+									</Box>
+									<Text
+										color="#1F1F33"
+										fontSize="14px"
+										lineHeight="20px"
+										fontWeight="500"
+										textAlign="left"
+									>
+										{item.project_name}
+									</Text>
+								</Flex>
+
+
+							</Flex>
+						))
 				)
 			}
 		</Flex>

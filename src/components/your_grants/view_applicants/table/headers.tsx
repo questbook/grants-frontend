@@ -11,26 +11,20 @@ const tableHeadersInReview = [
 	'Proposals',
 	'Review Stage',
 	'Review',
+	'Score'
 ]
 
 const tableHeadersAccepted = [
-	'Applicant Address',
 	'Proposals',
-	'Funding Sent',
-	'Reviewer',
-	'Status',
-	'Last updated on',
-	'Actions',
+	'Funds Sent (in USD)',
+	'Milestone Status',
+	'Last update on'
 ]
 
 const tableHeadersRejected = [
-	'Applicant Address',
 	'Proposals',
-	'Funding Sent',
-	'Reviewer',
-	'Status',
-	'Last updated on',
-	'Actions',
+	'Rejected On',
+	'Review'
 ]
 
 const tableHeadersReviewer = [
@@ -46,7 +40,7 @@ const tableHeadersFlexReviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116]
 const tableHeadersFlexPendingForReview = [0.5, 0.3, 0.15, 0.13]
 const tableHeadersFlexAccepted = [0.5, 0.20, 0.15, 0.13]
 const tableHeadersFlexInReview = [0.5, 0.20, 0.15, 0.13]
-const tableHeadersFlexRejected = [0.5, 0.20, 0.15, 0.13]
+const tableHeadersFlexRejected = [0.5, 0.20, 0.15]
 const tableHeadersAlign = [
 	'left',
 	'left',
@@ -66,9 +60,9 @@ const tableHeadersAlignReviewer = [
 	'center',
 ]
 
-function Headers({ is_reviewer, isEvaluationSet, applicationsStatus, checkbox }:{ is_reviewer : boolean; isEvaluationSet:boolean; applicationsStatus:string, checkbox: React.ReactNode }) {
+function Headers({ is_reviewer, isEvaluationSet, applicationsStatus, adminDidAcceptOrReject, checkbox }:{ is_reviewer : boolean; isEvaluationSet:boolean; applicationsStatus:string, adminDidAcceptOrReject:boolean; checkbox: React.ReactNode }) {
 	const Tableduel = is_reviewer ? (tableHeadersReviewer) :
-					 !isEvaluationSet ? (tableHeadersPendingForReview) :
+		!isEvaluationSet && !adminDidAcceptOrReject ? (tableHeadersPendingForReview) :
 					 applicationsStatus === 'Accepted' ? tableHeadersAccepted :
 					 applicationsStatus === 'Rejected' ? tableHeadersRejected :
 					 tableHeadersInReview
@@ -94,7 +88,7 @@ function Headers({ is_reviewer, isEvaluationSet, applicationsStatus, checkbox }:
 						h="60px"
 						flex={
 							is_reviewer ? (tableHeadersFlexReviewer[index]) :
-								!isEvaluationSet ? (tableHeadersFlexPendingForReview[index]) :
+								!isEvaluationSet && !adminDidAcceptOrReject ? (tableHeadersFlexPendingForReview[index]) :
 									applicationsStatus === 'Accepted' ? tableHeadersFlexAccepted[index] :
 										applicationsStatus === 'Rejected' ? tableHeadersFlexRejected[index] :
 											tableHeadersFlexInReview[index]

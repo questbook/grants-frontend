@@ -68,8 +68,10 @@ function ViewApplicants() {
 	const [isAcceptedActive, setIsAcceptedActive] = useState(false)
 	const [isInReviewActive, setIsInReviewActive] = useState(false)
 	const [isRejectedActive, setIsRejectedActive] = useState(false)
+	const [isPendingForReviewActive, setIsPendingForReviewActive] = useState(false)
 	const [isRubricSet, setIsRubricSet] = useState(false)
 	const [isSetupEvaluationBoxOpen, setIsSetupEvaluationBoxOpen] = useState(true)
+	const [adminDidAcceptOrReject, setAdminDidAcceptOrReject] = useState(false)
 
 	const { data: accountData } = useAccount()
 	const router = useRouter()
@@ -223,6 +225,11 @@ function ViewApplicants() {
 				}
 
 				setRewardTokenDecimals(decimal)
+
+				if(applicant.state === 'approved' || applicant.state === 'rejected') {
+					setAdminDidAcceptOrReject(true)
+				}
+
 				return {
 					grantTitle: applicant?.grant?.title,
 					applicationId: applicant.id,
@@ -365,10 +372,10 @@ function ViewApplicants() {
 	}, [grantData])
 
 	useEffect(() => {
-		if(isRubricSet) {
+		if(isRubricSet || adminDidAcceptOrReject) {
 			setApplicationsFilter('In Review'); setIsInReviewActive(true)
 		}
-	}, [isRubricSet])
+	}, [isRubricSet, adminDidAcceptOrReject])
 
 	useEffect(() => {
 		const total = fundsDisbursed?.fundsTransfers.reduce(
@@ -469,12 +476,22 @@ function ViewApplicants() {
 			{
 				(reviewerData.length > 0 || applicantsData.length > 0) && (isReviewer || isAdmin) ? (
 					<Flex direction="column">
+
 						{
-							isRubricSet && (
+							!isRubricSet && isSetupEvaluationBoxOpen && !adminDidAcceptOrReject && (
+								<SetupRubricAlert
+									onClick={() => setRubricDrawerOpen(true)}
+									onClose={() => setIsSetupEvaluationBoxOpen(false)} />
+							)
+						}
+
+						{
+							 (isRubricSet || adminDidAcceptOrReject) && (
 								<ApplicationStatusBar
 									isAcceptedActive={isAcceptedActive}
 								 isInReviewActive={isInReviewActive}
 								  isRejectedActive={isRejectedActive}
+
 								  onClickFirst={
 										() => {
 											setIsAcceptedActive(!isAcceptedActive), setIsInReviewActive(false), setIsRejectedActive(false), setApplicationsFilter('Accepted')
@@ -491,18 +508,10 @@ function ViewApplicants() {
 										}
 									}
 
+
 								/>
 							)
 
-						}
-
-
-						{
-							!isRubricSet && isSetupEvaluationBoxOpen && (
-								<SetupRubricAlert
-									onClick={() => setRubricDrawerOpen(true)}
-									onClose={() => setIsSetupEvaluationBoxOpen(false)} />
-							)
 						}
 
 						<ApplicantsTable
@@ -512,6 +521,7 @@ function ViewApplicants() {
 							reviewerData={reviewerData}
 							actorId={isActorId}
 							applicationsFilter={applicationsFilter}
+							adminDidAcceptOrReject={adminDidAcceptOrReject}
 							onViewApplicantFormClick={
 								(commentData: any) => router.push({
 									pathname: '/your_grants/view_applicants/applicant_form/',

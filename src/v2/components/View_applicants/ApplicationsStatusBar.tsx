@@ -14,7 +14,9 @@ type ApplicationsStatusProps = {
 
 const ApplicationStatusBar = ({ isAcceptedActive, isInReviewActive, isRejectedActive, onClickFirst, onClickSecond, onClickThird } : ApplicationsStatusProps) => {
 	return (
-		<HStack spacing='24px'>
+		<HStack
+			spacing='24px'
+			mt={2}>
 			<Box
 				as="button"
 				w='128px'
