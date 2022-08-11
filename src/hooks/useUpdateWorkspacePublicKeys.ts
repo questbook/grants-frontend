@@ -41,6 +41,9 @@ export default function useUpdateWorkspacePublicKeys(
 		apiKey: apiKey,
 	})
 
+	useEffect(() => {
+		console.log('ERQQW', biconomyWalletClient)
+	}, [])
 
 	useEffect(() => {
 		if(data) {

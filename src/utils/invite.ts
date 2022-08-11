@@ -86,6 +86,7 @@ export const serialiseInviteInfoIntoUrl = (info: InviteInfo) => {
 	return url.toString()
 }
 
+
 export const useMakeInvite = (role: number) => {
 	const { switchNetwork } = useNetwork()
 	const { workspace } = useContext(ApiClientsContext)!

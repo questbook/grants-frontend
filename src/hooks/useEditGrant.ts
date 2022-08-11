@@ -2,7 +2,9 @@ import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash, parseAmount } from 'src/utils/formattingUtils'
 import { apiKey, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
@@ -13,8 +15,6 @@ import {
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useGrantContract from './contracts/useGrantContract'
 import useQBContract from './contracts/useQBContract'
-import { useBiconomy } from './gasless/useBiconomy'
-import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
 
 export default function useEditGrant(
@@ -45,6 +45,9 @@ export default function useEditGrant(
 		// targetContractABI: ApplicationReviewRegistryAbi,
 	})
 
+	useEffect(() => {
+		console.count("I'm inside")
+	}, [])
 
 	useEffect(() => {
 		if(data) {
