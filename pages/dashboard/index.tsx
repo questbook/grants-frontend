@@ -42,7 +42,8 @@ function Dashboard() {
         Dashboard
 			</Text>
 			{
-				userAccessLevel === WorkspaceMemberAccessLevel.Admin ?
+				userAccessLevel === WorkspaceMemberAccessLevel.Admin ||
+        userAccessLevel === WorkspaceMemberAccessLevel.Owner ?
 					<AdminDashboard />
 					: userAccessLevel === WorkspaceMemberAccessLevel.Reviewer ?
 						<ReviewerDashboard /> : (

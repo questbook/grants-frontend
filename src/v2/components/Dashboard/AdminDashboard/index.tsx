@@ -13,8 +13,8 @@ import {
 	GetAllGrantsForCreatorQuery,
 	useGetAllGrantsForCreatorQuery,
 } from 'src/generated/graphql'
+import NavbarLayout from 'src/layout/navbarLayout'
 import { UNIX_TIMESTAMP_MAX, UNIX_TIMESTAMP_MIN } from 'src/utils/generics'
-import NavbarLayout from '../../src/layout/navbarLayout'
 
 // const Tabledata = [
 // 	{
