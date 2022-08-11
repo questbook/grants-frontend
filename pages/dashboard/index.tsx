@@ -2,15 +2,16 @@ import React, { ReactElement, useContext, useMemo } from 'react'
 import { Center, Flex, Text } from '@chakra-ui/react'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { useAccount } from 'wagmi'
-import { WorkspaceMemberAccessLevel } from '../src/generated/graphql'
-import ReviewerDashboard from '../src/v2/components/ReviewerDashboard'
-import { ApiClientsContext } from './_app'
+import { WorkspaceMemberAccessLevel } from '../../src/generated/graphql'
+import AdminDashboard from '../../src/v2/components/Dashboard/AdminDashboard'
+import ReviewerDashboard from '../../src/v2/components/Dashboard/ReviewerDashboard'
+import { ApiClientsContext } from '../_app'
 
 function Dashboard() {
 	const { data: accountData } = useAccount()
 	const { workspace } = useContext(ApiClientsContext)!
 
-	const isReviewer = useMemo<boolean>(() => {
+	const userAccessLevel = useMemo<WorkspaceMemberAccessLevel | undefined>(() => {
 		if(
 			workspace
       && workspace.members
@@ -21,10 +22,8 @@ function Dashboard() {
 			const tempMember = workspace.members.find(
 				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 			)
-			return tempMember?.accessLevel === WorkspaceMemberAccessLevel.Reviewer
+			return tempMember?.accessLevel
 		}
-
-		return false
 	}, [accountData, workspace])
 
 	return (
@@ -43,11 +42,14 @@ function Dashboard() {
         Dashboard
 			</Text>
 			{
-				isReviewer ? <ReviewerDashboard /> : (
-					<Center>
-            Coming soon...
-					</Center>
-				)
+				userAccessLevel === WorkspaceMemberAccessLevel.Admin ?
+					<AdminDashboard />
+					: userAccessLevel === WorkspaceMemberAccessLevel.Reviewer ?
+						<ReviewerDashboard /> : (
+							<Center>
+                Coming soon...
+							</Center>
+						)
 			}
 		</Flex>
 	)

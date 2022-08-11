@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Box, Button, Flex } from '@chakra-ui/react'
 import { useAccount } from 'wagmi'
-import { ApplicationState } from '../../../generated/graphql'
+import { ApplicationState } from '../../../../generated/graphql'
 import ApplicationsTable from './ApplicationsTable'
 
 function ReviewerDashboard() {

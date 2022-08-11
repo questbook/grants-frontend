@@ -42,8 +42,7 @@ export default ({
 			size='sm'
 		>
 			<AlertDialogOverlay
-				background='rgba(240, 240, 247, 0.7)'
-				backdropFilter='blur(10px)'
+				background='rgba(31, 31, 51, 0.75)'
 			/>
 
 			<ModalContent>
@@ -52,8 +51,11 @@ export default ({
 						<Image
 							boxSize='12'
 							src='/ui_icons/network_transaction_logo.svg' />
+
+						<Box w='1' />
+
 						<VStack
-							spacing='1'
+							spacing='0'
 							align='start'>
 							<Text fontSize='xl'>
 								Network transaction
@@ -72,7 +74,7 @@ export default ({
 									src={info?.icon || ''} />
 
 								<Text
-									fontSize='sm'
+									fontSize='small'
 									fontWeight='bold'>
 									{info?.name}
 								</Text>
@@ -86,15 +88,18 @@ export default ({
 				<ModalBody p='5'>
 					<VStack align='stretch'>
 						<Flex
-							p='4'
+							p='3'
 							borderRadius='base'
 							bg='#D5F1EB'
 						>
 							{description}
 						</Flex>
+
+						<Box height='2' />
+
 						<Text
 							fontSize='sm'
-							color='v2LightGrey'
+							color='v2Grey'
 							fontWeight='bold'>
 							ACTIVITY
 						</Text>
@@ -175,9 +180,9 @@ const ModalStep = ({
 				}
 
 				<Text
-					fontWeight={state === 'loading' ? '500' : '400'}
+					fontWeight={state === 'loading' ? 'bold' : 'light'}
 					ml={3}
-					color={state === 'loading' ? 'black' : '#AFAFCC'}
+					color={state === 'loading' ? 'black' : '#555570'}
 				>
 					{text}
 				</Text>

@@ -5,6 +5,7 @@ import { ApiClientsContext } from 'pages/_app'
 import { useGetWorkspaceMembersLazyQuery } from 'src/generated/graphql'
 import { MinimalWorkspace } from 'src/types'
 import getTabFromPath from 'src/utils/tabUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useAccount, useConnect } from 'wagmi'
 import Domains from './Domains'
 import SidebarItem from './SidebarItem'
@@ -124,7 +125,21 @@ function Sidebar() {
 							onClick={
 								() => {
 									setTabSelected(tab.index)
+									if(tab.path === '/dashboard') {
+										if(!workspace) {
+											return
+										}
+
+										router.push({ pathname: tab.path, query: {
+											daoId: workspace.id,
+											chainId: getSupportedChainIdFromWorkspace(workspace)
+										} })
+
+										return
+									}
+
 									router.push({ pathname: tab.path })
+
 								}
 							}
 						/>

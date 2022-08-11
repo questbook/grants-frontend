@@ -14,18 +14,18 @@ import {
 	Tr,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { ApiClientsContext } from '../../../../pages/_app'
-import Loader from '../../../components/ui/loader'
-import { CHAIN_INFO, defaultChainId } from '../../../constants/chains'
-import { ApplicationState, useGetReviewerApplicationsQuery } from '../../../generated/graphql'
-import { formatAmount, getFormattedDateFromUnixTimestampWithYear } from '../../../utils/formattingUtils'
-import { capitalizeFirstLetter } from '../../../utils/generics'
-import { getAssetInfo } from '../../../utils/tokenUtils'
+import { ApiClientsContext } from '../../../../../pages/_app'
+import Loader from '../../../../components/ui/loader'
+import { CHAIN_INFO, defaultChainId } from '../../../../constants/chains'
+import { ApplicationState, useGetReviewerApplicationsQuery } from '../../../../generated/graphql'
+import { formatAmount, getFormattedDateFromUnixTimestampWithYear } from '../../../../utils/formattingUtils'
+import { capitalizeFirstLetter } from '../../../../utils/generics'
+import { getAssetInfo } from '../../../../utils/tokenUtils'
 import {
 	getSupportedChainIdFromSupportedNetwork,
 	getSupportedChainIdFromWorkspace,
-} from '../../../utils/validationUtils'
-import PaginatorView from '../WorkspaceMembers/PaginatorView'
+} from '../../../../utils/validationUtils'
+import PaginatorView from '../../WorkspaceMembers/PaginatorView'
 
 const PAGE_SIZE = 5
 
