@@ -157,34 +157,34 @@ function FeedbackDrawer({
 		<>
 			<Drawer
 				isOpen={feedbackDrawerOpen}
-				placement="right"
+				placement='right'
 				onClose={() => setFeedbackDrawerOpen(false)}
-				size="lg"
+				size='lg'
 			>
 				<DrawerOverlay />
 				<DrawerContent>
 
 					<Flex
 						bg={'#f5f5fa'}
-						direction="column"
-						overflow="scroll"
+						direction='column'
+						overflow='scroll'
 						p={8}>
 						<Flex
 							mb={8}
-							alignItems="center">
+							alignItems='center'>
 							<Image
-								src="/ui_icons/back_arrow.svg"
-								cursor="pointer"
-								mr="12px"
-								h="16px"
-								w="16px"
+								src='/ui_icons/back_arrow.svg'
+								cursor='pointer'
+								mr='12px'
+								h='16px'
+								w='16px'
 								onClick={() => setFeedbackDrawerOpen(false)}
 							/>
 							<Text
-								color="#122224"
-								fontWeight="bold"
-								fontSize="16px"
-								lineHeight="20px"
+								color='#122224'
+								fontWeight='bold'
+								fontSize='16px'
+								lineHeight='20px'
 							>
                 Application Feedback
 							</Text>
@@ -197,23 +197,23 @@ function FeedbackDrawer({
 										borderRadius={'10px'}
 										padding={'30px'}
 										mt={4}
-										gap="2"
-										direction="column"
+										gap='2'
+										direction='column'
 									>
 										<Text
-											color="#122224"
-											fontWeight="bold"
-											fontSize="16px"
-											lineHeight="12px"
+											color='#122224'
+											fontWeight='bold'
+											fontSize='16px'
+											lineHeight='12px'
 										>
 											{feedback.rubric.title}
 										</Text>
 										<Text
-											color="#69657B"
-											fontWeight="400"
-											fontSize="12px"
-											lineHeight="12px"
-											mt="6px"
+											color='#69657B'
+											fontWeight='400'
+											fontSize='12px'
+											lineHeight='12px'
+											mt='6px'
 										>
 											{feedback.rubric.details}
 										</Text>
@@ -238,15 +238,15 @@ function FeedbackDrawer({
 															value={i}>
 															{i}
 														</SliderMark>
-													)
+													),
 												)
 											}
 											<SliderTrack>
 												<Box />
-												<SliderFilledTrack color={'#785EF0'} />
+												<SliderFilledTrack bg={'#785EF0'} />
 											</SliderTrack>
 											<SliderThumb
-												style={{ border: '2px solid #785EF0' }} />
+												style={{ border: '3px solid #785EF0' }} />
 										</Slider>
 										<Box h={5} />
 										<MultiLineInput
@@ -258,7 +258,7 @@ function FeedbackDrawer({
 													setFeedbackData(newFeedbackData)
 												}
 											}
-											placeholder="Comments"
+											placeholder='Comments'
 											isError={false}
 										/>
 									</Flex>
@@ -268,11 +268,11 @@ function FeedbackDrawer({
 						}
 						<Box mt={12}>
 							<Button
-								mt="auto"
-								variant="primary"
+								mt='auto'
+								variant='primary'
 								onClick={handleOnSubmit}>
 								{
-									!loading ? 'Save' : (
+									!loading ? 'Continue' : (
 										<Loader />
 									)
 								}
@@ -294,7 +294,7 @@ function FeedbackDrawer({
 						'Sign transaction',
 						'Waiting for transaction to complete',
 						'Waiting for transaction indexing',
-						'Review pushed on-chain'
+						'Review pushed on-chain',
 					]
 				} />
 		</>
