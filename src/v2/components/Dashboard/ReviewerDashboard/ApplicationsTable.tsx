@@ -64,7 +64,7 @@ function ApplicationsTable({
 	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 	const { client } = subgraphClients[chainId]
 
-	const { data } = useGetReviewerApplicationsQuery({
+	const { data } = useGetReviewerApplicationsForGrantQuery({
 		client,
 		variables: {
 			workspaceId: workspace!.id,

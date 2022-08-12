@@ -1,5 +1,5 @@
-query getReviewerApplications(
-    $workspaceId: String
+query getReviewerApplicationsForGrant(
+    $workspaceId: String!
     $reviewerId: Bytes!
     $grantId: ID!
     $applicationStateIn: [ApplicationState!]!
@@ -45,6 +45,8 @@ query getReviewerApplications(
             id
         }
         grant {
+            id
+            title
             rubric {
                 isPrivate
             }
