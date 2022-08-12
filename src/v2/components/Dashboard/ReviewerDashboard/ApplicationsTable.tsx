@@ -1,25 +1,17 @@
-import React, { useContext, useMemo, useState } from 'react'
-import {
-	Box,
-	Button,
-	Center,
-	Flex,
-	Grid,
-	GridItem,
-	Table,
-	Tbody,
-	Td,
-	Th,
-	Thead,
-	Tr,
-} from '@chakra-ui/react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
+import { Box, Button, Center, Flex, Grid, GridItem, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { useAccount } from 'wagmi'
 import { ApiClientsContext } from '../../../../../pages/_app'
 import Loader from '../../../../components/ui/loader'
 import { CHAIN_INFO, defaultChainId } from '../../../../constants/chains'
-import { ApplicationState, useGetReviewerApplicationsQuery } from '../../../../generated/graphql'
+import {
+	ApplicationState, GetReviewerApplicationsForGrantQuery, useGetReviewerApplicationsForGrantQuery,
+} from '../../../../generated/graphql'
+import useEncryption from '../../../../hooks/utils/useEncryption'
 import { formatAmount, getFormattedDateFromUnixTimestampWithYear } from '../../../../utils/formattingUtils'
 import { capitalizeFirstLetter } from '../../../../utils/generics'
+import { getFromIPFS } from '../../../../utils/ipfsUtils'
 import { getAssetInfo } from '../../../../utils/tokenUtils'
 import {
 	getSupportedChainIdFromSupportedNetwork,
@@ -46,6 +38,7 @@ type Application = {
 
 type Props = {
   reviewerId: string,
+  grantId: string,
   showApplicationState: boolean,
   applicationStateIn: ApplicationState[],
 }
@@ -53,6 +46,7 @@ type Props = {
 
 function ApplicationsTable({
 	reviewerId,
+	grantId,
 	applicationStateIn,
 	showApplicationState,
 }: Props) {
@@ -69,6 +63,7 @@ function ApplicationsTable({
 		variables: {
 			workspaceId: workspace!.id,
 			reviewerId,
+			grantId,
 			applicationStateIn,
 			first: PAGE_SIZE,
 			skip: page * PAGE_SIZE,

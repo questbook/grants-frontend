@@ -1,18 +1,50 @@
-import { useState } from 'react'
-import { Box, Button, Flex } from '@chakra-ui/react'
+import { useContext, useMemo, useState } from 'react'
+import { Box, Button, Flex, Text } from '@chakra-ui/react'
 import { useAccount } from 'wagmi'
-import { ApplicationState } from '../../../../generated/graphql'
+import { ApiClientsContext } from '../../../../../pages/_app'
+import Loader from '../../../../components/ui/loader'
+import { defaultChainId } from '../../../../constants/chains'
+import {
+	ApplicationState, useGetGrantsForReviewerInWorkspaceQuery,
+} from '../../../../generated/graphql'
+import {
+	getSupportedChainIdFromWorkspace,
+} from '../../../../utils/validationUtils'
 import ApplicationsTable from './ApplicationsTable'
 
 function ReviewerDashboard() {
 	const [showPendingReviews, setShowPendingReviews] = useState(true)
 
+	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
+
+	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+	const { client } = subgraphClients[chainId]
+
 	const { data: accountData } = useAccount()
 
+	const { data } = useGetGrantsForReviewerInWorkspaceQuery({
+		client,
+		variables: {
+			workspaceId: workspace!.id!,
+			reviewerId: accountData!.address!,
+		},
+	})
+
+	const grants = useMemo(() => {
+		if(!data) {
+			return
+		}
+
+		return data.grantApplications.map((application) => application.grant)
+	}, [data])
+
+
 	const reviewDoneStates = Object.values(ApplicationState)
-	// all states except 'submitted'
+	// all states except 'submitted' and 'resubmit'
 	const submittedIdx = reviewDoneStates.indexOf(ApplicationState.Submitted)
 	reviewDoneStates.splice(submittedIdx, 1)
+	const resubmitIdx = reviewDoneStates.indexOf(ApplicationState.Resubmit)
+	reviewDoneStates.splice(resubmitIdx, 1)
 
 	return (
 		<Flex
@@ -41,11 +73,24 @@ function ReviewerDashboard() {
 				</Flex>
 			</Box>
 			<Box h={5} />
-			<ApplicationsTable
-				reviewerId={accountData!.address!}
-				showApplicationState={!showPendingReviews}
-				applicationStateIn={showPendingReviews ? [ApplicationState.Submitted] : reviewDoneStates}
-			/>
+			{
+				grants === undefined ? <Loader /> : grants.map((grant) => (
+					<>
+						<Text
+							fontSize={25}
+							fontWeight={'bold'}>
+							{grant.title}
+						</Text>
+						<Box h={2} />
+						<ApplicationsTable
+							reviewerId={accountData!.address!}
+							grantId={grant.id}
+							showApplicationState={!showPendingReviews}
+							applicationStateIn={showPendingReviews ? [ApplicationState.Submitted] : reviewDoneStates}
+						/>
+					</>
+				))
+			}
 		</Flex>
 	)
 }
