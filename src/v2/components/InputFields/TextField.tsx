@@ -18,7 +18,7 @@ interface Props {
 	isVerified?: boolean;
 }
 
-function TextField({ label, optionalText, helperText, helperLinkText, helperLinkUrl, placeholder, maxLength, value, onChange, isPasted, isVerified}: Props) {
+function TextField({ label, optionalText, helperText, helperLinkText, helperLinkUrl, placeholder, maxLength, value, onChange, isPasted, isVerified }: Props) {
 	const [currentLength, setCurrentLength] = React.useState(value?.toString().length)
 
 	React.useEffect(() => {

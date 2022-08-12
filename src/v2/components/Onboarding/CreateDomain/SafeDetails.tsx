@@ -1,21 +1,21 @@
-import { Box, Button, CircularProgress, Flex, Text } from '@chakra-ui/react'
-import Dropdown from '../../InputFields/Dropdown';
+import { ChangeEventHandler } from 'react'
+import { Box, Button, CircularProgress, Flex, Image, Text } from '@chakra-ui/react'
 import TextField from '../../InputFields/TextField'
+import SafeSelect, { SafeSelectOption } from './SafeSelect'
 
 interface Props {
 	step: number;
 	safeAddress: string;
-	setSafeAddress: (safeAddress: string) => void;
 	isPasted?: boolean;
-	setIsPasted?: (isPasted: boolean) => void;
 	isVerified?: boolean;
-	setIsVerified?: (isVerified: boolean) => void;
 	isLoading?: boolean;
-	setIsLoading?: (isLoading: boolean) => void;
+	safeSelected: SafeSelectOption;
+	onSelectedSafeChange: (e: SafeSelectOption) => void;
+	onChange: ChangeEventHandler<HTMLInputElement>;
 	onContinue: () => void;
 }
 
-function SafeDetails({ step, safeAddress, setSafeAddress, isPasted, setIsPasted, isVerified, setIsVerified, isLoading, setIsLoading, onContinue }: Props) {
+function SafeDetails({ step, safeAddress, isPasted, isVerified, isLoading, safeSelected, onChange, onSelectedSafeChange, onContinue }: Props) {
 	return (
 		<>
 			<Text
@@ -42,11 +42,7 @@ function SafeDetails({ step, safeAddress, setSafeAddress, isPasted, setIsPasted,
 				helperLinkUrl='https://youtube.com'
 				placeholder='0xE6379586E5D8350038E9126c5553c0C77549B6c3'
 				value={safeAddress}
-				onChange={
-					(e) => {
-						setSafeAddress(e.target.value)
-					}
-				}
+				onChange={onChange}
 				isPasted={isPasted}
 				isVerified={isVerified} />
 			{
@@ -70,13 +66,19 @@ function SafeDetails({ step, safeAddress, setSafeAddress, isPasted, setIsPasted,
 			{step === 1 && <Box mt={6} />}
 			{
 				step === 1 && (
-					<Dropdown
+					<SafeSelect
 						label="Safes Found"
 						helperText="Associated with this address on all networks."
 						helperLinkText="Learn about supported networks"
 						helperLinkUrl='https://youtube.com'
-						value={''}
-						onChange={(e) => { }} />
+						value={safeSelected}
+						onChange={
+							(safeSelected: SafeSelectOption | undefined) => {
+								if(safeSelected) {
+									onSelectedSafeChange(safeSelected)
+								}
+							}
+						} />
 				)
 			}
 
@@ -84,6 +86,7 @@ function SafeDetails({ step, safeAddress, setSafeAddress, isPasted, setIsPasted,
 				variant="primaryV2"
 				ml="auto"
 				mt={6}
+				rightIcon={<Image src={`/ui_icons/arrow-right-fill${!isVerified ? '-disabled' : ''}.svg`} />}
 				disabled={!isVerified}
 				onClick={onContinue}>
 				Continue

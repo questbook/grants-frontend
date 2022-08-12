@@ -1,16 +1,18 @@
+import { ReactNode } from 'react'
 import { Box, Text } from '@chakra-ui/react'
 import { PlaceholderProps, Select, SelectComponentsConfig } from 'chakra-react-select'
 import { SelectDropdownArrow } from 'src/v2/assets/custom chakra icons/Arrows/SelectDropdownArrow'
 
 type DropdownSelectProps<T> = {
 	options: T[]
-	placeholder?: string
+	placeholder?: ReactNode
 	makeOption: SelectComponentsConfig<T, any, any>['Option']
+	singleValue?: SelectComponentsConfig<T, any, any>['SingleValue']
 	selected: T | undefined
 	setSelected: (role: T | undefined) => void
 }
 
-export default function DropdownSelect<T>({ options, placeholder, makeOption, selected, setSelected }: DropdownSelectProps<T>) {
+export default function DropdownSelect<T>({ options, placeholder, makeOption, singleValue, selected, setSelected }: DropdownSelectProps<T>) {
 	return (
 		<Select<T>
 			options={options}
@@ -24,7 +26,7 @@ export default function DropdownSelect<T>({ options, placeholder, makeOption, se
 				{
 					Option: makeOption,
 					DropdownIndicator,
-					SingleValue,
+					SingleValue: singleValue ?? SingleValue,
 					Control,
 					// @ts-ignore
 					Placeholder,

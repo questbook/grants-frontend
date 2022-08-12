@@ -3,7 +3,8 @@ import { Box, Flex, HStack, Image, Spacer, Text } from '@chakra-ui/react'
 import { Organization } from 'src/v2/assets/custom chakra icons/Organization'
 import AccountDetails from 'src/v2/components/NavBar/AccountDetails'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
-import { ConfirmData, DomainName, SafeAddress } from 'src/v2/components/Onboarding/CreateDomain'
+import { ConfirmData, DomainName, SafeDetails } from 'src/v2/components/Onboarding/CreateDomain'
+import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 import SuccessfulDomainCreationModal from 'src/v2/components/Onboarding/CreateDomain/SuccessfulDomainCreationModal'
 import QuestbookLogo from 'src/v2/components/QuestbookLogo'
 import VerifySignerModal from 'src/v2/components/VerifySignerModal'
@@ -17,6 +18,7 @@ const OnboardingCreateDomain = () => {
 	const [isSafeAddressPasted, setIsSafeAddressPasted] = useState(false)
 	const [isSafeAddressVerified, setIsSafeAddressVerified] = useState(false)
 	const [isSafesLoading, setIsSafesLoading] = useState(true)
+	const [safeSelected, setSafeSelected] = useState<SafeSelectOption>()
 
 	// State variables for step 2
 	const [domainName, setDomainName] = useState('')
@@ -52,17 +54,18 @@ const OnboardingCreateDomain = () => {
 	}, [domainName])
 
 	const steps = [
-		<SafeAddress
+		<SafeDetails
 			key={0}
 			step={step}
 			safeAddress={safeAddress}
-			setSafeAddress={setSafeAddress}
 			isPasted={isSafeAddressPasted}
-			setIsPasted={setIsSafeAddressPasted}
 			isVerified={isSafeAddressVerified}
-			setIsVerified={setIsSafeAddressVerified}
 			isLoading={isSafesLoading}
-			setIsLoading={setIsSafesLoading}
+			onChange={
+				(e) => {
+					setSafeAddress(e.target.value)
+				}
+			}
 			onContinue={
 				() => {
 					if(step === 0) {
@@ -71,7 +74,9 @@ const OnboardingCreateDomain = () => {
 						setStep(2)
 					}
 				}
-			} />, <DomainName
+			}
+			safeSelected={safeSelected!}
+			onSelectedSafeChange={setSafeSelected} />, <DomainName
 			key={1}
 			domainName={domainName}
 			onChange={
