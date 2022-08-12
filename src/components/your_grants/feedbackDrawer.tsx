@@ -273,7 +273,7 @@ function FeedbackDrawer({
 								variant='primary'
 								onClick={handleOnSubmit}>
 								{
-									!loading ? 'Continue' : (
+									!loading ? 'Confirm' : (
 										<Loader />
 									)
 								}

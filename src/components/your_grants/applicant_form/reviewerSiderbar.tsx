@@ -31,7 +31,6 @@ function ReviewerSidebar({
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 	const { data: accountData } = useAccount()
 	const [feedbackDrawerOpen, setFeedbackDrawerOpen] = React.useState(false)
-	const [feedbacks, setFeedbacks] = React.useState<any[]>([])
 	const [yourReview, setYourReview] = useState<any>()
 	const [reviewSelected, setReviewSelected] = React.useState<any>()
 	const { decryptMessage } = useEncryption()
@@ -130,82 +129,79 @@ function ReviewerSidebar({
 												lineHeight='12px'
 											>
                         Comments:
-												{' '}
 												{feedback.comment}
 											</Text>
 											<Box h={2} />
 										</>
 									)
 								}
-
 							</Flex>
 						</>
 					))
 				}
 			</Flex>
 		)
-	}
-
-	return (
-		<>
-			<Flex
-				bg='white'
-				border='2px solid #D0D3D3'
-				borderRadius={8}
-				w={340}
-				direction='column'
-				alignItems='stretch'
-				px='28px'
-				py='22px'
-				mb={8}
-			>
-				<Flex direction='column'>
-					<Text fontWeight='700'>
-            Assigned to review (you)
-					</Text>
-					<Text
-						mt={2}
-						color='#717A7C'
-						fontSize='12px'>
-            Review the application and provide
-            your comment.
-						{' '}
-					</Text>
-
-					<Button
-						onClick={
-							() => {
-								if(applicationData?.grant.rubric?.items && applicationData?.grant.rubric?.items?.length === 0) {
-									toast({
-										title: 'Evaluation Rubric not present!',
-										description: 'Evaluation Rubric required for review, contact grant administrator!',
-										status: 'warning',
-										isClosable: true,
-									})
-								} else {
-									setFeedbackDrawerOpen(true)
+	} else {
+		return (
+			<>
+				<Flex
+					bg='white'
+					border='2px solid #D0D3D3'
+					borderRadius={8}
+					w={340}
+					direction='column'
+					alignItems='stretch'
+					px='28px'
+					py='22px'
+					mb={8}
+				>
+					<Flex direction='column'>
+						<Text fontWeight='700'>
+              Assigned to review (you)
+						</Text>
+						<Text
+							mt={2}
+							color='#717A7C'
+							fontSize='12px'>
+              Review the application and provide
+              your comment.
+						</Text>
+						<Button
+							onClick={
+								() => {
+									if(applicationData?.grant.rubric?.items && applicationData?.grant.rubric?.items?.length === 0) {
+										toast({
+											title: 'Evaluation Rubric not present!',
+											description: 'Evaluation Rubric required for review, contact grant administrator!',
+											status: 'warning',
+											isClosable: true,
+										})
+									} else {
+										setFeedbackDrawerOpen(true)
+									}
 								}
 							}
-						}
-						mt={6}
-						variant='primary'>
-            Review Application
-					</Button>
+							mt={6}
+							variant='primary'>
+              Review Application
+						</Button>
+					</Flex>
 				</Flex>
-			</Flex>
 
-			<FeedbackDrawer
-				feedbackDrawerOpen={feedbackDrawerOpen}
-				setFeedbackDrawerOpen={setFeedbackDrawerOpen}
-				grantAddress={applicationData!.grant.id}
-				chainId={chainId}
-				workspaceId={applicationData!.grant.workspace.id}
-				rubrics={applicationData!.grant.rubric!.items}
-				applicationId={applicationData!.id}
-				isPrivate={applicationData!.grant.rubric!.isPrivate}
-			/>
-		</>
-	)
+				<FeedbackDrawer
+					feedbackDrawerOpen={feedbackDrawerOpen}
+					setFeedbackDrawerOpen={setFeedbackDrawerOpen}
+					grantAddress={applicationData!.grant.id}
+					chainId={chainId}
+					workspaceId={applicationData!.grant.workspace.id}
+					rubrics={applicationData!.grant.rubric!.items}
+					applicationId={applicationData!.id}
+					isPrivate={applicationData!.grant.rubric!.isPrivate}
+				/>
+			</>
+		)
+	}
+
 }
 
 export default ReviewerSidebar
