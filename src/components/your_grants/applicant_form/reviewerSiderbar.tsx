@@ -200,10 +200,7 @@ function ReviewerSidebar({
 				grantAddress={applicationData!.grant.id}
 				chainId={chainId}
 				workspaceId={applicationData!.grant.workspace.id}
-				feedbacks={feedbacks}
-				setFeedbacks={setFeedbacks}
 				rubrics={applicationData!.grant.rubric!.items}
-				feedbackEditAllowed
 				applicationId={applicationData!.id}
 				isPrivate={applicationData!.grant.rubric!.isPrivate}
 			/>

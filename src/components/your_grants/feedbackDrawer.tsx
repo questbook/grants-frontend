@@ -1,5 +1,4 @@
-import React, { useContext, useEffect } from 'react'
-// import useSetFeedbacks from 'src/hooks/useSetFeedbacks';
+import React, { useContext, useEffect, useState } from 'react'
 import {
 	Box,
 	Button,
@@ -21,17 +20,13 @@ import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useSubmitReview from 'src/hooks/useSubmitReview'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { useAccount } from 'wagmi'
+import NetworkTransactionModal from '../../v2/components/NetworkTransactionModal'
 import MultiLineInput from '../ui/forms/multiLineInput'
 import Loader from '../ui/loader'
 
 function FeedbackDrawer({
 	feedbackDrawerOpen,
 	setFeedbackDrawerOpen,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	feedbacks,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	setFeedbacks,
-	feedbackEditAllowed,
 	rubrics,
 	grantAddress,
 	chainId,
@@ -41,9 +36,6 @@ function FeedbackDrawer({
 }: {
   feedbackDrawerOpen: boolean;
   setFeedbackDrawerOpen: (feedbackDrawerOpen: boolean) => void;
-  feedbacks: any[];
-  setFeedbacks: (feedbacks: any[]) => void;
-  feedbackEditAllowed: boolean;
   grantAddress: string;
   chainId: SupportedChainId | undefined;
   workspaceId: string;
@@ -53,7 +45,7 @@ function FeedbackDrawer({
 }) {
 	const [editedFeedbackData, setEditedFeedbackData] = React.useState<any>()
 	const [feedbackData, setFeedbackData] = React.useState<any[]>()
-	const [isApproved, setIsApproved] = React.useState<boolean>(false)
+	const [currentStep, setCurrentStep] = useState<number>()
 
 	const [pk, setPk] = React.useState<string>('*')
 	const { data: accountData } = useAccount()
@@ -75,7 +67,7 @@ function FeedbackDrawer({
 				rating: feedback.rating,
 				comment: feedback.comment,
 			}))
-			setEditedFeedbackData({ isApproved, items: formattedFeedbackData })
+			setEditedFeedbackData({ items: formattedFeedbackData })
 		}
 
 	}, [transactionData, newPublicKey])
@@ -109,7 +101,6 @@ function FeedbackDrawer({
 				newFeedbackData.push({
 					rating: 0,
 					comment: '',
-					isError: false,
 					rubric,
 				})
 			})
@@ -136,7 +127,7 @@ function FeedbackDrawer({
 			rating: feedback.rating,
 			comment: feedback.comment,
 		}))
-		setEditedFeedbackData({ isApproved, items: formattedFeedbackData })
+		setEditedFeedbackData({ items: formattedFeedbackData })
 	}
 
 	const [
@@ -198,55 +189,6 @@ function FeedbackDrawer({
                 Application Feedback
 							</Text>
 						</Flex>
-						<Text
-							color="#122224"
-							fontWeight="bold"
-							fontSize="16px"
-							lineHeight="20px"
-						>
-              Overall Recommendation
-						</Text>
-						<Flex
-							pt="12px"
-							pb="18px">
-							<Button
-								onClick={() => setIsApproved(true)}
-								variant={!isApproved ? 'outline' : 'solid'}
-								h={12}
-								minW="130px"
-								colorScheme="brandGreen"
-								borderRadius="6px"
-							>
-								<Image
-									h="16px"
-									w="16px"
-									src={!isApproved ? '/ui_icons/like_up_green.svg' : '/ui_icons/like_up.svg'} />
-								<Box mr="6px" />
-								<Text color={!isApproved ? '#39C696' : '#FFFFFF'}>
-For
-								</Text>
-							</Button>
-
-							<Box ml={4} />
-
-							<Button
-								onClick={() => setIsApproved(false)}
-								variant={isApproved ? 'outline' : 'solid'}
-								h={12}
-								minW="130px"
-								colorScheme="brandRed"
-								borderRadius="6px"
-							>
-								<Image
-									h="16px"
-									w="16px"
-									src={isApproved ? '/ui_icons/like_down_red.svg' : '/ui_icons/like_down.svg'} />
-								<Box mr="6px" />
-								<Text color={isApproved ? '#EE7979' : '#FFFFFF'}>
-Against
-								</Text>
-							</Button>
-						</Flex>
 						{
 							feedbackData?.map((feedback, index) => (
 								<>
@@ -284,8 +226,6 @@ Against
 												(r) => {
 													const newFeedbackData = [...feedbackData]
 													newFeedbackData[index].rating = r
-													newFeedbackData[index].isError = false
-													console.log(newFeedbackData)
 													setFeedbackData(newFeedbackData)
 												}
 											}
@@ -303,24 +243,12 @@ Against
 											}
 											<SliderTrack>
 												<Box />
-												<SliderFilledTrack />
+												<SliderFilledTrack color={'#785EF0'} />
 											</SliderTrack>
 											<SliderThumb
-												style={{ border: '2px solid' }} />
+												style={{ border: '2px solid #785EF0' }} />
 										</Slider>
 										<Box h={5} />
-										{
-											feedback.isError ? (
-												<Text
-													fontSize="14px"
-													color="#EE7979"
-													fontWeight="700"
-													lineHeight="20px"
-												>
-                      Rating is Mandatory Field
-												</Text>
-											) : null
-										}
 										<MultiLineInput
 											value={feedback.comment}
 											onChange={
@@ -332,15 +260,12 @@ Against
 											}
 											placeholder="Comments"
 											isError={false}
-											errorText="Star Rating is Mandatory Field"
-											disabled={!feedbackEditAllowed}
 										/>
 									</Flex>
 									<Divider mt={4} />
 								</>
 							))
 						}
-
 						<Box mt={12}>
 							<Button
 								mt="auto"
@@ -358,6 +283,20 @@ Against
 			</Drawer>
 
 			<RenderModal />
+			<NetworkTransactionModal
+				isOpen={currentStep !== undefined}
+				subtitle='Submitting review'
+				description={<></>}
+				currentStepIndex={currentStep || 0}
+				steps={
+					[
+						'Uploading data to IPFS',
+						'Sign transaction',
+						'Waiting for transaction to complete',
+						'Waiting for transaction indexing',
+						'Review pushed on-chain'
+					]
+				} />
 		</>
 	)
 }
