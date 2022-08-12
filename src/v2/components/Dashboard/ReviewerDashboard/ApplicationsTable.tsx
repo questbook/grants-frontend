@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
-import { Box, Button, Center, Flex, Grid, GridItem, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
+import { Box, Button, Center, Flex, Grid, GridItem, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'
 import { ApiClientsContext } from '../../../../../pages/_app'
@@ -18,6 +18,21 @@ import {
 	getSupportedChainIdFromWorkspace,
 } from '../../../../utils/validationUtils'
 import PaginatorView from '../../WorkspaceMembers/PaginatorView'
+
+const STATUS_COLORS: { [key in ApplicationState]?: { 'text': string, 'bg': string } } = {
+	[ApplicationState.Approved]: {
+		'text': '#128994',
+		'bg': '#C3EAE3',
+	},
+	[ApplicationState.Submitted]: {
+		'text': '#0F7ABC',
+		'bg': '#DCF3FF',
+	},
+	[ApplicationState.Rejected]: {
+		'text': '#C60063',
+		'bg': '#FFC6C5',
+	},
+}
 
 type ReviewType = GetReviewerApplicationsForGrantQuery['grantApplications'][0]['reviews'][0]
 
@@ -186,7 +201,17 @@ function ApplicationsTable({
 									{
 										showApplicationState && (
 											<Td>
-												{capitalizeFirstLetter(application.state)}
+												<Flex alignItems={'start'}>
+													<Text
+														fontWeight={'bold'}
+														padding={'5px 10px'}
+														borderRadius={'5px'}
+														color={STATUS_COLORS[application.state]?.text}
+														bg={STATUS_COLORS[application.state]?.bg}
+													>
+														{capitalizeFirstLetter(application.state)}
+													</Text>
+												</Flex>
 											</Td>
 										)
 									}
