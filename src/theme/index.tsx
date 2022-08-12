@@ -88,6 +88,13 @@ const theme = extendTheme({
 			1: '#C8CBFC',
 			2: '#785EF0',
 			3: '#5245C2'
+		},
+		gray: {
+			1: '#FBFBFD',
+			2: '#F0F0F7',
+			3: '#E0E0EC',
+			4: '#D2D2E3',
+			5: '#AFAFCC',
 		}
 	},
 	sizes: {

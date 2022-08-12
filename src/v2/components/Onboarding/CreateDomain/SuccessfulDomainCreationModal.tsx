@@ -1,5 +1,6 @@
 import React from 'react'
-import { AlertDialogOverlay, Image, Modal, ModalBody, ModalContent } from '@chakra-ui/react'
+import { ExternalLinkIcon } from '@chakra-ui/icons'
+import { AlertDialogOverlay, Button, Flex, Image, Modal, ModalBody, ModalContent, Text } from '@chakra-ui/react'
 
 const SuccessfulDomainCreationModal = ({
 	isOpen,
@@ -39,11 +40,61 @@ const SuccessfulDomainCreationModal = ({
 						h="23%" />
 					<Image
 						src="/ui_icons/domain-created-illustration.png"
-						w='50%'
-						h="291px"
+						mt="-5%"
+						w="45%"
 						mx="auto"
-						border="1px solid black" />
-					{/* <Text variant='' ></Text> */}
+					/>
+					<Text
+						mt="-5%"
+						variant='v2_subheading'
+						fontWeight="500"
+						textAlign="center">
+Success! Your DAO is created
+					</Text>
+					<Flex
+						align="center"
+						justify="center"
+						w="100%"
+						mt={2}>
+						<Button
+							rightIcon={
+								<ExternalLinkIcon
+									color="black.1"
+									boxSize="12px" />
+							}
+							variant="link">
+							<Text
+								variant="v2_body"
+								fontWeight="500">
+Polygon DAO
+							</Text>
+						</Button>
+						<Text
+							ml={2}
+							variant="v2_body"
+							color="black.2">
+is now on-chain.
+						</Text>
+					</Flex>
+					<Text
+						mt={12}
+						textAlign="center">
+Next create a grant or bounty to attract builders
+					</Text>
+					<Flex
+						align="center"
+						justify="center"
+						w="100%"
+						my={6}>
+						<Button variant="secondaryV2">
+I’ll do it later
+						</Button>
+						<Button
+							variant="primaryV2"
+							ml={4}>
+Create a grant
+						</Button>
+					</Flex>
 				</ModalBody>
 			</ModalContent>
 
