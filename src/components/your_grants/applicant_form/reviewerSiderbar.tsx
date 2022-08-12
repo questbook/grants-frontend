@@ -128,8 +128,7 @@ function ReviewerSidebar({
 												fontSize='16px'
 												lineHeight='12px'
 											>
-                        Comments:
-												{feedback.comment}
+												{`Comments: ${feedback.comment}`}
 											</Text>
 											<Box h={2} />
 										</>
