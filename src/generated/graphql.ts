@@ -4107,6 +4107,16 @@ export type GetGrantsAppliedToQueryVariables = Exact<{
 
 export type GetGrantsAppliedToQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, grant: { __typename?: 'Grant', id: string } }> };
 
+export type GetGrantsForReviewerInWorkspaceQueryVariables = Exact<{
+  workspaceId: Scalars['String'];
+  reviewerId: Scalars['Bytes'];
+  first?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type GetGrantsForReviewerInWorkspaceQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', grant: { __typename?: 'Grant', id: string, title: string } }> };
+
 export type GetMyApplicationsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
@@ -4134,8 +4144,8 @@ export type GetNumberOfGrantsQueryVariables = Exact<{
 
 export type GetNumberOfGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string }> };
 
-export type GetReviewerApplicationsQueryVariables = Exact<{
-  workspaceId?: InputMaybe<Scalars['String']>;
+export type GetReviewerApplicationsForGrantQueryVariables = Exact<{
+  workspaceId: Scalars['String'];
   reviewerId: Scalars['Bytes'];
   grantId: Scalars['ID'];
   applicationStateIn: Array<ApplicationState> | ApplicationState;
@@ -4144,7 +4154,7 @@ export type GetReviewerApplicationsQueryVariables = Exact<{
 }>;
 
 
-export type GetReviewerApplicationsQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, applicantId: string, milestones: Array<{ __typename?: 'ApplicationMilestone', amount: string }>, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, reviewer?: { __typename?: 'WorkspaceMember', id: string } | null, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, grant: { __typename?: 'Grant', rubric?: { __typename?: 'Rubric', isPrivate: boolean } | null, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork> }, reward: { __typename?: 'Reward', asset: string } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> };
+export type GetReviewerApplicationsForGrantQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, applicantId: string, milestones: Array<{ __typename?: 'ApplicationMilestone', amount: string }>, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, reviewer?: { __typename?: 'WorkspaceMember', id: string } | null, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, grant: { __typename?: 'Grant', id: string, title: string, rubric?: { __typename?: 'Rubric', isPrivate: boolean } | null, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork> }, reward: { __typename?: 'Reward', asset: string } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> };
 
 export type GetWorkspaceDetailsQueryVariables = Exact<{
   workspaceID: Scalars['ID'];
@@ -5747,6 +5757,54 @@ export function useGetGrantsAppliedToLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type GetGrantsAppliedToQueryHookResult = ReturnType<typeof useGetGrantsAppliedToQuery>;
 export type GetGrantsAppliedToLazyQueryHookResult = ReturnType<typeof useGetGrantsAppliedToLazyQuery>;
 export type GetGrantsAppliedToQueryResult = Apollo.QueryResult<GetGrantsAppliedToQuery, GetGrantsAppliedToQueryVariables>;
+export const GetGrantsForReviewerInWorkspaceDocument = gql`
+    query getGrantsForReviewerInWorkspace($workspaceId: String!, $reviewerId: Bytes!, $first: Int, $skip: Int) {
+  grantApplications(
+    where: {grant_: {workspace: $workspaceId}, reviewers_: {actorId_contains: $reviewerId}}
+    first: $first
+    skip: $skip
+    subgraphError: allow
+    orderBy: createdAtS
+    orderDirection: desc
+  ) {
+    grant {
+      id
+      title
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetGrantsForReviewerInWorkspaceQuery__
+ *
+ * To run a query within a React component, call `useGetGrantsForReviewerInWorkspaceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGrantsForReviewerInWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGrantsForReviewerInWorkspaceQuery({
+ *   variables: {
+ *      workspaceId: // value for 'workspaceId'
+ *      reviewerId: // value for 'reviewerId'
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *   },
+ * });
+ */
+export function useGetGrantsForReviewerInWorkspaceQuery(baseOptions: Apollo.QueryHookOptions<GetGrantsForReviewerInWorkspaceQuery, GetGrantsForReviewerInWorkspaceQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetGrantsForReviewerInWorkspaceQuery, GetGrantsForReviewerInWorkspaceQueryVariables>(GetGrantsForReviewerInWorkspaceDocument, options);
+      }
+export function useGetGrantsForReviewerInWorkspaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetGrantsForReviewerInWorkspaceQuery, GetGrantsForReviewerInWorkspaceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetGrantsForReviewerInWorkspaceQuery, GetGrantsForReviewerInWorkspaceQueryVariables>(GetGrantsForReviewerInWorkspaceDocument, options);
+        }
+export type GetGrantsForReviewerInWorkspaceQueryHookResult = ReturnType<typeof useGetGrantsForReviewerInWorkspaceQuery>;
+export type GetGrantsForReviewerInWorkspaceLazyQueryHookResult = ReturnType<typeof useGetGrantsForReviewerInWorkspaceLazyQuery>;
+export type GetGrantsForReviewerInWorkspaceQueryResult = Apollo.QueryResult<GetGrantsForReviewerInWorkspaceQuery, GetGrantsForReviewerInWorkspaceQueryVariables>;
 export const GetMyApplicationsDocument = gql`
     query getMyApplications($first: Int, $skip: Int, $applicantID: Bytes!) {
   grantApplications(
@@ -5887,8 +5945,8 @@ export function useGetNumberOfGrantsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetNumberOfGrantsQueryHookResult = ReturnType<typeof useGetNumberOfGrantsQuery>;
 export type GetNumberOfGrantsLazyQueryHookResult = ReturnType<typeof useGetNumberOfGrantsLazyQuery>;
 export type GetNumberOfGrantsQueryResult = Apollo.QueryResult<GetNumberOfGrantsQuery, GetNumberOfGrantsQueryVariables>;
-export const GetReviewerApplicationsDocument = gql`
-    query getReviewerApplications($workspaceId: String, $reviewerId: Bytes!, $grantId: ID!, $applicationStateIn: [ApplicationState!]!, $first: Int, $skip: Int) {
+export const GetReviewerApplicationsForGrantDocument = gql`
+    query getReviewerApplicationsForGrant($workspaceId: String!, $reviewerId: Bytes!, $grantId: ID!, $applicationStateIn: [ApplicationState!]!, $first: Int, $skip: Int) {
   grantApplications(
     where: {state_in: $applicationStateIn, grant_: {id: $grantId, workspace: $workspaceId}, reviewers_: {actorId_contains: $reviewerId}}
     first: $first
@@ -5919,6 +5977,8 @@ export const GetReviewerApplicationsDocument = gql`
       id
     }
     grant {
+      id
+      title
       rubric {
         isPrivate
       }
@@ -5940,16 +6000,16 @@ export const GetReviewerApplicationsDocument = gql`
     `;
 
 /**
- * __useGetReviewerApplicationsQuery__
+ * __useGetReviewerApplicationsForGrantQuery__
  *
- * To run a query within a React component, call `useGetReviewerApplicationsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetReviewerApplicationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetReviewerApplicationsForGrantQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetReviewerApplicationsForGrantQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetReviewerApplicationsQuery({
+ * const { data, loading, error } = useGetReviewerApplicationsForGrantQuery({
  *   variables: {
  *      workspaceId: // value for 'workspaceId'
  *      reviewerId: // value for 'reviewerId'
@@ -5960,17 +6020,17 @@ export const GetReviewerApplicationsDocument = gql`
  *   },
  * });
  */
-export function useGetReviewerApplicationsQuery(baseOptions: Apollo.QueryHookOptions<GetReviewerApplicationsQuery, GetReviewerApplicationsQueryVariables>) {
+export function useGetReviewerApplicationsForGrantQuery(baseOptions: Apollo.QueryHookOptions<GetReviewerApplicationsForGrantQuery, GetReviewerApplicationsForGrantQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetReviewerApplicationsQuery, GetReviewerApplicationsQueryVariables>(GetReviewerApplicationsDocument, options);
+        return Apollo.useQuery<GetReviewerApplicationsForGrantQuery, GetReviewerApplicationsForGrantQueryVariables>(GetReviewerApplicationsForGrantDocument, options);
       }
-export function useGetReviewerApplicationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetReviewerApplicationsQuery, GetReviewerApplicationsQueryVariables>) {
+export function useGetReviewerApplicationsForGrantLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetReviewerApplicationsForGrantQuery, GetReviewerApplicationsForGrantQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetReviewerApplicationsQuery, GetReviewerApplicationsQueryVariables>(GetReviewerApplicationsDocument, options);
+          return Apollo.useLazyQuery<GetReviewerApplicationsForGrantQuery, GetReviewerApplicationsForGrantQueryVariables>(GetReviewerApplicationsForGrantDocument, options);
         }
-export type GetReviewerApplicationsQueryHookResult = ReturnType<typeof useGetReviewerApplicationsQuery>;
-export type GetReviewerApplicationsLazyQueryHookResult = ReturnType<typeof useGetReviewerApplicationsLazyQuery>;
-export type GetReviewerApplicationsQueryResult = Apollo.QueryResult<GetReviewerApplicationsQuery, GetReviewerApplicationsQueryVariables>;
+export type GetReviewerApplicationsForGrantQueryHookResult = ReturnType<typeof useGetReviewerApplicationsForGrantQuery>;
+export type GetReviewerApplicationsForGrantLazyQueryHookResult = ReturnType<typeof useGetReviewerApplicationsForGrantLazyQuery>;
+export type GetReviewerApplicationsForGrantQueryResult = Apollo.QueryResult<GetReviewerApplicationsForGrantQuery, GetReviewerApplicationsForGrantQueryVariables>;
 export const GetWorkspaceDetailsDocument = gql`
     query getWorkspaceDetails($workspaceID: ID!) {
   workspace(id: $workspaceID, subgraphError: allow) {
