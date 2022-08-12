@@ -11,7 +11,7 @@ export const useNetwork = () => {
 			return CHAIN_INFO[network]
 		}
 
-		return CHAIN_INFO['4']
+		return CHAIN_INFO['5']
 	}, [network])
 
 	return { activeChain: network, network, switchNetwork, data }

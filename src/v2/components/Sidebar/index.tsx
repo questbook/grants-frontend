@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Divider, Flex, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
@@ -11,6 +11,7 @@ import { useAccount, useConnect } from 'wagmi'
 import Domains from './Domains'
 import SidebarItem from './SidebarItem'
 import { TabIndex, useGetTabs } from './Tabs'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 
 function Sidebar() {
 	const [topTabs, bottomTabs] = useGetTabs()
@@ -18,6 +19,7 @@ function Sidebar() {
 	const { isConnected } = useConnect()
 	const { workspace, setWorkspace, subgraphClients, connected } =
     React.useContext(ApiClientsContext)!
+	const { switchNetwork, network} = useNetwork();
 
 	const router = useRouter()
 	const toast = useToast()

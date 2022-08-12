@@ -80,9 +80,10 @@ const OnboardingCreateDao = () => {
 			// 	return
 			// }
 
-			console.log('creating workspace')
+			console.log('creating workspace', accountData!.address)
 			setCurrentStep(1)
 			const uploadedImageHash = (await uploadToIPFS(daoImageFile)).hash
+
 			const {
 				data: { ipfsHash },
 			} = await validatorApi.validateWorkspaceCreate({
@@ -95,6 +96,7 @@ const OnboardingCreateDao = () => {
 					getSupportedValidatorNetworkFromChainId(daoNetwork!.id),
 				],
 			})
+
 			if(!ipfsHash) {
 				throw new Error('Error validating grant data')
 			}

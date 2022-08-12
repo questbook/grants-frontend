@@ -95,7 +95,7 @@
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-goerli-testnet",
 		"rpcUrls": [
-			"https://goerli.infura.io/v3/"
+			"https://eth-goerli.g.alchemy.com/v2/Kafi2TspXAOPnHhfNYvL6avWXhQR-exd"
 		],
 		"nativeCurrency": {
 			"name": "Goerli ETH",

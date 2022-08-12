@@ -49,7 +49,7 @@ export default function useCreateGrant(
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients
 
-	if(!chainId) {
+	if (!chainId) {
 		// eslint-disable-next-line no-param-reassign
 		chainId = getSupportedChainIdFromWorkspace(workspace)
 	}
@@ -62,29 +62,29 @@ export default function useCreateGrant(
 
 	useEffect(() => {
 		console.log('data', data)
-		if(data) {
+		if (data) {
 			setError(undefined)
 			setIncorrectNetwork(false)
 		}
 	}, [data])
 
 	useEffect(() => {
-		if(incorrectNetwork) {
+		if (incorrectNetwork) {
 			setIncorrectNetwork(false)
 		}
 
 	}, [grantContract])
 
 	useEffect(() => {
-		if(incorrectNetwork) {
+		if (incorrectNetwork) {
 			return
 		}
 
-		if(error) {
+		if (error) {
 			return
 		}
 
-		if(loading) {
+		if (loading) {
 			return
 		}
 
@@ -96,7 +96,7 @@ export default function useCreateGrant(
 			try {
 				const detailsHash = (await uploadToIPFS(data.details)).hash
 				let reward
-				if(data.rewardToken.address === '') {
+				if (data.rewardToken.address === '') {
 					console.log('grant data', data)
 					reward = {
 						committed: parseAmount(data.reward, data.rewardCurrencyAddress),
@@ -122,7 +122,7 @@ export default function useCreateGrant(
 					reward,
 					creatorId: accountData?.address!,
 					workspaceId: getSupportedValidatorNetworkFromChainId(
-            (chainId || getSupportedChainIdFromWorkspace(workspace))!,
+						(chainId || getSupportedChainIdFromWorkspace(workspace))!,
 					),
 					fields: data.fields,
 					grantManagers: data.grantManagers.length ? data.grantManagers : [accountData!.address],
@@ -130,29 +130,29 @@ export default function useCreateGrant(
 
 				console.log('ipfsHash', ipfsHash)
 
-				if(!ipfsHash) {
+				if (!ipfsHash) {
 					throw new Error('Error validating grant data')
 				}
 
 				let rubricHash = ''
-				if(data.rubric) {
+				if (data.rubric) {
 					const {
 						data: { ipfsHash: auxRubricHash },
 					} = await validatorApi.validateRubricSet({
 						rubric: data.rubric,
 					})
 
-					if(!auxRubricHash) {
+					if (!auxRubricHash) {
 						throw new Error('Error validating rubric data')
 					}
 
 					rubricHash = auxRubricHash
 				}
 
-				console.log('rubricHash', rubricHash)
+				console.log("rubric hash", GRANT_FACTORY_ADDRESS[currentChainId], grantContract.address, WORKSPACE_REGISTRY_ADDRESS[currentChainId], APPLICATION_REGISTRY_ADDRESS[currentChainId]);
 
 				console.log('WHAT IS THIS', biconomyWalletClient, scwAddress)
-				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+				if (!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
 					throw new Error('Zero wallet is not ready')
 				}
 
@@ -162,7 +162,7 @@ export default function useCreateGrant(
 				console.log('ENTERING')
 
 				const methodArgs = [
-					workspaceId ?? Number(workspace?.id).toString(),
+					workspaceId || Number(workspace?.id).toString(),
 					ipfsHash,
 					rubricHash,
 					WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
@@ -171,9 +171,19 @@ export default function useCreateGrant(
 
 				console.log('THESE ARE METHODS', methodArgs)
 
-				const transactionHash = await sendGaslessTransaction(biconomy, grantContract, 'createGrant', methodArgs,
-					GRANT_FACTORY_ADDRESS[currentChainId!], biconomyWalletClient,
-					scwAddress, webwallet, `${currentChainId}`, webHookId, nonce)
+				const transactionHash = await sendGaslessTransaction(
+					biconomy,
+					grantContract,
+					'createGrant',
+					methodArgs,
+					grantContract.address,
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					webHookId,
+					nonce
+				)
 
 				console.log(transactionHash)
 				const receipt = await getTransactionReceipt(transactionHash, currentChainId.toString())
@@ -186,13 +196,13 @@ export default function useCreateGrant(
 				const CACHE_KEY = strings.cache.create_grant
 				const cacheKey = `${chainId || getSupportedChainIdFromWorkspace(workspace)}-${CACHE_KEY}-${workspace?.id}`
 				console.log('Deleting key: ', cacheKey)
-				if(typeof window !== 'undefined') {
+				if (typeof window !== 'undefined') {
 					localStorage.removeItem(cacheKey)
 				}
 
 				setTransactionData(createGrantTransactionData)
 				setLoading(false)
-			} catch(e: any) {
+			} catch (e: any) {
 				const message = getErrorMessage(e)
 				setError(message)
 				setLoading(false)
@@ -201,7 +211,7 @@ export default function useCreateGrant(
 					render: () => ErrorToast({
 						content: message,
 						close: () => {
-							if(toastRef.current) {
+							if (toastRef.current) {
 								toast.close(toastRef.current)
 							}
 						},
@@ -212,32 +222,32 @@ export default function useCreateGrant(
 
 		try {
 			console.log('O')
-			if(!data) {
+			if (!data) {
 				return
 			}
 
 			console.log('OO')
 
-			if(transactionData) {
+			if (transactionData) {
 				return
 			}
 
 			console.log('OOO')
 
-			if(!accountData || !accountData.address) {
+			if (!accountData || !accountData.address) {
 				throw new Error('not connected to wallet')
 			}
 
 			console.log('OOOO')
 
-			if(!workspace) {
+			if (!workspace) {
 				throw new Error('not connected to workspace')
 			}
 
 			console.log('OOOOO')
 
-			if(!currentChainId) {
-				if(switchNetwork && chainId) {
+			if (!currentChainId) {
+				if (switchNetwork && chainId) {
 					console.log(' (CREATE GRANT HOOK) Switch Network (!currentChainId): ', workspace, chainId)
 					switchNetwork(chainId)
 				}
@@ -247,8 +257,8 @@ export default function useCreateGrant(
 				return
 			}
 
-			if(chainId !== currentChainId) {
-				if(switchNetwork && chainId) {
+			if (chainId !== currentChainId) {
+				if (switchNetwork && chainId) {
 					console.log(' (CREATE GRANT HOOK) Switch Network: (chainId !== currentChainId)', workspace, chainId)
 					switchNetwork(chainId)
 				}
@@ -258,11 +268,11 @@ export default function useCreateGrant(
 				return
 			}
 
-			if(!validatorApi) {
+			if (!validatorApi) {
 				throw new Error('validatorApi or workspaceId is not defined')
 			}
 
-			if(
+			if (
 				!grantContract
 				|| grantContract.address
 				=== '0x0000000000000000000000000000000000000000'
@@ -273,7 +283,7 @@ export default function useCreateGrant(
 			}
 
 			validate()
-		} catch(e: any) {
+		} catch (e: any) {
 			const message = getErrorMessage(e)
 			setError(message)
 			setLoading(false)
@@ -282,7 +292,7 @@ export default function useCreateGrant(
 				render: () => ErrorToast({
 					content: message,
 					close: () => {
-						if(toastRef.current) {
+						if (toastRef.current) {
 							toast.close(toastRef.current)
 						}
 					},
