@@ -4137,13 +4137,14 @@ export type GetNumberOfGrantsQuery = { __typename?: 'Query', grants: Array<{ __t
 export type GetReviewerApplicationsQueryVariables = Exact<{
   workspaceId?: InputMaybe<Scalars['String']>;
   reviewerId: Scalars['Bytes'];
+  grantId: Scalars['ID'];
   applicationStateIn: Array<ApplicationState> | ApplicationState;
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type GetReviewerApplicationsQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, applicantId: string, grant: { __typename?: 'Grant', workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork> }, reward: { __typename?: 'Reward', asset: string } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> };
+export type GetReviewerApplicationsQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, applicantId: string, milestones: Array<{ __typename?: 'ApplicationMilestone', amount: string }>, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, reviewer?: { __typename?: 'WorkspaceMember', id: string } | null, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, grant: { __typename?: 'Grant', rubric?: { __typename?: 'Rubric', isPrivate: boolean } | null, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork> }, reward: { __typename?: 'Reward', asset: string } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> };
 
 export type GetWorkspaceDetailsQueryVariables = Exact<{
   workspaceID: Scalars['ID'];
@@ -5887,9 +5888,9 @@ export type GetNumberOfGrantsQueryHookResult = ReturnType<typeof useGetNumberOfG
 export type GetNumberOfGrantsLazyQueryHookResult = ReturnType<typeof useGetNumberOfGrantsLazyQuery>;
 export type GetNumberOfGrantsQueryResult = Apollo.QueryResult<GetNumberOfGrantsQuery, GetNumberOfGrantsQueryVariables>;
 export const GetReviewerApplicationsDocument = gql`
-    query getReviewerApplications($workspaceId: String, $reviewerId: Bytes!, $applicationStateIn: [ApplicationState!]!, $first: Int, $skip: Int) {
+    query getReviewerApplications($workspaceId: String, $reviewerId: Bytes!, $grantId: ID!, $applicationStateIn: [ApplicationState!]!, $first: Int, $skip: Int) {
   grantApplications(
-    where: {state_in: $applicationStateIn, grant_: {workspace: $workspaceId}, reviewers_: {actorId_contains: $reviewerId}}
+    where: {state_in: $applicationStateIn, grant_: {id: $grantId, workspace: $workspaceId}, reviewers_: {actorId_contains: $reviewerId}}
     first: $first
     skip: $skip
     subgraphError: allow
@@ -5900,7 +5901,27 @@ export const GetReviewerApplicationsDocument = gql`
     state
     createdAtS
     applicantId
+    milestones {
+      amount
+    }
+    reviews {
+      reviewer {
+        id
+      }
+      data {
+        id
+        manager {
+          id
+        }
+        data
+      }
+      publicReviewDataHash
+      id
+    }
     grant {
+      rubric {
+        isPrivate
+      }
       workspace {
         supportedNetworks
       }
@@ -5932,6 +5953,7 @@ export const GetReviewerApplicationsDocument = gql`
  *   variables: {
  *      workspaceId: // value for 'workspaceId'
  *      reviewerId: // value for 'reviewerId'
+ *      grantId: // value for 'grantId'
  *      applicationStateIn: // value for 'applicationStateIn'
  *      first: // value for 'first'
  *      skip: // value for 'skip'
