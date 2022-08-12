@@ -36,6 +36,8 @@ import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
+import Loader from '../../src/components/ui/loader'
+import ReviewerDashboard from '../../src/v2/components/Dashboard/ReviewerDashboard'
 
 const PAGE_SIZE = 5
 
@@ -363,6 +365,31 @@ function YourGrants() {
 		// eslint-disable-next-line consistent-return
 		return () => parentElement.removeEventListener('scroll', handleScroll)
 	}, [handleScroll])
+
+	if(isReviewer === undefined) {
+		return <Loader />
+	}
+
+	if(isReviewer) {
+		return (
+			<Flex
+				w='100%'
+				h='100vh'
+				bg={'#F5F5FA'}
+				padding={'40px'}
+				direction={'column'}
+			>
+				<Text
+					fontWeight={'700'}
+					fontSize={'30px'}
+					lineHeight={'44px'}
+					letterSpacing={-1}>
+				Grants & Bounties
+				</Text>
+				<ReviewerDashboard />
+			</Flex>
+		)
+	}
 
 	return (
 		<>
