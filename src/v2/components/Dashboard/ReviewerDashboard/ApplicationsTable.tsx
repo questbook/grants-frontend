@@ -81,17 +81,31 @@ function ApplicationsTable({
 		setHasMoreData(data!.grantApplications.length >= PAGE_SIZE)
 
 		const fetchedApplications: Application[] = data!.grantApplications.map((application) => {
+			const decimals = CHAIN_INFO[
+				getSupportedChainIdFromSupportedNetwork(
+					application.grant.workspace.supportedNetworks[0],
+				)
+			]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
+				?.decimals || 18
+
 			const getFieldString = (name: string) => application.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
 
-			const rewardAmount = getFieldString('fundingAsk') ? formatAmount(
-        getFieldString('fundingAsk')!,
-        CHAIN_INFO[
-        	getSupportedChainIdFromSupportedNetwork(
-        		application.grant.workspace.supportedNetworks[0],
-        	)
-        ]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
-        	?.decimals || 18,
-			) : '1'
+			let rewardAmount: number
+
+			const fundingAskField = getFieldString('fundingAsk')
+			if(fundingAskField) {
+				rewardAmount = +formatAmount(
+          getFieldString('fundingAsk')!,
+          decimals,
+				)
+			} else {
+				rewardAmount = 0
+				application.milestones.forEach(
+					(milestone) => rewardAmount += +formatAmount(
+						milestone.amount,
+						decimals,
+					))
+			}
 
 			const tokenLabel = getAssetInfo(
 				application?.grant?.reward?.asset?.toLowerCase(),
@@ -183,7 +197,7 @@ function ApplicationsTable({
 										showReviewButton && (
 											<Td>
 												<Button
-													variant={'inviteLink'}
+													variant={'solid'}
 													onClick={
 														() => {
 															router.push(`/your_grants/view_applicants/applicant_form?applicationId=${application.id}`)
