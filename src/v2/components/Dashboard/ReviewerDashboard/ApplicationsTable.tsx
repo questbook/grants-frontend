@@ -19,7 +19,7 @@ import {
 } from '../../../../utils/validationUtils'
 import PaginatorView from '../../WorkspaceMembers/PaginatorView'
 
-type ReviewType = GetReviewerApplicationsQuery['grantApplications'][0]['reviews'][0]
+type ReviewType = GetReviewerApplicationsForGrantQuery['grantApplications'][0]['reviews'][0]
 
 const PAGE_SIZE = 5
 
