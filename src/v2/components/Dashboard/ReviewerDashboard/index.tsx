@@ -44,7 +44,6 @@ function ReviewerDashboard() {
 			<ApplicationsTable
 				reviewerId={accountData!.address!}
 				showApplicationState={!showPendingReviews}
-				showReviewButton={showPendingReviews}
 				applicationStateIn={showPendingReviews ? [ApplicationState.Submitted] : reviewDoneStates}
 			/>
 		</Flex>

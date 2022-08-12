@@ -47,7 +47,6 @@ type Application = {
 type Props = {
   reviewerId: string,
   showApplicationState: boolean,
-  showReviewButton: boolean,
   applicationStateIn: ApplicationState[],
 }
 
@@ -56,7 +55,6 @@ function ApplicationsTable({
 	reviewerId,
 	applicationStateIn,
 	showApplicationState,
-	showReviewButton,
 }: Props) {
 	const [page, setPage] = useState(0)
 	const [hasMoreData, setHasMoreData] = useState(true)
