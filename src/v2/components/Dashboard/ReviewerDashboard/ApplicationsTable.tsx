@@ -27,12 +27,16 @@ import {
 } from '../../../../utils/validationUtils'
 import PaginatorView from '../../WorkspaceMembers/PaginatorView'
 
+type ReviewType = GetReviewerApplicationsQuery['grantApplications'][0]['reviews'][0]
+
 const PAGE_SIZE = 5
 
 type Application = {
   id: string,
   submittedOn: number,
+  grantRubricIsPrivate: boolean | undefined,
   state: ApplicationState,
+  reviews: ReviewType[],
   projectName: string,
   reward: string,
   applicantId: string,
@@ -115,6 +119,8 @@ function ApplicationsTable({
 			return {
 				id: application.id,
 				submittedOn: application.createdAtS,
+				reviews: application.reviews,
+				grantRubricIsPrivate: application.grant.rubric?.isPrivate,
 				reward: `${rewardAmount} ${tokenLabel}`,
 				state: application.state,
 				applicantId: application.applicantId,
@@ -133,11 +139,9 @@ function ApplicationsTable({
 		TABLE_HEADERS.push('Status')
 	}
 
-	if(showReviewButton && !TABLE_HEADERS.includes('Review')) {
+	if(!TABLE_HEADERS.includes('Review')) {
 		TABLE_HEADERS.push('Review')
 	}
-
-	const router = useRouter()
 
 	return (
 		<>
@@ -193,21 +197,7 @@ function ApplicationsTable({
 											</Td>
 										)
 									}
-									{
-										showReviewButton && (
-											<Td>
-												<Button
-													variant={'solid'}
-													onClick={
-														() => {
-															router.push(`/your_grants/view_applicants/applicant_form?applicationId=${application.id}`)
-														}
-													}>
-                          Review
-												</Button>
-											</Td>
-										)
-									}
+									<ReviewTableData application={application} />
 								</Tr>
 							))
 						}
@@ -236,6 +226,68 @@ function ApplicationsTable({
 			</Flex>
 		</>
 	)
+}
+
+const ReviewTableData = ({ application }: { application: Application }) => {
+	const [reviewSum, setReviewSum] = useState<number>()
+
+	const { decryptMessage } = useEncryption()
+	const { data: accountData } = useAccount()
+	const router = useRouter()
+
+	const loadReview = async() => {
+		const review = application.reviews.find((r) => (
+			r.reviewer?.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
+		))
+
+		if(!review) {
+			return
+		}
+
+		let data: { items: { feedback: { rating: number } }[] }
+		if(application.grantRubricIsPrivate) {
+			const reviewData = review?.data.find((d: any) => (
+				d.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
+			))
+			const ipfsData = await getFromIPFS(reviewData!.data)
+
+			data = JSON.parse(await decryptMessage(ipfsData) || '{}')
+		} else {
+			const ipfsData = await getFromIPFS(review!.publicReviewDataHash!)
+			data = JSON.parse(ipfsData || '{}')
+		}
+
+		let reviewSum = 0
+		data?.items.forEach((feedback: any) => reviewSum += feedback.rating)
+
+		setReviewSum(reviewSum)
+	}
+
+	useEffect(() => {
+		loadReview()
+	}, [])
+
+	if(application.state === ApplicationState.Submitted) {
+		return (
+			<Td>
+				<Button
+					variant={'solid'}
+					onClick={
+						() => {
+							router.push(`/your_grants/view_applicants/applicant_form?applicationId=${application.id}`)
+						}
+					}>
+          Review
+				</Button>
+			</Td>
+		)
+	} else {
+		return (
+			<Td>
+				{reviewSum}
+			</Td>
+		)
+	}
 }
 
 
