@@ -137,6 +137,7 @@ function FeedbackDrawer({
 		loading,
 	] = useSubmitReview(
 		editedFeedbackData,
+		setCurrentStep,
 		isPrivate,
 		chainId,
 		workspaceId,

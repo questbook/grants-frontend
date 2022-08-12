@@ -16,6 +16,7 @@ import useChainId from './utils/useChainId'
 
 export default function useSubmitReview(
 	data: any,
+	setCurrentStep: (step?: number) => void,
 	isPrivate: boolean,
 	chainId?: SupportedChainId,
 	workspaceId?: string,
@@ -74,6 +75,8 @@ export default function useSubmitReview(
 
 		async function validate() {
 			setLoading(true)
+			setCurrentStep(0)
+
 			// console.log('calling validate');
 			try {
 				// console.log(workspaceId || Number(workspace?.id).toString());
@@ -108,6 +111,7 @@ export default function useSubmitReview(
 
 				const dataHash = (await uploadToIPFS(JSON.stringify(data))).hash
 
+
 				const {
 					data: { ipfsHash },
 				} = await validatorApi.validateReviewSet({
@@ -122,17 +126,22 @@ export default function useSubmitReview(
 					throw new Error('Error validating review data')
 				}
 
+				setCurrentStep(1)
+
 				const createGrantTransaction = await applicationReviewContract.submitReview(
 					workspaceId || Number(workspace?.id).toString(),
-					applicationId!,
-					grantAddress!,
-					ipfsHash,
+          applicationId!,
+          grantAddress!,
+          ipfsHash,
 				)
+				setCurrentStep(2)
 				const createGrantTransactionData = await createGrantTransaction.wait()
 
 				setTransactionData(createGrantTransactionData)
+				setCurrentStep(5)
 				setLoading(false)
 			} catch(e: any) {
+				setCurrentStep(undefined)
 				const message = getErrorMessage(e)
 				setError(message)
 				setLoading(false)
@@ -202,7 +211,7 @@ export default function useSubmitReview(
 			if(
 				!applicationReviewContract
         || applicationReviewContract.address
-          === '0x0000000000000000000000000000000000000000'
+        === '0x0000000000000000000000000000000000000000'
         || !applicationReviewContract.signer
         || !applicationReviewContract.provider
 			) {
