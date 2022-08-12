@@ -100,7 +100,7 @@ export default {
 			primaryV2: {
 				bg: '#1F1F33',
 				color: '#ffffff',
-				lineHeight: '1.25rem',
+				lineHeighth: '1.25rem',
 				'&:hover': {
 					bg: '#3F3F53',
 				},

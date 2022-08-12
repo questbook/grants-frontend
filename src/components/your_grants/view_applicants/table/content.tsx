@@ -376,14 +376,14 @@ REVIEWERS
 											overflowY="scroll"
 											scrollBehavior="smooth">
 											{
-												item.reviewers.map((reviewer: { email: string }) => (
+												item.reviewers.map((reviewer: { member: { email: string } }) => (
 													<Flex
-														key={reviewer.email}
+														key={reviewer.member?.email}
 														direction="column">
 														<Text
 															mt="2"
 														>
-															{reviewer.email}
+															{reviewer.member?.email}
 														</Text>
 													</Flex>
 												))

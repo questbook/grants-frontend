@@ -150,6 +150,23 @@ a {
   border-color: #8850EA;
 }
 
+.barhover {
+  background: white;
+  padding: 4px 8px;
+  font-size: 12px;
+  color: #717A7C;
+  line-height: 16px;
+  filter: drop-shadow(0px 4px 5px rgba(87, 122, 147, 0.06)) drop-shadow(0px 4px 32px rgba(0, 0, 0, 0.07)) drop-shadow(1px 9px 16px rgba(121, 132, 134, 0.06)) drop-shadow(0px 1px 6px rgba(108, 134, 164, 0.1));
+}
+
+.apexcharts-xcrosshairs.apexcharts-active {
+  opacity: 0 !important;
+}
+
+.apexcharts-xaxistooltip.apexcharts-active {
+  opacity: 0 !important;
+}
+
 @media only screen and (max-width: 600px) {
   .css-18zpb5w, .css-36fyah, .css-txogrl, .css-14csuak, .css-1oioic1, .css-ey1yde, .css-1hubv9n {
     display: none !important;

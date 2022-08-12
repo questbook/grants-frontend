@@ -9,7 +9,6 @@ const RoleDataDisplay = ({ role }: { role: number }) => {
 			align='start'
 			spacing='3'>
 			<Text
-				fontWeight='bold'
 				fontSize='sm'>
 				As
 				{' '}

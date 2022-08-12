@@ -35,9 +35,11 @@ query getApplicantsForAGrant($first: Int, $skip: Int, $grantID: String!) {
         value
       }
     },
-    reviewers {
-      email
-      id
+    applicationReviewers {      
+      id,
+      member {
+        email
+      }
     },
    milestones {
         id,
