@@ -1,17 +1,17 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Divider, Flex, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { useGetWorkspaceMembersLazyQuery } from 'src/generated/graphql'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { MinimalWorkspace } from 'src/types'
 import getTabFromPath from 'src/utils/tabUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount, useConnect } from 'wagmi'
+import { useConnect } from 'wagmi'
 import Domains from './Domains'
 import SidebarItem from './SidebarItem'
 import { TabIndex, useGetTabs } from './Tabs'
-import { useNetwork } from 'src/hooks/gasless/useNetwork'
 
 function Sidebar() {
 	const [topTabs, bottomTabs] = useGetTabs()
@@ -19,7 +19,7 @@ function Sidebar() {
 	const { isConnected } = useConnect()
 	const { workspace, setWorkspace, subgraphClients, connected } =
     React.useContext(ApiClientsContext)!
-	const { switchNetwork, network} = useNetwork();
+	const { switchNetwork, network } = useNetwork()
 
 	const router = useRouter()
 	const toast = useToast()

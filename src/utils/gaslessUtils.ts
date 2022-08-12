@@ -113,7 +113,7 @@ export const addDapp = async(dappName: string, networkId: string, authToken: str
 }
 
 export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: BiconomyWalletClient) => {
-	console.log("I'm here")
+	console.log("I'm here", biconomyWalletClient)
 	var { doesWalletExist, walletAddress } = await biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address })
 	console.log("I'm not here")
 	let scwAddress

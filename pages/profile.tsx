@@ -30,6 +30,7 @@ import SeeMore from 'src/components/profile/see_more'
 import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { useGetDaoDetailsQuery, useGetFundsAndProfileDataQuery } from 'src/generated/graphql'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 // APP LAYOUT & STATE
 import NavbarLayout from 'src/layout/navbarLayout'
@@ -57,6 +58,7 @@ function Profile() {
 	const [grantWinners, setGrantWinners] = React.useState<any>([])
 	const [fundingTime, setFundingTime] = React.useState<any>([])
 	const [applicationTime, setApplicationTime] = React.useState<any>([])
+	const { network, switchNetwork } = useNetwork()
 
 	//Tab section
 	const tabs = ['Browse Grants', 'About']
@@ -70,8 +72,9 @@ function Profile() {
 			const { chainId: cId, daoId: dId } = router.query
 			setChainId((cId as unknown) as SupportedChainId)
 			setDaoId(dId?.toString())
+			switchNetwork((cId as unknown) as SupportedChainId)
 		}
-	}, [router])
+	}, [router, network])
 
 	const [queryParams, setQueryParams] = useState<any>({
 		client: subgraphClients[chainID || defaultChainId].client,

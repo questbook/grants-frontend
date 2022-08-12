@@ -3,7 +3,6 @@ import { Flex, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import ConnectWalletModal from 'src/v2/components/ConnectWalletModal'
 import NavBar from 'src/v2/components/NavBar'
 import Sidebar from 'src/v2/components/Sidebar'
 import { useConnect, useNetwork } from 'wagmi'
@@ -91,11 +90,11 @@ function NavbarLayout({ children, renderGetStarted, renderTabs, renderSidebar }:
 				{/* <Sidebar /> */}
 				{children}
 			</Flex>
-			<ConnectWalletModal
+			{/* <ConnectWalletModal
 				isOpen={connectWalletModalIsOpen}
 				onClose={() => setConnectWalletModalIsOpen(false)}
 				redirect={() => router.push({ pathname: '/onboarding' })}
-			/>
+			/> */}
 		</>
 	)
 }

@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Box, Button, Divider, Flex, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { MinimalWorkspace } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import getRole from 'src/utils/memberUtils'
-import { useAccount } from 'wagmi'
+import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 
 interface Props {
   workspaces: MinimalWorkspace[];
@@ -14,10 +16,24 @@ interface Props {
 
 function Domains({ workspaces, onWorkspaceClick }: Props) {
 	const { workspace } = React.useContext(ApiClientsContext)!
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const [expanded, setExpanded] = React.useState(false)
+	const { network, switchNetwork } = useNetwork()
 
 	const router = useRouter()
+
+	useEffect(() => {
+		if(!workspace) {
+			return
+		}
+
+		const currentChainId = getSupportedChainIdFromSupportedNetwork(workspace.supportedNetworks[0])
+
+		if(network !== currentChainId) {
+			switchNetwork(currentChainId)
+		}
+
+	}, [network, workspace])
 
 	return (
 		<Flex
