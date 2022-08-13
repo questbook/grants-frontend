@@ -1,37 +1,38 @@
-import { Box, Button, CircularProgress, Flex, Text } from '@chakra-ui/react'
+import { ChangeEventHandler } from 'react'
+import { Box, Button, CircularProgress, Flex, Image, Text } from '@chakra-ui/react'
 import TextField from '../../InputFields/TextField'
+import SafeSelect, { SafeSelectOption } from './SafeSelect'
 
 interface Props {
-    step: number;
-    safeAddress: string;
-    setSafeAddress: (safeAddress: string) => void;
-    isPasted?: boolean;
-    setIsPasted?: (isPasted: boolean) => void;
-    isVerified?: boolean;
-    setIsVerified?: (isVerified: boolean) => void;
-    isLoading?: boolean;
-    setIsLoading?: (isLoading: boolean) => void;
-    onContinue: () => void;
+	step: number;
+	safeAddress: string;
+	isPasted?: boolean;
+	isVerified?: boolean;
+	isLoading?: boolean;
+	safeSelected: SafeSelectOption;
+	onSelectedSafeChange: (e: SafeSelectOption) => void;
+	onChange: ChangeEventHandler<HTMLInputElement>;
+	onContinue: () => void;
 }
 
-function SafeDetails({ step, safeAddress, setSafeAddress, isPasted, setIsPasted, isVerified, setIsVerified, isLoading, setIsLoading, onContinue }: Props) {
+function SafeDetails({ step, safeAddress, isPasted, isVerified, isLoading, safeSelected, onChange, onSelectedSafeChange, onContinue }: Props) {
 	return (
 		<>
 			<Text
 				variant="v2_body"
 				color="black.3">
-            Let’s begin the adventure.
+				Let’s begin the adventure.
 			</Text>
 			<Text
 				variant="v2_heading_3"
 				fontWeight="500">
-            Create a domain
+				Create a domain
 			</Text>
 			<Text
 				variant="v2_body"
 				fontWeight="500"
 				mt={6}>
-            To create a domain, you need a safe.
+				To create a domain, you need a safe.
 			</Text>
 			<Box mb="auto" />
 			<TextField
@@ -41,15 +42,9 @@ function SafeDetails({ step, safeAddress, setSafeAddress, isPasted, setIsPasted,
 				helperLinkUrl='https://youtube.com'
 				placeholder='0xE6379586E5D8350038E9126c5553c0C77549B6c3'
 				value={safeAddress}
-				onChange={
-					(e) => {
-						setSafeAddress(e.target.value)
-					}
-				}
+				onChange={onChange}
 				isPasted={isPasted}
-				setIsPasted={setIsPasted}
-				isVerified={isVerified}
-				setIsVerified={setIsVerified} />
+				isVerified={isVerified} />
 			{
 				isLoading && (
 					<Flex
@@ -63,20 +58,38 @@ function SafeDetails({ step, safeAddress, setSafeAddress, isPasted, setIsPasted,
 							ml={2}
 							variant="v2_metadata"
 							color="black.3">
-								Looking up safes with this address on different networks...
+							Looking up safes with this address on different networks...
 						</Text>
 					</Flex>
 				)
 			}
-
+			{step === 1 && <Box mt={6} />}
+			{
+				step === 1 && (
+					<SafeSelect
+						label="Safes Found"
+						helperText="Associated with this address on all networks."
+						helperLinkText="Learn about supported networks"
+						helperLinkUrl='https://youtube.com'
+						value={safeSelected}
+						onChange={
+							(safeSelected: SafeSelectOption | undefined) => {
+								if(safeSelected) {
+									onSelectedSafeChange(safeSelected)
+								}
+							}
+						} />
+				)
+			}
 
 			<Button
 				variant="primaryV2"
 				ml="auto"
 				mt={6}
+				rightIcon={<Image src={`/ui_icons/arrow-right-fill${!isVerified ? '-disabled' : ''}.svg`} />}
 				disabled={!isVerified}
 				onClick={onContinue}>
-            Continue
+				Continue
 			</Button>
 		</>
 	)

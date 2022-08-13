@@ -55,6 +55,9 @@ const theme = extendTheme({
 		brandText: '#4E4E6B',
 		brandSubtext: '#7D7DA0',
 		blue: {
+			1: '#D1D7F4',
+			2: '#036AFF',
+			3: '#1850A5',
 			100: '#AFAFCC',
 			500: '#2B67F6',
 		},
@@ -85,6 +88,13 @@ const theme = extendTheme({
 			1: '#C8CBFC',
 			2: '#785EF0',
 			3: '#5245C2'
+		},
+		gray: {
+			1: '#FBFBFD',
+			2: '#F0F0F7',
+			3: '#E0E0EC',
+			4: '#D2D2E3',
+			5: '#AFAFCC',
 		}
 	},
 	sizes: {
