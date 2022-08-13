@@ -7,6 +7,7 @@ import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import { ConfirmData, DomainName, SafeAddress } from 'src/v2/components/Onboarding/CreateDomain'
 import QuestbookLogo from 'src/v2/components/QuestbookLogo'
 import VerifySignerModal from 'src/v2/components/VerifySignerModal'
+import useSafeOwners from 'src/hooks/useSafeOwners'
 
 const OnboardingCreateDomain = () => {
 	const [step, setStep] = useState(0)
