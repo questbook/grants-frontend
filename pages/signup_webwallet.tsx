@@ -5,9 +5,6 @@ import {
 	Flex } from '@chakra-ui/react'
 import NavbarLayout from '../src/layout/navbarLayout'
 import { BiconomyContext, WebwalletContext } from './_app'
-import { ethers } from 'ethers'
-import GrantAbi from 'src/contracts/abi/GrantAbi.json'
-import { jsonRpcProviders } from 'src/utils/gaslessUtils'
 
 
 function SignupWebwallet() {
@@ -22,7 +19,7 @@ function SignupWebwallet() {
 
 	const handleSendGaslessTransaction = async(e: any) => {
 		e.preventDefault()
-		
+
 	}
 
 	return (

@@ -167,10 +167,10 @@ export default function useEditGrant(
 				)
 
 				await getTransactionReceipt(rubricTxn, currentChainId.toString())
-					
 
-				console.log("YYTTE", ipfsHash);
-				
+
+				console.log('YYTTE', ipfsHash)
+
 				const createGrantTransaction = await sendGaslessTransaction(
 					biconomy,
 					grantContract,
