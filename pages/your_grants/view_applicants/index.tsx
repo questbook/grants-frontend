@@ -515,6 +515,7 @@ function ViewApplicants() {
 						}
 
 						<ApplicantsTable
+							grantID={grantID}
 							isReviewer={isReviewer}
 							isEvaluationSet={isRubricSet}
 							data={applicantsData}

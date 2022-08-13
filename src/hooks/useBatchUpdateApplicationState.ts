@@ -13,8 +13,8 @@ import useChainId from './utils/useChainId'
 
 export default function useBatchUpdateApplicationState(
 	data:string,
-	applicationIds: Number[] | undefined,
-	state: number | undefined,
+	applicationIds: number[],
+	state: number,
 	submitClicked: boolean,
 	setSubmitClicked: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
@@ -41,12 +41,6 @@ export default function useBatchUpdateApplicationState(
 		}
 	}, [state])
 
-	useEffect(() => {
-		if(submitClicked) {
-			setIncorrectNetwork(false)
-			setSubmitClicked(false)
-		}
-	}, [setSubmitClicked, submitClicked])
 
 	useEffect(() => {
 		if(incorrectNetwork) {
@@ -68,30 +62,39 @@ export default function useBatchUpdateApplicationState(
 			return
 		}
 
+
+		if(!submitClicked) {
+			return
+		}
+
+		// if(submitClicked) {
+		// 	setIncorrectNetwork(false)
+		// 	setSubmitClicked(false)
+		// }
+
 		async function validate() {
 			setLoading(true)
 			// console.log('calling validate');
-			console.log('DATA: ', data)
+			// console.log('DATA: ', data)
 			try {
-				const {
-					data: { ipfsHash },
-				} = await validatorApi.validateGrantApplicationUpdate({
-					feedback: data.length === 0 ? '  ' : data,
-				})
-				if(!ipfsHash) {
-					throw new Error('Error validating grant data')
-				}
-
+				// const {
+				// 	data: { ipfsHash },
+				// } = await validatorApi.validateGrantApplicationUpdate({
+				// 	feedback: data.length === 0 ? '  ' : data,
+				// })
+				// if(!ipfsHash) {
+				// 	throw new Error('Error validating grant data')
+				// }
 				const updateTxn = await applicationContract.batchUpdateApplicationState(
 					applicationIds,
+					Array(applicationIds.length).fill(state),
 					Number(workspace!.id),
-					state!,
-					ipfsHash,
 				)
 				const updateTxnData = await updateTxn.wait()
 
 				setTransactionData(updateTxnData)
 				setLoading(false)
+				setSubmitClicked(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
 				setError(message)
@@ -115,11 +118,11 @@ export default function useBatchUpdateApplicationState(
 				return
 			}
 
-			if(state !== 2) {
-				if(!data) {
-					return
-				}
-			}
+			// if(state !== 2) {
+			// 	if(!data) {
+			// 		return
+			// 	}
+			// }
 
 			if(!applicationIds) {
 				return

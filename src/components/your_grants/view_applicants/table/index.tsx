@@ -1,11 +1,16 @@
 import React, { useEffect } from 'react'
-import { Checkbox, CheckboxGroup, Flex, Text } from '@chakra-ui/react'
+import { Button, Checkbox, CheckboxGroup,
+	 Flex, Modal, ModalBody,
+	ModalCloseButton, ModalContent, ModalFooter, ModalOverlay, Text } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
+import useBatchUpdateApplicationState from 'src/hooks/useBatchUpdateApplicationState'
 import Actions from '../actions'
 import Content from './content'
 import Filter from './filter'
 import Headers from './headers'
 
 function ApplicantsTable({
+	grantID,
 	onViewApplicantFormClick,
 	// onAcceptApplicationClick,
 	// onRejectApplicationClick,
@@ -19,6 +24,7 @@ function ApplicantsTable({
 	reviewerData,
 	archiveGrantComponent,
 }: {
+	grantID: any;
   onViewApplicantFormClick?: (data?: any) => void;
   // onAcceptApplicationClick?: () => void;
   // onRejectApplicationClick?: () => void;
@@ -33,29 +39,88 @@ function ApplicantsTable({
   reviewerData: any[];
 }) {
 	const [filter, setFilter] = React.useState(-1)
-	const [checkedItems, setCheckedItems] = React.useState<boolean[]>(
-		Array(data.length).fill(false)
-	)
+	const [checkedItems, setCheckedItems] = React.useState<boolean[]>(Array(data.filter((item) => ('In Review' === item.status)).length).fill(false))
 
-	const [checkedApplicationsIds, setCheckedApplicationsIds] = React.useState<Number[]>()
+	const [checkedApplicationsIds, setCheckedApplicationsIds] = React.useState<number[]>([])
+	const [isAcceptClicked, setIsAcceptClicked] = React.useState<boolean>(false)
+	const [isRejectClicked, setIsRejectClicked] = React.useState<boolean>(false)
+	const [isConfirmClicked, setIsConfirmClicked] = React.useState<boolean>(false)
+	const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false)
+	const [state, setState] = React.useState<number>(5)
+	const [inReviewApplications, setInReviewApplications] = React.useState<any[]>([])
+	const [acceptedApplications, setAcceptedApplications] = React.useState<any[]>([])
+	const [rejectedApplications, setRejectedApplications] = React.useState<any[]>([])
+
 
 	const allChecked = checkedItems.every(Boolean)
 	const someChecked = checkedItems.some((element) => {
 		return element
 	})
 
+	const router = useRouter()
+
 	useEffect(() => {
-		const tempArr: Number[] = []
+		if(checkedItems.length === 0) {
+			return
+		}
+
+		const tempArr: number[] = []
 		for(let i = 0; i < checkedItems.length; i++) {
 			if(checkedItems[i]) {
-				tempArr.push(Number(data[i].applicationId))
+				tempArr.push(Number(inReviewApplications[i].applicationId))
 			}
 		}
 
 		setCheckedApplicationsIds(tempArr)
 	}, [
-		checkedItems
+		checkedItems, inReviewApplications
 	])
+
+	useEffect(() => {
+		setInReviewApplications(data.filter((item) => ('In Review' === item.status)))
+		setAcceptedApplications(data.filter((item) => ('Accepted' === item.status)))
+		setRejectedApplications(data.filter((item) => ('Rejected' === item.status)))
+	}, [data])
+
+	useEffect(() => {
+		if(applicationsFilter === 'Accepted' || 'Rejected') {
+			setCheckedItems(Array(data.filter((item) => (applicationsFilter === item.status)).length).fill(false))
+		}
+	}, [applicationsFilter])
+
+	useEffect(() => {
+		if(isConfirmClicked) {
+			setIsModalOpen(false)
+		} else if(isAcceptClicked || isRejectClicked) {
+			setIsModalOpen(true)
+		 }
+	}, [isAcceptClicked, isRejectClicked, isConfirmClicked])
+
+	const [txn, txnLink, loading, error] = useBatchUpdateApplicationState(
+		'',
+		checkedApplicationsIds,
+		state,
+		isConfirmClicked,
+		setIsConfirmClicked
+	)
+
+	useEffect(() => {
+		if(error) {
+			setIsConfirmClicked(false)
+		} else if(txn) {
+			router.reload()
+		}
+	}, [
+		txn, error, loading
+	])
+
+	const handleSubmit = (st: number) => {
+		setState(st)
+		setIsConfirmClicked(true)
+		setIsAcceptClicked(false)
+		setIsRejectClicked(false)
+		setIsModalOpen(false)
+	}
 
 	return (
 		<>
@@ -85,8 +150,16 @@ function ApplicantsTable({
 				{
 					someChecked ? (
 						<Actions
-							onAcceptApplicationsClick={() => {}}
-							onRejectApplicationsClick={() => {}} />
+							onAcceptApplicationsClick={
+								() => {
+									setIsAcceptClicked(true)
+								}
+							}
+							onRejectApplicationsClick={
+								() => {
+									setIsRejectClicked(true)
+								}
+							} />
 					) : (
 						<Filter
 							filter={filter}
@@ -96,7 +169,78 @@ function ApplicantsTable({
 
 			</Flex>
 			{archiveGrantComponent}
+			{
+				isModalOpen
+		&& (
+			<Modal
+				blockScrollOnMount={false}
+				isOpen={isModalOpen}
+				onClose={
+					() => {
+						setIsAcceptClicked(false)
+						setIsRejectClicked(false)
+						setIsModalOpen(false)
+					}
+				}>
+				<ModalOverlay />
+				<ModalContent>
+					<ModalCloseButton />
+					<ModalBody>
 
+						<Text
+							fontWeight="500"
+							fontSize="20px"
+							lineHeight="24px"
+							color="#1F1F33"
+						>
+							{isAcceptClicked ? 'Accept selected applicants' : 'Reject selected applicants'}
+						</Text>
+						<Text
+							fontWeight="400"
+							fontSize="14px"
+							lineHeight="20px"
+							color="#7D7DA0">
+					This will notify selected applicants that their applications have been rejected. This action cannot be undone.
+						</Text>
+
+						<Text
+							fontWeight="400"
+							fontSize="16px"
+							lineHeight="24px"
+							color="#1F1F33">
+ Are you sure you want to do this?
+						</Text>
+					</ModalBody>
+
+					<ModalFooter>
+						<Button
+							variant='ghost'
+							mr={3}
+							onClick={
+								() => {
+									setIsAcceptClicked(false)
+									setIsRejectClicked(false)
+									setIsModalOpen(false)
+								}
+							}>
+              Cancel
+						</Button>
+						<Button
+							colorScheme={isAcceptClicked ? 'blue' : 'pink'}
+							mr={3}
+							onClick={
+								() => {
+									isAcceptClicked ? handleSubmit(2) : handleSubmit(3)
+								}
+							}>
+Confirm
+						</Button>
+					</ModalFooter>
+				</ModalContent>
+			</Modal>
+
+		)
+			}
 			<Flex
 				w="100%"
 				// mt={10}
@@ -126,8 +270,14 @@ function ApplicantsTable({
 								h="58.5px"
 								w="40px"
 								bg="#FFFFFF"
-								isChecked={allChecked}
-								onChange={(e) => setCheckedItems(Array(data.length).fill(e.target.checked))}
+								isChecked={applicationsFilter === 'Pending For Review' || applicationsFilter === 'In Review' ? allChecked : false}
+								onChange={
+									(e) => {
+										applicationsFilter === 'Pending For Review' || applicationsFilter === 'In Review' ?
+											setCheckedItems(Array(data.length).fill(e.target.checked)) :
+											{}
+									}
+								}
 								ml={15}
 							/>
 						</Flex>
@@ -142,7 +292,7 @@ function ApplicantsTable({
 
 						<CheckboxGroup colorScheme="blue">
 							{
-								data.map((application, index) => {
+								applicationsFilter === 'Rejected' ? rejectedApplications.map((application, index) => {
 									return (
 										<Flex
 											key={application.applicantId}
@@ -173,7 +323,70 @@ function ApplicantsTable({
 											/>
 										</Flex>
 									)
-								})
+								}) : applicationsFilter === 'Accepted' ? acceptedApplications.map((application, index) => {
+									return (
+										<Flex
+											key={application.applicantId}
+											direction="row"
+											h="58px"
+											justify="stretch"
+											align="center"
+											bg="#FFFFFF"
+											px={0}
+											//   py={4}
+											border="1px"
+											borderColor="#E0E0EC"
+
+										>
+											<Checkbox
+												h="58px"
+												w="40px"
+												isChecked={checkedItems[index]}
+												onChange={
+													(e) => {
+														const tempArr: boolean[] = []
+														tempArr.push(...checkedItems)
+														tempArr[index] = e.target.checked
+														setCheckedItems(tempArr)
+													}
+												}
+												ml={15}
+											/>
+										</Flex>
+									)
+								}) :
+									inReviewApplications.map((application, index) => {
+										return (
+											<Flex
+												key={application.applicantId}
+												direction="row"
+												h="58px"
+												justify="stretch"
+												align="center"
+												bg="#FFFFFF"
+												px={0}
+												//   py={4}
+												border="1px"
+												borderColor="#E0E0EC"
+
+											>
+												<Checkbox
+													h="58px"
+													w="40px"
+													isChecked={checkedItems[index]}
+													onChange={
+														(e) => {
+															const tempArr: boolean[] = []
+															tempArr.push(...checkedItems)
+															tempArr[index] = e.target.checked
+															setCheckedItems(tempArr)
+														}
+													}
+													ml={15}
+												/>
+											</Flex>
+										)
+									})
 							}
 						</CheckboxGroup>
 					</Flex>
