@@ -1,4 +1,4 @@
-import { Box, Button, Text } from '@chakra-ui/react'
+import { Box, Button, Image, Text } from '@chakra-ui/react'
 import TextField from '../../InputFields/TextField'
 
 interface Props {
@@ -27,15 +27,15 @@ Give your domain a name
 				value={domainName}
 				onChange={onChange}
 				isVerified={isVerified}
-				setIsVerified={setIsVerified}
 				maxLength={30} />
 			<Button
 				variant="primaryV2"
 				ml="auto"
 				mt={6}
+				rightIcon={<Image src={`/ui_icons/arrow-right-fill${!isVerified ? '-disabled' : ''}.svg`} />}
 				disabled={!isVerified}
 				onClick={onContinue}>
-            Continue
+				Continue
 			</Button>
 		</>
 	)

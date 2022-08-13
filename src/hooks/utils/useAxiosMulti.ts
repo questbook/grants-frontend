@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 
-const DEFAULT_ERROR_MESSAGE = 'Could not fetch safe\'s data. Please try again.'
+const DEFAULT_ERROR_MESSAGE = 'Could not fetch all data.'
 
 interface Props {
   urls: string[],
@@ -24,7 +24,7 @@ function useAxiosMulti({ urls, payload, method }: Props) {
 			try {
 				const axiosRequests = urls.map(url => axios.request({
 					data: payload,
-					// signal: controllerRef.current.signal,
+					signal: controllerRef.current.signal,
 					method,
 					url
 				}))
@@ -41,6 +41,7 @@ function useAxiosMulti({ urls, payload, method }: Props) {
 					}
 				})
 				setData(finalData)
+				setError('')
 			} catch(error: any) {
 				if(typeof error === 'string') {
 					setError(error)
