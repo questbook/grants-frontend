@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { Checkbox, CheckboxGroup, Flex, Text } from '@chakra-ui/react'
+import Actions from '../actions'
 import Content from './content'
 import Filter from './filter'
 import Headers from './headers'
@@ -35,10 +36,26 @@ function ApplicantsTable({
 	const [checkedItems, setCheckedItems] = React.useState<boolean[]>(
 		Array(data.length).fill(false)
 	)
+
+	const [checkedApplicationsIds, setCheckedApplicationsIds] = React.useState<Number[]>()
+
 	const allChecked = checkedItems.every(Boolean)
+	const someChecked = checkedItems.some((element) => {
+		return element
+	})
+
 	useEffect(() => {
-		console.log(filter)
-	}, [filter])
+		const tempArr: Number[] = []
+		for(let i = 0; i < checkedItems.length; i++) {
+			if(checkedItems[i]) {
+				tempArr.push(Number(data[i].applicationId))
+			}
+		}
+
+		setCheckedApplicationsIds(tempArr)
+	}, [
+		checkedItems
+	])
 
 	return (
 		<>
@@ -65,9 +82,18 @@ function ApplicantsTable({
 					{' '}
 				</Text>
 
-				<Filter
-					filter={filter}
-					setFilter={setFilter} />
+				{
+					someChecked ? (
+						<Actions
+							onAcceptApplicationsClick={() => {}}
+							onRejectApplicationsClick={() => {}} />
+					) : (
+						<Filter
+							filter={filter}
+							setFilter={setFilter} />
+					)
+				}
+
 			</Flex>
 			{archiveGrantComponent}
 

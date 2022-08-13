@@ -1,180 +1,88 @@
 import React from 'react'
 import {
 	Button,
+	Flex,
 	Image,
 	Menu,
 	MenuButton,
+	MenuGroup,
 	MenuItem,
 	MenuList,
 	Text,
 } from '@chakra-ui/react'
 
 function Actions({
-	status,
-	onViewApplicationFormClick,
-	// onAcceptApplicationClick,
-	// onRejectApplicationClick,
+	onAcceptApplicationsClick,
+	onRejectApplicationsClick,
 }: {
-  status: number;
-  onViewApplicationFormClick?: () => void;
-  // onAcceptApplicationClick?: () => void;
-  // onRejectApplicationClick?: () => void;
+    onAcceptApplicationsClick: () => void;
+    onRejectApplicationsClick: () => void;
 }) {
-	if(status === 3) {
-		return (
+	return (
+		<Flex
+			direction="row"
+			justify="start"
+			align="flex-start"
+			padding="6px 13px"
+			gap="4px"
+			bg="#F0F0F7"
+			borderRadius="2px"
+			mr="5"
+		>
 			<Menu placement="bottom">
 				<MenuButton
 					as={Button}
 					aria-label="View More Options"
-					variant="outline"
-					color="brand.500"
-					fontWeight="500"
-					fontSize="14px"
-					lineHeight="14px"
-					textAlign="center"
-					borderRadius={8}
-					borderColor="brand.500"
+					// mt="-28px"
+					// pl="16px"
+					variant="link"
 					_focus={{}}
-					p={0}
-					minW={0}
-					w="88px"
-					h="32px"
-					justifyContent="center"
-					alignItems="center"
-					display="flex"
+					color="#1F1F33"
+					rightIcon={<Image src="/ui_icons/dropdown_arrow.svg" />}
+					fontSize="14px"
+					lineHeight="20px"
+					fontWeight="500"
+					w="fit-content"
+					mx="auto"
 				>
-          View
-					<Image
-						display="inline-block"
-						h="5px"
-						w="10px"
-						ml="4px"
-						mb="2px"
-						src="/ui_icons/dropdown_arrow.svg"
-					/>
+          Actions
 				</MenuButton>
 				<MenuList
-					boxShadow="0px 0px 4px rgba(0, 0, 0, 0.16), 0px 13px 16px rgba(0, 0, 0, 0.2)"
-					minW="88px"
-					p={0}
-				>
-					<MenuItem
-						onClick={
-							() => {
-								if(onViewApplicationFormClick) {
-									onViewApplicationFormClick()
-								}
-							}
-						}
-						icon={<Image src="/ui_icons/see.svg" />}
-					>
-						<Text
-							fontSize="14px"
-							fontWeight="400"
-							lineHeight="20px"
-							color="#122224"
-						>
-              View Application
-						</Text>
-					</MenuItem>
-					{/* <MenuItem
-            onClick={() => {
-              if (onAcceptApplicationClick) {
-                onAcceptApplicationClick();
-              }
-            }}
-            icon={<CheckIcon color="#31373D" />}
-          >
-            <Text
-              fontSize="14px"
-              fontWeight="400"
-              lineHeight="20px"
-              color="#122224"
-            >
-              Approve
-            </Text>
-          </MenuItem>
-          <MenuItem
-            onClick={() => {
-              if (onRejectApplicationClick) {
-                onRejectApplicationClick();
-              }
-            }}
-            icon={<CloseIcon color="#31373D" />}
-          >
-            <Text
-              fontSize="14px"
-              fontWeight="400"
-              lineHeight="20px"
-              color="#122224"
-            >
-              Reject
-            </Text>
-          </MenuItem> */}
+					minW="164px"
+					p={0}>
+					<MenuGroup
+						title="Applicant actions"
+						color="#7D7DA0">
+						<MenuItem onClick={onAcceptApplicationsClick}>
+							<Image src="/ui_icons/change_stage.svg" />
+							<Text
+								color="#1F1F33"
+								fontWeight="400"
+								fontSize="14px"
+								lineHeight="20px"
+								ml={2}>
+							Accept
+							</Text>
+						</MenuItem>
+
+						<MenuItem onClick={onRejectApplicationsClick}>
+							<Image src="/ui_icons/reject_icon.svg" />
+							<Text
+								color="#1F1F33"
+								fontWeight="400"
+								fontSize="14px"
+								lineHeight="20px"
+								ml={2}>
+							Reject
+							</Text>
+						</MenuItem>
+					</MenuGroup>
 				</MenuList>
 			</Menu>
-		)
-	}
 
-	return (
-		<Menu placement="bottom">
-			<MenuButton
-				as={Button}
-				aria-label="View More Options"
-				variant="outline"
-				color="brand.500"
-				fontWeight="500"
-				fontSize="14px"
-				lineHeight="14px"
-				textAlign="center"
-				borderRadius={8}
-				borderColor="brand.500"
-				_focus={{}}
-				p={0}
-				minW={0}
-				w="88px"
-				h="32px"
-				justifyContent="center"
-				alignItems="center"
-				display="flex"
-			>
-        View
-				<Image
-					display="inline-block"
-					h="5px"
-					w="10px"
-					ml="4px"
-					mb="2px"
-					src="/ui_icons/dropdown_arrow.svg"
-				/>
-			</MenuButton>
-			<MenuList
-				boxShadow="0px 0px 4px rgba(0, 0, 0, 0.16), 0px 13px 16px rgba(0, 0, 0, 0.2)"
-				minW="88px"
-				p={0}
-			>
-				<MenuItem
-					onClick={
-						() => {
-							if(onViewApplicationFormClick) {
-								onViewApplicationFormClick()
-							}
-						}
-					}
-					icon={<Image src="ui_icons/see.svg" />}
-				>
-					<Text
-						fontSize="14px"
-						fontWeight="400"
-						lineHeight="20px"
-						color="#122224"
-					>
-            View Application
-					</Text>
-				</MenuItem>
-			</MenuList>
-		</Menu>
+		</Flex>
 	)
+
 }
 
 Actions.defaultProps = {
