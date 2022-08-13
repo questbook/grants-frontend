@@ -6,7 +6,9 @@ import { ApiClientsContext } from '../../../../../pages/_app'
 import Loader from '../../../../components/ui/loader'
 import { CHAIN_INFO, defaultChainId } from '../../../../constants/chains'
 import {
-	ApplicationState, GetReviewerApplicationsForGrantQuery, useGetReviewerApplicationsForGrantQuery,
+	ApplicationState,
+	GetReviewerApplicationsForGrantQuery,
+	useGetReviewerApplicationsForGrantQuery,
 } from '../../../../generated/graphql'
 import useEncryption from '../../../../hooks/utils/useEncryption'
 import { formatAmount, getFormattedDateFromUnixTimestampWithYear } from '../../../../utils/formattingUtils'
@@ -253,25 +255,26 @@ const ReviewTableData = ({ application }: { application: Application }) => {
 	const { data: accountData } = useAccount()
 	const router = useRouter()
 
-	const loadReview = async() => {
-		const review = application.reviews.find((r) => (
-			r.reviewer?.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
-		))
+	// review, if the logged in reviewer already has added a review
+	const userReview = application.reviews.find((r) => (
+		r.reviewer?.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
+	))
 
-		if(!review) {
+	const loadReview = async() => {
+		if(!userReview) {
 			return
 		}
 
 		let data: { items: { feedback: { rating: number } }[] }
 		if(application.grantRubricIsPrivate) {
-			const reviewData = review?.data.find((d: any) => (
+			const reviewData = userReview?.data.find((d: any) => (
 				d.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
 			))
 			const ipfsData = await getFromIPFS(reviewData!.data)
 
 			data = JSON.parse(await decryptMessage(ipfsData) || '{}')
 		} else {
-			const ipfsData = await getFromIPFS(review!.publicReviewDataHash!)
+			const ipfsData = await getFromIPFS(userReview!.publicReviewDataHash!)
 			data = JSON.parse(ipfsData || '{}')
 		}
 
@@ -285,7 +288,15 @@ const ReviewTableData = ({ application }: { application: Application }) => {
 		loadReview()
 	}, [])
 
-	if(application.state === ApplicationState.Submitted) {
+	if(userReview) {
+		return (
+			<Td>
+				<Flex alignItems={'start'}>
+					{reviewSum === undefined ? <Loader /> : reviewSum}
+				</Flex>
+			</Td>
+		)
+	} else {
 		return (
 			<Td>
 				<Button
@@ -297,12 +308,6 @@ const ReviewTableData = ({ application }: { application: Application }) => {
 					}>
           Review
 				</Button>
-			</Td>
-		)
-	} else {
-		return (
-			<Td>
-				{reviewSum}
 			</Td>
 		)
 	}
