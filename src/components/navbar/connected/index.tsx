@@ -33,6 +33,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	const { data: accountData, nonce } = useQuestbookAccount()
 	const { isConnected, activeConnector } = useConnect()
 	const tabPaths = [
+		'dao_dashboard',
 		'your_grants',
 		'funds',
 		'manage_dao',
@@ -48,6 +49,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	const { workspace, setWorkspace, subgraphClients, connected } = apiClients
 	const [isAdmin, setIsAdmin] = React.useState(false)
 	const [isReviewer, setIsReviewer] = React.useState<boolean>(false)
+	// const [accountData, setaccountData] = React.useState<any>()
 
 	const [grantsCount, setGrantsCount] = React.useState(0)
 
@@ -70,8 +72,30 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	useEffect(() => {
 		if(workspaces) {
 			setWorkspaces([])
+
 		}
 	}, [activeConnector])
+
+
+	useEffect(() => {
+		if(
+			workspace
+			&& workspace.members
+			&& workspace.members.length > 0
+			&& accountData
+			&& accountData.address
+		) {
+			const tempMember = workspace.members.find(
+				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
+			)
+			setIsAdmin(
+				tempMember?.accessLevel === 'admin'
+				|| tempMember?.accessLevel === 'owner',
+			)
+			setIsReviewer(tempMember?.accessLevel === 'reviewer')
+		}
+
+	}, [accountData, workspace])
 
 	useEffect(() => {
 		if(!accountData?.address) {
@@ -136,24 +160,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 
 		(key) => useGetWorkspaceMembersLazyQuery({ client: subgraphClients[key].client }),
 	)
-	useEffect(() => {
-		if(
-			workspace
-			&& workspace.members
-			&& workspace.members.length > 0
-			&& accountData
-			&& accountData.address
-		) {
-			const tempMember = workspace.members.find(
-				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
-			)
-			setIsAdmin(
-				tempMember?.accessLevel === 'admin'
-				|| tempMember?.accessLevel === 'owner',
-			)
-			setIsReviewer(tempMember?.accessLevel === 'reviewer')
-		}
-	}, [accountData, workspace])
+
 
 	useEffect(() => {
 		if(!accountData?.address) {
@@ -216,7 +223,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 
 		getWorkspaceData(accountData?.address)
 
-	}, [isConnected, accountData, connected])
+	}, [isConnected, accountData?.address, connected])
 
 	const [isDiscover, setIsDiscover] = useState<boolean>(false)
 
@@ -351,14 +358,16 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 							(workspace?.id || grantsCount) && router.pathname !== '/' ? (
 								<>
 									<Box mr="12px" />
+
 									<Flex
 										h="100%"
-										direction="column">
+										direction="column"
+										display={isAdmin ? '' : 'none'}>
 										<Tab
-											label={isReviewer ? 'Grants Assigned' : 'Grants'}
+											label="Dashboard"
 											icon={
 												`/ui_icons/${activeIndex === 0 ? 'brand' : 'gray'
-												}/tab_grants.svg`
+												}/grant-dao.svg`
 											}
 											isActive={activeIndex === 0}
 											onClick={
@@ -380,13 +389,12 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 									</Flex>
 									<Flex
 										h="100%"
-										direction="column"
-										display={isAdmin ? '' : 'none'}>
+										direction="column">
 										<Tab
-											label="Funds"
+											label={isReviewer ? 'Grants Assigned' : 'Grants'}
 											icon={
 												`/ui_icons/${activeIndex === 1 ? 'brand' : 'gray'
-												}/tab_funds.svg`
+												}/tab_grants.svg`
 											}
 											isActive={activeIndex === 1}
 											onClick={
@@ -406,15 +414,16 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 											) : null
 										}
 									</Flex>
+
 									<Flex
 										h="100%"
 										direction="column"
 										display={isAdmin ? '' : 'none'}>
 										<Tab
-											label="Manage DAO"
+											label="Funds"
 											icon={
 												`/ui_icons/${activeIndex === 2 ? 'brand' : 'gray'
-												}/tab_settings.svg`
+												}/tab_funds.svg`
 											}
 											isActive={activeIndex === 2}
 											onClick={
@@ -434,6 +443,34 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 											) : null
 										}
 									</Flex>
+									<Flex
+										h="100%"
+										direction="column"
+										display={isAdmin ? '' : 'none'}>
+										<Tab
+											label="Manage DAO"
+											icon={
+												`/ui_icons/${activeIndex === 3 ? 'brand' : 'gray'
+												}/tab_settings.svg`
+											}
+											isActive={activeIndex === 3}
+											onClick={
+												() => {
+													router.push({
+														pathname: `/${tabPaths[3]}`,
+													})
+												}
+											}
+										/>
+										{
+											activeIndex === 3 ? (
+												<Box
+													w="100%"
+													h="2px"
+													bgColor="#8850EA" />
+											) : null
+										}
+									</Flex>
 									{
 										isReviewer && (
 											<Flex
@@ -442,21 +479,21 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 												<Tab
 													label="Payouts"
 													icon={
-														activeIndex === 4
+														activeIndex === 5
 															? '/ui_icons/brand/tab_review_funds.svg'
 															: '/ui_icons/gray/tab_funds.svg'
 													}
-													isActive={activeIndex === 4}
+													isActive={activeIndex === 5}
 													onClick={
 														() => {
 															router.push({
-																pathname: `/${tabPaths[4]}`,
+																pathname: `/${tabPaths[5]}`,
 															})
 														}
 													}
 												/>
 												{
-													activeIndex === 4 ? (
+													activeIndex === 5 ? (
 														<Box
 															w="100%"
 															h="2px"
@@ -480,20 +517,20 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 									<Tab
 										label="My Applications"
 										icon={
-											`/ui_icons/${activeIndex === 3 ? 'brand' : 'gray'
+											`/ui_icons/${activeIndex === 4 ? 'brand' : 'gray'
 											}/tab_grants.svg`
 										}
-										isActive={activeIndex === 3}
+										isActive={activeIndex === 4}
 										onClick={
 											() => {
 												router.push({
-													pathname: `/${tabPaths[3]}`,
+													pathname: `/${tabPaths[4]}`,
 												})
 											}
 										}
 									/>
 									{
-										activeIndex === 3 ? (
+										activeIndex === 4 ? (
 											<Box
 												w="100%"
 												h="2px"

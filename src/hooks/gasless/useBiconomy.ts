@@ -9,7 +9,7 @@ import { useNetwork } from './useNetwork'
 export const useBiconomy = (data: { apiKey: string, }) => {
 	const { webwallet, scwAddress, setScwAddress, nonce, } = useContext(WebwalletContext)!
 	const { biconomyDaoObj, setBiconomyDaoObj, biconomyWalletClient, setBiconomyWalletClient, loading, setIsLoading } = useContext(BiconomyContext)!
-	const { network } = useNetwork()
+	const { network, switchNetwork } = useNetwork()
 
 	useEffect(() => {
 		console.log('STEP1', nonce, webwallet, biconomyWalletClient)
@@ -20,6 +20,18 @@ export const useBiconomy = (data: { apiKey: string, }) => {
 				.catch(error => console.log(error))
 		}
 	}, [webwallet, nonce, biconomyDaoObj, biconomyWalletClient, scwAddress, network])
+
+	useEffect(() => {
+		if(biconomyDaoObj) {
+			if(biconomyDaoObj.networkId !== network) {
+				setIsLoading(true)
+				initiateBiconomy()
+					.then(res => console.log(res))
+					.catch(error => console.log(error))
+			}
+		}
+
+	}, [network])
 
 	const initiateBiconomy = async() => {
 		console.log('STEP2', webwallet, network)
@@ -42,25 +54,19 @@ export const useBiconomy = (data: { apiKey: string, }) => {
 		_biconomy.onEvent(_biconomy.READY, async() => {
 			console.log('Inside biconomy ready event')
 
-			const _biconomyWalletClient: BiconomyWalletClient = _biconomy.biconomyWalletClient
+			const _biconomyWalletClient: BiconomyWalletClient = await _biconomy.biconomyWalletClient
 			console.log('biconomyWalletClient', _biconomyWalletClient)
 
-			if(!scwAddress) {
+			if(_biconomyWalletClient) {
 				const walletAddress = await deploySCW(webwallet, _biconomyWalletClient)
 				setScwAddress(walletAddress)
-			} else {
-				console.log('SCW Wallet already exists at Address', scwAddress)
+				console.log('SCWSCW', walletAddress, scwAddress)
 			}
 
-			if(!biconomyWalletClient) {
-				setBiconomyWalletClient(_biconomyWalletClient)
-			}
-
-			if(!biconomyDaoObj) {
-				setBiconomyDaoObj(_biconomy)
-			}
-
+			setBiconomyWalletClient(_biconomyWalletClient)
+			setBiconomyDaoObj(_biconomy)
 			setIsLoading(false)
+
 		}).onEvent(_biconomy.ERROR, (error: any, message: any) => {
 			setIsLoading(false)
 			console.log(message)

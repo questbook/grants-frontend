@@ -80,9 +80,10 @@ const OnboardingCreateDao = () => {
 			// 	return
 			// }
 
-			console.log('creating workspace')
+			console.log('creating workspace', accountData!.address)
 			setCurrentStep(1)
 			const uploadedImageHash = (await uploadToIPFS(daoImageFile)).hash
+
 			const {
 				data: { ipfsHash },
 			} = await validatorApi.validateWorkspaceCreate({
@@ -95,6 +96,7 @@ const OnboardingCreateDao = () => {
 					getSupportedValidatorNetworkFromChainId(daoNetwork!.id),
 				],
 			})
+
 			if(!ipfsHash) {
 				throw new Error('Error validating grant data')
 			}
@@ -105,9 +107,10 @@ const OnboardingCreateDao = () => {
 			}
 
 			setCurrentStep(2)
-
+			console.log(12344343)
 
 			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
+				console.log('54321')
 				return
 			}
 
@@ -248,7 +251,7 @@ const OnboardingCreateDao = () => {
 				imageBackgroundColor={'#C2E7DA'}
 				imageProps={
 					{
-						mixBlendMode: 'color-dodge'
+						mixBlendMode: 'hard-light'
 					}
 				}
 			>

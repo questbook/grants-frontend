@@ -3,12 +3,11 @@ import { Box, Button, HStack, Image, Input, Modal, ModalCloseButton, ModalConten
 import { BigNumber } from 'ethers'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { ROLES } from 'src/constants'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useDAOName from 'src/hooks/useDAOName'
 import { delay } from 'src/utils/generics'
 import { InviteInfo, useJoinInvite } from 'src/utils/invite'
 import { ForwardArrow } from 'src/v2/assets/custom chakra icons/Arrows/ForwardArrow'
-import { useAccount, useConnect } from 'wagmi'
-import ConnectWalletModal from '../ConnectWalletModal'
 import ControlBar from '../ControlBar'
 import NetworkFeeEstimateView from '../NetworkFeeEstimateView'
 import NetworkTransactionModal from '../NetworkTransactionModal'
@@ -36,10 +35,8 @@ type DisplayProps = {
 }
 
 export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const daoName = useDAOName(inviteInfo?.workspaceId, inviteInfo?.chainId)
-
-	const { isDisconnected } = useConnect()
 
 	const toast = useToast()
 
@@ -129,7 +126,7 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 		<>
 			<Modal
 				isCentered={true}
-				isOpen={!!inviteInfo && !isDisconnected}
+				isOpen={!!inviteInfo}
 				size='3xl'
 				onClose={onClose}
 			>
@@ -201,10 +198,10 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 					]
 				}
 			/>
-			<ConnectWalletModal
+			{/* <ConnectWalletModal
 				isOpen={isDisconnected && !!inviteInfo}
 				onClose={() => { }}
-			/>
+			/> */}
 		</>
 	)
 }

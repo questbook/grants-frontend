@@ -27,7 +27,7 @@ export default function useSubmitApplication(
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
 	const { data: accountData, nonce } = useQuestbookAccount()
-	const { data: networkData, switchNetwork } = useNetwork()
+	const { data: networkData, switchNetwork, network } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi } = apiClients
@@ -38,15 +38,20 @@ export default function useSubmitApplication(
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
 
+
 	const { webwallet } = useContext(WebwalletContext)!
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,
 	})
 
-	// useEffect(() => {
-	// 	console.log("HEER", biconomyWalletClient)
-	// }, [])
+	useEffect(() => {
+
+		if(currentChainId !== network) {
+			switchNetwork(currentChainId)
+		}
+
+	}, [network, currentChainId])
 
 	useEffect(() => {
 		if(data) {

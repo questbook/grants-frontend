@@ -122,7 +122,7 @@ export default function useCreateGrant(
 					reward,
 					creatorId: accountData?.address!,
 					workspaceId: getSupportedValidatorNetworkFromChainId(
-            (chainId || getSupportedChainIdFromWorkspace(workspace))!,
+						(chainId || getSupportedChainIdFromWorkspace(workspace))!,
 					),
 					fields: data.fields,
 					grantManagers: data.grantManagers.length ? data.grantManagers : [accountData!.address],
@@ -149,7 +149,7 @@ export default function useCreateGrant(
 					rubricHash = auxRubricHash
 				}
 
-				console.log('rubricHash', rubricHash)
+				console.log('rubric hash', GRANT_FACTORY_ADDRESS[currentChainId], grantContract.address, WORKSPACE_REGISTRY_ADDRESS[currentChainId], APPLICATION_REGISTRY_ADDRESS[currentChainId])
 
 				console.log('WHAT IS THIS', biconomyWalletClient, scwAddress)
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
@@ -162,7 +162,7 @@ export default function useCreateGrant(
 				console.log('ENTERING')
 
 				const methodArgs = [
-					workspaceId ?? Number(workspace?.id).toString(),
+					workspaceId || Number(workspace?.id).toString(),
 					ipfsHash,
 					rubricHash,
 					WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
@@ -171,9 +171,19 @@ export default function useCreateGrant(
 
 				console.log('THESE ARE METHODS', methodArgs)
 
-				const transactionHash = await sendGaslessTransaction(biconomy, grantContract, 'createGrant', methodArgs,
-					GRANT_FACTORY_ADDRESS[currentChainId!], biconomyWalletClient,
-					scwAddress, webwallet, `${currentChainId}`, webHookId, nonce)
+				const transactionHash = await sendGaslessTransaction(
+					biconomy,
+					grantContract,
+					'createGrant',
+					methodArgs,
+					grantContract.address,
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					webHookId,
+					nonce
+				)
 
 				console.log(transactionHash)
 				const receipt = await getTransactionReceipt(transactionHash, currentChainId.toString())

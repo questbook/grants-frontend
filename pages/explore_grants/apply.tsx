@@ -9,6 +9,7 @@ import Sidebar from 'src/components/explore_grants/apply_grant/sidebar'
 import { defaultChainId } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import { useGetGrantDetailsQuery } from 'src/generated/graphql'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { formatAmount } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'
@@ -39,6 +40,7 @@ function ApplyGrant() {
 	const [chainId, setChainId] = useState<SupportedChainId>()
 	const [acceptingApplications, setAcceptingApplications] = useState(true)
 	const [shouldShowButton, setShouldShowButton] = useState(false)
+	const { network, switchNetwork } = useNetwork()
 
 	useEffect(() => {
 		if(router && router.query) {
@@ -77,6 +79,22 @@ function ApplyGrant() {
 	const { data, error, loading } = useGetGrantDetailsQuery(queryParams)
 
 	useEffect(() => {
+		if(!grantData) {
+			return
+		}
+
+		const localChainId = getSupportedChainIdFromSupportedNetwork(
+			grantData.workspace.supportedNetworks[0],
+		)
+
+		if(network !== localChainId) {
+			switchNetwork(localChainId)
+		}
+
+
+	}, [network, grantData])
+
+	useEffect(() => {
 		if(data && data.grants && data.grants.length > 0) {
 			setGrantData(data.grants[0])
 		}
@@ -92,6 +110,7 @@ function ApplyGrant() {
 			grantData.workspace.supportedNetworks[0],
 		)
 		const chainInfo = getChainInfo(grantData, localChainId)
+
 
 		// const chainInfo = CHAIN_INFO[localChainId]
 		//   ?.supportedCurrencies[grantData?.reward.asset.toLowerCase()];

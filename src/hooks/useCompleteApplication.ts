@@ -1,7 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
-import { APPLICATION_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
@@ -100,7 +99,7 @@ export default function useCompleteApplication(
 					[Number(applicationId),
 						Number(workspace!.id),
 						ipfsHash, ],
-					APPLICATION_REGISTRY_ADDRESS[currentChainId],
+					applicationContract.address,
 					biconomyWalletClient,
 					scwAddress,
 					webwallet,

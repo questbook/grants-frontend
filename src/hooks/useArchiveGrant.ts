@@ -150,6 +150,7 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 				throw new Error('validatorApi or workspaceId is not defined')
 			}
 
+			console.log('grantcontract', grantContract)
 			if(
 				!grantContract
         || grantContract.address

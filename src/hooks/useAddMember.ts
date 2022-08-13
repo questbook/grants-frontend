@@ -46,7 +46,6 @@ export default function useAddMember(
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		apiKey: apiKey,
-		// targetContractABI: WorkspaceRegistryAbi,
 	})
 
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState<boolean>(false)

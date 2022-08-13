@@ -4,7 +4,6 @@ import { CHAIN_INFO, SHOW_TEST_NETS } from 'src/constants/chains'
 import useChainId from 'src/hooks/utils/useChainId'
 import { useConnect } from 'wagmi'
 import AccountDetails from './AccountDetails'
-import ConnectWallet from './ConnectWallet'
 
 interface Props {
   onGetStartedClick: boolean;
@@ -91,13 +90,13 @@ function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicke
 			{true && <AccountDetails /> /* @TODO-gasless: FIX HERE */}
 
 			{/* {!connected && <GetStarted onGetStartedClick={onGetStartedClick} />} */}
-			{
+			{/* {
 				isDisconnected && false && (
 					<ConnectWallet
 						onGetStartedBtnClicked={onGetStartedBtnClicked}
 						setGetStartedClicked={setGetStartedClicked} />
 				)
-			}
+			} */}
 		</Container>
 	)
 }

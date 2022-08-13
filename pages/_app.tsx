@@ -172,7 +172,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		const _network = localStorage.getItem('network')
 
 		if(!_network) {
-			return undefined
+			return CHAIN_INFO['5'].id
 		}
 
 		return parseInt(_network)
@@ -183,7 +183,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		const privateKey = localStorage.getItem('webwalletPrivateKey')
 
 		let newWebwallet = Wallet.createRandom()
-		newWebwallet = newWebwallet.connect(jsonRpcProviders['80001'])
+		newWebwallet = newWebwallet.connect(jsonRpcProviders['5'])
 
 		if(!privateKey) {
 			localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
@@ -192,7 +192,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 		try {
 			newWebwallet = new Wallet(privateKey)
-			newWebwallet = newWebwallet.connect(jsonRpcProviders['80001'])
+			newWebwallet = newWebwallet.connect(jsonRpcProviders['5'])
 			return newWebwallet
 		} catch{
 			localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
