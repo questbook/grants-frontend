@@ -9,3 +9,4 @@ export const capitalizeFirstLetter = (data: string) => {
 export const delay = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms))
 
 export const UNIX_TIMESTAMP_MAX = unixTimestampSeconds(new Date(2038, 0, 1))
+export const UNIX_TIMESTAMP_MIN = unixTimestampSeconds(new Date(1970, 0, 1))

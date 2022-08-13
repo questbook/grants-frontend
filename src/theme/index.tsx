@@ -70,7 +70,7 @@ const theme = extendTheme({
 		bannerGrey: '#F0F0F7',
 		v2Grey: '#555570',
 		primary: '#745FE8',
-		v2LightGrey: '#D2D2E3',
+		v2LightGrey: '#AFAFCC',
 	},
 	sizes: {
 		connectWallet: '41.5rem',

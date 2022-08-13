@@ -252,7 +252,7 @@ function ViewApplicants() {
 					},
 					// status: applicationStatuses.indexOf(applicant?.state),
 					status: TableFilters[applicant?.state],
-					reviewers: applicant.reviewers,
+					reviewers: applicant.applicationReviewers,
 					amount_paid: formatAmount(
 						getTotalFundingRecv(
 							applicant.milestones as unknown as ApplicationMilestone[]
@@ -330,7 +330,7 @@ function ViewApplicants() {
 					},
 					// status: applicationStatuses.indexOf(applicant?.state),
 					status: Reviewerstatus(applicant.reviews),
-					reviewers: applicant.reviewers,
+					reviewers: applicant.applicationReviewers,
 				}
 			}
 			)
