@@ -11,29 +11,31 @@ interface Props {
 }
 
 const useAxios = ({ url, method, payload }: Props) => {
-    const [data, setData] = useState<any>(null)
-    const [error, setError] = useState("")
-    const [loaded, setLoaded] = useState(false)
-    const controllerRef = useRef(new AbortController())
-    const cancel = () => {
-        controllerRef.current.abort();
-    };
-    useEffect(() => {
-        (async () => {
-            try {
-                const response = await axios.request({
-                    data: payload,
-                    signal: controllerRef.current.signal,
-                    method,
-                    url,
-                })
-                console.log('axios', response)
-                setData(response.data)
-                setError('')
-            } catch(error: any) {
+	const [data, setData] = useState<any>(null)
+	const [error, setError] = useState('')
+	const [loaded, setLoaded] = useState(false)
+	const controllerRef = useRef(new AbortController())
+	const cancel = () => {
+		controllerRef.current.abort()
+	}
+
+	useEffect(() => {
+		(async() => {
+			try {
+				const response = await axios.request({
+					data: payload,
+					signal: controllerRef.current.signal,
+					method,
+					url,
+				})
+				console.log('axios', response)
+				setData(response.data)
+				setError('')
+			} catch(error: any) {
 				if(typeof error === 'string') {
 					setError(error)
 				}
+
 				if(typeof error?.message === 'string') {
 					setError(error.message)
 				} else {
@@ -42,9 +44,9 @@ const useAxios = ({ url, method, payload }: Props) => {
 			} finally {
 				setLoaded(true)
 			}
-        })()
-    }, [url, method, payload])
-    return { cancel, data, error, loaded }
+		})()
+	}, [url, method, payload])
+	return { cancel, data, error, loaded }
 }
 
 export default useAxios

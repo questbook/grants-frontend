@@ -31,16 +31,17 @@ function useAxiosMulti({ urls, payload, method }: Props) {
 				const newData = await Promise.allSettled(axiosRequests)
 				const finalData = newData.map(element => {
 					try {
-						if(element.status === 'fulfilled'){
+						if(element.status === 'fulfilled') {
 							return element.value.data
 						}
+
 						return []
 					} catch(error) {
 						return []
 					}
 				})
 				setData(finalData)
-        setError('')
+				setError('')
 			} catch(error: any) {
 				if(typeof error === 'string') {
 					setError(error)
