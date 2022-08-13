@@ -5,6 +5,9 @@ import {
 	Flex } from '@chakra-ui/react'
 import NavbarLayout from '../src/layout/navbarLayout'
 import { BiconomyContext, WebwalletContext } from './_app'
+import { ethers } from 'ethers'
+import GrantAbi from 'src/contracts/abi/GrantAbi.json'
+import { jsonRpcProviders } from 'src/utils/gaslessUtils'
 
 
 function SignupWebwallet() {
@@ -14,14 +17,12 @@ function SignupWebwallet() {
 	const [number] = useState<string>('one')
 
 	useEffect(() => {
-		switchNetwork(5)
 	}, [])
 
 
 	const handleSendGaslessTransaction = async(e: any) => {
 		e.preventDefault()
-		// const apiKK = await addDapp("goerli-testing-dapp", '5', process.env.BICO_AUTH_TOKEN);
-		// registerWebHook(process.env.BICO_AUTH_TOKEN!, "qypYydNmh.85fb44d4-bc3a-4434-8e51-a929f54de521");
+		
 	}
 
 	return (
