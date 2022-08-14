@@ -232,7 +232,7 @@ function DaoDashboard() {
 	const extractLast30Applications = (data: any) => {
 		const everydayApplications = data.everydayApplications
 
-		if(!everydayApplications) {
+		if(!everydayApplications || !everydayApplications.length) {
 			return []
 		}
 
