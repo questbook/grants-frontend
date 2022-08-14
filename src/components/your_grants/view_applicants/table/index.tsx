@@ -4,6 +4,7 @@ import { Button, Checkbox, CheckboxGroup,
 	ModalCloseButton, ModalContent, ModalFooter, ModalOverlay, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import useBatchUpdateApplicationState from 'src/hooks/useBatchUpdateApplicationState'
+import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import Actions from '../actions'
 import Content from './content'
 import Filter from './filter'
@@ -50,7 +51,7 @@ function ApplicantsTable({
 	const [inReviewApplications, setInReviewApplications] = React.useState<any[]>([])
 	const [acceptedApplications, setAcceptedApplications] = React.useState<any[]>([])
 	const [rejectedApplications, setRejectedApplications] = React.useState<any[]>([])
-
+	const [currentStep, setCurrentStep] = React.useState<number>()
 
 	const allChecked = checkedItems.every(Boolean)
 	const someChecked = checkedItems.some((element) => {
@@ -65,8 +66,10 @@ function ApplicantsTable({
 		}
 
 		const tempArr: number[] = []
+		console.log(checkedItems)
+		console.log(inReviewApplications)
 		for(let i = 0; i < checkedItems.length; i++) {
-			if(checkedItems[i]) {
+			if(checkedItems[i] && inReviewApplications[i]) {
 				tempArr.push(Number(inReviewApplications[i].applicationId))
 			}
 		}
@@ -105,9 +108,14 @@ function ApplicantsTable({
 	)
 
 	useEffect(() => {
+		if(loading) {
+			setCurrentStep(1)
+		}
+
 		if(error) {
 			setIsConfirmClicked(false)
 		} else if(txn) {
+			setCurrentStep(2)
 			router.reload()
 		}
 	}, [
@@ -120,6 +128,7 @@ function ApplicantsTable({
 		setIsAcceptClicked(false)
 		setIsRejectClicked(false)
 		setIsModalOpen(false)
+		setCurrentStep(0)
 	}
 
 	return (
@@ -169,78 +178,7 @@ function ApplicantsTable({
 
 			</Flex>
 			{archiveGrantComponent}
-			{
-				isModalOpen
-		&& (
-			<Modal
-				blockScrollOnMount={false}
-				isOpen={isModalOpen}
-				onClose={
-					() => {
-						setIsAcceptClicked(false)
-						setIsRejectClicked(false)
-						setIsModalOpen(false)
-					}
-				}>
-				<ModalOverlay />
-				<ModalContent>
-					<ModalCloseButton />
-					<ModalBody>
 
-						<Text
-							fontWeight="500"
-							fontSize="20px"
-							lineHeight="24px"
-							color="#1F1F33"
-						>
-							{isAcceptClicked ? 'Accept selected applicants' : 'Reject selected applicants'}
-						</Text>
-						<Text
-							fontWeight="400"
-							fontSize="14px"
-							lineHeight="20px"
-							color="#7D7DA0">
-					This will notify selected applicants that their applications have been rejected. This action cannot be undone.
-						</Text>
-
-						<Text
-							fontWeight="400"
-							fontSize="16px"
-							lineHeight="24px"
-							color="#1F1F33">
- Are you sure you want to do this?
-						</Text>
-					</ModalBody>
-
-					<ModalFooter>
-						<Button
-							variant='ghost'
-							mr={3}
-							onClick={
-								() => {
-									setIsAcceptClicked(false)
-									setIsRejectClicked(false)
-									setIsModalOpen(false)
-								}
-							}>
-              Cancel
-						</Button>
-						<Button
-							colorScheme={isAcceptClicked ? 'blue' : 'pink'}
-							mr={3}
-							onClick={
-								() => {
-									isAcceptClicked ? handleSubmit(2) : handleSubmit(3)
-								}
-							}>
-Confirm
-						</Button>
-					</ModalFooter>
-				</ModalContent>
-			</Modal>
-
-		)
-			}
 			<Flex
 				w="100%"
 				// mt={10}
@@ -412,7 +350,91 @@ Confirm
 					/>
 				</Flex>
 			</Flex>
+			<NetworkTransactionModal
+				isOpen={isConfirmClicked}
+				subtitle='bulk action'
+				description={<></>}
+				currentStepIndex={currentStep || 0}
+				steps={
+					[
+						'Connect your wallet',
+						'Waiting for transaction to complete',
+						'DAO created on-chain'
+					]
+				}
+			/>
+			{
+				isModalOpen
+		&& (
+			<Modal
+				blockScrollOnMount={false}
+				isOpen={isModalOpen}
+				onClose={
+					() => {
+						setIsAcceptClicked(false)
+						setIsRejectClicked(false)
+						setIsModalOpen(false)
+					}
+				}>
+				<ModalOverlay />
+				<ModalContent>
+					<ModalCloseButton />
+					<ModalBody>
 
+						<Text
+							fontWeight="500"
+							fontSize="20px"
+							lineHeight="24px"
+							color="#1F1F33"
+						>
+							{isAcceptClicked ? 'Accept selected applicants' : 'Reject selected applicants'}
+						</Text>
+						<Text
+							fontWeight="400"
+							fontSize="14px"
+							lineHeight="20px"
+							color="#7D7DA0">
+					This will notify selected applicants that their applications have been rejected. This action cannot be undone.
+						</Text>
+
+						<Text
+							fontWeight="400"
+							fontSize="16px"
+							lineHeight="24px"
+							color="#1F1F33">
+ Are you sure you want to do this?
+						</Text>
+					</ModalBody>
+
+					<ModalFooter>
+						<Button
+							variant='ghost'
+							mr={3}
+							onClick={
+								() => {
+									setIsAcceptClicked(false)
+									setIsRejectClicked(false)
+									setIsModalOpen(false)
+								}
+							}>
+              Cancel
+						</Button>
+						<Button
+							colorScheme={isAcceptClicked ? 'blue' : 'pink'}
+							mr={3}
+							onClick={
+								() => {
+									isAcceptClicked ? handleSubmit(2) : handleSubmit(3)
+								}
+							}>
+Confirm
+						</Button>
+					</ModalFooter>
+				</ModalContent>
+			</Modal>
+
+		)
+			}
 			{/* Can we move this to next release */}
 			{/* <Flex
         direction="row"
