@@ -51,6 +51,58 @@
 			"decimals": 18
 		}
 	},
+	"5": {
+		"id": 5,
+		"name": "Goerli",
+		"isTestNetwork": true,
+		"icon": "/chain_assets/eth.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://goerli.etherscan.io/address/{{address}}",
+			"transactionHash": "https://goerli.etherscan.io/tx/{{tx}}"
+		},
+		"supportedCurrencies": {
+			"0x73967c6a0904aa032c103b4104747e88c566b1a2": {
+				"icon": "/chain_assets/dai.svg",
+				"label": "DAI",
+				"address": "0x73967c6a0904aa032c103b4104747e88c566b1a2",
+				"pair": "0xa478c2975ab1ea89e8196811f51a7b7ade33eb11",
+				"decimals": 18
+			},
+			"0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6": {
+				"icon": "/chain_assets/weth.svg",
+				"label": "WETH",
+				"address": "0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6",
+				"pair": "0x0",
+				"decimals": 18
+			},
+			"0x2f3a40a3db8a7e3d09b0adfefbce4f6f81927557": {
+				"icon": "/chain_assets/usdc.svg",
+				"label": "USDC",
+				"address": "0x2f3a40a3db8a7e3d09b0adfefbce4f6f81927557",
+				"pair": "0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc",
+				"decimals": 6
+			}
+		},
+		"qbContracts": {
+			"applications": "0x06c3C145F0879F969F2beb5d8DB1D25c83a7b7C2",
+			"workspace": "0x4881fAB72dE0cBd58Bdc635EE9967d1de87EB5A2",
+			"grantFactory": "0x6C95c4b887eAcC52612e3D79575A1b00Ace05A4d",
+			"reviews": "0xc782342D667f8355869E9f5D23f245804aB10F56"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-goerli-testnet",
+		"rpcUrls": [
+			"https://goerli.infura.io/v3/"
+		],
+		"nativeCurrency": {
+			"name": "Goerli ETH",
+			"symbol": "ETH",
+			"decimals": 18
+		}
+	},
 	"10": {
 		"id": 10,
 		"name": "Optimism Mainnet",
@@ -147,10 +199,10 @@
 			}
 		},
 		"qbContracts": {
-			"applications": "0xcbE56313F2A7592d97caf909d6A8b8cD72e9Fbae",
-			"workspace": "0x02bE08DeD04a6A7F7D4b5593cD303AC8Cef652DB",
-			"grantFactory": "0x56A4a132e3Ab595F657F4B2c4A3e1484F38C32b6",
-			"reviews": "0x4dF627729f8a79F3A8bCD42C069d15bC4777830A"
+			"applications": "0x6BE9f5605C30787EC25841685aEb2eEE0462F6E8",
+			"workspace": "0x2F49964b7736B804a61F3ccC14A970dD77C0C43c",
+			"grantFactory": "0x3a77d002474aC5e4f7b2D084AD37c28Ff966b0f5",
+			"reviews": "0x10BEd93621f8BeE7B8f7E2fCA5D2060D08f81a12"
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-telos-mainnet",
 		"rpcUrls": [
@@ -185,10 +237,10 @@
 			}
 		},
 		"qbContracts": {
-			"applications": "0x0022B3FB492596C86CF114b460D9Bd6a9cf80Ba2",
-			"workspace": "0x0c58ff1573c0c3F07B54D4dE0Ab19e047F4785FB",
-			"grantFactory": "0xbD4c8Aea352851D2c043D31B07B155B7F14505AC",
-			"reviews": "0xe99Be727911552f671e18f37C42d0d6961f07675"
+			"applications": "0x084aCcB463c38D7e050cf7099B4D11C9EBa78a2E",
+			"workspace": "0xdB902Ecd8B2c8b6aA5f8eF839216451AB78B4cB6",
+			"grantFactory": "0x7bec92f06E02605622D8Bd1D91739f7c4E6867A0",
+			"reviews": "0xF386f93269cb23Ff1b5c0635Ff4258d607BF7ae4"
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-telos-testnet",
 		"rpcUrls": [
@@ -287,6 +339,43 @@
 		"nativeCurrency": {
 			"name": "Optimism Kovan",
 			"symbol": "KOR",
+			"decimals": 18
+		}
+	},
+	"100": {
+		"id": 100,
+		"name": "Gnosis Mainnet",
+		"isTestNetwork": false,
+		"icon": "/chain_assets/gnosis.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://blockscout.com/xdai/mainnet/address/{{address}}/",
+			"transactionHash": "https://blockscout.com/xdai/mainnet/tx/{{tx}}/"
+		},
+		"supportedCurrencies": {
+			"0x9c58bacc331c9aa871afd802db6379a98e80cedb": {
+				"icon": "/chain_assets/gnosis.svg",
+				"label": "GNO",
+				"address": "0x9c58bacc331c9aa871afd802db6379a98e80cedb",
+				"decimals": 18
+			}
+		},
+		"qbContracts": {
+			"applications": "0x084aCcB463c38D7e050cf7099B4D11C9EBa78a2E",
+			"workspace": "0x37d2df191899C715fE840671C6240C4Be05aF6B3",
+			"grantFactory": "0xAAD5fD023BB96867aF3dCE443F0252CF53FB0424",
+			"reviews": "0xF386f93269cb23Ff1b5c0635Ff4258d607BF7ae4"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-gnosis-mainnet",
+		"rpcUrls": [
+			"https://rpc.gnosischain.com/"
+		],
+		"nativeCurrency": {
+			"name": "Gnosis Mainnet",
+			"symbol": "GNO",
 			"decimals": 18
 		}
 	},

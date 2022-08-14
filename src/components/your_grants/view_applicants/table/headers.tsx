@@ -5,7 +5,7 @@ const tableHeaders = [
 	'Applicant Address',
 	'Project Name',
 	'Funding Sent',
-	'Reviewer',
+	'Reviewers',
 	'Status',
 	'Last updated on',
 	'Actions',

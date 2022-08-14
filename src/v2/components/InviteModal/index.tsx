@@ -23,7 +23,7 @@ const InviteModal = ({ isOpen, onClose: _onClose }: InviteModalProps) => {
 		<Modal
 			isCentered={true}
 			isOpen={isOpen}
-			size='lg'
+			size='xl'
 			onClose={onClose}
 		>
 			<ModalOverlay />

@@ -45,8 +45,8 @@ export default function ControlBar({ points, currentIndex }: ControlBarProps) {
 												size='3.5'
 												bg={colorScheme}>
 												<Circle
-													bg='v2LightGrey'
-													size='1.5' />
+													bg='white'
+													size={currentIndex === idx ? '1.5' : '3'} />
 											</Circle>
 										)
 								}
