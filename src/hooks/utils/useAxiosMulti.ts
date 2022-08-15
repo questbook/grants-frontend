@@ -22,6 +22,7 @@ function useAxiosMulti({ urls, payload, method }: Props) {
 	useEffect(() => {
 		(async() => {
 			try {
+				setLoaded(false)
 				const axiosRequests = urls.map(url => axios.request({
 					data: payload,
 					signal: controllerRef.current.signal,

@@ -21,6 +21,7 @@ const useAxios = ({ url, method, payload }: Props) => {
 
 	useEffect(() => {
 		(async() => {
+			setLoaded(false)
 			try {
 				const response = await axios.request({
 					data: payload,

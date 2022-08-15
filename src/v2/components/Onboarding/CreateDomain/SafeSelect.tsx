@@ -12,15 +12,17 @@ interface Props {
 	value: SafeSelectOption | undefined;
 	onChange: (e: SafeSelectOption | undefined) => void;
 	isError?: boolean;
+	safesOptions?: SafeSelectOption[];
 }
 
 export interface SafeSelectOption extends OptionBase {
+	networkId: string;
 	networkName: string; // Polygon
 	networkIcon: string;
 	safeType: string; // Gnosis
 	safeIcon: string;
 	amount: number; // 1000
-	currency: string; // USD
+	currency?: string; // USD
 	isNote?: boolean;
 }
 
@@ -122,7 +124,7 @@ const SingleValue = ({ innerProps, data }: any) => (
 				color="black.2">
 				{data.amount}
 				{' '}
-				{data.currency}
+				{data.currency ?? 'USD'}
 			</Text>
 		</Flex>
 	</Box>
@@ -131,6 +133,7 @@ const SingleValue = ({ innerProps, data }: any) => (
 
 const dummyData: SafeSelectOption[] = [
 	{
+		networkId: '',
 		networkName: '',
 		networkIcon: '',
 		safeType: '',
@@ -141,6 +144,7 @@ const dummyData: SafeSelectOption[] = [
 		isDisabled: true,
 	},
 	{
+		networkId: '',
 		networkName: 'Polygon',
 		networkIcon: '/ui_icons/polygon.svg',
 		safeType: 'Gnosis',
@@ -149,6 +153,7 @@ const dummyData: SafeSelectOption[] = [
 		currency: 'USD',
 	},
 	{
+		networkId: '',
 		networkName: 'Optimism',
 		networkIcon: '/ui_icons/optimism.svg',
 		safeType: 'Gnosis',
@@ -157,6 +162,7 @@ const dummyData: SafeSelectOption[] = [
 		currency: 'USD',
 	},
 	{
+		networkId: '',
 		networkName: 'Polygon',
 		networkIcon: '/ui_icons/polygon.svg',
 		safeType: 'Gnosis',
@@ -167,7 +173,7 @@ const dummyData: SafeSelectOption[] = [
 	},
 ]
 
-function SafeSelect({ label, optionalText, helperText, helperLinkText, helperLinkUrl, value, onChange }: Props) {
+function SafeSelect({ label, optionalText, helperText, helperLinkText, helperLinkUrl, value, onChange, safesOptions }: Props) {
 	useEffect(() => {
 		console.log('SELECTED DROPDOWN: ', value)
 	}, [value])
@@ -213,7 +219,7 @@ function SafeSelect({ label, optionalText, helperText, helperLinkText, helperLin
 				)
 			}
 			<DropdownSelect
-				options={dummyData}
+				options={safesOptions ?? dummyData}
 				makeOption={Option}
 				singleValue={SingleValue}
 				placeholder='Select from the list'

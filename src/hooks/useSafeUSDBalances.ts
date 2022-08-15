@@ -1,5 +1,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
+import { CHAIN_INFO } from 'src/constants/chains'
+import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 import SAFES_ENPOINTS from '../constants/safesEndpointsTest.json'
 import useAxiosMulti from './utils/useAxiosMulti'
 
@@ -13,18 +15,16 @@ interface Props {
     safeAddress: string
 }
 
-export interface USDBalancesData {
-    [key: string]: number;
-}
-
 interface SingleTokenData {
     fiatBalance?: string;
 }
 
+type ValidChainID = keyof typeof CHAIN_INFO;
+
 interface AllTokensData extends Array<SingleTokenData> { }
 
 function useSafeUSDBalances({ safeAddress }: Props) {
-	const urls = useMemo(() => {
+	const gnosisUrls = useMemo(() => {
 		if(safeAddress === '') {
 			return []
 		}
@@ -33,19 +33,32 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 	}, [safeAddress])
 
 	const { data: rawData, error, loaded } = useAxiosMulti({
-		urls,
+		urls: gnosisUrls,
 		method: 'get'
 	})
-	const [data, setData] = useState<USDBalancesData>({})
+
+	const [data, setData] = useState<SafeSelectOption[]>([])
+
+	const getTokensSum = (tokensData: AllTokensData) => {
+		return tokensData.reduce((partialSum: number, item) => partialSum + parseFloat(item?.fiatBalance || '0'), 0)
+	}
 
 	useEffect(() => {
 		if(loaded && !error) {
-			const newData: USDBalancesData = {}
+			const newData: SafeSelectOption[] = []
 			rawData.forEach((allTokensData: AllTokensData, index) => {
-				const currentChainID = SAFES_BALANCES_CHAIN_ID[index]
-				const tokensSum = allTokensData.reduce((partialSum: number, item) => partialSum + parseFloat(item?.fiatBalance || '0'), 0)
+				const currentChainID = SAFES_BALANCES_CHAIN_ID[index] as unknown as ValidChainID
+				const tokensSum = getTokensSum(allTokensData)
 				if(tokensSum >= USD_BALANCE_THRESHOLD) {
-					newData[currentChainID] = tokensSum
+					const newElement: SafeSelectOption = {
+						networkId: currentChainID.toString(),
+						networkName: CHAIN_INFO[currentChainID]?.name,
+						networkIcon: CHAIN_INFO[currentChainID]?.icon,
+						safeType: 'Gnosis',
+						safeIcon: '/ui_icons/gnosis.svg',
+						amount: Math.floor(tokensSum),
+					}
+					newData.push(newElement)
 				}
 			})
 			console.log('Final Safe', newData)
