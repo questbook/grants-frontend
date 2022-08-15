@@ -32,7 +32,7 @@ interface YourGrantCardProps {
   onViewApplicantsClick?: () => void;
   onAddFundsClick?: () => void;
   acceptingApplications: boolean;
-  chainId: SupportedChainId | undefined;
+  chainId: SupportedChainId;
   isAdmin: boolean;
   initialRubrics: Rubric;
   workspaceId: string;
