@@ -14,11 +14,19 @@ function SignupWebwallet() {
 	const [number] = useState<string>('one')
 
 	useEffect(() => {
+
 	}, [])
 
 
 	const handleSendGaslessTransaction = async(e: any) => {
 		e.preventDefault()
+		const zob = async() => {
+			const x = new Promise(r => setTimeout(r, 2000))
+			x.then((x) => console.log('awaited 2000??'))
+			console.log('didn"t await')
+		}
+
+		zob().then((y) => console.log('REALLy'))
 
 	}
 
