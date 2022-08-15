@@ -130,6 +130,8 @@ export default function useSubmitApplication(
 					nonce
 				)
 
+				
+
 				const transactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
 
 				const CACHE_KEY = strings.cache.apply_grant

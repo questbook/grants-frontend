@@ -56,6 +56,22 @@ export const getNonce = async(webwallet: Wallet | undefined) => {
 	return false
 }
 
+export const addUser = async(webwallet: Wallet) => {
+	if(!webwallet) {
+		return
+	}
+
+	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/add_user',
+		{
+			webwallet_address: webwallet.address
+		})
+	if(response.data && response.data.authorie) {
+		return true;
+	}
+
+	return false
+}
+
 export const registerWebHook = async(authToken: string, apiKey: string) => {
 	const url = 'https://api.biconomy.io/api/v1/dapp/register-webhook'
 

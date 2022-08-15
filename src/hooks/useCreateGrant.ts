@@ -159,7 +159,7 @@ export default function useCreateGrant(
 				// let transactionHash: string | undefined | boolean
 				console.log('THIS IS ADDRESS', GRANT_FACTORY_ADDRESS[currentChainId!], currentChainId)
 
-				console.log('ENTERING')
+				console.log('ENTERING', ipfsHash)
 
 				const methodArgs = [
 					workspaceId || Number(workspace?.id).toString(),
