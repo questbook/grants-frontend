@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
@@ -27,10 +27,10 @@ export default function useSubmitReview(
 	grantAddress?: string,
 	applicationId?: string,
 ) {
-	const [error, setError] = React.useState<string>()
-	const [loading, setLoading] = React.useState(false)
-	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
-	const [transactionData, setTransactionData] = React.useState<any>()
+	const [error, setError] = useState<string>()
+	const [loading, setLoading] = useState(false)
+	const [incorrectNetwork, setIncorrectNetwork] = useState(false)
+	const [transactionData, setTransactionData] = useState<any>()
 	const { data: accountData } = useAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 	const { encryptMessage } = useEncryption()
@@ -52,7 +52,7 @@ export default function useSubmitReview(
 
 	const applicationReviewContract = useQBContract('reviews', chainId)
 
-	const toastRef = React.useRef<ToastId>()
+	const toastRef = useRef<ToastId>()
 	const toast = useToast()
 	const currentChainId = useChainId()
 
@@ -88,7 +88,7 @@ export default function useSubmitReview(
 			setCurrentStep(0)
 
 			try {
-				const encryptedReview = {} as any
+				const encryptedReview: { [key in string]: string } = {}
 				if(isPrivate) {
 					const yourPublicKey = workspace?.members.find(
 						(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
@@ -156,7 +156,7 @@ export default function useSubmitReview(
 				setTransactionData(createGrantTransactionData)
 				setLoading(false)
 				setCurrentStep(5)
-			} catch(e: any) {
+			} catch(e) {
 				setCurrentStep(undefined)
 				const message = getErrorMessage(e)
 				setError(message)
@@ -235,7 +235,7 @@ export default function useSubmitReview(
 			}
 
 			validate()
-		} catch(e: any) {
+		} catch(e) {
 			const message = getErrorMessage(e)
 			setError(message)
 			setLoading(false)

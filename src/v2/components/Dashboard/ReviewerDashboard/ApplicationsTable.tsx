@@ -40,8 +40,6 @@ const STATUS_COLORS: { [key in ApplicationState]?: { 'text': string, 'bg': strin
 
 type InitialApplicationType = GetInitialToBeReviewedApplicationGrantsQuery['grantReviewerCounters'][0]['grant']['applications'][0]
 
-type GrantType = GetInitialToBeReviewedApplicationGrantsQuery['grantReviewerCounters'][0]['grant']
-
 type ReviewType = InitialApplicationType['reviews'][0]
 
 export const APPLICATIONS_TABLE_PAGE_SIZE = 5

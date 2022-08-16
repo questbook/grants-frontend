@@ -20,9 +20,16 @@ import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useSubmitReview from 'src/hooks/useSubmitReview'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { useAccount } from 'wagmi'
+import { RubricItem } from '../../generated/graphql'
 import NetworkTransactionModal from '../../v2/components/NetworkTransactionModal'
 import MultiLineInput from '../ui/forms/multiLineInput'
 import Loader from '../ui/loader'
+
+interface FeedbackType {
+  rubric: RubricItem,
+  rating: number,
+  comment: string,
+}
 
 function FeedbackDrawer({
 	feedbackDrawerOpen,
@@ -39,12 +46,12 @@ function FeedbackDrawer({
   grantAddress: string;
   chainId: SupportedChainId | undefined;
   workspaceId: string;
-  rubrics: any[];
+  rubrics: RubricItem[];
   applicationId: string;
   isPrivate: boolean;
 }) {
-	const [feedbackData, setFeedbackData] = useState<any[]>()
-	const [editedFeedbackData, setEditedFeedbackData] = useState<any>()
+	const [feedbackData, setFeedbackData] = useState<FeedbackType[]>()
+	const [editedFeedbackData, setEditedFeedbackData] = useState<{ items?: Array<FeedbackType> }>()
 	const [currentStep, setCurrentStep] = useState<number>()
 
 	const [pk, setPk] = useState<string>('*')
@@ -140,7 +147,7 @@ function FeedbackDrawer({
 		applicationId,
 	)
 
-	const { setRefresh } = useCustomToast(transactionLink)
+	const { setRefresh } = useCustomToast(transactionLink as string)
 
 	useEffect(() => {
 		if(data) {
