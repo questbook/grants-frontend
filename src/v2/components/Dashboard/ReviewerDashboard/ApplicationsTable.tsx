@@ -7,7 +7,7 @@ import Loader from '../../../../components/ui/loader'
 import { CHAIN_INFO, defaultChainId } from '../../../../constants/chains'
 import {
 	ApplicationState,
-	GetInitialToBeReviewedApplicationGrantsQuery, Grant,
+	GetInitialToBeReviewedApplicationGrantsQuery,
 	useGetMoreReviewedApplicationsLazyQuery,
 	useGetMoreToBeReviewedApplicationsLazyQuery,
 } from '../../../../generated/graphql'
@@ -59,9 +59,9 @@ type Application = {
 
 type Props = {
   reviewerId: string,
-  grant: Partial<Grant>,
-  initialApplications?: InitialApplicationType[],
   showToBeReviewedApplications: boolean,
+  initialApplications?: InitialApplicationType[],
+  grant: GetInitialToBeReviewedApplicationGrantsQuery['grantReviewerCounters'][0]['grant'],
 }
 
 
