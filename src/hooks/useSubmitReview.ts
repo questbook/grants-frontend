@@ -11,6 +11,10 @@ import {
 } from 'src/utils/validationUtils'
 import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
+import {
+	useGetInitialReviewedApplicationGrantsQuery,
+} from '../generated/graphql'
+import { delay } from '../utils/generics'
 import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
 
@@ -31,13 +35,20 @@ export default function useSubmitReview(
 	const { data: networkData, switchNetwork } = useNetwork()
 	const { encryptMessage } = useEncryption()
 
-	const apiClients = useContext(ApiClientsContext)!
-	const { validatorApi, workspace } = apiClients
+	const { validatorApi, workspace, subgraphClients } = useContext(ApiClientsContext)!
 
 	if(!chainId) {
 		// eslint-disable-next-line no-param-reassign
 		chainId = getSupportedChainIdFromWorkspace(workspace)
 	}
+
+	const { client } = subgraphClients[chainId!]
+
+	const { fetchMore: fetchReviews } = useGetInitialReviewedApplicationGrantsQuery({
+		client,
+		skip: true,
+		fetchPolicy: 'network-only',
+	})
 
 	const applicationReviewContract = useQBContract('reviews', chainId)
 
@@ -111,7 +122,6 @@ export default function useSubmitReview(
 
 				const dataHash = (await uploadToIPFS(JSON.stringify(data))).hash
 
-
 				const {
 					data: { ipfsHash },
 				} = await validatorApi.validateReviewSet({
@@ -137,9 +147,30 @@ export default function useSubmitReview(
 				setCurrentStep(2)
 				const createGrantTransactionData = await createGrantTransaction.wait()
 
+				setCurrentStep(3)
+
+				const reviewerId = accountData!.address!
+
+				let didIndex = false
+				do {
+					console.log(`polling for reviewer "${reviewerId}"`)
+					await delay(2000)
+					const result = await fetchReviews({
+						variables: { reviewerId, applicationsCount: 1 },
+					})
+					const grants = result.data.grantReviewerCounters.map(e => e.grant)
+					grants.forEach(grant => {
+						if(grant.id === grantAddress) {
+							didIndex = true
+							console.log(`poll success: ${didIndex}`)
+						}
+					})
+
+				} while(!didIndex)
+
 				setTransactionData(createGrantTransactionData)
-				setCurrentStep(5)
 				setLoading(false)
+				setCurrentStep(5)
 			} catch(e: any) {
 				setCurrentStep(undefined)
 				const message = getErrorMessage(e)
