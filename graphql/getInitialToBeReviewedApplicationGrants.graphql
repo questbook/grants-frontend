@@ -1,5 +1,6 @@
 query getInitialToBeReviewedApplicationGrants(
     $reviewerAddress: Bytes!
+    $reviewerAddressStr: String!
     $applicationsCount: Int!,
 ) {
     grantReviewerCounters(where: { reviewerAddress: $reviewerAddress, pendingCounter_gt: 0 }) {
@@ -26,7 +27,7 @@ query getInitialToBeReviewedApplicationGrants(
                 milestones {
                     amount
                 }
-                reviews {
+                reviews(where: {reviewer_contains_nocase: $reviewerAddressStr}) {
                     reviewer {
                         id
                     }

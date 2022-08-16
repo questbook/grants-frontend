@@ -1,6 +1,7 @@
 query getMoreReviewedApplications(
     $grantId: String!
     $reviewerAddress: Bytes!
+    $reviewerAddressStr: String!
     $first: Int
     $skip: Int
 ) {
@@ -19,7 +20,7 @@ query getMoreReviewedApplications(
         milestones {
             amount
         }
-        reviews {
+        reviews(where: {reviewer_contains_nocase: $reviewerAddressStr}) {
             reviewer {
                 id
             }

@@ -24,7 +24,8 @@ function ReviewerDashboard() {
 	const { data: accountData } = useAccount()
 
 	const variables = {
-		reviewerAddress: accountData!.address!,
+		reviewerAddress: accountData!.address!.toLowerCase(),
+		reviewerAddressStr: accountData!.address!,
 		applicationsCount: APPLICATIONS_TABLE_PAGE_SIZE,
 	}
 

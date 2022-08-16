@@ -138,6 +138,7 @@ function ApplicationsTable({
 
 	const variables = {
 		reviewerAddress: reviewerId.toLowerCase(),
+		reviewerAddressStr: reviewerId,
 		grantId: grant.id,
 		first: APPLICATIONS_TABLE_PAGE_SIZE,
 		skip: page * APPLICATIONS_TABLE_PAGE_SIZE,
