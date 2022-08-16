@@ -1,13 +1,13 @@
 query getMoreReviewedApplications(
     $grantId: String!
-    $reviewerId: Bytes!
+    $reviewerAddress: Bytes!
     $first: Int
     $skip: Int
 ) {
     grantApplications(
         where: {
             grant: $grantId,
-            doneReviewerAddresses_contains_nocase: [$reviewerId]
+            doneReviewerAddresses_contains_nocase: [$reviewerAddress]
         },
         first: $first,
         skip: $skip,

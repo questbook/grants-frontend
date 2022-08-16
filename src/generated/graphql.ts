@@ -4273,7 +4273,7 @@ export type GetGrantsForReviewerInWorkspaceQueryVariables = Exact<{
 export type GetGrantsForReviewerInWorkspaceQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', grant: { __typename?: 'Grant', id: string, title: string } }> };
 
 export type GetInitialReviewedApplicationGrantsQueryVariables = Exact<{
-  reviewerId: Scalars['Bytes'];
+  reviewerAddress: Scalars['Bytes'];
   applicationsCount: Scalars['Int'];
 }>;
 
@@ -4281,7 +4281,7 @@ export type GetInitialReviewedApplicationGrantsQueryVariables = Exact<{
 export type GetInitialReviewedApplicationGrantsQuery = { __typename?: 'Query', grantReviewerCounters: Array<{ __typename?: 'GrantReviewerCounter', grant: { __typename?: 'Grant', id: string, title: string, rubric?: { __typename?: 'Rubric', isPrivate: boolean } | null, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork> }, reward: { __typename?: 'Reward', asset: string }, applications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, applicantId: string, milestones: Array<{ __typename?: 'ApplicationMilestone', amount: string }>, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, reviewer?: { __typename?: 'WorkspaceMember', id: string } | null, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> } }> };
 
 export type GetInitialToBeReviewedApplicationGrantsQueryVariables = Exact<{
-  reviewerId: Scalars['Bytes'];
+  reviewerAddress: Scalars['Bytes'];
   applicationsCount: Scalars['Int'];
 }>;
 
@@ -4290,7 +4290,7 @@ export type GetInitialToBeReviewedApplicationGrantsQuery = { __typename?: 'Query
 
 export type GetMoreReviewedApplicationsQueryVariables = Exact<{
   grantId: Scalars['String'];
-  reviewerId: Scalars['Bytes'];
+  reviewerAddress: Scalars['Bytes'];
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
 }>;
@@ -4300,7 +4300,7 @@ export type GetMoreReviewedApplicationsQuery = { __typename?: 'Query', grantAppl
 
 export type GetMoreToBeReviewedApplicationsQueryVariables = Exact<{
   grantId: Scalars['String'];
-  reviewerId: Scalars['Bytes'];
+  reviewerAddress: Scalars['Bytes'];
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
 }>;
@@ -5985,8 +5985,10 @@ export type GetGrantsForReviewerInWorkspaceQueryHookResult = ReturnType<typeof u
 export type GetGrantsForReviewerInWorkspaceLazyQueryHookResult = ReturnType<typeof useGetGrantsForReviewerInWorkspaceLazyQuery>;
 export type GetGrantsForReviewerInWorkspaceQueryResult = Apollo.QueryResult<GetGrantsForReviewerInWorkspaceQuery, GetGrantsForReviewerInWorkspaceQueryVariables>;
 export const GetInitialReviewedApplicationGrantsDocument = gql`
-    query getInitialReviewedApplicationGrants($reviewerId: Bytes!, $applicationsCount: Int!) {
-  grantReviewerCounters(where: {reviewerAddress: $reviewerId, doneCounter_gt: 0}) {
+    query getInitialReviewedApplicationGrants($reviewerAddress: Bytes!, $applicationsCount: Int!) {
+  grantReviewerCounters(
+    where: {reviewerAddress: $reviewerAddress, doneCounter_gt: 0}
+  ) {
     grant {
       id
       title
@@ -6001,7 +6003,7 @@ export const GetInitialReviewedApplicationGrantsDocument = gql`
       }
       applications(
         first: $applicationsCount
-        where: {doneReviewerAddresses_contains_nocase: [$reviewerId]}
+        where: {doneReviewerAddresses_contains_nocase: [$reviewerAddress]}
       ) {
         id
         state
@@ -6048,7 +6050,7 @@ export const GetInitialReviewedApplicationGrantsDocument = gql`
  * @example
  * const { data, loading, error } = useGetInitialReviewedApplicationGrantsQuery({
  *   variables: {
- *      reviewerId: // value for 'reviewerId'
+ *      reviewerAddress: // value for 'reviewerAddress'
  *      applicationsCount: // value for 'applicationsCount'
  *   },
  * });
@@ -6065,9 +6067,9 @@ export type GetInitialReviewedApplicationGrantsQueryHookResult = ReturnType<type
 export type GetInitialReviewedApplicationGrantsLazyQueryHookResult = ReturnType<typeof useGetInitialReviewedApplicationGrantsLazyQuery>;
 export type GetInitialReviewedApplicationGrantsQueryResult = Apollo.QueryResult<GetInitialReviewedApplicationGrantsQuery, GetInitialReviewedApplicationGrantsQueryVariables>;
 export const GetInitialToBeReviewedApplicationGrantsDocument = gql`
-    query getInitialToBeReviewedApplicationGrants($reviewerId: Bytes!, $applicationsCount: Int!) {
+    query getInitialToBeReviewedApplicationGrants($reviewerAddress: Bytes!, $applicationsCount: Int!) {
   grantReviewerCounters(
-    where: {reviewerAddress: $reviewerId, pendingCounter_gt: 0}
+    where: {reviewerAddress: $reviewerAddress, pendingCounter_gt: 0}
   ) {
     grant {
       id
@@ -6083,7 +6085,7 @@ export const GetInitialToBeReviewedApplicationGrantsDocument = gql`
       }
       applications(
         first: $applicationsCount
-        where: {state: submitted, pendingReviewerAddresses_contains_nocase: [$reviewerId]}
+        where: {state: submitted, pendingReviewerAddresses_contains_nocase: [$reviewerAddress]}
       ) {
         id
         state
@@ -6130,7 +6132,7 @@ export const GetInitialToBeReviewedApplicationGrantsDocument = gql`
  * @example
  * const { data, loading, error } = useGetInitialToBeReviewedApplicationGrantsQuery({
  *   variables: {
- *      reviewerId: // value for 'reviewerId'
+ *      reviewerAddress: // value for 'reviewerAddress'
  *      applicationsCount: // value for 'applicationsCount'
  *   },
  * });
@@ -6147,9 +6149,9 @@ export type GetInitialToBeReviewedApplicationGrantsQueryHookResult = ReturnType<
 export type GetInitialToBeReviewedApplicationGrantsLazyQueryHookResult = ReturnType<typeof useGetInitialToBeReviewedApplicationGrantsLazyQuery>;
 export type GetInitialToBeReviewedApplicationGrantsQueryResult = Apollo.QueryResult<GetInitialToBeReviewedApplicationGrantsQuery, GetInitialToBeReviewedApplicationGrantsQueryVariables>;
 export const GetMoreReviewedApplicationsDocument = gql`
-    query getMoreReviewedApplications($grantId: String!, $reviewerId: Bytes!, $first: Int, $skip: Int) {
+    query getMoreReviewedApplications($grantId: String!, $reviewerAddress: Bytes!, $first: Int, $skip: Int) {
   grantApplications(
-    where: {grant: $grantId, doneReviewerAddresses_contains_nocase: [$reviewerId]}
+    where: {grant: $grantId, doneReviewerAddresses_contains_nocase: [$reviewerAddress]}
     first: $first
     skip: $skip
   ) {
@@ -6197,7 +6199,7 @@ export const GetMoreReviewedApplicationsDocument = gql`
  * const { data, loading, error } = useGetMoreReviewedApplicationsQuery({
  *   variables: {
  *      grantId: // value for 'grantId'
- *      reviewerId: // value for 'reviewerId'
+ *      reviewerAddress: // value for 'reviewerAddress'
  *      first: // value for 'first'
  *      skip: // value for 'skip'
  *   },
@@ -6215,9 +6217,9 @@ export type GetMoreReviewedApplicationsQueryHookResult = ReturnType<typeof useGe
 export type GetMoreReviewedApplicationsLazyQueryHookResult = ReturnType<typeof useGetMoreReviewedApplicationsLazyQuery>;
 export type GetMoreReviewedApplicationsQueryResult = Apollo.QueryResult<GetMoreReviewedApplicationsQuery, GetMoreReviewedApplicationsQueryVariables>;
 export const GetMoreToBeReviewedApplicationsDocument = gql`
-    query getMoreToBeReviewedApplications($grantId: String!, $reviewerId: Bytes!, $first: Int, $skip: Int) {
+    query getMoreToBeReviewedApplications($grantId: String!, $reviewerAddress: Bytes!, $first: Int, $skip: Int) {
   grantApplications(
-    where: {state: submitted, grant: $grantId, pendingReviewerAddresses_contains_nocase: [$reviewerId]}
+    where: {state: submitted, grant: $grantId, pendingReviewerAddresses_contains_nocase: [$reviewerAddress]}
     first: $first
     skip: $skip
   ) {
@@ -6265,7 +6267,7 @@ export const GetMoreToBeReviewedApplicationsDocument = gql`
  * const { data, loading, error } = useGetMoreToBeReviewedApplicationsQuery({
  *   variables: {
  *      grantId: // value for 'grantId'
- *      reviewerId: // value for 'reviewerId'
+ *      reviewerAddress: // value for 'reviewerAddress'
  *      first: // value for 'first'
  *      skip: // value for 'skip'
  *   },

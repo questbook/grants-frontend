@@ -1,8 +1,8 @@
 query getInitialToBeReviewedApplicationGrants(
-    $reviewerId: Bytes!
+    $reviewerAddress: Bytes!
     $applicationsCount: Int!,
 ) {
-    grantReviewerCounters(where: { reviewerAddress: $reviewerId, pendingCounter_gt: 0 }) {
+    grantReviewerCounters(where: { reviewerAddress: $reviewerAddress, pendingCounter_gt: 0 }) {
         grant {
             id
             title
@@ -17,7 +17,7 @@ query getInitialToBeReviewedApplicationGrants(
             }
             applications(first: $applicationsCount, where: {
                 state: submitted,
-                pendingReviewerAddresses_contains_nocase: [$reviewerId]
+                pendingReviewerAddresses_contains_nocase: [$reviewerAddress]
             }) {
                 id
                 state
