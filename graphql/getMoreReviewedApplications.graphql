@@ -1,0 +1,56 @@
+query getMoreReviewedApplications(
+    $grantId: String!
+    $reviewerId: Bytes!
+    $first: Int
+    $skip: Int
+) {
+    grantApplications(
+        where: {
+            grant: $grantId,
+            doneReviewerAddresses_contains_nocase: [$reviewerId]
+        },
+        first: $first,
+        skip: $skip,
+    ) {
+        id
+        state
+        createdAtS
+        applicantId
+        milestones {
+            amount
+        }
+        reviews {
+            reviewer {
+                id
+            }
+            data {
+                id
+                manager {
+                    id
+                }
+                data
+            }
+            publicReviewDataHash
+            id
+        }
+        grant {
+            id
+            title
+            rubric {
+                isPrivate
+            }
+            workspace {
+                supportedNetworks
+            }
+            reward {
+                asset
+            }
+        }
+        fields {
+            id
+            values {
+                value
+            }
+        }
+    }
+}

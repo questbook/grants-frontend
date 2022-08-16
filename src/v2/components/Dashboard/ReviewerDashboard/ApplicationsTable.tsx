@@ -6,7 +6,8 @@ import { ApiClientsContext } from '../../../../../pages/_app'
 import Loader from '../../../../components/ui/loader'
 import { CHAIN_INFO, defaultChainId } from '../../../../constants/chains'
 import {
-	ApplicationState, GetInitialToBeReviewedApplicationGrantsQuery,
+	ApplicationState,
+	GetInitialToBeReviewedApplicationGrantsQuery, useGetMoreReviewedApplicationsLazyQuery, useGetMoreToBeReviewedApplicationsLazyQuery,
 } from '../../../../generated/graphql'
 import SupportedChainId from '../../../../generated/SupportedChainId'
 import useEncryption from '../../../../hooks/utils/useEncryption'
@@ -120,7 +121,7 @@ function ApplicationsTable({
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
 
 	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-	// const { client } = subgraphClients[chainId]
+	const { client } = subgraphClients[chainId]
 
 	useEffect(() => {
 		if(applications) {
@@ -130,42 +131,32 @@ function ApplicationsTable({
 		}
 	}, [applications])
 
+	const variables = {
+		reviewerId: reviewerId.toLowerCase(),
+		grantId,
+		first: APPLICATIONS_TABLE_PAGE_SIZE,
+		skip: page * APPLICATIONS_TABLE_PAGE_SIZE,
+	}
+	const moreData = showToBeReviewedApplications ?
+		useGetMoreToBeReviewedApplicationsLazyQuery({ client, variables }) :
+		useGetMoreReviewedApplicationsLazyQuery({ client, variables })
+
 	useEffect(() => {
-		if(initialApplications !== undefined) {
+		if(page === 0 && initialApplications !== undefined) {
 			setApplications(initialApplications.map(
 				(application) => (parseApplication(application, chainId)),
 			))
+		} else {
+			(async() => {
+				const { data } = await moreData[0]({ client, variables })
+				if(data) {
+					setApplications(data.grantApplications.map(
+						(application) => (parseApplication(application, chainId)),
+					))
+				}
+			})()
 		}
-	}, [])
-
-
-	//
-	// const variables = {
-	// 	reviewerId: reviewerId.toLowerCase(),
-	// 	grantId,
-	// 	first: APPLICATIONS_TABLE_PAGE_SIZE,
-	// 	skip: page * APPLICATIONS_TABLE_PAGE_SIZE,
-	// }
-	// const { data } = showToBeReviewedApplications ?
-	// 	useGetToBeReviewedReviewerApplicationsForGrantQuery({
-	// 		client, variables: { ...variables, doesNotHaveReviewOfReviewerId: reviewerId },
-	// 	}) : useGetDoneReviewerApplicationsForGrantQuery({
-	// 		client, variables: { ...variables, shouldHaveReviewOfReviewerId: reviewerId },
-	// 	})
-	//
-	// const applications = useMemo(() => {
-	// 	if(!data) {
-	// 		return
-	// 	}
-	//
-	// 	setHasMoreData(data!.grantApplications.length >= PAGE_SIZE)
-	//
-	// 	const fetchedApplications: Application[] = data!.grantApplications.map((application) => {
-	//
-	// 	})
-	//
-	// 	return fetchedApplications
-	// }, [page, data])
+	}, [page])
 
 	const TABLE_HEADERS = ['Project Name', 'Funding ask', 'Submitted on']
 
