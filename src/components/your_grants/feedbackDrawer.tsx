@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import {
 	Box,
 	Button,
@@ -43,11 +43,11 @@ function FeedbackDrawer({
   applicationId: string;
   isPrivate: boolean;
 }) {
-	const [editedFeedbackData, setEditedFeedbackData] = React.useState<any>()
-	const [feedbackData, setFeedbackData] = React.useState<any[]>()
+	const [feedbackData, setFeedbackData] = useState<any[]>()
+	const [editedFeedbackData, setEditedFeedbackData] = useState<any>()
 	const [currentStep, setCurrentStep] = useState<number>()
 
-	const [pk, setPk] = React.useState<string>('*')
+	const [pk, setPk] = useState<string>('*')
 	const { data: accountData } = useAccount()
 	const { workspace } = useContext(ApiClientsContext)!
 
@@ -61,7 +61,7 @@ function FeedbackDrawer({
 	useEffect(() => {
 		if(transactionData && newPublicKey && newPublicKey.publicKey) {
 			setPk(newPublicKey.publicKey)
-			const formattedFeedbackData = feedbackData?.map((feedback: any) => ({
+			const formattedFeedbackData = feedbackData?.map((feedback) => ({
 				rubric: feedback.rubric,
 				rating: feedback.rating,
 				comment: feedback.comment,
@@ -117,7 +117,7 @@ function FeedbackDrawer({
 			return
 		}
 
-		const formattedFeedbackData = feedbackData?.map((feedback: any) => ({
+		const formattedFeedbackData = feedbackData?.map((feedback) => ({
 			rubric: feedback.rubric,
 			rating: feedback.rating,
 			comment: feedback.comment,

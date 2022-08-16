@@ -7,7 +7,7 @@ import Loader from '../../../../components/ui/loader'
 import { CHAIN_INFO, defaultChainId } from '../../../../constants/chains'
 import {
 	ApplicationState,
-	GetInitialToBeReviewedApplicationGrantsQuery,
+	GetInitialToBeReviewedApplicationGrantsQuery, Grant,
 	useGetMoreReviewedApplicationsLazyQuery,
 	useGetMoreToBeReviewedApplicationsLazyQuery,
 } from '../../../../generated/graphql'
@@ -61,24 +61,24 @@ type Application = {
 
 type Props = {
   reviewerId: string,
-  grant: GrantType,
+  grant: Partial<Grant>,
   initialApplications?: InitialApplicationType[],
   showToBeReviewedApplications: boolean,
 }
 
 
 function ApplicationsTable({
-	reviewerId,
 	grant,
-	showToBeReviewedApplications,
+	reviewerId,
 	initialApplications,
+	showToBeReviewedApplications,
 }: Props) {
 	const parseApplication = (application: InitialApplicationType, chainId: SupportedChainId): Application => {
 		const decimals = CHAIN_INFO[
 			getSupportedChainIdFromSupportedNetwork(
-				grant.workspace.supportedNetworks[0],
+				grant.workspace?.supportedNetworks[0],
 			)
-		]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+		]?.supportedCurrencies[grant.reward!.asset.toLowerCase()]
 			?.decimals || 18
 
 		const getFieldString = (name: string) => application.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
@@ -87,10 +87,7 @@ function ApplicationsTable({
 
 		const fundingAskField = getFieldString('fundingAsk')
 		if(fundingAskField) {
-			rewardAmount = +formatAmount(
-        getFieldString('fundingAsk')!,
-        decimals,
-			)
+			rewardAmount = +formatAmount(fundingAskField, decimals)
 		} else {
 			rewardAmount = 0
 			application.milestones.forEach(
@@ -139,7 +136,7 @@ function ApplicationsTable({
 	const variables = {
 		reviewerAddress: reviewerId.toLowerCase(),
 		reviewerAddressStr: reviewerId,
-		grantId: grant.id,
+		grantId: grant.id!,
 		first: APPLICATIONS_TABLE_PAGE_SIZE,
 		skip: page * APPLICATIONS_TABLE_PAGE_SIZE,
 	}
