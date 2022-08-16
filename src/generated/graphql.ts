@@ -466,6 +466,8 @@ export type GrantApplication = {
   applicationReviewers: Array<GrantApplicationReviewer>;
   /** in seconds since epoch */
   createdAtS: Scalars['Int'];
+  /** Addresses of the assigned reviewers who have reviewed */
+  doneReviewerAddresses: Array<Scalars['Bytes']>;
   /** Feedback from the grant DAO manager/applicant */
   feedbackDao?: Maybe<Scalars['String']>;
   /** Feedback from the developer */
@@ -477,6 +479,8 @@ export type GrantApplication = {
   id: Scalars['ID'];
   /** Milestones of the application */
   milestones: Array<ApplicationMilestone>;
+  /** Addresses of the assigned reviewers who are yet to review */
+  pendingReviewerAddresses: Array<Scalars['Bytes']>;
   /** PII Data */
   pii: Array<PiiAnswer>;
   /** @deprecated (use 'applicationReviewers') People who will review the grant application */
@@ -796,6 +800,12 @@ export type GrantApplication_Filter = {
   createdAtS_lte?: InputMaybe<Scalars['Int']>;
   createdAtS_not?: InputMaybe<Scalars['Int']>;
   createdAtS_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  doneReviewerAddresses?: InputMaybe<Array<Scalars['Bytes']>>;
+  doneReviewerAddresses_contains?: InputMaybe<Array<Scalars['Bytes']>>;
+  doneReviewerAddresses_contains_nocase?: InputMaybe<Array<Scalars['Bytes']>>;
+  doneReviewerAddresses_not?: InputMaybe<Array<Scalars['Bytes']>>;
+  doneReviewerAddresses_not_contains?: InputMaybe<Array<Scalars['Bytes']>>;
+  doneReviewerAddresses_not_contains_nocase?: InputMaybe<Array<Scalars['Bytes']>>;
   feedbackDao?: InputMaybe<Scalars['String']>;
   feedbackDao_contains?: InputMaybe<Scalars['String']>;
   feedbackDao_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -879,6 +889,12 @@ export type GrantApplication_Filter = {
   milestones_not?: InputMaybe<Array<Scalars['String']>>;
   milestones_not_contains?: InputMaybe<Array<Scalars['String']>>;
   milestones_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  pendingReviewerAddresses?: InputMaybe<Array<Scalars['Bytes']>>;
+  pendingReviewerAddresses_contains?: InputMaybe<Array<Scalars['Bytes']>>;
+  pendingReviewerAddresses_contains_nocase?: InputMaybe<Array<Scalars['Bytes']>>;
+  pendingReviewerAddresses_not?: InputMaybe<Array<Scalars['Bytes']>>;
+  pendingReviewerAddresses_not_contains?: InputMaybe<Array<Scalars['Bytes']>>;
+  pendingReviewerAddresses_not_contains_nocase?: InputMaybe<Array<Scalars['Bytes']>>;
   pii?: InputMaybe<Array<Scalars['String']>>;
   pii_?: InputMaybe<PiiAnswer_Filter>;
   pii_contains?: InputMaybe<Array<Scalars['String']>>;
@@ -920,12 +936,14 @@ export enum GrantApplication_OrderBy {
   ApplicantId = 'applicantId',
   ApplicationReviewers = 'applicationReviewers',
   CreatedAtS = 'createdAtS',
+  DoneReviewerAddresses = 'doneReviewerAddresses',
   FeedbackDao = 'feedbackDao',
   FeedbackDev = 'feedbackDev',
   Fields = 'fields',
   Grant = 'grant',
   Id = 'id',
   Milestones = 'milestones',
+  PendingReviewerAddresses = 'pendingReviewerAddresses',
   Pii = 'pii',
   Reviewers = 'reviewers',
   Reviews = 'reviews',
@@ -1206,6 +1224,95 @@ export enum GrantManager_OrderBy {
   Grant = 'grant',
   Id = 'id',
   Member = 'member'
+}
+
+export type GrantReviewerCounter = {
+  __typename?: 'GrantReviewerCounter';
+  /** total number of applications assigned in grant */
+  counter: Scalars['Int'];
+  /** number of applications reviewed in the grant */
+  doneCounter: Scalars['Int'];
+  /** The grant itself */
+  grant: Grant;
+  /** ID of the entity, grantID . reviewerAddress */
+  id: Scalars['ID'];
+  /** number of applications assigned, pending in the grant */
+  pendingCounter: Scalars['Int'];
+  /** Address of the reviewer */
+  reviewerAddress: Scalars['Bytes'];
+};
+
+export type GrantReviewerCounter_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  counter?: InputMaybe<Scalars['Int']>;
+  counter_gt?: InputMaybe<Scalars['Int']>;
+  counter_gte?: InputMaybe<Scalars['Int']>;
+  counter_in?: InputMaybe<Array<Scalars['Int']>>;
+  counter_lt?: InputMaybe<Scalars['Int']>;
+  counter_lte?: InputMaybe<Scalars['Int']>;
+  counter_not?: InputMaybe<Scalars['Int']>;
+  counter_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  doneCounter?: InputMaybe<Scalars['Int']>;
+  doneCounter_gt?: InputMaybe<Scalars['Int']>;
+  doneCounter_gte?: InputMaybe<Scalars['Int']>;
+  doneCounter_in?: InputMaybe<Array<Scalars['Int']>>;
+  doneCounter_lt?: InputMaybe<Scalars['Int']>;
+  doneCounter_lte?: InputMaybe<Scalars['Int']>;
+  doneCounter_not?: InputMaybe<Scalars['Int']>;
+  doneCounter_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  grant?: InputMaybe<Scalars['String']>;
+  grant_?: InputMaybe<Grant_Filter>;
+  grant_contains?: InputMaybe<Scalars['String']>;
+  grant_contains_nocase?: InputMaybe<Scalars['String']>;
+  grant_ends_with?: InputMaybe<Scalars['String']>;
+  grant_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  grant_gt?: InputMaybe<Scalars['String']>;
+  grant_gte?: InputMaybe<Scalars['String']>;
+  grant_in?: InputMaybe<Array<Scalars['String']>>;
+  grant_lt?: InputMaybe<Scalars['String']>;
+  grant_lte?: InputMaybe<Scalars['String']>;
+  grant_not?: InputMaybe<Scalars['String']>;
+  grant_not_contains?: InputMaybe<Scalars['String']>;
+  grant_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  grant_not_ends_with?: InputMaybe<Scalars['String']>;
+  grant_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  grant_not_in?: InputMaybe<Array<Scalars['String']>>;
+  grant_not_starts_with?: InputMaybe<Scalars['String']>;
+  grant_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  grant_starts_with?: InputMaybe<Scalars['String']>;
+  grant_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  pendingCounter?: InputMaybe<Scalars['Int']>;
+  pendingCounter_gt?: InputMaybe<Scalars['Int']>;
+  pendingCounter_gte?: InputMaybe<Scalars['Int']>;
+  pendingCounter_in?: InputMaybe<Array<Scalars['Int']>>;
+  pendingCounter_lt?: InputMaybe<Scalars['Int']>;
+  pendingCounter_lte?: InputMaybe<Scalars['Int']>;
+  pendingCounter_not?: InputMaybe<Scalars['Int']>;
+  pendingCounter_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  reviewerAddress?: InputMaybe<Scalars['Bytes']>;
+  reviewerAddress_contains?: InputMaybe<Scalars['Bytes']>;
+  reviewerAddress_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  reviewerAddress_not?: InputMaybe<Scalars['Bytes']>;
+  reviewerAddress_not_contains?: InputMaybe<Scalars['Bytes']>;
+  reviewerAddress_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+};
+
+export enum GrantReviewerCounter_OrderBy {
+  Counter = 'counter',
+  DoneCounter = 'doneCounter',
+  Grant = 'grant',
+  Id = 'id',
+  PendingCounter = 'pendingCounter',
+  ReviewerAddress = 'reviewerAddress'
 }
 
 export type Grant_Filter = {
@@ -1839,6 +1946,8 @@ export type Query = {
   grantFields: Array<GrantField>;
   grantManager?: Maybe<GrantManager>;
   grantManagers: Array<GrantManager>;
+  grantReviewerCounter?: Maybe<GrantReviewerCounter>;
+  grantReviewerCounters: Array<GrantReviewerCounter>;
   grants: Array<Grant>;
   notification?: Maybe<Notification>;
   notifications: Array<Notification>;
@@ -2038,6 +2147,24 @@ export type QueryGrantManagersArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<GrantManager_Filter>;
+};
+
+
+export type QueryGrantReviewerCounterArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryGrantReviewerCountersArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<GrantReviewerCounter_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<GrantReviewerCounter_Filter>;
 };
 
 
@@ -2736,6 +2863,8 @@ export type Subscription = {
   grantFields: Array<GrantField>;
   grantManager?: Maybe<GrantManager>;
   grantManagers: Array<GrantManager>;
+  grantReviewerCounter?: Maybe<GrantReviewerCounter>;
+  grantReviewerCounters: Array<GrantReviewerCounter>;
   grants: Array<Grant>;
   notification?: Maybe<Notification>;
   notifications: Array<Notification>;
@@ -2935,6 +3064,24 @@ export type SubscriptionGrantManagersArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<GrantManager_Filter>;
+};
+
+
+export type SubscriptionGrantReviewerCounterArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionGrantReviewerCountersArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<GrantReviewerCounter_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<GrantReviewerCounter_Filter>;
 };
 
 
@@ -3166,13 +3313,21 @@ export type SubscriptionWorkspacesArgs = {
 
 export enum SupportedNetwork {
   Chain_4 = 'chain_4',
+  Chain_5 = 'chain_5',
   Chain_10 = 'chain_10',
+  Chain_40 = 'chain_40',
+  Chain_41 = 'chain_41',
   Chain_42 = 'chain_42',
   Chain_69 = 'chain_69',
+  Chain_100 = 'chain_100',
   Chain_137 = 'chain_137',
+  Chain_588 = 'chain_588',
   Chain_1001 = 'chain_1001',
+  Chain_1088 = 'chain_1088',
+  Chain_1287 = 'chain_1287',
   Chain_2153 = 'chain_2153',
   Chain_8217 = 'chain_8217',
+  Chain_9000 = 'chain_9000',
   Chain_42220 = 'chain_42220',
   Chain_44787 = 'chain_44787',
   Chain_80001 = 'chain_80001',
@@ -4117,6 +4272,22 @@ export type GetGrantsForReviewerInWorkspaceQueryVariables = Exact<{
 
 export type GetGrantsForReviewerInWorkspaceQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', grant: { __typename?: 'Grant', id: string, title: string } }> };
 
+export type GetInitialReviewedApplicationGrantsQueryVariables = Exact<{
+  reviewerId: Scalars['Bytes'];
+  applicationsCount: Scalars['Int'];
+}>;
+
+
+export type GetInitialReviewedApplicationGrantsQuery = { __typename?: 'Query', grantReviewerCounters: Array<{ __typename?: 'GrantReviewerCounter', grant: { __typename?: 'Grant', id: string, title: string, applications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, applicantId: string, milestones: Array<{ __typename?: 'ApplicationMilestone', amount: string }>, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, reviewer?: { __typename?: 'WorkspaceMember', id: string } | null, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, grant: { __typename?: 'Grant', id: string, title: string, rubric?: { __typename?: 'Rubric', isPrivate: boolean } | null, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork> }, reward: { __typename?: 'Reward', asset: string } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> } }> };
+
+export type GetInitialToBeReviewedApplicationGrantsQueryVariables = Exact<{
+  reviewerId: Scalars['Bytes'];
+  applicationsCount: Scalars['Int'];
+}>;
+
+
+export type GetInitialToBeReviewedApplicationGrantsQuery = { __typename?: 'Query', grantReviewerCounters: Array<{ __typename?: 'GrantReviewerCounter', grant: { __typename?: 'Grant', id: string, title: string, applications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, applicantId: string, milestones: Array<{ __typename?: 'ApplicationMilestone', amount: string }>, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, reviewer?: { __typename?: 'WorkspaceMember', id: string } | null, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, grant: { __typename?: 'Grant', id: string, title: string, rubric?: { __typename?: 'Rubric', isPrivate: boolean } | null, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork> }, reward: { __typename?: 'Reward', asset: string } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> } }> };
+
 export type GetMyApplicationsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
@@ -4143,18 +4314,6 @@ export type GetNumberOfGrantsQueryVariables = Exact<{
 
 
 export type GetNumberOfGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string }> };
-
-export type GetReviewerApplicationsForGrantQueryVariables = Exact<{
-  workspaceId: Scalars['String'];
-  reviewerId: Scalars['Bytes'];
-  grantId: Scalars['ID'];
-  applicationStateIn: Array<ApplicationState> | ApplicationState;
-  first?: InputMaybe<Scalars['Int']>;
-  skip?: InputMaybe<Scalars['Int']>;
-}>;
-
-
-export type GetReviewerApplicationsForGrantQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, applicantId: string, milestones: Array<{ __typename?: 'ApplicationMilestone', amount: string }>, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, reviewer?: { __typename?: 'WorkspaceMember', id: string } | null, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, grant: { __typename?: 'Grant', id: string, title: string, rubric?: { __typename?: 'Rubric', isPrivate: boolean } | null, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork> }, reward: { __typename?: 'Reward', asset: string } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> };
 
 export type GetWorkspaceDetailsQueryVariables = Exact<{
   workspaceID: Scalars['ID'];
@@ -5805,6 +5964,176 @@ export function useGetGrantsForReviewerInWorkspaceLazyQuery(baseOptions?: Apollo
 export type GetGrantsForReviewerInWorkspaceQueryHookResult = ReturnType<typeof useGetGrantsForReviewerInWorkspaceQuery>;
 export type GetGrantsForReviewerInWorkspaceLazyQueryHookResult = ReturnType<typeof useGetGrantsForReviewerInWorkspaceLazyQuery>;
 export type GetGrantsForReviewerInWorkspaceQueryResult = Apollo.QueryResult<GetGrantsForReviewerInWorkspaceQuery, GetGrantsForReviewerInWorkspaceQueryVariables>;
+export const GetInitialReviewedApplicationGrantsDocument = gql`
+    query getInitialReviewedApplicationGrants($reviewerId: Bytes!, $applicationsCount: Int!) {
+  grantReviewerCounters(where: {reviewerAddress: $reviewerId, doneCounter_gt: 0}) {
+    grant {
+      id
+      title
+      applications(
+        first: $applicationsCount
+        where: {doneReviewerAddresses_contains_nocase: [$reviewerId]}
+      ) {
+        id
+        state
+        createdAtS
+        applicantId
+        milestones {
+          amount
+        }
+        reviews {
+          reviewer {
+            id
+          }
+          data {
+            id
+            manager {
+              id
+            }
+            data
+          }
+          publicReviewDataHash
+          id
+        }
+        grant {
+          id
+          title
+          rubric {
+            isPrivate
+          }
+          workspace {
+            supportedNetworks
+          }
+          reward {
+            asset
+          }
+        }
+        fields {
+          id
+          values {
+            value
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetInitialReviewedApplicationGrantsQuery__
+ *
+ * To run a query within a React component, call `useGetInitialReviewedApplicationGrantsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetInitialReviewedApplicationGrantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetInitialReviewedApplicationGrantsQuery({
+ *   variables: {
+ *      reviewerId: // value for 'reviewerId'
+ *      applicationsCount: // value for 'applicationsCount'
+ *   },
+ * });
+ */
+export function useGetInitialReviewedApplicationGrantsQuery(baseOptions: Apollo.QueryHookOptions<GetInitialReviewedApplicationGrantsQuery, GetInitialReviewedApplicationGrantsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetInitialReviewedApplicationGrantsQuery, GetInitialReviewedApplicationGrantsQueryVariables>(GetInitialReviewedApplicationGrantsDocument, options);
+      }
+export function useGetInitialReviewedApplicationGrantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetInitialReviewedApplicationGrantsQuery, GetInitialReviewedApplicationGrantsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetInitialReviewedApplicationGrantsQuery, GetInitialReviewedApplicationGrantsQueryVariables>(GetInitialReviewedApplicationGrantsDocument, options);
+        }
+export type GetInitialReviewedApplicationGrantsQueryHookResult = ReturnType<typeof useGetInitialReviewedApplicationGrantsQuery>;
+export type GetInitialReviewedApplicationGrantsLazyQueryHookResult = ReturnType<typeof useGetInitialReviewedApplicationGrantsLazyQuery>;
+export type GetInitialReviewedApplicationGrantsQueryResult = Apollo.QueryResult<GetInitialReviewedApplicationGrantsQuery, GetInitialReviewedApplicationGrantsQueryVariables>;
+export const GetInitialToBeReviewedApplicationGrantsDocument = gql`
+    query getInitialToBeReviewedApplicationGrants($reviewerId: Bytes!, $applicationsCount: Int!) {
+  grantReviewerCounters(
+    where: {reviewerAddress: $reviewerId, pendingCounter_gt: 0}
+  ) {
+    grant {
+      id
+      title
+      applications(
+        first: $applicationsCount
+        where: {state: submitted, pendingReviewerAddresses_contains_nocase: [$reviewerId]}
+      ) {
+        id
+        state
+        createdAtS
+        applicantId
+        milestones {
+          amount
+        }
+        reviews {
+          reviewer {
+            id
+          }
+          data {
+            id
+            manager {
+              id
+            }
+            data
+          }
+          publicReviewDataHash
+          id
+        }
+        grant {
+          id
+          title
+          rubric {
+            isPrivate
+          }
+          workspace {
+            supportedNetworks
+          }
+          reward {
+            asset
+          }
+        }
+        fields {
+          id
+          values {
+            value
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetInitialToBeReviewedApplicationGrantsQuery__
+ *
+ * To run a query within a React component, call `useGetInitialToBeReviewedApplicationGrantsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetInitialToBeReviewedApplicationGrantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetInitialToBeReviewedApplicationGrantsQuery({
+ *   variables: {
+ *      reviewerId: // value for 'reviewerId'
+ *      applicationsCount: // value for 'applicationsCount'
+ *   },
+ * });
+ */
+export function useGetInitialToBeReviewedApplicationGrantsQuery(baseOptions: Apollo.QueryHookOptions<GetInitialToBeReviewedApplicationGrantsQuery, GetInitialToBeReviewedApplicationGrantsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetInitialToBeReviewedApplicationGrantsQuery, GetInitialToBeReviewedApplicationGrantsQueryVariables>(GetInitialToBeReviewedApplicationGrantsDocument, options);
+      }
+export function useGetInitialToBeReviewedApplicationGrantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetInitialToBeReviewedApplicationGrantsQuery, GetInitialToBeReviewedApplicationGrantsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetInitialToBeReviewedApplicationGrantsQuery, GetInitialToBeReviewedApplicationGrantsQueryVariables>(GetInitialToBeReviewedApplicationGrantsDocument, options);
+        }
+export type GetInitialToBeReviewedApplicationGrantsQueryHookResult = ReturnType<typeof useGetInitialToBeReviewedApplicationGrantsQuery>;
+export type GetInitialToBeReviewedApplicationGrantsLazyQueryHookResult = ReturnType<typeof useGetInitialToBeReviewedApplicationGrantsLazyQuery>;
+export type GetInitialToBeReviewedApplicationGrantsQueryResult = Apollo.QueryResult<GetInitialToBeReviewedApplicationGrantsQuery, GetInitialToBeReviewedApplicationGrantsQueryVariables>;
 export const GetMyApplicationsDocument = gql`
     query getMyApplications($first: Int, $skip: Int, $applicantID: Bytes!) {
   grantApplications(
@@ -5945,92 +6274,6 @@ export function useGetNumberOfGrantsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetNumberOfGrantsQueryHookResult = ReturnType<typeof useGetNumberOfGrantsQuery>;
 export type GetNumberOfGrantsLazyQueryHookResult = ReturnType<typeof useGetNumberOfGrantsLazyQuery>;
 export type GetNumberOfGrantsQueryResult = Apollo.QueryResult<GetNumberOfGrantsQuery, GetNumberOfGrantsQueryVariables>;
-export const GetReviewerApplicationsForGrantDocument = gql`
-    query getReviewerApplicationsForGrant($workspaceId: String!, $reviewerId: Bytes!, $grantId: ID!, $applicationStateIn: [ApplicationState!]!, $first: Int, $skip: Int) {
-  grantApplications(
-    where: {state_in: $applicationStateIn, grant_: {id: $grantId, workspace: $workspaceId}, reviewers_: {actorId_contains: $reviewerId}}
-    first: $first
-    skip: $skip
-    subgraphError: allow
-    orderBy: createdAtS
-    orderDirection: desc
-  ) {
-    id
-    state
-    createdAtS
-    applicantId
-    milestones {
-      amount
-    }
-    reviews {
-      reviewer {
-        id
-      }
-      data {
-        id
-        manager {
-          id
-        }
-        data
-      }
-      publicReviewDataHash
-      id
-    }
-    grant {
-      id
-      title
-      rubric {
-        isPrivate
-      }
-      workspace {
-        supportedNetworks
-      }
-      reward {
-        asset
-      }
-    }
-    fields {
-      id
-      values {
-        value
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useGetReviewerApplicationsForGrantQuery__
- *
- * To run a query within a React component, call `useGetReviewerApplicationsForGrantQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetReviewerApplicationsForGrantQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetReviewerApplicationsForGrantQuery({
- *   variables: {
- *      workspaceId: // value for 'workspaceId'
- *      reviewerId: // value for 'reviewerId'
- *      grantId: // value for 'grantId'
- *      applicationStateIn: // value for 'applicationStateIn'
- *      first: // value for 'first'
- *      skip: // value for 'skip'
- *   },
- * });
- */
-export function useGetReviewerApplicationsForGrantQuery(baseOptions: Apollo.QueryHookOptions<GetReviewerApplicationsForGrantQuery, GetReviewerApplicationsForGrantQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetReviewerApplicationsForGrantQuery, GetReviewerApplicationsForGrantQueryVariables>(GetReviewerApplicationsForGrantDocument, options);
-      }
-export function useGetReviewerApplicationsForGrantLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetReviewerApplicationsForGrantQuery, GetReviewerApplicationsForGrantQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetReviewerApplicationsForGrantQuery, GetReviewerApplicationsForGrantQueryVariables>(GetReviewerApplicationsForGrantDocument, options);
-        }
-export type GetReviewerApplicationsForGrantQueryHookResult = ReturnType<typeof useGetReviewerApplicationsForGrantQuery>;
-export type GetReviewerApplicationsForGrantLazyQueryHookResult = ReturnType<typeof useGetReviewerApplicationsForGrantLazyQuery>;
-export type GetReviewerApplicationsForGrantQueryResult = Apollo.QueryResult<GetReviewerApplicationsForGrantQuery, GetReviewerApplicationsForGrantQueryVariables>;
 export const GetWorkspaceDetailsDocument = gql`
     query getWorkspaceDetails($workspaceID: ID!) {
   workspace(id: $workspaceID, subgraphError: allow) {

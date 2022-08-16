@@ -1,0 +1,55 @@
+query getInitialReviewedApplicationGrants(
+    $reviewerId: Bytes!,
+    $applicationsCount: Int!,
+) {
+    grantReviewerCounters(where: { reviewerAddress: $reviewerId, doneCounter_gt: 0 }) {
+        grant {
+            id
+            title,
+            applications(first: $applicationsCount, where: {
+                doneReviewerAddresses_contains_nocase: [$reviewerId]
+            }) {
+                id
+                state
+                createdAtS
+                applicantId
+                milestones {
+                    amount
+                }
+                reviews {
+                    reviewer {
+                        id
+                    }
+                    data {
+                        id
+                        manager {
+                            id
+                        }
+                        data
+                    }
+                    publicReviewDataHash
+                    id
+                }
+                grant {
+                    id
+                    title
+                    rubric {
+                        isPrivate
+                    }
+                    workspace {
+                        supportedNetworks
+                    }
+                    reward {
+                        asset
+                    }
+                }
+                fields {
+                    id
+                    values {
+                        value
+                    }
+                }
+            }
+        }
+    }
+}
