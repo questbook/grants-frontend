@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Flex, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react'
 import dynamic from 'next/dynamic'
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false })
@@ -97,9 +97,11 @@ function BarGraph({
 
 	const [seriesOptions, setSeriesOptions] = useState<any>(barChartOptionsDashboard)
 
+	const [currentMonth, setCurrentMonth] = useState(1)
+
 	useEffect(() => {
 		console.log(applications)
-		const series = applications.map((app) => (app.applications ?? 0))
+		const series = applications.slice(-30 * currentMonth, -30 * (currentMonth - 1) === 0 ? applications.length : -30 * (currentMonth - 1)).map((app) => (app.applications ?? 0))
 		console.log(series)
 		setSeriesData([{
 			name: 'Applications',
@@ -182,9 +184,9 @@ function BarGraph({
 						},
 					},
 				},
-			],
+			]
 		} as any
-		options.xaxis.categories = applications.map((app, i) => {
+		options.xaxis.categories = applications.slice(-30 * currentMonth, -30 * (currentMonth - 1) === 0 ? applications.length : -30 * (currentMonth - 1)).map((app, i) => {
 			if(i % 7 === 0) {
 				const d = new Date(app.date.getTime() + 86400000)
 				return `${d.getDate()} ${months[d.getMonth()]}`
@@ -195,7 +197,7 @@ function BarGraph({
 
 		setSeriesOptions(options)
 
-	}, [applications])
+	}, [applications, currentMonth])
 
 	return (
 
@@ -252,16 +254,79 @@ function BarGraph({
 							 >
 							<Flex
 								direction='column'
-								alignSelf='flex-start'
-								ml="25px"
+								// alignSelf='flex-start'
+								mx="25px"
 								mt="5"
 							>
 
-								<Text
-									fontSize='16px'
-								>
+								<Flex w={'100%'}>
+									<Text
+										fontSize='16px'
+										mr={'auto'}
+									>
                 Applications Recieved
-								</Text>
+									</Text>
+									<Menu
+										placement="bottom"
+										// align="right"
+									>
+										<Box
+											width="169px"
+											height="32px"
+											borderRadius="8px"
+											border="1px solid #AAAAAA"
+											alignItems="center"
+											justifyContent={'center'}
+											display={'flex'}
+										>
+											<MenuButton
+												as={Button}
+												aria-label="View More Options"
+												// mt="-28px"
+												// pl="16px"
+												variant="link"
+												textDecoration="none"
+												_focus={{}}
+												leftIcon={<Image src="/ui_icons/calender-dao.svg" />}
+												color="#373737"
+												rightIcon={<Image src="/ui_icons/dropdown_arrow.svg" />}
+												fontSize="14px"
+												fontWeight="500"
+												w="fit-content"
+												mx="auto"
+											>
+          							{months[new Date((new Date()).getTime() + 86400000 * 30 * (12 - currentMonth + 1)).getMonth()]}
+											</MenuButton>
+										</Box>
+										<MenuList
+											minW="164px"
+											maxH='120px'
+											overflow='scroll'
+											p={0}>
+											{
+												Array(12).fill(0).map((_, i) => {
+													const t = new Date()
+													const d = new Date(t.getTime() + 86400000 * 30 * (12 - i))
+													return (
+														<MenuItem
+															onClick={() => setCurrentMonth(t.getMonth() - d.getMonth() + 1)}
+															key={`bar-graph-${i}`}>
+															<Text
+																fontSize="14px"
+																fontWeight="400"
+																lineHeight="20px"
+																color="#122224"
+															>
+																{months[d.getMonth()]}
+															</Text>
+														</MenuItem>
+													)
+												})
+											}
+
+										</MenuList>
+									</Menu>
+								</Flex>
 								<Text
 									fontSize='lg'
 									fontWeight='700'
