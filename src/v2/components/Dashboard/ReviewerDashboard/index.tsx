@@ -1,16 +1,18 @@
 import { useContext, useMemo, useState } from 'react'
 import { Box, Button, Flex, Text } from '@chakra-ui/react'
+import { Fragment } from 'preact'
 import { useAccount } from 'wagmi'
 import { ApiClientsContext } from '../../../../../pages/_app'
 import Loader from '../../../../components/ui/loader'
 import { defaultChainId } from '../../../../constants/chains'
 import {
-	ApplicationState, useGetGrantsForReviewerInWorkspaceQuery,
+	useGetInitialReviewedApplicationGrantsQuery,
+	useGetInitialToBeReviewedApplicationGrantsQuery,
 } from '../../../../generated/graphql'
 import {
 	getSupportedChainIdFromWorkspace,
 } from '../../../../utils/validationUtils'
-import ApplicationsTable from './ApplicationsTable'
+import ApplicationsTable, { APPLICATIONS_TABLE_PAGE_SIZE } from './ApplicationsTable'
 
 function ReviewerDashboard() {
 	const [showPendingReviews, setShowPendingReviews] = useState(true)
@@ -22,29 +24,22 @@ function ReviewerDashboard() {
 
 	const { data: accountData } = useAccount()
 
-	const { data } = useGetGrantsForReviewerInWorkspaceQuery({
-		client,
-		variables: {
-			workspaceId: workspace!.id!,
-			reviewerId: accountData!.address!,
-		},
-	})
+	const variables = {
+		reviewerId: accountData!.address!,
+		applicationsCount: APPLICATIONS_TABLE_PAGE_SIZE,
+	}
+
+	const { data } = showPendingReviews ?
+		useGetInitialToBeReviewedApplicationGrantsQuery({ client, variables }) :
+		useGetInitialReviewedApplicationGrantsQuery({ client, variables })
 
 	const grants = useMemo(() => {
 		if(!data) {
 			return
 		}
 
-		return data.grantApplications.map((application) => application.grant)
+		return data.grantReviewerCounters.map((application) => application.grant)
 	}, [data])
-
-
-	const reviewDoneStates = Object.values(ApplicationState)
-	// all states except 'submitted' and 'resubmit'
-	const submittedIdx = reviewDoneStates.indexOf(ApplicationState.Submitted)
-	reviewDoneStates.splice(submittedIdx, 1)
-	const resubmitIdx = reviewDoneStates.indexOf(ApplicationState.Resubmit)
-	reviewDoneStates.splice(resubmitIdx, 1)
 
 	return (
 		<Flex
@@ -75,7 +70,7 @@ function ReviewerDashboard() {
 			<Box h={5} />
 			{
 				grants === undefined ? <Loader /> : grants.map((grant) => (
-					<>
+					<Fragment key={grant.id}>
 						<Text
 							fontSize={25}
 							fontWeight={'bold'}>
@@ -85,10 +80,10 @@ function ReviewerDashboard() {
 						<ApplicationsTable
 							reviewerId={accountData!.address!}
 							grantId={grant.id}
-							showApplicationState={!showPendingReviews}
-							applicationStateIn={showPendingReviews ? [ApplicationState.Submitted] : reviewDoneStates}
+							initialApplications={grant.applications}
+							showToBeReviewedApplications={showPendingReviews}
 						/>
-					</>
+					</Fragment>
 				))
 			}
 		</Flex>
