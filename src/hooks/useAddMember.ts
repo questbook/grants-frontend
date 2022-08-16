@@ -8,10 +8,9 @@ import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
-	apiKey,
+	bicoDapps,
 	getTransactionReceipt,
-	sendGaslessTransaction,
-	webHookId
+	sendGaslessTransaction
 } from 'src/utils/gaslessUtils'
 import {
 	getSupportedChainIdFromWorkspace,
@@ -45,7 +44,7 @@ export default function useAddMember(
 	const { webwallet } = useContext(WebwalletContext)!
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
-		apiKey: apiKey,
+		chainId: chainId?.toString(),
 	})
 
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState<boolean>(false)
@@ -126,7 +125,7 @@ export default function useAddMember(
 					scwAddress,
 					webwallet,
 					`${currentChainId}`,
-					webHookId,
+					bicoDapps[currentChainId].webHookId,
 					nonce
 				)
 

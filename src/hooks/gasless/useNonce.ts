@@ -1,41 +1,45 @@
-import { useContext, useEffect } from 'react'
+import { useCallback, useContext } from 'react'
 import { WebwalletContext } from '../../../pages/_app'
 import { getNonce } from '../../utils/gaslessUtils'
 
 export const useNonce = () => {
 	const { webwallet, setWebwallet, nonce, setNonce, loadingNonce, setLoadingNonce } = useContext(WebwalletContext)!
 
-	const getUseNonce = async() => {
+	const getUseNonce = useCallback(async() => {
+		console.log('rerewq', webwallet)
 		const _nonce = await getNonce(webwallet)
 		return _nonce
-	}
+	}, [webwallet])
 
-	useEffect(() => {
-		if(!webwallet || loadingNonce) {
-			return
-		}
+	// useEffect(() => {
+	// 	const nonceTimeout = new Promise(r => setTimeout(r, 4000))
 
-		setLoadingNonce(true)
+	// 	console.log('GOT NONCE', webwallet, nonce, loadingNonce)
 
-		console.log('GOT NONCE', nonce)
-		if(webwallet && !nonce) {
-			getUseNonce()
-				.then(_nonce => {
-					console.log('GOT NONCE', _nonce)
-					if(!_nonce) {
-						setNonce(undefined)
-					} else {
-						if(_nonce === 'Token expired') {
-							setNonce(undefined)
-						} else {
-							setNonce(_nonce)
-						}
-					}
+	// 	if (!webwallet || loadingNonce || nonce) {
+	// 		return
+	// 	}
 
-					setLoadingNonce(false)
-				})
-		}
-	}, [webwallet, nonce])
+	// 	// setLoadingNonce(true)
+
+	// 	getUseNonce()
+	// 		.then(_nonce => {
+	// 			console.log('GOT NONCE', _nonce)
+	// 			if (!_nonce) {
+	// 				setNonce(undefined)
+	// 			} else {
+	// 				if (_nonce === 'Token expired') {
+	// 					setNonce(undefined)
+	// 				} else {
+	// 					setNonce(_nonce)
+	// 				}
+	// 			}
+	// 		})
+
+
+	// 	// setLoadingNonce(false)
+
+	// }, [webwallet, nonce, loadingNonce])
 
 	return nonce
 }

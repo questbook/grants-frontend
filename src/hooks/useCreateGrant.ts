@@ -13,7 +13,7 @@ import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash, parseAmount } from 'src/utils/formattingUtils'
-import { apiKey, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
+import { bicoDapps, getTransactionReceipt, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromWorkspace,
@@ -35,7 +35,7 @@ export default function useCreateGrant(
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
-		apiKey: apiKey,
+		chainId: chainId?.toString()!
 		// targetContractABI: GrantFactoryAbi,
 	})
 
@@ -181,7 +181,7 @@ export default function useCreateGrant(
 					scwAddress,
 					webwallet,
 					`${currentChainId}`,
-					webHookId,
+					bicoDapps[currentChainId].webHookId,
 					nonce
 				)
 

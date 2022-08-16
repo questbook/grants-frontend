@@ -5,7 +5,7 @@ import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { apiKey, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
+import { bicoDapps, getTransactionReceipt, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
@@ -35,15 +35,16 @@ export default function useAssignReviewers(
 
 	const { webwallet } = useContext(WebwalletContext)!
 
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
-		apiKey: apiKey,
-		// targetContractABI: ApplicationReviewRegistryAbi,
-	})
 
 	if(!chainId) {
 		// eslint-disable-next-line no-param-reassign
 		chainId = getSupportedChainIdFromWorkspace(workspace)
 	}
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		chainId: chainId?.toString()!
+		// targetContractABI: ApplicationReviewRegistryAbi,
+	})
 
 	const applicationReviewContract = useQBContract('reviews', chainId)
 
@@ -117,7 +118,7 @@ export default function useAssignReviewers(
 					scwAddress,
 					webwallet,
 					`${currentChainId}`,
-					webHookId,
+					bicoDapps[currentChainId].webHookId,
 					nonce
 				)
 

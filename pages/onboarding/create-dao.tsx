@@ -11,10 +11,9 @@ import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
 import {
-	apiKey,
+	bicoDapps,
 	getTransactionReceipt,
-	sendGaslessTransaction,
-	webHookId
+	sendGaslessTransaction
 } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
@@ -42,7 +41,7 @@ const OnboardingCreateDao = () => {
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
-		apiKey: apiKey,
+		chainId: daoNetwork?.id.toString()!,
 		// targetContractABI: WorkspaceRegistryAbi,
 		// chainId: network
 	})
@@ -124,7 +123,7 @@ const OnboardingCreateDao = () => {
 				scwAddress,
 				webwallet,
 				`${daoNetwork.id}`,
-				webHookId,
+				bicoDapps[daoNetwork.id.toString()].webHookId,
 				nonce
 			)
 

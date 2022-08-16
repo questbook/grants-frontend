@@ -4,8 +4,6 @@ import {
 	Image,
 	Menu,
 	MenuButton,
-	MenuItem,
-	MenuList,
 	Text,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
@@ -118,7 +116,7 @@ function AccountDetails() {
 					</MenuButton>
 				)
 			}
-			{
+			{/* {
 				(!(connected && isDisconnected) || (nonce && nonce !== 'Token expired')) && (
 					<MenuList>
 						<MenuItem
@@ -136,7 +134,7 @@ function AccountDetails() {
 						</MenuItem>
 					</MenuList>
 				)
-			}
+			} */}
 		</Menu>
 	)
 }

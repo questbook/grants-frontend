@@ -5,10 +5,9 @@ import { APPLICATION_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
-	apiKey,
+	bicoDapps,
 	getTransactionReceipt,
-	sendGaslessTransaction,
-	webHookId
+	sendGaslessTransaction
 } from 'src/utils/gaslessUtils'
 import {
 	getSupportedChainIdFromWorkspace,
@@ -40,7 +39,7 @@ export default function useApproveMilestone(
 	const toast = useToast()
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
-		apiKey: apiKey,
+		chainId: chainId?.toString()!
 		// targetContractABI: ApplicationRegistryAbi,
 	})
 
@@ -102,7 +101,7 @@ export default function useApproveMilestone(
 					scwAddress,
 					webwallet,
 					`${currentChainId}`,
-					webHookId,
+					bicoDapps[currentChainId].webHookId,
 					nonce
 				)
 

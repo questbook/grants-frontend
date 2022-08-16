@@ -11,10 +11,9 @@ import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useChainId from 'src/hooks/utils/useChainId'
 import {
-	apiKey,
+	bicoDapps,
 	getTransactionReceipt,
-	sendGaslessTransaction,
-	webHookId
+	sendGaslessTransaction
 } from 'src/utils/gaslessUtils'
 import { delay } from './generics'
 import { getSupportedChainIdFromWorkspace } from './validationUtils'
@@ -104,7 +103,7 @@ export const useMakeInvite = (role: number) => {
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 	const { data: accountData, nonce } = useQuestbookAccount()
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
-		apiKey: apiKey,
+		chainId: chainId?.toString()
 	})
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState('not ready')
 	const targetContractObject = useQBContract('workspace', network)
@@ -156,7 +155,7 @@ export const useMakeInvite = (role: number) => {
 				scwAddress,
 				webwallet,
 				chainId.toString(),
-				webHookId,
+				bicoDapps[chainId.toString()].webHookId,
 				nonce
 			)
 
@@ -211,7 +210,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
-		apiKey: apiKey,
+		chainId: inviteInfo?.chainId.toString()
 	})
 
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState('not ready')
@@ -281,7 +280,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 				scwAddress,
 				webwallet,
 				inviteInfo?.chainId.toString(),
-				webHookId,
+				bicoDapps[inviteInfo?.chainId.toString()].webHookId,
 				nonce
 			)
 			didReachStep?.('tx-signed')

@@ -6,7 +6,7 @@ import { APPLICATION_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { apiKey, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
+import { bicoDapps, getTransactionReceipt, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import strings from '../constants/strings.json'
@@ -42,7 +42,7 @@ export default function useSubmitApplication(
 	const { webwallet } = useContext(WebwalletContext)!
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
-		apiKey: apiKey,
+		chainId: chainId?.toString()
 	})
 
 	useEffect(() => {
@@ -126,7 +126,7 @@ export default function useSubmitApplication(
 					scwAddress,
 					webwallet,
 					`${currentChainId}`,
-					webHookId,
+					bicoDapps[currentChainId].webHookId,
 					nonce
 				)
 

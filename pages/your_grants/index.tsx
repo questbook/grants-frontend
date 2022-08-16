@@ -86,11 +86,16 @@ function removeDuplicates(array: any) {
 }
 
 function YourGrants() {
+	console.count('fdfdfdfdfdfdfd')
 	const router = useRouter()
 	const [pk, setPk] = useState<string>('*')
 	const [ignorePkModal, setIgnorePkModal] = useState(false)
 
 	const { data: accountData, nonce } = useQuestbookAccount()
+	// const accountData = {
+	// 	address: "0x9C910261B77bEeaa84289D098EbD309Ec748E9EF"
+	// }
+
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
 	const [isAdmin, setIsAdmin] = React.useState<boolean>(false)
 	const [isReviewer, setIsReviewer] = React.useState<boolean>(false)
@@ -294,6 +299,7 @@ function YourGrants() {
 	const allGrantsReviewerData =
     useGetAllGrantsForReviewerQuery(queryReviewerParams)
 	useEffect(() => {
+		console.log('FERR0')
 		if(!workspace) {
 			return
 		}
@@ -369,6 +375,7 @@ function YourGrants() {
 	const getEmptyStateForSelectedTab = () => TABS[selectedTab]?.emptyState()
 
 	useEffect(() => {
+		console.log('FERR-1')
 		const { current } = containerRef
 		if(!current) {
 			return
