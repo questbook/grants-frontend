@@ -117,6 +117,8 @@ export const WebwalletContext = createContext<{
 	setScwAddress: (scwAddress?: string) => void;
 	nonce?: string;
 	setNonce: (nonce?: string) => void;
+	loadingNonce: boolean;
+	setLoadingNonce: (loadingNonce?: boolean) => void;
 		} | null>(null)
 
 export const BiconomyContext = createContext<{
@@ -137,6 +139,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [biconomyWalletClient, setBiconomyWalletClient] = React.useState<BiconomyWalletClient>()
 	const [nonce, setNonce] = React.useState<string>()
 	const [loading, setIsLoading] = React.useState<boolean>(false)
+	const [loadingNonce, setLoadingNonce] = React.useState<boolean>(false)
 
 	useEffect(() => {
 		setWebwallet(createWebWallet())
@@ -262,7 +265,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				}
 
 				setNonce(newNonce)
-			}
+			},
+			loadingNonce: loadingNonce,
+			setLoadingNonce: setLoadingNonce
 		}),
 		[webwallet, setWebwallet, network, switchNetwork, scwAddress, setScwAddress, nonce, setNonce]
 	)

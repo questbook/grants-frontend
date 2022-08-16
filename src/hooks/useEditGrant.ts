@@ -1,7 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
-import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
@@ -149,7 +148,7 @@ export default function useEditGrant(
 				// )
 				// await rubricTxn.wait()
 				// const createGrantTransactionData = await createGrantTransaction.wait()
-				console.log('rubric hash', grantId, grantContract.address);
+				console.log('rubric hash', grantId, grantContract.address)
 				const rubricTxn = await sendGaslessTransaction(
 					biconomy,
 					applicationReviewContract,

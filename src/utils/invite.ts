@@ -243,6 +243,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 
 	const joinInvite = useCallback(
 		async(didReachStep?: (step: JoinInviteStep) => void) => {
+			console.log('GTRGTR', biconomyWalletClient, scwAddress, isBiconomyInitialised)
 			if(!signature) {
 				throw new Error('account not connected')
 			}
@@ -331,7 +332,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 		return result
 	}, [workspaceRegistry, inviteInfo, signature])
 
-	return { joinInvite, getJoinInviteGasEstimate }
+	return { joinInvite, getJoinInviteGasEstimate, isBiconomyInitialised: isBiconomyInitialised === 'ready' }
 }
 
 const numberToHex = (num: number) => `0x${num.toString(16)}`

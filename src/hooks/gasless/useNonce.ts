@@ -3,7 +3,7 @@ import { WebwalletContext } from '../../../pages/_app'
 import { getNonce } from '../../utils/gaslessUtils'
 
 export const useNonce = () => {
-	const { webwallet, setWebwallet, nonce, setNonce } = useContext(WebwalletContext)!
+	const { webwallet, setWebwallet, nonce, setNonce, loadingNonce, setLoadingNonce } = useContext(WebwalletContext)!
 
 	const getUseNonce = async() => {
 		const _nonce = await getNonce(webwallet)
@@ -11,9 +11,11 @@ export const useNonce = () => {
 	}
 
 	useEffect(() => {
-		if(!webwallet) {
+		if(!webwallet || loadingNonce) {
 			return
 		}
+
+		setLoadingNonce(true)
 
 		console.log('GOT NONCE', nonce)
 		if(webwallet && !nonce) {
@@ -29,6 +31,8 @@ export const useNonce = () => {
 							setNonce(_nonce)
 						}
 					}
+
+					setLoadingNonce(false)
 				})
 		}
 	}, [webwallet, nonce])

@@ -29,6 +29,7 @@ type DisplayProps = {
 	workspaceId?: string
 	role: number
 	profile: DAOMemberProfile
+	isBiconomyInitialised: boolean
 	getJoinInviteGasEstimate: () => Promise<BigNumber | undefined>
 	updateProfile<T extends keyof DAOMemberProfile>(key: T, value: DAOMemberProfile[T]): void
 	nextStep: () => void
@@ -48,7 +49,7 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 		profileImageUrl: '/ui_icons/default_profile_picture.png'
 	})
 
-	const { joinInvite, getJoinInviteGasEstimate } = useJoinInvite(inviteInfo!, profile)
+	const { joinInvite, getJoinInviteGasEstimate, isBiconomyInitialised } = useJoinInvite(inviteInfo!, profile)
 
 	const walletAddress = accountData?.address
 
@@ -60,6 +61,7 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 		role,
 		daoName,
 		profile,
+		isBiconomyInitialised,
 		updateProfile(key, value) {
 			setProfile(profile => ({ ...profile, [key]: value }))
 		},
@@ -326,7 +328,7 @@ const Step2LeftDisplay = ({ role, profile }: DisplayProps) => {
 	)
 }
 
-const Step2RightDisplay = ({ getJoinInviteGasEstimate, profile, updateProfile, nextStep }: DisplayProps) => {
+const Step2RightDisplay = ({ getJoinInviteGasEstimate, profile, updateProfile, nextStep, isBiconomyInitialised }: DisplayProps) => {
 	const allFieldsTruthy = Object.values(profile).every(v => !!v)
 
 	return (
@@ -388,7 +390,7 @@ const Step2RightDisplay = ({ getJoinInviteGasEstimate, profile, updateProfile, n
 			</HStack>
 
 			<Button
-				disabled={!allFieldsTruthy}
+				disabled={!allFieldsTruthy || !isBiconomyInitialised}
 				w='100%'
 				onClick={nextStep}
 				variant='primaryV2'>

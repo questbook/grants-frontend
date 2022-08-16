@@ -66,7 +66,7 @@ export const addUser = async(webwallet: Wallet) => {
 			webwallet_address: webwallet.address
 		})
 	if(response.data && response.data.authorie) {
-		return true;
+		return true
 	}
 
 	return false
@@ -178,7 +178,7 @@ export const sendGaslessTransaction = async(biconomy: any, targetContractObject:
 		return false
 	}
 
-	console.log('HERE1')
+	console.log('HERE1', targetContractObject, targetContractMethod, targetContractArgs)
 	const { data } = await targetContractObject.populateTransaction[targetContractMethod](...targetContractArgs)
 	console.log('HERE2')
 	console.log('HERE 00', biconomyWalletClient)

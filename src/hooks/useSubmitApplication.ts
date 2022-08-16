@@ -130,7 +130,6 @@ export default function useSubmitApplication(
 					nonce
 				)
 
-				
 
 				const transactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
 
