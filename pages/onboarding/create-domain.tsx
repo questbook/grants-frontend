@@ -120,6 +120,7 @@ const OnboardingCreateDomain = () => {
 	}, [domainName])
 
 	const createWorkspace = async() => {
+		console.log(safeSelected)
 		// setCallOnContractChange(false)
 		setCurrentStep(0)
 		try {
@@ -158,7 +159,7 @@ const OnboardingCreateDomain = () => {
 				throw new Error('Error validating grant data')
 			}
 
-			if(safeSelected?.networkId) {
+			if(!safeSelected || !safeSelected?.networkId) {
 
 				throw new Error('No network specified')
 			}
@@ -168,10 +169,6 @@ const OnboardingCreateDomain = () => {
 
 			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
 				console.log('54321')
-				return
-			}
-
-			if(!safeSelected) {
 				return
 			}
 
