@@ -4,7 +4,7 @@ import { WebwalletContext } from '../../../pages/_app'
 
 export const useQuestbookAccount = () => {
 	const { webwallet, scwAddress, setNonce } = useContext(WebwalletContext)!
-	const nonce = useNonce()
+	// const nonce = useNonce()
 	const [gaslessData, setGaslessData] = useState<any>()
 	// const { data: accountData } = useAccount()
 	// const { data: connectData, isConnecting, isConnected, isReconnecting, isError, connect, connectors } = useConnect()
@@ -12,7 +12,7 @@ export const useQuestbookAccount = () => {
 	// useEffect(() => {
 	// 	console.log('Changed nonce: ', nonce)
 	// }, [nonce])
-
+	const nonce = "43asdfasdfasdf";
 	useEffect(() => {
 		// console.log('HYY', nonce, webwallet, scwAddress)
 		if(nonce && webwallet && scwAddress && !gaslessData) {

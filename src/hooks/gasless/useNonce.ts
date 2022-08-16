@@ -31,7 +31,7 @@ export const useNonce = () => {
 					}
 				})
 		}
-	}, [webwallet, nonce, setNonce])
+	}, [webwallet, nonce])
 
 	return nonce
 }
