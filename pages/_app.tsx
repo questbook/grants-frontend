@@ -118,7 +118,7 @@ export const WebwalletContext = createContext<{
 	nonce?: string;
 	setNonce: (nonce?: string) => void;
 	loadingNonce: boolean;
-	setLoadingNonce: (loadingNonce?: boolean) => void;
+	setLoadingNonce: (loadingNonce: boolean) => void;
 		} | null>(null)
 
 export const BiconomyContext = createContext<{
