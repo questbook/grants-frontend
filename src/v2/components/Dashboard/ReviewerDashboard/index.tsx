@@ -1,6 +1,5 @@
 import { useContext, useMemo, useState } from 'react'
-import { Box, Button, Flex, Text } from '@chakra-ui/react'
-import { Fragment } from 'preact'
+import { Box, Button, Flex } from '@chakra-ui/react'
 import { useAccount } from 'wagmi'
 import { ApiClientsContext } from '../../../../../pages/_app'
 import Loader from '../../../../components/ui/loader'
@@ -70,20 +69,13 @@ function ReviewerDashboard() {
 			<Box h={5} />
 			{
 				grants === undefined ? <Loader /> : grants.map((grant) => (
-					<Fragment key={grant.id}>
-						<Text
-							fontSize={25}
-							fontWeight={'bold'}>
-							{grant.title}
-						</Text>
-						<Box h={2} />
-						<ApplicationsTable
-							reviewerId={accountData!.address!}
-							grantId={grant.id}
-							initialApplications={grant.applications}
-							showToBeReviewedApplications={showPendingReviews}
-						/>
-					</Fragment>
+					<ApplicationsTable
+						key={grant.id}
+						grant={grant}
+						reviewerId={accountData!.address!}
+						initialApplications={grant.applications}
+						showToBeReviewedApplications={showPendingReviews}
+					/>
 				))
 			}
 		</Flex>

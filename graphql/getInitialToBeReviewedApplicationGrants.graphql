@@ -5,7 +5,16 @@ query getInitialToBeReviewedApplicationGrants(
     grantReviewerCounters(where: { reviewerAddress: $reviewerId, pendingCounter_gt: 0 }) {
         grant {
             id
-            title,
+            title
+            rubric {
+                isPrivate
+            }
+            workspace {
+                supportedNetworks
+            }
+            reward {
+                asset
+            }
             applications(first: $applicationsCount, where: {
                 state: submitted,
                 pendingReviewerAddresses_contains_nocase: [$reviewerId]
@@ -30,19 +39,6 @@ query getInitialToBeReviewedApplicationGrants(
                     }
                     publicReviewDataHash
                     id
-                }
-                grant {
-                    id
-                    title
-                    rubric {
-                        isPrivate
-                    }
-                    workspace {
-                        supportedNetworks
-                    }
-                    reward {
-                        asset
-                    }
                 }
                 fields {
                     id

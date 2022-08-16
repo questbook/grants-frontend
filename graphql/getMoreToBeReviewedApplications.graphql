@@ -34,19 +34,6 @@ query getMoreToBeReviewedApplications(
             publicReviewDataHash
             id
         }
-        grant {
-            id
-            title
-            rubric {
-                isPrivate
-            }
-            workspace {
-                supportedNetworks
-            }
-            reward {
-                asset
-            }
-        }
         fields {
             id
             values {

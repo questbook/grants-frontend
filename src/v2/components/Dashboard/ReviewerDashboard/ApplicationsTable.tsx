@@ -7,7 +7,9 @@ import Loader from '../../../../components/ui/loader'
 import { CHAIN_INFO, defaultChainId } from '../../../../constants/chains'
 import {
 	ApplicationState,
-	GetInitialToBeReviewedApplicationGrantsQuery, useGetMoreReviewedApplicationsLazyQuery, useGetMoreToBeReviewedApplicationsLazyQuery,
+	GetInitialToBeReviewedApplicationGrantsQuery,
+	useGetMoreReviewedApplicationsLazyQuery,
+	useGetMoreToBeReviewedApplicationsLazyQuery,
 } from '../../../../generated/graphql'
 import SupportedChainId from '../../../../generated/SupportedChainId'
 import useEncryption from '../../../../hooks/utils/useEncryption'
@@ -37,6 +39,9 @@ const STATUS_COLORS: { [key in ApplicationState]?: { 'text': string, 'bg': strin
 }
 
 type InitialApplicationType = GetInitialToBeReviewedApplicationGrantsQuery['grantReviewerCounters'][0]['grant']['applications'][0]
+
+type GrantType = GetInitialToBeReviewedApplicationGrantsQuery['grantReviewerCounters'][0]['grant']
+
 type ReviewType = InitialApplicationType['reviews'][0]
 
 export const APPLICATIONS_TABLE_PAGE_SIZE = 5
@@ -56,64 +61,64 @@ type Application = {
 
 type Props = {
   reviewerId: string,
-  grantId: string,
+  grant: GrantType,
   initialApplications?: InitialApplicationType[],
   showToBeReviewedApplications: boolean,
-}
-
-const parseApplication = (application: InitialApplicationType, chainId: SupportedChainId): Application => {
-	const decimals = CHAIN_INFO[
-		getSupportedChainIdFromSupportedNetwork(
-			application.grant.workspace.supportedNetworks[0],
-		)
-	]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
-		?.decimals || 18
-
-	const getFieldString = (name: string) => application.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
-
-	let rewardAmount: number
-
-	const fundingAskField = getFieldString('fundingAsk')
-	if(fundingAskField) {
-		rewardAmount = +formatAmount(
-      getFieldString('fundingAsk')!,
-      decimals,
-		)
-	} else {
-		rewardAmount = 0
-		application.milestones.forEach(
-			(milestone) => rewardAmount += +formatAmount(
-				milestone.amount,
-				decimals,
-			))
-	}
-
-	const tokenLabel = getAssetInfo(
-		application?.grant?.reward?.asset?.toLowerCase(),
-		chainId,
-	).label
-
-	return {
-		id: application.id,
-		submittedOn: application.createdAtS,
-		reviews: application.reviews,
-		grantRubricIsPrivate: application.grant.rubric?.isPrivate,
-		reward: `${rewardAmount} ${tokenLabel}`,
-		state: application.state,
-		applicantId: application.applicantId,
-		projectName: getFieldString('projectName')!,
-		applicantEmail: getFieldString('applicantEmail'),
-		applicantName: getFieldString('applicantName')!,
-	}
 }
 
 
 function ApplicationsTable({
 	reviewerId,
-	grantId,
+	grant,
 	showToBeReviewedApplications,
 	initialApplications,
 }: Props) {
+	const parseApplication = (application: InitialApplicationType, chainId: SupportedChainId): Application => {
+		const decimals = CHAIN_INFO[
+			getSupportedChainIdFromSupportedNetwork(
+				grant.workspace.supportedNetworks[0],
+			)
+		]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+			?.decimals || 18
+
+		const getFieldString = (name: string) => application.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
+
+		let rewardAmount: number
+
+		const fundingAskField = getFieldString('fundingAsk')
+		if(fundingAskField) {
+			rewardAmount = +formatAmount(
+        getFieldString('fundingAsk')!,
+        decimals,
+			)
+		} else {
+			rewardAmount = 0
+			application.milestones.forEach(
+				(milestone) => rewardAmount += +formatAmount(
+					milestone.amount,
+					decimals,
+				))
+		}
+
+		const tokenLabel = getAssetInfo(
+			grant?.reward?.asset?.toLowerCase(),
+			chainId,
+		).label
+
+		return {
+			id: application.id,
+			submittedOn: application.createdAtS,
+			reviews: application.reviews,
+			grantRubricIsPrivate: grant.rubric?.isPrivate,
+			reward: `${rewardAmount} ${tokenLabel}`,
+			state: application.state,
+			applicantId: application.applicantId,
+			projectName: getFieldString('projectName')!,
+			applicantEmail: getFieldString('applicantEmail'),
+			applicantName: getFieldString('applicantName')!,
+		}
+	}
+
 	const [page, setPage] = useState(0)
 	const [applications, setApplications] = useState<Array<Application>>()
 	const [hasMoreData, setHasMoreData] = useState(true)
@@ -133,7 +138,7 @@ function ApplicationsTable({
 
 	const variables = {
 		reviewerId: reviewerId.toLowerCase(),
-		grantId,
+		grantId: grant.id,
 		first: APPLICATIONS_TABLE_PAGE_SIZE,
 		skip: page * APPLICATIONS_TABLE_PAGE_SIZE,
 	}
@@ -170,6 +175,12 @@ function ApplicationsTable({
 
 	return (
 		<>
+			<Text
+				fontSize={25}
+				fontWeight={'bold'}>
+				{grant.title}
+			</Text>
+			<Box h={2} />
 			<Box
 				boxShadow={'lg'}
 				borderRadius={7.5}
