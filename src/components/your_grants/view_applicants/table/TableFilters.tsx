@@ -6,7 +6,7 @@ enum TableFilters {
 //   Awaiting_Resubmit = 3,
 //   Completed = 4,
   'submitted' = 'In Review',
-  'resubmit' = 1,
+  'resubmit' = 'Awaiting Resubmission',
   'approved' = 'Accepted',
   'rejected' = 'Rejected',
   'completed' = 4,

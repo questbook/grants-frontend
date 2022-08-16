@@ -67,8 +67,8 @@ function ViewApplicants() {
 	const [applicationsFilter, setApplicationsFilter] = useState('Pending For Review')
 	const [isAcceptedActive, setIsAcceptedActive] = useState(false)
 	const [isInReviewActive, setIsInReviewActive] = useState(false)
+	const [isAwaitingResubmissionActive, setIsAwaitingResubmissionActive] = useState(false)
 	const [isRejectedActive, setIsRejectedActive] = useState(false)
-	const [isPendingForReviewActive, setIsPendingForReviewActive] = useState(false)
 	const [isRubricSet, setIsRubricSet] = useState(false)
 	const [isSetupEvaluationBoxOpen, setIsSetupEvaluationBoxOpen] = useState(true)
 	const [adminDidAcceptOrReject, setAdminDidAcceptOrReject] = useState(false)
@@ -490,21 +490,27 @@ function ViewApplicants() {
 								<ApplicationStatusBar
 									isAcceptedActive={isAcceptedActive}
 								 isInReviewActive={isInReviewActive}
+								 isAwaitingSubmissionActive={isAwaitingResubmissionActive}
 								  isRejectedActive={isRejectedActive}
 
 								  onClickFirst={
 										() => {
-											setIsAcceptedActive(!isAcceptedActive), setIsInReviewActive(false), setIsRejectedActive(false), setApplicationsFilter('Accepted')
+											setIsAcceptedActive(!isAcceptedActive), setIsInReviewActive(false), setIsAwaitingResubmissionActive(false), setIsRejectedActive(false), setApplicationsFilter('Accepted')
 										}
 									}
 									onClickSecond={
 										() => {
-											setIsAcceptedActive(false), setIsInReviewActive(!isInReviewActive), setIsRejectedActive(false), setApplicationsFilter('In Review')
+											setIsAcceptedActive(false), setIsInReviewActive(!isInReviewActive), setIsAwaitingResubmissionActive(false), setIsRejectedActive(false), setApplicationsFilter('In Review')
 										}
 									}
 									onClickThird={
 										() => {
-											setIsAcceptedActive(false), setIsInReviewActive(false), setIsRejectedActive(!isRejectedActive), setApplicationsFilter('Rejected')
+											setIsAcceptedActive(false), setIsInReviewActive(false), setIsAwaitingResubmissionActive(!isAwaitingResubmissionActive), setIsRejectedActive(false), setApplicationsFilter('Awaiting Resubmission')
+										}
+									}
+									onClickFourth={
+										() => {
+											setIsAcceptedActive(false), setIsInReviewActive(false), setIsAwaitingResubmissionActive(false), setIsRejectedActive(!isRejectedActive), setApplicationsFilter('Rejected')
 										}
 									}
 

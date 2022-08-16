@@ -21,6 +21,12 @@ const tableHeadersAccepted = [
 	'Last update on'
 ]
 
+const tableHeadersAwaitingResubmission = [
+	'Proposals',
+	'Asked for Resubmission On',
+	'Review'
+]
+
 const tableHeadersRejected = [
 	'Proposals',
 	'Rejected On',
@@ -40,6 +46,7 @@ const tableHeadersFlexReviewer = [0.231, 0.15, 0.184, 0.116, 0.22, 0.116]
 const tableHeadersFlexPendingForReview = [0.5, 0.3, 0.15, 0.13]
 const tableHeadersFlexAccepted = [0.5, 0.20, 0.15, 0.13]
 const tableHeadersFlexInReview = [0.5, 0.20, 0.15, 0.13]
+const tableHeadersFlexAwaitingResubmission = [0.5, 0.20, 0.15]
 const tableHeadersFlexRejected = [0.5, 0.20, 0.15]
 const tableHeadersAlign = [
 	'left',
@@ -64,6 +71,7 @@ function Headers({ is_reviewer, isEvaluationSet, applicationsStatus, adminDidAcc
 	const Tableduel = is_reviewer ? (tableHeadersReviewer) :
 		!isEvaluationSet && !adminDidAcceptOrReject ? (tableHeadersPendingForReview) :
 					 applicationsStatus === 'Accepted' ? tableHeadersAccepted :
+					 applicationsStatus === 'Awaiting Resubmission' ? tableHeadersAwaitingResubmission :
 					 applicationsStatus === 'Rejected' ? tableHeadersRejected :
 					 tableHeadersInReview
 	return (
@@ -90,8 +98,9 @@ function Headers({ is_reviewer, isEvaluationSet, applicationsStatus, adminDidAcc
 							is_reviewer ? (tableHeadersFlexReviewer[index]) :
 								!isEvaluationSet && !adminDidAcceptOrReject ? (tableHeadersFlexPendingForReview[index]) :
 									applicationsStatus === 'Accepted' ? tableHeadersFlexAccepted[index] :
-										applicationsStatus === 'Rejected' ? tableHeadersFlexRejected[index] :
-											tableHeadersFlexInReview[index]
+										applicationsStatus === 'Awaiting Resubmission' ? tableHeadersFlexAwaitingResubmission[index] :
+											applicationsStatus === 'Rejected' ? tableHeadersFlexRejected[index] :
+												tableHeadersFlexInReview[index]
 						}
 						mr={index === Tableduel.length - 1 ? 3 : 0}
 						alignItems="center"

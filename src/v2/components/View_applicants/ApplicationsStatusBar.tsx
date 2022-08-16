@@ -7,12 +7,14 @@ type ApplicationsStatusProps = {
     isAcceptedActive: boolean
     isInReviewActive: boolean
     isRejectedActive: boolean
+	isAwaitingSubmissionActive: boolean
     onClickFirst : () => void
     onClickSecond: () => void
     onClickThird: () => void
+	onClickFourth: () => void
     }
 
-const ApplicationStatusBar = ({ isAcceptedActive, isInReviewActive, isRejectedActive, onClickFirst, onClickSecond, onClickThird } : ApplicationsStatusProps) => {
+const ApplicationStatusBar = ({ isAcceptedActive, isInReviewActive, isAwaitingSubmissionActive, isRejectedActive, onClickFirst, onClickSecond, onClickThird, onClickFourth } : ApplicationsStatusProps) => {
 	return (
 		<HStack
 			spacing='24px'
@@ -49,6 +51,21 @@ const ApplicationStatusBar = ({ isAcceptedActive, isInReviewActive, isRejectedAc
 			</Box>
 			<Box
 				as="button"
+				w='256px'
+				h='28px'
+				font-style='normal'
+				font-weight='400'
+				font-size='14px'
+				line-height='20px'
+				textColor={isAwaitingSubmissionActive ? '#FFFFFF' : '#1F1F33'}
+				bg={isAwaitingSubmissionActive ? '#1F1F33' : '#E0E0EC'}
+				onClick={onClickThird}>
+				{' '}
+										Awaiting Resubmission
+				{' '}
+			</Box>
+			<Box
+				as="button"
 				w='128px'
 				h='28px'
 				font-style='normal'
@@ -57,7 +74,7 @@ const ApplicationStatusBar = ({ isAcceptedActive, isInReviewActive, isRejectedAc
 				line-height='20px'
 				textColor={isRejectedActive ? '#FFFFFF' : '#1F1F33'}
 				bg={isRejectedActive ? '#1F1F33' : '#E0E0EC'}
-				onClick={onClickThird}>
+				onClick={onClickFourth}>
 				{' '}
 										Rejected
 				{' '}

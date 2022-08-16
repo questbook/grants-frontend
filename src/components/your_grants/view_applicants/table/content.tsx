@@ -38,6 +38,7 @@ function Content({
 	const tableHeadersFlexPendingForReview = [0.5, 0.3, 0.15, 0.13]
 	const tableHeadersFlexAccepted = [0.5, 0.20, 0.15, 0.13]
 	const tableHeadersFlexInReview = [0.5, 0.20, 0.15, 0.13]
+	const tableHeadersFlexAwaitingResubmission = [0.5, 0.20, 0.15]
 	const tableHeadersFlexRejected = [0.5, 0.20, 0.15]
 	// const getStatus = (status: number): ReactElement => {
 	// 	if(status === TableFilters.submitted) {
@@ -417,6 +418,53 @@ function Content({
 								<Flex
 									h="60px"
 									flex={tableHeadersFlexRejected[0]}
+									alignItems="center"
+									border="1px"
+									borderColor="#E0E0EC"
+								>
+									<Box
+										h="40px"
+										w="40px"
+										ml="5">
+										<Image
+											w="38px"
+											h="38px"
+											borderRadius="22.1667px"
+											src="/ui_icons/generic_dao_member.svg"
+										/>
+									</Box>
+									<Text
+										color="#1F1F33"
+										fontSize="14px"
+										lineHeight="20px"
+										fontWeight="500"
+										textAlign="left"
+									>
+										{item.project_name}
+									</Text>
+								</Flex>
+
+
+							</Flex>
+						))
+				) : applicationsStatus === 'Awaiting Resubmission' ? (
+					data
+						.filter((item) => (applicationsStatus === item.status))
+						.map((item, index) => (
+							<Flex
+								key={item.id}
+								direction="row"
+								w="100%"
+								h="58px"
+								justify="stretch"
+								align="center"
+								bg="#FFFFFF"
+								px={0}
+							//   py={4}
+							>
+								<Flex
+									h="60px"
+									flex={tableHeadersFlexAwaitingResubmission[0]}
 									alignItems="center"
 									border="1px"
 									borderColor="#E0E0EC"

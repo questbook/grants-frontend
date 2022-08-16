@@ -44,12 +44,14 @@ function ApplicantsTable({
 
 	const [checkedApplicationsIds, setCheckedApplicationsIds] = React.useState<number[]>([])
 	const [isAcceptClicked, setIsAcceptClicked] = React.useState<boolean>(false)
+	// const [isAwaitingResubmissionClicked, setIsAwaitingResubmissionClicked] = React.useState<boolean>(false)
 	const [isRejectClicked, setIsRejectClicked] = React.useState<boolean>(false)
 	const [isConfirmClicked, setIsConfirmClicked] = React.useState<boolean>(false)
 	const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false)
 	const [state, setState] = React.useState<number>(5)
 	const [inReviewApplications, setInReviewApplications] = React.useState<any[]>([])
 	const [acceptedApplications, setAcceptedApplications] = React.useState<any[]>([])
+	const [awaitingResubmissionApplications, setAwaitingResubmissionApplications] = React.useState<any[]>([])
 	const [rejectedApplications, setRejectedApplications] = React.useState<any[]>([])
 	const [currentStep, setCurrentStep] = React.useState<number>()
 
@@ -82,11 +84,12 @@ function ApplicantsTable({
 	useEffect(() => {
 		setInReviewApplications(data.filter((item) => ('In Review' === item.status)))
 		setAcceptedApplications(data.filter((item) => ('Accepted' === item.status)))
+		setAwaitingResubmissionApplications(data.filter((item) => ('Awaiting Resubmission' === item.status)))
 		setRejectedApplications(data.filter((item) => ('Rejected' === item.status)))
 	}, [data])
 
 	useEffect(() => {
-		if(applicationsFilter === 'Accepted' || 'Rejected') {
+		if(applicationsFilter === 'Accepted' || 'Rejected' || 'Awaiting Resubmission') {
 			setCheckedItems(Array(data.filter((item) => (applicationsFilter === item.status)).length).fill(false))
 		}
 	}, [applicationsFilter])
@@ -262,6 +265,37 @@ function ApplicantsTable({
 										</Flex>
 									)
 								}) : applicationsFilter === 'Accepted' ? acceptedApplications.map((application, index) => {
+									return (
+										<Flex
+											key={application.applicantId}
+											direction="row"
+											h="58px"
+											justify="stretch"
+											align="center"
+											bg="#FFFFFF"
+											px={0}
+											//   py={4}
+											border="1px"
+											borderColor="#E0E0EC"
+
+										>
+											<Checkbox
+												h="58px"
+												w="40px"
+												isChecked={checkedItems[index]}
+												onChange={
+													(e) => {
+														const tempArr: boolean[] = []
+														tempArr.push(...checkedItems)
+														tempArr[index] = e.target.checked
+														setCheckedItems(tempArr)
+													}
+												}
+												ml={15}
+											/>
+										</Flex>
+									)
+								}) : applicationsFilter === 'Awaiting Resubmission' ? awaitingResubmissionApplications.map((application, index) => {
 									return (
 										<Flex
 											key={application.applicantId}
