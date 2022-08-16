@@ -142,6 +142,7 @@ const VerifySignerModal = ({
 														if(connector) {
 															connect(connector)
 														}
+														// onClose()
 													}
 												} />
 										))

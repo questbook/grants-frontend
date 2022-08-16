@@ -13,9 +13,7 @@ interface Props {
 
 type ValidChainID = keyof typeof SAFES_ENPOINTS;
 
-interface SafeDetails {
-    owners?: string[];
-}
+type SafeDetails = string[]
 
 function useSafeOwners({ safeAddress, chainID }: Props) {
 	const url = useMemo<string>(() => {
@@ -31,7 +29,7 @@ function useSafeOwners({ safeAddress, chainID }: Props) {
 		url,
 		method: 'get'
 	})
-	const [data, setData] = useState<string[]>([])
+	const [data, setData] = useState<SafeDetails>([])
 
 	useEffect(() => {
 		console.log(loaded, error)

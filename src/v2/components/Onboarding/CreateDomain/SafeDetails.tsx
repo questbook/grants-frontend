@@ -4,6 +4,7 @@ import TextField from '../../InputFields/TextField'
 import SafeSelect, { SafeSelectOption } from './SafeSelect'
 
 interface Props {
+	safesOptions: SafeSelectOption[];
 	step: number;
 	safeAddress: string;
 	isPasted?: boolean;
@@ -15,7 +16,7 @@ interface Props {
 	onContinue: () => void;
 }
 
-function SafeDetails({ step, safeAddress, isPasted, isVerified, isLoading, safeSelected, onChange, onSelectedSafeChange, onContinue }: Props) {
+function SafeDetails({ safesOptions, step, safeAddress, isPasted, isVerified, isLoading, safeSelected, onChange, onSelectedSafeChange, onContinue }: Props) {
 	return (
 		<>
 			<Text
@@ -34,7 +35,7 @@ function SafeDetails({ step, safeAddress, isPasted, isVerified, isLoading, safeS
 				mt={6}>
 				To create a domain, you need a safe.
 			</Text>
-			<Box mb="auto" />
+			<Box mb="10" />
 			<TextField
 				label='Safe Address'
 				helperText='Your safe can be used to invite members & do payouts on Questbook.'
@@ -44,7 +45,9 @@ function SafeDetails({ step, safeAddress, isPasted, isVerified, isLoading, safeS
 				value={safeAddress}
 				onChange={onChange}
 				isPasted={isPasted}
-				isVerified={isVerified} />
+				isVerified={isVerified}
+				isDisabled={step === 1}
+			/>
 			{
 				isLoading && (
 					<Flex
@@ -67,6 +70,7 @@ function SafeDetails({ step, safeAddress, isPasted, isVerified, isLoading, safeS
 			{
 				step === 1 && (
 					<SafeSelect
+						safesOptions={safesOptions}
 						label="Safes Found"
 						helperText="Associated with this address on all networks."
 						helperLinkText="Learn about supported networks"
@@ -81,7 +85,7 @@ function SafeDetails({ step, safeAddress, isPasted, isVerified, isLoading, safeS
 						} />
 				)
 			}
-
+			<Box m='auto' />
 			<Button
 				variant="primaryV2"
 				ml="auto"
