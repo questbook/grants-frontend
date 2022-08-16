@@ -356,18 +356,24 @@
 			"transactionHash": "https://blockscout.com/xdai/mainnet/tx/{{tx}}/"
 		},
 		"supportedCurrencies": {
-			"0x9c58bacc331c9aa871afd802db6379a98e80cedb": {
+			"0x9c58bacc331c9aa871afd802db6379a98e80cedb":{
 				"icon": "/chain_assets/gnosis.svg",
 				"label": "GNO",
 				"address": "0x9c58bacc331c9aa871afd802db6379a98e80cedb",
 				"decimals": 18
+			},
+			"0xfc8b2690f66b46fec8b3ceeb95ff4ac35a0054bc": {
+				"icon": "/chain_assets/dai.svg",
+				"label": "DAI",
+				"address": "0xfc8b2690f66b46fec8b3ceeb95ff4ac35a0054bc",
+				"decimals": 18
 			}
 		},
 		"qbContracts": {
-			"applications": "0x084aCcB463c38D7e050cf7099B4D11C9EBa78a2E",
-			"workspace": "0x37d2df191899C715fE840671C6240C4Be05aF6B3",
-			"grantFactory": "0xAAD5fD023BB96867aF3dCE443F0252CF53FB0424",
-			"reviews": "0xF386f93269cb23Ff1b5c0635Ff4258d607BF7ae4"
+			"applications": "0x20B8F9582eB9108233694daf195AdEC569dDD2fD",
+			"workspace": "0xea3a9b2A1283E3434AF80b1979351A73c92eAe77",
+			"grantFactory": "0x39F2aa6354EC64F5C135Fd06D74d457A62b916ef",
+			"reviews": "0x900C24C0c286D02e50f8D51471eD51d4FdAF7677"
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-gnosis-mainnet",
 		"rpcUrls": [
@@ -375,7 +381,7 @@
 		],
 		"nativeCurrency": {
 			"name": "Gnosis Mainnet",
-			"symbol": "GNO",
+			"symbol": "xDAI",
 			"decimals": 18
 		}
 	},

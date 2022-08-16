@@ -136,7 +136,7 @@ export default function useCreateGrant(
 
 				console.log('rubricHash', rubricHash)
 
-				// console.log(workspaceId || Number(workspace?.id).toString());
+				console.log(workspaceId || Number(workspace?.id).toString())
 				// console.log('ipfsHash', ipfsHash);
 				// console.log(
 				//   WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
@@ -149,6 +149,7 @@ export default function useCreateGrant(
 					rubricHash,
 					WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
 					APPLICATION_REGISTRY_ADDRESS[currentChainId!],
+					{ gasLimit: 500000 }
 				)
 				const createGrantTransactionData = await createGrantTransaction.wait()
 
