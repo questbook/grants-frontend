@@ -188,6 +188,7 @@ function ReviewerSidebar({
 					feedbackDrawerOpen={feedbackDrawerOpen}
 					setFeedbackDrawerOpen={setFeedbackDrawerOpen}
 					grantAddress={applicationData!.grant.id}
+					grantTitle={applicationData!.grant.title}
 					chainId={chainId}
 					workspaceId={applicationData!.grant.workspace.id}
 					rubrics={applicationData!.grant.rubric!.items}

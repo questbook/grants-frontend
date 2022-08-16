@@ -7,6 +7,7 @@ import {
 	DrawerContent,
 	DrawerOverlay,
 	Flex,
+	HStack,
 	Image,
 	Slider,
 	SliderFilledTrack, SliderMark,
@@ -35,6 +36,7 @@ function FeedbackDrawer({
 	feedbackDrawerOpen,
 	setFeedbackDrawerOpen,
 	rubrics,
+	grantTitle,
 	grantAddress,
 	chainId,
 	workspaceId,
@@ -43,6 +45,7 @@ function FeedbackDrawer({
 }: {
   feedbackDrawerOpen: boolean;
   setFeedbackDrawerOpen: (feedbackDrawerOpen: boolean) => void;
+  grantTitle: string;
   grantAddress: string;
   chainId: SupportedChainId | undefined;
   workspaceId: string;
@@ -289,7 +292,16 @@ function FeedbackDrawer({
 			<NetworkTransactionModal
 				isOpen={currentStep !== undefined}
 				subtitle='Submitting review'
-				description={<></>}
+				description={
+					<HStack w='100%'>
+						<Text
+							fontWeight={'500'}
+							fontSize={'17px'}
+						>
+							{grantTitle}
+						</Text>
+					</HStack>
+				}
 				currentStepIndex={currentStep || 0}
 				steps={
 					[
