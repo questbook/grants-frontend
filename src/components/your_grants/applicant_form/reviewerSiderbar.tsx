@@ -17,11 +17,8 @@ import FeedbackDrawer from '../feedbackDrawer'
 
 function ReviewerSidebar({
 	applicationData,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	isAdmin,
 }: {
   showHiddenData: () => void;
-  isAdmin: boolean;
   onAcceptApplicationClick: () => void;
   onRejectApplicationClick: () => void;
   onResubmitApplicationClick: () => void;
