@@ -146,7 +146,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		setScwAddress(getScwAddress())
 		setNonce(getNonce())
 		switchNetwork(getNetwork())
-	}, [setWebwallet, setScwAddress, setNonce, switchNetwork])
+	}, [])
 
 	const getScwAddress = () => {
 
@@ -225,6 +225,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		() => ({
 			webwallet: webwallet,
 			setWebwallet: (newWebwallet?: Wallet) => {
+				console.log('rrrrrrr')
 				if(newWebwallet) {
 					localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
 				} else {
@@ -266,10 +267,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 				setNonce(newNonce)
 			},
-			loadingNonce: loadingNonce,
-			setLoadingNonce: setLoadingNonce
+			loadingNonce,
+			setLoadingNonce
 		}),
-		[webwallet, setWebwallet, network, switchNetwork, scwAddress, setScwAddress, nonce, setNonce]
+		[webwallet, setWebwallet, network, switchNetwork, scwAddress, setScwAddress, nonce, setNonce, loadingNonce, setLoadingNonce]
 	)
 
 	const biconomyDaoObjContextValue = useMemo(

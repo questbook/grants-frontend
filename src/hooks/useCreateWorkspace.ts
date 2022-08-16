@@ -10,7 +10,7 @@ import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { apiKey, getEventData, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
+import { bicoDapps, getEventData, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
 import ErrorToast from '../components/ui/toasts/errorToast'
@@ -23,10 +23,6 @@ export default function useCreateWorkspace(
 
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
-		apiKey: apiKey,
-		// targetContractABI: WorkspaceRegistryAbi,
-	})
 
 	const [error, setError] = React.useState<string>()
 	const [loading, setLoading] = React.useState(false)
@@ -44,6 +40,10 @@ export default function useCreateWorkspace(
 
 	const networkChainId = getSupportedChainIdFromSupportedNetwork(`chain_${data?.network}` as SupportedNetwork)
 
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		chainId: networkChainId.toString()
+		// targetContractABI: WorkspaceRegistryAbi,
+	})
 	useEffect(() => {
 		if(data) {
 			setError(undefined)
@@ -73,7 +73,7 @@ export default function useCreateWorkspace(
 			const uploadedImageHash = (await uploadToIPFS(data.image)).hash
 			// console.log('Network: ', data.network);
 			// console.log('Network Return: ', getSupportedValidatorNetworkFromChainId(data.network));
-			console.log('THIS IS ADDRESS', accountData.address)
+			console.log('THIS IS ADDRESS', accountData?.address)
 			const {
 				data: { ipfsHash },
 			} = await validatorApi.validateWorkspaceCreate({
@@ -109,7 +109,7 @@ export default function useCreateWorkspace(
 				console.log(networkChainId, scwAddress, webwallet, nonce, webHookId)
 				const transactionHash = await sendGaslessTransaction(biconomy, targetContractObject, 'createWorkspace', [ipfsHash, new Uint8Array(32), 0],
 					WORKSPACE_REGISTRY_ADDRESS[networkChainId], biconomyWalletClient,
-					scwAddress, webwallet, `${networkChainId}`, webHookId, nonce)
+					scwAddress, webwallet, `${networkChainId}`, bicoDapps[networkChainId.toString()].webHookId, nonce)
 
 				console.log(transactionHash)
 				const receipt = await getTransactionReceipt(transactionHash, networkChainId.toString())
@@ -157,7 +157,7 @@ export default function useCreateWorkspace(
 				return
 			}
 
-			console.log(accountData, accountData.address)
+			console.log(accountData, accountData?.address)
 
 			if(!accountData || !accountData.address) {
 				throw new Error('not connected to wallet')

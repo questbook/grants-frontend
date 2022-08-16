@@ -22,7 +22,6 @@ const EIP712_WALLET_TX_TYPE = {
 // export const webHookId = "a36aa5b2-b761-4757-aad9-10348f3ec732"
 
 // goerli
-export const apiKey = 'cCEUGyH2y.37cd0d5e-704c-49e6-9f3d-e20fe5bb13d5' // apiKey from the dashboard
 export const webHookId = '97d579e5-917d-4059-90af-d46d5ee88b43'
 
 export const jsonRpcProviders: { [key: string]: ethers.providers.JsonRpcProvider } =
@@ -30,6 +29,14 @@ export const jsonRpcProviders: { [key: string]: ethers.providers.JsonRpcProvider
 	'80001': new ethers.providers.JsonRpcProvider('https://polygon-mumbai.g.alchemy.com/v2/X6pnQlJfJq00b8MT53QihWBINEgHZHGp'),
 	'4': new ethers.providers.JsonRpcProvider('https://eth-rinkeby.alchemyapi.io/v2/4CCa54H4pABZcHMOMLJfRySfhMkvQFrs'),
 	'5': new ethers.providers.JsonRpcProvider('https://eth-goerli.g.alchemy.com/v2/Hr6VkBfmbJIhEW3fHJnl0ujE0xmWxcqH')
+}
+
+export const bicoDapps: { [key: string]: {apiKey: string, webHookId: string} } = {
+	'5': {
+		apiKey: 'cCEUGyH2y.37cd0d5e-704c-49e6-9f3d-e20fe5bb13d5',
+		webHookId: '97d579e5-917d-4059-90af-d46d5ee88b43'
+	},
+
 }
 
 export const signNonce = async(webwallet: Wallet, nonce: string) => {
@@ -72,7 +79,7 @@ export const addUser = async(webwallet: Wallet) => {
 	return false
 }
 
-export const registerWebHook = async(authToken: string, apiKey: string) => {
+export const registerWebHook = async(authToken: string, chainId: string) => {
 	const url = 'https://api.biconomy.io/api/v1/dapp/register-webhook'
 
 	const formData = new URLSearchParams({
@@ -82,7 +89,7 @@ export const registerWebHook = async(authToken: string, apiKey: string) => {
 
 	const requestOptions = {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'authToken': authToken, 'apiKey': apiKey },
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'authToken': authToken, 'apiKey': bicoDapps[chainId].apiKey },
 		body: formData
 	}
 

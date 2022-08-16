@@ -11,7 +11,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSafeOwners from 'src/hooks/useSafeOwners'
 import useSafeUSDBalances from 'src/hooks/useSafeUSDBalances'
 import getErrorMessage from 'src/utils/errorUtils'
-import { apiKey, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
+import { bicoDapps, getTransactionReceipt, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
 import { Organization } from 'src/v2/assets/custom chakra icons/Organization'
@@ -58,9 +58,7 @@ const OnboardingCreateDomain = () => {
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
-		apiKey: apiKey,
-		// targetContractABI: WorkspaceRegistryAbi,
-		// chainId: network
+		chainId: safeSelected?.networkId ?? ''
 	})
 
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState('not ready')
@@ -147,7 +145,7 @@ const OnboardingCreateDomain = () => {
 				title: domainName!,
 				about: '',
 				logoIpfsHash: uploadedImageHash,
-				creatorId: accountDataWebwallet!.address,
+				creatorId: accountDataWebwallet!.address!,
 				socials: [],
 				supportedNetworks: [
 					getSupportedValidatorNetworkFromChainId(safeSelected?.networkId as unknown as SupportedChainId),
@@ -185,7 +183,7 @@ const OnboardingCreateDomain = () => {
 				scwAddress,
 				webwallet,
 				`${safeSelected.networkId}`,
-				webHookId,
+				bicoDapps[safeSelected.networkId].webHookId,
 				nonce
 			)
 
