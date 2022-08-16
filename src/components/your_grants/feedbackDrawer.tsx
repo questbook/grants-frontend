@@ -60,7 +60,6 @@ function FeedbackDrawer({
 
 	useEffect(() => {
 		if(transactionData && newPublicKey && newPublicKey.publicKey) {
-			console.log(newPublicKey)
 			setPk(newPublicKey.publicKey)
 			const formattedFeedbackData = feedbackData?.map((feedback: any) => ({
 				rubric: feedback.rubric,
@@ -73,7 +72,6 @@ function FeedbackDrawer({
 	}, [transactionData, newPublicKey])
 
 	useEffect(() => {
-		/// console.log(pk);
 		if(!accountData?.address) {
 			return
 		}
@@ -85,7 +83,6 @@ function FeedbackDrawer({
 		const k = workspace?.members?.find(
 			(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 		)?.publicKey?.toString()
-		// console.log(k);
 		if(k && k.length > 0) {
 			setPk(k)
 		} else {
@@ -95,7 +92,7 @@ function FeedbackDrawer({
 	}, [workspace, accountData])
 
 	useEffect(() => {
-		const newFeedbackData = [] as any[]
+		const newFeedbackData = Array<any>()
 		if(rubrics?.length > 0) {
 			rubrics.forEach((rubric) => {
 				newFeedbackData.push({
@@ -109,9 +106,7 @@ function FeedbackDrawer({
 		setFeedbackData(newFeedbackData)
 	}, [rubrics])
 	const handleOnSubmit = () => {
-		console.log(feedbackData)
-
-		const newFeedbackData = [] as any[]
+		const newFeedbackData = []
 		feedbackData?.forEach((feedback) => {
 			const newFeedbackDataObject = { ...feedback }
 			newFeedbackData.push(newFeedbackDataObject)

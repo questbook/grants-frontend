@@ -57,7 +57,6 @@ export default function useSubmitReview(
 	const currentChainId = useChainId()
 
 	useEffect(() => {
-		console.log('data', data)
 		if(data) {
 			setError(undefined)
 			setIncorrectNetwork(false)
@@ -88,18 +87,9 @@ export default function useSubmitReview(
 			setLoading(true)
 			setCurrentStep(0)
 
-			// console.log('calling validate');
 			try {
-				// console.log(workspaceId || Number(workspace?.id).toString());
-				// console.log('ipfsHash', ipfsHash);
-				// console.log(
-				//   WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
-				//   APPLICATION_REGISTRY_ADDRESS[currentChainId!],
-				// );
-
 				const encryptedReview = {} as any
 				if(isPrivate) {
-					console.log(accountData)
 					const yourPublicKey = workspace?.members.find(
 						(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 					)?.publicKey
@@ -107,7 +97,6 @@ export default function useSubmitReview(
 					const encryptedHash = (await uploadToIPFS(encryptedData)).hash
 					encryptedReview[accountData!.address!] = encryptedHash
 
-					console.log(workspace)
 					workspace?.members.filter(
 						(m) => (m.accessLevel === 'admin' || m.accessLevel === 'owner') && (m.publicKey && m.publicKey?.length > 0),
 					).map((m) => ({ key: m.publicKey, address: m.actorId }))
@@ -117,7 +106,6 @@ export default function useSubmitReview(
 							encryptedReview[address] = encryptedAdminHash
 						})
 
-					console.log('encryptedReview', encryptedReview)
 				}
 
 				const dataHash = (await uploadToIPFS(JSON.stringify(data))).hash
@@ -130,7 +118,6 @@ export default function useSubmitReview(
 					encryptedReview,
 				})
 
-				console.log('ipfsHash', ipfsHash)
 
 				if(!ipfsHash) {
 					throw new Error('Error validating review data')
@@ -153,7 +140,6 @@ export default function useSubmitReview(
 
 				let didIndex = false
 				do {
-					console.log(`polling for reviewer "${reviewerId}"`)
 					await delay(2000)
 					const result = await fetchReviews({
 						variables: { reviewerId, applicationsCount: 1 },
@@ -162,7 +148,6 @@ export default function useSubmitReview(
 					grants.forEach(grant => {
 						if(grant.id === grantAddress) {
 							didIndex = true
-							console.log(`poll success: ${didIndex}`)
 						}
 					})
 
