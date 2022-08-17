@@ -27,7 +27,7 @@ import NetworkTransactionModal from '../../v2/components/NetworkTransactionModal
 import MultiLineInput from '../ui/forms/multiLineInput'
 import Loader from '../ui/loader'
 
-interface FeedbackType {
+export interface FeedbackType {
   rubric: RubricItem,
   rating: number,
   comment: string,
@@ -103,7 +103,7 @@ function FeedbackDrawer({
 	}, [workspace, accountData])
 
 	useEffect(() => {
-		const newFeedbackData = Array<any>()
+		const newFeedbackData = Array<FeedbackType>()
 		if(rubrics?.length > 0) {
 			rubrics.forEach((rubric) => {
 				newFeedbackData.push({

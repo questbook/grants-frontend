@@ -287,9 +287,9 @@ const ReviewTableData = ({ application }: { application: Application }) => {
 			return
 		}
 
-		let data: { items: { feedback: { rating: number } }[] }
+		let data: { items: { rating: number }[] }
 		if(application.grantRubricIsPrivate) {
-			const reviewData = userReview?.data.find((d: any) => (
+			const reviewData = userReview?.data.find((d) => (
 				d.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
 			))
 			const ipfsData = await getFromIPFS(reviewData!.data)
@@ -301,7 +301,7 @@ const ReviewTableData = ({ application }: { application: Application }) => {
 		}
 
 		let reviewSum = 0
-		data?.items.forEach((feedback: any) => reviewSum += feedback.rating)
+		data?.items.forEach((feedback) => reviewSum += feedback.rating)
 
 		setReviewSum(reviewSum)
 	}
