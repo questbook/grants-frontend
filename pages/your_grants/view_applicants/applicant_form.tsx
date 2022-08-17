@@ -1,4 +1,4 @@
-import React, { ReactElement, useContext, useEffect, useState } from 'react'
+import { ReactElement, useContext, useEffect, useRef, useState } from 'react'
 import {
 	Box,
 	Button,
@@ -39,7 +39,7 @@ function ApplicantForm() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 	const { decryptApplicationPII } = useApplicationEncryption()
 
-	const toastRef = React.useRef<ToastId>()
+	const toastRef = useRef<ToastId>()
 
 	const toast = useToast()
 	const router = useRouter()
