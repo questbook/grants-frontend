@@ -1,4 +1,5 @@
 import { ReactElement, useContext, useEffect, useRef, useState } from 'react'
+import * as Apollo from '@apollo/client'
 import {
 	Box,
 	Button,
@@ -81,10 +82,7 @@ function ApplicantForm() {
 		getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 	].client
 
-	const [queryParams, setQueryParams] = useState<{
-    client: typeof client,
-    variables?: GetApplicationDetailsQueryVariables,
-  }>({ client })
+	const [queryParams, setQueryParams] = useState<Apollo.QueryHookOptions<GetApplicationDetailsQuery, GetApplicationDetailsQueryVariables>>({ client })
 
 	useEffect(() => {
 		if(!workspace) {
