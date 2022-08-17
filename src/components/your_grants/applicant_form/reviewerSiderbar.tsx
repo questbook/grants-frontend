@@ -6,6 +6,7 @@ import {
 	Text, useToast,
 } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
+import { Fragment } from 'preact'
 import useEncryption from 'src/hooks/utils/useEncryption'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import {
@@ -93,8 +94,8 @@ function ReviewerSidebar({
 				<Divider />
 				<Box h={2} />
 				{
-					reviewSelected?.items?.map((feedback: any) => (
-						<>
+					reviewSelected?.items?.map((feedback: any, index:number) => (
+						<Fragment key={index}>
 							<Flex
 								mt={4}
 								gap='2'
@@ -132,7 +133,7 @@ function ReviewerSidebar({
 									)
 								}
 							</Flex>
-						</>
+						</Fragment>
 					))
 				}
 			</Flex>
