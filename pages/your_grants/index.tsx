@@ -21,7 +21,7 @@ import YourGrantCard from 'src/components/your_grants/yourGrantCard'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import {
 	GetAllGrantsForCreatorQuery,
-	GetAllGrantsForReviewerQuery,
+	GetAllGrantsForReviewerQuery, Rubric,
 	useGetAllGrantsCountForCreatorQuery,
 	useGetAllGrantsForCreatorQuery,
 	useGetAllGrantsForReviewerQuery,
@@ -40,6 +40,13 @@ import Loader from '../../src/components/ui/loader'
 import ReviewerDashboard from '../../src/v2/components/Dashboard/ReviewerDashboard'
 
 const PAGE_SIZE = 5
+
+type GrantRewardType = {
+  address: string,
+  committed: BigNumber,
+  label: string,
+  icon: string,
+};
 
 const TABS = [
 	{
@@ -79,11 +86,10 @@ const TABS = [
 	},
 ]
 
-function removeDuplicates(array: any) {
-	const uniq: any = {}
-	// eslint-disable-next-line no-return-assign
+function removeDuplicates<T extends { grant: { id: string } }>(array: Array<T>) {
+	const uniq: { [key in string]: boolean } = {}
 	return array.filter(
-		(obj: any) => !uniq[obj.grant.id] && (uniq[obj.grant.id] = true),
+		(obj) => !uniq[obj.grant.id] && (uniq[obj.grant.id] = true),
 	)
 }
 
@@ -110,8 +116,10 @@ function YourGrants() {
         tempMember?.accessLevel === 'owner',
 			)
 			setIsReviewer(tempMember?.accessLevel === 'reviewer')
-			const user: any = tempMember?.id
-			localStorage.setItem('id', user)
+			const user: string | undefined = tempMember?.id
+			if(user !== undefined) {
+				localStorage.setItem('id', user)
+			}
 		}
 	}, [accountData, workspace])
 
@@ -348,10 +356,10 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 	}, [allGrantsReviewerData])
 
 	const [addFundsIsOpen, setAddFundsIsOpen] = useState(false)
-	const [grantForFunding, setGrantForFunding] = useState(null)
-	const [grantRewardAsset, setGrantRewardAsset] = useState<any>(null)
+	const [grantForFunding, setGrantForFunding] = useState<string>()
+	const [grantRewardAsset, setGrantRewardAsset] = useState<GrantRewardType>()
 
-	const initialiseFundModal = async(grant: any) => {
+	const initialiseFundModal = async(grant: GetAllGrantsForReviewerQuery['grantApplications'][0]['grant']) => {
 		setAddFundsIsOpen(true)
 		setGrantForFunding(grant.id)
 		const chainId = getSupportedChainIdFromSupportedNetwork(
@@ -509,7 +517,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 					{
 						isAdmin &&
             grants.length > 0 &&
-            grants.map((grant: any) => {
+            grants.map((grant) => {
             	const grantAmount = grant.reward.committed
             	let decimals
             	let icon
@@ -551,7 +559,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
             			grantTitle={grant.title}
             			grantDesc={grant.summary}
             			numOfApplicants={grant.numberOfApplications}
-            			endTimestamp={new Date(grant.deadline).getTime()}
+            			endTimestamp={new Date(grant.deadline!).getTime()}
             			grantAmount={formatAmount(grantAmount, decimals || 18)}
             			grantCurrency={label || 'LOL'}
             			grantCurrencyIcon={icon}
@@ -580,7 +588,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
             			}
             			acceptingApplications={grant.acceptingApplications}
             			isAdmin={isAdmin}
-            			initialRubrics={grant.rubric}
+            			initialRubrics={grant.rubric as Rubric}
             			workspaceId={grant.workspace.id}
             		/>
             	)
@@ -590,7 +598,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 					{
 						isReviewer &&
             grantsReviewer.length > 0 &&
-            grantsReviewer.map((grant: any) => {
+            grantsReviewer.map((grant) => {
             	const grantAmount = grant.grant.reward.committed
             	let decimals
             	let icon
@@ -635,7 +643,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
             			grantTitle={grant.grant.title}
             			grantDesc={grant.grant.summary}
             			numOfApplicants={grant.grant.numberOfApplications}
-            			endTimestamp={new Date(grant.grant.deadline).getTime()}
+            			endTimestamp={new Date(grant.grant.deadline!).getTime()}
             			grantAmount={formatAmount(grantAmount, decimals || 18)}
             			grantCurrency={label || 'LOL'}
             			grantCurrencyIcon={icon}
@@ -656,7 +664,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
             			}
             			acceptingApplications={grant.grant.acceptingApplications}
             			isAdmin={isAdmin}
-            			initialRubrics={grant.grant.rubric}
+            			initialRubrics={grant.grant.rubric as Rubric}
             			workspaceId={grant.grant.workspace.id}
             		/>
             	)
