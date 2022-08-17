@@ -468,8 +468,8 @@ function ApplicantForm() {
 								top='36px'
 							>
 								{
-									applicationData?.reviewers.find(
-										(reviewer) => reviewer.id.split('.')[1] ===
+									applicationData?.pendingReviewerAddresses?.find(
+										(pendingReviewer) => pendingReviewer.toLowerCase() ===
                       accountData?.address?.toLowerCase(),
 									) !== undefined && (
 										<ReviewerSidebar

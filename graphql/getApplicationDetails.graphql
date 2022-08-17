@@ -62,6 +62,7 @@ query getApplicationDetails($applicationID: ID!) {
         },
       },
     }
+    pendingReviewerAddresses
     reviews {
       reviewer {
         id
