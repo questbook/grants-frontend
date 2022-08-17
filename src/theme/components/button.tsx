@@ -100,7 +100,8 @@ export default {
 			primaryV2: {
 				bg: '#1F1F33',
 				color: '#ffffff',
-				lineHeighth: '1.25rem',
+				lineHeight: '1.25rem',
+				borderRadius: '4px',
 				'&:hover': {
 					bg: '#3F3F53',
 				},
@@ -113,7 +114,7 @@ export default {
 					color: '#AFAFCC',
 					'&:hover': {
 						bg: '#E0E0EC',
-					}
+					},
 				},
 			},
 			primaryLightV2: {
@@ -132,9 +133,11 @@ export default {
 					color: 'white',
 					'&:hover': {
 						bg: '#E0E0EC',
-					}
+					},
 				},
-
+			},
+			ghost: {
+				color: '#555570',
 			}
 		},
 	},

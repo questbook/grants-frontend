@@ -15,7 +15,7 @@ function Sidebar({
 	return (
 		<Box>
 			<Flex
-				// h="calc(100vh - 80px)"
+				// h="calc(100vh - 64px)"
 				// bg={theme.colors.backgrounds.floatingSidebar}
 				position="sticky"
 				top={10}

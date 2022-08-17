@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Button, Divider, HStack, Image, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, Spacer, Text, useToast, VStack } from '@chakra-ui/react'
 import { serialiseInviteInfoIntoUrl, useMakeInvite } from 'src/utils/invite'
 import { getRoleTitle } from '../AcceptInviteModal/RoleDataDisplay'
+import NetworkFeeEstimateView from '../NetworkFeeEstimateView'
 import NetworkTransactionModal from '../NetworkTransactionModal'
 import RoleSelect from './RoleSelect'
 
@@ -16,7 +17,7 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 
 	const toast = useToast()
 
-	const { makeInvite } = useMakeInvite(selectedRole || 0)
+	const { makeInvite, getMakeInviteGasEstimate } = useMakeInvite(selectedRole || 0)
 
 	const createLink = async() => {
 		setCreateLinkStep(0)
@@ -96,7 +97,14 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 				<Divider />
 
 				<ModalFooter>
-					<HStack align='center'>
+					<HStack
+						align='center'
+						w='100%'>
+						<NetworkFeeEstimateView
+							getEstimate={getMakeInviteGasEstimate} />
+
+						<Spacer />
+
 						<Button
 							variant='ghost'
 							onClick={onClose}>
@@ -110,7 +118,8 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 							|| typeof createLinkStep !== 'undefined'
 							}
 							onClick={createLink}
-							colorScheme='brandv2'>
+							colorScheme='brandv2'
+							variant='primaryV2'>
 							Create invite link
 						</Button>
 					</HStack>
@@ -120,11 +129,12 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 			<NetworkTransactionModal
 				currentStepIndex={createLinkStep || 0}
 				isOpen={typeof createLinkStep !== 'undefined'}
-				subtitle='creating invite link'
+				subtitle='Creating invite link'
 				description={
 					<HStack w='100%'>
 						<VStack
-							spacing='0'
+							// slightly lesser spacing between lines
+							spacing='-0.2rem'
 							align='left'>
 							<Text
 								fontWeight='bold'

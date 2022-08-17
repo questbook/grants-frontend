@@ -14,12 +14,7 @@ interface Props {
 }
 
 function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
-	const {
-		isDisconnected,
-		isConnected,
-		connect,
-		connectors,
-	} = useConnect()
+	const { isDisconnected, isConnected, connect, connectors } = useConnect()
 	const toast = useToast()
 	const router = useRouter()
 	const [connectWalletModalIsOpen, setConnectWalletModalIsOpen] =
@@ -63,12 +58,22 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 			<NavBar
 				onGetStartedClick={true}
 				onGetStartedBtnClicked={false}
-				setGetStartedClicked={() => {}} />
+				setGetStartedClicked={() => {}}
+			/>
 			<Flex
 				w="100vw"
 				h="100vh"
 				overflow="scroll">
-				{connected && <Sidebar />}
+				<Flex
+					display={{ base: 'none', lg: 'flex' }}
+					w="20%"
+					pos="sticky"
+					top={0}
+				>
+					<Sidebar />
+				</Flex>
+
+				{/* <Sidebar /> */}
 				{children}
 			</Flex>
 			<ConnectWalletModal
