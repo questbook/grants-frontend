@@ -274,7 +274,7 @@ export default function useSubmitReview(
 
 	return [
 		transactionData,
-		getExplorerUrlForTxHash(chainId || getSupportedChainIdFromWorkspace(workspace), transactionData.transactionHash),
+		getExplorerUrlForTxHash(chainId || getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
 		loading,
 		error,
 	]
