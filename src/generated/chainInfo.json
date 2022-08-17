@@ -364,10 +364,10 @@
 			}
 		},
 		"qbContracts": {
-			"applications": "0x084aCcB463c38D7e050cf7099B4D11C9EBa78a2E",
-			"workspace": "0x37d2df191899C715fE840671C6240C4Be05aF6B3",
-			"grantFactory": "0xAAD5fD023BB96867aF3dCE443F0252CF53FB0424",
-			"reviews": "0xF386f93269cb23Ff1b5c0635Ff4258d607BF7ae4"
+			"applications": "0x823b5405DB4359836ACFF646A9c04a70E2243EaF",
+			"workspace": "0xAF99f7fF00b339123Cb95fc42E8498E78E318e22",
+			"grantFactory": "0x9D922557918deE21E4aD435b38d8f94F3D4a2058",
+			"reviews": "0x3Cf0523E345007c73Ab0FcB69E08cB3DcCDBcb72"
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-gnosis-mainnet",
 		"rpcUrls": [
