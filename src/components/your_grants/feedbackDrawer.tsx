@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
 	Box,
 	Button,
@@ -12,7 +12,7 @@ import {
 	Slider,
 	SliderFilledTrack, SliderMark,
 	SliderThumb,
-	SliderTrack,
+	SliderTrack, Spacer,
 	Text,
 } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
@@ -20,6 +20,7 @@ import { SupportedChainId } from 'src/constants/chains'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useSubmitReview from 'src/hooks/useSubmitReview'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
+import { sumArray } from 'table/dist/src/utils'
 import { useAccount } from 'wagmi'
 import { RubricItem } from '../../generated/graphql'
 import NetworkTransactionModal from '../../v2/components/NetworkTransactionModal'
@@ -118,8 +119,7 @@ function FeedbackDrawer({
 	const handleOnSubmit = () => {
 		const newFeedbackData = []
 		feedbackData?.forEach((feedback) => {
-			const newFeedbackDataObject = { ...feedback }
-			newFeedbackData.push(newFeedbackDataObject)
+			newFeedbackData.push(feedback)
 		})
 
 		if(isPrivate && (!pk || pk === '*')) {
@@ -137,7 +137,6 @@ function FeedbackDrawer({
 
 	const [
 		data,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		transactionLink,
 		loading,
 	] = useSubmitReview(
@@ -299,6 +298,10 @@ function FeedbackDrawer({
 							fontSize={'17px'}
 						>
 							{grantTitle}
+						</Text>
+						<Spacer />
+						<Text>
+							{feedbackData && sumArray(feedbackData!.map(e => e.rating))}
 						</Text>
 					</HStack>
 				}
