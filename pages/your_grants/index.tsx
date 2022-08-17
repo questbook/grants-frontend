@@ -88,8 +88,8 @@ function removeDuplicates(array: any) {
 }
 
 function YourGrants() {
-	const [isAdmin, setIsAdmin] = useState<boolean>(false)
-	const [isReviewer, setIsReviewer] = useState<boolean>(false)
+	const [isAdmin, setIsAdmin] = useState<boolean>()
+	const [isReviewer, setIsReviewer] = useState<boolean>()
 
 	const { workspace } = useContext(ApiClientsContext)!
 	const { data: accountData } = useAccount()
@@ -150,7 +150,6 @@ function YourGrants() {
 				isReviewer={isReviewer} />
 		)
 	}
-
 }
 
 function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isReviewer: boolean }) {
