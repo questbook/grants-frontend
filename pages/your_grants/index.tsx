@@ -6,7 +6,7 @@ import React, {
 	useRef,
 	useState,
 } from 'react'
-import { Button, Flex, Text } from '@chakra-ui/react'
+import { Button, Center, Flex, Text } from '@chakra-ui/react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
@@ -83,50 +83,110 @@ function removeDuplicates(array: any) {
 	const uniq: any = {}
 	// eslint-disable-next-line no-return-assign
 	return array.filter(
-		(obj: any) => !uniq[obj.grant.id] && (uniq[obj.grant.id] = true)
+		(obj: any) => !uniq[obj.grant.id] && (uniq[obj.grant.id] = true),
 	)
 }
 
 function YourGrants() {
+	const [isAdmin, setIsAdmin] = useState<boolean>(false)
+	const [isReviewer, setIsReviewer] = useState<boolean>(false)
+
+	const { workspace } = useContext(ApiClientsContext)!
+	const { data: accountData } = useAccount()
+
+	useEffect(() => {
+		if(
+			workspace &&
+      workspace.members &&
+      workspace.members.length > 0 &&
+      accountData &&
+      accountData.address
+		) {
+			const tempMember = workspace.members.find(
+				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
+			)
+			setIsAdmin(
+				tempMember?.accessLevel === 'admin' ||
+        tempMember?.accessLevel === 'owner',
+			)
+			setIsReviewer(tempMember?.accessLevel === 'reviewer')
+			const user: any = tempMember?.id
+			localStorage.setItem('id', user)
+		}
+	}, [accountData, workspace])
+
+
+	if(isAdmin === undefined || isReviewer === undefined) {
+		return (
+			<Center w='100%'>
+				<Loader />
+			</Center>
+		)
+	}
+
+	if(isReviewer) {
+		return (
+			<Flex
+				w='100%'
+				h='100vh'
+				bg={'#F5F5FA'}
+				padding={'40px'}
+				direction={'column'}
+			>
+				<Text
+					fontWeight={'700'}
+					fontSize={'30px'}
+					lineHeight={'44px'}
+					letterSpacing={-1}>
+          Grants & Bounties
+				</Text>
+				<ReviewerDashboard />
+			</Flex>
+		)
+	} else {
+		return (
+			<YourGrantsAdminView
+				isAdmin={isAdmin}
+				isReviewer={isReviewer} />
+		)
+	}
+
+}
+
+function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isReviewer: boolean }) {
 	const router = useRouter()
 	const [pk, setPk] = useState<string>('*')
 	const [ignorePkModal, setIgnorePkModal] = useState(false)
 
 	const { data: accountData } = useAccount()
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
-	const [isAdmin, setIsAdmin] = React.useState<boolean>(false)
-	const [isReviewer, setIsReviewer] = React.useState<boolean>(false)
 
 	const containerRef = useRef(null)
 	const [currentPage, setCurrentPage] = React.useState(0)
 
-	const [grants, setGrants] = React.useState<
-    GetAllGrantsForCreatorQuery['grants']
-  >([])
+	const [grants, setGrants] = React.useState<GetAllGrantsForCreatorQuery['grants']>([])
 
-	const [grantsReviewer, setGrantsReviewer] = React.useState<
-    GetAllGrantsForReviewerQuery['grantApplications']
-  >([])
+	const [grantsReviewer, setGrantsReviewer] = React.useState<GetAllGrantsForReviewerQuery['grantApplications']>([])
 
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
-      subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-      ].client,
+    subgraphClients[
+    	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+    ].client,
 	})
 
 	const [queryReviewerParams, setQueryReviewerParams] = useState<any>({
 		client:
-      subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-      ].client,
+    subgraphClients[
+    	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+    ].client,
 	})
 
 	const [countQueryParams, setCountQueryParams] = useState<any>({
 		client:
-      subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-      ].client,
+    subgraphClients[
+    	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+    ].client,
 	})
 
 	const [selectedTab, setSelectedTab] = useState(0)
@@ -134,7 +194,7 @@ function YourGrants() {
 
 	useEffect(() => {
 		setSelectedTab(
-			parseInt(localStorage.getItem('yourGrantsTabSelected') || '0')
+			parseInt(localStorage.getItem('yourGrantsTabSelected') || '0'),
 		)
 	}, [])
 
@@ -149,7 +209,7 @@ function YourGrants() {
 
 		setCountQueryParams({
 			client:
-        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+      subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
 			variables: {
 				first: PAGE_SIZE,
 				skip: PAGE_SIZE * currentPage,
@@ -158,27 +218,6 @@ function YourGrants() {
 			fetchPolicy: 'network-only',
 		})
 	}, [currentPage, workspace, accountData?.address])
-
-	useEffect(() => {
-		if(
-			workspace &&
-      workspace.members &&
-      workspace.members.length > 0 &&
-      accountData &&
-      accountData.address
-		) {
-			const tempMember = workspace.members.find(
-				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase()
-			)
-			setIsAdmin(
-				tempMember?.accessLevel === 'admin' ||
-          tempMember?.accessLevel === 'owner'
-			)
-			setIsReviewer(tempMember?.accessLevel === 'reviewer')
-			const user: any = tempMember?.id
-			localStorage.setItem('id', user)
-		}
-	}, [accountData, workspace])
 
 	useEffect(() => {
 		if(!workspace) {
@@ -193,7 +232,7 @@ function YourGrants() {
 
 		setQueryParams({
 			client:
-        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+      subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
 			variables: {
 				first: PAGE_SIZE,
 				skip: PAGE_SIZE * currentPage,
@@ -204,7 +243,7 @@ function YourGrants() {
 		})
 		setQueryReviewerParams({
 			client:
-        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+      subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
 			variables: {
 				first: PAGE_SIZE,
 				skip: PAGE_SIZE * currentPage,
@@ -226,7 +265,7 @@ function YourGrants() {
 
 		const k = workspace?.members
 			?.find(
-				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase()
+				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 			)
 			?.publicKey?.toString()
 		// console.log(k);
@@ -296,11 +335,11 @@ function YourGrants() {
 		) {
 			console.log(
 				'data.grantsReviewer.raw',
-				allGrantsReviewerData.data.grantApplications
+				allGrantsReviewerData.data.grantApplications,
 			)
 			// eslint-disable-next-line max-len
 			const newReviewerData = removeDuplicates(
-				allGrantsReviewerData.data.grantApplications
+				allGrantsReviewerData.data.grantApplications,
 			)
 
 			console.log('data.grantsReviewer', newReviewerData)
@@ -317,7 +356,7 @@ function YourGrants() {
 		setAddFundsIsOpen(true)
 		setGrantForFunding(grant.id)
 		const chainId = getSupportedChainIdFromSupportedNetwork(
-			grant.workspace.supportedNetworks[0]
+			grant.workspace.supportedNetworks[0],
 		)
 		const chainInfo = getChainInfo(grant, chainId)
 
@@ -344,7 +383,7 @@ function YourGrants() {
 		const reachedBottom =
       Math.abs(
       	parentElement.scrollTop -
-          (parentElement.scrollHeight - parentElement.clientHeight)
+        (parentElement.scrollHeight - parentElement.clientHeight),
       ) < 10
 		if(reachedBottom) {
 			setCurrentPage(currentPage + 1)
@@ -384,7 +423,7 @@ function YourGrants() {
 					fontSize={'30px'}
 					lineHeight={'44px'}
 					letterSpacing={-1}>
-				Grants & Bounties
+          Grants & Bounties
 				</Text>
 				<ReviewerDashboard />
 			</Flex>
@@ -394,29 +433,29 @@ function YourGrants() {
 	return (
 		<>
 			<Flex
-				w="100%"
+				w='100%'
 				ref={containerRef}
-				direction="row"
-				justify="center">
+				direction='row'
+				justify='center'>
 				<Flex
-					direction="column"
-					w="55%"
-					alignItems="stretch"
+					direction='column'
+					w='55%'
+					alignItems='stretch'
 					pb={8}
 					px={10}>
 					{
 						<>
 							<Flex
-								mt="18px"
-								align="center"
-								justify="space-between">
-								<Text variant="heading">
+								mt='18px'
+								align='center'
+								justify='space-between'>
+								<Text variant='heading'>
 									{isReviewer ? 'Assigned Grants' : 'Your grants'}
 								</Text>
 								{
 									isAdmin && grants.length > 0 && (
 										<Button
-											variant="primaryV2"
+											variant='primaryV2'
 											onClick={
 												() => {
 													console.log('Create a grant!')
@@ -426,21 +465,21 @@ function YourGrants() {
 
 												}
 											}>
-Post a Grant / Bounty
+                      Post a Grant / Bounty
 										</Button>
 									)
 								}
 							</Flex>
 							<Flex
-								direction="row"
+								direction='row'
 								mt={4}
 								mb={4}>
 								{
 									isAdmin && TABS.map((tab) => (
 										<Button
-											padding="8px 24px"
-											borderRadius="52px"
-											minH="40px"
+											padding='8px 24px'
+											borderRadius='52px'
+											minH='40px'
 											bg={selectedTab === tab.index ? 'brand.500' : 'white'}
 											color={selectedTab === tab.index ? 'white' : 'black'}
 											onClick={
@@ -448,14 +487,14 @@ Post a Grant / Bounty
 													setSelectedTab(tab.index)
 													localStorage.setItem(
 														'yourGrantsTabSelected',
-														tab.index.toString()
+														tab.index.toString(),
 													)
 												}
 											}
 											_hover={{}}
-											fontWeight="700"
-											fontSize="16px"
-											lineHeight="24px"
+											fontWeight='700'
+											fontSize='16px'
+											lineHeight='24px'
 											mr={3}
 											border={selectedTab === tab.index ? 'none' : '1px solid #A0A7A7'}
 											key={tab.index}
@@ -485,21 +524,21 @@ Post a Grant / Bounty
             		decimals =
                   CHAIN_INFO[
                   	getSupportedChainIdFromSupportedNetwork(
-                  		grant.workspace.supportedNetworks[0]
+                  		grant.workspace.supportedNetworks[0],
                   	)
                   ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
                   	?.decimals
             		label =
                   CHAIN_INFO[
                   	getSupportedChainIdFromSupportedNetwork(
-                  		grant.workspace.supportedNetworks[0]
+                  		grant.workspace.supportedNetworks[0],
                   	)
                   ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
                   	?.label || 'LOL'
             		icon =
                   CHAIN_INFO[
                   	getSupportedChainIdFromSupportedNetwork(
-                  		grant.workspace.supportedNetworks[0]
+                  		grant.workspace.supportedNetworks[0],
                   	)
                   ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
                   	?.icon || '/images/dummy/Ethereum Icon.svg'
@@ -517,11 +556,11 @@ Post a Grant / Bounty
             			grantAmount={formatAmount(grantAmount, decimals || 18)}
             			grantCurrency={label || 'LOL'}
             			grantCurrencyIcon={icon}
-            			state="done"
+            			state='done'
             			chainId={
             				getSupportedChainIdFromSupportedNetwork(
-            				grant.workspace.supportedNetworks[0]
-            			)
+            					grant.workspace.supportedNetworks[0],
+            				)
             			}
             			onEditClick={
             				() => router.push({
@@ -565,21 +604,21 @@ Post a Grant / Bounty
             		decimals =
                   CHAIN_INFO[
                   	getSupportedChainIdFromSupportedNetwork(
-                  		grant.grant.workspace.supportedNetworks[0]
+                  		grant.grant.workspace.supportedNetworks[0],
                   	)
                   ]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
                   	?.decimals
             		label =
                   CHAIN_INFO[
                   	getSupportedChainIdFromSupportedNetwork(
-                  		grant.grant.workspace.supportedNetworks[0]
+                  		grant.grant.workspace.supportedNetworks[0],
                   	)
                   ]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
                   	?.label || 'LOL'
             		icon =
                   CHAIN_INFO[
                   	getSupportedChainIdFromSupportedNetwork(
-                  		grant.grant.workspace.supportedNetworks[0]
+                  		grant.grant.workspace.supportedNetworks[0],
                   	)
                   ]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
                   	?.icon || '/images/dummy/Ethereum Icon.svg'
@@ -591,8 +630,8 @@ Post a Grant / Bounty
             			key={grant.grant.id}
             			daoIcon={
             				getUrlForIPFSHash(
-            				grant.grant.workspace.logoIpfsHash
-            			)
+            					grant.grant.workspace.logoIpfsHash,
+            				)
             			}
             			grantTitle={grant.grant.title}
             			grantDesc={grant.grant.summary}
@@ -601,11 +640,11 @@ Post a Grant / Bounty
             			grantAmount={formatAmount(grantAmount, decimals || 18)}
             			grantCurrency={label || 'LOL'}
             			grantCurrencyIcon={icon}
-            			state="done"
+            			state='done'
             			chainId={
             				getSupportedChainIdFromSupportedNetwork(
-            				grant.grant.workspace.supportedNetworks[0]
-            			)
+            					grant.grant.workspace.supportedNetworks[0],
+            				)
             			}
             			onAddFundsClick={() => initialiseFundModal(grant.grant)}
             			onViewApplicantsClick={
@@ -653,9 +692,9 @@ Post a Grant / Bounty
 					}
 				</Flex>
 				<Flex
-					w="26%"
-					pos="sticky"
-					minH="calc(100vh - 64px)"
+					w='26%'
+					pos='sticky'
+					minH='calc(100vh - 64px)'
 					// display={isAdmin ? undefined : 'none'}
 				>
 					<Sidebar
