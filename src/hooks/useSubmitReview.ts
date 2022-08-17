@@ -44,11 +44,7 @@ export default function useSubmitReview(
 
 	const { client } = subgraphClients[chainId!]
 
-	const { fetchMore: fetchReviews } = useGetInitialReviewedApplicationGrantsQuery({
-		client,
-		skip: true,
-		fetchPolicy: 'network-only',
-	})
+	const { fetchMore: fetchReviews } = useGetInitialReviewedApplicationGrantsQuery({ client })
 
 	const applicationReviewContract = useQBContract('reviews', chainId)
 
@@ -142,7 +138,11 @@ export default function useSubmitReview(
 				do {
 					await delay(2000)
 					const result = await fetchReviews({
-						variables: { reviewerId, applicationsCount: 1 },
+						variables: {
+							reviewerAddress: reviewerId.toLowerCase(),
+							reviewerAddressStr: reviewerId,
+							applicationsCount: 1,
+						},
 					})
 					const grants = result.data.grantReviewerCounters.map(e => e.grant)
 					grants.forEach(grant => {
