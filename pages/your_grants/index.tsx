@@ -6,6 +6,7 @@ import {
 	useRef,
 	useState,
 } from 'react'
+import * as Apollo from '@apollo/client'
 import { Button, Center, Flex, Text } from '@chakra-ui/react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useRouter } from 'next/router'
@@ -20,8 +21,9 @@ import Sidebar from 'src/components/your_grants/sidebar/sidebar'
 import YourGrantCard from 'src/components/your_grants/yourGrantCard'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import {
-	GetAllGrantsForCreatorQuery,
-	GetAllGrantsForReviewerQuery, Rubric,
+	GetAllGrantsCountForCreatorQuery, GetAllGrantsCountForCreatorQueryVariables,
+	GetAllGrantsForCreatorQuery, GetAllGrantsForCreatorQueryVariables,
+	GetAllGrantsForReviewerQuery, GetAllGrantsForReviewerQueryVariables, Rubric,
 	useGetAllGrantsCountForCreatorQuery,
 	useGetAllGrantsForCreatorQuery,
 	useGetAllGrantsForReviewerQuery,
@@ -175,21 +177,20 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 
 	const [grantsReviewer, setGrantsReviewer] = useState<GetAllGrantsForReviewerQuery['grantApplications']>([])
 
-	const [queryParams, setQueryParams] = useState<any>({
+	const [queryParams, setQueryParams] = useState<Apollo.QueryHookOptions<GetAllGrantsForCreatorQuery, GetAllGrantsForCreatorQueryVariables>>({
+		client: subgraphClients[
+			getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+		].client,
+	})
+
+	const [queryReviewerParams, setQueryReviewerParams] = useState<Apollo.QueryHookOptions<GetAllGrantsForReviewerQuery, GetAllGrantsForReviewerQueryVariables>>({
 		client:
     subgraphClients[
     	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
     ].client,
 	})
 
-	const [queryReviewerParams, setQueryReviewerParams] = useState<any>({
-		client:
-    subgraphClients[
-    	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-    ].client,
-	})
-
-	const [countQueryParams, setCountQueryParams] = useState<any>({
+	const [countQueryParams, setCountQueryParams] = useState<Apollo.QueryHookOptions<GetAllGrantsCountForCreatorQuery, GetAllGrantsCountForCreatorQueryVariables>>({
 		client:
     subgraphClients[
     	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
@@ -254,7 +255,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 			variables: {
 				first: PAGE_SIZE,
 				skip: PAGE_SIZE * currentPage,
-				reviewerIDs: [localStorage.getItem('id')],
+				reviewerIDs: [localStorage.getItem('id')!],
 			},
 			fetchPolicy: 'network-only',
 		})
