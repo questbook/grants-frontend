@@ -100,7 +100,7 @@ function ReviewerSidebar({
 				<Divider />
 				<Box h={2} />
 				{
-					reviewSelected?.items?.map((feedback, index: number) => (
+					reviewSelected?.items?.map((feedback, index) => (
 						<Fragment key={index}>
 							<Flex
 								mt={4}
