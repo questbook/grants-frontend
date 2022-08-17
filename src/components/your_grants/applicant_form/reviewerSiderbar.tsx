@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import {
 	Box,
 	Button, Divider,
@@ -14,7 +14,9 @@ import {
 } from 'src/utils/validationUtils'
 import { useAccount } from 'wagmi'
 import { GetApplicationDetailsQuery } from '../../../generated/graphql'
-import FeedbackDrawer from '../feedbackDrawer'
+import FeedbackDrawer, { FeedbackType } from '../feedbackDrawer'
+
+type ReviewType = Exclude<Exclude<GetApplicationDetailsQuery['grantApplication'], null>, undefined>['reviews'][0];
 
 function ReviewerSidebar({
 	applicationData,
@@ -28,9 +30,9 @@ function ReviewerSidebar({
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 	const { data: accountData } = useAccount()
-	const [feedbackDrawerOpen, setFeedbackDrawerOpen] = React.useState(false)
-	const [yourReview, setYourReview] = useState<any>()
-	const [reviewSelected, setReviewSelected] = React.useState<any>()
+	const [feedbackDrawerOpen, setFeedbackDrawerOpen] = useState(false)
+	const [yourReview, setYourReview] = useState<ReviewType>()
+	const [reviewSelected, setReviewSelected] = useState<{ items: FeedbackType[] }>()
 	const { decryptMessage } = useEncryption()
 
 	const toast = useToast()
@@ -44,8 +46,8 @@ function ReviewerSidebar({
 			return
 		}
 
-		const review = applicationData?.reviews.find((r: any) => (
-			r.reviewer.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
+		const review = applicationData?.reviews.find((r) => (
+			r.reviewer?.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
 		))
 		setYourReview(review)
 		if(review) {
@@ -54,21 +56,25 @@ function ReviewerSidebar({
 
 	}, [applicationData, accountData])
 
-	const loadReview = async(yourReview: any) => {
-		let data = {}
+	const loadReview = async(yourReview: ReviewType) => {
+		if(!yourReview) {
+			return
+		}
+
+		let data: typeof reviewSelected
+
 		if(applicationData?.grant.rubric?.isPrivate) {
-			const reviewData = yourReview.data.find((d: any) => (
+			const reviewData = yourReview.data.find((d) => (
 				d.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
 			))
-			const ipfsData = await getFromIPFS(reviewData.data)
+			const ipfsData = await getFromIPFS(reviewData!.data)
 
 			data = JSON.parse(await decryptMessage(ipfsData) || '{}')
 		} else {
-			const ipfsData = await getFromIPFS(yourReview.publicReviewDataHash)
+			const ipfsData = await getFromIPFS(yourReview!.publicReviewDataHash!)
 			data = JSON.parse(ipfsData || '{}')
 		}
 
-		console.log(data)
 		setReviewSelected(data)
 	}
 
@@ -94,7 +100,7 @@ function ReviewerSidebar({
 				<Divider />
 				<Box h={2} />
 				{
-					reviewSelected?.items?.map((feedback: any, index:number) => (
+					reviewSelected?.items?.map((feedback, index: number) => (
 						<Fragment key={index}>
 							<Flex
 								mt={4}
