@@ -4262,16 +4262,6 @@ export type GetGrantsAppliedToQueryVariables = Exact<{
 
 export type GetGrantsAppliedToQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, grant: { __typename?: 'Grant', id: string } }> };
 
-export type GetGrantsForReviewerInWorkspaceQueryVariables = Exact<{
-  workspaceId: Scalars['String'];
-  reviewerId: Scalars['Bytes'];
-  first?: InputMaybe<Scalars['Int']>;
-  skip?: InputMaybe<Scalars['Int']>;
-}>;
-
-
-export type GetGrantsForReviewerInWorkspaceQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', grant: { __typename?: 'Grant', id: string, title: string } }> };
-
 export type GetInitialReviewedApplicationGrantsQueryVariables = Exact<{
   reviewerAddress: Scalars['Bytes'];
   reviewerAddressStr: Scalars['String'];
@@ -5940,54 +5930,6 @@ export function useGetGrantsAppliedToLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type GetGrantsAppliedToQueryHookResult = ReturnType<typeof useGetGrantsAppliedToQuery>;
 export type GetGrantsAppliedToLazyQueryHookResult = ReturnType<typeof useGetGrantsAppliedToLazyQuery>;
 export type GetGrantsAppliedToQueryResult = Apollo.QueryResult<GetGrantsAppliedToQuery, GetGrantsAppliedToQueryVariables>;
-export const GetGrantsForReviewerInWorkspaceDocument = gql`
-    query getGrantsForReviewerInWorkspace($workspaceId: String!, $reviewerId: Bytes!, $first: Int, $skip: Int) {
-  grantApplications(
-    where: {grant_: {workspace: $workspaceId}, reviewers_: {actorId_contains: $reviewerId}}
-    first: $first
-    skip: $skip
-    subgraphError: allow
-    orderBy: createdAtS
-    orderDirection: desc
-  ) {
-    grant {
-      id
-      title
-    }
-  }
-}
-    `;
-
-/**
- * __useGetGrantsForReviewerInWorkspaceQuery__
- *
- * To run a query within a React component, call `useGetGrantsForReviewerInWorkspaceQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetGrantsForReviewerInWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetGrantsForReviewerInWorkspaceQuery({
- *   variables: {
- *      workspaceId: // value for 'workspaceId'
- *      reviewerId: // value for 'reviewerId'
- *      first: // value for 'first'
- *      skip: // value for 'skip'
- *   },
- * });
- */
-export function useGetGrantsForReviewerInWorkspaceQuery(baseOptions: Apollo.QueryHookOptions<GetGrantsForReviewerInWorkspaceQuery, GetGrantsForReviewerInWorkspaceQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetGrantsForReviewerInWorkspaceQuery, GetGrantsForReviewerInWorkspaceQueryVariables>(GetGrantsForReviewerInWorkspaceDocument, options);
-      }
-export function useGetGrantsForReviewerInWorkspaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetGrantsForReviewerInWorkspaceQuery, GetGrantsForReviewerInWorkspaceQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetGrantsForReviewerInWorkspaceQuery, GetGrantsForReviewerInWorkspaceQueryVariables>(GetGrantsForReviewerInWorkspaceDocument, options);
-        }
-export type GetGrantsForReviewerInWorkspaceQueryHookResult = ReturnType<typeof useGetGrantsForReviewerInWorkspaceQuery>;
-export type GetGrantsForReviewerInWorkspaceLazyQueryHookResult = ReturnType<typeof useGetGrantsForReviewerInWorkspaceLazyQuery>;
-export type GetGrantsForReviewerInWorkspaceQueryResult = Apollo.QueryResult<GetGrantsForReviewerInWorkspaceQuery, GetGrantsForReviewerInWorkspaceQueryVariables>;
 export const GetInitialReviewedApplicationGrantsDocument = gql`
     query getInitialReviewedApplicationGrants($reviewerAddress: Bytes!, $reviewerAddressStr: String!, $applicationsCount: Int!) {
   grantReviewerCounters(
