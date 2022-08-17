@@ -1,4 +1,4 @@
-import React, {
+import {
 	ReactElement,
 	useCallback,
 	useContext,
@@ -161,11 +161,11 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
 
 	const containerRef = useRef(null)
-	const [currentPage, setCurrentPage] = React.useState(0)
+	const [currentPage, setCurrentPage] = useState(0)
 
-	const [grants, setGrants] = React.useState<GetAllGrantsForCreatorQuery['grants']>([])
+	const [grants, setGrants] = useState<GetAllGrantsForCreatorQuery['grants']>([])
 
-	const [grantsReviewer, setGrantsReviewer] = React.useState<GetAllGrantsForReviewerQuery['grantApplications']>([])
+	const [grantsReviewer, setGrantsReviewer] = useState<GetAllGrantsForReviewerQuery['grantApplications']>([])
 
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
@@ -347,9 +347,9 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 		}
 	}, [allGrantsReviewerData])
 
-	const [addFundsIsOpen, setAddFundsIsOpen] = React.useState(false)
-	const [grantForFunding, setGrantForFunding] = React.useState(null)
-	const [grantRewardAsset, setGrantRewardAsset] = React.useState<any>(null)
+	const [addFundsIsOpen, setAddFundsIsOpen] = useState(false)
+	const [grantForFunding, setGrantForFunding] = useState(null)
+	const [grantRewardAsset, setGrantRewardAsset] = useState<any>(null)
 
 	const initialiseFundModal = async(grant: any) => {
 		setAddFundsIsOpen(true)
