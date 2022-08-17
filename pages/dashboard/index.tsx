@@ -232,7 +232,7 @@ function DaoDashboard() {
 	const extractLast30Applications = (data: any) => {
 		const everydayApplications = data.everydayApplications
 
-		if(!everydayApplications) {
+		if(!everydayApplications || !everydayApplications.length) {
 			return []
 		}
 
@@ -254,7 +254,7 @@ function DaoDashboard() {
 		console.log('everydayApplicationsMap', everydayApplicationsMap)
 
 		const everydayApplicationsLast30 = []
-		for(let i = 0; i < 30; i++) {
+		for(let i = 0; i < 365; i++) {
 			const timekey = today.toISOString().split('T')[0] + 'T00:00:00.000Z'
 			// 00:00:00.000Z
 			if(everydayApplicationsMap[timekey]) {
@@ -306,7 +306,7 @@ function DaoDashboard() {
 		// console.log('everydayApplicationsMap', everydayApplicationsMap)
 
 		const everydayFundingsLast30 = []
-		for(let i = 0; i < 30; i++) {
+		for(let i = 0; i < 365; i++) {
 			const timekey = today.toISOString().split('T')[0] + 'T00:00:00.000Z'
 			// 00:00:00.000Z
 			if(everydayFundingsMap[timekey]) {
