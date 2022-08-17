@@ -1,5 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
+import { ContractReceipt } from '@ethersproject/contracts/src.ts'
 import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
 import useEncryption from 'src/hooks/utils/useEncryption'
@@ -11,6 +12,7 @@ import {
 } from 'src/utils/validationUtils'
 import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
+import { FeedbackType } from '../components/your_grants/feedbackDrawer'
 import {
 	useGetInitialReviewedApplicationGrantsQuery,
 } from '../generated/graphql'
@@ -19,7 +21,7 @@ import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
 
 export default function useSubmitReview(
-	data: any,
+	data: { items?: Array<FeedbackType> },
 	setCurrentStep: (step?: number) => void,
 	isPrivate: boolean,
 	chainId?: SupportedChainId,
@@ -30,7 +32,7 @@ export default function useSubmitReview(
 	const [error, setError] = useState<string>()
 	const [loading, setLoading] = useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = useState(false)
-	const [transactionData, setTransactionData] = useState<any>()
+	const [transactionData, setTransactionData] = useState<ContractReceipt>()
 	const { data: accountData } = useAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 	const { encryptMessage } = useEncryption()
@@ -273,7 +275,7 @@ export default function useSubmitReview(
 
 	return [
 		transactionData,
-		getExplorerUrlForTxHash(chainId || getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
+		getExplorerUrlForTxHash(chainId || getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash as string),
 		loading,
 		error,
 	]

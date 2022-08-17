@@ -140,7 +140,7 @@ function FeedbackDrawer({
 		transactionLink,
 		loading,
 	] = useSubmitReview(
-		editedFeedbackData,
+		editedFeedbackData!,
 		setCurrentStep,
 		isPrivate,
 		chainId,
