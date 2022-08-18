@@ -185,13 +185,13 @@ const OnboardingCreateDomain = () => {
 				nonce
 			)
 
-			if(!response) {
+			if(!transactionHash) {
 				return
 			}
 
 			setCurrentStep(3)
 
-			const { txFee, receipt } = await getTransactionDetails(response, safeSelected.networkId.toString())
+			const { txFee, receipt } = await getTransactionDetails(transactionHash, safeSelected.networkId.toString())
 
 			console.log('txFee', txFee)
 
