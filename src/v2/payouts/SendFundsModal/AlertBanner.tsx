@@ -1,6 +1,6 @@
 import { ReactElement } from 'react'
 import { Flex, Text } from '@chakra-ui/react'
-import { ErrorAlert } from '../../../../assets/custom chakra icons/ErrorAlertV2'
+import { ErrorAlert } from 'src/v2/assets/custom chakra icons/ErrorAlertV2'
 
 const AlertInfo = {
 	info: {
@@ -26,9 +26,10 @@ const AlertBanner = ({
 }) => (
 	<Flex
 		mt={4}
-		px={3}
-		py={2}
+		px={'18px'}
+		py={4}
 		bg={AlertInfo[type].bg}
+		borderLeft={`4px solid ${AlertInfo[type].iconColor}`}
 		borderRadius={'base'}
 		w={'fit-content'}
 	>
@@ -37,8 +38,10 @@ const AlertBanner = ({
 			boxSize={5} />
 
 		<Text
-			ml={1}
-			fontSize={'sm'}>
+			ml={'18px'}
+			fontSize={'sm'}
+			lineHeight='20px'
+		>
 			{message}
 		</Text>
 	</Flex>
