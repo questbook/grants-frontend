@@ -3,6 +3,7 @@ import React, {
 } from 'react'
 import {
 	Box,
+	Button,
 	Checkbox,
 	Container, Flex, Grid, GridItem, IconButton, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
@@ -31,8 +32,10 @@ import { ThreeDotsHorizontal } from 'src/v2/assets/custom chakra icons/ThreeDots
 import Breadcrumbs from 'src/v2/components/Breadcrumbs'
 import StyledTab from 'src/v2/components/StyledTab'
 import AcceptedRow from 'src/v2/payouts/AcceptedProposals/AcceptedRow'
-import SendFundsModal from 'src/v2/payouts/SendFundsModal'
+import SendFundsDrawer from 'src/v2/payouts/SendFundsDrawer/SendFundsDrawer'
+import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import StatsBanner from 'src/v2/payouts/StatsBanner'
+import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import { useAccount } from 'wagmi'
 
 const PAGE_SIZE = 500
@@ -96,6 +99,8 @@ function ViewApplicants() {
 	})
 
 	const [sendFundsModalIsOpen, setSendFundsModalIsOpen] = useState(false)
+	const [sendFundsDrawerIsOpen, setSendFundsDrawerIsOpen] = useState(false)
+	const [txnInitModalIsOpen, setTxnInitModalIsOpen] = useState(false)
 
 	useEffect(() => {
 		if(
@@ -464,6 +469,7 @@ function ViewApplicants() {
 							<Flex
 								py='14px'
 								px='16px'
+								alignItems={'center'}
 							>
 								<Text
 									mr='auto'
@@ -473,13 +479,27 @@ function ViewApplicants() {
 								>
 									Accepted
 								</Text>
-								<Text
+
+								<Button
+									colorScheme={'brandv2'}
+									py={'6px'}
+									px={3}
+									minH={0}
+									h='32px'
+									fontSize="14px"
+									m={0}
+									onClick={() => setSendFundsDrawerIsOpen(true)}
+								>
+										Send Funds
+								</Button>
+
+								{/* <Text
 									fontSize='14px'
 									lineHeight='20px'
 									fontWeight='500'
 								>
 									Filter By
-								</Text>
+								</Text> */}
 							</Flex>
 
 							<Flex
@@ -495,7 +515,7 @@ function ViewApplicants() {
 									alignItems='center'
 									justifyContent='center'
 								>
-									<Checkbox defaultChecked />
+									<Checkbox />
 								</GridItem>
 								<GridItem>
 									<Text
@@ -568,7 +588,29 @@ function ViewApplicants() {
 				<SendFundsModal
 					isOpen={sendFundsModalIsOpen}
 					onClose={() => setSendFundsModalIsOpen(false)}
+					onComplete={
+						() => {
+							setSendFundsModalIsOpen(false)
+							setTxnInitModalIsOpen(true)
+						}
+					}
+				/>
 
+				<TransactionInitiatedModal
+					isOpen={txnInitModalIsOpen}
+					onClose={() => setTxnInitModalIsOpen(false)}
+					onComplete={() => setTxnInitModalIsOpen(false)}
+				/>
+
+				<SendFundsDrawer
+					isOpen={sendFundsDrawerIsOpen}
+					onClose={() => setSendFundsDrawerIsOpen(false)}
+					onComplete={
+						() => {
+							setSendFundsDrawerIsOpen(false)
+							setTxnInitModalIsOpen(true)
+						}
+					}
 				/>
 
 

@@ -3,45 +3,71 @@ import {
 	Box,
 	Button,
 	Container,
+	Drawer,
+	DrawerContent,
+	DrawerOverlay,
 	Flex,
-	Modal as ModalComponent,
-	ModalContent,
-	ModalOverlay,
 	Text,
 } from '@chakra-ui/react'
-import { ArrowDownCircle } from '../assets/custom chakra icons/Arrows/ArrowDownCircle'
-import { CancelCircleFilled } from '../assets/custom chakra icons/CancelCircleFilled'
-import { ExternalLink } from '../assets/custom chakra icons/ExternalLink'
-import { FishEye } from '../assets/custom chakra icons/FishEye'
-import { FundsCircle } from '../assets/custom chakra icons/Your Grants/FundsCircle'
+import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
+import { useConnect } from 'wagmi'
+import { CancelCircleFilled } from '../../assets/custom chakra icons/CancelCircleFilled'
+import { FundsCircle } from '../../assets/custom chakra icons/Your Grants/FundsCircle'
+import SafeOwner from '../SendFundsModal/SafeOwner'
+import RecipientDetails from './RecepientDetails'
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+	onComplete: () => void;
 }
 
-function SendFundsModal({
+function SendFundsDrawer({
 	isOpen,
 	onClose,
+	onComplete,
 }: Props) {
 
 	const [step, setStep] = useState(0)
+	const [toAddressIsFocused, setToAddressIsFocused] = useState(false)
+
+	const [milestoneId, setMilestoneId] = useState<string>()
+	const [amount, setAmount] = useState<number>()
+
+
+	const {
+		isError: isErrorConnecting,
+		connect,
+		connectors
+	} = useConnect()
+
 	return (
-		<ModalComponent
-			isCentered
+		<Drawer
+			placement='right'
 			isOpen={isOpen}
-			onClose={onClose}
+			onClose={
+				() => {
+					setStep(0)
+					setMilestoneId(undefined)
+					setAmount(undefined)
+					onClose()
+				}
+			}
 			closeOnOverlayClick={false}
 		>
-			<ModalOverlay maxH="100vh" />
-			<ModalContent
+			<DrawerOverlay maxH="100vh" />
+			<DrawerContent
 				minW={528}
 				// h="min(90vh, 560px)"
 				overflowY="auto"
 				borderRadius="4px">
 				<Container
 					px={6}
-					py={4}>
+					py={4}
+					display='flex'
+					flexDirection={'column'}
+					maxH='100vh'
+				>
 
 					<Flex
 						direction="row"
@@ -90,6 +116,8 @@ function SendFundsModal({
 							onClick={
 								() => {
 									setStep(0)
+									setMilestoneId(undefined)
+									setAmount(undefined)
 									onClose()
 								}
 							}
@@ -105,7 +133,7 @@ function SendFundsModal({
 					/>
 
 					<Flex
-						maxH={'412px'}
+						maxH={'calc(100vh - 32px)'}
 						overflowY={'scroll'}
 						direction={'column'}>
 						<Flex>
@@ -153,16 +181,16 @@ function SendFundsModal({
 								direction={'column'}
 							>
 								<Box
-									bg={step === 1 ? '#785EF0' : '#E0E0EC'}
+									bg={step === 1 || step === 2 ? '#785EF0' : '#E0E0EC'}
 									borderRadius='20px'
 									height={1}
 								/>
 
 								<Flex
 									mt={2}
-									color={step === 1 ? '#785EF0' : '#E0E0EC'}>
+									color={step === 1 || step === 2 ? '#785EF0' : '#E0E0EC'}>
 									{
-										step === 1 ? (
+										step === 1 || step === 2 ? (
 											<FishEye
 												h={'14px'}
 												w={'14px'} />
@@ -180,7 +208,7 @@ function SendFundsModal({
 										lineHeight='16px'
 										fontWeight='500'
 										ml={1}
-										color={step === 1 ? '#785EF0' : '#1F1F33'}
+										color={step === 1 || step === 2 ? '#785EF0' : '#1F1F33'}
 									>
 										Verify as a safe owner
 									</Text>
@@ -188,95 +216,29 @@ function SendFundsModal({
 							</Flex>
 						</Flex>
 
-						<Flex
-							mt={4}
-							p={4}
-							borderRadius='2px'
-							boxShadow={'inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'}
-							flexDirection='column'
-						>
-							<Text
-								fontSize='14px'
-								lineHeight='20px'
-								fontWeight='500'
-							>
-							From
-							</Text>
+						{
+							step === 0 ? (
+								<RecipientDetails
+									milestoneId={milestoneId}
+									setMilestoneId={setMilestoneId}
+									amount={amount}
+									setAmount={setAmount}
 
-							<Flex
-								alignItems={'baseline'}
-								mt={2}
-							>
-								<Text
-									fontSize='14px'
-									lineHeight='20px'
-									fontWeight='500'
-								>
-									0x0CF4b49b4cdE2Cf4BE5dA09B8Fc5570D2c422027
-								</Text>
+									step={step} />
+							) : (
+								<SafeOwner onVerified={() => setStep(2)} />
+							)
+						}
 
-								<ExternalLink
-									ml={1}
-									h={'12px'}
-									w={'12px'}
-									cursor='pointer'
-								/>
-							</Flex>
-
-						</Flex>
-
-						<Flex
-							bg='white'
-							mx='auto'
-							mt='-10px'
-						>
-							<ArrowDownCircle
-								color='#785EF0'
-								h="28px"
-								w='28px'
-							/>
-						</Flex>
-
-
-						<Flex
-							mt={4}
-							p={4}
-							borderRadius='2px'
-							boxShadow={'inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'}
-							flexDirection='column'
-						>
-							<Text
-								fontSize='14px'
-								lineHeight='20px'
-								fontWeight='500'
-							>
-							From
-							</Text>
-
-							<Flex
-								alignItems={'baseline'}
-								mt={2}
-							>
-								<Text
-									fontSize='14px'
-									lineHeight='20px'
-									fontWeight='500'
-								>
-									0x0CF4b49b4cdE2Cf4BE5dA09B8Fc5570D2c422027
-								</Text>
-
-								<ExternalLink
-									ml={1}
-									h={'12px'}
-									w={'12px'}
-									cursor='pointer'
-								/>
-							</Flex>
-
-						</Flex>
 
 					</Flex>
 
+
+					<Flex
+						bg='#F0F0F7'
+						h={'1px'}
+						mx={'-24px'}
+					/>
 
 					<Flex
 						mt={4}
@@ -285,23 +247,33 @@ function SendFundsModal({
 
 						<Button
 							ml='auto'
+							colorScheme={'brandv2'}
+							disabled={step === 0 ? milestoneId === undefined || amount === undefined : step === 1}
 							onClick={
 								() => {
 									if(step === 0) {
 										setStep(1)
 									}
+
+									if(step === 2) {
+										setStep(0)
+										setMilestoneId(undefined)
+										setAmount(undefined)
+										onComplete()
+									}
 								}
 							}>
-							Continue
+							{step === 0 ? 'Continue' : 'Initiate Transaction'}
 						</Button>
+
 					</Flex>
 
 
 				</Container>
-			</ModalContent>
-		</ModalComponent>
+			</DrawerContent>
+		</Drawer>
 	)
 }
 
 
-export default SendFundsModal
+export default SendFundsDrawer
