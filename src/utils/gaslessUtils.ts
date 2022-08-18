@@ -177,6 +177,8 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 		console.log('Wallet does not exist')
 		console.log('Deploying wallet')
 		walletAddress = await biconomyWalletClient.checkIfWalletExistsAndDeploy({ eoa: webwallet.address }) // default index(salt) 0
+		const g = new Promise((r) => {setTimeout(r, 10000)})
+		g.then(() => {});
 		console.log('Wallet deployed at address', walletAddress)
 		scwAddress = walletAddress
 	} else {
