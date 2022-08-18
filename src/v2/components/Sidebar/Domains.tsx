@@ -110,7 +110,7 @@ function Domains({ workspaces, onWorkspaceClick }: Props) {
 							workspaces.map((workspace: MinimalWorkspace, index: number) => {
 								return (
 									<Flex
-										key={`${workspace.id}-${workspace.supportedNetworks[0]}`}
+										key={`${workspace.id}-${workspace.supportedNetworks[0]}-${index}`}
 										w="100%"
 										mt={index > 0 ? 4 : 0}
 										align="flex-start"

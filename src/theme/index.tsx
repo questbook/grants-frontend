@@ -7,6 +7,7 @@ import input from './components/input'
 import link from './components/link'
 import progress from './components/progress'
 import text from './components/text'
+import colors from './colors'
 
 const theme = extendTheme({
 	fonts: {
@@ -43,24 +44,8 @@ const theme = extendTheme({
 			500: '#EE7979',
 			600: '#EE7979',
 		},
-		white: {
-			'offWhite': '#F0F0F7',
-		},
-		black: {
-			1: '#1F1F33',
-			2: '#555570',
-			3: '#7D7DA0',
-			400: '#1F1F33'
-		},
 		brandText: '#4E4E6B',
 		brandSubtext: '#7D7DA0',
-		blue: {
-			1: '#D1D7F4',
-			2: '#036AFF',
-			3: '#1850A5',
-			100: '#AFAFCC',
-			500: '#2B67F6',
-		},
 		greenTextBackground: '#79F2C0',
 		greenTextDark: '#36B37E',
 		brandGrey: {
@@ -74,28 +59,11 @@ const theme = extendTheme({
 			600: '#3F3F53',
 			700: '#5F5F72',
 		},
-		yellow: '#FFCE00',
 		bannerGrey: '#F0F0F7',
 		v2Grey: '#555570',
 		primary: '#745FE8',
 		v2LightGrey: '#D2D2E3',
-		green: {
-			1: '#E3F6C1',
-			2: '#0DC98B',
-			3: '#0E753A'
-		},
-		violet: {
-			1: '#C8CBFC',
-			2: '#785EF0',
-			3: '#5245C2'
-		},
-		gray: {
-			1: '#FBFBFD',
-			2: '#F0F0F7',
-			3: '#E0E0EC',
-			4: '#D2D2E3',
-			5: '#AFAFCC',
-		}
+		...colors
 	},
 	sizes: {
 		connectWallet: '41.5rem',

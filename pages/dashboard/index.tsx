@@ -14,6 +14,7 @@ import {
 	useGetAllGrantsForCreatorQuery,
 } from 'src/generated/graphql'
 import { UNIX_TIMESTAMP_MAX, UNIX_TIMESTAMP_MIN } from 'src/utils/generics'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import NavbarLayout from '../../src/layout/navbarLayout'
 
 // const Tabledata = [
@@ -90,20 +91,36 @@ function DaoDashboard() {
 		grantsTat: any;
   }>()
 
-	useEffect(() => {
-		if(router && router.query) {
-			const { chainId: cId, daoId: dId } = router.query
-			setChainId((cId as unknown) as SupportedChainId)
-			setDaoId(dId?.toString())
-		}
-	}, [router])
+	const [grants, setGrants] = React.useState<
+    GetAllGrantsForCreatorQuery['grants']
+  >([])
+	const [queryParams, setQueryParams] = useState<any>({
+		client:
+      subgraphClients[
+      	chainID || defaultChainId
+      ].client,
+	})
+
+	// Uncomment to support public dashboards
+	// Will cause conflict with changing workspace in future
+	// useEffect(() => {
+	// 	if(router && router.query) {
+	// 		const { chainId: cId, daoId: dId } = router.query
+	// 		setChainId((cId as unknown) as SupportedChainId)
+	// 		setDaoId(dId?.toString())
+	// 	}
+	// }, [router])
 
 	useEffect(() => {
+		setChainId(getSupportedChainIdFromWorkspace(workspace))
+		setDaoId(workspace?.id)
+	}, [workspace])
+
+	useEffect(() => {
+
+		console.log('rec workspace, daostats')
+
 		if(!daoID || !chainID) {
-			return
-		}
-
-		if(daoStats) {
 			return
 		}
 
@@ -126,31 +143,10 @@ function DaoDashboard() {
 			fetchPolicy: 'network-only',
 		})
 
-		// Testing
-		// setQueryParams({
-		// 	client:
-		//     subgraphClients['137'].client,
-		// 	variables: {
-		// 		first: 999,
-		// 		skip: 0,
-		// 		workspaceId: '0x2',
-		// 		...query,
-		// 	},
-		// 	fetchPolicy: 'network-only',
-		// })
-
 		getAnalyticsData()
-	}, [workspace, daoStats])
+	}, [chainID, daoID])
 
-	const [grants, setGrants] = React.useState<
-    GetAllGrantsForCreatorQuery['grants']
-  >([])
-	const [queryParams, setQueryParams] = useState<any>({
-		client:
-      subgraphClients[
-      	chainID || defaultChainId
-      ].client,
-	})
+
 	const data = useGetAllGrantsForCreatorQuery(queryParams)
 
 	useEffect(() => {
@@ -169,6 +165,7 @@ function DaoDashboard() {
 	}, [data])
 
 	const getAnalyticsData = async() => {
+		console.log('calling analytics')
 		try {
 			//const res = await fetch('https://www.questbook-analytics.com/workspace-analytics', {
 			const res = await fetch(
@@ -235,7 +232,7 @@ function DaoDashboard() {
 	const extractLast30Applications = (data: any) => {
 		const everydayApplications = data.everydayApplications
 
-		if(!everydayApplications) {
+		if(!everydayApplications || !everydayApplications.length) {
 			return []
 		}
 
@@ -257,7 +254,7 @@ function DaoDashboard() {
 		console.log('everydayApplicationsMap', everydayApplicationsMap)
 
 		const everydayApplicationsLast30 = []
-		for(let i = 0; i < 30; i++) {
+		for(let i = 0; i < 365; i++) {
 			const timekey = today.toISOString().split('T')[0] + 'T00:00:00.000Z'
 			// 00:00:00.000Z
 			if(everydayApplicationsMap[timekey]) {
@@ -309,7 +306,7 @@ function DaoDashboard() {
 		// console.log('everydayApplicationsMap', everydayApplicationsMap)
 
 		const everydayFundingsLast30 = []
-		for(let i = 0; i < 30; i++) {
+		for(let i = 0; i < 365; i++) {
 			const timekey = today.toISOString().split('T')[0] + 'T00:00:00.000Z'
 			// 00:00:00.000Z
 			if(everydayFundingsMap[timekey]) {
@@ -486,20 +483,8 @@ function DaoDashboard() {
 						>
 							<Header />
 							{
-								!grants || grants.filter(item => !daoStats?.grantsPending[item.id] || daoStats?.grantsPending[item.id] === 0).length > 0 ? (
-									<>
-										<Flex
-											mt="15px"
-											direction="column"
-											w="100%"
-											border="1px solid #E8E9E9"
-											align="stretch"
-											background="#FFFFFF"
-										>
-											<DoaDashTableEmptyState />
-										</Flex>
-									</>
-								) : (
+								// !grants || grants.filter(item => !daoStats?.grantsPending[item.id] || daoStats?.grantsPending[item.id] === 0).length > 0 ? (
+								grants?.filter(item => (daoStats?.grantsPending[item.id] > 0 ?? false)).length > 0 ? (
 									<>
 										<TableContent
 											grants={
@@ -512,6 +497,20 @@ function DaoDashboard() {
 											pending={daoStats?.grantsPending ?? {}}
 											tat={daoStats?.grantsTat ?? {}}
 										/>
+									</>
+
+								) : (
+									<>
+										<Flex
+											mt="15px"
+											direction="column"
+											w="100%"
+											border="1px solid #E8E9E9"
+											align="stretch"
+											background="#FFFFFF"
+										>
+											<DoaDashTableEmptyState />
+										</Flex>
 									</>
 								)
 							}

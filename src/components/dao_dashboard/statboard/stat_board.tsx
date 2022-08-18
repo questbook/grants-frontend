@@ -9,7 +9,7 @@ function DaoStatBoard({
 	winnerApplicants,
 	tat,
 }: {
-  totalApplicants: number;
+  totalApplicants: number | null;
   uniqueApplicants: number;
   repeatApplicants: number;
   winnerApplicants: number;
@@ -21,7 +21,7 @@ function DaoStatBoard({
 	return (
 		<>
 			{
-				totalApplicants <= 0 ? (
+				totalApplicants === null ? (
 					<>
 						<Flex
 							mt="5"
@@ -325,7 +325,7 @@ function DaoStatBoard({
 											fontWeight={700}
 											fontSize="20px"
 											lineHeight="24px">
-											{Math.floor(tat) === NaN ? '0 min' : formatMinutes(Math.floor(tat))}
+											{Math.floor(tat) === NaN || Math.floor(tat) === 0 ? '0 min' : formatMinutes(Math.floor(tat))}
 										</Text>
 										{/* <Text
 											fontWeight="400"

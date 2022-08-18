@@ -16,10 +16,9 @@ interface Props {
 	isError?: boolean;
 	isPasted?: boolean;
 	isVerified?: boolean;
-	isDisabled?: boolean;
 }
 
-function TextField({ label, optionalText, helperText, helperLinkText, helperLinkUrl, placeholder, maxLength, value, onChange, isPasted, isVerified, isDisabled }: Props) {
+function TextField({ label, optionalText, helperText, helperLinkText, helperLinkUrl, placeholder, maxLength, value, onChange, isPasted, isVerified }: Props) {
 	const [currentLength, setCurrentLength] = React.useState(value?.toString().length)
 
 	React.useEffect(() => {
@@ -74,7 +73,6 @@ function TextField({ label, optionalText, helperText, helperLinkText, helperLink
 					color="black.1"
 					onChange={onChange}
 					value={value}
-					isDisabled={!!isDisabled}
 				/>
 				<InputRightElement>
 					{
