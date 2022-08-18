@@ -119,6 +119,7 @@ const OnboardingCreateDomain = () => {
 	}, [domainName])
 
 	const createWorkspace = async() => {
+		console.log(safeSelected)
 		// setCallOnContractChange(false)
 		setCurrentStep(0)
 		try {
@@ -157,7 +158,7 @@ const OnboardingCreateDomain = () => {
 				throw new Error('Error validating grant data')
 			}
 
-			if(safeSelected?.networkId) {
+			if(!safeSelected || !safeSelected?.networkId) {
 
 				throw new Error('No network specified')
 			}
@@ -170,11 +171,7 @@ const OnboardingCreateDomain = () => {
 				return
 			}
 
-			if(!safeSelected) {
-				return
-			}
-
-			const response = await sendGaslessTransaction(
+			const transactionHash = await sendGaslessTransaction(
 				biconomy,
 				targetContractObject,
 				'createWorkspace',
