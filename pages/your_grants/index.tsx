@@ -507,7 +507,7 @@ Post a Grant / Bounty
             			onAddFundsClick={() => initialiseFundModal(grant)}
             			onViewApplicantsClick={
             				() => router.push({
-            					pathname: '/your_grants/view_applicants/',
+            					pathname: '/v2/your_grants/view_applicants/',
             					query: {
             						grantId: grant.id,
             					},
@@ -583,7 +583,7 @@ Post a Grant / Bounty
             			onAddFundsClick={() => initialiseFundModal(grant.grant)}
             			onViewApplicantsClick={
             				() => router.push({
-            					pathname: '/your_grants/view_applicants/',
+            					pathname: '/v2/your_grants/view_applicants/',
             					query: {
             						grantId: grant.grant.id,
             					},
