@@ -6,7 +6,7 @@ import { APPLICATION_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { bicoDapps, getTransactionReceipt, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { addAuthorizedUser, bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import strings from '../constants/strings.json'
@@ -30,7 +30,7 @@ export default function useSubmitApplication(
 	const { data: networkData, switchNetwork, network } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
-	const { validatorApi } = apiClients
+	const { validatorApi, workspace } = apiClients
 
 	const currentChainId = useChainId()
 	const applicationRegistryContract = useQBContract('applications', chainId)
@@ -105,14 +105,6 @@ export default function useSubmitApplication(
 					throw new Error('Error validating grant data')
 				}
 
-				// const txn = await applicationRegistryContract.submitApplication(
-				// 	grantId!,
-				// 	Number(workspaceId).toString(),
-				// 	ipfsHash,
-				// 	data.milestones.length,
-				// )
-				// const txnData = await txn.wait()
-
 				const response = await sendGaslessTransaction(
 					biconomy,
 					applicationRegistryContract,
@@ -130,12 +122,11 @@ export default function useSubmitApplication(
 					nonce
 				)
 
-
-				if(!response) {
-					return
+				if(response) {
+					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+					setTransactionData(receipt)
+					await chargeGas(Number(workspace?.id), Number(txFee))
 				}
-
-			   const transactionData = await getTransactionReceipt(response.txHash, currentChainId.toString())
 
 				const CACHE_KEY = strings.cache.apply_grant
 				const cacheKey = `${chainId}-${CACHE_KEY}-${grantId}`
@@ -144,7 +135,6 @@ export default function useSubmitApplication(
 					localStorage.removeItem(cacheKey)
 				}
 
-				setTransactionData(transactionData)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -205,17 +195,23 @@ export default function useSubmitApplication(
 				throw new Error('validatorApi or workspaceId is not defined')
 			}
 
+			if(!webwallet) {
+				throw new Error('Your webwallet is not initialized, please contact support')
+			}
+
 			if(
 				!applicationRegistryContract
         || applicationRegistryContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !applicationRegistryContract.signer
-        || !applicationRegistryContract.provider
 			) {
 				return
 			}
 
-			validate()
+			addAuthorizedUser(webwallet?.address)
+				.then(() => {
+					validate()
+				})
+
 		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)

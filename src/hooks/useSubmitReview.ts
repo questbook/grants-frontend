@@ -7,7 +7,7 @@ import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import useEncryption from 'src/hooks/utils/useEncryption'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { bicoDapps, getTransactionReceipt, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromWorkspace,
@@ -164,13 +164,12 @@ export default function useSubmitReview(
 					nonce
 				)
 
-				if(!response) {
-					return
+				if(response) {
+					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+					setTransactionData(receipt)
+					await chargeGas(Number(workspace?.id), Number(txFee))
 				}
 
-			   const transactionData = await getTransactionReceipt(response.txHash, currentChainId.toString())
-
-				setTransactionData(transactionData)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -243,8 +242,6 @@ export default function useSubmitReview(
 				!applicationReviewContract
         || applicationReviewContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !applicationReviewContract.signer
-        || !applicationReviewContract.provider
 			) {
 				return
 			}

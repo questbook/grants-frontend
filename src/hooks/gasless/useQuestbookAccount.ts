@@ -2,9 +2,9 @@ import { useContext, useMemo } from 'react'
 import { WebwalletContext } from '../../../pages/_app'
 import { useNonce } from './useNonce'
 
-export const useQuestbookAccount = () => {
+export const useQuestbookAccount = (shouldRefreshNonce?: boolean) => {
 	const { webwallet, scwAddress, setNonce } = useContext(WebwalletContext)!
-	const nonce = useNonce()
+	const nonce = useNonce(shouldRefreshNonce)
 
 	// const [gaslessData, setGaslessData] = useState<any>()
 	const gaslessData2 = useMemo(() => {

@@ -5,7 +5,7 @@ import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { bicoDapps, getTransactionReceipt, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
@@ -110,13 +110,13 @@ export default function useUpdateWorkspacePublicKeys(
 					nonce
 				)
 
-				if(!response) {
-					return
+
+				if(response) {
+					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+					setTransactionData(receipt)
+					await chargeGas(Number(workspace?.id), Number(txFee))
 				}
 
-			   const updateTransactionData = await getTransactionReceipt(response.txHash, currentChainId.toString())
-
-				setTransactionData(updateTransactionData)
 				setLoading(false)
 			} catch(e: any) {
 				console.log(e)
@@ -185,8 +185,6 @@ export default function useUpdateWorkspacePublicKeys(
 				!workspaceRegistryContract
 				|| workspaceRegistryContract.address
 				=== '0x0000000000000000000000000000000000000000'
-				|| !workspaceRegistryContract.signer
-				|| !workspaceRegistryContract.provider
 			) {
 				return
 			}

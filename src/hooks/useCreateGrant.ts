@@ -13,7 +13,7 @@ import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash, parseAmount } from 'src/utils/formattingUtils'
-import { bicoDapps, getTransactionReceipt, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromWorkspace,
@@ -189,12 +189,9 @@ export default function useCreateGrant(
 					return
 				}
 
-				const receipt = await getTransactionReceipt(response.txHash, currentChainId.toString())
+				const { txFee, receipt } = await getTransactionDetails(response, currentChainId.toString())
 
-				console.log('THIS IS RECEIPT', receipt)
-
-				const createGrantTransactionData = receipt// await getEventData(receipt, "WorkspaceCreated", GrantFactoryAbi)
-
+				await chargeGas(Number(workspace?.id), Number(txFee))
 
 				const CACHE_KEY = strings.cache.create_grant
 				const cacheKey = `${chainId || getSupportedChainIdFromWorkspace(workspace)}-${CACHE_KEY}-${workspace?.id}`
@@ -203,7 +200,7 @@ export default function useCreateGrant(
 					localStorage.removeItem(cacheKey)
 				}
 
-				setTransactionData(createGrantTransactionData)
+				setTransactionData(receipt)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -279,8 +276,6 @@ export default function useCreateGrant(
 				!grantContract
 				|| grantContract.address
 				=== '0x0000000000000000000000000000000000000000'
-				// || !grantContract.signer
-				// || !grantContract.provider
 			) {
 				return
 			}

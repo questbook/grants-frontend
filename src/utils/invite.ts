@@ -12,7 +12,8 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useChainId from 'src/hooks/utils/useChainId'
 import {
 	bicoDapps,
-	getTransactionReceipt,
+	chargeGas,
+	getTransactionDetails,
 	sendGaslessTransaction
 } from 'src/utils/gaslessUtils'
 import { delay } from './generics'
@@ -158,12 +159,10 @@ export const useMakeInvite = (role: number) => {
 				bicoDapps[chainId.toString()].webHookId,
 				nonce
 			)
-
-			if(!response) {
-				throw new Error('Error executing your transaction!')
+			if(response) {
+				const { txFee } = await getTransactionDetails(response, chainId.toString())
+				await chargeGas(workspaceId, Number(txFee))
 			}
-
-			await getTransactionReceipt(response.txHash, chainId.toString())
 
 			didSign?.()
 
@@ -289,12 +288,11 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 			)
 			didReachStep?.('tx-signed')
 
-			// await tx.wait()
-			if(!response) {
-				return
-			}
 
-			await getTransactionReceipt(response.txHash, inviteInfo?.chainId.toString())
+			if(response) {
+				const { txFee } = await getTransactionDetails(response, inviteInfo?.chainId.toString())
+				await chargeGas(inviteInfo.workspaceId, Number(txFee))
+			}
 
 			didReachStep?.('tx-confirmed')
 

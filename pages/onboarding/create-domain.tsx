@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
@@ -11,7 +12,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSafeOwners from 'src/hooks/useSafeOwners'
 import useSafeUSDBalances from 'src/hooks/useSafeUSDBalances'
 import getErrorMessage from 'src/utils/errorUtils'
-import { bicoDapps, getTransactionReceipt, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { addAuthorizedOwner, bicoDapps, chargeGas, getEventData, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
 import { Organization } from 'src/v2/assets/custom chakra icons/Organization'
@@ -191,9 +192,22 @@ const OnboardingCreateDomain = () => {
 				return
 			}
 
-			await getTransactionReceipt(response.txHash, `${safeSelected.networkId}`)
-
 			setCurrentStep(3)
+
+			const { txFee, receipt } = await getTransactionDetails(response, safeSelected.networkId.toString())
+
+			console.log('txFee', txFee)
+
+			const event = await getEventData(receipt, 'WorkspaceCreated', WorkspaceRegistryAbi)
+			if(event) {
+				const workspace_id = Number(event.args[0].toBigInt())
+				console.log('workspace_id', workspace_id)
+
+				await addAuthorizedOwner(workspace_id, webwallet?.address!, scwAddress, safeSelected.networkId.toString(),
+					'this is the safe addres - to be updated in the new flow')
+				console.log('fdsao')
+				await chargeGas(workspace_id, Number(txFee))
+			}
 
 			setCurrentStep(5)
 			setTimeout(() => {

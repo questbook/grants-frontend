@@ -6,7 +6,8 @@ import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
 	bicoDapps,
-	getTransactionReceipt,
+	chargeGas,
+	getTransactionDetails,
 	sendGaslessTransaction
 } from 'src/utils/gaslessUtils'
 import {
@@ -88,7 +89,7 @@ export default function useApproveMilestone(
 					throw new Error('Zero wallet is not ready')
 				}
 
-				const response = await sendGaslessTransaction(
+				const txHash = await sendGaslessTransaction(
 					biconomy,
 					applicationContract,
 					'approveMilestone',
@@ -105,13 +106,15 @@ export default function useApproveMilestone(
 					nonce
 				)
 
-				if(!response) {
+				if(!txHash) {
 					return
 				}
 
-			   const updateTransactionData = await getTransactionReceipt(response.txHash, currentChainId.toString())
+				const { receipt, txFee } = await getTransactionDetails(txHash, currentChainId.toString())
 
-				setTransactionData(updateTransactionData)
+				await chargeGas(Number(workspace?.id), Number(txFee))
+
+				setTransactionData(receipt)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -188,8 +191,6 @@ export default function useApproveMilestone(
 				!applicationContract
 				|| applicationContract.address
 				=== '0x0000000000000000000000000000000000000000'
-				|| !applicationContract.signer
-				|| !applicationContract.provider
 			) {
 				return
 			}

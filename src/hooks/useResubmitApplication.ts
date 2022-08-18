@@ -7,7 +7,7 @@ import { SupportedChainId } from 'src/constants/chains'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { bicoDapps, getTransactionReceipt, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
@@ -28,7 +28,7 @@ export default function useResubmitApplication(
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
-	const { validatorApi } = apiClients
+	const { validatorApi, workspace } = apiClients
 
 	const currentChainId = useChainId()
 	const applicationRegistryContract = useQBContract('applications', chainId)
@@ -116,13 +116,13 @@ export default function useResubmitApplication(
 					nonce
 				)
 
-				if(!response) {
-					return
+				if(response) {
+					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+					setTransactionData(receipt)
+					await chargeGas(Number(workspace?.id), Number(txFee))
 				}
 
-			   const transactionData = await getTransactionReceipt(response.txHash, currentChainId.toString())
 
-				setTransactionData(transactionData)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -187,8 +187,6 @@ export default function useResubmitApplication(
 				!applicationRegistryContract
 				|| applicationRegistryContract.address
 				=== '0x0000000000000000000000000000000000000000'
-				|| !applicationRegistryContract.signer
-				|| !applicationRegistryContract.provider
 			) {
 				return
 			}

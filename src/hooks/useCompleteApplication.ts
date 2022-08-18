@@ -4,7 +4,7 @@ import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { bicoDapps, getTransactionReceipt, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
@@ -112,9 +112,12 @@ export default function useCompleteApplication(
 					return
 				}
 
-			   const updateTransactionData = await getTransactionReceipt(response.txHash, currentChainId.toString())
 
-				setTransactionData(updateTransactionData)
+				const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+
+				await chargeGas(Number(workspace?.id), Number(txFee))
+
+				setTransactionData(receipt)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -183,8 +186,6 @@ export default function useCompleteApplication(
 				!applicationContract
         || applicationContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !applicationContract.signer
-        || !applicationContract.provider
 			) {
 				return
 			}
