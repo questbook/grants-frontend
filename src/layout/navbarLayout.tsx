@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Flex, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
@@ -14,19 +14,13 @@ interface Props {
 }
 
 function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
-	const {
-		isDisconnected,
-		isConnected,
-		connect,
-		connectors,
-	} = useConnect()
+	const { isDisconnected, isConnected, connect, connectors } = useConnect()
 	const toast = useToast()
 	const router = useRouter()
 	const [connectWalletModalIsOpen, setConnectWalletModalIsOpen] =
     useState(false)
 
 	const { connected, setConnected } = useContext(ApiClientsContext)!
-	const currentPageRef = useRef(null)
 
 	const [renderCount, setRenderCount] = useState(0)
 
@@ -64,12 +58,22 @@ function NavbarLayout({ children, renderGetStarted, renderTabs }: Props) {
 			<NavBar
 				onGetStartedClick={true}
 				onGetStartedBtnClicked={false}
-				setGetStartedClicked={() => {}} />
+				setGetStartedClicked={() => {}}
+			/>
 			<Flex
 				w="100vw"
 				h="100vh"
 				overflow="scroll">
-				{connected && <Sidebar />}
+				<Flex
+					display={{ base: 'none', lg: 'flex' }}
+					w="20%"
+					pos="sticky"
+					top={0}
+				>
+					<Sidebar />
+				</Flex>
+
+				{/* <Sidebar /> */}
 				{children}
 			</Flex>
 			<ConnectWalletModal

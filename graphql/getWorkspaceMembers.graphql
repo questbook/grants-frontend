@@ -6,7 +6,7 @@ query getWorkspaceMembers($actorId: Bytes!) {
     subgraphError: allow
     orderBy: id
     orderDirection: desc
-  ){
+  ) {
     id
     actorId
     workspace {

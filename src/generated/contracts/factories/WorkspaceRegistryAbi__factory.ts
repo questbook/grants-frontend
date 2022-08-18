@@ -204,6 +204,49 @@ const _abi = [
       },
       {
         indexed: false,
+        internalType: "address",
+        name: "member",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint8",
+        name: "role",
+        type: "uint8",
+      },
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "enabled",
+        type: "bool",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "metadataHash",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "time",
+        type: "uint256",
+      },
+    ],
+    name: "WorkspaceMemberUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint96",
+        name: "id",
+        type: "uint96",
+      },
+      {
+        indexed: false,
         internalType: "address[]",
         name: "members",
         type: "address[]",
@@ -472,7 +515,7 @@ const _abi = [
       },
       {
         internalType: "string",
-        name: "_email",
+        name: "_metadataHash",
         type: "string",
       },
       {

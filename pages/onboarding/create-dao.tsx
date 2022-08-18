@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from 'react'
-import { ToastId, useToast } from '@chakra-ui/react'
+import { Box, HStack, Image, Spacer, Text, ToastId, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
@@ -7,11 +7,12 @@ import useQBContract from 'src/hooks/contracts/useQBContract'
 import getErrorMessage from 'src/utils/errorUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
+import { Organization } from 'src/v2/assets/custom chakra icons/Organization'
+import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import CreateDaoFinal from 'src/v2/components/Onboarding/CreateDao/CreateDaoFinal'
 import CreateDaoNameInput from 'src/v2/components/Onboarding/CreateDao/CreateDaoNameInput'
 import CreateDaoNetworkSelect from 'src/v2/components/Onboarding/CreateDao/CreateDaoNetworkSelect'
 import { NetworkSelectOption } from 'src/v2/components/Onboarding/SupportedNetworksData'
-import CreateDaoModal from 'src/v2/components/Onboarding/UI/CreateDaoModal'
 import BackgroundImageLayout from 'src/v2/components/Onboarding/UI/Layout/BackgroundImageLayout'
 import OnboardingCard from 'src/v2/components/Onboarding/UI/Layout/OnboardingCard'
 import { useAccount, useConnect, useNetwork, useSigner } from 'wagmi'
@@ -180,7 +181,7 @@ const OnboardingCreateDao = () => {
 				imageBackgroundColor={'#C2E7DA'}
 				imageProps={
 					{
-						mixBlendMode: 'color-dodge'
+						mixBlendMode: 'hard-light'
 					}
 				}
 			>
@@ -188,12 +189,42 @@ const OnboardingCreateDao = () => {
 					{steps[step]}
 				</OnboardingCard>
 			</BackgroundImageLayout>
-			<CreateDaoModal
+			<NetworkTransactionModal
 				isOpen={currentStep !== undefined}
-				onClose={() => {}}
-				daoName={daoName}
-				daoNetwork={daoNetwork}
-				daoImageFile={daoImageFile}
+				subtitle='creating DAO'
+				description={
+					<HStack w='100%'>
+						<Text
+							fontWeight={'500'}
+							fontSize={'17px'}
+						>
+							{daoName}
+						</Text>
+
+						<Spacer />
+
+						<Box>
+							{
+								daoImageFile ? (
+									<Image
+										objectFit="cover"
+										src={URL.createObjectURL(daoImageFile)}
+										w="100%"
+										h="100%"
+										minH={'48px'}
+										minW={'48px'}
+									/>
+								) : (
+
+									<Organization
+										color={'#389373'}
+										boxSize={8} />
+								)
+							}
+						</Box>
+					</HStack>
+				}
+				currentStepIndex={currentStep || 0}
 				steps={
 					[
 						'Connect your wallet',
@@ -202,9 +233,7 @@ const OnboardingCreateDao = () => {
 						'Waiting for transaction to complete',
 						'DAO created on-chain'
 					]
-				}
-				currentStep={currentStep}
-			/>
+				} />
 		</>
 	)
 }

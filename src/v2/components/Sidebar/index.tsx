@@ -1,13 +1,12 @@
 import React from 'react'
-import { Box, Button, Flex, Image, useToast } from '@chakra-ui/react'
+import { Divider, Flex, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { useGetWorkspaceMembersLazyQuery } from 'src/generated/graphql'
 import { MinimalWorkspace } from 'src/types'
-import getRole from 'src/utils/memberUtils'
 import getTabFromPath from 'src/utils/tabUtils'
 import { useAccount, useConnect } from 'wagmi'
-import ManageDAO from './ManageDAO'
+import Domains from './Domains'
 import SidebarItem from './SidebarItem'
 import { TabIndex, useGetTabs } from './Tabs'
 
@@ -41,7 +40,6 @@ function Sidebar() {
 
 		const getWorkspaceData = async(userAddress: string) => {
 			try {
-				console.log('getallworkspace', getAllWorkspaces)
 				const promises = getAllWorkspaces.map(
 					(allWorkspaces) => new Promise(async(resolve) => {
 						try {
@@ -94,18 +92,75 @@ function Sidebar() {
 			position="sticky"
 			left={0}
 			top={0}
-			h="calc(100vh - 80px)"
+			h="calc(100vh - 64px)"
 			w="25vw"
-			bg="#F0F0F7"
+			bg="white"
 			direction="column"
 			overflowY="scroll"
+			border="1px solid #E0E0EC"
 		>
+			{
+				workspace && workspace.id && accountData?.address && (
+					<Domains
+						workspaces={workspaces}
+						onWorkspaceClick={
+							(index: TabIndex) => {
+								setWorkspace(workspaces[index])
+							}
+						}
+					/>
+				)
+			}
 			<Flex
 				direction="column"
 				align="stretch"
-				mt={3}
-				mb={2}
-				mx={6}>
+				my={2}
+				mx={2}>
+				{
+					bottomTabs.map((tab, index) => (
+						<SidebarItem
+							key={tab.id}
+							index={tab.index}
+							selected={tabSelected}
+							id={tab.id}
+							name={tab.name}
+							onClick={
+								() => {
+									setTabSelected(tab.index)
+
+									// @Dhairya: uncomment this when you want dashboards to be public
+									// it will add chainid and daoid in url
+									// if(tab.path === '/dashboard') {
+									// 	if(!workspace) {
+									// 		return
+									// 	}
+
+									// 	router.push({ pathname: tab.path, query: {
+									// 		daoId: workspace.id,
+									// 		chainId: getSupportedChainIdFromWorkspace(workspace)
+									// 	} })
+
+									// 	return
+									// }
+
+									router.push({ pathname: tab.path })
+
+								}
+							}
+						/>
+					))
+				}
+			</Flex>
+			{
+				workspaces.length > 0 && (
+					<Divider variant="sidebar" />
+				)
+			}
+			<Flex
+				direction="column"
+				align="stretch"
+				my={2}
+				mx={2}>
 				{
 					topTabs.map((tab, index) => (
 						<SidebarItem
@@ -124,68 +179,9 @@ function Sidebar() {
 					))
 				}
 			</Flex>
-			<Flex
-				bg="#E0E0EC"
-				height="2px"
-				w="100%" />
-			<ManageDAO
-				workspaces={workspaces}
-				onWorkspaceClick={
-					(index: TabIndex) => {
-						setWorkspace(workspaces[index])
-					}
-				}
-			/>
-			<Flex
-				direction="column"
-				align="stretch"
-				mt={2}
-				mb={2}
-				mx={6}>
-				{
-					bottomTabs.map((tab, index) => (
-						<SidebarItem
-							key={tab.id}
-							index={tab.index}
-							selected={tabSelected}
-							id={tab.id}
-							name={tab.name}
-							onClick={
-								() => {
-									setTabSelected(tab.index)
-									router.push({ pathname: tab.path })
-								}
-							}
-						/>
-					))
-				}
-			</Flex>
-			<Box my="auto" />
-			{
-				(!workspaces || workspaces.length === 0 ||
-        (workspace && accountData?.address && getRole(workspace, accountData?.address) === 'Reviewer')) && (
-        	<Button
-        		m={4}
-        		h="40px"
-        		bg="#1F1F33"
-        		leftIcon={
-        			<Image
-        				boxSize="20px"
-        			src="/ui_icons/rocket.svg" />
-        		}
-        		fontSize="14px"
-        		lineHeight="20px"
-        		color="white"
-        		onClick={
-        			() => {
-        			router.push({ pathname: '/onboarding/create-dao' })
-        		}
-        		}
-        	>
-            Create your DAO
-        	</Button>
-				)
-			}
+			<Divider
+				variant="sidebar"
+				mt={2} />
 		</Flex>
 	)
 }

@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
-import { Box, Flex, Heading, Skeleton, Text } from '@chakra-ui/react'
+import { useCallback, useEffect, useState } from 'react'
+import { Box, Flex, Heading, Text } from '@chakra-ui/react'
 import { formatEther } from 'ethers/lib/utils'
-import { CHAIN_INFO } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
-import { GasStation } from 'src/v2/assets/custom chakra icons/GasStation'
 import { useProvider } from 'wagmi'
+import NetworkFeeEstimateView from '../../NetworkFeeEstimateView'
 import { NetworkSelectOption } from '../SupportedNetworksData'
 import ContinueButton from '../UI/Misc/ContinueButton'
 import DaoImageUpload from '../UI/Misc/DaoImageUpload'
@@ -23,12 +22,24 @@ const CreateDaoFinal = ({
 	onSubmit: (() => Promise<void>) | null
 }) => {
 	const provider = useProvider()
-	const [ gasEstimate, setGasEstimate ] = useState<string>()
+	const [gasEstimate, setGasEstimate] = useState<string>()
 	const [newDaoImageFile, setNewDaoImageFile] = useState<File | null>(null)
 
 	const workspaceRegistryContract = useQBContract(
 		'workspace',
 		daoNetwork.id,
+	)
+
+	const getCreateWorkspaceGasEstimate = useCallback(
+		() => {
+			return workspaceRegistryContract.estimateGas.createWorkspace(
+				// random hash -- just to estimate gas
+				'QmPK1s3pNYLi9ERiq3BDxKa4XosgWwFRQUydHUtz4YgpqB',
+				new Uint8Array(32),
+				0
+			)
+		},
+		[workspaceRegistryContract],
 	)
 
 	useEffect(() => {
@@ -106,31 +117,9 @@ const CreateDaoFinal = ({
 				</Flex>
 			</Flex>
 
-			<Flex
-				mt={14}
-				justifyContent={'center'}
-			>
-				<Skeleton isLoaded={gasEstimate !== undefined}>
-					<Flex
-						bg={'#F0F0F7'}
-						borderRadius={'base'}
-						px={3}>
-						<GasStation
-							color={'#89A6FB'}
-							boxSize={5} />
-						<Text
-							ml={2}
-							mt={'1.5px'}
-							fontSize={'xs'}>
-              Network Fee -
-							{' '}
-							{gasEstimate}
-							{' '}
-							{CHAIN_INFO[daoNetwork.id].nativeCurrency.symbol}
-						</Text>
-					</Flex>
-				</Skeleton>
-			</Flex>
+			<NetworkFeeEstimateView
+				getEstimate={getCreateWorkspaceGasEstimate}
+				chainId={daoNetwork.id} />
 
 			<Flex
 				mt={4}
@@ -147,7 +136,7 @@ const CreateDaoFinal = ({
 					}
 					content={
 						<>
-            Create Dao
+            				Create Dao
 						</>
 					}
 				/>

@@ -7,31 +7,32 @@ query getAllGrantsForADao($first: Int, $skip: Int, $workspaceId: String!, $accep
     orderBy: createdAtS,
     orderDirection: desc
   ) {
-  id,
-  creatorId,
-  title,
-  createdAtS,
-  summary,
-  details,
-  reward {
-    committed,
     id,
-    asset,
-    token {
-    address,
-    label,
-    decimal,
-    iconHash
-    }
-  },
-  workspace {id, title, logoIpfsHash, supportedNetworks},
-  deadline,
-  funding,
-  numberOfApplications,
-  applications {
-    id,
-    state,
+    creatorId,
+    title,
     createdAtS,
-    updatedAtS
+    summary,
+    details,
+    reward {
+      committed,
+      id,
+      asset,
+      token {
+      address,
+      label,
+      decimal,
+      iconHash
+      }
+    },
+    workspace {id, title, logoIpfsHash, supportedNetworks},
+    deadline,
+    funding,
+    numberOfApplications,
+    applications {
+      id,
+      state,
+      createdAtS,
+      updatedAtS
+    }
   }
-}}
+}
