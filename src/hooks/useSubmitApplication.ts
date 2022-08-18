@@ -113,7 +113,7 @@ export default function useSubmitApplication(
 				// )
 				// const txnData = await txn.wait()
 
-				const transactionHash = await sendGaslessTransaction(
+				const response = await sendGaslessTransaction(
 					biconomy,
 					applicationRegistryContract,
 					'submitApplication',
@@ -131,7 +131,11 @@ export default function useSubmitApplication(
 				)
 
 
-				const transactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
+				if(!response) {
+					return
+				}
+
+			   const transactionData = await getTransactionReceipt(response.txHash, currentChainId.toString())
 
 				const CACHE_KEY = strings.cache.apply_grant
 				const cacheKey = `${chainId}-${CACHE_KEY}-${grantId}`

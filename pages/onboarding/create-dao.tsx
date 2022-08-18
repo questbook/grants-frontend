@@ -12,7 +12,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
 import {
 	bicoDapps,
-	getTransactionReceipt,
+	getTransactionDetails,
 	sendGaslessTransaction
 } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
@@ -49,7 +49,7 @@ const OnboardingCreateDao = () => {
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState('not ready')
 
 	useEffect(() => {
-		if(biconomy && biconomyWalletClient && scwAddress) {
+		if (biconomy && biconomyWalletClient && scwAddress) {
 			setIsBiconomyInitialised('ready')
 		}
 	}, [biconomy, biconomyWalletClient, scwAddress])
@@ -61,7 +61,7 @@ const OnboardingCreateDao = () => {
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
 
-	const createWorkspace = async() => {
+	const createWorkspace = async () => {
 		setCallOnContractChange(false)
 		setCurrentStep(0)
 		try {
@@ -96,11 +96,11 @@ const OnboardingCreateDao = () => {
 				],
 			})
 
-			if(!ipfsHash) {
+			if (!ipfsHash) {
 				throw new Error('Error validating grant data')
 			}
 
-			if(!daoNetwork) {
+			if (!daoNetwork) {
 
 				throw new Error('No network specified')
 			}
@@ -108,12 +108,13 @@ const OnboardingCreateDao = () => {
 			setCurrentStep(2)
 			console.log(12344343)
 
-			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
+			if (typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
 				console.log('54321')
 				return
 			}
 
-			const transactionHash = await sendGaslessTransaction(
+
+			const response = await sendGaslessTransaction(
 				biconomy,
 				targetContractObject,
 				'createWorkspace',
@@ -127,7 +128,13 @@ const OnboardingCreateDao = () => {
 				nonce
 			)
 
-			await getTransactionReceipt(transactionHash, daoNetwork.id.toString())
+			if (!response) {
+				return
+			}
+
+			const { txFee, receipt } = await getTransactionDetails(response.txHash, daoNetwork.id.toString());
+			console.log("txFee", txFee);
+			
 
 			setCurrentStep(3)
 
@@ -135,7 +142,7 @@ const OnboardingCreateDao = () => {
 			setTimeout(() => {
 				router.push({ pathname: '/your_grants' })
 			}, 2000)
-		} catch(e) {
+		} catch (e) {
 			setCurrentStep(undefined)
 			const message = getErrorMessage(e)
 			toastRef.current = toast({
@@ -143,7 +150,7 @@ const OnboardingCreateDao = () => {
 				render: () => ErrorToast({
 					content: message,
 					close: () => {
-						if(toastRef.current) {
+						if (toastRef.current) {
 							toast.close(toastRef.current)
 						}
 					},
@@ -214,12 +221,12 @@ const OnboardingCreateDao = () => {
 	]
 
 	const nextClick = () => {
-		if(step === 0) {
+		if (step === 0) {
 			setStep(1)
 			return
 		}
 
-		if(step === 1) {
+		if (step === 1) {
 			setStep(2)
 			return
 		}
@@ -230,12 +237,12 @@ const OnboardingCreateDao = () => {
 	}
 
 	const backClick = () => {
-		if(step === 2) {
+		if (step === 2) {
 			setStep(1)
 			return
 		}
 
-		if(step === 1) {
+		if (step === 1) {
 			setStep(0)
 			return
 		}

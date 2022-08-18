@@ -20,7 +20,6 @@ import SubgraphClient from 'src/graphql/subgraph'
 import theme from 'src/theme'
 import { MinimalWorkspace } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
-import { jsonRpcProviders } from 'src/utils/gaslessUtils'
 import getSeo from 'src/utils/seo'
 import {
 	allChains,
@@ -186,7 +185,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		const privateKey = localStorage.getItem('webwalletPrivateKey')
 
 		let newWebwallet = Wallet.createRandom()
-		newWebwallet = newWebwallet.connect(jsonRpcProviders['5'])
 
 		if(!privateKey) {
 			localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
@@ -195,7 +193,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 		try {
 			newWebwallet = new Wallet(privateKey)
-			newWebwallet = newWebwallet.connect(jsonRpcProviders['5'])
 			return newWebwallet
 		} catch{
 			localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)

@@ -73,7 +73,7 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 					throw new Error('Zero wallet is not ready')
 				}
 
-				const transactionHash = await sendGaslessTransaction(
+				const response = await sendGaslessTransaction(
 					biconomy,
 					grantContract,
 					'updateGrantAccessibility',
@@ -87,7 +87,11 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 					nonce
 				)
 
-				const updateTransactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
+				if(!response) {
+					return
+				}
+
+			   const updateTransactionData = await getTransactionReceipt(response.txHash, currentChainId.toString())
 
 				setTransactionData(updateTransactionData)
 				setLoading(false)

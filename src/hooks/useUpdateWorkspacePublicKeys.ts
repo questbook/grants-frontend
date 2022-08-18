@@ -95,7 +95,7 @@ export default function useUpdateWorkspacePublicKeys(
 				// )
 				// const updateTransactionData1 = await updateTransaction1.wait()
 
-				const transactionHash = await sendGaslessTransaction(
+				const response = await sendGaslessTransaction(
 					biconomy,
 					workspaceRegistryContract,
 					'updateWorkspaceMetadata',
@@ -110,7 +110,11 @@ export default function useUpdateWorkspacePublicKeys(
 					nonce
 				)
 
-				const updateTransactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
+				if(!response) {
+					return
+				}
+
+			   const updateTransactionData = await getTransactionReceipt(response.txHash, currentChainId.toString())
 
 				setTransactionData(updateTransactionData)
 				setLoading(false)

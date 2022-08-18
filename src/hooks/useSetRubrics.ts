@@ -117,7 +117,7 @@ export default function useSetRubrics(
 				// )
 				// const createGrantTransactionData = await createGrantTransaction.wait()
 
-				const transactionHash = await sendGaslessTransaction(
+				const response = await sendGaslessTransaction(
 					biconomy,
 					applicationReviewContract,
 					'setRubrics',
@@ -133,7 +133,11 @@ export default function useSetRubrics(
 					nonce
 				)
 
-				const transactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
+				if(!response) {
+					return
+				}
+
+			   const transactionData = await getTransactionReceipt(response.txHash, currentChainId.toString())
 
 				setTransactionData(transactionData)
 				setLoading(false)

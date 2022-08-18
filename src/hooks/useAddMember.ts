@@ -111,7 +111,7 @@ export default function useAddMember(
 					webwallet
 				)
 
-				const transactionHash = await sendGaslessTransaction(
+				const response = await sendGaslessTransaction(
 					biconomy,
 					targetContractObject,
 					'updateWorkspaceMembers',
@@ -129,7 +129,11 @@ export default function useAddMember(
 					nonce
 				)
 
-				const updateTransactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
+				if(!response) {
+					return
+				}
+
+			   const updateTransactionData = await getTransactionReceipt(response.txHash, currentChainId.toString())
 
 				setTransactionData(updateTransactionData)
 				setLoading(false)

@@ -107,12 +107,15 @@ export default function useCreateWorkspace(
 				)
 				console.log('ENTERING')
 				console.log(networkChainId, scwAddress, webwallet, nonce, webHookId)
-				const transactionHash = await sendGaslessTransaction(biconomy, targetContractObject, 'createWorkspace', [ipfsHash, new Uint8Array(32), 0],
+				const response = await sendGaslessTransaction(biconomy, targetContractObject, 'createWorkspace', [ipfsHash, new Uint8Array(32), 0],
 					WORKSPACE_REGISTRY_ADDRESS[networkChainId], biconomyWalletClient,
 					scwAddress, webwallet, `${networkChainId}`, bicoDapps[networkChainId.toString()].webHookId, nonce)
 
-				console.log(transactionHash)
-				const receipt = await getTransactionReceipt(transactionHash, networkChainId.toString())
+				if(!response) {
+					return
+				}
+
+				const receipt = await getTransactionReceipt(response.txHash, networkChainId.toString())
 
 				console.log('THIS IS RECEIPT', receipt)
 

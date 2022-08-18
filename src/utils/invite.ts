@@ -143,7 +143,7 @@ export const useMakeInvite = (role: number) => {
 			}
 
 			console.log('CHAIN ID', chainId)
-			const transactionHash = await sendGaslessTransaction(
+			const response = await sendGaslessTransaction(
 				biconomy,
 				targetContractObject,
 				'createInviteLink',
@@ -159,7 +159,11 @@ export const useMakeInvite = (role: number) => {
 				nonce
 			)
 
-			await getTransactionReceipt(transactionHash, chainId.toString())
+			if(!response) {
+				throw new Error('Error executing your transaction!')
+			}
+
+			await getTransactionReceipt(response.txHash, chainId.toString())
 
 			didSign?.()
 
@@ -265,7 +269,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 				return undefined!
 			}
 
-			const transactionHash = await sendGaslessTransaction(
+			const response = await sendGaslessTransaction(
 				biconomy,
 				targetContractObject,
 				'joinViaInviteLink',
@@ -286,7 +290,11 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 			didReachStep?.('tx-signed')
 
 			// await tx.wait()
-			await getTransactionReceipt(transactionHash, inviteInfo?.chainId.toString())
+			if(!response) {
+				return
+			}
+
+			await getTransactionReceipt(response.txHash, inviteInfo?.chainId.toString())
 
 			didReachStep?.('tx-confirmed')
 

@@ -173,7 +173,7 @@ const OnboardingCreateDomain = () => {
 				return
 			}
 
-			const transactionHash = await sendGaslessTransaction(
+			const response = await sendGaslessTransaction(
 				biconomy,
 				targetContractObject,
 				'createWorkspace',
@@ -187,7 +187,11 @@ const OnboardingCreateDomain = () => {
 				nonce
 			)
 
-			await getTransactionReceipt(transactionHash, `${safeSelected.networkId}`)
+			if(!response) {
+				return
+			}
+
+			await getTransactionReceipt(response.txHash, `${safeSelected.networkId}`)
 
 			setCurrentStep(3)
 

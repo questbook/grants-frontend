@@ -214,11 +214,11 @@ export const sendGaslessTransaction = async(biconomy: any, targetContractObject:
 	console.log('HI')
 	const response = await biconomyWalletClient.sendBiconomyWalletTransaction({ execTransactionBody: safeTxBody, walletAddress: scwAddress, signature: newSignature }) // signature appended
 	console.log('HI2')
-	return response
+	return { txHash: response, gasPrice: safeTxBody.gasPrice }
 }
 
-export const getTransactionReceipt = async(transactionHash: string | undefined | boolean, chainId: string) => {
-	if(typeof (transactionHash) === 'undefined' || typeof (transactionHash) === 'boolean') {
+export const getTransactionReceipt = async(transactionHash: string | undefined, chainId: string) => {
+	if(typeof (transactionHash) === 'undefined' || transactionHash === undefined) {
 		return false
 	}
 
@@ -226,6 +226,23 @@ export const getTransactionReceipt = async(transactionHash: string | undefined |
 	await jsonRpcProviders[chainId].waitForTransaction(transactionHash, 1)
 	return await jsonRpcProviders[chainId].getTransactionReceipt(transactionHash)
 }
+
+export const getTransactionDetails = async(transactionHash: string, chainId: string) => {
+	const receipt = await getTransactionReceipt(transactionHash, chainId);
+
+	if(!receipt){
+		throw new Error("Couldn't fetch transaction receipt!")
+	}
+
+	const gasPrice = (await jsonRpcProviders[chainId].getTransaction(transactionHash)).gasPrice;
+	
+	if(!gasPrice){
+		throw new Error("Couldn't fetch gas price!")
+	}
+
+	return {receipt, txFee: gasPrice?.toBigInt() *  receipt.gasUsed.toBigInt()};
+}
+
 
 export const getEventData = async(receipt: any, eventName: string, contractABI: any) => {
 

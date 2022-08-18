@@ -100,7 +100,7 @@ export default function useResubmitApplication(
 				// )
 				// const txnData = await txn.wait()
 
-				const transactionHash = await sendGaslessTransaction(
+				const response = await sendGaslessTransaction(
 					biconomy,
 					applicationRegistryContract,
 					'updateApplicationMetadata',
@@ -116,7 +116,11 @@ export default function useResubmitApplication(
 					nonce
 				)
 
-				const transactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
+				if(!response) {
+					return
+				}
+
+			   const transactionData = await getTransactionReceipt(response.txHash, currentChainId.toString())
 
 				setTransactionData(transactionData)
 				setLoading(false)

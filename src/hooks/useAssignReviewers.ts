@@ -104,15 +104,15 @@ export default function useAssignReviewers(
 					throw new Error('Zero wallet is not ready')
 				}
 
-				const transactionHash = await sendGaslessTransaction(
+				const response = await sendGaslessTransaction(
 					biconomy,
 					applicationReviewContract,
 					'assignReviewers',
 					[workspaceId || workspace!.id,
-						applicationId!,
-						grantAddress!,
-						data.reviewers,
-						data.active, ],
+					applicationId!,
+					grantAddress!,
+					data.reviewers,
+					data.active, ],
 					APPLICATION_REVIEW_REGISTRY_ADDRESS[currentChainId],
 					biconomyWalletClient,
 					scwAddress,
@@ -122,7 +122,11 @@ export default function useAssignReviewers(
 					nonce
 				)
 
-				const updateTransactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
+				if(!response) {
+					return
+				}
+
+				const updateTransactionData = await getTransactionReceipt(response.txHash, currentChainId.toString())
 
 				setTransactionData(updateTransactionData)
 				setLoading(false)
@@ -195,10 +199,10 @@ export default function useAssignReviewers(
 
 			if(
 				!applicationReviewContract
-        || applicationReviewContract.address
-          === '0x0000000000000000000000000000000000000000'
-        || !applicationReviewContract.signer
-        || !applicationReviewContract.provider
+				|| applicationReviewContract.address
+				=== '0x0000000000000000000000000000000000000000'
+				|| !applicationReviewContract.signer
+				|| !applicationReviewContract.provider
 			) {
 				return
 			}

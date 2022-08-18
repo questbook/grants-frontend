@@ -171,7 +171,7 @@ export default function useCreateGrant(
 
 				console.log('THESE ARE METHODS', methodArgs)
 
-				const transactionHash = await sendGaslessTransaction(
+				const response = await sendGaslessTransaction(
 					biconomy,
 					grantContract,
 					'createGrant',
@@ -185,8 +185,11 @@ export default function useCreateGrant(
 					nonce
 				)
 
-				console.log(transactionHash)
-				const receipt = await getTransactionReceipt(transactionHash, currentChainId.toString())
+				if(!response) {
+					return
+				}
+
+				const receipt = await getTransactionReceipt(response.txHash, currentChainId.toString())
 
 				console.log('THIS IS RECEIPT', receipt)
 

@@ -106,7 +106,7 @@ export default function useUpdateApplicationState(
 				// )
 				// const updateTxnData = await updateTxn.wait()
 
-				const transactionHash = await sendGaslessTransaction(
+				const response = await sendGaslessTransaction(
 					biconomy,
 					applicationContract,
 					'updateApplicationState',
@@ -123,7 +123,11 @@ export default function useUpdateApplicationState(
 					nonce
 				)
 
-				const updateTransactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
+				if(!response) {
+					return
+				}
+
+			   const updateTransactionData = await getTransactionReceipt(response.txHash, currentChainId.toString())
 
 				setTransactionData(updateTransactionData)
 				setLoading(false)

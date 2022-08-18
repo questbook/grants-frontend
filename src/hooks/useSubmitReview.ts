@@ -147,7 +147,7 @@ export default function useSubmitReview(
 				// const createGrantTransactionData = await createGrantTransaction.wait()
 
 
-				const transactionHash = await sendGaslessTransaction(
+				const response = await sendGaslessTransaction(
 					biconomy,
 					applicationReviewContract,
 					'submitReview',
@@ -164,7 +164,11 @@ export default function useSubmitReview(
 					nonce
 				)
 
-				const transactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
+				if(!response) {
+					return
+				}
+
+			   const transactionData = await getTransactionReceipt(response.txHash, currentChainId.toString())
 
 				setTransactionData(transactionData)
 				setLoading(false)
