@@ -94,7 +94,7 @@ function ReviewerSidebar({
 				<Text
 					fontSize={20}
 					fontWeight={'500'}>
-          Scoring Rubric
+          Your Score
 				</Text>
 				<Box h={2} />
 				<Divider />

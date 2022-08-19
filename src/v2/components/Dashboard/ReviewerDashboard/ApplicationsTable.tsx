@@ -233,7 +233,7 @@ function ApplicationsTable({
 														color={STATUS_COLORS[application.state]?.text}
 														bg={STATUS_COLORS[application.state]?.bg}
 													>
-														{application.state === ApplicationState.Submitted ? 'In review' : capitalizeFirstLetter(application.state)}
+														{application.state === ApplicationState.Submitted ? 'In review by others' : capitalizeFirstLetter(application.state)}
 													</Text>
 												</Flex>
 											</Td>
