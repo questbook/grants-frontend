@@ -147,6 +147,8 @@ function ApplicationsTable({
 		TABLE_HEADERS.push('Review')
 	}
 
+	const router = useRouter()
+
 	useEffect(() => {
 		if(applications) {
 			setHasMoreData(applications!.length >= APPLICATIONS_TABLE_PAGE_SIZE)
@@ -219,6 +221,13 @@ function ApplicationsTable({
 							applications && applications!.map((application) => (
 								<Tr
 									key={application.id}
+									style={{ cursor: showToBeReviewedApplications ? 'inherit' : 'pointer' }}
+									onClick={
+										showToBeReviewedApplications ? undefined :
+											() => {
+												router.push(`/your_grants/view_applicants/applicant_form?applicationId=${application.id}`)
+											}
+									}
 								>
 									<Td>
 										<Grid>
@@ -324,26 +333,29 @@ const ReviewTableData = ({ application }: { application: Application }) => {
 		loadReview()
 	}, [])
 
-	return (
-		<Td>
-			<Button
-				variant={'solid'}
-				disabled={userReview ? reviewSum === undefined : false}
-				onClick={
-					() => {
-						router.push(`/your_grants/view_applicants/applicant_form?applicationId=${application.id}`)
-					}
-				}>
-				{
-					userReview ? (
-						<Flex alignItems={'start'}>
-							{reviewSum === undefined ? <Loader /> : reviewSum}
-						</Flex>
-					) : 'Review'
-				}
-			</Button>
-		</Td>
-	)
+	if(userReview) {
+		return (
+			<Td>
+				<Flex alignItems={'start'}>
+					{reviewSum === undefined ? <Loader /> : reviewSum}
+				</Flex>
+			</Td>
+		)
+	} else {
+		return (
+			<Td>
+				<Button
+					variant={'solid'}
+					onClick={
+						() => {
+							router.push(`/your_grants/view_applicants/applicant_form?applicationId=${application.id}`)
+						}
+					}>
+          Review
+				</Button>
+			</Td>
+		)
+	}
 }
 
 
