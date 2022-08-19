@@ -100,8 +100,8 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 					<HStack
 						align='center'
 						w='100%'>
-						<NetworkFeeEstimateView
-							getEstimate={getMakeInviteGasEstimate} />
+						{/* <NetworkFeeEstimateView
+							getEstimate={getMakeInviteGasEstimate} /> */}
 
 						<Spacer />
 

@@ -54,7 +54,7 @@ function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicke
 				alt="Questbook"
 				cursor="pointer"
 			/>
-			{
+			{/* {
 				// @TODO-gasless: FIX HERE
 				true && (
 					<Flex
@@ -85,7 +85,7 @@ function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicke
 					</Flex>
 
 				)
-			}
+			} */}
 
 			{true && <AccountDetails /> /* @TODO-gasless: FIX HERE */}
 

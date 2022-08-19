@@ -120,9 +120,9 @@ const CreateDaoFinal = ({
 				</Flex>
 			</Flex>
 
-			<NetworkFeeEstimateView
+			{/* <NetworkFeeEstimateView
 				getEstimate={getCreateWorkspaceGasEstimate}
-				chainId={daoNetwork.id} />
+				chainId={daoNetwork.id} /> */}
 
 			<Flex
 				mt={4}

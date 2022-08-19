@@ -16,6 +16,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "next.config.js", "**/*.ts", "**/*.tsx", "pages/signup_webwallet.tsx", "src/utils/gaslessUtils.ts"],
+  "include": ["next-env.d.ts", "next.config.js", "**/*.ts", "**/*.tsx", "pages/reset.tsx", "src/utils/gaslessUtils.ts"],
   "exclude": ["node_modules"]
 }

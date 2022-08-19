@@ -181,14 +181,12 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 	console.log("I'm not here")
 	let scwAddress
 	console.log('WEEEE', webwallet.address)
+
 	if(!doesWalletExist) {
 		console.log('Wallet does not exist')
 		console.log('Deploying wallet')
 		walletAddress = await biconomyWalletClient.checkIfWalletExistsAndDeploy({ eoa: webwallet.address }) // default index(salt) 0
-		const g = new Promise((r) => {
-			setTimeout(r, 10000)
-		})
-		g.then(() => { })
+		
 		console.log('Wallet deployed at address', walletAddress)
 		scwAddress = walletAddress
 	} else {
@@ -196,6 +194,10 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 		console.log(`Wallet address: ${walletAddress}`)
 		scwAddress = walletAddress
 	}
+	const g = new Promise((r) => {
+		setTimeout(r, 15000)
+	})
+	g.then(() => { })
 
 	return scwAddress
 }
@@ -256,7 +258,7 @@ export const sendGaslessTransaction = async(biconomy: any, targetContractObject:
 		},
 	}
 	console.log('HI')
-	const response = await biconomyWalletClient.sendBiconomyWalletTransaction({ execTransactionBody: safeTxBody, walletAddress: scwAddress, signature: newSignature, webHookAttributes }) // signature appended
+	const response = await biconomyWalletClient.sendBiconomyWalletTransaction({ execTransactionBody: safeTxBody, walletAddress: scwAddress, signature: newSignature }) // signature appended
 	console.log('HI2')
 	return response
 }
