@@ -4,6 +4,9 @@ import { CHAIN_INFO } from 'src/constants/chains'
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 import SAFES_ENPOINTS from '../constants/safesEndpointsTest.json'
 import useAxiosMulti from './utils/useAxiosMulti'
+import { getRealm } from '@solana/spl-governance';
+import { Connection, PublicKey } from '@solana/web3.js';
+
 
 const URL_PREFIX = 'v1/safes/'
 const URL_SUFFIX = '/balances/usd'
@@ -38,6 +41,17 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 	})
 
 	const [data, setData] = useState<SafeSelectOption[]>([])
+
+
+	useEffect(() => {
+		(async () => {
+			const connection = new Connection("https://api.devnet.solana.com")
+			const programId = new PublicKey('3mdphuX2x94TLqu5Hjm7xr8qTTUWGkREXr41fMWZZjrZ')
+			const realm = await getRealm(connection, programId)
+			console.log("realms", programId.toString(), realm)
+			console.log(realm.account)
+		})()
+	}, [])
 
 	const getTokensSum = (tokensData: AllTokensData) => {
 		return tokensData.reduce((partialSum: number, item) => partialSum + parseFloat(item?.fiatBalance || '0'), 0)
