@@ -324,29 +324,26 @@ const ReviewTableData = ({ application }: { application: Application }) => {
 		loadReview()
 	}, [])
 
-	if(userReview) {
-		return (
-			<Td>
-				<Flex alignItems={'start'}>
-					{reviewSum === undefined ? <Loader /> : reviewSum}
-				</Flex>
-			</Td>
-		)
-	} else {
-		return (
-			<Td>
-				<Button
-					variant={'solid'}
-					onClick={
-						() => {
-							router.push(`/your_grants/view_applicants/applicant_form?applicationId=${application.id}`)
-						}
-					}>
-          Review
-				</Button>
-			</Td>
-		)
-	}
+	return (
+		<Td>
+			<Button
+				variant={'solid'}
+				disabled={userReview ? reviewSum === undefined : false}
+				onClick={
+					() => {
+						router.push(`/your_grants/view_applicants/applicant_form?applicationId=${application.id}`)
+					}
+				}>
+				{
+					userReview ? (
+						<Flex alignItems={'start'}>
+							{reviewSum === undefined ? <Loader /> : reviewSum}
+						</Flex>
+					) : 'Review'
+				}
+			</Button>
+		</Td>
+	)
 }
 
 
