@@ -4,6 +4,7 @@ import {
 	Button,
 	Flex } from '@chakra-ui/react'
 import useQBContract from 'src/hooks/contracts/useQBContract'
+import { addDapp, registerWebHook } from 'src/utils/gaslessUtils'
 import NavbarLayout from '../src/layout/navbarLayout'
 import { BiconomyContext, WebwalletContext } from './_app'
 
@@ -22,6 +23,9 @@ function SignupWebwallet() {
 
 	const handleSendGaslessTransaction = async(e: any) => {
 		e.preventDefault()
+
+		const apiKey = await addDapp('gasless-polygon-dapp', '137', process.env.BICO_AUTH_TOKEN)
+		await registerWebHook(process.env.BICO_AUTH_TOKEN!, apiKey.apiKey, '10')
 		// const receipt = await getTransactionReceipt('0x6df907b588e171366a4b3369741b7da7e018e8cbe4aef20602145bf33f3e2dfc', '5')
 		// if(!receipt) {
 		// 	return
