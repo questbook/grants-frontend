@@ -55,7 +55,7 @@ function ReviewerDashboard() {
 						onClick={() => setShowPendingReviews(true)}
 						borderRadius={'5px'}
 						padding={'10px'}>
-            Reviews - waiting on you
+            To Be Reviewed
 					</Button>
 					<Button
 						bg={showPendingReviews ? 'transparent' : 'white'}
@@ -63,7 +63,7 @@ function ReviewerDashboard() {
 						onClick={() => setShowPendingReviews(false)}
 						borderRadius={'5px'}
 						padding={'10px'}>
-            Reviews done
+            Reviews Done
 					</Button>
 				</Flex>
 			</Box>

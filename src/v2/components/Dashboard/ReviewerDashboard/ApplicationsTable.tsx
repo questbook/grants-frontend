@@ -1,5 +1,19 @@
 import { useContext, useEffect, useState } from 'react'
-import { Box, Button, Center, Flex, Grid, GridItem, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react'
+import {
+	Box,
+	Button,
+	Center,
+	Flex,
+	Grid,
+	GridItem,
+	Table,
+	Tbody,
+	Td,
+	Text,
+	Th,
+	Thead,
+	Tr,
+} from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'
 import { ApiClientsContext } from '../../../../../pages/_app'
@@ -123,6 +137,16 @@ function ApplicationsTable({
 	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 	const { client } = subgraphClients[chainId]
 
+	const TABLE_HEADERS = ['Project Name', 'Funding ask', 'Submitted on']
+
+	if(!showToBeReviewedApplications && !TABLE_HEADERS.includes('Status')) {
+		TABLE_HEADERS.push('Status')
+	}
+
+	if(!TABLE_HEADERS.includes('Review')) {
+		TABLE_HEADERS.push('Review')
+	}
+
 	useEffect(() => {
 		if(applications) {
 			setHasMoreData(applications!.length >= APPLICATIONS_TABLE_PAGE_SIZE)
@@ -158,16 +182,6 @@ function ApplicationsTable({
 			})()
 		}
 	}, [page])
-
-	const TABLE_HEADERS = ['Project Name', 'Funding ask', 'Submitted on']
-
-	if(!showToBeReviewedApplications && !TABLE_HEADERS.includes('Status')) {
-		TABLE_HEADERS.push('Status')
-	}
-
-	if(!TABLE_HEADERS.includes('Review')) {
-		TABLE_HEADERS.push('Review')
-	}
 
 	return (
 		<>
