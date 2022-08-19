@@ -259,7 +259,7 @@ export const sendGaslessTransaction = async(biconomy: any, targetContractObject:
 		},
 	}
 	console.log('HI')
-	const response = await biconomyWalletClient.sendBiconomyWalletTransaction({ execTransactionBody: safeTxBody, walletAddress: scwAddress, signature: newSignature }) // signature appended
+	const response = await biconomyWalletClient.sendBiconomyWalletTransaction({ execTransactionBody: safeTxBody, walletAddress: scwAddress, signature: newSignature, webHookAttributes }) // signature appended
 	console.log('HI2')
 	return response
 }
