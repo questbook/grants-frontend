@@ -8,11 +8,12 @@ import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSafeOwners from 'src/hooks/useSafeOwners'
 import useSafeUSDBalances from 'src/hooks/useSafeUSDBalances'
 import getErrorMessage from 'src/utils/errorUtils'
-import { addAuthorizedOwner, bicoDapps, chargeGas, getEventData, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { addAuthorizedOwner, addAuthorizedUser, bicoDapps, chargeGas, getEventData, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
 import { Organization } from 'src/v2/assets/custom chakra icons/Organization'
@@ -54,15 +55,27 @@ const OnboardingCreateDomain = () => {
 	const { data: accountData } = useAccount()
 	const { disconnect } = useDisconnect()
 
-	const { data: accountDataWebwallet, nonce } = useQuestbookAccount()
+
+	const [shouldRefreshNonce, setShouldRefreshNonce] = useState<boolean>()
+	const { data: accountDataWebwallet, nonce } = useQuestbookAccount(shouldRefreshNonce)
 
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 
+	const { network } = useNetwork()
+
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
-		chainId: safeSelected?.networkId ?? ''
+		chainId: network?.toString() ?? ''
 	})
 
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState('not ready')
+
+	useEffect(() => {
+		disconnect()
+	}, [])
+
+	// useEffect(() => {
+	// 	setNonce(undefined)
+	// }, [])
 
 	useEffect(() => {
 		if(biconomy && biconomyWalletClient && scwAddress) {
@@ -71,7 +84,7 @@ const OnboardingCreateDomain = () => {
 	}, [biconomy, biconomyWalletClient, scwAddress])
 
 
-	const targetContractObject = useQBContract('workspace', safeSelected?.networkId as unknown as SupportedChainId)
+	const targetContractObject = useQBContract('workspace', network as unknown as SupportedChainId)
 
 	const { validatorApi } = useContext(ApiClientsContext)!
 
@@ -97,6 +110,21 @@ const OnboardingCreateDomain = () => {
 	}, [accountData, safeOwners, step])
 
 	useEffect(() => {
+		if(nonce && nonce !== 'Token expired') {
+			return
+		}
+
+		if(isOwner && webwallet) {
+			addAuthorizedUser(webwallet?.address)
+				.then(() => {
+					setShouldRefreshNonce(true)
+					console.log('Added authorized user', webwallet.address)
+				})
+				.catch((err) => console.log("Couldn't add authorized user", err))
+		}
+	}, [isOwner, webwallet, nonce])
+
+	useEffect(() => {
 		if(!setIsSafeAddressVerified) {
 			return
 		}
@@ -119,7 +147,11 @@ const OnboardingCreateDomain = () => {
 	}, [domainName])
 
 	const createWorkspace = async() => {
-		console.log(safeSelected)
+		console.log(network)
+		if(!network) {
+			return
+		}
+
 		// setCallOnContractChange(false)
 		setCurrentStep(0)
 		try {
@@ -150,7 +182,7 @@ const OnboardingCreateDomain = () => {
 				creatorId: accountDataWebwallet!.address!,
 				socials: [],
 				supportedNetworks: [
-					getSupportedValidatorNetworkFromChainId(safeSelected?.networkId as unknown as SupportedChainId),
+					getSupportedValidatorNetworkFromChainId(network),
 				],
 			})
 
@@ -158,7 +190,7 @@ const OnboardingCreateDomain = () => {
 				throw new Error('Error validating grant data')
 			}
 
-			if(!safeSelected || !safeSelected?.networkId) {
+			if(!safeSelected || !network) {
 
 				throw new Error('No network specified')
 			}
@@ -176,12 +208,12 @@ const OnboardingCreateDomain = () => {
 				targetContractObject,
 				'createWorkspace',
 				[ipfsHash, new Uint8Array(32), 0],
-				WORKSPACE_REGISTRY_ADDRESS[safeSelected.networkId as unknown as SupportedChainId],
+				WORKSPACE_REGISTRY_ADDRESS[network as unknown as SupportedChainId],
 				biconomyWalletClient,
 				scwAddress,
 				webwallet,
-				`${safeSelected.networkId}`,
-				bicoDapps[safeSelected.networkId].webHookId,
+				`${network}`,
+				bicoDapps[network].webHookId,
 				nonce
 			)
 
@@ -191,7 +223,7 @@ const OnboardingCreateDomain = () => {
 
 			setCurrentStep(3)
 
-			const { txFee, receipt } = await getTransactionDetails(transactionHash, safeSelected.networkId.toString())
+			const { txFee, receipt } = await getTransactionDetails(transactionHash, network.toString())
 
 			console.log('txFee', txFee)
 
@@ -200,7 +232,7 @@ const OnboardingCreateDomain = () => {
 				const workspace_id = Number(event.args[0].toBigInt())
 				console.log('workspace_id', workspace_id)
 
-				await addAuthorizedOwner(workspace_id, webwallet?.address!, scwAddress, safeSelected.networkId.toString(),
+				await addAuthorizedOwner(workspace_id, webwallet?.address!, scwAddress, network.toString(),
 					'this is the safe addres - to be updated in the new flow')
 				console.log('fdsao')
 				await chargeGas(workspace_id, Number(txFee))

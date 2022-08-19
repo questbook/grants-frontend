@@ -30,6 +30,7 @@ import CreateDaoNetworkSelect from 'src/v2/components/Onboarding/CreateDao/Creat
 import { NetworkSelectOption } from 'src/v2/components/Onboarding/SupportedNetworksData'
 import BackgroundImageLayout from 'src/v2/components/Onboarding/UI/Layout/BackgroundImageLayout'
 import OnboardingCard from 'src/v2/components/Onboarding/UI/Layout/OnboardingCard'
+import { useDisconnect } from 'wagmi'
 
 const OnboardingCreateDao = () => {
 	const router = useRouter()
@@ -53,6 +54,8 @@ const OnboardingCreateDao = () => {
 
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState('not ready')
 
+	const { disconnect } = useDisconnect()
+
 	useEffect(() => {
 		if(biconomy && biconomyWalletClient && scwAddress) {
 			setIsBiconomyInitialised('ready')
@@ -68,7 +71,6 @@ const OnboardingCreateDao = () => {
 
 		console.log('webwallet exists')
 		if(nonce && nonce !== 'Token expired') {
-
 			return
 		}
 

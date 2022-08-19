@@ -1,5 +1,6 @@
 import { useCallback, useContext, useEffect } from 'react'
 import { Biconomy } from '@biconomy/mexa'
+import SupportedChainId from 'src/generated/SupportedChainId'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import { bicoDapps, deploySCW, jsonRpcProviders } from 'src/utils/gaslessUtils'
 import { BiconomyContext, WebwalletContext } from '../../../pages/_app'
@@ -39,7 +40,7 @@ export const useBiconomy = (data: { chainId?: string }) => {
 		console.log('CREATING BICONOMY OBJ', network.toString())
 
 		let _newChainId = data.chainId ? data.chainId : network
-		_newChainId = _newChainId.toString()
+		_newChainId = network.toString()
 
 		const _biconomy = new Biconomy(jsonRpcProviders[_newChainId],
 			{
@@ -63,6 +64,7 @@ export const useBiconomy = (data: { chainId?: string }) => {
 			setBiconomyWalletClient(_biconomyWalletClient)
 			setBiconomyDaoObj(_biconomy)
 			setIsLoading(false)
+			switchNetwork(_newChainId as unknown as SupportedChainId)
 
 		}).onEvent(_biconomy.ERROR, (error: any, message: any) => {
 			setIsLoading(false)

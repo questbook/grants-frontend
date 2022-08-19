@@ -170,14 +170,15 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}
 
 	const getNetwork = () => {
+		return 5
 
-		const _network = localStorage.getItem('network')
+		// const _network = localStorage.getItem('network')
 
-		if(!_network) {
-			return CHAIN_INFO['5'].id
-		}
+		// if(!_network) {
+		// 	return CHAIN_INFO['5'].id
+		// }
 
-		return parseInt(_network)
+		// return parseInt(_network)
 	}
 
 	const createWebWallet = () => {
