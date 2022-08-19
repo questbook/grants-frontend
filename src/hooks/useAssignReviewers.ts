@@ -5,7 +5,7 @@ import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { bicoDapps, getTransactionReceipt, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
@@ -104,15 +104,15 @@ export default function useAssignReviewers(
 					throw new Error('Zero wallet is not ready')
 				}
 
-				const transactionHash = await sendGaslessTransaction(
+				const response = await sendGaslessTransaction(
 					biconomy,
 					applicationReviewContract,
 					'assignReviewers',
 					[workspaceId || workspace!.id,
-						applicationId!,
-						grantAddress!,
-						data.reviewers,
-						data.active, ],
+					applicationId!,
+					grantAddress!,
+					data.reviewers,
+					data.active, ],
 					APPLICATION_REVIEW_REGISTRY_ADDRESS[currentChainId],
 					biconomyWalletClient,
 					scwAddress,
@@ -122,9 +122,15 @@ export default function useAssignReviewers(
 					nonce
 				)
 
-				const updateTransactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
+				if(!response) {
+					return
+				}
 
-				setTransactionData(updateTransactionData)
+				const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+
+				await chargeGas(Number(workspace?.id), Number(txFee))
+
+				setTransactionData(receipt)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -195,10 +201,8 @@ export default function useAssignReviewers(
 
 			if(
 				!applicationReviewContract
-        || applicationReviewContract.address
-          === '0x0000000000000000000000000000000000000000'
-        || !applicationReviewContract.signer
-        || !applicationReviewContract.provider
+				|| applicationReviewContract.address
+				=== '0x0000000000000000000000000000000000000000'
 			) {
 				return
 			}

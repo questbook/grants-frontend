@@ -9,7 +9,8 @@ import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
 	bicoDapps,
-	getTransactionReceipt,
+	chargeGas,
+	getTransactionDetails,
 	sendGaslessTransaction
 } from 'src/utils/gaslessUtils'
 import {
@@ -111,7 +112,7 @@ export default function useAddMember(
 					webwallet
 				)
 
-				const transactionHash = await sendGaslessTransaction(
+				const response = await sendGaslessTransaction(
 					biconomy,
 					targetContractObject,
 					'updateWorkspaceMembers',
@@ -129,9 +130,17 @@ export default function useAddMember(
 					nonce
 				)
 
-				const updateTransactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
+				if(!response) {
+					return
+				}
 
-				setTransactionData(updateTransactionData)
+
+				const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+
+				await chargeGas(Number(workspace?.id), Number(txFee))
+
+				setTransactionData(receipt)
+
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -192,8 +201,6 @@ export default function useAddMember(
 			if(
 				!workspaceRegistryContract
 				|| workspaceRegistryContract.address === '0x0000000000000000000000000000000000000000'
-				|| !workspaceRegistryContract.signer
-				|| !workspaceRegistryContract.provider
 			) {
 				return
 			}

@@ -364,10 +364,10 @@
 			}
 		},
 		"qbContracts": {
-			"applications": "0x084aCcB463c38D7e050cf7099B4D11C9EBa78a2E",
-			"workspace": "0x37d2df191899C715fE840671C6240C4Be05aF6B3",
-			"grantFactory": "0xAAD5fD023BB96867aF3dCE443F0252CF53FB0424",
-			"reviews": "0xF386f93269cb23Ff1b5c0635Ff4258d607BF7ae4"
+			"applications": "0x823b5405DB4359836ACFF646A9c04a70E2243EaF",
+			"workspace": "0xAF99f7fF00b339123Cb95fc42E8498E78E318e22",
+			"grantFactory": "0x9D922557918deE21E4aD435b38d8f94F3D4a2058",
+			"reviews": "0x3Cf0523E345007c73Ab0FcB69E08cB3DcCDBcb72"
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-gnosis-mainnet",
 		"rpcUrls": [
@@ -538,6 +538,43 @@
 			"decimals": 18
 		}
 	},
+	"588": {
+		"id": 588,
+		"name": "Metis Testnet",
+		"isTestNetwork": true,
+		"icon": "/chain_assets/metis.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://stardust-explorer.metis.io/address/{{address}}/",
+			"transactionHash": "https://stardust-explorer.metis.io/tx/{{tx}}/"
+		},
+		"supportedCurrencies": {
+			"0x6e5791ad106fcadfba3115cdc21d1ad3471d2e13": {
+				"icon": "/chain_assets/metis.svg",
+				"label": "METIS",
+				"address": "0x6e5791ad106fcadfba3115cdc21d1ad3471d2e13",
+				"decimals": 18
+			}
+		},
+		"qbContracts": {
+			"applications": "0x5E8EaA1f8776A7b3a671346e4845ffBADee71590",
+			"workspace": "0xd4cBA0849B4f7456634884069C9B45d0414d1F27",
+			"grantFactory": "0xd94FF2f3a72b9312A3193202eB74bdd62be3Ebc7",
+			"reviews": "0x7E775b73cb5Db98964170BE69356CC8Fc9e4BBb8"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-metis-testnet",
+		"rpcUrls": [
+			"https://stardust.metis.io/?owner=588"
+		],
+		"nativeCurrency": {
+			"name": "Metis Testnet",
+			"symbol": "METIS",
+			"decimals": 18
+		}
+	},
 	"1001": {
 		"id": 1001,
 		"name": "Klaytn Testnet",
@@ -572,6 +609,43 @@
 		"nativeCurrency": {
 			"name": "Klaytn Testnet",
 			"symbol": "KLAY",
+			"decimals": 18
+		}
+	},
+	"1088": {
+		"id": 1088,
+		"name": "Metis Mainnet",
+		"isTestNetwork": false,
+		"icon": "/chain_assets/metis.svg",
+		"wallets": [
+			"injected",
+			"walletConnect"
+		],
+		"explorer": {
+			"address": "https://andromeda-explorer.metis.io/address/{{address}}/",
+			"transactionHash": "https://andromeda-explorer.metis.io/tx/{{tx}}/"
+		},
+		"supportedCurrencies": {
+			"0x9e32b13ce7f2e80a01932b42553652e053d6ed8e": {
+				"icon": "/chain_assets/metis.svg",
+				"label": "METIS",
+				"address": "0x9e32b13ce7f2e80a01932b42553652e053d6ed8e",
+				"decimals": 18
+			}
+		},
+		"qbContracts": {
+			"applications": "0xF5A60fDB047343BB0B459B5CcE3c7c05791C3f1A",
+			"workspace": "0xAAD5fD023BB96867aF3dCE443F0252CF53FB0424",
+			"grantFactory": "0xDe969eC2Ff6653f0BD2D60327f409D927C9A0F28",
+			"reviews": "0x6C912FAa7A8F306eea474be5dFa79Ca402a16507"
+		},
+		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-metis-mainnet",
+		"rpcUrls": [
+			"https://andromeda.metis.io/?owner=1088"
+		],
+		"nativeCurrency": {
+			"name": "Metis Mainnet",
+			"symbol": "METIS",
 			"decimals": 18
 		}
 	},

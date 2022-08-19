@@ -10,7 +10,7 @@ import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { bicoDapps, getEventData, getTransactionReceipt, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
+import { addAuthorizedOwner, bicoDapps, chargeGas, getEventData, getTransactionDetails, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
 import ErrorToast from '../components/ui/toasts/errorToast'
@@ -107,23 +107,30 @@ export default function useCreateWorkspace(
 				)
 				console.log('ENTERING')
 				console.log(networkChainId, scwAddress, webwallet, nonce, webHookId)
-				const transactionHash = await sendGaslessTransaction(biconomy, targetContractObject, 'createWorkspace', [ipfsHash, new Uint8Array(32), 0],
+				const response = await sendGaslessTransaction(biconomy, targetContractObject, 'createWorkspace', [ipfsHash, new Uint8Array(32), 0],
 					WORKSPACE_REGISTRY_ADDRESS[networkChainId], biconomyWalletClient,
 					scwAddress, webwallet, `${networkChainId}`, bicoDapps[networkChainId.toString()].webHookId, nonce)
 
-				console.log(transactionHash)
-				const receipt = await getTransactionReceipt(transactionHash, networkChainId.toString())
+				if(!response) {
+					return
+				}
 
-				console.log('THIS IS RECEIPT', receipt)
+				const { txFee, receipt } = await getTransactionDetails(response, networkChainId.toString())
 
 				const createWorkspaceTransactionData = await getEventData(receipt, 'WorkspaceCreated', WorkspaceRegistryAbi)
 
 				if(createWorkspaceTransactionData) {
-					console.log('THIS IS EVENT', createWorkspaceTransactionData.args)
-				}
 
-				// const createWorkspaceTransaction = await workspaceRegistryContract.createWorkspace(ipfsHash)
-				// const createWorkspaceTransactionData = await createWorkspaceTransaction.wait()
+					const workspace_id = Number(createWorkspaceTransactionData.args[0].toBigInt())
+					console.log('workspace_id', workspace_id)
+
+					await addAuthorizedOwner(workspace_id, webwallet?.address!, scwAddress, networkChainId.toString(),
+						'this is the safe addres - to be updated in the new flow')
+					console.log('fdsao')
+
+					await chargeGas(Number(workspace_id), Number(txFee))
+
+				}
 
 				setTransactionData(createWorkspaceTransactionData)
 				setImageHash(uploadedImageHash)
@@ -178,8 +185,6 @@ export default function useCreateWorkspace(
 				!workspaceRegistryContract
 				|| workspaceRegistryContract.address
 				=== '0x0000000000000000000000000000000000000000'
-				// || !workspaceRegistryContract.signer
-				// || !workspaceRegistryContract.provider
 			) {
 				console.log('ERROR HERE')
 				return

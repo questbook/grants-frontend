@@ -7,7 +7,7 @@ import { SupportedChainId } from 'src/constants/chains'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { bicoDapps, getTransactionReceipt, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
 import { useBiconomy } from './gasless/useBiconomy'
@@ -33,6 +33,7 @@ export default function useRequestMilestoneApproval(
 	const applicationContract = useQBContract('applications', chainId)
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
+	const { workspace } = apiClients
 
 	const { webwallet } = useContext(WebwalletContext)!
 
@@ -97,7 +98,7 @@ export default function useRequestMilestoneApproval(
 				// )
 				// const updateTxnData = await updateTxn.wait()
 
-				const transactionHash = await sendGaslessTransaction(
+				const response = await sendGaslessTransaction(
 					biconomy,
 					applicationContract,
 					'requestMilestoneApproval',
@@ -113,9 +114,13 @@ export default function useRequestMilestoneApproval(
 					nonce
 				)
 
-				const updateTransactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
 
-				setTransactionData(updateTransactionData)
+				if(response) {
+					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+					setTransactionData(receipt)
+					await chargeGas(Number(workspace?.id), Number(txFee))
+				}
+
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -192,8 +197,6 @@ export default function useRequestMilestoneApproval(
 				!applicationContract
         || applicationContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !applicationContract.signer
-        || !applicationContract.provider
 			) {
 				return
 			}

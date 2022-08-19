@@ -6,7 +6,7 @@ import { SupportedChainId } from 'src/constants/chains'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { bicoDapps, getTransactionReceipt, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
@@ -117,7 +117,7 @@ export default function useSetRubrics(
 				// )
 				// const createGrantTransactionData = await createGrantTransaction.wait()
 
-				const transactionHash = await sendGaslessTransaction(
+				const response = await sendGaslessTransaction(
 					biconomy,
 					applicationReviewContract,
 					'setRubrics',
@@ -133,9 +133,12 @@ export default function useSetRubrics(
 					nonce
 				)
 
-				const transactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
+				if(response) {
+					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+					setTransactionData(receipt)
+					await chargeGas(Number(workspace?.id), Number(txFee))
+				}
 
-				setTransactionData(transactionData)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -204,8 +207,6 @@ export default function useSetRubrics(
 				!applicationReviewContract
         || applicationReviewContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !applicationReviewContract.signer
-        || !applicationReviewContract.provider
 			) {
 				return
 			}

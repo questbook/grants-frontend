@@ -52,6 +52,8 @@ interface Props {
   defaultMilestoneFields: any[];
 }
 
+const MINIMUM_ALLOWED_LENGTH = 250
+
 // eslint-disable-next-line max-len
 function Form({
 	// onSubmit,
@@ -261,6 +263,11 @@ function Form({
 			error = true
 		}
 
+		if(projectDetails.getCurrentContent().getPlainText('').length < MINIMUM_ALLOWED_LENGTH) {
+			setProjectDetailsError(true)
+			error = true
+		}
+
 		if(!projectDetails.getCurrentContent().hasText()) {
 			setProjectDetailsError(true)
 			error = true
@@ -428,6 +435,7 @@ function Form({
 			setProjectLinks(formDataLocal?.projectLinks)
 		}
 
+		console.log('projecttt', formDataLocal.projectDetails)
 		if(formDataLocal?.projectDetails) {
 			setProjectDetails(
 				EditorState.createWithContent(

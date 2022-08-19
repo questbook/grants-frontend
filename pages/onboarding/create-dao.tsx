@@ -5,14 +5,19 @@ import { ApiClientsContext } from 'pages/_app'
 import { WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
 import {
+	addAuthorizedOwner,
+	addAuthorizedUser,
 	bicoDapps,
-	getTransactionReceipt,
+	chargeGas,
+	getEventData,
+	getTransactionDetails,
 	sendGaslessTransaction
 } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
@@ -29,7 +34,6 @@ import { useDisconnect } from 'wagmi'
 
 const OnboardingCreateDao = () => {
 	const router = useRouter()
-	const { data: accountData, nonce } = useQuestbookAccount()
 
 	const [step, setStep] = useState(0)
 	const [daoName, setDaoName] = useState<string>()
@@ -38,13 +42,14 @@ const OnboardingCreateDao = () => {
 	const [callOnContractChange, setCallOnContractChange] = useState(false)
 	const [currentStep, setCurrentStep] = useState<number>()
 	const { network, switchNetwork } = useNetwork()
+	const [shouldRefreshNonce, setShouldRefreshNonce] = useState<boolean>()
+
+	const { data: accountData, nonce } = useQuestbookAccount(shouldRefreshNonce)
 
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		chainId: daoNetwork?.id.toString()!,
-		// targetContractABI: WorkspaceRegistryAbi,
-		// chainId: network
 	})
 
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState('not ready')
@@ -52,15 +57,33 @@ const OnboardingCreateDao = () => {
 	const { disconnect } = useDisconnect()
 
 	useEffect(() => {
-		disconnect()
-	}, [])
-
-	useEffect(() => {
 		if(biconomy && biconomyWalletClient && scwAddress) {
 			setIsBiconomyInitialised('ready')
 		}
 	}, [biconomy, biconomyWalletClient, scwAddress])
 
+
+	useEffect(() => {
+
+		if(!webwallet) {
+			return
+		}
+
+		console.log('webwallet exists')
+		if(nonce && nonce !== 'Token expired') {
+			return
+		}
+
+		console.log('adding nonce')
+
+
+		addAuthorizedUser(webwallet?.address)
+			.then(() => {
+				setShouldRefreshNonce(true)
+				console.log('Added authorized user', webwallet.address)
+			})
+			.catch((err) => console.log("Couldn't add authorized user", err))
+	}, [webwallet, nonce, shouldRefreshNonce])
 
 	const targetContractObject = useQBContract('workspace', daoNetwork?.id)
 
@@ -120,7 +143,8 @@ const OnboardingCreateDao = () => {
 				return
 			}
 
-			const transactionHash = await sendGaslessTransaction(
+
+			const response = await sendGaslessTransaction(
 				biconomy,
 				targetContractObject,
 				'createWorkspace',
@@ -134,9 +158,27 @@ const OnboardingCreateDao = () => {
 				nonce
 			)
 
-			await getTransactionReceipt(transactionHash, daoNetwork.id.toString())
+			if(!response) {
+				return
+			}
 
 			setCurrentStep(3)
+
+			const { txFee, receipt } = await getTransactionDetails(response, daoNetwork.id.toString())
+
+			console.log('txFee', txFee)
+
+			const event = await getEventData(receipt, 'WorkspaceCreated', WorkspaceRegistryAbi)
+			if(event) {
+				const workspace_id = Number(event.args[0].toBigInt())
+				console.log('workspace_id', workspace_id)
+
+				await addAuthorizedOwner(workspace_id, webwallet?.address!, scwAddress, daoNetwork.id.toString(),
+					'this is the safe addres - to be updated in the new flow')
+				console.log('fdsao')
+				await chargeGas(workspace_id, Number(txFee))
+			}
+
 
 			setCurrentStep(5)
 			setTimeout(() => {

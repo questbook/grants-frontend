@@ -3,10 +3,10 @@ import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { bicoDapps, getTransactionReceipt, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import ErrorToast from '../components/ui/toasts/errorToast'
-import useGrantContract from './contracts/useGrantContract'
+import useQBContract from './contracts/useQBContract'
 import { useBiconomy } from './gasless/useBiconomy'
 import { useNetwork } from './gasless/useNetwork'
 import { useQuestbookAccount } from './gasless/useQuestbookAccount'
@@ -22,11 +22,13 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients
-	const grantContract = useGrantContract(grantId)
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
 	const currentChainId = useMemo(() => networkData.id, [networkData])
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
+
+	const grantFactoryContract = useQBContract('grantFactory', chainId)
+	const workspaceRegistryContract = useQBContract('workspace', chainId)
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		chainId: chainId?.toString()
@@ -47,9 +49,10 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 			setIncorrectNetwork(false)
 		}
 
-	}, [grantContract])
+	}, [grantFactoryContract])
 
 	useEffect(() => {
+		console.log('RErERERERE', changeCount, error, loading)
 		if(changeCount === 0) {
 			return
 		}
@@ -73,12 +76,13 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 					throw new Error('Zero wallet is not ready')
 				}
 
-				const transactionHash = await sendGaslessTransaction(
+				console.log('workspace_id', workspace?.id)
+				const response = await sendGaslessTransaction(
 					biconomy,
-					grantContract,
+					grantFactoryContract,
 					'updateGrantAccessibility',
-					[newState, ],
-					grantId || '0x0000000000000000000000000000000000000000',
+					[grantId, workspace?.id, workspaceRegistryContract.address, newState ],
+					grantFactoryContract.address,
 					biconomyWalletClient,
 					scwAddress,
 					webwallet,
@@ -87,9 +91,15 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 					nonce
 				)
 
-				const updateTransactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
+				if(!response) {
+					return
+				}
 
-				setTransactionData(updateTransactionData)
+				const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+
+				await chargeGas(Number(workspace?.id), Number(txFee))
+
+				setTransactionData(receipt)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -150,13 +160,12 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 				throw new Error('validatorApi or workspaceId is not defined')
 			}
 
-			console.log('grantcontract', grantContract)
+			console.log('grantFactoryContract', grantFactoryContract)
 			if(
-				!grantContract
-        || grantContract.address
+				!grantFactoryContract
+        || grantFactoryContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !grantContract.signer
-        || !grantContract.provider
+
 			) {
 				return
 			}
@@ -183,7 +192,7 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 		loading,
 		toast,
 		transactionData,
-		grantContract,
+		grantFactoryContract,
 		validatorApi,
 		workspace,
 		accountData,

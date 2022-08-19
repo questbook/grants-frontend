@@ -134,13 +134,9 @@ export default {
 						bg: '#E0E0EC',
 					},
 				},
-
 			},
-			inviteLink: {
-				_selected: { color: '#E0E0EC', bg: '#1F1F32' },
-				bg: '#1F1F32',
-				color: '#E0E0EC',
-				borderRadius: 4,
+			ghost: {
+				color: '#555570',
 			},
 			secondaryV2: {
 				bg: 'gray.3',

@@ -6,7 +6,7 @@ import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { bicoDapps, getTransactionReceipt, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
@@ -93,7 +93,7 @@ export default function useUpdateWorkspace(
 				// )
 				// const updateTransactionData1 = await updateTransaction1.wait()
 
-				const transactionHash = await sendGaslessTransaction(
+				const response = await sendGaslessTransaction(
 					biconomy,
 					workspaceRegistryContract,
 					'updateWorkspaceMetadata',
@@ -108,9 +108,12 @@ export default function useUpdateWorkspace(
 					nonce
 				)
 
-				const updateTransactionData = await getTransactionReceipt(transactionHash, currentChainId.toString())
+				if(response) {
+					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+					setTransactionData(receipt)
+					await chargeGas(Number(workspace?.id), Number(txFee))
+				}
 
-				setTransactionData(updateTransactionData)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -175,8 +178,6 @@ export default function useUpdateWorkspace(
 				!workspaceRegistryContract
 				|| workspaceRegistryContract.address
 				=== '0x0000000000000000000000000000000000000000'
-				|| !workspaceRegistryContract.signer
-				|| !workspaceRegistryContract.provider
 			) {
 				return
 			}

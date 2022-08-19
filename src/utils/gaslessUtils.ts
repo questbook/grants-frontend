@@ -31,7 +31,7 @@ export const jsonRpcProviders: { [key: string]: ethers.providers.JsonRpcProvider
 	'5': new ethers.providers.JsonRpcProvider('https://eth-goerli.g.alchemy.com/v2/Hr6VkBfmbJIhEW3fHJnl0ujE0xmWxcqH')
 }
 
-export const bicoDapps: { [key: string]: {apiKey: string, webHookId: string} } = {
+export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } } = {
 	'5': {
 		apiKey: 'cCEUGyH2y.37cd0d5e-704c-49e6-9f3d-e20fe5bb13d5',
 		webHookId: '97d579e5-917d-4059-90af-d46d5ee88b43'
@@ -58,22 +58,6 @@ export const getNonce = async(webwallet: Wallet | undefined) => {
 		})
 	if(response.data && response.data.nonce !== 'Token expired') {
 		return response.data.nonce
-	}
-
-	return false
-}
-
-export const addUser = async(webwallet: Wallet) => {
-	if(!webwallet) {
-		return
-	}
-
-	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/add_user',
-		{
-			webwallet_address: webwallet.address
-		})
-	if(response.data && response.data.authorie) {
-		return true
 	}
 
 	return false
@@ -135,6 +119,54 @@ export const addDapp = async(dappName: string, networkId: string, authToken: str
 	return resJson.data
 }
 
+export const addAuthorizedOwner = async(workspace_id: number, webwallet_address: string, scw_address: string,
+	chain_id: string, safe_address: string) => {
+
+	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/add_workspace_owner',
+		{
+			workspace_id,
+			webwallet_address,
+			scw_address,
+			chain_id,
+			safe_address
+		})
+
+	if(response.data && response.data.status) {
+		return true
+	}
+
+	return false
+}
+
+export const addAuthorizedUser = async(webwallet_address: string) => {
+
+	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/add_user',
+		{
+			webwallet_address
+		})
+
+	if(response.data && response.data.authorize) {
+		return true
+	}
+
+	return false
+}
+
+export const chargeGas = async(workspace_id: number, amount: number) => {
+	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/charge_gas',
+		{
+			workspace_id,
+			amount
+		})
+	if(response.data && response.data.status) {
+		console.log(`charged workspace ${workspace_id} with ${amount} gas`)
+		return true
+	}
+
+	return false
+
+}
+
 export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: BiconomyWalletClient) => {
 	console.log("I'm here", biconomyWalletClient)
 	var { doesWalletExist, walletAddress } = await biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address })
@@ -145,6 +177,10 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 		console.log('Wallet does not exist')
 		console.log('Deploying wallet')
 		walletAddress = await biconomyWalletClient.checkIfWalletExistsAndDeploy({ eoa: webwallet.address }) // default index(salt) 0
+		const g = new Promise((r) => {
+			setTimeout(r, 10000)
+		})
+		g.then(() => {})
 		console.log('Wallet deployed at address', walletAddress)
 		scwAddress = walletAddress
 	} else {
@@ -205,26 +241,40 @@ export const sendGaslessTransaction = async(biconomy: any, targetContractObject:
 	const webHookAttributes = {
 		'webHookId': webHookId, // received from the webhook register API
 		'webHookData': { // whatever data object to be passed to the webhook
-			'data': {
-				'signedNonce': signedNonce,
-				'nonce': nonce
-			}
+			'signedNonce': signedNonce,
+			'nonce': nonce
 		},
 	}
 	console.log('HI')
-	const response = await biconomyWalletClient.sendBiconomyWalletTransaction({ execTransactionBody: safeTxBody, walletAddress: scwAddress, signature: newSignature }) // signature appended
+	const response = await biconomyWalletClient.sendBiconomyWalletTransaction({ execTransactionBody: safeTxBody, walletAddress: scwAddress, signature: newSignature, webHookAttributes }) // signature appended
 	console.log('HI2')
 	return response
 }
 
-export const getTransactionReceipt = async(transactionHash: string | undefined | boolean, chainId: string) => {
-	if(typeof (transactionHash) === 'undefined' || typeof (transactionHash) === 'boolean') {
+export const getTransactionReceipt = async(transactionHash: string | undefined, chainId: string) => {
+	if(typeof (transactionHash) === 'undefined' || transactionHash === undefined) {
 		return false
 	}
 
 	console.log('GOT HERE')
 	await jsonRpcProviders[chainId].waitForTransaction(transactionHash, 1)
 	return await jsonRpcProviders[chainId].getTransactionReceipt(transactionHash)
+}
+
+export const getTransactionDetails = async(transactionHash: string, chainId: string) => {
+	const receipt = await getTransactionReceipt(transactionHash, chainId)
+
+	if(!receipt) {
+		throw new Error("Couldn't fetch transaction receipt!")
+	}
+
+	const gasPrice = (await jsonRpcProviders[chainId].getTransaction(transactionHash)).gasPrice
+
+	if(!gasPrice) {
+		throw new Error("Couldn't fetch gas price!")
+	}
+
+	return { receipt, txFee: gasPrice?.toBigInt() * receipt.gasUsed.toBigInt() }
 }
 
 export const getEventData = async(receipt: any, eventName: string, contractABI: any) => {

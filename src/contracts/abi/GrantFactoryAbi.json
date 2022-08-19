@@ -96,6 +96,43 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
+        "internalType": "address",
+        "name": "grantAddress",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint96",
+        "name": "workspaceId",
+        "type": "uint96"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "metadataHash",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "active",
+        "type": "bool"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "time",
+        "type": "uint256"
+      }
+    ],
+    "name": "GrantUpdatedFromFactory",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": false,
         "internalType": "uint8",
         "name": "version",
@@ -317,6 +354,62 @@
   {
     "inputs": [],
     "name": "unpause",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "grantAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint96",
+        "name": "_workspaceId",
+        "type": "uint96"
+      },
+      {
+        "internalType": "contract IWorkspaceRegistry",
+        "name": "_workspaceReg",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "_metadataHash",
+        "type": "string"
+      }
+    ],
+    "name": "updateGrant",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "grantAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint96",
+        "name": "_workspaceId",
+        "type": "uint96"
+      },
+      {
+        "internalType": "contract IWorkspaceRegistry",
+        "name": "_workspaceReg",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "_canAcceptApplication",
+        "type": "bool"
+      }
+    ],
+    "name": "updateGrantAccessibility",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

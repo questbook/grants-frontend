@@ -6,13 +6,12 @@ import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash, parseAmount } from 'src/utils/formattingUtils'
-import { bicoDapps, getTransactionReceipt, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
 import ErrorToast from '../components/ui/toasts/errorToast'
-import useGrantContract from './contracts/useGrantContract'
 import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
 
@@ -30,12 +29,14 @@ export default function useEditGrant(
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients
-	const grantContract = useGrantContract(grantId)
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
 	const currentChainId = useChainId()
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
+
 	const applicationReviewContract = useQBContract('reviews', chainId)
+	const grantFactoryContract = useQBContract('grantFactory', chainId)
+	const workspaceRegistryContract = useQBContract('workspace', chainId)
 
 	const { webwallet } = useContext(WebwalletContext)!
 
@@ -60,7 +61,7 @@ export default function useEditGrant(
 			setIncorrectNetwork(false)
 		}
 
-	}, [grantContract])
+	}, [grantFactoryContract])
 
 	useEffect(() => {
 		if(incorrectNetwork) {
@@ -70,6 +71,7 @@ export default function useEditGrant(
 	}, [applicationReviewContract])
 
 	useEffect(() => {
+		console.log('RErERERERE', incorrectNetwork, error, loading)
 		if(incorrectNetwork) {
 			return
 		}
@@ -148,7 +150,7 @@ export default function useEditGrant(
 				// )
 				// await rubricTxn.wait()
 				// const createGrantTransactionData = await createGrantTransaction.wait()
-				console.log('rubric hash', grantId, grantContract.address)
+				console.log('rubric hash', grantId, grantFactoryContract.address)
 				const rubricTxn = await sendGaslessTransaction(
 					biconomy,
 					applicationReviewContract,
@@ -165,17 +167,21 @@ export default function useEditGrant(
 					nonce
 				)
 
-				await getTransactionReceipt(rubricTxn, currentChainId.toString())
-
+				if(rubricTxn) {
+					const { txFee } = await getTransactionDetails(rubricTxn, currentChainId.toString())
+					await chargeGas(Number(workspace?.id), Number(txFee))
+				} else {
+					throw new Error("Transaction didn't go through")
+				}
 
 				console.log('YYTTE', ipfsHash)
 
 				const createGrantTransaction = await sendGaslessTransaction(
 					biconomy,
-					grantContract,
+					grantFactoryContract,
 					'updateGrant',
-					[ipfsHash, ],
-					grantId!,
+					[grantId, workspace?.id, workspaceRegistryContract.address, ipfsHash, ],
+					grantFactoryContract.address,
 					biconomyWalletClient,
 					scwAddress,
 					webwallet,
@@ -184,11 +190,15 @@ export default function useEditGrant(
 					nonce
 				)
 
-				const createGrantTransactionData = await getTransactionReceipt(createGrantTransaction, currentChainId.toString())
+				if(createGrantTransaction) {
+					const { receipt, txFee } = await getTransactionDetails(createGrantTransaction, currentChainId.toString())
+					setTransactionData(receipt)
+					await chargeGas(Number(workspace?.id), Number(txFee))
+				}
 
-				setTransactionData(createGrantTransactionData)
 				setLoading(false)
 			} catch(e: any) {
+
 				const message = getErrorMessage(e)
 				setError(message)
 				setLoading(false)
@@ -207,6 +217,7 @@ export default function useEditGrant(
 		}
 
 		try {
+			console.log('ttttt', data, transactionData, accountData, workspace, currentChainId, chainId)
 			if(!data) {
 				return
 			}
@@ -248,11 +259,9 @@ export default function useEditGrant(
 			}
 
 			if(
-				!grantContract
-        || grantContract.address
+				!grantFactoryContract
+        || grantFactoryContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !grantContract.signer
-        || !grantContract.provider
 			) {
 				return
 			}
@@ -261,8 +270,6 @@ export default function useEditGrant(
 				!applicationReviewContract
         || applicationReviewContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !applicationReviewContract.signer
-        || !applicationReviewContract.provider
 			) {
 				return
 			}
@@ -290,7 +297,7 @@ export default function useEditGrant(
 		loading,
 		toast,
 		transactionData,
-		grantContract,
+		grantFactoryContract,
 		validatorApi,
 		workspace,
 		accountData,
