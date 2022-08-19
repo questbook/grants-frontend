@@ -468,7 +468,10 @@ function ApplicantForm() {
 								top='36px'
 							>
 								{
-									applicationData?.pendingReviewerAddresses?.find(
+									[
+										...applicationData?.pendingReviewerAddresses ?? [],
+										...applicationData?.doneReviewerAddresses ?? [],
+									].find(
 										(pendingReviewer) => pendingReviewer.toLowerCase() ===
                       accountData?.address?.toLowerCase(),
 									) !== undefined && (
