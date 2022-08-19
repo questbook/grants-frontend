@@ -8,7 +8,7 @@ import { BiconomyContext, WebwalletContext } from './_app'
 
 function SignupWebwallet() {
 
-	const { setWebwallet, setScwAddress, setNonce } = useContext(WebwalletContext)!
+	const { setWebwallet, setScwAddress, setNonce, switchNetwork } = useContext(WebwalletContext)!
 	const { setBiconomyDaoObj } = useContext(BiconomyContext)!
 
 	const handleReset = async(e: any) => {

@@ -48,7 +48,7 @@ const OnboardingCreateDao = () => {
 
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading } = useBiconomy({
 		chainId: daoNetwork?.id.toString()!,
 	})
 
@@ -57,10 +57,12 @@ const OnboardingCreateDao = () => {
 	const { disconnect } = useDisconnect()
 
 	useEffect(() => {
-		if(biconomy && biconomyWalletClient && scwAddress) {
+		console.log('rree', loading, biconomy, scwAddress, biconomyWalletClient)
+		if(biconomy && biconomyWalletClient && scwAddress && !loading) {
+			console.log('rree', isBiconomyInitialised)
 			setIsBiconomyInitialised('ready')
 		}
-	}, [biconomy, biconomyWalletClient, scwAddress])
+	}, [biconomy, biconomyWalletClient, scwAddress, loading, isBiconomyInitialised])
 
 
 	useEffect(() => {
@@ -75,7 +77,6 @@ const OnboardingCreateDao = () => {
 		}
 
 		console.log('adding nonce')
-
 
 		addAuthorizedUser(webwallet?.address)
 			.then(() => {
@@ -250,7 +251,7 @@ const OnboardingCreateDao = () => {
 			daoName={daoName!}
 			daoImageFile={daoImageFile}
 			onImageFileChange={(image) => setDaoImageFile(image)}
-			isBiconomyInitialised={isBiconomyInitialised}
+			isBiconomyInitialised={isBiconomyInitialised === 'ready'}
 			onSubmit={() => createWorkspace()}
 		// 		activeChain?.id &&
 		// daoNetwork?.id &&

@@ -14,22 +14,36 @@ export const useBiconomy = (data: { chainId?: string }) => {
 
 	useEffect(() => {
 
-		console.log('STEP1', biconomyDaoObj, nonce, webwallet, biconomyWalletClient, loading)
-		if(
-			(!loading && nonce && webwallet && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress)) ||
-			(data.chainId && biconomyDaoObj && biconomyDaoObj.networkChainId && data.chainId !== biconomyDaoObj.networkChainId.toString())) {
+		console.log('STEP1', biconomyDaoObj, nonce, webwallet, biconomyWalletClient, loading, data.chainId)
+		if(!loading && nonce && webwallet && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress)) {
 			setIsLoading(true)
+			console.log('trying 1')
 			initiateBiconomy()
 				.then((res) => console.log(res))
 				.catch(error => console.log(error))
 		}
 
 
-	}, [webwallet, nonce, biconomyDaoObj, biconomyWalletClient, scwAddress, data.chainId])
+	}, [webwallet, nonce, biconomyDaoObj, biconomyWalletClient, scwAddress, loading])
+
+	useEffect(() => {
+
+		console.log('STEP3', biconomyDaoObj, nonce, webwallet, biconomyWalletClient, loading, data.chainId)
+		if(!loading && data.chainId && biconomyDaoObj && biconomyDaoObj.networkId && data.chainId !== biconomyDaoObj.networkId.toString()) {
+			setIsLoading(true)
+			console.log('trying 2')
+			initiateBiconomy()
+				.then((res) => console.log(res))
+				.catch(error => console.log(error))
+		}
+
+
+	}, [webwallet, nonce, biconomyDaoObj, biconomyWalletClient, scwAddress, data.chainId, network, loading])
+
 
 	const initiateBiconomy = useCallback(async() => {
 		console.log('STEP2', webwallet, network, data.chainId)
-		if(!webwallet || !network) {
+		if(!webwallet) {
 			return
 		}
 
@@ -37,10 +51,9 @@ export const useBiconomy = (data: { chainId?: string }) => {
 		console.log('DAODAO2', biconomyWalletClient)
 		console.log('DAODAO3', scwAddress)
 
-		console.log('CREATING BICONOMY OBJ', network.toString())
+		console.log('CREATING BICONOMY OBJ')
 
-		let _newChainId = data.chainId ? data.chainId : network
-		_newChainId = network.toString()
+		const _newChainId = data.chainId ? data.chainId : network!.toString()
 
 		const _biconomy = new Biconomy(jsonRpcProviders[_newChainId],
 			{
@@ -77,6 +90,7 @@ export const useBiconomy = (data: { chainId?: string }) => {
 	return {
 		biconomyDaoObj: biconomyDaoObj,
 		biconomyWalletClient: biconomyWalletClient,
-		scwAddress: scwAddress
+		scwAddress: scwAddress,
+		loading
 	}
 }
