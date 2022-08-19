@@ -1,5 +1,5 @@
 
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import {
 	Button,
 	Flex } from '@chakra-ui/react'
@@ -26,6 +26,7 @@ function SignupWebwallet() {
 			width='100%'
 			flexDir='row'
 			justifyContent='center'>
+			This will delete your webwallet and all your data!
 			<form onSubmit={handleReset}>
 				<Button
 					mt={4}

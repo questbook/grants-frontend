@@ -1,6 +1,5 @@
-import { Container, Flex, Image, Text } from '@chakra-ui/react'
+import { Container, Image } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { CHAIN_INFO, SHOW_TEST_NETS } from 'src/constants/chains'
 import useChainId from 'src/hooks/utils/useChainId'
 import { useConnect } from 'wagmi'
 import AccountDetails from './AccountDetails'
