@@ -9,8 +9,8 @@ interface Props {
 }
 
 function CopyIcon({ text, h }: Props) {
-	const normalImagePath = '/ui_icons/copy/normal.svg'
-	const hoverImagePath = '/ui_icons/copy/hover.svg'
+	const normalImagePath = '/ui_icons/copy/hover.svg'
+	const hoverImagePath = '/ui_icons/copy/normal.svg'
 	const activeImagePath = '/ui_icons/copy/active.svg'
 
 	const defaultTooltip = 'Copy'

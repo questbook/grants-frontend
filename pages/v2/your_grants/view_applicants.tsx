@@ -3,15 +3,12 @@ import React, {
 } from 'react'
 import {
 	Box,
-	Button,
-	Checkbox,
-	Container, Flex, Grid, GridItem, IconButton, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react'
+	Container, Flex, forwardRef, IconButton, IconButtonProps, Link, Menu, MenuButton, MenuItem, MenuList, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import moment from 'moment'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import Modal from 'src/components/ui/modal'
-import RubricDrawer from 'src/components/your_grants/rubricDrawer'
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
@@ -28,12 +25,19 @@ import { formatAmount } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { ArchiveGrant } from 'src/v2/assets/custom chakra icons/ArchiveGrant'
+import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
+import { EditPencil } from 'src/v2/assets/custom chakra icons/EditPencil'
+import { ErrorAlert } from 'src/v2/assets/custom chakra icons/ErrorAlertV2'
 import { ThreeDotsHorizontal } from 'src/v2/assets/custom chakra icons/ThreeDotsHorizontal'
+import { ViewEye } from 'src/v2/assets/custom chakra icons/ViewEye'
 import Breadcrumbs from 'src/v2/components/Breadcrumbs'
 import StyledTab from 'src/v2/components/StyledTab'
-import AcceptedRow from 'src/v2/payouts/AcceptedProposals/AcceptedRow'
+import AcceptedProposalsPanel from 'src/v2/payouts/AcceptedProposals/AcceptedProposalPanel'
+import InReviewPanel from 'src/v2/payouts/InReviewProposals/InReviewPanel'
 import SendFundsDrawer from 'src/v2/payouts/SendFundsDrawer/SendFundsDrawer'
 import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
+import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEvaluationDrawer'
 import StatsBanner from 'src/v2/payouts/StatsBanner'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import { useAccount } from 'wagmi'
@@ -60,6 +64,8 @@ function ViewApplicants() {
 	const [isReviewer, setIsReviewer] = React.useState<boolean>(false)
 	const [isUser, setIsUser] = React.useState<any>('')
 	const [isActorId, setIsActorId] = React.useState<any>('')
+
+	const [setupRubricBannerCancelled, setSetupRubricBannerCancelled] = useState(true)
 
 	const { data: accountData } = useAccount()
 	const router = useRouter()
@@ -173,6 +179,10 @@ function ViewApplicants() {
 				let decimal
 				let label
 				let icon
+				if(!(grantData?.grants[0].rubric?.items.length ?? true)) {
+					setSetupRubricBannerCancelled(false)
+				}
+
 				if(grantData?.grants[0].reward.token) {
 					decimal = grantData?.grants[0].reward.token.decimal
 					label = grantData?.grants[0].reward.token.label
@@ -405,20 +415,92 @@ function ViewApplicants() {
 
 					{
 						isAdmin && (
-							<IconButton
-								borderRadius='2.25px'
-								mt='auto'
-								h={6}
-								w={6}
-								minW={0}
-								aria-label='options'
-								onClick={() => setRubricDrawerOpen(true)}
-								icon={
-									<ThreeDotsHorizontal
-										h={'3px'}
-										w={'13.5px'} />
-								}
-							/>
+							<Menu>
+								<MenuButton
+									as={
+										forwardRef<IconButtonProps, 'div'>((props, ref) => (
+											<IconButton
+												borderRadius='2.25px'
+												mt='auto'
+												h={6}
+												w={6}
+												minW={0}
+												onClick={() => setRubricDrawerOpen(true)}
+												icon={
+													<ThreeDotsHorizontal
+														h={'3px'}
+														w={'13.5px'} />
+												}
+												{...props}
+												ref={ref}
+												aria-label='options'
+											/>
+										))
+									}
+								/>
+								<MenuList
+									minW={'240px'}
+									py={0}>
+									<Flex
+										bg={'#F0F0F7'}
+										px={4}
+										py={2}
+									>
+										<Text
+											fontSize='14px'
+											lineHeight='20px'
+											fontWeight='500'
+											textAlign='center'
+											color={'#555570'}
+										>
+											Grant options
+										</Text>
+									</Flex>
+									<MenuItem
+										px={'19px'}
+										py={'10px'}
+										onClick={() => setRubricDrawerOpen(true)}
+									>
+										{
+											(grantData?.grants[0].rubric?.items.length || 0) > 0 || false ? (
+												<ViewEye
+													color={'#C8CBFC'}
+													mr={'11px'} />
+											) : (
+												<EditPencil
+													color={'#C8CBFC'}
+													mr={'11px'} />
+											)
+										}
+										<Text
+											fontSize='14px'
+											lineHeight='20px'
+											fontWeight='400'
+											textAlign='center'
+											color={'#555570'}
+										>
+											{(grantData?.grants[0].rubric?.items.length || 0) > 0 || false ? 'View scoring rubric' : 'Setup applicant evaluation'}
+										</Text>
+									</MenuItem>
+									<MenuItem
+										px={'19px'}
+										py={'10px'}
+									>
+										<ArchiveGrant
+											color={'#C8CBFC'}
+											mr={'11px'} />
+										<Text
+											fontSize='14px'
+											lineHeight='20px'
+											fontWeight='400'
+											textAlign='center'
+											color={'#555570'}
+										>
+											Archive grant
+										</Text>
+									</MenuItem>
+								</MenuList>
+							</Menu>
 						)
 					}
 				</Flex>
@@ -441,13 +523,90 @@ function ViewApplicants() {
 				<Box mt={4} />
 
 				<StatsBanner
-					funds={1000}
-					reviews={10}
-					totalReviews={100}
-					applicants={2000}
+					funds={0}
+					reviews={0}
+					totalReviews={0}
+					applicants={applicantsData.length}
 				/>
 
 				<Box mt={5} />
+
+				{
+					setupRubricBannerCancelled || ((grantData?.grants[0].rubric?.items.length || 0) > 0 || false) ? <></> : (
+						<>
+							<Flex
+								px={'18px'}
+								py={4}
+								bg={'#C8CBFC'}
+								borderRadius={'base'}
+							>
+								<ErrorAlert
+									color={'#785EF0'}
+									boxSize={5}
+									mt={'2px'}
+								/>
+
+								<Flex
+									flexDirection='column'
+									ml={'18px'}
+									flex={1}
+								>
+									<Text
+										fontSize={'16px'}
+										lineHeight='24px'
+										fontWeight='500'
+									>
+									Setup applicant evaluation
+									</Text>
+
+									<Text
+										mt={'8px'}
+										fontSize={'14px'}
+										lineHeight='20px'
+										fontWeight='400'
+									>
+									On receiving applicants, define a scoring rubric and assign reviewers to evaluate the applicants.
+										{' '}
+										<Link
+											textDecoration={'none'}
+											fontWeight='500'
+											color='#1F1F33'
+										>
+										Learn more
+										</Link>
+									</Text>
+
+									<Text
+										mt={'14px'}
+										fontSize={'14px'}
+										lineHeight='20px'
+										fontWeight='500'
+										color='#785EF0'
+										cursor='pointer'
+										onClick={() => setRubricDrawerOpen(true)}
+									>
+									Setup now
+									</Text>
+								</Flex>
+
+								<CancelCircleFilled
+									mb='auto'
+									color='#7D7DA0'
+									h={6}
+									w={6}
+									onClick={
+										() => {
+											setSetupRubricBannerCancelled(true)
+										}
+									}
+									cursor='pointer'
+								/>
+							</Flex>
+							<Box mt={5} />
+						</>
+					)
+				}
+
 
 				<Tabs
 					h={8}
@@ -464,114 +623,31 @@ function ViewApplicants() {
 							p={0}
 							mt={5}
 							bg={'white'}
-							// border={'1px solid #F0F0F7'}>
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7' >
-							<Flex
-								py='14px'
-								px='16px'
-								alignItems={'center'}
-							>
-								<Text
-									mr='auto'
-									fontSize='14px'
-									lineHeight='20px'
-									fontWeight='500'
-								>
-									Accepted
-								</Text>
-
-								<Button
-									colorScheme={'brandv2'}
-									py={'6px'}
-									px={3}
-									minH={0}
-									h='32px'
-									fontSize="14px"
-									m={0}
-									onClick={() => setSendFundsDrawerIsOpen(true)}
-								>
-										Send Funds
-								</Button>
-
-								{/* <Text
-									fontSize='14px'
-									lineHeight='20px'
-									fontWeight='500'
-								>
-									Filter By
-								</Text> */}
-							</Flex>
-
-							<Flex
-								bg='#F0F0F7'
-								h={'1px'}
+							<AcceptedProposalsPanel
+								applicantsData={applicantsData}
+								onSendFundsClicked={(v) => setSendFundsModalIsOpen(v)}
+								grantData={grantData}
 							/>
-
-							<Grid
-								templateColumns={'56px 1fr 1fr 1fr'}
-							>
-								<GridItem
-									display='flex'
-									alignItems='center'
-									justifyContent='center'
-								>
-									<Checkbox />
-								</GridItem>
-								<GridItem>
-									<Text
-										px={4}
-										py={2}
-										color='#555570'
-										fontSize='14px'
-										lineHeight='20px'
-										fontWeight='500'
-									>
-										Proposals
-									</Text>
-								</GridItem>
-								<GridItem>
-									<Text
-										px={4}
-										py={2}
-										color='#555570'
-										fontSize='14px'
-										lineHeight='20px'
-										fontWeight='500'
-									>
-										Funds sent (in USD)
-									</Text>
-								</GridItem>
-								<GridItem>
-									<Text
-										px={4}
-										py={2}
-										color='#555570'
-										fontSize='14px'
-										lineHeight='20px'
-										fontWeight='500'
-									>
-										Milestone status
-									</Text>
-								</GridItem>
-
-								<GridItem colSpan={4}>
-									<Flex
-										bg='#F0F0F7'
-										h={'1px'}
-									/>
-								</GridItem>
-
-								{/* new ro */}
-
-								<AcceptedRow onSendFundsClicked={() => setSendFundsModalIsOpen(true)} />
-
-								<AcceptedRow onSendFundsClicked={() => setSendFundsModalIsOpen(true)} />
-							</Grid>
 						</TabPanel>
+
+						<TabPanel
+							tabIndex={1}
+							borderRadius={'2px'}
+							p={0}
+							mt={5}
+							bg={'white'}
+							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
+							<InReviewPanel
+								applicantsData={applicantsData}
+								onSendFundsClicked={(v) => setSendFundsModalIsOpen(v)} />
+						</TabPanel>
+
+
 					</TabPanels>
 				</Tabs>
 
-				<RubricDrawer
+				{/* <RubricDrawer
 					rubricDrawerOpen={rubricDrawerOpen}
 					setRubricDrawerOpen={setRubricDrawerOpen}
 					rubricEditAllowed={rubricEditAllowed}
@@ -583,6 +659,12 @@ function ViewApplicants() {
 					grantAddress={grantID}
 					workspaceId={workspace?.id || ''}
 					initialIsPrivate={grantData?.grants[0].rubric?.isPrivate || false}
+				/> */}
+
+				<SetupEvaluationDrawer
+					isOpen={rubricDrawerOpen}
+					onClose={() => setRubricDrawerOpen(false)}
+					onComplete={() => setRubricDrawerOpen(false)}
 				/>
 
 				<SendFundsModal
