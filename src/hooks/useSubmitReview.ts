@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
@@ -11,41 +11,49 @@ import {
 } from 'src/utils/validationUtils'
 import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
+import { FeedbackType } from '../components/your_grants/feedbackDrawer'
+import {
+	useGetInitialReviewedApplicationGrantsQuery,
+} from '../generated/graphql'
+import { delay } from '../utils/generics'
 import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
 
 export default function useSubmitReview(
-	data: any,
+	data: { items?: Array<FeedbackType> },
+	setCurrentStep: (step?: number) => void,
 	isPrivate: boolean,
 	chainId?: SupportedChainId,
 	workspaceId?: string,
 	grantAddress?: string,
 	applicationId?: string,
 ) {
-	const [error, setError] = React.useState<string>()
-	const [loading, setLoading] = React.useState(false)
-	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
-	const [transactionData, setTransactionData] = React.useState<any>()
+	const [error, setError] = useState<string>()
+	const [loading, setLoading] = useState(false)
+	const [incorrectNetwork, setIncorrectNetwork] = useState(false)
+	const [transactionData, setTransactionData] = useState<any>()
 	const { data: accountData } = useAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 	const { encryptMessage } = useEncryption()
 
-	const apiClients = useContext(ApiClientsContext)!
-	const { validatorApi, workspace } = apiClients
+	const { validatorApi, workspace, subgraphClients } = useContext(ApiClientsContext)!
 
 	if(!chainId) {
 		// eslint-disable-next-line no-param-reassign
 		chainId = getSupportedChainIdFromWorkspace(workspace)
 	}
 
+	const { client } = subgraphClients[chainId!]
+
+	const { fetchMore: fetchReviews } = useGetInitialReviewedApplicationGrantsQuery({ client })
+
 	const applicationReviewContract = useQBContract('reviews', chainId)
 
-	const toastRef = React.useRef<ToastId>()
+	const toastRef = useRef<ToastId>()
 	const toast = useToast()
 	const currentChainId = useChainId()
 
 	useEffect(() => {
-		console.log('data', data)
 		if(data) {
 			setError(undefined)
 			setIncorrectNetwork(false)
@@ -74,18 +82,11 @@ export default function useSubmitReview(
 
 		async function validate() {
 			setLoading(true)
-			// console.log('calling validate');
-			try {
-				// console.log(workspaceId || Number(workspace?.id).toString());
-				// console.log('ipfsHash', ipfsHash);
-				// console.log(
-				//   WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
-				//   APPLICATION_REGISTRY_ADDRESS[currentChainId!],
-				// );
+			setCurrentStep(0)
 
-				const encryptedReview = {} as any
+			try {
+				const encryptedReview: { [key in string]: string } = {}
 				if(isPrivate) {
-					console.log(accountData)
 					const yourPublicKey = workspace?.members.find(
 						(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 					)?.publicKey
@@ -93,7 +94,6 @@ export default function useSubmitReview(
 					const encryptedHash = (await uploadToIPFS(encryptedData)).hash
 					encryptedReview[accountData!.address!] = encryptedHash
 
-					console.log(workspace)
 					workspace?.members.filter(
 						(m) => (m.accessLevel === 'admin' || m.accessLevel === 'owner') && (m.publicKey && m.publicKey?.length > 0),
 					).map((m) => ({ key: m.publicKey, address: m.actorId }))
@@ -103,7 +103,6 @@ export default function useSubmitReview(
 							encryptedReview[address] = encryptedAdminHash
 						})
 
-					console.log('encryptedReview', encryptedReview)
 				}
 
 				const dataHash = (await uploadToIPFS(JSON.stringify(data))).hash
@@ -116,23 +115,50 @@ export default function useSubmitReview(
 					encryptedReview,
 				})
 
-				console.log('ipfsHash', ipfsHash)
 
 				if(!ipfsHash) {
 					throw new Error('Error validating review data')
 				}
 
+				setCurrentStep(1)
+
 				const createGrantTransaction = await applicationReviewContract.submitReview(
 					workspaceId || Number(workspace?.id).toString(),
-					applicationId!,
-					grantAddress!,
-					ipfsHash,
+          applicationId!,
+          grantAddress!,
+          ipfsHash,
 				)
+				setCurrentStep(2)
 				const createGrantTransactionData = await createGrantTransaction.wait()
+
+				setCurrentStep(3)
+
+				const reviewerId = accountData!.address!
+
+				let didIndex = false
+				do {
+					await delay(2000)
+					const result = await fetchReviews({
+						variables: {
+							reviewerAddress: reviewerId.toLowerCase(),
+							reviewerAddressStr: reviewerId,
+							applicationsCount: 1,
+						},
+					})
+					const grants = result.data.grantReviewerCounters.map(e => e.grant)
+					grants.forEach(grant => {
+						if(grant.id === grantAddress) {
+							didIndex = true
+						}
+					})
+
+				} while(!didIndex)
 
 				setTransactionData(createGrantTransactionData)
 				setLoading(false)
-			} catch(e: any) {
+				setCurrentStep(5)
+			} catch(e) {
+				setCurrentStep(undefined)
 				const message = getErrorMessage(e)
 				setError(message)
 				setLoading(false)
@@ -202,7 +228,7 @@ export default function useSubmitReview(
 			if(
 				!applicationReviewContract
         || applicationReviewContract.address
-          === '0x0000000000000000000000000000000000000000'
+        === '0x0000000000000000000000000000000000000000'
         || !applicationReviewContract.signer
         || !applicationReviewContract.provider
 			) {
@@ -210,7 +236,7 @@ export default function useSubmitReview(
 			}
 
 			validate()
-		} catch(e: any) {
+		} catch(e) {
 			const message = getErrorMessage(e)
 			setError(message)
 			setLoading(false)
