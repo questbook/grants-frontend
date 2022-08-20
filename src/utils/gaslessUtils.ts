@@ -196,7 +196,7 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 	}
 
 	const g = new Promise((r) => {
-		setTimeout(r, 25000)
+		setTimeout(r, 35000)
 	})
 	g.then(() => { })
 
