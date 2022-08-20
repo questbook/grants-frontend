@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button, Checkbox, Fade, Flex, GridItem, Image, Text, Tooltip } from '@chakra-ui/react'
 import CopyIcon from 'src/components/ui/copy_icon'
-import { FundsCircleFilled } from 'src/v2/assets/custom chakra icons/Your Grants/FundsCircleFilled'
+import { AcceptApplication } from 'src/v2/assets/custom chakra icons/AcceptApplication'
+import { RejectApplication } from 'src/v2/assets/custom chakra icons/RejectApplication'
+import { ResubmitApplication } from 'src/v2/assets/custom chakra icons/ResubmitApplication'
 
-const AcceptedRow = ({
+const InReviewRow = ({
 	onSendFundsClicked,
 	applicantData,
 	isChecked,
@@ -15,6 +17,7 @@ const AcceptedRow = ({
 	onChange: (e: any) => void;
 }) => {
 	const [isHovering, setIsHovering] = useState(false)
+	useEffect(() => console.log(applicantData), [applicantData])
 	return (
 		<>
 			<GridItem
@@ -27,7 +30,8 @@ const AcceptedRow = ({
 			>
 				<Checkbox
 					isChecked={isChecked}
-					onChange={onChange} />
+					onChange={onChange}
+				/>
 			</GridItem>
 			<GridItem
 				onMouseEnter={() => setIsHovering(true)}
@@ -40,6 +44,8 @@ const AcceptedRow = ({
 				<Flex
 					py={2}
 					px={4}
+					display='flex'
+					alignItems='center'
 				>
 					<Flex
 						bg='#F0F0F7'
@@ -48,12 +54,13 @@ const AcceptedRow = ({
 						w={'40px'}
 					>
 						<Image
-											 />
+						/>
 					</Flex>
 
 					<Flex
 						direction='column'
 						ml='12px'
+						alignItems={'center'}
 					>
 						<Text
 							fontSize='14px'
@@ -64,6 +71,15 @@ const AcceptedRow = ({
 						>
 							{applicantData?.project_name}
 						</Text>
+						{/* <Text
+							fontSize='12px'
+							lineHeight='16px'
+							fontWeight='400'
+							mt="2px"
+							color='#7D7DA0'
+						>
+							{applicantData?.} • ryan@gmail.com
+						</Text> */}
 						<Text
 							fontSize='12px'
 							lineHeight='16px'
@@ -105,7 +121,7 @@ const AcceptedRow = ({
 					lineHeight='20px'
 					fontWeight='500'
 				>
-										250 / 2000
+					5 / 5
 				</Text>
 			</GridItem>
 			<GridItem
@@ -126,7 +142,7 @@ const AcceptedRow = ({
 						fontWeight='500'
 						mr='auto'
 					>
-										1 / 4
+						15 • 15 • 15 • 15
 					</Text>
 
 
@@ -138,18 +154,37 @@ const AcceptedRow = ({
 							minH={0}
 							h="auto"
 							borderRadius={'2px'}
-							mr={6}
+							mr={4}
+							ml='auto'
 							onClick={() => onSendFundsClicked()}
 						>
-							<FundsCircleFilled />
-							<Text
-								fontSize='14px'
-								lineHeight='20px'
-								fontWeight='500'
-								ml={'6px'}
-							>
-								Send Funds
-							</Text>
+							<AcceptApplication />
+						</Button>
+
+						<Button
+							px={3}
+							py={'6px'}
+							minW={0}
+							minH={0}
+							h="auto"
+							borderRadius={'2px'}
+							mr={4}
+							onClick={() => onSendFundsClicked()}
+						>
+							<ResubmitApplication />
+						</Button>
+
+						<Button
+							px={3}
+							py={'6px'}
+							minW={0}
+							minH={0}
+							h="auto"
+							borderRadius={'2px'}
+							mr={'auto'}
+							onClick={() => onSendFundsClicked()}
+						>
+							<RejectApplication />
 						</Button>
 					</Fade>
 
@@ -159,4 +194,4 @@ const AcceptedRow = ({
 	)
 }
 
-export default AcceptedRow
+export default InReviewRow
