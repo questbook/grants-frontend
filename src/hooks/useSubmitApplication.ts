@@ -49,13 +49,12 @@ export default function useSubmitApplication(
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = React.useState('not ready')
 
 	useEffect(() => {
-		console.log('rree', biconomyLoading, biconomy, scwAddress, biconomyWalletClient)
-		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading) {
-			console.log('rree', isBiconomyInitialised)
+		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		console.log('rree', isBiconomyLoading, loading)
+		if(biconomy && biconomyWalletClient && scwAddress && !loading && chainId && biconomy.networkId === chainId) {
 			setIsBiconomyInitialised('ready')
 		}
-	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, shouldRefreshNonce])
-
+	}, [biconomy, biconomyWalletClient, scwAddress, loading, isBiconomyInitialised])
 
 	useEffect(() => {
 
@@ -280,7 +279,7 @@ export default function useSubmitApplication(
 		transactionData,
 		getExplorerUrlForTxHash(chainId, transactionData?.transactionHash),
 		loading,
-		isBiconomyInitialised,
+		isBiconomyInitialised === 'ready' && !biconomyLoading,
 		error,
 	]
 }

@@ -713,7 +713,7 @@ function Form({
 			{
 				acceptingApplications && (
 					<Button
-						disabled={isBiconomyInitialised !== 'ready'}
+						disabled={!isBiconomyInitialised}
 						onClick={loading ? () => {} : handleOnSubmit}
 						mx={10}
 						alignSelf="stretch"
