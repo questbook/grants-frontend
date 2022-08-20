@@ -1,4 +1,3 @@
-import { ChangeEventHandler } from 'react'
 import React from 'react'
 import { CheckIcon } from '@chakra-ui/icons'
 import { Flex, Input, InputGroup, InputRightElement, Link, Text } from '@chakra-ui/react'
@@ -72,10 +71,13 @@ function TextField({ label, optionalText, helperText, helperLinkText, helperLink
 					placeholder={placeholder}
 					maxLength={maxLength}
 					color="black.1"
-					onChange={(e) => {
-						if(!isDisabled)
-							setValue(e.target.value)
-					}}
+					onChange={
+						(e) => {
+							if(!isDisabled) {
+								setValue(e.target.value)
+							}
+						}
+					}
 					value={value}
 				/>
 				<InputRightElement>
@@ -86,10 +88,12 @@ function TextField({ label, optionalText, helperText, helperLinkText, helperLink
 								color="violet.2"
 								fontWeight="500"
 								cursor="pointer"
-								onClick={async () => {
-									const text = await navigator.clipboard.readText();
-									setValue(text)
-								}}>
+								onClick={
+									async() => {
+										const text = await navigator.clipboard.readText()
+										setValue(text)
+									}
+								}>
 Paste
 							</Text>
 						)

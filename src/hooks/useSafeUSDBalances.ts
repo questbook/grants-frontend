@@ -12,7 +12,7 @@ const URL_PREFIX = 'v1/safes/'
 const URL_SUFFIX = '/balances/usd'
 const SAFES_BALANCES_CHAIN_ID = Object.keys(SAFES_ENPOINTS)
 const SAFES_BALANCES_ENPOINTS = Object.values(SAFES_ENPOINTS)
-const USD_BALANCE_THRESHOLD = 200
+const USD_BALANCE_THRESHOLD = 50
 
 interface Props {
     safeAddress: string

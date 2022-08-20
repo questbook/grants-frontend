@@ -171,7 +171,7 @@ function Domains({ workspaces, onWorkspaceClick }: Props) {
 						px={0}
 						onClick={
 							() => {
-								router.push({ pathname: '/onboarding/create-dao' })
+								router.push({ pathname: '/onboarding/create-domain' })
 							}
 						}
 					>

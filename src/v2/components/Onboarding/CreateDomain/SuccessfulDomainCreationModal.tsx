@@ -12,7 +12,7 @@ const SuccessfulDomainCreationModal = ({
 	onClose: () => void,
 	redirect?: () => void,
 }) => {
-	const router = useRouter();
+	const router = useRouter()
 	return (
 		<Modal
 			isOpen={isOpen}
@@ -88,20 +88,25 @@ Next create a grant or bounty to attract builders
 						justify="center"
 						w="100%"
 						my={6}>
-						<Button variant="secondaryV2"
-						onClick={() => {
-							router.push({ pathname: '/' })
-						}}>
+						<Button
+							variant="secondaryV2"
+							onClick={
+								() => {
+									router.push({ pathname: '/' })
+								}
+							}>
 I’ll do it later
 						</Button>
 						<Button
 							variant="primaryV2"
 							ml={4}
-							onClick={() => {
-								router.push({
-									pathname: '/your_grants/create_grant/',
-								})
-							}}>
+							onClick={
+								() => {
+									router.push({
+										pathname: '/your_grants/',
+									})
+								}
+							}>
 Create a grant
 						</Button>
 					</Flex>
