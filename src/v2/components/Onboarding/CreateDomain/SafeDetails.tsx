@@ -1,4 +1,3 @@
-import { ChangeEventHandler } from 'react'
 import { Box, Button, CircularProgress, Flex, Image, Text } from '@chakra-ui/react'
 import TextField from '../../InputFields/TextField'
 import SafeSelect, { SafeSelectOption } from './SafeSelect'

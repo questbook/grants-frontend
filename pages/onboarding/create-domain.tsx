@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState, useCallback } from 'react'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Box, Flex, HStack, Image, Spacer, Text, ToastId, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
@@ -23,8 +23,10 @@ import { ConfirmData, DomainName, SafeDetails } from 'src/v2/components/Onboardi
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 import SuccessfulDomainCreationModal from 'src/v2/components/Onboarding/CreateDomain/SuccessfulDomainCreationModal'
 import QuestbookLogo from 'src/v2/components/QuestbookLogo'
+import SuccessToast from 'src/v2/components/Toasts/successToast'
 import VerifySignerModal from 'src/v2/components/VerifySignerModal'
 import { useAccount, useDisconnect } from 'wagmi'
+
 
 const OnboardingCreateDomain = () => {
 	const router = useRouter()
@@ -73,8 +75,9 @@ const OnboardingCreateDomain = () => {
 	}, [])
 
 	useEffect(() => {
-		if(isOwner)
+		if(isOwner) {
 			setIsVerifySignerModalOpen(false)
+		}
 	}, [isOwner])
 
 	// useEffect(() => {
@@ -96,36 +99,25 @@ const OnboardingCreateDomain = () => {
 	const toast = useToast()
 
 	useEffect(() => {
-		if(step === -1) {
+		console.log('cur step', step)
+		if(step === 3 && !isOwner) {
 			if(accountData?.address && safeOwners.includes(accountData?.address)) {
 				setIsOwner(true)
-				setIsVerifySignerModalOpen(false)
 				// alert('Your safe ownership is proved.')
+				toast.closeAll()
 				toast({
-					title: `Your safe ownership is proved.`,
-					status: 'success',
 					duration: 3000,
 					isClosable: true,
 					position: 'top-right',
-				})
-			} else {
-				// setIsOwner(false)
-				if(accountData?.address) {
-					disconnect()
-				}
-
-				// alert('Whoops! Looks like this wallet is not a signer on the safe.')
-				toast({
-					title: `Whoops! Looks like this wallet is not a signer on the safe.`,
-					status: 'error',
-					duration: 3000,
-					isClosable: true,
-					position: 'top-right',
+					render: () => SuccessToast({
+						content: 'Gotcha! You are one of the safe\'s owners.',
+						close: () => {}
+					}),
 				})
 			}
 		}
 
-	}, [accountData, safeOwners, step])
+	}, [accountData, safeOwners, step, isOwner])
 
 	useEffect(() => {
 		if(nonce && nonce !== 'Token expired') {
@@ -186,7 +178,7 @@ const OnboardingCreateDomain = () => {
 			// 	}, 60000)
 			// 	return
 			// }
-			console.log("all", biconomy, scwAddress, nonce, webwallet)
+			console.log('all', biconomy, scwAddress, nonce, webwallet)
 			console.log('creating workspace', accountData!.address)
 			console.log(accountDataWebwallet?.address)
 			setCurrentStep(1)
@@ -258,9 +250,9 @@ const OnboardingCreateDomain = () => {
 			}
 
 			setCurrentStep(5)
-			setTimeout(() => {
-				router.push({ pathname: '/your_grants' })
-			}, 2000)
+			// setTimeout(() => {
+			// 	router.push({ pathname: '/your_grants' })
+			// }, 2000)
 			setIsDomainCreationSuccessful(true)
 		} catch(e) {
 			setCurrentStep(undefined)
@@ -440,7 +432,11 @@ const OnboardingCreateDomain = () => {
 					]
 				} />
 			<VerifySignerModal
-				setIsOwner={(newState) => {setIsOwner(newState)}}
+				setIsOwner={
+					(newState) => {
+						setIsOwner(newState)
+					}
+				}
 				owners={safeOwners}
 				isOpen={isVerifySignerModalOpen}
 				onClose={
