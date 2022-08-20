@@ -263,10 +263,10 @@ function Form({
 			error = true
 		}
 
-		if(projectDetails.getCurrentContent().getPlainText('').length < MINIMUM_ALLOWED_LENGTH) {
-			setProjectDetailsError(true)
-			error = true
-		}
+		// if(projectDetails.getCurrentContent().getPlainText('').length < MINIMUM_ALLOWED_LENGTH) {
+		// 	setProjectDetailsError(true)
+		// 	error = true
+		// }
 
 		if(!projectDetails.getCurrentContent().hasText()) {
 			setProjectDetailsError(true)
