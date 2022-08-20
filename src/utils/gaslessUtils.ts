@@ -161,7 +161,7 @@ export const addAuthorizedUser = async(webwallet_address: string) => {
 }
 
 export const chargeGas = async(workspace_id: number, amount: number) => {
-	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0charge_gas',
+	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/charge_gas',
 		{
 			workspace_id,
 			amount
