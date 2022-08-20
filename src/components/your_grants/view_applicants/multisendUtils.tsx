@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js'
 //@ts-ignore
 import EIP712Domain from 'eth-typed-data'
 import * as ethUtil from 'ethereumjs-util'
-import { ethers } from 'ethers'
+import { utils } from 'ethers'
 
 /*
  * Safe relay service example
@@ -12,7 +12,7 @@ import { ethers } from 'ethers'
 const gnosisEstimateTransaction = async(safe: string, tx: any): Promise<any> => {
 	console.log(JSON.stringify(tx))
 	try {
-		const resp = await axios.post(`https://safe-relay.rinkeby.gnosis.pm/api/v2/safes/${safe}/transactions/estimate/`, tx)
+		const resp = await axios.post(`https://safe-transaction.rinkeby.gnosis.io/api/v1/safes/${safe}/multisig-transactions/estimations/`, tx)
 		console.log(resp.data)
 		return resp.data
 	} catch(e) {
@@ -31,8 +31,6 @@ const gnosisSubmitTx = async(safe: string, tx: any): Promise<any> => {
 		throw e
 	}
 }
-
-const { utils } = ethers
 
 const execute = async(safe, privateKey) => {
 	const safeDomain = new EIP712Domain({
@@ -83,7 +81,7 @@ const execute = async(safe, privateKey) => {
 		...txn,
 		data: utils.arrayify(txn.data)
 	})
-	const signer = async data => {
+	const signer = async(data: Buffer) => {
 		const { r, s, v } = ethUtil.ecsign(data, ethUtil.toBuffer(privateKey))
 		return {
 			r: new BigNumber(r.toString('hex'), 16).toString(10),
@@ -130,12 +128,33 @@ const gnosisProposeTx = async(safe: string, tx: any): Promise<any> => {
 	}
 }
 
-const submitTx = async(safe, sender, privateKey, tx) => {
+const submitTx = async(safe, sender, privateKey, tx, chainId) => {
 
 	const safeDomain = new EIP712Domain({
 		verifyingContract: safe,
 	})
 
+	console.log('chain id ---> ', chainId)
+
+	const EIP712_SAFE_TX_TYPE = {
+		SafeTx: [
+			{ type: 'address', name: 'to' },
+			{ type: 'uint256', name: 'value' },
+			{ type: 'bytes', name: 'data' },
+			{ type: 'uint8', name: 'operation' },
+			{ type: 'uint256', name: 'safeTxGas' },
+			{ type: 'uint256', name: 'baseGas' },
+			{ type: 'uint256', name: 'gasPrice' },
+			{ type: 'address', name: 'gasToken' },
+			{ type: 'address', name: 'refundReceiver' },
+			{ type: 'uint256', name: 'nonce' },
+		]
+	}
+
+	// const safeTxHash = utils._TypedDataEncoder.hash({
+	// 	chainId: ethers.BigNumber.from(chainId),
+	// 	verifyingContract: safe,
+	// }, EIP712_SAFE_TX_TYPE, tx)
 	const SafeTx = safeDomain.createType('SafeTx', [
 		{ type: 'address', name: 'to' },
 		{ type: 'uint256', name: 'value' },
@@ -151,25 +170,26 @@ const submitTx = async(safe, sender, privateKey, tx) => {
 
 	const to = utils.getAddress('0x0ebd146ffd9e20bf74e374e5f3a5a567a798177e')
 
-	tx['operation'] = 1
+	// tx['operation'] = 1
 	const baseTxn = tx
 
 	console.log(JSON.stringify({ baseTxn }))
 
 	// Let the Safe service estimate the tx and retrieve the nonce
-	const { safeTxGas, lastUsedNonce } = await gnosisEstimateTransaction(
-		safe,
-		baseTxn,
-	)
+	// const { safeTxGas, lastUsedNonce } = await gnosisEstimateTransaction(
+	// 	safe,
+	// 	baseTxn,
+	// )
 
 	const txn = {
 		...baseTxn,
-		safeTxGas,
+		safeTxGas: 5000,
 		// Here we can also set any custom nonce
-		nonce: lastUsedNonce === undefined ? 0 : lastUsedNonce + 1,
+		nonce: 34,
 		// We don't want to use the refund logic of the safe to lets use the default values
 		baseGas: 0,
 		gasPrice: 0,
+		gasLimit: 20000,
 		gasToken: '0x0000000000000000000000000000000000000000',
 		refundReceiver: '0x0000000000000000000000000000000000000000',
 	}
@@ -184,6 +204,15 @@ const submitTx = async(safe, sender, privateKey, tx) => {
 		return ethUtil.toRpcSig(v, r, s)
 	}
 
+	// const signHash = async(signer, hash: string) => {
+	// 	const typedDataHash = utils.arrayify(hash)
+	// 	return {
+	// 		signer: signer.address,
+	// 		data: (await signer.signMessage(typedDataHash)).replace(/1b$/, '1f').replace(/1c$/, '20')
+	// 	}
+	// }
+
+	// const signature = await signHash(signer, safeTxHash)
 	const signature = await safeTx.sign(signer)
 
 	console.log({ signature })
@@ -191,7 +220,7 @@ const submitTx = async(safe, sender, privateKey, tx) => {
 	const toSend = {
 		...txn,
 		sender,
-		contractTransactionHash: '0x' + safeTx.signHash().toString('hex'),
+		contractTransactionHash: '0xb40e500adee27688c2d15390fc585ecd31d55fc025698ee04daf4a0004492d3b',
 		signature: signature,
 	}
 

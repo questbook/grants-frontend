@@ -1,8 +1,13 @@
 /* eslint-disable react/no-unstable-nested-components */
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import {
 	Flex, Image, Link,
-	Text, Tooltip, } from '@chakra-ui/react'
+	Text, Tooltip,
+} from '@chakra-ui/react'
+import Safe, { SafeFactory } from '@gnosis.pm/safe-core-sdk'
+import EthersAdapter from '@gnosis.pm/safe-ethers-lib'
+import SafeServiceClient from '@gnosis.pm/safe-service-client'
+import { ethers } from 'ethers'
 import moment from 'moment'
 import Empty from 'src/components/ui/empty'
 import { defaultChainId, SupportedChainId } from 'src/constants/chains'
@@ -16,23 +21,23 @@ import {
 import { getAssetInfo } from '../../../../utils/tokenUtils'
 
 type TableContent = {
-  title: string;
-  flex?: number;
-  content: (
-    item: FundTransfer,
-    assetId: string,
-    assetDecimals: number,
-    grantId: string,
-    chainId?: SupportedChainId,
-    rewardToken?: Token
-  ) => React.ReactChild;
+	title: string;
+	flex?: number;
+	content: (
+		item: FundTransfer,
+		assetId: string,
+		assetDecimals: number,
+		grantId: string,
+		chainId?: SupportedChainId,
+		rewardToken?: Token
+	) => React.ReactChild;
 };
 
 type Token = {
-  label: string;
-  address: string;
-  icon: string;
-  decimals: number
+	label: string;
+	address: string;
+	icon: string;
+	decimals: number
 };
 
 const TABLE_HEADERS: { [id: string]: TableContent } = {
@@ -64,7 +69,7 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 						variant="applicationText">
 						{getMilestoneTitle(item.milestone)}
 						{' '}
-            -
+						-
 						{' '}
 						<Text
 							display="inline-block"
@@ -134,7 +139,7 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 					fontSize="14px"
 					lineHeight="14px"
 				>
-          View
+					View
 					{' '}
 					<Image
 						display="inline-block"
@@ -174,15 +179,15 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 }
 
 export type FundingProps = {
-  fundTransfers: FundTransfer[];
-  assetId: string;
-  columns: (keyof typeof TABLE_HEADERS)[];
-  assetDecimals: number;
-  grantId: string | null;
-  type: string;
-  chainId?: SupportedChainId;
-  // eslint-disable-next-line react/require-default-props
-  rewardToken?: Token;
+	fundTransfers: FundTransfer[];
+	assetId: string;
+	columns: (keyof typeof TABLE_HEADERS)[];
+	assetDecimals: number;
+	grantId: string | null;
+	type: string;
+	chainId?: SupportedChainId;
+	// eslint-disable-next-line react/require-default-props
+	rewardToken?: Token;
 };
 
 function Funding({
@@ -200,6 +205,38 @@ function Funding({
 		[columns],
 	)
 
+	const nonSafeTxns = fundTransfers.filter(fundtransfer => fundtransfer.type === 'funds_disbursed')
+
+	const safeTxn = '0xbd2055be7325b03ed7364dec32cca0a97fea8dda773ebdafab6dade952e5b771'
+
+	// const [safeSdk, safeService] = useGnosisSDK('0x7723d6CD277F0670fcB84eA8E9Efe14f1b16acBB')
+	async function initializeGnosisSdk(safeAddress: string) {
+		const provider = new ethers.providers.Web3Provider(window.ethereum)
+		await provider.send('eth_requestAccounts', [])
+
+		const signer = provider.getSigner()
+		const ethAdapter = new EthersAdapter({
+			ethers,
+			signer,
+		})
+
+		const txServiceUrl = 'https://safe-transaction.rinkeby.gnosis.io/'
+		const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
+		const safeFactory = await SafeFactory.create({ ethAdapter })
+		const safeSdk = await Safe.create({ ethAdapter, safeAddress })
+
+		return { safeService, safeSdk }
+	}
+
+
+	useEffect(async() => {
+		// safeService?.getTransaction(safeTxn)
+		const { safeService, safeSdk } = await initializeGnosisSdk('0x7723d6CD277F0670fcB84eA8E9Efe14f1b16acBB')
+		const txn = await safeService.getTransaction(safeTxn)
+		console.log('safe txn', txn)
+	}, [])
+
+
 	const emptyStates = {
 		funds_deposited: {
 			src: '/illustrations/empty_states/no_deposits.svg',
@@ -207,7 +244,7 @@ function Funding({
 			imgWidth: '135px',
 			title: 'No deposits yet.',
 			subtitle:
-        'Once you deposit funds to your grant smart contract, they will appear here.',
+				'Once you deposit funds to your grant smart contract, they will appear here.',
 		},
 		funds_withdrawn: {
 			src: '/illustrations/empty_states/no_withdrawals.svg',
@@ -215,7 +252,7 @@ function Funding({
 			imgWidth: '135px',
 			title: 'No withdrawals yet.',
 			subtitle:
-        'Once you withdraw funds from your grant smart contract, they will appear here.',
+				'Once you withdraw funds from your grant smart contract, they will appear here.',
 		},
 		funding_sent: {
 			src: '/illustrations/empty_states/funds_received.svg',
@@ -294,17 +331,17 @@ function Funding({
 									>
 										{
 											grantId
-                  && tableHeaders.map(({ title, flex, content }) => (
-                  	<Flex
-                  		key={title}
-                  		direction="row"
-                  		justify="start"
-                  		align="center"
-                  		flex={flex}
-                  	>
-                  		{content(item, assetId, assetDecimals, grantId, chainId, rewardToken)}
-                  	</Flex>
-                  ))
+											&& tableHeaders.map(({ title, flex, content }) => (
+												<Flex
+													key={title}
+													direction="row"
+													justify="start"
+													align="center"
+													flex={flex}
+												>
+													{content(item, assetId, assetDecimals, grantId, chainId, rewardToken)}
+												</Flex>
+											))
 										}
 									</Flex>
 								))
