@@ -171,7 +171,7 @@ export default function useSubmitReview(
 				if(response) {
 					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
 					setTransactionData(receipt)
-					await chargeGas(Number(workspace?.id), Number(txFee))
+					await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee))
 				}
 
 				setCurrentStep(3)
