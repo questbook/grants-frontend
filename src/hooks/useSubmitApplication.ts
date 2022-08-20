@@ -27,7 +27,7 @@ export default function useSubmitApplication(
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
 	const { data: networkData, switchNetwork, network } = useNetwork()
-	const [shouldRefreshNonce, setShouldRefreshNonce] = React.useState<boolean>();
+	const [shouldRefreshNonce, setShouldRefreshNonce] = React.useState<boolean>()
 	const { data: accountData, nonce } = useQuestbookAccount(shouldRefreshNonce)
 
 	const apiClients = useContext(ApiClientsContext)!
@@ -54,7 +54,7 @@ export default function useSubmitApplication(
 			console.log('rree', isBiconomyInitialised)
 			setIsBiconomyInitialised('ready')
 		}
-	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised])
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, shouldRefreshNonce])
 
 
 	useEffect(() => {
@@ -158,7 +158,7 @@ export default function useSubmitApplication(
 				if(response) {
 					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
 					setTransactionData(receipt)
-					await chargeGas(Number(workspace?.id), Number(txFee))
+					await chargeGas(Number(workspaceId), Number(txFee))
 				}
 
 				const CACHE_KEY = strings.cache.apply_grant

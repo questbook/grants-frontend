@@ -12,27 +12,13 @@ export const useBiconomy = (data: { chainId?: string }) => {
 	const { biconomyDaoObj, setBiconomyDaoObj, biconomyWalletClient, setBiconomyWalletClient } = useContext(BiconomyContext)!
 	const { network, switchNetwork } = useNetwork()
 
-	// useEffect(() => {
-	// 	console.log('STEP1', biconomyDaoObj, nonce, webwallet, biconomyWalletClient, data.chainId)
-	// 	const isBiconomyLoading = (typeof window !== 'undefined') ? localStorage.getItem('isBiconomyLoading') === 'true' : true
-	// 	if(!isBiconomyLoading && nonce && webwallet && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress)) {
-	// 		// setIsLoading(true)
-	// 		if (typeof window !== 'undefined') localStorage.setItem('isBiconomyLoading', 'true')
-	// 		console.count('STEP1: trying 1')
-	// 		initiateBiconomy()
-	// 			.then((res) => console.log(res))
-	// 			.catch(error => console.log(error))
-	// 	}
-
-
-	// }, [webwallet, nonce, biconomyDaoObj, biconomyWalletClient, scwAddress])
-
 	useEffect(() => {
 
-		console.log('STEP3', biconomyDaoObj, nonce, webwallet, biconomyWalletClient, data.chainId, network)
 		const isBiconomyLoading = (typeof window !== 'undefined') ? localStorage.getItem('isBiconomyLoading') === 'true' : true
+		console.log('STEP3', biconomyDaoObj, nonce, webwallet, biconomyWalletClient, data.chainId, network, isBiconomyLoading)
 		console.log('STEP3: CHAIN - ', data.chainId, biconomyDaoObj?.networkId)
-		if((!isBiconomyLoading && data.chainId && biconomyDaoObj && biconomyDaoObj.networkId && data.chainId !== biconomyDaoObj.networkId.toString()) || ((!isBiconomyLoading && nonce && webwallet && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress)))) {
+		if((!isBiconomyLoading && data.chainId && biconomyDaoObj && biconomyDaoObj.networkId && data.chainId !== biconomyDaoObj.networkId.toString()) ||
+		((!isBiconomyLoading && nonce && webwallet && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress)))) {
 			// setIsLoading(true)
 			if(typeof window !== 'undefined') {
 				localStorage.setItem('isBiconomyLoading', 'true')
@@ -44,8 +30,13 @@ export const useBiconomy = (data: { chainId?: string }) => {
 				.catch(error => console.log(error))
 		}
 
+		return (() => {
+			if(typeof window !== 'undefined') {
+				localStorage.setItem('isBiconomyLoading', 'false')
+			}
+		})
 
-	}, [data.chainId])
+	}, [data.chainId, nonce])
 
 
 	const initiateBiconomy = useCallback(async() => {

@@ -146,7 +146,7 @@ export default function useSubmitReview(
 				// )
 				// const createGrantTransactionData = await createGrantTransaction.wait()
 
-
+				console.log('workttr', workspaceId || Number(workspace?.id).toString())
 				const response = await sendGaslessTransaction(
 					biconomy,
 					applicationReviewContract,
@@ -167,7 +167,7 @@ export default function useSubmitReview(
 				if(response) {
 					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
 					setTransactionData(receipt)
-					await chargeGas(Number(workspace?.id), Number(txFee))
+					await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee))
 				}
 
 				setLoading(false)

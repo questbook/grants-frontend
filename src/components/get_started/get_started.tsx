@@ -1,7 +1,6 @@
 import React from 'react'
 import {
-	Button, Container, Flex, Image,
-	Link, Text, useTheme, } from '@chakra-ui/react'
+	Button, Container, Flex, Image, Text, useTheme, } from '@chakra-ui/react'
 import strings from '../../constants/strings.json'
 import { highlightWordsInString } from '../../utils/formattingUtils'
 
