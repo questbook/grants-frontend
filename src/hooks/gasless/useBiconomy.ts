@@ -90,7 +90,7 @@ export const useBiconomy = (data: { chainId?: string }) => {
 			console.log(error)
 		})
 
-	}, [webwallet, network, data.chainId])
+	}, [webwallet, data.chainId])
 
 	return {
 		biconomyDaoObj: biconomyDaoObj,

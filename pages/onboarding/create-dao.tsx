@@ -71,7 +71,7 @@ const OnboardingCreateDao = () => {
 			return
 		}
 
-		console.log('webwallet exists')
+		console.log('webwallet exists', nonce)
 		if(nonce && nonce !== 'Token expired') {
 			return
 		}

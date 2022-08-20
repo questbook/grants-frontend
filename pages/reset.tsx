@@ -1,5 +1,5 @@
 
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import {
 	Button,
 	Flex } from '@chakra-ui/react'
@@ -10,6 +10,10 @@ function SignupWebwallet() {
 
 	const { setWebwallet, setScwAddress, setNonce, switchNetwork } = useContext(WebwalletContext)!
 	const { setBiconomyDaoObj } = useContext(BiconomyContext)!
+
+	useEffect(() => {
+		// localStorage.setItem('isBiconomyLoading', 'false');
+	}, [])
 
 	const handleReset = async(e: any) => {
 		e.preventDefault()
