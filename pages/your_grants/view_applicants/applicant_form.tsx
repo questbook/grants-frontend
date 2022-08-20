@@ -107,7 +107,9 @@ function ApplicantForm() {
 		error: queryError,
 		loading: queryLoading,
 	} = useGetApplicationDetailsQuery(queryParams)
+
 	useEffect(() => {
+		console.log("ddddd", data, queryError, queryLoading)
 		if(data && data.grantApplication) {
 			console.log('grantApplication------>', data.grantApplication)
 			setApplicationData(data.grantApplication)

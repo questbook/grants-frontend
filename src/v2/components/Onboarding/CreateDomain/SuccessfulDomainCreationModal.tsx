@@ -1,6 +1,7 @@
 import React from 'react'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { AlertDialogOverlay, Button, Flex, Image, Modal, ModalBody, ModalContent, Text } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 
 const SuccessfulDomainCreationModal = ({
 	isOpen,
@@ -11,6 +12,7 @@ const SuccessfulDomainCreationModal = ({
 	onClose: () => void,
 	redirect?: () => void,
 }) => {
+	const router = useRouter();
 	return (
 		<Modal
 			isOpen={isOpen}
@@ -86,12 +88,20 @@ Next create a grant or bounty to attract builders
 						justify="center"
 						w="100%"
 						my={6}>
-						<Button variant="secondaryV2">
+						<Button variant="secondaryV2"
+						onClick={() => {
+							router.push({ pathname: '/' })
+						}}>
 I’ll do it later
 						</Button>
 						<Button
 							variant="primaryV2"
-							ml={4}>
+							ml={4}
+							onClick={() => {
+								router.push({
+									pathname: '/your_grants/create_grant/',
+								})
+							}}>
 Create a grant
 						</Button>
 					</Flex>

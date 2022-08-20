@@ -175,7 +175,7 @@ function Domains({ workspaces, onWorkspaceClick }: Props) {
 							}
 						}
 					>
-            Create New DAO
+            Create New Domain
 					</Button>
 				</Flex>
 			</Flex>
