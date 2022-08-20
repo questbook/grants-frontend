@@ -55,7 +55,6 @@ const OnboardingCreateDomain = () => {
 	const { data: accountData } = useAccount()
 	const { disconnect } = useDisconnect()
 
-
 	const [shouldRefreshNonce, setShouldRefreshNonce] = useState<boolean>()
 	const { data: accountDataWebwallet, nonce } = useQuestbookAccount(shouldRefreshNonce)
 
@@ -98,7 +97,7 @@ const OnboardingCreateDomain = () => {
 				setIsVerifySignerModalOpen(false)
 				alert('Your safe ownership is proved.')
 			} else {
-				setIsOwner(false)
+				// setIsOwner(false)
 				if(accountData?.address) {
 					disconnect()
 				}
