@@ -28,7 +28,8 @@ export const jsonRpcProviders: { [key: string]: ethers.providers.JsonRpcProvider
 {
 	'80001': new ethers.providers.JsonRpcProvider('https://polygon-mumbai.g.alchemy.com/v2/X6pnQlJfJq00b8MT53QihWBINEgHZHGp'),
 	'4': new ethers.providers.JsonRpcProvider('https://eth-rinkeby.alchemyapi.io/v2/4CCa54H4pABZcHMOMLJfRySfhMkvQFrs'),
-	'5': new ethers.providers.JsonRpcProvider('https://eth-goerli.g.alchemy.com/v2/Hr6VkBfmbJIhEW3fHJnl0ujE0xmWxcqH')
+	'5': new ethers.providers.JsonRpcProvider('https://eth-goerli.g.alchemy.com/v2/Hr6VkBfmbJIhEW3fHJnl0ujE0xmWxcqH'),
+	'137': new ethers.providers.JsonRpcProvider('https://polygon-mainnet.g.alchemy.com/v2/mmBX0eNrvs0k7UpEMwi0eIH6hC4Dqoss')
 }
 
 export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } } = {
@@ -36,7 +37,10 @@ export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } }
 		apiKey: 'cCEUGyH2y.37cd0d5e-704c-49e6-9f3d-e20fe5bb13d5',
 		webHookId: '97d579e5-917d-4059-90af-d46d5ee88b43'
 	},
-
+	'137': {
+		apiKey: 'kcwSbypnqq.f5fe6fbd-10e3-4dfe-a731-5eb4b6d85445',
+		webHookId: '202501f8-639f-495a-a1ec-d52d86db8b2d'
+	}
 }
 
 export const signNonce = async(webwallet: Wallet, nonce: string) => {
@@ -63,7 +67,7 @@ export const getNonce = async(webwallet: Wallet | undefined) => {
 	return false
 }
 
-export const registerWebHook = async(authToken: string, chainId: string) => {
+export const registerWebHook = async(authToken: string, apiKey: string, chainId: string) => {
 	const url = 'https://api.biconomy.io/api/v1/dapp/register-webhook'
 
 	const formData = new URLSearchParams({
@@ -73,7 +77,11 @@ export const registerWebHook = async(authToken: string, chainId: string) => {
 
 	const requestOptions = {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'authToken': authToken, 'apiKey': bicoDapps[chainId].apiKey },
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+			'authToken': authToken,
+			'apiKey': apiKey
+		},
 		body: formData
 	}
 
@@ -173,14 +181,12 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 	console.log("I'm not here")
 	let scwAddress
 	console.log('WEEEE', webwallet.address)
+
 	if(!doesWalletExist) {
 		console.log('Wallet does not exist')
 		console.log('Deploying wallet')
 		walletAddress = await biconomyWalletClient.checkIfWalletExistsAndDeploy({ eoa: webwallet.address }) // default index(salt) 0
-		const g = new Promise((r) => {
-			setTimeout(r, 10000)
-		})
-		g.then(() => {})
+
 		console.log('Wallet deployed at address', walletAddress)
 		scwAddress = walletAddress
 	} else {
@@ -188,6 +194,11 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 		console.log(`Wallet address: ${walletAddress}`)
 		scwAddress = walletAddress
 	}
+
+	const g = new Promise((r) => {
+		setTimeout(r, 15000)
+	})
+	g.then(() => { })
 
 	return scwAddress
 }
@@ -242,7 +253,9 @@ export const sendGaslessTransaction = async(biconomy: any, targetContractObject:
 		'webHookId': webHookId, // received from the webhook register API
 		'webHookData': { // whatever data object to be passed to the webhook
 			'signedNonce': signedNonce,
-			'nonce': nonce
+			'nonce': nonce,
+			'to': targetContractAddress,
+			'chain_id': chainId
 		},
 	}
 	console.log('HI')

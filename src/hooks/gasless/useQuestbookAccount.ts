@@ -8,7 +8,6 @@ export const useQuestbookAccount = (shouldRefreshNonce?: boolean) => {
 
 	// const [gaslessData, setGaslessData] = useState<any>()
 	const gaslessData2 = useMemo(() => {
-		console.log('new p', webwallet, scwAddress, nonce)
 		if(scwAddress && nonce && webwallet) {
 			return {
 				address: scwAddress,

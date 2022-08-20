@@ -9,7 +9,6 @@ import { delay } from 'src/utils/generics'
 import { InviteInfo, useJoinInvite } from 'src/utils/invite'
 import { ForwardArrow } from 'src/v2/assets/custom chakra icons/Arrows/ForwardArrow'
 import ControlBar from '../ControlBar'
-import NetworkFeeEstimateView from '../NetworkFeeEstimateView'
 import NetworkTransactionModal from '../NetworkTransactionModal'
 import RoleDataDisplay from './RoleDataDisplay'
 
@@ -385,8 +384,8 @@ const Step2RightDisplay = ({ getJoinInviteGasEstimate, profile, updateProfile, n
 				w='100%'
 				align='center'
 				justify='center'>
-				<NetworkFeeEstimateView
-					getEstimate={getJoinInviteGasEstimate} />
+				{/* <NetworkFeeEstimateView
+					getEstimate={getJoinInviteGasEstimate} /> */}
 			</HStack>
 
 			<Button

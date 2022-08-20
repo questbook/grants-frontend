@@ -9,27 +9,48 @@ import { useNetwork } from './useNetwork'
 
 export const useBiconomy = (data: { chainId?: string }) => {
 	const { webwallet, scwAddress, setScwAddress, nonce, } = useContext(WebwalletContext)!
-	const { biconomyDaoObj, setBiconomyDaoObj, biconomyWalletClient, setBiconomyWalletClient, loading, setIsLoading } = useContext(BiconomyContext)!
+	const { biconomyDaoObj, setBiconomyDaoObj, biconomyWalletClient, setBiconomyWalletClient } = useContext(BiconomyContext)!
 	const { network, switchNetwork } = useNetwork()
+
+	// useEffect(() => {
+	// 	console.log('STEP1', biconomyDaoObj, nonce, webwallet, biconomyWalletClient, data.chainId)
+	// 	const isBiconomyLoading = (typeof window !== 'undefined') ? localStorage.getItem('isBiconomyLoading') === 'true' : true
+	// 	if(!isBiconomyLoading && nonce && webwallet && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress)) {
+	// 		// setIsLoading(true)
+	// 		if (typeof window !== 'undefined') localStorage.setItem('isBiconomyLoading', 'true')
+	// 		console.count('STEP1: trying 1')
+	// 		initiateBiconomy()
+	// 			.then((res) => console.log(res))
+	// 			.catch(error => console.log(error))
+	// 	}
+
+
+	// }, [webwallet, nonce, biconomyDaoObj, biconomyWalletClient, scwAddress])
 
 	useEffect(() => {
 
-		console.log('STEP1', biconomyDaoObj, nonce, webwallet, biconomyWalletClient, loading)
-		if(
-			(!loading && nonce && webwallet && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress)) ||
-			(data.chainId && biconomyDaoObj && biconomyDaoObj.networkChainId && data.chainId !== biconomyDaoObj.networkChainId.toString())) {
-			setIsLoading(true)
+		console.log('STEP3', biconomyDaoObj, nonce, webwallet, biconomyWalletClient, data.chainId, network)
+		const isBiconomyLoading = (typeof window !== 'undefined') ? localStorage.getItem('isBiconomyLoading') === 'true' : true
+		console.log('STEP3: CHAIN - ', data.chainId, biconomyDaoObj?.networkId)
+		if((!isBiconomyLoading && data.chainId && biconomyDaoObj && biconomyDaoObj.networkId && data.chainId !== biconomyDaoObj.networkId.toString()) || ((!isBiconomyLoading && nonce && webwallet && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress)))) {
+			// setIsLoading(true)
+			if(typeof window !== 'undefined') {
+				localStorage.setItem('isBiconomyLoading', 'true')
+			}
+
+			console.count('STEP3: trying 2')
 			initiateBiconomy()
 				.then((res) => console.log(res))
 				.catch(error => console.log(error))
 		}
 
 
-	}, [webwallet, nonce, biconomyDaoObj, biconomyWalletClient, scwAddress, data.chainId])
+	}, [data.chainId])
+
 
 	const initiateBiconomy = useCallback(async() => {
 		console.log('STEP2', webwallet, network, data.chainId)
-		if(!webwallet || !network) {
+		if(!webwallet) {
 			return
 		}
 
@@ -37,10 +58,9 @@ export const useBiconomy = (data: { chainId?: string }) => {
 		console.log('DAODAO2', biconomyWalletClient)
 		console.log('DAODAO3', scwAddress)
 
-		console.log('CREATING BICONOMY OBJ', network.toString())
+		console.log('CREATING BICONOMY OBJ')
 
-		let _newChainId = data.chainId ? data.chainId : network
-		_newChainId = network.toString()
+		const _newChainId = data.chainId ? data.chainId : network!.toString()
 
 		const _biconomy = new Biconomy(jsonRpcProviders[_newChainId],
 			{
@@ -63,11 +83,18 @@ export const useBiconomy = (data: { chainId?: string }) => {
 
 			setBiconomyWalletClient(_biconomyWalletClient)
 			setBiconomyDaoObj(_biconomy)
-			setIsLoading(false)
+			if(typeof window !== 'undefined') {
+				localStorage.setItem('isBiconomyLoading', 'false')
+			}
+
 			switchNetwork(_newChainId as unknown as SupportedChainId)
 
 		}).onEvent(_biconomy.ERROR, (error: any, message: any) => {
-			setIsLoading(false)
+			// setIsLoading(false)
+			if(typeof window !== 'undefined') {
+				localStorage.setItem('isBiconomyLoading', 'false')
+			}
+
 			console.log(message)
 			console.log(error)
 		})
@@ -77,6 +104,7 @@ export const useBiconomy = (data: { chainId?: string }) => {
 	return {
 		biconomyDaoObj: biconomyDaoObj,
 		biconomyWalletClient: biconomyWalletClient,
-		scwAddress: scwAddress
+		scwAddress: scwAddress,
+		loading: typeof window !== 'undefined' ? localStorage.getItem('isBiconomyLoading') === 'true' : true,
 	}
 }

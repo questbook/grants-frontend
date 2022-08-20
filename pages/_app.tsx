@@ -124,9 +124,7 @@ export const BiconomyContext = createContext<{
 	biconomyDaoObj?: any,
 	setBiconomyDaoObj: (biconomyDaoObj: any) => void,
 	biconomyWalletClient?: BiconomyWalletClient,
-	setBiconomyWalletClient: (biconomyWalletClient: BiconomyWalletClient) => void,
-	loading: boolean,
-	setIsLoading: (loading: boolean) => void;
+	setBiconomyWalletClient: (biconomyWalletClient?: BiconomyWalletClient) => void
 		} | null>(null)
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
@@ -137,7 +135,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [biconomyDaoObj, setBiconomyDaoObj] = React.useState<any>()
 	const [biconomyWalletClient, setBiconomyWalletClient] = React.useState<BiconomyWalletClient>()
 	const [nonce, setNonce] = React.useState<string>()
-	const [loading, setIsLoading] = React.useState<boolean>(false)
 	const [loadingNonce, setLoadingNonce] = React.useState<boolean>(false)
 
 	useEffect(() => {
@@ -170,15 +167,14 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}
 
 	const getNetwork = () => {
-		return 5
 
-		// const _network = localStorage.getItem('network')
+		const _network = localStorage.getItem('network')
 
-		// if(!_network) {
-		// 	return CHAIN_INFO['5'].id
-		// }
+		if(!_network) {
+			return CHAIN_INFO['5'].id
+		}
 
-		// return parseInt(_network)
+		return parseInt(_network)
 	}
 
 	const createWebWallet = () => {
@@ -277,10 +273,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			setBiconomyDaoObj,
 			biconomyWalletClient,
 			setBiconomyWalletClient,
-			loading,
-			setIsLoading
 		}),
-		[biconomyDaoObj, setBiconomyDaoObj, biconomyWalletClient, setBiconomyWalletClient, loading, setIsLoading]
+		[biconomyDaoObj, setBiconomyDaoObj, biconomyWalletClient, setBiconomyWalletClient]
 	)
 
 	const clients = useMemo(() => {
