@@ -220,17 +220,17 @@ function BrowseGrants() {
 										chainId={chainId}
 										onClick={
 											() => {
-												if(!(accountData && accountData.address)) {
-													router.push({
-														pathname: '/connect_wallet',
-														query: {
-															flow: '/',
-															grantId: grant.id,
-															chainId,
-														},
-													})
-													return
-												}
+												// if(!(accountData && accountData.address)) {
+												// 	router.push({
+												// 		pathname: '/connect_wallet',
+												// 		query: {
+												// 			flow: '/',
+												// 			grantId: grant.id,
+												// 			chainId,
+												// 		},
+												// 	})
+												// 	return
+												// }
 
 												router.push({
 													pathname: '/explore_grants/about_grant',

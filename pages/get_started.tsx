@@ -23,10 +23,11 @@ function GetStarted() {
 		return (
 			<Dao
 				onClick={
-					() => router.push({
-						pathname: '/connect_wallet',
-						query: { flow: 'getting_started/dao' },
-					})
+					() => {}
+					// router.push({
+					// 	pathname: '/connect_wallet',
+					// 	query: { flow: 'getting_started/dao' },
+					// })
 				}
 			/>
 		)
@@ -36,10 +37,11 @@ function GetStarted() {
 		return (
 			<Talent
 				onClick={
-					() => router.push({
-						pathname: '/connect_wallet',
-						query: { flow: 'getting_started/developer' },
-					})
+					() => {}
+					// router.push({
+					// 	pathname: '/connect_wallet',
+					// 	query: { flow: 'getting_started/developer' },
+					// })
 				}
 			/>
 		)
