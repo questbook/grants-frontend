@@ -168,7 +168,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 	const [pk, setPk] = useState<string>('*')
 	const [ignorePkModal, setIgnorePkModal] = useState(false)
 
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
 
 	const containerRef = useRef(null)
