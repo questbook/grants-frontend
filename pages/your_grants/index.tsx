@@ -37,7 +37,6 @@ import {
 	getSupportedChainIdFromSupportedNetwork,
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
 import Loader from '../../src/components/ui/loader'
 import { useQuestbookAccount } from '../../src/hooks/gasless/useQuestbookAccount'
 import ReviewerDashboard from '../../src/v2/components/Dashboard/ReviewerDashboard'
