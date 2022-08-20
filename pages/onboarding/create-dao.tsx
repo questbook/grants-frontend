@@ -56,10 +56,11 @@ const OnboardingCreateDao = () => {
 
 	const { disconnect } = useDisconnect()
 
+
 	useEffect(() => {
-		console.log('rree', loading, biconomy, scwAddress, biconomyWalletClient)
-		if(biconomy && biconomyWalletClient && scwAddress && !loading) {
-			console.log('rree', isBiconomyInitialised)
+		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		console.log('rree', isBiconomyLoading, loading)
+		if(biconomy && biconomyWalletClient && scwAddress && !loading && daoNetwork && biconomy.networkId.toString() === daoNetwork?.id.toString()) {
 			setIsBiconomyInitialised('ready')
 		}
 	}, [biconomy, biconomyWalletClient, scwAddress, loading, isBiconomyInitialised])
@@ -71,7 +72,7 @@ const OnboardingCreateDao = () => {
 			return
 		}
 
-		console.log('webwallet exists')
+		console.log('webwallet exists', nonce)
 		if(nonce && nonce !== 'Token expired') {
 			return
 		}

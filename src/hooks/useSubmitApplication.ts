@@ -26,8 +26,9 @@ export default function useSubmitApplication(
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const { data: accountData, nonce } = useQuestbookAccount()
 	const { data: networkData, switchNetwork, network } = useNetwork()
+	const [shouldRefreshNonce, setShouldRefreshNonce] = React.useState<boolean>()
+	const { data: accountData, nonce } = useQuestbookAccount(shouldRefreshNonce)
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients
@@ -41,9 +42,20 @@ export default function useSubmitApplication(
 
 	const { webwallet } = useContext(WebwalletContext)!
 
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: chainId?.toString()
 	})
+
+	const [isBiconomyInitialised, setIsBiconomyInitialised] = React.useState('not ready')
+
+	useEffect(() => {
+		console.log('rree', biconomyLoading, biconomy, scwAddress, biconomyWalletClient)
+		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading) {
+			console.log('rree', isBiconomyInitialised)
+			setIsBiconomyInitialised('ready')
+		}
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, shouldRefreshNonce])
+
 
 	useEffect(() => {
 
@@ -67,6 +79,27 @@ export default function useSubmitApplication(
 		}
 
 	}, [applicationRegistryContract])
+
+	useEffect(() => {
+
+		if(!webwallet) {
+			return
+		}
+
+		console.log('webwallet exists')
+		if(nonce && nonce !== 'Token expired') {
+			return
+		}
+
+		console.log('adding nonce')
+
+		addAuthorizedUser(webwallet?.address)
+			.then(() => {
+				setShouldRefreshNonce(true)
+				console.log('Added authorized user', webwallet.address)
+			})
+			.catch((err) => console.log("Couldn't add authorized user", err))
+	}, [webwallet, nonce, shouldRefreshNonce])
 
 	useEffect(() => {
 		if(incorrectNetwork) {
@@ -125,7 +158,7 @@ export default function useSubmitApplication(
 				if(response) {
 					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
 					setTransactionData(receipt)
-					await chargeGas(Number(workspace?.id), Number(txFee))
+					await chargeGas(Number(workspaceId), Number(txFee))
 				}
 
 				const CACHE_KEY = strings.cache.apply_grant
@@ -207,10 +240,7 @@ export default function useSubmitApplication(
 				return
 			}
 
-			addAuthorizedUser(webwallet?.address)
-				.then(() => {
-					validate()
-				})
+			validate()
 
 		} catch(e: any) {
 			const message = getErrorMessage(e)
@@ -250,6 +280,7 @@ export default function useSubmitApplication(
 		transactionData,
 		getExplorerUrlForTxHash(chainId, transactionData?.transactionHash),
 		loading,
+		isBiconomyInitialised,
 		error,
 	]
 }
