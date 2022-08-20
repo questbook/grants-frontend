@@ -3,13 +3,13 @@ import TextField from '../../InputFields/TextField'
 
 interface Props {
     domainName: string;
-    onChange: React.ChangeEventHandler<HTMLInputElement>;
+    setValue: (newValue: string) => void
     isVerified: boolean;
     setIsVerified: (isVerified: boolean) => void;
     onContinue: () => void;
 }
 
-function DomainName({ domainName, onChange, isVerified, setIsVerified, onContinue } : Props) {
+function DomainName({ domainName, setValue, isVerified, setIsVerified, onContinue } : Props) {
 	return (
 		<>
 			<Text
@@ -25,7 +25,7 @@ Give your domain a name
 				helperLinkUrl='https://youtube.com'
 				placeholder='Ethereum Developer Relations'
 				value={domainName}
-				onChange={onChange}
+				setValue={setValue}
 				isVerified={isVerified}
 				maxLength={30} />
 			<Button
