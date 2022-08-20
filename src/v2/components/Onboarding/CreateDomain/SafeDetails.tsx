@@ -12,11 +12,11 @@ interface Props {
 	isLoading?: boolean;
 	safeSelected: SafeSelectOption;
 	onSelectedSafeChange: (e: SafeSelectOption) => void;
-	onChange: ChangeEventHandler<HTMLInputElement>;
+	setValue: (newValue: string) => void;
 	onContinue: () => void;
 }
 
-function SafeDetails({ safesOptions, step, safeAddress, isPasted, isVerified, isLoading, safeSelected, onChange, onSelectedSafeChange, onContinue }: Props) {
+function SafeDetails({ safesOptions, step, safeAddress, isPasted, isVerified, isLoading, safeSelected, setValue, onSelectedSafeChange, onContinue }: Props) {
 	return (
 		<>
 			<Text
@@ -39,11 +39,11 @@ function SafeDetails({ safesOptions, step, safeAddress, isPasted, isVerified, is
 			<TextField
 				label='Safe Address'
 				helperText='Your safe can be used to invite members & do payouts on Questbook.'
-				helperLinkText='Learn about safe and supported safes'
+				helperLinkText='Learn more'
 				helperLinkUrl='https://youtube.com'
 				placeholder='0xE6379586E5D8350038E9126c5553c0C77549B6c3'
 				value={safeAddress}
-				onChange={onChange}
+				setValue={setValue}
 				isPasted={isPasted}
 				isVerified={isVerified}
 				isDisabled={step === 1}

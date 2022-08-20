@@ -1,22 +1,30 @@
-import React, { useEffect, useState } from 'react'
-import { AlertDialogOverlay, Box, Flex, Image, Link, Modal, ModalBody, ModalContent, Text, VStack } from '@chakra-ui/react'
+import React, { useCallback, useEffect, useState } from 'react'
+import { AlertDialogOverlay, Box, Flex, Image, Link, Modal, ModalBody, ModalContent, Text, useToast, VStack } from '@chakra-ui/react'
 import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
-import { useAccount, useConnect } from 'wagmi'
+import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import VerifySignerErrorState from './VeirfySignerErrorState'
 import VerifyWalletButton from './VerifySignerButton'
+import SuccessToast from 'src/v2/components/Toasts/successToast'
+import ErrorToast from 'src/v2/components/Toasts/errorToast'
 
 const VerifySignerModal = ({
+	owners,
 	isOpen,
 	onClose,
 	redirect,
+	setIsOwner,
 }: {
+	owners: string[],
 	isOpen: boolean,
 	onClose: () => void,
 	redirect?: () => void,
+	setIsOwner: (newState: boolean) => void
 }) => {
 	const [connectClicked, setConnectClicked] = useState(false)
 	const [redirectInitiated, setRedirectInitiated] = useState(false)
+	const { disconnect } = useDisconnect()
+	const toast = useToast()
 
 	const {
 		isError: isErrorConnecting,
@@ -47,7 +55,7 @@ const VerifySignerModal = ({
 	const [isError, setIsError] = React.useState(false)
 
 	useEffect(() => {
-		if(isOpen) {
+		if (isOpen) {
 			setIsError(false)
 		}
 	}, [isOpen])
@@ -58,14 +66,49 @@ const VerifySignerModal = ({
 
 	useEffect(() => {
 		console.log(accountData)
-		if(accountData) {
-			if(!redirectInitiated && redirect && connectClicked) {
+		if (accountData) {
+			if (!redirectInitiated && redirect && connectClicked) {
 				setRedirectInitiated(true)
 				setConnectClicked(false)
 				redirect()
 			}
 		}
 	}, [accountData])
+
+	const showToast = useCallback(() => {
+		console.log("hzn", accountData?.address, owners)
+		if (accountData?.address && owners.includes(accountData?.address)) {
+			setIsOwner(true)
+			// alert('Your safe ownership is proved.')
+			toast.closeAll()
+			toast({
+				duration: 3000,
+				isClosable: true,
+				position: 'top-right',
+				render: () => SuccessToast({ 
+					content: `Gotcha! You are one of the safe's owners.`,
+					close: () => {}
+				}),
+			})
+		} else {
+			// setIsOwner(false)
+			if (accountData?.address) {
+				disconnect()
+			}
+			toast.closeAll()
+			// alert('Whoops! Looks like this wallet is not a signer on the safe.')
+			toast({
+				duration: 3000,
+				isClosable: true,
+				position: 'top-right',
+				render: () => ErrorToast({ 
+					content: `Whoops! Looks like this wallet is not an owner of the safe.`,
+					close: () => {}
+				}),
+				
+			})
+		}
+	}, [accountData, owners, toast])
 
 	return (
 		<Modal
@@ -139,9 +182,10 @@ const VerifySignerModal = ({
 													() => {
 														const connector = connectors.find((x) => x.id === wallet.id)
 														setConnectClicked(true)
-														if(connector) {
+														if (connector) {
 															connect(connector)
 														}
+														showToast()
 														// onClose()
 													}
 												} />
@@ -152,17 +196,17 @@ const VerifySignerModal = ({
 								<Text
 									mt={6}
 									variant="v2_body">
-Need help? Join our
+									Need help? Join our
 									<Link
 										mx={0.25}
 										fontWeight="500"
 										color={'black.1'}
 										isExternal
 										href="https://youtube.com">
-Discord
+										Discord
 									</Link>
 									{' '}
-to get instant support.
+									to get instant support.
 								</Text>
 
 								<Box h={5} />

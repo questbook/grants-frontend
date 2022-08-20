@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState, useCallback } from 'react'
 import { Box, Flex, HStack, Image, Spacer, Text, ToastId, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
@@ -72,6 +72,11 @@ const OnboardingCreateDomain = () => {
 		disconnect()
 	}, [])
 
+	useEffect(() => {
+		if(isOwner)
+			setIsVerifySignerModalOpen(false)
+	}, [isOwner])
+
 	// useEffect(() => {
 	// 	setNonce(undefined)
 	// }, [])
@@ -91,18 +96,32 @@ const OnboardingCreateDomain = () => {
 	const toast = useToast()
 
 	useEffect(() => {
-		if(step === 3) {
+		if(step === -1) {
 			if(accountData?.address && safeOwners.includes(accountData?.address)) {
 				setIsOwner(true)
 				setIsVerifySignerModalOpen(false)
-				alert('Your safe ownership is proved.')
+				// alert('Your safe ownership is proved.')
+				toast({
+					title: `Your safe ownership is proved.`,
+					status: 'success',
+					duration: 3000,
+					isClosable: true,
+					position: 'top-right',
+				})
 			} else {
 				// setIsOwner(false)
 				if(accountData?.address) {
 					disconnect()
 				}
 
-				alert('Whoops! Looks like this wallet is not a signer on the safe.')
+				// alert('Whoops! Looks like this wallet is not a signer on the safe.')
+				toast({
+					title: `Whoops! Looks like this wallet is not a signer on the safe.`,
+					status: 'error',
+					duration: 3000,
+					isClosable: true,
+					position: 'top-right',
+				})
 			}
 		}
 
@@ -145,7 +164,7 @@ const OnboardingCreateDomain = () => {
 		setIsDomainNameVerified(domainName.length > 0)
 	}, [domainName])
 
-	const createWorkspace = async() => {
+	const createWorkspace = useCallback(async() => {
 		console.log(network)
 		if(!network) {
 			return
@@ -167,8 +186,9 @@ const OnboardingCreateDomain = () => {
 			// 	}, 60000)
 			// 	return
 			// }
-
+			console.log("all", biconomy, scwAddress, nonce, webwallet)
 			console.log('creating workspace', accountData!.address)
+			console.log(accountDataWebwallet?.address)
 			setCurrentStep(1)
 			const uploadedImageHash = (await uploadToIPFS(daoImageFile)).hash
 
@@ -241,6 +261,7 @@ const OnboardingCreateDomain = () => {
 			setTimeout(() => {
 				router.push({ pathname: '/your_grants' })
 			}, 2000)
+			setIsDomainCreationSuccessful(true)
 		} catch(e) {
 			setCurrentStep(undefined)
 			const message = getErrorMessage(e)
@@ -256,7 +277,7 @@ const OnboardingCreateDomain = () => {
 				}),
 			})
 		}
-	}
+	}, [accountData, network, biconomy, targetContractObject, scwAddress, webwallet, nonce])
 
 	const steps = [
 		<SafeDetails
@@ -267,9 +288,9 @@ const OnboardingCreateDomain = () => {
 			isPasted={isSafeAddressPasted}
 			isVerified={isSafeAddressVerified}
 			isLoading={!loadedSafesUSDBalance}
-			onChange={
-				(e) => {
-					setSafeAddress(e.target.value)
+			setValue={
+				(newValue) => {
+					setSafeAddress(newValue)
 				}
 			}
 			onContinue={
@@ -285,9 +306,9 @@ const OnboardingCreateDomain = () => {
 			onSelectedSafeChange={setSafeSelected} />, <DomainName
 			key={1}
 			domainName={domainName}
-			onChange={
-				(e) => {
-					setDomainName(e.target.value)
+			setValue={
+				(newValue) => {
+					setDomainName(newValue)
 				}
 			}
 			isVerified={isDomainNameVerified}
@@ -316,7 +337,6 @@ const OnboardingCreateDomain = () => {
 						// setCurrentStep(1)
 						// This would open the final successful domain creation modal
 						// setIsVerifySignerModalOpen(true)
-						// setIsDomainCreationSuccessful(true)
 						// setIsOwner(false)
 						createWorkspace()
 					}
@@ -420,6 +440,8 @@ const OnboardingCreateDomain = () => {
 					]
 				} />
 			<VerifySignerModal
+				setIsOwner={(newState) => {setIsOwner(newState)}}
+				owners={safeOwners}
 				isOpen={isVerifySignerModalOpen}
 				onClose={
 					() => {
