@@ -627,7 +627,7 @@ function Content({
 							<Box my={4}>
 								<SingleLineInput
 									label='Enter recipient address'
-									placeholder='0x89dHVf84'
+									placeholder='0x4bED464ce9D43758e826cfa173f1cDa82964b894'
 									value={recipientAddress}
 									onChange={(e) => setRecipientAddress(e.target.value)} />
 							</Box>

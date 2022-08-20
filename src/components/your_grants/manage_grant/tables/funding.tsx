@@ -229,12 +229,12 @@ function Funding({
 	}
 
 
-	useEffect(async() => {
-		// safeService?.getTransaction(safeTxn)
-		const { safeService, safeSdk } = await initializeGnosisSdk('0x7723d6CD277F0670fcB84eA8E9Efe14f1b16acBB')
-		const txn = await safeService.getTransaction(safeTxn)
-		console.log('safe txn', txn)
-	}, [])
+	// useEffect(async() => {
+	// 	// safeService?.getTransaction(safeTxn)
+	// 	const { safeService, safeSdk } = await initializeGnosisSdk('0x7723d6CD277F0670fcB84eA8E9Efe14f1b16acBB')
+	// 	const txn = await safeService.getTransaction(safeTxn)
+	// 	console.log('safe txn', txn)
+	// }, [])
 
 
 	const emptyStates = {
