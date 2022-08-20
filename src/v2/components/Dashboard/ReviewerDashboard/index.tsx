@@ -1,6 +1,5 @@
 import { useContext, useMemo, useState } from 'react'
 import { Box, Button, Flex } from '@chakra-ui/react'
-import { useAccount } from 'wagmi'
 import { ApiClientsContext } from '../../../../../pages/_app'
 import Loader from '../../../../components/ui/loader'
 import { defaultChainId } from '../../../../constants/chains'
@@ -8,6 +7,7 @@ import {
 	useGetInitialReviewedApplicationGrantsQuery,
 	useGetInitialToBeReviewedApplicationGrantsQuery,
 } from '../../../../generated/graphql'
+import { useQuestbookAccount } from '../../../../hooks/gasless/useQuestbookAccount'
 import {
 	getSupportedChainIdFromWorkspace,
 } from '../../../../utils/validationUtils'
@@ -21,7 +21,7 @@ function ReviewerDashboard() {
 	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 	const { client } = subgraphClients[chainId]
 
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 
 	const variables = {
 		reviewerAddress: accountData!.address!.toLowerCase(),
@@ -55,7 +55,7 @@ function ReviewerDashboard() {
 						onClick={() => setShowPendingReviews(true)}
 						borderRadius={'5px'}
 						padding={'10px'}>
-            To Be Reviewed
+						To Be Reviewed
 					</Button>
 					<Button
 						bg={showPendingReviews ? 'transparent' : 'white'}
@@ -63,7 +63,7 @@ function ReviewerDashboard() {
 						onClick={() => setShowPendingReviews(false)}
 						borderRadius={'5px'}
 						padding={'10px'}>
-            Reviews Done
+						Reviews Done
 					</Button>
 				</Flex>
 			</Box>
