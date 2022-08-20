@@ -130,6 +130,7 @@ function Content({
 
 	const createMultiTransaction = async(transactions: MetaTransaction[]) => {
 		// const safeAddress = '0x7723d6CD277F0670fcB84eA8E9Efe14f1b16acBB'
+		//@ts-ignore
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		await provider.send('eth_requestAccounts', [])
 

@@ -9,6 +9,7 @@ export function useGnosisSDK(safeAddress: string) {
 	const [safeService, setSafeService] = useState()
 
 	async function initializeGnosisSdk(safeAddress: string) {
+		//@ts-ignore
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		await provider.send('eth_requestAccounts', [])
 
