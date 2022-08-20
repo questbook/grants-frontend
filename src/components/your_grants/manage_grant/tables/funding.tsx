@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unstable-nested-components */
-import React, { useEffect, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import {
 	Flex, Image, Link,
 	Text, Tooltip,

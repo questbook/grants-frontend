@@ -35,7 +35,6 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { publicProvider } from 'wagmi/providers/public'
 import 'styles/globals.css'
 import 'draft-js/dist/Draft.css'
-import EthersAdapter from '@gnosis.pm/safe-ethers-lib'
 
 
 type NextPageWithLayout = NextPage & {
@@ -66,7 +65,7 @@ const { chains, provider } = configureChains(allChains, [
 	infuraProvider({ infuraId })
 ])
 
-// const safeOwner = 
+// const safeOwner =
 
 // Set up client
 const client = createClient({

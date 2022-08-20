@@ -598,9 +598,9 @@ function Content({
                 onRejectApplicationClick={onRejectApplicationClick}
               /> */}
 								</Flex>
-								<Button 
-								width='max-content'
-								mx={2}
+								<Button
+									width='max-content'
+									mx={2}
 									variant='primaryCta'
 									onClick={
 										() => {
