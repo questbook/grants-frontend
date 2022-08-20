@@ -16,6 +16,7 @@ interface Props {
 	isError?: boolean;
 	isPasted?: boolean;
 	isVerified?: boolean;
+	isDisabled?: boolean;
 }
 
 function TextField({ label, optionalText, helperText, helperLinkText, helperLinkUrl, placeholder, maxLength, value, onChange, isPasted, isVerified }: Props) {

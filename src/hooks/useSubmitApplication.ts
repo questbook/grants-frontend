@@ -1,17 +1,19 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { GrantApplicationRequest } from '@questbook/service-validator-client'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { APPLICATION_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { addAuthorizedUser, bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
-import {
-	useAccount, useNetwork,
-} from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import strings from '../constants/strings.json'
 import useQBContract from './contracts/useQBContract'
+import { useBiconomy } from './gasless/useBiconomy'
+import { useNetwork } from './gasless/useNetwork'
+import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
 
 export default function useSubmitApplication(
@@ -24,17 +26,32 @@ export default function useSubmitApplication(
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const { data: accountData } = useAccount()
-	const { data: networkData, switchNetwork } = useNetwork()
+	const { data: accountData, nonce } = useQuestbookAccount()
+	const { data: networkData, switchNetwork, network } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
-	const { validatorApi } = apiClients
+	const { validatorApi, workspace } = apiClients
 
 	const currentChainId = useChainId()
 	const applicationRegistryContract = useQBContract('applications', chainId)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
+
+
+	const { webwallet } = useContext(WebwalletContext)!
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		chainId: chainId?.toString()
+	})
+
+	useEffect(() => {
+
+		if(currentChainId !== network) {
+			switchNetwork(currentChainId)
+		}
+
+	}, [network, currentChainId])
 
 	useEffect(() => {
 		if(data) {
@@ -69,6 +86,11 @@ export default function useSubmitApplication(
 			setLoading(true)
 			// console.log('calling validate');
 			try {
+
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					throw new Error('Zero wallet is not ready')
+				}
+
 				const detailsHash = (
 					await uploadToIPFS(data.fields.projectDetails[0].value)
 				).hash
@@ -83,13 +105,28 @@ export default function useSubmitApplication(
 					throw new Error('Error validating grant data')
 				}
 
-				const txn = await applicationRegistryContract.submitApplication(
-					grantId!,
-					Number(workspaceId).toString(),
-					ipfsHash,
-					data.milestones.length,
+				const response = await sendGaslessTransaction(
+					biconomy,
+					applicationRegistryContract,
+					'submitApplication',
+					[grantId!,
+						Number(workspaceId).toString(),
+						ipfsHash,
+						data.milestones.length, ],
+					APPLICATION_REGISTRY_ADDRESS[currentChainId],
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					bicoDapps[currentChainId].webHookId,
+					nonce
 				)
-				const txnData = await txn.wait()
+
+				if(response) {
+					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+					setTransactionData(receipt)
+					await chargeGas(Number(workspace?.id), Number(txFee))
+				}
 
 				const CACHE_KEY = strings.cache.apply_grant
 				const cacheKey = `${chainId}-${CACHE_KEY}-${grantId}`
@@ -98,7 +135,6 @@ export default function useSubmitApplication(
 					localStorage.removeItem(cacheKey)
 				}
 
-				setTransactionData(txnData)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -159,17 +195,23 @@ export default function useSubmitApplication(
 				throw new Error('validatorApi or workspaceId is not defined')
 			}
 
+			if(!webwallet) {
+				throw new Error('Your webwallet is not initialized, please contact support')
+			}
+
 			if(
 				!applicationRegistryContract
         || applicationRegistryContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !applicationRegistryContract.signer
-        || !applicationRegistryContract.provider
 			) {
 				return
 			}
 
-			validate()
+			addAuthorizedUser(webwallet?.address)
+				.then(() => {
+					validate()
+				})
+
 		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)

@@ -1,34 +1,49 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
+import { WebwalletContext } from 'pages/_app'
 import {
 	APPLICATION_REGISTRY_ADDRESS,
+	GRANT_FACTORY_ADDRESS,
 	WORKSPACE_REGISTRY_ADDRESS,
 } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
+import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash, parseAmount } from 'src/utils/formattingUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 	getSupportedValidatorNetworkFromChainId,
 } from 'src/utils/validationUtils'
-import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import strings from '../constants/strings.json'
 import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
+
+// @TODO fix grantContract
 
 export default function useCreateGrant(
 	data: any,
 	chainId?: SupportedChainId,
 	workspaceId?: string,
 ) {
+
+	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		chainId: chainId?.toString()!
+		// targetContractABI: GrantFactoryAbi,
+	})
+
 	const [error, setError] = React.useState<string>()
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
@@ -107,7 +122,7 @@ export default function useCreateGrant(
 					reward,
 					creatorId: accountData?.address!,
 					workspaceId: getSupportedValidatorNetworkFromChainId(
-            (chainId || getSupportedChainIdFromWorkspace(workspace))!,
+						(chainId || getSupportedChainIdFromWorkspace(workspace))!,
 					),
 					fields: data.fields,
 					grantManagers: data.grantManagers.length ? data.grantManagers : [accountData!.address],
@@ -134,23 +149,49 @@ export default function useCreateGrant(
 					rubricHash = auxRubricHash
 				}
 
-				console.log('rubricHash', rubricHash)
+				console.log('rubric hash', GRANT_FACTORY_ADDRESS[currentChainId], grantContract.address, WORKSPACE_REGISTRY_ADDRESS[currentChainId], APPLICATION_REGISTRY_ADDRESS[currentChainId])
 
-				// console.log(workspaceId || Number(workspace?.id).toString());
-				// console.log('ipfsHash', ipfsHash);
-				// console.log(
-				//   WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
-				//   APPLICATION_REGISTRY_ADDRESS[currentChainId!],
-				// );
+				console.log('WHAT IS THIS', biconomyWalletClient, scwAddress)
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					throw new Error('Zero wallet is not ready')
+				}
 
-				const createGrantTransaction = await grantContract.createGrant(
+				// let transactionHash: string | undefined | boolean
+				console.log('THIS IS ADDRESS', GRANT_FACTORY_ADDRESS[currentChainId!], currentChainId)
+
+				console.log('ENTERING', ipfsHash)
+
+				const methodArgs = [
 					workspaceId || Number(workspace?.id).toString(),
 					ipfsHash,
 					rubricHash,
 					WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
 					APPLICATION_REGISTRY_ADDRESS[currentChainId!],
+				]
+
+				console.log('THESE ARE METHODS', methodArgs)
+
+				const response = await sendGaslessTransaction(
+					biconomy,
+					grantContract,
+					'createGrant',
+					methodArgs,
+					grantContract.address,
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					bicoDapps[currentChainId].webHookId,
+					nonce
 				)
-				const createGrantTransactionData = await createGrantTransaction.wait()
+
+				if(!response) {
+					return
+				}
+
+				const { txFee, receipt } = await getTransactionDetails(response, currentChainId.toString())
+
+				await chargeGas(Number(workspace?.id), Number(txFee))
 
 				const CACHE_KEY = strings.cache.create_grant
 				const cacheKey = `${chainId || getSupportedChainIdFromWorkspace(workspace)}-${CACHE_KEY}-${workspace?.id}`
@@ -159,7 +200,7 @@ export default function useCreateGrant(
 					localStorage.removeItem(cacheKey)
 				}
 
-				setTransactionData(createGrantTransactionData)
+				setTransactionData(receipt)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -180,21 +221,30 @@ export default function useCreateGrant(
 		}
 
 		try {
+			console.log('O')
 			if(!data) {
 				return
 			}
+
+			console.log('OO')
 
 			if(transactionData) {
 				return
 			}
 
+			console.log('OOO')
+
 			if(!accountData || !accountData.address) {
 				throw new Error('not connected to wallet')
 			}
 
+			console.log('OOOO')
+
 			if(!workspace) {
 				throw new Error('not connected to workspace')
 			}
+
+			console.log('OOOOO')
 
 			if(!currentChainId) {
 				if(switchNetwork && chainId) {
@@ -224,10 +274,8 @@ export default function useCreateGrant(
 
 			if(
 				!grantContract
-        || grantContract.address
-          === '0x0000000000000000000000000000000000000000'
-        || !grantContract.signer
-        || !grantContract.provider
+				|| grantContract.address
+				=== '0x0000000000000000000000000000000000000000'
 			) {
 				return
 			}

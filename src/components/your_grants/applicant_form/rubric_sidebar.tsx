@@ -5,10 +5,11 @@ import {
 	Drawer, DrawerContent, DrawerOverlay, Flex, Image, Link, Text, } from '@chakra-ui/react'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import Loader from 'src/components/ui/loader'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useEncryption from 'src/hooks/utils/useEncryption'
 import { truncateStringFromMiddle } from 'src/utils/formattingUtils'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
-import { useAccount } from 'wagmi'
+
 
 interface RubricSidebarProps {
   total: number;
@@ -34,7 +35,7 @@ function RubricSidebar({
 	const [forPercentage, setForPercentage] = React.useState<number>(0)
 	const [againstPercentage, setAgainstPercentage] = React.useState<number>(0)
 
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 
 	const decodeReviews = async() => {
 		setLoading(true)

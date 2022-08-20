@@ -1,13 +1,17 @@
 /* eslint-disable eqeqeq */
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { APPLICATION_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { useAccount, useNetwork } from 'wagmi'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
+import { useBiconomy } from './gasless/useBiconomy'
+import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
 
 export default function useRequestMilestoneApproval(
@@ -20,7 +24,7 @@ export default function useRequestMilestoneApproval(
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
@@ -29,6 +33,15 @@ export default function useRequestMilestoneApproval(
 	const applicationContract = useQBContract('applications', chainId)
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
+	const { workspace } = apiClients
+
+	const { webwallet } = useContext(WebwalletContext)!
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		chainId: chainId?.toString()
+		// targetContractABI: ApplicationReviewRegistryAbi,
+	})
+
 	if(chainId) {
 		// eslint-disable-next-line no-param-reassign
 		chainId = parseInt(chainId as unknown as string, 10)
@@ -66,6 +79,11 @@ export default function useRequestMilestoneApproval(
 			setLoading(true)
 			// console.log('calling validate');
 			try {
+
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					throw new Error('Zero wallet is not ready')
+				}
+
 				const {
 					data: { ipfsHash },
 				} = await validatorApi.validateApplicationMilestoneUpdate(data)
@@ -73,14 +91,36 @@ export default function useRequestMilestoneApproval(
 					throw new Error('Error validating grant data')
 				}
 
-				const updateTxn = await applicationContract.requestMilestoneApproval(
-					applicationId!,
-					Number(milestoneIndex),
-					ipfsHash,
-				)
-				const updateTxnData = await updateTxn.wait()
+				// const updateTxn = await applicationContract.requestMilestoneApproval(
+				// 	applicationId!,
+				// 	Number(milestoneIndex),
+				// 	ipfsHash,
+				// )
+				// const updateTxnData = await updateTxn.wait()
 
-				setTransactionData(updateTxnData)
+				const response = await sendGaslessTransaction(
+					biconomy,
+					applicationContract,
+					'requestMilestoneApproval',
+					[applicationId!,
+						Number(milestoneIndex),
+						ipfsHash, ],
+					APPLICATION_REGISTRY_ADDRESS[currentChainId],
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					bicoDapps[currentChainId].webHookId,
+					nonce
+				)
+
+
+				if(response) {
+					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+					setTransactionData(receipt)
+					await chargeGas(Number(workspace?.id), Number(txFee))
+				}
+
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -157,8 +197,6 @@ export default function useRequestMilestoneApproval(
 				!applicationContract
         || applicationContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !applicationContract.signer
-        || !applicationContract.provider
 			) {
 				return
 			}

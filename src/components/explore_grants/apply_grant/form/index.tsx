@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React from 'react'
+import React, { useContext } from 'react'
 import {
 	Box,
 	Button,
@@ -12,14 +12,15 @@ import {
 import { GrantApplicationRequest } from '@questbook/service-validator-client'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import { useRouter } from 'next/router'
+import { WebwalletContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import { SupportedChainId } from 'src/constants/chains'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useSubmitApplication from 'src/hooks/useSubmitApplication'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { isValidEmail } from 'src/utils/validationUtils'
-import { useAccount, useSigner } from 'wagmi'
 import strings from '../../../../constants/strings.json'
 import { GrantApplicationFieldsSubgraph } from '../../../../types/application'
 import { parseAmount } from '../../../../utils/formattingUtils'
@@ -51,6 +52,8 @@ interface Props {
   defaultMilestoneFields: any[];
 }
 
+const MINIMUM_ALLOWED_LENGTH = 250
+
 // eslint-disable-next-line max-len
 function Form({
 	// onSubmit,
@@ -73,12 +76,12 @@ function Form({
 	shouldShowButton,
 	defaultMilestoneFields,
 }: Props) {
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const CACHE_KEY = strings.cache.apply_grant
 	const getKey = `${chainId}-${CACHE_KEY}-${grantId}`
 
 	const { encryptApplicationPII } = useApplicationEncryption()
-	const { data: signer } = useSigner()
+	const { webwallet: signer } = useContext(WebwalletContext)!
 	const [applicantName, setApplicantName] = React.useState('')
 	const [applicantNameError, setApplicantNameError] = React.useState(false)
 
@@ -197,6 +200,7 @@ function Form({
 		let error = false
 		if(applicantName === '' && grantRequiredFields.includes('applicantName')) {
 			setApplicantNameError(true)
+			console.log('Error name')
 			error = true
 		}
 
@@ -204,7 +208,9 @@ function Form({
 			(applicantEmail === '' || !isValidEmail(applicantEmail))
       && grantRequiredFields.includes('applicantEmail')
 		) {
+
 			setApplicantEmailError(true)
+			console.log('Error email')
 			error = true
 		}
 
@@ -213,6 +219,7 @@ function Form({
       && grantRequiredFields.includes('teamMembers')
 		) {
 			setTeamMembersError(true)
+			console.log('Error teamMembers')
 			error = true
 		}
 
@@ -224,6 +231,8 @@ function Form({
         && grantRequiredFields.includes('memberDetails')
 			) {
 				newMembersDescriptionArray[index].isError = true
+				console.log('Error memberDetails')
+
 				membersDescriptionError = true
 			}
 		})
@@ -235,6 +244,8 @@ function Form({
 
 		if(projectName === '' && grantRequiredFields.includes('projectName')) {
 			setProjectNameError(true)
+			console.log('Error projectName')
+
 			error = true
 		}
 
@@ -249,6 +260,11 @@ function Form({
 
 		if(projectLinksError) {
 			setProjectLinks(newProjectLinks)
+			error = true
+		}
+
+		if(projectDetails.getCurrentContent().getPlainText('').length < MINIMUM_ALLOWED_LENGTH) {
+			setProjectDetailsError(true)
 			error = true
 		}
 
@@ -307,6 +323,7 @@ function Form({
 			setCustomFields(errorCheckedCustomFields)
 		}
 
+
 		if(error) {
 			return
 		}
@@ -315,7 +332,7 @@ function Form({
 			convertToRaw(projectDetails.getCurrentContent()),
 		)
 		const links = projectLinks.map((pl) => pl.link)
-
+		console.log('Signer', signer)
 		if(!signer || !signer) {
 			return
 		}
@@ -418,6 +435,7 @@ function Form({
 			setProjectLinks(formDataLocal?.projectLinks)
 		}
 
+		console.log('projecttt', formDataLocal.projectDetails)
 		if(formDataLocal?.projectDetails) {
 			setProjectDetails(
 				EditorState.createWithContent(

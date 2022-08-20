@@ -34,8 +34,9 @@ export interface GrantAbiInterface extends utils.Interface {
     "applicationReg()": FunctionFragment;
     "disburseReward(uint96,uint96,address,uint256)": FunctionFragment;
     "disburseRewardP2P(uint96,address,uint96,address,uint256)": FunctionFragment;
+    "grantFactory()": FunctionFragment;
     "incrementApplicant()": FunctionFragment;
-    "initialize(uint96,string,address,address,address)": FunctionFragment;
+    "initialize(uint96,string,address,address,address,address)": FunctionFragment;
     "metadataHash()": FunctionFragment;
     "numApplicants()": FunctionFragment;
     "owner()": FunctionFragment;
@@ -58,6 +59,7 @@ export interface GrantAbiInterface extends utils.Interface {
       | "applicationReg"
       | "disburseReward"
       | "disburseRewardP2P"
+      | "grantFactory"
       | "incrementApplicant"
       | "initialize"
       | "metadataHash"
@@ -101,6 +103,10 @@ export interface GrantAbiInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "grantFactory",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "incrementApplicant",
     values?: undefined
   ): string;
@@ -108,6 +114,7 @@ export interface GrantAbiInterface extends utils.Interface {
     functionFragment: "initialize",
     values: [
       PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
@@ -189,6 +196,10 @@ export interface GrantAbiInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "disburseRewardP2P",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "grantFactory",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -457,6 +468,8 @@ export interface GrantAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    grantFactory(overrides?: CallOverrides): Promise<[string]>;
+
     incrementApplicant(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -466,6 +479,7 @@ export interface GrantAbi extends BaseContract {
       _metadataHash: PromiseOrValue<string>,
       _workspaceReg: PromiseOrValue<string>,
       _applicationReg: PromiseOrValue<string>,
+      _grantFactory: PromiseOrValue<string>,
       _grantFactoryOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -550,6 +564,8 @@ export interface GrantAbi extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  grantFactory(overrides?: CallOverrides): Promise<string>;
+
   incrementApplicant(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -559,6 +575,7 @@ export interface GrantAbi extends BaseContract {
     _metadataHash: PromiseOrValue<string>,
     _workspaceReg: PromiseOrValue<string>,
     _applicationReg: PromiseOrValue<string>,
+    _grantFactory: PromiseOrValue<string>,
     _grantFactoryOwner: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -643,6 +660,8 @@ export interface GrantAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    grantFactory(overrides?: CallOverrides): Promise<string>;
+
     incrementApplicant(overrides?: CallOverrides): Promise<void>;
 
     initialize(
@@ -650,6 +669,7 @@ export interface GrantAbi extends BaseContract {
       _metadataHash: PromiseOrValue<string>,
       _workspaceReg: PromiseOrValue<string>,
       _applicationReg: PromiseOrValue<string>,
+      _grantFactory: PromiseOrValue<string>,
       _grantFactoryOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -862,6 +882,8 @@ export interface GrantAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    grantFactory(overrides?: CallOverrides): Promise<BigNumber>;
+
     incrementApplicant(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -871,6 +893,7 @@ export interface GrantAbi extends BaseContract {
       _metadataHash: PromiseOrValue<string>,
       _workspaceReg: PromiseOrValue<string>,
       _applicationReg: PromiseOrValue<string>,
+      _grantFactory: PromiseOrValue<string>,
       _grantFactoryOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -956,6 +979,8 @@ export interface GrantAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    grantFactory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     incrementApplicant(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -965,6 +990,7 @@ export interface GrantAbi extends BaseContract {
       _metadataHash: PromiseOrValue<string>,
       _workspaceReg: PromiseOrValue<string>,
       _applicationReg: PromiseOrValue<string>,
+      _grantFactory: PromiseOrValue<string>,
       _grantFactoryOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

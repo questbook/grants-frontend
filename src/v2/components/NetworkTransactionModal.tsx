@@ -69,14 +69,14 @@ export default ({
 									{' on'}
 								</Text>
 
-								<Image
+								{/* <Image
 									boxSize='3'
-									src={info?.icon || ''} />
+									src={info?.icon || ''} /> */}
 
 								<Text
 									fontSize='small'
 									fontWeight='bold'>
-									{info?.name}
+									the blockchain
 								</Text>
 							</HStack>
 						</VStack>
