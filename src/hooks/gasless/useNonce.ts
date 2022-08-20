@@ -3,7 +3,7 @@ import { WebwalletContext } from '../../../pages/_app'
 import { getNonce } from '../../utils/gaslessUtils'
 
 export const useNonce = (shouldRefreshNonce?: boolean) => {
-	const { webwallet, setWebwallet, nonce, setNonce, loadingNonce, setLoadingNonce } = useContext(WebwalletContext)!
+	const { webwallet, setWebwallet, nonce, setNonce } = useContext(WebwalletContext)!
 
 	const getUseNonce = useCallback(async() => {
 		console.log('rerewq', webwallet)
@@ -12,14 +12,14 @@ export const useNonce = (shouldRefreshNonce?: boolean) => {
 	}, [webwallet])
 
 	useEffect(() => {
-		console.log('GOT NONCE', webwallet, nonce, loadingNonce, shouldRefreshNonce)
-
+		console.log('GOT NONCE', webwallet, nonce, shouldRefreshNonce)
+		const loadingNonce = localStorage.getItem('loadingNonce') === 'true'
 		if(!webwallet || loadingNonce || nonce) {
 			return
 		}
 
-		console.log('GOT NONCE 2')
-		setLoadingNonce(true)
+		console.log('GOT NONCE 255')
+		localStorage.setItem('loadingNonce', 'true')
 
 		getUseNonce()
 			.then(_nonce => {
@@ -27,6 +27,7 @@ export const useNonce = (shouldRefreshNonce?: boolean) => {
 				if(!_nonce) {
 					setNonce(undefined)
 				} else {
+					2
 					if(_nonce === 'Token expired') {
 						setNonce(undefined)
 					} else {
@@ -37,9 +38,9 @@ export const useNonce = (shouldRefreshNonce?: boolean) => {
 			.catch((err) => {
 				console.log('GOT NONCE', err)
 			})
-		setLoadingNonce(false)
+		localStorage.setItem('loadingNonce', 'false')
 
-	}, [webwallet, nonce, loadingNonce, shouldRefreshNonce])
+	}, [webwallet, nonce, shouldRefreshNonce])
 
 	return nonce
 }
