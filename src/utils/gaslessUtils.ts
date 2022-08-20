@@ -161,7 +161,7 @@ export const addAuthorizedUser = async(webwallet_address: string) => {
 }
 
 export const chargeGas = async(workspace_id: number, amount: number) => {
-	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/charge_gas',
+	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0charge_gas',
 		{
 			workspace_id,
 			amount
@@ -196,7 +196,7 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 	}
 
 	const g = new Promise((r) => {
-		setTimeout(r, 15000)
+		setTimeout(r, 25000)
 	})
 	g.then(() => { })
 
@@ -287,7 +287,11 @@ export const getTransactionDetails = async(transactionHash: string, chainId: str
 		throw new Error("Couldn't fetch gas price!")
 	}
 
-	return { receipt, txFee: gasPrice?.toBigInt() * receipt.gasUsed.toBigInt() }
+	const txFeeBigInt = gasPrice?.toBigInt() * receipt.gasUsed.toBigInt()
+	const txFeeEther = ethers.utils.formatEther(txFeeBigInt)
+	const txFee = Number(txFeeEther).toFixed(4).toString()
+
+	return { receipt, txFee }
 }
 
 export const getEventData = async(receipt: any, eventName: string, contractABI: any) => {

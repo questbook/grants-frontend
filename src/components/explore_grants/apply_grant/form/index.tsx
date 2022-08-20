@@ -74,7 +74,7 @@ function Form({
 	members,
 	acceptingApplications,
 	shouldShowButton,
-	defaultMilestoneFields,
+	defaultMilestoneFields
 }: Props) {
 	const { data: accountData, nonce } = useQuestbookAccount()
 	const CACHE_KEY = strings.cache.apply_grant
@@ -177,7 +177,7 @@ function Form({
 	const router = useRouter()
 
 	const [formData, setFormData] = React.useState<GrantApplicationRequest>()
-	const [txnData, txnLink, loading] = useSubmitApplication(
+	const [txnData, txnLink, loading, isBiconomyInitialised] = useSubmitApplication(
     formData!,
     chainId,
     grantId,
@@ -263,10 +263,10 @@ function Form({
 			error = true
 		}
 
-		if(projectDetails.getCurrentContent().getPlainText('').length < MINIMUM_ALLOWED_LENGTH) {
-			setProjectDetailsError(true)
-			error = true
-		}
+		// if(projectDetails.getCurrentContent().getPlainText('').length < MINIMUM_ALLOWED_LENGTH) {
+		// 	setProjectDetailsError(true)
+		// 	error = true
+		// }
 
 		if(!projectDetails.getCurrentContent().hasText()) {
 			setProjectDetailsError(true)
@@ -713,6 +713,7 @@ function Form({
 			{
 				acceptingApplications && (
 					<Button
+						disabled={isBiconomyInitialised !== 'ready'}
 						onClick={loading ? () => {} : handleOnSubmit}
 						mx={10}
 						alignSelf="stretch"

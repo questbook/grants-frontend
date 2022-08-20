@@ -1,7 +1,6 @@
 import React from 'react'
 import {
-	Button, Container, Flex, Image,
-	Link, Text, useTheme, } from '@chakra-ui/react'
+	Button, Container, Flex, Image, Text, useTheme, } from '@chakra-ui/react'
 import strings from '../../constants/strings.json'
 import { highlightWordsInString } from '../../utils/formattingUtils'
 
@@ -93,9 +92,9 @@ function GetStarted({
 				variant="footer"
 				mt="51px"
 				mb="35px">
-				<Link href="/connect_wallet">
+				{/* <Link href="/connect_wallet">
 					{strings.get_started.footer.link}
-				</Link>
+				</Link> */}
 				{' '}
 				{strings.get_started.footer.text}
 			</Text>
