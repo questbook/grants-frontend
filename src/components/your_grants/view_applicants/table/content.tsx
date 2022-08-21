@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 import {
 	Box,
 	Button,
@@ -25,6 +25,7 @@ import { MetaTransaction } from 'ethers-multisend'
 import CopyIcon from 'src/components/ui/copy_icon'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import Modal from 'src/components/ui/modal'
+import useChainId from 'src/hooks/utils/useChainId'
 import useApplicationMilestones from 'src/utils/queryUtil'
 import { erc20ABI } from 'wagmi'
 import {
@@ -67,13 +68,14 @@ function Content({
 	const [transactions, setTransactions] = useState<MetaTransaction[]>([])
 	const [isAddToBatchButtonClicked, setIsAddToBatchButtonClicked] = useState(false)
 	const [safeAddress, setSafeAddress] = useState('')
+	const [batchLookUpQueue, setBatchLookUpQueue] = useState<{[key: string]: boolean}>({})
 	const {
 		data: {
 			milestones, rewardAsset, rewardToken, fundingAsk, decimals,
 		},
 		refetch: refetchMilestones,
 	} = useApplicationMilestones(applicationID)
-
+	const chainId = useChainId()
 	const getStatus = (status: number): ReactElement => {
 		if(status === TableFilters.submitted) {
 			return <PendingReview />
@@ -137,7 +139,14 @@ function Content({
 			signer,
 		})
 
-		const txServiceUrl = 'https://safe-transaction.polygon.gnosis.io'
+		let txServiceUrl = 'https://safe-transaction.polygon.gnosis.io/'
+
+		if(chainId === 4) {
+			txServiceUrl = 'https://safe-transaction.rinkeby.gnosis.io/'
+		} else if(chainId === 137) {
+			txServiceUrl = 'https://safe-transaction.polygon.gnosis.io/'
+		}
+
 		const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
 		const safeFactory = await SafeFactory.create({ ethAdapter })
 		const safeSdk = await Safe.create({ ethAdapter, safeAddress })
@@ -172,7 +181,7 @@ function Content({
 		// setIsAddToBatchButtonClicked(false)
 	}
 
-	const addToBatch = () => {
+	const addToBatch = (applicationId: string) => {
 		const txData = ERC20Interface.encodeFunctionData('transfer', [
 			recipientAddress,
 			ethers.utils.parseUnits(fundAmount, decimals)
@@ -191,12 +200,20 @@ function Content({
 			setTransactions([...transactions, tx])
 		}
 
+
+		setBatchLookUpQueue({ ...batchLookUpQueue, [applicationId]: true })
+
+
 		setToDefaultValues()
 	}
 
 	const executeTransaction = () => {
 		createMultiTransaction(transactions)
 	}
+
+	useEffect(() => {
+		console.log('lookup queue', batchLookUpQueue)
+	}, [batchLookUpQueue])
 
 	return (
 		<>
@@ -596,20 +613,32 @@ function Content({
                 onRejectApplicationClick={onRejectApplicationClick}
               /> */}
 								</Flex>
-								<Button
-									width='max-content'
-									mx={2}
-									variant='primaryCta'
-									onClick={
-										() => {
-											setIsAddToBatchModalOpen(true)
-											setIsAddToBatchButtonClicked(false)
-											setApplicationID(item.applicationId)
-											console.log('application id', item.applicationId)
-										}
-									}>
-									Add to batch
-								</Button>
+								{
+									item.status === 2 ? (
+										<Button
+											width={32}
+											mx={2}
+											variant='primaryCta'
+											onClick={
+												() => {
+													setIsAddToBatchModalOpen(true)
+													setIsAddToBatchButtonClicked(false)
+													setApplicationID(item.applicationId)
+													console.log('application id', item.applicationId)
+												}
+											}>
+											{batchLookUpQueue[item.applicationId] ? 'Added' : 'Add to batch'}
+										</Button>
+									) : (
+										<Button
+											width={32}
+											mx={2}
+											variant='ghost'
+											disabled>
+											Add to batch
+										</Button>
+									)
+								}
 							</Flex>
 						)))
 				}
@@ -685,7 +714,7 @@ function Content({
 								variant='primaryCta'
 								onClick={
 									() => {
-										addToBatch()
+										addToBatch(applicationID)
 										setIsAddToBatchButtonClicked(true)
 									}
 								}>

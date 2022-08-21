@@ -1,12 +1,12 @@
-import { useState } from 'react'
-import Safe, { SafeFactory } from '@gnosis.pm/safe-core-sdk'
+import { useEffect, useState } from 'react'
+import Safe, { SafeConfig, SafeFactory } from '@gnosis.pm/safe-core-sdk'
 import EthersAdapter from '@gnosis.pm/safe-ethers-lib'
-import SafeServiceClient from '@gnosis.pm/safe-service-client'
+import SafeServiceClient, { SafeServiceClientConfig } from '@gnosis.pm/safe-service-client'
 import { ethers } from 'ethers'
 
 export function useGnosisSDK(safeAddress: string) {
-	const [safeSDK, setSafeSDK] = useState()
-	const [safeService, setSafeService] = useState()
+	const [safeSDK, setSafeSDK] = useState<SafeConfig>()
+	const [safeService, setSafeService] = useState<SafeServiceClientConfig>()
 
 	async function initializeGnosisSdk(safeAddress: string) {
 		//@ts-ignore
@@ -20,16 +20,21 @@ export function useGnosisSDK(safeAddress: string) {
 		})
 
 		const txServiceUrl = 'https://safe-transaction.rinkeby.gnosis.io/'
-		const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
+		const _safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
+		console.log('Safe service', _safeService)
 		//@ts-ignore
-		setSafeService(safeService)
+		setSafeService(_safeService)
 		const safeFactory = await SafeFactory.create({ ethAdapter })
 		const safeSdk = await Safe.create({ ethAdapter, safeAddress })
 		//@ts-ignore
 		setSafeSDK(safeSdk)
+		console.log('safe sdk', safeSdk)
 	}
 
-	initializeGnosisSdk(safeAddress)
+	useEffect(() => {
+		initializeGnosisSdk(safeAddress)
+	}, [safeAddress])
+
 
 	return [safeSDK, safeService]
 }

@@ -4,13 +4,10 @@ import {
 	Flex, Image, Link,
 	Text, Tooltip,
 } from '@chakra-ui/react'
-import Safe, { SafeFactory } from '@gnosis.pm/safe-core-sdk'
-import EthersAdapter from '@gnosis.pm/safe-ethers-lib'
-import SafeServiceClient from '@gnosis.pm/safe-service-client'
-import { ethers } from 'ethers'
 import moment from 'moment'
 import Empty from 'src/components/ui/empty'
 import { defaultChainId, SupportedChainId } from 'src/constants/chains'
+import { useGnosisSDK } from 'src/hooks/useGnosisSdk'
 import { FundTransfer } from 'src/types'
 import {
 	formatAmount,
@@ -209,33 +206,33 @@ function Funding({
 
 	const safeTxn = '0xbd2055be7325b03ed7364dec32cca0a97fea8dda773ebdafab6dade952e5b771'
 
-	// const [safeSdk, safeService] = useGnosisSDK('0x7723d6CD277F0670fcB84eA8E9Efe14f1b16acBB')
-	async function initializeGnosisSdk(safeAddress: string) {
-		// @ts-ignore
-		const provider = new ethers.providers.Web3Provider(window.ethereum)
-		await provider.send('eth_requestAccounts', [])
+	const [safeSdk, safeService] = useGnosisSDK('0x7723d6CD277F0670fcB84eA8E9Efe14f1b16acBB')
+	// async function initializeGnosisSdk(safeAddress: string) {
+	// 	// @ts-ignore
+	// 	const provider = new ethers.providers.Web3Provider(window.ethereum)
+	// 	await provider.send('eth_requestAccounts', [])
 
-		const signer = provider.getSigner()
-		const ethAdapter = new EthersAdapter({
-			ethers,
-			signer,
-		})
+	// 	const signer = provider.getSigner()
+	// 	const ethAdapter = new EthersAdapter({
+	// 		ethers,
+	// 		signer,
+	// 	})
 
-		const txServiceUrl = 'https://safe-transaction.rinkeby.gnosis.io/'
-		const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
-		const safeFactory = await SafeFactory.create({ ethAdapter })
-		const safeSdk = await Safe.create({ ethAdapter, safeAddress })
+	// 	const txServiceUrl = 'https://safe-transaction.rinkeby.gnosis.io/'
+	// 	const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
+	// 	const safeFactory = await SafeFactory.create({ ethAdapter })
+	// 	const safeSdk = await Safe.create({ ethAdapter, safeAddress })
 
-		return { safeService, safeSdk }
-	}
+	// 	return { safeService, safeSdk }
+	// }
 
 
-	// useEffect(async() => {
-	// 	// safeService?.getTransaction(safeTxn)
-	// 	const { safeService, safeSdk } = await initializeGnosisSdk('0x7723d6CD277F0670fcB84eA8E9Efe14f1b16acBB')
+	// useEffect(() => {
+	// 	safeService?.getTransaction(safeTxn)
+	// 	// const { safeService, safeSdk } = await initializeGnosisSdk('0x7723d6CD277F0670fcB84eA8E9Efe14f1b16acBB')
 	// 	const txn = await safeService.getTransaction(safeTxn)
 	// 	console.log('safe txn', txn)
-	// }, [])
+	// }, [safeService])
 
 
 	const emptyStates = {

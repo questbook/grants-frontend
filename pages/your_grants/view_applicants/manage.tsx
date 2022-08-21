@@ -33,6 +33,7 @@ import {
 } from 'src/generated/graphql'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useCompleteApplication from 'src/hooks/useCompleteApplication'
+import { useGnosisSDK } from 'src/hooks/useGnosisSdk'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
@@ -114,8 +115,9 @@ function ManageGrant() {
 			applicationId: applicationID,
 		},
 	})
-
+	const safeTxnHash = '0xbd2055be7325b03ed7364dec32cca0a97fea8dda773ebdafab6dade952e5b771'
 	// console.log('Funds Disbursed', fundsDisbursed);
+	const [safeSdk, safeService] = useGnosisSDK('0x7723d6CD277F0670fcB84eA8E9Efe14f1b16acBB')
 
 	const [applicationData, setApplicationData] = useState<GetApplicationDetailsQuery['grantApplication']>(null)
 	const applicantEmail = useMemo(
@@ -151,6 +153,12 @@ function ManageGrant() {
 	}
 
 	const fundingIcon = assetInfo.icon
+
+	// useEffect(() => {
+	// 	if(safeTxnHash && safeService) {
+	// 		safeService.getTransaction(safeTxnHash)
+	// 	}
+	// }, [safeTxnHash, safeService])
 
 	useEffect(() => {
 		setApplicationID(router?.query?.applicationId || '')
