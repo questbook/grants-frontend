@@ -44,7 +44,7 @@ const tableHeadersAlignReviewer = [
 	'center'
 ]
 
-function Headers({ is_reviewer }:{ is_reviewer : boolean; }) {
+function Headers({ is_reviewer }: { is_reviewer: boolean; }) {
 	const Tableduel = is_reviewer ? (tableHeadersReviewer) : (tableHeaders)
 	return (
 		<Flex
