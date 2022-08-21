@@ -1,17 +1,15 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { ApiClientsContext, WebwalletContext } from 'pages/_app'
-import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
-import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import useEncryption from 'src/hooks/utils/useEncryption'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
+import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import { FeedbackType } from '../components/your_grants/feedbackDrawer'
 import {
@@ -19,8 +17,6 @@ import {
 } from '../generated/graphql'
 import { delay } from '../utils/generics'
 import useQBContract from './contracts/useQBContract'
-import { useBiconomy } from './gasless/useBiconomy'
-import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
 
 export default function useSubmitReview(
@@ -36,7 +32,7 @@ export default function useSubmitReview(
 	const [loading, setLoading] = useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = useState(false)
 	const [transactionData, setTransactionData] = useState<any>()
-	const { data: accountData, nonce } = useQuestbookAccount()
+	const { data: accountData } = useAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 	const { encryptMessage } = useEncryption()
 
@@ -56,16 +52,6 @@ export default function useSubmitReview(
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
 	const currentChainId = useChainId()
-
-	const { webwallet } = useContext(WebwalletContext)!
-
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
-		chainId: chainId?.toString(),
-	})
-
-	if(!chainId) {
-		chainId = getSupportedChainIdFromWorkspace(workspace)
-	}
 
 	useEffect(() => {
 		if(data) {
@@ -99,11 +85,6 @@ export default function useSubmitReview(
 			setCurrentStep(0)
 
 			try {
-
-				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
-					throw new Error('Zero wallet is not ready')
-				}
-
 				const encryptedReview: { [key in string]: string } = {}
 				if(isPrivate) {
 					const yourPublicKey = workspace?.members.find(
@@ -139,41 +120,17 @@ export default function useSubmitReview(
 					throw new Error('Error validating review data')
 				}
 
-				// const createGrantTransaction = await applicationReviewContract.submitReview(
-				// 	workspaceId || Number(workspace?.id).toString(),
-				// 	applicationId!,
-				// 	grantAddress!,
-				// 	ipfsHash,
-				// )
-				// const createGrantTransactionData = await createGrantTransaction.wait()
-
 				setCurrentStep(1)
 
-				const response = await sendGaslessTransaction(
-					biconomy,
-					applicationReviewContract,
-					'submitReview',
-					[scwAddress,
-						workspaceId || Number(workspace?.id).toString(),
-						applicationId!,
-						grantAddress!,
-						ipfsHash],
-					APPLICATION_REVIEW_REGISTRY_ADDRESS[currentChainId],
-					biconomyWalletClient,
-					scwAddress,
-					webwallet,
-					`${currentChainId}`,
-					bicoDapps[currentChainId].webHookId,
-					nonce,
+				const createGrantTransaction = await applicationReviewContract.submitReview(
+					accountData?.address!,
+					workspaceId || Number(workspace?.id).toString(),
+          applicationId!,
+          grantAddress!,
+          ipfsHash,
 				)
-
 				setCurrentStep(2)
-
-				if(response) {
-					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
-					setTransactionData(receipt)
-					await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee))
-				}
+				const createGrantTransactionData = await createGrantTransaction.wait()
 
 				setCurrentStep(3)
 
@@ -198,6 +155,7 @@ export default function useSubmitReview(
 
 				} while(!didIndex)
 
+				setTransactionData(createGrantTransactionData)
 				setLoading(false)
 				setCurrentStep(5)
 			} catch(e) {
@@ -270,8 +228,10 @@ export default function useSubmitReview(
 
 			if(
 				!applicationReviewContract
-				|| applicationReviewContract.address
-				=== '0x0000000000000000000000000000000000000000'
+        || applicationReviewContract.address
+        === '0x0000000000000000000000000000000000000000'
+        || !applicationReviewContract.signer
+        || !applicationReviewContract.provider
 			) {
 				return
 			}
