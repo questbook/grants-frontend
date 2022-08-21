@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import { CHAIN_INFO } from 'src/constants/chains'
 import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
@@ -13,6 +14,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSafeOwners from 'src/hooks/useSafeOwners'
 import useSafeUSDBalances from 'src/hooks/useSafeUSDBalances'
 import getErrorMessage from 'src/utils/errorUtils'
+import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { addAuthorizedOwner, addAuthorizedUser, bicoDapps, chargeGas, getEventData, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
@@ -32,7 +34,7 @@ const OnboardingCreateDomain = () => {
 	const router = useRouter()
 	const [step, setStep] = useState(0)
 	const [currentStep, setCurrentStep] = useState<number>()
-
+	const { network } = useNetwork()
 
 	// State variables for step 0 and 1
 	const [safeAddress, setSafeAddress] = useState('')
@@ -50,6 +52,8 @@ const OnboardingCreateDomain = () => {
 	const [isOwner, setIsOwner] = useState(false)
 	const [isVerifySignerModalOpen, setIsVerifySignerModalOpen] = useState(false)
 	const { data: safeOwners } = useSafeOwners({ safeAddress, chainID: safeSelected?.networkId ?? '' })
+	const [ txHash, setTxHash ] = useState('')
+	const [ownerAddress, setOwnerAddress] = useState('')
 
 	const [isDomainCreationSuccessful, setIsDomainCreationSuccessful] = useState(false)
 
@@ -57,17 +61,13 @@ const OnboardingCreateDomain = () => {
 	const { data: accountData } = useAccount()
 	const { disconnect } = useDisconnect()
 
+	// Webwallet
 	const [shouldRefreshNonce, setShouldRefreshNonce] = useState<boolean>()
 	const { data: accountDataWebwallet, nonce } = useQuestbookAccount(shouldRefreshNonce)
-
-	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
-
-	const { network } = useNetwork()
-
+	const { webwallet } = useContext(WebwalletContext)!
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading } = useBiconomy({
 		chainId: network?.toString() || '',
 	})
-
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState('not ready')
 
 	useEffect(() => {
@@ -105,6 +105,7 @@ const OnboardingCreateDomain = () => {
 		if(step === 3 && !isOwner) {
 			if(accountData?.address && safeOwners.includes(accountData?.address)) {
 				setIsOwner(true)
+				setOwnerAddress(accountData.address)
 				// alert('Your safe ownership is proved.')
 				toast.closeAll()
 				toast({
@@ -255,6 +256,7 @@ const OnboardingCreateDomain = () => {
 			// setTimeout(() => {
 			// 	router.push({ pathname: '/your_grants' })
 			// }, 2000)
+			setTxHash(txHash)
 			setIsDomainCreationSuccessful(true)
 		} catch(e) {
 			setCurrentStep(undefined)
@@ -316,8 +318,8 @@ const OnboardingCreateDomain = () => {
 			safeAddress={safeAddress}
 			safeChainIcon="/ui_icons/gnosis.svg"
 			domainName={domainName}
-			domainNetwork="Polygon"
-			domainNetworkIcon='/ui_icons/polygon.svg'
+			domainNetwork={network ? CHAIN_INFO[network].name : 'Polygon'}
+			domainNetworkIcon={network ? CHAIN_INFO[network].icon : CHAIN_INFO[137].icon} // polygon is the default network
 			domainImageFile={daoImageFile}
 			onImageFileChange={(image) => setDaoImageFile(image)}
 			onCreateDomain={
@@ -337,7 +339,7 @@ const OnboardingCreateDomain = () => {
 				}
 			}
 			isVerified={isOwner}
-			signerAddress="0xE6379586E5D8350038E9126c5553c0C77549B6c3" />
+			signerAddress={ownerAddress} />
 	]
 
 
@@ -452,7 +454,10 @@ const OnboardingCreateDomain = () => {
 					() => {
 						setIsDomainCreationSuccessful(false)
 					}
-				} />
+				}
+				networkName={network ? CHAIN_INFO[network].name : undefined}
+				daoLink={network && txHash ? getExplorerUrlForTxHash(network, txHash) : undefined}
+			/>
 		</>
 	)
 }

@@ -83,7 +83,7 @@ My domain
 								<Text
 									ml={1}
 									variant="v2_title">
-									{formatAddress(safeAddress)}
+									{safeAddress}
 								</Text>
 							)
 						}

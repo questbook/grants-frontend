@@ -1,16 +1,21 @@
 import React from 'react'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
-import { AlertDialogOverlay, Button, Flex, Image, Modal, ModalBody, ModalContent, Text } from '@chakra-ui/react'
+import { AlertDialogOverlay, Button, Flex, Image, Link, Modal, ModalBody, ModalContent, Text } from '@chakra-ui/react'
+import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 
 const SuccessfulDomainCreationModal = ({
 	isOpen,
 	onClose,
 	redirect,
+	networkName,
+	daoLink
 }: {
 	isOpen: boolean,
 	onClose: () => void,
 	redirect?: () => void,
+	daoLink?: string,
+	networkName?: string,
 }) => {
 	const router = useRouter()
 	return (
@@ -58,21 +63,30 @@ Success! Your DAO is created
 						justify="center"
 						w="100%"
 						mt={2}>
-						<Button
-							rightIcon={
-								<ExternalLinkIcon
-									color="black.1"
-									boxSize="12px" />
-							}
-							variant="link">
-							<Text
-								variant="v2_body"
-								fontWeight="500">
-Polygon DAO
-							</Text>
-						</Button>
+						<NextLink
+							href={daoLink ?? '#'}
+							passHref>
+
+							<Link isExternal>
+								<Flex>
+									<Text
+										variant="v2_body"
+										fontWeight="500">
+										{networkName ?? 'Unknown'}
+										{' '}
+DAO
+									</Text>
+									<ExternalLinkIcon
+										color="black.1"
+										boxSize="15px"
+										mx='2px' />
+								</Flex>
+
+							</Link>
+
+						</NextLink>
 						<Text
-							ml={2}
+							ml={1}
 							variant="v2_body"
 							color="black.2">
 is now on-chain.
