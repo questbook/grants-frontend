@@ -85,6 +85,9 @@ function Form({
 	const [applicantEmail, setApplicantEmail] = React.useState('')
 	const [applicantEmailError, setApplicantEmailError] = React.useState(false)
 
+	const [applicantAddress, setApplicantAddress] = React.useState('')
+	const [applicantAddressError, setApplicantAddressError] = React.useState(false)
+
 	const [teamMembers, setTeamMembers] = React.useState<number | null>(1)
 	const [teamMembersError, setTeamMembersError] = React.useState(false)
 
@@ -208,6 +211,11 @@ function Form({
 			error = true
 		}
 
+		if(applicantAddress === '' && grantRequiredFields.includes('applicantAddress')) {
+			setApplicantAddressError(true)
+			error = true
+		}
+
 		if(
 			(!teamMembers || teamMembers <= 0)
       && grantRequiredFields.includes('teamMembers')
@@ -328,6 +336,7 @@ function Form({
 			fields: {
 				applicantName: [{ value: applicantName }],
 				applicantEmail: [{ value: applicantEmail }],
+				applicantAddress: [{ value: applicantAddress }],
 				projectName: [{ value: projectName }],
 				projectDetails: [{ value: projectDetailsString }],
 				fundingAsk: fundingAsk !== '' ? [
@@ -402,6 +411,10 @@ function Form({
 			setApplicantEmail(formDataLocal?.applicantEmail)
 		}
 
+		if(formDataLocal?.applicantAddress) {
+			setApplicantAddress(formDataLocal?.applicantAddress)
+		}
+
 		if(formDataLocal?.teamMembers) {
 			setTeamMembers(formDataLocal?.teamMembers)
 		}
@@ -457,6 +470,7 @@ function Form({
 		const formDataLocal = {
 			applicantName,
 			applicantEmail,
+			applicantAddress,
 			teamMembers,
 			membersDescription,
 			projectName,
@@ -476,6 +490,7 @@ function Form({
 	}, [
 		applicantName,
 		applicantEmail,
+		applicantAddress,
 		teamMembers,
 		membersDescription,
 		projectName,
@@ -580,10 +595,14 @@ function Form({
 					applicantNameError={applicantNameError}
 					applicantEmail={applicantEmail}
 					applicantEmailError={applicantEmailError}
+					applicantAddress={applicantAddress}
+					applicantAddressError={applicantAddressError}
 					setApplicantName={setApplicantName}
 					setApplicantNameError={setApplicantNameError}
 					setApplicantEmail={setApplicantEmail}
 					setApplicantEmailError={setApplicantEmailError}
+					setApplicantAddress={setApplicantAddress}
+					setApplicantAddressError={setApplicantAddressError}
 					grantRequiredFields={grantRequiredFields}
 				/>
 

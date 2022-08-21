@@ -90,6 +90,9 @@ function Form({
 	const [applicantEmail, setApplicantEmail] = useState('')
 	const [applicantEmailError, setApplicantEmailError] = useState(false)
 
+	const [applicantAddress, setApplicantAddress] = useState('')
+	const [applicantAddressError, setApplicantAddressError] = useState(false)
+
 	const [teamMembers, setTeamMembers] = useState(1)
 	const [teamMembersError, setTeamMembersError] = useState(false)
 
@@ -165,6 +168,7 @@ function Form({
 			if(formData && !loadedData) {
 				setApplicantName(formData.applicantName)
 				setApplicantEmail(formData.applicantEmail)
+				setApplicantAddress(formData.applicantAddress)
 				setTeamMembers(formData.teamMembers)
 				setMembersDescription(
 					formData?.membersDescription.map((member: any) => ({
@@ -246,6 +250,11 @@ function Form({
       && grantRequiredFields.includes('applicantEmail')
 		) {
 			setApplicantEmailError(true)
+			error = true
+		}
+
+		if(applicantAddress === '' && grantRequiredFields.includes('applicantAddress')) {
+			setApplicantAddressError(true)
 			error = true
 		}
 
@@ -361,6 +370,7 @@ function Form({
 			fields: {
 				applicantName: [{ value: applicantName }],
 				applicantEmail: [{ value: applicantEmail }],
+				applicantAddress: [{ value: applicantAddress }],
 				projectName: [{ value: projectName }],
 				projectDetails: [{ value: projectDetailsString }],
 				fundingAsk: [{ value: parseAmount(fundingAsk, rewardCurrencyAddress) }],
@@ -621,10 +631,14 @@ function Form({
 								applicantNameError={applicantNameError}
 								applicantEmail={applicantEmail}
 								applicantEmailError={applicantEmailError}
+								applicantAddress={applicantAddress}
+								applicantAddressError={applicantAddressError}
 								setApplicantName={setApplicantName}
 								setApplicantNameError={setApplicantNameError}
 								setApplicantEmail={setApplicantEmail}
 								setApplicantEmailError={setApplicantEmailError}
+								setApplicantAddress={setApplicantAddress}
+								setApplicantAddressError={setApplicantAddressError}
 								readOnly={onEdit === false}
 								grantRequiredFields={grantRequiredFields}
 							/>

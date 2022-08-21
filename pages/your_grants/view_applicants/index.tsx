@@ -186,7 +186,7 @@ function ViewApplicants() {
 				return {
 					grantTitle: applicant?.grant?.title,
 					applicationId: applicant.id,
-					applicant_address: applicant.applicantId,
+					applicant_address: getFieldString('applicantAddress') ?? applicant.applicantId,
 					sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
 					updated_on: moment.unix(applicant.updatedAtS).format('DD MMM YYYY'),
 					// applicant_name: getFieldString('applicantName'),
