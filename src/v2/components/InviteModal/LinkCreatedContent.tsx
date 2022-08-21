@@ -1,4 +1,4 @@
-import { Button, Divider, HStack, Image, ModalBody, ModalCloseButton, ModalContent, ModalFooter, Spacer, Text, VStack } from '@chakra-ui/react'
+import { Divider, HStack, Image, ModalBody, ModalCloseButton, ModalContent, Spacer, Text, VStack } from '@chakra-ui/react'
 import CopyButton from '../CopyButton'
 
 type LinkCreatedContentProps = {
@@ -6,7 +6,7 @@ type LinkCreatedContentProps = {
 	onClose: () => void
 }
 
-const LinkCreatedContent = ({ link, onClose }: LinkCreatedContentProps) => {
+const LinkCreatedContent = ({ link }: LinkCreatedContentProps) => {
 	return (
 		<ModalContent>
 			<ModalCloseButton />
@@ -49,19 +49,6 @@ const LinkCreatedContent = ({ link, onClose }: LinkCreatedContentProps) => {
 					</VStack>
 				</VStack>
 			</ModalBody>
-
-			<Divider />
-
-			<ModalFooter
-				alignItems='center'
-				justifyContent='center'>
-				<Button
-					variant='ghost'
-					color='v2Grey'
-					onClick={onClose}>
-						I will share it later
-				</Button>
-			</ModalFooter>
 		</ModalContent>
 	)
 }

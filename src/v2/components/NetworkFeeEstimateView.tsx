@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Flex, Image, Skeleton, Spacer, Text } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import { formatEther } from 'ethers/lib/utils'
-import { CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
-import useChainId from 'src/hooks/utils/useChainId'
+import { ApiClientsContext } from 'pages/_app'
+import { CHAIN_INFO, defaultChainId, SupportedChainId } from 'src/constants/chains'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useProvider } from 'wagmi'
 
 type NetworkFeeEstimateViewProps = {
@@ -12,11 +13,13 @@ type NetworkFeeEstimateViewProps = {
 }
 
 const NetworkFeeEstimateView = ({ chainId, getEstimate }: NetworkFeeEstimateViewProps) => {
-	const inbuiltChainId = useChainId()
-	const provider = useProvider()
+	const { workspace } = useContext(ApiClientsContext)!
 	const [gasEstimate, setGasEstimate] = useState<string>()
+	chainId = chainId || getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 
-	const symbol = CHAIN_INFO[chainId || inbuiltChainId]?.nativeCurrency.symbol
+	const provider = useProvider({ chainId })
+
+	const symbol = CHAIN_INFO[chainId]?.nativeCurrency.symbol
 
 	useEffect(() => {
 		(async() => {
@@ -37,32 +40,27 @@ const NetworkFeeEstimateView = ({ chainId, getEstimate }: NetworkFeeEstimateView
 	}, [getEstimate, setGasEstimate, provider])
 
 	return (
-		<Flex
-			mt={14}
-			justifyContent={'center'}
-		>
-			<Skeleton isLoaded={gasEstimate !== undefined}>
-				<Flex
-					bg='#F0F0F7'
-					align='center'
-					borderRadius='base'
-					p='1'
-					px={3}>
-					<Image
-						src='/ui_icons/gas_station.svg'
-						h='4' />
-					<Spacer w='1' />
-					<Text
-						fontSize={'xs'}>
-              			Network Fee:
-						{' '}
-						{gasEstimate}
-						{' '}
-						{symbol}
-					</Text>
-				</Flex>
-			</Skeleton>
-		</Flex>
+		<Skeleton isLoaded={gasEstimate !== undefined}>
+			<Flex
+				bg='#F0F0F7'
+				align='center'
+				borderRadius='base'
+				p='1'
+				px={3}>
+				<Image
+					src='/ui_icons/gas_station.svg'
+					h='4' />
+				<Spacer w='1' />
+				<Text
+					fontSize='xs'>
+              		Network Fee:
+					{' '}
+					{gasEstimate}
+					{' '}
+					{symbol}
+				</Text>
+			</Flex>
+		</Skeleton>
 	)
 }
 
