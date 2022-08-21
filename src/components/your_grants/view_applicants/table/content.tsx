@@ -33,9 +33,6 @@ import {
 } from '../states'
 import { TableFilters } from './TableFilters'
 
-
-const txServiceUrl = 'https://transaction-service.gnosis-safe-staging.celo-networks-dev.org'
-
 const ERC20Interface = new ethers.utils.Interface(erc20ABI)
 
 function Content({
@@ -140,7 +137,7 @@ function Content({
 			signer,
 		})
 
-		const txServiceUrl = 'https://safe-transaction.rinkeby.gnosis.io/'
+		const txServiceUrl = 'https://safe-transaction.polygon.gnosis.io'
 		const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
 		const safeFactory = await SafeFactory.create({ ethAdapter })
 		const safeSdk = await Safe.create({ ethAdapter, safeAddress })
