@@ -1,21 +1,25 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, Button, Container, Drawer, DrawerContent, DrawerOverlay, Flex, Text } from '@chakra-ui/react'
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
-import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
 import { SetupEvaluation } from 'src/v2/assets/custom chakra icons/SetupEvaluation'
-import AssignReviewers from './AssignReviewers'
-import RubricsForm from './RubricsForm'
+// import AssignReviewers from './AssignReviewers'
+import RubricsView from './RubricsView'
 
-const SetupEvaluationDrawer = ({
+const ViewEvaluationDrawer = ({
 	isOpen,
 	onClose,
 	onComplete,
+	grantData,
 }: {
   isOpen: boolean;
   onClose: () => void;
 	onComplete: () => void;
+  grantData: any;
 }) => {
 
+	useEffect(() => console.log('grantDataGGG', grantData), [grantData])
+
+	// The will be required while implementing edit rubrics
 	const [step, setStep] = useState(0)
 
 	return (
@@ -70,7 +74,7 @@ const SetupEvaluationDrawer = ({
 								lineHeight='24px'
 								fontWeight='500'
 							>
-							Setup applicant evaluation
+							Evaluation criteria
 							</Text>
 							<Text
 								fontSize='14px'
@@ -79,7 +83,7 @@ const SetupEvaluationDrawer = ({
 								mt={1}
 								color='#7D7DA0'
 							>
-							Define a scoring rubric and assign reviewers.
+							Scoring rubric used by reviewers to assign scores.
 							</Text>
 						</Flex>
 
@@ -90,6 +94,7 @@ const SetupEvaluationDrawer = ({
 							w={6}
 							onClick={
 								() => {
+									setStep(0)
 									onClose()
 								}
 							}
@@ -108,92 +113,14 @@ const SetupEvaluationDrawer = ({
 						maxH={'calc(100vh - 32px)'}
 						overflowY={'scroll'}
 						direction={'column'}>
-						<Flex>
-							<Flex
-								flex={1}
-								direction={'column'}
-							>
-								<Box
-									bg={step === 0 ? '#785EF0' : '#E0E0EC'}
-									borderRadius='20px'
-									height={1}
-								/>
 
-								<Flex
-									mt={2}
-									color={step === 0 ? '#785EF0' : '#E0E0EC'}>
-									{
-										step === 0 ? (
-											<FishEye
-												h={'14px'}
-												w={'14px'} />
-										) : (
-											<Box
-												border='1px solid #E0E0EC'
-												borderRadius='20px'
-												height={'14px'}
-												width={'14px'}
-											/>
-										)
-									}
-									<Text
-										fontSize='12px'
-										lineHeight='16px'
-										fontWeight='500'
-										ml={1}
-										color={step === 0 ? '#785EF0' : '#1F1F33'}
-									>
-										Scoring rubric
-									</Text>
-								</Flex>
-							</Flex>
-							<Box w={1} />
-							<Flex
-								flex={1}
-								direction={'column'}
-							>
-								<Box
-									bg={step === 1 || step === 2 ? '#785EF0' : '#E0E0EC'}
-									borderRadius='20px'
-									height={1}
-								/>
 
-								<Flex
-									mt={2}
-									color={step === 1 || step === 2 ? '#785EF0' : '#E0E0EC'}>
-									{
-										step === 1 || step === 2 ? (
-											<FishEye
-												h={'14px'}
-												w={'14px'} />
-										) : (
-											<Box
-												border='1px solid #E0E0EC'
-												borderRadius='20px'
-												height={'14px'}
-												width={'14px'}
-											/>
-										)
-									}
-									<Text
-										fontSize='12px'
-										lineHeight='16px'
-										fontWeight='500'
-										ml={1}
-										color={step === 1 || step === 2 ? '#785EF0' : '#1F1F33'}
-									>
-										Assign reviewers
-									</Text>
-								</Flex>
-							</Flex>
-						</Flex>
-
-						<Box mt={6} />
+						<Box mt={4} />
 
 						{
 							step === 0 ? (
-								<RubricsForm />
-							) : <AssignReviewers />
+								<RubricsView rubrics={grantData?.grants.length > 0 ? grantData.grants[0]?.rubric?.items : undefined} />
+							) : <></>
 						}
 					</Flex>
 
@@ -216,7 +143,8 @@ const SetupEvaluationDrawer = ({
 							onClick={
 								() => {
 									if(step === 0) {
-										setStep(1)
+										// setStep(1)
+										onComplete()
 									}
 
 									if(step === 2) {
@@ -224,7 +152,7 @@ const SetupEvaluationDrawer = ({
 									}
 								}
 							}>
-							{step === 0 ? 'Continue' : 'Initiate Transaction'}
+							{step === 0 ? 'Ok' : 'Save'}
 						</Button>
 
 					</Flex>
@@ -236,4 +164,4 @@ const SetupEvaluationDrawer = ({
 	)
 }
 
-export default SetupEvaluationDrawer
+export default ViewEvaluationDrawer

@@ -40,6 +40,7 @@ import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEvaluationDrawer'
 import StatsBanner from 'src/v2/payouts/StatsBanner'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
+import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
 import { useAccount } from 'wagmi'
 
 const PAGE_SIZE = 500
@@ -72,6 +73,10 @@ function ViewApplicants() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 
 	const [rubricDrawerOpen, setRubricDrawerOpen] = useState(false)
+	const [viewRubricDrawerOpen, setViewRubricDrawerOpen] = useState(false)
+
+	const [sendFundsTo, setSendFundsTo] = useState<any[]>()
+
 	const [maximumPoints, setMaximumPoints] = React.useState(5)
 	const [rubricEditAllowed] = useState(true)
 	const [rubrics, setRubrics] = useState<any[]>([
@@ -173,6 +178,7 @@ function ViewApplicants() {
 	const { data, error, loading } = useGetApplicantsForAGrantQuery(queryParams)
 	const { data: grantData } = useGetGrantDetailsQuery(queryParams)
 	useEffect(() => {
+		console.log('fetch', data)
 		if(data && data.grantApplications.length) {
 			const fetchedApplicantsData = data.grantApplications.map((applicant) => {
 				const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
@@ -207,6 +213,8 @@ function ViewApplicants() {
 				return {
 					grantTitle: applicant?.grant?.title,
 					applicationId: applicant.id,
+					applicantName: getFieldString('applicantName'),
+					applicantEmail: getFieldString('applicantEmail'),
 					applicant_address: applicant.applicantId,
 					sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
 					updated_on: moment.unix(applicant.updatedAtS).format('DD MMM YYYY'),
@@ -459,7 +467,10 @@ function ViewApplicants() {
 									<MenuItem
 										px={'19px'}
 										py={'10px'}
-										onClick={() => setRubricDrawerOpen(true)}
+										onClick={
+											() => (grantData?.grants[0].rubric?.items.length || 0) > 0 || false ?
+												setViewRubricDrawerOpen(true) : setRubricDrawerOpen(true)
+										}
 									>
 										{
 											(grantData?.grants[0].rubric?.items.length || 0) > 0 || false ? (
@@ -612,9 +623,10 @@ function ViewApplicants() {
 					h={8}
 					colorScheme='brandv2'>
 					<TabList>
-						<StyledTab label='Accepted (20)' />
-						<StyledTab label='In review (40)' />
-						<StyledTab label='Rejected (20)' />
+						<StyledTab label={`Accepted (${applicantsData.filter((item: any) => (2 === item.status)).length})`} />
+						<StyledTab label={`In Review (${applicantsData.filter((item: any) => (0 === item.status)).length})`} />
+						<StyledTab label={`Asked to Resubmit (${applicantsData.filter((item: any) => (1 === item.status)).length})`} />
+						<StyledTab label={`Rejected (${applicantsData.filter((item: any) => (3 === item.status)).length})`} />
 					</TabList>
 
 					<TabPanels>
@@ -626,7 +638,20 @@ function ViewApplicants() {
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7' >
 							<AcceptedProposalsPanel
 								applicantsData={applicantsData}
-								onSendFundsClicked={(v) => setSendFundsModalIsOpen(v)}
+								onSendFundsClicked={
+									(v, c) => {
+										console.log(c)
+										setSendFundsModalIsOpen(v)
+										setSendFundsTo(c)
+									}
+								}
+								onBulkSendFundsClicked={
+									(v, c) => {
+										console.log(c)
+										setSendFundsTo(c)
+										setSendFundsDrawerIsOpen(v)
+									}
+								}
 								grantData={grantData}
 							/>
 						</TabPanel>
@@ -667,15 +692,25 @@ function ViewApplicants() {
 					onComplete={() => setRubricDrawerOpen(false)}
 				/>
 
+				<ViewEvaluationDrawer
+					isOpen={viewRubricDrawerOpen}
+					grantData={grantData}
+					onClose={() => setViewRubricDrawerOpen(false)}
+					onComplete={() => setViewRubricDrawerOpen(false)}
+				/>
+
 				<SendFundsModal
 					isOpen={sendFundsModalIsOpen}
 					onClose={() => setSendFundsModalIsOpen(false)}
+					// @ts-expect-error
+					safeAddress={workspace?.safeAddress ?? 'HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC'}
 					onComplete={
 						() => {
 							setSendFundsModalIsOpen(false)
 							setTxnInitModalIsOpen(true)
 						}
 					}
+					proposals={sendFundsTo ?? []}
 				/>
 
 				<TransactionInitiatedModal
@@ -691,8 +726,12 @@ function ViewApplicants() {
 						() => {
 							setSendFundsDrawerIsOpen(false)
 							setTxnInitModalIsOpen(true)
+							setSendFundsTo(undefined)
 						}
 					}
+					// @ts-expect-error
+					safeAddress={workspace?.safeAddress ?? 'HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC'}
+					proposals={sendFundsTo ?? []}
 				/>
 
 
