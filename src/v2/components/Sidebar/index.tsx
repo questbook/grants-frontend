@@ -124,7 +124,24 @@ function Sidebar() {
 							onClick={
 								() => {
 									setTabSelected(tab.index)
+
+									// @Dhairya: uncomment this when you want dashboards to be public
+									// it will add chainid and daoid in url
+									// if(tab.path === '/dashboard') {
+									// 	if(!workspace) {
+									// 		return
+									// 	}
+
+									// 	router.push({ pathname: tab.path, query: {
+									// 		daoId: workspace.id,
+									// 		chainId: getSupportedChainIdFromWorkspace(workspace)
+									// 	} })
+
+									// 	return
+									// }
+
 									router.push({ pathname: tab.path })
+
 								}
 							}
 						/>

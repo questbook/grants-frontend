@@ -1,5 +1,5 @@
 import { createElement, useEffect, useRef, useState } from 'react'
-import { Button, HStack, Image, Input, Modal, ModalCloseButton, ModalContent, ModalOverlay, Progress, Spacer, Text, useToast, VStack } from '@chakra-ui/react'
+import { Box, Button, HStack, Image, Input, Modal, ModalCloseButton, ModalContent, ModalOverlay, Progress, Spacer, Text, useToast, VStack } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { ROLES } from 'src/constants'
@@ -137,21 +137,25 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 				<ModalContent>
 					<ModalCloseButton />
 					<HStack
+						spacing='0'
 						align='stretch'
 						justifyContent='stretch'>
 						{createElement(STEP_DISPLAYS[currentStep].left, displayProps)}
 						<VStack
 							align='start'
-							spacing={4}
-							p='0.75rem'
-							pr='2.5rem'
-							pb='2.5rem'
+							spacing='4'
+							p='1.5rem'
+							pt='1rem'
 							minH='70vh'
 							flexGrow={1}
 						>
-							<ControlBar
-								points={SECTIONS}
-								currentIndex={currentStep} />
+							<HStack
+								w='100%'
+								pr='3rem'>
+								<ControlBar
+									points={SECTIONS}
+									currentIndex={currentStep} />
+							</HStack>
 							{createElement(STEP_DISPLAYS[currentStep].right, displayProps)}
 						</VStack>
 					</HStack>
@@ -208,8 +212,8 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 const Step1LeftDisplay = () => {
 	return (
 		<Image
-			w='50%'
-			h='100%'
+			w='40%'
+			objectFit='cover'
 			src='/accept-invite-side.png' />
 	)
 }
@@ -225,7 +229,9 @@ const Step1RightDisplay = ({ daoName, role, nextStep }: DisplayProps) => {
 				Welcome to Questbook!
 			</Text>
 
-			<Text fontWeight='bold'>
+			<Text
+				fontWeight='bold'
+				fontSize='sm'>
 				You are invited to
 				{' '}
 				{
@@ -249,7 +255,7 @@ const Step1RightDisplay = ({ daoName, role, nextStep }: DisplayProps) => {
 				<Spacer />
 				<Button
 					onClick={nextStep}
-					colorScheme='brandv2'>
+					variant='primaryV2'>
 					Continue
 					<Spacer w='2' />
 					<ForwardArrow
@@ -261,7 +267,7 @@ const Step1RightDisplay = ({ daoName, role, nextStep }: DisplayProps) => {
 	)
 }
 
-const Step2LeftDisplay = ({ profile }: DisplayProps) => {
+const Step2LeftDisplay = ({ role, profile }: DisplayProps) => {
 	const [profileImageUrl, setProfileImageUrl] = useState(profile.profileImageUrl)
 	const imageUploadRef = useRef<HTMLInputElement>(null)
 
@@ -275,8 +281,9 @@ const Step2LeftDisplay = ({ profile }: DisplayProps) => {
 
 	return (
 		<VStack
-			bg='#FDF2C3'
+			bg={role === ROLES.admin ? '#FDF2C3' : '#C8CBFC'}
 			p='3'
+			pl='4'
 			align='start'
 			w='35%'>
 			<Text
@@ -302,7 +309,9 @@ const Step2LeftDisplay = ({ profile }: DisplayProps) => {
 							src='ui_icons/upload_v2.svg'
 							h='4' />
 						<Spacer w='2' />
-						<Text fontSize='sm'>
+						<Text
+							fontSize='sm'
+							color='black'>
 							Upload picture
 						</Text>
 					</Button>
@@ -336,21 +345,26 @@ const Step2RightDisplay = ({ getJoinInviteGasEstimate, profile, updateProfile, n
 								align='start'
 								spacing='0'>
 								<Text
-									fontSize='sm'
+									fontSize='md'
 									fontWeight='bold'>
 									{label}
 								</Text>
 								<Text
 									fontSize='sm'
 									fontWeight='light'
-									color='v2LightGrey'>
+									color='brandSubtext'>
 									{description}
 								</Text>
+
+								<Box h='1' />
+
 								<Input
 									variant='brandFlushed'
 									disabled={!editable}
 									placeholder={placeholder}
 									fontWeight={'500'}
+									background='transparent'
+									color={editable ? undefined : 'v2LightGrey'}
 									value={profile[key] || ''}
 									onChange={
 										(e) => {
@@ -380,7 +394,7 @@ const Step2RightDisplay = ({ getJoinInviteGasEstimate, profile, updateProfile, n
 				disabled={!allFieldsTruthy}
 				w='100%'
 				onClick={nextStep}
-				colorScheme='brandv2'>
+				variant='primaryV2'>
 				Create profile
 			</Button>
 		</>
@@ -396,14 +410,14 @@ const FIELD_INPUTS = [
 	{
 		key: 'fullName',
 		label: 'Name',
-		description: 'Others can identify you better',
+		description: 'Others can identify you better.',
 		placeholder: 'John Doe',
 		editable: true
 	},
 	{
 		key: 'walletAddress',
 		label: 'Wallet Address',
-		description: 'Address associated with your profile',
+		description: 'Questbook wallet associated with your profile.',
 		placeholder: '',
 		editable: false
 	}

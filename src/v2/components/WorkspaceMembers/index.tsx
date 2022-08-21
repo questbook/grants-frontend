@@ -110,8 +110,8 @@ function WorkspaceMembers() {
 					<Button
 						onClick={() => setIsInviteModalOpen(true)}
 						leftIcon={<LinkIcon />}
-						variant={'inviteLink'}>
-            Create invite link
+						variant='primaryV2' >
+            			Create invite link
 					</Button>
 				</Flex>
 				<Box h={5} />

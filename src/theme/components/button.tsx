@@ -100,7 +100,8 @@ export default {
 			primaryV2: {
 				bg: '#1F1F33',
 				color: '#ffffff',
-				lineHeighth: '1.25rem',
+				lineHeight: '1.25rem',
+				borderRadius: '4px',
 				'&:hover': {
 					bg: '#3F3F53',
 				},
@@ -134,14 +135,34 @@ export default {
 						bg: '#E0E0EC',
 					},
 				},
-
 			},
-			inviteLink: {
-				_selected: { color: '#E0E0EC', bg: '#1F1F32' },
-				bg: '#1F1F32',
-				color: '#E0E0EC',
-				borderRadius: 4,
+			ghost: {
+				color: '#555570',
 			},
+			secondaryV2: {
+				bg: 'gray.3',
+				color: 'black.1',
+				lineHeight: '1.25rem',
+				'&:hover': {
+					bg: 'gray.2',
+				},
+				'&:active': {
+					bg: 'gray.4',
+				},
+				'&:focus': {
+					bg: 'gray.4',
+					border: '1px solid black.3',
+					borderRadius: '2px'
+				},
+				'&:disabled': {
+					bg: 'gray.4',
+					opacity: 1,
+					color: 'gray.5',
+					'&:hover': {
+						bg: 'gray.3',
+					},
+				},
+			}
 		},
 	},
 }
