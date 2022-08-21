@@ -10,12 +10,16 @@ const RecipientDetails = ({
 	setMilestoneId,
 	amount,
 	setAmount,
+	applicantData,
+	safeAddress,
 }: {
   step: number,
   milestoneId: string | undefined,
   setMilestoneId: (id: string) => void,
   amount: number | undefined,
   setAmount: (amount: number) => void,
+	applicantData: any[],
+	safeAddress: string,
 }) => {
 	return (
 		<>
@@ -43,7 +47,7 @@ const RecipientDetails = ({
 						lineHeight='20px'
 						fontWeight='500'
 					>
-									0x0CF4b49b4cdE2Cf4BE5dA09B8Fc5570D2c422027
+						{safeAddress}
 					</Text>
 
 					<ExternalLink
@@ -86,181 +90,104 @@ const RecipientDetails = ({
 				</Text>
 
 
-				<Box
-					fontSize='14px'
-					lineHeight='20px'
-					fontWeight='400'
-					h='20px'
-					w='20px'
-					bg='#F0F0F7'
-					display='flex'
-					justifyContent={'center'}
-					alignItems={'center'}
-					mr={4}
-					mb={2}
-				>
-          1
-				</Box>
-				<Text
-					fontSize='12px'
-					lineHeight='16px'
-					fontWeight='400'
-					color='#7D7DA0'
-					mt='2px'
-				>
-							Summer NFT Bootcamp on Polygon • Ryan Adams
-				</Text>
+				{
+					applicantData.map((data, i) => (
+						<>
+							<Box
+								fontSize='14px'
+								lineHeight='20px'
+								fontWeight='400'
+								h='20px'
+								w='20px'
+								bg='#F0F0F7'
+								display='flex'
+								justifyContent={'center'}
+								alignItems={'center'}
+								mr={4}
+								mb={2}
+							>
+								{i + 1}
+							</Box>
+							<Text
+								fontSize='12px'
+								lineHeight='16px'
+								fontWeight='400'
+								color='#7D7DA0'
+								mt='2px'
+							>
+								{data?.project_name}
+								{' '}
+•
+								{' '}
+								{data?.applicantName}
+							</Text>
 
 
-				<Flex
-					alignItems={'baseline'}
-					mt={2}
-				>
-					<Input
-						variant={'brandFlushed'}
-						placeholder={'DAO Name'}
-						_placeholder={
-							{
-								color: 'blue.100',
-								fontWeight: '500'
-							}
-						}
-						fontWeight={'500'}
-						fontSize='14px'
-						value={'0x0CF4b49b4cdE2Cf4BE5dA09B8Fc5570D2c422027'}
-						errorBorderColor={'red'}
-						height={'auto'}
-					/>
-				</Flex>
+							<Flex
+								alignItems={'baseline'}
+								mt={2}
+							>
+								<Input
+									variant={'brandFlushed'}
+									placeholder={'DAO Name'}
+									_placeholder={
+										{
+											color: 'blue.100',
+											fontWeight: '500'
+										}
+									}
+									fontWeight={'500'}
+									fontSize='14px'
+									value={data?.applicant_address}
+									errorBorderColor={'red'}
+									height={'auto'}
+								/>
+							</Flex>
 
-				<Box h={6} />
+							<Box h={6} />
 
-				<Flex alignItems={'center'}>
-					<Flex
-						flex={1}
-						flexDirection={'column'}>
+							<Flex alignItems={'center'}>
+								<Flex
+									flex={1}
+									flexDirection={'column'}>
 
-						<MilestoneSelect
-							placeholder='Select from the list'
-							value={undefined}
-							onChange={(value) => value && setMilestoneId(value?.id)} />
-					</Flex>
+									<MilestoneSelect
+										placeholder='Select from the list'
+										value={undefined}
+										onChange={(value) => value && setMilestoneId(value?.id)} />
+								</Flex>
 
-					<Box w={6} />
+								<Box w={6} />
 
-					<Flex
-						flex={1}
-						flexDirection={'column'}>
+								<Flex
+									flex={1}
+									flexDirection={'column'}>
 
-						<Box h={2} />
-						<Input
-							variant={'brandFlushed'}
-							placeholder={'Amount'}
-							_placeholder={
-								{
-									color: 'blue.100',
-									fontWeight: '500'
-								}
-							}
-							fontWeight={'500'}
-							fontSize='14px'
-							value={amount}
-							errorBorderColor={'red'}
-							height={'auto'}
-							type={'number'}
-							onChange={(e) => setAmount(parseInt(e.target.value))}
-						/>
-					</Flex>
-				</Flex>
+									<Box h={2} />
+									<Input
+										variant={'brandFlushed'}
+										placeholder={'Amount'}
+										_placeholder={
+											{
+												color: 'blue.100',
+												fontWeight: '500'
+											}
+										}
+										fontWeight={'500'}
+										fontSize='14px'
+										value={amount}
+										errorBorderColor={'red'}
+										height={'auto'}
+										type={'number'}
+										onChange={(e) => setAmount(parseInt(e.target.value))}
+									/>
+								</Flex>
+							</Flex>
 
-				<Box h={6} />
-
-				<Box
-					fontSize='14px'
-					lineHeight='20px'
-					fontWeight='400'
-					h='20px'
-					w='20px'
-					bg='#F0F0F7'
-					display='flex'
-					justifyContent={'center'}
-					alignItems={'center'}
-					mr={4}
-					mb={2}
-				>
-          2
-				</Box>
-				<Text
-					fontSize='12px'
-					lineHeight='16px'
-					fontWeight='400'
-					color='#7D7DA0'
-					mt='2px'
-				>
-							Summer NFT Bootcamp on Polygon • Ryan Adams
-				</Text>
-
-
-				<Flex
-					alignItems={'baseline'}
-					mt={2}
-				>
-					<Input
-						variant={'brandFlushed'}
-						placeholder={'DAO Name'}
-						_placeholder={
-							{
-								color: 'blue.100',
-								fontWeight: '500'
-							}
-						}
-						fontWeight={'500'}
-						fontSize='14px'
-						value={'0x0CF4b49b4cdE2Cf4BE5dA09B8Fc5570D2c422027'}
-						errorBorderColor={'red'}
-						height={'auto'}
-					/>
-				</Flex>
-
-				<Box h={6} />
-
-				<Flex alignItems={'center'}>
-					<Flex
-						flex={1}
-						flexDirection={'column'}>
-
-						<MilestoneSelect
-							placeholder='Select from the list'
-							value={undefined}
-							onChange={(value) => value && setMilestoneId(value?.id)} />
-					</Flex>
-
-					<Box w={6} />
-
-					<Flex
-						flex={1}
-						flexDirection={'column'}>
-
-						<Box h={2} />
-						<Input
-							variant={'brandFlushed'}
-							placeholder={'Amount'}
-							_placeholder={
-								{
-									color: 'blue.100',
-									fontWeight: '500'
-								}
-							}
-							fontWeight={'500'}
-							fontSize='14px'
-							value={amount}
-							errorBorderColor={'red'}
-							height={'auto'}
-							type={'number'}
-							onChange={(e) => setAmount(parseInt(e.target.value))}
-						/>
-					</Flex>
-				</Flex>
+							<Box h={6} />
+						</>
+					))
+				}
 
 			</Flex>
 

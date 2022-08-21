@@ -20,12 +20,16 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
 	onComplete: () => void;
+	safeAddress: string;
+	proposals: any[];
 }
 
 function SendFundsModal({
 	isOpen,
 	onClose,
 	onComplete,
+	safeAddress,
+	proposals,
 }: Props) {
 
 	const [step, setStep] = useState(0)
@@ -219,7 +223,8 @@ function SendFundsModal({
 									setMilestoneId={setMilestoneId}
 									amount={amount}
 									setAmount={setAmount}
-
+									safeAddress={safeAddress}
+									applicantData={proposals[0]}
 									step={step} />
 							) : (
 								<SafeOwner onVerified={() => setStep(2)} />

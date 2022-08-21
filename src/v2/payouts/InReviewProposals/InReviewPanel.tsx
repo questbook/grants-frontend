@@ -3,6 +3,8 @@ import { Button, ButtonProps, Checkbox, Flex, forwardRef, Grid, GridItem, Menu, 
 import { useRouter } from 'next/router'
 import useBatchUpdateApplicationState from 'src/hooks/useBatchUpdateApplicationState'
 import { AcceptApplication } from 'src/v2/assets/custom chakra icons/AcceptApplication'
+import { RejectApplication } from 'src/v2/assets/custom chakra icons/RejectApplication'
+import { ResubmitApplication } from 'src/v2/assets/custom chakra icons/ResubmitApplication'
 import InReviewRow from './InReviewRow'
 import ZeroState from './ZeroState'
 
@@ -18,6 +20,7 @@ const InReviewPanel = ({
 	const [checkedApplicationsIds, setCheckedApplicationsIds] = useState<number[]>([])
 	const [isAcceptClicked, setIsAcceptClicked] = useState<boolean>(false)
 	const [isRejectClicked, setIsRejectClicked] = useState<boolean>(false)
+	const [isResubmitClicked, setIsResubmitClicked] = useState<boolean>(false)
 	const [isConfirmClicked, setIsConfirmClicked] = useState<boolean>(false)
 
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
@@ -62,10 +65,10 @@ const InReviewPanel = ({
 	useEffect(() => {
 		if(isConfirmClicked) {
 			setIsModalOpen(false)
-		} else if(isAcceptClicked || isRejectClicked) {
+		} else if(isAcceptClicked || isRejectClicked || isResubmitClicked) {
 			setIsModalOpen(true)
 		 }
-	}, [isAcceptClicked, isRejectClicked, isConfirmClicked])
+	}, [isAcceptClicked, isRejectClicked, isResubmitClicked, isConfirmClicked])
 
 
 	const [txn, txnLink, loading, error] = useBatchUpdateApplicationState(
@@ -173,6 +176,7 @@ const InReviewPanel = ({
 											Grant options
 									</Text>
 								</Flex>
+
 								<MenuItem
 									px={'19px'}
 									py={'10px'}
@@ -185,8 +189,43 @@ const InReviewPanel = ({
 										fontWeight='400'
 										textAlign='center'
 										color={'#555570'}
+										ml={2}
 									>
 										Accept proposals
+									</Text>
+								</MenuItem>
+								<MenuItem
+									px={'19px'}
+									py={'10px'}
+									onClick={() => setIsResubmitClicked(true)}
+								>
+									<ResubmitApplication />
+									<Text
+										fontSize='14px'
+										lineHeight='20px'
+										fontWeight='400'
+										textAlign='center'
+										color={'#555570'}
+										ml={2}
+									>
+										Resubmit proposals
+									</Text>
+								</MenuItem>
+								<MenuItem
+									px={'19px'}
+									py={'10px'}
+									onClick={() => setIsRejectClicked(true)}
+								>
+									<RejectApplication />
+									<Text
+										fontSize='14px'
+										lineHeight='20px'
+										fontWeight='400'
+										textAlign='center'
+										color={'#555570'}
+										ml={2}
+									>
+										Reject proposals
 									</Text>
 								</MenuItem>
 							</MenuList>
@@ -279,17 +318,21 @@ const InReviewPanel = ({
 			{
 				isModalOpen
 		&& (
+
 			<Modal
-				blockScrollOnMount={false}
+				isCentered
 				isOpen={isModalOpen}
 				onClose={
 					() => {
 						setIsAcceptClicked(false)
 						setIsRejectClicked(false)
+						setIsResubmitClicked(false)
 						setIsModalOpen(false)
 					}
-				}>
-				<ModalOverlay />
+				}
+				closeOnOverlayClick={false}
+			>
+				<ModalOverlay maxH="100vh" />
 				<ModalContent>
 					<ModalCloseButton />
 					<ModalBody>
@@ -300,7 +343,7 @@ const InReviewPanel = ({
 							lineHeight="24px"
 							color="#1F1F33"
 						>
-							{isAcceptClicked ? 'Accept selected applicants' : 'Reject selected applicants'}
+							{isAcceptClicked ? 'Accept selected applicants' : isResubmitClicked ? 'Resubmit selected applicants' : 'Reject selected applicants'}
 						</Text>
 						<Text
 							fontWeight="400"
@@ -327,6 +370,7 @@ const InReviewPanel = ({
 								() => {
 									setIsAcceptClicked(false)
 									setIsRejectClicked(false)
+									setIsResubmitClicked(false)
 									setIsModalOpen(false)
 								}
 							}>
@@ -337,7 +381,13 @@ const InReviewPanel = ({
 							mr={3}
 							onClick={
 								() => {
-									isAcceptClicked ? handleSubmit(2) : handleSubmit(3)
+									if(isAcceptClicked) {
+										handleSubmit(2)
+									} else if(isResubmitClicked) {
+										handleSubmit(1)
+									} else {
+										handleSubmit(3)
+									}
 								}
 							}>
 Confirm

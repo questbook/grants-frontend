@@ -10,12 +10,16 @@ const RecipientDetails = ({
 	setMilestoneId,
 	amount,
 	setAmount,
+	safeAddress,
+	applicantData,
 }: {
   step: number,
   milestoneId: string | undefined,
   setMilestoneId: (id: string) => void,
   amount: number | undefined,
   setAmount: (amount: number) => void,
+	safeAddress: string;
+	applicantData: any;
 }) => {
 	return (
 		<>
@@ -43,7 +47,7 @@ const RecipientDetails = ({
 						lineHeight='20px'
 						fontWeight='500'
 					>
-									0x0CF4b49b4cdE2Cf4BE5dA09B8Fc5570D2c422027
+						{safeAddress}
 					</Text>
 
 					<ExternalLink
@@ -91,7 +95,11 @@ const RecipientDetails = ({
 					color='#7D7DA0'
 					mt='2px'
 				>
-							Summer NFT Bootcamp on Polygon • Ryan Adams
+					{applicantData?.project_name}
+					{' '}
+•
+					{' '}
+					{applicantData?.applicantName}
 				</Text>
 
 
@@ -110,7 +118,7 @@ const RecipientDetails = ({
 						}
 						fontWeight={'500'}
 						fontSize='14px'
-						value={'0x0CF4b49b4cdE2Cf4BE5dA09B8Fc5570D2c422027'}
+						value={applicantData?.applicant_address}
 						errorBorderColor={'red'}
 						height={'auto'}
 					/>
