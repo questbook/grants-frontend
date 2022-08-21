@@ -328,7 +328,7 @@ function ViewApplicants() {
 	// const { data: grantData } = useGetGrantDetailsQuery(queryParams);
 	useEffect(() => {
 		console.log('grantData', grantData)
-		const initialRubrics = grantData?.grants[0].rubric
+		const initialRubrics = grantData?.grants[0]?.rubric
 		const newRubrics = [] as any[]
 		console.log('initialRubrics', initialRubrics)
 		initialRubrics?.items.forEach((initalRubric) => {
@@ -473,7 +473,7 @@ function ViewApplicants() {
 										}
 									>
 										{
-											(grantData?.grants[0].rubric?.items.length || 0) > 0 || false ? (
+											(grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ? (
 												<ViewEye
 													color={'#C8CBFC'}
 													mr={'11px'} />
@@ -490,7 +490,7 @@ function ViewApplicants() {
 											textAlign='center'
 											color={'#555570'}
 										>
-											{(grantData?.grants[0].rubric?.items.length || 0) > 0 || false ? 'View scoring rubric' : 'Setup applicant evaluation'}
+											{(grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ? 'View scoring rubric' : 'Setup applicant evaluation'}
 										</Text>
 									</MenuItem>
 									<MenuItem
