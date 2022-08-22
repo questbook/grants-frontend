@@ -32,9 +32,7 @@ const VerifySignerModal = ({
 		connectors
 	} = useConnect()
 
-	const {
-		data: accountData
-	} = useAccount()
+	const { data: accountData } = useAccount()
 
 	const availableWallets = [{
 		name: 'Metamask',
@@ -65,7 +63,6 @@ const VerifySignerModal = ({
 	}, [isErrorConnecting])
 
 	useEffect(() => {
-		console.log(accountData)
 		if(accountData) {
 			if(!redirectInitiated && redirect && connectClicked) {
 				setRedirectInitiated(true)
@@ -97,7 +94,6 @@ const VerifySignerModal = ({
 			}
 
 			toast.closeAll()
-			// alert('Whoops! Looks like this wallet is not a signer on the safe.')
 			toast({
 				duration: 3000,
 				isClosable: true,
@@ -183,10 +179,12 @@ const VerifySignerModal = ({
 												onClick={
 													() => {
 														const connector = connectors.find((x) => x.id === wallet.id)
-														setConnectClicked(true)
-														if(connector) {
-															connect(connector)
+														if(!connector) {
+															return alert('This wallet is not supported.')
 														}
+
+														setConnectClicked(true)
+														connect(connector)
 
 														showToast()
 														// onClose()
