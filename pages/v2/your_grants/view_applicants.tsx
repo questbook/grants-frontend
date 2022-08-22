@@ -39,7 +39,6 @@ import SendFundsDrawer from 'src/v2/payouts/SendFundsDrawer/SendFundsDrawer'
 import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEvaluationDrawer'
 import StatsBanner from 'src/v2/payouts/StatsBanner'
-import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import { useAccount } from 'wagmi'
 
 const PAGE_SIZE = 500
@@ -678,11 +677,11 @@ function ViewApplicants() {
 					}
 				/>
 
-				<TransactionInitiatedModal
+				{/* <TransactionInitiatedModal
 					isOpen={txnInitModalIsOpen}
 					onClose={() => setTxnInitModalIsOpen(false)}
 					onComplete={() => setTxnInitModalIsOpen(false)}
-				/>
+				/> */}
 
 				<SendFundsDrawer
 					isOpen={sendFundsDrawerIsOpen}

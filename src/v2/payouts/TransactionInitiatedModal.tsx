@@ -22,6 +22,7 @@ function TransactionInitiatedModal({
 	isOpen,
 	onClose,
 	onComplete,
+	proposalUrl
 }: Props) {
 
 	return (
@@ -180,17 +181,22 @@ transaction.
 						direction="row"
 						align="center">
 
-						<Button
-							ml='auto'
-							colorScheme={'brandv2'}
-							onClick={
-								() => {
-									onClose()
+						<a
+							target={'_blank'}
+							style={{ marginLeft:'auto' }}
+							href={proposalUrl}
+							rel="noreferrer">
+							<Button
+								colorScheme={'brandv2'}
+								onClick={
+									() => {
 
-								}
-							}>
+
+									}
+								}>
 							Open Safe
-						</Button>
+							</Button>
+						</a>
 
 					</Flex>
 
