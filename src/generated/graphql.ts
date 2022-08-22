@@ -4346,6 +4346,13 @@ export type GetNumberOfGrantsQueryVariables = Exact<{
 
 export type GetNumberOfGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string }> };
 
+export type GetReviewersForAWorkspaceQueryVariables = Exact<{
+  workspaceId: Scalars['ID'];
+}>;
+
+
+export type GetReviewersForAWorkspaceQuery = { __typename?: 'Query', workspaces: Array<{ __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, fullName?: string | null, actorId: string }> }> };
+
 export type GetWorkspaceDetailsQueryVariables = Exact<{
   workspaceID: Scalars['ID'];
 }>;
@@ -6450,6 +6457,46 @@ export function useGetNumberOfGrantsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetNumberOfGrantsQueryHookResult = ReturnType<typeof useGetNumberOfGrantsQuery>;
 export type GetNumberOfGrantsLazyQueryHookResult = ReturnType<typeof useGetNumberOfGrantsLazyQuery>;
 export type GetNumberOfGrantsQueryResult = Apollo.QueryResult<GetNumberOfGrantsQuery, GetNumberOfGrantsQueryVariables>;
+export const GetReviewersForAWorkspaceDocument = gql`
+    query getReviewersForAWorkspace($workspaceId: ID!) {
+  workspaces(where: {id: $workspaceId}) {
+    members(where: {accessLevel_not: owner}) {
+      profilePictureIpfsHash
+      accessLevel
+      fullName
+      actorId
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetReviewersForAWorkspaceQuery__
+ *
+ * To run a query within a React component, call `useGetReviewersForAWorkspaceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetReviewersForAWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetReviewersForAWorkspaceQuery({
+ *   variables: {
+ *      workspaceId: // value for 'workspaceId'
+ *   },
+ * });
+ */
+export function useGetReviewersForAWorkspaceQuery(baseOptions: Apollo.QueryHookOptions<GetReviewersForAWorkspaceQuery, GetReviewersForAWorkspaceQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetReviewersForAWorkspaceQuery, GetReviewersForAWorkspaceQueryVariables>(GetReviewersForAWorkspaceDocument, options);
+      }
+export function useGetReviewersForAWorkspaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetReviewersForAWorkspaceQuery, GetReviewersForAWorkspaceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetReviewersForAWorkspaceQuery, GetReviewersForAWorkspaceQueryVariables>(GetReviewersForAWorkspaceDocument, options);
+        }
+export type GetReviewersForAWorkspaceQueryHookResult = ReturnType<typeof useGetReviewersForAWorkspaceQuery>;
+export type GetReviewersForAWorkspaceLazyQueryHookResult = ReturnType<typeof useGetReviewersForAWorkspaceLazyQuery>;
+export type GetReviewersForAWorkspaceQueryResult = Apollo.QueryResult<GetReviewersForAWorkspaceQuery, GetReviewersForAWorkspaceQueryVariables>;
 export const GetWorkspaceDetailsDocument = gql`
     query getWorkspaceDetails($workspaceID: ID!) {
   workspace(id: $workspaceID, subgraphError: allow) {

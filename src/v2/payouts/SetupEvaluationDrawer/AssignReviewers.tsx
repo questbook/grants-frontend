@@ -1,7 +1,19 @@
 import { Checkbox, Flex, Image, Link, Slider, SliderFilledTrack, SliderMark, SliderThumb, SliderTrack, Switch, Text, Tooltip } from '@chakra-ui/react'
 import CopyIcon from 'src/components/ui/copy_icon'
+import { SidebarReviewer } from 'src/types'
+import { formatAddress } from 'src/utils/formattingUtils'
 
-const AssignReviewers = () => {
+interface Props {
+	minCount: number;
+	maxCount: number;
+	defaultSliderValue: number;
+	sliderValue: number;
+	onSlide: (value: number) => void;
+	reviewers: SidebarReviewer[];
+	onReviewerChange: (reviewer: SidebarReviewer) => void;
+}
+
+const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, onSlide, reviewers, onReviewerChange }: Props) => {
 	return (
 		<>
 			<Text
@@ -53,10 +65,11 @@ const AssignReviewers = () => {
 						mt={'24px'}
 						mb='30px'
 						aria-label='slider-ex-1'
-						defaultValue={2}
-						min={1}
-						max={5}
+						defaultValue={defaultSliderValue}
+						min={minCount}
+						max={maxCount}
 						step={1}
+						onChangeEnd={onSlide}
 					>
 						{
 							Array(6).fill(0).map((_, i) => i > 0 && (
@@ -91,7 +104,9 @@ const AssignReviewers = () => {
 					color='#7D7DA0'
 					mt='2px'
 				>
-				2 reviewers will be chosen randomly and assigned to each application
+					{sliderValue}
+					{' '}
+reviewers will be chosen randomly and assigned to each application
 
 				</Text>
 			</Flex>
@@ -117,18 +132,18 @@ const AssignReviewers = () => {
 				</Text>
 
 				{
-					Array(10).fill(0).map((_, i) => {
+					reviewers.map((reviewer: SidebarReviewer) => {
 						return (
 							<Flex
-								key={`reviewer-${i}`}
+								key={`reviewer-${reviewer.index}`}
 								py={2}
 								px={0}
 								display='flex'
 								alignItems='center'
 							>
 								<Checkbox
-								// isChecked={isChecked}
-								// onChange={onChange}
+									isChecked={reviewer.isSelected}
+									onChange={() => onReviewerChange(reviewer)}
 								/>
 								<Flex
 									bg='#F0F0F7'
@@ -153,17 +168,8 @@ const AssignReviewers = () => {
 										noOfLines={1}
 										textOverflow={'ellipsis'}
 									>
-							Ryan Adams
+										{reviewer.data.fullName}
 									</Text>
-									{/* <Text
-							fontSize='12px'
-							lineHeight='16px'
-							fontWeight='400'
-							mt="2px"
-							color='#7D7DA0'
-						>
-							{applicantData?.} • ryan@gmail.com
-						</Text> */}
 									<Text
 										fontSize='12px'
 										lineHeight='16px'
@@ -173,19 +179,14 @@ const AssignReviewers = () => {
 										display={'flex'}
 										alignItems='center'
 									>
-										<Tooltip label={'0x71......976f'}>
-											{/* <Tooltip label={applicantData?.applicant_address}> */}
-
-											{/* {`${applicantData?.applicant_address?.substring(0, 6)}...`} */}
-                0x71......976f
-
+										<Tooltip label={reviewer.data.actorId}>
+											{formatAddress(reviewer.data.actorId)}
 										</Tooltip>
 										<Flex
 											display="inline-block"
 											ml={2}
 										>
-											{/* <CopyIcon text={applicantData?.applicant_address!} /> */}
-											<CopyIcon text={'0x71......976f'} />
+											<CopyIcon text={reviewer.data.actorId} />
 										</Flex>
 									</Text>
 								</Flex>
