@@ -245,6 +245,7 @@ function ViewApplicants() {
 						).toString(),
 						decimal || 18,
 					),
+					reviews: applicant.reviews
 				}
 			})
 

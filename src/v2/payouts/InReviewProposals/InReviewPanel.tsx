@@ -310,7 +310,51 @@ const InReviewPanel = ({
 									setCheckedItems(tempArr)
 								}
 							}
-							onSendFundsClicked={() => onSendFundsClicked(true)} />
+							onSendFundsClicked={() => onSendFundsClicked(true)}
+							onAcceptClicked={
+								(e: any) => {
+									const tempArr: boolean[] = []
+									tempArr.push(...checkedItems)
+									for(let i = 0; i < tempArr.length; i++) {
+										tempArr[i] = false
+									}
+
+									tempArr[i] = e.target.checked
+									setCheckedItems(tempArr)
+									setIsAcceptClicked(true)
+								}
+							}
+
+							onResubmitClicked={
+								(e: any) => {
+									const tempArr: boolean[] = []
+									tempArr.push(...checkedItems)
+									for(let i = 0; i < tempArr.length; i++) {
+										tempArr[i] = false
+									}
+
+									tempArr[i] = e.target.checked
+									setCheckedItems(tempArr)
+									setIsResubmitClicked(true)
+								}
+							}
+
+							onRejectClicked={
+								(e: any) => {
+									const tempArr: boolean[] = []
+									tempArr.push(...checkedItems)
+									for(let i = 0; i < tempArr.length; i++) {
+										tempArr[i] = false
+									}
+
+									tempArr[i] = e.target.checked
+									setCheckedItems(tempArr)
+									setIsRejectClicked(true)
+								}
+							}
+
+							someChecked={someChecked}
+						/>
 					))
 				}
 			</Grid>
@@ -350,7 +394,10 @@ const InReviewPanel = ({
 							fontSize="14px"
 							lineHeight="20px"
 							color="#7D7DA0">
-					This will notify selected applicants that their applications have been rejected. This action cannot be undone.
+					This will notify selected applicants that their applications have been
+							{' '}
+							{isAcceptClicked ? 'accepted' : isResubmitClicked ? 'asked to resubmit' : 'rejected'}
+. This action cannot be undone.
 						</Text>
 
 						<Text
@@ -377,7 +424,7 @@ const InReviewPanel = ({
               Cancel
 						</Button>
 						<Button
-							colorScheme={isAcceptClicked ? 'blue' : 'pink'}
+							// colorScheme={isAcceptClicked ? 'blue' : 'pink'}
 							mr={3}
 							onClick={
 								() => {
