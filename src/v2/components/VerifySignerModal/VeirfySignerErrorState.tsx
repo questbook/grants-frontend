@@ -3,13 +3,17 @@ import { BackArrow } from 'src/v2/assets/custom chakra icons/Arrows/BackArrow'
 import { Cancel } from 'src/v2/assets/custom chakra icons/Cancel'
 import { ErrorAlert } from 'src/v2/assets/custom chakra icons/ErrorAlertV2'
 
+type VerifySignerErrorStateProps = {
+	onBack: () => void
+	onClose: () => void
+	tryAgain: () => void
+}
+
 const VerifySignerErrorState = ({
 	onBack,
+	tryAgain,
 	onClose,
-}: {
-  onBack: () => void,
-  onClose: () => void,
-}) => {
+}: VerifySignerErrorStateProps) => {
 	return (
 		<Flex
 			direction={'column'}
@@ -37,6 +41,7 @@ const VerifySignerErrorState = ({
 
 			<Button
 				colorScheme={'brand'}
+				onClick={tryAgain}
 				mt={6}>
 				Try Again
 			</Button>

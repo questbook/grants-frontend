@@ -139,6 +139,7 @@ const VerifySignerModal = ({
 						isError ? (
 							<VerifySignerErrorState
 								onBack={() => setIsError(false)}
+								tryAgain={showToast}
 								onClose={onClose}
 							/>
 						) : (
