@@ -3,7 +3,6 @@ import { Box, Flex, Heading, Text } from '@chakra-ui/react'
 import { formatEther } from 'ethers/lib/utils'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useProvider } from 'wagmi'
-import NetworkFeeEstimateView from '../../NetworkFeeEstimateView'
 import { NetworkSelectOption } from '../SupportedNetworksData'
 import ContinueButton from '../UI/Misc/ContinueButton'
 import DaoImageUpload from '../UI/Misc/DaoImageUpload'
@@ -14,13 +13,16 @@ const CreateDaoFinal = ({
 	daoImageFile,
 	onImageFileChange,
 	onSubmit,
+	isBiconomyInitialised
 }: {
   daoName: string,
   daoNetwork: NetworkSelectOption,
 	daoImageFile: File | null,
-	onImageFileChange: (image: File | null) => void
-	onSubmit: (() => Promise<void>) | null
+	onImageFileChange: (image: File | null) => void,
+	onSubmit: (() => Promise<void>) | null,
+	isBiconomyInitialised: boolean
 }) => {
+	console.log('HHHH', isBiconomyInitialised, onSubmit)
 	const provider = useProvider()
 	const [gasEstimate, setGasEstimate] = useState<string>()
 	const [newDaoImageFile, setNewDaoImageFile] = useState<File | null>(null)
@@ -117,9 +119,9 @@ const CreateDaoFinal = ({
 				</Flex>
 			</Flex>
 
-			<NetworkFeeEstimateView
+			{/* <NetworkFeeEstimateView
 				getEstimate={getCreateWorkspaceGasEstimate}
-				chainId={daoNetwork.id} />
+				chainId={daoNetwork.id} /> */}
 
 			<Flex
 				mt={4}
@@ -127,7 +129,7 @@ const CreateDaoFinal = ({
 			>
 				<ContinueButton
 					onClick={() => onSubmit!()}
-					disabled={onSubmit === null}
+					disabled={onSubmit === null || !isBiconomyInitialised}
 					props={
 						{
 							minW: '343px',

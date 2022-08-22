@@ -5,8 +5,9 @@ import {
 	useGetNumberOfApplicationsLazyQuery,
 	useGetNumberOfGrantsLazyQuery,
 } from 'src/generated/graphql'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount, useConnect } from 'wagmi'
+import { useConnect } from 'wagmi'
 
 enum TabIndex {
 	DISCOVER, MY_APPLICATIONS, DASHBOARD, GRANTS_AND_BOUNTIES, SAFE, APPS, SETTINGS, PAYOUTS
@@ -24,7 +25,7 @@ const TABS = [
 ]
 
 function useGetTabs() {
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { isConnected } = useConnect()
 	const { workspace, subgraphClients } = React.useContext(ApiClientsContext)!
 

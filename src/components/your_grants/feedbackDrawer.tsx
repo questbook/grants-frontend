@@ -21,16 +21,16 @@ import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useSubmitReview from 'src/hooks/useSubmitReview'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { sumArray } from 'table/dist/src/utils'
-import { useAccount } from 'wagmi'
 import { RubricItem } from '../../generated/graphql'
+import { useQuestbookAccount } from '../../hooks/gasless/useQuestbookAccount'
 import NetworkTransactionModal from '../../v2/components/NetworkTransactionModal'
 import MultiLineInput from '../ui/forms/multiLineInput'
 import Loader from '../ui/loader'
 
 export interface FeedbackType {
-  rubric: RubricItem,
-  rating: number,
-  comment: string,
+	rubric: RubricItem,
+	rating: number,
+	comment: string,
 }
 
 function FeedbackDrawer({
@@ -44,22 +44,22 @@ function FeedbackDrawer({
 	applicationId,
 	isPrivate,
 }: {
-  feedbackDrawerOpen: boolean;
-  setFeedbackDrawerOpen: (feedbackDrawerOpen: boolean) => void;
-  grantTitle: string;
-  grantAddress: string;
-  chainId: SupportedChainId | undefined;
-  workspaceId: string;
-  rubrics: RubricItem[];
-  applicationId: string;
-  isPrivate: boolean;
+	feedbackDrawerOpen: boolean;
+	setFeedbackDrawerOpen: (feedbackDrawerOpen: boolean) => void;
+	grantTitle: string;
+	grantAddress: string;
+	chainId: SupportedChainId | undefined;
+	workspaceId: string;
+	rubrics: RubricItem[];
+	applicationId: string;
+	isPrivate: boolean;
 }) {
 	const [feedbackData, setFeedbackData] = useState<FeedbackType[]>()
 	const [editedFeedbackData, setEditedFeedbackData] = useState<{ items?: Array<FeedbackType> }>()
 	const [currentStep, setCurrentStep] = useState<number>()
 
 	const [pk, setPk] = useState<string>('*')
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const { workspace } = useContext(ApiClientsContext)!
 
 	const {
@@ -191,7 +191,7 @@ function FeedbackDrawer({
 								fontSize='16px'
 								lineHeight='20px'
 							>
-                Application Feedback
+								Application Feedback
 							</Text>
 						</Flex>
 						{

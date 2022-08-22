@@ -15,6 +15,7 @@ import { ApiClientsContext } from 'pages/_app'
 import CopyIcon from 'src/components/ui/copy_icon'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetFundSentforReviewerQuery } from 'src/generated/graphql'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 // UI Components
 import NavbarLayout from 'src/layout/navbarLayout'
 // TOOLS AND UTILS
@@ -25,7 +26,6 @@ import {
 } from 'src/utils/formattingUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
 
 export default function Payouts() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
@@ -37,7 +37,7 @@ export default function Payouts() {
 		reviewPayoutsOutstanding,
 		setReviewPayoutsOutstanding,
 	] = React.useState<any>([])
-	const { data: account } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 
 	React.useEffect(() => {
 		setWorkspaceChainId(getSupportedChainIdFromWorkspace(workspace))
@@ -48,15 +48,15 @@ export default function Payouts() {
 			workspace
       && workspace.members
       && workspace.members.length > 0
-      && account
-      && account.address
+      && accountData
+      && accountData.address
 		) {
 			const tempMember = workspace.members.find(
-				(m) => m.actorId.toLowerCase() === account?.address?.toLowerCase(),
+				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 			)
 			setIsReviewer(tempMember?.accessLevel === 'reviewer')
 		}
-	}, [account, workspace])
+	}, [accountData, workspace])
 
 	const { data: reviewsPaidData } = useGetFundSentforReviewerQuery({
 		client:
@@ -64,7 +64,7 @@ export default function Payouts() {
       	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
       ].client,
 		variables: {
-			to: account?.address,
+			to: accountData?.address,
 		},
 	})
 
@@ -91,14 +91,14 @@ export default function Payouts() {
 	React.useEffect(() => {
 		if(reviewPayoutsOutstanding.length === 0) {
 			workspace?.members.forEach(
-				(member) => member.actorId === account?.address?.toLowerCase()
+				(member) => member.actorId === accountData?.address?.toLowerCase()
           && member.outstandingReviewIds.filter((review: any) => setReviewPayoutsOutstanding((array: any) => [...array, review])),
 			)
 		}
 	}, [
 		reviewPayoutsOutstanding,
 		reviewsPaidData,
-		account?.address,
+		accountData?.address,
 		workspace?.members,
 	])
 

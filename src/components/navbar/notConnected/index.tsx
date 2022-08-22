@@ -1,7 +1,6 @@
 import React from 'react'
 import { Container, Image } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import ConnectWallet from './connectWallet'
 import GetStarted from './getStarted'
 
 interface Props {
@@ -33,7 +32,7 @@ function Navbar({ renderGetStarted, onGetStartedClick }: Props) {
 				cursor="pointer"
 			/>
 			{renderGetStarted ? <GetStarted onGetStartedClick={onGetStartedClick} /> : null}
-			<ConnectWallet />
+			{/* <ConnectWallet /> */}
 		</Container>
 	)
 }

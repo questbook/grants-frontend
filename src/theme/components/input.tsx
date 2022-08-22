@@ -24,6 +24,41 @@ export default {
 						boxShadow: '0px 1px 0px 0px #F25A5A'
 					}
 				}
+			},
+			v2_metadata: {
+				fontSize: '12px',
+				lineHeight: '16px',
+				color: 'black.1'
+			},
+			v2_body: {
+				fontSize: '14px',
+				lineHeight: '20px',
+				color: 'black.1'
+			},
+			v2_title: {
+				fontSize: '16px',
+				lineHeight: '24px',
+				color: 'black.1'
+			},
+			v2_subheading: {
+				fontSize: '20px',
+				lineHeight: '24px',
+				color: 'black.1'
+			},
+			v2_heading_3: {
+				fontSize: '24px',
+				lineHeight: '32px',
+				color: 'black.1'
+			},
+			v2_heading_2: {
+				fontSize: '32px',
+				lineHeight: '40px',
+				color: 'black.1'
+			},
+			v2_heading_1: {
+				fontSize: '40px',
+				lineHeight: '48px',
+				color: 'black.1'
 			}
 		}
 	}

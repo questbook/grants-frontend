@@ -17,9 +17,11 @@ import NavbarLayout from 'src/layout/navbarLayout'
 
 function SignupDao() {
 	const router = useRouter()
+
 	const { setWorkspace } = useContext(ApiClientsContext)!
 
 	const [daoCreated, setDaoCreated] = React.useState(false)
+
 	const [creatingGrant, setCreatingGrant] = React.useState(router.query.create_grant === 'true')
 
 	const [newWorkspaceObject, setNewWorkspaceObject] = React.useState<any>({})
@@ -45,12 +47,10 @@ function SignupDao() {
 	useEffect(() => {
 		if(
 			workspaceData
-      && workspaceTransactionData
-      && workspaceTransactionData.events.length > 0
-      && workspaceTransactionData.events[0].event === 'WorkspaceCreated'
-      && imageHash
+			&& workspaceTransactionData
+			&& imageHash
 		) {
-			const newId = workspaceTransactionData.events[0].args.id
+			const newId = workspaceTransactionData.args.id
 			setDaoData({
 				...workspaceData,
 				image: imageHash,
@@ -160,19 +160,19 @@ function SignupDao() {
 			<Text
 				mt="46px"
 				variant="heading">
-        What should we call your Grants DAO?
+				What should we call your Grants DAO?
 			</Text>
 			<Text
 				mt={7}
 				maxW="676px"
 				textAlign="center">
-        A Grants DAO is a neatly arranged space where you can manage grants,
-        review grant applications and fund grants.
+				A Grants DAO is a neatly arranged space where you can manage grants,
+				review grant applications and fund grants.
 			</Text>
 			<Form
-				// hasClicked={workspaceLoading}
 				onSubmit={
 					(data) => {
+						console.log('GOT HERE')
 						setWorkspaceData(data)
 					}
 				}

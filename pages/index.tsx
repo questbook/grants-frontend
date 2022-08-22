@@ -17,6 +17,7 @@ import {
 	GetAllGrantsQuery,
 	useGetAllGrantsLazyQuery,
 } from 'src/generated/graphql'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { formatAmount } from 'src/utils/formattingUtils'
 import { unixTimestampSeconds } from 'src/utils/generics'
@@ -24,14 +25,14 @@ import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import { useAccount, useConnect } from 'wagmi'
+import { useConnect } from 'wagmi'
 import BrowseDao from './browse_dao'
 
 const PAGE_SIZE = 40
 
 function BrowseGrants() {
 	const containerRef = useRef(null)
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { isDisconnected } = useConnect()
 	const router = useRouter()
 	const { subgraphClients, connected } = useContext(ApiClientsContext)!
@@ -219,17 +220,17 @@ function BrowseGrants() {
 										chainId={chainId}
 										onClick={
 											() => {
-												if(!(accountData && accountData.address)) {
-													router.push({
-														pathname: '/connect_wallet',
-														query: {
-															flow: '/',
-															grantId: grant.id,
-															chainId,
-														},
-													})
-													return
-												}
+												// if(!(accountData && accountData.address)) {
+												// 	router.push({
+												// 		pathname: '/connect_wallet',
+												// 		query: {
+												// 			flow: '/',
+												// 			grantId: grant.id,
+												// 			chainId,
+												// 		},
+												// 	})
+												// 	return
+												// }
 
 												router.push({
 													pathname: '/explore_grants/about_grant',

@@ -17,6 +17,7 @@ import {
 	useGetGrantDetailsQuery,
 	useGetGrantsAppliedToQuery,
 } from 'src/generated/graphql'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
@@ -27,10 +28,9 @@ import {
 import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo, getChainInfo } from 'src/utils/tokenUtils'
-import { useAccount } from 'wagmi'
 
 function AboutGrant() {
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 
 	const router = useRouter()

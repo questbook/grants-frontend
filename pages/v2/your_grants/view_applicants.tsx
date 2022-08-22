@@ -42,7 +42,7 @@ import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEva
 import StatsBanner from 'src/v2/payouts/StatsBanner'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
-import { useAccount } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 
 const PAGE_SIZE = 500
 
@@ -69,7 +69,7 @@ function ViewApplicants() {
 
 	const [setupRubricBannerCancelled, setSetupRubricBannerCancelled] = useState(true)
 
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const router = useRouter()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 
@@ -92,6 +92,7 @@ function ViewApplicants() {
 	useEffect(() => {
 		if(router && router.query) {
 			const { grantId: gId } = router.query
+			console.log('fetch 100: ', gId)
 			setGrantID(gId)
 		}
 	}, [router])
@@ -125,7 +126,7 @@ function ViewApplicants() {
 			const tempMember = workspace.members.find(
 				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 			)
-			console.log(tempMember)
+			console.log('fetch 500: ', tempMember)
 			setIsAdmin(
 				tempMember?.accessLevel === 'admin'
         || tempMember?.accessLevel === 'owner',
@@ -148,7 +149,9 @@ function ViewApplicants() {
 
 		console.log('Grant ID: ', grantID)
 		console.log('isUser: ', isUser)
+		console.log('fetch: ', isAdmin, isReviewer)
 		if(isAdmin) {
+			console.log('Setting query params')
 			setQueryParams({
 				client:
           subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
@@ -175,6 +178,10 @@ function ViewApplicants() {
 		}
 
 	}, [workspace, grantID, isUser])
+
+	useEffect(() => {
+		console.log('Admin params: ', queryParams)
+	}, [queryParams])
 
 	const { data, error, loading } = useGetApplicantsForAGrantQuery(queryParams)
 	const { data: grantData } = useGetGrantDetailsQuery(queryParams)
