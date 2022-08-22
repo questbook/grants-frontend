@@ -26,9 +26,6 @@ function AccountDetails() {
 
 	const buttonRef = React.useRef<HTMLButtonElement>(null)
 
-	React.useEffect(() => {
-		console.log('SCW Address: ', scwAddress)
-	}, [scwAddress])
 	return (
 		<Menu>
 			{/* {

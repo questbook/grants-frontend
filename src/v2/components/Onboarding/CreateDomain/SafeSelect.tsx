@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Box, Flex, Image, Link, Text } from '@chakra-ui/react'
 import { OptionBase, OptionProps } from 'chakra-react-select'
 import DropdownSelect from '../../DropdownSelect'
@@ -174,9 +174,6 @@ const dummyData: SafeSelectOption[] = [
 ]
 
 function SafeSelect({ label, optionalText, helperText, helperLinkText, helperLinkUrl, value, onChange, safesOptions }: Props) {
-	useEffect(() => {
-		console.log('SELECTED DROPDOWN: ', value)
-	}, [value])
 	return (
 		<Flex direction="column">
 			<Flex>

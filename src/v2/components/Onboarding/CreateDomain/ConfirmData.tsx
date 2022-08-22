@@ -30,7 +30,7 @@ function ConfirmData({ domainImageFile, onImageFileChange, safeAddress, safeChai
 			<Text
 				variant="v2_heading_3"
 				fontWeight="500">
-My domain
+				My domain
 			</Text>
 			<Flex
 				mt="auto"
@@ -67,9 +67,9 @@ My domain
 										ml={2}
 										variant="v2_metadata"
 										fontWeight="500">
-(Verified signer:
+										(Verified signer:
 										{formatAddress(signerAddress)}
-)
+										)
 									</Text>
 									<Image
 										ml={2}
