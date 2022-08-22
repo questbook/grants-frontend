@@ -11,9 +11,9 @@ import {
 } from 'src/utils/validationUtils'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
-import { useBiconomy } from './gasless/useBiconomy'
-import { useNetwork } from './gasless/useNetwork'
-import { useQuestbookAccount } from './gasless/useQuestbookAccount'
+import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 
 export default function useAssignReviewers(
 	data: any,
@@ -68,15 +68,19 @@ export default function useAssignReviewers(
 	}, [applicationReviewContract])
 
 	useEffect(() => {
+		console.log("ettr here")
 		if(incorrectNetwork) {
+			console.log("ettr network error")
 			return
 		}
 
 		if(error) {
+			console.log("ettr error")
 			return
 		}
 
 		if(loading) {
+			console.log("ettr loading")
 			return
 		}
 
@@ -152,22 +156,29 @@ export default function useAssignReviewers(
 
 		try {
 			if(!data) {
+				console.log("ettr data")
 				return
 			}
 
 			if(!grantAddress) {
+				console.log("ettr grantAddress")
 				return
 			}
 
 			if(!applicationId) {
+
+				console.log("ettr applicationId")
 				return
 			}
 
 			if(transactionData) {
+				console.log("ettr transactionData")
 				return
 			}
 
 			if(!accountData || !accountData.address) {
+
+				console.log("ettr accountData")
 				throw new Error('not connected to wallet')
 			}
 
