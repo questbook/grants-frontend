@@ -303,6 +303,8 @@ function SendFundsModal({
 										setMilestoneId={setMilestoneId}
 										amount={amount}
 										setAmount={setAmount}
+										safeAddress={safeAddress}
+										applicantData={proposals[0]}
 										step={step} />
 								) : (
 									<SafeOwner
