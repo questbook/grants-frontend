@@ -1,3 +1,4 @@
+import { PublicKey } from '@solana/web3.js'
 
 export interface TransactionType {
     to: string,
@@ -42,7 +43,7 @@ export interface SafeDetails {
  */
 
 export interface Safe {
-    id: number;
+    id: number | PublicKey;
     name: string;
     description: string;
     image: string;

@@ -29,7 +29,7 @@ const solanaWallets = [{
 	id: 'phantom',
 }]
 
-const SafeOwner = ({ chainId, phantomWallet, signerVerified }) => {
+const SafeOwner = ({ isEvmChain, phantomWallet, signerVerified }) => {
 	if(!signerVerified) {
 		return (
 			<>
@@ -50,20 +50,7 @@ const SafeOwner = ({ chainId, phantomWallet, signerVerified }) => {
 					alignItems='stretch'
 				>
 					{
-						chainId === 9000001 ?
-							solanaWallets.map((wallet, index) => (
-								<ConnectWalletButton
-									maxW='100%'
-									key={index}
-									icon={wallet.icon}
-									name={wallet.name}
-									isPopular={wallet.isPopular}
-									onClick={
-										() => {
-											phantomWallet?.connect()
-										}
-									} />
-							)) :
+						isEvmChain ?
 							availableWallets.map((wallet, index) => (
 								<ConnectWalletButton
 									maxW='100%'
@@ -81,6 +68,18 @@ const SafeOwner = ({ chainId, phantomWallet, signerVerified }) => {
 
 											setVerified(true)
 											// onVerified()
+										}
+									} />
+							)) : solanaWallets.map((wallet, index) => (
+								<ConnectWalletButton
+									maxW='100%'
+									key={index}
+									icon={wallet.icon}
+									name={wallet.name}
+									isPopular={wallet.isPopular}
+									onClick={
+										() => {
+											phantomWallet?.connect()
 										}
 									} />
 							))
@@ -118,7 +117,7 @@ const SafeOwner = ({ chainId, phantomWallet, signerVerified }) => {
 				fontWeight='400'
 				textAlign={'center'}
 			>
-				{phantomWallet.publicKey?.toString()}
+				{isEvmChain ? '' : phantomWallet.publicKey?.toString()}
 			</Text>
 		</>
 	)

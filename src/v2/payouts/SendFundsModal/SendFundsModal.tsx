@@ -9,9 +9,10 @@ import {
 	ModalOverlay,
 	Text,
 } from '@chakra-ui/react'
-import { PublicKey } from '@solana/web3.js'
 import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
 import { SupportedSafes } from 'src/v2/constants/safe/supported_safes'
+import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
+import getProposalUrl from 'src/v2/utils/phantomUtils'
 import { useConnect } from 'wagmi'
 import { CancelCircleFilled } from '../../assets/custom chakra icons/CancelCircleFilled'
 import { FundsCircle } from '../../assets/custom chakra icons/Your Grants/FundsCircle'
@@ -27,25 +28,12 @@ interface Props {
 	proposals: any[];
 }
 
-type PhantomEvent = 'disconnect' | 'connect' | 'accountChanged';
-
-interface ConnectOpts {
-    onlyIfTrusted: boolean;
+enum ModalState {
+	RECEIPT_DETAILS,
+	CONNECT_WALLET,
+	VERIFIED_OWNER,
+	TRANSATION_INITIATED
 }
-
-interface PhantomProvider {
-    connect: (opts?: Partial<ConnectOpts>) => Promise<{ publicKey: PublicKey }>;
-    disconnect: ()=>Promise<void>;
-    on: (event: PhantomEvent, callback: (args:any)=>void) => void;
-    isPhantom: boolean;
-	publicKey: PublicKey;
-	isConnected: boolean;
-}
-
-type WindowWithSolana = Window & {
-    solana?: PhantomProvider;
-}
-
 
 function SendFundsModal({
 	isOpen,
@@ -63,40 +51,23 @@ function SendFundsModal({
 	const [milestoneId, setMilestoneId] = useState<string>()
 	const [amount, setAmount] = useState<number>()
 
-	const [ walletAvail, setWalletAvail ] = useState(false)
-	const [phantomWallet, setPhantomWallet] = useState<PhantomProvider>()
-	const [phantomWalletConnected, setPhantomWalletConnected] = useState(false)
+	const { phantomWalletAvailable,
+		phantomWallet,
+		phantomWalletConnected,
+		setPhantomWalletConnected } = usePhantomWallet()
+
 	const [signerVerified, setSignerVerififed] = useState(false)
 	const [proposalAddr, setProposalAddr] = useState('')
 
 	const supported_safes = new SupportedSafes()
-	const chainId = 9000001
-	const current_safe = supported_safes.getSafeByChainId(chainId)
+	const chainId = 9000001 // get your safe chain ID, currently on solana
+	const current_safe = supported_safes.getSafeByChainId(chainId) //current_safe has the stored safe address
+
+	const isEvmChain = chainId !== 9000001 ? true : false
 
 
 	useEffect(() => {
-		if('solana' in window) {
-			const solWindow = window as WindowWithSolana
-			if(solWindow?.solana?.isPhantom) {
-				setPhantomWallet(solWindow.solana)
-				setWalletAvail(true)
-			}
-		}
-	}, [])
-
-	useEffect(() => {
-		phantomWallet?.on('connect', () => {
-			console.log('phantom wallet connected ')
-			setPhantomWalletConnected(true)
-		})
-		phantomWallet?.on('disconnect', () => {
-			console.log('phantom wallet disconnected')
-		})
-
-	}, [phantomWallet?.isConnected])
-
-	useEffect(() => {
-		const getVerification = async() => {
+		const getRealmsVerification = async() => {
 			if(phantomWallet?.publicKey?.toString()) {
 				const isVerified = await current_safe?.isOwner(phantomWallet.publicKey?.toString())
 				console.log('realms_solana verification', isVerified)
@@ -108,7 +79,7 @@ function SendFundsModal({
 		}
 
 		if(phantomWalletConnected) {
-			getVerification()
+			getRealmsVerification()
 		}
 	}, [phantomWalletConnected])
 
@@ -297,7 +268,7 @@ function SendFundsModal({
 							</Flex>
 
 							{
-								step === 0 ? (
+								step === ModalState.RECEIPT_DETAILS ? (
 									<RecipientDetails
 										milestoneId={milestoneId}
 										setMilestoneId={setMilestoneId}
@@ -308,7 +279,7 @@ function SendFundsModal({
 										step={step} />
 								) : (
 									<SafeOwner
-										chainId={chainId}
+										isEvmChain={isEvmChain}
 										phantomWallet={phantomWallet}
 										signerVerified={signerVerified} />
 								)
@@ -330,15 +301,18 @@ function SendFundsModal({
 							<Button
 								ml='auto'
 								colorScheme={'brandv2'}
-								disabled={step === 0 ? milestoneId === undefined || amount === undefined : step === 1}
+								disabled={
+									step === ModalState.RECEIPT_DETAILS ? milestoneId === undefined
+											|| amount === undefined : step === ModalState.CONNECT_WALLET
+								}
 								onClick={
 									async() => {
-										if(step === 0) {
-											setStep(1)
+										if(step === ModalState.RECEIPT_DETAILS) {
+											setStep(ModalState.CONNECT_WALLET)
 										}
 
-										if(step === 2) {
-											setStep(0)
+										if(step === ModalState.VERIFIED_OWNER) {
+											setStep(ModalState.RECEIPT_DETAILS)
 											setTxnInitModalIsOpen(true)
 											setMilestoneId(undefined)
 											setAmount(undefined)
@@ -348,7 +322,7 @@ function SendFundsModal({
 										}
 									}
 								}>
-								{step === 0 ? 'Continue' : 'Initiate Transaction'}
+								{step === ModalState.RECEIPT_DETAILS ? 'Continue' : 'Initiate Transaction'}
 							</Button>
 
 						</Flex>
@@ -361,7 +335,7 @@ function SendFundsModal({
 				isOpen={txnInitModalIsOpen}
 				onClose={() => setTxnInitModalIsOpen(false)}
 				onComplete={() => setTxnInitModalIsOpen(false)}
-				proposalUrl={`http://localhost:3002/dao/${current_safe.realmPk}/proposal/${proposalAddr}`}
+				proposalUrl={isEvmChain ? '' : getProposalUrl(current_safe?.id.toString()!, proposalAddr)}
 			/>
 		</>
 	)

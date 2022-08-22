@@ -16,7 +16,7 @@ import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstructi
 import { Safe, TransactionType } from '../../types/safe'
 
 export class Realms_Solana implements Safe {
-    id: number;
+    id: PublicKey;
     name: string;
     description: string;
     image: string;
@@ -24,9 +24,8 @@ export class Realms_Solana implements Safe {
 
     connection: Connection
     programId: PublicKey
-    realmPk: PublicKey
     constructor() {
-    	this.id = 1
+    	this.id = new PublicKey('HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC') // realmPK
     	this.name = 'Realms on Solana'
     	this.description = 'Realms on Solana'
     	this.image = ''
@@ -34,14 +33,13 @@ export class Realms_Solana implements Safe {
 
     	this.connection = new Connection('https://mango.devnet.rpcpool.com', 'recent')
     	this.programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
-    	this.realmPk = new PublicKey('HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC')
     }
 
 
     async proposeTransactions(transactions: TransactionType[], wallet: any) {
 
     	const governance = await getGovernance(this.connection, new PublicKey('9PDa3cRWPiA6uCDN5rC92XygoV8WeKuvsM2YuoETCQkb'))
-    	const realmData = await getRealm(this.connection, this.realmPk)
+    	const realmData = await getRealm(this.connection, this.id)
     	const payer = wallet.publicKey
 
     	const tokenOwnerRecord = await getAllTokenOwnerRecords(
@@ -56,7 +54,7 @@ export class Realms_Solana implements Safe {
     		proposalInstructions,
     		this.programId,
     		2,
-    		this.realmPk,
+    		this.id,
     		governance.pubkey,
     		tokenOwnerRecord[0].pubkey,
     		`QB - NEW give me 0.3 sol payouts ${new Date().toTimeString()}`,
@@ -134,7 +132,7 @@ export class Realms_Solana implements Safe {
     		proposalInstructions,
     		this.programId,
     		2,
-    		this.realmPk,
+    		this.id,
     		governance.pubkey,
     		proposalAddress,
             payer!,
@@ -172,7 +170,7 @@ export class Realms_Solana implements Safe {
 
     async isOwner(address: String): any {
     	const walletPublicKey = new PublicKey(address)
-    	const realmData = await getRealm(this.connection, this.realmPk)
+    	const realmData = await getRealm(this.connection, this.id)
     	console.log('realms_solana - realmData', realmData)
 
     	const COUNCIL_MINT = realmData.account.config.councilMint
@@ -180,14 +178,7 @@ export class Realms_Solana implements Safe {
     	const governanceInfo = await getGovernanceAccounts(this.connection, this.programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
     	console.log('realms_solana - governanceInfo', governanceInfo[0])
 
-    	const tokenownerrecord = await getAllTokenOwnerRecords(this.connection, this.programId, this.realmPk)
-    	// console.log('realms_solana - tokenownerrecord', tokenownerrecord)
-    	// tokenownerrecord.map((tokenowerrecord, index) => {
-    	// 	if(address === tokenowerrecord.account.governingTokenOwner.toString()) {
-    	// 		callback(true)
-    	// 		return
-    	// 	}
-    	// })
+    	const tokenownerrecord = await getAllTokenOwnerRecords(this.connection, this.programId, this.id)
 
     	let isOwner = false
     	for(let i = 0; i < tokenownerrecord.length; i++) {
