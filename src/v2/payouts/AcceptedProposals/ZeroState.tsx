@@ -31,7 +31,7 @@ const ZeroState = ({
 				maxW='754px'
 			>
 				{
-					(grantData?.grants[0].rubric?.items.length || 0) > 0 || false ?
+					(grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ?
 						'' :
 						'In the meantime, you can set up applicant evaluation - define a scoring rubric and assign reviewers to evaluate the applicants.'
 
@@ -43,7 +43,7 @@ const ZeroState = ({
 				fontSize='14px'
 				h={9}
 			>
-				{(grantData?.grants[0].rubric?.items.length || 0) > 0 || false ? 'View scoring rubric' : 'Setup applicant evaluation'}
+				{(grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ? 'View scoring rubric' : 'Setup applicant evaluation'}
 
 			</Button>
 		</Flex>

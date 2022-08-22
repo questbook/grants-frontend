@@ -23,6 +23,8 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
 	onComplete: () => void;
+	safeAddress: string;
+	proposals: any[];
 }
 
 type PhantomEvent = 'disconnect' | 'connect' | 'accountChanged';
@@ -49,6 +51,8 @@ function SendFundsModal({
 	isOpen,
 	onClose,
 	onComplete,
+	safeAddress,
+	proposals,
 }: Props) {
 
 	const [step, setStep] = useState(0)

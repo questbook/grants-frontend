@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Button, Checkbox, Fade, Flex, GridItem, Image, Text, Tooltip } from '@chakra-ui/react'
-import CopyIcon from 'src/components/ui/copy_icon'
+import { Button, Checkbox, Fade, Flex, GridItem, Image, Text } from '@chakra-ui/react'
 import { AcceptApplication } from 'src/v2/assets/custom chakra icons/AcceptApplication'
 import { RejectApplication } from 'src/v2/assets/custom chakra icons/RejectApplication'
 import { ResubmitApplication } from 'src/v2/assets/custom chakra icons/ResubmitApplication'
@@ -60,7 +59,7 @@ const InReviewRow = ({
 					<Flex
 						direction='column'
 						ml='12px'
-						alignItems={'center'}
+						alignItems={'flex-start'}
 					>
 						<Text
 							fontSize='14px'
@@ -71,16 +70,20 @@ const InReviewRow = ({
 						>
 							{applicantData?.project_name}
 						</Text>
-						{/* <Text
+						<Text
 							fontSize='12px'
 							lineHeight='16px'
 							fontWeight='400'
 							mt="2px"
 							color='#7D7DA0'
 						>
-							{applicantData?.} • ryan@gmail.com
-						</Text> */}
-						<Text
+							{applicantData?.applicantName}
+							{' '}
+•
+							{' '}
+							{applicantData?.applicantEmail}
+						</Text>
+						{/* <Text
 							fontSize='12px'
 							lineHeight='16px'
 							fontWeight='400'
@@ -101,7 +104,7 @@ const InReviewRow = ({
 							>
 								<CopyIcon text={applicantData?.applicant_address!} />
 							</Flex>
-						</Text>
+						</Text> */}
 					</Flex>
 				</Flex>
 			</GridItem>

@@ -20,12 +20,16 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
 	onComplete: () => void;
+	safeAddress: string;
+	proposals: any[];
 }
 
 function SendFundsDrawer({
 	isOpen,
 	onClose,
 	onComplete,
+	safeAddress,
+	proposals,
 }: Props) {
 
 	const [step, setStep] = useState(0)
@@ -223,7 +227,8 @@ function SendFundsDrawer({
 									setMilestoneId={setMilestoneId}
 									amount={amount}
 									setAmount={setAmount}
-
+									applicantData={proposals}
+									safeAddress={safeAddress}
 									step={step} />
 							) : (
 								<SafeOwner onVerified={() => setStep(2)} />
