@@ -47,7 +47,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
     "setGrantFactory(address)": FunctionFragment;
     "setRubrics(uint96,address,string)": FunctionFragment;
     "setWorkspaceReg(address)": FunctionFragment;
-    "submitReview(uint96,uint96,address,string)": FunctionFragment;
+    "submitReview(address,uint96,uint96,address,string)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
@@ -173,6 +173,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "submitReview",
     values: [
+      PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
@@ -273,10 +274,11 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
   events: {
     "AdminChanged(address,address)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "ReviewPaymentFulfilled(uint96[],address,address,address,uint256,uint256)": EventFragment;
     "ReviewPaymentMarkedDone(uint96[],address,address,uint256,string,uint256)": EventFragment;
-    "ReviewSubmitted(uint96,uint96,uint96,address,string,uint256)": EventFragment;
+    "ReviewSubmitted(uint96,address,uint96,uint96,address,string,uint256)": EventFragment;
     "ReviewersAssigned(uint96[],uint96,uint96,address,address[],bool[],uint256)": EventFragment;
     "RubricsSet(uint96,address,string,uint256)": EventFragment;
     "Upgraded(address)": EventFragment;
@@ -284,6 +286,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ReviewPaymentFulfilled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ReviewPaymentMarkedDone"): EventFragment;
@@ -313,6 +316,13 @@ export type BeaconUpgradedEvent = TypedEvent<
 >;
 
 export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
+
+export interface InitializedEventObject {
+  version: number;
+}
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface OwnershipTransferredEventObject {
   previousOwner: string;
@@ -360,6 +370,7 @@ export type ReviewPaymentMarkedDoneEventFilter =
 
 export interface ReviewSubmittedEventObject {
   _reviewId: BigNumber;
+  _reviewerAddress: string;
   _workspaceId: BigNumber;
   _applicationId: BigNumber;
   _grantAddress: string;
@@ -367,7 +378,7 @@ export interface ReviewSubmittedEventObject {
   time: BigNumber;
 }
 export type ReviewSubmittedEvent = TypedEvent<
-  [BigNumber, BigNumber, BigNumber, string, string, BigNumber],
+  [BigNumber, string, BigNumber, BigNumber, string, string, BigNumber],
   ReviewSubmittedEventObject
 >;
 
@@ -541,6 +552,7 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     ): Promise<ContractTransaction>;
 
     submitReview(
+      _reviewerAddress: PromiseOrValue<string>,
       _workspaceId: PromiseOrValue<BigNumberish>,
       _applicationId: PromiseOrValue<BigNumberish>,
       _grantAddress: PromiseOrValue<string>,
@@ -671,6 +683,7 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
   ): Promise<ContractTransaction>;
 
   submitReview(
+    _reviewerAddress: PromiseOrValue<string>,
     _workspaceId: PromiseOrValue<BigNumberish>,
     _applicationId: PromiseOrValue<BigNumberish>,
     _grantAddress: PromiseOrValue<string>,
@@ -797,6 +810,7 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     ): Promise<void>;
 
     submitReview(
+      _reviewerAddress: PromiseOrValue<string>,
       _workspaceId: PromiseOrValue<BigNumberish>,
       _applicationId: PromiseOrValue<BigNumberish>,
       _grantAddress: PromiseOrValue<string>,
@@ -839,6 +853,9 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     BeaconUpgraded(
       beacon?: PromiseOrValue<string> | null
     ): BeaconUpgradedEventFilter;
+
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: PromiseOrValue<string> | null,
@@ -883,8 +900,9 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       time?: null
     ): ReviewPaymentMarkedDoneEventFilter;
 
-    "ReviewSubmitted(uint96,uint96,uint96,address,string,uint256)"(
+    "ReviewSubmitted(uint96,address,uint96,uint96,address,string,uint256)"(
       _reviewId?: PromiseOrValue<BigNumberish> | null,
+      _reviewerAddress?: null,
       _workspaceId?: null,
       _applicationId?: null,
       _grantAddress?: null,
@@ -893,6 +911,7 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     ): ReviewSubmittedEventFilter;
     ReviewSubmitted(
       _reviewId?: PromiseOrValue<BigNumberish> | null,
+      _reviewerAddress?: null,
       _workspaceId?: null,
       _applicationId?: null,
       _grantAddress?: null,
@@ -1028,6 +1047,7 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     ): Promise<BigNumber>;
 
     submitReview(
+      _reviewerAddress: PromiseOrValue<string>,
       _workspaceId: PromiseOrValue<BigNumberish>,
       _applicationId: PromiseOrValue<BigNumberish>,
       _grantAddress: PromiseOrValue<string>,
@@ -1142,6 +1162,7 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     submitReview(
+      _reviewerAddress: PromiseOrValue<string>,
       _workspaceId: PromiseOrValue<BigNumberish>,
       _applicationId: PromiseOrValue<BigNumberish>,
       _grantAddress: PromiseOrValue<string>,
