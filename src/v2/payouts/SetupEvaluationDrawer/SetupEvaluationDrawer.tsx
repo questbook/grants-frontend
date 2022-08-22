@@ -1,8 +1,18 @@
-import { useState } from 'react'
-import { Box, Button, Container, Drawer, DrawerContent, DrawerOverlay, Flex, Text } from '@chakra-ui/react'
+import { useContext, useEffect, useRef, useState } from 'react'
+import { Box, Button, Container, Drawer, DrawerContent, DrawerOverlay, Flex, Text, ToastId, useToast } from '@chakra-ui/react'
+import router from 'next/router'
+import { ApiClientsContext } from 'pages/_app'
+import ErrorToast from 'src/components/ui/toasts/errorToast'
+import { defaultChainId, SupportedChainId } from 'src/constants/chains'
+import { useGetReviewersForAWorkspaceQuery } from 'src/generated/graphql'
+import useQBContract from 'src/hooks/contracts/useQBContract'
+import { SidebarReviewer, SidebarRubrics } from 'src/types'
+import getErrorMessage from 'src/utils/errorUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
 import { SetupEvaluation } from 'src/v2/assets/custom chakra icons/SetupEvaluation'
+import { useNetwork } from 'wagmi'
 import AssignReviewers from './AssignReviewers'
 import RubricsForm from './RubricsForm'
 
@@ -10,13 +20,242 @@ const SetupEvaluationDrawer = ({
 	isOpen,
 	onClose,
 	onComplete,
+	grantAddress,
+	chainId,
+	setNetworkTransactionModalStep,
 }: {
-  isOpen: boolean;
-  onClose: () => void;
+	isOpen: boolean;
+	onClose: () => void;
 	onComplete: () => void;
+	grantAddress: string;
+	chainId?: SupportedChainId;
+	setNetworkTransactionModalStep: (step: number | undefined) => void;
 }) => {
 
+	const { subgraphClients, workspace, validatorApi } = useContext(ApiClientsContext)!
+	const [queryParams, setQueryParams] = useState<any>({
+		client:
+			subgraphClients[
+				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+			].client,
+	})
+	const { data, loading, error } = useGetReviewersForAWorkspaceQuery(queryParams)
+	useEffect(() => {
+		if(!workspace) {
+			return
+		}
+
+		setQueryParams({
+			client:
+				subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+			variables: {
+				workspaceId: workspace.id
+			},
+		})
+	}, [workspace])
+
 	const [step, setStep] = useState(0)
+
+	if(!chainId) {
+		// eslint-disable-next-line no-param-reassign
+		chainId = getSupportedChainIdFromWorkspace(workspace)
+	}
+
+	// Setting up rubrics
+	const [rubrics, setRubrics] = useState<SidebarRubrics[]>([{ index: 0, criteria: '', description: '' }])
+
+	const onRubricChange = (rubric: SidebarRubrics) => {
+		const temp = [...rubrics]
+		temp[rubric.index] = rubric
+		setRubrics(temp)
+	}
+
+	const onRubricCriteriaAdd = () => {
+		const temp = [...rubrics]
+		temp.push({ index: temp.length, criteria: '', description: '' })
+		setRubrics(temp)
+	}
+
+	const onRubricCriteriaDelete = (index: number) => {
+		if(rubrics.length > 1) {
+			const temp = [...rubrics]
+			temp.splice(index, 1)
+			setRubrics(temp)
+		}
+	}
+
+	const [canContinue, setCanContinue] = useState(false)
+
+	useEffect(() => {
+		for(const rubric of rubrics) {
+			if(!rubric.criteria || rubric.criteria.length === 0 || !rubric.description || rubric.description.length === 0) {
+				setCanContinue(false)
+				return
+			}
+		}
+
+		setCanContinue(true)
+	}, [rubrics])
+
+	// Assigning reviewers
+	const defaultSliderValue = 2
+	const [numOfReviewersPerApplication, setNumOfReviewersPerApplication] = useState(defaultSliderValue)
+	const [reviewers, setReviewers] = useState<SidebarReviewer[]>([])
+
+	useEffect(() => {
+		const temp: SidebarReviewer[] = []
+		let i = 0
+		data?.workspaces[0].members.forEach((member: any) => {
+			temp.push({ isSelected: false, data: member, index: i })
+			++i
+		}
+		)
+		setReviewers(temp)
+	}, [data])
+
+	const onReviewerChange = (reviewer: SidebarReviewer) => {
+		const temp = [...reviewers]
+		temp[reviewer.index].isSelected = !temp[reviewer.index].isSelected
+		setReviewers(temp)
+	}
+
+	const [callOnContractChange, setCallOnContractChange] = useState(false)
+	const { activeChain, switchNetworkAsync } = useNetwork()
+
+	const toastRef = useRef<ToastId>()
+	const toast = useToast()
+
+	const applicationReviewContract = useQBContract('reviews', chainId)
+
+	const applicationRegistry = useQBContract('applications', chainId)
+
+	const onInitiateTransaction = async() => {
+		setNetworkTransactionModalStep(0)
+		setCallOnContractChange(false)
+
+		console.log('Workspace: ', workspace)
+		if(!workspace || !workspace?.id || !grantAddress) {
+			return
+		}
+
+		chainId = getSupportedChainIdFromWorkspace(workspace)
+		try {
+			console.log('Chain ID: ', activeChain?.id, chainId)
+			if(activeChain?.id !== chainId) {
+				console.log('switching')
+				await switchNetworkAsync!(chainId)
+				console.log('create workspace again on contract object update')
+				setCallOnContractChange(true)
+				setTimeout(() => {
+					if(callOnContractChange && activeChain?.id !== chainId) {
+						setCallOnContractChange(false)
+						throw new Error('Error switching network')
+					}
+				}, 60000)
+				return
+			}
+
+			const idFromContract = await applicationRegistry.getApplicationWorkspace('0x4')
+			const idFromContract2 = await applicationRegistry.getApplicationWorkspace('0x17')
+			console.log('ID from Contract: ', idFromContract.toString())
+			console.log('ID2 from Contract: ', idFromContract2.toString())
+
+			const rubric = {} as any
+
+			if(rubrics.length > 0) {
+				rubrics.forEach((r: SidebarRubrics, index) => {
+					rubric[index.toString()] = {
+						title: r.criteria,
+						details: r.description,
+						maximumPoints: 5,
+					}
+				})
+			}
+
+			let rubricHash = ''
+
+			setNetworkTransactionModalStep(1)
+			const {
+				data: { ipfsHash: auxRubricHash },
+			} = await validatorApi.validateRubricSet({
+				rubric: {
+					isPrivate: false,
+					rubric: rubric,
+				},
+			})
+
+			if(!auxRubricHash) {
+				// throw new Error('Error validating rubric data')
+				setNetworkTransactionModalStep(undefined)
+				return
+			}
+
+			rubricHash = auxRubricHash
+			const workspaceId = Number(workspace?.id).toString()
+			console.log('Workspace ID: ', workspaceId)
+
+			console.log('(Auto - assign) Workspace ID: ', workspaceId)
+			console.log('(Auto - assign) Grant Address: ', grantAddress)
+			console.log('(Auto - assign) Reviewers: ', reviewers.filter((reviewer: SidebarReviewer) => reviewer.isSelected).map((reviewer: SidebarReviewer) => reviewer.data.actorId))
+			console.log('(Auto - assign) Active Status: ', reviewers.filter((reviewer: SidebarReviewer) => reviewer.isSelected).map(() => true))
+			console.log('(Auto - assign) Reviewer Count: ', numOfReviewersPerApplication)
+
+			// setNetworkTransactionModalStep(2)
+			// const setRubricTransaction = await applicationReviewContract.setRubrics(
+			// 	workspaceId,
+			// 	grantAddress,
+			// 	rubricHash,
+			// )
+			// await setRubricTransaction.wait()
+
+			// setNetworkTransactionModalStep(3)
+
+			// const enableAutoAssignTransaction = await applicationReviewContract.enableAutoAssignmentOfReviewers(
+			// 	workspaceId,
+			// 	grantAddress,
+			// 	reviewers.filter((reviewer: SidebarReviewer) => reviewer.isSelected).map((reviewer: SidebarReviewer) => reviewer.data.actorId),
+			// 	reviewers.filter((reviewer: SidebarReviewer) => reviewer.isSelected).map(() => true),
+			// 	numOfReviewersPerApplication,
+			// )
+
+			setNetworkTransactionModalStep(2)
+			const transaction = await applicationReviewContract.setRubricsAndEnableAutoAssign(
+				workspaceId,
+				grantAddress,
+				reviewers.filter((reviewer: SidebarReviewer) => reviewer.isSelected).map((reviewer: SidebarReviewer) => reviewer.data.actorId),
+				reviewers.filter((reviewer: SidebarReviewer) => reviewer.isSelected).map(() => true),
+				numOfReviewersPerApplication,
+				rubricHash,
+			)
+
+			setNetworkTransactionModalStep(3)
+			const transactionData = await transaction.wait()
+			console.log('RUBRIC AND AUTO ASSIGN: ', transactionData)
+
+			setNetworkTransactionModalStep(4)
+			setTimeout(() => {
+				setNetworkTransactionModalStep(undefined)
+				router.push({ pathname: '/v2/your_grants/view_applicants/', query: { grantId: grantAddress } })
+			}, 3000)
+			// setTransactionData(transactionData)
+		} catch(e) {
+			setNetworkTransactionModalStep(undefined)
+			const message = getErrorMessage(e)
+			toastRef.current = toast({
+				position: 'top',
+				render: () => ErrorToast({
+					content: message,
+					close: () => {
+						if(toastRef.current) {
+							toast.close(toastRef.current)
+						}
+					},
+				}),
+			})
+		}
+
+		onComplete()
+	}
 
 	return (
 		<Drawer
@@ -41,7 +280,7 @@ const SetupEvaluationDrawer = ({
 					display='flex'
 					flexDirection={'column'}
 					minH='100vh'
-				 >
+				>
 
 
 					<Flex
@@ -70,7 +309,7 @@ const SetupEvaluationDrawer = ({
 								lineHeight='24px'
 								fontWeight='500'
 							>
-							Setup applicant evaluation
+								Setup applicant evaluation
 							</Text>
 							<Text
 								fontSize='14px'
@@ -79,7 +318,7 @@ const SetupEvaluationDrawer = ({
 								mt={1}
 								color='#7D7DA0'
 							>
-							Define a scoring rubric and assign reviewers.
+								Define a scoring rubric and assign reviewers.
 							</Text>
 						</Flex>
 
@@ -192,8 +431,26 @@ const SetupEvaluationDrawer = ({
 
 						{
 							step === 0 ? (
-								<RubricsForm />
-							) : <AssignReviewers />
+								<RubricsForm
+									rubrics={rubrics}
+									onRubricChange={onRubricChange}
+									onRubricCriteriaAdd={onRubricCriteriaAdd}
+									onRubricCriteriaDelete={onRubricCriteriaDelete} />
+							) : (
+								<AssignReviewers
+									minCount={1}
+									maxCount={5}
+									defaultSliderValue={defaultSliderValue}
+									sliderValue={numOfReviewersPerApplication}
+									onSlide={
+										(value: number) => {
+											setNumOfReviewersPerApplication(value)
+										}
+									}
+									reviewers={reviewers}
+									onReviewerChange={onReviewerChange}
+								/>
+							)
 						}
 					</Flex>
 
@@ -212,15 +469,15 @@ const SetupEvaluationDrawer = ({
 						<Button
 							ml='auto'
 							colorScheme={'brandv2'}
-							// disabled={step === 0 ? milestoneId === undefined || amount === undefined : step === 1}
+							disabled={(step === 0 && !canContinue) || step === 1 && reviewers.filter(r => r.isSelected).length === 0}
 							onClick={
-								() => {
+								async() => {
 									if(step === 0) {
 										setStep(1)
 									}
 
-									if(step === 2) {
-										onComplete()
+									if(step === 1) {
+										await onInitiateTransaction()
 									}
 								}
 							}>
