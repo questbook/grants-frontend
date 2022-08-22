@@ -13,13 +13,11 @@ export const useBiconomy = (data: { chainId?: string }) => {
 	const { network, switchNetwork } = useNetwork()
 
 	useEffect(() => {
-
 		const isBiconomyLoading = (typeof window !== 'undefined') ? localStorage.getItem('isBiconomyLoading') === 'true' : false
 		console.log('STEP3', biconomyDaoObj, nonce, webwallet, biconomyWalletClient, data.chainId, network, isBiconomyLoading)
 		console.log('STEP3: CHAIN - ', data.chainId, biconomyDaoObj?.networkId)
 		if((!isBiconomyLoading && data.chainId && biconomyDaoObj && biconomyDaoObj.networkId && data.chainId !== biconomyDaoObj.networkId.toString()) ||
 		((!isBiconomyLoading && nonce && webwallet && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress)))) {
-			// setIsLoading(true)
 			if(typeof window !== 'undefined') {
 				localStorage.setItem('isBiconomyLoading', 'true')
 			}
@@ -32,6 +30,7 @@ export const useBiconomy = (data: { chainId?: string }) => {
 
 		return (() => {
 			if(typeof window !== 'undefined') {
+				console.log("hasan")
 				localStorage.setItem('isBiconomyLoading', 'false')
 			}
 		})
