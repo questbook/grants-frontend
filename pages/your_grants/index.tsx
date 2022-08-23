@@ -552,47 +552,47 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 										?.icon || '/images/dummy/Ethereum Icon.svg'
 							}
 
-							return (
-								<YourGrantCard
-									grantID={grant.id}
-									key={grant.id}
-									daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
-									grantTitle={grant.title}
-									grantDesc={grant.summary}
-									numOfApplicants={grant.numberOfApplications}
-									endTimestamp={new Date(grant.deadline!).getTime()}
-									grantAmount={formatAmount(grantAmount, decimals || 18)}
-									grantCurrency={label || 'LOL'}
-									grantCurrencyIcon={icon}
-									state='done'
-									chainId={
-										getSupportedChainIdFromSupportedNetwork(
-											grant.workspace.supportedNetworks[0],
-										)
-									}
-									onEditClick={
-										() => router.push({
-											pathname: '/your_grants/edit_grant/',
-											query: {
-												grantId: grant.id,
-											},
-										})
-									}
-									onAddFundsClick={() => initialiseFundModal(grant)}
-									onViewApplicantsClick={
-										() => router.push({
-											pathname: '/your_grants/view_applicants/',
-											query: {
-												grantId: grant.id,
-											},
-										})
-									}
-									acceptingApplications={grant.acceptingApplications}
-									isAdmin={isAdmin}
-									initialRubrics={grant.rubric as Rubric}
-									workspaceId={grant.workspace.id}
-								/>
-							)
+            	return (
+            		<YourGrantCard
+            			grantID={grant.id}
+            			key={grant.id}
+            			daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
+            			grantTitle={grant.title}
+            			grantDesc={grant.summary}
+            			numOfApplicants={grant.numberOfApplications}
+            			endTimestamp={new Date(grant.deadline!).getTime()}
+            			grantAmount={formatAmount(grantAmount, decimals || 18)}
+            			grantCurrency={label || 'LOL'}
+            			grantCurrencyIcon={icon}
+            			state='done'
+            			chainId={
+            				getSupportedChainIdFromSupportedNetwork(
+            					grant.workspace.supportedNetworks[0],
+            				)
+            			}
+            			onEditClick={
+            				() => router.push({
+            					pathname: '/your_grants/edit_grant/',
+            					query: {
+            						grantId: grant.id,
+            					},
+            				})
+            			}
+            			onAddFundsClick={() => initialiseFundModal(grant)}
+            			onViewApplicantsClick={
+            				() => router.push({
+            					pathname: '/v2/your_grants/view_applicants/',
+            					query: {
+            						grantId: grant.id,
+            					},
+            				})
+            			}
+            			acceptingApplications={grant.acceptingApplications}
+            			isAdmin={isAdmin}
+            			initialRubrics={grant.rubric as Rubric}
+            			workspaceId={grant.workspace.id}
+            		/>
+            	)
 						})
 					}
 
@@ -632,43 +632,43 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 										?.icon || '/images/dummy/Ethereum Icon.svg'
 							}
 
-							return (
-								<YourGrantCard
-									grantID={grant.grant.id}
-									key={grant.grant.id}
-									daoIcon={
-										getUrlForIPFSHash(
-											grant.grant.workspace.logoIpfsHash,
-										)
-									}
-									grantTitle={grant.grant.title}
-									grantDesc={grant.grant.summary}
-									numOfApplicants={grant.grant.numberOfApplications}
-									endTimestamp={new Date(grant.grant.deadline!).getTime()}
-									grantAmount={formatAmount(grantAmount, decimals || 18)}
-									grantCurrency={label || 'LOL'}
-									grantCurrencyIcon={icon}
-									state='done'
-									chainId={
-										getSupportedChainIdFromSupportedNetwork(
-											grant.grant.workspace.supportedNetworks[0],
-										)
-									}
-									onAddFundsClick={() => initialiseFundModal(grant.grant)}
-									onViewApplicantsClick={
-										() => router.push({
-											pathname: '/your_grants/view_applicants/',
-											query: {
-												grantId: grant.grant.id,
-											},
-										})
-									}
-									acceptingApplications={grant.grant.acceptingApplications}
-									isAdmin={isAdmin}
-									initialRubrics={grant.grant.rubric as Rubric}
-									workspaceId={grant.grant.workspace.id}
-								/>
-							)
+            	return (
+            		<YourGrantCard
+            			grantID={grant.grant.id}
+            			key={grant.grant.id}
+            			daoIcon={
+            				getUrlForIPFSHash(
+            					grant.grant.workspace.logoIpfsHash,
+            				)
+            			}
+            			grantTitle={grant.grant.title}
+            			grantDesc={grant.grant.summary}
+            			numOfApplicants={grant.grant.numberOfApplications}
+            			endTimestamp={new Date(grant.grant.deadline!).getTime()}
+            			grantAmount={formatAmount(grantAmount, decimals || 18)}
+            			grantCurrency={label || 'LOL'}
+            			grantCurrencyIcon={icon}
+            			state='done'
+            			chainId={
+            				getSupportedChainIdFromSupportedNetwork(
+            					grant.grant.workspace.supportedNetworks[0],
+            				)
+            			}
+            			onAddFundsClick={() => initialiseFundModal(grant.grant)}
+            			onViewApplicantsClick={
+            				() => router.push({
+            					pathname: '/v2/your_grants/view_applicants/',
+            					query: {
+            						grantId: grant.grant.id,
+            					},
+            				})
+            			}
+            			acceptingApplications={grant.grant.acceptingApplications}
+            			isAdmin={isAdmin}
+            			initialRubrics={grant.grant.rubric as Rubric}
+            			workspaceId={grant.grant.workspace.id}
+            		/>
+            	)
 						})
 					}
 					{

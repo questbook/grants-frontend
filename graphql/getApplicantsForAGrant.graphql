@@ -38,8 +38,18 @@ query getApplicantsForAGrant($first: Int, $skip: Int, $grantID: String!) {
     applicationReviewers {      
       id,
       member {
-        email
+        email,
+        fullName
       }
+    },
+    reviews {
+      id,
+      reviewerId,
+      reviewer {
+        id,
+        fullName,
+      }
+      publicReviewDataHash,
     },
    milestones {
         id,

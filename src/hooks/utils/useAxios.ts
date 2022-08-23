@@ -1,5 +1,5 @@
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
 
 const DEFAULT_ERROR_MESSAGE = 'Could not fetch the required data.'
@@ -14,10 +14,6 @@ const useAxios = ({ url, method, payload }: Props) => {
 	const [data, setData] = useState<any>(null)
 	const [error, setError] = useState('')
 	const [loaded, setLoaded] = useState(false)
-	const controllerRef = useRef(new AbortController())
-	const cancel = () => {
-		controllerRef.current.abort()
-	}
 
 	useEffect(() => {
 		(async() => {
@@ -25,7 +21,7 @@ const useAxios = ({ url, method, payload }: Props) => {
 			try {
 				const response = await axios.request({
 					data: payload,
-					signal: controllerRef.current.signal,
+					// signal: controllerRef.current.signal,
 					method,
 					url,
 				})
@@ -47,7 +43,7 @@ const useAxios = ({ url, method, payload }: Props) => {
 			}
 		})()
 	}, [url, method, payload])
-	return { cancel, data, error, loaded }
+	return { data, error, loaded }
 }
 
 export default useAxios

@@ -1,5 +1,5 @@
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
 
 const DEFAULT_ERROR_MESSAGE = 'Could not fetch all data.'
@@ -14,10 +14,6 @@ function useAxiosMulti({ urls, payload, method }: Props) {
 	const [data, setData] = useState<any[]>([])
 	const [error, setError] = useState<string>('')
 	const [loaded, setLoaded] = useState<boolean>(false)
-	const controllerRef = useRef(new AbortController())
-	const cancel = () => {
-		controllerRef.current.abort()
-	}
 
 	useEffect(() => {
 		(async() => {
@@ -25,7 +21,7 @@ function useAxiosMulti({ urls, payload, method }: Props) {
 				setLoaded(false)
 				const axiosRequests = urls.map(url => axios.request({
 					data: payload,
-					signal: controllerRef.current.signal,
+					// signal: controllerRef.current.signal,
 					method,
 					url
 				}))
@@ -58,7 +54,7 @@ function useAxiosMulti({ urls, payload, method }: Props) {
 			}
 		})()
 	}, [urls, payload, method])
-	return { cancel, data, error, loaded }
+	return { data, error, loaded }
 }
 
 export default useAxiosMulti

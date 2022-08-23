@@ -112,7 +112,7 @@ export const WebwalletContext = createContext<{
 	webwallet?: Wallet;
 	setWebwallet: (webwallet?: Wallet) => void;
 	network?: SupportedChainId;
-	switchNetwork: (newNetwork: SupportedChainId) => void;
+	switchNetwork: (newNetwork?: SupportedChainId) => void;
 	scwAddress?: string;
 	setScwAddress: (scwAddress?: string) => void;
 	nonce?: string;
@@ -129,7 +129,7 @@ export const BiconomyContext = createContext<{
 		} | null>(null)
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-	const [network, switchNetwork] = React.useState<SupportedChainId>()
+	const [network, switchNetwork] = React.useState<SupportedChainId>(5)
 	const [webwallet, setWebwallet] = React.useState<Wallet>()
 	const [workspace, setWorkspace] = React.useState<MinimalWorkspace>()
 	const [scwAddress, setScwAddress] = React.useState<string>()
@@ -168,6 +168,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}
 
 	const getNetwork = () => {
+		return 5;
 
 		const _network = localStorage.getItem('network')
 

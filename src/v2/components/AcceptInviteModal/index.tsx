@@ -1,4 +1,4 @@
-import { createElement, useEffect, useRef, useState } from 'react'
+import { createElement, useContext, useEffect, useRef, useState } from 'react'
 import { Box, Button, HStack, Image, Input, Modal, ModalCloseButton, ModalContent, ModalOverlay, Progress, Spacer, Text, useToast, VStack } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
@@ -11,6 +11,8 @@ import { ForwardArrow } from 'src/v2/assets/custom chakra icons/Arrows/ForwardAr
 import ControlBar from '../ControlBar'
 import NetworkTransactionModal from '../NetworkTransactionModal'
 import RoleDataDisplay from './RoleDataDisplay'
+import { WebwalletContext } from 'pages/_app'
+import { addAuthorizedUser } from 'src/utils/gaslessUtils'
 
 export type AcceptInviteModalProps = {
 	inviteInfo?: InviteInfo | undefined
@@ -35,8 +37,8 @@ type DisplayProps = {
 }
 
 export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
-	const { data: accountData } = useQuestbookAccount()
 	const daoName = useDAOName(inviteInfo?.workspaceId, inviteInfo?.chainId)
+	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 
 	const toast = useToast()
 
@@ -49,6 +51,31 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 	})
 
 	const { joinInvite, getJoinInviteGasEstimate, isBiconomyInitialised } = useJoinInvite(inviteInfo!, profile)
+
+	const [shouldRefreshNonce, setShouldRefreshNonce] = useState<boolean>()
+
+	const { data: accountData, nonce } = useQuestbookAccount(shouldRefreshNonce)
+
+	useEffect(() => {
+
+		if(!webwallet) {
+			return
+		}
+
+		console.log('webwallet exists', nonce)
+		if(nonce && nonce !== 'Token expired') {
+			return
+		}
+
+		console.log('adding nonce')
+
+		addAuthorizedUser(webwallet?.address)
+			.then(() => {
+				setShouldRefreshNonce(true)
+				console.log('Added authorized user', webwallet.address)
+			})
+			.catch((err) => console.log("Couldn't add authorized user", err))
+	}, [webwallet, nonce, shouldRefreshNonce])
 
 	const walletAddress = accountData?.address
 
