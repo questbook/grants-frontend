@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Flex, forwardRef, GridItem, Image, Menu, MenuButton, MenuItem, MenuList, Text, TextProps } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import getAvatar from 'src/utils/avatarUtils'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 
 const RejectedRow = ({
@@ -90,6 +91,8 @@ const RejectedRow = ({
 						w={'40px'}
 					>
 						<Image
+							borderRadius="3xl"
+							src={getAvatar(applicantData?.applicant_address)}
 						/>
 					</Flex>
 
@@ -211,6 +214,7 @@ const RejectedRow = ({
 						}
 					/>
 					<MenuList
+						overflow="scroll"
 						minW={'240px'}
 						maxH={'156px'}
 						py={0}>
@@ -256,6 +260,8 @@ const RejectedRow = ({
 													w={'20px'}
 												>
 													<Image
+														borderRadius="3xl"
+														src={getAvatar(reviewerId)}
 													/>
 												</Flex>
 

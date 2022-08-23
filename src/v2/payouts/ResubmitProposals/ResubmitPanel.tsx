@@ -2,7 +2,7 @@ import { Flex, Grid, GridItem, Text } from '@chakra-ui/react'
 import ResubmitRow from './ResubmitRow'
 import ZeroState from './ZeroState'
 
-const RejectedPanel = ({
+const ResubmitPanel = ({
 	applicantsData,
 }: {
   applicantsData: any[];
@@ -102,4 +102,4 @@ const RejectedPanel = ({
 	)
 }
 
-export default RejectedPanel
+export default ResubmitPanel

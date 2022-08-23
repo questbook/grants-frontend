@@ -136,7 +136,14 @@ const AcceptedProposalsPanel = ({
 					alignItems='center'
 					justifyContent='center'
 				>
-					<Checkbox />
+					<Checkbox
+						isChecked={checkedItems.every((checkedItem: boolean) => checkedItem !== undefined && checkedItem)}
+						onChange={
+							(e: any) => {
+								const tempArr = Array(checkedItems.length).fill(e.target.checked)
+								setCheckedItems(tempArr)
+							}
+						} />
 				</GridItem>
 				<GridItem>
 					<Text

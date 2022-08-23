@@ -221,7 +221,7 @@ function ViewApplicants() {
 					applicationId: applicant.id,
 					applicantName: getFieldString('applicantName'),
 					applicantEmail: getFieldString('applicantEmail'),
-					applicant_address: applicant.applicantId,
+					applicant_address: applicant.applicantId ?? getFieldString('applicantAddress'),
 					sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
 					updated_on: moment.unix(applicant.updatedAtS).format('DD MMM YYYY'),
 					// applicant_name: getFieldString('applicantName'),
@@ -247,6 +247,7 @@ function ViewApplicants() {
 						).toString(),
 						decimal || 18,
 					),
+					milestones: applicant.milestones,
 					reviews: applicant.reviews
 				}
 			})
@@ -540,8 +541,8 @@ function ViewApplicants() {
 
 				<StatsBanner
 					funds={0}
-					reviews={0}
-					totalReviews={0}
+					reviews={applicantsData.reduce((acc: any, curr: any) => acc + curr.reviews.length, 0)}
+					totalReviews={applicantsData.reduce((acc: any, curr: any) => acc + curr.reviewers.length, 0)}
 					applicants={applicantsData.length}
 				/>
 

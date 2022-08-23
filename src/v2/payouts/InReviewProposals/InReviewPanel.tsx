@@ -33,6 +33,7 @@ const InReviewPanel = ({
 	const someChecked = checkedItems.some((element) => {
 		return element
 	})
+	const allChecked = checkedItems.every(Boolean)
 	const router = useRouter()
 
 	useEffect(() => {
@@ -58,7 +59,7 @@ const InReviewPanel = ({
 
 	useEffect(() => {
 		setInReviewApplications(applicantsData.filter((item) => (0 === item.status)))
-		setAcceptedApplications(applicantsData.filter((item) => (2 === item.status)))
+		setAcceptedApplications(applicantsData.filter((item) => (0 === item.status)))
 		setRejectedApplications(applicantsData.filter((item) => (1 === item.status)))
 	}, [applicantsData])
 
@@ -247,7 +248,15 @@ const InReviewPanel = ({
 					alignItems='center'
 					justifyContent='center'
 				>
-					<Checkbox />
+					<Checkbox
+						defaultChecked={false}
+						isChecked={allChecked}
+						onChange={
+							(e: any) => {
+								const tempArr = Array(checkedItems.length).fill(e.target.checked)
+								setCheckedItems(tempArr)
+							}
+						} />
 				</GridItem>
 				<GridItem>
 					<Text
