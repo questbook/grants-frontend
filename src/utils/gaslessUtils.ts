@@ -43,7 +43,7 @@ export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } }
 	}
 }
 
-export const signNonce = async (webwallet: Wallet, nonce: string) => {
+export const signNonce = async(webwallet: Wallet, nonce: string) => {
 	const nonceHash = ethers.utils.hashMessage(nonce)
 	const nonceSigString: string = await webwallet.signMessage(nonce)
 	const nonceSig: ethers.Signature = ethers.utils.splitSignature(nonceSigString)
@@ -51,8 +51,8 @@ export const signNonce = async (webwallet: Wallet, nonce: string) => {
 	return { v: nonceSig.v, r: nonceSig.r, s: nonceSig.s, transactionHash: nonceHash }
 }
 
-export const getNonce = async (webwallet: Wallet | undefined) => {
-	if (!webwallet) {
+export const getNonce = async(webwallet: Wallet | undefined) => {
+	if(!webwallet) {
 		return
 	}
 
@@ -60,14 +60,14 @@ export const getNonce = async (webwallet: Wallet | undefined) => {
 		{
 			webwallet_address: webwallet.address
 		})
-	if (response.data && response.data.nonce !== 'Token expired') {
+	if(response.data && response.data.nonce !== 'Token expired') {
 		return response.data.nonce
 	}
 
 	return false
 }
 
-export const registerWebHook = async (authToken: string, apiKey: string, chainId: string) => {
+export const registerWebHook = async(authToken: string, apiKey: string, chainId: string) => {
 	const url = 'https://api.biconomy.io/api/v1/dapp/register-webhook'
 
 	const formData = new URLSearchParams({
@@ -92,16 +92,16 @@ export const registerWebHook = async (authToken: string, apiKey: string, chainId
 	console.log(responseJSON)
 	try {
 		webHookId = responseJSON.data.webHookId
-	} catch {
+	} catch{
 		throw Error("Couldn't register webhook for your app!")
 	}
 
 	return webHookId
 }
 
-export const addDapp = async (dappName: string, networkId: string, authToken: string | undefined) => {
+export const addDapp = async(dappName: string, networkId: string, authToken: string | undefined) => {
 	console.log('AUTH TOKEN', authToken)
-	if (!authToken) {
+	if(!authToken) {
 		return false
 	}
 
@@ -127,7 +127,7 @@ export const addDapp = async (dappName: string, networkId: string, authToken: st
 	return resJson.data
 }
 
-export const addAuthorizedOwner = async (workspace_id: number, webwallet_address: string, scw_address: string,
+export const addAuthorizedOwner = async(workspace_id: number, webwallet_address: string, scw_address: string,
 	chain_id: string, safe_address: string) => {
 
 	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/add_workspace_owner',
@@ -139,34 +139,34 @@ export const addAuthorizedOwner = async (workspace_id: number, webwallet_address
 			safe_address
 		})
 
-	if (response.data && response.data.status) {
+	if(response.data && response.data.status) {
 		return true
 	}
 
 	return false
 }
 
-export const addAuthorizedUser = async (webwallet_address: string) => {
+export const addAuthorizedUser = async(webwallet_address: string) => {
 
 	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/add_user',
 		{
 			webwallet_address
 		})
 
-	if (response.data && response.data.authorize) {
+	if(response.data && response.data.authorize) {
 		return true
 	}
 
 	return false
 }
 
-export const chargeGas = async (workspace_id: number, amount: number) => {
+export const chargeGas = async(workspace_id: number, amount: number) => {
 	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/charge_gas',
 		{
 			workspace_id,
 			amount
 		})
-	if (response.data && response.data.status) {
+	if(response.data && response.data.status) {
 		console.log(`charged workspace ${workspace_id} with ${amount} gas`)
 		return true
 	}
@@ -175,14 +175,14 @@ export const chargeGas = async (workspace_id: number, amount: number) => {
 
 }
 
-export const deploySCW = async (webwallet: Wallet, biconomyWalletClient: BiconomyWalletClient) => {
+export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: BiconomyWalletClient) => {
 	console.log("I'm here", biconomyWalletClient)
 	var { doesWalletExist, walletAddress } = await biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address })
 	console.log("I'm not here")
 	let scwAddress
 	console.log('WEEEE', webwallet.address)
 
-	if (!doesWalletExist) {
+	if(!doesWalletExist) {
 		console.log('Wallet does not exist')
 		console.log('Deploying wallet')
 		walletAddress = await biconomyWalletClient.checkIfWalletExistsAndDeploy({ eoa: webwallet.address }) // default index(salt) 0
@@ -203,24 +203,24 @@ export const deploySCW = async (webwallet: Wallet, biconomyWalletClient: Biconom
 	return scwAddress
 }
 
-export const sendGaslessTransactionNew = async (targetContractObject: Contract, targetContractMethod: string,
+export const sendGaslessTransactionNew = async(targetContractObject: Contract, targetContractMethod: string,
 	targetContractArgs: Array<any>, targetContractAddress: string, webwallet: Wallet | undefined, chainId: string) => {
-	
-		console.log('HERE1', targetContractMethod, targetContractArgs)
+
+	console.log('HERE1', targetContractMethod, targetContractArgs)
 	const { data } = await targetContractObject.populateTransaction[targetContractMethod](...targetContractArgs)
 
-	const res = await axios.post("http://localhost:3001/v0/build_tx", {
+	const res = await axios.post('http://localhost:3001/v0/build_tx', {
 		webwallet_address: webwallet?.address,
 		populated_tx: data,
 		chain_id: chainId,
 		target_contract_address: targetContractAddress
 	})
 
-	console.log("new flow", res);
-	return false;
+	console.log('new flow', res)
+	return false
 }
 
-export const sendGaslessTransaction = async (biconomy: any, targetContractObject: Contract, targetContractMethod: string,
+export const sendGaslessTransaction = async(biconomy: any, targetContractObject: Contract, targetContractMethod: string,
 	targetContractArgs: Array<any>, targetContractAddress: string, biconomyWalletClient: BiconomyWalletClient,
 	scwAddress: string, webwallet: Wallet | undefined, chainId: string, webHookId: string, nonce: string | undefined) => {
 
@@ -229,22 +229,22 @@ export const sendGaslessTransaction = async (biconomy: any, targetContractObject
 
 	console.log('ffff', targetContractAddress)
 
-	if (!biconomy) {
+	if(!biconomy) {
 		alert('Biconomy is not ready! Please wait.')
 		return false
 	}
 
-	if (!webwallet) {
+	if(!webwallet) {
 		alert('WebWallet is not ready! Please wait.')
 		return false
 	}
 
-	if (!nonce) {
+	if(!nonce) {
 		alert('Please log in with GitHub first!')
 		return false
 	}
 
-	if (nonce === 'Token expired') {
+	if(nonce === 'Token expired') {
 		alert('Your Session has terminated. Please log in again.')
 		return false
 	}
@@ -281,8 +281,8 @@ export const sendGaslessTransaction = async (biconomy: any, targetContractObject
 	return response
 }
 
-export const getTransactionReceipt = async (transactionHash: string | undefined, chainId: string) => {
-	if (typeof (transactionHash) === 'undefined' || transactionHash === undefined) {
+export const getTransactionReceipt = async(transactionHash: string | undefined, chainId: string) => {
+	if(typeof (transactionHash) === 'undefined' || transactionHash === undefined) {
 		return false
 	}
 
@@ -291,16 +291,16 @@ export const getTransactionReceipt = async (transactionHash: string | undefined,
 	return await jsonRpcProviders[chainId].getTransactionReceipt(transactionHash)
 }
 
-export const getTransactionDetails = async (transactionHash: string, chainId: string) => {
+export const getTransactionDetails = async(transactionHash: string, chainId: string) => {
 	const receipt = await getTransactionReceipt(transactionHash, chainId)
 
-	if (!receipt) {
+	if(!receipt) {
 		throw new Error("Couldn't fetch transaction receipt!")
 	}
 
 	const gasPrice = (await jsonRpcProviders[chainId].getTransaction(transactionHash)).gasPrice
 
-	if (!gasPrice) {
+	if(!gasPrice) {
 		throw new Error("Couldn't fetch gas price!")
 	}
 
@@ -311,13 +311,13 @@ export const getTransactionDetails = async (transactionHash: string, chainId: st
 	return { receipt, txFee }
 }
 
-export const getEventData = async (receipt: any, eventName: string, contractABI: any) => {
+export const getEventData = async(receipt: any, eventName: string, contractABI: any) => {
 
 	var eventInterface: ethers.utils.Interface
 
 	const isValidEvent = (item: ethers.utils.Fragment) => {
 		const fragmentItem = ethers.utils.Fragment.from(item)
-		if (!fragmentItem.name || !fragmentItem.type) {
+		if(!fragmentItem.name || !fragmentItem.type) {
 			return false
 		}
 
@@ -328,7 +328,7 @@ export const getEventData = async (receipt: any, eventName: string, contractABI:
 		try {
 			eventInterface.parseLog(item)
 			return true
-		} catch {
+		} catch{
 			return false
 		}
 	}
@@ -336,7 +336,7 @@ export const getEventData = async (receipt: any, eventName: string, contractABI:
 	console.log('THIS IS RECEIPT', receipt)
 	const abiInterface = new ethers.utils.Interface(contractABI) // this is contract's ABI
 	const humanReadableABI: string | string[] = abiInterface.format(ethers.utils.FormatTypes.full) // convert to human readable ABI
-	if (typeof (humanReadableABI) === 'string') {
+	if(typeof (humanReadableABI) === 'string') {
 		return false
 	}
 
@@ -344,7 +344,7 @@ export const getEventData = async (receipt: any, eventName: string, contractABI:
 
 	const eventFragment = abiFragments.filter(isValidEvent)
 
-	if (eventFragment.length !== 1) {
+	if(eventFragment.length !== 1) {
 		throw Error('Invalid Given Event!')
 	}
 
@@ -352,7 +352,7 @@ export const getEventData = async (receipt: any, eventName: string, contractABI:
 
 	const eventLogs = receipt.logs.filter(isValidEventInReceipt)
 
-	if (eventLogs.length !== 1) {
+	if(eventLogs.length !== 1) {
 		throw Error('Invalid Given Event!')
 	}
 

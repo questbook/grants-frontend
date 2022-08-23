@@ -168,7 +168,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}
 
 	const getNetwork = () => {
-		return 5;
+		return 5
 
 		const _network = localStorage.getItem('network')
 
