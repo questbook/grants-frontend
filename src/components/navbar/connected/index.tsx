@@ -19,20 +19,19 @@ import {
 	useGetNumberOfGrantsLazyQuery,
 	useGetWorkspaceMembersLazyQuery,
 } from 'src/generated/graphql'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useActiveTabIndex from 'src/hooks/utils/useActiveTabIndex'
 import { MinimalWorkspace } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount, useConnect } from 'wagmi'
+import { useConnect } from 'wagmi'
 import AccountDetails from './accountDetails'
 import Tab from './tab'
 
 function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	const toast = useToast()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { isConnected, activeConnector } = useConnect()
-	console.log(isConnected)
-	const { data: accountData } = useAccount()
-	console.log('account data' + accountData)
 	const tabPaths = [
 		'dao_dashboard',
 		'your_grants',

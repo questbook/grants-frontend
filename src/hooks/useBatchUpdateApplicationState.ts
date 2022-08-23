@@ -1,14 +1,17 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
+import { useBiconomy } from './gasless/useBiconomy'
+import { useNetwork } from './gasless/useNetwork'
+import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
 
 export default function useBatchUpdateApplicationState(
@@ -22,7 +25,7 @@ export default function useBatchUpdateApplicationState(
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
@@ -32,6 +35,13 @@ export default function useBatchUpdateApplicationState(
 	const applicationContract = useQBContract('applications', chainId)
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
+
+	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		chainId: chainId?.toString()!
+		// targetContractABI: GrantFactoryAbi,
+	})
 
 	useEffect(() => {
 		if(state) {
@@ -77,6 +87,9 @@ export default function useBatchUpdateApplicationState(
 			// console.log('calling validate');
 			// console.log('DATA: ', data)
 			try {
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					throw new Error('Zero wallet is not ready')
+				}
 				// const {
 				// 	data: { ipfsHash },
 				// } = await validatorApi.validateGrantApplicationUpdate({
@@ -85,14 +98,44 @@ export default function useBatchUpdateApplicationState(
 				// if(!ipfsHash) {
 				// 	throw new Error('Error validating grant data')
 				// }
-				const updateTxn = await applicationContract.batchUpdateApplicationState(
+				// const updateTxn = await applicationContract.batchUpdateApplicationState(
+				// 	applicationIds,
+				// 	Array(applicationIds.length).fill(state),
+				// 	Number(workspace!.id),
+				// )
+				// const updateTxnData = await updateTxn.wait()
+
+				const methodArgs = [
 					applicationIds,
 					Array(applicationIds.length).fill(state),
 					Number(workspace!.id),
-				)
-				const updateTxnData = await updateTxn.wait()
+				]
 
-				setTransactionData(updateTxnData)
+				console.log('THESE ARE METHODS', methodArgs)
+
+				const response = await sendGaslessTransaction(
+					biconomy,
+					applicationContract,
+					'batchUpdateApplicationState',
+					methodArgs,
+					applicationContract.address,
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					bicoDapps[currentChainId].webHookId,
+					nonce
+				)
+
+				if(!response) {
+					return
+				}
+
+				const { txFee, receipt } = await getTransactionDetails(response, currentChainId.toString())
+
+				await chargeGas(Number(workspace?.id), Number(txFee))
+
+				setTransactionData(receipt)
 				setLoading(false)
 				setSubmitClicked(false)
 			} catch(e: any) {
@@ -168,8 +211,6 @@ export default function useBatchUpdateApplicationState(
 				!applicationContract
         || applicationContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !applicationContract.signer
-        || !applicationContract.provider
 			) {
 				return
 			}

@@ -12,8 +12,8 @@ import { getFromIPFS } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
 import { GetApplicationDetailsQuery } from '../../../generated/graphql'
+import { useQuestbookAccount } from '../../../hooks/gasless/useQuestbookAccount'
 import FeedbackDrawer, { FeedbackType } from '../feedbackDrawer'
 
 type ReviewType = Exclude<Exclude<GetApplicationDetailsQuery['grantApplication'], null>, undefined>['reviews'][0];
@@ -21,15 +21,15 @@ type ReviewType = Exclude<Exclude<GetApplicationDetailsQuery['grantApplication']
 function ReviewerSidebar({
 	applicationData,
 }: {
-  showHiddenData: () => void;
-  onAcceptApplicationClick: () => void;
-  onRejectApplicationClick: () => void;
-  onResubmitApplicationClick: () => void;
-  applicationData: GetApplicationDetailsQuery['grantApplication'];
+	showHiddenData: () => void;
+	onAcceptApplicationClick: () => void;
+	onRejectApplicationClick: () => void;
+	onResubmitApplicationClick: () => void;
+	applicationData: GetApplicationDetailsQuery['grantApplication'];
 }) {
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const [feedbackDrawerOpen, setFeedbackDrawerOpen] = useState(false)
 	const [yourReview, setYourReview] = useState<ReviewType>()
 	const [reviewSelected, setReviewSelected] = useState<{ items: FeedbackType[] }>()
@@ -94,7 +94,7 @@ function ReviewerSidebar({
 				<Text
 					fontSize={20}
 					fontWeight={'500'}>
-          Your Score
+					Your Score
 				</Text>
 				<Box h={2} />
 				<Divider />
@@ -160,14 +160,14 @@ function ReviewerSidebar({
 				>
 					<Flex direction='column'>
 						<Text fontWeight='700'>
-              Assigned to review (you)
+							Assigned to review (you)
 						</Text>
 						<Text
 							mt={2}
 							color='#717A7C'
 							fontSize='12px'>
-              Review the application and provide
-              your comment.
+							Review the application and provide
+							your comment.
 						</Text>
 						<Button
 							onClick={
@@ -186,7 +186,7 @@ function ReviewerSidebar({
 							}
 							mt={6}
 							variant='primary'>
-              Review Application
+							Review Application
 						</Button>
 					</Flex>
 				</Flex>

@@ -37,17 +37,17 @@ import {
 	getSupportedChainIdFromSupportedNetwork,
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
 import Loader from '../../src/components/ui/loader'
+import { useQuestbookAccount } from '../../src/hooks/gasless/useQuestbookAccount'
 import ReviewerDashboard from '../../src/v2/components/Dashboard/ReviewerDashboard'
 
 const PAGE_SIZE = 5
 
 type GrantRewardType = {
-  address: string,
-  committed: BigNumber,
-  label: string,
-  icon: string,
+	address: string,
+	committed: BigNumber,
+	label: string,
+	icon: string,
 };
 
 const TABS = [
@@ -100,22 +100,22 @@ function YourGrants() {
 	const [isReviewer, setIsReviewer] = useState<boolean>()
 
 	const { workspace } = useContext(ApiClientsContext)!
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 
 	useEffect(() => {
 		if(
 			workspace &&
-      workspace.members &&
-      workspace.members.length > 0 &&
-      accountData &&
-      accountData.address
+			workspace.members &&
+			workspace.members.length > 0 &&
+			accountData &&
+			accountData.address
 		) {
 			const tempMember = workspace.members.find(
 				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 			)
 			setIsAdmin(
 				tempMember?.accessLevel === 'admin' ||
-        tempMember?.accessLevel === 'owner',
+				tempMember?.accessLevel === 'owner',
 			)
 			setIsReviewer(tempMember?.accessLevel === 'reviewer')
 			const user: string | undefined = tempMember?.id
@@ -148,7 +148,7 @@ function YourGrants() {
 					fontSize={'30px'}
 					lineHeight={'44px'}
 					letterSpacing={-1}>
-          Grants & Bounties
+					Grants & Bounties
 				</Text>
 				<ReviewerDashboard />
 			</Flex>
@@ -167,7 +167,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 	const [pk, setPk] = useState<string>('*')
 	const [ignorePkModal, setIgnorePkModal] = useState(false)
 
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
 
 	const containerRef = useRef(null)
@@ -185,16 +185,16 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 
 	const [queryReviewerParams, setQueryReviewerParams] = useState<Apollo.QueryHookOptions<GetAllGrantsForReviewerQuery, GetAllGrantsForReviewerQueryVariables>>({
 		client:
-    subgraphClients[
-    	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-    ].client,
+		subgraphClients[
+			getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+		].client,
 	})
 
 	const [countQueryParams, setCountQueryParams] = useState<Apollo.QueryHookOptions<GetAllGrantsCountForCreatorQuery, GetAllGrantsCountForCreatorQueryVariables>>({
 		client:
-    subgraphClients[
-    	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-    ].client,
+		subgraphClients[
+			getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+		].client,
 	})
 
 	const [selectedTab, setSelectedTab] = useState(0)
@@ -217,7 +217,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 
 		setCountQueryParams({
 			client:
-      subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+			subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
 			variables: {
 				first: PAGE_SIZE,
 				skip: PAGE_SIZE * currentPage,
@@ -240,7 +240,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 
 		setQueryParams({
 			client:
-      subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+			subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
 			variables: {
 				first: PAGE_SIZE,
 				skip: PAGE_SIZE * currentPage,
@@ -251,7 +251,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 		})
 		setQueryReviewerParams({
 			client:
-      subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+			subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
 			variables: {
 				first: PAGE_SIZE,
 				skip: PAGE_SIZE * currentPage,
@@ -314,8 +314,8 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 			console.log('data.grants', data.data.grants)
 			if(
 				grants.length > 0 &&
-        grants[0].workspace.id === data.data.grants[0].workspace.id &&
-        grants[0].id !== data.data.grants[0].id
+				grants[0].workspace.id === data.data.grants[0].workspace.id &&
+				grants[0].id !== data.data.grants[0].id
 			) {
 				setGrants([...grants, ...data.data.grants])
 			} else {
@@ -325,7 +325,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 	}, [data])
 
 	const allGrantsReviewerData =
-    useGetAllGrantsForReviewerQuery(queryReviewerParams)
+		useGetAllGrantsForReviewerQuery(queryReviewerParams)
 	useEffect(() => {
 		if(!workspace) {
 			return
@@ -338,8 +338,8 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 	useEffect(() => {
 		if(
 			allGrantsReviewerData.data &&
-      allGrantsReviewerData.data.grantApplications &&
-      allGrantsReviewerData.data.grantApplications.length > 0
+			allGrantsReviewerData.data.grantApplications &&
+			allGrantsReviewerData.data.grantApplications.length > 0
 		) {
 			console.log(
 				'data.grantsReviewer.raw',
@@ -389,10 +389,10 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 
 		const parentElement = (current as HTMLElement)?.parentNode as HTMLElement
 		const reachedBottom =
-      Math.abs(
-      	parentElement.scrollTop -
-        (parentElement.scrollHeight - parentElement.clientHeight),
-      ) < 10
+			Math.abs(
+				parentElement.scrollTop -
+				(parentElement.scrollHeight - parentElement.clientHeight),
+			) < 10
 		if(reachedBottom) {
 			setCurrentPage(currentPage + 1)
 		}
@@ -431,7 +431,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 					fontSize={'30px'}
 					lineHeight={'44px'}
 					letterSpacing={-1}>
-          Grants & Bounties
+					Grants & Bounties
 				</Text>
 				<ReviewerDashboard />
 			</Flex>
@@ -473,7 +473,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 
 												}
 											}>
-                      Post a Grant / Bounty
+											Post a Grant / Bounty
 										</Button>
 									)
 								}
@@ -517,40 +517,40 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 					}
 					{
 						isAdmin &&
-            grants.length > 0 &&
-            grants.map((grant) => {
-            	const grantAmount = grant.reward.committed
-            	let decimals
-            	let icon
-            	let label
-            	if(grant.reward.token) {
-            		// console.log('Reward has token')
-            		decimals = grant.reward.token.decimal
-            		label = grant.reward.token.label
-            		icon = getUrlForIPFSHash(grant.reward.token.iconHash)
-            	} else {
-            		decimals =
-                  CHAIN_INFO[
-                  	getSupportedChainIdFromSupportedNetwork(
-                  		grant.workspace.supportedNetworks[0],
-                  	)
-                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-                  	?.decimals
-            		label =
-                  CHAIN_INFO[
-                  	getSupportedChainIdFromSupportedNetwork(
-                  		grant.workspace.supportedNetworks[0],
-                  	)
-                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-                  	?.label || 'LOL'
-            		icon =
-                  CHAIN_INFO[
-                  	getSupportedChainIdFromSupportedNetwork(
-                  		grant.workspace.supportedNetworks[0],
-                  	)
-                  ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-                  	?.icon || '/images/dummy/Ethereum Icon.svg'
-            	}
+						grants.length > 0 &&
+						grants.map((grant) => {
+							const grantAmount = grant.reward.committed
+							let decimals
+							let icon
+							let label
+							if(grant.reward.token) {
+								// console.log('Reward has token')
+								decimals = grant.reward.token.decimal
+								label = grant.reward.token.label
+								icon = getUrlForIPFSHash(grant.reward.token.iconHash)
+							} else {
+								decimals =
+									CHAIN_INFO[
+										getSupportedChainIdFromSupportedNetwork(
+											grant.workspace.supportedNetworks[0],
+										)
+									]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+										?.decimals
+								label =
+									CHAIN_INFO[
+										getSupportedChainIdFromSupportedNetwork(
+											grant.workspace.supportedNetworks[0],
+										)
+									]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+										?.label || 'LOL'
+								icon =
+									CHAIN_INFO[
+										getSupportedChainIdFromSupportedNetwork(
+											grant.workspace.supportedNetworks[0],
+										)
+									]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
+										?.icon || '/images/dummy/Ethereum Icon.svg'
+							}
 
             	return (
             		<YourGrantCard
@@ -593,44 +593,44 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
             			workspaceId={grant.workspace.id}
             		/>
             	)
-            })
+						})
 					}
 
 					{
 						isReviewer &&
-            grantsReviewer.length > 0 &&
-            grantsReviewer.map((grant) => {
-            	const grantAmount = grant.grant.reward.committed
-            	let decimals
-            	let icon
-            	let label
-            	if(grant.grant.reward.token) {
-            		decimals = grant.grant.reward.token.decimal
-            		label = grant.grant.reward.token.label
-            		icon = getUrlForIPFSHash(grant.grant.reward.token.iconHash)
-            	} else {
-            		decimals =
-                  CHAIN_INFO[
-                  	getSupportedChainIdFromSupportedNetwork(
-                  		grant.grant.workspace.supportedNetworks[0],
-                  	)
-                  ]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
-                  	?.decimals
-            		label =
-                  CHAIN_INFO[
-                  	getSupportedChainIdFromSupportedNetwork(
-                  		grant.grant.workspace.supportedNetworks[0],
-                  	)
-                  ]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
-                  	?.label || 'LOL'
-            		icon =
-                  CHAIN_INFO[
-                  	getSupportedChainIdFromSupportedNetwork(
-                  		grant.grant.workspace.supportedNetworks[0],
-                  	)
-                  ]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
-                  	?.icon || '/images/dummy/Ethereum Icon.svg'
-            	}
+						grantsReviewer.length > 0 &&
+						grantsReviewer.map((grant) => {
+							const grantAmount = grant.grant.reward.committed
+							let decimals
+							let icon
+							let label
+							if(grant.grant.reward.token) {
+								decimals = grant.grant.reward.token.decimal
+								label = grant.grant.reward.token.label
+								icon = getUrlForIPFSHash(grant.grant.reward.token.iconHash)
+							} else {
+								decimals =
+									CHAIN_INFO[
+										getSupportedChainIdFromSupportedNetwork(
+											grant.grant.workspace.supportedNetworks[0],
+										)
+									]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
+										?.decimals
+								label =
+									CHAIN_INFO[
+										getSupportedChainIdFromSupportedNetwork(
+											grant.grant.workspace.supportedNetworks[0],
+										)
+									]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
+										?.label || 'LOL'
+								icon =
+									CHAIN_INFO[
+										getSupportedChainIdFromSupportedNetwork(
+											grant.grant.workspace.supportedNetworks[0],
+										)
+									]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
+										?.icon || '/images/dummy/Ethereum Icon.svg'
+							}
 
             	return (
             		<YourGrantCard
@@ -669,34 +669,34 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
             			workspaceId={grant.grant.workspace.id}
             		/>
             	)
-            })
+						})
 					}
 					{
 						grants.length === 0 &&
-            isAdmin &&
-            !grantCount[0] &&
-            !grantCount[1] &&
-            router.query.done && <FirstGrantEmptyState />
+						isAdmin &&
+						!grantCount[0] &&
+						!grantCount[1] &&
+						router.query.done && <FirstGrantEmptyState />
 					}
 					{
 						grants.length === 0 &&
-            isAdmin &&
-            !router.query.done &&
-            getEmptyStateForSelectedTab()
+						isAdmin &&
+						!router.query.done &&
+						getEmptyStateForSelectedTab()
 					}
 
 					{
 						grantsReviewer.length === 0 &&
-            isReviewer &&
-            !grantCount[0] &&
-            !grantCount[1] &&
-            router.query.done && <AssignedGrantEmptyState />
+						isReviewer &&
+						!grantCount[0] &&
+						!grantCount[1] &&
+						router.query.done && <AssignedGrantEmptyState />
 					}
 					{
 						grantsReviewer.length === 0 &&
-            isReviewer &&
-            !router.query.done &&
-            <AssignedGrantEmptyState />
+						isReviewer &&
+						!router.query.done &&
+						<AssignedGrantEmptyState />
 					}
 				</Flex>
 				<Flex

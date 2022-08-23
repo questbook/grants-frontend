@@ -7,14 +7,15 @@ import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
-	Text } from '@chakra-ui/react'
+	Text
+} from '@chakra-ui/react'
 
 interface Props {
-  grantAmount: string;
-  grantCurrency: string;
-  disbursedAmount?: string;
-  lineHeight: string | number;
-  marginBottom?: string | number;
+	grantAmount: string;
+	grantCurrency: string;
+	disbursedAmount?: string;
+	lineHeight: string | number;
+	marginBottom?: string | number;
 }
 
 function VerifiedBadge({
@@ -102,7 +103,7 @@ function VerifiedBadge({
 							fontSize="0.75rem"
 							lineHeight="1rem"
 						>
-            Funds deposited
+							Funds deposited
 						</Text>
 						<Text
 							color="#373737"
@@ -130,7 +131,7 @@ function VerifiedBadge({
 							fontSize="0.75rem"
 							lineHeight="1rem"
 						>
-						Funds sent to winners
+							Funds sent to winners
 						</Text>
 						<Text
 							color="#373737"

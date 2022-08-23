@@ -12,6 +12,7 @@ const nextConfig = {
 	},
 	env: {
 		NEXT_PUBLIC_IS_TEST: process.env.NEXT_PUBLIC_IS_TEST,
+		BICO_AUTH_TOKEN: process.env.BICO_AUTH_TOKEN
 	}
 }
 

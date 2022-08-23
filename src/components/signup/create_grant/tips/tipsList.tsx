@@ -7,7 +7,7 @@ function TipsList({
 	tipsHeading,
 	tips, icon,
 }: {
-  tipsHeading: string, tips: {}[], icon: string,
+  tipsHeading: string, tips: string[], icon: string,
 }) {
 	return (
 		<Flex

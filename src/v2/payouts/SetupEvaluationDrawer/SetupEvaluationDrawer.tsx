@@ -1,18 +1,20 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { Box, Button, Container, Drawer, DrawerContent, DrawerOverlay, Flex, Text, ToastId, useToast } from '@chakra-ui/react'
 import router from 'next/router'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import { useGetReviewersForAWorkspaceQuery } from 'src/generated/graphql'
 import useQBContract from 'src/hooks/contracts/useQBContract'
+import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { SidebarReviewer, SidebarRubrics } from 'src/types'
 import getErrorMessage from 'src/utils/errorUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
 import { SetupEvaluation } from 'src/v2/assets/custom chakra icons/SetupEvaluation'
-import { useNetwork } from 'wagmi'
 import AssignReviewers from './AssignReviewers'
 import RubricsForm from './RubricsForm'
 
@@ -119,19 +121,22 @@ const SetupEvaluationDrawer = ({
 		setReviewers(temp)
 	}
 
-	const [callOnContractChange, setCallOnContractChange] = useState(false)
-	const { activeChain, switchNetworkAsync } = useNetwork()
-
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
 
 	const applicationReviewContract = useQBContract('reviews', chainId)
 
-	const applicationRegistry = useQBContract('applications', chainId)
+	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		chainId: chainId?.toString()!
+		// targetContractABI: GrantFactoryAbi,
+	})
+
+	const { nonce } = useQuestbookAccount()
+
 
 	const onInitiateTransaction = async() => {
 		setNetworkTransactionModalStep(0)
-		setCallOnContractChange(false)
 
 		console.log('Workspace: ', workspace)
 		if(!workspace || !workspace?.id || !grantAddress) {
@@ -140,25 +145,28 @@ const SetupEvaluationDrawer = ({
 
 		chainId = getSupportedChainIdFromWorkspace(workspace)
 		try {
-			console.log('Chain ID: ', activeChain?.id, chainId)
-			if(activeChain?.id !== chainId) {
-				console.log('switching')
-				await switchNetworkAsync!(chainId)
-				console.log('create workspace again on contract object update')
-				setCallOnContractChange(true)
-				setTimeout(() => {
-					if(callOnContractChange && activeChain?.id !== chainId) {
-						setCallOnContractChange(false)
-						throw new Error('Error switching network')
-					}
-				}, 60000)
-				return
+			if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+				throw new Error('Zero wallet is not ready')
 			}
 
-			const idFromContract = await applicationRegistry.getApplicationWorkspace('0x4')
-			const idFromContract2 = await applicationRegistry.getApplicationWorkspace('0x17')
-			console.log('ID from Contract: ', idFromContract.toString())
-			console.log('ID2 from Contract: ', idFromContract2.toString())
+			if(!chainId) {
+				return
+			}
+			// Commenting this to accommodate gasless
+			// console.log('Chain ID: ', activeChain?.id, chainId)
+			// if(activeChain?.id !== chainId) {
+			// 	console.log('switching')
+			// 	await switchNetwork!(chainId!)
+			// 	console.log('create workspace again on contract object update')
+			// 	setCallOnContractChange(true)
+			// 	setTimeout(() => {
+			// 		if(callOnContractChange && activeChain?.id !== chainId) {
+			// 			setCallOnContractChange(false)
+			// 			throw new Error('Error switching network')
+			// 		}
+			// 	}, 60000)
+			// 	return
+			// }
 
 			const rubric = {} as any
 
@@ -200,42 +208,59 @@ const SetupEvaluationDrawer = ({
 			console.log('(Auto - assign) Active Status: ', reviewers.filter((reviewer: SidebarReviewer) => reviewer.isSelected).map(() => true))
 			console.log('(Auto - assign) Reviewer Count: ', numOfReviewersPerApplication)
 
-			// setNetworkTransactionModalStep(2)
-			// const setRubricTransaction = await applicationReviewContract.setRubrics(
-			// 	workspaceId,
-			// 	grantAddress,
-			// 	rubricHash,
-			// )
-			// await setRubricTransaction.wait()
-
-			// setNetworkTransactionModalStep(3)
-
-			// const enableAutoAssignTransaction = await applicationReviewContract.enableAutoAssignmentOfReviewers(
-			// 	workspaceId,
-			// 	grantAddress,
-			// 	reviewers.filter((reviewer: SidebarReviewer) => reviewer.isSelected).map((reviewer: SidebarReviewer) => reviewer.data.actorId),
-			// 	reviewers.filter((reviewer: SidebarReviewer) => reviewer.isSelected).map(() => true),
-			// 	numOfReviewersPerApplication,
-			// )
-
-			setNetworkTransactionModalStep(2)
-			const transaction = await applicationReviewContract.setRubricsAndEnableAutoAssign(
+			const methodArgs = [
 				workspaceId,
 				grantAddress,
 				reviewers.filter((reviewer: SidebarReviewer) => reviewer.isSelected).map((reviewer: SidebarReviewer) => reviewer.data.actorId),
 				reviewers.filter((reviewer: SidebarReviewer) => reviewer.isSelected).map(() => true),
 				numOfReviewersPerApplication,
 				rubricHash,
+			]
+
+			setNetworkTransactionModalStep(2)
+			// const transaction = await applicationReviewContract.setRubricsAndEnableAutoAssign(
+			// 	workspaceId,
+			// 	grantAddress,
+			// 	reviewers.filter((reviewer: SidebarReviewer) => reviewer.isSelected).map((reviewer: SidebarReviewer) => reviewer.data.actorId),
+			// 	reviewers.filter((reviewer: SidebarReviewer) => reviewer.isSelected).map(() => true),
+			// 	numOfReviewersPerApplication,
+			// 	rubricHash,
+			// )
+
+			// setNetworkTransactionModalStep(3)
+			// const transactionData = await transaction.wait()
+			// console.log('RUBRIC AND AUTO ASSIGN: ', transactionData)
+
+			const response = await sendGaslessTransaction(
+				biconomy,
+				applicationReviewContract,
+				'setRubricsAndEnableAutoAssign',
+				methodArgs,
+				applicationReviewContract.address,
+				biconomyWalletClient,
+				scwAddress,
+				webwallet,
+				`${chainId}`,
+				bicoDapps[chainId].webHookId,
+				nonce
 			)
 
+			if(!response) {
+				return
+			}
+
 			setNetworkTransactionModalStep(3)
-			const transactionData = await transaction.wait()
-			console.log('RUBRIC AND AUTO ASSIGN: ', transactionData)
+			const { txFee, receipt } = await getTransactionDetails(response, chainId.toString())
+
+			await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee))
+
+			console.log('Transaction DONE: ', receipt)
 
 			setNetworkTransactionModalStep(4)
 			setTimeout(() => {
 				setNetworkTransactionModalStep(undefined)
-				router.push({ pathname: '/v2/your_grants/view_applicants/', query: { grantId: grantAddress } })
+				// router.push({ pathname: '/v2/your_grants/view_applicants/', query: { grantId: grantAddress } })
+				router.reload()
 			}, 3000)
 			// setTransactionData(transactionData)
 		} catch(e) {
