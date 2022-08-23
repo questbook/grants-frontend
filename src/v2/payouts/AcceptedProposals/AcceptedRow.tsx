@@ -143,6 +143,7 @@ const AcceptedRow = ({
 									 {applicantData?.milestones?.filter((milestone: any) => milestone?.state === 'approved')?.length}
 						{' '}
 /
+						{' '}
 						{applicantData?.milestones?.length}
 					</Text>
 
