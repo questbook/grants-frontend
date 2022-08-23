@@ -183,7 +183,7 @@ const RecipientDetails = ({
 										errorBorderColor={'red'}
 										height={'auto'}
 										type={'number'}
-										onChange={(e) => onChangeRecepientDetails(data.applicationId, 'amount', parseInt(e.target.value))}
+										onChange={(e) => onChangeRecepientDetails(data.applicationId, 'amount', parseFloat(e.target.value))}
 									/>
 								</Flex>
 							</Flex>
