@@ -46,6 +46,19 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: "uint8",
+        name: "version",
+        type: "uint8",
+      },
+    ],
+    name: "Initialized",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: "address",
         name: "previousOwner",
@@ -155,6 +168,12 @@ const _abi = [
         internalType: "uint96",
         name: "_reviewId",
         type: "uint96",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "_reviewerAddress",
+        type: "address",
       },
       {
         indexed: false,
@@ -647,6 +666,11 @@ const _abi = [
   },
   {
     inputs: [
+      {
+        internalType: "address",
+        name: "_reviewerAddress",
+        type: "address",
+      },
       {
         internalType: "uint96",
         name: "_workspaceId",

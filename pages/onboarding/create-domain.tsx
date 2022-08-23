@@ -87,7 +87,7 @@ const OnboardingCreateDomain = () => {
 	useEffect(() => {
 		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
 		console.log('rree', isBiconomyLoading, loading)
-		if(biconomy && biconomyWalletClient && scwAddress && !loading && network && biconomy.networkId.toString() === network?.toString()) {
+		if(biconomy && biconomyWalletClient && scwAddress && !loading && network && biconomy.networkId?.toString() === network?.toString()) {
 			setIsBiconomyInitialised('ready')
 		}
 	}, [biconomy, biconomyWalletClient, scwAddress, loading, isBiconomyInitialised])
