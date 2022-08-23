@@ -15,7 +15,7 @@ const AcceptedProposalsPanel = ({
   grantData: any;
 
 }) => {
-	const [checkedItems, setCheckedItems] = useState<boolean[]>(Array(applicantsData.filter((item) => (0 === item.status)).length).fill(false))
+	const [checkedItems, setCheckedItems] = useState<boolean[]>(applicantsData.filter((item) => (2 === item.status)).map((item) => false))
 	const [checkedApplicationsIds, setCheckedApplicationsIds] = useState<number[]>([])
 	const [isBulkSendFundsClicked, setIsBulkSendFundsClicked] = useState<boolean>(false)
 	const [isConfirmClicked, setIsConfirmClicked] = useState<boolean>(false)
@@ -30,6 +30,11 @@ const AcceptedProposalsPanel = ({
 	const someChecked = checkedItems.some((element) => {
 		return element
 	})
+	const allChecked = checkedItems.length > 0 && checkedItems.every((element) => element === true)
+
+	useEffect(() => {
+		setCheckedItems(applicantsData.filter((item) => (2 === item.status)).map((item) => false))
+	}, [applicantsData])
 
 	useEffect(() => {
 		setInReviewApplications(applicantsData.filter((item) => (0 === item.status)))
@@ -137,10 +142,11 @@ const AcceptedProposalsPanel = ({
 					justifyContent='center'
 				>
 					<Checkbox
-						isChecked={checkedItems.every((checkedItem: boolean) => checkedItem !== undefined && checkedItem)}
+						// defaultChecked={false}
+						isChecked={checkedItems.length > 0 && allChecked}
 						onChange={
 							(e: any) => {
-								const tempArr = Array(checkedItems.length).fill(e.target.checked)
+								const tempArr = Array(acceptedApplications.length).fill(e.target.checked)
 								setCheckedItems(tempArr)
 							}
 						} />
