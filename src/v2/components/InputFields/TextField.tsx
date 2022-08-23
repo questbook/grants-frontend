@@ -1,9 +1,10 @@
+import { ChangeEventHandler } from 'react'
 import React from 'react'
 import { CheckIcon } from '@chakra-ui/icons'
 import { Flex, Input, InputGroup, InputRightElement, Link, Text } from '@chakra-ui/react'
 
 interface Props {
-	label: string;
+	label?: string;
 	optionalText?: string;
 	helperText?: string;
 	helperLinkText?: string;
@@ -11,14 +12,14 @@ interface Props {
 	placeholder?: string;
 	maxLength?: number;
 	value: string | number;
-	setValue: (newValue: string) => void;
+	onChange: ChangeEventHandler<HTMLInputElement>;
 	isError?: boolean;
 	isPasted?: boolean;
 	isVerified?: boolean;
 	isDisabled?: boolean;
 }
 
-function TextField({ label, optionalText, helperText, helperLinkText, helperLinkUrl, placeholder, maxLength, value, setValue, isPasted, isVerified, isDisabled }: Props) {
+function TextField({ label, optionalText, helperText, helperLinkText, helperLinkUrl, placeholder, maxLength, value, onChange, isPasted, isVerified, isDisabled }: Props) {
 	const [currentLength, setCurrentLength] = React.useState(value?.toString().length)
 
 	React.useEffect(() => {
@@ -27,11 +28,15 @@ function TextField({ label, optionalText, helperText, helperLinkText, helperLink
 	return (
 		<Flex direction="column">
 			<Flex>
-				<Text
-					variant="v2_body"
-					fontWeight="500">
-					{label}
-				</Text>
+				{
+					label && (
+						<Text
+							variant="v2_body"
+							fontWeight="500">
+							{label}
+						</Text>
+					)
+				}
 				{
 					optionalText && (
 						<Text
@@ -69,16 +74,12 @@ function TextField({ label, optionalText, helperText, helperLinkText, helperLink
 				<Input
 					variant="flushed"
 					placeholder={placeholder}
+					fontSize="14px"
 					maxLength={maxLength}
 					color="black.1"
-					onChange={
-						(e) => {
-							if(!isDisabled) {
-								setValue(e.target.value)
-							}
-						}
-					}
+					onChange={onChange}
 					value={value}
+					isDisabled={isDisabled}
 				/>
 				<InputRightElement>
 					{
@@ -88,12 +89,7 @@ function TextField({ label, optionalText, helperText, helperLinkText, helperLink
 								color="violet.2"
 								fontWeight="500"
 								cursor="pointer"
-								onClick={
-									async() => {
-										const text = await navigator.clipboard.readText()
-										setValue(text)
-									}
-								}>
+								onClick={() => { }}>
 Paste
 							</Text>
 						)
