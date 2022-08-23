@@ -163,7 +163,7 @@ function GrantRewardsInput({
 
 		if(!error) {
 			let pk
-			if((shouldEncrypt || shouldEncryptReviews) && !keySubmitted) {
+			if(shouldEncrypt && !keySubmitted) {
 				pk = await getPublicEncryptionKey()
 				if(!pk) {
 					return
