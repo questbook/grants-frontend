@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { BaseProvider } from '@ethersproject/providers'
 import { ec as EC } from 'elliptic'
@@ -131,27 +131,30 @@ export async function getSecureChannelFromTxHash(
  * @param chainId the chain to fetch on
  * @returns map of wallet address to tx hash
  */
-export async function useGetTxHashesOfGrantManagers(grantId: string, chainId: SupportedChainId) {
+export function useGetTxHashesOfGrantManagers(grantId: string | undefined, chainId: SupportedChainId) {
 	const { subgraphClients } = useContext(ApiClientsContext)!
 	const { client } = subgraphClients[chainId]
 
-	const { data } = useGetTxHashesOfGrantManagersQuery({
+	const { fetchMore } = useGetTxHashesOfGrantManagersQuery({
 		client,
-		variables: { grantId }
+		skip: true,
 	})
 
-	const map = useMemo(() => {
-		const result: { [address: string]: string } = { }
-		for(const { member } of (data?.grantManagers || [])) {
-			if(member) {
-				result[member.actorId] = member.lastKnownTxHash
+	return {
+		async fetch() {
+			const { data } = await fetchMore({
+				variables: { grantId: grantId || '' }
+			})
+			const result: { [address: string]: string } = { }
+			for(const { member } of (data?.grantManagers || [])) {
+				if(member) {
+					result[member.actorId] = member.lastKnownTxHash
+				}
 			}
+
+			return result
 		}
-
-		return result
-	}, [data])
-
-	return map
+	}
 }
 
 /**
@@ -182,4 +185,9 @@ async function getPublicKeyFromTx(tx: TransactionResponse) {
 	const recoveredPubKey = recoverPublicKey(msgBytes, signature)
 
 	return arrayify(recoveredPubKey)
+}
+
+/** key of an application; can pass as "extraInfo" when generating shared key */
+export function getKeyForApplication(applicationId: string) {
+	return `app:${applicationId}`
 }

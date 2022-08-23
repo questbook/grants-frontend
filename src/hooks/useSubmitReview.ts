@@ -2,16 +2,17 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
-import { SupportedChainId } from 'src/constants/chains'
+import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
-import useEncryption from 'src/hooks/utils/useEncryption'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import { getKeyForApplication, getSecureChannelFromTxHash, useGetTxHashesOfGrantManagers } from 'src/utils/pii'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
+import { useProvider } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import { FeedbackType } from '../components/your_grants/feedbackDrawer'
 import {
@@ -37,17 +38,17 @@ export default function useSubmitReview(
 	const [incorrectNetwork, setIncorrectNetwork] = useState(false)
 	const [transactionData, setTransactionData] = useState<any>()
 	const { data: accountData, nonce } = useQuestbookAccount()
+	const { webwallet } = useContext(WebwalletContext)!
 	const { data: networkData, switchNetwork } = useNetwork()
-	const { encryptMessage } = useEncryption()
-
 	const { validatorApi, workspace, subgraphClients } = useContext(ApiClientsContext)!
 
 	if(!chainId) {
-		// eslint-disable-next-line no-param-reassign
-		chainId = getSupportedChainIdFromWorkspace(workspace)
+		chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 	}
 
-	const { client } = subgraphClients[chainId!]
+	const { client } = subgraphClients[chainId]
+	const provider = useProvider({ chainId })
+	const { fetch: fetchTxHashes } = useGetTxHashesOfGrantManagers(grantAddress, chainId)
 
 	const { fetchMore: fetchReviews } = useGetInitialReviewedApplicationGrantsQuery({ client })
 
@@ -57,15 +58,9 @@ export default function useSubmitReview(
 	const toast = useToast()
 	const currentChainId = useChainId()
 
-	const { webwallet } = useContext(WebwalletContext)!
-
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		chainId: chainId?.toString(),
 	})
-
-	if(!chainId) {
-		chainId = getSupportedChainIdFromWorkspace(workspace)
-	}
 
 	useEffect(() => {
 		if(data) {
@@ -104,48 +99,52 @@ export default function useSubmitReview(
 					throw new Error('Zero wallet is not ready')
 				}
 
+				const jsonReview = JSON.stringify(data)
 				const encryptedReview: { [key in string]: string } = {}
+				let dataHash: string | undefined
 				if(isPrivate) {
-					const yourPublicKey = workspace?.members.find(
-						(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
-					)?.publicKey
-					const encryptedData = encryptMessage(JSON.stringify(data), yourPublicKey!)
-					const encryptedHash = (await uploadToIPFS(encryptedData)).hash
-					encryptedReview[accountData!.address!] = encryptedHash
+					const grantManagerTxMap = await fetchTxHashes()
+					const managers = Object.keys(grantManagerTxMap)
+					if(!managers.length) {
+						throw new Error('No grant managers on the grant. Please contact support')
+					}
 
-					workspace?.members.filter(
-						(m) => (m.accessLevel === 'admin' || m.accessLevel === 'owner') && (m.publicKey && m.publicKey?.length > 0),
-					).map((m) => ({ key: m.publicKey, address: m.actorId }))
-						.forEach(async({ key, address }) => {
-							const encryptedAdminData = encryptMessage(JSON.stringify(data), key!)
-							const encryptedAdminHash = (await uploadToIPFS(encryptedAdminData)).hash
-							encryptedReview[address] = encryptedAdminHash
-						})
+					console.log(`encrypting review for ${managers.length} admins...`)
 
+					// we go through all wallet addresses
+					// and upload the private review for each
+					await Promise.all(
+						managers.map(
+							async walletAddress => {
+								const { encrypt } = await getSecureChannelFromTxHash(
+									provider,
+									webwallet!,
+									grantManagerTxMap[walletAddress],
+									getKeyForApplication(applicationId!)
+								)
+								const enc = await encrypt(jsonReview)
+								console.log(`encrypted review for ${walletAddress}`)
+
+								const encHash = (await uploadToIPFS(enc)).hash
+								console.log(`uploaded encrypted review for ${walletAddress} to ${encHash}`)
+
+								encryptedReview[walletAddress] = encHash
+							}
+						)
+					)
+
+					console.log('generated encrypted reviews')
+				} else {
+					dataHash = (await uploadToIPFS(jsonReview)).hash
 				}
-
-				const dataHash = (await uploadToIPFS(JSON.stringify(data))).hash
 
 				const {
 					data: { ipfsHash },
 				} = await validatorApi.validateReviewSet({
 					reviewer: accountData?.address!,
-					publicReviewDataHash: isPrivate ? '' : dataHash,
+					publicReviewDataHash: dataHash,
 					encryptedReview,
 				})
-
-
-				if(!ipfsHash) {
-					throw new Error('Error validating review data')
-				}
-
-				// const createGrantTransaction = await applicationReviewContract.submitReview(
-				// 	workspaceId || Number(workspace?.id).toString(),
-				// 	applicationId!,
-				// 	grantAddress!,
-				// 	ipfsHash,
-				// )
-				// const createGrantTransactionData = await createGrantTransaction.wait()
 
 				setCurrentStep(1)
 
@@ -153,11 +152,13 @@ export default function useSubmitReview(
 					biconomy,
 					applicationReviewContract,
 					'submitReview',
-					[	scwAddress,
+					[
+						scwAddress,
 						workspaceId || Number(workspace?.id).toString(),
 						applicationId!,
 						grantAddress!,
-						ipfsHash],
+						ipfsHash
+					],
 					APPLICATION_REVIEW_REGISTRY_ADDRESS[currentChainId],
 					biconomyWalletClient,
 					scwAddress,
