@@ -19,6 +19,7 @@ function SignupWebwallet() {
 	const handleReset = async(e: any) => {
 		e.preventDefault()
 
+		switchNetwork(undefined)
 		setNonce(undefined)
 		setWebwallet(undefined)
 		setScwAddress(undefined)
