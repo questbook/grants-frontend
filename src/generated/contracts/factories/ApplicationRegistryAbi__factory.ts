@@ -332,6 +332,29 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint96[]",
+        name: "_applicationIds",
+        type: "uint96[]",
+      },
+      {
+        internalType: "enum ApplicationRegistry.ApplicationState[]",
+        name: "_applicationStates",
+        type: "uint8[]",
+      },
+      {
+        internalType: "uint96",
+        name: "_workspaceId",
+        type: "uint96",
+      },
+    ],
+    name: "batchUpdateApplicationState",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint96",
         name: "_applicationId",
         type: "uint96",

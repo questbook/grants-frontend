@@ -43,7 +43,7 @@ const InReviewPanel = ({
 		}
 
 		const tempArr: number[] = []
-		console.log(checkedItems)
+		console.log('checkedItems', checkedItems)
 		console.log(inReviewApplications)
 		for(let i = 0; i < checkedItems.length; i++) {
 			if(checkedItems[i] && inReviewApplications[i]) {
@@ -69,7 +69,6 @@ const InReviewPanel = ({
 			setIsModalOpen(true)
 		 }
 	}, [isAcceptClicked, isRejectClicked, isResubmitClicked, isConfirmClicked])
-
 
 	const [txn, txnLink, loading, error] = useBatchUpdateApplicationState(
 		'',
@@ -310,7 +309,42 @@ const InReviewPanel = ({
 									setCheckedItems(tempArr)
 								}
 							}
-							onSendFundsClicked={() => onSendFundsClicked(true)} />
+							onSendFundsClicked={() => onSendFundsClicked(true)}
+							onAcceptClicked={
+								(e: any) => {
+									// const tempArr: boolean[] = []
+									// tempArr.push(...checkedItems)
+									// for(let i = 0; i < tempArr.length; i++) {
+									// 	tempArr[i] = false
+									// }
+
+									const tempArr = Array(checkedItems.length).fill(false)
+									tempArr[i] = true
+									setCheckedItems(tempArr)
+									setIsAcceptClicked(true)
+								}
+							}
+
+							onResubmitClicked={
+								(e: any) => {
+									const tempArr = Array(checkedItems.length).fill(false)
+									tempArr[i] = true
+									setCheckedItems(tempArr)
+									setIsResubmitClicked(true)
+								}
+							}
+
+							onRejectClicked={
+								(e: any) => {
+									const tempArr = Array(checkedItems.length).fill(false)
+									tempArr[i] = true
+									setCheckedItems(tempArr)
+									setIsRejectClicked(true)
+								}
+							}
+
+							someChecked={someChecked}
+						/>
 					))
 				}
 			</Grid>
@@ -327,6 +361,7 @@ const InReviewPanel = ({
 						setIsAcceptClicked(false)
 						setIsRejectClicked(false)
 						setIsResubmitClicked(false)
+						setCheckedItems(Array(checkedItems.length).fill(false))
 						setIsModalOpen(false)
 					}
 				}
@@ -350,7 +385,10 @@ const InReviewPanel = ({
 							fontSize="14px"
 							lineHeight="20px"
 							color="#7D7DA0">
-					This will notify selected applicants that their applications have been rejected. This action cannot be undone.
+					This will notify selected applicants that their applications have been
+							{' '}
+							{isAcceptClicked ? 'accepted' : isResubmitClicked ? 'asked to resubmit' : 'rejected'}
+. This action cannot be undone.
 						</Text>
 
 						<Text
@@ -371,13 +409,14 @@ const InReviewPanel = ({
 									setIsAcceptClicked(false)
 									setIsRejectClicked(false)
 									setIsResubmitClicked(false)
+									setCheckedItems(Array(checkedItems.length).fill(false))
 									setIsModalOpen(false)
 								}
 							}>
               Cancel
 						</Button>
 						<Button
-							colorScheme={isAcceptClicked ? 'blue' : 'pink'}
+							// colorScheme={isAcceptClicked ? 'blue' : 'pink'}
 							mr={3}
 							onClick={
 								() => {

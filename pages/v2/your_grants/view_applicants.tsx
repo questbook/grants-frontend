@@ -37,6 +37,7 @@ import { SupportedSafes } from 'src/v2/constants/safe/supported_safes'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import AcceptedProposalsPanel from 'src/v2/payouts/AcceptedProposals/AcceptedProposalPanel'
 import InReviewPanel from 'src/v2/payouts/InReviewProposals/InReviewPanel'
+import RejectedPanel from 'src/v2/payouts/RejectedProposals/RejectedPanel'
 import SendFundsDrawer from 'src/v2/payouts/SendFundsDrawer/SendFundsDrawer'
 import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEvaluationDrawer'
@@ -252,6 +253,7 @@ function ViewApplicants() {
 						).toString(),
 						decimal || 18,
 					),
+					reviews: applicant.reviews
 				}
 			})
 
@@ -681,7 +683,7 @@ function ViewApplicants() {
 				<Box mt={5} />
 
 				{
-					setupRubricBannerCancelled || ((grantData?.grants[0].rubric?.items.length || 0) > 0 || false) ? <></> : (
+					setupRubricBannerCancelled || ((grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false) ? <></> : (
 						<>
 							<Flex
 								px={'18px'}
@@ -761,9 +763,10 @@ function ViewApplicants() {
 					h={8}
 					colorScheme='brandv2'>
 					<TabList>
-						<StyledTab label='Accepted (20)' />
-						<StyledTab label='In review (40)' />
-						<StyledTab label='Rejected (20)' />
+						<StyledTab label={`Accepted (${applicantsData.filter((item: any) => (2 === item.status)).length})`} />
+						<StyledTab label={`In Review (${applicantsData.filter((item: any) => (0 === item.status)).length})`} />
+						<StyledTab label={`Rejected (${applicantsData.filter((item: any) => (3 === item.status)).length})`} />
+						<StyledTab label={`Asked to Resubmit (${applicantsData.filter((item: any) => (1 === item.status)).length})`} />
 					</TabList>
 
 					<TabPanels>
@@ -790,6 +793,18 @@ function ViewApplicants() {
 							bg={'white'}
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<InReviewPanel
+								applicantsData={applicantsData}
+								onSendFundsClicked={(v) => setSendFundsModalIsOpen(v)} />
+						</TabPanel>
+
+						<TabPanel
+							tabIndex={2}
+							borderRadius={'2px'}
+							p={0}
+							mt={5}
+							bg={'white'}
+							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
+							<RejectedPanel
 								applicantsData={applicantsData}
 								onSendFundsClicked={(v) => setSendFundsModalIsOpen(v)} />
 						</TabPanel>

@@ -1,5 +1,6 @@
 import React, { createContext, ReactElement, ReactNode, useMemo } from 'react'
 import { ChakraProvider } from '@chakra-ui/react'
+import { ChatWidget } from '@papercups-io/chat-widget'
 // import dynamic from 'next/dynamic';
 import {
 	Configuration,
@@ -183,6 +184,21 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					</ChakraProvider>
 				</ApiClientsContext.Provider>
 			</WagmiConfig>
+			<ChatWidget
+				token="5b3b08cf-8b27-4d4b-9c4e-2290f53e04f0"
+				inbox="cb5e60c6-dfe5-481d-9dde-3f13e83344cd"
+				title="Welcome to Questbook Support"
+				subtitle="Have a question? Please feel free to ask here - we'll respond ASAP, hopefully now!"
+				primaryColor="#1F1F33"
+				newMessagePlaceholder="Type your question ..."
+				showAgentAvailability={false}
+				agentAvailableText="We're online right now!"
+				agentUnavailableText="We're away at the moment."
+				requireEmailUpfront={false}
+				iconVariant="filled"
+				baseUrl="https://app.papercups.io"
+			/>
+
 		</>
 	)
 }
