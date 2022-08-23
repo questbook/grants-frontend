@@ -17,6 +17,7 @@ import {
 	useGetApplicantsForAGrantReviewerQuery,
 	useGetGrantDetailsQuery,
 } from 'src/generated/graphql'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
@@ -42,7 +43,6 @@ import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEva
 import StatsBanner from 'src/v2/payouts/StatsBanner'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 
 const PAGE_SIZE = 500
 
