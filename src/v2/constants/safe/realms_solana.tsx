@@ -2,7 +2,6 @@
 import {
 	createInstructionData,
 	getAllTokenOwnerRecords,
-	getGovernance,
 	getGovernanceAccounts,
 	getNativeTreasuryAddress,
 	getRealm,
@@ -25,21 +24,25 @@ export class Realms_Solana implements Safe {
     connection: Connection
     programId: PublicKey
     constructor() {
-    	this.id = new PublicKey('HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC') // realmPK
+    	//this.id = new PublicKey('HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC') // devnet realmPK
+    	this.id = new PublicKey('AwTwXtM4D3KiDy8pBgrZRaZdNnsxXABsyHXr4u394rEh') // mainnet realmPK
     	this.name = 'Realms on Solana'
     	this.description = 'Realms on Solana'
     	this.image = ''
     	this.chainId = 9000001
 
-    	this.connection = new Connection('https://mango.devnet.rpcpool.com', 'recent')
+    	//this.connection = new Connection('https://mango.devnet.rpcpool.com', 'recent')
+    	this.connection = new Connection('http://realms-realms-c335.mainnet.rpcpool.com/258d3727-bb96-409d-abea-0b1b4c48af29', 'recent')
     	this.programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
     }
 
 
     async proposeTransactions(grantname: string, transactions: TransactionType[], wallet: any) {
 
-    	const governance = await getGovernance(this.connection, new PublicKey('9PDa3cRWPiA6uCDN5rC92XygoV8WeKuvsM2YuoETCQkb'))
     	const realmData = await getRealm(this.connection, this.id)
+    	const COUNCIL_MINT = realmData.account.config.councilMint
+    	const governanceInfo = await getGovernanceAccounts(this.connection, this.programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
+    	const governance = governanceInfo[0]
     	const payer = wallet.publicKey
 
     	const tokenOwnerRecord = await getAllTokenOwnerRecords(
