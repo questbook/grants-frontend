@@ -152,7 +152,9 @@ function EditForm({ workspaceData }: EditFormProps) {
 	}
 
 	const handleSubmit = async() => {
-		if (!editedFormData) return
+		if(!editedFormData) {
+			return
+		}
 		// if(!editedFormData?.bio?.length) {
 		// 	return updateEditError('bio', 'Please enter a bio')
 		// }
