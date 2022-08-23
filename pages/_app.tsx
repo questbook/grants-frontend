@@ -112,7 +112,7 @@ export const WebwalletContext = createContext<{
 	webwallet?: Wallet;
 	setWebwallet: (webwallet?: Wallet) => void;
 	network?: SupportedChainId;
-	switchNetwork: (newNetwork: SupportedChainId) => void;
+	switchNetwork: (newNetwork?: SupportedChainId) => void;
 	scwAddress?: string;
 	setScwAddress: (scwAddress?: string) => void;
 	nonce?: string;
