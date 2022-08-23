@@ -12,6 +12,8 @@ const RecipientDetails = ({
 	setAmount,
 	applicantData,
 	safeAddress,
+	initiateTransactionData,
+	onChangeRecepientDetails,
 }: {
   step: number,
   milestoneId: string | undefined,
@@ -47,7 +49,7 @@ const RecipientDetails = ({
 						lineHeight='20px'
 						fontWeight='500'
 					>
-						{safeAddress}
+						{initiateTransactionData[0].from}
 					</Text>
 
 					<ExternalLink
@@ -138,9 +140,10 @@ const RecipientDetails = ({
 									}
 									fontWeight={'500'}
 									fontSize='14px'
-									value={data?.applicant_address}
+									defaultValue={initiateTransactionData[i].to}
 									errorBorderColor={'red'}
 									height={'auto'}
+									onChange={(e) => onChangeRecepientDetails(data.applicationId, 'to', e.target.value)}
 								/>
 							</Flex>
 
@@ -153,8 +156,9 @@ const RecipientDetails = ({
 
 									<MilestoneSelect
 										placeholder='Select from the list'
-										value={undefined}
-										onChange={(value) => value && setMilestoneId(value?.id)} />
+										value={initiateTransactionData[i].selectedMilestone}
+										milestoneList={data.milestones}
+										onChange={(value) => value && onChangeRecepientDetails(data.applicationId, 'selectedMilestone', value?.id)} />
 								</Flex>
 
 								<Box w={6} />
@@ -179,7 +183,7 @@ const RecipientDetails = ({
 										errorBorderColor={'red'}
 										height={'auto'}
 										type={'number'}
-										onChange={(e) => setAmount(parseInt(e.target.value))}
+										onChange={(e) => onChangeRecepientDetails(data.applicationId, 'amount', parseInt(e.target.value))}
 									/>
 								</Flex>
 							</Flex>

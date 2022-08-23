@@ -445,7 +445,7 @@ function ViewApplicants() {
 	}, [phantomWalletConnected])
 
 	const initiateTransaction = async() => {
-		const proposaladdress = await current_safe?.proposeTransactions([], phantomWallet)
+		const proposaladdress = await current_safe?.proposeTransactions(initiateTransactionData, phantomWallet)
 		setProposalAddr(proposaladdress?.toString())
 	}
 
@@ -456,9 +456,11 @@ function ViewApplicants() {
 			if(transactionData.applicationId === applicationId) {
 				return { ...transactionData, [fieldName]:fieldValue }
 			}
-		})
 
+			return transactionData
+		})
 		console.log('initiateTransactionData', tempData)
+		setInitiateTransactionData(tempData)
 	}
 
 	//end of implementation

@@ -249,7 +249,7 @@ function SendFundsModal({
 										setAmount={setAmount}
 										safeAddress={safeAddress}
 										applicantData={proposals[0]}
-										initiateTransactionData={initiateTransactionData ? initiateTransactionData[0] : undefined}
+										initiateTransactionData={initiateTransactionData?.length ? initiateTransactionData[0] : undefined}
 										step={step}
 										onChangeRecepientDetails={onChangeRecepientDetails} />
 								) : (
