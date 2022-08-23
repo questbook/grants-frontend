@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
 	Box,
 	Button,
@@ -40,19 +40,14 @@ function SendFundsDrawer({
 	onChangeRecepientDetails,
 	phantomWallet,
 	setPhantomWalletConnected,
-	milestoneId,
-	setMilestoneId,
-	amount,
-	setAmount,
 	isEvmChain,
 	current_safe,
 	signerVerified,
 	initiateTransaction,
 	initiateTransactionData,
+	onModalStepChange,
+	step,
 }: Props) {
-
-	const [step, setStep] = useState(0)
-
 
 	const {
 		isError: isErrorConnecting,
@@ -70,28 +65,11 @@ function SendFundsDrawer({
 		return isNotValid
 	}
 
-
-	useEffect(() => {
-		setStep(ModalState.VERIFIED_OWNER)
-	}, [signerVerified])
-
 	return (
 		<Drawer
 			placement='right'
 			isOpen={isOpen}
-			onClose={
-				async() => {
-					if(phantomWallet?.isConnected) {
-						await phantomWallet.disconnect()
-						setPhantomWalletConnected(false)
-					}
-
-					setStep(0)
-					setMilestoneId(undefined)
-					setAmount(undefined)
-					onClose()
-				}
-			}
+			onClose={onClose}
 			closeOnOverlayClick={false}
 		>
 			<DrawerOverlay maxH="100vh" />
@@ -152,19 +130,7 @@ function SendFundsDrawer({
 							color='#7D7DA0'
 							h={6}
 							w={6}
-							onClick={
-								async() => {
-									if(phantomWallet?.isConnected) {
-										await phantomWallet.disconnect()
-										setPhantomWalletConnected(false)
-									}
-
-									setStep(0)
-									setMilestoneId(undefined)
-									setAmount(undefined)
-									onClose()
-								}
-							}
+							onClick={onClose}
 							cursor='pointer'
 						/>
 					</Flex>
@@ -263,15 +229,10 @@ function SendFundsDrawer({
 						{
 							step === 0 ? (
 								<RecipientDetails
-									milestoneId={milestoneId}
-									setMilestoneId={setMilestoneId}
-									amount={amount}
-									setAmount={setAmount}
 									applicantData={proposals}
 									safeAddress={safeAddress}
 									onChangeRecepientDetails={onChangeRecepientDetails}
-									initiateTransactionData={initiateTransactionData}
-									step={step} />
+									initiateTransactionData={initiateTransactionData} />
 							) : (
 								<SafeOwner
 									isEvmChain={isEvmChain}
@@ -295,27 +256,39 @@ function SendFundsDrawer({
 						direction="row"
 						align="center">
 
-						<Button
-							ml='auto'
-							colorScheme={'brandv2'}
-							disabled={step === ModalState.RECEIPT_DETAILS ? validateReceipentInput() : step === ModalState.CONNECT_WALLET ? !signerVerified : false}
-							onClick={
-								async() => {
-									if(step === ModalState.RECEIPT_DETAILS) {
-										setStep(ModalState.CONNECT_WALLET)
-									}
 
-									if(step === ModalState.VERIFIED_OWNER) {
-										setStep(ModalState.RECEIPT_DETAILS)
-										setMilestoneId(undefined)
-										setAmount(undefined)
-										onComplete()
-										initiateTransaction()
-									}
-								}
-							}>
-							{step === ModalState.RECEIPT_DETAILS ? 'Continue' : 'Initiate Transaction'}
-						</Button>
+						{
+							step === ModalState.RECEIPT_DETAILS ? (
+								<Button
+									ml='auto'
+									colorScheme={'brandv2'}
+									disabled={validateReceipentInput()}
+									onClick={
+										async() => {
+											onModalStepChange(step)
+										}
+									}>
+										Continue
+								</Button>
+							) : null
+						}
+
+
+						{
+							step === ModalState.CONNECT_WALLET || step === ModalState.VERIFIED_OWNER ? (
+								<Button
+									ml='auto'
+									colorScheme={'brandv2'}
+									disabled={!signerVerified}
+									onClick={
+										async() => {
+											onModalStepChange(step)
+										}
+									}>
+										Initiate Transaction
+								</Button>
+							) : null
+						}
 
 					</Flex>
 

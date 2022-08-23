@@ -5,21 +5,11 @@ import AlertBanner from './AlertBanner'
 import MilestoneSelect from './MilestoneSelect'
 
 const RecipientDetails = ({
-	step,
-	milestoneId,
-	setMilestoneId,
-	amount,
-	setAmount,
 	safeAddress,
 	applicantData,
 	initiateTransactionData,
 	onChangeRecepientDetails,
 }: {
-	step: number,
-	milestoneId: string | undefined,
-	setMilestoneId: (id: string) => void,
-	amount: number | undefined,
-	setAmount: (amount: number) => void,
 	safeAddress: string;
 	applicantData: any;
 }) => {

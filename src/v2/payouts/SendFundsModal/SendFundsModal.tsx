@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
 	Box,
 	Button,
@@ -34,24 +34,23 @@ enum ModalState {
 function SendFundsModal({
 	isOpen,
 	onClose,
-	onComplete,
 	safeAddress,
 	proposals,
 	onChangeRecepientDetails,
 	phantomWallet,
 	setPhantomWalletConnected,
-	milestoneId,
-	setMilestoneId,
-	amount,
-	setAmount,
 	isEvmChain,
 	current_safe,
 	signerVerified,
 	initiateTransaction,
 	initiateTransactionData,
+	onModalStepChange,
+	step,
 }: Props) {
 
-	const [step, setStep] = useState(0)
+	console.log('step', step)
+
+	// const [step, setStep] = useState(0)
 	const [toAddressIsFocused, setToAddressIsFocused] = useState(false)
 	const [txnInitModalIsOpen, setTxnInitModalIsOpen] = useState(false)
 
@@ -63,29 +62,12 @@ function SendFundsModal({
 	} = useConnect()
 
 
-	useEffect(() => {
-		setStep(ModalState.VERIFIED_OWNER)
-	}, [signerVerified])
-
-
 	return (
 		<>
 			<ModalComponent
 				isCentered
 				isOpen={isOpen}
-				onClose={
-					async() => {
-						if(phantomWallet?.isConnected) {
-							await phantomWallet.disconnect()
-							setPhantomWalletConnected(false)
-						}
-
-						setStep(0)
-						setMilestoneId(undefined)
-						setAmount(undefined)
-						onClose()
-					}
-				}
+				onClose={onClose}
 				closeOnOverlayClick={false}
 			>
 				<ModalOverlay maxH="100vh" />
@@ -142,14 +124,7 @@ function SendFundsModal({
 								color='#7D7DA0'
 								h={6}
 								w={6}
-								onClick={
-									() => {
-										setStep(0)
-										setMilestoneId(undefined)
-										setAmount(undefined)
-										onClose()
-									}
-								}
+								onClick={onClose}
 								cursor='pointer'
 							/>
 						</Flex>
@@ -248,14 +223,9 @@ function SendFundsModal({
 							{
 								step === ModalState.RECEIPT_DETAILS ? (
 									<RecipientDetails
-										milestoneId={milestoneId}
-										setMilestoneId={setMilestoneId}
-										amount={amount}
-										setAmount={setAmount}
 										safeAddress={safeAddress}
 										applicantData={proposals[0]}
-										initiateTransactionData={initiateTransactionData?.length ? initiateTransactionData[0] : undefined}
-										step={step}
+										initiateTransactionData={initiateTransactionData?.length > 0 ? initiateTransactionData[0] : undefined}
 										onChangeRecepientDetails={onChangeRecepientDetails} />
 								) : (
 									<SafeOwner
@@ -278,31 +248,43 @@ function SendFundsModal({
 							direction="row"
 							align="center">
 
-							<Button
-								ml='auto'
-								colorScheme={'brandv2'}
-								disabled={
-									step === ModalState.RECEIPT_DETAILS ? initiateTransactionData[0]?.selectedMilestone === undefined
-											|| initiateTransactionData[0]?.amount === undefined : !signerVerified
-								}
-								onClick={
-									async() => {
-										if(step === ModalState.RECEIPT_DETAILS) {
-											setStep(ModalState.CONNECT_WALLET)
-										}
 
-										if(step === ModalState.VERIFIED_OWNER) {
-											setStep(ModalState.RECEIPT_DETAILS)
-											setTxnInitModalIsOpen(true)
-											setMilestoneId(undefined)
-											setAmount(undefined)
-											onComplete()
-											initiateTransaction()
+							{
+								step === ModalState.RECEIPT_DETAILS ? (
+									<Button
+										ml='auto'
+										colorScheme={'brandv2'}
+										disabled={
+											initiateTransactionData?.length > 0 ?
+												initiateTransactionData[0]?.selectedMilestone === undefined
+											|| initiateTransactionData[0]?.amount === undefined : false
 										}
-									}
-								}>
-								{step === ModalState.RECEIPT_DETAILS ? 'Continue' : 'Initiate Transaction'}
-							</Button>
+										onClick={
+											async() => {
+												onModalStepChange(step)
+											}
+										}>
+										Continue
+									</Button>
+								) : null
+							}
+
+
+							{
+								step === ModalState.CONNECT_WALLET || step === ModalState.VERIFIED_OWNER ? (
+									<Button
+										ml='auto'
+										colorScheme={'brandv2'}
+										disabled={!signerVerified}
+										onClick={
+											async() => {
+												onModalStepChange(step)
+											}
+										}>
+										Initiate Transaction
+									</Button>
+								) : null
+							}
 
 						</Flex>
 

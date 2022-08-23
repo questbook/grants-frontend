@@ -6,10 +6,6 @@ import MilestoneSelect from './MilestoneSelect'
 
 const RecipientDetails = ({
 	step,
-	milestoneId,
-	setMilestoneId,
-	amount,
-	setAmount,
 	applicantData,
 	safeAddress,
 	initiateTransactionData,
@@ -17,9 +13,6 @@ const RecipientDetails = ({
 }: {
   step: number,
   milestoneId: string | undefined,
-  setMilestoneId: (id: string) => void,
-  amount: number | undefined,
-  setAmount: (amount: number) => void,
 	applicantData: any[],
 	safeAddress: string,
 }) => {

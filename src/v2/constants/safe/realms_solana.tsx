@@ -36,7 +36,7 @@ export class Realms_Solana implements Safe {
     }
 
 
-    async proposeTransactions(grantName: string, transactions: TransactionType[], wallet: any) {
+    async proposeTransactions(grantname: string, transactions: TransactionType[], wallet: any) {
 
     	const governance = await getGovernance(this.connection, new PublicKey('9PDa3cRWPiA6uCDN5rC92XygoV8WeKuvsM2YuoETCQkb'))
     	const realmData = await getRealm(this.connection, this.id)
@@ -57,8 +57,8 @@ export class Realms_Solana implements Safe {
     		this.id,
     		governance.pubkey,
     		tokenOwnerRecord[0].pubkey,
-    		`${transactions.length > 1 ? 'Batched Payout -' : ''} ${grantName} - ${new Date().toDateString()}`,
-    		`${grantName}`,
+    		`${transactions.length > 1 ? 'Batched Payout - ' : ''} ${grantname} - ${new Date().toDateString()}`,
+    		`${grantname}`,
     		tokenOwnerRecord[0].account.governingTokenMint,
             payer!,
             governance.account.proposalCount,
@@ -153,7 +153,6 @@ export class Realms_Solana implements Safe {
     	console.log('realms_solana - governanceInfo', governanceInfo[0])
 
     	const tokenownerrecord = await getAllTokenOwnerRecords(this.connection, this.programId, this.id)
-
     	let isOwner = false
     	for(let i = 0; i < tokenownerrecord.length; i++) {
     		if(tokenownerrecord[i].account.governingTokenOwner.toString() === address) {

@@ -69,7 +69,7 @@ const MilestoneSelect = ({
 		}
 		makeOption={Option}
 		placeholder={placeholder}
-		selected={value}
+		selected={milestoneList.find((milestone) => milestone.id === value) ?? undefined}
 		setSelected={onChange} />
 )
 

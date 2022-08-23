@@ -56,6 +56,13 @@ function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 	return val
 }
 
+enum ModalState {
+	RECEIPT_DETAILS,
+	CONNECT_WALLET,
+	VERIFIED_OWNER,
+	TRANSATION_INITIATED
+}
+
 function ViewApplicants() {
 	const [applicantsData, setApplicantsData] = useState<any>([])
 	const [reviewerData, setReviewerData] = useState<any>([])
@@ -395,9 +402,6 @@ function ViewApplicants() {
 
 	//Implementing the safe send
 
-	const [milestoneId, setMilestoneId] = useState<string>()
-	const [amount, setAmount] = useState<number>()
-
 	const { phantomWalletAvailable,
 		phantomWallet,
 		phantomWalletConnected,
@@ -415,7 +419,6 @@ function ViewApplicants() {
 	const isEvmChain = chainId !== 9000001 ? true : false
 
 	useEffect(() => {
-		console.log('sendFundsTo', sendFundsTo)
 		const formattedTrxnData = sendFundsTo?.map((recepient, i) => (
 			{
 				from: current_safe?.id.toString(),
@@ -447,6 +450,7 @@ function ViewApplicants() {
 	}, [phantomWalletConnected])
 
 	const initiateTransaction = async() => {
+		console.log('initiate transaction called')
 		const proposaladdress = await current_safe?.proposeTransactions(grantData?.grants[0].title, initiateTransactionData, phantomWallet)
 		setProposalAddr(proposaladdress?.toString())
 	}
@@ -464,6 +468,60 @@ function ViewApplicants() {
 		console.log('initiateTransactionData', tempData)
 		setInitiateTransactionData(tempData)
 	}
+
+
+	const [step, setStep] = useState(ModalState.RECEIPT_DETAILS)
+
+	const onSendFundsButtonClicked = async(state: boolean, selectedApplicants: any[]) => {
+		console.log('state', state)
+		console.log('selectedApplicants', selectedApplicants)
+		if(selectedApplicants.length === 1) {
+			setSendFundsModalIsOpen(state)
+		} else {
+			setSendFundsDrawerIsOpen(state)
+		}
+
+		setSendFundsTo(selectedApplicants)
+	}
+
+	const onModalStepChange = async(currentState:number) => {
+		switch (currentState) {
+		case ModalState.RECEIPT_DETAILS:
+			setStep(ModalState.CONNECT_WALLET)
+			break
+		case ModalState.CONNECT_WALLET:
+			if(signerVerified) {
+				setStep(ModalState.VERIFIED_OWNER)
+			}
+
+			break
+		case ModalState.VERIFIED_OWNER:
+			setStep(ModalState.TRANSATION_INITIATED)
+			initiateTransaction()
+			setSendFundsModalIsOpen(false)
+			setSendFundsDrawerIsOpen(false)
+			setTxnInitModalIsOpen(true)
+
+			break
+		}
+	}
+
+	const onModalClose = async() => {
+		setStep(ModalState.RECEIPT_DETAILS)
+		setSendFundsModalIsOpen(false)
+		setSendFundsDrawerIsOpen(false)
+		setTxnInitModalIsOpen(false)
+		if(phantomWallet?.isConnected) {
+			await phantomWallet.disconnect()
+			setPhantomWalletConnected(false)
+		}
+	}
+
+	useEffect(() => {
+		if(signerVerified) {
+			setStep(ModalState.VERIFIED_OWNER)
+		}
+	}, [signerVerified])
 
 	//end of implementation
 
@@ -718,20 +776,8 @@ function ViewApplicants() {
 							<AcceptedProposalsPanel
 								applicantsData={applicantsData}
 								reviewerData={reviewerData}
-								onSendFundsClicked={
-									(v, c) => {
-										console.log(c)
-										setSendFundsModalIsOpen(v)
-										setSendFundsTo(c)
-									}
-								}
-								onBulkSendFundsClicked={
-									(v, c) => {
-										console.log(c)
-										setSendFundsTo(c)
-										setSendFundsDrawerIsOpen(v)
-									}
-								}
+								onSendFundsClicked={onSendFundsButtonClicked}
+								onBulkSendFundsClicked={onSendFundsButtonClicked}
 								grantData={grantData}
 							/>
 						</TabPanel>
@@ -781,48 +827,34 @@ function ViewApplicants() {
 
 				<SendFundsModal
 					isOpen={sendFundsModalIsOpen}
-					onClose={() => setSendFundsModalIsOpen(false)}
+					onClose={onModalClose}
 					// @ts-expect-error
 					safeAddress={workspace?.safeAddress ?? 'HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC'}
-					onComplete={
-						() => {
-							setSendFundsModalIsOpen(false)
-							setTxnInitModalIsOpen(true)
-						}
-					}
 					proposals={sendFundsTo ?? []}
 
 					onChangeRecepientDetails={onChangeRecepientDetails}
 					phantomWallet={phantomWallet}
 					setPhantomWalletConnected={setPhantomWalletConnected}
-					milestoneId={milestoneId}
-					setMilestoneId={setMilestoneId}
-					amount={amount}
-					setAmount={setAmount}
 					isEvmChain={isEvmChain}
 					current_safe={current_safe}
 					signerVerified={signerVerified}
 					initiateTransaction={initiateTransaction}
 					initiateTransactionData={initiateTransactionData}
+
+					onModalStepChange={onModalStepChange}
+					step={step}
 				/>
 
 				<TransactionInitiatedModal
-					isOpen={txnInitModalIsOpen}
-					onClose={() => setTxnInitModalIsOpen(false)}
+					isOpen={txnInitModalIsOpen && proposalAddr}
+					onClose={onModalClose}
 					onComplete={() => setTxnInitModalIsOpen(false)}
 					proposalUrl={isEvmChain ? '' : getProposalUrl(current_safe?.id.toString(), proposalAddr)}
 				/>
 
 				<SendFundsDrawer
 					isOpen={sendFundsDrawerIsOpen}
-					onClose={() => setSendFundsDrawerIsOpen(false)}
-					onComplete={
-						() => {
-							setSendFundsDrawerIsOpen(false)
-							setTxnInitModalIsOpen(true)
-							setSendFundsTo(undefined)
-						}
-					}
+					onClose={onModalClose}
 					// @ts-expect-error
 					safeAddress={workspace?.safeAddress ?? 'HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC'}
 					proposals={sendFundsTo ?? []}
@@ -830,15 +862,14 @@ function ViewApplicants() {
 					onChangeRecepientDetails={onChangeRecepientDetails}
 					phantomWallet={phantomWallet}
 					setPhantomWalletConnected={setPhantomWalletConnected}
-					milestoneId={milestoneId}
-					setMilestoneId={setMilestoneId}
-					amount={amount}
-					setAmount={setAmount}
 					isEvmChain={isEvmChain}
 					current_safe={current_safe}
 					signerVerified={signerVerified}
 					initiateTransaction={initiateTransaction}
 					initiateTransactionData={initiateTransactionData}
+
+					onModalStepChange={onModalStepChange}
+					step={step}
 				/>
 
 
