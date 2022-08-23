@@ -152,16 +152,8 @@ function EditForm({ workspaceData }: EditFormProps) {
 	}
 
 	const handleSubmit = async() => {
-		if(!editedFormData?.bio?.length) {
-			return updateEditError('bio', 'Please enter a bio')
-		}
-
-		if(!editedFormData?.name?.length) {
-			return updateEditError('name', 'Please enter a name')
-		}
-
-		if(!editedFormData?.about?.getCurrentContent()?.hasText()) {
-			return updateEditError('about', 'Please enter about')
+		if(!editedFormData) {
+			return
 		}
 
 		const data = await generateWorkspaceUpdateRequest(
