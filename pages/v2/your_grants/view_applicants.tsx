@@ -47,6 +47,7 @@ import StatsBanner from 'src/v2/payouts/StatsBanner'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
 import { useAccount } from 'wagmi'
+import ResubmitPanel from 'src/v2/payouts/ResubmitProposals/ResubmitPanel'
 
 const PAGE_SIZE = 500
 
@@ -682,6 +683,17 @@ function ViewApplicants() {
 							<RejectedPanel
 								applicantsData={applicantsData}
 								onSendFundsClicked={(v) => setSendFundsModalIsOpen(v)} />
+						</TabPanel>
+
+						<TabPanel
+							tabIndex={3}
+							borderRadius={'2px'}
+							p={0}
+							mt={5}
+							bg={'white'}
+							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
+							<ResubmitPanel
+								applicantsData={applicantsData} />
 						</TabPanel>
 
 
