@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
 	Box,
 	Button,
@@ -61,6 +61,11 @@ function SendFundsModal({
 		connect,
 		connectors
 	} = useConnect()
+
+
+	useEffect(() => {
+		setStep(ModalState.VERIFIED_OWNER)
+	}, [signerVerified])
 
 
 	return (
@@ -277,8 +282,8 @@ function SendFundsModal({
 								ml='auto'
 								colorScheme={'brandv2'}
 								disabled={
-									step === ModalState.RECEIPT_DETAILS ? milestoneId === undefined
-											|| amount === undefined : step === ModalState.CONNECT_WALLET
+									step === ModalState.RECEIPT_DETAILS ? initiateTransactionData[0]?.selectedMilestone === undefined
+											|| initiateTransactionData[0]?.amount === undefined : !signerVerified
 								}
 								onClick={
 									async() => {
@@ -305,12 +310,6 @@ function SendFundsModal({
 					</Container>
 				</ModalContent>
 			</ModalComponent>
-			{/* <TransactionInitiatedModal
-				isOpen={txnInitModalIsOpen}
-				onClose={() => setTxnInitModalIsOpen(false)}
-				onComplete={() => setTxnInitModalIsOpen(false)}
-				proposalUrl={isEvmChain ? '' : getProposalUrl(current_safe?.id.toString()!, proposalAddr)}
-			/> */}
 		</>
 	)
 }

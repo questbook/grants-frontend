@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
 	Box,
 	Button,
@@ -59,6 +59,21 @@ function SendFundsDrawer({
 		connect,
 		connectors
 	} = useConnect()
+
+	const validateReceipentInput = () => {
+		let isNotValid = false
+		initiateTransactionData?.map((data, i) => {
+			if(data.to === undefined || data.selectedMilestone === undefined || data.amount === undefined) {
+				isNotValid = true
+			}
+		})
+		return isNotValid
+	}
+
+
+	useEffect(() => {
+		setStep(ModalState.VERIFIED_OWNER)
+	}, [signerVerified])
 
 	return (
 		<Drawer
@@ -283,10 +298,7 @@ function SendFundsDrawer({
 						<Button
 							ml='auto'
 							colorScheme={'brandv2'}
-							disabled={
-								step === ModalState.RECEIPT_DETAILS ? milestoneId === undefined
-											|| amount === undefined : step === ModalState.CONNECT_WALLET
-							}
+							disabled={step === ModalState.RECEIPT_DETAILS ? validateReceipentInput() : step === ModalState.CONNECT_WALLET ? !signerVerified : false}
 							onClick={
 								async() => {
 									if(step === ModalState.RECEIPT_DETAILS) {

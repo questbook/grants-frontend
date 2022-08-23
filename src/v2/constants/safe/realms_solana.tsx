@@ -36,7 +36,7 @@ export class Realms_Solana implements Safe {
     }
 
 
-    async proposeTransactions(transactions: TransactionType[], wallet: any) {
+    async proposeTransactions(grantName: string, transactions: TransactionType[], wallet: any) {
 
     	const governance = await getGovernance(this.connection, new PublicKey('9PDa3cRWPiA6uCDN5rC92XygoV8WeKuvsM2YuoETCQkb'))
     	const realmData = await getRealm(this.connection, this.id)
@@ -57,8 +57,8 @@ export class Realms_Solana implements Safe {
     		this.id,
     		governance.pubkey,
     		tokenOwnerRecord[0].pubkey,
-    		`QB - NEW give me 0.3 sol payouts ${new Date().toTimeString()}`,
-    		'give me money',
+    		`${transactions.length > 1 ? 'Batched Payout -' : ''} ${grantName} - ${new Date().toDateString()}`,
+    		`${grantName}`,
     		tokenOwnerRecord[0].account.governingTokenMint,
             payer!,
             governance.account.proposalCount,
@@ -74,57 +74,31 @@ export class Realms_Solana implements Safe {
 
     	console.log('create New proposal - nativeTreasury', nativeTreasury.toString())
 
-    	const ins1 = SystemProgram.transfer({
-    		fromPubkey: nativeTreasury,
-    		toPubkey: payer!,
-    		lamports: 0.3 * 1000000000,
-    		programId: this.programId,
-    	})
+    	for(let i = 0; i < transactions.length; i++) {
+    		const ins = SystemProgram.transfer({
+    			fromPubkey: new PublicKey(transactions[i].from),
+    			toPubkey: new PublicKey(transactions[i].to),
+    			lamports: transactions[i].amount * 1000000000,
+    			programId: this.programId,
+    		})
 
+    		const instructionData = createInstructionData(ins)
 
-    	const ins2 = SystemProgram.transfer({
-    		fromPubkey: nativeTreasury,
-    		toPubkey: new PublicKey('5JhJkGb7ZhSV1SeXyVstmC1miHDurL3fgsBWZ9Vveetv'),
-    		lamports: 0.4 * 1000000000,
-    		programId: this.programId,
-    	})
-
-    	console.log('create New proposal - proposalInstructions', proposalInstructions)
-    	console.log('create New proposal - ins1', ins1)
-    	console.log('create New proposal - ins2', ins1)
-
-    	const instructionData1 = createInstructionData(ins1)
-    	const instructionData2 = createInstructionData(ins2)
-
-    	await withInsertTransaction(
-    		proposalInstructions,
-    		this.programId,
-    		2,
-    		governance.pubkey,
-    		proposalAddress,
-    		tokenOwnerRecord[0].pubkey,
-            payer!,
-            0,
-            0,
-            0,
-            [instructionData1],
-            payer!
-    	)
-
-    	await withInsertTransaction(
-    		proposalInstructions,
-    		this.programId,
-    		2,
-    		governance.pubkey,
-    		proposalAddress,
-    		tokenOwnerRecord[0].pubkey,
-            payer!,
-            1,
-            0,
-            0,
-            [instructionData2],
-            payer!
-    	)
+    		await withInsertTransaction(
+    			proposalInstructions,
+    			this.programId,
+    			2,
+    			governance.pubkey,
+    			proposalAddress,
+    			tokenOwnerRecord[0].pubkey,
+				payer!,
+				i,
+				0,
+				0,
+				[instructionData],
+				payer!
+    		)
+    	}
 
     	console.log('create New proposal - after withInsertTransaction', proposalInstructions)
 

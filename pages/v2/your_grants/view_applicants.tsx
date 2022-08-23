@@ -43,6 +43,7 @@ import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEva
 import StatsBanner from 'src/v2/payouts/StatsBanner'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
+import getProposalUrl from 'src/v2/utils/phantomUtils'
 import { useAccount } from 'wagmi'
 
 const PAGE_SIZE = 500
@@ -427,25 +428,26 @@ function ViewApplicants() {
 		setInitiateTransactionData(formattedTrxnData)
 	}, [sendFundsTo])
 
-
-	useEffect(() => {
-		const getRealmsVerification = async() => {
-			if(phantomWallet?.publicKey?.toString()) {
-				const isVerified = await current_safe?.isOwner(phantomWallet.publicKey?.toString())
-				console.log('realms_solana verification', isVerified)
-				if(isVerified) {
-					setSignerVerififed(true)
-				}
+	const getRealmsVerification = async() => {
+		if(phantomWallet?.publicKey?.toString()) {
+			const isVerified = await current_safe?.isOwner(phantomWallet.publicKey?.toString())
+			console.log('realms_solana verification', isVerified)
+			if(isVerified) {
+				setSignerVerififed(true)
 			}
 		}
+	}
 
+	useEffect(() => {
 		if(phantomWalletConnected) {
 			getRealmsVerification()
+		} else {
+			setSignerVerififed(false)
 		}
 	}, [phantomWalletConnected])
 
 	const initiateTransaction = async() => {
-		const proposaladdress = await current_safe?.proposeTransactions(initiateTransactionData, phantomWallet)
+		const proposaladdress = await current_safe?.proposeTransactions(grantData?.grants[0].title, initiateTransactionData, phantomWallet)
 		setProposalAddr(proposaladdress?.toString())
 	}
 
@@ -808,7 +810,7 @@ function ViewApplicants() {
 					isOpen={txnInitModalIsOpen}
 					onClose={() => setTxnInitModalIsOpen(false)}
 					onComplete={() => setTxnInitModalIsOpen(false)}
-					proposalUrl={''}
+					proposalUrl={isEvmChain ? '' : getProposalUrl(current_safe?.id.toString(), proposalAddr)}
 				/>
 
 				<SendFundsDrawer
