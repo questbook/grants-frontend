@@ -40,6 +40,7 @@ import StyledTab from 'src/v2/components/StyledTab'
 import AcceptedProposalsPanel from 'src/v2/payouts/AcceptedProposals/AcceptedProposalPanel'
 import InReviewPanel from 'src/v2/payouts/InReviewProposals/InReviewPanel'
 import RejectedPanel from 'src/v2/payouts/RejectedProposals/RejectedPanel'
+import ResubmitPanel from 'src/v2/payouts/ResubmitProposals/ResubmitPanel'
 import SendFundsDrawer from 'src/v2/payouts/SendFundsDrawer/SendFundsDrawer'
 import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEvaluationDrawer'
@@ -47,7 +48,6 @@ import StatsBanner from 'src/v2/payouts/StatsBanner'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
 import { useAccount } from 'wagmi'
-import ResubmitPanel from 'src/v2/payouts/ResubmitProposals/ResubmitPanel'
 
 const PAGE_SIZE = 500
 

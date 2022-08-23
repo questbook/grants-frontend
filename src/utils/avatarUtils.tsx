@@ -1,5 +1,5 @@
 function getAvatar(address: string) {
-    return `https://cdn.stamp.fyi/avatar/${address}`
+	return `https://cdn.stamp.fyi/avatar/${address}`
 }
 
-export default getAvatar;
+export default getAvatar

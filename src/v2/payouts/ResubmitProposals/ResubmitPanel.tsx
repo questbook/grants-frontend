@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { Flex, Grid, GridItem, Text } from '@chakra-ui/react'
 import ResubmitRow from './ResubmitRow'
 import ZeroState from './ZeroState'
