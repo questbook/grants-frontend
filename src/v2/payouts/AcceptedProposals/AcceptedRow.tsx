@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Button, Checkbox, Fade, Flex, GridItem, Image, Text, Tooltip } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import CopyIcon from 'src/components/ui/copy_icon'
 import { FundsCircleFilled } from 'src/v2/assets/custom chakra icons/Your Grants/FundsCircleFilled'
 
@@ -14,6 +15,7 @@ const AcceptedRow = ({
 	isChecked: boolean;
 	onChange: (e: any) => void;
 }) => {
+	const router = useRouter()
 	const [isHovering, setIsHovering] = useState(false)
 	return (
 		<>
@@ -61,6 +63,15 @@ const AcceptedRow = ({
 							fontWeight='500'
 							noOfLines={1}
 							textOverflow={'ellipsis'}
+							cursor='pointer'
+							onClick={
+								() => router.push({
+									pathname: '/your_grants/view_applicants/manage/',
+									query: {
+										applicationId: applicantData?.applicationId,
+									},
+								})
+							}
 						>
 							{applicantData?.project_name}
 						</Text>

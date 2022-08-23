@@ -43,7 +43,7 @@ const InReviewPanel = ({
 		}
 
 		const tempArr: number[] = []
-		console.log(checkedItems)
+		console.log('checkedItems', checkedItems)
 		console.log(inReviewApplications)
 		for(let i = 0; i < checkedItems.length; i++) {
 			if(checkedItems[i] && inReviewApplications[i]) {
@@ -69,7 +69,6 @@ const InReviewPanel = ({
 			setIsModalOpen(true)
 		 }
 	}, [isAcceptClicked, isRejectClicked, isResubmitClicked, isConfirmClicked])
-
 
 	const [txn, txnLink, loading, error] = useBatchUpdateApplicationState(
 		'',
@@ -313,13 +312,14 @@ const InReviewPanel = ({
 							onSendFundsClicked={() => onSendFundsClicked(true)}
 							onAcceptClicked={
 								(e: any) => {
-									const tempArr: boolean[] = []
-									tempArr.push(...checkedItems)
-									for(let i = 0; i < tempArr.length; i++) {
-										tempArr[i] = false
-									}
+									// const tempArr: boolean[] = []
+									// tempArr.push(...checkedItems)
+									// for(let i = 0; i < tempArr.length; i++) {
+									// 	tempArr[i] = false
+									// }
 
-									tempArr[i] = e.target.checked
+									const tempArr = Array(checkedItems.length).fill(false)
+									tempArr[i] = true
 									setCheckedItems(tempArr)
 									setIsAcceptClicked(true)
 								}
@@ -327,13 +327,8 @@ const InReviewPanel = ({
 
 							onResubmitClicked={
 								(e: any) => {
-									const tempArr: boolean[] = []
-									tempArr.push(...checkedItems)
-									for(let i = 0; i < tempArr.length; i++) {
-										tempArr[i] = false
-									}
-
-									tempArr[i] = e.target.checked
+									const tempArr = Array(checkedItems.length).fill(false)
+									tempArr[i] = true
 									setCheckedItems(tempArr)
 									setIsResubmitClicked(true)
 								}
@@ -341,13 +336,8 @@ const InReviewPanel = ({
 
 							onRejectClicked={
 								(e: any) => {
-									const tempArr: boolean[] = []
-									tempArr.push(...checkedItems)
-									for(let i = 0; i < tempArr.length; i++) {
-										tempArr[i] = false
-									}
-
-									tempArr[i] = e.target.checked
+									const tempArr = Array(checkedItems.length).fill(false)
+									tempArr[i] = true
 									setCheckedItems(tempArr)
 									setIsRejectClicked(true)
 								}
@@ -371,6 +361,7 @@ const InReviewPanel = ({
 						setIsAcceptClicked(false)
 						setIsRejectClicked(false)
 						setIsResubmitClicked(false)
+						setCheckedItems(Array(checkedItems.length).fill(false))
 						setIsModalOpen(false)
 					}
 				}
@@ -418,6 +409,7 @@ const InReviewPanel = ({
 									setIsAcceptClicked(false)
 									setIsRejectClicked(false)
 									setIsResubmitClicked(false)
+									setCheckedItems(Array(checkedItems.length).fill(false))
 									setIsModalOpen(false)
 								}
 							}>

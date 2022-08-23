@@ -240,7 +240,7 @@ function ReviewDrawer({
 													fontSize="14px"
 													lineHeight="20px"
 												>
-													{member.email ? member.email : member.actorId}
+													{ member.fullName ? member.fullName : member.email ? member.email : member.actorId}
 												</Text>
 												<Text
 													mt={member.email || reviewExists ? 1 : 0}

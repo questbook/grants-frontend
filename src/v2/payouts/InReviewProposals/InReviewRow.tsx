@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Button, Checkbox, Fade, Flex, forwardRef, GridItem, Image, Menu, MenuButton, MenuItem, MenuList, Text, TextProps } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { AcceptApplication } from 'src/v2/assets/custom chakra icons/AcceptApplication'
 import { RejectApplication } from 'src/v2/assets/custom chakra icons/RejectApplication'
@@ -24,6 +25,7 @@ const InReviewRow = ({
 	onRejectClicked: (e: any) => void;
 	onResubmitClicked: (e: any) => void;
 }) => {
+	const router = useRouter()
 	const [isHovering, setIsHovering] = useState(false)
 	useEffect(() => console.log(applicantData), [applicantData])
 
@@ -128,6 +130,16 @@ const InReviewRow = ({
 							fontWeight='500'
 							noOfLines={1}
 							textOverflow={'ellipsis'}
+							cursor='pointer'
+							onClick={
+								() => router.push({
+									pathname: '/your_grants/view_applicants/applicant_form/',
+									query: {
+										commentData: '',
+										applicationId: applicantData?.applicationId,
+									},
+								})
+							}
 						>
 							{applicantData?.project_name}
 						</Text>

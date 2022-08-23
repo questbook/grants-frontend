@@ -105,7 +105,6 @@ function useGetTabs() {
 		getNumberOfApplications()
 	}, [accountData?.address, isConnected])
 
-	console.log('WORKSPACE: ', workspace)
 	if(!workspace || !workspace.id) {
 		// Pure applicant
 		if(applicationCount > 0) {
