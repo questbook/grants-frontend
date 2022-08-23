@@ -30,7 +30,7 @@ export const useBiconomy = (data: { chainId?: string }) => {
 
 		return (() => {
 			if(typeof window !== 'undefined') {
-				console.log("hasan")
+				console.log('hasan')
 				localStorage.setItem('isBiconomyLoading', 'false')
 			}
 		})
