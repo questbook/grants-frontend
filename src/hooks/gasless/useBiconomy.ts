@@ -14,7 +14,7 @@ export const useBiconomy = (data: { chainId?: string }) => {
 
 	useEffect(() => {
 
-		const isBiconomyLoading = (typeof window !== 'undefined') ? localStorage.getItem('isBiconomyLoading') === 'true' : true
+		const isBiconomyLoading = (typeof window !== 'undefined') ? localStorage.getItem('isBiconomyLoading') === 'true' : false
 		console.log('STEP3', biconomyDaoObj, nonce, webwallet, biconomyWalletClient, data.chainId, network, isBiconomyLoading)
 		console.log('STEP3: CHAIN - ', data.chainId, biconomyDaoObj?.networkId)
 		if((!isBiconomyLoading && data.chainId && biconomyDaoObj && biconomyDaoObj.networkId && data.chainId !== biconomyDaoObj.networkId.toString()) ||
