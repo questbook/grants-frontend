@@ -8,6 +8,7 @@ const AcceptedProposalsPanel = ({
 	onSendFundsClicked,
 	onBulkSendFundsClicked,
 	grantData,
+	reviewerData,
 }: {
   applicantsData: any[];
   onSendFundsClicked: (state: boolean, checkedItems: any[]) => void;
@@ -15,6 +16,8 @@ const AcceptedProposalsPanel = ({
   grantData: any;
 
 }) => {
+	console.log('accepted - applicantsdata', applicantsData)
+	console.log('accepted - reviewerdata', reviewerData)
 	const [checkedItems, setCheckedItems] = useState<boolean[]>(Array(applicantsData.filter((item) => (0 === item.status)).length).fill(false))
 	const [checkedApplicationsIds, setCheckedApplicationsIds] = useState<number[]>([])
 	const [isBulkSendFundsClicked, setIsBulkSendFundsClicked] = useState<boolean>(false)

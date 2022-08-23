@@ -33,12 +33,15 @@ import { ThreeDotsHorizontal } from 'src/v2/assets/custom chakra icons/ThreeDots
 import { ViewEye } from 'src/v2/assets/custom chakra icons/ViewEye'
 import Breadcrumbs from 'src/v2/components/Breadcrumbs'
 import StyledTab from 'src/v2/components/StyledTab'
+import { SupportedSafes } from 'src/v2/constants/safe/supported_safes'
+import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import AcceptedProposalsPanel from 'src/v2/payouts/AcceptedProposals/AcceptedProposalPanel'
 import InReviewPanel from 'src/v2/payouts/InReviewProposals/InReviewPanel'
 import SendFundsDrawer from 'src/v2/payouts/SendFundsDrawer/SendFundsDrawer'
 import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEvaluationDrawer'
 import StatsBanner from 'src/v2/payouts/StatsBanner'
+import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
 import { useAccount } from 'wagmi'
 
@@ -158,7 +161,7 @@ function ViewApplicants() {
 			})
 		}
 
-		if(isReviewer) {
+		if(isReviewer || isAdmin) {
 			console.log('reviewer', isUser)
 			setQueryReviewerParams({
 				client:
@@ -224,19 +227,20 @@ function ViewApplicants() {
 						//   getFieldString('fundingAsk') || '0',
 						// ),
 						amount:
-              applicant && getFieldString('fundingAsk') ? formatAmount(
-                getFieldString('fundingAsk')!,
-                decimal || 18,
-              ) : '1',
+						applicant && getFieldString('fundingAsk') ? formatAmount(
+							getFieldString('fundingAsk')!,
+							decimal || 18,
+						) : '1',
 						symbol: label,
 						icon,
 					},
 					// status: applicationStatuses.indexOf(applicant?.state),
 					status: TableFilters[applicant?.state],
+					milestones: applicant.milestones,
 					reviewers: applicant.applicationReviewers,
 					amount_paid: formatAmount(
 						getTotalFundingRecv(
-              applicant.milestones as unknown as ApplicationMilestone[],
+							applicant.milestones as unknown as ApplicationMilestone[],
 						).toString(),
 						decimal || 18,
 					),
@@ -386,6 +390,79 @@ function ViewApplicants() {
 	React.useEffect(() => {
 		console.log('Is Accepting Applications: ', isAcceptingApplications)
 	}, [isAcceptingApplications])
+
+
+	//Implementing the safe send
+
+	const [milestoneId, setMilestoneId] = useState<string>()
+	const [amount, setAmount] = useState<number>()
+
+	const { phantomWalletAvailable,
+		phantomWallet,
+		phantomWalletConnected,
+		setPhantomWalletConnected } = usePhantomWallet()
+
+	const [signerVerified, setSignerVerififed] = useState(false)
+	const [proposalAddr, setProposalAddr] = useState('')
+
+	const [initiateTransactionData, setInitiateTransactionData] = useState([])
+
+	const supported_safes = new SupportedSafes()
+	const chainId = 9000001 // get your safe chain ID, currently on solana
+	const current_safe = supported_safes.getSafeByChainId(chainId) //current_safe has the stored safe address
+
+	const isEvmChain = chainId !== 9000001 ? true : false
+
+	useEffect(() => {
+		console.log('sendFundsTo', sendFundsTo)
+		const formattedTrxnData = sendFundsTo?.map((recepient, i) => (
+			{
+				from: current_safe?.id.toString(),
+				to: recepient.applicant_address,
+				applicationId: recepient.applicationId,
+				selectedMilestone: recepient.milestones[0].id,
+				amount: recepient.milestones[0].amount
+			})
+		)
+		setInitiateTransactionData(formattedTrxnData)
+	}, [sendFundsTo])
+
+
+	useEffect(() => {
+		const getRealmsVerification = async() => {
+			if(phantomWallet?.publicKey?.toString()) {
+				const isVerified = await current_safe?.isOwner(phantomWallet.publicKey?.toString())
+				console.log('realms_solana verification', isVerified)
+				if(isVerified) {
+					setSignerVerififed(true)
+				}
+			}
+		}
+
+		if(phantomWalletConnected) {
+			getRealmsVerification()
+		}
+	}, [phantomWalletConnected])
+
+	const initiateTransaction = async() => {
+		const proposaladdress = await current_safe?.proposeTransactions([], phantomWallet)
+		setProposalAddr(proposaladdress?.toString())
+	}
+
+	const onChangeRecepientDetails = (applicationId, fieldName, fieldValue) => {
+		console.log('onChangeRecepientDetails', applicationId, fieldName, fieldValue)
+
+		const tempData = initiateTransactionData.map((transactionData, i) => {
+			if(transactionData.applicationId === applicationId) {
+				return { ...transactionData, [fieldName]:fieldValue }
+			}
+		})
+
+		console.log('initiateTransactionData', tempData)
+	}
+
+	//end of implementation
+
 
 	return (
 		<Container
@@ -636,6 +713,7 @@ function ViewApplicants() {
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7' >
 							<AcceptedProposalsPanel
 								applicantsData={applicantsData}
+								reviewerData={reviewerData}
 								onSendFundsClicked={
 									(v, c) => {
 										console.log(c)
@@ -709,13 +787,27 @@ function ViewApplicants() {
 						}
 					}
 					proposals={sendFundsTo ?? []}
+
+					onChangeRecepientDetails={onChangeRecepientDetails}
+					phantomWallet={phantomWallet}
+					setPhantomWalletConnected={setPhantomWalletConnected}
+					milestoneId={milestoneId}
+					setMilestoneId={setMilestoneId}
+					amount={amount}
+					setAmount={setAmount}
+					isEvmChain={isEvmChain}
+					current_safe={current_safe}
+					signerVerified={signerVerified}
+					initiateTransaction={initiateTransaction}
+					initiateTransactionData={initiateTransactionData}
 				/>
 
-				{/* <TransactionInitiatedModal
+				<TransactionInitiatedModal
 					isOpen={txnInitModalIsOpen}
 					onClose={() => setTxnInitModalIsOpen(false)}
 					onComplete={() => setTxnInitModalIsOpen(false)}
-				/> */}
+					proposalUrl={''}
+				/>
 
 				<SendFundsDrawer
 					isOpen={sendFundsDrawerIsOpen}
@@ -730,6 +822,19 @@ function ViewApplicants() {
 					// @ts-expect-error
 					safeAddress={workspace?.safeAddress ?? 'HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC'}
 					proposals={sendFundsTo ?? []}
+
+					onChangeRecepientDetails={onChangeRecepientDetails}
+					phantomWallet={phantomWallet}
+					setPhantomWalletConnected={setPhantomWalletConnected}
+					milestoneId={milestoneId}
+					setMilestoneId={setMilestoneId}
+					amount={amount}
+					setAmount={setAmount}
+					isEvmChain={isEvmChain}
+					current_safe={current_safe}
+					signerVerified={signerVerified}
+					initiateTransaction={initiateTransaction}
+					initiateTransactionData={initiateTransactionData}
 				/>
 
 

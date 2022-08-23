@@ -13,8 +13,8 @@ import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
 import { useConnect } from 'wagmi'
 import { CancelCircleFilled } from '../../assets/custom chakra icons/CancelCircleFilled'
 import { FundsCircle } from '../../assets/custom chakra icons/Your Grants/FundsCircle'
+import RecipientDetails from '../SendFundsModal/RecepientDetails'
 import SafeOwner from '../SendFundsModal/SafeOwner'
-import RecipientDetails from './RecepientDetails'
 
 interface Props {
   isOpen: boolean;

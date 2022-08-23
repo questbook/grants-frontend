@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
 	Box,
 	Button,
@@ -10,13 +10,9 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
-import { SupportedSafes } from 'src/v2/constants/safe/supported_safes'
-import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
-import getProposalUrl from 'src/v2/utils/phantomUtils'
 import { useConnect } from 'wagmi'
 import { CancelCircleFilled } from '../../assets/custom chakra icons/CancelCircleFilled'
 import { FundsCircle } from '../../assets/custom chakra icons/Your Grants/FundsCircle'
-import TransactionInitiatedModal from '../TransactionInitiatedModal'
 import RecipientDetails from './RecepientDetails'
 import SafeOwner from './SafeOwner'
 
@@ -41,47 +37,24 @@ function SendFundsModal({
 	onComplete,
 	safeAddress,
 	proposals,
+	onChangeRecepientDetails,
+	phantomWallet,
+	setPhantomWalletConnected,
+	milestoneId,
+	setMilestoneId,
+	amount,
+	setAmount,
+	isEvmChain,
+	current_safe,
+	signerVerified,
+	initiateTransaction,
+	initiateTransactionData,
 }: Props) {
 
 	const [step, setStep] = useState(0)
 	const [toAddressIsFocused, setToAddressIsFocused] = useState(false)
 	const [txnInitModalIsOpen, setTxnInitModalIsOpen] = useState(false)
 
-
-	const [milestoneId, setMilestoneId] = useState<string>()
-	const [amount, setAmount] = useState<number>()
-
-	const { phantomWalletAvailable,
-		phantomWallet,
-		phantomWalletConnected,
-		setPhantomWalletConnected } = usePhantomWallet()
-
-	const [signerVerified, setSignerVerififed] = useState(false)
-	const [proposalAddr, setProposalAddr] = useState('')
-
-	const supported_safes = new SupportedSafes()
-	const chainId = 9000001 // get your safe chain ID, currently on solana
-	const current_safe = supported_safes.getSafeByChainId(chainId) //current_safe has the stored safe address
-
-	const isEvmChain = chainId !== 9000001 ? true : false
-
-
-	useEffect(() => {
-		const getRealmsVerification = async() => {
-			if(phantomWallet?.publicKey?.toString()) {
-				const isVerified = await current_safe?.isOwner(phantomWallet.publicKey?.toString())
-				console.log('realms_solana verification', isVerified)
-				if(isVerified) {
-					setSignerVerififed(true)
-					setStep(2)
-				}
-			}
-		}
-
-		if(phantomWalletConnected) {
-			getRealmsVerification()
-		}
-	}, [phantomWalletConnected])
 
 	const {
 		isError: isErrorConnecting,
@@ -276,7 +249,9 @@ function SendFundsModal({
 										setAmount={setAmount}
 										safeAddress={safeAddress}
 										applicantData={proposals[0]}
-										step={step} />
+										initiateTransactionData={initiateTransactionData ? initiateTransactionData[0] : undefined}
+										step={step}
+										onChangeRecepientDetails={onChangeRecepientDetails} />
 								) : (
 									<SafeOwner
 										isEvmChain={isEvmChain}
@@ -317,8 +292,7 @@ function SendFundsModal({
 											setMilestoneId(undefined)
 											setAmount(undefined)
 											onComplete()
-											const proposaladdress = await current_safe?.proposeTransactions([], phantomWallet)
-											setProposalAddr(proposaladdress?.toString())
+											initiateTransaction()
 										}
 									}
 								}>
@@ -331,12 +305,12 @@ function SendFundsModal({
 					</Container>
 				</ModalContent>
 			</ModalComponent>
-			<TransactionInitiatedModal
+			{/* <TransactionInitiatedModal
 				isOpen={txnInitModalIsOpen}
 				onClose={() => setTxnInitModalIsOpen(false)}
 				onComplete={() => setTxnInitModalIsOpen(false)}
 				proposalUrl={isEvmChain ? '' : getProposalUrl(current_safe?.id.toString()!, proposalAddr)}
-			/>
+			/> */}
 		</>
 	)
 }
