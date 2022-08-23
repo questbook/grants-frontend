@@ -221,6 +221,7 @@ export type FundsTransfer = {
 export enum FundsTransferType {
   FundsDeposited = 'funds_deposited',
   FundsDisbursed = 'funds_disbursed',
+  FundsDisbursedFromSafe = 'funds_disbursed_from_safe',
   FundsWithdrawn = 'funds_withdrawn',
   ReviewPaymentDone = 'review_payment_done'
 }
@@ -409,6 +410,8 @@ export type Grant = {
   metadataHash: Scalars['String'];
   /** Number of applications in the grant */
   numberOfApplications: Scalars['Int'];
+  /** Should reviews submitted be encrypted & only be visible privately */
+  privateReviews: Scalars['Boolean'];
   /** Proposed reward for the grant */
   reward: Reward;
   /** Rubric for evaulating the grant */
@@ -1444,6 +1447,10 @@ export type Grant_Filter = {
   numberOfApplications_lte?: InputMaybe<Scalars['Int']>;
   numberOfApplications_not?: InputMaybe<Scalars['Int']>;
   numberOfApplications_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  privateReviews?: InputMaybe<Scalars['Boolean']>;
+  privateReviews_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  privateReviews_not?: InputMaybe<Scalars['Boolean']>;
+  privateReviews_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   reward?: InputMaybe<Scalars['String']>;
   reward_?: InputMaybe<Reward_Filter>;
   reward_contains?: InputMaybe<Scalars['String']>;
@@ -1572,6 +1579,7 @@ export enum Grant_OrderBy {
   Managers = 'managers',
   MetadataHash = 'metadataHash',
   NumberOfApplications = 'numberOfApplications',
+  PrivateReviews = 'privateReviews',
   Reward = 'reward',
   Rubric = 'rubric',
   Summary = 'summary',
@@ -3544,6 +3552,8 @@ export type WorkspaceMember = {
   fullName?: Maybe<Scalars['String']>;
   /** Globally unique ID of the member */
   id: Scalars['ID'];
+  /** Last known hash of the TX made by this user */
+  lastKnownTxHash: Scalars['Bytes'];
   /** Timestamp of when the last review was done */
   lastReviewSubmittedAt: Scalars['Int'];
   /** The review IDs for which this member is owed a payment */
@@ -3656,6 +3666,12 @@ export type WorkspaceMember_Filter = {
   id_lte?: InputMaybe<Scalars['ID']>;
   id_not?: InputMaybe<Scalars['ID']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  lastKnownTxHash?: InputMaybe<Scalars['Bytes']>;
+  lastKnownTxHash_contains?: InputMaybe<Scalars['Bytes']>;
+  lastKnownTxHash_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  lastKnownTxHash_not?: InputMaybe<Scalars['Bytes']>;
+  lastKnownTxHash_not_contains?: InputMaybe<Scalars['Bytes']>;
+  lastKnownTxHash_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   lastReviewSubmittedAt?: InputMaybe<Scalars['Int']>;
   lastReviewSubmittedAt_gt?: InputMaybe<Scalars['Int']>;
   lastReviewSubmittedAt_gte?: InputMaybe<Scalars['Int']>;
@@ -3757,6 +3773,7 @@ export enum WorkspaceMember_OrderBy {
   Email = 'email',
   FullName = 'fullName',
   Id = 'id',
+  LastKnownTxHash = 'lastKnownTxHash',
   LastReviewSubmittedAt = 'lastReviewSubmittedAt',
   OutstandingReviewIds = 'outstandingReviewIds',
   ProfilePictureIpfsHash = 'profilePictureIpfsHash',
@@ -4328,6 +4345,13 @@ export type GetNumberOfGrantsQueryVariables = Exact<{
 
 
 export type GetNumberOfGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string }> };
+
+export type GetTxHashesOfGrantManagersQueryVariables = Exact<{
+  grantId: Scalars['String'];
+}>;
+
+
+export type GetTxHashesOfGrantManagersQuery = { __typename?: 'Query', grantManagers: Array<{ __typename?: 'GrantManager', member?: { __typename?: 'WorkspaceMember', actorId: string, lastKnownTxHash: string } | null }> };
 
 export type GetWorkspaceDetailsQueryVariables = Exact<{
   workspaceID: Scalars['ID'];
@@ -6376,6 +6400,44 @@ export function useGetNumberOfGrantsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetNumberOfGrantsQueryHookResult = ReturnType<typeof useGetNumberOfGrantsQuery>;
 export type GetNumberOfGrantsLazyQueryHookResult = ReturnType<typeof useGetNumberOfGrantsLazyQuery>;
 export type GetNumberOfGrantsQueryResult = Apollo.QueryResult<GetNumberOfGrantsQuery, GetNumberOfGrantsQueryVariables>;
+export const GetTxHashesOfGrantManagersDocument = gql`
+    query getTxHashesOfGrantManagers($grantId: String!) {
+  grantManagers(where: {grant: $grantId}) {
+    member {
+      actorId
+      lastKnownTxHash
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetTxHashesOfGrantManagersQuery__
+ *
+ * To run a query within a React component, call `useGetTxHashesOfGrantManagersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTxHashesOfGrantManagersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTxHashesOfGrantManagersQuery({
+ *   variables: {
+ *      grantId: // value for 'grantId'
+ *   },
+ * });
+ */
+export function useGetTxHashesOfGrantManagersQuery(baseOptions: Apollo.QueryHookOptions<GetTxHashesOfGrantManagersQuery, GetTxHashesOfGrantManagersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTxHashesOfGrantManagersQuery, GetTxHashesOfGrantManagersQueryVariables>(GetTxHashesOfGrantManagersDocument, options);
+      }
+export function useGetTxHashesOfGrantManagersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTxHashesOfGrantManagersQuery, GetTxHashesOfGrantManagersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTxHashesOfGrantManagersQuery, GetTxHashesOfGrantManagersQueryVariables>(GetTxHashesOfGrantManagersDocument, options);
+        }
+export type GetTxHashesOfGrantManagersQueryHookResult = ReturnType<typeof useGetTxHashesOfGrantManagersQuery>;
+export type GetTxHashesOfGrantManagersLazyQueryHookResult = ReturnType<typeof useGetTxHashesOfGrantManagersLazyQuery>;
+export type GetTxHashesOfGrantManagersQueryResult = Apollo.QueryResult<GetTxHashesOfGrantManagersQuery, GetTxHashesOfGrantManagersQueryVariables>;
 export const GetWorkspaceDetailsDocument = gql`
     query getWorkspaceDetails($workspaceID: ID!) {
   workspace(id: $workspaceID, subgraphError: allow) {

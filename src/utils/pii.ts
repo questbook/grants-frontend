@@ -1,10 +1,11 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { BaseProvider } from '@ethersproject/providers'
 import { ec as EC } from 'elliptic'
 import { Wallet } from 'ethers'
 import { arrayify, joinSignature, keccak256, recoverPublicKey, resolveProperties, serializeTransaction } from 'ethers/lib/utils'
-import { WebwalletContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { useGetTxHashesOfGrantManagersQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { useProvider } from 'wagmi'
 
@@ -124,8 +125,33 @@ export async function getSecureChannelFromTxHash(
 	}
 }
 
-async function useGetSomeTransactionOfUsers(walletAddress: string[], chainId: SupportedChainId) {
+/**
+ * Fetch a transaction hash of each of the grant managers
+ * @param grantId the grant to fetch the managers from
+ * @param chainId the chain to fetch on
+ * @returns map of wallet address to tx hash
+ */
+export async function useGetTxHashesOfGrantManagers(grantId: string, chainId: SupportedChainId) {
+	const { subgraphClients } = useContext(ApiClientsContext)!
+	const { client } = subgraphClients[chainId]
 
+	const { data } = useGetTxHashesOfGrantManagersQuery({
+		client,
+		variables: { grantId }
+	})
+
+	const map = useMemo(() => {
+		const result: { [address: string]: string } = { }
+		for(const { member } of (data?.grantManagers || [])) {
+			if(member) {
+				result[member.actorId] = member.lastKnownTxHash
+			}
+		}
+
+		return result
+	}, [data])
+
+	return map
 }
 
 /**
