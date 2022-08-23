@@ -41,6 +41,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
     "hasAutoAssigningEnabled(address)": FunctionFragment;
     "initialize()": FunctionFragment;
     "isAutoAssigningEnabled(address)": FunctionFragment;
+    "lastAssignedReviewerIndices(address)": FunctionFragment;
     "markPaymentDone(uint96,uint96[],address,uint96[],address,uint256,string)": FunctionFragment;
     "owner()": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
@@ -75,6 +76,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
       | "hasAutoAssigningEnabled"
       | "initialize"
       | "isAutoAssigningEnabled"
+      | "lastAssignedReviewerIndices"
       | "markPaymentDone"
       | "owner"
       | "proxiableUUID"
@@ -155,6 +157,10 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "isAutoAssigningEnabled",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "lastAssignedReviewerIndices",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -295,6 +301,10 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isAutoAssigningEnabled",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "lastAssignedReviewerIndices",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -605,6 +615,11 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    lastAssignedReviewerIndices(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     markPaymentDone(
       _workspaceId: PromiseOrValue<BigNumberish>,
       _applicationIds: PromiseOrValue<BigNumberish>[],
@@ -788,6 +803,11 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  lastAssignedReviewerIndices(
+    arg0: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   markPaymentDone(
     _workspaceId: PromiseOrValue<BigNumberish>,
     _applicationIds: PromiseOrValue<BigNumberish>[],
@@ -968,6 +988,11 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    lastAssignedReviewerIndices(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     markPaymentDone(
       _workspaceId: PromiseOrValue<BigNumberish>,
@@ -1265,6 +1290,11 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    lastAssignedReviewerIndices(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     markPaymentDone(
       _workspaceId: PromiseOrValue<BigNumberish>,
       _applicationIds: PromiseOrValue<BigNumberish>[],
@@ -1427,6 +1457,11 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     isAutoAssigningEnabled(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    lastAssignedReviewerIndices(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
