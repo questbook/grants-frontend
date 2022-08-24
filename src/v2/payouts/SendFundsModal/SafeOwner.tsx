@@ -34,11 +34,7 @@ const solanaWallets = [{
 interface Props {
 	isEvmChain: boolean;
 	phantomWallet: any;
-	setIsOwner: (newState: boolean) => void,
-	owners: string[],
-	isOpen: string,
-	onClose: () => void,
-	redirect: () => void,
+	signerVerified: boolean;
 }
 
 

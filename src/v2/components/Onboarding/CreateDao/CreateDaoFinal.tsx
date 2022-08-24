@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, Flex, Heading, Text } from '@chakra-ui/react'
 import { formatEther } from 'ethers/lib/utils'
 import useQBContract from 'src/hooks/contracts/useQBContract'
@@ -32,17 +32,17 @@ const CreateDaoFinal = ({
 		daoNetwork.id,
 	)
 
-	const getCreateWorkspaceGasEstimate = useCallback(
-		() => {
-			return workspaceRegistryContract.estimateGas.createWorkspace(
-				// random hash -- just to estimate gas
-				'QmPK1s3pNYLi9ERiq3BDxKa4XosgWwFRQUydHUtz4YgpqB',
-				new Uint8Array(32),
-				0
-			)
-		},
-		[workspaceRegistryContract],
-	)
+	// const getCreateWorkspaceGasEstimate = useCallback(
+	// 	() => {
+	// 		return workspaceRegistryContract.estimateGas.createWorkspace(
+	// 			// random hash -- just to estimate gas
+	// 			'QmPK1s3pNYLi9ERiq3BDxKa4XosgWwFRQUydHUtz4YgpqB',
+	// 			new Uint8Array(32),
+	// 			0
+	// 		)
+	// 	},
+	// 	[workspaceRegistryContract],
+	// )
 
 	useEffect(() => {
 		if(daoImageFile && !newDaoImageFile) {
@@ -53,7 +53,7 @@ const CreateDaoFinal = ({
 	const estimateCreateWorkspace = async(hash: string) => {
 		setGasEstimate(undefined)
 		try {
-			const estimate = await workspaceRegistryContract.estimateGas.createWorkspace(hash, new Uint8Array(32), 0)
+			const estimate = await workspaceRegistryContract.estimateGas.createWorkspace(hash, new Uint8Array(32), '', 0)
 			const gasPrice = await provider.getGasPrice()
 			setGasEstimate(formatEther(estimate.mul(gasPrice)))
 		} catch(e) {

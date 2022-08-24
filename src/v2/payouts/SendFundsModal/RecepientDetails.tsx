@@ -1,17 +1,18 @@
 import { Box, Flex, Input, Text } from '@chakra-ui/react'
 import { ArrowDownCircle } from 'src/v2/assets/custom chakra icons/Arrows/ArrowDownCircle'
 import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
+import { TransactionType } from 'src/v2/types/safe'
 import AlertBanner from './AlertBanner'
 import MilestoneSelect from './MilestoneSelect'
 
 const RecipientDetails = ({
-	safeAddress,
 	applicantData,
 	initiateTransactionData,
 	onChangeRecepientDetails,
 }: {
-	safeAddress: string;
 	applicantData: any;
+	initiateTransactionData: TransactionType | undefined;
+	onChangeRecepientDetails :(applicationId: any, fieldName: string, fieldValue: any)=>void;
 }) => {
 	return (
 		<>
@@ -39,7 +40,7 @@ const RecipientDetails = ({
 						lineHeight='20px'
 						fontWeight='500'
 					>
-						{initiateTransactionData.from}
+						{initiateTransactionData?.from}
 					</Text>
 
 					<ExternalLink
@@ -110,7 +111,7 @@ const RecipientDetails = ({
 						}
 						fontWeight={'500'}
 						fontSize='14px'
-						defaultValue={initiateTransactionData.to}
+						defaultValue={initiateTransactionData?.to}
 						errorBorderColor={'red'}
 						height={'auto'}
 						onChange={(e) => onChangeRecepientDetails(applicantData.applicationId, 'to', e.target.value)}
@@ -141,7 +142,7 @@ const RecipientDetails = ({
 
 				<MilestoneSelect
 					placeholder='Select from the list'
-					value={initiateTransactionData.selectedMilestone}
+					value={initiateTransactionData?.selectedMilestone}
 					milestoneList={applicantData.milestones}
 					onChange={(value) => value && onChangeRecepientDetails(applicantData.applicationId, 'selectedMilestone', value?.id)} />
 
@@ -181,7 +182,7 @@ const RecipientDetails = ({
 						}
 						fontWeight={'500'}
 						fontSize='14px'
-						defaultValue={initiateTransactionData.amount}
+						defaultValue={initiateTransactionData?.amount}
 						errorBorderColor={'red'}
 						height={'auto'}
 						type={'number'}

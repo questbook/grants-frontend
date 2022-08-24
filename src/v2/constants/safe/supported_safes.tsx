@@ -5,7 +5,7 @@ export class SupportedSafes {
     safes: Safe[];
     constructor() {
     	this.safes = []
-    	this.safes.push(new Realms_Solana())
+    	this.safes.push(new Realms_Solana(''))
     }
 
     getSafe(id: number): Safe | undefined {

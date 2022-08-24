@@ -288,7 +288,6 @@ function ViewApplicants() {
 						).toString(),
 						decimal || 18,
 					),
-					milestones: applicant.milestones,
 					reviews: applicant.reviews
 				}
 			})
@@ -446,7 +445,7 @@ function ViewApplicants() {
 	const [signerVerified, setSignerVerififed] = useState(false)
 	const [proposalAddr, setProposalAddr] = useState('')
 
-	const [initiateTransactionData, setInitiateTransactionData] = useState([])
+	const [initiateTransactionData, setInitiateTransactionData] = useState<any>([])
 
 	// const supported_safes = new SupportedSafes()
 	const chainId = 9000001 // get your safe chain ID, currently on solana
@@ -500,14 +499,14 @@ function ViewApplicants() {
 
 	const initiateTransaction = async() => {
 		console.log('initiate transaction called')
-		const proposaladdress = await current_safe?.proposeTransactions(grantData?.grants[0].title, initiateTransactionData, phantomWallet)
+		const proposaladdress = await current_safe?.proposeTransactions(grantData?.grants[0].title!, initiateTransactionData, phantomWallet)
 		setProposalAddr(proposaladdress?.toString())
 	}
 
-	const onChangeRecepientDetails = (applicationId, fieldName, fieldValue) => {
+	const onChangeRecepientDetails = (applicationId:any, fieldName: string, fieldValue:any) => {
 		console.log('onChangeRecepientDetails', applicationId, fieldName, fieldValue)
 
-		const tempData = initiateTransactionData.map((transactionData, i) => {
+		const tempData = initiateTransactionData.map((transactionData:any, i:number) => {
 			if(transactionData.applicationId === applicationId) {
 				return { ...transactionData, [fieldName]:fieldValue }
 			}
@@ -825,7 +824,6 @@ function ViewApplicants() {
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7' >
 							<AcceptedProposalsPanel
 								applicantsData={applicantsData}
-								reviewerData={reviewerData}
 								onSendFundsClicked={onSendFundsButtonClicked}
 								onBulkSendFundsClicked={onSendFundsButtonClicked}
 								grantData={grantData}
@@ -922,10 +920,10 @@ function ViewApplicants() {
 				/>
 
 				<TransactionInitiatedModal
-					isOpen={txnInitModalIsOpen && proposalAddr}
+					isOpen={txnInitModalIsOpen && proposalAddr ? true : false}
 					onClose={onModalClose}
 					onComplete={() => setTxnInitModalIsOpen(false)}
-					proposalUrl={isEvmChain ? '' : getProposalUrl(current_safe?.id?.toString(), proposalAddr)}
+					proposalUrl={isEvmChain ? '' : getProposalUrl(current_safe?.id?.toString()!, proposalAddr)}
 				/>
 
 				<SendFundsDrawer
