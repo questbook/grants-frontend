@@ -5,19 +5,19 @@ import { SetupEvaluation } from 'src/v2/assets/custom chakra icons/SetupEvaluati
 // import AssignReviewers from './AssignReviewers'
 import RubricsView from './RubricsView'
 
-const ViewEvaluationDrawer = ({
+const ViewScoreDrawer = ({
 	isOpen,
 	onClose,
-	onComplete,
-	grantData,
+	score,
+	reviewer,
 }: {
   isOpen: boolean;
   onClose: () => void;
-	onComplete: () => void;
-  grantData: any;
+  score?: any;
+	reviewer?: any;
 }) => {
 
-	useEffect(() => console.log('grantDataGGG', grantData), [grantData])
+	useEffect(() => console.log('grantDataGGG', score), [score])
 
 	// The will be required while implementing edit rubrics
 	const [step, setStep] = useState(0)
@@ -74,7 +74,7 @@ const ViewEvaluationDrawer = ({
 								lineHeight='24px'
 								fontWeight='500'
 							>
-							Evaluation criteria
+							Score & comments
 							</Text>
 							<Text
 								fontSize='14px'
@@ -83,7 +83,7 @@ const ViewEvaluationDrawer = ({
 								mt={1}
 								color='#7D7DA0'
 							>
-							Scoring rubric used by reviewers to assign scores.
+							Total score based on rubric, and comments by the reviewer.
 							</Text>
 						</Flex>
 
@@ -117,9 +117,17 @@ const ViewEvaluationDrawer = ({
 
 						<Box mt={4} />
 
-						{
+						{/* {
 							step === 0 ? (
 								<RubricsView rubrics={grantData?.grants.length > 0 ? grantData.grants[0]?.rubric?.items : undefined} />
+							) : <></>
+						} */}
+
+						{
+							step === 0 ? (
+								<RubricsView
+									reviewer={reviewer}
+									rubrics={score} />
 							) : <></>
 						}
 					</Flex>
@@ -137,18 +145,18 @@ const ViewEvaluationDrawer = ({
 						align="center">
 
 						<Button
-							ml='auto'
+							mr='auto'
 							colorScheme={'brandv2'}
 							// disabled={step === 0 ? milestoneId === undefined || amount === undefined : step === 1}
 							onClick={
 								() => {
 									if(step === 0) {
 										// setStep(1)
-										onComplete()
+										onClose()
 									}
 
 									if(step === 2) {
-										onComplete()
+										onClose()
 									}
 								}
 							}>
@@ -164,4 +172,4 @@ const ViewEvaluationDrawer = ({
 	)
 }
 
-export default ViewEvaluationDrawer
+export default ViewScoreDrawer
