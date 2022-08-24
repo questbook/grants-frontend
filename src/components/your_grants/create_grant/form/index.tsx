@@ -104,7 +104,7 @@ function Form({
 	const [publicKey] = React.useState<WorkspaceUpdateRequest>({
 		publicKey: '',
 	})
-	const [transactionData, transactionLink, loading] = useUpdateWorkspacePublicKeys(publicKey)
+	const [transactionData, transactionLink, loading, isBiconomyInitialised] = useUpdateWorkspacePublicKeys(publicKey)
 
 	const { setRefresh } = useCustomToast(transactionLink)
 	const [admins, setAdmins] = React.useState<any[]>([])
@@ -844,6 +844,7 @@ function Form({
 			</Flex>
 
 			<Button
+				disabled={!isBiconomyInitialised}
 				py={hasClicked ? 2 : 0}
 				onClick={hasClicked ? () => {} : handleOnSubmit}
 				variant="primary"

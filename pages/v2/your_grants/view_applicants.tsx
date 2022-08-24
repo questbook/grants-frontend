@@ -409,7 +409,7 @@ function ViewApplicants() {
 		setIsAcceptingApplications([acceptingApplications, 0])
 	}, [acceptingApplications])
 
-	const [transactionData, txnLink, archiveGrantLoading, archiveGrantError] = useArchiveGrant(
+	const [transactionData, txnLink, archiveGrantLoading, isBiconomyInitialised, archiveGrantError] = useArchiveGrant(
 		isAcceptingApplications[0],
 		isAcceptingApplications[1],
 		grantID,
@@ -839,6 +839,7 @@ function ViewApplicants() {
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<InReviewPanel
 								applicantsData={applicantsData}
+								grantData={grantData}
 								onSendFundsClicked={(v) => setSendFundsModalIsOpen(v)} />
 						</TabPanel>
 
@@ -1085,6 +1086,7 @@ function ViewApplicants() {
 						}
 					}
 					loading={archiveGrantLoading}
+					isBiconomyInitialised={isBiconomyInitialised}
 				/>
 			</Modal>
 		</Container>

@@ -31,7 +31,7 @@ function DaoData({ disbursed, applicants, winners, grants, fundTimes, applicatio
 					lineHeight="1.5rem"
 				>
 $
-					{disbursed.reduce((sum, a) => sum + a, 0).toFixed(0)}
+					{disbursed}
 				</Heading>
 				<Text
 					fontSize="14px"
@@ -49,7 +49,7 @@ $
 					color="#122224"
 					fontSize="1.2rem"
 					lineHeight="1.5rem">
-					{applicants.reduce((sum, a) => sum + a, 0)}
+					{applicants}
 				</Heading>
 				<Text
 					fontSize="0.875rem"
@@ -66,7 +66,7 @@ Applicants
 					color="#122224"
 					fontSize="1.2rem"
 					lineHeight="1.5rem">
-					{winners.length}
+					{winners}
 				</Heading>
 				<Text
 					fontSize="0.875rem"

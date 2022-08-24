@@ -16,7 +16,7 @@ import useSafeOwners from 'src/hooks/useSafeOwners'
 import useSafeUSDBalances from 'src/hooks/useSafeUSDBalances'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { addAuthorizedOwner, addAuthorizedUser, bicoDapps, chargeGas, getEventData, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { addAuthorizedOwner, addAuthorizedUser, bicoDapps, chargeGas, getEventData, getTransactionDetails, networksMapping, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
 import { Organization } from 'src/v2/assets/custom chakra icons/Organization'
@@ -69,10 +69,22 @@ const OnboardingCreateDomain = () => {
 	const [shouldRefreshNonce, setShouldRefreshNonce] = useState<boolean>()
 	const { data: accountDataWebwallet, nonce } = useQuestbookAccount(shouldRefreshNonce)
 	const { webwallet } = useContext(WebwalletContext)!
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading } = useBiconomy({
-		chainId: network?.toString() || '',
+	console.log('safeSelected', safeSelected)
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
+		chainId: safeSelected?.networkId ? networksMapping[safeSelected?.networkId?.toString()] : '',
 	})
-	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState('not ready')
+	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
+
+	useEffect(() => {
+		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		console.log('rree', isBiconomyLoading, biconomyLoading)
+		console.log('networks 2:', biconomy?.networkId?.toString(), safeSelected?.networkId, safeSelected?.networkId ?
+			networksMapping[safeSelected?.networkId?.toString()] : undefined)
+		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && safeSelected?.networkId &&
+			biconomy.networkId && biconomy.networkId?.toString() === networksMapping[safeSelected?.networkId?.toString()]) {
+			setIsBiconomyInitialised(true)
+		}
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, safeSelected?.networkId])
 
 	useEffect(() => {
 		disconnect()
@@ -83,18 +95,6 @@ const OnboardingCreateDomain = () => {
 			setIsVerifySignerModalOpen(false)
 		}
 	}, [isOwner])
-
-	// useEffect(() => {
-	// 	setNonce(undefined)
-	// }, [])
-
-	useEffect(() => {
-		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		console.log('rree', isBiconomyLoading, loading)
-		if(biconomy && biconomyWalletClient && scwAddress && !loading && network && biconomy.networkId?.toString() === network?.toString()) {
-			setIsBiconomyInitialised('ready')
-		}
-	}, [biconomy, biconomyWalletClient, scwAddress, loading, isBiconomyInitialised])
 
 
 	const targetContractObject = useQBContract('workspace', network as unknown as SupportedChainId)
@@ -188,6 +188,7 @@ const OnboardingCreateDomain = () => {
 				about: '',
 				logoIpfsHash: uploadedImageHash,
 				creatorId: accountDataWebwallet!.address!,
+				creatorPublicKey: webwallet?.publicKey,
 				socials: [],
 				supportedNetworks: [
 					getSupportedValidatorNetworkFromChainId(network),
@@ -316,6 +317,7 @@ const OnboardingCreateDomain = () => {
 			domainNetwork={network ? CHAIN_INFO[network].name : 'Polygon'}
 			domainNetworkIcon={network ? CHAIN_INFO[network].icon : CHAIN_INFO[137].icon} // polygon is the default network
 			domainImageFile={daoImageFile}
+			isBiconomyInitialised={isBiconomyInitialised}
 			onImageFileChange={(image) => setDaoImageFile(image)}
 			onCreateDomain={
 				() => {

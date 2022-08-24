@@ -72,7 +72,7 @@ function CreateGrant() {
 	] as const
 
 	const [formData, setFormData] = useState<any>()
-	const [transactionData, blockExplorerLink, loading] = useCreateGrant(formData)
+	const [transactionData, blockExplorerLink, loading, isBiconomyInitialised] = useCreateGrant(formData)
 
 	useEffect(() => {
 		if(workspace) {
@@ -193,6 +193,7 @@ function CreateGrant() {
 											letterSpacing={0}
 											textAlign="left"
 										>
+											asdfff
 											{title}
 										</Text>
 									</Button>

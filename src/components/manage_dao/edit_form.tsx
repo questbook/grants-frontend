@@ -56,7 +56,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 		website: ''
 	}])
 
-	const [txnData, txnLink, loading] = useUpdateWorkspace(editData as any)
+	const [txnData, txnLink, loading, isBiconomyInitialised] = useUpdateWorkspace(editData as any)
 
 	const supportedNetwork = useMemo(() => {
 		if(editedFormData) {
@@ -646,6 +646,7 @@ service partner
 				justify="start"
 				mt={4}>
 				<Button
+					disabled={!isBiconomyInitialised}
 					ref={buttonRef}
 					w={loading ? buttonRef.current?.offsetWidth : 'auto'}
 					variant="primary"
