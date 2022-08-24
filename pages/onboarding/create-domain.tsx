@@ -159,6 +159,10 @@ const OnboardingCreateDomain = () => {
 		setIsDomainNameVerified(domainName.length > 0)
 	}, [domainName])
 
+	useEffect(() => {
+		console.log('safeSelected', safeSelected)
+	}, [safeSelected])
+
 	const createWorkspace = useCallback(async() => {
 		console.log(network)
 		if(!network) {
@@ -206,7 +210,7 @@ const OnboardingCreateDomain = () => {
 
 			console.log('sefe', safeSelected)
 			console.log('network', network)
-			if(!network) {
+			if(!safeSelected || !network) {
 				throw new Error('No network specified')
 			}
 
@@ -274,7 +278,7 @@ const OnboardingCreateDomain = () => {
 				}),
 			})
 		}
-	}, [accountData, network, biconomy, targetContractObject, scwAddress, webwallet, nonce])
+	}, [biconomyWalletClient, domainName, accountDataWebwallet, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, safeSelected])
 
 	const steps = [
 		<SafeDetails
