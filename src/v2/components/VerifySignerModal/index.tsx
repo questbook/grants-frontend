@@ -1,9 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { AlertDialogOverlay, Box, Flex, Image, Link, Modal, ModalBody, ModalContent, Text, useToast, VStack } from '@chakra-ui/react'
+import { NetworkType } from 'src/constants/Networks'
 import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
+import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
 import ErrorToast from 'src/v2/components/Toasts/errorToast'
 import SuccessToast from 'src/v2/components/Toasts/successToast'
+import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import VerifySignerErrorState from './VeirfySignerErrorState'
 import VerifyWalletButton from './VerifySignerButton'
@@ -14,15 +17,18 @@ const VerifySignerModal = ({
 	onClose,
 	redirect,
 	setIsOwner,
+	networkType,
 }: {
 	owners: string[],
 	isOpen: boolean,
 	onClose: () => void,
 	redirect?: () => void,
-	setIsOwner: (newState: boolean) => void
+	setIsOwner: (newState: boolean) => void,
+	networkType: NetworkType
 }) => {
 	const [connectClicked, setConnectClicked] = useState(false)
 	const [redirectInitiated, setRedirectInitiated] = useState(false)
+	const { phantomWallet, phantomWalletConnected } = usePhantomWallet()
 	const { disconnect } = useDisconnect()
 	const toast = useToast()
 
@@ -52,6 +58,15 @@ const VerifySignerModal = ({
 		id: 'walletConnect'
 	}]
 
+	const solanaWallets = [{
+		name: 'Phantom',
+		icon: <PhantomLogo
+			h={8}
+			w={'33px'} />,
+		isPopular: true,
+		id: 'phantom',
+	}]
+
 	const [isError, setIsError] = React.useState(false)
 
 	useEffect(() => {
@@ -77,7 +92,8 @@ const VerifySignerModal = ({
 
 	const showToast = useCallback(() => {
 		console.log('hzn', accountData?.address, owners)
-		if(accountData?.address && owners.includes(accountData?.address)) {
+		if((accountData?.address && owners.includes(accountData?.address)) // gnosis
+		|| (phantomWallet?.publicKey && owners.includes(phantomWallet?.publicKey.toString()))) { // spl-gov
 			setIsOwner(true)
 			// alert('Your safe ownership is proved.')
 			toast.closeAll()
@@ -109,7 +125,7 @@ const VerifySignerModal = ({
 
 			})
 		}
-	}, [accountData, owners, toast])
+	}, [accountData, owners, toast, phantomWallet])
 
 	return (
 		<Modal
@@ -173,7 +189,26 @@ const VerifySignerModal = ({
 									spacing={4}
 								>
 									{
-										availableWallets.map((wallet, index) => (
+										networkType === NetworkType.EVM ? (
+											availableWallets.map((wallet, index) => (
+												<VerifyWalletButton
+													key={index}
+													icon={wallet.icon}
+													name={wallet.name}
+													isPopular={wallet.isPopular}
+													onClick={
+														() => {
+															const connector = connectors.find((x) => x.id === wallet.id)
+															setConnectClicked(true)
+															if(connector) {
+																connect(connector)
+															}
+
+															showToast()
+														// onClose()
+														}
+													} />
+											))) : (solanaWallets.map((wallet, index) => (
 											<VerifyWalletButton
 												key={index}
 												icon={wallet.icon}
@@ -181,17 +216,11 @@ const VerifySignerModal = ({
 												isPopular={wallet.isPopular}
 												onClick={
 													() => {
-														const connector = connectors.find((x) => x.id === wallet.id)
-														setConnectClicked(true)
-														if(connector) {
-															connect(connector)
-														}
-
+														phantomWallet?.connect()
 														showToast()
-														// onClose()
 													}
 												} />
-										))
+										)))
 									}
 								</VStack>
 

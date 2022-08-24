@@ -1,6 +1,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { CHAIN_INFO } from 'src/constants/chains'
+import { NetworkType } from 'src/constants/Networks'
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 import { getSafeDetails } from 'src/v2/constants/safe/realms_solana'
 import SAFES_ENPOINTS from '../constants/safesEndpointsTest.json'
@@ -70,6 +71,7 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 				const tokensSum = getTokensSum(allTokensData)
 				if(tokensSum >= USD_BALANCE_THRESHOLD) {
 					const newElement: SafeSelectOption = {
+						networkType: NetworkType.EVM,
 						networkId: currentChainID.toString(),
 						networkName: CHAIN_INFO[currentChainID]?.name,
 						networkIcon: CHAIN_INFO[currentChainID]?.icon,

@@ -5,6 +5,7 @@ import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { CHAIN_INFO } from 'src/constants/chains'
+import { NetworkType } from 'src/constants/Networks'
 import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
@@ -49,9 +50,9 @@ const OnboardingCreateDomain = () => {
 
 	// State variables for step 3 and 4
 	const [daoImageFile, setDaoImageFile] = useState<File | null>(null)
-	const [isOwner, setIsOwner] = useState(true)
+	const [isOwner, setIsOwner] = useState(false)
 	const [isVerifySignerModalOpen, setIsVerifySignerModalOpen] = useState(false)
-	const { data: safeOwners } = useSafeOwners({ safeAddress, chainID: safeSelected?.networkId ?? '' })
+	const { data: safeOwners } = useSafeOwners({ safeAddress, chainID: safeSelected?.networkId, type: safeSelected?.networkType ?? NetworkType.EVM })
 	const [ txHash, setTxHash ] = useState('')
 	const [ownerAddress, setOwnerAddress] = useState('')
 
@@ -441,6 +442,7 @@ const OnboardingCreateDomain = () => {
 					]
 				} />
 			<VerifySignerModal
+				networkType={safeSelected?.networkType ?? NetworkType.EVM}
 				setIsOwner={
 					(newState) => {
 						setIsOwner(newState)

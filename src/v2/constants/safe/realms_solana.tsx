@@ -10,9 +10,11 @@ import {
 	VoteType,
 	withCreateProposal,
 	withInsertTransaction,
-	withSignOffProposal } from '@solana/spl-governance'
+	withSignOffProposal,
+} from '@solana/spl-governance'
 import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
 import assert from 'assert'
+import { NetworkType } from 'src/constants/Networks'
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 import { Safe, TransactionType } from '../../types/safe'
 
@@ -200,6 +202,7 @@ const getSafeDetails = async(realmsPublicKey: String) : Promise<SafeSelectOption
 		assert(realmData.account.name)
 		console.log('name', realmData.account.name)
 		return {
+			networkType: NetworkType.Solana,
 			networkId: '90001',
 			networkName: 'Solana', // Polygon
 			networkIcon: '/network_icons/solana.svg',
@@ -241,18 +244,24 @@ const isOwner = async(safeAddress: string, address: String): Promise<boolean> =>
 const getOwners = async(safeAddress: string): Promise<string[]> => {
 	const connection = new Connection('https://mango.devnet.rpcpool.com', 'recent')
 	const programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
-	const safeAddressPublicKey = new PublicKey(safeAddress)
-	const realmData = await getRealm(connection, safeAddressPublicKey)
-	console.log('realms_solana - realmData', realmData)
 
-	const COUNCIL_MINT = realmData.account.config.councilMint
+	try {
+		const safeAddressPublicKey = new PublicKey(safeAddress)
+		const realmData = await getRealm(connection, safeAddressPublicKey)
+		console.log('realms_solana - realmData', realmData)
 
-	const governanceInfo = await getGovernanceAccounts(connection, programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
-	console.log('realms_solana - governanceInfo', governanceInfo[0])
+		const COUNCIL_MINT = realmData.account.config.councilMint
 
-	const tokenownerrecord = await getAllTokenOwnerRecords(connection, programId, safeAddressPublicKey)
-	const owners = tokenownerrecord.map(record => record.account.governingTokenOwner.toString())
-	return owners
+		const governanceInfo = await getGovernanceAccounts(connection, programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
+		console.log('realms_solana - governanceInfo', governanceInfo[0])
+
+		const tokenownerrecord = await getAllTokenOwnerRecords(connection, programId, safeAddressPublicKey)
+		const owners = tokenownerrecord.map(record => record.account.governingTokenOwner.toString())
+		return owners
+	} catch(e) {
+		return []
+	}
+
 }
 
 export { getSafeDetails, isOwner, getOwners }
