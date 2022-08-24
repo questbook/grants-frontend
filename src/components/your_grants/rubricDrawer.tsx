@@ -160,6 +160,7 @@ function RubricDrawer({
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		transactionLink,
 		loading,
+		isBiconomyInitialised
 	] = useSetRubrics(editedRubricData, chainId, workspaceId, grantAddress)
 
 	const { setRefresh } = useCustomToast(transactionLink)
@@ -496,6 +497,7 @@ function RubricDrawer({
 
 						<Box mt={12}>
 							<Button
+								disabled={!isBiconomyInitialised}
 								mt="auto"
 								variant="primary"
 								onClick={handleOnSubmit}>

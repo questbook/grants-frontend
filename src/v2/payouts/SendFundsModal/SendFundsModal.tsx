@@ -10,6 +10,8 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
+import { PhantomProvider } from 'src/v2/types/phantom'
+import { Safe, TransactionType } from 'src/v2/types/safe'
 import { useConnect } from 'wagmi'
 import { CancelCircleFilled } from '../../assets/custom chakra icons/CancelCircleFilled'
 import { FundsCircle } from '../../assets/custom chakra icons/Your Grants/FundsCircle'
@@ -17,11 +19,20 @@ import RecipientDetails from './RecepientDetails'
 import SafeOwner from './SafeOwner'
 
 interface Props {
-  isOpen: boolean;
-  onClose: () => void;
-	onComplete: () => void;
+	isOpen: boolean;
+	onClose: () => void;
 	safeAddress: string;
 	proposals: any[];
+	onChangeRecepientDetails :(applicationId: any, fieldName: string, fieldValue: any)=>void;
+	phantomWallet : PhantomProvider | undefined;
+	setPhantomWalletConnected: (value: boolean)=>void;
+	isEvmChain: boolean;
+	current_safe: Safe;
+	signerVerified: boolean;
+	initiateTransaction: ()=>Promise<void>;
+	initiateTransactionData: TransactionType[];
+	onModalStepChange: (value: number)=>Promise<void>;
+	step: ModalState;
 }
 
 enum ModalState {
@@ -223,7 +234,6 @@ function SendFundsModal({
 							{
 								step === ModalState.RECEIPT_DETAILS ? (
 									<RecipientDetails
-										safeAddress={safeAddress}
 										applicantData={proposals[0]}
 										initiateTransactionData={initiateTransactionData?.length > 0 ? initiateTransactionData[0] : undefined}
 										onChangeRecepientDetails={onChangeRecepientDetails} />

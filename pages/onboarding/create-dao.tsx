@@ -30,7 +30,6 @@ import CreateDaoNetworkSelect from 'src/v2/components/Onboarding/CreateDao/Creat
 import { NetworkSelectOption } from 'src/v2/components/Onboarding/SupportedNetworksData'
 import BackgroundImageLayout from 'src/v2/components/Onboarding/UI/Layout/BackgroundImageLayout'
 import OnboardingCard from 'src/v2/components/Onboarding/UI/Layout/OnboardingCard'
-import { useDisconnect } from 'wagmi'
 
 const OnboardingCreateDao = () => {
 	const router = useRouter()
@@ -53,9 +52,6 @@ const OnboardingCreateDao = () => {
 	})
 
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState('not ready')
-
-	const { disconnect } = useDisconnect()
-
 
 	useEffect(() => {
 		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
@@ -122,6 +118,7 @@ const OnboardingCreateDao = () => {
 				about: '',
 				logoIpfsHash: uploadedImageHash,
 				creatorId: accountData!.address,
+				creatorPublicKey: webwallet?.publicKey,
 				socials: [],
 				supportedNetworks: [
 					getSupportedValidatorNetworkFromChainId(daoNetwork!.id),

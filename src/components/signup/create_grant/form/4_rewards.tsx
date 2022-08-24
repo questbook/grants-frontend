@@ -132,7 +132,7 @@ function GrantRewardsInput({
 	const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({
 		publicKey: '',
 	})
-	const [transactionData, transactionLink, loading] = useUpdateWorkspacePublicKeys(publicKey)
+	const [transactionData, transactionLink, loading, isBiconomyInitialised] = useUpdateWorkspacePublicKeys(publicKey)
 
 	const { setRefresh } = useCustomToast(transactionLink)
 	const [shouldEncryptReviews, setShouldEncryptReviews] = useState(false)
@@ -493,6 +493,7 @@ function GrantRewardsInput({
 			</Flex>
 
 			<Button
+				disabled={!isBiconomyInitialised}
 				ref={buttonRef}
 				mt="auto"
 				variant="primary"

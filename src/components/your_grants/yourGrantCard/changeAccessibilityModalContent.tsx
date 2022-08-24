@@ -12,10 +12,11 @@ interface Props {
   actionButtonOnClick: () => void;
   onClose: () => void;
   loading: boolean;
+  isBiconomyInitialised: boolean;
 }
 
 function ModalContent({
-	imagePath, title, subtitle, actionButtonText, actionButtonOnClick, onClose, loading,
+	imagePath, title, subtitle, actionButtonText, actionButtonOnClick, onClose, loading, isBiconomyInitialised
 }: Props) {
 	return (
 		<ModalBody>
@@ -54,6 +55,7 @@ function ModalContent({
 Cancel
 					</Button>
 					<Button
+						disabled={!isBiconomyInitialised}
 						w="45%"
 						variant="primary"
 						onClick={

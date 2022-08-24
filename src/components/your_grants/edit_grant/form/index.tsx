@@ -29,7 +29,7 @@ function Form({
 	refs,
 	onSubmit,
 	formData,
-	hasClicked,
+	hasClicked
 }: {
   refs: any[];
   onSubmit: (data: any) => void;
@@ -95,7 +95,7 @@ function Form({
 	const [publicKey] = React.useState<WorkspaceUpdateRequest>({
 		publicKey: '',
 	})
-	const [transactionData, transactionLink, loading] = useUpdateWorkspacePublicKeys(publicKey)
+	const [transactionData, transactionLink, loading, isBiconomyInitialised] = useUpdateWorkspacePublicKeys(publicKey)
 
 	const { setRefresh } = useCustomToast(transactionLink)
 	const [admins, setAdmins] = useState<any[]>([])
@@ -597,6 +597,7 @@ function Form({
 				mt="-73px"
 				justifyContent="flex-end">
 				<Button
+					disabled={!isBiconomyInitialised}
 					ref={buttonRef}
 					w={hasClicked ? buttonRef.current?.offsetWidth : 'auto'}
 					onClick={hasClicked ? () => { } : handleOnSubmit}
@@ -752,6 +753,7 @@ Learn more
 			</Flex>
 
 			<Button
+				disabled={!isBiconomyInitialised}
 				onClick={hasClicked ? () => { } : handleOnSubmit}
 				py={hasClicked ? 2 : 0}
 				variant="primary">

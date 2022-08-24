@@ -332,7 +332,7 @@ function ViewApplicants() {
 		setIsAcceptingApplications([acceptingApplications, 0])
 	}, [acceptingApplications])
 
-	const [transactionData, txnLink, archiveGrantLoading, archiveGrantError] = useArchiveGrant(
+	const [transactionData, txnLink, archiveGrantLoading, isBiconomyInitialised, archiveGrantError] = useArchiveGrant(
 		isAcceptingApplications[0],
 		isAcceptingApplications[1],
 		grantID,
@@ -512,6 +512,7 @@ function ViewApplicants() {
 						}
 					}
 					loading={archiveGrantLoading}
+					isBiconomyInitialised={isBiconomyInitialised}
 				/>
 			</Modal>
 		</Container>

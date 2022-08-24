@@ -125,7 +125,7 @@ function ApplicantForm() {
 	}, [router])
 
 	const [state, setState] = useState<number>()
-	const [txn, txnLink, loading, error] = useUpdateApplicationState(
+	const [txn, txnLink, loading, isBiconomyInitialised, error] = useUpdateApplicationState(
 		state === 1 ? resubmitComment : rejectionComment,
 		applicationData?.id,
 		state,
@@ -477,18 +477,13 @@ function ApplicantForm() {
 										(pendingReviewer) => pendingReviewer.toLowerCase() ===
                       accountData?.address?.toLowerCase(),
 									) !== undefined && (
-										<ReviewerSidebar
-											showHiddenData={showHiddenData}
-											applicationData={applicationData}
-											onAcceptApplicationClick={() => setStep(1)}
-											onRejectApplicationClick={() => setStep(2)}
-											onResubmitApplicationClick={() => setStep(3)}
-										/>
+										<ReviewerSidebar applicationData={applicationData} />
 									)
 								}
 								{
 									isAdmin && (
 										<Sidebar
+											isBiconomyInitialised={isBiconomyInitialised}
 											showHiddenData={showHiddenData}
 											applicationData={applicationData}
 											onAcceptApplicationClick={() => setStep(1)}

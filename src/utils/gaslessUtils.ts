@@ -43,6 +43,12 @@ export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } }
 	}
 }
 
+export const networksMapping: { [key: string]: string } = {
+	'137': '137',
+	'5': '5',
+	'4': '5'
+}
+
 export const signNonce = async(webwallet: Wallet, nonce: string) => {
 	const nonceHash = ethers.utils.hashMessage(nonce)
 	const nonceSigString: string = await webwallet.signMessage(nonce)

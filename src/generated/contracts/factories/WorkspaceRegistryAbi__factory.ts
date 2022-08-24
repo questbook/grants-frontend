@@ -345,6 +345,12 @@ const _abi = [
       },
       {
         indexed: false,
+        internalType: "string",
+        name: "longSafeAddress",
+        type: "string",
+      },
+      {
+        indexed: false,
         internalType: "uint256",
         name: "safeChainId",
         type: "uint256",
@@ -474,6 +480,11 @@ const _abi = [
         internalType: "bytes32",
         name: "_safeAddress",
         type: "bytes32",
+      },
+      {
+        internalType: "string",
+        name: "_longSafeAddress",
+        type: "string",
       },
       {
         internalType: "uint256",
@@ -822,6 +833,11 @@ const _abi = [
         internalType: "bytes32",
         name: "_safeAddress",
         type: "bytes32",
+      },
+      {
+        internalType: "string",
+        name: "_longSafeAddress",
+        type: "string",
       },
       {
         internalType: "uint256",
