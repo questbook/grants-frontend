@@ -1,8 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Button, Checkbox, Fade, Flex, forwardRef, GridItem, Image, Menu, MenuButton, MenuItem, MenuList, Text, TextProps } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { ApiClientsContext } from 'pages/_app'
+import { defaultChainId } from 'src/constants/chains'
+import { IReview, IReviewFeedback } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
-import { getFromIPFS } from 'src/utils/ipfsUtils'
+import { useLoadReview } from 'src/utils/reviews'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { AcceptApplication } from 'src/v2/assets/custom chakra icons/AcceptApplication'
 import { RejectApplication } from 'src/v2/assets/custom chakra icons/RejectApplication'
 import { ResubmitApplication } from 'src/v2/assets/custom chakra icons/ResubmitApplication'
@@ -26,48 +30,40 @@ const InReviewRow = ({
 	onRejectClicked: (e: any) => void;
 	onResubmitClicked: (e: any) => void;
 }) => {
+	const { workspace } = useContext(ApiClientsContext)!
+ 	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+
 	const router = useRouter()
 	const [isHovering, setIsHovering] = useState(false)
-	useEffect(() => console.log(applicantData), [applicantData])
 
-	const [reviews, setReviews] = useState<any>()
+	const { grant, reviews: submittedReviews } = applicantData || { }
+	const { loadReview, isReviewPrivate } = useLoadReview(grant?.id, chainId)
 
-	const getReview = async(hash: string) => {
-		if(hash === '') {
-			return {}
-		}
+	const [reviews, setReviews] = useState<{ [_id: string]: IReviewFeedback }>({ })
 
-		const d = await getFromIPFS(hash)
-		try {
-			const data = JSON.parse(d)
-			return data
-		} catch(e) {
-			console.log('incorrect review', e)
-			return {}
-		}
-	}
+	const getReviews = async() => {
+		const reviewsDataMap: typeof reviews = { }
 
-	const getReviews = async(reviews: any[]) => {
-		const reviewsDataMap = {} as any
-		const reviewsData = await Promise.all(reviews?.map(async(review) => {
-			const data = await getReview(review?.publicReviewDataHash)
-			return data
-		}))
+		await Promise.all(
+			submittedReviews!.map(async(review: IReview) => {
+				try {
+					console.log('review ', review)
+					const reviewData = await loadReview(review, applicantData!.id)
+					const [workspaceId, reviewerAddress] = review.reviewer!.id.split('.')
+					reviewsDataMap[reviewerAddress] = reviewData
+				} catch(error) {
+					console.error(`failed to load review from "${review.reviewer!.id}"`, error)
+					// do nothing for now
+				}
+			})
+		)
 
-		reviewsData.forEach((review, i) => {
-			const reviewerIdSplit = reviews[i]?.reviewer?.id.split('.')
-			const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
-			reviewsDataMap[reviewerId] = review.items
-		})
-
-		console.log('reviewsData', reviewsData)
-		console.log('reviewsData', reviewsDataMap)
 		setReviews(reviewsDataMap)
 	}
 
 	useEffect(() => {
-		if(applicantData?.reviews?.length) {
-			getReviews(applicantData.reviews)
+		if(submittedReviews?.length) {
+			getReviews()
 		}
 	}, [applicantData])
 
@@ -431,7 +427,7 @@ const InReviewRow = ({
 												}
 
 												{
-													reviews[reviewKey].map((item: any) => {
+													reviews[reviewKey]?.map((item: any) => {
 														return (
 															<>
 																<MenuItem
