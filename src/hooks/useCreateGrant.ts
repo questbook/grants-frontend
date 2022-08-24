@@ -32,11 +32,10 @@ export default function useCreateGrant(
 	workspaceId?: string,
 ) {
 
-	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
+	const { webwallet } = useContext(WebwalletContext)!
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		chainId: chainId?.toString()!
-		// targetContractABI: GrantFactoryAbi,
 	})
 
 	const [error, setError] = React.useState<string>()
@@ -46,8 +45,7 @@ export default function useCreateGrant(
 	const { data: accountData, nonce } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 
-	const apiClients = useContext(ApiClientsContext)!
-	const { validatorApi, workspace } = apiClients
+	const { validatorApi, workspace } = useContext(ApiClientsContext)!
 
 	if(!chainId) {
 		// eslint-disable-next-line no-param-reassign
@@ -61,7 +59,6 @@ export default function useCreateGrant(
 	const currentChainId = useChainId()
 
 	useEffect(() => {
-		console.log('data', data)
 		if(data) {
 			setError(undefined)
 			setIncorrectNetwork(false)
@@ -112,6 +109,13 @@ export default function useCreateGrant(
 					console.log('Reward after parsing', reward)
 				}
 
+				const admins = workspace?.members
+					.filter(m => m.accessLevel === 'admin' || m.accessLevel === 'owner')
+					.map(m => m.actorId)
+				const grantManagers = data.grantManagers.length
+					? data.grantManagers
+					: (admins || [accountData!.address])
+
 				const {
 					data: { ipfsHash },
 				} = await validatorApi.validateGrantCreate({
@@ -125,10 +129,8 @@ export default function useCreateGrant(
 						(chainId || getSupportedChainIdFromWorkspace(workspace))!,
 					),
 					fields: data.fields,
-					grantManagers: data.grantManagers.length ? data.grantManagers : [accountData!.address],
+					grantManagers,
 				})
-
-				console.log('ipfsHash', ipfsHash)
 
 				if(!ipfsHash) {
 					throw new Error('Error validating grant data')
