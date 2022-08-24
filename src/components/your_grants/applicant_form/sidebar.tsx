@@ -326,10 +326,7 @@ function Sidebar({
 
 			<Box mt={8} />
 
-			<RubricSidebar
-				total={applicationData?.reviewers.length || 0}
-				applicationData={applicationData}
-			/>
+			<RubricSidebar applicationData={applicationData} />
 
 			{
 				!applicationData?.reviews || applicationData?.reviews.length === 0 ? null : (

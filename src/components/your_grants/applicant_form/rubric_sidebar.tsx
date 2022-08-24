@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import StarRatings from 'react-star-ratings'
 import {
+	Badge,
 	Box, Button, Divider,
 	Drawer, DrawerContent, DrawerOverlay, Flex, Image, Link, Text, } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
@@ -8,14 +9,12 @@ import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import Loader from 'src/components/ui/loader'
 import { defaultChainId } from 'src/constants/chains'
 import { GetApplicationDetailsQuery } from 'src/generated/graphql'
-import useEncryption from 'src/hooks/utils/useEncryption'
 import { IReviewFeedback } from 'src/types'
 import { truncateStringFromMiddle } from 'src/utils/formattingUtils'
 import { useLoadReview } from 'src/utils/reviews'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 interface RubricSidebarProps {
-  total: number
   applicationData: GetApplicationDetailsQuery['grantApplication']
 }
 
@@ -26,18 +25,13 @@ type RubricResult = {
 	total: number
 }
 
-function RubricSidebar({
-	total,
-	applicationData
-}: RubricSidebarProps) {
+function RubricSidebar({ applicationData }: RubricSidebarProps) {
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 
-	const { decryptMessage } = useEncryption()
 	const [loading, setLoading] = useState(false)
 	const [detailedReviews, setDetailedReviews] = useState<any[]>([])
 	const [aggregatedResults, setAggregatedResults] = useState<any>()
-	const [isDecrypted, setIsDecrypted] = useState(false)
 	const [detailDrawerOpen, setDetailDrawerOpen] = useState(false)
 	const [reviewerDrawerOpen, setReviewerDrawerOpen] = useState(false)
 	const [reviewSelected, setReviewSelected] = useState<any>()
@@ -46,9 +40,16 @@ function RubricSidebar({
 	const [forPercentage, setForPercentage] = useState<number>(0)
 	const [againstPercentage, setAgainstPercentage] = useState<number>(0)
 
+	const total = Math.max(
+		applicationData?.reviewers?.length || 0,
+		applicationData?.reviews?.length || 0,
+	)
+
 	const { grant, reviews } = applicationData || { }
 	const rubric = grant?.rubric
-	const { loadReview } = useLoadReview(grant?.id, chainId)
+	const { loadReview, isReviewPrivate } = useLoadReview(grant?.id, chainId)
+
+	const isPrivate = reviews?.[0] ? isReviewPrivate(reviews[0]) : false
 
 	const decodeReviews = async() => {
 		setLoading(true)
@@ -61,7 +62,7 @@ function RubricSidebar({
 						const reviewData = await loadReview(review, applicationData!.id)
 						feedbacks.push(reviewData)
 					} catch(error) {
-						console.error(`failed to load review from "${review.reviewer!}"`, error)
+						console.error(`failed to load review from "${review.reviewer!.id}"`, error)
 						// do nothing for now
 					}
 				}
@@ -178,6 +179,18 @@ function RubricSidebar({
 						color="#122224">
             			Application Review
 					</Text>
+
+					{
+						isPrivate && (
+							<Badge
+								fontSize='x-small'
+								p='1'
+								pr='2'
+								pl='2'>
+								Private
+							</Badge>
+						)
+					}
 				</Flex>
 				<Flex
 					mt={3}
@@ -356,7 +369,7 @@ function RubricSidebar({
 							/>
 						</Flex>
 						{
-							reviews?.map((review: any, i: number) => (
+							reviews?.map((review, i: number) => (
 								<Button
 									key={review.id}
 									onClick={
@@ -392,14 +405,17 @@ function RubricSidebar({
 												fontSize="14px"
 												lineHeight="16px"
 											>
-												{truncateStringFromMiddle(review.reviewer.id.split('.')[1])}
+												{
+													review.reviewer?.fullName
+													|| truncateStringFromMiddle(review.reviewer?.id.split('.')?.[1] || '')
+												}
 											</Text>
 											<Text
-												mt={review.reviewer.email ? 1 : 0}
+												mt={review.reviewer?.email ? 1 : 0}
 												color="#717A7C"
 												fontSize="12px"
 												lineHeight="16px">
-												{review.reviewer.email}
+												{review.reviewer?.email}
 											</Text>
 										</Flex>
 										<Image

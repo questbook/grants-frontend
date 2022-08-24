@@ -12,6 +12,13 @@ type PrivateReviewData = {
 	dataIpfsHash: string
 }
 
+type GenerateReviewDataProps = {
+	grantId: string
+	isPrivate: boolean
+	chainId: SupportedChainId
+	applicationId: string
+}
+
 export function useLoadReview(
 	grantId: string | undefined,
 	chainId: SupportedChainId
@@ -98,8 +105,6 @@ export function useLoadReview(
 				throw new Error('Webwallet not initialized. Cannot decrypt')
 			}
 
-			console.log('rev', review.reviewer?.id, scwAddress)
-
 			const isReviewer = review.reviewer?.id?.toLocaleLowerCase().endsWith(scwAddress.toLocaleLowerCase())
 			let reviewData: PrivateReviewData
 			if(isReviewer) {
@@ -134,13 +139,6 @@ export function useLoadReview(
 	}
 }
 
-type GenerateReviewDataProps = {
-	grantId: string
-	isPrivate: boolean
-	chainId: SupportedChainId
-	applicationId: string
-}
-
 export const useGenerateReviewData = ({
 	grantId,
 	isPrivate,
@@ -157,6 +155,7 @@ export const useGenerateReviewData = ({
 		let dataHash: string | undefined
 		if(isPrivate) {
 			const grantManagerMap = await fetchPubKeys()
+
 			const managers = Object.keys(grantManagerMap)
 			if(!managers.length) {
 				throw new Error('No grant managers on the grant. Please contact support')
@@ -191,6 +190,10 @@ export const useGenerateReviewData = ({
 				)
 			)
 
+			if(!Object.keys(encryptedReview).length) {
+				throw new Error('No valid managers to encrypt for!')
+			}
+
 			console.log('generated encrypted reviews')
 		} else {
 			dataHash = (await uploadToIPFS(jsonReview)).hash
@@ -200,6 +203,7 @@ export const useGenerateReviewData = ({
 			data: { ipfsHash },
 		} = await validatorApi.validateReviewSet({
 			reviewer: scwAddress!,
+			reviewerPublicKey: webwallet?.publicKey,
 			publicReviewDataHash: dataHash,
 			encryptedReview,
 		})

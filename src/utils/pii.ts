@@ -41,14 +41,16 @@ export async function getSecureChannelFromTxHash(
  */
 export async function getSecureChannelFromPublicKey(
 	webwallet: Wallet,
-	publicKey: string,
+	publicKeyStr: string,
 	extraInfo?: string
 ) {
 	const encoder = new TextEncoder()
 	const decoder = new TextDecoder()
+
+	const publicKey = arrayify(publicKeyStr)
 	// we use our private key & wallet B's public key
 	// to perform ECDH & generate a shared key
-	const keyPair = ec.keyFromPrivate(webwallet.privateKey)
+	const keyPair = ec.keyFromPrivate(arrayify(webwallet.privateKey))
 	const pubKey = ec.keyFromPublic(publicKey)
 	const sharedKeyBn = keyPair.derive(pubKey.getPublic())
 	// lastly we hash the shared key with some extra info
@@ -62,9 +64,6 @@ export async function getSecureChannelFromPublicKey(
 	// generate subtlecrypto key from raw bytes
 	const subtle = window.crypto.subtle
 	const subtleKey = await subtle.importKey('raw', sharedAesKey, 'aes-cbc', false, ['encrypt', 'decrypt'])
-
-	console.log('other pub key', publicKey)
-	console.log('my pub key', arrayify(webwallet.publicKey))
 
 	return {
 		/**
