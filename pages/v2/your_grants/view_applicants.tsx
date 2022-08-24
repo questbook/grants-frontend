@@ -418,6 +418,17 @@ function ViewApplicants() {
 	const chainId = 9000001 // get your safe chain ID, currently on solana
 	const current_safe = supported_safes.getSafeByChainId(chainId) //current_safe has the stored safe address
 
+	//checking if the realm address is valid
+
+	useEffect(() => {
+		const checkValidSafeAddress = async() => {
+			const isValidSafeAddress = await current_safe?.isValidSafeAddress('HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC')
+			console.log('isValidSafeAddress', isValidSafeAddress)
+		}
+
+		checkValidSafeAddress()
+	}, [])
+
 	const isEvmChain = chainId !== 9000001 ? true : false
 
 	useEffect(() => {
