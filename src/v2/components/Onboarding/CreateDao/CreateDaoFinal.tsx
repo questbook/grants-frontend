@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Box, Flex, Heading, Text } from '@chakra-ui/react'
 import { formatEther } from 'ethers/lib/utils'
 import useQBContract from 'src/hooks/contracts/useQBContract'
