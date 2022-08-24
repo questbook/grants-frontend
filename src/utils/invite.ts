@@ -97,13 +97,14 @@ export const serialiseInviteInfoIntoUrl = (info: InviteInfo) => {
 export const useMakeInvite = (role: number) => {
 
 	const { workspace } = useContext(ApiClientsContext)!
+	console.log('make invite', workspace?.id)
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 
 	const { network, switchNetwork } = useNetwork()
 
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 	const { data: accountData, nonce } = useQuestbookAccount()
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, } = useBiconomy({
 		chainId: chainId?.toString()
 	})
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState('not ready')
@@ -268,6 +269,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 				return undefined!
 			}
 
+			console.log('invite33', inviteInfo)
 			const response = await sendGaslessTransaction(
 				biconomy,
 				targetContractObject,

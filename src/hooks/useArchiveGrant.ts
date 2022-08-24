@@ -30,10 +30,21 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 	const grantFactoryContract = useQBContract('grantFactory', chainId)
 	const workspaceRegistryContract = useQBContract('workspace', chainId)
 
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: chainId?.toString()
 		// targetContractABI: GrantABI,
 	})
+
+	const [isBiconomyInitialised, setIsBiconomyInitialised] = React.useState(false)
+
+	useEffect(() => {
+		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		console.log('rree', isBiconomyLoading, biconomyLoading)
+		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
+			biconomy.networkId.toString() === chainId.toString()) {
+			setIsBiconomyInitialised(true)
+		}
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised])
 
 	const { webwallet } = useContext(WebwalletContext)!
 
@@ -206,6 +217,7 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 		transactionData,
 		getExplorerUrlForTxHash(currentChainId, transactionData?.transactionHash),
 		loading,
+		isBiconomyInitialised,
 		error,
 	]
 }

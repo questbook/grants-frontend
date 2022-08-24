@@ -245,7 +245,7 @@ function AboutGrant() {
 		setIsAcceptingApplications([acceptingApplications, 0])
 	}, [acceptingApplications])
 
-	const [transactionData, txnLink, archiveGrantLoading, archiveGrantError] =
+	const [transactionData, txnLink, archiveGrantLoading, isBiconomyInitialised, archiveGrantError] =
     useArchiveGrant(
     	isAcceptingApplications[0],
     	isAcceptingApplications[1],
@@ -461,6 +461,7 @@ function AboutGrant() {
 							])
 						}
 					}
+					isBiconomyInitialised={isBiconomyInitialised}
 					loading={archiveGrantLoading}
 				/>
 			</Modal>

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
@@ -47,19 +47,6 @@ export default function useAddMember(
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		chainId: chainId?.toString(),
 	})
-
-	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState<boolean>(false)
-
-	useEffect(() => {
-		console.log('THIS IS BICONOMY', biconomy)
-		console.log('THIS IS BICONOMY SECOND', biconomyWalletClient)
-		if(biconomy && biconomyWalletClient && scwAddress) {
-			setIsBiconomyInitialised(true)
-		} else {
-			setIsBiconomyInitialised(false)
-		}
-	}, [biconomy, biconomyWalletClient, scwAddress])
-
 
 	useEffect(() => {
 		if(data) {

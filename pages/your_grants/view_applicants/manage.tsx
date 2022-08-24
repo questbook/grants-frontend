@@ -205,7 +205,7 @@ function ManageGrant() {
 	]
 
 	const [update, setUpdate] = useState<any>()
-	const [txn, txnLink, loading] = useCompleteApplication(update, applicationData?.id)
+	const [txn, txnLink, isBiconomyInitialised, loading] = useCompleteApplication(update, applicationData?.id)
 
 	const { setRefresh } = useCustomToast(txnLink, 6000)
 	useEffect(() => {
@@ -528,6 +528,7 @@ View
 					{
 						applicationData?.state !== 'completed' && selected === 0 && (
 							<Button
+								disabled={!isBiconomyInitialised}
 								variant="primary"
 								onClick={() => setIsGrantCompleteModalOpen(true)}
 							>

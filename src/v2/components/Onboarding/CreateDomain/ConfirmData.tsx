@@ -13,9 +13,10 @@ interface Props {
     onCreateDomain: () => void;
     isVerified: boolean;
     signerAddress?: string;
+	isBiconomyInitialised: boolean;
 }
 
-function ConfirmData({ domainImageFile, onImageFileChange, safeAddress, safeChainIcon, domainName, domainNetwork, domainNetworkIcon, onCreateDomain, isVerified, signerAddress }: Props) {
+function ConfirmData({ domainImageFile, onImageFileChange, safeAddress, safeChainIcon, domainName, domainNetwork, domainNetworkIcon, onCreateDomain, isVerified, signerAddress, isBiconomyInitialised }: Props) {
 	const [newDomainImageFile, setNewDomainImageFile] = React.useState<File | null>(null)
 	const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`
 
@@ -98,6 +99,7 @@ My domain
 				</Flex>
 			</Flex>
 			<Button
+				disabled={!isBiconomyInitialised}
 				variant="primaryV2"
 				mx="auto"
 				mt={6}

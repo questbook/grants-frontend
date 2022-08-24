@@ -41,10 +41,22 @@ export default function useAssignReviewers(
 		chainId = getSupportedChainIdFromWorkspace(workspace)
 	}
 
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: chainId?.toString()!
 		// targetContractABI: ApplicationReviewRegistryAbi,
 	})
+
+
+	const [isBiconomyInitialised, setIsBiconomyInitialised] = React.useState(false)
+
+	useEffect(() => {
+		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		console.log('rree', isBiconomyLoading, biconomyLoading)
+		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
+			biconomy.networkId.toString() === chainId.toString()) {
+			setIsBiconomyInitialised(true)
+		}
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised])
 
 	const applicationReviewContract = useQBContract('reviews', chainId)
 

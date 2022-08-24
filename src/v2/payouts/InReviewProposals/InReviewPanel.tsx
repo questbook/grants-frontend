@@ -70,7 +70,7 @@ const InReviewPanel = ({
 		 }
 	}, [isAcceptClicked, isRejectClicked, isResubmitClicked, isConfirmClicked])
 
-	const [txn, txnLink, loading, error] = useBatchUpdateApplicationState(
+	const [txn, txnLink, loading, isBiconomyInitialised, error] = useBatchUpdateApplicationState(
 		'',
 		checkedApplicationsIds,
 		state,
@@ -417,6 +417,7 @@ const InReviewPanel = ({
 						</Button>
 						<Button
 							// colorScheme={isAcceptClicked ? 'blue' : 'pink'}
+							disabled={!isBiconomyInitialised}
 							mr={3}
 							onClick={
 								() => {
