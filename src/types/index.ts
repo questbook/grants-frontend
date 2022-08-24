@@ -1,11 +1,6 @@
 import { EditorState } from 'draft-js'
 import { FeedbackType } from 'src/components/your_grants/feedbackDrawer'
-import {
-	ApplicationRegistryAbi,
-	ApplicationReviewRegistryAbi,
-	GrantFactoryAbi,
-	WorkspaceRegistryAbi,
-} from 'src/generated/contracts'
+import { ApplicationRegistryAbi, ApplicationReviewRegistryAbi, GrantFactoryAbi, WorkspaceRegistryAbi } from 'src/generated/contracts'
 import {
 	GetAllGrantsForADaoQuery,
 	GetApplicationDetailsQuery,

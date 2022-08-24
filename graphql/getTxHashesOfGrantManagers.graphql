@@ -1,8 +1,0 @@
-query getTxHashesOfGrantManagers($grantId: String!) {
-  grantManagers(where: { grant: $grantId }) {
-    member {
-      actorId,
-      lastKnownTxHash
-    }
-  }
-}
