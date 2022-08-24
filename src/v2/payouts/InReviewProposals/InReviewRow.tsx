@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Button, Checkbox, Fade, Flex, forwardRef, GridItem, Image, Menu, MenuButton, MenuItem, MenuList, Text, TextProps } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import getAvatar from 'src/utils/avatarUtils'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { AcceptApplication } from 'src/v2/assets/custom chakra icons/AcceptApplication'
 import { RejectApplication } from 'src/v2/assets/custom chakra icons/RejectApplication'
@@ -116,6 +117,8 @@ const InReviewRow = ({
 						w={'40px'}
 					>
 						<Image
+							borderRadius="3xl"
+							src={getAvatar(applicantData?.applicant_address)}
 						/>
 					</Flex>
 
@@ -215,6 +218,7 @@ const InReviewRow = ({
 						}
 					/>
 					<MenuList
+						overflow="scroll"
 						minW={'240px'}
 						maxH={'156px'}
 						py={0}>
@@ -260,9 +264,10 @@ const InReviewRow = ({
 													w={'20px'}
 												>
 													<Image
+														borderRadius="3xl"
+														src={getAvatar(reviewerId)}
 													/>
 												</Flex>
-
 												<Flex
 													ml='12px'
 													alignItems={'center'}
@@ -309,170 +314,193 @@ const InReviewRow = ({
 				alignItems='center'
 			>
 				<Flex alignItems={'center'}>
-					<Flex>
+					<Flex alignItems="center">
 						{
 							reviews &&
-							Object.keys(reviews).map((reviewKey, i) => {
+							[...Object.keys(reviews).sort((a, b) => totalScore(reviews[b]) - totalScore(reviews[a]))].map((reviewKey, i) => {
 								return (
-									<Menu key={`review-${reviewKey}-${i}`}>
-										<MenuButton
-											as={
-												forwardRef<TextProps, 'div'>((props, ref) => (
+									<>
+										<Menu key={`review-${reviewKey}-${i}`}>
+											<MenuButton
+												as={
+													forwardRef<TextProps, 'div'>((props, ref) => (
+														<Text
+															px={4}
+															py={'18px'}
+															color='#555570'
+															fontSize='14px'
+															lineHeight='20px'
+															fontWeight='500'
+															{...props}
+															ref={ref}
+															aria-label='reviewers'
+															cursor={'pointer'}
+														>
+															{totalScore(reviews[reviewKey])}
+														</Text>
+													))
+												}
+											/>
+											<MenuList
+												overflow="scroll"
+												minW={'240px'}
+												maxH={'156px'}
+												py={0}>
+												<Flex
+													bg={'#F0F0F7'}
+													px={4}
+													py={2}
+												>
 													<Text
-														px={4}
-														py={'18px'}
-														color='#555570'
 														fontSize='14px'
 														lineHeight='20px'
 														fontWeight='500'
-														{...props}
-														ref={ref}
-														aria-label='reviewers'
-														cursor={'pointer'}
+														textAlign='center'
+														color={'#555570'}
 													>
-														{totalScore(reviews[reviewKey])}
+												Score
 													</Text>
-												))
-											}
-										/>
-										<MenuList
-											minW={'240px'}
-											maxH={'156px'}
-											py={0}>
-											<Flex
-												bg={'#F0F0F7'}
-												px={4}
-												py={2}
-											>
+												</Flex>
+												{
+													[applicantData?.reviewers?.find((reviewer: any) => {
+														const reviewerIdSplit = reviewer?.id.split('.')
+														const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
+														return reviewerId === reviewKey
+													})].map((reviewer: any, i: number) => {
+														const reviewerIdSplit = reviewer?.id.split('.')
+														const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
+														console.log(reviewerId)
+														return (
+															<>
+																<MenuItem
+																	px={'16px'}
+																	py={'10px'}
+																>
+
+																	<Flex
+																		key={`reviewer-${i}`}
+																		px={0}
+																		display='flex'
+																		alignItems='center'
+																		w='100%'
+																	>
+
+																		<Flex
+																			bg='#F0F0F7'
+																			borderRadius='20px'
+																			h={'20px'}
+																			w={'20px'}
+																		>
+																			<Image
+																				borderRadius="3xl"
+																				src={getAvatar(reviewerId)}
+																			/>
+																		</Flex>
+
+																		<Flex
+																			ml='12px'
+																			alignItems={'center'}
+																		>
+																			<Text
+																				fontSize='14px'
+																				lineHeight='20px'
+																				fontWeight='500'
+																				noOfLines={1}
+																				textOverflow={'ellipsis'}
+																			>
+																				{reviewer?.member?.fullName}
+																			</Text>
+
+
+																		</Flex>
+																		<Text
+																			fontSize='12px'
+																			lineHeight='16px'
+																			fontWeight='400'
+																			mt="2px"
+																			color='#7D7DA0'
+																			ml='auto'
+																		>
+																			{totalScore(reviews ? reviews[reviewerId] : [])}
+																		</Text>
+																	</Flex>
+																</MenuItem>
+															</>
+														)
+													})
+												}
+
+												{
+													reviews[reviewKey].map((item: any) => {
+														return (
+															<>
+																<MenuItem
+																	px={'16px'}
+																	py={'10px'}
+																>
+
+																	<Flex
+																		key={`reviewDetail-${item?.rubric?.id}`}
+																		px={0}
+																		display='flex'
+																		alignItems='center'
+																		w='100%'
+																	>
+
+																		<Flex
+																			ml='12px'
+																			alignItems={'center'}
+																		>
+																			<Text
+																				fontSize='14px'
+																				lineHeight='20px'
+																				fontWeight='500'
+																				noOfLines={1}
+																				textOverflow={'ellipsis'}
+																			>
+																				{item?.rubric?.title}
+																			</Text>
+
+
+																		</Flex>
+																		<Text
+																			fontSize='12px'
+																			lineHeight='16px'
+																			fontWeight='400'
+																			mt="2px"
+																			color='#7D7DA0'
+																			ml='auto'
+																		>
+																			{item?.rating}
+																		</Text>
+																	</Flex>
+																</MenuItem>
+															</>
+														)
+													})
+												}
+
+
+											</MenuList>
+										</Menu>
+										{
+											i < Object.keys(reviews).length - 1 && (
 												<Text
 													fontSize='14px'
 													lineHeight='20px'
 													fontWeight='500'
 													textAlign='center'
+													alignItems="center"
 													color={'#555570'}
 												>
-													Score
+													{' '}
+•
+													{' '}
 												</Text>
-											</Flex>
-											{
-												[applicantData?.reviewers?.find((reviewer: any) => {
-													const reviewerIdSplit = reviewer?.id.split('.')
-													const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
-													return reviewerId === reviewKey
-												})].map((reviewer: any, i: number) => {
-													const reviewerIdSplit = reviewer?.id.split('.')
-													const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
-													console.log(reviewerId)
-													return (
-														<>
-															<MenuItem
-																px={'16px'}
-																py={'10px'}
-															>
+											)
+										}
+									</>
 
-																<Flex
-																	key={`reviewer-${i}`}
-																	px={0}
-																	display='flex'
-																	alignItems='center'
-																	w='100%'
-																>
-																	<Flex
-																		bg='#F0F0F7'
-																		borderRadius='20px'
-																		h={'20px'}
-																		w={'20px'}
-																	>
-																		<Image
-																		/>
-																	</Flex>
-
-																	<Flex
-																		ml='12px'
-																		alignItems={'center'}
-																	>
-																		<Text
-																			fontSize='14px'
-																			lineHeight='20px'
-																			fontWeight='500'
-																			noOfLines={1}
-																			textOverflow={'ellipsis'}
-																		>
-																			{reviewer?.member?.fullName}
-																		</Text>
-
-
-																	</Flex>
-																	<Text
-																		fontSize='12px'
-																		lineHeight='16px'
-																		fontWeight='400'
-																		mt="2px"
-																		color='#7D7DA0'
-																		ml='auto'
-																	>
-																		{totalScore(reviews ? reviews[reviewerId] : [])}
-																	</Text>
-																</Flex>
-															</MenuItem>
-														</>
-													)
-												})
-											}
-
-											{
-												reviews[reviewKey].map((item: any) => {
-													return (
-														<>
-															<MenuItem
-																px={'16px'}
-																py={'10px'}
-															>
-
-																<Flex
-																	key={`reviewDetail-${item?.rubric?.id}`}
-																	px={0}
-																	display='flex'
-																	alignItems='center'
-																	w='100%'
-																>
-
-																	<Flex
-																		ml='12px'
-																		alignItems={'center'}
-																	>
-																		<Text
-																			fontSize='14px'
-																			lineHeight='20px'
-																			fontWeight='500'
-																			noOfLines={1}
-																			textOverflow={'ellipsis'}
-																		>
-																			{item?.rubric?.title}
-																		</Text>
-
-
-																	</Flex>
-																	<Text
-																		fontSize='12px'
-																		lineHeight='16px'
-																		fontWeight='400'
-																		mt="2px"
-																		color='#7D7DA0'
-																		ml='auto'
-																	>
-																		{item?.rating}
-																	</Text>
-																</Flex>
-															</MenuItem>
-														</>
-													)
-												})
-											}
-
-
-										</MenuList>
-									</Menu>
 								)
 							})
 						}

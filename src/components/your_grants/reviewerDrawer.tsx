@@ -17,7 +17,6 @@ import useAssignReviewers from 'src/hooks/useAssignReviewers'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { truncateStringFromMiddle } from 'src/utils/formattingUtils'
 import SingleLineInput from '../ui/forms/singleLineInput'
-// import useSetReviews from 'src/hooks/useSetReviews';
 import Loader from '../ui/loader'
 
 function ReviewDrawer({

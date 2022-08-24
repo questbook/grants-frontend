@@ -1,16 +1,19 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useMemo } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
+import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
-import useChainId from './utils/useChainId'
 
 export default function useAssignReviewers(
 	data: any,
@@ -23,22 +26,31 @@ export default function useAssignReviewers(
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients
+
+
+	const { webwallet } = useContext(WebwalletContext)!
+
 
 	if(!chainId) {
 		// eslint-disable-next-line no-param-reassign
 		chainId = getSupportedChainIdFromWorkspace(workspace)
 	}
 
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		chainId: chainId?.toString()!
+		// targetContractABI: ApplicationReviewRegistryAbi,
+	})
+
 	const applicationReviewContract = useQBContract('reviews', chainId)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
-	const currentChainId = useChainId()
+	const currentChainId = useMemo(() => networkData.id, [networkData])
 
 	useEffect(() => {
 		console.log('data', data)
@@ -56,15 +68,19 @@ export default function useAssignReviewers(
 	}, [applicationReviewContract])
 
 	useEffect(() => {
+		console.log('ettr here')
 		if(incorrectNetwork) {
+			console.log('ettr network error')
 			return
 		}
 
 		if(error) {
+			console.log('ettr error')
 			return
 		}
 
 		if(loading) {
+			console.log('ettr loading')
 			return
 		}
 
@@ -79,16 +95,46 @@ export default function useAssignReviewers(
 				//   APPLICATION_REGISTRY_ADDRESS[currentChainId!],
 				// );
 
-				const createGrantTransaction = await applicationReviewContract.assignReviewers(
-					workspaceId || workspace!.id,
+				// const createGrantTransaction = await applicationReviewContract.assignReviewers(
+				// 	workspaceId || workspace!.id,
+				// 	applicationId!,
+				// 	grantAddress!,
+				// 	data.reviewers,
+				// 	data.active,
+				// )
+				// const createGrantTransactionData = await createGrantTransaction.wait()
+
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					throw new Error('Zero wallet is not ready')
+				}
+
+				const response = await sendGaslessTransaction(
+					biconomy,
+					applicationReviewContract,
+					'assignReviewers',
+					[workspaceId || workspace!.id,
 					applicationId!,
 					grantAddress!,
 					data.reviewers,
-					data.active,
+					data.active, ],
+					APPLICATION_REVIEW_REGISTRY_ADDRESS[currentChainId],
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					bicoDapps[currentChainId].webHookId,
+					nonce
 				)
-				const createGrantTransactionData = await createGrantTransaction.wait()
 
-				setTransactionData(createGrantTransactionData)
+				if(!response) {
+					return
+				}
+
+				const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+
+				await chargeGas(Number(workspace?.id), Number(txFee))
+
+				setTransactionData(receipt)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -110,22 +156,29 @@ export default function useAssignReviewers(
 
 		try {
 			if(!data) {
+				console.log('ettr data')
 				return
 			}
 
 			if(!grantAddress) {
+				console.log('ettr grantAddress')
 				return
 			}
 
 			if(!applicationId) {
+
+				console.log('ettr applicationId')
 				return
 			}
 
 			if(transactionData) {
+				console.log('ettr transactionData')
 				return
 			}
 
 			if(!accountData || !accountData.address) {
+
+				console.log('ettr accountData')
 				throw new Error('not connected to wallet')
 			}
 
@@ -159,10 +212,8 @@ export default function useAssignReviewers(
 
 			if(
 				!applicationReviewContract
-        || applicationReviewContract.address
-          === '0x0000000000000000000000000000000000000000'
-        || !applicationReviewContract.signer
-        || !applicationReviewContract.provider
+				|| applicationReviewContract.address
+				=== '0x0000000000000000000000000000000000000000'
 			) {
 				return
 			}

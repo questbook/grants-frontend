@@ -3,12 +3,12 @@ import { ToastId, useToast } from '@chakra-ui/react'
 import { GrantApplicationFieldAnswerItem, GrantApplicationRequest } from '@questbook/service-validator-client'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { GetApplicationDetailsQuery, GrantFieldAnswerItem } from 'src/generated/graphql'
-import { useAccount } from 'wagmi'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useEncryption from './utils/useEncryption'
 
 export default function useApplicationEncryption() {
 	const { encryptMessage, decryptMessage } = useEncryption()
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()

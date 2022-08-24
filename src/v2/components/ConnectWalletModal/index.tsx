@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { AlertDialogOverlay, Box, Flex, Image, Link, Modal, ModalBody, ModalContent, Text, VStack } from '@chakra-ui/react'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
-import { useAccount, useConnect } from 'wagmi'
-import ConnectWalletButton from './ConnectWalletButton'
+import { useConnect } from 'wagmi'
 import ConnectWalletErrorState from './ConnectWalletErrorState'
 
 const ConnectWalletModal = ({
@@ -26,7 +26,7 @@ const ConnectWalletModal = ({
 
 	const {
 		data: accountData
-	} = useAccount()
+	} = useQuestbookAccount()
 
 	const availableWallets = [{
 		name: 'Metamask',
@@ -138,7 +138,7 @@ const ConnectWalletModal = ({
 									px={4}
 									spacing={4}
 								>
-									{
+									{/* {
 										availableWallets.map((wallet, index) => (
 											<ConnectWalletButton
 												key={index}
@@ -155,7 +155,7 @@ const ConnectWalletModal = ({
 													}
 												} />
 										))
-									}
+									} */}
 								</VStack>
 
 								<Text

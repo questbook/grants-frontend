@@ -1,9 +1,12 @@
 import React, {
 	ReactElement, useContext, useEffect, useState,
 } from 'react'
+import { ExternalLinkIcon } from '@chakra-ui/icons'
 import {
 	Box,
-	Container, Flex, forwardRef, IconButton, IconButtonProps, Link, Menu, MenuButton, MenuItem, MenuList, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react'
+	Button,
+	Container, Flex, forwardRef, IconButton, IconButtonProps, Link, Menu, MenuButton, MenuItem, MenuList, TabList, TabPanel, TabPanels, Tabs, Text
+} from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import moment from 'moment'
 import { useRouter } from 'next/router'
@@ -17,11 +20,12 @@ import {
 	useGetApplicantsForAGrantReviewerQuery,
 	useGetGrantDetailsQuery,
 } from 'src/generated/graphql'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
-import { formatAmount } from 'src/utils/formattingUtils'
+import { formatAddress, formatAmount } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -32,12 +36,14 @@ import { ErrorAlert } from 'src/v2/assets/custom chakra icons/ErrorAlertV2'
 import { ThreeDotsHorizontal } from 'src/v2/assets/custom chakra icons/ThreeDotsHorizontal'
 import { ViewEye } from 'src/v2/assets/custom chakra icons/ViewEye'
 import Breadcrumbs from 'src/v2/components/Breadcrumbs'
+import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import StyledTab from 'src/v2/components/StyledTab'
 import { SupportedSafes } from 'src/v2/constants/safe/supported_safes'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import AcceptedProposalsPanel from 'src/v2/payouts/AcceptedProposals/AcceptedProposalPanel'
 import InReviewPanel from 'src/v2/payouts/InReviewProposals/InReviewPanel'
 import RejectedPanel from 'src/v2/payouts/RejectedProposals/RejectedPanel'
+import ResubmitPanel from 'src/v2/payouts/ResubmitProposals/ResubmitPanel'
 import SendFundsDrawer from 'src/v2/payouts/SendFundsDrawer/SendFundsDrawer'
 import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEvaluationDrawer'
@@ -45,7 +51,6 @@ import StatsBanner from 'src/v2/payouts/StatsBanner'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
 import getProposalUrl from 'src/v2/utils/phantomUtils'
-import { useAccount } from 'wagmi'
 
 const PAGE_SIZE = 500
 
@@ -79,7 +84,7 @@ function ViewApplicants() {
 
 	const [setupRubricBannerCancelled, setSetupRubricBannerCancelled] = useState(true)
 
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const router = useRouter()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 
@@ -102,22 +107,23 @@ function ViewApplicants() {
 	useEffect(() => {
 		if(router && router.query) {
 			const { grantId: gId } = router.query
+			console.log('fetch 100: ', gId)
 			setGrantID(gId)
 		}
 	}, [router])
 
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
-      subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-      ].client,
+			subgraphClients[
+				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+			].client,
 	})
 
 	const [queryReviewerParams, setQueryReviewerParams] = useState<any>({
 		client:
-      subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-      ].client,
+			subgraphClients[
+				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+			].client,
 	})
 
 	const [sendFundsModalIsOpen, setSendFundsModalIsOpen] = useState(false)
@@ -127,18 +133,18 @@ function ViewApplicants() {
 	useEffect(() => {
 		if(
 			workspace
-      && workspace.members
-      && workspace.members.length > 0
-      && accountData
-      && accountData.address
+			&& workspace.members
+			&& workspace.members.length > 0
+			&& accountData
+			&& accountData.address
 		) {
 			const tempMember = workspace.members.find(
 				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 			)
-			console.log(tempMember)
+			console.log('fetch 500: ', tempMember)
 			setIsAdmin(
 				tempMember?.accessLevel === 'admin'
-        || tempMember?.accessLevel === 'owner',
+				|| tempMember?.accessLevel === 'owner',
 			)
 
 			setIsReviewer(tempMember?.accessLevel === 'reviewer')
@@ -158,10 +164,12 @@ function ViewApplicants() {
 
 		console.log('Grant ID: ', grantID)
 		console.log('isUser: ', isUser)
+		console.log('fetch: ', isAdmin, isReviewer)
 		if(isAdmin) {
+			console.log('Setting query params')
 			setQueryParams({
 				client:
-          subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+					subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
 				variables: {
 					grantID,
 					first: PAGE_SIZE,
@@ -174,7 +182,7 @@ function ViewApplicants() {
 			console.log('reviewer', isUser)
 			setQueryReviewerParams({
 				client:
-        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+					subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
 				variables: {
 					grantID,
 					reviewerIDs: [isUser],
@@ -185,6 +193,10 @@ function ViewApplicants() {
 		}
 
 	}, [workspace, grantID, isUser])
+
+	useEffect(() => {
+		console.log('Admin params: ', queryParams)
+	}, [queryParams])
 
 	const { data, error, loading } = useGetApplicantsForAGrantQuery(queryParams)
 	const { data: grantData } = useGetGrantDetailsQuery(queryParams)
@@ -226,7 +238,7 @@ function ViewApplicants() {
 					applicationId: applicant.id,
 					applicantName: getFieldString('applicantName'),
 					applicantEmail: getFieldString('applicantEmail'),
-					applicant_address: applicant.applicantId,
+					applicant_address: applicant.applicantId ?? getFieldString('applicantAddress'),
 					sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
 					updated_on: moment.unix(applicant.updatedAtS).format('DD MMM YYYY'),
 					// applicant_name: getFieldString('applicantName'),
@@ -236,10 +248,10 @@ function ViewApplicants() {
 						//   getFieldString('fundingAsk') || '0',
 						// ),
 						amount:
-						applicant && getFieldString('fundingAsk') ? formatAmount(
-							getFieldString('fundingAsk')!,
-							decimal || 18,
-						) : '1',
+							applicant && getFieldString('fundingAsk') ? formatAmount(
+								getFieldString('fundingAsk')!,
+								decimal || 18,
+							) : '1',
 						symbol: label,
 						icon,
 					},
@@ -253,6 +265,7 @@ function ViewApplicants() {
 						).toString(),
 						decimal || 18,
 					),
+					milestones: applicant.milestones,
 					reviews: applicant.reviews
 				}
 			})
@@ -272,7 +285,7 @@ function ViewApplicants() {
 
 	const reviewData = useGetApplicantsForAGrantReviewerQuery(queryReviewerParams)
 
-	const Reviewerstatus = (item:any) => {
+	const Reviewerstatus = (item: any) => {
 		const user = []
 		// eslint-disable-next-line no-restricted-syntax
 		for(const n in item) {
@@ -305,15 +318,15 @@ function ViewApplicants() {
 						//   getFieldString('fundingAsk') || '0',
 						// ),
 						amount:
-              applicant && getFieldString('fundingAsk') ? formatAmount(
-                getFieldString('fundingAsk')!,
-                CHAIN_INFO[
-                	getSupportedChainIdFromSupportedNetwork(
-                		applicant.grant.workspace.supportedNetworks[0],
-                	)
-                ]?.supportedCurrencies[applicant.grant.reward.asset.toLowerCase()]
-                	?.decimals || 18,
-              ) : '1',
+							applicant && getFieldString('fundingAsk') ? formatAmount(
+								getFieldString('fundingAsk')!,
+								CHAIN_INFO[
+									getSupportedChainIdFromSupportedNetwork(
+										applicant.grant.workspace.supportedNetworks[0],
+									)
+								]?.supportedCurrencies[applicant.grant.reward.asset.toLowerCase()]
+									?.decimals || 18,
+							) : '1',
 						symbol: getAssetInfo(
 							applicant?.grant?.reward?.asset?.toLowerCase(),
 							getSupportedChainIdFromWorkspace(workspace),
@@ -367,8 +380,8 @@ function ViewApplicants() {
 	}, [workspace, accountData, daoId])
 
 	const [isAcceptingApplications, setIsAcceptingApplications] = React.useState<
-  [boolean, number]
-  >([acceptingApplications, 0])
+		[boolean, number]
+	>([acceptingApplications, 0])
 
 	useEffect(() => {
 		setIsAcceptingApplications([acceptingApplications, 0])
@@ -397,9 +410,7 @@ function ViewApplicants() {
 
 	}, [archiveGrantError])
 
-	React.useEffect(() => {
-		console.log('Is Accepting Applications: ', isAcceptingApplications)
-	}, [isAcceptingApplications])
+	const [networkTransactionModalStep, setNetworkTransactionModalStep] = React.useState<number>()
 
 
 	//Implementing the safe send
@@ -619,7 +630,7 @@ function ViewApplicants() {
 										px={'19px'}
 										py={'10px'}
 										onClick={
-											() => (grantData?.grants[0].rubric?.items.length || 0) > 0 || false ?
+											() => (grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ?
 												setViewRubricDrawerOpen(true) : setRubricDrawerOpen(true)
 										}
 									>
@@ -686,15 +697,15 @@ function ViewApplicants() {
 
 				<StatsBanner
 					funds={0}
-					reviews={0}
-					totalReviews={0}
+					reviews={applicantsData.reduce((acc: any, curr: any) => acc + curr.reviews.length, 0)}
+					totalReviews={applicantsData.reduce((acc: any, curr: any) => acc + curr.reviewers.length, 0)}
 					applicants={applicantsData.length}
 				/>
 
 				<Box mt={5} />
 
 				{
-					setupRubricBannerCancelled || ((grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false) ? <></> : (
+					setupRubricBannerCancelled || (((grantData?.grants && grantData?.grants.length > 0 && grantData?.grants[0].rubric?.items.length) || 0) > 0 || false) ? <></> : (
 						<>
 							<Flex
 								px={'18px'}
@@ -718,7 +729,7 @@ function ViewApplicants() {
 										lineHeight='24px'
 										fontWeight='500'
 									>
-									Setup applicant evaluation
+										Setup applicant evaluation
 									</Text>
 
 									<Text
@@ -727,14 +738,14 @@ function ViewApplicants() {
 										lineHeight='20px'
 										fontWeight='400'
 									>
-									On receiving applicants, define a scoring rubric and assign reviewers to evaluate the applicants.
+										On receiving applicants, define a scoring rubric and assign reviewers to evaluate the applicants.
 										{' '}
 										<Link
 											textDecoration={'none'}
 											fontWeight='500'
 											color='#1F1F33'
 										>
-										Learn more
+											Learn more
 										</Link>
 									</Text>
 
@@ -747,7 +758,7 @@ function ViewApplicants() {
 										cursor='pointer'
 										onClick={() => setRubricDrawerOpen(true)}
 									>
-									Setup now
+										Setup now
 									</Text>
 								</Flex>
 
@@ -820,6 +831,17 @@ function ViewApplicants() {
 								onSendFundsClicked={(v) => setSendFundsModalIsOpen(v)} />
 						</TabPanel>
 
+						<TabPanel
+							tabIndex={3}
+							borderRadius={'2px'}
+							p={0}
+							mt={5}
+							bg={'white'}
+							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
+							<ResubmitPanel
+								applicantsData={applicantsData} />
+						</TabPanel>
+
 
 					</TabPanels>
 				</Tabs>
@@ -842,6 +864,9 @@ function ViewApplicants() {
 					isOpen={rubricDrawerOpen}
 					onClose={() => setRubricDrawerOpen(false)}
 					onComplete={() => setRubricDrawerOpen(false)}
+					grantAddress={grantID}
+					chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
+					setNetworkTransactionModalStep={setNetworkTransactionModalStep}
 				/>
 
 				<ViewEvaluationDrawer
@@ -898,6 +923,39 @@ function ViewApplicants() {
 					step={step}
 				/>
 
+				<NetworkTransactionModal
+					isOpen={networkTransactionModalStep !== undefined}
+					subtitle='Creating scoring rubric'
+					description={
+						<Flex
+							direction="column"
+							w='100%'
+							align="start">
+							<Text
+								fontWeight={'500'}
+								fontSize={'17px'}
+							>
+								{grantData && grantData?.grants && grantData?.grants.length > 0 && grantData?.grants[0].title}
+							</Text>
+
+							<Button
+								rightIcon={<ExternalLinkIcon />}
+								variant="linkV2"
+								bg='#D5F1EB'>
+								{grantID && formatAddress(grantID)}
+							</Button>
+						</Flex>
+					}
+					currentStepIndex={networkTransactionModalStep || 0}
+					steps={
+						[
+							'Connect your wallet',
+							'Uploading rubric data to IPFS',
+							'Setting rubric and enabling auto assignment of reviewers',
+							'Waiting for transaction to complete',
+							'Rubric created and Reviewers assigned',
+						]
+					} />
 
 				{/* {
 					(reviewerData.length > 0 || applicantsData.length > 0) && (isReviewer || isAdmin) ? (

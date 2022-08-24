@@ -60,25 +60,27 @@ export default ({
 							<Text fontSize='xl'>
 								Network transaction
 							</Text>
-							<HStack spacing='1'>
-								<Text
-									fontSize='sm'
-									fontWeight='light'
-									color='v2Grey'>
-									{subtitle}
-									{' on'}
-								</Text>
 
+							<Text
+								fontSize='sm'
+								fontWeight='light'
+								color='v2Grey'>
+								{subtitle}
+								{' on'}
 								<Image
 									boxSize='3'
-									src={info?.icon || ''} />
-
+									ml={1}
+									src={info?.icon || ''}
+									display="inline"
+									mb={-0.75} />
+								{' '}
 								<Text
 									fontSize='small'
-									fontWeight='bold'>
+									fontWeight='bold'
+									display="inline">
 									{info?.name}
 								</Text>
-							</HStack>
+							</Text>
 						</VStack>
 					</HStack>
 				</ModalHeader>
@@ -161,7 +163,7 @@ const ModalStep = ({
 										borderRadius={'50%'}
 										boxSizing={'border-box'}
 										animation={'spinner 0.45s linear infinite'}
-									 />
+									/>
 								) : (
 									<Box
 										minW={4}
@@ -171,7 +173,7 @@ const ModalStep = ({
 
 										borderRadius={'50%'}
 										boxSizing={'border-box'}
-						 />
+									/>
 								)
 							}
 

@@ -1,12 +1,13 @@
-import { SupportedChainId } from 'src/constants/chains'
-import { CHAIN_INFO } from 'src/constants/chains'
-import { useNetwork } from 'wagmi'
+import { useMemo } from 'react'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 
 /**
  * Return the chain ID if supported by the app, otherwise return undefined
  * @returns the chain ID if supported -- undefined otherwise
  */
 export default function useChainId() {
-	const { activeChain } = useNetwork()
-	return CHAIN_INFO[activeChain?.id as SupportedChainId]?.id
+	// @TODO-gasless: Change here!
+	const { data } = useNetwork()
+	const id = useMemo(() => data.id, [data])
+	return id
 }

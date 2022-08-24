@@ -226,3 +226,5 @@ export const getExplorerUrlForAddress = (chainId: SupportedChainId | undefined, 
 export const getExplorerUrlForTxHash = (chainId: SupportedChainId | undefined, tx: string) => {
 	return CHAIN_INFO[chainId!]?.explorer.transactionHash.replace('{{tx}}', tx) || ''
 }
+
+export const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`
