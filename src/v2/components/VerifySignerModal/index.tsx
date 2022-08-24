@@ -95,7 +95,7 @@ const VerifySignerModal = ({
 
 	useEffect(() => {
 		if(isOpen && walletClicked) {
-			if(accountData?.address && owners.includes(accountData?.address)) {
+			if(networkType === NetworkType.EVM && accountData?.address && owners.includes(accountData?.address)) {
 				setIsOwner(true)
 				setOwnerAddress(accountData.address)
 				// alert('Your safe ownership is proved.')
@@ -109,7 +109,7 @@ const VerifySignerModal = ({
 						close: () => { }
 					}),
 				})
-			} else if(phantomWallet?.publicKey && owners.includes(phantomWallet?.publicKey.toString())) {
+			} else if(networkType === NetworkType.Solana && phantomWallet?.publicKey && owners.includes(phantomWallet?.publicKey.toString())) {
 				setIsOwner(true)
 				setOwnerAddress(phantomWallet?.publicKey.toString())
 				// alert('Your safe ownership is proved.')
@@ -123,12 +123,13 @@ const VerifySignerModal = ({
 						close: () => { }
 					}),
 				})
-			} else {
+			} else if(phantomWallet?.publicKey || accountData?.address) {
 				// setIsOwner(false)
 				if(accountData?.address) {
 					disconnect()
-					phantomWallet?.disconnect()
 				}
+
+				phantomWallet?.disconnect()
 
 				toast.closeAll()
 				// alert('Whoops! Looks like this wallet is not a signer on the safe.')
