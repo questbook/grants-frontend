@@ -13,15 +13,17 @@ import {
 import { CancelCircleFilled } from '../assets/custom chakra icons/CancelCircleFilled'
 
 interface Props {
-  isOpen: boolean;
-  onClose: () => void;
+	isOpen: boolean;
+	onClose: () => void;
 	onComplete: () => void;
+	proposalUrl: string;
 }
 
 function TransactionInitiatedModal({
 	isOpen,
 	onClose,
 	onComplete,
+	proposalUrl
 }: Props) {
 
 	return (
@@ -180,17 +182,22 @@ transaction.
 						direction="row"
 						align="center">
 
-						<Button
-							ml='auto'
-							colorScheme={'brandv2'}
-							onClick={
-								() => {
-									onClose()
+						<a
+							target={'_blank'}
+							style={{ marginLeft:'auto' }}
+							href={proposalUrl}
+							rel="noreferrer">
+							<Button
+								colorScheme={'brandv2'}
+								onClick={
+									() => {
 
-								}
-							}>
+
+									}
+								}>
 							Open Safe
-						</Button>
+							</Button>
+						</a>
 
 					</Flex>
 

@@ -1,25 +1,18 @@
 import { Box, Flex, Input, Text } from '@chakra-ui/react'
 import { ArrowDownCircle } from 'src/v2/assets/custom chakra icons/Arrows/ArrowDownCircle'
 import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
+import { TransactionType } from 'src/v2/types/safe'
 import AlertBanner from './AlertBanner'
 import MilestoneSelect from './MilestoneSelect'
 
 const RecipientDetails = ({
-	step,
-	milestoneId,
-	setMilestoneId,
-	amount,
-	setAmount,
 	applicantData,
-	safeAddress,
+	initiateTransactionData,
+	onChangeRecepientDetails,
 }: {
-  step: number,
-  milestoneId: string | undefined,
-  setMilestoneId: (id: string) => void,
-  amount: number | undefined,
-  setAmount: (amount: number) => void,
-	applicantData: any[],
-	safeAddress: string,
+	applicantData: any;
+	initiateTransactionData: TransactionType[] | undefined;
+	onChangeRecepientDetails :(applicationId: any, fieldName: string, fieldValue: any)=>void;
 }) => {
 	return (
 		<>
@@ -47,7 +40,7 @@ const RecipientDetails = ({
 						lineHeight='20px'
 						fontWeight='500'
 					>
-						{safeAddress}
+						{initiateTransactionData ? initiateTransactionData[0]?.from : ''}
 					</Text>
 
 					<ExternalLink
@@ -91,7 +84,7 @@ const RecipientDetails = ({
 
 
 				{
-					applicantData.map((data, i) => (
+					applicantData.map((data:any, i:number) => (
 						<>
 							<Box
 								fontSize='14px'
@@ -138,9 +131,10 @@ const RecipientDetails = ({
 									}
 									fontWeight={'500'}
 									fontSize='14px'
-									value={data?.applicant_address}
+									defaultValue={initiateTransactionData ? initiateTransactionData[i]?.to : ''}
 									errorBorderColor={'red'}
 									height={'auto'}
+									onChange={(e) => onChangeRecepientDetails(data.applicationId, 'to', e.target.value)}
 								/>
 							</Flex>
 
@@ -153,8 +147,9 @@ const RecipientDetails = ({
 
 									<MilestoneSelect
 										placeholder='Select from the list'
-										value={undefined}
-										onChange={(value) => value && setMilestoneId(value?.id)} />
+										value={initiateTransactionData ? initiateTransactionData[i].selectedMilestone : ''}
+										milestoneList={data.milestones}
+										onChange={(value) => value && onChangeRecepientDetails(data.applicationId, 'selectedMilestone', value?.id)} />
 								</Flex>
 
 								<Box w={6} />
@@ -175,11 +170,11 @@ const RecipientDetails = ({
 										}
 										fontWeight={'500'}
 										fontSize='14px'
-										value={amount}
+										defaultValue={initiateTransactionData ? initiateTransactionData[i].amount : ''}
 										errorBorderColor={'red'}
 										height={'auto'}
 										type={'number'}
-										onChange={(e) => setAmount(parseInt(e.target.value))}
+										onChange={(e) => onChangeRecepientDetails(data.applicationId, 'amount', parseFloat(e.target.value))}
 									/>
 								</Flex>
 							</Flex>

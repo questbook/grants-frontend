@@ -50,33 +50,27 @@ const Option = ({ innerProps, data }: any) => (
 )
 
 const MilestoneSelect = ({
+	milestoneList,
 	value,
 	onChange,
 	placeholder,
 }: {
+	milestoneList:any[];
   value: MilestoneSelectOption | undefined;
   onChange: (value: MilestoneSelectOption | undefined) => void;
   placeholder: string;
 }) => (
 	<DropdownSelect
 		options={
-			[{
-				id: '0x1',
-				title: 'Milestone 1',
-				label: '1. Feature complete and deployed onto Polygon testnet.'
-			}, {
-				id: '0x2',
-				title: 'Milestone 2',
-				label: '2. Feature complete and deployed onto Polygon testnet.'
-			}, {
-				id: '0x3',
-				title: 'Milestone 3',
-				label: '3. Feature complete and deployed onto Polygon testnet.'
-			}]
+			milestoneList.map((milestone, i) => ({
+				id: milestone.id,
+				title: milestone.title,
+				label: ''
+			}))
 		}
 		makeOption={Option}
 		placeholder={placeholder}
-		selected={value}
+		selected={milestoneList.find((milestone) => milestone.id === value) ?? undefined}
 		setSelected={onChange} />
 )
 

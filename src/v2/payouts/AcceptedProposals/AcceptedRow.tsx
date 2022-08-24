@@ -119,7 +119,13 @@ const AcceptedRow = ({
 					lineHeight='20px'
 					fontWeight='500'
 				>
-										250 / 2000
+					{applicantData.amount_paid}
+					{' '}
+                /
+					{' '}
+					{applicantData.funding_asked?.amount}
+					{' '}
+					{applicantData.funding_asked?.symbol}
 				</Text>
 			</GridItem>
 			<GridItem

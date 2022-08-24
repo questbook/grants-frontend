@@ -1,9 +1,9 @@
 
 import { useEffect, useMemo, useState } from 'react'
-import { getRealm } from '@solana/spl-governance'
-import { Connection, PublicKey } from '@solana/web3.js'
 import { CHAIN_INFO } from 'src/constants/chains'
+import { NetworkType } from 'src/constants/Networks'
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
+import { getSafeDetails } from 'src/v2/constants/safe/realms_solana'
 import SAFES_ENPOINTS from '../constants/safesEndpointsTest.json'
 import useAxiosMulti from './utils/useAxiosMulti'
 
@@ -35,23 +35,29 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 		return SAFES_BALANCES_ENPOINTS.map(element => element + URL_PREFIX + safeAddress + URL_SUFFIX)
 	}, [safeAddress])
 
-	const { data: rawData, error, loaded } = useAxiosMulti({
+	const { data: gnosisRawData, error, loaded } = useAxiosMulti({
 		urls: gnosisUrls,
 		method: 'get'
 	})
 
-	const [data, setData] = useState<SafeSelectOption[]>([])
+	const [splGovSafe, setSplGovSafe] = useState<SafeSelectOption | null>(null)
 
+	const [gnosisData, setGnosisData] = useState<SafeSelectOption[]>([])
+
+	const data = useMemo(() => {
+		if(splGovSafe) {
+			return [...gnosisData, splGovSafe]
+		}
+
+		return gnosisData
+	}, [gnosisData, splGovSafe])
 
 	useEffect(() => {
 		(async() => {
-			const connection = new Connection('https://api.devnet.solana.com')
-			const programId = new PublicKey('3mdphuX2x94TLqu5Hjm7xr8qTTUWGkREXr41fMWZZjrZ')
-			const realm = await getRealm(connection, programId)
-			console.log('realms', programId.toString(), realm)
-			console.log(realm.account)
+			const newSplGovSafe = await getSafeDetails(safeAddress)
+			setSplGovSafe(newSplGovSafe)
 		})()
-	}, [])
+	}, [safeAddress])
 
 	const getTokensSum = (tokensData: AllTokensData) => {
 		return tokensData.reduce((partialSum: number, item) => partialSum + parseFloat(item?.fiatBalance || '0'), 0)
@@ -60,25 +66,26 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 	useEffect(() => {
 		if(loaded && !error) {
 			const newData: SafeSelectOption[] = []
-			rawData.forEach((allTokensData: AllTokensData, index) => {
+			gnosisRawData.forEach((allTokensData: AllTokensData, index) => {
 				const currentChainID = SAFES_BALANCES_CHAIN_ID[index] as unknown as ValidChainID
 				const tokensSum = getTokensSum(allTokensData)
 				if(tokensSum >= USD_BALANCE_THRESHOLD) {
 					const newElement: SafeSelectOption = {
+						networkType: NetworkType.EVM,
 						networkId: currentChainID.toString(),
 						networkName: CHAIN_INFO[currentChainID]?.name,
 						networkIcon: CHAIN_INFO[currentChainID]?.icon,
 						safeType: 'Gnosis',
-						safeIcon: '/ui_icons/gnosis.svg',
+						safeIcon: '/safes_icons/gnosis.svg',
 						amount: Math.floor(tokensSum),
 					}
 					newData.push(newElement)
 				}
 			})
 			console.log('Final Safe', newData)
-			setData(newData)
+			setGnosisData(newData)
 		}
-	}, [rawData, loaded, error])
+	}, [gnosisRawData, loaded, error])
 
 	return { error, loaded, data }
 }

@@ -1,25 +1,18 @@
 import { Box, Flex, Input, Text } from '@chakra-ui/react'
 import { ArrowDownCircle } from 'src/v2/assets/custom chakra icons/Arrows/ArrowDownCircle'
 import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
+import { TransactionType } from 'src/v2/types/safe'
 import AlertBanner from './AlertBanner'
 import MilestoneSelect from './MilestoneSelect'
 
 const RecipientDetails = ({
-	step,
-	milestoneId,
-	setMilestoneId,
-	amount,
-	setAmount,
-	safeAddress,
 	applicantData,
+	initiateTransactionData,
+	onChangeRecepientDetails,
 }: {
-  step: number,
-  milestoneId: string | undefined,
-  setMilestoneId: (id: string) => void,
-  amount: number | undefined,
-  setAmount: (amount: number) => void,
-	safeAddress: string;
 	applicantData: any;
+	initiateTransactionData: TransactionType | undefined;
+	onChangeRecepientDetails :(applicationId: any, fieldName: string, fieldValue: any)=>void;
 }) => {
 	return (
 		<>
@@ -47,7 +40,7 @@ const RecipientDetails = ({
 						lineHeight='20px'
 						fontWeight='500'
 					>
-						{safeAddress}
+						{initiateTransactionData?.from}
 					</Text>
 
 					<ExternalLink
@@ -118,9 +111,10 @@ const RecipientDetails = ({
 						}
 						fontWeight={'500'}
 						fontSize='14px'
-						value={applicantData?.applicant_address}
+						defaultValue={initiateTransactionData?.to}
 						errorBorderColor={'red'}
 						height={'auto'}
+						onChange={(e) => onChangeRecepientDetails(applicantData.applicationId, 'to', e.target.value)}
 					/>
 				</Flex>
 
@@ -148,8 +142,9 @@ const RecipientDetails = ({
 
 				<MilestoneSelect
 					placeholder='Select from the list'
-					value={undefined}
-					onChange={(value) => value && setMilestoneId(value?.id)} />
+					value={initiateTransactionData?.selectedMilestone}
+					milestoneList={applicantData.milestones}
+					onChange={(value) => value && onChangeRecepientDetails(applicantData.applicationId, 'selectedMilestone', value?.id)} />
 
 				<Box h={6} />
 
@@ -187,11 +182,11 @@ const RecipientDetails = ({
 						}
 						fontWeight={'500'}
 						fontSize='14px'
-						value={amount}
+						defaultValue={initiateTransactionData?.amount}
 						errorBorderColor={'red'}
 						height={'auto'}
 						type={'number'}
-						onChange={(e) => setAmount(parseInt(e.target.value))}
+						onChange={(e) => onChangeRecepientDetails(applicantData.applicationId, 'amount', parseFloat(e.target.value))}
 					/>
 				</Flex>
 

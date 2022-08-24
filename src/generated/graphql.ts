@@ -4353,6 +4353,13 @@ export type GetReviewersForAWorkspaceQueryVariables = Exact<{
 
 export type GetReviewersForAWorkspaceQuery = { __typename?: 'Query', workspaces: Array<{ __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, fullName?: string | null, actorId: string }> }> };
 
+export type GetSafeForAWorkspaceQueryVariables = Exact<{
+  workspaceID: Scalars['String'];
+}>;
+
+
+export type GetSafeForAWorkspaceQuery = { __typename?: 'Query', workspaceSafes: Array<{ __typename?: 'WorkspaceSafe', address: string, chainId: string, workspace: { __typename?: 'Workspace', id: string } }> };
+
 export type GetWorkspaceDetailsQueryVariables = Exact<{
   workspaceID: Scalars['ID'];
 }>;
@@ -6505,6 +6512,45 @@ export function useGetReviewersForAWorkspaceLazyQuery(baseOptions?: Apollo.LazyQ
 export type GetReviewersForAWorkspaceQueryHookResult = ReturnType<typeof useGetReviewersForAWorkspaceQuery>;
 export type GetReviewersForAWorkspaceLazyQueryHookResult = ReturnType<typeof useGetReviewersForAWorkspaceLazyQuery>;
 export type GetReviewersForAWorkspaceQueryResult = Apollo.QueryResult<GetReviewersForAWorkspaceQuery, GetReviewersForAWorkspaceQueryVariables>;
+export const GetSafeForAWorkspaceDocument = gql`
+    query getSafeForAWorkspace($workspaceID: String!) {
+  workspaceSafes(where: {workspace: $workspaceID}) {
+    address
+    chainId
+    workspace {
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetSafeForAWorkspaceQuery__
+ *
+ * To run a query within a React component, call `useGetSafeForAWorkspaceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSafeForAWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSafeForAWorkspaceQuery({
+ *   variables: {
+ *      workspaceID: // value for 'workspaceID'
+ *   },
+ * });
+ */
+export function useGetSafeForAWorkspaceQuery(baseOptions: Apollo.QueryHookOptions<GetSafeForAWorkspaceQuery, GetSafeForAWorkspaceQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetSafeForAWorkspaceQuery, GetSafeForAWorkspaceQueryVariables>(GetSafeForAWorkspaceDocument, options);
+      }
+export function useGetSafeForAWorkspaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSafeForAWorkspaceQuery, GetSafeForAWorkspaceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetSafeForAWorkspaceQuery, GetSafeForAWorkspaceQueryVariables>(GetSafeForAWorkspaceDocument, options);
+        }
+export type GetSafeForAWorkspaceQueryHookResult = ReturnType<typeof useGetSafeForAWorkspaceQuery>;
+export type GetSafeForAWorkspaceLazyQueryHookResult = ReturnType<typeof useGetSafeForAWorkspaceLazyQuery>;
+export type GetSafeForAWorkspaceQueryResult = Apollo.QueryResult<GetSafeForAWorkspaceQuery, GetSafeForAWorkspaceQueryVariables>;
 export const GetWorkspaceDetailsDocument = gql`
     query getWorkspaceDetails($workspaceID: ID!) {
   workspace(id: $workspaceID, subgraphError: allow) {
