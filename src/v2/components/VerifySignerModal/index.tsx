@@ -32,12 +32,13 @@ const VerifySignerModal = ({
 	const [walletClicked, setWalletClicked] = useState(false)
 	const [redirectInitiated, setRedirectInitiated] = useState(false)
 	const { phantomWallet, phantomWalletConnected } = usePhantomWallet()
-	const { disconnect } = useDisconnect()
+	const { disconnectAsync } = useDisconnect()
 	const toast = useToast()
 
 	const {
 		isError: isErrorConnecting,
 		connect,
+		connectAsync,
 		connectors
 	} = useConnect()
 
@@ -126,9 +127,9 @@ const VerifySignerModal = ({
 			} else {
 				// setIsOwner(false)
 				if(accountData?.address) {
-					disconnect()
-					phantomWallet?.disconnect()
+					disconnectAsync()
 				}
+				phantomWallet?.disconnect()
 
 				toast.closeAll()
 				// alert('Whoops! Looks like this wallet is not a signer on the safe.')
@@ -217,14 +218,18 @@ const VerifySignerModal = ({
 													name={wallet.name}
 													isPopular={wallet.isPopular}
 													onClick={
-														() => {
+														async () => {
 															const connector = connectors.find((x) => x.id === wallet.id)
 															setConnectClicked(true)
-															setWalletClicked(true)
 															if(connector) {
-																connect(connector)
+																try{
+																	await connectAsync(connector)
+																}
+																catch(e){
+																	console.log('evm error', e)
+																}
+																setWalletClicked(true)
 															}
-
 															// showToast()
 															// onClose()
 														}
@@ -236,9 +241,9 @@ const VerifySignerModal = ({
 												name={wallet.name}
 												isPopular={wallet.isPopular}
 												onClick={
-													() => {
+													async () => {
+														await phantomWallet?.connect()
 														setWalletClicked(true)
-														phantomWallet?.connect()
 														// showToast()
 													}
 												} />
