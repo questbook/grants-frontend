@@ -1,4 +1,5 @@
 import { EditorState } from 'draft-js'
+import { FeedbackType } from 'src/components/your_grants/feedbackDrawer'
 import {
 	ApplicationRegistryAbi,
 	ApplicationReviewRegistryAbi,
@@ -7,6 +8,7 @@ import {
 } from 'src/generated/contracts'
 import {
 	GetAllGrantsForADaoQuery,
+	GetApplicationDetailsQuery,
 	GetApplicationMilestonesQuery,
 	GetDaoDetailsQuery,
 	GetFundSentForApplicationQuery,
@@ -30,6 +32,10 @@ export type Workspace = Exclude<
 >;
 export type DAOWorkspace = GetDaoDetailsQuery['workspace'];
 export type DAOGrant = GetDaoDetailsQuery['grants'];
+
+export type IReview = Exclude<Exclude<GetApplicationDetailsQuery['grantApplication'], null>, undefined>['reviews'][0];
+
+export type IReviewFeedback = { isApproved?: boolean, items: FeedbackType[] }
 
 export type PartnersProps = {
   name: string;

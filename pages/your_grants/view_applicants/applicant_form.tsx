@@ -477,13 +477,7 @@ function ApplicantForm() {
 										(pendingReviewer) => pendingReviewer.toLowerCase() ===
                       accountData?.address?.toLowerCase(),
 									) !== undefined && (
-										<ReviewerSidebar
-											showHiddenData={showHiddenData}
-											applicationData={applicationData}
-											onAcceptApplicationClick={() => setStep(1)}
-											onRejectApplicationClick={() => setStep(2)}
-											onResubmitApplicationClick={() => setStep(3)}
-										/>
+										<ReviewerSidebar applicationData={applicationData} />
 									)
 								}
 								{

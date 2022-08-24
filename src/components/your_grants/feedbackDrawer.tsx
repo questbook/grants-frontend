@@ -17,7 +17,6 @@ import {
 } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
-import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useSubmitReview from 'src/hooks/useSubmitReview'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { sumArray } from 'table/dist/src/utils'
@@ -58,49 +57,8 @@ function FeedbackDrawer({
 	const [editedFeedbackData, setEditedFeedbackData] = useState<{ items?: Array<FeedbackType> }>()
 	const [currentStep, setCurrentStep] = useState<number>()
 
-	const [pk, setPk] = useState<string>('*')
 	const { data: accountData } = useQuestbookAccount()
 	const { workspace } = useContext(ApiClientsContext)!
-
-	const {
-		RenderModal,
-		setHiddenModalOpen: setHiddenPkModalOpen,
-		transactionData,
-		publicKey: newPublicKey,
-	} = useSubmitPublicKey()
-
-	useEffect(() => {
-		if(transactionData && newPublicKey && newPublicKey.publicKey) {
-			setPk(newPublicKey.publicKey)
-			const formattedFeedbackData = feedbackData?.map((feedback) => ({
-				rubric: feedback.rubric,
-				rating: feedback.rating,
-				comment: feedback.comment,
-			}))
-			setEditedFeedbackData({ items: formattedFeedbackData })
-		}
-
-	}, [transactionData, newPublicKey])
-
-	useEffect(() => {
-		if(!accountData?.address) {
-			return
-		}
-
-		if(!workspace) {
-			return
-		}
-
-		const k = workspace?.members?.find(
-			(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
-		)?.publicKey?.toString()
-		if(k && k.length > 0) {
-			setPk(k)
-		} else {
-			setPk('')
-		}
-
-	}, [workspace, accountData])
 
 	useEffect(() => {
 		const newFeedbackData = Array<FeedbackType>()
@@ -116,16 +74,12 @@ function FeedbackDrawer({
 
 		setFeedbackData(newFeedbackData)
 	}, [rubrics])
+
 	const handleOnSubmit = () => {
 		const newFeedbackData = []
 		feedbackData?.forEach((feedback) => {
 			newFeedbackData.push(feedback)
 		})
-
-		if(isPrivate && (!pk || pk === '*')) {
-			setHiddenPkModalOpen(true)
-			return
-		}
 
 		const formattedFeedbackData = feedbackData?.map((feedback) => ({
 			rubric: feedback.rubric,
@@ -287,7 +241,6 @@ function FeedbackDrawer({
 				</DrawerContent>
 			</Drawer>
 
-			<RenderModal />
 			<NetworkTransactionModal
 				isOpen={currentStep !== undefined}
 				subtitle='Submitting review'

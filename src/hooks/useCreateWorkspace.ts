@@ -82,6 +82,7 @@ export default function useCreateWorkspace(
 				about: data.about,
 				logoIpfsHash: uploadedImageHash,
 				creatorId: accountData?.address!,
+				creatorPublicKey: webwallet?.publicKey,
 				socials: [],
 				partners: [],
 				supportedNetworks: [getSupportedValidatorNetworkFromChainId(data.network)],
