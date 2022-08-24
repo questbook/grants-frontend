@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Button, ButtonProps, Checkbox, Flex, forwardRef, Grid, GridItem, Menu, MenuButton, MenuItem, MenuList, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalOverlay, Text } from '@chakra-ui/react'
+import { Badge, Button, ButtonProps, Checkbox, Flex, forwardRef, Grid, GridItem, HStack, Menu, MenuButton, MenuItem, MenuList, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalOverlay, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import useBatchUpdateApplicationState from 'src/hooks/useBatchUpdateApplicationState'
 import { AcceptApplication } from 'src/v2/assets/custom chakra icons/AcceptApplication'
@@ -121,14 +121,20 @@ const InReviewPanel = ({
 				px='16px'
 				alignItems={'center'}
 			>
-				<Text
-					mr='auto'
-					fontSize='14px'
-					lineHeight='20px'
-					fontWeight='500'
-				>
-					In Review
-				</Text>
+				<HStack justify='space-between'>
+					<Text
+						mr='auto'
+						fontSize='14px'
+						lineHeight='20px'
+						fontWeight='500'
+					>
+						In Review
+					</Text>
+
+					<Badge fontSize='x-small'>
+						Private
+					</Badge>
+				</HStack>
 
 
 				{/* <Text
