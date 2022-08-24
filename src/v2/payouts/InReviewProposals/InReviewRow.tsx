@@ -431,7 +431,7 @@ const InReviewRow = ({
 												}
 
 												{
-													reviews[reviewKey].map((item: any) => {
+													reviews[reviewKey]?.map((item: any) => {
 														return (
 															<>
 																<MenuItem
