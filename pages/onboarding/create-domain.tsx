@@ -206,8 +206,7 @@ const OnboardingCreateDomain = () => {
 
 			console.log('sefe', safeSelected)
 			console.log('network', network)
-			if(!safeSelected || !network) {
-
+			if(!network) {
 				throw new Error('No network specified')
 			}
 
