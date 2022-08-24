@@ -46,8 +46,7 @@ import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEvaluationDrawer'
 import StatsBanner from 'src/v2/payouts/StatsBanner'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
-import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
-import { useAccount } from 'wagmi'
+import ViewScoreDrawer from 'src/v2/payouts/ViewScoreDrawer/ViewEvaluationDrawer'
 
 const PAGE_SIZE = 500
 
@@ -724,7 +723,7 @@ function ViewApplicants() {
 					setNetworkTransactionModalStep={setNetworkTransactionModalStep}
 				/>
 
-				<ViewEvaluationDrawer
+				<ViewScoreDrawer
 					isOpen={viewRubricDrawerOpen}
 					grantData={grantData}
 					onClose={() => setViewRubricDrawerOpen(false)}

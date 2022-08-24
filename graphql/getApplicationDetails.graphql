@@ -79,6 +79,7 @@ query getApplicationDetails($applicationID: ID!) {
       }
       publicReviewDataHash
       id
+      createdAtS
     }
     reviewers {
       email
