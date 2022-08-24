@@ -46,7 +46,7 @@ import StatsBanner from 'src/v2/payouts/StatsBanner'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
 import getProposalUrl from 'src/v2/utils/phantomUtils'
-import { useAccount, erc20ABI } from 'wagmi'
+import { erc20ABI, useAccount } from 'wagmi'
 
 const PAGE_SIZE = 500
 const SAFE_ADDRESS = '0x7723d6CD277F0670fcB84eA8E9Efe14f1b16acBB'
@@ -106,7 +106,7 @@ function ViewApplicants() {
 	])
 
 	useEffect(() => {
-		if (router && router.query) {
+		if(router && router.query) {
 			const { grantId: gId } = router.query
 			setGrantID(gId)
 		}
@@ -131,7 +131,7 @@ function ViewApplicants() {
 	const [txnInitModalIsOpen, setTxnInitModalIsOpen] = useState(false)
 
 	useEffect(() => {
-		if (
+		if(
 			workspace
 			&& workspace.members
 			&& workspace.members.length > 0
@@ -154,17 +154,17 @@ function ViewApplicants() {
 	}, [accountData, workspace])
 
 	useEffect(() => {
-		if (!workspace) {
+		if(!workspace) {
 			return
 		}
 
-		if (!grantID) {
+		if(!grantID) {
 			return
 		}
 
 		console.log('Grant ID: ', grantID)
 		console.log('isUser: ', isUser)
-		if (isAdmin) {
+		if(isAdmin) {
 			setQueryParams({
 				client:
 					subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
@@ -176,7 +176,7 @@ function ViewApplicants() {
 			})
 		}
 
-		if (isReviewer || isAdmin) {
+		if(isReviewer || isAdmin) {
 			console.log('reviewer', isUser)
 			setQueryReviewerParams({
 				client:
@@ -196,10 +196,10 @@ function ViewApplicants() {
 	const { data: grantData } = useGetGrantDetailsQuery(queryParams)
 	useEffect(() => {
 		console.log('fetch', data)
-		
-		if (data && data.grantApplications.length) {
+
+		if(data && data.grantApplications.length) {
 			setRewardAssetAddress(data.grantApplications[0].grant.reward.asset)
-			if(data.grantApplications[0].grant.reward.token){
+			if(data.grantApplications[0].grant.reward.token) {
 				setRewardAssetDecimals(data.grantApplications[0].grant.reward.token.decimal)
 			} else {
 				setRewardAssetDecimals(CHAIN_INFO[
@@ -209,16 +209,17 @@ function ViewApplicants() {
 				]?.supportedCurrencies[data.grantApplications[0].grant.reward.asset.toLowerCase()]
 					?.decimals)
 			}
+
 			const fetchedApplicantsData = data.grantApplications.map((applicant) => {
 				const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
 				let decimal
 				let label
 				let icon
-				if (!(grantData?.grants[0].rubric?.items.length ?? true)) {
+				if(!(grantData?.grants[0].rubric?.items.length ?? true)) {
 					setSetupRubricBannerCancelled(false)
 				}
 
-				if (grantData?.grants[0].reward.token) {
+				if(grantData?.grants[0].reward.token) {
 					decimal = grantData?.grants[0].reward.token.decimal
 					label = grantData?.grants[0].reward.token.label
 					icon = getUrlForIPFSHash(grantData?.grants[0].reward.token.iconHash)
@@ -293,13 +294,13 @@ function ViewApplicants() {
 	const Reviewerstatus = (item: any) => {
 		const user = []
 		// eslint-disable-next-line no-restricted-syntax
-		for (const n in item) {
-			if (item[n].reviewer.id === isActorId) {
+		for(const n in item) {
+			if(item[n].reviewer.id === isActorId) {
 				user.push(isActorId)
 			}
 		}
 
-		if (user.length === 1) {
+		if(user.length === 1) {
 			return 9
 		}
 
@@ -308,7 +309,7 @@ function ViewApplicants() {
 
 	useEffect(() => {
 		// console.log('Raw reviewer data: ', reviewData)
-		if (reviewData.data && reviewData.data.grantApplications.length) {
+		if(reviewData.data && reviewData.data.grantApplications.length) {
 			console.log('Reviewer Applications: ', reviewData.data)
 			const fetchedApplicantsData = reviewData.data.grantApplications.map((applicant) => {
 				const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
@@ -370,12 +371,12 @@ function ViewApplicants() {
 				descriptionError: false,
 			})
 		})
-		if (newRubrics.length === 0) {
+		if(newRubrics.length === 0) {
 			return
 		}
 
 		setRubrics(newRubrics)
-		if (initialRubrics?.items[0].maximumPoints) {
+		if(initialRubrics?.items[0].maximumPoints) {
 			setMaximumPoints(initialRubrics.items[0].maximumPoints)
 		}
 	}, [grantData])
@@ -403,7 +404,7 @@ function ViewApplicants() {
 	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		// console.log(transactionData);
-		if (transactionData) {
+		if(transactionData) {
 			setIsModalOpen(false)
 			setRefresh(true)
 		}
@@ -442,7 +443,7 @@ function ViewApplicants() {
 	//checking if the realm address is valid
 
 	useEffect(() => {
-		const checkValidSafeAddress = async () => {
+		const checkValidSafeAddress = async() => {
 			const isValidSafeAddress = await current_safe?.isValidSafeAddress('HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC')
 			console.log('isValidSafeAddress', isValidSafeAddress)
 		}
@@ -468,7 +469,7 @@ function ViewApplicants() {
 
 	function createEVMMetaTransactions() {
 		const readyTxs = gnosisBatchData.map((data, i) => {
-			const txData = encodeTransactionData(data.to, (data.amount.toString()));
+			const txData = encodeTransactionData(data.to, (data.amount.toString()))
 			const tx = {
 				to: ethers.utils.getAddress(rewardAssetAddress),
 				data: txData,
@@ -490,27 +491,27 @@ function ViewApplicants() {
 		return txData
 	}
 
-	const getRealmsVerification = async () => {
-		if (phantomWallet?.publicKey?.toString()) {
+	const getRealmsVerification = async() => {
+		if(phantomWallet?.publicKey?.toString()) {
 			const isVerified = await current_safe?.isOwner(phantomWallet.publicKey?.toString())
 			console.log('realms_solana verification', isVerified)
-			if (isVerified) {
+			if(isVerified) {
 				setSignerVerififed(true)
 			}
 		}
 	}
 
 	useEffect(() => {
-		if (phantomWalletConnected) {
+		if(phantomWalletConnected) {
 			getRealmsVerification()
 		} else {
 			setSignerVerififed(true)
 		}
 	}, [phantomWalletConnected])
 
-	const initiateTransaction = async () => {
+	const initiateTransaction = async() => {
 		console.log('initiate transaction called')
-		if (isEvmChain) {
+		if(isEvmChain) {
 			console.log('transactions initiated --> ', gnosisReadyToExecuteTxns)
 			const readyToExecuteTxs = createEVMMetaTransactions()
 			const result = await current_safe?.createMultiTransaction(readyToExecuteTxs, SAFE_ADDRESS)
@@ -518,14 +519,14 @@ function ViewApplicants() {
 			const proposaladdress = await current_safe?.proposeTransactions(grantData?.grants[0].title, initiateTransactionData, phantomWallet)
 			setProposalAddr(proposaladdress?.toString())
 		}
-		
+
 	}
 
 	const onChangeRecepientDetails = (applicationId, fieldName, fieldValue) => {
 		console.log('onChangeRecepientDetails', applicationId, fieldName, fieldValue)
 		console.log('Gnosis Batch data', gnosisBatchData)
 		const tempData = initiateTransactionData.map((transactionData, i) => {
-			if (transactionData.applicationId === applicationId) {
+			if(transactionData.applicationId === applicationId) {
 				return { ...transactionData, [fieldName]: fieldValue }
 			}
 
@@ -540,10 +541,10 @@ function ViewApplicants() {
 
 	const [step, setStep] = useState(ModalState.RECEIPT_DETAILS)
 
-	const onSendFundsButtonClicked = async (state: boolean, selectedApplicants: any[]) => {
+	const onSendFundsButtonClicked = async(state: boolean, selectedApplicants: any[]) => {
 		console.log('state', state)
 		console.log('selectedApplicants', selectedApplicants)
-		if (selectedApplicants.length === 1) {
+		if(selectedApplicants.length === 1) {
 			setSendFundsModalIsOpen(state)
 		} else {
 			setSendFundsDrawerIsOpen(state)
@@ -552,41 +553,41 @@ function ViewApplicants() {
 		setSendFundsTo(selectedApplicants)
 	}
 
-	const onModalStepChange = async (currentState: number) => {
+	const onModalStepChange = async(currentState: number) => {
 		switch (currentState) {
-			case ModalState.RECEIPT_DETAILS:
-				setStep(ModalState.CONNECT_WALLET)
-				break
-			case ModalState.CONNECT_WALLET:
-				if (signerVerified) {
-					setStep(ModalState.VERIFIED_OWNER)
-				}
+		case ModalState.RECEIPT_DETAILS:
+			setStep(ModalState.CONNECT_WALLET)
+			break
+		case ModalState.CONNECT_WALLET:
+			if(signerVerified) {
+				setStep(ModalState.VERIFIED_OWNER)
+			}
 
-				break
-			case ModalState.VERIFIED_OWNER:
-				setStep(ModalState.TRANSATION_INITIATED)
-				initiateTransaction()
-				setSendFundsModalIsOpen(false)
-				setSendFundsDrawerIsOpen(false)
-				setTxnInitModalIsOpen(true)
+			break
+		case ModalState.VERIFIED_OWNER:
+			setStep(ModalState.TRANSATION_INITIATED)
+			initiateTransaction()
+			setSendFundsModalIsOpen(false)
+			setSendFundsDrawerIsOpen(false)
+			setTxnInitModalIsOpen(true)
 
-				break
+			break
 		}
 	}
 
-	const onModalClose = async () => {
+	const onModalClose = async() => {
 		setStep(ModalState.RECEIPT_DETAILS)
 		setSendFundsModalIsOpen(false)
 		setSendFundsDrawerIsOpen(false)
 		setTxnInitModalIsOpen(false)
-		if (phantomWallet?.isConnected) {
+		if(phantomWallet?.isConnected) {
 			await phantomWallet.disconnect()
 			setPhantomWalletConnected(false)
 		}
 	}
 
 	useEffect(() => {
-		if (signerVerified) {
+		if(signerVerified) {
 			setStep(ModalState.VERIFIED_OWNER)
 		}
 	}, [signerVerified])
@@ -1065,7 +1066,7 @@ function ViewApplicants() {
 	)
 }
 
-ViewApplicants.getLayout = function (page: ReactElement) {
+ViewApplicants.getLayout = function(page: ReactElement) {
 	return (
 		<NavbarLayout>
 			{page}
