@@ -8,7 +8,8 @@ const URL_SUFFIX = ''
 
 interface Props {
     safeAddress: string;
-    chainID: string;
+    chainID?: string;
+	isSolana?: boolean;
 }
 
 type ValidChainID = keyof typeof SAFES_ENPOINTS;

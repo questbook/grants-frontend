@@ -49,7 +49,7 @@ const OnboardingCreateDomain = () => {
 
 	// State variables for step 3 and 4
 	const [daoImageFile, setDaoImageFile] = useState<File | null>(null)
-	const [isOwner, setIsOwner] = useState(false)
+	const [isOwner, setIsOwner] = useState(true)
 	const [isVerifySignerModalOpen, setIsVerifySignerModalOpen] = useState(false)
 	const { data: safeOwners } = useSafeOwners({ safeAddress, chainID: safeSelected?.networkId ?? '' })
 	const [ txHash, setTxHash ] = useState('')
@@ -182,7 +182,7 @@ const OnboardingCreateDomain = () => {
 			// 	return
 			// }
 			console.log('all', biconomy, scwAddress, nonce, webwallet)
-			console.log('creating workspace', accountData!.address)
+			// console.log('creating workspace', accountData!.address)
 			console.log(accountDataWebwallet?.address)
 			setCurrentStep(1)
 			const uploadedImageHash = (await uploadToIPFS(daoImageFile)).hash
@@ -204,6 +204,8 @@ const OnboardingCreateDomain = () => {
 				throw new Error('Error validating grant data')
 			}
 
+			console.log('sefe', safeSelected)
+			console.log('network', network)
 			if(!safeSelected || !network) {
 
 				throw new Error('No network specified')
@@ -299,7 +301,7 @@ const OnboardingCreateDomain = () => {
 				}
 			}
 			safeSelected={safeSelected!}
-			onSelectedSafeChange={setSafeSelected} />, <DomainName
+			onSelectedSafeChange={(newSafe) => setSafeSelected(newSafe)} />, <DomainName
 			key={1}
 			domainName={domainName}
 			setValue={
