@@ -678,6 +678,7 @@ function ViewApplicants() {
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<InReviewPanel
 								applicantsData={applicantsData}
+								grantData={grantData}
 								onSendFundsClicked={(v) => setSendFundsModalIsOpen(v)} />
 						</TabPanel>
 

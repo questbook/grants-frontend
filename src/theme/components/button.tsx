@@ -171,9 +171,6 @@ export default {
 				_hover: {
 					bg: 'gray.2',
 				},
-				_active: {
-					bg: 'gray.3',
-				},
 				_focus: {
 					bg: 'gray.3',
 					border: '1px solid gray.4',
