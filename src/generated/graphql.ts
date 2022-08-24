@@ -410,8 +410,6 @@ export type Grant = {
   metadataHash: Scalars['String'];
   /** Number of applications in the grant */
   numberOfApplications: Scalars['Int'];
-  /** Should reviews submitted be encrypted & only be visible privately */
-  privateReviews: Scalars['Boolean'];
   /** Proposed reward for the grant */
   reward: Reward;
   /** Rubric for evaulating the grant */
@@ -1447,10 +1445,6 @@ export type Grant_Filter = {
   numberOfApplications_lte?: InputMaybe<Scalars['Int']>;
   numberOfApplications_not?: InputMaybe<Scalars['Int']>;
   numberOfApplications_not_in?: InputMaybe<Array<Scalars['Int']>>;
-  privateReviews?: InputMaybe<Scalars['Boolean']>;
-  privateReviews_in?: InputMaybe<Array<Scalars['Boolean']>>;
-  privateReviews_not?: InputMaybe<Scalars['Boolean']>;
-  privateReviews_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   reward?: InputMaybe<Scalars['String']>;
   reward_?: InputMaybe<Reward_Filter>;
   reward_contains?: InputMaybe<Scalars['String']>;
@@ -1579,7 +1573,6 @@ export enum Grant_OrderBy {
   Managers = 'managers',
   MetadataHash = 'metadataHash',
   NumberOfApplications = 'numberOfApplications',
-  PrivateReviews = 'privateReviews',
   Reward = 'reward',
   Rubric = 'rubric',
   Summary = 'summary',
@@ -4270,6 +4263,13 @@ export type GetGrantDetailsQueryVariables = Exact<{
 
 export type GetGrantDetailsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, deadline?: string | null, funding: string, acceptingApplications: boolean, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, isPii: boolean }>, reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null }> }, rubric?: { __typename?: 'Rubric', isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }> };
 
+export type GetGrantManagersWithPublicKeyQueryVariables = Exact<{
+  grantID: Scalars['String'];
+}>;
+
+
+export type GetGrantManagersWithPublicKeyQuery = { __typename?: 'Query', grantManagers: Array<{ __typename?: 'GrantManager', member?: { __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null } | null }> };
+
 export type GetGrantsAppliedToQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
@@ -4346,13 +4346,6 @@ export type GetNumberOfGrantsQueryVariables = Exact<{
 
 export type GetNumberOfGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string }> };
 
-export type GetTxHashesOfGrantManagersQueryVariables = Exact<{
-  grantId: Scalars['String'];
-}>;
-
-
-export type GetTxHashesOfGrantManagersQuery = { __typename?: 'Query', grantManagers: Array<{ __typename?: 'GrantManager', member?: { __typename?: 'WorkspaceMember', actorId: string, lastKnownTxHash: string } | null }> };
-
 export type GetWorkspaceDetailsQueryVariables = Exact<{
   workspaceID: Scalars['ID'];
 }>;
@@ -4383,6 +4376,13 @@ export type GetWorkspaceMembersByWorkspaceIdQueryVariables = Exact<{
 
 
 export type GetWorkspaceMembersByWorkspaceIdQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, addedAt: number }> };
+
+export type GetWorkspaceMembersPublicKeysQueryVariables = Exact<{
+  workspaceId: Scalars['String'];
+}>;
+
+
+export type GetWorkspaceMembersPublicKeysQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null }> };
 
 
 export const GetAllGrantsDocument = gql`
@@ -5911,6 +5911,44 @@ export function useGetGrantDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetGrantDetailsQueryHookResult = ReturnType<typeof useGetGrantDetailsQuery>;
 export type GetGrantDetailsLazyQueryHookResult = ReturnType<typeof useGetGrantDetailsLazyQuery>;
 export type GetGrantDetailsQueryResult = Apollo.QueryResult<GetGrantDetailsQuery, GetGrantDetailsQueryVariables>;
+export const GetGrantManagersWithPublicKeyDocument = gql`
+    query getGrantManagersWithPublicKey($grantID: String!) {
+  grantManagers(where: {grant: $grantID}) {
+    member {
+      actorId
+      publicKey
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetGrantManagersWithPublicKeyQuery__
+ *
+ * To run a query within a React component, call `useGetGrantManagersWithPublicKeyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGrantManagersWithPublicKeyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGrantManagersWithPublicKeyQuery({
+ *   variables: {
+ *      grantID: // value for 'grantID'
+ *   },
+ * });
+ */
+export function useGetGrantManagersWithPublicKeyQuery(baseOptions: Apollo.QueryHookOptions<GetGrantManagersWithPublicKeyQuery, GetGrantManagersWithPublicKeyQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetGrantManagersWithPublicKeyQuery, GetGrantManagersWithPublicKeyQueryVariables>(GetGrantManagersWithPublicKeyDocument, options);
+      }
+export function useGetGrantManagersWithPublicKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetGrantManagersWithPublicKeyQuery, GetGrantManagersWithPublicKeyQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetGrantManagersWithPublicKeyQuery, GetGrantManagersWithPublicKeyQueryVariables>(GetGrantManagersWithPublicKeyDocument, options);
+        }
+export type GetGrantManagersWithPublicKeyQueryHookResult = ReturnType<typeof useGetGrantManagersWithPublicKeyQuery>;
+export type GetGrantManagersWithPublicKeyLazyQueryHookResult = ReturnType<typeof useGetGrantManagersWithPublicKeyLazyQuery>;
+export type GetGrantManagersWithPublicKeyQueryResult = Apollo.QueryResult<GetGrantManagersWithPublicKeyQuery, GetGrantManagersWithPublicKeyQueryVariables>;
 export const GetGrantsAppliedToDocument = gql`
     query getGrantsAppliedTo($first: Int, $skip: Int, $applicantID: Bytes!) {
   grantApplications(
@@ -6400,44 +6438,6 @@ export function useGetNumberOfGrantsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetNumberOfGrantsQueryHookResult = ReturnType<typeof useGetNumberOfGrantsQuery>;
 export type GetNumberOfGrantsLazyQueryHookResult = ReturnType<typeof useGetNumberOfGrantsLazyQuery>;
 export type GetNumberOfGrantsQueryResult = Apollo.QueryResult<GetNumberOfGrantsQuery, GetNumberOfGrantsQueryVariables>;
-export const GetTxHashesOfGrantManagersDocument = gql`
-    query getTxHashesOfGrantManagers($grantId: String!) {
-  grantManagers(where: {grant: $grantId}) {
-    member {
-      actorId
-      lastKnownTxHash
-    }
-  }
-}
-    `;
-
-/**
- * __useGetTxHashesOfGrantManagersQuery__
- *
- * To run a query within a React component, call `useGetTxHashesOfGrantManagersQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetTxHashesOfGrantManagersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetTxHashesOfGrantManagersQuery({
- *   variables: {
- *      grantId: // value for 'grantId'
- *   },
- * });
- */
-export function useGetTxHashesOfGrantManagersQuery(baseOptions: Apollo.QueryHookOptions<GetTxHashesOfGrantManagersQuery, GetTxHashesOfGrantManagersQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTxHashesOfGrantManagersQuery, GetTxHashesOfGrantManagersQueryVariables>(GetTxHashesOfGrantManagersDocument, options);
-      }
-export function useGetTxHashesOfGrantManagersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTxHashesOfGrantManagersQuery, GetTxHashesOfGrantManagersQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTxHashesOfGrantManagersQuery, GetTxHashesOfGrantManagersQueryVariables>(GetTxHashesOfGrantManagersDocument, options);
-        }
-export type GetTxHashesOfGrantManagersQueryHookResult = ReturnType<typeof useGetTxHashesOfGrantManagersQuery>;
-export type GetTxHashesOfGrantManagersLazyQueryHookResult = ReturnType<typeof useGetTxHashesOfGrantManagersLazyQuery>;
-export type GetTxHashesOfGrantManagersQueryResult = Apollo.QueryResult<GetTxHashesOfGrantManagersQuery, GetTxHashesOfGrantManagersQueryVariables>;
 export const GetWorkspaceDetailsDocument = gql`
     query getWorkspaceDetails($workspaceID: ID!) {
   workspace(id: $workspaceID, subgraphError: allow) {
@@ -6656,3 +6656,39 @@ export function useGetWorkspaceMembersByWorkspaceIdLazyQuery(baseOptions?: Apoll
 export type GetWorkspaceMembersByWorkspaceIdQueryHookResult = ReturnType<typeof useGetWorkspaceMembersByWorkspaceIdQuery>;
 export type GetWorkspaceMembersByWorkspaceIdLazyQueryHookResult = ReturnType<typeof useGetWorkspaceMembersByWorkspaceIdLazyQuery>;
 export type GetWorkspaceMembersByWorkspaceIdQueryResult = Apollo.QueryResult<GetWorkspaceMembersByWorkspaceIdQuery, GetWorkspaceMembersByWorkspaceIdQueryVariables>;
+export const GetWorkspaceMembersPublicKeysDocument = gql`
+    query getWorkspaceMembersPublicKeys($workspaceId: String!) {
+  workspaceMembers(where: {workspace: $workspaceId}) {
+    actorId
+    publicKey
+  }
+}
+    `;
+
+/**
+ * __useGetWorkspaceMembersPublicKeysQuery__
+ *
+ * To run a query within a React component, call `useGetWorkspaceMembersPublicKeysQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWorkspaceMembersPublicKeysQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetWorkspaceMembersPublicKeysQuery({
+ *   variables: {
+ *      workspaceId: // value for 'workspaceId'
+ *   },
+ * });
+ */
+export function useGetWorkspaceMembersPublicKeysQuery(baseOptions: Apollo.QueryHookOptions<GetWorkspaceMembersPublicKeysQuery, GetWorkspaceMembersPublicKeysQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetWorkspaceMembersPublicKeysQuery, GetWorkspaceMembersPublicKeysQueryVariables>(GetWorkspaceMembersPublicKeysDocument, options);
+      }
+export function useGetWorkspaceMembersPublicKeysLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetWorkspaceMembersPublicKeysQuery, GetWorkspaceMembersPublicKeysQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetWorkspaceMembersPublicKeysQuery, GetWorkspaceMembersPublicKeysQueryVariables>(GetWorkspaceMembersPublicKeysDocument, options);
+        }
+export type GetWorkspaceMembersPublicKeysQueryHookResult = ReturnType<typeof useGetWorkspaceMembersPublicKeysQuery>;
+export type GetWorkspaceMembersPublicKeysLazyQueryHookResult = ReturnType<typeof useGetWorkspaceMembersPublicKeysLazyQuery>;
+export type GetWorkspaceMembersPublicKeysQueryResult = Apollo.QueryResult<GetWorkspaceMembersPublicKeysQuery, GetWorkspaceMembersPublicKeysQueryVariables>;

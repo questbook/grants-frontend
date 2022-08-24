@@ -194,6 +194,7 @@ const OnboardingCreateDomain = () => {
 				about: '',
 				logoIpfsHash: uploadedImageHash,
 				creatorId: accountDataWebwallet!.address!,
+				creatorPublicKey: webwallet?.publicKey,
 				socials: [],
 				supportedNetworks: [
 					getSupportedValidatorNetworkFromChainId(network),

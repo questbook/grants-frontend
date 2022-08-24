@@ -1,62 +1,14 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { BaseProvider } from '@ethersproject/providers'
 import { ec as EC } from 'elliptic'
 import { Wallet } from 'ethers'
 import { arrayify, joinSignature, keccak256, recoverPublicKey, resolveProperties, serializeTransaction } from 'ethers/lib/utils'
-import { ApiClientsContext, WebwalletContext } from 'pages/_app'
-import { useGetTxHashesOfGrantManagersQuery } from 'src/generated/graphql'
+import { ApiClientsContext } from 'pages/_app'
+import { useGetGrantManagersWithPublicKeyQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
-import { useProvider } from 'wagmi'
 
 const ec = new EC('secp256k1')
-
-export function useSecureChannelFromTxHash(
-	txHash: string | undefined,
-	chainId: SupportedChainId
-) {
-	const provider = useProvider({ chainId })
-	const { webwallet } = useContext(WebwalletContext)!
-	const [data, setData] = useState<any>()
-	const [error, setError] = useState<Error>()
-
-	useEffect(() => {
-		// cannot get secure channel without these
-		if(!webwallet || !txHash) {
-			return
-		}
-
-		let disposed = false;
-		(async() => {
-			try {
-				const data = await getSecureChannelFromTxHash(
-					provider,
-					webwallet,
-					txHash
-				)
-
-				if(!disposed) {
-					setData(data)
-					setError(undefined)
-				}
-			} catch(error: any) {
-				console.log(`error in fetching pub key: ${error}`)
-				if(!disposed) {
-					setError(error)
-				}
-			}
-		})()
-
-		return () => {
-			disposed = true
-		}
-	}, [txHash, chainId, webwallet, setData, setError])
-
-	return {
-		data,
-		error
-	}
-}
 
 /**
  * Generates a secure channel between the current wallet and another wallet B
@@ -71,13 +23,30 @@ export async function getSecureChannelFromTxHash(
 	txHash: string,
 	extraInfo?: string
 ) {
-	const encoder = new TextEncoder()
-	const decoder = new TextDecoder()
 	// first we fetch the tx details from the hash
 	// and derive the public key
 	const tx = await provider.getTransaction(txHash!)
 	const publicKey = await getPublicKeyFromTx(tx)
-	// second we use our private key & wallet B's public key
+
+	return getSecureChannelFromPublicKey(webwallet, publicKey, extraInfo)
+}
+
+
+/**
+ * Generates a secure channel between the current wallet and another wallet B
+ * @param provider provider to interact with RPC
+ * @param webwallet our webwallet (private key is a must)
+ * @param publicKey public key of wallet B
+ * @returns utilities to securely encrypt/decrypt info with wallet B
+ */
+export async function getSecureChannelFromPublicKey(
+	webwallet: Wallet,
+	publicKey: string,
+	extraInfo?: string
+) {
+	const encoder = new TextEncoder()
+	const decoder = new TextDecoder()
+	// we use our private key & wallet B's public key
 	// to perform ECDH & generate a shared key
 	const keyPair = ec.keyFromPrivate(webwallet.privateKey)
 	const pubKey = ec.keyFromPublic(publicKey)
@@ -93,6 +62,9 @@ export async function getSecureChannelFromTxHash(
 	// generate subtlecrypto key from raw bytes
 	const subtle = window.crypto.subtle
 	const subtleKey = await subtle.importKey('raw', sharedAesKey, 'aes-cbc', false, ['encrypt', 'decrypt'])
+
+	console.log('other pub key', publicKey)
+	console.log('my pub key', arrayify(webwallet.publicKey))
 
 	return {
 		/**
@@ -131,11 +103,11 @@ export async function getSecureChannelFromTxHash(
  * @param chainId the chain to fetch on
  * @returns map of wallet address to tx hash
  */
-export function useGetTxHashesOfGrantManagers(grantId: string | undefined, chainId: SupportedChainId) {
+export function useGetPublicKeysOfGrantManagers(grantId: string | undefined, chainId: SupportedChainId) {
 	const { subgraphClients } = useContext(ApiClientsContext)!
 	const { client } = subgraphClients[chainId]
 
-	const { fetchMore } = useGetTxHashesOfGrantManagersQuery({
+	const { fetchMore } = useGetGrantManagersWithPublicKeyQuery({
 		client,
 		skip: true,
 	})
@@ -143,12 +115,12 @@ export function useGetTxHashesOfGrantManagers(grantId: string | undefined, chain
 	return {
 		async fetch() {
 			const { data } = await fetchMore({
-				variables: { grantId: grantId || '' }
+				variables: { grantID: grantId || '' }
 			})
-			const result: { [address: string]: string } = { }
+			const result: { [address: string]: string | null } = { }
 			for(const { member } of (data?.grantManagers || [])) {
 				if(member) {
-					result[member.actorId] = member.lastKnownTxHash
+					result[member.actorId] = member.publicKey || null
 				}
 			}
 
@@ -161,6 +133,7 @@ export function useGetTxHashesOfGrantManagers(grantId: string | undefined, chain
  * retreives the public key from a transaction
  * from: https://ethereum.stackexchange.com/questions/78815/ethers-js-recover-public-key-from-contract-deployment-via-v-r-s-values
  * @param tx the transaction object
+ * @returns the public key hex
  */
 async function getPublicKeyFromTx(tx: TransactionResponse) {
 	const expandedSig = {
@@ -184,7 +157,7 @@ async function getPublicKeyFromTx(tx: TransactionResponse) {
 	const msgBytes = arrayify(msgHash) // create binary hash
 	const recoveredPubKey = recoverPublicKey(msgBytes, signature)
 
-	return arrayify(recoveredPubKey)
+	return recoveredPubKey
 }
 
 /** key of an application; can pass as "extraInfo" when generating shared key */

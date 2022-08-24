@@ -1,0 +1,6 @@
+query getWorkspaceMembersPublicKeys($workspaceId: String!) {
+    workspaceMembers(where: { workspace: $workspaceId }) {
+        actorId
+		publicKey
+    }
+}

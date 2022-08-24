@@ -20,9 +20,7 @@ import useChainId from './utils/useChainId'
 export default function useCreateWorkspace(
 	data: any
 ) {
-
-	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
-
+	const { webwallet } = useContext(WebwalletContext)!
 
 	const [error, setError] = React.useState<string>()
 	const [loading, setLoading] = React.useState(false)
@@ -82,6 +80,7 @@ export default function useCreateWorkspace(
 				about: data.about,
 				logoIpfsHash: uploadedImageHash,
 				creatorId: accountData?.address!,
+				creatorPublicKey: webwallet?.publicKey,
 				socials: [],
 				partners: [],
 				supportedNetworks: [getSupportedValidatorNetworkFromChainId(data.network)],

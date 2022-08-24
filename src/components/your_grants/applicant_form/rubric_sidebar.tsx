@@ -1,58 +1,77 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import StarRatings from 'react-star-ratings'
 import {
 	Box, Button, Divider,
 	Drawer, DrawerContent, DrawerOverlay, Flex, Image, Link, Text, } from '@chakra-ui/react'
+import { ApiClientsContext } from 'pages/_app'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import Loader from 'src/components/ui/loader'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import { defaultChainId } from 'src/constants/chains'
+import { GetApplicationDetailsQuery } from 'src/generated/graphql'
 import useEncryption from 'src/hooks/utils/useEncryption'
+import { IReviewFeedback } from 'src/types'
 import { truncateStringFromMiddle } from 'src/utils/formattingUtils'
-import { getFromIPFS } from 'src/utils/ipfsUtils'
-
+import { useLoadReview } from 'src/utils/reviews'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 interface RubricSidebarProps {
-  total: number;
-  rubric: any;
-  reviews: any[]
+  total: number
+  applicationData: GetApplicationDetailsQuery['grantApplication']
+}
+
+type RubricResult = {
+	title: string
+	maximumPoints: number
+	rating: number
+	total: number
 }
 
 function RubricSidebar({
 	total,
-	rubric,
-	reviews,
+	applicationData
 }: RubricSidebarProps) {
+	const { workspace } = useContext(ApiClientsContext)!
+	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+
 	const { decryptMessage } = useEncryption()
-	const [loading, setLoading] = React.useState(false)
-	const [detailedReviews, setDetailedReviews] = React.useState<any[]>([])
-	const [aggregatedResults, setAggregatedResults] = React.useState<any>()
-	const [isDecrypted, setIsDecrypted] = React.useState(false)
-	const [detailDrawerOpen, setDetailDrawerOpen] = React.useState(false)
-	const [reviewerDrawerOpen, setReviewerDrawerOpen] = React.useState(false)
-	const [reviewSelected, setReviewSelected] = React.useState<any>()
-	const [reviewerSelected, setReviewerSelected] = React.useState<any>()
+	const [loading, setLoading] = useState(false)
+	const [detailedReviews, setDetailedReviews] = useState<any[]>([])
+	const [aggregatedResults, setAggregatedResults] = useState<any>()
+	const [isDecrypted, setIsDecrypted] = useState(false)
+	const [detailDrawerOpen, setDetailDrawerOpen] = useState(false)
+	const [reviewerDrawerOpen, setReviewerDrawerOpen] = useState(false)
+	const [reviewSelected, setReviewSelected] = useState<any>()
+	const [reviewerSelected, setReviewerSelected] = useState<any>()
 
-	const [forPercentage, setForPercentage] = React.useState<number>(0)
-	const [againstPercentage, setAgainstPercentage] = React.useState<number>(0)
+	const [forPercentage, setForPercentage] = useState<number>(0)
+	const [againstPercentage, setAgainstPercentage] = useState<number>(0)
 
-	const { data: accountData, nonce } = useQuestbookAccount()
+	const { grant, reviews } = applicationData || { }
+	const rubric = grant?.rubric
+	const { loadReview } = useLoadReview(grant?.id, chainId)
 
 	const decodeReviews = async() => {
 		setLoading(true)
-		const publicDataPromises = reviews?.map(async(review) => {
-			const reviewData = getFromIPFS(review.publicReviewDataHash)
-			return reviewData
-		})
-		if(!publicDataPromises) {
-			return
-		}
 
-		const publicData = (await Promise.all(publicDataPromises)).map((data) => JSON.parse(data || '{}'))
-		console.log(publicData)
-		setDetailedReviews(publicData)
+		const feedbacks: IReviewFeedback[] = []
+		await Promise.all(
+			reviews!.map(
+				async review => {
+					try {
+						const reviewData = await loadReview(review, applicationData!.id)
+						feedbacks.push(reviewData)
+					} catch(error) {
+						console.error(`failed to load review from "${review.reviewer!}"`, error)
+						// do nothing for now
+					}
+				}
+			)
+		)
 
-		const results = [] as any
-		rubric.items.forEach((item: any) => {
+		setDetailedReviews(feedbacks)
+
+		const results: { [id: string]: RubricResult } = { }
+		rubric!.items.forEach((item) => {
 			results[item.id] = {
 				title: item.title,
 				maximumPoints: item.maximumPoints,
@@ -62,7 +81,7 @@ function RubricSidebar({
 		})
 
 		let forCount = 0
-		publicData.forEach((review: any) => {
+		feedbacks.forEach((review) => {
 			if(review.isApproved) {
 				forCount += 1
 			}
@@ -73,79 +92,16 @@ function RubricSidebar({
 			})
 		})
 
-		// eslint-disable-next-line @typescript-eslint/no-shadow
-		const forPercentage = Math.ceil((forCount / publicData.length) * 100)
-		// eslint-disable-next-line @typescript-eslint/no-shadow
+		const forPercentage = Math.ceil((forCount / feedbacks.length) * 100)
 		const againstPercentage = 100 - forPercentage
 
-		if(publicData.length > 0) {
+		if(feedbacks.length) {
 			setForPercentage(forPercentage)
 			setAgainstPercentage(againstPercentage)
 		}
 
-		console.log(results)
 		setAggregatedResults(results)
 		setLoading(false)
-	}
-
-	const getEncrpytedData = async() => {
-		setLoading(true)
-		console.log(reviews)
-		const privateDataPromises = reviews?.map((review) => {
-			const decryptableData = review.data.filter((data: any) => data.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase())
-			return decryptableData.length > 0 ? decryptableData[0] : undefined
-		}).flat().filter((review) => review !== undefined).map(async(review) => {
-			const reviewData = getFromIPFS(review.data)
-			return reviewData
-		})
-		if(!privateDataPromises) {
-			return
-		}
-
-		// console.log(privateDataPromises);
-		// const privateData = await Promise.all((await Promise.all(privateDataPromises))
-		//   .map(async (data) => JSON.parse(await decryptMessage(data) || '{}')));
-
-		const privateData = await Promise.all(privateDataPromises)
-		const privateDecryptedData = await Promise.all(privateData.map(async(data) => JSON.parse(await decryptMessage(data) || '{}')))
-
-		setDetailedReviews(privateDecryptedData)
-		const results = [] as any
-		rubric.items.forEach((item: any) => {
-			results[item.id] = {
-				title: item.title,
-				maximumPoints: item.maximumPoints,
-				rating: 0,
-				total: 0,
-			}
-		})
-
-		let forCount = 0
-		privateDecryptedData.forEach((review: any) => {
-			if(review.isApproved) {
-				forCount += 1
-			}
-
-			review.items.forEach((item: any) => {
-				results[item.rubric.id].rating += item.rating
-				results[item.rubric.id].total += 1
-			})
-		})
-
-		// eslint-disable-next-line @typescript-eslint/no-shadow
-		const forPercentage = Math.ceil((forCount / privateDecryptedData.length) * 100)
-		// eslint-disable-next-line @typescript-eslint/no-shadow
-		const againstPercentage = 100 - forPercentage
-
-		if(privateDecryptedData.length > 0) {
-			setForPercentage(forPercentage)
-			setAgainstPercentage(againstPercentage)
-		}
-
-		// console.log(results);
-		setAggregatedResults(results)
-		setLoading(false)
-		setIsDecrypted(true)
 	}
 
 	useEffect(() => {
@@ -153,10 +109,7 @@ function RubricSidebar({
 			return
 		}
 
-		if(!rubric.isPrivate) {
-			decodeReviews()
-		}
-
+		decodeReviews()
 	}, [reviews, rubric])
 
 	const motion = [
@@ -174,7 +127,7 @@ function RubricSidebar({
 		},
 	]
 
-	if(!reviews || reviews.length === 0) {
+	if(!reviews?.length) {
 		return null
 	}
 
@@ -196,54 +149,11 @@ function RubricSidebar({
 					<Text
 						variant="tableHeader"
 						color="#122224">
-            Application Review
+            			Application Review
 					</Text>
 				</Flex>
 
 				<Loader />
-			</Flex>
-		)
-	}
-
-	if(rubric?.isPrivate && !isDecrypted) {
-		return (
-			<Flex
-				bg="white"
-				border="2px solid #D0D3D3"
-				borderRadius={8}
-				w={340}
-				direction="column"
-				alignItems="stretch"
-				px="28px"
-				py="22px"
-			>
-				<Flex
-					direction="row"
-					justify="space-between">
-					<Text
-						variant="tableHeader"
-						color="#122224">
-            Application Review
-					</Text>
-				</Flex>
-
-				{
-					loading ? (
-						<>
-							<Box mt={5} />
-							<Loader />
-						</>
-					) : (
-						<Link
-							onClick={() => getEncrpytedData()}
-							mt={5}
-							fontSize="14px"
-							lineHeight="24px"
-							fontWeight="500">
-            Decrypt reviews to see the results
-						</Link>
-					)
-				}
 			</Flex>
 		)
 	}
@@ -266,7 +176,7 @@ function RubricSidebar({
 					<Text
 						variant="tableHeader"
 						color="#122224">
-            Application Review
+            			Application Review
 					</Text>
 				</Flex>
 				<Flex
@@ -277,18 +187,17 @@ function RubricSidebar({
 						mr="auto"
 						variant="applicationText">
 						{detailedReviews.length}
-            /
+           				/
 						{total}
 						{' '}
-            Reviews Submitted
+            			Reviews Submitted
 					</Text>
 
 					<Text fontSize="12px">
-            (
+            			(
 						{total - detailedReviews.length}
 						{' '}
-            waiting)
-
+           				waiting)
 					</Text>
 				</Flex>
 

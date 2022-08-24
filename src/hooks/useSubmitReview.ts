@@ -3,21 +3,17 @@ import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { defaultChainId, SupportedChainId } from 'src/constants/chains'
+import { useGetInitialReviewedApplicationGrantsQuery } from 'src/generated/graphql'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
-import { uploadToIPFS } from 'src/utils/ipfsUtils'
-import { getKeyForApplication, getSecureChannelFromTxHash, useGetTxHashesOfGrantManagers } from 'src/utils/pii'
+import { useGenerateReviewData } from 'src/utils/reviews'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useProvider } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import { FeedbackType } from '../components/your_grants/feedbackDrawer'
-import {
-	useGetInitialReviewedApplicationGrantsQuery,
-} from '../generated/graphql'
 import { delay } from '../utils/generics'
 import useQBContract from './contracts/useQBContract'
 import { useBiconomy } from './gasless/useBiconomy'
@@ -47,10 +43,14 @@ export default function useSubmitReview(
 	}
 
 	const { client } = subgraphClients[chainId]
-	const provider = useProvider({ chainId })
-	const { fetch: fetchTxHashes } = useGetTxHashesOfGrantManagers(grantAddress, chainId)
 
 	const { fetchMore: fetchReviews } = useGetInitialReviewedApplicationGrantsQuery({ client })
+	const { generateReviewData } = useGenerateReviewData({
+		grantId: grantAddress!,
+		applicationId: applicationId!,
+		isPrivate,
+		chainId,
+	})
 
 	const applicationReviewContract = useQBContract('reviews', chainId)
 
@@ -99,51 +99,8 @@ export default function useSubmitReview(
 					throw new Error('Zero wallet is not ready')
 				}
 
-				const jsonReview = JSON.stringify(data)
-				const encryptedReview: { [key in string]: string } = {}
-				let dataHash: string | undefined
-				if(isPrivate) {
-					const grantManagerTxMap = await fetchTxHashes()
-					const managers = Object.keys(grantManagerTxMap)
-					if(!managers.length) {
-						throw new Error('No grant managers on the grant. Please contact support')
-					}
-
-					console.log(`encrypting review for ${managers.length} admins...`)
-
-					// we go through all wallet addresses
-					// and upload the private review for each
-					await Promise.all(
-						managers.map(
-							async walletAddress => {
-								const { encrypt } = await getSecureChannelFromTxHash(
-									provider,
-									webwallet!,
-									grantManagerTxMap[walletAddress],
-									getKeyForApplication(applicationId!)
-								)
-								const enc = await encrypt(jsonReview)
-								console.log(`encrypted review for ${walletAddress}`)
-
-								const encHash = (await uploadToIPFS(enc)).hash
-								console.log(`uploaded encrypted review for ${walletAddress} to ${encHash}`)
-
-								encryptedReview[walletAddress] = encHash
-							}
-						)
-					)
-
-					console.log('generated encrypted reviews')
-				} else {
-					dataHash = (await uploadToIPFS(jsonReview)).hash
-				}
-
-				const {
-					data: { ipfsHash },
-				} = await validatorApi.validateReviewSet({
-					reviewer: accountData?.address!,
-					publicReviewDataHash: dataHash,
-					encryptedReview,
+				const { ipfsHash } = await generateReviewData({
+					items: data.items!
 				})
 
 				setCurrentStep(1)

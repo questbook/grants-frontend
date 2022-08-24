@@ -122,6 +122,7 @@ const OnboardingCreateDao = () => {
 				about: '',
 				logoIpfsHash: uploadedImageHash,
 				creatorId: accountData!.address,
+				creatorPublicKey: webwallet?.publicKey,
 				socials: [],
 				supportedNetworks: [
 					getSupportedValidatorNetworkFromChainId(daoNetwork!.id),

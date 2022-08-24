@@ -134,12 +134,13 @@ export const useMakeInvite = (role: number) => {
 				bicoDapps[chainId.toString()].webHookId,
 				nonce
 			)
+
+			didSign?.()
+
 			if(response) {
 				const { txFee } = await getTransactionDetails(response, chainId.toString())
 				await chargeGas(workspaceId, Number(txFee))
 			}
-
-			didSign?.()
 
 			const inviteInfo: InviteInfo = {
 				workspaceId,
@@ -226,7 +227,10 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 
 			const {
 				data: { ipfsHash }
-			} = await validatorApi.validateWorkspaceMemberUpdate(profileInfo)
+			} = await validatorApi.validateWorkspaceMemberUpdate({
+				...profileInfo,
+				publicKey: webwallet?.publicKey
+			})
 
 			didReachStep?.('ipfs-uploaded')
 

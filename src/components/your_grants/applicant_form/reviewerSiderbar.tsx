@@ -7,21 +7,17 @@ import {
 	HStack,
 	Text, useToast,
 } from '@chakra-ui/react'
-import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { ApiClientsContext } from 'pages/_app'
 import { Fragment } from 'preact'
 import Loader from 'src/components/ui/loader'
 import { defaultChainId } from 'src/constants/chains'
-import { getFromIPFS } from 'src/utils/ipfsUtils'
-import { getKeyForApplication, getSecureChannelFromTxHash, useGetTxHashesOfGrantManagers } from 'src/utils/pii'
+import { useLoadReview } from 'src/utils/reviews'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useProvider } from 'wagmi'
 import { GetApplicationDetailsQuery } from '../../../generated/graphql'
 import { useQuestbookAccount } from '../../../hooks/gasless/useQuestbookAccount'
 import FeedbackDrawer, { FeedbackType } from '../feedbackDrawer'
-
-type IReview = Exclude<Exclude<GetApplicationDetailsQuery['grantApplication'], null>, undefined>['reviews'][0];
 
 type ReviewerSidebarProps = {
 	applicationData: GetApplicationDetailsQuery['grantApplication']
@@ -31,8 +27,6 @@ function ReviewerSidebar({ applicationData }: ReviewerSidebarProps) {
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 	const { data: accountData } = useQuestbookAccount()
-	const provider = useProvider({ chainId })
-	const { webwallet } = useContext(WebwalletContext)!
 
 	const [feedbackDrawerOpen, setFeedbackDrawerOpen] = useState(false)
 	const [reviewSelected, setReviewSelected] = useState<{ items: FeedbackType[] }>()
@@ -41,7 +35,7 @@ function ReviewerSidebar({ applicationData }: ReviewerSidebarProps) {
 	const isPrivate = !!applicationData?.grant.rubric?.isPrivate
 	const grantId = applicationData?.grant.id
 
-	const { fetch: fetchTxHashes } = useGetTxHashesOfGrantManagers(grantId, chainId)
+	const { loadReview } = useLoadReview(grantId, chainId)
 
 	const yourReview = useMemo(() => {
 		return applicationData?.reviews.find((r) => (
@@ -50,55 +44,6 @@ function ReviewerSidebar({ applicationData }: ReviewerSidebarProps) {
 	}, [applicationData])
 
 	const toast = useToast()
-
-	const loadReview = async(yourReview: IReview) => {
-		if(!yourReview) {
-			return
-		}
-
-		let data: typeof reviewSelected
-
-		if(isPrivate) {
-			// load the grant manager tx map
-			const grantManagerTxHashMap = await fetchTxHashes()
-			// find some review that we have a shared key with
-			const reviewDataList = yourReview?.data.map(d => {
-				const walletAddress = d.id.split('.').pop()
-				const txHash = grantManagerTxHashMap[walletAddress!]
-				if(txHash) {
-					return {
-						walletAddress,
-						dataIpfsHash: d.data,
-						txHash
-					}
-				}
-			})
-			const reviewData = reviewDataList.find(d => !!d)
-			if(!reviewData) {
-				throw new Error('No shared key present!')
-			}
-
-			console.log(`decrypting "${yourReview.id}" using "${reviewData.walletAddress}" shared key`)
-
-			const ipfsData = await getFromIPFS(reviewData!.dataIpfsHash)
-			const { decrypt } = await getSecureChannelFromTxHash(
-				provider,
-				webwallet!,
-				reviewData.txHash,
-				getKeyForApplication(applicationData.id)
-			)
-
-			console.log(`prepared secure channel for decryption with "${reviewData!.walletAddress}"`)
-
-			const jsonReview = await decrypt(ipfsData)
-			data = JSON.parse(jsonReview)
-		} else {
-			const ipfsData = await getFromIPFS(yourReview!.publicReviewDataHash!)
-			data = JSON.parse(ipfsData || '{}')
-		}
-
-		setReviewSelected(data)
-	}
 
 	useEffect(() => {
 		if(!applicationData) {
@@ -110,8 +55,12 @@ function ReviewerSidebar({ applicationData }: ReviewerSidebarProps) {
 		}
 
 		if(yourReview) {
-			loadReview(yourReview)
-				.catch(err => setReviewLoadError(err))
+			loadReview(yourReview, applicationData!.id)
+				.then(setReviewSelected)
+				.catch(err => {
+					console.error('error in loading review ', err)
+					setReviewLoadError(err)
+				})
 		}
 
 	}, [applicationData, accountData])
@@ -152,8 +101,21 @@ function ReviewerSidebar({ applicationData }: ReviewerSidebarProps) {
 				<Divider />
 				<Box h={2} />
 				{
-					!reviewSelected && (
+					// loading if review is not there
+					// and there's no error
+					!reviewSelected && !reviewLoadError && (
 						<Loader />
+					)
+				}
+				{
+					!!reviewLoadError && (
+						<Text color='red'>
+							There was an error in loading your review:
+							<br />
+							<b>
+								{reviewLoadError.message}
+							</b>
+						</Text>
 					)
 				}
 				{
