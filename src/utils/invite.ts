@@ -229,7 +229,8 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 			const {
 				data: { ipfsHash }
 			} = await validatorApi.validateWorkspaceMemberUpdate({
-				...profileInfo,
+				fullName: profileInfo?.fullName,
+				profilePictureIpfsHash: profileInfo?.profilePictureIpfsHash,
 				publicKey: webwallet?.publicKey
 			})
 
