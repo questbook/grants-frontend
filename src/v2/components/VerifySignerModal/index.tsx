@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AlertDialogOverlay, Box, Flex, Image, Link, Modal, ModalBody, ModalContent, Text, useToast, VStack } from '@chakra-ui/react'
 import { NetworkType } from 'src/constants/Networks'
 import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
@@ -18,15 +18,18 @@ const VerifySignerModal = ({
 	redirect,
 	setIsOwner,
 	networkType,
+	setOwnerAddress
 }: {
 	owners: string[],
 	isOpen: boolean,
 	onClose: () => void,
 	redirect?: () => void,
 	setIsOwner: (newState: boolean) => void,
-	networkType: NetworkType
+	networkType: NetworkType,
+	setOwnerAddress: (ownerAddress: string) => void
 }) => {
 	const [connectClicked, setConnectClicked] = useState(false)
+	const [walletClicked, setWalletClicked] = useState(false)
 	const [redirectInitiated, setRedirectInitiated] = useState(false)
 	const { phantomWallet, phantomWalletConnected } = usePhantomWallet()
 	const { disconnect } = useDisconnect()
@@ -90,42 +93,59 @@ const VerifySignerModal = ({
 		}
 	}, [accountData])
 
-	const showToast = useCallback(() => {
-		console.log('hzn', accountData?.address, owners)
-		if((accountData?.address && owners.includes(accountData?.address)) // gnosis
-		|| (phantomWallet?.publicKey && owners.includes(phantomWallet?.publicKey.toString()))) { // spl-gov
-			setIsOwner(true)
-			// alert('Your safe ownership is proved.')
-			toast.closeAll()
-			toast({
-				duration: 3000,
-				isClosable: true,
-				position: 'top-right',
-				render: () => SuccessToast({
-					content: 'Gotcha! You are one of the safe\'s owners.',
-					close: () => {}
-				}),
-			})
-		} else {
-			// setIsOwner(false)
-			if(accountData?.address) {
-				disconnect()
+	useEffect(() => {
+		if(isOpen && walletClicked) {
+			if(accountData?.address && owners.includes(accountData?.address)) {
+				setIsOwner(true)
+				setOwnerAddress(accountData.address)
+				// alert('Your safe ownership is proved.')
+				toast.closeAll()
+				toast({
+					duration: 3000,
+					isClosable: true,
+					position: 'top-right',
+					render: () => SuccessToast({
+						content: 'Gotcha! You are one of the safe\'s owners.',
+						close: () => { }
+					}),
+				})
+			} else if(phantomWallet?.publicKey && owners.includes(phantomWallet?.publicKey.toString())) {
+				setIsOwner(true)
+				setOwnerAddress(phantomWallet?.publicKey.toString())
+				// alert('Your safe ownership is proved.')
+				toast.closeAll()
+				toast({
+					duration: 3000,
+					isClosable: true,
+					position: 'top-right',
+					render: () => SuccessToast({
+						content: 'Gotcha! You are one of the safe\'s owners.',
+						close: () => { }
+					}),
+				})
+			} else {
+				// setIsOwner(false)
+				if(accountData?.address) {
+					disconnect()
+					phantomWallet?.disconnect()
+				}
+
+				toast.closeAll()
+				// alert('Whoops! Looks like this wallet is not a signer on the safe.')
+				toast({
+					duration: 3000,
+					isClosable: true,
+					position: 'top-right',
+					render: () => ErrorToast({
+						content: 'Whoops! Looks like this wallet is not an owner of the safe.',
+						close: () => { }
+					}),
+				})
 			}
 
-			toast.closeAll()
-			// alert('Whoops! Looks like this wallet is not a signer on the safe.')
-			toast({
-				duration: 3000,
-				isClosable: true,
-				position: 'top-right',
-				render: () => ErrorToast({
-					content: 'Whoops! Looks like this wallet is not an owner of the safe.',
-					close: () => {}
-				}),
-
-			})
+			setWalletClicked(false)
 		}
-	}, [accountData, owners, toast, phantomWallet])
+	}, [walletClicked, accountData, owners, toast, phantomWallet?.publicKey, isOpen, phantomWallet?.disconnect])
 
 	return (
 		<Modal
@@ -200,12 +220,13 @@ const VerifySignerModal = ({
 														() => {
 															const connector = connectors.find((x) => x.id === wallet.id)
 															setConnectClicked(true)
+															setWalletClicked(true)
 															if(connector) {
 																connect(connector)
 															}
 
-															showToast()
-														// onClose()
+															// showToast()
+															// onClose()
 														}
 													} />
 											))) : (solanaWallets.map((wallet, index) => (
@@ -216,8 +237,9 @@ const VerifySignerModal = ({
 												isPopular={wallet.isPopular}
 												onClick={
 													() => {
+														setWalletClicked(true)
 														phantomWallet?.connect()
-														showToast()
+														// showToast()
 													}
 												} />
 										)))
