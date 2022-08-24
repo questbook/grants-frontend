@@ -3,8 +3,9 @@ import React, {
 } from 'react'
 import {
 	Box,
-	Container, Flex, forwardRef, IconButton, IconButtonProps, Link, Menu, MenuButton, MenuItem, MenuList, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react'
-import { BigNumber } from 'ethers'
+	Container, Flex, forwardRef, IconButton, IconButtonProps, Link, Menu, MenuButton, MenuItem, MenuList, TabList, TabPanel, TabPanels, Tabs, Text
+} from '@chakra-ui/react'
+import { BigNumber, ethers } from 'ethers'
 import moment from 'moment'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
@@ -45,9 +46,11 @@ import StatsBanner from 'src/v2/payouts/StatsBanner'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
 import getProposalUrl from 'src/v2/utils/phantomUtils'
-import { useAccount } from 'wagmi'
+import { useAccount, erc20ABI } from 'wagmi'
 
 const PAGE_SIZE = 500
+const SAFE_ADDRESS = '0x7723d6CD277F0670fcB84eA8E9Efe14f1b16acBB'
+const ERC20Interface = new ethers.utils.Interface(erc20ABI)
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 	let val = BigNumber.from(0)
@@ -86,6 +89,9 @@ function ViewApplicants() {
 	const [rubricDrawerOpen, setRubricDrawerOpen] = useState(false)
 	const [viewRubricDrawerOpen, setViewRubricDrawerOpen] = useState(false)
 
+	const [rewardAssetAddress, setRewardAssetAddress] = useState('')
+	const [rewardAssetDecimals, setRewardAssetDecimals] = useState<number>()
+
 	const [sendFundsTo, setSendFundsTo] = useState<any[]>()
 
 	const [maximumPoints, setMaximumPoints] = React.useState(5)
@@ -100,7 +106,7 @@ function ViewApplicants() {
 	])
 
 	useEffect(() => {
-		if(router && router.query) {
+		if (router && router.query) {
 			const { grantId: gId } = router.query
 			setGrantID(gId)
 		}
@@ -108,16 +114,16 @@ function ViewApplicants() {
 
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
-      subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-      ].client,
+			subgraphClients[
+				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+			].client,
 	})
 
 	const [queryReviewerParams, setQueryReviewerParams] = useState<any>({
 		client:
-      subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-      ].client,
+			subgraphClients[
+				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+			].client,
 	})
 
 	const [sendFundsModalIsOpen, setSendFundsModalIsOpen] = useState(false)
@@ -125,12 +131,12 @@ function ViewApplicants() {
 	const [txnInitModalIsOpen, setTxnInitModalIsOpen] = useState(false)
 
 	useEffect(() => {
-		if(
+		if (
 			workspace
-      && workspace.members
-      && workspace.members.length > 0
-      && accountData
-      && accountData.address
+			&& workspace.members
+			&& workspace.members.length > 0
+			&& accountData
+			&& accountData.address
 		) {
 			const tempMember = workspace.members.find(
 				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
@@ -138,7 +144,7 @@ function ViewApplicants() {
 			console.log(tempMember)
 			setIsAdmin(
 				tempMember?.accessLevel === 'admin'
-        || tempMember?.accessLevel === 'owner',
+				|| tempMember?.accessLevel === 'owner',
 			)
 
 			setIsReviewer(tempMember?.accessLevel === 'reviewer')
@@ -148,20 +154,20 @@ function ViewApplicants() {
 	}, [accountData, workspace])
 
 	useEffect(() => {
-		if(!workspace) {
+		if (!workspace) {
 			return
 		}
 
-		if(!grantID) {
+		if (!grantID) {
 			return
 		}
 
 		console.log('Grant ID: ', grantID)
 		console.log('isUser: ', isUser)
-		if(isAdmin) {
+		if (isAdmin) {
 			setQueryParams({
 				client:
-          subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+					subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
 				variables: {
 					grantID,
 					first: PAGE_SIZE,
@@ -170,11 +176,11 @@ function ViewApplicants() {
 			})
 		}
 
-		if(isReviewer || isAdmin) {
+		if (isReviewer || isAdmin) {
 			console.log('reviewer', isUser)
 			setQueryReviewerParams({
 				client:
-        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+					subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
 				variables: {
 					grantID,
 					reviewerIDs: [isUser],
@@ -190,17 +196,29 @@ function ViewApplicants() {
 	const { data: grantData } = useGetGrantDetailsQuery(queryParams)
 	useEffect(() => {
 		console.log('fetch', data)
-		if(data && data.grantApplications.length) {
+		
+		if (data && data.grantApplications.length) {
+			setRewardAssetAddress(data.grantApplications[0].grant.reward.asset)
+			if(data.grantApplications[0].grant.reward.token){
+				setRewardAssetDecimals(data.grantApplications[0].grant.reward.token.decimal)
+			} else {
+				setRewardAssetDecimals(CHAIN_INFO[
+					getSupportedChainIdFromSupportedNetwork(
+						data.grantApplications[0].grant.workspace.supportedNetworks[0],
+					)
+				]?.supportedCurrencies[data.grantApplications[0].grant.reward.asset.toLowerCase()]
+					?.decimals)
+			}
 			const fetchedApplicantsData = data.grantApplications.map((applicant) => {
 				const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
 				let decimal
 				let label
 				let icon
-				if(!(grantData?.grants[0].rubric?.items.length ?? true)) {
+				if (!(grantData?.grants[0].rubric?.items.length ?? true)) {
 					setSetupRubricBannerCancelled(false)
 				}
 
-				if(grantData?.grants[0].reward.token) {
+				if (grantData?.grants[0].reward.token) {
 					decimal = grantData?.grants[0].reward.token.decimal
 					label = grantData?.grants[0].reward.token.label
 					icon = getUrlForIPFSHash(grantData?.grants[0].reward.token.iconHash)
@@ -236,10 +254,10 @@ function ViewApplicants() {
 						//   getFieldString('fundingAsk') || '0',
 						// ),
 						amount:
-						applicant && getFieldString('fundingAsk') ? formatAmount(
-							getFieldString('fundingAsk')!,
-							decimal || 18,
-						) : '1',
+							applicant && getFieldString('fundingAsk') ? formatAmount(
+								getFieldString('fundingAsk')!,
+								decimal || 18,
+							) : '1',
 						symbol: label,
 						icon,
 					},
@@ -272,16 +290,16 @@ function ViewApplicants() {
 
 	const reviewData = useGetApplicantsForAGrantReviewerQuery(queryReviewerParams)
 
-	const Reviewerstatus = (item:any) => {
+	const Reviewerstatus = (item: any) => {
 		const user = []
 		// eslint-disable-next-line no-restricted-syntax
-		for(const n in item) {
-			if(item[n].reviewer.id === isActorId) {
+		for (const n in item) {
+			if (item[n].reviewer.id === isActorId) {
 				user.push(isActorId)
 			}
 		}
 
-		if(user.length === 1) {
+		if (user.length === 1) {
 			return 9
 		}
 
@@ -289,8 +307,8 @@ function ViewApplicants() {
 	}
 
 	useEffect(() => {
-		console.log('Raw reviewer data: ', reviewData)
-		if(reviewData.data && reviewData.data.grantApplications.length) {
+		// console.log('Raw reviewer data: ', reviewData)
+		if (reviewData.data && reviewData.data.grantApplications.length) {
 			console.log('Reviewer Applications: ', reviewData.data)
 			const fetchedApplicantsData = reviewData.data.grantApplications.map((applicant) => {
 				const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
@@ -305,15 +323,15 @@ function ViewApplicants() {
 						//   getFieldString('fundingAsk') || '0',
 						// ),
 						amount:
-              applicant && getFieldString('fundingAsk') ? formatAmount(
-                getFieldString('fundingAsk')!,
-                CHAIN_INFO[
-                	getSupportedChainIdFromSupportedNetwork(
-                		applicant.grant.workspace.supportedNetworks[0],
-                	)
-                ]?.supportedCurrencies[applicant.grant.reward.asset.toLowerCase()]
-                	?.decimals || 18,
-              ) : '1',
+							applicant && getFieldString('fundingAsk') ? formatAmount(
+								getFieldString('fundingAsk')!,
+								CHAIN_INFO[
+									getSupportedChainIdFromSupportedNetwork(
+										applicant.grant.workspace.supportedNetworks[0],
+									)
+								]?.supportedCurrencies[applicant.grant.reward.asset.toLowerCase()]
+									?.decimals || 18,
+							) : '1',
 						symbol: getAssetInfo(
 							applicant?.grant?.reward?.asset?.toLowerCase(),
 							getSupportedChainIdFromWorkspace(workspace),
@@ -343,7 +361,7 @@ function ViewApplicants() {
 		console.log('grantData', grantData)
 		const initialRubrics = grantData?.grants[0]?.rubric
 		const newRubrics = [] as any[]
-		console.log('initialRubrics', initialRubrics)
+		// console.log('initialRubrics', initialRubrics)
 		initialRubrics?.items.forEach((initalRubric) => {
 			newRubrics.push({
 				name: initalRubric.title,
@@ -352,12 +370,12 @@ function ViewApplicants() {
 				descriptionError: false,
 			})
 		})
-		if(newRubrics.length === 0) {
+		if (newRubrics.length === 0) {
 			return
 		}
 
 		setRubrics(newRubrics)
-		if(initialRubrics?.items[0].maximumPoints) {
+		if (initialRubrics?.items[0].maximumPoints) {
 			setMaximumPoints(initialRubrics.items[0].maximumPoints)
 		}
 	}, [grantData])
@@ -367,8 +385,8 @@ function ViewApplicants() {
 	}, [workspace, accountData, daoId])
 
 	const [isAcceptingApplications, setIsAcceptingApplications] = React.useState<
-  [boolean, number]
-  >([acceptingApplications, 0])
+		[boolean, number]
+	>([acceptingApplications, 0])
 
 	useEffect(() => {
 		setIsAcceptingApplications([acceptingApplications, 0])
@@ -385,7 +403,7 @@ function ViewApplicants() {
 	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		// console.log(transactionData);
-		if(transactionData) {
+		if (transactionData) {
 			setIsModalOpen(false)
 			setRefresh(true)
 		}
@@ -409,19 +427,22 @@ function ViewApplicants() {
 		phantomWalletConnected,
 		setPhantomWalletConnected } = usePhantomWallet()
 
-	const [signerVerified, setSignerVerififed] = useState(false)
+	const [signerVerified, setSignerVerififed] = useState(true)
 	const [proposalAddr, setProposalAddr] = useState('')
 
 	const [initiateTransactionData, setInitiateTransactionData] = useState([])
+	const [gnosisBatchData, setGnosisBatchData] = useState<any>([])
+	const [gnosisReadyToExecuteTxns, setGnosisReadyToExecuteTxns] = useState<any>([])
 
 	const supported_safes = new SupportedSafes()
-	const chainId = 9000001 // get your safe chain ID, currently on solana
+	// const chainId = 9000001 // get your safe chain ID, currently on solana
+	const chainId = 4
 	const current_safe = supported_safes.getSafeByChainId(chainId) //current_safe has the stored safe address
 
 	//checking if the realm address is valid
 
 	useEffect(() => {
-		const checkValidSafeAddress = async() => {
+		const checkValidSafeAddress = async () => {
 			const isValidSafeAddress = await current_safe?.isValidSafeAddress('HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC')
 			console.log('isValidSafeAddress', isValidSafeAddress)
 		}
@@ -442,53 +463,87 @@ function ViewApplicants() {
 			})
 		)
 		setInitiateTransactionData(formattedTrxnData)
+		setGnosisBatchData(formattedTrxnData)
 	}, [sendFundsTo])
 
-	const getRealmsVerification = async() => {
-		if(phantomWallet?.publicKey?.toString()) {
+	function createEVMMetaTransactions() {
+		const readyTxs = gnosisBatchData.map((data, i) => {
+			const txData = encodeTransactionData(data.to, (data.amount.toString()));
+			const tx = {
+				to: ethers.utils.getAddress(rewardAssetAddress),
+				data: txData,
+				value: '0'
+			}
+			return tx
+		})
+		console.log('ready to execute tx', readyTxs)
+		setGnosisReadyToExecuteTxns(readyTxs)
+		return readyTxs
+	}
+
+	function encodeTransactionData(recipientAddress: string, fundAmount: string) {
+		const txData = ERC20Interface.encodeFunctionData('transfer', [
+			recipientAddress,
+			ethers.utils.parseUnits(fundAmount, rewardAssetDecimals)
+		])
+
+		return txData
+	}
+
+	const getRealmsVerification = async () => {
+		if (phantomWallet?.publicKey?.toString()) {
 			const isVerified = await current_safe?.isOwner(phantomWallet.publicKey?.toString())
 			console.log('realms_solana verification', isVerified)
-			if(isVerified) {
+			if (isVerified) {
 				setSignerVerififed(true)
 			}
 		}
 	}
 
 	useEffect(() => {
-		if(phantomWalletConnected) {
+		if (phantomWalletConnected) {
 			getRealmsVerification()
 		} else {
-			setSignerVerififed(false)
+			setSignerVerififed(true)
 		}
 	}, [phantomWalletConnected])
 
-	const initiateTransaction = async() => {
+	const initiateTransaction = async () => {
 		console.log('initiate transaction called')
-		const proposaladdress = await current_safe?.proposeTransactions(grantData?.grants[0].title, initiateTransactionData, phantomWallet)
-		setProposalAddr(proposaladdress?.toString())
+		if (isEvmChain) {
+			console.log('transactions initiated --> ', gnosisReadyToExecuteTxns)
+			const readyToExecuteTxs = createEVMMetaTransactions()
+			const result = await current_safe?.createMultiTransaction(readyToExecuteTxs, SAFE_ADDRESS)
+		} else {
+			const proposaladdress = await current_safe?.proposeTransactions(grantData?.grants[0].title, initiateTransactionData, phantomWallet)
+			setProposalAddr(proposaladdress?.toString())
+		}
+		
 	}
 
 	const onChangeRecepientDetails = (applicationId, fieldName, fieldValue) => {
 		console.log('onChangeRecepientDetails', applicationId, fieldName, fieldValue)
-
+		console.log('Gnosis Batch data', gnosisBatchData)
 		const tempData = initiateTransactionData.map((transactionData, i) => {
-			if(transactionData.applicationId === applicationId) {
-				return { ...transactionData, [fieldName]:fieldValue }
+			if (transactionData.applicationId === applicationId) {
+				return { ...transactionData, [fieldName]: fieldValue }
 			}
 
 			return transactionData
 		})
+
 		console.log('initiateTransactionData', tempData)
 		setInitiateTransactionData(tempData)
+		setGnosisBatchData(tempData)
 	}
 
 
 	const [step, setStep] = useState(ModalState.RECEIPT_DETAILS)
 
-	const onSendFundsButtonClicked = async(state: boolean, selectedApplicants: any[]) => {
+	const onSendFundsButtonClicked = async (state: boolean, selectedApplicants: any[]) => {
 		console.log('state', state)
 		console.log('selectedApplicants', selectedApplicants)
-		if(selectedApplicants.length === 1) {
+		if (selectedApplicants.length === 1) {
 			setSendFundsModalIsOpen(state)
 		} else {
 			setSendFundsDrawerIsOpen(state)
@@ -497,41 +552,41 @@ function ViewApplicants() {
 		setSendFundsTo(selectedApplicants)
 	}
 
-	const onModalStepChange = async(currentState:number) => {
+	const onModalStepChange = async (currentState: number) => {
 		switch (currentState) {
-		case ModalState.RECEIPT_DETAILS:
-			setStep(ModalState.CONNECT_WALLET)
-			break
-		case ModalState.CONNECT_WALLET:
-			if(signerVerified) {
-				setStep(ModalState.VERIFIED_OWNER)
-			}
+			case ModalState.RECEIPT_DETAILS:
+				setStep(ModalState.CONNECT_WALLET)
+				break
+			case ModalState.CONNECT_WALLET:
+				if (signerVerified) {
+					setStep(ModalState.VERIFIED_OWNER)
+				}
 
-			break
-		case ModalState.VERIFIED_OWNER:
-			setStep(ModalState.TRANSATION_INITIATED)
-			initiateTransaction()
-			setSendFundsModalIsOpen(false)
-			setSendFundsDrawerIsOpen(false)
-			setTxnInitModalIsOpen(true)
+				break
+			case ModalState.VERIFIED_OWNER:
+				setStep(ModalState.TRANSATION_INITIATED)
+				initiateTransaction()
+				setSendFundsModalIsOpen(false)
+				setSendFundsDrawerIsOpen(false)
+				setTxnInitModalIsOpen(true)
 
-			break
+				break
 		}
 	}
 
-	const onModalClose = async() => {
+	const onModalClose = async () => {
 		setStep(ModalState.RECEIPT_DETAILS)
 		setSendFundsModalIsOpen(false)
 		setSendFundsDrawerIsOpen(false)
 		setTxnInitModalIsOpen(false)
-		if(phantomWallet?.isConnected) {
+		if (phantomWallet?.isConnected) {
 			await phantomWallet.disconnect()
 			setPhantomWalletConnected(false)
 		}
 	}
 
 	useEffect(() => {
-		if(signerVerified) {
+		if (signerVerified) {
 			setStep(ModalState.VERIFIED_OWNER)
 		}
 	}, [signerVerified])
@@ -718,7 +773,7 @@ function ViewApplicants() {
 										lineHeight='24px'
 										fontWeight='500'
 									>
-									Setup applicant evaluation
+										Setup applicant evaluation
 									</Text>
 
 									<Text
@@ -727,14 +782,14 @@ function ViewApplicants() {
 										lineHeight='20px'
 										fontWeight='400'
 									>
-									On receiving applicants, define a scoring rubric and assign reviewers to evaluate the applicants.
+										On receiving applicants, define a scoring rubric and assign reviewers to evaluate the applicants.
 										{' '}
 										<Link
 											textDecoration={'none'}
 											fontWeight='500'
 											color='#1F1F33'
 										>
-										Learn more
+											Learn more
 										</Link>
 									</Text>
 
@@ -747,7 +802,7 @@ function ViewApplicants() {
 										cursor='pointer'
 										onClick={() => setRubricDrawerOpen(true)}
 									>
-									Setup now
+										Setup now
 									</Text>
 								</Flex>
 
@@ -1010,7 +1065,7 @@ function ViewApplicants() {
 	)
 }
 
-ViewApplicants.getLayout = function(page: ReactElement) {
+ViewApplicants.getLayout = function (page: ReactElement) {
 	return (
 		<NavbarLayout>
 			{page}
