@@ -232,7 +232,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 				fullName: profileInfo?.fullName,
 				profilePictureIpfsHash: profileInfo?.profilePictureIpfsHash,
 				publicKey: webwallet?.publicKey
-			})
+			} as WorkspaceMemberUpdate)
 
 			didReachStep?.('ipfs-uploaded')
 
