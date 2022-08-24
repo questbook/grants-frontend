@@ -32,12 +32,14 @@ function Sidebar({
 	onRejectApplicationClick,
 	onResubmitApplicationClick,
 	applicationData,
+	isBiconomyInitialised
 }: {
   showHiddenData: () => void;
   onAcceptApplicationClick: () => void;
   onRejectApplicationClick: () => void;
   onResubmitApplicationClick: () => void;
   applicationData: any;
+  isBiconomyInitialised: boolean;
 }) {
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
@@ -336,6 +338,7 @@ function Sidebar({
 					/>
 				</Flex>
 				<Button
+					disabled={!isBiconomyInitialised}
 					onClick={() => onAcceptApplicationClick()}
 					variant="primary"
 					mt={7}
@@ -347,7 +350,7 @@ function Sidebar({
 					onClick={() => onAcceptApplicationClick()}
 					variant="primary"
 					mt={7}
-					disabled={applicationData?.state === 'resubmit'}
+					disabled={applicationData?.state === 'resubmit' || !isBiconomyInitialised}
 					display={applicationData?.state === 'resubmit' ? '' : 'none'}
 				>
           Accept Application
@@ -364,6 +367,7 @@ function Sidebar({
           notified to resubmit.
 				</Text>
 				<Button
+					disabled={!isBiconomyInitialised}
 					onClick={() => onResubmitApplicationClick()}
 					variant="resubmit"
 					mt={4}
@@ -372,6 +376,7 @@ function Sidebar({
           Ask to Resubmit
 				</Button>
 				<Button
+					disabled={!isBiconomyInitialised}
 					onClick={() => onRejectApplicationClick()}
 					variant="reject"
 					mt={4}

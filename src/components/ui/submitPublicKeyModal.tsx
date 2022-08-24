@@ -12,6 +12,7 @@ interface Props {
   setHiddenModalOpen: (hiddenModalOpen: boolean) => void;
   setPublicKey: React.Dispatch<React.SetStateAction<WorkspaceUpdateRequest>>;
   loading: boolean;
+  isBiconomyInitialised: boolean;
 }
 
 function SubmitPublicKeyModal({
@@ -19,6 +20,7 @@ function SubmitPublicKeyModal({
 	setHiddenModalOpen,
 	setPublicKey,
 	loading,
+	isBiconomyInitialised
 }: Props) {
 	const { getPublicEncryptionKey } = useEncryption()
 	return (
@@ -118,6 +120,7 @@ Click “Confirm” to confirm the transaction.
             By pressing Continue you&apos;ll have to approve this transaction in your wallet.
 					</Text>
 					<Button
+						disabled={!isBiconomyInitialised}
 						mb={10}
 						mt={8}
 						variant="primary"

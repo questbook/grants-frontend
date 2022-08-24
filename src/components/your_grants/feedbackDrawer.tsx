@@ -93,6 +93,7 @@ function FeedbackDrawer({
 		data,
 		transactionLink,
 		loading,
+		isBiconomyInitialised
 	] = useSubmitReview(
 		editedFeedbackData!,
 		setCurrentStep,
@@ -227,6 +228,7 @@ function FeedbackDrawer({
 						}
 						<Box mt={12}>
 							<Button
+								disabled={!isBiconomyInitialised}
 								mt='auto'
 								variant='primary'
 								onClick={handleOnSubmit}>

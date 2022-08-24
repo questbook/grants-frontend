@@ -64,13 +64,25 @@ export default function useSubmitReview(
 
 	const { webwallet } = useContext(WebwalletContext)!
 
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
-		chainId: chainId?.toString(),
-	})
-
 	if(!chainId) {
 		chainId = getSupportedChainIdFromWorkspace(workspace)
 	}
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
+		chainId: chainId?.toString(),
+	})
+
+	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
+
+	useEffect(() => {
+		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		console.log('rree', isBiconomyLoading, biconomyLoading)
+		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
+			biconomy.networkId.toString() === chainId.toString()) {
+			setIsBiconomyInitialised(true)
+		}
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised])
+
 
 	useEffect(() => {
 		if(data) {
@@ -295,6 +307,7 @@ export default function useSubmitReview(
 		transactionData,
 		getExplorerUrlForTxHash(chainId || getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
 		loading,
+		isBiconomyInitialised,
 		error,
 	]
 }

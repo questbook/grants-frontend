@@ -212,7 +212,7 @@ function Form({
 	}, [formData, application])
 
 	const [updateData, setUpdateData] = React.useState<any>()
-	const [txnData, txnLink, loading] = useResubmitApplication(
+	const [txnData, txnLink, loading, isBiconomyInitialised] = useResubmitApplication(
 		updateData,
 		chainId,
 		applicationID,
@@ -759,6 +759,7 @@ you&apos;ll have to approve this
 						{
 							onSubmit && !onEdit ? (
 								<Button
+									disabled={!isBiconomyInitialised}
 									onClick={() => setOnEdit(true)}
 									py={loading ? 2 : 0}
 									mt={8}

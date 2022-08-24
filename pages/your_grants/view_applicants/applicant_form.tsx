@@ -125,7 +125,7 @@ function ApplicantForm() {
 	}, [router])
 
 	const [state, setState] = useState<number>()
-	const [txn, txnLink, loading, error] = useUpdateApplicationState(
+	const [txn, txnLink, loading, isBiconomyInitialised, error] = useUpdateApplicationState(
 		state === 1 ? resubmitComment : rejectionComment,
 		applicationData?.id,
 		state,
@@ -483,6 +483,7 @@ function ApplicantForm() {
 								{
 									isAdmin && (
 										<Sidebar
+											isBiconomyInitialised={isBiconomyInitialised}
 											showHiddenData={showHiddenData}
 											applicationData={applicationData}
 											onAcceptApplicationClick={() => setStep(1)}
