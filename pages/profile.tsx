@@ -34,7 +34,6 @@ import { useGetDaoDetailsQuery, useGetFundsAndProfileDataQuery } from 'src/gener
 import NavbarLayout from 'src/layout/navbarLayout'
 // CONSTANTS AND TYPES
 import type { DAOWorkspace } from 'src/types'
-import { calculateUSDValue } from 'src/utils/calculatingUtils'
 import { formatAmount } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'
 // UTILS AND TOOLS
@@ -94,6 +93,7 @@ function Profile() {
 			},
 		})
 
+		getAnalyticsData()
 	}, [chainID, daoID])
 
 	const { data, error, loading } = useGetDaoDetailsQuery(queryParams)
@@ -115,13 +115,13 @@ function Profile() {
 		},
 	})
 
-	useEffect(() => {
-		if(allDaoData && allDaoData.grants.length >= 1 && grantsApplicants.length === 0) {
-			allDaoData.grants.forEach((grant) => {
-				setGrantsApplicants((array: any) => [...array, grant.numberOfApplications])
-			})
-		}
-	}, [allDaoData, grantsApplicants])
+	// useEffect(() => {
+	// 	if(allDaoData && allDaoData.grants.length >= 1 && grantsApplicants.length === 0) {
+	// 		allDaoData.grants.forEach((grant) => {
+	// 			setGrantsApplicants((array: any) => [...array, grant.numberOfApplications])
+	// 		})
+	// 	}
+	// }, [allDaoData, grantsApplicants])
 
 	useEffect(() => {
 		if(allDaoData && fundingTime.length === 0) {
@@ -169,11 +169,11 @@ function Profile() {
 					tokenInfo?.decimals || 18
 				)
 
-				if(tokenInfo !== undefined && tokenValue !== '0') {
-					calculateUSDValue(tokenValue, tokenInfo.pair!).then((promise) => {
-						setGrantsDisbursed((array: any) => [...array, promise])
-					})
-				}
+				// if(tokenInfo !== undefined && tokenValue !== '0') {
+				// 	calculateUSDValue(tokenValue, tokenInfo.pair!).then((promise) => {
+				// 		setGrantsDisbursed((array: any) => [...array, promise])
+				// 	})
+				// }
 			}
 			)
 		}
@@ -186,6 +186,62 @@ function Profile() {
 		onClose()
 		setCodeActive(false)
 	}
+
+	const getAnalyticsData = async() => {
+		console.log('calling analytics')
+		try {
+			//const res = await fetch('https://www.questbook-analytics.com/workspace-analytics', {
+			const res = await fetch(
+				'https://www.questbook-analytics.com/workspace-analytics',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					referrerPolicy: 'unsafe-url',
+					body: JSON.stringify({
+						chainId: chainID,
+						workspaceId: daoID,
+					}),
+
+					// For testing
+					// body: JSON.stringify({
+					// 	chainId: 137,
+					// 	workspaceId: '0x2'
+					// })
+				}
+			)
+
+			const data = await res.json()
+			console.log('res', data)
+
+			const totalFunding = extractLast30Fundings(data)
+			setGrantsDisbursed(totalFunding)
+			setGrantsApplicants(data.totalApplicants)
+			setGrantWinners(data.winnerApplicants)
+
+		} catch(e) {
+			console.log(e)
+		}
+	}
+
+	const extractLast30Fundings = (data: any) => {
+		const everydayFundings = data.everydayFunding
+		let totalFunding = 0
+
+		if(!everydayFundings || everydayFundings.length === 0) {
+			return totalFunding
+		}
+
+		// console.log(everydayApplications)
+
+		everydayFundings.forEach((application: any) => {
+			totalFunding += parseInt(application.funding)
+		})
+
+		return totalFunding
+	}
+
 
 	return (
 		<Flex
