@@ -226,12 +226,16 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 				throw new Error('account not connected')
 			}
 
+			if(!webwallet) {
+				throw new Error('webwallet not connected')
+			}
+
 			const {
 				data: { ipfsHash }
 			} = await validatorApi.validateWorkspaceMemberUpdate({
 				fullName: profileInfo?.fullName,
 				profilePictureIpfsHash: profileInfo?.profilePictureIpfsHash,
-				publicKey: webwallet?.publicKey
+				publicKey: webwallet.publicKey
 			} as WorkspaceMemberUpdate)
 
 			didReachStep?.('ipfs-uploaded')

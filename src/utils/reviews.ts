@@ -1,4 +1,5 @@
 import { useContext } from 'react'
+import { ReviewSetRequest } from '@questbook/service-validator-client'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import { useGetWorkspaceMembersPublicKeysQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
@@ -150,6 +151,10 @@ export const useGenerateReviewData = ({
 	const { fetch: fetchPubKeys } = useGetPublicKeysOfGrantManagers(grantId, chainId)
 
 	const generateReviewData = async(data: IReviewFeedback) => {
+		if(!webwallet) {
+			throw new Error('Webwallet not initialized')
+		}
+
 		const jsonReview = JSON.stringify(data)
 		const encryptedReview: { [key in string]: string } = {}
 		let dataHash: string | undefined
@@ -203,10 +208,10 @@ export const useGenerateReviewData = ({
 			data: { ipfsHash },
 		} = await validatorApi.validateReviewSet({
 			reviewer: scwAddress!,
-			reviewerPublicKey: webwallet?.publicKey,
+			reviewerPublicKey: webwallet.publicKey,
 			publicReviewDataHash: dataHash,
 			encryptedReview,
-		})
+		} as ReviewSetRequest)
 
 		return {
 			ipfsHash
