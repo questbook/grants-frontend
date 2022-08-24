@@ -221,6 +221,7 @@ export type FundsTransfer = {
 export enum FundsTransferType {
   FundsDeposited = 'funds_deposited',
   FundsDisbursed = 'funds_disbursed',
+  FundsDisbursedFromSafe = 'funds_disbursed_from_safe',
   FundsWithdrawn = 'funds_withdrawn',
   ReviewPaymentDone = 'review_payment_done'
 }
@@ -466,6 +467,8 @@ export type GrantApplication = {
   applicationReviewers: Array<GrantApplicationReviewer>;
   /** in seconds since epoch */
   createdAtS: Scalars['Int'];
+  /** Addresses of the assigned reviewers who have reviewed */
+  doneReviewerAddresses: Array<Scalars['Bytes']>;
   /** Feedback from the grant DAO manager/applicant */
   feedbackDao?: Maybe<Scalars['String']>;
   /** Feedback from the developer */
@@ -477,6 +480,8 @@ export type GrantApplication = {
   id: Scalars['ID'];
   /** Milestones of the application */
   milestones: Array<ApplicationMilestone>;
+  /** Addresses of the assigned reviewers who are yet to review */
+  pendingReviewerAddresses: Array<Scalars['Bytes']>;
   /** PII Data */
   pii: Array<PiiAnswer>;
   /** @deprecated (use 'applicationReviewers') People who will review the grant application */
@@ -796,6 +801,12 @@ export type GrantApplication_Filter = {
   createdAtS_lte?: InputMaybe<Scalars['Int']>;
   createdAtS_not?: InputMaybe<Scalars['Int']>;
   createdAtS_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  doneReviewerAddresses?: InputMaybe<Array<Scalars['Bytes']>>;
+  doneReviewerAddresses_contains?: InputMaybe<Array<Scalars['Bytes']>>;
+  doneReviewerAddresses_contains_nocase?: InputMaybe<Array<Scalars['Bytes']>>;
+  doneReviewerAddresses_not?: InputMaybe<Array<Scalars['Bytes']>>;
+  doneReviewerAddresses_not_contains?: InputMaybe<Array<Scalars['Bytes']>>;
+  doneReviewerAddresses_not_contains_nocase?: InputMaybe<Array<Scalars['Bytes']>>;
   feedbackDao?: InputMaybe<Scalars['String']>;
   feedbackDao_contains?: InputMaybe<Scalars['String']>;
   feedbackDao_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -879,6 +890,12 @@ export type GrantApplication_Filter = {
   milestones_not?: InputMaybe<Array<Scalars['String']>>;
   milestones_not_contains?: InputMaybe<Array<Scalars['String']>>;
   milestones_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  pendingReviewerAddresses?: InputMaybe<Array<Scalars['Bytes']>>;
+  pendingReviewerAddresses_contains?: InputMaybe<Array<Scalars['Bytes']>>;
+  pendingReviewerAddresses_contains_nocase?: InputMaybe<Array<Scalars['Bytes']>>;
+  pendingReviewerAddresses_not?: InputMaybe<Array<Scalars['Bytes']>>;
+  pendingReviewerAddresses_not_contains?: InputMaybe<Array<Scalars['Bytes']>>;
+  pendingReviewerAddresses_not_contains_nocase?: InputMaybe<Array<Scalars['Bytes']>>;
   pii?: InputMaybe<Array<Scalars['String']>>;
   pii_?: InputMaybe<PiiAnswer_Filter>;
   pii_contains?: InputMaybe<Array<Scalars['String']>>;
@@ -920,12 +937,14 @@ export enum GrantApplication_OrderBy {
   ApplicantId = 'applicantId',
   ApplicationReviewers = 'applicationReviewers',
   CreatedAtS = 'createdAtS',
+  DoneReviewerAddresses = 'doneReviewerAddresses',
   FeedbackDao = 'feedbackDao',
   FeedbackDev = 'feedbackDev',
   Fields = 'fields',
   Grant = 'grant',
   Id = 'id',
   Milestones = 'milestones',
+  PendingReviewerAddresses = 'pendingReviewerAddresses',
   Pii = 'pii',
   Reviewers = 'reviewers',
   Reviews = 'reviews',
@@ -1206,6 +1225,95 @@ export enum GrantManager_OrderBy {
   Grant = 'grant',
   Id = 'id',
   Member = 'member'
+}
+
+export type GrantReviewerCounter = {
+  __typename?: 'GrantReviewerCounter';
+  /** total number of applications assigned in grant */
+  counter: Scalars['Int'];
+  /** number of applications reviewed in the grant */
+  doneCounter: Scalars['Int'];
+  /** The grant itself */
+  grant: Grant;
+  /** ID of the entity, grantID . reviewerAddress */
+  id: Scalars['ID'];
+  /** number of applications assigned, pending in the grant */
+  pendingCounter: Scalars['Int'];
+  /** Address of the reviewer */
+  reviewerAddress: Scalars['Bytes'];
+};
+
+export type GrantReviewerCounter_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  counter?: InputMaybe<Scalars['Int']>;
+  counter_gt?: InputMaybe<Scalars['Int']>;
+  counter_gte?: InputMaybe<Scalars['Int']>;
+  counter_in?: InputMaybe<Array<Scalars['Int']>>;
+  counter_lt?: InputMaybe<Scalars['Int']>;
+  counter_lte?: InputMaybe<Scalars['Int']>;
+  counter_not?: InputMaybe<Scalars['Int']>;
+  counter_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  doneCounter?: InputMaybe<Scalars['Int']>;
+  doneCounter_gt?: InputMaybe<Scalars['Int']>;
+  doneCounter_gte?: InputMaybe<Scalars['Int']>;
+  doneCounter_in?: InputMaybe<Array<Scalars['Int']>>;
+  doneCounter_lt?: InputMaybe<Scalars['Int']>;
+  doneCounter_lte?: InputMaybe<Scalars['Int']>;
+  doneCounter_not?: InputMaybe<Scalars['Int']>;
+  doneCounter_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  grant?: InputMaybe<Scalars['String']>;
+  grant_?: InputMaybe<Grant_Filter>;
+  grant_contains?: InputMaybe<Scalars['String']>;
+  grant_contains_nocase?: InputMaybe<Scalars['String']>;
+  grant_ends_with?: InputMaybe<Scalars['String']>;
+  grant_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  grant_gt?: InputMaybe<Scalars['String']>;
+  grant_gte?: InputMaybe<Scalars['String']>;
+  grant_in?: InputMaybe<Array<Scalars['String']>>;
+  grant_lt?: InputMaybe<Scalars['String']>;
+  grant_lte?: InputMaybe<Scalars['String']>;
+  grant_not?: InputMaybe<Scalars['String']>;
+  grant_not_contains?: InputMaybe<Scalars['String']>;
+  grant_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  grant_not_ends_with?: InputMaybe<Scalars['String']>;
+  grant_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  grant_not_in?: InputMaybe<Array<Scalars['String']>>;
+  grant_not_starts_with?: InputMaybe<Scalars['String']>;
+  grant_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  grant_starts_with?: InputMaybe<Scalars['String']>;
+  grant_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  pendingCounter?: InputMaybe<Scalars['Int']>;
+  pendingCounter_gt?: InputMaybe<Scalars['Int']>;
+  pendingCounter_gte?: InputMaybe<Scalars['Int']>;
+  pendingCounter_in?: InputMaybe<Array<Scalars['Int']>>;
+  pendingCounter_lt?: InputMaybe<Scalars['Int']>;
+  pendingCounter_lte?: InputMaybe<Scalars['Int']>;
+  pendingCounter_not?: InputMaybe<Scalars['Int']>;
+  pendingCounter_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  reviewerAddress?: InputMaybe<Scalars['Bytes']>;
+  reviewerAddress_contains?: InputMaybe<Scalars['Bytes']>;
+  reviewerAddress_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  reviewerAddress_not?: InputMaybe<Scalars['Bytes']>;
+  reviewerAddress_not_contains?: InputMaybe<Scalars['Bytes']>;
+  reviewerAddress_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+};
+
+export enum GrantReviewerCounter_OrderBy {
+  Counter = 'counter',
+  DoneCounter = 'doneCounter',
+  Grant = 'grant',
+  Id = 'id',
+  PendingCounter = 'pendingCounter',
+  ReviewerAddress = 'reviewerAddress'
 }
 
 export type Grant_Filter = {
@@ -1839,6 +1947,8 @@ export type Query = {
   grantFields: Array<GrantField>;
   grantManager?: Maybe<GrantManager>;
   grantManagers: Array<GrantManager>;
+  grantReviewerCounter?: Maybe<GrantReviewerCounter>;
+  grantReviewerCounters: Array<GrantReviewerCounter>;
   grants: Array<Grant>;
   notification?: Maybe<Notification>;
   notifications: Array<Notification>;
@@ -2038,6 +2148,24 @@ export type QueryGrantManagersArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<GrantManager_Filter>;
+};
+
+
+export type QueryGrantReviewerCounterArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryGrantReviewerCountersArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<GrantReviewerCounter_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<GrantReviewerCounter_Filter>;
 };
 
 
@@ -2736,6 +2864,8 @@ export type Subscription = {
   grantFields: Array<GrantField>;
   grantManager?: Maybe<GrantManager>;
   grantManagers: Array<GrantManager>;
+  grantReviewerCounter?: Maybe<GrantReviewerCounter>;
+  grantReviewerCounters: Array<GrantReviewerCounter>;
   grants: Array<Grant>;
   notification?: Maybe<Notification>;
   notifications: Array<Notification>;
@@ -2935,6 +3065,24 @@ export type SubscriptionGrantManagersArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<GrantManager_Filter>;
+};
+
+
+export type SubscriptionGrantReviewerCounterArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionGrantReviewerCountersArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<GrantReviewerCounter_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<GrantReviewerCounter_Filter>;
 };
 
 
@@ -3166,13 +3314,21 @@ export type SubscriptionWorkspacesArgs = {
 
 export enum SupportedNetwork {
   Chain_4 = 'chain_4',
+  Chain_5 = 'chain_5',
   Chain_10 = 'chain_10',
+  Chain_40 = 'chain_40',
+  Chain_41 = 'chain_41',
   Chain_42 = 'chain_42',
   Chain_69 = 'chain_69',
+  Chain_100 = 'chain_100',
   Chain_137 = 'chain_137',
+  Chain_588 = 'chain_588',
   Chain_1001 = 'chain_1001',
+  Chain_1088 = 'chain_1088',
+  Chain_1287 = 'chain_1287',
   Chain_2153 = 'chain_2153',
   Chain_8217 = 'chain_8217',
+  Chain_9000 = 'chain_9000',
   Chain_42220 = 'chain_42220',
   Chain_44787 = 'chain_44787',
   Chain_80001 = 'chain_80001',
@@ -3389,6 +3545,8 @@ export type WorkspaceMember = {
   fullName?: Maybe<Scalars['String']>;
   /** Globally unique ID of the member */
   id: Scalars['ID'];
+  /** Last known hash of the TX made by this user */
+  lastKnownTxHash: Scalars['Bytes'];
   /** Timestamp of when the last review was done */
   lastReviewSubmittedAt: Scalars['Int'];
   /** The review IDs for which this member is owed a payment */
@@ -3501,6 +3659,12 @@ export type WorkspaceMember_Filter = {
   id_lte?: InputMaybe<Scalars['ID']>;
   id_not?: InputMaybe<Scalars['ID']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  lastKnownTxHash?: InputMaybe<Scalars['Bytes']>;
+  lastKnownTxHash_contains?: InputMaybe<Scalars['Bytes']>;
+  lastKnownTxHash_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  lastKnownTxHash_not?: InputMaybe<Scalars['Bytes']>;
+  lastKnownTxHash_not_contains?: InputMaybe<Scalars['Bytes']>;
+  lastKnownTxHash_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   lastReviewSubmittedAt?: InputMaybe<Scalars['Int']>;
   lastReviewSubmittedAt_gt?: InputMaybe<Scalars['Int']>;
   lastReviewSubmittedAt_gte?: InputMaybe<Scalars['Int']>;
@@ -3602,6 +3766,7 @@ export enum WorkspaceMember_OrderBy {
   Email = 'email',
   FullName = 'fullName',
   Id = 'id',
+  LastKnownTxHash = 'lastKnownTxHash',
   LastReviewSubmittedAt = 'lastReviewSubmittedAt',
   OutstandingReviewIds = 'outstandingReviewIds',
   ProfilePictureIpfsHash = 'profilePictureIpfsHash',
