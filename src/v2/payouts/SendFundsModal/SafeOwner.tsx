@@ -42,9 +42,9 @@ interface Props {
 }
 
 
-const SafeOwner = ({ isEvmChain, phantomWallet, isOpen }: Props) => {
+const SafeOwner = ({ isEvmChain, phantomWallet, signerVerified }: Props) => {
 	const { connect, connectors } = useConnect()
-	if(isOpen) {
+	if(!signerVerified) {
 		return (
 			<>
 				<Text

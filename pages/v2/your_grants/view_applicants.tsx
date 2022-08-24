@@ -19,6 +19,7 @@ import {
 	useGetApplicantsForAGrantQuery,
 	useGetApplicantsForAGrantReviewerQuery,
 	useGetGrantDetailsQuery,
+	useGetSafeForAWorkspaceQuery,
 } from 'src/generated/graphql'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
@@ -38,7 +39,7 @@ import { ViewEye } from 'src/v2/assets/custom chakra icons/ViewEye'
 import Breadcrumbs from 'src/v2/components/Breadcrumbs'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import StyledTab from 'src/v2/components/StyledTab'
-import { SupportedSafes } from 'src/v2/constants/safe/supported_safes'
+import { Realms_Solana } from 'src/v2/constants/safe/realms_solana'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import AcceptedProposalsPanel from 'src/v2/payouts/AcceptedProposals/AcceptedProposalPanel'
 import InReviewPanel from 'src/v2/payouts/InReviewProposals/InReviewPanel'
@@ -82,11 +83,33 @@ function ViewApplicants() {
 	const [isUser, setIsUser] = React.useState<any>('')
 	const [isActorId, setIsActorId] = React.useState<any>('')
 
+	const [workspaceSafe, setWorkspaceSafe] = useState('')
+
 	const [setupRubricBannerCancelled, setSetupRubricBannerCancelled] = useState(true)
 
 	const { data: accountData } = useQuestbookAccount()
 	const router = useRouter()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
+
+	const workspacechainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+	const { client } = subgraphClients[workspacechainId]
+
+	const { data :safeAddressData } = useGetSafeForAWorkspaceQuery({
+		client,
+		variables: {
+			workspaceID: workspace?.id.toString()!,
+		},
+	})
+
+	useEffect(() => {
+		if(safeAddressData) {
+			const { workspaceSafes } = safeAddressData
+			const safeAddress = workspaceSafes[0].address
+			console.log('safeAddress', safeAddress)
+			setWorkspaceSafe(safeAddress)
+		}
+	}, [safeAddressData])
+
 
 	const [rubricDrawerOpen, setRubricDrawerOpen] = useState(false)
 	const [viewRubricDrawerOpen, setViewRubricDrawerOpen] = useState(false)
@@ -425,15 +448,17 @@ function ViewApplicants() {
 
 	const [initiateTransactionData, setInitiateTransactionData] = useState([])
 
-	const supported_safes = new SupportedSafes()
+	// const supported_safes = new SupportedSafes()
 	const chainId = 9000001 // get your safe chain ID, currently on solana
-	const current_safe = supported_safes.getSafeByChainId(chainId) //current_safe has the stored safe address
+	// const current_safe = supported_safes.getSafeByChainId(chainId) //current_safe has the stored safe address
+
+	const current_safe = new Realms_Solana(workspaceSafe ?? '')
 
 	//checking if the realm address is valid
 
 	useEffect(() => {
 		const checkValidSafeAddress = async() => {
-			const isValidSafeAddress = await current_safe?.isValidSafeAddress('HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC')
+			const isValidSafeAddress = await current_safe?.isValidSafeAddress(workspaceSafe)
 			console.log('isValidSafeAddress', isValidSafeAddress)
 		}
 
@@ -445,7 +470,7 @@ function ViewApplicants() {
 	useEffect(() => {
 		const formattedTrxnData = sendFundsTo?.map((recepient, i) => (
 			{
-				from: current_safe?.id.toString(),
+				from: current_safe?.id?.toString(),
 				to: recepient.applicant_address,
 				applicationId: recepient.applicationId,
 				selectedMilestone: recepient.milestones[0].id,
@@ -900,7 +925,7 @@ function ViewApplicants() {
 					isOpen={txnInitModalIsOpen && proposalAddr}
 					onClose={onModalClose}
 					onComplete={() => setTxnInitModalIsOpen(false)}
-					proposalUrl={isEvmChain ? '' : getProposalUrl(current_safe?.id.toString(), proposalAddr)}
+					proposalUrl={isEvmChain ? '' : getProposalUrl(current_safe?.id?.toString(), proposalAddr)}
 				/>
 
 				<SendFundsDrawer

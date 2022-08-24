@@ -216,7 +216,7 @@ const OnboardingCreateDomain = () => {
 				biconomy,
 				targetContractObject,
 				'createWorkspace',
-				[ipfsHash, new Uint8Array(32), 0],
+				[ipfsHash, new Uint8Array(32), safeAddress, 1],
 				WORKSPACE_REGISTRY_ADDRESS[network as unknown as SupportedChainId],
 				biconomyWalletClient,
 				scwAddress,

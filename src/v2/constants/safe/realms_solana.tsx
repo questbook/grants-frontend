@@ -19,7 +19,7 @@ import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/Safe
 import { Safe, TransactionType } from '../../types/safe'
 
 export class Realms_Solana implements Safe {
-    id: PublicKey;
+    id: PublicKey | undefined;
     name: string;
     description: string;
     image: string;
@@ -27,8 +27,8 @@ export class Realms_Solana implements Safe {
 
     connection: Connection
     programId: PublicKey
-    constructor() {
-    	this.id = new PublicKey('HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC') // devnet realmPK
+    constructor(realmsId: string) {
+    	this.id = realmsId ? new PublicKey(realmsId) : undefined // devnet realmPK
     	//this.id = new PublicKey('AwTwXtM4D3KiDy8pBgrZRaZdNnsxXABsyHXr4u394rEh') // mainnet realmPK
     	this.name = 'Realms on Solana'
     	this.description = 'Realms on Solana'
