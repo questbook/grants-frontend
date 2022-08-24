@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { ChevronRightIcon } from '@chakra-ui/icons'
 import {
 	Box,
 	Button,
@@ -10,12 +11,13 @@ import {
 } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import CopyIcon from 'src/components/ui/copy_icon'
-import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { CHAIN_INFO } from 'src/constants/chains'
+import { getFromIPFS, getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromSupportedNetwork,
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
+import ViewScoreDrawer from 'src/v2/payouts/ViewScoreDrawer/ViewScoreDrawer'
 import {
 	formatAmount,
 	getFormattedFullDateFromUnixTimestamp,
@@ -23,9 +25,6 @@ import {
 } from '../../../utils/formattingUtils'
 import { getAssetInfo } from '../../../utils/tokenUtils'
 import MailTo from '../mail_to/mailTo'
-import ReviewDrawer from '../reviewerDrawer'
-import RubricDrawer from '../rubricDrawer'
-import RubricSidebar from './rubric_sidebar'
 
 function Sidebar({
 	showHiddenData,
@@ -49,44 +48,102 @@ function Sidebar({
 			(fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
 		)?.values[0]?.value : undefined
 
-	const [rubricDrawerOpen, setRubricDrawerOpen] = useState(false)
-	const [maximumPoints, setMaximumPoints] = React.useState(5)
-	const [rubricEditAllowed] = useState(true)
-	const [rubrics, setRubrics] = useState<any[]>([
-		{
-			name: '',
-			nameError: false,
-			description: '',
-			descriptionError: false,
-		},
-	])
+	// const [rubricDrawerOpen, setRubricDrawerOpen] = useState(false)
+	// const [maximumPoints, setMaximumPoints] = React.useState(5)
+	// const [rubricEditAllowed] = useState(true)
+	// const [rubrics, setRubrics] = useState<any[]>([
+	// 	{
+	// 		name: '',
+	// 		nameError: false,
+	// 		description: '',
+	// 		descriptionError: false,
+	// 	},
+	// ])
+
+	// useEffect(() => {
+	// 	if(!applicationData) {
+	// 		return
+	// 	}
+
+	// 	const initialRubrics = applicationData?.grant.rubric
+	// 	const newRubrics = [] as any[]
+	// 	console.log('initialRubrics', initialRubrics)
+	// 	console.log('application Data ', applicationData)
+	// 	initialRubrics?.items.forEach((initalRubric: any) => {
+	// 		newRubrics.push({
+	// 			name: initalRubric.title,
+	// 			nameError: false,
+	// 			description: initalRubric.details,
+	// 			descriptionError: false,
+	// 		})
+	// 	})
+	// 	if(newRubrics.length === 0) {
+	// 		return
+	// 	}
+
+	// 	setRubrics(newRubrics)
+	// 	if(initialRubrics?.items[0].maximumPoints) {
+	// 		setMaximumPoints(initialRubrics.items[0].maximumPoints)
+	// 	}
+	// }, [applicationData])
+
+	const [reviews, setReviews] = useState<any>()
+	const [selectedReview, setSelectedReview] = useState<any>()
+	const [selectedReviewer, setSelectedReviewer] = useState<any>()
+	const [scoreDrawerOpen, setScoreDrawerOpen] = useState(false)
+
+	const getReview = async(hash: string) => {
+		if(hash === '') {
+			return {}
+		}
+
+		const d = await getFromIPFS(hash)
+		try {
+			const data = JSON.parse(d)
+			return data
+		} catch(e) {
+			console.log('incorrect review', e)
+			return {}
+		}
+	}
+
+	const getReviews = async(reviews: any[]) => {
+		const reviewsDataMap = {} as any
+		const reviewsData = await Promise.all(reviews?.map(async(review) => {
+			const data = await getReview(review?.publicReviewDataHash)
+			return data
+		}))
+
+		reviewsData.forEach((review, i) => {
+			const reviewerIdSplit = reviews[i]?.reviewer?.id.split('.')
+			const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
+			reviewsDataMap[reviewerId] = {
+				items: review.items,
+				createdAtS: reviews[i].createdAtS
+			}
+		})
+
+		console.log('reviewsData', reviewsData)
+		console.log('reviewsData', reviewsDataMap)
+		setReviews(reviewsDataMap)
+	}
 
 	useEffect(() => {
-		if(!applicationData) {
-			return
-		}
-
-		const initialRubrics = applicationData?.grant.rubric
-		const newRubrics = [] as any[]
-		console.log('initialRubrics', initialRubrics)
-		console.log('application Data ', applicationData)
-		initialRubrics?.items.forEach((initalRubric: any) => {
-			newRubrics.push({
-				name: initalRubric.title,
-				nameError: false,
-				description: initalRubric.details,
-				descriptionError: false,
-			})
-		})
-		if(newRubrics.length === 0) {
-			return
-		}
-
-		setRubrics(newRubrics)
-		if(initialRubrics?.items[0].maximumPoints) {
-			setMaximumPoints(initialRubrics.items[0].maximumPoints)
+		console.log('appl side', applicationData)
+		if(applicationData?.reviews?.length) {
+			getReviews(applicationData.reviews)
 		}
 	}, [applicationData])
+
+	const totalScore = (items?: any[]) => {
+		console.log(items)
+		let s = 0
+		items?.forEach((item) => {
+			s += item.rating ?? 0
+		})
+
+		return s
+	}
 
 	const [reviewDrawerOpen, setReviewDrawerOpen] = React.useState(false)
 	let icon
@@ -324,22 +381,32 @@ function Sidebar({
 				</Button>
 			</Flex>
 
-			<Box mt={8} />
+			<Box mt={6} />
 
-			<RubricSidebar
+			{/* <RubricSidebar
 				total={
 					applicationData
 						?.reviewers.length || 0
 				}
 				reviews={applicationData?.reviews}
 				rubric={applicationData?.grant.rubric}
-			/>
+			/> */}
 
-			{
-				!applicationData?.reviews || applicationData?.reviews.length === 0 ? null : (
-					<Box mt={8} />
-				)
-			}
+			{/* <Flex
+				bg="white"
+				border="2px solid #D0D3D3"
+				borderRadius={8}
+				w={340}
+				direction="column"
+				alignItems="stretch"
+				px="23px"
+				py="17px"
+			>
+				<Flex direction="column">
+Score
+				</Flex>
+			</Flex> */}
+
 
 			<Flex
 				bg="white"
@@ -353,9 +420,9 @@ function Sidebar({
 			>
 				<Flex direction="column">
 					<Text fontWeight="700">
-Application Reviewers
+Score
 					</Text>
-					<Text mt={2}>
+					{/* <Text mt={2}>
 Assign reviewers for application
 					</Text>
 					<Button
@@ -364,7 +431,7 @@ Assign reviewers for application
 						<Text fontWeight="700">
 Assign Reviewers
 						</Text>
-					</Button>
+					</Button> */}
 				</Flex>
 
 				<Flex direction="column">
@@ -375,45 +442,82 @@ Assign Reviewers
 						applicationData
 							?.reviewers
 							?.map((r: any) => ({
+								name: r.fullName,
 								email: r.email,
 								address: r.id.split('.')[1],
-							})).map((reviewer: any) => (
-								<Flex
-									key={reviewer.email}
-									w="100%"
-									h="64px"
-									align="center"
-									mt={2}
-									py={3}
-								>
-									<Image src="/ui_icons/reviewer_account.svg" />
+								id: r.id
+							})).map((reviewer: any) => {
+								const reviewerIdSplit = reviewer?.id.split('.')
+								const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
+
+								return (
 									<Flex
-										direction="column"
-										ml={4}
-										justifyContent="center">
-										<Text
-											fontWeight="700"
-											color="#122224"
-											fontSize="14px"
-											lineHeight="16px"
-										>
-											{truncateStringFromMiddle(reviewer.address)}
-										</Text>
-										<Text
-											mt={reviewer.email ? 1 : 0}
-											color="#717A7C"
-											fontSize="12px"
-											lineHeight="16px">
-											{reviewer.email}
-										</Text>
+										key={reviewer.email}
+										w="100%"
+										h="64px"
+										align="center"
+										mt={2}
+										py={3}
+										cursor='pointer'
+										onClick={
+											() => {
+												setSelectedReview(reviews[reviewerId])
+												setSelectedReviewer(reviewer)
+												setScoreDrawerOpen(true)
+											}
+										}
+									>
+										<Image src="/ui_icons/reviewer_account.svg" />
+										<Flex
+											direction="column"
+											ml={4}
+											justifyContent="center">
+											<Text
+												fontWeight="700"
+												color="#122224"
+												fontSize="14px"
+												lineHeight="16px"
+											>
+												{reviewer?.name}
+											</Text>
+											<Text
+												mt={1}
+												color="#717A7C"
+												fontSize="12px"
+												lineHeight="16px">
+												{totalScore(reviews ? reviews[reviewerId].items : [])}
+											</Text>
+										</Flex>
+
+
+										<ChevronRightIcon
+											ml='auto'
+											h='40px'
+											w='40px'
+											mr='-16px'
+											p={0}
+										/>
 									</Flex>
-								</Flex>
-							))
+								)
+							})
 					}
 				</Flex>
 			</Flex>
 
-			<ReviewDrawer
+			<ViewScoreDrawer
+				isOpen={scoreDrawerOpen}
+				onClose={
+					() => {
+						setSelectedReview(undefined)
+						setSelectedReviewer(undefined)
+						setScoreDrawerOpen(false)
+					}
+				}
+				score={selectedReview}
+				reviewer={selectedReviewer}
+			/>
+
+			{/* <ReviewDrawer
 				reviewDrawerOpen={reviewDrawerOpen}
 				setReviewDrawerOpen={setReviewDrawerOpen}
 				grantAddress={applicationData?.grant.id}
@@ -423,9 +527,9 @@ Assign Reviewers
 				reviews={applicationData?.reviews}
 				applicationId={applicationData?.id}
 				onClose={() => setReviewDrawerOpen(false)}
-			/>
+			/> */}
 
-			<Flex
+			{/* <Flex
 				bg="white"
 				border="2px solid #D0D3D3"
 				borderRadius={8}
@@ -491,9 +595,9 @@ Evaluation Rubric
 							))
 					}
 				</Flex>
-			</Flex>
+			</Flex> */}
 
-			<Box mb={8} />
+			{/* <Box mb={8} />
 
 			<RubricDrawer
 				rubricDrawerOpen={rubricDrawerOpen}
@@ -507,7 +611,7 @@ Evaluation Rubric
 				grantAddress={applicationData?.grant.id}
 				workspaceId={workspace?.id || ''}
 				initialIsPrivate={applicationData?.grant.rubric?.isPrivate || false}
-			/>
+			/> */}
 		</>
 	)
 }
