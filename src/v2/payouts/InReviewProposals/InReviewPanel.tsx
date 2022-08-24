@@ -1,18 +1,24 @@
 import { useEffect, useState } from 'react'
+import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { Button, ButtonProps, Checkbox, Flex, forwardRef, Grid, GridItem, Menu, MenuButton, MenuItem, MenuList, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalOverlay, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { GetGrantDetailsQuery } from 'src/generated/graphql'
 import useBatchUpdateApplicationState from 'src/hooks/useBatchUpdateApplicationState'
+import { formatAddress } from 'src/utils/formattingUtils'
 import { AcceptApplication } from 'src/v2/assets/custom chakra icons/AcceptApplication'
 import { RejectApplication } from 'src/v2/assets/custom chakra icons/RejectApplication'
 import { ResubmitApplication } from 'src/v2/assets/custom chakra icons/ResubmitApplication'
+import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import InReviewRow from './InReviewRow'
 import ZeroState from './ZeroState'
 
 const InReviewPanel = ({
 	applicantsData,
+	grantData,
 	onSendFundsClicked,
 }: {
   applicantsData: any[];
+  grantData?: GetGrantDetailsQuery;
   onSendFundsClicked: (state: boolean) => void;
 
 }) => {
@@ -39,6 +45,22 @@ const InReviewPanel = ({
 	useEffect(() => {
 		setCheckedItems(applicantsData.filter((item) => (0 === item.status)).map((item) => false))
 	}, [applicantsData])
+
+	const getSubtitle = () => {
+		if(isAcceptClicked) {
+			return 'Accepting applications'
+		}
+
+		if(isRejectClicked) {
+			return 'Rejecting applications'
+		}
+
+		if(isResubmitClicked) {
+			return 'Resubmitting applications'
+		}
+
+		return ''
+	}
 
 	useEffect(() => {
 		const inReviewApplications = applicantsData?.filter((item: any) => (0 === item.status))
@@ -75,7 +97,7 @@ const InReviewPanel = ({
 		 }
 	}, [isAcceptClicked, isRejectClicked, isResubmitClicked, isConfirmClicked])
 
-	const [txn, txnLink, loading, error] = useBatchUpdateApplicationState(
+	const [txn, txnLink, loading, error, networkTransactionModalStep] = useBatchUpdateApplicationState(
 		'',
 		checkedApplicationsIds,
 		state,
@@ -362,13 +384,9 @@ const InReviewPanel = ({
 				}
 			</Grid>
 
-			{
-				isModalOpen
-		&& (
-
 			<Modal
 				isCentered
-				isOpen={isModalOpen}
+				isOpen={isModalOpen && networkTransactionModalStep === undefined}
 				onClose={
 					() => {
 						setIsAcceptClicked(false)
@@ -448,8 +466,38 @@ Confirm
 				</ModalContent>
 			</Modal>
 
-		)
-			}
+			<NetworkTransactionModal
+				isOpen={networkTransactionModalStep !== undefined}
+				subtitle={getSubtitle()}
+				description={
+					<Flex
+						direction="column"
+						w='100%'
+						align="start">
+						<Text
+							fontWeight={'500'}
+							fontSize={'17px'}
+						>
+							{grantData && grantData?.grants[0]?.title}
+						</Text>
+
+						<Button
+							rightIcon={<ExternalLinkIcon />}
+							variant="linkV2"
+							bg='#D5F1EB'>
+							{grantData && formatAddress(grantData?.grants[0]?.id)}
+						</Button>
+					</Flex>
+				}
+				currentStepIndex={networkTransactionModalStep || 0}
+				steps={
+					[
+						'Connect your wallet',
+						'Updating application(s) state',
+						'Waiting for transaction to complete',
+						'Application(s) state updated',
+					]
+				} />
 		</>
 	)
 }
