@@ -17,7 +17,7 @@ import {
 	getSupportedChainIdFromSupportedNetwork,
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import ViewScoreDrawer from 'src/v2/payouts/ViewScoreDrawer/ViewEvaluationDrawer'
+import ViewScoreDrawer from 'src/v2/payouts/ViewScoreDrawer/ViewScoreDrawer'
 import {
 	formatAmount,
 	getFormattedFullDateFromUnixTimestamp,
