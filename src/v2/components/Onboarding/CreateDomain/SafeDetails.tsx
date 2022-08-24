@@ -42,7 +42,8 @@ function SafeDetails({ safesOptions, step, safeAddress, isPasted, isVerified, is
 				helperLinkUrl='https://youtube.com'
 				placeholder='0xE6379586E5D8350038E9126c5553c0C77549B6c3'
 				value={safeAddress}
-				setValue={setValue}
+				onChange={(e) => setValue(e.target.value)}
+				// setValue={setValue}
 				isPasted={isPasted}
 				isVerified={isVerified}
 				isDisabled={step === 1}

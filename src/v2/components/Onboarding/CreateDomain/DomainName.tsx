@@ -25,7 +25,8 @@ Give your domain a name
 				helperLinkUrl='https://youtube.com'
 				placeholder='Ethereum Developer Relations'
 				value={domainName}
-				setValue={setValue}
+				onChange={(e) => setValue(e.target.value)}
+				// setValue={setValue}
 				isVerified={isVerified}
 				maxLength={30} />
 			<Button

@@ -35,6 +35,7 @@ export default function useBatchUpdateApplicationState(
 	const applicationContract = useQBContract('applications', chainId)
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
+	const [networkTransactionModalStep, setNetworkTransactionModalStep] = React.useState<number>()
 
 	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
 
@@ -95,6 +96,7 @@ export default function useBatchUpdateApplicationState(
 		// }
 
 		async function validate() {
+			setNetworkTransactionModalStep(1)
 			setLoading(true)
 			// console.log('calling validate');
 			// console.log('DATA: ', data)
@@ -143,13 +145,21 @@ export default function useBatchUpdateApplicationState(
 					return
 				}
 
+				setNetworkTransactionModalStep(2)
+
 				const { txFee, receipt } = await getTransactionDetails(response, currentChainId.toString())
 
 				await chargeGas(Number(workspace?.id), Number(txFee))
 
+				setNetworkTransactionModalStep(3)
+
 				setTransactionData(receipt)
 				setLoading(false)
 				setSubmitClicked(false)
+
+				setTimeout(() => {
+					setNetworkTransactionModalStep(undefined)
+				}, 2000)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
 				setError(message)
@@ -195,6 +205,8 @@ export default function useBatchUpdateApplicationState(
 				throw new Error('not connected to workspace')
 			}
 
+			setNetworkTransactionModalStep(0)
+
 			if(!currentChainId) {
 				if(switchNetwork && chainId) {
 					switchNetwork(chainId)
@@ -226,6 +238,7 @@ export default function useBatchUpdateApplicationState(
 			) {
 				return
 			}
+
 
 			validate()
 		} catch(e: any) {
@@ -269,5 +282,6 @@ export default function useBatchUpdateApplicationState(
 		loading,
 		isBiconomyInitialised,
 		error,
+		networkTransactionModalStep
 	]
 }

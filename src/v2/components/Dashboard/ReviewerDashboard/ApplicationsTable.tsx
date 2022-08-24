@@ -15,8 +15,9 @@ import {
 	Tr,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { useAccount } from 'wagmi'
-import { ApiClientsContext } from '../../../../../pages/_app'
+import { IReview, IReviewFeedback } from 'src/types'
+import { useLoadReview } from 'src/utils/reviews'
+import { ApiClientsContext, WebwalletContext } from '../../../../../pages/_app'
 import Loader from '../../../../components/ui/loader'
 import { CHAIN_INFO, defaultChainId } from '../../../../constants/chains'
 import {
@@ -26,10 +27,8 @@ import {
 	useGetMoreToBeReviewedApplicationsLazyQuery,
 } from '../../../../generated/graphql'
 import SupportedChainId from '../../../../generated/SupportedChainId'
-import useEncryption from '../../../../hooks/utils/useEncryption'
 import { formatAmount, getFormattedDateFromUnixTimestampWithYear } from '../../../../utils/formattingUtils'
 import { capitalizeFirstLetter } from '../../../../utils/generics'
-import { getFromIPFS } from '../../../../utils/ipfsUtils'
 import { getAssetInfo } from '../../../../utils/tokenUtils'
 import {
 	getSupportedChainIdFromSupportedNetwork,
@@ -136,6 +135,8 @@ function ApplicationsTable({
 
 	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 	const { client } = subgraphClients[chainId]
+
+	const { loadReview } = useLoadReview(grant.id, chainId)
 
 	const TABLE_HEADERS = ['Project Name', 'Funding ask', 'Submitted on']
 
@@ -262,7 +263,9 @@ function ApplicationsTable({
 											</Td>
 										)
 									}
-									<ReviewTableData application={application} />
+									<ReviewTableData
+										application={application}
+										loadReview={r => loadReview(r, application.id)} />
 								</Tr>
 							))
 						}
@@ -293,45 +296,36 @@ function ApplicationsTable({
 	)
 }
 
-const ReviewTableData = ({ application }: { application: Application }) => {
+const ReviewTableData = ({ application, loadReview }: { application: Application, loadReview: (r: IReview) => Promise<IReviewFeedback> }) => {
 	const [reviewSum, setReviewSum] = useState<number>()
 
-	const { decryptMessage } = useEncryption()
-	const { data: accountData } = useAccount()
+	const { scwAddress } = useContext(WebwalletContext)!
 	const router = useRouter()
 
 	// review, if the logged in reviewer already has added a review
 	const userReview = application.reviews.find((r) => (
-		r.reviewer?.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
+		r.reviewer?.id.split('.')[1].toLowerCase() === scwAddress?.toLowerCase()
 	))
 
-	const loadReview = async() => {
-		if(!userReview) {
-			return
+	const getReview = async() => {
+		try {
+			const data = await loadReview(userReview! as IReview)
+
+			let reviewSum = 0
+			data?.items.forEach((feedback) => reviewSum += feedback.rating)
+
+			setReviewSum(reviewSum)
+		} catch(error) {
+			console.error(`error in loading self review (${userReview?.id}): ${error}`)
+			setReviewSum(0)
 		}
-
-		let data: { items: { rating: number }[] }
-		if(application.grantRubricIsPrivate) {
-			const reviewData = userReview?.data.find((d) => (
-				d.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
-			))
-			const ipfsData = await getFromIPFS(reviewData!.data)
-
-			data = JSON.parse(await decryptMessage(ipfsData) || '{}')
-		} else {
-			const ipfsData = await getFromIPFS(userReview!.publicReviewDataHash!)
-			data = JSON.parse(ipfsData || '{}')
-		}
-
-		let reviewSum = 0
-		data?.items.forEach((feedback) => reviewSum += feedback.rating)
-
-		setReviewSum(reviewSum)
 	}
 
 	useEffect(() => {
-		loadReview()
-	}, [])
+		if(userReview) {
+			getReview()
+		}
+	}, [userReview?.id])
 
 	if(userReview) {
 		return (

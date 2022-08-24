@@ -1,3 +1,4 @@
+
 export default {
 	Button: {
 		baseStyle: {
@@ -161,6 +162,23 @@ export default {
 						bg: 'gray.3',
 					},
 				},
+			},
+			linkV2: {
+				bg: 'white',
+				color: 'black.1',
+				h: 8,
+				px: 3,
+				_hover: {
+					bg: 'gray.2',
+				},
+				_focus: {
+					bg: 'gray.3',
+					border: '1px solid gray.4',
+				},
+				_disabled: {
+					color: 'gray.5',
+				},
+				py: 2,
 			}
 		},
 	},

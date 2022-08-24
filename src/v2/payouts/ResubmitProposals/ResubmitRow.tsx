@@ -4,14 +4,10 @@ import { useRouter } from 'next/router'
 import getAvatar from 'src/utils/avatarUtils'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 
-const RejectedRow = ({
+const ResubmitRow = ({
 	applicantData,
-	isChecked,
-	onChange,
 }: {
 	applicantData: any;
-	isChecked: boolean;
-	onChange: (e: any) => void;
 }) => {
 	const router = useRouter()
 	const [isHovering, setIsHovering] = useState(false)
@@ -308,4 +304,4 @@ const RejectedRow = ({
 	)
 }
 
-export default RejectedRow
+export default ResubmitRow

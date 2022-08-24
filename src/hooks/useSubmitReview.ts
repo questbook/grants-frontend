@@ -2,13 +2,12 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
-import { SupportedChainId } from 'src/constants/chains'
+import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
-import useEncryption from 'src/hooks/utils/useEncryption'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
-import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import { useGenerateReviewData } from 'src/utils/reviews'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
@@ -38,16 +37,22 @@ export default function useSubmitReview(
 	const [transactionData, setTransactionData] = useState<any>()
 	const { data: accountData, nonce } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
-	const { encryptMessage } = useEncryption()
 
 	const { validatorApi, workspace, subgraphClients } = useContext(ApiClientsContext)!
 
 	if(!chainId) {
 		// eslint-disable-next-line no-param-reassign
-		chainId = getSupportedChainIdFromWorkspace(workspace)
+		chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 	}
 
 	const { client } = subgraphClients[chainId!]
+
+	const { generateReviewData } = useGenerateReviewData({
+		grantId: grantAddress!,
+		applicationId: applicationId!,
+		isPrivate,
+		chainId,
+	})
 
 	const { fetchMore: fetchReviews } = useGetInitialReviewedApplicationGrantsQuery({ client })
 
@@ -104,36 +109,9 @@ export default function useSubmitReview(
 					throw new Error('Zero wallet is not ready')
 				}
 
-				const encryptedReview: { [key in string]: string } = {}
-				if(isPrivate) {
-					const yourPublicKey = workspace?.members.find(
-						(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
-					)?.publicKey
-					const encryptedData = encryptMessage(JSON.stringify(data), yourPublicKey!)
-					const encryptedHash = (await uploadToIPFS(encryptedData)).hash
-					encryptedReview[accountData!.address!] = encryptedHash
-
-					workspace?.members.filter(
-						(m) => (m.accessLevel === 'admin' || m.accessLevel === 'owner') && (m.publicKey && m.publicKey?.length > 0),
-					).map((m) => ({ key: m.publicKey, address: m.actorId }))
-						.forEach(async({ key, address }) => {
-							const encryptedAdminData = encryptMessage(JSON.stringify(data), key!)
-							const encryptedAdminHash = (await uploadToIPFS(encryptedAdminData)).hash
-							encryptedReview[address] = encryptedAdminHash
-						})
-
-				}
-
-				const dataHash = (await uploadToIPFS(JSON.stringify(data))).hash
-
-				const {
-					data: { ipfsHash },
-				} = await validatorApi.validateReviewSet({
-					reviewer: accountData?.address!,
-					publicReviewDataHash: isPrivate ? '' : dataHash,
-					encryptedReview,
+				const { ipfsHash } = await generateReviewData({
+					items: data.items!
 				})
-
 
 				if(!ipfsHash) {
 					throw new Error('Error validating review data')
