@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Checkbox, Fade, Flex, forwardRef, GridItem, Image, Menu, MenuButton, MenuItem, MenuList, Text, TextProps } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
@@ -41,15 +41,18 @@ const InReviewRow = ({
 
 	const [reviews, setReviews] = useState<{ [_id: string]: IReviewFeedback }>({ })
 
+	const sortedReviews = useMemo(() => (
+		[...Object.keys(reviews).sort((a, b) => totalScore(reviews[b]) - totalScore(reviews[a]))]
+	), [reviews])
+
 	const getReviews = async() => {
 		const reviewsDataMap: typeof reviews = { }
 
 		await Promise.all(
 			submittedReviews!.map(async(review: IReview) => {
 				try {
-					console.log('review ', review)
-					const reviewData = await loadReview(review, applicantData!.id)
-					const [workspaceId, reviewerAddress] = review.reviewer!.id.split('.')
+					const reviewData = await loadReview(review, applicantData!.applicationId)
+					const [, reviewerAddress] = review.reviewer!.id.split('.')
 					reviewsDataMap[reviewerAddress] = reviewData
 				} catch(error) {
 					console.error(`failed to load review from "${review.reviewer!.id}"`, error)
@@ -66,16 +69,6 @@ const InReviewRow = ({
 			getReviews()
 		}
 	}, [applicantData])
-
-	const totalScore = (items?: any[]) => {
-		console.log(items)
-		let s = 0
-		items?.forEach((item) => {
-			s += item.rating ?? 0
-		})
-
-		return s
-	}
 
 	return (
 		<>
@@ -151,7 +144,7 @@ const InReviewRow = ({
 						>
 							{applicantData?.applicantName}
 							{' '}
-•
+							•
 							{' '}
 							{applicantData?.applicantEmail}
 						</Text>
@@ -206,7 +199,7 @@ const InReviewRow = ({
 								>
 									{
 										applicantData?.reviewers?.length > 0 ?
-					 						`${applicantData?.reviews?.length} / ${applicantData?.reviewers?.length}`
+					 						`${submittedReviews?.length} / ${applicantData?.reviewers?.length}`
 											: '-'
 									}
 								</Text>
@@ -238,7 +231,6 @@ const InReviewRow = ({
 							applicantData?.reviewers?.map((reviewer: any, i: number) => {
 								const reviewerIdSplit = reviewer?.id.split('.')
 								const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
-								console.log(reviewerId)
 								return (
 									<>
 										<MenuItem
@@ -288,7 +280,7 @@ const InReviewRow = ({
 													color='#7D7DA0'
 													ml='auto'
 												>
-													{totalScore(reviews ? reviews[reviewerId] : [])}
+													{reviews[reviewerId] ? totalScore(reviews[reviewerId]) : 0}
 												</Text>
 											</Flex>
 										</MenuItem>
@@ -312,8 +304,7 @@ const InReviewRow = ({
 				<Flex alignItems={'center'}>
 					<Flex alignItems="center">
 						{
-							reviews &&
-							[...Object.keys(reviews).sort((a, b) => totalScore(reviews[b]) - totalScore(reviews[a]))].map((reviewKey, i) => {
+							sortedReviews.map((reviewKey, i) => {
 								return (
 									<>
 										<Menu key={`review-${reviewKey}-${i}`}>
@@ -417,7 +408,7 @@ const InReviewRow = ({
 																			color='#7D7DA0'
 																			ml='auto'
 																		>
-																			{totalScore(reviews ? reviews[reviewerId] : [])}
+																			{reviews[reviewerId] ? totalScore(reviews[reviewerId]) : 0}
 																		</Text>
 																	</Flex>
 																</MenuItem>
@@ -427,7 +418,7 @@ const InReviewRow = ({
 												}
 
 												{
-													reviews[reviewKey]?.map((item: any) => {
+													reviews[reviewKey]?.items.map((item) => {
 														return (
 															<>
 																<MenuItem
@@ -480,7 +471,7 @@ const InReviewRow = ({
 											</MenuList>
 										</Menu>
 										{
-											i < Object.keys(reviews).length - 1 && (
+											i < sortedReviews.length - 1 && (
 												<Text
 													fontSize='14px'
 													lineHeight='20px'
@@ -549,6 +540,15 @@ const InReviewRow = ({
 			</GridItem>
 		</>
 	)
+}
+
+const totalScore = (feedback: IReviewFeedback) => {
+	let s = 0
+	feedback.items?.forEach((item) => {
+		s += item.rating ?? 0
+	})
+
+	return s
 }
 
 export default InReviewRow
