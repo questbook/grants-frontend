@@ -120,7 +120,8 @@ function BrowseDao() {
 		}
 	}, [grants])
 
-	const formatDataforWorkspace = (workspaces: any) => {
+	const formatDataforWorkspace = async(workspaces: any) => {
+		const { funding: fundingData, applications: applicationsData } = await getAnalyticsData()
 		var result = Object.keys(workspaces).map((key) => {
 			var totalamount = 0
 			if(workspaces[key].length > 1) {
@@ -129,14 +130,22 @@ function BrowseDao() {
 				})
 			}
 
+			const chainID = key.split('-')[1].substring(6)
+			const workspaceID = key.split('-')[0]
+
+			// console.log(chainID, workspaceID)
+
+			const workspaceFund = fundingData.find((f: any) => f.groupkey === `${workspaceID}-${chainID}`)
+			const application = applicationsData.find((f: any) => f.groupkey === `${workspaceID}-${chainID}`)
+
 			var dao = {
 				chainID: key.split('-')[1],
 				workspaceID: key.split('-')[0],
 				name: workspaces[key][0].name,
 				icon: workspaces[key][0].icon,
-				amount:totalamount === 0 ? Number(formatAmount(workspaces[key][0].amount)) : totalamount,
+				amount: workspaceFund ? workspaceFund['sum(amount)'] : 0,
 				token: workspaces[key][0].token,
-				noOfApplicants: workspaces[key][0].noOfApplicants
+				noOfApplicants: application ? application['count(*)'] : 0,
 			}
 			return (dao)
 		})
@@ -184,6 +193,43 @@ function BrowseDao() {
 			})
 		}
 	}, [])
+
+	const getAnalyticsData = async() => {
+		console.log('calling analytics')
+		try {
+			//const res = await fetch('https://www.questbook-analytics.com/workspace-analytics', {
+			const res = await fetch(
+				'https://www.questbook-analytics.com/analytics',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					referrerPolicy: 'unsafe-url'
+
+					// For testing
+					// body: JSON.stringify({
+					// 	chainId: 137,
+					// 	workspaceId: '0x2'
+					// })
+				}
+			)
+
+			const data = await res.json()
+			console.log('res', data)
+			return {
+				funding: data.funding,
+				applications: data.applications,
+			}
+		} catch(e) {
+			console.log('res', e)
+			return {
+				funding: [],
+				applications: [],
+			}
+		}
+	}
+
 
 	return (
 	// <Box

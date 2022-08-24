@@ -141,16 +141,16 @@ function Profile() {
 		}
 	}, [allDaoData])
 
-	useEffect(() => {
-		if(allDaoData && allDaoData.grants.length >= 1 && grantWinners.length === 0) {
-			allDaoData.grants.forEach((grant) => {
-				grant.applications.forEach(
-					(app: any) => app.state === 'approved' &&
-            setGrantWinners((winners: any) => [...winners, app])
-				)
-			})
-		}
-	}, [allDaoData, grantWinners])
+	// useEffect(() => {
+	// 	if(allDaoData && allDaoData.grants.length >= 1 && grantWinners.length === 0) {
+	// 		allDaoData.grants.forEach((grant) => {
+	// 			grant.applications.forEach(
+	// 				(app: any) => app.state === 'approved' &&
+	//           setGrantWinners((winners: any) => [...winners, app])
+	// 			)
+	// 		})
+	// 	}
+	// }, [allDaoData, grantWinners])
 
 	useEffect(() => {
 		if(allDaoData && grantsDisbursed.length === 0) {
