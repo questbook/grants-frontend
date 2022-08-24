@@ -203,7 +203,7 @@ const getSafeDetails = async(realmsPublicKey: String) : Promise<SafeSelectOption
 		console.log('name', realmData.account.name)
 		return {
 			networkType: NetworkType.Solana,
-			networkId: '90001',
+			networkId: 'solana-devnet', // it should be 'solana-mainnet' in the other case.
 			networkName: 'Solana', // Polygon
 			networkIcon: '/network_icons/solana.svg',
 			safeType: 'SPL-GOV', // Gnosis
