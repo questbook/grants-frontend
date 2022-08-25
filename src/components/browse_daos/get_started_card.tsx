@@ -16,7 +16,7 @@ function GetStartedCard() {
 			onClick={
 				() => {
 					router.push({
-						pathname: '/onboarding',
+						pathname: '/onboarding/create-domain',
 					})
 				}
 			}>
