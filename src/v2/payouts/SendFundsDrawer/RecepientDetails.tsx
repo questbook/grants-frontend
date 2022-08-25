@@ -170,7 +170,7 @@ const RecipientDetails = ({
 										}
 										fontWeight={'500'}
 										fontSize='14px'
-										defaultValue={initiateTransactionData ? initiateTransactionData[i].amount : ''}
+										defaultValue={''}
 										errorBorderColor={'red'}
 										height={'auto'}
 										type={'number'}
