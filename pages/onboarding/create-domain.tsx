@@ -454,7 +454,7 @@ const OnboardingCreateDomain = () => {
 						setIsDomainCreationSuccessful(false)
 					}
 				}
-				networkName={network ? CHAIN_INFO[network].name : undefined}
+				domainName={domainName}
 				daoLink={network && txHash ? getExplorerUrlForTxHash(network, txHash) : undefined}
 			/>
 		</>
