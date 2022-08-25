@@ -20,6 +20,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useSubmitApplication from 'src/hooks/useSubmitApplication'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
+import { addAuthorizedUser } from 'src/utils/gaslessUtils'
 import { isValidEmail } from 'src/utils/validationUtils'
 import strings from '../../../../constants/strings.json'
 import { GrantApplicationFieldsSubgraph } from '../../../../types/application'
@@ -76,9 +77,12 @@ function Form({
 	shouldShowButton,
 	defaultMilestoneFields
 }: Props) {
-	const { data: accountData, nonce } = useQuestbookAccount()
 	const CACHE_KEY = strings.cache.apply_grant
 	const getKey = `${chainId}-${CACHE_KEY}-${grantId}`
+
+	const [shouldRefreshNonce, setShouldRefreshNonce] = React.useState<boolean>()
+
+	const { data: accountData, nonce } = useQuestbookAccount(shouldRefreshNonce)
 
 	const { encryptApplicationPII } = useApplicationEncryption()
 	const { webwallet: signer } = useContext(WebwalletContext)!
@@ -183,6 +187,21 @@ function Form({
     grantId,
     workspaceId,
 	)
+
+	React.useEffect(() => {
+		if(nonce && nonce !== 'Token expired') {
+			return
+		}
+
+		if(signer) {
+			addAuthorizedUser(signer?.address)
+				.then(() => {
+					setShouldRefreshNonce(true)
+					console.log('Added authorized user', signer.address)
+				})
+				.catch((err) => console.log("Couldn't add authorized user", err))
+		}
+	}, [signer, nonce])
 
 	const { setRefresh } = useCustomToast(txnLink)
 	React.useEffect(() => {
