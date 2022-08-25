@@ -58,12 +58,11 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 	useEffect(() => {
 		(async() => {
 			setSplGovLoaded(false)
-			try{
+			try {
 				const newSplGovSafe = await getSafeDetails(safeAddress)
 				setSplGovSafe(newSplGovSafe)
 				setSplGovError('')
-			}
-			catch(error: any){
+			} catch(error: any) {
 				console.log(error)
 				if(typeof error === 'string') {
 					setSplGovError(error)
@@ -74,8 +73,10 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 				} else {
 					setSplGovError(DEFAULT_ERROR_MESSAGE)
 				}
+
 				setSplGovSafe(null)
 			}
+
 			setSplGovLoaded(true)
 		})()
 	}, [safeAddress])

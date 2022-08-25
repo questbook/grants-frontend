@@ -20,6 +20,7 @@ import {
 import ViewScoreDrawer from 'src/v2/payouts/ViewScoreDrawer/ViewScoreDrawer'
 import {
 	formatAmount,
+	getFieldString,
 	getFormattedFullDateFromUnixTimestamp,
 	truncateStringFromMiddle,
 } from '../../../utils/formattingUtils'
@@ -44,11 +45,10 @@ function Sidebar({
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 
-	const applicantEmail = applicationData?.fields?.find(
-		(fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
-	) ? applicationData?.fields?.find(
-			(fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
-		)?.values[0]?.value : undefined
+	const applicantEmail = getFieldString(applicationData, 'applicantEmail')
+	const applicantAddress = getFieldString(applicationData, 'applicantAddress')
+
+	console.log('Applicant address: ', applicantAddress)
 
 	// const [rubricDrawerOpen, setRubricDrawerOpen] = useState(false)
 	// const [maximumPoints, setMaximumPoints] = React.useState(5)
@@ -200,15 +200,15 @@ function Sidebar({
 						src={icon}
 					/>
 					<Box mx={3} />
-					<Tooltip label={applicationData?.applicantId}>
+					<Tooltip label={applicantAddress}>
 						<Heading
 							variant="applicationHeading"
 							color="brand.500">
-							{truncateStringFromMiddle(applicationData?.applicantId)}
+							{truncateStringFromMiddle(applicantAddress)}
 						</Heading>
 					</Tooltip>
 					<Box mr={4} />
-					<CopyIcon text={applicationData?.applicantId} />
+					<CopyIcon text={applicantAddress} />
 				</Flex>
 				<Box my={4} />
 				<Flex
@@ -224,11 +224,7 @@ function Sidebar({
 					<Heading
 						variant="applicationHeading"
 						lineHeight="32px">
-						{
-							applicationData?.fields?.find(
-								(fld: any) => fld?.id?.split('.')[1] === 'applicantName',
-							)?.values[0]?.value
-						}
+						{getFieldString(applicationData, 'applicantName')}
 					</Heading>
 				</Flex>
 				<Flex
@@ -245,15 +241,10 @@ function Sidebar({
 						variant="applicationHeading"
 						lineHeight="32px">
 						{
-							applicationData?.fields?.find(
-								(fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
-							) ? (
+							applicantEmail
+							 ? (
 									<>
-										{
-											applicationData?.fields?.find(
-												(fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
-											)?.values[0]?.value
-										}
+										{applicantEmail}
 										<MailTo applicantEmail={applicantEmail} />
 									</>
 								) : (
@@ -319,9 +310,7 @@ function Sidebar({
 						{
 							applicationData
               && formatAmount(
-              	applicationData?.fields?.find(
-              		(fld: any) => fld?.id?.split('.')[1] === 'fundingAsk',
-              	)?.values[0]?.value || '0',
+              	getFieldString(applicationData, 'fundingAsk') || '0',
               	decimals || 18,
               )
 						}

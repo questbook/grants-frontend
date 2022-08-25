@@ -8,14 +8,14 @@ const SuccessfulDomainCreationModal = ({
 	isOpen,
 	onClose,
 	redirect,
-	networkName,
+	domainName,
 	daoLink
 }: {
 	isOpen: boolean,
 	onClose: () => void,
 	redirect?: () => void,
 	daoLink?: string,
-	networkName?: string,
+	domainName?: string,
 }) => {
 	const router = useRouter()
 	return (
@@ -72,7 +72,7 @@ Success! Your DAO is created
 									<Text
 										variant="v2_body"
 										fontWeight="500">
-										{networkName ?? 'Unknown'}
+										{domainName ?? 'Unknown'}
 										{' '}
 DAO
 									</Text>

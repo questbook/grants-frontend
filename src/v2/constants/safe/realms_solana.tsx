@@ -84,7 +84,7 @@ export class Realms_Solana implements Safe {
 
     	for(let i = 0; i < transactions.length; i++) {
     		const ins = SystemProgram.transfer({
-    			fromPubkey: new PublicKey(transactions[i].from),
+    			fromPubkey: nativeTreasury,
     			toPubkey: new PublicKey(transactions[i].to),
     			lamports: transactions[i].amount * 1000000000,
     			programId: this.programId,
@@ -210,7 +210,7 @@ const getSafeDetails = async(realmsAddress: string) : Promise<SafeSelectOption |
 	console.log('solToUsd', solToUsd)
 	const usdAmount = solToUsd * solAmount
 	console.log('usdAmount', usdAmount)
-	
+
 	return {
 		networkType: NetworkType.Solana,
 		networkId: '900001', // A costum value for Solana as it's not EVM.

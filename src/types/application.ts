@@ -1,6 +1,7 @@
 export interface GrantApplicationProps {
   applicantName: string;
   applicantEmail:string;
+  applicantAddress: string;
   teamMembers: number;
   membersDescription: { description: string }[];
   projectName: string;

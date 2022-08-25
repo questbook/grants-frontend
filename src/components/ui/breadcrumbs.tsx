@@ -45,7 +45,7 @@ function Breadcrumbs({ path, id }: BreadcrumbProps) {
 													? 'your_applications'
 												// eslint-disable-next-line no-nested-ternary
 													: node === 'View Applicants'
-														? `your_grants/view_applicants/?grantId=${id}`
+														? `v2/your_grants/view_applicants/?grantId=${id}`
 													// eslint-disable-next-line no-nested-ternary
 														: node === 'View Application'
 															? `your_grants/view_applicants/applicant_form/?applicationId=${id}`

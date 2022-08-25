@@ -20,6 +20,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useSubmitApplication from 'src/hooks/useSubmitApplication'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
+import { addAuthorizedUser } from 'src/utils/gaslessUtils'
 import { isValidEmail } from 'src/utils/validationUtils'
 import strings from '../../../../constants/strings.json'
 import { GrantApplicationFieldsSubgraph } from '../../../../types/application'
@@ -76,9 +77,12 @@ function Form({
 	shouldShowButton,
 	defaultMilestoneFields
 }: Props) {
-	const { data: accountData, nonce } = useQuestbookAccount()
 	const CACHE_KEY = strings.cache.apply_grant
 	const getKey = `${chainId}-${CACHE_KEY}-${grantId}`
+
+	const [shouldRefreshNonce, setShouldRefreshNonce] = React.useState<boolean>()
+
+	const { data: accountData, nonce } = useQuestbookAccount(shouldRefreshNonce)
 
 	const { encryptApplicationPII } = useApplicationEncryption()
 	const { webwallet: signer } = useContext(WebwalletContext)!
@@ -87,6 +91,9 @@ function Form({
 
 	const [applicantEmail, setApplicantEmail] = React.useState('')
 	const [applicantEmailError, setApplicantEmailError] = React.useState(false)
+
+	const [applicantAddress, setApplicantAddress] = React.useState('')
+	const [applicantAddressError, setApplicantAddressError] = React.useState(false)
 
 	const [teamMembers, setTeamMembers] = React.useState<number | null>(1)
 	const [teamMembersError, setTeamMembersError] = React.useState(false)
@@ -184,6 +191,21 @@ function Form({
     workspaceId,
 	)
 
+	React.useEffect(() => {
+		if(nonce && nonce !== 'Token expired') {
+			return
+		}
+
+		if(signer) {
+			addAuthorizedUser(signer?.address)
+				.then(() => {
+					setShouldRefreshNonce(true)
+					console.log('Added authorized user', signer.address)
+				})
+				.catch((err) => console.log("Couldn't add authorized user", err))
+		}
+	}, [signer, nonce])
+
 	const { setRefresh } = useCustomToast(txnLink)
 	React.useEffect(() => {
 		if(txnData) {
@@ -211,6 +233,11 @@ function Form({
 
 			setApplicantEmailError(true)
 			console.log('Error email')
+			error = true
+		}
+
+		if(applicantAddress === '' && grantRequiredFields.includes('applicantAddress')) {
+			setApplicantAddressError(true)
 			error = true
 		}
 
@@ -345,6 +372,7 @@ function Form({
 			fields: {
 				applicantName: [{ value: applicantName }],
 				applicantEmail: [{ value: applicantEmail }],
+				applicantAddress: [{ value: applicantAddress }],
 				projectName: [{ value: projectName }],
 				projectDetails: [{ value: projectDetailsString }],
 				fundingAsk: fundingAsk !== '' ? [
@@ -419,6 +447,10 @@ function Form({
 			setApplicantEmail(formDataLocal?.applicantEmail)
 		}
 
+		if(formDataLocal?.applicantAddress) {
+			setApplicantAddress(formDataLocal?.applicantAddress)
+		}
+
 		if(formDataLocal?.teamMembers) {
 			setTeamMembers(formDataLocal?.teamMembers)
 		}
@@ -475,6 +507,7 @@ function Form({
 		const formDataLocal = {
 			applicantName,
 			applicantEmail,
+			applicantAddress,
 			teamMembers,
 			membersDescription,
 			projectName,
@@ -494,6 +527,7 @@ function Form({
 	}, [
 		applicantName,
 		applicantEmail,
+		applicantAddress,
 		teamMembers,
 		membersDescription,
 		projectName,
@@ -598,10 +632,14 @@ function Form({
 					applicantNameError={applicantNameError}
 					applicantEmail={applicantEmail}
 					applicantEmailError={applicantEmailError}
+					applicantAddress={applicantAddress}
+					applicantAddressError={applicantAddressError}
 					setApplicantName={setApplicantName}
 					setApplicantNameError={setApplicantNameError}
 					setApplicantEmail={setApplicantEmail}
 					setApplicantEmailError={setApplicantEmailError}
+					setApplicantAddress={setApplicantAddress}
+					setApplicantAddressError={setApplicantAddressError}
 					grantRequiredFields={grantRequiredFields}
 				/>
 
