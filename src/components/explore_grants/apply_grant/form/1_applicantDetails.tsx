@@ -9,20 +9,28 @@ function ApplicantDetails({
 	setApplicantName,
 	applicantEmail,
 	setApplicantEmail,
+	applicantAddress,
+	setApplicantAddress,
 	applicantNameError,
 	setApplicantNameError,
 	applicantEmailError,
 	setApplicantEmailError,
 	grantRequiredFields,
+	applicantAddressError,
+	setApplicantAddressError,
 }: {
   applicantName: string;
   setApplicantName: (applicantName: string) => void;
   applicantEmail: string;
   setApplicantEmail: (applicantEmail: string) => void;
   applicantNameError: boolean;
+  applicantAddress: string;
+  setApplicantAddress: (applicantAddress: string) => void;
   setApplicantNameError: (applicantNameError: boolean) => void;
   applicantEmailError: boolean;
   setApplicantEmailError: (applicantEmailError: boolean) => void;
+  applicantAddressError: boolean;
+  setApplicantAddressError: (applicantAddressError: boolean) => void;
   grantRequiredFields: string[];
 }) {
 	return (
@@ -71,6 +79,25 @@ function ApplicantDetails({
 				errorText="Required"
 				visible={grantRequiredFields.includes('applicantEmail')}
 				type="email"
+			/>
+			<Box mt={6} />
+			<SingleLineInput
+				label="Applicant Address"
+				placeholder="0xF6C42302bC230BBA9c5379dDFb33ca72409E1624"
+				subtext="Your wallet address where you would like to receive funds"
+				onChange={
+					(e) => {
+						if(applicantAddress) {
+							 setApplicantAddressError(false)
+						}
+
+						setApplicantAddress(e.target.value)
+					}
+				}
+				isError={applicantAddressError}
+				errorText="Required"
+				value={applicantAddress}
+				visible={grantRequiredFields.includes('applicantAddress')}
 			/>
 		</>
 	)

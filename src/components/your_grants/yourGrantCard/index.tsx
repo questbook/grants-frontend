@@ -62,7 +62,7 @@ function YourGrantCard({
   [boolean, number]
   >([acceptingApplications, 0])
 
-	const [transactionData, txnLink, loading, error] = useArchiveGrant(
+	const [transactionData, txnLink, loading, isBiconomyInitialised, error] = useArchiveGrant(
 		isAcceptingApplications[0],
 		isAcceptingApplications[1],
 		grantID,
@@ -401,6 +401,7 @@ function YourGrantCard({
 						}
 					}
 					loading={loading}
+					isBiconomyInitialised={isBiconomyInitialised}
 				/>
 			</Modal>
 

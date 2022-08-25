@@ -12,6 +12,12 @@ export default [
 		isRequired: true,
 	},
 	{
+		title: 'Applicant Address',
+		id: 'applicantAddress',
+		inputType: 'short-form',
+		isRequired: true
+	},
+	{
 		title: 'Team Members',
 		id: 'teamMembers',
 		inputType: 'long-form',

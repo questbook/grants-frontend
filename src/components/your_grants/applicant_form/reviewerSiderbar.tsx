@@ -1,59 +1,49 @@
-import React, { useContext, useEffect, useState } from 'react'
-import StarRatings from 'react-star-ratings'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import {
+	Badge,
 	Box,
-	Button,
-	Divider,
-	Drawer,
-	DrawerContent,
-	DrawerOverlay,
+	Button, Divider,
 	Flex,
-	Image,
-	Text,
+	HStack,
+	Text, useToast,
 } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
-import MultiLineInput from 'src/components/ui/forms/multiLineInput'
+import { Fragment } from 'preact'
 import Loader from 'src/components/ui/loader'
-import useSubmitReview from 'src/hooks/useSubmitReview'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
-import useEncryption from 'src/hooks/utils/useEncryption'
-import { getFromIPFS } from 'src/utils/ipfsUtils'
+import { defaultChainId } from 'src/constants/chains'
+import { useLoadReview } from 'src/utils/reviews'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
-import FeedbackDrawer from '../feedbackDrawer'
+import { GetApplicationDetailsQuery } from '../../../generated/graphql'
+import { useQuestbookAccount } from '../../../hooks/gasless/useQuestbookAccount'
+import FeedbackDrawer, { FeedbackType } from '../feedbackDrawer'
 
-function ReviewerSidebar({
-	applicationData,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	isAdmin,
-}: {
-  showHiddenData: () => void;
-  isAdmin: boolean;
-  onAcceptApplicationClick: () => void;
-  onRejectApplicationClick: () => void;
-  onResubmitApplicationClick: () => void;
-  applicationData: any;
-}) {
+type ReviewerSidebarProps = {
+	applicationData: GetApplicationDetailsQuery['grantApplication']
+}
+
+function ReviewerSidebar({ applicationData }: ReviewerSidebarProps) {
 	const { workspace } = useContext(ApiClientsContext)!
-	const chainId = getSupportedChainIdFromWorkspace(workspace)
-	const { data: accountData } = useAccount()
+	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+	const { data: accountData } = useQuestbookAccount()
 
-	const [feedbackDrawerOpen, setFeedbackDrawerOpen] = React.useState(false)
-	const [feedbacks, setFeedbacks] = React.useState<any[]>([])
+	const [feedbackDrawerOpen, setFeedbackDrawerOpen] = useState(false)
+	const [reviewSelected, setReviewSelected] = useState<{ items: FeedbackType[] }>()
+	const [reviewLoadError, setReviewLoadError] = useState<Error>()
 
-	const [yourReview, setYourReview] = useState<any>()
+	const isPrivate = !!applicationData?.grant.rubric?.isPrivate
+	const grantId = applicationData?.grant.id
 
-	const [decrpytLoading, setDecrpytLoading] = useState(false)
-	const [reviewerDrawerOpen, setReviewerDrawerOpen] = useState(false)
-	const [reviewSelected, setReviewSelected] = React.useState<any>()
+	const { loadReview } = useLoadReview(grantId, chainId)
 
-	const [editedFeedbackData, setEditedFeedbackData] = React.useState<any>()
+	const yourReview = useMemo(() => {
+		return applicationData?.reviews.find((r) => (
+			r.reviewer?.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
+		))
+	}, [applicationData])
 
-	const { decryptMessage } = useEncryption()
-
-	console.log(applicationData)
+	const toast = useToast()
 
 	useEffect(() => {
 		if(!applicationData) {
@@ -64,344 +54,177 @@ function ReviewerSidebar({
 			return
 		}
 
-		const review = applicationData?.reviews.find((r: any) => (
-			r.reviewer.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
-		))
-		setYourReview(review)
+		if(yourReview) {
+			loadReview(yourReview, applicationData!.id)
+				.then(setReviewSelected)
+				.catch(err => {
+					console.error('error in loading review ', err)
+					setReviewLoadError(err)
+				})
+		}
 
 	}, [applicationData, accountData])
 
-	const handleSeeFeedbackClick = async() => {
-		setDecrpytLoading(true)
-
-		let data = {}
-		if(applicationData?.grant.rubric?.isPrivate) {
-			const reviewData = yourReview.data.find((d: any) => (
-				d.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
-			))
-			const ipfsData = await getFromIPFS(reviewData.data)
-
-			data = JSON.parse(await decryptMessage(ipfsData) || '{}')
-		} else {
-			const ipfsData = await getFromIPFS(yourReview.publicReviewDataHash)
-			data = JSON.parse(ipfsData || '{}')
-		}
-
-		console.log(data)
-		setDecrpytLoading(false)
-		setReviewSelected(data)
-		setReviewerDrawerOpen(true)
-	}
-
-	const handleOnResubmit = () => {
-		console.log(reviewSelected)
-
-		// let error = false;
-		// reviewSelected?.forEach((feedback: any) => {
-		//   if (feedback.rating === 0 && feedback.comment === '') {
-		//     error = true;
-		//   }
-		// });
-		// if (error) return;
-		setEditedFeedbackData(reviewSelected)
-	}
-
-	const [
-		data,
-		transactionLink,
-		resubmitLoading,
-	] = useSubmitReview(
-		editedFeedbackData,
-		applicationData?.grant.rubric?.isPrivate,
-		chainId,
-		applicationData?.grant.workspace.id,
-		applicationData?.grant.id,
-		applicationData?.id,
-	)
-
-	const { setRefresh } = useCustomToast(transactionLink)
-
-	useEffect(() => {
-		if(data) {
-			setReviewerDrawerOpen(false)
-			setReviewSelected(null)
-			setFeedbackDrawerOpen(false)
-			setRefresh(true)
-		}
-	}, [data, setFeedbackDrawerOpen])
-
-	// if (yourReview && isAdmin) {
-	//   return null;
-	// }
-
 	if(yourReview) {
+		return (
+			<Flex
+				bg='white'
+				border='2px solid #D0D3D3'
+				borderRadius={8}
+				w={340}
+				direction='column'
+				alignItems='stretch'
+				px='28px'
+				py='22px'
+				mb={8}
+			>
+				<HStack justify='space-between'>
+					<Text
+						fontSize={20}
+						fontWeight={'500'}>
+						Your Score
+					</Text>
+
+					{
+						isPrivate && (
+							<Badge
+								fontSize='x-small'
+								p='1'
+								pr='2'
+								pl='2'>
+								Private
+							</Badge>
+						)
+					}
+				</HStack>
+				<Box h={2} />
+				<Divider />
+				<Box h={2} />
+				{
+					// loading if review is not there
+					// and there's no error
+					!reviewSelected && !reviewLoadError && (
+						<Loader />
+					)
+				}
+				{
+					!!reviewLoadError && (
+						<Text color='red'>
+							There was an error in loading your review:
+							<br />
+							<b>
+								{reviewLoadError.message}
+							</b>
+						</Text>
+					)
+				}
+				{
+					reviewSelected?.items?.map((feedback, index) => (
+						<Fragment key={index}>
+							<Flex
+								mt={4}
+								gap='2'
+								direction='column'
+							>
+								<Text
+									color='#122224'
+									fontWeight='bold'
+									fontSize='16px'
+									lineHeight='12px'
+								>
+									{feedback.rubric.title}
+								</Text>
+								<Box h={1} />
+								<Text
+									color='#122224'
+									fontSize='16px'
+									lineHeight='12px'
+								>
+									{feedback.rating}
+								</Text>
+								{
+									feedback.comment && (
+										<>
+											<Box h={1} />
+											<Text
+												color='#122224'
+												fontSize='16px'
+												lineHeight='12px'
+											>
+												{`Comments: ${feedback.comment}`}
+											</Text>
+											<Box h={2} />
+										</>
+									)
+								}
+							</Flex>
+						</Fragment>
+					))
+				}
+			</Flex>
+		)
+	} else {
 		return (
 			<>
 				<Flex
-					bg="white"
-					border="2px solid #D0D3D3"
+					bg='white'
+					border='2px solid #D0D3D3'
 					borderRadius={8}
 					w={340}
-					direction="column"
-					alignItems="stretch"
-					px="28px"
-					py="22px"
+					direction='column'
+					alignItems='stretch'
+					px='28px'
+					py='22px'
 					mb={8}
 				>
-					<Flex direction="column">
-						<Text fontWeight="700">
-Your Review
+					<Flex direction='column'>
+						<Text fontWeight='700'>
+							Assigned to review (you)
 						</Text>
 						<Text
 							mt={2}
-							color="#717A7C"
-							fontSize="12px">
-              You have already submitted a review for this application.
-							{' '}
+							color='#717A7C'
+							fontSize='12px'>
+							Review the application and provide
+							your comment.
 						</Text>
-
-						{
-							decrpytLoading ? (
-								<Button
-									onClick={() => {}}
-									mt={6}
-									variant="primary">
-									<Loader />
-								</Button>
-							) : (
-								<Button
-									onClick={() => handleSeeFeedbackClick()}
-									mt={6}
-									variant="primary">
-View Feedback
-								</Button>
-							)
-						}
-
+						<Button
+							onClick={
+								() => {
+									if(applicationData?.grant.rubric?.items && applicationData?.grant.rubric?.items?.length === 0) {
+										toast({
+											title: 'Evaluation Rubric not present!',
+											description: 'Evaluation Rubric required for review, contact grant administrator!',
+											status: 'warning',
+											isClosable: true,
+										})
+									} else {
+										setFeedbackDrawerOpen(true)
+									}
+								}
+							}
+							mt={6}
+							variant='primary'>
+							Review Application
+						</Button>
 					</Flex>
 				</Flex>
-				<Drawer
-					isOpen={reviewerDrawerOpen}
-					placement="right"
-					onClose={
-						() => {
-							setReviewerDrawerOpen(false)
-							setReviewSelected(null)
-						}
-					}
-					size="lg"
-				>
-					<DrawerOverlay />
-					<DrawerContent>
 
-						<Flex
-							direction="column"
-							overflow="scroll"
-							p={8}>
-							<Flex
-								mb={8}
-								alignItems="center">
-								<Image
-									src="/ui_icons/back_arrow.svg"
-									cursor="pointer"
-									mr="12px"
-									h="16px"
-									w="16px"
-									onClick={
-										() => {
-											setReviewerDrawerOpen(false)
-											setReviewSelected(null)
-										}
-									}
-								/>
-								<Text
-									color="#122224"
-									fontWeight="bold"
-									fontSize="16px"
-									lineHeight="20px"
-								>
-                  Application Feedback
-								</Text>
-							</Flex>
-							<Text
-								mt="18px"
-								color="#122224"
-								fontWeight="bold"
-								fontSize="16px"
-								lineHeight="20px"
-							>
-                Overall Recommendation
-							</Text>
-							<Flex
-								pt="12px"
-								pb="18px">
-								<Button
-									onClick={() => {}}
-									variant={!reviewSelected?.isApproved ? 'outline' : 'solid'}
-									h={12}
-									minW="130px"
-									colorScheme="brandGreen"
-									borderRadius="6px"
-								>
-									<Image
-										h="16px"
-										w="16px"
-										src={!reviewSelected?.isApproved ? '/ui_icons/like_up_green.svg' : '/ui_icons/like_up.svg'} />
-									<Box mr="6px" />
-									<Text color={!reviewSelected?.isApproved ? '#39C696' : '#FFFFFF'}>
-For
-									</Text>
-								</Button>
-
-								<Box ml={4} />
-
-								<Button
-									onClick={() => {}}
-									variant={reviewSelected?.isApproved ? 'outline' : 'solid'}
-									h={12}
-									minW="130px"
-									colorScheme="brandRed"
-									borderRadius="6px"
-								>
-									<Image
-										h="16px"
-										w="16px"
-										src={reviewSelected?.isApproved ? '/ui_icons/like_down_red.svg' : '/ui_icons/like_down.svg'} />
-									<Box mr="6px" />
-									<Text color={reviewSelected?.isApproved ? '#EE7979' : '#FFFFFF'}>
-Against
-									</Text>
-								</Button>
-							</Flex>
-							{
-								reviewSelected?.items?.map((feedback: any) => (
-									<>
-										<Flex
-											mt={4}
-											gap="2"
-											direction="column"
-										>
-											<Text
-												color="#122224"
-												fontWeight="bold"
-												fontSize="16px"
-												lineHeight="12px"
-											>
-												{feedback.rubric.title}
-											</Text>
-											<Text
-												color="#69657B"
-												fontWeight="400"
-												fontSize="12px"
-												lineHeight="12px"
-												mt="6px"
-											>
-												{feedback.rubric.details}
-											</Text>
-
-											<Box mt="2px">
-												<StarRatings
-													numberOfStars={feedback.rubric.maximumPoints}
-													starRatedColor="#88BDEE"
-													rating={feedback.rating}
-													name="rating"
-													starHoverColor="#88BDEE"
-													starDimension="18px"
-													starSpacing="4px"
-												/>
-											</Box>
-
-											<MultiLineInput
-												value={feedback.comment}
-												onChange={() => {}}
-												placeholder="Feedback"
-												isError={false}
-												errorText="Required"
-												disabled
-											/>
-										</Flex>
-										<Divider mt={4} />
-									</>
-								))
-							}
-
-							<Flex
-								direction="row"
-								mt={12}
-								alignItems="center">
-								<Button
-									mt="auto"
-									variant="primary"
-									onClick={handleOnResubmit}>
-									{resubmitLoading ? <Loader /> : 'Resubmit Feedback'}
-								</Button>
-								<Text
-									fontSize="12px"
-									color="#717A7C"
-									ml={4}>
-                  If in case the DAO admin is not able to view your review,
-                  you can resubmit it without editing it.
-                  Please consult with the DAO admin before resubmitting
-								</Text>
-							</Flex>
-						</Flex>
-
-					</DrawerContent>
-				</Drawer>
+				<FeedbackDrawer
+					feedbackDrawerOpen={feedbackDrawerOpen}
+					setFeedbackDrawerOpen={setFeedbackDrawerOpen}
+					grantAddress={applicationData!.grant.id}
+					grantTitle={applicationData!.grant.title}
+					chainId={chainId}
+					workspaceId={applicationData!.grant.workspace.id}
+					rubrics={applicationData!.grant.rubric!.items}
+					applicationId={applicationData!.id}
+					isPrivate={applicationData!.grant.rubric!.isPrivate}
+				/>
 			</>
 		)
 	}
 
-	return (
-		<>
-			<Flex
-				bg="white"
-				border="2px solid #D0D3D3"
-				borderRadius={8}
-				w={340}
-				direction="column"
-				alignItems="stretch"
-				px="28px"
-				py="22px"
-				mb={8}
-			>
-				<Flex direction="column">
-					<Text fontWeight="700">
-Assigned to review (you)
-					</Text>
-					<Text
-						mt={2}
-						color="#717A7C"
-						fontSize="12px">
-            Review the application and provide
-            your comment.
-						{' '}
-					</Text>
-
-					<Button
-						onClick={() => setFeedbackDrawerOpen(true)}
-						mt={6}
-						variant="primary">
-Review Application
-					</Button>
-				</Flex>
-			</Flex>
-
-			<FeedbackDrawer
-				feedbackDrawerOpen={feedbackDrawerOpen}
-				setFeedbackDrawerOpen={setFeedbackDrawerOpen}
-				grantAddress={applicationData?.grant.id}
-				chainId={chainId}
-				workspaceId={applicationData?.grant.workspace.id}
-				feedbacks={feedbacks}
-				setFeedbacks={setFeedbacks}
-				rubrics={applicationData?.grant.rubric?.items}
-				feedbackEditAllowed
-				applicationId={applicationData?.id}
-				isPrivate={applicationData?.grant.rubric?.isPrivate}
-			/>
-		</>
-	)
 }
 
 export default ReviewerSidebar

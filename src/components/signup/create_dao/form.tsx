@@ -15,8 +15,9 @@ import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from 'src/constants/chains'
 import config from 'src/constants/config.json'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useChainId from 'src/hooks/utils/useChainId'
-import { useAccount, useNetwork } from 'wagmi'
 import ImageUpload from '../../ui/forms/imageUpload'
 import MultiLineInput from '../../ui/forms/multiLineInput'
 import RichTextEditor from '../../ui/forms/richTextEditor'
@@ -66,7 +67,7 @@ function Form({
 	const toastRef = React.useRef<ToastId>()
 	const maxImageSize = 2
 
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 	const [defaultItem, setDefaultItem] = useState<{ icon?: string; label: string, id: number }>()
 
@@ -105,6 +106,7 @@ function Form({
 			error = true
 		}
 
+		console.log('GG', chainId)
 		if(!chainId) {
 			error = true
 		}
@@ -117,6 +119,7 @@ function Form({
 			return
 		}
 
+		// console.log("TTTT", chainId, accountData.address);
 		console.log(aboutString, daoBio)
 
 		onFormSubmit({

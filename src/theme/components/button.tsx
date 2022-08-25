@@ -1,3 +1,4 @@
+
 export default {
 	Button: {
 		baseStyle: {
@@ -101,7 +102,6 @@ export default {
 				bg: '#1F1F33',
 				color: '#ffffff',
 				lineHeight: '1.25rem',
-				borderRadius: '4px',
 				'&:hover': {
 					bg: '#3F3F53',
 				},
@@ -120,7 +120,7 @@ export default {
 			primaryLightV2: {
 				bg: '#1F1F33',
 				color: '#ffffff',
-				lineHeighth: '1.25rem',
+				lineHeight: '1.25rem',
 				'&:hover': {
 					bg: '#3F3F53',
 				},
@@ -162,6 +162,23 @@ export default {
 						bg: 'gray.3',
 					},
 				},
+			},
+			linkV2: {
+				bg: 'white',
+				color: 'black.1',
+				h: 8,
+				px: 3,
+				_hover: {
+					bg: 'gray.2',
+				},
+				_focus: {
+					bg: 'gray.3',
+					border: '1px solid gray.4',
+				},
+				_disabled: {
+					color: 'gray.5',
+				},
+				py: 2,
 			}
 		},
 	},

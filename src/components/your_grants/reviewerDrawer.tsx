@@ -17,7 +17,6 @@ import useAssignReviewers from 'src/hooks/useAssignReviewers'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { truncateStringFromMiddle } from 'src/utils/formattingUtils'
 import SingleLineInput from '../ui/forms/singleLineInput'
-// import useSetReviews from 'src/hooks/useSetReviews';
 import Loader from '../ui/loader'
 
 function ReviewDrawer({
@@ -240,7 +239,7 @@ function ReviewDrawer({
 													fontSize="14px"
 													lineHeight="20px"
 												>
-													{member.email ? member.email : member.actorId}
+													{ member.fullName ? member.fullName : member.email ? member.email : member.actorId}
 												</Text>
 												<Text
 													mt={member.email || reviewExists ? 1 : 0}

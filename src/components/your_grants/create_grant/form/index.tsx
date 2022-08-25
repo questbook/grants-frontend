@@ -11,12 +11,12 @@ import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
 import { CHAIN_INFO } from 'src/constants/chains'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
 import applicantDetailsList from '../../../../constants/applicantDetailsList'
 import strings from '../../../../constants/strings.json'
 import Heading from '../../../ui/heading'
@@ -49,7 +49,7 @@ function Form({
 
 	}, [workspace, currentChain])
 
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const maxDescriptionLength = 300
 	const [title, setTitle] = useState('')
 	const [summary, setSummary] = useState('')
@@ -104,7 +104,7 @@ function Form({
 	const [publicKey] = React.useState<WorkspaceUpdateRequest>({
 		publicKey: '',
 	})
-	const [transactionData, transactionLink, loading] = useUpdateWorkspacePublicKeys(publicKey)
+	const [transactionData, transactionLink, loading, isBiconomyInitialised] = useUpdateWorkspacePublicKeys(publicKey)
 
 	const { setRefresh } = useCustomToast(transactionLink)
 	const [admins, setAdmins] = React.useState<any[]>([])
@@ -844,6 +844,7 @@ function Form({
 			</Flex>
 
 			<Button
+				disabled={!isBiconomyInitialised}
 				py={hasClicked ? 2 : 0}
 				onClick={hasClicked ? () => {} : handleOnSubmit}
 				variant="primary"

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import {
 	Button, Image, Menu, MenuButton, MenuItem, MenuList, Text, } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import ConnectWalletModal from 'src/v2/components/ConnectWalletModal'
 
 function ConnectWallet({ onGetStartedBtnClicked, setGetStartedClicked } :{onGetStartedBtnClicked:boolean, setGetStartedClicked:(value: boolean)=>void}) {
 	const [connectWalletModalIsOpen, setConnectWalletModalIsOpen] = useState(false)
@@ -66,7 +65,7 @@ function ConnectWallet({ onGetStartedBtnClicked, setGetStartedClicked } :{onGetS
 				</MenuList>
 			</Menu>
 
-			<ConnectWalletModal
+			{/* <ConnectWalletModal
 				isOpen={connectWalletModalIsOpen}
 				onClose={
 					() => {
@@ -74,7 +73,7 @@ function ConnectWallet({ onGetStartedBtnClicked, setGetStartedClicked } :{onGetS
 						setGetStartedClicked(false)
 					}
 				}
-			/>
+			/> */}
 		</>
 	)
 }

@@ -1,14 +1,17 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
-import { ApiClientsContext } from 'pages/_app'
-// import { BigNumber } from 'ethers';
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
+import { useBiconomy } from './gasless/useBiconomy'
+import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
 
 export default function useMarkReviewPaymentDone(
@@ -25,7 +28,7 @@ export default function useMarkReviewPaymentDone(
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
@@ -37,6 +40,13 @@ export default function useMarkReviewPaymentDone(
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
 	const currentChainId = useChainId()
+
+	const { webwallet } = useContext(WebwalletContext)!
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		chainId: chainId?.toString()
+		// targetContractABI: ApplicationReviewRegistryAbi,
+	})
 
 	useEffect(() => {
 		// console.log(totalAmount);
@@ -76,19 +86,48 @@ export default function useMarkReviewPaymentDone(
 
 			setLoading(true)
 			try {
-				const markPaymentTxb = await applicationReviewerContract.markPaymentDone(
-					workspaceId,
-					applicationsIds,
-					reviewerAddress!,
-					reviewIds,
-					reviewCurrencyAddress!,
-					totalAmount,
-					transactionHash!,
+				// const markPaymentTxb1 = await applicationReviewerContract.markPaymentDone(
+				// 	workspaceId,
+				// 	applicationsIds,
+				// 	reviewerAddress!,
+				// 	reviewIds,
+				// 	reviewCurrencyAddress!,
+				// 	totalAmount,
+				// 	transactionHash!,
+				// )
+
+				// const updateTxnData = await markPaymentTxb1.wait()
+
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					throw new Error('Zero wallet is not ready')
+				}
+
+				const markPaymentTxb = await sendGaslessTransaction(
+					biconomy,
+					applicationReviewerContract,
+					'markPaymentDone',
+					[workspaceId,
+						applicationsIds,
+						reviewerAddress!,
+						reviewIds,
+						reviewCurrencyAddress!,
+						totalAmount,
+						transactionHash!, ],
+					APPLICATION_REVIEW_REGISTRY_ADDRESS[currentChainId],
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					bicoDapps[currentChainId].webHookId,
+					nonce
 				)
 
-				const updateTxnData = await markPaymentTxb.wait()
+				if(markPaymentTxb) {
+					const { receipt, txFee } = await getTransactionDetails(markPaymentTxb, currentChainId.toString())
+					setTransactionData(receipt)
+					await chargeGas(Number(workspace?.id), Number(txFee))
+				}
 
-				setTransactionData(updateTxnData)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -151,10 +190,8 @@ export default function useMarkReviewPaymentDone(
 
 			if(
 				!applicationReviewerContract
-        || applicationReviewerContract.address
-          === '0x0000000000000000000000000000000000000000'
-        || !applicationReviewerContract.signer
-        || !applicationReviewerContract.provider
+				|| applicationReviewerContract.address
+				=== '0x0000000000000000000000000000000000000000'
 			) {
 				return
 			}

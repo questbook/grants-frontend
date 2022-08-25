@@ -1,10 +1,12 @@
-import React, { createContext, ReactElement, ReactNode, useMemo } from 'react'
+import React, { createContext, ReactElement, ReactNode, useEffect, useMemo } from 'react'
 import { ChakraProvider } from '@chakra-ui/react'
+import { ChatWidget } from '@papercups-io/chat-widget'
 // import dynamic from 'next/dynamic';
 import {
 	Configuration,
 	ValidationApi,
 } from '@questbook/service-validator-client'
+import { Wallet } from 'ethers'
 import { NextPage } from 'next'
 import type { AppContext, AppProps } from 'next/app'
 import App from 'next/app'
@@ -18,6 +20,7 @@ import {
 import SubgraphClient from 'src/graphql/subgraph'
 import theme from 'src/theme'
 import { MinimalWorkspace } from 'src/types'
+import { BiconomyWalletClient } from 'src/types/gasless'
 import getSeo from 'src/utils/seo'
 import {
 	allChains,
@@ -38,11 +41,11 @@ import 'draft-js/dist/Draft.css'
 
 
 type NextPageWithLayout = NextPage & {
-  getLayout?: (page: ReactElement) => ReactNode;
+	getLayout?: (page: ReactElement) => ReactNode;
 };
 
 type AppPropsWithLayout = AppProps & {
-  Component: NextPageWithLayout;
+	Component: NextPageWithLayout;
 };
 
 const infuraId = process.env.NEXT_PUBLIC_INFURA_ID
@@ -97,16 +100,184 @@ const client = createClient({
 })
 
 export const ApiClientsContext = createContext<{
-  validatorApi: ValidationApi;
-  workspace?: MinimalWorkspace;
-  setWorkspace: (workspace?: MinimalWorkspace) => void;
-  subgraphClients: { [chainId: string]: SubgraphClient };
-  connected: boolean;
-  setConnected: (connected: boolean) => void;
-  	} | null>(null)
+	validatorApi: ValidationApi;
+	workspace?: MinimalWorkspace;
+	setWorkspace: (workspace?: MinimalWorkspace) => void;
+	subgraphClients: { [chainId: string]: SubgraphClient };
+	connected: boolean;
+	setConnected: (connected: boolean) => void;
+		} | null>(null)
+
+export const WebwalletContext = createContext<{
+	webwallet?: Wallet;
+	setWebwallet: (webwallet?: Wallet) => void;
+	network?: SupportedChainId;
+	switchNetwork: (newNetwork?: SupportedChainId) => void;
+	scwAddress?: string;
+	setScwAddress: (scwAddress?: string) => void;
+	nonce?: string;
+	setNonce: (nonce?: string) => void;
+	loadingNonce: boolean;
+	setLoadingNonce: (loadingNonce: boolean) => void;
+		} | null>(null)
+
+export const BiconomyContext = createContext<{
+	biconomyDaoObj?: any,
+	setBiconomyDaoObj: (biconomyDaoObj: any) => void,
+	biconomyWalletClient?: BiconomyWalletClient,
+	setBiconomyWalletClient: (biconomyWalletClient?: BiconomyWalletClient) => void
+		} | null>(null)
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+	const [network, switchNetwork] = React.useState<SupportedChainId>(5)
+	const [webwallet, setWebwallet] = React.useState<Wallet>()
 	const [workspace, setWorkspace] = React.useState<MinimalWorkspace>()
+	const [scwAddress, setScwAddress] = React.useState<string>()
+	const [biconomyDaoObj, setBiconomyDaoObj] = React.useState<any>()
+	const [biconomyWalletClient, setBiconomyWalletClient] = React.useState<BiconomyWalletClient>()
+	const [nonce, setNonce] = React.useState<string>()
+	const [loadingNonce, setLoadingNonce] = React.useState<boolean>(false)
+
+	useEffect(() => {
+		setWebwallet(createWebWallet())
+		setScwAddress(getScwAddress())
+		setNonce(getNonce())
+		switchNetwork(getNetwork())
+	}, [])
+
+	const getScwAddress = () => {
+
+		const _scwAddress = localStorage.getItem('scwAddress')
+
+		if(!_scwAddress) {
+			return undefined
+		}
+
+		return _scwAddress
+	}
+
+	const getNonce = () => {
+
+		const _nonce = localStorage.getItem('nonce')
+
+		if(!_nonce) {
+			return undefined
+		}
+
+		return _nonce
+	}
+
+	const getNetwork = () => {
+		return 5
+
+		// const _network = localStorage.getItem('network')
+
+		// if(!_network) {
+		// 	return CHAIN_INFO['5'].id
+		// }
+
+		// return parseInt(_network)
+	}
+
+	const createWebWallet = () => {
+
+		const privateKey = localStorage.getItem('webwalletPrivateKey')
+
+		let newWebwallet = Wallet.createRandom()
+
+		if(!privateKey) {
+			localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
+			return newWebwallet
+		}
+
+		try {
+			newWebwallet = new Wallet(privateKey)
+			return newWebwallet
+		} catch{
+			localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
+			return newWebwallet
+		}
+	}
+
+	// const getBiconomyDaoObj = () => {
+	// 	if (typeof window === 'undefined') {
+	// 		return undefined
+	// 	}
+
+	// 	let _biconomyDaoObj = localStorage.getItem('biconomyDaoObj')
+	// 	if (!_biconomyDaoObj) {
+	// 		return undefined
+	// 	}
+
+	// 	try {
+	// 		_biconomyDaoObj = JSON.parse(_biconomyDaoObj)
+	// 		return _biconomyDaoObj
+	// 	} catch {
+	// 		return undefined
+	// 	}
+	// }
+
+	const webwalletContextValue = useMemo(
+		() => ({
+			webwallet: webwallet,
+			setWebwallet: (newWebwallet?: Wallet) => {
+				console.log('rrrrrrr')
+				if(newWebwallet) {
+					localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
+				} else {
+					localStorage.removeItem('webwalletPrivateKey')
+				}
+
+				setWebwallet(newWebwallet)
+			},
+			network: network,
+			switchNetwork: (newNetwork?: SupportedChainId) => {
+				if(newNetwork) {
+					localStorage.setItem('network', newNetwork.toString())
+				} else {
+					localStorage.removeItem('network')
+				}
+
+				switchNetwork(newNetwork!)
+			},
+			scwAddress: scwAddress,
+			setScwAddress: (newScwAddress?: string) => {
+				if(newScwAddress) {
+					localStorage.setItem('scwAddress', newScwAddress)
+				} else {
+					localStorage.removeItem('scwAddress')
+				}
+
+				setScwAddress(newScwAddress)
+			},
+			nonce: nonce,
+			setNonce: (newNonce?: string) => {
+				console.log('called nonce: ', newNonce)
+				if(newNonce) {
+					console.log('setting nonce', newNonce)
+					localStorage.setItem('nonce', newNonce)
+				} else {
+					console.log('removing nonce: ', localStorage.getItem('nonce'))
+					localStorage.removeItem('nonce')
+				}
+
+				setNonce(newNonce)
+			},
+			loadingNonce,
+			setLoadingNonce
+		}),
+		[webwallet, setWebwallet, network, switchNetwork, scwAddress, setScwAddress, nonce, setNonce, loadingNonce, setLoadingNonce]
+	)
+
+	const biconomyDaoObjContextValue = useMemo(
+		() => ({
+			biconomyDaoObj,
+			setBiconomyDaoObj,
+			biconomyWalletClient,
+			setBiconomyWalletClient,
+		}),
+		[biconomyDaoObj, setBiconomyDaoObj, biconomyWalletClient, setBiconomyWalletClient]
+	)
 
 	const clients = useMemo(() => {
 		const clientsObject = {} as { [chainId: string]: SubgraphClient }
@@ -153,6 +324,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 	const seo = getSeo()
 
+
 	const getLayout = Component.getLayout || ((page) => page)
 	return (
 		<>
@@ -178,11 +350,30 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			</Head>
 			<WagmiConfig client={client}>
 				<ApiClientsContext.Provider value={apiClients}>
-					<ChakraProvider theme={theme}>
-						{getLayout(<Component {...pageProps} />)}
-					</ChakraProvider>
+					<WebwalletContext.Provider value={webwalletContextValue}>
+						<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
+							<ChakraProvider theme={theme}>
+								{getLayout(<Component {...pageProps} />)}
+							</ChakraProvider>
+						</BiconomyContext.Provider>
+					</WebwalletContext.Provider>
 				</ApiClientsContext.Provider>
 			</WagmiConfig>
+			<ChatWidget
+				token="5b3b08cf-8b27-4d4b-9c4e-2290f53e04f0"
+				inbox="cb5e60c6-dfe5-481d-9dde-3f13e83344cd"
+				title="Welcome to Questbook Support"
+				subtitle="Have a question? Please feel free to ask here - we'll respond ASAP, hopefully now!"
+				primaryColor="#1F1F33"
+				newMessagePlaceholder="Type your question ..."
+				showAgentAvailability={false}
+				agentAvailableText="We're online right now!"
+				agentUnavailableText="We're away at the moment."
+				requireEmailUpfront={false}
+				iconVariant="filled"
+				baseUrl="https://app.papercups.io"
+			/>
+
 		</>
 	)
 }

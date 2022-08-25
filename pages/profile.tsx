@@ -30,24 +30,24 @@ import SeeMore from 'src/components/profile/see_more'
 import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { useGetDaoDetailsQuery, useGetFundsAndProfileDataQuery } from 'src/generated/graphql'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 // APP LAYOUT & STATE
 import NavbarLayout from 'src/layout/navbarLayout'
 // CONSTANTS AND TYPES
 import type { DAOWorkspace } from 'src/types'
-import { calculateUSDValue } from 'src/utils/calculatingUtils'
 import { formatAmount } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'
 // UTILS AND TOOLS
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
 
 function Profile() {
 	const router = useRouter()
 	const { onOpen, isOpen, onClose } = useDisclosure()
 
 	const { subgraphClients } = React.useContext(ApiClientsContext)!
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 
 	const [workspaceData, setWorkspaceData] = React.useState<DAOWorkspace>()
 	const [chainID, setChainId] = React.useState<SupportedChainId>()
@@ -57,6 +57,7 @@ function Profile() {
 	const [grantWinners, setGrantWinners] = React.useState<any>([])
 	const [fundingTime, setFundingTime] = React.useState<any>([])
 	const [applicationTime, setApplicationTime] = React.useState<any>([])
+	const { network, switchNetwork } = useNetwork()
 
 	//Tab section
 	const tabs = ['Browse Grants', 'About']
@@ -70,8 +71,9 @@ function Profile() {
 			const { chainId: cId, daoId: dId } = router.query
 			setChainId((cId as unknown) as SupportedChainId)
 			setDaoId(dId?.toString())
+			switchNetwork((cId as unknown) as SupportedChainId)
 		}
-	}, [router])
+	}, [router, network])
 
 	const [queryParams, setQueryParams] = useState<any>({
 		client: subgraphClients[chainID || defaultChainId].client,
@@ -94,6 +96,7 @@ function Profile() {
 			},
 		})
 
+		getAnalyticsData()
 	}, [chainID, daoID])
 
 	const { data, error, loading } = useGetDaoDetailsQuery(queryParams)
@@ -115,13 +118,68 @@ function Profile() {
 		},
 	})
 
-	useEffect(() => {
-		if(allDaoData && allDaoData.grants.length >= 1 && grantsApplicants.length === 0) {
-			allDaoData.grants.forEach((grant) => {
-				setGrantsApplicants((array: any) => [...array, grant.numberOfApplications])
-			})
+	// useEffect(() => {
+	// 	if(allDaoData && allDaoData.grants.length >= 1 && grantsApplicants.length === 0) {
+	// 		allDaoData.grants.forEach((grant) => {
+	// 			setGrantsApplicants((array: any) => [...array, grant.numberOfApplications])
+	// 		})
+	// 	}
+	// }, [allDaoData, grantsApplicants])
+
+	const getAnalyticsData = async() => {
+		console.log('calling analytics')
+		try {
+			//const res = await fetch('https://www.questbook-analytics.com/workspace-analytics', {
+			const res = await fetch(
+				'https://www.questbook-analytics.com/workspace-analytics',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					referrerPolicy: 'unsafe-url',
+					body: JSON.stringify({
+						chainId: chainID,
+						workspaceId: daoID,
+					}),
+
+					// For testing
+					// body: JSON.stringify({
+					// 	chainId: 137,
+					// 	workspaceId: '0x2'
+					// })
+				}
+			)
+
+			const data = await res.json()
+			console.log('res', data)
+
+			const totalFunding = extractLast30Fundings(data)
+			setGrantsDisbursed(totalFunding)
+			setGrantsApplicants(data.totalApplicants)
+			setGrantWinners(data.winnerApplicants)
+
+		} catch(e) {
+			console.log(e)
 		}
-	}, [allDaoData, grantsApplicants])
+	}
+
+	const extractLast30Fundings = (data: any) => {
+		const everydayFundings = data.everydayFunding
+		let totalFunding = 0
+
+		if(!everydayFundings || everydayFundings.length === 0) {
+			return totalFunding
+		}
+
+		// console.log(everydayApplications)
+
+		everydayFundings.forEach((application: any) => {
+			totalFunding += parseInt(application.funding)
+		})
+
+		return totalFunding
+	}
 
 	useEffect(() => {
 		if(allDaoData && fundingTime.length === 0) {
@@ -141,16 +199,16 @@ function Profile() {
 		}
 	}, [allDaoData])
 
-	useEffect(() => {
-		if(allDaoData && allDaoData.grants.length >= 1 && grantWinners.length === 0) {
-			allDaoData.grants.forEach((grant) => {
-				grant.applications.forEach(
-					(app: any) => app.state === 'approved' &&
-            setGrantWinners((winners: any) => [...winners, app])
-				)
-			})
-		}
-	}, [allDaoData, grantWinners])
+	// useEffect(() => {
+	// 	if(allDaoData && allDaoData.grants.length >= 1 && grantWinners.length === 0) {
+	// 		allDaoData.grants.forEach((grant) => {
+	// 			grant.applications.forEach(
+	// 				(app: any) => app.state === 'approved' &&
+	//           setGrantWinners((winners: any) => [...winners, app])
+	// 			)
+	// 		})
+	// 	}
+	// }, [allDaoData, grantWinners])
 
 	useEffect(() => {
 		if(allDaoData && grantsDisbursed.length === 0) {
@@ -169,11 +227,11 @@ function Profile() {
 					tokenInfo?.decimals || 18
 				)
 
-				if(tokenInfo !== undefined && tokenValue !== '0') {
-					calculateUSDValue(tokenValue, tokenInfo.pair!).then((promise) => {
-						setGrantsDisbursed((array: any) => [...array, promise])
-					})
-				}
+				// if(tokenInfo !== undefined && tokenValue !== '0') {
+				// 	calculateUSDValue(tokenValue, tokenInfo.pair!).then((promise) => {
+				// 		setGrantsDisbursed((array: any) => [...array, promise])
+				// 	})
+				// }
 			}
 			)
 		}
@@ -431,17 +489,17 @@ Embed profile stats
               			funding={funding}
               			onClick={
               				() => {
-              					if(!(accountData && accountData.address)) {
-              						router.push({
-              							pathname: '/connect_wallet',
-              							query: {
-              								flow: '/',
-              								grantId: grant.id,
-              								chainId,
-              							},
-              						})
-              						return
-              					}
+              					// if(!(accountData && accountData.address)) {
+              					// 	router.push({
+              					// 		pathname: '/connect_wallet',
+              					// 		query: {
+              					// 			flow: '/',
+              					// 			grantId: grant.id,
+              					// 			chainId,
+              					// 		},
+              					// 	})
+              					// 	return
+              					// }
 
               				router.push({
               						pathname: '/explore_grants/about_grant',

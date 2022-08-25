@@ -1,10 +1,8 @@
-import { Container, Flex, Image, Text } from '@chakra-ui/react'
+import { Container, Image } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { CHAIN_INFO, SHOW_TEST_NETS } from 'src/constants/chains'
 import useChainId from 'src/hooks/utils/useChainId'
 import { useConnect } from 'wagmi'
 import AccountDetails from './AccountDetails'
-import ConnectWallet from './ConnectWallet'
 
 interface Props {
   onGetStartedClick: boolean;
@@ -55,8 +53,9 @@ function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicke
 				alt="Questbook"
 				cursor="pointer"
 			/>
-			{
-				!isDisconnected && (
+			{/* {
+				// @TODO-gasless: FIX HERE
+				true && (
 					<Flex
 						align="center"
 						justify="center"
@@ -85,16 +84,18 @@ function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicke
 					</Flex>
 
 				)
-			}
-			{!isDisconnected && <AccountDetails />}
+			} */}
+
+			{true && <AccountDetails /> /* @TODO-gasless: FIX HERE */}
+
 			{/* {!connected && <GetStarted onGetStartedClick={onGetStartedClick} />} */}
-			{
-				isDisconnected && (
+			{/* {
+				isDisconnected && false && (
 					<ConnectWallet
 						onGetStartedBtnClicked={onGetStartedBtnClicked}
 						setGetStartedClicked={setGetStartedClicked} />
 				)
-			}
+			} */}
 		</Container>
 	)
 }

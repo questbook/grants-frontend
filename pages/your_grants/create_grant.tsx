@@ -12,12 +12,13 @@ import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import Breadcrumbs from 'src/components/ui/breadcrumbs'
 import Form from 'src/components/your_grants/create_grant/form'
+import SupportedChainId from 'src/generated/SupportedChainId'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import useCreateGrant from 'src/hooks/useCreateGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import useIntersection from 'src/hooks/utils/useIntersection'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useNetwork } from 'wagmi'
 
 function CreateGrant() {
 	const apiClients = useContext(ApiClientsContext)!
@@ -68,18 +69,18 @@ function CreateGrant() {
 			'Grant reward & submission deadline',
 			grantRewardsRef,
 		],
-	]
+	] as const
 
 	const [formData, setFormData] = useState<any>()
-	const [transactionData, blockExplorerLink, loading] = useCreateGrant(formData)
+	const [transactionData, blockExplorerLink, loading, isBiconomyInitialised] = useCreateGrant(formData)
 
 	useEffect(() => {
-		if(workspace && switchNetwork) {
+		if(workspace) {
 			const chainId = getSupportedChainIdFromWorkspace(workspace)
 			console.log(' (CREATE_GRANT) Switch Network: ', workspace, chainId)
-			switchNetwork(chainId!)
+			switchNetwork(chainId!.toString() as unknown as SupportedChainId)
 		}
-	}, [switchNetwork, workspace])
+	}, [workspace])
 
 	const { setRefresh } = useCustomToast(blockExplorerLink)
 

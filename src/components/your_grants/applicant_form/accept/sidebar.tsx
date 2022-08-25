@@ -5,7 +5,7 @@ import {
 import { ApiClientsContext } from 'pages/_app'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { getFormattedFullDateFromUnixTimestamp, truncateStringFromMiddle } from '../../../../utils/formattingUtils'
+import { getFieldString, getFormattedFullDateFromUnixTimestamp, truncateStringFromMiddle } from '../../../../utils/formattingUtils'
 import { getAssetInfo } from '../../../../utils/tokenUtils'
 import FloatingSidebar from '../../../ui/sidebar/floatingSidebar'
 import MailTo from '../../mail_to/mailTo'
@@ -21,11 +21,9 @@ function Sidebar(
 ) {
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
-	const applicantEmail = applicationData?.fields?.find(
-		(fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
-	) ? applicationData?.fields?.find(
-			(fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
-		)?.values[0]?.value : undefined
+	const applicantEmail = getFieldString(applicationData, 'applicantEmail')
+	const applicantAddress = getFieldString(applicationData, 'applicantAddress')
+
 	let icon
 	if(applicationData.grant.reward.token) {
 		icon = getUrlForIPFSHash(applicationData.grant.reward.token.iconHash)
@@ -56,11 +54,11 @@ function Sidebar(
 						w="45px"
 						src={icon} />
 					<Box mx={3} />
-					<Tooltip label={applicationData?.applicantId}>
+					<Tooltip label={applicantAddress}>
 						<Heading
 							variant="applicationHeading"
 							color="brand.500">
-							{truncateStringFromMiddle(applicationData?.applicantId)}
+							{truncateStringFromMiddle(applicantAddress)}
 						</Heading>
 					</Tooltip>
 				</Flex>

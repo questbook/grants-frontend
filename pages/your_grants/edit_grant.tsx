@@ -105,6 +105,7 @@ function EditGrant() {
         grant.fields.find((field: any) => field.id.includes('applicantName')) !== undefined,
 			applicantEmail:
         grant.fields.find((field: any) => field.id.includes('applicantEmail')) !== undefined,
+			applicantAddress: grant.fields.find((field: any) => field.id.includes('applicantAddress')) !== undefined,
 			teamMembers:
         grant.fields.find((field: any) => field.id.includes('teamMembers')) !== undefined,
 			projectName:
@@ -198,6 +199,7 @@ function EditGrant() {
           grant.fields.find((field: any) => field.id.includes('applicantName')) !== undefined,
 				applicantEmail:
           grant.fields.find((field: any) => field.id.includes('applicantEmail')) !== undefined,
+		  applicantAddress: grant.fields.find((field: any) => field.id.includes('applicantAddress')) !== undefined,
 				teamMembers:
           grant.fields.find((field: any) => field.id.includes('teamMembers')) !== undefined,
 				projectName:
@@ -275,7 +277,7 @@ function EditGrant() {
 	}
 
 	const [editData, setEditData] = useState<any>()
-	const [transactionData, txnLink, loading] = useEditGrant(editData, grantID)
+	const [transactionData, txnLink, loading, isBiconomyInitialised] = useEditGrant(editData, grantID)
 
 	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {

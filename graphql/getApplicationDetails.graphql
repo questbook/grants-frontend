@@ -62,10 +62,13 @@ query getApplicationDetails($applicationID: ID!) {
         },
       },
     }
+    pendingReviewerAddresses
+    doneReviewerAddresses
     reviews {
       reviewer {
         id
         email
+        fullName
       }
       data {
         id
@@ -76,10 +79,12 @@ query getApplicationDetails($applicationID: ID!) {
       }
       publicReviewDataHash
       id
+      createdAtS
     }
     reviewers {
       email
       id
+      fullName
     }
     applicantId
     state

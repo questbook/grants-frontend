@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React from 'react'
+import React, { useContext } from 'react'
 import {
 	Box,
 	Button,
@@ -12,14 +12,16 @@ import {
 import { GrantApplicationRequest } from '@questbook/service-validator-client'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import { useRouter } from 'next/router'
+import { WebwalletContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import { SupportedChainId } from 'src/constants/chains'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useSubmitApplication from 'src/hooks/useSubmitApplication'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
+import { addAuthorizedUser } from 'src/utils/gaslessUtils'
 import { isValidEmail } from 'src/utils/validationUtils'
-import { useAccount, useSigner } from 'wagmi'
 import strings from '../../../../constants/strings.json'
 import { GrantApplicationFieldsSubgraph } from '../../../../types/application'
 import { parseAmount } from '../../../../utils/formattingUtils'
@@ -51,6 +53,8 @@ interface Props {
   defaultMilestoneFields: any[];
 }
 
+const MINIMUM_ALLOWED_LENGTH = 250
+
 // eslint-disable-next-line max-len
 function Form({
 	// onSubmit,
@@ -71,19 +75,25 @@ function Form({
 	members,
 	acceptingApplications,
 	shouldShowButton,
-	defaultMilestoneFields,
+	defaultMilestoneFields
 }: Props) {
-	const { data: accountData } = useAccount()
 	const CACHE_KEY = strings.cache.apply_grant
 	const getKey = `${chainId}-${CACHE_KEY}-${grantId}`
 
+	const [shouldRefreshNonce, setShouldRefreshNonce] = React.useState<boolean>()
+
+	const { data: accountData, nonce } = useQuestbookAccount(shouldRefreshNonce)
+
 	const { encryptApplicationPII } = useApplicationEncryption()
-	const { data: signer } = useSigner()
+	const { webwallet: signer } = useContext(WebwalletContext)!
 	const [applicantName, setApplicantName] = React.useState('')
 	const [applicantNameError, setApplicantNameError] = React.useState(false)
 
 	const [applicantEmail, setApplicantEmail] = React.useState('')
 	const [applicantEmailError, setApplicantEmailError] = React.useState(false)
+
+	const [applicantAddress, setApplicantAddress] = React.useState('')
+	const [applicantAddressError, setApplicantAddressError] = React.useState(false)
 
 	const [teamMembers, setTeamMembers] = React.useState<number | null>(1)
 	const [teamMembersError, setTeamMembersError] = React.useState(false)
@@ -174,12 +184,27 @@ function Form({
 	const router = useRouter()
 
 	const [formData, setFormData] = React.useState<GrantApplicationRequest>()
-	const [txnData, txnLink, loading] = useSubmitApplication(
+	const [txnData, txnLink, loading, isBiconomyInitialised] = useSubmitApplication(
     formData!,
     chainId,
     grantId,
     workspaceId,
 	)
+
+	React.useEffect(() => {
+		if(nonce && nonce !== 'Token expired') {
+			return
+		}
+
+		if(signer) {
+			addAuthorizedUser(signer?.address)
+				.then(() => {
+					setShouldRefreshNonce(true)
+					console.log('Added authorized user', signer.address)
+				})
+				.catch((err) => console.log("Couldn't add authorized user", err))
+		}
+	}, [signer, nonce])
 
 	const { setRefresh } = useCustomToast(txnLink)
 	React.useEffect(() => {
@@ -197,6 +222,7 @@ function Form({
 		let error = false
 		if(applicantName === '' && grantRequiredFields.includes('applicantName')) {
 			setApplicantNameError(true)
+			console.log('Error name')
 			error = true
 		}
 
@@ -204,7 +230,14 @@ function Form({
 			(applicantEmail === '' || !isValidEmail(applicantEmail))
       && grantRequiredFields.includes('applicantEmail')
 		) {
+
 			setApplicantEmailError(true)
+			console.log('Error email')
+			error = true
+		}
+
+		if(applicantAddress === '' && grantRequiredFields.includes('applicantAddress')) {
+			setApplicantAddressError(true)
 			error = true
 		}
 
@@ -213,6 +246,7 @@ function Form({
       && grantRequiredFields.includes('teamMembers')
 		) {
 			setTeamMembersError(true)
+			console.log('Error teamMembers')
 			error = true
 		}
 
@@ -224,6 +258,8 @@ function Form({
         && grantRequiredFields.includes('memberDetails')
 			) {
 				newMembersDescriptionArray[index].isError = true
+				console.log('Error memberDetails')
+
 				membersDescriptionError = true
 			}
 		})
@@ -235,6 +271,8 @@ function Form({
 
 		if(projectName === '' && grantRequiredFields.includes('projectName')) {
 			setProjectNameError(true)
+			console.log('Error projectName')
+
 			error = true
 		}
 
@@ -251,6 +289,11 @@ function Form({
 			setProjectLinks(newProjectLinks)
 			error = true
 		}
+
+		// if(projectDetails.getCurrentContent().getPlainText('').length < MINIMUM_ALLOWED_LENGTH) {
+		// 	setProjectDetailsError(true)
+		// 	error = true
+		// }
 
 		if(!projectDetails.getCurrentContent().hasText()) {
 			setProjectDetailsError(true)
@@ -307,6 +350,7 @@ function Form({
 			setCustomFields(errorCheckedCustomFields)
 		}
 
+
 		if(error) {
 			return
 		}
@@ -315,7 +359,7 @@ function Form({
 			convertToRaw(projectDetails.getCurrentContent()),
 		)
 		const links = projectLinks.map((pl) => pl.link)
-
+		console.log('Signer', signer)
 		if(!signer || !signer) {
 			return
 		}
@@ -328,6 +372,7 @@ function Form({
 			fields: {
 				applicantName: [{ value: applicantName }],
 				applicantEmail: [{ value: applicantEmail }],
+				applicantAddress: [{ value: applicantAddress }],
 				projectName: [{ value: projectName }],
 				projectDetails: [{ value: projectDetailsString }],
 				fundingAsk: fundingAsk !== '' ? [
@@ -402,6 +447,10 @@ function Form({
 			setApplicantEmail(formDataLocal?.applicantEmail)
 		}
 
+		if(formDataLocal?.applicantAddress) {
+			setApplicantAddress(formDataLocal?.applicantAddress)
+		}
+
 		if(formDataLocal?.teamMembers) {
 			setTeamMembers(formDataLocal?.teamMembers)
 		}
@@ -418,6 +467,7 @@ function Form({
 			setProjectLinks(formDataLocal?.projectLinks)
 		}
 
+		console.log('projecttt', formDataLocal.projectDetails)
 		if(formDataLocal?.projectDetails) {
 			setProjectDetails(
 				EditorState.createWithContent(
@@ -457,6 +507,7 @@ function Form({
 		const formDataLocal = {
 			applicantName,
 			applicantEmail,
+			applicantAddress,
 			teamMembers,
 			membersDescription,
 			projectName,
@@ -476,6 +527,7 @@ function Form({
 	}, [
 		applicantName,
 		applicantEmail,
+		applicantAddress,
 		teamMembers,
 		membersDescription,
 		projectName,
@@ -580,10 +632,14 @@ function Form({
 					applicantNameError={applicantNameError}
 					applicantEmail={applicantEmail}
 					applicantEmailError={applicantEmailError}
+					applicantAddress={applicantAddress}
+					applicantAddressError={applicantAddressError}
 					setApplicantName={setApplicantName}
 					setApplicantNameError={setApplicantNameError}
 					setApplicantEmail={setApplicantEmail}
 					setApplicantEmailError={setApplicantEmailError}
+					setApplicantAddress={setApplicantAddress}
+					setApplicantAddressError={setApplicantAddressError}
 					grantRequiredFields={grantRequiredFields}
 				/>
 
@@ -695,6 +751,7 @@ function Form({
 			{
 				acceptingApplications && (
 					<Button
+						disabled={!isBiconomyInitialised}
 						onClick={loading ? () => {} : handleOnSubmit}
 						mx={10}
 						alignSelf="stretch"

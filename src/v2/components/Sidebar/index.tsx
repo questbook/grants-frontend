@@ -3,19 +3,22 @@ import { Divider, Flex, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { useGetWorkspaceMembersLazyQuery } from 'src/generated/graphql'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { MinimalWorkspace } from 'src/types'
 import getTabFromPath from 'src/utils/tabUtils'
-import { useAccount, useConnect } from 'wagmi'
+import { useConnect } from 'wagmi'
 import Domains from './Domains'
 import SidebarItem from './SidebarItem'
 import { TabIndex, useGetTabs } from './Tabs'
 
 function Sidebar() {
 	const [topTabs, bottomTabs] = useGetTabs()
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { isConnected } = useConnect()
 	const { workspace, setWorkspace, subgraphClients, connected } =
     React.useContext(ApiClientsContext)!
+	const { switchNetwork, network } = useNetwork()
 
 	const router = useRouter()
 	const toast = useToast()
@@ -43,9 +46,11 @@ function Sidebar() {
 				const promises = getAllWorkspaces.map(
 					(allWorkspaces) => new Promise(async(resolve) => {
 						try {
+
 							const { data } = await allWorkspaces[0]({
 								variables: { actorId: userAddress },
 							})
+							console.log('THIS ISSSS DATA', data)
 							if(data && data.workspaceMembers.length > 0) {
 								resolve(data.workspaceMembers.map((w) => w.workspace))
 							} else {
@@ -58,10 +63,13 @@ function Sidebar() {
 				)
 				Promise.all(promises).then((values: any[]) => {
 					const allWorkspacesData = [].concat(...values) as MinimalWorkspace[]
-					allWorkspacesData.sort((a, b) => {
+					const tempSet = new Set([...workspaces, ...allWorkspacesData])
+					const tempArray = Array.from(tempSet)
+					tempArray.sort((a, b) => {
 						return b.createdAtS - a.createdAtS
 					})
-					setWorkspaces([...workspaces, ...allWorkspacesData])
+					console.log('WORKSPACE SET: ', tempArray)
+					setWorkspaces(tempArray)
 
 					const savedWorkspaceData = localStorage.getItem('currentWorkspace')
 					if(!savedWorkspaceData || savedWorkspaceData === 'undefined') {

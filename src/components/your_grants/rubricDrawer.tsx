@@ -4,10 +4,10 @@ import {
 	Switch, Text, } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSetRubrics from 'src/hooks/useSetRubrics'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
-import { useAccount } from 'wagmi'
 import Dropdown from '../ui/forms/dropdown'
 import MultiLineInput from '../ui/forms/multiLineInput'
 import SingleLineInput from '../ui/forms/singleLineInput'
@@ -48,7 +48,7 @@ function RubricDrawer({
 	const [editedRubricData, setEditedRubricData] = React.useState<any>()
 
 	const [pk, setPk] = React.useState<string>('*')
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { workspace } = useContext(ApiClientsContext)!
 
 	const {
@@ -160,6 +160,7 @@ function RubricDrawer({
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		transactionLink,
 		loading,
+		isBiconomyInitialised
 	] = useSetRubrics(editedRubricData, chainId, workspaceId, grantAddress)
 
 	const { setRefresh } = useCustomToast(transactionLink)
@@ -496,6 +497,7 @@ function RubricDrawer({
 
 						<Box mt={12}>
 							<Button
+								disabled={!isBiconomyInitialised}
 								mt="auto"
 								variant="primary"
 								onClick={handleOnSubmit}>

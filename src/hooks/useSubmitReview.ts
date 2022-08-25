@@ -1,51 +1,90 @@
-import React, { useContext, useEffect } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
-import { SupportedChainId } from 'src/constants/chains'
-import useEncryption from 'src/hooks/utils/useEncryption'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import { defaultChainId, SupportedChainId } from 'src/constants/chains'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { useGenerateReviewData } from 'src/utils/reviews'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
+import { FeedbackType } from '../components/your_grants/feedbackDrawer'
+import {
+	useGetInitialReviewedApplicationGrantsQuery,
+} from '../generated/graphql'
+import { delay } from '../utils/generics'
 import useQBContract from './contracts/useQBContract'
+import { useBiconomy } from './gasless/useBiconomy'
+import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
 
 export default function useSubmitReview(
-	data: any,
+	data: { items?: Array<FeedbackType> },
+	setCurrentStep: (step?: number) => void,
 	isPrivate: boolean,
 	chainId?: SupportedChainId,
 	workspaceId?: string,
 	grantAddress?: string,
 	applicationId?: string,
 ) {
-	const [error, setError] = React.useState<string>()
-	const [loading, setLoading] = React.useState(false)
-	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
-	const [transactionData, setTransactionData] = React.useState<any>()
-	const { data: accountData } = useAccount()
+	const [error, setError] = useState<string>()
+	const [loading, setLoading] = useState(false)
+	const [incorrectNetwork, setIncorrectNetwork] = useState(false)
+	const [transactionData, setTransactionData] = useState<any>()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
-	const { encryptMessage } = useEncryption()
 
-	const apiClients = useContext(ApiClientsContext)!
-	const { validatorApi, workspace } = apiClients
+	const { validatorApi, workspace, subgraphClients } = useContext(ApiClientsContext)!
 
 	if(!chainId) {
 		// eslint-disable-next-line no-param-reassign
-		chainId = getSupportedChainIdFromWorkspace(workspace)
+		chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 	}
+
+	const { client } = subgraphClients[chainId!]
+
+	const { generateReviewData } = useGenerateReviewData({
+		grantId: grantAddress!,
+		applicationId: applicationId!,
+		isPrivate,
+		chainId,
+	})
+
+	const { fetchMore: fetchReviews } = useGetInitialReviewedApplicationGrantsQuery({ client })
 
 	const applicationReviewContract = useQBContract('reviews', chainId)
 
-	const toastRef = React.useRef<ToastId>()
+	const toastRef = useRef<ToastId>()
 	const toast = useToast()
 	const currentChainId = useChainId()
 
+	const { webwallet } = useContext(WebwalletContext)!
+
+	if(!chainId) {
+		chainId = getSupportedChainIdFromWorkspace(workspace)
+	}
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
+		chainId: chainId?.toString(),
+	})
+
+	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
+
 	useEffect(() => {
-		console.log('data', data)
+		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		console.log('rree', isBiconomyLoading, biconomyLoading)
+		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
+			biconomy.networkId.toString() === chainId.toString()) {
+			setIsBiconomyInitialised(true)
+		}
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised])
+
+
+	useEffect(() => {
 		if(data) {
 			setError(undefined)
 			setIncorrectNetwork(false)
@@ -74,65 +113,85 @@ export default function useSubmitReview(
 
 		async function validate() {
 			setLoading(true)
-			// console.log('calling validate');
+			setCurrentStep(0)
+
 			try {
-				// console.log(workspaceId || Number(workspace?.id).toString());
-				// console.log('ipfsHash', ipfsHash);
-				// console.log(
-				//   WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
-				//   APPLICATION_REGISTRY_ADDRESS[currentChainId!],
-				// );
 
-				const encryptedReview = {} as any
-				if(isPrivate) {
-					console.log(accountData)
-					const yourPublicKey = workspace?.members.find(
-						(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
-					)?.publicKey
-					const encryptedData = encryptMessage(JSON.stringify(data), yourPublicKey!)
-					const encryptedHash = (await uploadToIPFS(encryptedData)).hash
-					encryptedReview[accountData!.address!] = encryptedHash
-
-					console.log(workspace)
-					workspace?.members.filter(
-						(m) => (m.accessLevel === 'admin' || m.accessLevel === 'owner') && (m.publicKey && m.publicKey?.length > 0),
-					).map((m) => ({ key: m.publicKey, address: m.actorId }))
-						.forEach(async({ key, address }) => {
-							const encryptedAdminData = encryptMessage(JSON.stringify(data), key!)
-							const encryptedAdminHash = (await uploadToIPFS(encryptedAdminData)).hash
-							encryptedReview[address] = encryptedAdminHash
-						})
-
-					console.log('encryptedReview', encryptedReview)
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					throw new Error('Zero wallet is not ready')
 				}
 
-				const dataHash = (await uploadToIPFS(JSON.stringify(data))).hash
-
-				const {
-					data: { ipfsHash },
-				} = await validatorApi.validateReviewSet({
-					reviewer: accountData?.address!,
-					publicReviewDataHash: isPrivate ? '' : dataHash,
-					encryptedReview,
+				const { ipfsHash } = await generateReviewData({
+					items: data.items!
 				})
-
-				console.log('ipfsHash', ipfsHash)
 
 				if(!ipfsHash) {
 					throw new Error('Error validating review data')
 				}
 
-				const createGrantTransaction = await applicationReviewContract.submitReview(
-					workspaceId || Number(workspace?.id).toString(),
-					applicationId!,
-					grantAddress!,
-					ipfsHash,
-				)
-				const createGrantTransactionData = await createGrantTransaction.wait()
+				// const createGrantTransaction = await applicationReviewContract.submitReview(
+				// 	workspaceId || Number(workspace?.id).toString(),
+				// 	applicationId!,
+				// 	grantAddress!,
+				// 	ipfsHash,
+				// )
+				// const createGrantTransactionData = await createGrantTransaction.wait()
 
-				setTransactionData(createGrantTransactionData)
+				setCurrentStep(1)
+
+				const response = await sendGaslessTransaction(
+					biconomy,
+					applicationReviewContract,
+					'submitReview',
+					[	scwAddress,
+						workspaceId || Number(workspace?.id).toString(),
+						applicationId!,
+						grantAddress!,
+						ipfsHash],
+					APPLICATION_REVIEW_REGISTRY_ADDRESS[currentChainId],
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					bicoDapps[currentChainId].webHookId,
+					nonce,
+				)
+
+				setCurrentStep(2)
+
+				if(response) {
+					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+					setTransactionData(receipt)
+					await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee))
+				}
+
+				setCurrentStep(3)
+
+				const reviewerId = accountData!.address!
+
+				let didIndex = false
+				do {
+					await delay(2000)
+					const result = await fetchReviews({
+						variables: {
+							reviewerAddress: reviewerId.toLowerCase(),
+							reviewerAddressStr: reviewerId,
+							applicationsCount: 1,
+						},
+					})
+					const grants = result.data.grantReviewerCounters.map(e => e.grant)
+					grants.forEach(grant => {
+						if(grant.id === grantAddress) {
+							didIndex = true
+						}
+					})
+
+				} while(!didIndex)
+
 				setLoading(false)
-			} catch(e: any) {
+				setCurrentStep(5)
+			} catch(e) {
+				setCurrentStep(undefined)
 				const message = getErrorMessage(e)
 				setError(message)
 				setLoading(false)
@@ -201,16 +260,14 @@ export default function useSubmitReview(
 
 			if(
 				!applicationReviewContract
-        || applicationReviewContract.address
-          === '0x0000000000000000000000000000000000000000'
-        || !applicationReviewContract.signer
-        || !applicationReviewContract.provider
+				|| applicationReviewContract.address
+				=== '0x0000000000000000000000000000000000000000'
 			) {
 				return
 			}
 
 			validate()
-		} catch(e: any) {
+		} catch(e) {
 			const message = getErrorMessage(e)
 			setError(message)
 			setLoading(false)
@@ -250,6 +307,7 @@ export default function useSubmitReview(
 		transactionData,
 		getExplorerUrlForTxHash(chainId || getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
 		loading,
+		isBiconomyInitialised,
 		error,
 	]
 }

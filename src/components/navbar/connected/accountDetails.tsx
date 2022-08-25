@@ -14,12 +14,13 @@ import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
 import { CHAIN_INFO, SHOW_TEST_NETS } from 'src/constants/chains'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useChainId from 'src/hooks/utils/useChainId'
-import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import { useConnect, useDisconnect } from 'wagmi'
 
 function AccountDetails() {
 	const isOnline = true
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { isDisconnected } = useConnect()
 	const { disconnect } = useDisconnect()
 	const { connected, setConnected } = useContext(ApiClientsContext)!
@@ -113,7 +114,9 @@ function AccountDetails() {
 				}
 			</MenuButton>
 			{
-				!(connected && isDisconnected) && (
+				// @TODO-gasless: FIX HERE
+				// !(connected && isDisconnected) &&
+				(
 					<MenuList>
 						<MenuItem isDisabled>
           Signed in with
@@ -123,7 +126,7 @@ function AccountDetails() {
 						<MenuItem
 							onClick={
 								() => {
-									setConnected(false)
+									// @TODO-gasless: FIX HERE setConnected(false)
 									disconnect()
 									router.replace('/')
 								}

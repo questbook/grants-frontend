@@ -1,4 +1,5 @@
-import React, { ReactElement, useContext, useEffect, useState } from 'react'
+import { ReactElement, useContext, useEffect, useRef, useState } from 'react'
+import * as Apollo from '@apollo/client'
 import {
 	Box,
 	Button,
@@ -25,41 +26,41 @@ import ReviewerSidebar from 'src/components/your_grants/applicant_form/reviewerS
 import Sidebar from 'src/components/your_grants/applicant_form/sidebar'
 import { defaultChainId } from 'src/constants/chains'
 import {
-	GetApplicationDetailsQuery,
+	GetApplicationDetailsQuery, GetApplicationDetailsQueryVariables,
 	useGetApplicationDetailsQuery,
 } from 'src/generated/graphql'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
 
 function ApplicantForm() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 	const { decryptApplicationPII } = useApplicationEncryption()
 
-	const toastRef = React.useRef<ToastId>()
+	const toastRef = useRef<ToastId>()
 
 	const toast = useToast()
 	const router = useRouter()
 	const [step, setStep] = useState(0)
 
 	const [isAdmin, setIsAdmin] = useState(false)
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	useEffect(() => {
 		if(workspace && workspace.members && workspace.members.length > 0) {
 			const tempMember = workspace.members.find(
-				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase()
+				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 			)
 			setIsAdmin(
 				tempMember?.accessLevel === 'admin' ||
-          tempMember?.accessLevel === 'owner'
+        tempMember?.accessLevel === 'owner',
 			)
 		}
 	}, [accountData?.address, workspace])
 
-	const [applicationId, setApplicationId] = useState<any>('')
+	const [applicationId, setApplicationId] = useState<string>('')
 	const [applicationData, setApplicationData] =
     useState<GetApplicationDetailsQuery['grantApplication']>(null)
 	const [submitClicked, setSubmitClicked] = useState(false)
@@ -73,16 +74,15 @@ function ApplicantForm() {
 	useEffect(() => {
 		if(router && router.query) {
 			const { applicationId: aId } = router.query
-			setApplicationId(aId)
+			setApplicationId(aId as string)
 		}
 	}, [router])
 
-	const [queryParams, setQueryParams] = useState<any>({
-		client:
-      subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-      ].client,
-	})
+	const client = subgraphClients[
+		getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+	].client
+
+	const [queryParams, setQueryParams] = useState<Apollo.QueryHookOptions<GetApplicationDetailsQuery, GetApplicationDetailsQueryVariables>>({ client })
 
 	useEffect(() => {
 		if(!workspace) {
@@ -95,7 +95,7 @@ function ApplicantForm() {
 
 		setQueryParams({
 			client:
-        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+      subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
 			variables: {
 				applicationID: applicationId,
 			},
@@ -107,12 +107,14 @@ function ApplicantForm() {
 		error: queryError,
 		loading: queryLoading,
 	} = useGetApplicationDetailsQuery(queryParams)
+
 	useEffect(() => {
+		console.log('ddddd', data, queryError, queryLoading)
 		if(data && data.grantApplication) {
 			console.log('grantApplication------>', data.grantApplication)
 			setApplicationData(data.grantApplication)
 		}
-	}, [data, queryError, queryLoading])
+	}, [data, queryError, queryLoading, applicationData])
 
 	useEffect(() => {
 		if(router.query.flow === 'approved') {
@@ -122,13 +124,13 @@ function ApplicantForm() {
 		}
 	}, [router])
 
-	const [state, setState] = useState<any>(null)
-	const [txn, txnLink, loading, error] = useUpdateApplicationState(
+	const [state, setState] = useState<number>()
+	const [txn, txnLink, loading, isBiconomyInitialised, error] = useUpdateApplicationState(
 		state === 1 ? resubmitComment : rejectionComment,
 		applicationData?.id,
 		state,
 		submitClicked,
-		setSubmitClicked
+		setSubmitClicked,
 	)
 
 	const { setRefresh } = useCustomToast(txnLink)
@@ -136,7 +138,7 @@ function ApplicantForm() {
 		if(txn) {
 			setState(undefined)
 			router.replace({
-				pathname: '/your_grants/view_applicants',
+				pathname: '/v2/your_grants/view_applicants',
 				query: {
 					grantId: applicationData?.grant?.id,
 				},
@@ -153,7 +155,7 @@ function ApplicantForm() {
 		if(applicationData) {
 			setHiddenModalOpen(true)
 			const decryptedApplicationData = await decryptApplicationPII(
-				applicationData
+				applicationData,
 			)
 			if(decryptedApplicationData) {
 				setApplicationData(decryptedApplicationData)
@@ -184,63 +186,63 @@ function ApplicantForm() {
 			<Modal
 				isOpen={hiddenModalOpen}
 				onClose={() => setHiddenModalOpen(false)}
-				title="View Details with your Wallet"
+				title='View Details with your Wallet'
 				modalWidth={566}
 			>
 				<ModalBody px={10}>
-					<Flex direction="column">
-						<Flex mt="36px">
+					<Flex direction='column'>
+						<Flex mt='36px'>
 							<Text
-								fontWeight="bold"
-								fontSize="18px">
+								fontWeight='bold'
+								fontSize='18px'>
                 How does this work?
 							</Text>
 						</Flex>
 						<Flex
-							mt="28px"
-							alignItems="center">
+							mt='28px'
+							alignItems='center'>
 							<Box
-								bg="#8850EA"
-								color="#fff"
+								bg='#8850EA'
+								color='#fff'
 								h={10}
 								w={10}
-								display="flex"
-								alignItems="center"
-								justifyContent="center"
-								borderRadius="50%"
-								mr="19px"
+								display='flex'
+								alignItems='center'
+								justifyContent='center'
+								borderRadius='50%'
+								mr='19px'
 							>
                 1
 							</Box>
 							<Text>
-Open your wallet
+                Open your wallet
 							</Text>
 						</Flex>
 						<Flex
-							alignItems="center"
-							mt="35px"
-							mb="40px">
+							alignItems='center'
+							mt='35px'
+							mb='40px'>
 							<Box
-								bg="#8850EA"
-								color="#fff"
+								bg='#8850EA'
+								color='#fff'
 								h={10}
 								w={10}
-								display="flex"
-								alignItems="center"
-								justifyContent="center"
-								borderRadius="50%"
-								mr="19px"
+								display='flex'
+								alignItems='center'
+								justifyContent='center'
+								borderRadius='50%'
+								mr='19px'
 							>
                 2
 							</Box>
 							<Text>
-Click on ‘Decrypt’ to view the details.
+                Click on ‘Decrypt’ to view the details.
 							</Text>
 						</Flex>
 
 						<Button
 							mb={10}
-							variant="primary"
+							variant='primary'
 							onClick={() => setHiddenModalOpen(false)}
 						>
               ok
@@ -310,16 +312,16 @@ Click on ‘Decrypt’ to view the details.
 		return (
 			<>
 				<Flex
-					direction="row"
-					w="100%"
-					mx="auto">
+					direction='row'
+					w='100%'
+					mx='auto'>
 					<Flex
-						direction="column"
-						w="100%"
-						mx="44px"
+						direction='column'
+						w='100%'
+						mx='44px'
 						p={0}
-						h="100%">
-						<Box ml="30px">
+						h='100%'>
+						<Box ml='30px'>
 							<Breadcrumbs
 								path={['Your Grants', 'View Applicants', 'Applicant Form']}
 								id={applicationData?.grant?.id}
@@ -327,71 +329,71 @@ Click on ‘Decrypt’ to view the details.
 						</Box>
 
 						<Text
-							mt="18px"
+							mt='18px'
 							mb={6}
-							variant="heading">
+							variant='heading'>
 							{applicationData?.grant?.title || ''}
 						</Text>
 						<Flex
-							direction="row"
-							w="100%"
-							justify="space-between">
+							direction='row'
+							w='100%'
+							justify='space-between'>
 							<Flex
-								direction="column"
-								w="65%"
-								align="start">
+								direction='column'
+								w='65%'
+								align='start'>
 								<Flex
-									direction="column"
-									alignItems="stretch"
+									direction='column'
+									alignItems='stretch'
 									pb={8}
-									w="100%">
+									w='100%'>
 									{
 										applicationData && applicationData?.state === 'rejected' && (
 											<Flex
-												alignItems="flex-start"
-												bgColor="#FFC0C0"
-												border="2px solid #EE7979"
-												px="26px"
-												py="22px"
-												borderRadius="6px"
+												alignItems='flex-start'
+												bgColor='#FFC0C0'
+												border='2px solid #EE7979'
+												px='26px'
+												py='22px'
+												borderRadius='6px'
 												my={4}
 												mx={10}
-												alignSelf="stretch"
+												alignSelf='stretch'
 											>
 												<Flex
-													alignItems="center"
-													justifyContent="center"
-													bgColor="#F7B7B7"
-													border="2px solid #EE7979"
-													borderRadius="40px"
+													alignItems='center'
+													justifyContent='center'
+													bgColor='#F7B7B7'
+													border='2px solid #EE7979'
+													borderRadius='40px'
 													p={2}
-													h="40px"
-													w="40px"
-													mt="5px"
+													h='40px'
+													w='40px'
+													mt='5px'
 												>
 													<Image
-														h="40px"
-														w="40px"
-														src="/ui_icons/result_rejected_application.svg"
-														alt="Rejected"
+														h='40px'
+														w='40px'
+														src='/ui_icons/result_rejected_application.svg'
+														alt='Rejected'
 													/>
 												</Flex>
 												<Flex
-													ml="23px"
-													direction="column">
+													ml='23px'
+													direction='column'>
 													<Text
-														fontSize="16px"
-														lineHeight="24px"
-														fontWeight="700"
-														color="#7B4646"
+														fontSize='16px'
+														lineHeight='24px'
+														fontWeight='700'
+														color='#7B4646'
 													>
-                          Application Rejected
+                            Application Rejected
 													</Text>
 													<Text
-														fontSize="16px"
-														lineHeight="24px"
-														fontWeight="400"
-														color="#7B4646"
+														fontSize='16px'
+														lineHeight='24px'
+														fontWeight='400'
+														color='#7B4646'
 													>
 														{applicationData?.feedbackDao}
 													</Text>
@@ -403,45 +405,45 @@ Click on ‘Decrypt’ to view the details.
 									{
 										applicationData && applicationData?.state === 'resubmit' && (
 											<Flex
-												alignItems="flex-start"
-												bgColor="#FEF6D9"
-												border="2px solid #EFC094"
-												px="26px"
-												py="22px"
-												borderRadius="6px"
+												alignItems='flex-start'
+												bgColor='#FEF6D9'
+												border='2px solid #EFC094'
+												px='26px'
+												py='22px'
+												borderRadius='6px'
 												my={4}
 												mx={10}
-												alignSelf="stretch"
+												alignSelf='stretch'
 											>
 												<Flex
-													alignItems="center"
-													justifyContent="center"
-													h="36px"
-													w="42px"
+													alignItems='center'
+													justifyContent='center'
+													h='36px'
+													w='42px'
 												>
 													<Image
-														h="40px"
-														w="40px"
-														src="/ui_icons/alert_triangle.svg"
-														alt="Resubmit"
+														h='40px'
+														w='40px'
+														src='/ui_icons/alert_triangle.svg'
+														alt='Resubmit'
 													/>
 												</Flex>
 												<Flex
-													ml="23px"
-													direction="column">
+													ml='23px'
+													direction='column'>
 													<Text
-														fontSize="16px"
-														lineHeight="24px"
-														fontWeight="700"
-														color="#7B4646"
+														fontSize='16px'
+														lineHeight='24px'
+														fontWeight='700'
+														color='#7B4646'
 													>
-                          Request for Resubmission
+                            Request for Resubmission
 													</Text>
 													<Text
-														fontSize="16px"
-														lineHeight="24px"
-														fontWeight="400"
-														color="#7B4646"
+														fontSize='16px'
+														lineHeight='24px'
+														fontWeight='400'
+														color='#7B4646'
 													>
 														{applicationData?.feedbackDao}
 													</Text>
@@ -450,7 +452,7 @@ Click on ‘Decrypt’ to view the details.
 										)
 									}
 
-									<Flex direction="column">
+									<Flex direction='column'>
 										<Application
 											applicationData={applicationData}
 											showHiddenData={showHiddenData}
@@ -459,32 +461,29 @@ Click on ‘Decrypt’ to view the details.
 								</Flex>
 							</Flex>
 							<Flex
-								direction="column"
+								direction='column'
 								mt={2}
 								ml={4}
 								w={340}
-								alignItems="stretch"
-								pos="sticky"
-								top="36px"
+								alignItems='stretch'
+								pos='sticky'
+								top='36px'
 							>
 								{
-									applicationData?.reviewers.find(
-										(reviewer) => reviewer.id.split('.')[1] ===
-                    accountData?.address?.toLowerCase()
+									[
+										...applicationData?.pendingReviewerAddresses ?? [],
+										...applicationData?.doneReviewerAddresses ?? [],
+									].find(
+										(pendingReviewer) => pendingReviewer.toLowerCase() ===
+                      accountData?.address?.toLowerCase(),
 									) !== undefined && (
-										<ReviewerSidebar
-											showHiddenData={showHiddenData}
-											applicationData={applicationData}
-											isAdmin={isAdmin}
-											onAcceptApplicationClick={() => setStep(1)}
-											onRejectApplicationClick={() => setStep(2)}
-											onResubmitApplicationClick={() => setStep(3)}
-										/>
+										<ReviewerSidebar applicationData={applicationData} />
 									)
 								}
 								{
 									isAdmin && (
 										<Sidebar
+											isBiconomyInitialised={isBiconomyInitialised}
 											showHiddenData={showHiddenData}
 											applicationData={applicationData}
 											onAcceptApplicationClick={() => setStep(1)}
@@ -505,12 +504,12 @@ Click on ‘Decrypt’ to view the details.
 	return (
 		<>
 			<Flex
-				direction="column"
+				direction='column'
 				mx={200}>
 				<Flex
-					direction="column"
+					direction='column'
 					mx={10}
-					w="100%">
+					w='100%'>
 					<Breadcrumbs
 						path={['My Grants', 'View Applicants', 'Applicant Form']}
 						id={applicationData?.grant?.id}
@@ -518,14 +517,14 @@ Click on ‘Decrypt’ to view the details.
 					<Text
 						mt={4}
 						mb={4}
-						variant="heading">
+						variant='heading'>
 						{applicationData?.grant?.title}
 					</Text>
 					<Divider mb={5} />
 					<Flex
-						maxW="100%"
-						direction="row"
-						justify="space-between">
+						maxW='100%'
+						direction='row'
+						justify='space-between'>
 						{renderContent(step)}
 					</Flex>
 				</Flex>
