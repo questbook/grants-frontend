@@ -87,7 +87,7 @@ function ApplicantDetails({
 			<Box mt={6} />
 			<SingleLineInput
 				label="Applicant Address"
-				placeholder="0xF6C42302bC230BBA9c5379dDFb33ca72409E1624"
+				placeholder="Ethereum or Solana address"
 				subtext="Your wallet address where you would like to receive funds"
 				onChange={
 					(e) => {
