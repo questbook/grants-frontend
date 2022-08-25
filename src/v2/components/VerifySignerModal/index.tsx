@@ -38,6 +38,7 @@ const VerifySignerModal = ({
 	const {
 		isError: isErrorConnecting,
 		connect,
+		isConnected,
 		connectors
 	} = useConnect()
 
@@ -222,7 +223,7 @@ const VerifySignerModal = ({
 															const connector = connectors.find((x) => x.id === wallet.id)
 															setConnectClicked(true)
 															setWalletClicked(true)
-															if(connector) {
+															if(connector && !isConnected) {
 																connect(connector)
 															}
 

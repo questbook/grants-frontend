@@ -52,7 +52,9 @@ import StatsBanner from 'src/v2/payouts/StatsBanner'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
 import getProposalUrl from 'src/v2/utils/phantomUtils'
-import { erc20ABI, useAccount } from 'wagmi'
+import { erc20ABI, useAccount, useConnect, useDisconnect } from 'wagmi'
+import { SupportedSafes } from 'src/v2/constants/safe/supported_safes'
+
 
 const PAGE_SIZE = 500
 const SAFE_ADDRESS = '0x7723d6CD277F0670fcB84eA8E9Efe14f1b16acBB'
@@ -461,18 +463,21 @@ function ViewApplicants() {
 		phantomWalletConnected,
 		setPhantomWalletConnected } = usePhantomWallet()
 
-	const [signerVerified, setSignerVerififed] = useState(true)
+	const {connect, isConnected} = useConnect()
+	const {disconnect} = useDisconnect()
+
+	const [signerVerified, setSignerVerififed] = useState(false)
 	const [proposalAddr, setProposalAddr] = useState('')
 
 	const [initiateTransactionData, setInitiateTransactionData] = useState([])
 	const [gnosisBatchData, setGnosisBatchData] = useState<any>([])
 	const [gnosisReadyToExecuteTxns, setGnosisReadyToExecuteTxns] = useState<any>([])
 
-	// const supported_safes = new SupportedSafes()
-	const chainId = 9000001 // get your safe chain ID, currently on solana
-	// const current_safe = supported_safes.getSafeByChainId(chainId) //current_safe has the stored safe address
+	const supported_safes = new SupportedSafes()
+	const chainId = 4 // get your safe chain ID, currently on solana
+	const current_safe = supported_safes.getSafeByChainId(chainId) //current_safe has the stored safe address
 
-	const current_safe = new Realms_Solana(workspaceSafe ?? '')
+	// const current_safe = new Realms_Solana(workspaceSafe ?? '')
 
 	//checking if the realm address is valid
 
@@ -535,11 +540,23 @@ function ViewApplicants() {
 		}
 	}
 
+	const verifyGnosisOwner = async() => {
+		if(isConnected) {
+			const isVerified = await current_safe?.isOwner(SAFE_ADDRESS)
+			console.log('verifying owner', isVerified)
+			if(isVerified) {
+				setSignerVerififed(true)
+			}
+		}
+	}
+
 	useEffect(() => {
 		if(phantomWalletConnected) {
 			getRealmsVerification()
+		}else if (isConnected){
+			verifyGnosisOwner()
 		} else {
-			setSignerVerififed(true)
+			setSignerVerififed(false)
 		}
 	}, [phantomWalletConnected])
 
@@ -617,6 +634,9 @@ function ViewApplicants() {
 		if(phantomWallet?.isConnected) {
 			await phantomWallet.disconnect()
 			setPhantomWalletConnected(false)
+		}
+		if(isConnected){
+			disconnect()
 		}
 	}
 

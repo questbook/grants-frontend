@@ -8,12 +8,12 @@ import SAFES_ENPOINTS from '../constants/safesEndpointsTest.json'
 import useAxiosMulti from './utils/useAxiosMulti'
 
 
-// const URL_PREFIX = 'v1/safes/'
 const URL_PREFIX = 'v1/safes/'
-const URL_SUFFIX = '/safes'
+// const URL_PREFIX = 'v1/safes/'
+const URL_SUFFIX = '/balances/usd'
 const SAFES_BALANCES_CHAIN_ID = Object.keys(SAFES_ENPOINTS)
 const SAFES_BALANCES_ENPOINTS = Object.values(SAFES_ENPOINTS)
-const USD_BALANCE_THRESHOLD = 50
+const USD_BALANCE_THRESHOLD = 1
 
 interface Props {
     safeAddress: string
@@ -34,7 +34,7 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 		}
 		console.log('Inside safe usd balance', safeAddress)
 		console.log('API url', SAFES_BALANCES_ENPOINTS[0] + URL_PREFIX + safeAddress + URL_SUFFIX)
-		return SAFES_BALANCES_ENPOINTS.map(element => element + URL_PREFIX + safeAddress)
+		return SAFES_BALANCES_ENPOINTS.map(element => element + URL_PREFIX + safeAddress + URL_SUFFIX)
 	}, [safeAddress])
 
 	const { data: gnosisRawData, error, loaded } = useAxiosMulti({

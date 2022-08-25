@@ -57,7 +57,7 @@ export interface SafeDetails {
  */
 
 export interface Safe {
-    id: number | PublicKey | undefined;
+    id: string | PublicKey | undefined;
     name: string;
     description: string;
     image: string;

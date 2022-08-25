@@ -7,11 +7,11 @@ const safeChainIds = Object.keys(safeServicesInfo)
 
 export class SupportedSafes {
     safes: Safe[];
-    constructor() {
+    constructor(safeAddress: string) {
     	this.safes = []
     	this.safes.push(new Realms_Solana(''))
     	for(let i = 0; i < safeChainIds.length; i++) {
-    		const newGnosisSafe = new Gnosis_Safe(parseInt(safeChainIds[i]), safeServicesInfo[safeChainIds[i]])
+    		const newGnosisSafe = new Gnosis_Safe(parseInt(safeChainIds[i]), safeServicesInfo[safeChainIds[i]], safeAddress)
     		this.safes.push(newGnosisSafe)
     	}
 
