@@ -1,15 +1,12 @@
 import React from 'react'
 import {
 	Box,
-	Divider,
 	Flex,
 	Grid,
 	GridItem,
 	Image,
-	Switch,
 	Text,
 } from '@chakra-ui/react'
-import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import applicantDetailsList from '../../../../constants/applicantDetailsList'
 import Badge from '../../../ui/badge'
@@ -380,7 +377,7 @@ function ApplicantDetails({
 				)
 			}
 
-			<Flex
+			{/* <Flex
 				direction="column"
 				mt={8}>
 				<Text
@@ -620,7 +617,7 @@ function ApplicantDetails({
             Add another criteria
 					</Text>
 				</Box>
-			</Flex>
+			</Flex> */}
 
 			{/* <Flex
 				opacity={rubricRequired ? 1 : 0.4}
