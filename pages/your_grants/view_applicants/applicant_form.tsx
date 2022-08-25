@@ -447,7 +447,7 @@ function ApplicantForm() {
 													>
 														{applicationData?.feedbackDao}
 													</Text>
-												</Flex> 
+												</Flex>
 											</Flex>
 										)
 									}

@@ -78,36 +78,44 @@ const AcceptedRow = ({
 						>
 							{applicantData?.project_name}
 						</Text>
-						{applicantData?.applicant_address && <Text
-							fontSize='12px'
-							lineHeight='16px'
-							fontWeight='400'
-							mt="2px"
-							color='#7D7DA0'
-							display={'flex'}
-							alignItems='center'
-						>
-							<Tooltip label={applicantData?.applicant_address}>
-								{`${applicantData?.applicant_address?.substring(0, 6)}...`}
-							</Tooltip>
+						{
+							applicantData?.applicant_address && (
+								<Text
+									fontSize='12px'
+									lineHeight='16px'
+									fontWeight='400'
+									mt="2px"
+									color='#7D7DA0'
+									display={'flex'}
+									alignItems='center'
+								>
+									<Tooltip label={applicantData?.applicant_address}>
+										{`${applicantData?.applicant_address?.substring(0, 6)}...`}
+									</Tooltip>
 									<Flex
 										display="inline-block"
 										ml={2}
 									>
 										<CopyIcon text={applicantData?.applicant_address!} />
 									</Flex>
-						</Text>}
-						{!applicantData?.applicant_address && <Text
-							fontSize='12px'
-							lineHeight='16px'
-							fontWeight='400'
-							mt="2px"
-							color='#7D7DA0'
-							display={'flex'}
-							alignItems='center'
-						>
+								</Text>
+							)
+						}
+						{
+							!applicantData?.applicant_address && (
+								<Text
+									fontSize='12px'
+									lineHeight='16px'
+									fontWeight='400'
+									mt="2px"
+									color='#7D7DA0'
+									display={'flex'}
+									alignItems='center'
+								>
 							No applicant address found
-						</Text>}
+								</Text>
+							)
+						}
 					</Flex>
 				</Flex>
 			</GridItem>
