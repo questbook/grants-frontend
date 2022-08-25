@@ -1,15 +1,23 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useMemo } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { APPLICATION_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
+	bicoDapps,
+	chargeGas,
+	getTransactionDetails,
+	sendGaslessTransaction
+} from 'src/utils/gaslessUtils'
+import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
-import useChainId from './utils/useChainId'
+import { useBiconomy } from './gasless/useBiconomy'
+import { useNetwork } from './gasless/useNetwork'
+import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 
 export default function useApproveMilestone(
 	data: any,
@@ -20,16 +28,34 @@ export default function useApproveMilestone(
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients
-	const currentChainId = useChainId()
+	const currentChainId = useMemo(() => networkData.id, [networkData])
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 	const applicationContract = useQBContract('applications', chainId)
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
+		chainId: chainId?.toString()!
+		// targetContractABI: ApplicationRegistryAbi,
+	})
+
+	const [isBiconomyInitialised, setIsBiconomyInitialised] = React.useState(false)
+
+	useEffect(() => {
+		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		console.log('rree', isBiconomyLoading, biconomyLoading)
+		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.netWorkId &&
+			biconomy.networkId.toString() === chainId.toString()) {
+			setIsBiconomyInitialised(true)
+		}
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised])
+
+	const { webwallet } = useContext(WebwalletContext)!
 
 	useEffect(() => {
 		if(data) {
@@ -70,15 +96,36 @@ export default function useApproveMilestone(
 					throw new Error('Error validating grant data')
 				}
 
-				const updateTxn = await applicationContract.approveMilestone(
-					applicationId!,
-					Number(milestoneIndex),
-					Number(workspace!.id),
-					ipfsHash,
-				)
-				const updateTxnData = await updateTxn.wait()
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					throw new Error('Zero wallet is not ready')
+				}
 
-				setTransactionData(updateTxnData)
+				const txHash = await sendGaslessTransaction(
+					biconomy,
+					applicationContract,
+					'approveMilestone',
+					[applicationId!,
+						Number(milestoneIndex),
+						Number(workspace!.id),
+						ipfsHash, ],
+					APPLICATION_REGISTRY_ADDRESS[currentChainId],
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					bicoDapps[currentChainId].webHookId,
+					nonce
+				)
+
+				if(!txHash) {
+					return
+				}
+
+				const { receipt, txFee } = await getTransactionDetails(txHash, currentChainId.toString())
+
+				await chargeGas(Number(workspace?.id), Number(txFee))
+
+				setTransactionData(receipt)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -153,10 +200,8 @@ export default function useApproveMilestone(
 
 			if(
 				!applicationContract
-        || applicationContract.address
-          === '0x0000000000000000000000000000000000000000'
-        || !applicationContract.signer
-        || !applicationContract.provider
+				|| applicationContract.address
+				=== '0x0000000000000000000000000000000000000000'
 			) {
 				return
 			}

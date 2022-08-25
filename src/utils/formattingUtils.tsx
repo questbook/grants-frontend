@@ -145,7 +145,9 @@ export function highlightWordsInString(
 	return formatted.split('<span>').map((word, index) => {
 		if(index % 2) {
 			return (
-				<span style={{ color, fontWeight: 700 }}>
+				<span
+					key={index}
+					style={{ color, fontWeight: 700 }}>
 					{word}
 				</span>
 			)
@@ -226,3 +228,7 @@ export const getExplorerUrlForAddress = (chainId: SupportedChainId | undefined, 
 export const getExplorerUrlForTxHash = (chainId: SupportedChainId | undefined, tx: string) => {
 	return CHAIN_INFO[chainId!]?.explorer.transactionHash.replace('{{tx}}', tx) || ''
 }
+
+export const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`
+
+export const getFieldString = (applicationData: any, name: string) => applicationData?.fields?.find((field: any) => field?.id?.includes(`.${name}`))?.values[0]?.value

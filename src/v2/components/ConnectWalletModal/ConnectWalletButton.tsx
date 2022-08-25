@@ -7,11 +7,13 @@ const ConnectWalletButton = ({
 	icon,
 	name,
 	isPopular,
+	maxW
 }: {
   onClick: () => void,
   icon: React.ReactNode,
   name: string,
   isPopular?: boolean,
+	maxW?: string,
 }) => {
 	const [isHovering, setIsHovering] = useState(false)
 	return (
@@ -20,7 +22,7 @@ const ConnectWalletButton = ({
 			px={6}
 			py={4}
 			h={'auto'}
-			maxW={'27rem'}
+			maxW={maxW ?? '27rem'}
 			colorScheme={'brandGrey'}
 			onClick={onClick}
 			onMouseEnter={() => setIsHovering(true)}

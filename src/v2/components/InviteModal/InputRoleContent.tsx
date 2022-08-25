@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Button, Divider, HStack, Image, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, Spacer, Text, useToast, VStack } from '@chakra-ui/react'
 import { serialiseInviteInfoIntoUrl, useMakeInvite } from 'src/utils/invite'
 import { getRoleTitle } from '../AcceptInviteModal/RoleDataDisplay'
-import NetworkFeeEstimateView from '../NetworkFeeEstimateView'
 import NetworkTransactionModal from '../NetworkTransactionModal'
 import RoleSelect from './RoleSelect'
 
@@ -100,8 +99,8 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 					<HStack
 						align='center'
 						w='100%'>
-						<NetworkFeeEstimateView
-							getEstimate={getMakeInviteGasEstimate} />
+						{/* <NetworkFeeEstimateView
+							getEstimate={getMakeInviteGasEstimate} /> */}
 
 						<Spacer />
 

@@ -1,12 +1,13 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useGrantContract from './contracts/useGrantContract'
+import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
 
 export default function useWithdrawFunds(
@@ -21,7 +22,7 @@ export default function useWithdrawFunds(
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
@@ -31,6 +32,13 @@ export default function useWithdrawFunds(
 	const toast = useToast()
 	const currentChainId = useChainId()
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
+
+	// const { webwallet } = useContext(WebwalletContext)!
+
+	// const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+	// 	chainId: chainId?.toString()!
+	// })
+
 
 	useEffect(() => {
 		if(finalAmount) {
@@ -73,12 +81,36 @@ export default function useWithdrawFunds(
 		async function validate() {
 			setLoading(true)
 			try {
-				const transferTxn = await grantContract.withdrawFunds(
+
+				// if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+				// 	throw new Error('Zero wallet is not ready')
+				// }
+
+				const transferTxn1 = await grantContract.withdrawFunds(
 					rewardAddress!,
 					finalAmount!,
 					address!,
 				)
-				const depositTransactionData = await transferTxn.wait()
+				const depositTransactionData = await transferTxn1.wait()
+
+				// const transferTxn = await sendGaslessTransaction(
+				// 	biconomy,
+				// 	grantContract,
+				// 	'withdrawFunds',
+				// 	[rewardAddress!,
+				// 		finalAmount!,
+				// 		address!, ],
+				// 	grantAddress || '0x0000000000000000000000000000000000000000',
+				// 	biconomyWalletClient,
+				// 	scwAddress,
+				// 	webwallet,
+				// 	`${currentChainId}`,
+				// 	bicoDapps[currentChainId].webHookId,
+				// 	nonce
+				// )
+
+				// const depositTransactionData = await getTransactionReceipt(transferTxn, currentChainId.toString())
+
 
 				setTransactionData(depositTransactionData)
 				setLoading(false)

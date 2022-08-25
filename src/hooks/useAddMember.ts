@@ -1,15 +1,25 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useMemo } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
+import { ethers } from 'ethers'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
+import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
+	bicoDapps,
+	chargeGas,
+	getTransactionDetails,
+	sendGaslessTransaction
+} from 'src/utils/gaslessUtils'
+import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
-import useChainId from './utils/useChainId'
+import { useNetwork } from './gasless/useNetwork'
+import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 
 export default function useAddMember(
 	data: any,
@@ -18,18 +28,25 @@ export default function useAddMember(
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { workspace } = apiClients
 
-	const currentChainId = useChainId()
+	const currentChainId = useMemo(() => networkData.id, [networkData])
+
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 	const workspaceRegistryContract = useQBContract('workspace', chainId)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
+
+	const { webwallet } = useContext(WebwalletContext)!
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		chainId: chainId?.toString(),
+	})
 
 	useEffect(() => {
 		if(data) {
@@ -64,16 +81,53 @@ export default function useAddMember(
 			// console.log('calling validate');
 			// console.log(data);
 			try {
-				const updateTransaction = await workspaceRegistryContract.updateWorkspaceMembers(
-					workspace!.id,
-					data.memberAddress,
-					data.memberRoles,
-					data.memberRolesEnabled,
-					data.memberEmail,
-				)
-				const updateTransactionData = await updateTransaction.wait()
+				// const updateTransaction = await workspaceRegistryContract.updateWorkspaceMembers(
+				// 	workspace!.id,
+				// 	data.memberAddress,
+				// 	data.memberRoles,
+				// 	data.memberRolesEnabled,
+				// 	data.memberEmail,
+				// )
+				// const updateTransactionData = await updateTransaction.wait()
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					throw new Error('Zero wallet is not ready')
+				}
 
-				setTransactionData(updateTransactionData)
+				const targetContractObject = new ethers.Contract(
+					WORKSPACE_REGISTRY_ADDRESS[currentChainId],
+					WorkspaceRegistryAbi,
+					webwallet
+				)
+
+				const response = await sendGaslessTransaction(
+					biconomy,
+					targetContractObject,
+					'updateWorkspaceMembers',
+					[workspace!.id,
+						data.memberAddress,
+						data.memberRoles,
+						data.memberRolesEnabled,
+						data.memberEmail, ],
+					WORKSPACE_REGISTRY_ADDRESS[currentChainId],
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					bicoDapps[currentChainId].webHookId,
+					nonce
+				)
+
+				if(!response) {
+					return
+				}
+
+
+				const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+
+				await chargeGas(Number(workspace?.id), Number(txFee))
+
+				setTransactionData(receipt)
+
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -94,6 +148,7 @@ export default function useAddMember(
 		}
 
 		try {
+
 			if(!data) {
 				return
 			}
@@ -132,9 +187,7 @@ export default function useAddMember(
 
 			if(
 				!workspaceRegistryContract
-        		|| workspaceRegistryContract.address === '0x0000000000000000000000000000000000000000'
-        		|| !workspaceRegistryContract.signer
-        		|| !workspaceRegistryContract.provider
+				|| workspaceRegistryContract.address === '0x0000000000000000000000000000000000000000'
 			) {
 				return
 			}

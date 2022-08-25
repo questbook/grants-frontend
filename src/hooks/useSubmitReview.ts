@@ -1,15 +1,16 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
-import { SupportedChainId } from 'src/constants/chains'
-import useEncryption from 'src/hooks/utils/useEncryption'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import { defaultChainId, SupportedChainId } from 'src/constants/chains'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { useGenerateReviewData } from 'src/utils/reviews'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import { FeedbackType } from '../components/your_grants/feedbackDrawer'
 import {
@@ -17,6 +18,8 @@ import {
 } from '../generated/graphql'
 import { delay } from '../utils/generics'
 import useQBContract from './contracts/useQBContract'
+import { useBiconomy } from './gasless/useBiconomy'
+import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
 
 export default function useSubmitReview(
@@ -32,18 +35,24 @@ export default function useSubmitReview(
 	const [loading, setLoading] = useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = useState(false)
 	const [transactionData, setTransactionData] = useState<any>()
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
-	const { encryptMessage } = useEncryption()
 
 	const { validatorApi, workspace, subgraphClients } = useContext(ApiClientsContext)!
 
 	if(!chainId) {
 		// eslint-disable-next-line no-param-reassign
-		chainId = getSupportedChainIdFromWorkspace(workspace)
+		chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 	}
 
 	const { client } = subgraphClients[chainId!]
+
+	const { generateReviewData } = useGenerateReviewData({
+		grantId: grantAddress!,
+		applicationId: applicationId!,
+		isPrivate,
+		chainId,
+	})
 
 	const { fetchMore: fetchReviews } = useGetInitialReviewedApplicationGrantsQuery({ client })
 
@@ -52,6 +61,28 @@ export default function useSubmitReview(
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
 	const currentChainId = useChainId()
+
+	const { webwallet } = useContext(WebwalletContext)!
+
+	if(!chainId) {
+		chainId = getSupportedChainIdFromWorkspace(workspace)
+	}
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
+		chainId: chainId?.toString(),
+	})
+
+	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
+
+	useEffect(() => {
+		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		console.log('rree', isBiconomyLoading, biconomyLoading)
+		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
+			biconomy.networkId.toString() === chainId.toString()) {
+			setIsBiconomyInitialised(true)
+		}
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised])
+
 
 	useEffect(() => {
 		if(data) {
@@ -85,51 +116,54 @@ export default function useSubmitReview(
 			setCurrentStep(0)
 
 			try {
-				const encryptedReview: { [key in string]: string } = {}
-				if(isPrivate) {
-					const yourPublicKey = workspace?.members.find(
-						(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
-					)?.publicKey
-					const encryptedData = encryptMessage(JSON.stringify(data), yourPublicKey!)
-					const encryptedHash = (await uploadToIPFS(encryptedData)).hash
-					encryptedReview[accountData!.address!] = encryptedHash
 
-					workspace?.members.filter(
-						(m) => (m.accessLevel === 'admin' || m.accessLevel === 'owner') && (m.publicKey && m.publicKey?.length > 0),
-					).map((m) => ({ key: m.publicKey, address: m.actorId }))
-						.forEach(async({ key, address }) => {
-							const encryptedAdminData = encryptMessage(JSON.stringify(data), key!)
-							const encryptedAdminHash = (await uploadToIPFS(encryptedAdminData)).hash
-							encryptedReview[address] = encryptedAdminHash
-						})
-
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					throw new Error('Zero wallet is not ready')
 				}
 
-				const dataHash = (await uploadToIPFS(JSON.stringify(data))).hash
-
-				const {
-					data: { ipfsHash },
-				} = await validatorApi.validateReviewSet({
-					reviewer: accountData?.address!,
-					publicReviewDataHash: isPrivate ? '' : dataHash,
-					encryptedReview,
+				const { ipfsHash } = await generateReviewData({
+					items: data.items!
 				})
-
 
 				if(!ipfsHash) {
 					throw new Error('Error validating review data')
 				}
 
+				// const createGrantTransaction = await applicationReviewContract.submitReview(
+				// 	workspaceId || Number(workspace?.id).toString(),
+				// 	applicationId!,
+				// 	grantAddress!,
+				// 	ipfsHash,
+				// )
+				// const createGrantTransactionData = await createGrantTransaction.wait()
+
 				setCurrentStep(1)
 
-				const createGrantTransaction = await applicationReviewContract.submitReview(
-					workspaceId || Number(workspace?.id).toString(),
-          applicationId!,
-          grantAddress!,
-          ipfsHash,
+				const response = await sendGaslessTransaction(
+					biconomy,
+					applicationReviewContract,
+					'submitReview',
+					[	scwAddress,
+						workspaceId || Number(workspace?.id).toString(),
+						applicationId!,
+						grantAddress!,
+						ipfsHash],
+					APPLICATION_REVIEW_REGISTRY_ADDRESS[currentChainId],
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					bicoDapps[currentChainId].webHookId,
+					nonce,
 				)
+
 				setCurrentStep(2)
-				const createGrantTransactionData = await createGrantTransaction.wait()
+
+				if(response) {
+					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+					setTransactionData(receipt)
+					await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee))
+				}
 
 				setCurrentStep(3)
 
@@ -154,7 +188,6 @@ export default function useSubmitReview(
 
 				} while(!didIndex)
 
-				setTransactionData(createGrantTransactionData)
 				setLoading(false)
 				setCurrentStep(5)
 			} catch(e) {
@@ -227,10 +260,8 @@ export default function useSubmitReview(
 
 			if(
 				!applicationReviewContract
-        || applicationReviewContract.address
-        === '0x0000000000000000000000000000000000000000'
-        || !applicationReviewContract.signer
-        || !applicationReviewContract.provider
+				|| applicationReviewContract.address
+				=== '0x0000000000000000000000000000000000000000'
 			) {
 				return
 			}
@@ -276,6 +307,7 @@ export default function useSubmitReview(
 		transactionData,
 		getExplorerUrlForTxHash(chainId || getSupportedChainIdFromWorkspace(workspace), transactionData?.transactionHash),
 		loading,
+		isBiconomyInitialised,
 		error,
 	]
 }

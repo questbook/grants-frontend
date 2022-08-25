@@ -1,39 +1,47 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import {
+	Badge,
 	Box,
 	Button, Divider,
 	Flex,
+	HStack,
 	Text, useToast,
 } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import { Fragment } from 'preact'
-import useEncryption from 'src/hooks/utils/useEncryption'
-import { getFromIPFS } from 'src/utils/ipfsUtils'
+import Loader from 'src/components/ui/loader'
+import { defaultChainId } from 'src/constants/chains'
+import { useLoadReview } from 'src/utils/reviews'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
 import { GetApplicationDetailsQuery } from '../../../generated/graphql'
+import { useQuestbookAccount } from '../../../hooks/gasless/useQuestbookAccount'
 import FeedbackDrawer, { FeedbackType } from '../feedbackDrawer'
 
-type ReviewType = Exclude<Exclude<GetApplicationDetailsQuery['grantApplication'], null>, undefined>['reviews'][0];
+type ReviewerSidebarProps = {
+	applicationData: GetApplicationDetailsQuery['grantApplication']
+}
 
-function ReviewerSidebar({
-	applicationData,
-}: {
-  showHiddenData: () => void;
-  onAcceptApplicationClick: () => void;
-  onRejectApplicationClick: () => void;
-  onResubmitApplicationClick: () => void;
-  applicationData: GetApplicationDetailsQuery['grantApplication'];
-}) {
+function ReviewerSidebar({ applicationData }: ReviewerSidebarProps) {
 	const { workspace } = useContext(ApiClientsContext)!
-	const chainId = getSupportedChainIdFromWorkspace(workspace)
-	const { data: accountData } = useAccount()
+	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+	const { data: accountData } = useQuestbookAccount()
+
 	const [feedbackDrawerOpen, setFeedbackDrawerOpen] = useState(false)
-	const [yourReview, setYourReview] = useState<ReviewType>()
 	const [reviewSelected, setReviewSelected] = useState<{ items: FeedbackType[] }>()
-	const { decryptMessage } = useEncryption()
+	const [reviewLoadError, setReviewLoadError] = useState<Error>()
+
+	const isPrivate = !!applicationData?.grant.rubric?.isPrivate
+	const grantId = applicationData?.grant.id
+
+	const { loadReview } = useLoadReview(grantId, chainId)
+
+	const yourReview = useMemo(() => {
+		return applicationData?.reviews.find((r) => (
+			r.reviewer?.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
+		))
+	}, [applicationData])
 
 	const toast = useToast()
 
@@ -46,37 +54,16 @@ function ReviewerSidebar({
 			return
 		}
 
-		const review = applicationData?.reviews.find((r) => (
-			r.reviewer?.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
-		))
-		setYourReview(review)
-		if(review) {
-			loadReview(review)
+		if(yourReview) {
+			loadReview(yourReview, applicationData!.id)
+				.then(setReviewSelected)
+				.catch(err => {
+					console.error('error in loading review ', err)
+					setReviewLoadError(err)
+				})
 		}
 
 	}, [applicationData, accountData])
-
-	const loadReview = async(yourReview: ReviewType) => {
-		if(!yourReview) {
-			return
-		}
-
-		let data: typeof reviewSelected
-
-		if(applicationData?.grant.rubric?.isPrivate) {
-			const reviewData = yourReview.data.find((d) => (
-				d.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
-			))
-			const ipfsData = await getFromIPFS(reviewData!.data)
-
-			data = JSON.parse(await decryptMessage(ipfsData) || '{}')
-		} else {
-			const ipfsData = await getFromIPFS(yourReview!.publicReviewDataHash!)
-			data = JSON.parse(ipfsData || '{}')
-		}
-
-		setReviewSelected(data)
-	}
 
 	if(yourReview) {
 		return (
@@ -91,14 +78,46 @@ function ReviewerSidebar({
 				py='22px'
 				mb={8}
 			>
-				<Text
-					fontSize={20}
-					fontWeight={'500'}>
-          Your Score
-				</Text>
+				<HStack justify='space-between'>
+					<Text
+						fontSize={20}
+						fontWeight={'500'}>
+						Your Score
+					</Text>
+
+					{
+						isPrivate && (
+							<Badge
+								fontSize='x-small'
+								p='1'
+								pr='2'
+								pl='2'>
+								Private
+							</Badge>
+						)
+					}
+				</HStack>
 				<Box h={2} />
 				<Divider />
 				<Box h={2} />
+				{
+					// loading if review is not there
+					// and there's no error
+					!reviewSelected && !reviewLoadError && (
+						<Loader />
+					)
+				}
+				{
+					!!reviewLoadError && (
+						<Text color='red'>
+							There was an error in loading your review:
+							<br />
+							<b>
+								{reviewLoadError.message}
+							</b>
+						</Text>
+					)
+				}
 				{
 					reviewSelected?.items?.map((feedback, index) => (
 						<Fragment key={index}>
@@ -160,14 +179,14 @@ function ReviewerSidebar({
 				>
 					<Flex direction='column'>
 						<Text fontWeight='700'>
-              Assigned to review (you)
+							Assigned to review (you)
 						</Text>
 						<Text
 							mt={2}
 							color='#717A7C'
 							fontSize='12px'>
-              Review the application and provide
-              your comment.
+							Review the application and provide
+							your comment.
 						</Text>
 						<Button
 							onClick={
@@ -186,7 +205,7 @@ function ReviewerSidebar({
 							}
 							mt={6}
 							variant='primary'>
-              Review Application
+							Review Application
 						</Button>
 					</Flex>
 				</Flex>

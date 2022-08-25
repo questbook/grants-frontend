@@ -36,7 +36,7 @@ const Onboarding = () => {
 			})
 		} else {
 			router.push({
-				pathname: '/onboarding/create-dao',
+				pathname: '/onboarding/create-domain',
 			})
 		}
 	}

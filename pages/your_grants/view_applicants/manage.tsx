@@ -31,6 +31,7 @@ import {
 	useGetApplicationDetailsQuery,
 	useGetFundSentForApplicationQuery,
 } from 'src/generated/graphql'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useCompleteApplication from 'src/hooks/useCompleteApplication'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
@@ -38,12 +39,12 @@ import NavbarLayout from 'src/layout/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
 import {
 	formatAmount,
+	getFieldString,
 	getFormattedDateFromUnixTimestampWithYear,
 } from 'src/utils/formattingUtils'
 import useApplicationMilestones from 'src/utils/queryUtil'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 	let val = BigNumber.from(0)
@@ -73,7 +74,7 @@ function ManageGrant() {
 	const [applicationID, setApplicationID] = useState<any>()
 	const router = useRouter()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 
 	const {
 		data: {
@@ -81,14 +82,6 @@ function ManageGrant() {
 		},
 		refetch: refetchMilestones,
 	} = useApplicationMilestones(applicationID)
-
-	useEffect(() => {
-		console.log(decimals)
-	}, [decimals])
-
-	useEffect(() => {
-		console.log('milestones', milestones)
-	}, [milestones])
 
 	const {
 		data: appDetailsResult,
@@ -119,9 +112,12 @@ function ManageGrant() {
 
 	const [applicationData, setApplicationData] = useState<GetApplicationDetailsQuery['grantApplication']>(null)
 	const applicantEmail = useMemo(
-		() => applicationData?.fields.find(
-			(field) => field.id.includes('applicantEmail'),
-		)?.values[0]?.value,
+		() => getFieldString(applicationData, 'applicantEmail'),
+		[applicationData],
+	)
+
+	const applicantAddress = useMemo(
+		() => getFieldString(applicationData, 'applicantAddress'),
 		[applicationData],
 	)
 
@@ -205,7 +201,7 @@ function ManageGrant() {
 	]
 
 	const [update, setUpdate] = useState<any>()
-	const [txn, txnLink, loading] = useCompleteApplication(update, applicationData?.id)
+	const [txn, txnLink, isBiconomyInitialised, loading] = useCompleteApplication(update, applicationData?.id)
 
 	const { setRefresh } = useCustomToast(txnLink, 6000)
 	useEffect(() => {
@@ -331,26 +327,30 @@ Click on ‘Decrypt’ to view the details.
 					direction="row"
 					justify="start"
 					align="baseline">
-					<Text
-						key="address"
-						variant="applicationText">
+					{
+						applicantAddress && (
+							<Text
+								key="address"
+								variant="applicationText">
             By
-						{' '}
-						<Tooltip label={applicationData?.applicantId}>
-							<Box
-								as="span"
-								fontWeight="700"
-								display="inline-block">
-								{`${applicationData?.applicantId?.substring(0, 6)}...`}
-							</Box>
-						</Tooltip>
-						<Flex
-							display="inline-block"
-							ml={2}>
-							<CopyIcon text={applicationData?.applicantId!} />
-						</Flex>
-					</Text>
-					<Box mr={6} />
+								{' '}
+								<Tooltip label={applicantAddress}>
+									<Box
+										as="span"
+										fontWeight="700"
+										display="inline-block">
+										{`${applicantAddress?.substring(0, 6)}...`}
+									</Box>
+								</Tooltip>
+								<Flex
+									display="inline-block"
+									ml={2}>
+									<CopyIcon text={applicantAddress} />
+								</Flex>
+							</Text>
+						)
+					}
+					{applicantAddress && <Box mr={6} />}
 					<Text
 						key="mail_text"
 						fontWeight="400">
@@ -528,6 +528,7 @@ View
 					{
 						applicationData?.state !== 'completed' && selected === 0 && (
 							<Button
+								disabled={!isBiconomyInitialised}
 								variant="primary"
 								onClick={() => setIsGrantCompleteModalOpen(true)}
 							>

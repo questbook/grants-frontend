@@ -10,6 +10,10 @@ const AlertInfo = {
 	warning: {
 		bg: '#FFF9D7',
 		iconColor: '#F3D950'
+	},
+	infoSendFunds: {
+		bg: '#C8CBFC',
+		iconColor: '#785EF0'
 	}
 }
 

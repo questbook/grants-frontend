@@ -42,7 +42,7 @@ const CreateDaoNetworkSelect = ({
 				type={chainId ? 'info' : 'warning'}
 				message={
 					<>
-						Your wallet is connected to
+						Your webwallet is connected to
 						{' '}
 						<span style={{ fontWeight: 500, fontSize: '14px' }}>
 							{chainId ? CHAIN_INFO[chainId].name : 'Unsupported Network'}

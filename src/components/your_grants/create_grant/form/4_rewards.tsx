@@ -6,7 +6,6 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { Token } from '@questbook/service-validator-client'
-// import Modal from 'src/components/ui/modal';
 import CustomTokenModal from 'src/components/ui/submitCustomTokenModal'
 import 'react-datepicker/dist/react-datepicker.css'
 import Datepicker from '../../../ui/forms/datepicker'

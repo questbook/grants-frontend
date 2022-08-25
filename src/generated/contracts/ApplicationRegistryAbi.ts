@@ -32,8 +32,10 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
   functions: {
     "applicationCount()": FunctionFragment;
     "applicationMilestones(uint96,uint48)": FunctionFragment;
+    "applicationReviewReg()": FunctionFragment;
     "applications(uint96)": FunctionFragment;
     "approveMilestone(uint96,uint48,uint96,string)": FunctionFragment;
+    "batchUpdateApplicationState(uint96[],uint8[],uint96)": FunctionFragment;
     "completeApplication(uint96,uint96,string)": FunctionFragment;
     "getApplicationOwner(uint96)": FunctionFragment;
     "getApplicationWorkspace(uint96)": FunctionFragment;
@@ -42,6 +44,7 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     "proxiableUUID()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestMilestoneApproval(uint96,uint48,string)": FunctionFragment;
+    "setApplicationReviewReg(address)": FunctionFragment;
     "setWorkspaceReg(address)": FunctionFragment;
     "submitApplication(address,uint96,string,uint48)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -56,8 +59,10 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "applicationCount"
       | "applicationMilestones"
+      | "applicationReviewReg"
       | "applications"
       | "approveMilestone"
+      | "batchUpdateApplicationState"
       | "completeApplication"
       | "getApplicationOwner"
       | "getApplicationWorkspace"
@@ -66,6 +71,7 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
       | "proxiableUUID"
       | "renounceOwnership"
       | "requestMilestoneApproval"
+      | "setApplicationReviewReg"
       | "setWorkspaceReg"
       | "submitApplication"
       | "transferOwnership"
@@ -85,6 +91,10 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "applicationReviewReg",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "applications",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -95,6 +105,14 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "batchUpdateApplicationState",
+    values: [
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
@@ -133,6 +151,10 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setApplicationReviewReg",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setWorkspaceReg",
@@ -190,11 +212,19 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "applicationReviewReg",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "applications",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "approveMilestone",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "batchUpdateApplicationState",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -221,6 +251,10 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "requestMilestoneApproval",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setApplicationReviewReg",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -403,6 +437,8 @@ export interface ApplicationRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[number]>;
 
+    applicationReviewReg(overrides?: CallOverrides): Promise<[string]>;
+
     applications(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -424,6 +460,13 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _milestoneId: PromiseOrValue<BigNumberish>,
       _workspaceId: PromiseOrValue<BigNumberish>,
       _reasonMetadataHash: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    batchUpdateApplicationState(
+      _applicationIds: PromiseOrValue<BigNumberish>[],
+      _applicationStates: PromiseOrValue<BigNumberish>[],
+      _workspaceId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -460,6 +503,11 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _applicationId: PromiseOrValue<BigNumberish>,
       _milestoneId: PromiseOrValue<BigNumberish>,
       _reasonMetadataHash: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setApplicationReviewReg(
+      _applicationReviewReg: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -518,6 +566,8 @@ export interface ApplicationRegistryAbi extends BaseContract {
     overrides?: CallOverrides
   ): Promise<number>;
 
+  applicationReviewReg(overrides?: CallOverrides): Promise<string>;
+
   applications(
     arg0: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -539,6 +589,13 @@ export interface ApplicationRegistryAbi extends BaseContract {
     _milestoneId: PromiseOrValue<BigNumberish>,
     _workspaceId: PromiseOrValue<BigNumberish>,
     _reasonMetadataHash: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  batchUpdateApplicationState(
+    _applicationIds: PromiseOrValue<BigNumberish>[],
+    _applicationStates: PromiseOrValue<BigNumberish>[],
+    _workspaceId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -575,6 +632,11 @@ export interface ApplicationRegistryAbi extends BaseContract {
     _applicationId: PromiseOrValue<BigNumberish>,
     _milestoneId: PromiseOrValue<BigNumberish>,
     _reasonMetadataHash: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setApplicationReviewReg(
+    _applicationReviewReg: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -633,6 +695,8 @@ export interface ApplicationRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<number>;
 
+    applicationReviewReg(overrides?: CallOverrides): Promise<string>;
+
     applications(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -654,6 +718,13 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _milestoneId: PromiseOrValue<BigNumberish>,
       _workspaceId: PromiseOrValue<BigNumberish>,
       _reasonMetadataHash: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    batchUpdateApplicationState(
+      _applicationIds: PromiseOrValue<BigNumberish>[],
+      _applicationStates: PromiseOrValue<BigNumberish>[],
+      _workspaceId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -686,6 +757,11 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _applicationId: PromiseOrValue<BigNumberish>,
       _milestoneId: PromiseOrValue<BigNumberish>,
       _reasonMetadataHash: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setApplicationReviewReg(
+      _applicationReviewReg: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -831,6 +907,8 @@ export interface ApplicationRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    applicationReviewReg(overrides?: CallOverrides): Promise<BigNumber>;
+
     applications(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -841,6 +919,13 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _milestoneId: PromiseOrValue<BigNumberish>,
       _workspaceId: PromiseOrValue<BigNumberish>,
       _reasonMetadataHash: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    batchUpdateApplicationState(
+      _applicationIds: PromiseOrValue<BigNumberish>[],
+      _applicationStates: PromiseOrValue<BigNumberish>[],
+      _workspaceId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -877,6 +962,11 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _applicationId: PromiseOrValue<BigNumberish>,
       _milestoneId: PromiseOrValue<BigNumberish>,
       _reasonMetadataHash: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setApplicationReviewReg(
+      _applicationReviewReg: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -936,6 +1026,10 @@ export interface ApplicationRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    applicationReviewReg(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     applications(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -946,6 +1040,13 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _milestoneId: PromiseOrValue<BigNumberish>,
       _workspaceId: PromiseOrValue<BigNumberish>,
       _reasonMetadataHash: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    batchUpdateApplicationState(
+      _applicationIds: PromiseOrValue<BigNumberish>[],
+      _applicationStates: PromiseOrValue<BigNumberish>[],
+      _workspaceId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -982,6 +1083,11 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _applicationId: PromiseOrValue<BigNumberish>,
       _milestoneId: PromiseOrValue<BigNumberish>,
       _reasonMetadataHash: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setApplicationReviewReg(
+      _applicationReviewReg: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
