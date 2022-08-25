@@ -19,6 +19,7 @@ import {
 	useGetApplicantsForAGrantQuery,
 	useGetApplicantsForAGrantReviewerQuery,
 	useGetGrantDetailsQuery,
+	useGetSafeForAWorkspaceQuery,
 } from 'src/generated/graphql'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
@@ -38,6 +39,8 @@ import { ViewEye } from 'src/v2/assets/custom chakra icons/ViewEye'
 import Breadcrumbs from 'src/v2/components/Breadcrumbs'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import StyledTab from 'src/v2/components/StyledTab'
+import { Realms_Solana } from 'src/v2/constants/safe/realms_solana'
+import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import AcceptedProposalsPanel from 'src/v2/payouts/AcceptedProposals/AcceptedProposalPanel'
 import InReviewPanel from 'src/v2/payouts/InReviewProposals/InReviewPanel'
 import RejectedPanel from 'src/v2/payouts/RejectedProposals/RejectedPanel'
@@ -48,6 +51,7 @@ import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEva
 import StatsBanner from 'src/v2/payouts/StatsBanner'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
+import getProposalUrl from 'src/v2/utils/phantomUtils'
 
 const PAGE_SIZE = 500
 
@@ -57,6 +61,13 @@ function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 		val = val.add(milestone.amountPaid)
 	})
 	return val
+}
+
+enum ModalState {
+	RECEIPT_DETAILS,
+	CONNECT_WALLET,
+	VERIFIED_OWNER,
+	TRANSATION_INITIATED
 }
 
 function ViewApplicants() {
@@ -72,11 +83,33 @@ function ViewApplicants() {
 	const [isUser, setIsUser] = React.useState<any>('')
 	const [isActorId, setIsActorId] = React.useState<any>('')
 
+	const [workspaceSafe, setWorkspaceSafe] = useState('')
+
 	const [setupRubricBannerCancelled, setSetupRubricBannerCancelled] = useState(true)
 
 	const { data: accountData } = useQuestbookAccount()
 	const router = useRouter()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
+
+	const workspacechainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+	const { client } = subgraphClients[workspacechainId]
+
+	const { data :safeAddressData } = useGetSafeForAWorkspaceQuery({
+		client,
+		variables: {
+			workspaceID: workspace?.id.toString()!,
+		},
+	})
+
+	useEffect(() => {
+		if(safeAddressData) {
+			const { workspaceSafes } = safeAddressData
+			const safeAddress = workspaceSafes[0].address
+			console.log('safeAddress', safeAddress)
+			setWorkspaceSafe(safeAddress)
+		}
+	}, [safeAddressData])
+
 
 	const [rubricDrawerOpen, setRubricDrawerOpen] = useState(false)
 	const [viewRubricDrawerOpen, setViewRubricDrawerOpen] = useState(false)
@@ -168,7 +201,7 @@ function ViewApplicants() {
 			})
 		}
 
-		if(isReviewer) {
+		if(isReviewer || isAdmin) {
 			console.log('reviewer', isUser)
 			setQueryReviewerParams({
 				client:
@@ -246,6 +279,7 @@ function ViewApplicants() {
 					},
 					// status: applicationStatuses.indexOf(applicant?.state),
 					status: TableFilters[applicant?.state],
+					milestones: applicant.milestones,
 					reviewers: applicant.applicationReviewers,
 					amount_paid: formatAmount(
 						getTotalFundingRecv(
@@ -253,7 +287,6 @@ function ViewApplicants() {
 						).toString(),
 						decimal || 18,
 					),
-					milestones: applicant.milestones,
 					reviews: applicant.reviews
 				}
 			})
@@ -398,6 +431,146 @@ function ViewApplicants() {
 	}, [archiveGrantError])
 
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = React.useState<number>()
+
+
+	//Implementing the safe send
+
+	const { phantomWalletAvailable,
+		phantomWallet,
+		phantomWalletConnected,
+		setPhantomWalletConnected } = usePhantomWallet()
+
+	const [signerVerified, setSignerVerififed] = useState(false)
+	const [proposalAddr, setProposalAddr] = useState('')
+
+	const [initiateTransactionData, setInitiateTransactionData] = useState<any>([])
+
+	// const supported_safes = new SupportedSafes()
+	const chainId = 9000001 // get your safe chain ID, currently on solana
+	// const current_safe = supported_safes.getSafeByChainId(chainId) //current_safe has the stored safe address
+
+	const current_safe = new Realms_Solana(workspaceSafe ?? '')
+
+	//checking if the realm address is valid
+
+	useEffect(() => {
+		const checkValidSafeAddress = async() => {
+			const isValidSafeAddress = await current_safe?.isValidSafeAddress(workspaceSafe)
+			console.log('isValidSafeAddress', isValidSafeAddress)
+		}
+
+		checkValidSafeAddress()
+	}, [])
+
+	const isEvmChain = chainId !== 9000001 ? true : false
+
+	useEffect(() => {
+		const formattedTrxnData = sendFundsTo?.map((recepient, i) => (
+			{
+				from: current_safe?.id?.toString(),
+				to: recepient.applicant_address,
+				applicationId: recepient.applicationId,
+				selectedMilestone: recepient.milestones[0].id,
+				amount: recepient.milestones[0].amount
+			})
+		)
+		setInitiateTransactionData(formattedTrxnData)
+	}, [sendFundsTo])
+
+	const getRealmsVerification = async() => {
+		if(phantomWallet?.publicKey?.toString()) {
+			const isVerified = await current_safe?.isOwner(phantomWallet.publicKey?.toString())
+			console.log('realms_solana verification', isVerified)
+			if(isVerified) {
+				setSignerVerififed(true)
+			}
+		}
+	}
+
+	useEffect(() => {
+		if(phantomWalletConnected) {
+			getRealmsVerification()
+		} else {
+			setSignerVerififed(false)
+		}
+	}, [phantomWalletConnected])
+
+	const initiateTransaction = async() => {
+		console.log('initiate transaction called')
+		const proposaladdress = await current_safe?.proposeTransactions(grantData?.grants[0].title!, initiateTransactionData, phantomWallet)
+		setProposalAddr(proposaladdress?.toString())
+	}
+
+	const onChangeRecepientDetails = (applicationId:any, fieldName: string, fieldValue:any) => {
+		console.log('onChangeRecepientDetails', applicationId, fieldName, fieldValue)
+
+		const tempData = initiateTransactionData.map((transactionData:any, i:number) => {
+			if(transactionData.applicationId === applicationId) {
+				return { ...transactionData, [fieldName]:fieldValue }
+			}
+
+			return transactionData
+		})
+		console.log('initiateTransactionData', tempData)
+		setInitiateTransactionData(tempData)
+	}
+
+
+	const [step, setStep] = useState(ModalState.RECEIPT_DETAILS)
+
+	const onSendFundsButtonClicked = async(state: boolean, selectedApplicants: any[]) => {
+		console.log('state', state)
+		console.log('selectedApplicants', selectedApplicants)
+		if(selectedApplicants.length === 1) {
+			setSendFundsModalIsOpen(state)
+		} else {
+			setSendFundsDrawerIsOpen(state)
+		}
+
+		setSendFundsTo(selectedApplicants)
+	}
+
+	const onModalStepChange = async(currentState:number) => {
+		switch (currentState) {
+		case ModalState.RECEIPT_DETAILS:
+			setStep(ModalState.CONNECT_WALLET)
+			break
+		case ModalState.CONNECT_WALLET:
+			if(signerVerified) {
+				setStep(ModalState.VERIFIED_OWNER)
+			}
+
+			break
+		case ModalState.VERIFIED_OWNER:
+			setStep(ModalState.TRANSATION_INITIATED)
+			initiateTransaction()
+			setSendFundsModalIsOpen(false)
+			setSendFundsDrawerIsOpen(false)
+			setTxnInitModalIsOpen(true)
+
+			break
+		}
+	}
+
+	const onModalClose = async() => {
+		setStep(ModalState.RECEIPT_DETAILS)
+		setSendFundsModalIsOpen(false)
+		setSendFundsDrawerIsOpen(false)
+		setTxnInitModalIsOpen(false)
+		if(phantomWallet?.isConnected) {
+			await phantomWallet.disconnect()
+			setPhantomWalletConnected(false)
+		}
+	}
+
+	useEffect(() => {
+		if(signerVerified) {
+			setStep(ModalState.VERIFIED_OWNER)
+		}
+	}, [signerVerified])
+
+	//end of implementation
+
 
 	return (
 		<Container
@@ -649,20 +822,8 @@ function ViewApplicants() {
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7' >
 							<AcceptedProposalsPanel
 								applicantsData={applicantsData}
-								onSendFundsClicked={
-									(v, c) => {
-										console.log(c)
-										setSendFundsModalIsOpen(v)
-										setSendFundsTo(c)
-									}
-								}
-								onBulkSendFundsClicked={
-									(v, c) => {
-										console.log(c)
-										setSendFundsTo(c)
-										setSendFundsDrawerIsOpen(v)
-									}
-								}
+								onSendFundsClicked={onSendFundsButtonClicked}
+								onBulkSendFundsClicked={onSendFundsButtonClicked}
 								grantData={grantData}
 							/>
 						</TabPanel>
@@ -739,37 +900,49 @@ function ViewApplicants() {
 
 				<SendFundsModal
 					isOpen={sendFundsModalIsOpen}
-					onClose={() => setSendFundsModalIsOpen(false)}
+					onClose={onModalClose}
 					// @ts-expect-error
 					safeAddress={workspace?.safeAddress ?? 'HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC'}
-					onComplete={
-						() => {
-							setSendFundsModalIsOpen(false)
-							setTxnInitModalIsOpen(true)
-						}
-					}
 					proposals={sendFundsTo ?? []}
+
+					onChangeRecepientDetails={onChangeRecepientDetails}
+					phantomWallet={phantomWallet}
+					setPhantomWalletConnected={setPhantomWalletConnected}
+					isEvmChain={isEvmChain}
+					current_safe={current_safe}
+					signerVerified={signerVerified}
+					initiateTransaction={initiateTransaction}
+					initiateTransactionData={initiateTransactionData}
+
+					onModalStepChange={onModalStepChange}
+					step={step}
 				/>
 
 				<TransactionInitiatedModal
-					isOpen={txnInitModalIsOpen}
-					onClose={() => setTxnInitModalIsOpen(false)}
+					isOpen={txnInitModalIsOpen && proposalAddr ? true : false}
+					onClose={onModalClose}
 					onComplete={() => setTxnInitModalIsOpen(false)}
+					proposalUrl={isEvmChain ? '' : getProposalUrl(current_safe?.id?.toString()!, proposalAddr)}
 				/>
 
 				<SendFundsDrawer
 					isOpen={sendFundsDrawerIsOpen}
-					onClose={() => setSendFundsDrawerIsOpen(false)}
-					onComplete={
-						() => {
-							setSendFundsDrawerIsOpen(false)
-							setTxnInitModalIsOpen(true)
-							setSendFundsTo(undefined)
-						}
-					}
+					onClose={onModalClose}
 					// @ts-expect-error
 					safeAddress={workspace?.safeAddress ?? 'HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC'}
 					proposals={sendFundsTo ?? []}
+
+					onChangeRecepientDetails={onChangeRecepientDetails}
+					phantomWallet={phantomWallet}
+					setPhantomWalletConnected={setPhantomWalletConnected}
+					isEvmChain={isEvmChain}
+					current_safe={current_safe}
+					signerVerified={signerVerified}
+					initiateTransaction={initiateTransaction}
+					initiateTransactionData={initiateTransactionData}
+
+					onModalStepChange={onModalStepChange}
+					step={step}
 				/>
 
 				<NetworkTransactionModal

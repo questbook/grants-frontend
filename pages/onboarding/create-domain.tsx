@@ -5,6 +5,7 @@ import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { CHAIN_INFO } from 'src/constants/chains'
+import { NetworkType } from 'src/constants/Networks'
 import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
@@ -25,8 +26,8 @@ import { ConfirmData, DomainName, SafeDetails } from 'src/v2/components/Onboardi
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 import SuccessfulDomainCreationModal from 'src/v2/components/Onboarding/CreateDomain/SuccessfulDomainCreationModal'
 import QuestbookLogo from 'src/v2/components/QuestbookLogo'
-import SuccessToast from 'src/v2/components/Toasts/successToast'
 import VerifySignerModal from 'src/v2/components/VerifySignerModal'
+import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import { useAccount, useDisconnect } from 'wagmi'
 
 
@@ -51,7 +52,7 @@ const OnboardingCreateDomain = () => {
 	const [daoImageFile, setDaoImageFile] = useState<File | null>(null)
 	const [isOwner, setIsOwner] = useState(false)
 	const [isVerifySignerModalOpen, setIsVerifySignerModalOpen] = useState(false)
-	const { data: safeOwners } = useSafeOwners({ safeAddress, chainID: safeSelected?.networkId ?? '' })
+	const { data: safeOwners } = useSafeOwners({ safeAddress, chainID: safeSelected?.networkId, type: safeSelected?.networkType ?? NetworkType.EVM })
 	const [ txHash, setTxHash ] = useState('')
 	const [ownerAddress, setOwnerAddress] = useState('')
 
@@ -60,6 +61,9 @@ const OnboardingCreateDomain = () => {
 	// Wagmi
 	const { data: accountData } = useAccount()
 	const { disconnect } = useDisconnect()
+
+	// Solana
+	const { phantomWallet } = usePhantomWallet()
 
 	// Webwallet
 	const [shouldRefreshNonce, setShouldRefreshNonce] = useState<boolean>()
@@ -103,21 +107,7 @@ const OnboardingCreateDomain = () => {
 	useEffect(() => {
 		console.log('cur step', step)
 		if(step === 3 && !isOwner) {
-			if(accountData?.address && safeOwners.includes(accountData?.address)) {
-				setIsOwner(true)
-				setOwnerAddress(accountData.address)
-				// alert('Your safe ownership is proved.')
-				toast.closeAll()
-				toast({
-					duration: 3000,
-					isClosable: true,
-					position: 'top-right',
-					render: () => SuccessToast({
-						content: 'Gotcha! You are one of the safe\'s owners.',
-						close: () => {}
-					}),
-				})
-			}
+
 		}
 
 	}, [accountData, safeOwners, step, isOwner])
@@ -159,6 +149,10 @@ const OnboardingCreateDomain = () => {
 		setIsDomainNameVerified(domainName.length > 0)
 	}, [domainName])
 
+	useEffect(() => {
+		console.log('safeSelected', safeSelected)
+	}, [safeSelected])
+
 	const createWorkspace = useCallback(async() => {
 		console.log(network)
 		if(!network) {
@@ -182,7 +176,7 @@ const OnboardingCreateDomain = () => {
 			// 	return
 			// }
 			console.log('all', biconomy, scwAddress, nonce, webwallet)
-			console.log('creating workspace', accountData!.address)
+			// console.log('creating workspace', accountData!.address)
 			console.log(accountDataWebwallet?.address)
 			setCurrentStep(1)
 			const uploadedImageHash = (await uploadToIPFS(daoImageFile)).hash
@@ -205,8 +199,9 @@ const OnboardingCreateDomain = () => {
 				throw new Error('Error validating grant data')
 			}
 
+			console.log('sefe', safeSelected)
+			console.log('network', network)
 			if(!safeSelected || !network) {
-
 				throw new Error('No network specified')
 			}
 
@@ -222,7 +217,7 @@ const OnboardingCreateDomain = () => {
 				biconomy,
 				targetContractObject,
 				'createWorkspace',
-				[ipfsHash, new Uint8Array(32), safeAddress, 0],
+				[ipfsHash, new Uint8Array(32), safeAddress, 1],
 				WORKSPACE_REGISTRY_ADDRESS[network as unknown as SupportedChainId],
 				biconomyWalletClient,
 				scwAddress,
@@ -274,7 +269,7 @@ const OnboardingCreateDomain = () => {
 				}),
 			})
 		}
-	}, [accountData, network, biconomy, targetContractObject, scwAddress, webwallet, nonce])
+	}, [biconomyWalletClient, domainName, accountDataWebwallet, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, safeSelected])
 
 	const steps = [
 		<SafeDetails
@@ -300,7 +295,7 @@ const OnboardingCreateDomain = () => {
 				}
 			}
 			safeSelected={safeSelected!}
-			onSelectedSafeChange={setSafeSelected} />, <DomainName
+			onSelectedSafeChange={(newSafe) => setSafeSelected(newSafe)} />, <DomainName
 			key={1}
 			domainName={domainName}
 			setValue={
@@ -438,6 +433,8 @@ const OnboardingCreateDomain = () => {
 					]
 				} />
 			<VerifySignerModal
+				setOwnerAddress={(newOwnerAddress) => setOwnerAddress(newOwnerAddress)}
+				networkType={safeSelected?.networkType ?? NetworkType.EVM}
 				setIsOwner={
 					(newState) => {
 						setIsOwner(newState)

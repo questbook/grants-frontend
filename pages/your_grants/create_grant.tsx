@@ -193,7 +193,6 @@ function CreateGrant() {
 											letterSpacing={0}
 											textAlign="left"
 										>
-											asdfff
 											{title}
 										</Text>
 									</Button>

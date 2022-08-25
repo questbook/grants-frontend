@@ -95,7 +95,7 @@ const SingleValue = ({ innerProps, data }: any) => (
 			noOfLines={1}
 			textOverflow='ellipsis'
 		>
-			{data.label}
+			{data.label ?? data.title}
 		</Text>
 	</Box>
 )

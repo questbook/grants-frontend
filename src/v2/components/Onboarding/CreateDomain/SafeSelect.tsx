@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { Box, Flex, Image, Link, Text } from '@chakra-ui/react'
 import { OptionBase, OptionProps } from 'chakra-react-select'
+import { NetworkType } from 'src/constants/Networks'
 import DropdownSelect from '../../DropdownSelect'
 
 interface Props {
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export interface SafeSelectOption extends OptionBase {
+	networkType: NetworkType;
 	networkId: string;
 	networkName: string; // Polygon
 	networkIcon: string;
@@ -131,47 +133,47 @@ const SingleValue = ({ innerProps, data }: any) => (
 
 )
 
-const dummyData: SafeSelectOption[] = [
-	{
-		networkId: '',
-		networkName: '',
-		networkIcon: '',
-		safeType: '',
-		safeIcon: '',
-		amount: 0,
-		currency: '',
-		isNote: true,
-		isDisabled: true,
-	},
-	{
-		networkId: '',
-		networkName: 'Polygon',
-		networkIcon: '/ui_icons/polygon.svg',
-		safeType: 'Gnosis',
-		safeIcon: '/ui_icons/gnosis.svg',
-		amount: 1000,
-		currency: 'USD',
-	},
-	{
-		networkId: '',
-		networkName: 'Optimism',
-		networkIcon: '/ui_icons/optimism.svg',
-		safeType: 'Gnosis',
-		safeIcon: '/ui_icons/gnosis.svg',
-		amount: 1000,
-		currency: 'USD',
-	},
-	{
-		networkId: '',
-		networkName: 'Polygon',
-		networkIcon: '/ui_icons/polygon.svg',
-		safeType: 'Gnosis',
-		safeIcon: '/ui_icons/gnosis.svg',
-		amount: 100,
-		currency: 'USD',
-		isDisabled: true,
-	},
-]
+// const dummyData: SafeSelectOption[] = [
+// 	{
+// 		networkId: '',
+// 		networkName: '',
+// 		networkIcon: '',
+// 		safeType: '',
+// 		safeIcon: '',
+// 		amount: 0,
+// 		currency: '',
+// 		isNote: true,
+// 		isDisabled: true,
+// 	},
+// 	{
+// 		networkId: '',
+// 		networkName: 'Polygon',
+// 		networkIcon: '/ui_icons/polygon.svg',
+// 		safeType: 'Gnosis',
+// 		safeIcon: '/ui_icons/gnosis.svg',
+// 		amount: 1000,
+// 		currency: 'USD',
+// 	},
+// 	{
+// 		networkId: '',
+// 		networkName: 'Optimism',
+// 		networkIcon: '/ui_icons/optimism.svg',
+// 		safeType: 'Gnosis',
+// 		safeIcon: '/ui_icons/gnosis.svg',
+// 		amount: 1000,
+// 		currency: 'USD',
+// 	},
+// 	{
+// 		networkId: '',
+// 		networkName: 'Polygon',
+// 		networkIcon: '/ui_icons/polygon.svg',
+// 		safeType: 'Gnosis',
+// 		safeIcon: '/ui_icons/gnosis.svg',
+// 		amount: 100,
+// 		currency: 'USD',
+// 		isDisabled: true,
+// 	},
+// ]
 
 function SafeSelect({ label, optionalText, helperText, helperLinkText, helperLinkUrl, value, onChange, safesOptions }: Props) {
 	useEffect(() => {
@@ -219,7 +221,7 @@ function SafeSelect({ label, optionalText, helperText, helperLinkText, helperLin
 				)
 			}
 			<DropdownSelect
-				options={safesOptions ?? dummyData}
+				options={safesOptions ?? []}
 				makeOption={Option}
 				singleValue={SingleValue}
 				placeholder='Select from the list'

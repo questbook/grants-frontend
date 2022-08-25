@@ -1,8 +1,10 @@
-import { useState } from 'react'
+
 import { Flex, Image, Text, VStack } from '@chakra-ui/react'
 import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
+import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
 import ConnectWalletButton from 'src/v2/components/ConnectWalletModal/ConnectWalletButton'
+import { useConnect } from 'wagmi'
 
 const availableWallets = [{
 	name: 'Metamask',
@@ -20,9 +22,25 @@ const availableWallets = [{
 	id: 'walletConnect'
 }]
 
-const SafeOwner = ({ onVerified }: {onVerified: () => void}) => {
-	const [verified, setVerified] = useState(false)
-	if(!verified) {
+const solanaWallets = [{
+	name: 'Phantom',
+	icon: <PhantomLogo
+		h={8}
+		w={'33px'} />,
+	isPopular: true,
+	id: 'phantom',
+}]
+
+interface Props {
+	isEvmChain: boolean;
+	phantomWallet: any;
+	signerVerified: boolean;
+}
+
+
+const SafeOwner = ({ isEvmChain, phantomWallet, signerVerified }: Props) => {
+	const { connect, connectors } = useConnect()
+	if(!signerVerified) {
 		return (
 			<>
 				<Text
@@ -42,26 +60,39 @@ const SafeOwner = ({ onVerified }: {onVerified: () => void}) => {
 					alignItems='stretch'
 				>
 					{
-						availableWallets.map((wallet, index) => (
-							<ConnectWalletButton
-								maxW='100%'
-								key={index}
-								icon={wallet.icon}
-								name={wallet.name}
-								isPopular={wallet.isPopular}
-								onClick={
-									() => {
-									// const connector = connectors.find((x) => x.id === wallet.id)
-									// // setConnectClicked(true)
-									// if(connector) {
-									// 	connect(connector)
-									// }
+						isEvmChain ?
+							availableWallets.map((wallet, index) => (
+								<ConnectWalletButton
+									maxW='100%'
+									key={index}
+									icon={wallet.icon}
+									name={wallet.name}
+									isPopular={wallet.isPopular}
+									onClick={
+										() => {
+											const connector = connectors.find((x) => x.id === wallet.id)
+											// setConnectClicked(true)
+											if(connector) {
+												connect(connector)
+											}
 
-										setVerified(true)
-										onVerified()
-									}
-								} />
-						))
+											// setVerified(true)
+											// onVerified()
+										}
+									} />
+							)) : solanaWallets.map((wallet, index) => (
+								<ConnectWalletButton
+									maxW='100%'
+									key={index}
+									icon={wallet.icon}
+									name={wallet.name}
+									isPopular={wallet.isPopular}
+									onClick={
+										() => {
+											phantomWallet?.connect()
+										}
+									} />
+							))
 					}
 				</VStack>
 
@@ -96,7 +127,7 @@ const SafeOwner = ({ onVerified }: {onVerified: () => void}) => {
 				fontWeight='400'
 				textAlign={'center'}
 			>
-				0xBcz0a1920CF4E20D2c422027Cf4BE5dA09B8Fc55
+				{isEvmChain ? '' : phantomWallet.publicKey?.toString()}
 			</Text>
 		</>
 	)

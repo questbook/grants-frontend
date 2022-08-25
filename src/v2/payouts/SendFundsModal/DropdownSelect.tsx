@@ -93,7 +93,7 @@ const SingleValue = ({ innerProps, data }: any) => (
 			color={'#1F1F33'}
 			fontSize='14px'
 		>
-			{data.label}
+			{data.label ?? data.title}
 		</Text>
 	</Box>
 )

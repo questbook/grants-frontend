@@ -13,7 +13,6 @@ const AcceptedProposalsPanel = ({
   onSendFundsClicked: (state: boolean, checkedItems: any[]) => void;
   onBulkSendFundsClicked: (state: boolean, checkedItems: any[]) => void;
   grantData: any;
-
 }) => {
 	const [checkedItems, setCheckedItems] = useState<boolean[]>(applicantsData.filter((item) => (2 === item.status)).map((item) => false))
 	const [checkedApplicationsIds, setCheckedApplicationsIds] = useState<number[]>([])
