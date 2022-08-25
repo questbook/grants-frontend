@@ -105,7 +105,7 @@ function ViewApplicants() {
 	useEffect(() => {
 		if(safeAddressData) {
 			const { workspaceSafes } = safeAddressData
-			const safeAddress = workspaceSafes[0].address
+			const safeAddress = workspaceSafes[0]?.address
 			setWorkspaceSafe(safeAddress)
 		}
 	}, [safeAddressData])
