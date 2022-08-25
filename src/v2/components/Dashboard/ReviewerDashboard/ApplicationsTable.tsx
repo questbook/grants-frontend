@@ -27,7 +27,7 @@ import {
 	useGetMoreToBeReviewedApplicationsLazyQuery,
 } from '../../../../generated/graphql'
 import SupportedChainId from '../../../../generated/SupportedChainId'
-import { formatAmount, getFormattedDateFromUnixTimestampWithYear } from '../../../../utils/formattingUtils'
+import { formatAmount, getFieldString, getFormattedDateFromUnixTimestampWithYear } from '../../../../utils/formattingUtils'
 import { capitalizeFirstLetter } from '../../../../utils/generics'
 import { getAssetInfo } from '../../../../utils/tokenUtils'
 import {
@@ -92,11 +92,9 @@ function ApplicationsTable({
 		]?.supportedCurrencies[grant.reward!.asset.toLowerCase()]
 			?.decimals || 18
 
-		const getFieldString = (name: string) => application.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
-
 		let rewardAmount: number
 
-		const fundingAskField = getFieldString('fundingAsk')
+		const fundingAskField = getFieldString(application, 'fundingAsk')
 		if(fundingAskField) {
 			rewardAmount = +formatAmount(fundingAskField, decimals)
 		} else {
@@ -121,9 +119,9 @@ function ApplicationsTable({
 			reward: `${rewardAmount} ${tokenLabel}`,
 			state: application.state,
 			applicantId: application.applicantId,
-			projectName: getFieldString('projectName')!,
-			applicantEmail: getFieldString('applicantEmail'),
-			applicantName: getFieldString('applicantName')!,
+			projectName: getFieldString(application, 'projectName')!,
+			applicantEmail: getFieldString(application, 'applicantEmail'),
+			applicantName: getFieldString(application, 'applicantName')!,
 		}
 	}
 

@@ -106,6 +106,7 @@ function EditGrant() {
         grant.fields.find((field: any) => field.id.includes('applicantName')) !== undefined,
 			applicantEmail:
         grant.fields.find((field: any) => field.id.includes('applicantEmail')) !== undefined,
+			applicantAddress: grant.fields.find((field: any) => field.id.includes('applicantAddress')) !== undefined,
 			teamMembers:
         grant.fields.find((field: any) => field.id.includes('teamMembers')) !== undefined,
 			projectName:
@@ -199,6 +200,7 @@ function EditGrant() {
           grant.fields.find((field: any) => field.id.includes('applicantName')) !== undefined,
 				applicantEmail:
           grant.fields.find((field: any) => field.id.includes('applicantEmail')) !== undefined,
+		  applicantAddress: grant.fields.find((field: any) => field.id.includes('applicantAddress')) !== undefined,
 				teamMembers:
           grant.fields.find((field: any) => field.id.includes('teamMembers')) !== undefined,
 				projectName:

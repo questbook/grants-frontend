@@ -26,7 +26,7 @@ import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
-import { formatAddress, formatAmount } from 'src/utils/formattingUtils'
+import { formatAddress, formatAmount, getFieldString } from 'src/utils/formattingUtils'
 import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
@@ -227,7 +227,6 @@ function ViewApplicants() {
 		console.log('fetch', data)
 		if(data && data.grantApplications.length) {
 			const fetchedApplicantsData = data.grantApplications.map((applicant) => {
-				const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
 				let decimal
 				let label
 				let icon
@@ -259,20 +258,20 @@ function ViewApplicants() {
 				return {
 					grantTitle: applicant?.grant?.title,
 					applicationId: applicant.id,
-					applicantName: getFieldString('applicantName'),
-					applicantEmail: getFieldString('applicantEmail'),
-					applicant_address: applicant.applicantId ?? getFieldString('applicantAddress'),
+					applicantName: getFieldString(applicant, 'applicantName'),
+					applicantEmail: getFieldString(applicant, 'applicantEmail'),
+					applicant_address: getFieldString(applicant, 'applicantAddress'),
 					sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
 					updated_on: moment.unix(applicant.updatedAtS).format('DD MMM YYYY'),
 					// applicant_name: getFieldString('applicantName'),
-					project_name: getFieldString('projectName'),
+					project_name: getFieldString(applicant, 'projectName'),
 					funding_asked: {
 						// amount: formatAmount(
 						//   getFieldString('fundingAsk') || '0',
 						// ),
 						amount:
-							applicant && getFieldString('fundingAsk') ? formatAmount(
-								getFieldString('fundingAsk')!,
+							applicant && getFieldString(applicant, 'fundingAsk') ? formatAmount(
+								getFieldString(applicant, 'fundingAsk')!,
 								decimal || 18,
 							) : '1',
 						symbol: label,
@@ -328,20 +327,19 @@ function ViewApplicants() {
 		if(reviewData.data && reviewData.data.grantApplications.length) {
 			console.log('Reviewer Applications: ', reviewData.data)
 			const fetchedApplicantsData = reviewData.data.grantApplications.map((applicant) => {
-				const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
 				return {
 					grantTitle: applicant?.grant?.title,
 					applicationId: applicant.id,
-					applicant_address: applicant.applicantId,
+					applicant_address: getFieldString(applicant, 'applicantAddress'),
 					sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
-					project_name: getFieldString('projectName'),
+					project_name: getFieldString(applicant, 'projectName'),
 					funding_asked: {
 						// amount: formatAmount(
 						//   getFieldString('fundingAsk') || '0',
 						// ),
 						amount:
-							applicant && getFieldString('fundingAsk') ? formatAmount(
-								getFieldString('fundingAsk')!,
+							applicant && getFieldString(applicant, 'fundingAsk') ? formatAmount(
+								getFieldString(applicant, 'fundingAsk')!,
 								CHAIN_INFO[
 									getSupportedChainIdFromSupportedNetwork(
 										applicant.grant.workspace.supportedNetworks[0],
