@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { Box, Flex, HStack, Image, Spacer, Text, ToastId, useToast } from '@chakra-ui/react'
+import { Box, Flex, HStack, IconButton, Image, Spacer, Text, ToastId, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
@@ -19,6 +19,7 @@ import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { addAuthorizedOwner, addAuthorizedUser, bicoDapps, chargeGas, getEventData, getTransactionDetails, networksMapping, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
+import { BackArrowThick } from 'src/v2/assets/custom chakra icons/Arrows/BackArrowThick'
 import { Organization } from 'src/v2/assets/custom chakra icons/Organization'
 import AccountDetails from 'src/v2/components/NavBar/AccountDetails'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
@@ -128,7 +129,7 @@ const OnboardingCreateDomain = () => {
 	}, [isOwner, webwallet, nonce])
 
 	useEffect(() => {
-		if(!setIsSafeAddressVerified) {
+		if(!setIsSafeAddressVerified || !safesUSDBalance) {
 			return
 		}
 
@@ -276,14 +277,14 @@ const OnboardingCreateDomain = () => {
 
 	const steps = [
 		<SafeDetails
-			safesOptions={safesUSDBalance}
+			safesOptions={safesUSDBalance!}
 			key={0}
 			step={step}
 			safeAddress={safeAddress}
 			isPasted={isSafeAddressPasted}
 			isVerified={isSafeAddressVerified}
 			isLoading={!loadedSafesUSDBalance}
-			isSafeAddressError={safeAddress !== '' && loadedSafesUSDBalance && safeBalanceError.length === 0}
+			isSafeAddressError={step === 0 && safeAddress !== '' && loadedSafesUSDBalance && safesUSDBalance && safesUSDBalance.length === 0}
 			setValue={
 				(newValue) => {
 					setSafeAddress(newValue)
@@ -343,6 +344,14 @@ const OnboardingCreateDomain = () => {
 			signerAddress={ownerAddress} />
 	]
 
+	const onBackClick = () => {
+		if(step > 0) {
+			setStep(step - 1)
+		} else {
+			router.back()
+		}
+	}
+
 
 	return (
 		<>
@@ -372,9 +381,28 @@ const OnboardingCreateDomain = () => {
 					<Box mr="auto" />
 					<AccountDetails />
 				</Flex>
-
 				{
-
+					step > 0 && (
+						<IconButton
+							onClick={onBackClick}
+							size={'sm'}
+							colorScheme={'brandv2'}
+							icon={
+								<BackArrowThick
+									color={'white'}
+									boxSize={'18.67px'} />
+							}
+							aria-label="Back"
+							position={'absolute'}
+							p={3.5}
+							mt="12vh"
+							ml="22vw"
+							boxSize={'46.67px'}
+							borderRadius={'3xl'}
+						/>
+					)
+				}
+				{
 					<Flex
 						key={step}
 						w="47%"

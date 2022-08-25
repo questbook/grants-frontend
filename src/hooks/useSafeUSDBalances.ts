@@ -41,20 +41,31 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 	})
 
 	const [splGovSafe, setSplGovSafe] = useState<SafeSelectOption | null>(null)
+	const [isSplGovSafeLoading, setIsSplGovSafeLoading] = useState(false)
 
 	const [gnosisData, setGnosisData] = useState<SafeSelectOption[]>([])
 
 	const data = useMemo(() => {
-		if(splGovSafe) {
-			return [...gnosisData, splGovSafe]
+		if(!loaded || isSplGovSafeLoading) {
+			return
 		}
 
-		return gnosisData
+		if(gnosisData.length > 0 && splGovSafe) {
+			return [...gnosisData, splGovSafe]
+		} else if(gnosisData.length > 0 && !splGovSafe) {
+			return gnosisData
+		} else if(gnosisData.length === 0 && splGovSafe) {
+			return [splGovSafe]
+		} else {
+			return []
+		}
 	}, [gnosisData, splGovSafe])
 
 	useEffect(() => {
 		(async() => {
+			setIsSplGovSafeLoading(true)
 			const newSplGovSafe = await getSafeDetails(safeAddress)
+			setIsSplGovSafeLoading(false)
 			setSplGovSafe(newSplGovSafe)
 		})()
 	}, [safeAddress])
