@@ -128,6 +128,7 @@ const OnboardingCreateDomain = () => {
 	}, [isOwner, webwallet, nonce])
 
 	useEffect(() => {
+		console.log('Safes USD balance', safesUSDBalance)
 		if(!setIsSafeAddressVerified) {
 			return
 		}

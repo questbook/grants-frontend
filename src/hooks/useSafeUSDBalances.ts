@@ -8,8 +8,9 @@ import SAFES_ENPOINTS from '../constants/safesEndpointsTest.json'
 import useAxiosMulti from './utils/useAxiosMulti'
 
 
+// const URL_PREFIX = 'v1/safes/'
 const URL_PREFIX = 'v1/safes/'
-const URL_SUFFIX = '/balances/usd'
+const URL_SUFFIX = '/safes'
 const SAFES_BALANCES_CHAIN_ID = Object.keys(SAFES_ENPOINTS)
 const SAFES_BALANCES_ENPOINTS = Object.values(SAFES_ENPOINTS)
 const USD_BALANCE_THRESHOLD = 50
@@ -31,8 +32,9 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 		if(safeAddress === '') {
 			return []
 		}
-
-		return SAFES_BALANCES_ENPOINTS.map(element => element + URL_PREFIX + safeAddress + URL_SUFFIX)
+		console.log('Inside safe usd balance', safeAddress)
+		console.log('API url', SAFES_BALANCES_ENPOINTS[0] + URL_PREFIX + safeAddress + URL_SUFFIX)
+		return SAFES_BALANCES_ENPOINTS.map(element => element + URL_PREFIX + safeAddress)
 	}, [safeAddress])
 
 	const { data: gnosisRawData, error, loaded } = useAxiosMulti({
@@ -66,6 +68,7 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 	useEffect(() => {
 		if(loaded && !error) {
 			const newData: SafeSelectOption[] = []
+			console.log('gnosis raw data', gnosisRawData)
 			gnosisRawData.forEach((allTokensData: AllTokensData, index) => {
 				const currentChainID = SAFES_BALANCES_CHAIN_ID[index] as unknown as ValidChainID
 				const tokensSum = getTokensSum(allTokensData)
