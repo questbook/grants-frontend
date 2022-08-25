@@ -12,8 +12,8 @@ export const useNonce = (shouldRefreshNonce?: boolean) => {
 	}, [webwallet])
 
 	useEffect(() => {
-		console.log('GOT NONCE', webwallet, nonce, shouldRefreshNonce)
 		const loadingNonce = localStorage.getItem('loadingNonce') === 'true'
+		console.log('GOT NONCE', webwallet, nonce, shouldRefreshNonce, loadingNonce)
 		if(!webwallet || loadingNonce || nonce) {
 			return
 		}

@@ -28,6 +28,8 @@ export class Realms_Solana implements Safe {
     connection: Connection
     programId: PublicKey
     constructor(realmsId: string) {
+		console.log("realmsId", realmsId)
+
     	this.id = realmsId ? new PublicKey(realmsId) : undefined // devnet realmPK
     	//this.id = new PublicKey('AwTwXtM4D3KiDy8pBgrZRaZdNnsxXABsyHXr4u394rEh') // mainnet realmPK
     	this.name = 'Realms on Solana'
