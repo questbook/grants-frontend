@@ -96,7 +96,7 @@ You will be asked to verify that you own the safe. and have tokens atleast worth
 						color="black.2">
 						{data.amount}
 						{' '}
-						{data.currency}
+						{data.currency || 'USD'}
 					</Text>
 				</Flex>
 			)

@@ -47,8 +47,7 @@ export const networksMapping: { [key: string]: string } = {
 	'137': '5',
 	'5': '5',
 	'4': '5',
-	'solana-devnet': '5',
-	'solana-mainnet': '5'
+	'900001': '5' // This is for solana.
 }
 
 export const signNonce = async(webwallet: Wallet, nonce: string) => {
