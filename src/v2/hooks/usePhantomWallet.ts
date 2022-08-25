@@ -24,6 +24,7 @@ export default function usePhantomWallet() {
 		})
 		phantomWallet?.on('disconnect', () => {
 			console.log('phantom wallet disconnected')
+			setPhantomWalletConnected(false)
 		})
 
 	}, [phantomWallet?.isConnected])

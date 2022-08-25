@@ -55,6 +55,7 @@ const MilestoneSelect = ({
 	onChange,
 	placeholder,
 }: {
+	milestoneList:any[];
   value: MilestoneSelectOption | undefined;
   onChange: (value: MilestoneSelectOption | undefined) => void;
   placeholder: string;

@@ -1,15 +1,19 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
+import { useBiconomy } from './gasless/useBiconomy'
+import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
+
 
 export default function useCompleteApplication(
 	data: any,
@@ -19,7 +23,7 @@ export default function useCompleteApplication(
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
@@ -29,6 +33,25 @@ export default function useCompleteApplication(
 	const applicationContract = useQBContract('applications', chainId)
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
+
+	const { webwallet } = useContext(WebwalletContext)!
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
+		chainId: chainId?.toString()!
+		// targetContractABI: ApplicationRegistryAbi,
+	})
+
+
+	const [isBiconomyInitialised, setIsBiconomyInitialised] = React.useState(false)
+
+	useEffect(() => {
+		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		console.log('rree', isBiconomyLoading, biconomyLoading)
+		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
+			biconomy.networkId.toString() === chainId.toString()) {
+			setIsBiconomyInitialised(true)
+		}
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised])
 
 	useEffect(() => {
 		if(data) {
@@ -69,14 +92,44 @@ export default function useCompleteApplication(
 					throw new Error('Error validating grant data')
 				}
 
-				const updateTxn = await applicationContract.completeApplication(
-					Number(applicationId),
-					Number(workspace!.id),
-					ipfsHash,
-				)
-				const updateTxnData = await updateTxn.wait()
+				// const updateTxn = await applicationContract.completeApplication(
+				// 	Number(applicationId),
+				// 	Number(workspace!.id),
+				// 	ipfsHash,
+				// )
+				// const updateTxnData = await updateTxn.wait()
 
-				setTransactionData(updateTxnData)
+
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					throw new Error('Zero wallet is not ready')
+				}
+
+				const response = await sendGaslessTransaction(
+					biconomy,
+					applicationContract,
+					'completeApplication',
+					[Number(applicationId),
+						Number(workspace!.id),
+						ipfsHash, ],
+					applicationContract.address,
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					bicoDapps[currentChainId].webHookId,
+					nonce
+				)
+
+				if(!response) {
+					return
+				}
+
+
+				const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+
+				await chargeGas(Number(workspace?.id), Number(txFee))
+
+				setTransactionData(receipt)
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -145,8 +198,6 @@ export default function useCompleteApplication(
 				!applicationContract
         || applicationContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !applicationContract.signer
-        || !applicationContract.provider
 			) {
 				return
 			}
@@ -189,6 +240,7 @@ export default function useCompleteApplication(
 	return [
 		transactionData,
 		getExplorerUrlForTxHash(currentChainId, transactionData?.transactionHash),
+		isBiconomyInitialised,
 		loading,
 	]
 }

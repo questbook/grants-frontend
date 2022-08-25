@@ -1,8 +1,10 @@
+
 import { Flex, Image, Text, VStack } from '@chakra-ui/react'
 import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
 import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
 import ConnectWalletButton from 'src/v2/components/ConnectWalletModal/ConnectWalletButton'
+import { useConnect } from 'wagmi'
 
 const availableWallets = [{
 	name: 'Metamask',
@@ -29,7 +31,15 @@ const solanaWallets = [{
 	id: 'phantom',
 }]
 
-const SafeOwner = ({ isEvmChain, phantomWallet, signerVerified }) => {
+interface Props {
+	isEvmChain: boolean;
+	phantomWallet: any;
+	signerVerified: boolean;
+}
+
+
+const SafeOwner = ({ isEvmChain, phantomWallet, signerVerified }: Props) => {
+	const { connect, connectors } = useConnect()
 	if(!signerVerified) {
 		return (
 			<>
@@ -60,13 +70,13 @@ const SafeOwner = ({ isEvmChain, phantomWallet, signerVerified }) => {
 									isPopular={wallet.isPopular}
 									onClick={
 										() => {
-										// const connector = connectors.find((x) => x.id === wallet.id)
-										// // setConnectClicked(true)
-										// if(connector) {
-										// 	connect(connector)
-										// }
+											const connector = connectors.find((x) => x.id === wallet.id)
+											// setConnectClicked(true)
+											if(connector) {
+												connect(connector)
+											}
 
-											setVerified(true)
+											// setVerified(true)
 											// onVerified()
 										}
 									} />

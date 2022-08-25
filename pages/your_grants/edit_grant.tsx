@@ -276,7 +276,7 @@ function EditGrant() {
 	}
 
 	const [editData, setEditData] = useState<any>()
-	const [transactionData, txnLink, loading] = useEditGrant(editData, grantID)
+	const [transactionData, txnLink, loading, isBiconomyInitialised] = useEditGrant(editData, grantID)
 
 	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {

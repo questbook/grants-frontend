@@ -1,10 +1,12 @@
 import { PublicKey } from '@solana/web3.js'
 
 export interface TransactionType {
+    from:string,
     to: string,
-    amount: string,
+    amount: any,
     data: string,
-    metadata: any
+    metadata: any,
+    selectedMilestone: any
 }
 
 export enum OperationType {
@@ -55,7 +57,7 @@ export interface SafeDetails {
  */
 
 export interface Safe {
-    id: number | PublicKey;
+    id: number | PublicKey | undefined;
     name: string;
     description: string;
     image: string;
@@ -74,7 +76,7 @@ export interface Safe {
      *   5. Update the transaction on the Questbook smart contract
      *   6. Close the modal using the Callback
      */
-    proposeTransactions(transactions : TransactionType[], wallet: any, callback: Callback<TransactionResult>): void;
+    proposeTransactions(grantName: string, transactions : TransactionType[], wallet: any): Promise<string>;
 
     createMultiTransaction(transactions: MetaTransaction[], safeAddress: string): void;
     /**
@@ -88,7 +90,7 @@ export interface Safe {
      *
      * This should pop up metamask/walletconnect/phantom etc to allow the user to sign a message and then check if the signer address is owner on the safe
      */
-    isOwner(address: String, callback: Callback<any>) : void;
+    isOwner(address: String, callback: Callback<any>) : Promise<boolean>;
 
     /**
      * @param address : Address of the safe

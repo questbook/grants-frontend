@@ -17,20 +17,19 @@ import {
 } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import { SupportedChainId } from 'src/constants/chains'
-import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useSubmitReview from 'src/hooks/useSubmitReview'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { sumArray } from 'table/dist/src/utils'
-import { useAccount } from 'wagmi'
 import { RubricItem } from '../../generated/graphql'
+import { useQuestbookAccount } from '../../hooks/gasless/useQuestbookAccount'
 import NetworkTransactionModal from '../../v2/components/NetworkTransactionModal'
 import MultiLineInput from '../ui/forms/multiLineInput'
 import Loader from '../ui/loader'
 
 export interface FeedbackType {
-  rubric: RubricItem,
-  rating: number,
-  comment: string,
+	rubric: RubricItem,
+	rating: number,
+	comment: string,
 }
 
 function FeedbackDrawer({
@@ -44,63 +43,22 @@ function FeedbackDrawer({
 	applicationId,
 	isPrivate,
 }: {
-  feedbackDrawerOpen: boolean;
-  setFeedbackDrawerOpen: (feedbackDrawerOpen: boolean) => void;
-  grantTitle: string;
-  grantAddress: string;
-  chainId: SupportedChainId | undefined;
-  workspaceId: string;
-  rubrics: RubricItem[];
-  applicationId: string;
-  isPrivate: boolean;
+	feedbackDrawerOpen: boolean;
+	setFeedbackDrawerOpen: (feedbackDrawerOpen: boolean) => void;
+	grantTitle: string;
+	grantAddress: string;
+	chainId: SupportedChainId | undefined;
+	workspaceId: string;
+	rubrics: RubricItem[];
+	applicationId: string;
+	isPrivate: boolean;
 }) {
 	const [feedbackData, setFeedbackData] = useState<FeedbackType[]>()
 	const [editedFeedbackData, setEditedFeedbackData] = useState<{ items?: Array<FeedbackType> }>()
 	const [currentStep, setCurrentStep] = useState<number>()
 
-	const [pk, setPk] = useState<string>('*')
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const { workspace } = useContext(ApiClientsContext)!
-
-	const {
-		RenderModal,
-		setHiddenModalOpen: setHiddenPkModalOpen,
-		transactionData,
-		publicKey: newPublicKey,
-	} = useSubmitPublicKey()
-
-	useEffect(() => {
-		if(transactionData && newPublicKey && newPublicKey.publicKey) {
-			setPk(newPublicKey.publicKey)
-			const formattedFeedbackData = feedbackData?.map((feedback) => ({
-				rubric: feedback.rubric,
-				rating: feedback.rating,
-				comment: feedback.comment,
-			}))
-			setEditedFeedbackData({ items: formattedFeedbackData })
-		}
-
-	}, [transactionData, newPublicKey])
-
-	useEffect(() => {
-		if(!accountData?.address) {
-			return
-		}
-
-		if(!workspace) {
-			return
-		}
-
-		const k = workspace?.members?.find(
-			(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
-		)?.publicKey?.toString()
-		if(k && k.length > 0) {
-			setPk(k)
-		} else {
-			setPk('')
-		}
-
-	}, [workspace, accountData])
 
 	useEffect(() => {
 		const newFeedbackData = Array<FeedbackType>()
@@ -116,16 +74,12 @@ function FeedbackDrawer({
 
 		setFeedbackData(newFeedbackData)
 	}, [rubrics])
+
 	const handleOnSubmit = () => {
 		const newFeedbackData = []
 		feedbackData?.forEach((feedback) => {
 			newFeedbackData.push(feedback)
 		})
-
-		if(isPrivate && (!pk || pk === '*')) {
-			setHiddenPkModalOpen(true)
-			return
-		}
 
 		const formattedFeedbackData = feedbackData?.map((feedback) => ({
 			rubric: feedback.rubric,
@@ -139,6 +93,7 @@ function FeedbackDrawer({
 		data,
 		transactionLink,
 		loading,
+		isBiconomyInitialised
 	] = useSubmitReview(
 		editedFeedbackData!,
 		setCurrentStep,
@@ -191,7 +146,7 @@ function FeedbackDrawer({
 								fontSize='16px'
 								lineHeight='20px'
 							>
-                Application Feedback
+								Application Feedback
 							</Text>
 						</Flex>
 						{
@@ -273,6 +228,7 @@ function FeedbackDrawer({
 						}
 						<Box mt={12}>
 							<Button
+								disabled={!isBiconomyInitialised}
 								mt='auto'
 								variant='primary'
 								onClick={handleOnSubmit}>
@@ -287,7 +243,6 @@ function FeedbackDrawer({
 				</DrawerContent>
 			</Drawer>
 
-			<RenderModal />
 			<NetworkTransactionModal
 				isOpen={currentStep !== undefined}
 				subtitle='Submitting review'

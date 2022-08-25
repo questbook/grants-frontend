@@ -21,7 +21,7 @@ function ModalContent({ milestone, onClose, chainId }: Props) {
 
 	const { milestoneIndex, applicationId } = getMilestoneMetadata(milestone)!
 	const [milestoneUpdate, setMilestoneUpdate] = useState<any>()
-	const [txn, txnLink, loading] = useRequestMilestoneApproval(
+	const [txn, txnLink, loading, isBiconomyInitialised] = useRequestMilestoneApproval(
 		milestoneUpdate,
 		chainId,
 		applicationId,
@@ -122,6 +122,7 @@ function ModalContent({ milestone, onClose, chainId }: Props) {
 					</Text>
 				</Flex>
 				<Button
+					disabled={!isBiconomyInitialised}
 					w="100%"
 					variant="primary"
 					mt={8}

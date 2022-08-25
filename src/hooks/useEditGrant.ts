@@ -1,15 +1,17 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash, parseAmount } from 'src/utils/formattingUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
-import useGrantContract from './contracts/useGrantContract'
 import useQBContract from './contracts/useQBContract'
 import useChainId from './utils/useChainId'
 
@@ -17,21 +19,47 @@ export default function useEditGrant(
 	data: any,
 	grantId?: string,
 ) {
+	console.log(grantId)
 	const [error, setError] = React.useState<string>()
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients
-	const grantContract = useGrantContract(grantId)
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
 	const currentChainId = useChainId()
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
+
 	const applicationReviewContract = useQBContract('reviews', chainId)
+	const grantFactoryContract = useQBContract('grantFactory', chainId)
+	const workspaceRegistryContract = useQBContract('workspace', chainId)
+
+	const { webwallet } = useContext(WebwalletContext)!
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
+		chainId: chainId?.toString()!
+		// targetContractABI: ApplicationReviewRegistryAbi,
+	})
+
+	const [isBiconomyInitialised, setIsBiconomyInitialised] = React.useState(false)
+
+	useEffect(() => {
+		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		console.log('rree', isBiconomyLoading, biconomyLoading)
+		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
+			biconomy.networkId.toString() === chainId.toString()) {
+			setIsBiconomyInitialised(true)
+		}
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised])
+
+
+	useEffect(() => {
+		console.count("I'm inside")
+	}, [])
 
 	useEffect(() => {
 		if(data) {
@@ -45,7 +73,7 @@ export default function useEditGrant(
 			setIncorrectNetwork(false)
 		}
 
-	}, [grantContract])
+	}, [grantFactoryContract])
 
 	useEffect(() => {
 		if(incorrectNetwork) {
@@ -55,6 +83,7 @@ export default function useEditGrant(
 	}, [applicationReviewContract])
 
 	useEffect(() => {
+		console.log('RErERERERE', incorrectNetwork, error, loading)
 		if(incorrectNetwork) {
 			return
 		}
@@ -72,6 +101,10 @@ export default function useEditGrant(
 			setLoading(true)
 			console.log('calling validate', data)
 			try {
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					throw new Error('Zero wallet is not ready')
+				}
+
 				const detailsHash = (await uploadToIPFS(data.details)).hash
 				let reward
 				if(data.rewardToken.address === '') {
@@ -118,21 +151,66 @@ export default function useEditGrant(
 
 				// console.log('rubricHash', rubricHash);
 
-				const rubricTxn = await applicationReviewContract.setRubrics(
-					workspace!.id,
-					grantId!,
-					rubricHash,
+				// const rubricTxn = await applicationReviewContract.setRubrics(
+				// 	workspace!.id,
+				// 	grantId!,
+				// 	rubricHash,
+				// )
+
+				// const createGrantTransaction = await grantContract.updateGrant(
+				// 	ipfsHash,
+				// )
+				// await rubricTxn.wait()
+				// const createGrantTransactionData = await createGrantTransaction.wait()
+				console.log('rubric hash', grantId, grantFactoryContract.address)
+				const rubricTxn = await sendGaslessTransaction(
+					biconomy,
+					applicationReviewContract,
+					'setRubrics',
+					[workspace!.id,
+						grantId!,
+						rubricHash, ],
+					applicationReviewContract.address,
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					bicoDapps[currentChainId].webHookId,
+					nonce
 				)
 
-				const createGrantTransaction = await grantContract.updateGrant(
-					ipfsHash,
-				)
-				await rubricTxn.wait()
-				const createGrantTransactionData = await createGrantTransaction.wait()
+				if(rubricTxn) {
+					const { txFee } = await getTransactionDetails(rubricTxn, currentChainId.toString())
+					await chargeGas(Number(workspace?.id), Number(txFee))
+				} else {
+					throw new Error("Transaction didn't go through")
+				}
 
-				setTransactionData(createGrantTransactionData)
+				console.log('YYTTE', ipfsHash)
+
+				const createGrantTransaction = await sendGaslessTransaction(
+					biconomy,
+					grantFactoryContract,
+					'updateGrant',
+					[grantId, workspace?.id, workspaceRegistryContract.address, ipfsHash, ],
+					grantFactoryContract.address,
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					bicoDapps[currentChainId].webHookId,
+					nonce
+				)
+
+				if(createGrantTransaction) {
+					const { receipt, txFee } = await getTransactionDetails(createGrantTransaction, currentChainId.toString())
+					setTransactionData(receipt)
+					await chargeGas(Number(workspace?.id), Number(txFee))
+				}
+
 				setLoading(false)
 			} catch(e: any) {
+
 				const message = getErrorMessage(e)
 				setError(message)
 				setLoading(false)
@@ -151,6 +229,7 @@ export default function useEditGrant(
 		}
 
 		try {
+			console.log('ttttt', data, transactionData, accountData, workspace, currentChainId, chainId)
 			if(!data) {
 				return
 			}
@@ -192,11 +271,9 @@ export default function useEditGrant(
 			}
 
 			if(
-				!grantContract
-        || grantContract.address
+				!grantFactoryContract
+        || grantFactoryContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !grantContract.signer
-        || !grantContract.provider
 			) {
 				return
 			}
@@ -205,8 +282,6 @@ export default function useEditGrant(
 				!applicationReviewContract
         || applicationReviewContract.address
           === '0x0000000000000000000000000000000000000000'
-        || !applicationReviewContract.signer
-        || !applicationReviewContract.provider
 			) {
 				return
 			}
@@ -234,7 +309,7 @@ export default function useEditGrant(
 		loading,
 		toast,
 		transactionData,
-		grantContract,
+		grantFactoryContract,
 		validatorApi,
 		workspace,
 		accountData,
@@ -249,6 +324,7 @@ export default function useEditGrant(
 		transactionData,
 		getExplorerUrlForTxHash(currentChainId, transactionData?.transactionHash),
 		loading,
+		isBiconomyInitialised,
 		error,
 	]
 }

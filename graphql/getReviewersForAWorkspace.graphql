@@ -1,0 +1,10 @@
+query getReviewersForAWorkspace($workspaceId: ID!) {
+    workspaces(where: {id: $workspaceId}) {
+        members (where: {accessLevel_not: owner}) {
+            profilePictureIpfsHash
+            accessLevel
+            fullName
+            actorId
+        }
+    }
+}

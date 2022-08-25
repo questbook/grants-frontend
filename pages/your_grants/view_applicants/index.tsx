@@ -21,6 +21,7 @@ import {
 	useGetApplicantsForAGrantReviewerQuery,
 	useGetGrantDetailsQuery,
 } from 'src/generated/graphql'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
@@ -29,7 +30,6 @@ import { formatAmount } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
 
 const PAGE_SIZE = 500
 
@@ -54,7 +54,7 @@ function ViewApplicants() {
 	const [isUser, setIsUser] = React.useState<any>('')
 	const [isActorId, setIsActorId] = React.useState<any>('')
 
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const router = useRouter()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 
@@ -332,7 +332,7 @@ function ViewApplicants() {
 		setIsAcceptingApplications([acceptingApplications, 0])
 	}, [acceptingApplications])
 
-	const [transactionData, txnLink, archiveGrantLoading, archiveGrantError] = useArchiveGrant(
+	const [transactionData, txnLink, archiveGrantLoading, isBiconomyInitialised, archiveGrantError] = useArchiveGrant(
 		isAcceptingApplications[0],
 		isAcceptingApplications[1],
 		grantID,
@@ -512,6 +512,7 @@ function ViewApplicants() {
 						}
 					}
 					loading={archiveGrantLoading}
+					isBiconomyInitialised={isBiconomyInitialised}
 				/>
 			</Modal>
 		</Container>

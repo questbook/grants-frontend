@@ -12,12 +12,12 @@ import {
 import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
 import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
-import { useAccount } from 'wagmi'
 import applicantDetailsList from '../../../../constants/applicantDetailsList'
 import Heading from '../../../ui/heading'
 import Title from './1_title'
@@ -29,7 +29,7 @@ function Form({
 	refs,
 	onSubmit,
 	formData,
-	hasClicked,
+	hasClicked
 }: {
   refs: any[];
   onSubmit: (data: any) => void;
@@ -38,7 +38,7 @@ function Form({
 }) {
 	const { workspace } = useContext(ApiClientsContext)!
 	const maxDescriptionLength = 300
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const [title, setTitle] = useState(formData.title || '')
 	const [summary, setSummary] = useState(formData.summary || '')
 
@@ -95,7 +95,7 @@ function Form({
 	const [publicKey] = React.useState<WorkspaceUpdateRequest>({
 		publicKey: '',
 	})
-	const [transactionData, transactionLink, loading] = useUpdateWorkspacePublicKeys(publicKey)
+	const [transactionData, transactionLink, loading, isBiconomyInitialised] = useUpdateWorkspacePublicKeys(publicKey)
 
 	const { setRefresh } = useCustomToast(transactionLink)
 	const [admins, setAdmins] = useState<any[]>([])
@@ -597,6 +597,7 @@ function Form({
 				mt="-73px"
 				justifyContent="flex-end">
 				<Button
+					disabled={!isBiconomyInitialised}
 					ref={buttonRef}
 					w={hasClicked ? buttonRef.current?.offsetWidth : 'auto'}
 					onClick={hasClicked ? () => { } : handleOnSubmit}
@@ -752,6 +753,7 @@ Learn more
 			</Flex>
 
 			<Button
+				disabled={!isBiconomyInitialised}
 				onClick={hasClicked ? () => { } : handleOnSubmit}
 				py={hasClicked ? 2 : 0}
 				variant="primary">

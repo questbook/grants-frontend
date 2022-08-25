@@ -10,12 +10,16 @@ import {
 	VoteType,
 	withCreateProposal,
 	withInsertTransaction,
-	withSignOffProposal } from '@solana/spl-governance'
+	withSignOffProposal,
+} from '@solana/spl-governance'
 import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
+import assert from 'assert'
+import { NetworkType } from 'src/constants/Networks'
+import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 import { Safe, TransactionType } from '../../types/safe'
 
 export class Realms_Solana implements Safe {
-    id: PublicKey;
+    id: PublicKey | undefined;
     name: string;
     description: string;
     image: string;
@@ -23,8 +27,8 @@ export class Realms_Solana implements Safe {
 
     connection: Connection
     programId: PublicKey
-    constructor() {
-    	this.id = new PublicKey('HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC') // devnet realmPK
+    constructor(realmsId: string) {
+    	this.id = realmsId ? new PublicKey(realmsId) : undefined // devnet realmPK
     	//this.id = new PublicKey('AwTwXtM4D3KiDy8pBgrZRaZdNnsxXABsyHXr4u394rEh') // mainnet realmPK
     	this.name = 'Realms on Solana'
     	this.description = 'Realms on Solana'
@@ -37,9 +41,9 @@ export class Realms_Solana implements Safe {
     }
 
 
-    async proposeTransactions(grantname: string, transactions: TransactionType[], wallet: any) {
+    async proposeTransactions(grantname: string, transactions: TransactionType[], wallet: any) : Promise<string> {
 
-    	const realmData = await getRealm(this.connection, this.id)
+    	const realmData = await getRealm(this.connection, this.id!)
     	const COUNCIL_MINT = realmData.account.config.councilMint
     	const governanceInfo = await getGovernanceAccounts(this.connection, this.programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
     	const governance = governanceInfo[0]
@@ -57,7 +61,7 @@ export class Realms_Solana implements Safe {
     		proposalInstructions,
     		this.programId,
     		2,
-    		this.id,
+    		this.id!,
     		governance.pubkey,
     		tokenOwnerRecord[0].pubkey,
     		`${transactions.length > 1 ? 'Batched Payout - ' : ''} ${grantname} - ${new Date().toDateString()}`,
@@ -109,7 +113,7 @@ export class Realms_Solana implements Safe {
     		proposalInstructions,
     		this.programId,
     		2,
-    		this.id,
+    		this.id!,
     		governance.pubkey,
     		proposalAddress,
             payer!,
@@ -137,12 +141,18 @@ export class Realms_Solana implements Safe {
     	const sendTrxn = await getProvider().signAndSendTransaction(transaction)
     	console.log('create realms proposal - sendTrxn', sendTrxn)
 
-    	return proposalAddress
+    	return proposalAddress.toString()
     }
 
-    async isOwner(address: String): any {
+    isValidSafeAddress(realmsPublicKey: string): any {
+    	//safe address => realms public key
+
+    	return false
+    }
+
+    async isOwner(address: String): Promise<boolean> {
     	const walletPublicKey = new PublicKey(address)
-    	const realmData = await getRealm(this.connection, this.id)
+    	const realmData = await getRealm(this.connection, this.id!)
     	console.log('realms_solana - realmData', realmData)
 
     	const COUNCIL_MINT = realmData.account.config.councilMint
@@ -150,7 +160,7 @@ export class Realms_Solana implements Safe {
     	const governanceInfo = await getGovernanceAccounts(this.connection, this.programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
     	console.log('realms_solana - governanceInfo', governanceInfo[0])
 
-    	const tokenownerrecord = await getAllTokenOwnerRecords(this.connection, this.programId, this.id)
+    	const tokenownerrecord = await getAllTokenOwnerRecords(this.connection, this.programId, this.id!)
     	let isOwner = false
     	for(let i = 0; i < tokenownerrecord.length; i++) {
     		if(tokenownerrecord[i].account.governingTokenOwner.toString() === address) {
@@ -162,25 +172,96 @@ export class Realms_Solana implements Safe {
     	return isOwner
     }
 
-    async isValidSafeAddress(realmsPublicKey: string): Promise<any> {
+    async getSafeDetails(realmsPublicKey: String) : Promise<any> {
     	const realmData = await getRealm(this.connection, new PublicKey(realmsPublicKey))
     	const COUNCIL_MINT = realmData.account.config.councilMint
     	const governanceInfo = await getGovernanceAccounts(this.connection, this.programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
     	const governance = governanceInfo[0]
     	const nativeTreasury = await getNativeTreasuryAddress(this.programId, governance.pubkey)
-
-
-    	console.log('isValidSafeAddress - governance', governance)
-    	console.log('isValidSafeAddress - nativeTreasury', nativeTreasury.toString())
-
-    	return false
-    }
-
-    getSafeDetails(realmsPublicKey: String) : any {
-
+    	console.log('governance', governance)
+    	console.log('nativeTreasury', nativeTreasury)
     }
 
     getTransactionHashStatus(proposalPublicKeys: String[]):any {
 
     }
 }
+
+const getSafeDetails = async(realmsPublicKey: String) : Promise<SafeSelectOption | null> => {
+	const connection = new Connection('https://mango.devnet.rpcpool.com', 'recent')
+	const programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
+	try {
+		const realmData = await getRealm(connection, new PublicKey(realmsPublicKey))
+		const COUNCIL_MINT = realmData.account.config.councilMint
+		const governanceInfo = await getGovernanceAccounts(connection, programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
+		const governance = governanceInfo[0]
+		const nativeTreasuryAddress = await getNativeTreasuryAddress(programId, governance.pubkey)
+		console.log('realmData', realmData)
+		console.log('governance', governance)
+		console.log('nativeTreasury', nativeTreasuryAddress)
+		assert(realmData.account.name)
+		console.log('name', realmData.account.name)
+		return {
+			networkType: NetworkType.Solana,
+			networkId: '90001',
+			networkName: 'Solana', // Polygon
+			networkIcon: '/network_icons/solana.svg',
+			safeType: 'SPL-GOV', // Gnosis
+			safeIcon: '/safes_icons/spl_gov.png',
+			amount: 1000, // 1000
+		}
+	} catch(e) {
+		console.log('realms error', e)
+		return null
+	}
+}
+
+const isOwner = async(safeAddress: string, address: String): Promise<boolean> => {
+	const connection = new Connection('https://mango.devnet.rpcpool.com', 'recent')
+	const programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
+	const safeAddressPublicKey = new PublicKey(safeAddress)
+	const walletPublicKey = new PublicKey(address)
+	const realmData = await getRealm(connection, safeAddressPublicKey)
+	console.log('realms_solana - realmData', realmData)
+
+	const COUNCIL_MINT = realmData.account.config.councilMint
+
+	const governanceInfo = await getGovernanceAccounts(connection, programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
+	console.log('realms_solana - governanceInfo', governanceInfo[0])
+
+	const tokenownerrecord = await getAllTokenOwnerRecords(connection, programId, safeAddressPublicKey)
+	let isOwner = false
+	for(let i = 0; i < tokenownerrecord.length; i++) {
+		if(tokenownerrecord[i].account.governingTokenOwner.toString() === address) {
+			isOwner = true
+			break
+		}
+	}
+
+	return isOwner
+}
+
+const getOwners = async(safeAddress: string): Promise<string[]> => {
+	const connection = new Connection('https://mango.devnet.rpcpool.com', 'recent')
+	const programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
+
+	try {
+		const safeAddressPublicKey = new PublicKey(safeAddress)
+		const realmData = await getRealm(connection, safeAddressPublicKey)
+		console.log('realms_solana - realmData', realmData)
+
+		const COUNCIL_MINT = realmData.account.config.councilMint
+
+		const governanceInfo = await getGovernanceAccounts(connection, programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
+		console.log('realms_solana - governanceInfo', governanceInfo[0])
+
+		const tokenownerrecord = await getAllTokenOwnerRecords(connection, programId, safeAddressPublicKey)
+		const owners = tokenownerrecord.map(record => record.account.governingTokenOwner.toString())
+		return owners
+	} catch(e) {
+		return []
+	}
+
+}
+
+export { getSafeDetails, isOwner, getOwners }

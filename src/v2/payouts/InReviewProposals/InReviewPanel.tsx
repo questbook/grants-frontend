@@ -1,22 +1,28 @@
 import { useEffect, useState } from 'react'
-import { Button, ButtonProps, Checkbox, Flex, forwardRef, Grid, GridItem, Menu, MenuButton, MenuItem, MenuList, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalOverlay, Text } from '@chakra-ui/react'
+import { ExternalLinkIcon } from '@chakra-ui/icons'
+import { Badge, Button, ButtonProps, Checkbox, Flex, forwardRef, Grid, GridItem, HStack, Menu, MenuButton, MenuItem, MenuList, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalOverlay, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { GetGrantDetailsQuery } from 'src/generated/graphql'
 import useBatchUpdateApplicationState from 'src/hooks/useBatchUpdateApplicationState'
+import { formatAddress } from 'src/utils/formattingUtils'
 import { AcceptApplication } from 'src/v2/assets/custom chakra icons/AcceptApplication'
 import { RejectApplication } from 'src/v2/assets/custom chakra icons/RejectApplication'
 import { ResubmitApplication } from 'src/v2/assets/custom chakra icons/ResubmitApplication'
+import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import InReviewRow from './InReviewRow'
 import ZeroState from './ZeroState'
 
 const InReviewPanel = ({
 	applicantsData,
+	grantData,
 	onSendFundsClicked,
 }: {
   applicantsData: any[];
+  grantData?: GetGrantDetailsQuery;
   onSendFundsClicked: (state: boolean) => void;
 
 }) => {
-	const [checkedItems, setCheckedItems] = useState<boolean[]>(Array(applicantsData.filter((item) => (0 === item.status)).length).fill(false))
+	const [checkedItems, setCheckedItems] = useState<boolean[]>(applicantsData.filter((item) => (0 === item.status)).map((item) => false))
 	const [checkedApplicationsIds, setCheckedApplicationsIds] = useState<number[]>([])
 	const [isAcceptClicked, setIsAcceptClicked] = useState<boolean>(false)
 	const [isRejectClicked, setIsRejectClicked] = useState<boolean>(false)
@@ -33,7 +39,28 @@ const InReviewPanel = ({
 	const someChecked = checkedItems.some((element) => {
 		return element
 	})
+	const allChecked = checkedItems.length > 0 && checkedItems.every((element) => element === true)
 	const router = useRouter()
+
+	useEffect(() => {
+		setCheckedItems(applicantsData.filter((item) => (0 === item.status)).map((item) => false))
+	}, [applicantsData])
+
+	const getSubtitle = () => {
+		if(isAcceptClicked) {
+			return 'Accepting applications'
+		}
+
+		if(isRejectClicked) {
+			return 'Rejecting applications'
+		}
+
+		if(isResubmitClicked) {
+			return 'Resubmitting applications'
+		}
+
+		return ''
+	}
 
 	useEffect(() => {
 		const inReviewApplications = applicantsData?.filter((item: any) => (0 === item.status))
@@ -58,7 +85,7 @@ const InReviewPanel = ({
 
 	useEffect(() => {
 		setInReviewApplications(applicantsData.filter((item) => (0 === item.status)))
-		setAcceptedApplications(applicantsData.filter((item) => (2 === item.status)))
+		setAcceptedApplications(applicantsData.filter((item) => (0 === item.status)))
 		setRejectedApplications(applicantsData.filter((item) => (1 === item.status)))
 	}, [applicantsData])
 
@@ -70,7 +97,7 @@ const InReviewPanel = ({
 		 }
 	}, [isAcceptClicked, isRejectClicked, isResubmitClicked, isConfirmClicked])
 
-	const [txn, txnLink, loading, error] = useBatchUpdateApplicationState(
+	const [txn, txnLink, loading, isBiconomyInitialised, error, networkTransactionModalStep] = useBatchUpdateApplicationState(
 		'',
 		checkedApplicationsIds,
 		state,
@@ -116,14 +143,20 @@ const InReviewPanel = ({
 				px='16px'
 				alignItems={'center'}
 			>
-				<Text
-					mr='auto'
-					fontSize='14px'
-					lineHeight='20px'
-					fontWeight='500'
-				>
-					In Review
-				</Text>
+				<HStack justify='space-between'>
+					<Text
+						mr='auto'
+						fontSize='14px'
+						lineHeight='20px'
+						fontWeight='500'
+					>
+						In Review
+					</Text>
+
+					<Badge fontSize='x-small'>
+						Private
+					</Badge>
+				</HStack>
 
 
 				{/* <Text
@@ -247,7 +280,15 @@ const InReviewPanel = ({
 					alignItems='center'
 					justifyContent='center'
 				>
-					<Checkbox />
+					<Checkbox
+						// defaultChecked={false}
+						isChecked={checkedItems.length > 0 && allChecked}
+						onChange={
+							(e: any) => {
+								const tempArr = Array(inReviewApplications.length).fill(e.target.checked)
+								setCheckedItems(tempArr)
+							}
+						} />
 				</GridItem>
 				<GridItem>
 					<Text
@@ -349,13 +390,9 @@ const InReviewPanel = ({
 				}
 			</Grid>
 
-			{
-				isModalOpen
-		&& (
-
 			<Modal
 				isCentered
-				isOpen={isModalOpen}
+				isOpen={isModalOpen && networkTransactionModalStep === undefined}
 				onClose={
 					() => {
 						setIsAcceptClicked(false)
@@ -417,6 +454,7 @@ const InReviewPanel = ({
 						</Button>
 						<Button
 							// colorScheme={isAcceptClicked ? 'blue' : 'pink'}
+							disabled={!isBiconomyInitialised}
 							mr={3}
 							onClick={
 								() => {
@@ -435,8 +473,38 @@ Confirm
 				</ModalContent>
 			</Modal>
 
-		)
-			}
+			<NetworkTransactionModal
+				isOpen={networkTransactionModalStep !== undefined}
+				subtitle={getSubtitle()}
+				description={
+					<Flex
+						direction="column"
+						w='100%'
+						align="start">
+						<Text
+							fontWeight={'500'}
+							fontSize={'17px'}
+						>
+							{grantData && grantData?.grants[0]?.title}
+						</Text>
+
+						<Button
+							rightIcon={<ExternalLinkIcon />}
+							variant="linkV2"
+							bg='#D5F1EB'>
+							{grantData && formatAddress(grantData?.grants[0]?.id)}
+						</Button>
+					</Flex>
+				}
+				currentStepIndex={networkTransactionModalStep || 0}
+				steps={
+					[
+						'Connect your wallet',
+						'Updating application(s) state',
+						'Waiting for transaction to complete',
+						'Application(s) state updated',
+					]
+				} />
 		</>
 	)
 }

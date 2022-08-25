@@ -56,7 +56,7 @@ function CustomTokenModal({
 	const [imageFile, setImageFile] = useState<File | null>(null)
 
 	const [tokenData, setTokenData] = useState<WorkspaceUpdateRequest | any>()
-	const [txnData, txnLink, loading] = useUpdateWorkspace(tokenData)
+	const [txnData, txnLink, loading, isBiconomyInitialised] = useUpdateWorkspace(tokenData)
 
 	const toast = useToast()
 	const toastRef = React.useRef<ToastId>()
@@ -266,6 +266,7 @@ Upload logo of atleast 100 X 100 px size
 					</Flex>
 					<Box my={4} />
 					<Button
+						disabled={!isBiconomyInitialised}
 						variant="primary"
 						onClick={handleSubmit}>
 						{loading ? <Loader /> : 'Add token'}

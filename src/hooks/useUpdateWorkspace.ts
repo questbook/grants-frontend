@@ -1,15 +1,19 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { WorkspaceUpdateRequest } from '@questbook/service-validator-client'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useQBContract from './contracts/useQBContract'
+import { useBiconomy } from './gasless/useBiconomy'
+import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 import useChainId from './utils/useChainId'
 
 export default function useUpdateWorkspace(
@@ -19,7 +23,7 @@ export default function useUpdateWorkspace(
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
@@ -31,6 +35,23 @@ export default function useUpdateWorkspace(
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
+
+	const { webwallet } = useContext(WebwalletContext)!
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
+		chainId: chainId?.toString()
+	})
+
+	const [isBiconomyInitialised, setIsBiconomyInitialised] = React.useState(false)
+
+	useEffect(() => {
+		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		console.log('rree', isBiconomyLoading, biconomyLoading)
+		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
+			biconomy.networkId.toString() === chainId.toString()) {
+			setIsBiconomyInitialised(true)
+		}
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised])
 
 	useEffect(() => {
 		if(data) {
@@ -65,6 +86,11 @@ export default function useUpdateWorkspace(
 			setLoading(true)
 			console.log(data)
 			try {
+
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					throw new Error('Zero wallet is not ready')
+				}
+
 				const {
 					data: { ipfsHash },
 				} = await validatorApi.validateWorkspaceUpdate(data)
@@ -72,13 +98,33 @@ export default function useUpdateWorkspace(
 					throw new Error('Error validating grant data')
 				}
 
-				const updateTransaction = await workspaceRegistryContract.updateWorkspaceMetadata(
-					+workspace!.id,
-					ipfsHash,
-				)
-				const updateTransactionData = await updateTransaction.wait()
+				// const updateTransaction1 = await workspaceRegistryContract.updateWorkspaceMetadata(
+				// 	+workspace!.id,
+				// 	ipfsHash,
+				// )
+				// const updateTransactionData1 = await updateTransaction1.wait()
 
-				setTransactionData(updateTransactionData)
+				const response = await sendGaslessTransaction(
+					biconomy,
+					workspaceRegistryContract,
+					'updateWorkspaceMetadata',
+					[+workspace!.id,
+						ipfsHash, ],
+					WORKSPACE_REGISTRY_ADDRESS[currentChainId],
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					`${currentChainId}`,
+					bicoDapps[currentChainId].webHookId,
+					nonce
+				)
+
+				if(response) {
+					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+					setTransactionData(receipt)
+					await chargeGas(Number(workspace?.id), Number(txFee))
+				}
+
 				setLoading(false)
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -143,8 +189,6 @@ export default function useUpdateWorkspace(
 				!workspaceRegistryContract
 				|| workspaceRegistryContract.address
 				=== '0x0000000000000000000000000000000000000000'
-				|| !workspaceRegistryContract.signer
-				|| !workspaceRegistryContract.provider
 			) {
 				return
 			}
@@ -187,6 +231,7 @@ export default function useUpdateWorkspace(
 		transactionData,
 		getExplorerUrlForTxHash(currentChainId, transactionData?.transactionHash),
 		loading,
+		isBiconomyInitialised,
 		error,
 	]
 }

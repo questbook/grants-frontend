@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Button, Checkbox, Fade, Flex, GridItem, Image, Text, Tooltip } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import CopyIcon from 'src/components/ui/copy_icon'
+import getAvatar from 'src/utils/avatarUtils'
 import { FundsCircleFilled } from 'src/v2/assets/custom chakra icons/Your Grants/FundsCircleFilled'
 
 const AcceptedRow = ({
@@ -50,7 +51,9 @@ const AcceptedRow = ({
 						w={'40px'}
 					>
 						<Image
-											 />
+							borderRadius="3xl"
+							src={getAvatar(applicantData?.applicant_address)}
+						/>
 					</Flex>
 
 					<Flex
@@ -143,7 +146,11 @@ const AcceptedRow = ({
 						fontWeight='500'
 						mr='auto'
 					>
-										1 / 4
+									 {applicantData?.milestones?.filter((milestone: any) => milestone?.state === 'approved')?.length}
+						{' '}
+/
+						{' '}
+						{applicantData?.milestones?.length}
 					</Text>
 
 

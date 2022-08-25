@@ -1,11 +1,13 @@
 import React, {
 	ReactElement, useContext, useEffect, useState,
 } from 'react'
+import { ExternalLinkIcon } from '@chakra-ui/icons'
 import {
 	Box,
+	Button,
 	Container, Flex, forwardRef, IconButton, IconButtonProps, Link, Menu, MenuButton, MenuItem, MenuList, TabList, TabPanel, TabPanels, Tabs, Text
 } from '@chakra-ui/react'
-import { BigNumber, ethers } from 'ethers'
+import { BigNumber } from 'ethers'
 import moment from 'moment'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
@@ -17,12 +19,14 @@ import {
 	useGetApplicantsForAGrantQuery,
 	useGetApplicantsForAGrantReviewerQuery,
 	useGetGrantDetailsQuery,
+	useGetSafeForAWorkspaceQuery,
 } from 'src/generated/graphql'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
-import { formatAmount } from 'src/utils/formattingUtils'
+import { formatAddress, formatAmount } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -33,12 +37,14 @@ import { ErrorAlert } from 'src/v2/assets/custom chakra icons/ErrorAlertV2'
 import { ThreeDotsHorizontal } from 'src/v2/assets/custom chakra icons/ThreeDotsHorizontal'
 import { ViewEye } from 'src/v2/assets/custom chakra icons/ViewEye'
 import Breadcrumbs from 'src/v2/components/Breadcrumbs'
+import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import StyledTab from 'src/v2/components/StyledTab'
-import { SupportedSafes } from 'src/v2/constants/safe/supported_safes'
+import { Realms_Solana } from 'src/v2/constants/safe/realms_solana'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import AcceptedProposalsPanel from 'src/v2/payouts/AcceptedProposals/AcceptedProposalPanel'
 import InReviewPanel from 'src/v2/payouts/InReviewProposals/InReviewPanel'
 import RejectedPanel from 'src/v2/payouts/RejectedProposals/RejectedPanel'
+import ResubmitPanel from 'src/v2/payouts/ResubmitProposals/ResubmitPanel'
 import SendFundsDrawer from 'src/v2/payouts/SendFundsDrawer/SendFundsDrawer'
 import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEvaluationDrawer'
@@ -80,11 +86,33 @@ function ViewApplicants() {
 	const [isUser, setIsUser] = React.useState<any>('')
 	const [isActorId, setIsActorId] = React.useState<any>('')
 
+	const [workspaceSafe, setWorkspaceSafe] = useState('')
+
 	const [setupRubricBannerCancelled, setSetupRubricBannerCancelled] = useState(true)
 
-	const { data: accountData } = useAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const router = useRouter()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
+
+	const workspacechainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+	const { client } = subgraphClients[workspacechainId]
+
+	const { data :safeAddressData } = useGetSafeForAWorkspaceQuery({
+		client,
+		variables: {
+			workspaceID: workspace?.id.toString()!,
+		},
+	})
+
+	useEffect(() => {
+		if(safeAddressData) {
+			const { workspaceSafes } = safeAddressData
+			const safeAddress = workspaceSafes[0].address
+			console.log('safeAddress', safeAddress)
+			setWorkspaceSafe(safeAddress)
+		}
+	}, [safeAddressData])
+
 
 	const [rubricDrawerOpen, setRubricDrawerOpen] = useState(false)
 	const [viewRubricDrawerOpen, setViewRubricDrawerOpen] = useState(false)
@@ -108,6 +136,7 @@ function ViewApplicants() {
 	useEffect(() => {
 		if(router && router.query) {
 			const { grantId: gId } = router.query
+			console.log('fetch 100: ', gId)
 			setGrantID(gId)
 		}
 	}, [router])
@@ -141,7 +170,7 @@ function ViewApplicants() {
 			const tempMember = workspace.members.find(
 				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 			)
-			console.log(tempMember)
+			console.log('fetch 500: ', tempMember)
 			setIsAdmin(
 				tempMember?.accessLevel === 'admin'
 				|| tempMember?.accessLevel === 'owner',
@@ -164,7 +193,9 @@ function ViewApplicants() {
 
 		console.log('Grant ID: ', grantID)
 		console.log('isUser: ', isUser)
+		console.log('fetch: ', isAdmin, isReviewer)
 		if(isAdmin) {
+			console.log('Setting query params')
 			setQueryParams({
 				client:
 					subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
@@ -191,6 +222,10 @@ function ViewApplicants() {
 		}
 
 	}, [workspace, grantID, isUser])
+
+	useEffect(() => {
+		console.log('Admin params: ', queryParams)
+	}, [queryParams])
 
 	const { data, error, loading } = useGetApplicantsForAGrantQuery(queryParams)
 	const { data: grantData } = useGetGrantDetailsQuery(queryParams)
@@ -245,7 +280,7 @@ function ViewApplicants() {
 					applicationId: applicant.id,
 					applicantName: getFieldString('applicantName'),
 					applicantEmail: getFieldString('applicantEmail'),
-					applicant_address: applicant.applicantId,
+					applicant_address: applicant.applicantId ?? getFieldString('applicantAddress'),
 					sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
 					updated_on: moment.unix(applicant.updatedAtS).format('DD MMM YYYY'),
 					// applicant_name: getFieldString('applicantName'),
@@ -393,7 +428,7 @@ function ViewApplicants() {
 		setIsAcceptingApplications([acceptingApplications, 0])
 	}, [acceptingApplications])
 
-	const [transactionData, txnLink, archiveGrantLoading, archiveGrantError] = useArchiveGrant(
+	const [transactionData, txnLink, archiveGrantLoading, isBiconomyInitialised, archiveGrantError] = useArchiveGrant(
 		isAcceptingApplications[0],
 		isAcceptingApplications[1],
 		grantID,
@@ -416,9 +451,7 @@ function ViewApplicants() {
 
 	}, [archiveGrantError])
 
-	React.useEffect(() => {
-		console.log('Is Accepting Applications: ', isAcceptingApplications)
-	}, [isAcceptingApplications])
+	const [networkTransactionModalStep, setNetworkTransactionModalStep] = React.useState<number>()
 
 
 	//Implementing the safe send
@@ -435,16 +468,17 @@ function ViewApplicants() {
 	const [gnosisBatchData, setGnosisBatchData] = useState<any>([])
 	const [gnosisReadyToExecuteTxns, setGnosisReadyToExecuteTxns] = useState<any>([])
 
-	const supported_safes = new SupportedSafes()
-	// const chainId = 9000001 // get your safe chain ID, currently on solana
-	const chainId = 4
-	const current_safe = supported_safes.getSafeByChainId(chainId) //current_safe has the stored safe address
+	// const supported_safes = new SupportedSafes()
+	const chainId = 9000001 // get your safe chain ID, currently on solana
+	// const current_safe = supported_safes.getSafeByChainId(chainId) //current_safe has the stored safe address
+
+	const current_safe = new Realms_Solana(workspaceSafe ?? '')
 
 	//checking if the realm address is valid
 
 	useEffect(() => {
 		const checkValidSafeAddress = async() => {
-			const isValidSafeAddress = await current_safe?.isValidSafeAddress('HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC')
+			const isValidSafeAddress = await current_safe?.isValidSafeAddress(workspaceSafe)
 			console.log('isValidSafeAddress', isValidSafeAddress)
 		}
 
@@ -456,7 +490,7 @@ function ViewApplicants() {
 	useEffect(() => {
 		const formattedTrxnData = sendFundsTo?.map((recepient, i) => (
 			{
-				from: current_safe?.id.toString(),
+				from: current_safe?.id?.toString(),
 				to: recepient.applicant_address,
 				applicationId: recepient.applicationId,
 				selectedMilestone: recepient.milestones[0].id,
@@ -675,7 +709,7 @@ function ViewApplicants() {
 										px={'19px'}
 										py={'10px'}
 										onClick={
-											() => (grantData?.grants[0].rubric?.items.length || 0) > 0 || false ?
+											() => (grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ?
 												setViewRubricDrawerOpen(true) : setRubricDrawerOpen(true)
 										}
 									>
@@ -742,15 +776,15 @@ function ViewApplicants() {
 
 				<StatsBanner
 					funds={0}
-					reviews={0}
-					totalReviews={0}
+					reviews={applicantsData.reduce((acc: any, curr: any) => acc + curr.reviews.length, 0)}
+					totalReviews={applicantsData.reduce((acc: any, curr: any) => acc + curr.reviewers.length, 0)}
 					applicants={applicantsData.length}
 				/>
 
 				<Box mt={5} />
 
 				{
-					setupRubricBannerCancelled || ((grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false) ? <></> : (
+					setupRubricBannerCancelled || (((grantData?.grants && grantData?.grants.length > 0 && grantData?.grants[0].rubric?.items.length) || 0) > 0 || false) ? <></> : (
 						<>
 							<Flex
 								px={'18px'}
@@ -845,7 +879,6 @@ function ViewApplicants() {
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7' >
 							<AcceptedProposalsPanel
 								applicantsData={applicantsData}
-								reviewerData={reviewerData}
 								onSendFundsClicked={onSendFundsButtonClicked}
 								onBulkSendFundsClicked={onSendFundsButtonClicked}
 								grantData={grantData}
@@ -861,6 +894,7 @@ function ViewApplicants() {
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<InReviewPanel
 								applicantsData={applicantsData}
+								grantData={grantData}
 								onSendFundsClicked={(v) => setSendFundsModalIsOpen(v)} />
 						</TabPanel>
 
@@ -874,6 +908,17 @@ function ViewApplicants() {
 							<RejectedPanel
 								applicantsData={applicantsData}
 								onSendFundsClicked={(v) => setSendFundsModalIsOpen(v)} />
+						</TabPanel>
+
+						<TabPanel
+							tabIndex={3}
+							borderRadius={'2px'}
+							p={0}
+							mt={5}
+							bg={'white'}
+							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
+							<ResubmitPanel
+								applicantsData={applicantsData} />
 						</TabPanel>
 
 
@@ -898,6 +943,9 @@ function ViewApplicants() {
 					isOpen={rubricDrawerOpen}
 					onClose={() => setRubricDrawerOpen(false)}
 					onComplete={() => setRubricDrawerOpen(false)}
+					grantAddress={grantID}
+					chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
+					setNetworkTransactionModalStep={setNetworkTransactionModalStep}
 				/>
 
 				<ViewEvaluationDrawer
@@ -928,10 +976,10 @@ function ViewApplicants() {
 				/>
 
 				<TransactionInitiatedModal
-					isOpen={txnInitModalIsOpen && proposalAddr}
+					isOpen={txnInitModalIsOpen && proposalAddr ? true : false}
 					onClose={onModalClose}
 					onComplete={() => setTxnInitModalIsOpen(false)}
-					proposalUrl={isEvmChain ? '' : getProposalUrl(current_safe?.id.toString(), proposalAddr)}
+					proposalUrl={isEvmChain ? '' : getProposalUrl(current_safe?.id?.toString()!, proposalAddr)}
 				/>
 
 				<SendFundsDrawer
@@ -954,6 +1002,39 @@ function ViewApplicants() {
 					step={step}
 				/>
 
+				<NetworkTransactionModal
+					isOpen={networkTransactionModalStep !== undefined}
+					subtitle='Creating scoring rubric'
+					description={
+						<Flex
+							direction="column"
+							w='100%'
+							align="start">
+							<Text
+								fontWeight={'500'}
+								fontSize={'17px'}
+							>
+								{grantData && grantData?.grants && grantData?.grants.length > 0 && grantData?.grants[0].title}
+							</Text>
+
+							<Button
+								rightIcon={<ExternalLinkIcon />}
+								variant="linkV2"
+								bg='#D5F1EB'>
+								{grantID && formatAddress(grantID)}
+							</Button>
+						</Flex>
+					}
+					currentStepIndex={networkTransactionModalStep || 0}
+					steps={
+						[
+							'Connect your wallet',
+							'Uploading rubric data to IPFS',
+							'Setting rubric and enabling auto assignment of reviewers',
+							'Waiting for transaction to complete',
+							'Rubric created and Reviewers assigned',
+						]
+					} />
 
 				{/* {
 					(reviewerData.length > 0 || applicantsData.length > 0) && (isReviewer || isAdmin) ? (
@@ -1060,6 +1141,7 @@ function ViewApplicants() {
 						}
 					}
 					loading={archiveGrantLoading}
+					isBiconomyInitialised={isBiconomyInitialised}
 				/>
 			</Modal>
 		</Container>

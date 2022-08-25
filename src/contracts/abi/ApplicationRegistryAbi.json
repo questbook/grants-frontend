@@ -237,6 +237,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "applicationReviewReg",
+    "outputs": [
+      {
+        "internalType": "contract IApplicationReviewRegistry",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint96",
@@ -468,6 +481,19 @@
   {
     "inputs": [
       {
+        "internalType": "contract IApplicationReviewRegistry",
+        "name": "_applicationReviewReg",
+        "type": "address"
+      }
+    ],
+    "name": "setApplicationReviewReg",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "contract IWorkspaceRegistry",
         "name": "_workspaceReg",
         "type": "address"
@@ -615,4 +641,3 @@
     "type": "function"
   }
 ]
-

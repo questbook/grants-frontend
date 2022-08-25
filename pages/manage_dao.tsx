@@ -11,10 +11,10 @@ import Settings from 'src/components/manage_dao/settings'
 import Loader from 'src/components/ui/loader'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetWorkspaceDetailsQuery } from 'src/generated/graphql'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { Workspace } from 'src/types'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useAccount } from 'wagmi'
 import WorkspaceMembers from '../src/v2/components/WorkspaceMembers'
 
 function ManageDAO() {
@@ -29,7 +29,7 @@ function ManageDAO() {
 	const [isAdmin, setIsAdmin] = React.useState<boolean>(false)
 	const [isLoading, setIsLoading] = React.useState<boolean>(true)
 
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 
 	const [queryParams, setQueryParams] = useState<any>({
 		client:

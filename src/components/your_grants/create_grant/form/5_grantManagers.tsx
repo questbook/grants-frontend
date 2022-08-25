@@ -2,8 +2,8 @@ import React from 'react'
 import {
 	Box,
 	Flex, Grid, GridItem, } from '@chakra-ui/react'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { truncateStringFromMiddle } from 'src/utils/formattingUtils'
-import { useAccount } from 'wagmi'
 import Badge from '../../../ui/badge'
 
 function GrantManagers({
@@ -15,7 +15,7 @@ function GrantManagers({
   grantManagers: any[];
   toggleGrantManager: (address: string) => void;
 }) {
-	const { data: accountData } = useAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	return (
 		<Flex
 			py={0}
