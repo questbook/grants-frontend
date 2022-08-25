@@ -41,7 +41,7 @@ const OnboardingCreateDomain = () => {
 	const [safeAddress, setSafeAddress] = useState('')
 	const [isSafeAddressPasted, setIsSafeAddressPasted] = useState(false)
 	const [isSafeAddressVerified, setIsSafeAddressVerified] = useState(false)
-	const { data: safesUSDBalance, loaded: loadedSafesUSDBalance } = useSafeUSDBalances({ safeAddress })
+	const { data: safesUSDBalance, loaded: loadedSafesUSDBalance, error: safeBalanceError } = useSafeUSDBalances({ safeAddress })
 	const [safeSelected, setSafeSelected] = useState<SafeSelectOption>()
 
 	// State variables for step 2
@@ -133,9 +133,12 @@ const OnboardingCreateDomain = () => {
 		}
 
 		if(Object.keys(safesUSDBalance).length > 0) {
+			console.log('safe address verified!')
 			setIsSafeAddressVerified(true)
 			setIsSafeAddressPasted(true)
+			setStep(1)
 		} else {
+			console.log('safe address not verified!')
 			setIsSafeAddressVerified(false)
 			setIsSafeAddressPasted(false)
 		}
@@ -280,6 +283,7 @@ const OnboardingCreateDomain = () => {
 			isPasted={isSafeAddressPasted}
 			isVerified={isSafeAddressVerified}
 			isLoading={!loadedSafesUSDBalance}
+			isSafeAddressError={safeAddress !== '' && loadedSafesUSDBalance && safeBalanceError.length === 0}
 			setValue={
 				(newValue) => {
 					setSafeAddress(newValue)

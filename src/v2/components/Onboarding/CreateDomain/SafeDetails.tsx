@@ -8,6 +8,7 @@ interface Props {
 	safeAddress: string;
 	isPasted?: boolean;
 	isVerified?: boolean;
+	isSafeAddressError?: boolean;
 	isLoading?: boolean;
 	safeSelected: SafeSelectOption;
 	onSelectedSafeChange: (e: SafeSelectOption) => void;
@@ -15,7 +16,7 @@ interface Props {
 	onContinue: () => void;
 }
 
-function SafeDetails({ safesOptions, step, safeAddress, isPasted, isVerified, isLoading, safeSelected, setValue, onSelectedSafeChange, onContinue }: Props) {
+function SafeDetails({ safesOptions, step, safeAddress, isPasted, isVerified, isLoading, safeSelected, setValue, onSelectedSafeChange, onContinue, isSafeAddressError }: Props) {
 	return (
 		<>
 			<Text
@@ -37,16 +38,18 @@ function SafeDetails({ safesOptions, step, safeAddress, isPasted, isVerified, is
 			<Box mb="10" />
 			<TextField
 				label='Safe Address'
-				helperText='Your safe can be used to invite members & do payouts on Questbook.'
+				helperText='Your safe can be used to do payouts on Questbook.'
 				helperLinkText='Learn more'
 				helperLinkUrl='https://youtube.com'
-				placeholder='0xE6379586E5D8350038E9126c5553c0C77549B6c3'
+				placeholder='Ethereum or Solana address'
 				value={safeAddress}
 				onChange={(e) => setValue(e.target.value)}
 				// setValue={setValue}
 				isPasted={isPasted}
 				isVerified={isVerified}
 				isDisabled={step === 1}
+				isError={isSafeAddressError}
+				errorText="This safe is not supported. We currently support safes on Gnosis (Ethereum), and Realms (Solana)."
 			/>
 			{
 				isLoading && (
