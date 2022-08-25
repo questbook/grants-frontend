@@ -1,5 +1,5 @@
 import React, {
-	ReactElement, useContext, useEffect, useState,
+	ReactElement, useContext, useEffect, useMemo, useState,
 } from 'react'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import {
@@ -27,6 +27,7 @@ import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
 import { formatAddress, formatAmount } from 'src/utils/formattingUtils'
+import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -105,7 +106,6 @@ function ViewApplicants() {
 		if(safeAddressData) {
 			const { workspaceSafes } = safeAddressData
 			const safeAddress = workspaceSafes[0].address
-			console.log('safeAddress', safeAddress)
 			setWorkspaceSafe(safeAddress)
 		}
 	}, [safeAddressData])
@@ -451,7 +451,11 @@ function ViewApplicants() {
 	const chainId = 9000001 // get your safe chain ID, currently on solana
 	// const current_safe = supported_safes.getSafeByChainId(chainId) //current_safe has the stored safe address
 
-	const current_safe = new Realms_Solana(workspaceSafe ?? '')
+	const current_safe = useMemo(() => {
+		if(isPlausibleSolanaAddress(workspaceSafe)) {
+			return new Realms_Solana(workspaceSafe)
+		}
+	}, [workspaceSafe])
 
 	//checking if the realm address is valid
 
@@ -500,7 +504,9 @@ function ViewApplicants() {
 	const initiateTransaction = async() => {
 		console.log('initiate transaction called')
 		const proposaladdress = await current_safe?.proposeTransactions(grantData?.grants[0].title!, initiateTransactionData, phantomWallet)
-		setProposalAddr(proposaladdress?.toString())
+		if(proposaladdress) {
+			setProposalAddr(proposaladdress.toString())
+		}
 	}
 
 	const onChangeRecepientDetails = (applicationId:any, fieldName: string, fieldValue:any) => {
