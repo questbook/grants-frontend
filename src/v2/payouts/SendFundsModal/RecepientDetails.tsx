@@ -102,7 +102,7 @@ const RecipientDetails = ({
 				>
 					<Input
 						variant={'brandFlushed'}
-						placeholder={'DAO Name'}
+						placeholder={'Ethereum or Solana address'}
 						_placeholder={
 							{
 								color: 'blue.100',
