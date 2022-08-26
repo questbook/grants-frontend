@@ -194,6 +194,7 @@ function FeedbackDrawer({
 												Array.from({ length: feedback.rubric.maximumPoints },
 													(_, i) => (
 														<SliderMark
+															key={i}
 															paddingTop={'10px'}
 															value={i}>
 															{i}

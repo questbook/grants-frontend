@@ -95,16 +95,16 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: true,
-        internalType: "uint96",
-        name: "applicationId",
-        type: "uint96",
+        indexed: false,
+        internalType: "uint96[]",
+        name: "applicationIds",
+        type: "uint96[]",
       },
       {
         indexed: false,
-        internalType: "uint96",
-        name: "milestoneId",
-        type: "uint96",
+        internalType: "uint96[]",
+        name: "milestoneIds",
+        type: "uint96[]",
       },
       {
         indexed: false,
@@ -119,7 +119,7 @@ const _abi = [
         type: "string",
       },
       {
-        indexed: false,
+        indexed: true,
         internalType: "string",
         name: "transactionHash",
         type: "string",
@@ -132,9 +132,9 @@ const _abi = [
       },
       {
         indexed: false,
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
+        internalType: "uint256[]",
+        name: "amounts",
+        type: "uint256[]",
       },
       {
         indexed: false,

@@ -641,8 +641,12 @@ function ViewApplicants() {
 			const readyToExecuteTxs = createEVMMetaTransactions()
 			const result = await current_safe?.createMultiTransaction(readyToExecuteTxs, workspaceSafe)
 			console.log('Proposed transaction', result)
-			proposaladdress = 'gnosisproposaladdress'
-			setProposalAddr('gnosisproposaladdress')
+			if(result) {
+				proposaladdress = result
+				setProposalAddr(result)
+			} else {
+				throw new Error('Proposal address not found')
+			}
 		} else {
 			proposaladdress = await current_safe?.proposeTransactions(grantData?.grants[0].title!, initiateTransactionData, phantomWallet)
 			console.log('proposal address', proposaladdress)
@@ -734,14 +738,13 @@ function ViewApplicants() {
 			)
 
 			if(!transactionHash) {
-				return
+				throw new Error('No transaction hash found!')
 			}
 
 			const { txFee, receipt } = await getTransactionDetails(transactionHash, workspacechainId.toString())
 
 			console.log('txFee', txFee)
-
-			console.log('fdsao')
+			console.log('receipt: ', receipt)
 			await chargeGas(Number(workspace.id), Number(txFee))
 
 		} catch(e) {

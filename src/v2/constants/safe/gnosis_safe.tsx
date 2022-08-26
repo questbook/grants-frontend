@@ -48,7 +48,7 @@ export class Gnosis_Safe implements GnosisSafe {
 
     		const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
     		const senderSignature = await safeSdk.signTransactionHash(safeTxHash)
-    		console.log(signer.getAddress())
+    		console.log(await signer.getAddress())
     		const txhash = await safeService.proposeTransaction({
     			safeAddress,
     			safeTransactionData: safeTransaction.data,
@@ -58,8 +58,9 @@ export class Gnosis_Safe implements GnosisSafe {
     			origin
     		})
 
-
+    		return safeTxHash
     	} catch(e) {
+    		return undefined
     		console.log(e)
     	}
 
