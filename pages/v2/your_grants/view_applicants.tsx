@@ -995,8 +995,7 @@ function ViewApplicants() {
 				<SendFundsModal
 					isOpen={sendFundsModalIsOpen}
 					onClose={onModalClose}
-					// @ts-expect-error
-					safeAddress={workspace?.safeAddress ?? 'HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC'}
+					safeAddress={workspaceSafe ?? 'HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC'}
 					proposals={sendFundsTo ?? []}
 
 					onChangeRecepientDetails={onChangeRecepientDetails}
