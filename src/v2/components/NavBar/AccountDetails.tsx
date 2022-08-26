@@ -68,7 +68,7 @@ function AccountDetails() {
 			} */}
 
 			{
-				nonce &&
+				nonce && scwAddress &&
 				(
 					<MenuButton
 						ref={buttonRef}

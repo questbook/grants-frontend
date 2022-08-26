@@ -102,7 +102,7 @@ const RecipientDetails = ({
 				>
 					<Input
 						variant={'brandFlushed'}
-						placeholder={'DAO Name'}
+						placeholder={'Ethereum or Solana address'}
 						_placeholder={
 							{
 								color: 'blue.100',
@@ -153,10 +153,10 @@ const RecipientDetails = ({
 					lineHeight='20px'
 					fontWeight='500'
 				>
-							Amount (in USD)
+							Amount (in SOL)
 				</Text>
 
-				<Text
+				{/* <Text
 					fontSize='12px'
 					lineHeight='16px'
 					fontWeight='400'
@@ -164,7 +164,7 @@ const RecipientDetails = ({
 					mt='2px'
 				>
 							Balance: 1000 USD
-				</Text>
+				</Text> */}
 
 
 				<Flex
@@ -182,7 +182,7 @@ const RecipientDetails = ({
 						}
 						fontWeight={'500'}
 						fontSize='14px'
-						defaultValue={initiateTransactionData?.amount}
+						defaultValue={''}
 						errorBorderColor={'red'}
 						height={'auto'}
 						type={'number'}

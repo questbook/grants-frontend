@@ -27,7 +27,7 @@ interface Props {
 	phantomWallet : PhantomProvider | undefined;
 	setPhantomWalletConnected: (value: boolean)=>void;
 	isEvmChain: boolean;
-	current_safe: Safe;
+	current_safe?: Safe;
 	signerVerified: boolean;
 	initiateTransaction: ()=>Promise<void>;
 	initiateTransactionData: TransactionType[];

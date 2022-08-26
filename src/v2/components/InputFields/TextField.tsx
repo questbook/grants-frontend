@@ -1,7 +1,7 @@
 import { ChangeEventHandler } from 'react'
 import React from 'react'
 import { CheckIcon } from '@chakra-ui/icons'
-import { Flex, Input, InputGroup, InputRightElement, Link, Text } from '@chakra-ui/react'
+import { Box, Flex, Input, InputGroup, InputRightElement, Link, Text } from '@chakra-ui/react'
 
 interface Props {
 	label?: string;
@@ -14,17 +14,19 @@ interface Props {
 	value: string | number;
 	onChange: ChangeEventHandler<HTMLInputElement>;
 	isError?: boolean;
+	errorText?: string;
 	isPasted?: boolean;
 	isVerified?: boolean;
 	isDisabled?: boolean;
 }
 
-function TextField({ label, optionalText, helperText, helperLinkText, helperLinkUrl, placeholder, maxLength, value, onChange, isPasted, isVerified, isDisabled }: Props) {
+function TextField({ label, optionalText, helperText, helperLinkText, helperLinkUrl, placeholder, maxLength, value, onChange, isPasted, isVerified, isDisabled, isError, errorText }: Props) {
 	const [currentLength, setCurrentLength] = React.useState(value?.toString().length)
 
 	React.useEffect(() => {
 		setCurrentLength(value?.toString().length)
 	}, [value])
+
 	return (
 		<Flex direction="column">
 			<Flex>
@@ -79,6 +81,7 @@ function TextField({ label, optionalText, helperText, helperLinkText, helperLink
 					color="black.1"
 					onChange={onChange}
 					value={value}
+					errorBorderColor="orange.2"
 					isDisabled={isDisabled}
 				/>
 				<InputRightElement>
@@ -97,18 +100,30 @@ Paste
 					{isVerified && <CheckIcon color="green.2" />}
 				</InputRightElement>
 			</InputGroup>
-			{
-				maxLength && maxLength > 0 && (
-					<Text
-						variant="v2_metadata"
-						color="black.3"
-						mt={1}
-						textAlign="right"
-					>
-						{`${currentLength}/${maxLength}`}
-					</Text>
-				)
-			}
+			<Flex mt={1}>
+				{
+					isError && (
+						<Text
+							variant="v2_metadata"
+							color="orange.2">
+							{errorText}
+						</Text>
+					)
+				}
+				<Box mx="auto" />
+				{
+					maxLength && maxLength > 0 && (
+						<Text
+							variant="v2_metadata"
+							color="black.3"
+							mt={1}
+							textAlign="right"
+						>
+							{`${currentLength}/${maxLength}`}
+						</Text>
+					)
+				}
+			</Flex>
 		</Flex>
 	)
 }

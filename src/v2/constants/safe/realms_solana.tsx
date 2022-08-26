@@ -14,6 +14,7 @@ import {
 } from '@solana/spl-governance'
 import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
 import assert from 'assert'
+import axios from 'axios'
 import { NetworkType } from 'src/constants/Networks'
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 import { MetaTransaction, Safe, TransactionType } from '../../types/safe'
@@ -28,6 +29,8 @@ export class Realms_Solana implements Safe {
     connection: Connection
     programId: PublicKey
     constructor(realmsId: string) {
+    	console.log('realmsId', realmsId)
+
     	this.id = realmsId ? new PublicKey(realmsId) : undefined // devnet realmPK
     	//this.id = new PublicKey('AwTwXtM4D3KiDy8pBgrZRaZdNnsxXABsyHXr4u394rEh') // mainnet realmPK
     	this.name = 'Realms on Solana'
@@ -191,32 +194,37 @@ export class Realms_Solana implements Safe {
     }
 }
 
-const getSafeDetails = async(realmsPublicKey: String) : Promise<SafeSelectOption | null> => {
+const getSafeDetails = async(realmsAddress: string) : Promise<SafeSelectOption | null> => {
 	const connection = new Connection('https://mango.devnet.rpcpool.com', 'recent')
 	const programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
-	try {
-		const realmData = await getRealm(connection, new PublicKey(realmsPublicKey))
-		const COUNCIL_MINT = realmData.account.config.councilMint
-		const governanceInfo = await getGovernanceAccounts(connection, programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
-		const governance = governanceInfo[0]
-		const nativeTreasuryAddress = await getNativeTreasuryAddress(programId, governance.pubkey)
-		console.log('realmData', realmData)
-		console.log('governance', governance)
-		console.log('nativeTreasury', nativeTreasuryAddress)
-		assert(realmData.account.name)
-		console.log('name', realmData.account.name)
-		return {
-			networkType: NetworkType.Solana,
-			networkId: 'solana-devnet', // it should be 'solana-mainnet' in the other case.
-			networkName: 'Solana', // Polygon
-			networkIcon: '/network_icons/solana.svg',
-			safeType: 'SPL-GOV', // Gnosis
-			safeIcon: '/safes_icons/spl_gov.png',
-			amount: 1000, // 1000
-		}
-	} catch(e) {
-		console.log('realms error', e)
-		return null
+	const realmsPublicKey = new PublicKey(realmsAddress)
+	const realmData = await getRealm(connection, realmsPublicKey)
+	const COUNCIL_MINT = realmData.account.config.councilMint
+	const governanceInfo = await getGovernanceAccounts(connection, programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
+	const governance = governanceInfo[0]
+	const nativeTreasuryAddress = await getNativeTreasuryAddress(programId, governance.pubkey)
+	console.log('governanceInfo', governanceInfo)
+	// console.log('realmData', realmData)
+	// console.log('governance', governance)
+	console.log('nativeTreasury', nativeTreasuryAddress.toString())
+	assert(realmData.account.name)
+	console.log('name', realmData.account.name)
+	const solAmount = (await connection.getAccountInfo(nativeTreasuryAddress))!.lamports / 1000000000
+	console.log('sol amount', solAmount)
+	const url = 'https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd'
+	const solToUsd = parseFloat((await axios.get(url)).data.solana.usd)
+	console.log('solToUsd', solToUsd)
+	const usdAmount = solToUsd * solAmount
+	console.log('usdAmount', usdAmount)
+
+	return {
+		networkType: NetworkType.Solana,
+		networkId: '900001', // A costum value for Solana as it's not EVM.
+		networkName: 'Solana',
+		networkIcon: '/network_icons/solana.svg',
+		safeType: 'SPL-GOV',
+		safeIcon: '/safes_icons/spl_gov.png',
+		amount: usdAmount, // 1000
 	}
 }
 

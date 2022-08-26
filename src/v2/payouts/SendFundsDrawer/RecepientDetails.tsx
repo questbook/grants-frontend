@@ -122,7 +122,7 @@ const RecipientDetails = ({
 							>
 								<Input
 									variant={'brandFlushed'}
-									placeholder={'DAO Name'}
+									placeholder={'Ethereum or Solana address'}
 									_placeholder={
 										{
 											color: 'blue.100',
@@ -170,7 +170,7 @@ const RecipientDetails = ({
 										}
 										fontWeight={'500'}
 										fontSize='14px'
-										defaultValue={initiateTransactionData ? initiateTransactionData[i].amount : ''}
+										defaultValue={''}
 										errorBorderColor={'red'}
 										height={'auto'}
 										type={'number'}
