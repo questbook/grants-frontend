@@ -17,6 +17,7 @@ interface Props {
 }
 
 export interface SafeSelectOption extends OptionBase {
+	safeAddress: string;
 	networkType: NetworkType;
 	networkId: string;
 	networkName: string; // Polygon

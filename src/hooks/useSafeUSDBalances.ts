@@ -93,6 +93,7 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 				const tokensSum = getTokensSum(allTokensData)
 				if(tokensSum >= USD_BALANCE_THRESHOLD) {
 					const newElement: SafeSelectOption = {
+						safeAddress: safeAddress,
 						networkType: NetworkType.EVM,
 						networkId: currentChainID.toString(),
 						networkName: CHAIN_INFO[currentChainID]?.name,
@@ -107,7 +108,7 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 			console.log('Final Safe', newData)
 			setGnosisData(newData)
 		}
-	}, [gnosisRawData, gnosisLoaded, gnosisError])
+	}, [gnosisRawData, gnosisLoaded, gnosisError, safeAddress])
 
 	return { gnosisError, splGovError, loaded: gnosisLoaded && splGovLoaded, data }
 }

@@ -208,10 +208,11 @@ const getSafeDetails = async(realmsAddress: string) : Promise<SafeSelectOption |
 	const url = 'https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd'
 	const solToUsd = parseFloat((await axios.get(url)).data.solana.usd)
 	console.log('solToUsd', solToUsd)
-	const usdAmount = solToUsd * solAmount
+	const usdAmount = Math.floor(solToUsd * solAmount)
 	console.log('usdAmount', usdAmount)
 
 	return {
+		safeAddress: realmsAddress,
 		networkType: NetworkType.Solana,
 		networkId: '900001', // A costum value for Solana as it's not EVM.
 		networkName: 'Solana',
