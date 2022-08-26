@@ -47,7 +47,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "applicationReg()": FunctionFragment;
     "createInviteLink(uint96,uint8,address)": FunctionFragment;
     "createWorkspace(string,bytes32,string,uint256)": FunctionFragment;
-    "disburseRewardFromSafe(uint96[],uint96[],address,uint256[],uint96)": FunctionFragment;
+    "disburseRewardFromSafe(uint96[],uint96[],address,string,uint256[],uint96,string)": FunctionFragment;
     "disburseRewardP2P(uint96,address,uint96,address,uint256,uint96)": FunctionFragment;
     "initialize()": FunctionFragment;
     "isWorkspaceAdmin(uint96,address)": FunctionFragment;
@@ -137,8 +137,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>[],
       PromiseOrValue<BigNumberish>[],
       PromiseOrValue<string>,
+      PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>
     ]
   ): string;
   encodeFunctionData(
@@ -331,7 +333,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "AdminChanged(address,address)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
     "DisburseReward(uint96,uint96,address,address,uint256,bool,uint256)": EventFragment;
-    "DisburseRewardFromSafe(uint96,uint96,address,address,uint256,bool,uint256)": EventFragment;
+    "DisburseRewardFromSafe(uint96,uint96,address,string,string,address,uint256,bool,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Paused(address)": EventFragment;
@@ -401,13 +403,25 @@ export interface DisburseRewardFromSafeEventObject {
   applicationId: BigNumber;
   milestoneId: BigNumber;
   asset: string;
+  nonEvmAssetAddress: string;
+  transactionHash: string;
   sender: string;
   amount: BigNumber;
   isP2P: boolean;
   time: BigNumber;
 }
 export type DisburseRewardFromSafeEvent = TypedEvent<
-  [BigNumber, BigNumber, string, string, BigNumber, boolean, BigNumber],
+  [
+    BigNumber,
+    BigNumber,
+    string,
+    string,
+    string,
+    string,
+    BigNumber,
+    boolean,
+    BigNumber
+  ],
   DisburseRewardFromSafeEventObject
 >;
 
@@ -585,8 +599,10 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       _applicationIds: PromiseOrValue<BigNumberish>[],
       _milestoneIds: PromiseOrValue<BigNumberish>[],
       _erc20Interface: PromiseOrValue<string>,
+      nonEvmAssetAddress: PromiseOrValue<string>,
       _amounts: PromiseOrValue<BigNumberish>[],
       _workspaceId: PromiseOrValue<BigNumberish>,
+      transactionHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -738,8 +754,10 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     _applicationIds: PromiseOrValue<BigNumberish>[],
     _milestoneIds: PromiseOrValue<BigNumberish>[],
     _erc20Interface: PromiseOrValue<string>,
+    nonEvmAssetAddress: PromiseOrValue<string>,
     _amounts: PromiseOrValue<BigNumberish>[],
     _workspaceId: PromiseOrValue<BigNumberish>,
+    transactionHash: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -891,8 +909,10 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       _applicationIds: PromiseOrValue<BigNumberish>[],
       _milestoneIds: PromiseOrValue<BigNumberish>[],
       _erc20Interface: PromiseOrValue<string>,
+      nonEvmAssetAddress: PromiseOrValue<string>,
       _amounts: PromiseOrValue<BigNumberish>[],
       _workspaceId: PromiseOrValue<BigNumberish>,
+      transactionHash: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1043,10 +1063,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       time?: null
     ): DisburseRewardEventFilter;
 
-    "DisburseRewardFromSafe(uint96,uint96,address,address,uint256,bool,uint256)"(
+    "DisburseRewardFromSafe(uint96,uint96,address,string,string,address,uint256,bool,uint256)"(
       applicationId?: PromiseOrValue<BigNumberish> | null,
       milestoneId?: null,
       asset?: null,
+      nonEvmAssetAddress?: null,
+      transactionHash?: null,
       sender?: null,
       amount?: null,
       isP2P?: null,
@@ -1056,6 +1078,8 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       applicationId?: PromiseOrValue<BigNumberish> | null,
       milestoneId?: null,
       asset?: null,
+      nonEvmAssetAddress?: null,
+      transactionHash?: null,
       sender?: null,
       amount?: null,
       isP2P?: null,
@@ -1193,8 +1217,10 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       _applicationIds: PromiseOrValue<BigNumberish>[],
       _milestoneIds: PromiseOrValue<BigNumberish>[],
       _erc20Interface: PromiseOrValue<string>,
+      nonEvmAssetAddress: PromiseOrValue<string>,
       _amounts: PromiseOrValue<BigNumberish>[],
       _workspaceId: PromiseOrValue<BigNumberish>,
+      transactionHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1342,8 +1368,10 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       _applicationIds: PromiseOrValue<BigNumberish>[],
       _milestoneIds: PromiseOrValue<BigNumberish>[],
       _erc20Interface: PromiseOrValue<string>,
+      nonEvmAssetAddress: PromiseOrValue<string>,
       _amounts: PromiseOrValue<BigNumberish>[],
       _workspaceId: PromiseOrValue<BigNumberish>,
+      transactionHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

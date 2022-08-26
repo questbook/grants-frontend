@@ -114,6 +114,18 @@ const _abi = [
       },
       {
         indexed: false,
+        internalType: "string",
+        name: "nonEvmAssetAddress",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "transactionHash",
+        type: "string",
+      },
+      {
+        indexed: false,
         internalType: "address",
         name: "sender",
         type: "address",
@@ -515,6 +527,11 @@ const _abi = [
         type: "address",
       },
       {
+        internalType: "string",
+        name: "nonEvmAssetAddress",
+        type: "string",
+      },
+      {
         internalType: "uint256[]",
         name: "_amounts",
         type: "uint256[]",
@@ -523,6 +540,11 @@ const _abi = [
         internalType: "uint96",
         name: "_workspaceId",
         type: "uint96",
+      },
+      {
+        internalType: "string",
+        name: "transactionHash",
+        type: "string",
       },
     ],
     name: "disburseRewardFromSafe",

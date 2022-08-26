@@ -19,6 +19,7 @@ import {
 	useGetApplicantsForAGrantQuery,
 	useGetApplicantsForAGrantReviewerQuery,
 	useGetGrantDetailsQuery,
+	useGetRealmsFundTransferDataQuery,
 	useGetSafeForAWorkspaceQuery,
 } from 'src/generated/graphql'
 import useQBContract from 'src/hooks/contracts/useQBContract'
@@ -105,6 +106,42 @@ function ViewApplicants() {
 			workspaceID: workspace?.id.toString()!,
 		},
 	})
+
+	const [realmsQueryParams, setRealmsQueryParams] = useState<any>({
+		client:
+      subgraphClients[
+      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+      ].client,
+	})
+
+	useEffect(() => {
+		if(!grantID) {
+			return
+		}
+
+		setRealmsQueryParams({
+			client:
+        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+			variables: { grantID: grantID },
+		})
+
+	}, [grantID])
+
+	const { data: realmsFundTransferData } = useGetRealmsFundTransferDataQuery(realmsQueryParams)
+
+	useEffect(() => {
+		console.log('realms fund transfer data', realmsFundTransferData)
+
+		if(!realmsFundTransferData) {
+			return
+		}
+
+		// @sourav - use the transactionHash here
+		// this is the transction hash of the first fundTransfer object. If you need more info
+		// you can extract them as well
+		const transactionHash = realmsFundTransferData.grants[0].fundTransfers[0].transactionHash
+
+	}, [realmsFundTransferData])
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: workspacechainId ? workspacechainId.toString() : defaultChainId.toString(),
