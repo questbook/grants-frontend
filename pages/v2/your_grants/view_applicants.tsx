@@ -1,5 +1,5 @@
 import React, {
-	ReactElement, useContext, useEffect, useMemo, useState,
+	ReactElement, useCallback, useContext, useEffect, useMemo, useState,
 } from 'react'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import {
@@ -7,10 +7,10 @@ import {
 	Button,
 	Container, Flex, forwardRef, IconButton, IconButtonProps, Link, Menu, MenuButton, MenuItem, MenuList, TabList, TabPanel, TabPanels, Tabs, Text
 } from '@chakra-ui/react'
-import { BigNumber } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import moment from 'moment'
 import { useRouter } from 'next/router'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import Modal from 'src/components/ui/modal'
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
@@ -21,12 +21,15 @@ import {
 	useGetGrantDetailsQuery,
 	useGetSafeForAWorkspaceQuery,
 } from 'src/generated/graphql'
+import useQBContract from 'src/hooks/contracts/useQBContract'
+import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
 import { formatAddress, formatAmount, getFieldString } from 'src/utils/formattingUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
@@ -72,6 +75,7 @@ enum ModalState {
 }
 
 function ViewApplicants() {
+
 	const [applicantsData, setApplicantsData] = useState<any>([])
 	const [reviewerData, setReviewerData] = useState<any>([])
 	const [daoId, setDaoId] = useState('')
@@ -88,7 +92,7 @@ function ViewApplicants() {
 
 	const [setupRubricBannerCancelled, setSetupRubricBannerCancelled] = useState(true)
 
-	const { data: accountData } = useQuestbookAccount()
+	const { data: accountData, nonce } = useQuestbookAccount()
 	const router = useRouter()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 
@@ -101,6 +105,23 @@ function ViewApplicants() {
 			workspaceID: workspace?.id.toString()!,
 		},
 	})
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
+		chainId: workspacechainId ? workspacechainId.toString() : defaultChainId.toString(),
+	})
+	const [isBiconomyInitialisedDisburse, setIsBiconomyInitialisedDisburse] = useState(false)
+
+	useEffect(() => {
+		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		console.log('rree', isBiconomyLoading, biconomyLoading)
+		console.log('networks 2:', biconomy?.networkId?.toString(), workspacechainId, defaultChainId)
+
+		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && workspacechainId &&
+			biconomy.networkId && biconomy.networkId?.toString() === workspacechainId.toString()) {
+			setIsBiconomyInitialisedDisburse(true)
+		}
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialisedDisburse, workspacechainId])
+
 
 	useEffect(() => {
 		if(safeAddressData) {
@@ -499,13 +520,117 @@ function ViewApplicants() {
 		}
 	}, [phantomWalletConnected])
 
+	const workspaceRegistryContract = useQBContract('workspace', workspacechainId)
+	const { webwallet } = useContext(WebwalletContext)!
+
+	useEffect(() => {
+		console.log()
+	}, [initiateTransactionData])
+
 	const initiateTransaction = async() => {
 		console.log('initiate transaction called')
 		const proposaladdress = await current_safe?.proposeTransactions(grantData?.grants[0].title!, initiateTransactionData, phantomWallet)
-		if(proposaladdress) {
-			setProposalAddr(proposaladdress.toString())
+		console.log('proposal address', proposaladdress)
+		if(!proposaladdress) {
+			throw new Error('No proposal address found!')
 		}
+
+		setProposalAddr(proposaladdress?.toString())
+		disburseRewardFromSafe(proposaladdress?.toString())
+			.then(() => {
+				console.log('Sent transaction to contract - realms')
+			})
+			.catch((err) => {
+				console.log('realms sending transction error:', err)
+			})
 	}
+
+	const disburseRewardFromSafe = useCallback(async(proposaladdress: string) => {
+		console.log(workspacechainId)
+		if(!workspacechainId) {
+			return
+		}
+
+		// setCallOnContractChange(false)
+		try {
+			// if(activeChain?.id !== daoNetwork?.id) {
+			// 	console.log('switching')
+			// 	// await switchNetworkAsync!(daoNetwork?.id)
+			// 	console.log('create workspace again on contract object update')
+			// 	setCallOnContractChange(true)
+			// 	setTimeout(() => {
+			// 		if(callOnContractChange && activeChain?.id !== daoNetwork?.id) {
+			// 			setCallOnContractChange(false)
+			// 			throw new Error('Error switching network')
+			// 		}
+			// 	}, 60000)
+			// 	return
+			// }
+
+			// console.log('creating workspace', accountData!.address)
+
+			if(!workspacechainId) {
+				throw new Error('No network specified')
+			}
+
+			if(!proposaladdress) {
+				throw new Error('No proposal Address specified')
+			}
+
+			if(!initiateTransactionData) {
+				throw new Error('No data provided!')
+			}
+
+			if(!workspace) {
+				throw new Error('No workspace found!')
+			}
+
+			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
+				return
+			}
+
+			const methodArgs = [
+				initiateTransactionData.map((element: any) => (parseInt(element.applicationId, 16))),
+				initiateTransactionData.map((element: any) => (parseInt(element.selectedMilestone, 16))),
+				'0x9C910261B77bEeaa84289D098EbD309Ec748E9EF',
+				'nonEvmAssetAddress-toBeChanged',
+				initiateTransactionData.map((element: any) => (ethers.utils.parseEther(element.amount.toString()))),
+				workspace.id,
+				proposaladdress
+			]
+
+			console.log('methodArgs', methodArgs)
+
+			const transactionHash = await sendGaslessTransaction(
+				biconomy,
+				workspaceRegistryContract,
+				'disburseRewardFromSafe',
+				methodArgs,
+				workspaceRegistryContract.address,
+				biconomyWalletClient,
+				scwAddress,
+				webwallet,
+				`${workspacechainId}`,
+				bicoDapps[workspacechainId.toString()].webHookId,
+				nonce
+			)
+
+			if(!transactionHash) {
+				return
+			}
+
+			const { txFee, receipt } = await getTransactionDetails(transactionHash, workspacechainId.toString())
+
+			console.log('txFee', txFee)
+
+			console.log('fdsao')
+			await chargeGas(Number(workspace.id), Number(txFee))
+
+		} catch(e) {
+			console.log('disburse error', e)
+		}
+	}, [workspace, biconomyWalletClient, workspacechainId, biconomy, workspaceRegistryContract, scwAddress, webwallet, nonce, initiateTransactionData, proposalAddr])
+
 
 	const onChangeRecepientDetails = (applicationId:any, fieldName: string, fieldValue:any) => {
 		console.log('onChangeRecepientDetails', applicationId, fieldName, fieldValue)
