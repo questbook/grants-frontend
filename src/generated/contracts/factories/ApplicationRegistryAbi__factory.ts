@@ -248,19 +248,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "applicationReviewReg",
-    outputs: [
-      {
-        internalType: "contract IApplicationReviewRegistry",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "uint96",
@@ -338,29 +325,6 @@ const _abi = [
       },
     ],
     name: "approveMilestone",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint96[]",
-        name: "_applicationIds",
-        type: "uint96[]",
-      },
-      {
-        internalType: "enum ApplicationRegistry.ApplicationState[]",
-        name: "_applicationStates",
-        type: "uint8[]",
-      },
-      {
-        internalType: "uint96",
-        name: "_workspaceId",
-        type: "uint96",
-      },
-    ],
-    name: "batchUpdateApplicationState",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -485,19 +449,6 @@ const _abi = [
       },
     ],
     name: "requestMilestoneApproval",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract IApplicationReviewRegistry",
-        name: "_applicationReviewReg",
-        type: "address",
-      },
-    ],
-    name: "setApplicationReviewReg",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

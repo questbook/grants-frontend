@@ -46,19 +46,6 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
-        internalType: "uint8",
-        name: "version",
-        type: "uint8",
-      },
-    ],
-    name: "Initialized",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
         indexed: true,
         internalType: "address",
         name: "previousOwner",
@@ -168,12 +155,6 @@ const _abi = [
         internalType: "uint96",
         name: "_reviewId",
         type: "uint96",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "_reviewerAddress",
-        type: "address",
       },
       {
         indexed: false,
@@ -303,24 +284,6 @@ const _abi = [
     type: "event",
   },
   {
-    inputs: [
-      {
-        internalType: "uint96",
-        name: "_applicationId",
-        type: "uint96",
-      },
-      {
-        internalType: "address",
-        name: "_grantAddress",
-        type: "address",
-      },
-    ],
-    name: "appendToApplicationList",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "applicationReg",
     outputs: [
@@ -328,30 +291,6 @@ const _abi = [
         internalType: "contract IApplicationRegistry",
         name: "",
         type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    name: "applicationsToGrant",
-    outputs: [
-      {
-        internalType: "uint96",
-        name: "",
-        type: "uint96",
       },
     ],
     stateMutability: "view",
@@ -386,29 +325,6 @@ const _abi = [
       },
     ],
     name: "assignReviewers",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint96",
-        name: "_workspaceId",
-        type: "uint96",
-      },
-      {
-        internalType: "uint96",
-        name: "_applicationId",
-        type: "uint96",
-      },
-      {
-        internalType: "address",
-        name: "_grantAddress",
-        type: "address",
-      },
-    ],
-    name: "assignReviewersRoundRobin",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -494,30 +410,6 @@ const _abi = [
         name: "rubricsMetadataHash",
         type: "string",
       },
-      {
-        internalType: "uint96",
-        name: "numOfReviewersPerApplication",
-        type: "uint96",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_grantAddress",
-        type: "address",
-      },
-    ],
-    name: "hasAutoAssigningEnabled",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
     ],
     stateMutability: "view",
     type: "function",
@@ -527,44 +419,6 @@ const _abi = [
     name: "initialize",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    name: "isAutoAssigningEnabled",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    name: "lastAssignedReviewerIndices",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -683,54 +537,6 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    name: "reviewerAssignmentCounts",
-    outputs: [
-      {
-        internalType: "uint96",
-        name: "",
-        type: "uint96",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    name: "reviewers",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-      {
         internalType: "uint96",
         name: "",
         type: "uint96",
@@ -829,44 +635,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint96",
-        name: "_workspaceId",
-        type: "uint96",
-      },
-      {
-        internalType: "address",
-        name: "_grantAddress",
-        type: "address",
-      },
-      {
-        internalType: "address[]",
-        name: "_reviewers",
-        type: "address[]",
-      },
-      {
-        internalType: "bool[]",
-        name: "_active",
-        type: "bool[]",
-      },
-      {
-        internalType: "uint96",
-        name: "_numOfReviewersPerApplication",
-        type: "uint96",
-      },
-      {
-        internalType: "string",
-        name: "_rubricMetadataHash",
-        type: "string",
-      },
-    ],
-    name: "setRubricsAndEnableAutoAssign",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "contract IWorkspaceRegistry",
         name: "_workspaceReg",
         type: "address",
@@ -879,11 +647,6 @@ const _abi = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "_reviewerAddress",
-        type: "address",
-      },
       {
         internalType: "uint96",
         name: "_workspaceId",

@@ -345,12 +345,6 @@ const _abi = [
       },
       {
         indexed: false,
-        internalType: "string",
-        name: "longSafeAddress",
-        type: "string",
-      },
-      {
-        indexed: false,
         internalType: "uint256",
         name: "safeChainId",
         type: "uint256",
@@ -482,11 +476,6 @@ const _abi = [
         type: "bytes32",
       },
       {
-        internalType: "string",
-        name: "_longSafeAddress",
-        type: "string",
-      },
-      {
         internalType: "uint256",
         name: "_safeChainId",
         type: "uint256",
@@ -500,14 +489,14 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint96[]",
-        name: "_applicationIds",
-        type: "uint96[]",
+        internalType: "uint96",
+        name: "_applicationId",
+        type: "uint96",
       },
       {
-        internalType: "uint96[]",
-        name: "_milestoneIds",
-        type: "uint96[]",
+        internalType: "uint96",
+        name: "_milestoneId",
+        type: "uint96",
       },
       {
         internalType: "contract IERC20",
@@ -515,9 +504,9 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "uint256[]",
-        name: "_amounts",
-        type: "uint256[]",
+        internalType: "uint256",
+        name: "_amount",
+        type: "uint256",
       },
       {
         internalType: "uint96",
@@ -833,11 +822,6 @@ const _abi = [
         internalType: "bytes32",
         name: "_safeAddress",
         type: "bytes32",
-      },
-      {
-        internalType: "string",
-        name: "_longSafeAddress",
-        type: "string",
       },
       {
         internalType: "uint256",
