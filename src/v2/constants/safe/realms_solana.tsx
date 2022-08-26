@@ -83,7 +83,7 @@ export class Realms_Solana implements Safe {
 
     	for(let i = 0; i < transactions.length; i++) {
     		const ins = SystemProgram.transfer({
-    			fromPubkey: new PublicKey(transactions[i].from),
+    			fromPubkey: nativeTreasury,
     			toPubkey: new PublicKey(transactions[i].to),
     			lamports: transactions[i].amount * 1000000000,
     			programId: this.programId,
@@ -203,7 +203,7 @@ const getSafeDetails = async(realmsPublicKey: String) : Promise<SafeSelectOption
 		console.log('name', realmData.account.name)
 		return {
 			networkType: NetworkType.Solana,
-			networkId: '90001',
+			networkId: 'solana-devnet', // it should be 'solana-mainnet' in the other case.
 			networkName: 'Solana', // Polygon
 			networkIcon: '/network_icons/solana.svg',
 			safeType: 'SPL-GOV', // Gnosis

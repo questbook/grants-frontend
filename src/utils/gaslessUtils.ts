@@ -44,9 +44,11 @@ export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } }
 }
 
 export const networksMapping: { [key: string]: string } = {
-	'137': '137',
+	'137': '5',
 	'5': '5',
-	'4': '5'
+	'4': '5',
+	'solana-devnet': '5',
+	'solana-mainnet': '5'
 }
 
 export const signNonce = async(webwallet: Wallet, nonce: string) => {
