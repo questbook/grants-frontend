@@ -138,7 +138,7 @@ function ApplicantForm() {
 		if(txn) {
 			setState(undefined)
 			router.replace({
-				pathname: '/your_grants/view_applicants',
+				pathname: '/v2/your_grants/view_applicants',
 				query: {
 					grantId: applicationData?.grant?.id,
 				},

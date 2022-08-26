@@ -1,5 +1,5 @@
 import React, {
-	ReactElement, useCallback, useContext, useEffect, useState,
+	ReactElement, useCallback, useContext, useEffect, useMemo, useState,
 } from 'react'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import {
@@ -21,12 +21,16 @@ import {
 	useGetGrantDetailsQuery,
 	useGetSafeForAWorkspaceQuery,
 } from 'src/generated/graphql'
+import useQBContract from 'src/hooks/contracts/useQBContract'
+import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
-import { formatAddress, formatAmount } from 'src/utils/formattingUtils'
+import { formatAddress, formatAmount, getFieldString } from 'src/utils/formattingUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -52,9 +56,6 @@ import StatsBanner from 'src/v2/payouts/StatsBanner'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
 import getProposalUrl from 'src/v2/utils/phantomUtils'
-import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
-import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
-import useQBContract from 'src/hooks/contracts/useQBContract'
 
 const PAGE_SIZE = 500
 
@@ -125,9 +126,7 @@ function ViewApplicants() {
 	useEffect(() => {
 		if(safeAddressData) {
 			const { workspaceSafes } = safeAddressData
-			console.log("workspaceSafes", workspaceSafes);
-			const safeAddress = workspaceSafes[0].address
-			console.log('safeAddress', safeAddress)
+			const safeAddress = workspaceSafes[0]?.address
 			setWorkspaceSafe(safeAddress)
 		}
 	}, [safeAddressData])
@@ -249,7 +248,6 @@ function ViewApplicants() {
 		console.log('fetch', data)
 		if(data && data.grantApplications.length) {
 			const fetchedApplicantsData = data.grantApplications.map((applicant) => {
-				const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
 				let decimal
 				let label
 				let icon
@@ -281,20 +279,20 @@ function ViewApplicants() {
 				return {
 					grantTitle: applicant?.grant?.title,
 					applicationId: applicant.id,
-					applicantName: getFieldString('applicantName'),
-					applicantEmail: getFieldString('applicantEmail'),
-					applicant_address: applicant.applicantId ?? getFieldString('applicantAddress'),
+					applicantName: getFieldString(applicant, 'applicantName'),
+					applicantEmail: getFieldString(applicant, 'applicantEmail'),
+					applicant_address: getFieldString(applicant, 'applicantAddress'),
 					sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
 					updated_on: moment.unix(applicant.updatedAtS).format('DD MMM YYYY'),
 					// applicant_name: getFieldString('applicantName'),
-					project_name: getFieldString('projectName'),
+					project_name: getFieldString(applicant, 'projectName'),
 					funding_asked: {
 						// amount: formatAmount(
 						//   getFieldString('fundingAsk') || '0',
 						// ),
 						amount:
-							applicant && getFieldString('fundingAsk') ? formatAmount(
-								getFieldString('fundingAsk')!,
+							applicant && getFieldString(applicant, 'fundingAsk') ? formatAmount(
+								getFieldString(applicant, 'fundingAsk')!,
 								decimal || 18,
 							) : '1',
 						symbol: label,
@@ -350,20 +348,19 @@ function ViewApplicants() {
 		if(reviewData.data && reviewData.data.grantApplications.length) {
 			console.log('Reviewer Applications: ', reviewData.data)
 			const fetchedApplicantsData = reviewData.data.grantApplications.map((applicant) => {
-				const getFieldString = (name: string) => applicant.fields.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
 				return {
 					grantTitle: applicant?.grant?.title,
 					applicationId: applicant.id,
-					applicant_address: applicant.applicantId,
+					applicant_address: getFieldString(applicant, 'applicantAddress'),
 					sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
-					project_name: getFieldString('projectName'),
+					project_name: getFieldString(applicant, 'projectName'),
 					funding_asked: {
 						// amount: formatAmount(
 						//   getFieldString('fundingAsk') || '0',
 						// ),
 						amount:
-							applicant && getFieldString('fundingAsk') ? formatAmount(
-								getFieldString('fundingAsk')!,
+							applicant && getFieldString(applicant, 'fundingAsk') ? formatAmount(
+								getFieldString(applicant, 'fundingAsk')!,
 								CHAIN_INFO[
 									getSupportedChainIdFromSupportedNetwork(
 										applicant.grant.workspace.supportedNetworks[0],
@@ -473,7 +470,11 @@ function ViewApplicants() {
 	const chainId = 9000001 // get your safe chain ID, currently on solana
 	// const current_safe = supported_safes.getSafeByChainId(chainId) //current_safe has the stored safe address
 
-	const current_safe = new Realms_Solana(workspaceSafe ?? '')
+	const current_safe = useMemo(() => {
+		if(isPlausibleSolanaAddress(workspaceSafe)) {
+			return new Realms_Solana(workspaceSafe)
+		}
+	}, [workspaceSafe])
 
 	//checking if the realm address is valid
 
@@ -519,7 +520,7 @@ function ViewApplicants() {
 		}
 	}, [phantomWalletConnected])
 
-	const workspaceRegistryContract = useQBContract('workspace', workspacechainId);
+	const workspaceRegistryContract = useQBContract('workspace', workspacechainId)
 	const { webwallet } = useContext(WebwalletContext)!
 
 	useEffect(() => {
@@ -529,12 +530,19 @@ function ViewApplicants() {
 	const initiateTransaction = async() => {
 		console.log('initiate transaction called')
 		const proposaladdress = await current_safe?.proposeTransactions(grantData?.grants[0].title!, initiateTransactionData, phantomWallet)
-		console.log("proposal address", proposaladdress);
+		console.log('proposal address', proposaladdress)
+		if(!proposaladdress) {
+			throw new Error('No proposal address found!')
+		}
 
 		setProposalAddr(proposaladdress?.toString())
 		disburseRewardFromSafe(proposaladdress?.toString())
-		.then(() => {console.log("Sent transaction to contract - realms")})
-		.catch((err) => {console.log("realms sending transction error:", err)});
+			.then(() => {
+				console.log('Sent transaction to contract - realms')
+			})
+			.catch((err) => {
+				console.log('realms sending transction error:', err)
+			})
 	}
 
 	const disburseRewardFromSafe = useCallback(async(proposaladdress: string) => {
@@ -558,23 +566,23 @@ function ViewApplicants() {
 			// 	}, 60000)
 			// 	return
 			// }
-			
+
 			// console.log('creating workspace', accountData!.address)
 
 			if(!workspacechainId) {
 				throw new Error('No network specified')
 			}
 
-			if(!proposaladdress){
-				throw new Error('No proposal Address specified');
+			if(!proposaladdress) {
+				throw new Error('No proposal Address specified')
 			}
 
-			if(!initiateTransactionData){
-				throw new Error('No data provided!');
+			if(!initiateTransactionData) {
+				throw new Error('No data provided!')
 			}
 
-			if(!workspace){
-				throw new Error('No workspace found!');
+			if(!workspace) {
+				throw new Error('No workspace found!')
 			}
 
 			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
@@ -584,14 +592,14 @@ function ViewApplicants() {
 			const methodArgs = [
 				initiateTransactionData.map((element: any) => (parseInt(element.applicationId, 16))),
 				initiateTransactionData.map((element: any) => (parseInt(element.selectedMilestone, 16))),
-				"0x9C910261B77bEeaa84289D098EbD309Ec748E9EF",
-				"nonEvmAssetAddress-toBeChanged",
+				'0x9C910261B77bEeaa84289D098EbD309Ec748E9EF',
+				'nonEvmAssetAddress-toBeChanged',
 				initiateTransactionData.map((element: any) => (ethers.utils.parseEther(element.amount.toString()))),
 				workspace.id,
 				proposaladdress
 			]
 
-			console.log("methodArgs", methodArgs);
+			console.log('methodArgs', methodArgs)
 
 			const transactionHash = await sendGaslessTransaction(
 				biconomy,
@@ -619,7 +627,7 @@ function ViewApplicants() {
 			await chargeGas(Number(workspace.id), Number(txFee))
 
 		} catch(e) {
-			console.log("disburse error", e);
+			console.log('disburse error', e)
 		}
 	}, [workspace, biconomyWalletClient, workspacechainId, biconomy, workspaceRegistryContract, scwAddress, webwallet, nonce, initiateTransactionData, proposalAddr])
 

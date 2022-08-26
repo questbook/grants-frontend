@@ -13,6 +13,7 @@ const URL_SUFFIX = '/balances/usd'
 const SAFES_BALANCES_CHAIN_ID = Object.keys(SAFES_ENPOINTS)
 const SAFES_BALANCES_ENPOINTS = Object.values(SAFES_ENPOINTS)
 const USD_BALANCE_THRESHOLD = 50
+const DEFAULT_ERROR_MESSAGE = "Couldn't fetch data"
 
 interface Props {
     safeAddress: string
@@ -35,12 +36,14 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 		return SAFES_BALANCES_ENPOINTS.map(element => element + URL_PREFIX + safeAddress + URL_SUFFIX)
 	}, [safeAddress])
 
-	const { data: gnosisRawData, error, loaded } = useAxiosMulti({
+	const { data: gnosisRawData, error: gnosisError, loaded: gnosisLoaded } = useAxiosMulti({
 		urls: gnosisUrls,
 		method: 'get'
 	})
 
 	const [splGovSafe, setSplGovSafe] = useState<SafeSelectOption | null>(null)
+	const [splGovLoaded, setSplGovLoaded] = useState(false)
+	const [splGovError, setSplGovError] = useState('')
 
 	const [gnosisData, setGnosisData] = useState<SafeSelectOption[]>([])
 
@@ -54,8 +57,27 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 
 	useEffect(() => {
 		(async() => {
-			const newSplGovSafe = await getSafeDetails(safeAddress)
-			setSplGovSafe(newSplGovSafe)
+			setSplGovLoaded(false)
+			try {
+				const newSplGovSafe = await getSafeDetails(safeAddress)
+				setSplGovSafe(newSplGovSafe)
+				setSplGovError('')
+			} catch(error: any) {
+				console.log(error)
+				if(typeof error === 'string') {
+					setSplGovError(error)
+				}
+
+				if(typeof error?.message === 'string') {
+					setSplGovError(error.message)
+				} else {
+					setSplGovError(DEFAULT_ERROR_MESSAGE)
+				}
+
+				setSplGovSafe(null)
+			}
+
+			setSplGovLoaded(true)
 		})()
 	}, [safeAddress])
 
@@ -64,7 +86,7 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 	}
 
 	useEffect(() => {
-		if(loaded && !error) {
+		if(gnosisLoaded && !gnosisError) {
 			const newData: SafeSelectOption[] = []
 			gnosisRawData.forEach((allTokensData: AllTokensData, index) => {
 				const currentChainID = SAFES_BALANCES_CHAIN_ID[index] as unknown as ValidChainID
@@ -85,9 +107,9 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 			console.log('Final Safe', newData)
 			setGnosisData(newData)
 		}
-	}, [gnosisRawData, loaded, error])
+	}, [gnosisRawData, gnosisLoaded, gnosisError])
 
-	return { error, loaded, data }
+	return { gnosisError, splGovError, loaded: gnosisLoaded && splGovLoaded, data }
 }
 
 export default useSafeUSDBalances

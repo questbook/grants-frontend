@@ -39,6 +39,7 @@ import NavbarLayout from 'src/layout/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
 import {
 	formatAmount,
+	getFieldString,
 	getFormattedDateFromUnixTimestampWithYear,
 } from 'src/utils/formattingUtils'
 import useApplicationMilestones from 'src/utils/queryUtil'
@@ -82,14 +83,6 @@ function ManageGrant() {
 		refetch: refetchMilestones,
 	} = useApplicationMilestones(applicationID)
 
-	useEffect(() => {
-		console.log(decimals)
-	}, [decimals])
-
-	useEffect(() => {
-		console.log('milestones', milestones)
-	}, [milestones])
-
 	const {
 		data: appDetailsResult,
 		refetch: refetchApplicationDetails,
@@ -119,9 +112,12 @@ function ManageGrant() {
 
 	const [applicationData, setApplicationData] = useState<GetApplicationDetailsQuery['grantApplication']>(null)
 	const applicantEmail = useMemo(
-		() => applicationData?.fields.find(
-			(field) => field.id.includes('applicantEmail'),
-		)?.values[0]?.value,
+		() => getFieldString(applicationData, 'applicantEmail'),
+		[applicationData],
+	)
+
+	const applicantAddress = useMemo(
+		() => getFieldString(applicationData, 'applicantAddress'),
 		[applicationData],
 	)
 
@@ -331,26 +327,30 @@ Click on ‘Decrypt’ to view the details.
 					direction="row"
 					justify="start"
 					align="baseline">
-					<Text
-						key="address"
-						variant="applicationText">
+					{
+						applicantAddress && (
+							<Text
+								key="address"
+								variant="applicationText">
             By
-						{' '}
-						<Tooltip label={applicationData?.applicantId}>
-							<Box
-								as="span"
-								fontWeight="700"
-								display="inline-block">
-								{`${applicationData?.applicantId?.substring(0, 6)}...`}
-							</Box>
-						</Tooltip>
-						<Flex
-							display="inline-block"
-							ml={2}>
-							<CopyIcon text={applicationData?.applicantId!} />
-						</Flex>
-					</Text>
-					<Box mr={6} />
+								{' '}
+								<Tooltip label={applicantAddress}>
+									<Box
+										as="span"
+										fontWeight="700"
+										display="inline-block">
+										{`${applicantAddress?.substring(0, 6)}...`}
+									</Box>
+								</Tooltip>
+								<Flex
+									display="inline-block"
+									ml={2}>
+									<CopyIcon text={applicantAddress} />
+								</Flex>
+							</Text>
+						)
+					}
+					{applicantAddress && <Box mr={6} />}
 					<Text
 						key="mail_text"
 						fontWeight="400">
