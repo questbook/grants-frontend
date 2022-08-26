@@ -500,7 +500,7 @@ function ViewApplicants() {
 
 	// const supported_safes = new SupportedSafes(workspaceSafe)
 	// const chainId = 4 // get your safe chain ID, currently on solana
-	const isEvmChain = workspaceSafeChainId !== 9000001 ? true : false
+	const isEvmChain = workspaceSafeChainId !== 900001 ? true : false
 
 	const current_safe = useMemo(() => {
 		if(isEvmChain) {
