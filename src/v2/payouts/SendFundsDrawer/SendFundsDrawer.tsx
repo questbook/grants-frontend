@@ -246,7 +246,8 @@ function SendFundsDrawer({
 								<SafeOwner
 									isEvmChain={isEvmChain}
 									phantomWallet={phantomWallet}
-									signerVerified={signerVerified} />
+									signerVerified={signerVerified}
+									gnosisSafeAddress={safeAddress} />
 							)
 						}
 
