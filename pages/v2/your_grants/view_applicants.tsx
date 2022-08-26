@@ -54,6 +54,7 @@ import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvalua
 import getProposalUrl from 'src/v2/utils/phantomUtils'
 import { erc20ABI, useAccount, useConnect, useDisconnect } from 'wagmi'
 import { SupportedSafes } from 'src/v2/constants/safe/supported_safes'
+import getGnosisTansactionLink from 'src/v2/utils/gnosisUtils'
 
 
 const PAGE_SIZE = 500
@@ -558,7 +559,7 @@ function ViewApplicants() {
 		} else {
 			setSignerVerififed(false)
 		}
-	}, [phantomWalletConnected])
+	}, [phantomWalletConnected, isConnected])
 
 	const initiateTransaction = async() => {
 		console.log('initiate transaction called')
@@ -566,6 +567,8 @@ function ViewApplicants() {
 			console.log('transactions initiated --> ', gnosisReadyToExecuteTxns)
 			const readyToExecuteTxs = createEVMMetaTransactions()
 			const result = await current_safe?.createMultiTransaction(readyToExecuteTxs, SAFE_ADDRESS)
+			console.log('Proposed transaction', result)
+			setProposalAddr('created')
 		} else {
 			const proposaladdress = await current_safe?.proposeTransactions(grantData?.grants[0].title, initiateTransactionData, phantomWallet)
 			setProposalAddr(proposaladdress?.toString())
@@ -986,7 +989,7 @@ function ViewApplicants() {
 					phantomWallet={phantomWallet}
 					setPhantomWalletConnected={setPhantomWalletConnected}
 					isEvmChain={isEvmChain}
-					current_safe={current_safe}
+					current_safe={current_safe!}
 					signerVerified={signerVerified}
 					initiateTransaction={initiateTransaction}
 					initiateTransactionData={initiateTransactionData}
@@ -999,7 +1002,7 @@ function ViewApplicants() {
 					isOpen={txnInitModalIsOpen && proposalAddr ? true : false}
 					onClose={onModalClose}
 					onComplete={() => setTxnInitModalIsOpen(false)}
-					proposalUrl={isEvmChain ? '' : getProposalUrl(current_safe?.id?.toString()!, proposalAddr)}
+					proposalUrl={isEvmChain ? getGnosisTansactionLink(current_safe?.id!, current_safe?.chainId) : getProposalUrl(current_safe?.id?.toString()!, proposalAddr)}
 				/>
 
 				<SendFundsDrawer

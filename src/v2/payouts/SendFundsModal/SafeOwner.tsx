@@ -4,7 +4,7 @@ import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/
 import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
 import ConnectWalletButton from 'src/v2/components/ConnectWalletModal/ConnectWalletButton'
-import { useConnect } from 'wagmi'
+import { useAccount, useConnect } from 'wagmi'
 
 const availableWallets = [{
 	name: 'Metamask',
@@ -40,6 +40,7 @@ interface Props {
 
 const SafeOwner = ({ isEvmChain, phantomWallet, signerVerified }: Props) => {
 	const { connect, connectors } = useConnect()
+	const { address, isConnected } = useAccount()
 	if(!signerVerified) {
 		return (
 			<>
@@ -127,7 +128,7 @@ const SafeOwner = ({ isEvmChain, phantomWallet, signerVerified }: Props) => {
 				fontWeight='400'
 				textAlign={'center'}
 			>
-				{isEvmChain ? '' : phantomWallet.publicKey?.toString()}
+				{isEvmChain ? address : phantomWallet.publicKey?.toString()}
 			</Text>
 		</>
 	)
