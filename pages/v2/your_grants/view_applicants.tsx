@@ -115,12 +115,7 @@ function ViewApplicants() {
 		},
 	})
 
-	const [realmsQueryParams, setRealmsQueryParams] = useState<any>({
-		client:
-      subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-      ].client,
-	})
+	const [realmsQueryParams, setRealmsQueryParams] = useState<any>({ client })
 
 	useEffect(() => {
 		if(!grantID) {
@@ -128,8 +123,7 @@ function ViewApplicants() {
 		}
 
 		setRealmsQueryParams({
-			client:
-        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+			client,
 			variables: { grantID: grantID },
 		})
 
@@ -147,7 +141,7 @@ function ViewApplicants() {
 		// @sourav - use the transactionHash here
 		// this is the transction hash of the first fundTransfer object. If you need more info
 		// you can extract them as well
-		const transactionHash = realmsFundTransferData.grants[0].fundTransfers[0].transactionHash
+		const transactionHash = realmsFundTransferData.grants[0]?.fundTransfers[0]?.transactionHash
 
 	}, [realmsFundTransferData])
 
