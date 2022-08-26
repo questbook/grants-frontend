@@ -345,6 +345,12 @@ const _abi = [
       },
       {
         indexed: false,
+        internalType: "string",
+        name: "longSafeAddress",
+        type: "string",
+      },
+      {
+        indexed: false,
         internalType: "uint256",
         name: "safeChainId",
         type: "uint256",
@@ -476,12 +482,50 @@ const _abi = [
         type: "bytes32",
       },
       {
+        internalType: "string",
+        name: "_longSafeAddress",
+        type: "string",
+      },
+      {
         internalType: "uint256",
         name: "_safeChainId",
         type: "uint256",
       },
     ],
     name: "createWorkspace",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint96[]",
+        name: "_applicationIds",
+        type: "uint96[]",
+      },
+      {
+        internalType: "uint96[]",
+        name: "_milestoneIds",
+        type: "uint96[]",
+      },
+      {
+        internalType: "contract IERC20",
+        name: "_erc20Interface",
+        type: "address",
+      },
+      {
+        internalType: "uint256[]",
+        name: "_amounts",
+        type: "uint256[]",
+      },
+      {
+        internalType: "uint96",
+        name: "_workspaceId",
+        type: "uint96",
+      },
+    ],
+    name: "disburseRewardFromSafe",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -822,6 +866,11 @@ const _abi = [
         internalType: "bytes32",
         name: "_safeAddress",
         type: "bytes32",
+      },
+      {
+        internalType: "string",
+        name: "_longSafeAddress",
+        type: "string",
       },
       {
         internalType: "uint256",

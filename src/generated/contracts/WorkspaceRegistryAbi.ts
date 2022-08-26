@@ -44,6 +44,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   functions: {
     "anonAuthoriserAddress()": FunctionFragment;
     "apiFlagForWorkspaceId(uint96,uint8)": FunctionFragment;
+    "apiFlagForWorkspaceId(uint96,uint8)": FunctionFragment;
     "applicationReg()": FunctionFragment;
     "createInviteLink(uint96,uint8,address)": FunctionFragment;
     "createWorkspace(string,bytes32,uint256)": FunctionFragment;
@@ -64,7 +65,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "updateAnonAuthoriserAddress(address)": FunctionFragment;
     "updateWorkspaceMembers(uint96,address[],uint8[],bool[],string[])": FunctionFragment;
     "updateWorkspaceMetadata(uint96,string)": FunctionFragment;
-    "updateWorkspaceSafe(uint96,bytes32,uint256)": FunctionFragment;
+    "updateWorkspaceSafe(uint96,bytes32,string,uint256)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
     "workspaceCount()": FunctionFragment;
@@ -75,9 +76,11 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "anonAuthoriserAddress"
       | "apiFlagForWorkspaceId"
+      | "apiFlagForWorkspaceId"
       | "applicationReg"
       | "createInviteLink"
       | "createWorkspace"
+      | "disburseRewardFromSafe"
       | "disburseRewardFromSafe"
       | "disburseRewardP2P"
       | "initialize"
@@ -105,6 +108,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "anonAuthoriserAddress",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "apiFlagForWorkspaceId",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "apiFlagForWorkspaceId",
@@ -217,6 +224,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BytesLike>,
+      PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>
     ]
   ): string;
@@ -246,6 +254,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "apiFlagForWorkspaceId",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "applicationReg",
     data: BytesLike
   ): Result;
@@ -255,6 +267,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "createWorkspace",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "disburseRewardFromSafe",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -330,6 +346,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "BeaconUpgraded(address)": EventFragment;
     "DisburseReward(uint96,uint96,address,address,uint256,bool,uint256)": EventFragment;
     "DisburseRewardFromSafe(uint96,uint96,address,address,uint256,bool,uint256)": EventFragment;
+    "DisburseRewardFromSafe(uint96,uint96,address,address,uint256,bool,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Paused(address)": EventFragment;
@@ -338,13 +355,14 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "WorkspaceCreated(uint96,address,string,uint256)": EventFragment;
     "WorkspaceMemberUpdated(uint96,address,uint8,bool,string,uint256)": EventFragment;
     "WorkspaceMembersUpdated(uint96,address[],uint8[],bool[],string[],uint256)": EventFragment;
-    "WorkspaceSafeUpdated(uint96,bytes32,uint256,uint256)": EventFragment;
+    "WorkspaceSafeUpdated(uint96,bytes32,string,uint256,uint256)": EventFragment;
     "WorkspaceUpdated(uint96,address,string,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DisburseReward"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DisburseRewardFromSafe"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DisburseRewardFromSafe"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
@@ -394,6 +412,23 @@ export type DisburseRewardEvent = TypedEvent<
 >;
 
 export type DisburseRewardEventFilter = TypedEventFilter<DisburseRewardEvent>;
+
+export interface DisburseRewardFromSafeEventObject {
+  applicationId: BigNumber;
+  milestoneId: BigNumber;
+  asset: string;
+  sender: string;
+  amount: BigNumber;
+  isP2P: boolean;
+  time: BigNumber;
+}
+export type DisburseRewardFromSafeEvent = TypedEvent<
+  [BigNumber, BigNumber, string, string, BigNumber, boolean, BigNumber],
+  DisburseRewardFromSafeEventObject
+>;
+
+export type DisburseRewardFromSafeEventFilter =
+  TypedEventFilter<DisburseRewardFromSafeEvent>;
 
 export interface DisburseRewardFromSafeEventObject {
   applicationId: BigNumber;
@@ -501,11 +536,12 @@ export type WorkspaceMembersUpdatedEventFilter =
 export interface WorkspaceSafeUpdatedEventObject {
   id: BigNumber;
   safeAddress: string;
+  longSafeAddress: string;
   safeChainId: BigNumber;
   time: BigNumber;
 }
 export type WorkspaceSafeUpdatedEvent = TypedEvent<
-  [BigNumber, string, BigNumber, BigNumber],
+  [BigNumber, string, string, BigNumber, BigNumber],
   WorkspaceSafeUpdatedEventObject
 >;
 
@@ -561,6 +597,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    apiFlagForWorkspaceId(
+      workspaceId: PromiseOrValue<BigNumberish>,
+      role: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     applicationReg(overrides?: CallOverrides): Promise<[string]>;
 
     createInviteLink(
@@ -573,6 +615,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     createWorkspace(
       _metadataHash: PromiseOrValue<string>,
       _safeAddress: PromiseOrValue<BytesLike>,
+      _longSafeAddress: PromiseOrValue<string>,
       _safeChainId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -674,6 +717,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     updateWorkspaceSafe(
       _id: PromiseOrValue<BigNumberish>,
       _safeAddress: PromiseOrValue<BytesLike>,
+      _longSafeAddress: PromiseOrValue<string>,
       _safeChainId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -712,6 +756,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  apiFlagForWorkspaceId(
+    workspaceId: PromiseOrValue<BigNumberish>,
+    role: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   applicationReg(overrides?: CallOverrides): Promise<string>;
 
   createInviteLink(
@@ -724,6 +774,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
   createWorkspace(
     _metadataHash: PromiseOrValue<string>,
     _safeAddress: PromiseOrValue<BytesLike>,
+    _longSafeAddress: PromiseOrValue<string>,
     _safeChainId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -825,6 +876,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
   updateWorkspaceSafe(
     _id: PromiseOrValue<BigNumberish>,
     _safeAddress: PromiseOrValue<BytesLike>,
+    _longSafeAddress: PromiseOrValue<string>,
     _safeChainId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -863,6 +915,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    apiFlagForWorkspaceId(
+      workspaceId: PromiseOrValue<BigNumberish>,
+      role: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     applicationReg(overrides?: CallOverrides): Promise<string>;
 
     createInviteLink(
@@ -875,6 +933,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     createWorkspace(
       _metadataHash: PromiseOrValue<string>,
       _safeAddress: PromiseOrValue<BytesLike>,
+      _longSafeAddress: PromiseOrValue<string>,
       _safeChainId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -968,6 +1027,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     updateWorkspaceSafe(
       _id: PromiseOrValue<BigNumberish>,
       _safeAddress: PromiseOrValue<BytesLike>,
+      _longSafeAddress: PromiseOrValue<string>,
       _safeChainId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1033,6 +1093,25 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       isP2P?: null,
       time?: null
     ): DisburseRewardEventFilter;
+
+    "DisburseRewardFromSafe(uint96,uint96,address,address,uint256,bool,uint256)"(
+      applicationId?: PromiseOrValue<BigNumberish> | null,
+      milestoneId?: null,
+      asset?: null,
+      sender?: null,
+      amount?: null,
+      isP2P?: null,
+      time?: null
+    ): DisburseRewardFromSafeEventFilter;
+    DisburseRewardFromSafe(
+      applicationId?: PromiseOrValue<BigNumberish> | null,
+      milestoneId?: null,
+      asset?: null,
+      sender?: null,
+      amount?: null,
+      isP2P?: null,
+      time?: null
+    ): DisburseRewardFromSafeEventFilter;
 
     "DisburseRewardFromSafe(uint96,uint96,address,address,uint256,bool,uint256)"(
       applicationId?: PromiseOrValue<BigNumberish> | null,
@@ -1125,15 +1204,17 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       time?: null
     ): WorkspaceMembersUpdatedEventFilter;
 
-    "WorkspaceSafeUpdated(uint96,bytes32,uint256,uint256)"(
+    "WorkspaceSafeUpdated(uint96,bytes32,string,uint256,uint256)"(
       id?: PromiseOrValue<BigNumberish> | null,
       safeAddress?: null,
+      longSafeAddress?: null,
       safeChainId?: null,
       time?: null
     ): WorkspaceSafeUpdatedEventFilter;
     WorkspaceSafeUpdated(
       id?: PromiseOrValue<BigNumberish> | null,
       safeAddress?: null,
+      longSafeAddress?: null,
       safeChainId?: null,
       time?: null
     ): WorkspaceSafeUpdatedEventFilter;
@@ -1161,6 +1242,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    apiFlagForWorkspaceId(
+      workspaceId: PromiseOrValue<BigNumberish>,
+      role: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     applicationReg(overrides?: CallOverrides): Promise<BigNumber>;
 
     createInviteLink(
@@ -1173,6 +1260,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     createWorkspace(
       _metadataHash: PromiseOrValue<string>,
       _safeAddress: PromiseOrValue<BytesLike>,
+      _longSafeAddress: PromiseOrValue<string>,
       _safeChainId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1274,6 +1362,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     updateWorkspaceSafe(
       _id: PromiseOrValue<BigNumberish>,
       _safeAddress: PromiseOrValue<BytesLike>,
+      _longSafeAddress: PromiseOrValue<string>,
       _safeChainId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1308,6 +1397,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    apiFlagForWorkspaceId(
+      workspaceId: PromiseOrValue<BigNumberish>,
+      role: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     applicationReg(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     createInviteLink(
@@ -1320,6 +1415,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     createWorkspace(
       _metadataHash: PromiseOrValue<string>,
       _safeAddress: PromiseOrValue<BytesLike>,
+      _longSafeAddress: PromiseOrValue<string>,
       _safeChainId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -1421,6 +1517,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     updateWorkspaceSafe(
       _id: PromiseOrValue<BigNumberish>,
       _safeAddress: PromiseOrValue<BytesLike>,
+      _longSafeAddress: PromiseOrValue<string>,
       _safeChainId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

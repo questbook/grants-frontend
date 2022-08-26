@@ -221,6 +221,7 @@ export type FundsTransfer = {
 export enum FundsTransferType {
   FundsDeposited = 'funds_deposited',
   FundsDisbursed = 'funds_disbursed',
+  FundsDisbursedFromSafe = 'funds_disbursed_from_safe',
   FundsWithdrawn = 'funds_withdrawn',
   ReviewPaymentDone = 'review_payment_done'
 }
@@ -3544,6 +3545,8 @@ export type WorkspaceMember = {
   fullName?: Maybe<Scalars['String']>;
   /** Globally unique ID of the member */
   id: Scalars['ID'];
+  /** Last known hash of the TX made by this user */
+  lastKnownTxHash: Scalars['Bytes'];
   /** Timestamp of when the last review was done */
   lastReviewSubmittedAt: Scalars['Int'];
   /** The review IDs for which this member is owed a payment */
@@ -3656,6 +3659,12 @@ export type WorkspaceMember_Filter = {
   id_lte?: InputMaybe<Scalars['ID']>;
   id_not?: InputMaybe<Scalars['ID']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  lastKnownTxHash?: InputMaybe<Scalars['Bytes']>;
+  lastKnownTxHash_contains?: InputMaybe<Scalars['Bytes']>;
+  lastKnownTxHash_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  lastKnownTxHash_not?: InputMaybe<Scalars['Bytes']>;
+  lastKnownTxHash_not_contains?: InputMaybe<Scalars['Bytes']>;
+  lastKnownTxHash_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   lastReviewSubmittedAt?: InputMaybe<Scalars['Int']>;
   lastReviewSubmittedAt_gt?: InputMaybe<Scalars['Int']>;
   lastReviewSubmittedAt_gte?: InputMaybe<Scalars['Int']>;
@@ -3757,6 +3766,7 @@ export enum WorkspaceMember_OrderBy {
   Email = 'email',
   FullName = 'fullName',
   Id = 'id',
+  LastKnownTxHash = 'lastKnownTxHash',
   LastReviewSubmittedAt = 'lastReviewSubmittedAt',
   OutstandingReviewIds = 'outstandingReviewIds',
   ProfilePictureIpfsHash = 'profilePictureIpfsHash',
