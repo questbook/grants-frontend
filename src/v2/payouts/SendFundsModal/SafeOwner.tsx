@@ -35,12 +35,13 @@ interface Props {
 	isEvmChain: boolean;
 	phantomWallet: any;
 	signerVerified: boolean;
+	gnosisSafeAddress: string;
 }
 
 
-const SafeOwner = ({ isEvmChain, phantomWallet, signerVerified }: Props) => {
+const SafeOwner = ({ isEvmChain, phantomWallet, signerVerified, gnosisSafeAddress }: Props) => {
 	const { connect, connectors } = useConnect()
-	const { address, isConnected } = useAccount()
+	// const { address, isConnected } = useAccount()
 	if(!signerVerified) {
 		return (
 			<>
@@ -128,7 +129,7 @@ const SafeOwner = ({ isEvmChain, phantomWallet, signerVerified }: Props) => {
 				fontWeight='400'
 				textAlign={'center'}
 			>
-				{isEvmChain ? address : phantomWallet.publicKey?.toString()}
+				{isEvmChain ? gnosisSafeAddress : phantomWallet.publicKey?.toString()}
 			</Text>
 		</>
 	)

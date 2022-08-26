@@ -1,5 +1,5 @@
 import { Safe } from '../../types/safe'
-import safeServicesInfo from '../safeServicesInfo.json'
+import safeServicesInfo from '../safeServicesInfo'
 import { Gnosis_Safe } from './gnosis_safe'
 import { Realms_Solana } from './realms_solana'
 
@@ -11,14 +11,14 @@ export class SupportedSafes {
     	this.safes = []
     	this.safes.push(new Realms_Solana(''))
     	for(let i = 0; i < safeChainIds.length; i++) {
-    		const newGnosisSafe = new Gnosis_Safe(parseInt(safeChainIds[i]), safeServicesInfo[safeChainIds[i]], safeAddress)
+    		const newGnosisSafe = new Gnosis_Safe(parseInt(safeChainIds[i]), safeServicesInfo[parseInt(safeChainIds[i])], safeAddress)
     		this.safes.push(newGnosisSafe)
     	}
 
     	console.log('Safes initialized', this.safes)
     }
 
-    getSafe(id: number): Safe | undefined {
+    getSafe(id: number | string): Safe | undefined {
     	return this.safes.find(safe => safe.id === id)
     }
 

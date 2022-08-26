@@ -54,11 +54,14 @@ import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvalua
 import getGnosisTansactionLink from 'src/v2/utils/gnosisUtils'
 import getProposalUrl from 'src/v2/utils/phantomUtils'
 import { erc20ABI, useConnect, useDisconnect } from 'wagmi'
+import { Gnosis_Safe } from 'src/v2/constants/safe/gnosis_safe'
+import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
+import { Realms_Solana } from 'src/v2/constants/safe/realms_solana'
 
 
 const PAGE_SIZE = 500
-const SAFE_ADDRESS = '0x7723d6CD277F0670fcB84eA8E9Efe14f1b16acBB'
 const ERC20Interface = new ethers.utils.Interface(erc20ABI)
+const safeChainIds = Object.keys(safeServicesInfo)
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 	let val = BigNumber.from(0)
@@ -89,6 +92,7 @@ function ViewApplicants() {
 	const [isActorId, setIsActorId] = React.useState<any>('')
 
 	const [workspaceSafe, setWorkspaceSafe] = useState('')
+	const [workspaceSafeChainId, setWorkspaceSafeChainId] = useState(0)
 
 	const [setupRubricBannerCancelled, setSetupRubricBannerCancelled] = useState(true)
 
@@ -111,7 +115,9 @@ function ViewApplicants() {
 			const { workspaceSafes } = safeAddressData
 			const safeAddress = workspaceSafes[0].address
 			console.log('safeAddress', safeAddress)
+			console.log('workspace safe details', workspaceSafes)
 			setWorkspaceSafe(safeAddress)
+			setWorkspaceSafeChainId(parseInt(workspaceSafes[0].chainId))
 		}
 	}, [safeAddressData])
 
@@ -469,16 +475,22 @@ function ViewApplicants() {
 	const [signerVerified, setSignerVerififed] = useState(false)
 	const [proposalAddr, setProposalAddr] = useState('')
 
-	const [initiateTransactionData, setInitiateTransactionData] = useState([])
+	const [initiateTransactionData, setInitiateTransactionData] = useState<any>([])
 	const [gnosisBatchData, setGnosisBatchData] = useState<any>([])
 	const [gnosisReadyToExecuteTxns, setGnosisReadyToExecuteTxns] = useState<any>([])
 
-	const supported_safes = new SupportedSafes()
-	const chainId = 4 // get your safe chain ID, currently on solana
-	const current_safe = supported_safes.getSafeByChainId(chainId) //current_safe has the stored safe address
+	// const supported_safes = new SupportedSafes(workspaceSafe)
+	// const chainId = 4 // get your safe chain ID, currently on solana
+	const isEvmChain = workspaceSafeChainId !== 9000001 ? true : false
 
-	// const current_safe = new Realms_Solana(workspaceSafe ?? '')
-
+	let current_safe: any
+	if (isEvmChain) {
+		const txnServiceURL = safeServicesInfo[workspaceSafeChainId]
+		current_safe = new Gnosis_Safe(workspaceSafeChainId, txnServiceURL, workspaceSafe)
+	} else {
+		const current_safe = new Realms_Solana(workspaceSafe ?? '')
+	}
+	
 	//checking if the realm address is valid
 
 	useEffect(() => {
@@ -490,7 +502,7 @@ function ViewApplicants() {
 		checkValidSafeAddress()
 	}, [])
 
-	const isEvmChain = chainId !== 9000001 ? true : false
+	
 
 	useEffect(() => {
 		const formattedTrxnData = sendFundsTo?.map((recepient, i) => (
@@ -507,7 +519,7 @@ function ViewApplicants() {
 	}, [sendFundsTo])
 
 	function createEVMMetaTransactions() {
-		const readyTxs = gnosisBatchData.map((data, i) => {
+		const readyTxs = gnosisBatchData.map((data: any) => {
 			const txData = encodeTransactionData(data.to, (data.amount.toString()))
 			const tx = {
 				to: ethers.utils.getAddress(rewardAssetAddress),
@@ -542,7 +554,7 @@ function ViewApplicants() {
 
 	const verifyGnosisOwner = async() => {
 		if(isConnected) {
-			const isVerified = await current_safe?.isOwner(SAFE_ADDRESS)
+			const isVerified = await current_safe?.isOwner(workspaceSafe)
 			console.log('verifying owner', isVerified)
 			if(isVerified) {
 				setSignerVerififed(true)
@@ -567,7 +579,7 @@ function ViewApplicants() {
 		if(isEvmChain) {
 			console.log('transactions initiated --> ', gnosisReadyToExecuteTxns)
 			const readyToExecuteTxs = createEVMMetaTransactions()
-			const result = await current_safe?.createMultiTransaction(readyToExecuteTxs, SAFE_ADDRESS)
+			const result = await current_safe?.createMultiTransaction(readyToExecuteTxs, workspaceSafe)
 			console.log('Proposed transaction', result)
 			setProposalAddr('created')
 		} else {
@@ -577,10 +589,10 @@ function ViewApplicants() {
 
 	}
 
-	const onChangeRecepientDetails = (applicationId, fieldName, fieldValue) => {
+	const onChangeRecepientDetails = (applicationId: string, fieldName: string, fieldValue: string | number) => {
 		console.log('onChangeRecepientDetails', applicationId, fieldName, fieldValue)
 		console.log('Gnosis Batch data', gnosisBatchData)
-		const tempData = initiateTransactionData.map((transactionData, i) => {
+		const tempData = initiateTransactionData.map((transactionData: any) => {
 			if(transactionData.applicationId === applicationId) {
 				return { ...transactionData, [fieldName]: fieldValue }
 			}
