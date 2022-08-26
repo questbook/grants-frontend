@@ -2,7 +2,7 @@ import Safe, { SafeFactory } from '@gnosis.pm/safe-core-sdk'
 import EthersAdapter from '@gnosis.pm/safe-ethers-lib'
 import SafeServiceClient from '@gnosis.pm/safe-service-client'
 import { ethers } from 'ethers'
-import { Callback, MetaTransaction, Safe as GnosisSafe } from '../../types/safe'
+import { MetaTransaction, Safe as GnosisSafe } from '../../types/safe'
 
 export class Gnosis_Safe implements GnosisSafe {
     id: string;
@@ -25,19 +25,19 @@ export class Gnosis_Safe implements GnosisSafe {
 
     	console.log('creating gnosis transaction for', transactions)
     	//@ts-ignore
-		const provider = new ethers.providers.Web3Provider(window.ethereum)
+    	const provider = new ethers.providers.Web3Provider(window.ethereum)
     	await provider.send('eth_requestAccounts', [])
 
-		const signer = provider.getSigner()
+    	const signer = provider.getSigner()
     	const ethAdapter = new EthersAdapter({
     		ethers,
     		signer,
     	})
 
-		const safeService = new SafeServiceClient({ txServiceUrl: this.txnServiceURL, ethAdapter })
+    	const safeService = new SafeServiceClient({ txServiceUrl: this.txnServiceURL, ethAdapter })
     	const safeFactory = await SafeFactory.create({ ethAdapter })
     	const safeSdk = await Safe.create({ ethAdapter, safeAddress })
-		
+
     	try {
     		const safeTransaction = await safeSdk.createTransaction(transactions)
 
@@ -67,12 +67,12 @@ export class Gnosis_Safe implements GnosisSafe {
     	return false
     }
 
-	async isOwner(safeAddress: string): Promise<boolean> {
-		//@ts-ignore
-		const provider = new ethers.providers.Web3Provider(window.ethereum)
+    async isOwner(safeAddress: string): Promise<boolean> {
+    	//@ts-ignore
+    	const provider = new ethers.providers.Web3Provider(window.ethereum)
     	await provider.send('eth_requestAccounts', [])
 
-		const signer = provider.getSigner()
+    	const signer = provider.getSigner()
     	const ethAdapter = new EthersAdapter({
     		ethers,
     		signer,
@@ -80,10 +80,10 @@ export class Gnosis_Safe implements GnosisSafe {
 
     	const safeSdk = await Safe.create({ ethAdapter, safeAddress })
 
-		const userAddress = await signer.getAddress()
-		const isOwner = await safeSdk.isOwner(userAddress)
+    	const userAddress = await signer.getAddress()
+    	const isOwner = await safeSdk.isOwner(userAddress)
 
-		return isOwner
-	}
+    	return isOwner
+    }
 
 }

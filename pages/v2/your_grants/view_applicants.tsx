@@ -39,7 +39,7 @@ import { ViewEye } from 'src/v2/assets/custom chakra icons/ViewEye'
 import Breadcrumbs from 'src/v2/components/Breadcrumbs'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import StyledTab from 'src/v2/components/StyledTab'
-import { Realms_Solana } from 'src/v2/constants/safe/realms_solana'
+import { SupportedSafes } from 'src/v2/constants/safe/supported_safes'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import AcceptedProposalsPanel from 'src/v2/payouts/AcceptedProposals/AcceptedProposalPanel'
 import InReviewPanel from 'src/v2/payouts/InReviewProposals/InReviewPanel'
@@ -51,10 +51,9 @@ import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEva
 import StatsBanner from 'src/v2/payouts/StatsBanner'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
-import getProposalUrl from 'src/v2/utils/phantomUtils'
-import { erc20ABI, useAccount, useConnect, useDisconnect } from 'wagmi'
-import { SupportedSafes } from 'src/v2/constants/safe/supported_safes'
 import getGnosisTansactionLink from 'src/v2/utils/gnosisUtils'
+import getProposalUrl from 'src/v2/utils/phantomUtils'
+import { erc20ABI, useConnect, useDisconnect } from 'wagmi'
 
 
 const PAGE_SIZE = 500
@@ -464,8 +463,8 @@ function ViewApplicants() {
 		phantomWalletConnected,
 		setPhantomWalletConnected } = usePhantomWallet()
 
-	const {connect, isConnected} = useConnect()
-	const {disconnect} = useDisconnect()
+	const { connect, isConnected } = useConnect()
+	const { disconnect } = useDisconnect()
 
 	const [signerVerified, setSignerVerififed] = useState(false)
 	const [proposalAddr, setProposalAddr] = useState('')
@@ -547,6 +546,8 @@ function ViewApplicants() {
 			console.log('verifying owner', isVerified)
 			if(isVerified) {
 				setSignerVerififed(true)
+			} else {
+				console.log('not a owner')
 			}
 		}
 	}
@@ -554,7 +555,7 @@ function ViewApplicants() {
 	useEffect(() => {
 		if(phantomWalletConnected) {
 			getRealmsVerification()
-		}else if (isConnected){
+		} else if(isConnected) {
 			verifyGnosisOwner()
 		} else {
 			setSignerVerififed(false)
@@ -638,7 +639,8 @@ function ViewApplicants() {
 			await phantomWallet.disconnect()
 			setPhantomWalletConnected(false)
 		}
-		if(isConnected){
+
+		if(isConnected) {
 			disconnect()
 		}
 	}

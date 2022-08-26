@@ -32,6 +32,7 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 		if(safeAddress === '') {
 			return []
 		}
+
 		console.log('Inside safe usd balance', safeAddress)
 		console.log('API url', SAFES_BALANCES_ENPOINTS[0] + URL_PREFIX + safeAddress + URL_SUFFIX)
 		return SAFES_BALANCES_ENPOINTS.map(element => element + URL_PREFIX + safeAddress + URL_SUFFIX)
