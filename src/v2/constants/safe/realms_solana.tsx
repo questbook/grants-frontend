@@ -42,10 +42,10 @@ export class Realms_Solana implements Safe {
     	//this.connection = new Connection('http://realms-realms-c335.mainnet.rpcpool.com/258d3727-bb96-409d-abea-0b1b4c48af29', 'recent')
     	this.programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
     }
-	
-	createMultiTransaction(transactions: MetaTransaction[], safeAddress: string): void {
-		throw new Error('Method not implemented.')
-	}
+
+    createMultiTransaction(transactions: MetaTransaction[], safeAddress: string): void {
+    	throw new Error('Method not implemented.')
+    }
 
 
     async proposeTransactions(grantname: string, transactions: TransactionType[], wallet: any) : Promise<string> {

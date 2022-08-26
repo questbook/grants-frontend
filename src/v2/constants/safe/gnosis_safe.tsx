@@ -2,7 +2,7 @@ import Safe, { SafeFactory } from '@gnosis.pm/safe-core-sdk'
 import EthersAdapter from '@gnosis.pm/safe-ethers-lib'
 import SafeServiceClient from '@gnosis.pm/safe-service-client'
 import { ethers } from 'ethers'
-import { MetaTransaction, Safe as GnosisSafe, SafeDetails, TransactionType } from '../../types/safe'
+import { MetaTransaction, Safe as GnosisSafe, TransactionType } from '../../types/safe'
 
 export class Gnosis_Safe implements GnosisSafe {
     id: string;
@@ -20,9 +20,9 @@ export class Gnosis_Safe implements GnosisSafe {
     	this.chainId = chainId
     	this.txnServiceURL = txnServiceURL
     }
-	proposeTransactions(grantName: string, transactions: TransactionType[], wallet: any): Promise<string> {
-		throw new Error('Method not implemented.')
-	}
+    proposeTransactions(grantName: string, transactions: TransactionType[], wallet: any): Promise<string> {
+    	throw new Error('Method not implemented.')
+    }
 
     async createMultiTransaction(transactions: MetaTransaction[], safeAddress: string) {
 
@@ -89,12 +89,12 @@ export class Gnosis_Safe implements GnosisSafe {
     	return isOwner
     }
 
-	getTransactionHashStatus(proposalPublicKeys: String[]):any {
+    getTransactionHashStatus(proposalPublicKeys: String[]):any {
 
     }
 
-	getSafeDetails(address: String): any {
-		
-	}
+    getSafeDetails(address: String): any {
+
+    }
 
 }
