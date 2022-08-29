@@ -74,7 +74,7 @@ export default function useCreateWorkspace(
 
 			try {
 				// eslint-disable-next-line max-len
-				const createWorkspaceTransaction = await workspaceRegistryContract.createWorkspace(ipfsHash, new Uint8Array(32), "safe address", 0)
+				const createWorkspaceTransaction = await workspaceRegistryContract.createWorkspace(ipfsHash, new Uint8Array(32), 'safe address', 0)
 				const createWorkspaceTransactionData = await createWorkspaceTransaction.wait()
 
 				setTransactionData(createWorkspaceTransactionData)
