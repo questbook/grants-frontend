@@ -4397,13 +4397,11 @@ export type GetNumberOfGrantsQueryVariables = Exact<{
 export type GetNumberOfGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string }> };
 
 export type GetRealmsFundTransferDataQueryVariables = Exact<{
-  first?: InputMaybe<Scalars['Int']>;
-  skip?: InputMaybe<Scalars['Int']>;
   grantID: Scalars['ID'];
 }>;
 
 
-export type GetRealmsFundTransferDataQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, asset: string, nonEvmAsset?: string | null, transactionHash?: string | null, application?: { __typename?: 'GrantApplication', applicantId: string, id: string, state: ApplicationState } | null }> }> };
+export type GetRealmsFundTransferDataQuery = { __typename?: 'Query', grant?: { __typename?: 'Grant', fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, asset: string, nonEvmAsset?: string | null, transactionHash?: string | null, application?: { __typename?: 'GrantApplication', applicantId: string, id: string, state: ApplicationState } | null }> } | null };
 
 export type GetReviewersForAWorkspaceQueryVariables = Exact<{
   workspaceId: Scalars['ID'];
@@ -6532,8 +6530,8 @@ export type GetNumberOfGrantsQueryHookResult = ReturnType<typeof useGetNumberOfG
 export type GetNumberOfGrantsLazyQueryHookResult = ReturnType<typeof useGetNumberOfGrantsLazyQuery>;
 export type GetNumberOfGrantsQueryResult = Apollo.QueryResult<GetNumberOfGrantsQuery, GetNumberOfGrantsQueryVariables>;
 export const GetRealmsFundTransferDataDocument = gql`
-    query getRealmsFundTransferData($first: Int, $skip: Int, $grantID: ID!) {
-  grants(where: {id: $grantID}, subgraphError: allow) {
+    query getRealmsFundTransferData($grantID: ID!) {
+  grant(id: $grantID, subgraphError: allow) {
     fundTransfers {
       amount
       type
@@ -6562,8 +6560,6 @@ export const GetRealmsFundTransferDataDocument = gql`
  * @example
  * const { data, loading, error } = useGetRealmsFundTransferDataQuery({
  *   variables: {
- *      first: // value for 'first'
- *      skip: // value for 'skip'
  *      grantID: // value for 'grantID'
  *   },
  * });

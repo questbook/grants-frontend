@@ -115,36 +115,6 @@ function ViewApplicants() {
 		},
 	})
 
-	const [realmsQueryParams, setRealmsQueryParams] = useState<any>({ client })
-
-	useEffect(() => {
-		if(!grantID) {
-			return
-		}
-
-		setRealmsQueryParams({
-			client,
-			variables: { grantID: grantID },
-		})
-
-	}, [grantID])
-
-	const { data: realmsFundTransferData } = useGetRealmsFundTransferDataQuery(realmsQueryParams)
-
-	useEffect(() => {
-		console.log('realms fund transfer data', realmsFundTransferData)
-
-		if(!realmsFundTransferData) {
-			return
-		}
-
-		// @sourav - use the transactionHash here
-		// this is the transction hash of the first fundTransfer object. If you need more info
-		// you can extract them as well
-		const transactionHash = realmsFundTransferData.grants[0]?.fundTransfers[0]?.transactionHash
-
-	}, [realmsFundTransferData])
-
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: workspacechainId ? workspacechainId.toString() : defaultChainId.toString(),
 	})
@@ -155,7 +125,7 @@ function ViewApplicants() {
 		console.log('rree', isBiconomyLoading, biconomyLoading)
 		console.log('networks 2:', biconomy?.networkId?.toString(), workspacechainId, defaultChainId)
 
-		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && workspacechainId &&
+		if (biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && workspacechainId &&
 			biconomy.networkId && biconomy.networkId?.toString() === workspacechainId.toString()) {
 			setIsBiconomyInitialisedDisburse(true)
 		}
@@ -163,7 +133,7 @@ function ViewApplicants() {
 
 
 	useEffect(() => {
-		if(safeAddressData) {
+		if (safeAddressData) {
 			const { workspaceSafes } = safeAddressData
 			const safeAddress = workspaceSafes[0].address
 			console.log('safeAddress', safeAddress)
@@ -194,7 +164,7 @@ function ViewApplicants() {
 	])
 
 	useEffect(() => {
-		if(router && router.query) {
+		if (router && router.query) {
 			const { grantId: gId } = router.query
 			console.log('fetch 100: ', gId)
 			setGrantID(gId)
@@ -215,12 +185,54 @@ function ViewApplicants() {
 			].client,
 	})
 
+	const [realmsQueryParams, setRealmsQueryParams] = useState<any>({
+		client: subgraphClients[
+			getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+		].client
+	})
+
+	const { data: realmsFundTransferData } = useGetRealmsFundTransferDataQuery(realmsQueryParams)
+
+	useEffect(() => {
+		if (!workspace) return
+
+		if (!grantID) {
+			return
+		}
+
+		setRealmsQueryParams({
+			client: subgraphClients[
+				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+			].client,
+			variables: { grantID },
+		})
+
+	}, [grantID, workspace])
+
+	useEffect(() => {
+		if (!realmsFundTransferData) {
+			return
+		}
+
+		console.log('realms fund transfer data', realmsFundTransferData)
+
+		realmsFundTransferData?.grant?.fundTransfers?.forEach((fundTransfer) => {
+			console.log('Fund transfer hash - ', fundTransfer?.transactionHash)
+		})
+
+		// @sourav - use the transactionHash here
+		// this is the transction hash of the first fundTransfer object. If you need more info
+		// you can extract them as well
+		// const transactionHash = realmsFundTransferData.grants[0]?.fundTransfers[0]?.transactionHash
+
+	}, [realmsFundTransferData, grantID])
+
 	const [sendFundsModalIsOpen, setSendFundsModalIsOpen] = useState(false)
 	const [sendFundsDrawerIsOpen, setSendFundsDrawerIsOpen] = useState(false)
 	const [txnInitModalIsOpen, setTxnInitModalIsOpen] = useState(false)
 
 	useEffect(() => {
-		if(
+		if (
 			workspace
 			&& workspace.members
 			&& workspace.members.length > 0
@@ -243,18 +255,18 @@ function ViewApplicants() {
 	}, [accountData, workspace])
 
 	useEffect(() => {
-		if(!workspace) {
+		if (!workspace) {
 			return
 		}
 
-		if(!grantID) {
+		if (!grantID) {
 			return
 		}
 
 		console.log('Grant ID: ', grantID)
 		console.log('isUser: ', isUser)
 		console.log('fetch: ', isAdmin, isReviewer)
-		if(isAdmin) {
+		if (isAdmin) {
 			console.log('Setting query params')
 			setQueryParams({
 				client:
@@ -267,7 +279,7 @@ function ViewApplicants() {
 			})
 		}
 
-		if(isReviewer || isAdmin) {
+		if (isReviewer || isAdmin) {
 			console.log('reviewer', isUser)
 			setQueryReviewerParams({
 				client:
@@ -292,9 +304,9 @@ function ViewApplicants() {
 	useEffect(() => {
 		console.log('fetch', data)
 
-		if(data && data.grantApplications.length) {
+		if (data && data.grantApplications.length) {
 			setRewardAssetAddress(data.grantApplications[0].grant.reward.asset)
-			if(data.grantApplications[0].grant.reward.token) {
+			if (data.grantApplications[0].grant.reward.token) {
 				setRewardAssetDecimals(data.grantApplications[0].grant.reward.token.decimal)
 			} else {
 				setRewardAssetDecimals(CHAIN_INFO[
@@ -309,11 +321,11 @@ function ViewApplicants() {
 				let decimal
 				let label
 				let icon
-				if(!(grantData?.grants[0].rubric?.items.length ?? true)) {
+				if (!(grantData?.grants[0].rubric?.items.length ?? true)) {
 					setSetupRubricBannerCancelled(false)
 				}
 
-				if(grantData?.grants[0].reward.token) {
+				if (grantData?.grants[0].reward.token) {
 					decimal = grantData?.grants[0].reward.token.decimal
 					label = grantData?.grants[0].reward.token.label
 					icon = getUrlForIPFSHash(grantData?.grants[0].reward.token.iconHash)
@@ -388,13 +400,13 @@ function ViewApplicants() {
 	const Reviewerstatus = (item: any) => {
 		const user = []
 		// eslint-disable-next-line no-restricted-syntax
-		for(const n in item) {
-			if(item[n].reviewer.id === isActorId) {
+		for (const n in item) {
+			if (item[n].reviewer.id === isActorId) {
 				user.push(isActorId)
 			}
 		}
 
-		if(user.length === 1) {
+		if (user.length === 1) {
 			return 9
 		}
 
@@ -403,7 +415,7 @@ function ViewApplicants() {
 
 	useEffect(() => {
 		// console.log('Raw reviewer data: ', reviewData)
-		if(reviewData.data && reviewData.data.grantApplications.length) {
+		if (reviewData.data && reviewData.data.grantApplications.length) {
 			console.log('Reviewer Applications: ', reviewData.data)
 			const fetchedApplicantsData = reviewData.data.grantApplications.map((applicant) => {
 				return {
@@ -464,12 +476,12 @@ function ViewApplicants() {
 				descriptionError: false,
 			})
 		})
-		if(newRubrics.length === 0) {
+		if (newRubrics.length === 0) {
 			return
 		}
 
 		setRubrics(newRubrics)
-		if(initialRubrics?.items[0].maximumPoints) {
+		if (initialRubrics?.items[0].maximumPoints) {
 			setMaximumPoints(initialRubrics.items[0].maximumPoints)
 		}
 	}, [grantData])
@@ -497,7 +509,7 @@ function ViewApplicants() {
 	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		// console.log(transactionData);
-		if(transactionData) {
+		if (transactionData) {
 			setIsModalOpen(false)
 			setRefresh(true)
 		}
@@ -534,11 +546,11 @@ function ViewApplicants() {
 	const isEvmChain = workspaceSafeChainId !== 900001 ? true : false
 
 	const current_safe = useMemo(() => {
-		if(isEvmChain) {
+		if (isEvmChain) {
 			const txnServiceURL = safeServicesInfo[workspaceSafeChainId]
 			return new Gnosis_Safe(workspaceSafeChainId, txnServiceURL, workspaceSafe)
 		} else {
-			if(isPlausibleSolanaAddress(workspaceSafe)) {
+			if (isPlausibleSolanaAddress(workspaceSafe)) {
 				return new Realms_Solana(workspaceSafe)
 			}
 		}
@@ -547,7 +559,7 @@ function ViewApplicants() {
 	//checking if the realm address is valid
 
 	useEffect(() => {
-		const checkValidSafeAddress = async() => {
+		const checkValidSafeAddress = async () => {
 			const isValidSafeAddress = await current_safe?.isValidSafeAddress(workspaceSafe)
 			console.log('isValidSafeAddress', isValidSafeAddress)
 		}
@@ -594,21 +606,21 @@ function ViewApplicants() {
 		return txData
 	}
 
-	const getRealmsVerification = async() => {
-		if(phantomWallet?.publicKey?.toString()) {
+	const getRealmsVerification = async () => {
+		if (phantomWallet?.publicKey?.toString()) {
 			const isVerified = await current_safe?.isOwner(phantomWallet.publicKey?.toString())
 			console.log('realms_solana verification', isVerified)
-			if(isVerified) {
+			if (isVerified) {
 				setSignerVerififed(true)
 			}
 		}
 	}
 
-	const verifyGnosisOwner = async() => {
-		if(isConnected) {
+	const verifyGnosisOwner = async () => {
+		if (isConnected) {
 			const isVerified = await current_safe?.isOwner(workspaceSafe)
 			console.log('verifying owner', isVerified)
-			if(isVerified) {
+			if (isVerified) {
 				setSignerVerififed(true)
 			} else {
 				console.log('not a owner')
@@ -617,9 +629,9 @@ function ViewApplicants() {
 	}
 
 	useEffect(() => {
-		if(phantomWalletConnected) {
+		if (phantomWalletConnected) {
 			getRealmsVerification()
-		} else if(isConnected) {
+		} else if (isConnected) {
 			verifyGnosisOwner()
 		} else {
 			setSignerVerififed(false)
@@ -633,15 +645,15 @@ function ViewApplicants() {
 		console.log()
 	}, [initiateTransactionData])
 
-	const initiateTransaction = async() => {
+	const initiateTransaction = async () => {
 		console.log('initiate transaction called')
 		let proposaladdress: string | undefined
-		if(isEvmChain) {
+		if (isEvmChain) {
 			console.log('transactions initiated --> ', gnosisReadyToExecuteTxns)
 			const readyToExecuteTxs = createEVMMetaTransactions()
 			const result = await current_safe?.createMultiTransaction(readyToExecuteTxs, workspaceSafe)
 			console.log('Proposed transaction', result)
-			if(result) {
+			if (result) {
 				proposaladdress = result
 				setProposalAddr(result)
 			} else {
@@ -650,7 +662,7 @@ function ViewApplicants() {
 		} else {
 			proposaladdress = await current_safe?.proposeTransactions(grantData?.grants[0].title!, initiateTransactionData, phantomWallet)
 			console.log('proposal address', proposaladdress)
-			if(!proposaladdress) {
+			if (!proposaladdress) {
 				throw new Error('No proposal address found!')
 			}
 
@@ -667,9 +679,9 @@ function ViewApplicants() {
 
 	}
 
-	const disburseRewardFromSafe = useCallback(async(proposaladdress: string) => {
+	const disburseRewardFromSafe = useCallback(async (proposaladdress: string) => {
 		console.log(workspacechainId)
-		if(!workspacechainId) {
+		if (!workspacechainId) {
 			return
 		}
 
@@ -691,23 +703,23 @@ function ViewApplicants() {
 
 			// console.log('creating workspace', accountData!.address)
 
-			if(!workspacechainId) {
+			if (!workspacechainId) {
 				throw new Error('No network specified')
 			}
 
-			if(!proposaladdress) {
+			if (!proposaladdress) {
 				throw new Error('No proposal Address specified')
 			}
 
-			if(!initiateTransactionData) {
+			if (!initiateTransactionData) {
 				throw new Error('No data provided!')
 			}
 
-			if(!workspace) {
+			if (!workspace) {
 				throw new Error('No workspace found!')
 			}
 
-			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
+			if (typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
 				return
 			}
 
@@ -737,7 +749,7 @@ function ViewApplicants() {
 				nonce
 			)
 
-			if(!transactionHash) {
+			if (!transactionHash) {
 				throw new Error('No transaction hash found!')
 			}
 
@@ -747,7 +759,7 @@ function ViewApplicants() {
 			console.log('receipt: ', receipt)
 			await chargeGas(Number(workspace.id), Number(txFee))
 
-		} catch(e) {
+		} catch (e) {
 			console.log('disburse error', e)
 		}
 	}, [workspace, biconomyWalletClient, workspacechainId, biconomy, workspaceRegistryContract, scwAddress, webwallet, nonce, initiateTransactionData, proposalAddr])
@@ -756,7 +768,7 @@ function ViewApplicants() {
 		console.log('onChangeRecepientDetails', applicationId, fieldName, fieldValue)
 		console.log('Gnosis Batch data', gnosisBatchData)
 		const tempData = initiateTransactionData.map((transactionData: any) => {
-			if(transactionData.applicationId === applicationId) {
+			if (transactionData.applicationId === applicationId) {
 				return { ...transactionData, [fieldName]: fieldValue }
 			}
 
@@ -771,10 +783,10 @@ function ViewApplicants() {
 
 	const [step, setStep] = useState(ModalState.RECEIPT_DETAILS)
 
-	const onSendFundsButtonClicked = async(state: boolean, selectedApplicants: any[]) => {
+	const onSendFundsButtonClicked = async (state: boolean, selectedApplicants: any[]) => {
 		console.log('state', state)
 		console.log('selectedApplicants', selectedApplicants)
-		if(selectedApplicants.length === 1) {
+		if (selectedApplicants.length === 1) {
 			setSendFundsModalIsOpen(state)
 		} else {
 			setSendFundsDrawerIsOpen(state)
@@ -783,45 +795,45 @@ function ViewApplicants() {
 		setSendFundsTo(selectedApplicants)
 	}
 
-	const onModalStepChange = async(currentState: number) => {
+	const onModalStepChange = async (currentState: number) => {
 		switch (currentState) {
-		case ModalState.RECEIPT_DETAILS:
-			setStep(ModalState.CONNECT_WALLET)
-			break
-		case ModalState.CONNECT_WALLET:
-			if(signerVerified) {
-				setStep(ModalState.VERIFIED_OWNER)
-			}
+			case ModalState.RECEIPT_DETAILS:
+				setStep(ModalState.CONNECT_WALLET)
+				break
+			case ModalState.CONNECT_WALLET:
+				if (signerVerified) {
+					setStep(ModalState.VERIFIED_OWNER)
+				}
 
-			break
-		case ModalState.VERIFIED_OWNER:
-			setStep(ModalState.TRANSATION_INITIATED)
-			initiateTransaction()
-			setSendFundsModalIsOpen(false)
-			setSendFundsDrawerIsOpen(false)
-			setTxnInitModalIsOpen(true)
+				break
+			case ModalState.VERIFIED_OWNER:
+				setStep(ModalState.TRANSATION_INITIATED)
+				initiateTransaction()
+				setSendFundsModalIsOpen(false)
+				setSendFundsDrawerIsOpen(false)
+				setTxnInitModalIsOpen(true)
 
-			break
+				break
 		}
 	}
 
-	const onModalClose = async() => {
+	const onModalClose = async () => {
 		setStep(ModalState.RECEIPT_DETAILS)
 		setSendFundsModalIsOpen(false)
 		setSendFundsDrawerIsOpen(false)
 		setTxnInitModalIsOpen(false)
-		if(phantomWallet?.isConnected) {
+		if (phantomWallet?.isConnected) {
 			await phantomWallet.disconnect()
 			setPhantomWalletConnected(false)
 		}
 
-		if(isConnected) {
+		if (isConnected) {
 			disconnect()
 		}
 	}
 
 	useEffect(() => {
-		if(signerVerified) {
+		if (signerVerified) {
 			setStep(ModalState.VERIFIED_OWNER)
 		}
 	}, [signerVerified])
@@ -1347,7 +1359,7 @@ function ViewApplicants() {
 	)
 }
 
-ViewApplicants.getLayout = function(page: ReactElement) {
+ViewApplicants.getLayout = function (page: ReactElement) {
 	return (
 		<NavbarLayout>
 			{page}
