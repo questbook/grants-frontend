@@ -123,6 +123,7 @@ export default function useSubmitReview(
 				setCurrentStep(1)
 
 				const createGrantTransaction = await applicationReviewContract.submitReview(
+					accountData?.address!,
 					workspaceId || Number(workspace?.id).toString(),
           applicationId!,
           grantAddress!,

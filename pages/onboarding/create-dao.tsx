@@ -74,7 +74,7 @@ const OnboardingCreateDao = () => {
 			}
 
 			setCurrentStep(2)
-			const createWorkspaceTransaction = await workspaceRegistryContract.createWorkspace(ipfsHash, new Uint8Array(32), 0)
+			const createWorkspaceTransaction = await workspaceRegistryContract.createWorkspace(ipfsHash, new Uint8Array(32), "safe address", 0)
 			setCurrentStep(3)
 			await createWorkspaceTransaction.wait()
 
