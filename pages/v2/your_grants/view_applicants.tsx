@@ -168,6 +168,8 @@ function ViewApplicants() {
 			const safeAddress = workspaceSafes[0].address
 			console.log('safeAddress', safeAddress)
 			console.log('workspace safe details', workspaceSafes)
+			const _isEvmChain = workspaceSafeChainId !== 900001 ? true : false
+			// setIsEvmChain(_isEvmChain)
 			setWorkspaceSafe(safeAddress)
 			setWorkspaceSafeChainId(parseInt(workspaceSafes[0].chainId))
 		}
@@ -528,6 +530,7 @@ function ViewApplicants() {
 	const [initiateTransactionData, setInitiateTransactionData] = useState<any>([])
 	const [gnosisBatchData, setGnosisBatchData] = useState<any>([])
 	const [gnosisReadyToExecuteTxns, setGnosisReadyToExecuteTxns] = useState<any>([])
+	// const [isEvmChain, setIsEvmChain] = useState<boolean>(false)
 
 	// const supported_safes = new SupportedSafes(workspaceSafe)
 	// const chainId = 4 // get your safe chain ID, currently on solana
@@ -639,11 +642,11 @@ function ViewApplicants() {
 		if(isEvmChain) {
 			console.log('transactions initiated --> ', gnosisReadyToExecuteTxns)
 			const readyToExecuteTxs = createEVMMetaTransactions()
-			const result = await current_safe?.createMultiTransaction(readyToExecuteTxs, workspaceSafe)
-			console.log('Proposed transaction', result)
-			if(result) {
-				proposaladdress = result
-				setProposalAddr(result)
+			const safeTxHash = await current_safe?.createMultiTransaction(readyToExecuteTxs, workspaceSafe)
+			console.log('Proposed transaction', safeTxHash)
+			if(safeTxHash) {
+				proposaladdress = safeTxHash
+				setProposalAddr(safeTxHash)
 			} else {
 				throw new Error('Proposal address not found')
 			}
@@ -1184,10 +1187,8 @@ function ViewApplicants() {
 				<SendFundsDrawer
 					isOpen={sendFundsDrawerIsOpen}
 					onClose={onModalClose}
-					// @ts-expect-error
-					safeAddress={workspace?.safeAddress ?? 'HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC'}
+					safeAddress={workspaceSafe ?? 'HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC'}
 					proposals={sendFundsTo ?? []}
-
 					onChangeRecepientDetails={onChangeRecepientDetails}
 					phantomWallet={phantomWallet}
 					setPhantomWalletConnected={setPhantomWalletConnected}
