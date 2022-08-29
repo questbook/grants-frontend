@@ -121,7 +121,7 @@ function ViewApplicants() {
 
 		setRealmsQueryParams({
 			client:
-        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+        subgraphClients[getSupportedChainIdFromWorkspace(workspace) || defaultChainId].client,
 			variables: { grantID: grantID },
 		})
 

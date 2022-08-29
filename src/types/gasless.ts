@@ -43,7 +43,10 @@ export type CheckIfWalletExistsType = {
     walletAddress: string
 }
 
-export type CheckIfWalletExistsAndDeployType = string
+export type CheckIfWalletExistsAndDeployType = {
+    walletAddress: string,
+    txHash: string
+}
 
 export type BuildExecTransactionParams = {
     data?: string,
