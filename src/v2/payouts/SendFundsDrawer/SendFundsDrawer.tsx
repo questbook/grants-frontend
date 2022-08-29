@@ -10,6 +10,8 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
+import { Gnosis_Safe } from 'src/v2/constants/safe/gnosis_safe'
+import { Realms_Solana } from 'src/v2/constants/safe/realms_solana'
 import { PhantomProvider } from 'src/v2/types/phantom'
 import { Safe, TransactionType } from 'src/v2/types/safe'
 import { useConnect } from 'wagmi'
@@ -27,7 +29,7 @@ interface Props {
 	phantomWallet : PhantomProvider | undefined;
 	setPhantomWalletConnected: (value: boolean)=>void;
 	isEvmChain: boolean;
-	current_safe?: Safe;
+	current_safe?: Safe | Realms_Solana | Gnosis_Safe;
 	signerVerified: boolean;
 	initiateTransaction: ()=>Promise<void>;
 	initiateTransactionData: TransactionType[];

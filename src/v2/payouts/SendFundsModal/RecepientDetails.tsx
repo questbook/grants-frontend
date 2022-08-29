@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react'
 import { Box, Flex, Input, Text } from '@chakra-ui/react'
 import { ArrowDownCircle } from 'src/v2/assets/custom chakra icons/Arrows/ArrowDownCircle'
 import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
+import { getSafeDetails, usdToSolana } from 'src/v2/constants/safe/realms_solana'
 import { TransactionType } from 'src/v2/types/safe'
 import AlertBanner from './AlertBanner'
 import MilestoneSelect from './MilestoneSelect'
@@ -14,6 +16,15 @@ const RecipientDetails = ({
 	initiateTransactionData: TransactionType | undefined;
 	onChangeRecepientDetails :(applicationId: any, fieldName: string, fieldValue: any)=>void;
 }) => {
+	const [balance, setBalance] = useState(0)
+	useEffect(() => {
+		async function getBalance() {
+			const balance = await getSafeDetails(initiateTransactionData?.from!)
+			setBalance(balance?.amount!)
+		}
+
+		getBalance()
+	}, [])
 	return (
 		<>
 			<Flex
@@ -153,18 +164,22 @@ const RecipientDetails = ({
 					lineHeight='20px'
 					fontWeight='500'
 				>
-							Amount (in SOL)
+							Amount (in USD)
 				</Text>
 
-				{/* <Text
+				<Text
 					fontSize='12px'
 					lineHeight='16px'
 					fontWeight='400'
 					color='#7D7DA0'
 					mt='2px'
 				>
-							Balance: 1000 USD
-				</Text> */}
+							Balance:
+					{' '}
+					{balance}
+					{' '}
+USD
+				</Text>
 
 
 				<Flex
@@ -186,7 +201,7 @@ const RecipientDetails = ({
 						errorBorderColor={'red'}
 						height={'auto'}
 						type={'number'}
-						onChange={(e) => onChangeRecepientDetails(applicantData.applicationId, 'amount', parseFloat(e.target.value))}
+						onChange={async(e) => onChangeRecepientDetails(applicantData.applicationId, 'amount', await usdToSolana(parseFloat(e.target.value)))}
 					/>
 				</Flex>
 

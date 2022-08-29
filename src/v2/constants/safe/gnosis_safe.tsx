@@ -90,7 +90,7 @@ export class Gnosis_Safe implements GnosisSafe {
     	return isOwner
     }
 
-    getTransactionHashStatus(proposalPublicKeys: String[]):any {
+    getTransactionHashStatus(proposalPublicKeys: string):any {
 
     }
 

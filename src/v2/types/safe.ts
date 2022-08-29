@@ -103,5 +103,5 @@ export interface Safe {
      * @param address : List of transaction hashes
      * Fetch the details of the transaction hashes from the appropriate api and return the status and amount transferred
      */
-    getTransactionHashStatus(transactionHashes: String[]) : Promise<TransactionHashStatus>;
+    getTransactionHashStatus(transactionHashes: string) : Promise<TransactionHashStatus>;
 }

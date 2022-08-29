@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button, Checkbox, Fade, Flex, GridItem, Image, Text, Tooltip } from '@chakra-ui/react'
+import { Badge, Button, Checkbox, Fade, Flex, GridItem, Image, Text, Tooltip } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import CopyIcon from 'src/components/ui/copy_icon'
 import getAvatar from 'src/utils/avatarUtils'
@@ -7,11 +7,13 @@ import { FundsCircleFilled } from 'src/v2/assets/custom chakra icons/Your Grants
 
 const AcceptedRow = ({
 	onSendFundsClicked,
+	applicationStatus,
 	applicantData,
 	isChecked,
 	onChange,
 }: {
 	onSendFundsClicked: () => void;
+	applicationStatus: number
 	applicantData: any;
 	isChecked: boolean;
 	onChange: (e: any) => void;
@@ -142,7 +144,18 @@ const AcceptedRow = ({
 					{applicantData.funding_asked?.amount}
 					{' '}
 					{applicantData.funding_asked?.symbol}
+
 				</Text>
+
+				<Badge
+					variant='subtle'
+					color='#0F7ABC'>
+					{
+						applicationStatus === 0 ? 'Transaction in Queue' :
+							applicationStatus === 1 ? 'completed' : ''
+					}
+				</Badge>
+
 			</GridItem>
 			<GridItem
 				onMouseEnter={() => setIsHovering(true)}

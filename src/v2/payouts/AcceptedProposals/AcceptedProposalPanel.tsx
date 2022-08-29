@@ -4,11 +4,13 @@ import AcceptedRow from './AcceptedRow'
 import ZeroState from './ZeroState'
 
 const AcceptedProposalsPanel = ({
+	applicationStatuses,
 	applicantsData,
 	onSendFundsClicked,
 	onBulkSendFundsClicked,
 	grantData,
 }: {
+	applicationStatuses:{[applicationId: string]:{transactionHash: string, status:number, amount: number}}
   applicantsData: any[];
   onSendFundsClicked: (state: boolean, checkedItems: any[]) => void;
   onBulkSendFundsClicked: (state: boolean, checkedItems: any[]) => void;
@@ -200,6 +202,7 @@ const AcceptedProposalsPanel = ({
 					applicantsData?.filter((item: any) => (2 === item.status)).map((applicantData: any, i) => (
 						<AcceptedRow
 							key={`accepted-${i}`}
+							applicationStatus={applicationStatuses[applicantData.applicationId]?.status}
 							applicantData={applicantData}
 							isChecked={checkedItems[i]}
 							onChange={

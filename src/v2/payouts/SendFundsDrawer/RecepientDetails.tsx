@@ -1,6 +1,7 @@
 import { Box, Flex, Input, Text } from '@chakra-ui/react'
 import { ArrowDownCircle } from 'src/v2/assets/custom chakra icons/Arrows/ArrowDownCircle'
 import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
+import { usdToSolana } from 'src/v2/constants/safe/realms_solana'
 import { TransactionType } from 'src/v2/types/safe'
 import AlertBanner from './AlertBanner'
 import MilestoneSelect from './MilestoneSelect'
@@ -174,7 +175,7 @@ const RecipientDetails = ({
 										errorBorderColor={'red'}
 										height={'auto'}
 										type={'number'}
-										onChange={(e) => onChangeRecepientDetails(data.applicationId, 'amount', parseFloat(e.target.value))}
+										onChange={async(e) => onChangeRecepientDetails(data.applicationId, 'amount', await usdToSolana(parseFloat(e.target.value)))}
 									/>
 								</Flex>
 							</Flex>
