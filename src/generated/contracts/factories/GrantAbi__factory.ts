@@ -401,6 +401,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "grantFactory",
+    outputs: [
+      {
+        internalType: "contract IGrantFactory",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "incrementApplicant",
     outputs: [],
     stateMutability: "nonpayable",
@@ -426,6 +439,11 @@ const _abi = [
       {
         internalType: "contract IApplicationRegistry",
         name: "_applicationReg",
+        type: "address",
+      },
+      {
+        internalType: "contract IGrantFactory",
+        name: "_grantFactory",
         type: "address",
       },
       {
