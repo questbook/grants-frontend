@@ -206,14 +206,15 @@ export type FundsTransfer = {
   id: Scalars['ID'];
   /** Milestone for which the funds were released */
   milestone?: Maybe<ApplicationMilestone>;
+  /** Hash/signature of the transaction */
+  nonEvmAsset?: Maybe<Scalars['String']>;
   /** Reviw for which the payment was done */
   review?: Maybe<Review>;
   /** Address of who released the funds */
   sender: Scalars['Bytes'];
   /** The address to which funds were sent */
   to: Scalars['Bytes'];
-  /** Hash/signature of the transaction */
-  transactionHash?: Maybe<Scalars['Bytes']>;
+  transactionHash?: Maybe<Scalars['String']>;
   /** What the type of funds transfer is */
   type: FundsTransferType;
 };
@@ -322,6 +323,26 @@ export type FundsTransfer_Filter = {
   milestone_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
   milestone_starts_with?: InputMaybe<Scalars['String']>;
   milestone_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  nonEvmAsset?: InputMaybe<Scalars['String']>;
+  nonEvmAsset_contains?: InputMaybe<Scalars['String']>;
+  nonEvmAsset_contains_nocase?: InputMaybe<Scalars['String']>;
+  nonEvmAsset_ends_with?: InputMaybe<Scalars['String']>;
+  nonEvmAsset_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  nonEvmAsset_gt?: InputMaybe<Scalars['String']>;
+  nonEvmAsset_gte?: InputMaybe<Scalars['String']>;
+  nonEvmAsset_in?: InputMaybe<Array<Scalars['String']>>;
+  nonEvmAsset_lt?: InputMaybe<Scalars['String']>;
+  nonEvmAsset_lte?: InputMaybe<Scalars['String']>;
+  nonEvmAsset_not?: InputMaybe<Scalars['String']>;
+  nonEvmAsset_not_contains?: InputMaybe<Scalars['String']>;
+  nonEvmAsset_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  nonEvmAsset_not_ends_with?: InputMaybe<Scalars['String']>;
+  nonEvmAsset_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  nonEvmAsset_not_in?: InputMaybe<Array<Scalars['String']>>;
+  nonEvmAsset_not_starts_with?: InputMaybe<Scalars['String']>;
+  nonEvmAsset_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  nonEvmAsset_starts_with?: InputMaybe<Scalars['String']>;
+  nonEvmAsset_starts_with_nocase?: InputMaybe<Scalars['String']>;
   review?: InputMaybe<Scalars['String']>;
   review_?: InputMaybe<Review_Filter>;
   review_contains?: InputMaybe<Scalars['String']>;
@@ -355,12 +376,26 @@ export type FundsTransfer_Filter = {
   to_not?: InputMaybe<Scalars['Bytes']>;
   to_not_contains?: InputMaybe<Scalars['Bytes']>;
   to_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
-  transactionHash?: InputMaybe<Scalars['Bytes']>;
-  transactionHash_contains?: InputMaybe<Scalars['Bytes']>;
-  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']>>;
-  transactionHash_not?: InputMaybe<Scalars['Bytes']>;
-  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']>;
-  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  transactionHash?: InputMaybe<Scalars['String']>;
+  transactionHash_contains?: InputMaybe<Scalars['String']>;
+  transactionHash_contains_nocase?: InputMaybe<Scalars['String']>;
+  transactionHash_ends_with?: InputMaybe<Scalars['String']>;
+  transactionHash_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  transactionHash_gt?: InputMaybe<Scalars['String']>;
+  transactionHash_gte?: InputMaybe<Scalars['String']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['String']>>;
+  transactionHash_lt?: InputMaybe<Scalars['String']>;
+  transactionHash_lte?: InputMaybe<Scalars['String']>;
+  transactionHash_not?: InputMaybe<Scalars['String']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['String']>;
+  transactionHash_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  transactionHash_not_ends_with?: InputMaybe<Scalars['String']>;
+  transactionHash_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['String']>>;
+  transactionHash_not_starts_with?: InputMaybe<Scalars['String']>;
+  transactionHash_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  transactionHash_starts_with?: InputMaybe<Scalars['String']>;
+  transactionHash_starts_with_nocase?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<FundsTransferType>;
   type_in?: InputMaybe<Array<FundsTransferType>>;
   type_not?: InputMaybe<FundsTransferType>;
@@ -375,6 +410,7 @@ export enum FundsTransfer_OrderBy {
   Grant = 'grant',
   Id = 'id',
   Milestone = 'milestone',
+  NonEvmAsset = 'nonEvmAsset',
   Review = 'review',
   Sender = 'sender',
   To = 'to',
@@ -3545,6 +3581,8 @@ export type WorkspaceMember = {
   fullName?: Maybe<Scalars['String']>;
   /** Globally unique ID of the member */
   id: Scalars['ID'];
+  /** Last known hash of the TX made by this user */
+  lastKnownTxHash: Scalars['Bytes'];
   /** Timestamp of when the last review was done */
   lastReviewSubmittedAt: Scalars['Int'];
   /** The review IDs for which this member is owed a payment */
@@ -3657,6 +3695,12 @@ export type WorkspaceMember_Filter = {
   id_lte?: InputMaybe<Scalars['ID']>;
   id_not?: InputMaybe<Scalars['ID']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  lastKnownTxHash?: InputMaybe<Scalars['Bytes']>;
+  lastKnownTxHash_contains?: InputMaybe<Scalars['Bytes']>;
+  lastKnownTxHash_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  lastKnownTxHash_not?: InputMaybe<Scalars['Bytes']>;
+  lastKnownTxHash_not_contains?: InputMaybe<Scalars['Bytes']>;
+  lastKnownTxHash_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   lastReviewSubmittedAt?: InputMaybe<Scalars['Int']>;
   lastReviewSubmittedAt_gt?: InputMaybe<Scalars['Int']>;
   lastReviewSubmittedAt_gte?: InputMaybe<Scalars['Int']>;
@@ -3758,6 +3802,7 @@ export enum WorkspaceMember_OrderBy {
   Email = 'email',
   FullName = 'fullName',
   Id = 'id',
+  LastKnownTxHash = 'lastKnownTxHash',
   LastReviewSubmittedAt = 'lastReviewSubmittedAt',
   OutstandingReviewIds = 'outstandingReviewIds',
   ProfilePictureIpfsHash = 'profilePictureIpfsHash',
@@ -3770,7 +3815,7 @@ export enum WorkspaceMember_OrderBy {
 export type WorkspaceSafe = {
   __typename?: 'WorkspaceSafe';
   /** Address of the safe */
-  address: Scalars['Bytes'];
+  address: Scalars['String'];
   /** Chain ID of the chain */
   chainId: Scalars['BigInt'];
   id: Scalars['ID'];
@@ -3781,12 +3826,26 @@ export type WorkspaceSafe = {
 export type WorkspaceSafe_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
-  address?: InputMaybe<Scalars['Bytes']>;
-  address_contains?: InputMaybe<Scalars['Bytes']>;
-  address_in?: InputMaybe<Array<Scalars['Bytes']>>;
-  address_not?: InputMaybe<Scalars['Bytes']>;
-  address_not_contains?: InputMaybe<Scalars['Bytes']>;
-  address_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  address?: InputMaybe<Scalars['String']>;
+  address_contains?: InputMaybe<Scalars['String']>;
+  address_contains_nocase?: InputMaybe<Scalars['String']>;
+  address_ends_with?: InputMaybe<Scalars['String']>;
+  address_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  address_gt?: InputMaybe<Scalars['String']>;
+  address_gte?: InputMaybe<Scalars['String']>;
+  address_in?: InputMaybe<Array<Scalars['String']>>;
+  address_lt?: InputMaybe<Scalars['String']>;
+  address_lte?: InputMaybe<Scalars['String']>;
+  address_not?: InputMaybe<Scalars['String']>;
+  address_not_contains?: InputMaybe<Scalars['String']>;
+  address_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  address_not_ends_with?: InputMaybe<Scalars['String']>;
+  address_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  address_not_in?: InputMaybe<Array<Scalars['String']>>;
+  address_not_starts_with?: InputMaybe<Scalars['String']>;
+  address_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  address_starts_with?: InputMaybe<Scalars['String']>;
+  address_starts_with_nocase?: InputMaybe<Scalars['String']>;
   chainId?: InputMaybe<Scalars['BigInt']>;
   chainId_gt?: InputMaybe<Scalars['BigInt']>;
   chainId_gte?: InputMaybe<Scalars['BigInt']>;
