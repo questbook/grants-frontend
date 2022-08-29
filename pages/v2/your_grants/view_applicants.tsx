@@ -118,7 +118,7 @@ function ViewApplicants() {
 	const [realmsQueryParams, setRealmsQueryParams] = useState<any>({ client })
 
 	useEffect(() => {
-		if(!grantID) {
+		if(!grantID || !workspace) {
 			return
 		}
 
@@ -127,7 +127,7 @@ function ViewApplicants() {
 			variables: { grantID: grantID },
 		})
 
-	}, [grantID])
+	}, [grantID, workspace])
 
 	const { data: realmsFundTransferData } = useGetRealmsFundTransferDataQuery(realmsQueryParams)
 
@@ -141,7 +141,9 @@ function ViewApplicants() {
 		// @sourav - use the transactionHash here
 		// this is the transction hash of the first fundTransfer object. If you need more info
 		// you can extract them as well
-		const transactionHash = realmsFundTransferData.grants[0]?.fundTransfers[0]?.transactionHash
+		realmsFundTransferData.grants[0]?.fundTransfers?.forEach((fundTransfer) => {
+			console.log('TX HASH - ', fundTransfer.transactionHash)
+		})
 
 	}, [realmsFundTransferData])
 
