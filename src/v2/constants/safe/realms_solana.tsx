@@ -6,6 +6,7 @@ import {
 	getNativeTreasuryAddress,
 	getRealm,
 	Governance,
+	Proposal,
 	pubkeyFilter,
 	VoteType,
 	withCreateProposal,
@@ -189,7 +190,18 @@ export class Realms_Solana implements Safe {
     	console.log('nativeTreasury', nativeTreasury)
     }
 
-    getTransactionHashStatus(proposalPublicKeys: String[]):any {
+    async getTransactionHashStatus(proposalPublicKeys: String[]):Promise<any> {
+
+    	const realmData = await getRealm(this.connection, new PublicKey(this.id!))
+    	const COUNCIL_MINT = realmData.account.config.councilMint
+    	const governanceInfo = await getGovernanceAccounts(this.connection, new PublicKey(this.programId), Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
+    	const governance = governanceInfo[0]
+
+    	const proposals = await getGovernanceAccounts(this.connection, new PublicKey(this.programId), Proposal, [
+                    pubkeyFilter(1, governance.pubkey)!,
+    	])
+
+    	console.log('proposals', proposals)
 
     }
 }
