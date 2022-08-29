@@ -95,7 +95,9 @@ function ApplicantDetails({
 
 						if(id === 'isMultipleMilestones') {
 							return (
-								<GridItem colSpan={1}>
+								<GridItem
+									key={id}
+									colSpan={1}>
 									<Badge
 										isActive={milestoneSelectOptionIsVisible}
 										onClick={
