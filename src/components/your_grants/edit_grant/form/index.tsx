@@ -300,7 +300,7 @@ function Form({
 
 	}, [currentChain])
 
-	const [date, setDate] = React.useState(formData.date.substring(0, 10) || '')
+	const [date, setDate] = React.useState(formData.date || '')
 	const [dateError, setDateError] = React.useState(false)
 
 	const handleOnSubmit = () => {

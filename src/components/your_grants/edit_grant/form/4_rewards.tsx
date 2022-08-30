@@ -154,7 +154,7 @@ function GrantRewardsInput({
 						setDate(e.target.value)
 					}
 				}
-				value={date}
+				value={date.substring(0, 10)}
 				isError={dateError}
 				errorText='Required'
 				label='Grant Deadline'
