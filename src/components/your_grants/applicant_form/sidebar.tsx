@@ -244,9 +244,9 @@ function Sidebar({
 							applicantEmail
 							 ? (
 									<>
-									{applicantEmail}
-									<MailTo applicantEmail={applicantEmail} />
-        </>
+										{applicantEmail}
+										<MailTo applicantEmail={applicantEmail} />
+									</>
 								) : (
 									<Heading
 										variant='applicationHeading'

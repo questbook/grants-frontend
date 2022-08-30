@@ -182,7 +182,7 @@ export const chargeGas = async(workspace_id: number, amount: number) => {
 
 }
 
-export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: BiconomyWalletClient) => {
+export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: BiconomyWalletClient, chainId: string) => {
 	// console.log("I'm here", biconomyWalletClient)
 	var { doesWalletExist, walletAddress } = await biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address })
 	// console.log("I'm not here")
@@ -194,7 +194,7 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 		console.log('Deploying wallet')
 		const { walletAddress, txHash } = await biconomyWalletClient.checkIfWalletExistsAndDeploy({ eoa: webwallet.address }) // default index(salt) 0
 
-		await getTransactionReceipt(txHash, chainId);
+		await getTransactionReceipt(txHash, chainId)
 
 		// console.log('Wallet deployed at address', walletAddress)
 		scwAddress = walletAddress

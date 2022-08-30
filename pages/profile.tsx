@@ -458,7 +458,7 @@ function Profile() {
               		chainInfo?.decimals
               	)
               	return (
-	<BrowseGrantCard
+									<BrowseGrantCard
               			daoID={grant.workspace.id}
               			key={grant.id}
               			daoName={grant.workspace.title}

@@ -51,12 +51,12 @@ export default function useSubmitApplication(
 
 	useEffect(() => {
 		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		// console.log('rree', isBiconomyLoading, biconomyLoading)
+		// console.log('rree', isBiconomyLoading, biconomyLoading, chainId, biconomy)
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
 			biconomy.networkId.toString() === chainId.toString()) {
 			setIsBiconomyInitialised(true)
 		}
-	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised])
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, chainId])
 
 
 	useEffect(() => {
@@ -97,7 +97,7 @@ export default function useSubmitApplication(
 
 		addAuthorizedUser(webwallet?.address)
 			.then(() => {
-				console.log("")
+				console.log('')
 				setShouldRefreshNonce(true)
 				// console.log('Added authorized user', webwallet.address)
 			})
