@@ -12,12 +12,12 @@ function GrantDetails({
 	grantSummary,
 	grantDetails,
 }: {
-  grantSummary: string;
-  grantDetails: string;
+  grantSummary: string
+  grantDetails: string
 }) {
 	const [decodedDetails, setDecodedDetails] = useState('')
 	const getDecodedDetails = async(detailsHash: string) => {
-		console.log(detailsHash)
+		// console.log(detailsHash)
 		const d = await getFromIPFS(detailsHash)
 		setDecodedDetails(d)
 	}
@@ -38,33 +38,33 @@ function GrantDetails({
 		<>
 			<Text
 				mt={7}
-				variant="heading"
-				fontSize="18px"
-				lineHeight="26px"
-				color="#8347E5"
+				variant='heading'
+				fontSize='18px'
+				lineHeight='26px'
+				color='#8347E5'
 			>
-        About Grant
+				About Grant
 			</Text>
 
 			<Text
 				mt={4}
-				variant="heading"
-				fontSize="16px"
-				lineHeight="24px">
-        Summary
+				variant='heading'
+				fontSize='16px'
+				lineHeight='24px'>
+				Summary
 			</Text>
 			<Text
 				mt={3}
-				fontWeight="400">
+				fontWeight='400'>
 				{grantSummary}
 			</Text>
 
 			<Text
 				mt={4}
-				variant="heading"
-				fontSize="16px"
-				lineHeight="24px">
-        Details
+				variant='heading'
+				fontSize='16px'
+				lineHeight='24px'>
+				Details
 			</Text>
 			<Linkify
 				componentDecorator={
@@ -84,7 +84,7 @@ function GrantDetails({
 			>
 				<Box
 					mt={3}
-					fontWeight="400">
+					fontWeight='400'>
 					{
 						decodedDetails !== '' ? (
 							<TextViewer

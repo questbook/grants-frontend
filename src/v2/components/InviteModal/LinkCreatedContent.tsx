@@ -1,5 +1,5 @@
 import { Divider, HStack, Image, ModalBody, ModalCloseButton, ModalContent, Spacer, Text, VStack } from '@chakra-ui/react'
-import CopyButton from '../CopyButton'
+import CopyButton from 'src/v2/components/CopyButton'
 
 type LinkCreatedContentProps = {
 	link: string

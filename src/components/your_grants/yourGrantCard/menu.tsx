@@ -12,24 +12,24 @@ import copy from 'copy-to-clipboard'
 import { SupportedChainId } from 'src/constants/chains'
 
 interface Props {
-  grantID: string;
-  chainId: SupportedChainId | undefined;
-  onArchiveGrantClick: () => void;
-  isArchived: boolean;
-  numOfApplicants: number;
-  onViewApplicantsClick: (() => void) | undefined;
-  onEditClick: (() => void) | undefined;
-  isAdmin: boolean;
-  setRubricDrawerOpen: (arg0: boolean) => void;
-  initialRubricAvailable: boolean;
+  grantID: string
+  chainId: SupportedChainId | undefined
+  onArchiveGrantClick: () => void
+  isArchived: boolean
+  numOfApplicants: number
+  onViewApplicantsClick: (() => void) | undefined
+  onEditClick: (() => void) | undefined
+  isAdmin: boolean
+  setRubricDrawerOpen: (arg0: boolean) => void
+  initialRubricAvailable: boolean
 }
 
 interface MenuItemProps {
-  iconPath: string;
-  iconWidth?: string | number;
-  iconHeight?: string | number;
-  text: string;
-  onClick: () => void;
+  iconPath: string
+  iconWidth?: string | number
+  iconHeight?: string | number
+  text: string
+  onClick: () => void
 }
 
 function YourGrantMenu({
@@ -103,43 +103,43 @@ function YourGrantMenu({
 	return (
 		<MenuComponent
 			closeOnSelect={false}
-			placement="left"
+			placement='left'
 			onClose={() => setCopied(false)}
 		>
 			<MenuButton
 				as={IconButton}
-				aria-label="View More Options"
+				aria-label='View More Options'
 				icon={
 					<Image
 						h={4}
 						w={4}
-						src="/ui_icons/more.svg" />
+						src='/ui_icons/more.svg' />
 				}
-				variant="link"
+				variant='link'
 				mx={0}
 				minW={0}
 			/>
 			<MenuList
-				minW="164px"
+				minW='164px'
 				p={0}>
 				{
 					items.map((item) => (
 						<MenuItem
 							key={item.text}
 							onClick={item.onClick}
-							py="12px"
-							px="16px">
+							py='12px'
+							px='16px'>
 							<Text
-								fontSize="14px"
-								fontWeight="400"
-								lineHeight="20px"
-								color="#122224"
-								display="flex"
-								alignItems="center"
+								fontSize='14px'
+								fontWeight='400'
+								lineHeight='20px'
+								color='#122224'
+								display='flex'
+								alignItems='center'
 							>
 								<Image
 									mr={18}
-									display="inline-block"
+									display='inline-block'
 									h={item.iconHeight || '20px'}
 									w={item.iconWidth || '20px'}
 									src={item.iconPath}

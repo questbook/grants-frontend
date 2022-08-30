@@ -1,6 +1,6 @@
 import { Heading, HStack } from '@chakra-ui/react'
-import { onboardingData } from '../OnboardingData'
-import { OnboardingPathSelectionCard } from '../UI/Cards/OnboardingPathSelectionCard'
+import { onboardingData } from 'src/v2/components/Onboarding/OnboardingData'
+import { OnboardingPathSelectionCard } from 'src/v2/components/Onboarding/UI/Cards/OnboardingPathSelectionCard'
 
 
 const OnboardingPathSelectionStep = ({
@@ -12,13 +12,13 @@ const OnboardingPathSelectionStep = ({
 }) => {
 	return (
 		<>
-			<Heading variant={'small'}>
+			<Heading variant='small'>
 				What are you looking for?
 			</Heading>
 
 			<HStack
-				alignItems={'stretch'}
-				justifyContent={'center'}
+				alignItems='stretch'
+				justifyContent='center'
 				spacing={6}
 				mt={8}>
 				{

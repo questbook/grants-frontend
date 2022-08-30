@@ -12,12 +12,12 @@ import {
 	getExplorerUrlForTxHash,
 	getMilestoneTitle,
 	getTextWithEllipses,
-} from '../../../../utils/formattingUtils'
-import { getAssetInfo } from '../../../../utils/tokenUtils'
+} from 'src/utils/formattingUtils'
+import { getAssetInfo } from 'src/utils/tokenUtils'
 
 type TableContent = {
-  title: string;
-  flex?: number;
+  title: string
+  flex?: number
   content: (
     item: FundTransfer,
     assetId: string,
@@ -25,13 +25,13 @@ type TableContent = {
     grantId: string,
     chainId?: SupportedChainId,
     rewardToken?: Token
-  ) => React.ReactChild;
+  ) => React.ReactChild
 };
 
 type Token = {
-  label: string;
-  address: string;
-  icon: string;
+  label: string
+  address: string
+  icon: string
   decimals: number
 };
 
@@ -53,23 +53,23 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 			return (
 				<>
 					<Image
-						display="inline-block"
+						display='inline-block'
 						src={icon}
 						mr={2}
-						h="27px"
-						w="27px"
+						h='27px'
+						w='27px'
 					/>
 					<Text
-						textAlign="start"
-						variant="applicationText">
+						textAlign='start'
+						variant='applicationText'>
 						{getMilestoneTitle(item.milestone)}
 						{' '}
-            -
+						-
 						{' '}
 						<Text
-							display="inline-block"
-							variant="applicationText"
-							fontWeight="700"
+							display='inline-block'
+							variant='applicationText'
+							fontWeight='700'
 						>
 							{formatAmount(item.amount, assetDecimals)}
 							{' '}
@@ -85,9 +85,9 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 		flex: 0.35,
 		content: (item, assetId, assetDecimals: number) => (
 			<Text
-				display="inline-block"
-				variant="applicationText"
-				fontWeight="700">
+				display='inline-block'
+				variant='applicationText'
+				fontWeight='700'>
 				{/* {ethers.utils.formatUnits(item.amount, assetDecimals)} */}
 				{formatAmount(item.amount, assetDecimals)}
 				{' '}
@@ -100,7 +100,7 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 		flex: 0.2,
 		content: (item) => (
 			<Tooltip label={`Transaction ID: ${item.id}`}>
-				<Text variant="applicationText">
+				<Text variant='applicationText'>
 					{moment(new Date(item.createdAtS * 1000)).format('MMM DD, YYYY')}
 				</Text>
 			</Tooltip>
@@ -112,8 +112,8 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 		content: (item) => (
 			<Tooltip label={item.to}>
 				<Text
-					variant="applicationText"
-					color="#122224">
+					variant='applicationText'
+					color='#122224'>
 					{getTextWithEllipses(item.to)}
 				</Text>
 			</Tooltip>
@@ -128,17 +128,17 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 				isExternal
 			>
 				<Text
-					color="brand.500"
-					variant="applicationText"
-					fontWeight="500"
-					fontSize="14px"
-					lineHeight="14px"
+					color='brand.500'
+					variant='applicationText'
+					fontWeight='500'
+					fontSize='14px'
+					lineHeight='14px'
 				>
-          View
+					View
 					{' '}
 					<Image
-						display="inline-block"
-						src="/ui_icons/link.svg" />
+						display='inline-block'
+						src='/ui_icons/link.svg' />
 				</Text>
 			</Link>
 		),
@@ -149,8 +149,8 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 		content: (item, _, __, grantId) => (
 			<Tooltip label={item.sender}>
 				<Text
-					variant="applicationText"
-					color="#122224">
+					variant='applicationText'
+					color='#122224'>
 					{getTextWithEllipses(item.sender)}
 					{' '}
 					{item.sender === grantId ? ' (Grant)' : ''}
@@ -164,8 +164,8 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 		content: (item) => (
 			<Tooltip label={item.sender}>
 				<Text
-					variant="applicationText"
-					color="#122224">
+					variant='applicationText'
+					color='#122224'>
 					{getTextWithEllipses(item.sender)}
 				</Text>
 			</Tooltip>
@@ -174,15 +174,15 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 }
 
 export type FundingProps = {
-  fundTransfers: FundTransfer[];
-  assetId: string;
-  columns: (keyof typeof TABLE_HEADERS)[];
-  assetDecimals: number;
-  grantId: string | null;
-  type: string;
-  chainId?: SupportedChainId;
+  fundTransfers: FundTransfer[]
+  assetId: string
+  columns: (keyof typeof TABLE_HEADERS)[]
+  assetDecimals: number
+  grantId: string | null
+  type: string
+  chainId?: SupportedChainId
   // eslint-disable-next-line react/require-default-props
-  rewardToken?: Token;
+  rewardToken?: Token
 };
 
 function Funding({
@@ -228,17 +228,17 @@ function Funding({
 
 	return (
 		<Flex
-			w="100%"
+			w='100%'
 			my={4}
-			align="center"
-			direction="column"
+			align='center'
+			direction='column'
 			flex={1}>
 			{
 				fundTransfers.length === 0 && (
 					<Flex
 						mt={14}
-						direction="column"
-						align="center">
+						direction='column'
+						align='center'>
 						<Empty
 							src={emptyStates[type as keyof typeof emptyStates].src}
 							imgHeight={emptyStates[type as keyof typeof emptyStates].imgHeight}
@@ -253,57 +253,57 @@ function Funding({
 				fundTransfers.length > 0 && (
 					<>
 						<Flex
-							direction="row"
-							w="100%"
-							justify="strech"
-							align="center"
-							mt="32px"
-							mb="9px"
+							direction='row'
+							w='100%'
+							justify='strech'
+							align='center'
+							mt='32px'
+							mb='9px'
 						>
 							{
 								tableHeaders.map((header) => (
 									<Text
 										key={header.title}
-										textAlign="left"
+										textAlign='left'
 										flex={header.flex}
-										variant="tableHeader">
+										variant='tableHeader'>
 										{header.title}
 									</Text>
 								))
 							}
 						</Flex>
 						<Flex
-							direction="column"
-							w="100%"
-							border="1px solid #D0D3D3"
+							direction='column'
+							w='100%'
+							border='1px solid #D0D3D3'
 							borderRadius={4}
-							align="stretch"
+							align='stretch'
 						>
 							{
 								fundTransfers.map((item, index) => (
 									<Flex
 										key={item.id}
-										direction="row"
-										w="100%"
-										justify="stretch"
-										align="center"
+										direction='row'
+										w='100%'
+										justify='stretch'
+										align='center'
 										bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
 										py={4}
-										pl="15px"
-										pr="15px"
+										pl='15px'
+										pr='15px'
 									>
 										{
 											grantId
                   && tableHeaders.map(({ title, flex, content }) => (
                   	<Flex
                   		key={title}
-                  		direction="row"
-                  		justify="start"
-                  		align="center"
+                  		direction='row'
+                  		justify='start'
+                  		align='center'
                   		flex={flex}
                   	>
                   		{content(item, assetId, assetDecimals, grantId, chainId, rewardToken)}
-                  	</Flex>
+ </Flex>
                   ))
 										}
 									</Flex>

@@ -18,6 +18,12 @@ import {
 } from '@chakra-ui/react'
 import { utils } from 'ethers'
 import router from 'next/router'
+// CONTEXT AND CONSTANTS
+import { ApiClientsContext } from 'pages/_app'
+import PayoutModalContent from 'src/components/manage_dao/payoutModalContent'
+// UI COMPONENTS
+import CopyIcon from 'src/components/ui/copy_icon'
+import Modal from 'src/components/ui/modal'
 import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import { useGetDaoGrantsQuery, useGetFundSentforReviewsQuery } from 'src/generated/graphql'
 // TOOLS AND UTILS
@@ -28,12 +34,6 @@ import {
 } from 'src/utils/formattingUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-// CONTEXT AND CONSTANTS
-import { ApiClientsContext } from '../../../pages/_app'
-// UI COMPONENTS
-import CopyIcon from '../ui/copy_icon'
-import Modal from '../ui/modal'
-import PayoutModalContent from './payoutModalContent'
 
 function Payouts() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
@@ -147,36 +147,36 @@ function Payouts() {
 
 	return (
 		<Flex
-			direction="column"
-			align="start"
-			w="100%">
+			direction='column'
+			align='start'
+			w='100%'>
 			<Flex
-				direction="row"
-				w="full"
-				justify="space-between">
+				direction='row'
+				w='full'
+				justify='space-between'>
 				<Text
-					fontStyle="normal"
-					fontWeight="bold"
-					fontSize="18px"
-					lineHeight="26px"
+					fontStyle='normal'
+					fontWeight='bold'
+					fontSize='18px'
+					lineHeight='26px'
 				>
-          Manage Payouts
+					Manage Payouts
 				</Text>
 			</Flex>
 			<Flex
-				w="100%"
+				w='100%'
 				mt={8}
-				alignItems="flex-start"
-				direction="column">
+				alignItems='flex-start'
+				direction='column'>
 				<Tabs
 					index={tabIndex}
-					variant="soft-rounded"
-					align="start"
-					w="100%">
+					variant='soft-rounded'
+					align='start'
+					w='100%'>
 					<TabList>
 						<Tab
-							borderColor="#AAAAAA"
-							color="#AAAAAA"
+							borderColor='#AAAAAA'
+							color='#AAAAAA'
 							_focus={
 								{
 									boxShadow: 'none',
@@ -193,7 +193,7 @@ function Payouts() {
 							}
 							onClick={() => setTabIndex(0)}
 						>
-              Outstanding
+							Outstanding
 							{' '}
 							{
 								outstandingReviews.length === 0
@@ -202,8 +202,8 @@ function Payouts() {
 							}
 						</Tab>
 						<Tab
-							borderColor="#AAAAAA"
-							color="#AAAAAA"
+							borderColor='#AAAAAA'
+							color='#AAAAAA'
 							_focus={
 								{
 									boxShadow: 'none',
@@ -220,18 +220,18 @@ function Payouts() {
 							}
 							onClick={() => setTabIndex(1)}
 						>
-              History
+							History
 						</Tab>
 					</TabList>
 
 					<TabPanels>
 						<TabPanel>
 							<Grid
-								gridAutoFlow="column"
-								gridTemplateColumns="repeat(5, 1fr)"
-								w="100%"
-								justifyItems="center"
-								alignContent="center"
+								gridAutoFlow='column'
+								gridTemplateColumns='repeat(5, 1fr)'
+								w='100%'
+								justifyItems='center'
+								alignContent='center'
 								py={4}
 								px={5}
 							>
@@ -240,17 +240,17 @@ function Payouts() {
 									tableHeaders.map((header) => (
 										<Text
 											key={header}
-											w="fit-content"
-											variant="tableHeader">
+											w='fit-content'
+											variant='tableHeader'>
 											{header}
 										</Text>
 									))
 								}
 							</Grid>
 							<Flex
-								direction="column"
-								w="100%"
-								border="1px solid #D0D3D3"
+								direction='column'
+								w='100%'
+								border='1px solid #D0D3D3'
 								borderRadius={4}
 							>
 								{
@@ -258,10 +258,10 @@ function Payouts() {
 										? (
 											<Flex
 												p={2}
-												alignItems="center"
-												justifyContent="center">
+												alignItems='center'
+												justifyContent='center'>
 												<Text>
-There are no outstanding reviews to pay for
+													There are no outstanding reviews to pay for
 												</Text>
 											</Flex>
 										)
@@ -270,88 +270,88 @@ There are no outstanding reviews to pay for
                           && (
                           	<Flex>
                           		<Grid
-                          			gridAutoFlow="column"
-                          			gridTemplateColumns="repeat(5, 1fr)"
-                          			w="100%"
-                          			justifyItems="center"
-                          			alignContent="center"
+                          			gridAutoFlow='column'
+                          			gridTemplateColumns='repeat(5, 1fr)'
+                          			w='100%'
+                          			justifyItems='center'
+                          			alignContent='center'
                           			bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
                           			py={4}
                           			px={5}
                           		>
                           			<Text
-                          				minW="fit-content"
-                          				variant="tableBody"
-                          				justifySelf="left"
-                          				alignSelf="center"
+                          				minW='fit-content'
+                          				variant='tableBody'
+                          				justifySelf='left'
+                          				alignSelf='center'
                           			>
                           				{' '}
                           				{
                           					reviewer.email && reviewer.email.length > 16 ? (
-                          					<Tooltip label={reviewer.email}>
-                          						<Flex
-                          							alignSelf="center"
-                          							alignItems="center"
+                          						<Tooltip label={reviewer.email}>
+                          							<Flex
+                          							alignSelf='center'
+                          							alignItems='center'
                           						>
-                          							<Text
-                          								alignSelf="center"
-                          								textAlign="center"
-                          								variant="tableBody"
+                          								<Text
+                          								alignSelf='center'
+                          								textAlign='center'
+                          								variant='tableBody'
                           							>
-                          								{trimAddress(reviewer.email, 12)}
-                          							</Text>
-                          							<Box mr="7px" />
-                          						</Flex>
-                          					</Tooltip>
+                          									{trimAddress(reviewer.email, 12)}
+ </Text>
+                          								<Box mr='7px' />
+ </Flex>
+ </Tooltip>
                           				) : (
                           					handleEmptyEmail(reviewer.email)
                           				)
                           				}
-                          			</Text>
+ </Text>
                           			<Tooltip label={reviewer.actorId}>
-                          				<Flex alignItems="center">
+                          				<Flex alignItems='center'>
                           					<Text
-                          						textAlign="center"
-                          						variant="tableBody"
+                          						textAlign='center'
+                          						variant='tableBody'
                           					>
                           						{trimAddress(reviewer.actorId, 4)}
-                          					</Text>
-                          					<Box mr="7px" />
+ </Text>
+                          					<Box mr='7px' />
                           					<CopyIcon
-                          						h="0.75rem"
+                          						h='0.75rem'
                           						text={reviewer.actorId}
                           					/>
-                          				</Flex>
-                          			</Tooltip>
+ </Flex>
+ </Tooltip>
                           			<Text
-                          				minW="fit-content"
-                          				variant="tableBody"
-                          				alignSelf="center"
+                          				minW='fit-content'
+                          				variant='tableBody'
+                          				alignSelf='center'
                           			>
                           				{
                           					getFormattedDateFromUnixTimestampWithYear(
                           					reviewer.lastReviewSubmittedAt,
                           				)
                           				}
-                          			</Text>
+ </Text>
                           			<Text
-                          				alignSelf="center"
-                          				variant="tableBody">
+                          				alignSelf='center'
+                          				variant='tableBody'>
                           				{reviewer.outstandingReviewIds.length}
-                          			</Text>
+ </Text>
                           			<Flex
-                          				direction="row"
-                          				gap="0.5rem">
+                          				direction='row'
+                          				gap='0.5rem'>
                           				<Button
-                          					variant="outline"
-                          					color="brand.500"
-                          					fontWeight="500"
-                          					fontSize="14px"
-                          					lineHeight="14px"
-                          					textAlign="center"
+                          					variant='outline'
+                          					color='brand.500'
+                          					fontWeight='500'
+                          					fontSize='14px'
+                          					lineHeight='14px'
+                          					textAlign='center'
                           					borderRadius={8}
-                          					borderColor="brand.500"
-                          					height="2rem"
+                          					borderColor='brand.500'
+                          					height='2rem'
                           					onClick={
                           						() => {
                           						payModal.onOpen()
@@ -360,15 +360,15 @@ There are no outstanding reviews to pay for
                           						}
                           					}
                           				>
-                                  Mark as done
+		Mark as done
                           				</Button>
                           				<Button
-                          					variant="primary"
-                          					fontWeight="500"
-                          					fontSize="14px"
-                          					lineHeight="14px"
-                          					textAlign="center"
-                          					height="2rem"
+                          					variant='primary'
+                          					fontWeight='500'
+                          					fontSize='14px'
+                          					lineHeight='14px'
+                          					textAlign='center'
+                          					height='2rem'
                           					px={3}
                           					onClick={
                           						() => {
@@ -378,10 +378,10 @@ There are no outstanding reviews to pay for
                           						}
                           					}
                           				>
-                                  Pay now
+		Pay now
                           				</Button>
-                          			</Flex>
-                          		</Grid>
+ </Flex>
+ </Grid>
 
                           		<Modal
                           			isOpen={payModal.isOpen}
@@ -407,13 +407,13 @@ There are no outstanding reviews to pay for
                           			leftIcon={
                           				payMode !== -1 && (
                           					<IconButton
-                          						mr="1rem"
-                          						ml="-1rem"
-                          						aria-label="Back"
-                          						variant="ghost"
+                          						mr='1rem'
+                          						ml='-1rem'
+                          						aria-label='Back'
+                          						variant='ghost'
                           						_hover={{}}
                           						_active={{}}
-                          						icon={<Image src="/ui_icons/black/chevron_left.svg" />}
+                          						icon={<Image src='/ui_icons/black/chevron_left.svg' />}
                           						onClick={
                           							() => {
                           							setPayMode(-1)
@@ -426,48 +426,48 @@ There are no outstanding reviews to pay for
                           			}
                           		>
                           			<Flex
-                          				direction="column"
-                          				pb="1rem"
-                          				mx="2rem">
+                          				direction='column'
+                          				pb='1rem'
+                          				mx='2rem'>
                           				{
                           					payMode === -1 && (
-                          						<Text pt="1rem">
-													Select a wallet to process this transaction
+                          						<Text pt='1rem'>
+	Select a wallet to process this transaction
                           						</Text>
                           					)
                           				}
                           				{
                           					payMode === -1
                           					? payOptions.map((option, ind) => (
-                          						<Button
+                          							<Button
 												  	key={option}
-                          							border="1px solid"
-                          							borderColor="#6A4CFF"
-                          							borderRadius="0.5rem"
-                          							bgColor="rgba(149, 128, 255, 0.1)"
+                          							border='1px solid'
+                          							borderColor='#6A4CFF'
+                          							borderRadius='0.5rem'
+                          							bgColor='rgba(149, 128, 255, 0.1)'
                           							onClick={
                           									() => {
                           								setPayMode(ind)
                           									}
                           								}
-                          							p="1.5rem"
-                          							h="4.5rem"
-                          							mt="2rem"
+                          							p='1.5rem'
+                          							h='4.5rem'
+                          							mt='2rem'
                           						>
-                          							<Flex
-                          								w="100%"
-                          								justify="space-between"
-                          								align="center"
+                          								<Flex
+                          								w='100%'
+                          								justify='space-between'
+                          								align='center'
                           							>
-                          								<Flex>
-                          									<Text
-                          										variant="tableBody"
-                          										color="#8850EA"
+                          									<Flex>
+                          										<Text
+                          										variant='tableBody'
+                          										color='#8850EA'
                           									>
-                          										{option}
-                          										{' '}
-                          									</Text>
-                          									<Tooltip
+                          											{option}
+                          											{' '}
+ </Text>
+                          										<Tooltip
                           										label={
                           												`${
                           											ind === 0
@@ -475,37 +475,37 @@ There are no outstanding reviews to pay for
                           												: 'You will have to send the reviewer rewards separately'
                           										}`
                           											}
-                          										fontSize="md"
+                          										fontSize='md'
                           									>
-                          										<Image
+                          											<Image
                           											ml={2}
-                          											display="inline-block"
-                          											alt="another_wallet"
-                          											src="/ui_icons/info_brand_light.svg"
-                          											color="#8850EA"
+                          											display='inline-block'
+                          											alt='another_wallet'
+                          											src='/ui_icons/info_brand_light.svg'
+                          											color='#8850EA'
                           										/>
-                          									</Tooltip>
-                          								</Flex>
-                          								<IconButton
-                          									aria-label="right_chevron"
-                          									variant="ghost"
+ </Tooltip>
+ </Flex>
+                          									<IconButton
+                          									aria-label='right_chevron'
+                          									variant='ghost'
                           									_hover={{}}
                           									_active={{}}
-                          									w="13px"
-                          									h="6px"
-                          									icon={<Image src="/ui_icons/brand/chevron_right.svg" />}
+                          									w='13px'
+                          									h='6px'
+                          									icon={<Image src='/ui_icons/brand/chevron_right.svg' />}
                           									onClick={
                           											() => {
                           										setPayMode(ind)
                           											}
                           										}
                           								/>
-                          							</Flex>
-                          						</Button>
+ </Flex>
+ </Button>
                           					))
                           					: null
                           				}
-                          			</Flex>
+ </Flex>
 
                           			<PayoutModalContent
                           				workspaceId={workspace!.id}
@@ -520,7 +520,7 @@ There are no outstanding reviews to pay for
                           				setPaymentOutside={setPaymentOutside}
                           				setTabIndex={setTabIndex}
                           			/>
-                          		</Modal>
+ </Modal>
                           	</Flex>
                           ))
 								}
@@ -528,11 +528,11 @@ There are no outstanding reviews to pay for
 						</TabPanel>
 						<TabPanel>
 							<Grid
-								gridAutoFlow="column"
-								gridTemplateColumns="repeat(4, 1fr)"
-								w="100%"
-								justifyItems="center"
-								alignContent="center"
+								gridAutoFlow='column'
+								gridTemplateColumns='repeat(4, 1fr)'
+								w='100%'
+								justifyItems='center'
+								alignContent='center'
 								py={4}
 								px={5}
 							>
@@ -541,17 +541,17 @@ There are no outstanding reviews to pay for
 									historyTableHeaders.map((header) => (
 										<Text
 											key={header}
-											w="fit-content"
-											variant="tableHeader">
+											w='fit-content'
+											variant='tableHeader'>
 											{header}
 										</Text>
 									))
 								}
 							</Grid>
 							<Flex
-								direction="column"
-								w="100%"
-								border="1px solid #D0D3D3"
+								direction='column'
+								w='100%'
+								border='1px solid #D0D3D3'
 								borderRadius={4}
 							>
 								{
@@ -559,51 +559,51 @@ There are no outstanding reviews to pay for
 										? (
 											<Flex
 												p={2}
-												alignItems="center"
-												justifyContent="center">
+												alignItems='center'
+												justifyContent='center'>
 												<Text>
-There is no payout history to show
+													There is no payout history to show
 												</Text>
 											</Flex>
 										)
 										: reviewPayoutsDone.map((data: any, index: number) => (
 											<Flex key={data.id}>
 												<Grid
-													gridAutoFlow="column"
-													gridTemplateColumns="repeat(4, 1fr)"
-													w="100%"
-													justifyItems="center"
-													alignContent="center"
+													gridAutoFlow='column'
+													gridTemplateColumns='repeat(4, 1fr)'
+													w='100%'
+													justifyItems='center'
+													alignContent='center'
 													bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
 													py={4}
 													px={5}
 												>
 													<Tooltip label={data.to}>
-														<Flex alignItems="center">
+														<Flex alignItems='center'>
 															<Text
-																textAlign="center"
-																variant="tableBody">
+																textAlign='center'
+																variant='tableBody'>
 																{trimAddress(data.to, 4)}
 															</Text>
-															<Box mr="7px" />
+															<Box mr='7px' />
 															<CopyIcon
-																h="0.75rem"
+																h='0.75rem'
 																text={data.to} />
 														</Flex>
 													</Tooltip>
 
 													<Tooltip label={data.sender}>
-														<Flex alignItems="center">
+														<Flex alignItems='center'>
 															<Text
-																textAlign="center"
-																variant="tableBody">
+																textAlign='center'
+																variant='tableBody'>
 																{trimAddress(data.sender, 4)}
 															</Text>
-															<Box mr="7px" />
+															<Box mr='7px' />
 														</Flex>
 													</Tooltip>
 
-													<Text variant="tableBody">
+													<Text variant='tableBody'>
 														{utils.formatUnits(data.amount).slice(0, -2)}
 														{' '}
 														{
@@ -613,22 +613,22 @@ There is no payout history to show
 															).label
 														}
 													</Text>
-													<Text variant="tableBody">
+													<Text variant='tableBody'>
 														{getFormattedDateFromUnixTimestampWithYear(data.createdAtS)}
 													</Text>
 
-													<Flex direction="row">
+													<Flex direction='row'>
 														<Link
 															href={getExplorerUrlForTxHash(workspaceChainId, data.id.substr(0, data.id.indexOf('.')))}
 															isExternal
 														>
-                            View
+															View
 															{' '}
 															<Image
-																display="inline-block"
-																h="10px"
-																w="10px"
-																src="/ui_icons/link.svg"
+																display='inline-block'
+																h='10px'
+																w='10px'
+																src='/ui_icons/link.svg'
 															/>
 														</Link>
 													</Flex>

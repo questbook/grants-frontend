@@ -3,32 +3,32 @@ import {
 	Box, Text,
 } from '@chakra-ui/react'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
-import Tooltip from '../../../ui/tooltip'
+import Tooltip from 'src/components/ui/tooltip'
 
 function CustomFields({
 	customFields,
 	setCustomFields,
 	readOnly,
 }: {
-  customFields: any[];
-  setCustomFields: (customFields: any[]) => void;
-  readOnly?: boolean;
+  customFields: any[]
+  setCustomFields: (customFields: any[]) => void
+  readOnly?: boolean
 }) {
 	useEffect(() => {
-		console.log('customFields', customFields)
+		// console.log('customFields', customFields)
 	}, [customFields])
 	return (
 		<>
 			<Text
-				fontWeight="700"
-				fontSize="16px"
-				lineHeight="20px"
-				color="#8850EA">
-        Other Information
+				fontWeight='700'
+				fontSize='16px'
+				lineHeight='20px'
+				color='#8850EA'>
+				Other Information
 				<Tooltip
-					icon="/ui_icons/tooltip_questionmark_brand.svg"
-					label="Additional details for the application form"
-					placement="bottom-start"
+					icon='/ui_icons/tooltip_questionmark_brand.svg'
+					label='Additional details for the application form'
+					placement='bottom-start'
 				/>
 			</Text>
 
@@ -52,9 +52,9 @@ function CustomFields({
 										setCustomFields(newCustomFields)
 									}
 								}
-								placeholder="Field Label"
+								placeholder='Field Label'
 								isError={customField.isError}
-								errorText="Required"
+								errorText='Required'
 								maxLength={30}
 							/>
 							<Box mt={2} />

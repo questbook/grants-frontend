@@ -4,9 +4,9 @@ import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO } from 'src/constants/chains'
 import SupportedChainId from 'src/generated/SupportedChainId'
 
 export interface NetworkSelectOption extends OptionBase {
-	id: SupportedChainId,
-  label: string;
-  icon: JSX.Element;
+	id: SupportedChainId
+  label: string
+  icon: JSX.Element
 }
 
 // export const supportedNetworks: { [networkName: string]: NetworkSelectOption } =

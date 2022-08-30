@@ -145,13 +145,13 @@ function ApplyGrant() {
 		}
 
 		// supportedCurrencyObj = getAssetInfo(grantData?.reward?.asset?.toLowerCase(), chainId);
-		// console.log('curr', supportedCurrencyObj);
+		// // console.log('curr', supportedCurrencyObj);
 		if(supportedCurrencyObj) {
 			setRewardCurrency(supportedCurrencyObj?.label)
 			setRewardCurrencyCoin(supportedCurrencyObj?.icon)
 			setRewardCurrencyAddress(grantData?.reward?.asset?.toLowerCase())
 		}
-		// console.log(grantData);
+		// // console.log(grantData);
 
 		setGrantDetails(grantData?.details)
 		setGrantSummary(grantData?.summary)
@@ -166,14 +166,14 @@ function ApplyGrant() {
 
 	return (
 		<Flex
-			direction="row"
-			w="100%"
+			direction='row'
+			w='100%'
 			// px="10%"
-			justify="space-evenly">
+			justify='space-evenly'>
 			<Flex
-				direction="column"
-				w="50%"
-				h="100%">
+				direction='column'
+				w='50%'
+				h='100%'>
 				<Form
 					chainId={chainId}
 					title={title}
@@ -194,8 +194,8 @@ function ApplyGrant() {
 					shouldShowButton={shouldShowButton}
 					defaultMilestoneFields={
 						grantData?.fields?.map((field: any) => {
-						// console.log(field);
-						// console.log(field.title.startsWith('defaultMilestone'));
+						// // console.log(field);
+						// // console.log(field.title.startsWith('defaultMilestone'));
 							if(field.title.startsWith('defaultMilestone')) {
 								const i = field.title.indexOf('-')
 								if(i !== -1) {
@@ -214,8 +214,8 @@ function ApplyGrant() {
 			</Flex>
 
 			<Flex
-				direction="column"
-				w="50%">
+				direction='column'
+				w='50%'>
 				<Sidebar
 					grantSummary={grantSummary}
 					grantDetails={grantDetails} />

@@ -4,8 +4,8 @@ import {
 	Button,
 	Flex
 } from '@chakra-ui/react'
-import NavbarLayout from '../src/layout/navbarLayout'
-import { BiconomyContext, WebwalletContext } from './_app'
+import { BiconomyContext, WebwalletContext } from 'pages/_app'
+import NavbarLayout from 'src/layout/navbarLayout'
 
 function SignupWebwallet() {
 
@@ -37,7 +37,7 @@ function SignupWebwallet() {
 					width='100%'
 					flexDir='row'
 					justifyContent='center'>
-				This will delete your webwallet and all your data!
+					This will delete your webwallet and all your data!
 
 				</Flex>
 				<Flex

@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { Button, Divider, HStack, Image, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, Spacer, Text, useToast, VStack } from '@chakra-ui/react'
 import { serialiseInviteInfoIntoUrl, useMakeInvite } from 'src/utils/invite'
-import { getRoleTitle } from '../AcceptInviteModal/RoleDataDisplay'
-import NetworkTransactionModal from '../NetworkTransactionModal'
-import RoleSelect from './RoleSelect'
+import { getRoleTitle } from 'src/v2/components/AcceptInviteModal/RoleDataDisplay'
+import RoleSelect from 'src/v2/components/InviteModal/RoleSelect'
+import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
 export type InputRoleContentProps = {
 	onLinkCreated: (link: string) => void
@@ -34,7 +34,7 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 			const url = serialiseInviteInfoIntoUrl(info)
 			onLinkCreated(url)
 		} catch(error: any) {
-			console.error('error ', error)
+			// // console.error('error ', error)
 			toast({
 				title: `Error in generating the invite: "${error.message}"`,
 				status: 'error',

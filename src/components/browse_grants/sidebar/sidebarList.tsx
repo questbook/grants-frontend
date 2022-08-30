@@ -9,44 +9,44 @@ function SidebarList({
 	linkText,
 	linkHref,
 }: {
-  listHeading: string;
-  listElements: { src: string; text: string }[];
-  linkText: string;
-  linkHref: string;
+  listHeading: string
+  listElements: { src: string, text: string }[]
+  linkText: string
+  linkHref: string
 }) {
 	return (
 		<Flex
-			direction="column"
-			justify="start"
-			align="start">
+			direction='column'
+			justify='start'
+			align='start'>
 			<Text
-				fontSize="18px"
-				lineHeight="26px"
-				fontWeight="700">
+				fontSize='18px'
+				lineHeight='26px'
+				fontWeight='700'>
 				{listHeading}
 			</Text>
 			<VStack
 				mt={5}
-				direction="column"
+				direction='column'
 				spacing={7}
-				justify="start"
-				align="start"
+				justify='start'
+				align='start'
 			>
 				{
 					listElements.map(({ src, text }) => (
 						<HStack
 							key={text}
-							justify="start"
+							justify='start'
 							spacing={4}
-							align="start"
-							w="full">
+							align='start'
+							w='full'>
 							<Image
-								h="21px"
+								h='21px'
 								src={src} />
 							<Text
-								fontWeight="400"
-								lineHeight="19.5px"
-								color="#122224">
+								fontWeight='400'
+								lineHeight='19.5px'
+								color='#122224'>
 								{text}
 							</Text>
 						</HStack>
@@ -57,7 +57,7 @@ function SidebarList({
 				mt={6}
 				ml={9}
 				href={linkHref}
-				fontSize="12px"
+				fontSize='12px'
 				isExternal>
 				{linkText}
 				{' '}

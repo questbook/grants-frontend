@@ -1,23 +1,23 @@
 import { Box, Button, Image, Text } from '@chakra-ui/react'
-import TextField from '../../InputFields/TextField'
+import TextField from 'src/v2/components/InputFields/TextField'
 
 interface Props {
-    domainName: string;
+    domainName: string
     setValue: (newValue: string) => void
-    isVerified: boolean;
-    setIsVerified: (isVerified: boolean) => void;
-    onContinue: () => void;
+    isVerified: boolean
+    setIsVerified: (isVerified: boolean) => void
+    onContinue: () => void
 }
 
-function DomainName({ domainName, setValue, isVerified, setIsVerified, onContinue } : Props) {
+function DomainName({ domainName, setValue, isVerified, setIsVerified, onContinue }: Props) {
 	return (
 		<>
 			<Text
-				variant="v2_heading_3"
-				fontWeight="500">
-Give your domain a name
+				variant='v2_heading_3'
+				fontWeight='500'>
+				Give your domain a name
 			</Text>
-			<Box mt="auto" />
+			<Box mt='auto' />
 			<TextField
 				label='Domain Name'
 				helperText='Domain is a workspace where you can post your grants, invite members, and fund builders.'
@@ -30,8 +30,8 @@ Give your domain a name
 				isVerified={isVerified}
 				maxLength={30} />
 			<Button
-				variant="primaryV2"
-				ml="auto"
+				variant='primaryV2'
+				ml='auto'
 				mt={6}
 				rightIcon={<Image src={`/ui_icons/arrow-right-fill${!isVerified ? '-disabled' : ''}.svg`} />}
 				disabled={!isVerified}

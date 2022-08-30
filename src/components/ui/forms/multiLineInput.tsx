@@ -2,20 +2,20 @@ import React, { ChangeEventHandler, useEffect } from 'react'
 import {
 	Box,
 	Flex, Text, Textarea, useTheme, } from '@chakra-ui/react'
-import Tooltip from '../tooltip'
+import Tooltip from 'src/components/ui/tooltip'
 
 interface MultiLineInputProps {
-  label?: string;
-  value: string | undefined;
-  onChange: ChangeEventHandler<HTMLTextAreaElement>;
-  placeholder?: string;
-  isError: boolean;
-  errorText?: string;
-  subtext?: string | null | undefined;
-  maxLength?: number;
-  disabled?: boolean;
-  tooltip?: string;
-  visible?: boolean;
+  label?: string
+  value: string | undefined
+  onChange: ChangeEventHandler<HTMLTextAreaElement>
+  placeholder?: string
+  isError: boolean
+  errorText?: string
+  subtext?: string | null | undefined
+  maxLength?: number
+  disabled?: boolean
+  tooltip?: string
+  visible?: boolean
 }
 
 const defaultProps = {
@@ -52,24 +52,24 @@ function MultiLineInput({
 	return (
 		<Flex
 			flex={1}
-			direction="column"
+			direction='column'
 			display={visible ? '' : 'none'}>
 			<Text
-				lineHeight="20px"
-				fontWeight="bold">
+				lineHeight='20px'
+				fontWeight='bold'>
 				{label}
 				{tooltip && tooltip.length ? <Tooltip label={tooltip} /> : null}
 			</Text>
 			<Textarea
 				isInvalid={isError}
 				isDisabled={disabled}
-				color="#122224"
-				background="#E8E9E9"
+				color='#122224'
+				background='#E8E9E9'
 				_placeholder={{ color: '#717A7C' }}
 				_disabled={{ color: '#122224', background: '#F3F4F4' }}
-				minH="120px"
+				minH='120px'
 				mt={1}
-				variant="filled"
+				variant='filled'
 				placeholder={placeholder}
 				value={value}
 				onChange={
@@ -93,10 +93,10 @@ function MultiLineInput({
 			{
 				isError && errorText && errorText?.length && (
 					<Text
-						fontSize="14px"
-						color="#EE7979"
-						fontWeight="700"
-						lineHeight="20px"
+						fontSize='14px'
+						color='#EE7979'
+						fontWeight='700'
+						lineHeight='20px'
 					>
 						{errorText}
 					</Text>
@@ -105,11 +105,11 @@ function MultiLineInput({
 			{
 				maxLength && maxLength > 0 && (
 					<Text
-						fontSize="14px"
-						color="#717A7C"
-						fontWeight="500"
-						lineHeight="20px"
-						textAlign="right"
+						fontSize='14px'
+						color='#717A7C'
+						fontWeight='500'
+						lineHeight='20px'
+						textAlign='right'
 						mt={isError && errorText && errorText?.length ? '-19px' : 1}
 					>
 						{`${currentLength}/${maxLength}`}
@@ -119,10 +119,10 @@ function MultiLineInput({
 			{
 				subtext && subtext?.length && (
 					<Text
-						fontSize="12px"
-						color="#717A7C"
-						fontWeight="400"
-						lineHeight="20px"
+						fontSize='12px'
+						color='#717A7C'
+						fontWeight='400'
+						lineHeight='20px'
 					>
 						{subtext}
 					</Text>

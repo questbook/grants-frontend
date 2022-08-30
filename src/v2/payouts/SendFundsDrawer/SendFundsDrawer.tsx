@@ -9,30 +9,32 @@ import {
 	Flex,
 	Text,
 } from '@chakra-ui/react'
+import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
+import { FundsCircle } from 'src/v2/assets/custom chakra icons/Your Grants/FundsCircle'
+import { Gnosis_Safe } from 'src/v2/constants/safe/gnosis_safe'
+import { Realms_Solana } from 'src/v2/constants/safe/realms_solana'
+import RecipientDetails from 'src/v2/payouts/SendFundsDrawer/RecepientDetails'
+import SafeOwner from 'src/v2/payouts/SendFundsModal/SafeOwner'
 import { PhantomProvider } from 'src/v2/types/phantom'
 import { Safe, TransactionType } from 'src/v2/types/safe'
 import { useConnect } from 'wagmi'
-import { CancelCircleFilled } from '../../assets/custom chakra icons/CancelCircleFilled'
-import { FundsCircle } from '../../assets/custom chakra icons/Your Grants/FundsCircle'
-import SafeOwner from '../SendFundsModal/SafeOwner'
-import RecipientDetails from './RecepientDetails'
 
 interface Props {
-	isOpen: boolean;
-	onClose: () => void;
-	safeAddress: string;
-	proposals: any[];
-	onChangeRecepientDetails :(applicationId: any, fieldName: string, fieldValue: any)=>void;
-	phantomWallet : PhantomProvider | undefined;
-	setPhantomWalletConnected: (value: boolean)=>void;
-	isEvmChain: boolean;
-	current_safe?: Safe;
-	signerVerified: boolean;
-	initiateTransaction: ()=>Promise<void>;
-	initiateTransactionData: TransactionType[];
-	onModalStepChange: (value: number)=>Promise<void>;
-	step: ModalState;
+	isOpen: boolean
+	onClose: () => void
+	safeAddress: string
+	proposals: any[]
+	onChangeRecepientDetails: (applicationId: any, fieldName: string, fieldValue: any) => void
+	phantomWallet: PhantomProvider | undefined
+	setPhantomWalletConnected: (value: boolean) => void
+	isEvmChain: boolean
+	current_safe?: Safe | Realms_Solana | Gnosis_Safe
+	signerVerified: boolean
+	initiateTransaction: () => Promise<void>
+	initiateTransactionData: TransactionType[]
+	onModalStepChange: (value: number) => Promise<void>
+	step: ModalState
 }
 
 enum ModalState {
@@ -82,23 +84,23 @@ function SendFundsDrawer({
 			onClose={onClose}
 			closeOnOverlayClick={false}
 		>
-			<DrawerOverlay maxH="100vh" />
+			<DrawerOverlay maxH='100vh' />
 			<DrawerContent
 				minW={528}
 				// h="min(90vh, 560px)"
-				overflowY="auto"
-				borderRadius="4px">
+				overflowY='auto'
+				borderRadius='4px'>
 				<Container
 					px={6}
 					py={4}
 					display='flex'
-					flexDirection={'column'}
+					flexDirection='column'
 					maxH='100vh'
 				>
 
 					<Flex
-						direction="row"
-						align="center">
+						direction='row'
+						align='center'>
 						<Flex
 							bg='#D1D7F4'
 							h='48px'
@@ -122,7 +124,7 @@ function SendFundsDrawer({
 								lineHeight='24px'
 								fontWeight='500'
 							>
-							Send funds
+								Send funds
 							</Text>
 							<Text
 								fontSize='14px'
@@ -131,7 +133,7 @@ function SendFundsDrawer({
 								mt={1}
 								color='#7D7DA0'
 							>
-							Use your safe to send funds to the applicant.
+								Use your safe to send funds to the applicant.
 							</Text>
 						</Flex>
 
@@ -147,19 +149,19 @@ function SendFundsDrawer({
 
 					<Flex
 						bg='#F0F0F7'
-						h={'1px'}
-						mx={'-24px'}
+						h='1px'
+						mx='-24px'
 						my={4}
 					/>
 
 					<Flex
-						maxH={'calc(100vh - 32px)'}
-						overflowY={'scroll'}
-						direction={'column'}>
+						maxH='calc(100vh - 32px)'
+						overflowY='scroll'
+						direction='column'>
 						<Flex>
 							<Flex
 								flex={1}
-								direction={'column'}
+								direction='column'
 							>
 								<Box
 									bg={step === 0 ? '#785EF0' : '#E0E0EC'}
@@ -173,14 +175,14 @@ function SendFundsDrawer({
 									{
 										step === 0 ? (
 											<FishEye
-												h={'14px'}
-												w={'14px'} />
+												h='14px'
+												w='14px' />
 										) : (
 											<Box
 												border='1px solid #E0E0EC'
 												borderRadius='20px'
-												height={'14px'}
-												width={'14px'}
+												height='14px'
+												width='14px'
 											/>
 										)
 									}
@@ -198,7 +200,7 @@ function SendFundsDrawer({
 							<Box w={1} />
 							<Flex
 								flex={1}
-								direction={'column'}
+								direction='column'
 							>
 								<Box
 									bg={step === 1 || step === 2 ? '#785EF0' : '#E0E0EC'}
@@ -212,14 +214,14 @@ function SendFundsDrawer({
 									{
 										step === 1 || step === 2 ? (
 											<FishEye
-												h={'14px'}
-												w={'14px'} />
+												h='14px'
+												w='14px' />
 										) : (
 											<Box
 												border='1px solid #E0E0EC'
 												borderRadius='20px'
-												height={'14px'}
-												width={'14px'}
+												height='14px'
+												width='14px'
 											/>
 										)
 									}
@@ -257,28 +259,28 @@ function SendFundsDrawer({
 
 					<Flex
 						bg='#F0F0F7'
-						h={'1px'}
-						mx={'-24px'}
+						h='1px'
+						mx='-24px'
 					/>
 
 					<Flex
 						mt={4}
-						direction="row"
-						align="center">
+						direction='row'
+						align='center'>
 
 
 						{
 							step === ModalState.RECEIPT_DETAILS ? (
 								<Button
 									ml='auto'
-									colorScheme={'brandv2'}
+									colorScheme='brandv2'
 									disabled={validateReceipentInput()}
 									onClick={
 										async() => {
 											onModalStepChange(step)
 										}
 									}>
-										Continue
+									Continue
 								</Button>
 							) : null
 						}
@@ -288,14 +290,14 @@ function SendFundsDrawer({
 							step === ModalState.CONNECT_WALLET || step === ModalState.VERIFIED_OWNER ? (
 								<Button
 									ml='auto'
-									colorScheme={'brandv2'}
+									colorScheme='brandv2'
 									disabled={!signerVerified}
 									onClick={
 										async() => {
 											onModalStepChange(step)
 										}
 									}>
-										Initiate Transaction
+									Initiate Transaction
 								</Button>
 							) : null
 						}

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { Contract, ethers, Wallet } from 'ethers'
-import { BiconomyWalletClient } from '../types/gasless'
+import { BiconomyWalletClient } from 'src/types/gasless'
 
 const EIP712_WALLET_TX_TYPE = {
 	WalletTx: [
@@ -96,7 +96,7 @@ export const registerWebHook = async(authToken: string, apiKey: string, chainId:
 	const responseJSON = await response.json()
 
 	let webHookId = false
-	console.log(responseJSON)
+	// console.log(responseJSON)
 	try {
 		webHookId = responseJSON.data.webHookId
 	} catch{
@@ -107,7 +107,7 @@ export const registerWebHook = async(authToken: string, apiKey: string, chainId:
 }
 
 export const addDapp = async(dappName: string, networkId: string, authToken: string | undefined) => {
-	console.log('AUTH TOKEN', authToken)
+	// console.log('AUTH TOKEN', authToken)
 	if(!authToken) {
 		return false
 	}
@@ -129,7 +129,7 @@ export const addDapp = async(dappName: string, networkId: string, authToken: str
 	const res = await fetch(url, requestOptions)
 	const resJson = await res.json()
 
-	console.log(resJson.data)
+	// console.log(resJson.data)
 
 	return resJson.data
 }
@@ -174,7 +174,7 @@ export const chargeGas = async(workspace_id: number, amount: number) => {
 			amount
 		})
 	if(response.data && response.data.status) {
-		console.log(`charged workspace ${workspace_id} with ${amount} gas`)
+		// console.log(`charged workspace ${workspace_id} with ${amount} gas`)
 		return true
 	}
 
@@ -183,22 +183,22 @@ export const chargeGas = async(workspace_id: number, amount: number) => {
 }
 
 export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: BiconomyWalletClient) => {
-	console.log("I'm here", biconomyWalletClient)
+	// console.log("I'm here", biconomyWalletClient)
 	var { doesWalletExist, walletAddress } = await biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address })
-	console.log("I'm not here")
+	// console.log("I'm not here")
 	let scwAddress
-	console.log('WEEEE', webwallet.address)
+	// console.log('WEEEE', webwallet.address)
 
 	if(!doesWalletExist) {
-		console.log('Wallet does not exist')
-		console.log('Deploying wallet')
+		// console.log('Wallet does not exist')
+		// console.log('Deploying wallet')
 		walletAddress = await biconomyWalletClient.checkIfWalletExistsAndDeploy({ eoa: webwallet.address }) // default index(salt) 0
 
-		console.log('Wallet deployed at address', walletAddress)
+		// console.log('Wallet deployed at address', walletAddress)
 		scwAddress = walletAddress
 	} else {
-		console.log(`Wallet already exists for: ${webwallet.address}`)
-		console.log(`Wallet address: ${walletAddress}`)
+		// console.log(`Wallet already exists for: ${webwallet.address}`)
+		// console.log(`Wallet address: ${walletAddress}`)
 		scwAddress = walletAddress
 	}
 
@@ -213,7 +213,7 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 export const sendGaslessTransactionNew = async(targetContractObject: Contract, targetContractMethod: string,
 	targetContractArgs: Array<any>, targetContractAddress: string, webwallet: Wallet | undefined, chainId: string) => {
 
-	console.log('HERE1', targetContractMethod, targetContractArgs)
+	// console.log('HERE1', targetContractMethod, targetContractArgs)
 	const { data } = await targetContractObject.populateTransaction[targetContractMethod](...targetContractArgs)
 
 	const res = await axios.post('http://localhost:3001/v0/build_tx', {
@@ -223,7 +223,7 @@ export const sendGaslessTransactionNew = async(targetContractObject: Contract, t
 		target_contract_address: targetContractAddress
 	})
 
-	console.log('new flow', res)
+	// console.log('new flow', res)
 	return false
 }
 
@@ -231,10 +231,10 @@ export const sendGaslessTransaction = async(biconomy: any, targetContractObject:
 	targetContractArgs: Array<any>, targetContractAddress: string, biconomyWalletClient: BiconomyWalletClient,
 	scwAddress: string, webwallet: Wallet | undefined, chainId: string, webHookId: string, nonce: string | undefined) => {
 
-	console.log(biconomy, targetContractObject, targetContractMethod, targetContractArgs, targetContractAddress,
-		biconomyWalletClient, scwAddress, webwallet, chainId, webHookId, nonce)
+	// console.log(biconomy, targetContractObject, targetContractMethod, targetContractArgs, targetContractAddress,
+	// 	biconomyWalletClient, scwAddress, webwallet, chainId, webHookId, nonce)
 
-	console.log('ffff', targetContractAddress)
+	// console.log('ffff', targetContractAddress)
 
 	if(!biconomy) {
 		alert('Biconomy is not ready! Please wait.')
@@ -256,17 +256,17 @@ export const sendGaslessTransaction = async(biconomy: any, targetContractObject:
 		return false
 	}
 
-	console.log('HERE1', targetContractObject, targetContractMethod, targetContractArgs)
+	// console.log('HERE1', targetContractObject, targetContractMethod, targetContractArgs)
 	const { data } = await targetContractObject.populateTransaction[targetContractMethod](...targetContractArgs)
-	console.log('HERE2')
-	console.log('HERE 00', biconomyWalletClient)
-	console.log(biconomyWalletClient, data, targetContractAddress, scwAddress)
+	// console.log('HERE2')
+	// console.log('HERE 00', biconomyWalletClient)
+	// console.log(biconomyWalletClient, data, targetContractAddress, scwAddress)
 	const safeTxBody = await biconomyWalletClient.buildExecTransaction({ data, to: targetContractAddress, walletAddress: scwAddress })
 
-	console.log('HERE3')
+	// console.log('HERE3')
 
 	const signature = await webwallet._signTypedData({ verifyingContract: scwAddress, chainId: ethers.BigNumber.from(chainId) }, EIP712_WALLET_TX_TYPE, safeTxBody)
-	console.log('HERE4')
+	// console.log('HERE4')
 
 	let newSignature = '0x'
 	newSignature += signature.slice(2)
@@ -282,9 +282,9 @@ export const sendGaslessTransaction = async(biconomy: any, targetContractObject:
 			'chain_id': chainId
 		},
 	}
-	console.log('HI')
+	// console.log('HI')
 	const response = await biconomyWalletClient.sendBiconomyWalletTransaction({ execTransactionBody: safeTxBody, walletAddress: scwAddress, signature: newSignature, webHookAttributes }) // signature appended
-	console.log('HI2')
+	// console.log('HI2')
 	return response
 }
 
@@ -293,7 +293,7 @@ export const getTransactionReceipt = async(transactionHash: string | undefined, 
 		return false
 	}
 
-	console.log('GOT HERE')
+	// console.log('GOT HERE')
 	await jsonRpcProviders[chainId].waitForTransaction(transactionHash, 1)
 	return await jsonRpcProviders[chainId].getTransactionReceipt(transactionHash)
 }
@@ -340,7 +340,7 @@ export const getEventData = async(receipt: any, eventName: string, contractABI: 
 		}
 	}
 
-	console.log('THIS IS RECEIPT', receipt)
+	// console.log('THIS IS RECEIPT', receipt)
 	const abiInterface = new ethers.utils.Interface(contractABI) // this is contract's ABI
 	const humanReadableABI: string | string[] = abiInterface.format(ethers.utils.FormatTypes.full) // convert to human readable ABI
 	if(typeof (humanReadableABI) === 'string') {

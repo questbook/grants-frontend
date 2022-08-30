@@ -1,6 +1,6 @@
 import React, { MouseEventHandler } from 'react'
 import { Box, Button } from '@chakra-ui/react'
-import Tooltip from './tooltip'
+import Tooltip from 'src/components/ui/tooltip'
 
 function Badge({
 	isActive,
@@ -10,12 +10,12 @@ function Badge({
 	inActiveVariant,
 	variant,
 }: {
-  isActive: boolean;
-  onClick: MouseEventHandler<HTMLButtonElement>;
-  label: string;
-  tooltip?: string;
-  inActiveVariant?: string;
-  variant?: String;
+  isActive: boolean
+  onClick: MouseEventHandler<HTMLButtonElement>
+  label: string
+  tooltip?: string
+  inActiveVariant?: string
+  variant?: String
 }) {
 	const getBorderRadius = () => {
 		if(variant === 'buttonGroupStart') {
@@ -32,22 +32,22 @@ function Badge({
 	if(isActive) {
 		return (
 			<Button
-				w="100%"
+				w='100%'
 				h={12}
 				isActive={isActive}
-				variant="outline"
-				colorScheme="brand"
+				variant='outline'
+				colorScheme='brand'
 				onClick={onClick}
 				borderRadius={getBorderRadius()}
 			>
 				{label}
 				<Box
-					as="span"
-					mt="1px">
+					as='span'
+					mt='1px'>
 					{
 						tooltip && tooltip.length ? (
 							<Tooltip
-								icon="/ui_icons/tooltip_questionmark_brand.svg"
+								icon='/ui_icons/tooltip_questionmark_brand.svg'
 								label={tooltip}
 							/>
 						) : null
@@ -59,17 +59,17 @@ function Badge({
 
 	return (
 		<Button
-			w="100%"
+			w='100%'
 			h={12}
 			variant={inActiveVariant}
 			onClick={onClick}
-			alignItems="center"
+			alignItems='center'
 			borderRadius={getBorderRadius()}
 		>
 			{label}
 			<Box
-				as="span"
-				mt="1px">
+				as='span'
+				mt='1px'>
 				{tooltip && tooltip.length ? <Tooltip label={tooltip} /> : null}
 			</Box>
 		</Button>

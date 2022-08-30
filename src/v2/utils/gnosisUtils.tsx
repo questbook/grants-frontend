@@ -8,7 +8,7 @@ export default function getGnosisTansactionLink(safeAddress: string, chainId: st
 	if(chainId === '42220') {
 		return `https://safe.celo.org/#/safes/${safeAddress}/transactions`
 	} else {
-		console.log('Safe Address', safeAddress)
+		// console.log('Safe Address', safeAddress)
 		return `https://gnosis-safe.io/app/${NETWORK_PREFIX[chainId]}:${safeAddress}/transactions/queue`
 	}
 

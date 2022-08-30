@@ -3,17 +3,17 @@ import { AlertDialogOverlay, Box, Flex, Image, Link, Modal, ModalBody, ModalCont
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
+import ConnectWalletErrorState from 'src/v2/components/ConnectWalletModal/ConnectWalletErrorState'
 import { useConnect } from 'wagmi'
-import ConnectWalletErrorState from './ConnectWalletErrorState'
 
 const ConnectWalletModal = ({
 	isOpen,
 	onClose,
 	redirect,
 }: {
-	isOpen: boolean,
-	onClose: () => void,
-	redirect?: () => void,
+	isOpen: boolean
+	onClose: () => void
+	redirect?: () => void
 }) => {
 	const [connectClicked, setConnectClicked] = useState(false)
 	const [redirectInitiated, setRedirectInitiated] = useState(false)
@@ -32,14 +32,14 @@ const ConnectWalletModal = ({
 		name: 'Metamask',
 		icon: <MetamaskFox
 			h={8}
-			w={'33px'} />,
+			w='33px' />,
 		isPopular: true,
 		id: 'injected',
 	}, {
 		name: 'WalletConnect',
 		icon: <WalletConnectLogo
 			h={8}
-			w={'33px'} />,
+			w='33px' />,
 		isPopular: false,
 		id: 'walletConnect'
 	}]
@@ -57,7 +57,7 @@ const ConnectWalletModal = ({
 	}, [isErrorConnecting])
 
 	useEffect(() => {
-		console.log(accountData)
+		// console.log(accountData)
 		if(accountData) {
 			if(!redirectInitiated && redirect && connectClicked) {
 				setRedirectInitiated(true)
@@ -72,21 +72,21 @@ const ConnectWalletModal = ({
 			isOpen={isOpen}
 			onClose={onClose}
 			isCentered
-			scrollBehavior={'outside'}
+			scrollBehavior='outside'
 			size={isError ? 'md' : '2xl'}
 		>
 			<AlertDialogOverlay
-				background={'rgba(240, 240, 247, 0.7)'}
-				backdropFilter={'blur(10px)'}
+				background='rgba(240, 240, 247, 0.7)'
+				backdropFilter='blur(10px)'
 			/>
 
 			<ModalContent
-				w={'36rem'}
-				boxShadow={'none'}
-				filter={'drop-shadow(2px 4px 40px rgba(31, 31, 51, 0.05))'}
-				borderRadius={'base'}
-				fontFamily={'Neue-Haas-Grotesk-Display, sans-serif'}
-				fontSize={'1rem'}
+				w='36rem'
+				boxShadow='none'
+				filter='drop-shadow(2px 4px 40px rgba(31, 31, 51, 0.05))'
+				borderRadius='base'
+				fontFamily='Neue-Haas-Grotesk-Display, sans-serif'
+				fontSize='1rem'
 			>
 				<ModalBody
 					p={0}
@@ -99,8 +99,8 @@ const ConnectWalletModal = ({
 							/>
 						) : (
 							<Flex
-								direction={'column'}
-								alignItems={'center'}>
+								direction='column'
+								alignItems='center'>
 								<Image
 									h={8}
 									src='/questbooklogomini-black.svg'
@@ -109,7 +109,7 @@ const ConnectWalletModal = ({
 								/>
 								<Box
 									h={0.5}
-									w={'full'}
+									w='full'
 									style={
 										{
 											background: 'linear-gradient(89.92deg, rgba(224, 224, 236, 0) 0.04%, #E0E0EC 48.36%, rgba(224, 224, 236, 0) 99.3%)'
@@ -119,22 +119,22 @@ const ConnectWalletModal = ({
 
 								<Text
 									mt={8}
-									fontWeight={'bold'}
-									fontSize={'2xl'}
-									lineHeight={'8'}
+									fontWeight='bold'
+									fontSize='2xl'
+									lineHeight='8'
 								>
-								Connect Wallet
+									Connect Wallet
 								</Text>
 								<Text
 									mt={2}
-									color={'brandText'}>
-								To start using Questbook, connect with one of your wallets.
+									color='brandText'>
+									To start using Questbook, connect with one of your wallets.
 								</Text>
 
 								<VStack
 									mt={6}
-									direction={'column'}
-									w={'full'}
+									direction='column'
+									w='full'
 									px={4}
 									spacing={4}
 								>
@@ -160,18 +160,18 @@ const ConnectWalletModal = ({
 
 								<Text
 									my={8}
-									fontSize={'sm'}
-									color={'brandText'}
-									textAlign={'center'}
+									fontSize='sm'
+									color='brandText'
+									textAlign='center'
 								>
 									By connecting your wallet, you accept Questbook’s
 									{' '}
 									<Link
-										fontSize={'1rem'}
-										variant={'basev2'}
+										fontSize='1rem'
+										variant='basev2'
 										href='http://socionity.com/privacy.html'
 										isExternal>
-								Terms of Service
+										Terms of Service
 									</Link>
 								</Text>
 

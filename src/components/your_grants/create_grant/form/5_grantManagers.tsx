@@ -2,28 +2,28 @@ import React from 'react'
 import {
 	Box,
 	Flex, Grid, GridItem, } from '@chakra-ui/react'
+import Badge from 'src/components/ui/badge'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { truncateStringFromMiddle } from 'src/utils/formattingUtils'
-import Badge from '../../../ui/badge'
 
 function GrantManagers({
 	admins,
 	grantManagers,
 	toggleGrantManager,
 }: {
-  admins: any[];
-  grantManagers: any[];
-  toggleGrantManager: (address: string) => void;
+  admins: any[]
+  grantManagers: any[]
+  toggleGrantManager: (address: string) => void
 }) {
 	const { data: accountData, nonce } = useQuestbookAccount()
 	return (
 		<Flex
 			py={0}
-			direction="column">
+			direction='column'>
 			<Grid
-				templateColumns="repeat(2, 1fr)"
-				gap="18px"
-				fontWeight="bold"
+				templateColumns='repeat(2, 1fr)'
+				gap='18px'
+				fontWeight='bold'
 			>
 				{
 					admins.map((adminAddress) => (

@@ -1,6 +1,6 @@
 import { ReactElement } from 'react'
 import { Button } from '@chakra-ui/react'
-import { ArrowRightFilled } from '../../../../assets/custom chakra icons/Arrows/ArrowRightFilled'
+import { ArrowRightFilled } from 'src/v2/assets/custom chakra icons/Arrows/ArrowRightFilled'
 
 const ContinueButton = ({
 	onClick,
@@ -8,18 +8,18 @@ const ContinueButton = ({
 	props,
 	content,
 }: {
-  onClick: () => void,
-  disabled: boolean,
+  onClick: () => void
+  disabled: boolean
   props?: any
 	content?: ReactElement
 }) => (
 	<Button
-		colorScheme={'brandv2'}
-		borderRadius={'base'}
+		colorScheme='brandv2'
+		borderRadius='base'
 		py={3.5}
 		px={7}
 		zIndex={100}
-		variant={'primaryV2'}
+		variant='primaryV2'
 		_disabled={
 			{
 				color: 'white',
@@ -35,7 +35,7 @@ const ContinueButton = ({
 					Continue
 					<ArrowRightFilled
 						ml={3}
-						boxSize={'13.33px'} />
+						boxSize='13.33px' />
 				</>
 			)
 		}

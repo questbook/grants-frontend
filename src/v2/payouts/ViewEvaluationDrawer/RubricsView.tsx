@@ -6,7 +6,7 @@ const RubricsView = ({ rubrics }: {rubrics: any[]}) => {
 			<Flex
 				p={4}
 				borderRadius='2px'
-				boxShadow={'inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'}
+				boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'
 				flexDirection='column'
 			>
 				{
@@ -21,8 +21,8 @@ const RubricsView = ({ rubrics }: {rubrics: any[]}) => {
 									w='20px'
 									bg='#F0F0F7'
 									display='flex'
-									justifyContent={'center'}
-									alignItems={'center'}
+									justifyContent='center'
+									alignItems='center'
 									mr={4}
 									mb={2}
 								>

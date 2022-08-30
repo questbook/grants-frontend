@@ -28,12 +28,12 @@ function SignupDao() {
 	const [newPublicKey, setNewPublicKey] = React.useState()
 
 	const [daoData, setDaoData] = React.useState<{
-    name: string;
-	bio: string;
-    about: string;
-    image: string;
-    network: SupportedChainId;
-    id: string;
+    name: string
+	bio: string
+    about: string
+    image: string
+    network: SupportedChainId
+    id: string
   } | null>(null)
 
 	const [workspaceData, setWorkspaceData] = React.useState<any>()
@@ -89,7 +89,7 @@ function SignupDao() {
 
 	const { setRefresh } = useCustomToast(transactionLink)
 	useEffect(() => {
-		// console.log(grantTransactionData);
+		// // console.log(grantTransactionData);
 		if(grantTransactionData) {
 			setGrantData(null)
 
@@ -151,28 +151,28 @@ function SignupDao() {
 
 	return (
 		<Container
-			maxW="100%"
-			display="flex"
-			px="70px"
-			flexDirection="column"
-			alignItems="center"
+			maxW='100%'
+			display='flex'
+			px='70px'
+			flexDirection='column'
+			alignItems='center'
 		>
 			<Text
-				mt="46px"
-				variant="heading">
+				mt='46px'
+				variant='heading'>
 				What should we call your Grants DAO?
 			</Text>
 			<Text
 				mt={7}
-				maxW="676px"
-				textAlign="center">
+				maxW='676px'
+				textAlign='center'>
 				A Grants DAO is a neatly arranged space where you can manage grants,
 				review grant applications and fund grants.
 			</Text>
 			<Form
 				onSubmit={
 					(data) => {
-						console.log('GOT HERE')
+						// console.log('GOT HERE')
 						setWorkspaceData(data)
 					}
 				}

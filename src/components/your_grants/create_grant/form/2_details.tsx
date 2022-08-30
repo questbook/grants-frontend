@@ -9,16 +9,16 @@ function Details({
 	detailsError,
 	setDetailsError,
 }: {
-  details: EditorState;
-  setDetails: (details: EditorState) => void;
-  detailsError: boolean;
-  setDetailsError: (detailsError: boolean) => void;
+  details: EditorState
+  setDetails: (details: EditorState) => void
+  detailsError: boolean
+  setDetailsError: (detailsError: boolean) => void
 }) {
 	return (
-		<Flex direction="column">
+		<Flex direction='column'>
 			<RichTextEditor
-				label="Grant Details"
-				placeholder="Details about your grant - requirements, deliverables, and milestones"
+				label='Grant Details'
+				placeholder='Details about your grant - requirements, deliverables, and milestones'
 				value={details}
 				isError={detailsError}
 				onChange={
@@ -30,7 +30,7 @@ function Details({
 						setDetails(e)
 					}
 				}
-				errorText="Required"
+				errorText='Required'
 				maxLength={-1}
 			/>
 		</Flex>

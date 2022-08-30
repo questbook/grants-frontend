@@ -55,7 +55,7 @@ const OnboardingCreateDao = () => {
 
 	useEffect(() => {
 		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		console.log('rree', isBiconomyLoading, loading)
+		// console.log('rree', isBiconomyLoading, loading)
 		if(biconomy && biconomyWalletClient && scwAddress && !loading && daoNetwork && biconomy.networkId.toString() === daoNetwork?.id.toString()) {
 			setIsBiconomyInitialised('ready')
 		}
@@ -68,19 +68,19 @@ const OnboardingCreateDao = () => {
 			return
 		}
 
-		console.log('webwallet exists', nonce)
+		// console.log('webwallet exists', nonce)
 		if(nonce && nonce !== 'Token expired') {
 			return
 		}
 
-		console.log('adding nonce')
+		// console.log('adding nonce')
 
 		addAuthorizedUser(webwallet?.address)
 			.then(() => {
 				setShouldRefreshNonce(true)
-				console.log('Added authorized user', webwallet.address)
+				// console.log('Added authorized user', webwallet.address)
 			})
-			.catch((err) => console.log("Couldn't add authorized user", err))
+			// .catch((err) => console.log("Couldn't add authorized user", err))
 	}, [webwallet, nonce, shouldRefreshNonce])
 
 	const targetContractObject = useQBContract('workspace', daoNetwork?.id)
@@ -94,9 +94,9 @@ const OnboardingCreateDao = () => {
 		setCurrentStep(0)
 		try {
 			// if(activeChain?.id !== daoNetwork?.id) {
-			// 	console.log('switching')
+			// 	// console.log('switching')
 			// 	// await switchNetworkAsync!(daoNetwork?.id)
-			// 	console.log('create workspace again on contract object update')
+			// 	// console.log('create workspace again on contract object update')
 			// 	setCallOnContractChange(true)
 			// 	setTimeout(() => {
 			// 		if(callOnContractChange && activeChain?.id !== daoNetwork?.id) {
@@ -107,7 +107,7 @@ const OnboardingCreateDao = () => {
 			// 	return
 			// }
 
-			console.log('creating workspace', accountData!.address)
+			// console.log('creating workspace', accountData!.address)
 			setCurrentStep(1)
 			const uploadedImageHash = (await uploadToIPFS(daoImageFile)).hash
 
@@ -135,10 +135,10 @@ const OnboardingCreateDao = () => {
 			}
 
 			setCurrentStep(2)
-			console.log(12344343)
+			// console.log(12344343)
 
 			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
-				console.log('54321')
+				// console.log('54321')
 				return
 			}
 
@@ -165,16 +165,16 @@ const OnboardingCreateDao = () => {
 
 			const { txFee, receipt } = await getTransactionDetails(response, daoNetwork.id.toString())
 
-			console.log('txFee', txFee)
+			// console.log('txFee', txFee)
 
 			const event = await getEventData(receipt, 'WorkspaceCreated', WorkspaceRegistryAbi)
 			if(event) {
 				const workspace_id = Number(event.args[0].toBigInt())
-				console.log('workspace_id', workspace_id)
+				// console.log('workspace_id', workspace_id)
 
 				await addAuthorizedOwner(workspace_id, webwallet?.address!, scwAddress, daoNetwork.id.toString(),
 					'this is the safe addres - to be updated in the new flow')
-				console.log('fdsao')
+				// console.log('fdsao')
 				await chargeGas(workspace_id, Number(txFee))
 			}
 
@@ -222,7 +222,7 @@ const OnboardingCreateDao = () => {
 
 	const steps = [
 		<CreateDaoNameInput
-			key={'createdao-onboardingstep-0'}
+			key='createdao-onboardingstep-0'
 			daoName={daoName}
 			onSubmit={
 				(name) => {
@@ -232,19 +232,19 @@ const OnboardingCreateDao = () => {
 			}
 		/>,
 		<CreateDaoNetworkSelect
-			key={'createdao-onboardingstep-1'}
+			key='createdao-onboardingstep-1'
 			daoNetwork={daoNetwork}
 			onSubmit={
 				(network) => {
 					setDaoNetwork(network)
 					switchNetwork(network.id)
-					console.log('NETWORK', network)
+					// console.log('NETWORK', network)
 					nextClick()
 				}
 			}
 		/>,
 		<CreateDaoFinal
-			key={'createdao-onboardingstep-2'}
+			key='createdao-onboardingstep-2'
 			daoNetwork={daoNetwork!}
 			daoName={daoName!}
 			daoImageFile={daoImageFile}
@@ -294,8 +294,8 @@ const OnboardingCreateDao = () => {
 	return (
 		<>
 			<BackgroundImageLayout
-				imageSrc={'/onboarding-create-dao.png'}
-				imageBackgroundColor={'#C2E7DA'}
+				imageSrc='/onboarding-create-dao.png'
+				imageBackgroundColor='#C2E7DA'
 				imageProps={
 					{
 						mixBlendMode: 'hard-light'
@@ -312,8 +312,8 @@ const OnboardingCreateDao = () => {
 				description={
 					<HStack w='100%'>
 						<Text
-							fontWeight={'500'}
-							fontSize={'17px'}
+							fontWeight='500'
+							fontSize='17px'
 						>
 							{daoName}
 						</Text>
@@ -324,17 +324,17 @@ const OnboardingCreateDao = () => {
 							{
 								daoImageFile ? (
 									<Image
-										objectFit="cover"
+										objectFit='cover'
 										src={URL.createObjectURL(daoImageFile)}
-										w="100%"
-										h="100%"
-										minH={'48px'}
-										minW={'48px'}
+										w='100%'
+										h='100%'
+										minH='48px'
+										minW='48px'
 									/>
 								) : (
 
 									<Organization
-										color={'#389373'}
+										color='#389373'
 										boxSize={8} />
 								)
 							}

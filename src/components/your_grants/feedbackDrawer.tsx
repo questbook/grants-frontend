@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
 	Box,
 	Button,
@@ -15,21 +15,19 @@ import {
 	SliderTrack, Spacer,
 	Text,
 } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
+import MultiLineInput from 'src/components/ui/forms/multiLineInput'
+import Loader from 'src/components/ui/loader'
 import { SupportedChainId } from 'src/constants/chains'
+import { RubricItem } from 'src/generated/graphql'
 import useSubmitReview from 'src/hooks/useSubmitReview'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
-import { sumArray } from 'table/dist/src/utils'
-import { RubricItem } from '../../generated/graphql'
-import { useQuestbookAccount } from '../../hooks/gasless/useQuestbookAccount'
-import NetworkTransactionModal from '../../v2/components/NetworkTransactionModal'
-import MultiLineInput from '../ui/forms/multiLineInput'
-import Loader from '../ui/loader'
+import { sumArray } from 'src/utils/generics'
+import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
 export interface FeedbackType {
-	rubric: RubricItem,
-	rating: number,
-	comment: string,
+	rubric: RubricItem
+	rating: number
+	comment: string
 }
 
 function FeedbackDrawer({
@@ -43,22 +41,19 @@ function FeedbackDrawer({
 	applicationId,
 	isPrivate,
 }: {
-	feedbackDrawerOpen: boolean;
-	setFeedbackDrawerOpen: (feedbackDrawerOpen: boolean) => void;
-	grantTitle: string;
-	grantAddress: string;
-	chainId: SupportedChainId | undefined;
-	workspaceId: string;
-	rubrics: RubricItem[];
-	applicationId: string;
-	isPrivate: boolean;
+	feedbackDrawerOpen: boolean
+	setFeedbackDrawerOpen: (feedbackDrawerOpen: boolean) => void
+	grantTitle: string
+	grantAddress: string
+	chainId: SupportedChainId | undefined
+	workspaceId: string
+	rubrics: RubricItem[]
+	applicationId: string
+	isPrivate: boolean
 }) {
 	const [feedbackData, setFeedbackData] = useState<FeedbackType[]>()
 	const [editedFeedbackData, setEditedFeedbackData] = useState<{ items?: Array<FeedbackType> }>()
 	const [currentStep, setCurrentStep] = useState<number>()
-
-	const { data: accountData } = useQuestbookAccount()
-	const { workspace } = useContext(ApiClientsContext)!
 
 	useEffect(() => {
 		const newFeedbackData = Array<FeedbackType>()
@@ -125,7 +120,7 @@ function FeedbackDrawer({
 				<DrawerContent>
 
 					<Flex
-						bg={'#f5f5fa'}
+						bg='#f5f5fa'
 						direction='column'
 						overflow='scroll'
 						p={8}>
@@ -153,9 +148,9 @@ function FeedbackDrawer({
 							feedbackData?.map((feedback, index) => (
 								<>
 									<Flex
-										bg={'white'}
-										borderRadius={'10px'}
-										padding={'30px'}
+										bg='white'
+										borderRadius='10px'
+										padding='30px'
 										mt={4}
 										gap='2'
 										direction='column'
@@ -195,7 +190,7 @@ function FeedbackDrawer({
 													(_, i) => (
 														<SliderMark
 															key={i}
-															paddingTop={'10px'}
+															paddingTop='10px'
 															value={i}>
 															{i}
 														</SliderMark>
@@ -204,7 +199,7 @@ function FeedbackDrawer({
 											}
 											<SliderTrack>
 												<Box />
-												<SliderFilledTrack bg={'#785EF0'} />
+												<SliderFilledTrack bg='#785EF0' />
 											</SliderTrack>
 											<SliderThumb
 												style={{ border: '3px solid #785EF0' }} />
@@ -250,8 +245,8 @@ function FeedbackDrawer({
 				description={
 					<HStack w='100%'>
 						<Text
-							fontWeight={'500'}
-							fontSize={'17px'}
+							fontWeight='500'
+							fontSize='17px'
 						>
 							{grantTitle}
 						</Text>

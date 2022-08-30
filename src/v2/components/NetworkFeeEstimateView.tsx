@@ -33,7 +33,7 @@ const NetworkFeeEstimateView = ({ chainId, getEstimate }: NetworkFeeEstimateView
 					setGasEstimate(undefined)
 				}
 			} catch(e) {
-				console.error('error in fetching gas estimate ', e)
+				// console.error('error in fetching gas estimate ', e)
 				setGasEstimate('NaN')
 			}
 		})()
@@ -53,7 +53,7 @@ const NetworkFeeEstimateView = ({ chainId, getEstimate }: NetworkFeeEstimateView
 				<Spacer w='1' />
 				<Text
 					fontSize='xs'>
-              		Network Fee:
+					Network Fee:
 					{' '}
 					{gasEstimate}
 					{' '}

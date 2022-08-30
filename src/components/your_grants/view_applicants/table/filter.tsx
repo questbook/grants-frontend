@@ -4,40 +4,40 @@ import {
 	Flex,
 	Image,
 	Menu, MenuButton, MenuItem, MenuList, Text, } from '@chakra-ui/react'
-import FilterStates from '../filterStates'
-import { TableFilterNames } from './TableFilters'
+import FilterStates from 'src/components/your_grants/view_applicants/filterStates'
+import { TableFilterNames } from 'src/components/your_grants/view_applicants/table/TableFilters'
 
 function Filter({
 	filter,
 	setFilter,
 }: {
-  filter: number;
-  setFilter: (i: number) => void;
+  filter: number
+  setFilter: (i: number) => void
 }) {
 	return (
 		<Flex
-			direction="row"
-			justify="start"
-			align="center">
-			<Menu placement="bottom">
+			direction='row'
+			justify='start'
+			align='center'>
+			<Menu placement='bottom'>
 				<MenuButton
 					as={Button}
-					aria-label="View More Options"
+					aria-label='View More Options'
 					// mt="-28px"
 					// pl="16px"
-					variant="link"
+					variant='link'
 					_focus={{}}
-					color="#6200EE"
-					rightIcon={<Image src="/ui_icons/dropdown_arrow.svg" />}
-					fontSize="16px"
-					fontWeight="500"
-					w="fit-content"
-					mx="auto"
+					color='#6200EE'
+					rightIcon={<Image src='/ui_icons/dropdown_arrow.svg' />}
+					fontSize='16px'
+					fontWeight='500'
+					w='fit-content'
+					mx='auto'
 				>
-          Filter By
+					Filter By
 				</MenuButton>
 				<MenuList
-					minW="164px"
+					minW='164px'
 					p={0}>
 					{
 						Object.keys(TableFilterNames).map((option, i) => (
@@ -45,10 +45,10 @@ function Filter({
 								key={option}
 								onClick={() => setFilter(i - 1)}>
 								<Text
-									fontSize="14px"
-									fontWeight="400"
-									lineHeight="20px"
-									color="#122224"
+									fontSize='14px'
+									fontWeight='400'
+									lineHeight='20px'
+									color='#122224'
 								>
 									{TableFilterNames[option as keyof typeof TableFilterNames]}
 								</Text>

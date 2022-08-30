@@ -8,25 +8,25 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
+import Dropdown from 'src/components/ui/forms/dropdown'
+import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import Loader from 'src/components/ui/loader'
+import Modal from 'src/components/ui/modal'
 import useWithdrawFunds from 'src/hooks/useWithdrawFunds'
 import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getExplorerUrlForTxHash, parseAmount, truncateStringFromMiddle } from 'src/utils/formattingUtils'
-import Dropdown from '../../ui/forms/dropdown'
-import SingleLineInput from '../../ui/forms/singleLineInput'
-import Modal from '../../ui/modal'
 
 interface Props {
-  isOpen: boolean;
-  onClose: () => void;
-  grantAddress: string;
+  isOpen: boolean
+  onClose: () => void
+  grantAddress: string
   rewardAsset: {
-    address: string;
-    committed: BigNumber;
-    label: string;
-    icon: string;
-  };
+    address: string
+    committed: BigNumber
+    label: string
+    icon: string
+  }
 }
 
 function WithdrawFunds({
@@ -60,7 +60,7 @@ function WithdrawFunds({
 
 	const { setRefresh } = useCustomToast(withdrawTxnLink)
 	useEffect(() => {
-		// console.log(depositTransactionData);
+		// // console.log(depositTransactionData);
 		if(withdrawTransactionData) {
 			setType(1)
 			setTransactionHash(withdrawTransactionData.hash)
@@ -89,19 +89,19 @@ function WithdrawFunds({
 				{
 					type !== 1 && (
 						<Flex
-							direction="column"
+							direction='column'
 							mt={7}>
 							<Flex
-								direction="row"
-								w="100%"
-								align="start"
-								justify="space-between">
+								direction='row'
+								w='100%'
+								align='start'
+								justify='space-between'>
 								<Flex
-									w="70%"
-									direction="column">
+									w='70%'
+									direction='column'>
 									<SingleLineInput
-										label="Withdrawal Amount"
-										placeholder="100"
+										label='Withdrawal Amount'
+										placeholder='100'
 										value={funding}
 										onChange={
 											(e) => {
@@ -113,16 +113,16 @@ function WithdrawFunds({
 											}
 										}
 										isError={error}
-										errorText="Required"
-										type="number"
+										errorText='Required'
+										type='number'
 									/>
 								</Flex>
 								<Flex
-									direction="column"
-									w="25%"
-									mt="20px">
+									direction='column'
+									w='25%'
+									mt='20px'>
 									<Dropdown
-										listItemsMinWidth="132px"
+										listItemsMinWidth='132px'
 										listItems={
 											[
 												{
@@ -136,10 +136,10 @@ function WithdrawFunds({
 							</Flex>
 							<Flex mt={8}>
 								<SingleLineInput
-									label="Recipient Address"
-									placeholder="Enter address here"
+									label='Recipient Address'
+									placeholder='Enter address here'
 									isError={addressError}
-									errorText=""
+									errorText=''
 									value={address}
 									onChange={
 										(e) => {
@@ -155,34 +155,34 @@ function WithdrawFunds({
 								addressError ? (
 									<Flex
 										mt={1}
-										direction="row"
-										align="start">
+										direction='row'
+										align='start'>
 										<Image
 											mt={1}
-											src="/ui_icons/error_red.svg" />
+											src='/ui_icons/error_red.svg' />
 										<Text
 											ml={1}
-											variant="footer"
-											color="#EE7979">
-                  The withdrawal address format is wrong. Please check the
-                  withdrawal address length and content.
+											variant='footer'
+											color='#EE7979'>
+											The withdrawal address format is wrong. Please check the
+											withdrawal address length and content.
 										</Text>
 									</Flex>
 								) : (
 									<Text
 										mt={1}
-										variant="footer">
-                Enter recipient address on
+										variant='footer'>
+										Enter recipient address on
 										{' '}
 										{rewardAsset.label === 'WMATIC' ? 'Polygon' : 'Ethereum'}
 										{' '}
-                network
+										network
 									</Text>
 								)
 							}
 
 							<Button
-								variant="primary"
+								variant='primary'
 								mt={addressError ? 5 : 10}
 								mb={9}
 								onClick={
@@ -203,37 +203,37 @@ function WithdrawFunds({
 				{
 					type === 1 && (
 						<Flex
-							direction="column"
-							align="center">
+							direction='column'
+							align='center'>
 							<Image
-								w="120.25px"
-								h="123.15px"
-								src="/illustrations/dao_created.svg" />
+								w='120.25px'
+								h='123.15px'
+								src='/illustrations/dao_created.svg' />
 							<Text
 								mt={10}
-								variant="tableHeader"
-								color="#122224"
-								textAlign="center">
-Your withdrawal is in progress.
+								variant='tableHeader'
+								color='#122224'
+								textAlign='center'>
+								Your withdrawal is in progress.
 							</Text>
 
 							<Flex
-								direction="column"
-								w="full"
+								direction='column'
+								w='full'
 								mt={4}
 								mb={5}>
 								{
 									TABS.map((detail) => (
 										<Flex
 											key={detail.key}
-											direction="row"
-											justify="space-between">
+											direction='row'
+											justify='space-between'>
 											<Text>
 												{detail.key}
 											</Text>
 											<Text
-												variant="tableHeader"
-												color="#122224">
+												variant='tableHeader'
+												color='#122224'>
 												{detail.value}
 											</Text>
 										</Flex>
@@ -245,24 +245,24 @@ Your withdrawal is in progress.
 								mx={1}
 								href={getExplorerUrlForTxHash(currentChainId, transactionHash)}
 								isExternal
-								variant="footer"
-								fontWeight="700"
-								color="brand.500"
+								variant='footer'
+								fontWeight='700'
+								color='brand.500'
 							>
-            Learn more
+								Learn more
 								<Image
 									ml={1}
-									display="inline-block"
-									h="10px"
-									w="10px"
-									src="/ui_icons/link.svg"
+									display='inline-block'
+									h='10px'
+									w='10px'
+									src='/ui_icons/link.svg'
 								/>
 							</Link>
 
 							<Button
 								my={8}
-								variant="primary"
-								w="full"
+								variant='primary'
+								w='full'
 								onClick={
 									() => {
 										onClose()
@@ -270,7 +270,7 @@ Your withdrawal is in progress.
 									}
 								}
 							>
-            OK
+								OK
 							</Button>
 						</Flex>
 					)

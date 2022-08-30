@@ -1,3 +1,14 @@
 extends: '@creatoros'
 parserOptions:
   project: ./tsconfig.json
+plugins:
+  - no-relative-import-paths
+  - sonarjs
+rules:
+  no-console: 'error'
+  sonarjs/no-duplicated-branches: 'error'
+  sonarjs/no-identical-functions: 'error'
+  sonarjs/no-gratuitous-expressions: 'error'
+  no-relative-import-paths/no-relative-import-paths:
+    - error
+    - rootDir: ''

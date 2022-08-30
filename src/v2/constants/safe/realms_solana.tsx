@@ -6,6 +6,7 @@ import {
 	getNativeTreasuryAddress,
 	getRealm,
 	Governance,
+	Proposal,
 	pubkeyFilter,
 	VoteType,
 	withCreateProposal,
@@ -17,18 +18,18 @@ import assert from 'assert'
 import axios from 'axios'
 import { NetworkType } from 'src/constants/Networks'
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
-import { MetaTransaction, Safe, TransactionType } from '../../types/safe'
+import { MetaTransaction, Safe, TransactionType } from 'src/v2/types/safe'
 
 export class Realms_Solana implements Safe {
-    id: PublicKey | undefined;
-    name: string;
-    description: string;
-    image: string;
-    chainId: number;
+	id: PublicKey | undefined
+	name: string
+	description: string
+	image: string
+	chainId: number
 
-    connection: Connection
-    programId: PublicKey
-    constructor(realmsId: string) {
+	connection: Connection
+	programId: PublicKey
+	constructor(realmsId: string) {
     	console.log('realmsId', realmsId)
 
     	this.id = realmsId ? new PublicKey(realmsId) : undefined // devnet realmPK
@@ -41,14 +42,14 @@ export class Realms_Solana implements Safe {
     	this.connection = new Connection('https://mango.devnet.rpcpool.com', 'recent')
     	//this.connection = new Connection('http://realms-realms-c335.mainnet.rpcpool.com/258d3727-bb96-409d-abea-0b1b4c48af29', 'recent')
     	this.programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
-    }
+	}
 
-    createMultiTransaction(transactions: MetaTransaction[], safeAddress: string): void {
+	createMultiTransaction(transactions: MetaTransaction[], safeAddress: string): void {
     	throw new Error('Method not implemented.')
-    }
+	}
 
 
-    async proposeTransactions(grantname: string, transactions: TransactionType[], wallet: any) : Promise<string> {
+	async proposeTransactions(grantname: string, transactions: TransactionType[], wallet: any): Promise<string> {
 
     	const realmData = await getRealm(this.connection, this.id!)
     	const COUNCIL_MINT = realmData.account.config.councilMint
@@ -92,7 +93,7 @@ export class Realms_Solana implements Safe {
     		const ins = SystemProgram.transfer({
     			fromPubkey: nativeTreasury,
     			toPubkey: new PublicKey(transactions[i].to),
-    			lamports: transactions[i].amount * 1000000000,
+    			lamports: parseFloat(transactions[i].amount.toFixed(9)) * 1000000000,
     			programId: this.programId,
     		})
 
@@ -149,15 +150,15 @@ export class Realms_Solana implements Safe {
     	console.log('create realms proposal - sendTrxn', sendTrxn)
 
     	return proposalAddress.toString()
-    }
+	}
 
-    isValidSafeAddress(realmsPublicKey: string): any {
+	isValidSafeAddress(realmsPublicKey: string): any {
     	//safe address => realms public key
 
     	return false
-    }
+	}
 
-    async isOwner(address: String): Promise<boolean> {
+	async isOwner(address: String): Promise<boolean> {
     	const walletPublicKey = new PublicKey(address)
     	const realmData = await getRealm(this.connection, this.id!)
     	console.log('realms_solana - realmData', realmData)
@@ -177,9 +178,9 @@ export class Realms_Solana implements Safe {
     	}
 
     	return isOwner
-    }
+	}
 
-    async getSafeDetails(realmsPublicKey: String) : Promise<any> {
+	async getSafeDetails(realmsPublicKey: String): Promise<any> {
     	const realmData = await getRealm(this.connection, new PublicKey(realmsPublicKey))
     	const COUNCIL_MINT = realmData.account.config.councilMint
     	const governanceInfo = await getGovernanceAccounts(this.connection, this.programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
@@ -187,14 +188,49 @@ export class Realms_Solana implements Safe {
     	const nativeTreasury = await getNativeTreasuryAddress(this.programId, governance.pubkey)
     	console.log('governance', governance)
     	console.log('nativeTreasury', nativeTreasury)
-    }
+	}
 
-    getTransactionHashStatus(proposalPublicKeys: String[]):any {
+	async getTransactionHashStatus(proposalPublicKey: string): Promise<any> {
 
-    }
+    	console.log('getTransactionHashStatus', proposalPublicKey)
+    	const realmData = await getRealm(this.connection, new PublicKey(this.id!))
+    	const COUNCIL_MINT = realmData.account.config.councilMint
+    	const governanceInfo = await getGovernanceAccounts(this.connection, new PublicKey(this.programId), Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
+    	const governance = governanceInfo[0]
+
+    	const proposals = await getGovernanceAccounts(this.connection, new PublicKey(this.programId), Proposal, [
+                    pubkeyFilter(1, governance.pubkey)!,
+    	])
+
+
+    	const propsalsToSend: {[proposalKey: string]: number} = {};
+
+    	(proposals
+    		.filter((proposal) => proposalPublicKey.includes(proposal.pubkey.toString())) || [])
+    		.map((proposal) => {
+    			console.log('proposals L211', proposal.account.state)
+    			propsalsToSend[proposal.pubkey.toString()] = proposal.account.state < 5 ? 0 : proposal.account.state === 5 ? 1 : 2
+    		})
+
+
+    	console.log('proposals', propsalsToSend)
+    	return propsalsToSend
+	}
 }
 
-const getSafeDetails = async(realmsAddress: string) : Promise<SafeSelectOption | null> => {
+const solanaToUsd = async(solAmount: number) => {
+	const url = 'https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd'
+	const solToUsd = parseFloat((await axios.get(url)).data.solana.usd)
+	return Math.floor(solToUsd * solAmount)
+}
+
+const usdToSolana = async(usdAmount: number) => {
+	const url = 'https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd'
+	const usdToSolana = parseFloat((await axios.get(url)).data.solana.usd)
+	return (usdAmount / usdToSolana)
+}
+
+const getSafeDetails = async(realmsAddress: string): Promise<SafeSelectOption | null> => {
 	const connection = new Connection('https://mango.devnet.rpcpool.com', 'recent')
 	const programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
 	const realmsPublicKey = new PublicKey(realmsAddress)
@@ -211,10 +247,7 @@ const getSafeDetails = async(realmsAddress: string) : Promise<SafeSelectOption |
 	console.log('name', realmData.account.name)
 	const solAmount = (await connection.getAccountInfo(nativeTreasuryAddress))!.lamports / 1000000000
 	console.log('sol amount', solAmount)
-	const url = 'https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd'
-	const solToUsd = parseFloat((await axios.get(url)).data.solana.usd)
-	console.log('solToUsd', solToUsd)
-	const usdAmount = Math.floor(solToUsd * solAmount)
+	const usdAmount = await solanaToUsd(solAmount)
 	console.log('usdAmount', usdAmount)
 
 	return {
@@ -278,4 +311,4 @@ const getOwners = async(safeAddress: string): Promise<string[]> => {
 }
 
 
-export { getSafeDetails, isOwner, getOwners }
+export { getSafeDetails, isOwner, getOwners, solanaToUsd, usdToSolana }

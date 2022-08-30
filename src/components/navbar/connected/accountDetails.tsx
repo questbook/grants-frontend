@@ -37,8 +37,8 @@ function AccountDetails() {
 	  	ref={buttonRef}
 				as={Button}
 				h={12}
-				variant="solid"
-				size="xl"
+				variant='solid'
+				size='xl'
 				px={2}
 				py={1}
 				borderRadius={8}
@@ -46,8 +46,8 @@ function AccountDetails() {
 					!(connected && isDisconnected) && (
 						<Image
 							mr={2}
-							src="/ui_icons/dropdown_arrow.svg"
-							alt="options" />
+							src='/ui_icons/dropdown_arrow.svg'
+							alt='options' />
 					)
 				}
 				w={connected && isDisconnected ? buttonRef.current?.offsetWidth : 'auto'}
@@ -57,9 +57,9 @@ function AccountDetails() {
 						<Loader />
 					) : (
 						<Flex
-							direction="row"
-							align="center"
-							justify="center">
+							direction='row'
+							align='center'
+							justify='center'>
 							{
 								chainId ? (
 									(CHAIN_INFO[chainId].isTestNetwork && !SHOW_TEST_NETS) ? null : (
@@ -67,7 +67,7 @@ function AccountDetails() {
 											h={8}
 											w={8}
 											src={CHAIN_INFO[chainId].icon}
-											alt="current network"
+											alt='current network'
 										/>
 									)
 								) : null
@@ -77,22 +77,22 @@ function AccountDetails() {
 								ml={3}
 								mr={5}
 								mt={1}
-								alignItems="flex-start">
+								alignItems='flex-start'>
 								<Flex
-									mb="-6px"
-									alignItems="center">
+									mb='-6px'
+									alignItems='center'>
 									<Image
-										mt="-3px"
+										mt='-3px'
 										mr={1}
-										src="/ui_icons/online.svg"
+										src='/ui_icons/online.svg'
 										visibility={isOnline ? 'visible' : 'hidden'}
-										alt="wallet connected"
+										alt='wallet connected'
 									/>
 									<Text
-										fontSize="9px"
-										lineHeight="14px"
-										fontWeight="500"
-										color="#122224"
+										fontSize='9px'
+										lineHeight='14px'
+										fontWeight='500'
+										color='#122224'
 									>
 										{chainId ? ((CHAIN_INFO[chainId].isTestNetwork && !SHOW_TEST_NETS) ? 'Unsupported Network' : CHAIN_INFO[chainId].name) : 'Unsupported Network'}
 									</Text>
@@ -100,10 +100,10 @@ function AccountDetails() {
 
 								<Flex>
 									<Text
-										color="#122224"
-										fontWeight="700"
-										fontSize="16px"
-										lineHeight="24px"
+										color='#122224'
+										fontWeight='700'
+										fontSize='16px'
+										lineHeight='24px'
 									>
 										{formatAddress(accountData?.address || '')}
 									</Text>
@@ -119,7 +119,7 @@ function AccountDetails() {
 				(
 					<MenuList>
 						<MenuItem isDisabled>
-          Signed in with
+							Signed in with
 							{' '}
 							{accountData?.connector?.name}
 						</MenuItem>
@@ -131,9 +131,9 @@ function AccountDetails() {
 									router.replace('/')
 								}
 							}
-							icon={<Image src="/ui_icons/logout.svg" />}
+							icon={<Image src='/ui_icons/logout.svg' />}
 						>
-          Logout
+							Logout
 						</MenuItem>
 					</MenuList>
 				)

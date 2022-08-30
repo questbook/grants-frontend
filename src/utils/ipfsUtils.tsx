@@ -22,22 +22,22 @@ export const uploadToIPFS = async(data: string | Blob | null): Promise<{ hash: s
 
 export const getFromIPFS = async(hash: string): Promise<string> => {
 	try {
-		console.log(hash)
+		// console.log(hash)
 		const fetchResult = await fetch(`${IPFS_DOWNLOAD_ENDPOINT}?arg=${hash}`)
 		const responseBody = await fetchResult.text()
 		return responseBody
 	} catch(e) {
-		console.log(e)
+		// console.log(e)
 	}
 
 	// fallback
 	try {
-		console.log(hash)
+		// console.log(hash)
 		const fetchResult = await fetch(`https://ipfs.io/ipfs/${hash}`)
 		const responseBody = await fetchResult.text()
 		return responseBody
 	} catch(e) {
-		console.log(e)
+		// console.log(e)
 	}
 
 	return ''

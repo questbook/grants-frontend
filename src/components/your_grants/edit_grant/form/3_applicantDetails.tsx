@@ -2,10 +2,10 @@ import React from 'react'
 import {
 	Box, Divider,
 	Flex, Grid, GridItem, Image, Switch, Text, } from '@chakra-ui/react'
+import Badge from 'src/components/ui/badge'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
-import applicantDetailsList from '../../../../constants/applicantDetailsList'
-import Badge from '../../../ui/badge'
+import applicantDetailsList from 'src/constants/applicantDetailsList'
 
 function ApplicantDetails({
 	detailsRequired,
@@ -32,29 +32,29 @@ function ApplicantDetails({
 
 	setMaximumPoints,
 }: {
-  detailsRequired: any[];
-  toggleDetailsRequired: (index: number) => void;
+  detailsRequired: any[]
+  toggleDetailsRequired: (index: number) => void
 
-  customFields: any[];
-  setCustomFields: (customFields: any[]) => void;
-  customFieldsOptionIsVisible: boolean;
-  setCustomFieldsOptionIsVisible: (customFieldsOptionIsVisible: boolean) => void;
+  customFields: any[]
+  setCustomFields: (customFields: any[]) => void
+  customFieldsOptionIsVisible: boolean
+  setCustomFieldsOptionIsVisible: (customFieldsOptionIsVisible: boolean) => void
 
-  multipleMilestones: boolean;
-  setMultipleMilestones: (multipleMilestones: boolean) => void;
+  multipleMilestones: boolean
+  setMultipleMilestones: (multipleMilestones: boolean) => void
 
-  defaultMilestoneFields: any[];
-  setDefaultMilestoneFields: (defaultMilestoneFields: any[]) => void;
+  defaultMilestoneFields: any[]
+  setDefaultMilestoneFields: (defaultMilestoneFields: any[]) => void
 
-  defaultMilestoneFieldsOptionIsVisible: boolean;
+  defaultMilestoneFieldsOptionIsVisible: boolean
 
-  rubricRequired: boolean;
-  setRubricRequired: (rubricRequired: boolean) => void;
-  rubrics: any[];
-  setRubrics: (rubrics: any[]) => void;
-  defaultRubricsPresent: boolean;
+  rubricRequired: boolean
+  setRubricRequired: (rubricRequired: boolean) => void
+  rubrics: any[]
+  setRubrics: (rubrics: any[]) => void
+  defaultRubricsPresent: boolean
 
-  setMaximumPoints: (maximumPoints: number) => void;
+  setMaximumPoints: (maximumPoints: number) => void
 }) {
 	const [milestoneSelectOptionIsVisible,
 		setMilestoneSelectOptionIsVisible] = React.useState((multipleMilestones || false)
@@ -62,11 +62,11 @@ function ApplicantDetails({
 	return (
 		<Flex
 			py={0}
-			direction="column">
+			direction='column'>
 			<Grid
-				templateColumns="repeat(2, 1fr)"
-				gap="18px"
-				fontWeight="bold">
+				templateColumns='repeat(2, 1fr)'
+				gap='18px'
+				fontWeight='bold'>
 				{
 					detailsRequired.map((detail, index) => {
 						const {
@@ -86,8 +86,8 @@ function ApplicantDetails({
 												)
 											}
 										}
-										label="Add Custom Field"
-										tooltip="Get additional details in your application form."
+										label='Add Custom Field'
+										tooltip='Get additional details in your application form.'
 									/>
 								</GridItem>
 							)
@@ -109,8 +109,8 @@ function ApplicantDetails({
 												setDefaultMilestoneFields([])
 											}
 										}
-										label="Milestones"
-										tooltip="Add milestones for the applicant to complete"
+										label='Milestones'
+										tooltip='Add milestones for the applicant to complete'
 									/>
 								</GridItem>
 							)
@@ -151,9 +151,9 @@ function ApplicantDetails({
 										index > 0 && (
 											<Flex
 												mt={2}
-												mb="-21px"
-												gap="2"
-												justifyContent="flex-end">
+												mb='-21px'
+												gap='2'
+												justifyContent='flex-end'>
 												<Box
 													onClick={
 														() => {
@@ -162,24 +162,24 @@ function ApplicantDetails({
 															setCustomFields(newCustomFields)
 														}
 													}
-													display="flex"
-													alignItems="center"
-													cursor="pointer"
+													display='flex'
+													alignItems='center'
+													cursor='pointer'
 													zIndex={1}
 												>
 													<Image
-														h="12px"
-														w="12px"
-														src="/ui_icons/delete_red.svg"
-														mr="6px"
-														mt="-2px"
+														h='12px'
+														w='12px'
+														src='/ui_icons/delete_red.svg'
+														mr='6px'
+														mt='-2px'
 													/>
 													<Text
-														fontWeight="500"
-														fontSize="14px"
-														color="#DF5252"
-														lineHeight="20px">
-                      Delete
+														fontWeight='500'
+														fontSize='14px'
+														color='#DF5252'
+														lineHeight='20px'>
+														Delete
 													</Text>
 												</Box>
 											</Flex>
@@ -196,9 +196,9 @@ function ApplicantDetails({
 												setCustomFields(newCustomFields)
 											}
 										}
-										placeholder="Field Label"
+										placeholder='Field Label'
 										isError={customField.isError}
-										errorText="Required"
+										errorText='Required'
 										maxLength={300}
 									/>
 									<Box mt={2} />
@@ -207,8 +207,8 @@ function ApplicantDetails({
 						}
 						<Flex
 							mt={2}
-							gap="2"
-							justifyContent="flex-start">
+							gap='2'
+							justifyContent='flex-start'>
 							<Box
 								onClick={
 									() => {
@@ -219,22 +219,22 @@ function ApplicantDetails({
 										setCustomFields(newCustomFields)
 									}
 								}
-								display="flex"
-								alignItems="center"
-								cursor="pointer"
+								display='flex'
+								alignItems='center'
+								cursor='pointer'
 							>
 								<Image
-									h="16px"
-									w="15px"
-									src="/ui_icons/plus_circle.svg"
-									mr="6px"
+									h='16px'
+									w='15px'
+									src='/ui_icons/plus_circle.svg'
+									mr='6px'
 								/>
 								<Text
-									fontWeight="500"
-									fontSize="14px"
-									color="#8850EA"
-									lineHeight="20px">
-                Add another question
+									fontWeight='500'
+									fontSize='14px'
+									color='#8850EA'
+									lineHeight='20px'>
+									Add another question
 								</Text>
 							</Box>
 						</Flex>
@@ -248,16 +248,16 @@ function ApplicantDetails({
 					<>
 						<Flex
 							flex={1}
-							direction="column">
+							direction='column'>
 							<Text
-								lineHeight="20px"
-								fontWeight="bold">
-              Milestones
+								lineHeight='20px'
+								fontWeight='bold'>
+								Milestones
 							</Text>
 						</Flex>
 						<Flex
 							mt={1}
-							maxW="420px">
+							maxW='420px'>
 							<Badge
 								isActive={!multipleMilestones}
 								onClick={
@@ -268,16 +268,16 @@ function ApplicantDetails({
 										setMultipleMilestones(false)
 									}
 								}
-								label="Single Milestone"
-								inActiveVariant="solid"
-								variant="buttonGroupStart"
+								label='Single Milestone'
+								inActiveVariant='solid'
+								variant='buttonGroupStart'
 							/>
 							<Badge
 								isActive={multipleMilestones}
 								onClick={() => setMultipleMilestones(true)}
-								label="Multiple Milestones"
-								inActiveVariant="solid"
-								variant="buttonGroupEnd"
+								label='Multiple Milestones'
+								inActiveVariant='solid'
+								variant='buttonGroupEnd'
 							/>
 						</Flex>
 
@@ -287,9 +287,9 @@ function ApplicantDetails({
 								<>
 									<Flex
 										mt={2}
-										mb="-21px"
-										gap="2"
-										justifyContent="flex-end">
+										mb='-21px'
+										gap='2'
+										justifyContent='flex-end'>
 										<Box
 											onClick={
 												() => {
@@ -298,24 +298,24 @@ function ApplicantDetails({
 													setDefaultMilestoneFields(newDefaultMilestoneFields)
 												}
 											}
-											display="flex"
-											alignItems="center"
-											cursor="pointer"
+											display='flex'
+											alignItems='center'
+											cursor='pointer'
 											zIndex={1}
 										>
 											<Image
-												h="12px"
-												w="12px"
-												src="/ui_icons/delete_red.svg"
-												mr="6px"
-												mt="-2px"
+												h='12px'
+												w='12px'
+												src='/ui_icons/delete_red.svg'
+												mr='6px'
+												mt='-2px'
 											/>
 											<Text
-												fontWeight="500"
-												fontSize="14px"
-												color="#DF5252"
-												lineHeight="20px">
-                    Delete
+												fontWeight='500'
+												fontSize='14px'
+												color='#DF5252'
+												lineHeight='20px'>
+												Delete
 											</Text>
 										</Box>
 									</Flex>
@@ -330,9 +330,9 @@ function ApplicantDetails({
 												setDefaultMilestoneFields(newDefaultMilestoneFields)
 											}
 										}
-										placeholder="Field Label"
+										placeholder='Field Label'
 										isError={defaultMilestoneField.isError}
-										errorText="Required"
+										errorText='Required'
 										maxLength={250}
 									/>
 									<Box mt={1} />
@@ -342,9 +342,9 @@ function ApplicantDetails({
 						{
 							(multipleMilestones || (!multipleMilestones && defaultMilestoneFields.length === 0)) && (
 								<Flex
-									mt="-4px"
-									gap="2"
-									justifyContent="flex-start">
+									mt='-4px'
+									gap='2'
+									justifyContent='flex-start'>
 									<Box
 										onClick={
 											() => {
@@ -355,22 +355,22 @@ function ApplicantDetails({
 												setDefaultMilestoneFields(newDefaultMilestoneFields)
 											}
 										}
-										display="flex"
-										alignItems="center"
-										cursor="pointer"
+										display='flex'
+										alignItems='center'
+										cursor='pointer'
 									>
 										<Image
-											h="16px"
-											w="15px"
-											src="/ui_icons/plus_circle.svg"
-											mr="6px"
+											h='16px'
+											w='15px'
+											src='/ui_icons/plus_circle.svg'
+											mr='6px'
 										/>
 										<Text
-											fontWeight="500"
-											fontSize="14px"
-											color="#8850EA"
-											lineHeight="20px">
-                  Add a milestone
+											fontWeight='500'
+											fontSize='14px'
+											color='#8850EA'
+											lineHeight='20px'>
+											Add a milestone
 										</Text>
 									</Box>
 								</Flex>
@@ -382,56 +382,56 @@ function ApplicantDetails({
 			}
 
 			<Flex
-				direction="column"
+				direction='column'
 				mt={8}>
 				<Text
-					fontSize="18px"
-					fontWeight="700"
-					lineHeight="26px"
+					fontSize='18px'
+					fontWeight='700'
+					lineHeight='26px'
 					letterSpacing={0}
 				>
-          Applicant Review
+					Applicant Review
 				</Text>
 				<Flex>
 					<Text
-						color="#717A7C"
-						fontSize="14px"
-						lineHeight="20px">
-            Once you receive applications you can assign reviewers to each applicant,
-            and setup an evaluation scorecard to get feedback from them.
+						color='#717A7C'
+						fontSize='14px'
+						lineHeight='20px'>
+						Once you receive applications you can assign reviewers to each applicant,
+						and setup an evaluation scorecard to get feedback from them.
 					</Text>
 				</Flex>
 			</Flex>
 
 			<Flex
 				mt={4}
-				gap="2"
-				justifyContent="space-between">
-				<Flex direction="column">
+				gap='2'
+				justifyContent='space-between'>
+				<Flex direction='column'>
 					<Text
-						color="#122224"
-						fontWeight="bold"
-						fontSize="16px"
-						lineHeight="20px"
+						color='#122224'
+						fontWeight='bold'
+						fontSize='16px'
+						lineHeight='20px'
 					>
-            Evaluation rubric
+						Evaluation rubric
 					</Text>
 					<Flex>
 						<Text
-							color="#717A7C"
-							fontSize="14px"
-							lineHeight="20px">
-              Define a set of criteria for reviewers to evaluate the application.
-              You can add this later too.
+							color='#717A7C'
+							fontSize='14px'
+							lineHeight='20px'>
+							Define a set of criteria for reviewers to evaluate the application.
+							You can add this later too.
 						</Text>
 					</Flex>
 				</Flex>
 				<Flex
-					justifyContent="center"
+					justifyContent='center'
 					gap={2}
-					alignItems="center">
+					alignItems='center'>
 					<Switch
-						id="encrypt"
+						id='encrypt'
 						defaultChecked={defaultRubricsPresent}
 						onChange={
 							(e) => {
@@ -446,9 +446,9 @@ function ApplicantDetails({
 						}
 					/>
 					<Text
-						fontSize="12px"
-						fontWeight="bold"
-						lineHeight="16px">
+						fontSize='12px'
+						fontWeight='bold'
+						lineHeight='16px'>
 						{`${rubricRequired ? 'YES' : 'NO'}`}
 					</Text>
 				</Flex>
@@ -459,29 +459,29 @@ function ApplicantDetails({
 					<>
 						<Flex
 							mt={4}
-							gap="2"
-							alignItems="flex-start"
+							gap='2'
+							alignItems='flex-start'
 							opacity={rubricRequired ? 1 : 0.4}
 						>
 							<Flex
-								direction="column"
+								direction='column'
 								flex={0.3327}>
 								<Text
-									mt="18px"
-									color="#122224"
-									fontWeight="bold"
-									fontSize="16px"
-									lineHeight="20px"
+									mt='18px'
+									color='#122224'
+									fontWeight='bold'
+									fontSize='16px'
+									lineHeight='20px'
 								>
-                Criteria
+									Criteria
 									{' '}
 									{index + 1}
 								</Text>
 							</Flex>
 							<Flex
-								justifyContent="center"
+								justifyContent='center'
 								gap={2}
-								alignItems="center"
+								alignItems='center'
 								flex={0.6673}>
 								<SingleLineInput
 									value={rubrics[index].name}
@@ -493,35 +493,35 @@ function ApplicantDetails({
 											setRubrics(newRubrics)
 										}
 									}
-									placeholder="Name"
+									placeholder='Name'
 									isError={rubrics[index].nameError}
-									errorText="Required"
+									errorText='Required'
 									disabled={!rubricRequired}
 								/>
 							</Flex>
 						</Flex>
 						<Flex
 							mt={6}
-							gap="2"
-							alignItems="flex-start"
+							gap='2'
+							alignItems='flex-start'
 							opacity={rubricRequired ? 1 : 0.4}>
 							<Flex
-								direction="column"
+								direction='column'
 								flex={0.3327}>
 								<Text
-									mt="18px"
-									color="#122224"
-									fontWeight="bold"
-									fontSize="16px"
-									lineHeight="20px"
+									mt='18px'
+									color='#122224'
+									fontWeight='bold'
+									fontSize='16px'
+									lineHeight='20px'
 								>
-                Description
+									Description
 								</Text>
 							</Flex>
 							<Flex
-								justifyContent="center"
+								justifyContent='center'
 								gap={2}
-								alignItems="center"
+								alignItems='center'
 								flex={0.6673}>
 								<MultiLineInput
 									value={rubrics[index].description}
@@ -533,9 +533,9 @@ function ApplicantDetails({
 											setRubrics(newRubrics)
 										}
 									}
-									placeholder="Describe the evaluation criteria"
+									placeholder='Describe the evaluation criteria'
 									isError={rubrics[index].descriptionError}
-									errorText="Required"
+									errorText='Required'
 									disabled={!rubricRequired}
 								/>
 							</Flex>
@@ -543,8 +543,8 @@ function ApplicantDetails({
 
 						<Flex
 							mt={2}
-							gap="2"
-							justifyContent="flex-end">
+							gap='2'
+							justifyContent='flex-end'>
 							<Box
 								onClick={
 									() => {
@@ -557,23 +557,23 @@ function ApplicantDetails({
 										setRubrics(newRubrics)
 									}
 								}
-								display="flex"
-								alignItems="center"
-								cursor="pointer"
+								display='flex'
+								alignItems='center'
+								cursor='pointer'
 								opacity={rubricRequired ? 1 : 0.4}
 							>
 								<Image
-									h="16px"
-									w="15px"
-									src="/ui_icons/delete_red.svg"
-									mr="6px"
+									h='16px'
+									w='15px'
+									src='/ui_icons/delete_red.svg'
+									mr='6px'
 								/>
 								<Text
-									fontWeight="500"
-									fontSize="14px"
-									color="#DF5252"
-									lineHeight="20px">
-                Delete
+									fontWeight='500'
+									fontSize='14px'
+									color='#DF5252'
+									lineHeight='20px'>
+									Delete
 								</Text>
 							</Box>
 						</Flex>
@@ -583,9 +583,9 @@ function ApplicantDetails({
 			}
 
 			<Flex
-				mt="19px"
-				gap="2"
-				justifyContent="flex-start">
+				mt='19px'
+				gap='2'
+				justifyContent='flex-start'>
 				<Box
 					onClick={
 						() => {
@@ -602,23 +602,23 @@ function ApplicantDetails({
 							setRubrics(newRubrics)
 						}
 					}
-					display="flex"
-					alignItems="center"
-					cursor="pointer"
+					display='flex'
+					alignItems='center'
+					cursor='pointer'
 					opacity={rubricRequired ? 1 : 0.4}
 				>
 					<Image
-						h="16px"
-						w="15px"
-						src="/ui_icons/plus_circle.svg"
-						mr="6px"
+						h='16px'
+						w='15px'
+						src='/ui_icons/plus_circle.svg'
+						mr='6px'
 					/>
 					<Text
-						fontWeight="500"
-						fontSize="14px"
-						color="#8850EA"
-						lineHeight="20px">
-            Add another criteria
+						fontWeight='500'
+						fontSize='14px'
+						color='#8850EA'
+						lineHeight='20px'>
+						Add another criteria
 					</Text>
 				</Box>
 			</Flex>

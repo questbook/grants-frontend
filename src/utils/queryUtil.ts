@@ -3,8 +3,8 @@ import { ApiClientsContext } from 'pages/_app'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from 'src/constants/chains'
 import { useGetApplicationMilestonesQuery } from 'src/generated/graphql'
-import { getUrlForIPFSHash } from './ipfsUtils'
-import { getSupportedChainIdFromWorkspace } from './validationUtils'
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 const useApplicationMilestones = (grantId: string, chainId?: SupportedChainId) => {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!

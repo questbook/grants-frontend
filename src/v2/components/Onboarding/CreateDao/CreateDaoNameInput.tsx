@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 import { Box, Flex, Heading, Input, Text } from '@chakra-ui/react'
 import { ForwardArrow } from 'src/v2/assets/custom chakra icons/Arrows/ForwardArrow'
 import { IdeaBulb } from 'src/v2/assets/custom chakra icons/IdeaBulb'
-import ContinueButton from '../UI/Misc/ContinueButton'
+import ContinueButton from 'src/v2/components/Onboarding/UI/Misc/ContinueButton'
 
 const CreateDaoNameInput = ({
 	daoName,
 	onSubmit,
 }: {
-	daoName: string | undefined,
+	daoName: string | undefined
   onSubmit: (name: string) => void
 }) => {
 	const [newDaoName, setNewDaoName] = useState('')
@@ -42,57 +42,57 @@ const CreateDaoNameInput = ({
 			errorConditions.some(condition => condition.errorFunction(newDaoName))
 		)
 
-		// console.log(errorConditions.some(condition => condition.errorFunction(newDaoName)))
+		// // console.log(errorConditions.some(condition => condition.errorFunction(newDaoName)))
 	}, [newDaoName])
 	return (
 		<>
-			<Text color={'brandText'}>
-        Let’s begin the adventure.
+			<Text color='brandText'>
+				Let’s begin the adventure.
 			</Text>
-			<Heading variant={'small'}>
-        What would you like to call your DAO?
+			<Heading variant='small'>
+				What would you like to call your DAO?
 			</Heading>
 
 			<Flex
 				mt={6}
-				alignItems={'flex-start'}>
+				alignItems='flex-start'>
 				<Flex
-					direction={'column'}
+					direction='column'
 					mt={2}>
 					<ForwardArrow
-						color={'blue.500'}
-						w={'16px'}
-						h={'15.56px'} />
+						color='blue.500'
+						w='16px'
+						h='15.56px' />
 				</Flex>
 				<Flex
 					flex={1}
-					direction={'column'}
+					direction='column'
 					ml={4}>
 					<Input
-						variant={'brandFlushed'}
-						placeholder={'DAO Name'}
+						variant='brandFlushed'
+						placeholder='DAO Name'
 						_placeholder={
 							{
 								color: 'blue.100',
 								fontWeight: '500'
 							}
 						}
-						fontWeight={'500'}
+						fontWeight='500'
 						value={newDaoName}
 						onChange={(e) => setNewDaoName(e.target.value)}
-						errorBorderColor={'red'}
+						errorBorderColor='red'
 						isInvalid={!newDaoInputIsFocused && newDaoNameIsError}
 						onFocus={() => setNewDaoInputIsFocused(true)}
 						onBlur={() => setNewDaoInputIsFocused(false)}
 					/>
 
 					<Flex
-						alignItems={'center'}
+						alignItems='center'
 						mt={6}>
-						<IdeaBulb color={'yellow'} />
+						<IdeaBulb color='yellow' />
 						<Text
 							ml={1}
-							fontWeight={'500'}>
+							fontWeight='500'>
 							Tips
 						</Text>
 					</Flex>
@@ -101,12 +101,12 @@ const CreateDaoNameInput = ({
 						errorConditions.map((condition, index) => (
 							<Flex
 								key={`daocreate-error-${index}`}
-								letterSpacing={'0.5px'}
+								letterSpacing='0.5px'
 								color={!newDaoInputIsFocused && condition.errorFunction(newDaoName) ? 'red' : '#1F1F33'}
-								fontSize={'sm'}
+								fontSize='sm'
 							>
 								<Box ml={1} />
-									•
+								•
 								<Box ml={2} />
 								{condition.description}
 							</Flex>
@@ -117,7 +117,7 @@ const CreateDaoNameInput = ({
 
 			<Flex
 				mt={2}
-				justifyContent={'flex-end'}>
+				justifyContent='flex-end'>
 				<ContinueButton
 					disabled={!newDaoName || newDaoNameIsError}
 					onClick={() => onSubmit(newDaoName)}

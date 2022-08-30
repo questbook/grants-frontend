@@ -5,9 +5,9 @@ import axios from 'axios'
 const DEFAULT_ERROR_MESSAGE = 'Could not fetch all data.'
 
 interface Props {
-  urls: string[],
-  payload?: any,
-  method: string,
+  urls: string[]
+  payload?: any
+  method: string
 }
 
 function useAxiosMulti({ urls, payload, method }: Props) {

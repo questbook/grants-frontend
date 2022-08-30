@@ -63,12 +63,12 @@ function EditGrant() {
 	} = useGetGrantDetailsQuery(queryParams)
 
 	const getDecodedDetails = async(detailsHash: string, grant: any) => {
-		console.log(detailsHash)
+		// console.log(detailsHash)
 		const d = await getFromIPFS(detailsHash)
 		let reward
 		let rewardCurrency
 		let rewardCurrencyAddress
-		console.log('grant token while editing grant', grant)
+		// console.log('grant token while editing grant', grant)
 		if(grant.reward.token) {
 			reward = ethers.utils.formatUnits(
 				grant.reward.committed,
@@ -161,9 +161,9 @@ function EditGrant() {
 			let reward
 			let rewardCurrency
 			let rewardCurrencyAddress
-			console.log('grant token while editing grant', grant)
+			// console.log('grant token while editing grant', grant)
 			if(grant.reward.token) {
-				console.log('grant token while editing grant', grant)
+				// console.log('grant token while editing grant', grant)
 				reward = ethers.utils.formatUnits(
 					grant.reward.committed,
 					grant.reward.token.decimal,
@@ -282,7 +282,7 @@ function EditGrant() {
 
 	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
-		// console.log(transactionData);
+		// // console.log(transactionData);
 		if(transactionData) {
 			router.replace({ pathname: '/your_grants', query: { done: 'yes' } })
 			setRefresh(true)
@@ -296,15 +296,15 @@ function EditGrant() {
 
 	return (
 		<Container
-			maxW="100%"
-			display="flex"
-			px="70px">
+			maxW='100%'
+			display='flex'
+			px='70px'>
 			<Container
 				flex={1}
-				display="flex"
-				flexDirection="column"
-				maxW="682px"
-				alignItems="stretch"
+				display='flex'
+				flexDirection='column'
+				maxW='682px'
+				alignItems='stretch'
 				pb={8}
 				px={10}
 			>
@@ -316,7 +316,7 @@ function EditGrant() {
 							formData={formData}
 							onSubmit={
 								(editdata: any) => {
-									console.log('editdata', editdata)
+									// console.log('editdata', editdata)
 									setEditData(editdata)
 								}
 							}

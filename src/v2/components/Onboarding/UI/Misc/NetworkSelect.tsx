@@ -1,27 +1,27 @@
 import { Box, Button, Text } from '@chakra-ui/react'
 import DropdownSelect from 'src/v2/components/DropdownSelect'
-import { NetworkSelectOption, supportedNetworks } from '../../SupportedNetworksData'
+import { NetworkSelectOption, supportedNetworks } from 'src/v2/components/Onboarding/SupportedNetworksData'
 
 const Option = ({ innerProps, data }: any) => (
 	<Box
 		{...innerProps}
-		alignItems={'center'}
+		alignItems='center'
 		p={0}
 		m={0}
 	>
 		<Button
-			w={'100%'}
-			variant={'ghost'}
+			w='100%'
+			variant='ghost'
 			py={1}
 			px={4}
-			justifyContent={'flex-start'}
+			justifyContent='flex-start'
 			borderRadius={0}
 			h={8}
 		>
 			{data.icon}
 			<Text
 				ml={2}
-				fontWeight={'400'}
+				fontWeight='400'
 			>
 				{data.label}
 			</Text>
@@ -34,9 +34,9 @@ const NetworkSelect = ({
 	onChange,
 	placeholder,
 }: {
-  value: NetworkSelectOption | undefined;
-  onChange: (value: NetworkSelectOption | undefined) => void;
-  placeholder: string;
+  value: NetworkSelectOption | undefined
+  onChange: (value: NetworkSelectOption | undefined) => void
+  placeholder: string
 }) => (
 	<DropdownSelect
 		options={supportedNetworks}

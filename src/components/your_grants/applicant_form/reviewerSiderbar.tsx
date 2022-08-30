@@ -10,14 +10,14 @@ import {
 import { ApiClientsContext } from 'pages/_app'
 import { Fragment } from 'preact'
 import Loader from 'src/components/ui/loader'
+import FeedbackDrawer, { FeedbackType } from 'src/components/your_grants/feedbackDrawer'
 import { defaultChainId } from 'src/constants/chains'
+import { GetApplicationDetailsQuery } from 'src/generated/graphql'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { useLoadReview } from 'src/utils/reviews'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import { GetApplicationDetailsQuery } from '../../../generated/graphql'
-import { useQuestbookAccount } from '../../../hooks/gasless/useQuestbookAccount'
-import FeedbackDrawer, { FeedbackType } from '../feedbackDrawer'
 
 type ReviewerSidebarProps = {
 	applicationData: GetApplicationDetailsQuery['grantApplication']
@@ -58,7 +58,7 @@ function ReviewerSidebar({ applicationData }: ReviewerSidebarProps) {
 			loadReview(yourReview, applicationData!.id)
 				.then(setReviewSelected)
 				.catch(err => {
-					console.error('error in loading review ', err)
+					// console.error('error in loading review ', err)
 					setReviewLoadError(err)
 				})
 		}
@@ -81,7 +81,7 @@ function ReviewerSidebar({ applicationData }: ReviewerSidebarProps) {
 				<HStack justify='space-between'>
 					<Text
 						fontSize={20}
-						fontWeight={'500'}>
+						fontWeight='500'>
 						Your Score
 					</Text>
 

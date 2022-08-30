@@ -40,27 +40,27 @@ function AddFunds() {
 
 	return (
 		<Flex
-			w="100%"
-			direction="row"
-			justify="center">
+			w='100%'
+			direction='row'
+			justify='center'>
 			<Flex
-				w="80%"
-				direction="column"
-				align="start"
+				w='80%'
+				direction='column'
+				align='start'
 				mt={6}
-				h="100%">
+				h='100%'>
 				{/* <Text variant="heading">Funds</Text> */}
-				<Heading title="Funds" />
+				<Heading title='Funds' />
 				<Flex
-					direction="row"
+					direction='row'
 					mt={4}
 					mb={4}>
 					{
 						tabs.map((tab) => (
 							<Button
-								padding="8px 24px"
-								borderRadius="52px"
-								minH="40px"
+								padding='8px 24px'
+								borderRadius='52px'
+								minH='40px'
 								bg={selectedTab === tab.index ? 'brand.500' : 'white'}
 								color={selectedTab === tab.index ? 'white' : 'black'}
 								onClick={
@@ -73,9 +73,9 @@ function AddFunds() {
 									}
 								}
 								_hover={{}}
-								fontWeight="700"
-								fontSize="16px"
-								lineHeight="24px"
+								fontWeight='700'
+								fontSize='16px'
+								lineHeight='24px'
 								mr={3}
 								border={selectedTab === tab.index ? 'none' : '1px solid #A0A7A7'}
 								key={tab.index}

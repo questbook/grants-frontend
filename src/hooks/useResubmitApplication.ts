@@ -2,18 +2,18 @@ import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { GrantApplicationUpdate } from '@questbook/service-validator-client'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { APPLICATION_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
+import useQBContract from 'src/hooks/contracts/useQBContract'
+import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import useChainId from 'src/hooks/utils/useChainId'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
-import ErrorToast from '../components/ui/toasts/errorToast'
-import useQBContract from './contracts/useQBContract'
-import { useBiconomy } from './gasless/useBiconomy'
-import { useQuestbookAccount } from './gasless/useQuestbookAccount'
-import useChainId from './utils/useChainId'
 
 export default function useResubmitApplication(
 	data: GrantApplicationUpdate,
@@ -47,7 +47,7 @@ export default function useResubmitApplication(
 
 	useEffect(() => {
 		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		console.log('rree', isBiconomyLoading, biconomyLoading)
+		// console.log('rree', isBiconomyLoading, biconomyLoading)
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
 			biconomy.networkId.toString() === chainId.toString()) {
 			setIsBiconomyInitialised(true)
@@ -81,11 +81,11 @@ export default function useResubmitApplication(
 		if(loading) {
 			return
 		}
-		// console.log('calling createGrant');
+		// // console.log('calling createGrant');
 
 		async function validate() {
 			setLoading(true)
-			// console.log('calling validate');
+			// // console.log('calling validate');
 			try {
 
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
@@ -97,7 +97,7 @@ export default function useResubmitApplication(
 				).hash
 				// eslint-disable-next-line no-param-reassign
 				data.fields!.projectDetails[0].value = detailsHash
-				console.log('Details hash: ', detailsHash)
+				// console.log('Details hash: ', detailsHash)
 				const {
 					data: { ipfsHash },
 				} = await validatorApi.validateGrantApplicationUpdate(data)

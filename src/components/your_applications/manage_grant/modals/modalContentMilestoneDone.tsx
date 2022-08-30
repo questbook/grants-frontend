@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import {
 	Box, Button, Flex, Image, ModalBody, Text, } from '@chakra-ui/react'
+import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import Loader from 'src/components/ui/loader'
 import { SupportedChainId } from 'src/constants/chains'
 import useRequestMilestoneApproval from 'src/hooks/useRequestMilestoneApproval'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { ApplicationMilestone } from 'src/types'
-import { getMilestoneMetadata } from '../../../../utils/formattingUtils'
-import MultiLineInput from '../../../ui/forms/multiLineInput'
+import { getMilestoneMetadata } from 'src/utils/formattingUtils'
 
 interface Props {
-  chainId: SupportedChainId | undefined;
-  milestone: ApplicationMilestone | undefined;
-  onClose: () => void;
+  chainId: SupportedChainId | undefined
+  milestone: ApplicationMilestone | undefined
+  onClose: () => void
 }
 
 function ModalContent({ milestone, onClose, chainId }: Props) {
@@ -48,33 +48,33 @@ function ModalContent({ milestone, onClose, chainId }: Props) {
 	}
 
 	return (
-		<ModalBody maxW="521px">
+		<ModalBody maxW='521px'>
 			<Flex
-				direction="column"
-				justify="start"
-				align="center">
+				direction='column'
+				justify='start'
+				align='center'>
 				<Image
-					src="/ui_icons/milestone_complete.svg"
+					src='/ui_icons/milestone_complete.svg'
 					mt={6} />
 				<Text
-					textAlign="center"
-					variant="applicationText"
+					textAlign='center'
+					variant='applicationText'
 					mt={6}>
-          Add a brief summary of what was achieved in the milestone, timelines
-          and links to show your proof of work.
+					Add a brief summary of what was achieved in the milestone, timelines
+					and links to show your proof of work.
 				</Text>
 				<Text
 					mt={8}
-					textAlign="center"
-					variant="applicationText">
-          The grantor can see your summary.
+					textAlign='center'
+					variant='applicationText'>
+					The grantor can see your summary.
 				</Text>
 				<Flex
 					mt={6}
-					w="100%">
+					w='100%'>
 					<MultiLineInput
-						label="Milestone Summary"
-						placeholder="Write the milestone summary as detailed as possible."
+						label='Milestone Summary'
+						placeholder='Write the milestone summary as detailed as possible.'
 						value={details}
 						isError={detailsError}
 						onChange={
@@ -86,45 +86,45 @@ function ModalContent({ milestone, onClose, chainId }: Props) {
 								setDetails(e.target.value)
 							}
 						}
-						errorText="Required"
+						errorText='Required'
 						maxLength={300}
 					/>
 				</Flex>
 				<Flex
-					direction="row"
-					w="100%"
-					align="start"
+					direction='row'
+					w='100%'
+					align='start'
 					mt={2}>
 					<Image
 						mt={1}
-						src="/ui_icons/info.svg" />
+						src='/ui_icons/info.svg' />
 					<Box mr={2} />
-					<Text variant="footer">
-            By pressing Mark as done you’ll have to approve this transaction in
-            your wallet.
+					<Text variant='footer'>
+						By pressing Mark as done you’ll have to approve this transaction in
+						your wallet.
 						{' '}
 						<Button
-							variant="link"
-							color="brand.500"
+							variant='link'
+							color='brand.500'
 							rightIcon={
 								<Image
 									ml={1}
-									src="/ui_icons/link.svg"
-									display="inline-block" />
+									src='/ui_icons/link.svg'
+									display='inline-block' />
 							}
 						>
 							<Text
-								variant="footer"
-								color="brand.500">
-                Learn More
+								variant='footer'
+								color='brand.500'>
+								Learn More
 							</Text>
 						</Button>
 					</Text>
 				</Flex>
 				<Button
 					disabled={!isBiconomyInitialised}
-					w="100%"
-					variant="primary"
+					w='100%'
+					variant='primary'
 					mt={8}
 					py={loading ? 2 : 0}
 					onClick={loading ? () => {} : markAsDone}>

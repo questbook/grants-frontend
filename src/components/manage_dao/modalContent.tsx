@@ -2,21 +2,21 @@ import React, { useEffect } from 'react'
 import {
 	Box, Button, Flex, Image, Link, ModalBody, Text } from '@chakra-ui/react'
 import { ethers } from 'ethers'
+import ConfirmationModalContent from 'src/components/manage_dao/confirmationModalContent'
+import MemberProps from 'src/components/manage_dao/memberProps'
+import roles from 'src/components/manage_dao/roles'
+import Badge from 'src/components/ui/badge'
+import SingleLineInput from 'src/components/ui/forms/singleLineInput'
+import Loader from 'src/components/ui/loader'
+import Modal from 'src/components/ui/modal'
 import useAddMember from 'src/hooks/useAddMember'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { isValidAddress, isValidEmail } from 'src/utils/validationUtils'
-import Badge from '../ui/badge'
-import SingleLineInput from '../ui/forms/singleLineInput'
-import Loader from '../ui/loader'
-import Modal from '../ui/modal'
-import ConfirmationModalContent from './confirmationModalContent'
-import MemberProps from './memberProps'
-import roles from './roles'
 
 interface Props {
-  onClose: (member: MemberProps, shouldRevoke?: boolean) => void;
-  isEdit: boolean,
-  member?: MemberProps;
+  onClose: (member: MemberProps, shouldRevoke?: boolean) => void
+  isEdit: boolean
+  member?: MemberProps
 }
 
 function ModalContent({
@@ -52,7 +52,7 @@ function ModalContent({
 				role: roles.find((r) => r.index === dtRole)?.value || '',
 				updatedAt: time,
 				addedBy: txnData.from,
-			}, dt[3].every((r:boolean) => !r))
+			}, dt[3].every((r: boolean) => !r))
 			setRefresh(true)
 		}
 
@@ -155,9 +155,9 @@ function ModalContent({
 				</Text>
 				<Box my={8} />
 				<SingleLineInput
-					label="Address *"
-					placeholder="0xb794f5e74279579268"
-					subtext=""
+					label='Address *'
+					placeholder='0xb794f5e74279579268'
+					subtext=''
 					value={memberAddress}
 					onChange={
 						(e) => {
@@ -169,13 +169,13 @@ function ModalContent({
 						}
 					}
 					isError={memberAddressError}
-					errorText="Address required with proper format"
+					errorText='Address required with proper format'
 				/>
-				<Box my="31px" />
+				<Box my='31px' />
 				<SingleLineInput
-					label="Email address *"
-					placeholder="name@sample.com"
-					subtext=""
+					label='Email address *'
+					placeholder='name@sample.com'
+					subtext=''
 					value={memberEmail}
 					onChange={
 						(e) => {
@@ -189,52 +189,52 @@ function ModalContent({
 						}
 					}
 					isError={memberEmailError}
-					errorText="Required email address in proper format"
-					type="email"
+					errorText='Required email address in proper format'
+					type='email'
 				/>
-				<Box my="31px" />
+				<Box my='31px' />
 				{
 					member?.role === 'owner' || member?.role === 'admin' ? (
 						<>
 							<Flex
-								direction="row"
+								direction='row'
 								mt={6}>
 								<Text
-									textAlign="left"
-									variant="footer"
-									fontSize="12px">
+									textAlign='left'
+									variant='footer'
+									fontSize='12px'>
 									<Image
-										display="inline-block"
-										src="/ui_icons/info.svg"
-										alt="pro tip"
-										mb="-2px" />
+										display='inline-block'
+										src='/ui_icons/info.svg'
+										alt='pro tip'
+										mb='-2px' />
 									{' '}
-                						By pressing Send Invite you&apos;ll have to approve this transaction in your wallet.
+									By pressing Send Invite you&apos;ll have to approve this transaction in your wallet.
 									{' '}
 									<Link
-										href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
+										href='https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46'
 										isExternal>
 										Learn more
 									</Link>
 									{' '}
 									<Image
-										display="inline-block"
-										src="/ui_icons/link.svg"
-										alt="pro tip"
-										mb="-1px"
-										h="10px"
-										w="10px"
+										display='inline-block'
+										src='/ui_icons/link.svg'
+										alt='pro tip'
+										mb='-1px'
+										h='10px'
+										w='10px'
 									/>
 								</Text>
 							</Flex>
 							<Flex
-								direction="row"
-								justify="stretch">
-								{isEdit && <Box mx="auto" />}
+								direction='row'
+								justify='stretch'>
+								{isEdit && <Box mx='auto' />}
 								<Button
 									w={isEdit ? '48%' : '100%'}
 									py={loading ? 2 : 0}
-									variant="primary"
+									variant='primary'
 									onClick={loading ? () => {} : () => handleOwnerSubmit()}
 									disabled={loading}
 								>
@@ -246,16 +246,16 @@ function ModalContent({
 						<>
 							<Flex
 								flex={1}
-								direction="column">
+								direction='column'>
 								<Text
-									lineHeight="20px"
-									fontWeight="bold">
-                Role *
+									lineHeight='20px'
+									fontWeight='bold'>
+									Role *
 								</Text>
 							</Flex>
 							<Flex
 								mt={1}
-								maxW="420px">
+								maxW='420px'>
 								{
 									roles.map((r) => (
 										<>
@@ -263,7 +263,7 @@ function ModalContent({
 												isActive={r.value === role}
 												onClick={() => setRole(r.value)}
 												label={r.label}
-												inActiveVariant="solid"
+												inActiveVariant='solid'
 												tooltip={r.tooltip}
 											/>
 											{r.index < roles.length - 1 && <Box mr={4} />}
@@ -272,45 +272,45 @@ function ModalContent({
 								}
 							</Flex>
 							<Flex
-								direction="row"
+								direction='row'
 								mt={6}>
 								<Text
-									textAlign="left"
-									variant="footer"
-									fontSize="12px">
+									textAlign='left'
+									variant='footer'
+									fontSize='12px'>
 									<Image
-										display="inline-block"
-										src="/ui_icons/info.svg"
-										alt="pro tip"
-										mb="-2px" />
+										display='inline-block'
+										src='/ui_icons/info.svg'
+										alt='pro tip'
+										mb='-2px' />
 									{' '}
-                By pressing Send Invite you&apos;ll have to approve this transaction in your wallet.
+									By pressing Send Invite you&apos;ll have to approve this transaction in your wallet.
 									{' '}
 									<Link
-										href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
+										href='https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46'
 										isExternal>
-Learn more
+										Learn more
 									</Link>
 									{' '}
 									<Image
-										display="inline-block"
-										src="/ui_icons/link.svg"
-										alt="pro tip"
-										mb="-1px"
-										h="10px"
-										w="10px"
+										display='inline-block'
+										src='/ui_icons/link.svg'
+										alt='pro tip'
+										mb='-1px'
+										h='10px'
+										w='10px'
 									/>
 								</Text>
 							</Flex>
 							<Box my={4} />
 							<Flex
-								direction="row"
-								justify="stretch">
+								direction='row'
+								justify='stretch'>
 								{
 									isEdit && (
 										<Button
-											w="48%"
-											variant="disconnect"
+											w='48%'
+											variant='disconnect'
 											onClick={
 												loading ? () => {} : () => {
 													setHidden(true)
@@ -324,24 +324,24 @@ Learn more
 													: (
 														<>
 															<span>
-Revoke Access
+																Revoke Access
 															</span>
 															{' '}
 															<Image
 																ml={2}
-																src="/ui_icons/delete_gray.svg"
-																display="inline-block" />
+																src='/ui_icons/delete_gray.svg'
+																display='inline-block' />
 														</>
 													)
 											}
 										</Button>
 									)
 								}
-								{isEdit && <Box mx="auto" />}
+								{isEdit && <Box mx='auto' />}
 								<Button
 									w={isEdit ? '48%' : '100%'}
 									py={loading ? 2 : 0}
-									variant="primary"
+									variant='primary'
 									onClick={loading ? () => {} : () => handleSubmit()}
 									disabled={loading && revoking}
 								>
@@ -361,7 +361,7 @@ Revoke Access
 						setRevokeModalOpen(false)
 					}
 				}
-				title=""
+				title=''
 			>
 				<ConfirmationModalContent
 					actionButtonOnClick={

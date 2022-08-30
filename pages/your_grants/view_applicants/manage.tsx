@@ -108,7 +108,7 @@ function ManageGrant() {
 		},
 	})
 
-	// console.log('Funds Disbursed', fundsDisbursed);
+	// // console.log('Funds Disbursed', fundsDisbursed);
 
 	const [applicationData, setApplicationData] = useState<GetApplicationDetailsQuery['grantApplication']>(null)
 	const applicantEmail = useMemo(
@@ -182,7 +182,7 @@ function ManageGrant() {
 					columns={['milestoneTitle', 'date', 'from', 'action']}
 					assetDecimals={decimals}
 					grantId={applicationData?.grant?.id || ''}
-					type="funding_sent"
+					type='funding_sent'
 					chainId={getSupportedChainIdFromWorkspace(workspace)}
 					rewardToken={rewardToken}
 				/>
@@ -234,65 +234,65 @@ function ManageGrant() {
 			<Modal
 				isOpen={hiddenModalOpen}
 				onClose={() => setHiddenModalOpen(false)}
-				title="View Details with your Wallet"
+				title='View Details with your Wallet'
 				modalWidth={566}
 			>
 				<ModalBody px={10}>
-					<Flex direction="column">
-						<Flex mt="36px">
+					<Flex direction='column'>
+						<Flex mt='36px'>
 							<Text
-								fontWeight="bold"
-								fontSize="18px">
-                How does this work?
+								fontWeight='bold'
+								fontSize='18px'>
+								How does this work?
 							</Text>
 						</Flex>
 						<Flex
-							mt="28px"
-							alignItems="center">
+							mt='28px'
+							alignItems='center'>
 							<Box
-								bg="#8850EA"
-								color="#fff"
+								bg='#8850EA'
+								color='#fff'
 								h={10}
 								w={10}
-								display="flex"
-								alignItems="center"
-								justifyContent="center"
-								borderRadius="50%"
-								mr="19px"
+								display='flex'
+								alignItems='center'
+								justifyContent='center'
+								borderRadius='50%'
+								mr='19px'
 							>
-                1
+								1
 							</Box>
 							<Text>
-Open your wallet
+								Open your wallet
 							</Text>
 						</Flex>
 						<Flex
-							alignItems="center"
-							mt="35px"
-							mb="40px">
+							alignItems='center'
+							mt='35px'
+							mb='40px'>
 							<Box
-								bg="#8850EA"
-								color="#fff"
+								bg='#8850EA'
+								color='#fff'
 								h={10}
 								w={10}
-								display="flex"
-								alignItems="center"
-								justifyContent="center"
-								borderRadius="50%"
-								mr="19px"
+								display='flex'
+								alignItems='center'
+								justifyContent='center'
+								borderRadius='50%'
+								mr='19px'
 							>
-                2
+								2
 							</Box>
 							<Text>
-Click on ‘Decrypt’ to view the details.
+								Click on ‘Decrypt’ to view the details.
 							</Text>
 						</Flex>
 
 						<Button
 							mb={10}
-							variant="primary"
+							variant='primary'
 							onClick={() => setHiddenModalOpen(false)}>
-              ok
+							ok
 						</Button>
 					</Flex>
 				</ModalBody>
@@ -302,15 +302,15 @@ Click on ‘Decrypt’ to view the details.
 
 	return (
 		<Container
-			maxW="100%"
-			display="flex"
-			px="70px">
+			maxW='100%'
+			display='flex'
+			px='70px'>
 			<Container
 				flex={1}
-				display="flex"
-				flexDirection="column"
-				maxW="834px"
-				alignItems="stretch"
+				display='flex'
+				flexDirection='column'
+				maxW='834px'
+				alignItems='stretch'
 				pb={8}
 				px={10}
 			>
@@ -318,32 +318,32 @@ Click on ‘Decrypt’ to view the details.
 					path={path}
 					id={applicationData?.id} />
 				<Heading
-					mt="12px"
+					mt='12px'
 					title={applicationData?.grant?.title || ''}
 					dontRenderDivider
 				/>
 				<Flex
-					mt="3px"
-					direction="row"
-					justify="start"
-					align="baseline">
+					mt='3px'
+					direction='row'
+					justify='start'
+					align='baseline'>
 					{
 						applicantAddress && (
 							<Text
-								key="address"
-								variant="applicationText">
-            By
+								key='address'
+								variant='applicationText'>
+								By
 								{' '}
 								<Tooltip label={applicantAddress}>
 									<Box
-										as="span"
-										fontWeight="700"
-										display="inline-block">
+										as='span'
+										fontWeight='700'
+										display='inline-block'>
 										{`${applicantAddress?.substring(0, 6)}...`}
 									</Box>
 								</Tooltip>
 								<Flex
-									display="inline-block"
+									display='inline-block'
 									ml={2}>
 									<CopyIcon text={applicantAddress} />
 								</Flex>
@@ -352,28 +352,28 @@ Click on ‘Decrypt’ to view the details.
 					}
 					{applicantAddress && <Box mr={6} />}
 					<Text
-						key="mail_text"
-						fontWeight="400">
+						key='mail_text'
+						fontWeight='400'>
 						<Image
-							display="inline-block"
-							alt="mail_icon"
-							src="/ui_icons/mail_icon.svg"
+							display='inline-block'
+							alt='mail_icon'
+							src='/ui_icons/mail_icon.svg'
 							mr={2}
 						/>
 						{
 							applicantEmail || (
 								<Text
-									display="inline"
-									variant="applicationHeading"
-									lineHeight="32px"
+									display='inline'
+									variant='applicationHeading'
+									lineHeight='32px'
 									onClick={showHiddenData}
-									cursor="pointer">
-              Hidden
+									cursor='pointer'>
+									Hidden
 									{' '}
 									<Text
-										color="#6200EE"
-										display="inline">
-View
+										color='#6200EE'
+										display='inline'>
+										View
 									</Text>
 								</Text>
 							)
@@ -381,12 +381,12 @@ View
 					</Text>
 					<Box mr={6} />
 					<Text
-						key="date_text"
-						fontWeight="400">
+						key='date_text'
+						fontWeight='400'>
 						<Image
-							alt="date_icon"
-							display="inline-block"
-							src="/ui_icons/date_icon.svg"
+							alt='date_icon'
+							display='inline-block'
+							src='/ui_icons/date_icon.svg'
 							mr={2}
 						/>
 						{
@@ -397,23 +397,23 @@ View
 					</Text>
 					<Box mr={6} />
 					<Link
-						key="link"
-						variant="link"
-						fontSize="14px"
-						lineHeight="24px"
-						fontWeight="500"
-						fontStyle="normal"
-						color="#414E50"
+						key='link'
+						variant='link'
+						fontSize='14px'
+						lineHeight='24px'
+						fontWeight='500'
+						fontStyle='normal'
+						color='#414E50'
 						href={`/your_grants/view_applicants/applicant_form/?applicationId=${applicationData?.id}`}
 						isExternal
 					>
-            View Application
+						View Application
 						{' '}
 						<Image
-							display="inline-block"
+							display='inline-block'
 							h={3}
 							w={3}
-							src="/ui_icons/link.svg"
+							src='/ui_icons/link.svg'
 						/>
 					</Link>
 				</Flex>
@@ -421,14 +421,14 @@ View
 				{
 					applicationData?.state === 'completed' && (
 						<Text
-							variant="applicationText"
-							color="#717A7C"
+							variant='applicationText'
+							color='#717A7C'
 							mt={6}>
-            Grant marked as complete on
+							Grant marked as complete on
 							{' '}
 							<Text
-								variant="applicationText"
-								display="inline-block">
+								variant='applicationText'
+								display='inline-block'>
 								{
 									getFormattedDateFromUnixTimestampWithYear(
 										applicationData?.updatedAtS,
@@ -440,18 +440,18 @@ View
 				}
 
 				<Flex
-					mt="29px"
-					direction="row"
-					w="full"
-					align="center">
+					mt='29px'
+					direction='row'
+					w='full'
+					align='center'>
 					{
 						tabs.map((tab, index) => (
 							<Button
 							// eslint-disable-next-line react/no-array-index-key
 								key={`tab-${tab.title}-${index}`}
-								variant="ghost"
-								h="110px"
-								w="full"
+								variant='ghost'
+								h='110px'
+								w='full'
 								_hover={
 									{
 										background: '#F5F5F5',
@@ -473,7 +473,7 @@ View
 								borderLeftWidth={index !== selected ? 0 : '2px'}
 								borderTopWidth={index !== selected ? 0 : '2px'}
 								borderBottomWidth={index !== selected ? '2px' : 0}
-								borderBottomRightRadius="-2px"
+								borderBottomRightRadius='-2px'
 								onClick={
 									() => {
 										if(tabs[index].content) {
@@ -483,34 +483,34 @@ View
 								}
 							>
 								<Flex
-									direction="column"
-									justify="center"
-									align="center"
-									w="100%">
+									direction='column'
+									justify='center'
+									align='center'
+									w='100%'>
 									<Flex
-										direction="row"
-										justify="center"
-										align="center">
+										direction='row'
+										justify='center'
+										align='center'>
 										{
 											tab.icon && (
 												<Image
-													h="26px"
-													w="26px"
+													h='26px'
+													w='26px'
 													src={tab.icon}
 													alt={tab.icon} />
 											)
 										}
 										<Box mx={1} />
 										<Text
-											fontWeight="700"
-											fontSize="26px"
-											lineHeight="40px">
+											fontWeight='700'
+											fontSize='26px'
+											lineHeight='40px'>
 											{tab.title}
 										</Text>
 									</Flex>
 									<Text
-										variant="applicationText"
-										color="#717A7C">
+										variant='applicationText'
+										color='#717A7C'>
 										{tab.subtitle}
 									</Text>
 								</Flex>
@@ -522,17 +522,17 @@ View
 				{tabs[selected].content}
 
 				<Flex
-					direction="row"
-					justify="center"
+					direction='row'
+					justify='center'
 					mt={8}>
 					{
 						applicationData?.state !== 'completed' && selected === 0 && (
 							<Button
 								disabled={!isBiconomyInitialised}
-								variant="primary"
+								variant='primary'
 								onClick={() => setIsGrantCompleteModalOpen(true)}
 							>
-              Mark Application as closed
+								Mark Application as closed
 							</Button>
 						)
 					}
@@ -555,7 +555,7 @@ View
 			<Modal
 				isOpen={isGrantCompleteModelOpen}
 				onClose={() => setIsGrantCompleteModalOpen(false)}
-				title="Mark Application as closed"
+				title='Mark Application as closed'
 				modalWidth={512}
 			>
 				<ModalContent
@@ -569,17 +569,17 @@ View
 					<Modal
 						isOpen={isSendFundModalOpen}
 						onClose={() => setIsSendFundModalOpen(false)}
-						title="Send Funds"
+						title='Send Funds'
 						rightIcon={
 							(
 								<Button
 									_focus={{}}
-									variant="link"
-									color="#AA82F0"
-									leftIcon={<Image src="/sidebar/discord_icon.svg" />}
+									variant='link'
+									color='#AA82F0'
+									leftIcon={<Image src='/sidebar/discord_icon.svg' />}
 									onClick={() => window.open(config.supportLink)}
 								>
-              Support 24*7
+									Support 24*7
 								</Button>
 							)
 						}

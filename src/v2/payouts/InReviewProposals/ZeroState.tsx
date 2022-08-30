@@ -3,7 +3,7 @@ import { Flex, Text } from '@chakra-ui/react'
 const ZeroState = () => {
 	return (
 		<Flex
-			h={'calc(100vh - 352px)'}
+			h='calc(100vh - 352px)'
 			justifyContent='center'
 			alignItems='center'
 			flexDirection='column'
@@ -23,7 +23,7 @@ const ZeroState = () => {
 				lineHeight='20px'
 				fontWeight='400'
 				textAlign='center'
-				color={'#7D7DA0'}
+				color='#7D7DA0'
 				maxW='754px'
 			>
 				There are no new applications to review, you can review or assign reviewers to them here as soon as they are submitted.

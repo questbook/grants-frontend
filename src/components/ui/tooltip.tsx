@@ -10,33 +10,33 @@ function Tooltip({
 	icon,
 	placement,
 }: {
-  label:string | (string | JSX.Element)[];
-  h?: number | string;
-  w?: number | string;
-  icon?: string;
-  placement?: PlacementWithLogical;
+  label: string | (string | JSX.Element)[]
+  h?: number | string
+  w?: number | string
+  icon?: string
+  placement?: PlacementWithLogical
 }) {
 	return (
 		<TooltipComponent
 			placement={placement}
 			label={label}
-			bg="white"
-			color="#122224"
-			boxShadow="0px 2px 16px -1px rgba(0, 0, 0, 0.14)"
-			borderRadius="8px"
-			px="21px"
-			pt="18px"
-			pb="24px"
-			fontWeight="400"
+			bg='white'
+			color='#122224'
+			boxShadow='0px 2px 16px -1px rgba(0, 0, 0, 0.14)'
+			borderRadius='8px'
+			px='21px'
+			pt='18px'
+			pb='24px'
+			fontWeight='400'
 		>
 			<Button
-				as="span"
-				variant="ghost"
+				as='span'
+				variant='ghost'
 				h={4}
-				size="xs"
+				size='xs'
 				minWidth={0}
 				p={0}
-				mx="6px"
+				mx='6px'
 				borderRadius={12}
 			>
 				<Image
@@ -44,7 +44,7 @@ function Tooltip({
 					w={w}
 					mb={1}
 					src={icon}
-					alt="help"
+					alt='help'
 				/>
 			</Button>
 		</TooltipComponent>

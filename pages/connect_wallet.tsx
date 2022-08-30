@@ -42,7 +42,7 @@ function ConnectWallet() {
 		.filter(Boolean)
 
 	useEffect(() => {
-		console.log('Connect wallet', activeChain)
+		// console.log('Connect wallet', activeChain)
 		if((!isConnecting || !isReconnecting) && connectData && isConnected) {
 			if(router.query.flow === 'getting_started/dao') {
 				router.replace('/signup/')
@@ -83,20 +83,20 @@ function ConnectWallet() {
 
 	return (
 		<Container
-			maxW="100%"
-			display="flex"
-			px="70px"
-			flexDirection="column"
-			alignItems="center"
+			maxW='100%'
+			display='flex'
+			px='70px'
+			flexDirection='column'
+			alignItems='center'
 		>
 			<Text
-				mt="46px"
-				variant="heading">
+				mt='46px'
+				variant='heading'>
 				{strings.connect_wallet.heading}
 			</Text>
 			<Text
 				mt={7}
-				textAlign="center">
+				textAlign='center'>
 				{strings.connect_wallet.subheading_1}
 				{' '}
 				{/* <Tooltip label={strings.connect_wallet.tooltip_label} /> */}
@@ -104,16 +104,16 @@ function ConnectWallet() {
 			</Text>
 
 			<Flex
-				alignItems="baseline"
+				alignItems='baseline'
 				mt={7}>
 				<Text
-					fontWeight="400"
-					color="#3E4969"
+					fontWeight='400'
+					color='#3E4969'
 					mr={4}>
 					{strings.connect_wallet.dropdown_label}
 				</Text>
 				<SecondaryDropdown
-					listItemsMinWidth="280px"
+					listItemsMinWidth='280px'
 					listItems={
 						ALL_SUPPORTED_CHAIN_IDS.map((chainId) => ({
 							id: chainId,
@@ -140,9 +140,9 @@ function ConnectWallet() {
 
 			<VStack
 				spacing={5}
-				width="100%"
-				maxW="496px"
-				flexDirection="column"
+				width='100%'
+				maxW='496px'
+				flexDirection='column'
 				mt={7}
 			>
 				{
@@ -167,20 +167,20 @@ function ConnectWallet() {
 			{
 				router.query.flow === 'getting_started/dao' && (
 					<Text
-						variant="footer"
-						mt="24px">
+						variant='footer'
+						mt='24px'>
 						<Image
-							display="inline-block"
-							src="/ui_icons/protip.svg"
-							alt="pro tip"
-							mb="-2px"
+							display='inline-block'
+							src='/ui_icons/protip.svg'
+							alt='pro tip'
+							mb='-2px'
 						/>
 						{' '}
 						<Text
-							variant="footer"
-							fontWeight="700"
-							display="inline-block">
-            Pro Tip:
+							variant='footer'
+							fontWeight='700'
+							display='inline-block'>
+							Pro Tip:
 							{' '}
 						</Text>
 						{' '}
@@ -190,21 +190,21 @@ function ConnectWallet() {
 			}
 
 			<Text
-				variant="footer"
-				my="36px">
+				variant='footer'
+				my='36px'>
 				{strings.connect_wallet.footer}
 				{' '}
 				<Link
 					isExternal
-					href="http://socionity.com/privacy.html">
-Terms of Service
+					href='http://socionity.com/privacy.html'>
+					Terms of Service
 				</Link>
 			</Text>
 
 			<Modal
 				isOpen={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
-				title="Unlock Wallet"
+				title='Unlock Wallet'
 			>
 				<ModalContent onClose={() => setIsModalOpen(false)} />
 			</Modal>

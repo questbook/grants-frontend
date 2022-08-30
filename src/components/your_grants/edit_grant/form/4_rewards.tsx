@@ -6,11 +6,11 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { Token } from '@questbook/service-validator-client'
+import Datepicker from 'src/components/ui/forms/datepicker'
+import Dropdown from 'src/components/ui/forms/dropdown'
+import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import CustomTokenModal from 'src/components/ui/submitCustomTokenModal'
 import 'react-datepicker/dist/react-datepicker.css'
-import Datepicker from '../../../ui/forms/datepicker'
-import Dropdown from '../../../ui/forms/dropdown'
-import SingleLineInput from '../../../ui/forms/singleLineInput'
 
 function GrantRewardsInput({
 	reward,
@@ -33,25 +33,25 @@ function GrantRewardsInput({
 	shouldEncryptReviews,
 	setShouldEncryptReviews,
 }: {
-  reward: string;
-  setReward: (rewards: string) => void;
-  rewardError: boolean;
-  setRewardError: (rewardError: boolean) => void;
-  setRewardToken: (rewardToken: Token) => void;
-  rewardCurrency: string;
-  setRewardCurrency: (rewardCurrency: string) => void;
-  setRewardCurrencyAddress: (rewardCurrencyAddress: string) => void;
-  date: string;
-  setDate: (date: string) => void;
-  dateError: boolean;
-  setDateError: (dateError: boolean) => void;
-  supportedCurrencies: any[];
-  shouldEncrypt: boolean;
-  setShouldEncrypt: (shouldEncrypt: boolean) => void;
-  defaultShouldEncrypt: boolean;
-  defaultShouldEncryptReviews: boolean;
-  shouldEncryptReviews: boolean;
-  setShouldEncryptReviews: (shouldEncryptReviews: boolean) => void;
+  reward: string
+  setReward: (rewards: string) => void
+  rewardError: boolean
+  setRewardError: (rewardError: boolean) => void
+  setRewardToken: (rewardToken: Token) => void
+  rewardCurrency: string
+  setRewardCurrency: (rewardCurrency: string) => void
+  setRewardCurrencyAddress: (rewardCurrencyAddress: string) => void
+  date: string
+  setDate: (date: string) => void
+  dateError: boolean
+  setDateError: (dateError: boolean) => void
+  supportedCurrencies: any[]
+  shouldEncrypt: boolean
+  setShouldEncrypt: (shouldEncrypt: boolean) => void
+  defaultShouldEncrypt: boolean
+  defaultShouldEncryptReviews: boolean
+  shouldEncryptReviews: boolean
+  setShouldEncryptReviews: (shouldEncryptReviews: boolean) => void
 }) {
 	const [isModalOpen, setIsModalOpen] = React.useState(false)
 	const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<any[]>([])
@@ -65,18 +65,18 @@ function GrantRewardsInput({
 	const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false)
 	const addERC = true
 	return (
-		<Flex direction="column">
+		<Flex direction='column'>
 
 			<Flex
-				direction="row"
+				direction='row'
 				mt={12}>
 				<Box
-					minW="160px"
+					minW='160px'
 					flex={1}>
 					<SingleLineInput
-						label="Grant Reward"
-						placeholder="100"
-						errorText="Required"
+						label='Grant Reward'
+						placeholder='100'
+						errorText='Required'
 						onChange={
 							(e) => {
 								if(rewardError) {
@@ -88,7 +88,7 @@ function GrantRewardsInput({
 						}
 						value={reward}
 						isError={rewardError}
-						type="number"
+						type='number'
 					/>
 				</Box>
 				<CustomTokenModal
@@ -104,15 +104,15 @@ function GrantRewardsInput({
 				<Box
 					mt={5}
 					ml={4}
-					minW="132px"
+					minW='132px'
 					flex={0}>
 					<Dropdown
-						listItemsMinWidth="132px"
+						listItemsMinWidth='132px'
 						listItems={supportedCurrenciesList}
 						value={rewardCurrency}
 						onChange={
 							(data: any) => {
-								console.log('tokenDATA', data)
+								// console.log('tokenDATA', data)
 								if(data === 'addERCToken') {
 									setIsModalOpen(true)
 								}
@@ -120,7 +120,7 @@ function GrantRewardsInput({
 								setRewardCurrency(data.label)
 								setRewardCurrencyAddress(data.id)
 								if(data !== 'addERCToken' && !isJustAddedToken && data.icon.lastIndexOf('chain_assets') === -1) {
-									console.log('custom token', data)
+									// console.log('custom token', data)
 									setRewardToken({
 										iconHash: data.icon.substring(data.icon.lastIndexOf('=') + 1),
 										address: data.address,
@@ -156,42 +156,42 @@ function GrantRewardsInput({
 				}
 				value={date}
 				isError={dateError}
-				errorText="Required"
-				label="Grant Deadline"
-				tooltip="This is the last date on/before which grantees can apply"
+				errorText='Required'
+				label='Grant Deadline'
+				tooltip='This is the last date on/before which grantees can apply'
 			/>
 
 			<Flex
-				direction="column"
+				direction='column'
 				mt={12}>
 				<Text
-					fontSize="18px"
-					fontWeight="700"
-					lineHeight="26px"
+					fontSize='18px'
+					fontWeight='700'
+					lineHeight='26px'
 					letterSpacing={0}
 				>
-          Grant privacy
+					Grant privacy
 				</Text>
 			</Flex>
 
 			<Flex
 				mt={8}
-				gap="2"
-				justifyContent="space-between">
-				<Flex direction="column">
+				gap='2'
+				justifyContent='space-between'>
+				<Flex direction='column'>
 					<Text
-						color="#122224"
-						fontWeight="bold"
-						fontSize="16px"
-						lineHeight="20px"
+						color='#122224'
+						fontWeight='bold'
+						fontSize='16px'
+						lineHeight='20px'
 					>
-            Hide applicant personal data (email, and about team)
+						Hide applicant personal data (email, and about team)
 					</Text>
 					<Flex>
 						<Text
-							color="#717A7C"
-							fontSize="14px"
-							lineHeight="20px">
+							color='#717A7C'
+							fontSize='14px'
+							lineHeight='20px'>
 							{
 								shouldEncrypt
 									? 'The applicant data will be visible only to DAO members.'
@@ -206,11 +206,11 @@ function GrantRewardsInput({
 					</Flex>
 				</Flex>
 				<Flex
-					justifyContent="center"
+					justifyContent='center'
 					gap={2}
-					alignItems="center">
+					alignItems='center'>
 					<Switch
-						id="encrypt"
+						id='encrypt'
 						defaultChecked={defaultShouldEncrypt}
 						onChange={
 							(e) => {
@@ -219,9 +219,9 @@ function GrantRewardsInput({
 						}
 					/>
 					<Text
-						fontSize="12px"
-						fontWeight="bold"
-						lineHeight="16px">
+						fontSize='12px'
+						fontWeight='bold'
+						lineHeight='16px'>
 						{`${shouldEncrypt ? 'YES' : 'NO'}`}
 					</Text>
 				</Flex>
@@ -229,32 +229,32 @@ function GrantRewardsInput({
 
 			<Flex
 				mt={8}
-				gap="2"
-				justifyContent="space-between">
-				<Flex direction="column">
+				gap='2'
+				justifyContent='space-between'>
+				<Flex direction='column'>
 					<Text
-						color="#122224"
-						fontWeight="bold"
-						fontSize="16px"
-						lineHeight="20px"
+						color='#122224'
+						fontWeight='bold'
+						fontSize='16px'
+						lineHeight='20px'
 					>
-            Keep applicant reviews private
+						Keep applicant reviews private
 					</Text>
 					<Flex>
 						<Text
-							color="#717A7C"
-							fontSize="14px"
-							lineHeight="20px">
-              Private review is only visible to reviewers, DAO members.
+							color='#717A7C'
+							fontSize='14px'
+							lineHeight='20px'>
+							Private review is only visible to reviewers, DAO members.
 						</Text>
 					</Flex>
 				</Flex>
 				<Flex
-					justifyContent="center"
+					justifyContent='center'
 					gap={2}
-					alignItems="center">
+					alignItems='center'>
 					<Switch
-						id="encrypt"
+						id='encrypt'
 						defaultChecked={defaultShouldEncryptReviews}
 						onChange={
 							(e) => {
@@ -263,9 +263,9 @@ function GrantRewardsInput({
 						}
 					/>
 					<Text
-						fontSize="12px"
-						fontWeight="bold"
-						lineHeight="16px">
+						fontSize='12px'
+						fontWeight='bold'
+						lineHeight='16px'>
 						{`${shouldEncryptReviews ? 'YES' : 'NO'}`}
 					</Text>
 				</Flex>

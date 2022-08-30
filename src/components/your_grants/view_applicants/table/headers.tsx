@@ -41,23 +41,23 @@ const tableHeadersAlignReviewer = [
 	'center',
 ]
 
-function Headers({ is_reviewer }:{ is_reviewer : boolean; }) {
+function Headers({ is_reviewer }: { is_reviewer: boolean }) {
 	const Tableduel = is_reviewer ? (tableHeadersReviewer) : (tableHeaders)
 	return (
 		<Flex
-			direction="row"
-			w="100%"
-			justify="strech"
-			align="center"
+			direction='row'
+			w='100%'
+			justify='strech'
+			align='center'
 			py={0}>
 			{
 				Tableduel.map((header, index) => (
 					<Text
 						key={header}
-						whiteSpace="nowrap"
+						whiteSpace='nowrap'
 						textAlign={is_reviewer ? (tableHeadersAlignReviewer[index] as ResponsiveValue<'left' | 'center'>) : ((tableHeadersAlign[index] as ResponsiveValue<'left' | 'center'>))}
 						flex={is_reviewer ? (tableHeadersflexReviewer[index]) : (tableHeadersflex[index])}
-						variant="tableHeader"
+						variant='tableHeader'
 
 					>
 						{header}

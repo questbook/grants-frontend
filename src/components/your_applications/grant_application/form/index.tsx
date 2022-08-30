@@ -21,25 +21,25 @@ import {
 } from 'draft-js'
 import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
+import ApplicantDetails from 'src/components/your_applications/grant_application/form/1_applicantDetails'
+import AboutTeam from 'src/components/your_applications/grant_application/form/2_aboutTeam'
+import AboutProject from 'src/components/your_applications/grant_application/form/3_aboutProject'
+import Funding from 'src/components/your_applications/grant_application/form/4_funding'
+import CustomFields from 'src/components/your_applications/grant_application/form/5_customFields'
 import { SupportedChainId } from 'src/constants/chains'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useResubmitApplication from 'src/hooks/useResubmitApplication'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
-import { getFromIPFS } from 'src/utils/ipfsUtils'
-import { isValidEmail } from 'src/utils/validationUtils'
 import {
 	GrantApplicationFieldsSubgraph,
 	GrantApplicationProps,
-} from '../../../../types/application'
+} from 'src/types/application'
 import {
 	getFormattedFullDateFromUnixTimestamp,
 	parseAmount,
-} from '../../../../utils/formattingUtils'
-import ApplicantDetails from './1_applicantDetails'
-import AboutTeam from './2_aboutTeam'
-import AboutProject from './3_aboutProject'
-import Funding from './4_funding'
-import CustomFields from './5_customFields'
+} from 'src/utils/formattingUtils'
+import { getFromIPFS } from 'src/utils/ipfsUtils'
+import { isValidEmail } from 'src/utils/validationUtils'
 
 function Form({
 	chainId,
@@ -61,23 +61,23 @@ function Form({
 	application,
 }: // grantID,
 {
-  chainId: SupportedChainId | undefined;
-  onSubmit: null | ((data: any) => void);
-  rewardAmount: string;
-  rewardCurrency: string;
-  rewardCurrencyCoin: string;
-  rewardCurrencyAddress: string | undefined;
-  formData: GrantApplicationProps | null;
-  grantTitle: string;
-  sentDate: string;
-  daoLogo: string;
-  state: string;
-  feedback: string;
-  grantRequiredFields: string[];
-  applicationID: string;
-  workspace: any;
-  piiFields: string[];
-  application: any;
+  chainId: SupportedChainId | undefined
+  onSubmit: null | ((data: any) => void)
+  rewardAmount: string
+  rewardCurrency: string
+  rewardCurrencyCoin: string
+  rewardCurrencyAddress: string | undefined
+  formData: GrantApplicationProps | null
+  grantTitle: string
+  sentDate: string
+  daoLogo: string
+  state: string
+  feedback: string
+  grantRequiredFields: string[]
+  applicationID: string
+  workspace: any
+  piiFields: string[]
+  application: any
   // grantID: string;
 }) {
 	const { encryptApplicationPII } = useApplicationEncryption()
@@ -143,10 +143,10 @@ function Form({
 		try {
 			if(projectDetails.startsWith('Qm') && projectDetails.length < 64) {
 				const o = await getFromIPFS(projectDetails)
-				console.log('From IPFS: ', o)
+				// console.log('From IPFS: ', o)
 				setProjectDetails(EditorState.createWithContent(convertFromRaw(JSON.parse(o))))
 			} else {
-				console.log('Previous text value: ', projectDetails)
+				// console.log('Previous text value: ', projectDetails)
 				const o = JSON.parse(projectDetails)
 				setProjectDetails(EditorState.createWithContent(convertFromRaw(o)))
 			}
@@ -183,7 +183,7 @@ function Form({
 						isError: false,
 					})),
 				)
-				console.log('Project details: ', formData.projectDetails)
+				// console.log('Project details: ', formData.projectDetails)
 				getProjectDetails(formData.projectDetails)
 				setProjectGoal(formData.projectGoal)
 				setProjectMilestones(
@@ -211,7 +211,7 @@ function Form({
 				setLoadedData(true)
 			}
 		} catch(error) {
-			// console.log(error);
+			// // console.log(error);
 		}
 	}, [formData, application])
 
@@ -234,7 +234,7 @@ function Form({
 	}, [router, txnData])
 
 	const handleOnSubmit = async() => {
-		// console.log(onEdit);
+		// // console.log(onEdit);
 		if(!onSubmit && !onEdit) {
 			return
 		}
@@ -414,7 +414,7 @@ function Form({
         workspace.members,
 			)
 
-			console.log('encryptedData -----', encryptedData)
+			// console.log('encryptedData -----', encryptedData)
 		}
 
 		setUpdateData(encryptedData || data)
@@ -422,43 +422,43 @@ function Form({
 
 	return (
 		<Flex
-			mt="30px"
-			flexDirection="column"
-			alignItems="center"
-			w="100%">
+			mt='30px'
+			flexDirection='column'
+			alignItems='center'
+			w='100%'>
 			{
 				!loadedData ? <Loader /> : (
 					<>
 						<Image
-							objectFit="cover"
-							h="96px"
-							w="96px"
+							objectFit='cover'
+							h='96px'
+							w='96px'
 							src={daoLogo}
-							alt="Polygon DAO"
+							alt='Polygon DAO'
 						/>
 						<Text
 							mt={6}
-							variant="heading"
-							textAlign="center">
+							variant='heading'
+							textAlign='center'>
 							{grantTitle}
 						</Text>
 
 						<Text
-							mt="10px"
-							fontSize="16px"
-							lineHeight="24px"
-							fontWeight="500"
-							color="#717A7C"
+							mt='10px'
+							fontSize='16px'
+							lineHeight='24px'
+							fontWeight='500'
+							color='#717A7C'
 						>
 							<Image
-								mb="-2px"
-								src="/ui_icons/calendar.svg"
-								w="16px"
-								h="18px"
-								display="inline-block"
+								mb='-2px'
+								src='/ui_icons/calendar.svg'
+								w='16px'
+								h='18px'
+								display='inline-block'
 							/>
 							{' '}
-        Sent on
+							Sent on
 							{' '}
 							{getFormattedFullDateFromUnixTimestamp(Number(sentDate))}
 						</Text>
@@ -466,50 +466,50 @@ function Form({
 						{
 							state === 'rejected' && (
 								<Flex
-									alignItems="flex-start"
-									bgColor="#FFC0C0"
-									border="2px solid #EE7979"
-									px="26px"
-									py="22px"
-									borderRadius="6px"
+									alignItems='flex-start'
+									bgColor='#FFC0C0'
+									border='2px solid #EE7979'
+									px='26px'
+									py='22px'
+									borderRadius='6px'
 									mt={4}
 									mx={10}
-									alignSelf="stretch"
+									alignSelf='stretch'
 								>
 									<Flex
-										alignItems="center"
-										justifyContent="center"
-										bgColor="#F7B7B7"
-										border="2px solid #EE7979"
-										borderRadius="40px"
+										alignItems='center'
+										justifyContent='center'
+										bgColor='#F7B7B7'
+										border='2px solid #EE7979'
+										borderRadius='40px'
 										p={2}
-										h="40px"
-										w="40px"
-										mt="5px"
+										h='40px'
+										w='40px'
+										mt='5px'
 									>
 										<Image
-											h="40px"
-											w="40px"
-											src="/ui_icons/result_rejected_application.svg"
-											alt="Rejected"
+											h='40px'
+											w='40px'
+											src='/ui_icons/result_rejected_application.svg'
+											alt='Rejected'
 										/>
 									</Flex>
 									<Flex
-										ml="23px"
-										direction="column">
+										ml='23px'
+										direction='column'>
 										<Text
-											fontSize="16px"
-											lineHeight="24px"
-											fontWeight="700"
-											color="#7B4646"
+											fontSize='16px'
+											lineHeight='24px'
+											fontWeight='700'
+											color='#7B4646'
 										>
-              Application Rejected
+											Application Rejected
 										</Text>
 										<Text
-											fontSize="16px"
-											lineHeight="24px"
-											fontWeight="400"
-											color="#7B4646"
+											fontSize='16px'
+											lineHeight='24px'
+											fontWeight='400'
+											color='#7B4646'
 										>
 											{feedback}
 										</Text>
@@ -521,44 +521,44 @@ function Form({
 						{
 							state === 'resubmit' && (
 								<Flex
-									alignItems="flex-start"
-									bgColor="#FEF6D9"
-									border="2px solid #EFC094"
-									px="26px"
-									py="22px"
-									borderRadius="6px"
+									alignItems='flex-start'
+									bgColor='#FEF6D9'
+									border='2px solid #EFC094'
+									px='26px'
+									py='22px'
+									borderRadius='6px'
 									mt={4}
 									mx={10}
-									alignSelf="stretch"
+									alignSelf='stretch'
 								>
 									<Flex
-										alignItems="center"
-										justifyContent="center"
-										h="36px"
-										w="42px">
+										alignItems='center'
+										justifyContent='center'
+										h='36px'
+										w='42px'>
 										<Image
-											h="40px"
-											w="40px"
-											src="/ui_icons/alert_triangle.svg"
-											alt="Resubmit"
+											h='40px'
+											w='40px'
+											src='/ui_icons/alert_triangle.svg'
+											alt='Resubmit'
 										/>
 									</Flex>
 									<Flex
-										ml="23px"
-										direction="column">
+										ml='23px'
+										direction='column'>
 										<Text
-											fontSize="16px"
-											lineHeight="24px"
-											fontWeight="700"
-											color="#7B4646"
+											fontSize='16px'
+											lineHeight='24px'
+											fontWeight='700'
+											color='#7B4646'
 										>
-              Resubmit your Application
+											Resubmit your Application
 										</Text>
 										<Text
-											fontSize="16px"
-											lineHeight="24px"
-											fontWeight="400"
-											color="#7B4646"
+											fontSize='16px'
+											lineHeight='24px'
+											fontWeight='400'
+											color='#7B4646'
 										>
 											{feedback}
 										</Text>
@@ -574,7 +574,7 @@ function Form({
 									py={loading ? 2 : 0}
 									mt={8}
 									mb={4}
-									variant="primary"
+									variant='primary'
 								>
 									Edit Application for Resubmit
 								</Button>
@@ -587,7 +587,7 @@ function Form({
 									onClick={() => setOnEdit(true)}
 									mt={8}
 									mb={4}
-									variant="primary"
+									variant='primary'
 									disabled={loading}
 								>
 									Edit Application
@@ -602,7 +602,7 @@ function Form({
 									py={loading ? 2 : 0}
 									mt={8}
 									mb={4}
-									variant="primary"
+									variant='primary'
 								>
 									{loading ? <Loader /> : 'Submit Edits'}
 								</Button>
@@ -610,21 +610,21 @@ function Form({
 						}
 
 						<Text
-							zIndex="1"
+							zIndex='1'
 							px={9}
-							bgColor="white"
-							mt="21px"
-							lineHeight="26px"
-							fontSize="18px"
-							fontWeight="500"
+							bgColor='white'
+							mt='21px'
+							lineHeight='26px'
+							fontSize='18px'
+							fontWeight='500'
 						>
-        Your Application Form
+							Your Application Form
 						</Text>
 						<Container
-							mt="-12px"
+							mt='-12px'
 							p={10}
-							border="2px solid #E8E9E9"
-							borderRadius="12px"
+							border='2px solid #E8E9E9'
+							borderRadius='12px'
 						>
 							<ApplicantDetails
 								applicantName={applicantName}
@@ -643,7 +643,7 @@ function Form({
 								grantRequiredFields={grantRequiredFields}
 							/>
 
-							<Box mt="43px" />
+							<Box mt='43px' />
 							<AboutTeam
 								teamMembers={teamMembers}
 								teamMembersError={teamMembersError}
@@ -655,7 +655,7 @@ function Form({
 								grantRequiredFields={grantRequiredFields}
 							/>
 
-							<Box mt="19px" />
+							<Box mt='19px' />
 							<AboutProject
 								projectName={projectName}
 								setProjectName={setProjectName}
@@ -679,7 +679,7 @@ function Form({
 								grantRequiredFields={grantRequiredFields}
 							/>
 
-							<Box mt="43px" />
+							<Box mt='43px' />
 							{
 								grantRequiredFields.includes('fundingBreakdown') && (
 									<Funding
@@ -703,7 +703,7 @@ function Form({
 							{
 								customFields.length > 0 && (
 									<>
-										<Box mt="43px" />
+										<Box mt='43px' />
 										<CustomFields
 											customFields={customFields}
 											setCustomFields={setCustomFields}
@@ -718,37 +718,37 @@ function Form({
 							onEdit && (
 								<Text
 									mt={10}
-									textAlign="center"
-									variant="footer"
-									fontSize="12px">
+									textAlign='center'
+									variant='footer'
+									fontSize='12px'>
 									<Image
-										display="inline-block"
-										src="/ui_icons/info.svg"
-										alt="pro tip"
-										mb="-2px"
+										display='inline-block'
+										src='/ui_icons/info.svg'
+										alt='pro tip'
+										mb='-2px'
 									/>
 									{' '}
-          By pressing
+									By pressing
 									{' '}
 									{onSubmit ? 'Submit Application' : 'Submit Edits'}
 									{' '}
-you&apos;ll have to approve this
-          transaction in your wallet.
+									you&apos;ll have to approve this
+									transaction in your wallet.
 									{' '}
 									<Link
-										href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
+										href='https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46'
 										isExternal
 									>
-            Learn more
+										Learn more
 									</Link>
 									{' '}
 									<Image
-										display="inline-block"
-										src="/ui_icons/link.svg"
-										alt="pro tip"
-										mb="-1px"
-										h="10px"
-										w="10px"
+										display='inline-block'
+										src='/ui_icons/link.svg'
+										alt='pro tip'
+										mb='-1px'
+										h='10px'
+										w='10px'
 									/>
 								</Text>
 							)
@@ -761,7 +761,7 @@ you&apos;ll have to approve this
 									py={loading ? 2 : 0}
 									mt={8}
 									mb={4}
-									variant="primary"
+									variant='primary'
 								>
 									{loading ? <Loader /> : 'Submit Edits'}
 								</Button>
@@ -778,7 +778,7 @@ you&apos;ll have to approve this
 									py={loading ? 2 : 0}
 									mt={8}
 									mb={4}
-									variant="primary"
+									variant='primary'
 								>
 									Edit Application for Resubmit
 								</Button>

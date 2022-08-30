@@ -18,8 +18,8 @@ function ConnectWallet() {
 				py={2}
 				borderRadius={8}
 				height={12}
-				transition="all 1s"
-				background="linear-gradient(180deg, #717A7C 0%, #414E50 100%)"
+				transition='all 1s'
+				background='linear-gradient(180deg, #717A7C 0%, #414E50 100%)'
 				_hover={
 					{
 						background: 'linear-gradient(180deg, #6F797B 0%, #78969A 100%)',
@@ -42,27 +42,27 @@ function ConnectWallet() {
 				}
 			>
 				<Image
-					h="30px"
-					w="30px"
-					src="/ui_icons/user_account.svg"
-					alt="account_circle"
+					h='30px'
+					w='30px'
+					src='/ui_icons/user_account.svg'
+					alt='account_circle'
 				/>
 				<VStack
 					spacing={0}
 					ml={3}
 					mr={1}
-					alignItems="flex-start">
+					alignItems='flex-start'>
 					<Text
-						fontSize="9px"
-						color="white"
-						fontWeight="500">
-          Sign in to your account
+						fontSize='9px'
+						color='white'
+						fontWeight='500'>
+						Sign in to your account
 					</Text>
 					<Text
-						color="white"
-						fontSize="16px"
-						fontWeight="700">
-          Connect Wallet
+						color='white'
+						fontSize='16px'
+						fontWeight='700'>
+						Connect Wallet
 					</Text>
 				</VStack>
 			</Button>

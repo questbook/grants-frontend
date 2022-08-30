@@ -1,13 +1,13 @@
 import { Container, Image } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import useChainId from 'src/hooks/utils/useChainId'
+import AccountDetails from 'src/v2/components/NavBar/AccountDetails'
 import { useConnect } from 'wagmi'
-import AccountDetails from './AccountDetails'
 
 interface Props {
-  onGetStartedClick: boolean;
-  onGetStartedBtnClicked: boolean;
-  setGetStartedClicked: (value:boolean)=>void;
+  onGetStartedClick: boolean
+  onGetStartedBtnClicked: boolean
+  setGetStartedClicked: (value: boolean) => void
 }
 
 function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicked }: Props) {
@@ -19,15 +19,15 @@ function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicke
 	return (
 		<Container
 			zIndex={1}
-			variant={'header-container'}
-			maxH="64px"
+			variant='header-container'
+			maxH='64px'
 			display='flex'
-			maxW="100vw"
-			bg={ 'white'}
-			ps={'42px'}
-			pe={'15px'}
-			py={'16px'}
-			minWidth={{ base:'-webkit-fill-available' }}
+			maxW='100vw'
+			bg='white'
+			ps='42px'
+			pe='15px'
+			py='16px'
+			minWidth={{ base: '-webkit-fill-available' }}
 		>
 			<Image
 				onClick={
@@ -35,11 +35,11 @@ function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicke
 						pathname: '/',
 					})
 				}
-				display={{ base:'none', lg:'inherit' }}
-				mr="auto"
+				display={{ base: 'none', lg: 'inherit' }}
+				mr='auto'
 				src={isDisconnected ? '/ui_icons/qb.svg' : '/ui_icons/qb.svg'}
-				alt="Questbook"
-				cursor="pointer"
+				alt='Questbook'
+				cursor='pointer'
 			/>
 			<Image
 				onClick={
@@ -47,11 +47,11 @@ function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicke
 						pathname: '/',
 					})
 				}
-				display={{ base:'inherit', lg:'none' }}
-				mr="auto"
+				display={{ base: 'inherit', lg: 'none' }}
+				mr='auto'
 				src={isDisconnected ? '/ui_icons/questbookMobile.svg' : '/ui_icons/qb.svg'}
-				alt="Questbook"
-				cursor="pointer"
+				alt='Questbook'
+				cursor='pointer'
 			/>
 			{/* {
 				// @TODO-gasless: FIX HERE

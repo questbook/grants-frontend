@@ -70,7 +70,7 @@ const OnboardingCreateDomain = () => {
 	const [shouldRefreshNonce, setShouldRefreshNonce] = useState<boolean>()
 	const { data: accountDataWebwallet, nonce } = useQuestbookAccount(shouldRefreshNonce)
 	const { webwallet } = useContext(WebwalletContext)!
-	console.log('safeSelected', safeSelected)
+	// console.log('safeSelected', safeSelected)
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: safeSelected?.networkId ? networksMapping[safeSelected?.networkId?.toString()] : '',
 	})
@@ -78,9 +78,9 @@ const OnboardingCreateDomain = () => {
 
 	useEffect(() => {
 		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		console.log('rree', isBiconomyLoading, biconomyLoading)
-		console.log('networks 2:', biconomy?.networkId?.toString(), safeSelected?.networkId, safeSelected?.networkId ?
-			networksMapping[safeSelected?.networkId?.toString()] : undefined)
+		// console.log('rree', isBiconomyLoading, biconomyLoading)
+		// console.log('networks 2:', biconomy?.networkId?.toString(), safeSelected?.networkId, safeSelected?.networkId ?
+		//	networksMapping[safeSelected?.networkId?.toString()] : undefined)
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && safeSelected?.networkId &&
 			biconomy.networkId && biconomy.networkId?.toString() === networksMapping[safeSelected?.networkId?.toString()]) {
 			setIsBiconomyInitialised(true)
@@ -106,7 +106,7 @@ const OnboardingCreateDomain = () => {
 	const toast = useToast()
 
 	useEffect(() => {
-		console.log('cur step', step)
+		// console.log('cur step', step)
 		if(step === 3 && !isOwner) {
 
 		}
@@ -122,9 +122,9 @@ const OnboardingCreateDomain = () => {
 			addAuthorizedUser(webwallet?.address)
 				.then(() => {
 					setShouldRefreshNonce(true)
-					console.log('Added authorized user', webwallet.address)
+					// console.log('Added authorized user', webwallet.address)
 				})
-				.catch((err) => console.log("Couldn't add authorized user", err))
+				// .catch((err) => console.log("Couldn't add authorized user", err))
 		}
 	}, [isOwner, webwallet, nonce])
 
@@ -134,12 +134,12 @@ const OnboardingCreateDomain = () => {
 		}
 
 		if(Object.keys(safesUSDBalance).length > 0) {
-			console.log('safe address verified!')
+			// console.log('safe address verified!')
 			setIsSafeAddressVerified(true)
 			setIsSafeAddressPasted(true)
 			setStep(1)
 		} else {
-			console.log('safe address not verified!')
+			// console.log('safe address not verified!')
 			setIsSafeAddressVerified(false)
 			setIsSafeAddressPasted(false)
 		}
@@ -154,11 +154,11 @@ const OnboardingCreateDomain = () => {
 	}, [domainName])
 
 	useEffect(() => {
-		console.log('safeSelected', safeSelected)
+		// console.log('safeSelected', safeSelected)
 	}, [safeSelected])
 
 	const createWorkspace = useCallback(async() => {
-		console.log(network)
+		// console.log(network)
 		if(!network) {
 			return
 		}
@@ -167,9 +167,9 @@ const OnboardingCreateDomain = () => {
 		setCurrentStep(0)
 		try {
 			// if(activeChain?.id !== daoNetwork?.id) {
-			// 	console.log('switching')
+			// 	// console.log('switching')
 			// 	// await switchNetworkAsync!(daoNetwork?.id)
-			// 	console.log('create workspace again on contract object update')
+			// 	// console.log('create workspace again on contract object update')
 			// 	setCallOnContractChange(true)
 			// 	setTimeout(() => {
 			// 		if(callOnContractChange && activeChain?.id !== daoNetwork?.id) {
@@ -179,9 +179,9 @@ const OnboardingCreateDomain = () => {
 			// 	}, 60000)
 			// 	return
 			// }
-			console.log('all', biconomy, scwAddress, nonce, webwallet)
-			// console.log('creating workspace', accountData!.address)
-			console.log(accountDataWebwallet?.address)
+			// console.log('all', biconomy, scwAddress, nonce, webwallet)
+			// // console.log('creating workspace', accountData!.address)
+			// console.log(accountDataWebwallet?.address)
 			setCurrentStep(1)
 			const uploadedImageHash = (await uploadToIPFS(daoImageFile)).hash
 
@@ -203,17 +203,17 @@ const OnboardingCreateDomain = () => {
 				throw new Error('Error validating grant data')
 			}
 
-			console.log('sefe', safeSelected)
-			console.log('network', network)
+			// console.log('sefe', safeSelected)
+			// console.log('network', network)
 			if(!safeSelected || !network) {
 				throw new Error('No network specified')
 			}
 
 			setCurrentStep(2)
-			console.log(12344343)
+			// console.log(12344343)
 
 			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
-				console.log('54321')
+				// console.log('54321')
 				return
 			}
 
@@ -239,16 +239,16 @@ const OnboardingCreateDomain = () => {
 
 			const { txFee, receipt } = await getTransactionDetails(transactionHash, network.toString())
 
-			console.log('txFee', txFee)
+			// console.log('txFee', txFee)
 
 			const event = await getEventData(receipt, 'WorkspaceCreated', WorkspaceRegistryAbi)
 			if(event) {
 				const workspace_id = Number(event.args[0].toBigInt())
-				console.log('workspace_id', workspace_id)
+				// console.log('workspace_id', workspace_id)
 
 				await addAuthorizedOwner(workspace_id, webwallet?.address!, scwAddress, network.toString(),
 					'this is the safe addres - to be updated in the new flow')
-				console.log('fdsao')
+				// console.log('fdsao')
 				await chargeGas(workspace_id, Number(txFee))
 			}
 
@@ -317,7 +317,7 @@ const OnboardingCreateDomain = () => {
 			} />, <ConfirmData
 			key={2}
 			safeAddress={safeAddress}
-			safeChainIcon="/ui_icons/gnosis.svg"
+			safeChainIcon='/ui_icons/gnosis.svg'
 			domainName={domainName}
 			domainNetwork={network ? CHAIN_INFO[network].name : 'Polygon'}
 			domainNetworkIcon={network ? CHAIN_INFO[network].icon : CHAIN_INFO[137].icon} // polygon is the default network
@@ -326,7 +326,7 @@ const OnboardingCreateDomain = () => {
 			onImageFileChange={(image) => setDaoImageFile(image)}
 			onCreateDomain={
 				() => {
-					console.log('Is Owner: ', isOwner)
+					// console.log('Is Owner: ', isOwner)
 					if(!isOwner && !isVerifySignerModalOpen) {
 						setIsVerifySignerModalOpen(true)
 						// setIsOwner(true)
@@ -356,68 +356,65 @@ const OnboardingCreateDomain = () => {
 	return (
 		<>
 			<Flex
-				position="absolute"
+				position='absolute'
 				left={0}
 				right={0}
 				top={0}
 				bottom={0}
 				zIndex={-1} >
 				<Image
-					src="/background/create-domain.jpg"
-					w="100%"
-					h="100%" />
+					src='/background/create-domain.jpg'
+					w='100%'
+					h='100%' />
 			</Flex>
 
 			<Flex
-				direction="column"
-				w="100vw"
-				h="100vh">
+				direction='column'
+				w='100vw'
+				h='100vh'>
 				<Flex
-					w="100vw"
-					h="64px"
-					align="center"
-					px="42px">
+					w='100vw'
+					h='64px'
+					align='center'
+					px='42px'>
 					<QuestbookLogo color='white' />
-					<Box mr="auto" />
+					<Box mr='auto' />
 					<AccountDetails />
 				</Flex>
 				{
 					step > 0 && (
 						<IconButton
 							onClick={onBackClick}
-							size={'sm'}
-							colorScheme={'brandv2'}
+							size='sm'
+							colorScheme='brandv2'
 							icon={
 								<BackArrowThick
-									color={'white'}
-									boxSize={'18.67px'} />
+									color='white'
+									boxSize='18.67px' />
 							}
-							aria-label="Back"
-							position={'absolute'}
+							aria-label='Back'
+							position='absolute'
 							p={3.5}
-							mt="12vh"
-							ml="22vw"
-							boxSize={'46.67px'}
-							borderRadius={'3xl'}
+							mt='12vh'
+							ml='22vw'
+							boxSize='46.67px'
+							borderRadius='3xl'
 						/>
 					)
 				}
-				{
-					<Flex
-						key={step}
-						w="47%"
-						h={step === 0 ? '43%' : (step === 1 ? '55%' : (step === 2 ? '38%' : (isOwner ? '36%' : '40%')))}
-						mx="auto"
-						mt="15vh"
-						bg="white"
-						p={6}
-						boxShadow="2.2px 4.43px 44.33px rgba(31, 31, 51, 0.05)"
-						borderRadius="4px"
-						direction="column">
-						{step <= 1 ? steps[0] : (step === 2 ? steps[1] : steps[2])}
-					</Flex>
-
-				}
+				<Flex
+					key={step}
+					w='47%'
+					h={step === 0 ? '43%' : (step === 1 ? '55%' : (step === 2 ? '38%' : (isOwner ? '36%' : '40%')))}
+					mx='auto'
+					mt='15vh'
+					bg='white'
+					p={6}
+					boxShadow='2.2px 4.43px 44.33px rgba(31, 31, 51, 0.05)'
+					borderRadius='4px'
+					direction='column'>
+					{step <= 1 ? steps[0] : (step === 2 ? steps[1] : steps[2])}
+				</Flex>
 			</Flex>
 			<NetworkTransactionModal
 				isOpen={currentStep !== undefined}
@@ -425,8 +422,8 @@ const OnboardingCreateDomain = () => {
 				description={
 					<HStack w='100%'>
 						<Text
-							fontWeight={'500'}
-							fontSize={'17px'}
+							fontWeight='500'
+							fontSize='17px'
 						>
 							{domainName}
 						</Text>
@@ -437,17 +434,17 @@ const OnboardingCreateDomain = () => {
 							{
 								daoImageFile ? (
 									<Image
-										objectFit="cover"
+										objectFit='cover'
 										src={URL.createObjectURL(daoImageFile)}
-										w="100%"
-										h="100%"
-										minH={'48px'}
-										minW={'48px'}
+										w='100%'
+										h='100%'
+										minH='48px'
+										minW='48px'
 									/>
 								) : (
 
 									<Organization
-										color={'#389373'}
+										color='#389373'
 										boxSize={8} />
 								)
 							}

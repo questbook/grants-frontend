@@ -13,10 +13,10 @@ import {
 	getDefaultKeyBinding,
 	RichUtils,
 } from 'draft-js'
+import Loader from 'src/components/ui/loader'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
 import 'draft-js/dist/Draft.css'
 import '@draft-js-plugins/image/lib/plugin.css'
-import Loader from '../../loader'
 
 const linkifyPlugin = createLinkifyPlugin({
 	component(props) {
@@ -42,16 +42,16 @@ function StyleButton({
 	style,
 	label,
 }: {
-  onToggle: (style: string) => void;
-  active: boolean;
-  icon: string | undefined;
-  style: string;
+  onToggle: (style: string) => void
+  active: boolean
+  icon: string | undefined
+  style: string
   // eslint-disable-next-line react/require-default-props
-  label?: string | undefined;
+  label?: string | undefined
 }) {
 	return (
 		<IconButton
-			aria-label="save-image"
+			aria-label='save-image'
 			bg={active ? '#A0A7A7' : 'none'}
 			_hover={{ bg: active ? '#A0A7A7' : 'none' }}
 			_active={{ bg: active ? '#A0A7A7' : 'none' }}
@@ -82,12 +82,12 @@ function InlineStyleControls({
 	editorState,
 	onToggle,
 }: {
-  editorState: EditorState;
-  onToggle: (style: string) => void;
+  editorState: EditorState
+  onToggle: (style: string) => void
 }) {
 	const currentStyle = editorState.getCurrentInlineStyle()
 	return (
-		<div className="RichEditor-controls">
+		<div className='RichEditor-controls'>
 			{
 				INLINE_STYLES.map((type) => (
 					<StyleButton
@@ -115,8 +115,8 @@ function BlockStyleControls({
 	editorState,
 	onToggle,
 }: {
-  editorState: EditorState;
-  onToggle: (style: string) => void;
+  editorState: EditorState
+  onToggle: (style: string) => void
 }) {
 	const selection = editorState.getSelection()
 	const blockType = editorState
@@ -125,7 +125,7 @@ function BlockStyleControls({
 		.getType()
 
 	return (
-		<div className="RichEditor-controls">
+		<div className='RichEditor-controls'>
 			{
 				BLOCK_TYPES.map((type) => (
 					<StyleButton
@@ -148,10 +148,10 @@ function TextEditor({
 	onChange: setEditorState,
 	readOnly,
 }: {
-  placeholder: string | undefined;
-  value: EditorState;
-  onChange: (editorState: EditorState) => void;
-  readOnly?: boolean;
+  placeholder: string | undefined
+  value: EditorState
+  onChange: (editorState: EditorState) => void
+  readOnly?: boolean
 }) {
 	const ref = useRef(null)
 	const imageUploadRef = useRef(null)
@@ -267,19 +267,19 @@ function TextEditor({
           const richText = JSON.stringify(
             convertToRaw(editorState.getCurrentContent()),
           );
-          console.log(richText);
+          // console.log(richText);
         }}
       >
         save
       </button> */}
 
 			<Flex
-				bg="#E8E9E9"
-				h="56px"
-				borderRadius="8px 8px 0 0"
-				border="1px solid #D0D3D3"
-				borderBottom="none"
-				alignItems="center"
+				bg='#E8E9E9'
+				h='56px'
+				borderRadius='8px 8px 0 0'
+				border='1px solid #D0D3D3'
+				borderBottom='none'
+				alignItems='center'
 			>
 				<BlockStyleControls
 					editorState={editorState}
@@ -305,14 +305,14 @@ function TextEditor({
 				/>
 
 				<IconButton
-					aria-label="save-image"
-					bg="none"
+					aria-label='save-image'
+					bg='none'
 					_active={{ bg: 'none' }}
 					_hover={{ bg: 'none' }}
 					style={{ transition: 'none' }}
 					icon={
 						!uploadingImage ? (
-							<Image src="/ui_icons/add_image.svg" />
+							<Image src='/ui_icons/add_image.svg' />
 						) : (
 							<Loader />
 						)
@@ -324,10 +324,10 @@ function TextEditor({
 			<input
 				style={{ display: 'none' }}
 				ref={imageUploadRef}
-				type="file"
-				name="myImage"
+				type='file'
+				name='myImage'
 				onChange={handleImageUpload}
-				accept="image/jpg, image/jpeg, image/png"
+				accept='image/jpg, image/jpeg, image/png'
 			/>
 			<div
 				className={focused ? 'richTextContainer focus' : 'richTextContainer'}
@@ -350,7 +350,7 @@ function TextEditor({
 					keyBindingFn={mapKeyToEditorCommand}
 					onChange={onChange}
 					placeholder={renderPlaceholder() ? placeholder : ''}
-					editorKey="foobar"
+					editorKey='foobar'
 					spellCheck={false}
 					onFocus={() => setFocused(true)}
 					onBlur={() => setFocused(false)}

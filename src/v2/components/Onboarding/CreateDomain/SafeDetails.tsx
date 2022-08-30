@@ -1,41 +1,41 @@
 import { Box, Button, CircularProgress, Flex, Image, Text } from '@chakra-ui/react'
-import TextField from '../../InputFields/TextField'
-import SafeSelect, { SafeSelectOption } from './SafeSelect'
+import TextField from 'src/v2/components/InputFields/TextField'
+import SafeSelect, { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 
 interface Props {
-	safesOptions: SafeSelectOption[];
-	step: number;
-	safeAddress: string;
-	isPasted?: boolean;
-	isVerified?: boolean;
-	isSafeAddressError?: boolean;
-	isLoading?: boolean;
-	safeSelected: SafeSelectOption;
-	onSelectedSafeChange: (e: SafeSelectOption) => void;
-	setValue: (newValue: string) => void;
-	onContinue: () => void;
+	safesOptions: SafeSelectOption[]
+	step: number
+	safeAddress: string
+	isPasted?: boolean
+	isVerified?: boolean
+	isSafeAddressError?: boolean
+	isLoading?: boolean
+	safeSelected: SafeSelectOption
+	onSelectedSafeChange: (e: SafeSelectOption) => void
+	setValue: (newValue: string) => void
+	onContinue: () => void
 }
 
 function SafeDetails({ safesOptions, step, safeAddress, isPasted, isVerified, isLoading, safeSelected, setValue, onSelectedSafeChange, onContinue, isSafeAddressError }: Props) {
 	return (
 		<>
 			<Text
-				variant="v2_body"
-				color="black.3">
+				variant='v2_body'
+				color='black.3'>
 				Let’s begin the adventure.
 			</Text>
 			<Text
-				variant="v2_heading_3"
-				fontWeight="500">
+				variant='v2_heading_3'
+				fontWeight='500'>
 				Create a domain
 			</Text>
 			<Text
-				variant="v2_body"
-				fontWeight="500"
+				variant='v2_body'
+				fontWeight='500'
 				mt={6}>
 				To create a domain, you need a safe.
 			</Text>
-			<Box mb="10" />
+			<Box mb='10' />
 			<TextField
 				label='Safe Address'
 				helperText='Your safe can be used to do payouts on Questbook.'
@@ -49,21 +49,21 @@ function SafeDetails({ safesOptions, step, safeAddress, isPasted, isVerified, is
 				isVerified={isVerified}
 				isDisabled={step === 1}
 				isError={isSafeAddressError}
-				errorText="This safe is not supported. We currently support safes on Gnosis (Ethereum), and Realms (Solana)."
+				errorText='This safe is not supported. We currently support safes on Gnosis (Ethereum), and Realms (Solana).'
 			/>
 			{
 				isLoading && (
 					<Flex
 						mt={2}
-						align="center">
+						align='center'>
 						<CircularProgress
-							color="violet.2"
-							size="11px"
+							color='violet.2'
+							size='11px'
 							isIndeterminate />
 						<Text
 							ml={2}
-							variant="v2_metadata"
-							color="black.3">
+							variant='v2_metadata'
+							color='black.3'>
 							Looking up safes with this address on different networks...
 						</Text>
 					</Flex>
@@ -74,9 +74,9 @@ function SafeDetails({ safesOptions, step, safeAddress, isPasted, isVerified, is
 				step === 1 && (
 					<SafeSelect
 						safesOptions={safesOptions}
-						label="Safes Found"
-						helperText="Associated with this address on all networks."
-						helperLinkText="Learn about supported networks"
+						label='Safes Found'
+						helperText='Associated with this address on all networks.'
+						helperLinkText='Learn about supported networks'
 						helperLinkUrl='https://youtube.com'
 						value={safeSelected}
 						onChange={
@@ -90,8 +90,8 @@ function SafeDetails({ safesOptions, step, safeAddress, isPasted, isVerified, is
 			}
 			<Box m='auto' />
 			<Button
-				variant="primaryV2"
-				ml="auto"
+				variant='primaryV2'
+				ml='auto'
 				mt={6}
 				rightIcon={<Image src={`/ui_icons/arrow-right-fill${!isVerified ? '-disabled' : ''}.svg`} />}
 				disabled={!isVerified}
