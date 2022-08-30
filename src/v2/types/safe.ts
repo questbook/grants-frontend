@@ -9,6 +9,18 @@ export interface TransactionType {
     selectedMilestone: any
 }
 
+export enum OperationType {
+    Call = 0,
+    DelegateCall = 1,
+  }
+
+export interface MetaTransaction {
+    readonly to: string
+    readonly value: string
+    readonly data: string
+    readonly operation?: OperationType
+  }
+
 export enum TransactionStatus {
     PENDING,
     SUCCESS,
@@ -45,7 +57,7 @@ export interface SafeDetails {
  */
 
 export interface Safe {
-    id: number | PublicKey | undefined;
+    id: string | PublicKey | undefined;
     name: string;
     description: string;
     image: string;
@@ -66,6 +78,7 @@ export interface Safe {
      */
     proposeTransactions(grantName: string, transactions : TransactionType[], wallet: any): Promise<string>;
 
+    createMultiTransaction(transactions: MetaTransaction[], safeAddress: string): void;
     /**
      * @param address : Address of the safe
      * This is useful when searching for detecting which network the safe is on (in the onboarding)

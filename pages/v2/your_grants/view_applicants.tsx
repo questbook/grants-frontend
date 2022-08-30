@@ -44,7 +44,9 @@ import { ViewEye } from 'src/v2/assets/custom chakra icons/ViewEye'
 import Breadcrumbs from 'src/v2/components/Breadcrumbs'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import StyledTab from 'src/v2/components/StyledTab'
+import { Gnosis_Safe } from 'src/v2/constants/safe/gnosis_safe'
 import { Realms_Solana } from 'src/v2/constants/safe/realms_solana'
+import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import AcceptedProposalsPanel from 'src/v2/payouts/AcceptedProposals/AcceptedProposalPanel'
 import InReviewPanel from 'src/v2/payouts/InReviewProposals/InReviewPanel'
@@ -56,9 +58,14 @@ import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEva
 import StatsBanner from 'src/v2/payouts/StatsBanner'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
+import getGnosisTansactionLink from 'src/v2/utils/gnosisUtils'
 import getProposalUrl from 'src/v2/utils/phantomUtils'
+import { erc20ABI, useConnect, useDisconnect } from 'wagmi'
+
 
 const PAGE_SIZE = 500
+const ERC20Interface = new ethers.utils.Interface(erc20ABI)
+const safeChainIds = Object.keys(safeServicesInfo)
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 	let val = BigNumber.from(0)
@@ -90,6 +97,7 @@ function ViewApplicants() {
 	const [isActorId, setIsActorId] = React.useState<any>('')
 
 	const [workspaceSafe, setWorkspaceSafe] = useState('')
+	const [workspaceSafeChainId, setWorkspaceSafeChainId] = useState(0)
 
 	const [setupRubricBannerCancelled, setSetupRubricBannerCancelled] = useState(true)
 
@@ -100,32 +108,26 @@ function ViewApplicants() {
 	const workspacechainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 	const { client } = subgraphClients[workspacechainId]
 
-	const { data :safeAddressData } = useGetSafeForAWorkspaceQuery({
+	const { data: safeAddressData } = useGetSafeForAWorkspaceQuery({
 		client,
 		variables: {
 			workspaceID: workspace?.id.toString()!,
 		},
 	})
 
-	const [realmsQueryParams, setRealmsQueryParams] = useState<any>({
-		client:
-      subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-      ].client,
-	})
+	const [realmsQueryParams, setRealmsQueryParams] = useState<any>({ client })
 
 	useEffect(() => {
-		if(!grantID) {
+		if(!grantID || !workspace) {
 			return
 		}
 
 		setRealmsQueryParams({
-			client:
-        subgraphClients[getSupportedChainIdFromWorkspace(workspace) || defaultChainId].client,
+			client,
 			variables: { grantID: grantID },
 		})
 
-	}, [grantID])
+	}, [grantID, workspace])
 
 	const { data: realmsFundTransferData } = useGetRealmsFundTransferDataQuery(realmsQueryParams)
 
@@ -139,7 +141,9 @@ function ViewApplicants() {
 		// @sourav - use the transactionHash here
 		// this is the transction hash of the first fundTransfer object. If you need more info
 		// you can extract them as well
-		const transactionHash = realmsFundTransferData.grants[0].fundTransfers[0].transactionHash
+		realmsFundTransferData.grants[0]?.fundTransfers?.forEach((fundTransfer) => {
+			console.log('TX HASH - ', fundTransfer.transactionHash)
+		})
 
 	}, [realmsFundTransferData])
 
@@ -163,14 +167,22 @@ function ViewApplicants() {
 	useEffect(() => {
 		if(safeAddressData) {
 			const { workspaceSafes } = safeAddressData
-			const safeAddress = workspaceSafes[0]?.address
+			const safeAddress = workspaceSafes[0].address
+			console.log('safeAddress', safeAddress)
+			console.log('workspace safe details', workspaceSafes)
+			const _isEvmChain = workspaceSafeChainId !== 900001 ? true : false
+			// setIsEvmChain(_isEvmChain)
 			setWorkspaceSafe(safeAddress)
+			setWorkspaceSafeChainId(parseInt(workspaceSafes[0].chainId))
 		}
 	}, [safeAddressData])
 
 
 	const [rubricDrawerOpen, setRubricDrawerOpen] = useState(false)
 	const [viewRubricDrawerOpen, setViewRubricDrawerOpen] = useState(false)
+
+	const [rewardAssetAddress, setRewardAssetAddress] = useState('')
+	const [rewardAssetDecimals, setRewardAssetDecimals] = useState<number>()
 
 	const [sendFundsTo, setSendFundsTo] = useState<any[]>()
 
@@ -283,7 +295,20 @@ function ViewApplicants() {
 	const { data: grantData } = useGetGrantDetailsQuery(queryParams)
 	useEffect(() => {
 		console.log('fetch', data)
+
 		if(data && data.grantApplications.length) {
+			setRewardAssetAddress(data.grantApplications[0].grant.reward.asset)
+			if(data.grantApplications[0].grant.reward.token) {
+				setRewardAssetDecimals(data.grantApplications[0].grant.reward.token.decimal)
+			} else {
+				setRewardAssetDecimals(CHAIN_INFO[
+					getSupportedChainIdFromSupportedNetwork(
+						data.grantApplications[0].grant.workspace.supportedNetworks[0],
+					)
+				]?.supportedCurrencies[data.grantApplications[0].grant.reward.asset.toLowerCase()]
+					?.decimals)
+			}
+
 			const fetchedApplicantsData = data.grantApplications.map((applicant) => {
 				let decimal
 				let label
@@ -381,7 +406,7 @@ function ViewApplicants() {
 	}
 
 	useEffect(() => {
-		console.log('Raw reviewer data: ', reviewData)
+		// console.log('Raw reviewer data: ', reviewData)
 		if(reviewData.data && reviewData.data.grantApplications.length) {
 			console.log('Reviewer Applications: ', reviewData.data)
 			const fetchedApplicantsData = reviewData.data.grantApplications.map((applicant) => {
@@ -434,7 +459,7 @@ function ViewApplicants() {
 		console.log('grantData', grantData)
 		const initialRubrics = grantData?.grants[0]?.rubric
 		const newRubrics = [] as any[]
-		console.log('initialRubrics', initialRubrics)
+		// console.log('initialRubrics', initialRubrics)
 		initialRubrics?.items.forEach((initalRubric) => {
 			newRubrics.push({
 				name: initalRubric.title,
@@ -498,18 +523,29 @@ function ViewApplicants() {
 		phantomWalletConnected,
 		setPhantomWalletConnected } = usePhantomWallet()
 
+	const { connect, isConnected } = useConnect()
+	const { disconnect } = useDisconnect()
+
 	const [signerVerified, setSignerVerififed] = useState(false)
 	const [proposalAddr, setProposalAddr] = useState('')
 
 	const [initiateTransactionData, setInitiateTransactionData] = useState<any>([])
+	const [gnosisBatchData, setGnosisBatchData] = useState<any>([])
+	const [gnosisReadyToExecuteTxns, setGnosisReadyToExecuteTxns] = useState<any>([])
+	// const [isEvmChain, setIsEvmChain] = useState<boolean>(false)
 
-	// const supported_safes = new SupportedSafes()
-	const chainId = 9000001 // get your safe chain ID, currently on solana
-	// const current_safe = supported_safes.getSafeByChainId(chainId) //current_safe has the stored safe address
+	// const supported_safes = new SupportedSafes(workspaceSafe)
+	// const chainId = 4 // get your safe chain ID, currently on solana
+	const isEvmChain = workspaceSafeChainId !== 900001 ? true : false
 
 	const current_safe = useMemo(() => {
-		if(isPlausibleSolanaAddress(workspaceSafe)) {
-			return new Realms_Solana(workspaceSafe)
+		if(isEvmChain) {
+			const txnServiceURL = safeServicesInfo[workspaceSafeChainId]
+			return new Gnosis_Safe(workspaceSafeChainId, txnServiceURL, workspaceSafe)
+		} else {
+			if(isPlausibleSolanaAddress(workspaceSafe)) {
+				return new Realms_Solana(workspaceSafe)
+			}
 		}
 	}, [workspaceSafe])
 
@@ -524,7 +560,6 @@ function ViewApplicants() {
 		checkValidSafeAddress()
 	}, [])
 
-	const isEvmChain = chainId !== 9000001 ? true : false
 
 	useEffect(() => {
 		const formattedTrxnData = sendFundsTo?.map((recepient, i) => (
@@ -537,7 +572,32 @@ function ViewApplicants() {
 			})
 		)
 		setInitiateTransactionData(formattedTrxnData)
+		setGnosisBatchData(formattedTrxnData)
 	}, [sendFundsTo])
+
+	function createEVMMetaTransactions() {
+		const readyTxs = gnosisBatchData.map((data: any) => {
+			const txData = encodeTransactionData(data.to, (data.amount.toString()))
+			const tx = {
+				to: ethers.utils.getAddress(rewardAssetAddress),
+				data: txData,
+				value: '0'
+			}
+			return tx
+		})
+		console.log('ready to execute tx', readyTxs)
+		setGnosisReadyToExecuteTxns(readyTxs)
+		return readyTxs
+	}
+
+	function encodeTransactionData(recipientAddress: string, fundAmount: string) {
+		const txData = ERC20Interface.encodeFunctionData('transfer', [
+			recipientAddress,
+			ethers.utils.parseUnits(fundAmount, rewardAssetDecimals)
+		])
+
+		return txData
+	}
 
 	const getRealmsVerification = async() => {
 		if(phantomWallet?.publicKey?.toString()) {
@@ -549,13 +609,27 @@ function ViewApplicants() {
 		}
 	}
 
+	const verifyGnosisOwner = async() => {
+		if(isConnected) {
+			const isVerified = await current_safe?.isOwner(workspaceSafe)
+			console.log('verifying owner', isVerified)
+			if(isVerified) {
+				setSignerVerififed(true)
+			} else {
+				console.log('not a owner')
+			}
+		}
+	}
+
 	useEffect(() => {
 		if(phantomWalletConnected) {
 			getRealmsVerification()
+		} else if(isConnected) {
+			verifyGnosisOwner()
 		} else {
 			setSignerVerififed(false)
 		}
-	}, [phantomWalletConnected])
+	}, [phantomWalletConnected, isConnected])
 
 	const workspaceRegistryContract = useQBContract('workspace', workspacechainId)
 	const { webwallet } = useContext(WebwalletContext)!
@@ -566,20 +640,36 @@ function ViewApplicants() {
 
 	const initiateTransaction = async() => {
 		console.log('initiate transaction called')
-		const proposaladdress = await current_safe?.proposeTransactions(grantData?.grants[0].title!, initiateTransactionData, phantomWallet)
-		console.log('proposal address', proposaladdress)
-		if(!proposaladdress) {
-			throw new Error('No proposal address found!')
+		let proposaladdress: string | undefined
+		if(isEvmChain) {
+			console.log('transactions initiated --> ', gnosisReadyToExecuteTxns)
+			const readyToExecuteTxs = createEVMMetaTransactions()
+			const safeTxHash = await current_safe?.createMultiTransaction(readyToExecuteTxs, workspaceSafe)
+			console.log('Proposed transaction', safeTxHash)
+			if(safeTxHash) {
+				proposaladdress = safeTxHash
+				setProposalAddr(safeTxHash)
+			} else {
+				throw new Error('Proposal address not found')
+			}
+		} else {
+			proposaladdress = await current_safe?.proposeTransactions(grantData?.grants[0].title!, initiateTransactionData, phantomWallet)
+			console.log('proposal address', proposaladdress)
+			if(!proposaladdress) {
+				throw new Error('No proposal address found!')
+			}
+
+			setProposalAddr(proposaladdress?.toString())
 		}
 
-		setProposalAddr(proposaladdress?.toString())
-		disburseRewardFromSafe(proposaladdress?.toString())
+		disburseRewardFromSafe(proposaladdress?.toString()!)
 			.then(() => {
 				console.log('Sent transaction to contract - realms')
 			})
 			.catch((err) => {
 				console.log('realms sending transction error:', err)
 			})
+
 	}
 
 	const disburseRewardFromSafe = useCallback(async(proposaladdress: string) => {
@@ -629,7 +719,7 @@ function ViewApplicants() {
 			const methodArgs = [
 				initiateTransactionData.map((element: any) => (parseInt(element.applicationId, 16))),
 				initiateTransactionData.map((element: any) => (parseInt(element.selectedMilestone, 16))),
-				'0x9C910261B77bEeaa84289D098EbD309Ec748E9EF',
+				rewardAssetAddress,
 				'nonEvmAssetAddress-toBeChanged',
 				initiateTransactionData.map((element: any) => (ethers.utils.parseEther(element.amount.toString()))),
 				workspace.id,
@@ -653,14 +743,13 @@ function ViewApplicants() {
 			)
 
 			if(!transactionHash) {
-				return
+				throw new Error('No transaction hash found!')
 			}
 
 			const { txFee, receipt } = await getTransactionDetails(transactionHash, workspacechainId.toString())
 
 			console.log('txFee', txFee)
-
-			console.log('fdsao')
+			console.log('receipt: ', receipt)
 			await chargeGas(Number(workspace.id), Number(txFee))
 
 		} catch(e) {
@@ -668,19 +757,20 @@ function ViewApplicants() {
 		}
 	}, [workspace, biconomyWalletClient, workspacechainId, biconomy, workspaceRegistryContract, scwAddress, webwallet, nonce, initiateTransactionData, proposalAddr])
 
-
-	const onChangeRecepientDetails = (applicationId:any, fieldName: string, fieldValue:any) => {
+	const onChangeRecepientDetails = (applicationId: any, fieldName: string, fieldValue: any) => {
 		console.log('onChangeRecepientDetails', applicationId, fieldName, fieldValue)
-
-		const tempData = initiateTransactionData.map((transactionData:any, i:number) => {
+		console.log('Gnosis Batch data', gnosisBatchData)
+		const tempData = initiateTransactionData.map((transactionData: any) => {
 			if(transactionData.applicationId === applicationId) {
-				return { ...transactionData, [fieldName]:fieldValue }
+				return { ...transactionData, [fieldName]: fieldValue }
 			}
 
 			return transactionData
 		})
+
 		console.log('initiateTransactionData', tempData)
 		setInitiateTransactionData(tempData)
+		setGnosisBatchData(tempData)
 	}
 
 
@@ -698,7 +788,7 @@ function ViewApplicants() {
 		setSendFundsTo(selectedApplicants)
 	}
 
-	const onModalStepChange = async(currentState:number) => {
+	const onModalStepChange = async(currentState: number) => {
 		switch (currentState) {
 		case ModalState.RECEIPT_DETAILS:
 			setStep(ModalState.CONNECT_WALLET)
@@ -728,6 +818,10 @@ function ViewApplicants() {
 		if(phantomWallet?.isConnected) {
 			await phantomWallet.disconnect()
 			setPhantomWalletConnected(false)
+		}
+
+		if(isConnected) {
+			disconnect()
 		}
 	}
 
@@ -1069,15 +1163,14 @@ function ViewApplicants() {
 				<SendFundsModal
 					isOpen={sendFundsModalIsOpen}
 					onClose={onModalClose}
-					// @ts-expect-error
-					safeAddress={workspace?.safeAddress ?? 'HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC'}
+					safeAddress={workspaceSafe ?? 'HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC'}
 					proposals={sendFundsTo ?? []}
 
 					onChangeRecepientDetails={onChangeRecepientDetails}
 					phantomWallet={phantomWallet}
 					setPhantomWalletConnected={setPhantomWalletConnected}
 					isEvmChain={isEvmChain}
-					current_safe={current_safe}
+					current_safe={current_safe!}
 					signerVerified={signerVerified}
 					initiateTransaction={initiateTransaction}
 					initiateTransactionData={initiateTransactionData}
@@ -1090,16 +1183,14 @@ function ViewApplicants() {
 					isOpen={txnInitModalIsOpen && proposalAddr ? true : false}
 					onClose={onModalClose}
 					onComplete={() => setTxnInitModalIsOpen(false)}
-					proposalUrl={isEvmChain ? '' : getProposalUrl(current_safe?.id?.toString()!, proposalAddr)}
+					proposalUrl={isEvmChain ? getGnosisTansactionLink(current_safe?.id?.toString()!, current_safe?.chainId.toString()!) : getProposalUrl(current_safe?.id?.toString()!, proposalAddr)}
 				/>
 
 				<SendFundsDrawer
 					isOpen={sendFundsDrawerIsOpen}
 					onClose={onModalClose}
-					// @ts-expect-error
-					safeAddress={workspace?.safeAddress ?? 'HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC'}
+					safeAddress={workspaceSafe ?? 'HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC'}
 					proposals={sendFundsTo ?? []}
-
 					onChangeRecepientDetails={onChangeRecepientDetails}
 					phantomWallet={phantomWallet}
 					setPhantomWalletConnected={setPhantomWalletConnected}

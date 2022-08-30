@@ -333,7 +333,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "AdminChanged(address,address)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
     "DisburseReward(uint96,uint96,address,address,uint256,bool,uint256)": EventFragment;
-    "DisburseRewardFromSafe(uint96,uint96,address,string,string,address,uint256,bool,uint256)": EventFragment;
+    "DisburseRewardFromSafe(uint96[],uint96[],address,string,string,address,uint256[],bool,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Paused(address)": EventFragment;
@@ -400,25 +400,25 @@ export type DisburseRewardEvent = TypedEvent<
 export type DisburseRewardEventFilter = TypedEventFilter<DisburseRewardEvent>;
 
 export interface DisburseRewardFromSafeEventObject {
-  applicationId: BigNumber;
-  milestoneId: BigNumber;
+  applicationIds: BigNumber[];
+  milestoneIds: BigNumber[];
   asset: string;
   nonEvmAssetAddress: string;
   transactionHash: string;
   sender: string;
-  amount: BigNumber;
+  amounts: BigNumber[];
   isP2P: boolean;
   time: BigNumber;
 }
 export type DisburseRewardFromSafeEvent = TypedEvent<
   [
-    BigNumber,
-    BigNumber,
+    BigNumber[],
+    BigNumber[],
     string,
     string,
     string,
     string,
-    BigNumber,
+    BigNumber[],
     boolean,
     BigNumber
   ],
@@ -1063,25 +1063,25 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       time?: null
     ): DisburseRewardEventFilter;
 
-    "DisburseRewardFromSafe(uint96,uint96,address,string,string,address,uint256,bool,uint256)"(
-      applicationId?: PromiseOrValue<BigNumberish> | null,
-      milestoneId?: null,
+    "DisburseRewardFromSafe(uint96[],uint96[],address,string,string,address,uint256[],bool,uint256)"(
+      applicationIds?: null,
+      milestoneIds?: null,
       asset?: null,
       nonEvmAssetAddress?: null,
-      transactionHash?: null,
+      transactionHash?: PromiseOrValue<string> | null,
       sender?: null,
-      amount?: null,
+      amounts?: null,
       isP2P?: null,
       time?: null
     ): DisburseRewardFromSafeEventFilter;
     DisburseRewardFromSafe(
-      applicationId?: PromiseOrValue<BigNumberish> | null,
-      milestoneId?: null,
+      applicationIds?: null,
+      milestoneIds?: null,
       asset?: null,
       nonEvmAssetAddress?: null,
-      transactionHash?: null,
+      transactionHash?: PromiseOrValue<string> | null,
       sender?: null,
-      amount?: null,
+      amounts?: null,
       isP2P?: null,
       time?: null
     ): DisburseRewardFromSafeEventFilter;
