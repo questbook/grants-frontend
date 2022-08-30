@@ -11,11 +11,11 @@ const SuccessfulDomainCreationModal = ({
 	domainName,
 	daoLink
 }: {
-	isOpen: boolean,
-	onClose: () => void,
-	redirect?: () => void,
-	daoLink?: string,
-	domainName?: string,
+	isOpen: boolean
+	onClose: () => void
+	redirect?: () => void
+	daoLink?: string
+	domainName?: string
 }) => {
 	const router = useRouter()
 	return (
@@ -23,45 +23,45 @@ const SuccessfulDomainCreationModal = ({
 			isOpen={isOpen}
 			onClose={onClose}
 			isCentered
-			scrollBehavior={'outside'}
-			size="2xl"
+			scrollBehavior='outside'
+			size='2xl'
 		>
 			<AlertDialogOverlay
-				background={'rgba(240, 240, 247, 0.7)'}
-				backdropFilter={'blur(10px)'}
+				background='rgba(240, 240, 247, 0.7)'
+				backdropFilter='blur(10px)'
 			/>
 
 			<ModalContent
-				boxShadow={'none'}
-				filter={'drop-shadow(2px 4px 40px rgba(31, 31, 51, 0.05))'}
-				borderRadius={'base'}
-				fontFamily={'Neue-Haas-Grotesk-Display, sans-serif'}
-				fontSize={'1rem'}
+				boxShadow='none'
+				filter='drop-shadow(2px 4px 40px rgba(31, 31, 51, 0.05))'
+				borderRadius='base'
+				fontFamily='Neue-Haas-Grotesk-Display, sans-serif'
+				fontSize='1rem'
 			>
 				<ModalBody
 					p={0}
 				>
 					<Image
-						src="/ui_icons/domain-created-top.svg"
-						w="100%"
-						h="23%" />
+						src='/ui_icons/domain-created-top.svg'
+						w='100%'
+						h='23%' />
 					<Image
-						src="/ui_icons/domain-created-illustration.png"
-						mt="-5%"
-						w="45%"
-						mx="auto"
+						src='/ui_icons/domain-created-illustration.png'
+						mt='-5%'
+						w='45%'
+						mx='auto'
 					/>
 					<Text
-						mt="-5%"
+						mt='-5%'
 						variant='v2_subheading'
-						fontWeight="500"
-						textAlign="center">
-Success! Your DAO is created
+						fontWeight='500'
+						textAlign='center'>
+						Success! Your DAO is created
 					</Text>
 					<Flex
-						align="center"
-						justify="center"
-						w="100%"
+						align='center'
+						justify='center'
+						w='100%'
 						mt={2}>
 						<NextLink
 							href={daoLink ?? '#'}
@@ -70,15 +70,15 @@ Success! Your DAO is created
 							<Link isExternal>
 								<Flex>
 									<Text
-										variant="v2_body"
-										fontWeight="500">
+										variant='v2_body'
+										fontWeight='500'>
 										{domainName ?? 'Unknown'}
 										{' '}
-DAO
+										DAO
 									</Text>
 									<ExternalLinkIcon
-										color="black.1"
-										boxSize="15px"
+										color='black.1'
+										boxSize='15px'
 										mx='2px' />
 								</Flex>
 
@@ -87,32 +87,32 @@ DAO
 						</NextLink>
 						<Text
 							ml={1}
-							variant="v2_body"
-							color="black.2">
-is now on-chain.
+							variant='v2_body'
+							color='black.2'>
+							is now on-chain.
 						</Text>
 					</Flex>
 					<Text
 						mt={12}
-						textAlign="center">
-Next create a grant or bounty to attract builders
+						textAlign='center'>
+						Next create a grant or bounty to attract builders
 					</Text>
 					<Flex
-						align="center"
-						justify="center"
-						w="100%"
+						align='center'
+						justify='center'
+						w='100%'
 						my={6}>
 						<Button
-							variant="secondaryV2"
+							variant='secondaryV2'
 							onClick={
 								() => {
 									router.push({ pathname: '/' })
 								}
 							}>
-I’ll do it later
+							I’ll do it later
 						</Button>
 						<Button
-							variant="primaryV2"
+							variant='primaryV2'
 							ml={4}
 							onClick={
 								() => {
@@ -121,7 +121,7 @@ I’ll do it later
 									})
 								}
 							}>
-Create a grant
+							Create a grant
 						</Button>
 					</Flex>
 				</ModalBody>

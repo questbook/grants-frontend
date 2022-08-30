@@ -9,30 +9,30 @@ import {
 } from '@questbook/service-validator-client'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import { ApiClientsContext } from 'pages/_app'
+import Heading from 'src/components/ui/heading'
 import Loader from 'src/components/ui/loader'
+import Title from 'src/components/your_grants/create_grant/form/1_title'
+import Details from 'src/components/your_grants/create_grant/form/2_details'
+import ApplicantDetails from 'src/components/your_grants/create_grant/form/3_applicantDetails'
+import GrantRewardsInput from 'src/components/your_grants/create_grant/form/4_rewards'
+import applicantDetailsList from 'src/constants/applicantDetailsList'
 import { CHAIN_INFO } from 'src/constants/chains'
+import strings from 'src/constants/strings.json'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import applicantDetailsList from '../../../../constants/applicantDetailsList'
-import strings from '../../../../constants/strings.json'
-import Heading from '../../../ui/heading'
-import Title from './1_title'
-import Details from './2_details'
-import ApplicantDetails from './3_applicantDetails'
-import GrantRewardsInput from './4_rewards'
 
 function Form({
 	refs,
 	onSubmit,
 	hasClicked,
 }: {
-  refs: any[];
-  onSubmit: (data: any) => void;
-  hasClicked: boolean;
+  refs: any[]
+  onSubmit: (data: any) => void
+  hasClicked: boolean
 }) {
 	const CACHE_KEY = strings.cache.create_grant
 	const { workspace } = React.useContext(ApiClientsContext)!
@@ -63,7 +63,7 @@ function Form({
 	} = useSubmitPublicKey()
 
 	useEffect(() => {
-		/// console.log(pk);
+		/// // console.log(pk);
 		if(!accountData?.address) {
 			return
 		}
@@ -75,7 +75,7 @@ function Form({
 		const k = workspace?.members?.find(
 			(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 		)?.publicKey?.toString()
-		// console.log(k);
+		// // console.log(k);
 		if(k && k.length > 0) {
 			setPk(k)
 		} else {
@@ -122,7 +122,7 @@ function Form({
 	React.useEffect(() => {
 		if(transactionData) {
 			setKeySubmitted(true)
-			console.log('transactionData-----', transactionData)
+			// console.log('transactionData-----', transactionData)
 			setRefresh(true)
 		}
 	}, [transactionData])
@@ -134,7 +134,7 @@ function Form({
           && member.publicKey
           && member.publicKey !== '',
 			)
-			console.log('Workspace', workspace)
+			// console.log('Workspace', workspace)
 			setHasOwnerPublicKey(hasPubKey)
 		}
 	}, [accountData, workspace])
@@ -251,7 +251,7 @@ function Form({
 	}
 
 	React.useEffect(() => {
-		// console.log(currentChain);
+		// // console.log(currentChain);
 		if(currentChain) {
 			const supportedCurrencies = Object.keys(
 				CHAIN_INFO[currentChain].supportedCurrencies,
@@ -458,7 +458,7 @@ function Form({
 
 	useEffect(() => {
 		if(newPkTransactionData && newPublicKey && newPublicKey.publicKey) {
-			// console.log(newPublicKey);
+			// // console.log(newPublicKey);
 			setPk(newPublicKey.publicKey)
 			const detailsString = JSON.stringify(
 				convertToRaw(details.getCurrentContent()),
@@ -559,7 +559,7 @@ function Form({
 
 	}, [newPkTransactionData, newPublicKey])
 	React.useEffect(() => {
-		console.log('Key: ', getKey)
+		// console.log('Key: ', getKey)
 		if(getKey.includes('undefined') || typeof window === 'undefined') {
 			return
 		}
@@ -570,7 +570,7 @@ function Form({
 		}
 
 		const formData = typeof window !== 'undefined' ? JSON.parse(data || '{}') : {}
-		console.log('Data from cache: ', formData)
+		// console.log('Data from cache: ', formData)
 
 		setTitle(formData?.title)
 		setSummary(formData?.summary)
@@ -667,7 +667,7 @@ function Form({
 			shouldEncrypt,
 			shouldEncryptReviews,
 		}
-		console.log(JSON.stringify(formData))
+		// console.log(JSON.stringify(formData))
 		localStorage.setItem(getKey, JSON.stringify(formData))
 
 	}, [
@@ -692,23 +692,23 @@ function Form({
 
 	return (
 		<Flex
-			direction="column"
-			pb="10rem"
+			direction='column'
+			pb='10rem'
 		>
 			<Heading
-				mt="18px"
-				title="Create a grant" />
+				mt='18px'
+				title='Create a grant' />
 			<Text
 				ref={refs[0]}
-				fontSize="18px"
-				fontWeight="700"
-				lineHeight="26px"
+				fontSize='18px'
+				fontWeight='700'
+				lineHeight='26px'
 				letterSpacing={0}
-				mt="30px"
+				mt='30px'
 			>
-        Grant Intro
+				Grant Intro
 			</Text>
-			<Box mt="20px" />
+			<Box mt='20px' />
 			<Title
 				title={title}
 				setTitle={setTitle}
@@ -723,15 +723,15 @@ function Form({
 
 			<Text
 				ref={refs[1]}
-				fontSize="18px"
-				fontWeight="700"
-				lineHeight="26px"
+				fontSize='18px'
+				fontWeight='700'
+				lineHeight='26px'
 				letterSpacing={0}
 				mt={4}
 			>
-        Grant Details
+				Grant Details
 			</Text>
-			<Box mt="20px" />
+			<Box mt='20px' />
 			<Details
 				details={details}
 				setDetails={setDetails}
@@ -741,15 +741,15 @@ function Form({
 
 			<Text
 				ref={refs[2]}
-				fontSize="18px"
-				fontWeight="700"
-				lineHeight="26px"
+				fontSize='18px'
+				fontWeight='700'
+				lineHeight='26px'
 				letterSpacing={0}
-				mt="40px"
+				mt='40px'
 			>
-        Applicant Details
+				Applicant Details
 			</Text>
-			<Box mt="20px" />
+			<Box mt='20px' />
 			<ApplicantDetails
 				detailsRequired={detailsRequired}
 				toggleDetailsRequired={toggleDetailsRequired}
@@ -778,13 +778,13 @@ function Form({
 
 			<Text
 				ref={refs[3]}
-				fontSize="18px"
-				fontWeight="700"
-				lineHeight="26px"
+				fontSize='18px'
+				fontWeight='700'
+				lineHeight='26px'
 				letterSpacing={0}
-				mt="40px"
+				mt='40px'
 			>
-        Reward and Deadline
+				Reward and Deadline
 			</Text>
 			<GrantRewardsInput
 				reward={reward}
@@ -808,37 +808,37 @@ function Form({
 			/>
 
 			<Flex
-				alignItems="flex-start"
+				alignItems='flex-start'
 				mt={8}
 				mb={10}
-				justify="stretch">
+				justify='stretch'>
 				<Image
-					display="inline-block"
-					h="10px"
-					w="10px"
-					src="/ui_icons/info_brand.svg"
+					display='inline-block'
+					h='10px'
+					w='10px'
+					src='/ui_icons/info_brand.svg'
 					mt={1}
 					mr={2}
 				/>
 				{' '}
 				<Text
-					variant="footer"
-					w="100%">
-          By clicking Create Grant you&apos;ll have to approve this transaction
-          in your wallet.
+					variant='footer'
+					w='100%'>
+					By clicking Create Grant you&apos;ll have to approve this transaction
+					in your wallet.
 					{' '}
 					<Link
-						href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
+						href='https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46'
 						isExternal
 					>
-            Learn more
+						Learn more
 					</Link>
 					{' '}
 					<Image
-						display="inline-block"
-						h="10px"
-						w="10px"
-						src="/ui_icons/link.svg"
+						display='inline-block'
+						h='10px'
+						w='10px'
+						src='/ui_icons/link.svg'
 					/>
 				</Text>
 			</Flex>
@@ -847,7 +847,7 @@ function Form({
 				disabled={!isBiconomyInitialised}
 				py={hasClicked ? 2 : 0}
 				onClick={hasClicked ? () => {} : handleOnSubmit}
-				variant="primary"
+				variant='primary'
 			>
 				{hasClicked ? <Loader /> : 'Create Grant'}
 			</Button>

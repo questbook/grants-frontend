@@ -6,15 +6,15 @@ function Heading({
 	dontRenderDivider,
 	mt,
 }: {
-  title: string;
-  dontRenderDivider?: boolean;
-  mt?: SpaceProps['mt'];
+  title: string
+  dontRenderDivider?: boolean
+  mt?: SpaceProps['mt']
 }) {
 	return (
 		<>
 			<Text
 				mt={mt}
-				variant="heading">
+				variant='heading'>
 				{title}
 			</Text>
 			{

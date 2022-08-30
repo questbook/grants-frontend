@@ -4,8 +4,8 @@ import {
 } from '@chakra-ui/react'
 
 interface Props {
-  content: React.ReactNode;
-  close: () => void;
+  content: React.ReactNode
+  close: () => void
 }
 
 function ErrorToast({ content, close }: Props) {
@@ -18,67 +18,67 @@ function ErrorToast({ content, close }: Props) {
 
 	return (
 		<Flex
-			alignItems="flex-start"
-			bgColor="#FFC0C0"
-			border="2px solid #EE7979"
-			px="26px"
-			py="22px"
-			borderRadius="6px"
-			minW="578px"
+			alignItems='flex-start'
+			bgColor='#FFC0C0'
+			border='2px solid #EE7979'
+			px='26px'
+			py='22px'
+			borderRadius='6px'
+			minW='578px'
 			mt={4}
 			mx={10}
-			alignSelf="stretch"
+			alignSelf='stretch'
 		>
 			<Flex
-				alignItems="center"
-				justifyContent="center"
-				bgColor="#F7B7B7"
-				border="2px solid #EE7979"
-				borderRadius="40px"
+				alignItems='center'
+				justifyContent='center'
+				bgColor='#F7B7B7'
+				border='2px solid #EE7979'
+				borderRadius='40px'
 				p={2}
-				h="40px"
-				w="40px"
-				mt="5px"
+				h='40px'
+				w='40px'
+				mt='5px'
 			>
 				<Image
 					onClick={close}
-					h="40px"
-					w="40px"
-					src="/ui_icons/result_rejected_application.svg"
-					alt="Rejected"
+					h='40px'
+					w='40px'
+					src='/ui_icons/result_rejected_application.svg'
+					alt='Rejected'
 				/>
 			</Flex>
 			<Flex
 				flex={1}
-				ml="23px"
-				direction="column">
+				ml='23px'
+				direction='column'>
 				<Text
-					fontSize="16px"
-					lineHeight="24px"
-					fontWeight="700"
-					color="#7B4646"
+					fontSize='16px'
+					lineHeight='24px'
+					fontWeight='700'
+					color='#7B4646'
 				>
-          Error Message
+					Error Message
 				</Text>
 				<Text
-					fontSize="16px"
-					lineHeight="24px"
-					fontWeight="400"
-					color="#7B4646"
+					fontSize='16px'
+					lineHeight='24px'
+					fontWeight='400'
+					color='#7B4646'
 					{...contentProps}
 				/>
 
 			</Flex>
 			<Flex
-				h="full"
-				align="center"
-				justify="center">
+				h='full'
+				align='center'
+				justify='center'>
 				<IconButton
 					_hover={{}}
-					variant="ghost"
+					variant='ghost'
 					_active={{}}
-					icon={<Image src="/ui_icons/close.svg" />}
-					aria-label="Close"
+					icon={<Image src='/ui_icons/close.svg' />}
+					aria-label='Close'
 					onClick={close}
 				/>
 			</Flex>

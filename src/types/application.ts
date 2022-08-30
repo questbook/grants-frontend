@@ -1,45 +1,45 @@
 export interface GrantApplicationProps {
-  applicantName: string;
-  applicantEmail:string;
-  applicantAddress: string;
-  teamMembers: number;
-  membersDescription: { description: string }[];
-  projectName: string;
-  projectLinks: { link: string }[];
-  projectDetails: string;
-  projectGoal: string;
-  projectMilestones: { milestone: string, milestoneReward: string }[];
-  fundingAsk: string;
-  fundingBreakdown: string;
+  applicantName: string
+  applicantEmail: string
+  applicantAddress: string
+  teamMembers: number
+  membersDescription: { description: string }[]
+  projectName: string
+  projectLinks: { link: string }[]
+  projectDetails: string
+  projectGoal: string
+  projectMilestones: { milestone: string, milestoneReward: string }[]
+  fundingAsk: string
+  fundingBreakdown: string
 
 }
 
 export interface GrantApplicationFieldsSubgraph {
-  applicantName: string[];
-  applicantEmail:string[];
-  projectName: string[];
-  projectDetails: string[];
-  fundingAsk: string[];
-  fundingBreakdown: string[];
-  teamMembers?: string[];
-  memberDetails?: string[];
-  projectLink?: string[];
-  projectGoals?: string[];
-  isMultipleMilestones?: string[];
+  applicantName: string[]
+  applicantEmail: string[]
+  projectName: string[]
+  projectDetails: string[]
+  fundingAsk: string[]
+  fundingBreakdown: string[]
+  teamMembers?: string[]
+  memberDetails?: string[]
+  projectLink?: string[]
+  projectGoals?: string[]
+  isMultipleMilestones?: string[]
 }
 
 interface Milestone {
-  title: string;
-  amount: string;
+  title: string
+  amount: string
 }
 export interface GrantApplicationCreateSubgraph {
-  grantId: string;
-  applicantId: string;
-  fields: GrantApplicationFieldsSubgraph;
+  grantId: string
+  applicantId: string
+  fields: GrantApplicationFieldsSubgraph
   milestones: Milestone[]
 }
 
 export interface GrantApplicationUpdateSubgraph {
-  fields: GrantApplicationFieldsSubgraph;
+  fields: GrantApplicationFieldsSubgraph
   milestones: Milestone[]
 }

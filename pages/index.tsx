@@ -9,6 +9,7 @@ import React, {
 import { Flex, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
+import BrowseDao from 'pages/browse_dao'
 import GrantCard from 'src/components/browse_grants/grantCard'
 import Sidebar from 'src/components/browse_grants/sidebar'
 import Heading from 'src/components/ui/heading'
@@ -26,7 +27,6 @@ import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import { useConnect } from 'wagmi'
-import BrowseDao from './browse_dao'
 
 const PAGE_SIZE = 40
 
@@ -53,7 +53,7 @@ function BrowseGrants() {
 			const promises = allNetworkGrants.map(
 				// eslint-disable-next-line no-async-promise-executor
 				(allGrants) => new Promise(async(resolve) => {
-					// console.log('calling grants');
+					// // console.log('calling grants');
 					try {
 						const { data } = await allGrants[0]({
 							variables: {
@@ -103,7 +103,7 @@ function BrowseGrants() {
 				// @TODO: Handle the case where a lot of the grants are filtered out.
 			})
 		} catch(e) {
-			// console.log(e);
+			// // console.log(e);
 			toast({
 				title: 'Error loading grants',
 				status: 'error',
@@ -148,27 +148,27 @@ function BrowseGrants() {
 
 	return (
 		<Flex
-			w="100%"
+			w='100%'
 			ref={containerRef}
-			direction="row"
-			justify="center"
+			direction='row'
+			justify='center'
 		>
 			<Flex
-				p="0"
-				paddingInline="0"
-				direction="column"
-				w="55%"
-				alignItems="stretch"
+				p='0'
+				paddingInline='0'
+				direction='column'
+				w='55%'
+				alignItems='stretch'
 				pb={8}
 			>
 				<Flex
-					borderX="1px solid #E8E9E9"
-					p="1.5rem"
+					borderX='1px solid #E8E9E9'
+					p='1.5rem'
 				>
 					<Heading
 						dontRenderDivider
-						title="Browse grants"
-						mt="0"
+						title='Browse grants'
+						mt='0'
 					/>
 				</Flex>
 
@@ -263,8 +263,8 @@ function BrowseGrants() {
 			{
 				!connected && isDisconnected && (
 					<Flex
-						w="26%"
-						pos="sticky"
+						w='26%'
+						pos='sticky'
 						top={0}>
 						<Sidebar />
 					</Flex>

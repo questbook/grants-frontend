@@ -3,24 +3,24 @@ import {
 	Box, Button, Flex, ListItem, ModalBody, ToastId, UnorderedList, useToast,
 } from '@chakra-ui/react'
 import { Token, WorkspaceUpdateRequest } from '@questbook/service-validator-client'
+import ImageUpload from 'src/components/ui/forms/imageUpload'
+import SingleLineInput from 'src/components/ui/forms/singleLineInput'
+import Loader from 'src/components/ui/loader'
+import Modal from 'src/components/ui/modal'
+import ErrorToast from 'src/components/ui/toasts/errorToast'
 import config from 'src/constants/config.json'
 import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
 import { isValidAddress } from 'src/utils/validationUtils'
-import ImageUpload from './forms/imageUpload'
-import SingleLineInput from './forms/singleLineInput'
-import ErrorToast from './toasts/errorToast'
-import Loader from './loader'
-import Modal from './modal'
 
 interface ModalProps {
-  isModalOpen: boolean;
-  setIsModalOpen: (isModalOpen: boolean) => void;
-  setRewardCurrency: (rewardCurrency: string) => void;
-  setRewardCurrencyAddress: (rewardCurrencyAddress: string) => void;
+  isModalOpen: boolean
+  setIsModalOpen: (isModalOpen: boolean) => void
+  setRewardCurrency: (rewardCurrency: string) => void
+  setRewardCurrencyAddress: (rewardCurrencyAddress: string) => void
   setRewardToken: (rewardToken: Token) => void
-  setSupportedCurrenciesList: (supportedCurrencyList: Array<any>) => void;
-  supportedCurrenciesList: TokenDisplay[];
+  setSupportedCurrenciesList: (supportedCurrencyList: Array<any>) => void
+  supportedCurrenciesList: TokenDisplay[]
   // setIsJustAddedToken: (isJustAddedToken: boolean) => void;
   setIsJustAddedToken: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -71,7 +71,7 @@ function CustomTokenModal({
 	const uploadLogo = async() => {
 		let imageHash
 		let imageIPFSURL: string
-		console.log('Uploading...')
+		// console.log('Uploading...')
 		if(imageFile) {
 			imageHash = (await uploadToIPFS(imageFile)).hash
 			imageIPFSURL = getUrlForIPFSHash(imageHash)
@@ -164,14 +164,14 @@ function CustomTokenModal({
 				id: tokenAddress,
 				label: tokenSymbol,
 			}
-			console.log('Supported Currencies list', supportedCurrenciesList)
+			// console.log('Supported Currencies list', supportedCurrenciesList)
 			setTokenData({ tokens: [newToken] })
 			setRewardToken(newToken)
-			// console.log('Logging type of setIsJUstAddedToken', typeof setIsJustAddedToken)
+			// // console.log('Logging type of setIsJUstAddedToken', typeof setIsJustAddedToken)
 			setIsJustAddedToken(true)
 			const configuredToken = configureNewToken(newToken)
 			setSupportedCurrenciesList([...supportedCurrenciesList, configuredToken])
-			console.log('New list of supported currencies', [...supportedCurrenciesList, configuredToken])
+			// console.log('New list of supported currencies', [...supportedCurrenciesList, configuredToken])
 		}
 	}
 
@@ -189,15 +189,15 @@ function CustomTokenModal({
 					setIsModalOpen(false); setImage(config.defaultTokenUploadImagePath)
 				}
 			}
-			title="Add token"
+			title='Add token'
 			modalWidth={566}>
 			<ModalBody px={10}>
-				<Flex direction="column">
+				<Flex direction='column'>
 					<Box my={4} />
 					<SingleLineInput
-						label="Contract Address *"
-						placeholder="0xb794f5e74279579268"
-						subtext=""
+						label='Contract Address *'
+						placeholder='0xb794f5e74279579268'
+						subtext=''
 						value={tokenAddress}
 						onChange={
 							(e) => {
@@ -209,14 +209,14 @@ function CustomTokenModal({
 							}
 						}
 						isError={tokenAddressError}
-						errorText="Address required with proper format"
+						errorText='Address required with proper format'
 					/>
 
 					<Box my={4} />
 					<SingleLineInput
-						label="Token Symbol *"
-						placeholder="e.g. ETH"
-						subtext=""
+						label='Token Symbol *'
+						placeholder='e.g. ETH'
+						subtext=''
 						value={tokenSymbol}
 						onChange={
 							(e) => {
@@ -226,40 +226,40 @@ function CustomTokenModal({
 					/>
 					<Box my={4} />
 					<SingleLineInput
-						label="Decimal *"
-						placeholder="e.g. 18"
-						subtext=""
+						label='Decimal *'
+						placeholder='e.g. 18'
+						subtext=''
 						value={tokenDecimal}
 						onChange={
 							(e) => {
 								setTokenDecimal(e.target.value)
 							}
 						}
-						type="number"
+						type='number'
 					/>
 					<Box my={4} />
 					<Flex
-						direction="row"
+						direction='row'
 						my={4}>
 						<ImageUpload
 							image={image}
 							isError={false}
 							onChange={handleImageChange}
-							label="Add a logo" />
+							label='Add a logo' />
 						<Box
-							bg="#EBF9FC"
-							borderWidth="1px"
-							borderRadius="lg"
-							borderColor="#98C6CD"
+							bg='#EBF9FC'
+							borderWidth='1px'
+							borderRadius='lg'
+							borderColor='#98C6CD'
 							ml={8}
 							p={8}
-							alignItems="center">
+							alignItems='center'>
 							<UnorderedList>
 								<ListItem>
-Upload logo of atleast 100 X 100 px size
+									Upload logo of atleast 100 X 100 px size
 								</ListItem>
 								<ListItem>
-.jpeg, .png and .svg formats allowed
+									.jpeg, .png and .svg formats allowed
 								</ListItem>
 							</UnorderedList>
 						</Box>
@@ -267,7 +267,7 @@ Upload logo of atleast 100 X 100 px size
 					<Box my={4} />
 					<Button
 						disabled={!isBiconomyInitialised}
-						variant="primary"
+						variant='primary'
 						onClick={handleSubmit}>
 						{loading ? <Loader /> : 'Add token'}
 					</Button>

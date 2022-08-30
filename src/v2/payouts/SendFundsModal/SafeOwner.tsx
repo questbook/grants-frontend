@@ -11,14 +11,14 @@ const availableWallets = [{
 	name: 'Metamask',
 	icon: <MetamaskFox
 		h={8}
-		w={'33px'} />,
+		w='33px' />,
 	isPopular: true,
 	id: 'injected',
 }, {
 	name: 'WalletConnect',
 	icon: <WalletConnectLogo
 		h={8}
-		w={'33px'} />,
+		w='33px' />,
 	isPopular: false,
 	id: 'walletConnect'
 }]
@@ -27,16 +27,16 @@ const solanaWallets = [{
 	name: 'Phantom',
 	icon: <PhantomLogo
 		h={8}
-		w={'33px'} />,
+		w='33px' />,
 	isPopular: true,
 	id: 'phantom',
 }]
 
 interface Props {
-	isEvmChain: boolean;
-	phantomWallet: any;
-	signerVerified: boolean;
-	gnosisSafeAddress: string;
+	isEvmChain: boolean
+	phantomWallet: any
+	signerVerified: boolean
+	gnosisSafeAddress: string
 }
 
 
@@ -59,13 +59,13 @@ const SafeOwner = ({ isEvmChain, phantomWallet, signerVerified, gnosisSafeAddres
 					lineHeight='20px'
 					fontWeight='500'
 				>
-							Connect your wallet which is a safe owner.
+					Connect your wallet which is a safe owner.
 				</Text>
 
 				<VStack
 					my={6}
-					direction={'column'}
-					w={'full'}
+					direction='column'
+					w='full'
 					spacing={4}
 					alignItems='stretch'
 				>
@@ -113,8 +113,8 @@ const SafeOwner = ({ isEvmChain, phantomWallet, signerVerified, gnosisSafeAddres
 	return (
 		<>
 			<Flex
-				justifyContent={'center'}
-				py={'24px'}>
+				justifyContent='center'
+				py='24px'>
 				<Image
 					boxSize='48px'
 					src='/ThumbsUpSafe.svg' />
@@ -124,7 +124,7 @@ const SafeOwner = ({ isEvmChain, phantomWallet, signerVerified, gnosisSafeAddres
 				fontSize='14px'
 				lineHeight='20px'
 				fontWeight='500'
-				textAlign={'center'}
+				textAlign='center'
 			>
 				Verified Owner
 			</Text>
@@ -135,7 +135,7 @@ const SafeOwner = ({ isEvmChain, phantomWallet, signerVerified, gnosisSafeAddres
 				fontSize='14px'
 				lineHeight='20px'
 				fontWeight='400'
-				textAlign={'center'}
+				textAlign='center'
 			>
 				{isEvmChain ? gnosisSafeAddress : phantomWallet.publicKey?.toString()}
 			</Text>

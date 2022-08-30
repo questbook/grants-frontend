@@ -71,10 +71,10 @@ const DropdownIndicator = ({ innerProps }: any) => (
 		{...innerProps}
 		px={2}>
 		<SelectDropdownArrow
-			h={'5px'}
-			w={'10px'}
-			color={'#7D7DA0'}
-			transition={'all 0.2s ease-in'}
+			h='5px'
+			w='10px'
+			color='#7D7DA0'
+			transition='all 0.2s ease-in'
 		/>
 	</Box>
 )
@@ -82,15 +82,15 @@ const DropdownIndicator = ({ innerProps }: any) => (
 const SingleValue = ({ innerProps, data }: any) => (
 	<Box
 		{...innerProps}
-		display={'inline-flex'}
-		alignItems={'center'}
+		display='inline-flex'
+		alignItems='center'
 		p={0}
 		m={0}
 	>
 		{data.icon}
 		<Text
-			fontWeight={'500'}
-			color={'#1F1F33'}
+			fontWeight='500'
+			color='#1F1F33'
 			fontSize='14px'
 		>
 			{data.label ?? data.title}
@@ -104,10 +104,10 @@ const Control = ({ innerProps, isFocused, ...rest }: any) => {
 			{...innerProps}
 			py={1}
 			px={0}
-			display={'inline-flex'}
+			display='inline-flex'
 			flex={1}
-			w={'100%'}
-			transition={'all 0.2s ease-in'}
+			w='100%'
+			transition='all 0.2s ease-in'
 			borderBottom={isFocused ? '1px solid #2B67F6' : '1px solid #D2D2E3'}
 			boxShadow={isFocused ? '0px 1px 0px 0px #2b67f6' : 'none'}
 			_hover={
@@ -116,7 +116,7 @@ const Control = ({ innerProps, isFocused, ...rest }: any) => {
 					boxShadow: '0px 1px 0px 0px #2b67f6'
 				}
 			}
-			cursor={'pointer'}
+			cursor='pointer'
 		>
 			{rest.children}
 		</Box>
@@ -128,12 +128,12 @@ const Placeholder = ({ innerProps, children }: PlaceholderProps) => {
 		<Box
 			{...innerProps}
 			// h={8}
-			display={'inline-flex'}
-			alignItems={'center'}
+			display='inline-flex'
+			alignItems='center'
 		>
 			<Text
-				fontWeight={'500'}
-				color={'#AFAFCC'}
+				fontWeight='500'
+				color='#AFAFCC'
 				fontSize='14px'
 			>
 				{children}

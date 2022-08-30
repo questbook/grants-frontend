@@ -15,6 +15,9 @@ import {
 import { BigNumber } from '@ethersproject/bignumber'
 import { ethers } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
+import AddFunds from 'src/components/funds/add_funds_modal'
+import WithdrawFunds from 'src/components/funds/withdraw_funds_modal'
+import Funding from 'src/components/your_grants/manage_grant/tables/funding'
 import { defaultChainId } from 'src/constants/chains'
 import ERC20ABI from 'src/contracts/abi/ERC20.json'
 import { useGetFundingQuery } from 'src/generated/graphql'
@@ -23,12 +26,9 @@ import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useContract, useSigner } from 'wagmi'
-import Funding from '../your_grants/manage_grant/tables/funding'
-import AddFunds from './add_funds_modal'
-import WithdrawFunds from './withdraw_funds_modal'
 
 export type FundForAGrantProps = {
-  grant: Grant;
+  grant: Grant
 };
 
 const TABS = ['Deposits', 'Withdrawals'] as const
@@ -66,7 +66,7 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
 	})
 
 	// useEffect(() => {
-	//   console.log('data', data);
+	//   // console.log('data', data);
 	// }, [data]);
 
 	// eslint-disable-next-line max-len
@@ -95,55 +95,55 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
 				}
 
 				const assetDecimal = await rewardAssetContract.decimals()
-				console.log('decimal', assetDecimal)
+				// console.log('decimal', assetDecimal)
 				setFundingAssetDecimals(assetDecimal)
 			} catch(e) {
-				// console.error(e);
+				// // console.error(e);
 			}
 		}())
 	}, [grant, rewardAssetContract])
 
 	return (
 		<Flex
-			direction="column"
-			w="100%"
+			direction='column'
+			w='100%'
 			mt={3}
 			mb={12}>
 			<Flex
-				direction="row"
-				justify="space-between"
-				w="100%">
+				direction='row'
+				justify='space-between'
+				w='100%'>
 				<Text
-					fontWeight="700"
-					fontSize="18px"
-					lineHeight="26px"
-					maxW="50%">
+					fontWeight='700'
+					fontSize='18px'
+					lineHeight='26px'
+					maxW='50%'>
 					{grant.title}
 				</Text>
 				<Flex
-					direction="row"
-					justify="start"
-					align="center">
+					direction='row'
+					justify='start'
+					align='center'>
 					<Image
 						src={assetInfo?.icon}
-						alt="Ethereum Icon"
-						boxSize="36px" />
+						alt='Ethereum Icon'
+						boxSize='36px' />
 					<Box mr={2} />
 					<Text
-						fontWeight="700"
-						fontSize="16px"
-						lineHeight="24px"
+						fontWeight='700'
+						fontSize='16px'
+						lineHeight='24px'
 						letterSpacing={0.5}
 					>
-            Funds Available
+						Funds Available
 					</Text>
 					<Box mr={2} />
 					<Text
-						fontWeight="700"
-						fontSize="16px"
-						lineHeight="24px"
+						fontWeight='700'
+						fontSize='16px'
+						lineHeight='24px'
 						letterSpacing={0.5}
-						color="brand.500"
+						color='brand.500'
 					>
 						{ethers.utils.formatUnits(grant.funding, fundingAssetDecimals)}
 						{' '}
@@ -151,50 +151,50 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
 					</Text>
 					<Box mr={5} />
 					<Button
-						variant="primaryCta"
+						variant='primaryCta'
 						onClick={() => setIsAddFundsModalOpen(true)}
 					>
-            Add Funds
+						Add Funds
 					</Button>
 					<Menu>
 						<MenuButton
 							as={IconButton}
-							aria-label="hamburger dot"
-							icon={<Image src="/ui_icons/brand/hamburger_dot.svg" />}
+							aria-label='hamburger dot'
+							icon={<Image src='/ui_icons/brand/hamburger_dot.svg' />}
 							_hover={{}}
 							_active={{}}
-							variant="ghost"
+							variant='ghost'
 						/>
 						<MenuList>
 							<MenuItem
-								icon={<Image src="/ui_icons/withdraw_fund.svg" />}
+								icon={<Image src='/ui_icons/withdraw_fund.svg' />}
 								_hover={{}}
 								onClick={() => setIsWithdrawFundsModalOpen(true)}
 							>
-                Withdraw Funds
+								Withdraw Funds
 							</MenuItem>
 						</MenuList>
 					</Menu>
 				</Flex>
 			</Flex>
 			<Flex
-				direction="row"
-				w="full"
-				justify="start"
-				align="stretch"
+				direction='row'
+				w='full'
+				justify='start'
+				align='stretch'
 				my={4}>
 				{
 					TABS.map((tab, index) => (
 						<Button
 							key={tab}
-							variant="link"
+							variant='link'
 							ml={index === 0 ? 0 : 12}
 							_hover={{ color: 'black' }}
 							_focus={{}}
-							fontWeight="700"
-							fontStyle="normal"
-							fontSize="18px"
-							lineHeight="26px"
+							fontWeight='700'
+							fontStyle='normal'
+							fontSize='18px'
+							lineHeight='26px'
 							borderRadius={0}
 							color={index === selected ? '#122224' : '#A0A7A7'}
 							onClick={() => switchTab(index)}

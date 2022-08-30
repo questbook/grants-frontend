@@ -2,10 +2,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { NetworkType } from 'src/constants/Networks'
+import SAFES_ENPOINTS from 'src/constants/safesEndpointsTest.json'
+import useAxiosMulti from 'src/hooks/utils/useAxiosMulti'
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 import { getSafeDetails } from 'src/v2/constants/safe/realms_solana'
-import SAFES_ENPOINTS from '../constants/safesEndpointsTest.json'
-import useAxiosMulti from './utils/useAxiosMulti'
 
 
 const URL_PREFIX = 'v1/safes/'
@@ -21,7 +21,7 @@ interface Props {
 }
 
 interface SingleTokenData {
-    fiatBalance?: string;
+    fiatBalance?: string
 }
 
 type ValidChainID = keyof typeof CHAIN_INFO;
@@ -34,8 +34,8 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 			return []
 		}
 
-		console.log('Inside safe usd balance', safeAddress)
-		console.log('API url', SAFES_BALANCES_ENPOINTS[0] + URL_PREFIX + safeAddress + URL_SUFFIX)
+		// console.log('Inside safe usd balance', safeAddress)
+		// console.log('API url', SAFES_BALANCES_ENPOINTS[0] + URL_PREFIX + safeAddress + URL_SUFFIX)
 		return SAFES_BALANCES_ENPOINTS.map(element => element + URL_PREFIX + safeAddress + URL_SUFFIX)
 	}, [safeAddress])
 
@@ -66,7 +66,7 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 				setSplGovSafe(newSplGovSafe)
 				setSplGovError('')
 			} catch(error: any) {
-				console.log(error)
+				// console.log(error)
 				if(typeof error === 'string') {
 					setSplGovError(error)
 				}
@@ -91,7 +91,7 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 	useEffect(() => {
 		if(gnosisLoaded && !gnosisError) {
 			const newData: SafeSelectOption[] = []
-			console.log('gnosis raw data', gnosisRawData)
+			// console.log('gnosis raw data', gnosisRawData)
 			gnosisRawData.forEach((allTokensData: AllTokensData, index) => {
 				const currentChainID = SAFES_BALANCES_CHAIN_ID[index] as unknown as ValidChainID
 				const tokensSum = getTokensSum(allTokensData)
@@ -109,7 +109,7 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 					newData.push(newElement)
 				}
 			})
-			console.log('Final Safe', newData)
+			// console.log('Final Safe', newData)
 			setGnosisData(newData)
 		}
 	}, [gnosisRawData, gnosisLoaded, gnosisError, safeAddress])

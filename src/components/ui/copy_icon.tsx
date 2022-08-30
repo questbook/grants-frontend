@@ -3,9 +3,9 @@ import { Image, Tooltip } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 
 interface Props {
-  text: string;
+  text: string
   // eslint-disable-next-line react/require-default-props
-  h?: string;
+  h?: string
 }
 
 function CopyIcon({ text, h }: Props) {

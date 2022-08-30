@@ -35,7 +35,7 @@ function TextViewer({
 }: {
   // value: EditorState;
   // onChange: (editorState: EditorState) => void;
-  text: string;
+  text: string
 }) {
 	const ref = useRef(null)
 	const [editorState, setEditorState] = React.useState(() => {
@@ -90,7 +90,7 @@ function TextViewer({
 				blockStyleFn={getBlockStyle}
 				ref={ref}
 				editorState={editorState}
-				editorKey="foo"
+				editorKey='foo'
 				spellCheck={false}
 				plugins={plugins}
 				onChange={onChange}

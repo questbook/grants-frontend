@@ -9,21 +9,21 @@ const ConnectWalletButton = ({
 	isPopular,
 	maxW
 }: {
-  onClick: () => void,
-  icon: React.ReactNode,
-  name: string,
-  isPopular?: boolean,
-	maxW?: string,
+  onClick: () => void
+  icon: React.ReactNode
+  name: string
+  isPopular?: boolean
+	maxW?: string
 }) => {
 	const [isHovering, setIsHovering] = useState(false)
 	return (
 		<Button
-			w={'full'}
+			w='full'
 			px={6}
 			py={4}
-			h={'auto'}
+			h='auto'
 			maxW={maxW ?? '27rem'}
-			colorScheme={'brandGrey'}
+			colorScheme='brandGrey'
 			onClick={onClick}
 			onMouseEnter={() => setIsHovering(true)}
 			onMouseLeave={() => setIsHovering(false)}
@@ -31,9 +31,9 @@ const ConnectWalletButton = ({
 
 			{icon}
 			<Text
-				ml={'10px'}
-				fontWeight={'500'}
-				color={'black'}
+				ml='10px'
+				fontWeight='500'
+				color='black'
 			>
 				{name}
 			</Text>
@@ -42,14 +42,14 @@ const ConnectWalletButton = ({
 				isPopular && (
 					<Box
 						ml={3.5}
-						bg={'greenTextBackground'}
+						bg='greenTextBackground'
 						px={1}
-						borderRadius={'sm'}
+						borderRadius='sm'
 					>
 						<Text
-							fontWeight={'bold'}
-							fontSize={'xs'}
-							color={'greenTextDark'}
+							fontWeight='bold'
+							fontSize='xs'
+							color='greenTextDark'
 						>
 							POPULAR
 						</Text>
@@ -59,19 +59,19 @@ const ConnectWalletButton = ({
 
 			<Spacer />
 			<Text
-				fontWeight={'500'}
-				color={'blue.500'}
+				fontWeight='500'
+				color='blue.500'
 				opacity={isHovering ? 1 : 0}
-				transition={'all 0.3s'}
+				transition='all 0.3s'
 			>
 				Connect
 			</Text>
 			<ArrowRightFilled
 				ml={2}
-				boxSize={'13.33px'}
-				color={'blue.500'}
+				boxSize='13.33px'
+				color='blue.500'
 				opacity={isHovering ? 1 : 0}
-				transition={'all 0.3s'}
+				transition='all 0.3s'
 			/>
 		</Button>
 	)

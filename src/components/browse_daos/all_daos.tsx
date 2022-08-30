@@ -1,16 +1,16 @@
 import { Grid, GridItem } from '@chakra-ui/react'
+import DaoCard from 'src/components/browse_daos/dao_card'
+import GetStartedCard from 'src/components/browse_daos/get_started_card'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import DaoCard from './dao_card'
-import GetStartedCard from './get_started_card'
 
-function AllDaosGrid({ allWorkspaces }:{allWorkspaces: any}) {
+function AllDaosGrid({ allWorkspaces }: {allWorkspaces: any}) {
 	return (
 		<Grid
 			w='100%'
-			maxWidth={'1280px'}
+			maxWidth='1280px'
 
-			templateColumns={{ md:'repeat(1, 1fr)', lg:'repeat(3, 1fr)' }}
+			templateColumns={{ md: 'repeat(1, 1fr)', lg: 'repeat(3, 1fr)' }}
 			gap={6}
 
 		>
@@ -19,7 +19,7 @@ function AllDaosGrid({ allWorkspaces }:{allWorkspaces: any}) {
 					if(index === 0) {
 						return (
 							<>
-								<GridItem key={'get-started'}>
+								<GridItem key='get-started'>
 									<GetStartedCard />
 								</GridItem>
 								<GridItem key={index}>

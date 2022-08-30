@@ -27,7 +27,7 @@ function AccountDetails() {
 	const buttonRef = React.useRef<HTMLButtonElement>(null)
 
 	React.useEffect(() => {
-		console.log('SCW Address: ', scwAddress)
+		// console.log('SCW Address: ', scwAddress)
 	}, [scwAddress])
 	return (
 		<Menu>
@@ -73,17 +73,17 @@ function AccountDetails() {
 					<MenuButton
 						ref={buttonRef}
 						as={Button}
-						variant="solid"
+						variant='solid'
 						px={2.5}
 						py={2}
 						ml={3}
-						borderRadius="2px"
+						borderRadius='2px'
 						rightIcon={
 							!(connected && isDisconnected) && (
 								<Image
 									mr={2}
-									src="/ui_icons/arrow-drop-down-line.svg"
-									alt="options" />
+									src='/ui_icons/arrow-drop-down-line.svg'
+									alt='options' />
 							)
 						}
 						w={connected && isDisconnected ? buttonRef.current?.offsetWidth : 'auto'}
@@ -104,10 +104,10 @@ function AccountDetails() {
 						// )
 							(
 								<Text
-									color="#122224"
-									fontWeight="500"
-									fontSize="14px"
-									lineHeight="20px"
+									color='#122224'
+									fontWeight='500'
+									fontSize='14px'
+									lineHeight='20px'
 								>
 									{formatAddress(scwAddress ? scwAddress : 'xxxx')}
 								</Text>

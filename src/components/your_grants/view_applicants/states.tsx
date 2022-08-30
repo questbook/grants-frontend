@@ -6,21 +6,21 @@ const maxWidth = '127px'
 function GrantApproved() {
 	return (
 		<Text
-			w="100%"
+			w='100%'
 			maxW={maxWidth}
-			bg="#C8E9DE"
-			color="#334640"
-			borderRadius="24px"
-			border="1px solid #69B399"
+			bg='#C8E9DE'
+			color='#334640'
+			borderRadius='24px'
+			border='1px solid #69B399'
 			px={3}
 			py={1}
-			textAlign="center"
-			fontSize="12px"
-			lineHeight="20px"
-			fontWeight="400"
-			whiteSpace="nowrap"
+			textAlign='center'
+			fontSize='12px'
+			lineHeight='20px'
+			fontWeight='400'
+			whiteSpace='nowrap'
 		>
-      Grant Approved
+			Grant Approved
 		</Text>
 	)
 }
@@ -28,20 +28,20 @@ function GrantApproved() {
 function Rejected() {
 	return (
 		<Text
-			w="100%"
+			w='100%'
 			maxW={maxWidth}
-			bg="#EBCCDD"
-			color="#7B4646"
-			borderRadius="24px"
-			border="1px solid #EE7979"
+			bg='#EBCCDD'
+			color='#7B4646'
+			borderRadius='24px'
+			border='1px solid #EE7979'
 			px={3}
 			py={1}
-			textAlign="center"
-			fontSize="12px"
-			lineHeight="20px"
-			fontWeight="400"
+			textAlign='center'
+			fontSize='12px'
+			lineHeight='20px'
+			fontWeight='400'
 		>
-      Rejected
+			Rejected
 		</Text>
 	)
 }
@@ -49,21 +49,21 @@ function Rejected() {
 function PendingReview() {
 	return (
 		<Text
-			w="100%"
+			w='100%'
 			maxW={maxWidth}
-			bg="#FFF0B8"
-			color="#46251D"
-			borderRadius="24px"
-			border="1px solid #EFC094"
+			bg='#FFF0B8'
+			color='#46251D'
+			borderRadius='24px'
+			border='1px solid #EFC094'
 			px={3}
 			py={1}
-			textAlign="center"
-			fontSize="12px"
-			lineHeight="20px"
-			fontWeight="400"
-			whiteSpace="nowrap"
+			textAlign='center'
+			fontSize='12px'
+			lineHeight='20px'
+			fontWeight='400'
+			whiteSpace='nowrap'
 		>
-      Pending Review
+			Pending Review
 		</Text>
 	)
 }
@@ -71,21 +71,21 @@ function PendingReview() {
 function ResubmissionRequested() {
 	return (
 		<Text
-			w="100%"
+			w='100%'
 			maxW={maxWidth}
-			bg="#BBDEFF"
-			color="#3E4969"
-			borderRadius="24px"
-			border="1px solid #88BDEE"
+			bg='#BBDEFF'
+			color='#3E4969'
+			borderRadius='24px'
+			border='1px solid #88BDEE'
 			px={3}
 			py={1}
-			textAlign="center"
-			fontSize="12px"
-			lineHeight="20px"
-			fontWeight="400"
-			whiteSpace="nowrap"
+			textAlign='center'
+			fontSize='12px'
+			lineHeight='20px'
+			fontWeight='400'
+			whiteSpace='nowrap'
 		>
-      Awaiting Resubmit
+			Awaiting Resubmit
 		</Text>
 	)
 }
@@ -93,21 +93,21 @@ function ResubmissionRequested() {
 function GrantComplete() {
 	return (
 		<Text
-			w="100%"
+			w='100%'
 			maxW={maxWidth}
-			bg="#C8E9DE"
-			color="#334640"
-			borderRadius="24px"
-			border="1px solid #69B399"
+			bg='#C8E9DE'
+			color='#334640'
+			borderRadius='24px'
+			border='1px solid #69B399'
 			px={3}
 			py={1}
-			textAlign="center"
-			fontSize="12px"
-			lineHeight="20px"
-			fontWeight="400"
-			whiteSpace="nowrap"
+			textAlign='center'
+			fontSize='12px'
+			lineHeight='20px'
+			fontWeight='400'
+			whiteSpace='nowrap'
 		>
-      Closed
+			Closed
 		</Text>
 	)
 }
@@ -115,23 +115,23 @@ function GrantComplete() {
 function AssignedToReview() {
 	return (
 		<Text
-			w="100%"
+			w='100%'
 			maxW={maxWidth}
-			variant="outline"
-			bg="rgba(149, 128, 255, 0.1)"
-			color="brand.500"
-			borderRadius="24px"
-			border="1px solid #69B399"
-			borderColor="brand.500"
+			variant='outline'
+			bg='rgba(149, 128, 255, 0.1)'
+			color='brand.500'
+			borderRadius='24px'
+			border='1px solid #69B399'
+			borderColor='brand.500'
 			px={2}
 			py={1}
-			textAlign="center"
-			fontSize="12px"
-			lineHeight="20px"
-			fontWeight="400"
-			whiteSpace="nowrap"
+			textAlign='center'
+			fontSize='12px'
+			lineHeight='20px'
+			fontWeight='400'
+			whiteSpace='nowrap'
 		>
-      Assigned to Review
+			Assigned to Review
 		</Text>
 	)
 }
@@ -139,21 +139,21 @@ function AssignedToReview() {
 function ReviewDone() {
 	return (
 		<Text
-			w="100%"
+			w='100%'
 			maxW={maxWidth}
-			bg="#C8E9DE"
-			color="#334640"
-			borderRadius="24px"
-			border="1px solid #69B399"
+			bg='#C8E9DE'
+			color='#334640'
+			borderRadius='24px'
+			border='1px solid #69B399'
 			px={3}
 			py={1}
-			textAlign="center"
-			fontSize="12px"
-			lineHeight="20px"
-			fontWeight="400"
-			whiteSpace="nowrap"
+			textAlign='center'
+			fontSize='12px'
+			lineHeight='20px'
+			fontWeight='400'
+			whiteSpace='nowrap'
 		>
-      Review Done
+			Review Done
 		</Text>
 	)
 }

@@ -5,9 +5,9 @@ import axios from 'axios'
 const DEFAULT_ERROR_MESSAGE = 'Could not fetch the required data.'
 
 interface Props {
-    url: string;
-    method: string;
-    payload?: any;
+    url: string
+    method: string
+    payload?: any
 }
 
 const useAxios = ({ url, method, payload }: Props) => {
@@ -25,7 +25,7 @@ const useAxios = ({ url, method, payload }: Props) => {
 					method,
 					url,
 				})
-				console.log('axios', response)
+				// console.log('axios', response)
 				setData(response.data)
 				setError('')
 			} catch(error: any) {

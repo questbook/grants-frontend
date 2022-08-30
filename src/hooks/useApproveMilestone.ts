@@ -1,7 +1,12 @@
 import React, { useContext, useEffect, useMemo } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { APPLICATION_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import useQBContract from 'src/hooks/contracts/useQBContract'
+import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
@@ -13,11 +18,6 @@ import {
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import ErrorToast from '../components/ui/toasts/errorToast'
-import useQBContract from './contracts/useQBContract'
-import { useBiconomy } from './gasless/useBiconomy'
-import { useNetwork } from './gasless/useNetwork'
-import { useQuestbookAccount } from './gasless/useQuestbookAccount'
 
 export default function useApproveMilestone(
 	data: any,
@@ -48,7 +48,7 @@ export default function useApproveMilestone(
 
 	useEffect(() => {
 		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		console.log('rree', isBiconomyLoading, biconomyLoading)
+		// console.log('rree', isBiconomyLoading, biconomyLoading)
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.netWorkId &&
 			biconomy.networkId.toString() === chainId.toString()) {
 			setIsBiconomyInitialised(true)
@@ -87,7 +87,7 @@ export default function useApproveMilestone(
 
 		async function validate() {
 			setLoading(true)
-			// console.log('calling validate');
+			// // console.log('calling validate');
 			try {
 				const {
 					data: { ipfsHash },
@@ -146,10 +146,10 @@ export default function useApproveMilestone(
 		}
 
 		try {
-			// console.log(data);
-			// console.log(milestoneIndex);
-			// console.log(applicationId);
-			// console.log(Number.isNaN(milestoneIndex));
+			// // console.log(data);
+			// // console.log(milestoneIndex);
+			// // console.log(applicationId);
+			// // console.log(Number.isNaN(milestoneIndex));
 			if(Number.isNaN(milestoneIndex)) {
 				return
 			}

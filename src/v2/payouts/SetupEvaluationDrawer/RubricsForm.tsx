@@ -4,13 +4,13 @@ import { SidebarRubrics } from 'src/types'
 import TextField from 'src/v2/components/InputFields/TextField'
 
 interface Props {
-	rubrics: SidebarRubrics[];
-	onRubricChange: (rubric: SidebarRubrics) => void;
-	onRubricCriteriaAdd: () => void;
-	onRubricCriteriaDelete: (index: number) => void;
+	rubrics: SidebarRubrics[]
+	onRubricChange: (rubric: SidebarRubrics) => void
+	onRubricCriteriaAdd: () => void
+	onRubricCriteriaDelete: (index: number) => void
 }
 
-const RubricsForm = ({ rubrics, onRubricChange, onRubricCriteriaAdd, onRubricCriteriaDelete } : Props) => {
+const RubricsForm = ({ rubrics, onRubricChange, onRubricCriteriaAdd, onRubricCriteriaDelete }: Props) => {
 	return (
 		<>
 			<Text
@@ -28,14 +28,14 @@ const RubricsForm = ({ rubrics, onRubricChange, onRubricCriteriaAdd, onRubricCri
 				color='#7D7DA0'
 				mt='2px'
 			>
-							Total score is the sum of quality scores.
+				Total score is the sum of quality scores.
 				{' '}
 				<Link
-					textDecoration={'none'}
+					textDecoration='none'
 					fontWeight='500'
 					color='#1F1F33'
 				>
-								Learn more
+					Learn more
 				</Link>
 			</Text>
 
@@ -43,7 +43,7 @@ const RubricsForm = ({ rubrics, onRubricChange, onRubricCriteriaAdd, onRubricCri
 				mt={4}
 				p={4}
 				borderRadius='2px'
-				boxShadow={'inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'}
+				boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'
 				flexDirection='column'
 			>
 				{
@@ -52,35 +52,35 @@ const RubricsForm = ({ rubrics, onRubricChange, onRubricCriteriaAdd, onRubricCri
 							<Flex
 								key={index}
 								mt={index > 0 ? 6 : 0}
-								direction="column">
+								direction='column'>
 								<Flex>
 									<Text
-										variant="v2_body"
-										color="teal.2"
-										bg="teal.1"
-										h="20px"
-										w="20px"
-										textAlign="center">
+										variant='v2_body'
+										color='teal.2'
+										bg='teal.1'
+										h='20px'
+										w='20px'
+										textAlign='center'>
 										{index + 1}
 									</Text>
-									<Box mx="auto" />
+									<Box mx='auto' />
 									{
 										rubrics.length > 1 && (
 											<Button
 												leftIcon={
 													<Image
-														src="/ui_icons/rubric_delete_icon.svg"
-														boxSize="20px" />
+														src='/ui_icons/rubric_delete_icon.svg'
+														boxSize='20px' />
 												}
-												variant={'linkV2'}
+												variant='linkV2'
 												onClick={
 													() => {
 														onRubricCriteriaDelete(index)
 													}
 												}
-												color="orange.2"
+												color='orange.2'
 											>
-									Delete
+												Delete
 											</Button>
 										)
 									}
@@ -112,13 +112,13 @@ const RubricsForm = ({ rubrics, onRubricChange, onRubricCriteriaAdd, onRubricCri
 											<Button
 												leftIcon={
 													<Image
-														src="/ui_icons/rubric_add_icon.svg"
-														boxSize="20px" />
+														src='/ui_icons/rubric_add_icon.svg'
+														boxSize='20px' />
 												}
-												variant={'linkV2'}
+												variant='linkV2'
 												onClick={onRubricCriteriaAdd}
 											>
-            Add another
+												Add another
 												{' '}
 												{index === 0 && 'criterion'}
 											</Button>

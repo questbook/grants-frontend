@@ -1,6 +1,6 @@
 import { Box, Button, Text, VStack } from '@chakra-ui/react'
 import { OptionProps } from 'chakra-react-select'
-import DropdownSelect from '../DropdownSelect'
+import DropdownSelect from 'src/v2/components/DropdownSelect'
 
 type Role = {
 	id: number
@@ -32,7 +32,7 @@ const RoleSelect = ({ selectedRole, setSelectedRole }: RoleSelectProps) => {
 const Option = ({ innerProps, data }: OptionProps<Role, any, any>) => (
 	<Box
 		{...innerProps}
-		alignItems={'center'}
+		alignItems='center'
 		p={0}
 		m={0}
 	>

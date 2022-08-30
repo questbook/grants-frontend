@@ -2,19 +2,19 @@ import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { GrantApplicationRequest } from '@questbook/service-validator-client'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { APPLICATION_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
+import strings from 'src/constants/strings.json'
+import useQBContract from 'src/hooks/contracts/useQBContract'
+import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import useChainId from 'src/hooks/utils/useChainId'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { addAuthorizedUser, bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
-import ErrorToast from '../components/ui/toasts/errorToast'
-import strings from '../constants/strings.json'
-import useQBContract from './contracts/useQBContract'
-import { useBiconomy } from './gasless/useBiconomy'
-import { useNetwork } from './gasless/useNetwork'
-import { useQuestbookAccount } from './gasless/useQuestbookAccount'
-import useChainId from './utils/useChainId'
 
 export default function useSubmitApplication(
 	data: GrantApplicationRequest,
@@ -51,7 +51,7 @@ export default function useSubmitApplication(
 
 	useEffect(() => {
 		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		console.log('rree', isBiconomyLoading, biconomyLoading, chainId,biconomy?.networkId?.toString() )
+		// console.log('rree', isBiconomyLoading, biconomyLoading)
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
 			biconomy.networkId.toString() === chainId.toString()) {
 			setIsBiconomyInitialised(true)
@@ -69,7 +69,7 @@ export default function useSubmitApplication(
 
 	useEffect(() => {
 		if(data) {
-			console.log('Application data', data)
+			// console.log('Application data', data)
 			setError(undefined)
 			setIncorrectNetwork(false)
 		}
@@ -88,20 +88,20 @@ export default function useSubmitApplication(
 			return
 		}
 
-		console.log('webwallet exists')
+		// console.log('webwallet exists')
 		if(nonce && nonce !== 'Token expired') {
 			return
 		}
 
-		console.log('adding nonce')
+		// console.log('adding nonce')
 
 		addAuthorizedUser(webwallet?.address)
 			.then(() => {
 				console.log("")
 				setShouldRefreshNonce(true)
-				console.log('Added authorized user', webwallet.address)
+				// console.log('Added authorized user', webwallet.address)
 			})
-			.catch((err) => console.log("Couldn't add authorized user", err))
+			// .catch((err) => console.log("Couldn't add authorized user", err))
 	}, [webwallet, nonce, shouldRefreshNonce])
 
 	useEffect(() => {
@@ -116,11 +116,11 @@ export default function useSubmitApplication(
 		if(loading) {
 			return
 		}
-		// console.log('calling createGrant');
+		// // console.log('calling createGrant');
 
 		async function validate() {
 			setLoading(true)
-			// console.log('calling validate');
+			// // console.log('calling validate');
 			try {
 
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
@@ -132,11 +132,11 @@ export default function useSubmitApplication(
 				).hash
 				// eslint-disable-next-line no-param-reassign
 				data.fields.projectDetails[0].value = detailsHash
-				console.log('Details hash: ', detailsHash)
+				// console.log('Details hash: ', detailsHash)
 				const {
 					data: { ipfsHash },
 				} = await validatorApi.validateGrantApplicationCreate(data)
-				console.log(ipfsHash)
+				// console.log(ipfsHash)
 				if(!ipfsHash) {
 					throw new Error('Error validating grant data')
 				}
@@ -166,7 +166,7 @@ export default function useSubmitApplication(
 
 				const CACHE_KEY = strings.cache.apply_grant
 				const cacheKey = `${chainId}-${CACHE_KEY}-${grantId}`
-				console.log('Deleting cache key: ', cacheKey)
+				// console.log('Deleting cache key: ', cacheKey)
 				if(typeof window !== 'undefined') {
 					localStorage.removeItem(cacheKey)
 				}

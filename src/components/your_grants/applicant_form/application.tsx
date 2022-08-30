@@ -17,14 +17,14 @@ import { ApiClientsContext } from 'pages/_app'
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { GetApplicationDetailsQuery } from 'src/generated/graphql'
+import { formatAmount } from 'src/utils/formattingUtils'
 import { getFromIPFS, getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { formatAmount } from '../../../utils/formattingUtils'
-import { getAssetInfo } from '../../../utils/tokenUtils'
 
 interface Props {
-  applicationData: GetApplicationDetailsQuery['grantApplication'];
-  showHiddenData: () => void;
+  applicationData: GetApplicationDetailsQuery['grantApplication']
+  showHiddenData: () => void
 }
 
 function Application({ applicationData, showHiddenData }: Props) {
@@ -59,7 +59,7 @@ function Application({ applicationData, showHiddenData }: Props) {
 
 	const [decodedDetails, setDecodedDetails] = useState('')
 	const getDecodedDetails = async(detailsHash: string) => {
-		console.log(detailsHash)
+		// console.log(detailsHash)
 		const d = await getFromIPFS(detailsHash)
 		setDecodedDetails(d)
 	}
@@ -103,7 +103,7 @@ function Application({ applicationData, showHiddenData }: Props) {
 			setDecodedDetails(projectDetailsTemp)
 		}
 
-		console.log(decodedDetails)
+		// console.log(decodedDetails)
 
 		setProjectGoals(getStringField('projectGoals'))
 		setProjectMilestones(applicationData?.milestones || [])
@@ -143,22 +143,22 @@ function Application({ applicationData, showHiddenData }: Props) {
 	return (
 		<>
 			<Flex
-				mt="8px"
-				direction="column"
-				w="full">
+				mt='8px'
+				direction='column'
+				w='full'>
 				<Divider />
 				<Flex
-					direction="row"
-					w="full"
-					justify="space-evenly"
+					direction='row'
+					w='full'
+					justify='space-evenly'
 					h={14}
-					align="stretch"
+					align='stretch'
 					mb={8}
 				>
 					<Button
-						variant="ghost"
-						h="54px"
-						w="full"
+						variant='ghost'
+						h='54px'
+						w='full'
 						_hover={
 							{
 								background: '#F5F5F5',
@@ -170,42 +170,42 @@ function Application({ applicationData, showHiddenData }: Props) {
 						color='#122224'
 						borderBottomColor='#E7DAFF'
 						borderBottomWidth='1px'
-						fontSize="1.5rem"
+						fontSize='1.5rem'
 					>
-								Grant Details
+						Grant Details
 					</Button>
 				</Flex>
 			</Flex>
 			<Flex
-				direction="column"
-				w="full">
+				direction='column'
+				w='full'>
 				<Flex
-					direction="column"
-					w="full"
+					direction='column'
+					w='full'
 					mt={4}>
 					<Box display={projectTitle && projectTitle !== '' ? '' : 'none'}>
 						<Heading
-							variant="applicationHeading"
+							variant='applicationHeading'
 							ref={refs[0]}>
-              Project Title
+							Project Title
 						</Heading>
 						<Text
-							variant="applicationText"
+							variant='applicationText'
 							mt={2}>
 							{projectTitle}
 						</Text>
 					</Box>
 					<Box display={projectLink && projectLink.length ? '' : 'none'}>
 						<Heading
-							variant="applicationHeading"
+							variant='applicationHeading'
 							mt={10}>
-              Project Link
+							Project Link
 						</Heading>
 						{
 							projectLink.map(({ link }) => (
 								<Text
 									key={link}
-									variant="applicationText"
+									variant='applicationText'
 									mt={2}>
 									<Link
 										href={link}
@@ -227,9 +227,9 @@ function Application({ applicationData, showHiddenData }: Props) {
           </Box> */}
 
 					<Heading
-						variant="applicationHeading"
+						variant='applicationHeading'
 						mt={10}>
-            Project Description
+						Project Description
 					</Heading>
 					<Linkify
 						componentDecorator={
@@ -250,7 +250,7 @@ function Application({ applicationData, showHiddenData }: Props) {
 						<Box
 							mt={2}
 							mb={10}
-							fontWeight="400">
+							fontWeight='400'>
 							{
 								decodedDetails ? (
 									<TextViewer
@@ -262,11 +262,11 @@ function Application({ applicationData, showHiddenData }: Props) {
 					</Linkify>
 
 					<Box display={projectGoals && projectGoals !== '' ? '' : 'none'}>
-						<Heading variant="applicationHeading">
-Project Goals
+						<Heading variant='applicationHeading'>
+							Project Goals
 						</Heading>
 						<Text
-							variant="applicationText"
+							variant='applicationText'
 							mt={2}
 							mb={10}>
 							{projectGoals}
@@ -277,47 +277,47 @@ Project Goals
 						display={projectMilestones && projectMilestones.length ? '' : 'none'}
 					>
 						<Heading
-							variant="applicationHeading"
+							variant='applicationHeading'
 							ref={refs[1]}>
-              Project Milestones
+							Project Milestones
 						</Heading>
 						<Flex
-							direction="column"
-							w="full"
+							direction='column'
+							w='full'
 							mt={3}
 							mb={10}>
 							{
 								projectMilestones.map((milestone: any, index: number) => (
 									<Box key={milestone.id}>
 										<Heading
-											variant="applicationSubtitle"
+											variant='applicationSubtitle'
 											mt={3}>
-												Milestone
+											Milestone
 											{' '}
 											{index + 1}
 										</Heading>
 										<Text
-											variant="applicationTextHeading"
+											variant='applicationTextHeading'
 											mt={1}>
 											{milestone?.title}
 										</Text>
 										<Flex
-											direction="row"
-											justify="start"
+											direction='row'
+											justify='start'
 											mt={3}>
 											<Image
-												boxSize="48px"
+												boxSize='48px'
 												src={icon}
 											/>
 											<Box ml={2} />
 											<Flex
-												direction="column"
-												justify="center"
-												align="start">
-												<Heading variant="applicationSubtitle">
-                        Funding asked
+												direction='column'
+												justify='center'
+												align='start'>
+												<Heading variant='applicationSubtitle'>
+													Funding asked
 												</Heading>
-												<Text variant="applicationText">
+												<Text variant='applicationText'>
 													{
 														milestone?.amount && applicationData
                           && formatAmount(
@@ -338,29 +338,29 @@ Project Goals
 					</Box>
 
 					<Box display={fundingAsk && fundingAsk !== '' ? '' : 'none'}>
-						<Heading variant="applicationHeading">
-              Funding & Budget Breakdown
+						<Heading variant='applicationHeading'>
+							Funding & Budget Breakdown
 						</Heading>
 						<Flex
-							direction="row"
-							justify="start"
+							direction='row'
+							justify='start'
 							mt={3}
 							mb={10}>
 							<Image
-								boxSize="48px"
+								boxSize='48px'
 								src={icon}
 							/>
 							<Box ml={2} />
 							<Flex
-								direction="column"
-								justify="center"
-								align="start">
-								<Heading variant="applicationHeading">
-                  Total funding asked
+								direction='column'
+								justify='center'
+								align='start'>
+								<Heading variant='applicationHeading'>
+									Total funding asked
 								</Heading>
 								<Text
-									variant="applicationText"
-									color="brand.500">
+									variant='applicationText'
+									color='brand.500'>
 									{
 										applicationData
                     && fundingAsk && fundingAsk !== '' && formatAmount(
@@ -378,11 +378,11 @@ Project Goals
 					<Box
 						display={fundingBreakdown && fundingBreakdown !== '' ? '' : 'none'}
 					>
-						<Heading variant="applicationHeading">
-Funding Breakdown
+						<Heading variant='applicationHeading'>
+							Funding Breakdown
 						</Heading>
 						<Text
-							variant="applicationText"
+							variant='applicationText'
 							mb={10}>
 							{fundingBreakdown}
 						</Text>
@@ -390,19 +390,19 @@ Funding Breakdown
 
 					<Box display={teamMembers ? '' : 'none'}>
 						<Heading
-							variant="applicationHeading"
+							variant='applicationHeading'
 							ref={refs[2]}>
-              About Team
+							About Team
 						</Heading>
 						<Heading
-							variant="applicationHeading"
+							variant='applicationHeading'
 							mt={4}>
-              Team Members -
+							Team Members -
 							{' '}
 							<Heading
-								variant="applicationHeading"
-								color="brand.500"
-								display="inline-block"
+								variant='applicationHeading'
+								color='brand.500'
+								display='inline-block'
 							>
 								{teamMembers}
 							</Heading>
@@ -412,8 +412,8 @@ Funding Breakdown
 								memberDetails.map((memberDetail: any, index: number) => (
 									<Box key={index}>
 										<Heading
-											variant="applicationHeading"
-											color="brand.500"
+											variant='applicationHeading'
+											color='brand.500'
 											mt={5}
 										>
 											Member
@@ -421,7 +421,7 @@ Funding Breakdown
 											{index + 1}
 										</Heading>
 										<Text
-											variant="applicationText"
+											variant='applicationText'
 											mt={2}>
 											{memberDetail}
 										</Text>
@@ -429,39 +429,39 @@ Funding Breakdown
 								))
 							) : (
 								<Box
-									backdropBlur="base"
-									border="1px"
-									borderColor="#D0D3D3"
-									rounded="md"
-									py="5"
-									mt="2"
-									display="flex"
-									justifyContent="center"
+									backdropBlur='base'
+									border='1px'
+									borderColor='#D0D3D3'
+									rounded='md'
+									py='5'
+									mt='2'
+									display='flex'
+									justifyContent='center'
 								>
 									<Flex
-										direction="column"
-										justifyContent="center"
-										alignItems="center"
-										maxW="480px"
+										direction='column'
+										justifyContent='center'
+										alignItems='center'
+										maxW='480px'
 									>
 										<Image
-											h="77px"
-											w="89px"
-											src="/illustrations/disburse_grants.svg" />
+											h='77px'
+											w='89px'
+											src='/illustrations/disburse_grants.svg' />
 										<Text
-											textAlign="center"
-											variant="applicationText"
+											textAlign='center'
+											variant='applicationText'
 											mt={2}>
-                    Team member details are hidden, and can be viewed only if
-                    you have specific access.
+											Team member details are hidden, and can be viewed only if
+											you have specific access.
 										</Text>
 										<Button
 											onClick={showHiddenData}
-											variant="primary"
+											variant='primary'
 											mt={7}
-											w="269px"
+											w='269px'
 										>
-                    View Details
+											View Details
 										</Button>
 									</Flex>
 								</Box>
@@ -473,23 +473,23 @@ Funding Breakdown
 						mt={12}
 						display={customFields.length > 0 ? '' : 'none'}>
 						<Heading
-							variant="applicationHeading"
+							variant='applicationHeading'
 							ref={refs[3]}>
-								Add Custom Field
+							Add Custom Field
 						</Heading>
 
 						{
 							customFields.map((customField: any, index: number) => (
 								<Box key={customField.title}>
 									<Heading
-										variant="applicationHeading"
+										variant='applicationHeading'
 										mt={3}>
 										{index + 1}
 										{'. '}
 										{customField.title}
 									</Heading>
 									<Text
-										variant="applicationText"
+										variant='applicationText'
 										mt={1}>
 										{customField.value}
 									</Text>

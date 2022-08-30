@@ -3,16 +3,16 @@ import {
 	Box, Button, Text,
 	VStack, } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import FloatingSidebar from 'src/components/ui/sidebar/floatingSidebar2'
+import Tooltip from 'src/components/ui/tooltip'
 import { SupportedChainId } from 'src/constants/chains'
-import FloatingSidebar from '../../ui/sidebar/floatingSidebar2'
-import Tooltip from '../../ui/tooltip'
 
 interface Props {
-  grantRequiredFields: any[];
-  grantID: string;
-  chainId: SupportedChainId | undefined;
-  acceptingApplications: boolean;
-  alreadyApplied: boolean;
+  grantRequiredFields: any[]
+  grantID: string
+  chainId: SupportedChainId | undefined
+  acceptingApplications: boolean
+  alreadyApplied: boolean
 }
 
 function Sidebar({
@@ -21,18 +21,18 @@ function Sidebar({
 	const router = useRouter()
 	return (
 		<Box
-			my="41px"
-			display={{ base:'none', md:'flex' }}>
+			my='41px'
+			display={{ base: 'none', md: 'flex' }}>
 			<FloatingSidebar>
 				<Text
-					variant="heading"
-					fontSize="18px"
-					lineHeight="26px"
+					variant='heading'
+					fontSize='18px'
+					lineHeight='26px'
 					mt={3}>
-          Requisite for Application
+					Requisite for Application
 				</Text>
 				<VStack
-					alignItems="stretch"
+					alignItems='stretch'
 					mt={10}
 					p={0}
 					spacing={4}>
@@ -44,16 +44,16 @@ function Sidebar({
 
 							return (
 								<Text
-									fontWeight="400"
-									fontSize="16px"
-									lineHeight="20px"
+									fontWeight='400'
+									fontSize='16px'
+									lineHeight='20px'
 									key={`grant-required-field-${detail}`}
 								>
 									{detail}
 									{
 										tooltip?.length ? (
 											<Tooltip
-												icon="/ui_icons/tooltip_grey.svg"
+												icon='/ui_icons/tooltip_grey.svg'
 												label={tooltip} />
 										) : null
 									}
@@ -76,9 +76,9 @@ function Sidebar({
 								})
 							}
 							mt={10}
-							variant="primary"
+							variant='primary'
 						>
-          Apply for Grant
+							Apply for Grant
 						</Button>
 					)
 				}
@@ -86,10 +86,10 @@ function Sidebar({
 					acceptingApplications && alreadyApplied && (
 						<Button
 							mt={10}
-							variant="primary"
+							variant='primary'
 							isDisabled={true}
 						>
-          Already applied!
+							Already applied!
 						</Button>
 					)
 				}
@@ -97,24 +97,24 @@ function Sidebar({
 					acceptingApplications && alreadyApplied && (
 						<Text
 							mt={2}
-							color="#717A7C"
-							textAlign="center"
-							fontWeight="400"
-							fontSize="12px"
-							lineHeight="16px"
+							color='#717A7C'
+							textAlign='center'
+							fontWeight='400'
+							fontSize='12px'
+							lineHeight='16px'
 							mb={3}
 						>
-          You’ve already applied. View details
+							You’ve already applied. View details
 							{' '}
-							<a href="../../your_applications">
+							<a href='../../your_applications'>
 								<u>
 									<b>
-here
+										here
 									</b>
 								</u>
 							</a>
 							{' '}
-.
+							.
 
 						</Text>
 					)
@@ -123,15 +123,15 @@ here
 					acceptingApplications && !alreadyApplied && (
 						<Text
 							mt={2}
-							color="#717A7C"
-							textAlign="center"
-							fontWeight="400"
-							fontSize="12px"
-							lineHeight="16px"
+							color='#717A7C'
+							textAlign='center'
+							fontWeight='400'
+							fontSize='12px'
+							lineHeight='16px'
 							mb={3}
 						>
-          Before applying, please ensure you read the grant details, and understand every details
-          around it.
+							Before applying, please ensure you read the grant details, and understand every details
+							around it.
 						</Text>
 					)
 				}

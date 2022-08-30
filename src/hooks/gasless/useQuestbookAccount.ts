@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react'
-import { WebwalletContext } from '../../../pages/_app'
-import { useNonce } from './useNonce'
+import { WebwalletContext } from 'pages/_app'
+import { useNonce } from 'src/hooks/gasless/useNonce'
 
 export const useQuestbookAccount = (shouldRefreshNonce?: boolean) => {
 	const { webwallet, scwAddress, setNonce } = useContext(WebwalletContext)!
@@ -30,12 +30,12 @@ export const useQuestbookAccount = (shouldRefreshNonce?: boolean) => {
 	// const { data: connectData, isConnecting, isConnected, isReconnecting, isError, connect, connectors } = useConnect()
 
 	// useEffect(() => {
-	// 	console.log('Changed nonce: ', nonce)
+	// 	// console.log('Changed nonce: ', nonce)
 	// }, [nonce])
 
 	// useEffect(() => {
-	// 	console.log("fdfdfdfd", gaslessData)
-	// 	// console.log('HYY', nonce, webwallet, scwAddress)
+	// 	// console.log("fdfdfdfd", gaslessData)
+	// 	// // console.log('HYY', nonce, webwallet, scwAddress)
 	// 	if(nonce && webwallet && scwAddress && !gaslessData) {
 	// 		setGaslessData({
 	// 			address: scwAddress,

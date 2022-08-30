@@ -45,7 +45,7 @@ import Breadcrumbs from 'src/v2/components/Breadcrumbs'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import StyledTab from 'src/v2/components/StyledTab'
 import { Gnosis_Safe } from 'src/v2/constants/safe/gnosis_safe'
-import { Realms_Solana } from 'src/v2/constants/safe/realms_solana'
+import { Realms_Solana, solanaToUsd } from 'src/v2/constants/safe/realms_solana'
 import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import AcceptedProposalsPanel from 'src/v2/payouts/AcceptedProposals/AcceptedProposalPanel'
@@ -101,6 +101,9 @@ function ViewApplicants() {
 
 	const [setupRubricBannerCancelled, setSetupRubricBannerCancelled] = useState(true)
 
+	const [listOfApplicationToTxnsHash, setListOfApplicationToTxnsHash] = useState({})
+	const [applicationStatuses, setApplicationStatuses] = useState({})
+
 	const { data: accountData, nonce } = useQuestbookAccount()
 	const router = useRouter()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
@@ -114,6 +117,7 @@ function ViewApplicants() {
 			workspaceID: workspace?.id.toString()!,
 		},
 	})
+
 
 	const [realmsQueryParams, setRealmsQueryParams] = useState<any>({ client })
 
@@ -132,18 +136,30 @@ function ViewApplicants() {
 	const { data: realmsFundTransferData } = useGetRealmsFundTransferDataQuery(realmsQueryParams)
 
 	useEffect(() => {
-		console.log('realms fund transfer data', realmsFundTransferData)
+		// console.log('realms fund transfer data', realmsFundTransferData)
+
+		const applicationToTxnHashMap: {[applicationId: string]: {transactionHash: string, amount: number}} = {}
 
 		if(!realmsFundTransferData) {
 			return
 		}
 
-		// @sourav - use the transactionHash here
-		// this is the transction hash of the first fundTransfer object. If you need more info
-		// you can extract them as well
-		realmsFundTransferData.grants[0]?.fundTransfers?.forEach((fundTransfer) => {
-			console.log('TX HASH - ', fundTransfer.transactionHash)
+		realmsFundTransferData.grants[0]?.fundTransfers?.forEach((fundTransfer, i) => {
+			// console.log('TX HASH - ', i, fundTransfer.transactionHash)
+			if(!applicationToTxnHashMap[fundTransfer?.application?.id!]) {
+				applicationToTxnHashMap[fundTransfer?.application?.id!] = {
+					transactionHash: fundTransfer?.transactionHash!,
+					amount: parseFloat(fundTransfer?.amount)
+				}
+			} else {
+				applicationToTxnHashMap[fundTransfer?.application?.id!] = {
+					transactionHash: fundTransfer?.transactionHash!,
+					amount: parseFloat(fundTransfer?.amount)
+				}
+			}
+
 		})
+		setListOfApplicationToTxnsHash(applicationToTxnHashMap)
 
 	}, [realmsFundTransferData])
 
@@ -154,8 +170,8 @@ function ViewApplicants() {
 
 	useEffect(() => {
 		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		console.log('rree', isBiconomyLoading, biconomyLoading)
-		console.log('networks 2:', biconomy?.networkId?.toString(), workspacechainId, defaultChainId)
+		// console.log('rree', isBiconomyLoading, biconomyLoading)
+		// console.log('networks 2:', biconomy?.networkId?.toString(), workspacechainId, defaultChainId)
 
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && workspacechainId &&
 			biconomy.networkId && biconomy.networkId?.toString() === workspacechainId.toString()) {
@@ -168,9 +184,9 @@ function ViewApplicants() {
 		if(safeAddressData) {
 			const { workspaceSafes } = safeAddressData
 			const safeAddress = workspaceSafes[0].address
-			console.log('safeAddress', safeAddress)
-			console.log('workspace safe details', workspaceSafes)
-			const _isEvmChain = workspaceSafeChainId !== 900001 ? true : false
+			// console.log('safeAddress', safeAddress)
+			// console.log('workspace safe details', workspaceSafes)
+			const _isEvmChain = workspaceSafeChainId !== 900001
 			// setIsEvmChain(_isEvmChain)
 			setWorkspaceSafe(safeAddress)
 			setWorkspaceSafeChainId(parseInt(workspaceSafes[0].chainId))
@@ -200,7 +216,7 @@ function ViewApplicants() {
 	useEffect(() => {
 		if(router && router.query) {
 			const { grantId: gId } = router.query
-			console.log('fetch 100: ', gId)
+			// console.log('fetch 100: ', gId)
 			setGrantID(gId)
 		}
 	}, [router])
@@ -234,7 +250,7 @@ function ViewApplicants() {
 			const tempMember = workspace.members.find(
 				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 			)
-			console.log('fetch 500: ', tempMember)
+			// console.log('fetch 500: ', tempMember)
 			setIsAdmin(
 				tempMember?.accessLevel === 'admin'
 				|| tempMember?.accessLevel === 'owner',
@@ -255,11 +271,11 @@ function ViewApplicants() {
 			return
 		}
 
-		console.log('Grant ID: ', grantID)
-		console.log('isUser: ', isUser)
-		console.log('fetch: ', isAdmin, isReviewer)
+		// console.log('Grant ID: ', grantID)
+		// console.log('isUser: ', isUser)
+		// console.log('fetch: ', isAdmin, isReviewer)
 		if(isAdmin) {
-			console.log('Setting query params')
+			// console.log('Setting query params')
 			setQueryParams({
 				client:
 					subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
@@ -272,7 +288,7 @@ function ViewApplicants() {
 		}
 
 		if(isReviewer || isAdmin) {
-			console.log('reviewer', isUser)
+			// console.log('reviewer', isUser)
 			setQueryReviewerParams({
 				client:
 					subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
@@ -287,15 +303,9 @@ function ViewApplicants() {
 
 	}, [workspace, grantID, isUser])
 
-	useEffect(() => {
-		console.log('Admin params: ', queryParams)
-	}, [queryParams])
-
 	const { data, error, loading } = useGetApplicantsForAGrantQuery(queryParams)
 	const { data: grantData } = useGetGrantDetailsQuery(queryParams)
 	useEffect(() => {
-		console.log('fetch', data)
-
 		if(data && data.grantApplications.length) {
 			setRewardAssetAddress(data.grantApplications[0].grant.reward.asset)
 			if(data.grantApplications[0].grant.reward.token) {
@@ -373,19 +383,12 @@ function ViewApplicants() {
 					reviews: applicant.reviews
 				}
 			})
-
-			console.log('fetch', fetchedApplicantsData)
-
 			setApplicantsData(fetchedApplicantsData)
 			setDaoId(data.grantApplications[0].grant.workspace.id)
 			setAcceptingApplications(data.grantApplications[0].grant.acceptingApplications)
 		}
 
 	}, [data, error, loading, grantData])
-
-	useEffect(() => {
-		console.log('Review params: ', queryReviewerParams)
-	}, [queryReviewerParams])
 
 	const reviewData = useGetApplicantsForAGrantReviewerQuery(queryReviewerParams)
 
@@ -406,9 +409,8 @@ function ViewApplicants() {
 	}
 
 	useEffect(() => {
-		// console.log('Raw reviewer data: ', reviewData)
 		if(reviewData.data && reviewData.data.grantApplications.length) {
-			console.log('Reviewer Applications: ', reviewData.data)
+			// console.log('Reviewer Applications: ', reviewData.data)
 			const fetchedApplicantsData = reviewData.data.grantApplications.map((applicant) => {
 				return {
 					grantTitle: applicant?.grant?.title,
@@ -417,9 +419,6 @@ function ViewApplicants() {
 					sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
 					project_name: getFieldString(applicant, 'projectName'),
 					funding_asked: {
-						// amount: formatAmount(
-						//   getFieldString('fundingAsk') || '0',
-						// ),
 						amount:
 							applicant && getFieldString(applicant, 'fundingAsk') ? formatAmount(
 								getFieldString(applicant, 'fundingAsk')!,
@@ -439,13 +438,12 @@ function ViewApplicants() {
 							getSupportedChainIdFromWorkspace(workspace),
 						).icon,
 					},
-					// status: applicationStatuses.indexOf(applicant?.state),
 					status: Reviewerstatus(applicant.reviews),
 					reviewers: applicant.applicationReviewers,
 				}
 			})
 
-			console.log('fetch', fetchedApplicantsData)
+			// console.log('fetch', fetchedApplicantsData)
 
 			setReviewerData(fetchedApplicantsData)
 			setDaoId(reviewData.data.grantApplications[0].grant.workspace.id)
@@ -454,12 +452,9 @@ function ViewApplicants() {
 
 	}, [reviewData])
 
-	// const { data: grantData } = useGetGrantDetailsQuery(queryParams);
 	useEffect(() => {
-		console.log('grantData', grantData)
 		const initialRubrics = grantData?.grants[0]?.rubric
 		const newRubrics = [] as any[]
-		// console.log('initialRubrics', initialRubrics)
 		initialRubrics?.items.forEach((initalRubric) => {
 			newRubrics.push({
 				name: initalRubric.title,
@@ -500,7 +495,6 @@ function ViewApplicants() {
 
 	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
-		// console.log(transactionData);
 		if(transactionData) {
 			setIsModalOpen(false)
 			setRefresh(true)
@@ -532,11 +526,13 @@ function ViewApplicants() {
 	const [initiateTransactionData, setInitiateTransactionData] = useState<any>([])
 	const [gnosisBatchData, setGnosisBatchData] = useState<any>([])
 	const [gnosisReadyToExecuteTxns, setGnosisReadyToExecuteTxns] = useState<any>([])
-	// const [isEvmChain, setIsEvmChain] = useState<boolean>(false)
+	const [totalFundDisbursed, setTotalFundDisbursed] = useState (0)
+	const [step, setStep] = useState(ModalState.RECEIPT_DETAILS)
 
-	// const supported_safes = new SupportedSafes(workspaceSafe)
-	// const chainId = 4 // get your safe chain ID, currently on solana
-	const isEvmChain = workspaceSafeChainId !== 900001 ? true : false
+	const isEvmChain = workspaceSafeChainId !== 900001
+
+	const workspaceRegistryContract = useQBContract('workspace', workspacechainId)
+	const { webwallet } = useContext(WebwalletContext)!
 
 	const current_safe = useMemo(() => {
 		if(isEvmChain) {
@@ -549,12 +545,10 @@ function ViewApplicants() {
 		}
 	}, [workspaceSafe])
 
-	//checking if the realm address is valid
-
 	useEffect(() => {
 		const checkValidSafeAddress = async() => {
 			const isValidSafeAddress = await current_safe?.isValidSafeAddress(workspaceSafe)
-			console.log('isValidSafeAddress', isValidSafeAddress)
+			// console.log('isValidSafeAddress', isValidSafeAddress)
 		}
 
 		checkValidSafeAddress()
@@ -568,12 +562,67 @@ function ViewApplicants() {
 				to: recepient.applicant_address,
 				applicationId: recepient.applicationId,
 				selectedMilestone: recepient.milestones[0].id,
-				amount: recepient.milestones[0].amount
+				amount: 0
 			})
 		)
 		setInitiateTransactionData(formattedTrxnData)
 		setGnosisBatchData(formattedTrxnData)
 	}, [sendFundsTo])
+
+	useEffect(() => {
+		if(phantomWalletConnected) {
+			getRealmsVerification()
+		} else if(isConnected) {
+			verifyGnosisOwner()
+		} else {
+			setSignerVerififed(false)
+		}
+	}, [phantomWalletConnected, isConnected])
+
+	useEffect(() => {
+		if(signerVerified) {
+			setStep(ModalState.VERIFIED_OWNER)
+		}
+	}, [signerVerified])
+
+
+	async function getStatus(applicationToTxnHashMap: {[applicationId: string]: {transactionHash: string, amount: number}}) {
+		// console.log('applicationToTxnHashMap', applicationToTxnHashMap)
+		const statuses: {[applicationId: string]: {transactionHash: string, status: number, amount: number}} = {}
+
+		Promise.all((Object.keys(applicationToTxnHashMap || {}) || []).map(async(applicationId) => {
+			//@ts-ignore
+			const status = await current_safe?.getTransactionHashStatus(applicationToTxnHashMap[applicationId].transactionHash)
+			// console.log('applicationToTxnHashMap status', status)
+			statuses[applicationId] = {
+				transactionHash: applicationToTxnHashMap[applicationId].transactionHash,
+				status: status[applicationToTxnHashMap[applicationId].transactionHash],
+				amount: applicationToTxnHashMap[applicationId].amount
+			}
+			return status
+		})).then(async(done) => {
+			if(statuses && !isEvmChain) {
+				let totalFundDisbursed = 0
+				for(const applicantId of Object.keys(statuses)) {
+					if(statuses[applicantId]?.status === 1) {
+						totalFundDisbursed += await solanaToUsd(statuses[applicantId].amount / 10 ** 9)
+					}
+				}
+
+				setTotalFundDisbursed(totalFundDisbursed)
+			}
+
+			setApplicationStatuses(statuses)
+		})
+	}
+
+	useEffect(() => {
+		if((Object.keys(listOfApplicationToTxnsHash) || []).length > 0) {
+			// console.log('fetch status')
+			getStatus((listOfApplicationToTxnsHash) || [])
+		}
+
+	}, [listOfApplicationToTxnsHash])
 
 	function createEVMMetaTransactions() {
 		const readyTxs = gnosisBatchData.map((data: any) => {
@@ -585,7 +634,6 @@ function ViewApplicants() {
 			}
 			return tx
 		})
-		console.log('ready to execute tx', readyTxs)
 		setGnosisReadyToExecuteTxns(readyTxs)
 		return readyTxs
 	}
@@ -602,7 +650,6 @@ function ViewApplicants() {
 	const getRealmsVerification = async() => {
 		if(phantomWallet?.publicKey?.toString()) {
 			const isVerified = await current_safe?.isOwner(phantomWallet.publicKey?.toString())
-			console.log('realms_solana verification', isVerified)
 			if(isVerified) {
 				setSignerVerififed(true)
 			}
@@ -612,40 +659,22 @@ function ViewApplicants() {
 	const verifyGnosisOwner = async() => {
 		if(isConnected) {
 			const isVerified = await current_safe?.isOwner(workspaceSafe)
-			console.log('verifying owner', isVerified)
 			if(isVerified) {
 				setSignerVerififed(true)
 			} else {
-				console.log('not a owner')
+				// console.log('not a owner')
+				setSignerVerififed(false)
 			}
 		}
 	}
 
-	useEffect(() => {
-		if(phantomWalletConnected) {
-			getRealmsVerification()
-		} else if(isConnected) {
-			verifyGnosisOwner()
-		} else {
-			setSignerVerififed(false)
-		}
-	}, [phantomWalletConnected, isConnected])
-
-	const workspaceRegistryContract = useQBContract('workspace', workspacechainId)
-	const { webwallet } = useContext(WebwalletContext)!
-
-	useEffect(() => {
-		console.log()
-	}, [initiateTransactionData])
 
 	const initiateTransaction = async() => {
-		console.log('initiate transaction called')
+		// console.log('initiate transaction called')
 		let proposaladdress: string | undefined
 		if(isEvmChain) {
-			console.log('transactions initiated --> ', gnosisReadyToExecuteTxns)
 			const readyToExecuteTxs = createEVMMetaTransactions()
 			const safeTxHash = await current_safe?.createMultiTransaction(readyToExecuteTxs, workspaceSafe)
-			console.log('Proposed transaction', safeTxHash)
 			if(safeTxHash) {
 				proposaladdress = safeTxHash
 				setProposalAddr(safeTxHash)
@@ -654,7 +683,6 @@ function ViewApplicants() {
 			}
 		} else {
 			proposaladdress = await current_safe?.proposeTransactions(grantData?.grants[0].title!, initiateTransactionData, phantomWallet)
-			console.log('proposal address', proposaladdress)
 			if(!proposaladdress) {
 				throw new Error('No proposal address found!')
 			}
@@ -664,38 +692,21 @@ function ViewApplicants() {
 
 		disburseRewardFromSafe(proposaladdress?.toString()!)
 			.then(() => {
-				console.log('Sent transaction to contract - realms')
+				// console.log('Sent transaction to contract - realms')
 			})
 			.catch((err) => {
-				console.log('realms sending transction error:', err)
+				// console.log('realms sending transction error:', err)
 			})
 
 	}
 
 	const disburseRewardFromSafe = useCallback(async(proposaladdress: string) => {
-		console.log(workspacechainId)
+		// console.log(workspacechainId)
 		if(!workspacechainId) {
 			return
 		}
 
-		// setCallOnContractChange(false)
 		try {
-			// if(activeChain?.id !== daoNetwork?.id) {
-			// 	console.log('switching')
-			// 	// await switchNetworkAsync!(daoNetwork?.id)
-			// 	console.log('create workspace again on contract object update')
-			// 	setCallOnContractChange(true)
-			// 	setTimeout(() => {
-			// 		if(callOnContractChange && activeChain?.id !== daoNetwork?.id) {
-			// 			setCallOnContractChange(false)
-			// 			throw new Error('Error switching network')
-			// 		}
-			// 	}, 60000)
-			// 	return
-			// }
-
-			// console.log('creating workspace', accountData!.address)
-
 			if(!workspacechainId) {
 				throw new Error('No network specified')
 			}
@@ -721,12 +732,12 @@ function ViewApplicants() {
 				initiateTransactionData.map((element: any) => (parseInt(element.selectedMilestone, 16))),
 				rewardAssetAddress,
 				'nonEvmAssetAddress-toBeChanged',
-				initiateTransactionData.map((element: any) => (ethers.utils.parseEther(element.amount.toString()))),
+				initiateTransactionData.map((element: any) => isEvmChain ? (ethers.utils.parseEther(element.amount.toString())) : Math.floor(element.amount.toFixed(9) * 1000000000)),
 				workspace.id,
 				proposaladdress
 			]
 
-			console.log('methodArgs', methodArgs)
+			// console.log('methodArgs', methodArgs)
 
 			const transactionHash = await sendGaslessTransaction(
 				biconomy,
@@ -748,18 +759,18 @@ function ViewApplicants() {
 
 			const { txFee, receipt } = await getTransactionDetails(transactionHash, workspacechainId.toString())
 
-			console.log('txFee', txFee)
-			console.log('receipt: ', receipt)
+			// console.log('txFee', txFee)
+			// console.log('receipt: ', receipt)
 			await chargeGas(Number(workspace.id), Number(txFee))
 
 		} catch(e) {
-			console.log('disburse error', e)
+			// console.log('disburse error', e)
 		}
 	}, [workspace, biconomyWalletClient, workspacechainId, biconomy, workspaceRegistryContract, scwAddress, webwallet, nonce, initiateTransactionData, proposalAddr])
 
 	const onChangeRecepientDetails = (applicationId: any, fieldName: string, fieldValue: any) => {
-		console.log('onChangeRecepientDetails', applicationId, fieldName, fieldValue)
-		console.log('Gnosis Batch data', gnosisBatchData)
+		// console.log('onChangeRecepientDetails', applicationId, fieldName, fieldValue)
+		// console.log('Gnosis Batch data', gnosisBatchData)
 		const tempData = initiateTransactionData.map((transactionData: any) => {
 			if(transactionData.applicationId === applicationId) {
 				return { ...transactionData, [fieldName]: fieldValue }
@@ -768,17 +779,14 @@ function ViewApplicants() {
 			return transactionData
 		})
 
-		console.log('initiateTransactionData', tempData)
+		// console.log('initiateTransactionData', tempData)
 		setInitiateTransactionData(tempData)
 		setGnosisBatchData(tempData)
 	}
 
-
-	const [step, setStep] = useState(ModalState.RECEIPT_DETAILS)
-
 	const onSendFundsButtonClicked = async(state: boolean, selectedApplicants: any[]) => {
-		console.log('state', state)
-		console.log('selectedApplicants', selectedApplicants)
+		// console.log('state', state)
+		// console.log('selectedApplicants', selectedApplicants)
 		if(selectedApplicants.length === 1) {
 			setSendFundsModalIsOpen(state)
 		} else {
@@ -825,34 +833,28 @@ function ViewApplicants() {
 		}
 	}
 
-	useEffect(() => {
-		if(signerVerified) {
-			setStep(ModalState.VERIFIED_OWNER)
-		}
-	}, [signerVerified])
-
 	//end of implementation
 
 
 	return (
 		<Container
-			maxW="100%"
-			display="flex"
-			pb="300px"
+			maxW='100%'
+			display='flex'
+			pb='300px'
 			px={0}
-			minH={'calc(100vh - 64px)'}
-			bg={'#FBFBFD'}
+			minH='calc(100vh - 64px)'
+			bg='#FBFBFD'
 		>
 			<Container
 				flex={1}
-				display="flex"
-				flexDirection="column"
-				maxW="1116px"
-				alignItems="stretch"
+				display='flex'
+				flexDirection='column'
+				maxW='1116px'
+				alignItems='stretch'
 				pb={8}
 				px={8}
 				pt={6}
-				pos="relative"
+				pos='relative'
 			>
 				<Breadcrumbs path={['My Grants', 'View Applicants']} />
 
@@ -882,8 +884,8 @@ function ViewApplicants() {
 												onClick={() => setRubricDrawerOpen(true)}
 												icon={
 													<ThreeDotsHorizontal
-														h={'3px'}
-														w={'13.5px'} />
+														h='3px'
+														w='13.5px' />
 												}
 												{...props}
 												ref={ref}
@@ -893,10 +895,10 @@ function ViewApplicants() {
 									}
 								/>
 								<MenuList
-									minW={'240px'}
+									minW='240px'
 									py={0}>
 									<Flex
-										bg={'#F0F0F7'}
+										bg='#F0F0F7'
 										px={4}
 										py={2}
 									>
@@ -905,14 +907,14 @@ function ViewApplicants() {
 											lineHeight='20px'
 											fontWeight='500'
 											textAlign='center'
-											color={'#555570'}
+											color='#555570'
 										>
 											Grant options
 										</Text>
 									</Flex>
 									<MenuItem
-										px={'19px'}
-										py={'10px'}
+										px='19px'
+										py='10px'
 										onClick={
 											() => (grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ?
 												setViewRubricDrawerOpen(true) : setRubricDrawerOpen(true)
@@ -921,12 +923,12 @@ function ViewApplicants() {
 										{
 											(grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ? (
 												<ViewEye
-													color={'#C8CBFC'}
-													mr={'11px'} />
+													color='#C8CBFC'
+													mr='11px' />
 											) : (
 												<EditPencil
-													color={'#C8CBFC'}
-													mr={'11px'} />
+													color='#C8CBFC'
+													mr='11px' />
 											)
 										}
 										<Text
@@ -934,24 +936,24 @@ function ViewApplicants() {
 											lineHeight='20px'
 											fontWeight='400'
 											textAlign='center'
-											color={'#555570'}
+											color='#555570'
 										>
 											{(grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ? 'View scoring rubric' : 'Setup applicant evaluation'}
 										</Text>
 									</MenuItem>
 									<MenuItem
-										px={'19px'}
-										py={'10px'}
+										px='19px'
+										py='10px'
 									>
 										<ArchiveGrant
-											color={'#C8CBFC'}
-											mr={'11px'} />
+											color='#C8CBFC'
+											mr='11px' />
 										<Text
 											fontSize='14px'
 											lineHeight='20px'
 											fontWeight='400'
 											textAlign='center'
-											color={'#555570'}
+											color='#555570'
 										>
 											Archive grant
 										</Text>
@@ -980,7 +982,7 @@ function ViewApplicants() {
 				<Box mt={4} />
 
 				<StatsBanner
-					funds={0}
+					funds={totalFundDisbursed}
 					reviews={applicantsData.reduce((acc: any, curr: any) => acc + curr.reviews.length, 0)}
 					totalReviews={applicantsData.reduce((acc: any, curr: any) => acc + curr.reviewers.length, 0)}
 					applicants={applicantsData.length}
@@ -992,24 +994,24 @@ function ViewApplicants() {
 					setupRubricBannerCancelled || (((grantData?.grants && grantData?.grants.length > 0 && grantData?.grants[0].rubric?.items.length) || 0) > 0 || false) ? <></> : (
 						<>
 							<Flex
-								px={'18px'}
+								px='18px'
 								py={4}
-								bg={'#C8CBFC'}
-								borderRadius={'base'}
+								bg='#C8CBFC'
+								borderRadius='base'
 							>
 								<ErrorAlert
-									color={'#785EF0'}
+									color='#785EF0'
 									boxSize={5}
-									mt={'2px'}
+									mt='2px'
 								/>
 
 								<Flex
 									flexDirection='column'
-									ml={'18px'}
+									ml='18px'
 									flex={1}
 								>
 									<Text
-										fontSize={'16px'}
+										fontSize='16px'
 										lineHeight='24px'
 										fontWeight='500'
 									>
@@ -1017,15 +1019,15 @@ function ViewApplicants() {
 									</Text>
 
 									<Text
-										mt={'8px'}
-										fontSize={'14px'}
+										mt='8px'
+										fontSize='14px'
 										lineHeight='20px'
 										fontWeight='400'
 									>
 										On receiving applicants, define a scoring rubric and assign reviewers to evaluate the applicants.
 										{' '}
 										<Link
-											textDecoration={'none'}
+											textDecoration='none'
 											fontWeight='500'
 											color='#1F1F33'
 										>
@@ -1034,8 +1036,8 @@ function ViewApplicants() {
 									</Text>
 
 									<Text
-										mt={'14px'}
-										fontSize={'14px'}
+										mt='14px'
+										fontSize='14px'
 										lineHeight='20px'
 										fontWeight='500'
 										color='#785EF0'
@@ -1077,12 +1079,13 @@ function ViewApplicants() {
 
 					<TabPanels>
 						<TabPanel
-							borderRadius={'2px'}
+							borderRadius='2px'
 							p={0}
 							mt={5}
-							bg={'white'}
+							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7' >
 							<AcceptedProposalsPanel
+								applicationStatuses={applicationStatuses}
 								applicantsData={applicantsData}
 								onSendFundsClicked={onSendFundsButtonClicked}
 								onBulkSendFundsClicked={onSendFundsButtonClicked}
@@ -1092,10 +1095,10 @@ function ViewApplicants() {
 
 						<TabPanel
 							tabIndex={1}
-							borderRadius={'2px'}
+							borderRadius='2px'
 							p={0}
 							mt={5}
-							bg={'white'}
+							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<InReviewPanel
 								applicantsData={applicantsData}
@@ -1105,10 +1108,10 @@ function ViewApplicants() {
 
 						<TabPanel
 							tabIndex={2}
-							borderRadius={'2px'}
+							borderRadius='2px'
 							p={0}
 							mt={5}
-							bg={'white'}
+							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<RejectedPanel
 								applicantsData={applicantsData}
@@ -1117,10 +1120,10 @@ function ViewApplicants() {
 
 						<TabPanel
 							tabIndex={3}
-							borderRadius={'2px'}
+							borderRadius='2px'
 							p={0}
 							mt={5}
-							bg={'white'}
+							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<ResubmitPanel
 								applicantsData={applicantsData} />
@@ -1180,7 +1183,7 @@ function ViewApplicants() {
 				/>
 
 				<TransactionInitiatedModal
-					isOpen={txnInitModalIsOpen && proposalAddr ? true : false}
+					isOpen={!!(txnInitModalIsOpen && proposalAddr)}
 					onClose={onModalClose}
 					onComplete={() => setTxnInitModalIsOpen(false)}
 					proposalUrl={isEvmChain ? getGnosisTansactionLink(current_safe?.id?.toString()!, current_safe?.chainId.toString()!) : getProposalUrl(current_safe?.id?.toString()!, proposalAddr)}
@@ -1209,19 +1212,19 @@ function ViewApplicants() {
 					subtitle='Creating scoring rubric'
 					description={
 						<Flex
-							direction="column"
+							direction='column'
 							w='100%'
-							align="start">
+							align='start'>
 							<Text
-								fontWeight={'500'}
-								fontSize={'17px'}
+								fontWeight='500'
+								fontSize='17px'
 							>
 								{grantData && grantData?.grants && grantData?.grants.length > 0 && grantData?.grants[0].title}
 							</Text>
 
 							<Button
 								rightIcon={<ExternalLinkIcon />}
-								variant="linkV2"
+								variant='linkV2'
 								bg='#D5F1EB'>
 								{grantID && formatAddress(grantID)}
 							</Button>
@@ -1324,18 +1327,18 @@ function ViewApplicants() {
 			<Modal
 				isOpen={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
-				title=""
+				title=''
 			>
 				<ChangeAccessibilityModalContent
 					onClose={() => setIsModalOpen(false)}
-					imagePath="/illustrations/publish_grant.svg"
-					title="Are you sure you want to publish this grant?"
-					subtitle="The grant will be live, and applicants can apply for this grant."
-					actionButtonText="Publish grant"
+					imagePath='/illustrations/publish_grant.svg'
+					title='Are you sure you want to publish this grant?'
+					subtitle='The grant will be live, and applicants can apply for this grant.'
+					actionButtonText='Publish grant'
 					actionButtonOnClick={
 						() => {
-							console.log('Doing it!')
-							console.log('Is Accepting Applications (Button click): ', isAcceptingApplications)
+							// console.log('Doing it!')
+							// console.log('Is Accepting Applications (Button click): ', isAcceptingApplications)
 							setIsAcceptingApplications([
 								!isAcceptingApplications[0],
 								isAcceptingApplications[1] + 1,

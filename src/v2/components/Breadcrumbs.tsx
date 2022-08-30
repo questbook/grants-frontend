@@ -4,9 +4,9 @@ import {
 } from '@chakra-ui/react'
 
 interface BreadcrumbProps {
-  path: string[];
+  path: string[]
   // eslint-disable-next-line react/require-default-props
-  id?: string;
+  id?: string
 }
 
 function Breadcrumbs({ path, id }: BreadcrumbProps) {
@@ -14,10 +14,10 @@ function Breadcrumbs({ path, id }: BreadcrumbProps) {
 	return (
 		<Text
 			mt={0}
-			fontWeight="400"
-			fontSize="14px"
-			lineHeight="20px"
-			color="#7D7DA0"
+			fontWeight='400'
+			fontSize='14px'
+			lineHeight='20px'
+			color='#7D7DA0'
 		>
 			{
 				path.map((node, index) => {
@@ -29,9 +29,9 @@ function Breadcrumbs({ path, id }: BreadcrumbProps) {
 					return (
 						<Box
 							key={`breadcrumb-${node}`}
-							as="span">
+							as='span'>
 							<Link
-								color={'#7D7DA0'}
+								color='#7D7DA0'
 								href={
 									`/${
 										// eslint-disable-next-line no-nested-ternary
@@ -59,17 +59,17 @@ function Breadcrumbs({ path, id }: BreadcrumbProps) {
 								{node}
 							</Link>
 							{' '}
-            /
+							/
 							{' '}
 						</Box>
 					)
 				})
 			}
 			<Box
-				as="span"
-				display="inline-block"
-				color={'#1F1F33'}
-				fontWeight="bold"
+				as='span'
+				display='inline-block'
+				color='#1F1F33'
+				fontWeight='bold'
 			>
 				{path[path.length - 1]}
 			</Box>

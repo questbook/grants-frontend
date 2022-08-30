@@ -3,19 +3,19 @@ import { ToastId, useToast } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
 import { WebwalletContext } from 'pages/_app'
+import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
 import { SupportedNetwork } from 'src/generated/graphql'
+import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import useChainId from 'src/hooks/utils/useChainId'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { addAuthorizedOwner, bicoDapps, chargeGas, getEventData, getTransactionDetails, sendGaslessTransaction, webHookId } from 'src/utils/gaslessUtils'
+import { addAuthorizedOwner, bicoDapps, chargeGas, getEventData, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
-import ErrorToast from '../components/ui/toasts/errorToast'
-import useQBContract from './contracts/useQBContract'
-import useChainId from './utils/useChainId'
 
 export default function useCreateWorkspace(
 	data: any
@@ -51,12 +51,12 @@ export default function useCreateWorkspace(
 	}, [data])
 
 	useEffect(() => {
-		console.log(data?.network)
+		// console.log(data?.network)
 	}, [data])
 
 	useEffect(() => {
-		console.log('THIS IS ERROR', error)
-		console.log('THIS IS LOADING', loading)
+		// console.log('THIS IS ERROR', error)
+		// console.log('THIS IS LOADING', loading)
 		if(error) {
 			return
 		}
@@ -64,16 +64,16 @@ export default function useCreateWorkspace(
 		if(loading) {
 			return
 		}
-		// console.log('calling createGrant');
+		// // console.log('calling createGrant');
 
 		async function validate() {
 			setLoading(true)
-			// console.log('calling validate');
+			// // console.log('calling validate');
 
 			const uploadedImageHash = (await uploadToIPFS(data.image)).hash
-			// console.log('Network: ', data.network);
-			// console.log('Network Return: ', getSupportedValidatorNetworkFromChainId(data.network));
-			console.log('THIS IS ADDRESS', accountData?.address)
+			// // console.log('Network: ', data.network);
+			// // console.log('Network Return: ', getSupportedValidatorNetworkFromChainId(data.network));
+			// console.log('THIS IS ADDRESS', accountData?.address)
 			const {
 				data: { ipfsHash },
 			} = await validatorApi.validateWorkspaceCreate({
@@ -98,7 +98,7 @@ export default function useCreateWorkspace(
 				}
 
 				// eslint-disable-next-line max-len
-				console.log('Workspace registry address', WORKSPACE_REGISTRY_ADDRESS[networkChainId])
+				// console.log('Workspace registry address', WORKSPACE_REGISTRY_ADDRESS[networkChainId])
 				// let transactionHash: string | undefined | boolean
 
 				const targetContractObject = new ethers.Contract(
@@ -106,8 +106,8 @@ export default function useCreateWorkspace(
 					WorkspaceRegistryAbi,
 					webwallet
 				)
-				console.log('ENTERING')
-				console.log(networkChainId, scwAddress, webwallet, nonce, webHookId)
+				// console.log('ENTERING')
+				// console.log(networkChainId, scwAddress, webwallet, nonce, webHookId)
 				const response = await sendGaslessTransaction(biconomy, targetContractObject, 'createWorkspace', [ipfsHash, new Uint8Array(32), 0],
 					WORKSPACE_REGISTRY_ADDRESS[networkChainId], biconomyWalletClient,
 					scwAddress, webwallet, `${networkChainId}`, bicoDapps[networkChainId.toString()].webHookId, nonce)
@@ -123,11 +123,11 @@ export default function useCreateWorkspace(
 				if(createWorkspaceTransactionData) {
 
 					const workspace_id = Number(createWorkspaceTransactionData.args[0].toBigInt())
-					console.log('workspace_id', workspace_id)
+					// console.log('workspace_id', workspace_id)
 
 					await addAuthorizedOwner(workspace_id, webwallet?.address!, scwAddress, networkChainId.toString(),
 						'this is the safe addres - to be updated in the new flow')
-					console.log('fdsao')
+					// console.log('fdsao')
 
 					await chargeGas(Number(workspace_id), Number(txFee))
 
@@ -155,39 +155,39 @@ export default function useCreateWorkspace(
 		}
 
 		try {
-			console.log(data)
+			// console.log(data)
 			if(!data) {
 				return
 			}
 
-			console.log(transactionData)
+			// console.log(transactionData)
 			if(transactionData) {
 				return
 			}
 
-			console.log(accountData, accountData?.address)
+			// console.log(accountData, accountData?.address)
 
 			if(!accountData || !accountData.address) {
 				throw new Error('not connected to wallet')
 			}
 
-			console.log(chainId)
+			// console.log(chainId)
 			if(!chainId) {
 				throw new Error('not connected to valid network')
 			}
 
-			console.log(validatorApi)
+			// console.log(validatorApi)
 			if(!validatorApi) {
 				throw new Error('validatorApi or workspaceId is not defined')
 			}
 
-			console.log(workspaceRegistryContract)
+			// console.log(workspaceRegistryContract)
 			if(
 				!workspaceRegistryContract
 				|| workspaceRegistryContract.address
 				=== '0x0000000000000000000000000000000000000000'
 			) {
-				console.log('ERROR HERE')
+				// console.log('ERROR HERE')
 				return
 			}
 

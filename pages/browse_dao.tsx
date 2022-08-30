@@ -42,7 +42,7 @@ function BrowseDao() {
 			const promises = allNetworkGrantsForDao.map(
 				// eslint-disable-next-line no-async-promise-executor
 				(allGrants) => new Promise(async(resolve) => {
-					// console.log('calling grants');
+					// // console.log('calling grants');
 					try {
 						const { data } = await allGrants[0]({
 							variables: {
@@ -53,7 +53,7 @@ function BrowseDao() {
 							},
 						})
 						if(data && data.grants) {
-							console.log('data.grants', data.grants)
+							// console.log('data.grants', data.grants)
 							const filteredGrants = data.grants.filter(
 								(grant) => grant.applications.length === 0
 							)
@@ -93,7 +93,7 @@ function BrowseDao() {
 				// @TODO: Handle the case where a lot of the grants are filtered out.
 			})
 		} catch(e) {
-			// console.log(e);
+			// // console.log(e);
 			toast({
 				title: 'Error loading grants',
 				status: 'error',
@@ -134,7 +134,7 @@ function BrowseDao() {
 				workspaceID: key.split('-')[0],
 				name: workspaces[key][0].name,
 				icon: workspaces[key][0].icon,
-				amount:totalamount === 0 ? Number(formatAmount(workspaces[key][0].amount)) : totalamount,
+				amount: totalamount === 0 ? Number(formatAmount(workspaces[key][0].amount)) : totalamount,
 				token: workspaces[key][0].token,
 				noOfApplicants: workspaces[key][0].noOfApplicants
 			}
@@ -153,17 +153,17 @@ function BrowseDao() {
 	useEffect(() => {
 		if(selectedSorting === 'grant_rewards') {
 			var workspaces = [...allWorkspaces]
-			workspaces.sort((a:any, b:any) => {
+			workspaces.sort((a: any, b: any) => {
 				return parseFloat(b.amount) - parseFloat(a.amount) || Number(isNaN(a.amount)) - Number(isNaN(b.amount))
 			})
-			console.log('sorted reward-wise workspace')
+			// console.log('sorted reward-wise workspace')
 			setSortedWorkspaces(workspaces)
 		} else if(selectedSorting === 'no_of_applicants') {
 			var workspaces = [...allWorkspaces]
 			workspaces.sort((a, b) => {
 				return parseFloat(b.noOfApplicants) - parseFloat(a.noOfApplicants) || Number(isNaN(a.noOfApplicants)) - Number(isNaN(b.noOfApplicants))
 			})
-			console.log('sorted applicant-wise workspace')
+			// console.log('sorted applicant-wise workspace')
 			setSortedWorkspaces(workspaces)
 		}
 	}, [selectedSorting, allWorkspaces])
@@ -175,7 +175,7 @@ function BrowseDao() {
 				setInviteInfo(inviteInfo)
 			}
 		} catch(error: any) {
-			console.error('invalid invite ', error)
+			// console.error('invalid invite ', error)
 			toast({
 				title: `Invalid invite "${error.message}"`,
 				status: 'error',
@@ -278,30 +278,30 @@ function BrowseDao() {
 		// </Box>
 		<>
 			<Container
-				maxWidth={'1280px'}
-				w="100%">
+				maxWidth='1280px'
+				w='100%'>
 				<Flex
-					my={'16px'}
-					maxWidth={'1280px'}>
+					my='16px'
+					maxWidth='1280px'>
 					<Text
-						fontSize={'24px'}
-						fontWeight={'700'}>
+						fontSize='24px'
+						fontWeight='700'>
 						Discover
 					</Text>
-					<Box marginLeft={'auto'}>
+					<Box marginLeft='auto'>
 						<Menu>
 							<MenuButton
 								as={Button}
-								rightIcon={<Image src={'/ui_icons/black_down.svg'} />}>
-    								Sort by
+								rightIcon={<Image src='/ui_icons/black_down.svg' />}>
+								Sort by
 							</MenuButton>
 							<MenuList>
 								<MenuItem
-									justifyContent={'center'}
-									bg={'#F0F0F7'}>
+									justifyContent='center'
+									bg='#F0F0F7'>
 									<Text
-										fontWeight={'700'}>
-											Sort by
+										fontWeight='700'>
+										Sort by
 									</Text>
 								</MenuItem>
 								<MenuItem
@@ -312,8 +312,8 @@ function BrowseDao() {
 									}>
 									<Flex>
 										<Image src={selectedSorting === 'grant_rewards' ? '/ui_icons/sorting_checked.svg' : '/ui_icons/sorting_unchecked.svg'} />
-										<Text ml={'10px'}>
-													Grant rewards
+										<Text ml='10px'>
+											Grant rewards
 										</Text>
 									</Flex>
 								</MenuItem>
@@ -325,8 +325,8 @@ function BrowseDao() {
 									}>
 									<Flex>
 										<Image src={selectedSorting === 'no_of_applicants' ? '/ui_icons/sorting_checked.svg' : '/ui_icons/sorting_unchecked.svg'} />
-										<Text ml={'10px'}>
-													Number of Applicants
+										<Text ml='10px'>
+											Number of Applicants
 										</Text>
 									</Flex>
 								</MenuItem>

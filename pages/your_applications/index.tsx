@@ -112,18 +112,18 @@ function YourApplications() {
 	return (
 		<Flex
 			ref={containerRef}
-			w="100%"
+			w='100%'
 		>
 			<Flex
 				flex={1}
-				direction="column"
-				maxW="65%"
-				alignItems="stretch"
+				direction='column'
+				maxW='65%'
+				alignItems='stretch'
 				pb={8}
 				px={10}
-				mx="auto"
+				mx='auto'
 			>
-				<Heading title="My Applications" />
+				<Heading title='My Applications' />
 
 				{
 					myApplications.length > 0
@@ -199,15 +199,15 @@ function YourApplications() {
 				{
 					myApplications.length === 0 && (
 						<Flex
-							direction="column"
+							direction='column'
 							mt={14}
-							align="center">
+							align='center'>
 							<Empty
-								src="/illustrations/empty_states/no_applications.svg"
-								imgHeight="134px"
-								imgWidth="147px"
-								title="No applications"
-								subtitle="All your grant applications are shown here. Discover grants on our home page."
+								src='/illustrations/empty_states/no_applications.svg'
+								imgHeight='134px'
+								imgWidth='147px'
+								title='No applications'
+								subtitle='All your grant applications are shown here. Discover grants on our home page.'
 							/>
 						</Flex>
 					)

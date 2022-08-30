@@ -6,7 +6,7 @@ export const SelectDropdownArrow = createIcon({
 	path: (
 		<path
 			fill='currentColor'
-			d="M5 5L0 0H10L5 5Z"
+			d='M5 5L0 0H10L5 5Z'
 		/>
 	),
 })

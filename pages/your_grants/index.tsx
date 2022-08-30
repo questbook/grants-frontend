@@ -12,6 +12,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import AddFunds from 'src/components/funds/add_funds_modal'
+import Loader from 'src/components/ui/loader'
 import ArchivedGrantEmptyState from 'src/components/your_grants/empty_states/archived_grant'
 import AssignedGrantEmptyState from 'src/components/your_grants/empty_states/assigned_grant'
 import ExpiredGrantEmptyState from 'src/components/your_grants/empty_states/expired_grant'
@@ -28,6 +29,7 @@ import {
 	useGetAllGrantsForCreatorQuery,
 	useGetAllGrantsForReviewerQuery,
 } from 'src/generated/graphql'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { formatAmount } from 'src/utils/formattingUtils'
 import { UNIX_TIMESTAMP_MAX, unixTimestampSeconds } from 'src/utils/generics'
@@ -37,17 +39,15 @@ import {
 	getSupportedChainIdFromSupportedNetwork,
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import Loader from '../../src/components/ui/loader'
-import { useQuestbookAccount } from '../../src/hooks/gasless/useQuestbookAccount'
-import ReviewerDashboard from '../../src/v2/components/Dashboard/ReviewerDashboard'
+import ReviewerDashboard from 'src/v2/components/Dashboard/ReviewerDashboard'
 
 const PAGE_SIZE = 5
 
 type GrantRewardType = {
-	address: string,
-	committed: BigNumber,
-	label: string,
-	icon: string,
+	address: string
+	committed: BigNumber
+	label: string
+	icon: string
 };
 
 const TABS = [
@@ -104,8 +104,7 @@ function YourGrants() {
 
 	useEffect(() => {
 		if(
-			workspace &&
-			workspace.members &&
+			workspace?.members &&
 			workspace.members.length > 0 &&
 			accountData &&
 			accountData.address
@@ -139,14 +138,14 @@ function YourGrants() {
 			<Flex
 				w='100%'
 				h='100vh'
-				bg={'#F5F5FA'}
-				padding={'40px'}
-				direction={'column'}
+				bg='#F5F5FA'
+				padding='40px'
+				direction='column'
 			>
 				<Text
-					fontWeight={'700'}
-					fontSize={'30px'}
-					lineHeight={'44px'}
+					fontWeight='700'
+					fontSize='30px'
+					lineHeight='44px'
 					letterSpacing={-1}>
 					Grants & Bounties
 				</Text>
@@ -262,7 +261,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 	}, [currentPage, workspace, accountData?.address, selectedTab])
 
 	useEffect(() => {
-		/// console.log(pk);
+		/// // console.log(pk);
 		if(!accountData?.address) {
 			return
 		}
@@ -276,7 +275,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 			)
 			?.publicKey?.toString()
-		// console.log(k);
+		// // console.log(k);
 		if(k && k.length > 0) {
 			setPk(k)
 		} else {
@@ -311,7 +310,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 
 	useEffect(() => {
 		if(data.data && data.data.grants && data.data.grants.length > 0) {
-			console.log('data.grants', data.data.grants)
+			// console.log('data.grants', data.data.grants)
 			if(
 				grants.length > 0 &&
 				grants[0].workspace.id === data.data.grants[0].workspace.id &&
@@ -341,16 +340,16 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 			allGrantsReviewerData.data.grantApplications &&
 			allGrantsReviewerData.data.grantApplications.length > 0
 		) {
-			console.log(
-				'data.grantsReviewer.raw',
-				allGrantsReviewerData.data.grantApplications,
-			)
+			// console.log(
+			//	'data.grantsReviewer.raw',
+			//	allGrantsReviewerData.data.grantApplications,
+			// )
 			// eslint-disable-next-line max-len
 			const newReviewerData = removeDuplicates(
 				allGrantsReviewerData.data.grantApplications,
 			)
 
-			console.log('data.grantsReviewer', newReviewerData)
+			// console.log('data.grantsReviewer', newReviewerData)
 
 			setGrantsReviewer(newReviewerData)
 		}
@@ -422,14 +421,14 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 			<Flex
 				w='100%'
 				h='100vh'
-				bg={'#F5F5FA'}
-				padding={'40px'}
-				direction={'column'}
+				bg='#F5F5FA'
+				padding='40px'
+				direction='column'
 			>
 				<Text
-					fontWeight={'700'}
-					fontSize={'30px'}
-					lineHeight={'44px'}
+					fontWeight='700'
+					fontSize='30px'
+					lineHeight='44px'
 					letterSpacing={-1}>
 					Grants & Bounties
 				</Text>
@@ -451,70 +450,67 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 					alignItems='stretch'
 					pb={8}
 					px={10}>
-					{
-						<>
-							<Flex
-								mt='18px'
-								align='center'
-								justify='space-between'>
-								<Text variant='heading'>
-									{isReviewer ? 'Assigned Grants' : 'Your grants'}
-								</Text>
-								{
-									isAdmin && grants.length > 0 && (
-										<Button
-											variant='primaryV2'
-											onClick={
-												() => {
-													console.log('Create a grant!')
-													router.push({
-														pathname: '/your_grants/create_grant/',
-													})
+					<>
+						<Flex
+							mt='18px'
+							align='center'
+							justify='space-between'>
+							<Text variant='heading'>
+								{isReviewer ? 'Assigned Grants' : 'Your grants'}
+							</Text>
+							{
+								isAdmin && grants.length > 0 && (
+									<Button
+										variant='primaryV2'
+										onClick={
+											() => {
+												// console.log('Create a grant!')
+												router.push({
+													pathname: '/your_grants/create_grant/',
+												})
 
-												}
-											}>
-											Post a Grant / Bounty
-										</Button>
-									)
-								}
-							</Flex>
-							<Flex
-								direction='row'
-								mt={4}
-								mb={4}>
-								{
-									isAdmin && TABS.map((tab) => (
-										<Button
-											padding='8px 24px'
-											borderRadius='52px'
-											minH='40px'
-											bg={selectedTab === tab.index ? 'brand.500' : 'white'}
-											color={selectedTab === tab.index ? 'white' : 'black'}
-											onClick={
-												() => {
-													setSelectedTab(tab.index)
-													localStorage.setItem(
-														'yourGrantsTabSelected',
-														tab.index.toString(),
-													)
-												}
 											}
-											_hover={{}}
-											fontWeight='700'
-											fontSize='16px'
-											lineHeight='24px'
-											mr={3}
-											border={selectedTab === tab.index ? 'none' : '1px solid #A0A7A7'}
-											key={tab.index}
-										>
-											{tab.label}
-										</Button>
-									))
-								}
-							</Flex>
-						</>
-
-					}
+										}>
+										Post a Grant / Bounty
+									</Button>
+								)
+							}
+						</Flex>
+						<Flex
+							direction='row'
+							mt={4}
+							mb={4}>
+							{
+								isAdmin && TABS.map((tab) => (
+									<Button
+										padding='8px 24px'
+										borderRadius='52px'
+										minH='40px'
+										bg={selectedTab === tab.index ? 'brand.500' : 'white'}
+										color={selectedTab === tab.index ? 'white' : 'black'}
+										onClick={
+											() => {
+												setSelectedTab(tab.index)
+												localStorage.setItem(
+													'yourGrantsTabSelected',
+													tab.index.toString(),
+												)
+											}
+										}
+										_hover={{}}
+										fontWeight='700'
+										fontSize='16px'
+										lineHeight='24px'
+										mr={3}
+										border={selectedTab === tab.index ? 'none' : '1px solid #A0A7A7'}
+										key={tab.index}
+									>
+										{tab.label}
+									</Button>
+								))
+							}
+						</Flex>
+					</>
 					{
 						isAdmin &&
 						grants.length > 0 &&
@@ -524,7 +520,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 							let icon
 							let label
 							if(grant.reward.token) {
-								// console.log('Reward has token')
+								// // console.log('Reward has token')
 								decimals = grant.reward.token.decimal
 								label = grant.reward.token.label
 								icon = getUrlForIPFSHash(grant.reward.token.iconHash)
@@ -552,47 +548,47 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 										?.icon || '/images/dummy/Ethereum Icon.svg'
 							}
 
-            	return (
-            		<YourGrantCard
-            			grantID={grant.id}
-            			key={grant.id}
-            			daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
-            			grantTitle={grant.title}
-            			grantDesc={grant.summary}
-            			numOfApplicants={grant.numberOfApplications}
-            			endTimestamp={new Date(grant.deadline!).getTime()}
-            			grantAmount={formatAmount(grantAmount, decimals || 18)}
-            			grantCurrency={label || 'LOL'}
-            			grantCurrencyIcon={icon}
-            			state='done'
-            			chainId={
-            				getSupportedChainIdFromSupportedNetwork(
-            					grant.workspace.supportedNetworks[0],
-            				)
-            			}
-            			onEditClick={
-            				() => router.push({
-            					pathname: '/your_grants/edit_grant/',
-            					query: {
-            						grantId: grant.id,
-            					},
-            				})
-            			}
-            			onAddFundsClick={() => initialiseFundModal(grant)}
-            			onViewApplicantsClick={
-            				() => router.push({
-            					pathname: '/v2/your_grants/view_applicants/',
-            					query: {
-            						grantId: grant.id,
-            					},
-            				})
-            			}
-            			acceptingApplications={grant.acceptingApplications}
-            			isAdmin={isAdmin}
-            			initialRubrics={grant.rubric as Rubric}
-            			workspaceId={grant.workspace.id}
-            		/>
-            	)
+							return (
+								<YourGrantCard
+									grantID={grant.id}
+									key={grant.id}
+									daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
+									grantTitle={grant.title}
+									grantDesc={grant.summary}
+									numOfApplicants={grant.numberOfApplications}
+									endTimestamp={new Date(grant.deadline!).getTime()}
+									grantAmount={formatAmount(grantAmount, decimals || 18)}
+									grantCurrency={label || 'LOL'}
+									grantCurrencyIcon={icon}
+									state='done'
+									chainId={
+										getSupportedChainIdFromSupportedNetwork(
+											grant.workspace.supportedNetworks[0],
+										)
+									}
+									onEditClick={
+										() => router.push({
+											pathname: '/your_grants/edit_grant/',
+											query: {
+												grantId: grant.id,
+											},
+										})
+									}
+									onAddFundsClick={() => initialiseFundModal(grant)}
+									onViewApplicantsClick={
+										() => router.push({
+											pathname: '/v2/your_grants/view_applicants/',
+											query: {
+												grantId: grant.id,
+											},
+										})
+									}
+									acceptingApplications={grant.acceptingApplications}
+									isAdmin={isAdmin}
+									initialRubrics={grant.rubric as Rubric}
+									workspaceId={grant.workspace.id}
+								/>
+							)
 						})
 					}
 
@@ -633,7 +629,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 							}
 
             	return (
-            		<YourGrantCard
+	<YourGrantCard
             			grantID={grant.grant.id}
             			key={grant.grant.id}
             			daoIcon={

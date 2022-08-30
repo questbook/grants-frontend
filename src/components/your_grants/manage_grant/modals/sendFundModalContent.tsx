@@ -18,32 +18,32 @@ import {
 } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
+import Dropdown from 'src/components/ui/forms/dropdown'
+import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import Loader from 'src/components/ui/loader'
+import ERC20ABI from 'src/contracts/abi/ERC20.json'
 import useDisburseP2PReward from 'src/hooks/useDisburseP2PReward'
 import useDisburseReward from 'src/hooks/useDisburseReward'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
+import { formatAmount, parseAmount } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useContract, useNetwork, useSigner } from 'wagmi'
-import ERC20ABI from '../../../../contracts/abi/ERC20.json'
-import { formatAmount, parseAmount } from '../../../../utils/formattingUtils'
-import Dropdown from '../../../ui/forms/dropdown'
-import SingleLineInput from '../../../ui/forms/singleLineInput'
 
 interface Props {
-	isOpen: boolean;
-	onClose: () => void;
+	isOpen: boolean
+	onClose: () => void
 	rewardAsset: {
-		address: string;
-		committed: BigNumber;
-		label: string;
-		icon: string;
-		decimals?: number;
-	};
-	contractFunding: string;
-	milestones: any[];
-	applicationId: string;
-	applicantId: string;
-	grantId: string;
+		address: string
+		committed: BigNumber
+		label: string
+		icon: string
+		decimals?: number
+	}
+	contractFunding: string
+	milestones: any[]
+	applicationId: string
+	applicantId: string
+	grantId: string
 }
 
 function ModalContent({
@@ -104,7 +104,7 @@ function ModalContent({
 
 	const { setRefresh: setDisburseDataRefresh } = useCustomToast(disburseDataLink)
 	useEffect(() => {
-		// console.log(depositTransactionData);
+		// // console.log(depositTransactionData);
 		if(disburseData) {
 			onClose()
 			setDisburseAmount(undefined)
@@ -158,7 +158,7 @@ function ModalContent({
 
 	const { setRefresh: setDisburseP2PDataRefresh } = useCustomToast(disburseP2PDataLink)
 	useEffect(() => {
-		// console.log(depositTransactionData);
+		// // console.log(depositTransactionData);
 		if(disburseP2PData) {
 			onClose()
 			setDisburseP2PAmount(undefined)
@@ -205,11 +205,11 @@ function ModalContent({
 					// signerStates.data._address,
 					tempAddress,
 				)
-				// console.log('tempAddress', tempAddress);
-				// console.log(tempWalletBalance);
+				// // console.log('tempAddress', tempAddress);
+				// // console.log(tempWalletBalance);
 				setWalletBalance(tempWalletBalance)
 			} catch(e) {
-				console.error(e)
+				// console.error(e)
 			}
 		}())
 	}, [signer, rewardAssetContract])
@@ -219,41 +219,41 @@ function ModalContent({
 			{
 				chosen === -1 && (
 					<Flex
-						direction="column"
-						justify="start"
-						align="start">
+						direction='column'
+						justify='start'
+						align='start'>
 						<Heading
-							variant="applicationHeading"
+							variant='applicationHeading'
 							mt={4}>
 							Use funds from the grant smart contract
 						</Heading>
 						<Flex
-							direction="row"
-							justify="space-between"
-							align="center"
-							w="100%"
+							direction='row'
+							justify='space-between'
+							align='center'
+							w='100%'
 							mt={9}
 						>
 							<Flex
-								direction="row"
-								justify="start"
-								align="center">
+								direction='row'
+								justify='start'
+								align='center'>
 								<Image
 									src={rewardAsset.icon}
-									boxSize="36px" />
+									boxSize='36px' />
 								<Flex
-									direction="column"
+									direction='column'
 									ml={2}>
 									<Text
-										variant="applicationText"
-										fontWeight="700">
+										variant='applicationText'
+										fontWeight='700'>
 										Funds Available
 									</Text>
 									<Text
-										fontSize="14px"
-										lineHeight="20px"
-										fontWeight="700"
-										color="brand.500"
+										fontSize='14px'
+										lineHeight='20px'
+										fontWeight='700'
+										color='brand.500'
 									>
 										{
 											`${formatAmount(contractFunding.toString(), rewardAssetDecimals)} ${rewardAsset?.label
@@ -265,7 +265,7 @@ function ModalContent({
 							<Checkbox
 								m={0}
 								p={0}
-								colorScheme="brand"
+								colorScheme='brand'
 								isChecked={checkedItems[0]}
 								onChange={() => setCheckedItems([true, false])}
 							/>
@@ -273,37 +273,37 @@ function ModalContent({
 
 						<Divider mt={6} />
 						<Heading
-							variant="applicationHeading"
+							variant='applicationHeading'
 							mt={6}>
 							Use funds from the wallet linked to your account
 						</Heading>
 						<Flex
-							direction="row"
-							justify="space-between"
-							align="center"
-							w="100%"
+							direction='row'
+							justify='space-between'
+							align='center'
+							w='100%'
 							mt={9}
 						>
 							<Flex
-								direction="row"
-								justify="start"
-								align="center">
+								direction='row'
+								justify='start'
+								align='center'>
 								<Image
 									src={rewardAsset.icon}
-									boxSize="36px" />
+									boxSize='36px' />
 								<Flex
-									direction="column"
+									direction='column'
 									ml={2}>
 									<Text
-										variant="applicationText"
-										fontWeight="700">
+										variant='applicationText'
+										fontWeight='700'>
 										Funds Available
 									</Text>
 									<Text
-										fontSize="14px"
-										lineHeight="20px"
-										fontWeight="700"
-										color="brand.500"
+										fontSize='14px'
+										lineHeight='20px'
+										fontWeight='700'
+										color='brand.500'
 									>
 										{
 											`${formatAmount(walletBalance.toString(), rewardAssetDecimals)} ${rewardAsset?.label
@@ -315,15 +315,15 @@ function ModalContent({
 							<Checkbox
 								m={0}
 								p={0}
-								colorScheme="brand"
+								colorScheme='brand'
 								isChecked={checkedItems[1]}
 								onChange={() => setCheckedItems([false, true])}
 							/>
 						</Flex>
 						<Divider mt={6} />
 						<Button
-							variant="primary"
-							w="100%"
+							variant='primary'
+							w='100%'
 							my={8}
 							onClick={
 								() => {
@@ -346,17 +346,17 @@ function ModalContent({
 			{
 				chosen === 0 && (
 					<Flex
-						direction="column"
-						justify="start"
-						align="start">
+						direction='column'
+						justify='start'
+						align='start'>
 						<Heading
-							variant="applicationHeading"
+							variant='applicationHeading'
 							mt={4}>
 							Sending funds from grant smart contract
 						</Heading>
 						<Button
 							mt={1}
-							variant="link"
+							variant='link'
 							_focus={{}}
 							onClick={
 								() => {
@@ -367,33 +367,33 @@ function ModalContent({
 							}
 						>
 							<Heading
-								variant="applicationHeading"
-								color="brand.500">
+								variant='applicationHeading'
+								color='brand.500'>
 								Change
 							</Heading>
 						</Button>
 
 						<Flex
-							direction="row"
-							justify="start"
-							align="center"
+							direction='row'
+							justify='start'
+							align='center'
 							mt={6}>
 							<Image
 								src={rewardAsset.icon}
-								boxSize="36px" />
+								boxSize='36px' />
 							<Flex
-								direction="column"
+								direction='column'
 								ml={2}>
 								<Text
-									variant="applicationText"
-									fontWeight="700">
+									variant='applicationText'
+									fontWeight='700'>
 									Funds Available
 								</Text>
 								<Text
-									fontSize="14px"
-									lineHeight="20px"
-									fontWeight="700"
-									color="brand.500"
+									fontSize='14px'
+									lineHeight='20px'
+									fontWeight='700'
+									color='brand.500'
 								>
 									{
 										`${formatAmount(contractFunding.toString(), rewardAssetDecimals)} ${rewardAsset?.label
@@ -405,22 +405,22 @@ function ModalContent({
 
 						<Box mt={8} />
 						<Heading
-							variant="applicationHeading"
-							color="#122224">
+							variant='applicationHeading'
+							color='#122224'>
 							Milestone
 						</Heading>
 						<Menu matchWidth>
 							<MenuButton
-								w="100%"
+								w='100%'
 								as={Button}
-								color="#122224"
-								background="#E8E9E9"
+								color='#122224'
+								background='#E8E9E9'
 								_disabled={{ color: '#A0A7A7', background: '#F3F4F4' }}
-								rightIcon={<Image src="/ui_icons/dropdown_arrow.svg" />}
-								textAlign="left"
+								rightIcon={<Image src='/ui_icons/dropdown_arrow.svg' />}
+								textAlign='left'
 							>
 								<Text
-									variant="applicationText"
+									variant='applicationText'
 									color={selectedMilestone === -1 ? '#717A7C' : '#122224'}
 								>
 									{
@@ -449,18 +449,18 @@ function ModalContent({
 						</Menu>
 
 						<Flex
-							direction="row"
-							w="100%"
-							alignItems="start"
-							justify="space-between"
+							direction='row'
+							w='100%'
+							alignItems='start'
+							justify='space-between'
 							mt={8}
 						>
 							<Flex
-								w="70%"
-								direction="column">
+								w='70%'
+								direction='column'>
 								<SingleLineInput
-									label="Amount to be disbursed"
-									placeholder="100"
+									label='Amount to be disbursed'
+									placeholder='100'
 									value={funding}
 									onChange={
 										(e) => {
@@ -472,16 +472,16 @@ function ModalContent({
 										}
 									}
 									isError={error}
-									errorText="Required"
-									type="number"
+									errorText='Required'
+									type='number'
 								/>
 							</Flex>
 							<Flex
-								direction="column"
-								w="25%"
-								mt="20px">
+								direction='column'
+								w='25%'
+								mt='20px'>
 								<Dropdown
-									listItemsMinWidth="132px"
+									listItemsMinWidth='132px'
 									listItems={
 										[
 											{
@@ -494,8 +494,8 @@ function ModalContent({
 							</Flex>
 						</Flex>
 						<Button
-							variant="primary"
-							w="100%"
+							variant='primary'
+							w='100%'
 							my={10}
 							onClick={disburseLoading ? () => { } : sendFundsFromContract}
 							py={disburseLoading ? 2 : 0}
@@ -509,17 +509,17 @@ function ModalContent({
 			{
 				chosen === 1 && (
 					<Flex
-						direction="column"
-						justify="start"
-						align="start">
+						direction='column'
+						justify='start'
+						align='start'>
 						<Heading
-							variant="applicationHeading"
+							variant='applicationHeading'
 							mt={4}>
 							Sending funds from wallet linked to your account
 						</Heading>
 						<Button
 							mt={1}
-							variant="link"
+							variant='link'
 							_focus={{}}
 							onClick={
 								() => {
@@ -530,33 +530,33 @@ function ModalContent({
 							}
 						>
 							<Heading
-								variant="applicationHeading"
-								color="brand.500">
+								variant='applicationHeading'
+								color='brand.500'>
 								Change
 							</Heading>
 						</Button>
 
 						<Flex
-							direction="row"
-							justify="start"
-							align="center"
+							direction='row'
+							justify='start'
+							align='center'
 							mt={6}>
 							<Image
 								src={rewardAsset.icon}
-								boxSize="36px" />
+								boxSize='36px' />
 							<Flex
-								direction="column"
+								direction='column'
 								ml={2}>
 								<Text
-									variant="applicationText"
-									fontWeight="700">
+									variant='applicationText'
+									fontWeight='700'>
 									Funds Available
 								</Text>
 								<Text
-									fontSize="14px"
-									lineHeight="20px"
-									fontWeight="700"
-									color="brand.500"
+									fontSize='14px'
+									lineHeight='20px'
+									fontWeight='700'
+									color='brand.500'
 								>
 									{
 										`${formatAmount(walletBalance.toString(), rewardAssetDecimals)} ${rewardAsset?.label
@@ -568,19 +568,19 @@ function ModalContent({
 
 						<Box mt={8} />
 						<Heading
-							variant="applicationHeading"
-							color="#122224">
+							variant='applicationHeading'
+							color='#122224'>
 							Milestone
 						</Heading>
 						<Menu matchWidth>
 							<MenuButton
-								w="100%"
+								w='100%'
 								as={Button}
-								rightIcon={<Image src="/ui_icons/dropdown_arrow.svg" />}
-								textAlign="left"
+								rightIcon={<Image src='/ui_icons/dropdown_arrow.svg' />}
+								textAlign='left'
 							>
 								<Text
-									variant="applicationText"
+									variant='applicationText'
 									color={selectedMilestone === -1 ? '#717A7C' : '#122224'}
 								>
 									{
@@ -609,18 +609,18 @@ function ModalContent({
 						</Menu>
 
 						<Flex
-							direction="row"
-							w="100%"
-							alignItems="start"
-							justify="space-between"
+							direction='row'
+							w='100%'
+							alignItems='start'
+							justify='space-between'
 							mt={8}
 						>
 							<Flex
-								w="70%"
-								direction="column">
+								w='70%'
+								direction='column'>
 								<SingleLineInput
-									label="Amount to be disbursed"
-									placeholder="100"
+									label='Amount to be disbursed'
+									placeholder='100'
 									value={funding}
 									onChange={
 										(e) => {
@@ -632,16 +632,16 @@ function ModalContent({
 										}
 									}
 									isError={error}
-									errorText="Required"
-									type="number"
+									errorText='Required'
+									type='number'
 								/>
 							</Flex>
 							<Flex
-								direction="column"
-								w="25%"
-								mt="20px">
+								direction='column'
+								w='25%'
+								mt='20px'>
 								<Dropdown
-									listItemsMinWidth="132px"
+									listItemsMinWidth='132px'
 									listItems={
 										[
 											{
@@ -654,12 +654,12 @@ function ModalContent({
 							</Flex>
 						</Flex>
 						<Flex
-							w="100%"
-							direction="column"
+							w='100%'
+							direction='column'
 							mt={8}>
 							<SingleLineInput
-								label="Wallet address (Funds will be sent to this address)"
-								placeholder="0x230fb4c4d462eEF9e6790447Cf57271E519bB697"
+								label='Wallet address (Funds will be sent to this address)'
+								placeholder='0x230fb4c4d462eEF9e6790447Cf57271E519bB697'
 								value={applicantWalletAddress}
 								onChange={
 									(e) => {
@@ -671,12 +671,12 @@ function ModalContent({
 									}
 								}
 								isError={error}
-								errorText="Required"
+								errorText='Required'
 							/>
 						</Flex>
 						<Button
-							variant="primary"
-							w="100%"
+							variant='primary'
+							w='100%'
 							my={10}
 							onClick={disburseP2PLoading ? () => { } : sendFundsFromWallet}
 							py={disburseP2PLoading ? 2 : 0}

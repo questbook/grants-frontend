@@ -1,9 +1,12 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import ErrorToast from 'src/components/ui/toasts/errorToast'
+import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import useChainId from 'src/hooks/utils/useChainId'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash, parseAmount } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
@@ -11,15 +14,12 @@ import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import ErrorToast from '../components/ui/toasts/errorToast'
-import useQBContract from './contracts/useQBContract'
-import useChainId from './utils/useChainId'
 
 export default function useEditGrant(
 	data: any,
 	grantId?: string,
 ) {
-	console.log(grantId)
+	// console.log(grantId)
 	const [error, setError] = React.useState<string>()
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
@@ -49,7 +49,7 @@ export default function useEditGrant(
 
 	useEffect(() => {
 		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		console.log('rree', isBiconomyLoading, biconomyLoading)
+		// console.log('rree', isBiconomyLoading, biconomyLoading)
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
 			biconomy.networkId.toString() === chainId.toString()) {
 			setIsBiconomyInitialised(true)
@@ -83,7 +83,7 @@ export default function useEditGrant(
 	}, [applicationReviewContract])
 
 	useEffect(() => {
-		console.log('RErERERERE', incorrectNetwork, error, loading)
+		// console.log('RErERERERE', incorrectNetwork, error, loading)
 		if(incorrectNetwork) {
 			return
 		}
@@ -95,11 +95,11 @@ export default function useEditGrant(
 		if(loading) {
 			return
 		}
-		// console.log('calling editGrant');
+		// // console.log('calling editGrant');
 
 		async function validate() {
 			setLoading(true)
-			console.log('calling validate', data)
+			// console.log('calling validate', data)
 			try {
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
 					throw new Error('Zero wallet is not ready')
@@ -149,7 +149,7 @@ export default function useEditGrant(
 					rubricHash = auxRubricHash
 				}
 
-				// console.log('rubricHash', rubricHash);
+				// // console.log('rubricHash', rubricHash);
 
 				// const rubricTxn = await applicationReviewContract.setRubrics(
 				// 	workspace!.id,
@@ -162,7 +162,7 @@ export default function useEditGrant(
 				// )
 				// await rubricTxn.wait()
 				// const createGrantTransactionData = await createGrantTransaction.wait()
-				console.log('rubric hash', grantId, grantFactoryContract.address)
+				// console.log('rubric hash', grantId, grantFactoryContract.address)
 				const rubricTxn = await sendGaslessTransaction(
 					biconomy,
 					applicationReviewContract,
@@ -186,7 +186,7 @@ export default function useEditGrant(
 					throw new Error("Transaction didn't go through")
 				}
 
-				console.log('YYTTE', ipfsHash)
+				// console.log('YYTTE', ipfsHash)
 
 				const createGrantTransaction = await sendGaslessTransaction(
 					biconomy,
@@ -229,7 +229,7 @@ export default function useEditGrant(
 		}
 
 		try {
-			console.log('ttttt', data, transactionData, accountData, workspace, currentChainId, chainId)
+			// console.log('ttttt', data, transactionData, accountData, workspace, currentChainId, chainId)
 			if(!data) {
 				return
 			}

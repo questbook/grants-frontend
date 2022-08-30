@@ -1,5 +1,6 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react'
-import { Container, Flex, Heading, Spacer, Text } from '@chakra-ui/react'
+import { LinkIcon } from '@chakra-ui/icons'
+import { Button, Container, Flex, Heading, Spacer, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import DoaDashTableEmptyState from 'src/components/dao_dashboard/empty_states/dao_dashboard'
@@ -13,9 +14,10 @@ import {
 	GetAllGrantsForCreatorQuery,
 	useGetAllGrantsForCreatorQuery,
 } from 'src/generated/graphql'
+import NavbarLayout from 'src/layout/navbarLayout'
 import { UNIX_TIMESTAMP_MAX, UNIX_TIMESTAMP_MIN } from 'src/utils/generics'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import NavbarLayout from '../../src/layout/navbarLayout'
+import InviteModal from 'src/v2/components/InviteModal'
 
 // const Tabledata = [
 // 	{
@@ -74,21 +76,22 @@ function DaoDashboard() {
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
 	const router = useRouter()
 
+	const [isInviteModalOpen, setIsInviteModalOpen] = useState(false)
 	const [chainID, setChainId] = React.useState<SupportedChainId>()
 	const [daoID, setDaoId] = React.useState<string>()
 
 	const [daoStats, setDaoStats] = useState<{
-    totalApplicants: number;
-    uniqueApplicants: number;
-    repeatApplicants: number;
-		winnerApplicants: number;
-		tat: number;
-    everydayApplications: any[];
-    everydayFunding: any[];
-    totalFunding: number;
-    grantsFunding: any;
-		grantsPending: any;
-		grantsTat: any;
+    totalApplicants: number
+    uniqueApplicants: number
+    repeatApplicants: number
+		winnerApplicants: number
+		tat: number
+    everydayApplications: any[]
+    everydayFunding: any[]
+    totalFunding: number
+    grantsFunding: any
+		grantsPending: any
+		grantsTat: any
   }>()
 
 	const [grants, setGrants] = React.useState<
@@ -334,32 +337,37 @@ function DaoDashboard() {
 	return (
 		<>
 			<Container
-				maxW="100%"
-				display="flex"
-				px="70px"
-				mb="300px"
-				height="100%">
+				maxW='100%'
+				display='flex'
+				px='70px'
+				mb='300px'
+				height='100%'>
 				<Container
 					flex={1}
-					display="flex"
-					flexDirection="column"
-					maxW="1116px"
-					alignItems="stretch"
+					display='flex'
+					flexDirection='column'
+					maxW='1116px'
+					alignItems='stretch'
 					pb={8}
 					px={10}
-					pos="relative"
+					pos='relative'
 				>
 					<Flex
-						direction="row"
+						direction='row'
 						mt={5}
-						align="center">
+						align='center'>
 						<Text
-							variant="heading"
-							mr="14">
-              DAO Stats
+							variant='heading'
+							mr='14'>
+							DAO Stats
 						</Text>
 						<Spacer />
-
+						<Button
+							onClick={() => setIsInviteModalOpen(true)}
+							leftIcon={<LinkIcon />}
+							variant='primaryV2' >
+							Create invite link
+						</Button>
 						{/* <Menu
 							placement="bottom"
 							// align="right"
@@ -438,12 +446,12 @@ function DaoDashboard() {
 						tat={daoStats?.tat ?? 0}
 					/>
 
-					<Flex mt="4">
+					<Flex mt='4'>
 						<Flex
-							display="flex"
-							flexDirection="row"
-							alignItems="flex-start"
-							gap="20px"
+							display='flex'
+							flexDirection='row'
+							alignItems='flex-start'
+							gap='20px'
 						>
 							<BarGraph
 								applications={daoStats?.everydayApplications ?? []}
@@ -451,8 +459,8 @@ function DaoDashboard() {
 							/>
 
 							<LineGraph
-								app_count={''}
-								title={''}
+								app_count=''
+								title=''
 								fundings={daoStats?.everydayFunding ?? []}
 								totalFunding={daoStats?.totalFunding ?? 0}
 							/>
@@ -460,9 +468,9 @@ function DaoDashboard() {
 					</Flex>
 
 					<Heading
-						fontSize="24px"
-						fontWeight="700"
-						mt="10">
+						fontSize='24px'
+						fontWeight='700'
+						mt='10'>
 						{
 							!grants || grants.filter(item => !daoStats?.grantsPending[item.id] || daoStats?.grantsPending[item.id] === 0).length > 0 ?
 								'Grants' :
@@ -470,16 +478,16 @@ function DaoDashboard() {
 						}
 					</Heading>
 
-					<Flex mt="2">
+					<Flex mt='2'>
 						<Flex
-							direction="column"
-							width="100%"
-							align="center"
-							borderRadius="8px 8px 0px 0px"
-							borderBottom="1px solid #E8E9E9"
-							background="#FFFFFF"
-							height="56px"
-							boxShadow="0px 0px 8px rgba(18, 34, 36, 0.15)"
+							direction='column'
+							width='100%'
+							align='center'
+							borderRadius='8px 8px 0px 0px'
+							borderBottom='1px solid #E8E9E9'
+							background='#FFFFFF'
+							height='56px'
+							boxShadow='0px 0px 8px rgba(18, 34, 36, 0.15)'
 						>
 							<Header />
 							{
@@ -502,12 +510,12 @@ function DaoDashboard() {
 								) : (
 									<>
 										<Flex
-											mt="15px"
-											direction="column"
-											w="100%"
-											border="1px solid #E8E9E9"
-											align="stretch"
-											background="#FFFFFF"
+											mt='15px'
+											direction='column'
+											w='100%'
+											border='1px solid #E8E9E9'
+											align='stretch'
+											background='#FFFFFF'
 										>
 											<DoaDashTableEmptyState />
 										</Flex>
@@ -518,6 +526,9 @@ function DaoDashboard() {
 					</Flex>
 				</Container>
 			</Container>
+			<InviteModal
+				isOpen={isInviteModalOpen}
+				onClose={() => setIsInviteModalOpen(false)} />
 		</>
 	)
 }

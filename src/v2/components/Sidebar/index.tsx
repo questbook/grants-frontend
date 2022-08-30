@@ -7,10 +7,10 @@ import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { MinimalWorkspace } from 'src/types'
 import getTabFromPath from 'src/utils/tabUtils'
+import Domains from 'src/v2/components/Sidebar/Domains'
+import SidebarItem from 'src/v2/components/Sidebar/SidebarItem'
+import { TabIndex, useGetTabs } from 'src/v2/components/Sidebar/Tabs'
 import { useConnect } from 'wagmi'
-import Domains from './Domains'
-import SidebarItem from './SidebarItem'
-import { TabIndex, useGetTabs } from './Tabs'
 
 function Sidebar() {
 	const [topTabs, bottomTabs] = useGetTabs()
@@ -50,7 +50,7 @@ function Sidebar() {
 							const { data } = await allWorkspaces[0]({
 								variables: { actorId: userAddress },
 							})
-							console.log('THIS ISSSS DATA', data)
+							// console.log('THIS ISSSS DATA', data)
 							if(data && data.workspaceMembers.length > 0) {
 								resolve(data.workspaceMembers.map((w) => w.workspace))
 							} else {
@@ -64,7 +64,7 @@ function Sidebar() {
 				Promise.all(promises).then((values: any[]) => {
 					const allWorkspacesData = [].concat(...values) as MinimalWorkspace[]
 					const tempSet = new Set([...workspaces, ...allWorkspacesData])
-					console.log('WORKSPACE SET: ', tempSet)
+					// console.log('WORKSPACE SET: ', tempSet)
 					setWorkspaces(Array.from(tempSet))
 
 					const savedWorkspaceData = localStorage.getItem('currentWorkspace')
@@ -93,15 +93,15 @@ function Sidebar() {
 
 	return (
 		<Flex
-			position="sticky"
+			position='sticky'
 			left={0}
 			top={0}
-			h="calc(100vh - 64px)"
-			w="25vw"
-			bg="white"
-			direction="column"
-			overflowY="scroll"
-			border="1px solid #E0E0EC"
+			h='calc(100vh - 64px)'
+			w='25vw'
+			bg='white'
+			direction='column'
+			overflowY='scroll'
+			border='1px solid #E0E0EC'
 		>
 			{
 				workspace && workspace.id && accountData?.address && (
@@ -116,8 +116,8 @@ function Sidebar() {
 				)
 			}
 			<Flex
-				direction="column"
-				align="stretch"
+				direction='column'
+				align='stretch'
 				my={2}
 				mx={2}>
 				{
@@ -157,12 +157,12 @@ function Sidebar() {
 			</Flex>
 			{
 				workspaces.length > 0 && (
-					<Divider variant="sidebar" />
+					<Divider variant='sidebar' />
 				)
 			}
 			<Flex
-				direction="column"
-				align="stretch"
+				direction='column'
+				align='stretch'
 				my={2}
 				mx={2}>
 				{
@@ -184,7 +184,7 @@ function Sidebar() {
 				}
 			</Flex>
 			<Divider
-				variant="sidebar"
+				variant='sidebar'
 				mt={2} />
 		</Flex>
 	)

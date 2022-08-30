@@ -1,14 +1,14 @@
 import React, { useRef, useState } from 'react'
 import { Container } from '@chakra-ui/react'
+import Form from 'src/components/signup/create_grant/form'
+import TipsContainer from 'src/components/signup/create_grant/tips'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import Form from './form'
-import TipsContainer from './tips'
 
 function CreateGrant({
 	onSubmit, hasClicked,
 }: {
-  onSubmit: (data: any) => void;
-  hasClicked: boolean;
+  onSubmit: (data: any) => void
+  hasClicked: boolean
 }) {
 	const { data: accountData, nonce } = useQuestbookAccount()
 	const totalSteps = 4
@@ -20,7 +20,7 @@ function CreateGrant({
 	const changeCurrentStep = (data: any, step: number) => {
 		const newFormData = { ...formData }
 		if(data.pii) {
-			console.log(formData)
+			// console.log(formData)
 			if(formData.fields.applicantEmail) {
 				newFormData.fields.applicantEmail = { ...formData.fields.applicantEmail, pii: true }
 			}
@@ -51,7 +51,7 @@ function CreateGrant({
 			left: 0,
 			behavior: 'smooth',
 		})
-		// console.log(currentPageRef.current?.parentNode);
+		// // console.log(currentPageRef.current?.parentNode);
 		setCurrentStep(step)
 	}
 
@@ -86,10 +86,10 @@ function CreateGrant({
 	return (
 		<Container
 			ref={currentPageRef}
-			display="flex"
-			w="100%"
-			maxW="100%"
-			minH="calc(100vh - 64px)"
+			display='flex'
+			w='100%'
+			maxW='100%'
+			minH='calc(100vh - 64px)'
 			px={0}
 			py={0}
 		>

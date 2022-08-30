@@ -1,8 +1,8 @@
 import { useContext } from 'react'
 import { WebwalletContext } from 'pages/_app'
+import erc20Interface from 'src/contracts/abi/ERC20.json'
 import type { ERC20 } from 'src/generated/contracts/ERC20'
 import { useContract } from 'wagmi'
-import erc20Interface from '../../contracts/abi/ERC20.json'
 
 export default function useERC20Contract(address?: string) {
 	const { webwallet: signer } = useContext(WebwalletContext)!

@@ -15,8 +15,8 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
 import { SetupEvaluation } from 'src/v2/assets/custom chakra icons/SetupEvaluation'
-import AssignReviewers from './AssignReviewers'
-import RubricsForm from './RubricsForm'
+import AssignReviewers from 'src/v2/payouts/SetupEvaluationDrawer/AssignReviewers'
+import RubricsForm from 'src/v2/payouts/SetupEvaluationDrawer/RubricsForm'
 
 const SetupEvaluationDrawer = ({
 	isOpen,
@@ -26,12 +26,12 @@ const SetupEvaluationDrawer = ({
 	chainId,
 	setNetworkTransactionModalStep,
 }: {
-	isOpen: boolean;
-	onClose: () => void;
-	onComplete: () => void;
-	grantAddress: string;
-	chainId?: SupportedChainId;
-	setNetworkTransactionModalStep: (step: number | undefined) => void;
+	isOpen: boolean
+	onClose: () => void
+	onComplete: () => void
+	grantAddress: string
+	chainId?: SupportedChainId
+	setNetworkTransactionModalStep: (step: number | undefined) => void
 }) => {
 
 	const { subgraphClients, workspace, validatorApi } = useContext(ApiClientsContext)!
@@ -138,7 +138,7 @@ const SetupEvaluationDrawer = ({
 	const onInitiateTransaction = async() => {
 		setNetworkTransactionModalStep(0)
 
-		console.log('Workspace: ', workspace)
+		// console.log('Workspace: ', workspace)
 		if(!workspace || !workspace?.id || !grantAddress) {
 			return
 		}
@@ -153,11 +153,11 @@ const SetupEvaluationDrawer = ({
 				return
 			}
 			// Commenting this to accommodate gasless
-			// console.log('Chain ID: ', activeChain?.id, chainId)
+			// // console.log('Chain ID: ', activeChain?.id, chainId)
 			// if(activeChain?.id !== chainId) {
-			// 	console.log('switching')
+			// 	// console.log('switching')
 			// 	await switchNetwork!(chainId!)
-			// 	console.log('create workspace again on contract object update')
+			// 	// console.log('create workspace again on contract object update')
 			// 	setCallOnContractChange(true)
 			// 	setTimeout(() => {
 			// 		if(callOnContractChange && activeChain?.id !== chainId) {
@@ -200,13 +200,13 @@ const SetupEvaluationDrawer = ({
 
 			rubricHash = auxRubricHash
 			const workspaceId = Number(workspace?.id).toString()
-			console.log('Workspace ID: ', workspaceId)
+			// console.log('Workspace ID: ', workspaceId)
 
-			console.log('(Auto - assign) Workspace ID: ', workspaceId)
-			console.log('(Auto - assign) Grant Address: ', grantAddress)
-			console.log('(Auto - assign) Reviewers: ', reviewers.filter((reviewer: SidebarReviewer) => reviewer.isSelected).map((reviewer: SidebarReviewer) => reviewer.data.actorId))
-			console.log('(Auto - assign) Active Status: ', reviewers.filter((reviewer: SidebarReviewer) => reviewer.isSelected).map(() => true))
-			console.log('(Auto - assign) Reviewer Count: ', numOfReviewersPerApplication)
+			// console.log('(Auto - assign) Workspace ID: ', workspaceId)
+			// console.log('(Auto - assign) Grant Address: ', grantAddress)
+			// console.log('(Auto - assign) Reviewers: ', reviewers.filter((reviewer: SidebarReviewer) => reviewer.isSelected).map((reviewer: SidebarReviewer) => reviewer.data.actorId))
+			// console.log('(Auto - assign) Active Status: ', reviewers.filter((reviewer: SidebarReviewer) => reviewer.isSelected).map(() => true))
+			// console.log('(Auto - assign) Reviewer Count: ', numOfReviewersPerApplication)
 
 			const methodArgs = [
 				workspaceId,
@@ -229,7 +229,7 @@ const SetupEvaluationDrawer = ({
 
 			// setNetworkTransactionModalStep(3)
 			// const transactionData = await transaction.wait()
-			// console.log('RUBRIC AND AUTO ASSIGN: ', transactionData)
+			// // console.log('RUBRIC AND AUTO ASSIGN: ', transactionData)
 
 			const response = await sendGaslessTransaction(
 				biconomy,
@@ -254,7 +254,7 @@ const SetupEvaluationDrawer = ({
 
 			await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee))
 
-			console.log('Transaction DONE: ', receipt)
+			// console.log('Transaction DONE: ', receipt)
 
 			setNetworkTransactionModalStep(4)
 			setTimeout(() => {
@@ -293,24 +293,24 @@ const SetupEvaluationDrawer = ({
 			}
 			closeOnOverlayClick={false}
 		>
-			<DrawerOverlay maxH="100vh" />
+			<DrawerOverlay maxH='100vh' />
 			<DrawerContent
 				minW={528}
 				// h="min(90vh, 560px)"
-				overflowY="auto"
-				borderRadius="4px">
+				overflowY='auto'
+				borderRadius='4px'>
 				<Container
 					px={6}
 					py={4}
 					display='flex'
-					flexDirection={'column'}
+					flexDirection='column'
 					minH='100vh'
 				>
 
 
 					<Flex
-						direction="row"
-						align="center">
+						direction='row'
+						align='center'>
 						<Flex
 							bg='#D1D7F4'
 							h='48px'
@@ -363,19 +363,19 @@ const SetupEvaluationDrawer = ({
 
 					<Flex
 						my={4}
-						mx={'-24px'}
+						mx='-24px'
 						bg='#F0F0F7'
-						h={'1px'}
+						h='1px'
 					/>
 
 					<Flex
-						maxH={'calc(100vh - 32px)'}
-						overflowY={'scroll'}
-						direction={'column'}>
+						maxH='calc(100vh - 32px)'
+						overflowY='scroll'
+						direction='column'>
 						<Flex>
 							<Flex
 								flex={1}
-								direction={'column'}
+								direction='column'
 							>
 								<Box
 									bg={step === 0 ? '#785EF0' : '#E0E0EC'}
@@ -389,14 +389,14 @@ const SetupEvaluationDrawer = ({
 									{
 										step === 0 ? (
 											<FishEye
-												h={'14px'}
-												w={'14px'} />
+												h='14px'
+												w='14px' />
 										) : (
 											<Box
 												border='1px solid #E0E0EC'
 												borderRadius='20px'
-												height={'14px'}
-												width={'14px'}
+												height='14px'
+												width='14px'
 											/>
 										)
 									}
@@ -414,7 +414,7 @@ const SetupEvaluationDrawer = ({
 							<Box w={1} />
 							<Flex
 								flex={1}
-								direction={'column'}
+								direction='column'
 							>
 								<Box
 									bg={step === 1 || step === 2 ? '#785EF0' : '#E0E0EC'}
@@ -428,14 +428,14 @@ const SetupEvaluationDrawer = ({
 									{
 										step === 1 || step === 2 ? (
 											<FishEye
-												h={'14px'}
-												w={'14px'} />
+												h='14px'
+												w='14px' />
 										) : (
 											<Box
 												border='1px solid #E0E0EC'
 												borderRadius='20px'
-												height={'14px'}
-												width={'14px'}
+												height='14px'
+												width='14px'
 											/>
 										)
 									}
@@ -480,20 +480,20 @@ const SetupEvaluationDrawer = ({
 					</Flex>
 
 					<Flex
-						mt={'auto'}
+						mt='auto'
 						bg='#F0F0F7'
-						h={'1px'}
-						mx={'-24px'}
+						h='1px'
+						mx='-24px'
 					/>
 
 					<Flex
 						mt={4}
-						direction="row"
-						align="center">
+						direction='row'
+						align='center'>
 
 						<Button
 							ml='auto'
-							colorScheme={'brandv2'}
+							colorScheme='brandv2'
 							disabled={(step === 0 && !canContinue) || step === 1 && reviewers.filter(r => r.isSelected).length === 0}
 							onClick={
 								async() => {

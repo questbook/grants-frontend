@@ -11,21 +11,21 @@ import {
 } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import CopyIcon from 'src/components/ui/copy_icon'
+import MailTo from 'src/components/your_grants/mail_to/mailTo'
 import { CHAIN_INFO } from 'src/constants/chains'
-import { getFromIPFS, getUrlForIPFSHash } from 'src/utils/ipfsUtils'
-import {
-	getSupportedChainIdFromSupportedNetwork,
-	getSupportedChainIdFromWorkspace,
-} from 'src/utils/validationUtils'
-import ViewScoreDrawer from 'src/v2/payouts/ViewScoreDrawer/ViewScoreDrawer'
 import {
 	formatAmount,
 	getFieldString,
 	getFormattedFullDateFromUnixTimestamp,
 	truncateStringFromMiddle,
-} from '../../../utils/formattingUtils'
-import { getAssetInfo } from '../../../utils/tokenUtils'
-import MailTo from '../mail_to/mailTo'
+} from 'src/utils/formattingUtils'
+import { getFromIPFS, getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getAssetInfo } from 'src/utils/tokenUtils'
+import {
+	getSupportedChainIdFromSupportedNetwork,
+	getSupportedChainIdFromWorkspace,
+} from 'src/utils/validationUtils'
+import ViewScoreDrawer from 'src/v2/payouts/ViewScoreDrawer/ViewScoreDrawer'
 
 function Sidebar({
 	showHiddenData,
@@ -35,12 +35,12 @@ function Sidebar({
 	applicationData,
 	isBiconomyInitialised
 }: {
-  showHiddenData: () => void;
-  onAcceptApplicationClick: () => void;
-  onRejectApplicationClick: () => void;
-  onResubmitApplicationClick: () => void;
-  applicationData: any;
-  isBiconomyInitialised: boolean;
+  showHiddenData: () => void
+  onAcceptApplicationClick: () => void
+  onRejectApplicationClick: () => void
+  onResubmitApplicationClick: () => void
+  applicationData: any
+  isBiconomyInitialised: boolean
 }) {
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
@@ -48,7 +48,7 @@ function Sidebar({
 	const applicantEmail = getFieldString(applicationData, 'applicantEmail')
 	const applicantAddress = getFieldString(applicationData, 'applicantAddress')
 
-	console.log('Applicant address: ', applicantAddress)
+	// console.log('Applicant address: ', applicantAddress)
 
 	// const [rubricDrawerOpen, setRubricDrawerOpen] = useState(false)
 	// const [maximumPoints, setMaximumPoints] = React.useState(5)
@@ -69,8 +69,8 @@ function Sidebar({
 
 	// 	const initialRubrics = applicationData?.grant.rubric
 	// 	const newRubrics = [] as any[]
-	// 	console.log('initialRubrics', initialRubrics)
-	// 	console.log('application Data ', applicationData)
+	// 	// console.log('initialRubrics', initialRubrics)
+	// 	// console.log('application Data ', applicationData)
 	// 	initialRubrics?.items.forEach((initalRubric: any) => {
 	// 		newRubrics.push({
 	// 			name: initalRubric.title,
@@ -104,7 +104,7 @@ function Sidebar({
 			const data = JSON.parse(d)
 			return data
 		} catch(e) {
-			console.log('incorrect review', e)
+			// console.log('incorrect review', e)
 			return {}
 		}
 	}
@@ -125,20 +125,20 @@ function Sidebar({
 			}
 		})
 
-		console.log('reviewsData', reviewsData)
-		console.log('reviewsData', reviewsDataMap)
+		// console.log('reviewsData', reviewsData)
+		// console.log('reviewsData', reviewsDataMap)
 		setReviews(reviewsDataMap)
 	}
 
 	useEffect(() => {
-		console.log('appl side', applicationData)
+		// console.log('appl side', applicationData)
 		if(applicationData?.reviews?.length) {
 			getReviews(applicationData.reviews)
 		}
 	}, [applicationData])
 
 	const totalScore = (items?: any[]) => {
-		console.log(items)
+		// console.log(items)
 		let s = 0
 		items?.forEach((item) => {
 			s += item.rating ?? 0
@@ -170,40 +170,40 @@ function Sidebar({
 	return (
 		<>
 			<Flex
-				bg="white"
-				border="2px solid #D0D3D3"
+				bg='white'
+				border='2px solid #D0D3D3'
 				borderRadius={8}
 				w={340}
-				direction="column"
-				alignItems="stretch"
-				px="28px"
-				py="22px"
+				direction='column'
+				alignItems='stretch'
+				px='28px'
+				py='22px'
 			>
 				<Heading
-					fontSize="16px"
-					fontWeight="400"
-					color="#414E50"
-					lineHeight="26px"
-					fontStyle="normal"
+					fontSize='16px'
+					fontWeight='400'
+					color='#414E50'
+					lineHeight='26px'
+					fontStyle='normal'
 				>
-          Application Details
+					Application Details
 				</Heading>
 				<Flex
-					direction="row"
-					justify="start"
-					w="full"
+					direction='row'
+					justify='start'
+					w='full'
 					mt={6}
-					align="center">
+					align='center'>
 					<Image
-						h="45px"
-						w="45px"
+						h='45px'
+						w='45px'
 						src={icon}
 					/>
 					<Box mx={3} />
 					<Tooltip label={applicantAddress}>
 						<Heading
-							variant="applicationHeading"
-							color="brand.500">
+							variant='applicationHeading'
+							color='brand.500'>
 							{truncateStringFromMiddle(applicantAddress)}
 						</Heading>
 					</Tooltip>
@@ -212,54 +212,54 @@ function Sidebar({
 				</Flex>
 				<Box my={4} />
 				<Flex
-					direction="row"
-					justify="space-between"
-					w="full"
-					align="center">
+					direction='row'
+					justify='space-between'
+					w='full'
+					align='center'>
 					<Text
-						variant="applicationText"
-						lineHeight="32px">
-            Name
+						variant='applicationText'
+						lineHeight='32px'>
+						Name
 					</Text>
 					<Heading
-						variant="applicationHeading"
-						lineHeight="32px">
+						variant='applicationHeading'
+						lineHeight='32px'>
 						{getFieldString(applicationData, 'applicantName')}
 					</Heading>
 				</Flex>
 				<Flex
-					direction="row"
-					justify="space-between"
-					w="full"
-					align="center">
+					direction='row'
+					justify='space-between'
+					w='full'
+					align='center'>
 					<Text
-						variant="applicationText"
-						lineHeight="32px">
-            Email
+						variant='applicationText'
+						lineHeight='32px'>
+						Email
 					</Text>
 					<Heading
-						variant="applicationHeading"
-						lineHeight="32px">
+						variant='applicationHeading'
+						lineHeight='32px'>
 						{
 							applicantEmail
 							 ? (
 									<>
-										{applicantEmail}
-										<MailTo applicantEmail={applicantEmail} />
-									</>
+									{applicantEmail}
+									<MailTo applicantEmail={applicantEmail} />
+        </>
 								) : (
 									<Heading
-										variant="applicationHeading"
-										lineHeight="32px"
+										variant='applicationHeading'
+										lineHeight='32px'
 										onClick={showHiddenData}
-										cursor="pointer"
+										cursor='pointer'
 									>
-                  Hidden
+										Hidden
 										{' '}
 										<Text
-											color="#6200EE"
-											display="inline">
-                    View
+											color='#6200EE'
+											display='inline'>
+											View
 										</Text>
 									</Heading>
 								)
@@ -267,45 +267,45 @@ function Sidebar({
 					</Heading>
 				</Flex>
 				<Flex
-					direction="row"
-					justify="space-between"
-					w="full"
-					align="center">
+					direction='row'
+					justify='space-between'
+					w='full'
+					align='center'>
 					<Text
-						variant="applicationText"
-						lineHeight="32px">
-            Sent On
+						variant='applicationText'
+						lineHeight='32px'>
+						Sent On
 					</Text>
 					<Heading
-						variant="applicationHeading"
-						lineHeight="32px">
+						variant='applicationHeading'
+						lineHeight='32px'>
 						{getFormattedFullDateFromUnixTimestamp(applicationData?.createdAtS)}
 					</Heading>
 				</Flex>
 				<Flex
-					direction="column"
-					w="full"
-					align="start"
+					direction='column'
+					w='full'
+					align='start'
 					mt={4}>
 					<Box
 						// variant="dashed"
-						border="1px dashed #A0A7A7"
+						border='1px dashed #A0A7A7'
 						h={0}
-						w="100%"
+						w='100%'
 						m={0}
 					/>
 					<Text
-						fontSize="10px"
+						fontSize='10px'
 						mt={6}
-						lineHeight="12px">
-            FUNDING REQUESTED
+						lineHeight='12px'>
+						FUNDING REQUESTED
 					</Text>
 					<Text
-						fontSize="20px"
-						lineHeight="40px"
-						fontWeight="500"
-						fontStyle="normal"
-						color="#122224"
+						fontSize='20px'
+						lineHeight='40px'
+						fontWeight='500'
+						fontStyle='normal'
+						color='#122224'
 					>
 						{
 							applicationData
@@ -319,59 +319,59 @@ function Sidebar({
 					</Text>
 					<Box
 						// variant="dashed"
-						border="1px dashed #A0A7A7"
+						border='1px dashed #A0A7A7'
 						h={0}
-						w="100%"
-						mt="17px"
+						w='100%'
+						mt='17px'
 						mb={0}
 					/>
 				</Flex>
 				<Button
 					disabled={!isBiconomyInitialised}
 					onClick={() => onAcceptApplicationClick()}
-					variant="primary"
+					variant='primary'
 					mt={7}
 					display={applicationData?.state === 'submitted' ? '' : 'none'}
 				>
-          Approve Application
+					Approve Application
 				</Button>
 				<Button
 					onClick={() => onAcceptApplicationClick()}
-					variant="primary"
+					variant='primary'
 					mt={7}
 					disabled={applicationData?.state === 'resubmit' || !isBiconomyInitialised}
 					display={applicationData?.state === 'resubmit' ? '' : 'none'}
 				>
-          Accept Application
+					Accept Application
 				</Button>
 				<Text
 					mt={7}
-					fontSize="sm"
-					lineHeight="4"
-					align="center"
-					color="#717A7C"
+					fontSize='sm'
+					lineHeight='4'
+					align='center'
+					color='#717A7C'
 					display={applicationData?.state === 'resubmit' ? '' : 'none'}
 				>
-          This application has been asked for resubmission. The applicant has been
-          notified to resubmit.
+					This application has been asked for resubmission. The applicant has been
+					notified to resubmit.
 				</Text>
 				<Button
 					disabled={!isBiconomyInitialised}
 					onClick={() => onResubmitApplicationClick()}
-					variant="resubmit"
+					variant='resubmit'
 					mt={4}
 					display={applicationData?.state === 'submitted' ? '' : 'none'}
 				>
-          Ask to Resubmit
+					Ask to Resubmit
 				</Button>
 				<Button
 					disabled={!isBiconomyInitialised}
 					onClick={() => onRejectApplicationClick()}
-					variant="reject"
+					variant='reject'
 					mt={4}
 					display={applicationData?.state === 'submitted' ? '' : 'none'}
 				>
-          Reject Application
+					Reject Application
 				</Button>
 			</Flex>
 
@@ -403,18 +403,18 @@ Score
 
 
 			<Flex
-				bg="white"
-				border="2px solid #D0D3D3"
+				bg='white'
+				border='2px solid #D0D3D3'
 				borderRadius={8}
 				w={340}
-				direction="column"
-				alignItems="stretch"
-				px="28px"
-				py="22px"
+				direction='column'
+				alignItems='stretch'
+				px='28px'
+				py='22px'
 			>
-				<Flex direction="column">
-					<Text fontWeight="700">
-Score
+				<Flex direction='column'>
+					<Text fontWeight='700'>
+						Score
 					</Text>
 					{/* <Text mt={2}>
 Assign reviewers for application
@@ -428,10 +428,10 @@ Assign Reviewers
 					</Button> */}
 				</Flex>
 
-				<Flex direction="column">
+				<Flex direction='column'>
 					<Text
-						mb="14px"
-						fontWeight="700" />
+						mb='14px'
+						fontWeight='700' />
 					{
 						applicationData
 							?.reviewers
@@ -447,9 +447,9 @@ Assign Reviewers
 								return (
 									<Flex
 										key={reviewer.email}
-										w="100%"
-										h="64px"
-										align="center"
+										w='100%'
+										h='64px'
+										align='center'
 										mt={2}
 										py={3}
 										cursor='pointer'
@@ -461,24 +461,24 @@ Assign Reviewers
 											}
 										}
 									>
-										<Image src="/ui_icons/reviewer_account.svg" />
+										<Image src='/ui_icons/reviewer_account.svg' />
 										<Flex
-											direction="column"
+											direction='column'
 											ml={4}
-											justifyContent="center">
+											justifyContent='center'>
 											<Text
-												fontWeight="700"
-												color="#122224"
-												fontSize="14px"
-												lineHeight="16px"
+												fontWeight='700'
+												color='#122224'
+												fontSize='14px'
+												lineHeight='16px'
 											>
 												{reviewer?.name}
 											</Text>
 											<Text
 												mt={1}
-												color="#717A7C"
-												fontSize="12px"
-												lineHeight="16px">
+												color='#717A7C'
+												fontSize='12px'
+												lineHeight='16px'>
 												{totalScore(reviews ? reviews[reviewerId].items : [])}
 											</Text>
 										</Flex>

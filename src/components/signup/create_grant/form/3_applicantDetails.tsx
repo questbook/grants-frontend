@@ -8,14 +8,14 @@ import {
 	Image,
 	Text,
 } from '@chakra-ui/react'
+import Badge from 'src/components/ui/badge'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
-import applicantDetailsList from '../../../../constants/applicantDetailsList'
-import Badge from '../../../ui/badge'
+import applicantDetailsList from 'src/constants/applicantDetailsList'
 
 interface Props {
-  onSubmit: (data: any) => void;
-  constructCache: (data: any) => void;
-  cacheKey: string;
+  onSubmit: (data: any) => void
+  constructCache: (data: any) => void
+  cacheKey: string
 }
 
 function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
@@ -221,7 +221,7 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 		}
 
 		const formData = JSON.parse(data || '{}')
-		console.log('Data from cache: ', formData)
+		// console.log('Data from cache: ', formData)
 
 		if(formData?.detailsRequired) {
 			setDetailsRequired(formData?.detailsRequired)
@@ -272,19 +272,19 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 		<>
 			<Flex
 				py={12}
-				direction="column">
+				direction='column'>
 				<Text
-					variant="heading"
-					fontSize="36px"
-					lineHeight="48px">
-          What details should the applicants provide?
+					variant='heading'
+					fontSize='36px'
+					lineHeight='48px'>
+					What details should the applicants provide?
 				</Text>
 
 				<Grid
 					mt={12}
-					templateColumns="repeat(2, 1fr)"
+					templateColumns='repeat(2, 1fr)'
 					gap={5}
-					fontWeight="bold"
+					fontWeight='bold'
 				>
 					{
 						detailsRequired.map((detail, index) => {
@@ -307,8 +307,8 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 													)
 												}
 											}
-											label="Add Custom Field"
-											tooltip="Get additional details in your application form."
+											label='Add Custom Field'
+											tooltip='Get additional details in your application form.'
 										/>
 									</GridItem>
 								)
@@ -330,8 +330,8 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 													setDefaultMilestoneFields([])
 												}
 											}
-											label="Milestones"
-											tooltip="Add milestones for the applicant to complete"
+											label='Milestones'
+											tooltip='Add milestones for the applicant to complete'
 										/>
 									</GridItem>
 								)
@@ -371,9 +371,9 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 											index > 0 && (
 												<Flex
 													mt={2}
-													mb="-21px"
-													gap="2"
-													justifyContent="flex-end">
+													mb='-21px'
+													gap='2'
+													justifyContent='flex-end'>
 													<Box
 														onClick={
 															() => {
@@ -382,25 +382,25 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 																setCustomFields(newCustomFields)
 															}
 														}
-														display="flex"
-														alignItems="center"
-														cursor="pointer"
+														display='flex'
+														alignItems='center'
+														cursor='pointer'
 														zIndex={1}
 													>
 														<Image
-															h="12px"
-															w="12px"
-															src="/ui_icons/delete_red.svg"
-															mr="6px"
-															mt="-2px"
+															h='12px'
+															w='12px'
+															src='/ui_icons/delete_red.svg'
+															mr='6px'
+															mt='-2px'
 														/>
 														<Text
-															fontWeight="500"
-															fontSize="14px"
-															color="#DF5252"
-															lineHeight="20px"
+															fontWeight='500'
+															fontSize='14px'
+															color='#DF5252'
+															lineHeight='20px'
 														>
-                        Delete
+															Delete
 														</Text>
 													</Box>
 												</Flex>
@@ -417,9 +417,9 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 													setCustomFields(newCustomFields)
 												}
 											}
-											placeholder="Field Label"
+											placeholder='Field Label'
 											isError={customField.isError}
-											errorText="Required"
+											errorText='Required'
 											maxLength={300}
 										/>
 										<Box mt={2} />
@@ -428,8 +428,8 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 							}
 							<Flex
 								mt={2}
-								gap="2"
-								justifyContent="flex-start">
+								gap='2'
+								justifyContent='flex-start'>
 								<Box
 									onClick={
 										() => {
@@ -443,23 +443,23 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 											setCustomFields(newCustomFields)
 										}
 									}
-									display="flex"
-									alignItems="center"
-									cursor="pointer"
+									display='flex'
+									alignItems='center'
+									cursor='pointer'
 								>
 									<Image
-										h="16px"
-										w="15px"
-										src="/ui_icons/plus_circle.svg"
-										mr="6px"
+										h='16px'
+										w='15px'
+										src='/ui_icons/plus_circle.svg'
+										mr='6px'
 									/>
 									<Text
-										fontWeight="500"
-										fontSize="14px"
-										color="#8850EA"
-										lineHeight="20px"
+										fontWeight='500'
+										fontSize='14px'
+										color='#8850EA'
+										lineHeight='20px'
 									>
-                  Add another question
+										Add another question
 									</Text>
 								</Box>
 							</Flex>
@@ -473,16 +473,16 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 						<>
 							<Flex
 								flex={1}
-								direction="column">
+								direction='column'>
 								<Text
-									lineHeight="20px"
-									fontWeight="bold">
-                Milestones
+									lineHeight='20px'
+									fontWeight='bold'>
+									Milestones
 								</Text>
 							</Flex>
 							<Flex
 								mt={1}
-								maxW="420px">
+								maxW='420px'>
 								<Badge
 									isActive={!multipleMilestones}
 									onClick={
@@ -493,16 +493,16 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 											setMultipleMilestones(false)
 										}
 									}
-									label="Single Milestone"
-									inActiveVariant="solid"
-									variant="buttonGroupStart"
+									label='Single Milestone'
+									inActiveVariant='solid'
+									variant='buttonGroupStart'
 								/>
 								<Badge
 									isActive={multipleMilestones}
 									onClick={() => setMultipleMilestones(true)}
-									label="Multiple Milestones"
-									inActiveVariant="solid"
-									variant="buttonGroupEnd"
+									label='Multiple Milestones'
+									inActiveVariant='solid'
+									variant='buttonGroupEnd'
 								/>
 							</Flex>
 
@@ -512,9 +512,9 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 									<>
 										<Flex
 											mt={2}
-											mb="-21px"
-											gap="2"
-											justifyContent="flex-end">
+											mb='-21px'
+											gap='2'
+											justifyContent='flex-end'>
 											<Box
 												onClick={
 													() => {
@@ -525,25 +525,25 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 														setDefaultMilestoneFields(newDefaultMilestoneFields)
 													}
 												}
-												display="flex"
-												alignItems="center"
-												cursor="pointer"
+												display='flex'
+												alignItems='center'
+												cursor='pointer'
 												zIndex={1}
 											>
 												<Image
-													h="12px"
-													w="12px"
-													src="/ui_icons/delete_red.svg"
-													mr="6px"
-													mt="-2px"
+													h='12px'
+													w='12px'
+													src='/ui_icons/delete_red.svg'
+													mr='6px'
+													mt='-2px'
 												/>
 												<Text
-													fontWeight="500"
-													fontSize="14px"
-													color="#DF5252"
-													lineHeight="20px"
+													fontWeight='500'
+													fontSize='14px'
+													color='#DF5252'
+													lineHeight='20px'
 												>
-                      Delete
+													Delete
 												</Text>
 											</Box>
 										</Flex>
@@ -560,9 +560,9 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 													setDefaultMilestoneFields(newDefaultMilestoneFields)
 												}
 											}
-											placeholder="Field Label"
+											placeholder='Field Label'
 											isError={defaultMilestoneField.isError}
-											errorText="Required"
+											errorText='Required'
 											maxLength={250}
 										/>
 										<Box mt={1} />
@@ -573,10 +573,10 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 								(multipleMilestones
               || (!multipleMilestones && defaultMilestoneFields.length === 0)) && (
 									<Flex
-										mt="-4px"
-										gap="2"
-										justifyContent="flex-start">
-										<Box
+										mt='-4px'
+										gap='2'
+										justifyContent='flex-start'>
+	<Box
 											onClick={
 												() => {
 													const newDefaultMilestoneFields = [
@@ -589,26 +589,26 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 													setDefaultMilestoneFields(newDefaultMilestoneFields)
 												}
 											}
-											display="flex"
-											alignItems="center"
-											cursor="pointer"
+											display='flex'
+											alignItems='center'
+											cursor='pointer'
 										>
 											<Image
-												h="16px"
-												w="15px"
-												src="/ui_icons/plus_circle.svg"
-												mr="6px"
+												h='16px'
+												w='15px'
+												src='/ui_icons/plus_circle.svg'
+												mr='6px'
 											/>
 											<Text
-												fontWeight="500"
-												fontSize="14px"
-												color="#8850EA"
-												lineHeight="20px"
+												fontWeight='500'
+												fontSize='14px'
+												color='#8850EA'
+												lineHeight='20px'
 											>
-                    Add a milestone
+			Add a milestone
 											</Text>
 										</Box>
-									</Flex>
+</Flex>
 								)
 							}
 							<Box mt={6} />
@@ -907,10 +907,10 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 				</Flex> */}
 			</Flex>
 			<Button
-				mt="auto"
-				variant="primary"
+				mt='auto'
+				variant='primary'
 				onClick={handleOnSubmit}>
-        Continue
+				Continue
 			</Button>
 		</>
 	)

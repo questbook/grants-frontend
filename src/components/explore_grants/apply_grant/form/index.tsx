@@ -13,44 +13,44 @@ import { GrantApplicationRequest } from '@questbook/service-validator-client'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import { useRouter } from 'next/router'
 import { WebwalletContext } from 'pages/_app'
+import ApplicantDetails from 'src/components/explore_grants/apply_grant/form/1_applicantDetails'
+import AboutTeam from 'src/components/explore_grants/apply_grant/form/2_aboutTeam'
+import AboutProject from 'src/components/explore_grants/apply_grant/form/3_aboutProject'
+import Funding from 'src/components/explore_grants/apply_grant/form/4_funding'
+import CustomFields from 'src/components/explore_grants/apply_grant/form/5_customFields'
 import Loader from 'src/components/ui/loader'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import { SupportedChainId } from 'src/constants/chains'
+import strings from 'src/constants/strings.json'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useSubmitApplication from 'src/hooks/useSubmitApplication'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
+import { GrantApplicationFieldsSubgraph } from 'src/types/application'
+import { parseAmount } from 'src/utils/formattingUtils'
 import { addAuthorizedUser } from 'src/utils/gaslessUtils'
 import { isValidEmail } from 'src/utils/validationUtils'
-import strings from '../../../../constants/strings.json'
-import { GrantApplicationFieldsSubgraph } from '../../../../types/application'
-import { parseAmount } from '../../../../utils/formattingUtils'
-import ApplicantDetails from './1_applicantDetails'
-import AboutTeam from './2_aboutTeam'
-import AboutProject from './3_aboutProject'
-import Funding from './4_funding'
-import CustomFields from './5_customFields'
 
 interface Props {
   // onSubmit: (data: any) => void;
-  chainId: SupportedChainId | undefined;
-  title: string;
-  grantId: string;
-  daoLogo: string;
-  workspaceId: string;
-  isGrantVerified: boolean;
-  funding: string;
-  rewardAmount: string;
-  rewardCurrency: string;
-  rewardDecimal: number | undefined;
-  rewardCurrencyCoin: string;
-  rewardCurrencyAddress: string | undefined;
-  grantRequiredFields: string[];
-  piiFields: string[];
-  members: any[];
-  acceptingApplications: boolean;
-  shouldShowButton: boolean;
-  defaultMilestoneFields: any[];
+  chainId: SupportedChainId | undefined
+  title: string
+  grantId: string
+  daoLogo: string
+  workspaceId: string
+  isGrantVerified: boolean
+  funding: string
+  rewardAmount: string
+  rewardCurrency: string
+  rewardDecimal: number | undefined
+  rewardCurrencyCoin: string
+  rewardCurrencyAddress: string | undefined
+  grantRequiredFields: string[]
+  piiFields: string[]
+  members: any[]
+  acceptingApplications: boolean
+  shouldShowButton: boolean
+  defaultMilestoneFields: any[]
 }
 
 const MINIMUM_ALLOWED_LENGTH = 250
@@ -200,9 +200,9 @@ function Form({
 			addAuthorizedUser(signer?.address)
 				.then(() => {
 					setShouldRefreshNonce(true)
-					console.log('Added authorized user', signer.address)
+					// console.log('Added authorized user', signer.address)
 				})
-				.catch((err) => console.log("Couldn't add authorized user", err))
+				// .catch((err) => console.log("Couldn't add authorized user", err))
 		}
 	}, [signer, nonce])
 
@@ -218,11 +218,11 @@ function Form({
 	}, [router, txnData])
 
 	const handleOnSubmit = async() => {
-		console.log(grantRequiredFields)
+		// console.log(grantRequiredFields)
 		let error = false
 		if(applicantName === '' && grantRequiredFields.includes('applicantName')) {
 			setApplicantNameError(true)
-			console.log('Error name')
+			// console.log('Error name')
 			error = true
 		}
 
@@ -232,7 +232,7 @@ function Form({
 		) {
 
 			setApplicantEmailError(true)
-			console.log('Error email')
+			// console.log('Error email')
 			error = true
 		}
 
@@ -246,7 +246,7 @@ function Form({
       && grantRequiredFields.includes('teamMembers')
 		) {
 			setTeamMembersError(true)
-			console.log('Error teamMembers')
+			// console.log('Error teamMembers')
 			error = true
 		}
 
@@ -258,7 +258,7 @@ function Form({
         && grantRequiredFields.includes('memberDetails')
 			) {
 				newMembersDescriptionArray[index].isError = true
-				console.log('Error memberDetails')
+				// console.log('Error memberDetails')
 
 				membersDescriptionError = true
 			}
@@ -271,7 +271,7 @@ function Form({
 
 		if(projectName === '' && grantRequiredFields.includes('projectName')) {
 			setProjectNameError(true)
-			console.log('Error projectName')
+			// console.log('Error projectName')
 
 			error = true
 		}
@@ -359,12 +359,12 @@ function Form({
 			convertToRaw(projectDetails.getCurrentContent()),
 		)
 		const links = projectLinks.map((pl) => pl.link)
-		console.log('Signer', signer)
+		// console.log('Signer', signer)
 		if(!signer || !signer) {
 			return
 		}
 
-		console.log('Funding asked: ', fundingAsk)
+		// console.log('Funding asked: ', fundingAsk)
 
 		const data: GrantApplicationRequest = {
 			grantId,
@@ -416,19 +416,19 @@ function Form({
 		customFields.forEach((customField) => {
 			data.fields[customField.title] = [{ value: customField.value }]
 		})
-		console.log(data)
+		// console.log(data)
 		let encryptedData
 		if(piiFields.length > 0 && members) {
 			encryptedData = await encryptApplicationPII(data, piiFields, members)
 
-			console.log('encryptedData -----', encryptedData)
+			// console.log('encryptedData -----', encryptedData)
 		}
 
 		setFormData(encryptedData || data)
 	}
 
 	React.useEffect(() => {
-		console.log('Key: ', getKey)
+		// console.log('Key: ', getKey)
 		if(getKey.includes('undefined') || typeof window === 'undefined') {
 			return
 		}
@@ -467,7 +467,7 @@ function Form({
 			setProjectLinks(formDataLocal?.projectLinks)
 		}
 
-		console.log('projecttt', formDataLocal.projectDetails)
+		// console.log('projecttt', formDataLocal.projectDetails)
 		if(formDataLocal?.projectDetails) {
 			setProjectDetails(
 				EditorState.createWithContent(
@@ -496,7 +496,7 @@ function Form({
 			setCustomFields(formDataLocal?.customFields)
 		}
 
-		console.log('Data from cache: ', formDataLocal)
+		// console.log('Data from cache: ', formDataLocal)
 	}, [getKey])
 
 	React.useEffect(() => {
@@ -519,7 +519,7 @@ function Form({
 			fundingBreakdown,
 			customFields,
 		}
-		console.log(JSON.stringify(formDataLocal))
+		// console.log(JSON.stringify(formDataLocal))
 		if(typeof window !== 'undefined') {
 			localStorage.setItem(getKey, JSON.stringify(formDataLocal))
 		}
@@ -542,36 +542,36 @@ function Form({
 
 	return (
 		<Flex
-			my="30px"
-			flexDirection="column"
-			alignItems="center"
-			w="100%"
-			px="44px"
+			my='30px'
+			flexDirection='column'
+			alignItems='center'
+			w='100%'
+			px='44px'
 		>
 			{
 				!acceptingApplications && (
 					<Flex
-						w="100%"
-						bg="#F3F4F4"
-						direction="row"
-						align="center"
+						w='100%'
+						bg='#F3F4F4'
+						direction='row'
+						align='center'
 						px={8}
 						py={6}
 						mt={6}
 						mb={8}
-						border="1px solid #E8E9E9"
-						borderRadius="6px"
+						border='1px solid #E8E9E9'
+						borderRadius='6px'
 					>
 						<Image
-							src="/toast/warning.svg"
-							w="42px"
-							h="36px" />
+							src='/toast/warning.svg'
+							w='42px'
+							h='36px' />
 						<Flex
-							direction="column"
+							direction='column'
 							ml={6}>
 							<Text
-								variant="tableHeader"
-								color="#414E50">
+								variant='tableHeader'
+								color='#414E50'>
 								{
 									shouldShowButton && accountData?.address
 										? 'Grant is archived and cannot be discovered on the Home page.'
@@ -579,53 +579,53 @@ function Form({
 								}
 							</Text>
 							<Text
-								variant="tableBody"
-								color="#717A7C"
-								fontWeight="400"
+								variant='tableBody'
+								color='#717A7C'
+								fontWeight='400'
 								mt={2}>
-              New applicants cannot apply to an archived grant.
+								New applicants cannot apply to an archived grant.
 							</Text>
 						</Flex>
 					</Flex>
 				)
 			}
 			<Image
-				objectFit="cover"
-				h="96px"
-				w="96px"
+				objectFit='cover'
+				h='96px'
+				w='96px'
 				src={daoLogo}
-				alt="Polygon DAO"
+				alt='Polygon DAO'
 			/>
 			<Text
 				mt={6}
-				variant="heading">
+				variant='heading'>
 				{title}
 				{
 					isGrantVerified && (
 						<VerifiedBadge
 							grantAmount={funding}
 							grantCurrency={rewardCurrency}
-							lineHeight="44px"
+							lineHeight='44px'
 						/>
 					)
 				}
 			</Text>
 			<Text
-				zIndex="1"
+				zIndex='1'
 				px={9}
-				bgColor="white"
-				mt="33px"
-				lineHeight="26px"
-				fontSize="18px"
-				fontWeight="500"
+				bgColor='white'
+				mt='33px'
+				lineHeight='26px'
+				fontSize='18px'
+				fontWeight='500'
 			>
-        Your Application Form
+				Your Application Form
 			</Text>
 			<Container
-				mt="-12px"
+				mt='-12px'
 				p={10}
-				border="2px solid #E8E9E9"
-				borderRadius="12px"
+				border='2px solid #E8E9E9'
+				borderRadius='12px'
 			>
 				<ApplicantDetails
 					applicantName={applicantName}
@@ -643,7 +643,7 @@ function Form({
 					grantRequiredFields={grantRequiredFields}
 				/>
 
-				<Box mt="43px" />
+				<Box mt='43px' />
 				<AboutTeam
 					teamMembers={teamMembers}
 					teamMembersError={teamMembersError}
@@ -654,7 +654,7 @@ function Form({
 					grantRequiredFields={grantRequiredFields}
 				/>
 
-				<Box mt="19px" />
+				<Box mt='19px' />
 				<AboutProject
 					projectName={projectName}
 					setProjectName={setProjectName}
@@ -677,7 +677,7 @@ function Form({
 					grantRequiredFields={grantRequiredFields}
 				/>
 
-				<Box mt="43px" />
+				<Box mt='43px' />
 				{
 					grantRequiredFields.includes('fundingBreakdown') && (
 						<Funding
@@ -700,7 +700,7 @@ function Form({
 				{
 					customFields && customFields.length > 0 && (
 						<>
-							<Box mt="43px" />
+							<Box mt='43px' />
 							<CustomFields
 								customFields={customFields}
 								setCustomFields={setCustomFields}
@@ -714,33 +714,33 @@ function Form({
 				acceptingApplications && (
 					<Text
 						mt={10}
-						textAlign="center"
-						variant="footer"
-						fontSize="12px">
+						textAlign='center'
+						variant='footer'
+						fontSize='12px'>
 						<Image
-							display="inline-block"
-							src="/ui_icons/info.svg"
-							alt="pro tip"
-							mb="-2px"
+							display='inline-block'
+							src='/ui_icons/info.svg'
+							alt='pro tip'
+							mb='-2px'
 						/>
 						{' '}
-          By pressing Submit Application you&apos;ll have to approve this
-          transaction in your wallet.
+						By pressing Submit Application you&apos;ll have to approve this
+						transaction in your wallet.
 						{' '}
 						<Link
-							href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
+							href='https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46'
 							isExternal
 						>
-            Learn more
+							Learn more
 						</Link>
 						{' '}
 						<Image
-							display="inline-block"
-							src="/ui_icons/link.svg"
-							alt="pro tip"
-							mb="-1px"
-							h="10px"
-							w="10px"
+							display='inline-block'
+							src='/ui_icons/link.svg'
+							alt='pro tip'
+							mb='-1px'
+							h='10px'
+							w='10px'
 						/>
 					</Text>
 				)
@@ -754,8 +754,8 @@ function Form({
 						disabled={!isBiconomyInitialised}
 						onClick={loading ? () => {} : handleOnSubmit}
 						mx={10}
-						alignSelf="stretch"
-						variant="primary"
+						alignSelf='stretch'
+						variant='primary'
 						py={loading ? 2 : 0}
 					>
 						{loading ? <Loader /> : 'Submit Application'}

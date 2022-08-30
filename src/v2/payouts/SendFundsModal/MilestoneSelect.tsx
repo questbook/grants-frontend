@@ -1,31 +1,31 @@
 import { Box, Button, Text } from '@chakra-ui/react'
 import { OptionBase } from 'chakra-react-select'
-import DropdownSelect from './DropdownSelect'
+import DropdownSelect from 'src/v2/payouts/SendFundsModal/DropdownSelect'
 
 
 export interface MilestoneSelectOption extends OptionBase {
-	id: string;
-  label: string;
-  title: string;
+	id: string
+  label: string
+  title: string
 }
 
 const Option = ({ innerProps, data }: any) => (
 	<Box
 		{...innerProps}
-		alignItems={'center'}
+		alignItems='center'
 		p={0}
 		m={0}
 	>
 		<Button
-			w={'100%'}
-			variant={'ghost'}
-			py={'10px'}
+			w='100%'
+			variant='ghost'
+			py='10px'
 			px={4}
-			alignItems={'flex-start'}
+			alignItems='flex-start'
 			borderRadius={0}
 			display='flex'
 			flexDirection='column'
-			textAlign={'left'}
+			textAlign='left'
 			h='auto'
 		>
 			<Text
@@ -56,9 +56,9 @@ const MilestoneSelect = ({
 	placeholder,
 }: {
 	milestoneList: any[]
-  value: MilestoneSelectOption | undefined;
-  onChange: (value: MilestoneSelectOption | undefined) => void;
-  placeholder: string;
+  value: MilestoneSelectOption | undefined
+  onChange: (value: MilestoneSelectOption | undefined) => void
+  placeholder: string
 }) => (
 	<DropdownSelect
 		options={

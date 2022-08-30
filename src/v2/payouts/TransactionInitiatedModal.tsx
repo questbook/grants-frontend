@@ -10,13 +10,13 @@ import {
 	ModalOverlay,
 	Text,
 } from '@chakra-ui/react'
-import { CancelCircleFilled } from '../assets/custom chakra icons/CancelCircleFilled'
+import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 
 interface Props {
-	isOpen: boolean;
-	onClose: () => void;
-	onComplete: () => void;
-	proposalUrl: string;
+	isOpen: boolean
+	onClose: () => void
+	onComplete: () => void
+	proposalUrl: string
 }
 
 function TransactionInitiatedModal({
@@ -37,22 +37,22 @@ function TransactionInitiatedModal({
 			}
 			closeOnOverlayClick={false}
 		>
-			<ModalOverlay maxH="100vh" />
+			<ModalOverlay maxH='100vh' />
 			<ModalContent
 				minW={528}
 				// h="min(90vh, 560px)"
-				overflowY="auto"
-				borderRadius="4px">
+				overflowY='auto'
+				borderRadius='4px'>
 				<Container
 					px={6}
 					py={6}>
 
 					<Flex
-						direction="row"
-						align="center">
+						direction='row'
+						align='center'>
 						<Flex
 							flex={1}
-							justifyContent={'center'}>
+							justifyContent='center'>
 							<Image
 								boxSize='48px'
 								src='/ThumbsUpSafe.svg' />
@@ -77,15 +77,15 @@ function TransactionInitiatedModal({
 						fontSize='20px'
 						lineHeight='24px'
 						fontWeight='500'
-						textAlign={'center'}
+						textAlign='center'
 					>
-				Transaction initated
+						Transaction initated
 					</Text>
 
 					<Flex
 						bg='#F0F0F7'
-						h={'1px'}
-						mx={'-24px'}
+						h='1px'
+						mx='-24px'
 						my={4}
 					/>
 
@@ -94,7 +94,7 @@ function TransactionInitiatedModal({
 						lineHeight='20px'
 						fontWeight='500'
 					>
-				Here’s what you can do next:
+						Here’s what you can do next:
 					</Text>
 
 					<Flex mt={6}>
@@ -106,18 +106,18 @@ function TransactionInitiatedModal({
 							w='20px'
 							bg='#F0F0F7'
 							display='flex'
-							justifyContent={'center'}
-							alignItems={'center'}
+							justifyContent='center'
+							alignItems='center'
 							mr={4}
 						>
-              1
+							1
 						</Box>
 						<Text
 							fontSize='14px'
 							lineHeight='20px'
 							fontWeight='400'
 						>
-				Open safe.
+							Open safe.
 						</Text>
 					</Flex>
 
@@ -130,18 +130,18 @@ function TransactionInitiatedModal({
 							w='20px'
 							bg='#F0F0F7'
 							display='flex'
-							justifyContent={'center'}
-							alignItems={'center'}
+							justifyContent='center'
+							alignItems='center'
 							mr={4}
 						>
-              2
+							2
 						</Box>
 						<Text
 							fontSize='14px'
 							lineHeight='20px'
 							fontWeight='400'
 						>
-				Confirm the transaction which is in “Queue”.
+							Confirm the transaction which is in “Queue”.
 						</Text>
 					</Flex>
 
@@ -154,48 +154,48 @@ function TransactionInitiatedModal({
 							w='20px'
 							bg='#F0F0F7'
 							display='flex'
-							justifyContent={'center'}
-							alignItems={'center'}
+							justifyContent='center'
+							alignItems='center'
 							mr={4}
 						>
-              3
+							3
 						</Box>
 						<Text
 							fontSize='14px'
 							lineHeight='20px'
 							fontWeight='400'
 						>
-				Notify other owners on the safe to confirm the
-transaction.
+							Notify other owners on the safe to confirm the
+							transaction.
 						</Text>
 					</Flex>
 
 
 					<Flex
 						bg='#F0F0F7'
-						h={'1px'}
-						mx={'-24px'}
+						h='1px'
+						mx='-24px'
 					/>
 
 					<Flex
 						mt={4}
-						direction="row"
-						align="center">
+						direction='row'
+						align='center'>
 
 						<a
-							target={'_blank'}
-							style={{ marginLeft:'auto' }}
+							target='_blank'
+							style={{ marginLeft: 'auto' }}
 							href={proposalUrl}
-							rel="noreferrer">
+							rel='noreferrer'>
 							<Button
-								colorScheme={'brandv2'}
+								colorScheme='brandv2'
 								onClick={
 									() => {
 
 
 									}
 								}>
-							Open Safe
+								Open Safe
 							</Button>
 						</a>
 

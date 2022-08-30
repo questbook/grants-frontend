@@ -3,8 +3,8 @@ import {
 	Box,
 	Button, 	Flex,
 	Text, } from '@chakra-ui/react'
+import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import Loader from 'src/components/ui/loader'
-import MultiLineInput from '../../../ui/forms/multiLineInput'
 
 function Resubmit({
 	onSubmit,
@@ -14,36 +14,36 @@ function Resubmit({
 	commentError,
 	setCommentError,
 }: {
-  onSubmit: (data: any) => void;
-  hasClicked: boolean;
-  comment: string;
-  setComment: (comment: string) => void;
-  commentError: boolean;
-  setCommentError: (commentError: boolean) => void;
+  onSubmit: (data: any) => void
+  hasClicked: boolean
+  comment: string
+  setComment: (comment: string) => void
+  commentError: boolean
+  setCommentError: (commentError: boolean) => void
 }) {
 	return (
 		<Flex
-			flexDirection="column"
-			w="25vw"
-			maxW="1260px"
-			alignItems="stretch"
+			flexDirection='column'
+			w='25vw'
+			maxW='1260px'
+			alignItems='stretch'
 			pb={8}
 			px={0}
-			alignSelf="flex-start"
+			alignSelf='flex-start'
 			ml={0}
 		>
 			<Text
-				fontSize="18px"
-				lineHeight="26px"
-				fontWeight="700">
-        Reason for Resubmission
+				fontSize='18px'
+				lineHeight='26px'
+				fontWeight='700'>
+				Reason for Resubmission
 			</Text>
 
-			<Box mt="24px" />
+			<Box mt='24px' />
 			<MultiLineInput
-				label="Comments"
-				placeholder="Write an explanation as detailed as possible about every
-        reason asking for resubmission."
+				label='Comments'
+				placeholder='Write an explanation as detailed as possible about every
+        reason asking for resubmission.'
 				value={comment}
 				onChange={
 					(e) => {
@@ -55,15 +55,15 @@ function Resubmit({
 					}
 				}
 				isError={commentError}
-				errorText="Required"
+				errorText='Required'
 			/>
 
 			<Button
 				onClick={() => (hasClicked ? {} : onSubmit({ comment }))}
-				w="100%"
+				w='100%'
 				mt={10}
 				py={hasClicked ? 2 : 0}
-				variant="primary">
+				variant='primary'>
 				{hasClicked ? <Loader /> : 'Ask to Resubmit'}
 			</Button>
 		</Flex>

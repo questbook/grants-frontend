@@ -21,14 +21,14 @@ const InReviewRow = ({
 	onRejectClicked,
 	onResubmitClicked,
 }: {
-	onSendFundsClicked: () => void;
-	applicantData: any;
-	isChecked: boolean;
-	onChange: (e: any) => void;
-	someChecked: boolean;
-	onAcceptClicked: (e: any) => void;
-	onRejectClicked: (e: any) => void;
-	onResubmitClicked: (e: any) => void;
+	onSendFundsClicked: () => void
+	applicantData: any
+	isChecked: boolean
+	onChange: (e: any) => void
+	someChecked: boolean
+	onAcceptClicked: (e: any) => void
+	onRejectClicked: (e: any) => void
+	onResubmitClicked: (e: any) => void
 }) => {
 	const { workspace } = useContext(ApiClientsContext)!
  	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
@@ -55,7 +55,7 @@ const InReviewRow = ({
 					const [, reviewerAddress] = review.reviewer!.id.split('.')
 					reviewsDataMap[reviewerAddress] = reviewData
 				} catch(error) {
-					console.error(`failed to load review from "${review.reviewer!.id}"`, error)
+					// console.error(`failed to load review from "${review.reviewer!.id}"`, error)
 					// do nothing for now
 				}
 			})
@@ -102,11 +102,11 @@ const InReviewRow = ({
 					<Flex
 						bg='#F0F0F7'
 						borderRadius='20px'
-						h={'40px'}
-						w={'40px'}
+						h='40px'
+						w='40px'
 					>
 						<Image
-							borderRadius="3xl"
+							borderRadius='3xl'
 							src={getAvatar(applicantData?.applicant_address)}
 						/>
 					</Flex>
@@ -114,14 +114,14 @@ const InReviewRow = ({
 					<Flex
 						direction='column'
 						ml='12px'
-						alignItems={'flex-start'}
+						alignItems='flex-start'
 					>
 						<Text
 							fontSize='14px'
 							lineHeight='20px'
 							fontWeight='500'
 							noOfLines={1}
-							textOverflow={'ellipsis'}
+							textOverflow='ellipsis'
 							cursor='pointer'
 							onClick={
 								() => router.push({
@@ -139,7 +139,7 @@ const InReviewRow = ({
 							fontSize='12px'
 							lineHeight='16px'
 							fontWeight='400'
-							mt="2px"
+							mt='2px'
 							color='#7D7DA0'
 						>
 							{applicantData?.applicantName}
@@ -187,7 +187,7 @@ const InReviewRow = ({
 							forwardRef<TextProps, 'div'>((props, ref) => (
 								<Text
 									px={4}
-									py={'18px'}
+									py='18px'
 									color='#555570'
 									fontSize='14px'
 									lineHeight='20px'
@@ -195,7 +195,7 @@ const InReviewRow = ({
 									{...props}
 									ref={ref}
 									aria-label='reviewers'
-									cursor={'pointer'}
+									cursor='pointer'
 								>
 									{
 										applicantData?.reviewers?.length > 0 ?
@@ -207,12 +207,12 @@ const InReviewRow = ({
 						}
 					/>
 					<MenuList
-						overflow="scroll"
-						minW={'240px'}
-						maxH={'156px'}
+						overflow='scroll'
+						minW='240px'
+						maxH='156px'
 						py={0}>
 						<Flex
-							bg={'#F0F0F7'}
+							bg='#F0F0F7'
 							px={4}
 							py={2}
 						>
@@ -221,7 +221,7 @@ const InReviewRow = ({
 								lineHeight='20px'
 								fontWeight='500'
 								textAlign='center'
-								color={'#555570'}
+								color='#555570'
 							>
 								Reviewers
 							</Text>
@@ -234,8 +234,8 @@ const InReviewRow = ({
 								return (
 									<>
 										<MenuItem
-											px={'16px'}
-											py={'10px'}
+											px='16px'
+											py='10px'
 										>
 
 											<Flex
@@ -248,24 +248,24 @@ const InReviewRow = ({
 												<Flex
 													bg='#F0F0F7'
 													borderRadius='20px'
-													h={'20px'}
-													w={'20px'}
+													h='20px'
+													w='20px'
 												>
 													<Image
-														borderRadius="3xl"
+														borderRadius='3xl'
 														src={getAvatar(reviewerId)}
 													/>
 												</Flex>
 												<Flex
 													ml='12px'
-													alignItems={'center'}
+													alignItems='center'
 												>
 													<Text
 														fontSize='14px'
 														lineHeight='20px'
 														fontWeight='500'
 														noOfLines={1}
-														textOverflow={'ellipsis'}
+														textOverflow='ellipsis'
 													>
 														{reviewer?.member?.fullName}
 													</Text>
@@ -276,7 +276,7 @@ const InReviewRow = ({
 													fontSize='12px'
 													lineHeight='16px'
 													fontWeight='400'
-													mt="2px"
+													mt='2px'
 													color='#7D7DA0'
 													ml='auto'
 												>
@@ -301,8 +301,8 @@ const InReviewRow = ({
 				display='flex'
 				alignItems='center'
 			>
-				<Flex alignItems={'center'}>
-					<Flex alignItems="center">
+				<Flex alignItems='center'>
+					<Flex alignItems='center'>
 						{
 							sortedReviews.map((reviewKey, i) => {
 								return (
@@ -313,7 +313,7 @@ const InReviewRow = ({
 													forwardRef<TextProps, 'div'>((props, ref) => (
 														<Text
 															px={4}
-															py={'18px'}
+															py='18px'
 															color='#555570'
 															fontSize='14px'
 															lineHeight='20px'
@@ -321,7 +321,7 @@ const InReviewRow = ({
 															{...props}
 															ref={ref}
 															aria-label='reviewers'
-															cursor={'pointer'}
+															cursor='pointer'
 														>
 															{totalScore(reviews[reviewKey])}
 														</Text>
@@ -329,12 +329,12 @@ const InReviewRow = ({
 												}
 											/>
 											<MenuList
-												overflow="scroll"
-												minW={'240px'}
-												maxH={'156px'}
+												overflow='scroll'
+												minW='240px'
+												maxH='156px'
 												py={0}>
 												<Flex
-													bg={'#F0F0F7'}
+													bg='#F0F0F7'
 													px={4}
 													py={2}
 												>
@@ -343,9 +343,9 @@ const InReviewRow = ({
 														lineHeight='20px'
 														fontWeight='500'
 														textAlign='center'
-														color={'#555570'}
+														color='#555570'
 													>
-												Score
+														Score
 													</Text>
 												</Flex>
 												{
@@ -356,12 +356,12 @@ const InReviewRow = ({
 													})].map((reviewer: any, i: number) => {
 														const reviewerIdSplit = reviewer?.id.split('.')
 														const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
-														console.log(reviewerId)
+														// console.log(reviewerId)
 														return (
 															<>
 																<MenuItem
-																	px={'16px'}
-																	py={'10px'}
+																	px='16px'
+																	py='10px'
 																>
 
 																	<Flex
@@ -375,25 +375,25 @@ const InReviewRow = ({
 																		<Flex
 																			bg='#F0F0F7'
 																			borderRadius='20px'
-																			h={'20px'}
-																			w={'20px'}
+																			h='20px'
+																			w='20px'
 																		>
 																			<Image
-																				borderRadius="3xl"
+																				borderRadius='3xl'
 																				src={getAvatar(reviewerId)}
 																			/>
 																		</Flex>
 
 																		<Flex
 																			ml='12px'
-																			alignItems={'center'}
+																			alignItems='center'
 																		>
 																			<Text
 																				fontSize='14px'
 																				lineHeight='20px'
 																				fontWeight='500'
 																				noOfLines={1}
-																				textOverflow={'ellipsis'}
+																				textOverflow='ellipsis'
 																			>
 																				{reviewer?.member?.fullName}
 																			</Text>
@@ -404,7 +404,7 @@ const InReviewRow = ({
 																			fontSize='12px'
 																			lineHeight='16px'
 																			fontWeight='400'
-																			mt="2px"
+																			mt='2px'
 																			color='#7D7DA0'
 																			ml='auto'
 																		>
@@ -422,8 +422,8 @@ const InReviewRow = ({
 														return (
 															<>
 																<MenuItem
-																	px={'16px'}
-																	py={'10px'}
+																	px='16px'
+																	py='10px'
 																>
 
 																	<Flex
@@ -436,14 +436,14 @@ const InReviewRow = ({
 
 																		<Flex
 																			ml='12px'
-																			alignItems={'center'}
+																			alignItems='center'
 																		>
 																			<Text
 																				fontSize='14px'
 																				lineHeight='20px'
 																				fontWeight='500'
 																				noOfLines={1}
-																				textOverflow={'ellipsis'}
+																				textOverflow='ellipsis'
 																			>
 																				{item?.rubric?.title}
 																			</Text>
@@ -454,7 +454,7 @@ const InReviewRow = ({
 																			fontSize='12px'
 																			lineHeight='16px'
 																			fontWeight='400'
-																			mt="2px"
+																			mt='2px'
 																			color='#7D7DA0'
 																			ml='auto'
 																		>
@@ -477,11 +477,11 @@ const InReviewRow = ({
 													lineHeight='20px'
 													fontWeight='500'
 													textAlign='center'
-													alignItems="center"
-													color={'#555570'}
+													alignItems='center'
+													color='#555570'
 												>
 													{' '}
-•
+													•
 													{' '}
 												</Text>
 											)
@@ -497,11 +497,11 @@ const InReviewRow = ({
 					<Fade in={!someChecked && isHovering}>
 						<Button
 							px={3}
-							py={'6px'}
+							py='6px'
 							minW={0}
 							minH={0}
-							h="auto"
-							borderRadius={'2px'}
+							h='auto'
+							borderRadius='2px'
 							mr={4}
 							ml='auto'
 							onClick={(e) => onAcceptClicked(e)}
@@ -511,11 +511,11 @@ const InReviewRow = ({
 
 						<Button
 							px={3}
-							py={'6px'}
+							py='6px'
 							minW={0}
 							minH={0}
-							h="auto"
-							borderRadius={'2px'}
+							h='auto'
+							borderRadius='2px'
 							mr={4}
 							onClick={(e) => onResubmitClicked(e)}
 						>
@@ -524,12 +524,12 @@ const InReviewRow = ({
 
 						<Button
 							px={3}
-							py={'6px'}
+							py='6px'
 							minW={0}
 							minH={0}
-							h="auto"
-							borderRadius={'2px'}
-							mr={'auto'}
+							h='auto'
+							borderRadius='2px'
+							mr='auto'
 							onClick={(e) => onRejectClicked(e)}
 						>
 							<RejectApplication />

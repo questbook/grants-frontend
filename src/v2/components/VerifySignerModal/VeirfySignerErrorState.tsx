@@ -7,36 +7,36 @@ const VerifySignerErrorState = ({
 	onBack,
 	onClose,
 }: {
-  onBack: () => void,
-  onClose: () => void,
+  onBack: () => void
+  onClose: () => void
 }) => {
 	return (
 		<Flex
-			direction={'column'}
-			align={'center'}
+			direction='column'
+			align='center'
 		>
 			<ErrorAlert
 				mt={8}
-				color={'red'}
+				color='red'
 				boxSize={8}
 				p={1} />
 
 			<Text
 				mt={2}
-				fontWeight={'bold'}
-				fontSize={'2xl'}>
+				fontWeight='bold'
+				fontSize='2xl'>
 				Error Connecting..
 			</Text>
 
 			<Text
 				mt={1}
-				color={'brandText'}
+				color='brandText'
 			>
 				The connection to your wallet failed.
 			</Text>
 
 			<Button
-				colorScheme={'brand'}
+				colorScheme='brand'
 				mt={6}>
 				Try Again
 			</Button>
@@ -45,30 +45,30 @@ const VerifySignerErrorState = ({
 				onClick={onBack}
 				mt={3}
 				mb={8}
-				variant={'ghost'}
-				color={'#0065FF'}
+				variant='ghost'
+				color='#0065FF'
 			>
 				Select another wallet
 			</Button>
 
 			<IconButton
 				onClick={onBack}
-				pos={'absolute'}
+				pos='absolute'
 				top={4.5}
 				left={4}
 				icon={<BackArrow />}
-				aria-label="Back"
-				variant={'ghost'}
+				aria-label='Back'
+				variant='ghost'
 			/>
 
 			<IconButton
 				onClick={onClose}
-				pos={'absolute'}
+				pos='absolute'
 				top={4.5}
 				right={4}
 				icon={<Cancel />}
-				aria-label="Close"
-				variant={'ghost'}
+				aria-label='Close'
+				variant='ghost'
 			/>
 
 		</Flex>

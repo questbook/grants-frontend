@@ -2,20 +2,20 @@ import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { BigNumber, utils } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
+import CustomToast from 'src/components/ui/toasts/customToast'
+import ErrorToast from 'src/components/ui/toasts/errorToast'
 import SuccessToast from 'src/components/ui/toasts/successToast'
+import useERC20Contract from 'src/hooks/contracts/useERC20Contract'
+import useGrantContract from 'src/hooks/contracts/useGrantContract'
 import useQBContract from 'src/hooks/contracts/useQBContract'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import useChainId from 'src/hooks/utils/useChainId'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
 import { useNetwork, useProvider } from 'wagmi'
-import CustomToast from '../components/ui/toasts/customToast'
-import ErrorToast from '../components/ui/toasts/errorToast'
-import useERC20Contract from './contracts/useERC20Contract'
-import useGrantContract from './contracts/useGrantContract'
-import { useQuestbookAccount } from './gasless/useQuestbookAccount'
-import useChainId from './utils/useChainId'
 
 export default function useDisburseReward(
 	data: any,
@@ -102,10 +102,10 @@ export default function useDisburseReward(
 	}
 
 	async function disburseRewardP2PEvent() {
-		console.log('Got to disburse event')
+		// console.log('Got to disburse event')
 		const filter = workspaceRegistryContract.filters.DisburseReward(BigNumber.from(applicationId).toNumber())
 		workspaceRegistryContract.on(filter, (applicationIdEvent, milestoneId, asset, sender, amount, isP2P, eventDetail) => {
-			console.log('DisburseReward', eventDetail)
+			// console.log('DisburseReward', eventDetail)
 			if(utils.getAddress(sender) === accountData?.address && BigNumber.from(applicationId).toNumber() === applicationIdEvent.toNumber()) {
 				setTransactionData(eventDetail)
 				setLoading(false)
@@ -142,16 +142,16 @@ export default function useDisburseReward(
 
 		async function validate() {
 			setLoading(true)
-			// console.log('calling validate')
+			// // console.log('calling validate')
 			try {
 
 				const account = await provider.getCode(accountData?.address!)
 				if(account !== '0x') {
 
-					console.log('account is not 0x')
+					// console.log('account is not 0x')
 					const getAllowance = await rewardContract.allowance(accountData?.address!, workspaceRegistryContract.address)
 					if(parseInt(getAllowance.toString()) === 0) {
-						console.log('getAllowance 1', getAllowance, data)
+						// console.log('getAllowance 1', getAllowance, data)
 						rewardContract.approve(workspaceRegistryContract.address, data)
 						toastRef.current = toast({
 							position: 'top',
@@ -166,7 +166,7 @@ export default function useDisburseReward(
 						})
 						Promise.all([approvalEvent(), disburseRewardP2PEvent()])
 					} else if(parseInt(getAllowance.toString()) > parseInt(data)) {
-						console.log('Disburse', typeof (data), parseInt(getAllowance.toString()))
+						// console.log('Disburse', typeof (data), parseInt(getAllowance.toString()))
 						toastRef.current = toast({
 							position: 'top',
 							render: () => CustomToast({
@@ -188,7 +188,7 @@ export default function useDisburseReward(
 						), disburseRewardP2PEvent()])
 
 					} else {
-						console.log('getAllowance 2', typeof (data), (parseInt(getAllowance.toString()) + parseInt(data)).toString())
+						// console.log('getAllowance 2', typeof (data), (parseInt(getAllowance.toString()) + parseInt(data)).toString())
 						rewardContract.approve(workspaceRegistryContract.address, (parseInt(getAllowance.toString()) + parseInt(data)).toString())
 						toastRef.current = toast({
 							position: 'top',
@@ -205,7 +205,7 @@ export default function useDisburseReward(
 					}
 
 				} else {
-					console.log('EOA account', data)
+					// console.log('EOA account', data)
 					const tx = await rewardContract.approve(workspaceRegistryContract.address, data)
 					await tx.wait()
 					const transDetail = await workspaceRegistryContract.disburseRewardP2P(
@@ -241,10 +241,10 @@ export default function useDisburseReward(
 		}
 
 		try {
-			// console.log(data);
-			// console.log(milestoneIndex);
-			// console.log(applicationId);
-			// console.log(Number.isNaN(milestoneIndex));
+			// // console.log(data);
+			// // console.log(milestoneIndex);
+			// // console.log(applicationId);
+			// // console.log(Number.isNaN(milestoneIndex));
 			if(Number.isNaN(milestoneIndex)) {
 				return
 			}
@@ -297,7 +297,7 @@ export default function useDisburseReward(
 				throw new Error('validatorApi or workspaceId is not defined')
 			}
 
-			// console.log(5);
+			// // console.log(5);
 			if(
 				!grantContract
 				|| workspaceRegistryContract.address

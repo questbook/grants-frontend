@@ -60,9 +60,9 @@ function AboutGrant() {
 	const [account, setAccount] = useState<any>(null)
 
 	useEffect(() => {
-		// console.log(router.query);
+		// // console.log(router.query);
 		if(router.query) {
-			// console.log('setting chain id');
+			// // console.log('setting chain id');
 			const { chainId: cId, grantId: gId } = router.query
 			setChainId(cId as unknown as SupportedChainId)
 			setGrantID(gId)
@@ -86,7 +86,7 @@ function AboutGrant() {
 			return
 		}
 
-		// console.log(chainId);
+		// // console.log(chainId);
 		setQueryParams({
 			client: subgraphClients[chainId].client,
 			variables: {
@@ -98,7 +98,7 @@ function AboutGrant() {
 	const { data, error, loading } = useGetGrantDetailsQuery(queryParams)
 
 	useEffect(() => {
-		// console.log('data', data);
+		// // console.log('data', data);
 		if(data && data.grants && data.grants.length > 0) {
 			setGrantData(data.grants[0])
 		}
@@ -188,7 +188,7 @@ function AboutGrant() {
 			setRewardCurrencyCoin(supportedCurrencyObj?.icon)
 		}
 
-		// console.log(grantData?.fields);
+		// // console.log(grantData?.fields);
 
 		if(
 			grantData?.fields.length &&
@@ -204,8 +204,8 @@ function AboutGrant() {
 		setGrantRequiredFields(
 			grantData?.fields
 				?.map((field: any) => {
-					console.log(field)
-					console.log(field.title.startsWith('defaultMilestone'))
+					// console.log(field)
+					// console.log(field.title.startsWith('defaultMilestone'))
 					if(field.title.startsWith('defaultMilestone')) {
 						return null
 					}
@@ -256,7 +256,7 @@ function AboutGrant() {
 	const buttonRef = React.useRef<HTMLButtonElement>(null)
 
 	useEffect(() => {
-		// console.log(transactionData);
+		// // console.log(transactionData);
 		if(transactionData) {
 			setRefresh(true)
 			setIsModalOpen(false)
@@ -269,32 +269,32 @@ function AboutGrant() {
 
 	return (
 		<Flex
-			direction="column"
-			w="100%"
+			direction='column'
+			w='100%'
 			mb={8}>
 			{
 				!acceptingApplications && (
 					<Flex
-						maxW="100%"
-						bg="#F3F4F4"
-						direction="row"
-						align="center"
+						maxW='100%'
+						bg='#F3F4F4'
+						direction='row'
+						align='center'
 						px={8}
 						py={6}
 						mt={6}
-						border="1px solid #E8E9E9"
-						borderRadius="6px"
+						border='1px solid #E8E9E9'
+						borderRadius='6px'
 					>
 						<Image
-							src="/toast/warning.svg"
-							w="42px"
-							h="36px" />
+							src='/toast/warning.svg'
+							w='42px'
+							h='36px' />
 						<Flex
-							direction="column"
+							direction='column'
 							ml={6}>
 							<Text
-								variant="tableHeader"
-								color="#414E50">
+								variant='tableHeader'
+								color='#414E50'>
 								{
 									shouldShowButton && accountData?.address
 										? 'Grant is archived and cannot be discovered on the Home page.'
@@ -302,23 +302,23 @@ function AboutGrant() {
 								}
 							</Text>
 							<Text
-								variant="tableBody"
-								color="#717A7C"
-								fontWeight="400"
+								variant='tableBody'
+								color='#717A7C'
+								fontWeight='400'
 								mt={2}>
-              New applicants cannot apply to an archived grant.
+								New applicants cannot apply to an archived grant.
 							</Text>
 						</Flex>
-						<Box mr="auto" />
+						<Box mr='auto' />
 						{
 							accountData?.address && shouldShowButton && (
 								<Button
 									ref={buttonRef}
 									w={archiveGrantLoading ? buttonRef?.current?.offsetWidth : 'auto'}
-									variant="primary"
+									variant='primary'
 									onClick={() => setIsModalOpen(true)}
 								>
-              Publish grant
+									Publish grant
 								</Button>
 							)
 						}
@@ -326,19 +326,19 @@ function AboutGrant() {
 				)
 			}
 			<Flex
-				direction="row"
-				justify="center"
-				w="100%">
+				direction='row'
+				justify='center'
+				w='100%'>
 				<Flex
-					direction="column"
-					w="54%"
-					ml={'80px'}>
+					direction='column'
+					w='54%'
+					ml='80px'>
 					<Breadcrumbs
 						path={['Explore Grants', 'About Grant']}
 						 />
 					<Text
-						variant="heading"
-						mt="18px">
+						variant='heading'
+						mt='18px'>
 						{' '}
 						{title}
 						{' '}
@@ -347,32 +347,32 @@ function AboutGrant() {
 								<VerifiedBadge
 									grantAmount={funding}
 									grantCurrency={rewardCurrency}
-									lineHeight="44px"
+									lineHeight='44px'
 								/>
 							)
 						}
 					</Text>
 					<Flex
-						fontWeight="400"
-						alignItems="center">
+						fontWeight='400'
+						alignItems='center'>
 						<Image
 							mr={3}
-							mt="-3px"
+							mt='-3px'
 							boxSize={3}
-							src="/ui_icons/calendar.svg" />
+							src='/ui_icons/calendar.svg' />
 						<Deadline date={deadline} />
 						<Image
 							mx={2}
-							src="/ui_icons/green_dot.svg" />
+							src='/ui_icons/green_dot.svg' />
 						<Box
-							as="span"
-							display="inline-block"
-							color="#122224"
-							fontWeight="bold"
+							as='span'
+							display='inline-block'
+							color='#122224'
+							fontWeight='bold'
 						>
 							{acceptingApplications ? 'Open' : 'Closed'}
 						</Box>
-						<Box mx="auto" />
+						<Box mx='auto' />
 						<GrantShare
 							chainId={chainId}
 							grantID={grantID} />
@@ -394,8 +394,8 @@ function AboutGrant() {
 						defaultMilestoneFields={
 							grantData?.fields
 								?.map((field: any) => {
-								// console.log(field);
-								// console.log(field.title.startsWith('defaultMilestone'));
+								// // console.log(field);
+								// // console.log(field.title.startsWith('defaultMilestone'));
 									if(field.title.startsWith('defaultMilestone')) {
 										const i = field.title.indexOf('-')
 										if(i !== -1) {
@@ -421,10 +421,10 @@ function AboutGrant() {
 						grantDetails={grantDetails}
 					/>
 				</Flex>
-				<Box mr="4%" />
+				<Box mr='4%' />
 				<Flex
-					direction="column"
-					w="32%">
+					direction='column'
+					w='32%'>
 					<Sidebar
 						chainId={chainId}
 						grantID={grantData?.id}
@@ -437,11 +437,11 @@ function AboutGrant() {
 			<Modal
 				isOpen={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
-				title=""
+				title=''
 			>
 				<ChangeAccessibilityModalContent
 					onClose={() => setIsModalOpen(false)}
-					imagePath="/illustrations/publish_grant.svg"
+					imagePath='/illustrations/publish_grant.svg'
 					title={
 						acceptingApplications
 							? 'Are you sure you want to archive this grant?'

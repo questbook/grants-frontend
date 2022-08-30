@@ -5,7 +5,7 @@ import {
 import { SupportedChainId } from 'src/constants/chains'
 import { ApplicationMilestone } from 'src/types'
 import { formatAmount } from 'src/utils/formattingUtils'
-import { getAssetInfo } from '../../../utils/tokenUtils'
+import { getAssetInfo } from 'src/utils/tokenUtils'
 
 const TABLE_HEADERS = [
 	{
@@ -27,9 +27,9 @@ const TABLE_HEADERS = [
 ]
 
 type Token = {
-  label: string;
-  address: string;
-  icon: string;
+  label: string
+  address: string
+  icon: string
   decimals: number
 };
 
@@ -39,10 +39,10 @@ export type AbstractMilestonesTableProps = {
   refetch: () => void
   sendFundOpen?: () => void
   renderStatus: (milestone: ApplicationMilestone) => React.ReactNode
-  chainId?: SupportedChainId | undefined,
-  decimals?: number,
+  chainId?: SupportedChainId | undefined
+  decimals?: number
   // eslint-disable-next-line react/require-default-props
-  rewardToken?: Token,
+  rewardToken?: Token
 };
 
 function AbstractMilestonesTable(
@@ -65,19 +65,19 @@ function AbstractMilestonesTable(
 
 	return (
 		<Flex
-			w="100%"
+			w='100%'
 			my={4}
-			align="center"
-			direction="column"
+			align='center'
+			direction='column'
 			flex={1}
 		>
 			<Flex
-				direction="row"
-				w="100%"
-				justify="strech"
-				align="center"
-				mt="32px"
-				mb="9px"
+				direction='row'
+				w='100%'
+				justify='strech'
+				align='center'
+				mt='32px'
+				mb='9px'
 			>
 				{
 					TABLE_HEADERS.map((header) => (
@@ -85,9 +85,9 @@ function AbstractMilestonesTable(
 							key={header.title}
 							justifyContent={header.justifyContent}
 							flex={header.flex ? header.flex : 1}
-							variant="tableHeader"
-							display="flex"
-							minW="180px"
+							variant='tableHeader'
+							display='flex'
+							minW='180px'
 						>
 							{header.title}
 						</Text>
@@ -95,73 +95,73 @@ function AbstractMilestonesTable(
 				}
 			</Flex>
 			<Flex
-				direction="column"
-				w="100%"
-				border="1px solid #D0D3D3"
+				direction='column'
+				w='100%'
+				border='1px solid #D0D3D3'
 				borderRadius={4}
-				align="stretch"
+				align='stretch'
 			>
 				{
 					milestones.map((item, index) => (
 						<Flex
 							key={item.id}
-							direction="row"
-							w="100%"
-							justify="stretch"
-							align="center"
+							direction='row'
+							w='100%'
+							justify='stretch'
+							align='center'
 							bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
 							px={0}
 							py={4}
 						>
 							<Flex
 								flex={TABLE_HEADERS[0].flex}
-								direction="column"
-								w="100%"
-								pl="19px"
+								direction='column'
+								w='100%'
+								pl='19px'
 							>
 								<Text
-									variant="applicationText"
-									fontWeight="700"
-									color="#122224">
+									variant='applicationText'
+									fontWeight='700'
+									color='#122224'>
 									{item.title}
 								</Text>
 								<Text
-									fontSize="14px"
-									lineHeight="24px"
+									fontSize='14px'
+									lineHeight='24px'
 									letterSpacing={0.5}
-									fontStyle="normal"
-									fontWeight="400"
-									color="#717A7C"
+									fontStyle='normal'
+									fontWeight='400'
+									color='#717A7C'
 									noOfLines={1}
-									textOverflow="ellipsis"
+									textOverflow='ellipsis'
 								>
-                Milestone
+									Milestone
 									{' '}
 									{index + 1}
 								</Text>
 							</Flex>
 							<Flex
 								ml={8}
-								direction="row"
-								justify="start"
-								align="center"
+								direction='row'
+								justify='start'
+								align='center'
 								flex={TABLE_HEADERS[1].flex}
 							>
 								<Image
-									display="inline-block"
+									display='inline-block'
 									src={rewardIcon}
 									mr={2}
-									boxSize="27px" />
+									boxSize='27px' />
 								<Text
-									textAlign="center"
-									fontSize="14px"
+									textAlign='center'
+									fontSize='14px'
 									letterSpacing={0.5}
-									fontWeight="700"
-									color="#122224"
+									fontWeight='700'
+									color='#122224'
 								>
 									{formatAmount(item.amountPaid.toString(), decimals)}
 									{' '}
-                /
+									/
 									{' '}
 									{formatAmount(item.amount.toString(), decimals)}
 									{' '}
@@ -170,9 +170,9 @@ function AbstractMilestonesTable(
 							</Flex>
 							<Flex
 								flex={TABLE_HEADERS[2].flex}
-								justify="end"
+								justify='end'
 								mr={5}
-								minW="180px"
+								minW='180px'
 							>
 								{renderStatus(item)}
 							</Flex>

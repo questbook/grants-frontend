@@ -16,8 +16,9 @@ import {
 	getTransactionDetails,
 	sendGaslessTransaction
 } from 'src/utils/gaslessUtils'
-import { delay } from './generics'
-import { getSupportedChainIdFromWorkspace } from './validationUtils'
+import { delay } from 'src/utils/generics'
+import logger from 'src/utils/logger'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 export type InviteInfo = {
 	workspaceId: number
 	role: number
@@ -96,13 +97,12 @@ export const serialiseInviteInfoIntoUrl = (info: InviteInfo) => {
 
 export const useMakeInvite = (role: number) => {
 	const { workspace } = useContext(ApiClientsContext)!
-	console.log('make invite', workspace?.id)
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 
 	const { network, switchNetwork } = useNetwork()
 
-	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
-	const { data: accountData, nonce } = useQuestbookAccount()
+	const { webwallet } = useContext(WebwalletContext)!
+	const { nonce } = useQuestbookAccount()
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, } = useBiconomy({
 		chainId: chainId?.toString()
 	})
@@ -111,12 +111,12 @@ export const useMakeInvite = (role: number) => {
 
 	const makeInvite = useCallback(
 		async(didSign?: () => void): Promise<InviteInfo> => {
-			switchNetwork && switchNetwork?.(chainId!)
+			switchNetwork?.(chainId!)
 			const { privateKey, address } = generateKeyPairAndAddress()
 			// convert "0x" encoded hex to a number
 			const workspaceId = parseInt(workspace!.id.replace('0x', ''), 16)
 
-			console.log('creating invite ', { workspaceId, role, address })
+			logger.info({ workspaceId, role, address }, 'creating invite ')
 
 			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress || !chainId) {
 				return undefined!
@@ -149,7 +149,7 @@ export const useMakeInvite = (role: number) => {
 				privateKey: Buffer.from(privateKey),
 				chainId: chainId!,
 			}
-			console.log('created invite ', inviteInfo)
+			logger.info({ inviteInfo }, 'created invite')
 
 			return inviteInfo
 		},
@@ -244,7 +244,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 				return undefined!
 			}
 
-			console.log('invite33', inviteInfo)
+			// console.log('invite33', inviteInfo)
 			const response = await sendGaslessTransaction(
 				biconomy,
 				targetContractObject,
@@ -278,14 +278,14 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 
 			let didIndex = false
 			do {
-				console.log(`polling for member "${memberId}"`)
+				logger.info({ memberId }, 'polling for member in workspace')
 				await delay(2000)
 				const result = await fetchMembers({
 					variables: { id: memberId },
 				})
 
 				didIndex = !!result.data?.workspaceMember
-				console.log(`poll success: ${didIndex}`)
+				logger.info(`poll result: ${didIndex}`)
 			} while(!didIndex)
 		},
 		[profileInfo, workspaceRegistry, validatorApi, inviteInfo, signature, fetchMembers, switchNetwork, connectedChainId]

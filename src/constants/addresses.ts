@@ -1,5 +1,5 @@
+import { CHAIN_INFO } from 'src/constants/chains'
 import { AddressMap, QBContract } from 'src/types'
-import { CHAIN_INFO } from './chains'
 
 export const WORKSPACE_REGISTRY_ADDRESS = compileAddresses('workspace')
 export const APPLICATION_REGISTRY_ADDRESS = compileAddresses('applications')
