@@ -2,27 +2,23 @@ import { ReactElement, useContext, useEffect, useState } from 'react'
 import { Box, Button, Container, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Text, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import AllDaosGrid from 'src/components/browse_daos/all_daos'
-import { GetAllGrantsQuery, useGetAllGrantsLazyQuery, useGetAllWorkspacesLazyQuery } from 'src/generated/graphql'
+import { GetAllGrantsQuery, useGetAllGrantsLazyQuery } from 'src/generated/graphql'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { formatAmount } from 'src/utils/formattingUtils'
 import { unixTimestampSeconds } from 'src/utils/generics'
 import { extractInviteInfo, InviteInfo } from 'src/utils/invite'
 import AcceptInviteModal from 'src/v2/components/AcceptInviteModal'
-import { useAccount, useConnect } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 const PAGE_SIZE = 40
 
 function BrowseDao() {
-	const { subgraphClients, connected } = useContext(ApiClientsContext)!
+	const { subgraphClients } = useContext(ApiClientsContext)!
 
 	const toast = useToast()
-	const allNetworkWorkspace = Object.keys(subgraphClients)!.map(
-		(key) => useGetAllWorkspacesLazyQuery({ client: subgraphClients[key].client }),
-	)
 	const allNetworkGrantsForDao = Object.keys(subgraphClients)!.map((key) => useGetAllGrantsLazyQuery({ client: subgraphClients[key].client })
 	)
 	const { data: accountData } = useAccount()
-	const { isDisconnected } = useConnect()
 
 	const [allWorkspaces, setAllWorkspaces] = useState([] as any[])
 	// const [selectedChainId, setSelectedChainId] = useState<number|undefined>()
@@ -30,7 +26,7 @@ function BrowseDao() {
 	const [selectedSorting, setSelectedSorting] = useState('grant_rewards')
 
 	const [currentPage, setCurrentPage] = useState(0)
-	const [allDataFetched, setAllDataFectched] = useState<Boolean>(false)
+	const [, setAllDataFectched] = useState<Boolean>(false)
 	const [grants, setGrants] = useState<GetAllGrantsQuery['grants']>([])
 
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
@@ -104,7 +100,7 @@ function BrowseDao() {
 	useEffect(() => {
 		var obj = {} as any
 		if(grants.length > 0) {
-			grants.map((grant, i) => {
+			grants.map((grant,) => {
 				obj [`${grant.workspace.id}-${grant.workspace.supportedNetworks[0]}`] = obj [`${grant.workspace.id}-${grant.workspace.supportedNetworks[0]}`] || []
 				obj [`${grant.workspace.id}-${grant.workspace.supportedNetworks[0]}`].push(
 					{

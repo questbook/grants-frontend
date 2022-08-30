@@ -15,14 +15,12 @@ import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCirc
 interface Props {
 	isOpen: boolean
 	onClose: () => void
-	onComplete: () => void
 	proposalUrl: string
 }
 
 function TransactionInitiatedModal({
 	isOpen,
 	onClose,
-	onComplete,
 	proposalUrl
 }: Props) {
 

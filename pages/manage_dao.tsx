@@ -29,7 +29,7 @@ function ManageDAO() {
 	const [isAdmin, setIsAdmin] = React.useState<boolean>(false)
 	const [isLoading, setIsLoading] = React.useState<boolean>(true)
 
-	const { data: accountData, nonce } = useQuestbookAccount()
+	const { data: accountData } = useQuestbookAccount()
 
 	const [queryParams, setQueryParams] = useState<any>({
 		client:

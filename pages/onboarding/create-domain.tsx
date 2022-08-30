@@ -77,7 +77,7 @@ const OnboardingCreateDomain = () => {
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
 
 	useEffect(() => {
-		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		// const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
 		// console.log('rree', isBiconomyLoading, biconomyLoading)
 		// console.log('networks 2:', biconomy?.networkId?.toString(), safeSelected?.networkId, safeSelected?.networkId ?
 		//	networksMapping[safeSelected?.networkId?.toString()] : undefined)

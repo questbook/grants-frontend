@@ -52,8 +52,8 @@ function Header() {
 
 
 						>
-		{header}
- </Text>
+							{header}
+						</Text>
 
 					))
 

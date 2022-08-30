@@ -1,6 +1,5 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react'
 import { Container, Flex, Heading, Spacer, Text } from '@chakra-ui/react'
-import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import DoaDashTableEmptyState from 'src/components/dao_dashboard/empty_states/dao_dashboard'
 import BarGraph from 'src/components/dao_dashboard/graph/bar_graph'
@@ -72,7 +71,6 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function DaoDashboard() {
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
-	const router = useRouter()
 
 	const [chainID, setChainId] = React.useState<SupportedChainId>()
 	const [daoID, setDaoId] = React.useState<string>()
@@ -244,12 +242,10 @@ function DaoDashboard() {
 			everydayApplicationsMap[timekey] = application.numApps
 		})
 
-		const date = new Date(everydayApplications[0].fordate)
-		// // console.log(date)
+		// const date = new Date(everydayApplications[0].fordate)
 
 		let today = new Date()
 		// today = new Date(today.setDate(today.getDate() + 1))
-		// // console.log('today', today)
 
 		// console.log('everydayApplicationsMap', everydayApplicationsMap)
 
@@ -287,8 +283,6 @@ function DaoDashboard() {
 			}
 		}
 
-		// // console.log(everydayApplications)
-
 		const everydayFundingsMap = {} as any
 		everydayFundings.forEach((application: any) => {
 			totalFunding += parseInt(application.funding)
@@ -296,9 +290,7 @@ function DaoDashboard() {
 			everydayFundingsMap[timekey] = application.funding
 		})
 
-		const date = new Date(everydayFundings[0].fordate)
-		// // console.log(date)
-
+		// const date = new Date(everydayFundings[0].fordate)
 		let today = new Date()
 		// today = new Date(today.setDate(today.getDate() - 1))
 		// // console.log('today', today)
@@ -484,7 +476,7 @@ function DaoDashboard() {
 							<Header />
 							{
 								// !grants || grants.filter(item => !daoStats?.grantsPending[item.id] || daoStats?.grantsPending[item.id] === 0).length > 0 ? (
-								grants?.filter(item => (daoStats?.grantsPending[item.id] > 0 ?? false)).length > 0 ? (
+								grants?.filter(item => (daoStats?.grantsPending[item.id] > 0)).length > 0 ? (
 									<>
 										<TableContent
 											grants={

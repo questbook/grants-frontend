@@ -75,7 +75,7 @@ export default function useSubmitReview(
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
 
 	useEffect(() => {
-		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		// const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
 		// console.log('rree', isBiconomyLoading, biconomyLoading)
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
 			biconomy.networkId.toString() === chainId.toString()) {

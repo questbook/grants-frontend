@@ -169,7 +169,7 @@ function ViewApplicants() {
 	const [isBiconomyInitialisedDisburse, setIsBiconomyInitialisedDisburse] = useState(false)
 
 	useEffect(() => {
-		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		// const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
 		// console.log('rree', isBiconomyLoading, biconomyLoading)
 		// console.log('networks 2:', biconomy?.networkId?.toString(), workspacechainId, defaultChainId)
 
@@ -591,15 +591,17 @@ function ViewApplicants() {
 		const statuses: {[applicationId: string]: {transactionHash: string, status: number, amount: number}} = {}
 
 		Promise.all((Object.keys(applicationToTxnHashMap || {}) || []).map(async(applicationId) => {
-			//@ts-ignore
-			const status = await current_safe?.getTransactionHashStatus(applicationToTxnHashMap[applicationId].transactionHash)
-			// console.log('applicationToTxnHashMap status', status)
-			statuses[applicationId] = {
-				transactionHash: applicationToTxnHashMap[applicationId].transactionHash,
-				status: status[applicationToTxnHashMap[applicationId].transactionHash],
-				amount: applicationToTxnHashMap[applicationId].amount
+			const transaction = applicationToTxnHashMap[applicationId]
+			const status = await current_safe?.getTransactionHashStatus(transaction?.transactionHash)
+			if(transaction && status) {
+				console.log('applicationToTxnHashMap status', status)
+				statuses[applicationId] = {
+					transactionHash: transaction.transactionHash,
+					status: status[transaction.transactionHash],
+					amount: transaction.amount
+				}
+				return status
 			}
-			return status
 		})).then(async(done) => {
 			if(statuses && !isEvmChain) {
 				let totalFundDisbursed = 0
@@ -1102,8 +1104,7 @@ function ViewApplicants() {
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<InReviewPanel
 								applicantsData={applicantsData}
-								grantData={grantData}
-								onSendFundsClicked={(v) => setSendFundsModalIsOpen(v)} />
+								grantData={grantData} />
 						</TabPanel>
 
 						<TabPanel
@@ -1114,8 +1115,7 @@ function ViewApplicants() {
 							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<RejectedPanel
-								applicantsData={applicantsData}
-								onSendFundsClicked={(v) => setSendFundsModalIsOpen(v)} />
+								applicantsData={applicantsData} />
 						</TabPanel>
 
 						<TabPanel
@@ -1171,13 +1171,9 @@ function ViewApplicants() {
 
 					onChangeRecepientDetails={onChangeRecepientDetails}
 					phantomWallet={phantomWallet}
-					setPhantomWalletConnected={setPhantomWalletConnected}
 					isEvmChain={isEvmChain}
-					current_safe={current_safe!}
 					signerVerified={signerVerified}
-					initiateTransaction={initiateTransaction}
 					initiateTransactionData={initiateTransactionData}
-
 					onModalStepChange={onModalStepChange}
 					step={step}
 				/>
@@ -1185,7 +1181,6 @@ function ViewApplicants() {
 				<TransactionInitiatedModal
 					isOpen={!!(txnInitModalIsOpen && proposalAddr)}
 					onClose={onModalClose}
-					onComplete={() => setTxnInitModalIsOpen(false)}
 					proposalUrl={isEvmChain ? getGnosisTansactionLink(current_safe?.id?.toString()!, current_safe?.chainId.toString()!) : getProposalUrl(current_safe?.id?.toString()!, proposalAddr)}
 				/>
 

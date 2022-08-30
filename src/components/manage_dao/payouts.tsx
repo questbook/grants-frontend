@@ -299,15 +299,15 @@ function Payouts() {
                           								variant='tableBody'
                           							>
                           									{trimAddress(reviewer.email, 12)}
- </Text>
+                          								</Text>
                           								<Box mr='7px' />
- </Flex>
- </Tooltip>
+                          							</Flex>
+                          						</Tooltip>
                           				) : (
                           					handleEmptyEmail(reviewer.email)
                           				)
                           				}
- </Text>
+                          			</Text>
                           			<Tooltip label={reviewer.actorId}>
                           				<Flex alignItems='center'>
                           					<Text
@@ -315,14 +315,14 @@ function Payouts() {
                           						variant='tableBody'
                           					>
                           						{trimAddress(reviewer.actorId, 4)}
- </Text>
+                          					</Text>
                           					<Box mr='7px' />
                           					<CopyIcon
                           						h='0.75rem'
                           						text={reviewer.actorId}
                           					/>
- </Flex>
- </Tooltip>
+                          				</Flex>
+                          			</Tooltip>
                           			<Text
                           				minW='fit-content'
                           				variant='tableBody'
@@ -333,12 +333,12 @@ function Payouts() {
                           					reviewer.lastReviewSubmittedAt,
                           				)
                           				}
- </Text>
+                          			</Text>
                           			<Text
                           				alignSelf='center'
                           				variant='tableBody'>
                           				{reviewer.outstandingReviewIds.length}
- </Text>
+                          			</Text>
                           			<Flex
                           				direction='row'
                           				gap='0.5rem'>
@@ -380,8 +380,8 @@ function Payouts() {
                           				>
 		Pay now
                           				</Button>
- </Flex>
- </Grid>
+                          			</Flex>
+                          		</Grid>
 
                           		<Modal
                           			isOpen={payModal.isOpen}
@@ -466,7 +466,7 @@ function Payouts() {
                           									>
                           											{option}
                           											{' '}
- </Text>
+                          										</Text>
                           										<Tooltip
                           										label={
                           												`${
@@ -484,8 +484,8 @@ function Payouts() {
                           											src='/ui_icons/info_brand_light.svg'
                           											color='#8850EA'
                           										/>
- </Tooltip>
- </Flex>
+                          										</Tooltip>
+                          									</Flex>
                           									<IconButton
                           									aria-label='right_chevron'
                           									variant='ghost'
@@ -500,12 +500,12 @@ function Payouts() {
                           											}
                           										}
                           								/>
- </Flex>
- </Button>
+                          								</Flex>
+                          							</Button>
                           					))
                           					: null
                           				}
- </Flex>
+                          			</Flex>
 
                           			<PayoutModalContent
                           				workspaceId={workspace!.id}
@@ -520,7 +520,7 @@ function Payouts() {
                           				setPaymentOutside={setPaymentOutside}
                           				setTabIndex={setTabIndex}
                           			/>
- </Modal>
+                          		</Modal>
                           	</Flex>
                           ))
 								}

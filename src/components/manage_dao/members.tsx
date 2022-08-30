@@ -138,10 +138,10 @@ function Members({ workspaceMembers }: Props) {
             						variant='tableBody'
             					>
             							{trimAddress(data.email, 12)}
- </Text>
+            						</Text>
             						<Box mr='7px' />
- </Flex>
- </Tooltip>
+            					</Flex>
+            				</Tooltip>
             		) : (
             				<Text
             				alignSelf='center'
@@ -149,35 +149,35 @@ function Members({ workspaceMembers }: Props) {
             				variant='tableBody'
             			>
             					{handleEmptyEmail(data.email)}
- </Text>
+            				</Text>
             		)
             		}
             		<Tooltip label={data.address}>
             			<Flex alignItems='center'>
             				<Text variant='tableBody'>
             					{trimAddress(data.address, 4)}
- </Text>
+            				</Text>
             				<Box mr='7px' />
             				<CopyIcon text={data.address} />
- </Flex>
- </Tooltip>
+            			</Flex>
+            		</Tooltip>
             		<Text variant='tableBody'>
             			{roles.find((r) => r.value === data.role)?.label || 'Admin'}
- </Text>
+            		</Text>
             		<Text variant='tableBody'>
             			{getFormattedDateFromUnixTimestampWithYear(data.updatedAt)}
- </Text>
+            		</Text>
             		<Tooltip label={data.address}>
             			<Flex alignItems='center'>
             				<Text variant='tableBody'>
             					{trimAddress(data.address, 4)}
- </Text>
+            				</Text>
             				<Box mr='7px' />
             				<CopyIcon
             					h='0.75rem'
             					text={data.address} />
- </Flex>
- </Tooltip>
+            			</Flex>
+            		</Tooltip>
             		<Box flex={tableDataFlex[4]}>
             			<Button
             				variant='outline'
@@ -198,8 +198,8 @@ function Members({ workspaceMembers }: Props) {
             			>
 		Edit
             			</Button>
- </Box>
- </Grid>
+            		</Box>
+            	</Grid>
             ))
 					}
 				</Flex>

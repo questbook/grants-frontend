@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
 	Box,
 	Button,
@@ -12,13 +12,10 @@ import {
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
 import { FundsCircle } from 'src/v2/assets/custom chakra icons/Your Grants/FundsCircle'
-import { Gnosis_Safe } from 'src/v2/constants/safe/gnosis_safe'
-import { Realms_Solana } from 'src/v2/constants/safe/realms_solana'
 import RecipientDetails from 'src/v2/payouts/SendFundsModal/RecepientDetails'
 import SafeOwner from 'src/v2/payouts/SendFundsModal/SafeOwner'
 import { PhantomProvider } from 'src/v2/types/phantom'
-import { Safe, TransactionType } from 'src/v2/types/safe'
-import { useConnect } from 'wagmi'
+import { TransactionType } from 'src/v2/types/safe'
 
 interface Props {
 	isOpen: boolean
@@ -27,11 +24,8 @@ interface Props {
 	proposals: any[]
 	onChangeRecepientDetails: (applicationId: any, fieldName: string, fieldValue: any) => void
 	phantomWallet: PhantomProvider | undefined
-	setPhantomWalletConnected: (value: boolean) => void
 	isEvmChain: boolean
-	current_safe?: Safe | Realms_Solana | Gnosis_Safe
 	signerVerified: boolean
-	initiateTransaction: () => Promise<void>
 	initiateTransactionData: TransactionType[]
 	onModalStepChange: (value: number) => Promise<void>
 	step: ModalState
@@ -51,28 +45,25 @@ function SendFundsModal({
 	proposals,
 	onChangeRecepientDetails,
 	phantomWallet,
-	setPhantomWalletConnected,
 	isEvmChain,
-	current_safe,
 	signerVerified,
-	initiateTransaction,
 	initiateTransactionData,
 	onModalStepChange,
 	step,
 }: Props) {
 
-	console.log('step', step)
+	// console.log('step', step)
 
 	// const [step, setStep] = useState(0)
-	const [toAddressIsFocused, setToAddressIsFocused] = useState(false)
-	const [txnInitModalIsOpen, setTxnInitModalIsOpen] = useState(false)
+	// const [toAddressIsFocused, setToAddressIsFocused] = useState(false)
+	// const [txnInitModalIsOpen, setTxnInitModalIsOpen] = useState(false)
 
 
-	const {
-		isError: isErrorConnecting,
-		connect,
-		connectors
-	} = useConnect()
+	// const {
+	// 	isError: isErrorConnecting,
+	// 	connect,
+	// 	connectors
+	// } = useConnect()
 
 
 	return (

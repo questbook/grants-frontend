@@ -576,7 +576,7 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 										mt='-4px'
 										gap='2'
 										justifyContent='flex-start'>
-	<Box
+										<Box
 											onClick={
 												() => {
 													const newDefaultMilestoneFields = [
@@ -608,7 +608,7 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 			Add a milestone
 											</Text>
 										</Box>
-</Flex>
+									</Flex>
 								)
 							}
 							<Box mt={6} />

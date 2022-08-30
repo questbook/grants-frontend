@@ -1,11 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Flex, useToast } from '@chakra-ui/react'
-import { useRouter } from 'next/router'
+import { Flex } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import NavBar from 'src/v2/components/NavBar'
 import Sidebar from 'src/v2/components/Sidebar'
-import { useConnect, useNetwork } from 'wagmi'
+import { useConnect } from 'wagmi'
 
 interface Props {
   children: React.ReactNode
@@ -14,22 +12,12 @@ interface Props {
   renderSidebar?: boolean
 }
 
-function NavbarLayout({ children, renderGetStarted, renderTabs, renderSidebar }: Props) {
-	const { isDisconnected, isConnected, isError, isIdle, isConnecting, isReconnecting, connect, connectors, data: connectData, status: connectStatus, error } = useConnect()
-	const { data: networkData, pendingChainId, activeChain, status: networkStatus } = useNetwork()
-	const { data: accountData, nonce } = useQuestbookAccount()
-	const toast = useToast()
-	const router = useRouter()
-	const [connectWalletModalIsOpen, setConnectWalletModalIsOpen] =
-    useState(false)
+function NavbarLayout({ children, renderSidebar }: Props) {
+	const { isDisconnected, isConnected } = useConnect()
 
 	const { connected, setConnected } = useContext(ApiClientsContext)!
 
 	const [renderCount, setRenderCount] = useState(0)
-
-	useEffect(() => {
-		// console.log('Render Count: ', renderCount)
-	}, [renderCount])
 
 	useEffect(() => {
 		// @TODO-gasless: FIX HERE
