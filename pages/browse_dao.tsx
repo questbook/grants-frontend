@@ -4,7 +4,6 @@ import { ApiClientsContext } from 'pages/_app'
 import AllDaosGrid from 'src/components/browse_daos/all_daos'
 import { GetAllGrantsQuery, useGetAllGrantsLazyQuery, useGetAllWorkspacesLazyQuery } from 'src/generated/graphql'
 import NavbarLayout from 'src/layout/navbarLayout'
-import { formatAmount } from 'src/utils/formattingUtils'
 import { unixTimestampSeconds } from 'src/utils/generics'
 import { extractInviteInfo, InviteInfo } from 'src/utils/invite'
 import AcceptInviteModal from 'src/v2/components/AcceptInviteModal'
@@ -120,27 +119,51 @@ function BrowseDao() {
 		}
 	}, [grants])
 
-	const formatDataforWorkspace = (workspaces: any) => {
-		var result = Object.keys(workspaces).map((key) => {
-			var totalamount = 0
-			if(workspaces[key].length > 1) {
-				workspaces[key].map((grant: any) => {
-					totalamount += Number(formatAmount(grant.amount))
-				})
-			}
+	const fetchDAO = async(chainId: string, daoId: string) => {
+		try {
+			var res = await fetch(
+				'https://www.questbook-analytics.com/workspace-analytics',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					referrerPolicy: 'unsafe-url',
+					body: JSON.stringify({
+						chainId: chainId,
+						workspaceId: daoId,
+					}),
+				}
+			)
+			var data = await res.json()
+			return data
+
+		} catch(error) {
+			console.log(error)
+		}
+
+	}
+
+	const formatDataforWorkspace = async(workspaces: any) => {
+		var result = Promise.all(Object.keys(workspaces).map(async(key) => {
+			var data = await fetchDAO(key.split('_')[1], key.split('-')[0])
+			var totalFunding = (!data.everydayFunding || data.everydayFunding.length === 0) ? 0 : data.everydayFunding.reduce((a: number, b: any) => a + Number(b['funding']), 0)
 
 			var dao = {
 				chainID: key.split('-')[1],
 				workspaceID: key.split('-')[0],
 				name: workspaces[key][0].name,
 				icon: workspaces[key][0].icon,
-				amount:totalamount === 0 ? Number(formatAmount(workspaces[key][0].amount)) : totalamount,
+				amount: totalFunding,
 				token: workspaces[key][0].token,
-				noOfApplicants: workspaces[key][0].noOfApplicants
+				noOfApplicants: data.totalApplicants
+				// noOfApplicants: workspaces[key][0].noOfApplicants
 			}
 			return (dao)
-		})
-		setAllWorkspaces(result)
+		}))
+		setAllWorkspaces(await result)
+
+
 	}
 
 	useEffect(() => {
