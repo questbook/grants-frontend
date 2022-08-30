@@ -6,7 +6,6 @@ import {
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
-import Payouts from 'src/components/manage_dao/payouts'
 import Settings from 'src/components/manage_dao/settings'
 import Loader from 'src/components/ui/loader'
 import { defaultChainId } from 'src/constants/chains'
@@ -20,16 +19,15 @@ import WorkspaceMembers from 'src/v2/components/WorkspaceMembers'
 function ManageDAO() {
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
 	const router = useRouter()
-	const tabs = ['Settings', 'Members', 'Payouts']
+	const tabs = ['Settings', 'Members']
 	const [selected, setSelected] = useState(
-		// eslint-disable-next-line no-nested-ternary
-		router.query.tab === 'members' ? 1 : router.query.tab === 'payouts' ? 2 : 0,
+		router.query.tab === 'members' ? 1 : 0,
 	)
 	const [workspaceData, setWorkspaceData] = useState<Workspace>()
 	const [isAdmin, setIsAdmin] = React.useState<boolean>(false)
 	const [isLoading, setIsLoading] = React.useState<boolean>(true)
 
-	const { data: accountData, nonce } = useQuestbookAccount()
+	const { data: accountData } = useQuestbookAccount()
 
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
@@ -68,8 +66,12 @@ function ManageDAO() {
 	}
 
 	useEffect(() => {
-		if(workspace && workspace.members
-      && workspace.members.length > 0 && accountData && accountData.address) {
+		if(
+			workspace?.members
+      		&& workspace.members.length > 0
+			&& accountData
+			&& accountData.address
+		) {
 			const tempMember = workspace.members.find(
 				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 			)
@@ -138,16 +140,9 @@ function ManageDAO() {
 								height='1px'
 								mb={5} />
 							{
-							// eslint-disable-next-line no-nested-ternary
-								selected === 0 ? (
-									<Settings workspaceData={workspaceData!} />
-								) // eslint-disable-next-line no-nested-ternary
-									: selected === 1 ? (
-										<WorkspaceMembers />
-									) : (
-									// eslint-disable-next-line no-nested-ternary
-										selected === 2 && <Payouts />
-									)
+								selected === 0
+									? <Settings workspaceData={workspaceData!} />
+									: <WorkspaceMembers />
 							}
 						</Flex>
 						<Flex w='auto' />

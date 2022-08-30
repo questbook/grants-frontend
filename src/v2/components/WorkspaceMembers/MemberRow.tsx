@@ -1,12 +1,12 @@
 import React from 'react'
 import { Box, Checkbox, Circle, Flex, Grid, GridItem, Image, Tag, Td, Tr } from '@chakra-ui/react'
+import { WorkspaceMember, WorkspaceMemberAccessLevel } from 'src/generated/graphql'
+import { getFormattedDateFromUnixTimestampWithYear } from 'src/utils/formattingUtils'
+import { capitalizeFirstLetter } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
-import { WorkspaceMember, WorkspaceMemberAccessLevel } from '../../../generated/graphql'
-import { getFormattedDateFromUnixTimestampWithYear } from '../../../utils/formattingUtils'
-import { capitalizeFirstLetter } from '../../../utils/generics'
 
 type Props = {
-	member: Partial<WorkspaceMember>;
+	member: Partial<WorkspaceMember>
 }
 
 function MemberRow({ member }: Props) {
@@ -16,31 +16,29 @@ function MemberRow({ member }: Props) {
 				<Checkbox disabled />
 			</Td>
 			<Td>
-				<Flex direction={'row'}>
-					{
-						<>
-							{
-								member.profilePictureIpfsHash ? (
-									<Image
-										src={getUrlForIPFSHash(member.profilePictureIpfsHash)}
-										borderRadius={'50%'}
-										boxSize='40px'
-									/>
-								) : (
-									<Circle
-										bg={'grey'}
-										size='40px'
-									/>
-								)
-							}
-							<Box w={2} />
-						</>
-					}
+				<Flex direction='row'>
+					<>
+						{
+							member.profilePictureIpfsHash ? (
+								<Image
+									src={getUrlForIPFSHash(member.profilePictureIpfsHash)}
+									borderRadius='50%'
+									boxSize='40px'
+								/>
+							) : (
+								<Circle
+									bg='grey'
+									size='40px'
+								/>
+							)
+						}
+						<Box w={2} />
+					</>
 					<Grid>
-						<GridItem fontWeight={'bold'}>
+						<GridItem fontWeight='bold'>
 							{member.fullName}
 						</GridItem>
-						<GridItem color={'#9292AF'}>
+						<GridItem color='#9292AF'>
 							{member.actorId}
 						</GridItem>
 					</Grid>
@@ -48,9 +46,9 @@ function MemberRow({ member }: Props) {
 			</Td>
 			<Td>
 				<Tag
-					bg={'#FFC403'}
+					bg='#FFC403'
 					borderRadius={2}
-					fontWeight={'bold'}
+					fontWeight='bold'
 				>
 					{
 						capitalizeFirstLetter(member.accessLevel! === WorkspaceMemberAccessLevel.Owner
