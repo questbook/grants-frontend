@@ -145,41 +145,16 @@ function BrowseDao() {
 
 	}
 
-	const extractLast30Fundings = (data: any) => {
-		const everydayFundings = data.everydayFunding
-		let totalFunding = 0
-
-		if(!everydayFundings || everydayFundings.length === 0) {
-			return totalFunding
-		}
-
-		everydayFundings.forEach((application: any) => {
-			totalFunding += parseInt(application.funding)
-		})
-
-		return totalFunding
-	}
-
 	const formatDataforWorkspace = async(workspaces: any) => {
-
 		var result = Promise.all(Object.keys(workspaces).map(async(key) => {
-			var totalamount = 0
 			var data = await fetchDAO(key.split('_')[1], key.split('-')[0])
-
-			const totalFunding = extractLast30Fundings(data)
-
-			if(workspaces[key].length > 1) {
-				workspaces[key].map((grant: any) => {
-					totalamount += Number(formatAmount(grant.amount))
-				})
-			}
+			var totalFunding = (!data.everydayFunding || data.everydayFunding.length === 0) ? 0 : data.everydayFunding.reduce((a: number, b: any) => a + Number(b['funding']), 0)
 
 			var dao = {
 				chainID: key.split('-')[1],
 				workspaceID: key.split('-')[0],
 				name: workspaces[key][0].name,
 				icon: workspaces[key][0].icon,
-				// amount:totalamount === 0 ? Number(formatAmount(workspaces[key][0].amount)) : totalamount,
 				amount: totalFunding,
 				token: workspaces[key][0].token,
 				noOfApplicants: data.totalApplicants
