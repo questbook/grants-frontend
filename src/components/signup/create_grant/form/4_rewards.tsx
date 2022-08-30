@@ -498,7 +498,6 @@ function GrantRewardsInput({
 				mt="auto"
 				variant="primary"
 				onClick={hasClicked ? () => { } : handleOnSubmit}
-				py={hasClicked ? 2 : 0}
 				w={hasClicked ? buttonRef.current?.offsetWidth : 'auto'}
 			>
 				{hasClicked ? <Loader /> : 'Continue'}
