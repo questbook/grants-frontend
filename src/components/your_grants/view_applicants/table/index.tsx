@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import { Flex, Text } from '@chakra-ui/react'
-import Content from './content'
-import Filter from './filter'
-import Headers from './headers'
+import Content from 'src/components/your_grants/view_applicants/table/content'
+import Filter from 'src/components/your_grants/view_applicants/table/filter'
+import Headers from 'src/components/your_grants/view_applicants/table/headers'
 
 function Table({
 	onViewApplicantFormClick,
@@ -16,29 +16,29 @@ function Table({
 	reviewerData,
 	archiveGrantComponent,
 }: {
-  onViewApplicantFormClick?: (data? : any) => void;
+  onViewApplicantFormClick?: (data?: any) => void
   // onAcceptApplicationClick?: () => void;
   // onRejectApplicationClick?: () => void;
-  onManageApplicationClick?: (data? : any) => void;
-  data: any[];
-  title: string;
+  onManageApplicationClick?: (data?: any) => void
+  data: any[]
+  title: string
   actorId: string
-  isReviewer : boolean;
-  archiveGrantComponent: React.ReactNode;
-  reviewerData: any[];
+  isReviewer: boolean
+  archiveGrantComponent: React.ReactNode
+  reviewerData: any[]
 }) {
 	const [filter, setFilter] = React.useState(-1)
 	useEffect(() => {
-		console.log(filter)
+		// console.log(filter)
 	}, [filter])
 	return (
 		<>
 			<Flex
-				direction="row"
+				direction='row'
 				mt={3}
-				align="center">
+				align='center'>
 				<Text
-					variant="heading"
+					variant='heading'
 					mr={4}>
 					{title}
 				</Text>
@@ -48,10 +48,10 @@ function Table({
 			</Flex>
 			{archiveGrantComponent}
 			<Flex
-				w="100%"
+				w='100%'
 				mt={10}
-				align="center"
-				direction="column"
+				align='center'
+				direction='column'
 				flex={1}>
 				<Headers is_reviewer={isReviewer} />
 				<Content

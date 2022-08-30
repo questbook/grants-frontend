@@ -5,14 +5,14 @@ import {
 import Loader from 'src/components/ui/loader'
 
 interface Props {
-  imagePath: string;
-  title: string;
-  subtitle: string;
-  actionButtonText: string;
-  actionButtonOnClick: () => void;
-  onClose: () => void;
-  loading: boolean;
-  isBiconomyInitialised: boolean;
+  imagePath: string
+  title: string
+  subtitle: string
+  actionButtonText: string
+  actionButtonOnClick: () => void
+  onClose: () => void
+  loading: boolean
+  isBiconomyInitialised: boolean
 }
 
 function ModalContent({
@@ -21,43 +21,43 @@ function ModalContent({
 	return (
 		<ModalBody>
 			<Flex
-				direction="column"
-				justify="start"
-				align="center">
+				direction='column'
+				justify='start'
+				align='center'>
 				<Image
-					w="131px"
-					h="127px"
+					w='131px'
+					h='127px'
 					src={imagePath} />
 				<Heading
 					mt={8}
-					textAlign="center"
-					variant="applicationHeading">
+					textAlign='center'
+					variant='applicationHeading'>
 					{title}
 				</Heading>
 				<Text
 					mt={4}
-					textAlign="center"
-					variant="applicationText">
+					textAlign='center'
+					variant='applicationText'>
 					{subtitle}
 				</Text>
 				<Flex
-					direction="row"
-					w="100%"
-					justify="space-evenly"
+					direction='row'
+					w='100%'
+					justify='space-evenly'
 					mt={10}
 					mb={4}>
 					<Button
-						w="45%"
-						variant="resubmit"
-						color="brand.500"
+						w='45%'
+						variant='resubmit'
+						color='brand.500'
 						_hover={{ background: '#F5F5F5', borderColor: 'brand.500', borderWidth: '2px' }}
 						onClick={onClose}>
-Cancel
+						Cancel
 					</Button>
 					<Button
 						disabled={!isBiconomyInitialised}
-						w="45%"
-						variant="primary"
+						w='45%'
+						variant='primary'
 						onClick={
 							() => {
 								actionButtonOnClick()

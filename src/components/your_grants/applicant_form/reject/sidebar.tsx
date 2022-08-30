@@ -3,20 +3,20 @@ import {
 	Box, Divider, Flex, Heading, Image, Link, Text, Tooltip,
 } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
+import FloatingSidebar from 'src/components/ui/sidebar/floatingSidebar'
+import MailTo from 'src/components/your_grants/mail_to/mailTo'
+import { getFormattedFullDateFromUnixTimestamp, truncateStringFromMiddle } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { getFormattedFullDateFromUnixTimestamp, truncateStringFromMiddle } from '../../../../utils/formattingUtils'
-import { getAssetInfo } from '../../../../utils/tokenUtils'
-import FloatingSidebar from '../../../ui/sidebar/floatingSidebar'
-import MailTo from '../../mail_to/mailTo'
 
 function Sidebar(
 	{
 		applicationData,
 		showHiddenData,
 	}: {
-    applicationData: any;
-    showHiddenData: () => void;
+    applicationData: any
+    showHiddenData: () => void
   },
 ) {
 	const { workspace } = useContext(ApiClientsContext)!
@@ -36,66 +36,66 @@ function Sidebar(
 	}
 
 	return (
-		<Box mt="8px">
+		<Box mt='8px'>
 			<FloatingSidebar>
 				<Heading
-					fontSize="16px"
-					fontWeight="400"
-					color="#414E50"
-					lineHeight="26px"
-					fontStyle="normal"
+					fontSize='16px'
+					fontWeight='400'
+					color='#414E50'
+					lineHeight='26px'
+					fontStyle='normal'
 				>
-          Application Details
+					Application Details
 				</Heading>
 				<Flex
-					direction="row"
-					justify="start"
-					w="full"
+					direction='row'
+					justify='start'
+					w='full'
 					mt={6}
-					align="center">
+					align='center'>
 					<Image
-						h="45px"
-						w="45px"
+						h='45px'
+						w='45px'
 						src={icon} />
 					<Box mx={3} />
 					<Tooltip label={applicationData?.applicantId}>
 						<Heading
-							variant="applicationHeading"
-							color="brand.500">
+							variant='applicationHeading'
+							color='brand.500'>
 							{truncateStringFromMiddle(applicationData?.applicantId)}
 						</Heading>
 					</Tooltip>
 				</Flex>
 				<Box my={4} />
 				<Flex
-					direction="row"
-					justify="space-between"
-					w="full"
-					align="center">
+					direction='row'
+					justify='space-between'
+					w='full'
+					align='center'>
 					<Text
-						variant="applicationText"
-						lineHeight="32px">
-            Name
+						variant='applicationText'
+						lineHeight='32px'>
+						Name
 					</Text>
 					<Heading
-						variant="applicationHeading"
-						lineHeight="32px">
+						variant='applicationHeading'
+						lineHeight='32px'>
 						{applicationData?.fields?.find((fld: any) => fld?.id?.split('.')[1] === 'applicantName').values[0]?.value}
 					</Heading>
 				</Flex>
 				<Flex
-					direction="row"
-					justify="space-between"
-					w="full"
-					align="center">
+					direction='row'
+					justify='space-between'
+					w='full'
+					align='center'>
 					<Text
-						variant="applicationText"
-						lineHeight="32px">
-            Email
+						variant='applicationText'
+						lineHeight='32px'>
+						Email
 					</Text>
 					<Heading
-						variant="applicationHeading"
-						lineHeight="32px">
+						variant='applicationHeading'
+						lineHeight='32px'>
 						{
 							(applicationData?.fields?.find((fld: any) => fld?.id?.split('.')[1] === 'applicantEmail')) ? (
 								<>
@@ -108,16 +108,16 @@ function Sidebar(
 								</>
 							) : (
 								<Heading
-									variant="applicationHeading"
-									lineHeight="32px"
+									variant='applicationHeading'
+									lineHeight='32px'
 									onClick={showHiddenData}
-									cursor="pointer">
-                Hidden
+									cursor='pointer'>
+									Hidden
 									{' '}
 									<Text
-										color="#6200EE"
-										display="inline">
-View
+										color='#6200EE'
+										display='inline'>
+										View
 									</Text>
 								</Heading>
 							)
@@ -125,63 +125,63 @@ View
 					</Heading>
 				</Flex>
 				<Flex
-					direction="row"
-					justify="space-between"
-					w="full"
-					align="center">
+					direction='row'
+					justify='space-between'
+					w='full'
+					align='center'>
 					<Text
-						variant="applicationText"
-						lineHeight="32px">
-            Sent On
+						variant='applicationText'
+						lineHeight='32px'>
+						Sent On
 					</Text>
 					<Heading
-						variant="applicationHeading"
-						lineHeight="32px">
+						variant='applicationHeading'
+						lineHeight='32px'>
 						{getFormattedFullDateFromUnixTimestamp(applicationData?.createdAtS)}
 					</Heading>
 				</Flex>
-				<Divider mt="37px" />
+				<Divider mt='37px' />
 				<Flex
-					mt="22px"
-					mb="3px"
-					direction="row"
-					w="full"
-					alignItems="center">
+					mt='22px'
+					mb='3px'
+					direction='row'
+					w='full'
+					alignItems='center'>
 					<Link
-						variant="link"
-						fontSize="14px"
-						lineHeight="24px"
-						fontWeight="500"
-						fontStyle="normal"
-						color="#414E50"
+						variant='link'
+						fontSize='14px'
+						lineHeight='24px'
+						fontWeight='500'
+						fontStyle='normal'
+						color='#414E50'
 						href={`/explore_grants/about_grant?grantID=${applicationData?.grant?.id}`}
 					>
-            View Grant
+						View Grant
 						{' '}
 						<Image
-							display="inline-block"
+							display='inline-block'
 							h={3}
 							w={3}
-							src="/ui_icons/link.svg"
+							src='/ui_icons/link.svg'
 						/>
 					</Link>
 					<Link
-						variant="link"
-						fontSize="14px"
-						lineHeight="24px"
-						fontWeight="500"
-						fontStyle="normal"
-						color="#414E50"
+						variant='link'
+						fontSize='14px'
+						lineHeight='24px'
+						fontWeight='500'
+						fontStyle='normal'
+						color='#414E50'
 						href={`/your_applications/grant_application?applicationID=${applicationData?.id}`}
-						ml="auto"
+						ml='auto'
 					>
-            View Application
+						View Application
 						{' '}
 						<Image
-							display="inline-block"
+							display='inline-block'
 							h={3}
 							w={3}
-							src="/ui_icons/link.svg"
+							src='/ui_icons/link.svg'
 						/>
 					</Link>
 				</Flex>

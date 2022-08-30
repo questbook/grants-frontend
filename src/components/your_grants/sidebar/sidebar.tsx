@@ -3,13 +3,13 @@ import {
 	Box, Button, Flex, Image, Link,
 	Text, } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import SidebarComponent from 'src/components/ui/sidebar/sidebar'
 import config from 'src/constants/config.json'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
-import SidebarComponent from '../../ui/sidebar/sidebar'
 
 interface Props {
-  showCreateGrantItem: boolean;
-  isReviewer: boolean;
+  showCreateGrantItem: boolean
+  isReviewer: boolean
 }
 function Sidebar({ showCreateGrantItem, isReviewer }: Props) {
 	const { RenderModal, setHiddenModalOpen } = useSubmitPublicKey()
@@ -82,22 +82,22 @@ function Sidebar({ showCreateGrantItem, isReviewer }: Props) {
 		>
 			<Flex
 				flex={1}
-				w="100%"
-				direction="column"
+				w='100%'
+				direction='column'
 				py={7}
 				px={10}>
-				<Text variant="heading">
-          Here is what you can do
+				<Text variant='heading'>
+					Here is what you can do
 					{' '}
 					<Text
-						as="span"
-						display="inline-block"
-						color="#EA5050"
-						variant="heading"
-						fontWeight="600"
+						as='span'
+						display='inline-block'
+						color='#EA5050'
+						variant='heading'
+						fontWeight='600'
 						letterSpacing={-1}
 					>
-            next?
+						next?
 					</Text>
 				</Text>
 
@@ -107,30 +107,30 @@ function Sidebar({ showCreateGrantItem, isReviewer }: Props) {
 					listItems.map((item) => (
 						<Flex
 							key={item.title}
-							direction="row"
-							align="start"
+							direction='row'
+							align='start'
 							mb={14}>
 							<Image
 								src={item.icon}
-								boxSize="30px" />
+								boxSize='30px' />
 							<Flex
 								ml={4}
-								direction="column"
-								align="start">
+								direction='column'
+								align='start'>
 								<Text
-									fontSize="18px"
-									fontWeight="700"
-									lineHeight="26px"
-									color="#122224"
+									fontSize='18px'
+									fontWeight='700'
+									lineHeight='26px'
+									color='#122224'
 								>
 									{item.title}
 								</Text>
 								<Text
 									mt={2}
-									fontSize="18px"
-									fontWeight="400"
-									lineHeight="26px"
-									color="#122224"
+									fontSize='18px'
+									fontWeight='400'
+									lineHeight='26px'
+									color='#122224'
 								>
 									{item.subtitle}
 								</Text>
@@ -141,11 +141,11 @@ function Sidebar({ showCreateGrantItem, isReviewer }: Props) {
 											mt={2}
 											isExternal>
 											<Text
-												color="#122224"
-												fontWeight="normal"
-												fontSize="14px"
-												lineHeight="20px"
-												decoration="underline"
+												color='#122224'
+												fontWeight='normal'
+												fontSize='14px'
+												lineHeight='20px'
+												decoration='underline'
 											>
 												{item.learnMoreText}
 											</Text>
@@ -154,11 +154,11 @@ function Sidebar({ showCreateGrantItem, isReviewer }: Props) {
 								}
 								<Button
 									mt={5}
-									variant="primaryCta"
-									height="32px"
+									variant='primaryCta'
+									height='32px'
 									onClick={item.onSubmit}
 								>
-                Start
+									Start
 								</Button>
 							</Flex>
 						</Flex>

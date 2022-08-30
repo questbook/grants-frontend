@@ -10,6 +10,10 @@ import {
 	useToast,
 } from '@chakra-ui/react'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
+import ImageUpload from 'src/components/ui/forms/imageUpload'
+import MultiLineInput from 'src/components/ui/forms/multiLineInput'
+import RichTextEditor from 'src/components/ui/forms/richTextEditor'
+import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import SecondaryDropdown from 'src/components/ui/secondaryDropdown'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { CHAIN_INFO } from 'src/constants/chains'
@@ -18,22 +22,18 @@ import config from 'src/constants/config.json'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useChainId from 'src/hooks/utils/useChainId'
-import ImageUpload from '../../ui/forms/imageUpload'
-import MultiLineInput from '../../ui/forms/multiLineInput'
-import RichTextEditor from '../../ui/forms/richTextEditor'
-import SingleLineInput from '../../ui/forms/singleLineInput'
 
 function Form({
 	onSubmit: onFormSubmit,
 }: {
   onSubmit: (data: {
-    name: string;
-	bio: string;
-    about: string;
-    image: File | null;
-    network: SupportedChainId;
-    ownerId: string;
-  }) => void;
+    name: string
+	bio: string
+    about: string
+    image: File | null
+    network: SupportedChainId
+    ownerId: string
+  }) => void
 }) {
 	const chainId = useChainId()
 
@@ -69,7 +69,7 @@ function Form({
 
 	const { data: accountData, nonce } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
-	const [defaultItem, setDefaultItem] = useState<{ icon?: string; label: string, id: number }>()
+	const [defaultItem, setDefaultItem] = useState<{ icon?: string, label: string, id: number }>()
 
 	const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if(event.target.files && event.target.files[0]) {
@@ -106,7 +106,7 @@ function Form({
 			error = true
 		}
 
-		console.log('GG', chainId)
+		// console.log('GG', chainId)
 		if(!chainId) {
 			error = true
 		}
@@ -119,8 +119,8 @@ function Form({
 			return
 		}
 
-		// console.log("TTTT", chainId, accountData.address);
-		console.log(aboutString, daoBio)
+		// // console.log("TTTT", chainId, accountData.address);
+		// console.log(aboutString, daoBio)
 
 		onFormSubmit({
 			name: daoName,
@@ -133,7 +133,7 @@ function Form({
 	}
 
 	useEffect(() => {
-		console.log('chainID -->', chainId)
+		// console.log('chainID -->', chainId)
 		if(chainId) {
 			const newItem = { icon: CHAIN_INFO[chainId!].icon, label: CHAIN_INFO[chainId!].name, id: chainId }
 			setDefaultItem(newItem)
@@ -145,17 +145,17 @@ function Form({
 		<>
 			<Flex
 				mt={8}
-				w="100%"
-				maxW="502px"
-				flexDirection="column">
+				w='100%'
+				maxW='502px'
+				flexDirection='column'>
 				<Flex
-					w="100%"
+					w='100%'
 					mt={8}
-					alignItems="flex-start">
+					alignItems='flex-start'>
 					<SingleLineInput
-						label="Grants DAO Name"
-						placeholder="Nouns DAO"
-						subtext="Letters, spaces, and numbers are allowed."
+						label='Grants DAO Name'
+						placeholder='Nouns DAO'
+						subtext='Letters, spaces, and numbers are allowed.'
 						value={daoName}
 						onChange={
 							(e) => {
@@ -167,22 +167,22 @@ function Form({
 							}
 						}
 						isError={daoNameError}
-						errorText="Required"
+						errorText='Required'
 					/>
 					<Box ml={9} />
 					<ImageUpload
 						image={image}
 						onChange={handleImageChange}
-						label="Add a logo"
+						label='Add a logo'
 						isError={imageError}
 					/>
 				</Flex>
 				<Flex
-					w="100%"
+					w='100%'
 					mt={1}>
 					<RichTextEditor
-						label="About your Grants DAO"
-						placeholder="Write details about your grants, bounty, and other projects."
+						label='About your Grants DAO'
+						placeholder='Write details about your grants, bounty, and other projects.'
 						value={daoAbout}
 						onChange={
 							(e: EditorState) => {
@@ -190,16 +190,16 @@ function Form({
 							}
 						}
 						isError={daoAboutError}
-						errorText="Required"
+						errorText='Required'
 						maxLength={800}
 					/>
 				</Flex>
 				<Flex
-					w="100%"
+					w='100%'
 					mt={1}>
 					<MultiLineInput
-						label="Bio"
-						placeholder="A small description of your dao in a few sentences"
+						label='Bio'
+						placeholder='A small description of your dao in a few sentences'
 						value={daoBio}
 						onChange={
 							(e) => {
@@ -211,12 +211,12 @@ function Form({
 							}
 						}
 						isError={daoBioError}
-						errorText="Required"
+						errorText='Required'
 						maxLength={200}
 					/>
 				</Flex>
 				<Flex
-					w="100%"
+					w='100%'
 					mt={1}>
 					{/* <SingleLineInput
 						label="Network"
@@ -253,7 +253,7 @@ function Form({
 						}
 					/> */}
 					<SecondaryDropdown
-						listItemsMinWidth="100%"
+						listItemsMinWidth='100%'
 						dropdownWidth='100%'
 						listItems={
 							ALL_SUPPORTED_CHAIN_IDS.map((chainId) => ({
@@ -267,9 +267,9 @@ function Form({
 						onChange={
 							(id: SupportedChainId) => {
 								if(switchNetwork) {
-									console.log(' (CREATE DAO) Switch Network before: ', chainId, id)
+									// console.log(' (CREATE DAO) Switch Network before: ', chainId, id)
 									const network = switchNetwork(id)
-									console.log(' (CREATE DAO) Switch Network after: ', network, chainId, id)
+									// console.log(' (CREATE DAO) Switch Network after: ', network, chainId, id)
 								}
 								// setSelectedNetworkId(id)
 							}
@@ -279,45 +279,45 @@ function Form({
 			</Flex>
 
 			<Text
-				display="flex"
-				alignItems="center"
-				variant="footer"
-				mt="51px">
+				display='flex'
+				alignItems='center'
+				variant='footer'
+				mt='51px'>
 				<Image
 					mr={1}
-					display="inline-block"
-					h="14px"
-					w="14px"
-					src="/ui_icons/info_brand.svg"
+					display='inline-block'
+					h='14px'
+					w='14px'
+					src='/ui_icons/info_brand.svg'
 				/>
 				{' '}
-        By pressing continue you&apos;ll have to approve this transaction in
-        your wallet.
+				By pressing continue you&apos;ll have to approve this transaction in
+				your wallet.
 				{' '}
 				<Link
 					mx={1}
-					href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
+					href='https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46'
 					isExternal>
-          Learn more
+					Learn more
 					<Image
 						ml={1}
-						display="inline-block"
-						h="10px"
-						w="10px"
-						src="/ui_icons/link.svg"
+						display='inline-block'
+						h='10px'
+						w='10px'
+						src='/ui_icons/link.svg'
 					/>
 				</Link>
 			</Text>
 
 			<Button
 				onClick={handleSubmit}
-				w="100%"
-				maxW="502px"
-				variant="primary"
+				w='100%'
+				maxW='502px'
+				variant='primary'
 				mt={5}
 				mb={16}
 			>
-        Create Grants DAO
+				Create Grants DAO
 			</Button>
 		</>
 	)

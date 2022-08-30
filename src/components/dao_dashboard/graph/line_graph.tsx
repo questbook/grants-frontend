@@ -88,11 +88,11 @@ function LineGraph({
 	title,
 	fundings,
 	totalFunding,
-}:{
-	app_count:string,
-	title: string,
-	fundings: any[],
-	totalFunding: number,
+}: {
+	app_count: string
+	title: string
+	fundings: any[]
+	totalFunding: number
 }) {
 
 	const [seriesData, setSeriesData] = useState<any[]>([{
@@ -105,9 +105,9 @@ function LineGraph({
 
 	useEffect(() => {
 
-		console.log(fundings)
+		// console.log(fundings)
 		const series = fundings.slice(-30 * currentMonth, -30 * (currentMonth - 1) === 0 ? fundings.length : -30 * (currentMonth - 1)).map((app) => (app.funding))
-		console.log(series)
+		// console.log(series)
 		setSeriesData([{
 			name: 'Funds transfered',
 			data: series
@@ -224,25 +224,25 @@ function LineGraph({
 					<>
 
 						<Flex
-							width="512px"
-							height="250px"
-							borderRadius="8px"
-							background="#FFFFFF"
-							boxShadow="0px 0px 8px rgba(18, 34, 36, 0.15)"
-							flexDirection="column"
+							width='512px'
+							height='250px'
+							borderRadius='8px'
+							background='#FFFFFF'
+							boxShadow='0px 0px 8px rgba(18, 34, 36, 0.15)'
+							flexDirection='column'
 
 							 >
 							<Flex
 								direction='column'
 								alignSelf='flex-start'
-								ml="25px"
-								mt="5"
+								ml='25px'
+								mt='5'
 							>
 
 								<Text
 									fontSize='16px'
 								>
-                Total Funds Disbursed
+									Total Funds Disbursed
 								</Text>
 
 							</Flex>
@@ -251,10 +251,10 @@ function LineGraph({
 								<Chart
 									options={lineChartOptionsProfile2 as any}
 									series={lineChartDataProfile2}
-									type="line"
-									width="512px"
-									height="160px"
-									ml="20px"
+									type='line'
+									width='512px'
+									height='160px'
+									ml='20px'
 								 />
 
 							</Flex>
@@ -267,63 +267,63 @@ function LineGraph({
 					<>
 
 						<Flex
-							width="512px"
-							height="250px"
-							borderRadius="8px"
-							background="#FFFFFF"
-							boxShadow="0px 0px 8px rgba(18, 34, 36, 0.15)"
-							flexDirection="column"
+							width='512px'
+							height='250px'
+							borderRadius='8px'
+							background='#FFFFFF'
+							boxShadow='0px 0px 8px rgba(18, 34, 36, 0.15)'
+							flexDirection='column'
 
 				 >
 							<Flex
 								direction='column'
 								// alignSelf='flex-start'
-								mx="25px"
-								mt="5"
+								mx='25px'
+								mt='5'
 							>
 
-								<Flex w={'100%'}>
+								<Flex w='100%'>
 									<Text
 										mr='auto'
 										fontSize='16px'
 									>
-	Total Funds Disbursed
+										Total Funds Disbursed
 									</Text>
 
 									<Menu
-										placement="bottom"
+										placement='bottom'
 									// align="right"
 									>
 										<Box
-											width="169px"
-											height="32px"
-											borderRadius="8px"
-											border="1px solid #AAAAAA"
-											alignItems="center"
-											justifyContent={'center'}
-											display={'flex'}
+											width='169px'
+											height='32px'
+											borderRadius='8px'
+											border='1px solid #AAAAAA'
+											alignItems='center'
+											justifyContent='center'
+											display='flex'
 										>
 											<MenuButton
 												as={Button}
-												aria-label="View More Options"
+												aria-label='View More Options'
 												// mt="-28px"
 												// pl="16px"
-												variant="link"
-												textDecoration="none"
+												variant='link'
+												textDecoration='none'
 												_focus={{}}
-												leftIcon={<Image src="/ui_icons/calender-dao.svg" />}
-												color="#373737"
-												rightIcon={<Image src="/ui_icons/dropdown_arrow.svg" />}
-												fontSize="14px"
-												fontWeight="500"
-												w="fit-content"
-												mx="auto"
+												leftIcon={<Image src='/ui_icons/calender-dao.svg' />}
+												color='#373737'
+												rightIcon={<Image src='/ui_icons/dropdown_arrow.svg' />}
+												fontSize='14px'
+												fontWeight='500'
+												w='fit-content'
+												mx='auto'
 											>
-          							{months[new Date((new Date()).getTime() + 86400000 * 30 * (12 - currentMonth + 1)).getMonth()]}
+												{months[new Date((new Date()).getTime() + 86400000 * 30 * (12 - currentMonth + 1)).getMonth()]}
 											</MenuButton>
 										</Box>
 										<MenuList
-											minW="164px"
+											minW='164px'
 											maxH='120px'
 											overflow='scroll'
 											p={0}>
@@ -336,10 +336,10 @@ function LineGraph({
 															onClick={() => setCurrentMonth(t.getMonth() - d.getMonth() + 1)}
 															key={`bar-graph-${i}`}>
 															<Text
-																fontSize="14px"
-																fontWeight="400"
-																lineHeight="20px"
-																color="#122224"
+																fontSize='14px'
+																fontWeight='400'
+																lineHeight='20px'
+																color='#122224'
 															>
 																{months[d.getMonth()]}
 															</Text>
@@ -356,7 +356,7 @@ function LineGraph({
 									fontSize='lg'
 									fontWeight='700'
 								>
-								$
+									$
 									{totalFunding}
 									{/* <Text
 										as='span'
@@ -373,10 +373,10 @@ function LineGraph({
 								<Chart
 									options={seriesOptions as any}
 									series={seriesData}
-									type="line"
-									width="512px"
-									height="160px"
-									ml="20px"
+									type='line'
+									width='512px'
+									height='160px'
+									ml='20px'
 					 />
 
 							</Flex>

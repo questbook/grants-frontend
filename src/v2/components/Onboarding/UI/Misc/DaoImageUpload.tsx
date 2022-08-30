@@ -49,51 +49,51 @@ const DaoImageUpload = ({
 	}
 
 	return (
-		<Box pos={'relative'}>
+		<Box pos='relative'>
 			<input
 				style={{ visibility: 'hidden', height: 0, width: 0 }}
 				ref={ref}
-				type="file"
-				name="myImage"
+				type='file'
+				name='myImage'
 				onChange={handleImageChange}
-				accept="image/jpg, image/jpeg, image/png" />
+				accept='image/jpg, image/jpeg, image/png' />
 			<Button
-				bg={'#C2E7DA'}
-				boxSize={'72px'}
-				overflow={'hidden'}
+				bg='#C2E7DA'
+				boxSize='72px'
+				overflow='hidden'
 				onClick={() => openInput()}
-				boxShadow={'0px 2px 0px #1f1f331a !important'}
+				boxShadow='0px 2px 0px #1f1f331a !important'
 			>
 				{
 					daoImageFile ? (
 						<Image
-							objectFit="cover"
+							objectFit='cover'
 							src={URL.createObjectURL(daoImageFile)}
-							w="100%"
-							h="100%"
-							minH={'72px'}
-							minW={'72px'}
+							w='100%'
+							h='100%'
+							minH='72px'
+							minW='72px'
 						/>
 					) : (
 
 						<Organization
-							color={'#389373'}
+							color='#389373'
 							boxSize={8} />
 					)
 				}
 			</Button>
 			<IconButton
-				bg={'white'}
+				bg='white'
 				icon={daoImageFile ? <Cancel boxSize={3} /> : <ImageUploadIcon />}
-				aria-label={'upload dao icon image'}
-				boxShadow={'0px 2px 4px #1f1f331a !important'}
-				boxSize={'30px'}
-				borderRadius={'30px'}
+				aria-label='upload dao icon image'
+				boxShadow='0px 2px 4px #1f1f331a !important'
+				boxSize='30px'
+				borderRadius='30px'
 				minW={0}
 				minH={0}
-				pos={'absolute'}
-				bottom={'-15px'}
-				left={'calc(50% - 15px)'}
+				pos='absolute'
+				bottom='-15px'
+				left='calc(50% - 15px)'
 				zIndex={1}
 				onClick={
 					() => {

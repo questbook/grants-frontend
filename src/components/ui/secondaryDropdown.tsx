@@ -13,14 +13,14 @@ import {
 } from '@chakra-ui/react'
 
 interface DropdownProps {
-  listItems: { icon?: string; label: string, id: number }[];
-  listItemsMinWidth?: string;
-  dropdownWidth?: string;
-  defaultItem?: { icon?: string; label: string, id: number };
-  label?: string;
+  listItems: { icon?: string, label: string, id: number }[]
+  listItemsMinWidth?: string
+  dropdownWidth?: string
+  defaultItem?: { icon?: string, label: string, id: number }
+  label?: string
   // eslint-disable-next-line react/no-unused-prop-types
-  value?: string;
-  onChange?: Function;
+  value?: string
+  onChange?: Function
 }
 
 const defaultProps = {
@@ -50,16 +50,16 @@ function SecondaryDropdown({
 	}, [defaultItem])
 	return (
 		<Flex
-			flexDirection="column"
-			alignItems="stretch"
+			flexDirection='column'
+			alignItems='stretch'
 			width={dropdownWidth}
-			position="relative">
+			position='relative'>
 			{
 				label && label.length && (
 					<>
 						<Text
-							lineHeight="20px"
-							fontWeight="bold">
+							lineHeight='20px'
+							fontWeight='bold'>
 							{label}
 						</Text>
 						<Box mt={1} />
@@ -69,18 +69,18 @@ function SecondaryDropdown({
 			<Menu
 				onClose={() => setIsOpen(false)}
 				isOpen={isOpen}
-				variant="form">
+				variant='form'>
 				<MenuButton
-					maxW="100%"
-					h="32px"
+					maxW='100%'
+					h='32px'
 					mt={1}
 					as={Button}
-					rightIcon={onChange ? <Image src="/ui_icons/form_dropdown.svg" /> : null}
-					textAlign="left"
+					rightIcon={onChange ? <Image src='/ui_icons/form_dropdown.svg' /> : null}
+					textAlign='left'
 					flex={1}
 					p={0}
-					bg="#CAD7FD"
-					border="2px solid #87A0EB"
+					bg='#CAD7FD'
+					border='2px solid #87A0EB'
 					_active={{ background: '#87A0EB' }}
 					_hover={{ background: '#87A0EB' }}
 					pr={5}
@@ -96,27 +96,27 @@ function SecondaryDropdown({
 					minW={280}
 				>
 					<Container
-						alignItems="center"
-						display="flex"
-						w="full"
+						alignItems='center'
+						display='flex'
+						w='full'
 						px={4}
 						py={3}
-						h="32px"
-						justifyContent="flex-start"
+						h='32px'
+						justifyContent='flex-start'
 					>
 						{
 							selected.icon && selected.icon.length ? (
 								<Image
 									mr={3}
-									h="14px"
-									w="14px"
+									h='14px'
+									w='14px'
 									src={selected.icon} />
 							) : null
 						}
 						<Text
-							fontWeight="500"
-							fontSize="16px"
-							color="#414E50">
+							fontWeight='500'
+							fontSize='16px'
+							color='#414E50'>
 							{selected.label}
 						</Text>
 					</Container>
@@ -142,26 +142,26 @@ function SecondaryDropdown({
 								p={0}
 							>
 								<Flex
-									alignItems="center"
-									w="full"
+									alignItems='center'
+									w='full'
 									px={3}
 									py={2}
-									h="32px"
-									justifyContent="flex-start"
+									h='32px'
+									justifyContent='flex-start'
 								>
 									{
 										icon && icon.length ? (
 											<Image
 												mr={3}
-												h="14px"
-												w="14px"
+												h='14px'
+												w='14px'
 												src={icon} />
 										) : null
 									}
 									<Text
-										fontWeight="400"
-										fontSize="14px"
-										color="#414E50">
+										fontWeight='400'
+										fontSize='14px'
+										color='#414E50'>
 										{text}
 									</Text>
 								</Flex>

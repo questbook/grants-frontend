@@ -13,6 +13,14 @@ import {
 	useToast,
 } from '@chakra-ui/react'
 import { WorkspaceUpdateRequest } from '@questbook/service-validator-client'
+import CoverUpload from 'src/components/ui/forms/coverUpload'
+import ImageUpload from 'src/components/ui/forms/imageUpload'
+import MultiLineInput from 'src/components/ui/forms/multiLineInput'
+import RichTextEditor from 'src/components/ui/forms/richTextEditor'
+import SingleLineInput from 'src/components/ui/forms/singleLineInput'
+import Loader from 'src/components/ui/loader'
+import ErrorToast from 'src/components/ui/toasts/errorToast'
+import InfoToast from 'src/components/ui/toasts/infoToast'
 // CONSTANTS AND TYPES
 import { CHAIN_INFO } from 'src/constants/chains'
 import config from 'src/constants/config.json'
@@ -25,17 +33,9 @@ import {
 	workspaceDataToSettingsForm,
 } from 'src/utils/settingsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import CoverUpload from '../ui/forms/coverUpload'
-import ImageUpload from '../ui/forms/imageUpload'
-import MultiLineInput from '../ui/forms/multiLineInput'
-import RichTextEditor from '../ui/forms/richTextEditor'
-import SingleLineInput from '../ui/forms/singleLineInput'
-import Loader from '../ui/loader'
-import ErrorToast from '../ui/toasts/errorToast'
-import InfoToast from '../ui/toasts/infoToast'
 
 type EditFormProps = {
-  workspaceData: Workspace | undefined;
+  workspaceData: Workspace | undefined
 };
 
 type EditErrors = { [K in keyof SettingsForm]?: { error: string } };
@@ -201,16 +201,16 @@ function EditForm({ workspaceData }: EditFormProps) {
 	return (
 		<>
 			<Grid
-				w="100%"
-				gridTemplateColumns="4fr 1fr"
-				justifyItems="space-between"
+				w='100%'
+				gridTemplateColumns='4fr 1fr'
+				justifyItems='space-between'
 				mt={8}
-				alignItems="flex-start"
+				alignItems='flex-start'
 			>
 				<SingleLineInput
-					label="Grants DAO Name"
-					placeholder="Nouns DAO"
-					subtext="Letters, spaces, and numbers are allowed."
+					label='Grants DAO Name'
+					placeholder='Nouns DAO'
+					subtext='Letters, spaces, and numbers are allowed.'
 					value={editedFormData?.name}
 					onChange={(e) => updateFormData({ name: e.target.value })}
 					isError={hasError('name')}
@@ -219,16 +219,16 @@ function EditForm({ workspaceData }: EditFormProps) {
 					image={editedFormData?.image! || config.defaultDAOImagePath}
 					isError={false}
 					onChange={(e) => handleImageChange('image', e)}
-					label="Add a logo"
+					label='Add a logo'
 				/>
 			</Grid>
 			<Grid
-				w="100%"
-				gridTemplateColumns="4fr 1fr"
-				justifyItems="space-between">
+				w='100%'
+				gridTemplateColumns='4fr 1fr'
+				justifyItems='space-between'>
 				<MultiLineInput
-					label="Bio"
-					placeholder="Describe your DAO in 200 characters"
+					label='Bio'
+					placeholder='Describe your DAO in 200 characters'
 					value={editedFormData?.bio}
 					onChange={(e) => updateFormData({ bio: e.target.value })}
 					isError={hasError('bio')}
@@ -237,19 +237,19 @@ function EditForm({ workspaceData }: EditFormProps) {
 				/>
 			</Grid>
 			<Grid
-				w="100%"
-				gridTemplateColumns="4fr 1fr"
-				justifyItems="space-between">
+				w='100%'
+				gridTemplateColumns='4fr 1fr'
+				justifyItems='space-between'>
 				{
 					editedFormData?.about
 						? (
 							<RichTextEditor
-								label="About your Grants DAO"
-								placeholder="Write details about your grants, bounty, and other projects."
+								label='About your Grants DAO'
+								placeholder='Write details about your grants, bounty, and other projects.'
 								value={editedFormData!.about!}
 								onChange={about => updateFormData({ about })}
 								isError={hasError('about')}
-								errorText="Required"
+								errorText='Required'
 								maxLength={800}
 							/>
 						)
@@ -257,14 +257,14 @@ function EditForm({ workspaceData }: EditFormProps) {
 				}
 			</Grid>
 			<Grid
-				w="100%"
-				gridTemplateColumns="4fr 1fr"
-				justifyItems="space-between"
+				w='100%'
+				gridTemplateColumns='4fr 1fr'
+				justifyItems='space-between'
 				mt={8}
 			>
 				<SingleLineInput
-					label="Network"
-					placeholder="Network"
+					label='Network'
+					placeholder='Network'
 					value={supportedNetwork}
 					onChange={() => {}}
 					isError={false}
@@ -272,34 +272,34 @@ function EditForm({ workspaceData }: EditFormProps) {
 				/>
 			</Grid>
 			<Grid
-				w="80%"
-				gridTemplateColumns="5fr 1fr"
-				justifyItems="space-between"
+				w='80%'
+				gridTemplateColumns='5fr 1fr'
+				justifyItems='space-between'
 				mt={5}
 			>
-				<Flex direction="column">
+				<Flex direction='column'>
 					<Text
-						fontSize="18px"
-						fontWeight="700"
-						lineHeight="26px"
+						fontSize='18px'
+						fontWeight='700'
+						lineHeight='26px'
 						letterSpacing={0}
-						w="full"
+						w='full'
 					>
-            			Do you want to showcase your grant program partners?
+						Do you want to showcase your grant program partners?
 					</Text>
 					<Text
-						color="#717A7C"
-						fontSize="14px"
-						lineHeight="20px">
-            			You can add their names, logo, and a link to their site.
+						color='#717A7C'
+						fontSize='14px'
+						lineHeight='20px'>
+						You can add their names, logo, and a link to their site.
 					</Text>
 				</Flex>
 				<Flex
-					justifySelf="right"
+					justifySelf='right'
 					gap={2}
-					alignItems="center">
+					alignItems='center'>
 					<Switch
-						id="encrypt"
+						id='encrypt'
 						isChecked={partnersRequired}
 						onChange={
 							(e: any) => {
@@ -313,9 +313,9 @@ function EditForm({ workspaceData }: EditFormProps) {
 						}
 					/>
 					<Text
-						fontSize="12px"
-						fontWeight="bold"
-						lineHeight="16px">
+						fontSize='12px'
+						fontWeight='bold'
+						lineHeight='16px'>
 						{`${partnersRequired ? 'YES' : 'NO'}`}
 					</Text>
 				</Flex>
@@ -324,34 +324,34 @@ function EditForm({ workspaceData }: EditFormProps) {
 			{
 				partners!.map((partner, index) => (
 					<Box
-						w="100%"
+						w='100%'
 						key={index}>
 						<Grid
-							minW="100%"
-							gridTemplateColumns="4fr 1fr"
-							justifyItems="space-between"
+							minW='100%'
+							gridTemplateColumns='4fr 1fr'
+							justifyItems='space-between'
 							mt={2}
 							opacity={partnersRequired ? 1 : 0.4}
 						>
 							<Flex
 								mt={4}
-								gap="2"
-								alignItems="flex-start"
-								direction="column"
+								gap='2'
+								alignItems='flex-start'
+								direction='column'
 								opacity={partnersRequired ? 1 : 0.4}
-								justifyContent="space-between"
+								justifyContent='space-between'
 							>
 								<Flex
-									alignItems="center"
-									direction="row"
-									justifyContent="space-between"
-									w="100%"
+									alignItems='center'
+									direction='row'
+									justifyContent='space-between'
+									w='100%'
 								>
 									<Text
-										color="#122224"
-										fontWeight="bold"
-										fontSize="16px"
-										lineHeight="20px"
+										color='#122224'
+										fontWeight='bold'
+										fontSize='16px'
+										lineHeight='20px'
 									>
 										Partner Name
 									</Text>
@@ -368,22 +368,22 @@ function EditForm({ workspaceData }: EditFormProps) {
 												updateFormData({ partners: newPartners })
 											}
 										}
-										alignItems="center"
-										cursor="pointer"
+										alignItems='center'
+										cursor='pointer'
 										opacity={partnersRequired ? 1 : 0.4}
-										gap="0.25rem"
-										justifySelf="flex-end"
+										gap='0.25rem'
+										justifySelf='flex-end'
 									>
 										<Image
-											h="0.875rem"
-											w="0.875rem"
-											src="/ui_icons/delete_red.svg"
+											h='0.875rem'
+											w='0.875rem'
+											src='/ui_icons/delete_red.svg'
 										/>
 										<Text
-											fontWeight="500"
-											fontSize="14px"
-											color="#DF5252"
-											lineHeight="20px"
+											fontWeight='500'
+											fontSize='14px'
+											color='#DF5252'
+											lineHeight='20px'
 										>
 											Delete
 										</Text>
@@ -392,9 +392,9 @@ function EditForm({ workspaceData }: EditFormProps) {
 							</Flex>
 						</Grid>
 						<Grid
-							minW="100%"
-							gridTemplateColumns="4fr 1fr"
-							justifyItems="space-between"
+							minW='100%'
+							gridTemplateColumns='4fr 1fr'
+							justifyItems='space-between'
 							mt={2}
 							opacity={partnersRequired ? 1 : 0.4}
 						>
@@ -407,46 +407,46 @@ function EditForm({ workspaceData }: EditFormProps) {
 										updateFormData({ partners: newPartners })
 									}
 								}
-								placeholder="e.g. Partner DAO"
+								placeholder='e.g. Partner DAO'
 								maxLength={24}
-								errorText="Required"
+								errorText='Required'
 								disabled={!partnersRequired}
 							/>
 							<Box
-								mt="-2.2rem"
-								mb="-10rem">
+								mt='-2.2rem'
+								mb='-10rem'>
 								<ImageUpload
 									image={isIpfsHash(partner.partnerImageHash) ? getUrlForIPFSHash(partner.partnerImageHash!) : partner.partnerImageHash!}
 									isError={false}
 									onChange={e => handlePartnerImageChange(e, index)}
-									label="Partner logo"
+									label='Partner logo'
 								/>
 							</Box>
 						</Grid>
 
 						<Flex
-							w="80%"
-							gap="2"
-							alignItems="flex-start"
-							direction="column"
+							w='80%'
+							gap='2'
+							alignItems='flex-start'
+							direction='column'
 							opacity={partnersRequired ? 1 : 0.4}
 						>
 							<Flex flex={0.3327}>
 								<Text
-									mt="18px"
-									color="#122224"
-									fontWeight="bold"
-									fontSize="16px"
-									lineHeight="20px"
+									mt='18px'
+									color='#122224'
+									fontWeight='bold'
+									fontSize='16px'
+									lineHeight='20px'
 								>
 									Industry
 								</Text>
 							</Flex>
 							<Flex
-								justifyContent="center"
+								justifyContent='center'
 								gap={2}
-								alignItems="center"
-								w="100%"
+								alignItems='center'
+								w='100%'
 							>
 								<SingleLineInput
 									value={partner.industry}
@@ -457,37 +457,37 @@ function EditForm({ workspaceData }: EditFormProps) {
 											updateFormData({ partners: newPartners })
 										}
 									}
-									placeholder="e.g. Security"
+									placeholder='e.g. Security'
 									maxLength={24}
-									errorText="Required"
+									errorText='Required'
 									disabled={!partnersRequired}
 								/>
 							</Flex>
 						</Flex>
 
 						<Flex
-							w="80%"
-							gap="2"
-							alignItems="flex-start"
-							direction="column"
+							w='80%'
+							gap='2'
+							alignItems='flex-start'
+							direction='column'
 							opacity={partnersRequired ? 1 : 0.4}
 						>
 							<Flex flex={0.3327}>
 								<Text
-									mt="18px"
-									color="#122224"
-									fontWeight="bold"
-									fontSize="16px"
-									lineHeight="20px"
+									mt='18px'
+									color='#122224'
+									fontWeight='bold'
+									fontSize='16px'
+									lineHeight='20px'
 								>
 									Website
 								</Text>
 							</Flex>
 							<Flex
-								justifyContent="center"
+								justifyContent='center'
 								gap={2}
-								alignItems="center"
-								w="full"
+								alignItems='center'
+								w='full'
 								flex={0.6673}
 							>
 								<SingleLineInput
@@ -499,9 +499,9 @@ function EditForm({ workspaceData }: EditFormProps) {
 											updateFormData({ partners: newPartners })
 										}
 									}
-									placeholder="e.g. https://www.example.com"
+									placeholder='e.g. https://www.example.com'
 									maxLength={48}
-									errorText="Required"
+									errorText='Required'
 									disabled={!partnersRequired}
 								/>
 							</Flex>
@@ -511,9 +511,9 @@ function EditForm({ workspaceData }: EditFormProps) {
 			}
 
 			<Flex
-				mt="19px"
-				gap="2"
-				justifyContent="flex-start">
+				mt='19px'
+				gap='2'
+				justifyContent='flex-start'>
 				<Box
 					onClick={
 						() => {
@@ -532,124 +532,124 @@ function EditForm({ workspaceData }: EditFormProps) {
 							setPartners(newPartners)
 						}
 					}
-					display="flex"
-					alignItems="center"
-					cursor="pointer"
+					display='flex'
+					alignItems='center'
+					cursor='pointer'
 					opacity={partnersRequired ? 1 : 0.4}
 				>
 					<Image
-						h="16px"
-						w="15px"
-						src="/ui_icons/plus_circle.svg"
-						mr="6px" />
+						h='16px'
+						w='15px'
+						src='/ui_icons/plus_circle.svg'
+						mr='6px' />
 					<Text
-						fontWeight="500"
-						fontSize="14px"
-						color="#8850EA"
-						lineHeight="20px"
+						fontWeight='500'
+						fontSize='14px'
+						color='#8850EA'
+						lineHeight='20px'
 					>
 						Add
 						{' '}
 						{partners! && partners!.length >= 1 ? 'another' : 'a'}
 						{' '}
-service partner
+						service partner
 					</Text>
 				</Box>
 			</Flex>
 
 			<Flex
-				w="100%"
+				w='100%'
 				mt={10}>
 				<CoverUpload
 					image={editedFormData?.coverImage || ''}
 					isError={false}
 					onChange={(e) => handleImageChange('coverImage', e)}
-					subtext="Upload a cover"
+					subtext='Upload a cover'
 				/>
 			</Flex>
 			<Flex
-				w="100%"
+				w='100%'
 				mt={8}
-				alignItems="flex-start">
+				alignItems='flex-start'>
 				<SingleLineInput
-					label="Twitter Profile Link"
-					placeholder="https://twitter.com/questbookapp"
-					subtext=""
+					label='Twitter Profile Link'
+					placeholder='https://twitter.com/questbookapp'
+					subtext=''
 					value={editedFormData?.twitterHandle}
 					onChange={(e) => updateFormData({ twitterHandle: e.target.value })}
 					isError={hasError('twitterHandle')}
 				/>
 			</Flex>
 			<Flex
-				w="100%"
+				w='100%'
 				mt={8}
-				alignItems="flex-start">
+				alignItems='flex-start'>
 				<SingleLineInput
-					label="Discord Server Link"
-					placeholder="https://discord.gg/questbook"
-					subtext=""
+					label='Discord Server Link'
+					placeholder='https://discord.gg/questbook'
+					subtext=''
 					value={editedFormData?.discordHandle}
 					onChange={(e) => updateFormData({ discordHandle: e.target.value })}
 					isError={hasError('discordHandle')}
 				/>
 			</Flex>
 			<Flex
-				w="100%"
+				w='100%'
 				mt={8}
-				alignItems="flex-start">
+				alignItems='flex-start'>
 				<SingleLineInput
-					label="Telegram Channel"
-					placeholder="https://t.me/questbook"
-					subtext=""
+					label='Telegram Channel'
+					placeholder='https://t.me/questbook'
+					subtext=''
 					value={editedFormData?.telegramChannel}
 					onChange={(e) => updateFormData({ telegramChannel: e.target.value })}
 					isError={hasError('telegramChannel')}
 				/>
 			</Flex>
 			<Flex
-				direction="row"
+				direction='row'
 				mt={4}>
 				<Text
-					textAlign="left"
-					variant="footer"
-					fontSize="12px">
+					textAlign='left'
+					variant='footer'
+					fontSize='12px'>
 					<Image
-						display="inline-block"
-						src="/ui_icons/info.svg"
-						alt="pro tip"
-						mb="-2px"
+						display='inline-block'
+						src='/ui_icons/info.svg'
+						alt='pro tip'
+						mb='-2px'
 					/>
 					{' '}
 					By pressing the button Save Changes below you&apos;ll have to approve
 					this transaction in your wallet.
 					{' '}
 					<Link
-						href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
+						href='https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46'
 						isExternal
 					>
-            			Learn more
+						Learn more
 					</Link>
 					{' '}
 					<Image
-						display="inline-block"
-						src="/ui_icons/link.svg"
-						alt="pro tip"
-						mb="-1px"
-						h="10px"
-						w="10px"
+						display='inline-block'
+						src='/ui_icons/link.svg'
+						alt='pro tip'
+						mb='-1px'
+						h='10px'
+						w='10px'
 					/>
 				</Text>
 			</Flex>
 
 			<Flex
-				direction="row"
-				justify="start"
+				direction='row'
+				justify='start'
 				mt={4}>
 				<Button
 					disabled={!isBiconomyInitialised}
 					ref={buttonRef}
 					w={loading ? buttonRef.current?.offsetWidth : 'auto'}
-					variant="primary"
+					variant='primary'
 					onClick={loading ? () => {} : handleSubmit}
 					py={loading ? 2 : 0}
 				>

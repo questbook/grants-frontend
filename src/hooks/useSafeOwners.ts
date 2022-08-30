@@ -1,18 +1,18 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { NetworkType } from 'src/constants/Networks'
+import SAFES_ENPOINTS from 'src/constants/safesEndpointsTest.json'
+import useAxios from 'src/hooks/utils/useAxios'
 import { getOwners } from 'src/v2/constants/safe/realms_solana'
-import SAFES_ENPOINTS from '../constants/safesEndpointsTest.json'
-import useAxios from './utils/useAxios'
 
 const URL_PREFIX = 'v1/safes/'
 const URL_SUFFIX = ''
 
 
 interface Props {
-    safeAddress: string;
-    chainID?: string;
-	type: NetworkType;
+    safeAddress: string
+    chainID?: string
+	type: NetworkType
 }
 
 type ValidChainID = keyof typeof SAFES_ENPOINTS;
@@ -41,7 +41,7 @@ function useSafeOwners({ safeAddress, type, chainID }: Props) {
 	const [splGovData, setSplGovData] = useState<SafeDetails>([])
 
 	const data = useMemo(() => {
-		console.log('safeowners', splGovData, gnosisData)
+		// console.log('safeowners', splGovData, gnosisData)
 		if(gnosisData.length > 0) {
 			return gnosisData
 		}
@@ -57,9 +57,9 @@ function useSafeOwners({ safeAddress, type, chainID }: Props) {
 	}, [safeAddress])
 
 	useEffect(() => {
-		console.log(loaded, error)
+		// console.log(loaded, error)
 		if(loaded && !error) {
-			// console.log('owners', rawData?.owners)
+			// // console.log('owners', rawData?.owners)
 			setData(rawData?.owners ?? [])
 		}
 	}, [rawData, loaded, error])

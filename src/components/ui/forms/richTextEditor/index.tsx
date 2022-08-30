@@ -3,21 +3,21 @@ import {
 	Box,
 	Flex, Text, } from '@chakra-ui/react'
 import { EditorState } from 'draft-js'
-import Tooltip from '../../tooltip'
-import TextEditor from './textEditor'
+import TextEditor from 'src/components/ui/forms/richTextEditor/textEditor'
+import Tooltip from 'src/components/ui/tooltip'
 
 interface RichTextEditorProps {
-  label?: string;
-  value: EditorState;
-  onChange: (e: EditorState) => void;
-  placeholder?: string;
-  isError: boolean;
-  errorText?: string;
-  subtext?: string | null | undefined;
-  maxLength?: number;
-  disabled?: boolean;
-  tooltip?: string;
-  visible?: boolean;
+  label?: string
+  value: EditorState
+  onChange: (e: EditorState) => void
+  placeholder?: string
+  isError: boolean
+  errorText?: string
+  subtext?: string | null | undefined
+  maxLength?: number
+  disabled?: boolean
+  tooltip?: string
+  visible?: boolean
 }
 
 const defaultProps = {
@@ -46,11 +46,11 @@ function RichTextEditor({
 	return (
 		<Flex
 			flex={1}
-			direction="column"
+			direction='column'
 			display={visible ? '' : 'none'}>
 			<Text
-				lineHeight="20px"
-				fontWeight="bold"
+				lineHeight='20px'
+				fontWeight='bold'
 				mb={1}>
 				{label}
 				{tooltip && tooltip.length ? <Tooltip label={tooltip} /> : null}
@@ -70,10 +70,10 @@ function RichTextEditor({
 			{
 				isError && errorText && errorText?.length && (
 					<Text
-						fontSize="14px"
-						color="#EE7979"
-						fontWeight="700"
-						lineHeight="20px"
+						fontSize='14px'
+						color='#EE7979'
+						fontWeight='700'
+						lineHeight='20px'
 					>
 						{errorText}
 					</Text>
@@ -82,10 +82,10 @@ function RichTextEditor({
 			{
 				subtext && subtext?.length && (
 					<Text
-						fontSize="12px"
-						color="#717A7C"
-						fontWeight="400"
-						lineHeight="20px"
+						fontSize='12px'
+						color='#717A7C'
+						fontWeight='400'
+						lineHeight='20px'
 					>
 						{subtext}
 					</Text>

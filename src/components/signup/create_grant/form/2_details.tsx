@@ -6,9 +6,9 @@ import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import RichTextEditor from 'src/components/ui/forms/richTextEditor'
 
 interface Props {
-  onSubmit: (data: any) => void;
-  constructCache: (data: any) => void;
-  cacheKey: string;
+  onSubmit: (data: any) => void
+  constructCache: (data: any) => void
+  cacheKey: string
 }
 
 function Details({ onSubmit, constructCache, cacheKey }: Props) {
@@ -26,7 +26,7 @@ function Details({ onSubmit, constructCache, cacheKey }: Props) {
 		}
 
 		const formData = JSON.parse(data || '{}')
-		console.log('Data from cache: ', formData)
+		// console.log('Data from cache: ', formData)
 
 		if(formData?.details) {
 			setDetails(
@@ -61,19 +61,19 @@ function Details({ onSubmit, constructCache, cacheKey }: Props) {
 		<>
 			<Flex
 				py={12}
-				direction="column">
+				direction='column'>
 				<Text
-					variant="heading"
-					fontSize="36px"
-					lineHeight="48px">
-          What&apos;s your grant about?
+					variant='heading'
+					fontSize='36px'
+					lineHeight='48px'>
+					What&apos;s your grant about?
 				</Text>
 
 				<Box mt={12} />
 
 				<RichTextEditor
-					label="Grant Details"
-					placeholder="Details about your grant - requirements, deliverables, and milestones"
+					label='Grant Details'
+					placeholder='Details about your grant - requirements, deliverables, and milestones'
 					value={details}
 					isError={detailsError}
 					onChange={
@@ -85,17 +85,17 @@ function Details({ onSubmit, constructCache, cacheKey }: Props) {
 							setDetails(e)
 						}
 					}
-					errorText="Required"
+					errorText='Required'
 					maxLength={-1}
 				/>
 
 				<Box mt={12} />
 			</Flex>
-			<Flex mt="auto">
+			<Flex mt='auto'>
 				<Button
-					variant="primary"
+					variant='primary'
 					onClick={handleOnSubmit}>
-          Continue
+					Continue
 				</Button>
 
 				{/* <Button h={12} minW="168px" ml="42px" onClick={() => onSubmit({})}>

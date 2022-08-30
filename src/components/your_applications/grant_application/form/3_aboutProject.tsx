@@ -3,11 +3,11 @@ import {
 	Box, Flex, Image,
 	Text, } from '@chakra-ui/react'
 import { EditorState } from 'draft-js'
+import Dropdown from 'src/components/ui/forms/dropdown'
+import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import RichTextEditor from 'src/components/ui/forms/richTextEditor'
-import Dropdown from '../../../ui/forms/dropdown'
-import MultiLineInput from '../../../ui/forms/multiLineInput'
-import SingleLineInput from '../../../ui/forms/singleLineInput'
-import Tooltip from '../../../ui/tooltip'
+import SingleLineInput from 'src/components/ui/forms/singleLineInput'
+import Tooltip from 'src/components/ui/tooltip'
 
 function AboutProject({
 	projectName,
@@ -36,72 +36,72 @@ function AboutProject({
 	readOnly,
 	grantRequiredFields,
 }: {
-  projectName: string;
-  setProjectName: (projectName: string) => void;
-  projectNameError: boolean;
-  setProjectNameError: (projectNameError: boolean) => void;
+  projectName: string
+  setProjectName: (projectName: string) => void
+  projectNameError: boolean
+  setProjectNameError: (projectNameError: boolean) => void
 
   projectLinks: {
-    link: string;
-    isError: boolean;
-  }[];
+    link: string
+    isError: boolean
+  }[]
   setProjectLinks: (
     projectLinks: {
-      link: string;
-      isError: boolean;
+      link: string
+      isError: boolean
     }[]
-  ) => void;
+  ) => void
 
-  projectDetails: EditorState;
-  setProjectDetails: (projectDetails: EditorState) => void;
-  projectDetailsError: boolean;
-  setProjectDetailsError: (projectDetailsError: boolean) => void;
+  projectDetails: EditorState
+  setProjectDetails: (projectDetails: EditorState) => void
+  projectDetailsError: boolean
+  setProjectDetailsError: (projectDetailsError: boolean) => void
 
-  projectGoal: string;
-  setProjectGoal: (projectGoal: string) => void;
-  projectGoalError: boolean;
-  setProjectGoalError: (projectGoalError: boolean) => void;
+  projectGoal: string
+  setProjectGoal: (projectGoal: string) => void
+  projectGoalError: boolean
+  setProjectGoalError: (projectGoalError: boolean) => void
 
   projectMilestones: {
-    milestone: string;
-    milestoneReward: string;
-    milestoneIsError: boolean;
-    milestoneRewardIsError: boolean;
-  }[];
+    milestone: string
+    milestoneReward: string
+    milestoneIsError: boolean
+    milestoneRewardIsError: boolean
+  }[]
   setProjectMilestones: (
     projectMilestones: {
-      milestone: string;
-      milestoneReward: string;
-      milestoneIsError: boolean;
-      milestoneRewardIsError: boolean;
+      milestone: string
+      milestoneReward: string
+      milestoneIsError: boolean
+      milestoneRewardIsError: boolean
     }[]
-  ) => void;
+  ) => void
 
-  rewardCurrency: string;
-  rewardCurrencyCoin: string;
+  rewardCurrency: string
+  rewardCurrencyCoin: string
 
-  readOnly?: boolean;
-  grantRequiredFields: string[];
+  readOnly?: boolean
+  grantRequiredFields: string[]
 }) {
 	return (
 		<>
 			<Text
-				fontWeight="700"
-				fontSize="16px"
-				lineHeight="20px"
-				color="#8850EA">
-        Project Details
+				fontWeight='700'
+				fontSize='16px'
+				lineHeight='20px'
+				color='#8850EA'>
+				Project Details
 				<Tooltip
-					icon="/ui_icons/tooltip_questionmark_brand.svg"
-					label="Write about your project - idea, use cases, process, goals, and how it helps our ecosystem."
-					placement="bottom-start"
+					icon='/ui_icons/tooltip_questionmark_brand.svg'
+					label='Write about your project - idea, use cases, process, goals, and how it helps our ecosystem.'
+					placement='bottom-start'
 				/>
 			</Text>
 
 			<Box mt={6} />
 			<SingleLineInput
-				label="Project Name"
-				placeholder="NFT marketplace"
+				label='Project Name'
+				placeholder='NFT marketplace'
 				value={projectName}
 				onChange={
 					(e) => {
@@ -113,7 +113,7 @@ function AboutProject({
 					}
 				}
 				isError={projectNameError}
-				errorText="Required"
+				errorText='Required'
 				disabled={readOnly}
 				visible={grantRequiredFields.includes('projectName')}
 				maxLength={30}
@@ -125,7 +125,7 @@ function AboutProject({
 						<Box mt={7} />
 						<SingleLineInput
 							label={`Project Link ${index + 1}`}
-							placeholder="www.project.com"
+							placeholder='www.project.com'
 							value={project.link}
 							onChange={
 								(e) => {
@@ -143,7 +143,7 @@ function AboutProject({
 								}
 							}
 							isError={project.isError}
-							errorText="Required"
+							errorText='Required'
 							disabled={readOnly}
 							visible={grantRequiredFields.includes('projectLink')}
 							inputRightElement={
@@ -156,23 +156,23 @@ function AboutProject({
 												setProjectLinks(newProjectLinks)
 											}
 										}
-										mt="-78px"
-										ml="-32px"
-										display="flex"
-										alignItems="center"
-										cursor="pointer"
+										mt='-78px'
+										ml='-32px'
+										display='flex'
+										alignItems='center'
+										cursor='pointer'
 									>
 										<Image
-											h="16px"
-											w="15px"
-											src="/ui_icons/delete_red.svg"
-											mr="6px"
+											h='16px'
+											w='15px'
+											src='/ui_icons/delete_red.svg'
+											mr='6px'
 										/>
 										<Text
-											fontWeight="700"
-											color="#DF5252"
+											fontWeight='700'
+											color='#DF5252'
 											lineHeight={0}>
-                    Delete
+											Delete
 										</Text>
 									</Box>
 								)
@@ -187,30 +187,30 @@ function AboutProject({
 					<Box mt={3} />
 				) : (
 					<Text
-						fontSize="14px"
-						color="#8850EA"
-						fontWeight="500"
-						lineHeight="20px"
+						fontSize='14px'
+						color='#8850EA'
+						fontWeight='500'
+						lineHeight='20px'
 						mt={3}
-						cursor="pointer"
+						cursor='pointer'
 						onClick={
 							() => {
 								setProjectLinks([...projectLinks, { link: '', isError: false }])
 							}
 						}
-						w="fit-content"
+						w='fit-content'
 						display={grantRequiredFields.includes('projectLink') ? 'block' : 'none'}
 					>
 						<Image
-							display="inline-block"
+							display='inline-block'
 							h={4}
 							w={4}
 							mr={2}
-							mb="-3px"
-							src="/ui_icons/plus_circle.svg"
-							alt="link"
+							mb='-3px'
+							src='/ui_icons/plus_circle.svg'
+							alt='link'
 						/>
-          Add another project link
+						Add another project link
 					</Text>
 				)
 			}
@@ -223,8 +223,8 @@ function AboutProject({
         />
       ) : ( */}
 			<RichTextEditor
-				label="Project Details"
-				placeholder="Write details about your project - requirements, deliverables, and milestones - as detailed as possible."
+				label='Project Details'
+				placeholder='Write details about your project - requirements, deliverables, and milestones - as detailed as possible.'
 				value={projectDetails}
 				onChange={
 					(e: EditorState) => {
@@ -236,7 +236,7 @@ function AboutProject({
 					}
 				}
 				isError={projectDetailsError}
-				errorText="Required"
+				errorText='Required'
 				visible={grantRequiredFields.includes('projectDetails')}
 				maxLength={-1}
 				disabled={readOnly}
@@ -245,8 +245,8 @@ function AboutProject({
 
 			<Box mt={8} />
 			<MultiLineInput
-				placeholder="Write about what your team plans to achieve with this project"
-				label="Project Goals"
+				placeholder='Write about what your team plans to achieve with this project'
+				label='Project Goals'
 				maxLength={1000}
 				value={projectGoal}
 				onChange={
@@ -259,7 +259,7 @@ function AboutProject({
 					}
 				}
 				isError={projectGoalError}
-				errorText="Required"
+				errorText='Required'
 				disabled={readOnly}
 				visible={grantRequiredFields.includes('projectGoals')}
 			/>
@@ -280,7 +280,7 @@ function AboutProject({
 							<Box mt={8} />
 							<SingleLineInput
 								label={`Project Milestone ${index + 1}`}
-								placeholder="App Launch on November 30"
+								placeholder='App Launch on November 30'
 								value={milestone}
 								onChange={
 									(e) => {
@@ -298,7 +298,7 @@ function AboutProject({
 									}
 								}
 								isError={milestoneIsError}
-								errorText="Required"
+								errorText='Required'
 								disabled={readOnly}
 								inputRightElement={
 									index === 0 ? null : (
@@ -310,23 +310,23 @@ function AboutProject({
 													setProjectMilestones(newProjectMilestones)
 												}
 											}
-											mt="-78px"
-											ml="-32px"
-											display="flex"
-											alignItems="center"
-											cursor="pointer"
+											mt='-78px'
+											ml='-32px'
+											display='flex'
+											alignItems='center'
+											cursor='pointer'
 										>
 											<Image
-												h="16px"
-												w="15px"
-												src="/ui_icons/delete_red.svg"
-												mr="6px"
+												h='16px'
+												w='15px'
+												src='/ui_icons/delete_red.svg'
+												mr='6px'
 											/>
 											<Text
-												fontWeight="700"
-												color="#DF5252"
+												fontWeight='700'
+												color='#DF5252'
 												lineHeight={0}>
-                      Delete
+												Delete
 											</Text>
 										</Box>
 									)
@@ -334,15 +334,15 @@ function AboutProject({
 							/>
 
 							<Box mt={8} />
-							<Flex alignItems="flex-start">
+							<Flex alignItems='flex-start'>
 								<Box
-									minW="160px"
+									minW='160px'
 									flex={1}>
 									<SingleLineInput
-										label="Expected Milestone Reward"
-										placeholder="100"
-										tooltip="How much money would you need to complete this milestone"
-										tooltipPlacement="bottom-start"
+										label='Expected Milestone Reward'
+										placeholder='100'
+										tooltip='How much money would you need to complete this milestone'
+										tooltipPlacement='bottom-start'
 										value={milestoneReward}
 										onChange={
 											(e) => {
@@ -360,18 +360,18 @@ function AboutProject({
 											}
 										}
 										isError={milestoneRewardIsError}
-										errorText="Required"
-										type="number"
+										errorText='Required'
+										type='number'
 										disabled={readOnly}
 									/>
 								</Box>
 								<Box
 									ml={4}
 									mt={5}
-									minW="132px"
+									minW='132px'
 									flex={0}>
 									<Dropdown
-										listItemsMinWidth="132px"
+										listItemsMinWidth='132px'
 										listItems={
 											[
 												{
@@ -393,12 +393,12 @@ function AboutProject({
 					<Box mt={3} />
 				) : (
 					<Text
-						fontSize="14px"
-						color="#8850EA"
-						fontWeight="500"
-						lineHeight="20px"
+						fontSize='14px'
+						color='#8850EA'
+						fontWeight='500'
+						lineHeight='20px'
 						mt={3}
-						cursor="pointer"
+						cursor='pointer'
 						onClick={
 							() => {
 								setProjectMilestones([
@@ -412,7 +412,7 @@ function AboutProject({
 								])
 							}
 						}
-						w="fit-content"
+						w='fit-content'
 						display={
 							grantRequiredFields.includes('isMultipleMilestones')
 								? 'block'
@@ -420,15 +420,15 @@ function AboutProject({
 						}
 					>
 						<Image
-							display="inline-block"
+							display='inline-block'
 							h={4}
 							w={4}
 							mr={2}
-							mb="-3px"
-							src="/ui_icons/plus_circle.svg"
-							alt="link"
+							mb='-3px'
+							src='/ui_icons/plus_circle.svg'
+							alt='link'
 						/>
-          Add a milestone
+						Add a milestone
 					</Text>
 				)
 			}

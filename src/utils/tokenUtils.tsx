@@ -4,7 +4,7 @@ import {
 	SupportedChainId,
 } from 'src/constants/chains'
 import { ChainInfo } from 'src/types'
-import { getUrlForIPFSHash } from './ipfsUtils'
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 export function getAssetInfo(asset?: string, chainId?: SupportedChainId) {
 	asset = asset?.toLowerCase()
@@ -16,7 +16,7 @@ export function getAssetInfo(asset?: string, chainId?: SupportedChainId) {
 	}
 }
 
-export function getChainInfo(grant: any, chainId: SupportedChainId) : ChainInfo['supportedCurrencies'][string] {
+export function getChainInfo(grant: any, chainId: SupportedChainId): ChainInfo['supportedCurrencies'][string] {
 	// let chainInfo: ChainInfo['supportedCurrencies'][string]
 	let tokenIcon: string
 	let chainInfo =
@@ -24,7 +24,7 @@ export function getChainInfo(grant: any, chainId: SupportedChainId) : ChainInfo[
       	grant.reward.asset.toLowerCase()
       ]
 
-	//   console.log('WOWW2', chainInfo, !chainInfo)
+	//   // console.log('WOWW2', chainInfo, !chainInfo)
 	if(!chainInfo && grant.reward.token) {
 		tokenIcon = getUrlForIPFSHash(grant.reward.token.iconHash)
 		chainInfo = {
@@ -44,7 +44,7 @@ export function getChainInfo(grant: any, chainId: SupportedChainId) : ChainInfo[
 		}
 	}
 
-	// console.log('WOWW2', chainInfo, grant.reward)
+	// // console.log('WOWW2', chainInfo, grant.reward)
 
 	return chainInfo
 }

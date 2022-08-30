@@ -1,4 +1,4 @@
-import seoConfig from '../constants/seo'
+import seoConfig from 'src/constants/seo'
 
 type GetSeoOptions = {
   omitOpenGraphImage?: boolean

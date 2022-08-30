@@ -1,15 +1,15 @@
 import React from 'react'
 import {
 	Button, Container, Flex, Image, Text, useTheme, } from '@chakra-ui/react'
-import strings from '../../constants/strings.json'
-import { highlightWordsInString } from '../../utils/formattingUtils'
+import strings from 'src/constants/strings.json'
+import { highlightWordsInString } from 'src/utils/formattingUtils'
 
 function GetStarted({
 	onTalentClick,
 	onDaoClick,
 }: {
-  onTalentClick: () => void;
-  onDaoClick: () => void;
+  onTalentClick: () => void
+  onDaoClick: () => void
 }) {
 	const theme = useTheme()
 
@@ -37,50 +37,50 @@ function GetStarted({
 	]
 	return (
 		<Container
-			maxW="100%"
-			display="flex"
-			px="70px"
-			flexDirection="column"
-			alignItems="center"
+			maxW='100%'
+			display='flex'
+			px='70px'
+			flexDirection='column'
+			alignItems='center'
 		>
 			<Text
-				mt="46px"
-				variant="heading"
-				textAlign="center">
+				mt='46px'
+				variant='heading'
+				textAlign='center'>
 				{strings.get_started.heading}
 			</Text>
 			<Text
-				mt="42px"
-				variant="heading"
-				textAlign="center">
+				mt='42px'
+				variant='heading'
+				textAlign='center'>
 				{strings.get_started.subheading}
 			</Text>
 			<Flex
 				mt={20}
-				justify="space-evenly"
-				w="80%">
+				justify='space-evenly'
+				w='80%'>
 				{
 					tabs.map(({ id, icon, text, onClick }) => (
 						<Flex
 							key={id}
-							direction="column"
-							justify="start"
-							align="center"
+							direction='column'
+							justify='start'
+							align='center'
 							mx={4}>
 							<Image
-								h="153px"
-								w="202px"
+								h='153px'
+								w='202px'
 								src={icon} />
 							<Text
 								mt={10}
-								fontWeight="400"
-								textAlign="center">
+								fontWeight='400'
+								textAlign='center'>
 								{text}
 							</Text>
 							<Button
 								onClick={onClick}
 								mt={10}
-								variant="primary">
+								variant='primary'>
 								{strings.get_started.button_text}
 							</Button>
 						</Flex>
@@ -89,9 +89,9 @@ function GetStarted({
 			</Flex>
 
 			<Text
-				variant="footer"
-				mt="51px"
-				mb="35px">
+				variant='footer'
+				mt='51px'
+				mb='35px'>
 				{/* <Link href="/connect_wallet">
 					{strings.get_started.footer.link}
 				</Link> */}

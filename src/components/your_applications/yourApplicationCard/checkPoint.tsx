@@ -8,8 +8,8 @@ interface Props {
   | 'approved'
   | 'submitted'
   | 'rejected'
-  | 'resubmit';
-  date?: string;
+  | 'resubmit'
+  date?: string
 }
 
 function CheckPoint({ state, date }: Props) {
@@ -60,35 +60,35 @@ function CheckPoint({ state, date }: Props) {
 	return (
 		<>
 			<Text
-				fontSize="14px"
-				lineHeight="24px"
-				fontWeight="700"
-				color="#414E50"
-				position="absolute"
-				top="-20px"
-				whiteSpace="nowrap"
+				fontSize='14px'
+				lineHeight='24px'
+				fontWeight='700'
+				color='#414E50'
+				position='absolute'
+				top='-20px'
+				whiteSpace='nowrap'
 			>
 				{ date}
 			</Text>
 			<Box
-				display="flex"
-				alignItems="center"
-				justifyContent="center"
+				display='flex'
+				alignItems='center'
+				justifyContent='center'
 				h={9}
 				w={9}
 				bg={stateInfo[state]?.bgColor}
-				borderRadius="36px"
+				borderRadius='36px'
 			>
 				<Image src={stateInfo[state]?.icon} />
 			</Box>
 			<Text
-				fontSize="14px"
-				lineHeight="16px"
-				fontWeight="500"
+				fontSize='14px'
+				lineHeight='16px'
+				fontWeight='500'
 				color={stateInfo[state]?.textColor}
-				position="absolute"
-				bottom="-18px"
-				whiteSpace="nowrap"
+				position='absolute'
+				bottom='-18px'
+				whiteSpace='nowrap'
 			>
 				{stateInfo[state]?.text}
 			</Text>

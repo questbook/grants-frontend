@@ -14,13 +14,13 @@ import {
 } from '@chakra-ui/react'
 
 interface DropdownProps {
-  listItems: { icon?: string; label: string, id?: string; address?: string; decimals?: number }[];
-  listItemsMinWidth?: string;
-  label?: string;
-  value?: string;
-  onChange?: Function;
-  defaultIndex?: number;
-  addERC?: boolean;
+  listItems: { icon?: string, label: string, id?: string, address?: string, decimals?: number }[]
+  listItemsMinWidth?: string
+  label?: string
+  value?: string
+  onChange?: Function
+  defaultIndex?: number
+  addERC?: boolean
 }
 
 const defaultProps = {
@@ -49,15 +49,15 @@ function Dropdown({
 	}, [defaultSelected])
 	return (
 		<Flex
-			flexDirection="column"
-			alignItems="stretch"
-			position="relative">
+			flexDirection='column'
+			alignItems='stretch'
+			position='relative'>
 			{
 				label && label.length && (
 					<>
 						<Text
-							lineHeight="20px"
-							fontWeight="bold">
+							lineHeight='20px'
+							fontWeight='bold'>
 							{label}
 						</Text>
 						<Box mt={1} />
@@ -67,15 +67,15 @@ function Dropdown({
 			<Menu
 				onClose={() => setIsOpen(false)}
 				isOpen={isOpen}
-				variant="form"
+				variant='form'
 				isLazy>
 				<MenuButton
-					maxW="100%"
+					maxW='100%'
 					h={12}
 					mt={1}
 					as={Button}
-					rightIcon={onChange ? <Image src="/ui_icons/form_dropdown.svg" /> : null}
-					textAlign="left"
+					rightIcon={onChange ? <Image src='/ui_icons/form_dropdown.svg' /> : null}
+					textAlign='left'
 					flex={1}
 					p={0}
 					pr={5}
@@ -91,13 +91,13 @@ function Dropdown({
 					_focus={{ boxShadow: 'none' }}
 				>
 					<Container
-						alignItems="center"
-						display="flex"
-						w="full"
+						alignItems='center'
+						display='flex'
+						w='full'
 						px={4}
 						py={3}
 						h={12}
-						justifyContent="flex-start"
+						justifyContent='flex-start'
 					>
 						{
 							value ? (
@@ -106,16 +106,16 @@ function Dropdown({
 										listItems?.find(({ label: text }) => text === value)?.icon ? (
 											<Image
 												mr={3}
-												h="24px"
-												w="24px"
+												h='24px'
+												w='24px'
 												src={listItems.find(({ label: text }) => text === value)?.icon}
 											/>
 										) : null
 									}
 									<Text
-										fontWeight="400"
-										fontSize="14px"
-										color="#414E50">
+										fontWeight='400'
+										fontSize='14px'
+										color='#414E50'>
 										{value}
 									</Text>
 								</>
@@ -125,15 +125,15 @@ function Dropdown({
 										selected?.icon && selected?.icon.length ? (
 											<Image
 												mr={3}
-												h="24px"
-												w="24px"
+												h='24px'
+												w='24px'
 												src={selected.icon} />
 										) : null
 									}
 									<Text
-										fontWeight="400"
-										fontSize="14px"
-										color="#414E50">
+										fontWeight='400'
+										fontSize='14px'
+										color='#414E50'>
 										{selected?.label}
 									</Text>
 								</>
@@ -144,8 +144,8 @@ function Dropdown({
 				<MenuList
 					minW={0}
 					py={0}
-					maxH="250px"
-					overflowY="scroll"
+					maxH='250px'
+					overflowY='scroll'
 					sx={
 						{
 							'&::-webkit-scrollbar': {
@@ -188,26 +188,26 @@ function Dropdown({
 								p={0}
 							>
 								<Flex
-									alignItems="center"
-									w="full"
+									alignItems='center'
+									w='full'
 									px={4}
 									py={3}
 									h={12}
-									justifyContent="flex-start"
+									justifyContent='flex-start'
 								>
 									{
 										icon && icon.length ? (
 											<Image
 												mr={3}
-												h="24px"
-												w="24px"
+												h='24px'
+												w='24px'
 												src={icon} />
 										) : null
 									}
 									<Text
-										fontWeight="400"
-										fontSize="14px"
-										color="#414E50">
+										fontWeight='400'
+										fontSize='14px'
+										color='#414E50'>
 										{text}
 									</Text>
 								</Flex>
@@ -231,23 +231,23 @@ function Dropdown({
 										}
 									}>
 									<Flex
-										alignItems="center"
-										w="full"
+										alignItems='center'
+										w='full'
 										px={4}
 										py={3}
 										h={12}
-										justifyContent="flex-start"
+										justifyContent='flex-start'
 									>
 										<Image
 											mr={3}
-											h="18px"
-											w="18px"
-											src="/ui_icons/addERCToken.svg" />
+											h='18px'
+											w='18px'
+											src='/ui_icons/addERCToken.svg' />
 										<Text
-											fontWeight="400"
-											fontSize="14px"
-											color="#414E50">
-Add your ERC 20 Token
+											fontWeight='400'
+											fontSize='14px'
+											color='#414E50'>
+											Add your ERC 20 Token
 										</Text>
 									</Flex>
 								</MenuItem>

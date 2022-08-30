@@ -2,15 +2,15 @@ import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
+import ErrorToast from 'src/components/ui/toasts/errorToast'
+import useERC20Contract from 'src/hooks/contracts/useERC20Contract'
+import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import useChainId from 'src/hooks/utils/useChainId'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import ErrorToast from '../components/ui/toasts/errorToast'
-import useERC20Contract from './contracts/useERC20Contract'
-import useQBContract from './contracts/useQBContract'
-import { useQuestbookAccount } from './gasless/useQuestbookAccount'
-import useChainId from './utils/useChainId'
 
 export default function useFulfillReviewPayment(
 	workspaceId: string,
@@ -38,7 +38,7 @@ export default function useFulfillReviewPayment(
 	const currentChainId = useChainId()
 
 	useEffect(() => {
-		// console.log(totalAmount);
+		// // console.log(totalAmount);
 		if(!totalAmount) {
 			setError(undefined)
 			setIncorrectNetwork(false)
@@ -68,10 +68,10 @@ export default function useFulfillReviewPayment(
 			return
 		}
 
-		console.log('YES')
+		// console.log('YES')
 
 		async function fulfillPayment() {
-			console.log('YES2')
+			// console.log('YES2')
 
 			setFulfillLoading(true)
 			try {
@@ -81,7 +81,7 @@ export default function useFulfillReviewPayment(
 				)
 				await txnApprove.wait()
 
-				console.log('WENT THROUGH')
+				// console.log('WENT THROUGH')
 
 				const fulfillPaymenTxn = await applicationReviewerContract.fulfillPayment(
 					workspaceId,

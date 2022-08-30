@@ -3,14 +3,14 @@ import {
 	Button,
 	Flex, IconButton, Image, Link, ModalBody, Text,
 } from '@chakra-ui/react'
+import Modal from 'src/components/ui/modal'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
-import Modal from './modal'
 
 interface Props {
-  hiddenModalOpen: boolean;
-  setHiddenModalOpen: (hiddenModalOpen: boolean) => void;
-  setIgnorePkModal: (ignorePkModal: boolean) => void;
-  isAdmin: boolean;
+  hiddenModalOpen: boolean
+  setHiddenModalOpen: (hiddenModalOpen: boolean) => void
+  setIgnorePkModal: (ignorePkModal: boolean) => void
+  isAdmin: boolean
 }
 
 function AllowAccessToPublicKeyModal({
@@ -35,30 +35,30 @@ function AllowAccessToPublicKeyModal({
 			<Modal
 				isOpen={hiddenModalOpen}
 				onClose={() => setHiddenModalOpen(false)}
-				title=""
+				title=''
 				modalWidth={719}
 				showCloseButton={false}
 			>
 				<ModalBody
 					px={10}
-					display="flex"
-					flexDirection="column">
+					display='flex'
+					flexDirection='column'>
 
 					<IconButton
 						m={0}
-						ml="auto"
-						aria-label="close-button"
-						size="14px"
+						ml='auto'
+						aria-label='close-button'
+						size='14px'
 						icon={
 							<Image
-								boxSize="14px"
+								boxSize='14px'
 								_active={{}}
 								_hover={{}}
-								src="/ui_icons/close.svg" />
+								src='/ui_icons/close.svg' />
 						}
 						_hover={{}}
 						_active={{}}
-						variant="ghost"
+						variant='ghost'
 						onClick={
 							() => {
 								setIgnorePkModal(true)
@@ -67,20 +67,20 @@ function AllowAccessToPublicKeyModal({
 					/>
 
 					<Flex
-						direction="column"
-						align="center">
+						direction='column'
+						align='center'>
 						<Text
-							variant="heading"
-							fontFamily="Spartan"
+							variant='heading'
+							fontFamily='Spartan'
 							letterSpacing={-1}
-							textAlign="center"
+							textAlign='center'
 						>
-              gm! 👋 Welcome to Questbook
+							gm! 👋 Welcome to Questbook
 						</Text>
 
 						<Text
 							mt={4}
-							variant="applicationText">
+							variant='applicationText'>
 							{
 								isAdmin
 									? 'You’ve been invited to be as an Admin.'
@@ -93,14 +93,14 @@ function AllowAccessToPublicKeyModal({
 								<>
 									<Text
 										mt={9}
-										variant="applicationText"
-										fontWeight="700">
-                  Here’s what you can do next
+										variant='applicationText'
+										fontWeight='700'>
+										Here’s what you can do next
 									</Text>
 
 									<Flex
-										direction="column"
-										align="flex-start"
+										direction='column'
+										align='flex-start'
 										mt={5}>
 										{
 											[
@@ -109,17 +109,17 @@ function AllowAccessToPublicKeyModal({
 											].map((item, index) => (
 												<Flex
 													key={item}
-													justify="start"
-													direction="row"
+													justify='start'
+													direction='row'
 													mt={index === 0 ? 0 : 6}>
 													<Image
-														h="28px"
-														w="28px"
+														h='28px'
+														w='28px'
 														src={`/ui_icons/reviewers_modal_icon_${index + 1}.svg`}
 													/>
 													<Text
 														ml={4}
-														variant="applicationText">
+														variant='applicationText'>
 														{item}
 													</Text>
 												</Flex>
@@ -132,40 +132,40 @@ function AllowAccessToPublicKeyModal({
 
 						<Text
 							mt={9}
-							variant="applicantText"
-							textAlign="center">
-              To get started with reviewing applications,
-              you are required to submit your public key that enables you to
+							variant='applicantText'
+							textAlign='center'>
+							To get started with reviewing applications,
+							you are required to submit your public key that enables you to
 							{' '}
 							<b>
-view encrypted applicant details
+								view encrypted applicant details
 							</b>
 							{' '}
-              such as email etc.
+							such as email etc.
 							<br />
 							<br />
-              This along with the data submitted by the reviewers is encrypted and
+							This along with the data submitted by the reviewers is encrypted and
 							{' '}
 							<b>
-will be visible to you only if you share your public key
+								will be visible to you only if you share your public key
 							</b>
 							{' '}
 							{' '}
 							<Link
 								mx={1}
-								href="/"
+								href='/'
 								isExternal
-								color="brand.500"
-								fontWeight="400"
-								fontSize="14px"
+								color='brand.500'
+								fontWeight='400'
+								fontSize='14px'
 							>
-                Learn more
+								Learn more
 								<Image
 									ml={1}
-									display="inline-block"
-									h="10px"
-									w="10px"
-									src="/ui_icons/link.svg"
+									display='inline-block'
+									h='10px'
+									w='10px'
+									src='/ui_icons/link.svg'
 								/>
 							</Link>
 						</Text>
@@ -173,8 +173,8 @@ will be visible to you only if you share your public key
 						<Button
 							onClick={() => setHiddenPkModalOpen(true)}
 							my={10}
-							variant="primary">
-Allow access to public key
+							variant='primary'>
+							Allow access to public key
 						</Button>
 					</Flex>
 				</ModalBody>

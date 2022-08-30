@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react'
 import { Flex, Grid, GridItem, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import useBatchUpdateApplicationState from 'src/hooks/useBatchUpdateApplicationState'
-import RejectedRow from './RejectedRow'
-import ZeroState from './ZeroState'
+import RejectedRow from 'src/v2/payouts/RejectedProposals/RejectedRow'
+import ZeroState from 'src/v2/payouts/RejectedProposals/ZeroState'
 
 const RejectedPanel = ({
 	applicantsData,
 	onSendFundsClicked,
 }: {
-  applicantsData: any[];
-  onSendFundsClicked: (state: boolean) => void;
+  applicantsData: any[]
+  onSendFundsClicked: (state: boolean) => void
 
 }) => {
 	const [checkedItems, setCheckedItems] = useState<boolean[]>(Array(applicantsData.filter((item) => (0 === item.status)).length).fill(false))
@@ -40,8 +40,8 @@ const RejectedPanel = ({
 		}
 
 		const tempArr: number[] = []
-		console.log(checkedItems)
-		console.log(inReviewApplications)
+		// console.log(checkedItems)
+		// console.log(inReviewApplications)
 		for(let i = 0; i < checkedItems.length; i++) {
 			if(checkedItems[i] && inReviewApplications[i]) {
 				tempArr.push(Number(inReviewApplications[i].applicationId))
@@ -112,7 +112,7 @@ const RejectedPanel = ({
 			<Flex
 				py='14px'
 				px='16px'
-				alignItems={'center'}
+				alignItems='center'
 			>
 				<Text
 					mr='auto'
@@ -135,12 +135,12 @@ const RejectedPanel = ({
 
 			<Flex
 				bg='#F0F0F7'
-				h={'1px'}
+				h='1px'
 			/>
 
 
 			<Grid
-				templateColumns={'1fr 1fr 1fr'}
+				templateColumns='1fr 1fr 1fr'
 			>
 
 				<GridItem>
@@ -183,7 +183,7 @@ const RejectedPanel = ({
 				<GridItem colSpan={4}>
 					<Flex
 						bg='#F0F0F7'
-						h={'1px'}
+						h='1px'
 					/>
 				</GridItem>
 

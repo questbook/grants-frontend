@@ -2,21 +2,21 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'
 import { Box, Button, Flex } from '@chakra-ui/react'
 
 type Props = {
-  onPageChange: (page: number) => void,
-  currentPage: number,
-  hasMoreData: boolean,
+  onPageChange: (page: number) => void
+  currentPage: number
+  hasMoreData: boolean
 };
 
 function PaginatorView({ currentPage, onPageChange, hasMoreData }: Props) {
 	return (
 		<Box
-			boxShadow={'lg'}
+			boxShadow='lg'
 			borderRadius={7.5}
-			bg={'white'}>
+			bg='white'>
 			<Flex
-				alignItems={'center'}>
+				alignItems='center'>
 				<Button
-					bg={'inherit'}
+					bg='inherit'
 					disabled={currentPage === 0}
 					onClick={() => onPageChange(currentPage - 1)}
 				>
@@ -26,7 +26,7 @@ function PaginatorView({ currentPage, onPageChange, hasMoreData }: Props) {
 				{currentPage + 1}
 				<Box w={2.5} />
 				<Button
-					bg={'inherit'}
+					bg='inherit'
 					disabled={!hasMoreData}
 					onClick={() => onPageChange(currentPage + 1)}
 				>

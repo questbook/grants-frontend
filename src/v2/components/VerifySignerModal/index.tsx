@@ -6,10 +6,10 @@ import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
 import ErrorToast from 'src/v2/components/Toasts/errorToast'
 import SuccessToast from 'src/v2/components/Toasts/successToast'
+import VerifySignerErrorState from 'src/v2/components/VerifySignerModal/VeirfySignerErrorState'
+import VerifyWalletButton from 'src/v2/components/VerifySignerModal/VerifySignerButton'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
-import VerifySignerErrorState from './VeirfySignerErrorState'
-import VerifyWalletButton from './VerifySignerButton'
 
 const VerifySignerModal = ({
 	owners,
@@ -20,12 +20,12 @@ const VerifySignerModal = ({
 	networkType,
 	setOwnerAddress
 }: {
-	owners: string[],
-	isOpen: boolean,
-	onClose: () => void,
-	redirect?: () => void,
-	setIsOwner: (newState: boolean) => void,
-	networkType: NetworkType,
+	owners: string[]
+	isOpen: boolean
+	onClose: () => void
+	redirect?: () => void
+	setIsOwner: (newState: boolean) => void
+	networkType: NetworkType
 	setOwnerAddress: (ownerAddress: string) => void
 }) => {
 	const [connectClicked, setConnectClicked] = useState(false)
@@ -49,14 +49,14 @@ const VerifySignerModal = ({
 		name: 'Metamask',
 		icon: <MetamaskFox
 			h={8}
-			w={'33px'} />,
+			w='33px' />,
 		isPopular: true,
 		id: 'injected',
 	}, {
 		name: 'WalletConnect',
 		icon: <WalletConnectLogo
 			h={8}
-			w={'33px'} />,
+			w='33px' />,
 		isPopular: false,
 		id: 'walletConnect'
 	}]
@@ -65,7 +65,7 @@ const VerifySignerModal = ({
 		name: 'Phantom',
 		icon: <PhantomLogo
 			h={8}
-			w={'33px'} />,
+			w='33px' />,
 		isPopular: true,
 		id: 'phantom',
 	}]
@@ -83,7 +83,7 @@ const VerifySignerModal = ({
 	}, [isErrorConnecting])
 
 	useEffect(() => {
-		console.log(accountData)
+		// console.log(accountData)
 		if(accountData) {
 			if(!redirectInitiated && redirect && connectClicked) {
 				setRedirectInitiated(true)
@@ -153,21 +153,21 @@ const VerifySignerModal = ({
 			isOpen={isOpen}
 			onClose={onClose}
 			isCentered
-			scrollBehavior={'outside'}
+			scrollBehavior='outside'
 			size={isError ? 'md' : '2xl'}
 		>
 			<AlertDialogOverlay
-				background={'rgba(240, 240, 247, 0.7)'}
-				backdropFilter={'blur(10px)'}
+				background='rgba(240, 240, 247, 0.7)'
+				backdropFilter='blur(10px)'
 			/>
 
 			<ModalContent
-				w={'36rem'}
-				boxShadow={'none'}
-				filter={'drop-shadow(2px 4px 40px rgba(31, 31, 51, 0.05))'}
-				borderRadius={'base'}
-				fontFamily={'Neue-Haas-Grotesk-Display, sans-serif'}
-				fontSize={'1rem'}
+				w='36rem'
+				boxShadow='none'
+				filter='drop-shadow(2px 4px 40px rgba(31, 31, 51, 0.05))'
+				borderRadius='base'
+				fontFamily='Neue-Haas-Grotesk-Display, sans-serif'
+				fontSize='1rem'
 			>
 				<ModalBody
 					p={0}
@@ -180,32 +180,32 @@ const VerifySignerModal = ({
 							/>
 						) : (
 							<Flex
-								direction={'column'}
-								alignItems={'center'}
+								direction='column'
+								alignItems='center'
 								py={6}>
 								<Image
-									boxSize="48px"
+									boxSize='48px'
 									src='/ui_icons/verify-signer-top.svg'
 									alt='Questbook'
 								/>
 
 								<Text
 									mt={6}
-									variant="v2_heading_3"
-									fontWeight="500"
+									variant='v2_heading_3'
+									fontWeight='500'
 								>
 									Verify you’re a signer
 								</Text>
 								<Text
-									variant="v2_body"
-									color="black.3">
+									variant='v2_body'
+									color='black.3'>
 									Connect your wallet which is a signer on the safe.
 								</Text>
 
 								<VStack
 									mt={6}
-									direction={'column'}
-									w={'full'}
+									direction='column'
+									w='full'
 									px={4}
 									spacing={4}
 								>
@@ -225,7 +225,7 @@ const VerifySignerModal = ({
 																try {
 																	await connectAsync(connector)
 																} catch(e) {
-																	console.log('evm error', e)
+																	// console.log('evm error', e)
 																}
 
 																setWalletClicked(true)
@@ -253,14 +253,14 @@ const VerifySignerModal = ({
 
 								<Text
 									mt={6}
-									variant="v2_body">
+									variant='v2_body'>
 									Need help? Join our
 									<Link
 										mx={0.25}
-										fontWeight="500"
-										color={'black.1'}
+										fontWeight='500'
+										color='black.1'
 										isExternal
-										href="https://youtube.com">
+										href='https://youtube.com'>
 										Discord
 									</Link>
 									{' '}

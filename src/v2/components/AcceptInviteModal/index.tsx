@@ -10,9 +10,9 @@ import { addAuthorizedUser } from 'src/utils/gaslessUtils'
 import { delay } from 'src/utils/generics'
 import { InviteInfo, useJoinInvite } from 'src/utils/invite'
 import { ForwardArrow } from 'src/v2/assets/custom chakra icons/Arrows/ForwardArrow'
-import ControlBar from '../ControlBar'
-import NetworkTransactionModal from '../NetworkTransactionModal'
-import RoleDataDisplay from './RoleDataDisplay'
+import RoleDataDisplay from 'src/v2/components/AcceptInviteModal/RoleDataDisplay'
+import ControlBar from 'src/v2/components/ControlBar'
+import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
 export type AcceptInviteModalProps = {
 	inviteInfo?: InviteInfo | undefined
@@ -62,19 +62,19 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 			return
 		}
 
-		console.log('webwallet exists', nonce)
+		// console.log('webwallet exists', nonce)
 		if(nonce && nonce !== 'Token expired') {
 			return
 		}
 
-		console.log('adding nonce')
+		// console.log('adding nonce')
 
 		addAuthorizedUser(webwallet?.address)
 			.then(() => {
 				setShouldRefreshNonce(true)
-				console.log('Added authorized user', webwallet.address)
+				// console.log('Added authorized user', webwallet.address)
 			})
-			.catch((err) => console.log("Couldn't add authorized user", err))
+			// .catch((err) => console.log("Couldn't add authorized user", err))
 	}, [webwallet, nonce, shouldRefreshNonce])
 
 	const walletAddress = accountData?.address
@@ -125,7 +125,7 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 
 			onClose()
 		} catch(error: any) {
-			console.error('error in join ', error)
+			// console.error('error in join ', error)
 
 			const toastId = toast({
 				render: () => ErrorToast({
@@ -387,7 +387,7 @@ const Step2RightDisplay = ({ getJoinInviteGasEstimate, profile, updateProfile, n
 									variant='brandFlushed'
 									disabled={!editable}
 									placeholder={placeholder}
-									fontWeight={'500'}
+									fontWeight='500'
 									background='transparent'
 									color={editable ? undefined : 'v2LightGrey'}
 									value={profile[key] || ''}

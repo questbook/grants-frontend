@@ -2,17 +2,17 @@ import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import useQBContract from 'src/hooks/contracts/useQBContract'
+import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import useChainId from 'src/hooks/utils/useChainId'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import ErrorToast from '../components/ui/toasts/errorToast'
-import useQBContract from './contracts/useQBContract'
-import { useBiconomy } from './gasless/useBiconomy'
-import { useQuestbookAccount } from './gasless/useQuestbookAccount'
-import useChainId from './utils/useChainId'
 
 export default function useMarkReviewPaymentDone(
 	workspaceId: string,
@@ -49,7 +49,7 @@ export default function useMarkReviewPaymentDone(
 	})
 
 	useEffect(() => {
-		// console.log(totalAmount);
+		// // console.log(totalAmount);
 		if(!totalAmount) {
 			setError(undefined)
 			setIncorrectNetwork(false)
@@ -79,10 +79,10 @@ export default function useMarkReviewPaymentDone(
 			return
 		}
 
-		// console.log('YES');
+		// // console.log('YES');
 
 		async function markAsDone() {
-			// console.log('YES2');
+			// // console.log('YES2');
 
 			setLoading(true)
 			try {

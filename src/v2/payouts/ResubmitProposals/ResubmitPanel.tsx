@@ -1,11 +1,11 @@
 import { Flex, Grid, GridItem, Text } from '@chakra-ui/react'
-import ResubmitRow from './ResubmitRow'
-import ZeroState from './ZeroState'
+import ResubmitRow from 'src/v2/payouts/ResubmitProposals/ResubmitRow'
+import ZeroState from 'src/v2/payouts/ResubmitProposals/ZeroState'
 
 const ResubmitPanel = ({
 	applicantsData,
 }: {
-  applicantsData: any[];
+  applicantsData: any[]
 
 }) => {
 	if(applicantsData?.filter((item: any) => (1 === item.status)).length === 0) {
@@ -19,7 +19,7 @@ const ResubmitPanel = ({
 			<Flex
 				py='14px'
 				px='16px'
-				alignItems={'center'}
+				alignItems='center'
 			>
 				<Text
 					mr='auto'
@@ -42,12 +42,12 @@ const ResubmitPanel = ({
 
 			<Flex
 				bg='#F0F0F7'
-				h={'1px'}
+				h='1px'
 			/>
 
 
 			<Grid
-				templateColumns={'1fr 1fr 1fr'}
+				templateColumns='1fr 1fr 1fr'
 			>
 
 				<GridItem>

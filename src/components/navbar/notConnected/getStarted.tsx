@@ -12,7 +12,7 @@ function GetStarted({
 			<Button
 				mr={5}
 				h={12}
-				transition="all 1s ease"
+				transition='all 1s ease'
 				_active={
 					{
 						background:
@@ -30,16 +30,16 @@ function GetStarted({
 						background: 'linear-gradient(96.85deg, #E0E6E7 -21.73%, #C4C4C4 110.75%)',
 					}
 				}
-				background="linear-gradient(96.85deg, #6F25F1 -21.73%, #00E1FF 110.75%)"
+				background='linear-gradient(96.85deg, #6F25F1 -21.73%, #00E1FF 110.75%)'
 				px={6}
 				py={3}
 				onClick={onGetStartedClick}
 			>
 				<Text
-					fontFamily="DM Sans"
-					color="white"
-					fontWeight="bold">
-        Get Started
+					fontFamily='DM Sans'
+					color='white'
+					fontWeight='bold'>
+					Get Started
 				</Text>
 			</Button>
 		</>

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Modal, ModalOverlay } from '@chakra-ui/react'
-import InputRoleContent from './InputRoleContent'
-import LinkCreatedContent from './LinkCreatedContent'
+import InputRoleContent from 'src/v2/components/InviteModal/InputRoleContent'
+import LinkCreatedContent from 'src/v2/components/InviteModal/LinkCreatedContent'
 
 export type InviteModalProps = {
 	isOpen: boolean

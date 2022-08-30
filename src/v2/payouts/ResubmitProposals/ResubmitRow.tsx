@@ -7,12 +7,10 @@ import { getFromIPFS } from 'src/utils/ipfsUtils'
 const ResubmitRow = ({
 	applicantData,
 }: {
-	applicantData: any;
+	applicantData: any
 }) => {
 	const router = useRouter()
 	const [isHovering, setIsHovering] = useState(false)
-	useEffect(() => console.log(applicantData), [applicantData])
-
 	const [reviews, setReviews] = useState<any>()
 
 	const getReview = async(hash: string) => {
@@ -25,7 +23,7 @@ const ResubmitRow = ({
 			const data = JSON.parse(d)
 			return data
 		} catch(e) {
-			console.log('incorrect review', e)
+			// console.log('incorrect review', e)
 			return {}
 		}
 	}
@@ -43,8 +41,8 @@ const ResubmitRow = ({
 			reviewsDataMap[reviewerId] = review.items
 		})
 
-		console.log('reviewsData', reviewsData)
-		console.log('reviewsData', reviewsDataMap)
+		// console.log('reviewsData', reviewsData)
+		// console.log('reviewsData', reviewsDataMap)
 		setReviews(reviewsDataMap)
 	}
 
@@ -55,7 +53,7 @@ const ResubmitRow = ({
 	}, [applicantData])
 
 	const totalScore = (items?: any[]) => {
-		console.log(items)
+		// console.log(items)
 		let s = 0
 		items?.forEach((item) => {
 			s += item.rating ?? 0
@@ -83,11 +81,11 @@ const ResubmitRow = ({
 					<Flex
 						bg='#F0F0F7'
 						borderRadius='20px'
-						h={'40px'}
-						w={'40px'}
+						h='40px'
+						w='40px'
 					>
 						<Image
-							borderRadius="3xl"
+							borderRadius='3xl'
 							src={getAvatar(applicantData?.applicant_address)}
 						/>
 					</Flex>
@@ -95,14 +93,14 @@ const ResubmitRow = ({
 					<Flex
 						direction='column'
 						ml='12px'
-						alignItems={'flex-start'}
+						alignItems='flex-start'
 					>
 						<Text
 							fontSize='14px'
 							lineHeight='20px'
 							fontWeight='500'
 							noOfLines={1}
-							textOverflow={'ellipsis'}
+							textOverflow='ellipsis'
 							cursor='pointer'
 							onClick={
 								() => router.push({
@@ -120,12 +118,12 @@ const ResubmitRow = ({
 							fontSize='12px'
 							lineHeight='16px'
 							fontWeight='400'
-							mt="2px"
+							mt='2px'
 							color='#7D7DA0'
 						>
 							{applicantData?.applicantName}
 							{' '}
-•
+							•
 							{' '}
 							{applicantData?.applicantEmail}
 						</Text>
@@ -165,7 +163,7 @@ const ResubmitRow = ({
 			>
 				<Text
 					px={4}
-					py={'18px'}
+					py='18px'
 					color='#555570'
 					fontSize='14px'
 					lineHeight='20px'
@@ -190,7 +188,7 @@ const ResubmitRow = ({
 							forwardRef<TextProps, 'div'>((props, ref) => (
 								<Text
 									px={4}
-									py={'18px'}
+									py='18px'
 									color='#555570'
 									fontSize='14px'
 									lineHeight='20px'
@@ -198,7 +196,7 @@ const ResubmitRow = ({
 									{...props}
 									ref={ref}
 									aria-label='reviewers'
-									cursor={'pointer'}
+									cursor='pointer'
 								>
 									{
 										applicantData?.reviewers?.length > 0 ?
@@ -210,12 +208,12 @@ const ResubmitRow = ({
 						}
 					/>
 					<MenuList
-						overflow="scroll"
-						minW={'240px'}
-						maxH={'156px'}
+						overflow='scroll'
+						minW='240px'
+						maxH='156px'
 						py={0}>
 						<Flex
-							bg={'#F0F0F7'}
+							bg='#F0F0F7'
 							px={4}
 							py={2}
 						>
@@ -224,7 +222,7 @@ const ResubmitRow = ({
 								lineHeight='20px'
 								fontWeight='500'
 								textAlign='center'
-								color={'#555570'}
+								color='#555570'
 							>
 								Reviewers
 							</Text>
@@ -234,12 +232,12 @@ const ResubmitRow = ({
 							applicantData?.reviewers?.map((reviewer: any, i: number) => {
 								const reviewerIdSplit = reviewer?.id.split('.')
 								const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
-								console.log(reviewerId)
+								// console.log(reviewerId)
 								return (
 									<>
 										<MenuItem
-											px={'16px'}
-											py={'10px'}
+											px='16px'
+											py='10px'
 										>
 
 											<Flex
@@ -252,25 +250,25 @@ const ResubmitRow = ({
 												<Flex
 													bg='#F0F0F7'
 													borderRadius='20px'
-													h={'20px'}
-													w={'20px'}
+													h='20px'
+													w='20px'
 												>
 													<Image
-														borderRadius="3xl"
+														borderRadius='3xl'
 														src={getAvatar(reviewerId)}
 													/>
 												</Flex>
 
 												<Flex
 													ml='12px'
-													alignItems={'center'}
+													alignItems='center'
 												>
 													<Text
 														fontSize='14px'
 														lineHeight='20px'
 														fontWeight='500'
 														noOfLines={1}
-														textOverflow={'ellipsis'}
+														textOverflow='ellipsis'
 													>
 														{reviewer?.member?.fullName}
 													</Text>
@@ -281,7 +279,7 @@ const ResubmitRow = ({
 													fontSize='12px'
 													lineHeight='16px'
 													fontWeight='400'
-													mt="2px"
+													mt='2px'
 													color='#7D7DA0'
 													ml='auto'
 												>

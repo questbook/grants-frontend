@@ -4,8 +4,8 @@ import { WorkspaceUpdateRequest } from '@questbook/service-validator-client'
 import { useRouter } from 'next/router'
 import SubmitPublicKeyModal from 'src/components/ui/submitPublicKeyModal'
 import SuccessToast from 'src/components/ui/toasts/successToast'
-import useChainId from './utils/useChainId'
-import useUpdateWorkspacePublicKeys from './useUpdateWorkspacePublicKeys'
+import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
+import useChainId from 'src/hooks/utils/useChainId'
 
 export default function useSubmitPublicKey() {
 	const [hiddenModalOpen, setHiddenModalOpen] = useState(false)
@@ -22,8 +22,8 @@ export default function useSubmitPublicKey() {
 				position: 'top',
 				render: () => (
 					<SuccessToast
-						heading="Access applicant personal details"
-						body="You can view all the details on new applicant forms submitted."
+						heading='Access applicant personal details'
+						body='You can view all the details on new applicant forms submitted.'
 						close={
 							() => {
 								if(toastRef.current) {

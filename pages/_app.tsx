@@ -41,11 +41,11 @@ import 'draft-js/dist/Draft.css'
 
 
 type NextPageWithLayout = NextPage & {
-	getLayout?: (page: ReactElement) => ReactNode;
+	getLayout?: (page: ReactElement) => ReactNode
 };
 
 type AppPropsWithLayout = AppProps & {
-	Component: NextPageWithLayout;
+	Component: NextPageWithLayout
 };
 
 const infuraId = process.env.NEXT_PUBLIC_INFURA_ID
@@ -100,31 +100,31 @@ const client = createClient({
 })
 
 export const ApiClientsContext = createContext<{
-	validatorApi: ValidationApi;
-	workspace?: MinimalWorkspace;
-	setWorkspace: (workspace?: MinimalWorkspace) => void;
-	subgraphClients: { [chainId: string]: SubgraphClient };
-	connected: boolean;
-	setConnected: (connected: boolean) => void;
+	validatorApi: ValidationApi
+	workspace?: MinimalWorkspace
+	setWorkspace: (workspace?: MinimalWorkspace) => void
+	subgraphClients: { [chainId: string]: SubgraphClient }
+	connected: boolean
+	setConnected: (connected: boolean) => void
 		} | null>(null)
 
 export const WebwalletContext = createContext<{
-	webwallet?: Wallet;
-	setWebwallet: (webwallet?: Wallet) => void;
-	network?: SupportedChainId;
-	switchNetwork: (newNetwork?: SupportedChainId) => void;
-	scwAddress?: string;
-	setScwAddress: (scwAddress?: string) => void;
-	nonce?: string;
-	setNonce: (nonce?: string) => void;
-	loadingNonce: boolean;
-	setLoadingNonce: (loadingNonce: boolean) => void;
+	webwallet?: Wallet
+	setWebwallet: (webwallet?: Wallet) => void
+	network?: SupportedChainId
+	switchNetwork: (newNetwork?: SupportedChainId) => void
+	scwAddress?: string
+	setScwAddress: (scwAddress?: string) => void
+	nonce?: string
+	setNonce: (nonce?: string) => void
+	loadingNonce: boolean
+	setLoadingNonce: (loadingNonce: boolean) => void
 		} | null>(null)
 
 export const BiconomyContext = createContext<{
-	biconomyDaoObj?: any,
-	setBiconomyDaoObj: (biconomyDaoObj: any) => void,
-	biconomyWalletClient?: BiconomyWalletClient,
+	biconomyDaoObj?: any
+	setBiconomyDaoObj: (biconomyDaoObj: any) => void
+	biconomyWalletClient?: BiconomyWalletClient
 	setBiconomyWalletClient: (biconomyWalletClient?: BiconomyWalletClient) => void
 		} | null>(null)
 
@@ -221,7 +221,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		() => ({
 			webwallet: webwallet,
 			setWebwallet: (newWebwallet?: Wallet) => {
-				console.log('rrrrrrr')
+				// console.log('rrrrrrr')
 				if(newWebwallet) {
 					localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
 				} else {
@@ -252,12 +252,12 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			},
 			nonce: nonce,
 			setNonce: (newNonce?: string) => {
-				console.log('called nonce: ', newNonce)
+				// console.log('called nonce: ', newNonce)
 				if(newNonce) {
-					console.log('setting nonce', newNonce)
+					// console.log('setting nonce', newNonce)
 					localStorage.setItem('nonce', newNonce)
 				} else {
-					console.log('removing nonce: ', localStorage.getItem('nonce'))
+					// console.log('removing nonce: ', localStorage.getItem('nonce'))
 					localStorage.removeItem('nonce')
 				}
 
@@ -332,7 +332,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			<Head>
 				<script
 					async
-					src="https://www.googletagmanager.com/gtag/js?id=G-N9KVED0HQZ"
+					src='https://www.googletagmanager.com/gtag/js?id=G-N9KVED0HQZ'
 				/>
 				<script
 					// eslint-disable-next-line react/no-danger
@@ -360,18 +360,18 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				</ApiClientsContext.Provider>
 			</WagmiConfig>
 			<ChatWidget
-				token="5b3b08cf-8b27-4d4b-9c4e-2290f53e04f0"
-				inbox="cb5e60c6-dfe5-481d-9dde-3f13e83344cd"
-				title="Welcome to Questbook Support"
+				token='5b3b08cf-8b27-4d4b-9c4e-2290f53e04f0'
+				inbox='cb5e60c6-dfe5-481d-9dde-3f13e83344cd'
+				title='Welcome to Questbook Support'
 				subtitle="Have a question? Please feel free to ask here - we'll respond ASAP, hopefully now!"
-				primaryColor="#1F1F33"
-				newMessagePlaceholder="Type your question ..."
+				primaryColor='#1F1F33'
+				newMessagePlaceholder='Type your question ...'
 				showAgentAvailability={false}
 				agentAvailableText="We're online right now!"
 				agentUnavailableText="We're away at the moment."
 				requireEmailUpfront={false}
-				iconVariant="filled"
-				baseUrl="https://app.papercups.io"
+				iconVariant='filled'
+				baseUrl='https://app.papercups.io'
 			/>
 
 		</>

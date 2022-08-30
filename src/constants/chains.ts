@@ -1,7 +1,7 @@
+import chainInfo from 'src/generated/chainInfo.json'
+import SupportedChainId from 'src/generated/SupportedChainId'
 import { ChainInfoMap } from 'src/types'
 import 'dotenv/config'
-import chainInfo from '../generated/chainInfo.json'
-import SupportedChainId from '../generated/SupportedChainId'
 
 // by default, we show all test nets
 export const SHOW_TEST_NETS = process.env.NEXT_PUBLIC_IS_TEST !== 'false'

@@ -1,18 +1,19 @@
 import { Box, Flex, Input, Text } from '@chakra-ui/react'
 import { ArrowDownCircle } from 'src/v2/assets/custom chakra icons/Arrows/ArrowDownCircle'
 import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
+import { usdToSolana } from 'src/v2/constants/safe/realms_solana'
+import AlertBanner from 'src/v2/payouts/SendFundsDrawer/AlertBanner'
+import MilestoneSelect from 'src/v2/payouts/SendFundsDrawer/MilestoneSelect'
 import { TransactionType } from 'src/v2/types/safe'
-import AlertBanner from './AlertBanner'
-import MilestoneSelect from './MilestoneSelect'
 
 const RecipientDetails = ({
 	applicantData,
 	initiateTransactionData,
 	onChangeRecepientDetails,
 }: {
-	applicantData: any;
-	initiateTransactionData: TransactionType[] | undefined;
-	onChangeRecepientDetails :(applicationId: any, fieldName: string, fieldValue: any)=>void;
+	applicantData: any
+	initiateTransactionData: TransactionType[] | undefined
+	onChangeRecepientDetails: (applicationId: any, fieldName: string, fieldValue: any) => void
 }) => {
 	return (
 		<>
@@ -20,7 +21,7 @@ const RecipientDetails = ({
 				mt={4}
 				p={4}
 				borderRadius='2px'
-				boxShadow={'inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'}
+				boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'
 				flexDirection='column'
 			>
 				<Text
@@ -28,11 +29,11 @@ const RecipientDetails = ({
 					lineHeight='20px'
 					fontWeight='500'
 				>
-							From
+					From
 				</Text>
 
 				<Flex
-					alignItems={'baseline'}
+					alignItems='baseline'
 					mt={2}
 				>
 					<Text
@@ -45,8 +46,8 @@ const RecipientDetails = ({
 
 					<ExternalLink
 						ml={1}
-						h={'12px'}
-						w={'12px'}
+						h='12px'
+						w='12px'
 						cursor='pointer'
 					/>
 				</Flex>
@@ -60,7 +61,7 @@ const RecipientDetails = ({
 			>
 				<ArrowDownCircle
 					color='#785EF0'
-					h="28px"
+					h='28px'
 					w='28px'
 				/>
 			</Flex>
@@ -70,7 +71,7 @@ const RecipientDetails = ({
 				mt={4}
 				p={4}
 				borderRadius='2px'
-				boxShadow={'inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'}
+				boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'
 				flexDirection='column'
 			>
 				<Text
@@ -79,12 +80,12 @@ const RecipientDetails = ({
 					fontWeight='500'
 					mb={6}
 				>
-							To
+					To
 				</Text>
 
 
 				{
-					applicantData.map((data:any, i:number) => (
+					applicantData.map((data: any, i: number) => (
 						<>
 							<Box
 								fontSize='14px'
@@ -94,8 +95,8 @@ const RecipientDetails = ({
 								w='20px'
 								bg='#F0F0F7'
 								display='flex'
-								justifyContent={'center'}
-								alignItems={'center'}
+								justifyContent='center'
+								alignItems='center'
 								mr={4}
 								mb={2}
 							>
@@ -110,40 +111,40 @@ const RecipientDetails = ({
 							>
 								{data?.project_name}
 								{' '}
-•
+								•
 								{' '}
 								{data?.applicantName}
 							</Text>
 
 
 							<Flex
-								alignItems={'baseline'}
+								alignItems='baseline'
 								mt={2}
 							>
 								<Input
-									variant={'brandFlushed'}
-									placeholder={'Ethereum or Solana address'}
+									variant='brandFlushed'
+									placeholder='Ethereum or Solana address'
 									_placeholder={
 										{
 											color: 'blue.100',
 											fontWeight: '500'
 										}
 									}
-									fontWeight={'500'}
+									fontWeight='500'
 									fontSize='14px'
 									defaultValue={initiateTransactionData ? initiateTransactionData[i]?.to : ''}
-									errorBorderColor={'red'}
-									height={'auto'}
+									errorBorderColor='red'
+									height='auto'
 									onChange={(e) => onChangeRecepientDetails(data.applicationId, 'to', e.target.value)}
 								/>
 							</Flex>
 
 							<Box h={6} />
 
-							<Flex alignItems={'center'}>
+							<Flex alignItems='center'>
 								<Flex
 									flex={1}
-									flexDirection={'column'}>
+									flexDirection='column'>
 
 									<MilestoneSelect
 										placeholder='Select from the list'
@@ -156,25 +157,25 @@ const RecipientDetails = ({
 
 								<Flex
 									flex={1}
-									flexDirection={'column'}>
+									flexDirection='column'>
 
 									<Box h={2} />
 									<Input
-										variant={'brandFlushed'}
-										placeholder={'Amount'}
+										variant='brandFlushed'
+										placeholder='Amount'
 										_placeholder={
 											{
 												color: 'blue.100',
 												fontWeight: '500'
 											}
 										}
-										fontWeight={'500'}
+										fontWeight='500'
 										fontSize='14px'
-										defaultValue={''}
-										errorBorderColor={'red'}
-										height={'auto'}
-										type={'number'}
-										onChange={(e) => onChangeRecepientDetails(data.applicationId, 'amount', parseFloat(e.target.value))}
+										defaultValue=''
+										errorBorderColor='red'
+										height='auto'
+										type='number'
+										onChange={async(e) => onChangeRecepientDetails(data.applicationId, 'amount', await usdToSolana(parseFloat(e.target.value)))}
 									/>
 								</Flex>
 							</Flex>
@@ -189,7 +190,7 @@ const RecipientDetails = ({
 			<AlertBanner
 				message={
 					<Text>
-								Next, you will asked be to confirm that you are an owner on the safe. Only safe owners are allowed to send funds.
+						Next, you will asked be to confirm that you are an owner on the safe. Only safe owners are allowed to send funds.
 					</Text>
 				}
 				type='infoSendFunds'

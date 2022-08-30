@@ -17,7 +17,7 @@ const isValidEmail = (email: string) => {
  */
 const getSupportedChainIdFromSupportedNetwork = (chain: SupportedNetwork | undefined): SupportedChainId => {
 	if(chain) {
-		const [_, chainIdStr] = chain?.split('_')
+		const [, chainIdStr] = chain?.split('_')
 		const chainId = +chainIdStr
 		// if the chain ID is valid -- then it would be converted to a regular, non-NaN number
 		// otherwise -- it's invalid and we simply return the default chain

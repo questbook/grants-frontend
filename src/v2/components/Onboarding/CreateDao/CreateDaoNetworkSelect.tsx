@@ -2,17 +2,17 @@ import { useEffect, useState } from 'react'
 import { Box, Flex, Heading, Text } from '@chakra-ui/react'
 import { CHAIN_INFO } from 'src/constants/chains'
 import useChainId from 'src/hooks/utils/useChainId'
-import { NetworkSelectOption, supportedNetworks } from '../SupportedNetworksData'
-import AlertBanner from '../UI/Misc/AlertBanner'
-import ContinueButton from '../UI/Misc/ContinueButton'
-import NetworkSelect from '../UI/Misc/NetworkSelect'
+import { NetworkSelectOption, supportedNetworks } from 'src/v2/components/Onboarding/SupportedNetworksData'
+import AlertBanner from 'src/v2/components/Onboarding/UI/Misc/AlertBanner'
+import ContinueButton from 'src/v2/components/Onboarding/UI/Misc/ContinueButton'
+import NetworkSelect from 'src/v2/components/Onboarding/UI/Misc/NetworkSelect'
 
 
 const CreateDaoNetworkSelect = ({
 	onSubmit,
 	daoNetwork,
 }: {
-	onSubmit: (network: NetworkSelectOption) => void,
+	onSubmit: (network: NetworkSelectOption) => void
 	daoNetwork: NetworkSelectOption | undefined
 }) => {
 	const [newDaoSelectedNetwork, setNewDaoSelectedNetwork] = useState<NetworkSelectOption>()
@@ -21,7 +21,7 @@ const CreateDaoNetworkSelect = ({
 	useEffect(() => {
 		if(!newDaoSelectedNetwork && !daoNetwork) {
 			const currentSupportedNetwork = supportedNetworks.find((network) => network.id === chainId)
-			console.log(currentSupportedNetwork)
+			// console.log(currentSupportedNetwork)
 			setNewDaoSelectedNetwork(currentSupportedNetwork)
 		}
 	}, [chainId])
@@ -34,8 +34,8 @@ const CreateDaoNetworkSelect = ({
 
 	return (
 		<>
-			<Heading variant={'small'}>
-      Which network should the DAO be on?
+			<Heading variant='small'>
+				Which network should the DAO be on?
 			</Heading>
 
 			<AlertBanner
@@ -53,22 +53,22 @@ const CreateDaoNetworkSelect = ({
 			/>
 
 			<Flex
-				alignItems={'stretch'}
+				alignItems='stretch'
 				mt={4}>
 				<Flex
 					flex={1}
-					alignItems={'flex-start'}
+					alignItems='flex-start'
 				>
 					<Text
-						fontWeight={'500'}
+						fontWeight='500'
 						mt={2}>
-					Network
+						Network
 					</Text>
 					<Box mr={7} />
 					<Flex
-						w={'full'}
-						direction={'column'}
-						h={'full'}
+						w='full'
+						direction='column'
+						h='full'
 
 					>
 						<NetworkSelect
@@ -80,11 +80,11 @@ const CreateDaoNetworkSelect = ({
 						{
 							newDaoSelectedNetwork && chainId !== newDaoSelectedNetwork.id && (
 								<Text
-									color={'brandSubtext'}
-									fontSize={'sm'}
-									mt={'auto'}
+									color='brandSubtext'
+									fontSize='sm'
+									mt='auto'
 								>
-							Before creating your DAO on-chain, you will be asked to switch the network in your wallet.
+									Before creating your DAO on-chain, you will be asked to switch the network in your wallet.
 								</Text>
 							)
 						}

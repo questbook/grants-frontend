@@ -127,7 +127,7 @@ function Profile() {
 	// }, [allDaoData, grantsApplicants])
 
 	const getAnalyticsData = async() => {
-		console.log('calling analytics')
+		// console.log('calling analytics')
 		try {
 			//const res = await fetch('https://www.questbook-analytics.com/workspace-analytics', {
 			const res = await fetch(
@@ -152,7 +152,7 @@ function Profile() {
 			)
 
 			const data = await res.json()
-			console.log('res', data)
+			// console.log('res', data)
 
 			const totalFunding = extractLast30Fundings(data)
 			setGrantsDisbursed(totalFunding)
@@ -160,7 +160,7 @@ function Profile() {
 			setGrantWinners(data.winnerApplicants)
 
 		} catch(e) {
-			console.log(e)
+			// console.log(e)
 		}
 	}
 
@@ -172,7 +172,7 @@ function Profile() {
 			return totalFunding
 		}
 
-		// console.log(everydayApplications)
+		// // console.log(everydayApplications)
 
 		everydayFundings.forEach((application: any) => {
 			totalFunding += parseInt(application.funding)
@@ -247,7 +247,7 @@ function Profile() {
 
 	return (
 		<Flex
-			direction="column"
+			direction='column'
 			w={
 				{
 					base: '100%',
@@ -255,24 +255,24 @@ function Profile() {
 					lg: '52%',
 				}
 			}
-			mx="auto"
-			mb="1rem"
-			pb="1rem"
-			borderX="1px solid #E8E9E9"
+			mx='auto'
+			mb='1rem'
+			pb='1rem'
+			borderX='1px solid #E8E9E9'
 			// borderBottom="1px solid #E8E9E9"
 		>
-			<Stack w="full">
+			<Stack w='full'>
 				<Flex
 					bg={workspaceData?.coverImageIpfsHash ? 'white' : 'brand.500'}
-					h={{ base: '125px', md:'210px' }}
-					w="fill"
+					h={{ base: '125px', md: '210px' }}
+					w='fill'
 				>
 					{
 						workspaceData?.coverImageIpfsHash && (
 							<Image
-								fit="contain"
-								alignSelf="flex-end"
-								justifySelf="flex-end"
+								fit='contain'
+								alignSelf='flex-end'
+								justifySelf='flex-end'
 								src={getUrlForIPFSHash(workspaceData?.coverImageIpfsHash)}
 							/>
 						)
@@ -280,34 +280,34 @@ function Profile() {
 				</Flex>
 
 				<Flex
-					direction="column"
-					m="auto"
-					w="100%">
+					direction='column'
+					m='auto'
+					w='100%'>
 					<Flex
-						direction="row"
-						w="100%"
-						align="end"
-						mt="-3.5rem"
-						px="1.5rem"
-						gap="1rem"
+						direction='row'
+						w='100%'
+						align='end'
+						mt='-3.5rem'
+						px='1.5rem'
+						gap='1rem'
 					>
 						<Image
 							src={getUrlForIPFSHash(workspaceData?.logoIpfsHash!)}
-							w="120px"
-							h="120px"
-							borderRadius="12px"
+							w='120px'
+							h='120px'
+							borderRadius='12px'
 						/>
 
 
-						<Box mr="auto" />
+						<Box mr='auto' />
 
 
 						<Flex
-							direction="row"
-							alignSelf="start"
-							justify="right"
-							mt="3.5rem"
-							gap="0.5rem"
+							direction='row'
+							alignSelf='start'
+							justify='right'
+							mt='3.5rem'
+							gap='0.5rem'
 						>
 							{
 								workspaceData?.socials.map((social, index) => (
@@ -316,16 +316,16 @@ function Profile() {
 										aria-label={social.name}
 										// as={Button}
 										zIndex={10}
-										border="1px solid #E8E9E9"
-										borderRadius="10px"
+										border='1px solid #E8E9E9'
+										borderRadius='10px'
 										icon={
 											<Image
-												boxSize="1rem"
+												boxSize='1rem'
 												src={`/ui_icons/profile_${social.name}.svg`}
 											/>
 										}
-										bg="white"
-										boxSize="2.5rem"
+										bg='white'
+										boxSize='2.5rem'
 										onClick={
 											() => {
 												window.open(social.value, '_blank')
@@ -337,23 +337,23 @@ function Profile() {
 						</Flex>
 					</Flex>
 					<Flex
-						pl={'25px'}
-						direction="column"
-						align="start">
+						pl='25px'
+						direction='column'
+						align='start'>
 						<Text
-							variant="heading"
-							fontWeight="700"
-							fontSize="20px">
+							variant='heading'
+							fontWeight='700'
+							fontSize='20px'>
 							{workspaceData?.title}
 						</Text>
 						{
 							chainID && (
 								<Text
-									variant="applicationText"
-									fontWeight="400"
-									fontSize="1rem"
-									color="#717A7C"
-									lineHeight={'10px'}
+									variant='applicationText'
+									fontWeight='400'
+									fontSize='1rem'
+									color='#717A7C'
+									lineHeight='10px'
 								>
 									{CHAIN_INFO[chainID].name}
 								</Text>
@@ -361,16 +361,16 @@ function Profile() {
 						}
 					</Flex>
 
-					<Stack px="1.5rem">
+					<Stack px='1.5rem'>
 						{workspaceData?.bio && <SeeMore text={workspaceData?.bio} />}
 					</Stack>
 
 					<Stack
-						px="1.5rem"
-						pb={{ base: '16px', md:'2rem' }}
-						pt="1rem"
-						direction="row"
-						justifyContent="space-between"
+						px='1.5rem'
+						pb={{ base: '16px', md: '2rem' }}
+						pt='1rem'
+						direction='row'
+						justifyContent='space-between'
 					>
 						<DaoData
 							disbursed={grantsDisbursed}
@@ -381,35 +381,35 @@ function Profile() {
 							applicationTime={applicationTime}
 						/>
 						<Button
-							px="8px"
-							border="1px solid #E8E9E9"
-							bg="none"
-							h="2rem"
-							w="fit-content"
-							alignSelf="end"
-							fontSize="0.875rem"
-							lineHeight="2rem"
-							color="#373737"
+							px='8px'
+							border='1px solid #E8E9E9'
+							bg='none'
+							h='2rem'
+							w='fit-content'
+							alignSelf='end'
+							fontSize='0.875rem'
+							lineHeight='2rem'
+							color='#373737'
 							onClick={() => onOpen()}
 							display={{ base: 'none', md: 'block' }}
 						>
 							{'</>'}
 							{' '}
-Embed profile stats
+							Embed profile stats
 						</Button>
 					</Stack>
 
 					<Divider />
 					<Stack
 						px={{ base: '16px', md: '1.5rem' }}
-						py={{ base: '12px', md:'1rem' }}
-						direction="row"
-						gap="1rem">
+						py={{ base: '12px', md: '1rem' }}
+						direction='row'
+						gap='1rem'>
 						{
 							tabs.map((tab, index) => (
 								<Button
 									key={index}
-									variant="link"
+									variant='link'
 									ml={index === 0 ? 0 : 12}
 									_hover={
 										{
@@ -417,8 +417,8 @@ Embed profile stats
 										}
 									}
 									_focus={{}}
-									fontWeight="700"
-									fontStyle="normal"
+									fontWeight='700'
+									fontStyle='normal'
 									fontSize={{ base: '16px', md: '28px' }}
 									// lineHeight="44px"
 									letterSpacing={-1}
@@ -458,7 +458,7 @@ Embed profile stats
               		chainInfo?.decimals
               	)
               	return (
-              		<BrowseGrantCard
+	<BrowseGrantCard
               			daoID={grant.workspace.id}
               			key={grant.id}
               			daoName={grant.workspace.title}
@@ -541,52 +541,52 @@ Embed profile stats
 			<Modal
 				isOpen={isOpen}
 				onClose={() => closeModal()}
-				size="3xl"
+				size='3xl'
 			>
 				<ModalOverlay />
 				<ModalContent>
 					<ModalHeader
-						p="16px"
-						borderBottom="1px solid #E8E9E9">
+						p='16px'
+						borderBottom='1px solid #E8E9E9'>
 						<ModalCloseButton />
 						<Flex
-							direction="column"
-							gap="0.5rem">
+							direction='column'
+							gap='0.5rem'>
 							<Heading
-								fontFamily="DM Sans"
-								fontStyle="normal"
-								fontWeight="500"
-								fontSize="1.25rem"
-								lineHeight="1.5rem"
-								color="#1F1F33"
+								fontFamily='DM Sans'
+								fontStyle='normal'
+								fontWeight='500'
+								fontSize='1.25rem'
+								lineHeight='1.5rem'
+								color='#1F1F33'
 							>
-							Embed profile stats
+								Embed profile stats
 							</Heading>
 							<Text
-								fontFamily="DM Sans"
-								fontStyle="normal"
-								fontWeight="400"
-								fontSize="0.875rem"
-								lineHeight="1.25rem"
-								color="#7D7DA0"
+								fontFamily='DM Sans'
+								fontStyle='normal'
+								fontWeight='400'
+								fontSize='0.875rem'
+								lineHeight='1.25rem'
+								color='#7D7DA0'
 							>
-						Use embed codes for your profile. They are easy to embed on any website and are a great way to get applicants for your DAO.
+								Use embed codes for your profile. They are easy to embed on any website and are a great way to get applicants for your DAO.
 							</Text>
 						</Flex>
 					</ModalHeader >
 					<ModalBody
-						gap="1rem"
-					 m="auto"
+						gap='1rem'
+					 m='auto'
 					 >
 						{
 							!codeActive ? (
 								<Image
-									src="/images/embed_sample.png"
-									height="360" />
+									src='/images/embed_sample.png'
+									height='360' />
 							) : (
 								<Code
-									w="98%"
-									p="1rem"
+									w='98%'
+									p='1rem'
 									// eslint-disable-next-line react/no-children-prop
 									children={value}
 								/>
@@ -594,20 +594,20 @@ Embed profile stats
 						}
 					</ModalBody>
 					<ModalFooter
-						borderTop="1px solid #E8E9E9"
-						justifyContent="center"
+						borderTop='1px solid #E8E9E9'
+						justifyContent='center'
 					>
 						<Button
 							onClick={() => !codeActive ? setCodeActive(true) : onCopy()}
-							color="#FFFFFF"
-							bg="#1F1F33"
-							p="1rem"
-							_hover={{ bg:'#1F1F33', color:'#FFFFFF' }}
-							_focus={{ bg:'#1F1F33', color:'#FFFFFF' }}
-							_active={{ bg:'#1F1F33', color:'#FFFFFF' }}
-							w="90%"
-							borderRadius="0.5rem"
-							justifySelf="center"
+							color='#FFFFFF'
+							bg='#1F1F33'
+							p='1rem'
+							_hover={{ bg: '#1F1F33', color: '#FFFFFF' }}
+							_focus={{ bg: '#1F1F33', color: '#FFFFFF' }}
+							_active={{ bg: '#1F1F33', color: '#FFFFFF' }}
+							w='90%'
+							borderRadius='0.5rem'
+							justifySelf='center'
 						>
 							{!codeActive ? 'Get embed code' : hasCopied ? 'Copied' : 'Copy'}
 						</Button>

@@ -11,17 +11,17 @@ import {
 } from '@chakra-ui/react'
 
 interface Props {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  alignTitle?: 'left' | 'center' | 'right';
-  children: React.ReactNode;
-  leftIcon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
+  isOpen: boolean
+  onClose: () => void
+  title: string
+  alignTitle?: 'left' | 'center' | 'right'
+  children: React.ReactNode
+  leftIcon?: React.ReactNode
+  rightIcon?: React.ReactNode
   // topIcon?: React.ReactNode;
-  modalWidth?: string | number;
-  closeButtonMargin?: string | number;
-  showCloseButton?: boolean;
+  modalWidth?: string | number
+  closeButtonMargin?: string | number
+  showCloseButton?: boolean
 }
 
 function Modal({
@@ -44,12 +44,12 @@ function Modal({
 			onClose={onClose}
 			closeOnOverlayClick={false}
 		>
-			<ModalOverlay maxH="100vh" />
+			<ModalOverlay maxH='100vh' />
 			<ModalContent
 				minW={modalWidth}
-				maxH="90vh"
-				overflowY="auto"
-				borderRadius="12px">
+				maxH='90vh'
+				overflowY='auto'
+				borderRadius='12px'>
 				<Container
 					px={8}
 					pt={9}>
@@ -60,33 +60,33 @@ function Modal({
             </Flex>
           )} */}
 					<Flex
-						direction="row"
-						w="100%"
-						align="center">
+						direction='row'
+						w='100%'
+						align='center'>
 						{typeof leftIcon !== 'undefined' && leftIcon}
 						<Heading
 							textAlign={alignTitle}
-							variant="modal">
+							variant='modal'>
 							{title}
 						</Heading>
-						<Box mx="auto" />
+						<Box mx='auto' />
 						{typeof rightIcon !== 'undefined' && rightIcon}
 						{
 							showCloseButton && (
 								<IconButton
 									m={closeButtonMargin}
-									aria-label="close-button"
-									size="14px"
+									aria-label='close-button'
+									size='14px'
 									icon={
 										<Image
-											boxSize="14px"
+											boxSize='14px'
 											_active={{}}
 											_hover={{}}
-											src="/ui_icons/close.svg" />
+											src='/ui_icons/close.svg' />
 									}
 									_hover={{}}
 									_active={{}}
-									variant="ghost"
+									variant='ghost'
 									onClick={onClose}
 								/>
 							)

@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react'
 import { Button, Checkbox, Flex, Grid, GridItem, Text } from '@chakra-ui/react'
-import AcceptedRow from './AcceptedRow'
-import ZeroState from './ZeroState'
+import AcceptedRow from 'src/v2/payouts/AcceptedProposals/AcceptedRow'
+import ZeroState from 'src/v2/payouts/AcceptedProposals/ZeroState'
 
 const AcceptedProposalsPanel = ({
+	applicationStatuses,
 	applicantsData,
 	onSendFundsClicked,
 	onBulkSendFundsClicked,
 	grantData,
 }: {
-  applicantsData: any[];
-  onSendFundsClicked: (state: boolean, checkedItems: any[]) => void;
-  onBulkSendFundsClicked: (state: boolean, checkedItems: any[]) => void;
-  grantData: any;
+	applicationStatuses: {[applicationId: string]: {transactionHash: string, status: number, amount: number}}
+  applicantsData: any[]
+  onSendFundsClicked: (state: boolean, checkedItems: any[]) => void
+  onBulkSendFundsClicked: (state: boolean, checkedItems: any[]) => void
+  grantData: any
 }) => {
 	const [checkedItems, setCheckedItems] = useState<boolean[]>(applicantsData.filter((item) => (2 === item.status)).map((item) => false))
 	const [checkedApplicationsIds, setCheckedApplicationsIds] = useState<number[]>([])
@@ -89,7 +91,7 @@ const AcceptedProposalsPanel = ({
 			<Flex
 				py='14px'
 				px='16px'
-				alignItems={'center'}
+				alignItems='center'
 			>
 				<Text
 					mr='auto'
@@ -97,22 +99,22 @@ const AcceptedProposalsPanel = ({
 					lineHeight='20px'
 					fontWeight='500'
 				>
-        Accepted
+					Accepted
 				</Text>
 
 				{
 					someChecked && (
 						<Button
-							colorScheme={'brandv2'}
-							py={'6px'}
+							colorScheme='brandv2'
+							py='6px'
 							px={3}
 							minH={0}
 							h='32px'
-							fontSize="14px"
+							fontSize='14px'
 							m={0}
 							onClick={() => onBulkSendFundsClicked(true, acceptedApplications.filter((app, i) => checkedItems[i]))}
 						>
-              Send Funds
+							Send Funds
 						</Button>
 					)
 				}
@@ -129,11 +131,11 @@ const AcceptedProposalsPanel = ({
 
 			<Flex
 				bg='#F0F0F7'
-				h={'1px'}
+				h='1px'
 			/>
 
 			<Grid
-				templateColumns={'56px 1fr 1fr 1fr'}
+				templateColumns='56px 1fr 1fr 1fr'
 			>
 				<GridItem
 					display='flex'
@@ -159,7 +161,7 @@ const AcceptedProposalsPanel = ({
 						lineHeight='20px'
 						fontWeight='500'
 					>
-          Proposals
+						Proposals
 					</Text>
 				</GridItem>
 				<GridItem>
@@ -171,7 +173,7 @@ const AcceptedProposalsPanel = ({
 						lineHeight='20px'
 						fontWeight='500'
 					>
-          Funds sent (in USD)
+						Funds sent (in USD)
 					</Text>
 				</GridItem>
 				<GridItem>
@@ -183,14 +185,14 @@ const AcceptedProposalsPanel = ({
 						lineHeight='20px'
 						fontWeight='500'
 					>
-          Milestone status
+						Milestone status
 					</Text>
 				</GridItem>
 
 				<GridItem colSpan={4}>
 					<Flex
 						bg='#F0F0F7'
-						h={'1px'}
+						h='1px'
 					/>
 				</GridItem>
 
@@ -200,6 +202,7 @@ const AcceptedProposalsPanel = ({
 					applicantsData?.filter((item: any) => (2 === item.status)).map((applicantData: any, i) => (
 						<AcceptedRow
 							key={`accepted-${i}`}
+							applicationStatus={applicationStatuses[applicantData.applicationId]?.status}
 							applicantData={applicantData}
 							isChecked={checkedItems[i]}
 							onChange={

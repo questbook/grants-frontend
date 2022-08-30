@@ -1,5 +1,5 @@
 import { Box, Circle, HStack, Text, VStack } from '@chakra-ui/react'
-import { CheckCircle } from '../assets/custom chakra icons/CheckCircle'
+import { CheckCircle } from 'src/v2/assets/custom chakra icons/CheckCircle'
 
 export type ControlBarProps = {
 	currentIndex: number

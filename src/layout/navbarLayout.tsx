@@ -8,10 +8,10 @@ import Sidebar from 'src/v2/components/Sidebar'
 import { useConnect, useNetwork } from 'wagmi'
 
 interface Props {
-  children: React.ReactNode;
-  renderGetStarted?: boolean;
-  renderTabs?: boolean;
-  renderSidebar?: boolean;
+  children: React.ReactNode
+  renderGetStarted?: boolean
+  renderTabs?: boolean
+  renderSidebar?: boolean
 }
 
 function NavbarLayout({ children, renderGetStarted, renderTabs, renderSidebar }: Props) {
@@ -28,7 +28,7 @@ function NavbarLayout({ children, renderGetStarted, renderTabs, renderSidebar }:
 	const [renderCount, setRenderCount] = useState(0)
 
 	useEffect(() => {
-		console.log('Render Count: ', renderCount)
+		// console.log('Render Count: ', renderCount)
 	}, [renderCount])
 
 	useEffect(() => {
@@ -71,15 +71,15 @@ function NavbarLayout({ children, renderGetStarted, renderTabs, renderSidebar }:
 				setGetStartedClicked={() => {}}
 			/>
 			<Flex
-				w="100vw"
-				h="100vh"
-				overflow="scroll">
+				w='100vw'
+				h='100vh'
+				overflow='scroll'>
 				{
 					renderSidebar && connected && (
 						<Flex
 							display={{ base: 'none', lg: 'flex' }}
-							w="20%"
-							pos="sticky"
+							w='20%'
+							pos='sticky'
 							top={0}
 						>
 							<Sidebar />

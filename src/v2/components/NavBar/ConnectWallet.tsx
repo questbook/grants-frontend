@@ -3,7 +3,7 @@ import {
 	Button, Image, Menu, MenuButton, MenuItem, MenuList, Text, } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 
-function ConnectWallet({ onGetStartedBtnClicked, setGetStartedClicked } :{onGetStartedBtnClicked:boolean, setGetStartedClicked:(value: boolean)=>void}) {
+function ConnectWallet({ onGetStartedBtnClicked, setGetStartedClicked }: {onGetStartedBtnClicked: boolean, setGetStartedClicked: (value: boolean) => void}) {
 	const [connectWalletModalIsOpen, setConnectWalletModalIsOpen] = useState(false)
 	const [mobileOpen, setMobileOpen] = useState(false)
 	const router = useRouter()
@@ -17,9 +17,9 @@ function ConnectWallet({ onGetStartedBtnClicked, setGetStartedClicked } :{onGetS
 	return (
 		<>
 			<Button
-				borderRadius={'4px'}
-				color={'white' }
-				background={'black'}
+				borderRadius='4px'
+				color='white'
+				background='black'
 				onClick={
 					() => {
 						setConnectWalletModalIsOpen(true)
@@ -27,40 +27,40 @@ function ConnectWallet({ onGetStartedBtnClicked, setGetStartedClicked } :{onGetS
 				}
 			>
 				<Image
-					display={{ base:'none', md:'inherit' }}
-					h="20px"
-					w="20px"
-					src={'/ui_icons/light_user_account.svg'}
-					alt="account_circle"
-					mr={'10px'}
+					display={{ base: 'none', md: 'inherit' }}
+					h='20px'
+					w='20px'
+					src='/ui_icons/light_user_account.svg'
+					alt='account_circle'
+					mr='10px'
 				/>
 				<Text
-					fontSize="14px"
-					fontWeight="500"
-					px={'0px'}
-					py={'0px'}
+					fontSize='14px'
+					fontWeight='500'
+					px='0px'
+					py='0px'
 				>
-          Connect Wallet
+					Connect Wallet
 				</Text>
 			</Button>
 
 			<Menu >
 				<MenuButton
-					display={{ sm:'', md:'none' }}
+					display={{ sm: '', md: 'none' }}
 					as={Button}
 					aria-label='Options'
-					rightIcon={!mobileOpen ? <Image src={'/ui_icons/hamburger.svg'} /> : <Image src={'/ui_icons/cross.svg'} />}
+					rightIcon={!mobileOpen ? <Image src='/ui_icons/hamburger.svg' /> : <Image src='/ui_icons/cross.svg' />}
 					variant='outline'
 					onClick={() => setMobileOpen(prev => !prev)}
-					borderWidth={'0px'}
-					_hover={{ bg:'white' }}
-					_active={{ bg:'white' }}
+					borderWidth='0px'
+					_hover={{ bg: 'white' }}
+					_active={{ bg: 'white' }}
 
 				/>
 
 				<MenuList >
 					<MenuItem >
-     					Discover
+						Discover
 					</MenuItem>
 				</MenuList>
 			</Menu>

@@ -77,7 +77,7 @@ function CreateGrant() {
 	useEffect(() => {
 		if(workspace) {
 			const chainId = getSupportedChainIdFromWorkspace(workspace)
-			console.log(' (CREATE_GRANT) Switch Network: ', workspace, chainId)
+			// console.log(' (CREATE_GRANT) Switch Network: ', workspace, chainId)
 			switchNetwork(chainId!.toString() as unknown as SupportedChainId)
 		}
 	}, [workspace])
@@ -85,7 +85,7 @@ function CreateGrant() {
 	const { setRefresh } = useCustomToast(blockExplorerLink)
 
 	useEffect(() => {
-		// console.log(transactionData);
+		// // console.log(transactionData);
 		if(transactionData) {
 			router.replace({ pathname: '/your_grants', query: { done: 'yes' } })
 			setRefresh(true)
@@ -120,15 +120,15 @@ function CreateGrant() {
 
 	return (
 		<Container
-			maxW="100%"
-			display="flex"
-			px="70px">
+			maxW='100%'
+			display='flex'
+			px='70px'>
 			<Container
 				flex={1}
-				display="flex"
-				flexDirection="column"
-				maxW="682px"
-				alignItems="stretch"
+				display='flex'
+				flexDirection='column'
+				maxW='682px'
+				alignItems='stretch'
 				pb={8}
 				px={10}
 			>
@@ -144,64 +144,64 @@ function CreateGrant() {
 				<Flex
 					// h="calc(100vh - 64px)"
 					// bg={theme.colors.backgrounds.floatingSidebar}
-					position="sticky"
+					position='sticky'
 					top={10}
-					borderLeft="2px solid #E8E9E9"
+					borderLeft='2px solid #E8E9E9'
 					maxW={340}
-					direction="column"
-					alignItems="stretch"
-					boxSizing="border-box"
+					direction='column'
+					alignItems='stretch'
+					boxSizing='border-box'
 				>
 					{
 						sideBarDetails.map(([title, description, ref], index) => (
 							<Flex
 								key={`sidebar-${title}`}
-								direction="row"
-								align="start">
+								direction='row'
+								align='start'>
 								<Box
 								// bg={currentStep < index ? '#E8E9E9' : 'brand.500'}
 									bg={getColor(index, '#E8E9E9', 'brand.500')}
-									h="20px"
-									w="20px"
-									minW="20px"
+									h='20px'
+									w='20px'
+									minW='20px'
 									color={getColor(index, 'black', 'white')}
-									textAlign="center"
-									display="flex"
-									alignItems="center"
-									justifyContent="center"
-									lineHeight="0"
-									fontSize="12px"
-									fontWeight="700"
-									ml="-1px"
+									textAlign='center'
+									display='flex'
+									alignItems='center'
+									justifyContent='center'
+									lineHeight='0'
+									fontSize='12px'
+									fontWeight='700'
+									ml='-1px'
 								>
 									{index + 1}
 								</Box>
 								<Flex
-									direction="column"
-									align="start"
+									direction='column'
+									align='start'
 									ml={7}>
 									<Button
-										variant="link"
+										variant='link'
 										color={getColor(index, 'black', 'brand.500')}
-										textAlign="left"
+										textAlign='left'
 										onClick={() => scroll(ref)}
 									>
 										<Text
-											fontSize="18px"
-											fontWeight="700"
-											lineHeight="26px"
+											fontSize='18px'
+											fontWeight='700'
+											lineHeight='26px'
 											letterSpacing={0}
-											textAlign="left"
+											textAlign='left'
 										>
 											{title}
 										</Text>
 									</Button>
 									<Text
-										mt="6px"
+										mt='6px'
 										color={getColor(index, '#717A7C', '#122224')}
-										fontSize="14px"
-										fontWeight="400"
-										lineHeight="20px"
+										fontSize='14px'
+										fontWeight='400'
+										lineHeight='20px'
 									>
 										{description}
 									</Text>

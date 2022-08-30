@@ -9,27 +9,27 @@ import {
 } from '@chakra-ui/react'
 import { BigNumber, utils } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
+import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import CustomToast from 'src/components/ui/toasts/customToast'
 import SuccessToast from 'src/components/ui/toasts/successToast'
+import ERC20ABI from 'src/contracts/abi/ERC20.json'
 import useERC20Contract from 'src/hooks/contracts/useERC20Contract'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import useChainId from 'src/hooks/utils/useChainId'
+import { parseAmount } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useAccount, useContract, useNetwork, useSigner } from 'wagmi'
-import ERC20ABI from '../../../../contracts/abi/ERC20.json'
-import { parseAmount } from '../../../../utils/formattingUtils'
-import SingleLineInput from '../../../ui/forms/singleLineInput'
 
 interface Props {
-    isOpen: boolean;
-    onClose: () => void;
+    isOpen: boolean
+    onClose: () => void
     rewardAsset: {
-        address: string;
-        committed: BigNumber;
-        label: string;
-        icon: string;
-        decimals?: number;
-    };
+        address: string
+        committed: BigNumber
+        label: string
+        icon: string
+        decimals?: number
+    }
 }
 
 function ModalContent({
@@ -69,10 +69,10 @@ function ModalContent({
 	}, [isOpen, switchNetwork, workspace])
 
 	async function approvalEvent() {
-		console.log('Listening to approval event..')
+		// console.log('Listening to approval event..')
 		const filter = rewardContract.filters.Approval(accountData?.address, utils.getAddress(workspaceRegistryContract.address!))
 		rewardContract.on(filter, (from, to, amount, eventDetail) => {
-			console.log(`Received approval from ${from} to ${to}`)
+			// console.log(`Received approval from ${from} to ${to}`)
 			toastRef.current = toast({
 				position: 'top',
 				render: () => SuccessToast({
@@ -120,9 +120,9 @@ function ModalContent({
 	return (
 		<ModalBody px={10}>
 			<Flex
-				direction="column"
-				justify="start"
-				align="start">
+				direction='column'
+				justify='start'
+				align='start'>
 				<Box my={4}>
 					<SingleLineInput
 						label='Enter the amount that you want to approve for funds disbursal'
@@ -143,7 +143,7 @@ function ModalContent({
 					my={4}
 					variant='primary'
 					onClick={approveDisbursal}>
-Approve
+					Approve
 				</Button>
 			</Flex>
 		</ModalBody>

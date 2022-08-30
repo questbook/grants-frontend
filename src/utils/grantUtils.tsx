@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers'
-import { formatAmount } from './formattingUtils'
+import { formatAmount } from 'src/utils/formattingUtils'
 
 const CUTOFF = 4 // We will consider values which are only greater than 4 places of decimal
 function isValid(funding: string, decimals?: number) {

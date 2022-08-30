@@ -2,9 +2,9 @@ import React, { Dispatch, SetStateAction } from 'react'
 import {
 	Box, Text,
 } from '@chakra-ui/react'
+import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import MySelect from 'src/components/ui/forms/select'
-import MultiLineInput from '../../../ui/forms/multiLineInput'
-import Tooltip from '../../../ui/tooltip'
+import Tooltip from 'src/components/ui/tooltip'
 
 function AboutTeam({
 	teamMembers,
@@ -19,29 +19,29 @@ function AboutTeam({
 	grantRequiredFields,
 }: {
 
-  teamMembers: number | null;
-  setTeamMembers: Dispatch< SetStateAction<number>>;
-  teamMembersError: boolean;
-  setTeamMembersError: (teamMembersError: boolean) => void;
+  teamMembers: number | null
+  setTeamMembers: Dispatch< SetStateAction<number>>
+  teamMembersError: boolean
+  setTeamMembersError: (teamMembersError: boolean) => void
 
-  membersDescription: { description: string, isError: boolean }[];
-  setMembersDescription: (membersDescription: { description: string, isError: boolean }[]) => void;
+  membersDescription: { description: string, isError: boolean }[]
+  setMembersDescription: (membersDescription: { description: string, isError: boolean }[]) => void
 
-  readOnly?: boolean;
-  grantRequiredFields: string[];
+  readOnly?: boolean
+  grantRequiredFields: string[]
 }) {
 	return (
 		<Box display={grantRequiredFields.includes('teamMembers') || grantRequiredFields.includes('memberDetails') ? '' : 'none'}>
 			<Text
-				fontWeight="700"
-				fontSize="16px"
-				lineHeight="20px"
-				color="#8850EA">
-        About Team
+				fontWeight='700'
+				fontSize='16px'
+				lineHeight='20px'
+				color='#8850EA'>
+				About Team
 				<Tooltip
-					icon="/ui_icons/tooltip_questionmark_brand.svg"
-					label="Write about the team members working on the project."
-					placement="bottom-start"
+					icon='/ui_icons/tooltip_questionmark_brand.svg'
+					label='Write about the team members working on the project.'
+					placement='bottom-start'
 				/>
 			</Text>
 
@@ -61,26 +61,26 @@ function AboutTeam({
 								setMembersDescription(Array(value).fill({ description: '', isError: false }))
 							}
 						}
-						label="Team Members"
+						label='Team Members'
 						disabled={readOnly}
 						options={Array.from(Array(11).keys()).slice(1)}
 					/>
 				)
 			}
 
-			<Box mt="43px" />
+			<Box mt='43px' />
 			<Text
-				fontWeight="700"
-				fontSize="16px"
-				lineHeight="20px"
-				color="#8850EA"
+				fontWeight='700'
+				fontSize='16px'
+				lineHeight='20px'
+				color='#8850EA'
 				display={
 					grantRequiredFields.includes(
 						'memberDetails',
 					) ? '' : 'none'
 				}
 			>
-        Details
+				Details
 				{/* <Tooltip
           icon="/ui_icons/tooltip_questionmark_brand.svg"
           label="details"
@@ -94,7 +94,7 @@ function AboutTeam({
 					membersDescription.map(({ description, isError }, index) => (
 						<MultiLineInput
 							key={index}
-							placeholder="Write about team member - education, work experience with portfolio link, and side projects."
+							placeholder='Write about team member - education, work experience with portfolio link, and side projects.'
 							label={`Member ${index + 1}`}
 							maxLength={300}
 							value={description}
@@ -114,7 +114,7 @@ function AboutTeam({
 								}
 							}
 							isError={isError}
-							errorText="Required"
+							errorText='Required'
 							disabled={readOnly}
 							visible={grantRequiredFields.includes('memberDetails')}
 						/>
@@ -123,10 +123,10 @@ function AboutTeam({
 						[...Array(teamMembers)].map((_, index) => (
 							<MultiLineInput
 								key={index}
-								placeholder="Write about team member - education, work experience with portfolio link, and side projects."
+								placeholder='Write about team member - education, work experience with portfolio link, and side projects.'
 								label={`Member ${index + 1}`}
 								maxLength={300}
-								value=""
+								value=''
 								onChange={
 									(e) => {
 										const newMembersDescription = [...membersDescription]
@@ -143,7 +143,7 @@ function AboutTeam({
 									}
 								}
 								isError={false}
-								errorText="Required"
+								errorText='Required'
 								disabled={readOnly}
 								visible={grantRequiredFields.includes('memberDetails')}
 							/>

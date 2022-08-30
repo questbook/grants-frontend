@@ -15,7 +15,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { Workspace } from 'src/types'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import WorkspaceMembers from '../src/v2/components/WorkspaceMembers'
+import WorkspaceMembers from 'src/v2/components/WorkspaceMembers'
 
 function ManageDAO() {
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
@@ -60,7 +60,7 @@ function ManageDAO() {
 
 		setWorkspaceData(data!.workspace!)
 
-		console.log(data)
+		// console.log(data)
 	}, [data])
 
 	const switchTab = (to: number) => {
@@ -80,29 +80,29 @@ function ManageDAO() {
 
 	return (
 		<Flex
-			w="100%"
+			w='100%'
 			px={10}
-			maxH="calc(100vh - 64px)"
-			bg={'#F5F5FA'}
-			overflowY="scroll"
+			maxH='calc(100vh - 64px)'
+			bg='#F5F5FA'
+			overflowY='scroll'
 			mb={4}>
 			{
 				isAdmin ? (
 					<Flex
-						direction="row"
-						w="100%"
-						justify="space-evenly">
+						direction='row'
+						w='100%'
+						justify='space-evenly'>
 						<Flex
 							w={selected === 0 ? '100%' : '100%'}
-							maxW="1036px"
-							direction="column"
+							maxW='1036px'
+							direction='column'
 						>
 							<Flex
-								direction="row"
-								w="full"
-								justify="start"
+								direction='row'
+								w='full'
+								justify='start'
 								h={14}
-								align="stretch"
+								align='stretch'
 								mb={4}
 								mt={6}
 							>
@@ -110,7 +110,7 @@ function ManageDAO() {
 									tabs.map((tab, index) => (
 										<Button
 											key={tab}
-											variant="link"
+											variant='link'
 											ml={index === 0 ? 0 : 12}
 											_hover={
 												{
@@ -118,10 +118,10 @@ function ManageDAO() {
 												}
 											}
 											_focus={{}}
-											fontWeight="700"
-											fontStyle="normal"
-											fontSize="28px"
-											lineHeight="44px"
+											fontWeight='700'
+											fontStyle='normal'
+											fontSize='28px'
+											lineHeight='44px'
 											letterSpacing={-1}
 											borderRadius={0}
 											color={index === selected ? '#122224' : '#A0A7A7'}
@@ -134,8 +134,8 @@ function ManageDAO() {
 							</Flex>
 							<Divider
 								w={selected === 0 ? '70%' : '100%'}
-								bg="#A0A7A7"
-								height="1px"
+								bg='#A0A7A7'
+								height='1px'
 								mb={5} />
 							{
 							// eslint-disable-next-line no-nested-ternary
@@ -150,7 +150,7 @@ function ManageDAO() {
 									)
 							}
 						</Flex>
-						<Flex w="auto" />
+						<Flex w='auto' />
 					</Flex>
 				)
 					: (
@@ -160,16 +160,16 @@ function ManageDAO() {
 								isLoading
 									? (
 										<Flex
-											m="auto"
-											mt="25vh">
+											m='auto'
+											mt='25vh'>
 											<Loader />
 										</Flex>
 									)
 									: (
 										<Text
-											textAlign="center"
-											p="2rem">
-You do not have access to this DAO settings
+											textAlign='center'
+											p='2rem'>
+											You do not have access to this DAO settings
 										</Text>
 									)
 							}

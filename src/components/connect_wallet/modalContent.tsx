@@ -4,7 +4,7 @@ import {
 	VStack, } from '@chakra-ui/react'
 
 interface Props {
-  onClose: () => void;
+  onClose: () => void
 }
 
 function ModalContent({
@@ -17,23 +17,23 @@ function ModalContent({
 					px={6}
 					py={8}>
 					<VStack
-						alignItems="flex-start"
+						alignItems='flex-start'
 						spacing={4}>
 						<Text>
-              Click on the
+							Click on the
 							<Image
 								mx={2}
-								display="inline-block"
-								src="/wallet_icons/metamask.svg"
-								alt="metamak"
+								display='inline-block'
+								src='/wallet_icons/metamask.svg'
+								alt='metamak'
 							/>
-              icon in your browser.
+							icon in your browser.
 						</Text>
 						<Image
-							w="432px"
-							h="193.11px"
-							src="/images/metamask_modal.png"
-							alt="metamask help"
+							w='432px'
+							h='193.11px'
+							src='/images/metamask_modal.png'
+							alt='metamask help'
 						/>
 					</VStack>
 				</Container>
@@ -41,9 +41,9 @@ function ModalContent({
 
 			<ModalFooter>
 				<Button
-					variant="primary"
+					variant='primary'
 					onClick={onClose}>
-          OK
+					OK
 				</Button>
 			</ModalFooter>
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { PhantomProvider, WindowWithSolana } from '../types/phantom'
+import { PhantomProvider, WindowWithSolana } from 'src/v2/types/phantom'
 
 export default function usePhantomWallet() {
 
@@ -19,11 +19,11 @@ export default function usePhantomWallet() {
 
 	useEffect(() => {
 		phantomWallet?.on('connect', () => {
-			console.log('phantom wallet connected ')
+			// console.log('phantom wallet connected ')
 			setPhantomWalletConnected(true)
 		})
 		phantomWallet?.on('disconnect', () => {
-			console.log('phantom wallet disconnected')
+			// console.log('phantom wallet disconnected')
 			setPhantomWalletConnected(false)
 		})
 

@@ -1,8 +1,8 @@
 import React from 'react'
 import { Box, Flex, Text } from '@chakra-ui/react'
+import SidebarList from 'src/components/browse_grants/sidebar/sidebarList'
+import SidebarComponent from 'src/components/ui/sidebar/sidebar'
 import config from 'src/constants/config.json'
-import SidebarComponent from '../../ui/sidebar/sidebar'
-import SidebarList from './sidebarList'
 
 function Sidebar() {
 	return (
@@ -24,28 +24,28 @@ function Sidebar() {
 		>
 			<Flex
 				flex={1}
-				w="full"
-				direction="column"
+				w='full'
+				direction='column'
 				py={7}
 				px={10}
 				// overflow="scroll"
 			>
 				<Text
-					fontSize="28px"
-					lineHeight="35.5px">
-          What is
+					fontSize='28px'
+					lineHeight='35.5px'>
+					What is
 					<br />
 					<Text
-						as="span"
-						display="inline-block"
-						fontWeight="700">
-            Questbook?
+						as='span'
+						display='inline-block'
+						fontWeight='700'>
+						Questbook?
 					</Text>
 				</Text>
 
 				<Box mt={8}>
 					<SidebarList
-						listHeading="Protocols & DAOs"
+						listHeading='Protocols & DAOs'
 						listElements={
 							[
 								{
@@ -66,14 +66,14 @@ function Sidebar() {
 								},
 							]
 						}
-						linkText="See our guide"
-						linkHref="https://www.notion.so/questbook/Grant-DAO-Wiki-e844026ab4344b67b447a7aa390ae053"
+						linkText='See our guide'
+						linkHref='https://www.notion.so/questbook/Grant-DAO-Wiki-e844026ab4344b67b447a7aa390ae053'
 					/>
 				</Box>
 
 				<Box mt={8}>
 					<SidebarList
-						listHeading="Buidlers"
+						listHeading='Buidlers'
 						listElements={
 							[
 								{
@@ -90,8 +90,8 @@ function Sidebar() {
 								},
 							]
 						}
-						linkText="See our guide"
-						linkHref="https://www.notion.so/questbook/Talent-Wiki-2927326de319415f87264a139621bbae"
+						linkText='See our guide'
+						linkHref='https://www.notion.so/questbook/Talent-Wiki-2927326de319415f87264a139621bbae'
 					/>
 				</Box>
 			</Flex>

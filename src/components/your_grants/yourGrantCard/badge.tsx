@@ -6,20 +6,20 @@ function Badge({
 	numOfApplicants,
 	endTimestamp,
 }: {
-  numOfApplicants: number;
-  endTimestamp: number;
+  numOfApplicants: number
+  endTimestamp: number
 }) {
 	return (
 		<Flex
-			direction="row"
-			alignItems="center"
-			mb="10px"
-			fontWeight="700">
+			direction='row'
+			alignItems='center'
+			mb='10px'
+			fontWeight='700'>
 			<Image
-				mr="6px"
+				mr='6px'
 				boxSize={3}
-				src="/ui_icons/applicant.svg" />
-			<Text fontSize="xs">
+				src='/ui_icons/applicant.svg' />
+			<Text fontSize='xs'>
 				{numOfApplicants}
 				{' '}
 				Applicant
@@ -27,12 +27,12 @@ function Badge({
 			</Text>
 			<Image
 				mx={2}
-				src="/ui_icons/green_dot.svg" />
+				src='/ui_icons/green_dot.svg' />
 			<Image
-				mr="6px"
+				mr='6px'
 				boxSize={3}
-				src="/ui_icons/deadline.svg" />
-			<Text fontSize="xs">
+				src='/ui_icons/deadline.svg' />
+			<Text fontSize='xs'>
 				<Deadline date={new Date(endTimestamp)} />
 			</Text>
 		</Flex>

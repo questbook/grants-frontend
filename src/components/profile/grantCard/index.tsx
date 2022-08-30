@@ -9,28 +9,28 @@ import { calculateUSDValue, useTimeDifference } from 'src/utils/calculatingUtils
 import { nFormatter } from 'src/utils/formattingUtils'
 
 interface BrowseGrantCardProps {
-  daoID: string;
-  daoName: string;
-  isDaoVerified?: boolean;
-  chainId: SupportedChainId | undefined;
+  daoID: string
+  daoName: string
+  isDaoVerified?: boolean
+  chainId: SupportedChainId | undefined
 
-  grantTitle: string;
-  grantDesc: string;
-  isGrantVerified?: boolean;
-  funding: string;
+  grantTitle: string
+  grantDesc: string
+  isGrantVerified?: boolean
+  funding: string
 
-  numOfApplicants: number;
-  endTimestamp: number;
-  createdAt: number;
+  numOfApplicants: number
+  endTimestamp: number
+  createdAt: number
 
-  grantAmount: string;
-  grantCurrency: string;
-  grantCurrencyPair: string | null;
-  grantCurrencyIcon: string;
-  disbursedAmount: string;
+  grantAmount: string
+  grantCurrency: string
+  grantCurrencyPair: string | null
+  grantCurrencyIcon: string
+  disbursedAmount: string
 
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
-  onTitleClick?: React.MouseEventHandler<HTMLAnchorElement>;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>
+  onTitleClick?: React.MouseEventHandler<HTMLAnchorElement>
 }
 
 function BrowseGrantCard({
@@ -71,30 +71,30 @@ function BrowseGrantCard({
 
 	return (
 		<Flex
-			w="full"
-			border="1px solid #E8E9E9"
+			w='full'
+			border='1px solid #E8E9E9'
 		>
 			{' '}
 			<Flex
 				py={{ base: '16px', md: 6 }}
-				px={{ base: '16px', md:'1.5rem' }}
-				w="100%">
+				px={{ base: '16px', md: '1.5rem' }}
+				w='100%'>
 				<Flex
 					flex={1}
-					direction="column">
+					direction='column'>
 					<Flex
-						justifyContent={'space-around'}
-						direction="row"
-						alignItems="center">
-						<Text maxW="50%">
+						justifyContent='space-around'
+						direction='row'
+						alignItems='center'>
+						<Text maxW='50%'>
 							<Link
 								onClick={onTitleClick}
-								whiteSpace="normal"
-								textAlign="left"
-								lineHeight="26px"
-								fontSize="18px"
-								fontWeight="700"
-								color="#12224"
+								whiteSpace='normal'
+								textAlign='left'
+								lineHeight='26px'
+								fontSize='18px'
+								fontWeight='700'
+								color='#12224'
 							>
 								{grantTitle}
 							</Link>
@@ -102,63 +102,63 @@ function BrowseGrantCard({
 
 						<Image
 							mx={2}
-							src="/ui_icons/green_dot.svg"
-							display="inline-block"
+							src='/ui_icons/green_dot.svg'
+							display='inline-block'
 						/>
 
 						<Text
-							fontSize="0.75rem"
-							lineHeight="1rem"
-							fontWeight="700"
-							color="#8C8C8C"
+							fontSize='0.75rem'
+							lineHeight='1rem'
+							fontWeight='700'
+							color='#8C8C8C'
 						>
 							{useTimeDifference(currentDate, createdAt * 1000)}
 						</Text>
 
-						<Box mr="auto" />
+						<Box mr='auto' />
 
 						<Badge numOfApplicants={numOfApplicants} />
 					</Flex>
 
 					<Text
 						mt={5}
-						lineHeight="24px"
-						color="#373737"
-						fontSize="1rem"
-						fontWeight="400"
+						lineHeight='24px'
+						color='#373737'
+						fontSize='1rem'
+						fontWeight='400'
 					>
 						{grantDesc}
 					</Text>
 
 					<Flex
-						direction="row"
-						mt="1.5rem"
-						alignItems="center">
+						direction='row'
+						mt='1.5rem'
+						alignItems='center'>
 						<Stack
-							bgColor="#F5F5F5"
-							borderRadius="1.25rem"
-							h="1.5rem"
-							px="0.5rem"
-							justify="center"
+							bgColor='#F5F5F5'
+							borderRadius='1.25rem'
+							h='1.5rem'
+							px='0.5rem'
+							justify='center'
 						>
 							<Text
-								fontFamily="DM Sans"
+								fontFamily='DM Sans'
 								fontSize={{ base: '12px', md: '0.85rem' }}
-								lineHeight="1rem"
-								fontWeight="400"
-								color="#373737"
+								lineHeight='1rem'
+								fontWeight='400'
+								color='#373737'
 							>
 								<b>
 
 									{grantReward !== 0 ? `$${nFormatter(grantReward.toFixed(0))}` : grantAmount}
 								</b>
-/grantee
+								/grantee
 								{
 									isGrantVerified && (
 										<VerifiedBadge
 											grantAmount={funding}
 											grantCurrency={grantCurrency}
-											lineHeight="26px"
+											lineHeight='26px'
 											disbursedAmount={disbursedAmount}
 											marginBottom={-1}
 										/>
@@ -169,8 +169,8 @@ function BrowseGrantCard({
 
 						<Image
 							mx={{ base: '8px', md: 4 }}
-							src="/ui_icons/green_dot.svg"
-							display="inline-block"
+							src='/ui_icons/green_dot.svg'
+							display='inline-block'
 						/>
 						<Image
 							boxSize={4}
@@ -178,11 +178,11 @@ function BrowseGrantCard({
 						<Text
 							ml={2}
 							fontSize={{ base: '12px', md: '0.85rem' }}
-							lineHeight="1rem"
-							fontWeight="400"
-							color="#373737"
+							lineHeight='1rem'
+							fontWeight='400'
+							color='#373737'
 						>
-              Paid in
+							Paid in
 							{' '}
 							<b>
 								{grantCurrency}
@@ -190,22 +190,22 @@ function BrowseGrantCard({
 						</Text>
 						<Image
 							mx={{ base: '8px', md: 4 }}
-							src="/ui_icons/green_dot.svg"
-							display="inline-block"
+							src='/ui_icons/green_dot.svg'
+							display='inline-block'
 						/>
 
 						<Image
-							mr="6px"
+							mr='6px'
 							boxSize={3}
-							src="/ui_icons/deadline.svg"
-							display="inline-block"
+							src='/ui_icons/deadline.svg'
+							display='inline-block'
 						/>
 						<Text
 							fontSize={{ base: '12px', md: '0.85rem' }}
-							lineHeight="1rem"
-							display="inline-block"
+							lineHeight='1rem'
+							display='inline-block'
 							width={{ base: '100px' }}>
-              Ends on
+							Ends on
 							{' '}
 							<b>
 								{moment(endTimestamp).format('MMMM D')}
@@ -215,15 +215,15 @@ function BrowseGrantCard({
 					</Flex>
 
 					<Flex
-						justifyContent={'space-between'}
-						py={'15px'}>
+						justifyContent='space-between'
+						py='15px'>
 						<Badge numOfApplicants={numOfApplicants} />
 
 						<Button
 							onClick={onClick}
-							variant="primaryCta"
-							h="105px">
-              Apply Now
+							variant='primaryCta'
+							h='105px'>
+							Apply Now
 						</Button>
 
 					</Flex>

@@ -1,5 +1,6 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react'
-import { Container, Flex, Heading, Spacer, Text } from '@chakra-ui/react'
+import { LinkIcon } from '@chakra-ui/icons'
+import { Button, Container, Flex, Heading, Spacer, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import DoaDashTableEmptyState from 'src/components/dao_dashboard/empty_states/dao_dashboard'
@@ -16,6 +17,7 @@ import {
 import { UNIX_TIMESTAMP_MAX, UNIX_TIMESTAMP_MIN } from 'src/utils/generics'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import NavbarLayout from '../../src/layout/navbarLayout'
+import InviteModal from '../../src/v2/components/InviteModal'
 
 // const Tabledata = [
 // 	{
@@ -74,6 +76,7 @@ function DaoDashboard() {
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
 	const router = useRouter()
 
+	const [isInviteModalOpen, setIsInviteModalOpen] = useState(false)
 	const [chainID, setChainId] = React.useState<SupportedChainId>()
 	const [daoID, setDaoId] = React.useState<string>()
 
@@ -359,7 +362,12 @@ function DaoDashboard() {
               DAO Stats
 						</Text>
 						<Spacer />
-
+						<Button
+							onClick={() => setIsInviteModalOpen(true)}
+							leftIcon={<LinkIcon />}
+							variant='primaryV2' >
+							Create invite link
+						</Button>
 						{/* <Menu
 							placement="bottom"
 							// align="right"
@@ -518,6 +526,9 @@ function DaoDashboard() {
 					</Flex>
 				</Container>
 			</Container>
+			<InviteModal
+				isOpen={isInviteModalOpen}
+				onClose={() => setIsInviteModalOpen(false)} />
 		</>
 	)
 }

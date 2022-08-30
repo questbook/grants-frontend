@@ -1,13 +1,13 @@
 import { extendTheme } from '@chakra-ui/react'
-import button from './components/button'
-import container from './components/container'
-import divider from './components/divider'
-import header from './components/header'
-import input from './components/input'
-import link from './components/link'
-import progress from './components/progress'
-import text from './components/text'
-import colors from './colors'
+import colors from 'src/theme/colors'
+import button from 'src/theme/components/button'
+import container from 'src/theme/components/container'
+import divider from 'src/theme/components/divider'
+import header from 'src/theme/components/header'
+import input from 'src/theme/components/input'
+import link from 'src/theme/components/link'
+import progress from 'src/theme/components/progress'
+import text from 'src/theme/components/text'
 
 const theme = extendTheme({
 	fonts: {

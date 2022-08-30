@@ -2,17 +2,17 @@ import React, { useEffect } from 'react'
 import {
 	Box,
 	Button, Flex, Grid, Modal, ModalContent, ModalHeader, ModalOverlay, Text, Tooltip, } from '@chakra-ui/react'
+import EditModalContent from 'src/components/manage_dao/modalContent'
+import roles from 'src/components/manage_dao/roles'
+import CopyIcon from 'src/components/ui/copy_icon'
 import {
 	getFormattedDateFromUnixTimestampWithYear,
 	trimAddress,
 } from 'src/utils/formattingUtils'
 import InviteModal from 'src/v2/components/InviteModal'
-import CopyIcon from '../ui/copy_icon'
-import EditModalContent from './modalContent'
-import roles from './roles'
 
 interface Props {
-  workspaceMembers: any;
+  workspaceMembers: any
 }
 
 function Members({ workspaceMembers }: Props) {
@@ -55,43 +55,43 @@ function Members({ workspaceMembers }: Props) {
 
 	return (
 		<Flex
-			direction="column"
-			align="start"
-			w="100%">
+			direction='column'
+			align='start'
+			w='100%'>
 			<Flex
-				direction="row"
-				w="full"
-				justify="space-between">
+				direction='row'
+				w='full'
+				justify='space-between'>
 				<Text
-					fontStyle="normal"
-					fontWeight="bold"
-					fontSize="18px"
-					lineHeight="26px"
+					fontStyle='normal'
+					fontWeight='bold'
+					fontSize='18px'
+					lineHeight='26px'
 				>
-          			Manage Members
+					Manage Members
 				</Text>
 				<Button
-					variant="primaryCta"
+					variant='primaryCta'
 					onClick={
 						() => {
 							setIsInviteModalOpen(true)
 						}
 					}
 				>
-          			Invite New
+					Invite New
 				</Button>
 			</Flex>
 			<Flex
-				w="100%"
+				w='100%'
 				mt={8}
-				alignItems="flex-start"
-				direction="column">
+				alignItems='flex-start'
+				direction='column'>
 				<Grid
-					gridAutoFlow="column"
-					gridTemplateColumns="repeat(5, 1fr)"
-					w="100%"
-					justifyItems="center"
-					alignContent="center"
+					gridAutoFlow='column'
+					gridTemplateColumns='repeat(5, 1fr)'
+					w='100%'
+					justifyItems='center'
+					alignContent='center'
 					py={4}
 					px={5}
 				>
@@ -99,7 +99,7 @@ function Members({ workspaceMembers }: Props) {
 					{
 						tableHeaders.map((header) => (
 							<Text
-								variant="tableHeader"
+								variant='tableHeader'
 								key={header}>
 								{header}
 							</Text>
@@ -107,9 +107,9 @@ function Members({ workspaceMembers }: Props) {
 					}
 				</Grid>
 				<Flex
-					direction="column"
-					w="100%"
-					border="1px solid #D0D3D3"
+					direction='column'
+					w='100%'
+					border='1px solid #D0D3D3'
 					borderRadius={4}
 				>
 					{
@@ -117,78 +117,78 @@ function Members({ workspaceMembers }: Props) {
             && tableData.map((data: any, index: number) => (
             	<Grid
             		key={data.address}
-            		gridAutoFlow="column"
-            		gridTemplateColumns="repeat(5, 1fr)"
-            		w="100%"
-            		justifyItems="center"
-            		alignContent="center"
+            		gridAutoFlow='column'
+            		gridTemplateColumns='repeat(5, 1fr)'
+            		w='100%'
+            		justifyItems='center'
+            		alignContent='center'
             		bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
             		py={4}
             		px={5}
             	>
             		{
             			data.email?.length > 16 ? (
-            			<Tooltip label={data.email}>
-            				<Flex
-            						alignSelf="center"
-            						alignItems="center">
-            					<Text
-            						alignSelf="center"
-            						textAlign="center"
-            						variant="tableBody"
+            				<Tooltip label={data.email}>
+            					<Flex
+            						alignSelf='center'
+            						alignItems='center'>
+            						<Text
+            						alignSelf='center'
+            						textAlign='center'
+            						variant='tableBody'
             					>
-            						{trimAddress(data.email, 12)}
-            					</Text>
-            					<Box mr="7px" />
-            				</Flex>
-            			</Tooltip>
+            							{trimAddress(data.email, 12)}
+ </Text>
+            						<Box mr='7px' />
+ </Flex>
+ </Tooltip>
             		) : (
-            			<Text
-            				alignSelf="center"
-            				textAlign="center"
-            				variant="tableBody"
+            				<Text
+            				alignSelf='center'
+            				textAlign='center'
+            				variant='tableBody'
             			>
-            				{handleEmptyEmail(data.email)}
-            			</Text>
+            					{handleEmptyEmail(data.email)}
+ </Text>
             		)
             		}
             		<Tooltip label={data.address}>
-            			<Flex alignItems="center">
-            				<Text variant="tableBody">
+            			<Flex alignItems='center'>
+            				<Text variant='tableBody'>
             					{trimAddress(data.address, 4)}
-            				</Text>
-            				<Box mr="7px" />
+ </Text>
+            				<Box mr='7px' />
             				<CopyIcon text={data.address} />
-            			</Flex>
-            		</Tooltip>
-            		<Text variant="tableBody">
+ </Flex>
+ </Tooltip>
+            		<Text variant='tableBody'>
             			{roles.find((r) => r.value === data.role)?.label || 'Admin'}
-            		</Text>
-            		<Text variant="tableBody">
+ </Text>
+            		<Text variant='tableBody'>
             			{getFormattedDateFromUnixTimestampWithYear(data.updatedAt)}
-            		</Text>
+ </Text>
             		<Tooltip label={data.address}>
-            			<Flex alignItems="center">
-            				<Text variant="tableBody">
+            			<Flex alignItems='center'>
+            				<Text variant='tableBody'>
             					{trimAddress(data.address, 4)}
-            				</Text>
-            				<Box mr="7px" />
+ </Text>
+            				<Box mr='7px' />
             				<CopyIcon
-            					h="0.75rem"
+            					h='0.75rem'
             					text={data.address} />
-            			</Flex>
-            		</Tooltip>
+ </Flex>
+ </Tooltip>
             		<Box flex={tableDataFlex[4]}>
             			<Button
-            				variant="outline"
-            				color="brand.500"
-            				fontWeight="500"
-            				fontSize="14px"
-            				lineHeight="14px"
-            				textAlign="center"
+            				variant='outline'
+            				color='brand.500'
+            				fontWeight='500'
+            				fontSize='14px'
+            				lineHeight='14px'
+            				textAlign='center'
             				borderRadius={8}
-            				borderColor="brand.500"
-            				height="32px"
+            				borderColor='brand.500'
+            				height='32px'
             				onClick={
             					() => {
             						setIsEditModalOpen(true)
@@ -196,10 +196,10 @@ function Members({ workspaceMembers }: Props) {
             					}
             				}
             			>
-                    Edit
+		Edit
             			</Button>
-            		</Box>
-            	</Grid>
+ </Box>
+ </Grid>
             ))
 					}
 				</Flex>
@@ -223,11 +223,11 @@ function Members({ workspaceMembers }: Props) {
 							onClose={
 								(
 									newMember: {
-								address: string;
-								email: string;
-								role: string;
-								updatedAt?: number;
-								addedBy?: string;
+								address: string
+								email: string
+								role: string
+								updatedAt?: number
+								addedBy?: string
 							},
 									shouldRevoke?: boolean,
 								) => {

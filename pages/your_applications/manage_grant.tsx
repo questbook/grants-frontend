@@ -57,7 +57,7 @@ function ManageGrant() {
 
 	useEffect(() => {
 		if(router && router.query) {
-			console.log(router.query)
+			// console.log(router.query)
 			const { chainId: cId, applicationId: aId } = router.query
 			setChainId(cId as unknown as SupportedChainId)
 			setApplicationID(aId)
@@ -177,22 +177,22 @@ function ManageGrant() {
 
 	return (
 		<Container
-			maxW="100%"
-			display="flex"
-			px="70px">
+			maxW='100%'
+			display='flex'
+			px='70px'>
 			<Container
 				flex={1}
-				display="flex"
-				flexDirection="column"
-				maxW="834px"
-				alignItems="stretch"
+				display='flex'
+				flexDirection='column'
+				maxW='834px'
+				alignItems='stretch'
 				pb={8}
 				px={10}
 			>
 				<Breadcrumbs path={['My Applications', 'Manage Grant']} />
 				<Text
-					variant="heading"
-					mt="18px">
+					variant='heading'
+					mt='18px'>
 					{applicationData.title}
 					{
 						isGrantVerified
@@ -200,25 +200,25 @@ function ManageGrant() {
             	<VerifiedBadge
             		grantAmount={grantFunding}
             		grantCurrency={assetInfo?.label}
-            		lineHeight="44px" />
+            		lineHeight='44px' />
             )
 					}
 				</Text>
 				<Box mt={5} />
 
 				<Flex
-					direction="row"
-					w="full"
-					align="center">
+					direction='row'
+					w='full'
+					align='center'>
 					{
 						tabs.map((tab, index) => {
-							console.log('TAB: ', tab)
+							// console.log('TAB: ', tab)
 							return (
 								<Button
 									key={tab.title}
-									variant="ghost"
-									h="110px"
-									w="full"
+									variant='ghost'
+									h='110px'
+									w='full'
 									_hover={
 										{
 											background: '#F5F5F5',
@@ -240,38 +240,38 @@ function ManageGrant() {
 									borderLeftWidth={index !== selected ? 0 : '2px'}
 									borderTopWidth={index !== selected ? 0 : '2px'}
 									borderBottomWidth={index !== selected ? '2px' : 0}
-									borderBottomRightRadius="-2px"
+									borderBottomRightRadius='-2px'
 									onClick={() => (index !== tabs.length - 1 ? setSelected(index) : null)}
 								>
 									<Flex
-										direction="column"
-										justify="center"
-										align="center"
-										w="100%">
+										direction='column'
+										justify='center'
+										align='center'
+										w='100%'>
 										<Flex
-											direction="row"
-											justify="center"
-											align="center">
+											direction='row'
+											justify='center'
+											align='center'>
 											{
 												tab.icon && (
 													<Image
-														h="26px"
-														w="26px"
+														h='26px'
+														w='26px'
 														src={tab.icon}
 														alt={tab.icon} />
 												)
 											}
 											<Box mx={1} />
 											<Text
-												fontWeight="700"
-												fontSize="26px"
-												lineHeight="40px">
+												fontWeight='700'
+												fontSize='26px'
+												lineHeight='40px'>
 												{tab.title}
 											</Text>
 										</Flex>
 										<Text
-											variant="applicationText"
-											color="#717A7C">
+											variant='applicationText'
+											color='#717A7C'>
 											{tab.subtitle}
 										</Text>
 									</Flex>
