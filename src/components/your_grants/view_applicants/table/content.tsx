@@ -27,7 +27,7 @@ import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import Modal from 'src/components/ui/modal'
 import useChainId from 'src/hooks/utils/useChainId'
 import useApplicationMilestones from 'src/utils/queryUtil'
-import { erc20ABI } from 'wagmi'
+import { chain, erc20ABI } from 'wagmi'
 import {
 	AssignedToReview, GrantApproved, GrantComplete, PendingReview, Rejected, ResubmissionRequested,
 	ReviewDone,
@@ -145,6 +145,8 @@ function Content({
 			txServiceUrl = 'https://safe-transaction.rinkeby.gnosis.io/'
 		} else if(chainId === 137) {
 			txServiceUrl = 'https://safe-transaction.polygon.gnosis.io/'
+		} else if (chainId === 42220) {
+			txServiceUrl === 'https://transaction-service.gnosis-safe-staging.celo-networks-dev.org'
 		}
 
 		const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })

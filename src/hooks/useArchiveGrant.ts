@@ -8,6 +8,9 @@ import { useAccount, useNetwork } from 'wagmi'
 import ErrorToast from '../components/ui/toasts/errorToast'
 import useGrantContract from './contracts/useGrantContract'
 import useChainId from './utils/useChainId'
+import useQBContract from './contracts/useQBContract'
+import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import { ContractTransaction } from 'ethers'
 
 export default function useArchiveGrant(newState: boolean, changeCount: number, grantId?: string) {
 	const [error, setError] = React.useState<string>()
@@ -24,44 +27,58 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 	const toast = useToast()
 	const currentChainId = useChainId()
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
+	const grantFactoryContract = useQBContract('grantFactory', chainId)
 
 	useEffect(() => {
-		if(newState) {
+		if (newState) {
 			setError(undefined)
 			setIncorrectNetwork(false)
 		}
 	}, [newState])
 
 	useEffect(() => {
-		if(incorrectNetwork) {
+		if (incorrectNetwork) {
 			setIncorrectNetwork(false)
 		}
 
 	}, [grantContract])
 
 	useEffect(() => {
-		if(changeCount === 0) {
+		if (changeCount === 0) {
 			return
 		}
 
-		if(error) {
+		if (error) {
 			return
 		}
 
-		if(loading) {
+		if (loading) {
 			return
 		}
 
 		async function validate() {
 			setLoading(true)
-
+			console.log('grant ID', grantId)
+			console.log('workspace Id', Number(workspace?.id).toString())
+			console.log('workspace address', WORKSPACE_REGISTRY_ADDRESS[currentChainId])
+			console.log('new state', newState)
+			let archiveGrantTransaction: ContractTransaction
 			try {
-				const archiveGrantTransaction = await grantContract.updateGrantAccessibility(newState)
+				if (chainId === 42220) {
+					archiveGrantTransaction = await grantContract.updateGrantAccessibility(newState)
+				} else {
+					archiveGrantTransaction = await grantFactoryContract.updateGrantAccessibility(
+						grantId!,
+						Number(workspace?.id).toString(),
+						WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
+						newState)
+				}
+				
 				const archiveGrantTransactionData = await archiveGrantTransaction.wait()
 
 				setTransactionData(archiveGrantTransactionData)
 				setLoading(false)
-			} catch(e: any) {
+			} catch (e: any) {
 				const message = getErrorMessage(e)
 				setError(message)
 				setLoading(false)
@@ -70,7 +87,7 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 					render: () => ErrorToast({
 						content: message,
 						close: () => {
-							if(toastRef.current) {
+							if (toastRef.current) {
 								toast.close(toastRef.current)
 							}
 						},
@@ -80,20 +97,20 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 		}
 
 		try {
-			if(transactionData) {
+			if (transactionData) {
 				return
 			}
 
-			if(!accountData || !accountData.address) {
+			if (!accountData || !accountData.address) {
 				throw new Error('not connected to wallet')
 			}
 
-			if(!workspace) {
+			if (!workspace) {
 				throw new Error('not connected to workspace')
 			}
 
-			if(!currentChainId) {
-				if(switchNetwork && chainId) {
+			if (!currentChainId) {
+				if (switchNetwork && chainId) {
 					switchNetwork(chainId)
 				}
 
@@ -102,8 +119,8 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 				return
 			}
 
-			if(chainId !== currentChainId) {
-				if(switchNetwork && chainId) {
+			if (chainId !== currentChainId) {
+				if (switchNetwork && chainId) {
 					switchNetwork(chainId)
 				}
 
@@ -112,26 +129,26 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 				return
 			}
 
-			if(getSupportedChainIdFromWorkspace(workspace) !== currentChainId) {
+			if (getSupportedChainIdFromWorkspace(workspace) !== currentChainId) {
 				throw new Error('connected to wrong network')
 			}
 
-			if(!validatorApi) {
+			if (!validatorApi) {
 				throw new Error('validatorApi or workspaceId is not defined')
 			}
 
-			if(
+			if (
 				!grantContract
-        || grantContract.address
-          === '0x0000000000000000000000000000000000000000'
-        || !grantContract.signer
-        || !grantContract.provider
+				|| grantContract.address
+				=== '0x0000000000000000000000000000000000000000'
+				|| !grantContract.signer
+				|| !grantContract.provider
 			) {
 				return
 			}
 
 			validate()
-		} catch(e: any) {
+		} catch (e: any) {
 			const message = getErrorMessage(e)
 			setError(message)
 			setLoading(false)
@@ -140,7 +157,7 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 				render: () => ErrorToast({
 					content: message,
 					close: () => {
-						if(toastRef.current) {
+						if (toastRef.current) {
 							toast.close(toastRef.current)
 						}
 					},
