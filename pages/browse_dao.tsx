@@ -23,7 +23,7 @@ function BrowseDao() {
 	)
 	const { data: accountData } = useAccount()
 	const { isDisconnected } = useConnect()
-
+	const [grantsApplicants, setGrantsApplicants] = useState<any>()
 	const [allWorkspaces, setAllWorkspaces] = useState([] as any[])
 	// const [selectedChainId, setSelectedChainId] = useState<number|undefined>()
 	const [sortedWorkspaces, setSortedWorkspaces] = useState([] as any[])
@@ -120,9 +120,54 @@ function BrowseDao() {
 		}
 	}, [grants])
 
-	const formatDataforWorkspace = (workspaces: any) => {
-		var result = Object.keys(workspaces).map((key) => {
+	const fetchDAO = async(chainId: string, daoId: string) => {
+		try {
+			var res = await fetch(
+				'https://www.questbook-analytics.com/workspace-analytics',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					referrerPolicy: 'unsafe-url',
+					body: JSON.stringify({
+						chainId: chainId,
+						workspaceId: daoId,
+					}),
+				}
+			)
+			var data = await res.json()
+			return data
+
+		} catch(error) {
+			console.log(error)
+		}
+
+	}
+
+	const extractLast30Fundings = (data: any) => {
+		const everydayFundings = data.everydayFunding
+		let totalFunding = 0
+
+		if(!everydayFundings || everydayFundings.length === 0) {
+			return totalFunding
+		}
+
+		everydayFundings.forEach((application: any) => {
+			totalFunding += parseInt(application.funding)
+		})
+
+		return totalFunding
+	}
+
+	const formatDataforWorkspace = async(workspaces: any) => {
+
+		var result = Promise.all(Object.keys(workspaces).map(async(key) => {
 			var totalamount = 0
+			var data = await fetchDAO(key.split('_')[1], key.split('-')[0])
+
+			const totalFunding = extractLast30Fundings(data)
+
 			if(workspaces[key].length > 1) {
 				workspaces[key].map((grant: any) => {
 					totalamount += Number(formatAmount(grant.amount))
@@ -134,13 +179,17 @@ function BrowseDao() {
 				workspaceID: key.split('-')[0],
 				name: workspaces[key][0].name,
 				icon: workspaces[key][0].icon,
-				amount:totalamount === 0 ? Number(formatAmount(workspaces[key][0].amount)) : totalamount,
+				// amount:totalamount === 0 ? Number(formatAmount(workspaces[key][0].amount)) : totalamount,
+				amount: totalFunding,
 				token: workspaces[key][0].token,
-				noOfApplicants: workspaces[key][0].noOfApplicants
+				noOfApplicants: data.totalApplicants
+				// noOfApplicants: workspaces[key][0].noOfApplicants
 			}
 			return (dao)
-		})
-		setAllWorkspaces(result)
+		}))
+		setAllWorkspaces(await result)
+
+
 	}
 
 	useEffect(() => {
