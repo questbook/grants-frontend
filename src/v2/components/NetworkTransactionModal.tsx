@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { AlertDialogOverlay, Box, Divider, Flex, HStack, Image, Modal, ModalBody, ModalContent, ModalHeader, Text, VStack } from '@chakra-ui/react'
 import { CHAIN_INFO } from 'src/constants/chains'
 import useChainId from 'src/hooks/utils/useChainId'
-import { CheckCircle } from '../assets/custom chakra icons/CheckCircle'
+import { CheckCircle } from 'src/v2/assets/custom chakra icons/CheckCircle'
 
 export type NetworkTransactionModalProps = {
 	isOpen: boolean
@@ -38,7 +38,7 @@ export default ({
 			isOpen={isOpen}
 			onClose={() => { }}
 			isCentered
-			scrollBehavior={'outside'}
+			scrollBehavior='outside'
 			size='sm'
 		>
 			<AlertDialogOverlay
@@ -71,13 +71,13 @@ export default ({
 									boxSize='3'
 									ml={1}
 									src={info?.icon || ''}
-									display="inline"
+									display='inline'
 									mb={-0.75} />
 								{' '}
 								<Text
 									fontSize='small'
 									fontWeight='bold'
-									display="inline">
+									display='inline'>
 									{info?.name}
 								</Text>
 							</Text>
@@ -142,7 +142,7 @@ const ModalStep = ({
 				{
 					state === 'done' ? (
 						<CheckCircle
-							color={'#3AE0AE'}
+							color='#3AE0AE'
 							boxSize={4} />
 					) : (
 						<>
@@ -151,8 +151,8 @@ const ModalStep = ({
 									<Box
 										minW={4}
 										minH={4}
-										p={'2px'}
-										bg={'linear-gradient(180deg, #89A6FB 5.88%, #B6F72B 94.12%)'}
+										p='2px'
+										bg='linear-gradient(180deg, #89A6FB 5.88%, #B6F72B 94.12%)'
 										style={
 											{
 												aspectRatio: '1',
@@ -160,19 +160,19 @@ const ModalStep = ({
 												WebkitMaskComposite: 'source-out'
 											}
 										}
-										borderRadius={'50%'}
-										boxSizing={'border-box'}
-										animation={'spinner 0.45s linear infinite'}
+										borderRadius='50%'
+										boxSizing='border-box'
+										animation='spinner 0.45s linear infinite'
 									/>
 								) : (
 									<Box
 										minW={4}
 										minH={4}
-										borderColor={'#E0E0EC'}
-										borderWidth={'2px'}
+										borderColor='#E0E0EC'
+										borderWidth='2px'
 
-										borderRadius={'50%'}
-										boxSizing={'border-box'}
+										borderRadius='50%'
+										boxSizing='border-box'
 									/>
 								)
 							}
@@ -194,9 +194,9 @@ const ModalStep = ({
 				!isLastStep && (
 					<Box
 						h='2'
-						w={'2px'}
+						w='2px'
 						style={{ marginLeft: '6px' }}
-						bg={'#E0E0EC'} />
+						bg='#E0E0EC' />
 				)
 			}
 		</VStack>

@@ -35,13 +35,13 @@ function getErrorMessage(e: any) {
 			message = TRANSACTION_REPLACED_MSG
 		}
 
-		console.log('Internal error: ', e)
+		// console.log('Internal error: ', e)
 	} else {
-		console.log('General error: ', e)
+		// console.log('General error: ', e)
 		message = getMessageFromCode(e?.code, e?.message)
 	}
 
-	console.log('Message: ', message)
+	// console.log('Message: ', message)
 	return message
 }
 

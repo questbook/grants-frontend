@@ -2,7 +2,7 @@ import React from 'react'
 import {
 	Box, Text,
 } from '@chakra-ui/react'
-import SingleLineInput from '../../../ui/forms/singleLineInput'
+import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 
 function ApplicantDetails({
 	applicantName,
@@ -20,35 +20,35 @@ function ApplicantDetails({
 	readOnly,
 	grantRequiredFields,
 }: {
-  applicantName: string;
-  setApplicantName: (applicantName: string) => void;
-  applicantEmail: string;
-  setApplicantEmail: (applicantEmail: string) => void;
-  applicantAddress: string;
-  setApplicantAddress: (applicantAddress: string) => void;
-  applicantNameError: boolean;
-  setApplicantNameError: (applicantNameError: boolean) => void;
-  applicantEmailError: boolean;
-  setApplicantEmailError: (applicantEmailError: boolean) => void;
-  applicantAddressError: boolean;
-  setApplicantAddressError: (applicantAddressError: boolean) => void;
-  readOnly?: boolean;
-  grantRequiredFields: string[];
+  applicantName: string
+  setApplicantName: (applicantName: string) => void
+  applicantEmail: string
+  setApplicantEmail: (applicantEmail: string) => void
+  applicantAddress: string
+  setApplicantAddress: (applicantAddress: string) => void
+  applicantNameError: boolean
+  setApplicantNameError: (applicantNameError: boolean) => void
+  applicantEmailError: boolean
+  setApplicantEmailError: (applicantEmailError: boolean) => void
+  applicantAddressError: boolean
+  setApplicantAddressError: (applicantAddressError: boolean) => void
+  readOnly?: boolean
+  grantRequiredFields: string[]
 }) {
 	return (
 		<>
 			<Text
-				fontWeight="700"
-				fontSize="16px"
-				lineHeight="20px"
-				color="#8850EA">
-        Applicant Details
+				fontWeight='700'
+				fontSize='16px'
+				lineHeight='20px'
+				color='#8850EA'>
+				Applicant Details
 			</Text>
 			<Box mt={6} />
 			<SingleLineInput
-				label="Applicant Name"
-				placeholder="Nouns DAO"
-				subtext="Full names are preferred."
+				label='Applicant Name'
+				placeholder='Nouns DAO'
+				subtext='Full names are preferred.'
 				onChange={
 					(e) => {
 						if(applicantNameError) {
@@ -59,15 +59,15 @@ function ApplicantDetails({
 					}
 				}
 				isError={applicantNameError}
-				errorText="Required"
+				errorText='Required'
 				value={applicantName}
 				disabled={readOnly}
 				visible={grantRequiredFields.includes('applicantName')}
 			/>
 			<Box mt={6} />
 			<SingleLineInput
-				label="Applicant Email"
-				placeholder="name@sample.com"
+				label='Applicant Email'
+				placeholder='name@sample.com'
 				value={applicantEmail}
 				onChange={
 					(e: any) => {
@@ -79,16 +79,16 @@ function ApplicantDetails({
 					}
 				}
 				isError={applicantEmailError}
-				errorText="Required"
+				errorText='Required'
 				disabled={readOnly}
 				visible={grantRequiredFields.includes('applicantEmail')}
-				type="email"
+				type='email'
 			/>
 			<Box mt={6} />
 			<SingleLineInput
-				label="Applicant Address"
-				placeholder="Ethereum or Solana address"
-				subtext="Your wallet address where you would like to receive funds"
+				label='Applicant Address'
+				placeholder='Ethereum or Solana address'
+				subtext='Your wallet address where you would like to receive funds'
 				onChange={
 					(e) => {
 						if(applicantAddress) {
@@ -99,7 +99,7 @@ function ApplicantDetails({
 					}
 				}
 				isError={applicantAddressError}
-				errorText="Required"
+				errorText='Required'
 				value={applicantAddress}
 				visible={grantRequiredFields.includes('applicantAddress')}
 			/>

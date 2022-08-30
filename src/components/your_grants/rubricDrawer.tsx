@@ -3,15 +3,15 @@ import {
 	Box, Button, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, Image, Link,
 	Switch, Text, } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
+import Dropdown from 'src/components/ui/forms/dropdown'
+import MultiLineInput from 'src/components/ui/forms/multiLineInput'
+import SingleLineInput from 'src/components/ui/forms/singleLineInput'
+import Loader from 'src/components/ui/loader'
 import { SupportedChainId } from 'src/constants/chains'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSetRubrics from 'src/hooks/useSetRubrics'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
-import Dropdown from '../ui/forms/dropdown'
-import MultiLineInput from '../ui/forms/multiLineInput'
-import SingleLineInput from '../ui/forms/singleLineInput'
-import Loader from '../ui/loader'
 
 function RubricDrawer({
 	rubricDrawerOpen,
@@ -26,17 +26,17 @@ function RubricDrawer({
 	workspaceId,
 	initialIsPrivate,
 }: {
-  rubricDrawerOpen: boolean;
-  setRubricDrawerOpen: (rubricDrawerOpen: boolean) => void;
-  rubrics: any[];
-  setRubrics: (rubrics: any[]) => void;
-  rubricEditAllowed: boolean;
-  maximumPoints: number;
-  setMaximumPoints: (maximumPoints: number) => void;
-  grantAddress: string;
-  chainId: SupportedChainId | undefined;
-  workspaceId: string;
-  initialIsPrivate: boolean;
+  rubricDrawerOpen: boolean
+  setRubricDrawerOpen: (rubricDrawerOpen: boolean) => void
+  rubrics: any[]
+  setRubrics: (rubrics: any[]) => void
+  rubricEditAllowed: boolean
+  maximumPoints: number
+  setMaximumPoints: (maximumPoints: number) => void
+  grantAddress: string
+  chainId: SupportedChainId | undefined
+  workspaceId: string
+  initialIsPrivate: boolean
 }) {
 	const [shouldEncryptReviews, setShouldEncryptReviews] = React.useState(false)
 	useEffect(() => {
@@ -60,7 +60,7 @@ function RubricDrawer({
 
 	useEffect(() => {
 		if(transactionData && newPublicKey && newPublicKey.publicKey) {
-			console.log(newPublicKey)
+			// console.log(newPublicKey)
 			setPk(newPublicKey.publicKey)
 			const rubric = {} as any
 
@@ -74,7 +74,7 @@ function RubricDrawer({
 				})
 			}
 
-			console.log('rubric', rubric)
+			// console.log('rubric', rubric)
 			setEditedRubricData({
 				rubric: {
 					isPrivate: shouldEncryptReviews,
@@ -86,7 +86,7 @@ function RubricDrawer({
 	}, [transactionData, newPublicKey])
 
 	useEffect(() => {
-		/// console.log(pk);
+		/// // console.log(pk);
 		if(!accountData?.address) {
 			return
 		}
@@ -98,7 +98,7 @@ function RubricDrawer({
 		const k = workspace?.members?.find(
 			(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 		)?.publicKey?.toString()
-		// console.log(k);
+		// // console.log(k);
 		if(k && k.length > 0) {
 			setPk(k)
 		} else {
@@ -145,7 +145,7 @@ function RubricDrawer({
 				})
 			}
 
-			console.log('rubric', rubric)
+			// console.log('rubric', rubric)
 			setEditedRubricData({
 				rubric: {
 					isPrivate: shouldEncryptReviews,
@@ -176,34 +176,34 @@ function RubricDrawer({
 		<>
 			<Drawer
 				isOpen={rubricDrawerOpen}
-				placement="right"
+				placement='right'
 				onClose={() => setRubricDrawerOpen(false)}
-				size="lg"
+				size='lg'
 			>
 				<DrawerOverlay />
 				<DrawerContent>
 
 					<Flex
-						direction="column"
-						overflow="scroll"
+						direction='column'
+						overflow='scroll'
 						p={8}>
 						<Flex
 							mb={8}
-							alignItems="center">
+							alignItems='center'>
 							<Text
-								color="#122224"
-								fontWeight="bold"
-								fontSize="16px"
-								lineHeight="20px"
-								mr="auto"
+								color='#122224'
+								fontWeight='bold'
+								fontSize='16px'
+								lineHeight='20px'
+								mr='auto'
 							>
-                Setup evaluation score
+								Setup evaluation score
 							</Text>
 							<Image
-								src="/ui_icons/close_drawer.svg"
-								cursor="pointer"
-								h="20px"
-								w="20px"
+								src='/ui_icons/close_drawer.svg'
+								cursor='pointer'
+								h='20px'
+								w='20px'
 								onClick={() => setRubricDrawerOpen(false)}
 							/>
 						</Flex>
@@ -212,29 +212,29 @@ function RubricDrawer({
 								<>
 									<Flex
 										mt={4}
-										gap="2"
-										alignItems="flex-start"
+										gap='2'
+										alignItems='flex-start'
 										opacity={rubricEditAllowed ? 1 : 0.4}
 									>
 										<Flex
-											direction="column"
+											direction='column'
 											flex={0.3327}>
 											<Text
-												mt="18px"
-												color="#122224"
-												fontWeight="bold"
-												fontSize="16px"
-												lineHeight="20px"
+												mt='18px'
+												color='#122224'
+												fontWeight='bold'
+												fontSize='16px'
+												lineHeight='20px'
 											>
-                      Criteria
+												Criteria
 												{' '}
 												{index + 1}
 											</Text>
 										</Flex>
 										<Flex
-											justifyContent="center"
+											justifyContent='center'
 											gap={2}
-											alignItems="center"
+											alignItems='center'
 											flex={0.6673}>
 											<SingleLineInput
 												value={rubrics[index].name}
@@ -246,35 +246,35 @@ function RubricDrawer({
 														setRubrics(newRubrics)
 													}
 												}
-												placeholder="Name"
+												placeholder='Name'
 												isError={rubrics[index].nameError}
-												errorText="Required"
+												errorText='Required'
 												disabled={!rubricEditAllowed}
 											/>
 										</Flex>
 									</Flex>
 									<Flex
 										mt={6}
-										gap="2"
-										alignItems="flex-start"
+										gap='2'
+										alignItems='flex-start'
 										opacity={rubricEditAllowed ? 1 : 0.4}>
 										<Flex
-											direction="column"
+											direction='column'
 											flex={0.3327}>
 											<Text
-												mt="18px"
-												color="#122224"
-												fontWeight="bold"
-												fontSize="16px"
-												lineHeight="20px"
+												mt='18px'
+												color='#122224'
+												fontWeight='bold'
+												fontSize='16px'
+												lineHeight='20px'
 											>
-                      Description
+												Description
 											</Text>
 										</Flex>
 										<Flex
-											justifyContent="center"
+											justifyContent='center'
 											gap={2}
-											alignItems="center"
+											alignItems='center'
 											flex={0.6673}>
 											<MultiLineInput
 												value={rubrics[index].description}
@@ -286,9 +286,9 @@ function RubricDrawer({
 														setRubrics(newRubrics)
 													}
 												}
-												placeholder="Describe the evaluation criteria"
+												placeholder='Describe the evaluation criteria'
 												isError={rubrics[index].descriptionError}
-												errorText="Required"
+												errorText='Required'
 												disabled={!rubricEditAllowed}
 											/>
 										</Flex>
@@ -296,8 +296,8 @@ function RubricDrawer({
 
 									<Flex
 										mt={2}
-										gap="2"
-										justifyContent="flex-end">
+										gap='2'
+										justifyContent='flex-end'>
 										<Box
 											onClick={
 												() => {
@@ -310,23 +310,23 @@ function RubricDrawer({
 													setRubrics(newRubrics)
 												}
 											}
-											display="flex"
-											alignItems="center"
-											cursor="pointer"
+											display='flex'
+											alignItems='center'
+											cursor='pointer'
 											opacity={rubricEditAllowed ? 1 : 0.4}
 										>
 											<Image
-												h="16px"
-												w="15px"
-												src="/ui_icons/delete_red.svg"
-												mr="6px"
+												h='16px'
+												w='15px'
+												src='/ui_icons/delete_red.svg'
+												mr='6px'
 											/>
 											<Text
-												fontWeight="500"
-												fontSize="14px"
-												color="#DF5252"
-												lineHeight="20px">
-                      Delete
+												fontWeight='500'
+												fontSize='14px'
+												color='#DF5252'
+												lineHeight='20px'>
+												Delete
 											</Text>
 										</Box>
 									</Flex>
@@ -336,9 +336,9 @@ function RubricDrawer({
 						}
 
 						<Flex
-							mt="19px"
-							gap="2"
-							justifyContent="flex-start">
+							mt='19px'
+							gap='2'
+							justifyContent='flex-start'>
 							<Box
 								onClick={
 									() => {
@@ -355,42 +355,42 @@ function RubricDrawer({
 										setRubrics(newRubrics)
 									}
 								}
-								display="flex"
-								alignItems="center"
-								cursor="pointer"
+								display='flex'
+								alignItems='center'
+								cursor='pointer'
 								opacity={rubricEditAllowed ? 1 : 0.4}
 							>
 								<Image
-									h="16px"
-									w="15px"
-									src="/ui_icons/plus_circle.svg"
-									mr="6px"
+									h='16px'
+									w='15px'
+									src='/ui_icons/plus_circle.svg'
+									mr='6px'
 								/>
 								<Text
-									fontWeight="500"
-									fontSize="14px"
-									color="#8850EA"
-									lineHeight="20px">
-                  Add another criteria
+									fontWeight='500'
+									fontSize='14px'
+									color='#8850EA'
+									lineHeight='20px'>
+									Add another criteria
 								</Text>
 							</Box>
 						</Flex>
 
 						<Flex
 							opacity={rubricEditAllowed ? 1 : 0.4}
-							direction="column"
+							direction='column'
 							mt={6}>
 							<Text
-								fontSize="18px"
-								fontWeight="700"
-								lineHeight="26px"
+								fontSize='18px'
+								fontWeight='700'
+								lineHeight='26px'
 								letterSpacing={0}
 							>
-                Evaluation Rating
+								Evaluation Rating
 							</Text>
 							<Box
 								mt={2}
-								minW="399px"
+								minW='399px'
 								flex={0}>
 								<Dropdown
 									listItems={
@@ -413,42 +413,42 @@ function RubricDrawer({
 											setMaximumPoints(parseInt(id, 10))
 										} : undefined
 									}
-									listItemsMinWidth="300px"
+									listItemsMinWidth='300px'
 								/>
 							</Box>
 						</Flex>
 
 						<Flex
 							mt={8}
-							gap="2"
-							justifyContent="space-between">
+							gap='2'
+							justifyContent='space-between'>
 							<Flex
-								direction="column"
+								direction='column'
 								flex={1}>
 								<Text
-									color="#122224"
-									fontWeight="bold"
-									fontSize="16px"
-									lineHeight="20px"
+									color='#122224'
+									fontWeight='bold'
+									fontSize='16px'
+									lineHeight='20px'
 								>
-                  Keep applicant reviews private
+									Keep applicant reviews private
 								</Text>
 								<Flex>
 									<Text
-										color="#717A7C"
-										fontSize="14px"
-										lineHeight="20px">
-                    Private review is only visible to reviewers, DAO members.
+										color='#717A7C'
+										fontSize='14px'
+										lineHeight='20px'>
+										Private review is only visible to reviewers, DAO members.
 									</Text>
 								</Flex>
 							</Flex>
 							<Flex
-								ml="auto"
-								justifyContent="center"
+								ml='auto'
+								justifyContent='center'
 								gap={2}
-								alignItems="center">
+								alignItems='center'>
 								<Switch
-									id="encrypt"
+									id='encrypt'
 									defaultChecked={initialIsPrivate}
 									onChange={
 										(e) => {
@@ -457,49 +457,49 @@ function RubricDrawer({
 									}
 								/>
 								<Text
-									fontSize="12px"
-									fontWeight="bold"
-									lineHeight="16px">
+									fontSize='12px'
+									fontWeight='bold'
+									lineHeight='16px'>
 									{`${shouldEncryptReviews ? 'YES' : 'NO'}`}
 								</Text>
 							</Flex>
 						</Flex>
 
 						<Text
-							variant="footer"
+							variant='footer'
 							mt={8}
 							mb={7}
-							maxW="400">
+							maxW='400'>
 							<Image
-								display="inline-block"
-								h="10px"
-								w="10px"
-								src="/ui_icons/info_brand.svg"
+								display='inline-block'
+								h='10px'
+								w='10px'
+								src='/ui_icons/info_brand.svg'
 							/>
 							{' '}
-              By clicking Publish Grant you&apos;ll have to approve this transaction
-              in your wallet.
+							By clicking Publish Grant you&apos;ll have to approve this transaction
+							in your wallet.
 							{' '}
 							<Link
-								href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
+								href='https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46'
 								isExternal
 							>
-                Learn more
+								Learn more
 							</Link>
 							{' '}
 							<Image
-								display="inline-block"
-								h="10px"
-								w="10px"
-								src="/ui_icons/link.svg"
+								display='inline-block'
+								h='10px'
+								w='10px'
+								src='/ui_icons/link.svg'
 							/>
 						</Text>
 
 						<Box mt={12}>
 							<Button
 								disabled={!isBiconomyInitialised}
-								mt="auto"
-								variant="primary"
+								mt='auto'
+								variant='primary'
 								onClick={handleOnSubmit}>
 								{
 									!loading ? 'Save' : (

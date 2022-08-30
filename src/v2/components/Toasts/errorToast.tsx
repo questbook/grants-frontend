@@ -6,8 +6,8 @@ import {
 } from '@chakra-ui/react'
 
 interface Props {
-    content: React.ReactNode;
-    close: () => void;
+    content: React.ReactNode
+    close: () => void
 }
 
 function ErrorToast({ content, close }: Props) {
@@ -28,39 +28,39 @@ function ErrorToast({ content, close }: Props) {
 				bg='#FF7545' />
 
 			<Flex
-				alignItems="flex-start"
-				bgColor="#FFFFFF"
-				px="26px"
-				py="22px"
-				alignSelf="stretch"
+				alignItems='flex-start'
+				bgColor='#FFFFFF'
+				px='26px'
+				py='22px'
+				alignSelf='stretch'
 			>
 
 				<Flex
-					alignItems="center"
-					justifyContent="center"
+					alignItems='center'
+					justifyContent='center'
 					p={2}
-					h="40px"
-					w="40px"
-					mt="5px"
+					h='40px'
+					w='40px'
+					mt='5px'
 				>
 					<Image
 						onClick={close}
-						h="40px"
-						w="40px"
-						src="/ui_icons/error_toast_icon.svg"
-						alt="Rejected"
+						h='40px'
+						w='40px'
+						src='/ui_icons/error_toast_icon.svg'
+						alt='Rejected'
 					/>
 				</Flex>
 				<Flex
 					flex={1}
-					ml="23px"
-					direction="column">
+					ml='23px'
+					direction='column'>
 					<Text
 						width='100%'
-						fontSize="16px"
-						lineHeight="24px"
-						fontWeight="400"
-						color="#7B4646"
+						fontSize='16px'
+						lineHeight='24px'
+						fontWeight='400'
+						color='#7B4646'
 						{...contentProps}
 					/>
 

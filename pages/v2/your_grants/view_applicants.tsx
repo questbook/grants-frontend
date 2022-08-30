@@ -136,16 +136,16 @@ function ViewApplicants() {
 	const { data: realmsFundTransferData } = useGetRealmsFundTransferDataQuery(realmsQueryParams)
 
 	useEffect(() => {
-		console.log('realms fund transfer data', realmsFundTransferData)
+		// console.log('realms fund transfer data', realmsFundTransferData)
 
-		const applicationToTxnHashMap : {[applicationId: string]: {transactionHash: string, amount: number}} = {}
+		const applicationToTxnHashMap: {[applicationId: string]: {transactionHash: string, amount: number}} = {}
 
 		if(!realmsFundTransferData) {
 			return
 		}
 
 		realmsFundTransferData.grants[0]?.fundTransfers?.forEach((fundTransfer, i) => {
-			console.log('TX HASH - ', i, fundTransfer.transactionHash)
+			// console.log('TX HASH - ', i, fundTransfer.transactionHash)
 			if(!applicationToTxnHashMap[fundTransfer?.application?.id!]) {
 				applicationToTxnHashMap[fundTransfer?.application?.id!] = {
 					transactionHash: fundTransfer?.transactionHash!,
@@ -170,8 +170,8 @@ function ViewApplicants() {
 
 	useEffect(() => {
 		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		console.log('rree', isBiconomyLoading, biconomyLoading)
-		console.log('networks 2:', biconomy?.networkId?.toString(), workspacechainId, defaultChainId)
+		// console.log('rree', isBiconomyLoading, biconomyLoading)
+		// console.log('networks 2:', biconomy?.networkId?.toString(), workspacechainId, defaultChainId)
 
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && workspacechainId &&
 			biconomy.networkId && biconomy.networkId?.toString() === workspacechainId.toString()) {
@@ -184,9 +184,9 @@ function ViewApplicants() {
 		if(safeAddressData) {
 			const { workspaceSafes } = safeAddressData
 			const safeAddress = workspaceSafes[0].address
-			console.log('safeAddress', safeAddress)
-			console.log('workspace safe details', workspaceSafes)
-			const _isEvmChain = workspaceSafeChainId !== 900001 ? true : false
+			// console.log('safeAddress', safeAddress)
+			// console.log('workspace safe details', workspaceSafes)
+			const _isEvmChain = workspaceSafeChainId !== 900001
 			// setIsEvmChain(_isEvmChain)
 			setWorkspaceSafe(safeAddress)
 			setWorkspaceSafeChainId(parseInt(workspaceSafes[0].chainId))
@@ -216,7 +216,7 @@ function ViewApplicants() {
 	useEffect(() => {
 		if(router && router.query) {
 			const { grantId: gId } = router.query
-			console.log('fetch 100: ', gId)
+			// console.log('fetch 100: ', gId)
 			setGrantID(gId)
 		}
 	}, [router])
@@ -250,7 +250,7 @@ function ViewApplicants() {
 			const tempMember = workspace.members.find(
 				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 			)
-			console.log('fetch 500: ', tempMember)
+			// console.log('fetch 500: ', tempMember)
 			setIsAdmin(
 				tempMember?.accessLevel === 'admin'
 				|| tempMember?.accessLevel === 'owner',
@@ -271,11 +271,11 @@ function ViewApplicants() {
 			return
 		}
 
-		console.log('Grant ID: ', grantID)
-		console.log('isUser: ', isUser)
-		console.log('fetch: ', isAdmin, isReviewer)
+		// console.log('Grant ID: ', grantID)
+		// console.log('isUser: ', isUser)
+		// console.log('fetch: ', isAdmin, isReviewer)
 		if(isAdmin) {
-			console.log('Setting query params')
+			// console.log('Setting query params')
 			setQueryParams({
 				client:
 					subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
@@ -288,7 +288,7 @@ function ViewApplicants() {
 		}
 
 		if(isReviewer || isAdmin) {
-			console.log('reviewer', isUser)
+			// console.log('reviewer', isUser)
 			setQueryReviewerParams({
 				client:
 					subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
@@ -410,7 +410,7 @@ function ViewApplicants() {
 
 	useEffect(() => {
 		if(reviewData.data && reviewData.data.grantApplications.length) {
-			console.log('Reviewer Applications: ', reviewData.data)
+			// console.log('Reviewer Applications: ', reviewData.data)
 			const fetchedApplicantsData = reviewData.data.grantApplications.map((applicant) => {
 				return {
 					grantTitle: applicant?.grant?.title,
@@ -443,7 +443,7 @@ function ViewApplicants() {
 				}
 			})
 
-			console.log('fetch', fetchedApplicantsData)
+			// console.log('fetch', fetchedApplicantsData)
 
 			setReviewerData(fetchedApplicantsData)
 			setDaoId(reviewData.data.grantApplications[0].grant.workspace.id)
@@ -529,7 +529,7 @@ function ViewApplicants() {
 	const [totalFundDisbursed, setTotalFundDisbursed] = useState (0)
 	const [step, setStep] = useState(ModalState.RECEIPT_DETAILS)
 
-	const isEvmChain = workspaceSafeChainId !== 900001 ? true : false
+	const isEvmChain = workspaceSafeChainId !== 900001
 
 	const workspaceRegistryContract = useQBContract('workspace', workspacechainId)
 	const { webwallet } = useContext(WebwalletContext)!
@@ -548,7 +548,7 @@ function ViewApplicants() {
 	useEffect(() => {
 		const checkValidSafeAddress = async() => {
 			const isValidSafeAddress = await current_safe?.isValidSafeAddress(workspaceSafe)
-			console.log('isValidSafeAddress', isValidSafeAddress)
+			// console.log('isValidSafeAddress', isValidSafeAddress)
 		}
 
 		checkValidSafeAddress()
@@ -586,14 +586,14 @@ function ViewApplicants() {
 	}, [signerVerified])
 
 
-	async function getStatus(applicationToTxnHashMap : {[applicationId: string] : {transactionHash: string, amount: number}}) {
-		console.log('applicationToTxnHashMap', applicationToTxnHashMap)
-		const statuses : {[applicationId: string]:{transactionHash: string, status:number, amount: number}} = {}
+	async function getStatus(applicationToTxnHashMap: {[applicationId: string]: {transactionHash: string, amount: number}}) {
+		// console.log('applicationToTxnHashMap', applicationToTxnHashMap)
+		const statuses: {[applicationId: string]: {transactionHash: string, status: number, amount: number}} = {}
 
 		Promise.all((Object.keys(applicationToTxnHashMap || {}) || []).map(async(applicationId) => {
 			//@ts-ignore
 			const status = await current_safe?.getTransactionHashStatus(applicationToTxnHashMap[applicationId].transactionHash)
-			console.log('applicationToTxnHashMap status', status)
+			// console.log('applicationToTxnHashMap status', status)
 			statuses[applicationId] = {
 				transactionHash: applicationToTxnHashMap[applicationId].transactionHash,
 				status: status[applicationToTxnHashMap[applicationId].transactionHash],
@@ -618,7 +618,7 @@ function ViewApplicants() {
 
 	useEffect(() => {
 		if((Object.keys(listOfApplicationToTxnsHash) || []).length > 0) {
-			console.log('fetch status')
+			// console.log('fetch status')
 			getStatus((listOfApplicationToTxnsHash) || [])
 		}
 
@@ -662,7 +662,7 @@ function ViewApplicants() {
 			if(isVerified) {
 				setSignerVerififed(true)
 			} else {
-				console.log('not a owner')
+				// console.log('not a owner')
 				setSignerVerififed(false)
 			}
 		}
@@ -670,7 +670,7 @@ function ViewApplicants() {
 
 
 	const initiateTransaction = async() => {
-		console.log('initiate transaction called')
+		// console.log('initiate transaction called')
 		let proposaladdress: string | undefined
 		if(isEvmChain) {
 			const readyToExecuteTxs = createEVMMetaTransactions()
@@ -692,16 +692,16 @@ function ViewApplicants() {
 
 		disburseRewardFromSafe(proposaladdress?.toString()!)
 			.then(() => {
-				console.log('Sent transaction to contract - realms')
+				// console.log('Sent transaction to contract - realms')
 			})
 			.catch((err) => {
-				console.log('realms sending transction error:', err)
+				// console.log('realms sending transction error:', err)
 			})
 
 	}
 
 	const disburseRewardFromSafe = useCallback(async(proposaladdress: string) => {
-		console.log(workspacechainId)
+		// console.log(workspacechainId)
 		if(!workspacechainId) {
 			return
 		}
@@ -737,7 +737,7 @@ function ViewApplicants() {
 				proposaladdress
 			]
 
-			console.log('methodArgs', methodArgs)
+			// console.log('methodArgs', methodArgs)
 
 			const transactionHash = await sendGaslessTransaction(
 				biconomy,
@@ -759,18 +759,18 @@ function ViewApplicants() {
 
 			const { txFee, receipt } = await getTransactionDetails(transactionHash, workspacechainId.toString())
 
-			console.log('txFee', txFee)
-			console.log('receipt: ', receipt)
+			// console.log('txFee', txFee)
+			// console.log('receipt: ', receipt)
 			await chargeGas(Number(workspace.id), Number(txFee))
 
 		} catch(e) {
-			console.log('disburse error', e)
+			// console.log('disburse error', e)
 		}
 	}, [workspace, biconomyWalletClient, workspacechainId, biconomy, workspaceRegistryContract, scwAddress, webwallet, nonce, initiateTransactionData, proposalAddr])
 
 	const onChangeRecepientDetails = (applicationId: any, fieldName: string, fieldValue: any) => {
-		console.log('onChangeRecepientDetails', applicationId, fieldName, fieldValue)
-		console.log('Gnosis Batch data', gnosisBatchData)
+		// console.log('onChangeRecepientDetails', applicationId, fieldName, fieldValue)
+		// console.log('Gnosis Batch data', gnosisBatchData)
 		const tempData = initiateTransactionData.map((transactionData: any) => {
 			if(transactionData.applicationId === applicationId) {
 				return { ...transactionData, [fieldName]: fieldValue }
@@ -779,14 +779,14 @@ function ViewApplicants() {
 			return transactionData
 		})
 
-		console.log('initiateTransactionData', tempData)
+		// console.log('initiateTransactionData', tempData)
 		setInitiateTransactionData(tempData)
 		setGnosisBatchData(tempData)
 	}
 
 	const onSendFundsButtonClicked = async(state: boolean, selectedApplicants: any[]) => {
-		console.log('state', state)
-		console.log('selectedApplicants', selectedApplicants)
+		// console.log('state', state)
+		// console.log('selectedApplicants', selectedApplicants)
 		if(selectedApplicants.length === 1) {
 			setSendFundsModalIsOpen(state)
 		} else {
@@ -838,23 +838,23 @@ function ViewApplicants() {
 
 	return (
 		<Container
-			maxW="100%"
-			display="flex"
-			pb="300px"
+			maxW='100%'
+			display='flex'
+			pb='300px'
 			px={0}
-			minH={'calc(100vh - 64px)'}
-			bg={'#FBFBFD'}
+			minH='calc(100vh - 64px)'
+			bg='#FBFBFD'
 		>
 			<Container
 				flex={1}
-				display="flex"
-				flexDirection="column"
-				maxW="1116px"
-				alignItems="stretch"
+				display='flex'
+				flexDirection='column'
+				maxW='1116px'
+				alignItems='stretch'
 				pb={8}
 				px={8}
 				pt={6}
-				pos="relative"
+				pos='relative'
 			>
 				<Breadcrumbs path={['My Grants', 'View Applicants']} />
 
@@ -884,8 +884,8 @@ function ViewApplicants() {
 												onClick={() => setRubricDrawerOpen(true)}
 												icon={
 													<ThreeDotsHorizontal
-														h={'3px'}
-														w={'13.5px'} />
+														h='3px'
+														w='13.5px' />
 												}
 												{...props}
 												ref={ref}
@@ -895,10 +895,10 @@ function ViewApplicants() {
 									}
 								/>
 								<MenuList
-									minW={'240px'}
+									minW='240px'
 									py={0}>
 									<Flex
-										bg={'#F0F0F7'}
+										bg='#F0F0F7'
 										px={4}
 										py={2}
 									>
@@ -907,14 +907,14 @@ function ViewApplicants() {
 											lineHeight='20px'
 											fontWeight='500'
 											textAlign='center'
-											color={'#555570'}
+											color='#555570'
 										>
 											Grant options
 										</Text>
 									</Flex>
 									<MenuItem
-										px={'19px'}
-										py={'10px'}
+										px='19px'
+										py='10px'
 										onClick={
 											() => (grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ?
 												setViewRubricDrawerOpen(true) : setRubricDrawerOpen(true)
@@ -923,12 +923,12 @@ function ViewApplicants() {
 										{
 											(grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ? (
 												<ViewEye
-													color={'#C8CBFC'}
-													mr={'11px'} />
+													color='#C8CBFC'
+													mr='11px' />
 											) : (
 												<EditPencil
-													color={'#C8CBFC'}
-													mr={'11px'} />
+													color='#C8CBFC'
+													mr='11px' />
 											)
 										}
 										<Text
@@ -936,24 +936,24 @@ function ViewApplicants() {
 											lineHeight='20px'
 											fontWeight='400'
 											textAlign='center'
-											color={'#555570'}
+											color='#555570'
 										>
 											{(grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ? 'View scoring rubric' : 'Setup applicant evaluation'}
 										</Text>
 									</MenuItem>
 									<MenuItem
-										px={'19px'}
-										py={'10px'}
+										px='19px'
+										py='10px'
 									>
 										<ArchiveGrant
-											color={'#C8CBFC'}
-											mr={'11px'} />
+											color='#C8CBFC'
+											mr='11px' />
 										<Text
 											fontSize='14px'
 											lineHeight='20px'
 											fontWeight='400'
 											textAlign='center'
-											color={'#555570'}
+											color='#555570'
 										>
 											Archive grant
 										</Text>
@@ -994,24 +994,24 @@ function ViewApplicants() {
 					setupRubricBannerCancelled || (((grantData?.grants && grantData?.grants.length > 0 && grantData?.grants[0].rubric?.items.length) || 0) > 0 || false) ? <></> : (
 						<>
 							<Flex
-								px={'18px'}
+								px='18px'
 								py={4}
-								bg={'#C8CBFC'}
-								borderRadius={'base'}
+								bg='#C8CBFC'
+								borderRadius='base'
 							>
 								<ErrorAlert
-									color={'#785EF0'}
+									color='#785EF0'
 									boxSize={5}
-									mt={'2px'}
+									mt='2px'
 								/>
 
 								<Flex
 									flexDirection='column'
-									ml={'18px'}
+									ml='18px'
 									flex={1}
 								>
 									<Text
-										fontSize={'16px'}
+										fontSize='16px'
 										lineHeight='24px'
 										fontWeight='500'
 									>
@@ -1019,15 +1019,15 @@ function ViewApplicants() {
 									</Text>
 
 									<Text
-										mt={'8px'}
-										fontSize={'14px'}
+										mt='8px'
+										fontSize='14px'
 										lineHeight='20px'
 										fontWeight='400'
 									>
 										On receiving applicants, define a scoring rubric and assign reviewers to evaluate the applicants.
 										{' '}
 										<Link
-											textDecoration={'none'}
+											textDecoration='none'
 											fontWeight='500'
 											color='#1F1F33'
 										>
@@ -1036,8 +1036,8 @@ function ViewApplicants() {
 									</Text>
 
 									<Text
-										mt={'14px'}
-										fontSize={'14px'}
+										mt='14px'
+										fontSize='14px'
 										lineHeight='20px'
 										fontWeight='500'
 										color='#785EF0'
@@ -1079,10 +1079,10 @@ function ViewApplicants() {
 
 					<TabPanels>
 						<TabPanel
-							borderRadius={'2px'}
+							borderRadius='2px'
 							p={0}
 							mt={5}
-							bg={'white'}
+							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7' >
 							<AcceptedProposalsPanel
 								applicationStatuses={applicationStatuses}
@@ -1095,10 +1095,10 @@ function ViewApplicants() {
 
 						<TabPanel
 							tabIndex={1}
-							borderRadius={'2px'}
+							borderRadius='2px'
 							p={0}
 							mt={5}
-							bg={'white'}
+							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<InReviewPanel
 								applicantsData={applicantsData}
@@ -1108,10 +1108,10 @@ function ViewApplicants() {
 
 						<TabPanel
 							tabIndex={2}
-							borderRadius={'2px'}
+							borderRadius='2px'
 							p={0}
 							mt={5}
-							bg={'white'}
+							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<RejectedPanel
 								applicantsData={applicantsData}
@@ -1120,10 +1120,10 @@ function ViewApplicants() {
 
 						<TabPanel
 							tabIndex={3}
-							borderRadius={'2px'}
+							borderRadius='2px'
 							p={0}
 							mt={5}
-							bg={'white'}
+							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<ResubmitPanel
 								applicantsData={applicantsData} />
@@ -1183,7 +1183,7 @@ function ViewApplicants() {
 				/>
 
 				<TransactionInitiatedModal
-					isOpen={txnInitModalIsOpen && proposalAddr ? true : false}
+					isOpen={!!(txnInitModalIsOpen && proposalAddr)}
 					onClose={onModalClose}
 					onComplete={() => setTxnInitModalIsOpen(false)}
 					proposalUrl={isEvmChain ? getGnosisTansactionLink(current_safe?.id?.toString()!, current_safe?.chainId.toString()!) : getProposalUrl(current_safe?.id?.toString()!, proposalAddr)}
@@ -1212,19 +1212,19 @@ function ViewApplicants() {
 					subtitle='Creating scoring rubric'
 					description={
 						<Flex
-							direction="column"
+							direction='column'
 							w='100%'
-							align="start">
+							align='start'>
 							<Text
-								fontWeight={'500'}
-								fontSize={'17px'}
+								fontWeight='500'
+								fontSize='17px'
 							>
 								{grantData && grantData?.grants && grantData?.grants.length > 0 && grantData?.grants[0].title}
 							</Text>
 
 							<Button
 								rightIcon={<ExternalLinkIcon />}
-								variant="linkV2"
+								variant='linkV2'
 								bg='#D5F1EB'>
 								{grantID && formatAddress(grantID)}
 							</Button>
@@ -1327,18 +1327,18 @@ function ViewApplicants() {
 			<Modal
 				isOpen={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
-				title=""
+				title=''
 			>
 				<ChangeAccessibilityModalContent
 					onClose={() => setIsModalOpen(false)}
-					imagePath="/illustrations/publish_grant.svg"
-					title="Are you sure you want to publish this grant?"
-					subtitle="The grant will be live, and applicants can apply for this grant."
-					actionButtonText="Publish grant"
+					imagePath='/illustrations/publish_grant.svg'
+					title='Are you sure you want to publish this grant?'
+					subtitle='The grant will be live, and applicants can apply for this grant.'
+					actionButtonText='Publish grant'
 					actionButtonOnClick={
 						() => {
-							console.log('Doing it!')
-							console.log('Is Accepting Applications (Button click): ', isAcceptingApplications)
+							// console.log('Doing it!')
+							// console.log('Is Accepting Applications (Button click): ', isAcceptingApplications)
 							setIsAcceptingApplications([
 								!isAcceptingApplications[0],
 								isAcceptingApplications[1] + 1,

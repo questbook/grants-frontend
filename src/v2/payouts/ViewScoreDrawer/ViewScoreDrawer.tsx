@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Box, Button, Container, Drawer, DrawerContent, DrawerOverlay, Flex, Text } from '@chakra-ui/react'
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 import { SetupEvaluation } from 'src/v2/assets/custom chakra icons/SetupEvaluation'
 // import AssignReviewers from './AssignReviewers'
-import RubricsView from './RubricsView'
+import RubricsView from 'src/v2/payouts/ViewScoreDrawer/RubricsView'
 
 const ViewScoreDrawer = ({
 	isOpen,
@@ -11,14 +11,11 @@ const ViewScoreDrawer = ({
 	score,
 	reviewer,
 }: {
-  isOpen: boolean;
-  onClose: () => void;
-  score?: any;
-	reviewer?: any;
+  isOpen: boolean
+  onClose: () => void
+  score?: any
+	reviewer?: any
 }) => {
-
-	useEffect(() => console.log('grantDataGGG', score), [score])
-
 	// The will be required while implementing edit rubrics
 	const [step, setStep] = useState(0)
 
@@ -33,24 +30,24 @@ const ViewScoreDrawer = ({
 			}
 			closeOnOverlayClick={false}
 		>
-			<DrawerOverlay maxH="100vh" />
+			<DrawerOverlay maxH='100vh' />
 			<DrawerContent
 				minW={528}
 				// h="min(90vh, 560px)"
-				overflowY="auto"
-				borderRadius="4px">
+				overflowY='auto'
+				borderRadius='4px'>
 				<Container
 					px={6}
 					py={4}
 					display='flex'
-					flexDirection={'column'}
+					flexDirection='column'
 					minH='100vh'
 				 >
 
 
 					<Flex
-						direction="row"
-						align="center">
+						direction='row'
+						align='center'>
 						<Flex
 							bg='#D1D7F4'
 							h='48px'
@@ -74,7 +71,7 @@ const ViewScoreDrawer = ({
 								lineHeight='24px'
 								fontWeight='500'
 							>
-							Score & comments
+								Score & comments
 							</Text>
 							<Text
 								fontSize='14px'
@@ -83,7 +80,7 @@ const ViewScoreDrawer = ({
 								mt={1}
 								color='#7D7DA0'
 							>
-							Total score based on rubric, and comments by the reviewer.
+								Total score based on rubric, and comments by the reviewer.
 							</Text>
 						</Flex>
 
@@ -104,15 +101,15 @@ const ViewScoreDrawer = ({
 
 					<Flex
 						my={4}
-						mx={'-24px'}
+						mx='-24px'
 						bg='#F0F0F7'
-						h={'1px'}
+						h='1px'
 					/>
 
 					<Flex
-						maxH={'calc(100vh - 32px)'}
-						overflowY={'scroll'}
-						direction={'column'}>
+						maxH='calc(100vh - 32px)'
+						overflowY='scroll'
+						direction='column'>
 
 
 						<Box mt={4} />
@@ -133,20 +130,20 @@ const ViewScoreDrawer = ({
 					</Flex>
 
 					<Flex
-						mt={'auto'}
+						mt='auto'
 						bg='#F0F0F7'
-						h={'1px'}
-						mx={'-24px'}
+						h='1px'
+						mx='-24px'
 					/>
 
 					<Flex
 						mt={4}
-						direction="row"
-						align="center">
+						direction='row'
+						align='center'>
 
 						<Button
 							mr='auto'
-							colorScheme={'brandv2'}
+							colorScheme='brandv2'
 							// disabled={step === 0 ? milestoneId === undefined || amount === undefined : step === 1}
 							onClick={
 								() => {

@@ -16,11 +16,11 @@ const Onboarding = () => {
 
 	const steps = [
 		<OnboardingPathSelectionStep
-			key={'onboardingstep-0'}
+			key='onboardingstep-0'
 			selectedPath={selectedPath}
 			setSelectedPath={setSelectedPath} />,
 		<OnboardingPathDataStep
-			key={'onboardingstep-1'}
+			key='onboardingstep-1'
 		 selectedPath={selectedPath!} />,
 	]
 
@@ -52,8 +52,8 @@ const Onboarding = () => {
 
 	return (
 		<BackgroundImageLayout
-			imageSrc={'/onboarding.png'}
-			imageBackgroundColor={'brandv2.500'}
+			imageSrc='/onboarding.png'
+			imageBackgroundColor='brandv2.500'
 			imageProps={
 				{
 					mixBlendMode: 'color-dodge'

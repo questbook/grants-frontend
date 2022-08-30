@@ -4,7 +4,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 
 
 export default function useMailTo(
-	to : string | undefined = undefined,
+	to: string | undefined = undefined,
 	body: string | undefined = undefined,
 	subject: string | undefined = undefined,
 	cc: string | undefined = undefined,

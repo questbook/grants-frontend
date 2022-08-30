@@ -2,15 +2,18 @@ import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import { WebwalletContext } from 'pages/_app'
+import ErrorToast from 'src/components/ui/toasts/errorToast'
 import {
 	APPLICATION_REGISTRY_ADDRESS,
-	GRANT_FACTORY_ADDRESS,
 	WORKSPACE_REGISTRY_ADDRESS,
 } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
+import strings from 'src/constants/strings.json'
+import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import useChainId from 'src/hooks/utils/useChainId'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash, parseAmount } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
@@ -19,10 +22,6 @@ import {
 	getSupportedChainIdFromWorkspace,
 	getSupportedValidatorNetworkFromChainId,
 } from 'src/utils/validationUtils'
-import ErrorToast from '../components/ui/toasts/errorToast'
-import strings from '../constants/strings.json'
-import useQBContract from './contracts/useQBContract'
-import useChainId from './utils/useChainId'
 
 // @TODO fix grantContract
 
@@ -43,7 +42,7 @@ export default function useCreateGrant(
 
 	useEffect(() => {
 		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		console.log('rree', isBiconomyLoading, biconomyLoading)
+		// console.log('rree', isBiconomyLoading, biconomyLoading)
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
 			biconomy.networkId.toString() === chainId.toString()) {
 			setIsBiconomyInitialised(true)
@@ -73,7 +72,7 @@ export default function useCreateGrant(
 	const currentChainId = useChainId()
 
 	useEffect(() => {
-		console.log('data', data)
+		// console.log('data', data)
 		if(data) {
 			setError(undefined)
 			setIncorrectNetwork(false)
@@ -100,28 +99,28 @@ export default function useCreateGrant(
 			return
 		}
 
-		console.log('YEEES')
+		// console.log('YEEES')
 
 		async function validate() {
 			setLoading(true)
-			console.log('calling validate')
+			// console.log('calling validate')
 			try {
 				const detailsHash = (await uploadToIPFS(data.details)).hash
 				let reward
 				if(data.rewardToken.address === '') {
-					console.log('grant data', data)
+					// console.log('grant data', data)
 					reward = {
 						committed: parseAmount(data.reward, data.rewardCurrencyAddress),
 						asset: data.rewardCurrencyAddress,
 					}
 				} else {
-					console.log('Reward before parsing', data.reward, data.rewardToken.decimal)
+					// console.log('Reward before parsing', data.reward, data.rewardToken.decimal)
 					reward = {
 						committed: parseAmount(data.reward, undefined, data.rewardToken.decimal),
 						asset: data.rewardCurrencyAddress,
 						token: data.rewardToken,
 					}
-					console.log('Reward after parsing', reward)
+					// console.log('Reward after parsing', reward)
 				}
 
 				const {
@@ -140,7 +139,7 @@ export default function useCreateGrant(
 					grantManagers: data.grantManagers.length ? data.grantManagers : [accountData!.address],
 				})
 
-				console.log('ipfsHash', ipfsHash)
+				// console.log('ipfsHash', ipfsHash)
 
 				if(!ipfsHash) {
 					throw new Error('Error validating grant data')
@@ -161,17 +160,17 @@ export default function useCreateGrant(
 					rubricHash = auxRubricHash
 				}
 
-				console.log('rubric hash', GRANT_FACTORY_ADDRESS[currentChainId], grantContract.address, WORKSPACE_REGISTRY_ADDRESS[currentChainId], APPLICATION_REGISTRY_ADDRESS[currentChainId])
+				// console.log('rubric hash', GRANT_FACTORY_ADDRESS[currentChainId], grantContract.address, WORKSPACE_REGISTRY_ADDRESS[currentChainId], APPLICATION_REGISTRY_ADDRESS[currentChainId])
 
-				console.log('WHAT IS THIS', biconomyWalletClient, scwAddress)
+				// console.log('WHAT IS THIS', biconomyWalletClient, scwAddress)
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
 					throw new Error('Zero wallet is not ready')
 				}
 
 				// let transactionHash: string | undefined | boolean
-				console.log('THIS IS ADDRESS', GRANT_FACTORY_ADDRESS[currentChainId!], currentChainId)
+				// console.log('THIS IS ADDRESS', GRANT_FACTORY_ADDRESS[currentChainId!], currentChainId)
 
-				console.log('ENTERING', ipfsHash)
+				// console.log('ENTERING', ipfsHash)
 
 				const methodArgs = [
 					workspaceId || Number(workspace?.id).toString(),
@@ -181,7 +180,7 @@ export default function useCreateGrant(
 					APPLICATION_REGISTRY_ADDRESS[currentChainId!],
 				]
 
-				console.log('THESE ARE METHODS', methodArgs)
+				// console.log('THESE ARE METHODS', methodArgs)
 
 				const response = await sendGaslessTransaction(
 					biconomy,
@@ -207,7 +206,7 @@ export default function useCreateGrant(
 
 				const CACHE_KEY = strings.cache.create_grant
 				const cacheKey = `${chainId || getSupportedChainIdFromWorkspace(workspace)}-${CACHE_KEY}-${workspace?.id}`
-				console.log('Deleting key: ', cacheKey)
+				// console.log('Deleting key: ', cacheKey)
 				if(typeof window !== 'undefined') {
 					localStorage.removeItem(cacheKey)
 				}
@@ -233,34 +232,34 @@ export default function useCreateGrant(
 		}
 
 		try {
-			console.log('O')
+			// console.log('O')
 			if(!data) {
 				return
 			}
 
-			console.log('OO')
+			// console.log('OO')
 
 			if(transactionData) {
 				return
 			}
 
-			console.log('OOO')
+			// console.log('OOO')
 
 			if(!accountData || !accountData.address) {
 				throw new Error('not connected to wallet')
 			}
 
-			console.log('OOOO')
+			// console.log('OOOO')
 
 			if(!workspace) {
 				throw new Error('not connected to workspace')
 			}
 
-			console.log('OOOOO')
+			// console.log('OOOOO')
 
 			if(!currentChainId) {
 				if(switchNetwork && chainId) {
-					console.log(' (CREATE GRANT HOOK) Switch Network (!currentChainId): ', workspace, chainId)
+					// console.log(' (CREATE GRANT HOOK) Switch Network (!currentChainId): ', workspace, chainId)
 					switchNetwork(chainId)
 				}
 
@@ -271,7 +270,7 @@ export default function useCreateGrant(
 
 			if(chainId !== currentChainId) {
 				if(switchNetwork && chainId) {
-					console.log(' (CREATE GRANT HOOK) Switch Network: (chainId !== currentChainId)', workspace, chainId)
+					// console.log(' (CREATE GRANT HOOK) Switch Network: (chainId !== currentChainId)', workspace, chainId)
 					switchNetwork(chainId)
 				}
 

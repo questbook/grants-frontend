@@ -71,7 +71,7 @@ function ViewApplication() {
 
 	useEffect(() => {
 		if(data) {
-			console.log('data', data)
+			// console.log('data', data)
 			setApplication(data.grantApplication)
 		}
 
@@ -89,9 +89,9 @@ function ViewApplication() {
 		)
 		let decimals: number
 		if(application.grant.reward.token) {
-			console.log('Application milestone ', application.milestones[0])
+			// console.log('Application milestone ', application.milestones[0])
 			decimals = application.grant.reward.token.decimal
-			console.log('decimals', decimals)
+			// console.log('decimals', decimals)
 		} else {
 			decimals = CHAIN_INFO[
 				getSupportedChainIdFromSupportedNetwork(
@@ -120,7 +120,7 @@ function ViewApplication() {
 			projectGoal: getStringField('projectGoals'),
 			projectMilestones:
         application.milestones.map((ms: any) => {
-        	console.log('milestone', ms.amount)
+        	// console.log('milestone', ms.amount)
         	return (
         		{
         			milestone: ms.title,
@@ -144,7 +144,7 @@ function ViewApplication() {
 			fundingBreakdown: getStringField('fundingBreakdown'),
 		}
 
-		console.log('fd', fd.projectMilestones[0].milestoneReward)
+		// console.log('fd', fd.projectMilestones[0].milestoneReward)
 		if(application?.grant?.fields?.find((field: any) => field.title === 'memberDetails') && !fd.membersDescription.length) {
 			fd.membersDescription = [...Array(fd.teamMembers)].map(() => ({ description: '' }))
 		}
@@ -172,15 +172,15 @@ function ViewApplication() {
 
 	return (
 		<Container
-			maxW="100%"
-			display="flex"
-			px="70px">
+			maxW='100%'
+			display='flex'
+			px='70px'>
 			<Container
 				flex={1}
-				display="flex"
-				flexDirection="column"
-				maxW="834px"
-				alignItems="stretch"
+				display='flex'
+				flexDirection='column'
+				maxW='834px'
+				alignItems='stretch'
 				pb={8}
 				px={10}
 			>

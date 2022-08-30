@@ -8,6 +8,9 @@ import {
 	WorkspaceUpdateRequest,
 } from '@questbook/service-validator-client'
 import { ApiClientsContext } from 'pages/_app'
+import Datepicker from 'src/components/ui/forms/datepicker'
+import Dropdown from 'src/components/ui/forms/dropdown'
+import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import Loader from 'src/components/ui/loader'
 import CustomTokenModal from 'src/components/ui/submitCustomTokenModal'
 import Tooltip from 'src/components/ui/tooltip'
@@ -19,15 +22,12 @@ import useCustomToast from 'src/hooks/utils/useCustomToast'
 import useEncryption from 'src/hooks/utils/useEncryption'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import 'react-datepicker/dist/react-datepicker.css'
-import Datepicker from '../../../ui/forms/datepicker'
-import Dropdown from '../../../ui/forms/dropdown'
-import SingleLineInput from '../../../ui/forms/singleLineInput'
 
 interface Props {
-	onSubmit: (data: any) => void;
-	constructCache: (data: any) => void;
-	cacheKey: string;
-	hasClicked: boolean;
+	onSubmit: (data: any) => void
+	constructCache: (data: any) => void
+	cacheKey: string
+	hasClicked: boolean
 }
 
 function GrantRewardsInput({
@@ -77,7 +77,7 @@ function GrantRewardsInput({
 
 	useEffect(() => {
 		if(supportedCurrencies && supportedCurrencies.length > 0) {
-			console.log('Supported Currencies', supportedCurrencies)
+			// console.log('Supported Currencies', supportedCurrencies)
 			// setSupportedCurrenciesList(supportedCurrencies);
 		}
 	}, [supportedCurrencies])
@@ -99,20 +99,20 @@ function GrantRewardsInput({
 	useEffect(() => {
 		if(workspace && switchNetwork) {
 			const chainId = getSupportedChainIdFromWorkspace(workspace)
-			console.log(' (CREATE_GRANT) Switch Network: ', workspace, chainId)
+			// console.log(' (CREATE_GRANT) Switch Network: ', workspace, chainId)
 			switchNetwork(chainId!)
 		}
 	}, [switchNetwork, workspace])
 
 	useEffect(() => {
-		console.log(currentChain)
+		// console.log(currentChain)
 		if(currentChain) {
 			const currencies = Object.keys(
 				CHAIN_INFO[currentChain].supportedCurrencies,
 			)
 				.map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
 				.map((currency) => ({ ...currency, id: currency.address }))
-			// console.log('Reward Currency', rewardCurrency);
+			// // console.log('Reward Currency', rewardCurrency);
 			setSupportedCurrenciesList(currencies)
 			setRewardCurrency(currencies[0].label)
 			setRewardCurrencyAddress(currencies[0].address)
@@ -121,7 +121,7 @@ function GrantRewardsInput({
 	}, [currentChain])
 
 	useEffect(() => {
-		console.log(rewardCurrencyAddress)
+		// console.log(rewardCurrencyAddress)
 	}, [rewardCurrencyAddress])
 
 	const [date, setDate] = React.useState('')
@@ -158,8 +158,8 @@ function GrantRewardsInput({
 			error = true
 		}
 
-		console.log(reward)
-		console.log(rewardCurrencyAddress)
+		// console.log(reward)
+		// console.log(rewardCurrencyAddress)
 
 		if(!error) {
 			let pk
@@ -194,7 +194,7 @@ function GrantRewardsInput({
 		}
 
 		const formData = JSON.parse(data || '{}')
-		console.log('Data from cache: ', formData)
+		// console.log('Data from cache: ', formData)
 
 		if(formData?.reward) {
 			setReward(formData?.reward)
@@ -251,23 +251,23 @@ function GrantRewardsInput({
 		<>
 			<Flex
 				py={12}
-				direction="column">
+				direction='column'>
 				<Text
-					variant="heading"
-					fontSize="36px"
-					lineHeight="48px">
+					variant='heading'
+					fontSize='36px'
+					lineHeight='48px'>
 					What&apos;s the reward and deadline for the grant?
 				</Text>
 
 				<Flex
-					direction="row"
+					direction='row'
 					mt={12}>
 					<Box
-						minW="160px"
+						minW='160px'
 						flex={1}>
 						<SingleLineInput
-							label="Grant Reward"
-							placeholder="100"
+							label='Grant Reward'
+							placeholder='100'
 							value={reward}
 							onChange={
 								(e) => {
@@ -279,8 +279,8 @@ function GrantRewardsInput({
 								}
 							}
 							isError={rewardError}
-							errorText="Required"
-							type="number"
+							errorText='Required'
+							type='number'
 						/>
 					</Box>
 					<CustomTokenModal
@@ -296,15 +296,15 @@ function GrantRewardsInput({
 					<Box
 						mt={5}
 						ml={4}
-						minW="132px"
+						minW='132px'
 						flex={0}>
 						<Dropdown
-							listItemsMinWidth="132px"
+							listItemsMinWidth='132px'
 							listItems={supportedCurrenciesList}
 							value={rewardCurrency}
 							onChange={
 								(data: any) => {
-									// console.log('data while signing up:', data);
+									// // console.log('data while signing up:', data);
 									if(data === 'addERCToken') {
 										setIsModalOpen(true)
 									}
@@ -312,7 +312,7 @@ function GrantRewardsInput({
 									setRewardCurrency(data.label)
 									setRewardCurrencyAddress(data.id)
 									if(data !== 'addERCToken' && !isJustAddedToken && data.icon.lastIndexOf('chain_assets') === -1) {
-										// console.log('On selecting reward', data)
+										// // console.log('On selecting reward', data)
 										setRewardToken({
 											iconHash: data.icon.substring(data.icon.lastIndexOf('=') + 1),
 											address: data.address,
@@ -348,18 +348,18 @@ function GrantRewardsInput({
 					}
 					value={date}
 					isError={dateError}
-					errorText="Required"
-					label="Grant Deadline"
-					tooltip="This is the last date on/before which grantees can apply"
+					errorText='Required'
+					label='Grant Deadline'
+					tooltip='This is the last date on/before which grantees can apply'
 				/>
 
 				<Flex
-					direction="column"
+					direction='column'
 					mt={12}>
 					<Text
-						fontSize="18px"
-						fontWeight="700"
-						lineHeight="26px"
+						fontSize='18px'
+						fontWeight='700'
+						lineHeight='26px'
 						letterSpacing={0}
 					>
 						Grant privacy
@@ -368,38 +368,38 @@ function GrantRewardsInput({
 
 				<Flex
 					mt={8}
-					gap="2">
+					gap='2'>
 					<Flex
-						direction="column"
+						direction='column'
 						flex={1}>
 						<Text
-							color="#122224"
-							fontWeight="bold"
-							fontSize="16px"
-							lineHeight="20px"
+							color='#122224'
+							fontWeight='bold'
+							fontSize='16px'
+							lineHeight='20px'
 						>
 							Hide applicant personal data (email, and about team)
 						</Text>
 						<Flex>
 							<Text
-								color="#717A7C"
-								fontSize="14px"
-								lineHeight="20px">
+								color='#717A7C'
+								fontSize='14px'
+								lineHeight='20px'>
 								You will be using your public key to access this data.
 								<Tooltip
-									icon="/ui_icons/tooltip_questionmark.svg"
-									label="Public key linked to your wallet will allow you to see the hidden data."
-									placement="bottom-start"
+									icon='/ui_icons/tooltip_questionmark.svg'
+									label='Public key linked to your wallet will allow you to see the hidden data.'
+									placement='bottom-start'
 								/>
 							</Text>
 						</Flex>
 					</Flex>
 					<Flex
-						justifyContent="center"
+						justifyContent='center'
 						gap={2}
-						alignItems="center">
+						alignItems='center'>
 						<Switch
-							id="encrypt"
+							id='encrypt'
 							onChange={
 								(e) => {
 									setShouldEncrypt(e.target.checked)
@@ -407,9 +407,9 @@ function GrantRewardsInput({
 							}
 						/>
 						<Text
-							fontSize="12px"
-							fontWeight="bold"
-							lineHeight="16px">
+							fontSize='12px'
+							fontWeight='bold'
+							lineHeight='16px'>
 							{`${shouldEncrypt ? 'YES' : 'NO'}`}
 						</Text>
 					</Flex>
@@ -417,35 +417,35 @@ function GrantRewardsInput({
 
 				<Flex
 					mt={8}
-					gap="2"
-					justifyContent="space-between">
+					gap='2'
+					justifyContent='space-between'>
 					<Flex
-						direction="column"
+						direction='column'
 						flex={1}>
 						<Text
-							color="#122224"
-							fontWeight="bold"
-							fontSize="16px"
-							lineHeight="20px"
+							color='#122224'
+							fontWeight='bold'
+							fontSize='16px'
+							lineHeight='20px'
 						>
 							Keep applicant reviews private
 						</Text>
 						<Flex>
 							<Text
-								color="#717A7C"
-								fontSize="14px"
-								lineHeight="20px">
+								color='#717A7C'
+								fontSize='14px'
+								lineHeight='20px'>
 								Private review is only visible to reviewers, DAO members.
 							</Text>
 						</Flex>
 					</Flex>
 					<Flex
-						ml="auto"
-						justifyContent="center"
+						ml='auto'
+						justifyContent='center'
 						gap={2}
-						alignItems="center">
+						alignItems='center'>
 						<Switch
-							id="encrypt"
+							id='encrypt'
 							onChange={
 								(e) => {
 									setShouldEncryptReviews(e.target.checked)
@@ -453,41 +453,41 @@ function GrantRewardsInput({
 							}
 						/>
 						<Text
-							fontSize="12px"
-							fontWeight="bold"
-							lineHeight="16px">
+							fontSize='12px'
+							fontWeight='bold'
+							lineHeight='16px'>
 							{`${shouldEncryptReviews ? 'YES' : 'NO'}`}
 						</Text>
 					</Flex>
 				</Flex>
 
 				<Text
-					variant="footer"
+					variant='footer'
 					mt={8}
 					mb={7}
-					maxW="400">
+					maxW='400'>
 					<Image
-						display="inline-block"
-						h="10px"
-						w="10px"
-						src="/ui_icons/info_brand.svg"
+						display='inline-block'
+						h='10px'
+						w='10px'
+						src='/ui_icons/info_brand.svg'
 					/>
 					{' '}
 					By clicking Publish Grant you&apos;ll have to approve this transaction
 					in your wallet.
 					{' '}
 					<Link
-						href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
+						href='https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46'
 						isExternal
 					>
 						Learn more
 					</Link>
 					{' '}
 					<Image
-						display="inline-block"
-						h="10px"
-						w="10px"
-						src="/ui_icons/link.svg"
+						display='inline-block'
+						h='10px'
+						w='10px'
+						src='/ui_icons/link.svg'
 					/>
 				</Text>
 			</Flex>
@@ -495,8 +495,8 @@ function GrantRewardsInput({
 			<Button
 				disabled={!isBiconomyInitialised}
 				ref={buttonRef}
-				mt="auto"
-				variant="primary"
+				mt='auto'
+				variant='primary'
 				onClick={hasClicked ? () => { } : handleOnSubmit}
 				py={hasClicked ? 2 : 0}
 				w={hasClicked ? buttonRef.current?.offsetWidth : 'auto'}

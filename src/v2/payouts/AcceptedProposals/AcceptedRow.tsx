@@ -12,11 +12,11 @@ const AcceptedRow = ({
 	isChecked,
 	onChange,
 }: {
-	onSendFundsClicked: () => void;
+	onSendFundsClicked: () => void
 	applicationStatus: number
-	applicantData: any;
-	isChecked: boolean;
-	onChange: (e: any) => void;
+	applicantData: any
+	isChecked: boolean
+	onChange: (e: any) => void
 }) => {
 	const router = useRouter()
 	const [isHovering, setIsHovering] = useState(false)
@@ -49,11 +49,11 @@ const AcceptedRow = ({
 					<Flex
 						bg='#F0F0F7'
 						borderRadius='20px'
-						h={'40px'}
-						w={'40px'}
+						h='40px'
+						w='40px'
 					>
 						<Image
-							borderRadius="3xl"
+							borderRadius='3xl'
 							src={getAvatar(applicantData?.applicant_address)}
 						/>
 					</Flex>
@@ -67,7 +67,7 @@ const AcceptedRow = ({
 							lineHeight='20px'
 							fontWeight='500'
 							noOfLines={1}
-							textOverflow={'ellipsis'}
+							textOverflow='ellipsis'
 							cursor='pointer'
 							onClick={
 								() => router.push({
@@ -86,16 +86,16 @@ const AcceptedRow = ({
 									fontSize='12px'
 									lineHeight='16px'
 									fontWeight='400'
-									mt="2px"
+									mt='2px'
 									color='#7D7DA0'
-									display={'flex'}
+									display='flex'
 									alignItems='center'
 								>
 									<Tooltip label={applicantData?.applicant_address}>
 										{`${applicantData?.applicant_address?.substring(0, 6)}...`}
 									</Tooltip>
 									<Flex
-										display="inline-block"
+										display='inline-block'
 										ml={2}
 									>
 										<CopyIcon text={applicantData?.applicant_address!} />
@@ -109,12 +109,12 @@ const AcceptedRow = ({
 									fontSize='12px'
 									lineHeight='16px'
 									fontWeight='400'
-									mt="2px"
+									mt='2px'
 									color='#7D7DA0'
-									display={'flex'}
+									display='flex'
 									alignItems='center'
 								>
-							No applicant address found
+									No applicant address found
 								</Text>
 							)
 						}
@@ -131,7 +131,7 @@ const AcceptedRow = ({
 			>
 				<Text
 					px={4}
-					py={'18px'}
+					py='18px'
 					color='#555570'
 					fontSize='14px'
 					lineHeight='20px'
@@ -139,7 +139,7 @@ const AcceptedRow = ({
 				>
 					{applicantData.amount_paid}
 					{' '}
-                /
+					/
 					{' '}
 					{applicantData.funding_asked?.amount}
 					{' '}
@@ -165,19 +165,19 @@ const AcceptedRow = ({
 				display='flex'
 				alignItems='center'
 			>
-				<Flex alignItems={'center'}>
+				<Flex alignItems='center'>
 					<Text
 						px={4}
-						py={'18px'}
+						py='18px'
 						color='#555570'
 						fontSize='14px'
 						lineHeight='20px'
 						fontWeight='500'
 						mr='auto'
 					>
-									 {applicantData?.milestones?.filter((milestone: any) => milestone?.state === 'approved')?.length}
+						{applicantData?.milestones?.filter((milestone: any) => milestone?.state === 'approved')?.length}
 						{' '}
-/
+						/
 						{' '}
 						{applicantData?.milestones?.length}
 					</Text>
@@ -186,11 +186,11 @@ const AcceptedRow = ({
 					<Fade in={isHovering}>
 						<Button
 							px={3}
-							py={'6px'}
+							py='6px'
 							minW={0}
 							minH={0}
-							h="auto"
-							borderRadius={'2px'}
+							h='auto'
+							borderRadius='2px'
 							mr={6}
 							onClick={() => onSendFundsClicked()}
 						>
@@ -199,7 +199,7 @@ const AcceptedRow = ({
 								fontSize='14px'
 								lineHeight='20px'
 								fontWeight='500'
-								ml={'6px'}
+								ml='6px'
 							>
 								Send Funds
 							</Text>

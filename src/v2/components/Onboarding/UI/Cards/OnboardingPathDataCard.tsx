@@ -7,43 +7,43 @@ const OnboardingPathDataCard = ({
 	title,
 	image,
 }: {
-  index: number,
-  title: string,
-  image: JSX.Element,
+  index: number
+  title: string
+  image: JSX.Element
 }) => (
 	<Flex
-		direction={'column'}
+		direction='column'
 		py={8}
 		px={3}
-		alignItems={'center'}
-		border={'2px solid #B6F72B'}
+		alignItems='center'
+		border='2px solid #B6F72B'
 		flex={1}
-		borderRadius={'base'}
-		pos={'relative'}
-		boxSizing={'border-box'}
-		justifyItems={'flex-start'}
-		minH={'252px'}
+		borderRadius='base'
+		pos='relative'
+		boxSizing='border-box'
+		justifyItems='flex-start'
+		minH='252px'
 	>
 		<Box
-			h={'35px'}
-			w={'51.34px'}
-			mt={'-12.5'}
-			display={'flex'}
-			justifyContent={'center'}
-			alignItems={'center'}
-			pos={'relative'}
+			h='35px'
+			w='51.34px'
+			mt='-12.5'
+			display='flex'
+			justifyContent='center'
+			alignItems='center'
+			pos='relative'
 		>
 			<Text
 				zIndex={1}
-				fontSize={'sm'}
-				fontWeight={'bold'}>
+				fontSize='sm'
+				fontWeight='bold'>
 				{index + 1}
 			</Text>
 			<OnboardingFrameHexagon
-				color={'#B6F72B'}
-				h={'100%'}
-				w={'100%'}
-				pos={'absolute'}
+				color='#B6F72B'
+				h='100%'
+				w='100%'
+				pos='absolute'
 				zIndex={0}
 			/>
 		</Box>
@@ -51,44 +51,44 @@ const OnboardingPathDataCard = ({
 		{image}
 		<Spacer />
 		<Text
-			mt={'26px'}
-			mb={'15px'}
-			fontWeight={'500'}
-			textAlign={'center'}
+			mt='26px'
+			mb='15px'
+			fontWeight='500'
+			textAlign='center'
 		>
 			{title}
 		</Text>
 		<Spacer />
 
 		<Box
-			pos={'absolute'}
+			pos='absolute'
 			top={-3}
 			left={-3}
 			h={10}
 			w={10}
-			display={'flex'}
-			justifyContent={'center'}
-			alignItems={'center'}
+			display='flex'
+			justifyContent='center'
+			alignItems='center'
 		>
 			<OnboardingFrameStar
-				color={'#B6F72B'}
-				boxSize={'100%'}
+				color='#B6F72B'
+				boxSize='100%'
 			/>
 		</Box>
 
 		<Box
-			pos={'absolute'}
+			pos='absolute'
 			bottom={-3}
 			right={-3}
 			h={10}
 			w={10}
-			display={'flex'}
-			justifyContent={'center'}
-			alignItems={'center'}
+			display='flex'
+			justifyContent='center'
+			alignItems='center'
 		>
 			<OnboardingFrameStar
-				color={'#B6F72B'}
-				boxSize={'100%'}
+				color='#B6F72B'
+				boxSize='100%'
 			/>
 		</Box>
 

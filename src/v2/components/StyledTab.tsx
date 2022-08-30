@@ -3,10 +3,10 @@ import { Tab } from '@chakra-ui/react'
 const StyledTab = ({ label }: {label: string}) => {
 	return (
 		<Tab
-			fontSize={'14px'}
+			fontSize='14px'
 			lineHeight='20px'
 			fontWeight='500'
-			py={'4'}
+			py='4'
 			h={8}
 			minW={0}
 			px={2}

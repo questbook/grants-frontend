@@ -6,7 +6,7 @@ import copy from 'copy-to-clipboard'
 import Modal from 'src/components/ui/modal'
 import useMailTo from 'src/hooks/utils/useMailTo'
 
-function MailTo({ applicantEmail } : { applicantEmail: string }) {
+function MailTo({ applicantEmail }: { applicantEmail: string }) {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [copied, setCopied] = useState(false)
 	const { defaultLink, gmailLink, yahooLink } = useMailTo(
@@ -28,21 +28,21 @@ Best,%0D
 						isExternal
 						href={defaultLink}>
 						<Image
-							display="inline-block"
-							src="/ui_icons/brand/email.svg"
-							alt="mail to"
-							mb="-2px"
-							ml="4px"
+							display='inline-block'
+							src='/ui_icons/brand/email.svg'
+							alt='mail to'
+							mb='-2px'
+							ml='4px'
 						/>
 					</Link>
 				) : (
 					<Image
-						display="inline-block"
-						src="/ui_icons/brand/email.svg"
-						alt="mail to"
-						mb="-2px"
-						ml="4px"
-						cursor="pointer"
+						display='inline-block'
+						src='/ui_icons/brand/email.svg'
+						alt='mail to'
+						mb='-2px'
+						ml='4px'
+						cursor='pointer'
 						onClick={() => setIsModalOpen(true)}
 					/>
 				)
@@ -51,42 +51,42 @@ Best,%0D
 			<Modal
 				isOpen={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
-				title="Choose your email service"
-				modalWidth="527px"
+				title='Choose your email service'
+				modalWidth='527px'
 			>
 				<ModalBody px={8}>
 					<Text>
-Send a document, or interview link to applicant inbox.
+						Send a document, or interview link to applicant inbox.
 					</Text>
 					<Box my={8} />
 
 					<Flex
-						alignItems="center"
-						justifyContent="space-evenly">
+						alignItems='center'
+						justifyContent='space-evenly'>
 						<Link
 							isExternal
 							href={gmailLink}>
 							<Image
-								src="/illustrations/gmail.svg"
+								src='/illustrations/gmail.svg'
 							/>
 						</Link>
 						<Link
 							isExternal
 							href={yahooLink}>
 							<Image
-								src="/illustrations/yahoo.svg"
+								src='/illustrations/yahoo.svg'
 							/>
 						</Link>
 					</Flex>
 
 					<Box my={8} />
-					<Flex justifyContent="center">
+					<Flex justifyContent='center'>
 						<Image
-							display="inline-block"
-							src="/ui_icons/brand/email.svg"
-							alt="mail to"
-							mb="0px"
-							mr="6px"
+							display='inline-block'
+							src='/ui_icons/brand/email.svg'
+							alt='mail to'
+							mb='0px'
+							mr='6px'
 						/>
 						<Link onClick={() => copy(applicantEmail) && setCopied(true)}>
 							{copied ? 'Copied!' : 'Copy email address'}

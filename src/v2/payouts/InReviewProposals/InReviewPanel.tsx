@@ -9,17 +9,17 @@ import { AcceptApplication } from 'src/v2/assets/custom chakra icons/AcceptAppli
 import { RejectApplication } from 'src/v2/assets/custom chakra icons/RejectApplication'
 import { ResubmitApplication } from 'src/v2/assets/custom chakra icons/ResubmitApplication'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
-import InReviewRow from './InReviewRow'
-import ZeroState from './ZeroState'
+import InReviewRow from 'src/v2/payouts/InReviewProposals/InReviewRow'
+import ZeroState from 'src/v2/payouts/InReviewProposals/ZeroState'
 
 const InReviewPanel = ({
 	applicantsData,
 	grantData,
 	onSendFundsClicked,
 }: {
-  applicantsData: any[];
-  grantData?: GetGrantDetailsQuery;
-  onSendFundsClicked: (state: boolean) => void;
+  applicantsData: any[]
+  grantData?: GetGrantDetailsQuery
+  onSendFundsClicked: (state: boolean) => void
 
 }) => {
 	const [checkedItems, setCheckedItems] = useState<boolean[]>(applicantsData.filter((item) => (0 === item.status)).map((item) => false))
@@ -70,8 +70,8 @@ const InReviewPanel = ({
 		}
 
 		const tempArr: number[] = []
-		console.log('checkedItems', checkedItems)
-		console.log(inReviewApplications)
+		// console.log('checkedItems', checkedItems)
+		// console.log(inReviewApplications)
 		for(let i = 0; i < checkedItems.length; i++) {
 			if(checkedItems[i] && inReviewApplications[i]) {
 				tempArr.push(Number(inReviewApplications[i].applicationId))
@@ -141,7 +141,7 @@ const InReviewPanel = ({
 			<Flex
 				py='14px'
 				px='16px'
-				alignItems={'center'}
+				alignItems='center'
 			>
 				<HStack justify='space-between'>
 					<Text
@@ -174,27 +174,27 @@ const InReviewPanel = ({
 								as={
 									forwardRef<ButtonProps, 'div'>((props, ref) => (
 										<Button
-											colorScheme={'brandv2'}
-											py={'6px'}
+											colorScheme='brandv2'
+											py='6px'
 											px={3}
 											minH={0}
 											h='32px'
-											fontSize="14px"
+											fontSize='14px'
 											m={0}
 											{...props}
 											ref={ref}
 											// onClick={() => setSendFundsDrawerIsOpen(true)}
 										>
-                      Actions
+											Actions
 										</Button>
 									))
 								}
 							/>
 							<MenuList
-								minW={'240px'}
+								minW='240px'
 								py={0}>
 								<Flex
-									bg={'#F0F0F7'}
+									bg='#F0F0F7'
 									px={4}
 									py={2}
 								>
@@ -203,15 +203,15 @@ const InReviewPanel = ({
 										lineHeight='20px'
 										fontWeight='500'
 										textAlign='center'
-										color={'#555570'}
+										color='#555570'
 									>
-											Grant options
+										Grant options
 									</Text>
 								</Flex>
 
 								<MenuItem
-									px={'19px'}
-									py={'10px'}
+									px='19px'
+									py='10px'
 									onClick={() => setIsAcceptClicked(true)}
 								>
 									<AcceptApplication />
@@ -220,15 +220,15 @@ const InReviewPanel = ({
 										lineHeight='20px'
 										fontWeight='400'
 										textAlign='center'
-										color={'#555570'}
+										color='#555570'
 										ml={2}
 									>
 										Accept proposals
 									</Text>
 								</MenuItem>
 								<MenuItem
-									px={'19px'}
-									py={'10px'}
+									px='19px'
+									py='10px'
 									onClick={() => setIsResubmitClicked(true)}
 								>
 									<ResubmitApplication />
@@ -237,15 +237,15 @@ const InReviewPanel = ({
 										lineHeight='20px'
 										fontWeight='400'
 										textAlign='center'
-										color={'#555570'}
+										color='#555570'
 										ml={2}
 									>
 										Resubmit proposals
 									</Text>
 								</MenuItem>
 								<MenuItem
-									px={'19px'}
-									py={'10px'}
+									px='19px'
+									py='10px'
 									onClick={() => setIsRejectClicked(true)}
 								>
 									<RejectApplication />
@@ -254,7 +254,7 @@ const InReviewPanel = ({
 										lineHeight='20px'
 										fontWeight='400'
 										textAlign='center'
-										color={'#555570'}
+										color='#555570'
 										ml={2}
 									>
 										Reject proposals
@@ -268,12 +268,12 @@ const InReviewPanel = ({
 
 			<Flex
 				bg='#F0F0F7'
-				h={'1px'}
+				h='1px'
 			/>
 
 
 			<Grid
-				templateColumns={'56px 1fr 1fr 1fr'}
+				templateColumns='56px 1fr 1fr 1fr'
 			>
 				<GridItem
 					display='flex'
@@ -330,7 +330,7 @@ const InReviewPanel = ({
 				<GridItem colSpan={4}>
 					<Flex
 						bg='#F0F0F7'
-						h={'1px'}
+						h='1px'
 					/>
 				</GridItem>
 
@@ -404,36 +404,36 @@ const InReviewPanel = ({
 				}
 				closeOnOverlayClick={false}
 			>
-				<ModalOverlay maxH="100vh" />
+				<ModalOverlay maxH='100vh' />
 				<ModalContent>
 					<ModalCloseButton />
 					<ModalBody>
 
 						<Text
-							fontWeight="500"
-							fontSize="20px"
-							lineHeight="24px"
-							color="#1F1F33"
+							fontWeight='500'
+							fontSize='20px'
+							lineHeight='24px'
+							color='#1F1F33'
 						>
 							{isAcceptClicked ? 'Accept selected applicants' : isResubmitClicked ? 'Resubmit selected applicants' : 'Reject selected applicants'}
 						</Text>
 						<Text
-							fontWeight="400"
-							fontSize="14px"
-							lineHeight="20px"
-							color="#7D7DA0">
-					This will notify selected applicants that their applications have been
+							fontWeight='400'
+							fontSize='14px'
+							lineHeight='20px'
+							color='#7D7DA0'>
+							This will notify selected applicants that their applications have been
 							{' '}
 							{isAcceptClicked ? 'accepted' : isResubmitClicked ? 'asked to resubmit' : 'rejected'}
-. This action cannot be undone.
+							. This action cannot be undone.
 						</Text>
 
 						<Text
-							fontWeight="400"
-							fontSize="16px"
-							lineHeight="24px"
-							color="#1F1F33">
- Are you sure you want to do this?
+							fontWeight='400'
+							fontSize='16px'
+							lineHeight='24px'
+							color='#1F1F33'>
+							Are you sure you want to do this?
 						</Text>
 					</ModalBody>
 
@@ -450,7 +450,7 @@ const InReviewPanel = ({
 									setIsModalOpen(false)
 								}
 							}>
-              Cancel
+							Cancel
 						</Button>
 						<Button
 							// colorScheme={isAcceptClicked ? 'blue' : 'pink'}
@@ -467,7 +467,7 @@ const InReviewPanel = ({
 									}
 								}
 							}>
-Confirm
+							Confirm
 						</Button>
 					</ModalFooter>
 				</ModalContent>
@@ -478,19 +478,19 @@ Confirm
 				subtitle={getSubtitle()}
 				description={
 					<Flex
-						direction="column"
+						direction='column'
 						w='100%'
-						align="start">
+						align='start'>
 						<Text
-							fontWeight={'500'}
-							fontSize={'17px'}
+							fontWeight='500'
+							fontSize='17px'
 						>
 							{grantData && grantData?.grants[0]?.title}
 						</Text>
 
 						<Button
 							rightIcon={<ExternalLinkIcon />}
-							variant="linkV2"
+							variant='linkV2'
 							bg='#D5F1EB'>
 							{grantData && formatAddress(grantData?.grants[0]?.id)}
 						</Button>

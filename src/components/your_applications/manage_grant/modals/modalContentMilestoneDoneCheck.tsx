@@ -7,7 +7,7 @@ import { getFormattedDateFromUnixTimestampWithYear } from 'src/utils/formattingU
 
 interface Props {
   milestone: ApplicationMilestone | undefined
-  onClose: () => void;
+  onClose: () => void
 }
 
 function ModalContent({
@@ -17,35 +17,35 @@ function ModalContent({
 	return (
 		<ModalBody>
 			<Flex
-				direction="column"
-				justify="start"
-				align="start">
-				<Text variant="applicationText">
-Feature complete and deployed onto testnet.
+				direction='column'
+				justify='start'
+				align='start'>
+				<Text variant='applicationText'>
+					Feature complete and deployed onto testnet.
 				</Text>
 				<Heading
 					mt={6}
-					variant="applicationHeading">
-          You marked it as done on
+					variant='applicationHeading'>
+					You marked it as done on
 					{' '}
 					{getFormattedDateFromUnixTimestampWithYear(milestone?.updatedAtS || 0)}
 				</Heading>
 				<Heading
 					mt={8}
-					variant="applicationHeading">
-          Milestone Summary
+					variant='applicationHeading'>
+					Milestone Summary
 				</Heading>
 				<Text
 					mt={4}
-					variant="applicationText">
+					variant='applicationText'>
 					{milestone?.feedbackDao}
 				</Text>
 				<Button
-					w="100%"
-					variant="primary"
+					w='100%'
+					variant='primary'
 					mt={10}
 					onClick={onClose}>
-OK
+					OK
 				</Button>
 				<Box mb={4} />
 			</Flex>

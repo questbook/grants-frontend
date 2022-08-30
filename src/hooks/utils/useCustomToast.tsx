@@ -12,7 +12,7 @@ function useCustomToast(link: string, toastDuration?: number, route?: string, sh
 	const [refresh, setRefresh] = useState(shouldRefresh || false)
 
 	useEffect(() => {
-		console.log('CUSTOM TOAST: ', refresh, link)
+		// console.log('CUSTOM TOAST: ', refresh, link)
 		if(refresh && link && !link.includes('undefined') && !link.includes('null')) {
 			toastRef.current = toast({
 				duration: toastDuration || 3500,
@@ -32,7 +32,7 @@ function useCustomToast(link: string, toastDuration?: number, route?: string, sh
 					)
 				},
 				onCloseComplete: () => {
-					console.log('Reloading page')
+					// console.log('Reloading page')
 					if(route) {
 						router.replace(route)
 					} else {

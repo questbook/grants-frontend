@@ -2,10 +2,10 @@ import { useCallback, useEffect, useState } from 'react'
 import { Box, Flex, Heading, Text } from '@chakra-ui/react'
 import { formatEther } from 'ethers/lib/utils'
 import useQBContract from 'src/hooks/contracts/useQBContract'
+import { NetworkSelectOption } from 'src/v2/components/Onboarding/SupportedNetworksData'
+import ContinueButton from 'src/v2/components/Onboarding/UI/Misc/ContinueButton'
+import DaoImageUpload from 'src/v2/components/Onboarding/UI/Misc/DaoImageUpload'
 import { useProvider } from 'wagmi'
-import { NetworkSelectOption } from '../SupportedNetworksData'
-import ContinueButton from '../UI/Misc/ContinueButton'
-import DaoImageUpload from '../UI/Misc/DaoImageUpload'
 
 const CreateDaoFinal = ({
 	daoName,
@@ -15,14 +15,14 @@ const CreateDaoFinal = ({
 	onSubmit,
 	isBiconomyInitialised
 }: {
-  daoName: string,
-  daoNetwork: NetworkSelectOption,
-	daoImageFile: File | null,
-	onImageFileChange: (image: File | null) => void,
-	onSubmit: (() => Promise<void>) | null,
+  daoName: string
+  daoNetwork: NetworkSelectOption
+	daoImageFile: File | null
+	onImageFileChange: (image: File | null) => void
+	onSubmit: (() => Promise<void>) | null
 	isBiconomyInitialised: boolean
 }) => {
-	console.log('HHHH', isBiconomyInitialised, onSubmit)
+	// console.log('HHHH', isBiconomyInitialised, onSubmit)
 	const provider = useProvider()
 	const [gasEstimate, setGasEstimate] = useState<string>()
 	const [newDaoImageFile, setNewDaoImageFile] = useState<File | null>(null)
@@ -58,9 +58,9 @@ const CreateDaoFinal = ({
 			const gasPrice = await provider.getGasPrice()
 			setGasEstimate(formatEther(estimate.mul(gasPrice)))
 		} catch(e) {
-			// console.log(e)
-			// console.log('error', Date.now())
-			// console.log(workspaceRegistryContract)
+			// // console.log(e)
+			// // console.log('error', Date.now())
+			// // console.log(workspaceRegistryContract)
 
 			// @TODO
 			// getting cannot estimate gas error unpredictably
@@ -79,8 +79,8 @@ const CreateDaoFinal = ({
 
 	return (
 		<>
-			<Heading variant={'small'}>
-        My DAO
+			<Heading variant='small'>
+				My DAO
 			</Heading>
 			<Flex mt={6}>
 
@@ -90,29 +90,29 @@ const CreateDaoFinal = ({
 
 				<Flex
 					ml={4}
-					direction={'column'}>
+					direction='column'>
 					<Text
-						fontWeight={'500'}
-						fontSize={'2xl'}
+						fontWeight='500'
+						fontSize='2xl'
 					>
 						{daoName}
 					</Text>
 					<Box
-						display={'inline-flex'}
-						alignItems={'center'}
+						display='inline-flex'
+						alignItems='center'
 						p={0}
 						m={0}
-						mt={'10.32px'}
+						mt='10.32px'
 					>
 						<Box boxSize={5}>
 							{daoNetwork.icon}
 						</Box>
 						<Text
 							ml={1}
-							mt={'1.5px'}
-							fontWeight={'700'}
-							fontSize={'sm'}
-							color={'brandSubtext'}
+							mt='1.5px'
+							fontWeight='700'
+							fontSize='sm'
+							color='brandSubtext'
 						>
 							{daoNetwork.label}
 						</Text>
@@ -126,7 +126,7 @@ const CreateDaoFinal = ({
 
 			<Flex
 				mt={4}
-				justifyContent={'center'}
+				justifyContent='center'
 			>
 				<ContinueButton
 					onClick={() => onSubmit!()}
@@ -139,7 +139,7 @@ const CreateDaoFinal = ({
 					}
 					content={
 						<>
-            				Create Dao
+							Create Dao
 						</>
 					}
 				/>

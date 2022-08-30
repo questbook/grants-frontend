@@ -8,34 +8,34 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import Modal from 'src/components/ui/modal'
+import RubricDrawer from 'src/components/your_grants/rubricDrawer'
+import Badge from 'src/components/your_grants/yourGrantCard/badge'
+import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
+import YourGrantMenu from 'src/components/your_grants/yourGrantCard/menu'
 import { SupportedChainId } from 'src/constants/chains'
 import { Rubric } from 'src/generated/graphql'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
-import RubricDrawer from '../rubricDrawer'
-import Badge from './badge'
-import ChangeAccessibilityModalContent from './changeAccessibilityModalContent'
-import YourGrantMenu from './menu'
 
 interface YourGrantCardProps {
-  grantID: string;
-  daoIcon: string;
-  grantTitle: string;
-  grantDesc: string;
-  numOfApplicants: number;
-  endTimestamp: number;
-  grantAmount: string;
-  grantCurrency: string;
-  grantCurrencyIcon: string;
-  state: 'processing' | 'done';
-  onEditClick?: () => void;
-  onViewApplicantsClick?: () => void;
-  onAddFundsClick?: () => void;
-  acceptingApplications: boolean;
-  chainId: SupportedChainId | undefined;
-  isAdmin: boolean;
-  initialRubrics: Rubric;
-  workspaceId: string;
+  grantID: string
+  daoIcon: string
+  grantTitle: string
+  grantDesc: string
+  numOfApplicants: number
+  endTimestamp: number
+  grantAmount: string
+  grantCurrency: string
+  grantCurrencyIcon: string
+  state: 'processing' | 'done'
+  onEditClick?: () => void
+  onViewApplicantsClick?: () => void
+  onAddFundsClick?: () => void
+  acceptingApplications: boolean
+  chainId: SupportedChainId | undefined
+  isAdmin: boolean
+  initialRubrics: Rubric
+  workspaceId: string
 }
 
 function YourGrantCard({
@@ -88,7 +88,7 @@ function YourGrantCard({
 
 	useEffect(() => {
 		const newRubrics = [] as any[]
-		console.log('initialRubrics', initialRubrics)
+		// console.log('initialRubrics', initialRubrics)
 		initialRubrics?.items.forEach((initalRubric) => {
 			newRubrics.push({
 				name: initalRubric.title,
@@ -108,7 +108,7 @@ function YourGrantCard({
 	}, [initialRubrics])
 
 	React.useEffect(() => {
-		// console.log(transactionData);
+		// // console.log(transactionData);
 		if(transactionData) {
 			setIsArchiveModalOpen(false)
 			setIsPublishGrantModalOpen(false)
@@ -123,7 +123,7 @@ function YourGrantCard({
 	}, [error])
 
 	React.useEffect(() => {
-		console.log('isAcceptingApplications: ', isAcceptingApplications)
+		// console.log('isAcceptingApplications: ', isAcceptingApplications)
 
 	}, [isAcceptingApplications])
 
@@ -133,32 +133,32 @@ function YourGrantCard({
 				isAdmin ? (
 					<Flex
 						py={6}
-						w="100%">
+						w='100%'>
 						<Image
-							objectFit="cover"
-							h="54px"
-							w="54px"
+							objectFit='cover'
+							h='54px'
+							w='54px'
 							src={daoIcon} />
 						<Flex
 							flex={1}
-							direction="column"
+							direction='column'
 							ml={6}>
-							<Flex direction="row">
-								<Flex direction="column">
+							<Flex direction='row'>
+								<Flex direction='column'>
 									<Text
-										lineHeight="24px"
-										fontSize="18px"
-										fontWeight="700">
+										lineHeight='24px'
+										fontSize='18px'
+										fontWeight='700'>
 										{grantTitle}
 									</Text>
 									<Text
-										lineHeight="24px"
-										color="#122224"
-										fontWeight="400">
+										lineHeight='24px'
+										color='#122224'
+										fontWeight='400'>
 										{grantDesc}
 									</Text>
 								</Flex>
-								<Box mr="auto" />
+								<Box mr='auto' />
 							</Flex>
 
 							<Box mt={6} />
@@ -171,25 +171,25 @@ function YourGrantCard({
 							<Flex
 								direction={{ base: 'column', md: 'row' }}
 								mt={8}
-								alignItems="center"
+								alignItems='center'
 							>
 								<Flex
-									direction="row"
-									align="center"
-									w="full">
+									direction='row'
+									align='center'
+									w='full'>
 									<Image
 										src={grantCurrencyIcon}
-										boxSize="36px" />
+										boxSize='36px' />
 									<Text
 										ml={2}
-										fontWeight="700"
-										color="#3F06A0">
+										fontWeight='700'
+										color='#3F06A0'>
 										{grantAmount}
 										{' '}
 										{grantCurrency}
 									</Text>
 
-									<Box mr="auto" />
+									<Box mr='auto' />
 
 									<YourGrantMenu
 										chainId={chainId}
@@ -214,12 +214,12 @@ function YourGrantCard({
 												ml={5}
 												isDisabled={state === 'processing'}
 												variant={state === 'processing' ? 'primaryCta' : 'outline'}
-												color="brand.500"
-												borderColor="brand.500"
-												h="32px"
+												color='brand.500'
+												borderColor='brand.500'
+												h='32px'
 												onClick={onAddFundsClick || (() => {})}
 											>
-                  Add funds
+												Add funds
 											</Button>
 										)
 									}
@@ -228,7 +228,7 @@ function YourGrantCard({
 											<Button
 												ml={2}
 												isDisabled={state === 'processing'}
-												variant="primaryCta"
+												variant='primaryCta'
 												onClick={
 													() => {
 														if(numOfApplicants <= 0 && onEditClick) {
@@ -249,7 +249,7 @@ function YourGrantCard({
 											<Button
 												ml={5}
 												isDisabled={state === 'processing'}
-												variant="primaryCta"
+												variant='primaryCta'
 												onClick={
 													() => {
 														setIsPublishGrantModalOpen(true)
@@ -258,7 +258,7 @@ function YourGrantCard({
 												ref={buttonRef}
 												w={loading ? buttonRef.current?.offsetWidth : 'auto'}
 											>
-                  Publish grant
+												Publish grant
 											</Button>
 										)
 									}
@@ -270,32 +270,32 @@ function YourGrantCard({
 
 					<Flex
 						py={6}
-						w="100%">
+						w='100%'>
 						<Image
-							objectFit="cover"
-							h="54px"
-							w="54px"
+							objectFit='cover'
+							h='54px'
+							w='54px'
 							src={daoIcon} />
 						<Flex
 							flex={1}
-							direction="column"
+							direction='column'
 							ml={6}>
-							<Flex direction="row">
-								<Flex direction="column">
+							<Flex direction='row'>
+								<Flex direction='column'>
 									<Text
-										lineHeight="24px"
-										fontSize="18px"
-										fontWeight="700">
+										lineHeight='24px'
+										fontSize='18px'
+										fontWeight='700'>
 										{grantTitle}
 									</Text>
 									<Text
-										lineHeight="24px"
-										color="#122224"
-										fontWeight="400">
+										lineHeight='24px'
+										color='#122224'
+										fontWeight='400'>
 										{grantDesc}
 									</Text>
 								</Flex>
-								<Box mr="auto" />
+								<Box mr='auto' />
 							</Flex>
 
 							<Box mt={6} />
@@ -308,25 +308,25 @@ function YourGrantCard({
 							<Flex
 								direction={{ base: 'column', md: 'row' }}
 								mt={8}
-								alignItems="center"
+								alignItems='center'
 							>
 								<Flex
-									direction="row"
-									align="center"
-									w="full">
+									direction='row'
+									align='center'
+									w='full'>
 									<Image
 										src={grantCurrencyIcon}
-										boxSize="36px" />
+										boxSize='36px' />
 									<Text
 										ml={2}
-										fontWeight="700"
-										color="#3F06A0">
+										fontWeight='700'
+										color='#3F06A0'>
 										{grantAmount}
 										{' '}
 										{grantCurrency}
 									</Text>
 
-									<Box mr="auto" />
+									<Box mr='auto' />
 
 									<YourGrantMenu
 										chainId={chainId}
@@ -349,7 +349,7 @@ function YourGrantCard({
 											<Button
 												ml={2}
 												isDisabled={state === 'processing'}
-												variant="primaryCta"
+												variant='primaryCta'
 												onClick={
 													() => {
 														if(numOfApplicants <= 0 && onEditClick) {
@@ -372,7 +372,7 @@ function YourGrantCard({
 					</Flex>
 				)
 			}
-			<Divider w="auto" />
+			<Divider w='auto' />
 			<Modal
 				isOpen={acceptingApplications ? isArchiveModalOpen : isPublishGrantModalOpen}
 				onClose={
@@ -380,7 +380,7 @@ function YourGrantCard({
 						? setIsArchiveModalOpen(false)
 						: setIsPublishGrantModalOpen(false))
 				}
-				title=""
+				title=''
 			>
 				<ChangeAccessibilityModalContent
 					onClose={

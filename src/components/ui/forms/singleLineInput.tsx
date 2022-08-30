@@ -10,29 +10,29 @@ import {
 	Text,
 	useTheme,
 } from '@chakra-ui/react'
-import Tooltip from '../tooltip'
+import Tooltip from 'src/components/ui/tooltip'
 
 interface SingleLineInputProps {
-  label?: string;
-  value: string | undefined ;
-  onChange: ChangeEventHandler<HTMLInputElement>;
-  onClick?: () => void;
-  placeholder?: string;
-  isError?: boolean;
-  errorText?: string;
-  subtext?: string | null | undefined;
-  subtextAlign?: 'left' | 'right' | 'center';
-  disabled?: boolean;
-  tooltip?: string;
-  tooltipPlacement?: PlacementWithLogical;
+  label?: string
+  value: string | undefined
+  onChange: ChangeEventHandler<HTMLInputElement>
+  onClick?: () => void
+  placeholder?: string
+  isError?: boolean
+  errorText?: string
+  subtext?: string | null | undefined
+  subtextAlign?: 'left' | 'right' | 'center'
+  disabled?: boolean
+  tooltip?: string
+  tooltipPlacement?: PlacementWithLogical
 
-  labelRightElement?: React.ReactNode;
-  inputRightElement?: React.ReactNode;
-  inputLeftElement?: React.ReactNode;
-  type?: string;
-  height?: string | number;
-  visible?: boolean;
-  maxLength?: number;
+  labelRightElement?: React.ReactNode
+  inputRightElement?: React.ReactNode
+  inputLeftElement?: React.ReactNode
+  type?: string
+  height?: string | number
+  visible?: boolean
+  maxLength?: number
 }
 
 const defaultProps = {
@@ -86,15 +86,15 @@ function SingleLineInput({
 	return (
 		<Flex
 			flex={1}
-			direction="column"
+			direction='column'
 			display={visible ? '' : 'none'}>
 			<Flex
-				direction="row"
-				justify="space-between"
-				align="center">
+				direction='row'
+				justify='space-between'
+				align='center'>
 				<Text
-					lineHeight="20px"
-					fontWeight="bold">
+					lineHeight='20px'
+					fontWeight='bold'>
 					{label}
 					{
 						tooltip && tooltip.length ? (
@@ -112,7 +112,7 @@ function SingleLineInput({
 				{
 					inputLeftElement && (
 						<InputLeftElement
-							h="100%"
+							h='100%'
 							mt={0.5}>
 							{inputLeftElement}
 						</InputLeftElement>
@@ -123,11 +123,11 @@ function SingleLineInput({
 					isDisabled={disabled}
 					isInvalid={isError}
 					mt={1}
-					color="#122224"
-					background="#E8E9E9"
+					color='#122224'
+					background='#E8E9E9'
 					_placeholder={{ color: '#717A7C' }}
 					_disabled={{ color: '#122224', background: '#F3F4F4' }}
-					variant="filled"
+					variant='filled'
 					placeholder={placeholder}
 					value={value === null ? undefined : value}
 					onChange={
@@ -150,7 +150,7 @@ function SingleLineInput({
 				{
 					inputRightElement && (
 						<InputRightElement
-							h="100%"
+							h='100%'
 							mt={1}>
 							{inputRightElement}
 						</InputRightElement>
@@ -166,10 +166,10 @@ function SingleLineInput({
 			{
 				isError && errorText && errorText?.length && (
 					<Text
-						fontSize="14px"
-						color="#EE7979"
-						fontWeight="700"
-						lineHeight="20px"
+						fontSize='14px'
+						color='#EE7979'
+						fontWeight='700'
+						lineHeight='20px'
 					>
 						{errorText}
 					</Text>
@@ -178,10 +178,10 @@ function SingleLineInput({
 			{
 				!(isError && errorText && errorText?.length) && subtext && subtext?.length && (
 					<Text
-						fontSize="12px"
-						color="#717A7C"
-						fontWeight="400"
-						lineHeight="20px"
+						fontSize='12px'
+						color='#717A7C'
+						fontWeight='400'
+						lineHeight='20px'
 						textAlign={subtextAlign}
 						mt={1}
 					>
@@ -192,11 +192,11 @@ function SingleLineInput({
 			{
 				maxLength && maxLength > 0 && (
 					<Text
-						fontSize="14px"
-						color="#717A7C"
-						fontWeight="500"
-						lineHeight="20px"
-						textAlign="right"
+						fontSize='14px'
+						color='#717A7C'
+						fontWeight='500'
+						lineHeight='20px'
+						textAlign='right'
 						mt={isError && errorText && errorText?.length ? '-19px' : 1}
 					>
 						{`${currentLength}/${maxLength}`}

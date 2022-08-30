@@ -2,8 +2,8 @@ import React from 'react'
 import { Center, CircularProgress } from '@chakra-ui/react'
 
 interface Props {
-  size?: string | number;
-  mt?: string | number;
+  size?: string | number
+  mt?: string | number
 }
 
 function Loader({ size, mt }: Props) {
@@ -11,7 +11,7 @@ function Loader({ size, mt }: Props) {
 		<Center>
 			<CircularProgress
 				isIndeterminate
-				color="brand.500"
+				color='brand.500'
 				size={size}
 				mt={mt} />
 		</Center>

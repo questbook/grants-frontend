@@ -8,10 +8,10 @@ const BackgroundImageLayout = ({
 	isDarkQuestbookLogo,
 	children,
 }: {
-  imageSrc: string,
-  imageBackgroundColor: string,
-  imageProps?: any,
-  isDarkQuestbookLogo?: boolean,
+  imageSrc: string
+  imageBackgroundColor: string
+  imageProps?: any
+  isDarkQuestbookLogo?: boolean
   children: React.ReactNode
 }) => {
 	const [imageLoaded, setImageLoaded] = useState(false)
@@ -28,37 +28,37 @@ const BackgroundImageLayout = ({
 	return (
 		<Box
 			bg={imageBackgroundColor}
-			h={'100vh'}
-			w={'100%'}
-			overflow={'hidden'}
-			fontFamily={'Neue-Haas-Grotesk-Display, sans-serif'}
+			h='100vh'
+			w='100%'
+			overflow='hidden'
+			fontFamily='Neue-Haas-Grotesk-Display, sans-serif'
 		>
 			<Image
 				ref={imageRef}
 				src={imageSrc}
-				height={'100%'}
-				width={'100%'}
-				objectFit={'cover'}
+				height='100%'
+				width='100%'
+				objectFit='cover'
 				onLoad={
 					() => {
 						setImageLoaded(true)
 						setTimeout(() => setImageTransitioned(true), 300)
 					}
 				}
-				transition={'opacity 0.3s'}
+				transition='opacity 0.3s'
 				{...imageLoaded ? imageProps : null}
 			/>
 
 			<Fade in={imageTransitioned}>
 				<Box
-					pos={'absolute'}
+					pos='absolute'
 					top={0}
 					left={0}
 					zIndex={1}
 					p={5}>
 					<Image
 						src={isDarkQuestbookLogo ? '/questbooklogo-black.svg' : '/questbooklogo-white.svg'}
-						alt="Questbook"
+						alt='Questbook'
 						zIndex={100} />
 				</Box>
 

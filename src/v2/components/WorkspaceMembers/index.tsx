@@ -14,19 +14,19 @@ import {
 	Thead,
 	Tr,
 } from '@chakra-ui/react'
-import { ApiClientsContext } from '../../../../pages/_app'
-import Loader from '../../../components/ui/loader'
-import { defaultChainId } from '../../../constants/chains'
+import { ApiClientsContext } from 'pages/_app'
+import Loader from 'src/components/ui/loader'
+import { defaultChainId } from 'src/constants/chains'
 import {
 	useGetWorkspaceMembersByWorkspaceIdQuery,
 	WorkspaceMember,
 	WorkspaceMemberAccessLevel,
-} from '../../../generated/graphql'
-import { getSupportedChainIdFromWorkspace } from '../../../utils/validationUtils'
-import InviteModal from '../InviteModal'
-import AccessLevelTab from './AccessLevelTab'
-import MemberRow from './MemberRow'
-import PaginatorView from './PaginatorView'
+} from 'src/generated/graphql'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import InviteModal from 'src/v2/components/InviteModal'
+import AccessLevelTab from 'src/v2/components/WorkspaceMembers/AccessLevelTab'
+import MemberRow from 'src/v2/components/WorkspaceMembers/MemberRow'
+import PaginatorView from 'src/v2/components/WorkspaceMembers/PaginatorView'
 
 const PAGE_SIZE = 7
 
@@ -82,13 +82,13 @@ function WorkspaceMembers() {
 	return (
 		<>
 			<Flex
-				direction={'column'}
+				direction='column'
 			>
 				<Flex
-					direction={'row'}
+					direction='row'
 				>
 					<Tabs
-						borderBottom={'transparent'}
+						borderBottom='transparent'
 						onChange={
 							(index) => {
 								setPage(0)
@@ -111,14 +111,14 @@ function WorkspaceMembers() {
 						onClick={() => setIsInviteModalOpen(true)}
 						leftIcon={<LinkIcon />}
 						variant='primaryV2' >
-            			Create invite link
+						Create invite link
 					</Button>
 				</Flex>
 				<Box h={5} />
 				<Box
-					boxShadow={'lg'}
+					boxShadow='lg'
 					borderRadius={7.5}
-					bg={'white'}
+					bg='white'
 				>
 					<Table>
 						<Thead>
@@ -128,9 +128,9 @@ function WorkspaceMembers() {
 										<Th
 											key={tableHeader}
 											fontSize={18}
-											fontWeight={'bold'}
+											fontWeight='bold'
 											letterSpacing={-1}
-											textTransform={'none'}
+											textTransform='none'
 										>
 											{tableHeader}
 										</Th>
@@ -162,7 +162,7 @@ function WorkspaceMembers() {
 				</Box>
 				<Box h={2} />
 				<Flex
-					justifyContent={'end'}>
+					justifyContent='end'>
 					<PaginatorView
 						currentPage={page}
 						onPageChange={setPage}

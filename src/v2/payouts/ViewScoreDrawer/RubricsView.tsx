@@ -1,9 +1,9 @@
 import { Box, Flex, Image, Text } from '@chakra-ui/react'
 import getAvatar from 'src/utils/avatarUtils'
 
-const RubricsView = ({ rubrics, reviewer }: {rubrics?: any; reviewer: any}) => {
+const RubricsView = ({ rubrics, reviewer }: {rubrics?: any, reviewer: any}) => {
 	const totalScore = (items?: any[]) => {
-		console.log(items)
+		// console.log(items)
 		let s = 0
 		items?.forEach((item) => {
 			s += item.rating ?? 0
@@ -31,18 +31,18 @@ const RubricsView = ({ rubrics, reviewer }: {rubrics?: any; reviewer: any}) => {
 				py={4}
 				borderRadius='2px'
 				flexDirection='row'
-				alignItems={'center'}
+				alignItems='center'
 			>
 
 
 				<Flex
 					bg='#F0F0F7'
 					borderRadius='20px'
-					h={'40px'}
-					w={'40px'}
+					h='40px'
+					w='40px'
 				>
 					<Image
-						borderRadius="3xl"
+						borderRadius='3xl'
 						src={getAvatar(reviewer?.id)}
 					/>
 				</Flex>
@@ -51,14 +51,14 @@ const RubricsView = ({ rubrics, reviewer }: {rubrics?: any; reviewer: any}) => {
 					direction='column'
 					ml='12px'
 					justifyContent='flex-start'
-					textAlign={'left'}
+					textAlign='left'
 				>
 					<Text
 						fontSize='14px'
 						lineHeight='20px'
 						fontWeight='500'
 						noOfLines={1}
-						textOverflow={'ellipsis'}
+						textOverflow='ellipsis'
 					>
 						{reviewer.name}
 					</Text>
@@ -66,9 +66,9 @@ const RubricsView = ({ rubrics, reviewer }: {rubrics?: any; reviewer: any}) => {
 						fontSize='12px'
 						lineHeight='16px'
 						fontWeight='400'
-						mt="2px"
+						mt='2px'
 						color='#7D7DA0'
-						display={'flex'}
+						display='flex'
 						alignItems='center'
 					>
 						{formatCreatedAt(rubrics.createdAtS)}
@@ -83,9 +83,9 @@ const RubricsView = ({ rubrics, reviewer }: {rubrics?: any; reviewer: any}) => {
 					w='20px'
 					bg='#F0F0F7'
 					display='flex'
-					justifyContent={'center'}
-					alignItems={'center'}
-					ml={'auto'}
+					justifyContent='center'
+					alignItems='center'
+					ml='auto'
 				>
 					{totalScore(rubrics?.items ?? [])}
 				</Box>
@@ -104,7 +104,7 @@ const RubricsView = ({ rubrics, reviewer }: {rubrics?: any; reviewer: any}) => {
 			<Flex
 				p={4}
 				borderRadius='2px'
-				boxShadow={'inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'}
+				boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'
 				flexDirection='column'
 			>
 				{
@@ -119,8 +119,8 @@ const RubricsView = ({ rubrics, reviewer }: {rubrics?: any; reviewer: any}) => {
 									w='20px'
 									bg='#F0F0F7'
 									display='flex'
-									justifyContent={'center'}
-									alignItems={'center'}
+									justifyContent='center'
+									alignItems='center'
 									mr={4}
 									mb={2}
 								>

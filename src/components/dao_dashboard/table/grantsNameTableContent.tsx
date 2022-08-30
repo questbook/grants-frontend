@@ -20,12 +20,12 @@ const GrantsNameTableContent = ({ name }: { name: string }) => {
 				<Text noOfLines={2}>
 					{`${name.substring(0, 51)}`}
 					<Text
-						color="#8E48D3"
-						as={'span'}
+						color='#8E48D3'
+						as='span'
 						onClick={() => setIsExpanded(true)}
-						cursor={'pointer'}
+						cursor='pointer'
 					>
-            ...more
+						...more
 					</Text>
 				</Text>
 			</Tooltip>
@@ -36,12 +36,12 @@ const GrantsNameTableContent = ({ name }: { name: string }) => {
 		<Text>
 			{name}
 			<Text
-				color="#8E48D3"
-				as={'span'}
+				color='#8E48D3'
+				as='span'
 				onClick={() => setIsExpanded(false)}
-				cursor={'pointer'}
+				cursor='pointer'
 			>
-        ...less
+				...less
 			</Text>
 		</Text>
 	)

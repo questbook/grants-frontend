@@ -109,93 +109,93 @@ export default function Payouts() {
 			)
 		}
 
-		console.log(reviewsDone)
+		// console.log(reviewsDone)
 	}, [reviewsDone, reviewPayoutsDone, reviewPayoutsOutstanding])
 
 	return (
-		<Flex w="100%">
+		<Flex w='100%'>
 			{
 				isReviewer ? (
 					<Flex
-						direction="column"
+						direction='column'
 						w={{ base: '95vw', md: '70vw' }}
-						m="auto">
+						m='auto'>
 						<Grid
 							mt={6}
-							gap="1.5rem"
-							gridAutoFlow="column">
+							gap='1.5rem'
+							gridAutoFlow='column'>
 							<Grid
-								border="1px solid #D0D3D3"
-								borderRadius="4px"
-								py="1rem"
-								px="2rem"
-								gridTemplateColumns="3fr 1fr"
+								border='1px solid #D0D3D3'
+								borderRadius='4px'
+								py='1rem'
+								px='2rem'
+								gridTemplateColumns='3fr 1fr'
 								gridTemplateAreas='"heading icon" "text icon"'
-								alignContent="center"
-								gap="0.5rem"
+								alignContent='center'
+								gap='0.5rem'
 							>
 								<Heading
-									fontSize="1.5rem"
-									gridArea="heading">
+									fontSize='1.5rem'
+									gridArea='heading'>
 									{reviewsDone}
 								</Heading>
 								<Text
-									fontSize="1rem"
-									color="#AAAAAA"
-									gridArea="text">
-                Reviews Done
+									fontSize='1rem'
+									color='#AAAAAA'
+									gridArea='text'>
+									Reviews Done
 								</Text>
 								<Flex
-									w="40px"
-									h="40px"
-									gridArea="icon"
-									justifySelf="center"
-									alignSelf="center"
-									justifyContent="center"
-									alignItems="center"
+									w='40px'
+									h='40px'
+									gridArea='icon'
+									justifySelf='center'
+									alignSelf='center'
+									justifyContent='center'
+									alignItems='center'
 								>
-									<Image src="/illustrations/reviews_done.svg" />
+									<Image src='/illustrations/reviews_done.svg' />
 								</Flex>
 							</Grid>
 							<Grid
-								border="1px solid #D0D3D3"
-								borderRadius="4px"
-								p="1rem"
-								gridTemplateColumns="3fr 1fr"
+								border='1px solid #D0D3D3'
+								borderRadius='4px'
+								p='1rem'
+								gridTemplateColumns='3fr 1fr'
 								gridTemplateAreas='"heading icon" "text icon"'
-								alignContent="center"
-								gap="0.5rem"
+								alignContent='center'
+								gap='0.5rem'
 							>
 								<Heading
-									fontSize="1.5rem"
-									gridArea="heading">
+									fontSize='1.5rem'
+									gridArea='heading'>
 									{reviewPayoutsOutstanding.length}
 								</Heading>
 								<Text
-									fontSize="1rem"
-									color="#AAAAAA"
-									gridArea="text">
-                Outstanding Review Payouts
+									fontSize='1rem'
+									color='#AAAAAA'
+									gridArea='text'>
+									Outstanding Review Payouts
 								</Text>
 								<Flex
-									w="40px"
-									h="40px"
-									gridArea="icon"
-									justifySelf="center"
-									alignSelf="center"
-									justifyContent="center"
-									alignItems="center"
+									w='40px'
+									h='40px'
+									gridArea='icon'
+									justifySelf='center'
+									alignSelf='center'
+									justifyContent='center'
+									alignItems='center'
 								>
-									<Image src="/illustrations/reviews_outstanding.svg" />
+									<Image src='/illustrations/reviews_outstanding.svg' />
 								</Flex>
 							</Grid>
 						</Grid>
 						<Grid
-							gridAutoFlow="column"
-							gridTemplateColumns="repeat(4, 1fr)"
-							w="100%"
-							justifyContent="space-between"
-							alignContent="center"
+							gridAutoFlow='column'
+							gridTemplateColumns='repeat(4, 1fr)'
+							w='100%'
+							justifyContent='space-between'
+							alignContent='center'
 							pb={2}
 							pt={4}
 							px={5}
@@ -205,9 +205,9 @@ export default function Payouts() {
 								historyTableHeaders.map((header) => (
 									<Text
 										key={header}
-										w="fit-content"
-										variant="tableHeader"
-										color="black">
+										w='fit-content'
+										variant='tableHeader'
+										color='black'>
 										{header}
 									</Text>
 								))
@@ -216,44 +216,44 @@ export default function Payouts() {
 						{
 							reviewPayoutsDone.length !== 0 && reviewPayoutsOutstanding !== 0 ? (
 								<Flex
-									direction="column"
-									w="100%"
-									border="1px solid #D0D3D3"
+									direction='column'
+									w='100%'
+									border='1px solid #D0D3D3'
 									borderRadius={4}
 								>
 									{
 										reviewPayoutsDone.map((data: any, index: number) => (
 											<Flex key={data.id}>
 												<Grid
-													gridAutoFlow="column"
-													gridTemplateColumns="repeat(4, 1fr)"
-													w="100%"
-													justifyContent="space-between"
-													alignContent="center"
+													gridAutoFlow='column'
+													gridTemplateColumns='repeat(4, 1fr)'
+													w='100%'
+													justifyContent='space-between'
+													alignContent='center'
 													bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
 													py={4}
 													px={5}
 												>
 													<Tooltip
-														justifySelf="left"
+														justifySelf='left'
 														label={data.sender}>
 														<Flex
-															alignItems="center"
-															gap="0.5rem">
+															alignItems='center'
+															gap='0.5rem'>
 															<Text
-																textAlign="center"
-																variant="tableBody">
+																textAlign='center'
+																variant='tableBody'>
 																{trimAddress(data.sender, 4)}
 															</Text>
 															<CopyIcon
-																h="0.75rem"
+																h='0.75rem'
 																text={data.sender} />
 														</Flex>
 													</Tooltip>
 
 													<Text
-														variant="tableBody"
-														justifySelf="left">
+														variant='tableBody'
+														justifySelf='left'>
 														{utils.formatUnits(data.amount).slice(0, -2)}
 														{' '}
 														{
@@ -265,14 +265,14 @@ export default function Payouts() {
 													</Text>
 
 													<Text
-														variant="tableBody"
-														justifySelf="left">
+														variant='tableBody'
+														justifySelf='left'>
 														{data.review.length > 1 ? data.review.length : 1}
 													</Text>
 
 													<Text
-														variant="tableBody"
-														justifySelf="start">
+														variant='tableBody'
+														justifySelf='start'>
 														{
 															getFormattedDateFromUnixTimestampWithYear(
 																data.createdAtS,
@@ -280,7 +280,7 @@ export default function Payouts() {
 														}
 													</Text>
 
-													<Flex direction="row">
+													<Flex direction='row'>
 														<Link
 															href={getExplorerUrlForTxHash(workspaceChainId, data.id.substr(0, data.id.indexOf('.')))}
 															isExternal
@@ -288,10 +288,10 @@ export default function Payouts() {
 															View
 															{' '}
 															<Image
-																display="inline-block"
-																h="10px"
-																w="10px"
-																src="/ui_icons/link.svg"
+																display='inline-block'
+																h='10px'
+																w='10px'
+																src='/ui_icons/link.svg'
 															/>
 														</Link>
 													</Flex>
@@ -303,10 +303,10 @@ export default function Payouts() {
 							) : (
 								<Flex
 									p={2}
-									alignItems="center"
-									justifyContent="center"
-									direction="column"
-									gap="1rem"
+									alignItems='center'
+									justifyContent='center'
+									direction='column'
+									gap='1rem'
 								>
 									{
 										reviewPayoutsDone.length < 1 && (
@@ -314,20 +314,20 @@ export default function Payouts() {
 												<Image
 													w={40}
 													h={40}
-													src="/illustrations/empty_states/no_grants.svg"
+													src='/illustrations/empty_states/no_grants.svg'
 												/>
 												<Heading>
-It&apos;s quite silent here
+													It&apos;s quite silent here
 												</Heading>
 												<Text>
-                    Click
+													Click
 													{' '}
-													<Link href="/your_grants/">
-here
+													<Link href='/your_grants/'>
+														here
 													</Link>
 													{' '}
-                    to start
-                    reviewing some grants to earn payouts
+													to start
+													reviewing some grants to earn payouts
 												</Text>
 											</>
 										)
@@ -338,14 +338,14 @@ here
 												<Image
 													w={40}
 													h={40}
-													src="/illustrations/empty_states/no_deposits.svg"
+													src='/illustrations/empty_states/no_deposits.svg'
 												/>
 												<Heading>
-No Payouts yet...
+													No Payouts yet...
 												</Heading>
 												<Text>
-                    Once a grant admin disburses funds to your address it will
-                    show up here.
+													Once a grant admin disburses funds to your address it will
+													show up here.
 												</Text>
 											</>
 										)
@@ -356,7 +356,7 @@ No Payouts yet...
 					</Flex>
 				) : (
 					<Text>
-You do not have access to this page
+						You do not have access to this page
 					</Text>
 				)
 			}

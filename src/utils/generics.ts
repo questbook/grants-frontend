@@ -16,5 +16,7 @@ export const isPlausibleSolanaAddress = (str: string | undefined) => (
 	!!str && /^[1-9A-HJ-NP-Za-km-z]+$/.test(str)
 )
 
+export const sumArray = (arr: number[]) => arr.reduce((a, b) => a + b, 0)
+
 export const UNIX_TIMESTAMP_MAX = unixTimestampSeconds(new Date(2038, 0, 1))
 export const UNIX_TIMESTAMP_MIN = unixTimestampSeconds(new Date(1970, 0, 1))

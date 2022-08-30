@@ -14,6 +14,8 @@ import {
 } from '@chakra-ui/react'
 import router from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
+import AccountDetails from 'src/components/navbar/connected/accountDetails'
+import Tab from 'src/components/navbar/connected/tab'
 import {
 	useGetNumberOfApplicationsLazyQuery,
 	useGetNumberOfGrantsLazyQuery,
@@ -25,8 +27,6 @@ import { MinimalWorkspace } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useConnect } from 'wagmi'
-import AccountDetails from './accountDetails'
-import Tab from './tab'
 
 function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	const toast = useToast()
@@ -177,7 +177,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 				const promises = getAllWorkspaces.map(
 					// eslint-disable-next-line no-async-promise-executor
 					(allWorkspaces) => new Promise(async(resolve) => {
-						// console.log('calling grants');
+						// // console.log('calling grants');
 						try {
 							const { data } = await allWorkspaces[0]({
 								variables: { actorId: userAddress },
@@ -196,7 +196,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 					const allWorkspacesData = [].concat(...values) as MinimalWorkspace[]
 					// setGrants([...grants, ...allGrantsData]);
 					// setCurrentPage(currentPage + 1);
-					// console.log('all workspaces', allWorkspacesData);
+					// // console.log('all workspaces', allWorkspacesData);
 					setWorkspaces([...workspaces, ...allWorkspacesData])
 
 
@@ -213,7 +213,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 					}
 				})
 			} catch(e) {
-				// console.log(e);
+				// // console.log(e);
 				toast({
 					title: 'Error getting workspace data',
 					status: 'error',
@@ -240,12 +240,12 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 	return (
 		<Container
 			zIndex={1}
-			variant="header-container"
-			maxW="100vw"
+			variant='header-container'
+			maxW='100vw'
 			pr={8}
 			pl={0}
-			alignItems="center"
-			minH="80px"
+			alignItems='center'
+			minH='80px'
 		>
 			{
 				connected ? (
@@ -253,49 +253,49 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 						<MenuButton
 							as={Button}
 							m={0}
-							h="100%"
-							variant="ghost"
-							display="flex"
-							alignItems="center"
+							h='100%'
+							variant='ghost'
+							display='flex'
+							alignItems='center'
 							borderRadius={0}
-							background="linear-gradient(263.05deg, #EFF0F0 -7.32%, #FCFCFC 32.62%)"
-							px="38px"
+							background='linear-gradient(263.05deg, #EFF0F0 -7.32%, #FCFCFC 32.62%)'
+							px='38px'
 						>
 							<Flex
-								direction="row"
-								align="center">
+								direction='row'
+								align='center'>
 								<Image
-									objectFit="cover"
-									w="32px"
-									h="32px"
-									mr="10px"
+									objectFit='cover'
+									w='32px'
+									h='32px'
+									mr='10px'
 									src={
 										router.pathname === '/' || !workspace
 											? '/ui_icons/gray/see.svg'
 											: getUrlForIPFSHash(workspace.logoIpfsHash)
 									}
-									display="inline-block"
+									display='inline-block'
 								/>
 								<Text
-									color="#414E50"
-									fontWeight="500"
-									fontSize="16px"
-									lineHeight="24px"
-									overflow="hidden"
-									textOverflow="ellipsis"
+									color='#414E50'
+									fontWeight='500'
+									fontSize='16px'
+									lineHeight='24px'
+									overflow='hidden'
+									textOverflow='ellipsis'
 								>
 									{router.pathname === '/' || !workspace ? 'Discover Grants' : workspace.title}
 								</Text>
 								<Image
 									ml={2}
-									src="/ui_icons/dropdown_arrow.svg"
-									alt="options" />
+									src='/ui_icons/dropdown_arrow.svg'
+									alt='options' />
 							</Flex>
 						</MenuButton>
 
 						<MenuList
-							maxH="80vh"
-							overflowY="auto">
+							maxH='80vh'
+							overflowY='auto'>
 							{
 								workspaces.map((userWorkspace) => (
 									<MenuItem
@@ -303,7 +303,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 										icon={
 											(
 												<Image
-													boxSize="20px"
+													boxSize='20px'
 													src={getUrlForIPFSHash(userWorkspace.logoIpfsHash)}
 												/>
 											)
@@ -320,7 +320,7 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 								))
 							}
 							<MenuItem
-								icon={<Image src="/ui_icons/gray/see.svg" />}
+								icon={<Image src='/ui_icons/gray/see.svg' />}
 								onClick={
 									() => {
 										router.push('/')
@@ -343,9 +343,9 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 						}
 						h={9}
 						w={8}
-						src="/questbook_logo.svg"
-						alt="Questbook"
-						cursor="pointer"
+						src='/questbook_logo.svg'
+						alt='Questbook'
+						cursor='pointer'
 						ml={8}
 					/>
 				)
@@ -357,14 +357,14 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 						{
 							(workspace?.id || grantsCount) && router.pathname !== '/' ? (
 								<>
-									<Box mr="12px" />
+									<Box mr='12px' />
 
 									<Flex
-										h="100%"
-										direction="column"
+										h='100%'
+										direction='column'
 										display={isAdmin ? '' : 'none'}>
 										<Tab
-											label="Dashboard"
+											label='Dashboard'
 											icon={
 												`/ui_icons/${activeIndex === 0 ? 'brand' : 'gray'
 												}/grant-dao.svg`
@@ -381,15 +381,15 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 										{
 											activeIndex === 0 ? (
 												<Box
-													w="100%"
-													h="2px"
-													bgColor="#8850EA" />
+													w='100%'
+													h='2px'
+													bgColor='#8850EA' />
 											) : null
 										}
 									</Flex>
 									<Flex
-										h="100%"
-										direction="column">
+										h='100%'
+										direction='column'>
 										<Tab
 											label={isReviewer ? 'Grants Assigned' : 'Grants'}
 											icon={
@@ -408,19 +408,19 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 										{
 											activeIndex === 1 ? (
 												<Box
-													w="100%"
-													h="2px"
-													bgColor="#8850EA" />
+													w='100%'
+													h='2px'
+													bgColor='#8850EA' />
 											) : null
 										}
 									</Flex>
 
 									<Flex
-										h="100%"
-										direction="column"
+										h='100%'
+										direction='column'
 										display={isAdmin ? '' : 'none'}>
 										<Tab
-											label="Funds"
+											label='Funds'
 											icon={
 												`/ui_icons/${activeIndex === 2 ? 'brand' : 'gray'
 												}/tab_funds.svg`
@@ -437,18 +437,18 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 										{
 											activeIndex === 2 ? (
 												<Box
-													w="100%"
-													h="2px"
-													bgColor="#8850EA" />
+													w='100%'
+													h='2px'
+													bgColor='#8850EA' />
 											) : null
 										}
 									</Flex>
 									<Flex
-										h="100%"
-										direction="column"
+										h='100%'
+										direction='column'
 										display={isAdmin ? '' : 'none'}>
 										<Tab
-											label="Manage DAO"
+											label='Manage DAO'
 											icon={
 												`/ui_icons/${activeIndex === 3 ? 'brand' : 'gray'
 												}/tab_settings.svg`
@@ -465,19 +465,19 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 										{
 											activeIndex === 3 ? (
 												<Box
-													w="100%"
-													h="2px"
-													bgColor="#8850EA" />
+													w='100%'
+													h='2px'
+													bgColor='#8850EA' />
 											) : null
 										}
 									</Flex>
 									{
 										isReviewer && (
 											<Flex
-												h="100%"
-												direction="column">
+												h='100%'
+												direction='column'>
 												<Tab
-													label="Payouts"
+													label='Payouts'
 													icon={
 														activeIndex === 5
 															? '/ui_icons/brand/tab_review_funds.svg'
@@ -495,9 +495,9 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 												{
 													activeIndex === 5 ? (
 														<Box
-															w="100%"
-															h="2px"
-															bgColor="#8850EA" />
+															w='100%'
+															h='2px'
+															bgColor='#8850EA' />
 													) : null
 												}
 											</Flex>
@@ -507,15 +507,15 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 							) : null
 						}
 
-						<Box mr="auto" />
+						<Box mr='auto' />
 
 						{
 							(!workspace?.id || applicationCount > 0) && (
 								<Flex
-									h="100%"
-									direction="column">
+									h='100%'
+									direction='column'>
 									<Tab
-										label="My Applications"
+										label='My Applications'
 										icon={
 											`/ui_icons/${activeIndex === 4 ? 'brand' : 'gray'
 											}/tab_grants.svg`
@@ -532,24 +532,24 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 									{
 										activeIndex === 4 ? (
 											<Box
-												w="100%"
-												h="2px"
-												bgColor="#8850EA" />
+												w='100%'
+												h='2px'
+												bgColor='#8850EA' />
 										) : null
 									}
 								</Flex>
 							)
 						}
 
-						<Box mr="8px" />
+						<Box mr='8px' />
 
 						<Button
 							display={isAdmin || !workspace || !workspace?.id ? undefined : 'none'}
 							onClick={
 								() => {
-									console.log('Create a grant!')
-									console.log(workspace)
-									console.log(workspace?.id)
+									// console.log('Create a grant!')
+									// console.log(workspace)
+									// console.log(workspace?.id)
 									if(!workspace?.id) {
 										router.push({
 											pathname: '/signup',
@@ -566,15 +566,15 @@ function Navbar({ renderTabs }: { renderTabs: boolean }) {
 									}
 								}
 							}
-							maxW="163px"
-							variant="primary"
-							mr="12px"
+							maxW='163px'
+							variant='primary'
+							mr='12px'
 						>
 							Create a Grant
 						</Button>
 					</>
 				) : (
-					<Box mr="auto" />
+					<Box mr='auto' />
 				)
 			}
 

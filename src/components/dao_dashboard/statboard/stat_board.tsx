@@ -9,11 +9,11 @@ function DaoStatBoard({
 	winnerApplicants,
 	tat,
 }: {
-  totalApplicants: number | null;
-  uniqueApplicants: number;
-  repeatApplicants: number;
-  winnerApplicants: number;
-	tat: number;
+  totalApplicants: number | null
+  uniqueApplicants: number
+  repeatApplicants: number
+  winnerApplicants: number
+	tat: number
 }) {
 	useEffect(() => {
 		formatMinutes(tat)
@@ -24,145 +24,145 @@ function DaoStatBoard({
 				totalApplicants === null ? (
 					<>
 						<Flex
-							mt="5"
-							width="1040px"
-							height="84px"
-							background="#FFFFFF"
-							boxShadow="0px 0px 8px rgba(18, 34, 36, 0.15)"
-							borderRadius="8px"
-							display="flex"
+							mt='5'
+							width='1040px'
+							height='84px'
+							background='#FFFFFF'
+							boxShadow='0px 0px 8px rgba(18, 34, 36, 0.15)'
+							borderRadius='8px'
+							display='flex'
 						>
 							<Flex
-								margin="5"
-								display="flex"
-								gap="60px">
+								margin='5'
+								display='flex'
+								gap='60px'>
 								<Flex
-									display="flex"
-									flexDirection="column"
-									alignItems="flex-start"
+									display='flex'
+									flexDirection='column'
+									alignItems='flex-start'
 								>
 									<Flex>
 										<Text
 											fontWeight={700}
-											fontSize="20px"
-											lineHeight="24px"
-											color="#AAAAAA"
+											fontSize='20px'
+											lineHeight='24px'
+											color='#AAAAAA'
 										>
-                    --
+											--
 										</Text>
 									</Flex>
 
 									<Text
-										fontSize="16px"
-										color="#AAAAAA"
-										fontWeight="400"
-										lineHeight="24px"
+										fontSize='16px'
+										color='#AAAAAA'
+										fontWeight='400'
+										lineHeight='24px'
 									>
-                  Total Applicants
+										Total Applicants
 									</Text>
 								</Flex>
 
 								<Flex
-									display="flex"
-									flexDirection="column"
-									alignItems="flex-start"
+									display='flex'
+									flexDirection='column'
+									alignItems='flex-start'
 								>
 									<Flex>
 										<Text
 											fontWeight={700}
-											fontSize="20px"
-											lineHeight="24px"
-											color="#AAAAAA"
+											fontSize='20px'
+											lineHeight='24px'
+											color='#AAAAAA'
 										>
-                    --
+											--
 										</Text>
 									</Flex>
 
 									<Text
-										fontSize="16px"
-										color="#AAAAAA"
-										fontWeight="400"
-										lineHeight="24px"
+										fontSize='16px'
+										color='#AAAAAA'
+										fontWeight='400'
+										lineHeight='24px'
 									>
-                  Unique Applicants
+										Unique Applicants
 									</Text>
 								</Flex>
 
 								<Flex
-									display="flex"
-									flexDirection="column"
-									alignItems="flex-start"
+									display='flex'
+									flexDirection='column'
+									alignItems='flex-start'
 								>
 									<Flex>
 										<Text
 											fontWeight={700}
-											fontSize="20px"
-											lineHeight="24px"
-											color="#AAAAAA"
+											fontSize='20px'
+											lineHeight='24px'
+											color='#AAAAAA'
 										>
-                    --
+											--
 										</Text>
 									</Flex>
 
 									<Text
-										fontSize="16px"
-										color="#AAAAAA"
-										fontWeight="400"
-										lineHeight="24px"
+										fontSize='16px'
+										color='#AAAAAA'
+										fontWeight='400'
+										lineHeight='24px'
 									>
-                  Repeats Applicants
+										Repeats Applicants
 									</Text>
 								</Flex>
 
 								<Flex
-									display="flex"
-									flexDirection="column"
-									alignItems="flex-start"
+									display='flex'
+									flexDirection='column'
+									alignItems='flex-start'
 								>
 									<Flex>
 										<Text
 											fontWeight={700}
-											fontSize="20px"
-											lineHeight="24px"
-											color="#AAAAAA"
+											fontSize='20px'
+											lineHeight='24px'
+											color='#AAAAAA'
 										>
-                    --
+											--
 										</Text>
 									</Flex>
 
 									<Text
-										fontSize="16px"
-										color="#AAAAAA"
-										fontWeight="400"
-										lineHeight="24px"
+										fontSize='16px'
+										color='#AAAAAA'
+										fontWeight='400'
+										lineHeight='24px'
 									>
-                  Grant winners
+										Grant winners
 									</Text>
 								</Flex>
 
 								<Flex
-									display="flex"
-									flexDirection="column"
-									alignItems="flex-start"
+									display='flex'
+									flexDirection='column'
+									alignItems='flex-start'
 								>
 									<Flex>
 										<Text
 											fontWeight={700}
-											fontSize="20px"
-											lineHeight="24px"
-											color="#AAAAAA"
+											fontSize='20px'
+											lineHeight='24px'
+											color='#AAAAAA'
 										>
-                    --
+											--
 										</Text>
 									</Flex>
 
 									<Text
-										fontSize="16px"
-										color="#AAAAAA"
-										fontWeight="400"
-										lineHeight="24px"
+										fontSize='16px'
+										color='#AAAAAA'
+										fontWeight='400'
+										lineHeight='24px'
 									>
-                  TAT for disburdal
+										TAT for disburdal
 									</Text>
 								</Flex>
 							</Flex>
@@ -171,28 +171,28 @@ function DaoStatBoard({
 				) : (
 					<>
 						<Flex
-							mt="5"
-							width="1040px"
-							height="84px"
-							background="#FFFFFF"
-							boxShadow="0px 0px 8px rgba(18, 34, 36, 0.15)"
-							borderRadius="8px"
-							display="flex"
+							mt='5'
+							width='1040px'
+							height='84px'
+							background='#FFFFFF'
+							boxShadow='0px 0px 8px rgba(18, 34, 36, 0.15)'
+							borderRadius='8px'
+							display='flex'
 						>
 							<Flex
-								margin="5"
-								display="flex"
-								gap="60px">
+								margin='5'
+								display='flex'
+								gap='60px'>
 								<Flex
-									display="flex"
-									flexDirection="column"
-									alignItems="flex-start"
+									display='flex'
+									flexDirection='column'
+									alignItems='flex-start'
 								>
 									<Flex>
 										<Text
 											fontWeight={700}
-											fontSize="20px"
-											lineHeight="24px">
+											fontSize='20px'
+											lineHeight='24px'>
 											{totalApplicants}
 										</Text>
 										{/* <Text
@@ -207,25 +207,25 @@ function DaoStatBoard({
 									</Flex>
 
 									<Text
-										fontSize="16px"
-										color="#AAAAAA"
-										fontWeight="400"
-										lineHeight="24px"
+										fontSize='16px'
+										color='#AAAAAA'
+										fontWeight='400'
+										lineHeight='24px'
 									>
-                  Total Applicants
+										Total Applicants
 									</Text>
 								</Flex>
 
 								<Flex
-									display="flex"
-									flexDirection="column"
-									alignItems="flex-start"
+									display='flex'
+									flexDirection='column'
+									alignItems='flex-start'
 								>
 									<Flex>
 										<Text
 											fontWeight={700}
-											fontSize="20px"
-											lineHeight="24px">
+											fontSize='20px'
+											lineHeight='24px'>
 											{uniqueApplicants}
 										</Text>
 										{/* <Text
@@ -240,25 +240,25 @@ function DaoStatBoard({
 									</Flex>
 
 									<Text
-										fontSize="16px"
-										color="#AAAAAA"
-										fontWeight="400"
-										lineHeight="24px"
+										fontSize='16px'
+										color='#AAAAAA'
+										fontWeight='400'
+										lineHeight='24px'
 									>
-                  Unique Applicants
+										Unique Applicants
 									</Text>
 								</Flex>
 
 								<Flex
-									display="flex"
-									flexDirection="column"
-									alignItems="flex-start"
+									display='flex'
+									flexDirection='column'
+									alignItems='flex-start'
 								>
 									<Flex>
 										<Text
 											fontWeight={700}
-											fontSize="20px"
-											lineHeight="24px">
+											fontSize='20px'
+											lineHeight='24px'>
 											{repeatApplicants}
 										</Text>
 										{/* <Text
@@ -273,25 +273,25 @@ function DaoStatBoard({
 									</Flex>
 
 									<Text
-										fontSize="16px"
-										color="#AAAAAA"
-										fontWeight="400"
-										lineHeight="24px"
+										fontSize='16px'
+										color='#AAAAAA'
+										fontWeight='400'
+										lineHeight='24px'
 									>
-                  Repeat Applicants
+										Repeat Applicants
 									</Text>
 								</Flex>
 
 								<Flex
-									display="flex"
-									flexDirection="column"
-									alignItems="flex-start"
+									display='flex'
+									flexDirection='column'
+									alignItems='flex-start'
 								>
 									<Flex>
 										<Text
 											fontWeight={700}
-											fontSize="20px"
-											lineHeight="24px">
+											fontSize='20px'
+											lineHeight='24px'>
 											{winnerApplicants}
 										</Text>
 										{/* <Text
@@ -306,25 +306,25 @@ function DaoStatBoard({
 									</Flex>
 
 									<Text
-										fontSize="16px"
-										color="#AAAAAA"
-										fontWeight="400"
-										lineHeight="24px"
+										fontSize='16px'
+										color='#AAAAAA'
+										fontWeight='400'
+										lineHeight='24px'
 									>
-                  Grant Winners
+										Grant Winners
 									</Text>
 								</Flex>
 
 								<Flex
-									display="flex"
-									flexDirection="column"
-									alignItems="flex-start"
+									display='flex'
+									flexDirection='column'
+									alignItems='flex-start'
 								>
 									<Flex>
 										<Text
 											fontWeight={700}
-											fontSize="20px"
-											lineHeight="24px">
+											fontSize='20px'
+											lineHeight='24px'>
 											{Math.floor(tat) === NaN || Math.floor(tat) === 0 ? '0 min' : formatMinutes(Math.floor(tat))}
 										</Text>
 										{/* <Text
@@ -339,12 +339,12 @@ function DaoStatBoard({
 									</Flex>
 
 									<Text
-										fontSize="16px"
-										color="#AAAAAA"
-										fontWeight="400"
-										lineHeight="24px"
+										fontSize='16px'
+										color='#AAAAAA'
+										fontWeight='400'
+										lineHeight='24px'
 									>
-                  TAT for Disbursal
+										TAT for Disbursal
 									</Text>
 								</Flex>
 							</Flex>

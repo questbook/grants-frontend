@@ -2,12 +2,12 @@ import React, { useState } from 'react'
 import {
 	Box,
 	Button, Flex, ModalBody, Text, } from '@chakra-ui/react'
+import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import Loader from 'src/components/ui/loader'
-import MultiLineInput from '../../../ui/forms/multiLineInput'
 
 interface Props {
-  onClose: (details: string) => void;
-  hasClicked: boolean;
+  onClose: (details: string) => void
+  hasClicked: boolean
 }
 
 function ModalContent({ onClose, hasClicked }: Props) {
@@ -16,24 +16,24 @@ function ModalContent({ onClose, hasClicked }: Props) {
 
 	return (
 		<ModalBody
-			maxW="521px"
+			maxW='521px'
 			mt={8}>
 			<Flex
-				direction="column"
-				justify="start"
-				align="stretch">
+				direction='column'
+				justify='start'
+				align='stretch'>
 				<Text
-					textAlign="center"
-					variant="applicationText">
-          Add a brief summary of what was achieved in the grant,
-          appreciation for the team and links to show the proof of work.
+					textAlign='center'
+					variant='applicationText'>
+					Add a brief summary of what was achieved in the grant,
+					appreciation for the team and links to show the proof of work.
 				</Text>
 				<Flex
 					mt={8}
-					w="100%">
+					w='100%'>
 					<MultiLineInput
-						label="Grant Completion Summary"
-						placeholder="A tool, script or tutorial to set up monitoring for miner GPU, CPU, & memory."
+						label='Grant Completion Summary'
+						placeholder='A tool, script or tutorial to set up monitoring for miner GPU, CPU, & memory.'
 						value={details}
 						isError={detailsError}
 						onChange={
@@ -45,13 +45,13 @@ function ModalContent({ onClose, hasClicked }: Props) {
 								setDetails(e.target.value)
 							}
 						}
-						errorText="Required"
+						errorText='Required'
 						maxLength={300}
 					/>
 				</Flex>
 				<Button
-					w="100%"
-					variant="primary"
+					w='100%'
+					variant='primary'
 					mt={6}
 					py={hasClicked ? 2 : 0}
 					onClick={() => (hasClicked ? {} : onClose(details))}>

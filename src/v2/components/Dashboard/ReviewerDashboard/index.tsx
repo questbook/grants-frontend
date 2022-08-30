@@ -1,17 +1,17 @@
 import { useContext, useMemo, useState } from 'react'
 import { Box, Button, Flex } from '@chakra-ui/react'
-import { ApiClientsContext } from '../../../../../pages/_app'
-import Loader from '../../../../components/ui/loader'
-import { defaultChainId } from '../../../../constants/chains'
+import { ApiClientsContext } from 'pages/_app'
+import Loader from 'src/components/ui/loader'
+import { defaultChainId } from 'src/constants/chains'
 import {
 	useGetInitialReviewedApplicationGrantsQuery,
 	useGetInitialToBeReviewedApplicationGrantsQuery,
-} from '../../../../generated/graphql'
-import { useQuestbookAccount } from '../../../../hooks/gasless/useQuestbookAccount'
+} from 'src/generated/graphql'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import {
 	getSupportedChainIdFromWorkspace,
-} from '../../../../utils/validationUtils'
-import ApplicationsTable, { APPLICATIONS_TABLE_PAGE_SIZE } from './ApplicationsTable'
+} from 'src/utils/validationUtils'
+import ApplicationsTable, { APPLICATIONS_TABLE_PAGE_SIZE } from 'src/v2/components/Dashboard/ReviewerDashboard/ApplicationsTable'
 
 function ReviewerDashboard() {
 	const [showPendingReviews, setShowPendingReviews] = useState(true)
@@ -43,26 +43,26 @@ function ReviewerDashboard() {
 
 	return (
 		<Flex
-			direction={'column'}>
+			direction='column'>
 			<Box h={30} />
 			<Box
-				bg={'#f0f0f7'}
-				padding={'5px'}>
-				<Flex gap={'5px'}>
+				bg='#f0f0f7'
+				padding='5px'>
+				<Flex gap='5px'>
 					<Button
 						bg={showPendingReviews ? 'white' : 'transparent'}
 						color={showPendingReviews ? 'black' : '#7D7DA0'}
 						onClick={() => setShowPendingReviews(true)}
-						borderRadius={'5px'}
-						padding={'10px'}>
+						borderRadius='5px'
+						padding='10px'>
 						To Be Reviewed
 					</Button>
 					<Button
 						bg={showPendingReviews ? 'transparent' : 'white'}
 						color={showPendingReviews ? '#7D7DA0' : 'black'}
 						onClick={() => setShowPendingReviews(false)}
-						borderRadius={'5px'}
-						padding={'10px'}>
+						borderRadius='5px'
+						padding='10px'>
 						Reviews Done
 					</Button>
 				</Flex>

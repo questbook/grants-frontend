@@ -38,23 +38,23 @@ export type IReview = Exclude<Exclude<GetApplicationDetailsQuery['grantApplicati
 export type IReviewFeedback = { isApproved?: boolean, items: FeedbackType[] }
 
 export type PartnersProps = {
-  name: string;
-  industry: string;
-  website?: string | null;
-  partnerImageHash?: string | null | undefined;
+  name: string
+  industry: string
+  website?: string | null
+  partnerImageHash?: string | null | undefined
 };
 
 export type SettingsForm = {
-  name: string;
-  about: EditorState;
-  bio: string;
-  supportedNetwork: SupportedNetwork;
-  partners?: PartnersProps[];
-  image?: string;
-  coverImage?: string;
-  twitterHandle?: string;
-  discordHandle?: string;
-  telegramChannel?: string;
+  name: string
+  about: EditorState
+  bio: string
+  supportedNetwork: SupportedNetwork
+  partners?: PartnersProps[]
+  image?: string
+  coverImage?: string
+  twitterHandle?: string
+  discordHandle?: string
+  telegramChannel?: string
 };
 
 export type AddressMap = { [C in SupportedChainId]: string };
@@ -66,39 +66,39 @@ export type QBContract =
   | 'reviews';
 
 export type QBContractABIMap = {
-  workspace: WorkspaceRegistryAbi;
-  grantFactory: GrantFactoryAbi;
-  applications: ApplicationRegistryAbi;
-  reviews: ApplicationReviewRegistryAbi;
+  workspace: WorkspaceRegistryAbi
+  grantFactory: GrantFactoryAbi
+  applications: ApplicationRegistryAbi
+  reviews: ApplicationReviewRegistryAbi
 };
 
 export interface ChainInfo {
-  readonly id: SupportedChainId;
-  readonly name: string;
-  readonly isTestNetwork?: boolean;
-  readonly icon: string;
-  readonly wallets: string[];
+  readonly id: SupportedChainId
+  readonly name: string
+  readonly isTestNetwork?: boolean
+  readonly icon: string
+  readonly wallets: string[]
   readonly explorer: {
-    address: string;
-    transactionHash: string;
-  };
+    address: string
+    transactionHash: string
+  }
   readonly supportedCurrencies: {
     [address: string]: {
-      icon: string;
-      label: string;
-      pair?: string;
-      address: string;
-      decimals: number;
-    };
-  };
-  readonly qbContracts: { [C in QBContract]: string };
-  readonly subgraphClientUrl: string;
-  readonly rpcUrls: string[];
+      icon: string
+      label: string
+      pair?: string
+      address: string
+      decimals: number
+    }
+  }
+  readonly qbContracts: { [C in QBContract]: string }
+  readonly subgraphClientUrl: string
+  readonly rpcUrls: string[]
   readonly nativeCurrency: {
-    name: string;
-    symbol: string;
-    decimals: number;
-  };
+    name: string
+    symbol: string
+    decimals: number
+  }
 }
 
 export type ChainInfoMap = {
@@ -106,13 +106,13 @@ export type ChainInfoMap = {
 };
 
 export interface SidebarRubrics {
-  index: number;
-  criteria: string;
-  description: string;
+  index: number
+  criteria: string
+  description: string
 }
 
 export interface SidebarReviewer {
-  data: GetReviewersForAWorkspaceQuery['workspaces'][number]['members'][number];
-  isSelected: boolean;
-  index: number;
+  data: GetReviewersForAWorkspaceQuery['workspaces'][number]['members'][number]
+  isSelected: boolean
+  index: number
 }

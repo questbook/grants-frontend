@@ -4,13 +4,13 @@ import { SidebarReviewer } from 'src/types'
 import { formatAddress } from 'src/utils/formattingUtils'
 
 interface Props {
-	minCount: number;
-	maxCount: number;
-	defaultSliderValue: number;
-	sliderValue: number;
-	onSlide: (value: number) => void;
-	reviewers: SidebarReviewer[];
-	onReviewerChange: (reviewer: SidebarReviewer) => void;
+	minCount: number
+	maxCount: number
+	defaultSliderValue: number
+	sliderValue: number
+	onSlide: (value: number) => void
+	reviewers: SidebarReviewer[]
+	onReviewerChange: (reviewer: SidebarReviewer) => void
 }
 
 const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, onSlide, reviewers, onReviewerChange }: Props) => {
@@ -34,7 +34,7 @@ const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, 
 				Reviewers are auto assigned equally.
 				{' '}
 				<Link
-					textDecoration={'none'}
+					textDecoration='none'
 					fontWeight='500'
 					color='#1F1F33'
 				>
@@ -46,7 +46,7 @@ const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, 
 				mt={4}
 				p={4}
 				borderRadius='2px'
-				boxShadow={'inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'}
+				boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'
 				flexDirection='column'
 			>
 
@@ -55,14 +55,14 @@ const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, 
 					lineHeight='20px'
 					fontWeight='500'
 				>
-				Select the number of reviewers to be auto assigned per application
+					Select the number of reviewers to be auto assigned per application
 				</Text>
 
 				<Flex
 
 				>
 					<Slider
-						mt={'24px'}
+						mt='24px'
 						mb='30px'
 						aria-label='slider-ex-1'
 						defaultValue={defaultSliderValue}
@@ -91,7 +91,7 @@ const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, 
 							<SliderFilledTrack />
 						</SliderTrack>
 						<SliderThumb
-							border={'2px solid #785EF0'}
+							border='2px solid #785EF0'
 							borderColor='#785EF0'
 						/>
 					</Slider>
@@ -106,7 +106,7 @@ const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, 
 				>
 					{sliderValue}
 					{' '}
-reviewers will be chosen randomly and assigned to each application
+					reviewers will be chosen randomly and assigned to each application
 
 				</Text>
 			</Flex>
@@ -115,10 +115,10 @@ reviewers will be chosen randomly and assigned to each application
 				my={4}
 				p={4}
 				borderRadius='2px'
-				boxShadow={'inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'}
+				boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'
 				flexDirection='column'
-				maxH={'378px'}
-				minH={'240px'}
+				maxH='378px'
+				minH='240px'
 				overflow='scroll'
 			>
 
@@ -128,7 +128,7 @@ reviewers will be chosen randomly and assigned to each application
 					fontWeight='500'
 					mb={6}
 				>
-				Select reviewers to be auto - assigned
+					Select reviewers to be auto - assigned
 				</Text>
 
 				{
@@ -148,9 +148,9 @@ reviewers will be chosen randomly and assigned to each application
 								<Flex
 									bg='#F0F0F7'
 									borderRadius='20px'
-									h={'40px'}
-									w={'40px'}
-									ml={'12px'}
+									h='40px'
+									w='40px'
+									ml='12px'
 								>
 									<Image
 									/>
@@ -159,14 +159,14 @@ reviewers will be chosen randomly and assigned to each application
 								<Flex
 									direction='column'
 									ml='12px'
-									alignItems={'center'}
+									alignItems='center'
 								>
 									<Text
 										fontSize='14px'
 										lineHeight='20px'
 										fontWeight='500'
 										noOfLines={1}
-										textOverflow={'ellipsis'}
+										textOverflow='ellipsis'
 									>
 										{reviewer.data.fullName}
 									</Text>
@@ -174,16 +174,16 @@ reviewers will be chosen randomly and assigned to each application
 										fontSize='12px'
 										lineHeight='16px'
 										fontWeight='400'
-										mt="2px"
+										mt='2px'
 										color='#7D7DA0'
-										display={'flex'}
+										display='flex'
 										alignItems='center'
 									>
 										<Tooltip label={reviewer.data.actorId}>
 											{formatAddress(reviewer.data.actorId)}
 										</Tooltip>
 										<Flex
-											display="inline-block"
+											display='inline-block'
 											ml={2}
 										>
 											<CopyIcon text={reviewer.data.actorId} />
@@ -200,7 +200,7 @@ reviewers will be chosen randomly and assigned to each application
 				my={4}
 				p={4}
 				borderRadius='2px'
-				boxShadow={'inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'}
+				boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'
 				flexDirection='column'
 
 			>
@@ -209,7 +209,7 @@ reviewers will be chosen randomly and assigned to each application
 					lineHeight='20px'
 					fontWeight='500'
 				>
-				Make reviews private
+					Make reviews private
 				</Text>
 
 				<Text
@@ -219,7 +219,7 @@ reviewers will be chosen randomly and assigned to each application
 					color='#7D7DA0'
 					mt='2px'
 				>
-				The reviews will be encrypted on-chain if enabled.
+					The reviews will be encrypted on-chain if enabled.
 				</Text>
 
 				<Text
@@ -228,7 +228,7 @@ reviewers will be chosen randomly and assigned to each application
 					fontWeight='500'
 					mt={6}
 				>
-				Hide scoring rubric & reviews
+					Hide scoring rubric & reviews
 				</Text>
 
 				<Flex>
@@ -240,10 +240,10 @@ reviewers will be chosen randomly and assigned to each application
 						mt='2px'
 						mr='auto'
 					>
-				The reviews will be encrypted on-chain if enabled.
+						The reviews will be encrypted on-chain if enabled.
 					</Text>
 					<Switch
-						id="encrypt"
+						id='encrypt'
 						// // isChecked={partnersRequired}
 						// // onChange={
 						// // 	(e: any) => {

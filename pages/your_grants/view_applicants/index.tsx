@@ -102,7 +102,7 @@ function ViewApplicants() {
 			const tempMember = workspace.members.find(
 				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 			)
-			console.log(tempMember)
+			// console.log(tempMember)
 			setIsAdmin(
 				tempMember?.accessLevel === 'admin'
         || tempMember?.accessLevel === 'owner',
@@ -123,8 +123,8 @@ function ViewApplicants() {
 			return
 		}
 
-		console.log('Grant ID: ', grantID)
-		console.log('isUser: ', isUser)
+		// console.log('Grant ID: ', grantID)
+		// console.log('isUser: ', isUser)
 		if(isAdmin) {
 			setQueryParams({
 				client:
@@ -138,7 +138,7 @@ function ViewApplicants() {
 		}
 
 		if(isReviewer) {
-			console.log('reviewer', isUser)
+			// console.log('reviewer', isUser)
 			setQueryReviewerParams({
 				client:
         subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
@@ -214,7 +214,7 @@ function ViewApplicants() {
 				}
 			})
 
-			console.log('fetch', fetchedApplicantsData)
+			// console.log('fetch', fetchedApplicantsData)
 
 			setApplicantsData(fetchedApplicantsData)
 			setDaoId(data.grantApplications[0].grant.workspace.id)
@@ -224,12 +224,12 @@ function ViewApplicants() {
 	}, [data, error, loading, grantData])
 
 	useEffect(() => {
-		console.log('Review params: ', queryReviewerParams)
+		// console.log('Review params: ', queryReviewerParams)
 	}, [queryReviewerParams])
 
 	const reviewData = useGetApplicantsForAGrantReviewerQuery(queryReviewerParams)
 
-	const Reviewerstatus = (item:any) => {
+	const Reviewerstatus = (item: any) => {
 		const user = []
 		// eslint-disable-next-line no-restricted-syntax
 		for(const n in item) {
@@ -246,9 +246,9 @@ function ViewApplicants() {
 	}
 
 	useEffect(() => {
-		console.log('Raw reviewer data: ', reviewData)
+		// console.log('Raw reviewer data: ', reviewData)
 		if(reviewData.data && reviewData.data.grantApplications.length) {
-			console.log('Reviewer Applications: ', reviewData.data)
+			// console.log('Reviewer Applications: ', reviewData.data)
 			const fetchedApplicantsData = reviewData.data.grantApplications.map((applicant) => {
 				return {
 					grantTitle: applicant?.grant?.title,
@@ -285,7 +285,7 @@ function ViewApplicants() {
 				}
 			})
 
-			console.log('fetch', fetchedApplicantsData)
+			// console.log('fetch', fetchedApplicantsData)
 
 			setReviewerData(fetchedApplicantsData)
 			setDaoId(reviewData.data.grantApplications[0].grant.workspace.id)
@@ -296,10 +296,10 @@ function ViewApplicants() {
 
 	// const { data: grantData } = useGetGrantDetailsQuery(queryParams);
 	useEffect(() => {
-		console.log('grantData', grantData)
+		// console.log('grantData', grantData)
 		const initialRubrics = grantData?.grants[0].rubric
 		const newRubrics = [] as any[]
-		console.log('initialRubrics', initialRubrics)
+		// console.log('initialRubrics', initialRubrics)
 		initialRubrics?.items.forEach((initalRubric) => {
 			newRubrics.push({
 				name: initalRubric.title,
@@ -340,7 +340,7 @@ function ViewApplicants() {
 
 	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
-		// console.log(transactionData);
+		// // console.log(transactionData);
 		if(transactionData) {
 			setIsModalOpen(false)
 			setRefresh(true)
@@ -354,36 +354,36 @@ function ViewApplicants() {
 	}, [archiveGrantError])
 
 	React.useEffect(() => {
-		console.log('Is Accepting Applications: ', isAcceptingApplications)
+		// console.log('Is Accepting Applications: ', isAcceptingApplications)
 	}, [isAcceptingApplications])
 
 	return (
 		<Container
-			maxW="100%"
-			display="flex"
-			px="70px"
-			mb="300px"
+			maxW='100%'
+			display='flex'
+			px='70px'
+			mb='300px'
 		>
 			<Container
 				flex={1}
-				display="flex"
-				flexDirection="column"
-				maxW="1116px"
-				alignItems="stretch"
+				display='flex'
+				flexDirection='column'
+				maxW='1116px'
+				alignItems='stretch'
 				pb={8}
 				px={10}
-				pos="relative"
+				pos='relative'
 			>
 				<Breadcrumbs path={['My Grants', 'View Applicants']} />
 
 				{
 					isAdmin && (
 						<Box
-							pos="absolute"
-							right="40px"
-							top="48px">
+							pos='absolute'
+							right='40px'
+							top='48px'>
 							<Button
-								variant="primary"
+								variant='primary'
 								onClick={() => setRubricDrawerOpen(true)}>
 								{(grantData?.grants[0].rubric?.items.length || 0) > 0 || false ? 'Edit Evaluation Rubric' : 'Setup Evaluation Rubric'}
 							</Button>
@@ -434,46 +434,46 @@ function ViewApplicants() {
 							archiveGrantComponent={
 								!acceptingApplications && (
 									<Flex
-										maxW="100%"
-										bg="#F3F4F4"
-										direction="row"
-										align="center"
+										maxW='100%'
+										bg='#F3F4F4'
+										direction='row'
+										align='center'
 										px={8}
 										py={6}
 										mt={6}
-										border="1px solid #E8E9E9"
-										borderRadius="6px"
+										border='1px solid #E8E9E9'
+										borderRadius='6px'
 									>
 										<Image
-											src="/toast/warning.svg"
-											w="42px"
-											h="36px" />
+											src='/toast/warning.svg'
+											w='42px'
+											h='36px' />
 										<Flex
-											direction="column"
+											direction='column'
 											ml={6}>
 											<Text
-												variant="tableHeader"
-												color="#414E50">
+												variant='tableHeader'
+												color='#414E50'>
 												{shouldShowButton && accountData?.address ? 'Grant is archived and cannot be discovered on the Home page.' : 'Grant is archived and closed for new applications.'}
 											</Text>
 											<Text
-												variant="tableBody"
-												color="#717A7C"
-												fontWeight="400"
+												variant='tableBody'
+												color='#717A7C'
+												fontWeight='400'
 												mt={2}>
-                  New applicants cannot apply to an archived grant.
+												New applicants cannot apply to an archived grant.
 											</Text>
 										</Flex>
-										<Box mr="auto" />
+										<Box mr='auto' />
 										{
 											accountData?.address && shouldShowButton && (
 												<Button
 													ref={buttonRef}
 													w={archiveGrantLoading ? buttonRef?.current?.offsetWidth : 'auto'}
-													variant="primary"
+													variant='primary'
 													onClick={() => setIsModalOpen(true)}
 												>
-                Publish grant
+													Publish grant
 												</Button>
 											)
 										}
@@ -491,18 +491,18 @@ function ViewApplicants() {
 			<Modal
 				isOpen={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
-				title=""
+				title=''
 			>
 				<ChangeAccessibilityModalContent
 					onClose={() => setIsModalOpen(false)}
-					imagePath="/illustrations/publish_grant.svg"
-					title="Are you sure you want to publish this grant?"
-					subtitle="The grant will be live, and applicants can apply for this grant."
-					actionButtonText="Publish grant"
+					imagePath='/illustrations/publish_grant.svg'
+					title='Are you sure you want to publish this grant?'
+					subtitle='The grant will be live, and applicants can apply for this grant.'
+					actionButtonText='Publish grant'
 					actionButtonOnClick={
 						() => {
-							console.log('Doing it!')
-							console.log('Is Accepting Applications (Button click): ', isAcceptingApplications)
+							// console.log('Doing it!')
+							// console.log('Is Accepting Applications (Button click): ', isAcceptingApplications)
 							setIsAcceptingApplications([
 								!isAcceptingApplications[0],
 								isAcceptingApplications[1] + 1,

@@ -15,26 +15,26 @@ import {
 	Tr,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { IReview, IReviewFeedback } from 'src/types'
-import { useLoadReview } from 'src/utils/reviews'
-import { ApiClientsContext, WebwalletContext } from '../../../../../pages/_app'
-import Loader from '../../../../components/ui/loader'
-import { CHAIN_INFO, defaultChainId } from '../../../../constants/chains'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import Loader from 'src/components/ui/loader'
+import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import {
 	ApplicationState,
 	GetInitialToBeReviewedApplicationGrantsQuery,
 	useGetMoreReviewedApplicationsLazyQuery,
 	useGetMoreToBeReviewedApplicationsLazyQuery,
-} from '../../../../generated/graphql'
-import SupportedChainId from '../../../../generated/SupportedChainId'
-import { formatAmount, getFieldString, getFormattedDateFromUnixTimestampWithYear } from '../../../../utils/formattingUtils'
-import { capitalizeFirstLetter } from '../../../../utils/generics'
-import { getAssetInfo } from '../../../../utils/tokenUtils'
+} from 'src/generated/graphql'
+import SupportedChainId from 'src/generated/SupportedChainId'
+import { IReview, IReviewFeedback } from 'src/types'
+import { formatAmount, getFieldString, getFormattedDateFromUnixTimestampWithYear } from 'src/utils/formattingUtils'
+import { capitalizeFirstLetter } from 'src/utils/generics'
+import { useLoadReview } from 'src/utils/reviews'
+import { getAssetInfo } from 'src/utils/tokenUtils'
 import {
 	getSupportedChainIdFromSupportedNetwork,
 	getSupportedChainIdFromWorkspace,
-} from '../../../../utils/validationUtils'
-import PaginatorView from '../../WorkspaceMembers/PaginatorView'
+} from 'src/utils/validationUtils'
+import PaginatorView from 'src/v2/components/WorkspaceMembers/PaginatorView'
 
 const STATUS_COLORS: { [key in ApplicationState]?: { 'text': string, 'bg': string } } = {
 	[ApplicationState.Approved]: {
@@ -58,23 +58,23 @@ type ReviewType = InitialApplicationType['reviews'][0]
 export const APPLICATIONS_TABLE_PAGE_SIZE = 5
 
 type Application = {
-  id: string,
-  submittedOn: number,
-  grantRubricIsPrivate: boolean | undefined,
-  state: ApplicationState,
-  reviews: ReviewType[],
-  projectName: string,
-  reward: string,
-  applicantId: string,
-  applicantName: string,
-  applicantEmail?: string,
+  id: string
+  submittedOn: number
+  grantRubricIsPrivate: boolean | undefined
+  state: ApplicationState
+  reviews: ReviewType[]
+  projectName: string
+  reward: string
+  applicantId: string
+  applicantName: string
+  applicantEmail?: string
 }
 
 type Props = {
-  reviewerId: string,
-  showToBeReviewedApplications: boolean,
-  initialApplications?: InitialApplicationType[],
-  grant: GetInitialToBeReviewedApplicationGrantsQuery['grantReviewerCounters'][0]['grant'],
+  reviewerId: string
+  showToBeReviewedApplications: boolean
+  initialApplications?: InitialApplicationType[]
+  grant: GetInitialToBeReviewedApplicationGrantsQuery['grantReviewerCounters'][0]['grant']
 }
 
 
@@ -188,14 +188,14 @@ function ApplicationsTable({
 		<>
 			<Text
 				fontSize={25}
-				fontWeight={'bold'}>
+				fontWeight='bold'>
 				{grant.title}
 			</Text>
 			<Box h={2} />
 			<Box
-				boxShadow={'lg'}
+				boxShadow='lg'
 				borderRadius={7.5}
-				bg={'white'}
+				bg='white'
 			>
 				<Table>
 					<Thead>
@@ -205,9 +205,9 @@ function ApplicationsTable({
 									<Th
 										key={tableHeader}
 										fontSize={18}
-										fontWeight={'bold'}
+										fontWeight='bold'
 										letterSpacing={-1}
-										textTransform={'none'}
+										textTransform='none'
 									>
 										{tableHeader}
 									</Th>
@@ -230,10 +230,10 @@ function ApplicationsTable({
 								>
 									<Td>
 										<Grid>
-											<GridItem fontWeight={'bold'}>
+											<GridItem fontWeight='bold'>
 												{application.projectName}
 											</GridItem>
-											<GridItem color={'#9292AF'}>
+											<GridItem color='#9292AF'>
 												{`${application.applicantName} • ${application.applicantEmail ?? application.applicantId}`}
 											</GridItem>
 										</Grid>
@@ -247,11 +247,11 @@ function ApplicationsTable({
 									{
 										!showToBeReviewedApplications && (
 											<Td>
-												<Flex alignItems={'start'}>
+												<Flex alignItems='start'>
 													<Text
-														fontWeight={'bold'}
-														padding={'5px 10px'}
-														borderRadius={'5px'}
+														fontWeight='bold'
+														padding='5px 10px'
+														borderRadius='5px'
 														color={STATUS_COLORS[application.state]?.text}
 														bg={STATUS_COLORS[application.state]?.bg}
 													>
@@ -283,7 +283,7 @@ function ApplicationsTable({
 			</Box>
 			<Box h={2} />
 			<Flex
-				justifyContent={'end'}>
+				justifyContent='end'>
 				<PaginatorView
 					currentPage={page}
 					onPageChange={setPage}
@@ -314,7 +314,7 @@ const ReviewTableData = ({ application, loadReview }: { application: Application
 
 			setReviewSum(reviewSum)
 		} catch(error) {
-			console.error(`error in loading self review (${userReview?.id}): ${error}`)
+			// // console.error(`error in loading self review (${userReview?.id}): ${error}`)
 			setReviewSum(0)
 		}
 	}
@@ -328,7 +328,7 @@ const ReviewTableData = ({ application, loadReview }: { application: Application
 	if(userReview) {
 		return (
 			<Td>
-				<Flex alignItems={'start'}>
+				<Flex alignItems='start'>
 					{reviewSum === undefined ? <Loader /> : reviewSum}
 				</Flex>
 			</Td>
@@ -337,13 +337,13 @@ const ReviewTableData = ({ application, loadReview }: { application: Application
 		return (
 			<Td>
 				<Button
-					variant={'solid'}
+					variant='solid'
 					onClick={
 						() => {
 							router.push(`/your_grants/view_applicants/applicant_form?applicationId=${application.id}`)
 						}
 					}>
-          Review
+					Review
 				</Button>
 			</Td>
 		)

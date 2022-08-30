@@ -1,8 +1,10 @@
 import React, { useContext, useEffect, useMemo } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
+import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
@@ -12,8 +14,6 @@ import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } f
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import ErrorToast from '../components/ui/toasts/errorToast'
-import useQBContract from './contracts/useQBContract'
 
 export default function useAssignReviewers(
 	data: any,
@@ -51,7 +51,7 @@ export default function useAssignReviewers(
 
 	useEffect(() => {
 		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		console.log('rree', isBiconomyLoading, biconomyLoading)
+		// console.log('rree', isBiconomyLoading, biconomyLoading)
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
 			biconomy.networkId.toString() === chainId.toString()) {
 			setIsBiconomyInitialised(true)
@@ -65,7 +65,7 @@ export default function useAssignReviewers(
 	const currentChainId = useMemo(() => networkData.id, [networkData])
 
 	useEffect(() => {
-		console.log('data', data)
+		// console.log('data', data)
 		if(data) {
 			setError(undefined)
 			setIncorrectNetwork(false)
@@ -80,29 +80,29 @@ export default function useAssignReviewers(
 	}, [applicationReviewContract])
 
 	useEffect(() => {
-		console.log('ettr here')
+		// console.log('ettr here')
 		if(incorrectNetwork) {
-			console.log('ettr network error')
+			// console.log('ettr network error')
 			return
 		}
 
 		if(error) {
-			console.log('ettr error')
+			// console.log('ettr error')
 			return
 		}
 
 		if(loading) {
-			console.log('ettr loading')
+			// console.log('ettr loading')
 			return
 		}
 
 		async function validate() {
 			setLoading(true)
-			// console.log('calling validate');
+			// // console.log('calling validate');
 			try {
-				// console.log(workspaceId || Number(workspace?.id).toString());
-				// console.log('ipfsHash', ipfsHash);
-				// console.log(
+				// // console.log(workspaceId || Number(workspace?.id).toString());
+				// // console.log('ipfsHash', ipfsHash);
+				// // console.log(
 				//   WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
 				//   APPLICATION_REGISTRY_ADDRESS[currentChainId!],
 				// );
@@ -168,29 +168,29 @@ export default function useAssignReviewers(
 
 		try {
 			if(!data) {
-				console.log('ettr data')
+				// console.log('ettr data')
 				return
 			}
 
 			if(!grantAddress) {
-				console.log('ettr grantAddress')
+				// console.log('ettr grantAddress')
 				return
 			}
 
 			if(!applicationId) {
 
-				console.log('ettr applicationId')
+				// console.log('ettr applicationId')
 				return
 			}
 
 			if(transactionData) {
-				console.log('ettr transactionData')
+				// console.log('ettr transactionData')
 				return
 			}
 
 			if(!accountData || !accountData.address) {
 
-				console.log('ettr accountData')
+				// console.log('ettr accountData')
 				throw new Error('not connected to wallet')
 			}
 

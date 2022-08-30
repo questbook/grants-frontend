@@ -12,8 +12,8 @@ import { getFromIPFS } from 'src/utils/ipfsUtils'
 
 
 interface RubricSidebarProps {
-  total: number;
-  rubric: any;
+  total: number
+  rubric: any
   reviews: any[]
 }
 
@@ -48,7 +48,7 @@ function RubricSidebar({
 		}
 
 		const publicData = (await Promise.all(publicDataPromises)).map((data) => JSON.parse(data || '{}'))
-		console.log(publicData)
+		// console.log(publicData)
 		setDetailedReviews(publicData)
 
 		const results = [] as any
@@ -83,14 +83,14 @@ function RubricSidebar({
 			setAgainstPercentage(againstPercentage)
 		}
 
-		console.log(results)
+		// console.log(results)
 		setAggregatedResults(results)
 		setLoading(false)
 	}
 
 	const getEncrpytedData = async() => {
 		setLoading(true)
-		console.log(reviews)
+		// console.log(reviews)
 		const privateDataPromises = reviews?.map((review) => {
 			const decryptableData = review.data.filter((data: any) => data.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase())
 			return decryptableData.length > 0 ? decryptableData[0] : undefined
@@ -102,7 +102,7 @@ function RubricSidebar({
 			return
 		}
 
-		// console.log(privateDataPromises);
+		// // console.log(privateDataPromises);
 		// const privateData = await Promise.all((await Promise.all(privateDataPromises))
 		//   .map(async (data) => JSON.parse(await decryptMessage(data) || '{}')));
 
@@ -142,7 +142,7 @@ function RubricSidebar({
 			setAgainstPercentage(againstPercentage)
 		}
 
-		// console.log(results);
+		// // console.log(results);
 		setAggregatedResults(results)
 		setLoading(false)
 		setIsDecrypted(true)
@@ -181,22 +181,22 @@ function RubricSidebar({
 	if(loading) {
 		return (
 			<Flex
-				bg="white"
-				border="2px solid #D0D3D3"
+				bg='white'
+				border='2px solid #D0D3D3'
 				borderRadius={8}
 				w={340}
-				direction="column"
-				alignItems="stretch"
-				px="28px"
-				py="22px"
+				direction='column'
+				alignItems='stretch'
+				px='28px'
+				py='22px'
 			>
 				<Flex
-					direction="row"
-					justify="space-between">
+					direction='row'
+					justify='space-between'>
 					<Text
-						variant="tableHeader"
-						color="#122224">
-            Application Review
+						variant='tableHeader'
+						color='#122224'>
+						Application Review
 					</Text>
 				</Flex>
 
@@ -208,22 +208,22 @@ function RubricSidebar({
 	if(rubric?.isPrivate && !isDecrypted) {
 		return (
 			<Flex
-				bg="white"
-				border="2px solid #D0D3D3"
+				bg='white'
+				border='2px solid #D0D3D3'
 				borderRadius={8}
 				w={340}
-				direction="column"
-				alignItems="stretch"
-				px="28px"
-				py="22px"
+				direction='column'
+				alignItems='stretch'
+				px='28px'
+				py='22px'
 			>
 				<Flex
-					direction="row"
-					justify="space-between">
+					direction='row'
+					justify='space-between'>
 					<Text
-						variant="tableHeader"
-						color="#122224">
-            Application Review
+						variant='tableHeader'
+						color='#122224'>
+						Application Review
 					</Text>
 				</Flex>
 
@@ -237,10 +237,10 @@ function RubricSidebar({
 						<Link
 							onClick={() => getEncrpytedData()}
 							mt={5}
-							fontSize="14px"
-							lineHeight="24px"
-							fontWeight="500">
-            Decrypt reviews to see the results
+							fontSize='14px'
+							lineHeight='24px'
+							fontWeight='500'>
+							Decrypt reviews to see the results
 						</Link>
 					)
 				}
@@ -251,43 +251,43 @@ function RubricSidebar({
 	return (
 		<>
 			<Flex
-				bg="white"
-				border="2px solid #D0D3D3"
+				bg='white'
+				border='2px solid #D0D3D3'
 				borderRadius={8}
 				w={340}
-				direction="column"
-				alignItems="stretch"
-				px="28px"
-				py="22px"
+				direction='column'
+				alignItems='stretch'
+				px='28px'
+				py='22px'
 			>
 				<Flex
-					direction="row"
-					justify="space-between">
+					direction='row'
+					justify='space-between'>
 					<Text
-						variant="tableHeader"
-						color="#122224">
-            Application Review
+						variant='tableHeader'
+						color='#122224'>
+						Application Review
 					</Text>
 				</Flex>
 				<Flex
 					mt={3}
-					alignItems="center">
+					alignItems='center'>
 					<Text
-						fontSize="14px"
-						mr="auto"
-						variant="applicationText">
+						fontSize='14px'
+						mr='auto'
+						variant='applicationText'>
 						{detailedReviews.length}
-            /
+						/
 						{total}
 						{' '}
-            Reviews Submitted
+						Reviews Submitted
 					</Text>
 
-					<Text fontSize="12px">
-            (
+					<Text fontSize='12px'>
+						(
 						{total - detailedReviews.length}
 						{' '}
-            waiting)
+						waiting)
 
 					</Text>
 				</Flex>
@@ -297,56 +297,56 @@ function RubricSidebar({
 				{
 					forPercentage === 0 && againstPercentage === 0 ? null : (
 						<Flex
-							direction="column"
+							direction='column'
 							mt={8}>
 
 							{
 								motion.map((motionItem, index) => (
 									<Flex
 										key={motionItem.label}
-										w="100%"
-										justify="space-between"
-										position="relative"
-										align="center"
+										w='100%'
+										justify='space-between'
+										position='relative'
+										align='center'
 										mt={index === 0 ? 0 : '44px'}
 									>
 										<Flex
 											w={`${motionItem.percentage}%`}
 											bg={motionItem.color}
-											borderRadius="4px"
-											h="32px"
-											position="absolute"
+											borderRadius='4px'
+											h='32px'
+											position='absolute'
 											left={0}
 										/>
 
 										<Flex
-											direction="row"
-											align="center"
-											pos="absolute">
+											direction='row'
+											align='center'
+											pos='absolute'>
 											<Image
-												w="12px"
-												h="12px"
+												w='12px'
+												h='12px'
 												src={motionItem.icon}
 												mx={3} />
 											<Text
-												fontSize="14px"
-												lineHeight="24px"
-												fontWeight="500"
-												color="#FFFFFF"
+												fontSize='14px'
+												lineHeight='24px'
+												fontWeight='500'
+												color='#FFFFFF'
 											>
 												{motionItem.label}
 											</Text>
 										</Flex>
 										<Text
-											position="absolute"
+											position='absolute'
 											right={2}
-											fontSize="18px"
-											lineHeight="24px"
-											fontWeight="700"
-											color="#414E50"
+											fontSize='18px'
+											lineHeight='24px'
+											fontWeight='700'
+											color='#414E50'
 										>
 											{motionItem.percentage}
-                  %
+											%
 										</Text>
 									</Flex>
 								))
@@ -359,37 +359,37 @@ function RubricSidebar({
 					aggregatedResults && Object.values(aggregatedResults).length > 0 ? (
 						<Text
 							mt={14}
-							variant="tableHeader"
-							color="#122224">
-            Evaluation Rubric
+							variant='tableHeader'
+							color='#122224'>
+							Evaluation Rubric
 						</Text>
 					) : null
 				}
 				<Flex
-					direction="column"
+					direction='column'
 					mt={4}>
 					{
 						aggregatedResults && Object.values(aggregatedResults)
 							.map((r: any, i: number) => (
 								<Flex
 									key={r.title}
-									direction="row"
+									direction='row'
 									mt={i === 0 ? 0 : 5}
-									alignItems="center">
+									alignItems='center'>
 									<Text
-										fontSize="16px"
-										lineHeight="16px"
-										fontWeight="400"
-										color="#122224"
+										fontSize='16px'
+										lineHeight='16px'
+										fontWeight='400'
+										color='#122224'
 									>
 										{r.title}
 									</Text>
-									<Box mx="auto" />
+									<Box mx='auto' />
 									<StarRatings
 										rating={r.total === 0 ? 0 : r.rating / r.total}
-										starRatedColor="#88BDEE"
-										starDimension="16px"
-										starSpacing="2px"
+										starRatedColor='#88BDEE'
+										starDimension='16px'
+										starSpacing='2px'
 										numberOfStars={r.maximumPoints}
 									/>
 								</Flex>
@@ -402,10 +402,10 @@ function RubricSidebar({
 						<Link
 							mt={5}
 							onClick={() => setDetailDrawerOpen(true)}
-							fontSize="14px"
-							lineHeight="24px"
-							fontWeight="500">
-								See detailed feedback
+							fontSize='14px'
+							lineHeight='24px'
+							fontWeight='500'>
+							See detailed feedback
 						</Link>
 					) : null
 				}
@@ -413,36 +413,36 @@ function RubricSidebar({
 
 			<Drawer
 				isOpen={detailDrawerOpen}
-				placement="right"
+				placement='right'
 				onClose={() => setDetailDrawerOpen(false)}
-				size="lg"
+				size='lg'
 			>
 				<DrawerOverlay />
 				<DrawerContent>
 					<Flex
-						direction="column"
+						direction='column'
 						py={8}
 						px={4}
-						h="100%"
-						overflow="scroll">
+						h='100%'
+						overflow='scroll'>
 						<Flex
 							px={4}
 							mb={8}
-							alignItems="center">
+							alignItems='center'>
 							<Text
-								color="#122224"
-								fontWeight="bold"
-								fontSize="16px"
-								lineHeight="20px"
-								mr="auto"
+								color='#122224'
+								fontWeight='bold'
+								fontSize='16px'
+								lineHeight='20px'
+								mr='auto'
 							>
 								Select Reviewer
 							</Text>
 							<Image
-								src="/ui_icons/close_drawer.svg"
-								cursor="pointer"
-								h="20px"
-								w="20px"
+								src='/ui_icons/close_drawer.svg'
+								cursor='pointer'
+								h='20px'
+								w='20px'
 								onClick={() => setDetailDrawerOpen(false)}
 							/>
 						</Flex>
@@ -452,9 +452,9 @@ function RubricSidebar({
 									key={review.id}
 									onClick={
 										() => {
-											console.log(review)
+											// console.log(review)
 											setReviewerDrawerOpen(true)
-											console.log(detailedReviews[i])
+											// console.log(detailedReviews[i])
 											setReviewSelected(detailedReviews[i])
 											setReviewerSelected(review.reviewer)
 										}
@@ -462,41 +462,41 @@ function RubricSidebar({
 									mb={4}
 									py={8}
 									px={4}
-									mx="-2px"
-									backgroundColor="white"
+									mx='-2px'
+									backgroundColor='white'
 								>
 									<Flex
-										w="100%"
-										h="64px"
-										align="center"
+										w='100%'
+										h='64px'
+										align='center'
 										py={3}
 									>
-										<Image src="/ui_icons/reviewer_account.svg" />
+										<Image src='/ui_icons/reviewer_account.svg' />
 										<Flex
-											direction="column"
+											direction='column'
 											ml={4}
-											justifyContent="center"
-											textAlign="left">
+											justifyContent='center'
+											textAlign='left'>
 											<Text
-												fontWeight="700"
-												color="#122224"
-												fontSize="14px"
-												lineHeight="16px"
+												fontWeight='700'
+												color='#122224'
+												fontSize='14px'
+												lineHeight='16px'
 											>
 												{truncateStringFromMiddle(review.reviewer.id.split('.')[1])}
 											</Text>
 											<Text
 												mt={review.reviewer.email ? 1 : 0}
-												color="#717A7C"
-												fontSize="12px"
-												lineHeight="16px">
+												color='#717A7C'
+												fontSize='12px'
+												lineHeight='16px'>
 												{review.reviewer.email}
 											</Text>
 										</Flex>
 										<Image
-											ml="auto"
+											ml='auto'
 											mr={2}
-											src="/ui_icons/drawer_navigate_right.svg" />
+											src='/ui_icons/drawer_navigate_right.svg' />
 									</Flex>
 								</Button>
 							))
@@ -507,7 +507,7 @@ function RubricSidebar({
 
 			<Drawer
 				isOpen={reviewerDrawerOpen}
-				placement="right"
+				placement='right'
 				onClose={
 					() => {
 						setReviewerDrawerOpen(false)
@@ -515,24 +515,24 @@ function RubricSidebar({
 						setReviewerSelected(null)
 					}
 				}
-				size="lg"
+				size='lg'
 			>
 				<DrawerOverlay />
 				<DrawerContent>
 
 					<Flex
-						direction="column"
-						overflow="scroll"
+						direction='column'
+						overflow='scroll'
 						p={8}>
 						<Flex
 							mb={6}
-							alignItems="center">
+							alignItems='center'>
 							<Image
-								src="/ui_icons/back_arrow.svg"
-								cursor="pointer"
-								mr="12px"
-								h="16px"
-								w="16px"
+								src='/ui_icons/back_arrow.svg'
+								cursor='pointer'
+								mr='12px'
+								h='16px'
+								w='16px'
 								onClick={
 									() => {
 										setReviewerDrawerOpen(false)
@@ -542,40 +542,40 @@ function RubricSidebar({
 								}
 							/>
 							<Text
-								color="#122224"
-								fontWeight="bold"
-								fontSize="16px"
-								lineHeight="20px"
+								color='#122224'
+								fontWeight='bold'
+								fontSize='16px'
+								lineHeight='20px'
 							>
-                Application Feedback
+								Application Feedback
 							</Text>
 						</Flex>
 
 						<Flex
-							w="100%"
-							h="64px"
-							align="center"
+							w='100%'
+							h='64px'
+							align='center'
 							py={3}
 						>
-							<Image src="/ui_icons/reviewer_account.svg" />
+							<Image src='/ui_icons/reviewer_account.svg' />
 							<Flex
-								direction="column"
+								direction='column'
 								ml={4}
-								justifyContent="center"
-								textAlign="left">
+								justifyContent='center'
+								textAlign='left'>
 								<Text
-									fontWeight="700"
-									color="#122224"
-									fontSize="14px"
-									lineHeight="16px"
+									fontWeight='700'
+									color='#122224'
+									fontSize='14px'
+									lineHeight='16px'
 								>
 									{truncateStringFromMiddle(reviewerSelected?.id.split('.')[1])}
 								</Text>
 								<Text
 									mt={reviewerSelected?.email ? 1 : 0}
-									color="#717A7C"
-									fontSize="12px"
-									lineHeight="16px">
+									color='#717A7C'
+									fontSize='12px'
+									lineHeight='16px'>
 									{reviewerSelected?.email}
 								</Text>
 							</Flex>
@@ -585,32 +585,32 @@ function RubricSidebar({
 							reviewSelected && reviewSelected.items && reviewSelected.items.length > 0 ? (
 								<>
 									<Text
-										mt="18px"
-										color="#122224"
-										fontWeight="bold"
-										fontSize="16px"
-										lineHeight="20px"
+										mt='18px'
+										color='#122224'
+										fontWeight='bold'
+										fontSize='16px'
+										lineHeight='20px'
 									>
-                  Overall Recommendation
+										Overall Recommendation
 									</Text>
 									<Flex
-										pt="12px"
-										pb="18px">
+										pt='12px'
+										pb='18px'>
 										<Button
 											onClick={() => {}}
 											variant={!reviewSelected?.isApproved ? 'outline' : 'solid'}
 											h={12}
-											minW="130px"
-											colorScheme="brandGreen"
-											borderRadius="6px"
+											minW='130px'
+											colorScheme='brandGreen'
+											borderRadius='6px'
 										>
 											<Image
-												h="16px"
-												w="16px"
+												h='16px'
+												w='16px'
 												src={!reviewSelected?.isApproved ? '/ui_icons/like_up_green.svg' : '/ui_icons/like_up.svg'} />
-											<Box mr="6px" />
+											<Box mr='6px' />
 											<Text color={!reviewSelected?.isApproved ? '#39C696' : '#FFFFFF'}>
-For
+												For
 											</Text>
 										</Button>
 
@@ -620,17 +620,17 @@ For
 											onClick={() => {}}
 											variant={reviewSelected?.isApproved ? 'outline' : 'solid'}
 											h={12}
-											minW="130px"
-											colorScheme="brandRed"
-											borderRadius="6px"
+											minW='130px'
+											colorScheme='brandRed'
+											borderRadius='6px'
 										>
 											<Image
-												h="16px"
-												w="16px"
+												h='16px'
+												w='16px'
 												src={reviewSelected?.isApproved ? '/ui_icons/like_down_red.svg' : '/ui_icons/like_down.svg'} />
-											<Box mr="6px" />
+											<Box mr='6px' />
 											<Text color={reviewSelected?.isApproved ? '#EE7979' : '#FFFFFF'}>
-Against
+												Against
 											</Text>
 										</Button>
 									</Flex>
@@ -639,45 +639,45 @@ Against
 											<>
 												<Flex
 													mt={4}
-													gap="2"
-													direction="column"
+													gap='2'
+													direction='column'
 												>
 													<Text
-														mt="18px"
-														color="#122224"
-														fontWeight="bold"
-														fontSize="16px"
-														lineHeight="12px"
+														mt='18px'
+														color='#122224'
+														fontWeight='bold'
+														fontSize='16px'
+														lineHeight='12px'
 													>
 														{feedback.rubric.title}
 													</Text>
 													<Text
-														color="#69657B"
-														fontWeight="400"
-														fontSize="12px"
-														lineHeight="12px"
+														color='#69657B'
+														fontWeight='400'
+														fontSize='12px'
+														lineHeight='12px'
 													>
 														{feedback.rubric.details}
 													</Text>
 
-													<Box mt="2px">
+													<Box mt='2px'>
 														<StarRatings
 															numberOfStars={feedback.rubric.maximumPoints}
-															starRatedColor="#88BDEE"
+															starRatedColor='#88BDEE'
 															rating={feedback.rating}
-															name="rating"
-															starHoverColor="#88BDEE"
-															starDimension="18px"
-															starSpacing="4px"
+															name='rating'
+															starHoverColor='#88BDEE'
+															starDimension='18px'
+															starSpacing='4px'
 														/>
 													</Box>
 
 													<MultiLineInput
 														value={feedback.comment}
 														onChange={() => {}}
-														placeholder="Feedback"
+														placeholder='Feedback'
 														isError={false}
-														errorText="Required"
+														errorText='Required'
 														disabled
 													/>
 												</Flex>
@@ -688,13 +688,13 @@ Against
 								</>
 							) : (
 								<Text
-									mt="18px"
-									color="#122224"
-									fontWeight="bold"
-									fontSize="16px"
-									lineHeight="20px"
+									mt='18px'
+									color='#122224'
+									fontWeight='bold'
+									fontSize='16px'
+									lineHeight='20px'
 								>
-                Unable to decrpyt review
+									Unable to decrpyt review
 								</Text>
 							)
 						}

@@ -144,96 +144,96 @@ export default function Embed() {
 
 	return (
 		<Flex
-			mt="2%"
-			ml="2%"
+			mt='2%'
+			ml='2%'
 			w={{ base: '90%', md: '70%', xl: '50%' }}
-			h="fit-content"
-			bgColor="white"
-			p="3rem"
-			direction="column"
-			borderRadius="1rem"
-			gap="1.5rem"
-			justifyItems="center"
-			boxShadow="0px 4px 20px -8px rgba(9, 17, 18, 0.2)"
+			h='fit-content'
+			bgColor='white'
+			p='3rem'
+			direction='column'
+			borderRadius='1rem'
+			gap='1.5rem'
+			justifyItems='center'
+			boxShadow='0px 4px 20px -8px rgba(9, 17, 18, 0.2)'
 		>
 			<Flex
-				justifyContent="center"
-				direction="column"
-				gap="1rem">
+				justifyContent='center'
+				direction='column'
+				gap='1rem'>
 				<Heading
-					fontFamily="DM Sans"
-					color="#122224"
-					fontWeight="700"
-					fontSize="2rem"
-					lineHeight="2.5rem"
-					textAlign="center"
+					fontFamily='DM Sans'
+					color='#122224'
+					fontWeight='700'
+					fontSize='2rem'
+					lineHeight='2.5rem'
+					textAlign='center'
 				>
-          Help us build the future of web3
+					Help us build the future of web3
 				</Heading>
 				<Text
-					textAlign="center"
-					fontFamily="DM Sans"
-					color="#373737"
-					fontWeight="400"
-					fontSize="1rem"
-					lineHeight="1.5rem"
+					textAlign='center'
+					fontFamily='DM Sans'
+					color='#373737'
+					fontWeight='400'
+					fontSize='1rem'
+					lineHeight='1.5rem'
 					w={{ base: '90%', md: '70%', xl: '50%' }}
-					m="auto"
+					m='auto'
 				>
-          The ultimate aim through this program is to help developers build
-          their dream solution and take it to the masses.
+					The ultimate aim through this program is to help developers build
+					their dream solution and take it to the masses.
 				</Text>
 			</Flex>
 			<Flex
-	  			direction="column"
-				gap="2rem"
-				border="1px solid #C4C4C4"
-				borderRadius="0.5rem"
+	  			direction='column'
+				gap='2rem'
+				border='1px solid #C4C4C4'
+				borderRadius='0.5rem'
 				w={{ base: '90%', md: '70%' }}
-				h="fit-content"
-				alignSelf="center"
-				p="1.5rem"
+				h='fit-content'
+				alignSelf='center'
+				p='1.5rem'
 			>
 				<Flex
-					w="100%"
-					justifyContent="center"
-					alignContent="center"
-					gap="0.5rem"
+					w='100%'
+					justifyContent='center'
+					alignContent='center'
+					gap='0.5rem'
 				>
 					<Image
-						objectFit="cover"
-						h="2rem"
-						w="2rem"
-						borderRadius="100%"
+						objectFit='cover'
+						h='2rem'
+						w='2rem'
+						borderRadius='100%'
 						src={getUrlForIPFSHash(workspaceData?.logoIpfsHash!)}
 					/>
 					<Heading
-						fontFamily="DM Sans"
-						color="#122224"
-						fontWeight="700"
-						fontSize="1rem"
-						lineHeight="1.5rem"
-						textAlign="center"
+						fontFamily='DM Sans'
+						color='#122224'
+						fontWeight='700'
+						fontSize='1rem'
+						lineHeight='1.5rem'
+						textAlign='center'
 					>
 						{workspaceData?.title}
 					</Heading>
 				</Flex>
 				<Grid
-					gap="1rem"
+					gap='1rem'
 					gridTemplateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
-					m="auto"
-					w="100%"
-					justifyItems="center"
-					alignItems="center"
+					m='auto'
+					w='100%'
+					justifyItems='center'
+					alignItems='center'
 				>
 					<Flex
 						minW={{ base: '120px', md: 'auto' }}
-						direction="column">
+						direction='column'>
 						<Heading
-							color="#122224"
-							fontSize="1.2rem"
-							lineHeight="1.5rem">
-              $
+							color='#122224'
+							fontSize='1.2rem'
+							lineHeight='1.5rem'>
+							$
 							{
 								grantsDisbursed
 									.reduce((sum: number, a: number) => sum + a, 0)
@@ -241,116 +241,116 @@ export default function Embed() {
 							}
 						</Heading>
 						<Text
-							fontSize="0.875rem"
-							lineHeight="24px"
-							fontWeight="400"
-							color="#AAAAAA"
+							fontSize='0.875rem'
+							lineHeight='24px'
+							fontWeight='400'
+							color='#AAAAAA'
 						>
-              Grants Disbursed
+							Grants Disbursed
 						</Text>
 					</Flex>
 
 					<Flex
 						minW={{ base: '120px', md: 'auto' }}
-						direction="column">
+						direction='column'>
 						<Heading
-							color="#122224"
-							fontSize="1.2rem"
-							lineHeight="1.5rem">
+							color='#122224'
+							fontSize='1.2rem'
+							lineHeight='1.5rem'>
 							{grantsData?.grants.length!}
 						</Heading>
 						<Text
-							fontSize="0.875rem"
-							lineHeight="24px"
-							fontWeight="400"
-							color="#AAAAAA"
+							fontSize='0.875rem'
+							lineHeight='24px'
+							fontWeight='400'
+							color='#AAAAAA'
 						>
-              Active Grants
+							Active Grants
 						</Text>
 					</Flex>
 
 					<Flex
 						minW={{ base: '120px', md: 'auto' }}
-						direction="column">
+						direction='column'>
 						<Heading
-							color="#122224"
-							fontSize="1.2rem"
-							lineHeight="1.5rem">
+							color='#122224'
+							fontSize='1.2rem'
+							lineHeight='1.5rem'>
 							{grantsApplicants.reduce((sum: number, a: number) => sum + a, 0)}
 						</Heading>
 						<Text
-							fontSize="0.875rem"
-							lineHeight="24px"
-							fontWeight="400"
-							color="#AAAAAA"
+							fontSize='0.875rem'
+							lineHeight='24px'
+							fontWeight='400'
+							color='#AAAAAA'
 						>
-              Total Applicants
+							Total Applicants
 						</Text>
 					</Flex>
 
 					<Flex
 						minW={{ base: '120px', md: 'auto' }}
-						direction="column">
+						direction='column'>
 						<Heading
-							color="#122224"
-							fontSize="1.2rem"
-							lineHeight="1.5rem">
+							color='#122224'
+							fontSize='1.2rem'
+							lineHeight='1.5rem'>
 							{grantRecipients.length}
 						</Heading>
 						<Text
-							fontSize="0.875rem"
-							lineHeight="24px"
-							fontWeight="400"
-							color="#AAAAAA"
+							fontSize='0.875rem'
+							lineHeight='24px'
+							fontWeight='400'
+							color='#AAAAAA'
 						>
-              Grant Recipients
+							Grant Recipients
 						</Text>
 					</Flex>
 				</Grid>
 			</Flex>
 			<Link
-				m="auto"
+				m='auto'
 				href={`https://www.questbook.app/profile/?daoId=${daoID}&chainId=${chainID}`}
 				isExternal
 				_hover={{ textDecoration: 'none' }}
 			>
 				<Button
-					p="12px 32px"
-					w="200px"
-					bg="#1F1F33"
-					borderRadius="8px"
-					color="white"
+					p='12px 32px'
+					w='200px'
+					bg='#1F1F33'
+					borderRadius='8px'
+					color='white'
 					_hover={{ bg: 'gray' }}
 				>
-        Apply for Grants
+					Apply for Grants
 				</Button>
 			</Link>
 			<Flex
-				justifyItems="center"
-				alignItems="center"
-				justifyContent="center"
-				gap="0.5rem"
+				justifyItems='center'
+				alignItems='center'
+				justifyContent='center'
+				gap='0.5rem'
 			>
 				<Link
-					href="https://www.questbook.app"
+					href='https://www.questbook.app'
 					isExternal
 					_hover={{ textDecoration: 'none' }}
 				>
 					<Text
-						textAlign="center"
-						fontFamily="DM Sans"
-						color="#AAAAAA"
-						fontWeight="400"
-						fontSize="0.875rem"
-						lineHeight="1rem"
+						textAlign='center'
+						fontFamily='DM Sans'
+						color='#AAAAAA'
+						fontWeight='400'
+						fontSize='0.875rem'
+						lineHeight='1rem'
 					>
-            Powered by
+						Powered by
 					</Text>
 				</Link>
 				<Link
-					href="https://www.questbook.app"
+					href='https://www.questbook.app'
 					isExternal>
-					<Image src="/questbook_logo_full.svg" />
+					<Image src='/questbook_logo_full.svg' />
 				</Link>
 			</Flex>
 		</Flex>

@@ -18,18 +18,18 @@ import assert from 'assert'
 import axios from 'axios'
 import { NetworkType } from 'src/constants/Networks'
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
-import { MetaTransaction, Safe, TransactionType } from '../../types/safe'
+import { MetaTransaction, Safe, TransactionType } from 'src/v2/types/safe'
 
 export class Realms_Solana implements Safe {
-    id: PublicKey | undefined;
-    name: string;
-    description: string;
-    image: string;
-    chainId: number;
+	id: PublicKey | undefined
+	name: string
+	description: string
+	image: string
+	chainId: number
 
-    connection: Connection
-    programId: PublicKey
-    constructor(realmsId: string) {
+	connection: Connection
+	programId: PublicKey
+	constructor(realmsId: string) {
     	console.log('realmsId', realmsId)
 
     	this.id = realmsId ? new PublicKey(realmsId) : undefined // devnet realmPK
@@ -42,14 +42,14 @@ export class Realms_Solana implements Safe {
     	this.connection = new Connection('https://mango.devnet.rpcpool.com', 'recent')
     	//this.connection = new Connection('http://realms-realms-c335.mainnet.rpcpool.com/258d3727-bb96-409d-abea-0b1b4c48af29', 'recent')
     	this.programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
-    }
+	}
 
-    createMultiTransaction(transactions: MetaTransaction[], safeAddress: string): void {
+	createMultiTransaction(transactions: MetaTransaction[], safeAddress: string): void {
     	throw new Error('Method not implemented.')
-    }
+	}
 
 
-    async proposeTransactions(grantname: string, transactions: TransactionType[], wallet: any) : Promise<string> {
+	async proposeTransactions(grantname: string, transactions: TransactionType[], wallet: any): Promise<string> {
 
     	const realmData = await getRealm(this.connection, this.id!)
     	const COUNCIL_MINT = realmData.account.config.councilMint
@@ -150,15 +150,15 @@ export class Realms_Solana implements Safe {
     	console.log('create realms proposal - sendTrxn', sendTrxn)
 
     	return proposalAddress.toString()
-    }
+	}
 
-    isValidSafeAddress(realmsPublicKey: string): any {
+	isValidSafeAddress(realmsPublicKey: string): any {
     	//safe address => realms public key
 
     	return false
-    }
+	}
 
-    async isOwner(address: String): Promise<boolean> {
+	async isOwner(address: String): Promise<boolean> {
     	const walletPublicKey = new PublicKey(address)
     	const realmData = await getRealm(this.connection, this.id!)
     	console.log('realms_solana - realmData', realmData)
@@ -178,9 +178,9 @@ export class Realms_Solana implements Safe {
     	}
 
     	return isOwner
-    }
+	}
 
-    async getSafeDetails(realmsPublicKey: String) : Promise<any> {
+	async getSafeDetails(realmsPublicKey: String): Promise<any> {
     	const realmData = await getRealm(this.connection, new PublicKey(realmsPublicKey))
     	const COUNCIL_MINT = realmData.account.config.councilMint
     	const governanceInfo = await getGovernanceAccounts(this.connection, this.programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
@@ -188,9 +188,9 @@ export class Realms_Solana implements Safe {
     	const nativeTreasury = await getNativeTreasuryAddress(this.programId, governance.pubkey)
     	console.log('governance', governance)
     	console.log('nativeTreasury', nativeTreasury)
-    }
+	}
 
-    async getTransactionHashStatus(proposalPublicKey: string):Promise<any> {
+	async getTransactionHashStatus(proposalPublicKey: string): Promise<any> {
 
     	console.log('getTransactionHashStatus', proposalPublicKey)
     	const realmData = await getRealm(this.connection, new PublicKey(this.id!))
@@ -203,7 +203,7 @@ export class Realms_Solana implements Safe {
     	])
 
 
-    	const propsalsToSend:{[proposalKey: string]: number} = {};
+    	const propsalsToSend: {[proposalKey: string]: number} = {};
 
     	(proposals
     		.filter((proposal) => proposalPublicKey.includes(proposal.pubkey.toString())) || [])
@@ -215,7 +215,7 @@ export class Realms_Solana implements Safe {
 
     	console.log('proposals', propsalsToSend)
     	return propsalsToSend
-    }
+	}
 }
 
 const solanaToUsd = async(solAmount: number) => {
@@ -230,7 +230,7 @@ const usdToSolana = async(usdAmount: number) => {
 	return (usdAmount / usdToSolana)
 }
 
-const getSafeDetails = async(realmsAddress: string) : Promise<SafeSelectOption | null> => {
+const getSafeDetails = async(realmsAddress: string): Promise<SafeSelectOption | null> => {
 	const connection = new Connection('https://mango.devnet.rpcpool.com', 'recent')
 	const programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
 	const realmsPublicKey = new PublicKey(realmsAddress)

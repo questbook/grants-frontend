@@ -6,22 +6,22 @@ import Empty from 'src/components/ui/empty'
 function LiveGrantEmptyState() {
 	return (
 		<Flex
-			direction="row"
-			w="100%">
+			direction='row'
+			w='100%'>
 			<Flex
-				direction="column"
-				justify="center"
-				h="100%"
-				align="center"
+				direction='column'
+				justify='center'
+				h='100%'
+				align='center'
 				mt={10}
-				mx="auto"
+				mx='auto'
 			>
 				<Empty
-					src="/illustrations/empty_states/no_live_grant.svg"
-					imgHeight="174px"
-					imgWidth="146px"
-					title="It’s quite silent here!"
-					subtitle="Get started by creating your grant and post it in less than 2 minutes."
+					src='/illustrations/empty_states/no_live_grant.svg'
+					imgHeight='174px'
+					imgWidth='146px'
+					title='It’s quite silent here!'
+					subtitle='Get started by creating your grant and post it in less than 2 minutes.'
 				/>
 
 				<Button
@@ -35,11 +35,11 @@ function LiveGrantEmptyState() {
 
 						}
 					}
-					maxW="163px"
-					variant="primary"
-					mr="12px"
+					maxW='163px'
+					variant='primary'
+					mr='12px'
 				>
-          Create a Grant
+					Create a Grant
 				</Button>
 			</Flex>
 		</Flex>

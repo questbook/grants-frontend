@@ -49,7 +49,7 @@ function ApplicantForm() {
 	const [isAdmin, setIsAdmin] = useState(false)
 	const { data: accountData, nonce } = useQuestbookAccount()
 	useEffect(() => {
-		if(workspace && workspace.members && workspace.members.length > 0) {
+		if(workspace?.members && workspace.members.length > 0) {
 			const tempMember = workspace.members.find(
 				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 			)
@@ -109,9 +109,9 @@ function ApplicantForm() {
 	} = useGetApplicationDetailsQuery(queryParams)
 
 	useEffect(() => {
-		console.log('ddddd', data, queryError, queryLoading)
+		// console.log('ddddd', data, queryError, queryLoading)
 		if(data && data.grantApplication) {
-			console.log('grantApplication------>', data.grantApplication)
+			// console.log('grantApplication------>', data.grantApplication)
 			setApplicationData(data.grantApplication)
 		}
 	}, [data, queryError, queryLoading, applicationData])
@@ -164,7 +164,7 @@ function ApplicantForm() {
 	}
 
 	const handleApplicationStateUpdate = async(st: number) => {
-		// console.log('unsetting state');
+		// // console.log('unsetting state');
 		setState(undefined)
 		if(st === 1 && resubmitComment === '') {
 			setResubmitCommentError(true)
@@ -176,7 +176,7 @@ function ApplicantForm() {
 			return
 		}
 
-		// console.log('setting state');
+		// // console.log('setting state');
 		setSubmitClicked(true)
 		setState(st)
 	}
@@ -195,7 +195,7 @@ function ApplicantForm() {
 							<Text
 								fontWeight='bold'
 								fontSize='18px'>
-                How does this work?
+								How does this work?
 							</Text>
 						</Flex>
 						<Flex
@@ -212,10 +212,10 @@ function ApplicantForm() {
 								borderRadius='50%'
 								mr='19px'
 							>
-                1
+								1
 							</Box>
 							<Text>
-                Open your wallet
+								Open your wallet
 							</Text>
 						</Flex>
 						<Flex
@@ -233,10 +233,10 @@ function ApplicantForm() {
 								borderRadius='50%'
 								mr='19px'
 							>
-                2
+								2
 							</Box>
 							<Text>
-                Click on ‘Decrypt’ to view the details.
+								Click on ‘Decrypt’ to view the details.
 							</Text>
 						</Flex>
 
@@ -245,7 +245,7 @@ function ApplicantForm() {
 							variant='primary'
 							onClick={() => setHiddenModalOpen(false)}
 						>
-              ok
+							ok
 						</Button>
 					</Flex>
 				</ModalBody>
@@ -387,7 +387,7 @@ function ApplicantForm() {
 														fontWeight='700'
 														color='#7B4646'
 													>
-                            Application Rejected
+														Application Rejected
 													</Text>
 													<Text
 														fontSize='16px'
@@ -437,7 +437,7 @@ function ApplicantForm() {
 														fontWeight='700'
 														color='#7B4646'
 													>
-                            Request for Resubmission
+														Request for Resubmission
 													</Text>
 													<Text
 														fontSize='16px'

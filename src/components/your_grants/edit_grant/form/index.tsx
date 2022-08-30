@@ -10,7 +10,13 @@ import {
 	ContentState, convertFromRaw, convertToRaw, EditorState,
 } from 'draft-js'
 import { ApiClientsContext } from 'pages/_app'
+import Heading from 'src/components/ui/heading'
 import Loader from 'src/components/ui/loader'
+import Title from 'src/components/your_grants/edit_grant/form/1_title'
+import Details from 'src/components/your_grants/edit_grant/form/2_details'
+import ApplicantDetails from 'src/components/your_grants/edit_grant/form/3_applicantDetails'
+import GrantRewardsInput from 'src/components/your_grants/edit_grant/form/4_rewards'
+import applicantDetailsList from 'src/constants/applicantDetailsList'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
@@ -18,12 +24,6 @@ import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys
 import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
-import applicantDetailsList from '../../../../constants/applicantDetailsList'
-import Heading from '../../../ui/heading'
-import Title from './1_title'
-import Details from './2_details'
-import ApplicantDetails from './3_applicantDetails'
-import GrantRewardsInput from './4_rewards'
 
 function Form({
 	refs,
@@ -31,10 +31,10 @@ function Form({
 	formData,
 	hasClicked
 }: {
-  refs: any[];
-  onSubmit: (data: any) => void;
-  formData: any;
-  hasClicked: boolean;
+  refs: any[]
+  onSubmit: (data: any) => void
+  formData: any
+  hasClicked: boolean
 }) {
 	const { workspace } = useContext(ApiClientsContext)!
 	const maxDescriptionLength = 300
@@ -51,7 +51,7 @@ function Form({
 	} = useSubmitPublicKey()
 
 	useEffect(() => {
-		/// console.log(pk);
+		/// // console.log(pk);
 		if(!accountData?.address) {
 			return
 		}
@@ -63,7 +63,7 @@ function Form({
 		const k = workspace?.members?.find(
 			(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 		)?.publicKey?.toString()
-		// console.log(k);
+		// // console.log(k);
 		if(k && k.length > 0) {
 			setPk(k)
 		} else {
@@ -104,7 +104,7 @@ function Form({
 	useEffect(() => {
 		if(transactionData) {
 			setKeySubmitted(true)
-			console.log('transactionData-----', transactionData)
+			// console.log('transactionData-----', transactionData)
 			setRefresh(true)
 		}
 	}, [transactionData])
@@ -116,7 +116,7 @@ function Form({
           && member.publicKey
           && member.publicKey !== '',
 			)
-			console.log('Workspace', workspace)
+			// console.log('Workspace', workspace)
 			setHasOwnerPublicKey(hasPubKey)
 		}
 	}, [accountData, workspace])
@@ -174,7 +174,7 @@ function Form({
 		const newDetailsRequired = [...detailsRequired];
 		// TODO: create interface for detailsRequired
 
-		// console.log(newDetailsRequired, index);
+		// // console.log(newDetailsRequired, index);
 
 		(newDetailsRequired[index] as any).required = !(
       newDetailsRequired[index] as any
@@ -205,7 +205,7 @@ function Form({
 
 		const initialRubrics = formData.rubric
 		const newRubrics = [] as any[]
-		console.log('initialRubrics', initialRubrics)
+		// console.log('initialRubrics', initialRubrics)
 		initialRubrics?.items.forEach((initalRubric: any) => {
 			newRubrics.push({
 				name: initalRubric.title,
@@ -239,7 +239,7 @@ function Form({
 	})
 
 	useEffect(() => {
-		console.log('formData', formData)
+		// console.log('formData', formData)
 	}, [formData])
 	const [customFieldsOptionIsVisible, setCustomFieldsOptionIsVisible] = React.useState(
 		Object.keys(formData).filter((key) => key.startsWith('customField')).length > 0,
@@ -288,7 +288,7 @@ function Form({
 	}
 
 	useEffect(() => {
-		// console.log(currentChain);
+		// // console.log(currentChain);
 		if(currentChain) {
 			const supportedCurrencies = Object.keys(
 				CHAIN_INFO[currentChain].supportedCurrencies,
@@ -485,7 +485,7 @@ function Form({
 
 	useEffect(() => {
 		if(newPkTransactionData && newPublicKey && newPublicKey.publicKey) {
-			// console.log(newPublicKey);
+			// // console.log(newPublicKey);
 			setPk(newPublicKey.publicKey)
 			const detailsString = JSON.stringify(
 				convertToRaw(details.getCurrentContent()),
@@ -590,19 +590,19 @@ function Form({
 	return (
 		<>
 			<Heading
-				mt="18px"
-				title="Edit your grant" />
+				mt='18px'
+				title='Edit your grant' />
 
 			<Flex
-				mt="-73px"
-				justifyContent="flex-end">
+				mt='-73px'
+				justifyContent='flex-end'>
 				<Button
 					disabled={!isBiconomyInitialised}
 					ref={buttonRef}
 					w={hasClicked ? buttonRef.current?.offsetWidth : 'auto'}
 					onClick={hasClicked ? () => { } : handleOnSubmit}
 					py={hasClicked ? 2 : 0}
-					variant="primary"
+					variant='primary'
 				>
 					{hasClicked ? <Loader /> : 'Save'}
 				</Button>
@@ -610,15 +610,15 @@ function Form({
 
 			<Text
 				ref={refs[0]}
-				fontSize="18px"
-				fontWeight="700"
-				lineHeight="26px"
+				fontSize='18px'
+				fontWeight='700'
+				lineHeight='26px'
 				letterSpacing={0}
-				mt="30px"
+				mt='30px'
 			>
-        Grant Intro
+				Grant Intro
 			</Text>
-			<Box mt="20px" />
+			<Box mt='20px' />
 			<Title
 				title={title}
 				setTitle={setTitle}
@@ -633,15 +633,15 @@ function Form({
 
 			<Text
 				ref={refs[1]}
-				fontSize="18px"
-				fontWeight="700"
-				lineHeight="26px"
+				fontSize='18px'
+				fontWeight='700'
+				lineHeight='26px'
 				letterSpacing={0}
 				mt={4}
 			>
-        Grant Details
+				Grant Details
 			</Text>
-			<Box mt="20px" />
+			<Box mt='20px' />
 			<Details
 				details={details}
 				setDetails={setDetails}
@@ -651,15 +651,15 @@ function Form({
 
 			<Text
 				ref={refs[2]}
-				fontSize="18px"
-				fontWeight="700"
-				lineHeight="26px"
+				fontSize='18px'
+				fontWeight='700'
+				lineHeight='26px'
 				letterSpacing={0}
-				mt="40px"
+				mt='40px'
 			>
-        Applicant Details
+				Applicant Details
 			</Text>
-			<Box mt="20px" />
+			<Box mt='20px' />
 			<ApplicantDetails
 				detailsRequired={detailsRequired}
 				toggleDetailsRequired={toggleDetailsRequired}
@@ -688,15 +688,15 @@ function Form({
 
 			<Text
 				ref={refs[3]}
-				fontSize="18px"
-				fontWeight="700"
-				lineHeight="26px"
+				fontSize='18px'
+				fontWeight='700'
+				lineHeight='26px'
 				letterSpacing={0}
-				mt="40px"
+				mt='40px'
 			>
-        Reward and Deadline
+				Reward and Deadline
 			</Text>
-			<Box mt="20px" />
+			<Box mt='20px' />
 			<GrantRewardsInput
 				reward={reward}
 				setReward={setReward}
@@ -720,34 +720,34 @@ function Form({
 			/>
 
 			<Flex
-				alignItems="flex-start"
+				alignItems='flex-start'
 				mt={8}
 				mb={10}
-				maxW="400">
+				maxW='400'>
 				<Image
-					display="inline-block"
-					h="10px"
-					w="10px"
-					src="/ui_icons/info_brand.svg"
+					display='inline-block'
+					h='10px'
+					w='10px'
+					src='/ui_icons/info_brand.svg'
 					mt={1}
 					mr={2}
 				/>
 				{' '}
-				<Text variant="footer">
-          By clicking Publish Grant you&apos;ll have to approve this transaction
-          in your wallet.
+				<Text variant='footer'>
+					By clicking Publish Grant you&apos;ll have to approve this transaction
+					in your wallet.
 					{' '}
 					<Link
-						href="https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46"
+						href='https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46'
 						isExternal>
-Learn more
+						Learn more
 					</Link>
 					{' '}
 					<Image
-						display="inline-block"
-						h="10px"
-						w="10px"
-						src="/ui_icons/link.svg"
+						display='inline-block'
+						h='10px'
+						w='10px'
+						src='/ui_icons/link.svg'
 					/>
 				</Text>
 			</Flex>
@@ -756,7 +756,7 @@ Learn more
 				disabled={!isBiconomyInitialised}
 				onClick={hasClicked ? () => { } : handleOnSubmit}
 				py={hasClicked ? 2 : 0}
-				variant="primary">
+				variant='primary'>
 				{hasClicked ? <Loader /> : 'Save Changes'}
 			</Button>
 

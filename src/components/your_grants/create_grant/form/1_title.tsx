@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Flex } from '@chakra-ui/react'
-import MultiLineInput from '../../../ui/forms/multiLineInput'
-import SingleLineInput from '../../../ui/forms/singleLineInput'
+import MultiLineInput from 'src/components/ui/forms/multiLineInput'
+import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 
 function Title({
 	title,
@@ -14,22 +14,22 @@ function Title({
 	setSummaryError,
 	maxDescriptionLength,
 }: {
-  title: string;
-  setTitle: (title: string) => void;
-  summary: string;
-  setSummary: (summary: string) => void;
-  titleError: boolean;
-  setTitleError: (titleError: boolean) => void;
-  summaryError: boolean;
-  setSummaryError: (summaryError: boolean) => void;
-  maxDescriptionLength: number;
+  title: string
+  setTitle: (title: string) => void
+  summary: string
+  setSummary: (summary: string) => void
+  titleError: boolean
+  setTitleError: (titleError: boolean) => void
+  summaryError: boolean
+  setSummaryError: (summaryError: boolean) => void
+  maxDescriptionLength: number
 }) {
 	return (
 		<Flex
-			direction="column"
-			w="100%">
+			direction='column'
+			w='100%'>
 			<SingleLineInput
-				label="Grant Title"
+				label='Grant Title'
 				value={title}
 				onChange={
 					(e) => {
@@ -37,17 +37,17 @@ function Title({
 						setTitle(e.target.value)
 					}
 				}
-				placeholder="Decentralized batching contract"
-				subtext="Letters, spaces, and numbers are allowed."
+				placeholder='Decentralized batching contract'
+				subtext='Letters, spaces, and numbers are allowed.'
 				isError={titleError}
-				errorText="Required"
+				errorText='Required'
 			/>
 
 			<Box mt={8} />
 
 			<MultiLineInput
-				label="Grant Summary"
-				placeholder="A tool, script or tutorial to set up monitoring for miner GPU, CPU, & memory."
+				label='Grant Summary'
+				placeholder='A tool, script or tutorial to set up monitoring for miner GPU, CPU, & memory.'
 				value={summary}
 				onChange={
 					(e) => {
@@ -59,7 +59,7 @@ function Title({
 				}
 				maxLength={maxDescriptionLength}
 				isError={summaryError}
-				errorText="Required"
+				errorText='Required'
 			/>
 		</Flex>
 	)

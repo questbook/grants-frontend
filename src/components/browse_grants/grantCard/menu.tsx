@@ -15,30 +15,30 @@ function ShareMenu({
 	grantID,
 	chainId,
 }: {
-  grantID: string;
-  chainId: SupportedChainId | undefined;
+  grantID: string
+  chainId: SupportedChainId | undefined
 }) {
 	const [copied, setCopied] = React.useState(false)
 
 	return (
 		<MenuComponent
 			closeOnSelect={false}
-			placement="left">
+			placement='left'>
 			<MenuButton
 				as={IconButton}
-				aria-label="View More Options"
+				aria-label='View More Options'
 				icon={
 					<Image
 						h={4}
 						w={4}
-						src="/ui_icons/more.svg" />
+						src='/ui_icons/more.svg' />
 				}
-				variant="link"
+				variant='link'
 				mx={0}
 				minW={0}
 			/>
 			<MenuList
-				minW="164px"
+				minW='164px'
 				p={0}>
 				<MenuItem
 					onClick={
@@ -46,7 +46,7 @@ function ShareMenu({
 							const href = window.location.href.split('/')
 							const protocol = href[0]
 							const domain = href[2]
-							// console.log(domain);
+							// // console.log(domain);
 
 							const req = {
 								long_url: `${protocol}//${domain}/explore_grants/about_grant/?grantId=${grantID}&chainId=${chainId}&utm_source=questbook&utm_medium=browse_grants&utm_campaign=share`,
@@ -63,7 +63,7 @@ function ShareMenu({
 								body: JSON.stringify(req),
 							}).then((response) => {
 								if(!response.ok) {
-									console.log(response)
+									// console.log(response)
 								}
 
 								return response.json()
@@ -73,23 +73,23 @@ function ShareMenu({
 							})
 						}
 					}
-					py="12px"
-					px="16px"
+					py='12px'
+					px='16px'
 				>
 					<Text
-						fontSize="14px"
-						fontWeight="400"
-						lineHeight="20px"
-						color="#122224"
-						display="flex"
-						alignItems="center"
+						fontSize='14px'
+						fontWeight='400'
+						lineHeight='20px'
+						color='#122224'
+						display='flex'
+						alignItems='center'
 					>
 						<Image
 							mr={18}
-							display="inline-block"
+							display='inline-block'
 							h={4}
 							w={4}
-							src="/ui_icons/share_brand.svg"
+							src='/ui_icons/share_brand.svg'
 						/>
 						{copied ? 'Link Copied!' : 'Share'}
 					</Text>

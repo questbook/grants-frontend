@@ -28,11 +28,11 @@ function Header() {
 	return (
 		<>
 			<Flex
-				w="100%"
+				w='100%'
 				py={0}
-				mt="4"
-				align="center"
-				justify="strech"
+				mt='4'
+				align='center'
+				justify='strech'
 
 
 			>
@@ -41,19 +41,19 @@ function Header() {
                          		TableHeader.map((header: any, index: any) => (
 
 						<Text
-							whiteSpace="nowrap"
+							whiteSpace='nowrap'
 							key={header}
-							fontWeight="700"
-							fontSize="16px"
-							lineHeight="24px"
+							fontWeight='700'
+							fontSize='16px'
+							lineHeight='24px'
 							textAlign={tableHeadersAlign[index] as ResponsiveValue<'left' | 'center'>}
 							flex={tableHeadersflex[index]}
-							ml="20px"
+							ml='20px'
 
 
 						>
-							{header}
-						</Text>
+		{header}
+ </Text>
 
 					))
 

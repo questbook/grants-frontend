@@ -1,11 +1,11 @@
 import { PublicKey } from '@solana/web3.js'
 
 export interface TransactionType {
-    from:string,
-    to: string,
-    amount: any,
-    data: string,
-    metadata: any,
+    from: string
+    to: string
+    amount: any
+    data: string
+    metadata: any
     selectedMilestone: any
 }
 
@@ -28,27 +28,27 @@ export enum TransactionStatus {
 }
 
 export interface TransactionResult {
-    transactionHash: string,
-    url: string, // url on the safe to view the transaction
-    status: TransactionStatus,
+    transactionHash: string
+    url: string // url on the safe to view the transaction
+    status: TransactionStatus
 }
 
 export interface TransactionHashStatus {
-    to: string,
-    from: string,
-    amount: string,
+    to: string
+    from: string
+    amount: string
     status: TransactionStatus
 }
 
 export interface Callback<T> {
-    (error: Error, result: T): void;
+    (error: Error, result: T): void
 }
 
 export interface SafeDetails {
-    name: string,
-    address: string,
-    balance: string,
-    owners: string[],
+    name: string
+    address: string
+    balance: string
+    owners: string[]
 }
 
 /**
@@ -57,11 +57,11 @@ export interface SafeDetails {
  */
 
 export interface Safe {
-    id: string | PublicKey | undefined;
-    name: string;
-    description: string;
-    image: string;
-    chainId: number;
+    id: string | PublicKey | undefined
+    name: string
+    description: string
+    image: string
+    chainId: number
 
     /**
      *
@@ -76,32 +76,32 @@ export interface Safe {
      *   5. Update the transaction on the Questbook smart contract
      *   6. Close the modal using the Callback
      */
-    proposeTransactions(grantName: string, transactions : TransactionType[], wallet: any): Promise<string>;
+    proposeTransactions(grantName: string, transactions: TransactionType[], wallet: any): Promise<string>
 
-    createMultiTransaction(transactions: MetaTransaction[], safeAddress: string): void;
+    createMultiTransaction(transactions: MetaTransaction[], safeAddress: string): void
     /**
      * @param address : Address of the safe
      * This is useful when searching for detecting which network the safe is on (in the onboarding)
      */
-    isValidSafeAddress(address: String) : Promise<boolean>;
+    isValidSafeAddress(address: String): Promise<boolean>
 
     /**
      * @param address : Address of the safe
      *
      * This should pop up metamask/walletconnect/phantom etc to allow the user to sign a message and then check if the signer address is owner on the safe
      */
-    isOwner(address: String, callback: Callback<any>) : Promise<boolean>;
+    isOwner(address: String, callback: Callback<any>): Promise<boolean>
 
     /**
      * @param address : Address of the safe
      * Fetch the details of the safe from the appropriate api and return the details
      */
-    getSafeDetails(address: String) : Promise<SafeDetails>;
+    getSafeDetails(address: String): Promise<SafeDetails>
 
 
     /**
      * @param address : List of transaction hashes
      * Fetch the details of the transaction hashes from the appropriate api and return the status and amount transferred
      */
-    getTransactionHashStatus(transactionHashes: string) : Promise<TransactionHashStatus>;
+    getTransactionHashStatus(transactionHashes: string): Promise<TransactionHashStatus>
 }

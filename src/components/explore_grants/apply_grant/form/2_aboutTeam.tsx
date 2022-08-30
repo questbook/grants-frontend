@@ -2,9 +2,9 @@ import React from 'react'
 import {
 	Box, Text,
 } from '@chakra-ui/react'
+import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import MySelect from 'src/components/ui/forms/select'
-import MultiLineInput from '../../../ui/forms/multiLineInput'
-import Tooltip from '../../../ui/tooltip'
+import Tooltip from 'src/components/ui/tooltip'
 
 function AboutTeam({
 	teamMembers,
@@ -17,28 +17,28 @@ function AboutTeam({
 
 	grantRequiredFields,
 }: {
-  teamMembers: number | null;
-  setTeamMembers: (teamMembers: number | null) => void;
-  teamMembersError: boolean;
-  setTeamMembersError: (teamMembersError: boolean) => void;
+  teamMembers: number | null
+  setTeamMembers: (teamMembers: number | null) => void
+  teamMembersError: boolean
+  setTeamMembersError: (teamMembersError: boolean) => void
 
-  membersDescription: { description: string, isError: boolean }[];
-  setMembersDescription: (membersDescription: { description: string, isError: boolean }[]) => void;
-  grantRequiredFields: string[];
+  membersDescription: { description: string, isError: boolean }[]
+  setMembersDescription: (membersDescription: { description: string, isError: boolean }[]) => void
+  grantRequiredFields: string[]
 }) {
 	return (
 
 		<Box display={grantRequiredFields.includes('teamMembers') || grantRequiredFields.includes('memberDetails') ? '' : 'none'}>
 			<Text
-				fontWeight="700"
-				fontSize="16px"
-				lineHeight="20px"
-				color="#8850EA">
-        About Team
+				fontWeight='700'
+				fontSize='16px'
+				lineHeight='20px'
+				color='#8850EA'>
+				About Team
 				<Tooltip
-					icon="/ui_icons/tooltip_questionmark_brand.svg"
-					label="Write about the team members working on the project."
-					placement="bottom-start"
+					icon='/ui_icons/tooltip_questionmark_brand.svg'
+					label='Write about the team members working on the project.'
+					placement='bottom-start'
 				/>
 			</Text>
 
@@ -58,25 +58,25 @@ function AboutTeam({
 								setMembersDescription(Array(value).fill({ description: '', isError: false }))
 							}
 						}
-						label="Team Members"
+						label='Team Members'
 						options={Array.from(Array(11).keys()).slice(1)}
 					/>
 				)
 			}
 
-			<Box mt="43px" />
+			<Box mt='43px' />
 			<Text
-				fontWeight="700"
-				fontSize="16px"
-				lineHeight="20px"
-				color="#8850EA"
+				fontWeight='700'
+				fontSize='16px'
+				lineHeight='20px'
+				color='#8850EA'
 				display={
 					grantRequiredFields.includes(
 						'memberDetails',
 					) ? '' : 'none'
 				}
 			>
-        Details
+				Details
 				{/* <Tooltip
           icon="/ui_icons/tooltip_questionmark_brand.svg"
           label="details"
@@ -89,7 +89,7 @@ function AboutTeam({
 				membersDescription.map(({ description, isError }, index) => (
 					<MultiLineInput
 						key={index}
-						placeholder="Write about team member - education, work experience with portfolio link, and side projects."
+						placeholder='Write about team member - education, work experience with portfolio link, and side projects.'
 						label={`Member ${index + 1}`}
 						maxLength={300}
 						value={description}
@@ -109,7 +109,7 @@ function AboutTeam({
 							}
 						}
 						isError={isError}
-						errorText="Required"
+						errorText='Required'
 						visible={grantRequiredFields.includes('memberDetails')}
 					/>
 				))

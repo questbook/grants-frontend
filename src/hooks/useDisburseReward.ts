@@ -2,18 +2,18 @@ import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { BigNumber, utils } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
+import CustomToast from 'src/components/ui/toasts/customToast'
+import ErrorToast from 'src/components/ui/toasts/errorToast'
 import SuccessToast from 'src/components/ui/toasts/successToast'
+import useGrantContract from 'src/hooks/contracts/useGrantContract'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import useChainId from 'src/hooks/utils/useChainId'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import CustomToast from '../components/ui/toasts/customToast'
-import ErrorToast from '../components/ui/toasts/errorToast'
-import useGrantContract from './contracts/useGrantContract'
-import { useQuestbookAccount } from './gasless/useQuestbookAccount'
-import useChainId from './utils/useChainId'
 
 export default function useDisburseReward(
 	data: any,
@@ -62,9 +62,9 @@ export default function useDisburseReward(
 	}, [grantContract])
 
 	async function disburseRewardEvent() {
-		// console.log('Got to disburse event')
+		// // console.log('Got to disburse event')
 		grantContract.once('DisburseReward', (applicationIdEvent, milestoneId, asset, sender, amount, isP2P, eventDetail) => {
-			console.log('DisburseReward', eventDetail)
+			// console.log('DisburseReward', eventDetail)
 			if(utils.getAddress(sender) === accountData?.address && BigNumber.from(applicationId).toNumber() === applicationIdEvent.toNumber()) {
 				setTransactionData(eventDetail)
 				setLoading(false)
@@ -102,7 +102,7 @@ export default function useDisburseReward(
 		async function validate() {
 			setLoading(true)
 			try {
-				// console.log('Got to validate')
+				// // console.log('Got to validate')
 				grantContract.disburseReward(
 					applicationId!,
 					milestoneIndex!,
@@ -141,10 +141,10 @@ export default function useDisburseReward(
 		}
 
 		try {
-			// console.log(data);
-			// console.log(milestoneIndex);
-			// console.log(applicationId);
-			// console.log(Number.isNaN(milestoneIndex));
+			// // console.log(data);
+			// // console.log(milestoneIndex);
+			// // console.log(applicationId);
+			// // console.log(Number.isNaN(milestoneIndex));
 			if(Number.isNaN(milestoneIndex)) {
 				return
 			}
@@ -165,7 +165,7 @@ export default function useDisburseReward(
 				return
 			}
 
-			// console.log(66);
+			// // console.log(66);
 			if(!accountData || !accountData.address) {
 				throw new Error('not connected to wallet')
 			}
