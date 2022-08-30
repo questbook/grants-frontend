@@ -608,7 +608,7 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 			Add a milestone
 											</Text>
 										</Box>
-</Flex>
+									</Flex>
 								)
 							}
 							<Box mt={6} />
