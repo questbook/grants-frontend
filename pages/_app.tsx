@@ -66,6 +66,8 @@ const { chains, provider } = configureChains(allChains, [
 	infuraProvider({ infuraId })
 ])
 
+// const safeOwner =
+
 // Set up client
 const client = createClient({
 	autoConnect: true,
