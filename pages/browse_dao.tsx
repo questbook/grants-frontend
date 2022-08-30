@@ -23,7 +23,6 @@ function BrowseDao() {
 	)
 	const { data: accountData } = useAccount()
 	const { isDisconnected } = useConnect()
-	const [grantsApplicants, setGrantsApplicants] = useState<any>()
 	const [allWorkspaces, setAllWorkspaces] = useState([] as any[])
 	// const [selectedChainId, setSelectedChainId] = useState<number|undefined>()
 	const [sortedWorkspaces, setSortedWorkspaces] = useState([] as any[])
