@@ -25,6 +25,7 @@ query getWorkspaceMembers($actorId: Bytes!) {
         id
         actorId
         publicKey
+        fullName
         email
         accessLevel
         outstandingReviewIds

@@ -145,7 +145,9 @@ export function highlightWordsInString(
 	return formatted.split('<span>').map((word, index) => {
 		if(index % 2) {
 			return (
-				<span style={{ color, fontWeight: 700 }}>
+				<span
+					key={index}
+					style={{ color, fontWeight: 700 }}>
 					{word}
 				</span>
 			)

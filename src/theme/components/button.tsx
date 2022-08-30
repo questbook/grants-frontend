@@ -138,6 +138,30 @@ export default {
 			},
 			ghost: {
 				color: '#555570',
+			},
+			secondaryV2: {
+				bg: 'gray.3',
+				color: 'black.1',
+				lineHeight: '1.25rem',
+				'&:hover': {
+					bg: 'gray.2',
+				},
+				'&:active': {
+					bg: 'gray.4',
+				},
+				'&:focus': {
+					bg: 'gray.4',
+					border: '1px solid black.3',
+					borderRadius: '2px'
+				},
+				'&:disabled': {
+					bg: 'gray.4',
+					opacity: 1,
+					color: 'gray.5',
+					'&:hover': {
+						bg: 'gray.3',
+					},
+				},
 			}
 		},
 	},
