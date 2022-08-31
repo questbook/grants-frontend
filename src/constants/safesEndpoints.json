@@ -7,5 +7,6 @@
     "56": "https://safe-transaction.bsc.gnosis.io/api/",
     "246": "https://safe-transaction.ewc.gnosis.io/api/",
     "10": "https://safe-transaction.optimism.gnosis.io/api/",
-    "137": "https://safe-transaction.polygon.gnosis.io/api/"
+    "137": "https://safe-transaction.polygon.gnosis.io/api/",
+    "42220": "https://transaction-service.gnosis-safe-staging.celo-networks-dev.org/api/"
 }
