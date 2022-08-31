@@ -25,7 +25,6 @@ interface Props {
   sentDate?: string
   updatedDate?: string
   reviewDate?: string
-  resultDate?: string
   funding: string
   currency: string
 }
@@ -39,7 +38,6 @@ const defaultProps = {
 	sentDate: '',
 	updatedDate: '',
 	reviewDate: '',
-	resultDate: '',
 }
 
 function YourApplicationCard({
@@ -57,8 +55,6 @@ function YourApplicationCard({
 	reviewDate,
 	funding,
 	currency,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	resultDate,
 }: Props) {
 	return (
 		<Flex direction='column'>

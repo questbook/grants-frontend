@@ -44,7 +44,7 @@ export type CheckIfWalletExistsType = {
 }
 
 export type CheckIfWalletExistsAndDeployType = {
-    walletAddress: string,
+    walletAddress: string
     txHash: string
 }
 

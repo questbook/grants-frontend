@@ -62,7 +62,7 @@ const MilestoneSelect = ({
 }) => (
 	<DropdownSelect
 		options={
-			milestoneList.map((milestone, i) => ({
+			milestoneList.map((milestone,) => ({
 				id: milestone.id,
 				title: milestone.title,
 				label: ''

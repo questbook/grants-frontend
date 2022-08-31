@@ -89,7 +89,7 @@ export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boole
 
 			switchNetwork(parseInt(_newChainId))
 
-		}).onEvent(_biconomy.ERROR, (error: any, message: any) => {
+		}).onEvent(_biconomy.ERROR, () => {
 			// setIsLoading(false)
 			if(typeof window !== 'undefined') {
 				localStorage.setItem('isBiconomyLoading', 'false')

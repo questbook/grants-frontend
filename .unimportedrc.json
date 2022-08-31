@@ -1,0 +1,7 @@
+{
+	"aliases": {
+		"src/*": ["./src", "./src/*"],
+		"pages/*": ["./pages", "./pages/*"]
+	}
+
+}

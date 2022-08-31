@@ -53,7 +53,7 @@ interface Props {
   defaultMilestoneFields: any[]
 }
 
-const MINIMUM_ALLOWED_LENGTH = 250
+// const MINIMUM_ALLOWED_LENGTH = 250
 
 // eslint-disable-next-line max-len
 function Form({

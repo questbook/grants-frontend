@@ -16,7 +16,7 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 
 	const toast = useToast()
 
-	const { makeInvite, getMakeInviteGasEstimate } = useMakeInvite(selectedRole || 0)
+	const { makeInvite } = useMakeInvite(selectedRole || 0)
 
 	const createLink = async() => {
 		setCreateLinkStep(0)

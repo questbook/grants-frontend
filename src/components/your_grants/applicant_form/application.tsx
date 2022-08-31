@@ -28,20 +28,6 @@ interface Props {
 }
 
 function Application({ applicationData, showHiddenData }: Props) {
-	const [selected, setSelected] = useState(0)
-
-	const scroll = (ref: any, currentSelection: number) => {
-		if(!ref.current) {
-			return
-		}
-
-		ref.current.scrollIntoView({
-			behavior: 'smooth',
-			block: 'start',
-		})
-		setSelected(currentSelection)
-	}
-
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 	const refs = [useRef(null), useRef(null), useRef(null), useRef(null)]

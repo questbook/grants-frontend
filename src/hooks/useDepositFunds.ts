@@ -21,7 +21,7 @@ export default function useDepositFunds(
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
-	const { data: accountData, nonce } = useQuestbookAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
@@ -63,10 +63,10 @@ export default function useDepositFunds(
 					},
 				}),
 			})
-			const transferTxn = rewardContract.transfer(
-			grantAddress!,
-			finalAmount!,
-			)
+			// const transferTxn = rewardContract.transfer(
+			// grantAddress!,
+			// finalAmount!,
+			// )
 
 			await rewardContract.once('Transfer', (from, to, amount, event) => {
 				if(from === accountData?.address && to === utils.getAddress(grantAddress!)) {

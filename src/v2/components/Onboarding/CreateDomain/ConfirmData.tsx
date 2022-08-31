@@ -16,7 +16,7 @@ interface Props {
 	isBiconomyInitialised: boolean
 }
 
-function ConfirmData({ domainImageFile, onImageFileChange, safeAddress, safeChainIcon, domainName, domainNetwork, domainNetworkIcon, onCreateDomain, isVerified, signerAddress, isBiconomyInitialised }: Props) {
+function ConfirmData({ domainImageFile, safeAddress, safeChainIcon, domainName, domainNetwork, domainNetworkIcon, onCreateDomain, isVerified, signerAddress, isBiconomyInitialised }: Props) {
 	const [newDomainImageFile, setNewDomainImageFile] = React.useState<File | null>(null)
 	const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`
 

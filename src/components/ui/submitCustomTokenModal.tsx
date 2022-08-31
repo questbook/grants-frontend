@@ -12,6 +12,7 @@ import config from 'src/constants/config.json'
 import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
 import { isValidAddress } from 'src/utils/validationUtils'
+import SuccessToast from 'src/v2/components/Toasts/successToast'
 
 interface ModalProps {
   isModalOpen: boolean
@@ -60,6 +61,22 @@ function CustomTokenModal({
 
 	const toast = useToast()
 	const toastRef = React.useRef<ToastId>()
+
+	useEffect(() => {
+		if(txnData) {
+			toastRef.current = toast({
+				position: 'top',
+				render: () => SuccessToast({
+					content: 'New token added at ' + txnLink,
+					close: () => {
+						if(toastRef.current) {
+							toast.close(toastRef.current)
+						}
+					},
+				}),
+			})
+		}
+	}, [txnData])
 
 	const validateTokenAddress = () => {
 		if(!tokenAddress || !isValidAddress(tokenAddress)) {

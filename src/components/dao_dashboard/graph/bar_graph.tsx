@@ -126,7 +126,7 @@ function BarGraph({
 				// 	},
 				// },
 				// theme: 'dark',
-				custom: ({ series, seriesIndex, dataPointIndex, w }: {series: any, seriesIndex: any, dataPointIndex: any, w: any}) => {
+				custom: ({ series, seriesIndex, dataPointIndex }: {series: any, seriesIndex: any, dataPointIndex: any}) => {
 					const d = new Date(applications[dataPointIndex].date.getTime() + 86400000)
 					return (
 						`<div class='barhover'>

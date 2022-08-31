@@ -147,7 +147,6 @@ function Sidebar({
 		return s
 	}
 
-	const [reviewDrawerOpen, setReviewDrawerOpen] = React.useState(false)
 	let icon
 	let label
 	let decimals
@@ -244,9 +243,9 @@ function Sidebar({
 							applicantEmail
 							 ? (
 									<>
-										{applicantEmail}
-										<MailTo applicantEmail={applicantEmail} />
-									</>
+									{applicantEmail}
+									<MailTo applicantEmail={applicantEmail} />
+        </>
 								) : (
 									<Heading
 										variant='applicationHeading'

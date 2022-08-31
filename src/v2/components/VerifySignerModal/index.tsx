@@ -31,7 +31,7 @@ const VerifySignerModal = ({
 	const [connectClicked, setConnectClicked] = useState(false)
 	const [walletClicked, setWalletClicked] = useState(false)
 	const [redirectInitiated, setRedirectInitiated] = useState(false)
-	const { phantomWallet, phantomWalletConnected } = usePhantomWallet()
+	const { phantomWallet } = usePhantomWallet()
 	const { disconnectAsync } = useDisconnect()
 	const toast = useToast()
 

@@ -303,7 +303,7 @@ function Funding({
                   		flex={flex}
                   	>
                   		{content(item, assetId, assetDecimals, grantId, chainId, rewardToken)}
-                  	</Flex>
+ </Flex>
                   ))
 										}
 									</Flex>
