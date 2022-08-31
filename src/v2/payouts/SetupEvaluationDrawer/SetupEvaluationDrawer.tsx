@@ -481,7 +481,7 @@ const SetupEvaluationDrawer = ({
 									}
 								}
 							}>
-							{step === 0 ? 'Continue' : 'Initiate Transaction'}
+							{step === 0 ? 'Continue' : 'Setup Evaluation'}
 						</Button>
 
 					</Flex>
