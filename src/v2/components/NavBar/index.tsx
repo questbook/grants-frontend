@@ -1,20 +1,13 @@
 import { Container, Image } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import useChainId from 'src/hooks/utils/useChainId'
 import AccountDetails from 'src/v2/components/NavBar/AccountDetails'
 import { useConnect } from 'wagmi'
 
-interface Props {
-  onGetStartedClick: boolean
-  onGetStartedBtnClicked: boolean
-  setGetStartedClicked: (value: boolean) => void
-}
-
-function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicked }: Props) {
+function NavBar() {
 	// const { connected } = useContext(ApiClientsContext)!
 	const { isDisconnected } = useConnect()
 	const router = useRouter()
-	const chainId = useChainId()
+	// const chainId = useChainId()
 
 	return (
 		<Container
@@ -86,7 +79,8 @@ function NavBar({ onGetStartedClick, onGetStartedBtnClicked, setGetStartedClicke
 				)
 			} */}
 
-			{true && <AccountDetails /> /* @TODO-gasless: FIX HERE */}
+			{/* @TODO-gasless: FIX HERE */}
+			<AccountDetails />
 
 			{/* {!connected && <GetStarted onGetStartedClick={onGetStartedClick} />} */}
 			{/* {

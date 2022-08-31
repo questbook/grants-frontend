@@ -37,7 +37,7 @@ export default function useBatchUpdateApplicationState(
 	const toast = useToast()
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = React.useState<number>()
 
-	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
+	const { webwallet } = useContext(WebwalletContext)!
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: chainId?.toString()!
@@ -48,13 +48,14 @@ export default function useBatchUpdateApplicationState(
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = React.useState(false)
 
 	useEffect(() => {
-		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		// console.log('rree', isBiconomyLoading, biconomyLoading)
+		// const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		console.log('rree',biconomy, biconomyWalletClient, scwAddress)
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
 			biconomy.networkId.toString() === chainId.toString()) {
+				console.log("Hifff")
 			setIsBiconomyInitialised(true)
 		}
-	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised])
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, chainId])
 
 	useEffect(() => {
 		if(state) {

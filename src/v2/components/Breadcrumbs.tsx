@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-	Box, Link, Text, useTheme,
+	Box, Link, Text,
 } from '@chakra-ui/react'
 
 interface BreadcrumbProps {
@@ -10,7 +10,7 @@ interface BreadcrumbProps {
 }
 
 function Breadcrumbs({ path, id }: BreadcrumbProps) {
-	const theme = useTheme()
+	// const theme = useTheme()
 	return (
 		<Text
 			mt={0}

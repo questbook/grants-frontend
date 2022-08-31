@@ -21,7 +21,7 @@ export default function useCreateWorkspace(
 	data: any
 ) {
 
-	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
+	const { webwallet } = useContext(WebwalletContext)!
 
 
 	const [error, setError] = React.useState<string>()

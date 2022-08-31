@@ -31,7 +31,6 @@ import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { useGetDaoDetailsQuery, useGetFundsAndProfileDataQuery } from 'src/generated/graphql'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 // APP LAYOUT & STATE
 import NavbarLayout from 'src/layout/navbarLayout'
 // CONSTANTS AND TYPES
@@ -47,7 +46,7 @@ function Profile() {
 	const { onOpen, isOpen, onClose } = useDisclosure()
 
 	const { subgraphClients } = React.useContext(ApiClientsContext)!
-	const { data: accountData, nonce } = useQuestbookAccount()
+	// const { data: accountData, nonce } = useQuestbookAccount()
 
 	const [workspaceData, setWorkspaceData] = React.useState<DAOWorkspace>()
 	const [chainID, setChainId] = React.useState<SupportedChainId>()
@@ -117,14 +116,6 @@ function Profile() {
 			acceptingApplications: true,
 		},
 	})
-
-	// useEffect(() => {
-	// 	if(allDaoData && allDaoData.grants.length >= 1 && grantsApplicants.length === 0) {
-	// 		allDaoData.grants.forEach((grant) => {
-	// 			setGrantsApplicants((array: any) => [...array, grant.numberOfApplications])
-	// 		})
-	// 	}
-	// }, [allDaoData, grantsApplicants])
 
 	const getAnalyticsData = async() => {
 		// console.log('calling analytics')
@@ -198,44 +189,6 @@ function Profile() {
 			})
 		}
 	}, [allDaoData])
-
-	// useEffect(() => {
-	// 	if(allDaoData && allDaoData.grants.length >= 1 && grantWinners.length === 0) {
-	// 		allDaoData.grants.forEach((grant) => {
-	// 			grant.applications.forEach(
-	// 				(app: any) => app.state === 'approved' &&
-	//           setGrantWinners((winners: any) => [...winners, app])
-	// 			)
-	// 		})
-	// 	}
-	// }, [allDaoData, grantWinners])
-
-	useEffect(() => {
-		if(allDaoData && grantsDisbursed.length === 0) {
-			allDaoData.grants.forEach((grant) => {
-				const chainId = getSupportedChainIdFromSupportedNetwork(
-					grant.workspace.supportedNetworks[0]
-				)
-
-				const tokenInfo =
-            CHAIN_INFO[chainId]?.supportedCurrencies[
-            	grant.reward.asset.toLowerCase()
-            ]
-
-				const tokenValue = formatAmount(
-					grant.funding,
-					tokenInfo?.decimals || 18
-				)
-
-				// if(tokenInfo !== undefined && tokenValue !== '0') {
-				// 	calculateUSDValue(tokenValue, tokenInfo.pair!).then((promise) => {
-				// 		setGrantsDisbursed((array: any) => [...array, promise])
-				// 	})
-				// }
-			}
-			)
-		}
-	}, [allDaoData, grantsDisbursed])
 
 	const value = `<embed src="https://www.questbook.app/embed/?daoId=${daoID}&chainId=${chainID}" type="text/html" width="700" height="700" />`
 	const { hasCopied, onCopy } = useClipboard(value)
@@ -376,7 +329,6 @@ function Profile() {
 							disbursed={grantsDisbursed}
 							winners={grantWinners}
 							applicants={grantsApplicants}
-							grants={allDaoData}
 							fundTimes={fundingTime}
 							applicationTime={applicationTime}
 						/>
@@ -458,10 +410,8 @@ function Profile() {
               		chainInfo?.decimals
               	)
               	return (
-	<BrowseGrantCard
-              			daoID={grant.workspace.id}
+									<BrowseGrantCard
               			key={grant.id}
-              			daoName={grant.workspace.title}
               			isDaoVerified={false}
               			createdAt={grant.createdAtS}
               			grantTitle={grant.title}
@@ -485,7 +435,6 @@ function Profile() {
               			grantCurrency={chainInfo?.label || 'LOL'}
               			grantCurrencyIcon={chainInfo?.icon || '/images/dummy/Ethereum Icon.svg'}
               			grantCurrencyPair={chainInfo?.pair || null}
-              			chainId={chainId}
               			isGrantVerified={isGrantVerified}
               			funding={funding}
               			onClick={

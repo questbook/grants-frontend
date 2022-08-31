@@ -27,7 +27,7 @@ function YourApplications() {
 	const [myApplications, setMyApplications] = React.useState<any>([])
 
 	const containerRef = useRef(null)
-	const { data: accountData, nonce } = useQuestbookAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const [currentPage, setCurrentPage] = React.useState(0)
 	// modified for testing
 	const allNetworkApplications = Object.keys(subgraphClients)!.map((key) => (

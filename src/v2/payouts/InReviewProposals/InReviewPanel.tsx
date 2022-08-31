@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
-import { Badge, Button, ButtonProps, Checkbox, Flex, forwardRef, Grid, GridItem, HStack, Menu, MenuButton, MenuItem, MenuList, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalOverlay, Text } from '@chakra-ui/react'
+import { Badge, Box, Button, ButtonProps, Checkbox, Flex, forwardRef, Grid, GridItem, HStack, Menu, MenuButton, MenuItem, MenuList, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalOverlay, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { GetGrantDetailsQuery } from 'src/generated/graphql'
 import useBatchUpdateApplicationState from 'src/hooks/useBatchUpdateApplicationState'
@@ -15,14 +15,12 @@ import ZeroState from 'src/v2/payouts/InReviewProposals/ZeroState'
 const InReviewPanel = ({
 	applicantsData,
 	grantData,
-	onSendFundsClicked,
 }: {
   applicantsData: any[]
   grantData?: GetGrantDetailsQuery
-  onSendFundsClicked: (state: boolean) => void
 
 }) => {
-	const [checkedItems, setCheckedItems] = useState<boolean[]>(applicantsData.filter((item) => (0 === item.status)).map((item) => false))
+	const [checkedItems, setCheckedItems] = useState<boolean[]>(applicantsData.filter((item) => (0 === item.status)).map(() => false))
 	const [checkedApplicationsIds, setCheckedApplicationsIds] = useState<number[]>([])
 	const [isAcceptClicked, setIsAcceptClicked] = useState<boolean>(false)
 	const [isRejectClicked, setIsRejectClicked] = useState<boolean>(false)
@@ -32,9 +30,6 @@ const InReviewPanel = ({
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 	const [state, setState] = useState<number>(5)
 	const [inReviewApplications, setInReviewApplications] = useState<any[]>([])
-	const [acceptedApplications, setAcceptedApplications] = useState<any[]>([])
-	const [rejectedApplications, setRejectedApplications] = useState<any[]>([])
-	const [currentStep, setCurrentStep] = useState<number>()
 
 	const someChecked = checkedItems.some((element) => {
 		return element
@@ -43,7 +38,7 @@ const InReviewPanel = ({
 	const router = useRouter()
 
 	useEffect(() => {
-		setCheckedItems(applicantsData.filter((item) => (0 === item.status)).map((item) => false))
+		setCheckedItems(applicantsData.filter((item) => (0 === item.status)).map(() => false))
 	}, [applicantsData])
 
 	const getSubtitle = () => {
@@ -85,8 +80,6 @@ const InReviewPanel = ({
 
 	useEffect(() => {
 		setInReviewApplications(applicantsData.filter((item) => (0 === item.status)))
-		setAcceptedApplications(applicantsData.filter((item) => (0 === item.status)))
-		setRejectedApplications(applicantsData.filter((item) => (1 === item.status)))
 	}, [applicantsData])
 
 	useEffect(() => {
@@ -97,7 +90,7 @@ const InReviewPanel = ({
 		 }
 	}, [isAcceptClicked, isRejectClicked, isResubmitClicked, isConfirmClicked])
 
-	const [txn, txnLink, loading, isBiconomyInitialised, error, networkTransactionModalStep] = useBatchUpdateApplicationState(
+	const [txn,, loading, isBiconomyInitialised, error, networkTransactionModalStep] = useBatchUpdateApplicationState(
 		'',
 		checkedApplicationsIds,
 		state,
@@ -106,14 +99,18 @@ const InReviewPanel = ({
 	)
 
 	useEffect(() => {
-		if(loading) {
-			setCurrentStep(1)
-		}
+		console.log("isBiconomyInitialised", isBiconomyInitialised);
+	}, [isBiconomyInitialised])
+
+	useEffect(() => {
+		// if(loading) {
+		// 	setCurrentStep(1)
+		// }
 
 		if(error) {
 			setIsConfirmClicked(false)
 		} else if(txn) {
-			setCurrentStep(2)
+			// setCurrentStep(2)
 			router.reload()
 		}
 	}, [
@@ -126,7 +123,7 @@ const InReviewPanel = ({
 		setIsAcceptClicked(false)
 		setIsRejectClicked(false)
 		setIsModalOpen(false)
-		setCurrentStep(0)
+		// setCurrentStep(0)
 	}
 
 
@@ -158,7 +155,7 @@ const InReviewPanel = ({
 					</Badge>
 				</HStack>
 
-
+				<Box mx='auto' />
 				{/* <Text
 									fontSize='14px'
 									lineHeight='20px'
@@ -350,9 +347,8 @@ const InReviewPanel = ({
 									setCheckedItems(tempArr)
 								}
 							}
-							onSendFundsClicked={() => onSendFundsClicked(true)}
 							onAcceptClicked={
-								(e: any) => {
+								() => {
 									// const tempArr: boolean[] = []
 									// tempArr.push(...checkedItems)
 									// for(let i = 0; i < tempArr.length; i++) {
@@ -367,7 +363,7 @@ const InReviewPanel = ({
 							}
 
 							onResubmitClicked={
-								(e: any) => {
+								() => {
 									const tempArr = Array(checkedItems.length).fill(false)
 									tempArr[i] = true
 									setCheckedItems(tempArr)
@@ -376,7 +372,7 @@ const InReviewPanel = ({
 							}
 
 							onRejectClicked={
-								(e: any) => {
+								() => {
 									const tempArr = Array(checkedItems.length).fill(false)
 									tempArr[i] = true
 									setCheckedItems(tempArr)

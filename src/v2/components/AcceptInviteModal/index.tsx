@@ -38,7 +38,7 @@ type DisplayProps = {
 
 export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 	const daoName = useDAOName(inviteInfo?.workspaceId, inviteInfo?.chainId)
-	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
+	const { webwallet } = useContext(WebwalletContext)!
 
 	const toast = useToast()
 
@@ -50,9 +50,9 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 		profileImageUrl: '/ui_icons/default_profile_picture.png'
 	})
 
-	const { joinInvite, getJoinInviteGasEstimate, isBiconomyInitialised } = useJoinInvite(inviteInfo!, profile)
+	const [shouldRefreshNonce, setShouldRefreshNonce] = useState<boolean>(false)
 
-	const [shouldRefreshNonce, setShouldRefreshNonce] = useState<boolean>()
+	const { joinInvite, getJoinInviteGasEstimate, isBiconomyInitialised } = useJoinInvite(inviteInfo!, profile, shouldRefreshNonce)
 
 	const { data: accountData, nonce } = useQuestbookAccount(shouldRefreshNonce)
 
@@ -354,7 +354,7 @@ const Step2LeftDisplay = ({ role, profile }: DisplayProps) => {
 	)
 }
 
-const Step2RightDisplay = ({ getJoinInviteGasEstimate, profile, updateProfile, nextStep, isBiconomyInitialised }: DisplayProps) => {
+const Step2RightDisplay = ({ profile, updateProfile, nextStep, isBiconomyInitialised }: DisplayProps) => {
 	const allFieldsTruthy = Object.values(profile).every(v => !!v)
 
 	return (

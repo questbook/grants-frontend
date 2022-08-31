@@ -24,7 +24,7 @@ query getAllGrants($first: Int, $skip: Int, $applicantId: Bytes!, $minDeadline: 
     }
   },
   createdAtS,
-  workspace {id, title, logoIpfsHash, supportedNetworks}, 
+  workspace {id, title, logoIpfsHash, supportedNetworks, createdAtS}, 
   deadline,
   funding,
   numberOfApplications,

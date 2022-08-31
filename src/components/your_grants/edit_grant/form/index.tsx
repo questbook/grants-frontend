@@ -38,7 +38,7 @@ function Form({
 }) {
 	const { workspace } = useContext(ApiClientsContext)!
 	const maxDescriptionLength = 300
-	const { data: accountData, nonce } = useQuestbookAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const [title, setTitle] = useState(formData.title || '')
 	const [summary, setSummary] = useState(formData.summary || '')
 
@@ -95,7 +95,7 @@ function Form({
 	const [publicKey] = React.useState<WorkspaceUpdateRequest>({
 		publicKey: '',
 	})
-	const [transactionData, transactionLink, loading, isBiconomyInitialised] = useUpdateWorkspacePublicKeys(publicKey)
+	const [transactionData, transactionLink, , isBiconomyInitialised] = useUpdateWorkspacePublicKeys(publicKey)
 
 	const { setRefresh } = useCustomToast(transactionLink)
 	const [admins, setAdmins] = useState<any[]>([])
@@ -682,7 +682,7 @@ function Form({
 				setRubricRequired={setRubricRequired}
 				rubrics={rubrics}
 				setRubrics={setRubrics}
-				setMaximumPoints={setMaximumPoints}
+				// setMaximumPoints={setMaximumPoints}
 				defaultRubricsPresent={formData.rubric.items.length > 0}
 			/>
 

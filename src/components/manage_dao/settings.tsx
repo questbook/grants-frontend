@@ -15,11 +15,6 @@ interface Props {
 }
 
 function Settings({ workspaceData }: Props) {
-
-	interface Props {
-		workspaceData: Workspace
-	  }
-
 	return (
 		<Flex
 			direction='column'

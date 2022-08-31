@@ -16,17 +16,8 @@ const AcceptedProposalsPanel = ({
   onBulkSendFundsClicked: (state: boolean, checkedItems: any[]) => void
   grantData: any
 }) => {
-	const [checkedItems, setCheckedItems] = useState<boolean[]>(applicantsData.filter((item) => (2 === item.status)).map((item) => false))
-	const [checkedApplicationsIds, setCheckedApplicationsIds] = useState<number[]>([])
-	const [isBulkSendFundsClicked, setIsBulkSendFundsClicked] = useState<boolean>(false)
-	const [isConfirmClicked, setIsConfirmClicked] = useState<boolean>(false)
-
-	const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
-	const [state, setState] = useState<number>(5)
-	const [inReviewApplications, setInReviewApplications] = useState<any[]>([])
+	const [checkedItems, setCheckedItems] = useState<boolean[]>(applicantsData.filter((item) => (2 === item.status)).map(() => false))
 	const [acceptedApplications, setAcceptedApplications] = useState<any[]>([])
-	const [rejectedApplications, setRejectedApplications] = useState<any[]>([])
-	const [currentStep, setCurrentStep] = useState<number>()
 
 	const someChecked = checkedItems.some((element) => {
 		return element
@@ -34,22 +25,20 @@ const AcceptedProposalsPanel = ({
 	const allChecked = checkedItems.length > 0 && checkedItems.every((element) => element === true)
 
 	useEffect(() => {
-		setCheckedItems(applicantsData.filter((item) => (2 === item.status)).map((item) => false))
+		setCheckedItems(applicantsData.filter((item) => (2 === item.status)).map(() => false))
 	}, [applicantsData])
 
 	useEffect(() => {
-		setInReviewApplications(applicantsData.filter((item) => (0 === item.status)))
 		setAcceptedApplications(applicantsData.filter((item) => (2 === item.status)))
-		setRejectedApplications(applicantsData.filter((item) => (1 === item.status)))
 	}, [applicantsData])
 
-	useEffect(() => {
-		if(isConfirmClicked) {
-			setIsModalOpen(false)
-		} else if(isBulkSendFundsClicked) {
-			setIsModalOpen(true)
-		 }
-	}, [isBulkSendFundsClicked, isConfirmClicked])
+	// useEffect(() => {
+	// 	if(isConfirmClicked) {
+	// 		setIsModalOpen(false)
+	// 	} else if(isBulkSendFundsClicked) {
+	// 		setIsModalOpen(true)
+	// 	 }
+	// }, [isBulkSendFundsClicked, isConfirmClicked])
 
 	useEffect(() => {
 		const inReviewApplications = applicantsData?.filter((item: any) => (0 === item.status))
@@ -59,26 +48,18 @@ const AcceptedProposalsPanel = ({
 		}
 
 		const tempArr: number[] = []
-		console.log(checkedItems)
-		console.log(inReviewApplications)
+		// console.log(checkedItems)
+		// console.log(inReviewApplications)
 		for(let i = 0; i < checkedItems.length; i++) {
 			if(checkedItems[i] && inReviewApplications[i]) {
 				tempArr.push(Number(inReviewApplications[i].applicationId))
 			}
 		}
 
-		setCheckedApplicationsIds(tempArr)
+		// setCheckedApplicationsIds(tempArr)
 	}, [
 		checkedItems
 	])
-
-	const handleSubmit = (st: number) => {
-		setState(st)
-		setIsBulkSendFundsClicked(true)
-		setIsModalOpen(false)
-		setCurrentStep(0)
-	}
-
 
 	if(applicantsData?.filter((item: any) => (2 === item.status)).length === 0) {
 		return (

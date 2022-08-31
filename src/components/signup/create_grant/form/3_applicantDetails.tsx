@@ -572,11 +572,11 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 							{
 								(multipleMilestones
               || (!multipleMilestones && defaultMilestoneFields.length === 0)) && (
-									<Flex
+<Flex
 										mt='-4px'
 										gap='2'
 										justifyContent='flex-start'>
-	<Box
+										<Box
 											onClick={
 												() => {
 													const newDefaultMilestoneFields = [
@@ -593,22 +593,22 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 											alignItems='center'
 											cursor='pointer'
 										>
-											<Image
+		<Image
 												h='16px'
 												w='15px'
 												src='/ui_icons/plus_circle.svg'
 												mr='6px'
 											/>
-											<Text
+		<Text
 												fontWeight='500'
 												fontSize='14px'
 												color='#8850EA'
 												lineHeight='20px'
 											>
-			Add a milestone
+												Add a milestone
 											</Text>
-										</Box>
-</Flex>
+ </Box>
+         </Flex>
 								)
 							}
 							<Box mt={6} />

@@ -103,9 +103,22 @@ export const useMakeInvite = (role: number) => {
 
 	const { webwallet } = useContext(WebwalletContext)!
 	const { nonce } = useQuestbookAccount()
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, } = useBiconomy({
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: chainId?.toString()
 	})
+
+	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
+
+	useEffect(() => {
+		// const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		// console.log('rree', biconomyLoading, chainId, biconomy)
+		// console.log("invite", scwAddress)
+		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
+			biconomy.networkId.toString() === chainId.toString()) {
+			setIsBiconomyInitialised(true)
+		}
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, chainId])
+
 	const targetContractObject = useQBContract('workspace', network)
 	const workspaceRegistry = useQBContract('workspace', chainId)
 
@@ -117,6 +130,7 @@ export const useMakeInvite = (role: number) => {
 			const workspaceId = parseInt(workspace!.id.replace('0x', ''), 16)
 
 			logger.info({ workspaceId, role, address }, 'creating invite ')
+			// console.log("inviteee", biconomyWalletClient, scwAddress, chainId);
 
 			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress || !chainId) {
 				return undefined!
@@ -153,7 +167,7 @@ export const useMakeInvite = (role: number) => {
 
 			return inviteInfo
 		},
-		[role, workspace?.id, workspaceRegistry]
+		[role, workspace?.id, workspaceRegistry, biconomyWalletClient, chainId, scwAddress, biconomy, nonce, webwallet]
 	)
 
 	const getMakeInviteGasEstimate = useCallback(
@@ -177,30 +191,37 @@ export const useMakeInvite = (role: number) => {
 		[workspaceRegistry, role, workspace?.id]
 	)
 
-	return { makeInvite, getMakeInviteGasEstimate }
+	return { makeInvite, getMakeInviteGasEstimate, isBiconomyInitialised }
 }
 
 type JoinInviteStep = 'ipfs-uploaded' | 'tx-signed' | 'tx-confirmed'
 
-export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemberUpdate) => {
+export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemberUpdate, shouldRefreshNonce: boolean) => {
 
 	const connectedChainId = useChainId()
 	const { network, switchNetwork } = useNetwork()
 
 	const { webwallet } = useContext(WebwalletContext)!
 
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
-		chainId: inviteInfo?.chainId.toString()
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
+		chainId: inviteInfo?.chainId.toString(),
+		shouldRefreshNonce: shouldRefreshNonce
 	})
-
-	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState('not ready')
 	const targetContractObject = useQBContract('workspace', network)
 
+	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
+
 	useEffect(() => {
-		if(biconomy && biconomyWalletClient && scwAddress) {
-			setIsBiconomyInitialised('ready')
+		// const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		// console.log('rree', isBiconomyLoading, biconomyLoading, chainId, biconomy)
+		// console.log("invite", scwAddress)
+		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && inviteInfo?.chainId && biconomy?.networkId &&
+			biconomy.networkId.toString() === inviteInfo?.chainId?.toString()) {
+				// console.log("zonb");
+			setIsBiconomyInitialised(true)
 		}
-	}, [biconomy, biconomyWalletClient, scwAddress])
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, inviteInfo])
+
 
 	const { data: account, nonce } = useQuestbookAccount()
 	const { validatorApi, subgraphClients } = useContext(ApiClientsContext)!
@@ -239,6 +260,8 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 			} as WorkspaceMemberUpdate)
 
 			didReachStep?.('ipfs-uploaded')
+
+			// console.log("inviiii", biconomyWalletClient, scwAddress)
 
 			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
 				return undefined!
@@ -288,8 +311,8 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 				logger.info(`poll result: ${didIndex}`)
 			} while(!didIndex)
 		},
-		[profileInfo, workspaceRegistry, validatorApi, inviteInfo, signature, fetchMembers, switchNetwork, connectedChainId]
-	)
+		[profileInfo, workspaceRegistry, validatorApi, inviteInfo, signature, fetchMembers, switchNetwork, connectedChainId, scwAddress, biconomyWalletClient,
+		biconomy, webwallet, nonce])
 
 	const getJoinInviteGasEstimate = useCallback(async() => {
 		if(!signature) {
@@ -315,7 +338,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 		return result
 	}, [workspaceRegistry, inviteInfo, signature])
 
-	return { joinInvite, getJoinInviteGasEstimate, isBiconomyInitialised: isBiconomyInitialised === 'ready' }
+	return { joinInvite, getJoinInviteGasEstimate, isBiconomyInitialised }
 }
 
 const numberToHex = (num: number) => `0x${num.toString(16)}`

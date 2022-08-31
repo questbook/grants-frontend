@@ -17,9 +17,9 @@ import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGran
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import {
 	useGetApplicantsForAGrantQuery,
-	useGetApplicantsForAGrantReviewerQuery,
 	useGetGrantDetailsQuery,
 	useGetRealmsFundTransferDataQuery,
+	useGetReviewersForAWorkspaceQuery,
 	useGetSafeForAWorkspaceQuery,
 } from 'src/generated/graphql'
 import useQBContract from 'src/hooks/contracts/useQBContract'
@@ -44,8 +44,10 @@ import { ViewEye } from 'src/v2/assets/custom chakra icons/ViewEye'
 import Breadcrumbs from 'src/v2/components/Breadcrumbs'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import StyledTab from 'src/v2/components/StyledTab'
+import NoReviewerBanner from 'src/v2/components/ViewApplicants/NoReviewerBanner'
+import RubricNotSetBanner from 'src/v2/components/ViewApplicants/RubricNotSetBanner'
 import { Gnosis_Safe } from 'src/v2/constants/safe/gnosis_safe'
-import { Realms_Solana, solanaToUsd } from 'src/v2/constants/safe/realms_solana'
+import { Realms_Solana, solanaToUsd, usdToSolana } from 'src/v2/constants/safe/realms_solana'
 import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import AcceptedProposalsPanel from 'src/v2/payouts/AcceptedProposals/AcceptedProposalPanel'
@@ -65,7 +67,7 @@ import { erc20ABI, useConnect, useDisconnect } from 'wagmi'
 
 const PAGE_SIZE = 500
 const ERC20Interface = new ethers.utils.Interface(erc20ABI)
-const safeChainIds = Object.keys(safeServicesInfo)
+// const safeChainIds = Object.keys(safeServicesInfo)
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 	let val = BigNumber.from(0)
@@ -83,23 +85,23 @@ enum ModalState {
 }
 
 function ViewApplicants() {
-
 	const [applicantsData, setApplicantsData] = useState<any>([])
-	const [reviewerData, setReviewerData] = useState<any>([])
-	const [daoId, setDaoId] = useState('')
+	// const [reviewerData, setReviewerData] = useState<any>([])
+	// const [daoId, setDaoId] = useState('')
 	const [grantID, setGrantID] = useState<any>(null)
 	const [acceptingApplications, setAcceptingApplications] = useState(true)
-	const [shouldShowButton, setShouldShowButton] = useState(false)
+	// const [shouldShowButton, setShouldShowButton] = useState(false)
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [isAdmin, setIsAdmin] = React.useState<boolean>(false)
 	const [isReviewer, setIsReviewer] = React.useState<boolean>(false)
 	const [isUser, setIsUser] = React.useState<any>('')
-	const [isActorId, setIsActorId] = React.useState<any>('')
+	// const [isActorId, setIsActorId] = React.useState<any>('')
 
 	const [workspaceSafe, setWorkspaceSafe] = useState('')
 	const [workspaceSafeChainId, setWorkspaceSafeChainId] = useState(0)
 
-	const [setupRubricBannerCancelled, setSetupRubricBannerCancelled] = useState(true)
+	const [setupRubricBannerCancelled, setSetupRubricBannerCancelled] = useState(false)
+	const [addReviewerBannerCancelled, setAddReviewerBannerCancelled] = useState(false)
 
 	const [listOfApplicationToTxnsHash, setListOfApplicationToTxnsHash] = useState({})
 	const [applicationStatuses, setApplicationStatuses] = useState({})
@@ -117,7 +119,6 @@ function ViewApplicants() {
 			workspaceID: workspace?.id.toString()!,
 		},
 	})
-
 
 	const [realmsQueryParams, setRealmsQueryParams] = useState<any>({ client })
 
@@ -144,20 +145,23 @@ function ViewApplicants() {
 			return
 		}
 
-		realmsFundTransferData.grants[0]?.fundTransfers?.forEach((fundTransfer, i) => {
+		realmsFundTransferData?.grants[0]?.fundTransfers?.forEach((fundTransfer,) => {
 			// console.log('TX HASH - ', i, fundTransfer.transactionHash)
-			if(!applicationToTxnHashMap[fundTransfer?.application?.id!]) {
-				applicationToTxnHashMap[fundTransfer?.application?.id!] = {
-					transactionHash: fundTransfer?.transactionHash!,
-					amount: parseFloat(fundTransfer?.amount)
-				}
-			} else {
-				applicationToTxnHashMap[fundTransfer?.application?.id!] = {
-					transactionHash: fundTransfer?.transactionHash!,
-					amount: parseFloat(fundTransfer?.amount)
-				}
+			// if(!applicationToTxnHashMap[fundTransfer?.application?.id!]) {
+			// 	applicationToTxnHashMap[fundTransfer?.application?.id!] = {
+			// 		transactionHash: fundTransfer?.transactionHash!,
+			// 		amount: parseFloat(fundTransfer?.amount)
+			// 	}
+			// } else {
+			// 	applicationToTxnHashMap[fundTransfer?.application?.id!] = {
+			// 		transactionHash: fundTransfer?.transactionHash!,
+			// 		amount: parseFloat(fundTransfer?.amount)
+			// 	}
+			// }
+			applicationToTxnHashMap[fundTransfer?.application?.id!] = {
+				transactionHash: fundTransfer?.transactionHash!,
+				amount: parseFloat(fundTransfer?.amount)
 			}
-
 		})
 		setListOfApplicationToTxnsHash(applicationToTxnHashMap)
 
@@ -169,7 +173,7 @@ function ViewApplicants() {
 	const [isBiconomyInitialisedDisburse, setIsBiconomyInitialisedDisburse] = useState(false)
 
 	useEffect(() => {
-		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		// const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
 		// console.log('rree', isBiconomyLoading, biconomyLoading)
 		// console.log('networks 2:', biconomy?.networkId?.toString(), workspacechainId, defaultChainId)
 
@@ -183,13 +187,13 @@ function ViewApplicants() {
 	useEffect(() => {
 		if(safeAddressData) {
 			const { workspaceSafes } = safeAddressData
-			const safeAddress = workspaceSafes[0].address
+			const safeAddress = workspaceSafes[0]?.address
 			// console.log('safeAddress', safeAddress)
 			// console.log('workspace safe details', workspaceSafes)
-			const _isEvmChain = workspaceSafeChainId !== 900001
+			// const _isEvmChain = workspaceSafeChainId !== 900001
 			// setIsEvmChain(_isEvmChain)
 			setWorkspaceSafe(safeAddress)
-			setWorkspaceSafeChainId(parseInt(workspaceSafes[0].chainId))
+			setWorkspaceSafeChainId(parseInt(workspaceSafes[0]?.chainId))
 		}
 	}, [safeAddressData])
 
@@ -201,17 +205,6 @@ function ViewApplicants() {
 	const [rewardAssetDecimals, setRewardAssetDecimals] = useState<number>()
 
 	const [sendFundsTo, setSendFundsTo] = useState<any[]>()
-
-	const [maximumPoints, setMaximumPoints] = React.useState(5)
-	const [rubricEditAllowed] = useState(true)
-	const [rubrics, setRubrics] = useState<any[]>([
-		{
-			name: '',
-			nameError: false,
-			description: '',
-			descriptionError: false,
-		},
-	])
 
 	useEffect(() => {
 		if(router && router.query) {
@@ -228,7 +221,7 @@ function ViewApplicants() {
 			].client,
 	})
 
-	const [queryReviewerParams, setQueryReviewerParams] = useState<any>({
+	const [, setQueryReviewerParams] = useState<any>({
 		client:
 			subgraphClients[
 				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
@@ -258,7 +251,7 @@ function ViewApplicants() {
 
 			setIsReviewer(tempMember?.accessLevel === 'reviewer')
 			setIsUser(tempMember?.id)
-			setIsActorId(tempMember?.id)
+			// setIsActorId(tempMember?.id)
 		}
 	}, [accountData, workspace])
 
@@ -384,98 +377,73 @@ function ViewApplicants() {
 				}
 			})
 			setApplicantsData(fetchedApplicantsData)
-			setDaoId(data.grantApplications[0].grant.workspace.id)
+			// setDaoId(data.grantApplications[0].grant.workspace.id)
 			setAcceptingApplications(data.grantApplications[0].grant.acceptingApplications)
 		}
 
 	}, [data, error, loading, grantData])
 
-	const reviewData = useGetApplicantsForAGrantReviewerQuery(queryReviewerParams)
+	// const reviewData = useGetApplicantsForAGrantReviewerQuery(queryReviewerParams)
 
-	const Reviewerstatus = (item: any) => {
-		const user = []
-		// eslint-disable-next-line no-restricted-syntax
-		for(const n in item) {
-			if(item[n].reviewer.id === isActorId) {
-				user.push(isActorId)
-			}
-		}
+	// const Reviewerstatus = (item: any) => {
+	// 	const user = []
+	// 	// eslint-disable-next-line no-restricted-syntax
+	// 	for(const n in item) {
+	// 		if(item[n].reviewer.id === isActorId) {
+	// 			user.push(isActorId)
+	// 		}
+	// 	}
 
-		if(user.length === 1) {
-			return 9
-		}
+	// 	if(user.length === 1) {
+	// 		return 9
+	// 	}
 
-		return 0
-	}
+	// 	return 0
+	// }
 
-	useEffect(() => {
-		if(reviewData.data && reviewData.data.grantApplications.length) {
-			// console.log('Reviewer Applications: ', reviewData.data)
-			const fetchedApplicantsData = reviewData.data.grantApplications.map((applicant) => {
-				return {
-					grantTitle: applicant?.grant?.title,
-					applicationId: applicant.id,
-					applicant_address: getFieldString(applicant, 'applicantAddress'),
-					sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
-					project_name: getFieldString(applicant, 'projectName'),
-					funding_asked: {
-						amount:
-							applicant && getFieldString(applicant, 'fundingAsk') ? formatAmount(
-								getFieldString(applicant, 'fundingAsk')!,
-								CHAIN_INFO[
-									getSupportedChainIdFromSupportedNetwork(
-										applicant.grant.workspace.supportedNetworks[0],
-									)
-								]?.supportedCurrencies[applicant.grant.reward.asset.toLowerCase()]
-									?.decimals || 18,
-							) : '1',
-						symbol: getAssetInfo(
-							applicant?.grant?.reward?.asset?.toLowerCase(),
-							getSupportedChainIdFromWorkspace(workspace),
-						).label,
-						icon: getAssetInfo(
-							applicant?.grant?.reward?.asset?.toLowerCase(),
-							getSupportedChainIdFromWorkspace(workspace),
-						).icon,
-					},
-					status: Reviewerstatus(applicant.reviews),
-					reviewers: applicant.applicationReviewers,
-				}
-			})
+	// useEffect(() => {
+	// 	if(reviewData.data && reviewData.data.grantApplications.length) {
+	// 		// console.log('Reviewer Applications: ', reviewData.data)
+	// 		const fetchedApplicantsData = reviewData.data.grantApplications.map((applicant) => {
+	// 			return {
+	// 				grantTitle: applicant?.grant?.title,
+	// 				applicationId: applicant.id,
+	// 				applicant_address: getFieldString(applicant, 'applicantAddress'),
+	// 				sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
+	// 				project_name: getFieldString(applicant, 'projectName'),
+	// 				funding_asked: {
+	// 					amount:
+	// 						applicant && getFieldString(applicant, 'fundingAsk') ? formatAmount(
+	// 							getFieldString(applicant, 'fundingAsk')!,
+	// 							CHAIN_INFO[
+	// 								getSupportedChainIdFromSupportedNetwork(
+	// 									applicant.grant.workspace.supportedNetworks[0],
+	// 								)
+	// 							]?.supportedCurrencies[applicant.grant.reward.asset.toLowerCase()]
+	// 								?.decimals || 18,
+	// 						) : '1',
+	// 					symbol: getAssetInfo(
+	// 						applicant?.grant?.reward?.asset?.toLowerCase(),
+	// 						getSupportedChainIdFromWorkspace(workspace),
+	// 					).label,
+	// 					icon: getAssetInfo(
+	// 						applicant?.grant?.reward?.asset?.toLowerCase(),
+	// 						getSupportedChainIdFromWorkspace(workspace),
+	// 					).icon,
+	// 				},
+	// 				status: Reviewerstatus(applicant.reviews),
+	// 				reviewers: applicant.applicationReviewers,
+	// 			}
+	// 		})
 
-			// console.log('fetch', fetchedApplicantsData)
+	// 		// console.log('fetch', fetchedApplicantsData)
 
-			setReviewerData(fetchedApplicantsData)
-			setDaoId(reviewData.data.grantApplications[0].grant.workspace.id)
-			setAcceptingApplications(reviewData.data.grantApplications[0].grant.acceptingApplications)
-		}
+	// 		// setReviewerData(fetchedApplicantsData)
+	// 		// setDaoId(reviewData.data.grantApplications[0].grant.workspace.id)
+	// 		setAcceptingApplications(reviewData.data.grantApplications[0].grant.acceptingApplications)
+	// 	}
 
-	}, [reviewData])
-
-	useEffect(() => {
-		const initialRubrics = grantData?.grants[0]?.rubric
-		const newRubrics = [] as any[]
-		initialRubrics?.items.forEach((initalRubric) => {
-			newRubrics.push({
-				name: initalRubric.title,
-				nameError: false,
-				description: initalRubric.details,
-				descriptionError: false,
-			})
-		})
-		if(newRubrics.length === 0) {
-			return
-		}
-
-		setRubrics(newRubrics)
-		if(initialRubrics?.items[0].maximumPoints) {
-			setMaximumPoints(initialRubrics.items[0].maximumPoints)
-		}
-	}, [grantData])
-
-	useEffect(() => {
-		setShouldShowButton(daoId === workspace?.id)
-	}, [workspace, accountData, daoId])
+	// }, [reviewData])
 
 	const [isAcceptingApplications, setIsAcceptingApplications] = React.useState<
 		[boolean, number]
@@ -490,8 +458,6 @@ function ViewApplicants() {
 		isAcceptingApplications[1],
 		grantID,
 	)
-
-	const buttonRef = React.useRef<HTMLButtonElement>(null)
 
 	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
@@ -512,12 +478,12 @@ function ViewApplicants() {
 
 	//Implementing the safe send
 
-	const { phantomWalletAvailable,
+	const {
 		phantomWallet,
 		phantomWalletConnected,
 		setPhantomWalletConnected } = usePhantomWallet()
 
-	const { connect, isConnected } = useConnect()
+	const { isConnected } = useConnect()
 	const { disconnect } = useDisconnect()
 
 	const [signerVerified, setSignerVerififed] = useState(false)
@@ -525,7 +491,7 @@ function ViewApplicants() {
 
 	const [initiateTransactionData, setInitiateTransactionData] = useState<any>([])
 	const [gnosisBatchData, setGnosisBatchData] = useState<any>([])
-	const [gnosisReadyToExecuteTxns, setGnosisReadyToExecuteTxns] = useState<any>([])
+	const [, setGnosisReadyToExecuteTxns] = useState<any>([])
 	const [totalFundDisbursed, setTotalFundDisbursed] = useState (0)
 	const [step, setStep] = useState(ModalState.RECEIPT_DETAILS)
 
@@ -545,18 +511,18 @@ function ViewApplicants() {
 		}
 	}, [workspaceSafe])
 
+	// useEffect(() => {
+	// 	const checkValidSafeAddress = async() => {
+	// 		const isValidSafeAddress = await current_safe?.isValidSafeAddress(workspaceSafe)
+	// 		// console.log('isValidSafeAddress', isValidSafeAddress)
+	// 	}
+
+	// 	checkValidSafeAddress()
+	// }, [])
+
+
 	useEffect(() => {
-		const checkValidSafeAddress = async() => {
-			const isValidSafeAddress = await current_safe?.isValidSafeAddress(workspaceSafe)
-			// console.log('isValidSafeAddress', isValidSafeAddress)
-		}
-
-		checkValidSafeAddress()
-	}, [])
-
-
-	useEffect(() => {
-		const formattedTrxnData = sendFundsTo?.map((recepient, i) => (
+		const formattedTrxnData = sendFundsTo?.map((recepient,) => (
 			{
 				from: current_safe?.id?.toString(),
 				to: recepient.applicant_address,
@@ -587,20 +553,20 @@ function ViewApplicants() {
 
 
 	async function getStatus(applicationToTxnHashMap: {[applicationId: string]: {transactionHash: string, amount: number}}) {
-		// console.log('applicationToTxnHashMap', applicationToTxnHashMap)
 		const statuses: {[applicationId: string]: {transactionHash: string, status: number, amount: number}} = {}
 
 		Promise.all((Object.keys(applicationToTxnHashMap || {}) || []).map(async(applicationId) => {
-			//@ts-ignore
-			const status = await current_safe?.getTransactionHashStatus(applicationToTxnHashMap[applicationId].transactionHash)
-			// console.log('applicationToTxnHashMap status', status)
-			statuses[applicationId] = {
-				transactionHash: applicationToTxnHashMap[applicationId].transactionHash,
-				status: status[applicationToTxnHashMap[applicationId].transactionHash],
-				amount: applicationToTxnHashMap[applicationId].amount
+			const transaction = applicationToTxnHashMap[applicationId]
+			const status = await current_safe?.getTransactionHashStatus(transaction?.transactionHash)
+			if(transaction && status) {
+				statuses[applicationId] = {
+					transactionHash: transaction.transactionHash,
+					status: status[transaction.transactionHash],
+					amount: transaction.amount
+				}
+				return status
 			}
-			return status
-		})).then(async(done) => {
+		})).then(async() => {
 			if(statuses && !isEvmChain) {
 				let totalFundDisbursed = 0
 				for(const applicantId of Object.keys(statuses)) {
@@ -694,7 +660,7 @@ function ViewApplicants() {
 			.then(() => {
 				// console.log('Sent transaction to contract - realms')
 			})
-			.catch((err) => {
+			.catch(() => {
 				// console.log('realms sending transction error:', err)
 			})
 
@@ -757,7 +723,7 @@ function ViewApplicants() {
 				throw new Error('No transaction hash found!')
 			}
 
-			const { txFee, receipt } = await getTransactionDetails(transactionHash, workspacechainId.toString())
+			const { txFee } = await getTransactionDetails(transactionHash, workspacechainId.toString())
 
 			// console.log('txFee', txFee)
 			// console.log('receipt: ', receipt)
@@ -768,9 +734,14 @@ function ViewApplicants() {
 		}
 	}, [workspace, biconomyWalletClient, workspacechainId, biconomy, workspaceRegistryContract, scwAddress, webwallet, nonce, initiateTransactionData, proposalAddr])
 
-	const onChangeRecepientDetails = (applicationId: any, fieldName: string, fieldValue: any) => {
+	const onChangeRecepientDetails = async(applicationId: any, fieldName: string, fieldValue: any) => {
 		// console.log('onChangeRecepientDetails', applicationId, fieldName, fieldValue)
 		// console.log('Gnosis Batch data', gnosisBatchData)
+
+		if(!isEvmChain && fieldName === 'amount') {
+			fieldValue = await usdToSolana(fieldValue)
+		}
+
 		const tempData = initiateTransactionData.map((transactionData: any) => {
 			if(transactionData.applicationId === applicationId) {
 				return { ...transactionData, [fieldName]: fieldValue }
@@ -835,6 +806,49 @@ function ViewApplicants() {
 
 	//end of implementation
 
+	const [getReviewersForAWorkspaceParams, setGetReviewersForAWorkspaceParams] = useState<any>({
+		client:
+			subgraphClients[
+				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+			].client,
+	})
+	const { data: reviewersForAWorkspaceData } = useGetReviewersForAWorkspaceQuery(getReviewersForAWorkspaceParams)
+	useEffect(() => {
+		if(!workspace) {
+			return
+		}
+
+		setGetReviewersForAWorkspaceParams({
+			client:
+				subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+			variables: {
+				workspaceId: workspace.id
+			},
+		})
+	}, [workspace])
+
+	const [areReviewersAdded, setAreReviewersAdded] = useState<boolean>(false)
+	const [areRubricsSet, setAreRubricsSet] = useState<boolean>(false)
+
+	useEffect(() => {
+		if(!reviewersForAWorkspaceData) {
+			setAreReviewersAdded(true)
+		} else if(reviewersForAWorkspaceData?.workspaces[0]?.members.length) {
+			setAreReviewersAdded(reviewersForAWorkspaceData?.workspaces[0]?.members.length > 0)
+		} else {
+			setAreReviewersAdded(false)
+		}
+	}, [reviewersForAWorkspaceData])
+
+	useEffect(() => {
+		if(!grantData) {
+			setAreRubricsSet(true)
+		} else if(grantData?.grants[0].rubric?.items.length) {
+			setAreRubricsSet(grantData?.grants[0].rubric?.items.length > 0)
+		} else {
+			setAreRubricsSet(false)
+		}
+	}, [grantData])
 
 	return (
 		<Container
@@ -964,21 +978,6 @@ function ViewApplicants() {
 					}
 				</Flex>
 
-				{/* {
-					isAdmin && (
-						<Box
-							pos="absolute"
-							right="40px"
-							top="48px">
-							<Button
-								variant="primary"
-								onClick={() => setRubricDrawerOpen(true)}>
-								{(grantData?.grants[0].rubric?.items.length || 0) > 0 || false ? 'Edit Evaluation Rubric' : 'Setup Evaluation Rubric'}
-							</Button>
-						</Box>
-					)
-				} */}
-
 				<Box mt={4} />
 
 				<StatsBanner
@@ -989,80 +988,28 @@ function ViewApplicants() {
 				/>
 
 				<Box mt={5} />
-
 				{
-					setupRubricBannerCancelled || (((grantData?.grants && grantData?.grants.length > 0 && grantData?.grants[0].rubric?.items.length) || 0) > 0 || false) ? <></> : (
-						<>
-							<Flex
-								px='18px'
-								py={4}
-								bg='#C8CBFC'
-								borderRadius='base'
-							>
-								<ErrorAlert
-									color='#785EF0'
-									boxSize={5}
-									mt='2px'
-								/>
+					!areReviewersAdded && !areRubricsSet && !addReviewerBannerCancelled && (
+						<NoReviewerBanner
+							onSetup={
+								() => {
+									router.push({
+										pathname: '/manage_dao/',
+										query: {
+											tab: 'members',
+										},
+									})
+								}
+							}
+							onClose={() => setAddReviewerBannerCancelled(true)} />
+					)
+				}
+				{
+					areReviewersAdded && !areRubricsSet && !setupRubricBannerCancelled && (
+						<RubricNotSetBanner
+							onSetup={() => setRubricDrawerOpen(true)}
+							onClose={() => setSetupRubricBannerCancelled(true)} />
 
-								<Flex
-									flexDirection='column'
-									ml='18px'
-									flex={1}
-								>
-									<Text
-										fontSize='16px'
-										lineHeight='24px'
-										fontWeight='500'
-									>
-										Setup applicant evaluation
-									</Text>
-
-									<Text
-										mt='8px'
-										fontSize='14px'
-										lineHeight='20px'
-										fontWeight='400'
-									>
-										On receiving applicants, define a scoring rubric and assign reviewers to evaluate the applicants.
-										{' '}
-										<Link
-											textDecoration='none'
-											fontWeight='500'
-											color='#1F1F33'
-										>
-											Learn more
-										</Link>
-									</Text>
-
-									<Text
-										mt='14px'
-										fontSize='14px'
-										lineHeight='20px'
-										fontWeight='500'
-										color='#785EF0'
-										cursor='pointer'
-										onClick={() => setRubricDrawerOpen(true)}
-									>
-										Setup now
-									</Text>
-								</Flex>
-
-								<CancelCircleFilled
-									mb='auto'
-									color='#7D7DA0'
-									h={6}
-									w={6}
-									onClick={
-										() => {
-											setSetupRubricBannerCancelled(true)
-										}
-									}
-									cursor='pointer'
-								/>
-							</Flex>
-							<Box mt={5} />
-						</>
 					)
 				}
 
@@ -1102,8 +1049,7 @@ function ViewApplicants() {
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<InReviewPanel
 								applicantsData={applicantsData}
-								grantData={grantData}
-								onSendFundsClicked={(v) => setSendFundsModalIsOpen(v)} />
+								grantData={grantData} />
 						</TabPanel>
 
 						<TabPanel
@@ -1114,8 +1060,7 @@ function ViewApplicants() {
 							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<RejectedPanel
-								applicantsData={applicantsData}
-								onSendFundsClicked={(v) => setSendFundsModalIsOpen(v)} />
+								applicantsData={applicantsData} />
 						</TabPanel>
 
 						<TabPanel
@@ -1133,20 +1078,6 @@ function ViewApplicants() {
 					</TabPanels>
 				</Tabs>
 
-				{/* <RubricDrawer
-					rubricDrawerOpen={rubricDrawerOpen}
-					setRubricDrawerOpen={setRubricDrawerOpen}
-					rubricEditAllowed={rubricEditAllowed}
-					rubrics={rubrics}
-					setRubrics={setRubrics}
-					maximumPoints={maximumPoints}
-					setMaximumPoints={setMaximumPoints}
-					chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
-					grantAddress={grantID}
-					workspaceId={workspace?.id || ''}
-					initialIsPrivate={grantData?.grants[0].rubric?.isPrivate || false}
-				/> */}
-
 				<SetupEvaluationDrawer
 					isOpen={rubricDrawerOpen}
 					onClose={() => setRubricDrawerOpen(false)}
@@ -1154,6 +1085,7 @@ function ViewApplicants() {
 					grantAddress={grantID}
 					chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
 					setNetworkTransactionModalStep={setNetworkTransactionModalStep}
+					data={reviewersForAWorkspaceData}
 				/>
 
 				<ViewEvaluationDrawer
@@ -1171,13 +1103,9 @@ function ViewApplicants() {
 
 					onChangeRecepientDetails={onChangeRecepientDetails}
 					phantomWallet={phantomWallet}
-					setPhantomWalletConnected={setPhantomWalletConnected}
 					isEvmChain={isEvmChain}
-					current_safe={current_safe!}
 					signerVerified={signerVerified}
-					initiateTransaction={initiateTransaction}
 					initiateTransactionData={initiateTransactionData}
-
 					onModalStepChange={onModalStepChange}
 					step={step}
 				/>
@@ -1185,7 +1113,6 @@ function ViewApplicants() {
 				<TransactionInitiatedModal
 					isOpen={!!(txnInitModalIsOpen && proposalAddr)}
 					onClose={onModalClose}
-					onComplete={() => setTxnInitModalIsOpen(false)}
 					proposalUrl={isEvmChain ? getGnosisTansactionLink(current_safe?.id?.toString()!, current_safe?.chainId.toString()!) : getProposalUrl(current_safe?.id?.toString()!, proposalAddr)}
 				/>
 
@@ -1240,88 +1167,6 @@ function ViewApplicants() {
 							'Rubric created and Reviewers assigned',
 						]
 					} />
-
-				{/* {
-					(reviewerData.length > 0 || applicantsData.length > 0) && (isReviewer || isAdmin) ? (
-						<Table
-							title={applicantsData[0]?.grantTitle || 'Grant Title'}
-							isReviewer={isReviewer}
-							data={applicantsData}
-							reviewerData={reviewerData}
-							actorId={isActorId}
-							onViewApplicantFormClick={
-								(commentData: any) => router.push({
-									pathname: '/your_grants/view_applicants/applicant_form/',
-									query: {
-										commentData,
-										applicationId: commentData.applicationId,
-									},
-								})
-							}
-							// eslint-disable-next-line @typescript-eslint/no-shadow
-							onManageApplicationClick={
-								(data: any) => router.push({
-									pathname: '/your_grants/view_applicants/manage/',
-									query: {
-										applicationId: data.applicationId,
-									},
-								})
-							}
-							archiveGrantComponent={
-								!acceptingApplications && (
-									<Flex
-										maxW="100%"
-										bg="#F3F4F4"
-										direction="row"
-										align="center"
-										px={8}
-										py={6}
-										mt={6}
-										border="1px solid #E8E9E9"
-										borderRadius="6px"
-									>
-										<Image
-											src="/toast/warning.svg"
-											w="42px"
-											h="36px" />
-										<Flex
-											direction="column"
-											ml={6}>
-											<Text
-												variant="tableHeader"
-												color="#414E50">
-												{shouldShowButton && accountData?.address ? 'Grant is archived and cannot be discovered on the Home page.' : 'Grant is archived and closed for new applications.'}
-											</Text>
-											<Text
-												variant="tableBody"
-												color="#717A7C"
-												fontWeight="400"
-												mt={2}>
-                  New applicants cannot apply to an archived grant.
-											</Text>
-										</Flex>
-										<Box mr="auto" />
-										{
-											accountData?.address && shouldShowButton && (
-												<Button
-													ref={buttonRef}
-													w={archiveGrantLoading ? buttonRef?.current?.offsetWidth : 'auto'}
-													variant="primary"
-													onClick={() => setIsModalOpen(true)}
-												>
-                Publish grant
-												</Button>
-											)
-										}
-									</Flex>
-								)
-							}
-						/>
-					) : (
-						<AppplicationTableEmptyState />
-
-					)
-				} */}
 
 			</Container>
 			<Modal

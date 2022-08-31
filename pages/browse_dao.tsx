@@ -2,35 +2,30 @@ import { ReactElement, useContext, useEffect, useState } from 'react'
 import { Box, Button, Container, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Text, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import AllDaosGrid from 'src/components/browse_daos/all_daos'
-import { GetAllGrantsQuery, useGetAllGrantsLazyQuery, useGetAllWorkspacesLazyQuery } from 'src/generated/graphql'
+import { GetAllGrantsQuery, useGetAllGrantsLazyQuery } from 'src/generated/graphql'
 import NavbarLayout from 'src/layout/navbarLayout'
-import { formatAmount } from 'src/utils/formattingUtils'
 import { unixTimestampSeconds } from 'src/utils/generics'
 import { extractInviteInfo, InviteInfo } from 'src/utils/invite'
 import AcceptInviteModal from 'src/v2/components/AcceptInviteModal'
-import { useAccount, useConnect } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 const PAGE_SIZE = 40
 
 function BrowseDao() {
-	const { subgraphClients, connected } = useContext(ApiClientsContext)!
+	const { subgraphClients } = useContext(ApiClientsContext)!
 
 	const toast = useToast()
-	const allNetworkWorkspace = Object.keys(subgraphClients)!.map(
-		(key) => useGetAllWorkspacesLazyQuery({ client: subgraphClients[key].client }),
-	)
 	const allNetworkGrantsForDao = Object.keys(subgraphClients)!.map((key) => useGetAllGrantsLazyQuery({ client: subgraphClients[key].client })
 	)
 	const { data: accountData } = useAccount()
-	const { isDisconnected } = useConnect()
-
 	const [allWorkspaces, setAllWorkspaces] = useState([] as any[])
 	// const [selectedChainId, setSelectedChainId] = useState<number|undefined>()
 	const [sortedWorkspaces, setSortedWorkspaces] = useState([] as any[])
+	const [newWorkspaces, setNewWorkspaces] = useState([] as any[])
 	const [selectedSorting, setSelectedSorting] = useState('grant_rewards')
 
 	const [currentPage, setCurrentPage] = useState(0)
-	const [allDataFetched, setAllDataFectched] = useState<Boolean>(false)
+	const [, setAllDataFectched] = useState<Boolean>(false)
 	const [grants, setGrants] = useState<GetAllGrantsQuery['grants']>([])
 
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
@@ -104,7 +99,7 @@ function BrowseDao() {
 	useEffect(() => {
 		var obj = {} as any
 		if(grants.length > 0) {
-			grants.map((grant, i) => {
+			grants.map((grant,) => {
 				obj [`${grant.workspace.id}-${grant.workspace.supportedNetworks[0]}`] = obj [`${grant.workspace.id}-${grant.workspace.supportedNetworks[0]}`] || []
 				obj [`${grant.workspace.id}-${grant.workspace.supportedNetworks[0]}`].push(
 					{
@@ -113,34 +108,59 @@ function BrowseDao() {
 						icon: grant.workspace.logoIpfsHash,
 						amount: grant.reward.committed,
 						token: grant.reward.token,
-						noOfApplicants: grant.numberOfApplications
+						noOfApplicants: grant.numberOfApplications,
+						createdAtS: grant.workspace.createdAtS,
 					})
 			})
 			formatDataforWorkspace(obj)
 		}
 	}, [grants])
 
-	const formatDataforWorkspace = (workspaces: any) => {
-		var result = Object.keys(workspaces).map((key) => {
-			var totalamount = 0
-			if(workspaces[key].length > 1) {
-				workspaces[key].map((grant: any) => {
-					totalamount += Number(formatAmount(grant.amount))
-				})
-			}
+	const fetchDAO = async(chainId: string, daoId: string) => {
+		try {
+			var res = await fetch(
+				'https://www.questbook-analytics.com/workspace-analytics',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					referrerPolicy: 'unsafe-url',
+					body: JSON.stringify({
+						chainId: chainId,
+						workspaceId: daoId,
+					}),
+				}
+			)
+			var data = await res.json()
+			return data
+
+		} catch(error) {
+			// console.log(error)
+		}
+
+	}
+
+	const formatDataforWorkspace = async(workspaces: any) => {
+		var result = Promise.all(Object.keys(workspaces).map(async(key) => {
+			var data = await fetchDAO(key.split('_')[1], key.split('-')[0])
+			var totalFunding = (!data.everydayFunding || data.everydayFunding.length === 0) ? 0 : data.everydayFunding.reduce((a: number, b: any) => a + Number(b['funding']), 0)
 
 			var dao = {
 				chainID: key.split('-')[1],
 				workspaceID: key.split('-')[0],
 				name: workspaces[key][0].name,
 				icon: workspaces[key][0].icon,
-				amount: totalamount === 0 ? Number(formatAmount(workspaces[key][0].amount)) : totalamount,
+				amount: totalFunding,
 				token: workspaces[key][0].token,
-				noOfApplicants: workspaces[key][0].noOfApplicants
+				noOfApplicants: data.totalApplicants
+				// noOfApplicants: workspaces[key][0].noOfApplicants
 			}
 			return (dao)
-		})
-		setAllWorkspaces(result)
+		}))
+		setAllWorkspaces(await result)
+
+
 	}
 
 	useEffect(() => {
@@ -152,20 +172,27 @@ function BrowseDao() {
 
 	useEffect(() => {
 		if(selectedSorting === 'grant_rewards') {
-			var workspaces = [...allWorkspaces]
+			var workspaces = [...allWorkspaces].filter(w => w.amount > 999)
 			workspaces.sort((a: any, b: any) => {
 				return parseFloat(b.amount) - parseFloat(a.amount) || Number(isNaN(a.amount)) - Number(isNaN(b.amount))
 			})
 			// console.log('sorted reward-wise workspace')
 			setSortedWorkspaces(workspaces)
 		} else if(selectedSorting === 'no_of_applicants') {
-			var workspaces = [...allWorkspaces]
+			var workspaces = [...allWorkspaces].filter(w => w.amount > 999)
 			workspaces.sort((a, b) => {
 				return parseFloat(b.noOfApplicants) - parseFloat(a.noOfApplicants) || Number(isNaN(a.noOfApplicants)) - Number(isNaN(b.noOfApplicants))
 			})
 			// console.log('sorted applicant-wise workspace')
 			setSortedWorkspaces(workspaces)
 		}
+
+		const newWorkspaces = [...allWorkspaces].filter(w => workspaces.find(ww => ww.workspaceID === w.workspaceID) === undefined)
+		newWorkspaces.sort((a: any, b: any) => {
+			return b.createdAtS - a.createdAtS
+		})
+		setNewWorkspaces(newWorkspaces)
+
 	}, [selectedSorting, allWorkspaces])
 
 	useEffect(() => {
@@ -286,7 +313,7 @@ function BrowseDao() {
 					<Text
 						fontSize='24px'
 						fontWeight='700'>
-						Discover
+						Popular
 					</Text>
 					<Box marginLeft='auto'>
 						<Menu>
@@ -334,7 +361,23 @@ function BrowseDao() {
 						</Menu>
 					</Box>
 				</Flex>
-				<AllDaosGrid allWorkspaces={sortedWorkspaces} />
+				<AllDaosGrid
+					renderGetStarted
+					allWorkspaces={sortedWorkspaces} />
+
+				<Flex
+					my='16px'
+					maxWidth='1280px'>
+					<Text
+						fontSize='24px'
+						fontWeight='700'>
+						New
+					</Text>
+				</Flex>
+
+				<AllDaosGrid
+					renderGetStarted={false}
+					allWorkspaces={newWorkspaces} />
 			</Container>
 			<AcceptInviteModal
 				inviteInfo={inviteInfo}

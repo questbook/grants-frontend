@@ -15,8 +15,7 @@ import 'react-datepicker/dist/react-datepicker.css'
 function GrantRewardsInput({
 	reward,
 	setReward,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	rewardToken,
+	// rewardToken,
 	setRewardToken,
 	rewardError,
 	setRewardError,
@@ -35,7 +34,7 @@ function GrantRewardsInput({
 }: {
   reward: string
   setReward: (rewards: string) => void
-  rewardToken: Token
+//   rewardToken: Token
   setRewardToken: (rewardToken: Token) => void
   rewardError: boolean
   setRewardError: (rewardError: boolean) => void

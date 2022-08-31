@@ -28,7 +28,6 @@ import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/Safe
 import SuccessfulDomainCreationModal from 'src/v2/components/Onboarding/CreateDomain/SuccessfulDomainCreationModal'
 import QuestbookLogo from 'src/v2/components/QuestbookLogo'
 import VerifySignerModal from 'src/v2/components/VerifySignerModal'
-import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import { useAccount, useDisconnect } from 'wagmi'
 
 
@@ -64,7 +63,7 @@ const OnboardingCreateDomain = () => {
 	const { disconnect } = useDisconnect()
 
 	// Solana
-	const { phantomWallet } = usePhantomWallet()
+	// const { phantomWallet } = usePhantomWallet()
 
 	// Webwallet
 	const [shouldRefreshNonce, setShouldRefreshNonce] = useState<boolean>()
@@ -73,11 +72,12 @@ const OnboardingCreateDomain = () => {
 	// console.log('safeSelected', safeSelected)
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: safeSelected?.networkId ? networksMapping[safeSelected?.networkId?.toString()] : '',
+		shouldRefreshNonce: shouldRefreshNonce
 	})
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
 
 	useEffect(() => {
-		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		// const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
 		// console.log('rree', isBiconomyLoading, biconomyLoading)
 		// console.log('networks 2:', biconomy?.networkId?.toString(), safeSelected?.networkId, safeSelected?.networkId ?
 		//	networksMapping[safeSelected?.networkId?.toString()] : undefined)
@@ -114,11 +114,12 @@ const OnboardingCreateDomain = () => {
 	}, [accountData, safeOwners, step, isOwner])
 
 	useEffect(() => {
+		// console.log("add_user", nonce, webwallet);
 		if(nonce && nonce !== 'Token expired') {
 			return
 		}
 
-		if(isOwner && webwallet) {
+		if(webwallet) {
 			addAuthorizedUser(webwallet?.address)
 				.then(() => {
 					setShouldRefreshNonce(true)
@@ -126,7 +127,7 @@ const OnboardingCreateDomain = () => {
 				})
 				// .catch((err) => console.log("Couldn't add authorized user", err))
 		}
-	}, [isOwner, webwallet, nonce])
+	}, [webwallet, nonce])
 
 	useEffect(() => {
 		if(!setIsSafeAddressVerified || !safesUSDBalance) {

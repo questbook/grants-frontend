@@ -38,23 +38,24 @@ const OnboardingCreateDao = () => {
 	const [daoName, setDaoName] = useState<string>()
 	const [daoNetwork, setDaoNetwork] = useState<NetworkSelectOption>()
 	const [daoImageFile, setDaoImageFile] = useState<File | null>(null)
-	const [callOnContractChange, setCallOnContractChange] = useState(false)
+	const [, setCallOnContractChange] = useState(false)
 	const [currentStep, setCurrentStep] = useState<number>()
-	const { network, switchNetwork } = useNetwork()
+	const { switchNetwork } = useNetwork()
 	const [shouldRefreshNonce, setShouldRefreshNonce] = useState<boolean>()
 
 	const { data: accountData, nonce } = useQuestbookAccount(shouldRefreshNonce)
 
-	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
+	const { webwallet } = useContext(WebwalletContext)!
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading } = useBiconomy({
 		chainId: daoNetwork?.id.toString()!,
+		shouldRefreshNonce: shouldRefreshNonce
 	})
 
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState('not ready')
 
 	useEffect(() => {
-		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+		// const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
 		// console.log('rree', isBiconomyLoading, loading)
 		if(biconomy && biconomyWalletClient && scwAddress && !loading && daoNetwork && biconomy.networkId.toString() === daoNetwork?.id.toString()) {
 			setIsBiconomyInitialised('ready')
