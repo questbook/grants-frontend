@@ -47,7 +47,15 @@ export const networksMapping: { [key: string]: string } = {
 	'137': '5',
 	'5': '5',
 	'4': '5',
-	'900001': '5' // This is for solana.
+	'900001': '5', // This is for solana.
+	"1": "5",
+    "100": "5",
+    "42161": "5",
+    "43114": "5",
+    "1313161554": "5",
+    "56": "5",
+    "246": "5",
+    "10": "5",
 }
 
 export const signNonce = async(webwallet: Wallet, nonce: string) => {
