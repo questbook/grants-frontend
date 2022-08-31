@@ -553,14 +553,12 @@ function ViewApplicants() {
 
 
 	async function getStatus(applicationToTxnHashMap: {[applicationId: string]: {transactionHash: string, amount: number}}) {
-		// console.log('applicationToTxnHashMap', applicationToTxnHashMap)
 		const statuses: {[applicationId: string]: {transactionHash: string, status: number, amount: number}} = {}
 
 		Promise.all((Object.keys(applicationToTxnHashMap || {}) || []).map(async(applicationId) => {
 			const transaction = applicationToTxnHashMap[applicationId]
 			const status = await current_safe?.getTransactionHashStatus(transaction?.transactionHash)
 			if(transaction && status) {
-				// console.log('applicationToTxnHashMap status', status)
 				statuses[applicationId] = {
 					transactionHash: transaction.transactionHash,
 					status: status[transaction.transactionHash],
