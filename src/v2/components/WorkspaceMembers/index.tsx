@@ -37,7 +37,7 @@ const USER_TYPES = [
 	},
 	{
 		'name': 'Administrators',
-		'accessLevels': [WorkspaceMemberAccessLevel['Admin']],
+		'accessLevels': [WorkspaceMemberAccessLevel['Owner'], WorkspaceMemberAccessLevel['Admin']],
 	},
 	{
 		'name': 'Reviewers',

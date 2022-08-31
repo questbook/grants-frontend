@@ -1,12 +1,12 @@
 import React from 'react'
 import { Box, Checkbox, Circle, Flex, Grid, GridItem, Image, Tag, Td, Tr } from '@chakra-ui/react'
-import { WorkspaceMember } from 'src/generated/graphql'
+import { WorkspaceMember, WorkspaceMemberAccessLevel } from 'src/generated/graphql'
 import { getFormattedDateFromUnixTimestampWithYear } from 'src/utils/formattingUtils'
 import { capitalizeFirstLetter } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 type Props = {
-  member: Partial<WorkspaceMember>
+	member: Partial<WorkspaceMember>
 }
 
 function MemberRow({ member }: Props) {
@@ -50,7 +50,10 @@ function MemberRow({ member }: Props) {
 					borderRadius={2}
 					fontWeight='bold'
 				>
-					{capitalizeFirstLetter(member.accessLevel!)}
+					{
+						capitalizeFirstLetter(member.accessLevel! === WorkspaceMemberAccessLevel.Owner
+							? WorkspaceMemberAccessLevel.Admin : member.accessLevel!)
+					}
 				</Tag>
 			</Td>
 			<Td>

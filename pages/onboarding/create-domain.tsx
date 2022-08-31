@@ -28,7 +28,6 @@ import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/Safe
 import SuccessfulDomainCreationModal from 'src/v2/components/Onboarding/CreateDomain/SuccessfulDomainCreationModal'
 import QuestbookLogo from 'src/v2/components/QuestbookLogo'
 import VerifySignerModal from 'src/v2/components/VerifySignerModal'
-import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import { useAccount, useDisconnect } from 'wagmi'
 
 
@@ -64,7 +63,7 @@ const OnboardingCreateDomain = () => {
 	const { disconnect } = useDisconnect()
 
 	// Solana
-	const { phantomWallet } = usePhantomWallet()
+	// const { phantomWallet } = usePhantomWallet()
 
 	// Webwallet
 	const [shouldRefreshNonce, setShouldRefreshNonce] = useState<boolean>()

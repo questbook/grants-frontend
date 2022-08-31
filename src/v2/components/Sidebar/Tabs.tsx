@@ -3,10 +3,8 @@ import { useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import {
 	useGetNumberOfApplicationsLazyQuery,
-	useGetNumberOfGrantsLazyQuery,
 } from 'src/generated/graphql'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useConnect } from 'wagmi'
 
 enum TabIndex {
@@ -25,7 +23,7 @@ const TABS = [
 ]
 
 function useGetTabs() {
-	const { data: accountData, nonce } = useQuestbookAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const { isConnected } = useConnect()
 	const { workspace, subgraphClients } = React.useContext(ApiClientsContext)!
 
@@ -33,15 +31,7 @@ function useGetTabs() {
 		(key) => useGetNumberOfApplicationsLazyQuery({ client: subgraphClients[key].client }),
 	)
 
-	const getNumberOfGrantsClients = Object.fromEntries(
-		Object.keys(subgraphClients)!.map((key) => [
-			key,
-			useGetNumberOfGrantsLazyQuery({ client: subgraphClients[key].client }),
-		]),
-	)
-
 	const [applicationCount, setApplicationCount] = React.useState(0)
-	const [grantsCount, setGrantsCount] = React.useState(0)
 	const toast = useToast()
 
 	const getNumberOfApplications = async() => {
@@ -70,33 +60,6 @@ function useGetTabs() {
 			})
 		}
 	}
-
-	const getNumberOfGrants = async() => {
-		try {
-			const query = getNumberOfGrantsClients[getSupportedChainIdFromWorkspace(workspace)!][0]
-			const { data } = await query({
-				variables: { workspaceId: workspace?.id! },
-			})
-			if(data && data.grants.length > 0) {
-				setGrantsCount(data.grants.length)
-			} else {
-				setGrantsCount(0)
-			}
-		} catch(e) {
-			toast({
-				title: 'Error getting grants count',
-				status: 'error',
-			})
-		}
-	}
-
-	React.useEffect(() => {
-		if(!workspace || !workspace?.id) {
-			return
-		}
-
-		getNumberOfGrants()
-	}, [accountData?.address, workspace?.id, isConnected])
 
 	React.useEffect(() => {
 		if(!accountData?.address) {

@@ -31,7 +31,7 @@ export default function useCreateGrant(
 	workspaceId?: string,
 ) {
 
-	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
+	const { webwallet } = useContext(WebwalletContext)!
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: chainId?.toString()!
@@ -47,7 +47,7 @@ export default function useCreateGrant(
 			biconomy.networkId.toString() === chainId.toString()) {
 			setIsBiconomyInitialised(true)
 		}
-	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised])
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, chainId])
 
 
 	const [error, setError] = React.useState<string>()

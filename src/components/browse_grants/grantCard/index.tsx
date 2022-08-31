@@ -17,7 +17,6 @@ interface GrantCardProps {
   grantID: string
   daoIcon: string
   daoName: string
-  isDaoVerified?: boolean
   chainId: SupportedChainId | undefined
 
   grantTitle: string
@@ -44,7 +43,6 @@ function GrantCard({
 	grantID,
 	daoIcon,
 	daoName,
-	isDaoVerified,
 	chainId,
 	grantTitle,
 	grantDesc,

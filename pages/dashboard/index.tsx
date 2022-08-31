@@ -1,5 +1,6 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react'
-import { Container, Flex, Heading, Spacer, Text } from '@chakra-ui/react'
+import { LinkIcon } from '@chakra-ui/icons'
+import { Button, Container, Flex, Heading, Spacer, Text } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import DoaDashTableEmptyState from 'src/components/dao_dashboard/empty_states/dao_dashboard'
 import BarGraph from 'src/components/dao_dashboard/graph/bar_graph'
@@ -15,6 +16,7 @@ import {
 import NavbarLayout from 'src/layout/navbarLayout'
 import { UNIX_TIMESTAMP_MAX, UNIX_TIMESTAMP_MIN } from 'src/utils/generics'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import InviteModal from 'src/v2/components/InviteModal'
 
 // const Tabledata = [
 // 	{
@@ -72,6 +74,7 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 function DaoDashboard() {
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
 
+	const [isInviteModalOpen, setIsInviteModalOpen] = useState(false)
 	const [chainID, setChainId] = React.useState<SupportedChainId>()
 	const [daoID, setDaoId] = React.useState<string>()
 
@@ -243,9 +246,11 @@ function DaoDashboard() {
 		})
 
 		// const date = new Date(everydayApplications[0].fordate)
+		// console.log(date)
 
 		let today = new Date()
 		// today = new Date(today.setDate(today.getDate() + 1))
+		// console.log('today', today)
 
 		// console.log('everydayApplicationsMap', everydayApplicationsMap)
 
@@ -291,11 +296,13 @@ function DaoDashboard() {
 		})
 
 		// const date = new Date(everydayFundings[0].fordate)
+		// console.log(date)
+
 		let today = new Date()
 		// today = new Date(today.setDate(today.getDate() - 1))
-		// // console.log('today', today)
+		// console.log('today', today)
 
-		// // console.log('everydayApplicationsMap', everydayApplicationsMap)
+		// console.log('everydayApplicationsMap', everydayApplicationsMap)
 
 		const everydayFundingsLast30 = []
 		for(let i = 0; i < 365; i++) {
@@ -316,7 +323,7 @@ function DaoDashboard() {
 			today = new Date(today.setDate(today.getDate() - 1))
 		}
 
-		// // console.log('everydayApplicationsLast30', everydayApplicationsLast30)
+		// console.log('everydayApplicationsLast30', everydayApplicationsLast30)
 		return {
 			everydayFunding: everydayFundingsLast30.reverse(),
 			totalFunding,
@@ -351,7 +358,12 @@ function DaoDashboard() {
 							DAO Stats
 						</Text>
 						<Spacer />
-
+						<Button
+							onClick={() => setIsInviteModalOpen(true)}
+							leftIcon={<LinkIcon />}
+							variant='primaryV2' >
+							Create invite link
+						</Button>
 						{/* <Menu
 							placement="bottom"
 							// align="right"
@@ -443,8 +455,6 @@ function DaoDashboard() {
 							/>
 
 							<LineGraph
-								app_count=''
-								title=''
 								fundings={daoStats?.everydayFunding ?? []}
 								totalFunding={daoStats?.totalFunding ?? 0}
 							/>
@@ -510,6 +520,9 @@ function DaoDashboard() {
 					</Flex>
 				</Container>
 			</Container>
+			<InviteModal
+				isOpen={isInviteModalOpen}
+				onClose={() => setIsInviteModalOpen(false)} />
 		</>
 	)
 }

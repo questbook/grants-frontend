@@ -74,7 +74,7 @@ export const getNonce = async(webwallet: Wallet | undefined) => {
 	return false
 }
 
-export const registerWebHook = async(authToken: string, apiKey: string, chainId: string) => {
+export const registerWebHook = async(authToken: string, apiKey: string) => {
 	const url = 'https://api.biconomy.io/api/v1/dapp/register-webhook'
 
 	const formData = new URLSearchParams({
@@ -182,7 +182,7 @@ export const chargeGas = async(workspace_id: number, amount: number) => {
 
 }
 
-export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: BiconomyWalletClient) => {
+export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: BiconomyWalletClient, chainId: string) => {
 	// console.log("I'm here", biconomyWalletClient)
 	var { doesWalletExist, walletAddress } = await biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address })
 	// console.log("I'm not here")
@@ -192,7 +192,9 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 	if(!doesWalletExist) {
 		// console.log('Wallet does not exist')
 		// console.log('Deploying wallet')
-		walletAddress = await biconomyWalletClient.checkIfWalletExistsAndDeploy({ eoa: webwallet.address }) // default index(salt) 0
+		const { walletAddress, txHash } = await biconomyWalletClient.checkIfWalletExistsAndDeploy({ eoa: webwallet.address }) // default index(salt) 0
+
+		await getTransactionReceipt(txHash, chainId)
 
 		// console.log('Wallet deployed at address', walletAddress)
 		scwAddress = walletAddress
@@ -210,22 +212,22 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 	return scwAddress
 }
 
-export const sendGaslessTransactionNew = async(targetContractObject: Contract, targetContractMethod: string,
-	targetContractArgs: Array<any>, targetContractAddress: string, webwallet: Wallet | undefined, chainId: string) => {
+// export const sendGaslessTransactionNew = async(targetContractObject: Contract, targetContractMethod: string,
+// 	targetContractArgs: Array<any>, targetContractAddress: string, webwallet: Wallet | undefined, chainId: string) => {
 
-	// console.log('HERE1', targetContractMethod, targetContractArgs)
-	const { data } = await targetContractObject.populateTransaction[targetContractMethod](...targetContractArgs)
+// 	// console.log('HERE1', targetContractMethod, targetContractArgs)
+// 	const { data } = await targetContractObject.populateTransaction[targetContractMethod](...targetContractArgs)
 
-	const res = await axios.post('http://localhost:3001/v0/build_tx', {
-		webwallet_address: webwallet?.address,
-		populated_tx: data,
-		chain_id: chainId,
-		target_contract_address: targetContractAddress
-	})
+// 	const res = await axios.post('http://localhost:3001/v0/build_tx', {
+// 		webwallet_address: webwallet?.address,
+// 		populated_tx: data,
+// 		chain_id: chainId,
+// 		target_contract_address: targetContractAddress
+// 	})
 
-	// console.log('new flow', res)
-	return false
-}
+// 	// console.log('new flow', res)
+// 	return false
+// }
 
 export const sendGaslessTransaction = async(biconomy: any, targetContractObject: Contract, targetContractMethod: string,
 	targetContractArgs: Array<any>, targetContractAddress: string, biconomyWalletClient: BiconomyWalletClient,

@@ -10,7 +10,7 @@ import useChainId from 'src/hooks/utils/useChainId'
 export default function useSubmitPublicKey() {
 	const [hiddenModalOpen, setHiddenModalOpen] = useState(false)
 	const [publicKey, setPublicKey] = React.useState<WorkspaceUpdateRequest>({ publicKey: '' })
-	const [transactionData, _, loading, isBiconomyInitialised] = useUpdateWorkspacePublicKeys(publicKey)
+	const [transactionData, , loading, isBiconomyInitialised] = useUpdateWorkspacePublicKeys(publicKey)
 
 	const router = useRouter()
 	const toastRef = React.useRef<ToastId>()

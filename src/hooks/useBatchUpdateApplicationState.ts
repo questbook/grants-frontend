@@ -37,7 +37,7 @@ export default function useBatchUpdateApplicationState(
 	const toast = useToast()
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = React.useState<number>()
 
-	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
+	const { webwallet } = useContext(WebwalletContext)!
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: chainId?.toString()!

@@ -54,9 +54,6 @@ function NavbarLayout({ children, renderSidebar }: Props) {
 				)
 			} */}
 			<NavBar
-				onGetStartedClick={true}
-				onGetStartedBtnClicked={false}
-				setGetStartedClicked={() => {}}
 			/>
 			<Flex
 				w='100vw'

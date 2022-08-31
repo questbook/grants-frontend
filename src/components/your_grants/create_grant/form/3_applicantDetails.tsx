@@ -27,12 +27,12 @@ function ApplicantDetails({
 	defaultMilestoneFields,
 	setDefaultMilestoneFields,
 
-	rubricRequired,
-	setRubricRequired,
-	rubrics,
-	setRubrics,
+	// rubricRequired,
+	// setRubricRequired,
+	// rubrics,
+	// setRubrics,
 
-	setMaximumPoints,
+	// setMaximumPoints,
 }: {
   detailsRequired: any[]
   toggleDetailsRequired: (index: number) => void
@@ -49,12 +49,12 @@ function ApplicantDetails({
   defaultMilestoneFields: any[]
   setDefaultMilestoneFields: (defaultMilestoneFields: any[]) => void
 
-  rubricRequired: boolean
-  setRubricRequired: (rubricRequired: boolean) => void
-  rubrics: any[]
-  setRubrics: (rubrics: any[]) => void
+//   rubricRequired: boolean
+//   setRubricRequired: (rubricRequired: boolean) => void
+//   rubrics: any[]
+//   setRubrics: (rubrics: any[]) => void
 
-  setMaximumPoints: (maximumPoints: number) => void
+//   setMaximumPoints: (maximumPoints: number) => void
 }) {
 	return (
 		<Flex

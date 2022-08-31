@@ -84,13 +84,9 @@ const lineChartOptionsProfile2 = {
 }
 
 function LineGraph({
-	app_count,
-	title,
 	fundings,
 	totalFunding,
 }: {
-	app_count: string
-	title: string
 	fundings: any[]
 	totalFunding: number
 }) {
@@ -132,7 +128,7 @@ function LineGraph({
 				// 	},
 				// },
 				// theme: 'dark',
-				custom: ({ series, seriesIndex, dataPointIndex, w }: {series: any, seriesIndex: any, dataPointIndex: any, w: any}) => {
+				custom: ({ series, seriesIndex, dataPointIndex }: {series: any, seriesIndex: any, dataPointIndex: any}) => {
 					const d = new Date(fundings[dataPointIndex].date.getTime() + 86400000)
 					return (
 						`<div class='barhover'>

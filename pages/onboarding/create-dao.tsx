@@ -49,6 +49,7 @@ const OnboardingCreateDao = () => {
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading } = useBiconomy({
 		chainId: daoNetwork?.id.toString()!,
+		shouldRefreshNonce: shouldRefreshNonce
 	})
 
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState('not ready')

@@ -147,7 +147,6 @@ function Sidebar({
 		return s
 	}
 
-	const [reviewDrawerOpen, setReviewDrawerOpen] = React.useState(false)
 	let icon
 	let label
 	let decimals

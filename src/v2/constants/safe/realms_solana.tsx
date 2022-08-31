@@ -1,4 +1,4 @@
-
+/* eslint-disable */
 import {
 	createInstructionData,
 	getAllTokenOwnerRecords,
@@ -129,15 +129,15 @@ export class Realms_Solana implements Safe {
             tokenOwnerRecord[0].pubkey
     	)
 
-    	const getProvider = (): any => {
-    		if('solana' in window) {
-    			// @ts-ignore
-    			const provider = window.solana as any
-    			if(provider.isPhantom) {
-    				return provider as any
-    			}
-    		}
-    	}
+    	// const getProvider = (): any => {
+    	// 	if('solana' in window) {
+    	// 		// @ts-ignore
+    	// 		const provider = window.solana as any
+    	// 		if(provider.isPhantom) {
+    	// 			return provider as any
+    	// 		}
+    	// 	}
+    	// }
 
     	// console.log('create New proposal - getProvider', getProvider())
 
@@ -163,7 +163,7 @@ export class Realms_Solana implements Safe {
     	const realmData = await getRealm(this.connection, this.id!)
     	// console.log('realms_solana - realmData', realmData)
 
-    	const COUNCIL_MINT = realmData.account.config.councilMint
+    	// const COUNCIL_MINT = realmData.account.config.councilMint
 
     	// const governanceInfo = await getGovernanceAccounts(this.connection, this.programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
     	// console.log('realms_solana - governanceInfo', governanceInfo[0])
@@ -184,7 +184,7 @@ export class Realms_Solana implements Safe {
     	const realmData = await getRealm(this.connection, new PublicKey(realmsPublicKey))
     	const COUNCIL_MINT = realmData.account.config.councilMint
     	const governanceInfo = await getGovernanceAccounts(this.connection, this.programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
-    	const governance = governanceInfo[0]
+    	// const governance = governanceInfo[0]
     	// const nativeTreasury = await getNativeTreasuryAddress(this.programId, governance.pubkey)
     	// console.log('governance', governance)
     	// console.log('nativeTreasury', nativeTreasury)
@@ -269,7 +269,7 @@ const isOwner = async(safeAddress: string, address: String): Promise<boolean> =>
 	const realmData = await getRealm(connection, safeAddressPublicKey)
 	// console.log('realms_solana - realmData', realmData)
 
-	const COUNCIL_MINT = realmData.account.config.councilMint
+	// const COUNCIL_MINT = realmData.account.config.councilMint
 
 	// const governanceInfo = await getGovernanceAccounts(connection, programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
 	// console.log('realms_solana - governanceInfo', governanceInfo[0])
@@ -295,7 +295,7 @@ const getOwners = async(safeAddress: string): Promise<string[]> => {
 		const realmData = await getRealm(connection, safeAddressPublicKey)
 		// console.log('realms_solana - realmData', realmData)
 
-		const COUNCIL_MINT = realmData.account.config.councilMint
+		// const COUNCIL_MINT = realmData.account.config.councilMint
 
 		// const governanceInfo = await getGovernanceAccounts(connection, programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
 		// console.log('realms_solana - governanceInfo', governanceInfo[0])

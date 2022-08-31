@@ -56,11 +56,6 @@ export default function useEditGrant(
 		}
 	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised])
 
-
-	useEffect(() => {
-		console.count("I'm inside")
-	}, [])
-
 	useEffect(() => {
 		if(data) {
 			setError(undefined)

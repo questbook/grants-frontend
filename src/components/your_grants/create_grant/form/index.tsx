@@ -49,7 +49,7 @@ function Form({
 
 	}, [workspace, currentChain])
 
-	const { data: accountData, nonce } = useQuestbookAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const maxDescriptionLength = 300
 	const [title, setTitle] = useState('')
 	const [summary, setSummary] = useState('')
@@ -104,7 +104,7 @@ function Form({
 	const [publicKey] = React.useState<WorkspaceUpdateRequest>({
 		publicKey: '',
 	})
-	const [transactionData, transactionLink, loading, isBiconomyInitialised] = useUpdateWorkspacePublicKeys(publicKey)
+	const [transactionData, transactionLink, , isBiconomyInitialised] = useUpdateWorkspacePublicKeys(publicKey)
 
 	const { setRefresh } = useCustomToast(transactionLink)
 	const [admins, setAdmins] = React.useState<any[]>([])
@@ -769,11 +769,11 @@ function Form({
 				setMilestoneSelectOptionIsVisible={setMilestoneSelectOptionIsVisible}
 				defaultMilestoneFields={defaultMilestoneFields}
 				setDefaultMilestoneFields={setDefaultMilestoneFields}
-				rubricRequired={rubricRequired}
-				setRubricRequired={setRubricRequired}
-				rubrics={rubrics}
-				setRubrics={setRubrics}
-				setMaximumPoints={setMaximumPoints}
+				// rubricRequired={rubricRequired}
+				// setRubricRequired={setRubricRequired}
+				// rubrics={rubrics}
+				// setRubrics={setRubrics}
+				// setMaximumPoints={setMaximumPoints}
 			/>
 
 			<Text
@@ -789,7 +789,7 @@ function Form({
 			<GrantRewardsInput
 				reward={reward}
 				setReward={setReward}
-				rewardToken={rewardToken}
+				// rewardToken={rewardToken}
 				setRewardToken={setRewardToken}
 				rewardError={rewardError}
 				setRewardError={setRewardError}
