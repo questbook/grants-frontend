@@ -737,10 +737,6 @@ function ViewApplicants() {
 		// console.log('onChangeRecepientDetails', applicationId, fieldName, fieldValue)
 		// console.log('Gnosis Batch data', gnosisBatchData)
 
-		if(!isEvmChain && fieldName==='amount'){
-			fieldValue = await usdToSolana(fieldValue)
-		}
-
 		const tempData = initiateTransactionData.map((transactionData: any) => {
 			if(transactionData.applicationId === applicationId) {
 				return { ...transactionData, [fieldName]: fieldValue }
