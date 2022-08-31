@@ -22,7 +22,7 @@ const EIP712_WALLET_TX_TYPE = {
 // export const webHookId = "a36aa5b2-b761-4757-aad9-10348f3ec732"
 
 // goerli
-export const webHookId = '97d579e5-917d-4059-90af-d46d5ee88b43'
+export const webHookId = '7726ab3f-2b4b-4a80-bfdd-c8ebb2d5ea2f'
 
 export const jsonRpcProviders: { [key: string]: ethers.providers.JsonRpcProvider } =
 {
@@ -35,7 +35,7 @@ export const jsonRpcProviders: { [key: string]: ethers.providers.JsonRpcProvider
 export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } } = {
 	'5': {
 		apiKey: 'cCEUGyH2y.37cd0d5e-704c-49e6-9f3d-e20fe5bb13d5',
-		webHookId: '97d579e5-917d-4059-90af-d46d5ee88b43'
+		webHookId: '7726ab3f-2b4b-4a80-bfdd-c8ebb2d5ea2f'
 	},
 	'137': {
 		apiKey: 'kcwSbypnqq.f5fe6fbd-10e3-4dfe-a731-5eb4b6d85445',
