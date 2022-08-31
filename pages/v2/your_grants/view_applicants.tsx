@@ -740,7 +740,7 @@ function ViewApplicants() {
 		// console.log('onChangeRecepientDetails', applicationId, fieldName, fieldValue)
 		// console.log('Gnosis Batch data', gnosisBatchData)
 
-		if(!isEvmChain && fieldName==='amount'){
+		if(!isEvmChain && fieldName === 'amount') {
 			fieldValue = await usdToSolana(fieldValue)
 		}
 
@@ -833,7 +833,7 @@ function ViewApplicants() {
 	const [areRubricsSet, setAreRubricsSet] = useState<boolean>(false)
 
 	useEffect(() => {
-		if(addReviewerBannerCancelled || !reviewersForAWorkspaceData) {
+		if(!reviewersForAWorkspaceData) {
 			setAreReviewersAdded(true)
 		} else if(reviewersForAWorkspaceData?.workspaces[0]?.members.length) {
 			setAreReviewersAdded(reviewersForAWorkspaceData?.workspaces[0]?.members.length > 0)
@@ -843,7 +843,7 @@ function ViewApplicants() {
 	}, [reviewersForAWorkspaceData])
 
 	useEffect(() => {
-		if(setupRubricBannerCancelled || !grantData) {
+		if(!grantData) {
 			setAreRubricsSet(true)
 		} else if(grantData?.grants[0].rubric?.items.length) {
 			setAreRubricsSet(grantData?.grants[0].rubric?.items.length > 0)
@@ -991,7 +991,7 @@ function ViewApplicants() {
 
 				<Box mt={5} />
 				{
-					!areReviewersAdded && (
+					!areReviewersAdded && !areRubricsSet && !addReviewerBannerCancelled && (
 						<NoReviewerBanner
 							onSetup={
 								() => {
@@ -1007,7 +1007,7 @@ function ViewApplicants() {
 					)
 				}
 				{
-					areReviewersAdded && !areRubricsSet && (
+					areReviewersAdded && !areRubricsSet && !setupRubricBannerCancelled && (
 						<RubricNotSetBanner
 							onSetup={() => setRubricDrawerOpen(true)}
 							onClose={() => setSetupRubricBannerCancelled(true)} />
