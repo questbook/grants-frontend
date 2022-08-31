@@ -201,7 +201,7 @@ const RecipientDetails = ({
 						errorBorderColor='red'
 						height='auto'
 						type='number'
-						onChange={async(e) => onChangeRecepientDetails(applicantData.applicationId, 'amount', await usdToSolana(parseFloat(e.target.value)))}
+						onChange={async(e) => onChangeRecepientDetails(applicantData.applicationId, 'amount', parseFloat(e.target.value))}
 					/>
 				</Flex>
 

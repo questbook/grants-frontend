@@ -44,7 +44,7 @@ import Breadcrumbs from 'src/v2/components/Breadcrumbs'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import StyledTab from 'src/v2/components/StyledTab'
 import { Gnosis_Safe } from 'src/v2/constants/safe/gnosis_safe'
-import { Realms_Solana, solanaToUsd } from 'src/v2/constants/safe/realms_solana'
+import { Realms_Solana, solanaToUsd, usdToSolana } from 'src/v2/constants/safe/realms_solana'
 import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import AcceptedProposalsPanel from 'src/v2/payouts/AcceptedProposals/AcceptedProposalPanel'
@@ -733,9 +733,14 @@ function ViewApplicants() {
 		}
 	}, [workspace, biconomyWalletClient, workspacechainId, biconomy, workspaceRegistryContract, scwAddress, webwallet, nonce, initiateTransactionData, proposalAddr])
 
-	const onChangeRecepientDetails = (applicationId: any, fieldName: string, fieldValue: any) => {
+	const onChangeRecepientDetails = async (applicationId: any, fieldName: string, fieldValue: any) => {
 		// console.log('onChangeRecepientDetails', applicationId, fieldName, fieldValue)
 		// console.log('Gnosis Batch data', gnosisBatchData)
+
+		if(!isEvmChain && fieldName==='amount'){
+			fieldValue = await usdToSolana(fieldValue)
+		}
+
 		const tempData = initiateTransactionData.map((transactionData: any) => {
 			if(transactionData.applicationId === applicationId) {
 				return { ...transactionData, [fieldName]: fieldValue }
