@@ -6,12 +6,11 @@ interface Props {
   disbursed: Array<number>
   applicants: Array<number>
   winners: Array<number>
-  grants: any
   fundTimes: Array<number>
   applicationTime: Array<number>
 }
 
-function DaoData({ disbursed, applicants, winners, grants, fundTimes, applicationTime }: Props) {
+function DaoData({ disbursed, applicants, winners, fundTimes, applicationTime }: Props) {
 
 	return (
 		<Grid

@@ -3,7 +3,6 @@ import { Divider, Flex, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { useGetWorkspaceMembersLazyQuery } from 'src/generated/graphql'
-import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { MinimalWorkspace } from 'src/types'
 import getTabFromPath from 'src/utils/tabUtils'
@@ -14,11 +13,10 @@ import { useConnect } from 'wagmi'
 
 function Sidebar() {
 	const [topTabs, bottomTabs] = useGetTabs()
-	const { data: accountData, nonce } = useQuestbookAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const { isConnected } = useConnect()
 	const { workspace, setWorkspace, subgraphClients, connected } =
     React.useContext(ApiClientsContext)!
-	const { switchNetwork, network } = useNetwork()
 
 	const router = useRouter()
 	const toast = useToast()
@@ -121,7 +119,7 @@ function Sidebar() {
 				my={2}
 				mx={2}>
 				{
-					bottomTabs.map((tab, index) => (
+					bottomTabs.map((tab,) => (
 						<SidebarItem
 							key={tab.id}
 							index={tab.index}
@@ -166,7 +164,7 @@ function Sidebar() {
 				my={2}
 				mx={2}>
 				{
-					topTabs.map((tab, index) => (
+					topTabs.map((tab,) => (
 						<SidebarItem
 							key={tab.id}
 							index={tab.index}

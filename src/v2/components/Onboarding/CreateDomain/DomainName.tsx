@@ -9,7 +9,7 @@ interface Props {
     onContinue: () => void
 }
 
-function DomainName({ domainName, setValue, isVerified, setIsVerified, onContinue }: Props) {
+function DomainName({ domainName, setValue, isVerified, onContinue }: Props) {
 	return (
 		<>
 			<Text

@@ -72,7 +72,7 @@ function CreateGrant() {
 	] as const
 
 	const [formData, setFormData] = useState<any>()
-	const [transactionData, blockExplorerLink, loading, isBiconomyInitialised] = useCreateGrant(formData)
+	const [transactionData, blockExplorerLink, loading] = useCreateGrant(formData)
 
 	useEffect(() => {
 		if(workspace) {

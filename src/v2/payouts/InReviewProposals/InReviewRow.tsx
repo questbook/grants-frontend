@@ -12,7 +12,6 @@ import { RejectApplication } from 'src/v2/assets/custom chakra icons/RejectAppli
 import { ResubmitApplication } from 'src/v2/assets/custom chakra icons/ResubmitApplication'
 
 const InReviewRow = ({
-	onSendFundsClicked,
 	applicantData,
 	isChecked,
 	onChange,
@@ -21,7 +20,6 @@ const InReviewRow = ({
 	onRejectClicked,
 	onResubmitClicked,
 }: {
-	onSendFundsClicked: () => void
 	applicantData: any
 	isChecked: boolean
 	onChange: (e: any) => void
@@ -37,7 +35,7 @@ const InReviewRow = ({
 	const [isHovering, setIsHovering] = useState(false)
 
 	const { grant, reviews: submittedReviews } = applicantData || { }
-	const { loadReview, isReviewPrivate } = useLoadReview(grant?.id, chainId)
+	const { loadReview } = useLoadReview(grant?.id, chainId)
 
 	const [reviews, setReviews] = useState<{ [_id: string]: IReviewFeedback }>({ })
 

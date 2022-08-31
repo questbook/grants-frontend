@@ -1,7 +1,6 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react'
 import { LinkIcon } from '@chakra-ui/icons'
 import { Button, Container, Flex, Heading, Spacer, Text } from '@chakra-ui/react'
-import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import DoaDashTableEmptyState from 'src/components/dao_dashboard/empty_states/dao_dashboard'
 import BarGraph from 'src/components/dao_dashboard/graph/bar_graph'
@@ -74,7 +73,6 @@ import InviteModal from 'src/v2/components/InviteModal'
 
 function DaoDashboard() {
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
-	const router = useRouter()
 
 	const [isInviteModalOpen, setIsInviteModalOpen] = useState(false)
 	const [chainID, setChainId] = React.useState<SupportedChainId>()
@@ -121,7 +119,7 @@ function DaoDashboard() {
 
 	useEffect(() => {
 
-		console.log('rec workspace, daostats')
+		// console.log('rec workspace, daostats')
 
 		if(!daoID || !chainID) {
 			return
@@ -154,7 +152,7 @@ function DaoDashboard() {
 
 	useEffect(() => {
 		if(data.data && data.data.grants && data.data.grants.length > 0) {
-			console.log('data.grants', data.data.grants)
+			// console.log('data.grants', data.data.grants)
 			if(
 				grants.length > 0 &&
         grants[0].workspace.id === data.data.grants[0].workspace.id &&
@@ -168,7 +166,7 @@ function DaoDashboard() {
 	}, [data])
 
 	const getAnalyticsData = async() => {
-		console.log('calling analytics')
+		// console.log('calling analytics')
 		try {
 			//const res = await fetch('https://www.questbook-analytics.com/workspace-analytics', {
 			const res = await fetch(
@@ -193,7 +191,7 @@ function DaoDashboard() {
 			)
 
 			const data = await res.json()
-			console.log('res', data)
+			// console.log('res', data)
 
 			const { everydayFunding, totalFunding } = extractLast30Fundings(data)
 
@@ -212,7 +210,7 @@ function DaoDashboard() {
 				grantsTat[f.grantId] = f.res
 			})
 
-			console.log(grantsPending)
+			// console.log(grantsPending)
 
 			setDaoStats({
 				totalApplicants: data.totalApplicants,
@@ -228,7 +226,7 @@ function DaoDashboard() {
 				grantsTat
 			})
 		} catch(e) {
-			console.log(e)
+			// console.log(e)
 		}
 	}
 
@@ -239,7 +237,7 @@ function DaoDashboard() {
 			return []
 		}
 
-		console.log('everydayApplications', everydayApplications)
+		// console.log('everydayApplications', everydayApplications)
 
 		const everydayApplicationsMap = {} as any
 		everydayApplications.forEach((application: any) => {
@@ -247,14 +245,14 @@ function DaoDashboard() {
 			everydayApplicationsMap[timekey] = application.numApps
 		})
 
-		const date = new Date(everydayApplications[0].fordate)
+		// const date = new Date(everydayApplications[0].fordate)
 		// console.log(date)
 
 		let today = new Date()
 		// today = new Date(today.setDate(today.getDate() + 1))
 		// console.log('today', today)
 
-		console.log('everydayApplicationsMap', everydayApplicationsMap)
+		// console.log('everydayApplicationsMap', everydayApplicationsMap)
 
 		const everydayApplicationsLast30 = []
 		for(let i = 0; i < 365; i++) {
@@ -275,7 +273,7 @@ function DaoDashboard() {
 			today = new Date(today.setDate(today.getDate() - 1))
 		}
 
-		console.log('everydayApplicationsLast30', everydayApplicationsLast30)
+		// console.log('everydayApplicationsLast30', everydayApplicationsLast30)
 		return everydayApplicationsLast30.reverse()
 	}
 
@@ -290,8 +288,6 @@ function DaoDashboard() {
 			}
 		}
 
-		// console.log(everydayApplications)
-
 		const everydayFundingsMap = {} as any
 		everydayFundings.forEach((application: any) => {
 			totalFunding += parseInt(application.funding)
@@ -299,7 +295,7 @@ function DaoDashboard() {
 			everydayFundingsMap[timekey] = application.funding
 		})
 
-		const date = new Date(everydayFundings[0].fordate)
+		// const date = new Date(everydayFundings[0].fordate)
 		// console.log(date)
 
 		let today = new Date()
@@ -459,8 +455,6 @@ function DaoDashboard() {
 							/>
 
 							<LineGraph
-								app_count=''
-								title=''
 								fundings={daoStats?.everydayFunding ?? []}
 								totalFunding={daoStats?.totalFunding ?? 0}
 							/>
@@ -492,7 +486,7 @@ function DaoDashboard() {
 							<Header />
 							{
 								// !grants || grants.filter(item => !daoStats?.grantsPending[item.id] || daoStats?.grantsPending[item.id] === 0).length > 0 ? (
-								grants?.filter(item => (daoStats?.grantsPending[item.id] > 0 ?? false)).length > 0 ? (
+								grants?.filter(item => (daoStats?.grantsPending[item.id] > 0)).length > 0 ? (
 									<>
 										<TableContent
 											grants={

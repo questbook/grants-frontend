@@ -6,21 +6,16 @@ import {
 	MenuButton,
 	Text,
 } from '@chakra-ui/react'
-import { useRouter } from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import { useConnect, useDisconnect } from 'wagmi'
+import { useConnect } from 'wagmi'
 
 function AccountDetails() {
-	const isOnline = true
-	const { data: accountData, nonce, setNonce } = useQuestbookAccount()
-	const { webwallet, setWebwallet, scwAddress } = useContext(WebwalletContext)!
+	const { nonce } = useQuestbookAccount()
+	const { scwAddress } = useContext(WebwalletContext)!
 	const { isDisconnected } = useConnect() // @TODO: change the way we see if a user is connect or not
 	// cause now it's only with metmask
-	const { disconnect } = useDisconnect()
-	const { connected, setConnected } = useContext(ApiClientsContext)!
-
-	const router = useRouter()
+	const { connected } = useContext(ApiClientsContext)!
 
 	const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`
 

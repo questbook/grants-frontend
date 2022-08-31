@@ -15,7 +15,6 @@ import SuccessToast from 'src/components/ui/toasts/successToast'
 import ERC20ABI from 'src/contracts/abi/ERC20.json'
 import useERC20Contract from 'src/hooks/contracts/useERC20Contract'
 import useQBContract from 'src/hooks/contracts/useQBContract'
-import useChainId from 'src/hooks/utils/useChainId'
 import { parseAmount } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useAccount, useContract, useNetwork, useSigner } from 'wagmi'
@@ -40,8 +39,6 @@ function ModalContent({
 	const apiClients = useContext(ApiClientsContext)!
 	const { workspace } = apiClients
 	const [error, setError] = React.useState(false)
-	const [rewardAssetDecimals, setRewardAssetDecimals] = React.useState(0)
-	const [submitClicked, setSubmitClicked] = useState(false)
 	const [approvalAmount, setApprovalAmount] = useState('')
 
 	const { data: signer } = useSigner()
@@ -53,7 +50,6 @@ function ModalContent({
 		contractInterface: ERC20ABI,
 		signerOrProvider: signer,
 	})
-	const currentChainId = useChainId()
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 	const workspaceRegistryContract = useQBContract('workspace', chainId)
 	const rewardContract = useERC20Contract(rewardAsset.address)
@@ -71,7 +67,7 @@ function ModalContent({
 	async function approvalEvent() {
 		// console.log('Listening to approval event..')
 		const filter = rewardContract.filters.Approval(accountData?.address, utils.getAddress(workspaceRegistryContract.address!))
-		rewardContract.on(filter, (from, to, amount, eventDetail) => {
+		rewardContract.on(filter, () => {
 			// console.log(`Received approval from ${from} to ${to}`)
 			toastRef.current = toast({
 				position: 'top',

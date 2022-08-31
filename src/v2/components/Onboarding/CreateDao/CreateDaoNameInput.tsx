@@ -29,7 +29,7 @@ const CreateDaoNameInput = ({
 		errorFunction: (string: string) => string && string.length < 5,
 	}, {
 		description: 'Ex: Ethereum DAO, Polygon DAO.',
-		errorFunction: (string: string) => false,
+		errorFunction: () => false,
 	}]
 
 	useEffect(() => {

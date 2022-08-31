@@ -18,7 +18,6 @@ import RecipientDetails from 'src/v2/payouts/SendFundsDrawer/RecepientDetails'
 import SafeOwner from 'src/v2/payouts/SendFundsModal/SafeOwner'
 import { PhantomProvider } from 'src/v2/types/phantom'
 import { Safe, TransactionType } from 'src/v2/types/safe'
-import { useConnect } from 'wagmi'
 
 interface Props {
 	isOpen: boolean
@@ -51,25 +50,22 @@ function SendFundsDrawer({
 	proposals,
 	onChangeRecepientDetails,
 	phantomWallet,
-	setPhantomWalletConnected,
 	isEvmChain,
-	current_safe,
 	signerVerified,
-	initiateTransaction,
 	initiateTransactionData,
 	onModalStepChange,
 	step,
 }: Props) {
 
-	const {
-		isError: isErrorConnecting,
-		connect,
-		connectors
-	} = useConnect()
+	// const {
+	// 	isError: isErrorConnecting,
+	// 	connect,
+	// 	connectors
+	// } = useConnect()
 
 	const validateReceipentInput = () => {
 		let isNotValid = false
-		initiateTransactionData?.map((data, i) => {
+		initiateTransactionData?.map((data,) => {
 			if(data.to === undefined || data.selectedMilestone === undefined || data.amount === undefined) {
 				isNotValid = true
 			}

@@ -41,7 +41,7 @@ const SetupEvaluationDrawer = ({
 				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 			].client,
 	})
-	const { data, loading, error } = useGetReviewersForAWorkspaceQuery(queryParams)
+	const { data } = useGetReviewersForAWorkspaceQuery(queryParams)
 	useEffect(() => {
 		if(!workspace) {
 			return
@@ -126,7 +126,7 @@ const SetupEvaluationDrawer = ({
 
 	const applicationReviewContract = useQBContract('reviews', chainId)
 
-	const { webwallet, setWebwallet } = useContext(WebwalletContext)!
+	const { webwallet } = useContext(WebwalletContext)!
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		chainId: chainId?.toString()!
 		// targetContractABI: GrantFactoryAbi,
@@ -250,7 +250,7 @@ const SetupEvaluationDrawer = ({
 			}
 
 			setNetworkTransactionModalStep(3)
-			const { txFee, receipt } = await getTransactionDetails(response, chainId.toString())
+			const { txFee } = await getTransactionDetails(response, chainId.toString())
 
 			await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee))
 

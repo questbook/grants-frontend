@@ -6,12 +6,8 @@ import { getFromIPFS } from 'src/utils/ipfsUtils'
 
 const RejectedRow = ({
 	applicantData,
-	isChecked,
-	onChange,
 }: {
 	applicantData: any
-	isChecked: boolean
-	onChange: (e: any) => void
 }) => {
 	const router = useRouter()
 	const [isHovering, setIsHovering] = useState(false)
