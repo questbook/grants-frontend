@@ -72,6 +72,7 @@ const OnboardingCreateDomain = () => {
 	// console.log('safeSelected', safeSelected)
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: safeSelected?.networkId ? networksMapping[safeSelected?.networkId?.toString()] : '',
+		shouldRefreshNonce: shouldRefreshNonce
 	})
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
 

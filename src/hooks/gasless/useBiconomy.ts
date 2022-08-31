@@ -14,7 +14,7 @@ export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boole
  
 
 	useEffect(() => {
-		// console.log("HO HERE");
+		// console.log("HO HERE", data.shouldRefreshNonce);
 		if(typeof window === 'undefined') {
 			setShouldRefresh((prev) => !prev);
 			return;
@@ -22,7 +22,7 @@ export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boole
 
 		const isBiconomyLoading = (typeof window !== 'undefined') ? localStorage.getItem('isBiconomyLoading') === 'true' : true
 		// console.log("HO HERE2", shouldRefresh, isBiconomyLoading);
-		// console.log("usebiconomy", {nonce, shouldRefresh, isBiconomyLoading, data, biconomyDaoObj})
+		// console.log("usebiconomy", {nonce, shouldRefresh, isBiconomyLoading, data, biconomyDaoObj, webwallet})
 		// console.log('STEP3', biconomyDaoObj, nonce, webwallet, biconomyWalletClient, data.chainId, network, isBiconomyLoading)
 		// console.log('STEP3: CHAIN - ', data.chainId, biconomyDaoObj?.networkId)
 		if((!isBiconomyLoading && data.chainId && biconomyDaoObj && biconomyDaoObj.networkId && networksMapping[data.chainId] !== biconomyDaoObj.networkId.toString()) ||
