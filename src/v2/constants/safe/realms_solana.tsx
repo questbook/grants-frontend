@@ -93,7 +93,7 @@ export class Realms_Solana implements Safe {
     		const ins = SystemProgram.transfer({
     			fromPubkey: nativeTreasury,
     			toPubkey: new PublicKey(transactions[i].to),
-    			lamports: parseFloat(transactions[i].amount.toFixed(9)) * 1000000000,
+    			lamports: parseFloat(await (await usdToSolana(transactions[i].amount)).toFixed(9)) * 1000000000,
     			programId: this.programId,
     		})
 
