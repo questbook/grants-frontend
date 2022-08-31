@@ -8,7 +8,7 @@ import useEncryption from 'src/hooks/utils/useEncryption'
 
 export default function useApplicationEncryption() {
 	const { encryptMessage, decryptMessage } = useEncryption()
-	const { data: accountData, nonce } = useQuestbookAccount()
+	const { data: accountData } = useQuestbookAccount()
 
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()

@@ -8,7 +8,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 // @TODO what does this component do?
 
 export default function useEncryption() {
-	const { data: accountData, nonce } = useQuestbookAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
 

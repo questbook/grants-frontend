@@ -31,7 +31,7 @@ export default function useSubmitApplication(
 	const { data: accountData, nonce } = useQuestbookAccount(shouldRefreshNonce)
 
 	const apiClients = useContext(ApiClientsContext)!
-	const { validatorApi, workspace } = apiClients
+	const { validatorApi } = apiClients
 
 	const currentChainId = useChainId()
 	const applicationRegistryContract = useQBContract('applications', chainId)
@@ -50,8 +50,6 @@ export default function useSubmitApplication(
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = React.useState(false)
 
 	useEffect(() => {
-		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		// console.log('rree', isBiconomyLoading, biconomyLoading, chainId, biconomy)
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
 			biconomy.networkId.toString() === chainId.toString()) {
 			setIsBiconomyInitialised(true)
@@ -88,18 +86,14 @@ export default function useSubmitApplication(
 			return
 		}
 
-		// console.log('webwallet exists')
 		if(nonce && nonce !== 'Token expired') {
 			return
 		}
 
-		// console.log('adding nonce')
 
 		addAuthorizedUser(webwallet?.address)
 			.then(() => {
-				console.log('')
 				setShouldRefreshNonce(true)
-				// console.log('Added authorized user', webwallet.address)
 			})
 			// .catch((err) => console.log("Couldn't add authorized user", err))
 	}, [webwallet, nonce, shouldRefreshNonce])

@@ -48,8 +48,6 @@ export default function useEditGrant(
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = React.useState(false)
 
 	useEffect(() => {
-		const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		// console.log('rree', isBiconomyLoading, biconomyLoading)
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
 			biconomy.networkId.toString() === chainId.toString()) {
 			setIsBiconomyInitialised(true)
@@ -57,9 +55,9 @@ export default function useEditGrant(
 	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised])
 
 
-	useEffect(() => {
-		console.count("I'm inside")
-	}, [])
+	// useEffect(() => {
+	// 	console.count("I'm inside")
+	// }, [])
 
 	useEffect(() => {
 		if(data) {

@@ -3,7 +3,7 @@ import { WebwalletContext } from 'pages/_app'
 import { getNonce } from 'src/utils/gaslessUtils'
 
 export const useNonce = (shouldRefreshNonce?: boolean) => {
-	const { webwallet, setWebwallet, nonce, setNonce } = useContext(WebwalletContext)!
+	const { webwallet, nonce, setNonce } = useContext(WebwalletContext)!
 
 	const getUseNonce = useCallback(async() => {
 		// console.log('rerewq', webwallet)
@@ -35,7 +35,7 @@ export const useNonce = (shouldRefreshNonce?: boolean) => {
 					}
 				}
 			})
-			.catch((err) => {
+			.catch(() => {
 				// console.log('GOT NONCE', err)
 			})
 		localStorage.setItem('loadingNonce', 'false')
