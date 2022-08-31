@@ -30,16 +30,13 @@ export class Realms_Solana implements Safe {
 	connection: Connection
 	programId: PublicKey
 	constructor(realmsId: string) {
-    	// console.log('realmsId', realmsId)
-
     	this.id = realmsId ? new PublicKey(realmsId) : undefined // devnet realmPK
-    	//this.id = new PublicKey('AwTwXtM4D3KiDy8pBgrZRaZdNnsxXABsyHXr4u394rEh') // mainnet realmPK
     	this.name = 'Realms on Solana'
     	this.description = 'Realms on Solana'
     	this.image = ''
     	this.chainId = 9000001
 
-    	this.connection = new Connection('https://mango.devnet.rpcpool.com', 'recent')
+    	this.connection = new Connection(process.env.SOLANA_RPC!, 'recent')
     	//this.connection = new Connection('http://realms-realms-c335.mainnet.rpcpool.com/258d3727-bb96-409d-abea-0b1b4c48af29', 'recent')
     	this.programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
 	}
@@ -52,9 +49,11 @@ export class Realms_Solana implements Safe {
 	async proposeTransactions(grantname: string, transactions: TransactionType[], wallet: any): Promise<string> {
 
     	const realmData = await getRealm(this.connection, this.id!)
-    	const COUNCIL_MINT = realmData.account.config.councilMint
-    	const governanceInfo = await getGovernanceAccounts(this.connection, this.programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
-    	const governance = governanceInfo[0]
+    	const governances = await getGovernanceAccounts(this.connection, this.programId, Governance, [
+			pubkeyFilter(1, this.id)!,
+		])
+  
+		const governance = governances.filter((gov)=>gov.pubkey.toString()===realmData.account.authority?.toString())[0]
     	const payer = wallet.publicKey
 
     	const tokenOwnerRecord = await getAllTokenOwnerRecords(
@@ -83,17 +82,13 @@ export class Realms_Solana implements Safe {
             payer!
     	)
 
-    	// console.log('create New proposal - proposal Address', proposalAddress)
-
     	const nativeTreasury = await getNativeTreasuryAddress(this.programId, governance.pubkey)
-
-    	// console.log('create New proposal - nativeTreasury', nativeTreasury.toString())
 
     	for(let i = 0; i < transactions.length; i++) {
     		const ins = SystemProgram.transfer({
     			fromPubkey: nativeTreasury,
     			toPubkey: new PublicKey(transactions[i].to),
-    			lamports: parseFloat(await (await usdToSolana(transactions[i].amount)).toFixed(9)) * 1000000000,
+    			lamports: parseFloat(transactions[i].amount.toFixed(9)) * 1000000000,
     			programId: this.programId,
     		})
 
@@ -115,8 +110,6 @@ export class Realms_Solana implements Safe {
     		)
     	}
 
-    	// console.log('create New proposal - after withInsertTransaction', proposalInstructions)
-
     	withSignOffProposal(
     		proposalInstructions,
     		this.programId,
@@ -129,25 +122,24 @@ export class Realms_Solana implements Safe {
             tokenOwnerRecord[0].pubkey
     	)
 
-    	// const getProvider = (): any => {
-    	// 	if('solana' in window) {
-    	// 		// @ts-ignore
-    	// 		const provider = window.solana as any
-    	// 		if(provider.isPhantom) {
-    	// 			return provider as any
-    	// 		}
-    	// 	}
-    	// }
+    	const getProvider = (): any => {
+    		if('solana' in window) {
+    			// @ts-ignore
+    			const provider = window.solana as any
+    			if(provider.isPhantom) {
+    				return provider as any
+    			}
+    		}
+    	}
 
-    	// console.log('create New proposal - getProvider', getProvider())
+    	console.log('create New proposal - getProvider', getProvider())
 
     	const block = await this.connection.getLatestBlockhash('confirmed')
     	const transaction = new Transaction()
     	transaction.recentBlockhash = block.blockhash
     	transaction.feePayer = payer!
     	transaction.add(...proposalInstructions)
-    	// const sendTrxn = await getProvider().signAndSendTransaction(transaction)
-    	// console.log('create realms proposal - sendTrxn', sendTrxn)
+    	const sendTrxn = await getProvider().signAndSendTransaction(transaction)
 
     	return proposalAddress.toString()
 	}
@@ -159,15 +151,6 @@ export class Realms_Solana implements Safe {
 	}
 
 	async isOwner(address: String): Promise<boolean> {
-    	// const walletPublicKey = new PublicKey(address)
-    	const realmData = await getRealm(this.connection, this.id!)
-    	// console.log('realms_solana - realmData', realmData)
-
-    	// const COUNCIL_MINT = realmData.account.config.councilMint
-
-    	// const governanceInfo = await getGovernanceAccounts(this.connection, this.programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
-    	// console.log('realms_solana - governanceInfo', governanceInfo[0])
-
     	const tokenownerrecord = await getAllTokenOwnerRecords(this.connection, this.programId, this.id!)
     	let isOwner = false
     	for(let i = 0; i < tokenownerrecord.length; i++) {
@@ -184,10 +167,6 @@ export class Realms_Solana implements Safe {
     	const realmData = await getRealm(this.connection, new PublicKey(realmsPublicKey))
     	const COUNCIL_MINT = realmData.account.config.councilMint
     	const governanceInfo = await getGovernanceAccounts(this.connection, this.programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
-    	// const governance = governanceInfo[0]
-    	// const nativeTreasury = await getNativeTreasuryAddress(this.programId, governance.pubkey)
-    	// console.log('governance', governance)
-    	// console.log('nativeTreasury', nativeTreasury)
 	}
 
 	async getTransactionHashStatus(proposalPublicKey: string): Promise<any> {
@@ -207,12 +186,8 @@ export class Realms_Solana implements Safe {
     	(proposals
     		.filter((proposal) => proposalPublicKey.includes(proposal.pubkey.toString())) || [])
     		.map((proposal) => {
-    			// console.log('proposals L211', proposal.account.state)
     			propsalsToSend[proposal.pubkey.toString()] = proposal.account.state < 5 ? 0 : proposal.account.state === 5 ? 1 : 2
     		})
-
-
-    	// console.log('proposals', propsalsToSend)
     	return propsalsToSend
 	}
 }
@@ -230,24 +205,18 @@ const usdToSolana = async(usdAmount: number) => {
 }
 
 const getSafeDetails = async(realmsAddress: string): Promise<SafeSelectOption | null> => {
-	const connection = new Connection('https://mango.devnet.rpcpool.com', 'recent')
+	const connection = new Connection(process.env.SOLANA_RPC!, 'recent')
 	const programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
 	const realmsPublicKey = new PublicKey(realmsAddress)
 	const realmData = await getRealm(connection, realmsPublicKey)
-	const COUNCIL_MINT = realmData.account.config.councilMint
-	const governanceInfo = await getGovernanceAccounts(connection, programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
-	const governance = governanceInfo[0]
+	const governances = await getGovernanceAccounts(connection, programId, Governance, [
+		pubkeyFilter(1, new PublicKey(realmsAddress))!,
+	])
+	const governance = governances.filter((gov)=>gov.pubkey.toString()===realmData.account.authority?.toString())[0]
 	const nativeTreasuryAddress = await getNativeTreasuryAddress(programId, governance.pubkey)
-	// console.log('governanceInfo', governanceInfo)
-	// console.log('realmData', realmData)
-	// console.log('governance', governance)
-	// console.log('nativeTreasury', nativeTreasuryAddress.toString())
 	assert(realmData.account.name)
-	// console.log('name', realmData.account.name)
 	const solAmount = (await connection.getAccountInfo(nativeTreasuryAddress))!.lamports / 1000000000
-	// console.log('sol amount', solAmount)
 	const usdAmount = await solanaToUsd(solAmount)
-	// console.log('usdAmount', usdAmount)
 
 	return {
 		safeAddress: realmsAddress,
@@ -262,17 +231,9 @@ const getSafeDetails = async(realmsAddress: string): Promise<SafeSelectOption | 
 }
 
 const isOwner = async(safeAddress: string, address: String): Promise<boolean> => {
-	const connection = new Connection('https://mango.devnet.rpcpool.com', 'recent')
+	const connection = new Connection(process.env.SOLANA_RPC!, 'recent')
 	const programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
 	const safeAddressPublicKey = new PublicKey(safeAddress)
-	// const walletPublicKey = new PublicKey(address)
-	const realmData = await getRealm(connection, safeAddressPublicKey)
-	// console.log('realms_solana - realmData', realmData)
-
-	// const COUNCIL_MINT = realmData.account.config.councilMint
-
-	// const governanceInfo = await getGovernanceAccounts(connection, programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
-	// console.log('realms_solana - governanceInfo', governanceInfo[0])
 
 	const tokenownerrecord = await getAllTokenOwnerRecords(connection, programId, safeAddressPublicKey)
 	let isOwner = false
@@ -287,19 +248,11 @@ const isOwner = async(safeAddress: string, address: String): Promise<boolean> =>
 }
 
 const getOwners = async(safeAddress: string): Promise<string[]> => {
-	const connection = new Connection('https://mango.devnet.rpcpool.com', 'recent')
+	const connection = new Connection(process.env.SOLANA_RPC!, 'recent')
 	const programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
 
 	try {
 		const safeAddressPublicKey = new PublicKey(safeAddress)
-		const realmData = await getRealm(connection, safeAddressPublicKey)
-		// console.log('realms_solana - realmData', realmData)
-
-		// const COUNCIL_MINT = realmData.account.config.councilMint
-
-		// const governanceInfo = await getGovernanceAccounts(connection, programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
-		// console.log('realms_solana - governanceInfo', governanceInfo[0])
-
 		const tokenownerrecord = await getAllTokenOwnerRecords(connection, programId, safeAddressPublicKey)
 		const owners = tokenownerrecord.map(record => record.account.governingTokenOwner.toString())
 		return owners
