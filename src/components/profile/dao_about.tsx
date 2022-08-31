@@ -99,7 +99,7 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
         				color='#191919'
         			>
         				{partner.name}
-        			</Text>
+ </Text>
         			<Text
         				fontSize='1rem'
         				lineHeight='1.25rem'
@@ -107,8 +107,8 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
         				color='#707070'
         			>
         				{partner.industry}
-        			</Text>
-        		</Flex>
+ </Text>
+ </Flex>
         		{
         			partner.website && (
         				<Link
@@ -125,7 +125,7 @@ function DaoAbout({ daoAbout, daoPartners }: DaoAboutProps) {
         				</Link>
         			)
         		}
-        	</Grid>
+ </Grid>
         ))
 				}
 			</Flex>
