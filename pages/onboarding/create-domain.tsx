@@ -113,11 +113,12 @@ const OnboardingCreateDomain = () => {
 	}, [accountData, safeOwners, step, isOwner])
 
 	useEffect(() => {
+		// console.log("add_user", nonce, webwallet);
 		if(nonce && nonce !== 'Token expired') {
 			return
 		}
 
-		if(isOwner && webwallet) {
+		if(webwallet) {
 			addAuthorizedUser(webwallet?.address)
 				.then(() => {
 					setShouldRefreshNonce(true)
@@ -125,7 +126,7 @@ const OnboardingCreateDomain = () => {
 				})
 				// .catch((err) => console.log("Couldn't add authorized user", err))
 		}
-	}, [isOwner, webwallet, nonce])
+	}, [webwallet, nonce])
 
 	useEffect(() => {
 		if(!setIsSafeAddressVerified || !safesUSDBalance) {
