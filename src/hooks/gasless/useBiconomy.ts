@@ -14,6 +14,11 @@ export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boole
  
 
 	useEffect(() => {
+		localStorage.setItem('isBiconomyLoading', 'false')
+		setShouldRefresh((prev) => !prev);
+	}, [])
+
+	useEffect(() => {
 		// console.log("HO HERE", data.shouldRefreshNonce);
 		if(typeof window === 'undefined') {
 			setShouldRefresh((prev) => !prev);

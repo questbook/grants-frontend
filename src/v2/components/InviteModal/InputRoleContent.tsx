@@ -18,7 +18,11 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 
 	const toast = useToast()
 
-	const { makeInvite } = useMakeInvite(selectedRole || 0)
+	const { makeInvite, isBiconomyInitialised } = useMakeInvite(selectedRole || 0)
+
+	// useEffect(() => {
+	// 	console.log("isBiconomyInitialised", isBiconomyInitialised );
+	// }, [isBiconomyInitialised])
 
 	useEffect(() => {
 		if(router.query.tab === 'members') {
@@ -123,6 +127,7 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 							disabled={
 								typeof selectedRole === 'undefined'
 							|| typeof createLinkStep !== 'undefined'
+							|| !isBiconomyInitialised 
 							}
 							onClick={createLink}
 							colorScheme='brandv2'

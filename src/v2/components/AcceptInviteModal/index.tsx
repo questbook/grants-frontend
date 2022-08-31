@@ -50,9 +50,9 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 		profileImageUrl: '/ui_icons/default_profile_picture.png'
 	})
 
-	const { joinInvite, getJoinInviteGasEstimate, isBiconomyInitialised } = useJoinInvite(inviteInfo!, profile)
+	const [shouldRefreshNonce, setShouldRefreshNonce] = useState<boolean>(false)
 
-	const [shouldRefreshNonce, setShouldRefreshNonce] = useState<boolean>()
+	const { joinInvite, getJoinInviteGasEstimate, isBiconomyInitialised } = useJoinInvite(inviteInfo!, profile, shouldRefreshNonce)
 
 	const { data: accountData, nonce } = useQuestbookAccount(shouldRefreshNonce)
 
