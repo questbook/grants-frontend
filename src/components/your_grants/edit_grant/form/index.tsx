@@ -24,6 +24,8 @@ import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys
 import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import axios from 'axios'
+import SAFES_ENPOINTS from 'src/constants/safesEndpoints.json'
 
 function Form({
 	refs,
@@ -257,46 +259,82 @@ function Form({
 
 	const currentChain = useChainId() || defaultChainId
 
-	const supportedCurrencies = Object.keys(
-		CHAIN_INFO[currentChain].supportedCurrencies,
-	).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
-		.map((currency) => ({ ...currency, id: currency.address }))
-	const [rewardCurrency, setRewardCurrency] = React.useState(
-		formData.rewardCurrency || supportedCurrencies[0].label,
-	)
-	const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
-		formData.rewardCurrencyAddress || supportedCurrencies[0].id,
-	)
+	const safeAddress = workspace?.safe?.address
+	const safeNetwork = workspace?.safe?.chainId
+	let transactionServiceURL
+	// let supportedCurrencies: [] = []
+	const [supportedCurrencies, setSupportedCurrencies] = useState([])
+	
+	const [rewardCurrency, setRewardCurrency] = React.useState('')
+	const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState('')
+	
+
+	// const supportedCurrencies = Object.keys(
+	// 	CHAIN_INFO[currentChain].supportedCurrencies,
+	// ).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
+	// 	.map((currency) => ({ ...currency, id: currency.address }))
+	// const [rewardCurrency, setRewardCurrency] = React.useState(
+	// 	formData.rewardCurrency || supportedCurrencies[0].label,
+	// )
+	// const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
+	// 	formData.rewardCurrencyAddress || supportedCurrencies[0].id,
+	// )
 
 	/**
    * checks if the workspace already has custom tokens added
    * if custom tokens found, append it to supportedCurrencies
    */
-	if(workspace?.tokens) {
-		for(let i = 0; i < workspace.tokens.length; i += 1) {
-			supportedCurrencies.push(
-				{
-					id: workspace.tokens[i].address,
-					address: workspace.tokens[i].address,
-					decimals: workspace.tokens[i].decimal,
-					pair: '',
-					label: workspace.tokens[i].label,
-					icon: getUrlForIPFSHash(workspace.tokens[i].iconHash),
-				},
-			)
-		}
-	}
+	// if(workspace?.tokens) {
+	// 	for(let i = 0; i < workspace.tokens.length; i += 1) {
+	// 		supportedCurrencies.push(
+	// 			{
+	// 				id: workspace.tokens[i].address,
+	// 				address: workspace.tokens[i].address,
+	// 				decimals: workspace.tokens[i].decimal,
+	// 				pair: '',
+	// 				label: workspace.tokens[i].label,
+	// 				icon: getUrlForIPFSHash(workspace.tokens[i].iconHash),
+	// 			},
+	// 		)
+	// 	}
+	// }
 
-	useEffect(() => {
+	React.useEffect(() => {
 		// // console.log(currentChain);
-		if(currentChain) {
-			const supportedCurrencies = Object.keys(
-				CHAIN_INFO[currentChain].supportedCurrencies,
-			).map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
-				.map((currency) => ({ ...currency, id: currency.address }))
-			setRewardCurrency(formData.rewardCurrency || supportedCurrencies[0].label)
-			setRewardCurrencyAddress(formData.rewardCurrencyAddress || supportedCurrencies[0].address)
+		// if(currentChain) {
+		// 	const supportedCurrencies = Object.keys(
+		// 		CHAIN_INFO[currentChain].supportedCurrencies,
+		// 	)
+		// 		.map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
+		// 		.map((currency) => ({ ...currency, id: currency.address }))
+		if(safeNetwork) {
+			transactionServiceURL = SAFES_ENPOINTS[safeNetwork]
+			console.log('transaction service url',safeNetwork, transactionServiceURL)
+			const gnosisUrl = `${transactionServiceURL}/v1/safes/${safeAddress}/balances/`
+			axios.get(gnosisUrl).then(res => {
+				console.log(res.data)
+				const tokens = res.data.filter(token => token.tokenAddress).map(token => {
+					if (token.tokenAddress){
+						const currency = {
+							"id": token.tokenAddress,
+							"address": token.tokenAddress,
+							"decimals": token.token.decimals,
+							"icon": token.token.logoUri,
+							"label": token.token.symbol,
+							"pair": ""
+						}
+						return currency
+					}
+				})
+				setSupportedCurrencies(tokens)
+				console.log('balances', supportedCurrencies)
+				setRewardCurrency(tokens[0]?.label)
+			setRewardCurrencyAddress(tokens[0].address)
+			})
 		}
+	
+			
+		
 
 	}, [currentChain])
 

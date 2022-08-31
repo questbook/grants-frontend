@@ -13,7 +13,7 @@ const URL_PREFIX = 'v1/safes/'
 const URL_SUFFIX = '/balances/usd'
 const SAFES_BALANCES_CHAIN_ID = Object.keys(SAFES_ENPOINTS)
 const SAFES_BALANCES_ENPOINTS = Object.values(SAFES_ENPOINTS)
-const USD_BALANCE_THRESHOLD = 50
+const USD_BALANCE_THRESHOLD = 0
 const DEFAULT_ERROR_MESSAGE = "Couldn't fetch data"
 
 interface Props {

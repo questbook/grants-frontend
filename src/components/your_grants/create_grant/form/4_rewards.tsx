@@ -128,10 +128,10 @@ function GrantRewardsInput({
 									})
 								} else {
 									setRewardToken({
-										label: '',
-										address: '',
-										decimal: '18',
-										iconHash: '',
+										label: data.label,
+										address: data.address,
+										decimal: data.decimals.toString(),
+										iconHash: data.icon,
 									})
 								}
 							}

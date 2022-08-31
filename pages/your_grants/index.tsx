@@ -522,7 +522,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 								// // console.log('Reward has token')
 								decimals = grant.reward.token.decimal
 								label = grant.reward.token.label
-								icon = getUrlForIPFSHash(grant.reward.token.iconHash)
+								icon = grant.reward.token.iconHash
 							} else {
 								decimals =
 									CHAIN_INFO[

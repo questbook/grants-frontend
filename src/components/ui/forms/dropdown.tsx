@@ -44,6 +44,7 @@ function Dropdown({
 	const [isOpen, setIsOpen] = React.useState(false)
 	const defaultSelected = listItems[defaultIndex || 0]
 	const [selected, setSelected] = React.useState(defaultSelected)
+	console.log('list items', listItems)
 	useEffect(() => {
 		setSelected(defaultSelected)
 	}, [defaultSelected])
@@ -127,7 +128,7 @@ function Dropdown({
 												mr={3}
 												h='24px'
 												w='24px'
-												src={selected.icon} />
+												src={selected.icon} alt='token icon'/>
 										) : null
 									}
 									<Text
@@ -196,6 +197,7 @@ function Dropdown({
 									justifyContent='flex-start'
 								>
 									{
+										
 										icon && icon.length ? (
 											<Image
 												mr={3}
