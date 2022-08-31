@@ -90,13 +90,17 @@ const InReviewPanel = ({
 		 }
 	}, [isAcceptClicked, isRejectClicked, isResubmitClicked, isConfirmClicked])
 
-	const [txn, loading, isBiconomyInitialised, error, networkTransactionModalStep] = useBatchUpdateApplicationState(
+	const [txn,, loading, isBiconomyInitialised, error, networkTransactionModalStep] = useBatchUpdateApplicationState(
 		'',
 		checkedApplicationsIds,
 		state,
 		isConfirmClicked,
 		setIsConfirmClicked
 	)
+
+	useEffect(() => {
+		console.log("isBiconomyInitialised", isBiconomyInitialised);
+	}, [isBiconomyInitialised])
 
 	useEffect(() => {
 		// if(loading) {

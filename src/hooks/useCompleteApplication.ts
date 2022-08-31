@@ -51,7 +51,7 @@ export default function useCompleteApplication(
 			biconomy.networkId.toString() === chainId.toString()) {
 			setIsBiconomyInitialised(true)
 		}
-	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised])
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, chainId])
 
 	useEffect(() => {
 		if(data) {
