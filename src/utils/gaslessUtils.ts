@@ -1,5 +1,8 @@
 import axios from 'axios'
 import { Contract, ethers, Wallet } from 'ethers'
+import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import SupportedChainId from 'src/generated/SupportedChainId'
+import { AddressMap } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
 
 const EIP712_WALLET_TX_TYPE = {
@@ -27,7 +30,6 @@ export const webHookId = '7726ab3f-2b4b-4a80-bfdd-c8ebb2d5ea2f'
 export const jsonRpcProviders: { [key: string]: ethers.providers.JsonRpcProvider } =
 {
 	'80001': new ethers.providers.JsonRpcProvider('https://polygon-mumbai.g.alchemy.com/v2/X6pnQlJfJq00b8MT53QihWBINEgHZHGp'),
-	'4': new ethers.providers.JsonRpcProvider('https://eth-rinkeby.alchemyapi.io/v2/4CCa54H4pABZcHMOMLJfRySfhMkvQFrs'),
 	'5': new ethers.providers.JsonRpcProvider('https://eth-goerli.g.alchemy.com/v2/Hr6VkBfmbJIhEW3fHJnl0ujE0xmWxcqH'),
 	'137': new ethers.providers.JsonRpcProvider('https://polygon-mainnet.g.alchemy.com/v2/mmBX0eNrvs0k7UpEMwi0eIH6hC4Dqoss')
 }
@@ -190,17 +192,32 @@ export const chargeGas = async(workspace_id: number, amount: number) => {
 
 }
 
-export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: BiconomyWalletClient, chainId: string) => {
+export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: BiconomyWalletClient, chainId: string, nonce: string) => {
+
+
+
+	const signedNonce = await signNonce(webwallet, nonce)
+
+	const webHookAttributes = {
+		'webHookId': bicoDapps[chainId].webHookId, // received from the webhook register API
+		'webHookData': { // whatever data object to be passed to the webhook
+			'signedNonce': signedNonce,
+			'nonce': nonce,
+			'to': WORKSPACE_REGISTRY_ADDRESS[parseInt(chainId) as SupportedChainId],
+			'chain_id': chainId
+		},
+	}
+
 	// console.log("I'm here", biconomyWalletClient)
 	var { doesWalletExist, walletAddress } = await biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address })
 	// console.log("I'm not here")
 	let scwAddress
 	// console.log('WEEEE', webwallet.address)
-
+	
 	if(!doesWalletExist) {
 		// console.log('Wallet does not exist')
 		// console.log('Deploying wallet')
-		const { walletAddress, txHash } = await biconomyWalletClient.checkIfWalletExistsAndDeploy({ eoa: webwallet.address }) // default index(salt) 0
+		const { walletAddress, txHash } = await biconomyWalletClient.checkIfWalletExistsAndDeploy({ eoa: webwallet.address , webHookAttributes }) // default index(salt) 0
 
 		await getTransactionReceipt(txHash, chainId)
 
