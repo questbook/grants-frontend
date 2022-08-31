@@ -1,7 +1,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { NetworkType } from 'src/constants/Networks'
-import SAFES_ENPOINTS from 'src/constants/safesEndpointsTest.json'
+import SAFES_ENPOINTS from 'src/constants/safesEndpoints.json'
 import useAxios from 'src/hooks/utils/useAxios'
 import { getOwners } from 'src/v2/constants/safe/realms_solana'
 
