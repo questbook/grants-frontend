@@ -3,7 +3,7 @@ import { Biconomy } from '@biconomy/mexa'
 import { BiconomyContext, WebwalletContext } from 'pages/_app'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { BiconomyWalletClient } from 'src/types/gasless'
-import { bicoDapps, deploySCW, jsonRpcProviders } from 'src/utils/gaslessUtils'
+import { bicoDapps, deploySCW, jsonRpcProviders, networksMapping } from 'src/utils/gaslessUtils'
 
 
 export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boolean }) => {
@@ -25,7 +25,7 @@ export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boole
 		// console.log("usebiconomy", {nonce, shouldRefresh, isBiconomyLoading, data, biconomyDaoObj})
 		// console.log('STEP3', biconomyDaoObj, nonce, webwallet, biconomyWalletClient, data.chainId, network, isBiconomyLoading)
 		// console.log('STEP3: CHAIN - ', data.chainId, biconomyDaoObj?.networkId)
-		if((!isBiconomyLoading && data.chainId && biconomyDaoObj && biconomyDaoObj.networkId && data.chainId !== biconomyDaoObj.networkId.toString()) ||
+		if((!isBiconomyLoading && data.chainId && biconomyDaoObj && biconomyDaoObj.networkId && networksMapping[data.chainId] !== biconomyDaoObj.networkId.toString()) ||
 		((!isBiconomyLoading && nonce && webwallet && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress)))) {
 			
 			localStorage.setItem('isBiconomyLoading', 'true')
@@ -58,7 +58,7 @@ export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boole
 
 		// console.log('CREATING BICONOMY OBJ')
 
-		const _newChainId = data.chainId ? data.chainId : network!.toString()
+		const _newChainId = networksMapping[data.chainId ? data.chainId : network!.toString()]
 
 		const _biconomy = new Biconomy(jsonRpcProviders[_newChainId],
 			{
