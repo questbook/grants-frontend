@@ -19,6 +19,7 @@ import {
 	useGetApplicantsForAGrantQuery,
 	useGetGrantDetailsQuery,
 	useGetRealmsFundTransferDataQuery,
+	useGetReviewersForAWorkspaceQuery,
 	useGetSafeForAWorkspaceQuery,
 } from 'src/generated/graphql'
 import useQBContract from 'src/hooks/contracts/useQBContract'
@@ -43,6 +44,8 @@ import { ViewEye } from 'src/v2/assets/custom chakra icons/ViewEye'
 import Breadcrumbs from 'src/v2/components/Breadcrumbs'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import StyledTab from 'src/v2/components/StyledTab'
+import NoReviewerBanner from 'src/v2/components/ViewApplicants/NoReviewerBanner'
+import RubricNotSetBanner from 'src/v2/components/ViewApplicants/RubricNotSetBanner'
 import { Gnosis_Safe } from 'src/v2/constants/safe/gnosis_safe'
 import { Realms_Solana, solanaToUsd, usdToSolana } from 'src/v2/constants/safe/realms_solana'
 import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
@@ -82,7 +85,6 @@ enum ModalState {
 }
 
 function ViewApplicants() {
-
 	const [applicantsData, setApplicantsData] = useState<any>([])
 	// const [reviewerData, setReviewerData] = useState<any>([])
 	// const [daoId, setDaoId] = useState('')
@@ -98,7 +100,8 @@ function ViewApplicants() {
 	const [workspaceSafe, setWorkspaceSafe] = useState('')
 	const [workspaceSafeChainId, setWorkspaceSafeChainId] = useState(0)
 
-	const [setupRubricBannerCancelled, setSetupRubricBannerCancelled] = useState(true)
+	const [setupRubricBannerCancelled, setSetupRubricBannerCancelled] = useState(false)
+	const [addReviewerBannerCancelled, setAddReviewerBannerCancelled] = useState(false)
 
 	const [listOfApplicationToTxnsHash, setListOfApplicationToTxnsHash] = useState({})
 	const [applicationStatuses, setApplicationStatuses] = useState({})
@@ -184,13 +187,13 @@ function ViewApplicants() {
 	useEffect(() => {
 		if(safeAddressData) {
 			const { workspaceSafes } = safeAddressData
-			const safeAddress = workspaceSafes[0].address
+			const safeAddress = workspaceSafes[0]?.address
 			// console.log('safeAddress', safeAddress)
 			// console.log('workspace safe details', workspaceSafes)
 			// const _isEvmChain = workspaceSafeChainId !== 900001
 			// setIsEvmChain(_isEvmChain)
 			setWorkspaceSafe(safeAddress)
-			setWorkspaceSafeChainId(parseInt(workspaceSafes[0].chainId))
+			setWorkspaceSafeChainId(parseInt(workspaceSafes[0]?.chainId))
 		}
 	}, [safeAddressData])
 
@@ -733,7 +736,7 @@ function ViewApplicants() {
 		}
 	}, [workspace, biconomyWalletClient, workspacechainId, biconomy, workspaceRegistryContract, scwAddress, webwallet, nonce, initiateTransactionData, proposalAddr])
 
-	const onChangeRecepientDetails = async (applicationId: any, fieldName: string, fieldValue: any) => {
+	const onChangeRecepientDetails = async(applicationId: any, fieldName: string, fieldValue: any) => {
 		// console.log('onChangeRecepientDetails', applicationId, fieldName, fieldValue)
 		// console.log('Gnosis Batch data', gnosisBatchData)
 
@@ -801,6 +804,49 @@ function ViewApplicants() {
 
 	//end of implementation
 
+	const [getReviewersForAWorkspaceParams, setGetReviewersForAWorkspaceParams] = useState<any>({
+		client:
+			subgraphClients[
+				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+			].client,
+	})
+	const { data: reviewersForAWorkspaceData } = useGetReviewersForAWorkspaceQuery(getReviewersForAWorkspaceParams)
+	useEffect(() => {
+		if(!workspace) {
+			return
+		}
+
+		setGetReviewersForAWorkspaceParams({
+			client:
+				subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+			variables: {
+				workspaceId: workspace.id
+			},
+		})
+	}, [workspace])
+
+	const [areReviewersAdded, setAreReviewersAdded] = useState<boolean>(false)
+	const [areRubricsSet, setAreRubricsSet] = useState<boolean>(false)
+
+	useEffect(() => {
+		if(addReviewerBannerCancelled || !reviewersForAWorkspaceData) {
+			setAreReviewersAdded(true)
+		} else if(reviewersForAWorkspaceData?.workspaces[0]?.members.length) {
+			setAreReviewersAdded(reviewersForAWorkspaceData?.workspaces[0]?.members.length > 0)
+		} else {
+			setAreReviewersAdded(false)
+		}
+	}, [reviewersForAWorkspaceData])
+
+	useEffect(() => {
+		if(setupRubricBannerCancelled || !grantData) {
+			setAreRubricsSet(true)
+		} else if(grantData?.grants[0].rubric?.items.length) {
+			setAreRubricsSet(grantData?.grants[0].rubric?.items.length > 0)
+		} else {
+			setAreRubricsSet(false)
+		}
+	}, [grantData])
 
 	return (
 		<Container
@@ -940,80 +986,28 @@ function ViewApplicants() {
 				/>
 
 				<Box mt={5} />
-
 				{
-					setupRubricBannerCancelled || (((grantData?.grants && grantData?.grants.length > 0 && grantData?.grants[0].rubric?.items.length) || 0) > 0 || false) ? <></> : (
-						<>
-							<Flex
-								px='18px'
-								py={4}
-								bg='#C8CBFC'
-								borderRadius='base'
-							>
-								<ErrorAlert
-									color='#785EF0'
-									boxSize={5}
-									mt='2px'
-								/>
+					!areReviewersAdded && (
+						<NoReviewerBanner
+							onSetup={
+								() => {
+									router.push({
+										pathname: '/manage_dao/',
+										query: {
+											tab: 'members',
+										},
+									})
+								}
+							}
+							onClose={() => setAddReviewerBannerCancelled(true)} />
+					)
+				}
+				{
+					areReviewersAdded && !areRubricsSet && (
+						<RubricNotSetBanner
+							onSetup={() => setRubricDrawerOpen(true)}
+							onClose={() => setSetupRubricBannerCancelled(true)} />
 
-								<Flex
-									flexDirection='column'
-									ml='18px'
-									flex={1}
-								>
-									<Text
-										fontSize='16px'
-										lineHeight='24px'
-										fontWeight='500'
-									>
-										Setup applicant evaluation
-									</Text>
-
-									<Text
-										mt='8px'
-										fontSize='14px'
-										lineHeight='20px'
-										fontWeight='400'
-									>
-										On receiving applicants, define a scoring rubric and assign reviewers to evaluate the applicants.
-										{' '}
-										<Link
-											textDecoration='none'
-											fontWeight='500'
-											color='#1F1F33'
-										>
-											Learn more
-										</Link>
-									</Text>
-
-									<Text
-										mt='14px'
-										fontSize='14px'
-										lineHeight='20px'
-										fontWeight='500'
-										color='#785EF0'
-										cursor='pointer'
-										onClick={() => setRubricDrawerOpen(true)}
-									>
-										Setup now
-									</Text>
-								</Flex>
-
-								<CancelCircleFilled
-									mb='auto'
-									color='#7D7DA0'
-									h={6}
-									w={6}
-									onClick={
-										() => {
-											setSetupRubricBannerCancelled(true)
-										}
-									}
-									cursor='pointer'
-								/>
-							</Flex>
-							<Box mt={5} />
-						</>
 					)
 				}
 
@@ -1089,6 +1083,7 @@ function ViewApplicants() {
 					grantAddress={grantID}
 					chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
 					setNetworkTransactionModalStep={setNetworkTransactionModalStep}
+					data={reviewersForAWorkspaceData}
 				/>
 
 				<ViewEvaluationDrawer
