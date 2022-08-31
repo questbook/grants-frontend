@@ -229,11 +229,6 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 		scwAddress = walletAddress
 	}
 
-	const g = new Promise((r) => {
-		setTimeout(r, 35000)
-	})
-	g.then(() => { })
-
 	return scwAddress
 }
 
