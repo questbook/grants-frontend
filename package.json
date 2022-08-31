@@ -72,7 +72,7 @@
     "wagmi": "^0.4.3"
   },
   "devDependencies": {
-    "@creatoros/eslint-config": "git+https://github.com/CreatorOS/eslint-config",
+    "@creatoros/eslint-config": "git+https://github.com/CreatorOS/eslint-config#72a5737781708c5d520f32302052b47dd4e35297",
     "@graphql-codegen/cli": "^2.6.2",
     "@graphql-codegen/introspection": "^2.1.1",
     "@graphql-codegen/typescript": "^2.4.5",
