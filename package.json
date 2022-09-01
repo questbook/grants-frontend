@@ -14,6 +14,7 @@
     "generate": "npm run generate:graphql && npm run generate:typechain"
   },
   "dependencies": {
+    "@questbook/zero-wallet": "./zero-wallet",
     "@apollo/client": "^3.5.8",
     "@biconomy/mexa": "2.0.38",
     "@chakra-ui/icons": "^1.0.0",

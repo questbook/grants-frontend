@@ -1,0 +1,24 @@
+{
+  "name": "@questbook/zero-wallet",
+  "version": "1.0.0",
+  "description": "Gasless Wallet by QuestBook",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "lint": "eslint . --ext .js,.ts,.jsx,.tsx",
+    "lint:fix": "eslint . --ext .js,.ts,.jsx,.tsx --fix"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@creatoros/eslint-config": "git+https://github.com/CreatorOS/eslint-config",
+    "eslint": "^8.23.0",
+    "typescript": "^4.8.2"
+  },
+  "dependencies": {
+    "ethers": "^5.7.0",
+    "wagmi": "^0.6.4"
+  }
+}
