@@ -74,7 +74,7 @@ function ManageGrant() {
 	const [applicationID, setApplicationID] = useState<any>()
 	const router = useRouter()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
-	const { data: accountData, nonce } = useQuestbookAccount()
+	const { data: accountData } = useQuestbookAccount()
 
 	const {
 		data: {
@@ -546,7 +546,6 @@ function ManageGrant() {
 						grant={applicationData?.grant}
 						applicationId={applicationID}
 						applicantId={applicationData?.applicantId!}
-						workspaceId={workspace?.id!}
 						decimals={decimals}
 					/>
 				)

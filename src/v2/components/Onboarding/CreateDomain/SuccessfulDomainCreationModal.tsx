@@ -7,7 +7,6 @@ import { useRouter } from 'next/router'
 const SuccessfulDomainCreationModal = ({
 	isOpen,
 	onClose,
-	redirect,
 	domainName,
 	daoLink
 }: {

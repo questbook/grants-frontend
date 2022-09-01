@@ -1,4 +1,5 @@
-import Safe, { SafeFactory } from '@gnosis.pm/safe-core-sdk'
+/* eslint-disable */
+import Safe from '@gnosis.pm/safe-core-sdk'
 import EthersAdapter from '@gnosis.pm/safe-ethers-lib'
 import SafeServiceClient from '@gnosis.pm/safe-service-client'
 import { ethers } from 'ethers'
@@ -20,13 +21,14 @@ export class Gnosis_Safe implements GnosisSafe {
     	this.chainId = chainId
     	this.txnServiceURL = txnServiceURL
 	}
+
 	proposeTransactions(grantName: string, transactions: TransactionType[], wallet: any): Promise<string> {
     	throw new Error('Method not implemented.')
 	}
 
 	async createMultiTransaction(transactions: MetaTransaction[], safeAddress: string) {
 
-    	console.log('creating gnosis transaction for', transactions)
+    	// console.log('creating gnosis transaction for', transactions)
     	//@ts-ignore
     	const provider = new ethers.providers.Web3Provider(window.ethereum)
     	await provider.send('eth_requestAccounts', [])
@@ -38,18 +40,18 @@ export class Gnosis_Safe implements GnosisSafe {
     	})
 
     	const safeService = new SafeServiceClient({ txServiceUrl: this.txnServiceURL, ethAdapter })
-    	const safeFactory = await SafeFactory.create({ ethAdapter })
+    	// const safeFactory = await SafeFactory.create({ ethAdapter })
     	const safeSdk = await Safe.create({ ethAdapter, safeAddress })
 
     	try {
     		const safeTransaction = await safeSdk.createTransaction(transactions)
 
-    		console.log(safeTransaction)
+    		// console.log(safeTransaction)
 
     		const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
     		const senderSignature = await safeSdk.signTransactionHash(safeTxHash)
-    		console.log(await signer.getAddress())
-    		const txhash = await safeService.proposeTransaction({
+    		// console.log(await signer.getAddress())
+    		await safeService.proposeTransaction({
     			safeAddress,
     			safeTransactionData: safeTransaction.data,
     			safeTxHash,
@@ -61,7 +63,7 @@ export class Gnosis_Safe implements GnosisSafe {
     		return safeTxHash
     	} catch(e) {
     		return undefined
-    		console.log(e)
+    		// console.log(e)
     	}
 
 

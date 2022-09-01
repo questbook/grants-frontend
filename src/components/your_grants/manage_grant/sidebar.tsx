@@ -19,12 +19,11 @@ interface Props {
 	milestones: any[]
 	applicationId: string
 	applicantId: string
-	workspaceId: string
 	decimals: number
 }
 
 function Sidebar({
-	grant, assetInfo, milestones, applicationId, applicantId, workspaceId, decimals,
+	grant, assetInfo, milestones, applicationId, applicantId, decimals,
 }: Props) {
 	const [isAddFundModalOpen, setIsAddFundModalOpen] = React.useState(false)
 	const [isSendFundModalOpen, setIsSendFundModalOpen] = React.useState(false)

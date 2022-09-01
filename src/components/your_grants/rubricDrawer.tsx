@@ -48,7 +48,7 @@ function RubricDrawer({
 	const [editedRubricData, setEditedRubricData] = React.useState<any>()
 
 	const [pk, setPk] = React.useState<string>('*')
-	const { data: accountData, nonce } = useQuestbookAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const { workspace } = useContext(ApiClientsContext)!
 
 	const {

@@ -30,7 +30,7 @@ function ApplicantDetails({
 	setRubrics,
 	defaultRubricsPresent,
 
-	setMaximumPoints,
+	// setMaximumPoints,
 }: {
   detailsRequired: any[]
   toggleDetailsRequired: (index: number) => void
@@ -54,7 +54,7 @@ function ApplicantDetails({
   setRubrics: (rubrics: any[]) => void
   defaultRubricsPresent: boolean
 
-  setMaximumPoints: (maximumPoints: number) => void
+//   setMaximumPoints: (maximumPoints: number) => void
 }) {
 	const [milestoneSelectOptionIsVisible,
 		setMilestoneSelectOptionIsVisible] = React.useState((multipleMilestones || false)

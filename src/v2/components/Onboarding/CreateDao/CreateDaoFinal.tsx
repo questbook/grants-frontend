@@ -1,11 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, Flex, Heading, Text } from '@chakra-ui/react'
-import { formatEther } from 'ethers/lib/utils'
-import useQBContract from 'src/hooks/contracts/useQBContract'
 import { NetworkSelectOption } from 'src/v2/components/Onboarding/SupportedNetworksData'
 import ContinueButton from 'src/v2/components/Onboarding/UI/Misc/ContinueButton'
 import DaoImageUpload from 'src/v2/components/Onboarding/UI/Misc/DaoImageUpload'
-import { useProvider } from 'wagmi'
 
 const CreateDaoFinal = ({
 	daoName,
@@ -22,56 +19,13 @@ const CreateDaoFinal = ({
 	onSubmit: (() => Promise<void>) | null
 	isBiconomyInitialised: boolean
 }) => {
-	// console.log('HHHH', isBiconomyInitialised, onSubmit)
-	const provider = useProvider()
-	const [gasEstimate, setGasEstimate] = useState<string>()
 	const [newDaoImageFile, setNewDaoImageFile] = useState<File | null>(null)
-
-	const workspaceRegistryContract = useQBContract(
-		'workspace',
-		daoNetwork.id,
-	)
-
-	const getCreateWorkspaceGasEstimate = useCallback(
-		() => {
-			return workspaceRegistryContract.estimateGas.createWorkspace(
-				// random hash -- just to estimate gas
-				'QmPK1s3pNYLi9ERiq3BDxKa4XosgWwFRQUydHUtz4YgpqB',
-				new Uint8Array(32),
-				'safeAddressName',
-				0
-			)
-		},
-		[workspaceRegistryContract],
-	)
 
 	useEffect(() => {
 		if(daoImageFile && !newDaoImageFile) {
 			setNewDaoImageFile(daoImageFile)
 		}
 	}, [daoImageFile])
-
-	const estimateCreateWorkspace = async(hash: string) => {
-		setGasEstimate(undefined)
-		try {
-			const estimate = await workspaceRegistryContract.estimateGas.createWorkspace(hash, new Uint8Array(32), 'safeAddressName', 0)
-			const gasPrice = await provider.getGasPrice()
-			setGasEstimate(formatEther(estimate.mul(gasPrice)))
-		} catch(e) {
-			// // console.log(e)
-			// // console.log('error', Date.now())
-			// // console.log(workspaceRegistryContract)
-
-			// @TODO
-			// getting cannot estimate gas error unpredictably
-		}
-	}
-
-	useEffect(() => {
-		if(workspaceRegistryContract.signer !== null && provider !== null) {
-			estimateCreateWorkspace('0000000000000000000000000000000000000000000000')
-		}
-	}, [workspaceRegistryContract, provider])
 
 	useEffect(() => {
 		onImageFileChange(newDaoImageFile)

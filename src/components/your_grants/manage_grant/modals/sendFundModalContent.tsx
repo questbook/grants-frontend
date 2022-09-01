@@ -13,7 +13,6 @@ import {
 	MenuList,
 	ModalBody,
 	Text,
-	ToastId,
 	useToast,
 } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
@@ -80,7 +79,6 @@ function ModalContent({
 	})
 
 	const toast = useToast()
-	const toastRef = React.useRef<ToastId>()
 
 	const [disburseAmount, setDisburseAmount] = useState<any>()
 	const [disburseData, disburseDataLink, disburseLoading, disburseError] = useDisburseReward(

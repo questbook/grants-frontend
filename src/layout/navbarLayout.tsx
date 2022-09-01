@@ -20,10 +20,6 @@ function NavbarLayout({ children, renderSidebar }: Props) {
 	const [renderCount, setRenderCount] = useState(0)
 
 	useEffect(() => {
-		// console.log('Render Count: ', renderCount)
-	}, [renderCount])
-
-	useEffect(() => {
 		// @TODO-gasless: FIX HERE
 		setConnected(true)
 		// if(!connected && isDisconnected) {
@@ -58,9 +54,6 @@ function NavbarLayout({ children, renderSidebar }: Props) {
 				)
 			} */}
 			<NavBar
-				onGetStartedClick={true}
-				onGetStartedBtnClicked={false}
-				setGetStartedClicked={() => {}}
 			/>
 			<Flex
 				w='100vw'

@@ -1,19 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { Box, Button, Flex, Image, Link, Stack, Text } from '@chakra-ui/react'
 import moment from 'moment'
-import { useRouter } from 'next/router'
 import Badge from 'src/components/browse_grants/grantCard/badge'
 import VerifiedBadge from 'src/components/ui/verified_badge'
-import { SupportedChainId } from 'src/constants/chains'
 import { calculateUSDValue, useTimeDifference } from 'src/utils/calculatingUtils'
 import { nFormatter } from 'src/utils/formattingUtils'
 
 interface BrowseGrantCardProps {
-  daoID: string
-  daoName: string
-  isDaoVerified?: boolean
-  chainId: SupportedChainId | undefined
-
   grantTitle: string
   grantDesc: string
   isGrantVerified?: boolean
@@ -34,10 +27,7 @@ interface BrowseGrantCardProps {
 }
 
 function BrowseGrantCard({
-	daoName,
 	createdAt,
-	isDaoVerified,
-	chainId,
 
 	grantTitle,
 	grantDesc,
@@ -56,7 +46,6 @@ function BrowseGrantCard({
 	onClick,
 	onTitleClick,
 }: BrowseGrantCardProps) {
-	const router = useRouter()
 	const [grantReward, setGrantReward] = useState<number>(0)
 
 	const currentDate = new Date().getTime()

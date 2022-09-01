@@ -163,8 +163,7 @@ function YourGrants() {
 
 function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isReviewer: boolean }) {
 	const router = useRouter()
-	const [pk, setPk] = useState<string>('*')
-	const [ignorePkModal, setIgnorePkModal] = useState(false)
+	// const [pk, setPk] = useState<string>('*')
 
 	const { data: accountData } = useQuestbookAccount()
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
@@ -260,28 +259,28 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 		})
 	}, [currentPage, workspace, accountData?.address, selectedTab])
 
-	useEffect(() => {
-		/// // console.log(pk);
-		if(!accountData?.address) {
-			return
-		}
+	// useEffect(() => {
+	// 	/// // console.log(pk);
+	// 	if(!accountData?.address) {
+	// 		return
+	// 	}
 
-		if(!workspace) {
-			return
-		}
+	// 	if(!workspace) {
+	// 		return
+	// 	}
 
-		const k = workspace?.members
-			?.find(
-				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
-			)
-			?.publicKey?.toString()
-		// // console.log(k);
-		if(k && k.length > 0) {
-			setPk(k)
-		} else {
-			setPk('')
-		}
-	}, [workspace, accountData])
+	// 	const k = workspace?.members
+	// 		?.find(
+	// 			(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
+	// 		)
+	// 		?.publicKey?.toString()
+	// 	// // console.log(k);
+	// 	if(k && k.length > 0) {
+	// 		setPk(k)
+	// 	} else {
+	// 		setPk('')
+	// 	}
+	// }, [workspace, accountData])
 
 	const {
 		data: allGrantsCountData,
