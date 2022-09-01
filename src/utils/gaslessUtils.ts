@@ -25,8 +25,6 @@ const EIP712_WALLET_TX_TYPE = {
 // export const webHookId = "a36aa5b2-b761-4757-aad9-10348f3ec732"
 
 // goerli
-export const webHookId = '7726ab3f-2b4b-4a80-bfdd-c8ebb2d5ea2f'
-
 export const jsonRpcProviders: { [key: string]: ethers.providers.JsonRpcProvider } =
 {
 	'80001': new ethers.providers.JsonRpcProvider('https://polygon-mumbai.g.alchemy.com/v2/X6pnQlJfJq00b8MT53QihWBINEgHZHGp'),
@@ -41,12 +39,12 @@ export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } }
 	},
 	'137': {
 		apiKey: 'kcwSbypnqq.f5fe6fbd-10e3-4dfe-a731-5eb4b6d85445',
-		webHookId: '202501f8-639f-495a-a1ec-d52d86db8b2d'
+		webHookId: '1728e0a7-88e2-40c0-9a34-e12eff38d7c3'
 	}
 }
 
 export const networksMapping: { [key: string]: string } = {
-	'137': '5',
+	'137': '137',
 	'5': '5',
 	'4': '5',
 	'900001': '5', // This is for solana.
@@ -178,11 +176,13 @@ export const addAuthorizedUser = async(webwallet_address: string) => {
 }
 
 export const chargeGas = async(workspace_id: number, amount: number) => {
+	// console.log(workspace_id, amount);
 	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/charge_gas',
 		{
 			workspace_id,
 			amount
 		})
+	// console.log("charge_gas", response)
 	if(response.data && response.data.status) {
 		// console.log(`charged workspace ${workspace_id} with ${amount} gas`)
 		return true

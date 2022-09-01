@@ -213,8 +213,9 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 
 	useEffect(() => {
 		// const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		// console.log('rree', isBiconomyLoading, biconomyLoading, chainId, biconomy)
-		// console.log("invite", scwAddress)
+		// console.log('rree', scwAddress, biconomyLoading, inviteInfo)
+		// console.log("invite", biconomy, biconomyWalletClient)
+		
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && inviteInfo?.chainId && biconomy?.networkId &&
 			biconomy.networkId.toString() === inviteInfo?.chainId?.toString()) {
 			// console.log("zonb");
