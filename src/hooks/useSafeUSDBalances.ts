@@ -4,7 +4,6 @@ import { USD_THRESHOLD } from 'src/constants'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { NetworkType } from 'src/constants/Networks'
 import SAFES_ENPOINTS_MAINNETS from 'src/constants/safesEndpoints.json'
-import SAFES_ENPOINTS_TESTNETS from 'src/constants/safesEndpointsTest.json'
 import useAxiosMulti from 'src/hooks/utils/useAxiosMulti'
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 import { getSafeDetails } from 'src/v2/constants/safe/realms_solana'
@@ -13,7 +12,8 @@ import { getSafeDetails } from 'src/v2/constants/safe/realms_solana'
 const URL_PREFIX = 'v1/safes/'
 // const URL_PREFIX = 'v1/safes/'
 const URL_SUFFIX = '/balances/usd'
-const SAFES_ENDPOINTS = process.env.NEXT_PUBLIC_IS_TEST === 'true' ? SAFES_ENPOINTS_TESTNETS : SAFES_ENPOINTS_MAINNETS
+// const SAFES_ENDPOINTS = process.env.NEXT_PUBLIC_IS_TEST === 'true' ? SAFES_ENPOINTS_TESTNETS : SAFES_ENPOINTS_MAINNETS
+const SAFES_ENDPOINTS = SAFES_ENPOINTS_MAINNETS
 const SAFES_BALANCES_CHAIN_ID = Object.keys(SAFES_ENDPOINTS)
 const SAFES_BALANCES_ENPOINTS = Object.values(SAFES_ENDPOINTS)
 const DEFAULT_ERROR_MESSAGE = 'Could not fetch data'
