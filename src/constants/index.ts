@@ -6,7 +6,7 @@ export const ROLES = {
 	reviewer: 0x1,
 }
 
-export const USD_THRESHOLD = 100
+export const USD_THRESHOLD = 50
 
 export const DEFAULT_NOTE = <SafeSelectOption>{
 	safeAddress: '',
