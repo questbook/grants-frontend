@@ -109,7 +109,7 @@ function Dropdown({
 												mr={3}
 												h='24px'
 												w='24px'
-												src={listItems.find(({ label: text }) => text === value)?.icon}
+												src={listItems.find(({ label: text }) => text === value)?.icon} fallbackSrc='/images/dummy/Ethereum Icon.svg'
 											/>
 										) : null
 									}
@@ -203,7 +203,7 @@ function Dropdown({
 												mr={3}
 												h='24px'
 												w='24px'
-												src={icon} />
+												src={icon} fallbackSrc='/images/dummy/Ethereum Icon.svg'/>
 										) : null
 									}
 									<Text
