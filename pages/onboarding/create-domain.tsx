@@ -72,6 +72,7 @@ const OnboardingCreateDomain = () => {
 	// console.log('safeSelected', safeSelected)
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: safeSelected?.networkId ? networksMapping[safeSelected?.networkId?.toString()] : '',
+		shouldRefreshNonce: shouldRefreshNonce
 	})
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
 
@@ -113,11 +114,12 @@ const OnboardingCreateDomain = () => {
 	}, [accountData, safeOwners, step, isOwner])
 
 	useEffect(() => {
+		// console.log("add_user", nonce, webwallet);
 		if(nonce && nonce !== 'Token expired') {
 			return
 		}
 
-		if(isOwner && webwallet) {
+		if(webwallet) {
 			addAuthorizedUser(webwallet?.address)
 				.then(() => {
 					setShouldRefreshNonce(true)
@@ -125,7 +127,7 @@ const OnboardingCreateDomain = () => {
 				})
 				// .catch((err) => console.log("Couldn't add authorized user", err))
 		}
-	}, [isOwner, webwallet, nonce])
+	}, [webwallet, nonce])
 
 	useEffect(() => {
 		if(!setIsSafeAddressVerified || !safesUSDBalance) {

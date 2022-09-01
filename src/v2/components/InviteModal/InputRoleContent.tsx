@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button, Divider, HStack, Image, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, Spacer, Text, useToast, VStack } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import { serialiseInviteInfoIntoUrl, useMakeInvite } from 'src/utils/invite'
 import { getRoleTitle } from 'src/v2/components/AcceptInviteModal/RoleDataDisplay'
 import RoleSelect from 'src/v2/components/InviteModal/RoleSelect'
@@ -11,12 +12,23 @@ export type InputRoleContentProps = {
 }
 
 const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => {
+	const router = useRouter()
 	const [selectedRole, setSelectedRole] = useState<number>()
 	const [createLinkStep, setCreateLinkStep] = useState<number>()
 
 	const toast = useToast()
 
-	const { makeInvite } = useMakeInvite(selectedRole || 0)
+	const { makeInvite, isBiconomyInitialised } = useMakeInvite(selectedRole || 0)
+
+	// useEffect(() => {
+	// 	console.log("isBiconomyInitialised", isBiconomyInitialised );
+	// }, [isBiconomyInitialised])
+
+	useEffect(() => {
+		if(router.query.tab === 'members') {
+			setSelectedRole(0x1)
+		}
+	}, [])
 
 	const createLink = async() => {
 		setCreateLinkStep(0)
@@ -115,6 +127,7 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 							disabled={
 								typeof selectedRole === 'undefined'
 							|| typeof createLinkStep !== 'undefined'
+							|| !isBiconomyInitialised 
 							}
 							onClick={createLink}
 							colorScheme='brandv2'

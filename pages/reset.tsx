@@ -6,6 +6,7 @@ import {
 } from '@chakra-ui/react'
 import { BiconomyContext, WebwalletContext } from 'pages/_app'
 import NavbarLayout from 'src/layout/navbarLayout'
+import { Wallet } from 'ethers'
 
 function SignupWebwallet() {
 
@@ -19,9 +20,8 @@ function SignupWebwallet() {
 	const handleReset = async(e: any) => {
 		e.preventDefault()
 
-		switchNetwork(undefined)
 		setNonce(undefined)
-		setWebwallet(undefined)
+		setWebwallet(Wallet.createRandom())
 		setScwAddress(undefined)
 		setBiconomyDaoObj(undefined)
 

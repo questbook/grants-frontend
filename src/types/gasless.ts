@@ -16,7 +16,7 @@ export type BiconomyWalletClient = {
     baseWallet: ethers.Contract
     entryPoint: ethers.Contract
     checkIfWalletExists: (params: CheckIfWalletExistsParams) => Promise<CheckIfWalletExistsType>
-    checkIfWalletExistsAndDeploy: (params: CheckIfWalletExistsParams) => Promise<CheckIfWalletExistsAndDeployType>
+    checkIfWalletExistsAndDeploy: (params: CheckIfWalletExistsAndDeployParams) => Promise<CheckIfWalletExistsAndDeployType>
     buildExecTransaction: (params: BuildExecTransactionParams) => Promise<BuildExecTransaction>
     sendBiconomyWalletTransaction: (params: SendBiconomyWalletTransactionParams) => Promise<string>
 }
@@ -35,7 +35,12 @@ export type WebHookAttributesType = {
 
 
 export type CheckIfWalletExistsParams = {
-    eoa: string
+    eoa: string,
+}
+
+export type CheckIfWalletExistsAndDeployParams = {
+    eoa: string,
+    webHookAttributes: any
 }
 
 export type CheckIfWalletExistsType = {
@@ -44,7 +49,7 @@ export type CheckIfWalletExistsType = {
 }
 
 export type CheckIfWalletExistsAndDeployType = {
-    walletAddress: string,
+    walletAddress: string
     txHash: string
 }
 

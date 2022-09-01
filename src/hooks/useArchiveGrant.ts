@@ -42,7 +42,7 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 			biconomy.networkId.toString() === chainId.toString()) {
 			setIsBiconomyInitialised(true)
 		}
-	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised])
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, chainId])
 
 	const { webwallet } = useContext(WebwalletContext)!
 

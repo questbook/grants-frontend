@@ -4,7 +4,7 @@ import GetStartedCard from 'src/components/browse_daos/get_started_card'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 
-function AllDaosGrid({ allWorkspaces }: {allWorkspaces: any}) {
+function AllDaosGrid({ allWorkspaces, renderGetStarted }: {allWorkspaces: any, renderGetStarted: boolean}) {
 	return (
 		<Grid
 			w='100%'
@@ -19,9 +19,13 @@ function AllDaosGrid({ allWorkspaces }: {allWorkspaces: any}) {
 					if(index === 0) {
 						return (
 							<>
-								<GridItem key='get-started'>
-									<GetStartedCard />
-								</GridItem>
+								{
+									renderGetStarted && (
+										<GridItem key='get-started'>
+											<GetStartedCard />
+										</GridItem>
+									)
+								}
 								<GridItem key={index}>
 									<DaoCard
 										logo={getUrlForIPFSHash(workspace.icon)}

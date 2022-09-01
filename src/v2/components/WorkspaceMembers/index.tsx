@@ -14,6 +14,7 @@ import {
 	Thead,
 	Tr,
 } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
 import { defaultChainId } from 'src/constants/chains'
@@ -49,7 +50,8 @@ const USER_TYPES = [
 const TABLE_HEADERS = ['', 'Member', 'Role', 'Joined on']
 
 function WorkspaceMembers() {
-	const [isInviteModalOpen, setIsInviteModalOpen] = useState(false)
+	const router = useRouter()
+	const [isInviteModalOpen, setIsInviteModalOpen] = useState(router.query.tab === 'members')
 	const [selectedUserTypeIdx, setSelectedUserTypeIdx] = useState(0)
 	const [members, setMembers] = useState<Partial<WorkspaceMember>[]>()
 	const [page, setPage] = useState(0)

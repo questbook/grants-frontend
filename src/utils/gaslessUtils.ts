@@ -1,5 +1,8 @@
 import axios from 'axios'
 import { Contract, ethers, Wallet } from 'ethers'
+import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import SupportedChainId from 'src/generated/SupportedChainId'
+import { AddressMap } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
 
 const EIP712_WALLET_TX_TYPE = {
@@ -22,12 +25,11 @@ const EIP712_WALLET_TX_TYPE = {
 // export const webHookId = "a36aa5b2-b761-4757-aad9-10348f3ec732"
 
 // goerli
-export const webHookId = '97d579e5-917d-4059-90af-d46d5ee88b43'
+export const webHookId = '7726ab3f-2b4b-4a80-bfdd-c8ebb2d5ea2f'
 
 export const jsonRpcProviders: { [key: string]: ethers.providers.JsonRpcProvider } =
 {
 	'80001': new ethers.providers.JsonRpcProvider('https://polygon-mumbai.g.alchemy.com/v2/X6pnQlJfJq00b8MT53QihWBINEgHZHGp'),
-	'4': new ethers.providers.JsonRpcProvider('https://eth-rinkeby.alchemyapi.io/v2/4CCa54H4pABZcHMOMLJfRySfhMkvQFrs'),
 	'5': new ethers.providers.JsonRpcProvider('https://eth-goerli.g.alchemy.com/v2/Hr6VkBfmbJIhEW3fHJnl0ujE0xmWxcqH'),
 	'137': new ethers.providers.JsonRpcProvider('https://polygon-mainnet.g.alchemy.com/v2/mmBX0eNrvs0k7UpEMwi0eIH6hC4Dqoss')
 }
@@ -35,7 +37,7 @@ export const jsonRpcProviders: { [key: string]: ethers.providers.JsonRpcProvider
 export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } } = {
 	'5': {
 		apiKey: 'cCEUGyH2y.37cd0d5e-704c-49e6-9f3d-e20fe5bb13d5',
-		webHookId: '97d579e5-917d-4059-90af-d46d5ee88b43'
+		webHookId: '7726ab3f-2b4b-4a80-bfdd-c8ebb2d5ea2f'
 	},
 	'137': {
 		apiKey: 'kcwSbypnqq.f5fe6fbd-10e3-4dfe-a731-5eb4b6d85445',
@@ -47,7 +49,15 @@ export const networksMapping: { [key: string]: string } = {
 	'137': '5',
 	'5': '5',
 	'4': '5',
-	'900001': '5' // This is for solana.
+	'900001': '5', // This is for solana.
+	"1": "5",
+    "100": "5",
+    "42161": "5",
+    "43114": "5",
+    "1313161554": "5",
+    "56": "5",
+    "246": "5",
+    "10": "5",
 }
 
 export const signNonce = async(webwallet: Wallet, nonce: string) => {
@@ -182,17 +192,32 @@ export const chargeGas = async(workspace_id: number, amount: number) => {
 
 }
 
-export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: BiconomyWalletClient, chainId: string) => {
+export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: BiconomyWalletClient, chainId: string, nonce: string) => {
+
+
+
+	const signedNonce = await signNonce(webwallet, nonce)
+
+	const webHookAttributes = {
+		'webHookId': bicoDapps[chainId].webHookId, // received from the webhook register API
+		'webHookData': { // whatever data object to be passed to the webhook
+			'signedNonce': signedNonce,
+			'nonce': nonce,
+			'to': WORKSPACE_REGISTRY_ADDRESS[parseInt(chainId) as SupportedChainId],
+			'chain_id': chainId
+		},
+	}
+
 	// console.log("I'm here", biconomyWalletClient)
 	var { doesWalletExist, walletAddress } = await biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address })
 	// console.log("I'm not here")
 	let scwAddress
 	// console.log('WEEEE', webwallet.address)
-
+	
 	if(!doesWalletExist) {
 		// console.log('Wallet does not exist')
 		// console.log('Deploying wallet')
-		const { walletAddress, txHash } = await biconomyWalletClient.checkIfWalletExistsAndDeploy({ eoa: webwallet.address }) // default index(salt) 0
+		const { walletAddress, txHash } = await biconomyWalletClient.checkIfWalletExistsAndDeploy({ eoa: webwallet.address , webHookAttributes }) // default index(salt) 0
 
 		await getTransactionReceipt(txHash, chainId)
 
@@ -203,11 +228,6 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 		// console.log(`Wallet address: ${walletAddress}`)
 		scwAddress = walletAddress
 	}
-
-	const g = new Promise((r) => {
-		setTimeout(r, 35000)
-	})
-	g.then(() => { })
 
 	return scwAddress
 }

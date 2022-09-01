@@ -50,9 +50,10 @@ export default function useBatchUpdateApplicationState(
 	useEffect(() => {
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
 			biconomy.networkId.toString() === chainId.toString()) {
+			console.log('Hifff')
 			setIsBiconomyInitialised(true)
 		}
-	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised])
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, chainId])
 
 	useEffect(() => {
 		if(state) {

@@ -4,7 +4,7 @@ import router from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { defaultChainId, SupportedChainId } from 'src/constants/chains'
-import { useGetReviewersForAWorkspaceQuery } from 'src/generated/graphql'
+import { GetReviewersForAWorkspaceQuery, useGetReviewersForAWorkspaceQuery } from 'src/generated/graphql'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
@@ -25,6 +25,7 @@ const SetupEvaluationDrawer = ({
 	grantAddress,
 	chainId,
 	setNetworkTransactionModalStep,
+	data,
 }: {
 	isOpen: boolean
 	onClose: () => void
@@ -32,36 +33,10 @@ const SetupEvaluationDrawer = ({
 	grantAddress: string
 	chainId?: SupportedChainId
 	setNetworkTransactionModalStep: (step: number | undefined) => void
+	data: GetReviewersForAWorkspaceQuery | undefined
 }) => {
-
-	const { subgraphClients, workspace, validatorApi } = useContext(ApiClientsContext)!
-	const [queryParams, setQueryParams] = useState<any>({
-		client:
-			subgraphClients[
-				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-			].client,
-	})
-	const { data } = useGetReviewersForAWorkspaceQuery(queryParams)
-	useEffect(() => {
-		if(!workspace) {
-			return
-		}
-
-		setQueryParams({
-			client:
-				subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
-			variables: {
-				workspaceId: workspace.id
-			},
-		})
-	}, [workspace])
-
 	const [step, setStep] = useState(0)
-
-	if(!chainId) {
-		// eslint-disable-next-line no-param-reassign
-		chainId = getSupportedChainIdFromWorkspace(workspace)
-	}
+	const { workspace, validatorApi } = useContext(ApiClientsContext)!
 
 	// Setting up rubrics
 	const [rubrics, setRubrics] = useState<SidebarRubrics[]>([{ index: 0, criteria: '', description: '' }])
@@ -506,7 +481,7 @@ const SetupEvaluationDrawer = ({
 									}
 								}
 							}>
-							{step === 0 ? 'Continue' : 'Initiate Transaction'}
+							{step === 0 ? 'Continue' : 'Setup Evaluation'}
 						</Button>
 
 					</Flex>

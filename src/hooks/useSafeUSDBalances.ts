@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { NetworkType } from 'src/constants/Networks'
-import SAFES_ENPOINTS from 'src/constants/safesEndpointsTest.json'
+import SAFES_ENPOINTS from 'src/constants/safesEndpoints.json'
 import useAxiosMulti from 'src/hooks/utils/useAxiosMulti'
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 import { getSafeDetails } from 'src/v2/constants/safe/realms_solana'
