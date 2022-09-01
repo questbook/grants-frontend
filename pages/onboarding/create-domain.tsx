@@ -3,6 +3,7 @@ import { Box, Flex, HStack, IconButton, Image, Spacer, Text, ToastId, useToast }
 import { useRouter } from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
+import { DEFAULT_NOTE, INSUFFICIENT_FUNDS_NOTE, USD_THRESHOLD } from 'src/constants'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { NetworkType } from 'src/constants/Networks'
@@ -18,7 +19,7 @@ import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { addAuthorizedOwner, addAuthorizedUser, bicoDapps, chargeGas, getEventData, getTransactionDetails, networksMapping, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
-import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
+import { getSupportedValidatorNetworkFromChainId, isValidEthereumAddress, isValidSolanaAddress } from 'src/utils/validationUtils'
 import { BackArrowThick } from 'src/v2/assets/custom chakra icons/Arrows/BackArrowThick'
 import { Organization } from 'src/v2/assets/custom chakra icons/Organization'
 import AccountDetails from 'src/v2/components/NavBar/AccountDetails'
@@ -43,6 +44,7 @@ const OnboardingCreateDomain = () => {
 	const [isSafeAddressVerified, setIsSafeAddressVerified] = useState(false)
 	const { data: safesUSDBalance, loaded: loadedSafesUSDBalance } = useSafeUSDBalances({ safeAddress })
 	const [safeSelected, setSafeSelected] = useState<SafeSelectOption>()
+	const [safeAddressError, setSafeAddressError] = useState<string>('')
 
 	// State variables for step 2
 	const [domainName, setDomainName] = useState('')
@@ -244,13 +246,13 @@ const OnboardingCreateDomain = () => {
 
 			const event = await getEventData(receipt, 'WorkspaceCreated', WorkspaceRegistryAbi)
 			if(event) {
-				const workspace_id = Number(event.args[0].toBigInt())
+				const workspaceId = Number(event.args[0].toBigInt())
 				// console.log('workspace_id', workspace_id)
 
-				await addAuthorizedOwner(workspace_id, webwallet?.address!, scwAddress, network.toString(),
+				await addAuthorizedOwner(workspaceId, webwallet?.address!, scwAddress, network.toString(),
 					'this is the safe addres - to be updated in the new flow')
 				// console.log('fdsao')
-				await chargeGas(workspace_id, Number(txFee))
+				await chargeGas(workspaceId, Number(txFee))
 			}
 
 			setCurrentStep(5)
@@ -276,16 +278,30 @@ const OnboardingCreateDomain = () => {
 		}
 	}, [biconomyWalletClient, domainName, accountDataWebwallet, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, safeSelected])
 
+	useEffect(() => {
+		if(step !== 0 || safeAddress === '' || !loadedSafesUSDBalance) {
+			setSafeAddressError('')
+		} else if(!isValidEthereumAddress(safeAddress) && !isValidSolanaAddress(safeAddress)) {
+			setSafeAddressError('Invalid address')
+		} else if(safesUSDBalance?.length === 0) {
+			setSafeAddressError('No Safe found with this address')
+		} else {
+			setSafeAddressError('Some unknown error occured')
+		}
+		//step === 0 && safeAddress !== '' && loadedSafesUSDBalance && safesUSDBalance?.length === 0
+	}, [step, safeAddress, loadedSafesUSDBalance, safesUSDBalance])
+
 	const steps = [
 		<SafeDetails
-			safesOptions={safesUSDBalance!}
+			safesOptions={[safesUSDBalance?.some((safe: SafeSelectOption) => safe.amount >= USD_THRESHOLD) ? DEFAULT_NOTE : INSUFFICIENT_FUNDS_NOTE, ...safesUSDBalance!]}
 			key={0}
 			step={step}
 			safeAddress={safeAddress}
 			isPasted={isSafeAddressPasted}
 			isVerified={isSafeAddressVerified}
 			isLoading={!loadedSafesUSDBalance}
-			isSafeAddressError={step === 0 && safeAddress !== '' && loadedSafesUSDBalance && safesUSDBalance && safesUSDBalance.length === 0}
+			isSafeAddressError={safeAddressError !== ''}
+			safeAddressErrorText={safeAddressError}
 			setValue={
 				(newValue) => {
 					setSafeAddress(newValue)

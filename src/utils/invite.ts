@@ -217,7 +217,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 		// console.log("invite", scwAddress)
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && inviteInfo?.chainId && biconomy?.networkId &&
 			biconomy.networkId.toString() === inviteInfo?.chainId?.toString()) {
-				// console.log("zonb");
+			// console.log("zonb");
 			setIsBiconomyInitialised(true)
 		}
 	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, inviteInfo])
@@ -312,7 +312,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 			} while(!didIndex)
 		},
 		[profileInfo, workspaceRegistry, validatorApi, inviteInfo, signature, fetchMembers, switchNetwork, connectedChainId, scwAddress, biconomyWalletClient,
-		biconomy, webwallet, nonce])
+			biconomy, webwallet, nonce])
 
 	const getJoinInviteGasEstimate = useCallback(async() => {
 		if(!signature) {

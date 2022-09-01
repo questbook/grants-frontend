@@ -4,9 +4,9 @@ import {
 	Button,
 	Flex
 } from '@chakra-ui/react'
+import { Wallet } from 'ethers'
 import { BiconomyContext, WebwalletContext } from 'pages/_app'
 import NavbarLayout from 'src/layout/navbarLayout'
-import { Wallet } from 'ethers'
 
 function SignupWebwallet() {
 

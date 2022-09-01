@@ -16,6 +16,7 @@ import {
 import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
 import assert from 'assert'
 import axios from 'axios'
+import { USD_THRESHOLD } from 'src/constants'
 import { NetworkType } from 'src/constants/Networks'
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 import { MetaTransaction, Safe, TransactionType } from 'src/v2/types/safe'
@@ -226,6 +227,7 @@ const getSafeDetails = async(realmsAddress: string): Promise<SafeSelectOption | 
 		safeType: 'SPL-GOV',
 		safeIcon: '/safes_icons/spl_gov.png',
 		amount: usdAmount, // 1000
+		isDisabled: usdAmount < USD_THRESHOLD
 	}
 }
 
