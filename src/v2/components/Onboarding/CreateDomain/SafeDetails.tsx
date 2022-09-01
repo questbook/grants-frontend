@@ -9,6 +9,7 @@ interface Props {
 	isPasted?: boolean
 	isVerified?: boolean
 	isSafeAddressError?: boolean
+	safeAddressErrorText?: string
 	isLoading?: boolean
 	safeSelected: SafeSelectOption
 	onSelectedSafeChange: (e: SafeSelectOption) => void
@@ -16,7 +17,7 @@ interface Props {
 	onContinue: () => void
 }
 
-function SafeDetails({ safesOptions, step, safeAddress, isPasted, isVerified, isLoading, safeSelected, setValue, onSelectedSafeChange, onContinue, isSafeAddressError }: Props) {
+function SafeDetails({ safesOptions, step, safeAddress, isPasted, isVerified, isLoading, safeSelected, setValue, onSelectedSafeChange, onContinue, isSafeAddressError, safeAddressErrorText }: Props) {
 	return (
 		<>
 			<Text
@@ -49,7 +50,7 @@ function SafeDetails({ safesOptions, step, safeAddress, isPasted, isVerified, is
 				isVerified={isVerified}
 				isDisabled={step === 1}
 				isError={isSafeAddressError}
-				errorText='This safe is not supported. We currently support safes on Gnosis (Ethereum), and Realms (Solana).'
+				errorText={safeAddressErrorText}
 			/>
 			{
 				isLoading && (

@@ -1,11 +1,11 @@
 import { Fragment, JsonFragment } from '@ethersproject/abi/src.ts/fragments'
-import { TransactionReceipt } from '@ethersproject/abstract-provider'
 import axios from 'axios'
 import { Contract, ethers, Wallet } from 'ethers'
 import { BiconomyContext } from 'pages/_app'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { BiconomyWalletClient } from 'src/types/gasless'
+import { TransactionReceipt } from 'web3-core'
 
 const EIP712_WALLET_TX_TYPE = {
 	WalletTx: [
@@ -337,8 +337,6 @@ export const getTransactionDetails = async(transactionHash: string, chainId: str
 
 export const getEventData = async(receipt: TransactionReceipt, eventName: string, contractABI: string | ReadonlyArray<Fragment | JsonFragment | string>) => {
 
-	var eventInterface: ethers.utils.Interface
-
 	const isValidEvent = (item: ethers.utils.Fragment) => {
 		const fragmentItem = ethers.utils.Fragment.from(item)
 		if(!fragmentItem.name || !fragmentItem.type) {
@@ -348,7 +346,7 @@ export const getEventData = async(receipt: TransactionReceipt, eventName: string
 		return fragmentItem.name === eventName && fragmentItem.type === 'event'
 	}
 
-	const isValidEventInReceipt = (item: ethers.providers.Log) => {
+	const isValidEventInReceipt = (item: TransactionReceipt['logs'][number]) => {
 		try {
 			eventInterface.parseLog(item)
 			return true
@@ -372,7 +370,7 @@ export const getEventData = async(receipt: TransactionReceipt, eventName: string
 		throw Error('Invalid Given Event!')
 	}
 
-	eventInterface = new ethers.utils.Interface(eventFragment)
+	const eventInterface = new ethers.utils.Interface(eventFragment)
 
 	const eventLogs = receipt.logs.filter(isValidEventInReceipt)
 

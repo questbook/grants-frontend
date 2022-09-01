@@ -1,13 +1,14 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { NetworkType } from 'src/constants/Networks'
-import SAFES_ENPOINTS from 'src/constants/safesEndpoints.json'
+import SAFES_ENPOINTS_MAINNETS from 'src/constants/safesEndpoints.json'
 import useAxios from 'src/hooks/utils/useAxios'
 import { getOwners } from 'src/v2/constants/safe/realms_solana'
 
 const URL_PREFIX = 'v1/safes/'
 const URL_SUFFIX = ''
-
+// const SAFES_ENDPOINTS = process.env.NEXT_PUBLIC_IS_TEST === 'true' ? SAFES_ENPOINTS_TESTNETS : SAFES_ENPOINTS_MAINNETS
+const SAFES_ENDPOINTS = SAFES_ENPOINTS_MAINNETS
 
 interface Props {
     safeAddress: string
@@ -15,7 +16,7 @@ interface Props {
 	type: NetworkType
 }
 
-type ValidChainID = keyof typeof SAFES_ENPOINTS;
+type ValidChainID = keyof typeof SAFES_ENDPOINTS;
 
 type SafeDetails = string[]
 
@@ -26,8 +27,8 @@ function useSafeOwners({ safeAddress, type, chainID }: Props) {
 		}
 
 		const chainIDKey = chainID as ValidChainID
-		if(SAFES_ENPOINTS[chainIDKey]) {
-			return SAFES_ENPOINTS[chainIDKey] + URL_PREFIX + safeAddress + URL_SUFFIX
+		if(SAFES_ENDPOINTS[chainIDKey]) {
+			return SAFES_ENDPOINTS[chainIDKey] + URL_PREFIX + safeAddress + URL_SUFFIX
 		}
 
 		return ''

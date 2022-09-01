@@ -6,14 +6,14 @@ export const useNonce = (shouldRefreshNonce?: boolean) => {
 	const { webwallet, nonce, setNonce } = useContext(WebwalletContext)!
 	const [shouldRefresh, setShouldRefresh] = useState<boolean>(false)
 
-	const getUseNonce = useCallback(async () => {
+	const getUseNonce = useCallback(async() => {
 		// console.log('rerewq', webwallet)
 		const _nonce = await getNonce(webwallet)
 		return _nonce
 	}, [webwallet])
 
 	useEffect(() => {
-		if (typeof window !== "undefined") {
+		if(typeof window !== 'undefined') {
 			localStorage.setItem('loadingNonce', 'false')
 		}
 
@@ -23,7 +23,7 @@ export const useNonce = (shouldRefreshNonce?: boolean) => {
 	useEffect(() => {
 		const loadingNonce = localStorage.getItem('loadingNonce') === 'true'
 		// console.log('GOT NONCE', webwallet, nonce, shouldRefreshNonce, loadingNonce)
-		if (!webwallet || loadingNonce || nonce) {
+		if(!webwallet || loadingNonce || nonce) {
 			return
 		}
 
@@ -33,23 +33,24 @@ export const useNonce = (shouldRefreshNonce?: boolean) => {
 		getUseNonce()
 			.then(_nonce => {
 				// console.log('GOT NONCE', webwallet.address, _nonce, nonce)
-				if (!_nonce) {
+				if(!_nonce) {
 					setNonce(undefined)
 				} else {
-					if (_nonce === 'Token expired') {
+					if(_nonce === 'Token expired') {
 						setNonce(undefined)
 					} else {
 						setNonce(_nonce)
 					}
 				}
+
 				localStorage.setItem('loadingNonce', 'false')
 			})
 			.catch((err) => {
-				console.log("err", err)
+				console.log('err', err)
 			})
 
 		return (() => {
-			if (typeof window !== 'undefined') {
+			if(typeof window !== 'undefined') {
 				// console.log('hasan')
 				localStorage.setItem('loadingNonce', 'false')
 			}

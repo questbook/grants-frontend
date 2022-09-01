@@ -57,9 +57,8 @@ export const generateWorkspaceUpdateRequest = async(
 	const req: WorkspaceUpdateRequest = {}
 
 	const applySimpleKeyUpdate = (key: keyof SettingsForm, wKey: keyof WorkspaceUpdateRequest) => {
-		// @ts-ignore
 		if(newForm[key] !== oldForm[key]) {
-			req[wKey] = newForm[key] as any
+			req[wKey] = newForm[key]
 		}
 	}
 
