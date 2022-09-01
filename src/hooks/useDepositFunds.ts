@@ -63,10 +63,10 @@ export default function useDepositFunds(
 					},
 				}),
 			})
-			// const transferTxn = rewardContract.transfer(
-			// grantAddress!,
-			// finalAmount!,
-			// )
+			rewardContract.transfer(
+			grantAddress!,
+			finalAmount!,
+			)
 
 			await rewardContract.once('Transfer', (from, to, amount, event) => {
 				if(from === accountData?.address && to === utils.getAddress(grantAddress!)) {
