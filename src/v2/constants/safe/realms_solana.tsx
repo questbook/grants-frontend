@@ -225,7 +225,7 @@ const getSafeDetails = async(realmsAddress: string): Promise<SafeSelectOption | 
 		networkName: 'Solana',
 		networkIcon: '/network_icons/solana.svg',
 		safeType: 'SPL-GOV',
-		safeIcon: '/safes_icons/spl_gov.png',
+		safeIcon: '/safes_icons/realms.svg',
 		amount: usdAmount, // 1000
 	}
 }
