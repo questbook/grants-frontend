@@ -3,6 +3,7 @@ import { ApiClientsContext } from 'pages/_app'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from 'src/constants/chains'
 import { useGetApplicationMilestonesQuery } from 'src/generated/graphql'
+import { ChainInfo } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
@@ -10,9 +11,9 @@ const useApplicationMilestones = (grantId: string, chainId?: SupportedChainId) =
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 	const fullData = useGetApplicationMilestonesQuery({
 		client:
-      subgraphClients[
-      	(chainId || getSupportedChainIdFromWorkspace(workspace)) || defaultChainId
-      ].client,
+		subgraphClients[
+			(chainId || getSupportedChainIdFromWorkspace(workspace)) || defaultChainId
+		].client,
 		variables: {
 			grantId,
 		},
@@ -42,7 +43,7 @@ const useApplicationMilestones = (grantId: string, chainId?: SupportedChainId) =
 	if(rewardToken?.address) {
 		decimals = rewardToken.decimals
 	} else if(rewardAsset && !rewardToken?.address) {
-		let allCurrencies: any[] = []
+		let allCurrencies: ChainInfo['supportedCurrencies'][''][] = []
 		ALL_SUPPORTED_CHAIN_IDS.forEach((id) => {
 			const { supportedCurrencies } = CHAIN_INFO[id]
 			const supportedCurrenciesArray = Object

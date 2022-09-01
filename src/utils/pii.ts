@@ -3,7 +3,14 @@ import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { BaseProvider } from '@ethersproject/providers'
 import { ec as EC } from 'elliptic'
 import { Wallet } from 'ethers'
-import { arrayify, joinSignature, keccak256, recoverPublicKey, resolveProperties, serializeTransaction } from 'ethers/lib/utils'
+import {
+	arrayify,
+	joinSignature,
+	keccak256,
+	recoverPublicKey,
+	resolveProperties,
+	serializeTransaction,
+} from 'ethers/lib/utils'
 import { ApiClientsContext } from 'pages/_app'
 import { useGetGrantManagersWithPublicKeyQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
@@ -154,9 +161,7 @@ async function getPublicKeyFromTx(tx: TransactionResponse) {
 	const raw = serializeTransaction(rsTx) // returns RLP encoded tx
 	const msgHash = keccak256(raw) // as specified by ECDSA
 	const msgBytes = arrayify(msgHash) // create binary hash
-	const recoveredPubKey = recoverPublicKey(msgBytes, signature)
-
-	return recoveredPubKey
+	return recoverPublicKey(msgBytes, signature)
 }
 
 /** key of an application; can pass as "extraInfo" when generating shared key */

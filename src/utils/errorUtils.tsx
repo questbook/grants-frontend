@@ -21,7 +21,7 @@ function getErrorMessage(e: any) {
 		e = e.error
 	}
 
-	let message = ''
+	let message: string
 	if(e.code === errorCodes.rpc.internal) {
 		if(e?.data?.message) {
 			message = e?.data?.message

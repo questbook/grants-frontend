@@ -3,7 +3,7 @@ import {
 	defaultChainId,
 	SupportedChainId,
 } from 'src/constants/chains'
-import { ChainInfo } from 'src/types'
+import { ChainInfo, Grant } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 export function getAssetInfo(asset?: string, chainId?: SupportedChainId) {

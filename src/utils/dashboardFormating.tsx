@@ -9,9 +9,6 @@ export const formatMinutes = (s: number) => {
 		n = n % inAMonth[i]
 	}
 
-	// // console.log('format min')
-	// // console.log(res)
-
 	let ans = ''
 	let i = 0
 
@@ -26,6 +23,5 @@ export const formatMinutes = (s: number) => {
 		ans = `${ans} ${res[i + 1]}${suffix[i + 1]}`
 	}
 
-	// // console.log(ans)
 	return ans
 }
