@@ -16,13 +16,13 @@ export function getAssetInfo(asset?: string, chainId?: SupportedChainId) {
 	}
 }
 
-export function getChainInfo(grant: any, chainId: SupportedChainId): ChainInfo['supportedCurrencies'][string] {
+export function getChainInfo(grant: { reward: Grant['reward'] }, chainId: SupportedChainId): ChainInfo['supportedCurrencies'][string] {
 	// let chainInfo: ChainInfo['supportedCurrencies'][string]
 	let tokenIcon: string
 	let chainInfo =
-      CHAIN_INFO[chainId]?.supportedCurrencies[
-      	grant.reward.asset.toLowerCase()
-      ]
+		CHAIN_INFO[chainId]?.supportedCurrencies[
+			grant.reward.asset.toLowerCase()
+		]
 
 	//   // console.log('WOWW2', chainInfo, !chainInfo)
 	if(!chainInfo && grant.reward.token) {
@@ -31,7 +31,7 @@ export function getChainInfo(grant: any, chainId: SupportedChainId): ChainInfo['
 			address: grant.reward.token.address,
 			label: grant.reward.token.label,
 			pair: undefined,
-			decimals: parseInt(grant.reward.token.decimal, 10),
+			decimals: parseInt(String(grant.reward.token.decimal), 10),
 			icon: tokenIcon,
 		}
 	} else if(!chainInfo && !grant.reward.token) {

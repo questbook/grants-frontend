@@ -40,7 +40,7 @@ export function parseAmount(number: string, contractAddress?: string, decimal?: 
 
 	let decimals = 18
 	if(contractAddress) {
-		let allCurrencies: ChainInfo['supportedCurrencies'][''][] = []
+		let allCurrencies: ChainInfo['supportedCurrencies'][string][] = []
 		ALL_SUPPORTED_CHAIN_IDS.forEach((id) => {
 			const { supportedCurrencies } = CHAIN_INFO[id]
 			const supportedCurrenciesArray = Object.keys(supportedCurrencies).map(

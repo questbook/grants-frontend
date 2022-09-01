@@ -43,7 +43,7 @@ const useApplicationMilestones = (grantId: string, chainId?: SupportedChainId) =
 	if(rewardToken?.address) {
 		decimals = rewardToken.decimals
 	} else if(rewardAsset && !rewardToken?.address) {
-		let allCurrencies: ChainInfo['supportedCurrencies'][''][] = []
+		let allCurrencies: ChainInfo['supportedCurrencies'][string][] = []
 		ALL_SUPPORTED_CHAIN_IDS.forEach((id) => {
 			const { supportedCurrencies } = CHAIN_INFO[id]
 			const supportedCurrenciesArray = Object
