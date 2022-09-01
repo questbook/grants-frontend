@@ -32,7 +32,7 @@ export const useNonce = (shouldRefreshNonce?: boolean) => {
 
 		getUseNonce()
 			.then(_nonce => {
-				// console.log('GOT NONCE', _nonce, nonce)
+				// console.log('GOT NONCE', webwallet.address, _nonce, nonce)
 				if (!_nonce) {
 					setNonce(undefined)
 				} else {

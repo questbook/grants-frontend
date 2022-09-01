@@ -170,16 +170,15 @@ export class Realms_Solana implements Safe {
 	}
 
 	async getTransactionHashStatus(proposalPublicKey: string): Promise<any> {
-    	// console.log('getTransactionHashStatus', proposalPublicKey)
     	const realmData = await getRealm(this.connection, new PublicKey(this.id!))
-    	const COUNCIL_MINT = realmData.account.config.councilMint
-    	const governanceInfo = await getGovernanceAccounts(this.connection, new PublicKey(this.programId), Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
-    	const governance = governanceInfo[0]
+    	const governances = await getGovernanceAccounts(this.connection, this.programId, Governance, [
+			pubkeyFilter(1, this.id)!,
+		])
+		const governance = governances.filter((gov)=>gov.pubkey.toString()===realmData.account.authority?.toString())[0]
 
     	const proposals = await getGovernanceAccounts(this.connection, new PublicKey(this.programId), Proposal, [
                     pubkeyFilter(1, governance.pubkey)!,
     	])
-
 
     	const propsalsToSend: {[proposalKey: string]: number} = {};
 
