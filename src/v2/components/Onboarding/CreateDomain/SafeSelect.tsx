@@ -16,6 +16,14 @@ interface Props {
 	safesOptions?: SafeSelectOption[]
 }
 
+export interface NoteDetails {
+	bgColor: string
+	color: string
+	text: string
+	link?: string
+	linkText?: string
+	linkTextColor?: string
+}
 export interface SafeSelectOption extends OptionBase {
 	safeAddress: string
 	networkType: NetworkType
@@ -27,6 +35,7 @@ export interface SafeSelectOption extends OptionBase {
 	amount: number // 1000
 	currency?: string // USD
 	isNote?: boolean
+	noteDetails?: NoteDetails
 }
 
 const Option = ({ innerProps, data }: OptionProps<SafeSelectOption, any, any>) => (
@@ -39,7 +48,7 @@ const Option = ({ innerProps, data }: OptionProps<SafeSelectOption, any, any>) =
 		{
 			data?.isNote && (
 				<Flex
-					bg='blue.1'
+					bg={data?.noteDetails?.bgColor}
 					w='100%'
 					direction='column'
 					p={2}
@@ -48,14 +57,24 @@ const Option = ({ innerProps, data }: OptionProps<SafeSelectOption, any, any>) =
 					<Text
 						variant='v2_metadata'
 						fontWeight='500'
-						color='blue.2'>
+						color={data?.noteDetails?.color}>
 						Note:
 					</Text>
 					<Text
 						mt={1}
 						variant='v2_metadata'
-						color='blue.2'>
-						You will be asked to verify that you own the safe. and have tokens atleast worth 1000 USD in your safe.
+						color={data?.noteDetails?.color}>
+						{data?.noteDetails?.text}
+						{' '}
+						{
+							data?.noteDetails?.link && (
+								<Link
+									href={data?.noteDetails?.link}
+									color={data?.noteDetails?.linkTextColor}>
+									{data?.noteDetails?.linkText}
+								</Link>
+							)
+						}
 					</Text>
 				</Flex>
 			)

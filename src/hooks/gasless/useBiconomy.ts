@@ -11,32 +11,32 @@ export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boole
 	const { biconomyDaoObj, setBiconomyDaoObj, biconomyWalletClient, setBiconomyWalletClient } = useContext(BiconomyContext)!
 	const { network, switchNetwork } = useNetwork()
 	const [shouldRefresh, setShouldRefresh] = useState<boolean>(false)
- 
+
 
 	useEffect(() => {
 		localStorage.setItem('isBiconomyLoading', 'false')
-		setShouldRefresh((prev) => !prev);
+		setShouldRefresh((prev) => !prev)
 	}, [])
 
 	useEffect(() => {
 		// console.log("HO HERE", data.shouldRefreshNonce);
 		if(typeof window === 'undefined') {
-			setShouldRefresh((prev) => !prev);
-			return;
+			setShouldRefresh((prev) => !prev)
+			return
 		}
 
 		const isBiconomyLoading = (typeof window !== 'undefined') ? localStorage.getItem('isBiconomyLoading') === 'true' : true
 		// console.log("HO HERE2", shouldRefresh, isBiconomyLoading);
-		// console.log("usebiconomy", {nonce, shouldRefresh, isBiconomyLoading, data, biconomyDaoObj, webwallet, 
+		// console.log("usebiconomy", {nonce, shouldRefresh, isBiconomyLoading, data, biconomyDaoObj, webwallet,
 		// 	firstCond: (!isBiconomyLoading && data.chainId && biconomyDaoObj && biconomyDaoObj.networkId && networksMapping[data.chainId] !== biconomyDaoObj.networkId.toString())
 		// 	, secondCond: (!isBiconomyLoading && nonce && webwallet && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress))})
 		// console.log('STEP3', biconomyDaoObj, nonce, webwallet, biconomyWalletClient, data.chainId, network, isBiconomyLoading)
 		// console.log('STEP3: CHAIN - ', data.chainId, biconomyDaoObj?.networkId)
 		if(
-		(!isBiconomyLoading && data.chainId && biconomyDaoObj && biconomyDaoObj.networkId && networksMapping[data.chainId] !== biconomyDaoObj.networkId.toString()) ||
+			(!isBiconomyLoading && data.chainId && biconomyDaoObj && biconomyDaoObj.networkId && networksMapping[data.chainId] !== biconomyDaoObj.networkId.toString()) ||
 		(!isBiconomyLoading && nonce && webwallet && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress))
 		) {
-			
+
 			localStorage.setItem('isBiconomyLoading', 'true')
 
 			// console.count('STEP3: trying 2')
@@ -82,7 +82,7 @@ export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boole
 			// console.log('biconomyWalletClient', _biconomyWalletClient)
 
 			if(_biconomyWalletClient) {
-				const walletAddress = await deploySCW(webwallet, _biconomyWalletClient, _newChainId, nonce!);
+				const walletAddress = await deploySCW(webwallet, _biconomyWalletClient, _newChainId, nonce!)
 				setScwAddress(walletAddress)
 				// console.log('SCWSCW', walletAddress, scwAddress)
 			}

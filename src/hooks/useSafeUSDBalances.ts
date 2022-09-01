@@ -1,8 +1,9 @@
 
 import { useEffect, useMemo, useState } from 'react'
+import { USD_THRESHOLD } from 'src/constants'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { NetworkType } from 'src/constants/Networks'
-import SAFES_ENPOINTS from 'src/constants/safesEndpoints.json'
+import SAFES_ENPOINTS_MAINNETS from 'src/constants/safesEndpoints.json'
 import useAxiosMulti from 'src/hooks/utils/useAxiosMulti'
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 import { getSafeDetails } from 'src/v2/constants/safe/realms_solana'
@@ -11,10 +12,11 @@ import { getSafeDetails } from 'src/v2/constants/safe/realms_solana'
 const URL_PREFIX = 'v1/safes/'
 // const URL_PREFIX = 'v1/safes/'
 const URL_SUFFIX = '/balances/usd'
-const SAFES_BALANCES_CHAIN_ID = Object.keys(SAFES_ENPOINTS)
-const SAFES_BALANCES_ENPOINTS = Object.values(SAFES_ENPOINTS)
-const USD_BALANCE_THRESHOLD = 50
-const DEFAULT_ERROR_MESSAGE = "Couldn't fetch data"
+// const SAFES_ENDPOINTS = process.env.NEXT_PUBLIC_IS_TEST === 'true' ? SAFES_ENPOINTS_TESTNETS : SAFES_ENPOINTS_MAINNETS
+const SAFES_ENDPOINTS = SAFES_ENPOINTS_MAINNETS
+const SAFES_BALANCES_CHAIN_ID = Object.keys(SAFES_ENDPOINTS)
+const SAFES_BALANCES_ENPOINTS = Object.values(SAFES_ENDPOINTS)
+const DEFAULT_ERROR_MESSAGE = 'Could not fetch data'
 
 interface Props {
     safeAddress: string
@@ -50,12 +52,14 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 
 	const [gnosisData, setGnosisData] = useState<SafeSelectOption[]>([])
 
-	const data = useMemo(() => {
+	const data = useMemo<SafeSelectOption[]>(() => {
 		if(splGovSafe) {
-			return [...gnosisData, splGovSafe]
+			const temp = [...gnosisData, splGovSafe]
+			temp.sort((a, b) => b.amount - a.amount)
+			return temp
 		}
 
-		return gnosisData
+		return [...gnosisData.sort((a, b) => b.amount - a.amount)]
 	}, [gnosisData, splGovSafe])
 
 	useEffect(() => {
@@ -91,11 +95,11 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 	useEffect(() => {
 		if(gnosisLoaded && !gnosisError) {
 			const newData: SafeSelectOption[] = []
-			// console.log('gnosis raw data', gnosisRawData)
 			gnosisRawData.forEach((allTokensData: AllTokensData, index) => {
 				const currentChainID = SAFES_BALANCES_CHAIN_ID[index] as unknown as ValidChainID
 				const tokensSum = getTokensSum(allTokensData)
-				if(tokensSum >= USD_BALANCE_THRESHOLD) {
+				// if(tokensSum >= USD_BALANCE_THRESHOLD) {
+				if(allTokensData.length > 0 && currentChainID in CHAIN_INFO) {
 					const newElement: SafeSelectOption = {
 						safeAddress: safeAddress,
 						networkType: NetworkType.EVM,
@@ -105,6 +109,7 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 						safeType: 'Gnosis',
 						safeIcon: '/safes_icons/gnosis.svg',
 						amount: Math.floor(tokensSum),
+						isDisabled: Math.floor(tokensSum) < USD_THRESHOLD
 					}
 					newData.push(newElement)
 				}

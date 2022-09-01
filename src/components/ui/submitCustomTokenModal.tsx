@@ -11,7 +11,7 @@ import ErrorToast from 'src/components/ui/toasts/errorToast'
 import config from 'src/constants/config.json'
 import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
-import { isValidAddress } from 'src/utils/validationUtils'
+import { isValidEthereumAddress } from 'src/utils/validationUtils'
 import SuccessToast from 'src/v2/components/Toasts/successToast'
 
 interface ModalProps {
@@ -79,7 +79,7 @@ function CustomTokenModal({
 	}, [txnData])
 
 	const validateTokenAddress = () => {
-		if(!tokenAddress || !isValidAddress(tokenAddress)) {
+		if(!tokenAddress || !isValidEthereumAddress(tokenAddress)) {
 			setTokenAddressError(true)
 		}
 	}

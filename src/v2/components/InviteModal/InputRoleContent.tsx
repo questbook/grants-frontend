@@ -127,7 +127,7 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 							disabled={
 								typeof selectedRole === 'undefined'
 							|| typeof createLinkStep !== 'undefined'
-							|| !isBiconomyInitialised 
+							|| !isBiconomyInitialised
 							}
 							onClick={createLink}
 							colorScheme='brandv2'

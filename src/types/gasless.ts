@@ -35,11 +35,11 @@ export type WebHookAttributesType = {
 
 
 export type CheckIfWalletExistsParams = {
-    eoa: string,
+    eoa: string
 }
 
 export type CheckIfWalletExistsAndDeployParams = {
-    eoa: string,
+    eoa: string
     webHookAttributes: any
 }
 
