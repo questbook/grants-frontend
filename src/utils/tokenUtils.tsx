@@ -31,7 +31,7 @@ export function getChainInfo(grant: { reward: Grant['reward'] }, chainId: Suppor
 			address: grant.reward.token.address,
 			label: grant.reward.token.label,
 			pair: undefined,
-			decimals: parseInt(String(grant.reward.token.decimal), 10),
+			decimals: +grant.reward.token.decimal,
 			icon: tokenIcon,
 		}
 	} else if(!chainInfo && !grant.reward.token) {
