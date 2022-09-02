@@ -86,66 +86,6 @@ export const getNonce = async(webwallet: Wallet | undefined) => {
 	return false
 }
 
-// export const registerWebHook = async(authToken: string, apiKey: string) => {
-// 	const url = 'https://api.biconomy.io/api/v1/dapp/register-webhook'
-//
-// 	const formData = new URLSearchParams({
-// 		'webHook': 'https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/check',
-// 		'requestType': 'post', // post or get
-// 	})
-//
-// 	const requestOptions = {
-// 		method: 'POST',
-// 		headers: {
-// 			'Content-Type': 'application/x-www-form-urlencoded',
-// 			'authToken': authToken,
-// 			'apiKey': apiKey
-// 		},
-// 		body: formData
-// 	}
-//
-// 	const response = await fetch(url, requestOptions)
-// 	const responseJSON = await response.json()
-//
-// 	let webHookId = false
-// 	// console.log(responseJSON)
-// 	try {
-// 		webHookId = responseJSON.data.webHookId
-// 	} catch{
-// 		throw Error("Couldn't register webhook for your app!")
-// 	}
-//
-// 	return webHookId
-// }
-//
-// export const addDapp = async(dappName: string, networkId: string, authToken: string | undefined) => {
-// 	// console.log('AUTH TOKEN', authToken)
-// 	if(!authToken) {
-// 		return false
-// 	}
-//
-// 	const url = 'https://api.biconomy.io/api/v1/dapp/public-api/create-dapp'
-//
-// 	const formData = new URLSearchParams({
-// 		'dappName': dappName,
-// 		'networkId': networkId,
-// 		'enableBiconomyWallet': 'true'
-// 	})
-//
-// 	const requestOptions = {
-// 		method: 'POST',
-// 		headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'authToken': authToken },
-// 		body: formData
-// 	}
-//
-// 	const res = await fetch(url, requestOptions)
-// 	const resJson = await res.json()
-//
-// 	// console.log(resJson.data)
-//
-// 	return resJson.data
-// }
-
 export const addAuthorizedOwner = async(workspaceId: number, webwalletAddress: string, scwAddress: string,
 	chainId: string, safeAddress: string) => {
 
@@ -204,42 +144,17 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 
 		await getTransactionReceipt(txHash, chainId)
 
-		// console.log('Wallet deployed at address', walletAddress)
 		scwAddress = walletAddress
 	} else {
-		// console.log(`Wallet already exists for: ${webwallet.address}`)
-		// console.log(`Wallet address: ${walletAddress}`)
 		scwAddress = walletAddress
 	}
 
 	return scwAddress
 }
 
-// export const sendGaslessTransactionNew = async(targetContractObject: Contract, targetContractMethod: string,
-// 	targetContractArgs: Array<any>, targetContractAddress: string, webwallet: Wallet | undefined, chainId: string) => {
-
-// 	// console.log('HERE1', targetContractMethod, targetContractArgs)
-// 	const { data } = await targetContractObject.populateTransaction[targetContractMethod](...targetContractArgs)
-
-// 	const res = await axios.post('http://localhost:3001/v0/build_tx', {
-// 		webwallet_address: webwallet?.address,
-// 		populated_tx: data,
-// 		chain_id: chainId,
-// 		target_contract_address: targetContractAddress
-// 	})
-
-// 	// console.log('new flow', res)
-// 	return false
-// }
-
 export const sendGaslessTransaction = async(biconomy: typeof BiconomyContext, targetContractObject: Contract, targetContractMethod: string,
 	targetContractArgs: Array<string | Uint8Array | number | number[]>, targetContractAddress: string, biconomyWalletClient: BiconomyWalletClient,
 	scwAddress: string, webwallet: Wallet | undefined, chainId: string, webHookId: string, nonce: string | undefined) => {
-
-	// console.log(biconomy, targetContractObject, targetContractMethod, targetContractArgs, targetContractAddress,
-	// 	biconomyWalletClient, scwAddress, webwallet, chainId, webHookId, nonce)
-
-	// console.log('ffff', targetContractAddress)
 
 	if(!biconomy) {
 		alert('Biconomy is not ready! Please wait.')
@@ -261,18 +176,12 @@ export const sendGaslessTransaction = async(biconomy: typeof BiconomyContext, ta
 		return false
 	}
 
-	// console.log('HERE1', targetContractObject, targetContractMethod, targetContractArgs)
 	const { data } = await targetContractObject.populateTransaction[targetContractMethod](...targetContractArgs)
-	// console.log('HERE2')
-	// console.log('HERE 00', biconomyWalletClient)
-	// console.log(biconomyWalletClient, data, targetContractAddress, scwAddress)
 	const safeTxBody = await biconomyWalletClient.buildExecTransaction({
 		data,
 		to: targetContractAddress,
 		walletAddress: scwAddress,
 	})
-
-	// console.log('HERE3')
 
 	const signature = await webwallet._signTypedData({
 		verifyingContract: scwAddress,
@@ -294,9 +203,8 @@ export const sendGaslessTransaction = async(biconomy: typeof BiconomyContext, ta
 			'chain_id': chainId,
 		},
 	}
-	// console.log('HI')
+
 	// signature appended
-	// console.log('HI2')
 	return await biconomyWalletClient.sendBiconomyWalletTransaction({
 		execTransactionBody: safeTxBody,
 		walletAddress: scwAddress,
@@ -310,7 +218,6 @@ export const getTransactionReceipt = async(transactionHash: string | undefined, 
 		return false
 	}
 
-	// console.log('GOT HERE')
 	await jsonRpcProviders[chainId].waitForTransaction(transactionHash, 1)
 	return await jsonRpcProviders[chainId].getTransactionReceipt(transactionHash)
 }
@@ -355,7 +262,6 @@ export const getEventData = async(receipt: TransactionReceipt, eventName: string
 		}
 	}
 
-	// console.log('THIS IS RECEIPT', receipt)
 	const abiInterface = new ethers.utils.Interface(contractABI) // this is contract's ABI
 	const humanReadableABI: string | string[] = abiInterface.format(ethers.utils.FormatTypes.full) // convert to human readable ABI
 	if(typeof (humanReadableABI) === 'string') {

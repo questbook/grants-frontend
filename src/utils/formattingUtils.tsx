@@ -49,16 +49,12 @@ export function parseAmount(number: string, contractAddress?: string, decimal?: 
 			allCurrencies = [...allCurrencies, ...supportedCurrenciesArray]
 		})
 
-		// console.log(allCurrencies)
-		// console.log(contractAddress)
-
 		decimals = allCurrencies.find((currency) => currency.address === contractAddress)
 			?.decimals || 18
 
 		return ethers.utils.parseUnits(number, decimals).toString()
 	}
 
-	// // console.log('number', number);
 	return ethers.utils.parseUnits(number, 18).toString()
 }
 
