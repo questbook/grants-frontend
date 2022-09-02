@@ -112,6 +112,8 @@ function truncateTo(number: string, digits = 3) {
 		+ (containsSymbol ? number.charAt(number.length - 1) : '')
 }
 
+export const extractDate = (date: string) => date.substring(0, 10)
+
 export function formatAmount(number: string, decimals = 18, isEditable = false, isBig = false) {
 	const value = ethers.utils.formatUnits(number, decimals).toString()
 
