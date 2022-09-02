@@ -1,0 +1,24 @@
+query getDAOsForExplore(
+	$first: Int,
+	$skip: Int,
+	$orderBy: Workspace_orderBy!,
+  $filter: Workspace_filter!
+) {
+  workspaces(
+    first: $first, 
+    skip: $skip,
+    orderBy: $orderBy,
+    orderDirection: desc,
+    where: $filter
+  ) {
+    id
+    title
+    logoIpfsHash
+    supportedNetworks
+    createdAtS,
+    mostRecentGrantPostedAtS,
+    numberOfApplications,
+    numberOfApplicationsSelected,
+    totalGrantFundingDisbursedUSD
+  }
+}
