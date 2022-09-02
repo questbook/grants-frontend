@@ -24,8 +24,7 @@ export const getFromIPFS = async(hash: string): Promise<string> => {
 	try {
 		// console.log(hash)
 		const fetchResult = await fetch(`${IPFS_DOWNLOAD_ENDPOINT}?arg=${hash}`)
-		const responseBody = await fetchResult.text()
-		return responseBody
+		return await fetchResult.text()
 	} catch(e) {
 		// console.log(e)
 	}
@@ -34,8 +33,7 @@ export const getFromIPFS = async(hash: string): Promise<string> => {
 	try {
 		// console.log(hash)
 		const fetchResult = await fetch(`https://ipfs.io/ipfs/${hash}`)
-		const responseBody = await fetchResult.text()
-		return responseBody
+		return await fetchResult.text()
 	} catch(e) {
 		// console.log(e)
 	}

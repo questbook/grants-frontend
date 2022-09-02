@@ -1,15 +1,13 @@
-import React from 'react'
 import { ethers } from 'ethers'
 import moment from 'moment'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
-import { CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
-import { ALL_SUPPORTED_CHAIN_IDS } from 'src/constants/chains'
-import { FundTransfer } from 'src/types'
+import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
+import { ChainInfo, FundTransfer } from 'src/types'
 
 export function timeToString(
 	timestamp: number,
 	type?: 'day_first' | 'month_first',
-	show_year?: boolean,
+	showYear?: boolean,
 ) {
 	const date = new Date(timestamp)
 	const months = [
@@ -31,7 +29,7 @@ export function timeToString(
 			0,
 			3,
 		)}, ${date.getFullYear()}`
-		: `${months[date.getMonth()]} ${date.getUTCDate().toString()} ${show_year ? date.getFullYear() : ''
+		: `${months[date.getMonth()]} ${date.getUTCDate().toString()} ${showYear ? date.getFullYear() : ''
 		}`
 }
 
@@ -42,7 +40,7 @@ export function parseAmount(number: string, contractAddress?: string, decimal?: 
 
 	let decimals = 18
 	if(contractAddress) {
-		let allCurrencies: any[] = []
+		let allCurrencies: ChainInfo['supportedCurrencies'][string][] = []
 		ALL_SUPPORTED_CHAIN_IDS.forEach((id) => {
 			const { supportedCurrencies } = CHAIN_INFO[id]
 			const supportedCurrenciesArray = Object.keys(supportedCurrencies).map(
@@ -51,16 +49,12 @@ export function parseAmount(number: string, contractAddress?: string, decimal?: 
 			allCurrencies = [...allCurrencies, ...supportedCurrenciesArray]
 		})
 
-		// console.log(allCurrencies)
-		// console.log(contractAddress)
-
 		decimals = allCurrencies.find((currency) => currency.address === contractAddress)
 			?.decimals || 18
 
 		return ethers.utils.parseUnits(number, decimals).toString()
 	}
 
-	// // console.log('number', number);
 	return ethers.utils.parseUnits(number, 18).toString()
 }
 
@@ -79,6 +73,7 @@ export function nFormatter(value: string, digits = 3) {
 		{ value: 1e15, symbol: 'P' },
 		{ value: 1e18, symbol: 'E' },
 	]
+	// noinspection RegExpSimplifiable
 	const rx = /\.0+$|(\.[0-9]*[1-9])0+$/
 	const item = lookup
 		.slice()
@@ -89,7 +84,7 @@ export function nFormatter(value: string, digits = 3) {
 		: '0'
 }
 
-export const trimAddress = (address: string, digitQuantity: number) => `${address.slice(0, digitQuantity)}...${address.slice(-4)}`
+// export const trimAddress = (address: string, digitQuantity: number) => `${address.slice(0, digitQuantity)}...${address.slice(-4)}`
 
 function truncateTo(number: string, digits = 3) {
 	const decimalIndex = number.indexOf('.')
@@ -104,21 +99,20 @@ function truncateTo(number: string, digits = 3) {
 	for(
 		let i = decimalIndex + 1;
 		i
-    < Math.min(
-    	decimalIndex + digits + 1,
-    	containsSymbol ? number.length - 1 : number.length,
-    );
+		< Math.min(
+			decimalIndex + digits + 1,
+			containsSymbol ? number.length - 1 : number.length,
+		);
 		i += 1
 	) {
-		// eslint-disable-next-line  @typescript-eslint/no-unused-expressions
-		isEntirelyZeroAfterDecimal && number.charCodeAt(i) === 48
 		ret += number.charAt(i)
 	}
 
-	const returnValue = (isEntirelyZeroAfterDecimal ? ret.substring(0, decimalIndex) : ret)
-    + (containsSymbol ? number.charAt(number.length - 1) : '')
-	return returnValue
+	return (isEntirelyZeroAfterDecimal ? ret.substring(0, decimalIndex) : ret)
+		+ (containsSymbol ? number.charAt(number.length - 1) : '')
 }
+
+export const extractDate = (date: string) => date.substring(0, 10)
 
 export function formatAmount(number: string, decimals = 18, isEditable = false, isBig = false) {
 	const value = ethers.utils.formatUnits(number, decimals).toString()
@@ -131,30 +125,8 @@ export function formatAmount(number: string, decimals = 18, isEditable = false, 
 		const formattedValue = nFormatter(value)
 		return truncateTo(formattedValue)
 	} else {
-	 	return truncateTo(value)
+		return truncateTo(value)
 	}
-}
-
-export function highlightWordsInString(
-	string: string,
-	words: string[],
-	color: string,
-) {
-	const regex = new RegExp(`(${words.join('|')})`, 'gi')
-	const formatted = string.replace(regex, (match) => `<span>${match}<span>`)
-	return formatted.split('<span>').map((word, index) => {
-		if(index % 2) {
-			return (
-				<span
-					key={index}
-					style={{ color, fontWeight: 700 }}>
-					{word}
-				</span>
-			)
-		}
-
-		return word
-	})
 }
 
 export function getFormattedDate(timestamp: number) {
@@ -231,4 +203,9 @@ export const getExplorerUrlForTxHash = (chainId: SupportedChainId | undefined, t
 
 export const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`
 
-export const getFieldString = (applicationData: any, name: string) => applicationData?.fields?.find((field: any) => field?.id?.includes(`.${name}`))?.values[0]?.value
+export const getFieldString = (applicationData: {
+	fields: {
+		id: string
+		values: { value: string }[]
+	}[]
+}, name: string) => applicationData?.fields?.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
