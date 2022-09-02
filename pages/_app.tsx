@@ -145,6 +145,11 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		switchNetwork(getNetwork())
 	}, [])
 
+	useEffect(() => {
+		console.log("webwallet address:", webwallet)
+		console.log("scw address:", scwAddress);
+	}, [webwallet, scwAddress])
+
 	const getScwAddress = () => {
 
 		const _scwAddress = localStorage.getItem('scwAddress')
