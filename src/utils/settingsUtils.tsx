@@ -58,6 +58,7 @@ export const generateWorkspaceUpdateRequest = async(
 
 	const applySimpleKeyUpdate = (key: keyof SettingsForm, wKey: keyof WorkspaceUpdateRequest) => {
 		if(newForm[key] !== oldForm[key]) {
+			// @ts-ignore
 			req[wKey] = newForm[key]
 		}
 	}
@@ -85,7 +86,7 @@ export const generateWorkspaceUpdateRequest = async(
 	if(newForm.partners!.length >= 1) {
 		// if any partner is changed
 		let changedPartners = false
-		const oldPartnersMap: { [_: string]: PartnersProps | undefined } = { }
+		const oldPartnersMap: { [_: string]: PartnersProps | undefined } = {}
 		for(const partner of oldForm.partners || []) {
 			oldPartnersMap[partner.name] = partner
 		}
@@ -118,7 +119,11 @@ export const generateWorkspaceUpdateRequest = async(
 
 		// partners have changed
 		if(changedPartners) {
-			req.partners = newForm.partners!.map(p => ({ ...p, website: p.website || '', partnerImageHash: p.partnerImageHash || '' }))
+			req.partners = newForm.partners!.map(p => ({
+				...p,
+				website: p.website || '',
+				partnerImageHash: p.partnerImageHash || '',
+			}))
 		}
 	} else {
 		req.partners = []
@@ -126,8 +131,8 @@ export const generateWorkspaceUpdateRequest = async(
 
 	if(
 		newForm.twitterHandle !== oldForm.twitterHandle
-    	|| newForm.discordHandle !== oldForm.discordHandle
-    	|| newForm.telegramChannel !== oldForm.telegramChannel
+		|| newForm.discordHandle !== oldForm.discordHandle
+		|| newForm.telegramChannel !== oldForm.telegramChannel
 	) {
 		req.socials = [
 			{ name: 'twitter', value: newForm.twitterHandle! },

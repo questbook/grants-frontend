@@ -1,4 +1,5 @@
 import { errorCodes, getMessageFromCode } from 'eth-rpc-errors'
+import { RpcError } from 'wagmi'
 
 const TRANSACTION_UNDERPRICED_MSG = `
 Oh, no, it appears that the transaction did not have enough gas to go through 😭
@@ -15,33 +16,33 @@ The transaction was unexpectedly dropped by the blockchain! 😢 <br />
 Please try again 
 `
 
-function getErrorMessage(e: any) {
-	// eslint-disable-next-line no-param-reassign
-	if(e.error) {
+function getErrorMessage(e: RpcError<{ message?: string }> | Error | { error: RpcError<{ message?: string }> }) {
+	if('error' in e) {
 		e = e.error
 	}
 
 	let message: string
-	if(e.code === errorCodes.rpc.internal) {
-		if(e?.data?.message) {
-			message = e?.data?.message
+
+	if('code' in e) {
+		if(e.code === errorCodes.rpc.internal) {
+			if(e?.data?.message) {
+				message = e?.data?.message
+			} else {
+				message = e?.message
+			}
+
+			if(message.includes('transaction underpriced')) {
+				message = TRANSACTION_UNDERPRICED_MSG
+			} else if(e.message.includes('transaction was replaced')) {
+				message = TRANSACTION_REPLACED_MSG
+			}
 		} else {
-			message = e?.message
+			message = getMessageFromCode(e?.code, e?.message)
 		}
-
-		if(message.includes('transaction underpriced')) {
-			message = TRANSACTION_UNDERPRICED_MSG
-		} else if(e.message.includes('transaction was replaced')) {
-			message = TRANSACTION_REPLACED_MSG
-		}
-
-		// console.log('Internal error: ', e)
 	} else {
-		// console.log('General error: ', e)
-		message = getMessageFromCode(e?.code, e?.message)
+		message = e.message
 	}
 
-	// console.log('Message: ', message)
 	return message
 }
 
