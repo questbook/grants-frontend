@@ -109,8 +109,6 @@ function truncateTo(number: string, digits = 3) {
 		);
 		i += 1
 	) {
-		// eslint-disable-next-line  @typescript-eslint/no-unused-expressions
-		// isEntirelyZeroAfterDecimal && number.charCodeAt(i) === 48
 		ret += number.charAt(i)
 	}
 
@@ -132,28 +130,6 @@ export function formatAmount(number: string, decimals = 18, isEditable = false, 
 		return truncateTo(value)
 	}
 }
-
-// export function highlightWordsInString(
-// 	string: string,
-// 	words: string[],
-// 	color: string,
-// ) {
-// 	const regex = new RegExp(`(${words.join('|')})`, 'gi')
-// 	const formatted = string.replace(regex, (match) => `<span>${match}<span>`)
-// 	return formatted.split('<span>').map((word, index) => {
-// 		if(index % 2) {
-// 			return (
-// 				<span
-// 					key={index}
-// 					style={{ color, fontWeight: 700 }}>
-// 					{word}
-// 				</span>
-// 			)
-// 		}
-//
-// 		return word
-// 	})
-// }
 
 export function getFormattedDate(timestamp: number) {
 	const date = new Date(timestamp)

@@ -81,7 +81,7 @@ export const getAverageTime = (applicationTimes: Array<number>, fundingTimes: Ar
 	const oneWeek = oneDay * 7
 	const twoWeeks = oneWeek * 2
 
-	let fundingDatesAverage: number = 0
+	let fundingDatesAverage = 0
 	let applicationSentAverage = 0
 
 	if(fundingTimes.length >= 1) {
