@@ -755,7 +755,6 @@ function Form({
 			<Button
 				disabled={!isBiconomyInitialised}
 				onClick={hasClicked ? () => { } : handleOnSubmit}
-				py={hasClicked ? 2 : 0}
 				variant='primary'>
 				{hasClicked ? <Loader /> : 'Save Changes'}
 			</Button>

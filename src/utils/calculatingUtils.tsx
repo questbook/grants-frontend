@@ -1,6 +1,6 @@
 import { createClient } from 'urql'
 
-export const calculateUSDValue = async(value: number | string | any, tokenPair: string | null) => {
+export const calculateUSDValue = async(value: number, tokenPair: string | null) => {
 
 	const wethPriceQuery = `
 {
@@ -21,7 +21,7 @@ export const calculateUSDValue = async(value: number | string | any, tokenPair: 
    }
   }
 `
- 	let amount = 0
+	let amount = 0
 
 	const client = createClient({
 		url: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2',
@@ -74,7 +74,7 @@ export const useTimeDifference = (first: number, second: number) => {
 }
 
 export const getAverageTime = (applicationTimes: Array<number>, fundingTimes: Array<number>) => {
-	const oneSecond = 60 * 1
+	const oneSecond = 60
 	const oneMinute = 60 * 1000
 	const oneHour = oneMinute * 60
 	const oneDay = oneHour * 24
@@ -83,18 +83,17 @@ export const getAverageTime = (applicationTimes: Array<number>, fundingTimes: Ar
 
 	let fundingDatesAverage = 0
 	let applicationSentAverage = 0
-	let average = 0
 
 	if(fundingTimes.length >= 1) {
-		fundingDatesAverage = (applicationTimes.reduce((sum: any, a: any) => sum + a, 0).toFixed(0)) / applicationTimes.length
-		applicationSentAverage = (fundingTimes.reduce((sum: any, a: any) => sum + a, 0).toFixed(0)) / fundingTimes.length
+		fundingDatesAverage = (+applicationTimes.reduce((sum, a) => sum + a, 0).toFixed(0)) / applicationTimes.length
+		applicationSentAverage = (+fundingTimes.reduce((sum, a) => sum + a, 0).toFixed(0)) / fundingTimes.length
 	}
 
-	average = applicationSentAverage - fundingDatesAverage
+	const average = applicationSentAverage - fundingDatesAverage
 
 	if(average < oneSecond) {
 		return '--'
-	}	else if(average < oneMinute) {
+	} else if(average < oneMinute) {
 		return Math.round(average / 1000) + 's'
 	} else if(average < oneHour) {
 		return Math.round(average / oneMinute) + 'min'

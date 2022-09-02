@@ -10,6 +10,7 @@ import Datepicker from 'src/components/ui/forms/datepicker'
 import Dropdown from 'src/components/ui/forms/dropdown'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import CustomTokenModal from 'src/components/ui/submitCustomTokenModal'
+import { extractDate } from 'src/utils/formattingUtils'
 import 'react-datepicker/dist/react-datepicker.css'
 
 function GrantRewardsInput({
@@ -154,7 +155,7 @@ function GrantRewardsInput({
 						setDate(e.target.value)
 					}
 				}
-				value={date}
+				value={extractDate(date)}
 				isError={dateError}
 				errorText='Required'
 				label='Grant Deadline'
