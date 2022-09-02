@@ -1,8 +1,18 @@
 import { useState } from 'react'
 import { Box, Flex, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import SupportedChainId from 'src/generated/SupportedChainId'
 
-function DaoCard({ logo, name, daoId, chainId, noOfApplicants, totalAmount }: {logo: string, name: string, daoId: string, chainId: any, noOfApplicants: string, totalAmount: number }) {
+type DaoCardProps = {
+	logo: string
+	name: string
+	daoId: string
+	chainId: SupportedChainId | undefined
+	noOfApplicants: number
+	totalAmount: number
+}
+
+function DaoCard({ logo, name, daoId, chainId, noOfApplicants, totalAmount }: DaoCardProps) {
 	const router = useRouter()
 	const [isActive, setIsActive] = useState(false)
 	return (
