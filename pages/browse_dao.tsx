@@ -22,7 +22,7 @@ function BrowseDao() {
 	)
 	const { data: accountData } = useAccount()
 	const { isDisconnected } = useConnect()
-
+	const [newWorkspaces, setNewWorkspaces] = useState([] as any[])
 	const [allWorkspaces, setAllWorkspaces] = useState([] as any[])
 	// const [selectedChainId, setSelectedChainId] = useState<number|undefined>()
 	const [sortedWorkspaces, setSortedWorkspaces] = useState([] as any[])
@@ -112,7 +112,8 @@ function BrowseDao() {
 						icon: grant.workspace.logoIpfsHash,
 						amount: grant.reward.committed,
 						token: grant.reward.token,
-						noOfApplicants: grant.numberOfApplications
+						noOfApplicants: grant.numberOfApplications,
+						createdAtS: grant.workspace.createdAtS,
 					})
 			})
 			formatDataforWorkspace(obj)
@@ -173,20 +174,26 @@ function BrowseDao() {
 
 	useEffect(() => {
 		if(selectedSorting === 'grant_rewards') {
-			var workspaces = [...allWorkspaces]
-			workspaces.sort((a:any, b:any) => {
+			var workspaces = [...allWorkspaces].filter(w => w.amount > 999)
+			workspaces.sort((a: any, b: any) => {
 				return parseFloat(b.amount) - parseFloat(a.amount) || Number(isNaN(a.amount)) - Number(isNaN(b.amount))
 			})
 			console.log('sorted reward-wise workspace')
 			setSortedWorkspaces(workspaces)
 		} else if(selectedSorting === 'no_of_applicants') {
-			var workspaces = [...allWorkspaces]
+			var workspaces = [...allWorkspaces].filter(w => w.amount > 999)
 			workspaces.sort((a, b) => {
 				return parseFloat(b.noOfApplicants) - parseFloat(a.noOfApplicants) || Number(isNaN(a.noOfApplicants)) - Number(isNaN(b.noOfApplicants))
 			})
 			console.log('sorted applicant-wise workspace')
 			setSortedWorkspaces(workspaces)
 		}
+
+		const newWorkspaces = [...allWorkspaces].filter(w => workspaces.find(ww => ww.workspaceID === w.workspaceID) === undefined)
+		newWorkspaces.sort((a: any, b: any) => {
+			return b.createdAtS - a.createdAtS
+		})
+		setNewWorkspaces(newWorkspaces)
 	}, [selectedSorting, allWorkspaces])
 
 	useEffect(() => {
@@ -299,30 +306,30 @@ function BrowseDao() {
 		// </Box>
 		<>
 			<Container
-				maxWidth={'1280px'}
-				w="100%">
+				maxWidth='1280px'
+				w='100%'>
 				<Flex
-					my={'16px'}
-					maxWidth={'1280px'}>
+					my='16px'
+					maxWidth='1280px'>
 					<Text
-						fontSize={'24px'}
-						fontWeight={'700'}>
-						Discover
+						fontSize='24px'
+						fontWeight='700'>
+						Popular
 					</Text>
-					<Box marginLeft={'auto'}>
+					<Box marginLeft='auto'>
 						<Menu>
 							<MenuButton
 								as={Button}
-								rightIcon={<Image src={'/ui_icons/black_down.svg'} />}>
-    								Sort by
+								rightIcon={<Image src='/ui_icons/black_down.svg' />}>
+								Sort by
 							</MenuButton>
 							<MenuList>
 								<MenuItem
-									justifyContent={'center'}
-									bg={'#F0F0F7'}>
+									justifyContent='center'
+									bg='#F0F0F7'>
 									<Text
-										fontWeight={'700'}>
-											Sort by
+										fontWeight='700'>
+										Sort by
 									</Text>
 								</MenuItem>
 								<MenuItem
@@ -333,8 +340,8 @@ function BrowseDao() {
 									}>
 									<Flex>
 										<Image src={selectedSorting === 'grant_rewards' ? '/ui_icons/sorting_checked.svg' : '/ui_icons/sorting_unchecked.svg'} />
-										<Text ml={'10px'}>
-													Grant rewards
+										<Text ml='10px'>
+											Grant rewards
 										</Text>
 									</Flex>
 								</MenuItem>
@@ -346,8 +353,8 @@ function BrowseDao() {
 									}>
 									<Flex>
 										<Image src={selectedSorting === 'no_of_applicants' ? '/ui_icons/sorting_checked.svg' : '/ui_icons/sorting_unchecked.svg'} />
-										<Text ml={'10px'}>
-													Number of Applicants
+										<Text ml='10px'>
+											Number of Applicants
 										</Text>
 									</Flex>
 								</MenuItem>
@@ -355,7 +362,22 @@ function BrowseDao() {
 						</Menu>
 					</Box>
 				</Flex>
-				<AllDaosGrid allWorkspaces={sortedWorkspaces} />
+				<AllDaosGrid
+					renderGetStarted
+					allWorkspaces={sortedWorkspaces} />
+				<Flex
+					my='16px'
+					maxWidth='1280px'>
+					<Text
+						fontSize='24px'
+						fontWeight='700'>
+						New
+					</Text>
+				</Flex>
+
+				<AllDaosGrid
+					renderGetStarted={false}
+					allWorkspaces={newWorkspaces} />
 			</Container>
 			<AcceptInviteModal
 				inviteInfo={inviteInfo}

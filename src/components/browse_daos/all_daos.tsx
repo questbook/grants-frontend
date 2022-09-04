@@ -1,27 +1,35 @@
+import { useState } from 'react'
 import { Grid, GridItem } from '@chakra-ui/react'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import DaoCard from './dao_card'
 import GetStartedCard from './get_started_card'
+import LoadMoreCard from './loadMoreCard'
 
-function AllDaosGrid({ allWorkspaces }:{allWorkspaces: any}) {
+function AllDaosGrid({ allWorkspaces, renderGetStarted }: {allWorkspaces: any[], renderGetStarted: boolean }) {
+	const [loadedCount, setLoadedCount] = useState(1)
+	const pageSize = 6
 	return (
 		<Grid
 			w='100%'
-			maxWidth={'1280px'}
+			maxWidth='1280px'
 
 			templateColumns={{ md:'repeat(1, 1fr)', lg:'repeat(3, 1fr)' }}
 			gap={6}
 
 		>
 			{
-				allWorkspaces.map((workspace: any, index: number) => {
+				allWorkspaces.slice(0, renderGetStarted ? undefined : pageSize * loadedCount).map((workspace: any, index: number) => {
 					if(index === 0) {
 						return (
 							<>
-								<GridItem key={'get-started'}>
-									<GetStartedCard />
-								</GridItem>
+								{
+									renderGetStarted && (
+										<GridItem key='get-started'>
+											<GetStartedCard />
+										</GridItem>
+									)
+								}
 								<GridItem key={index}>
 									<DaoCard
 										logo={getUrlForIPFSHash(workspace.icon)}
@@ -48,6 +56,14 @@ function AllDaosGrid({ allWorkspaces }:{allWorkspaces: any}) {
 					)
 				}
 
+				)
+			}
+
+			{
+				!renderGetStarted && loadedCount * pageSize < allWorkspaces.length && (
+					<GridItem key='get-started'>
+						<LoadMoreCard onClick={() => setLoadedCount(loadedCount + 1)} />
+					</GridItem>
 				)
 			}
 		</Grid>

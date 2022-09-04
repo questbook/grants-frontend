@@ -3509,6 +3509,12 @@ export type Workspace = {
   members: Array<WorkspaceMember>;
   /** Hash of the IPFS file from which the details about the workspace were pulled */
   metadataHash: Scalars['String'];
+  /** timestamp of when the latest grant was posted */
+  mostRecentGrantPostedAtS: Scalars['Int'];
+  /** total number of applications the DAO has received */
+  numberOfApplications: Scalars['Int'];
+  /** total number of applications the DAO has accepted */
+  numberOfApplicationsSelected: Scalars['Int'];
   /** Address of the owner of the workspace */
   ownerId: Scalars['Bytes'];
   partners: Array<Partner>;
@@ -3522,6 +3528,8 @@ export type Workspace = {
   title: Scalars['String'];
   /** Custom tokens setup by the workspace */
   tokens: Array<Token>;
+  /** total grant funding committed in USD */
+  totalGrantFundingCommittedUSD: Scalars['Int'];
   /** in seconds since epoch */
   updatedAtS: Scalars['Int'];
 };
@@ -4012,6 +4020,30 @@ export type Workspace_Filter = {
   metadataHash_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
   metadataHash_starts_with?: InputMaybe<Scalars['String']>;
   metadataHash_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  mostRecentGrantPostedAtS?: InputMaybe<Scalars['Int']>;
+  mostRecentGrantPostedAtS_gt?: InputMaybe<Scalars['Int']>;
+  mostRecentGrantPostedAtS_gte?: InputMaybe<Scalars['Int']>;
+  mostRecentGrantPostedAtS_in?: InputMaybe<Array<Scalars['Int']>>;
+  mostRecentGrantPostedAtS_lt?: InputMaybe<Scalars['Int']>;
+  mostRecentGrantPostedAtS_lte?: InputMaybe<Scalars['Int']>;
+  mostRecentGrantPostedAtS_not?: InputMaybe<Scalars['Int']>;
+  mostRecentGrantPostedAtS_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  numberOfApplications?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsSelected?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsSelected_gt?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsSelected_gte?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsSelected_in?: InputMaybe<Array<Scalars['Int']>>;
+  numberOfApplicationsSelected_lt?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsSelected_lte?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsSelected_not?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsSelected_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  numberOfApplications_gt?: InputMaybe<Scalars['Int']>;
+  numberOfApplications_gte?: InputMaybe<Scalars['Int']>;
+  numberOfApplications_in?: InputMaybe<Array<Scalars['Int']>>;
+  numberOfApplications_lt?: InputMaybe<Scalars['Int']>;
+  numberOfApplications_lte?: InputMaybe<Scalars['Int']>;
+  numberOfApplications_not?: InputMaybe<Scalars['Int']>;
+  numberOfApplications_not_in?: InputMaybe<Array<Scalars['Int']>>;
   ownerId?: InputMaybe<Scalars['Bytes']>;
   ownerId_contains?: InputMaybe<Scalars['Bytes']>;
   ownerId_in?: InputMaybe<Array<Scalars['Bytes']>>;
@@ -4060,6 +4092,14 @@ export type Workspace_Filter = {
   title_starts_with?: InputMaybe<Scalars['String']>;
   title_starts_with_nocase?: InputMaybe<Scalars['String']>;
   tokens_?: InputMaybe<Token_Filter>;
+  totalGrantFundingCommittedUSD?: InputMaybe<Scalars['Int']>;
+  totalGrantFundingCommittedUSD_gt?: InputMaybe<Scalars['Int']>;
+  totalGrantFundingCommittedUSD_gte?: InputMaybe<Scalars['Int']>;
+  totalGrantFundingCommittedUSD_in?: InputMaybe<Array<Scalars['Int']>>;
+  totalGrantFundingCommittedUSD_lt?: InputMaybe<Scalars['Int']>;
+  totalGrantFundingCommittedUSD_lte?: InputMaybe<Scalars['Int']>;
+  totalGrantFundingCommittedUSD_not?: InputMaybe<Scalars['Int']>;
+  totalGrantFundingCommittedUSD_not_in?: InputMaybe<Array<Scalars['Int']>>;
   updatedAtS?: InputMaybe<Scalars['Int']>;
   updatedAtS_gt?: InputMaybe<Scalars['Int']>;
   updatedAtS_gte?: InputMaybe<Scalars['Int']>;
@@ -4079,6 +4119,9 @@ export enum Workspace_OrderBy {
   LogoIpfsHash = 'logoIpfsHash',
   Members = 'members',
   MetadataHash = 'metadataHash',
+  MostRecentGrantPostedAtS = 'mostRecentGrantPostedAtS',
+  NumberOfApplications = 'numberOfApplications',
+  NumberOfApplicationsSelected = 'numberOfApplicationsSelected',
   OwnerId = 'ownerId',
   Partners = 'partners',
   Safe = 'safe',
@@ -4086,6 +4129,7 @@ export enum Workspace_OrderBy {
   SupportedNetworks = 'supportedNetworks',
   Title = 'title',
   Tokens = 'tokens',
+  TotalGrantFundingCommittedUsd = 'totalGrantFundingCommittedUSD',
   UpdatedAtS = 'updatedAtS'
 }
 
@@ -4129,7 +4173,7 @@ export type GetAllGrantsQueryVariables = Exact<{
 }>;
 
 
-export type GetAllGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, createdAtS: number, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> }, applications: Array<{ __typename?: 'GrantApplication', applicantId: string }> }> };
+export type GetAllGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, createdAtS: number, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, createdAtS: number }, applications: Array<{ __typename?: 'GrantApplication', applicantId: string }> }> };
 
 export type GetAllGrantsCountForCreatorQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -4453,6 +4497,7 @@ export const GetAllGrantsDocument = gql`
       title
       logoIpfsHash
       supportedNetworks
+      createdAtS
     }
     deadline
     funding
