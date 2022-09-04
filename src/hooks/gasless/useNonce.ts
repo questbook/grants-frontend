@@ -12,6 +12,10 @@ export const useNonce = (shouldRefreshNonce?: boolean) => {
 		return _nonce
 	}, [webwallet])
 
+	// useEffect(() => {
+	// 	console.log("nonce", nonce)
+	// }, [nonce])
+
 	useEffect(() => {
 		if(typeof window !== 'undefined') {
 			localStorage.setItem('loadingNonce', 'false')

@@ -116,7 +116,7 @@ const OnboardingCreateDomain = () => {
 	}, [accountData, safeOwners, step, isOwner])
 
 	useEffect(() => {
-		// console.log("add_user", nonce, webwallet);
+		// console.log("add_user", nonce, webwallet)
 		if(nonce && nonce !== 'Token expired') {
 			return
 		}

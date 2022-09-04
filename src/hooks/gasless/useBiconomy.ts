@@ -31,7 +31,7 @@ export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boole
 		// 	firstCond: (!isBiconomyLoading && data.chainId && biconomyDaoObj && biconomyDaoObj.networkId && networksMapping[data.chainId] !== biconomyDaoObj.networkId.toString())
 		// 	, secondCond: (!isBiconomyLoading && nonce && webwallet && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress))})
 		// console.log('STEP3', biconomyDaoObj, nonce, webwallet, biconomyWalletClient, data.chainId, network, isBiconomyLoading)
-		// console.log('STEP3: CHAIN - ', data.chainId, biconomyDaoObj?.networkId)
+		// console.log('STEP3: CHAIN - ', data.chainId, biconomyDaoObj)
 		if(
 			(!isBiconomyLoading && data.chainId && biconomyDaoObj && biconomyDaoObj.networkId && networksMapping[data.chainId] !== biconomyDaoObj.networkId.toString()) ||
 		(!isBiconomyLoading && nonce && webwallet && (!biconomyDaoObj || !biconomyWalletClient || !scwAddress))

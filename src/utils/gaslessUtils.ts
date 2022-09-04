@@ -22,18 +22,12 @@ const EIP712_WALLET_TX_TYPE = {
 	],
 }
 
-// mumbai
-// export const apiKey = "qypYydNmh.85fb44d4-bc3a-4434-8e51-a929f54de521"
-// export const webHookId = "a36aa5b2-b761-4757-aad9-10348f3ec732"
-
-// goerli
-export const webHookId = '7726ab3f-2b4b-4a80-bfdd-c8ebb2d5ea2f'
-
 export const jsonRpcProviders: { [key: string]: ethers.providers.JsonRpcProvider } =
 	{
 		'80001': new ethers.providers.JsonRpcProvider('https://polygon-mumbai.g.alchemy.com/v2/X6pnQlJfJq00b8MT53QihWBINEgHZHGp'),
 		'5': new ethers.providers.JsonRpcProvider('https://eth-goerli.g.alchemy.com/v2/Hr6VkBfmbJIhEW3fHJnl0ujE0xmWxcqH'),
 		'137': new ethers.providers.JsonRpcProvider('https://polygon-mainnet.g.alchemy.com/v2/mmBX0eNrvs0k7UpEMwi0eIH6hC4Dqoss'),
+		'10': new ethers.providers.JsonRpcProvider('https://opt-mainnet.g.alchemy.com/v2/Frv-KL7os-J7EV9e34WA0b0ayG5i1vNN')
 	}
 
 export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } } = {
@@ -45,10 +39,17 @@ export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } }
 		apiKey: 'kcwSbypnqq.f5fe6fbd-10e3-4dfe-a731-5eb4b6d85445',
 		webHookId: '202501f8-639f-495a-a1ec-d52d86db8b2d',
 	},
+	'10': {
+		apiKey: 'xc_x_i8x3.7002d254-03f5-427e-b25f-400b52d1d4c9',
+		webHookId: '105f79a9-eab0-4f8c-aa44-877ffc3f9c67'
+	}
 }
 
 export const networksMapping: { [key: string]: string } = {
-	'137': '5',
+	'137': '137',
+	'10': '10',
+
+	// goerli 
 	'5': '5',
 	'4': '5',
 	'900001': '5', // This is for solana.
@@ -59,7 +60,6 @@ export const networksMapping: { [key: string]: string } = {
 	'1313161554': '5',
 	'56': '5',
 	'246': '5',
-	'10': '5',
 }
 
 export const signNonce = async(webwallet: Wallet, nonce: string) => {
@@ -77,7 +77,7 @@ export const getNonce = async(webwallet: Wallet | undefined) => {
 
 	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/refresh_nonce',
 		{
-			webwalletAddress: webwallet.address,
+			webwallet_address: webwallet.address,
 		})
 	if(response.data && response.data.nonce !== 'Token expired') {
 		return response.data.nonce
@@ -137,6 +137,7 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 	let scwAddress
 
 	if(!doesWalletExist) {
+		// console.log("deploying scw ...", biconomyWalletClient)
 		const { walletAddress, txHash } = await biconomyWalletClient.checkIfWalletExistsAndDeploy({
 			eoa: webwallet.address,
 			webHookAttributes,
@@ -242,7 +243,7 @@ export const getTransactionDetails = async(transactionHash: string, chainId: str
 	return { receipt, txFee }
 }
 
-export const getEventData = async(receipt: TransactionReceipt, eventName: string, contractABI: string | ReadonlyArray<Fragment | JsonFragment | string>) => {
+export const getEventData = async(receipt: ethers.providers.TransactionReceipt, eventName: string, contractABI: string | ReadonlyArray<Fragment | JsonFragment | string>) => {
 
 	const isValidEvent = (item: ethers.utils.Fragment) => {
 		const fragmentItem = ethers.utils.Fragment.from(item)
@@ -285,4 +286,65 @@ export const getEventData = async(receipt: TransactionReceipt, eventName: string
 	}
 
 	return eventInterface.parseLog(eventLogs[0])
+}
+
+export const registerWebHook = async (authToken: string | undefined, apiKey: string) => {
+	
+	if(!authToken) {
+		throw new Error("No bico auth token found");
+	}
+
+	const url = 'https://api.biconomy.io/api/v1/dapp/register-webhook'
+
+	const formData = new URLSearchParams({
+		'webHook': 'https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/check',
+		'requestType': 'post', // post or get
+	})
+
+	const requestOptions = {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'authToken': authToken, 'apiKey': apiKey },
+		body: formData
+	}
+
+	const response = await fetch(url, requestOptions)
+	const responseJSON = await response.json()
+
+	let webHookId = "Couldn't register webhook on workspace!"
+	console.log(responseJSON)
+	try {
+		webHookId = responseJSON.data.webHookId
+	} catch {
+		throw Error("Couldn't register webhook for your app!")
+	}
+
+	return webHookId
+}
+
+export const addDapp = async(dappName: string, networkId: string, authToken: string | undefined) => {
+	console.log('AUTH TOKEN', authToken)
+	if(!authToken) {
+		throw new Error("No bico auth token found");
+	}
+
+	const url = 'https://api.biconomy.io/api/v1/dapp/public-api/create-dapp'
+
+	const formData = new URLSearchParams({
+		'dappName': dappName,
+		'networkId': networkId,
+		'enableBiconomyWallet': 'true'
+	})
+
+	const requestOptions = {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'authToken': authToken },
+		body: formData
+	}
+
+	const res = await fetch(url, requestOptions)
+	const resJson = await res.json()
+
+	console.log(resJson.data)
+
+	return { apiKey: resJson.data.apiKey, fundingKey: resJson.data.fundingKey.toString() }
 }
