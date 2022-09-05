@@ -4,11 +4,16 @@ import { ApiClientsContext } from 'pages/_app'
 import SupportedChainId from 'src/generated/SupportedChainId'
 
 export type UseMultiChainQueryOptions<Q, V> = {
+	/** specify chains to query from, set undefined to query all */
 	chains?: SupportedChainId[]
 	options: Omit<QueryHookOptions<Q, V>, 'client'>
 	useQuery: (opts: QueryHookOptions<Q, V>) => QueryResult<Q, V>
 }
 
+/**
+ * Queries from multiple chains simulataneously.
+ * @returns
+ */
 export function useMultiChainQuery<Q, V>({
 	chains,
 	options,

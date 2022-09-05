@@ -17,6 +17,9 @@ export type UseMultiChainPaginatedQuery<Q, K, V> = {
 	useQuery: (opts: QueryHookOptions<Q, V>) => QueryResult<Q, V>
 }
 
+/**
+ * Query paginated data from mutliple chains
+ */
 export function useMultiChainPaginatedQuery<Q, K, V extends PaginationVariables>({
 	chains,
 	pageSize,
