@@ -729,7 +729,7 @@ function ViewApplicants() {
 			// console.log('receipt: ', receipt)
 			await chargeGas(Number(workspace.id), Number(txFee))
 
-		} catch(e) {
+		} catch(e: any) {
 			// console.log('disburse error', e)
 		}
 	}, [workspace, biconomyWalletClient, workspacechainId, biconomy, workspaceRegistryContract, scwAddress, webwallet, nonce, initiateTransactionData, proposalAddr])

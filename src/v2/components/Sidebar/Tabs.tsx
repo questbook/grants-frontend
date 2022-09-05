@@ -53,7 +53,7 @@ function useGetTabs() {
 				const sum = value.reduce((a, b) => a + b, 0)
 				setApplicationCount(sum)
 			})
-		} catch(e) {
+		} catch(e: any) {
 			toast({
 				title: 'Error getting application count',
 				status: 'error',

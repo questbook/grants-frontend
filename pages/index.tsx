@@ -102,7 +102,7 @@ function BrowseGrants() {
 				setCurrentPage(firstTime ? 1 : currentPage + 1)
 				// @TODO: Handle the case where a lot of the grants are filtered out.
 			})
-		} catch(e) {
+		} catch(e: any) {
 			// // console.log(e);
 			toast({
 				title: 'Error loading grants',

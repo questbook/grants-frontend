@@ -150,7 +150,7 @@ function Profile() {
 			setGrantsApplicants(data.totalApplicants)
 			setGrantWinners(data.winnerApplicants)
 
-		} catch(e) {
+		} catch(e: any) {
 			// console.log(e)
 		}
 	}
@@ -410,7 +410,7 @@ function Profile() {
               		chainInfo?.decimals
               	)
               	return (
-									<BrowseGrantCard
+	<BrowseGrantCard
               			key={grant.id}
               			isDaoVerified={false}
               			createdAt={grant.createdAtS}

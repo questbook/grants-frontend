@@ -261,7 +261,7 @@ const OnboardingCreateDomain = () => {
 			// }, 2000)
 			setTxHash(txHash)
 			setIsDomainCreationSuccessful(true)
-		} catch(e) {
+		} catch(e: any) {
 			setCurrentStep(undefined)
 			const message = getErrorMessage(e)
 			toastRef.current = toast({

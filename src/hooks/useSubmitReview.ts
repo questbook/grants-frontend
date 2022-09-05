@@ -188,7 +188,7 @@ export default function useSubmitReview(
 
 				setLoading(false)
 				setCurrentStep(5)
-			} catch(e) {
+			} catch(e: any) {
 				setCurrentStep(undefined)
 				const message = getErrorMessage(e)
 				setError(message)
@@ -265,7 +265,7 @@ export default function useSubmitReview(
 			}
 
 			validate()
-		} catch(e) {
+		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)
 			setLoading(false)

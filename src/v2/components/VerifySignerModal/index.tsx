@@ -224,7 +224,7 @@ const VerifySignerModal = ({
 															if(connector) {
 																try {
 																	await connectAsync(connector)
-																} catch(e) {
+																} catch(e: any) {
 																	// console.log('evm error', e)
 																}
 
@@ -235,7 +235,7 @@ const VerifySignerModal = ({
 														}
 													} />
 											))) : (solanaWallets.map((wallet, index) => (
-												<VerifyWalletButton
+											<VerifyWalletButton
 												key={index}
 												icon={wallet.icon}
 												name={wallet.name}

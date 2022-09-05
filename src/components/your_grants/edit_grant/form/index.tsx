@@ -79,7 +79,7 @@ function Form({
 		try {
 			const o = JSON.parse(formData.details)
 			return EditorState.createWithContent(convertFromRaw(o))
-		} catch(e) {
+		} catch(e: any) {
 			if(formData.details) {
 				return EditorState.createWithContent(ContentState.createFromText(formData.details))
 			}
