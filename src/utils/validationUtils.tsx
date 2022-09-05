@@ -12,7 +12,7 @@ const isValidEthereumAddress = (address: string) => {
 const isValidSolanaAddress = (address: string) => {
 	try {
 		return PublicKey.isOnCurve(address)
-	} catch(e) {
+	} catch(e: any) {
 		return false
 	}
 }

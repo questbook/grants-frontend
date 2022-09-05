@@ -225,7 +225,7 @@ function DaoDashboard() {
 				grantsPending,
 				grantsTat
 			})
-		} catch(e) {
+		} catch(e: any) {
 			// console.log(e)
 		}
 	}

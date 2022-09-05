@@ -1,6 +1,6 @@
-import { Fragment, JsonFragment } from '@ethersproject/abi/src.ts/fragments'
 import axios from 'axios'
 import { Contract, ethers, Wallet } from 'ethers'
+import { Fragment } from 'ethers/lib/utils'
 import { BiconomyContext } from 'pages/_app'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import SupportedChainId from 'src/generated/SupportedChainId'
@@ -49,7 +49,7 @@ export const networksMapping: { [key: string]: string } = {
 	'137': '137',
 	'10': '10',
 
-	// goerli 
+	// goerli
 	'5': '5',
 	'4': '5',
 	'900001': '5', // This is for solana.
@@ -154,7 +154,7 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 }
 
 export const sendGaslessTransaction = async(biconomy: typeof BiconomyContext, targetContractObject: Contract, targetContractMethod: string,
-	targetContractArgs: Array<string | Uint8Array | number | number[]>, targetContractAddress: string, biconomyWalletClient: BiconomyWalletClient,
+	targetContractArgs: any, targetContractAddress: string, biconomyWalletClient: BiconomyWalletClient,
 	scwAddress: string, webwallet: Wallet | undefined, chainId: string, webHookId: string, nonce: string | undefined) => {
 
 	if(!biconomy) {
@@ -243,7 +243,7 @@ export const getTransactionDetails = async(transactionHash: string, chainId: str
 	return { receipt, txFee }
 }
 
-export const getEventData = async(receipt: ethers.providers.TransactionReceipt, eventName: string, contractABI: string | ReadonlyArray<Fragment | JsonFragment | string>) => {
+export const getEventData = async(receipt: ethers.providers.TransactionReceipt, eventName: string, contractABI: any) => {
 
 	const isValidEvent = (item: ethers.utils.Fragment) => {
 		const fragmentItem = ethers.utils.Fragment.from(item)
@@ -288,10 +288,10 @@ export const getEventData = async(receipt: ethers.providers.TransactionReceipt, 
 	return eventInterface.parseLog(eventLogs[0])
 }
 
-export const registerWebHook = async (authToken: string | undefined, apiKey: string) => {
-	
+export const registerWebHook = async(authToken: string | undefined, apiKey: string) => {
+
 	if(!authToken) {
-		throw new Error("No bico auth token found");
+		throw new Error('No bico auth token found')
 	}
 
 	const url = 'https://api.biconomy.io/api/v1/dapp/register-webhook'
@@ -314,7 +314,7 @@ export const registerWebHook = async (authToken: string | undefined, apiKey: str
 	console.log(responseJSON)
 	try {
 		webHookId = responseJSON.data.webHookId
-	} catch {
+	} catch{
 		throw Error("Couldn't register webhook for your app!")
 	}
 
@@ -324,7 +324,7 @@ export const registerWebHook = async (authToken: string | undefined, apiKey: str
 export const addDapp = async(dappName: string, networkId: string, authToken: string | undefined) => {
 	console.log('AUTH TOKEN', authToken)
 	if(!authToken) {
-		throw new Error("No bico auth token found");
+		throw new Error('No bico auth token found')
 	}
 
 	const url = 'https://api.biconomy.io/api/v1/dapp/public-api/create-dapp'

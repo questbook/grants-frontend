@@ -42,7 +42,7 @@ function TextViewer({
 		try {
 			const o = JSON.parse(text)
 			return EditorState.createWithContent(convertFromRaw(o))
-		} catch(e) {
+		} catch(e: any) {
 			if(text) {
 				return EditorState.createWithContent(ContentState.createFromText(text))
 			}
@@ -56,7 +56,7 @@ function TextViewer({
 			const o = JSON.parse(text)
 			const newState = EditorState.createWithContent(convertFromRaw(o))
 			EditorState.push(newState, ContentState.createFromText(text), 'change-block-data')
-		} catch(e) {
+		} catch(e: any) {
 			if(text) {
 				const newState = EditorState.createWithContent(ContentState.createFromText(text))
 				EditorState.push(newState, ContentState.createFromText(text), 'change-block-data')

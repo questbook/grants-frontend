@@ -66,7 +66,7 @@ function YourApplications() {
 				setMyApplications([...myApplications, ...allApplicationsData])
 				setCurrentPage(currentPage + 1)
 			})
-		} catch(e) {
+		} catch(e: any) {
 			// console.log('error in fetching my applications ', e);
 		}
 	}
@@ -129,7 +129,7 @@ function YourApplications() {
 					myApplications.length > 0
           && myApplications.map((application: any) => (
           	(
-          		<YourApplicationCard
+	<YourApplicationCard
           			key={application.id}
           			grantTitle={application.grant.title}
           			daoName={application.grant.workspace.title}
