@@ -14,9 +14,8 @@ import CopyIcon from 'src/components/ui/copy_icon'
 import MailTo from 'src/components/your_grants/mail_to/mailTo'
 import { CHAIN_INFO } from 'src/constants/chains'
 import {
-	formatAmount,
 	getFieldString,
-	getFormattedFullDateFromUnixTimestamp,
+	getFormattedFullDateFromUnixTimestamp, getRewardAmount,
 	truncateStringFromMiddle,
 } from 'src/utils/formattingUtils'
 import { getFromIPFS, getUrlForIPFSHash } from 'src/utils/ipfsUtils'
@@ -308,13 +307,7 @@ function Sidebar({
 							fontStyle='normal'
 							color='#122224'
 						>
-							{
-								applicationData
-                && formatAmount(
-                	getFieldString(applicationData, 'fundingAsk') || '0',
-                	decimals || 18,
-                )
-							}
+							{applicationData && getRewardAmount(decimals, applicationData)}
 							{' '}
 							{label}
 						</Text>
