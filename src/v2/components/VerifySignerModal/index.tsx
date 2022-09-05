@@ -235,7 +235,7 @@ const VerifySignerModal = ({
 														}
 													} />
 											))) : (solanaWallets.map((wallet, index) => (
-											<VerifyWalletButton
+												<VerifyWalletButton
 												key={index}
 												icon={wallet.icon}
 												name={wallet.name}
@@ -260,7 +260,7 @@ const VerifySignerModal = ({
 										fontWeight='500'
 										color='black.1'
 										isExternal
-										href='https://youtube.com'>
+										href='https://discord.gg/questbook'>
 										Discord
 									</Link>
 									{' '}
