@@ -20,12 +20,9 @@ import CopyIcon from 'src/components/ui/copy_icon'
 import Heading from 'src/components/ui/heading'
 import Modal from 'src/components/ui/modal'
 import ModalContent from 'src/components/your_grants/manage_grant/modals/modalContentGrantComplete'
-import SendFundModalContent from 'src/components/your_grants/manage_grant/modals/sendFundModalContent'
-import Sidebar from 'src/components/your_grants/manage_grant/sidebar'
 import Funding from 'src/components/your_grants/manage_grant/tables/funding'
 import Milestones from 'src/components/your_grants/manage_grant/tables/milestones'
 import { defaultChainId } from 'src/constants/chains'
-import config from 'src/constants/config.json'
 import {
 	GetApplicationDetailsQuery,
 	useGetApplicationDetailsQuery,
@@ -279,7 +276,7 @@ function ManageGrant() {
 					fundTransfers={fundsDisbursed?.fundsTransfers || []}
 					assetId={rewardAsset}
 					columns={['milestoneTitle', 'date', 'from', 'action']}
-					assetDecimals={decimals}
+					assetDecimals={decimals!}
 					grantId={applicationData?.grant?.id || ''}
 					type='funding_sent'
 					chainId={getSupportedChainIdFromWorkspace(workspace)}

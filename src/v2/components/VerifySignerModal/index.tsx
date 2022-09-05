@@ -224,7 +224,7 @@ const VerifySignerModal = ({
 															if(connector) {
 																try {
 																	await connectAsync(connector)
-																} catch(e) {
+																} catch(e: any) {
 																	// console.log('evm error', e)
 																}
 
@@ -260,7 +260,7 @@ const VerifySignerModal = ({
 										fontWeight='500'
 										color='black.1'
 										isExternal
-										href='https://youtube.com'>
+										href='https://discord.gg/questbook'>
 										Discord
 									</Link>
 									{' '}

@@ -99,7 +99,7 @@ const InReviewPanel = ({
 	)
 
 	useEffect(() => {
-		console.log("isBiconomyInitialised", isBiconomyInitialised);
+		console.log('isBiconomyInitialised', isBiconomyInitialised)
 	}, [isBiconomyInitialised])
 
 	useEffect(() => {

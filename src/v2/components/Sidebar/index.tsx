@@ -78,7 +78,7 @@ function Sidebar() {
 						setWorkspace(allWorkspacesData[i])
 					}
 				})
-			} catch(e) {
+			} catch(e: any) {
 				toast({
 					title: 'Error getting workspace data',
 					status: 'error',

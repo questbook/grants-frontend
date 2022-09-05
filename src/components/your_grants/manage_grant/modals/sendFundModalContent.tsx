@@ -206,7 +206,7 @@ function ModalContent({
 				// // console.log('tempAddress', tempAddress);
 				// // console.log(tempWalletBalance);
 				setWalletBalance(tempWalletBalance)
-			} catch(e) {
+			} catch(e: any) {
 				// console.error(e)
 			}
 		}())

@@ -22,7 +22,7 @@ const ResubmitRow = ({
 		try {
 			const data = JSON.parse(d)
 			return data
-		} catch(e) {
+		} catch(e: any) {
 			// console.log('incorrect review', e)
 			return {}
 		}

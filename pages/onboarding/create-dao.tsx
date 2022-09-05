@@ -184,7 +184,7 @@ const OnboardingCreateDao = () => {
 			setTimeout(() => {
 				router.push({ pathname: '/your_grants' })
 			}, 2000)
-		} catch(e) {
+		} catch(e: any) {
 			setCurrentStep(undefined)
 			const message = getErrorMessage(e)
 			toastRef.current = toast({
