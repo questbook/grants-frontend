@@ -33,7 +33,7 @@ function Sidebar({
 	onRejectApplicationClick,
 	onResubmitApplicationClick,
 	applicationData,
-	isBiconomyInitialised
+	isBiconomyInitialised,
 }: {
   showHiddenData: () => void
   onAcceptApplicationClick: () => void
@@ -121,7 +121,7 @@ function Sidebar({
 			const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
 			reviewsDataMap[reviewerId] = {
 				items: review.items,
-				createdAtS: reviews[i].createdAtS
+				createdAtS: reviews[i].createdAtS,
 			}
 		})
 
@@ -193,12 +193,6 @@ function Sidebar({
 					w='full'
 					mt={6}
 					align='center'>
-					<Image
-						h='45px'
-						w='45px'
-						src={icon}
-					/>
-					<Box mx={3} />
 					<Tooltip label={applicantAddress}>
 						<Heading
 							variant='applicationHeading'
@@ -209,7 +203,7 @@ function Sidebar({
 					<Box mr={4} />
 					<CopyIcon text={applicantAddress} />
 				</Flex>
-				<Box my={4} />
+				<Box my={2} />
 				<Flex
 					direction='row'
 					justify='space-between'
@@ -241,8 +235,8 @@ function Sidebar({
 						lineHeight='32px'>
 						{
 							applicantEmail
-							 ? (
-								<>
+								? (
+									<>
 										{applicantEmail}
 										<MailTo applicantEmail={applicantEmail} />
 									</>
@@ -281,50 +275,60 @@ function Sidebar({
 						{getFormattedFullDateFromUnixTimestamp(applicationData?.createdAtS)}
 					</Heading>
 				</Flex>
-				<Flex
-					direction='column'
-					w='full'
-					align='start'
-					mt={4}>
-					<Box
-						// variant="dashed"
-						border='1px dashed #A0A7A7'
-						h={0}
-						w='100%'
-						m={0}
+				<Flex>
+					<Image
+						h='45px'
+						w='45px'
+						my={10}
+						src={icon}
 					/>
-					<Text
-						fontSize='10px'
-						mt={6}
-						lineHeight='12px'>
-						FUNDING REQUESTED
-					</Text>
-					<Text
-						fontSize='20px'
-						lineHeight='40px'
-						fontWeight='500'
-						fontStyle='normal'
-						color='#122224'
-					>
-						{
-							applicationData
-              && formatAmount(
-              	getFieldString(applicationData, 'fundingAsk') || '0',
-              	decimals || 18,
-              )
-						}
-						{' '}
-						{label}
-					</Text>
-					<Box
-						// variant="dashed"
-						border='1px dashed #A0A7A7'
-						h={0}
-						w='100%'
-						mt='17px'
-						mb={0}
-					/>
+					<Box w={5} />
+					<Flex
+						direction='column'
+						w='full'
+						align='start'
+						mt={4}>
+						<Box
+							// variant="dashed"
+							border='1px dashed #A0A7A7'
+							h={0}
+							w='100%'
+							m={0}
+						/>
+						<Text
+							fontSize='10px'
+							mt={6}
+							lineHeight='12px'>
+							FUNDING REQUESTED
+						</Text>
+						<Text
+							fontSize='20px'
+							lineHeight='40px'
+							fontWeight='500'
+							fontStyle='normal'
+							color='#122224'
+						>
+							{
+								applicationData
+                && formatAmount(
+                	getFieldString(applicationData, 'fundingAsk') || '0',
+                	decimals || 18,
+                )
+							}
+							{' '}
+							{label}
+						</Text>
+						<Box
+							// variant="dashed"
+							border='1px dashed #A0A7A7'
+							h={0}
+							w='100%'
+							mt='17px'
+							mb={0}
+						/>
+					</Flex>
 				</Flex>
+
 				<Button
 					disabled={!isBiconomyInitialised}
 					onClick={() => onAcceptApplicationClick()}
@@ -438,7 +442,7 @@ Assign Reviewers
 								name: r.fullName,
 								email: r.email,
 								address: r.id.split('.')[1],
-								id: r.id
+								id: r.id,
 							})).map((reviewer: any) => {
 								const reviewerIdSplit = reviewer?.id.split('.')
 								const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
