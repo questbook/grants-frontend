@@ -47,7 +47,7 @@ import StyledTab from 'src/v2/components/StyledTab'
 import NoReviewerBanner from 'src/v2/components/ViewApplicants/NoReviewerBanner'
 import RubricNotSetBanner from 'src/v2/components/ViewApplicants/RubricNotSetBanner'
 import { Gnosis_Safe } from 'src/v2/constants/safe/gnosis_safe'
-import { Realms_Solana, solanaToUsd, usdToSolana } from 'src/v2/constants/safe/realms_solana'
+import { Realms_Solana, solanaToUsd, solanaToUsdOnDate, usdToSolana } from 'src/v2/constants/safe/realms_solana'
 import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import AcceptedProposalsPanel from 'src/v2/payouts/AcceptedProposals/AcceptedProposalPanel'
@@ -105,6 +105,15 @@ function ViewApplicants() {
 
 	const [listOfApplicationToTxnsHash, setListOfApplicationToTxnsHash] = useState({})
 	const [applicationStatuses, setApplicationStatuses] = useState({})
+	const [totalMilestonesAmt, setTotalMilestonesAmt] = useState({})
+	const [rubricDrawerOpen, setRubricDrawerOpen] = useState(false)
+	const [viewRubricDrawerOpen, setViewRubricDrawerOpen] = useState(false)
+
+	const [rewardAssetAddress, setRewardAssetAddress] = useState('')
+	const [rewardAssetDecimals, setRewardAssetDecimals] = useState<number>()
+
+	const [sendFundsTo, setSendFundsTo] = useState<any[]>()
+
 
 	const { data: accountData, nonce } = useQuestbookAccount()
 	const router = useRouter()
@@ -123,6 +132,21 @@ function ViewApplicants() {
 	const [realmsQueryParams, setRealmsQueryParams] = useState<any>({ client })
 
 	useEffect(() => {
+		if(applicantsData.length > 0 && rewardAssetDecimals) {
+			const applicationMilestones = {}
+			applicantsData.map(application => {
+				applicationMilestones[application.applicationId] = (application.milestones || []).reduce(
+					(previousValue, currentValue) => (Number(previousValue.amount || '0') / 10 ** rewardAssetDecimals) + (Number(currentValue.amount || '0') / 10 ** rewardAssetDecimals),
+					0
+				  )
+			})
+			setTotalMilestonesAmt(applicationMilestones)
+			console.log('applicationMilestones', applicationMilestones, applicantsData, rewardAssetDecimals || '')
+
+		}
+	}, [ applicantsData, rewardAssetDecimals])
+
+	useEffect(() => {
 		if(!grantID || !workspace) {
 			return
 		}
@@ -137,9 +161,9 @@ function ViewApplicants() {
 	const { data: realmsFundTransferData } = useGetRealmsFundTransferDataQuery(realmsQueryParams)
 
 	useEffect(() => {
-		// console.log('realms fund transfer data', realmsFundTransferData)
+		console.log('realms fund transfer data', realmsFundTransferData)
 
-		const applicationToTxnHashMap: {[applicationId: string]: {transactionHash: string, amount: number}} = {}
+		const applicationToTxnHashMap: {[applicationId: string]: [{transactionHash: string, amount: number}]} = {}
 
 		if(!realmsFundTransferData) {
 			return
@@ -147,22 +171,23 @@ function ViewApplicants() {
 
 		realmsFundTransferData?.grants[0]?.fundTransfers?.forEach((fundTransfer,) => {
 			// console.log('TX HASH - ', i, fundTransfer.transactionHash)
-			// if(!applicationToTxnHashMap[fundTransfer?.application?.id!]) {
-			// 	applicationToTxnHashMap[fundTransfer?.application?.id!] = {
-			// 		transactionHash: fundTransfer?.transactionHash!,
-			// 		amount: parseFloat(fundTransfer?.amount)
-			// 	}
-			// } else {
-			// 	applicationToTxnHashMap[fundTransfer?.application?.id!] = {
-			// 		transactionHash: fundTransfer?.transactionHash!,
-			// 		amount: parseFloat(fundTransfer?.amount)
-			// 	}
-			// }
-			applicationToTxnHashMap[fundTransfer?.application?.id!] = {
-				transactionHash: fundTransfer?.transactionHash!,
-				amount: parseFloat(fundTransfer?.amount)
+			if(!applicationToTxnHashMap[fundTransfer?.application?.id!]) {
+				applicationToTxnHashMap[fundTransfer?.application?.id!] = [ {
+					transactionHash: fundTransfer?.transactionHash!,
+					amount: parseFloat(fundTransfer?.amount)
+				}]
+			} else {
+				applicationToTxnHashMap[fundTransfer?.application?.id!].push({
+					transactionHash: fundTransfer?.transactionHash!,
+					amount: parseFloat(fundTransfer?.amount)
+				})
 			}
+			// applicationToTxnHashMap[fundTransfer?.application?.id!] = {
+			// 	transactionHash: fundTransfer?.transactionHash!,
+			// 	amount: parseFloat(fundTransfer?.amount)
+			// }
 		})
+		console.log('realms fund transfer data applicationToTxnHashMap', applicationToTxnHashMap)
 		setListOfApplicationToTxnsHash(applicationToTxnHashMap)
 
 	}, [realmsFundTransferData])
@@ -197,14 +222,6 @@ function ViewApplicants() {
 		}
 	}, [safeAddressData])
 
-
-	const [rubricDrawerOpen, setRubricDrawerOpen] = useState(false)
-	const [viewRubricDrawerOpen, setViewRubricDrawerOpen] = useState(false)
-
-	const [rewardAssetAddress, setRewardAssetAddress] = useState('')
-	const [rewardAssetDecimals, setRewardAssetDecimals] = useState<number>()
-
-	const [sendFundsTo, setSendFundsTo] = useState<any[]>()
 
 	useEffect(() => {
 		if(router && router.query) {
@@ -552,31 +569,57 @@ function ViewApplicants() {
 	}, [signerVerified])
 
 
-	async function getStatus(applicationToTxnHashMap: {[applicationId: string]: {transactionHash: string, amount: number}}) {
-		const statuses: {[applicationId: string]: {transactionHash: string, status: number, amount: number}} = {}
+	async function getAllStatus(applicationToTxnHashMap: {[applicationId: string]: {transactionHash: string, amount: number}}) {
+		var statuses: {[applicationId: string]: [{transactionHash: string, status: number, amount: number}]} = {}
 
-		Promise.all((Object.keys(applicationToTxnHashMap || {}) || []).map(async(applicationId) => {
-			const transaction = applicationToTxnHashMap[applicationId]
+		const getEachStatus = async(transaction, applicationId) => {
 			const status = await current_safe?.getTransactionHashStatus(transaction?.transactionHash)
 			if(transaction && status) {
-				statuses[applicationId] = {
-					transactionHash: transaction.transactionHash,
-					status: status[transaction.transactionHash],
-					amount: transaction.amount
-				}
-				return status
-			}
-		})).then(async() => {
-			if(statuses && !isEvmChain) {
-				let totalFundDisbursed = 0
-				for(const applicantId of Object.keys(statuses)) {
-					if(statuses[applicantId]?.status === 1) {
-						totalFundDisbursed += await solanaToUsd(statuses[applicantId].amount / 10 ** 9)
-					}
+				if(!statuses[applicationId]) {
+					statuses[applicationId] = []
 				}
 
-				setTotalFundDisbursed(totalFundDisbursed)
+				(statuses[applicationId]).push({
+					transactionHash: transaction.transactionHash,
+					...(status[transaction.transactionHash] || {}),
+					amount: (status[transaction.transactionHash] || {}).closedAtDate !== '' ?
+						await solanaToUsdOnDate(transaction.amount / 10 ** 9, status[transaction.transactionHash].closedAtDate) :
+						0
+				})
+
+
+				console.log('view Applicants status', status, applicationId, Date.now())
+				return status
 			}
+		}
+
+		Promise.all((Object.keys(applicationToTxnHashMap || {}) || []).map(async(applicationId) => {
+			const transactions = applicationToTxnHashMap[applicationId]
+
+			return Promise.all(transactions.map(async(transaction) => {
+				return new Promise(async(res, rej) => {
+					const status = await getEachStatus(transaction, applicationId)
+					res(status)
+
+				})
+			})).then((done) => done)
+		})).then(async() => {
+			console.log('view Applicants statuses', statuses, Date.now())
+
+			let totalFundDisbursed = 0
+
+
+			for(const txns of Object.values(statuses)) {
+				txns.map(txn => {
+					if(txn.status === 1) {
+						totalFundDisbursed += (txn.amount)
+					}
+				})
+
+			}
+
+			setTotalFundDisbursed(totalFundDisbursed)
+
 
 			setApplicationStatuses(statuses)
 		})
@@ -584,8 +627,8 @@ function ViewApplicants() {
 
 	useEffect(() => {
 		if((Object.keys(listOfApplicationToTxnsHash) || []).length > 0) {
-			// console.log('fetch status')
-			getStatus((listOfApplicationToTxnsHash) || [])
+			console.log('fetch status', listOfApplicationToTxnsHash)
+			getAllStatus((listOfApplicationToTxnsHash) || [])
 		}
 
 	}, [listOfApplicationToTxnsHash])
@@ -1032,6 +1075,8 @@ function ViewApplicants() {
 							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7' >
 							<AcceptedProposalsPanel
+								isEvmChain={isEvmChain}
+								totalMilestonesAmount={totalMilestonesAmt}
 								applicationStatuses={applicationStatuses}
 								applicantsData={applicantsData}
 								onSendFundsClicked={onSendFundsButtonClicked}
@@ -1095,7 +1140,7 @@ function ViewApplicants() {
 					onComplete={() => setViewRubricDrawerOpen(false)}
 				/>
 
-				<SendFundsModal
+				 <SendFundsModal
 					isOpen={sendFundsModalIsOpen}
 					onClose={onModalClose}
 					safeAddress={workspaceSafe ?? 'HWuCwhwayTaNcRtt72edn2uEMuKCuWMwmDFcJLbah3KC'}

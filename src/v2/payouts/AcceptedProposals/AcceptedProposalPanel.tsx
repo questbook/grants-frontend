@@ -4,18 +4,21 @@ import AcceptedRow from 'src/v2/payouts/AcceptedProposals/AcceptedRow'
 import ZeroState from 'src/v2/payouts/AcceptedProposals/ZeroState'
 
 const AcceptedProposalsPanel = ({
+	isEvmChain,
+	totalMilestonesAmount,
 	applicationStatuses,
 	applicantsData,
 	onSendFundsClicked,
 	onBulkSendFundsClicked,
 	grantData,
 }: {
-	applicationStatuses: {[applicationId: string]: {transactionHash: string, status: number, amount: number}}
+	applicationStatuses: {[applicationId: string]: [{transactionHash: string, status: number, amount: number}]}
   applicantsData: any[]
   onSendFundsClicked: (state: boolean, checkedItems: any[]) => void
   onBulkSendFundsClicked: (state: boolean, checkedItems: any[]) => void
   grantData: any
 }) => {
+	console.log('accepted proposal panel', applicationStatuses['0xad'], applicationStatuses['0xad']?.reduce((partialSum, a) => partialSum + a.amount, 0))
 	const [checkedItems, setCheckedItems] = useState<boolean[]>(applicantsData.filter((item) => (2 === item.status)).map(() => false))
 	const [acceptedApplications, setAcceptedApplications] = useState<any[]>([])
 
@@ -183,7 +186,10 @@ const AcceptedProposalsPanel = ({
 					applicantsData?.filter((item: any) => (2 === item.status)).map((applicantData: any, i) => (
 						<AcceptedRow
 							key={`accepted-${i}`}
-							applicationStatus={applicationStatuses[applicantData.applicationId]?.status}
+							isEvmChain={isEvmChain}
+							applicationStatus={applicationStatuses[applicantData.applicationId]?.reduce((partialStatus, a) => partialStatus && a.status, 1)}
+							applicationAmount={applicationStatuses[applicantData.applicationId]?.reduce((partialSum, a) => partialSum + a.amount, 0)}
+							totalMilestonesAmount={totalMilestonesAmount[applicantData.applicationId]}
 							applicantData={applicantData}
 							isChecked={checkedItems[i]}
 							onChange={

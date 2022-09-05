@@ -5,6 +5,7 @@ import applicantDetailsList from 'src/constants/applicantDetailsList'
 import { CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
 import { ALL_SUPPORTED_CHAIN_IDS } from 'src/constants/chains'
 import { FundTransfer } from 'src/types'
+import { solanaToUsdOnDate } from 'src/v2/constants/safe/realms_solana'
 
 export function timeToString(
 	timestamp: number,

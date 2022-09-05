@@ -6,8 +6,11 @@ import getAvatar from 'src/utils/avatarUtils'
 import { FundsCircleFilled } from 'src/v2/assets/custom chakra icons/Your Grants/FundsCircleFilled'
 
 const AcceptedRow = ({
+	isEvmChain,
 	onSendFundsClicked,
 	applicationStatus,
+	applicationAmount,
+	totalMilestonesAmount,
 	applicantData,
 	isChecked,
 	onChange,
@@ -137,23 +140,20 @@ const AcceptedRow = ({
 					lineHeight='20px'
 					fontWeight='500'
 				>
-					{applicantData.amount_paid}
+					{applicationAmount || 0}
 					{' '}
 					/
 					{' '}
-					{applicantData.funding_asked?.amount}
+					{totalMilestonesAmount || applicantData.funding_asked?.amount}
 					{' '}
-					{applicantData.funding_asked?.symbol}
+					{!isEvmChain ? 'USD' : applicantData.funding_asked?.symbol}
 
 				</Text>
 
 				<Badge
 					variant='subtle'
 					color='#0F7ABC'>
-					{
-						applicationStatus === 0 ? 'Transaction in Queue' :
-							applicationStatus === 1 ? 'completed' : ''
-					}
+					{applicationStatus === 0 ? 'Transaction in Queue' : ''}
 				</Badge>
 
 			</GridItem>

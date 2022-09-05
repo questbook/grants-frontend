@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unstable-nested-components */
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
 	Flex, Image, Link,
 	Text, Tooltip, } from '@chakra-ui/react'
@@ -14,6 +14,7 @@ import {
 	getTextWithEllipses,
 } from 'src/utils/formattingUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
+import { getDateInDDMMYYYY, solanaToUsdOnDate } from 'src/v2/constants/safe/realms_solana'
 
 type TableContent = {
   title: string
@@ -39,7 +40,7 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 	milestoneTitle: {
 		title: 'Funding Received',
 		flex: 0.5,
-		content: (item, assetId, assetDecimals, __, chainId, rewardToken) => {
+		content: (item, assetId, assetDecimals, __, chainId, rewardToken, usdAmount) => {
 			let icon
 			let label
 			if(rewardToken) {
@@ -71,7 +72,7 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 							variant='applicationText'
 							fontWeight='700'
 						>
-							{formatAmount(item.amount, assetDecimals)}
+							{usdAmount || formatAmount(item.amount, assetDecimals)}
 							{' '}
 							{label}
 						</Text>
@@ -186,6 +187,7 @@ export type FundingProps = {
 };
 
 function Funding({
+
 	fundTransfers,
 	assetId,
 	columns,
@@ -194,12 +196,14 @@ function Funding({
 	type,
 	chainId,
 	rewardToken,
+	usdAmount
 }: FundingProps) {
 	const tableHeaders = useMemo(
 		() => columns.map((column) => TABLE_HEADERS[column]),
 		[columns],
 	)
 
+	console.log('fundTransfers', fundTransfers)
 	const emptyStates = {
 		funds_deposited: {
 			src: '/illustrations/empty_states/no_deposits.svg',
@@ -226,6 +230,7 @@ function Funding({
 		},
 	}
 
+
 	return (
 		<Flex
 			w='100%'
@@ -250,6 +255,7 @@ function Funding({
 				)
 			}
 			{
+
 				fundTransfers.length > 0 && (
 					<>
 						<Flex
@@ -295,15 +301,15 @@ function Funding({
 										{
 											grantId
                   && tableHeaders.map(({ title, flex, content }) => (
-                  	<Flex
+	<Flex
                   		key={title}
                   		direction='row'
                   		justify='start'
                   		align='center'
                   		flex={flex}
                   	>
-                  		{content(item, assetId, assetDecimals, grantId, chainId, rewardToken)}
- </Flex>
+	{content(item, assetId, assetDecimals, grantId, chainId, rewardToken, usdAmount[index] || 0)}
+                  	</Flex>
                   ))
 										}
 									</Flex>

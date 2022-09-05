@@ -47,6 +47,7 @@ export type AbstractMilestonesTableProps = {
 
 function AbstractMilestonesTable(
 	{
+		rewardDisbursed,
 		milestones, rewardAssetId, renderStatus, chainId, decimals, rewardToken,
 	}: AbstractMilestonesTableProps,
 ) {
@@ -60,6 +61,9 @@ function AbstractMilestonesTable(
 		rewardSymbol = asset.label
 		rewardIcon = asset.icon
 	}
+
+	console.log('funding milestones', milestones, rewardDisbursed)
+
 
 	// const { icon: rewardIcon, label: rewardSymbol } = getAssetInfo(rewardAssetId, chainId);
 
@@ -159,7 +163,7 @@ function AbstractMilestonesTable(
 									fontWeight='700'
 									color='#122224'
 								>
-									{formatAmount(item.amountPaid.toString(), decimals)}
+									{rewardDisbursed || formatAmount(item.amountPaid.toString(), decimals)}
 									{' '}
 									/
 									{' '}

@@ -180,15 +180,37 @@ export class Realms_Solana implements Safe {
                     pubkeyFilter(1, governance.pubkey)!,
     	])
 
-    	const propsalsToSend: {[proposalKey: string]: number} = {};
+    	const propsalsToSend: {[proposalKey: string]: {status: number, closedAtDate: string}} = {};
 
     	(proposals
     		.filter((proposal) => proposalPublicKey.includes(proposal.pubkey.toString())) || [])
     		.map((proposal) => {
-    			propsalsToSend[proposal.pubkey.toString()] = proposal.account.state < 5 ? 0 : proposal.account.state === 5 ? 1 : 2
+				let closedAtDate = ''
+				if(proposal.account.state===5){
+					const closedAt = new Date((Number(proposal?.account?.closedAt?.toString()||''))*1000);
+					closedAtDate = getDateInDDMMYYYY(closedAt);
+				}
+				
+    			propsalsToSend[proposal.pubkey.toString()] = {status:proposal.account.state < 5 ? 0 : proposal.account.state === 5 ? 1 : 2, 
+					closedAtDate}
     		})
     	return propsalsToSend
 	}
+}
+
+const getDateInDDMMYYYY = (date) =>{
+	return `${date.getDate()+1<10?"0":""}${date.getDate()}`+"-"+ `${date.getMonth()+1<10?"0":""}${date.getMonth()+1}`+"-"+ date.getFullYear()
+}
+const solanaToUsdOnDate = async(solAmount: number, date:string) => {
+	let url = `https://api.coingecko.com/api/v3/coins/solana/history?date=${date}&localization=false`
+	let solToUsd = parseFloat((await axios.get(url)).data?.market_data?.current_price?.usd)
+	if(!solToUsd){
+const previousDay = new Date(new Date(Date(date)) - 864e5);
+const previousDate = getDateInDDMMYYYY(previousDay)
+url = `https://api.coingecko.com/api/v3/coins/solana/history?date=${previousDate}&localization=false`;
+ solToUsd = parseFloat((await axios.get(url)).data?.market_data?.current_price?.usd)
+	}
+	return Math.floor((solToUsd) * solAmount) || await solanaToUsd(solAmount)
 }
 
 const solanaToUsd = async(solAmount: number) => {
@@ -262,4 +284,4 @@ const getOwners = async(safeAddress: string): Promise<string[]> => {
 }
 
 
-export { getSafeDetails, isOwner, getOwners, solanaToUsd, usdToSolana }
+export { getSafeDetails, isOwner, getOwners, solanaToUsd, usdToSolana, solanaToUsdOnDate,getDateInDDMMYYYY }
