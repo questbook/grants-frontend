@@ -60,6 +60,7 @@ export const networksMapping: { [key: string]: string } = {
 	'1313161554': '5',
 	'56': '5',
 	'246': '5',
+	'42220': '5',
 }
 
 export const signNonce = async(webwallet: Wallet, nonce: string) => {
