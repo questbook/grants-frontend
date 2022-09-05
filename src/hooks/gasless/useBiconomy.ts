@@ -76,6 +76,14 @@ export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boole
 
 		// console.log('BICONOMY OBJ CREATED', _biconomy)
 		_biconomy.onEvent(_biconomy.READY, async() => {
+
+			const alreadyProcessingBiconomy = localStorage.getItem('alreadyProcessingBiconomyEvent');
+
+			if(alreadyProcessingBiconomy === "true")
+				return;
+			
+			localStorage.setItem('alreadyProcessingBiconomyEvent', 'true');
+
 			// console.log('Inside biconomy ready event')
 
 			const _biconomyWalletClient: BiconomyWalletClient = await _biconomy.biconomyWalletClient
@@ -89,12 +97,10 @@ export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boole
 
 			setBiconomyWalletClient(_biconomyWalletClient)
 			setBiconomyDaoObj(_biconomy)
-
-			if(typeof window !== 'undefined') {
-				localStorage.setItem('isBiconomyLoading', 'false')
-			}
-
 			switchNetwork(parseInt(_newChainId))
+
+			localStorage.setItem('isBiconomyLoading', 'false')
+			localStorage.setItem('alreadyProcessingBiconomyEvent', 'false');
 
 		}).onEvent(_biconomy.ERROR, () => {
 			// setIsLoading(false)
