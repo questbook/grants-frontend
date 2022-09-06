@@ -29,7 +29,7 @@ export default function useBatchUpdateApplicationState(
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
-	const { validatorApi, workspace } = apiClients
+	const { validatorApi, workspace, subgraphClients } = apiClients
 	const currentChainId = useChainId()
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 	const applicationContract = useQBContract('applications', chainId)
@@ -147,7 +147,7 @@ export default function useBatchUpdateApplicationState(
 				setNetworkTransactionModalStep(2)
 
 				const { txFee, receipt } = await getTransactionDetails(response, currentChainId.toString())
-
+				await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
 				await chargeGas(Number(workspace?.id), Number(txFee))
 
 				setNetworkTransactionModalStep(3)

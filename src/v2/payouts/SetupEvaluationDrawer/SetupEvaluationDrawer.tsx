@@ -36,7 +36,7 @@ const SetupEvaluationDrawer = ({
 	data: GetReviewersForAWorkspaceQuery | undefined
 }) => {
 	const [step, setStep] = useState(0)
-	const { workspace, validatorApi } = useContext(ApiClientsContext)!
+	const { workspace, validatorApi, subgraphClients } = useContext(ApiClientsContext)!
 
 	// Setting up rubrics
 	const [rubrics, setRubrics] = useState<SidebarRubrics[]>([{ index: 0, criteria: '', description: '' }])
@@ -225,12 +225,10 @@ const SetupEvaluationDrawer = ({
 			}
 
 			setNetworkTransactionModalStep(3)
-			const { txFee } = await getTransactionDetails(response, chainId.toString())
+			const { txFee, receipt } = await getTransactionDetails(response, chainId.toString())
+			await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
 
 			await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee))
-
-			// console.log('Transaction DONE: ', receipt)
-
 			setNetworkTransactionModalStep(4)
 			setTimeout(() => {
 				setNetworkTransactionModalStep(undefined)
