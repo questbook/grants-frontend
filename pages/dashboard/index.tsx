@@ -335,7 +335,6 @@ function DaoDashboard() {
 			<Container
 				maxW='100%'
 				display='flex'
-				px='70px'
 				mb='300px'
 				height='100%'>
 				<Container
