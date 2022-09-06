@@ -41,7 +41,7 @@ function SafeDetails({ safesOptions, step, safeAddress, isPasted, isVerified, is
 				label='Safe Address'
 				helperText='Your safe can be used to do payouts on Questbook.'
 				helperLinkText='Learn more'
-				helperLinkUrl='https://youtube.com'
+				helperLinkUrl='https://www.notion.so/questbook/Connecting-your-Safe-with-Questbook-3a3be08527b54f87b9d71a7332b108ac'
 				placeholder='Ethereum or Solana address'
 				value={safeAddress}
 				onChange={(e) => setValue(e.target.value)}
@@ -78,7 +78,7 @@ function SafeDetails({ safesOptions, step, safeAddress, isPasted, isVerified, is
 						label='Safes Found'
 						helperText='Associated with this address on all networks.'
 						helperLinkText='Learn about supported networks'
-						helperLinkUrl='https://youtube.com'
+						helperLinkUrl='https://www.notion.so/questbook/Supported-Safes-on-Questbook-20d76804bf8a4ef8a17d2e5b85d3421c'
 						value={safeSelected}
 						onChange={
 							(safeSelected: SafeSelectOption | undefined) => {

@@ -1,9 +1,10 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { USD_THRESHOLD } from 'src/constants'
-import { CHAIN_INFO } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import { NetworkType } from 'src/constants/Networks'
 import SAFES_ENPOINTS_MAINNETS from 'src/constants/safesEndpoints.json'
+import SAFES_NAMES from 'src/constants/safesSupported.json'
 import useAxiosMulti from 'src/hooks/utils/useAxiosMulti'
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 import { getSafeDetails } from 'src/v2/constants/safe/realms_solana'
@@ -95,17 +96,18 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 	useEffect(() => {
 		if(gnosisLoaded && !gnosisError) {
 			const newData: SafeSelectOption[] = []
+			console.log('gnosis raw data: ', gnosisRawData)
 			gnosisRawData.forEach((allTokensData: AllTokensData, index) => {
 				const currentChainID = SAFES_BALANCES_CHAIN_ID[index] as unknown as ValidChainID
 				const tokensSum = getTokensSum(allTokensData)
 				// if(tokensSum >= USD_BALANCE_THRESHOLD) {
-				if(allTokensData.length > 0 && currentChainID in CHAIN_INFO) {
+				if(allTokensData.length > 0 && currentChainID in SAFES_NAMES) {
 					const newElement: SafeSelectOption = {
 						safeAddress: safeAddress,
 						networkType: NetworkType.EVM,
 						networkId: currentChainID.toString(),
-						networkName: CHAIN_INFO[currentChainID]?.name,
-						networkIcon: CHAIN_INFO[currentChainID]?.icon,
+						networkName: SAFES_NAMES[currentChainID.toString() as keyof typeof SAFES_NAMES],
+						networkIcon: CHAIN_INFO[currentChainID in CHAIN_INFO ? currentChainID : defaultChainId]?.icon,
 						safeType: 'Gnosis',
 						safeIcon: '/safes_icons/gnosis.svg',
 						amount: Math.floor(tokensSum),

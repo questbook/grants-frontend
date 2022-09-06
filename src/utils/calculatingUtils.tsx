@@ -1,6 +1,6 @@
 import { createClient } from 'urql'
 
-export const calculateUSDValue = async(value: number, tokenPair: string | null) => {
+export const calculateUSDValue = async(value: number | string, tokenPair: string | null) => {
 
 	const wethPriceQuery = `
 {
@@ -29,12 +29,12 @@ export const calculateUSDValue = async(value: number, tokenPair: string | null) 
 
 	async function fetchWethPrice() {
 		const data = await client.query(wethPriceQuery).toPromise()
-		amount = data.data.bundle.ethPrice * value
+		amount = data.data.bundle.ethPrice * (typeof value === 'string' ? parseInt(value) : value)
 	}
 
 	async function fetchTokenPrice() {
 		const data = await client.query(priceQuery).toPromise()
-		amount = (data?.data?.pair?.token0! ? data.data.pair.token0.derivedETH : 0) * data.data.bundle.ethPrice * value
+		amount = (data?.data?.pair?.token0! ? data.data.pair.token0.derivedETH : 0) * data.data.bundle.ethPrice * (typeof value === 'string' ? parseInt(value) : value)
 	}
 
 	if(tokenPair === '0x0') {

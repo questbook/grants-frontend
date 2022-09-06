@@ -61,7 +61,7 @@ export class Gnosis_Safe implements GnosisSafe {
     		})
 
     		return safeTxHash
-    	} catch(e) {
+    	} catch(e: any) {
     		return undefined
     		// console.log(e)
     	}
