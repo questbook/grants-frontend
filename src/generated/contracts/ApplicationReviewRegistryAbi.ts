@@ -43,6 +43,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
     "isAutoAssigningEnabled(address)": FunctionFragment;
     "lastAssignedReviewerIndices(address)": FunctionFragment;
     "markPaymentDone(uint96,uint96[],address,uint96[],address,uint256,string)": FunctionFragment;
+    "migrateWallet(address,address,uint96)": FunctionFragment;
     "owner()": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -78,6 +79,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
       | "isAutoAssigningEnabled"
       | "lastAssignedReviewerIndices"
       | "markPaymentDone"
+      | "migrateWallet"
       | "owner"
       | "proxiableUUID"
       | "renounceOwnership"
@@ -173,6 +175,14 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "migrateWallet",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -311,6 +321,10 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
     functionFragment: "markPaymentDone",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "migrateWallet",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "proxiableUUID",
@@ -374,6 +388,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
     "BeaconUpgraded(address)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "ReviewMigrate(uint96,uint96,address,address,uint256)": EventFragment;
     "ReviewPaymentFulfilled(uint96[],address,address,address,uint256,uint256)": EventFragment;
     "ReviewPaymentMarkedDone(uint96[],address,address,uint256,string,uint256)": EventFragment;
     "ReviewSubmitted(uint96,address,uint96,uint96,address,string,uint256)": EventFragment;
@@ -386,6 +401,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ReviewMigrate"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ReviewPaymentFulfilled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ReviewPaymentMarkedDone"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ReviewSubmitted"): EventFragment;
@@ -433,6 +449,20 @@ export type OwnershipTransferredEvent = TypedEvent<
 
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
+
+export interface ReviewMigrateEventObject {
+  _reviewId: BigNumber;
+  _applicationId: BigNumber;
+  _previousReviewerAddress: string;
+  _newReviewerAddress: string;
+  time: BigNumber;
+}
+export type ReviewMigrateEvent = TypedEvent<
+  [BigNumber, BigNumber, string, string, BigNumber],
+  ReviewMigrateEventObject
+>;
+
+export type ReviewMigrateEventFilter = TypedEventFilter<ReviewMigrateEvent>;
 
 export interface ReviewPaymentFulfilledEventObject {
   _reviewIds: BigNumber[];
@@ -631,6 +661,13 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    migrateWallet(
+      fromWallet: PromiseOrValue<string>,
+      toWallet: PromiseOrValue<string>,
+      appId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
@@ -816,6 +853,13 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     _erc20Interface: PromiseOrValue<string>,
     _amount: PromiseOrValue<BigNumberish>,
     _transactionHash: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  migrateWallet(
+    fromWallet: PromiseOrValue<string>,
+    toWallet: PromiseOrValue<string>,
+    appId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1005,6 +1049,13 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    migrateWallet(
+      fromWallet: PromiseOrValue<string>,
+      toWallet: PromiseOrValue<string>,
+      appId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     owner(overrides?: CallOverrides): Promise<string>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<string>;
@@ -1134,6 +1185,21 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       previousOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
+
+    "ReviewMigrate(uint96,uint96,address,address,uint256)"(
+      _reviewId?: PromiseOrValue<BigNumberish> | null,
+      _applicationId?: null,
+      _previousReviewerAddress?: null,
+      _newReviewerAddress?: null,
+      time?: null
+    ): ReviewMigrateEventFilter;
+    ReviewMigrate(
+      _reviewId?: PromiseOrValue<BigNumberish> | null,
+      _applicationId?: null,
+      _previousReviewerAddress?: null,
+      _newReviewerAddress?: null,
+      time?: null
+    ): ReviewMigrateEventFilter;
 
     "ReviewPaymentFulfilled(uint96[],address,address,address,uint256,uint256)"(
       _reviewIds?: null,
@@ -1306,6 +1372,13 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    migrateWallet(
+      fromWallet: PromiseOrValue<string>,
+      toWallet: PromiseOrValue<string>,
+      appId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1474,6 +1547,13 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       _erc20Interface: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
       _transactionHash: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    migrateWallet(
+      fromWallet: PromiseOrValue<string>,
+      toWallet: PromiseOrValue<string>,
+      appId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

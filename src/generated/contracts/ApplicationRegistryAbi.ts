@@ -40,6 +40,7 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     "getApplicationOwner(uint96)": FunctionFragment;
     "getApplicationWorkspace(uint96)": FunctionFragment;
     "initialize()": FunctionFragment;
+    "migrateWallet(address,address)": FunctionFragment;
     "owner()": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -67,6 +68,7 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
       | "getApplicationOwner"
       | "getApplicationWorkspace"
       | "initialize"
+      | "migrateWallet"
       | "owner"
       | "proxiableUUID"
       | "renounceOwnership"
@@ -134,6 +136,10 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "initialize",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "migrateWallet",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -240,6 +246,10 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "migrateWallet",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "proxiableUUID",
@@ -491,6 +501,12 @@ export interface ApplicationRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    migrateWallet(
+      fromWallet: PromiseOrValue<string>,
+      toWallet: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
@@ -620,6 +636,12 @@ export interface ApplicationRegistryAbi extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  migrateWallet(
+    fromWallet: PromiseOrValue<string>,
+    toWallet: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
   proxiableUUID(overrides?: CallOverrides): Promise<string>;
@@ -746,6 +768,12 @@ export interface ApplicationRegistryAbi extends BaseContract {
     ): Promise<BigNumber>;
 
     initialize(overrides?: CallOverrides): Promise<void>;
+
+    migrateWallet(
+      fromWallet: PromiseOrValue<string>,
+      toWallet: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -950,6 +978,12 @@ export interface ApplicationRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    migrateWallet(
+      fromWallet: PromiseOrValue<string>,
+      toWallet: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1068,6 +1102,12 @@ export interface ApplicationRegistryAbi extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     initialize(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    migrateWallet(
+      fromWallet: PromiseOrValue<string>,
+      toWallet: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
