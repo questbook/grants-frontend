@@ -22,6 +22,7 @@ import theme from 'src/theme'
 import { MinimalWorkspace } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import getSeo from 'src/utils/seo'
+import MigrateToGasless from 'src/v2/components/MigrateToGasless'
 import {
 	allChains,
 	Chain,
@@ -146,8 +147,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}, [])
 
 	useEffect(() => {
-		console.log("webwallet address:", webwallet)
-		console.log("scw address:", scwAddress);
+		console.log('webwallet address:', webwallet)
+		console.log('scw address:', scwAddress)
 	}, [webwallet, scwAddress])
 
 	const getScwAddress = () => {
@@ -327,8 +328,20 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		[validatorApi, workspace, setWorkspace, clients, connected, setConnected]
 	)
 
-	const seo = getSeo()
+	const [migrateModalOpen, setMigrateModalOpen] = React.useState(false)
 
+	useEffect(() => {
+		if(typeof window === 'undefined') {
+			return
+		}
+
+		const didHaveWallet = localStorage.getItem('wagmi.wallet')
+		if(didHaveWallet) {
+			setMigrateModalOpen(true)
+		}
+	}, [])
+
+	const seo = getSeo()
 
 	const getLayout = Component.getLayout || ((page) => page)
 	return (
@@ -359,6 +372,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 						<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
 							<ChakraProvider theme={theme}>
 								{getLayout(<Component {...pageProps} />)}
+								{
+									typeof window !== 'undefined' && (
+										<MigrateToGasless
+											isOpen={migrateModalOpen}
+											onClose={() => setMigrateModalOpen(false)} />
+									)
+								}
 							</ChakraProvider>
 						</BiconomyContext.Provider>
 					</WebwalletContext.Provider>

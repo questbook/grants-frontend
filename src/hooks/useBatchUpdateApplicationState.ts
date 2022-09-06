@@ -20,6 +20,7 @@ export default function useBatchUpdateApplicationState(
 	state: number,
 	submitClicked: boolean,
 	setSubmitClicked: React.Dispatch<React.SetStateAction<boolean>>,
+	setNetworkTransactionModalStep: (step: number | undefined) => void
 ) {
 	const [error, setError] = React.useState<string>()
 	const [loading, setLoading] = React.useState(false)
@@ -35,7 +36,6 @@ export default function useBatchUpdateApplicationState(
 	const applicationContract = useQBContract('applications', chainId)
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
-	const [networkTransactionModalStep, setNetworkTransactionModalStep] = React.useState<number>()
 
 	const { webwallet } = useContext(WebwalletContext)!
 
@@ -280,7 +280,6 @@ export default function useBatchUpdateApplicationState(
 		getExplorerUrlForTxHash(currentChainId, transactionData?.transactionHash),
 		loading,
 		isBiconomyInitialised,
-		error,
-		networkTransactionModalStep
+		error
 	]
 }

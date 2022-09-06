@@ -25,6 +25,7 @@ import {
 export default function useSubmitReview(
 	data: { items?: Array<FeedbackType> },
 	setCurrentStep: (step?: number) => void,
+	setTransactionHash: (hash: string) => void,
 	isPrivate: boolean,
 	chainId?: SupportedChainId,
 	workspaceId?: string,
@@ -159,6 +160,7 @@ export default function useSubmitReview(
 
 				if(response) {
 					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+					setTransactionHash(receipt.transactionHash)
 					setTransactionData(receipt)
 					await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee))
 				}

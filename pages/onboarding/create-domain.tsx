@@ -464,7 +464,9 @@ const OnboardingCreateDomain = () => {
 						'Create domain on the network',
 						'Your domain is now on-chain'
 					]
-				} />
+				}
+				transactionHash={txHash}
+				onClose={() => setCurrentStep(undefined)} />
 			<VerifySignerModal
 				setOwnerAddress={(newOwnerAddress) => setOwnerAddress(newOwnerAddress)}
 				networkType={safeSelected?.networkType ?? NetworkType.EVM}
