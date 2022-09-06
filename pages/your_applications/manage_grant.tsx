@@ -296,7 +296,7 @@ function ManageGrant() {
 							fundTransfers={fundsDisbursed?.fundsTransfers || []}
 							assetId={rewardAsset}
 							columns={['milestoneTitle', 'date', 'from', 'action']}
-							assetDecimals={decimals}
+							assetDecimals={decimals!}
 							grantId={applicationData.grant?.id}
 							chainId={chainId}
 							rewardToken={rewardToken}

@@ -203,9 +203,4 @@ export const getExplorerUrlForTxHash = (chainId: SupportedChainId | undefined, t
 
 export const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`
 
-export const getFieldString = (applicationData: {
-	fields: {
-		id: string
-		values: { value: string }[]
-	}[]
-}, name: string) => applicationData?.fields?.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
+export const getFieldString = (applicationData: any, name: string) => applicationData?.fields?.find((field: any) => field?.id?.includes(`.${name}`))?.values[0]?.value

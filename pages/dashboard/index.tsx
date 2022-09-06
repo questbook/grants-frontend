@@ -225,7 +225,7 @@ function DaoDashboard() {
 				grantsPending,
 				grantsTat
 			})
-		} catch(e) {
+		} catch(e: any) {
 			// console.log(e)
 		}
 	}
@@ -335,7 +335,6 @@ function DaoDashboard() {
 			<Container
 				maxW='100%'
 				display='flex'
-				px='70px'
 				mb='300px'
 				height='100%'>
 				<Container
