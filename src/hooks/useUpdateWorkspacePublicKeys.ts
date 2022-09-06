@@ -128,6 +128,7 @@ export default function useUpdateWorkspacePublicKeys(
 				}
 
 				setLoading(false)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 				// console.log(e)
 				setError(e.message)
@@ -200,6 +201,7 @@ export default function useUpdateWorkspacePublicKeys(
 			}
 
 			validate()
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			setError(e.message)
 			setLoading(false)

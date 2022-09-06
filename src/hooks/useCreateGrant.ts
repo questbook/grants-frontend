@@ -211,6 +211,7 @@ export default function useCreateGrant(
 
 				setTransactionData(receipt)
 				setLoading(false)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 				const message = getErrorMessage(e)
 				setError(message)
@@ -290,6 +291,7 @@ export default function useCreateGrant(
 			}
 
 			validate()
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)

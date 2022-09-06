@@ -122,6 +122,7 @@ function AddFunds({
 					tempAddress,
 				)
 				setWalletBalance(tempWalletBalance)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 				// // console.error(e);
 			}

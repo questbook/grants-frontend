@@ -248,6 +248,7 @@ const OnboardingCreateDomain = () => {
 			setTxHash(txHash)
 			setIsDomainCreationSuccessful(true)
 			setCurrentStep(undefined)
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			setCurrentStep(undefined)
 			const message = getErrorMessage(e)
@@ -465,7 +466,7 @@ const OnboardingCreateDomain = () => {
 						'Your domain is now on-chain'
 					]
 				}
-				transactionHash={txHash}
+				viewLink={getExplorerUrlForTxHash(network, txHash)}
 				onClose={() => setCurrentStep(undefined)} />
 			<VerifySignerModal
 				setOwnerAddress={(newOwnerAddress) => setOwnerAddress(newOwnerAddress)}

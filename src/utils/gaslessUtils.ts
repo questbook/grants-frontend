@@ -136,7 +136,7 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 		},
 	}
 
-	const { doesWalletExist, walletAddress } = await biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address })
+	const { doesWalletExist, walletAddress } = await biconomyWalletClient?.checkIfWalletExists({ eoa: webwallet.address })
 	let scwAddress
 
 	if(!doesWalletExist) {

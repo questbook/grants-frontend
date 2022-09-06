@@ -207,6 +207,7 @@ export default function useEditGrant(
 				}
 
 				setLoading(false)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 
 				const message = getErrorMessage(e)
@@ -285,6 +286,7 @@ export default function useEditGrant(
 			}
 
 			validate()
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)
