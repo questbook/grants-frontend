@@ -328,8 +328,20 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		[validatorApi, workspace, setWorkspace, clients, connected, setConnected]
 	)
 
-	const seo = getSeo()
+	const [migrateModalOpen, setMigrateModalOpen] = React.useState(false)
 
+	useEffect(() => {
+		if(typeof window === 'undefined') {
+			return
+		}
+
+		const didHaveWallet = localStorage.getItem('wagmi.wallet')
+		if(didHaveWallet) {
+			setMigrateModalOpen(true)
+		}
+	}, [])
+
+	const seo = getSeo()
 
 	const getLayout = Component.getLayout || ((page) => page)
 	return (
@@ -355,18 +367,22 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				/>
 			</Head>
 			<WagmiConfig client={client}>
-				<ChakraProvider theme={theme}>
-					<ApiClientsContext.Provider value={apiClients}>
-						<WebwalletContext.Provider value={webwalletContextValue}>
-							<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
+				<ApiClientsContext.Provider value={apiClients}>
+					<WebwalletContext.Provider value={webwalletContextValue}>
+						<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
+							<ChakraProvider theme={theme}>
 								{getLayout(<Component {...pageProps} />)}
-								<MigrateToGasless
-									isOpen={true}
-									onClose={() => {}} />
-							</BiconomyContext.Provider>
-						</WebwalletContext.Provider>
-					</ApiClientsContext.Provider>
-				</ChakraProvider>
+								{
+									typeof window !== 'undefined' && (
+										<MigrateToGasless
+											isOpen={migrateModalOpen}
+											onClose={() => setMigrateModalOpen(false)} />
+									)
+								}
+							</ChakraProvider>
+						</BiconomyContext.Provider>
+					</WebwalletContext.Provider>
+				</ApiClientsContext.Provider>
 			</WagmiConfig>
 			<ChatWidget
 				token='5b3b08cf-8b27-4d4b-9c4e-2290f53e04f0'
