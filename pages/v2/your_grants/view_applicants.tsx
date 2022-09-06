@@ -207,7 +207,7 @@ function ViewApplicants() {
 	const [sendFundsTo, setSendFundsTo] = useState<any[]>()
 
 	useEffect(() => {
-		if(router && router.query) {
+		if(router?.query) {
 			const { grantId: gId } = router.query
 			// console.log('fetch 100: ', gId)
 			setGrantID(gId)
@@ -382,68 +382,6 @@ function ViewApplicants() {
 		}
 
 	}, [data, error, loading, grantData])
-
-	// const reviewData = useGetApplicantsForAGrantReviewerQuery(queryReviewerParams)
-
-	// const Reviewerstatus = (item: any) => {
-	// 	const user = []
-	// 	// eslint-disable-next-line no-restricted-syntax
-	// 	for(const n in item) {
-	// 		if(item[n].reviewer.id === isActorId) {
-	// 			user.push(isActorId)
-	// 		}
-	// 	}
-
-	// 	if(user.length === 1) {
-	// 		return 9
-	// 	}
-
-	// 	return 0
-	// }
-
-	// useEffect(() => {
-	// 	if(reviewData.data && reviewData.data.grantApplications.length) {
-	// 		// console.log('Reviewer Applications: ', reviewData.data)
-	// 		const fetchedApplicantsData = reviewData.data.grantApplications.map((applicant) => {
-	// 			return {
-	// 				grantTitle: applicant?.grant?.title,
-	// 				applicationId: applicant.id,
-	// 				applicant_address: getFieldString(applicant, 'applicantAddress'),
-	// 				sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
-	// 				project_name: getFieldString(applicant, 'projectName'),
-	// 				funding_asked: {
-	// 					amount:
-	// 						applicant && getFieldString(applicant, 'fundingAsk') ? formatAmount(
-	// 							getFieldString(applicant, 'fundingAsk')!,
-	// 							CHAIN_INFO[
-	// 								getSupportedChainIdFromSupportedNetwork(
-	// 									applicant.grant.workspace.supportedNetworks[0],
-	// 								)
-	// 							]?.supportedCurrencies[applicant.grant.reward.asset.toLowerCase()]
-	// 								?.decimals || 18,
-	// 						) : '1',
-	// 					symbol: getAssetInfo(
-	// 						applicant?.grant?.reward?.asset?.toLowerCase(),
-	// 						getSupportedChainIdFromWorkspace(workspace),
-	// 					).label,
-	// 					icon: getAssetInfo(
-	// 						applicant?.grant?.reward?.asset?.toLowerCase(),
-	// 						getSupportedChainIdFromWorkspace(workspace),
-	// 					).icon,
-	// 				},
-	// 				status: Reviewerstatus(applicant.reviews),
-	// 				reviewers: applicant.applicationReviewers,
-	// 			}
-	// 		})
-
-	// 		// console.log('fetch', fetchedApplicantsData)
-
-	// 		// setReviewerData(fetchedApplicantsData)
-	// 		// setDaoId(reviewData.data.grantApplications[0].grant.workspace.id)
-	// 		setAcceptingApplications(reviewData.data.grantApplications[0].grant.acceptingApplications)
-	// 	}
-
-	// }, [reviewData])
 
 	const [isAcceptingApplications, setIsAcceptingApplications] = React.useState<
 		[boolean, number]
@@ -1163,7 +1101,7 @@ function ViewApplicants() {
 							'Connect your wallet',
 							'Uploading rubric data to IPFS',
 							'Setting rubric and enabling auto assignment of reviewers',
-							'Waiting for transaction to complete',
+							'Completing indexing',
 							'Rubric created and Reviewers assigned',
 						]
 					} />
