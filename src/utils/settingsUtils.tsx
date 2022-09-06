@@ -135,9 +135,9 @@ export const generateWorkspaceUpdateRequest = async(
 		|| newForm.telegramChannel !== oldForm.telegramChannel
 	) {
 		req.socials = [
-			{ name: 'twitter', value: newForm.twitterHandle! },
-			{ name: 'discord', value: newForm.twitterHandle || '' },
-			{ name: 'telegram', value: newForm.twitterHandle || '' },
+			{ name: 'twitter', value: newForm.twitterHandle || '' },
+			{ name: 'discord', value: newForm.discordHandle || '' },
+			{ name: 'telegram', value: newForm.telegramChannel || '' },
 		]
 	}
 
