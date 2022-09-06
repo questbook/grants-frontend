@@ -41,21 +41,22 @@ const InReviewPanel = ({
 		setCheckedItems(applicantsData.filter((item) => (0 === item.status)).map(() => false))
 	}, [applicantsData])
 
-	const getSubtitle = () => {
+	const [subtitle, setSubtitle] = useState<string>('')
+
+	useEffect(() => {
 		if(isAcceptClicked) {
-			return 'Accepting applications'
+			setSubtitle('Accepting applications')
 		}
 
 		if(isRejectClicked) {
-			return 'Rejecting applications'
+			setSubtitle('Rejecting applications')
 		}
 
 		if(isResubmitClicked) {
-			return 'Resubmitting applications'
+			setSubtitle('Resubmitting applications')
 		}
 
-		return ''
-	}
+	}, [isAcceptClicked, isRejectClicked, isResubmitClicked])
 
 	useEffect(() => {
 		const inReviewApplications = applicantsData?.filter((item: any) => (0 === item.status))
@@ -97,10 +98,6 @@ const InReviewPanel = ({
 		isConfirmClicked,
 		setIsConfirmClicked
 	)
-
-	useEffect(() => {
-		console.log('isBiconomyInitialised', isBiconomyInitialised)
-	}, [isBiconomyInitialised])
 
 	useEffect(() => {
 		// if(loading) {
@@ -471,7 +468,7 @@ const InReviewPanel = ({
 
 			<NetworkTransactionModal
 				isOpen={networkTransactionModalStep !== undefined}
-				subtitle={getSubtitle()}
+				subtitle={subtitle}
 				description={
 					<Flex
 						direction='column'
@@ -481,23 +478,23 @@ const InReviewPanel = ({
 							fontWeight='500'
 							fontSize='17px'
 						>
-							{grantData && grantData?.grants[0]?.title}
+							{(grantData?.grants?.length || 0) > 0 && grantData?.grants[0]?.title}
 						</Text>
 
 						<Button
 							rightIcon={<ExternalLinkIcon />}
 							variant='linkV2'
 							bg='#D5F1EB'>
-							{grantData && formatAddress(grantData?.grants[0]?.id)}
+							{(grantData?.grants?.length || 0) > 0 && formatAddress(grantData?.grants[0]?.id!)}
 						</Button>
 					</Flex>
 				}
 				currentStepIndex={networkTransactionModalStep || 0}
 				steps={
 					[
-						'Connect your wallet',
 						'Updating application(s) state',
 						'Waiting for transaction to complete',
+						'Waiting for transaction to index',
 						'Application(s) state updated',
 					]
 				} />
