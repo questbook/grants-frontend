@@ -22,6 +22,7 @@ import theme from 'src/theme'
 import { MinimalWorkspace } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import getSeo from 'src/utils/seo'
+import MigrateToGasless from 'src/v2/components/MigrateToGasless'
 import {
 	allChains,
 	Chain,
@@ -146,8 +147,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}, [])
 
 	useEffect(() => {
-		console.log("webwallet address:", webwallet)
-		console.log("scw address:", scwAddress);
+		console.log('webwallet address:', webwallet)
+		console.log('scw address:', scwAddress)
 	}, [webwallet, scwAddress])
 
 	const getScwAddress = () => {
@@ -354,15 +355,18 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				/>
 			</Head>
 			<WagmiConfig client={client}>
-				<ApiClientsContext.Provider value={apiClients}>
-					<WebwalletContext.Provider value={webwalletContextValue}>
-						<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
-							<ChakraProvider theme={theme}>
+				<ChakraProvider theme={theme}>
+					<ApiClientsContext.Provider value={apiClients}>
+						<WebwalletContext.Provider value={webwalletContextValue}>
+							<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
 								{getLayout(<Component {...pageProps} />)}
-							</ChakraProvider>
-						</BiconomyContext.Provider>
-					</WebwalletContext.Provider>
-				</ApiClientsContext.Provider>
+								<MigrateToGasless
+									isOpen={true}
+									onClose={() => {}} />
+							</BiconomyContext.Provider>
+						</WebwalletContext.Provider>
+					</ApiClientsContext.Provider>
+				</ChakraProvider>
 			</WagmiConfig>
 			<ChatWidget
 				token='5b3b08cf-8b27-4d4b-9c4e-2290f53e04f0'
