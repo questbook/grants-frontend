@@ -87,9 +87,7 @@ export class Gnosis_Safe implements GnosisSafe {
     	const safeSdk = await Safe.create({ ethAdapter, safeAddress })
 
     	const userAddress = await signer.getAddress()
-    	const isOwner = await safeSdk.isOwner(userAddress)
-
-    	return isOwner
+      return await safeSdk.isOwner(userAddress)
 	}
 
 	getTransactionHashStatus(proposalPublicKeys: string): any {
