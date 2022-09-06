@@ -56,6 +56,8 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 
 	const { data: accountData, nonce } = useQuestbookAccount(shouldRefreshNonce)
 
+	const [transactionHash, setTransactionHash] = useState<string>()
+
 	useEffect(() => {
 
 		if(!webwallet) {
@@ -112,7 +114,7 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 				} else if(step === 'tx-confirmed') {
 					setInviteJoinStep(3)
 				}
-			})
+			}, setTransactionHash)
 
 			setInviteJoinStep(5)
 
@@ -224,6 +226,12 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 						'Waiting for transaction to index',
 						'Profile created on-chain'
 					]
+				}
+				transactionHash={transactionHash}
+				onClose={
+					() => {
+						setInviteJoinStep(undefined)
+					}
 				}
 			/>
 			{/* <ConnectWalletModal

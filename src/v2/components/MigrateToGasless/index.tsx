@@ -158,7 +158,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 						'Migration successful'
 					]
 				}
-				transactionHash='0x2974b9fb49e5d45d54f250906b3fb29f911dcc1c962d00c1cfc2cf0bba4bf987'
+				transactionHash=''
 				onClose={() => setNetworkModalStep(undefined)}
 			/>
 		</>

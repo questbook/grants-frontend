@@ -15,7 +15,7 @@ export type NetworkTransactionModalProps = {
 	steps: string[]
 
 	/** transaction hash of the completed transaction */
-	transactionHash: string
+	transactionHash: string | undefined
 	/** function to execute when closing the modal */
 	onClose: () => void
 }
@@ -115,7 +115,7 @@ export default ({
 						}
 
 						{
-							currentStepIndex === steps.length && transactionHash?.length > 0 && (
+							currentStepIndex === steps.length && (transactionHash?.length || 0) > 0 && (
 								<Flex mt='4'>
 									<Button
 										variant='link'
