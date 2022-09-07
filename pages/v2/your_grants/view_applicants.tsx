@@ -945,6 +945,7 @@ function ViewApplicants() {
 								applicantsData={applicantsData}
 								onSendFundsClicked={onSendFundsButtonClicked}
 								onBulkSendFundsClicked={onSendFundsButtonClicked}
+								onSetupApplicantEvaluationClicked={() => setRubricDrawerOpen(true)}
 								grantData={grantData}
 							/>
 						</TabPanel>
