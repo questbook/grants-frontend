@@ -8,7 +8,7 @@ import { MinimalWorkspace } from 'src/types'
 import getTabFromPath from 'src/utils/tabUtils'
 import Domains from 'src/v2/components/Sidebar/Domains'
 import SidebarItem from 'src/v2/components/Sidebar/SidebarItem'
-import { TabIndex, useGetTabs } from 'src/v2/components/Sidebar/Tabs'
+import { TAB_INDEXES, useGetTabs } from 'src/v2/components/Sidebar/Tabs'
 import { useConnect } from 'wagmi'
 
 function Sidebar() {
@@ -21,10 +21,10 @@ function Sidebar() {
 	const router = useRouter()
 	const toast = useToast()
 
-	const [tabSelected, setTabSelected] = React.useState<TabIndex>(getTabFromPath(router.pathname))
+	const [tabSelected, setTabSelected] = React.useState<number>(TAB_INDEXES[getTabFromPath(router.pathname)])
 
 	React.useEffect(() => {
-		setTabSelected(getTabFromPath(router.pathname))
+		setTabSelected(TAB_INDEXES[getTabFromPath(router.pathname)])
 	}, [router.pathname])
 
 	const [workspaces, setWorkspaces] = React.useState<MinimalWorkspace[]>([])
@@ -41,14 +41,12 @@ function Sidebar() {
 
 		const getWorkspaceData = async(userAddress: string) => {
 			try {
-				const promises = getAllWorkspaces.map(
+				const promises: Array<Promise<Array<MinimalWorkspace>>> = getAllWorkspaces.map(
 					(allWorkspaces) => new Promise(async(resolve) => {
 						try {
-
 							const { data } = await allWorkspaces[0]({
 								variables: { actorId: userAddress },
 							})
-							// console.log('THIS ISSSS DATA', data)
 							if(data && data.workspaceMembers.length > 0) {
 								resolve(data.workspaceMembers.map((w) => w.workspace))
 							} else {
@@ -59,8 +57,8 @@ function Sidebar() {
 						}
 					})
 				)
-				Promise.all(promises).then((values: any[]) => {
-					const allWorkspacesData = [].concat(...values) as MinimalWorkspace[]
+				Promise.all(promises).then((values) => {
+					const allWorkspacesData = values as unknown as MinimalWorkspace[]
 					const tempSet = new Set([...workspaces, ...allWorkspacesData])
 					// console.log('WORKSPACE SET: ', tempSet)
 					setWorkspaces(Array.from(tempSet))
@@ -78,7 +76,7 @@ function Sidebar() {
 						setWorkspace(allWorkspacesData[i])
 					}
 				})
-			} catch(e: any) {
+			} catch(_) {
 				toast({
 					title: 'Error getting workspace data',
 					status: 'error',
@@ -102,11 +100,11 @@ function Sidebar() {
 			border='1px solid #E0E0EC'
 		>
 			{
-				workspace && workspace.id && accountData?.address && (
+				workspace?.id && accountData?.address && (
 					<Domains
 						workspaces={workspaces}
 						onWorkspaceClick={
-							(index: TabIndex) => {
+							(index) => {
 								setWorkspace(workspaces[index])
 							}
 						}

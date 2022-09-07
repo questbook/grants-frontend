@@ -7,19 +7,30 @@ import {
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { useConnect } from 'wagmi'
 
-enum TabIndex {
-	DISCOVER, MY_APPLICATIONS, DASHBOARD, GRANTS_AND_BOUNTIES, SAFE, APPS, SETTINGS, PAYOUTS
+type Tabs = 'DISCOVER' | 'MY_APPLICATIONS' | 'DASHBOARD' | 'GRANTS_AND_BOUNTIES' | 'SAFE' | 'APPS' | 'SETTINGS' | 'PAYOUTS'
+
+const TAB_INDEXES: {[_ in Tabs]: number} = {
+	DISCOVER: 0,
+	MY_APPLICATIONS: 1,
+	DASHBOARD: 2,
+	GRANTS_AND_BOUNTIES: 3,
+	SAFE: 4,
+	APPS: 5,
+	SETTINGS: 6,
+	PAYOUTS: 7,
 }
 
+export type TabType = keyof typeof TAB_INDEXES
+
 const TABS = [
-	{ id: 'discover', index: TabIndex.DISCOVER, name: 'Discover', path: '/browse_dao' },
-	{ id: 'my_applications', index: TabIndex.MY_APPLICATIONS, name: 'My Applications', path: '/your_applications' },
-	{ id: 'dashboard', index: TabIndex.DASHBOARD, name: 'Dashboard', path: '/dashboard' },
-	{ id: 'grants_and_bounties', index: TabIndex.GRANTS_AND_BOUNTIES, name: 'Grants And Bounties', path: '/your_grants' },
-	{ id: 'safe', index: TabIndex.SAFE, name: 'Safe', path: '/safe' },
-	{ id: 'apps', index: TabIndex.APPS, name: 'Apps', path: '/apps' },
-	{ id: 'settings', index: TabIndex.SETTINGS, name: 'Settings', path: '/manage_dao' },
-	{ id: 'payouts', index: TabIndex.PAYOUTS, name: 'Payouts', path: '/payouts' }
+	{ id: 'discover', index: TAB_INDEXES.DISCOVER, name: 'Discover', path: '/browse_dao' },
+	{ id: 'my_applications', index: TAB_INDEXES.MY_APPLICATIONS, name: 'My Applications', path: '/your_applications' },
+	{ id: 'dashboard', index: TAB_INDEXES.DASHBOARD, name: 'Dashboard', path: '/dashboard' },
+	{ id: 'grants_and_bounties', index: TAB_INDEXES.GRANTS_AND_BOUNTIES, name: 'Grants And Bounties', path: '/your_grants' },
+	{ id: 'safe', index: TAB_INDEXES.SAFE, name: 'Safe', path: '/safe' },
+	{ id: 'apps', index: TAB_INDEXES.APPS, name: 'Apps', path: '/apps' },
+	{ id: 'settings', index: TAB_INDEXES.SETTINGS, name: 'Settings', path: '/manage_dao' },
+	{ id: 'payouts', index: TAB_INDEXES.PAYOUTS, name: 'Payouts', path: '/payouts' }
 ]
 
 function useGetTabs() {
@@ -36,7 +47,7 @@ function useGetTabs() {
 
 	const getNumberOfApplications = async() => {
 		try {
-			const promises = getNumberOfApplicationsClients.map(
+			const promises: Array<Promise<number>> = getNumberOfApplicationsClients.map(
 				// eslint-disable-next-line no-async-promise-executor
 				(query) => new Promise(async(resolve) => {
 					const { data } = await query[0]({
@@ -49,11 +60,11 @@ function useGetTabs() {
 					}
 				}),
 			)
-			Promise.all(promises).then((value: any[]) => {
+			Promise.all(promises).then((value) => {
 				const sum = value.reduce((a, b) => a + b, 0)
 				setApplicationCount(sum)
 			})
-		} catch(e: any) {
+		} catch(_) {
 			toast({
 				title: 'Error getting application count',
 				status: 'error',
@@ -102,4 +113,4 @@ function useGetTabs() {
 	}
 }
 
-export { useGetTabs, TabIndex, TABS }
+export { useGetTabs, TAB_INDEXES, TABS }
