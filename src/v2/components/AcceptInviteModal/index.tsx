@@ -1,4 +1,4 @@
-import { createElement, useContext, useEffect, useRef, useState } from 'react'
+import { ChangeEvent, createElement, useContext, useEffect, useRef, useState } from 'react'
 import { Box, Button, HStack, Image, Input, Modal, ModalCloseButton, ModalContent, ModalOverlay, Progress, Spacer, Text, useToast, VStack } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import { WebwalletContext } from 'pages/_app'
@@ -124,12 +124,12 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 			})
 
 			onClose()
-		} catch(error: any) {
+		} catch(error) {
 			// console.error('error in join ', error)
 
 			const toastId = toast({
 				render: () => ErrorToast({
-					content: `Error in joining the DAO: "${error.message}"`,
+					content: `Error in joining the DAO: "${(error as Error).message}"`,
 					close: () => {
 						toast.close(toastId!)
 					},
@@ -296,7 +296,7 @@ const Step2LeftDisplay = ({ role, profile }: DisplayProps) => {
 	const [profileImageUrl, setProfileImageUrl] = useState(profile.profileImageUrl)
 	const imageUploadRef = useRef<HTMLInputElement>(null)
 
-	const onImageUpdate = (event: React.ChangeEvent<HTMLInputElement>) => {
+	const onImageUpdate = (event: ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0]
 		if(file) {
 			const imgUrl = URL.createObjectURL(file)
