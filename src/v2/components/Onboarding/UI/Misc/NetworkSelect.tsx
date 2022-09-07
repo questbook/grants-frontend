@@ -1,8 +1,9 @@
 import { Box, Button, Text } from '@chakra-ui/react'
+import { GroupBase, OptionProps } from 'chakra-react-select'
 import DropdownSelect from 'src/v2/components/DropdownSelect'
 import { NetworkSelectOption, supportedNetworks } from 'src/v2/components/Onboarding/SupportedNetworksData'
 
-const Option = ({ innerProps, data }: any) => (
+const Option = ({ innerProps, data }: OptionProps<NetworkSelectOption, boolean, GroupBase<NetworkSelectOption>>) => (
 	<Box
 		{...innerProps}
 		alignItems='center'
