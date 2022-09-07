@@ -299,7 +299,7 @@ function Profile() {
 							fontSize='20px'>
 							{workspaceData?.title}
 						</Text>
-						{
+						{/* {
 							chainID && (
 								<Text
 									variant='applicationText'
@@ -311,7 +311,7 @@ function Profile() {
 									{CHAIN_INFO[chainID].name}
 								</Text>
 							)
-						}
+						} */}
 					</Flex>
 
 					<Stack px='1.5rem'>
