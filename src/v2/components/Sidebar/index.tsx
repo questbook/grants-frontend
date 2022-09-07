@@ -1,25 +1,22 @@
-import React from 'react'
-import { Divider, Flex, useToast } from '@chakra-ui/react'
+import React, { useEffect } from 'react'
+import { Divider, Flex } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
-import { useGetWorkspaceMembersLazyQuery } from 'src/generated/graphql'
+import { GetWorkspaceMembersQuery, useGetWorkspaceMembersQuery } from 'src/generated/graphql'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import { MinimalWorkspace } from 'src/types'
 import getTabFromPath from 'src/utils/tabUtils'
 import Domains from 'src/v2/components/Sidebar/Domains'
 import SidebarItem from 'src/v2/components/Sidebar/SidebarItem'
 import { TAB_INDEXES, useGetTabs } from 'src/v2/components/Sidebar/Tabs'
-import { useConnect } from 'wagmi'
 
 function Sidebar() {
 	const [topTabs, bottomTabs] = useGetTabs()
 	const { data: accountData } = useQuestbookAccount()
-	const { isConnected } = useConnect()
-	const { workspace, setWorkspace, subgraphClients, connected } =
-    React.useContext(ApiClientsContext)!
+	const { workspace, setWorkspace } = React.useContext(ApiClientsContext)!
 
 	const router = useRouter()
-	const toast = useToast()
 
 	const [tabSelected, setTabSelected] = React.useState<number>(TAB_INDEXES[getTabFromPath(router.pathname)])
 
@@ -29,63 +26,49 @@ function Sidebar() {
 
 	const [workspaces, setWorkspaces] = React.useState<MinimalWorkspace[]>([])
 
-	const getAllWorkspaces = Object.keys(subgraphClients)!.map((key) => useGetWorkspaceMembersLazyQuery({ client: subgraphClients[key].client }))
-	React.useEffect(() => {
-		if(!accountData?.address) {
-			return
-		}
-
-		if(!getAllWorkspaces) {
-			return
-		}
-
-		const getWorkspaceData = async(userAddress: string) => {
-			try {
-				const promises: Array<Promise<Array<MinimalWorkspace>>> = getAllWorkspaces.map(
-					(allWorkspaces) => new Promise(async(resolve) => {
-						try {
-							const { data } = await allWorkspaces[0]({
-								variables: { actorId: userAddress },
-							})
-							if(data && data.workspaceMembers.length > 0) {
-								resolve(data.workspaceMembers.map((w) => w.workspace))
-							} else {
-								resolve([])
-							}
-						} catch(err) {
-							resolve([])
-						}
-					})
-				)
-				Promise.all(promises).then((values) => {
-					const allWorkspacesData = values as unknown as MinimalWorkspace[]
-					const tempSet = new Set([...workspaces, ...allWorkspacesData])
-					// console.log('WORKSPACE SET: ', tempSet)
-					setWorkspaces(Array.from(tempSet))
-
-					const savedWorkspaceData = localStorage.getItem('currentWorkspace')
-					if(!savedWorkspaceData || savedWorkspaceData === 'undefined') {
-						setWorkspace(allWorkspacesData[0])
-					} else {
-						const savedWorkspaceDataChain = savedWorkspaceData.split('-')[0]
-						const savedWorkspaceDataId = savedWorkspaceData.split('-')[1]
-						const i = allWorkspacesData.findIndex(
-							(w) => w.id === savedWorkspaceDataId &&
-                w.supportedNetworks[0] === savedWorkspaceDataChain
-						)
-						setWorkspace(allWorkspacesData[i])
-					}
-				})
-			} catch(_) {
-				toast({
-					title: 'Error getting workspace data',
-					status: 'error',
-				})
+	const { results, fetchMore } = useMultiChainQuery({
+		useQuery: useGetWorkspaceMembersQuery,
+		options: {
+			variables: {
+				actorId: accountData?.address ?? '',
 			}
 		}
+	})
 
-		getWorkspaceData(accountData?.address)
-	}, [isConnected, accountData, connected])
+	useEffect(() => {
+		if(accountData?.address) {
+			fetchMore({
+				actorId: accountData?.address,
+			}, true)
+		}
+	}, [accountData?.address])
+
+	useEffect(() => {
+		const workspaces: MinimalWorkspace[] = []
+		results.forEach((result: GetWorkspaceMembersQuery | undefined) => {
+			if(result !== undefined && (result?.workspaceMembers?.length || 0) > 0) {
+				result.workspaceMembers?.forEach((workspaceMember) => {
+					workspaces.push(workspaceMember?.workspace)
+				})
+			}
+		})
+		setWorkspaces(workspaces)
+
+		if(workspaces.length > 0) {
+			const savedWorkspaceData = localStorage.getItem('currentWorkspace')
+			if(!savedWorkspaceData || savedWorkspaceData === 'undefined') {
+				setWorkspace(workspaces[0])
+			} else {
+				const savedWorkspaceDataChain = savedWorkspaceData.split('-')[0]
+				const savedWorkspaceDataId = savedWorkspaceData.split('-')[1]
+				const i = workspaces.findIndex(
+					(w) => w.id === savedWorkspaceDataId &&
+	            w.supportedNetworks[0] === savedWorkspaceDataChain
+				)
+				setWorkspace(workspaces[i])
+			}
+		}
+	}, [results])
 
 	return (
 		<Flex
@@ -104,8 +87,9 @@ function Sidebar() {
 					<Domains
 						workspaces={workspaces}
 						onWorkspaceClick={
-							(index) => {
+							(index, onComplete: () => void) => {
 								setWorkspace(workspaces[index])
+								router.push('/dashboard').then(onComplete)
 							}
 						}
 					/>

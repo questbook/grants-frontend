@@ -1,9 +1,11 @@
 import {
-	ApolloClient, gql,
+	ApolloClient,
 	HttpLink, InMemoryCache,
 } from '@apollo/client'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
+import { GetLatestBlockDocument } from 'src/generated/graphql'
+import { delay } from 'src/utils/generics'
 
 class SubgraphClient {
 	client: ApolloClient<{ }>
@@ -15,45 +17,24 @@ class SubgraphClient {
 			cache: new InMemoryCache(),
 		})
 		this.client = client
+		this.waitForBlock = this.waitForBlock.bind(this)
 	}
 
-	// eslint-disable-next-line class-methods-use-this
 	async waitForBlock(blockNumber: number) {
-		// It's ok to start with minBlock at 0. The query will be served
-		// using the latest block available. Setting minBlock to 0 is the
-		// same as leaving out that argument.
-		let minBlock = 0
-
-		while(minBlock < blockNumber) {
+		let latestBlockNumber = 0
+		do {
 			// Schedule a promise that will be ready once
 			// the next Ethereum block will likely be available.
-
-			// average block time is 12-14 seconds
-			const nextBlock = new Promise((f) => {
-				setTimeout(f, 5000)
-			})
-
-			const query = `
-				query {
-					_meta(block: {number_gte: ${minBlock}}) {
-					block {
-						number
-					}
-					}
-				}`
-
-			// eslint-disable-next-line no-await-in-loop
 			const response = await this.client.query({
-				query: gql(query),
+				query: GetLatestBlockDocument,
 				fetchPolicy: 'network-only',
 			})
 			// eslint-disable-next-line no-underscore-dangle
-			minBlock = response.data._meta.block.number
-			// console.log(minBlock)
-			// Sleep to wait for the next block
-			// eslint-disable-next-line no-await-in-loop
-			await nextBlock
-		}
+			latestBlockNumber = response.data._meta.block.number
+
+			// waiting for 4 seconds to fetch next block(s)
+			await delay(4000)
+		} while(latestBlockNumber < blockNumber)
 	}
 }
 

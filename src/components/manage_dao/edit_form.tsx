@@ -152,16 +152,20 @@ function EditForm({ workspaceData }: EditFormProps) {
 	}
 
 	const handleSubmit = async() => {
-		if(!editedFormData?.bio?.length) {
-			return updateEditError('bio', 'Please enter a bio')
-		}
+		// if(!editedFormData?.bio?.length) {
+		// 	return updateEditError('bio', 'Please enter a bio')
+		// }
 
-		if(!editedFormData?.name?.length) {
-			return updateEditError('name', 'Please enter a name')
-		}
+		// if(!editedFormData?.name?.length) {
+		// 	return updateEditError('name', 'Please enter a name')
+		// }
 
-		if(!editedFormData?.about?.getCurrentContent()?.hasText()) {
-			return updateEditError('about', 'Please enter about')
+		// if(!editedFormData?.about?.getCurrentContent()?.hasText()) {
+		// 	return updateEditError('about', 'Please enter about')
+		// }
+
+		if(!editedFormData) {
+			return
 		}
 
 		const data = await generateWorkspaceUpdateRequest(
@@ -255,21 +259,6 @@ function EditForm({ workspaceData }: EditFormProps) {
 						)
 						: undefined
 				}
-			</Grid>
-			<Grid
-				w='100%'
-				gridTemplateColumns='4fr 1fr'
-				justifyItems='space-between'
-				mt={8}
-			>
-				<SingleLineInput
-					label='Network'
-					placeholder='Network'
-					value={supportedNetwork}
-					onChange={() => {}}
-					isError={false}
-					disabled
-				/>
 			</Grid>
 			<Grid
 				w='80%'

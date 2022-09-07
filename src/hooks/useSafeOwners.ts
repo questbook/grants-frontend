@@ -2,13 +2,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import { NetworkType } from 'src/constants/Networks'
 import SAFES_ENPOINTS_MAINNETS from 'src/constants/safesEndpoints.json'
+import SAFES_ENPOINTS_TESTNETS from 'src/constants/safesEndpointsTest.json'
 import useAxios from 'src/hooks/utils/useAxios'
 import { getOwners } from 'src/v2/constants/safe/realms_solana'
 
 const URL_PREFIX = 'v1/safes/'
 const URL_SUFFIX = ''
 // const SAFES_ENDPOINTS = process.env.NEXT_PUBLIC_IS_TEST === 'true' ? SAFES_ENPOINTS_TESTNETS : SAFES_ENPOINTS_MAINNETS
-const SAFES_ENDPOINTS = SAFES_ENPOINTS_MAINNETS
+const SAFES_ENDPOINTS = { ...SAFES_ENPOINTS_MAINNETS, ...SAFES_ENPOINTS_TESTNETS };
 
 interface Props {
     safeAddress: string
