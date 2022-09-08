@@ -44,8 +44,8 @@ import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import StyledTab from 'src/v2/components/StyledTab'
 import NoReviewerBanner from 'src/v2/components/ViewApplicants/NoReviewerBanner'
 import RubricNotSetBanner from 'src/v2/components/ViewApplicants/RubricNotSetBanner'
-import { Gnosis_Safe } from 'src/v2/constants/safe/gnosis_safe'
-import { Realms_Solana, solanaToUsd, usdToSolana } from 'src/v2/constants/safe/realms_solana'
+import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
+import { RealmsSolana, solanaToUsd, usdToSolana } from 'src/v2/constants/safe/realms_solana'
 import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import AcceptedProposalsPanel from 'src/v2/payouts/AcceptedProposals/AcceptedProposalPanel'
@@ -412,10 +412,10 @@ function ViewApplicants() {
 	const currentSafe = useMemo(() => {
 		if(isEvmChain) {
 			const txnServiceURL = safeServicesInfo[workspaceSafeChainId]
-			return new Gnosis_Safe(workspaceSafeChainId, txnServiceURL, workspaceSafe)
+			return new GnosisSafe(workspaceSafeChainId, txnServiceURL, workspaceSafe)
 		} else {
 			if(isPlausibleSolanaAddress(workspaceSafe)) {
-				return new Realms_Solana(workspaceSafe)
+				return new RealmsSolana(workspaceSafe)
 			}
 		}
 	}, [workspaceSafe])

@@ -3,9 +3,9 @@ import Safe from '@gnosis.pm/safe-core-sdk'
 import EthersAdapter from '@gnosis.pm/safe-ethers-lib'
 import SafeServiceClient from '@gnosis.pm/safe-service-client'
 import { ethers } from 'ethers'
-import { MetaTransaction, Safe as GnosisSafe, TransactionType } from 'src/v2/types/safe'
+import { MetaTransaction, Safe as _GnosisSafe, TransactionType } from 'src/v2/types/safe'
 
-export class Gnosis_Safe implements GnosisSafe {
+export class GnosisSafe implements _GnosisSafe {
 	id: string
 	name: string
 	description: string

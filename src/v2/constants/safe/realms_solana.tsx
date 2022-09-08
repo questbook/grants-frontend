@@ -21,7 +21,7 @@ import { NetworkType } from 'src/constants/Networks';
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect';
 import { MetaTransaction, Safe, TransactionType } from 'src/v2/types/safe';
 
-export class Realms_Solana implements Safe {
+export class RealmsSolana implements Safe {
 	id: PublicKey | undefined
 	name: string
 	description: string
