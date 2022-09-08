@@ -12,7 +12,7 @@ export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boole
 	const { webwallet, scwAddress, setScwAddress, nonce } = useContext(WebwalletContext)!
 	const { biconomyDaoObj, setBiconomyDaoObj, biconomyWalletClient, setBiconomyWalletClient } = useContext(BiconomyContext)!
 	const { switchNetwork } = useNetwork()
-	const [biconomyInitPromises, setBiconomyInitPromises] = useState<{ [chainId: string]: Promise<void> }>({})
+	const [biconomyInitPromises, setBiconomyInitPromises] = useState<{ [chainId: string]: Promise<void> | undefined }>({})
 
 	const initiateBiconomy = useCallback(async(chainId: string) => {
 		if(!webwallet) {
@@ -29,7 +29,7 @@ export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boole
 			jsonRpcProviders[chainId],
 			{
 				apiKey: bicoDapps[chainId].apiKey,
-				debug: true // TODO: remove this?
+				debug: true 
 			}
 		)
 		logger.info('initializing biconomy')
@@ -40,13 +40,18 @@ export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boole
 				logger.info('biconomy ready')
 
 				_biconomyWalletClient = await _biconomy.biconomyWalletClient
-				// TODO: check if SCW already deployed
-				// if deployed, return the address
-				const walletAddress = await deploySCW(webwallet, _biconomyWalletClient, chainId, nonce!)
+				
+				const { doesWalletExist, walletAddress } = await _biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address })
+				
+				if(doesWalletExist){
+					resolve(walletAddress);
+				}
+				
+				const newWalletAddress = await deploySCW(webwallet, _biconomyWalletClient, chainId, nonce!)
 
-				logger.info({ walletAddress, chainId }, 'scw deployed')
+				logger.info({ newWalletAddress, chainId }, 'scw deployed')
 
-				resolve(walletAddress)
+				resolve(newWalletAddress)
 			})
 
 			_biconomy.onEvent(_biconomy.ERROR, (err: Error) => {
@@ -62,6 +67,7 @@ export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boole
 	}, [webwallet, data.chainId, nonce])
 
 	useEffect(() => {
+
 		if(typeof window === 'undefined') {
 			return
 		}
@@ -79,8 +85,7 @@ export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boole
 				.finally(() => {
 					if(!disposed) {
 						setBiconomyInitPromises(prev => {
-							delete prev[chainId]
-							return prev
+							return { ...prev, [chainId]: undefined }
 						})
 					}
 				})
