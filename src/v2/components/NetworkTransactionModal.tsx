@@ -42,7 +42,7 @@ export default ({
 			onClose={() => { }}
 			isCentered
 			scrollBehavior='outside'
-			size='sm'
+			size='md'
 		>
 			<AlertDialogOverlay
 				background='rgba(31, 31, 51, 0.75)'
