@@ -32,7 +32,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 	const [isConnectWalletModalOpen, setIsConnectWalletModalOpen] = useState(false)
 	const [hasDAO, setHasDAO] = useState(false)
 
-	const workspaceContract = useQBContract('applications', walletChain?.id as SupportedChainId, false)
+	const workspaceContract = useQBContract('workspace', walletChain?.id as SupportedChainId, false)
 
 	const [networkModalStep, setNetworkModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>()
