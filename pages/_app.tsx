@@ -116,6 +116,9 @@ export const WebwalletContext = createContext<{
 	switchNetwork: (newNetwork?: SupportedChainId) => void
 	scwAddress?: string
 	setScwAddress: (scwAddress?: string) => void
+
+	waitForScwAddress: Promise<string>
+
 	nonce?: string
 	setNonce: (nonce?: string) => void
 	loadingNonce: boolean
@@ -236,6 +239,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 				setWebwallet(newWebwallet)
 			},
+			waitForScwAddress: (async() => {
+				// TODO
+				return '0x0000000000000000000000000000000000000001'
+			})(),
 			network: network,
 			switchNetwork: (newNetwork?: SupportedChainId) => {
 				if(newNetwork) {
