@@ -15,6 +15,7 @@ import { DefaultSeo } from 'next-seo'
 import {
 	ALL_SUPPORTED_CHAIN_IDS,
 	CHAIN_INFO,
+	defaultChainId,
 	SupportedChainId,
 } from 'src/constants/chains'
 import SubgraphClient from 'src/graphql/subgraph'
@@ -134,7 +135,7 @@ export const BiconomyContext = createContext<{
 		} | null>(null)
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-	const [network, switchNetwork] = React.useState<SupportedChainId>(5)
+	const [network, switchNetwork] = React.useState<SupportedChainId>(defaultChainId)
 	const [webwallet, setWebwallet] = React.useState<Wallet>()
 	const [workspace, setWorkspace] = React.useState<MinimalWorkspace>()
 	const [scwAddress, setScwAddress] = React.useState<string>()
@@ -182,7 +183,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}
 
 	const getNetwork = () => {
-		return 5
+		return defaultChainId
 
 		// const _network = localStorage.getItem('network')
 
