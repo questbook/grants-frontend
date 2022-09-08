@@ -96,7 +96,8 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 			setNetworkModalStep(1)
 
 			logger.info({ wallet: walletData.address, scwAddress }, 'migrating to gasless')
-
+			logger.info({ signerFromWagmi: signer, signerFromContract: workspaceContract.signer }, 'Signer')
+			logger.info({ walletChain }, 'Current Chain')
 			const transaction = await workspaceContract.migrateWallet(walletData.address, scwAddress)
 
 			setNetworkModalStep(2)
@@ -111,15 +112,16 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 			// set to ensure ensure migration doesn't occur again
 			localStorage.setItem('didMigrate', 'true')
 			onClose()
-		} catch(err) {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		} catch(err: any) {
+			setNetworkModalStep(undefined)
 			logger.error({ err }, 'Error migrating wallet')
 			toast({
-				title: `Migration error "${e?.message}"`,
-				status: 'error',
+				title: `Migration error "${err?.message}"`,
+				status: 'warning',
 				duration: 9000,
 				isClosable: true,
 			})
-			setNetworkModalStep(undefined)
 		}
 	}
 
