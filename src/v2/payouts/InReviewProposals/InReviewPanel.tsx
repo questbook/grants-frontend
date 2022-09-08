@@ -4,6 +4,7 @@ import { Badge, Box, Button, ButtonProps, Checkbox, Flex, forwardRef, Grid, Grid
 import { useRouter } from 'next/router'
 import { GetGrantDetailsQuery } from 'src/generated/graphql'
 import useBatchUpdateApplicationState from 'src/hooks/useBatchUpdateApplicationState'
+import { IApplicantData } from 'src/types'
 import { formatAddress } from 'src/utils/formattingUtils'
 import { AcceptApplication } from 'src/v2/assets/custom chakra icons/AcceptApplication'
 import { RejectApplication } from 'src/v2/assets/custom chakra icons/RejectApplication'
@@ -16,9 +17,8 @@ const InReviewPanel = ({
 	applicantsData,
 	grantData,
 }: {
-  applicantsData: any[]
+  applicantsData: IApplicantData[]
   grantData?: GetGrantDetailsQuery
-
 }) => {
 	const [checkedItems, setCheckedItems] = useState<boolean[]>(applicantsData.filter((item) => (0 === item.status)).map(() => false))
 	const [checkedApplicationsIds, setCheckedApplicationsIds] = useState<number[]>([])
@@ -29,7 +29,7 @@ const InReviewPanel = ({
 
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 	const [state, setState] = useState<number>(5)
-	const [inReviewApplications, setInReviewApplications] = useState<any[]>([])
+	const [inReviewApplications, setInReviewApplications] = useState<IApplicantData[]>([])
 
 	const someChecked = checkedItems.some((element) => {
 		return element
@@ -59,7 +59,7 @@ const InReviewPanel = ({
 	}, [isAcceptClicked, isRejectClicked, isResubmitClicked])
 
 	useEffect(() => {
-		const inReviewApplications = applicantsData?.filter((item: any) => (0 === item.status))
+		const inReviewApplications = applicantsData?.filter((item) => (0 === item.status))
 
 		if(checkedItems.length === 0) {
 			return
@@ -124,7 +124,7 @@ const InReviewPanel = ({
 	}
 
 
-	if(applicantsData?.filter((item: any) => (0 === item.status)).length === 0) {
+	if(applicantsData?.filter((item) => (0 === item.status)).length === 0) {
 		return (
 			<ZeroState />
 		)
@@ -278,7 +278,7 @@ const InReviewPanel = ({
 						// defaultChecked={false}
 						isChecked={checkedItems.length > 0 && allChecked}
 						onChange={
-							(e: any) => {
+							(e) => {
 								const tempArr = Array(inReviewApplications.length).fill(e.target.checked)
 								setCheckedItems(tempArr)
 							}
@@ -331,13 +331,13 @@ const InReviewPanel = ({
 				{/* new ro */}
 
 				{
-					applicantsData?.filter((item: any) => (0 === item.status)).map((applicantData: any, i) => (
+					applicantsData?.filter((item) => (0 === item.status)).map((applicantData, i) => (
 						<InReviewRow
 							key={`inreview-${i}`}
 							applicantData={applicantData}
 							isChecked={checkedItems[i]}
 							onChange={
-								(e: any) => {
+								(e) => {
 									const tempArr: boolean[] = []
 									tempArr.push(...checkedItems)
 									tempArr[i] = e.target.checked

@@ -1,10 +1,12 @@
+import { QueryResult } from '@apollo/client'
 import { Button, Flex, Text } from '@chakra-ui/react'
+import { GetGrantDetailsQuery, GetGrantDetailsQueryVariables } from 'src/generated/graphql'
 
 const ZeroState = ({
 	grantData,
 	onSetupApplicantEvaluationClicked
 }: {
-	grantData: any,
+	grantData: QueryResult<GetGrantDetailsQuery, GetGrantDetailsQueryVariables>['data']
 	onSetupApplicantEvaluationClicked: () => void
 }) => {
 	return (

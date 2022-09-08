@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from 'react'
+import React, { MouseEventHandler, useContext, useEffect, useMemo, useState } from 'react'
 import {
 	Button,
 	Checkbox,
@@ -18,7 +18,7 @@ import {
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { defaultChainId } from 'src/constants/chains'
-import { IReview, IReviewFeedback } from 'src/types'
+import { IApplicantData, IReview, IReviewFeedback } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { useLoadReview } from 'src/utils/reviews'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -35,13 +35,13 @@ const InReviewRow = ({
 	onRejectClicked,
 	onResubmitClicked,
 }: {
-	applicantData: any
+	applicantData: IApplicantData
 	isChecked: boolean
-	onChange: (e: any) => void
+	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 	someChecked: boolean
-	onAcceptClicked: (e: any) => void
-	onRejectClicked: (e: any) => void
-	onResubmitClicked: (e: any) => void
+	onAcceptClicked: MouseEventHandler | undefined
+	onRejectClicked: MouseEventHandler | undefined
+	onResubmitClicked: MouseEventHandler | undefined
 }) => {
 	const { workspace } = useContext(ApiClientsContext)!
  	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
@@ -241,7 +241,7 @@ const InReviewRow = ({
 						</Flex>
 
 						{
-							applicantData?.reviewers?.map((reviewer: any, i: number) => {
+							applicantData?.reviewers?.map((reviewer, i) => {
 								const reviewerIdSplit = reviewer?.id.split('.')
 								const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
 								return (
@@ -362,13 +362,13 @@ const InReviewRow = ({
 													</Text>
 												</Flex>
 												{
-													[applicantData?.reviewers?.find((reviewer: any) => {
+													[applicantData?.reviewers?.find((reviewer) => {
 														const reviewerIdSplit = reviewer?.id.split('.')
 														const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
 														return reviewerId === reviewKey
-													})].map((reviewer: any, i: number) => {
+													})].map((reviewer, i) => {
 														const reviewerIdSplit = reviewer?.id.split('.')
-														const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
+														const reviewerId = reviewerIdSplit ? reviewerIdSplit[reviewerIdSplit.length - 1] : undefined
 														// console.log(reviewerId)
 														return (
 															<>
@@ -421,7 +421,7 @@ const InReviewRow = ({
 																			color='#7D7DA0'
 																			ml='auto'
 																		>
-																			{reviews[reviewerId] ? totalScore(reviews[reviewerId]) : 0}
+																			{reviewerId && reviews[reviewerId] ? totalScore(reviews[reviewerId]) : 0}
 																		</Text>
 																	</Flex>
 																</MenuItem>
@@ -518,7 +518,7 @@ const InReviewRow = ({
 								borderRadius='2px'
 								mr={4}
 								ml='auto'
-								onClick={(e) => onAcceptClicked(e)}
+								onClick={onAcceptClicked}
 							>
 								<AcceptApplication />
 							</Button>
@@ -533,7 +533,7 @@ const InReviewRow = ({
 								h='auto'
 								borderRadius='2px'
 								mr={4}
-								onClick={(e) => onResubmitClicked(e)}
+								onClick={onResubmitClicked}
 							>
 								<ResubmitApplication />
 							</Button>
@@ -548,7 +548,7 @@ const InReviewRow = ({
 								h='auto'
 								borderRadius='2px'
 								mr='auto'
-								onClick={(e) => onRejectClicked(e)}
+								onClick={onRejectClicked}
 							>
 								<RejectApplication />
 							</Button>

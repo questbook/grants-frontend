@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Badge, Button, Checkbox, Fade, Flex, GridItem, Image, Text, Tooltip } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import CopyIcon from 'src/components/ui/copy_icon'
+import { IApplicantData } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { FundsCircleFilled } from 'src/v2/assets/custom chakra icons/Your Grants/FundsCircleFilled'
 
@@ -14,9 +15,9 @@ const AcceptedRow = ({
 }: {
 	onSendFundsClicked: () => void
 	applicationStatus: number
-	applicantData: any
+	applicantData: IApplicantData
 	isChecked: boolean
-	onChange: (e: any) => void
+	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }) => {
 	const router = useRouter()
 	const [isHovering, setIsHovering] = useState(false)
@@ -175,7 +176,7 @@ const AcceptedRow = ({
 						fontWeight='500'
 						mr='auto'
 					>
-						{applicantData?.milestones?.filter((milestone: any) => milestone?.state === 'approved')?.length}
+						{applicantData?.milestones?.filter((milestone) => milestone?.state === 'approved')?.length}
 						{' '}
 						/
 						{' '}

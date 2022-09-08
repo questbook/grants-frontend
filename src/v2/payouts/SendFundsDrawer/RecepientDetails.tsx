@@ -1,4 +1,5 @@
 import { Box, Flex, Input, Text } from '@chakra-ui/react'
+import { IApplicantData } from 'src/types'
 import { ArrowDownCircle } from 'src/v2/assets/custom chakra icons/Arrows/ArrowDownCircle'
 import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
 import AlertBanner from 'src/v2/payouts/SendFundsDrawer/AlertBanner'
@@ -10,9 +11,9 @@ const RecipientDetails = ({
 	initiateTransactionData,
 	onChangeRecepientDetails,
 }: {
-	applicantData: any
+	applicantData: IApplicantData[]
 	initiateTransactionData: TransactionType[] | undefined
-	onChangeRecepientDetails: (applicationId: any, fieldName: string, fieldValue: any) => void
+	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: string | number) => void
 }) => {
 	return (
 		<>
@@ -84,7 +85,7 @@ const RecipientDetails = ({
 
 
 				{
-					applicantData.map((data: any, i: number) => (
+					applicantData.map((data, i) => (
 						<>
 							<Box
 								fontSize='14px'

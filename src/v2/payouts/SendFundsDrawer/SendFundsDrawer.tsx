@@ -9,13 +9,15 @@ import {
 	Flex,
 	Text,
 } from '@chakra-ui/react'
+import { IApplicantData } from 'src/types'
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
 import { FundsCircle } from 'src/v2/assets/custom chakra icons/Your Grants/FundsCircle'
-import { Gnosis_Safe } from 'src/v2/constants/safe/gnosis_safe'
-import { Realms_Solana } from 'src/v2/constants/safe/realms_solana'
+import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
+import { RealmsSolana } from 'src/v2/constants/safe/realms_solana'
 import RecipientDetails from 'src/v2/payouts/SendFundsDrawer/RecepientDetails'
 import SafeOwner from 'src/v2/payouts/SendFundsModal/SafeOwner'
+import { MODAL_STATE_INDEXES, ModalStateType } from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import { PhantomProvider } from 'src/v2/types/phantom'
 import { Safe, TransactionType } from 'src/v2/types/safe'
 
@@ -23,25 +25,19 @@ interface Props {
 	isOpen: boolean
 	onClose: () => void
 	safeAddress: string
-	proposals: any[]
-	onChangeRecepientDetails: (applicationId: any, fieldName: string, fieldValue: any) => void
+	proposals: IApplicantData[]
+	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: string | number) => void
 	phantomWallet: PhantomProvider | undefined
 	setPhantomWalletConnected: (value: boolean) => void
 	isEvmChain: boolean
-	current_safe?: Safe | Realms_Solana | Gnosis_Safe
+	current_safe?: Safe | RealmsSolana | GnosisSafe
 	signerVerified: boolean
 	initiateTransaction: () => Promise<void>
 	initiateTransactionData: TransactionType[]
 	onModalStepChange: (value: number) => Promise<void>
-	step: ModalState
+	step: ModalStateType
 }
 
-enum ModalState {
-	RECEIPT_DETAILS,
-	CONNECT_WALLET,
-	VERIFIED_OWNER,
-	TRANSATION_INITIATED
-}
 
 function SendFundsDrawer({
 	isOpen,
@@ -160,16 +156,16 @@ function SendFundsDrawer({
 								direction='column'
 							>
 								<Box
-									bg={step === 0 ? '#785EF0' : '#E0E0EC'}
+									bg={MODAL_STATE_INDEXES[step] === 0 ? '#785EF0' : '#E0E0EC'}
 									borderRadius='20px'
 									height={1}
 								/>
 
 								<Flex
 									mt={2}
-									color={step === 0 ? '#785EF0' : '#E0E0EC'}>
+									color={MODAL_STATE_INDEXES[step] === 0 ? '#785EF0' : '#E0E0EC'}>
 									{
-										step === 0 ? (
+										MODAL_STATE_INDEXES[step] === 0 ? (
 											<FishEye
 												h='14px'
 												w='14px' />
@@ -187,7 +183,7 @@ function SendFundsDrawer({
 										lineHeight='16px'
 										fontWeight='500'
 										ml={1}
-										color={step === 0 ? '#785EF0' : '#1F1F33'}
+										color={MODAL_STATE_INDEXES[step] === 0 ? '#785EF0' : '#1F1F33'}
 									>
 										Recipient Details
 									</Text>
@@ -199,16 +195,16 @@ function SendFundsDrawer({
 								direction='column'
 							>
 								<Box
-									bg={step === 1 || step === 2 ? '#785EF0' : '#E0E0EC'}
+									bg={MODAL_STATE_INDEXES[step] === 1 || MODAL_STATE_INDEXES[step] === 2 ? '#785EF0' : '#E0E0EC'}
 									borderRadius='20px'
 									height={1}
 								/>
 
 								<Flex
 									mt={2}
-									color={step === 1 || step === 2 ? '#785EF0' : '#E0E0EC'}>
+									color={MODAL_STATE_INDEXES[step] === 1 || MODAL_STATE_INDEXES[step] === 2 ? '#785EF0' : '#E0E0EC'}>
 									{
-										step === 1 || step === 2 ? (
+										MODAL_STATE_INDEXES[step] === 1 || MODAL_STATE_INDEXES[step] === 2 ? (
 											<FishEye
 												h='14px'
 												w='14px' />
@@ -226,7 +222,7 @@ function SendFundsDrawer({
 										lineHeight='16px'
 										fontWeight='500'
 										ml={1}
-										color={step === 1 || step === 2 ? '#785EF0' : '#1F1F33'}
+										color={MODAL_STATE_INDEXES[step] === 1 || MODAL_STATE_INDEXES[step] === 2 ? '#785EF0' : '#1F1F33'}
 									>
 										Verify as a safe owner
 									</Text>
@@ -235,7 +231,7 @@ function SendFundsDrawer({
 						</Flex>
 
 						{
-							step === 0 ? (
+							MODAL_STATE_INDEXES[step] === 0 ? (
 								<RecipientDetails
 									applicantData={proposals}
 									onChangeRecepientDetails={onChangeRecepientDetails}
@@ -266,14 +262,14 @@ function SendFundsDrawer({
 
 
 						{
-							step === ModalState.RECEIPT_DETAILS ? (
+							step === 'RECEIPT_DETAILS' ? (
 								<Button
 									ml='auto'
 									colorScheme='brandv2'
 									disabled={validateReceipentInput()}
 									onClick={
 										async() => {
-											onModalStepChange(step)
+											onModalStepChange(MODAL_STATE_INDEXES[step])
 										}
 									}>
 									Continue
@@ -283,14 +279,14 @@ function SendFundsDrawer({
 
 
 						{
-							step === ModalState.CONNECT_WALLET || step === ModalState.VERIFIED_OWNER ? (
+							step === 'CONNECT_WALLET' || step === 'VERIFIED_OWNER' ? (
 								<Button
 									ml='auto'
 									colorScheme='brandv2'
 									disabled={!signerVerified}
 									onClick={
 										async() => {
-											onModalStepChange(step)
+											onModalStepChange(MODAL_STATE_INDEXES[step])
 										}
 									}>
 									Initiate Transaction
