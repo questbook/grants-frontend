@@ -336,7 +336,12 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		}
 
 		const didHaveWallet = localStorage.getItem('wagmi.wallet')
-		if(didHaveWallet) {
+		const didMigrate = localStorage.getItem('didMigrate') === 'true'
+		if(!didHaveWallet && !didMigrate) {
+			localStorage.setItem('didMigrate', 'true')
+		}
+
+		if(didHaveWallet && !didMigrate) {
 			setMigrateModalOpen(true)
 		}
 	}, [])

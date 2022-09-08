@@ -89,6 +89,8 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 			await subgraphClients[walletChain?.id].waitForBlock(transactionData.blockNumber)
 
 			setNetworkModalStep(5)
+			localStorage.removeItem('wagmi.wallet')
+			localStorage.setItem('didMigrate', 'true')
 			onClose()
 		} catch(e) {
 			logger.error({ e }, 'Error migrating wallet')
