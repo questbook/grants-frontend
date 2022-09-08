@@ -5,7 +5,7 @@ import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { delay } from 'src/utils/generics'
+import { registerWebWallet } from 'src/utils/gaslessUtils'
 import logger from 'src/utils/logger'
 import ConnectWalletModal from 'src/v2/components/ConnectWalletModal'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
@@ -64,16 +64,11 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 
 		try {
 			setNetworkModalStep(0)
-			while(!gaslessData?.address) {
-				await delay(3000)
-			}
+			const privateKey = ''
+			const { scwAddress } = await registerWebWallet(privateKey)
 
 			setNetworkModalStep(1)
-			logger.info({ walletChain }, 'Connected wallet chain')
-			logger.info({ workspaceContract }, 'Workspace Contract')
-			logger.info({ walletData }, 'From data')
-			logger.info({ gaslessData }, 'To data')
-			const transaction = await workspaceContract.migrateWallet(walletData.address, gaslessData.address)
+			const transaction = await workspaceContract.migrateWallet(walletData.address, scwAddress)
 
 			setNetworkModalStep(2)
 			const transactionData = await transaction.wait()
