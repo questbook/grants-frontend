@@ -4,8 +4,10 @@ import { BigNumber } from 'ethers'
 import { WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { ROLES } from 'src/constants'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useDAOName from 'src/hooks/useDAOName'
+import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { addAuthorizedUser } from 'src/utils/gaslessUtils'
 import { delay } from 'src/utils/generics'
 import { InviteInfo, useJoinInvite } from 'src/utils/invite'
@@ -55,6 +57,7 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 	const { joinInvite, getJoinInviteGasEstimate, isBiconomyInitialised } = useJoinInvite(inviteInfo!, profile, shouldRefreshNonce)
 
 	const { data: accountData, nonce } = useQuestbookAccount(shouldRefreshNonce)
+	const { activeChain } = useNetwork()
 
 	const [transactionHash, setTransactionHash] = useState<string>()
 
@@ -227,7 +230,7 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 						'Profile created on-chain'
 					]
 				}
-				transactionHash={transactionHash}
+				viewLink={getExplorerUrlForTxHash(activeChain, transactionHash)}
 				onClose={
 					() => {
 						setInviteJoinStep(undefined)

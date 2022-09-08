@@ -61,7 +61,8 @@ export class GnosisSafe implements _GnosisSafe {
     		})
 
     		return safeTxHash
-    	} catch(e: any) {
+    	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+} catch(e: any) {
     		return undefined
     		// console.log(e)
     	}

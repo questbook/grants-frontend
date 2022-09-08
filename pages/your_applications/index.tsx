@@ -66,6 +66,7 @@ function YourApplications() {
 				setMyApplications([...myApplications, ...allApplicationsData])
 				setCurrentPage(currentPage + 1)
 			})
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			// console.log('error in fetching my applications ', e);
 		}

@@ -79,6 +79,7 @@ function Form({
 		try {
 			const o = JSON.parse(formData.details)
 			return EditorState.createWithContent(convertFromRaw(o))
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			if(formData.details) {
 				return EditorState.createWithContent(ContentState.createFromText(formData.details))

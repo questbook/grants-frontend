@@ -190,6 +190,7 @@ export default function useSubmitReview(
 
 				setLoading(false)
 				setCurrentStep(5)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 				setCurrentStep(undefined)
 				const message = getErrorMessage(e)
@@ -267,6 +268,7 @@ export default function useSubmitReview(
 			}
 
 			validate()
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)
