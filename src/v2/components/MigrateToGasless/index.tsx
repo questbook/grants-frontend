@@ -114,7 +114,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 		} catch(err) {
 			logger.error({ err }, 'Error migrating wallet')
 			toast({
-				title: `Migration error "${e?.message}"`,
+				title: `Migration error "${(err as Error)?.message}"`,
 				status: 'error',
 				duration: 9000,
 				isClosable: true,
