@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useState } from 'react'
 import { Box, Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import SupportedChainId from 'src/generated/SupportedChainId'
@@ -10,7 +10,7 @@ import { delay } from 'src/utils/generics'
 import logger from 'src/utils/logger'
 import ConnectWalletModal from 'src/v2/components/ConnectWalletModal'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
-import { useAccount, useConnect, useNetwork, useProvider, useSigner } from 'wagmi'
+import { useAccount, useConnect, useNetwork } from 'wagmi'
 
 interface Props {
     isOpen: boolean
@@ -25,25 +25,15 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 	const { data: walletData } = useAccount()
 	const { activeChain: walletChain } = useNetwork()
 	const { isConnected } = useConnect()
-	const provider = useProvider()
-	const { data: signer } = useSigner()
-
-	useEffect(() => {
-		logger.info({ provider }, 'Provider from WAGMI')
-	}, [signer])
-
-	useEffect(() => {
-		logger.info({ signer }, 'Signer from WAGMI')
-	}, [signer])
 
 	const { data: gaslessData } = useQuestbookAccount()
 
-	const [isConnectWalletModalOpen, setIsConnectWalletModalOpen] = React.useState(false)
+	const [isConnectWalletModalOpen, setIsConnectWalletModalOpen] = useState(false)
 
-	const workspaceContract = useQBContract('workspace', walletChain?.id as SupportedChainId, false)
+	const workspaceContract = useQBContract('applications', walletChain?.id as SupportedChainId, false)
 
-	const [networkModalStep, setNetworkModalStep] = React.useState<number>()
-	const [transactionHash, setTransactionHash] = React.useState<string>()
+	const [networkModalStep, setNetworkModalStep] = useState<number>()
+	const [transactionHash, setTransactionHash] = useState<string>()
 
 	const migrate = async() => {
 		if(!isConnected) {
