@@ -185,12 +185,7 @@ export const useGenerateReviewData = ({
 							getKeyForApplication(applicationId!)
 						)
 						const enc = await encrypt(jsonReview)
-						// console.log(`encrypted review for ${walletAddress}`)
-
-						const encHash = (await uploadToIPFS(enc)).hash
-						// console.log(`uploaded encrypted review for ${walletAddress} to ${encHash}`)
-
-						encryptedReview[walletAddress] = encHash
+						encryptedReview[walletAddress] = (await uploadToIPFS(enc)).hash
 					}
 				)
 			)

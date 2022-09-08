@@ -1,11 +1,8 @@
-import React from 'react'
-import { useToast } from '@chakra-ui/react'
+import React, { useEffect } from 'react'
 import { ApiClientsContext } from 'pages/_app'
-import {
-	useGetNumberOfApplicationsLazyQuery,
-} from 'src/generated/graphql'
+import { useGetNumberOfApplicationsQuery } from 'src/generated/graphql'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import { useConnect } from 'wagmi'
+import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 
 enum TabIndex {
 	DISCOVER, MY_APPLICATIONS, DASHBOARD, GRANTS_AND_BOUNTIES, SAFE, APPS, SETTINGS, PAYOUTS
@@ -24,50 +21,28 @@ const TABS = [
 
 function useGetTabs() {
 	const { data: accountData } = useQuestbookAccount()
-	const { isConnected } = useConnect()
-	const { workspace, subgraphClients } = React.useContext(ApiClientsContext)!
-
-	const getNumberOfApplicationsClients = Object.keys(subgraphClients)!.map(
-		(key) => useGetNumberOfApplicationsLazyQuery({ client: subgraphClients[key].client }),
-	)
+	const { workspace } = React.useContext(ApiClientsContext)!
 
 	const [applicationCount, setApplicationCount] = React.useState(0)
-	const toast = useToast()
 
-	const getNumberOfApplications = async() => {
-		try {
-			const promises = getNumberOfApplicationsClients.map(
-				// eslint-disable-next-line no-async-promise-executor
-				(query) => new Promise(async(resolve) => {
-					const { data } = await query[0]({
-						variables: { applicantId: accountData?.address! },
-					})
-					if(data && data.grantApplications.length > 0) {
-						resolve(data.grantApplications.length)
-					} else {
-						resolve(0)
-					}
-				}),
-			)
-			Promise.all(promises).then((value: any[]) => {
-				const sum = value.reduce((a, b) => a + b, 0)
-				setApplicationCount(sum)
-			})
-		} catch(e) {
-			toast({
-				title: 'Error getting application count',
-				status: 'error',
-			})
+	const { results, fetchMore } = useMultiChainQuery({
+		useQuery: useGetNumberOfApplicationsQuery,
+		options: {
+			variables: {
+				applicantId: accountData?.address ?? '',
+			}
 		}
-	}
+	})
 
-	React.useEffect(() => {
-		if(!accountData?.address) {
-			return
+	useEffect(() => {
+		if(accountData?.address) {
+			fetchMore({ applicantId: accountData?.address }, true)
 		}
+	}, [accountData?.address])
 
-		getNumberOfApplications()
-	}, [accountData?.address, isConnected])
+	useEffect(() => {
+		setApplicationCount(results.length)
+	}, [results])
 
 	if(!workspace || !workspace.id) {
 		// Pure applicant

@@ -20,6 +20,7 @@ export default function useBatchUpdateApplicationState(
 	state: number,
 	submitClicked: boolean,
 	setSubmitClicked: React.Dispatch<React.SetStateAction<boolean>>,
+	setNetworkTransactionModalStep: (step: number | undefined) => void
 ) {
 	const [error, setError] = React.useState<string>()
 	const [loading, setLoading] = React.useState(false)
@@ -29,13 +30,12 @@ export default function useBatchUpdateApplicationState(
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
-	const { validatorApi, workspace } = apiClients
+	const { validatorApi, workspace, subgraphClients } = apiClients
 	const currentChainId = useChainId()
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 	const applicationContract = useQBContract('applications', chainId)
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
-	const [networkTransactionModalStep, setNetworkTransactionModalStep] = React.useState<number>()
 
 	const { webwallet } = useContext(WebwalletContext)!
 
@@ -50,7 +50,7 @@ export default function useBatchUpdateApplicationState(
 	useEffect(() => {
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
 			biconomy.networkId.toString() === chainId.toString()) {
-			console.log('Hifff')
+			// console.log('Hifff')
 			setIsBiconomyInitialised(true)
 		}
 	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, chainId])
@@ -147,7 +147,7 @@ export default function useBatchUpdateApplicationState(
 				setNetworkTransactionModalStep(2)
 
 				const { txFee, receipt } = await getTransactionDetails(response, currentChainId.toString())
-
+				await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
 				await chargeGas(Number(workspace?.id), Number(txFee))
 
 				setNetworkTransactionModalStep(3)
@@ -280,7 +280,6 @@ export default function useBatchUpdateApplicationState(
 		getExplorerUrlForTxHash(currentChainId, transactionData?.transactionHash),
 		loading,
 		isBiconomyInitialised,
-		error,
-		networkTransactionModalStep
+		error
 	]
 }

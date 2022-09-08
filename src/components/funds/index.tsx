@@ -97,7 +97,7 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
 				const assetDecimal = await rewardAssetContract.decimals()
 				// console.log('decimal', assetDecimal)
 				setFundingAssetDecimals(assetDecimal)
-			} catch(e) {
+			} catch(e: any) {
 				// // console.error(e);
 			}
 		}())

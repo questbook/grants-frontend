@@ -25,6 +25,7 @@ import {
 export default function useSubmitReview(
 	data: { items?: Array<FeedbackType> },
 	setCurrentStep: (step?: number) => void,
+	setTransactionHash: (hash: string) => void,
 	isPrivate: boolean,
 	chainId?: SupportedChainId,
 	workspaceId?: string,
@@ -159,6 +160,7 @@ export default function useSubmitReview(
 
 				if(response) {
 					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+					setTransactionHash(receipt.transactionHash)
 					setTransactionData(receipt)
 					await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee))
 				}
@@ -188,7 +190,7 @@ export default function useSubmitReview(
 
 				setLoading(false)
 				setCurrentStep(5)
-			} catch(e) {
+			} catch(e: any) {
 				setCurrentStep(undefined)
 				const message = getErrorMessage(e)
 				setError(message)
@@ -265,7 +267,7 @@ export default function useSubmitReview(
 			}
 
 			validate()
-		} catch(e) {
+		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)
 			setLoading(false)

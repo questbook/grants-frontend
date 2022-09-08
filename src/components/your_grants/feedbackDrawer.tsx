@@ -84,6 +84,8 @@ function FeedbackDrawer({
 		setEditedFeedbackData({ items: formattedFeedbackData })
 	}
 
+	const [transactionHash, setTransactionHash] = useState<string>()
+
 	const [
 		data,
 		transactionLink,
@@ -92,6 +94,7 @@ function FeedbackDrawer({
 	] = useSubmitReview(
 		editedFeedbackData!,
 		setCurrentStep,
+		setTransactionHash,
 		isPrivate,
 		chainId,
 		workspaceId,
@@ -265,6 +268,12 @@ function FeedbackDrawer({
 						'Waiting for transaction indexing',
 						'Review pushed on-chain',
 					]
+				}
+				transactionHash={transactionHash}
+				onClose={
+					() => {
+						setCurrentStep(undefined)
+					}
 				} />
 		</>
 	)

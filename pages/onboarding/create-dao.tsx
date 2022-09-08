@@ -53,7 +53,7 @@ const OnboardingCreateDao = () => {
 	})
 
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState('not ready')
-
+	const [transactionHash, setTransactionHash] = useState<string>()
 	useEffect(() => {
 		// const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
 		// console.log('rree', isBiconomyLoading, loading)
@@ -165,26 +165,25 @@ const OnboardingCreateDao = () => {
 			setCurrentStep(3)
 
 			const { txFee, receipt } = await getTransactionDetails(response, daoNetwork.id.toString())
-
+			setTransactionHash(receipt?.transactionHash)
 			// console.log('txFee', txFee)
 
 			const event = await getEventData(receipt, 'WorkspaceCreated', WorkspaceRegistryAbi)
 			if(event) {
-				const workspace_id = Number(event.args[0].toBigInt())
+				const workspaceId = Number(event.args[0].toBigInt())
 				// console.log('workspace_id', workspace_id)
 
-				await addAuthorizedOwner(workspace_id, webwallet?.address!, scwAddress, daoNetwork.id.toString(),
+				await addAuthorizedOwner(workspaceId, webwallet?.address!, scwAddress, daoNetwork.id.toString(),
 					'this is the safe addres - to be updated in the new flow')
 				// console.log('fdsao')
-				await chargeGas(workspace_id, Number(txFee))
+				await chargeGas(workspaceId, Number(txFee))
 			}
-
 
 			setCurrentStep(5)
 			setTimeout(() => {
 				router.push({ pathname: '/your_grants' })
 			}, 2000)
-		} catch(e) {
+		} catch(e: any) {
 			setCurrentStep(undefined)
 			const message = getErrorMessage(e)
 			toastRef.current = toast({
@@ -330,8 +329,7 @@ const OnboardingCreateDao = () => {
 										w='100%'
 										h='100%'
 										minH='48px'
-										minW='48px'
-									/>
+										minW='48px' />
 								) : (
 
 									<Organization
@@ -351,7 +349,10 @@ const OnboardingCreateDao = () => {
 						'Waiting for transaction to complete',
 						'DAO created on-chain',
 					]
-				} />
+				}
+				transactionHash={transactionHash}
+				onClose={() => {}} />
+
 		</>
 	)
 }

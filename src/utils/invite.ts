@@ -10,15 +10,11 @@ import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useChainId from 'src/hooks/utils/useChainId'
-import {
-	bicoDapps,
-	chargeGas,
-	getTransactionDetails,
-	sendGaslessTransaction
-} from 'src/utils/gaslessUtils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { delay } from 'src/utils/generics'
 import logger from 'src/utils/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+
 export type InviteInfo = {
 	workspaceId: number
 	role: number
@@ -123,7 +119,7 @@ export const useMakeInvite = (role: number) => {
 	const workspaceRegistry = useQBContract('workspace', chainId)
 
 	const makeInvite = useCallback(
-		async(didSign?: () => void): Promise<InviteInfo> => {
+		async(didSign?: () => void, setTransactionHash?: (hash: string) => void): Promise<InviteInfo> => {
 			switchNetwork?.(chainId!)
 			const { privateKey, address } = generateKeyPairAndAddress()
 			// convert "0x" encoded hex to a number
@@ -153,7 +149,8 @@ export const useMakeInvite = (role: number) => {
 			didSign?.()
 
 			if(response) {
-				const { txFee } = await getTransactionDetails(response, chainId.toString())
+				const { txFee, receipt } = await getTransactionDetails(response, chainId.toString())
+				setTransactionHash?.(receipt?.transactionHash)
 				await chargeGas(workspaceId, Number(txFee))
 			}
 
@@ -178,7 +175,7 @@ export const useMakeInvite = (role: number) => {
 
 			const fakeAddress = '0x' + [...Array(40)].map(() => 1).join('')
 
-			const estimate = await workspaceRegistry
+			return await workspaceRegistry
 				.estimateGas
 				.createInviteLink(
 					workspace?.id,
@@ -186,7 +183,6 @@ export const useMakeInvite = (role: number) => {
 					// testing address
 					fakeAddress,
 				)
-			return estimate
 		},
 		[workspaceRegistry, role, workspace?.id]
 	)
@@ -213,11 +209,12 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 
 	useEffect(() => {
 		// const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		// console.log('rree', isBiconomyLoading, biconomyLoading, chainId, biconomy)
-		// console.log("invite", scwAddress)
+		// console.log('rree', scwAddress, biconomyLoading, inviteInfo)
+		// console.log("invite", biconomy, biconomyWalletClient)
+
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && inviteInfo?.chainId && biconomy?.networkId &&
 			biconomy.networkId.toString() === inviteInfo?.chainId?.toString()) {
-				// console.log("zonb");
+			// console.log("zonb");
 			setIsBiconomyInitialised(true)
 		}
 	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, inviteInfo])
@@ -242,7 +239,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 	), [account?.address, workspaceRegistry.address, inviteInfo?.privateKey])
 
 	const joinInvite = useCallback(
-		async(didReachStep?: (step: JoinInviteStep) => void) => {
+		async(didReachStep?: (step: JoinInviteStep) => void, setTransactionHash?: (hash: string) => void) => {
 			if(!signature) {
 				throw new Error('account not connected')
 			}
@@ -291,7 +288,8 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 			didReachStep?.('tx-signed')
 
 			if(response) {
-				const { txFee } = await getTransactionDetails(response, inviteInfo?.chainId.toString())
+				const { txFee, receipt } = await getTransactionDetails(response, inviteInfo?.chainId.toString())
+				setTransactionHash?.(receipt?.transactionHash)
 				await chargeGas(inviteInfo.workspaceId, Number(txFee))
 			}
 
@@ -312,7 +310,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 			} while(!didIndex)
 		},
 		[profileInfo, workspaceRegistry, validatorApi, inviteInfo, signature, fetchMembers, switchNetwork, connectedChainId, scwAddress, biconomyWalletClient,
-		biconomy, webwallet, nonce])
+			biconomy, webwallet, nonce])
 
 	const getJoinInviteGasEstimate = useCallback(async() => {
 		if(!signature) {
@@ -325,7 +323,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 			switchNetwork(inviteInfo.chainId)
 		}
 
-		const result = await workspaceRegistry
+		return await workspaceRegistry
 			.estimateGas
 			.joinViaInviteLink(
 				inviteInfo.workspaceId,
@@ -335,7 +333,6 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 				signature.r,
 				signature.s
 			)
-		return result
 	}, [workspaceRegistry, inviteInfo, signature])
 
 	return { joinInvite, getJoinInviteGasEstimate, isBiconomyInitialised }

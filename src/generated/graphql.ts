@@ -2443,9 +2443,7 @@ export type Review = {
   /** IPFS Hash to the publicly accessible review */
   publicReviewDataHash?: Maybe<Scalars['String']>;
   /** Workspace member that reviewed the app */
-  reviewer?: Maybe<WorkspaceMember>;
-  /** ID of the reviewer */
-  reviewerId: Scalars['String'];
+  reviewer: WorkspaceMember;
 };
 
 
@@ -2525,26 +2523,6 @@ export type Review_Filter = {
   publicReviewDataHash_starts_with?: InputMaybe<Scalars['String']>;
   publicReviewDataHash_starts_with_nocase?: InputMaybe<Scalars['String']>;
   reviewer?: InputMaybe<Scalars['String']>;
-  reviewerId?: InputMaybe<Scalars['String']>;
-  reviewerId_contains?: InputMaybe<Scalars['String']>;
-  reviewerId_contains_nocase?: InputMaybe<Scalars['String']>;
-  reviewerId_ends_with?: InputMaybe<Scalars['String']>;
-  reviewerId_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  reviewerId_gt?: InputMaybe<Scalars['String']>;
-  reviewerId_gte?: InputMaybe<Scalars['String']>;
-  reviewerId_in?: InputMaybe<Array<Scalars['String']>>;
-  reviewerId_lt?: InputMaybe<Scalars['String']>;
-  reviewerId_lte?: InputMaybe<Scalars['String']>;
-  reviewerId_not?: InputMaybe<Scalars['String']>;
-  reviewerId_not_contains?: InputMaybe<Scalars['String']>;
-  reviewerId_not_contains_nocase?: InputMaybe<Scalars['String']>;
-  reviewerId_not_ends_with?: InputMaybe<Scalars['String']>;
-  reviewerId_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  reviewerId_not_in?: InputMaybe<Array<Scalars['String']>>;
-  reviewerId_not_starts_with?: InputMaybe<Scalars['String']>;
-  reviewerId_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
-  reviewerId_starts_with?: InputMaybe<Scalars['String']>;
-  reviewerId_starts_with_nocase?: InputMaybe<Scalars['String']>;
   reviewer_?: InputMaybe<WorkspaceMember_Filter>;
   reviewer_contains?: InputMaybe<Scalars['String']>;
   reviewer_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -2573,8 +2551,7 @@ export enum Review_OrderBy {
   Data = 'data',
   Id = 'id',
   PublicReviewDataHash = 'publicReviewDataHash',
-  Reviewer = 'reviewer',
-  ReviewerId = 'reviewerId'
+  Reviewer = 'reviewer'
 }
 
 export type Reward = {
@@ -3585,7 +3562,7 @@ export type WorkspaceMember = {
   /** When the member was added */
   addedAt: Scalars['Int'];
   /** Address of the workspace member who added this member */
-  addedBy: WorkspaceMember;
+  addedBy?: Maybe<WorkspaceMember>;
   email?: Maybe<Scalars['String']>;
   /** Full name of the user */
   fullName?: Maybe<Scalars['String']>;
@@ -4250,7 +4227,7 @@ export type GetApplicantsForAGrantQueryVariables = Exact<{
 }>;
 
 
-export type GetApplicantsForAGrantQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, createdAtS: number, updatedAtS: number, grant: { __typename?: 'Grant', id: string, title: string, funding: string, acceptingApplications: boolean, reward: { __typename?: 'Reward', asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, supportedNetworks: Array<SupportedNetwork> } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, applicationReviewers: Array<{ __typename?: 'GrantApplicationReviewer', id: string, member: { __typename?: 'WorkspaceMember', email?: string | null, fullName?: string | null } }>, reviews: Array<{ __typename?: 'Review', id: string, reviewerId: string, publicReviewDataHash?: string | null, reviewer?: { __typename?: 'WorkspaceMember', id: string, fullName?: string | null } | null, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, state: MilestoneState, title: string, amount: string, amountPaid: string, updatedAtS?: number | null, feedbackDao?: string | null, feedbackDev?: string | null }> }> };
+export type GetApplicantsForAGrantQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, createdAtS: number, updatedAtS: number, grant: { __typename?: 'Grant', id: string, title: string, funding: string, acceptingApplications: boolean, reward: { __typename?: 'Reward', asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, supportedNetworks: Array<SupportedNetwork> } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, applicationReviewers: Array<{ __typename?: 'GrantApplicationReviewer', id: string, member: { __typename?: 'WorkspaceMember', email?: string | null, fullName?: string | null } }>, reviews: Array<{ __typename?: 'Review', id: string, publicReviewDataHash?: string | null, reviewer: { __typename?: 'WorkspaceMember', id: string, fullName?: string | null }, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, state: MilestoneState, title: string, amount: string, amountPaid: string, updatedAtS?: number | null, feedbackDao?: string | null, feedbackDev?: string | null }> }> };
 
 export type GetApplicantsForAGrantReviewerQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -4260,14 +4237,14 @@ export type GetApplicantsForAGrantReviewerQueryVariables = Exact<{
 }>;
 
 
-export type GetApplicantsForAGrantReviewerQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, createdAtS: number, updatedAtS: number, grant: { __typename?: 'Grant', id: string, title: string, funding: string, acceptingApplications: boolean, reward: { __typename?: 'Reward', asset: string }, workspace: { __typename?: 'Workspace', id: string, supportedNetworks: Array<SupportedNetwork> } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, applicationReviewers: Array<{ __typename?: 'GrantApplicationReviewer', id: string, member: { __typename?: 'WorkspaceMember', email?: string | null } }>, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, reviewer?: { __typename?: 'WorkspaceMember', id: string } | null, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }> }> };
+export type GetApplicantsForAGrantReviewerQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState, createdAtS: number, updatedAtS: number, grant: { __typename?: 'Grant', id: string, title: string, funding: string, acceptingApplications: boolean, reward: { __typename?: 'Reward', asset: string }, workspace: { __typename?: 'Workspace', id: string, supportedNetworks: Array<SupportedNetwork> } }, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, applicationReviewers: Array<{ __typename?: 'GrantApplicationReviewer', id: string, member: { __typename?: 'WorkspaceMember', email?: string | null } }>, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, reviewer: { __typename?: 'WorkspaceMember', id: string }, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }> }> };
 
 export type GetApplicationDetailsQueryVariables = Exact<{
   applicationID: Scalars['ID'];
 }>;
 
 
-export type GetApplicationDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, pendingReviewerAddresses: Array<string>, doneReviewerAddresses: Array<string>, applicantId: string, state: ApplicationState, feedbackDao?: string | null, feedbackDev?: string | null, createdAtS: number, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, pii: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, amount: string }>, grant: { __typename?: 'Grant', id: string, title: string, funding: string, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null }> }, reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, fields: Array<{ __typename?: 'GrantField', id: string, title: string, isPii: boolean }>, rubric?: { __typename?: 'Rubric', isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, createdAtS: number, reviewer?: { __typename?: 'WorkspaceMember', id: string, email?: string | null, fullName?: string | null } | null, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, reviewers: Array<{ __typename?: 'WorkspaceMember', email?: string | null, id: string, fullName?: string | null }> } | null };
+export type GetApplicationDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, pendingReviewerAddresses: Array<string>, doneReviewerAddresses: Array<string>, applicantId: string, state: ApplicationState, feedbackDao?: string | null, feedbackDev?: string | null, createdAtS: number, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, pii: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, amount: string }>, grant: { __typename?: 'Grant', id: string, title: string, funding: string, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null }> }, reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, fields: Array<{ __typename?: 'GrantField', id: string, title: string, isPii: boolean }>, rubric?: { __typename?: 'Rubric', isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, createdAtS: number, reviewer: { __typename?: 'WorkspaceMember', id: string, email?: string | null, fullName?: string | null }, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, reviewers: Array<{ __typename?: 'WorkspaceMember', email?: string | null, id: string, fullName?: string | null }> } | null };
 
 export type GetDaoGrantsQueryVariables = Exact<{
   workspaceId: Scalars['String'];
@@ -4401,7 +4378,7 @@ export type GetInitialReviewedApplicationGrantsQueryVariables = Exact<{
 }>;
 
 
-export type GetInitialReviewedApplicationGrantsQuery = { __typename?: 'Query', grantReviewerCounters: Array<{ __typename?: 'GrantReviewerCounter', grant: { __typename?: 'Grant', id: string, title: string, rubric?: { __typename?: 'Rubric', isPrivate: boolean } | null, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork> }, reward: { __typename?: 'Reward', asset: string }, applications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, applicantId: string, milestones: Array<{ __typename?: 'ApplicationMilestone', amount: string }>, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, reviewer?: { __typename?: 'WorkspaceMember', id: string } | null, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> } }> };
+export type GetInitialReviewedApplicationGrantsQuery = { __typename?: 'Query', grantReviewerCounters: Array<{ __typename?: 'GrantReviewerCounter', grant: { __typename?: 'Grant', id: string, title: string, rubric?: { __typename?: 'Rubric', isPrivate: boolean } | null, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork> }, reward: { __typename?: 'Reward', asset: string }, applications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, applicantId: string, milestones: Array<{ __typename?: 'ApplicationMilestone', amount: string }>, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, reviewer: { __typename?: 'WorkspaceMember', id: string }, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> } }> };
 
 export type GetInitialToBeReviewedApplicationGrantsQueryVariables = Exact<{
   reviewerAddress: Scalars['Bytes'];
@@ -4410,7 +4387,12 @@ export type GetInitialToBeReviewedApplicationGrantsQueryVariables = Exact<{
 }>;
 
 
-export type GetInitialToBeReviewedApplicationGrantsQuery = { __typename?: 'Query', grantReviewerCounters: Array<{ __typename?: 'GrantReviewerCounter', grant: { __typename?: 'Grant', id: string, title: string, rubric?: { __typename?: 'Rubric', isPrivate: boolean } | null, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork> }, reward: { __typename?: 'Reward', asset: string }, applications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, applicantId: string, milestones: Array<{ __typename?: 'ApplicationMilestone', amount: string }>, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, reviewer?: { __typename?: 'WorkspaceMember', id: string } | null, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> } }> };
+export type GetInitialToBeReviewedApplicationGrantsQuery = { __typename?: 'Query', grantReviewerCounters: Array<{ __typename?: 'GrantReviewerCounter', grant: { __typename?: 'Grant', id: string, title: string, rubric?: { __typename?: 'Rubric', isPrivate: boolean } | null, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork> }, reward: { __typename?: 'Reward', asset: string }, applications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, applicantId: string, milestones: Array<{ __typename?: 'ApplicationMilestone', amount: string }>, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, reviewer: { __typename?: 'WorkspaceMember', id: string }, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> } }> };
+
+export type GetLatestBlockQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetLatestBlockQuery = { __typename?: 'Query', _meta?: { __typename?: '_Meta_', block: { __typename?: '_Block_', number: number } } | null };
 
 export type GetMoreReviewedApplicationsQueryVariables = Exact<{
   grantId: Scalars['String'];
@@ -4421,7 +4403,7 @@ export type GetMoreReviewedApplicationsQueryVariables = Exact<{
 }>;
 
 
-export type GetMoreReviewedApplicationsQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, applicantId: string, milestones: Array<{ __typename?: 'ApplicationMilestone', amount: string }>, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, reviewer?: { __typename?: 'WorkspaceMember', id: string } | null, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> };
+export type GetMoreReviewedApplicationsQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, applicantId: string, milestones: Array<{ __typename?: 'ApplicationMilestone', amount: string }>, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, reviewer: { __typename?: 'WorkspaceMember', id: string }, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> };
 
 export type GetMoreToBeReviewedApplicationsQueryVariables = Exact<{
   grantId: Scalars['String'];
@@ -4432,7 +4414,7 @@ export type GetMoreToBeReviewedApplicationsQueryVariables = Exact<{
 }>;
 
 
-export type GetMoreToBeReviewedApplicationsQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, applicantId: string, milestones: Array<{ __typename?: 'ApplicationMilestone', amount: string }>, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, reviewer?: { __typename?: 'WorkspaceMember', id: string } | null, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> };
+export type GetMoreToBeReviewedApplicationsQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, state: ApplicationState, createdAtS: number, applicantId: string, milestones: Array<{ __typename?: 'ApplicationMilestone', amount: string }>, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, reviewer: { __typename?: 'WorkspaceMember', id: string }, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> };
 
 export type GetMyApplicationsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -4489,7 +4471,7 @@ export type GetWorkspaceDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, bio: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, updatedAt: number, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number, addedBy: { __typename?: 'WorkspaceMember', id: string, actorId: string } }> } | null };
+export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, bio: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, updatedAt: number, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number, addedBy?: { __typename?: 'WorkspaceMember', id: string, actorId: string } | null }> } | null };
 
 export type GetWorkspaceMemberExistsQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -5040,7 +5022,6 @@ export const GetApplicantsForAGrantDocument = gql`
     }
     reviews {
       id
-      reviewerId
       reviewer {
         id
         fullName
@@ -6371,6 +6352,42 @@ export function useGetInitialToBeReviewedApplicationGrantsLazyQuery(baseOptions?
 export type GetInitialToBeReviewedApplicationGrantsQueryHookResult = ReturnType<typeof useGetInitialToBeReviewedApplicationGrantsQuery>;
 export type GetInitialToBeReviewedApplicationGrantsLazyQueryHookResult = ReturnType<typeof useGetInitialToBeReviewedApplicationGrantsLazyQuery>;
 export type GetInitialToBeReviewedApplicationGrantsQueryResult = Apollo.QueryResult<GetInitialToBeReviewedApplicationGrantsQuery, GetInitialToBeReviewedApplicationGrantsQueryVariables>;
+export const GetLatestBlockDocument = gql`
+    query getLatestBlock {
+  _meta {
+    block {
+      number
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetLatestBlockQuery__
+ *
+ * To run a query within a React component, call `useGetLatestBlockQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLatestBlockQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLatestBlockQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetLatestBlockQuery(baseOptions?: Apollo.QueryHookOptions<GetLatestBlockQuery, GetLatestBlockQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetLatestBlockQuery, GetLatestBlockQueryVariables>(GetLatestBlockDocument, options);
+      }
+export function useGetLatestBlockLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLatestBlockQuery, GetLatestBlockQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetLatestBlockQuery, GetLatestBlockQueryVariables>(GetLatestBlockDocument, options);
+        }
+export type GetLatestBlockQueryHookResult = ReturnType<typeof useGetLatestBlockQuery>;
+export type GetLatestBlockLazyQueryHookResult = ReturnType<typeof useGetLatestBlockLazyQuery>;
+export type GetLatestBlockQueryResult = Apollo.QueryResult<GetLatestBlockQuery, GetLatestBlockQueryVariables>;
 export const GetMoreReviewedApplicationsDocument = gql`
     query getMoreReviewedApplications($grantId: String!, $reviewerAddress: Bytes!, $reviewerAddressStr: String!, $first: Int, $skip: Int) {
   grantApplications(
