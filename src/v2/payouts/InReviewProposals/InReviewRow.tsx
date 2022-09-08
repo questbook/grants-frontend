@@ -1,5 +1,20 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
-import { Button, Checkbox, Fade, Flex, forwardRef, GridItem, Image, Menu, MenuButton, MenuItem, MenuList, Text, TextProps } from '@chakra-ui/react'
+import {
+	Button,
+	Checkbox,
+	Fade,
+	Flex,
+	forwardRef,
+	GridItem,
+	Image,
+	Menu,
+	MenuButton,
+	MenuItem,
+	MenuList,
+	Text,
+	TextProps,
+	Tooltip,
+} from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { defaultChainId } from 'src/constants/chains'
@@ -493,45 +508,51 @@ const InReviewRow = ({
 
 
 					<Fade in={!someChecked && isHovering}>
-						<Button
-							px={3}
-							py='6px'
-							minW={0}
-							minH={0}
-							h='auto'
-							borderRadius='2px'
-							mr={4}
-							ml='auto'
-							onClick={(e) => onAcceptClicked(e)}
-						>
-							<AcceptApplication />
-						</Button>
+						<Tooltip label='Accept application'>
+							<Button
+								px={3}
+								py='6px'
+								minW={0}
+								minH={0}
+								h='auto'
+								borderRadius='2px'
+								mr={4}
+								ml='auto'
+								onClick={(e) => onAcceptClicked(e)}
+							>
+								<AcceptApplication />
+							</Button>
+						</Tooltip>
 
-						<Button
-							px={3}
-							py='6px'
-							minW={0}
-							minH={0}
-							h='auto'
-							borderRadius='2px'
-							mr={4}
-							onClick={(e) => onResubmitClicked(e)}
-						>
-							<ResubmitApplication />
-						</Button>
+						<Tooltip label='Ask for resubmission'>
+							<Button
+								px={3}
+								py='6px'
+								minW={0}
+								minH={0}
+								h='auto'
+								borderRadius='2px'
+								mr={4}
+								onClick={(e) => onResubmitClicked(e)}
+							>
+								<ResubmitApplication />
+							</Button>
+						</Tooltip>
 
-						<Button
-							px={3}
-							py='6px'
-							minW={0}
-							minH={0}
-							h='auto'
-							borderRadius='2px'
-							mr='auto'
-							onClick={(e) => onRejectClicked(e)}
-						>
-							<RejectApplication />
-						</Button>
+						<Tooltip label='Reject Application'>
+							<Button
+								px={3}
+								py='6px'
+								minW={0}
+								minH={0}
+								h='auto'
+								borderRadius='2px'
+								mr='auto'
+								onClick={(e) => onRejectClicked(e)}
+							>
+								<RejectApplication />
+							</Button>
+						</Tooltip>
 					</Fade>
 
 				</Flex>
