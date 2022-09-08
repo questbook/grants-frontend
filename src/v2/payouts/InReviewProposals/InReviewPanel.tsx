@@ -3,8 +3,9 @@ import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { Badge, Box, Button, ButtonProps, Checkbox, Flex, forwardRef, Grid, GridItem, HStack, Menu, MenuButton, MenuItem, MenuList, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalOverlay, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { GetGrantDetailsQuery } from 'src/generated/graphql'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import useBatchUpdateApplicationState from 'src/hooks/useBatchUpdateApplicationState'
-import { formatAddress } from 'src/utils/formattingUtils'
+import { formatAddress, getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { AcceptApplication } from 'src/v2/assets/custom chakra icons/AcceptApplication'
 import { RejectApplication } from 'src/v2/assets/custom chakra icons/RejectApplication'
 import { ResubmitApplication } from 'src/v2/assets/custom chakra icons/ResubmitApplication'
@@ -20,6 +21,7 @@ const InReviewPanel = ({
   grantData?: GetGrantDetailsQuery
 
 }) => {
+	const { activeChain } = useNetwork()
 	const [checkedItems, setCheckedItems] = useState<boolean[]>(applicantsData.filter((item) => (0 === item.status)).map(() => false))
 	const [checkedApplicationsIds, setCheckedApplicationsIds] = useState<number[]>([])
 	const [isAcceptClicked, setIsAcceptClicked] = useState<boolean>(false)
@@ -500,7 +502,7 @@ const InReviewPanel = ({
 						'Application(s) state updated',
 					]
 				}
-				transactionHash={txn?.transactionHash}
+				viewLink={getExplorerUrlForTxHash(activeChain, txn?.transactionHash)}
 				onClose={
 					() => {
 						setNetworkTransactionModalStep(undefined)

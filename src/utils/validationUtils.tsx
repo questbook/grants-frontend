@@ -12,6 +12,7 @@ const isValidEthereumAddress = (address: string) => {
 const isValidSolanaAddress = (address: string) => {
 	try {
 		return PublicKey.isOnCurve(address)
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch(e: any) {
 		return false
 	}

@@ -132,6 +132,7 @@ export default function useRequestMilestoneApproval(
 				}
 
 				setLoading(false)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 				const message = getErrorMessage(e)
 				setError(message)
@@ -212,6 +213,7 @@ export default function useRequestMilestoneApproval(
 			}
 
 			validate()
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)

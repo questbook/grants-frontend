@@ -239,6 +239,7 @@ const SetupEvaluationDrawer = ({
 				router.reload()
 			}, 3000)
 			// setTransactionData(transactionData)
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			setNetworkTransactionModalStep(undefined)
 			const message = getErrorMessage(e)

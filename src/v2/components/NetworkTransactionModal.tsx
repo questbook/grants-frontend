@@ -15,7 +15,7 @@ export type NetworkTransactionModalProps = {
 	steps: string[]
 
 	/** transaction hash of the completed transaction */
-	transactionHash: string | undefined
+	viewLink: string | undefined
 	/** function to execute when closing the modal */
 	onClose: () => void
 }
@@ -32,7 +32,7 @@ export default ({
 	description,
 	currentStepIndex,
 	steps,
-	transactionHash,
+	viewLink,
 	onClose,
 }: NetworkTransactionModalProps) => {
 
@@ -42,7 +42,7 @@ export default ({
 			onClose={() => { }}
 			isCentered
 			scrollBehavior='outside'
-			size='sm'
+			size='md'
 		>
 			<AlertDialogOverlay
 				background='rgba(31, 31, 51, 0.75)'
@@ -115,14 +115,20 @@ export default ({
 						}
 
 						{
-							currentStepIndex === steps.length && (transactionHash?.length || 0) > 0 && (
+							(viewLink?.length || 0) > 0 && (
 								<Flex mt='4'>
 									<Button
 										variant='link'
-										rightIcon={<ExternalLink />}>
+										rightIcon={<ExternalLink />}
+										onClick={
+											() => {
+												window.open(viewLink, '_blank')
+											}
+										}>
 										View transaction
 									</Button>
 									<Button
+										isDisabled={currentStepIndex < steps.length}
 										ml='auto'
 										variant='primaryV2'
 										onClick={onClose}>

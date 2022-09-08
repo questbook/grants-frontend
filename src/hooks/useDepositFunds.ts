@@ -75,6 +75,7 @@ export default function useDepositFunds(
 				}
 			})
 
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)
@@ -169,6 +170,7 @@ export default function useDepositFunds(
 				return
 			}
 
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)

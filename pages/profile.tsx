@@ -150,6 +150,7 @@ function Profile() {
 			setGrantsApplicants(data.totalApplicants)
 			setGrantWinners(data.winnerApplicants)
 
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			// console.log(e)
 		}

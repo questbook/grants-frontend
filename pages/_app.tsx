@@ -1,4 +1,4 @@
-import React, { createContext, ReactElement, ReactNode, useEffect, useMemo } from 'react'
+import React, { createContext, ReactElement, ReactNode, useEffect, useMemo, useRef } from 'react'
 import { ChakraProvider } from '@chakra-ui/react'
 import { ChatWidget } from '@papercups-io/chat-widget'
 // import dynamic from 'next/dynamic';
@@ -21,6 +21,7 @@ import SubgraphClient from 'src/graphql/subgraph'
 import theme from 'src/theme'
 import { MinimalWorkspace } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
+import { delay } from 'src/utils/generics'
 import getSeo from 'src/utils/seo'
 import MigrateToGasless from 'src/v2/components/MigrateToGasless'
 import {
@@ -116,6 +117,9 @@ export const WebwalletContext = createContext<{
 	switchNetwork: (newNetwork?: SupportedChainId) => void
 	scwAddress?: string
 	setScwAddress: (scwAddress?: string) => void
+
+	waitForScwAddress: Promise<string>
+
 	nonce?: string
 	setNonce: (nonce?: string) => void
 	loadingNonce: boolean
@@ -139,6 +143,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [nonce, setNonce] = React.useState<string>()
 	const [loadingNonce, setLoadingNonce] = React.useState<boolean>(false)
 
+	// reference to scw address
+	// used to poll for scwAddress in "waitForScwAddress"
+	const scwAddressRef = useRef(scwAddress)
+
 	useEffect(() => {
 		setWebwallet(createWebWallet())
 		setScwAddress(getScwAddress())
@@ -147,9 +155,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}, [])
 
 	useEffect(() => {
-		console.log('webwallet address:', webwallet)
-		console.log('scw address:', scwAddress)
-	}, [webwallet, scwAddress])
+		// set the scwaddress ref whenever it changes
+		scwAddressRef.current = scwAddress
+	}, [scwAddress])
 
 	const getScwAddress = () => {
 
@@ -236,6 +244,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 				setWebwallet(newWebwallet)
 			},
+			waitForScwAddress: (async() => {
+				while(!scwAddressRef.current) {
+					await delay(500)
+				}
+
+				return scwAddressRef.current
+			})(),
 			network: network,
 			switchNetwork: (newNetwork?: SupportedChainId) => {
 				if(newNetwork) {
@@ -336,7 +351,12 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		}
 
 		const didHaveWallet = localStorage.getItem('wagmi.wallet')
-		if(didHaveWallet) {
+		const didMigrate = localStorage.getItem('didMigrate') === 'true'
+		if(!didHaveWallet && !didMigrate) {
+			localStorage.setItem('didMigrate', 'true')
+		}
+
+		if(didHaveWallet && !didMigrate) {
 			setMigrateModalOpen(true)
 		}
 	}, [])

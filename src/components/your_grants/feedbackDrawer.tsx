@@ -21,6 +21,7 @@ import { SupportedChainId } from 'src/constants/chains'
 import { RubricItem } from 'src/generated/graphql'
 import useSubmitReview from 'src/hooks/useSubmitReview'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
+import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { sumArray } from 'src/utils/generics'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
@@ -269,7 +270,7 @@ function FeedbackDrawer({
 						'Review pushed on-chain',
 					]
 				}
-				transactionHash={transactionHash}
+				viewLink={getExplorerUrlForTxHash(chainId, transactionHash)}
 				onClose={
 					() => {
 						setCurrentStep(undefined)

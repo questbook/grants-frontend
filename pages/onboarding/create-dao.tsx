@@ -11,6 +11,7 @@ import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
+import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
 	addAuthorizedOwner,
 	addAuthorizedUser,
@@ -183,6 +184,7 @@ const OnboardingCreateDao = () => {
 			setTimeout(() => {
 				router.push({ pathname: '/your_grants' })
 			}, 2000)
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			setCurrentStep(undefined)
 			const message = getErrorMessage(e)
@@ -350,7 +352,7 @@ const OnboardingCreateDao = () => {
 						'DAO created on-chain',
 					]
 				}
-				transactionHash={transactionHash}
+				viewLink={getExplorerUrlForTxHash(daoNetwork?.id, transactionHash)}
 				onClose={() => {}} />
 
 		</>
