@@ -6,6 +6,7 @@ import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { registerWebWallet } from 'src/utils/gaslessUtils'
+import { delay } from 'src/utils/generics'
 import logger from 'src/utils/logger'
 import ConnectWalletModal from 'src/v2/components/ConnectWalletModal'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
@@ -64,7 +65,17 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 
 		try {
 			setNetworkModalStep(0)
-			const privateKey = ''
+			let privateKey: string | null = ''
+			do {
+				privateKey = localStorage.getItem('webwalletPrivateKey')
+				if(privateKey && privateKey !== null) {
+					break
+				}
+
+				await delay(2000)
+			// eslint-disable-next-line no-constant-condition
+			} while(true)
+
 			const { scwAddress } = await registerWebWallet(privateKey)
 
 			setNetworkModalStep(1)
