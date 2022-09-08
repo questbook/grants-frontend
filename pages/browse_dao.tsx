@@ -8,7 +8,6 @@ import { extractInviteInfo, InviteInfo } from 'src/utils/invite'
 import { mergeSortedArrays } from 'src/utils/mergeSortedArrays'
 import AcceptInviteModal from 'src/v2/components/AcceptInviteModal'
 
-
 const PAGE_SIZE = 20
 
 /**
@@ -170,26 +169,24 @@ function useMultiChainDaosForExplore(
 	orderBy: WorkspaceOrderBy,
 	filter: WorkspaceFilter,
 ) {
-	const result = useMultiChainPaginatedQuery({
+	return useMultiChainPaginatedQuery({
 		useQuery: useGetDaOsForExploreQuery,
 		pageSize: PAGE_SIZE,
 		variables: { orderBy, filter },
 		mergeResults(results) {
 			let final: GetDaOsForExploreQuery['workspaces'] = []
-			for(const result of results) {
-				final = mergeSortedArrays(final, result.workspaces, (a, b) => {
+			for(const { workspaces } of results) {
+				final = mergeSortedArrays(final, workspaces, (a, b) => {
 					// @ts-ignore
 					// basically, we use the order key to fetch the sorting property
 					// and sort the results
-					return b[orderBy] - a[orderBy] > 0
+					return b[orderBy] < a[orderBy]
 				})
 			}
 
 			return final
 		}
 	})
-
-	return result
 }
 
 export default BrowseDao
