@@ -317,12 +317,12 @@ function ViewApplicants() {
 					applicationId: applicant.id,
 					applicantName: getFieldString(applicant, 'applicantName'),
 					applicantEmail: getFieldString(applicant, 'applicantEmail'),
-					applicant_address: getFieldString(applicant, 'applicantAddress'),
-					sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
-					updated_on: moment.unix(applicant.updatedAtS).format('DD MMM YYYY'),
+					applicantAddress: getFieldString(applicant, 'applicantAddress'),
+					sentOn: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
+					updatedOn: moment.unix(applicant.updatedAtS).format('DD MMM YYYY'),
 					// applicant_name: getFieldString('applicantName'),
-					project_name: getFieldString(applicant, 'projectName'),
-					funding_asked: {
+					projectName: getFieldString(applicant, 'projectName'),
+					fundingAsked: {
 						// amount: formatAmount(
 						//   getFieldString('fundingAsk') || '0',
 						// ),
@@ -338,7 +338,7 @@ function ViewApplicants() {
 					status: TableFilters[applicant?.state],
 					milestones: applicant.milestones,
 					reviewers: applicant.applicationReviewers,
-					amount_paid: formatAmount(
+					amountPaid: formatAmount(
 						getTotalFundingRecv(
 							applicant.milestones as unknown as ApplicationMilestone[],
 						).toString(),
@@ -434,7 +434,7 @@ function ViewApplicants() {
 		const formattedTrxnData = sendFundsTo?.map((recepient,) => (
 			{
 				from: currentSafe?.id?.toString(),
-				to: recepient.applicant_address,
+				to: recepient.applicantAddress,
 				applicationId: recepient.applicationId,
 				selectedMilestone: recepient.milestones[0].id,
 				amount: 0

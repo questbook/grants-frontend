@@ -109,7 +109,7 @@ const RecipientDetails = ({
 								color='#7D7DA0'
 								mt='2px'
 							>
-								{data?.project_name}
+								{data?.projectName}
 								{' '}
 								•
 								{' '}

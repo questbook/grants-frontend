@@ -18,7 +18,7 @@ import {
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { defaultChainId } from 'src/constants/chains'
-import { IApplicantData, IReview, IReviewFeedback } from 'src/types'
+import { IApplicantData, IReviewFeedback } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { useLoadReview } from 'src/utils/reviews'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -59,11 +59,12 @@ const InReviewRow = ({
 	), [reviews])
 
 	const getReviews = async() => {
-		const reviewsDataMap: typeof reviews = { }
+		const reviewsDataMap: {[_ in string]: IReviewFeedback} = {}
 
 		await Promise.all(
-			submittedReviews!.map(async(review: IReview) => {
+			submittedReviews!.map(async(review) => {
 				try {
+					// @ts-ignore
 					const reviewData = await loadReview(review, applicantData!.applicationId)
 					const [, reviewerAddress] = review.reviewer!.id.split('.')
 					reviewsDataMap[reviewerAddress] = reviewData
@@ -120,7 +121,7 @@ const InReviewRow = ({
 					>
 						<Image
 							borderRadius='3xl'
-							src={getAvatar(applicantData?.applicant_address)}
+							src={getAvatar(applicantData?.applicantAddress)}
 						/>
 					</Flex>
 
@@ -146,7 +147,7 @@ const InReviewRow = ({
 								})
 							}
 						>
-							{applicantData?.project_name}
+							{applicantData?.projectName}
 						</Text>
 						<Text
 							fontSize='12px'
@@ -170,17 +171,17 @@ const InReviewRow = ({
 							display={'flex'}
 							alignItems='center'
 						>
-							<Tooltip label={applicantData?.applicant_address}>
+							<Tooltip label={applicantData?.applicantAddress}>
 
 
-								{`${applicantData?.applicant_address?.substring(0, 6)}...`}
+								{`${applicantData?.applicantAddress?.substring(0, 6)}...`}
 
 							</Tooltip>
 							<Flex
 								display="inline-block"
 								ml={2}
 							>
-								<CopyIcon text={applicantData?.applicant_address!} />
+								<CopyIcon text={applicantData?.applicantAddress!} />
 							</Flex>
 						</Text> */}
 					</Flex>

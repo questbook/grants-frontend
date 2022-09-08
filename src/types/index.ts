@@ -38,11 +38,11 @@ export type IApplicantData = {
   applicationId: string
   applicantName?: string
   applicantEmail?: string
-  applicant_address?: string
-  sent_on: string
-  updated_on: string
-  project_name?: string
-  funding_asked: {
+  applicantAddress?: string
+  sentOn: string
+  updatedOn: string
+  projectName?: string
+  fundingAsked: {
     amount: string
     symbol: string
     icon: string
@@ -51,10 +51,10 @@ export type IApplicantData = {
     id: string
   }
   status: number
+  amountPaid: string
+  reviews: GetApplicantsForAGrantQuery['grantApplications'][number]['reviews']
   milestones: GetApplicantsForAGrantQuery['grantApplications'][number]['milestones']
   reviewers: GetApplicantsForAGrantQuery['grantApplications'][number]['applicationReviewers']
-  amount_paid: string
-  reviews: GetApplicantsForAGrantQuery['grantApplications'][number]['reviews']
 }
 
 export type IReview = Exclude<Exclude<GetApplicationDetailsQuery['grantApplication'], null>, undefined>['reviews'][0];

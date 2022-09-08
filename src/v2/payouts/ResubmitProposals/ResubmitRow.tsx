@@ -90,7 +90,7 @@ const ResubmitRow = ({
 					>
 						<Image
 							borderRadius='3xl'
-							src={getAvatar(applicantData?.applicant_address)}
+							src={getAvatar(applicantData?.applicantAddress)}
 						/>
 					</Flex>
 
@@ -116,7 +116,7 @@ const ResubmitRow = ({
 								})
 							}
 						>
-							{applicantData?.project_name}
+							{applicantData?.projectName}
 						</Text>
 						<Text
 							fontSize='12px'
@@ -140,17 +140,17 @@ const ResubmitRow = ({
 							display={'flex'}
 							alignItems='center'
 						>
-							<Tooltip label={applicantData?.applicant_address}>
+							<Tooltip label={applicantData?.applicantAddress}>
 
 
-								{`${applicantData?.applicant_address?.substring(0, 6)}...`}
+								{`${applicantData?.applicantAddress?.substring(0, 6)}...`}
 
 							</Tooltip>
 							<Flex
 								display="inline-block"
 								ml={2}
 							>
-								<CopyIcon text={applicantData?.applicant_address!} />
+								<CopyIcon text={applicantData?.applicantAddress!} />
 							</Flex>
 						</Text> */}
 					</Flex>
@@ -173,7 +173,7 @@ const ResubmitRow = ({
 					lineHeight='20px'
 					fontWeight='500'
 				>
-					{applicantData?.updated_on ?? '-'}
+					{applicantData?.updatedOn ?? '-'}
 				</Text>
 
 			</GridItem>

@@ -100,7 +100,7 @@ const RecipientDetails = ({
 					color='#7D7DA0'
 					mt='2px'
 				>
-					{applicantData?.project_name}
+					{applicantData?.projectName}
 					{' '}
 					•
 					{' '}
