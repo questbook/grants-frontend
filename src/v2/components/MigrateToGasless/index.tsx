@@ -1,9 +1,17 @@
-import React from 'react'
-import { Box, Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
+import React, { useContext, useEffect, useState } from 'react'
+import { Box, Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { defaultChainId } from 'src/constants/chains'
+import { useGetWorkspacesOwnedQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
+import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
+import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { delay } from 'src/utils/generics'
+import logger from 'src/utils/logger'
+import ConnectWalletModal from 'src/v2/components/ConnectWalletModal'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount, useNetwork, useSigner } from 'wagmi'
 
 interface Props {
     isOpen: boolean
@@ -13,15 +21,108 @@ interface Props {
 const POINTERS = ['Zero gas fee across the app', 'Secure transactions', 'Seamless user experience']
 
 function MigrateToGasless({ isOpen, onClose }: Props) {
+	const toast = useToast()
+	const { waitForScwAddress } = useContext(WebwalletContext)!
+	const { subgraphClients } = useContext(ApiClientsContext)!
+
 	const { data: walletData } = useAccount()
+	const { data: signer } = useSigner()
 	const { activeChain: walletChain } = useNetwork()
 
-	const workspaceContract = useQBContract('workspace', walletChain?.id as SupportedChainId)
+	const [isConnectWalletModalOpen, setIsConnectWalletModalOpen] = useState(false)
+	const [hasDAO, setHasDAO] = useState(false)
 
-	const [networkModalStep, setNetworkModalStep] = React.useState<number>()
+	const workspaceContract = useQBContract('workspace', walletChain?.id as SupportedChainId, false)
+
+	const [networkModalStep, setNetworkModalStep] = useState<number>()
+	const [transactionHash, setTransactionHash] = useState<string>()
+
+	const { results, fetchMore } = useMultiChainQuery({
+		useQuery: useGetWorkspacesOwnedQuery,
+		options: {
+			variables: {
+				actorId: walletData?.address ?? ''
+			}
+		},
+		chains: [walletChain?.id! in SupportedChainId ? walletChain?.id! : defaultChainId]
+	})
+
+	useEffect(() => {
+		if(walletData?.address && walletChain?.id) {
+			setHasDAO(results.length > 0)
+		}
+	}, [results])
+
+	useEffect(() => {
+		if(walletData?.address && walletChain?.id) {
+			fetchMore({
+				actorId: walletData.address ?? ''
+			}, true)
+		}
+	}, [walletData?.address, walletChain?.id])
+
+	useEffect(() => {
+		if(walletData) {
+			setIsConnectWalletModalOpen(false)
+		}
+	}, [walletData])
 
 	const migrate = async() => {
+		try {
+			if(!walletData?.address) {
+				setIsConnectWalletModalOpen(true)
+				return
+			}
 
+			if(!hasDAO) {
+				throw new Error('No DAO on this network! Try switching network')
+			}
+
+			if(!walletChain) {
+				return
+			}
+
+			if(!(walletChain?.id in SupportedChainId)) {
+				throw new Error('Connected chain not supported!')
+			}
+
+			setNetworkModalStep(0)
+
+			while(!signer) {
+				delay(2000)
+			}
+
+			const scwAddress = await waitForScwAddress
+			setNetworkModalStep(1)
+
+			logger.info({ wallet: walletData.address, scwAddress }, 'migrating to gasless')
+			logger.info({ signerFromWagmi: signer, signerFromContract: workspaceContract.signer }, 'Signer')
+			logger.info({ walletChain }, 'Current Chain')
+			const transaction = await workspaceContract.migrateWallet(walletData.address, scwAddress)
+
+			setNetworkModalStep(2)
+			const transactionData = await transaction.wait()
+			setTransactionHash(transactionData.transactionHash)
+
+			setNetworkModalStep(3)
+			await subgraphClients[walletChain?.id].waitForBlock(transactionData.blockNumber)
+
+			setNetworkModalStep(5)
+
+			// set to ensure ensure migration doesn't occur again
+			localStorage.setItem('didMigrate', 'true')
+			onClose()
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		} catch(err: any) {
+			setNetworkModalStep(undefined)
+			logger.error({ err }, 'Error migrating wallet')
+			toast({
+				title: `Migration error "${(err as Error)?.message}"`,
+				status: 'error',
+				duration: 9000,
+				isClosable: true,
+			})
+		}
 	}
 
 	return (
@@ -127,6 +228,9 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 					</Flex>
 				</ModalContent>
 			</Modal>
+			<ConnectWalletModal
+				isOpen={isConnectWalletModalOpen}
+				onClose={() => setIsConnectWalletModalOpen(false)} />
 			<NetworkTransactionModal
 				currentStepIndex={networkModalStep || 0}
 				isOpen={networkModalStep !== undefined}
@@ -158,7 +262,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 						'Migration successful'
 					]
 				}
-				transactionHash=''
+				viewLink={getExplorerUrlForTxHash(walletChain?.id, transactionHash)}
 				onClose={() => setNetworkModalStep(undefined)}
 			/>
 		</>

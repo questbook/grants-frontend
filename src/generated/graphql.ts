@@ -4494,6 +4494,13 @@ export type GetWorkspaceMembersPublicKeysQueryVariables = Exact<{
 
 export type GetWorkspaceMembersPublicKeysQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null }> };
 
+export type GetWorkspacesOwnedQueryVariables = Exact<{
+  actorId: Scalars['Bytes'];
+}>;
+
+
+export type GetWorkspacesOwnedQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string }> };
+
 
 export const GetAllGrantsDocument = gql`
     query getAllGrants($first: Int, $skip: Int, $applicantId: Bytes!, $minDeadline: Int!) {
@@ -6985,3 +6992,38 @@ export function useGetWorkspaceMembersPublicKeysLazyQuery(baseOptions?: Apollo.L
 export type GetWorkspaceMembersPublicKeysQueryHookResult = ReturnType<typeof useGetWorkspaceMembersPublicKeysQuery>;
 export type GetWorkspaceMembersPublicKeysLazyQueryHookResult = ReturnType<typeof useGetWorkspaceMembersPublicKeysLazyQuery>;
 export type GetWorkspaceMembersPublicKeysQueryResult = Apollo.QueryResult<GetWorkspaceMembersPublicKeysQuery, GetWorkspaceMembersPublicKeysQueryVariables>;
+export const GetWorkspacesOwnedDocument = gql`
+    query GetWorkspacesOwned($actorId: Bytes!) {
+  workspaceMembers(where: {actorId: $actorId, accessLevel: owner}, first: 1) {
+    id
+  }
+}
+    `;
+
+/**
+ * __useGetWorkspacesOwnedQuery__
+ *
+ * To run a query within a React component, call `useGetWorkspacesOwnedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWorkspacesOwnedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetWorkspacesOwnedQuery({
+ *   variables: {
+ *      actorId: // value for 'actorId'
+ *   },
+ * });
+ */
+export function useGetWorkspacesOwnedQuery(baseOptions: Apollo.QueryHookOptions<GetWorkspacesOwnedQuery, GetWorkspacesOwnedQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetWorkspacesOwnedQuery, GetWorkspacesOwnedQueryVariables>(GetWorkspacesOwnedDocument, options);
+      }
+export function useGetWorkspacesOwnedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetWorkspacesOwnedQuery, GetWorkspacesOwnedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetWorkspacesOwnedQuery, GetWorkspacesOwnedQueryVariables>(GetWorkspacesOwnedDocument, options);
+        }
+export type GetWorkspacesOwnedQueryHookResult = ReturnType<typeof useGetWorkspacesOwnedQuery>;
+export type GetWorkspacesOwnedLazyQueryHookResult = ReturnType<typeof useGetWorkspacesOwnedLazyQuery>;
+export type GetWorkspacesOwnedQueryResult = Apollo.QueryResult<GetWorkspacesOwnedQuery, GetWorkspacesOwnedQueryVariables>;
