@@ -117,8 +117,8 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 			setNetworkModalStep(undefined)
 			logger.error({ err }, 'Error migrating wallet')
 			toast({
-				title: `Migration error "${err?.message}"`,
-				status: 'warning',
+				title: `Migration error "${(err as Error)?.message}"`,
+				status: 'error',
 				duration: 9000,
 				isClosable: true,
 			})
