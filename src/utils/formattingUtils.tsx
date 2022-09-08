@@ -1,4 +1,4 @@
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import moment from 'moment'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
 import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
@@ -210,21 +210,13 @@ export const getRewardAmount = (decimals: number, application: {
   fields: InitialApplicationType['fields']
   milestones: InitialApplicationType['milestones']
 }) => {
-
-	let rewardAmount: number
-
 	const fundingAskField = getFieldString(application, 'fundingAsk')
 	if(fundingAskField) {
-		rewardAmount = +formatAmount(fundingAskField, decimals)
+		return formatAmount(fundingAskField, decimals)
 	} else {
-		rewardAmount = 0
+		let sum = BigNumber.from(0)
 		application.milestones.forEach(
-			(milestone) => rewardAmount += +formatAmount(
-				milestone.amount,
-				decimals,
-			))
+			(milestone) => sum = sum.add(milestone.amount))
+		return formatAmount(sum.toString())
 	}
-
-	return rewardAmount
-
 }
