@@ -4275,6 +4275,16 @@ export type GetDaoNameQueryVariables = Exact<{
 
 export type GetDaoNameQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null } | null };
 
+export type GetDaOsForExploreQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+  orderBy: Workspace_OrderBy;
+  filter: Workspace_Filter;
+}>;
+
+
+export type GetDaOsForExploreQuery = { __typename?: 'Query', workspaces: Array<{ __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, createdAtS: number, mostRecentGrantPostedAtS: number, numberOfApplications: number, numberOfApplicationsSelected: number, totalGrantFundingDisbursedUSD: number }> };
+
 export type GetFundSentforReviewerQueryVariables = Exact<{
   type?: InputMaybe<FundsTransferType>;
   to?: InputMaybe<Scalars['Bytes']>;
@@ -5522,6 +5532,58 @@ export function useGetDaoNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetDaoNameQueryHookResult = ReturnType<typeof useGetDaoNameQuery>;
 export type GetDaoNameLazyQueryHookResult = ReturnType<typeof useGetDaoNameLazyQuery>;
 export type GetDaoNameQueryResult = Apollo.QueryResult<GetDaoNameQuery, GetDaoNameQueryVariables>;
+export const GetDaOsForExploreDocument = gql`
+    query getDAOsForExplore($first: Int, $skip: Int, $orderBy: Workspace_orderBy!, $filter: Workspace_filter!) {
+  workspaces(
+    first: $first
+    skip: $skip
+    orderBy: $orderBy
+    orderDirection: desc
+    where: $filter
+  ) {
+    id
+    title
+    logoIpfsHash
+    supportedNetworks
+    createdAtS
+    mostRecentGrantPostedAtS
+    numberOfApplications
+    numberOfApplicationsSelected
+    totalGrantFundingDisbursedUSD
+  }
+}
+    `;
+
+/**
+ * __useGetDaOsForExploreQuery__
+ *
+ * To run a query within a React component, call `useGetDaOsForExploreQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDaOsForExploreQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDaOsForExploreQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *      orderBy: // value for 'orderBy'
+ *      filter: // value for 'filter'
+ *   },
+ * });
+ */
+export function useGetDaOsForExploreQuery(baseOptions: Apollo.QueryHookOptions<GetDaOsForExploreQuery, GetDaOsForExploreQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDaOsForExploreQuery, GetDaOsForExploreQueryVariables>(GetDaOsForExploreDocument, options);
+      }
+export function useGetDaOsForExploreLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDaOsForExploreQuery, GetDaOsForExploreQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDaOsForExploreQuery, GetDaOsForExploreQueryVariables>(GetDaOsForExploreDocument, options);
+        }
+export type GetDaOsForExploreQueryHookResult = ReturnType<typeof useGetDaOsForExploreQuery>;
+export type GetDaOsForExploreLazyQueryHookResult = ReturnType<typeof useGetDaOsForExploreLazyQuery>;
+export type GetDaOsForExploreQueryResult = Apollo.QueryResult<GetDaOsForExploreQuery, GetDaOsForExploreQueryVariables>;
 export const GetFundSentforReviewerDocument = gql`
     query getFundSentforReviewer($type: FundsTransferType, $to: Bytes) {
   fundsTransfers(

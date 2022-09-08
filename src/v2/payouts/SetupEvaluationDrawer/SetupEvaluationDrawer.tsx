@@ -25,6 +25,7 @@ const SetupEvaluationDrawer = ({
 	grantAddress,
 	chainId,
 	setNetworkTransactionModalStep,
+	setTransactionHash,
 	data,
 }: {
 	isOpen: boolean
@@ -33,6 +34,7 @@ const SetupEvaluationDrawer = ({
 	grantAddress: string
 	chainId?: SupportedChainId
 	setNetworkTransactionModalStep: (step: number | undefined) => void
+	setTransactionHash: (hash: string) => void
 	data: GetReviewersForAWorkspaceQuery | undefined
 }) => {
 	const [step, setStep] = useState(0)
@@ -230,6 +232,7 @@ const SetupEvaluationDrawer = ({
 
 			setNetworkTransactionModalStep(3)
 			const { txFee, receipt } = await getTransactionDetails(response, chainId.toString())
+			setTransactionHash(receipt?.transactionHash)
 			await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
 
 			await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee))

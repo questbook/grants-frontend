@@ -91,12 +91,14 @@ const InReviewPanel = ({
 		 }
 	}, [isAcceptClicked, isRejectClicked, isResubmitClicked, isConfirmClicked])
 
-	const [txn,, loading, isBiconomyInitialised, error, networkTransactionModalStep] = useBatchUpdateApplicationState(
+	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
+
+	const [txn,, loading, isBiconomyInitialised, error] = useBatchUpdateApplicationState(
 		'',
 		checkedApplicationsIds,
 		state,
 		isConfirmClicked,
-		setIsConfirmClicked
+		setIsConfirmClicked, setNetworkTransactionModalStep
 	)
 
 	useEffect(() => {
@@ -497,6 +499,12 @@ const InReviewPanel = ({
 						'Waiting for transaction to index',
 						'Application(s) state updated',
 					]
+				}
+				transactionHash={txn?.transactionHash}
+				onClose={
+					() => {
+						setNetworkTransactionModalStep(undefined)
+					}
 				} />
 		</>
 	)

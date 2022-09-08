@@ -759,6 +759,8 @@ function ViewApplicants() {
 		}
 	}, [grantData])
 
+	const [transactionHash, setTransactionHash] = useState<string>()
+
 	return (
 		<Container
 			maxW='100%'
@@ -995,6 +997,7 @@ function ViewApplicants() {
 					grantAddress={grantID}
 					chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
 					setNetworkTransactionModalStep={setNetworkTransactionModalStep}
+					setTransactionHash={setTransactionHash}
 					data={reviewersForAWorkspaceData}
 				/>
 
@@ -1076,7 +1079,9 @@ function ViewApplicants() {
 							'Completing indexing',
 							'Rubric created and Reviewers assigned',
 						]
-					} />
+					}
+					transactionHash={transactionHash}
+					onClose={() => setNetworkTransactionModalStep(undefined)} />
 
 			</Container>
 			<Modal

@@ -20,10 +20,7 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 
 	const { makeInvite, isBiconomyInitialised } = useMakeInvite(selectedRole || 0)
 
-	// useEffect(() => {
-	// 	console.log("isBiconomyInitialised", isBiconomyInitialised );
-	// }, [isBiconomyInitialised])
-
+	const [transactionHash, setTransactionHash] = useState<string>()
 	useEffect(() => {
 		if(router.query.tab === 'members') {
 			setSelectedRole(0x1)
@@ -36,6 +33,7 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 		try {
 			const info = await makeInvite(
 				() => setCreateLinkStep(1),
+				setTransactionHash,
 			)
 
 			setCreateLinkStep(2)
@@ -169,6 +167,12 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 						'Wait for confirmation',
 						'Invite link created on-chain'
 					]
+				}
+				transactionHash={transactionHash}
+				onClose={
+					() => {
+						setCreateLinkStep(undefined)
+					}
 				}
 			/>
 		</>
