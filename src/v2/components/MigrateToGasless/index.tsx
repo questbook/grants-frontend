@@ -1,16 +1,13 @@
 import React, { useContext, useState } from 'react'
 import { Box, Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { registerWebWallet } from 'src/utils/gaslessUtils'
-import { delay } from 'src/utils/generics'
 import logger from 'src/utils/logger'
 import ConnectWalletModal from 'src/v2/components/ConnectWalletModal'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
-import { useAccount, useConnect, useNetwork } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 
 interface Props {
     isOpen: boolean
@@ -20,13 +17,11 @@ interface Props {
 const POINTERS = ['Zero gas fee across the app', 'Secure transactions', 'Seamless user experience']
 
 function MigrateToGasless({ isOpen, onClose }: Props) {
+	const { waitForScwAddress } = useContext(WebwalletContext)!
 	const { subgraphClients } = useContext(ApiClientsContext)!
 
 	const { data: walletData } = useAccount()
 	const { activeChain: walletChain } = useNetwork()
-	const { isConnected } = useConnect()
-
-	const { data: gaslessData } = useQuestbookAccount()
 
 	const [isConnectWalletModalOpen, setIsConnectWalletModalOpen] = useState(false)
 
@@ -36,7 +31,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 	const [transactionHash, setTransactionHash] = useState<string>()
 
 	const migrate = async() => {
-		if(!isConnected) {
+		if(!walletData?.address) {
 			setIsConnectWalletModalOpen(true)
 			return
 		}
@@ -49,25 +44,10 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 			return
 		}
 
-		if(!walletData?.address || !gaslessData?.address) {
-			return
-		}
-
 		try {
 			setNetworkModalStep(0)
-			let privateKey: string | null = ''
-			do {
-				privateKey = localStorage.getItem('webwalletPrivateKey')
-				if(privateKey && privateKey !== null) {
-					break
-				}
 
-				await delay(2000)
-			// eslint-disable-next-line no-constant-condition
-			} while(true)
-
-			const { scwAddress } = await registerWebWallet(privateKey)
-
+			const scwAddress = await waitForScwAddress
 			setNetworkModalStep(1)
 			const transaction = await workspaceContract.migrateWallet(walletData.address, scwAddress)
 
@@ -79,7 +59,8 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 			await subgraphClients[walletChain?.id].waitForBlock(transactionData.blockNumber)
 
 			setNetworkModalStep(5)
-			localStorage.removeItem('wagmi.wallet')
+
+			// set to ensure ensure migration doesn't occur again
 			localStorage.setItem('didMigrate', 'true')
 			onClose()
 		} catch(e) {
