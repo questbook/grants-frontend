@@ -73,9 +73,9 @@ function FeedbackDrawer({
 		if(transactionData && newPublicKey && newPublicKey.publicKey) {
 			setPk(newPublicKey.publicKey)
 			const formattedFeedbackData = feedbackData?.map((feedback) => ({
-				rubric: feedback.rubric,
-				rating: feedback.rating,
-				comment: feedback.comment,
+				rubric: feedback?.rubric,
+				rating: feedback?.rating,
+				comment: feedback?.comment,
 			}))
 			setEditedFeedbackData({ items: formattedFeedbackData })
 		}
@@ -128,9 +128,9 @@ function FeedbackDrawer({
 		}
 
 		const formattedFeedbackData = feedbackData?.map((feedback) => ({
-			rubric: feedback.rubric,
-			rating: feedback.rating,
-			comment: feedback.comment,
+			rubric: feedback?.rubric,
+			rating: feedback?.rating,
+			comment: feedback?.comment,
 		}))
 		setEditedFeedbackData({ items: formattedFeedbackData })
 	}
@@ -211,7 +211,7 @@ function FeedbackDrawer({
 											fontSize='16px'
 											lineHeight='12px'
 										>
-											{feedback.rubric.title}
+											{feedback?.rubric?.title}
 										</Text>
 										<Text
 											color='#69657B'
@@ -220,13 +220,13 @@ function FeedbackDrawer({
 											lineHeight='12px'
 											mt='6px'
 										>
-											{feedback.rubric.details}
+											{feedback?.rubric?.details}
 										</Text>
 										<Slider
 											min={0}
 											defaultValue={0}
 											step={1}
-											max={feedback.rubric.maximumPoints - 1}
+											max={feedback?.rubric?.maximumPoints - 1}
 											onChangeEnd={
 												(r) => {
 													const newFeedbackData = [...feedbackData]
@@ -236,7 +236,7 @@ function FeedbackDrawer({
 											}
 										>
 											{
-												Array.from({ length: feedback.rubric.maximumPoints },
+												Array.from({ length: feedback?.rubric?.maximumPoints },
 													(_, i) => (
 														<SliderMark
 															key={i}

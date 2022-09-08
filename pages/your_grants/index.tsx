@@ -589,7 +589,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
             			}
             			acceptingApplications={grant.acceptingApplications}
             			isAdmin={isAdmin}
-            			initialRubrics={grant.rubric as Rubric}
+            			initialRubrics={grant?.rubric as Rubric}
             			workspaceId={grant.workspace.id}
             		/>
             	)
@@ -665,7 +665,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
             			}
             			acceptingApplications={grant.grant.acceptingApplications}
             			isAdmin={isAdmin}
-            			initialRubrics={grant.grant.rubric as Rubric}
+            			initialRubrics={grant.grant?.rubric as Rubric}
             			workspaceId={grant.grant.workspace.id}
             		/>
             	)

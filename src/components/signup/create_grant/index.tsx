@@ -32,7 +32,7 @@ function CreateGrant({
 
 		if(data.shouldEncryptReviews) {
 			newFormData.rubric = {
-				...newFormData.rubric,
+				...newFormData?.rubric,
 				isPrivate: data.shouldEncryptReviews,
 			}
 			// eslint-disable-next-line no-param-reassign
@@ -72,7 +72,7 @@ function CreateGrant({
 
 		if(data.shouldEncryptReviews) {
 			newFormData.rubric = {
-				...newFormData.rubric,
+				...newFormData?.rubric,
 				isPrivate: data.shouldEncryptReviews,
 			}
 			// eslint-disable-next-line no-param-reassign

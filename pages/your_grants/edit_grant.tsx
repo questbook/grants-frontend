@@ -127,7 +127,7 @@ function EditGrant() {
 			rewardCurrency,
 			rewardCurrencyAddress,
 			date: grant.deadline,
-			rubric: grant.rubric,
+			rubric: grant?.rubric,
 			isPii: grant.fields.some((field: any) => field.isPii),
 		} as any
 		grant.fields
@@ -220,7 +220,7 @@ function EditGrant() {
 				rewardCurrency,
 				rewardCurrencyAddress,
 				date: grant.deadline,
-				rubric: grant.rubric,
+				rubric: grant?.rubric,
 				isPii: grant.fields.some((field: any) => field.isPii),
 			} as any
 			grant.fields

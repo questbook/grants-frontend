@@ -118,7 +118,7 @@ function ApplicationsTable({
 			id: application.id,
 			submittedOn: application.createdAtS,
 			reviews: application.reviews,
-			grantRubricIsPrivate: grant.rubric?.isPrivate,
+			grantRubricIsPrivate: grant?.rubric?.isPrivate,
 			reward: `${rewardAmount} ${tokenLabel}`,
 			state: application.state,
 			applicantId: application.applicantId,

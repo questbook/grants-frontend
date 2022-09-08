@@ -66,7 +66,7 @@ function Sidebar({
 			return
 		}
 
-		const initialRubrics = applicationData?.grant.rubric
+		const initialRubrics = applicationData?.grant?.rubric
 		const newRubrics = [] as any[]
 		console.log('initialRubrics', initialRubrics)
 		console.log('application Data ', applicationData)
@@ -332,7 +332,7 @@ function Sidebar({
 						?.reviewers.length || 0
 				}
 				reviews={applicationData?.reviews}
-				rubric={applicationData?.grant.rubric}
+				rubric={applicationData?.grant?.rubric}
 			/>
 
 			{
@@ -506,7 +506,7 @@ Evaluation Rubric
 				chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
 				grantAddress={applicationData?.grant.id}
 				workspaceId={workspace?.id || ''}
-				initialIsPrivate={applicationData?.grant.rubric?.isPrivate || false}
+				initialIsPrivate={applicationData?.grant?.rubric?.isPrivate || false}
 			/>
 		</>
 	)

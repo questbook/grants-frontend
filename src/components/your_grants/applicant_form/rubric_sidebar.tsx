@@ -67,8 +67,8 @@ function RubricSidebar({
 			}
 
 			review.items.forEach((item: any) => {
-				results[item.rubric.id].rating += item.rating
-				results[item.rubric.id].total += 1
+				results[item?.rubric?.id].rating += item.rating
+				results[item?.rubric?.id].total += 1
 			})
 		})
 
@@ -126,8 +126,8 @@ function RubricSidebar({
 			}
 
 			review.items.forEach((item: any) => {
-				results[item.rubric.id].rating += item.rating
-				results[item.rubric.id].total += 1
+				results[item?.rubric?.id].rating += item.rating
+				results[item?.rubric?.id].total += 1
 			})
 		})
 
@@ -648,7 +648,7 @@ Against
 														fontSize="16px"
 														lineHeight="12px"
 													>
-														{feedback.rubric.title}
+														{feedback?.rubric?.title}
 													</Text>
 													<Text
 														color="#69657B"
@@ -656,12 +656,12 @@ Against
 														fontSize="12px"
 														lineHeight="12px"
 													>
-														{feedback.rubric.details}
+														{feedback?.rubric?.details}
 													</Text>
 
 													<Box mt="2px">
 														<StarRatings
-															numberOfStars={feedback.rubric.maximumPoints}
+															numberOfStars={feedback?.rubric?.maximumPoints}
 															starRatedColor="#88BDEE"
 															rating={feedback.rating}
 															name="rating"

@@ -72,11 +72,11 @@ export default function useSetRubrics(
 			// console.log('calling validate');
 			try {
 				let rubricHash = ''
-				if(data.rubric) {
+				if(data?.rubric) {
 					const {
 						data: { ipfsHash: auxRubricHash },
 					} = await validatorApi.validateRubricSet({
-						rubric: data.rubric,
+						rubric: data?.rubric,
 					})
 
 					if(!auxRubricHash) {

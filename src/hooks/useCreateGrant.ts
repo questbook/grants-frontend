@@ -120,11 +120,11 @@ export default function useCreateGrant(
 				}
 
 				let rubricHash = ''
-				if(data.rubric) {
+				if(data?.rubric) {
 					const {
 						data: { ipfsHash: auxRubricHash },
 					} = await validatorApi.validateRubricSet({
-						rubric: data.rubric,
+						rubric: data?.rubric,
 					})
 
 					if(!auxRubricHash) {

@@ -63,7 +63,7 @@ function ReviewerSidebar({
 
 		let data: typeof reviewSelected
 
-		if(applicationData?.grant.rubric?.isPrivate) {
+		if(applicationData?.grant?.rubric?.isPrivate) {
 			const reviewData = yourReview.data.find((d) => (
 				d.id.split('.')[1].toLowerCase() === accountData?.address?.toLowerCase()
 			))
@@ -113,7 +113,7 @@ function ReviewerSidebar({
 									fontSize='16px'
 									lineHeight='12px'
 								>
-									{feedback.rubric.title}
+									{feedback?.rubric?.title}
 								</Text>
 								<Box h={1} />
 								<Text
@@ -121,7 +121,7 @@ function ReviewerSidebar({
 									fontSize='16px'
 									lineHeight='12px'
 								>
-									{feedback.rating}
+									{feedback?.rating}
 								</Text>
 								{
 									feedback.comment && (
@@ -172,7 +172,7 @@ function ReviewerSidebar({
 						<Button
 							onClick={
 								() => {
-									if(applicationData?.grant.rubric?.items && applicationData?.grant.rubric?.items?.length === 0) {
+									if(applicationData?.grant?.rubric?.items && applicationData?.grant?.rubric?.items?.length === 0) {
 										toast({
 											title: 'Evaluation Rubric not present!',
 											description: 'Evaluation Rubric required for review, contact grant administrator!',
@@ -198,9 +198,9 @@ function ReviewerSidebar({
 					grantTitle={applicationData!.grant.title}
 					chainId={chainId}
 					workspaceId={applicationData!.grant.workspace.id}
-					rubrics={applicationData!.grant.rubric!.items}
+					rubrics={applicationData!.grant?.rubric!.items}
 					applicationId={applicationData!.id}
-					isPrivate={applicationData!.grant.rubric!.isPrivate}
+					isPrivate={applicationData!.grant?.rubric!.isPrivate}
 				/>
 			</>
 		)
