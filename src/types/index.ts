@@ -54,7 +54,7 @@ export type IApplicantData = {
   milestones: GetApplicantsForAGrantQuery['grantApplications'][number]['milestones']
   reviewers: GetApplicantsForAGrantQuery['grantApplications'][number]['applicationReviewers']
   amount_paid: string
-  reviews: IReview[]
+  reviews: GetApplicantsForAGrantQuery['grantApplications'][number]['reviews']
 }
 
 export type IReview = Exclude<Exclude<GetApplicationDetailsQuery['grantApplication'], null>, undefined>['reviews'][0];
