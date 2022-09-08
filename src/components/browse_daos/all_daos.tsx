@@ -1,10 +1,21 @@
 import { Grid, GridItem } from '@chakra-ui/react'
 import DaoCard from 'src/components/browse_daos/dao_card'
 import GetStartedCard from 'src/components/browse_daos/get_started_card'
+import { GetDaOsForExploreQuery } from 'src/generated/graphql'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
-import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
-function AllDaosGrid({ allWorkspaces, renderGetStarted }: {allWorkspaces: any, renderGetStarted: boolean}) {
+type Workspace = GetDaOsForExploreQuery['workspaces'][0]
+
+type AllDaosGridProps = {
+	workspaces: Workspace[]
+	renderGetStarted: boolean
+}
+
+function AllDaosGrid({
+	workspaces,
+	renderGetStarted
+}: AllDaosGridProps) {
 	return (
 		<Grid
 			w='100%'
@@ -15,44 +26,24 @@ function AllDaosGrid({ allWorkspaces, renderGetStarted }: {allWorkspaces: any, r
 
 		>
 			{
-				allWorkspaces.map((workspace: any, index: number) => {
-					if(index === 0) {
-						return (
-							<>
-								{
-									renderGetStarted && (
-										<GridItem key='get-started'>
-											<GetStartedCard />
-										</GridItem>
-									)
-								}
-								<GridItem key={index}>
-									<DaoCard
-										logo={getUrlForIPFSHash(workspace.icon)}
-										name={workspace.name}
-										daoId={workspace.workspaceID}
-										chainId={getSupportedChainIdFromSupportedNetwork(workspace.chainID)}
-										noOfApplicants={workspace.noOfApplicants}
-										totalAmount={workspace.amount} />
-								</GridItem>
-							</>
-						)
-					}
-
-					return (
-						<GridItem key={index}>
-							<DaoCard
-								logo={getUrlForIPFSHash(workspace.icon)}
-								name={workspace.name}
-								daoId={workspace.workspaceID}
-								chainId={getSupportedChainIdFromSupportedNetwork(workspace.chainID)}
-								noOfApplicants={workspace.noOfApplicants}
-								totalAmount={workspace.amount} />
-						</GridItem>
-					)
-				}
-
+				renderGetStarted && (
+					<GridItem key='get-started'>
+						<GetStartedCard />
+					</GridItem>
 				)
+			}
+			{
+				workspaces.map((workspace, index: number) => (
+					<GridItem key={index}>
+						<DaoCard
+							logo={getUrlForIPFSHash(workspace.logoIpfsHash)}
+							name={workspace.title}
+							daoId={workspace.id}
+							chainId={getSupportedChainIdFromWorkspace(workspace)}
+							noOfApplicants={workspace.numberOfApplications}
+							totalAmount={workspace.totalGrantFundingDisbursedUSD} />
+					</GridItem>
+				))
 			}
 		</Grid>
 	)

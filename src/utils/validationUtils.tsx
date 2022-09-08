@@ -47,7 +47,7 @@ const getSupportedValidatorNetworkFromChainId = (chainId: SupportedChainId) => (
 	chainId.toString() as SupportedValidatorNetwork
 )
 
-const getSupportedChainIdFromWorkspace = (workspace?: MinimalWorkspace) => {
+const getSupportedChainIdFromWorkspace = (workspace?: Pick<MinimalWorkspace, 'supportedNetworks'>) => {
 	if(!workspace) {
 		return undefined
 	}
