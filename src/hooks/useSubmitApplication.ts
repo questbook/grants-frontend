@@ -15,6 +15,7 @@ import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { addAuthorizedUser, bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import logger from 'src/utils/logger'
 
 export default function useSubmitApplication(
 	data: GrantApplicationRequest,
@@ -60,6 +61,7 @@ export default function useSubmitApplication(
 	useEffect(() => {
 
 		if(currentChainId !== network) {
+			logger.info('SWITCH NETWORK (use-submit-application.tsx 1): ', currentChainId)
 			switchNetwork(currentChainId)
 		}
 
@@ -204,6 +206,7 @@ export default function useSubmitApplication(
 
 			if(!currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-submit-application.tsx 2): ', chainId)
 					switchNetwork(chainId)
 				}
 
@@ -214,6 +217,7 @@ export default function useSubmitApplication(
 
 			if(chainId !== currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-submit-application.tsx 3): ', chainId)
 					switchNetwork(chainId)
 				}
 

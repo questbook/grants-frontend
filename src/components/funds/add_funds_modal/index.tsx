@@ -24,6 +24,7 @@ import ERC20ABI from 'src/contracts/abi/ERC20.json'
 import useDepositFunds from 'src/hooks/useDepositFunds'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { formatAmount } from 'src/utils/formattingUtils'
+import logger from 'src/utils/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useContract, useNetwork, useSigner } from 'wagmi'
 
@@ -90,6 +91,7 @@ function AddFunds({
 		if(workspace && switchNetwork && isOpen) {
 			const chainId = getSupportedChainIdFromWorkspace(workspace)
 			// console.log(' (ADD FUNDS MODAL) Switch Network: ', workspace, chainId)
+			logger.info('SWITCH NETWORK (add-funds-modal.tsx 1): ', chainId!)
 			switchNetwork(chainId!)
 		}
 	}, [isOpen, switchNetwork, workspace])

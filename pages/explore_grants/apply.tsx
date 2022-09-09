@@ -14,6 +14,7 @@ import NavbarLayout from 'src/layout/navbarLayout'
 import { formatAmount } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import logger from 'src/utils/logger'
 import { getAssetInfo, getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 
@@ -88,6 +89,7 @@ function ApplyGrant() {
 		)
 
 		if(network !== localChainId) {
+			logger.info('SWITCH NETWORK (apply.tsx 1): ', localChainId)
 			switchNetwork(localChainId)
 		}
 

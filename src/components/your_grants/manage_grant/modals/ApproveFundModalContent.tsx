@@ -16,6 +16,7 @@ import ERC20ABI from 'src/contracts/abi/ERC20.json'
 import useERC20Contract from 'src/hooks/contracts/useERC20Contract'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { parseAmount } from 'src/utils/formattingUtils'
+import logger from 'src/utils/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useAccount, useContract, useNetwork, useSigner } from 'wagmi'
 
@@ -60,6 +61,7 @@ function ModalContent({
 	useEffect(() => {
 		if(workspace && switchNetwork && isOpen) {
 			const chainId = getSupportedChainIdFromWorkspace(workspace)
+			logger.info('SWITCH NETWORK (approve-fund-modal.tsx 1): ', chainId!)
 			switchNetwork(chainId!)
 		}
 	}, [isOpen, switchNetwork, workspace])

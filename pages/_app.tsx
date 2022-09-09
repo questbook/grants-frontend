@@ -23,6 +23,7 @@ import theme from 'src/theme'
 import { MinimalWorkspace } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import { delay } from 'src/utils/generics'
+import logger from 'src/utils/logger'
 import getSeo from 'src/utils/seo'
 import MigrateToGasless from 'src/v2/components/MigrateToGasless'
 import {
@@ -152,7 +153,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		setWebwallet(createWebWallet())
 		setScwAddress(getScwAddress())
 		setNonce(getNonce())
-		switchNetwork(getNetwork())
+		const network = getNetwork()
+		logger.info('SWITCH NETWORK (_app.tsx 1): ', network)
+		switchNetwork(network)
 	}, [])
 
 	useEffect(() => {
@@ -260,6 +263,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					localStorage.removeItem('network')
 				}
 
+				logger.info('SWITCH NETWORK (_app.tsx 2): ', network)
 				switchNetwork(newNetwork!)
 			},
 			scwAddress: scwAddress,

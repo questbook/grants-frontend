@@ -22,6 +22,7 @@ import config from 'src/constants/config.json'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useChainId from 'src/hooks/utils/useChainId'
+import logger from 'src/utils/logger'
 
 function Form({
 	onSubmit: onFormSubmit,
