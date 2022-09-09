@@ -1,9 +1,11 @@
 import axios from 'axios'
 import { Contract, ethers, Wallet } from 'ethers'
+import { Fragment } from 'ethers/lib/utils'
+import { BiconomyContext } from 'pages/_app'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import SupportedChainId from 'src/generated/SupportedChainId'
-import { AddressMap } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
+import { TransactionReceipt } from 'web3-core'
 
 const EIP712_WALLET_TX_TYPE = {
 	WalletTx: [
@@ -17,47 +19,48 @@ const EIP712_WALLET_TX_TYPE = {
 		{ type: 'address', name: 'gasToken' },
 		{ type: 'address', name: 'refundReceiver' },
 		{ type: 'uint256', name: 'nonce' },
-	]
+	],
 }
-
-// mumbai
-// export const apiKey = "qypYydNmh.85fb44d4-bc3a-4434-8e51-a929f54de521"
-// export const webHookId = "a36aa5b2-b761-4757-aad9-10348f3ec732"
-
-// goerli
-export const webHookId = '7726ab3f-2b4b-4a80-bfdd-c8ebb2d5ea2f'
 
 export const jsonRpcProviders: { [key: string]: ethers.providers.JsonRpcProvider } =
-{
-	'80001': new ethers.providers.JsonRpcProvider('https://polygon-mumbai.g.alchemy.com/v2/X6pnQlJfJq00b8MT53QihWBINEgHZHGp'),
-	'5': new ethers.providers.JsonRpcProvider('https://eth-goerli.g.alchemy.com/v2/Hr6VkBfmbJIhEW3fHJnl0ujE0xmWxcqH'),
-	'137': new ethers.providers.JsonRpcProvider('https://polygon-mainnet.g.alchemy.com/v2/mmBX0eNrvs0k7UpEMwi0eIH6hC4Dqoss')
-}
+	{
+		'80001': new ethers.providers.JsonRpcProvider('https://polygon-mumbai.g.alchemy.com/v2/X6pnQlJfJq00b8MT53QihWBINEgHZHGp'),
+		'5': new ethers.providers.JsonRpcProvider('https://eth-goerli.g.alchemy.com/v2/Hr6VkBfmbJIhEW3fHJnl0ujE0xmWxcqH'),
+		'137': new ethers.providers.JsonRpcProvider('https://polygon-mainnet.g.alchemy.com/v2/mmBX0eNrvs0k7UpEMwi0eIH6hC4Dqoss'),
+		'10': new ethers.providers.JsonRpcProvider('https://opt-mainnet.g.alchemy.com/v2/Frv-KL7os-J7EV9e34WA0b0ayG5i1vNN')
+	}
 
 export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } } = {
 	'5': {
 		apiKey: 'cCEUGyH2y.37cd0d5e-704c-49e6-9f3d-e20fe5bb13d5',
-		webHookId: '7726ab3f-2b4b-4a80-bfdd-c8ebb2d5ea2f'
+		webHookId: '7726ab3f-2b4b-4a80-bfdd-c8ebb2d5ea2f',
 	},
 	'137': {
 		apiKey: 'kcwSbypnqq.f5fe6fbd-10e3-4dfe-a731-5eb4b6d85445',
-		webHookId: '202501f8-639f-495a-a1ec-d52d86db8b2d'
+		webHookId: '202501f8-639f-495a-a1ec-d52d86db8b2d',
+	},
+	'10': {
+		apiKey: 'xc_x_i8x3.7002d254-03f5-427e-b25f-400b52d1d4c9',
+		webHookId: '105f79a9-eab0-4f8c-aa44-877ffc3f9c67'
 	}
 }
 
 export const networksMapping: { [key: string]: string } = {
-	'137': '5',
+	'137': '137',
+	'10': '10',
+
+	// goerli
 	'5': '5',
 	'4': '5',
 	'900001': '5', // This is for solana.
-	"1": "5",
-    "100": "5",
-    "42161": "5",
-    "43114": "5",
-    "1313161554": "5",
-    "56": "5",
-    "246": "5",
-    "10": "5",
+	'1': '5',
+	'100': '5',
+	'42161': '5',
+	'43114': '5',
+	'1313161554': '5',
+	'56': '5',
+	'246': '5',
+	'42220': '5',
 }
 
 export const signNonce = async(webwallet: Wallet, nonce: string) => {
@@ -75,7 +78,7 @@ export const getNonce = async(webwallet: Wallet | undefined) => {
 
 	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/refresh_nonce',
 		{
-			webwallet_address: webwallet.address
+			webwallet_address: webwallet.address,
 		})
 	if(response.data && response.data.nonce !== 'Token expired') {
 		return response.data.nonce
@@ -84,118 +87,41 @@ export const getNonce = async(webwallet: Wallet | undefined) => {
 	return false
 }
 
-export const registerWebHook = async(authToken: string, apiKey: string) => {
-	const url = 'https://api.biconomy.io/api/v1/dapp/register-webhook'
-
-	const formData = new URLSearchParams({
-		'webHook': 'https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/check',
-		'requestType': 'post', // post or get
-	})
-
-	const requestOptions = {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded',
-			'authToken': authToken,
-			'apiKey': apiKey
-		},
-		body: formData
-	}
-
-	const response = await fetch(url, requestOptions)
-	const responseJSON = await response.json()
-
-	let webHookId = false
-	// console.log(responseJSON)
-	try {
-		webHookId = responseJSON.data.webHookId
-	} catch{
-		throw Error("Couldn't register webhook for your app!")
-	}
-
-	return webHookId
-}
-
-export const addDapp = async(dappName: string, networkId: string, authToken: string | undefined) => {
-	// console.log('AUTH TOKEN', authToken)
-	if(!authToken) {
-		return false
-	}
-
-	const url = 'https://api.biconomy.io/api/v1/dapp/public-api/create-dapp'
-
-	const formData = new URLSearchParams({
-		'dappName': dappName,
-		'networkId': networkId,
-		'enableBiconomyWallet': 'true'
-	})
-
-	const requestOptions = {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'authToken': authToken },
-		body: formData
-	}
-
-	const res = await fetch(url, requestOptions)
-	const resJson = await res.json()
-
-	// console.log(resJson.data)
-
-	return resJson.data
-}
-
-export const addAuthorizedOwner = async(workspace_id: number, webwallet_address: string, scw_address: string,
-	chain_id: string, safe_address: string) => {
+export const addAuthorizedOwner = async(workspaceId: number, webwalletAddress: string, scwAddress: string,
+	chainId: string, safeAddress: string) => {
 
 	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/add_workspace_owner',
 		{
-			workspace_id,
-			webwallet_address,
-			scw_address,
-			chain_id,
-			safe_address
+			'workspace_id': workspaceId,
+			'webwallet_address': webwalletAddress,
+			'scw_address': scwAddress,
+			'chain_id': chainId,
+			'safe_address': safeAddress,
 		})
 
-	if(response.data && response.data.status) {
-		return true
-	}
-
-	return false
+	return !!response.data?.status
 }
 
-export const addAuthorizedUser = async(webwallet_address: string) => {
+export const addAuthorizedUser = async(webwalletAddress: string) => {
 
 	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/add_user',
 		{
-			webwallet_address
+			'webwallet_address': webwalletAddress,
 		})
 
-	if(response.data && response.data.authorize) {
-		return true
-	}
-
-	return false
+	return !!response.data?.authorize
 }
 
-export const chargeGas = async(workspace_id: number, amount: number) => {
+export const chargeGas = async(workspaceId: number, amount: number) => {
 	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/charge_gas',
 		{
-			workspace_id,
-			amount
+			'workspace_id': workspaceId,
+			amount,
 		})
-	if(response.data && response.data.status) {
-		// console.log(`charged workspace ${workspace_id} with ${amount} gas`)
-		return true
-	}
-
-	return false
-
+	return !!response.data?.status
 }
 
 export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: BiconomyWalletClient, chainId: string, nonce: string) => {
-
-
-
 	const signedNonce = await signNonce(webwallet, nonce)
 
 	const webHookAttributes = {
@@ -204,59 +130,33 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 			'signedNonce': signedNonce,
 			'nonce': nonce,
 			'to': WORKSPACE_REGISTRY_ADDRESS[parseInt(chainId) as SupportedChainId],
-			'chain_id': chainId
+			'chain_id': chainId,
 		},
 	}
 
-	// console.log("I'm here", biconomyWalletClient)
-	var { doesWalletExist, walletAddress } = await biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address })
-	// console.log("I'm not here")
+	const { doesWalletExist, walletAddress } = await biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address })
 	let scwAddress
-	// console.log('WEEEE', webwallet.address)
-	
+
 	if(!doesWalletExist) {
-		// console.log('Wallet does not exist')
-		// console.log('Deploying wallet')
-		const { walletAddress, txHash } = await biconomyWalletClient.checkIfWalletExistsAndDeploy({ eoa: webwallet.address , webHookAttributes }) // default index(salt) 0
+		// console.log("deploying scw ...", biconomyWalletClient)
+		const { walletAddress, txHash } = await biconomyWalletClient.checkIfWalletExistsAndDeploy({
+			eoa: webwallet.address,
+			webHookAttributes,
+		}) // default index(salt) 0
 
 		await getTransactionReceipt(txHash, chainId)
 
-		// console.log('Wallet deployed at address', walletAddress)
 		scwAddress = walletAddress
 	} else {
-		// console.log(`Wallet already exists for: ${webwallet.address}`)
-		// console.log(`Wallet address: ${walletAddress}`)
 		scwAddress = walletAddress
 	}
 
 	return scwAddress
 }
 
-// export const sendGaslessTransactionNew = async(targetContractObject: Contract, targetContractMethod: string,
-// 	targetContractArgs: Array<any>, targetContractAddress: string, webwallet: Wallet | undefined, chainId: string) => {
-
-// 	// console.log('HERE1', targetContractMethod, targetContractArgs)
-// 	const { data } = await targetContractObject.populateTransaction[targetContractMethod](...targetContractArgs)
-
-// 	const res = await axios.post('http://localhost:3001/v0/build_tx', {
-// 		webwallet_address: webwallet?.address,
-// 		populated_tx: data,
-// 		chain_id: chainId,
-// 		target_contract_address: targetContractAddress
-// 	})
-
-// 	// console.log('new flow', res)
-// 	return false
-// }
-
-export const sendGaslessTransaction = async(biconomy: any, targetContractObject: Contract, targetContractMethod: string,
-	targetContractArgs: Array<any>, targetContractAddress: string, biconomyWalletClient: BiconomyWalletClient,
+export const sendGaslessTransaction = async(biconomy: typeof BiconomyContext, targetContractObject: Contract, targetContractMethod: string,
+	targetContractArgs: any, targetContractAddress: string, biconomyWalletClient: BiconomyWalletClient,
 	scwAddress: string, webwallet: Wallet | undefined, chainId: string, webHookId: string, nonce: string | undefined) => {
-
-	// console.log(biconomy, targetContractObject, targetContractMethod, targetContractArgs, targetContractAddress,
-	// 	biconomyWalletClient, scwAddress, webwallet, chainId, webHookId, nonce)
-
-	// console.log('ffff', targetContractAddress)
 
 	if(!biconomy) {
 		alert('Biconomy is not ready! Please wait.')
@@ -278,16 +178,17 @@ export const sendGaslessTransaction = async(biconomy: any, targetContractObject:
 		return false
 	}
 
-	// console.log('HERE1', targetContractObject, targetContractMethod, targetContractArgs)
 	const { data } = await targetContractObject.populateTransaction[targetContractMethod](...targetContractArgs)
-	// console.log('HERE2')
-	// console.log('HERE 00', biconomyWalletClient)
-	// console.log(biconomyWalletClient, data, targetContractAddress, scwAddress)
-	const safeTxBody = await biconomyWalletClient.buildExecTransaction({ data, to: targetContractAddress, walletAddress: scwAddress })
+	const safeTxBody = await biconomyWalletClient.buildExecTransaction({
+		data,
+		to: targetContractAddress,
+		walletAddress: scwAddress,
+	})
 
-	// console.log('HERE3')
-
-	const signature = await webwallet._signTypedData({ verifyingContract: scwAddress, chainId: ethers.BigNumber.from(chainId) }, EIP712_WALLET_TX_TYPE, safeTxBody)
+	const signature = await webwallet._signTypedData({
+		verifyingContract: scwAddress,
+		chainId: ethers.BigNumber.from(chainId),
+	}, EIP712_WALLET_TX_TYPE, safeTxBody)
 	// console.log('HERE4')
 
 	let newSignature = '0x'
@@ -301,13 +202,17 @@ export const sendGaslessTransaction = async(biconomy: any, targetContractObject:
 			'signedNonce': signedNonce,
 			'nonce': nonce,
 			'to': targetContractAddress,
-			'chain_id': chainId
+			'chain_id': chainId,
 		},
 	}
-	// console.log('HI')
-	const response = await biconomyWalletClient.sendBiconomyWalletTransaction({ execTransactionBody: safeTxBody, walletAddress: scwAddress, signature: newSignature, webHookAttributes }) // signature appended
-	// console.log('HI2')
-	return response
+
+	// signature appended
+	return await biconomyWalletClient.sendBiconomyWalletTransaction({
+		execTransactionBody: safeTxBody,
+		walletAddress: scwAddress,
+		signature: newSignature,
+		webHookAttributes,
+	})
 }
 
 export const getTransactionReceipt = async(transactionHash: string | undefined, chainId: string) => {
@@ -315,7 +220,6 @@ export const getTransactionReceipt = async(transactionHash: string | undefined, 
 		return false
 	}
 
-	// console.log('GOT HERE')
 	await jsonRpcProviders[chainId].waitForTransaction(transactionHash, 1)
 	return await jsonRpcProviders[chainId].getTransactionReceipt(transactionHash)
 }
@@ -324,13 +228,13 @@ export const getTransactionDetails = async(transactionHash: string, chainId: str
 	const receipt = await getTransactionReceipt(transactionHash, chainId)
 
 	if(!receipt) {
-		throw new Error("Couldn't fetch transaction receipt!")
+		throw new Error('Couldn\'t fetch transaction receipt!')
 	}
 
 	const gasPrice = (await jsonRpcProviders[chainId].getTransaction(transactionHash)).gasPrice
 
 	if(!gasPrice) {
-		throw new Error("Couldn't fetch gas price!")
+		throw new Error('Couldn\'t fetch gas price!')
 	}
 
 	const txFeeBigInt = gasPrice?.toBigInt() * receipt.gasUsed.toBigInt()
@@ -340,9 +244,7 @@ export const getTransactionDetails = async(transactionHash: string, chainId: str
 	return { receipt, txFee }
 }
 
-export const getEventData = async(receipt: any, eventName: string, contractABI: any) => {
-
-	var eventInterface: ethers.utils.Interface
+export const getEventData = async(receipt: ethers.providers.TransactionReceipt, eventName: string, contractABI: any) => {
 
 	const isValidEvent = (item: ethers.utils.Fragment) => {
 		const fragmentItem = ethers.utils.Fragment.from(item)
@@ -353,7 +255,7 @@ export const getEventData = async(receipt: any, eventName: string, contractABI: 
 		return fragmentItem.name === eventName && fragmentItem.type === 'event'
 	}
 
-	const isValidEventInReceipt = (item: ethers.providers.Log) => {
+	const isValidEventInReceipt = (item: TransactionReceipt['logs'][number]) => {
 		try {
 			eventInterface.parseLog(item)
 			return true
@@ -362,7 +264,6 @@ export const getEventData = async(receipt: any, eventName: string, contractABI: 
 		}
 	}
 
-	// console.log('THIS IS RECEIPT', receipt)
 	const abiInterface = new ethers.utils.Interface(contractABI) // this is contract's ABI
 	const humanReadableABI: string | string[] = abiInterface.format(ethers.utils.FormatTypes.full) // convert to human readable ABI
 	if(typeof (humanReadableABI) === 'string') {
@@ -377,7 +278,7 @@ export const getEventData = async(receipt: any, eventName: string, contractABI: 
 		throw Error('Invalid Given Event!')
 	}
 
-	eventInterface = new ethers.utils.Interface(eventFragment)
+	const eventInterface = new ethers.utils.Interface(eventFragment)
 
 	const eventLogs = receipt.logs.filter(isValidEventInReceipt)
 
@@ -385,7 +286,66 @@ export const getEventData = async(receipt: any, eventName: string, contractABI: 
 		throw Error('Invalid Given Event!')
 	}
 
-	const eventLog = eventInterface.parseLog(eventLogs[0])
+	return eventInterface.parseLog(eventLogs[0])
+}
 
-	return eventLog
+export const registerWebHook = async(authToken: string | undefined, apiKey: string) => {
+
+	if(!authToken) {
+		throw new Error('No bico auth token found')
+	}
+
+	const url = 'https://api.biconomy.io/api/v1/dapp/register-webhook'
+
+	const formData = new URLSearchParams({
+		'webHook': 'https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/check',
+		'requestType': 'post', // post or get
+	})
+
+	const requestOptions = {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'authToken': authToken, 'apiKey': apiKey },
+		body: formData
+	}
+
+	const response = await fetch(url, requestOptions)
+	const responseJSON = await response.json()
+
+	let webHookId = "Couldn't register webhook on workspace!"
+	console.log(responseJSON)
+	try {
+		webHookId = responseJSON.data.webHookId
+	} catch{
+		throw Error("Couldn't register webhook for your app!")
+	}
+
+	return webHookId
+}
+
+export const addDapp = async(dappName: string, networkId: string, authToken: string | undefined) => {
+	console.log('AUTH TOKEN', authToken)
+	if(!authToken) {
+		throw new Error('No bico auth token found')
+	}
+
+	const url = 'https://api.biconomy.io/api/v1/dapp/public-api/create-dapp'
+
+	const formData = new URLSearchParams({
+		'dappName': dappName,
+		'networkId': networkId,
+		'enableBiconomyWallet': 'true'
+	})
+
+	const requestOptions = {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'authToken': authToken },
+		body: formData
+	}
+
+	const res = await fetch(url, requestOptions)
+	const resJson = await res.json()
+
+	console.log(resJson.data)
+
+	return { apiKey: resJson.data.apiKey, fundingKey: resJson.data.fundingKey.toString() }
 }

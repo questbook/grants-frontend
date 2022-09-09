@@ -44,8 +44,6 @@ export default function useUpdateWorkspacePublicKeys(
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = React.useState(false)
 
 	useEffect(() => {
-		// const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		// console.log('rree', isBiconomyLoading, biconomyLoading)
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
 			biconomy.networkId.toString() === chainId.toString()) {
 			setIsBiconomyInitialised(true)

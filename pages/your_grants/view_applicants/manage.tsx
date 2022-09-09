@@ -180,7 +180,7 @@ function ManageGrant() {
 					fundTransfers={fundsDisbursed?.fundsTransfers || []}
 					assetId={rewardAsset}
 					columns={['milestoneTitle', 'date', 'from', 'action']}
-					assetDecimals={decimals}
+					assetDecimals={decimals!}
 					grantId={applicationData?.grant?.id || ''}
 					type='funding_sent'
 					chainId={getSupportedChainIdFromWorkspace(workspace)}
@@ -546,7 +546,7 @@ function ManageGrant() {
 						grant={applicationData?.grant}
 						applicationId={applicationID}
 						applicantId={applicationData?.applicantId!}
-						decimals={decimals}
+						decimals={decimals!}
 					/>
 				)
 			}

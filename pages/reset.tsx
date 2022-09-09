@@ -4,9 +4,10 @@ import {
 	Button,
 	Flex
 } from '@chakra-ui/react'
+import { Wallet } from 'ethers'
 import { BiconomyContext, WebwalletContext } from 'pages/_app'
 import NavbarLayout from 'src/layout/navbarLayout'
-import { Wallet } from 'ethers'
+import { registerWebHook } from 'src/utils/gaslessUtils'
 
 function SignupWebwallet() {
 
@@ -24,7 +25,6 @@ function SignupWebwallet() {
 		setWebwallet(Wallet.createRandom())
 		setScwAddress(undefined)
 		setBiconomyDaoObj(undefined)
-
 	}
 
 	return (

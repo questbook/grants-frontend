@@ -150,7 +150,7 @@ function Form({
 				const o = JSON.parse(projectDetails)
 				setProjectDetails(EditorState.createWithContent(convertFromRaw(o)))
 			}
-		} catch(e) {
+		} catch(e: any) {
 			if(projectDetails) {
 				setProjectDetails(
 					EditorState.createWithContent(

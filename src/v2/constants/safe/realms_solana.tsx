@@ -16,6 +16,7 @@ import {
 import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
 import assert from 'assert'
 import axios from 'axios'
+import { USD_THRESHOLD } from 'src/constants'
 import { NetworkType } from 'src/constants/Networks'
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 import { MetaTransaction, Safe, TransactionType } from 'src/v2/types/safe'
@@ -224,8 +225,9 @@ const getSafeDetails = async(realmsAddress: string): Promise<SafeSelectOption | 
 		networkName: 'Solana',
 		networkIcon: '/network_icons/solana.svg',
 		safeType: 'SPL-GOV',
-		safeIcon: '/safes_icons/spl_gov.png',
+		safeIcon: '/safes_icons/realms.svg',
 		amount: usdAmount, // 1000
+		isDisabled: usdAmount < USD_THRESHOLD
 	}
 }
 
@@ -255,7 +257,7 @@ const getOwners = async(safeAddress: string): Promise<string[]> => {
 		const tokenownerrecord = await getAllTokenOwnerRecords(connection, programId, safeAddressPublicKey)
 		const owners = tokenownerrecord.map(record => record.account.governingTokenOwner.toString())
 		return owners
-	} catch(e) {
+	} catch(e: any) {
 		return []
 	}
 

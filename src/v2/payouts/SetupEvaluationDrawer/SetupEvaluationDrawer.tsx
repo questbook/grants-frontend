@@ -238,7 +238,7 @@ const SetupEvaluationDrawer = ({
 				router.reload()
 			}, 3000)
 			// setTransactionData(transactionData)
-		} catch(e) {
+		} catch(e: any) {
 			setNetworkTransactionModalStep(undefined)
 			const message = getErrorMessage(e)
 			toastRef.current = toast({

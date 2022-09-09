@@ -75,8 +75,6 @@ export default function useSubmitReview(
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
 
 	useEffect(() => {
-		// const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		// console.log('rree', isBiconomyLoading, biconomyLoading)
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
 			biconomy.networkId.toString() === chainId.toString()) {
 			setIsBiconomyInitialised(true)
@@ -190,7 +188,7 @@ export default function useSubmitReview(
 
 				setLoading(false)
 				setCurrentStep(5)
-			} catch(e) {
+			} catch(e: any) {
 				setCurrentStep(undefined)
 				const message = getErrorMessage(e)
 				setError(message)
@@ -267,7 +265,7 @@ export default function useSubmitReview(
 			}
 
 			validate()
-		} catch(e) {
+		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)
 			setLoading(false)

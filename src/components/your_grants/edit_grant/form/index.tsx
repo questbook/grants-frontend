@@ -81,7 +81,7 @@ function Form({
 		try {
 			const o = JSON.parse(formData.details)
 			return EditorState.createWithContent(convertFromRaw(o))
-		} catch(e) {
+		} catch(e: any) {
 			if(formData.details) {
 				return EditorState.createWithContent(ContentState.createFromText(formData.details))
 			}
@@ -793,7 +793,6 @@ function Form({
 			<Button
 				disabled={!isBiconomyInitialised}
 				onClick={hasClicked ? () => { } : handleOnSubmit}
-				py={hasClicked ? 2 : 0}
 				variant='primary'>
 				{hasClicked ? <Loader /> : 'Save Changes'}
 			</Button>
