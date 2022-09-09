@@ -265,6 +265,7 @@ function AboutProject({
 								label={`Project Milestone ${index + 1}`}
 								placeholder="App Launch on November 30"
 								value={milestone}
+								maxLength={1000}
 								onChange={
 									(e) => {
 										const newProjectMilestone = [...projectMilestones]
