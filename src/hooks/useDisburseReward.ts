@@ -11,6 +11,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useChainId from 'src/hooks/utils/useChainId'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import logger from 'src/utils/logger'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
@@ -177,6 +178,7 @@ export default function useDisburseReward(
 
 			if(!currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-disburse-reward.tsx 1): ', chainId)
 					switchNetwork(chainId)
 				}
 
@@ -187,6 +189,7 @@ export default function useDisburseReward(
 
 			if(chainId !== currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-disburse-reward.tsx 2): ', chainId)
 					switchNetwork(chainId)
 				}
 

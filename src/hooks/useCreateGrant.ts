@@ -18,6 +18,7 @@ import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash, parseAmount } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import logger from 'src/utils/logger'
 import {
 	getSupportedChainIdFromWorkspace,
 	getSupportedValidatorNetworkFromChainId,
@@ -259,6 +260,7 @@ export default function useCreateGrant(
 			if(!currentChainId) {
 				if(switchNetwork && chainId) {
 					// console.log(' (CREATE GRANT HOOK) Switch Network (!currentChainId): ', workspace, chainId)
+					logger.info('SWITCH NETWORK (use-create-grant.tsx 1): ', chainId)
 					switchNetwork(chainId)
 				}
 
@@ -270,6 +272,7 @@ export default function useCreateGrant(
 			if(chainId !== currentChainId) {
 				if(switchNetwork && chainId) {
 					// console.log(' (CREATE GRANT HOOK) Switch Network: (chainId !== currentChainId)', workspace, chainId)
+					logger.info('SWITCH NETWORK (use-create-grant.tsx 2): ', chainId)
 					switchNetwork(chainId)
 				}
 

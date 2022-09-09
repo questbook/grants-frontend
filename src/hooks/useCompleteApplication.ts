@@ -10,6 +10,7 @@ import useChainId from 'src/hooks/utils/useChainId'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import logger from 'src/utils/logger'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
@@ -172,6 +173,7 @@ export default function useCompleteApplication(
 
 			if(!currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-complete-application-state.tsx 1): ', chainId)
 					switchNetwork(chainId)
 				}
 
@@ -182,6 +184,7 @@ export default function useCompleteApplication(
 
 			if(chainId !== currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-complete-application-state.tsx 2): ', chainId)
 					switchNetwork(chainId)
 				}
 

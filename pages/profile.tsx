@@ -39,6 +39,7 @@ import { formatAmount } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'
 // UTILS AND TOOLS
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import logger from 'src/utils/logger'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 
 function Profile() {
@@ -66,10 +67,11 @@ function Profile() {
 	}
 
 	useEffect(() => {
-		if(router && router.query) {
+		if(router?.query) {
 			const { chainId: cId, daoId: dId } = router.query
 			setChainId((cId as unknown) as SupportedChainId)
 			setDaoId(dId?.toString())
+			logger.info('SWITCH NETWORK (profile.tsx 1): ', (cId as unknown) as SupportedChainId)
 			switchNetwork((cId as unknown) as SupportedChainId)
 		}
 	}, [router, network])

@@ -22,6 +22,7 @@ import {
 	sendGaslessTransaction
 } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import logger from 'src/utils/logger'
 import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
 import { Organization } from 'src/v2/assets/custom chakra icons/Organization'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
@@ -239,6 +240,7 @@ const OnboardingCreateDao = () => {
 			onSubmit={
 				(network) => {
 					setDaoNetwork(network)
+					logger.info('SWITCH NETWORK (create-dao.tsx 1): ', network.id)
 					switchNetwork(network.id)
 					// console.log('NETWORK', network)
 					nextClick()
