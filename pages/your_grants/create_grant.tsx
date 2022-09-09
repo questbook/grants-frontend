@@ -18,6 +18,7 @@ import useCreateGrant from 'src/hooks/useCreateGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import useIntersection from 'src/hooks/utils/useIntersection'
 import NavbarLayout from 'src/layout/navbarLayout'
+import logger from 'src/utils/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function CreateGrant() {
@@ -78,6 +79,7 @@ function CreateGrant() {
 		if(workspace) {
 			const chainId = getSupportedChainIdFromWorkspace(workspace)
 			// console.log(' (CREATE_GRANT) Switch Network: ', workspace, chainId)
+			logger.info('SWITCH NETWORK (create-grant.tsx 1): ', chainId!.toString() as unknown as SupportedChainId)
 			switchNetwork(chainId!.toString() as unknown as SupportedChainId)
 		}
 	}, [workspace])

@@ -63,7 +63,9 @@ export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boole
 		setScwAddress(scwAddress)
 		setBiconomyWalletClient(_biconomyWalletClient!)
 		setBiconomyDaoObj(_biconomy)
-		switchNetwork(parseInt(chainId))
+		const chain = parseInt(chainId)
+		logger.info('SWITCH NETWORK (use-biconomy.tsx 1): ', chain)
+		switchNetwork(chain)
 	}, [webwallet, data.chainId, nonce])
 
 	useEffect(() => {

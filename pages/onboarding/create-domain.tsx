@@ -74,16 +74,16 @@ const OnboardingCreateDomain = () => {
 	const { webwallet } = useContext(WebwalletContext)!
 	// console.log('safeSelected', safeSelected)
 
-	
+
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: safeSelected?.networkId ? networksMapping[safeSelected?.networkId?.toString()] : '',
 		shouldRefreshNonce: shouldRefreshNonce
 	})
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
-	
+
 
 	useEffect(() => {
-		
+
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && safeSelected?.networkId &&
 			biconomy.networkId && biconomy.networkId.toString() === networksMapping[safeSelected?.networkId?.toString()]) {
 			setIsBiconomyInitialised(true)

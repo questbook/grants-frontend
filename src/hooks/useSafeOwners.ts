@@ -9,7 +9,7 @@ import { getOwners } from 'src/v2/constants/safe/realms_solana'
 const URL_PREFIX = 'v1/safes/'
 const URL_SUFFIX = ''
 // const SAFES_ENDPOINTS = process.env.NEXT_PUBLIC_IS_TEST === 'true' ? SAFES_ENPOINTS_TESTNETS : SAFES_ENPOINTS_MAINNETS
-const SAFES_ENDPOINTS = { ...SAFES_ENPOINTS_MAINNETS, ...SAFES_ENPOINTS_TESTNETS };
+const SAFES_ENDPOINTS = { ...SAFES_ENPOINTS_MAINNETS, ...SAFES_ENPOINTS_TESTNETS }
 
 interface Props {
     safeAddress: string

@@ -320,6 +320,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 
 		// switch during gas estimation so that we use the correct chain
 		if(connectedChainId !== inviteInfo.chainId) {
+			logger.info('SWITCH NETWORK (join-invite-link.tsx 1): ', inviteInfo.chainId)
 			switchNetwork(inviteInfo.chainId)
 		}
 

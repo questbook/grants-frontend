@@ -17,6 +17,7 @@ import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { delay } from 'src/utils/generics'
+import logger from 'src/utils/logger'
 import { useGenerateReviewData } from 'src/utils/reviews'
 import {
 	getSupportedChainIdFromWorkspace,
@@ -237,6 +238,7 @@ export default function useSubmitReview(
 
 			if(!currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-subit-review.tsx 1): ', chainId)
 					switchNetwork(chainId)
 				}
 
@@ -247,6 +249,7 @@ export default function useSubmitReview(
 
 			if(chainId !== currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-subit-review.tsx 2): ', chainId)
 					switchNetwork(chainId)
 				}
 

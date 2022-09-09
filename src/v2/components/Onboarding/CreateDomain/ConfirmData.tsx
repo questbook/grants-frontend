@@ -21,7 +21,7 @@ function ConfirmData({ domainImageFile, safeAddress, safeChainIcon, domainName, 
 	const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`
 
 	React.useEffect(() => {
-		if (domainImageFile && !newDomainImageFile) {
+		if(domainImageFile && !newDomainImageFile) {
 			setNewDomainImageFile(domainImageFile)
 		}
 	}, [domainImageFile])
@@ -34,12 +34,12 @@ function ConfirmData({ domainImageFile, safeAddress, safeChainIcon, domainName, 
 				My domain
 			</Text>
 			<Text
-				mt="2"
+				mt='2'
 				variant='v2_heading_3'
 				fontWeight='500'>
 				{domainName}
 			</Text>
-			<Flex mt="70">
+			<Flex mt='70'>
 				<Flex
 					justify='space-between'>
 					<Flex direction='column'>
@@ -99,7 +99,7 @@ function ConfirmData({ domainImageFile, safeAddress, safeChainIcon, domainName, 
 				</Flex>
 				<Spacer />
 				<Flex
-					mt="-5"
+					mt='-5'
 				// align='start'
 				// justify='end'
 				>
@@ -112,7 +112,7 @@ function ConfirmData({ domainImageFile, safeAddress, safeChainIcon, domainName, 
 				disabled={!isBiconomyInitialised}
 				variant='primaryV2'
 				mx='auto'
-				mt="auto"
+				mt='auto'
 				w='53%'
 				onClick={onCreateDomain}>
 				Create Domain

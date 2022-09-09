@@ -1,12 +1,16 @@
 import React, { useEffect } from 'react'
 import { Divider, Flex } from '@chakra-ui/react'
+import { switchNetwork } from '@wagmi/core'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { GetWorkspaceMembersQuery, useGetWorkspaceMembersQuery } from 'src/generated/graphql'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import { MinimalWorkspace } from 'src/types'
+import logger from 'src/utils/logger'
 import getTabFromPath from 'src/utils/tabUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import Domains from 'src/v2/components/Sidebar/Domains'
 import SidebarItem from 'src/v2/components/Sidebar/SidebarItem'
 import { TAB_INDEXES, useGetTabs } from 'src/v2/components/Sidebar/Tabs'
@@ -14,6 +18,7 @@ import { TAB_INDEXES, useGetTabs } from 'src/v2/components/Sidebar/Tabs'
 function Sidebar() {
 	const [topTabs, bottomTabs] = useGetTabs()
 	const { data: accountData } = useQuestbookAccount()
+	const { network, switchNetwork } = useNetwork()
 	const { workspace, setWorkspace } = React.useContext(ApiClientsContext)!
 
 	const router = useRouter()
@@ -90,6 +95,11 @@ function Sidebar() {
 							(index, onComplete: () => void) => {
 								setWorkspace(workspaces[index])
 								router.push('/dashboard').then(onComplete)
+								const workspaceChainID = getSupportedChainIdFromWorkspace(workspaces[index])
+								if(network !== workspaceChainID) {
+									logger.info('SWITCH NETWORK (sidebar.tsx 1): ', workspaceChainID)
+									switchNetwork(workspaceChainID)
+								}
 							}
 						}
 					/>
