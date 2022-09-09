@@ -3,8 +3,9 @@ import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { Badge, Box, Button, ButtonProps, Checkbox, Flex, forwardRef, Grid, GridItem, HStack, Menu, MenuButton, MenuItem, MenuList, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalOverlay, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { GetGrantDetailsQuery } from 'src/generated/graphql'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import useBatchUpdateApplicationState from 'src/hooks/useBatchUpdateApplicationState'
-import { formatAddress } from 'src/utils/formattingUtils'
+import { formatAddress, getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { AcceptApplication } from 'src/v2/assets/custom chakra icons/AcceptApplication'
 import { RejectApplication } from 'src/v2/assets/custom chakra icons/RejectApplication'
 import { ResubmitApplication } from 'src/v2/assets/custom chakra icons/ResubmitApplication'
@@ -20,6 +21,7 @@ const InReviewPanel = ({
   grantData?: GetGrantDetailsQuery
 
 }) => {
+	const { activeChain } = useNetwork()
 	const [checkedItems, setCheckedItems] = useState<boolean[]>(applicantsData.filter((item) => (0 === item.status)).map(() => false))
 	const [checkedApplicationsIds, setCheckedApplicationsIds] = useState<number[]>([])
 	const [isAcceptClicked, setIsAcceptClicked] = useState<boolean>(false)
@@ -36,6 +38,8 @@ const InReviewPanel = ({
 	})
 	const allChecked = checkedItems.length > 0 && checkedItems.every((element) => element === true)
 	const router = useRouter()
+
+	const isPrivate = grantData?.grants?.[0]?.rubric?.isPrivate
 
 	useEffect(() => {
 		setCheckedItems(applicantsData.filter((item) => (0 === item.status)).map(() => false))
@@ -91,12 +95,14 @@ const InReviewPanel = ({
 		 }
 	}, [isAcceptClicked, isRejectClicked, isResubmitClicked, isConfirmClicked])
 
-	const [txn,, loading, isBiconomyInitialised, error, networkTransactionModalStep] = useBatchUpdateApplicationState(
+	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
+
+	const [txn,, loading, isBiconomyInitialised, error] = useBatchUpdateApplicationState(
 		'',
 		checkedApplicationsIds,
 		state,
 		isConfirmClicked,
-		setIsConfirmClicked
+		setIsConfirmClicked, setNetworkTransactionModalStep
 	)
 
 	useEffect(() => {
@@ -123,7 +129,6 @@ const InReviewPanel = ({
 		// setCurrentStep(0)
 	}
 
-
 	if(applicantsData?.filter((item: any) => (0 === item.status)).length === 0) {
 		return (
 			<ZeroState />
@@ -147,9 +152,13 @@ const InReviewPanel = ({
 						In Review
 					</Text>
 
-					<Badge fontSize='x-small'>
-						Private
-					</Badge>
+					{
+						isPrivate && (
+							<Badge fontSize='x-small'>
+								Private
+							</Badge>
+						)
+					}
 				</HStack>
 
 				<Box mx='auto' />
@@ -497,6 +506,12 @@ const InReviewPanel = ({
 						'Waiting for transaction to index',
 						'Application(s) state updated',
 					]
+				}
+				viewLink={getExplorerUrlForTxHash(activeChain, txn?.transactionHash)}
+				onClose={
+					() => {
+						setNetworkTransactionModalStep(undefined)
+					}
 				} />
 		</>
 	)

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Button, Divider, HStack, Image, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, Spacer, Text, useToast, VStack } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
+import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { serialiseInviteInfoIntoUrl, useMakeInvite } from 'src/utils/invite'
 import { getRoleTitle } from 'src/v2/components/AcceptInviteModal/RoleDataDisplay'
 import RoleSelect from 'src/v2/components/InviteModal/RoleSelect'
@@ -12,6 +14,7 @@ export type InputRoleContentProps = {
 }
 
 const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => {
+	const { activeChain } = useNetwork()
 	const router = useRouter()
 	const [selectedRole, setSelectedRole] = useState<number>()
 	const [createLinkStep, setCreateLinkStep] = useState<number>()
@@ -20,10 +23,7 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 
 	const { makeInvite, isBiconomyInitialised } = useMakeInvite(selectedRole || 0)
 
-	// useEffect(() => {
-	// 	console.log("isBiconomyInitialised", isBiconomyInitialised );
-	// }, [isBiconomyInitialised])
-
+	const [transactionHash, setTransactionHash] = useState<string>()
 	useEffect(() => {
 		if(router.query.tab === 'members') {
 			setSelectedRole(0x1)
@@ -36,6 +36,7 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 		try {
 			const info = await makeInvite(
 				() => setCreateLinkStep(1),
+				setTransactionHash,
 			)
 
 			setCreateLinkStep(2)
@@ -169,6 +170,12 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 						'Wait for confirmation',
 						'Invite link created on-chain'
 					]
+				}
+				viewLink={getExplorerUrlForTxHash(activeChain, transactionHash)}
+				onClose={
+					() => {
+						setCreateLinkStep(undefined)
+					}
 				}
 			/>
 		</>

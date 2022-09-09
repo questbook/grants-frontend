@@ -4,7 +4,7 @@ const ZeroState = ({
 	grantData,
 	onSetupApplicantEvaluationClicked
 }: {
-	grantData: any,
+	grantData: any
 	onSetupApplicantEvaluationClicked: () => void
 }) => {
 	return (

@@ -65,9 +65,9 @@ const AcceptedProposalsPanel = ({
 
 	if(applicantsData?.filter((item: any) => (2 === item.status)).length === 0) {
 		return (
-			<ZeroState 
-			grantData={grantData}
-			onSetupApplicantEvaluationClicked={onSetupApplicantEvaluationClicked}
+			<ZeroState
+				grantData={grantData}
+				onSetupApplicantEvaluationClicked={onSetupApplicantEvaluationClicked}
 			/>
 		)
 	}

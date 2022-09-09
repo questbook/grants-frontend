@@ -3,8 +3,8 @@ import { Box, Button, Container, Drawer, DrawerContent, DrawerOverlay, Flex, Tex
 import router from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
-import { defaultChainId, SupportedChainId } from 'src/constants/chains'
-import { GetReviewersForAWorkspaceQuery, useGetReviewersForAWorkspaceQuery } from 'src/generated/graphql'
+import { SupportedChainId } from 'src/constants/chains'
+import { GetReviewersForAWorkspaceQuery } from 'src/generated/graphql'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
@@ -25,6 +25,7 @@ const SetupEvaluationDrawer = ({
 	grantAddress,
 	chainId,
 	setNetworkTransactionModalStep,
+	setTransactionHash,
 	data,
 }: {
 	isOpen: boolean
@@ -33,6 +34,7 @@ const SetupEvaluationDrawer = ({
 	grantAddress: string
 	chainId?: SupportedChainId
 	setNetworkTransactionModalStep: (step: number | undefined) => void
+	setTransactionHash: (hash: string) => void
 	data: GetReviewersForAWorkspaceQuery | undefined
 }) => {
 	const [step, setStep] = useState(0)
@@ -226,6 +228,7 @@ const SetupEvaluationDrawer = ({
 
 			setNetworkTransactionModalStep(3)
 			const { txFee, receipt } = await getTransactionDetails(response, chainId.toString())
+			setTransactionHash(receipt?.transactionHash)
 			await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
 
 			await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee))
@@ -236,6 +239,7 @@ const SetupEvaluationDrawer = ({
 				router.reload()
 			}, 3000)
 			// setTransactionData(transactionData)
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			setNetworkTransactionModalStep(undefined)
 			const message = getErrorMessage(e)

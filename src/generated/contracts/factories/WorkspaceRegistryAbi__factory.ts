@@ -119,7 +119,7 @@ const _abi = [
         type: "string",
       },
       {
-        indexed: true,
+        indexed: false,
         internalType: "string",
         name: "transactionHash",
         type: "string",
@@ -252,6 +252,37 @@ const _abi = [
       },
     ],
     name: "WorkspaceCreated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint96",
+        name: "workspaceId",
+        type: "uint96",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "from",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "time",
+        type: "uint256",
+      },
+    ],
+    name: "WorkspaceMemberMigrate",
     type: "event",
   },
   {
@@ -708,6 +739,24 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "fromWallet",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "toWallet",
+        type: "address",
+      },
+    ],
+    name: "migrateWallet",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "owner",
     outputs: [
@@ -756,6 +805,19 @@ const _abi = [
   {
     inputs: [],
     name: "renounceOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IApplicationRegistry",
+        name: "_applicationReg",
+        type: "address",
+      },
+    ],
+    name: "setApplicationReg",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

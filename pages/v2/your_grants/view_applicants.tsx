@@ -29,7 +29,7 @@ import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
-import { formatAddress, formatAmount, getFieldString } from 'src/utils/formattingUtils'
+import { formatAddress, formatAmount, getExplorerUrlForTxHash, getFieldString } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
@@ -638,6 +638,7 @@ function ViewApplicants() {
 			// console.log('receipt: ', receipt)
 			await chargeGas(Number(workspace.id), Number(txFee))
 
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			// console.log('disburse error', e)
 		}
@@ -758,6 +759,8 @@ function ViewApplicants() {
 			setAreRubricsSet(false)
 		}
 	}, [grantData])
+
+	const [transactionHash, setTransactionHash] = useState<string>()
 
 	return (
 		<Container
@@ -995,6 +998,7 @@ function ViewApplicants() {
 					grantAddress={grantID}
 					chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
 					setNetworkTransactionModalStep={setNetworkTransactionModalStep}
+					setTransactionHash={setTransactionHash}
 					data={reviewersForAWorkspaceData}
 				/>
 
@@ -1076,7 +1080,9 @@ function ViewApplicants() {
 							'Completing indexing',
 							'Rubric created and Reviewers assigned',
 						]
-					} />
+					}
+					viewLink={getExplorerUrlForTxHash(getSupportedChainIdFromWorkspace(workspace) || defaultChainId, transactionHash)}
+					onClose={() => setNetworkTransactionModalStep(undefined)} />
 
 			</Container>
 			<Modal

@@ -20,6 +20,7 @@ import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys
 import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import useEncryption from 'src/hooks/utils/useEncryption'
+import logger from 'src/utils/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import 'react-datepicker/dist/react-datepicker.css'
 
@@ -100,6 +101,7 @@ function GrantRewardsInput({
 		if(workspace && switchNetwork) {
 			const chainId = getSupportedChainIdFromWorkspace(workspace)
 			// console.log(' (CREATE_GRANT) Switch Network: ', workspace, chainId)
+			logger.info('SWITCH NETWORK (create-dao.tsx 1): ', chainId!)
 			switchNetwork(chainId!)
 		}
 	}, [switchNetwork, workspace])

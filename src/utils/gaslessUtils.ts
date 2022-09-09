@@ -1,8 +1,10 @@
+import { Biconomy } from '@biconomy/mexa'
 import axios from 'axios'
 import { Contract, ethers, Wallet } from 'ethers'
 import { Fragment } from 'ethers/lib/utils'
 import { BiconomyContext } from 'pages/_app'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import { defaultChainId } from 'src/constants/chains'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import { TransactionReceipt } from 'web3-core'
@@ -63,7 +65,7 @@ export const networksMapping: { [key: string]: string } = {
 	'42220': '5',
 }
 
-export const signNonce = async (webwallet: Wallet, nonce: string) => {
+export const signNonce = async(webwallet: Wallet, nonce: string) => {
 	const nonceHash = ethers.utils.hashMessage(nonce)
 	const nonceSigString: string = await webwallet.signMessage(nonce)
 	const nonceSig: ethers.Signature = ethers.utils.splitSignature(nonceSigString)
@@ -71,8 +73,8 @@ export const signNonce = async (webwallet: Wallet, nonce: string) => {
 	return { v: nonceSig.v, r: nonceSig.r, s: nonceSig.s, transactionHash: nonceHash }
 }
 
-export const getNonce = async (webwallet: Wallet | undefined) => {
-	if (!webwallet) {
+export const getNonce = async(webwallet: Wallet | undefined) => {
+	if(!webwallet) {
 		return
 	}
 
@@ -80,14 +82,14 @@ export const getNonce = async (webwallet: Wallet | undefined) => {
 		{
 			webwallet_address: webwallet.address,
 		})
-	if (response.data && response.data.nonce !== 'Token expired') {
+	if(response.data && response.data.nonce !== 'Token expired') {
 		return response.data.nonce
 	}
 
 	return false
 }
 
-export const addAuthorizedOwner = async (workspaceId: number, webwalletAddress: string, scwAddress: string,
+export const addAuthorizedOwner = async(workspaceId: number, webwalletAddress: string, scwAddress: string,
 	chainId: string, safeAddress: string) => {
 
 	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/add_workspace_owner',
@@ -102,7 +104,7 @@ export const addAuthorizedOwner = async (workspaceId: number, webwalletAddress: 
 	return !!response.data?.status
 }
 
-export const addAuthorizedUser = async (webwalletAddress: string) => {
+export const addAuthorizedUser = async(webwalletAddress: string) => {
 
 	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/add_user',
 		{
@@ -112,7 +114,7 @@ export const addAuthorizedUser = async (webwalletAddress: string) => {
 	return !!response.data?.authorize
 }
 
-export const chargeGas = async (workspaceId: number, amount: number) => {
+export const chargeGas = async(workspaceId: number, amount: number) => {
 	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/charge_gas',
 		{
 			'workspace_id': workspaceId,
@@ -121,7 +123,7 @@ export const chargeGas = async (workspaceId: number, amount: number) => {
 	return !!response.data?.status
 }
 
-export const deploySCW = async (webwallet: Wallet, biconomyWalletClient: BiconomyWalletClient, chainId: string, nonce: string) => {
+export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: BiconomyWalletClient, chainId: string, nonce: string) => {
 	const signedNonce = await signNonce(webwallet, nonce)
 
 	const webHookAttributes = {
@@ -134,10 +136,10 @@ export const deploySCW = async (webwallet: Wallet, biconomyWalletClient: Biconom
 		},
 	}
 
-	const { doesWalletExist, walletAddress } = await biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address })
+	const { doesWalletExist, walletAddress } = await biconomyWalletClient?.checkIfWalletExists({ eoa: webwallet.address })
 	let scwAddress
 
-	if (!doesWalletExist) {
+	if(!doesWalletExist) {
 		// console.log("deploying scw ...", biconomyWalletClient)
 		const { walletAddress, txHash } = await biconomyWalletClient.checkIfWalletExistsAndDeploy({
 			eoa: webwallet.address,
@@ -154,26 +156,26 @@ export const deploySCW = async (webwallet: Wallet, biconomyWalletClient: Biconom
 	return scwAddress
 }
 
-export const sendGaslessTransaction = async (biconomy: typeof BiconomyContext, targetContractObject: Contract, targetContractMethod: string,
+export const sendGaslessTransaction = async(biconomy: typeof BiconomyContext, targetContractObject: Contract, targetContractMethod: string,
 	targetContractArgs: any, targetContractAddress: string, biconomyWalletClient: BiconomyWalletClient,
 	scwAddress: string, webwallet: Wallet | undefined, chainId: string, webHookId: string, nonce: string | undefined) => {
 
-	if (!biconomy) {
+	if(!biconomy) {
 		alert('Biconomy is not ready! Please wait.')
 		return false
 	}
 
-	if (!webwallet) {
+	if(!webwallet) {
 		alert('WebWallet is not ready! Please wait.')
 		return false
 	}
 
-	if (!nonce) {
+	if(!nonce) {
 		alert('Please log in with GitHub first!')
 		return false
 	}
 
-	if (nonce === 'Token expired') {
+	if(nonce === 'Token expired') {
 		alert('Your Session has terminated. Please log in again.')
 		return false
 	}
@@ -215,8 +217,8 @@ export const sendGaslessTransaction = async (biconomy: typeof BiconomyContext, t
 	})
 }
 
-export const getTransactionReceipt = async (transactionHash: string | undefined, chainId: string) => {
-	if (typeof (transactionHash) === 'undefined' || transactionHash === undefined) {
+export const getTransactionReceipt = async(transactionHash: string | undefined, chainId: string) => {
+	if(typeof (transactionHash) === 'undefined' || transactionHash === undefined) {
 		return false
 	}
 
@@ -224,16 +226,16 @@ export const getTransactionReceipt = async (transactionHash: string | undefined,
 	return await jsonRpcProviders[chainId].getTransactionReceipt(transactionHash)
 }
 
-export const getTransactionDetails = async (transactionHash: string, chainId: string) => {
+export const getTransactionDetails = async(transactionHash: string, chainId: string) => {
 	const receipt = await getTransactionReceipt(transactionHash, chainId)
 
-	if (!receipt) {
+	if(!receipt) {
 		throw new Error('Couldn\'t fetch transaction receipt!')
 	}
 
 	const gasPrice = (await jsonRpcProviders[chainId].getTransaction(transactionHash)).gasPrice
 
-	if (!gasPrice) {
+	if(!gasPrice) {
 		throw new Error('Couldn\'t fetch gas price!')
 	}
 
@@ -244,11 +246,11 @@ export const getTransactionDetails = async (transactionHash: string, chainId: st
 	return { receipt, txFee }
 }
 
-export const getEventData = async (receipt: ethers.providers.TransactionReceipt, eventName: string, contractABI: any) => {
+export const getEventData = async(receipt: ethers.providers.TransactionReceipt, eventName: string, contractABI: any) => {
 
 	const isValidEvent = (item: ethers.utils.Fragment) => {
 		const fragmentItem = ethers.utils.Fragment.from(item)
-		if (!fragmentItem.name || !fragmentItem.type) {
+		if(!fragmentItem.name || !fragmentItem.type) {
 			return false
 		}
 
@@ -259,14 +261,14 @@ export const getEventData = async (receipt: ethers.providers.TransactionReceipt,
 		try {
 			eventInterface.parseLog(item)
 			return true
-		} catch {
+		} catch{
 			return false
 		}
 	}
 
 	const abiInterface = new ethers.utils.Interface(contractABI) // this is contract's ABI
 	const humanReadableABI: string | string[] = abiInterface.format(ethers.utils.FormatTypes.full) // convert to human readable ABI
-	if (typeof (humanReadableABI) === 'string') {
+	if(typeof (humanReadableABI) === 'string') {
 		return false
 	}
 
@@ -274,7 +276,7 @@ export const getEventData = async (receipt: ethers.providers.TransactionReceipt,
 
 	const eventFragment = abiFragments.filter(isValidEvent)
 
-	if (eventFragment.length !== 1) {
+	if(eventFragment.length !== 1) {
 		throw Error('Invalid Given Event!')
 	}
 
@@ -282,16 +284,16 @@ export const getEventData = async (receipt: ethers.providers.TransactionReceipt,
 
 	const eventLogs = receipt.logs.filter(isValidEventInReceipt)
 
-	if (eventLogs.length !== 1) {
+	if(eventLogs.length !== 1) {
 		throw Error('Invalid Given Event!')
 	}
 
 	return eventInterface.parseLog(eventLogs[0])
 }
 
-export const registerWebHook = async (authToken: string | undefined, apiKey: string) => {
+export const registerWebHook = async(authToken: string | undefined, apiKey: string) => {
 
-	if (!authToken) {
+	if(!authToken) {
 		throw new Error('No bico auth token found')
 	}
 
@@ -315,16 +317,16 @@ export const registerWebHook = async (authToken: string | undefined, apiKey: str
 	console.log(responseJSON)
 	try {
 		webHookId = responseJSON.data.webHookId
-	} catch {
+	} catch{
 		throw Error("Couldn't register webhook for your app!")
 	}
 
 	return webHookId
 }
 
-export const addDapp = async (dappName: string, networkId: string, authToken: string | undefined) => {
+export const addDapp = async(dappName: string, networkId: string, authToken: string | undefined) => {
 	console.log('AUTH TOKEN', authToken)
-	if (!authToken) {
+	if(!authToken) {
 		throw new Error('No bico auth token found')
 	}
 
@@ -348,4 +350,49 @@ export const addDapp = async (dappName: string, networkId: string, authToken: st
 	console.log(resJson.data)
 
 	return { apiKey: resJson.data.apiKey, fundingKey: resJson.data.fundingKey.toString() }
+}
+
+export const registerWebWallet = async(privateKey: string): Promise<{ scwAddress: string }> => {
+
+	const webwallet = new ethers.Wallet(privateKey)
+
+	await addAuthorizedUser(webwallet.address)
+
+	const nonce = await getNonce(webwallet)
+
+	const biconomy = new Biconomy(jsonRpcProviders[defaultChainId.toString()],
+		{
+			apiKey: bicoDapps[defaultChainId.toString()].apiKey,
+			debug: true
+		})
+
+	const scwAddress: string = await new Promise((resolve, reject) => {
+		biconomy.onEvent(biconomy.READY, async() => {
+			const alreadyProcessingScw = localStorage.getItem('alreadyProcessingScw')
+
+			if(alreadyProcessingScw === 'true') {
+				reject(undefined)
+			}
+
+			localStorage.setItem('alreadyProcessingScw', 'true')
+
+			const biconomyWalletClient: BiconomyWalletClient = biconomy.biconomyWalletClient
+
+			if(biconomyWalletClient) {
+				const walletAddress = await deploySCW(webwallet, biconomyWalletClient, defaultChainId.toString(), nonce!)
+				localStorage.setItem('alreadyProcessingScw', 'false')
+				resolve(walletAddress)
+			}
+
+			localStorage.setItem('alreadyProcessingScw', 'false')
+
+			reject(undefined)
+
+		}).onEvent(biconomy.ERROR, () => {
+			throw new Error('Biconomy error!')
+		})
+	})
+
+	return { scwAddress: scwAddress }
+
 }

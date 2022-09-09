@@ -29,7 +29,7 @@ export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boole
 			jsonRpcProviders[chainId],
 			{
 				apiKey: bicoDapps[chainId].apiKey,
-				debug: true 
+				debug: true
 			}
 		)
 		logger.info('initializing biconomy')
@@ -40,13 +40,13 @@ export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boole
 				logger.info('biconomy ready')
 
 				_biconomyWalletClient = await _biconomy.biconomyWalletClient
-				
+
 				const { doesWalletExist, walletAddress } = await _biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address })
-				
-				if(doesWalletExist){
-					resolve(walletAddress);
+
+				if(doesWalletExist) {
+					resolve(walletAddress)
 				}
-				
+
 				const newWalletAddress = await deploySCW(webwallet, _biconomyWalletClient, chainId, nonce!)
 
 				logger.info({ newWalletAddress, chainId }, 'scw deployed')
@@ -63,7 +63,9 @@ export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boole
 		setScwAddress(scwAddress)
 		setBiconomyWalletClient(_biconomyWalletClient!)
 		setBiconomyDaoObj(_biconomy)
-		switchNetwork(parseInt(chainId))
+		const chain = parseInt(chainId)
+		logger.info('SWITCH NETWORK (use-biconomy.tsx 1): ', chain)
+		switchNetwork(chain)
 	}, [webwallet, data.chainId, nonce])
 
 	useEffect(() => {

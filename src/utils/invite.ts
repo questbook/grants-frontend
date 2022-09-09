@@ -119,7 +119,7 @@ export const useMakeInvite = (role: number) => {
 	const workspaceRegistry = useQBContract('workspace', chainId)
 
 	const makeInvite = useCallback(
-		async(didSign?: () => void): Promise<InviteInfo> => {
+		async(didSign?: () => void, setTransactionHash?: (hash: string) => void): Promise<InviteInfo> => {
 			switchNetwork?.(chainId!)
 			const { privateKey, address } = generateKeyPairAndAddress()
 			// convert "0x" encoded hex to a number
@@ -149,7 +149,8 @@ export const useMakeInvite = (role: number) => {
 			didSign?.()
 
 			if(response) {
-				const { txFee } = await getTransactionDetails(response, chainId.toString())
+				const { txFee, receipt } = await getTransactionDetails(response, chainId.toString())
+				setTransactionHash?.(receipt?.transactionHash)
 				await chargeGas(workspaceId, Number(txFee))
 			}
 
@@ -210,7 +211,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 		// const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
 		// console.log('rree', scwAddress, biconomyLoading, inviteInfo)
 		// console.log("invite", biconomy, biconomyWalletClient)
-		
+
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && inviteInfo?.chainId && biconomy?.networkId &&
 			biconomy.networkId.toString() === inviteInfo?.chainId?.toString()) {
 			// console.log("zonb");
@@ -238,7 +239,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 	), [account?.address, workspaceRegistry.address, inviteInfo?.privateKey])
 
 	const joinInvite = useCallback(
-		async(didReachStep?: (step: JoinInviteStep) => void) => {
+		async(didReachStep?: (step: JoinInviteStep) => void, setTransactionHash?: (hash: string) => void) => {
 			if(!signature) {
 				throw new Error('account not connected')
 			}
@@ -287,7 +288,8 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 			didReachStep?.('tx-signed')
 
 			if(response) {
-				const { txFee } = await getTransactionDetails(response, inviteInfo?.chainId.toString())
+				const { txFee, receipt } = await getTransactionDetails(response, inviteInfo?.chainId.toString())
+				setTransactionHash?.(receipt?.transactionHash)
 				await chargeGas(inviteInfo.workspaceId, Number(txFee))
 			}
 
@@ -318,6 +320,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 
 		// switch during gas estimation so that we use the correct chain
 		if(connectedChainId !== inviteInfo.chainId) {
+			logger.info('SWITCH NETWORK (join-invite-link.tsx 1): ', inviteInfo.chainId)
 			switchNetwork(inviteInfo.chainId)
 		}
 
