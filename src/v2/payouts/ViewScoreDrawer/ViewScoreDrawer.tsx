@@ -13,8 +13,11 @@ const ViewScoreDrawer = ({
 }: {
   isOpen: boolean
   onClose: () => void
-  score?: any
-	reviewer?: any
+  score?: {
+		items?: {rating?: number, comment?: string, rubric: {title: string}}[]
+		createdAtS: number
+	}
+	reviewer?: { id: string, name: string }
 }) => {
 	// The will be required while implementing edit rubrics
 	const [step, setStep] = useState(0)

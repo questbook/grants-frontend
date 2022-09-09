@@ -10,7 +10,7 @@ const BackgroundImageLayout = ({
 }: {
   imageSrc: string
   imageBackgroundColor: string
-  imageProps?: any
+  imageProps?: { [_ in string]: string }
   isDarkQuestbookLogo?: boolean
   children: React.ReactNode
 }) => {

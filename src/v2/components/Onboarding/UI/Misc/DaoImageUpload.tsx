@@ -25,7 +25,7 @@ const DaoImageUpload = ({
 	const toastRef = useRef<ToastId>()
 
 	const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		if(event.target.files && event.target.files[0]) {
+		if(event.target.files?.[0]) {
 			const img = event.target.files[0]
 			if(img.size / 1024 / 1024 <= maxImageSize) {
 				setDaoImageFile(img)

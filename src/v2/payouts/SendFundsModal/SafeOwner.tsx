@@ -1,10 +1,10 @@
-
 import { useEffect } from 'react'
 import { Flex, Image, Text, VStack } from '@chakra-ui/react'
 import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
 import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
 import ConnectWalletButton from 'src/v2/components/ConnectWalletModal/ConnectWalletButton'
+import { PhantomProvider } from 'src/v2/types/phantom'
 import { useConnect, useDisconnect } from 'wagmi'
 
 const availableWallets = [{
@@ -34,7 +34,7 @@ const solanaWallets = [{
 
 interface Props {
 	isEvmChain: boolean
-	phantomWallet: any
+	phantomWallet?: PhantomProvider
 	signerVerified: boolean
 	gnosisSafeAddress: string
 }
@@ -137,7 +137,7 @@ const SafeOwner = ({ isEvmChain, phantomWallet, signerVerified, gnosisSafeAddres
 				fontWeight='400'
 				textAlign='center'
 			>
-				{isEvmChain ? gnosisSafeAddress : phantomWallet.publicKey?.toString()}
+				{isEvmChain ? gnosisSafeAddress : phantomWallet?.publicKey?.toString()}
 			</Text>
 		</>
 	)

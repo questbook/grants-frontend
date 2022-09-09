@@ -12,16 +12,16 @@ import {
 	withCreateProposal,
 	withInsertTransaction,
 	withSignOffProposal,
-} from '@solana/spl-governance'
-import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
-import assert from 'assert'
-import axios from 'axios'
-import { USD_THRESHOLD } from 'src/constants'
-import { NetworkType } from 'src/constants/Networks'
-import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
-import { MetaTransaction, Safe, TransactionType } from 'src/v2/types/safe'
+} from '@solana/spl-governance';
+import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
+import assert from 'assert';
+import axios from 'axios';
+import { USD_THRESHOLD } from 'src/constants';
+import { NetworkType } from 'src/constants/Networks';
+import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect';
+import { MetaTransaction, Safe, TransactionType } from 'src/v2/types/safe';
 
-export class Realms_Solana implements Safe {
+export class RealmsSolana implements Safe {
 	id: PublicKey | undefined
 	name: string
 	description: string
@@ -53,7 +53,7 @@ export class Realms_Solana implements Safe {
     	const governances = await getGovernanceAccounts(this.connection, this.programId, Governance, [
 			pubkeyFilter(1, this.id)!,
 		])
-  
+
 		const governance = governances.filter((gov)=>gov.pubkey.toString()===realmData.account.authority?.toString())[0]
     	const payer = wallet.publicKey
 
@@ -140,7 +140,7 @@ export class Realms_Solana implements Safe {
     	transaction.recentBlockhash = block.blockhash
     	transaction.feePayer = payer!
     	transaction.add(...proposalInstructions)
-    	const sendTrxn = await getProvider().signAndSendTransaction(transaction)
+    	await getProvider().signAndSendTransaction(transaction)
 
     	return proposalAddress.toString()
 	}
@@ -167,7 +167,7 @@ export class Realms_Solana implements Safe {
 	async getSafeDetails(realmsPublicKey: String): Promise<any> {
     	const realmData = await getRealm(this.connection, new PublicKey(realmsPublicKey))
     	const COUNCIL_MINT = realmData.account.config.councilMint
-    	const governanceInfo = await getGovernanceAccounts(this.connection, this.programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
+    	await getGovernanceAccounts(this.connection, this.programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
 	}
 
 	async getTransactionHashStatus(proposalPublicKey: string): Promise<any> {
@@ -231,22 +231,22 @@ const getSafeDetails = async(realmsAddress: string): Promise<SafeSelectOption | 
 	}
 }
 
-const isOwner = async(safeAddress: string, address: String): Promise<boolean> => {
-	const connection = new Connection(process.env.SOLANA_RPC!, 'recent')
-	const programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
-	const safeAddressPublicKey = new PublicKey(safeAddress)
-
-	const tokenownerrecord = await getAllTokenOwnerRecords(connection, programId, safeAddressPublicKey)
-	let isOwner = false
-	for(let i = 0; i < tokenownerrecord.length; i++) {
-		if(tokenownerrecord[i].account.governingTokenOwner.toString() === address) {
-			isOwner = true
-			break
-		}
-	}
-
-	return isOwner
-}
+// const isOwner = async(safeAddress: string, address: String): Promise<boolean> => {
+// 	const connection = new Connection(process.env.SOLANA_RPC!, 'recent')
+// 	const programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
+// 	const safeAddressPublicKey = new PublicKey(safeAddress)
+//
+// 	const tokenownerrecord = await getAllTokenOwnerRecords(connection, programId, safeAddressPublicKey)
+// 	let isOwner = false
+// 	for(let i = 0; i < tokenownerrecord.length; i++) {
+// 		if(tokenownerrecord[i].account.governingTokenOwner.toString() === address) {
+// 			isOwner = true
+// 			break
+// 		}
+// 	}
+//
+// 	return isOwner
+// }
 
 const getOwners = async(safeAddress: string): Promise<string[]> => {
 	const connection = new Connection(process.env.SOLANA_RPC!, 'recent')
@@ -255,14 +255,11 @@ const getOwners = async(safeAddress: string): Promise<string[]> => {
 	try {
 		const safeAddressPublicKey = new PublicKey(safeAddress)
 		const tokenownerrecord = await getAllTokenOwnerRecords(connection, programId, safeAddressPublicKey)
-		const owners = tokenownerrecord.map(record => record.account.governingTokenOwner.toString())
-		return owners
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-} catch(e: any) {
+		return tokenownerrecord.map(record => record.account.governingTokenOwner.toString())
+	} catch(e: any) {
 		return []
 	}
-
 }
 
 
-export { getSafeDetails, isOwner, getOwners, solanaToUsd, usdToSolana }
+export { getSafeDetails, getOwners, solanaToUsd, usdToSolana }

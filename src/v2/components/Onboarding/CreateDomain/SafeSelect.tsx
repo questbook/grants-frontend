@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { Box, Flex, Image, Link, Text } from '@chakra-ui/react'
-import { OptionBase, OptionProps } from 'chakra-react-select'
+import { GroupBase, OptionBase, OptionProps, SingleValueProps } from 'chakra-react-select'
 import { NetworkType } from 'src/constants/Networks'
 import DropdownSelect from 'src/v2/components/DropdownSelect'
 
@@ -38,7 +38,7 @@ export interface SafeSelectOption extends OptionBase {
 	noteDetails?: NoteDetails
 }
 
-const Option = ({ innerProps, data }: OptionProps<SafeSelectOption, any, any>) => (
+const Option = ({ innerProps, data }: OptionProps<SafeSelectOption, boolean, GroupBase<SafeSelectOption>>) => (
 	<Box
 		{...innerProps}
 		alignItems='center'
@@ -124,7 +124,7 @@ const Option = ({ innerProps, data }: OptionProps<SafeSelectOption, any, any>) =
 	</Box>
 )
 
-const SingleValue = ({ innerProps, data }: any) => (
+const SingleValue = ({ innerProps, data }: SingleValueProps<SafeSelectOption, boolean, GroupBase<SafeSelectOption>>) => (
 	<Box
 		{...innerProps}
 		alignItems='center'

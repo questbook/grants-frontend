@@ -1,6 +1,6 @@
 import { Tab } from '@chakra-ui/react'
 
-const StyledTab = ({ label }: {label: string}) => {
+const StyledTab = ({ label }: { label: string }) => {
 	return (
 		<Tab
 			fontSize='14px'

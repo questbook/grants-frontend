@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Badge, Button, Checkbox, Fade, Flex, GridItem, Image, Text, Tooltip } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import CopyIcon from 'src/components/ui/copy_icon'
+import { IApplicantData } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { FundsCircleFilled } from 'src/v2/assets/custom chakra icons/Your Grants/FundsCircleFilled'
 
@@ -14,9 +15,9 @@ const AcceptedRow = ({
 }: {
 	onSendFundsClicked: () => void
 	applicationStatus: number
-	applicantData: any
+	applicantData: IApplicantData
 	isChecked: boolean
-	onChange: (e: any) => void
+	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }) => {
 	const router = useRouter()
 	const [isHovering, setIsHovering] = useState(false)
@@ -54,7 +55,7 @@ const AcceptedRow = ({
 					>
 						<Image
 							borderRadius='3xl'
-							src={getAvatar(applicantData?.applicant_address)}
+							src={getAvatar(applicantData?.applicantAddress)}
 						/>
 					</Flex>
 
@@ -78,10 +79,10 @@ const AcceptedRow = ({
 								})
 							}
 						>
-							{applicantData?.project_name}
+							{applicantData?.projectName}
 						</Text>
 						{
-							applicantData?.applicant_address && (
+							applicantData?.applicantAddress && (
 								<Text
 									fontSize='12px'
 									lineHeight='16px'
@@ -91,20 +92,20 @@ const AcceptedRow = ({
 									display='flex'
 									alignItems='center'
 								>
-									<Tooltip label={applicantData?.applicant_address}>
-										{`${applicantData?.applicant_address?.substring(0, 6)}...`}
+									<Tooltip label={applicantData?.applicantAddress}>
+										{`${applicantData?.applicantAddress?.substring(0, 6)}...`}
 									</Tooltip>
 									<Flex
 										display='inline-block'
 										ml={2}
 									>
-										<CopyIcon text={applicantData?.applicant_address!} />
+										<CopyIcon text={applicantData?.applicantAddress!} />
 									</Flex>
 								</Text>
 							)
 						}
 						{
-							!applicantData?.applicant_address && (
+							!applicantData?.applicantAddress && (
 								<Text
 									fontSize='12px'
 									lineHeight='16px'
@@ -137,13 +138,13 @@ const AcceptedRow = ({
 					lineHeight='20px'
 					fontWeight='500'
 				>
-					{applicantData.amount_paid}
+					{applicantData.amountPaid}
 					{' '}
 					/
 					{' '}
-					{applicantData.funding_asked?.amount}
+					{applicantData.fundingAsked?.amount}
 					{' '}
-					{applicantData.funding_asked?.symbol}
+					{applicantData.fundingAsked?.symbol}
 
 				</Text>
 
@@ -175,7 +176,7 @@ const AcceptedRow = ({
 						fontWeight='500'
 						mr='auto'
 					>
-						{applicantData?.milestones?.filter((milestone: any) => milestone?.state === 'approved')?.length}
+						{applicantData?.milestones?.filter((milestone) => milestone?.state === 'approved')?.length}
 						{' '}
 						/
 						{' '}

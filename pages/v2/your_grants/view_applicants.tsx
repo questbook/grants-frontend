@@ -44,8 +44,8 @@ import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import StyledTab from 'src/v2/components/StyledTab'
 import NoReviewerBanner from 'src/v2/components/ViewApplicants/NoReviewerBanner'
 import RubricNotSetBanner from 'src/v2/components/ViewApplicants/RubricNotSetBanner'
-import { Gnosis_Safe } from 'src/v2/constants/safe/gnosis_safe'
-import { Realms_Solana, solanaToUsd, usdToSolana } from 'src/v2/constants/safe/realms_solana'
+import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
+import { RealmsSolana, solanaToUsd, usdToSolana } from 'src/v2/constants/safe/realms_solana'
 import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import AcceptedProposalsPanel from 'src/v2/payouts/AcceptedProposals/AcceptedProposalPanel'
@@ -53,7 +53,7 @@ import InReviewPanel from 'src/v2/payouts/InReviewProposals/InReviewPanel'
 import RejectedPanel from 'src/v2/payouts/RejectedProposals/RejectedPanel'
 import ResubmitPanel from 'src/v2/payouts/ResubmitProposals/ResubmitPanel'
 import SendFundsDrawer from 'src/v2/payouts/SendFundsDrawer/SendFundsDrawer'
-import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
+import SendFundsModal, { MODAL_STATE_INDEXES, ModalStateType } from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEvaluationDrawer'
 import StatsBanner from 'src/v2/payouts/StatsBanner'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
@@ -73,13 +73,6 @@ function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 		val = val.add(milestone.amountPaid)
 	})
 	return val
-}
-
-enum ModalState {
-	RECEIPT_DETAILS,
-	CONNECT_WALLET,
-	VERIFIED_OWNER,
-	TRANSATION_INITIATED
 }
 
 function ViewApplicants() {
@@ -317,12 +310,12 @@ function ViewApplicants() {
 					applicationId: applicant.id,
 					applicantName: getFieldString(applicant, 'applicantName'),
 					applicantEmail: getFieldString(applicant, 'applicantEmail'),
-					applicant_address: getFieldString(applicant, 'applicantAddress'),
-					sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
-					updated_on: moment.unix(applicant.updatedAtS).format('DD MMM YYYY'),
+					applicantAddress: getFieldString(applicant, 'applicantAddress'),
+					sentOn: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
+					updatedOn: moment.unix(applicant.updatedAtS).format('DD MMM YYYY'),
 					// applicant_name: getFieldString('applicantName'),
-					project_name: getFieldString(applicant, 'projectName'),
-					funding_asked: {
+					projectName: getFieldString(applicant, 'projectName'),
+					fundingAsked: {
 						// amount: formatAmount(
 						//   getFieldString('fundingAsk') || '0',
 						// ),
@@ -338,7 +331,7 @@ function ViewApplicants() {
 					status: TableFilters[applicant?.state],
 					milestones: applicant.milestones,
 					reviewers: applicant.applicationReviewers,
-					amount_paid: formatAmount(
+					amountPaid: formatAmount(
 						getTotalFundingRecv(
 							applicant.milestones as unknown as ApplicationMilestone[],
 						).toString(),
@@ -402,7 +395,7 @@ function ViewApplicants() {
 	const [gnosisBatchData, setGnosisBatchData] = useState<any>([])
 	const [, setGnosisReadyToExecuteTxns] = useState<any>([])
 	const [totalFundDisbursed, setTotalFundDisbursed] = useState (0)
-	const [step, setStep] = useState(ModalState.RECEIPT_DETAILS)
+	const [step, setStep] = useState<ModalStateType>('RECEIPT_DETAILS')
 
 	const isEvmChain = workspaceSafeChainId !== 900001
 
@@ -412,10 +405,10 @@ function ViewApplicants() {
 	const currentSafe = useMemo(() => {
 		if(isEvmChain) {
 			const txnServiceURL = safeServicesInfo[workspaceSafeChainId]
-			return new Gnosis_Safe(workspaceSafeChainId, txnServiceURL, workspaceSafe)
+			return new GnosisSafe(workspaceSafeChainId, txnServiceURL, workspaceSafe)
 		} else {
 			if(isPlausibleSolanaAddress(workspaceSafe)) {
-				return new Realms_Solana(workspaceSafe)
+				return new RealmsSolana(workspaceSafe)
 			}
 		}
 	}, [workspaceSafe])
@@ -434,7 +427,7 @@ function ViewApplicants() {
 		const formattedTrxnData = sendFundsTo?.map((recepient,) => (
 			{
 				from: currentSafe?.id?.toString(),
-				to: recepient.applicant_address,
+				to: recepient.applicantAddress,
 				applicationId: recepient.applicationId,
 				selectedMilestone: recepient.milestones[0].id,
 				amount: 0
@@ -456,7 +449,7 @@ function ViewApplicants() {
 
 	useEffect(() => {
 		if(signerVerified) {
-			setStep(ModalState.VERIFIED_OWNER)
+			setStep('VERIFIED_OWNER')
 		}
 	}, [signerVerified])
 
@@ -679,17 +672,17 @@ function ViewApplicants() {
 
 	const onModalStepChange = async(currentState: number) => {
 		switch (currentState) {
-		case ModalState.RECEIPT_DETAILS:
-			setStep(ModalState.CONNECT_WALLET)
+		case MODAL_STATE_INDEXES['RECEIPT_DETAILS']:
+			setStep('CONNECT_WALLET')
 			break
-		case ModalState.CONNECT_WALLET:
+		case MODAL_STATE_INDEXES['CONNECT_WALLET']:
 			if(signerVerified) {
-				setStep(ModalState.VERIFIED_OWNER)
+				setStep('VERIFIED_OWNER')
 			}
 
 			break
-		case ModalState.VERIFIED_OWNER:
-			setStep(ModalState.TRANSATION_INITIATED)
+		case MODAL_STATE_INDEXES['VERIFIED_OWNER']:
+			setStep('TRANSATION_INITIATED')
 			initiateTransaction()
 			setSendFundsModalIsOpen(false)
 			setSendFundsDrawerIsOpen(false)
@@ -700,7 +693,7 @@ function ViewApplicants() {
 	}
 
 	const onModalClose = async() => {
-		setStep(ModalState.RECEIPT_DETAILS)
+		setStep('RECEIPT_DETAILS')
 		setSendFundsModalIsOpen(false)
 		setSendFundsDrawerIsOpen(false)
 		setTxnInitModalIsOpen(false)

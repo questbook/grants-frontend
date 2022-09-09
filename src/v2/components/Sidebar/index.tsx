@@ -13,7 +13,7 @@ import getTabFromPath from 'src/utils/tabUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import Domains from 'src/v2/components/Sidebar/Domains'
 import SidebarItem from 'src/v2/components/Sidebar/SidebarItem'
-import { TabIndex, useGetTabs } from 'src/v2/components/Sidebar/Tabs'
+import { TAB_INDEXES, useGetTabs } from 'src/v2/components/Sidebar/Tabs'
 
 function Sidebar() {
 	const [topTabs, bottomTabs] = useGetTabs()
@@ -23,10 +23,10 @@ function Sidebar() {
 
 	const router = useRouter()
 
-	const [tabSelected, setTabSelected] = React.useState<TabIndex>(getTabFromPath(router.pathname))
+	const [tabSelected, setTabSelected] = React.useState<number>(TAB_INDEXES[getTabFromPath(router.pathname)])
 
 	React.useEffect(() => {
-		setTabSelected(getTabFromPath(router.pathname))
+		setTabSelected(TAB_INDEXES[getTabFromPath(router.pathname)])
 	}, [router.pathname])
 
 	const [workspaces, setWorkspaces] = React.useState<MinimalWorkspace[]>([])
@@ -92,7 +92,7 @@ function Sidebar() {
 					<Domains
 						workspaces={workspaces}
 						onWorkspaceClick={
-							(index: TabIndex, onComplete: () => void) => {
+							(index, onComplete: () => void) => {
 								setWorkspace(workspaces[index])
 								router.push('/dashboard').then(onComplete)
 								const workspaceChainID = getSupportedChainIdFromWorkspace(workspaces[index])

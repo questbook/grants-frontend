@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { Box, Button, Spacer, Text } from '@chakra-ui/react'
 import { ArrowRightFilled } from 'src/v2/assets/custom chakra icons/Arrows/ArrowRightFilled'
 
@@ -9,7 +9,7 @@ const VerifyWalletButton = ({
 	isPopular,
 }: {
   onClick: () => void
-  icon: React.ReactNode
+  icon: ReactNode
   name: string
   isPopular?: boolean
 }) => {

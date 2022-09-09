@@ -46,10 +46,10 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 
 			const url = serialiseInviteInfoIntoUrl(info)
 			onLinkCreated(url)
-		} catch(error: any) {
+		} catch(error) {
 			// // console.error('error ', error)
 			toast({
-				title: `Error in generating the invite: "${error.message}"`,
+				title: `Error in generating the invite: "${(error as Error).message}"`,
 				status: 'error',
 				isClosable: true
 			})

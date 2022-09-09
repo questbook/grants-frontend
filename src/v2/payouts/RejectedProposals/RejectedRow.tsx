@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react'
 import { Flex, forwardRef, GridItem, Image, Menu, MenuButton, MenuItem, MenuList, Text, TextProps } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { IApplicantData, IReview } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 
 const RejectedRow = ({
 	applicantData,
 }: {
-	applicantData: any
+	applicantData: IApplicantData
 }) => {
 	const router = useRouter()
 	const [isHovering, setIsHovering] = useState(false)
-	const [reviews, setReviews] = useState<any>()
+	const [reviews, setReviews] = useState<{[_ in string]: {items?: {rating?: number}[]}}>()
 
 	const getReview = async(hash: string) => {
 		if(hash === '') {
@@ -22,20 +23,21 @@ const RejectedRow = ({
 		try {
 			const data = JSON.parse(d)
 			return data
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch(e: any) {
+		} catch(e) {
 			// console.log('incorrect review', e)
 			return {}
 		}
 	}
 
-	const getReviews = async(reviews: any[]) => {
-		const reviewsDataMap = {} as any
+	const getReviews = async(reviews: {
+		publicReviewDataHash?: IReview['publicReviewDataHash']
+		reviewer: IReview['reviewer']
+	}[]) => {
+		const reviewsDataMap: {[_ in string]: {items?: {rating?: number}[]}} = {}
 		const reviewsData = await Promise.all(reviews?.map(async(review) => {
-			const data = await getReview(review?.publicReviewDataHash)
+			const data = await getReview(review!.publicReviewDataHash!)
 			return data
 		}))
-
 		reviewsData.forEach((review, i) => {
 			const reviewerIdSplit = reviews[i]?.reviewer?.id.split('.')
 			const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
@@ -53,7 +55,7 @@ const RejectedRow = ({
 		}
 	}, [applicantData])
 
-	const totalScore = (items?: any[]) => {
+	const totalScore = (items?: {rating?: number}[]) => {
 		// console.log(items)
 		let s = 0
 		items?.forEach((item) => {
@@ -87,7 +89,7 @@ const RejectedRow = ({
 					>
 						<Image
 							borderRadius='3xl'
-							src={getAvatar(applicantData?.applicant_address)}
+							src={getAvatar(applicantData?.applicantAddress)}
 						/>
 					</Flex>
 
@@ -113,7 +115,7 @@ const RejectedRow = ({
 								})
 							}
 						>
-							{applicantData?.project_name}
+							{applicantData?.projectName}
 						</Text>
 						<Text
 							fontSize='12px'
@@ -137,17 +139,17 @@ const RejectedRow = ({
 							display={'flex'}
 							alignItems='center'
 						>
-							<Tooltip label={applicantData?.applicant_address}>
+							<Tooltip label={applicantData?.applicantAddress}>
 
 
-								{`${applicantData?.applicant_address?.substring(0, 6)}...`}
+								{`${applicantData?.applicantAddress?.substring(0, 6)}...`}
 
 							</Tooltip>
 							<Flex
 								display="inline-block"
 								ml={2}
 							>
-								<CopyIcon text={applicantData?.applicant_address!} />
+								<CopyIcon text={applicantData?.applicantAddress!} />
 							</Flex>
 						</Text> */}
 					</Flex>
@@ -170,7 +172,7 @@ const RejectedRow = ({
 					lineHeight='20px'
 					fontWeight='500'
 				>
-					{applicantData?.updated_on ?? '-'}
+					{applicantData?.updatedOn ?? '-'}
 				</Text>
 
 			</GridItem>
@@ -230,7 +232,7 @@ const RejectedRow = ({
 						</Flex>
 
 						{
-							applicantData?.reviewers?.map((reviewer: any, i: number) => {
+							applicantData?.reviewers?.map((reviewer, i) => {
 								const reviewerIdSplit = reviewer?.id.split('.')
 								const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
 								// console.log(reviewerId)
@@ -284,7 +286,7 @@ const RejectedRow = ({
 													color='#7D7DA0'
 													ml='auto'
 												>
-													{totalScore(reviews ? reviews[reviewerId] : [])}
+													{totalScore(reviews ? reviews[reviewerId]['items'] : [])}
 												</Text>
 											</Flex>
 										</MenuItem>

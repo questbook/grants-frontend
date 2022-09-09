@@ -96,8 +96,8 @@ const CreateDaoNetworkSelect = ({
 					disabled={!newDaoSelectedNetwork}
 					props={
 						{
-							ml: 5,
-							mt: 16,
+							ml: '5px',
+							mt: '16px',
 							variant: 'primaryLightV2'
 						}
 					}

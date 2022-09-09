@@ -224,8 +224,7 @@ const VerifySignerModal = ({
 															if(connector) {
 																try {
 																	await connectAsync(connector)
-																// eslint-disable-next-line @typescript-eslint/no-explicit-any
-																} catch(e: any) {
+																} catch(_) {
 																	// console.log('evm error', e)
 																}
 
@@ -236,7 +235,7 @@ const VerifySignerModal = ({
 														}
 													} />
 											))) : (solanaWallets.map((wallet, index) => (
-												<VerifyWalletButton
+											<VerifyWalletButton
 												key={index}
 												icon={wallet.icon}
 												name={wallet.name}
