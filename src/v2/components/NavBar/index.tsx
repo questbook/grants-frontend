@@ -1,11 +1,9 @@
 import { Container, Image } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import AccountDetails from 'src/v2/components/NavBar/AccountDetails'
-import { useConnect } from 'wagmi'
 
 function NavBar() {
 	// const { connected } = useContext(ApiClientsContext)!
-	const { isDisconnected } = useConnect()
 	const router = useRouter()
 	// const chainId = useChainId()
 
@@ -30,7 +28,7 @@ function NavBar() {
 				}
 				display={{ base: 'none', lg: 'inherit' }}
 				mr='auto'
-				src={isDisconnected ? '/ui_icons/qb.svg' : '/ui_icons/qb.svg'}
+				src='/ui_icons/qb.svg'
 				alt='Questbook'
 				cursor='pointer'
 			/>
@@ -42,7 +40,7 @@ function NavBar() {
 				}
 				display={{ base: 'inherit', lg: 'none' }}
 				mr='auto'
-				src={isDisconnected ? '/ui_icons/questbookMobile.svg' : '/ui_icons/qb.svg'}
+				src='/ui_icons/qb.svg'
 				alt='Questbook'
 				cursor='pointer'
 			/>

@@ -11,7 +11,6 @@ import { Button, Center, Flex, Text } from '@chakra-ui/react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
-import AddFunds from 'src/components/funds/add_funds_modal'
 import Loader from 'src/components/ui/loader'
 import ArchivedGrantEmptyState from 'src/components/your_grants/empty_states/archived_grant'
 import AssignedGrantEmptyState from 'src/components/your_grants/empty_states/assigned_grant'
@@ -628,7 +627,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 							}
 
             	return (
-								<YourGrantCard
+	<YourGrantCard
             			grantID={grant.grant.id}
             			key={grant.grant.id}
             			daoIcon={
@@ -706,16 +705,6 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 					/>
 				</Flex>
 			</Flex>
-			{
-				grantForFunding && grantRewardAsset && (
-					<AddFunds
-						isOpen={addFundsIsOpen}
-						onClose={() => setAddFundsIsOpen(false)}
-						grantAddress={grantForFunding}
-						rewardAsset={grantRewardAsset}
-					/>
-				)
-			}
 
 			{/* Removing Public Key Modal Temporarily */}
 			{/* <AllowAccessToPublicKeyModal

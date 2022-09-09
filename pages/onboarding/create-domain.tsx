@@ -29,7 +29,6 @@ import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/Safe
 import SuccessfulDomainCreationModal from 'src/v2/components/Onboarding/CreateDomain/SuccessfulDomainCreationModal'
 import QuestbookLogo from 'src/v2/components/QuestbookLogo'
 import VerifySignerModal from 'src/v2/components/VerifySignerModal'
-import { useAccount, useDisconnect } from 'wagmi'
 
 
 const OnboardingCreateDomain = () => {
@@ -61,10 +60,6 @@ const OnboardingCreateDomain = () => {
 
 	const [isDomainCreationSuccessful, setIsDomainCreationSuccessful] = useState(false)
 
-	// Wagmi
-	const { data: accountData } = useAccount()
-	const { disconnect } = useDisconnect()
-
 	// Solana
 	// const { phantomWallet } = usePhantomWallet()
 
@@ -92,10 +87,6 @@ const OnboardingCreateDomain = () => {
 	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, safeSelected?.networkId])
 
 	useEffect(() => {
-		disconnect()
-	}, [])
-
-	useEffect(() => {
 		if(isOwner) {
 			setIsVerifySignerModalOpen(false)
 		}
@@ -109,13 +100,13 @@ const OnboardingCreateDomain = () => {
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
 
-	useEffect(() => {
-		// console.log('cur step', step)
-		if(step === 3 && !isOwner) {
+	// useEffect(() => {
+	// 	// console.log('cur step', step)
+	// 	if(step === 3 && !isOwner) {
 
-		}
+	// 	}
 
-	}, [accountData, safeOwners, step, isOwner])
+	// }, [accountData, safeOwners, step, isOwner])
 
 	useEffect(() => {
 		// console.log("add_user", nonce, webwallet)

@@ -42,7 +42,7 @@ const VerifySignerModal = ({
 	} = useConnect()
 
 	const {
-		data: accountData
+		address
 	} = useAccount()
 
 	const availableWallets = [{
@@ -84,20 +84,20 @@ const VerifySignerModal = ({
 
 	useEffect(() => {
 		// console.log(accountData)
-		if(accountData) {
+		if(address) {
 			if(!redirectInitiated && redirect && connectClicked) {
 				setRedirectInitiated(true)
 				setConnectClicked(false)
 				redirect()
 			}
 		}
-	}, [accountData])
+	}, [address])
 
 	useEffect(() => {
 		if(isOpen && walletClicked) {
-			if(networkType === NetworkType.EVM && accountData?.address && owners.includes(accountData?.address)) {
+			if(networkType === NetworkType.EVM && address && owners.includes(address)) {
 				setIsOwner(true)
-				setOwnerAddress(accountData.address)
+				setOwnerAddress(address)
 				// alert('Your safe ownership is proved.')
 				toast.closeAll()
 				toast({
@@ -123,9 +123,9 @@ const VerifySignerModal = ({
 						close: () => { }
 					}),
 				})
-			} else if(phantomWallet?.publicKey || accountData?.address) {
+			} else if(phantomWallet?.publicKey || address) {
 				// setIsOwner(false)
-				if(accountData?.address) {
+				if(address) {
 					disconnectAsync()
 				}
 
@@ -146,7 +146,7 @@ const VerifySignerModal = ({
 
 			setWalletClicked(false)
 		}
-	}, [walletClicked, accountData, owners, toast, phantomWallet?.publicKey, isOpen, phantomWallet?.disconnect])
+	}, [walletClicked, address, owners, toast, phantomWallet?.publicKey, isOpen, phantomWallet?.disconnect])
 
 	return (
 		<Modal
@@ -223,7 +223,7 @@ const VerifySignerModal = ({
 															setConnectClicked(true)
 															if(connector) {
 																try {
-																	await connectAsync(connector)
+																	await connectAsync({ connector })
 																// eslint-disable-next-line @typescript-eslint/no-explicit-any
 																} catch(e: any) {
 																	// console.log('evm error', e)

@@ -47,7 +47,7 @@
     "axios": "^0.27.2",
     "axios-retry": "^3.3.1",
     "bn.js": "^5.2.0",
-    "chakra-react-select": "^4.0.3",
+    "chakra-react-select": "^4.2.2",
     "chart.js": "^3.8.0",
     "copy-to-clipboard": "^3.3.1",
     "dotenv": "^16.0.0",
@@ -62,7 +62,7 @@
     "moment": "^2.29.1",
     "multiformats": "^9.6.4",
     "next": "^12.0.8",
-    "next-seo": "^4.28.1",
+    "next-seo": "^5.5.0",
     "next-transpile-modules": "^9.0.0",
     "pino": "^8.4.2",
     "react": "^17.0.2",
@@ -76,7 +76,7 @@
     "tlds": "^1.230.0",
     "urql": "^2.2.1",
     "use-file-picker": "^1.4.1",
-    "wagmi": "^0.4.3"
+    "wagmi": "^0.6.5"
   },
   "devDependencies": {
     "@creatoros/eslint-config": "git+https://github.com/CreatorOS/eslint-config",

@@ -60,7 +60,7 @@ import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
 import getGnosisTansactionLink from 'src/v2/utils/gnosisUtils'
 import getProposalUrl from 'src/v2/utils/phantomUtils'
-import { erc20ABI, useConnect, useDisconnect } from 'wagmi'
+import { erc20ABI, useAccount } from 'wagmi'
 
 
 const PAGE_SIZE = 500
@@ -392,8 +392,7 @@ function ViewApplicants() {
 		phantomWalletConnected,
 		setPhantomWalletConnected } = usePhantomWallet()
 
-	const { isConnected } = useConnect()
-	const { disconnect } = useDisconnect()
+	const { isConnected } = useAccount()
 
 	const [signerVerified, setSignerVerififed] = useState(false)
 	const [proposalAddr, setProposalAddr] = useState('')
@@ -707,10 +706,6 @@ function ViewApplicants() {
 		if(phantomWallet?.isConnected) {
 			await phantomWallet.disconnect()
 			setPhantomWalletConnected(false)
-		}
-
-		if(isConnected) {
-			disconnect()
 		}
 	}
 

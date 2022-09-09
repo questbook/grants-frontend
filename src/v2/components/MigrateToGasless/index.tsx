@@ -25,9 +25,9 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 	const { waitForScwAddress } = useContext(WebwalletContext)!
 	const { subgraphClients } = useContext(ApiClientsContext)!
 
-	const { data: walletData } = useAccount()
+	const { address: walletAddress } = useAccount()
 	const { data: signer } = useSigner()
-	const { activeChain: walletChain } = useNetwork()
+	const { chain: walletChain } = useNetwork()
 
 	const [isConnectWalletModalOpen, setIsConnectWalletModalOpen] = useState(false)
 	const [hasDAO, setHasDAO] = useState(false)
@@ -41,35 +41,35 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 		useQuery: useGetWorkspacesOwnedQuery,
 		options: {
 			variables: {
-				actorId: walletData?.address ?? ''
+				actorId: walletAddress ?? ''
 			}
 		},
 		chains: [walletChain?.id! in SupportedChainId ? walletChain?.id! : defaultChainId]
 	})
 
 	useEffect(() => {
-		if(walletData?.address && walletChain?.id) {
+		if(walletAddress && walletChain?.id) {
 			setHasDAO(results.length > 0)
 		}
 	}, [results])
 
 	useEffect(() => {
-		if(walletData?.address && walletChain?.id) {
+		if(walletAddress && walletChain?.id) {
 			fetchMore({
-				actorId: walletData.address ?? ''
+				actorId: walletAddress ?? ''
 			}, true)
 		}
-	}, [walletData?.address, walletChain?.id])
+	}, [walletAddress, walletChain?.id])
 
 	useEffect(() => {
-		if(walletData) {
+		if(walletAddress) {
 			setIsConnectWalletModalOpen(false)
 		}
-	}, [walletData])
+	}, [walletAddress])
 
 	const migrate = async() => {
 		try {
-			if(!walletData?.address) {
+			if(!walletAddress) {
 				setIsConnectWalletModalOpen(true)
 				return
 			}
@@ -95,10 +95,10 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 			const scwAddress = await waitForScwAddress
 			setNetworkModalStep(1)
 
-			logger.info({ wallet: walletData.address, scwAddress }, 'migrating to gasless')
+			logger.info({ wallet: walletAddress, scwAddress }, 'migrating to gasless')
 			logger.info({ signerFromWagmi: signer, signerFromContract: workspaceContract.signer }, 'Signer')
 			logger.info({ walletChain }, 'Current Chain')
-			const transaction = await workspaceContract.migrateWallet(walletData.address, scwAddress)
+			const transaction = await workspaceContract.migrateWallet(walletAddress, scwAddress)
 
 			setNetworkModalStep(2)
 			const transactionData = await transaction.wait()
@@ -249,7 +249,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 							noOfLines={1}
 							fontSize='sm'
 							color='#3F8792'>
-							{walletData?.address ?? 'Not connected'}
+							{walletAddress ?? 'Not connected'}
 						</Text>
 					</Flex>
 				}
