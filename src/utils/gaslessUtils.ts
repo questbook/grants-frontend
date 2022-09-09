@@ -27,9 +27,9 @@ const EIP712_WALLET_TX_TYPE = {
 export const jsonRpcProviders: { [key: string]: ethers.providers.JsonRpcProvider } =
 {
 	'80001': new ethers.providers.JsonRpcProvider('https://polygon-mumbai.g.alchemy.com/v2/X6pnQlJfJq00b8MT53QihWBINEgHZHGp'),
-	'5': new ethers.providers.JsonRpcProvider('https://eth-goerli.g.alchemy.com/v2/Hr6VkBfmbJIhEW3fHJnl0ujE0xmWxcqH'),
-	'137': new ethers.providers.JsonRpcProvider('https://polygon-mainnet.g.alchemy.com/v2/mmBX0eNrvs0k7UpEMwi0eIH6hC4Dqoss'),
-	'10': new ethers.providers.JsonRpcProvider('https://opt-mainnet.g.alchemy.com/v2/Frv-KL7os-J7EV9e34WA0b0ayG5i1vNN')
+	'5': new ethers.providers.JsonRpcProvider('https://eth-goerli.g.alchemy.com/v2/c7FL3Wd0zxt_DtjeN1wqMWtCFVUTV_sP'),
+	'137': new ethers.providers.JsonRpcProvider('https://polygon-mainnet.g.alchemy.com/v2/zcWxjKH0Sif5PLp-b-vxP_M1JYF1aoPG'),
+	'10': new ethers.providers.JsonRpcProvider('https://opt-mainnet.g.alchemy.com/v2/8iYVobmm24k85ejRIS0fd8sBzSVbQtZv')
 }
 
 export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } } = {
