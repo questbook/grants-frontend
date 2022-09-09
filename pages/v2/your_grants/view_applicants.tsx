@@ -53,7 +53,7 @@ import InReviewPanel from 'src/v2/payouts/InReviewProposals/InReviewPanel'
 import RejectedPanel from 'src/v2/payouts/RejectedProposals/RejectedPanel'
 import ResubmitPanel from 'src/v2/payouts/ResubmitProposals/ResubmitPanel'
 import SendFundsDrawer from 'src/v2/payouts/SendFundsDrawer/SendFundsDrawer'
-import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
+import SendFundsModal, { MODAL_STATE_INDEXES, ModalStateType } from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEvaluationDrawer'
 import StatsBanner from 'src/v2/payouts/StatsBanner'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
@@ -73,13 +73,6 @@ function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 		val = val.add(milestone.amountPaid)
 	})
 	return val
-}
-
-enum ModalState {
-	RECEIPT_DETAILS,
-	CONNECT_WALLET,
-	VERIFIED_OWNER,
-	TRANSATION_INITIATED
 }
 
 function ViewApplicants() {
@@ -402,7 +395,7 @@ function ViewApplicants() {
 	const [gnosisBatchData, setGnosisBatchData] = useState<any>([])
 	const [, setGnosisReadyToExecuteTxns] = useState<any>([])
 	const [totalFundDisbursed, setTotalFundDisbursed] = useState (0)
-	const [step, setStep] = useState(ModalState.RECEIPT_DETAILS)
+	const [step, setStep] = useState<ModalStateType>('RECEIPT_DETAILS')
 
 	const isEvmChain = workspaceSafeChainId !== 900001
 
@@ -456,7 +449,7 @@ function ViewApplicants() {
 
 	useEffect(() => {
 		if(signerVerified) {
-			setStep(ModalState.VERIFIED_OWNER)
+			setStep('VERIFIED_OWNER')
 		}
 	}, [signerVerified])
 
@@ -679,17 +672,17 @@ function ViewApplicants() {
 
 	const onModalStepChange = async(currentState: number) => {
 		switch (currentState) {
-		case ModalState.RECEIPT_DETAILS:
-			setStep(ModalState.CONNECT_WALLET)
+		case MODAL_STATE_INDEXES['RECEIPT_DETAILS']:
+			setStep('CONNECT_WALLET')
 			break
-		case ModalState.CONNECT_WALLET:
+		case MODAL_STATE_INDEXES['CONNECT_WALLET']:
 			if(signerVerified) {
-				setStep(ModalState.VERIFIED_OWNER)
+				setStep('VERIFIED_OWNER')
 			}
 
 			break
-		case ModalState.VERIFIED_OWNER:
-			setStep(ModalState.TRANSATION_INITIATED)
+		case MODAL_STATE_INDEXES['VERIFIED_OWNER']:
+			setStep('TRANSATION_INITIATED')
 			initiateTransaction()
 			setSendFundsModalIsOpen(false)
 			setSendFundsDrawerIsOpen(false)
@@ -700,7 +693,7 @@ function ViewApplicants() {
 	}
 
 	const onModalClose = async() => {
-		setStep(ModalState.RECEIPT_DETAILS)
+		setStep('RECEIPT_DETAILS')
 		setSendFundsModalIsOpen(false)
 		setSendFundsDrawerIsOpen(false)
 		setTxnInitModalIsOpen(false)

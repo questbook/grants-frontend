@@ -1,11 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { Badge, Box, Button, ButtonProps, Checkbox, Flex, forwardRef, Grid, GridItem, HStack, Menu, MenuButton, MenuItem, MenuList, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalOverlay, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { ApiClientsContext } from 'pages/_app'
+import { defaultChainId } from 'src/constants/chains'
 import { GetGrantDetailsQuery } from 'src/generated/graphql'
 import useBatchUpdateApplicationState from 'src/hooks/useBatchUpdateApplicationState'
 import { IApplicantData } from 'src/types'
-import { formatAddress } from 'src/utils/formattingUtils'
+import { formatAddress, getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { AcceptApplication } from 'src/v2/assets/custom chakra icons/AcceptApplication'
 import { RejectApplication } from 'src/v2/assets/custom chakra icons/RejectApplication'
 import { ResubmitApplication } from 'src/v2/assets/custom chakra icons/ResubmitApplication'
@@ -26,6 +29,8 @@ const InReviewPanel = ({
 	const [isRejectClicked, setIsRejectClicked] = useState<boolean>(false)
 	const [isResubmitClicked, setIsResubmitClicked] = useState<boolean>(false)
 	const [isConfirmClicked, setIsConfirmClicked] = useState<boolean>(false)
+
+	const { workspace } = useContext(ApiClientsContext)!
 
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 	const [state, setState] = useState<number>(5)
@@ -500,7 +505,7 @@ const InReviewPanel = ({
 						'Application(s) state updated',
 					]
 				}
-				transactionHash={txn?.transactionHash}
+				viewLink={getExplorerUrlForTxHash(getSupportedChainIdFromWorkspace(workspace) || defaultChainId, txn?.transactionHash)}
 				onClose={
 					() => {
 						setNetworkTransactionModalStep(undefined)
