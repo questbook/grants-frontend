@@ -43,6 +43,7 @@ function Settings({ workspaceData }: Props) {
 					color='brand.500'
 					fontWeight='700'
 					letterSpacing={0.5}
+					isExternal
 				>
 					<Flex
 						direction='row'
