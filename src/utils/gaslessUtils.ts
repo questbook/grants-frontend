@@ -1,8 +1,10 @@
+import { Biconomy } from '@biconomy/mexa'
 import axios from 'axios'
 import { Contract, ethers, Wallet } from 'ethers'
 import { Fragment } from 'ethers/lib/utils'
 import { BiconomyContext } from 'pages/_app'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import { defaultChainId } from 'src/constants/chains'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import { TransactionReceipt } from 'web3-core'
@@ -23,12 +25,12 @@ const EIP712_WALLET_TX_TYPE = {
 }
 
 export const jsonRpcProviders: { [key: string]: ethers.providers.JsonRpcProvider } =
-	{
-		'80001': new ethers.providers.JsonRpcProvider('https://polygon-mumbai.g.alchemy.com/v2/X6pnQlJfJq00b8MT53QihWBINEgHZHGp'),
-		'5': new ethers.providers.JsonRpcProvider('https://eth-goerli.g.alchemy.com/v2/Hr6VkBfmbJIhEW3fHJnl0ujE0xmWxcqH'),
-		'137': new ethers.providers.JsonRpcProvider('https://polygon-mainnet.g.alchemy.com/v2/mmBX0eNrvs0k7UpEMwi0eIH6hC4Dqoss'),
-		'10': new ethers.providers.JsonRpcProvider('https://opt-mainnet.g.alchemy.com/v2/Frv-KL7os-J7EV9e34WA0b0ayG5i1vNN')
-	}
+{
+	'80001': new ethers.providers.JsonRpcProvider('https://polygon-mumbai.g.alchemy.com/v2/X6pnQlJfJq00b8MT53QihWBINEgHZHGp'),
+	'5': new ethers.providers.JsonRpcProvider('https://eth-goerli.g.alchemy.com/v2/Hr6VkBfmbJIhEW3fHJnl0ujE0xmWxcqH'),
+	'137': new ethers.providers.JsonRpcProvider('https://polygon-mainnet.g.alchemy.com/v2/mmBX0eNrvs0k7UpEMwi0eIH6hC4Dqoss'),
+	'10': new ethers.providers.JsonRpcProvider('https://opt-mainnet.g.alchemy.com/v2/Frv-KL7os-J7EV9e34WA0b0ayG5i1vNN')
+}
 
 export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } } = {
 	'5': {
@@ -37,7 +39,7 @@ export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } }
 	},
 	'137': {
 		apiKey: 'kcwSbypnqq.f5fe6fbd-10e3-4dfe-a731-5eb4b6d85445',
-		webHookId: '202501f8-639f-495a-a1ec-d52d86db8b2d',
+		webHookId: '33d5557b-6882-4a3d-a7c3-a4543682b9c0',
 	},
 	'10': {
 		apiKey: 'xc_x_i8x3.7002d254-03f5-427e-b25f-400b52d1d4c9',
@@ -134,7 +136,7 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 		},
 	}
 
-	const { doesWalletExist, walletAddress } = await biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address })
+	const { doesWalletExist, walletAddress } = await biconomyWalletClient?.checkIfWalletExists({ eoa: webwallet.address })
 	let scwAddress
 
 	if(!doesWalletExist) {
@@ -348,4 +350,49 @@ export const addDapp = async(dappName: string, networkId: string, authToken: str
 	console.log(resJson.data)
 
 	return { apiKey: resJson.data.apiKey, fundingKey: resJson.data.fundingKey.toString() }
+}
+
+export const registerWebWallet = async(privateKey: string): Promise<{ scwAddress: string }> => {
+
+	const webwallet = new ethers.Wallet(privateKey)
+
+	await addAuthorizedUser(webwallet.address)
+
+	const nonce = await getNonce(webwallet)
+
+	const biconomy = new Biconomy(jsonRpcProviders[defaultChainId.toString()],
+		{
+			apiKey: bicoDapps[defaultChainId.toString()].apiKey,
+			debug: true
+		})
+
+	const scwAddress: string = await new Promise((resolve, reject) => {
+		biconomy.onEvent(biconomy.READY, async() => {
+			const alreadyProcessingScw = localStorage.getItem('alreadyProcessingScw')
+
+			if(alreadyProcessingScw === 'true') {
+				reject(undefined)
+			}
+
+			localStorage.setItem('alreadyProcessingScw', 'true')
+
+			const biconomyWalletClient: BiconomyWalletClient = biconomy.biconomyWalletClient
+
+			if(biconomyWalletClient) {
+				const walletAddress = await deploySCW(webwallet, biconomyWalletClient, defaultChainId.toString(), nonce!)
+				localStorage.setItem('alreadyProcessingScw', 'false')
+				resolve(walletAddress)
+			}
+
+			localStorage.setItem('alreadyProcessingScw', 'false')
+
+			reject(undefined)
+
+		}).onEvent(biconomy.ERROR, () => {
+			throw new Error('Biconomy error!')
+		})
+	})
+
+	return { scwAddress: scwAddress }
+
 }

@@ -12,6 +12,7 @@ const isValidEthereumAddress = (address: string) => {
 const isValidSolanaAddress = (address: string) => {
 	try {
 		return PublicKey.isOnCurve(address)
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch(e: any) {
 		return false
 	}
@@ -47,7 +48,7 @@ const getSupportedValidatorNetworkFromChainId = (chainId: SupportedChainId) => (
 	chainId.toString() as SupportedValidatorNetwork
 )
 
-const getSupportedChainIdFromWorkspace = (workspace?: MinimalWorkspace) => {
+const getSupportedChainIdFromWorkspace = (workspace?: Pick<MinimalWorkspace, 'supportedNetworks'>) => {
 	if(!workspace) {
 		return undefined
 	}

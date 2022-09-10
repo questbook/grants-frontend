@@ -21,6 +21,7 @@ import { SupportedChainId } from 'src/constants/chains'
 import { RubricItem } from 'src/generated/graphql'
 import useSubmitReview from 'src/hooks/useSubmitReview'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
+import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { sumArray } from 'src/utils/generics'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
@@ -84,6 +85,8 @@ function FeedbackDrawer({
 		setEditedFeedbackData({ items: formattedFeedbackData })
 	}
 
+	const [transactionHash, setTransactionHash] = useState<string>()
+
 	const [
 		data,
 		transactionLink,
@@ -92,6 +95,7 @@ function FeedbackDrawer({
 	] = useSubmitReview(
 		editedFeedbackData!,
 		setCurrentStep,
+		setTransactionHash,
 		isPrivate,
 		chainId,
 		workspaceId,
@@ -265,6 +269,12 @@ function FeedbackDrawer({
 						'Waiting for transaction indexing',
 						'Review pushed on-chain',
 					]
+				}
+				viewLink={getExplorerUrlForTxHash(chainId, transactionHash)}
+				onClose={
+					() => {
+						setCurrentStep(undefined)
+					}
 				} />
 		</>
 	)

@@ -309,7 +309,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 
 	useEffect(() => {
 		if(data.data && data.data.grants && data.data.grants.length > 0) {
-			// console.log('data.grants', data.data.grants)
+			console.log('data.grants', data.data.grants)
 			if(
 				grants.length > 0 &&
 				grants[0].workspace.id === data.data.grants[0].workspace.id &&
@@ -519,7 +519,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 							let icon
 							let label
 							if(grant.reward.token) {
-								// // console.log('Reward has token')
+								console.log('Reward has token')
 								decimals = grant.reward.token.decimal
 								label = grant.reward.token.label
 								icon = grant.reward.token.iconHash

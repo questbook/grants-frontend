@@ -1,4 +1,4 @@
-import React, { createContext, ReactElement, ReactNode, useEffect, useMemo } from 'react'
+import React, { createContext, ReactElement, ReactNode, useEffect, useMemo, useRef } from 'react'
 import { ChakraProvider } from '@chakra-ui/react'
 import { ChatWidget } from '@papercups-io/chat-widget'
 // import dynamic from 'next/dynamic';
@@ -15,13 +15,17 @@ import { DefaultSeo } from 'next-seo'
 import {
 	ALL_SUPPORTED_CHAIN_IDS,
 	CHAIN_INFO,
+	defaultChainId,
 	SupportedChainId,
 } from 'src/constants/chains'
 import SubgraphClient from 'src/graphql/subgraph'
 import theme from 'src/theme'
 import { MinimalWorkspace } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
+import { delay } from 'src/utils/generics'
+import logger from 'src/utils/logger'
 import getSeo from 'src/utils/seo'
+import MigrateToGasless from 'src/v2/components/MigrateToGasless'
 import {
 	allChains,
 	Chain,
@@ -115,6 +119,9 @@ export const WebwalletContext = createContext<{
 	switchNetwork: (newNetwork?: SupportedChainId) => void
 	scwAddress?: string
 	setScwAddress: (scwAddress?: string) => void
+
+	waitForScwAddress: Promise<string>
+
 	nonce?: string
 	setNonce: (nonce?: string) => void
 	loadingNonce: boolean
@@ -129,7 +136,7 @@ export const BiconomyContext = createContext<{
 		} | null>(null)
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-	const [network, switchNetwork] = React.useState<SupportedChainId>(5)
+	const [network, switchNetwork] = React.useState<SupportedChainId>(defaultChainId)
 	const [webwallet, setWebwallet] = React.useState<Wallet>()
 	const [workspace, setWorkspace] = React.useState<MinimalWorkspace>()
 	const [scwAddress, setScwAddress] = React.useState<string>()
@@ -138,17 +145,23 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [nonce, setNonce] = React.useState<string>()
 	const [loadingNonce, setLoadingNonce] = React.useState<boolean>(false)
 
+	// reference to scw address
+	// used to poll for scwAddress in "waitForScwAddress"
+	const scwAddressRef = useRef(scwAddress)
+
 	useEffect(() => {
 		setWebwallet(createWebWallet())
 		setScwAddress(getScwAddress())
 		setNonce(getNonce())
-		switchNetwork(getNetwork())
+		const network = getNetwork()
+		logger.info('SWITCH NETWORK (_app.tsx 1): ', network)
+		switchNetwork(network)
 	}, [])
 
 	useEffect(() => {
-		console.log("webwallet address:", webwallet)
-		console.log("scw address:", scwAddress);
-	}, [webwallet, scwAddress])
+		// set the scwaddress ref whenever it changes
+		scwAddressRef.current = scwAddress
+	}, [scwAddress])
 
 	const getScwAddress = () => {
 
@@ -173,7 +186,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}
 
 	const getNetwork = () => {
-		return 5
+		return defaultChainId
 
 		// const _network = localStorage.getItem('network')
 
@@ -235,6 +248,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 				setWebwallet(newWebwallet)
 			},
+			waitForScwAddress: (async() => {
+				while(!scwAddressRef.current) {
+					await delay(500)
+				}
+
+				return scwAddressRef.current
+			})(),
 			network: network,
 			switchNetwork: (newNetwork?: SupportedChainId) => {
 				if(newNetwork) {
@@ -243,6 +263,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					localStorage.removeItem('network')
 				}
 
+				logger.info('SWITCH NETWORK (_app.tsx 2): ', network)
 				switchNetwork(newNetwork!)
 			},
 			scwAddress: scwAddress,
@@ -327,8 +348,25 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		[validatorApi, workspace, setWorkspace, clients, connected, setConnected]
 	)
 
-	const seo = getSeo()
+	const [migrateModalOpen, setMigrateModalOpen] = React.useState(false)
 
+	useEffect(() => {
+		if(typeof window === 'undefined') {
+			return
+		}
+
+		const didHaveWallet = localStorage.getItem('wagmi.wallet')
+		const didMigrate = localStorage.getItem('didMigrate') === 'true'
+		if(!didHaveWallet && !didMigrate) {
+			localStorage.setItem('didMigrate', 'true')
+		}
+
+		if(didHaveWallet && !didMigrate) {
+			setMigrateModalOpen(true)
+		}
+	}, [])
+
+	const seo = getSeo()
 
 	const getLayout = Component.getLayout || ((page) => page)
 	return (
@@ -359,6 +397,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 						<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
 							<ChakraProvider theme={theme}>
 								{getLayout(<Component {...pageProps} />)}
+								{
+									typeof window !== 'undefined' && (
+										<MigrateToGasless
+											isOpen={migrateModalOpen}
+											onClose={() => setMigrateModalOpen(false)} />
+									)
+								}
 							</ChakraProvider>
 						</BiconomyContext.Provider>
 					</WebwalletContext.Provider>

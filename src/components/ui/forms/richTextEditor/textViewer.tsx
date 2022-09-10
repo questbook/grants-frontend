@@ -42,6 +42,7 @@ function TextViewer({
 		try {
 			const o = JSON.parse(text)
 			return EditorState.createWithContent(convertFromRaw(o))
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			if(text) {
 				return EditorState.createWithContent(ContentState.createFromText(text))
@@ -56,6 +57,7 @@ function TextViewer({
 			const o = JSON.parse(text)
 			const newState = EditorState.createWithContent(convertFromRaw(o))
 			EditorState.push(newState, ContentState.createFromText(text), 'change-block-data')
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			if(text) {
 				const newState = EditorState.createWithContent(ContentState.createFromText(text))

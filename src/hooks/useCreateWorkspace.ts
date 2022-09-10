@@ -136,6 +136,7 @@ export default function useCreateWorkspace(
 				setTransactionData(createWorkspaceTransactionData)
 				setImageHash(uploadedImageHash)
 				setLoading(false)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 				const message = getErrorMessage(e)
 				setError(message)
@@ -192,6 +193,7 @@ export default function useCreateWorkspace(
 			}
 
 			validate()
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)

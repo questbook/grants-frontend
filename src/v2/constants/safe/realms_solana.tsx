@@ -257,7 +257,8 @@ const getOwners = async(safeAddress: string): Promise<string[]> => {
 		const tokenownerrecord = await getAllTokenOwnerRecords(connection, programId, safeAddressPublicKey)
 		const owners = tokenownerrecord.map(record => record.account.governingTokenOwner.toString())
 		return owners
-	} catch(e: any) {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+} catch(e: any) {
 		return []
 	}
 

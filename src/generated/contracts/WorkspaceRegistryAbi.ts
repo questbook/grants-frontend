@@ -54,11 +54,13 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "isWorkspaceAdminOrReviewer(uint96,address)": FunctionFragment;
     "joinViaInviteLink(uint96,string,uint8,uint8,bytes32,bytes32)": FunctionFragment;
     "memberRoles(uint96,address)": FunctionFragment;
+    "migrateWallet(address,address)": FunctionFragment;
     "owner()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "setApplicationReg(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unpause()": FunctionFragment;
     "updateAnonAuthoriserAddress(address)": FunctionFragment;
@@ -85,11 +87,13 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
       | "isWorkspaceAdminOrReviewer"
       | "joinViaInviteLink"
       | "memberRoles"
+      | "migrateWallet"
       | "owner"
       | "pause"
       | "paused"
       | "proxiableUUID"
       | "renounceOwnership"
+      | "setApplicationReg"
       | "transferOwnership"
       | "unpause"
       | "updateAnonAuthoriserAddress"
@@ -181,6 +185,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     functionFragment: "memberRoles",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "migrateWallet",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
@@ -191,6 +199,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setApplicationReg",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -286,6 +298,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     functionFragment: "memberRoles",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "migrateWallet",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
@@ -295,6 +311,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setApplicationReg",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -340,6 +360,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "Unpaused(address)": EventFragment;
     "Upgraded(address)": EventFragment;
     "WorkspaceCreated(uint96,address,string,uint256)": EventFragment;
+    "WorkspaceMemberMigrate(uint96,address,address,uint256)": EventFragment;
     "WorkspaceMemberUpdated(uint96,address,uint8,bool,string,uint256)": EventFragment;
     "WorkspaceMembersUpdated(uint96,address[],uint8[],bool[],string[],uint256)": EventFragment;
     "WorkspaceSafeUpdated(uint96,bytes32,string,uint256,uint256)": EventFragment;
@@ -356,6 +377,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WorkspaceCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "WorkspaceMemberMigrate"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WorkspaceMemberUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WorkspaceMembersUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WorkspaceSafeUpdated"): EventFragment;
@@ -481,6 +503,20 @@ export type WorkspaceCreatedEvent = TypedEvent<
 
 export type WorkspaceCreatedEventFilter =
   TypedEventFilter<WorkspaceCreatedEvent>;
+
+export interface WorkspaceMemberMigrateEventObject {
+  workspaceId: BigNumber;
+  from: string;
+  to: string;
+  time: BigNumber;
+}
+export type WorkspaceMemberMigrateEvent = TypedEvent<
+  [BigNumber, string, string, BigNumber],
+  WorkspaceMemberMigrateEventObject
+>;
+
+export type WorkspaceMemberMigrateEventFilter =
+  TypedEventFilter<WorkspaceMemberMigrateEvent>;
 
 export interface WorkspaceMemberUpdatedEventObject {
   id: BigNumber;
@@ -648,6 +684,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    migrateWallet(
+      fromWallet: PromiseOrValue<string>,
+      toWallet: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     pause(
@@ -659,6 +701,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setApplicationReg(
+      _applicationReg: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -803,6 +850,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  migrateWallet(
+    fromWallet: PromiseOrValue<string>,
+    toWallet: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
   pause(
@@ -814,6 +867,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
   proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setApplicationReg(
+    _applicationReg: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -956,6 +1014,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    migrateWallet(
+      fromWallet: PromiseOrValue<string>,
+      toWallet: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     owner(overrides?: CallOverrides): Promise<string>;
 
     pause(overrides?: CallOverrides): Promise<void>;
@@ -965,6 +1029,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    setApplicationReg(
+      _applicationReg: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -1068,7 +1137,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       milestoneIds?: null,
       asset?: null,
       nonEvmAssetAddress?: null,
-      transactionHash?: PromiseOrValue<string> | null,
+      transactionHash?: null,
       sender?: null,
       amounts?: null,
       isP2P?: null,
@@ -1079,7 +1148,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       milestoneIds?: null,
       asset?: null,
       nonEvmAssetAddress?: null,
-      transactionHash?: PromiseOrValue<string> | null,
+      transactionHash?: null,
       sender?: null,
       amounts?: null,
       isP2P?: null,
@@ -1123,6 +1192,19 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       metadataHash?: null,
       time?: null
     ): WorkspaceCreatedEventFilter;
+
+    "WorkspaceMemberMigrate(uint96,address,address,uint256)"(
+      workspaceId?: null,
+      from?: null,
+      to?: null,
+      time?: null
+    ): WorkspaceMemberMigrateEventFilter;
+    WorkspaceMemberMigrate(
+      workspaceId?: null,
+      from?: null,
+      to?: null,
+      time?: null
+    ): WorkspaceMemberMigrateEventFilter;
 
     "WorkspaceMemberUpdated(uint96,address,uint8,bool,string,uint256)"(
       id?: PromiseOrValue<BigNumberish> | null,
@@ -1266,6 +1348,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    migrateWallet(
+      fromWallet: PromiseOrValue<string>,
+      toWallet: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     pause(
@@ -1277,6 +1365,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setApplicationReg(
+      _applicationReg: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1417,6 +1510,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    migrateWallet(
+      fromWallet: PromiseOrValue<string>,
+      toWallet: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     pause(
@@ -1428,6 +1527,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setApplicationReg(
+      _applicationReg: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

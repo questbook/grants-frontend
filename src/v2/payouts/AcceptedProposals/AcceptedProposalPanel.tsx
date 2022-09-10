@@ -8,12 +8,14 @@ const AcceptedProposalsPanel = ({
 	applicantsData,
 	onSendFundsClicked,
 	onBulkSendFundsClicked,
+	onSetupApplicantEvaluationClicked,
 	grantData,
 }: {
 	applicationStatuses: {[applicationId: string]: {transactionHash: string, status: number, amount: number}}
   applicantsData: any[]
   onSendFundsClicked: (state: boolean, checkedItems: any[]) => void
   onBulkSendFundsClicked: (state: boolean, checkedItems: any[]) => void
+  onSetupApplicantEvaluationClicked: () => void
   grantData: any
 }) => {
 	const [checkedItems, setCheckedItems] = useState<boolean[]>(applicantsData.filter((item) => (2 === item.status)).map(() => false))
@@ -63,7 +65,10 @@ const AcceptedProposalsPanel = ({
 
 	if(applicantsData?.filter((item: any) => (2 === item.status)).length === 0) {
 		return (
-			<ZeroState grantData={grantData} />
+			<ZeroState
+				grantData={grantData}
+				onSetupApplicantEvaluationClicked={onSetupApplicantEvaluationClicked}
+			/>
 		)
 	}
 

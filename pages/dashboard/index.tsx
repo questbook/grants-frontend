@@ -225,6 +225,7 @@ function DaoDashboard() {
 				grantsPending,
 				grantsTat
 			})
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			// console.log(e)
 		}
@@ -335,7 +336,6 @@ function DaoDashboard() {
 			<Container
 				maxW='100%'
 				display='flex'
-				px='70px'
 				mb='300px'
 				height='100%'>
 				<Container

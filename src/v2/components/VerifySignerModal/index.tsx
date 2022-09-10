@@ -83,7 +83,7 @@ const VerifySignerModal = ({
 	}, [isErrorConnecting])
 
 	useEffect(() => {
-		console.log('account', accountData)
+		// console.log('account', accountData)
 		if(accountData) {
 			if(!redirectInitiated && redirect && connectClicked) {
 				setRedirectInitiated(true)
@@ -95,7 +95,7 @@ const VerifySignerModal = ({
 
 	useEffect(() => {
 		if(isOpen && walletClicked) {
-			console.log(networkType, accountData, owners)
+			// console.log(networkType, accountData, owners)
 			if(networkType === NetworkType.EVM && accountData?.address && owners.includes(accountData?.address)) {
 				setIsOwner(true)
 				setOwnerAddress(accountData.address)
@@ -225,6 +225,7 @@ const VerifySignerModal = ({
 															if(connector) {
 																try {
 																	await connectAsync(connector)
+																// eslint-disable-next-line @typescript-eslint/no-explicit-any
 																} catch(e: any) {
 																	// console.log('evm error', e)
 																}
@@ -236,7 +237,7 @@ const VerifySignerModal = ({
 														}
 													} />
 											))) : (solanaWallets.map((wallet, index) => (
-											<VerifyWalletButton
+												<VerifyWalletButton
 												key={index}
 												icon={wallet.icon}
 												name={wallet.name}

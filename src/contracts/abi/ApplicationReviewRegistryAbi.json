@@ -67,6 +67,43 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
+        "internalType": "uint96",
+        "name": "_reviewId",
+        "type": "uint96"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint96",
+        "name": "_applicationId",
+        "type": "uint96"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_previousReviewerAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_newReviewerAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "time",
+        "type": "uint256"
+      }
+    ],
+    "name": "ReviewMigrate",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": false,
         "internalType": "uint96[]",
         "name": "_reviewIds",
@@ -595,6 +632,29 @@
       }
     ],
     "name": "markPaymentDone",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "fromWallet",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "toWallet",
+        "type": "address"
+      },
+      {
+        "internalType": "uint96",
+        "name": "appId",
+        "type": "uint96"
+      }
+    ],
+    "name": "migrateWallet",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

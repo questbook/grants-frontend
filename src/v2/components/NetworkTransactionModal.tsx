@@ -1,8 +1,7 @@
-import type { ReactNode } from 'react'
-import { AlertDialogOverlay, Box, Divider, Flex, HStack, Image, Modal, ModalBody, ModalContent, ModalHeader, Text, VStack } from '@chakra-ui/react'
-import { CHAIN_INFO } from 'src/constants/chains'
-import useChainId from 'src/hooks/utils/useChainId'
+import { ReactNode } from 'react'
+import { AlertDialogOverlay, Box, Button, Divider, Flex, HStack, Image, Modal, ModalBody, ModalContent, ModalHeader, Text, VStack } from '@chakra-ui/react'
 import { CheckCircle } from 'src/v2/assets/custom chakra icons/CheckCircle'
+import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
 
 export type NetworkTransactionModalProps = {
 	isOpen: boolean
@@ -14,6 +13,11 @@ export type NetworkTransactionModalProps = {
 	currentStepIndex: number
 	/** title of the steps in the transaction */
 	steps: string[]
+
+	/** transaction hash of the completed transaction */
+	viewLink: string | undefined
+	/** function to execute when closing the modal */
+	onClose: () => void
 }
 
 type ModalStepProps = {
@@ -27,11 +31,10 @@ export default ({
 	subtitle,
 	description,
 	currentStepIndex,
-	steps
+	steps,
+	viewLink,
+	onClose,
 }: NetworkTransactionModalProps) => {
-	const chainId = useChainId()
-
-	const info = CHAIN_INFO[chainId]
 
 	return (
 		<Modal
@@ -39,7 +42,7 @@ export default ({
 			onClose={() => { }}
 			isCentered
 			scrollBehavior='outside'
-			size='sm'
+			size='md'
 		>
 			<AlertDialogOverlay
 				background='rgba(31, 31, 51, 0.75)'
@@ -66,20 +69,6 @@ export default ({
 								fontWeight='light'
 								color='v2Grey'>
 								{subtitle}
-								{' on'}
-								<Image
-									boxSize='3'
-									ml={1}
-									src={info?.icon || ''}
-									display='inline'
-									mb={-0.75} />
-								{' '}
-								<Text
-									fontSize='small'
-									fontWeight='bold'
-									display='inline'>
-									{info?.name}
-								</Text>
 							</Text>
 						</VStack>
 					</HStack>
@@ -123,6 +112,30 @@ export default ({
 									text={step}
 								/>
 							))
+						}
+
+						{
+							(viewLink?.length || 0) > 0 && (
+								<Flex mt='4'>
+									<Button
+										variant='link'
+										rightIcon={<ExternalLink />}
+										onClick={
+											() => {
+												window.open(viewLink, '_blank')
+											}
+										}>
+										View transaction
+									</Button>
+									<Button
+										isDisabled={currentStepIndex < steps.length}
+										ml='auto'
+										variant='primaryV2'
+										onClick={onClose}>
+										Okay
+									</Button>
+								</Flex>
+							)
 						}
 					</VStack>
 				</ModalBody>

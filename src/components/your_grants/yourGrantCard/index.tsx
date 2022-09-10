@@ -178,7 +178,9 @@ function YourGrantCard(this: any, {
 									align='center'
 									w='full'>
 									<Image
-										src={grantCurrencyIcon} alt='token icon' fallbackSrc='/images/dummy/Ethereum Icon.svg'
+										src={grantCurrencyIcon}
+										alt='token icon'
+										fallbackSrc='/images/dummy/Ethereum Icon.svg'
 										boxSize='36px' />
 									<Text
 										ml={2}

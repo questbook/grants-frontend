@@ -5,7 +5,7 @@ import { ExternalLinkIcon } from '@chakra-ui/icons'
 import {
 	Box,
 	Button,
-	Container, Flex, forwardRef, IconButton, IconButtonProps, Link, Menu, MenuButton, MenuItem, MenuList, TabList, TabPanel, TabPanels, Tabs, Text
+	Container, Flex, forwardRef, IconButton, IconButtonProps, Menu, MenuButton, MenuItem, MenuList, TabList, TabPanel, TabPanels, Tabs, Text
 } from '@chakra-ui/react'
 import { BigNumber, ethers } from 'ethers'
 import moment from 'moment'
@@ -29,16 +29,14 @@ import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
-import { formatAddress, formatAmount, getFieldString } from 'src/utils/formattingUtils'
+import { formatAddress, formatAmount, getExplorerUrlForTxHash, getFieldString } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { ArchiveGrant } from 'src/v2/assets/custom chakra icons/ArchiveGrant'
-import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 import { EditPencil } from 'src/v2/assets/custom chakra icons/EditPencil'
-import { ErrorAlert } from 'src/v2/assets/custom chakra icons/ErrorAlertV2'
 import { ThreeDotsHorizontal } from 'src/v2/assets/custom chakra icons/ThreeDotsHorizontal'
 import { ViewEye } from 'src/v2/assets/custom chakra icons/ViewEye'
 import Breadcrumbs from 'src/v2/components/Breadcrumbs'
@@ -93,7 +91,6 @@ function ViewApplicants() {
 	// const [shouldShowButton, setShouldShowButton] = useState(false)
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [isAdmin, setIsAdmin] = React.useState<boolean>(false)
-	const [isReviewer, setIsReviewer] = React.useState<boolean>(false)
 	const [isUser, setIsUser] = React.useState<any>('')
 	// const [isActorId, setIsActorId] = React.useState<any>('')
 
@@ -207,7 +204,7 @@ function ViewApplicants() {
 	const [sendFundsTo, setSendFundsTo] = useState<any[]>()
 
 	useEffect(() => {
-		if(router && router.query) {
+		if(router?.query) {
 			const { grantId: gId } = router.query
 			// console.log('fetch 100: ', gId)
 			setGrantID(gId)
@@ -221,26 +218,16 @@ function ViewApplicants() {
 			].client,
 	})
 
-	const [, setQueryReviewerParams] = useState<any>({
-		client:
-			subgraphClients[
-				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-			].client,
-	})
-
 	const [sendFundsModalIsOpen, setSendFundsModalIsOpen] = useState(false)
 	const [sendFundsDrawerIsOpen, setSendFundsDrawerIsOpen] = useState(false)
 	const [txnInitModalIsOpen, setTxnInitModalIsOpen] = useState(false)
 
 	useEffect(() => {
-		if(
-			workspace
-			&& workspace.members
-			&& workspace.members.length > 0
+		if((workspace?.members?.length || 0) > 0
 			&& accountData
 			&& accountData.address
 		) {
-			const tempMember = workspace.members.find(
+			const tempMember = workspace?.members.find(
 				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 			)
 			// console.log('fetch 500: ', tempMember)
@@ -249,7 +236,6 @@ function ViewApplicants() {
 				|| tempMember?.accessLevel === 'owner',
 			)
 
-			setIsReviewer(tempMember?.accessLevel === 'reviewer')
 			setIsUser(tempMember?.id)
 			// setIsActorId(tempMember?.id)
 		}
@@ -279,40 +265,25 @@ function ViewApplicants() {
 				},
 			})
 		}
-
-		if(isReviewer || isAdmin) {
-			// console.log('reviewer', isUser)
-			setQueryReviewerParams({
-				client:
-					subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
-				variables: {
-					grantID,
-					reviewerIDs: [isUser],
-					first: PAGE_SIZE,
-					skip: 0,
-				},
-			})
-		}
-
 	}, [workspace, grantID, isUser])
 
 	const { data, error, loading } = useGetApplicantsForAGrantQuery(queryParams)
 	const { data: grantData } = useGetGrantDetailsQuery(queryParams)
 	useEffect(() => {
-		if(data && data.grantApplications.length) {
-			setRewardAssetAddress(data.grantApplications[0].grant.reward.asset)
-			if(data.grantApplications[0].grant.reward.token) {
-				setRewardAssetDecimals(data.grantApplications[0].grant.reward.token.decimal)
+		if((data?.grantApplications?.length || 0) > 0) {
+			setRewardAssetAddress(data?.grantApplications[0]?.grant?.reward?.asset!)
+			if(data?.grantApplications[0].grant.reward.token) {
+				setRewardAssetDecimals(data?.grantApplications[0].grant.reward.token.decimal)
 			} else {
 				setRewardAssetDecimals(CHAIN_INFO[
 					getSupportedChainIdFromSupportedNetwork(
-						data.grantApplications[0].grant.workspace.supportedNetworks[0],
+						data?.grantApplications[0].grant.workspace.supportedNetworks[0],
 					)
-				]?.supportedCurrencies[data.grantApplications[0].grant.reward.asset.toLowerCase()]
+				]?.supportedCurrencies[data?.grantApplications[0]?.grant?.reward?.asset?.toLowerCase()!]
 					?.decimals)
 			}
 
-			const fetchedApplicantsData = data.grantApplications.map((applicant) => {
+			const fetchedApplicantsData = data?.grantApplications?.map((applicant) => {
 				let decimal
 				let label
 				let icon
@@ -378,72 +349,10 @@ function ViewApplicants() {
 			})
 			setApplicantsData(fetchedApplicantsData)
 			// setDaoId(data.grantApplications[0].grant.workspace.id)
-			setAcceptingApplications(data.grantApplications[0].grant.acceptingApplications)
+			setAcceptingApplications(data?.grantApplications[0]?.grant?.acceptingApplications!)
 		}
 
 	}, [data, error, loading, grantData])
-
-	// const reviewData = useGetApplicantsForAGrantReviewerQuery(queryReviewerParams)
-
-	// const Reviewerstatus = (item: any) => {
-	// 	const user = []
-	// 	// eslint-disable-next-line no-restricted-syntax
-	// 	for(const n in item) {
-	// 		if(item[n].reviewer.id === isActorId) {
-	// 			user.push(isActorId)
-	// 		}
-	// 	}
-
-	// 	if(user.length === 1) {
-	// 		return 9
-	// 	}
-
-	// 	return 0
-	// }
-
-	// useEffect(() => {
-	// 	if(reviewData.data && reviewData.data.grantApplications.length) {
-	// 		// console.log('Reviewer Applications: ', reviewData.data)
-	// 		const fetchedApplicantsData = reviewData.data.grantApplications.map((applicant) => {
-	// 			return {
-	// 				grantTitle: applicant?.grant?.title,
-	// 				applicationId: applicant.id,
-	// 				applicant_address: getFieldString(applicant, 'applicantAddress'),
-	// 				sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
-	// 				project_name: getFieldString(applicant, 'projectName'),
-	// 				funding_asked: {
-	// 					amount:
-	// 						applicant && getFieldString(applicant, 'fundingAsk') ? formatAmount(
-	// 							getFieldString(applicant, 'fundingAsk')!,
-	// 							CHAIN_INFO[
-	// 								getSupportedChainIdFromSupportedNetwork(
-	// 									applicant.grant.workspace.supportedNetworks[0],
-	// 								)
-	// 							]?.supportedCurrencies[applicant.grant.reward.asset.toLowerCase()]
-	// 								?.decimals || 18,
-	// 						) : '1',
-	// 					symbol: getAssetInfo(
-	// 						applicant?.grant?.reward?.asset?.toLowerCase(),
-	// 						getSupportedChainIdFromWorkspace(workspace),
-	// 					).label,
-	// 					icon: getAssetInfo(
-	// 						applicant?.grant?.reward?.asset?.toLowerCase(),
-	// 						getSupportedChainIdFromWorkspace(workspace),
-	// 					).icon,
-	// 				},
-	// 				status: Reviewerstatus(applicant.reviews),
-	// 				reviewers: applicant.applicationReviewers,
-	// 			}
-	// 		})
-
-	// 		// console.log('fetch', fetchedApplicantsData)
-
-	// 		// setReviewerData(fetchedApplicantsData)
-	// 		// setDaoId(reviewData.data.grantApplications[0].grant.workspace.id)
-	// 		setAcceptingApplications(reviewData.data.grantApplications[0].grant.acceptingApplications)
-	// 	}
-
-	// }, [reviewData])
 
 	const [isAcceptingApplications, setIsAcceptingApplications] = React.useState<
 		[boolean, number]
@@ -500,7 +409,7 @@ function ViewApplicants() {
 	const workspaceRegistryContract = useQBContract('workspace', workspacechainId)
 	const { webwallet } = useContext(WebwalletContext)!
 
-	const current_safe = useMemo(() => {
+	const currentSafe = useMemo(() => {
 		if(isEvmChain) {
 			const txnServiceURL = safeServicesInfo[workspaceSafeChainId]
 			return new Gnosis_Safe(workspaceSafeChainId, txnServiceURL, workspaceSafe)
@@ -524,7 +433,7 @@ function ViewApplicants() {
 	useEffect(() => {
 		const formattedTrxnData = sendFundsTo?.map((recepient,) => (
 			{
-				from: current_safe?.id?.toString(),
+				from: currentSafe?.id?.toString(),
 				to: recepient.applicant_address,
 				applicationId: recepient.applicationId,
 				selectedMilestone: recepient.milestones[0].id,
@@ -557,7 +466,7 @@ function ViewApplicants() {
 
 		Promise.all((Object.keys(applicationToTxnHashMap || {}) || []).map(async(applicationId) => {
 			const transaction = applicationToTxnHashMap[applicationId]
-			const status = await current_safe?.getTransactionHashStatus(transaction?.transactionHash)
+			const status = await currentSafe?.getTransactionHashStatus(transaction?.transactionHash)
 			if(transaction && status) {
 				statuses[applicationId] = {
 					transactionHash: transaction.transactionHash,
@@ -615,7 +524,7 @@ function ViewApplicants() {
 
 	const getRealmsVerification = async() => {
 		if(phantomWallet?.publicKey?.toString()) {
-			const isVerified = await current_safe?.isOwner(phantomWallet.publicKey?.toString())
+			const isVerified = await currentSafe?.isOwner(phantomWallet.publicKey?.toString())
 			if(isVerified) {
 				setSignerVerififed(true)
 			}
@@ -624,7 +533,7 @@ function ViewApplicants() {
 
 	const verifyGnosisOwner = async() => {
 		if(isConnected) {
-			const isVerified = await current_safe?.isOwner(workspaceSafe)
+			const isVerified = await currentSafe?.isOwner(workspaceSafe)
 			if(isVerified) {
 				setSignerVerififed(true)
 			} else {
@@ -640,7 +549,7 @@ function ViewApplicants() {
 		let proposaladdress: string | undefined
 		if(isEvmChain) {
 			const readyToExecuteTxs = createEVMMetaTransactions()
-			const safeTxHash = await current_safe?.createMultiTransaction(readyToExecuteTxs, workspaceSafe)
+			const safeTxHash = await currentSafe?.createMultiTransaction(readyToExecuteTxs, workspaceSafe)
 			if(safeTxHash) {
 				proposaladdress = safeTxHash
 				setProposalAddr(safeTxHash)
@@ -648,7 +557,7 @@ function ViewApplicants() {
 				throw new Error('Proposal address not found')
 			}
 		} else {
-			proposaladdress = await current_safe?.proposeTransactions(grantData?.grants[0].title!, initiateTransactionData, phantomWallet)
+			proposaladdress = await currentSafe?.proposeTransactions(grantData?.grants[0].title!, initiateTransactionData, phantomWallet)
 			if(!proposaladdress) {
 				throw new Error('No proposal address found!')
 			}
@@ -729,6 +638,7 @@ function ViewApplicants() {
 			// console.log('receipt: ', receipt)
 			await chargeGas(Number(workspace.id), Number(txFee))
 
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			// console.log('disburse error', e)
 		}
@@ -849,6 +759,8 @@ function ViewApplicants() {
 			setAreRubricsSet(false)
 		}
 	}, [grantData])
+
+	const [transactionHash, setTransactionHash] = useState<string>()
 
 	return (
 		<Container
@@ -1036,6 +948,7 @@ function ViewApplicants() {
 								applicantsData={applicantsData}
 								onSendFundsClicked={onSendFundsButtonClicked}
 								onBulkSendFundsClicked={onSendFundsButtonClicked}
+								onSetupApplicantEvaluationClicked={() => setRubricDrawerOpen(true)}
 								grantData={grantData}
 							/>
 						</TabPanel>
@@ -1085,6 +998,7 @@ function ViewApplicants() {
 					grantAddress={grantID}
 					chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
 					setNetworkTransactionModalStep={setNetworkTransactionModalStep}
+					setTransactionHash={setTransactionHash}
 					data={reviewersForAWorkspaceData}
 				/>
 
@@ -1113,7 +1027,7 @@ function ViewApplicants() {
 				<TransactionInitiatedModal
 					isOpen={!!(txnInitModalIsOpen && proposalAddr)}
 					onClose={onModalClose}
-					proposalUrl={isEvmChain ? getGnosisTansactionLink(current_safe?.id?.toString()!, current_safe?.chainId.toString()!) : getProposalUrl(current_safe?.id?.toString()!, proposalAddr)}
+					proposalUrl={isEvmChain ? getGnosisTansactionLink(currentSafe?.id?.toString()!, currentSafe?.chainId.toString()!) : getProposalUrl(currentSafe?.id?.toString()!, proposalAddr)}
 				/>
 
 				<SendFundsDrawer
@@ -1125,7 +1039,7 @@ function ViewApplicants() {
 					phantomWallet={phantomWallet}
 					setPhantomWalletConnected={setPhantomWalletConnected}
 					isEvmChain={isEvmChain}
-					current_safe={current_safe}
+					current_safe={currentSafe}
 					signerVerified={signerVerified}
 					initiateTransaction={initiateTransaction}
 					initiateTransactionData={initiateTransactionData}
@@ -1163,10 +1077,12 @@ function ViewApplicants() {
 							'Connect your wallet',
 							'Uploading rubric data to IPFS',
 							'Setting rubric and enabling auto assignment of reviewers',
-							'Waiting for transaction to complete',
+							'Completing indexing',
 							'Rubric created and Reviewers assigned',
 						]
-					} />
+					}
+					viewLink={getExplorerUrlForTxHash(getSupportedChainIdFromWorkspace(workspace) || defaultChainId, transactionHash)}
+					onClose={() => setNetworkTransactionModalStep(undefined)} />
 
 			</Container>
 			<Modal

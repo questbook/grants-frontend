@@ -34,6 +34,7 @@ import { useAccount, useDisconnect } from 'wagmi'
 
 const OnboardingCreateDomain = () => {
 	const router = useRouter()
+	const { subgraphClients } = useContext(ApiClientsContext)!
 	const [step, setStep] = useState(0)
 	const [currentStep, setCurrentStep] = useState<number>()
 	const { network } = useNetwork()
@@ -72,21 +73,22 @@ const OnboardingCreateDomain = () => {
 	const { data: accountDataWebwallet, nonce } = useQuestbookAccount(shouldRefreshNonce)
 	const { webwallet } = useContext(WebwalletContext)!
 	// console.log('safeSelected', safeSelected)
+
+
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: safeSelected?.networkId ? networksMapping[safeSelected?.networkId?.toString()] : '',
 		shouldRefreshNonce: shouldRefreshNonce
 	})
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
 
+
 	useEffect(() => {
-		// const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		// console.log('rree', isBiconomyLoading, biconomyLoading)
-		// console.log('networks 2:', biconomy?.networkId?.toString(), safeSelected?.networkId, safeSelected?.networkId ?
-		//	networksMapping[safeSelected?.networkId?.toString()] : undefined)
+
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && safeSelected?.networkId &&
-			biconomy.networkId && biconomy.networkId?.toString() === networksMapping[safeSelected?.networkId?.toString()]) {
+			biconomy.networkId && biconomy.networkId.toString() === networksMapping[safeSelected?.networkId?.toString()]) {
 			setIsBiconomyInitialised(true)
 		}
+
 	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, safeSelected?.networkId])
 
 	useEffect(() => {
@@ -167,25 +169,8 @@ const OnboardingCreateDomain = () => {
 		}
 
 		// setCallOnContractChange(false)
-		setCurrentStep(0)
 		try {
-			// if(activeChain?.id !== daoNetwork?.id) {
-			// 	// console.log('switching')
-			// 	// await switchNetworkAsync!(daoNetwork?.id)
-			// 	// console.log('create workspace again on contract object update')
-			// 	setCallOnContractChange(true)
-			// 	setTimeout(() => {
-			// 		if(callOnContractChange && activeChain?.id !== daoNetwork?.id) {
-			// 			setCallOnContractChange(false)
-			// 			throw new Error('Error switching network')
-			// 		}
-			// 	}, 60000)
-			// 	return
-			// }
-			// console.log('all', biconomy, scwAddress, nonce, webwallet)
-			// // console.log('creating workspace', accountData!.address)
-			// console.log(accountDataWebwallet?.address)
-			setCurrentStep(1)
+			setCurrentStep(0)
 			const uploadedImageHash = (await uploadToIPFS(daoImageFile)).hash
 
 			const {
@@ -212,13 +197,14 @@ const OnboardingCreateDomain = () => {
 				throw new Error('No network specified')
 			}
 
-			setCurrentStep(2)
 			// console.log(12344343)
 
 			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
 				// console.log('54321')
 				return
 			}
+
+			setCurrentStep(1)
 
 			const transactionHash = await sendGaslessTransaction(
 				biconomy,
@@ -238,12 +224,13 @@ const OnboardingCreateDomain = () => {
 				return
 			}
 
-			setCurrentStep(3)
+			setCurrentStep(2)
 
 			const { txFee, receipt } = await getTransactionDetails(transactionHash, network.toString())
-
+			await subgraphClients[network].waitForBlock(receipt?.blockNumber)
 			// console.log('txFee', txFee)
 
+			setCurrentStep(3)
 			const event = await getEventData(receipt, 'WorkspaceCreated', WorkspaceRegistryAbi)
 			if(event) {
 				const workspaceId = Number(event.args[0].toBigInt())
@@ -255,12 +242,14 @@ const OnboardingCreateDomain = () => {
 				await chargeGas(workspaceId, Number(txFee))
 			}
 
-			setCurrentStep(5)
+			setCurrentStep(4)
 			// setTimeout(() => {
 			// 	router.push({ pathname: '/your_grants' })
 			// }, 2000)
 			setTxHash(txHash)
 			setIsDomainCreationSuccessful(true)
+			setCurrentStep(undefined)
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			setCurrentStep(undefined)
 			const message = getErrorMessage(e)
@@ -473,11 +462,13 @@ const OnboardingCreateDomain = () => {
 					[
 						'Confirming Transaction',
 						'Complete Transaction',
-						'Complete indexing',
+						'Complete Indexing',
 						'Create domain on the network',
 						'Your domain is now on-chain'
 					]
-				} />
+				}
+				viewLink={getExplorerUrlForTxHash(network, txHash)}
+				onClose={() => setCurrentStep(undefined)} />
 			<VerifySignerModal
 				setOwnerAddress={(newOwnerAddress) => setOwnerAddress(newOwnerAddress)}
 				networkType={safeSelected?.networkType ?? NetworkType.EVM}

@@ -39,6 +39,7 @@ import { formatAmount } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'
 // UTILS AND TOOLS
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import logger from 'src/utils/logger'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 
 function Profile() {
@@ -66,10 +67,11 @@ function Profile() {
 	}
 
 	useEffect(() => {
-		if(router && router.query) {
+		if(router?.query) {
 			const { chainId: cId, daoId: dId } = router.query
 			setChainId((cId as unknown) as SupportedChainId)
 			setDaoId(dId?.toString())
+			logger.info('SWITCH NETWORK (profile.tsx 1): ', (cId as unknown) as SupportedChainId)
 			switchNetwork((cId as unknown) as SupportedChainId)
 		}
 	}, [router, network])
@@ -150,6 +152,7 @@ function Profile() {
 			setGrantsApplicants(data.totalApplicants)
 			setGrantWinners(data.winnerApplicants)
 
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			// console.log(e)
 		}
@@ -299,7 +302,7 @@ function Profile() {
 							fontSize='20px'>
 							{workspaceData?.title}
 						</Text>
-						{
+						{/* {
 							chainID && (
 								<Text
 									variant='applicationText'
@@ -311,7 +314,7 @@ function Profile() {
 									{CHAIN_INFO[chainID].name}
 								</Text>
 							)
-						}
+						} */}
 					</Flex>
 
 					<Stack px='1.5rem'>

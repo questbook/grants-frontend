@@ -1,9 +1,11 @@
 import { Button, Flex, Text } from '@chakra-ui/react'
 
 const ZeroState = ({
-	grantData
+	grantData,
+	onSetupApplicantEvaluationClicked
 }: {
 	grantData: any
+	onSetupApplicantEvaluationClicked: () => void
 }) => {
 	return (
 		<Flex
@@ -42,6 +44,7 @@ const ZeroState = ({
 				colorScheme='brandv2'
 				fontSize='14px'
 				h={9}
+				onClick={onSetupApplicantEvaluationClicked}
 			>
 				{(grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ? 'View scoring rubric' : 'Setup applicant evaluation'}
 

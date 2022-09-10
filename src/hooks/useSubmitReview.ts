@@ -17,6 +17,7 @@ import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { delay } from 'src/utils/generics'
+import logger from 'src/utils/logger'
 import { useGenerateReviewData } from 'src/utils/reviews'
 import {
 	getSupportedChainIdFromWorkspace,
@@ -25,6 +26,7 @@ import {
 export default function useSubmitReview(
 	data: { items?: Array<FeedbackType> },
 	setCurrentStep: (step?: number) => void,
+	setTransactionHash: (hash: string) => void,
 	isPrivate: boolean,
 	chainId?: SupportedChainId,
 	workspaceId?: string,
@@ -159,6 +161,7 @@ export default function useSubmitReview(
 
 				if(response) {
 					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+					setTransactionHash(receipt.transactionHash)
 					setTransactionData(receipt)
 					await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee))
 				}
@@ -188,6 +191,7 @@ export default function useSubmitReview(
 
 				setLoading(false)
 				setCurrentStep(5)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 				setCurrentStep(undefined)
 				const message = getErrorMessage(e)
@@ -234,6 +238,7 @@ export default function useSubmitReview(
 
 			if(!currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-subit-review.tsx 1): ', chainId)
 					switchNetwork(chainId)
 				}
 
@@ -244,6 +249,7 @@ export default function useSubmitReview(
 
 			if(chainId !== currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-subit-review.tsx 2): ', chainId)
 					switchNetwork(chainId)
 				}
 
@@ -265,6 +271,7 @@ export default function useSubmitReview(
 			}
 
 			validate()
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)

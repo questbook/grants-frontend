@@ -10,6 +10,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useChainId from 'src/hooks/utils/useChainId'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import logger from 'src/utils/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 export default function useDepositFunds(
@@ -75,6 +76,7 @@ export default function useDepositFunds(
 				}
 			})
 
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)
@@ -128,6 +130,7 @@ export default function useDepositFunds(
 
 			if(!currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-deposit-funds.tsx 1): ', chainId)
 					switchNetwork(chainId)
 				}
 
@@ -138,6 +141,7 @@ export default function useDepositFunds(
 
 			if(chainId !== currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-deposit-funds.tsx 2): ', chainId)
 					switchNetwork(chainId)
 				}
 
@@ -169,6 +173,7 @@ export default function useDepositFunds(
 				return
 			}
 
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)

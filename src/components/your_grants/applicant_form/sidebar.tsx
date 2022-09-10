@@ -103,6 +103,7 @@ function Sidebar({
 		try {
 			const data = JSON.parse(d)
 			return data
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			// console.log('incorrect review', e)
 			return {}

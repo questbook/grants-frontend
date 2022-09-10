@@ -6,6 +6,7 @@ import {
 	Box, Button, Flex,
 	Image, Link, Text, } from '@chakra-ui/react'
 import { Token, WorkspaceUpdateRequest } from '@questbook/service-validator-client'
+import axios from 'axios'
 import {
 	ContentState, convertFromRaw, convertToRaw, EditorState,
 } from 'draft-js'
@@ -18,14 +19,18 @@ import ApplicantDetails from 'src/components/your_grants/edit_grant/form/3_appli
 import GrantRewardsInput from 'src/components/your_grants/edit_grant/form/4_rewards'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
+import SAFES_ENDPOINTS_MAINNETS from 'src/constants/safesEndpoints.json'
+import SAFES_ENDPOINTS_TESTNETS from 'src/constants/safesEndpointsTest.json'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
 import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
+import { SafeToken } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
-import axios from 'axios'
-import SAFES_ENPOINTS from 'src/constants/safesEndpoints.json'
+
+const SAFES_ENDPOINTS = { ...SAFES_ENDPOINTS_MAINNETS, ...SAFES_ENDPOINTS_TESTNETS }
+type ValidChainID = keyof typeof SAFES_ENDPOINTS;
 
 function Form({
 	refs,
@@ -81,6 +86,7 @@ function Form({
 		try {
 			const o = JSON.parse(formData.details)
 			return EditorState.createWithContent(convertFromRaw(o))
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			if(formData.details) {
 				return EditorState.createWithContent(ContentState.createFromText(formData.details))
@@ -260,14 +266,14 @@ function Form({
 	const currentChain = useChainId() || defaultChainId
 
 	const safeAddress = workspace?.safe?.address
-	const safeNetwork = workspace?.safe?.chainId
+	const safeNetwork = workspace?.safe?.chainId as ValidChainID
 	let transactionServiceURL
 	// let supportedCurrencies: [] = []
 	const [supportedCurrencies, setSupportedCurrencies] = useState([])
-	
+
 	const [rewardCurrency, setRewardCurrency] = React.useState('')
 	const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState('')
-	
+
 
 	// const supportedCurrencies = Object.keys(
 	// 	CHAIN_INFO[currentChain].supportedCurrencies,
@@ -308,33 +314,32 @@ function Form({
 		// 		.map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
 		// 		.map((currency) => ({ ...currency, id: currency.address }))
 		if(safeNetwork) {
-			transactionServiceURL = SAFES_ENPOINTS[safeNetwork]
-			console.log('transaction service url',safeNetwork, transactionServiceURL)
+			transactionServiceURL = SAFES_ENDPOINTS[safeNetwork]
+			// console.log('transaction service url', safeNetwork, transactionServiceURL)
 			const gnosisUrl = `${transactionServiceURL}/v1/safes/${safeAddress}/balances/`
 			axios.get(gnosisUrl).then(res => {
-				console.log(res.data)
-				const tokens = res.data.filter(token => token.tokenAddress).map(token => {
-					if (token.tokenAddress){
+				// console.log(res.data)
+				const tokens = res.data.filter((token: SafeToken) => token.tokenAddress).map((token: SafeToken) => {
+					if(token.tokenAddress) {
 						const currency = {
-							"id": token.tokenAddress,
-							"address": token.tokenAddress,
-							"decimals": token.token.decimals,
-							"icon": token.token.logoUri,
-							"label": token.token.symbol,
-							"pair": ""
+							'id': token.tokenAddress,
+							'address': token.tokenAddress,
+							'decimals': token.token.decimals,
+							'icon': token.token.logoUri,
+							'label': token.token.symbol,
+							'pair': ''
 						}
 						return currency
 					}
 				})
 				setSupportedCurrencies(tokens)
-				console.log('balances', supportedCurrencies)
+				// console.log('balances', supportedCurrencies)
 				setRewardCurrency(tokens[0]?.label)
-			setRewardCurrencyAddress(tokens[0].address)
+				setRewardToken({ address: tokens[0].address, decimal: tokens[0].decimals.toString(), label: tokens[0].label, iconHash: tokens[0].icon })
+				setRewardCurrencyAddress(tokens[0].address)
 			})
 		}
-	
-			
-		
+
 
 	}, [currentChain])
 

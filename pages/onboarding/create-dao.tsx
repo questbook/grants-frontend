@@ -11,6 +11,7 @@ import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
+import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import {
 	addAuthorizedOwner,
 	addAuthorizedUser,
@@ -21,6 +22,7 @@ import {
 	sendGaslessTransaction
 } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import logger from 'src/utils/logger'
 import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
 import { Organization } from 'src/v2/assets/custom chakra icons/Organization'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
@@ -53,7 +55,7 @@ const OnboardingCreateDao = () => {
 	})
 
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState('not ready')
-
+	const [transactionHash, setTransactionHash] = useState<string>()
 	useEffect(() => {
 		// const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
 		// console.log('rree', isBiconomyLoading, loading)
@@ -165,25 +167,25 @@ const OnboardingCreateDao = () => {
 			setCurrentStep(3)
 
 			const { txFee, receipt } = await getTransactionDetails(response, daoNetwork.id.toString())
-
+			setTransactionHash(receipt?.transactionHash)
 			// console.log('txFee', txFee)
 
 			const event = await getEventData(receipt, 'WorkspaceCreated', WorkspaceRegistryAbi)
 			if(event) {
-				const workspace_id = Number(event.args[0].toBigInt())
+				const workspaceId = Number(event.args[0].toBigInt())
 				// console.log('workspace_id', workspace_id)
 
-				await addAuthorizedOwner(workspace_id, webwallet?.address!, scwAddress, daoNetwork.id.toString(),
+				await addAuthorizedOwner(workspaceId, webwallet?.address!, scwAddress, daoNetwork.id.toString(),
 					'this is the safe addres - to be updated in the new flow')
 				// console.log('fdsao')
-				await chargeGas(workspace_id, Number(txFee))
+				await chargeGas(workspaceId, Number(txFee))
 			}
-
 
 			setCurrentStep(5)
 			setTimeout(() => {
 				router.push({ pathname: '/your_grants' })
 			}, 2000)
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			setCurrentStep(undefined)
 			const message = getErrorMessage(e)
@@ -238,6 +240,7 @@ const OnboardingCreateDao = () => {
 			onSubmit={
 				(network) => {
 					setDaoNetwork(network)
+					logger.info('SWITCH NETWORK (create-dao.tsx 1): ', network.id)
 					switchNetwork(network.id)
 					// console.log('NETWORK', network)
 					nextClick()
@@ -330,8 +333,7 @@ const OnboardingCreateDao = () => {
 										w='100%'
 										h='100%'
 										minH='48px'
-										minW='48px'
-									/>
+										minW='48px' />
 								) : (
 
 									<Organization
@@ -351,7 +353,10 @@ const OnboardingCreateDao = () => {
 						'Waiting for transaction to complete',
 						'DAO created on-chain',
 					]
-				} />
+				}
+				viewLink={getExplorerUrlForTxHash(daoNetwork?.id, transactionHash)}
+				onClose={() => {}} />
+
 		</>
 	)
 }

@@ -9,6 +9,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import logger from 'src/utils/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 
@@ -110,6 +111,7 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 
 				setTransactionData(receipt)
 				setLoading(false)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 				const message = getErrorMessage(e)
 				setError(message)
@@ -143,6 +145,7 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 
 			if(!currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-archive-grant.tsx 1): ', chainId)
 					switchNetwork(chainId)
 				}
 
@@ -153,6 +156,7 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 
 			if(chainId !== currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-archive-grant.tsx 2): ', chainId)
 					switchNetwork(chainId)
 				}
 
@@ -180,6 +184,7 @@ export default function useArchiveGrant(newState: boolean, changeCount: number, 
 			}
 
 			validate()
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)
