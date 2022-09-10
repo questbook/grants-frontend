@@ -4,6 +4,7 @@ import {
 	Image,
 	Text,
 } from '@chakra-ui/react'
+import copy from 'copy-to-clipboard'
 import { WebwalletContext } from 'pages/_app'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import getAvatar from 'src/utils/avatarUtils'
@@ -30,6 +31,17 @@ function AccountDetails() {
 			{
 				nonce && scwAddress && (
 					<Text
+						onClick={
+							() => {
+								// This is for debug purposes only
+								const data1 = localStorage.getItem('webwalletPrivateKey')
+								const data2 = localStorage.getItem('scwAddress')
+								const data = { 'webwalletPrivateKey': data1, 'scwAddress': data2 }
+								if(data1 !== null && data2 !== null) {
+									copy(JSON.stringify(data))
+								}
+							}
+						}
 						ml={2}
 						variant='v2_body'
 						fontWeight='500'>
