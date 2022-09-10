@@ -150,7 +150,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [nonce, setNonce] = React.useState<string>()
 	const [loadingNonce, setLoadingNonce] = React.useState<boolean>(false)
 
-	const [biconomyInitPromises, setBiconomyInitPromises] = useState<{ [chainId: string]: Promise<void> | undefined }>({})
+	const biconomyInitPromisesRef = useRef<{ [chainId: string]: Promise<void> | undefined }>({})
+	const [biconomyLoading, setBiconomyLoading] = useState<{ [chainId: string]: boolean }>({})
 
 	// reference to scw address
 	// used to poll for scwAddress in "waitForScwAddress"
@@ -212,19 +213,21 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 	const initiateBiconomy = useCallback(
 		async(chainId: string) => {
-			let task = biconomyInitPromises[chainId]
+			let task = biconomyInitPromisesRef.current[chainId]
 			if(!task) {
 				task = initiateBiconomyUnsafe(chainId)
 					.catch(() => {
-						setBiconomyInitPromises(prev => {
-							return { ...prev, [chainId]: undefined }
-						})
+						biconomyInitPromisesRef.current[chainId] = undefined
 					})
-				setBiconomyInitPromises(prev => ({ ...prev, [chainId]: task }))
+					.finally(() => {
+						setBiconomyLoading(prev => ({ ...prev, [chainId]: false }))
+					})
+				biconomyInitPromisesRef.current[chainId] = task
+				setBiconomyLoading(prev => ({ ...prev, [chainId]: true }))
 			}
 
 			return task
-		}, [biconomyInitPromises, setBiconomyInitPromises, initiateBiconomyUnsafe]
+		}, [setBiconomyLoading, biconomyInitPromisesRef, initiateBiconomyUnsafe]
 	)
 
 	useEffect(() => {
@@ -376,13 +379,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const biconomyDaoObjContextValue = useMemo(
 		() => ({
 			biconomyDaoObj,
-			isInitiatingBiconomy: (chainId: string) => !!biconomyInitPromises[chainId],
+			isInitiatingBiconomy: (chainId: string) => !!biconomyLoading[chainId],
 			initiateBiconomy,
 			setBiconomyDaoObj,
 			biconomyWalletClient,
 			setBiconomyWalletClient,
 		}),
-		[biconomyDaoObj, setBiconomyDaoObj, initiateBiconomy, biconomyWalletClient, setBiconomyWalletClient]
+		[biconomyDaoObj, biconomyLoading, setBiconomyDaoObj, initiateBiconomy, biconomyWalletClient, setBiconomyWalletClient]
 	)
 
 	const clients = useMemo(() => {
