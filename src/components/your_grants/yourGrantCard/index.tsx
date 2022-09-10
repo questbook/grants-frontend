@@ -202,8 +202,6 @@ function YourGrantCard({
 										onViewApplicantsClick={onViewApplicantsClick}
 										onEditClick={onEditClick}
 										isAdmin={isAdmin}
-										setRubricDrawerOpen={setRubricDrawerOpen}
-										initialRubricAvailable={initialRubrics?.items.length > 0 || false}
 									/>
 
 									<Box mr='1' />
@@ -326,8 +324,6 @@ function YourGrantCard({
 										onViewApplicantsClick={onViewApplicantsClick}
 										onEditClick={onEditClick}
 										isAdmin={isAdmin}
-										setRubricDrawerOpen={setRubricDrawerOpen}
-										initialRubricAvailable={initialRubrics?.items.length > 0 || false}
 									/>
 									{
 										acceptingApplications && (

@@ -90,7 +90,7 @@ function ModalContent({ milestone, onClose, chainId }: Props) {
 						maxLength={300}
 					/>
 				</Flex>
-				<Flex
+				{/* <Flex
 					direction='row'
 					w='100%'
 					align='start'
@@ -120,7 +120,7 @@ function ModalContent({ milestone, onClose, chainId }: Props) {
 							</Text>
 						</Button>
 					</Text>
-				</Flex>
+				</Flex> */}
 				<Button
 					disabled={!isBiconomyInitialised}
 					w='100%'

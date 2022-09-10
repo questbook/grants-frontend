@@ -381,7 +381,7 @@ function ApplicantDetails({
 				)
 			}
 
-			<Flex
+			{/* <Flex
 				direction='column'
 				mt={8}>
 				<Text
@@ -621,7 +621,7 @@ function ApplicantDetails({
 						Add another criteria
 					</Text>
 				</Box>
-			</Flex>
+			</Flex> */}
 
 			{/* <Flex
 				opacity={rubricRequired ? 1 : 0.4}

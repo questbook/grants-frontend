@@ -368,7 +368,7 @@ function GrantRewardsInput({
 					</Text>
 				</Flex>
 
-				<Flex
+				{/* <Flex
 					mt={8}
 					gap='2'>
 					<Flex
@@ -415,7 +415,7 @@ function GrantRewardsInput({
 							{`${shouldEncrypt ? 'YES' : 'NO'}`}
 						</Text>
 					</Flex>
-				</Flex>
+				</Flex> */}
 
 				<Flex
 					mt={8}
@@ -463,7 +463,7 @@ function GrantRewardsInput({
 					</Flex>
 				</Flex>
 
-				<Text
+				{/* <Text
 					variant='footer'
 					mt={8}
 					mb={7}
@@ -491,7 +491,7 @@ function GrantRewardsInput({
 						w='10px'
 						src='/ui_icons/link.svg'
 					/>
-				</Text>
+				</Text> */}
 			</Flex>
 
 			<Button

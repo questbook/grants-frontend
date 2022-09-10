@@ -720,7 +720,7 @@ function Form({
 				setShouldEncryptReviews={setShouldEncryptReviews}
 			/>
 
-			<Flex
+			{/* <Flex
 				alignItems='flex-start'
 				mt={8}
 				mb={10}
@@ -751,9 +751,10 @@ function Form({
 						src='/ui_icons/link.svg'
 					/>
 				</Text>
-			</Flex>
+			</Flex> */}
 
 			<Button
+				mt={8}
 				disabled={!isBiconomyInitialised}
 				onClick={hasClicked ? () => { } : handleOnSubmit}
 				variant='primary'>
