@@ -28,7 +28,8 @@ export const jsonRpcProviders: { [key: string]: ethers.providers.JsonRpcProvider
 {
 	'5': new ethers.providers.JsonRpcProvider('https://eth-goerli.g.alchemy.com/v2/c7FL3Wd0zxt_DtjeN1wqMWtCFVUTV_sP'),
 	'137': new ethers.providers.JsonRpcProvider('https://polygon-mainnet.g.alchemy.com/v2/zcWxjKH0Sif5PLp-b-vxP_M1JYF1aoPG'),
-	'10': new ethers.providers.JsonRpcProvider('https://opt-mainnet.g.alchemy.com/v2/8iYVobmm24k85ejRIS0fd8sBzSVbQtZv')
+	'10': new ethers.providers.JsonRpcProvider('https://opt-mainnet.g.alchemy.com/v2/8iYVobmm24k85ejRIS0fd8sBzSVbQtZv'),
+	'42220': new ethers.providers.JsonRpcProvider('https://forno.celo.org/'),
 }
 
 export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } } = {
@@ -43,16 +44,21 @@ export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } }
 	'10': {
 		apiKey: 'xc_x_i8x3.7002d254-03f5-427e-b25f-400b52d1d4c9',
 		webHookId: '105f79a9-eab0-4f8c-aa44-877ffc3f9c67'
+	},
+	'42220': {
+		apiKey: 'Ihl5vFVvY.b7fd1559-e1de-4500-9b88-c47728b94a4c',
+		webHookId: 'f7c6b8fd-8ee9-4bce-b238-93138d3457e3',
 	}
 }
 
 export const networksMapping: { [key: string]: string } = {
 	'137': '137',
 	'10': '10',
+	'42220': '42220',
 
 	// goerli
 	'5': '5',
-	'4': '5',
+	'4': '42220',
 	'900001': '5', // This is for solana.
 	'1': '5',
 	'100': '5',
@@ -61,7 +67,6 @@ export const networksMapping: { [key: string]: string } = {
 	'1313161554': '5',
 	'56': '5',
 	'246': '5',
-	'42220': '5',
 }
 
 export const signNonce = async(webwallet: Wallet, nonce: string) => {
