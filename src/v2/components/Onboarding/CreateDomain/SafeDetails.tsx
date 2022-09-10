@@ -45,11 +45,8 @@ function SafeDetails({ safesOptions, step, safeAddress, isPasted, isVerified, is
 				placeholder='Ethereum or Solana address'
 				value={safeAddress}
 				onChange={(e) => setValue(e.target.value)}
-				// setValue={setValue}
-				isPasted={isPasted}
 				isVerified={isVerified}
 				isDisabled={step === 1}
-				isError={isSafeAddressError}
 				errorText={safeAddressErrorText}
 			/>
 			{
