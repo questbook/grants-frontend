@@ -267,6 +267,7 @@ function Form({
 
 	const safeAddress = workspace?.safe?.address
 	const safeNetwork = workspace?.safe?.chainId as ValidChainID
+	const isEVM = parseInt(safeNetwork) !== 900001
 	let transactionServiceURL
 	// let supportedCurrencies: [] = []
 	const [supportedCurrencies, setSupportedCurrencies] = useState([])
@@ -760,6 +761,7 @@ function Form({
 				defaultShouldEncryptReviews={formData.rubric.isPrivate}
 				shouldEncryptReviews={shouldEncryptReviews}
 				setShouldEncryptReviews={setShouldEncryptReviews}
+				isEVM={isEVM}
 			/>
 
 			<Flex

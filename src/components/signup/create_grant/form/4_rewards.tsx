@@ -80,6 +80,7 @@ function GrantRewardsInput({
 
 	const safeAddress = workspace?.safe?.address
 	const safeNetwork = workspace?.safe?.chainId as ValidChainID
+	const isEVM = parseInt(safeNetwork) !== 900001
 	let transactionServiceURL
 	// let supportedCurrencies: [] = []
 	const [supportedCurrencies, setSupportedCurrencies] = useState([])
@@ -343,8 +344,9 @@ function GrantRewardsInput({
 						mt={5}
 						ml={4}
 						minW='132px'
-						flex={0}>
-						<Dropdown
+						flex={0}
+						alignSelf='center'>
+						{isEVM ? <Dropdown
 							listItemsMinWidth='132px'
 							listItems={supportedCurrenciesList}
 							value={rewardCurrency}
@@ -376,7 +378,8 @@ function GrantRewardsInput({
 								}
 							}
 							addERC={addERC}
-						/>
+						/>: <Text lineHeight='20px'
+						fontWeight='bold'>SOL</Text>}
 					</Box>
 				</Flex>
 

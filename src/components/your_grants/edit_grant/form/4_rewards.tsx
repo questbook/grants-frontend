@@ -33,6 +33,7 @@ function GrantRewardsInput({
 	defaultShouldEncryptReviews,
 	shouldEncryptReviews,
 	setShouldEncryptReviews,
+	isEVM
 }: {
   reward: string
   setReward: (rewards: string) => void
@@ -53,6 +54,7 @@ function GrantRewardsInput({
   defaultShouldEncryptReviews: boolean
   shouldEncryptReviews: boolean
   setShouldEncryptReviews: (shouldEncryptReviews: boolean) => void
+  isEVM: boolean
 }) {
 	const [isModalOpen, setIsModalOpen] = React.useState(false)
 	const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<any[]>([])
@@ -106,8 +108,9 @@ function GrantRewardsInput({
 					mt={5}
 					ml={4}
 					minW='132px'
-					flex={0}>
-					<Dropdown
+					flex={0}
+					alignSelf='center'>
+					{isEVM ? <Dropdown
 						listItemsMinWidth='132px'
 						listItems={supportedCurrenciesList}
 						value={rewardCurrency}
@@ -139,7 +142,8 @@ function GrantRewardsInput({
 							}
 						}
 						addERC={addERC}
-					/>
+					/>: <Text lineHeight='20px'
+					fontWeight='bold'>SOL</Text>}
 				</Box>
 			</Flex>
 
