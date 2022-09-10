@@ -310,7 +310,7 @@ function ViewApplicants() {
 					applicationId: applicant.id,
 					applicantName: getFieldString(applicant, 'applicantName'),
 					applicantEmail: getFieldString(applicant, 'applicantEmail'),
-					applicantAddress: getFieldString(applicant, 'applicantAddress'),
+					applicantAddress: applicant.applicantId,
 					sentOn: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
 					updatedOn: moment.unix(applicant.updatedAtS).format('DD MMM YYYY'),
 					// applicant_name: getFieldString('applicantName'),
