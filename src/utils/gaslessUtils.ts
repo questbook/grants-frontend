@@ -58,7 +58,7 @@ export const networksMapping: { [key: string]: string } = {
 
 	// goerli
 	'5': '5',
-	'4': '42220',
+	'4': '5',
 	'900001': '5', // This is for solana.
 	'1': '5',
 	'100': '5',
