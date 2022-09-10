@@ -150,7 +150,7 @@ function ModalContent({ milestone, done }: Props) {
 						maxLength={300}
 					/>
 				</Flex>
-				<Flex
+				{/* <Flex
 					direction='row'
 					w='100%'
 					align='start'
@@ -180,7 +180,7 @@ function ModalContent({ milestone, done }: Props) {
 							</Text>
 						</Button>
 					</Text>
-				</Flex>
+				</Flex> */}
 				<Button
 					w='100%'
 					variant='primary'

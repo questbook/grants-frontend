@@ -175,7 +175,7 @@ function GrantRewardsInput({
 				</Text>
 			</Flex>
 
-			<Flex
+			{/* <Flex
 				mt={8}
 				gap='2'
 				justifyContent='space-between'>
@@ -198,11 +198,6 @@ function GrantRewardsInput({
 									? 'The applicant data will be visible only to DAO members.'
 									: 'The applicant data will be visible to everyone with the link.'
 							}
-							{/* <Tooltip
-                icon="/ui_icons/tooltip_questionmark.svg"
-                label="Public key linked to your wallet will allow you to see the hidden data."
-                placement="bottom-start"
-              /> */}
 						</Text>
 					</Flex>
 				</Flex>
@@ -226,7 +221,7 @@ function GrantRewardsInput({
 						{`${shouldEncrypt ? 'YES' : 'NO'}`}
 					</Text>
 				</Flex>
-			</Flex>
+			</Flex> */}
 
 			<Flex
 				mt={8}

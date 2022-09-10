@@ -595,7 +595,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 					isError={hasError('telegramChannel')}
 				/>
 			</Flex>
-			<Flex
+			{/* <Flex
 				direction='row'
 				mt={4}>
 				<Text
@@ -628,7 +628,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 						w='10px'
 					/>
 				</Text>
-			</Flex>
+			</Flex> */}
 
 			<Flex
 				direction='row'

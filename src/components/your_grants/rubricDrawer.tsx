@@ -465,7 +465,7 @@ function RubricDrawer({
 							</Flex>
 						</Flex>
 
-						<Text
+						{/* <Text
 							variant='footer'
 							mt={8}
 							mb={7}
@@ -493,7 +493,7 @@ function RubricDrawer({
 								w='10px'
 								src='/ui_icons/link.svg'
 							/>
-						</Text>
+						</Text> */}
 
 						<Box mt={12}>
 							<Button
