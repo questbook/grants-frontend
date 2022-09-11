@@ -120,18 +120,6 @@ function ViewApplicants() {
 
 	const [realmsQueryParams, setRealmsQueryParams] = useState<any>({ client })
 
-	// useEffect(() => {
-	// 	if(applicantsData.length > 0 && rewardAssetDecimals) {
-	// 		const totalRequestedAmt = {}
-	// 		applicantsData.map(application => {
-	// 			if(application) {
-	// 				totalRequestedAmt[application.applicationId] = getRewardAmountMilestones(rewardAssetDecimals, application)
-	// 			}
-	// 		})
-	// 		setTotalMilestonesAmt(totalRequestedAmt)
-	// 	}
-	// }, [ applicantsData, rewardAssetDecimals])
-
 	useEffect(() => {
 		if(!grantID || !workspace) {
 			return
@@ -158,12 +146,14 @@ function ViewApplicants() {
 			if(!applicationToTxnHashMap[fundTransfer?.application?.id!]) {
 				applicationToTxnHashMap[fundTransfer?.application?.id!] = [ {
 					transactionHash: fundTransfer?.transactionHash!,
-					amount: parseFloat(fundTransfer?.amount)
+					amount: parseFloat(fundTransfer?.amount),
+					milestone: fundTransfer.milestone
 				}]
 			} else {
 				applicationToTxnHashMap[fundTransfer?.application?.id!].push({
 					transactionHash: fundTransfer?.transactionHash!,
-					amount: parseFloat(fundTransfer?.amount)
+					amount: parseFloat(fundTransfer?.amount),
+					milestone: fundTransfer.milestone
 				})
 			}
 			// applicationToTxnHashMap[fundTransfer?.application?.id!] = {
@@ -264,6 +254,7 @@ function ViewApplicants() {
 			}
 
 			const fetchedApplicantsData = data?.grantApplications?.map((applicant) => {
+
 				let decimal
 				let label
 				let icon

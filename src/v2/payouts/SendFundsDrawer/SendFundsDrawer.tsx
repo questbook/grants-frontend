@@ -17,7 +17,7 @@ import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
 import { RealmsSolana } from 'src/v2/constants/safe/realms_solana'
 import RecipientDetails from 'src/v2/payouts/SendFundsDrawer/RecepientDetails'
 import SafeOwner from 'src/v2/payouts/SendFundsModal/SafeOwner'
-import { MODAL_STATE_INDEXES, ModalStateType } from 'src/v2/payouts/SendFundsModal/SendFundsModal'
+// import { MODAL_STATE_INDEXES, ModalStateType } from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import { PhantomProvider } from 'src/v2/types/phantom'
 import { Safe, TransactionType } from 'src/v2/types/safe'
 
@@ -35,7 +35,7 @@ interface Props {
 	initiateTransaction: () => Promise<void>
 	initiateTransactionData: TransactionType[]
 	onModalStepChange: (value: number) => Promise<void>
-	step: ModalStateType
+	step: string
 }
 
 
@@ -156,16 +156,16 @@ function SendFundsDrawer({
 								direction='column'
 							>
 								<Box
-									bg={MODAL_STATE_INDEXES[step] === 0 ? '#785EF0' : '#E0E0EC'}
+									bg={step === 'RECEIPT_DETAILS' ? '#785EF0' : '#E0E0EC'}
 									borderRadius='20px'
 									height={1}
 								/>
 
 								<Flex
 									mt={2}
-									color={MODAL_STATE_INDEXES[step] === 0 ? '#785EF0' : '#E0E0EC'}>
+									color={step === 'RECEIPT_DETAILS' ? '#785EF0' : '#E0E0EC'}>
 									{
-										MODAL_STATE_INDEXES[step] === 0 ? (
+										step === 'RECEIPT_DETAILS' ? (
 											<FishEye
 												h='14px'
 												w='14px' />
@@ -183,7 +183,7 @@ function SendFundsDrawer({
 										lineHeight='16px'
 										fontWeight='500'
 										ml={1}
-										color={MODAL_STATE_INDEXES[step] === 0 ? '#785EF0' : '#1F1F33'}
+										color={step === 'RECEIPT_DETAILS' ? '#785EF0' : '#1F1F33'}
 									>
 										Recipient Details
 									</Text>
@@ -195,16 +195,16 @@ function SendFundsDrawer({
 								direction='column'
 							>
 								<Box
-									bg={MODAL_STATE_INDEXES[step] === 1 || MODAL_STATE_INDEXES[step] === 2 ? '#785EF0' : '#E0E0EC'}
+									bg={step === 'CONNECT_WALLET' || step === 'VERIFIED_OWNER' ? '#785EF0' : '#E0E0EC'}
 									borderRadius='20px'
 									height={1}
 								/>
 
 								<Flex
 									mt={2}
-									color={MODAL_STATE_INDEXES[step] === 1 || MODAL_STATE_INDEXES[step] === 2 ? '#785EF0' : '#E0E0EC'}>
+									color={step === 'CONNECT_WALLET' || step === 'VERIFIED_OWNER' ? '#785EF0' : '#E0E0EC'}>
 									{
-										MODAL_STATE_INDEXES[step] === 1 || MODAL_STATE_INDEXES[step] === 2 ? (
+										step === 'CONNECT_WALLET' || step === 'VERIFIED_OWNER' ? (
 											<FishEye
 												h='14px'
 												w='14px' />
@@ -222,7 +222,7 @@ function SendFundsDrawer({
 										lineHeight='16px'
 										fontWeight='500'
 										ml={1}
-										color={MODAL_STATE_INDEXES[step] === 1 || MODAL_STATE_INDEXES[step] === 2 ? '#785EF0' : '#1F1F33'}
+										color={step === 'CONNECT_WALLET' || step === 'VERIFIED_OWNER' ? '#785EF0' : '#1F1F33'}
 									>
 										Verify as a safe owner
 									</Text>
@@ -231,7 +231,7 @@ function SendFundsDrawer({
 						</Flex>
 
 						{
-							MODAL_STATE_INDEXES[step] === 0 ? (
+							step === 'RECEIPT_DETAILS' ? (
 								<RecipientDetails
 									applicantData={proposals}
 									onChangeRecepientDetails={onChangeRecepientDetails}

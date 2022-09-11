@@ -26,6 +26,8 @@ const RecipientDetails = ({
 
 		getBalance()
 	}, [])
+
+	console.log('initiateTransactionData', initiateTransactionData)
 	return (
 		<>
 			<Flex
@@ -155,8 +157,8 @@ const RecipientDetails = ({
 				<MilestoneSelect
 					placeholder='Select from the list'
 					value={initiateTransactionData?.selectedMilestone}
-					milestoneList={applicantData.milestones}
-					onChange={(value) => value && onChangeRecepientDetails(applicantData.applicationId, 'selectedMilestone', value?.id)} />
+					milestoneList={applicantData?.milestones}
+					onChange={(value) => value && onChangeRecepientDetails(applicantData?.applicationId, 'selectedMilestone', value?.id)} />
 
 				<Box h={6} />
 

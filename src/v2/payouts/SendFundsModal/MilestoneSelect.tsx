@@ -62,7 +62,7 @@ const MilestoneSelect = ({
 }) => (
 	<DropdownSelect
 		options={
-			milestoneList.map((milestone,) => ({
+			milestoneList?.map((milestone,) => ({
 				id: milestone.id,
 				title: milestone.title,
 				label: ''
@@ -70,7 +70,7 @@ const MilestoneSelect = ({
 		}
 		makeOption={Option}
 		placeholder={placeholder}
-		selected={milestoneList.find((milestone) => milestone.id === value) ?? undefined}
+		selected={milestoneList?.find((milestone) => milestone.id === value) ?? undefined}
 		setSelected={onChange} />
 )
 

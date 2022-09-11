@@ -27,6 +27,7 @@ import {
 	GetApplicationDetailsQuery,
 	useGetApplicationDetailsQuery,
 	useGetFundSentForApplicationQuery,
+	useGetGrantDetailsQuery,
 	useGetRealmsFundTransferDataQuery,
 	useGetSafeForAWorkspaceQuery,
 } from 'src/generated/graphql'
@@ -41,10 +42,14 @@ import {
 	getFieldString,
 	getFormattedDateFromUnixTimestampWithYear,
 } from 'src/utils/formattingUtils'
+import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import useApplicationMilestones from 'src/utils/queryUtil'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { getDateInDDMMYYYY, solanaToUsdOnDate } from 'src/v2/constants/safe/realms_solana'
+import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
+import { getDateInDDMMYYYY, RealmsSolana, solanaToUsdOnDate } from 'src/v2/constants/safe/realms_solana'
+import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
+import SendFunds from 'src/v2/payouts/SendFunds'
 import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
@@ -72,25 +77,21 @@ function ManageGrant() {
 	const [isSendFundModalOpen, setIsSendFundModalOpen] = useState(false)
 	const [isAdmin, setIsAdmin] = React.useState<boolean>(false)
 	const [rewardDisbursed, setRewardDisbursed] = useState(0)
-	const [usdAmount, setUsdAmounts] = useState([])
 
 	const [applicationID, setApplicationID] = useState<any>()
+	const [workspaceSafe, setWorkspaceSafe] = useState('')
 	const [workspaceSafeChainId, setWorkspaceSafeChainId] = useState(0)
+	const [currentSafe, setCurrentSafe] = useState()
+	const [transactionStatus, setTransactionStatus] = useState()
+	const [sendFundsTo, setSendFundsTo] = useState([])
 
 	const router = useRouter()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 	const { data: accountData } = useQuestbookAccount()
 	const workspacechainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 
-
-	const isEvmChain = workspaceSafeChainId !== 900001
 	const { client } = subgraphClients[workspacechainId]
 
-
-	const [realmsQueryParams, setRealmsQueryParams] = useState<any>({ client })
-
-
-	const { data: realmsFundTransferData } = useGetRealmsFundTransferDataQuery(realmsQueryParams)
 	const { data: safeAddressData } = useGetSafeForAWorkspaceQuery({
 		client,
 		variables: {
@@ -102,10 +103,24 @@ function ManageGrant() {
 	useEffect(() => {
 		if(safeAddressData) {
 			const { workspaceSafes } = safeAddressData
-
+			const safeAddress = workspaceSafes[0]?.address
+			setWorkspaceSafe(safeAddress)
 			setWorkspaceSafeChainId(parseInt(workspaceSafes[0]?.chainId))
 		}
 	}, [safeAddressData])
+
+	const isEvmChain = workspaceSafeChainId !== 900001
+
+	 useEffect(() => {
+		if(isEvmChain) {
+			const txnServiceURL = safeServicesInfo[workspaceSafeChainId]
+			setCurrentSafe(new GnosisSafe(workspaceSafeChainId, txnServiceURL, workspaceSafe))
+		} else {
+			if(isPlausibleSolanaAddress(workspaceSafe)) {
+				setCurrentSafe(new RealmsSolana(workspaceSafe))
+			}
+		}
+	}, [workspaceSafe])
 
 	const {
 		data: {
@@ -128,7 +143,6 @@ function ManageGrant() {
 		},
 	})
 
-	// No txn hash returned by this query to filter basis of status
 	const { data: fundsDisbursed } = useGetFundSentForApplicationQuery({
 		client:
       subgraphClients[
@@ -140,25 +154,42 @@ function ManageGrant() {
 		},
 	})
 
+	const checkTransactionStatus = async() => {
+		var milestoneTrxnStatus = []
+		Promise.all(
+		 fundsDisbursed.fundsTransfers.map(async(transfer) => {
+				return new Promise(async(res, rej) => {
+					const status = await currentSafe.getTransactionHashStatus(transfer.transactionHash)
+					if(status && status[transfer.transactionHash].closedAtDate) {
+						const usdAmount = await solanaToUsdOnDate(transfer.amount, Object.values(status || {})[0]?.closedAtDate)
+						milestoneTrxnStatus.push({
+							amount: (usdAmount || 0) / 10 ** 9,
+							txnHash: transfer.transactionHash,
+							milestoneId: transfer.milestone.id,
+							safeAddress: workspaceSafe,
+							...(Object.values(status || {})[0]) })
+						res(usdAmount)
+					}
+
+				})
+			})
+		).then((res) => {
+			setTransactionStatus(milestoneTrxnStatus)
+			var total = 0
+			for(var i in milestoneTrxnStatus) {
+				total += milestoneTrxnStatus[i].amount
+			}
+
+			setRewardDisbursed(parseInt(total))
+		})
+	}
+
 	useEffect(() => {
-		const getFundingUSDAmount = async() => {
-			const amounts = [];
-			 (fundsDisbursed?.fundsTransfers || []).map(
-				async f => {
-					const amount = await solanaToUsdOnDate(
-						Number(f.amount) / 10 ** 9,
-						getDateInDDMMYYYY(new Date(Number(f.createdAtS) * 1000))
-					)
-					amounts.push(amount)
-				}) || []
-
-			setUsdAmounts(amounts)
+		if(fundsDisbursed?.fundsTransfers) {
+			checkTransactionStatus()
 		}
+	}, [fundsDisbursed, currentSafe])
 
-		getFundingUSDAmount()
-	}, [fundsDisbursed])
-
-	// console.log('Funds Disbursed', fundsDisbursed)
 
 	const [applicationData, setApplicationData] = useState<GetApplicationDetailsQuery['grantApplication']>(null)
 	const applicantEmail = useMemo(
@@ -204,54 +235,14 @@ function ManageGrant() {
 	}, [router, accountData, refetchApplicationDetails])
 
 
-	useEffect(() => {
-		if(!applicationData?.grant?.id || !workspace) {
-			return
-		}
-
-		setRealmsQueryParams({
-			client,
-			variables: { grantID: applicationData?.grant?.id },
-		})
-
-	}, [applicationData?.grant?.id, workspace])
-
-	useEffect(() => {
-		console.log('manage realmsFundTransferData', realmsFundTransferData)
-
-		const applicationToTxnHashMap: {[applicationId: string]: { amount: number}} = {}
-
-		if(!realmsFundTransferData) {
-			return
-		}
-
-		realmsFundTransferData?.grants[0]?.fundTransfers?.forEach(async(fundTransfer,) => {
-			if(fundTransfer.application?.applicantId === applicationData?.applicantId) {
-				console.log('manage ')
-				const amount = await solanaToUsdOnDate(parseFloat(fundTransfer?.amount) / 10 ** 9, getDateInDDMMYYYY(new Date((applicationData?.updatedAtS || 0) * 1000)))
-				console.log('manage amout', amount)
-				setRewardDisbursed(amount)
-			}
-
-		})
-
-
-		// setListOfApplicationToTxnsHash(applicationToTxnHashMap)
-
-	}, [realmsFundTransferData])
-
-
-	useEffect(() => {
-		console.log('manage', applicationData)
-	})
-
 	const tabs = [
 		{
 			title: milestones.length.toString(),
 			subtitle: milestones.length === 1 ? 'Milestone' : 'Milestones',
 			content: (
 				<Milestones
-					rewardDisbursed={rewardDisbursed}
+					transactionStatus={transactionStatus}
+					isEvmChain={isEvmChain}
 					refetch={refetchMilestones}
 					milestones={milestones}
 					rewardAssetId={rewardAsset}
@@ -270,10 +261,9 @@ function ManageGrant() {
 			subtitle: 'Funding Sent',
 			content: (
 				<Funding
-					usdAmount={usdAmount}
-
-
 					fundTransfers={fundsDisbursed?.fundsTransfers || []}
+					transactionStatus={transactionStatus}
+					isEvmChain={isEvmChain}
 					assetId={rewardAsset}
 					columns={['milestoneTitle', 'date', 'from', 'action']}
 					assetDecimals={decimals!}
@@ -643,7 +633,7 @@ function ManageGrant() {
 						borderColor='brand.500'
 						h='48px'
 						w='340px'
-						onClick={() => setIsSendFundModalOpen(true)}
+						onClick={() => setSendFundsTo([applicationData])}
 					>
 						Send Funds
 					</Button>
@@ -670,13 +660,22 @@ function ManageGrant() {
 				/>
 			</Modal>
 
-			{
+			{/* {
 				applicationData && applicationData.grant && (
 
 					<SendFundsModal />
 
 				)
-			}
+			} */}
+
+			<SendFunds
+				workspace={workspace}
+				workspaceSafe={workspaceSafe}
+				workspaceSafeChainId={workspaceSafeChainId}
+				sendFundsTo={sendFundsTo}
+				rewardAssetAddress={applicationData?.grant?.reward?.asset}
+				rewardAssetDecimals={applicationData?.grant?.reward?.token?.decimal}
+				grantData={applicationData?.grant} />
 
 			{renderModal()}
 		</Container>

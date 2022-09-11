@@ -206,12 +206,12 @@ const solanaToUsdOnDate = async(solAmount: number, date:string) => {
 	let url = `https://api.coingecko.com/api/v3/coins/solana/history?date=${date}&localization=false`
 	let solToUsd = parseFloat((await axios.get(url)).data?.market_data?.current_price?.usd)
 	if(!solToUsd){
-const previousDay = new Date(new Date(Date(date)) - 864e5);
-const previousDate = getDateInDDMMYYYY(previousDay)
-url = `https://api.coingecko.com/api/v3/coins/solana/history?date=${previousDate}&localization=false`;
- solToUsd = parseFloat((await axios.get(url)).data?.market_data?.current_price?.usd)
-	}
-	return Math.floor((solToUsd) * solAmount) || await solanaToUsd(solAmount)
+		const previousDay = new Date(new Date(Date(date)) - 864e5);
+		const previousDate = getDateInDDMMYYYY(previousDay)
+		url = `https://api.coingecko.com/api/v3/coins/solana/history?date=${previousDate}&localization=false`;
+		solToUsd = parseFloat((await axios.get(url)).data?.market_data?.current_price?.usd)
+			}
+	return Math.floor((solToUsd) * solAmount) 
 }
 
 const solanaToUsd = async(solAmount: number) => {

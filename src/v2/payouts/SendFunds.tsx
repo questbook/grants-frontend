@@ -6,6 +6,7 @@ import { defaultChainId } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import { getFieldString } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -19,14 +20,6 @@ import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import getGnosisTansactionLink from 'src/v2/utils/gnosisUtils'
 import getProposalUrl from 'src/v2/utils/phantomUtils'
 import { erc20ABI, useConnect, useDisconnect } from 'wagmi'
-
-
-enum ModalState {
-	RECEIPT_DETAILS,
-	CONNECT_WALLET,
-	VERIFIED_OWNER,
-	TRANSATION_INITIATED
-}
 
 const ERC20Interface = new ethers.utils.Interface(erc20ABI)
 
@@ -77,7 +70,7 @@ export default function SendFunds({
 	const [initiateTransactionData, setInitiateTransactionData] = useState<any>([])
 	const [gnosisBatchData, setGnosisBatchData] = useState<any>([])
 	const [, setGnosisReadyToExecuteTxns] = useState<any>([])
-	const [step, setStep] = useState(ModalState.RECEIPT_DETAILS)
+	const [step, setStep] = useState('RECEIPT_DETAILS')
 
 	const isEvmChain = workspaceSafeChainId !== 900001
 
@@ -85,7 +78,7 @@ export default function SendFunds({
 	const { webwallet } = useContext(WebwalletContext)!
 
 	const currentSafe = useMemo(() => {
-		if(isEvmChain) {
+		if(isEvmChain && workspaceSafe) {
 			const txnServiceURL = safeServicesInfo[workspaceSafeChainId]
 			return new GnosisSafe(workspaceSafeChainId, txnServiceURL, workspaceSafe)
 		} else {
@@ -107,12 +100,13 @@ export default function SendFunds({
 
 
 	useEffect(() => {
+		console.log('sendFundsTo', sendFundsTo)
 		const formattedTrxnData = sendFundsTo?.map((recepient,) => (
 			{
 				from: currentSafe?.id?.toString(),
-				to: recepient.applicant_address,
-				applicationId: recepient.applicationId,
-				selectedMilestone: recepient.milestones[0].id,
+				to:  recepient?.applicantAddress || getFieldString(recepient, 'applicantAddress') || recepient?.applicantId,
+				applicationId: recepient?.applicationId,
+				selectedMilestone: recepient?.milestones[0]?.id,
 				amount: 0
 			})
 		)
@@ -132,7 +126,7 @@ export default function SendFunds({
 
 	useEffect(() => {
 		if(signerVerified) {
-			setStep(ModalState.VERIFIED_OWNER)
+			setStep('VERIFIED_OWNER')
 		}
 	}, [signerVerified])
 
@@ -195,7 +189,7 @@ export default function SendFunds({
 				throw new Error('Proposal address not found')
 			}
 		} else {
-			proposaladdress = await currentSafe?.proposeTransactions(grantData?.grants[0].title!, initiateTransactionData, phantomWallet)
+			proposaladdress = await currentSafe?.proposeTransactions(grantData?.grants ? grantData?.grants[0].title! : grantData.title, initiateTransactionData, phantomWallet)
 			if(!proposaladdress) {
 				throw new Error('No proposal address found!')
 			}
@@ -305,19 +299,19 @@ export default function SendFunds({
 		setGnosisBatchData(tempData)
 	}
 
-	const onModalStepChange = async(currentState: number) => {
+	const onModalStepChange = async(currentState: string) => {
 		switch (currentState) {
-		case ModalState.RECEIPT_DETAILS:
-			setStep(ModalState.CONNECT_WALLET)
+		case 'RECEIPT_DETAILS':
+			setStep('CONNECT_WALLET')
 			break
-		case ModalState.CONNECT_WALLET:
+		case 'CONNECT_WALLET':
 			if(signerVerified) {
-				setStep(ModalState.VERIFIED_OWNER)
+				setStep('VERIFIED_OWNER')
 			}
 
 			break
-		case ModalState.VERIFIED_OWNER:
-			setStep(ModalState.TRANSATION_INITIATED)
+		case 'VERIFIED_OWNER':
+			setStep('TRANSATION_INITIATED')
 			initiateTransaction()
 			setSendFundsModalIsOpen(false)
 			setSendFundsDrawerIsOpen(false)
@@ -328,7 +322,7 @@ export default function SendFunds({
 	}
 
 	const onModalClose = async() => {
-		setStep(ModalState.RECEIPT_DETAILS)
+		setStep('RECEIPT_DETAILS')
 		setSendFundsModalIsOpen(false)
 		setSendFundsDrawerIsOpen(false)
 		setTxnInitModalIsOpen(false)

@@ -15,6 +15,7 @@ import {
 } from 'src/utils/formattingUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getDateInDDMMYYYY, solanaToUsdOnDate } from 'src/v2/constants/safe/realms_solana'
+import getProposalUrl from 'src/v2/utils/phantomUtils'
 
 type TableContent = {
   title: string
@@ -40,7 +41,7 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 	milestoneTitle: {
 		title: 'Funding Received',
 		flex: 0.5,
-		content: (item, assetId, assetDecimals, __, chainId, rewardToken, usdAmount) => {
+		content: (item, assetId, assetDecimals, __, chainId, rewardToken, transactionStatus, isEvmChain) => {
 			let icon
 			let label
 			if(rewardToken) {
@@ -72,9 +73,9 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 							variant='applicationText'
 							fontWeight='700'
 						>
-							{usdAmount || formatAmount(item.amount, assetDecimals)}
+							{isEvmChain ? formatAmount(item.amount, assetDecimals) : parseInt(transactionStatus[0].amount)}
 							{' '}
-							{label}
+							{isEvmChain ? label : 'USD'}
 						</Text>
 					</Text>
 				</>
@@ -123,9 +124,12 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 	action: {
 		title: 'Action',
 		flex: 0.1,
-		content: (item, _, __, ___, chainId) => (
+		content: (item, _, __, ___, chainId, ____, transactionStatus, isEvmChain) => (
 			<Link
-				href={getExplorerUrlForTxHash(chainId, item.id)}
+				href={
+					isEvmChain ? getExplorerUrlForTxHash(chainId, item.id)
+						: getProposalUrl(transactionStatus[0].safeAddress, transactionStatus[0].txnHash)
+				}
 				isExternal
 			>
 				<Text
@@ -147,12 +151,12 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 	from: {
 		title: 'From',
 		flex: 0.2,
-		content: (item, _, __, grantId) => (
+		content: (item, _, __, grantId, ___, ____, transactionStatus, isEvmChain) => (
 			<Tooltip label={item.sender}>
 				<Text
 					variant='applicationText'
 					color='#122224'>
-					{getTextWithEllipses(item.sender)}
+					{isEvmChain ? getTextWithEllipses(item.sender) : getTextWithEllipses(transactionStatus[0].safeAddress)}
 					{' '}
 					{item.sender === grantId ? ' (Grant)' : ''}
 				</Text>
@@ -189,6 +193,8 @@ export type FundingProps = {
 function Funding({
 
 	fundTransfers,
+	transactionStatus,
+	isEvmChain,
 	assetId,
 	columns,
 	assetDecimals,
@@ -196,14 +202,11 @@ function Funding({
 	type,
 	chainId,
 	rewardToken,
-	usdAmount
 }: FundingProps) {
 	const tableHeaders = useMemo(
 		() => columns.map((column) => TABLE_HEADERS[column]),
 		[columns],
 	)
-
-	console.log('fundTransfers', fundTransfers)
 	const emptyStates = {
 		funds_deposited: {
 			src: '/illustrations/empty_states/no_deposits.svg',
@@ -229,7 +232,6 @@ function Funding({
 			subtitle: 'Once you send funds to the grantee, they will appear here.',
 		},
 	}
-
 
 	return (
 		<Flex
@@ -286,34 +288,49 @@ function Funding({
 							align='stretch'
 						>
 							{
-								fundTransfers.map((item, index) => (
-									<Flex
-										key={item.id}
-										direction='row'
-										w='100%'
-										justify='stretch'
-										align='center'
-										bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
-										py={4}
-										pl='15px'
-										pr='15px'
-									>
-										{
-											grantId
-                  && tableHeaders.map(({ title, flex, content }) => (
-	<Flex
-                  		key={title}
-                  		direction='row'
-                  		justify='start'
-                  		align='center'
-                  		flex={flex}
-                  	>
-	{content(item, assetId, assetDecimals, grantId, chainId, rewardToken, usdAmount[index] || 0)}
-                  	</Flex>
-                  ))
-										}
-									</Flex>
-								))
+								fundTransfers.map((item, index) => {
+
+									const txnStatus = transactionStatus.filter((obj) => obj.txnHash === item.transactionHash)
+									if(txnStatus[0] && txnStatus[0].closedAtDate !== '') {
+										return (
+											<Flex
+												key={item.id}
+												direction='row'
+												w='100%'
+												justify='stretch'
+												align='center'
+												bg={index % 2 === 0 ? '#F7F9F9' : 'white'}
+												py={4}
+												pl='15px'
+												pr='15px'
+											>
+												{
+													grantId && tableHeaders.map(({ title, flex, content }) => (
+														<Flex
+															key={title}
+															direction='row'
+															justify='start'
+															align='center'
+															flex={flex}
+														>
+															{
+																content(
+																	item,
+																	assetId,
+																	assetDecimals,
+																	grantId,
+																	chainId,
+																	rewardToken,
+																	txnStatus,
+																	isEvmChain)
+															}
+														</Flex>
+													))
+												}
+											</Flex>
+										)
+									}
+								})
 							}
 						</Flex>
 					</>
