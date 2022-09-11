@@ -138,7 +138,7 @@ function GrantRewardsInput({
 			// setRewardCurrencyAddress(currencies[0].address)
 			if(safeNetwork) {
 				transactionServiceURL = SAFES_ENDPOINTS[safeNetwork]
-				console.log('transaction service url', safeNetwork, transactionServiceURL)
+				// console.log('transaction service url', safeNetwork, transactionServiceURL)
 				const gnosisUrl = `${transactionServiceURL}/v1/safes/${safeAddress}/balances/`
 				axios.get(gnosisUrl).then(res => {
 					// console.log(res.data)
@@ -378,8 +378,17 @@ function GrantRewardsInput({
 								}
 							}
 							addERC={addERC}
-						/>: <Text lineHeight='20px'
-						fontWeight='bold'>SOL</Text>}
+						/>: <Dropdown
+						listItemsMinWidth='132px'
+						listItems={
+							[
+								{
+									icon: '',
+									label: 'SOL',
+								},
+							]
+						}
+					/>}
 					</Box>
 				</Flex>
 

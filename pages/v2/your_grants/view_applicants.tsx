@@ -1098,7 +1098,6 @@ function ViewApplicants() {
 					actionButtonText='Publish grant'
 					actionButtonOnClick={
 						() => {
-							// console.log('Doing it!')
 							// console.log('Is Accepting Applications (Button click): ', isAcceptingApplications)
 							setIsAcceptingApplications([
 								!isAcceptingApplications[0],

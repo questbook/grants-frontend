@@ -239,7 +239,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		() => ({
 			webwallet: webwallet,
 			setWebwallet: (newWebwallet?: Wallet) => {
-				// console.log('rrrrrrr')
 				if(newWebwallet) {
 					localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
 				} else {

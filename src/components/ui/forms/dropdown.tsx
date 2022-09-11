@@ -44,7 +44,6 @@ function Dropdown({
 	const [isOpen, setIsOpen] = React.useState(false)
 	const defaultSelected = listItems[defaultIndex || 0]
 	const [selected, setSelected] = React.useState(defaultSelected)
-	console.log('list items', listItems)
 	useEffect(() => {
 		setSelected(defaultSelected)
 	}, [defaultSelected])
@@ -130,7 +129,8 @@ function Dropdown({
 												h='24px'
 												w='24px'
 												src={selected.icon}
-												alt='token icon' />
+												alt='token icon'
+												fallbackSrc='/images/dummy/Ethereum Icon.svg' />
 										) : null
 									}
 									<Text

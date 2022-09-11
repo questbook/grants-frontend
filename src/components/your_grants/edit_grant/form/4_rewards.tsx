@@ -142,8 +142,17 @@ function GrantRewardsInput({
 							}
 						}
 						addERC={addERC}
-					/>: <Text lineHeight='20px'
-					fontWeight='bold'>SOL</Text>}
+					/>: <Dropdown
+					listItemsMinWidth='132px'
+					listItems={
+						[
+							{
+								icon: '',
+								label: 'SOL',
+							},
+						]
+					}
+				/>}
 				</Box>
 			</Flex>
 
